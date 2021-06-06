@@ -18,9 +18,10 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from dcs.unittype import FlyingType, UnitType
+from dcs.unittype import UnitType
 
 from game import db
+from game.dcs.aircrafttype import AircraftType
 from game.theater import Airfield, ControlPoint
 from game.transfers import CargoShip
 from game.unitmap import (
@@ -49,8 +50,8 @@ class AirLosses:
     def losses(self) -> Iterator[FlyingUnit]:
         return itertools.chain(self.player, self.enemy)
 
-    def by_type(self, player: bool) -> Dict[Type[FlyingType], int]:
-        losses_by_type: Dict[Type[FlyingType], int] = defaultdict(int)
+    def by_type(self, player: bool) -> Dict[AircraftType, int]:
+        losses_by_type: Dict[AircraftType, int] = defaultdict(int)
         losses = self.player if player else self.enemy
         for loss in losses:
             losses_by_type[loss.flight.unit_type] += 1

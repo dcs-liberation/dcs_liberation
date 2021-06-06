@@ -5,12 +5,12 @@ import inspect
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, Iterator, Optional, Set, Tuple, Type, Union, cast
+from typing import Dict, Iterator, Optional, Set, Tuple, Union, cast
 
 from dcs.unitgroup import FlyingGroup
-from dcs.unittype import FlyingType
 from dcs.weapons_data import Weapons, weapon_ids
 
+from game.dcs.aircrafttype import AircraftType
 
 PydcsWeapon = Dict[str, Union[int, str]]
 PydcsWeaponAssignment = Tuple[int, PydcsWeapon]
@@ -97,12 +97,12 @@ class Pylon:
                 yield weapon
 
     @classmethod
-    def for_aircraft(cls, aircraft: Type[FlyingType], number: int) -> Pylon:
+    def for_aircraft(cls, aircraft: AircraftType, number: int) -> Pylon:
         # In pydcs these are all arbitrary inner classes of the aircraft type.
         # The only way to identify them is by their name.
         pylons = [
             v
-            for v in aircraft.__dict__.values()
+            for v in aircraft.dcs_unit_type.__dict__.values()
             if inspect.isclass(v) and v.__name__.startswith("Pylon")
         ]
 
@@ -121,8 +121,8 @@ class Pylon:
         return cls(number, allowed)
 
     @classmethod
-    def iter_pylons(cls, aircraft: Type[FlyingType]) -> Iterator[Pylon]:
-        for pylon in sorted(list(aircraft.pylons)):
+    def iter_pylons(cls, aircraft: AircraftType) -> Iterator[Pylon]:
+        for pylon in sorted(list(aircraft.dcs_unit_type.pylons)):
             yield cls.for_aircraft(aircraft, pylon)
 
 

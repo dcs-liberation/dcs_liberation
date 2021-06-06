@@ -30,10 +30,7 @@ class QAircraftTypeSelector(QComboBox):
         self.clear()
         for aircraft in aircraft_types:
             if aircraft in aircraft_for_task(mission_type):
-                self.addItem(
-                    f"{db.unit_get_expanded_info(self.country, aircraft, 'name')}",
-                    userData=aircraft,
-                )
+                self.addItem(f"{aircraft}", userData=aircraft)
         current_aircraft_index = self.findData(current_aircraft)
         if current_aircraft_index != -1:
             self.setCurrentIndex(current_aircraft_index)

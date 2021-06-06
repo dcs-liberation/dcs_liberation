@@ -1,5 +1,5 @@
 import logging
-from typing import Set, Type
+from typing import Set
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
@@ -13,9 +13,8 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 from dcs.helicopters import helicopter_map
-from dcs.unittype import FlyingType, UnitType
 
-from game import db
+from game.dcs.aircrafttype import AircraftType
 from game.theater import ControlPoint, ControlPointType
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
@@ -48,13 +47,11 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         task_box_layout = QGridLayout()
         row = 0
 
-        unit_types: Set[Type[FlyingType]] = set()
+        unit_types: Set[AircraftType] = set()
         for unit_type in self.game_model.game.player_faction.aircrafts:
-            if not issubclass(unit_type, FlyingType):
-                raise RuntimeError(f"Non-flying aircraft found in faction: {unit_type}")
-            if self.cp.is_carrier and unit_type not in db.CARRIER_CAPABLE:
+            if self.cp.is_carrier and not unit_type.carrier_capable:
                 continue
-            if self.cp.is_lha and unit_type not in db.LHA_CAPABLE:
+            if self.cp.is_lha and not unit_type.lha_capable:
                 continue
             if (
                 self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
@@ -65,9 +62,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         sorted_units = sorted(
             unit_types,
-            key=lambda u: db.unit_get_expanded_info(
-                self.game_model.game.player_country, u, "name"
-            ),
+            key=lambda u: u.name,
         )
         for unit_type in sorted_units:
             row = self.add_purchase_row(unit_type, task_box_layout, row)
@@ -85,30 +80,33 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
 
-    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+    def enable_purchase(self, unit_type: AircraftType) -> bool:
         if not super().enable_purchase(unit_type):
             return False
-        if not issubclass(unit_type, FlyingType):
-            return False
         if not self.cp.can_operate(unit_type):
             return False
         return True
 
-    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
-        if not issubclass(unit_type, FlyingType):
-            return False
+    def enable_sale(self, unit_type: AircraftType) -> bool:
         if not self.cp.can_operate(unit_type):
             return False
         return True
 
-    def buy(self, unit_type):
+    def name_of(self, unit_type: AircraftType) -> str:
+        return unit_type.name
+
+    def price_of(self, unit_type: AircraftType) -> int:
+        return unit_type.price
+
+    def buy(self, unit_type: AircraftType) -> None:
         if self.maximum_units > 0:
             if self.cp.unclaimed_parking(self.game_model.game) <= 0:
                 logging.debug(f"No space for additional aircraft at {self.cp}.")
                 QMessageBox.warning(
                     self,
                     "No space for additional aircraft",
-                    f"There is no parking space left at {self.cp.name} to accommodate another plane.",
+                    f"There is no parking space left at {self.cp.name} to accommodate "
+                    "another plane.",
                     QMessageBox.Ok,
                 )
                 return
@@ -122,7 +120,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         super().buy(unit_type)
         self.hangar_status.update_label()
 
-    def sell(self, unit_type: UnitType):
+    def sell(self, unit_type: AircraftType) -> None:
         # Don't need to remove aircraft from the inventory if we're canceling
         # orders.
         if self.pending_deliveries.units.get(unit_type, 0) <= 0:
@@ -134,7 +132,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                 QMessageBox.critical(
                     self,
                     "Could not sell aircraft",
-                    f"Attempted to sell one {unit_type.id} at {self.cp.name} "
+                    f"Attempted to sell one {unit_type} at {self.cp.name} "
                     "but none are available. Are all aircraft currently "
                     "assigned to a mission?",
                     QMessageBox.Ok,

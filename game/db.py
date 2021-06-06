@@ -133,7 +133,7 @@ from dcs.ships import (
 from dcs.terrain.terrain import Airport
 from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import FlyingType, UnitType, VehicleType
+from dcs.unittype import UnitType, VehicleType
 from dcs.vehicles import (
     AirDefence,
     Armor,
@@ -803,44 +803,6 @@ REWARDS = {
     "derrick": 8,
 }
 
-CARRIER_CAPABLE = [
-    FA_18C_hornet,
-    F_14A_135_GR,
-    F_14B,
-    AV8BNA,
-    Su_33,
-    A_4E_C,
-    S_3B,
-    S_3B_Tanker,
-    E_2C,
-    UH_1H,
-    Mi_8MT,
-    Ka_50,
-    AH_1W,
-    OH_58D,
-    UH_60A,
-    SH_60B,
-    SA342L,
-    SA342M,
-    SA342Minigun,
-    SA342Mistral,
-]
-
-LHA_CAPABLE = [
-    AV8BNA,
-    UH_1H,
-    Mi_8MT,
-    Ka_50,
-    AH_1W,
-    OH_58D,
-    UH_60A,
-    SH_60B,
-    SA342L,
-    SA342M,
-    SA342Minigun,
-    SA342Mistral,
-]
-
 """
 ---------- END OF CONFIGURATION SECTION
 """
@@ -938,7 +900,9 @@ def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
 
-def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> str:
+def unit_get_expanded_info(
+    country_name: str, unit_type: Type[UnitType], request_type: str
+) -> str:
     original_name = unit_type.name and unit_type.name or unit_type.id
     default_value = None
     faction_value = None
@@ -980,13 +944,6 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return None
 
 
-def flying_type_from_name(name: str) -> Optional[Type[FlyingType]]:
-    unit_type = plane_map.get(name)
-    if unit_type is not None:
-        return unit_type
-    return helicopter_map.get(name)
-
-
 def unit_type_of(unit: Unit) -> UnitType:
     if isinstance(unit, Vehicle):
         return vehicle_map[unit.type]
@@ -1013,39 +970,3 @@ F_16C_50.Liveries = DefaultLiveries
 P_51D_30_NA.Liveries = DefaultLiveries
 Ju_88A4.Liveries = DefaultLiveries
 B_17G.Liveries = DefaultLiveries
-
-# List of airframes that rely on their gun as a primary weapon. We confiscate bullets
-# from most AI air-to-ground missions since they aren't smart enough to RTB when they're
-# out of everything other than bullets (DCS does not have an all-but-gun winchester
-# option) and we don't want to be attacking fully functional Tors with a Vulcan.
-#
-# These airframes are the exceptions. They probably should be using their gun regardless
-# of the mission type.
-GUN_RELIANT_AIRFRAMES: List[Type[FlyingType]] = [
-    AH_1W,
-    AH_64A,
-    AH_64D,
-    A_10A,
-    A_10C,
-    A_10C_2,
-    A_20G,
-    Bf_109K_4,
-    FW_190A8,
-    FW_190D9,
-    F_86F_Sabre,
-    Ju_88A4,
-    Ka_50,
-    MiG_15bis,
-    MiG_19P,
-    Mi_24V,
-    Mi_28N,
-    P_47D_30,
-    P_47D_30bl1,
-    P_47D_40,
-    P_51D,
-    P_51D_30_NA,
-    SpitfireLFMkIX,
-    SpitfireLFMkIXCW,
-    Su_25,
-    Su_25T,
-]

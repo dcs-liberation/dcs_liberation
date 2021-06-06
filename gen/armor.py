@@ -28,6 +28,7 @@ from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
 from dcs.unittype import VehicleType
 from game import db
+from game.dcs.aircrafttype import AircraftType
 from game.unitmap import UnitMap
 from game.utils import heading_sum, opposite_heading
 from game.theater.controlpoint import ControlPoint
@@ -174,14 +175,14 @@ class GroundConflictGenerator:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
             code = 1688 - len(self.jtacs)
 
-            utype = MQ_9_Reaper
-            if self.game.player_faction.jtac_unit is not None:
-                utype = self.game.player_faction.jtac_unit
+            utype = self.game.player_faction.jtac_unit
+            if self.game.player_faction.jtac_unit is None:
+                utype = AircraftType.named("MQ-9 Reaper")
 
             jtac = self.mission.flight_group(
                 country=self.mission.country(self.game.player_country),
                 name=n,
-                aircraft_type=utype,
+                aircraft_type=utype.dcs_unit_type,
                 position=position[0],
                 airport=None,
                 altitude=5000,

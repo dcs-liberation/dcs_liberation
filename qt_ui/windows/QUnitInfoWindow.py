@@ -1,41 +1,40 @@
-import logging
-from typing import Type
+from typing import Type, Union
 
-from PySide2 import QtCore
+import dcs
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon, QMovie, QPixmap
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
     QDialog,
     QGridLayout,
-    QGroupBox,
-    QHBoxLayout,
     QLabel,
-    QMessageBox,
-    QPushButton,
     QTextBrowser,
     QFrame,
 )
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-from dcs.unittype import UnitType, FlyingType, VehicleType
-import dcs
-from qt_ui.uiconstants import AIRCRAFT_BANNERS, VEHICLE_BANNERS
-
-from game.game import Game
-from game import db
+from dcs.unittype import UnitType
 
 import gen.flights.ai_flight_planner_db
+from game import db
+from game.dcs.aircrafttype import AircraftType
+from game.game import Game
 from gen.flights.flight import FlightType
+from qt_ui.uiconstants import AIRCRAFT_BANNERS, VEHICLE_BANNERS
 
 
 class QUnitInfoWindow(QDialog):
-    def __init__(self, game: Game, unit_type: Type[UnitType]) -> None:
-        super(QUnitInfoWindow, self).__init__()
+    def __init__(
+        self, game: Game, unit_type: Union[AircraftType, Type[UnitType]]
+    ) -> None:
+        super().__init__()
         self.setModal(True)
         self.game = game
         self.unit_type = unit_type
-        self.setWindowTitle(
-            f"Unit Info: {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'name')}"
-        )
+        if isinstance(unit_type, AircraftType):
+            self.name = unit_type.name
+        else:
+            self.name = db.unit_get_expanded_info(
+                self.game.player_country, self.unit_type, "name"
+            )
+        self.setWindowTitle(f"Unit Info: {self.name}")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
         self.setMaximumWidth(640)
@@ -71,7 +70,7 @@ class QUnitInfoWindow(QDialog):
         self.details_grid_layout.setMargin(0)
 
         self.name_box = QLabel(
-            f"<b>Name:</b> {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'manufacturer')} {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'name')}"
+            f"<b>Name:</b> {db.unit_get_expanded_info(self.game.player_country, self.unit_type, 'manufacturer')} {self.name}"
         )
         self.name_box.setProperty("style", "info-element")
 

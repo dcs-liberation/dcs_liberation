@@ -1,5 +1,4 @@
 from __future__ import annotations
-from game.data.groundunitclass import GroundUnitClass
 
 import logging
 from dataclasses import dataclass, field
@@ -23,7 +22,9 @@ from game.data.doctrine import (
     COLDWAR_DOCTRINE,
     WWII_DOCTRINE,
 )
-from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
+from game.data.groundunitclass import GroundUnitClass
+from game.dcs.aircrafttype import AircraftType
+from pydcs_extensions.mod_units import MODDED_VEHICLES
 
 
 @dataclass
@@ -45,13 +46,13 @@ class Faction:
     description: str = field(default="")
 
     # Available aircraft
-    aircrafts: List[Type[FlyingType]] = field(default_factory=list)
+    aircrafts: List[AircraftType] = field(default_factory=list)
 
     # Available awacs aircraft
-    awacs: List[Type[FlyingType]] = field(default_factory=list)
+    awacs: List[AircraftType] = field(default_factory=list)
 
     # Available tanker aircraft
-    tankers: List[Type[FlyingType]] = field(default_factory=list)
+    tankers: List[AircraftType] = field(default_factory=list)
 
     # Available frontline units
     frontline_units: List[Type[VehicleType]] = field(default_factory=list)
@@ -114,7 +115,7 @@ class Faction:
     has_jtac: bool = field(default=False)
 
     # Unit to use as JTAC for this faction
-    jtac_unit: Optional[Type[FlyingType]] = field(default=None)
+    jtac_unit: Optional[AircraftType] = field(default=None)
 
     # doctrine
     doctrine: Doctrine = field(default=MODERN_DOCTRINE)
@@ -123,7 +124,7 @@ class Faction:
     building_set: List[str] = field(default_factory=list)
 
     # List of default livery overrides
-    liveries_overrides: Dict[Type[UnitType], List[str]] = field(default_factory=dict)
+    liveries_overrides: Dict[AircraftType, List[str]] = field(default_factory=dict)
 
     #: Set to True if the faction should force the "Unrestricted satnav" option
     #: for the mission. This option enables GPS for capable aircraft regardless
@@ -163,9 +164,9 @@ class Faction:
         faction.authors = json.get("authors", "")
         faction.description = json.get("description", "")
 
-        faction.aircrafts = load_all_aircraft(json.get("aircrafts", []))
-        faction.awacs = load_all_aircraft(json.get("awacs", []))
-        faction.tankers = load_all_aircraft(json.get("tankers", []))
+        faction.aircrafts = [AircraftType.named(n) for n in json.get("aircrafts", [])]
+        faction.awacs = [AircraftType.named(n) for n in json.get("awacs", [])]
+        faction.tankers = [AircraftType.named(n) for n in json.get("tankers", [])]
 
         faction.aircrafts = list(
             set(faction.aircrafts + faction.awacs + faction.tankers)
@@ -198,7 +199,7 @@ class Faction:
         faction.has_jtac = json.get("has_jtac", False)
         jtac_name = json.get("jtac_unit", None)
         if jtac_name is not None:
-            faction.jtac_unit = load_aircraft(jtac_name)
+            faction.jtac_unit = AircraftType.named(jtac_name)
         else:
             faction.jtac_unit = None
         faction.navy_group_count = int(json.get("navy_group_count", 1))
@@ -232,26 +233,13 @@ class Faction:
         # Load liveries override
         faction.liveries_overrides = {}
         liveries_overrides = json.get("liveries_overrides", {})
-        for k, v in liveries_overrides.items():
-            k = load_aircraft(k)
-            if k is not None:
-                faction.liveries_overrides[k] = [s.lower() for s in v]
+        for name, livery in liveries_overrides.items():
+            aircraft = AircraftType.named(name)
+            faction.liveries_overrides[aircraft] = [s.lower() for s in livery]
 
         faction.unrestricted_satnav = json.get("unrestricted_satnav", False)
 
         return faction
-
-    @property
-    def all_units(self) -> List[Type[UnitType]]:
-        return (
-            self.infantry_units
-            + self.aircrafts
-            + self.awacs
-            + self.artillery_units
-            + self.frontline_units
-            + self.tankers
-            + self.logistics_units
-        )
 
     @property
     def ground_units(self) -> Iterator[Type[VehicleType]]:
@@ -281,22 +269,6 @@ def unit_loader(unit: str, class_repository: List[Any]) -> Optional[Type[UnitTyp
                         return m
         logging.error(f"FACTION ERROR : Unable to find {unit} in pydcs")
         return None
-
-
-def load_aircraft(name: str) -> Optional[Type[FlyingType]]:
-    return cast(
-        Optional[FlyingType],
-        unit_loader(name, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES]),
-    )
-
-
-def load_all_aircraft(data) -> List[Type[FlyingType]]:
-    items = []
-    for name in data:
-        item = load_aircraft(name)
-        if item is not None:
-            items.append(item)
-    return items
 
 
 def load_vehicle(name: str) -> Optional[Type[VehicleType]]:
