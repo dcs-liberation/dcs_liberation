@@ -1695,7 +1695,8 @@ class FlightPlanBuilder:
             location.position.distance_to_point(closest_boundary)
         )
         orbit_heading = heading_to_threat_boundary
-        # Station 100nm outside the threat zone.
+
+        # Station 70nm outside the threat zone.
         threat_buffer = nautical_miles(70)
         if self.threat_zones.threatened(location.position):
             orbit_distance = distance_to_threat + threat_buffer

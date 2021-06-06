@@ -2229,7 +2229,12 @@ class TankerRaceTrackStartBuilder(PydcsWaypointBuilder):
             return waypoint
 
         tanker_type = self.flight.unit_type
-        altitude = self.flight.flight_plan.tot_waypoint.alt.meters
+
+        if self.flight.flight_plan.tot_waypoint is not None:
+            altitude = self.flight.flight_plan.tot_waypoint.alt.meters
+        else:
+            # Minimum planned altitude of any type.
+            altitude = Distance.from_feet(12000).meters
 
         if tanker_type is KC_135:
             # Around 300 knots IAS, at 24000 feet.
