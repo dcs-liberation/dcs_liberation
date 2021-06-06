@@ -25,8 +25,6 @@ from qt_ui.windows.AirWingDialog import AirWingDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
-from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
-from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 
 class QTopPanel(QFrame):
@@ -74,26 +72,12 @@ class QTopPanel(QFrame):
         self.transfers.setProperty("style", "btn-primary")
         self.transfers.clicked.connect(self.open_transfers)
 
-        self.settings = QPushButton("Settings")
-        self.settings.setDisabled(True)
-        self.settings.setIcon(CONST.ICONS["Settings"])
-        self.settings.setProperty("style", "btn-primary")
-        self.settings.clicked.connect(self.openSettings)
-
-        self.statistics = QPushButton("Statistics")
-        self.statistics.setDisabled(True)
-        self.statistics.setIcon(CONST.ICONS["Statistics"])
-        self.statistics.setProperty("style", "btn-primary")
-        self.statistics.clicked.connect(self.openStatisticsWindow)
-
         self.intel_box = QIntelBox(self.game)
 
         self.buttonBox = QGroupBox("Misc")
         self.buttonBoxLayout = QHBoxLayout()
         self.buttonBoxLayout.addWidget(self.air_wing)
         self.buttonBoxLayout.addWidget(self.transfers)
-        self.buttonBoxLayout.addWidget(self.settings)
-        self.buttonBoxLayout.addWidget(self.statistics)
         self.buttonBox.setLayout(self.buttonBoxLayout)
 
         self.proceedBox = QGroupBox("Proceed")
@@ -123,8 +107,6 @@ class QTopPanel(QFrame):
 
         self.air_wing.setEnabled(True)
         self.transfers.setEnabled(True)
-        self.settings.setEnabled(True)
-        self.statistics.setEnabled(True)
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
         self.intel_box.set_game(game)
@@ -144,14 +126,6 @@ class QTopPanel(QFrame):
 
     def open_transfers(self):
         self.dialog = PendingTransfersDialog(self.game_model)
-        self.dialog.show()
-
-    def openSettings(self):
-        self.dialog = QSettingsWindow(self.game)
-        self.dialog.show()
-
-    def openStatisticsWindow(self):
-        self.dialog = QStatsWindow(self.game)
         self.dialog.show()
 
     def passTurn(self):

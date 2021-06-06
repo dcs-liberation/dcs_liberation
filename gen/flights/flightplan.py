@@ -1057,7 +1057,7 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        start = self.aewc_orbit(location)
+        orbit_location = self.aewc_orbit(location)
 
         # As high as possible to maximize detection and on-station time.
         if flight.unit_type == E_2C:
@@ -1072,22 +1072,22 @@ class FlightPlanBuilder:
             patrol_alt = feet(25000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start = builder.orbit(start, patrol_alt)
+        orbit_location = builder.orbit(orbit_location, patrol_alt)
 
         return AwacsFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
-                flight.departure.position, start.position, patrol_alt
+                flight.departure.position, orbit_location.position, patrol_alt
             ),
             nav_from=builder.nav_path(
-                start.position, flight.arrival.position, patrol_alt
+                orbit_location.position, flight.arrival.position, patrol_alt
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
-            hold=start,
+            hold=orbit_location,
             hold_duration=timedelta(hours=4),
         )
 
@@ -1339,20 +1339,24 @@ class FlightPlanBuilder:
         return start, end
 
     def aewc_orbit(self, location: MissionTarget) -> Point:
-        # in threat zone
+        closest_boundary = self.threat_zones.closest_boundary(location.position)
+        heading_to_threat_boundary = location.position.heading_between_point(
+            closest_boundary
+        )
+        distance_to_threat = meters(
+            location.position.distance_to_point(closest_boundary)
+        )
+        orbit_heading = heading_to_threat_boundary
+        # Station 100nm outside the threat zone.
+        threat_buffer = nautical_miles(100)
         if self.threat_zones.threatened(location.position):
-            # Borderpoint
-            closest_boundary = self.threat_zones.closest_boundary(location.position)
-
-            # Heading + Distance to border point
-            heading = location.position.heading_between_point(closest_boundary)
-            distance = location.position.distance_to_point(closest_boundary)
-
-            return location.position.point_from_heading(heading, distance)
-
-        # this Part is fine. No threat zone, just use our point
+            orbit_distance = distance_to_threat + threat_buffer
         else:
-            return location.position
+            orbit_distance = distance_to_threat - threat_buffer
+
+        return location.position.point_from_heading(
+            orbit_heading, orbit_distance.meters
+        )
 
     def racetrack_for_frontline(
         self, origin: Point, front_line: FrontLine
@@ -1807,7 +1811,7 @@ class FlightPlanBuilder:
         # We'll always have a package, but if this is being planned via the UI
         # it could be the first flight in the package.
         if not self.package.flights:
-            raise RuntimeError(
+            raise PlanningError(
                 "Cannot determine source airfield for package with no flights"
             )
 
@@ -1819,5 +1823,4 @@ class FlightPlanBuilder:
             for flight in self.package.flights:
                 if flight.departure == airfield:
                     return airfield
-
-        raise RuntimeError("Could not find any airfield assigned to this package")
+        raise PlanningError("Could not find any airfield assigned to this package")

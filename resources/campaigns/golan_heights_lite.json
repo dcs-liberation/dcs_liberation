@@ -1,5 +1,5 @@
 {
-  "name": "Syria - Battle for Golan Heights - Lite",
+  "name": "Syria - Battle for Golan Heights",
   "theater": "Syria",
   "authors": "Khopa",
   "recommended_player_faction": "Israel 2000",
@@ -7,5 +7,5 @@
   "description": "<p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/><br/>This scenario is designed to be performance friendly.</p>",
   "miz": "golan_heights_lite.miz",
   "performance": 1,
-  "version": "5.0"
+  "version": "6.0"
 }

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from PySide2.QtCore import QItemSelectionModel, QSize
 from PySide2.QtGui import QStandardItemModel
 from PySide2.QtWidgets import QAbstractItemView, QListView
@@ -5,6 +7,7 @@ from PySide2.QtWidgets import QAbstractItemView, QListView
 from qt_ui.models import GameModel
 from qt_ui.windows.mission.QFlightItem import QFlightItem
 from game.theater.controlpoint import ControlPoint
+from gen.flights.traveltime import TotEstimator
 
 
 class QPlannedFlightsView(QListView):
@@ -25,8 +28,11 @@ class QPlannedFlightsView(QListView):
             for flight in package.flights:
                 if flight.from_cp == self.cp:
                     item = QFlightItem(package.package, flight)
-                    self.model.appendRow(item)
                     self.flight_items.append(item)
+
+        self.flight_items.sort(key=self.mission_start_for_flight)
+        for item in self.flight_items:
+            self.model.appendRow(item)
         self.set_selected_flight(0)
 
     def set_selected_flight(self, row):
@@ -43,3 +49,7 @@ class QPlannedFlightsView(QListView):
     def set_flight_planner(self) -> None:
         self.clear_layout()
         self.setup_content()
+
+    @staticmethod
+    def mission_start_for_flight(flight_item: QFlightItem) -> timedelta:
+        return TotEstimator(flight_item.package).mission_start_time(flight_item.flight)

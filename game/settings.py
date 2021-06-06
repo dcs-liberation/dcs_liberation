@@ -43,11 +43,11 @@ class Settings:
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
     restrict_weapons_by_date: bool = False
-    disable_legacy_aewc: bool = False
+    disable_legacy_aewc: bool = True
     generate_dark_kneeboard: bool = False
     invulnerable_player_pilots: bool = True
     auto_ato_behavior: AutoAtoBehavior = AutoAtoBehavior.Default
-    auto_ato_player_missions_asap: bool = False
+    auto_ato_player_missions_asap: bool = True
 
     # Performance oriented
     perf_red_alert_state: bool = True
@@ -57,6 +57,7 @@ class Settings:
     perf_moving_units: bool = True
     perf_infantry: bool = True
     perf_destroyed_units: bool = True
+    reserves_procurement_target: int = 10
 
     # Performance culling
     perf_culling: bool = False

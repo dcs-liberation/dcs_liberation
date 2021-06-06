@@ -5,9 +5,16 @@ from gen.sam.group_generator import GroupGenerator
 
 
 class EwrGenerator(GroupGenerator):
-    @property
-    def unit_type(self) -> VehicleType:
-        raise NotImplementedError
+    unit_type: VehicleType
+
+    @classmethod
+    def name(cls) -> str:
+        return cls.unit_type.name
+
+    @staticmethod
+    def price() -> int:
+        # TODO: Differentiate sites.
+        return 20
 
     def generate(self) -> None:
         self.add_unit(

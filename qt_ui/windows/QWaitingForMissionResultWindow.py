@@ -133,10 +133,10 @@ class QWaitingForMissionResultWindow(QDialog):
         self.setLayout(self.layout)
 
     @staticmethod
-    def add_update_row(description: str, count: Sized, layout: QGridLayout) -> None:
+    def add_update_row(description: str, count: int, layout: QGridLayout) -> None:
         row = layout.rowCount()
         layout.addWidget(QLabel(f"<b>{description}</b>"), row, 0)
-        layout.addWidget(QLabel(f"{len(count)}"), row, 1)
+        layout.addWidget(QLabel(f"{count}"), row, 1)
 
     def updateLayout(self, debriefing: Debriefing) -> None:
         updateBox = QGroupBox("Mission status")
@@ -145,34 +145,36 @@ class QWaitingForMissionResultWindow(QDialog):
         self.debriefing = debriefing
 
         self.add_update_row(
-            "Aircraft destroyed", list(debriefing.air_losses.losses), update_layout
+            "Aircraft destroyed", len(list(debriefing.air_losses.losses)), update_layout
         )
         self.add_update_row(
             "Front line units destroyed",
-            list(debriefing.front_line_losses),
+            len(list(debriefing.front_line_losses)),
             update_layout,
         )
         self.add_update_row(
-            "Convoy units destroyed", list(debriefing.convoy_losses), update_layout
+            "Convoy units destroyed", len(list(debriefing.convoy_losses)), update_layout
         )
         self.add_update_row(
             "Shipping cargo destroyed",
-            list(debriefing.cargo_ship_losses),
+            len(list(debriefing.cargo_ship_losses)),
             update_layout,
         )
         self.add_update_row(
-            "Airlift cargo destroyed", list(debriefing.airlift_losses), update_layout
+            "Airlift cargo destroyed",
+            sum(len(loss.cargo) for loss in debriefing.airlift_losses),
+            update_layout,
         )
         self.add_update_row(
             "Ground units lost at objective areas",
-            list(debriefing.ground_object_losses),
+            len(list(debriefing.ground_object_losses)),
             update_layout,
         )
         self.add_update_row(
-            "Buildings destroyed", list(debriefing.building_losses), update_layout
+            "Buildings destroyed", len(list(debriefing.building_losses)), update_layout
         )
         self.add_update_row(
-            "Base capture events", debriefing.base_captures, update_layout
+            "Base capture events", len(debriefing.base_captures), update_layout
         )
 
         # Clear previous content of the window

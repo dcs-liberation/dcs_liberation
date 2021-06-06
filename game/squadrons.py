@@ -10,10 +10,8 @@ from pathlib import Path
 from typing import (
     Type,
     Tuple,
-    List,
     TYPE_CHECKING,
     Optional,
-    Iterable,
     Iterator,
     Sequence,
 )
@@ -83,9 +81,12 @@ class Squadron:
     role: str
     aircraft: Type[FlyingType]
     livery: Optional[str]
-    mission_types: Tuple[FlightType, ...]
-    pilots: List[Pilot]
-    available_pilots: List[Pilot] = field(init=False, hash=False, compare=False)
+    mission_types: tuple[FlightType, ...]
+    pilots: list[Pilot]
+    available_pilots: list[Pilot] = field(init=False, hash=False, compare=False)
+    auto_assignable_mission_types: set[FlightType] = field(
+        init=False, hash=False, compare=False
+    )
 
     # We need a reference to the Game so that we can access the Faker without needing to
     # persist it to the save game, or having to reconstruct it (it's not cheap) each
@@ -95,6 +96,7 @@ class Squadron:
 
     def __post_init__(self) -> None:
         self.available_pilots = list(self.active_pilots)
+        self.auto_assignable_mission_types = set(self.mission_types)
 
     def __str__(self) -> str:
         return f'{self.name} "{self.nickname}"'
@@ -142,8 +144,12 @@ class Squadron:
     def return_pilot(self, pilot: Pilot) -> None:
         self.available_pilots.append(pilot)
 
-    def return_pilots(self, pilots: Iterable[Pilot]) -> None:
-        self.available_pilots.extend(pilots)
+    def return_pilots(self, pilots: Sequence[Pilot]) -> None:
+        # Return in reverse so that returning two pilots and then getting two more
+        # results in the same ordering. This happens commonly when resetting rosters in
+        # the UI, when we clear the roster because the UI is updating, then end up
+        # repopulating the same size flight from the same squadron.
+        self.available_pilots.extend(reversed(pilots))
 
     def enlist_new_pilots(self, count: int) -> None:
         new_pilots = [Pilot(self.faker.name()) for _ in range(count)]
@@ -160,6 +166,9 @@ class Squadron:
     def _pilots_with_status(self, status: PilotStatus) -> list[Pilot]:
         return [p for p in self.pilots if p.status == status]
 
+    def _pilots_without_status(self, status: PilotStatus) -> list[Pilot]:
+        return [p for p in self.pilots if p.status != status]
+
     @property
     def active_pilots(self) -> list[Pilot]:
         return self._pilots_with_status(PilotStatus.Active)
@@ -169,8 +178,12 @@ class Squadron:
         return self._pilots_with_status(PilotStatus.OnLeave)
 
     @property
-    def size(self) -> int:
-        return len(self.active_pilots) + len(self.pilots_on_leave)
+    def number_of_pilots_including_dead(self) -> int:
+        return len(self.pilots)
+
+    @property
+    def number_of_living_pilots(self) -> int:
+        return len(self._pilots_without_status(PilotStatus.Dead))
 
     def pilot_at_index(self, index: int) -> Pilot:
         return self.pilots[index]
@@ -212,6 +225,12 @@ class Squadron:
             game=game,
             player=player,
         )
+
+    def __setstate__(self, state) -> None:
+        # TODO: Remove save compat.
+        if "auto_assignable_mission_types" not in state:
+            state["auto_assignable_mission_types"] = set(state["mission_types"])
+        self.__dict__.update(state)
 
 
 class SquadronLoader:

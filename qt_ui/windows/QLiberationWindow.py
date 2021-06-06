@@ -22,12 +22,11 @@ from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
-from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
-from qt_ui.widgets.map.QLiberationMap import LeafletMap, QLiberationMap, LiberationMap
+from qt_ui.widgets.map.QLiberationMap import QLiberationMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
@@ -35,10 +34,12 @@ from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
     QLiberationPreferencesWindow,
 )
+from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
+from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 
 class QLiberationWindow(QMainWindow):
-    def __init__(self, game: Optional[Game], new_map: bool) -> None:
+    def __init__(self, game: Optional[Game]) -> None:
         super(QLiberationWindow, self).__init__()
 
         self.game = game
@@ -46,7 +47,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map: LiberationMap = self.create_map(new_map)
+        self.liberation_map = QLiberationMap(self.game_model, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle(f"DCS Liberation - v{VERSION}")
@@ -148,6 +149,14 @@ class QLiberationWindow(QMainWindow):
             )
         )
 
+        self.openSettingsAction = QAction("Settings", self)
+        self.openSettingsAction.setIcon(CONST.ICONS["Settings"])
+        self.openSettingsAction.triggered.connect(self.showSettingsDialog)
+
+        self.openStatsAction = QAction("Stats", self)
+        self.openStatsAction.setIcon(CONST.ICONS["Statistics"])
+        self.openStatsAction.triggered.connect(self.showStatsDialog)
+
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
@@ -158,7 +167,9 @@ class QLiberationWindow(QMainWindow):
         self.links_bar.addAction(self.openDiscordAction)
         self.links_bar.addAction(self.openGithubAction)
 
-        self.display_bar = self.addToolBar("Display")
+        self.actions_bar = self.addToolBar("Actions")
+        self.actions_bar.addAction(self.openSettingsAction)
+        self.actions_bar.addAction(self.openStatsAction)
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -173,30 +184,6 @@ class QLiberationWindow(QMainWindow):
         file_menu.addAction(self.showLiberationPrefDialogAction)
         file_menu.addSeparator()
         file_menu.addAction("E&xit", self.close)
-
-        displayMenu = self.menu.addMenu("&Display")
-
-        last_was_group = False
-        for item in DisplayOptions.menu_items():
-            if isinstance(item, DisplayRule):
-                if last_was_group:
-                    displayMenu.addSeparator()
-                    self.display_bar.addSeparator()
-                action = self.make_display_rule_action(item)
-                displayMenu.addAction(action)
-                if action.icon():
-                    self.display_bar.addAction(action)
-                last_was_group = False
-            elif isinstance(item, DisplayGroup):
-                displayMenu.addSeparator()
-                self.display_bar.addSeparator()
-                group = QActionGroup(displayMenu)
-                for display_rule in item:
-                    action = self.make_display_rule_action(display_rule, group)
-                    displayMenu.addAction(action)
-                    if action.icon():
-                        self.display_bar.addAction(action)
-                last_was_group = True
 
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction(self.openDiscordAction)
@@ -284,11 +271,6 @@ class QLiberationWindow(QMainWindow):
         self.game = game
         GameUpdateSignal.get_instance().game_loaded.emit(self.game)
 
-    def create_map(self, new_map: bool) -> LiberationMap:
-        if new_map:
-            return LeafletMap(self.game_model, self)
-        return QLiberationMap(self.game_model)
-
     def setGame(self, game: Optional[Game]):
         try:
             self.game = game
@@ -336,6 +318,14 @@ class QLiberationWindow(QMainWindow):
     def showLiberationDialog(self):
         self.subwindow = QLiberationPreferencesWindow()
         self.subwindow.show()
+
+    def showSettingsDialog(self) -> None:
+        self.dialog = QSettingsWindow(self.game)
+        self.dialog.show()
+
+    def showStatsDialog(self):
+        self.dialog = QStatsWindow(self.game)
+        self.dialog.show()
 
     def onDebriefing(self, debrief: Debriefing):
         logging.info("On Debriefing")

@@ -162,7 +162,7 @@ class AircraftAllocator:
         self, flight: ProposedFlight, task: FlightType
     ) -> Optional[Tuple[ControlPoint, Squadron]]:
         types = aircraft_for_task(task)
-        airfields_in_range = self.closest_airfields.airfields_within(
+        airfields_in_range = self.closest_airfields.operational_airfields_within(
             flight.max_distance
         )
 
@@ -180,7 +180,7 @@ class AircraftAllocator:
                 # Valid location with enough aircraft available. Find a squadron to fit
                 # the role.
                 for squadron in self.air_wing.squadrons_for(aircraft):
-                    if task not in squadron.mission_types:
+                    if task not in squadron.auto_assignable_mission_types:
                         continue
                     if len(squadron.available_pilots) >= flight.num_aircraft:
                         inventory.remove_aircraft(aircraft, flight.num_aircraft)
@@ -258,7 +258,9 @@ class PackageBuilder:
         self, aircraft: Type[FlyingType], arrival: ControlPoint
     ) -> Optional[ControlPoint]:
         divert_limit = nautical_miles(150)
-        for airfield in self.closest_airfields.airfields_within(divert_limit):
+        for airfield in self.closest_airfields.operational_airfields_within(
+            divert_limit
+        ):
             if airfield.captured != self.is_player:
                 continue
             if airfield == arrival:
@@ -433,7 +435,7 @@ class ObjectiveFinder:
 
                 is_building = isinstance(ground_object, BuildingGroundObject)
                 is_fob = isinstance(enemy_cp, Fob)
-                if is_building and is_fob and ground_object.airbase_group:
+                if is_building and is_fob and ground_object.is_control_point:
                     # This is the FOB structure itself. Can't be repaired or
                     # targeted by the player, so shouldn't be targetable by the
                     # AI.
@@ -467,8 +469,10 @@ class ObjectiveFinder:
                 # Off-map spawn locations don't need protection.
                 continue
             airfields_in_proximity = self.closest_airfields_to(cp)
-            airfields_in_threat_range = airfields_in_proximity.airfields_within(
-                self.AIRFIELD_THREAT_RANGE
+            airfields_in_threat_range = (
+                airfields_in_proximity.operational_airfields_within(
+                    self.AIRFIELD_THREAT_RANGE
+                )
             )
             for airfield in airfields_in_threat_range:
                 if not airfield.is_friendly(self.is_player):
@@ -502,31 +506,23 @@ class ObjectiveFinder:
             c for c in self.game.theater.controlpoints if c.is_friendly(self.is_player)
         )
 
-    def farthest_friendly_control_point(self) -> Optional[ControlPoint]:
-        """
-        Iterates over all friendly control points and find the one farthest away from the frontline
-        BUT! prefer Cvs. Everybody likes CVs!
-        """
-        from_frontline = 0
-        cp = None
-        first_friendly_cp = None
+    def farthest_friendly_control_point(self) -> ControlPoint:
+        """Finds the friendly control point that is farthest from any threats."""
+        threat_zones = self.game.threat_zone_for(not self.is_player)
 
-        for c in self.game.theater.controlpoints:
-            if c.is_friendly(self.is_player):
-                if first_friendly_cp is None:
-                    first_friendly_cp = c
-                if c.is_carrier:
-                    return c
-                if c.has_active_frontline:
-                    if c.distance_to(self.front_lines().__next__()) > from_frontline:
-                        from_frontline = c.distance_to(self.front_lines().__next__())
-                        cp = c
+        farthest = None
+        max_distance = meters(0)
+        for cp in self.friendly_control_points():
+            if isinstance(cp, OffMapSpawn):
+                continue
+            distance = threat_zones.distance_to_threat(cp.position)
+            if distance > max_distance:
+                farthest = cp
+                max_distance = distance
 
-        # If no frontlines on the map, return the first friendly cp
-        if cp is None:
-            return first_friendly_cp
-        else:
-            return cp
+        if farthest is None:
+            raise RuntimeError("Found no friendly control points. You probably lost.")
+        return farthest
 
     def enemy_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all enemy control points."""
@@ -608,7 +604,7 @@ class CoalitionMissionPlanner:
         for squadron in self.game.air_wing_for(self.is_player).iter_squadrons():
             if (
                 squadron.aircraft in all_compatible
-                and mission_type in squadron.mission_types
+                and mission_type in squadron.auto_assignable_mission_types
             ):
                 return True
         return False
@@ -624,15 +620,13 @@ class CoalitionMissionPlanner:
         eliminated this turn.
         """
 
-        # Find farthest, friendly CP for AEWC
-        cp = self.objective_finder.farthest_friendly_control_point()
-        if cp is not None:
-            yield ProposedMission(
-                cp,
-                [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
-                # Supports all the early CAP flights, so should be in the air ASAP.
-                asap=True,
-            )
+        # Find farthest, friendly CP for AEWC.
+        yield ProposedMission(
+            self.objective_finder.farthest_friendly_control_point(),
+            [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
+            # Supports all the early CAP flights, so should be in the air ASAP.
+            asap=True,
+        )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
@@ -1012,7 +1006,7 @@ class CoalitionMissionPlanner:
             interval = (latest - earliest) // count
             for time in range(earliest, latest, interval):
                 error = random.randint(-margin, margin)
-                yield timedelta(minutes=max(0, time + error))
+                yield timedelta(seconds=max(0, time + error))
 
         dca_types = {
             FlightType.BARCAP,
@@ -1026,11 +1020,11 @@ class CoalitionMissionPlanner:
 
         start_time = start_time_generator(
             count=len(non_dca_packages),
-            earliest=5,
+            earliest=5 * 60,
             latest=int(
-                self.game.settings.desired_player_mission_duration.total_seconds() / 60
+                self.game.settings.desired_player_mission_duration.total_seconds()
             ),
-            margin=5,
+            margin=5 * 60,
         )
         for package in self.ato.packages:
             tot = TotEstimator(package).earliest_tot()

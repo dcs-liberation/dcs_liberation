@@ -1,4 +1,5 @@
 import logging
+from typing import Callable
 
 from PySide2.QtCore import (
     QItemSelectionModel,
@@ -13,9 +14,13 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QPushButton,
     QHBoxLayout,
+    QGridLayout,
+    QLabel,
+    QCheckBox,
 )
 
 from game.squadrons import Pilot
+from gen.flights.flight import FlightType
 from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.models import SquadronModel
 
@@ -61,6 +66,31 @@ class PilotList(QListView):
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
 
 
+class AutoAssignedTaskControls(QVBoxLayout):
+    def __init__(self, squadron_model: SquadronModel) -> None:
+        super().__init__()
+        self.squadron_model = squadron_model
+
+        self.addWidget(QLabel("Auto-assignable mission types"))
+
+        def make_callback(toggled_task: FlightType) -> Callable[[bool], None]:
+            def callback(checked: bool) -> None:
+                self.on_toggled(toggled_task, checked)
+
+            return callback
+
+        for task in squadron_model.squadron.mission_types:
+            checkbox = QCheckBox(text=task.value)
+            checkbox.setChecked(squadron_model.is_auto_assignable(task))
+            checkbox.toggled.connect(make_callback(task))
+            self.addWidget(checkbox)
+
+        self.addStretch()
+
+    def on_toggled(self, task: FlightType, checked: bool) -> None:
+        self.squadron_model.set_auto_assignable(task, checked)
+
+
 class SquadronDialog(QDialog):
     """Dialog window showing a squadron."""
 
@@ -75,11 +105,17 @@ class SquadronDialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
+        columns = QHBoxLayout()
+        layout.addLayout(columns)
+
+        auto_assigned_tasks = AutoAssignedTaskControls(squadron_model)
+        columns.addLayout(auto_assigned_tasks)
+
         self.pilot_list = PilotList(squadron_model)
         self.pilot_list.selectionModel().selectionChanged.connect(
             self.on_selection_changed
         )
-        layout.addWidget(self.pilot_list)
+        columns.addWidget(self.pilot_list)
 
         button_panel = QHBoxLayout()
         button_panel.addStretch()

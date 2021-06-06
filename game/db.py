@@ -1251,6 +1251,7 @@ REWARDS = {
     "ammo": 2,
     "farp": 1,
     # TODO: Should generate no cash once they generate units.
+    # https://github.com/dcs-liberation/dcs_liberation/issues/1036
     "factory": 10,
     "comms": 10,
     "oil": 10,

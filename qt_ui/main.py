@@ -57,7 +57,7 @@ def inject_custom_payloads(user_path: Path) -> None:
     PayloadDirectories.set_preferred(user_path / "MissionEditor" / "UnitPayloads")
 
 
-def run_ui(game: Optional[Game], new_map: bool) -> None:
+def run_ui(game: Optional[Game]) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
@@ -111,7 +111,7 @@ def run_ui(game: Optional[Game], new_map: bool) -> None:
     GameUpdateSignal()
 
     # Start window
-    window = QLiberationWindow(game, new_map)
+    window = QLiberationWindow(game)
     window.showMaximized()
     splash.finish(window)
     qt_execution_code = app.exec_()
@@ -139,16 +139,8 @@ def parse_args() -> argparse.Namespace:
         help="Emits a warning for weapons without date or fallback information.",
     )
 
-    parser.add_argument(
-        "--new-map",
-        action="store_true",
-        default=True,
-        help="Use the new map. Functional but missing many display options.",
-    )
-
-    parser.add_argument(
-        "--old-map", dest="new_map", action="store_false", help="Use the old map."
-    )
+    parser.add_argument("--new-map", help="Deprecated. Does nothing.")
+    parser.add_argument("--old-map", help="Deprecated. Does nothing.")
 
     new_game = subparsers.add_parser("new-game")
 
@@ -267,7 +259,7 @@ def main():
                 args.cheats,
             )
 
-    run_ui(game, args.new_map)
+    run_ui(game)
 
 
 if __name__ == "__main__":

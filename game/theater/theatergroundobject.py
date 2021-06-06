@@ -12,7 +12,6 @@ from dcs.unittype import VehicleType
 
 from .. import db
 from ..data.radar_db import (
-    UNITS_WITH_RADAR,
     TRACK_RADARS,
     TELARS,
     LAUNCHER_TRACKER_PAIRS,
@@ -58,7 +57,6 @@ class TheaterGroundObject(MissionTarget):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        airbase_group: bool,
         sea_object: bool,
     ) -> None:
         super().__init__(name, position)
@@ -67,7 +65,6 @@ class TheaterGroundObject(MissionTarget):
         self.heading = heading
         self.control_point = control_point
         self.dcs_identifier = dcs_identifier
-        self.airbase_group = airbase_group
         self.sea_object = sea_object
         self.groups: List[Group] = []
 
@@ -193,6 +190,21 @@ class TheaterGroundObject(MissionTarget):
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return self.units
 
+    @property
+    def mark_locations(self) -> Iterator[Point]:
+        yield self.position
+
+    def clear(self) -> None:
+        self.groups = []
+
+    @property
+    def capturable(self) -> bool:
+        raise NotImplementedError
+
+    @property
+    def purchasable(self) -> bool:
+        raise NotImplementedError
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
@@ -205,7 +217,7 @@ class BuildingGroundObject(TheaterGroundObject):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        airbase_group=False,
+        is_fob_structure=False,
     ) -> None:
         super().__init__(
             name=name,
@@ -215,9 +227,9 @@ class BuildingGroundObject(TheaterGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
-            airbase_group=airbase_group,
             sea_object=False,
         )
+        self.is_fob_structure = is_fob_structure
         self.object_id = object_id
         # Other TGOs track deadness based on the number of alive units, but
         # buildings don't have groups assigned to the TGO.
@@ -250,6 +262,23 @@ class BuildingGroundObject(TheaterGroundObject):
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return list(self.iter_building_group())
 
+    @property
+    def mark_locations(self) -> Iterator[Point]:
+        for building in self.iter_building_group():
+            yield building.position
+
+    @property
+    def is_control_point(self) -> bool:
+        return self.is_fob_structure
+
+    @property
+    def capturable(self) -> bool:
+        return True
+
+    @property
+    def purchasable(self) -> bool:
+        return False
+
 
 class SceneryGroundObject(BuildingGroundObject):
     def __init__(
@@ -272,7 +301,7 @@ class SceneryGroundObject(BuildingGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
-            airbase_group=False,
+            is_fob_structure=False,
         )
         self.zone = zone
         try:
@@ -305,7 +334,7 @@ class FactoryGroundObject(BuildingGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier="Workshop A",
-            airbase_group=False,
+            is_fob_structure=False,
         )
 
 
@@ -320,6 +349,14 @@ class NavalGroundObject(TheaterGroundObject):
     @property
     def might_have_aa(self) -> bool:
         return True
+
+    @property
+    def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
+        return False
 
 
 class GenericCarrierGroundObject(NavalGroundObject):
@@ -339,7 +376,6 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="CARRIER",
-            airbase_group=True,
             sea_object=True,
         )
 
@@ -361,7 +397,6 @@ class LhaGroundObject(GenericCarrierGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="LHA",
-            airbase_group=True,
             sea_object=True,
         )
 
@@ -384,9 +419,16 @@ class MissileSiteGroundObject(TheaterGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=False,
         )
+
+    @property
+    def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
+        return False
 
 
 class CoastalSiteGroundObject(TheaterGroundObject):
@@ -406,26 +448,28 @@ class CoastalSiteGroundObject(TheaterGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=False,
         )
 
+    @property
+    def capturable(self) -> bool:
+        return False
 
-class BaseDefenseGroundObject(TheaterGroundObject):
-    """Base type for all base defenses."""
+    @property
+    def purchasable(self) -> bool:
+        return False
 
 
 # TODO: Differentiate types.
 # This type gets used both for AA sites (SAM, AAA, or SHORAD). These should each
 # be split into their own types.
-class SamGroundObject(BaseDefenseGroundObject):
+class SamGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
@@ -435,7 +479,6 @@ class SamGroundObject(BaseDefenseGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=for_airbase,
             sea_object=False,
         )
         # Set by the SAM unit generator if the generated group is compatible
@@ -495,15 +538,22 @@ class SamGroundObject(BaseDefenseGroundObject):
         else:
             return max(max_tel_range, max_telar_range, max_non_radar)
 
+    @property
+    def capturable(self) -> bool:
+        return False
 
-class VehicleGroupGroundObject(BaseDefenseGroundObject):
+    @property
+    def purchasable(self) -> bool:
+        return True
+
+
+class VehicleGroupGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
@@ -513,19 +563,25 @@ class VehicleGroupGroundObject(BaseDefenseGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=for_airbase,
             sea_object=False,
         )
 
+    @property
+    def capturable(self) -> bool:
+        return False
 
-class EwrGroundObject(BaseDefenseGroundObject):
+    @property
+    def purchasable(self) -> bool:
+        return True
+
+
+class EwrGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
@@ -535,7 +591,6 @@ class EwrGroundObject(BaseDefenseGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="EWR",
-            airbase_group=for_airbase,
             sea_object=False,
         )
 
@@ -555,6 +610,14 @@ class EwrGroundObject(BaseDefenseGroundObject):
     def might_have_aa(self) -> bool:
         return True
 
+    @property
+    def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
+        return True
+
 
 class ShipGroundObject(NavalGroundObject):
     def __init__(
@@ -568,7 +631,6 @@ class ShipGroundObject(NavalGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=True,
         )
 

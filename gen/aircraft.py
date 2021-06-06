@@ -803,7 +803,7 @@ class AircraftConflictGenerator:
         self._setup_payload(flight, group)
         self._setup_livery(flight, group)
 
-        for unit, pilot in zip(group.units, flight.pilots):
+        for unit, pilot in zip(group.units, flight.roster.pilots):
             player = pilot is not None and pilot.player
             self.set_skill(unit, pilot, blue=flight.departure.captured)
             # Do not generate player group with late activation.

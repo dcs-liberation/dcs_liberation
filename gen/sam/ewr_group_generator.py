@@ -17,8 +17,8 @@ from gen.sam.ewrs import (
     SnowDriftGenerator,
     StraightFlushGenerator,
     TallRackGenerator,
+    EwrGenerator,
 )
-from gen.sam.group_generator import GroupGenerator
 
 EWR_MAP = {
     "BoxSpringGenerator": BoxSpringGenerator,
@@ -36,7 +36,7 @@ EWR_MAP = {
 
 def get_faction_possible_ewrs_generator(
     faction: Faction,
-) -> List[Type[GroupGenerator]]:
+) -> List[Type[EwrGenerator]]:
     """
     Return the list of possible EWR generators for the given faction
     :param faction: Faction name to search units for

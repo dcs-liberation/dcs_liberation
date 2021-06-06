@@ -498,7 +498,6 @@ QHeaderView::section {
     background: #4B5B74;
     padding: 4px;
     border-style: none;
-    border-bottom: 1px solid #1D2731;
 }
 
 QHeaderView::section:horizontal
@@ -512,11 +511,6 @@ QHeaderView::section:vertical
 {
     /*border: none;*/
     text-align:left;
-    background: #4B5B74;
-}
-
-QTableWidget {
-    gridline-color: red;
     background: #4B5B74;
 }
 

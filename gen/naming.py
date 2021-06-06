@@ -312,10 +312,6 @@ class NameGenerator:
             db.unit_type_name(unit_type),
         )
 
-    @staticmethod
-    def next_basedefense_name():
-        return "basedefense_aa|0|0|"
-
     @classmethod
     def next_awacs_name(cls, country: Country):
         cls.number += 1
@@ -352,7 +348,7 @@ class NameGenerator:
 
         for _ in range(10):
             alpha = random.choice(ALPHA_MILITARY).upper()
-            number = str(random.randint(0, 100))
+            number = random.randint(0, 100)
             alpha_mil_name = f"{alpha} #{number:02}"
             if alpha_mil_name not in cls.existing_alphas:
                 cls.existing_alphas.append(alpha_mil_name)

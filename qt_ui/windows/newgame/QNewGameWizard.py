@@ -6,7 +6,7 @@ from typing import List
 
 from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
-from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel
+from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
@@ -319,7 +319,16 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         )
 
         # List of campaigns
-        campaignList = QCampaignList(campaigns)
+        show_incompatible_campaigns_checkbox = QCheckBox(
+            text="Show incompatible campaigns"
+        )
+        show_incompatible_campaigns_checkbox.setChecked(False)
+        campaignList = QCampaignList(
+            campaigns, show_incompatible_campaigns_checkbox.isChecked()
+        )
+        show_incompatible_campaigns_checkbox.toggled.connect(
+            lambda checked: campaignList.setup_content(show_incompatible=checked)
+        )
         self.registerField("selectedCampaign", campaignList)
 
         # Faction description
@@ -380,8 +389,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
             template_perf = jinja_env.get_template(
                 "campaign_performance_template_EN.j2"
             )
-            index = campaignList.selectionModel().currentIndex().row()
-            campaign = campaignList.campaigns[index]
+            campaign = campaignList.selected_campaign
             self.setField("selectedCampaign", campaign)
             self.campaignMapDescription.setText(template.render({"campaign": campaign}))
             self.faction_selection.setDefaultFactions(campaign)
@@ -396,9 +404,12 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
         on_campaign_selected()
 
-        # Docs Link
         docsText = QtWidgets.QLabel(
-            '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Campaigns"><span style="color:#FFFFFF;">How to create your own theater</span></a>'
+            "<p>Want more campaigns? You can "
+            '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Campaign-maintenance"><span style="color:#FFFFFF;">offer to help</span></a>, '
+            '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Community-campaigns"><span style="color:#FFFFFF;">play a community campaign</span></a>, '
+            'or <a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Campaigns"><span style="color:#FFFFFF;">create your own</span></a>.'
+            "</p>"
         )
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)
@@ -418,7 +429,8 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
         layout.addWidget(campaignList, 0, 0, 5, 1)
-        layout.addWidget(docsText, 5, 0, 1, 1)
+        layout.addWidget(show_incompatible_campaigns_checkbox, 5, 0, 1, 1)
+        layout.addWidget(docsText, 6, 0, 1, 1)
         layout.addWidget(self.campaignMapDescription, 0, 1, 1, 1)
         layout.addWidget(self.performanceText, 1, 1, 1, 1)
         layout.addWidget(mapSettingsGroup, 2, 1, 1, 1)

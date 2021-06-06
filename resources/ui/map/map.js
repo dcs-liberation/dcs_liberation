@@ -16,7 +16,6 @@ const Categories = Object.freeze([
   "ewr",
   "factory",
   "farp",
-  "fob",
   "fuel",
   "missile",
   "oil",
@@ -42,9 +41,9 @@ class CpIcons {
         this.icons[player][state] = {
           airfield: this.loadIcon("airfield", player, state),
           cv: this.loadIcon("cv", player, state),
-          fob: this.loadLegacyIcon(player),
+          fob: this.loadIcon("fob", player, state),
           lha: this.loadIcon("lha", player, state),
-          offmap: this.loadLegacyIcon(player),
+          offmap: this.loadIcon("airfield", player, state),
         };
       }
     }
@@ -59,19 +58,6 @@ class CpIcons {
     return new L.Icon({
       iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
       iconSize: [32, 32],
-    });
-  }
-
-  loadLegacyIcon(player) {
-    const color = player ? "blue" : "red";
-    return new L.Icon({
-      iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-      shadowUrl:
-        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41],
     });
   }
 }
@@ -179,6 +165,11 @@ const redRadarSamThreatZones = L.layerGroup();
 const blueNavmesh = L.layerGroup();
 const redNavmesh = L.layerGroup();
 
+const inclusionZones = L.layerGroup();
+const exclusionZones = L.layerGroup();
+const seaZones = L.layerGroup();
+const unculledZones = L.layerGroup();
+
 // Main map controls. These are the ones that we expect users to interact with.
 // These are always open, which unfortunately means that the scroll bar will not
 // appear if the menu doesn't fit. This fits in the smallest window size we
@@ -241,10 +232,16 @@ L.control
         "Air Defenses": redAirDefenseThreatZones,
         "Radar SAMs": redRadarSamThreatZones,
       },
-      "Navmeshes": {
+      Navmeshes: {
         Hide: L.layerGroup().addTo(map),
         Blue: blueNavmesh,
         Red: redNavmesh,
+      },
+      "Map Zones": {
+        "Inclusion zones": inclusionZones,
+        "Exclusion zones": exclusionZones,
+        "Sea zones": seaZones,
+        "Culling exclusion zones": unculledZones,
       },
     },
     {
@@ -268,6 +265,8 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.flightsChanged.connect(drawFlightPlans);
   game.threatZonesChanged.connect(drawThreatZones);
   game.navmeshesChanged.connect(drawNavmeshes);
+  game.mapZonesChanged.connect(drawMapZones);
+  game.unculledZonesChanged.connect(drawUnculledZones);
 });
 
 function recenterMap(center) {
@@ -291,12 +290,10 @@ class ControlPoint {
   }
 
   icon() {
-    // TODO: Runway status.
-    // https://github.com/dcs-liberation/dcs_liberation/issues/1105
     return Icons.ControlPoints.icon(
       this.cp.category,
       this.cp.blue,
-      UnitState.Alive
+      this.cp.status
     );
   }
 
@@ -889,6 +886,48 @@ function drawNavmeshes() {
   drawNavmesh(game.navmeshes.red, redNavmesh);
 }
 
+function drawMapZones() {
+  seaZones.clearLayers();
+  inclusionZones.clearLayers();
+  exclusionZones.clearLayers();
+
+  for (const zone of game.mapZones.seaZones) {
+    L.polygon(zone, {
+      color: "#344455",
+      fillColor: "#344455",
+      fillOpacity: 1,
+    }).addTo(seaZones);
+  }
+
+  for (const zone of game.mapZones.inclusionZones) {
+    L.polygon(zone, {
+      color: "#969696",
+      fillColor: "#4b4b4b",
+      fillOpacity: 1,
+    }).addTo(inclusionZones);
+  }
+
+  for (const zone of game.mapZones.exclusionZones) {
+    L.polygon(zone, {
+      color: "#969696",
+      fillColor: "#303030",
+      fillOpacity: 1,
+    }).addTo(exclusionZones);
+  }
+}
+
+function drawUnculledZones() {
+  unculledZones.clearLayers();
+
+  for (const zone of game.unculledZones) {
+    L.circle(zone.position, {
+      radius: zone.radius,
+      color: "#b4ff8c",
+      stroke: false,
+    }).addTo(unculledZones);
+  }
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -898,6 +937,8 @@ function drawInitialMap() {
   drawFlightPlans();
   drawThreatZones();
   drawNavmeshes();
+  drawMapZones();
+  drawUnculledZones();
 }
 
 function clearAllLayers() {

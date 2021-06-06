@@ -113,8 +113,6 @@ class Game:
         self.informations.append(Information("Game Start", "-" * 40, 0))
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
         self.__culling_zones: List[Point] = []
-        # Culling Points are for individual theater ground objects that we don't wish to cull.
-        self.__culling_points: List[Point] = []
         self.__destroyed_units: List[str] = []
         self.savepath = ""
         self.budget = player_budget
@@ -124,8 +122,8 @@ class Game:
 
         self.conditions = self.generate_conditions()
 
-        self.blue_transit_network = self.compute_transit_network_for(player=True)
-        self.red_transit_network = self.compute_transit_network_for(player=False)
+        self.blue_transit_network = TransitNetwork()
+        self.red_transit_network = TransitNetwork()
 
         self.blue_procurement_requests: List[AircraftProcurementRequest] = []
         self.red_procurement_requests: List[AircraftProcurementRequest] = []
@@ -148,7 +146,7 @@ class Game:
         self.blue_air_wing = AirWing(self, player=True)
         self.red_air_wing = AirWing(self, player=False)
 
-        self.on_load()
+        self.on_load(game_still_initializing=True)
 
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
@@ -301,11 +299,12 @@ class Game:
         else:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
 
-    def on_load(self) -> None:
+    def on_load(self, game_still_initializing: bool = False) -> None:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
-        self.compute_threat_zones()
+        if not game_still_initializing:
+            self.compute_threat_zones()
         self.blue_faker = Faker(self.faction_for(player=True).locales)
         self.red_faker = Faker(self.faction_for(player=False).locales)
 
@@ -439,8 +438,8 @@ class Game:
         # gets much more of the budget that turn. Otherwise budget (after
         # repairs) is split evenly between air and ground. For the default
         # starting budget of 2000 this gives 600 to ground forces and 1400 to
-        # aircraft.
-        ground_portion = 0.3 if self.turn == 0 else 0.5
+        # aircraft. After that the budget will be spend proportionally based on how much is already invested
+
         self.budget = ProcurementAi(
             self,
             for_player=True,
@@ -448,7 +447,6 @@ class Game:
             manage_runways=self.settings.automate_runway_repair,
             manage_front_line=self.settings.automate_front_line_reinforcements,
             manage_aircraft=self.settings.automate_aircraft_reinforcements,
-            front_line_budget_share=ground_portion,
         ).spend_budget(self.budget)
 
         self.enemy_budget = ProcurementAi(
@@ -458,7 +456,6 @@ class Game:
             manage_runways=True,
             manage_front_line=True,
             manage_aircraft=True,
-            front_line_budget_share=ground_portion,
         ).spend_budget(self.enemy_budget)
 
     def message(self, text: str) -> None:
@@ -519,7 +516,6 @@ class Game:
         :return: List of points of interests
         """
         zones = []
-        points = []
 
         # By default, use the existing frontline conflict position
         for front_line in self.theater.conflicts():
@@ -529,11 +525,6 @@ class Game:
             zones.append(front_line.red_cp.position)
 
         for cp in self.theater.controlpoints:
-            # Don't cull missile sites - their range is long enough to make them
-            # easily culled despite being a threat.
-            for tgo in cp.ground_objects:
-                if isinstance(tgo, MissileSiteGroundObject):
-                    points.append(tgo.position)
             # If do_not_cull_carrier is enabled, add carriers as culling point
             if self.settings.perf_do_not_cull_carrier:
                 if cp.is_carrier or cp.is_lha:
@@ -577,7 +568,6 @@ class Game:
             zones.append(Point(0, 0))
 
         self.__culling_zones = zones
-        self.__culling_points = points
 
     def add_destroyed_units(self, data):
         pos = Point(data["x"], data["z"])
@@ -593,19 +583,12 @@ class Game:
         :param pos: Position you are tryng to spawn stuff at
         :return: True if units can not be added at given position
         """
-        if self.settings.perf_culling == False:
+        if not self.settings.perf_culling:
             return False
-        else:
-            for z in self.__culling_zones:
-                if (
-                    z.distance_to_point(pos)
-                    < self.settings.perf_culling_distance * 1000
-                ):
-                    return False
-            for p in self.__culling_points:
-                if p.distance_to_point(pos) < 2500:
-                    return False
-            return True
+        for z in self.__culling_zones:
+            if z.distance_to_point(pos) < self.settings.perf_culling_distance * 1000:
+                return False
+        return True
 
     def get_culling_zones(self):
         """
@@ -613,13 +596,6 @@ class Game:
         :return: List of culling zones
         """
         return self.__culling_zones
-
-    def get_culling_points(self):
-        """
-        Check culling points
-        :return: List of culling points
-        """
-        return self.__culling_points
 
     # 1 = red, 2 = blue
     def get_player_coalition_id(self):
