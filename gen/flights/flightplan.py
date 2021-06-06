@@ -16,7 +16,17 @@ from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
-from dcs.planes import E_3A, E_2C, A_50, KJ_2000
+from dcs.planes import (
+    E_3A,
+    E_2C,
+    A_50,
+    IL_78M,
+    KC130,
+    KC135MPRS,
+    KC_135,
+    KJ_2000,
+    S_3B_Tanker,
+)
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
@@ -1706,7 +1716,19 @@ class FlightPlanBuilder:
         )
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        altitude = Distance.from_feet(14000)
+
+        tanker_type = flight.unit_type
+
+        if tanker_type is KC_135:
+            altitude = Distance.from_feet(24000)
+        elif tanker_type is KC135MPRS:
+            altitude = Distance.from_feet(23000)
+        elif tanker_type is KC130:
+            altitude = Distance.from_feet(22000)
+        elif tanker_type is S_3B_Tanker:
+            altitude = Distance.from_feet(12000)
+        elif tanker_type is IL_78M:
+            altitude = Distance.from_feet(21000)
 
         racetrack = builder.tanker_race_track(racetrack_start, racetrack_end, altitude)
 

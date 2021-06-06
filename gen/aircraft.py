@@ -13,7 +13,7 @@ from dcs.action import AITaskPush, ActivateGroup
 from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
-from dcs.planes import IL_78M, KC130, KC135MPRS, S_3B_Tanker
+from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, S_3B_Tanker
 from dcs.helicopters import UH_1H, helicopter_map
 from dcs.mapping import Point
 from dcs.mission import Mission, StartType
@@ -2228,24 +2228,32 @@ class TankerRaceTrackStartBuilder(PydcsWaypointBuilder):
             )
             return waypoint
 
-        basket_tankers = [KC130, KC135MPRS, IL_78M, S_3B_Tanker]
+        tanker_type = self.flight.unit_type
+        altitude = self.flight.flight_plan.tot_waypoint.alt.meters
 
-        if self.flight.unit_type in basket_tankers:
-            racetrack = ControlledTask(
-                OrbitAction(
-                    altitude=waypoint.alt,
-                    speed=680,
-                    pattern=OrbitAction.OrbitPattern.RaceTrack,
-                )
+        if tanker_type is KC_135:
+            # Around 300 knots IAS, at 24000 feet.
+            racetrack_orbit_speed = 825
+        elif tanker_type is KC135MPRS:
+            # Around 300 knots IAS, at 23000 feet.
+            racetrack_orbit_speed = 810
+        elif tanker_type is KC130:
+            # Around 210 knots IAS, at 22000 feet.  KC130 doesn't have the performance to fly fast at altitude.
+            racetrack_orbit_speed = 680
+        elif tanker_type is S_3B_Tanker:
+            # Around 265 knots IAS, at 12000 feet.
+            racetrack_orbit_speed = 590
+        elif tanker_type is IL_78M:
+            # Around 280 knots IAS, at 21000 feet.
+            racetrack_orbit_speed = 730
+
+        racetrack = ControlledTask(
+            OrbitAction(
+                altitude=altitude,
+                speed=racetrack_orbit_speed,
+                pattern=OrbitAction.OrbitPattern.RaceTrack,
             )
-        else:
-            racetrack = ControlledTask(
-                OrbitAction(
-                    altitude=waypoint.alt,
-                    speed=715,
-                    pattern=OrbitAction.OrbitPattern.RaceTrack,
-                )
-            )
+        )
 
         self.set_waypoint_tot(waypoint, flight_plan.racetrack_start_time)
         racetrack.stop_after_time(
