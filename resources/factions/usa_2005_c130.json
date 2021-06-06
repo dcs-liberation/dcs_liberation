@@ -33,7 +33,9 @@
   ],
   "tankers": [
     "KC_135",
-    "KC130"
+    "KC135MPRS",
+    "KC130",
+    "S-3B Tanker"
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
