@@ -1,3 +1,11 @@
+# 4.0.0
+
+Saves from 3.x are not compatible with 4.0.
+
+## Features/Improvements
+
+## Fixes
+
 # 3.0.0
 
 Saves from 2.5 are not compatible with 3.0.
@@ -15,7 +23,8 @@ Saves from 2.5 are not compatible with 3.0.
 * **[Campaign AI]** AI planned AEW&C missions will now be scheduled ASAP.
 * **[Campaign AI]** AI now considers the range to the SAM's threat zone rather than the range to the SAM itself when determining target priorities.
 * **[Campaign AI]** Auto purchase of ground units will now maintain unit composition instead of buying randomly. The unit composition is predefined.
-* **[Campaign AI]** AI will aim to purchase enough ground units to support the frontline, plus 30% reserve units.
+* **[Campaign AI]** Auto purchase will aim to purchase enough ground units to support the frontline, plus 30% reserve units.
+* **[Campaign AI]** Auto purchase will now adjust its air/ground balance to favor whichever is under-funded.
 * **[Flight Planner]** Desired mission length is now configurable (defaults to 60 minutes). A BARCAP will be planned every 30 minutes. Other packages will simply have their takeoffs spread out or compressed such that the last flight will take off around the mission end time.
 * **[Flight Planner]** Flight plans now include bullseye waypoints.
 * **[Flight Planner]** Differentiated SEAD and SEAD escort. SEAD is tasked with suppressing the package target, SEAD escort is tasked with protecting the package from all SAMs along its route.

@@ -24,7 +24,7 @@ from game import db
 from game.theater import Airfield, ControlPoint
 from game.transfers import CargoShip
 from game.unitmap import (
-    AirliftUnit,
+    AirliftUnits,
     Building,
     ConvoyUnit,
     FrontLineUnit,
@@ -75,8 +75,8 @@ class GroundLosses:
     player_cargo_ships: List[CargoShip] = field(default_factory=list)
     enemy_cargo_ships: List[CargoShip] = field(default_factory=list)
 
-    player_airlifts: List[AirliftUnit] = field(default_factory=list)
-    enemy_airlifts: List[AirliftUnit] = field(default_factory=list)
+    player_airlifts: List[AirliftUnits] = field(default_factory=list)
+    enemy_airlifts: List[AirliftUnits] = field(default_factory=list)
 
     player_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
     enemy_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
@@ -160,7 +160,7 @@ class Debriefing:
         yield from self.ground_losses.enemy_cargo_ships
 
     @property
-    def airlift_losses(self) -> Iterator[AirliftUnit]:
+    def airlift_losses(self) -> Iterator[AirliftUnits]:
         yield from self.ground_losses.player_airlifts
         yield from self.ground_losses.enemy_airlifts
 
@@ -220,7 +220,8 @@ class Debriefing:
         else:
             losses = self.ground_losses.enemy_airlifts
         for loss in losses:
-            losses_by_type[loss.unit_type] += 1
+            for unit_type in loss.cargo:
+                losses_by_type[unit_type] += 1
         return losses_by_type
 
     def building_losses_by_type(self, player: bool) -> Dict[str, int]:

@@ -1,0 +1,11 @@
+{
+  "name": "Syria - Full Map",
+  "theater": "Syria",
+  "authors": "Plob",
+  "recommended_player_faction": "Bluefor Modern",
+  "recommended_enemy_faction": "Syria 2011",
+  "description": "<p>Syria Full map, designed for groups of 4-12 players.</p>",
+  "miz": "syria_full_map.miz",
+  "performance": 3,
+  "version": "6.0"
+}

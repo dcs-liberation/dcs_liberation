@@ -13,7 +13,11 @@ class DcsLoadoutSelector(QComboBox):
         for loadout in Loadout.iter_for(flight):
             self.addItem(loadout.name, loadout)
         self.model().sort(0)
-        self.setCurrentText(flight.loadout.name)
+        self.setDisabled(flight.loadout.is_custom)
+        if flight.loadout.is_custom:
+            self.setCurrentText(Loadout.default_for(flight).name)
+        else:
+            self.setCurrentText(flight.loadout.name)
 
 
 class QFlightPayloadTab(QFrame):

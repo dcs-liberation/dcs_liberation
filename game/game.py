@@ -438,8 +438,8 @@ class Game:
         # gets much more of the budget that turn. Otherwise budget (after
         # repairs) is split evenly between air and ground. For the default
         # starting budget of 2000 this gives 600 to ground forces and 1400 to
-        # aircraft.
-        ground_portion = 0.3 if self.turn == 0 else 0.5
+        # aircraft. After that the budget will be spend proportionally based on how much is already invested
+
         self.budget = ProcurementAi(
             self,
             for_player=True,
@@ -447,7 +447,6 @@ class Game:
             manage_runways=self.settings.automate_runway_repair,
             manage_front_line=self.settings.automate_front_line_reinforcements,
             manage_aircraft=self.settings.automate_aircraft_reinforcements,
-            front_line_budget_share=ground_portion,
         ).spend_budget(self.budget)
 
         self.enemy_budget = ProcurementAi(
@@ -457,7 +456,6 @@ class Game:
             manage_runways=True,
             manage_front_line=True,
             manage_aircraft=True,
-            front_line_budget_share=ground_portion,
         ).spend_budget(self.enemy_budget)
 
     def message(self, text: str) -> None:

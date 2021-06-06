@@ -124,14 +124,38 @@ class PresetLocations:
 
 
 @dataclass(frozen=True)
-class PendingOccupancy:
-    present: int
-    ordered: int
-    transferring: int
+class AircraftAllocations:
+    present: dict[Type[FlyingType], int]
+    ordered: dict[Type[FlyingType], int]
+    transferring: dict[Type[FlyingType], int]
+
+    @property
+    def total_value(self) -> int:
+        total: int = 0
+        for unit_type, count in self.present.items():
+            total += PRICES[unit_type] * count
+        for unit_type, count in self.ordered.items():
+            total += PRICES[unit_type] * count
+        for unit_type, count in self.transferring.items():
+            total += PRICES[unit_type] * count
+
+        return total
 
     @property
     def total(self) -> int:
-        return self.present + self.ordered + self.transferring
+        return self.total_present + self.total_ordered + self.total_transferring
+
+    @property
+    def total_present(self) -> int:
+        return sum(self.present.values())
+
+    @property
+    def total_ordered(self) -> int:
+        return sum(self.ordered.values())
+
+    @property
+    def total_transferring(self) -> int:
+        return sum(self.transferring.values())
 
 
 @dataclass(frozen=True)
@@ -149,13 +173,33 @@ class GroundUnitAllocations:
             combined[unit_type] += count
         return dict(combined)
 
+    @property
+    def total_value(self) -> int:
+        total: int = 0
+        for unit_type, count in self.present.items():
+            total += PRICES[unit_type] * count
+        for unit_type, count in self.ordered.items():
+            total += PRICES[unit_type] * count
+        for unit_type, count in self.transferring.items():
+            total += PRICES[unit_type] * count
+
+        return total
+
     @cached_property
     def total(self) -> int:
-        return (
-            sum(self.present.values())
-            + sum(self.ordered.values())
-            + sum(self.transferring.values())
-        )
+        return self.total_present + self.total_ordered + self.total_transferring
+
+    @cached_property
+    def total_present(self) -> int:
+        return sum(self.present.values())
+
+    @cached_property
+    def total_ordered(self) -> int:
+        return sum(self.ordered.values())
+
+    @cached_property
+    def total_transferring(self) -> int:
+        return sum(self.transferring.values())
 
 
 @dataclass
@@ -577,37 +621,25 @@ class ControlPoint(MissionTarget, ABC):
     def can_operate(self, aircraft: Type[FlyingType]) -> bool:
         ...
 
-    def aircraft_transferring(self, game: Game) -> int:
+    def aircraft_transferring(self, game: Game) -> dict[Type[FlyingType], int]:
         if self.captured:
             ato = game.blue_ato
         else:
             ato = game.red_ato
 
-        total = 0
+        transferring: defaultdict[Type[FlyingType], int] = defaultdict(int)
         for package in ato.packages:
             for flight in package.flights:
                 if flight.departure == flight.arrival:
                     continue
                 if flight.departure == self:
-                    total -= flight.count
+                    transferring[flight.unit_type] -= flight.count
                 elif flight.arrival == self:
-                    total += flight.count
-        return total
-
-    def expected_aircraft_next_turn(self, game: Game) -> PendingOccupancy:
-        on_order = 0
-        for unit_bought in self.pending_unit_deliveries.units:
-            if issubclass(unit_bought, FlyingType):
-                on_order += self.pending_unit_deliveries.units[unit_bought]
-
-        return PendingOccupancy(
-            self.base.total_aircraft, on_order, self.aircraft_transferring(game)
-        )
+                    transferring[flight.unit_type] += flight.count
+        return transferring
 
     def unclaimed_parking(self, game: Game) -> int:
-        return (
-            self.total_aircraft_parking - self.expected_aircraft_next_turn(game).total
-        )
+        return self.total_aircraft_parking - self.allocated_aircraft(game).total
 
     @abstractmethod
     def active_runway(
@@ -656,6 +688,16 @@ class ControlPoint(MissionTarget, ABC):
                         for u in group.units:
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
+
+    def allocated_aircraft(self, game: Game) -> AircraftAllocations:
+        on_order = {}
+        for unit_bought, count in self.pending_unit_deliveries.units.items():
+            if issubclass(unit_bought, FlyingType):
+                on_order[unit_bought] = count
+
+        return AircraftAllocations(
+            self.base.aircraft, on_order, self.aircraft_transferring(game)
+        )
 
     def allocated_ground_units(
         self, transfers: PendingTransfers

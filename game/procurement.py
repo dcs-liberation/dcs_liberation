@@ -8,14 +8,13 @@ from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
 from dcs.unittype import FlyingType, VehicleType
 
 from game import db
+from game.data.groundunitclass import GroundUnitClass
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
-from game.data.groundunitclass import GroundUnitClass
-
 
 if TYPE_CHECKING:
     from game import Game
@@ -46,10 +45,7 @@ class ProcurementAi:
         manage_runways: bool,
         manage_front_line: bool,
         manage_aircraft: bool,
-        front_line_budget_share: float,
     ) -> None:
-        if front_line_budget_share > 1.0:
-            raise ValueError
 
         self.game = game
         self.is_player = for_player
@@ -58,14 +54,34 @@ class ProcurementAi:
         self.manage_runways = manage_runways
         self.manage_front_line = manage_front_line
         self.manage_aircraft = manage_aircraft
-        self.front_line_budget_share = front_line_budget_share
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
+
+    def calculate_ground_unit_budget_share(self) -> float:
+        armor_investment = 0
+        aircraft_investment = 0
+        for cp in self.owned_points:
+            cp_ground_units = cp.allocated_ground_units(self.game.transfers)
+            armor_investment += cp_ground_units.total_value
+            cp_aircraft = cp.allocated_aircraft(self.game)
+            aircraft_investment += cp_aircraft.total_value
+
+        total_investment = aircraft_investment + armor_investment
+        if total_investment == 0:
+            # Turn 0 or all units were destroyed. Either way, split 30/70.
+            return 0.3
+
+        # the more planes we have, the more ground units we want and vice versa
+        ground_unit_share = aircraft_investment / total_investment
+        if ground_unit_share > 1.0:
+            raise ValueError
+
+        return ground_unit_share
 
     def spend_budget(self, budget: float) -> float:
         if self.manage_runways:
             budget = self.repair_runways(budget)
         if self.manage_front_line:
-            armor_budget = math.ceil(budget * self.front_line_budget_share)
+            armor_budget = budget * self.calculate_ground_unit_budget_share()
             budget -= armor_budget
             budget += self.reinforce_front_line(armor_budget)
 
