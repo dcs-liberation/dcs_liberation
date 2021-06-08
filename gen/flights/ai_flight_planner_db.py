@@ -348,6 +348,7 @@ ANTISHIP_CAPABLE = [
     AJS37,
     Tu_22M3,
     FA_18C_hornet,
+    JAS39Gripen_AG,
     Su_24M,
     Su_17M4,
     JF_17,
