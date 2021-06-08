@@ -781,6 +781,22 @@ class ControlPoint(MissionTarget, ABC):
         return len([obj for obj in self.connected_objectives if obj.category == "ammo"])
 
     @property
+    def active_fuel_depots_count(self) -> int:
+        """Return the number of available fuel depots"""
+        return len(
+            [
+                obj
+                for obj in self.connected_objectives
+                if obj.category == "fuel" and not obj.is_dead
+            ]
+        )
+
+    @property
+    def total_fuel_depots_count(self) -> int:
+        """Return the number of fuel depots, including dead ones"""
+        return len([obj for obj in self.connected_objectives if obj.category == "fuel"])
+
+    @property
     def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
         return []
 
