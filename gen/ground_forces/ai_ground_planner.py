@@ -27,7 +27,7 @@ class CombatGroupRole(Enum):
 
 DISTANCE_FROM_FRONTLINE = {
     CombatGroupRole.TANK: (2200, 3200),
-    CombatGroupRole.APC: (7500, 8500),
+    CombatGroupRole.APC: (2700, 3700),
     CombatGroupRole.IFV: (2700, 3700),
     CombatGroupRole.ARTILLERY: (16000, 18000),
     CombatGroupRole.SHORAD: (12000, 13000),
