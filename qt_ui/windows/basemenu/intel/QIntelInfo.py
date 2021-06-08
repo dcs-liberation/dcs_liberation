@@ -1,3 +1,6 @@
+from collections import defaultdict
+
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFrame,
     QGridLayout,
@@ -7,8 +10,6 @@ from PySide2.QtWidgets import (
     QScrollArea,
     QWidget,
 )
-from PySide2.QtCore import Qt
-from dcs.task import CAP, CAS, Embarking, PinpointStrike
 
 from game import Game, db
 from game.theater import ControlPoint
@@ -19,51 +20,44 @@ class QIntelInfo(QFrame):
         super(QIntelInfo, self).__init__()
         self.cp = cp
         self.game = game
-        self.init_ui()
 
-    def init_ui(self):
         layout = QVBoxLayout()
         scroll_content = QWidget()
-        intelLayout = QVBoxLayout()
+        intel_layout = QVBoxLayout()
 
-        units = {
-            CAP: db.find_unittype(CAP, self.game.enemy_name),
-            Embarking: db.find_unittype(Embarking, self.game.enemy_name),
-            CAS: db.find_unittype(CAS, self.game.enemy_name),
-            PinpointStrike: db.find_unittype(PinpointStrike, self.game.enemy_name),
+        units_by_task: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+        for unit_type, count in self.cp.base.aircraft.items():
+            if count:
+                name = db.unit_get_expanded_info(
+                    self.game.enemy_country, unit_type, "name"
+                )
+                units_by_task[unit_type.task_default.name][name] += count
+
+        units_by_task = {
+            task: units_by_task[task] for task in sorted(units_by_task.keys())
         }
 
-        for task_type in units.keys():
-            units_column = list(set(units[task_type]))
+        front_line_units = defaultdict(int)
+        for unit_type, count in self.cp.base.armor.items():
+            if count:
+                name = db.unit_get_expanded_info(
+                    self.game.enemy_country, unit_type, "name"
+                )
+                front_line_units[name] += count
 
-            if sum([self.cp.base.total_units_of_type(u) for u in units_column]) > 0:
+        units_by_task["Front line units"] = front_line_units
+        for task, unit_types in units_by_task.items():
+            task_group = QGroupBox(task)
+            task_layout = QGridLayout()
+            task_group.setLayout(task_layout)
 
-                group = QGroupBox(db.task_name(task_type))
-                groupLayout = QGridLayout()
-                group.setLayout(groupLayout)
+            for row, (name, count) in enumerate(unit_types.items()):
+                task_layout.addWidget(QLabel(f"<b>{name}</b>"), row, 0)
+                task_layout.addWidget(QLabel(str(count)), row, 1)
 
-                row = 0
-                for unit_type in units_column:
-                    existing_units = self.cp.base.total_units_of_type(unit_type)
-                    if existing_units == 0:
-                        continue
-                    groupLayout.addWidget(
-                        QLabel(
-                            "<b>"
-                            + db.unit_get_expanded_info(
-                                self.game.enemy_country, unit_type, "name"
-                            )
-                            + "</b>"
-                        ),
-                        row,
-                        0,
-                    )
-                    groupLayout.addWidget(QLabel(str(existing_units)), row, 1)
-                    row += 1
+            intel_layout.addWidget(task_group)
 
-                intelLayout.addWidget(group)
-
-        scroll_content.setLayout(intelLayout)
+        scroll_content.setLayout(intel_layout)
         scroll = QScrollArea()
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
