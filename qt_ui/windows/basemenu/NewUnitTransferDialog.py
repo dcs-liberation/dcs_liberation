@@ -166,9 +166,7 @@ class ScrollingUnitTransferGrid(QFrame):
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
 
-        unit_types = set(
-            db.find_unittype(PinpointStrike, self.game_model.game.player_name)
-        )
+        unit_types = set(self.game_model.game.faction_for(player=True).ground_units)
         sorted_units = sorted(
             {u for u in unit_types if self.cp.base.total_units_of_type(u)},
             key=lambda u: db.unit_get_expanded_info(

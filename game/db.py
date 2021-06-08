@@ -1332,7 +1332,7 @@ def upgrade_to_supercarrier(unit, name: str):
 
 
 def find_unittype(for_task: Type[MainTask], country_name: str) -> List[Type[UnitType]]:
-    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
+    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].all_units]
 
 
 MANPADS: List[Type[VehicleType]] = [

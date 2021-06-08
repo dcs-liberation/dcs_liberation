@@ -3,7 +3,7 @@ from game.data.groundunitclass import GroundUnitClass
 
 import logging
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Type, List, Any, cast
+from typing import Optional, Dict, Type, List, Any, cast, Iterator
 
 import dcs
 from dcs.countries import country_dict
@@ -240,7 +240,7 @@ class Faction:
         return faction
 
     @property
-    def units(self) -> List[Type[UnitType]]:
+    def all_units(self) -> List[Type[UnitType]]:
         return (
             self.infantry_units
             + self.aircrafts
@@ -250,6 +250,12 @@ class Faction:
             + self.tankers
             + self.logistics_units
         )
+
+    @property
+    def ground_units(self) -> Iterator[Type[VehicleType]]:
+        yield from self.artillery_units
+        yield from self.frontline_units
+        yield from self.logistics_units
 
 
 def unit_loader(unit: str, class_repository: List[Any]) -> Optional[Type[UnitType]]:
