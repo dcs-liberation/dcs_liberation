@@ -417,7 +417,7 @@ PRICES = {
     F_22A: 40,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
-    JAS39Gripen: 30,
+    JAS39Gripen: 26,
     # bomber
     Su_17M4: 10,
     Su_25: 15,
@@ -431,7 +431,7 @@ PRICES = {
     A_10C: 22,
     A_10C_2: 24,
     S_3B: 10,
-    JAS39Gripen_AG: 30,
+    JAS39Gripen_AG: 22,
     # heli
     Ka_50: 13,
     SA342M: 8,
