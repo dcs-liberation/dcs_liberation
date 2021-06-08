@@ -103,7 +103,7 @@ class AirSupportConflictGenerator:
         fallback_tanker_number = 0
 
         for i, tanker_unit_type in enumerate(
-            db.find_unittype(Refueling, self.conflict.attackers_side)
+            self.game.faction_for(player=True).tankers
         ):
             alt, airspeed = self._get_tanker_params(tanker_unit_type)
             variant = db.unit_type_name(tanker_unit_type)
