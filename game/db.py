@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import List, Optional, Type, Union
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
@@ -11,7 +11,6 @@ from dcs.helicopters import (
     AH_64D,
     CH_47D,
     CH_53E,
-    HelicopterType,
     Ka_50,
     Mi_24V,
     Mi_26,
@@ -132,29 +131,21 @@ from dcs.ships import (
 )
 from dcs.task import (
     AWACS,
-    AntishipStrike,
     CAP,
     CAS,
     CargoTransportation,
     Embarking,
-    Escort,
-    FighterSweep,
-    GroundAttack,
-    Intercept,
     MainTask,
     Nothing,
     PinpointStrike,
     Reconnaissance,
     Refueling,
-    SEAD,
-    Task,
     Transport,
-    RunwayAttack,
 )
 from dcs.terrain.terrain import Airport
 from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import FlyingType, ShipType, UnitType, VehicleType
+from dcs.unittype import FlyingType, UnitType, VehicleType
 from dcs.vehicles import (
     AirDefence,
     Armor,
@@ -1084,106 +1075,10 @@ UNIT_BY_TASK = {
 }
 
 """
-Units from AirDefense category of UNIT_BY_TASK that will be removed from use if "No SAM" option is checked at the start of the game
-"""
-SAM_BAN = [
-    AirDefence.SAM_Linebacker___Bradley_M6,
-    AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL,
-    AirDefence.SAM_SA_8_Osa_Gecko_TEL,
-    AirDefence.SAM_SA_19_Tunguska_Grison,
-    AirDefence.SAM_SA_6_Kub_Gainful_TEL,
-    AirDefence.SAM_SA_8_Osa_Gecko_TEL,
-    AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    AirDefence.SAM_SA_2_S_75_Guideline_LN,
-    AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL,
-]
-
-"""
-Used to convert SAM site parts to the corresponding site
-"""
-SAM_CONVERT = {
-    AirDefence.SAM_P19_Flat_Face_SR__SA_2_3: AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_SA_3_S_125_Low_Blow_TR: AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_SA_3_S_125_Goa_LN: AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_SA_6_Kub_Gainful_TEL: AirDefence.SAM_SA_6_Kub_Gainful_TEL,
-    AirDefence.SAM_SA_6_Kub_Straight_Flush_STR: AirDefence.SAM_SA_6_Kub_Gainful_TEL,
-    AirDefence.SAM_SA_10_S_300_Grumble_TEL_C: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_Clam_Shell_SR: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_C2: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR: AirDefence.SAM_SA_10_S_300_Grumble_C2,
-    AirDefence.SAM_Hawk_TR__AN_MPQ_46: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    AirDefence.SAM_Hawk_SR__AN_MPQ_50: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    AirDefence.SAM_Hawk_LN_M192: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    "except": {
-        # this radar is shared between the two S300's. if we attempt to find a SAM site at a base and can't find one
-        #  model, we can safely assume the other was deployed
-        # well, perhaps not safely, but we'll make the assumption anyway :p
-        AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR: AirDefence.SAM_SA_10_S_300_Grumble_C2,
-        AirDefence.SAM_P19_Flat_Face_SR__SA_2_3: AirDefence.SAM_SA_2_S_75_Guideline_LN,
-    },
-}
-
-"""
-Units that will always be spawned in the air
-"""
-TAKEOFF_BAN: List[Type[FlyingType]] = []
-
-"""
-Units that will be always spawned in the air if launched from the carrier
-"""
-CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
-    Su_33,  # Kuznecow is bugged in a way that only 2 aircraft could be spawned
-]
-
-"""
 Units separated by country. 
 country : DCS Country name
 """
 FACTIONS = FactionLoader()
-
-CARRIER_TYPE_BY_PLANE = {
-    FA_18C_hornet: CVN_74_John_C__Stennis,
-    F_14A_135_GR: CVN_74_John_C__Stennis,
-    F_14B: CVN_74_John_C__Stennis,
-    Ka_50: LHA_1_Tarawa,
-    SA342M: LHA_1_Tarawa,
-    UH_1H: LHA_1_Tarawa,
-    Mi_8MT: LHA_1_Tarawa,
-    AV8BNA: LHA_1_Tarawa,
-}
-
-"""
-Aircraft payload overrides. Usually default loadout for the task is loaded during the mission generation.
-Syntax goes as follows:
-
-    `AircraftIdentifier`: {
-        "Category": "PayloadName",
-    },
-
-where:
-    * `AircraftIdentifier`: identifier of aircraft (the same that is used troughout the file)
-    * "Category": (in double quotes) is one of the tasks: CAS, CAP, Intercept, Escort or "*"
-    * "PayloadName": payload as found in resources/payloads/UNIT_TYPE.lua file. Sometimes this will match payload names 
-                     in the mission editor, sometimes it doesn't
-                     
-Payload will be used for operation of following type, "*" category will be used always, no matter the operation.
-"""
-
-COMMON_OVERRIDE = {
-    CAP: "CAP",
-    Intercept: "CAP",
-    CAS: "CAS",
-    PinpointStrike: "STRIKE",
-    SEAD: "SEAD",
-    AntishipStrike: "ANTISHIP",
-    GroundAttack: "STRIKE",
-    Escort: "CAP",
-    RunwayAttack: "RUNWAY_ATTACK",
-    FighterSweep: "CAP",
-    AWACS: "AEW&C",
-}
 
 """
 Aircraft livery overrides. Syntax as follows:
@@ -1297,16 +1192,6 @@ LHA_CAPABLE = [
 """
 ---------- END OF CONFIGURATION SECTION
 """
-
-UnitsDict = Dict[UnitType, int]
-PlaneDict = Dict[FlyingType, int]
-HeliDict = Dict[HelicopterType, int]
-ArmorDict = Dict[VehicleType, int]
-ShipDict = Dict[ShipType, int]
-AirDefenseDict = Dict[AirDefence, int]
-
-AssignedUnitsDict = Dict[Type[UnitType], Tuple[int, int]]
-TaskForceDict = Dict[Type[MainTask], AssignedUnitsDict]
 
 StartingPosition = Union[ShipGroup, StaticGroup, Airport, Point]
 
@@ -1461,89 +1346,6 @@ def unit_type_of(unit: Unit) -> UnitType:
         return ship_map[unit.type]
     else:
         return unit.type
-
-
-def task_name(task) -> str:
-    if task == AirDefence:
-        return "AirDefence"
-    elif task == Embarking:
-        return "Transportation"
-    elif task == PinpointStrike:
-        return "Frontline units"
-    else:
-        return task.name
-
-
-def unitdict_append(unit_dict: UnitsDict, unit_type: UnitType, count: int):
-    unit_dict[unit_type] = unit_dict.get(unit_type, 0) + 1
-
-
-def unitdict_merge(a: UnitsDict, b: UnitsDict) -> UnitsDict:
-    b = b.copy()
-    for k, v in a.items():
-        b[k] = b.get(k, 0) + v
-
-    return b
-
-
-def unitdict_split(unit_dict: UnitsDict, count: int):
-    buffer_dict: Dict[UnitType, int] = {}
-    for unit_type, unit_count in unit_dict.items():
-        for _ in range(unit_count):
-            unitdict_append(buffer_dict, unit_type, 1)
-            if sum(buffer_dict.values()) >= count:
-                yield buffer_dict
-                buffer_dict = {}
-
-    if len(buffer_dict):
-        yield buffer_dict
-
-
-def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict:
-    if total_count == 0:
-        return {}
-
-    groups = list(unitdict_split(unit_dict, total_count))
-    if len(groups) > 0:
-        return groups[0]
-    else:
-        return {}
-
-
-def assigned_units_split(fd: AssignedUnitsDict) -> Tuple[PlaneDict, PlaneDict]:
-    return (
-        {k: v1 for k, (v1, v2) in fd.items()},
-        {k: v2 for k, (v1, v2) in fd.items()},
-    )
-
-
-def assigned_units_from(d: PlaneDict) -> AssignedUnitsDict:
-    return {k: (v, 0) for k, v in d.items()}
-
-
-def assignedunits_split_to_count(dict: AssignedUnitsDict, count: int):
-    buffer_dict: Dict[Type[UnitType], Tuple[int, int]] = {}
-    for unit_type, (unit_count, client_count) in dict.items():
-        for _ in range(unit_count):
-            new_count, new_client_count = buffer_dict.get(unit_type, (0, 0))
-
-            new_count += 1
-
-            if client_count > 0:
-                new_client_count += 1
-                client_count -= 1
-
-            buffer_dict[unit_type] = new_count, new_client_count
-            if new_count >= count:
-                yield buffer_dict
-                buffer_dict = {}
-
-    if len(buffer_dict):
-        yield buffer_dict
-
-
-def unitdict_from(fd: AssignedUnitsDict) -> Dict:
-    return {k: v1 for k, (v1, v2) in fd.items()}
 
 
 def country_id_from_name(name):
