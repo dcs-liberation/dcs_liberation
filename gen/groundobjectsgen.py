@@ -600,6 +600,24 @@ class HelipadGenerator:
             helipad.static_unit = sg
             helipad.occupied = False
 
+            # Generate a FARP Ammo and Fuel stack for each pad
+            self.m.static_group(
+                country=country,
+                name=(name + "_fuel"),
+                _type=Fortification.FARP_Fuel_Depot,
+                position=pad.position.point_from_heading(helipad.heading, 35),
+                heading=pad.heading,
+            )
+            self.m.static_group(
+                country=country,
+                name=(name + "_ammo"),
+                _type=Fortification.FARP_Ammo_Storage,
+                position=pad.position.point_from_heading(
+                    helipad.heading, 35
+                ).point_from_heading(helipad.heading + 90, 10),
+                heading=pad.heading,
+            )
+
 
 class GroundObjectsGenerator:
     """Creates DCS groups and statics for the theater during mission generation.
