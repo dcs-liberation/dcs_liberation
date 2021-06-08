@@ -1060,7 +1060,6 @@ UNIT_BY_TASK = {
         frenchpack.DIM__TOYOTA_DESERT,
         frenchpack.DIM__KAMIKAZE,
     ],
-    AirDefence: [],
     Reconnaissance: [
         Unarmed.Truck_M818_6x6,
         Unarmed.Truck_Ural_375,

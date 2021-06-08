@@ -1,20 +1,14 @@
 import itertools
 import logging
-import math
 import typing
 from typing import Dict, Type
 
-from dcs.task import AWACS, CAP, CAS, Embarking, PinpointStrike, Task, Transport
-from dcs.unittype import FlyingType, UnitType, VehicleType
-from dcs.vehicles import AirDefence, Armor
+from dcs.task import AWACS, CAP, CAS, Embarking, PinpointStrike, Transport
+from dcs.unittype import FlyingType, VehicleType
+from dcs.vehicles import AirDefence
 
 from game import db
 from game.db import PRICES
-
-STRENGTH_AA_ASSEMBLE_MIN = 0.2
-PLANES_SCRAMBLE_MIN_BASE = 2
-PLANES_SCRAMBLE_MAX_BASE = 8
-PLANES_SCRAMBLE_FACTOR = 0.3
 
 BASE_MAX_STRENGTH = 1
 BASE_MIN_STRENGTH = 0
@@ -24,8 +18,6 @@ class Base:
     def __init__(self):
         self.aircraft: Dict[Type[FlyingType], int] = {}
         self.armor: Dict[Type[VehicleType], int] = {}
-        # TODO: Appears unused.
-        self.aa: Dict[AirDefence, int] = {}
         self.strength = 1
 
     @property
@@ -46,36 +38,13 @@ class Base:
                 logging.exception(f"No price found for {unit_type.id}")
         return total
 
-    @property
-    def total_aa(self) -> int:
-        return sum(self.aa.values())
-
-    def total_units(self, task: Task) -> int:
-        return sum(
-            [
-                c
-                for t, c in itertools.chain(
-                    self.aircraft.items(), self.armor.items(), self.aa.items()
-                )
-                if t in db.UNIT_BY_TASK[task]
-            ]
-        )
-
     def total_units_of_type(self, unit_type) -> int:
         return sum(
             [
                 c
-                for t, c in itertools.chain(
-                    self.aircraft.items(), self.armor.items(), self.aa.items()
-                )
+                for t, c in itertools.chain(self.aircraft.items(), self.armor.items())
                 if t == unit_type
             ]
-        )
-
-    @property
-    def all_units(self):
-        return itertools.chain(
-            self.aircraft.items(), self.armor.items(), self.aa.items()
         )
 
     def commision_units(self, units: typing.Dict[typing.Any, int]):
@@ -97,8 +66,6 @@ class Base:
                 target_dict = self.aircraft
             elif for_task == PinpointStrike:
                 target_dict = self.armor
-            elif for_task == AirDefence:
-                target_dict = self.aa
 
             if target_dict is not None:
                 target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
