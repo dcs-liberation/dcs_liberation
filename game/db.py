@@ -431,7 +431,7 @@ PRICES = {
     A_10C: 22,
     A_10C_2: 24,
     S_3B: 10,
-    JAS39Gripen_AG: 22,
+    JAS39Gripen_AG: 26,
     # heli
     Ka_50: 13,
     SA342M: 8,
