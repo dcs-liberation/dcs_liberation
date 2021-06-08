@@ -1474,23 +1474,6 @@ def task_name(task) -> str:
         return task.name
 
 
-def choose_units(
-    for_task: Task, factor: float, count: int, country: str
-) -> List[UnitType]:
-    suitable_unittypes = find_unittype(for_task, country)
-    suitable_unittypes = [
-        x for x in suitable_unittypes if x not in helicopter_map.values()
-    ]
-    suitable_unittypes.sort(key=lambda x: PRICES[x])
-
-    idx = int(len(suitable_unittypes) * factor)
-    variety = int(count + count * factor / 2)
-
-    index_start = min(idx, len(suitable_unittypes) - variety)
-    index_end = min(idx + variety, len(suitable_unittypes))
-    return list(set(suitable_unittypes[index_start:index_end]))
-
-
 def unitdict_append(unit_dict: UnitsDict, unit_type: UnitType, count: int):
     unit_dict[unit_type] = unit_dict.get(unit_type, 0) + 1
 
