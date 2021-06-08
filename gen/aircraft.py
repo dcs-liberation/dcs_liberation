@@ -669,7 +669,6 @@ AIRCRAFT_DATA: Dict[str, AircraftData] = {
         inter_flight_radio=get_radio("R&S Series 6000"),
         intra_flight_radio=get_radio("R&S Series 6000"),
         channel_allocator=None,
-        channel_namer=NoOpChannelAllocator,
     ),
 }
 AIRCRAFT_DATA["A-10C_2"] = AIRCRAFT_DATA["A-10C"]
