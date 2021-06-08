@@ -30,7 +30,7 @@ DISTANCE_FROM_FRONTLINE = {
     CombatGroupRole.APC: (2700, 3700),
     CombatGroupRole.IFV: (2700, 3700),
     CombatGroupRole.ARTILLERY: (16000, 18000),
-    CombatGroupRole.SHORAD: (12000, 13000),
+    CombatGroupRole.SHORAD: (5000, 8000),
     CombatGroupRole.LOGI: (18000, 20000),
     CombatGroupRole.INFANTRY: (2800, 3300),
     CombatGroupRole.ATGM: (5200, 6200),
