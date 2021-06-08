@@ -434,7 +434,7 @@ class Event:
             moved_units[frontline_unit] = int(count * move_factor)
             total_units_redeployed = total_units_redeployed + int(count * move_factor)
 
-        destination.base.commision_units(moved_units)
+        destination.base.commission_units(moved_units)
         source.base.commit_losses(moved_units)
 
         # Also transfer pending deliveries.

@@ -167,7 +167,7 @@ class QHangarStatus(QHBoxLayout):
         next_turn = self.control_point.allocated_aircraft(self.game_model.game)
         max_amount = self.control_point.total_aircraft_parking
 
-        components = [f"{next_turn.present} present"]
+        components = [f"{next_turn.total_present} present"]
         if next_turn.total_ordered > 0:
             components.append(f"{next_turn.total_ordered} purchased")
         elif next_turn.total_ordered < 0:
