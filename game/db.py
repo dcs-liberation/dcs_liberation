@@ -1331,18 +1331,6 @@ def upgrade_to_supercarrier(unit, name: str):
         return unit
 
 
-def unit_task(unit: UnitType) -> Optional[Task]:
-    for task, units in UNIT_BY_TASK.items():
-        if unit in units:
-            return task
-
-    if unit in SAM_CONVERT:
-        return unit_task(SAM_CONVERT[unit])
-
-    print(unit.name + " cause issue")
-    return None
-
-
 def find_unittype(for_task: Type[MainTask], country_name: str) -> List[Type[UnitType]]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 

@@ -541,7 +541,7 @@ class ControlPoint(MissionTarget, ABC):
         while self.base.armor:
             unit_type, count = self.base.armor.popitem()
             for _ in range(count):
-                destination.control_point.base.commision_units({unit_type: 1})
+                destination.control_point.base.commission_units({unit_type: 1})
                 destination = heapq.heappushpop(destinations, destination)
 
     def capture_aircraft(
@@ -589,7 +589,7 @@ class ControlPoint(MissionTarget, ABC):
                 return
             parking = destination.unclaimed_parking(game)
             transfer_amount = min([parking, count])
-            destination.base.commision_units({airframe: transfer_amount})
+            destination.base.commission_units({airframe: transfer_amount})
             count -= transfer_amount
 
     def retreat_air_units(self, game: Game) -> None:

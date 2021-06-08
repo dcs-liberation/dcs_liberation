@@ -3,11 +3,8 @@ import logging
 import typing
 from typing import Dict, Type
 
-from dcs.task import AWACS, CAP, CAS, Embarking, PinpointStrike, Transport
-from dcs.unittype import FlyingType, VehicleType
-from dcs.vehicles import AirDefence
+from dcs.unittype import FlyingType, VehicleType, UnitType
 
-from game import db
 from game.db import PRICES
 
 BASE_MAX_STRENGTH = 1
@@ -47,30 +44,23 @@ class Base:
             ]
         )
 
-    def commision_units(self, units: typing.Dict[typing.Any, int]):
-
+    def commission_units(self, units: typing.Dict[typing.Type[UnitType], int]):
         for unit_type, unit_count in units.items():
             if unit_count <= 0:
                 continue
 
-            for_task = db.unit_task(unit_type)
-
-            target_dict = None
-            if (
-                for_task == AWACS
-                or for_task == CAS
-                or for_task == CAP
-                or for_task == Embarking
-                or for_task == Transport
-            ):
-                target_dict = self.aircraft
-            elif for_task == PinpointStrike:
+            if issubclass(unit_type, VehicleType):
                 target_dict = self.armor
-
-            if target_dict is not None:
-                target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
+            elif issubclass(unit_type, FlyingType):
+                target_dict = self.aircraft
             else:
-                logging.error("Unable to determine target dict for " + str(unit_type))
+                logging.error(
+                    f"Unexpected unit type of {unit_type}: "
+                    f"{unit_type.__module__}.{unit_type.__name__}"
+                )
+                return
+
+            target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
 
     def commit_losses(self, units_lost: typing.Dict[typing.Any, int]):
 
