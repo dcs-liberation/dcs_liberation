@@ -14,7 +14,7 @@
 DCS Liberation is a [DCS World](https://www.digitalcombatsimulator.com/en/products/world/) turn based single-player or co-op dynamic campaign. 
 It is an external program that generates full and complex DCS missions and manage a persistent combat environment.  
 
-![Logo](https://i.imgur.com/4hq0rLq.png)
+![Screenshot](https://user-images.githubusercontent.com/315852/120939254-0b4a9f80-c6cc-11eb-82f5-ce3f8d714bfe.png)
 
 ## Downloads
 

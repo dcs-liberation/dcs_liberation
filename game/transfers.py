@@ -109,7 +109,7 @@ class TransferOrder:
 
     def disband_at(self, location: ControlPoint) -> None:
         logging.info(f"Units halting at {location}.")
-        location.base.commision_units(self.units)
+        location.base.commission_units(self.units)
         self.units.clear()
 
     @property
@@ -562,7 +562,7 @@ class PendingTransfers:
         if transfer.transport is not None:
             self.cancel_transport(transfer.transport, transfer)
         self.pending_transfers.remove(transfer)
-        transfer.origin.base.commision_units(transfer.units)
+        transfer.origin.base.commission_units(transfer.units)
 
     def perform_transfers(self) -> None:
         incomplete = []

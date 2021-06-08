@@ -340,11 +340,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         buy_ewr_layout.addLayout(stretch, 2, 0)
 
         # Armored units
-
-        armored_units = db.find_unittype(
-            PinpointStrike, faction.name
-        )  # Todo : refactor this legacy nonsense
-        for unit in set(armored_units):
+        for unit in set(faction.ground_units):
             self.buyArmorCombo.addItem(
                 db.unit_type_name_2(unit) + " [$" + str(db.PRICES[unit]) + "M]",
                 userData=unit,

@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import List, Optional, Type, Union
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
@@ -11,7 +11,6 @@ from dcs.helicopters import (
     AH_64D,
     CH_47D,
     CH_53E,
-    HelicopterType,
     Ka_50,
     Mi_24V,
     Mi_26,
@@ -132,29 +131,21 @@ from dcs.ships import (
 )
 from dcs.task import (
     AWACS,
-    AntishipStrike,
     CAP,
     CAS,
     CargoTransportation,
     Embarking,
-    Escort,
-    FighterSweep,
-    GroundAttack,
-    Intercept,
     MainTask,
     Nothing,
     PinpointStrike,
     Reconnaissance,
     Refueling,
-    SEAD,
-    Task,
     Transport,
-    RunwayAttack,
 )
 from dcs.terrain.terrain import Airport
 from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import FlyingType, ShipType, UnitType, VehicleType
+from dcs.unittype import FlyingType, UnitType, VehicleType
 from dcs.vehicles import (
     AirDefence,
     Armor,
@@ -725,466 +716,10 @@ PRICES = {
 }
 
 """
-Units separated by tasks. This will include units for both countries. Be advised that unit could only belong to single task!
-
-Following tasks are present:
-* CAP - figther aircraft for CAP/Escort/Intercept
-* CAS - CAS aircraft
-* Transport - transport aircraft (used as targets in intercept operations)
-* AWACS - awacs
-* AntishipStrike - units that will engage shipping
-* PinpointStrike - armor that will engage in ground war
-* AirDefense - AA units
-* Reconnaissance - units that will be used as targets in destroy insurgents operations
-* Nothing - troops that will be used for helicopter transport operations
-* Embarking - helicopters that will be used for helicopter transport operations
-* Carriage - aircraft carriers
-* CargoTransportation - ships that will be used as targets for ship intercept operations
-"""
-UNIT_BY_TASK = {
-    CAP: [
-        A_4E_C,
-        Bf_109K_4,
-        C_101CC,
-        FA_18C_hornet,
-        FW_190A8,
-        FW_190D9,
-        F_14A_135_GR,
-        F_14B,
-        F_15C,
-        F_16A,
-        F_16C_50,
-        F_22A,
-        F_4E,
-        F_5E_3,
-        I_16,
-        JF_17,
-        J_11A,
-        M_2000C,
-        MiG_19P,
-        MiG_21Bis,
-        MiG_23MLD,
-        MiG_25PD,
-        MiG_29A,
-        MiG_29G,
-        MiG_29S,
-        MiG_31,
-        Mirage_2000_5,
-        P_51D,
-        P_51D_30_NA,
-        SA342Mistral,
-        SpitfireLFMkIX,
-        SpitfireLFMkIXCW,
-        Su_27,
-        Su_30,
-        Su_33,
-        Su_57,
-    ],
-    CAS: [
-        AH_1W,
-        AH_64A,
-        AH_64D,
-        AJS37,
-        AV8BNA,
-        A_10A,
-        A_10C,
-        A_10C_2,
-        A_20G,
-        B_17G,
-        B_1B,
-        B_52H,
-        F_117A,
-        F_15E,
-        F_86F_Sabre,
-        Hercules,
-        Ju_88A4,
-        Ka_50,
-        L_39ZA,
-        MB_339PAN,
-        MQ_9_Reaper,
-        MiG_15bis,
-        MiG_27K,
-        Mi_24V,
-        Mi_28N,
-        Mi_8MT,
-        OH_58D,
-        P_47D_30,
-        P_47D_30bl1,
-        P_47D_40,
-        RQ_1A_Predator,
-        SA342L,
-        SA342M,
-        SA342Minigun,
-        SH_60B,
-        S_3B,
-        Su_17M4,
-        Su_24M,
-        Su_24MR,
-        Su_25,
-        Su_25T,
-        Su_34,
-        Tornado_GR4,
-        Tornado_IDS,
-        Tu_160,
-        Tu_22M3,
-        Tu_95MS,
-        UH_1H,
-        WingLoong_I,
-    ],
-    Transport: [
-        An_26B,
-        An_30M,
-        CH_47D,
-        CH_53E,
-        C_130,
-        C_17A,
-        IL_76MD,
-        Mi_26,
-        UH_60A,
-        Yak_40,
-    ],
-    Refueling: [
-        IL_78M,
-        KC130,
-        KC135MPRS,
-        KC_135,
-        S_3B_Tanker,
-    ],
-    AWACS: [
-        A_50,
-        E_2C,
-        E_3A,
-        KJ_2000,
-    ],
-    PinpointStrike: [
-        Armor.APC_MTLB,
-        Armor.APC_MTLB,
-        Armor.APC_MTLB,
-        Armor.APC_MTLB,
-        Armor.APC_MTLB,
-        Artillery.Grad_MRL_FDDM__FC,
-        Artillery.Grad_MRL_FDDM__FC,
-        Artillery.Grad_MRL_FDDM__FC,
-        Artillery.Grad_MRL_FDDM__FC,
-        Artillery.Grad_MRL_FDDM__FC,
-        Armor.Scout_BRDM_2,
-        Armor.Scout_BRDM_2,
-        Armor.Scout_BRDM_2,
-        Armor.APC_BTR_RD,
-        Armor.APC_BTR_RD,
-        Armor.APC_BTR_RD,
-        Armor.APC_BTR_RD,
-        Armor.APC_BTR_80,
-        Armor.APC_BTR_80,
-        Armor.APC_BTR_80,
-        Armor.APC_BTR_80,
-        Armor.APC_BTR_80,
-        Armor.IFV_BTR_82A,
-        Armor.IFV_BTR_82A,
-        Armor.IFV_BMP_1,
-        Armor.IFV_BMP_1,
-        Armor.IFV_BMP_1,
-        Armor.IFV_BMP_2,
-        Armor.IFV_BMP_2,
-        Armor.IFV_BMP_3,
-        Armor.IFV_BMP_3,
-        Armor.IFV_BMD_1,
-        Armor.LT_PT_76,
-        Armor.ZBD_04A,
-        Armor.ZBD_04A,
-        Armor.ZBD_04A,
-        Armor.MBT_T_55,
-        Armor.MBT_T_55,
-        Armor.MBT_T_55,
-        Armor.MBT_T_72B,
-        Armor.MBT_T_72B,
-        Armor.MBT_T_72B3,
-        Armor.MBT_T_72B3,
-        Armor.MBT_T_80U,
-        Armor.MBT_T_80U,
-        Armor.MBT_T_90,
-        Armor.ZTZ_96B,
-        Armor.Scout_Cobra,
-        Armor.Scout_Cobra,
-        Armor.Scout_Cobra,
-        Armor.Scout_Cobra,
-        Armor.APC_M113,
-        Armor.APC_M113,
-        Armor.APC_M113,
-        Armor.APC_M113,
-        Armor.APC_TPz_Fuchs,
-        Armor.APC_TPz_Fuchs,
-        Armor.APC_TPz_Fuchs,
-        Armor.APC_TPz_Fuchs,
-        Armor.ATGM_HMMWV,
-        Armor.ATGM_HMMWV,
-        Armor.ATGM_VAB_Mephisto,
-        Armor.ATGM_VAB_Mephisto,
-        Armor.Scout_HMMWV,
-        Armor.Scout_HMMWV,
-        Armor.IFV_M2A2_Bradley,
-        Armor.IFV_M2A2_Bradley,
-        Armor.ATGM_Stryker,
-        Armor.ATGM_Stryker,
-        Armor.IFV_M1126_Stryker_ICV,
-        Armor.IFV_M1126_Stryker_ICV,
-        Armor.IFV_M1126_Stryker_ICV,
-        Armor.SPG_Stryker_MGS,
-        Armor.IFV_Warrior,
-        Armor.IFV_Warrior,
-        Armor.IFV_Warrior,
-        Armor.IFV_LAV_25,
-        Armor.IFV_LAV_25,
-        Armor.IFV_Marder,
-        Armor.IFV_Marder,
-        Armor.IFV_Marder,
-        Armor.IFV_Marder,
-        Armor.MBT_M60A3_Patton,
-        Armor.MBT_M60A3_Patton,
-        Armor.MBT_M60A3_Patton,
-        Armor.MBT_Leopard_1A3,
-        Armor.MBT_Leopard_1A3,
-        Armor.MBT_M1A2_Abrams,
-        Armor.MBT_Leclerc,
-        Armor.MBT_Leopard_2A6M,
-        Armor.MBT_Challenger_II,
-        Armor.MBT_Chieftain_Mk_3,
-        Armor.MBT_Merkava_IV,
-        Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
-        Armor.Tk_PzIV_H,
-        Armor.HT_Pz_Kpfw_VI_Tiger_I,
-        Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
-        Armor.APC_Sd_Kfz_251_Halftrack,
-        Armor.APC_Sd_Kfz_251_Halftrack,
-        Armor.APC_Sd_Kfz_251_Halftrack,
-        Armor.APC_Sd_Kfz_251_Halftrack,
-        Armor.IFV_Sd_Kfz_234_2_Puma,
-        Armor.IFV_Sd_Kfz_234_2_Puma,
-        Armor.Tk_M4_Sherman,
-        Armor.MT_M4A4_Sherman_Firefly,
-        Armor.CT_Cromwell_IV,
-        Unarmed.Carrier_M30_Cargo,
-        Unarmed.Carrier_M30_Cargo,
-        Armor.APC_M2A1_Halftrack,
-        Armor.APC_M2A1_Halftrack,
-        Armor.APC_M2A1_Halftrack,
-        Armor.APC_M2A1_Halftrack,
-        Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
-        Armor.Tk_PzIV_H,
-        Armor.HT_Pz_Kpfw_VI_Tiger_I,
-        Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
-        Armor.SPG_Jagdpanther_G1,
-        Armor.SPG_Jagdpanzer_IV,
-        Armor.SPG_Sd_Kfz_184_Elefant,
-        Armor.APC_Sd_Kfz_251_Halftrack,
-        Armor.IFV_Sd_Kfz_234_2_Puma,
-        Armor.Tk_M4_Sherman,
-        Armor.MT_M4A4_Sherman_Firefly,
-        Armor.CT_Cromwell_IV,
-        Unarmed.Carrier_M30_Cargo,
-        Unarmed.Carrier_M30_Cargo,
-        Unarmed.Carrier_M30_Cargo,
-        Armor.APC_M2A1_Halftrack,
-        Armor.APC_M2A1_Halftrack,
-        Armor.CT_Centaur_IV,
-        Armor.CT_Centaur_IV,
-        Armor.HIT_Churchill_VII,
-        Armor.Car_M8_Greyhound_Armored,
-        Armor.Car_M8_Greyhound_Armored,
-        Armor.SPG_M10_GMC,
-        Armor.SPG_M10_GMC,
-        Armor.SPG_StuG_III_Ausf__G,
-        Armor.SPG_StuG_IV,
-        Artillery.SPG_M12_GMC_155mm,
-        Armor.SPG_Sturmpanzer_IV_Brummbar,
-        Armor.Car_Daimler_Armored,
-        Armor.LT_Mk_VII_Tetrarch,
-        Artillery.MLRS_M270_227mm,
-        Artillery.SPH_M109_Paladin_155mm,
-        Artillery.SPM_2S9_Nona_120mm_M,
-        Artillery.SPH_2S1_Gvozdika_122mm,
-        Artillery.SPH_2S3_Akatsia_152mm,
-        Artillery.SPH_2S19_Msta_152mm,
-        Artillery.MLRS_BM_21_Grad_122mm,
-        Artillery.MLRS_BM_21_Grad_122mm,
-        Artillery.MLRS_9K57_Uragan_BM_27_220mm,
-        Artillery.MLRS_9A52_Smerch_HE_300mm,
-        Artillery.SPH_Dana_vz77_152mm,
-        Artillery.SPH_T155_Firtina_155mm,
-        Artillery.PLZ_05,
-        Artillery.SPG_M12_GMC_155mm,
-        Armor.SPG_Sturmpanzer_IV_Brummbar,
-        AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375,
-        AirDefence.SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375,
-        AirDefence.SPAAA_ZSU_57_2,
-        AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
-        AirDefence.SAM_SA_8_Osa_Gecko_TEL,
-        AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL,
-        AirDefence.SAM_SA_13_Strela_10M3_Gopher_TEL,
-        AirDefence.SAM_SA_15_Tor_Gauntlet,
-        AirDefence.SAM_SA_19_Tunguska_Grison,
-        AirDefence.SPAAA_Gepard,
-        AirDefence.SPAAA_Vulcan_M163,
-        AirDefence.SAM_Linebacker___Bradley_M6,
-        AirDefence.SAM_Chaparral_M48,
-        AirDefence.SAM_Avenger__Stinger,
-        AirDefence.SAM_Roland_ADS,
-        AirDefence.HQ_7_Self_Propelled_LN,
-        AirDefence.AAA_8_8cm_Flak_18,
-        AirDefence.AAA_8_8cm_Flak_36,
-        AirDefence.AAA_8_8cm_Flak_37,
-        AirDefence.AAA_8_8cm_Flak_41,
-        AirDefence.AAA_Bofors_40mm,
-        AirDefence.AAA_S_60_57mm,
-        AirDefence.AAA_M1_37mm,
-        AirDefence.AAA_QF_3_7,
-        frenchpack.DIM__TOYOTA_BLUE,
-        frenchpack.DIM__TOYOTA_DESERT,
-        frenchpack.DIM__TOYOTA_GREEN,
-        frenchpack.DIM__KAMIKAZE,
-        frenchpack.AMX_10RCR,
-        frenchpack.AMX_10RCR_SEPAR,
-        frenchpack.ERC_90,
-        frenchpack.TRM_2000_PAMELA,
-        frenchpack.VAB__50,
-        frenchpack.VAB_MEPHISTO,
-        frenchpack.VAB_T20_13,
-        frenchpack.VBL__50,
-        frenchpack.VBL_AANF1,
-        frenchpack.VBAE_CRAB,
-        frenchpack.VBAE_CRAB_MMP,
-        frenchpack.AMX_30B2,
-        frenchpack.Leclerc_Serie_XXI,
-        frenchpack.DIM__TOYOTA_BLUE,
-        frenchpack.DIM__TOYOTA_GREEN,
-        frenchpack.DIM__TOYOTA_DESERT,
-        frenchpack.DIM__KAMIKAZE,
-    ],
-    AirDefence: [],
-    Reconnaissance: [
-        Unarmed.Truck_M818_6x6,
-        Unarmed.Truck_Ural_375,
-        Unarmed.LUV_UAZ_469_Jeep,
-    ],
-    Nothing: [
-        Infantry.Infantry_M4,
-        Infantry.Infantry_AK_74,
-    ],
-    Embarking: [],
-    Carriage: [
-        CVN_74_John_C__Stennis,
-        LHA_1_Tarawa,
-        CV_1143_5_Admiral_Kuznetsov,
-    ],
-    CargoTransportation: [
-        Cargo_Ivanov,
-        Bulker_Yakushev,
-        Tanker_Elnya_160,
-        Boat_Armed_Hi_speed,
-    ],
-}
-
-"""
-Units from AirDefense category of UNIT_BY_TASK that will be removed from use if "No SAM" option is checked at the start of the game
-"""
-SAM_BAN = [
-    AirDefence.SAM_Linebacker___Bradley_M6,
-    AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL,
-    AirDefence.SAM_SA_8_Osa_Gecko_TEL,
-    AirDefence.SAM_SA_19_Tunguska_Grison,
-    AirDefence.SAM_SA_6_Kub_Gainful_TEL,
-    AirDefence.SAM_SA_8_Osa_Gecko_TEL,
-    AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    AirDefence.SAM_SA_2_S_75_Guideline_LN,
-    AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL,
-]
-
-"""
-Used to convert SAM site parts to the corresponding site
-"""
-SAM_CONVERT = {
-    AirDefence.SAM_P19_Flat_Face_SR__SA_2_3: AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_SA_3_S_125_Low_Blow_TR: AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_SA_3_S_125_Goa_LN: AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_SA_6_Kub_Gainful_TEL: AirDefence.SAM_SA_6_Kub_Gainful_TEL,
-    AirDefence.SAM_SA_6_Kub_Straight_Flush_STR: AirDefence.SAM_SA_6_Kub_Gainful_TEL,
-    AirDefence.SAM_SA_10_S_300_Grumble_TEL_C: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_Clam_Shell_SR: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_C2: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
-    AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR: AirDefence.SAM_SA_10_S_300_Grumble_C2,
-    AirDefence.SAM_Hawk_TR__AN_MPQ_46: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    AirDefence.SAM_Hawk_SR__AN_MPQ_50: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    AirDefence.SAM_Hawk_LN_M192: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
-    "except": {
-        # this radar is shared between the two S300's. if we attempt to find a SAM site at a base and can't find one
-        #  model, we can safely assume the other was deployed
-        # well, perhaps not safely, but we'll make the assumption anyway :p
-        AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR: AirDefence.SAM_SA_10_S_300_Grumble_C2,
-        AirDefence.SAM_P19_Flat_Face_SR__SA_2_3: AirDefence.SAM_SA_2_S_75_Guideline_LN,
-    },
-}
-
-"""
-Units that will always be spawned in the air
-"""
-TAKEOFF_BAN: List[Type[FlyingType]] = []
-
-"""
-Units that will be always spawned in the air if launched from the carrier
-"""
-CARRIER_TAKEOFF_BAN: List[Type[FlyingType]] = [
-    Su_33,  # Kuznecow is bugged in a way that only 2 aircraft could be spawned
-]
-
-"""
 Units separated by country. 
 country : DCS Country name
 """
 FACTIONS = FactionLoader()
-
-CARRIER_TYPE_BY_PLANE = {
-    FA_18C_hornet: CVN_74_John_C__Stennis,
-    F_14A_135_GR: CVN_74_John_C__Stennis,
-    F_14B: CVN_74_John_C__Stennis,
-    Ka_50: LHA_1_Tarawa,
-    SA342M: LHA_1_Tarawa,
-    UH_1H: LHA_1_Tarawa,
-    Mi_8MT: LHA_1_Tarawa,
-    AV8BNA: LHA_1_Tarawa,
-}
-
-"""
-Aircraft payload overrides. Usually default loadout for the task is loaded during the mission generation.
-Syntax goes as follows:
-
-    `AircraftIdentifier`: {
-        "Category": "PayloadName",
-    },
-
-where:
-    * `AircraftIdentifier`: identifier of aircraft (the same that is used troughout the file)
-    * "Category": (in double quotes) is one of the tasks: CAS, CAP, Intercept, Escort or "*"
-    * "PayloadName": payload as found in resources/payloads/UNIT_TYPE.lua file. Sometimes this will match payload names 
-                     in the mission editor, sometimes it doesn't
-                     
-Payload will be used for operation of following type, "*" category will be used always, no matter the operation.
-"""
-
-COMMON_OVERRIDE = {
-    CAP: "CAP",
-    Intercept: "CAP",
-    CAS: "CAS",
-    PinpointStrike: "STRIKE",
-    SEAD: "SEAD",
-    AntishipStrike: "ANTISHIP",
-    GroundAttack: "STRIKE",
-    Escort: "CAP",
-    RunwayAttack: "RUNWAY_ATTACK",
-    FighterSweep: "CAP",
-    AWACS: "AEW&C",
-}
 
 """
 Aircraft livery overrides. Syntax as follows:
@@ -1299,16 +834,6 @@ LHA_CAPABLE = [
 ---------- END OF CONFIGURATION SECTION
 """
 
-UnitsDict = Dict[UnitType, int]
-PlaneDict = Dict[FlyingType, int]
-HeliDict = Dict[HelicopterType, int]
-ArmorDict = Dict[VehicleType, int]
-ShipDict = Dict[ShipType, int]
-AirDefenseDict = Dict[AirDefence, int]
-
-AssignedUnitsDict = Dict[Type[UnitType], Tuple[int, int]]
-TaskForceDict = Dict[Type[MainTask], AssignedUnitsDict]
-
 StartingPosition = Union[ShipGroup, StaticGroup, Airport, Point]
 
 
@@ -1330,22 +855,6 @@ def upgrade_to_supercarrier(unit, name: str):
         return CV_1143_5_Admiral_Kuznetsov_2017
     else:
         return unit
-
-
-def unit_task(unit: UnitType) -> Optional[Task]:
-    for task, units in UNIT_BY_TASK.items():
-        if unit in units:
-            return task
-
-    if unit in SAM_CONVERT:
-        return unit_task(SAM_CONVERT[unit])
-
-    print(unit.name + " cause issue")
-    return None
-
-
-def find_unittype(for_task: Type[MainTask], country_name: str) -> List[Type[UnitType]]:
-    return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 
 
 MANPADS: List[Type[VehicleType]] = [
@@ -1476,129 +985,11 @@ def unit_type_of(unit: Unit) -> UnitType:
         return unit.type
 
 
-def task_name(task) -> str:
-    if task == AirDefence:
-        return "AirDefence"
-    elif task == Embarking:
-        return "Transportation"
-    elif task == PinpointStrike:
-        return "Frontline units"
-    else:
-        return task.name
-
-
-def choose_units(
-    for_task: Task, factor: float, count: int, country: str
-) -> List[UnitType]:
-    suitable_unittypes = find_unittype(for_task, country)
-    suitable_unittypes = [
-        x for x in suitable_unittypes if x not in helicopter_map.values()
-    ]
-    suitable_unittypes.sort(key=lambda x: PRICES[x])
-
-    idx = int(len(suitable_unittypes) * factor)
-    variety = int(count + count * factor / 2)
-
-    index_start = min(idx, len(suitable_unittypes) - variety)
-    index_end = min(idx + variety, len(suitable_unittypes))
-    return list(set(suitable_unittypes[index_start:index_end]))
-
-
-def unitdict_append(unit_dict: UnitsDict, unit_type: UnitType, count: int):
-    unit_dict[unit_type] = unit_dict.get(unit_type, 0) + 1
-
-
-def unitdict_merge(a: UnitsDict, b: UnitsDict) -> UnitsDict:
-    b = b.copy()
-    for k, v in a.items():
-        b[k] = b.get(k, 0) + v
-
-    return b
-
-
-def unitdict_split(unit_dict: UnitsDict, count: int):
-    buffer_dict: Dict[UnitType, int] = {}
-    for unit_type, unit_count in unit_dict.items():
-        for _ in range(unit_count):
-            unitdict_append(buffer_dict, unit_type, 1)
-            if sum(buffer_dict.values()) >= count:
-                yield buffer_dict
-                buffer_dict = {}
-
-    if len(buffer_dict):
-        yield buffer_dict
-
-
-def unitdict_restrict_count(unit_dict: UnitsDict, total_count: int) -> UnitsDict:
-    if total_count == 0:
-        return {}
-
-    groups = list(unitdict_split(unit_dict, total_count))
-    if len(groups) > 0:
-        return groups[0]
-    else:
-        return {}
-
-
-def assigned_units_split(fd: AssignedUnitsDict) -> Tuple[PlaneDict, PlaneDict]:
-    return (
-        {k: v1 for k, (v1, v2) in fd.items()},
-        {k: v2 for k, (v1, v2) in fd.items()},
-    )
-
-
-def assigned_units_from(d: PlaneDict) -> AssignedUnitsDict:
-    return {k: (v, 0) for k, v in d.items()}
-
-
-def assignedunits_split_to_count(dict: AssignedUnitsDict, count: int):
-    buffer_dict: Dict[Type[UnitType], Tuple[int, int]] = {}
-    for unit_type, (unit_count, client_count) in dict.items():
-        for _ in range(unit_count):
-            new_count, new_client_count = buffer_dict.get(unit_type, (0, 0))
-
-            new_count += 1
-
-            if client_count > 0:
-                new_client_count += 1
-                client_count -= 1
-
-            buffer_dict[unit_type] = new_count, new_client_count
-            if new_count >= count:
-                yield buffer_dict
-                buffer_dict = {}
-
-    if len(buffer_dict):
-        yield buffer_dict
-
-
-def unitdict_from(fd: AssignedUnitsDict) -> Dict:
-    return {k: v1 for k, (v1, v2) in fd.items()}
-
-
 def country_id_from_name(name):
     for k, v in country_dict.items():
         if v.name == name:
             return k
     return -1
-
-
-def _validate_db():
-    # check unit by task uniquity
-    total_set = set()
-    for t, unit_collection in UNIT_BY_TASK.items():
-        for unit_type in set(unit_collection):
-            assert unit_type not in total_set, "{} is duplicate for task {}".format(
-                unit_type, t
-            )
-            total_set.add(unit_type)
-
-    # check prices
-    for unit_type in total_set:
-        assert unit_type in PRICES, "{} not in prices".format(unit_type)
-
-
-_validate_db()
 
 
 class DefaultLiveries:

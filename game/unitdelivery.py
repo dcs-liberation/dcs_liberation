@@ -104,11 +104,11 @@ class PendingUnitDeliveries:
                 game.message(f"{coalition} sold: {name} x {-count} at {source}")
 
         self.units = defaultdict(int)
-        self.destination.base.commision_units(bought_units)
+        self.destination.base.commission_units(bought_units)
         self.destination.base.commit_losses(sold_units)
 
         if units_needing_transfer:
-            ground_unit_source.base.commision_units(units_needing_transfer)
+            ground_unit_source.base.commission_units(units_needing_transfer)
             self.create_transfer(game, ground_unit_source, units_needing_transfer)
 
     def create_transfer(
