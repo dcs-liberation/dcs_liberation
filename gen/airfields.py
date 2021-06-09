@@ -674,7 +674,7 @@ AIRFIELD_DATA = {
         vor=("DAN", MHz(108, 400)),
         atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(122, 100), MHz(360, 100)),
         ils={
-            "50": ("IDAN", MHz(109, 300)),
+            "05": ("IDAN", MHz(109, 300)),
             "23": ("DANM", MHz(111, 700)),
         },
     ),
