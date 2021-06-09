@@ -399,6 +399,7 @@ class Operation:
     @classmethod
     def _generate_ground_conflicts(cls) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""
+        cls.jtacs = []
         for front_line in cls.game.theater.conflicts():
             player_cp = front_line.blue_cp
             enemy_cp = front_line.red_cp
