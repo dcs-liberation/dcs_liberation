@@ -103,6 +103,7 @@ from dcs.unittype import FlyingType
 from gen.flights.flight import FlightType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
+from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
@@ -134,6 +135,7 @@ CAP_CAPABLE = [
     FA_18C_hornet,
     F_16A,
     F_4E,
+    JAS39Gripen,
     JF_17,
     MiG_23MLD,
     MiG_21Bis,
@@ -174,6 +176,7 @@ CAS_CAPABLE = [
     FA_18C_hornet,
     Tornado_GR4,
     Tornado_IDS,
+    JAS39Gripen_AG,
     JF_17,
     AV8BNA,
     A_10A,
@@ -242,6 +245,7 @@ SEAD_CAPABLE = [
     A_4E_C,
     F_14B,
     F_14A_135_GR,
+    JAS39Gripen_AG,
     AV8BNA,
     Su_24M,
     Su_17M4,
@@ -257,6 +261,7 @@ DEAD_CAPABLE = [
     AJS37,
     F_14B,
     F_14A_135_GR,
+    JAS39Gripen_AG,
     B_1B,
     B_52H,
     Tu_160,
@@ -292,6 +297,7 @@ STRIKE_CAPABLE = [
     F_16A,
     F_14B,
     F_14A_135_GR,
+    JAS39Gripen_AG,
     Tornado_IDS,
     Su_17M4,
     Su_24MR,
@@ -342,6 +348,7 @@ ANTISHIP_CAPABLE = [
     AJS37,
     Tu_22M3,
     FA_18C_hornet,
+    JAS39Gripen_AG,
     Su_24M,
     Su_17M4,
     JF_17,
