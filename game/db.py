@@ -164,6 +164,7 @@ from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
+from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
 
@@ -174,6 +175,8 @@ plane_map["F-22A"] = F_22A
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Su-57"] = Su_57
 plane_map["Hercules"] = Hercules
+plane_map["JAS39Gripen"] = JAS39Gripen
+plane_map["JAS39Gripen_AG"] = JAS39Gripen_AG
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
@@ -405,6 +408,7 @@ PRICES = {
     F_22A: 40,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
+    JAS39Gripen: 26,
     # bomber
     Su_17M4: 10,
     Su_25: 15,
@@ -418,6 +422,7 @@ PRICES = {
     A_10C: 22,
     A_10C_2: 24,
     S_3B: 10,
+    JAS39Gripen_AG: 26,
     # heli
     Ka_50: 13,
     SA342M: 8,

@@ -350,6 +350,24 @@
             "year-of-variant-introduction": "1998"
         }
     }],
+    "JAS39Gripen": [{
+        "default": {
+            "name": "JAS 39 Gripen",
+            "country-of-origin": "Sweden",
+            "manufacturer": "Saab AB",
+            "role": "Fighter",
+            "year-of-variant-introduction": "2002"
+        }
+    }],
+    "JAS39Gripen_AG": [{
+        "default": {
+            "name": "JAS 39 Gripen A/G",
+            "country-of-origin": "Sweden",
+            "manufacturer": "Saab AB",
+            "role": "Attack",
+            "year-of-variant-introduction": "2002"
+        }
+    }],
     "JF-17": [{
         "default": {
             "name": "JF-17 Thunder",
