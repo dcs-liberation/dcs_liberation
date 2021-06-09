@@ -574,6 +574,12 @@ PRICES = {
     Armor.Car_Daimler_Armored: 8,
     Armor.LT_Mk_VII_Tetrarch: 8,
     Unarmed.Tractor_M4_Hi_Speed: 2,
+    Unarmed.Carrier_Sd_Kfz_7_Tractor: 1,
+    Unarmed.LUV_Kettenrad: 1,
+    Unarmed.LUV_Kubelwagen_82: 1,
+    Unarmed.Truck_Opel_Blitz: 1,
+    Unarmed.Truck_Bedford: 1,
+    Unarmed.Truck_GMC_Jimmy_6x6_Truck: 1,
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
