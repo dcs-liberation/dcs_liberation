@@ -12,6 +12,7 @@
     "A-10C": [{
         "default": {
             "name": "A-10C Thunderbolt II (Suite 3)",
+            "text": "The A-10C Thunderbolt II, also known as the Warthog, is a 'flying gun'. The A-10C is a high-survivability and versatile aircraft, popular with pilots for the 'get home' effectiveness.The mission of the aircraft is ground attack against tanks, armored vehicles and installations, and close air support of ground forces. The Warthog is famous for its massive 30mm cannon, but it can also be armed with Maverick guided missiles and several types of bombs and rockets.",
             "country-of-origin": "USA",
             "manufacturer": "Fairchild Republic",
             "role": "Close Air Support/Attack",
@@ -21,6 +22,7 @@
     "A-10C_2": [{
         "default": {
             "name": "A-10C Thunderbolt II (Suite 7)",
+            "text": "The A-10C Thunderbolt II, also known as the Warthog, is a 'flying gun'. The A-10C is a high-survivability and versatile aircraft, popular with pilots for the 'get home' effectiveness.The mission of the aircraft is ground attack against tanks, armored vehicles and installations, and close air support of ground forces. The Warthog is famous for its massive 30mm cannon, but it can also be armed with Maverick guided missiles and several types of bombs and rockets.",
             "country-of-origin": "USA",
             "manufacturer": "Fairchild Republic",
             "role": "Close Air Support/Attack",
@@ -30,6 +32,7 @@
     "A-20G": [{
         "default": {
             "name": "A-20G Havoc",
+            "text": "The Douglas A-20 Havoc (company designation DB-7) is an American medium bomber, attack aircraft, night intruder, night fighter, and reconnaissance aircraft of World War II. Designed to meet an Army Air Corps requirement for a bomber, it was ordered by France for their air force before the USAAC decided it would also meet their requirements. French DB-7s were the first to see combat; after the fall of France the bomber, under the service name Boston continued with the Royal Air Force. From 1941, night fighter and intruder versions were given the service name Havoc. In 1942 USAAF A-20s saw combat in North Africa.",
             "country-of-origin": "USA",
             "manufacturer": "Douglas",
             "role": "Medium Bomber/Attack",
@@ -42,6 +45,7 @@
     "A-4E-C": [{
         "default": {
             "name": "A-4E Skyhawk",
+            "text": "The Skyhawk is a relatively lightweight aircraft, with a maximum takeoff weight of 24,500 pounds (11,100 kg), and has a top speed of 670 miles per hour (1,080 km/h). The aircraft's five hardpoints support a variety of missiles, bombs, and other munitions. Skyhawks played key roles in the Vietnam War, the Yom Kippur War, and the Falklands War. Sixty years after the aircraft's first flight in 1954, some of the 2,960 produced (through February 1979)[1] remain in service with the Argentine Air Force and the Brazilian Naval Aviation.",
             "country-of-origin": "USA",
             "manufacturer": "Douglas",
             "role": "Carrier-based Attack/Light Fighter",
@@ -51,6 +55,7 @@
     "AH_1W": [{
         "default": {
             "name": "AH-1W SuperCobra",
+            "text": "The AH-1 Cobra was developed in the mid-1960s as an interim gunship for the U.S. Army for use during the Vietnam War. The Cobra shared the proven transmission, rotor system, and the T53 turboshaft engine of the UH-1 'Huey'. By June 1967, the first AH-1G HueyCobras had been delivered. Bell built 1,116 AH-1Gs for the U.S. Army between 1967 and 1973, and the Cobras chalked up over a million operational hours in Vietnam.",
             "country-of-origin": "USA",
             "manufacturer": "Bell",
             "role": "Attack",
@@ -63,6 +68,7 @@
     "AH-64A": [{
         "default": {
             "name": "AH-64A Apache",
+            "text": "The legendary 'Apache' is an US twin-turboshaft attack helicopter for a crew of two. It features a nose-mounted sensor suite for target acquisition and night vision systems. It is armed with a 30 mm (1.18 in) M230 chain gun carried between the main landing gear, under the aircraft's forward fuselage, and four hardpoints mounted on stub-wing pylons for carrying armament and stores, typically a mixture of AGM-114 Hellfire missiles and Hydra 70 rocket pods. The AH-64 has significant systems redundancy to improve combat survivability. American AH-64s have served in conflicts in Panama, the Persian Gulf, Kosovo, Afghanistan, and Iraq. Israel used the Apache in its military conflicts in Lebanon and the Gaza Strip. British and Dutch Apaches have seen deployments in wars in Afghanistan and Iraq.",
             "country-of-origin": "USA",
             "manufacturer": "Boeing",
             "role": "Attack",
@@ -72,6 +78,7 @@
     "AH-64D": [{
         "default": {
             "name": "AH-64D Apache Longbow",
+            "text": "The legendary 'Apache' is an US twin-turboshaft attack helicopter for a crew of two. It features a nose-mounted sensor suite for target acquisition and night vision systems. It is armed with a 30 mm (1.18 in) M230 chain gun carried between the main landing gear, under the aircraft's forward fuselage, and four hardpoints mounted on stub-wing pylons for carrying armament and stores, typically a mixture of AGM-114 Hellfire missiles and Hydra 70 rocket pods. The AH-64 has significant systems redundancy to improve combat survivability. American AH-64s have served in conflicts in Panama, the Persian Gulf, Kosovo, Afghanistan, and Iraq. Israel used the Apache in its military conflicts in Lebanon and the Gaza Strip. British and Dutch Apaches have seen deployments in wars in Afghanistan and Iraq.",
             "country-of-origin": "USA",
             "manufacturer": "Boeing",
             "role": "Attack",
@@ -101,6 +108,7 @@
     "B-1B": [{
         "default": {
             "name": "B-1B Lancer",
+            "text": "The Rockwell B-1 Lancer is a supersonic variable-sweep wing, heavy bomber used by the United States Air Force. It is commonly called the 'Bone' (from 'B-One').It is one of three strategic bombers in the U.S. Air Force fleet as of 2021, the other two being the B-2 Spirit and the B-52 Stratofortress. It first served in combat during Operation Desert Fox in 1998 and again during the NATO action in Kosovo the following year. The B-1B has supported U.S. and NATO military forces in Afghanistan and Iraq. The Air Force had 62 B-1Bs in service as of 2016. The Northrop Grumman B-21 Raider is to begin replacing the B-1B after 2025; all B-1s are planned to be retired by 2036.",
             "country-of-origin": "USA",
             "manufacturer": "Rockwell",
             "role": "Supersonic Strategic Bomber",
@@ -110,6 +118,7 @@
     "B-17G": [{
         "default": {
             "name": "B-17G Flying Fortress",
+            "text": "The B-17 was primarily employed by the USAAF in the daylight strategic bombing campaign of World War II against German industrial, military and civilian targets. The United States Eighth Air Force, based at many airfields in central, eastern and southern England, and the Fifteenth Air Force, based in Italy, complemented the RAF Bomber Command's night-time area bombing in the Combined Bomber Offensive to help secure air superiority over the cities, factories and battlefields of Western Europe in preparation for the invasion of France in 1944.it was a relatively fast, high-flying, long-range bomber with heavy defensive armament at the expense of bombload. It developed a reputation for toughness based upon stories and photos of badly damaged B-17s safely returning to base. The B-17 dropped more bombs than any other U.S. aircraft in World War II. Of approximately 1.5 million tons of bombs dropped on Nazi Germany and its occupied territories by U.S. aircraft, over 640,000 tons were dropped from B-17s.",
             "country-of-origin": "USA",
             "manufacturer": "Boeing",
             "role": "Heavy Bomber",
@@ -122,6 +131,7 @@
     "B-52H": [{
         "default": {
             "name": "B-52H Stratofortress",
+            "text": "The Boeing B-52 Stratofortress is capable of carrying up to 70,000 pounds (32,000 kg) of weapons, and has a typical combat range of more than 8,800 miles (14,080 km) without aerial refueling. The B-52 completed sixty years of continuous service with its original operator in 2015. After being upgraded between 2013 and 2015, the last airplanes are expected to serve into the 2050s.",
             "country-of-origin": "USA",
             "manufacturer": "Boeing",
             "role": "Strategic Bomber",
@@ -131,6 +141,7 @@
     "Bf-109K-4": [{
         "default": {
             "name": "Bf 109 K-4 Kurfürst",
+            "text": "The BF 109 series was, along with the Focke-Wulf Fw 190, the backbone of the Luftwaffe's fighter force. The Bf 109 first saw operational service in 1937 during the Spanish Civil War and was still in service at the dawn of the jet age at the end of World War II in 1945. The final production version of the Bf 109 was the K series or Kurfürst, introduced in late 1944, powered by the DB 605D engine with up to 2,000 PS (1,973 HP). Though externally akin to the late production Bf 109G series, a large number of internal changes and aerodynamic improvements were incorporated that improved its effectiveness and remedied flaws, keeping it competitive with the latest Allied and Soviet fighters. The Bf 109's outstanding rate of climb was superior to many Allied adversaries including the P-51D Mustang, Spitfire Mk. XIV and Hawker Tempest Mk. V.",
             "manufacturer": "Messerschmitt",
             "role": "Fighter",
             "year-of-variant-introduction": "1944"
@@ -169,6 +180,7 @@
     "F-4E": [{
         "default": {
             "name": "F-4E Phantom II",
+            "text": "Proving highly adaptable, the F-4 entered service with the Navy in 1961 before it was adopted by the United States Marine Corps and the United States Air Force, and by the mid-1960s it had become a major part of their air arms. Phantom production ran from 1958 to 1981 with a total of 5,195 aircraft built, making it the most produced American supersonic military aircraft in history, and cementing its position as an iconic combat aircraft of the Cold War. The F-4 was used extensively during the Vietnam War. It served as the principal air superiority fighter for the U.S. Air Force, Navy, and Marine Corps and became important in the ground-attack and aerial reconnaissance roles late in the war.",
             "country-of-origin": "USA",
             "manufacturer": "McDonnell Douglas",
             "role": "Fighter-Bomber",
@@ -230,6 +242,7 @@
     "F-15E": [{
         "default": {
             "name": "F-15E Strike Eagle",
+            "text": "The F-15 has often been labeled as the greatest U.S. fighter aircraft from the 1970s until the early 21st century. The F-15E is a multirole fighter and exceeds in CAS operations. It served worldwide without suffering any confirmed losses.",
             "country-of-origin": "USA",
             "manufacturer": "McDonnell Douglas",
             "role": "Multirole Strike Fighter",
@@ -252,6 +265,7 @@
     "F-22A":[{
         "default": {
             "name": "F-22A Raptor",
+            "text": "The F-22A is an American single-seat, twin-engine, all-weather stealth tactical fighter aircraft developed exclusively for the United States Air Force (USAF). The result of the USAF's Advanced Tactical Fighter (ATF) program, the aircraft was designed primarily as an air superiority fighter, but also has ground attack, electronic warfare, and signal intelligence capabilities. Currently it is viewed as the most advanced fighter in the world.",
             "country-of-origin": "USA",
             "manufacturer": "Lockheed Martin",
             "role": "Stealth Air-Superiority Fighter",
@@ -271,6 +285,7 @@
     "F-111F": [{
         "default": {
             "name": "F-111F Aardvark",
+            "text": "The General Dynamics F-111 Aardvark is a retired American supersonic, medium-range interdictor and tactical attack aircraft that also filled the roles of strategic nuclear bomber, aerial reconnaissance, and electronic-warfare aircraft in its various versions. The word 'aardvark' is Afrikaans for 'earth pig' and reflects the look of the long nose of the aircraft that might remind one of the nose of the aardvark.",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Fighter-Bomber",
@@ -280,6 +295,7 @@
     "F-117A": [{
         "default": {
             "name": "F-117A Nighthawk",
+            "text": "The Lockheed F-117 Nighthawk is a semi-retired American single-seat, twin-engine stealth attack aircraft that was developed by Lockheed's secretive Skunk Works division and operated by the United States Air Force (USAF). It was the first operational aircraft to be designed around stealth technology. The F-117 was widely publicized for its role in the Persian Gulf War of 1991. Although it was commonly referred to as the 'Stealth Fighter', it was strictly a ground-attack aircraft. F-117s took part in the conflict in Yugoslavia, where one was shot down and another damaged by surface-to-air missiles (SAM) in 1999. The U.S. Air Force retired the F-117 in April 2008, primarily due to the fielding of the F-22 Raptor. Despite the type's retirement, a portion of the fleet has been kept in airworthy condition, and Nighthawks have been observed flying in 2020.",
             "country-of-origin": "USA",
             "manufacturer": "Lockheed",
             "role": "Stealth Attack",
@@ -325,6 +341,7 @@
     "Hercules": [{
         "default": {
             "name": "C-130J-30 Super Hercules",
+            "text": "The Lockheed Martin C-130J Super Hercules is a four-engine turboprop military transport aircraft. The C-130J is a comprehensive update of the Lockheed C-130 Hercules, with new engines, flight deck, and other systems. As of February 2018, 400 C-130J aircraft have been delivered to 17 nations.",
             "country-of-origin": "USA",
             "manufacturer": "Lockheed",
             "role": "Transport",
@@ -344,10 +361,31 @@
     "J-11A": [{
         "default": {
             "name": "J-11A Flanker-L",
+            "text": "The Shenyang J-11 (NATO reporting name Flanker-L) is a twin-engine jet fighter whose airframe is based on the Soviet-designed Sukhoi Su-27. It is manufactured by the Shenyang Aircraft Corporation (SAC). The aircraft is operated by the People's Liberation Army Air Force (PLAAF) and the People's Liberation Army Naval Air Force (PLANAF).",
             "country-of-origin": "China",
             "manufacturer": "Shenyang",
             "role": "Air-Superiority Fighter",
             "year-of-variant-introduction": "1998"
+        }
+    }],
+    "JAS39Gripen": [{
+        "default": {
+            "name": "JAS 39 Gripen",
+            "text": "The Saab JAS 39 Gripen is a light single-engine multirole fighter aircraft manufactured by the Swedish aerospace company Saab AB. The Gripen has a delta wing and canard configuration with relaxed stability design and fly-by-wire flight controls. Various versions have been built, grouped as A-, C- and E-series. This is the AA Version, since the Mod for this aircraft splitted it in an AA and AG Version.",
+            "country-of-origin": "Sweden",
+            "manufacturer": "Saab AB",
+            "role": "Fighter",
+            "year-of-variant-introduction": "2002"
+        }
+    }],
+    "JAS39Gripen_AG": [{
+        "default": {
+            "name": "JAS 39 Gripen A/G",
+            "text": "The Saab JAS 39 Gripen is a light single-engine multirole fighter aircraft manufactured by the Swedish aerospace company Saab AB. The Gripen has a delta wing and canard configuration with relaxed stability design and fly-by-wire flight controls. Various versions have been built, grouped as A-, C- and E-series. This is the AG Version, since the Mod for this aircraft splitted it in an AA and AG Version.",
+            "country-of-origin": "Sweden",
+            "manufacturer": "Saab AB",
+            "role": "Attack",
+            "year-of-variant-introduction": "2002"
         }
     }],
     "JF-17": [{
@@ -367,6 +405,7 @@
     "Ju-88A4": [{
         "default": {
             "name": "Ju 88 A-4",
+            "text": "The Junkers Ju 88 is a German World War II Luftwaffe twin-engined multirole combat aircraft. Junkers Aircraft and Motor Works (JFM) designed the plane in the mid-1930s as a so-called Schnellbomber ('fast bomber') that would be too fast for fighters of its era to intercept. It suffered from technical problems during its development and early operational periods but became one of the most versatile combat aircraft of the war. Like a number of other Luftwaffe bombers, it served as a bomber, dive bomber, night fighter, torpedo bomber, reconnaissance aircraft, heavy fighter and at the end of the war, as a flying bomb. Despite a protracted development, it became one of the Luftwaffe's most important aircraft. The assembly line ran constantly from 1936 to 1945 and more than 15,000 Ju 88s were built in dozens of variants, more than any other twin-engine German aircraft of the period. Throughout production the basic structure of the aircraft remained unchanged.",
             "country-of-origin": "Germany",
             "manufacturer": "Junkers",
             "role": "Tactical/Torpedo Bomber",
@@ -446,6 +485,7 @@
     "MB-339PAN":[{
         "default": {
             "name": "MB-339PAN",
+            "text": "The Aermacchi MB-339 is a military jet trainer and light attack aircraft designed and manufactured by Italian aviation company Aermacchi.",
             "country-of-origin": "Italy",
             "manufacturer": "Aermacchi",
             "role": "Aerobatic",
@@ -455,6 +495,7 @@
     "Mirage 2000-5": [{
         "default": {
             "name": "Mirage 2000-5",
+            "text": "The Dassault Mirage 2000 is a French multirole, single-engined, fourth-generation jet fighter manufactured by Dassault Aviation. It was designed in the late 1970s as a lightweight fighter to replace the Mirage III for the French Air Force (Armée de l'air). The Mirage 2000 evolved into a multirole aircraft with several variants developed, with sales to a number of nations. It was later developed into the Mirage 2000N and 2000D strike variants, the improved Mirage 2000-5, and several export variants. Over 600 aircraft were built and it has been in service with 9 nations.",
             "country-of-origin": "France",
             "manufacturer": "Dassault",
             "role": "Multirole Fighter",
@@ -464,6 +505,7 @@
     "Mi-24V": [{
         "default": {
             "name": "Mi-24V Hind-E",
+            "text": "The Mil Mi-24 (Russian: Миль Ми-24; NATO reporting name: Hind) is a large helicopter gunship, attack helicopter and low-capacity troop transport with room for eight passengers. It is produced by Mil Moscow Helicopter Plant and has been operated since 1972 by the Soviet Air Force and its successors, along with 48 other nations. Soviet pilots called the Mi-24 the 'flying tank' (Russian: летающий танк, romanized: letayushchiy tank), a term used historically with the famous World War II Soviet Il-2 Shturmovik armored ground attack aircraft. More common unofficial nicknames were 'Galina' (or 'Galya'), 'Crocodile' (Russian: Крокодил, romanized: Krokodil), due to the helicopter's camouflage scheme, and 'Drinking Glass' (Russian: Стакан, romanized: Stakan), because of the flat glass plates that surround earlier Mi-24 variants' cockpits. It served to a great success in the Afghanistan war, until the Taliban where equiped with Stinger Misseles from the CIA.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Mil",
             "role": "Attack/Transport",
@@ -473,6 +515,7 @@
     "Mi-28N": [{
         "default": {
             "name": "Mi-28N Havoc",
+            "text": "The Mil Mi-28 (NATO reporting name 'Havoc') is a Russian all-weather, day-night, military tandem, two-seat anti-armor attack helicopter. It is an attack helicopter with no intended secondary transport capability, better optimized than the Mil Mi-24 gunship for the role. It carries a single gun in an undernose barbette, plus external loads carried on pylons beneath stub wings.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Mil",
             "role": "Attack",
@@ -534,6 +577,7 @@
     "MiG-23MLD": [{
         "default": {
             "name": "MiG-23MLD Flogger-K",
+            "text": "The Mikoyan-Gurevich MiG-23 (Russian: Микоян и Гуревич МиГ-23; NATO reporting name: Flogger) is a variable-geometry fighter aircraft, designed by the Mikoyan-Gurevich design bureau in the Soviet Union. It is a third-generation jet fighter, the world's most-produced variable-geometry aircraft, along with similar Soviet aircraft such as the Su-17 'Fitter'. It was the first Soviet fighter to field a look-down/shoot-down radar, the RP-23 Sapfir, and one of the first to be armed with beyond-visual-range missiles. Production started in 1969 and reached large numbers with over 5,000 aircraft built, making it the most produced variable-sweep wing aircraft in history. Today the MiG-23 remains in limited service with some export customers.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Mikoyan-Gurevich",
             "role": "Fighter",
@@ -547,6 +591,7 @@
     "MiG-25PD": [{
         "default": {
             "name": "MiG-25PD Foxbat-E",
+            "text": "The Mikoyan-Gurevich MiG-25 (Russian: Микоян и Гуревич МиГ-25; NATO reporting name: Foxbat) is a supersonic interceptor and reconnaissance aircraft that was among the fastest military aircraft to enter service. It was designed by the Soviet Union's Mikoyan-Gurevich bureau and is one of the few combat aircraft built primarily using stainless steel. It was the last plane designed by Mikhail Gurevich before his retirement. The first prototype flew in 1964, and the aircraft entered service in 1970. The MiG-25 was theoretically capable of a maximum speed exceeding Mach 3 and a ceiling of 27 km (89,000 ft). Its high speed was problematic: although sufficient thrust was available to reach Mach 3.2, a limit of Mach 2.83 had to be imposed as the engines tended to overspeed and overheat at higher air speeds, possibly damaging them beyond repair. The MiG-25 features powerful radar and four air-to-air missiles. When first seen in reconnaissance photography, the large wings suggested an enormous and highly maneuverable fighter, at a time when U.S. design theories were also evolving towards higher maneuverability due to combat performance in the Vietnam War. The appearance of the MiG-25 sparked serious concern in the West and prompted dramatic increases in performance for the McDonnell Douglas F-15 Eagle, then under development in the late 1960s. The capabilities of the MiG-25 were better understood by the west in 1976 when Soviet pilot Viktor Belenko defected in a MiG-25 to the United States via Japan. It turned out that the aircraft's weight necessitated its large wings.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Mikoyan-Gurevich",
             "role": "Interceptor",
@@ -556,6 +601,7 @@
     "MiG-25RBT": [{
         "default": {
             "name": "MiG-25RBT Foxbat-B",
+            "text": "The Mikoyan-Gurevich MiG-25 (Russian: Микоян и Гуревич МиГ-25; NATO reporting name: Foxbat) is a supersonic interceptor and reconnaissance aircraft that was among the fastest military aircraft to enter service. It was designed by the Soviet Union's Mikoyan-Gurevich bureau and is one of the few combat aircraft built primarily using stainless steel. It was the last plane designed by Mikhail Gurevich before his retirement. The first prototype flew in 1964, and the aircraft entered service in 1970. The MiG-25 was theoretically capable of a maximum speed exceeding Mach 3 and a ceiling of 27 km (89,000 ft). Its high speed was problematic: although sufficient thrust was available to reach Mach 3.2, a limit of Mach 2.83 had to be imposed as the engines tended to overspeed and overheat at higher air speeds, possibly damaging them beyond repair. The MiG-25 features powerful radar and four air-to-air missiles. When first seen in reconnaissance photography, the large wings suggested an enormous and highly maneuverable fighter, at a time when U.S. design theories were also evolving towards higher maneuverability due to combat performance in the Vietnam War. The appearance of the MiG-25 sparked serious concern in the West and prompted dramatic increases in performance for the McDonnell Douglas F-15 Eagle, then under development in the late 1960s. The capabilities of the MiG-25 were better understood by the west in 1976 when Soviet pilot Viktor Belenko defected in a MiG-25 to the United States via Japan. It turned out that the aircraft's weight necessitated its large wings.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Mikoyan-Gurevich",
             "role": "Strike Fighter",
@@ -565,6 +611,7 @@
     "MiG-27K": [{
         "default": {
             "name": "MiG-27K Flogger-J2",
+            "text": "The Mikoyan MiG-27 (Russian: Микоян МиГ-27; NATO reporting name: Flogger-D/J) is a variable-sweep ground-attack aircraft, originally built by the Mikoyan-Gurevich design bureau in the Soviet Union and later licence-produced in India by Hindustan Aeronautics as the Bahadur ('Valiant'). It is based on the Mikoyan-Gurevich MiG-23 fighter aircraft, but optimised for air-to-ground attack. Unlike the MiG-23, the MiG-27 did not have widespread use outside Russia, as most countries opted for the Mikoyan-Gurevich MiG-23BN and Sukhoi Su-22 instead. It remains in service only with the Kazakh Air Forces in the ground attack role. All Russian, Indian and Ukrainian MiG-27s have been retired.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Mikoyan",
             "role": "Attack",
@@ -604,6 +651,7 @@
     "MiG-31": [{
         "default": {
             "name": "MiG-31 Foxhound",
+            "text": "The Mikoyan MiG-31 (Russian: Микоян МиГ-31; NATO reporting name: Foxhound) is a supersonic interceptor aircraft that was developed for use by the Soviet Air Forces. The aircraft was designed by the Mikoyan design bureau as a replacement for the earlier MiG-25 \"Foxbat\"; the MiG-31 is based on and shares design elements with the MiG-25. The MiG-31 is among the fastest combat jets in the world. It continues to be operated by the Russian Air Force and the Kazakhstan Air Force following the end of the Cold War and the collapse of the Soviet Union in 1991. The Russian Defence Ministry expects the MiG-31 to remain in service until 2030 or beyond and was confirmed in 2020 when an announcement was made to extend the service lifetime from 2,500 to 3,500 hours on the existing airframes.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Mikoyan",
             "role": "Interceptor",
@@ -613,6 +661,7 @@
     "OH-58D": [{
         "default": {
             "name": "OH-58D Kiowa Warrior",
+            "text": "The Bell OH-58 Kiowa is a family of single-engine, single-rotor, military helicopters used for observation, utility, and direct fire support. Bell Helicopter manufactured the OH-58 for the United States Army based on its Model 206A JetRanger helicopter. The OH-58 was in continuous U.S. Army service from 1969 to 2017, when it was replaced in these roles by the Boeing AH-64 Apache and Eurocopter UH-72 Lakota. The latest model, the OH-58D Kiowa Warrior, is primarily operated in an armed reconnaissance role in support of ground troops. The OH-58 has been exported to Austria, Canada, Croatia, the Dominican Republic, Taiwan, Saudi Arabia, and Greece. It has also been produced under license in Australia.",
             "country-of-origin": "USA",
             "manufacturer": "Bell",
             "role": "Light Attack/Forward Air Control",
@@ -661,6 +710,7 @@
     "P-51D": [{
         "default": {
             "name": "P-51D-25-NA Mustang",
+            "text": "The North American Aviation P-51 Mustang is an American long-range, single-seat fighter and fighter-bomber used during World War II and the Korean War, among other conflicts. From late 1943, P-51Bs and P-51Cs (supplemented by P-51Ds from mid-1944) were used by the USAAF's Eighth Air Force to escort bombers in raids over Germany, while the RAF's Second Tactical Air Force and the USAAF's Ninth Air Force used the Merlin-powered Mustangs as fighter-bombers, roles in which the Mustang helped ensure Allied air superiority in 1944. The P-51 was also used by Allied air forces in the North African, Mediterranean, Italian, and Pacific theaters. During World War II, Mustang pilots claimed to have destroyed 4,950 enemy aircraft. At the start of the Korean War, the Mustang, by then redesignated F-51, was the main fighter of the United States until jet fighters, including North American's F-86, took over this role; the Mustang then became a specialized fighter-bomber. Despite the advent of jet fighters, the Mustang remained in service with some air forces until the early 1980s. After the Korean War, Mustangs became popular civilian warbirds and air racing aircraft.",
             "country-of-origin": "USA",
             "manufacturer": "North American",
             "role": "Fighter",
@@ -673,6 +723,7 @@
     "P-51D-30-NA": [{
         "default": {
             "name": "P-51D-30-NA Mustang",
+            "text": "The North American Aviation P-51 Mustang is an American long-range, single-seat fighter and fighter-bomber used during World War II and the Korean War, among other conflicts. From late 1943, P-51Bs and P-51Cs (supplemented by P-51Ds from mid-1944) were used by the USAAF's Eighth Air Force to escort bombers in raids over Germany, while the RAF's Second Tactical Air Force and the USAAF's Ninth Air Force used the Merlin-powered Mustangs as fighter-bombers, roles in which the Mustang helped ensure Allied air superiority in 1944. The P-51 was also used by Allied air forces in the North African, Mediterranean, Italian, and Pacific theaters. During World War II, Mustang pilots claimed to have destroyed 4,950 enemy aircraft. At the start of the Korean War, the Mustang, by then redesignated F-51, was the main fighter of the United States until jet fighters, including North American's F-86, took over this role; the Mustang then became a specialized fighter-bomber. Despite the advent of jet fighters, the Mustang remained in service with some air forces until the early 1980s. After the Korean War, Mustangs became popular civilian warbirds and air racing aircraft.",
             "country-of-origin": "USA",
             "manufacturer": "North American",
             "role": "Fighter",
@@ -685,6 +736,7 @@
     "Rafale_A_S": [{
         "default": {
             "name": "Rafale M (Air-to-Ground)",
+            "text": "The Dassault Rafale (French pronunciation: ​[ʁafal], literally meaning \"gust of wind\", and \"burst of fire\" in a more military sense) is a French twin-engine, canard delta wing, multirole fighter aircraft designed and built by Dassault Aviation. Equipped with a wide range of weapons, the Rafale is intended to perform air supremacy, interdiction, aerial reconnaissance, ground support, in-depth strike, anti-ship strike and nuclear deterrence missions. The Rafale is referred to as an \"omnirole\" aircraft by Dassault. The Rafale has been used in combat over Afghanistan, Libya, Mali, Iraq and Syria.",
             "country-of-origin": "France",
             "manufacturer": "Dassault",
             "role": "Multirole Fighter",
@@ -694,6 +746,7 @@
     "Rafale_B": [{
         "default": {
             "name": "Rafale B",
+            "text": "The Dassault Rafale (French pronunciation: ​[ʁafal], literally meaning \"gust of wind\", and \"burst of fire\" in a more military sense) is a French twin-engine, canard delta wing, multirole fighter aircraft designed and built by Dassault Aviation. Equipped with a wide range of weapons, the Rafale is intended to perform air supremacy, interdiction, aerial reconnaissance, ground support, in-depth strike, anti-ship strike and nuclear deterrence missions. The Rafale is referred to as an \"omnirole\" aircraft by Dassault. The Rafale has been used in combat over Afghanistan, Libya, Mali, Iraq and Syria.",
             "country-of-origin": "France",
             "manufacturer": "Dassault",
             "role": "Carrier-based Multirole Fighter",
@@ -703,6 +756,7 @@
     "Rafale_M": [{
         "default": {
             "name": "Rafale M (Air-to-Air)",
+            "text": "The Dassault Rafale (French pronunciation: ​[ʁafal], literally meaning \"gust of wind\", and \"burst of fire\" in a more military sense) is a French twin-engine, canard delta wing, multirole fighter aircraft designed and built by Dassault Aviation. Equipped with a wide range of weapons, the Rafale is intended to perform air supremacy, interdiction, aerial reconnaissance, ground support, in-depth strike, anti-ship strike and nuclear deterrence missions. The Rafale is referred to as an \"omnirole\" aircraft by Dassault. The Rafale has been used in combat over Afghanistan, Libya, Mali, Iraq and Syria.",
             "country-of-origin": "France",
             "manufacturer": "Dassault",
             "role": "Multirole Fighter",
@@ -712,6 +766,7 @@
     "S-3B": [{
         "default": {
             "name": "S-3B Viking",
+            "text": "The Lockheed S-3 Viking is a 4-crew, twin-engine turbofan-powered jet aircraft that was used by the U.S. Navy (USN) primarily for anti-submarine warfare. In the late 1990s, the S-3B's mission focus shifted to surface warfare and aerial refueling. The Viking also provided electronic warfare and surface surveillance capabilities to a carrier battle group. A carrier-based, subsonic, all-weather, long-range, multi-mission aircraft, it carried automated weapon systems and was capable of extended missions with in-flight refueling. Because of its characteristic sound, it was nicknamed the \"War Hoover\" after the vacuum cleaner brand. The S-3 was phased out from front-line fleet service aboard aircraft carriers in January 2009, with its missions taken over by aircraft like the P-3C Orion, P-8 Poseidon, Sikorsky SH-60 Seahawk and Boeing F/A-18E/F Super Hornet",
             "country-of-origin": "USA",
             "manufacturer": "Lockheed",
             "role": "Carrier-based Attack",
@@ -721,6 +776,7 @@
     "S-3B Tanker": [{
             "default": {
             "name": "S-3B Tanker",
+            "text": "The Lockheed S-3 Viking is a 4-crew, twin-engine turbofan-powered jet aircraft that was used by the U.S. Navy (USN) primarily for anti-submarine warfare. In the late 1990s, the S-3B's mission focus shifted to surface warfare and aerial refueling. The Viking also provided electronic warfare and surface surveillance capabilities to a carrier battle group. A carrier-based, subsonic, all-weather, long-range, multi-mission aircraft, it carried automated weapon systems and was capable of extended missions with in-flight refueling. Because of its characteristic sound, it was nicknamed the \"War Hoover\" after the vacuum cleaner brand. The S-3 was phased out from front-line fleet service aboard aircraft carriers in January 2009, with its missions taken over by aircraft like the P-3C Orion, P-8 Poseidon, Sikorsky SH-60 Seahawk and Boeing F/A-18E/F Super Hornet",
             "country-of-origin": "USA",
             "manufacturer": "Lockheed",
             "role": "Carrier-based Tanker",
@@ -765,6 +821,7 @@
     "SH-60B": [{
         "default": {
             "name": "SH-60B Seahawk",
+            "text": "The Sikorsky SH-60/MH-60 Seahawk (or Sea Hawk) is a twin turboshaft engine, multi-mission United States Navy helicopter based on the United States Army UH-60 Black Hawk and a member of the Sikorsky S-70 family. The most significant modifications are the folding main rotor and a hinged tail to reduce its footprint aboard ships. The U.S. Navy uses the H-60 airframe under the model designations SH-60B, SH-60F, HH-60H, MH-60R, and MH-60S. Able to deploy aboard any air-capable frigate, destroyer, cruiser, fast combat support ship, amphibious assault ship, Littoral combat ship or aircraft carrier, the Seahawk can handle anti-submarine warfare (ASW), anti-surface warfare (ASUW), naval special warfare (NSW) insertion, search and rescue (SAR), combat search and rescue (CSAR), vertical replenishment (VERTREP), and medical evacuation (MEDEVAC).",
             "country-of-origin": "USA",
             "manufacturer": "Sikorsky",
             "role": "Transport/Anti-Ship",
@@ -794,6 +851,7 @@
     "Su-17M4": [{
         "default": {
             "name": "Su-17M4 Fitter-K",
+            "text": "The Sukhoi Su-17 (izdeliye S-32) is a variable-sweep wing fighter-bomber developed for the Soviet military. Its NATO reporting name is \"Fitter\". Developed from the Sukhoi Su-7, the Su-17 was the first variable-sweep wing aircraft to enter Soviet service. Two subsequent Sukhoi aircraft, the Su-20 and Su-22, have usually been regarded as variants of the Su-17. The Su-17 has had a long career and has been operated by many other air forces of including the Russian Federation, other former Soviet republics, the former Warsaw Pact, countries in the Arab world, Angola and Peru.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Sukhoi",
             "role": "Fighter-Bomber",
@@ -815,6 +873,7 @@
     "Su-24M": [{
         "default": {
             "name": "Su-24M Fencer-D",
+            "text": "The Sukhoi Su-24 (NATO reporting name: Fencer) is a supersonic, all-weather attack aircraft developed in the Soviet Union. The aircraft has a variable-sweep wing, twin-engines and a side-by-side seating arrangement for its crew of two. It was the first of the USSR's aircraft to carry an integrated digital navigation/attack system. It remains in service with the Russian Air Force, Syrian Air Force, Ukrainian Air Force, Azerbaijan Air Force , Iraqi Air Force and various air forces to which it was exported.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Sukhoi",
             "role": "Attack",
@@ -858,6 +917,7 @@
     "Su-30": [{
         "default": {
             "name": "Su-30 Flanker-C",
+            "text": "The Sukhoi Su-30 (Russian: Сухой Су-30; NATO reporting name: Flanker-C/G/H) is a twin-engine, two-seat supermaneuverable fighter aircraft developed in the Soviet Union by Russia's Sukhoi Aviation Corporation. It is a multirole fighter for all-weather, air-to-air and air-to-surface deep interdiction missions. 630 numbers have been build.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Sukhoi",
             "role": "Multirole Fighter",
@@ -891,6 +951,7 @@
     "Su-34": [{
         "default": {
             "name": "Su-34 Fullback",
+            "text": "The Sukhoi Su-34 (Russian: Сухой Су-34; NATO reporting name: Fullback) is a Soviet-origin Russian twin-engine, twin-seat, all-weather supersonic medium-range fighter-bomber/strike aircraft. It first flew in 1990, intended for the Soviet Air Forces, and it entered service in 2014 with the Russian Air Force. Based on the Sukhoi Su-27 Flanker air superiority fighter, the Su-34 has an armored cockpit for side-by-side seating of its two-person crew. The Su-34 is designed primarily for tactical deployment against ground and naval targets (tactical bombing/attack/interdiction roles, including against small and mobile targets) on solo and group missions in daytime and at night, under favourable and adverse weather conditions and in a hostile environment with counter-fire and electronic Warfare (EW) counter-measures deployed, as well as for aerial reconnaissance. The Su-34 will eventually replace the Su-24 tactical strike fighter and the Tu-22M3 long-distance bomber.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Sukhoi",
             "role": "Fighter-Bomber/Strike Fighter",
@@ -900,6 +961,7 @@
     "Su-57": [{
         "default": {
             "name": "Su-57 Felon",
+            "text": "The Sukhoi Su-57 (Russian: Сухой Су-57; NATO reporting name: Felon) is a single-seat, twin-engine stealth multirole fighter developed by Sukhoi for the Russian Aerospace Forces. According to Sukhoi, the multirole fighter is designed to have supercruise, supermaneuverability, stealth, and integrated avionics to overcome the previous generations fighter aircraft as well as ground and naval defences. The Su-57 is intended to succeed the MiG-29 and Su-27 in the Russian Air Force and entered service in December 2020.",
             "country-of-origin": "Russia",
             "manufacturer": "Sukhoi",
             "role": "Stealth Air-Superiority Fighter",
@@ -909,6 +971,7 @@
     "Tornado GR4": [{
         "default": {
             "name": "Tornado GR4",
+            "text": "The Panavia Tornado is a family of twin-engine, variable-sweep wing multirole combat aircraft, jointly developed and manufactured by Italy, the United Kingdom and West Germany. There are three primary Tornado variants: the Tornado IDS (interdictor/strike) fighter-bomber, the suppression of enemy air defences Tornado ECR (electronic combat/reconnaissance) and the Tornado ADV (air defence variant) interceptor aircraft.",
             "country-of-origin": "UK/Italy/West Germany",
             "manufacturer": "Panavia",
             "role": "Strike Fighter",
@@ -918,6 +981,7 @@
     "Tornado IDS": [{
         "default": {
             "name": "Tornado IDS",
+            "text": "The Panavia Tornado is a family of twin-engine, variable-sweep wing multirole combat aircraft, jointly developed and manufactured by Italy, the United Kingdom and West Germany. There are three primary Tornado variants: the Tornado IDS (interdictor/strike) fighter-bomber, the suppression of enemy air defences Tornado ECR (electronic combat/reconnaissance) and the Tornado ADV (air defence variant) interceptor aircraft.",
             "country-of-origin": "UK/Italy/West Germany",
             "manufacturer": "Panavia",
             "role": "Strike Fighter",
@@ -927,6 +991,7 @@
     "Tu-22M3": [{
         "default": {
             "name": "Tu-22M3 Backfire-C",
+            "text": "The Tupolev Tu-22M (Russian: Туполев Ту-22М; NATO reporting name: Backfire) is a supersonic, variable-sweep wing, long-range strategic and maritime strike bomber developed by the Tupolev Design Bureau in the 1960s. According to some sources, the bomber was believed to be designated Tu-26 at one time. During the Cold War, the Tu-22M was operated by the Soviet Air Forces (VVS) in a missile carrier strategic bombing role, and by the Soviet Naval Aviation (Aviacija Vojenno-Morskogo Flota, AVMF) in a long-range maritime anti-shipping role. Significant numbers remain in service with the Russian Air Force, and as of 2014 more than 100 Tu-22Ms are in use.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Tupolev",
             "role": "Strategic/Maritime Strike Bomber",
@@ -936,6 +1001,7 @@
     "Tu-95MS": [{
         "default": {
             "name": "Tu-95MS Bear-H",
+            "text": "The Tupolev Tu-95 (Russian: Туполев Ту-95; NATO reporting name: \"Bear\") is a large, four-engine turboprop-powered strategic bomber and missile platform. First flown in 1952, the Tu-95 entered service with the Long-Range Aviation of the Soviet Air Forces in 1956 and is expected to serve the Russian Aerospace Forces until at least 2040. A development of the bomber for maritime patrol is designated Tu-142, while a passenger airliner derivative was called Tu-114. The aircraft has four Kuznetsov NK-12 engines with contra-rotating propellers. It is the only propeller-powered strategic bomber still in operational use today. The Tu-95 is one of the loudest military aircraft, particularly because the tips of the propeller blades move faster than the speed of sound",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Tupolev",
             "role": "Strategic Bomber",
@@ -945,6 +1011,7 @@
     "Tu-142": [{
         "default": {
             "name": "Tu-142 Bear-F",
+            "text": "The Tupolev Tu-142 (Russian: Туполев Ту-142; NATO reporting name: Bear F/J) is a Soviet/Russian maritime reconnaissance and anti-submarine warfare (ASW) aircraft derived from the Tu-95 turboprop strategic bomber. A specialised communications variant designated Tu-142MR was tasked with long-range communications duties with Soviet ballistic missile submarines. The Tu-142 was designed by the Tupolev design bureau, and manufactured by the Kuibyshev Aviation and Taganrog Machinery Plants from 1968 to 1994. Formerly operated by the Soviet Navy and Ukrainian Air Force, the Tu-142 currently serves with the Russian Navy.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Tupolev",
             "role": "Maritime Patrol/Anti-Ship",
@@ -954,6 +1021,7 @@
     "Tu-160": [{
         "default": {
             "name": "Tu-160 Blackjack",
+            "text": "The Tupolev Tu-160 (Russian: Туполев Ту-160 Белый лебедь, romanized: Belyj Lebeď, lit. 'White Swan'; NATO reporting name: Blackjack) is a supersonic, variable-sweep wing heavy strategic bomber designed by the Tupolev Design Bureau in the Soviet Union in the 1970s. It is the largest and heaviest Mach 2+ supersonic military aircraft ever built and next to the experimental XB-70 Valkyrie in overall length. As of 2021, it is the largest and heaviest combat aircraft, the fastest bomber in use and the largest and heaviest variable-sweep wing airplane ever flown.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Tupolev",
             "role": "Supersonic Strategic Bomber",
@@ -976,6 +1044,7 @@
     "AAA 8,8cm Flak 18": [{
         "default": {
             "name": "8.8 cm Flak 18",
+            "text": "The 8.8 cm Flak 18/36/37/41 is a German 88 mm anti-aircraft and anti-tank artillery gun, developed in the 1930s. It was widely used by Germany throughout World War II and is one of the most recognized German weapons of that conflict. Development of the original model led to a wide variety of guns. Air defense units were usually deployed with either a Kommandogerät (\"command device\") fire control computer or a portable Würzburg radar, which were responsible for its high level of accuracy against aircraft. The versatile carriage allowed the 8.8 cm Flak to be fired in a limited anti-tank mode when still on its wheels; it could be completely emplaced in only two and a half minutes.",
             "country-of-origin": "Germany",
             "manufacturer": "Krupp/Rheinmetall",
             "role": "Anti-Aircraft Gun/Anti-Tank Gun",
@@ -985,6 +1054,7 @@
     "AAA 8,8cm Flak 36": [{
         "default": {
             "name": "8.8 cm Flak 36",
+            "text": "The 8.8 cm Flak 18/36/37/41 is a German 88 mm anti-aircraft and anti-tank artillery gun, developed in the 1930s. It was widely used by Germany throughout World War II and is one of the most recognized German weapons of that conflict. Development of the original model led to a wide variety of guns. Air defense units were usually deployed with either a Kommandogerät (\"command device\") fire control computer or a portable Würzburg radar, which were responsible for its high level of accuracy against aircraft. The versatile carriage allowed the 8.8 cm Flak to be fired in a limited anti-tank mode when still on its wheels; it could be completely emplaced in only two and a half minutes.",
             "country-of-origin": "Germany",
             "manufacturer": "Krupp/Rheinmetall",
             "role": "Anti-Aircraft Gun/Anti-Tank Gun",
@@ -994,6 +1064,7 @@
     "AAA 8,8cm Flak 37": [{
         "default": {
             "name": "8.8 cm Flak 37",
+            "text": "The 8.8 cm Flak 18/36/37/41 is a German 88 mm anti-aircraft and anti-tank artillery gun, developed in the 1930s. It was widely used by Germany throughout World War II and is one of the most recognized German weapons of that conflict. Development of the original model led to a wide variety of guns. Air defense units were usually deployed with either a Kommandogerät (\"command device\") fire control computer or a portable Würzburg radar, which were responsible for its high level of accuracy against aircraft. The versatile carriage allowed the 8.8 cm Flak to be fired in a limited anti-tank mode when still on its wheels; it could be completely emplaced in only two and a half minutes.",
             "country-of-origin": "Germany",
             "manufacturer": "Krupp/Rheinmetall",
             "role": "Anti-Aircraft Gun/Anti-Tank Gun",
@@ -1003,6 +1074,7 @@
     "AAA 8,8cm Flak 41": [{
         "default": {
             "name": "8.8 cm Flak 41",
+            "text": "The 8.8 cm Flak 18/36/37/41 is a German 88 mm anti-aircraft and anti-tank artillery gun, developed in the 1930s. It was widely used by Germany throughout World War II and is one of the most recognized German weapons of that conflict. Development of the original model led to a wide variety of guns. Air defense units were usually deployed with either a Kommandogerät (\"command device\") fire control computer or a portable Würzburg radar, which were responsible for its high level of accuracy against aircraft. The versatile carriage allowed the 8.8 cm Flak to be fired in a limited anti-tank mode when still on its wheels; it could be completely emplaced in only two and a half minutes.",
             "country-of-origin": "Germany",
             "manufacturer": "Krupp/Rheinmetall",
             "role": "Anti-Aircraft Gun/Anti-Tank Gun",
@@ -1012,6 +1084,7 @@
     "AAA Bofors 40mm": [{
         "default": {
             "name": "Bofors 40 mm Gun",
+            "text": "The Bofors 40 mm gun, often referred to simply as the Bofors gun, is an anti-aircraft autocannon designed in the 1930s by the Swedish arms manufacturer AB Bofors. It was one of the most popular medium-weight anti-aircraft systems during World War II, used by most of the western Allies as well as some captured systems being used by the Axis powers. A small number of these weapons remain in service to this day, and saw action as late as the Persian Gulf War.",
             "country-of-origin": "Sweden",
             "manufacturer": "Bofors",
             "role": "Anti-Aircraft Gun",
@@ -1025,6 +1098,7 @@
     "AAA Flak 38": [{
         "default": {
             "name": "2 cm Flak 38",
+            "text": "The Flak 30 (Flugzeugabwehrkanone 30) and improved Flak 38 were 20 mm anti-aircraft guns used by various German forces throughout World War II. It was not only the primary German light anti-aircraft gun, but by far the most numerously produced German artillery piece throughout the war. It was produced in a variety of models, notably the Flakvierling 38 which combined four Flak 38 autocannons onto a single carriage.",
             "country-of-origin": "Germany",
             "manufacturer": "Mauser",
             "role": "Anti-Aircraft Gun",
@@ -1034,6 +1108,7 @@
     "AAA Flak-Vierling 38": [{
         "default": {
             "name": "2 cm Flakvierling 38",
+            "text": "The Flak 30 (Flugzeugabwehrkanone 30) and improved Flak 38 were 20 mm anti-aircraft guns used by various German forces throughout World War II. It was not only the primary German light anti-aircraft gun, but by far the most numerously produced German artillery piece throughout the war. It was produced in a variety of models, notably the Flakvierling 38 which combined four Flak 38 autocannons onto a single carriage.",
             "country-of-origin": "Germany",
             "manufacturer": "Mauser",
             "role": "Anti-Aircraft Gun",
@@ -1043,6 +1118,7 @@
     "AAA M45 Quadmount": [{
         "default": {
             "name": "M45 Quadmount",
+            "text": "The M45 Quadmount (nicknamed the \"meat chopper\" and \"Krautmower\" for its high rate of fire) was a weapon mounting consisting of four of the \"HB\", or \"heavy barrel\" .50 caliber M2 Browning machine guns mounted in pairs on each side of an open, electrically powered turret. It was developed by the W. L. Maxson Corporation to replace the earlier M33 twin mount (also from Maxson). Although designed as an anti-aircraft weapon, it was also used against ground targets. Introduced in 1943 during World War II, it remained in US service as late as the Vietnam War.",
             "country-of-origin": "USA",
             "manufacturer": "W. L. Maxson Corporation",
             "role": "Anti-Aircraft Gun",
@@ -1052,6 +1128,7 @@
     "AAA M1 37mm": [{
         "default": {
             "name": "M1 37mm Gun",
+            "text": "The 37 mm gun M1 was an anti-aircraft autocannon developed in the United States. It was used by the US Army in World War II. In addition to the towed variant, the gun was mounted, with two M2 machine guns, on the M2/M3 half-track, resulting in the T28/T28E1/M15/M15A1 series of multiple gun motor carriages. In early World War II, each Army Anti-Aircraft Artillery (AAA) Auto-Weapons battalion was authorized a total of thirty-two 37 mm guns in its four firing batteries, plus other weapons.",
             "country-of-origin": "USA",
             "manufacturer": "Colt",
             "role": "Anti-Aircraft Gun",
@@ -1061,6 +1138,7 @@
     "AAA Vulcan M163": [{
         "default": {
             "name": "M163 Vulcan Air Defense System",
+            "text": "The M163 had a fairly limited range from the start. Its 20x102mm round gave it a low effective range of only 1,200 meters, and its standard air-defense load of HEI-T rounds would self-destruct at approximately 1800 meters, a hard limit on range. Additionally, the radar was a range-only set incapable of finding targets. In US and Israeli service, the VADS has rarely been needed in its intended purpose of providing defense against aerial threats—consequently, the Vulcan gun system was in use throughout the late 1980s and early 1990s primarily as a ground support weapon.",
             "country-of-origin": "USA",
             "manufacturer": "General Electric",
             "role": "Self-Propelled Anti-Aircraft Gun",
@@ -1070,6 +1148,7 @@
     "AAA ZSU-57-2": [{
         "default": {
             "name": "ZSU-57-2 'Sparka'",
+            "text": "The ZSU-57-2 Ob'yekt 500 is a Soviet self-propelled anti-aircraft gun (SPAAG), armed with two 57 mm autocannons. 'ZSU' stands for Zenitnaya Samokhodnaya Ustanovka (Russian: Зенитная Самоходная Установка), meaning \"anti-aircraft self-propelled mount\", '57' stands for the bore of the armament in millimetres and '2' stands for the number of gun barrels. It was the first Soviet mass-produced tracked SPAAG.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Omsk Works",
             "role": "Self-Propelled Anti-Aircraft Gun",
@@ -1079,6 +1158,7 @@
     "AAA ZU-23 on Ural-375": [{
         "default": {
             "name": "ZU-23 on Ural-375",
+            "text": "The ZSU-57-2 Ob'yekt 500 is a Soviet self-propelled anti-aircraft gun (SPAAG), armed with two 57 mm autocannons. 'ZSU' stands for Zenitnaya Samokhodnaya Ustanovka (Russian: Зенитная Самоходная Установка), meaning \"anti-aircraft self-propelled mount\", '57' stands for the bore of the armament in millimetres and '2' stands for the number of gun barrels. It was the first Soviet mass-produced tracked SPAAG.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "KBP/Ural",
             "role": "Self-Propelled Anti-Aircraft Gun",
@@ -1088,6 +1168,7 @@
     "AAA ZU-23 Insurgent on Ural-375": [{
         "default": {
             "name": "ZU-23 on Ural-375",
+            "text": "The ZSU-57-2 Ob'yekt 500 is a Soviet self-propelled anti-aircraft gun (SPAAG), armed with two 57 mm autocannons. 'ZSU' stands for Zenitnaya Samokhodnaya Ustanovka (Russian: Зенитная Самоходная Установка), meaning \"anti-aircraft self-propelled mount\", '57' stands for the bore of the armament in millimetres and '2' stands for the number of gun barrels. It was the first Soviet mass-produced tracked SPAAG.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "KBP/Ural",
             "role": "Self-Propelled Anti-Aircraft Gun",
@@ -1097,6 +1178,7 @@
     "AA gun QF 3,7\"": [{
         "default": {
             "name": "QF 3.7-inch AA Gun",
+            "text": "The QF 3.7-inch AA was Britain's primary heavy anti-aircraft gun during World War II. It was roughly the equivalent of the German 88 mm FlaK and American 90 mm, but with a slightly larger calibre of 3.7 inches, approximately 94 mm. Production began in 1937 and it was used throughout World War II in all theatres except the Eastern Front. It remained in use after the war until AA guns were replaced by guided missiles beginning in 1957.",
             "country-of-origin": "UK",
             "manufacturer": "Vickers",
             "role": "Anti-Aircraft Gun",
@@ -1106,6 +1188,7 @@
     "AC Sd.Kfz.234/2 Puma": [{
         "default": {
             "name": "Sd.Kfz.234/2 Puma",
+            "text": "The Sd.Kfz. 234 (Sonderkraftfahrzeug 234, Special Purpose Vehicle 234), was a family of armoured cars designed and built in Germany during World War II. The vehicles were lightly armoured, armed with a 20, 50 or 75 mm main gun, and powered by a Tatra V12 diesel engine.",
             "country-of-origin": "Germany",
             "manufacturer": "Tatra/Büssing/Daimler-Benz/Schichau",
             "role": "Amphibious Armoured Personnel Carrier",
@@ -1115,6 +1198,7 @@
     "APC AAV-7": [{
         "default": {
             "name": "AAVP-7A1 'Amtrac'",
+            "text": "The Assault Amphibious Vehicle (AAV)—official designation AAVP-7A1 (formerly known as Landing Vehicle, Tracked, Personnel-7 abbr. LVTP-7)—is a fully tracked amphibious landing vehicle manufactured by U.S. Combat Systems (previously by United Defense, a former division of FMC Corporation). The AAV-P7/A1 is the current amphibious troop transport of the United States Marine Corps. It is used by U.S. Marine Corps Assault Amphibian Battalions to land the surface assault elements of the landing force and their equipment in a single lift from assault shipping during amphibious operations to inland objectives and to conduct mechanized operations and related combat support in subsequent mechanized operations ashore. It is also operated by other forces.",
             "country-of-origin": "USA",
             "manufacturer": "United Defense",
             "role": "Amphibious Armoured Personnel Carrier",
@@ -1124,6 +1208,7 @@
     "APC BTR-80": [{
         "default": {
             "name": "BTR-80",
+            "text": "The BTR-80 (Russian: бронетранспортёр, romanized: Bronyetransportyor, literally \"Armoured Transporter\") is an 8×8 wheeled amphibious armoured personnel carrier (APC) designed in the USSR. It was adopted in 1985 and replaced the previous vehicles, the BTR-60 and BTR-70, in the Soviet Army. It was first deployed during the Soviet–Afghan War.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Arzamas",
             "role": "Amphibious Armoured Personnel Carrier",
@@ -1133,6 +1218,7 @@
     "APC BTR-82A": [{
         "default": {
             "name": "BTR-82A",
+            "text": "The BTR-80 (Russian: бронетранспортёр, romanized: Bronyetransportyor, literally \"Armoured Transporter\") is an 8×8 wheeled amphibious armoured personnel carrier (APC) designed in the USSR. It was adopted in 1985 and replaced the previous vehicles, the BTR-60 and BTR-70, in the Soviet Army. It was first deployed during the Soviet–Afghan War. This is a modernized Version of the BTR 80.",
             "country-of-origin": "Russia",
             "manufacturer": "Arzamas",
             "role": "Amphibious Armoured Personnel Carrier",
@@ -1142,6 +1228,7 @@
     "APC Cobra": [{
         "default": {
             "name": "Cobra",
+            "text": "The Cobra (Turkish: Kobra) is an armoured tactical vehicle developed by Turkish firm Otokar.",
             "country-of-origin": "Turkey",
             "manufacturer": "Otokar",
             "role": "Armoured Car",
@@ -1151,6 +1238,7 @@
     "APC M2A1": [{
         "default": {
             "name": "M2A1 Half-Track",
+            "text": "The M2 half-track car is an armored half-track produced by the United States during World War II. ",
             "country-of-origin": "USA",
             "manufacturer": "White Motor Company",
             "role": "Armoured Personnel Carrier",
@@ -1160,6 +1248,7 @@
     "APC M113": [{
         "default": {
             "name": "M113",
+            "text": "The M113 is a fully tracked armored personnel carrier (APC) that was developed and produced by the Food Machinery and Chemical Corporation (FMC). The M113 was sent to United States Army Europe to replace the mechanized infantry's M59 APCs from 1961. The M113 was first used in combat in April 1962 after the United States provided the South Vietnamese Army (ARVN) with heavy weaponry such as the M113, under the Military Assistance Command, Vietnam (MACV) program. Eventually, the M113 was the most widely used armored vehicle of the U.S. Army in the Vietnam War and was used to break through heavy thickets in the midst of the jungle to attack and overrun enemy positions. About 80.000 have been build.",
             "country-of-origin": "USA",
             "manufacturer": "Food Machinery Corp",
             "role": "Armoured Personnel Carrier",
@@ -1169,6 +1258,7 @@
     "APC M1043 HMMWV Armament": [{
         "default": {
             "name": "M1043 HMMWV (M2 HMG)",
+            "text": "The High Mobility Multipurpose Wheeled Vehicle (HMMWV; colloquial: Humvee) is a family of light, four-wheel drive, military trucks and utility vehicles produced by AM General.",
             "country-of-origin": "USA",
             "manufacturer": "AM General",
             "role": "Armoured Car",
@@ -1178,6 +1268,7 @@
     "APC M1126 Stryker ICV": [{
         "default": {
             "name": "M1126 Stryker ICV (M2 HMG)",
+            "text": "The ICV (Infantry Carrier Vehicle) Stryker is a family of eight-wheeled armored fighting vehicles derived from the Canadian LAV III. ",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Armoured Personnel Carrier",
@@ -1187,6 +1278,7 @@
     "APC MTLB": [{
         "default": {
             "name": "MT-LB",
+            "text": "The MT-LB (Russian: Многоцелевой Тягач Легкий Бронированный, romanized: Mnogotselevoy tyagach legky bronirovanny, literally \"multi-purpose towing vehicle light armored\") is a Soviet multi-purpose fully amphibious auxiliary armored tracked vehicle, which was introduced in the 1950s. It is also produced in Poland, where (starting mid-1990s) its YaMZ engine was replaced by a Polish version.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Kharkiv",
             "role": "Armoured Personnel Carrier",
@@ -1196,6 +1288,7 @@
     "APC Sd.Kfz.251": [{
         "default": {
             "name": "Sd.Kfz.251 \"Hanomag\"",
+            "text": "The Sd.Kfz. 251 (Sonderkraftfahrzeug 251) half-track was a World War II German armored personnel carrier designed by the Hanomag company, based on its earlier, unarmored Sd.Kfz. 11 vehicle. The Sd.Kfz. 251 was designed to transport the Panzergrenadier (German mechanized infantry) into battle. Sd.Kfz. 251s were the most widely produced German half-tracks of the war, with at least 15,252 vehicles and variants produced by seven manufacturers.",
             "country-of-origin": "Germany",
             "manufacturer": "Hanomag",
             "role": "Armoured Personnel Carrier",
@@ -1205,6 +1298,7 @@
     "ARV BRDM-2": [{
         "default": {
             "name": "BRDM-2",
+            "text": "The BRDM-2 (Boyevaya Razvedyvatelnaya Dozornaya Mashina, Боевая Разведывательная Дозорная Машина, literally \"Combat Reconnaissance/Patrol Vehicle\") is an amphibious armoured patrol car used by Russia and the former Soviet Union. It was also known under the designations BTR-40PB, BTR-40P-2 and GAZ 41-08. This vehicle, like many other Soviet designs, has been exported extensively and is in use in at least 38 countries.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "GAZ",
             "role": "Amphibious Armoured Car",
@@ -1214,6 +1308,7 @@
     "ARV BTR-RD": [{
         "default": {
             "name": "BTR-D",
+            "text": "The BTR-D is a Soviet airborne multi-purpose tracked armoured personnel carrier which was introduced in 1974 and first seen by the West in 1979 during the Soviet–Afghan War. BTR-D stands for Bronetransportyor Desanta (БТР-Д, Бронетранспортер Десанта, literally \"armoured transporter of the Airborne\")",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Volgograd",
             "role": "Airborne Amphibious Armoured Personnel Carrier",
@@ -1223,6 +1318,7 @@
     "ATGM M1045 HMMWV TOW": [{
         "default": {
             "name": "M1045 HMMWV (BGM-71 TOW)",
+            "text": "The High Mobility Multipurpose Wheeled Vehicle (HMMWV; colloquial: Humvee) is a family of light, four-wheel drive, military trucks and utility vehicles produced by AM General. This verison carries a TOW for ATGM.",
             "country-of-origin": "USA",
             "manufacturer": "AM General",
             "role": "Armoured Car",
@@ -1232,6 +1328,7 @@
     "ATGM M1134 Stryker": [{
         "default": {
             "name": "M1134 Stryker ATGM (BGM-71 TOW)",
+            "text": "The ICV (Infantry Carrier Vehicle) Stryker is a family of eight-wheeled armored fighting vehicles derived from the Canadian LAV III.",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Armoured Car",
@@ -1241,6 +1338,7 @@
     "CT Centaur IV": [{
         "default": {
             "name": "A27L Cruiser Tank MK VIII Centaur IV",
+            "text": "The Cromwell tank, officially Tank, Cruiser, Mk VIII, Cromwell (A27M), was one of the series of cruiser tanks fielded by Britain in the Second World War. Named after the English Civil War leader Oliver Cromwell, the Cromwell was the first tank put into service by the British to combine high speed from a powerful and reliable engine (the Rolls-Royce Meteor), and reasonable armour. ",
             "country-of-origin": "UK",
             "manufacturer": "Leyland",
             "role": "Cruiser Tank",
@@ -1250,6 +1348,7 @@
     "CT Cromwell IV": [{
         "default": {
             "name": "A27M Cruiser Tank MK VIII Cromwell IV",
+            "text": "The Cromwell tank, officially Tank, Cruiser, Mk VIII, Cromwell (A27M), was one of the series of cruiser tanks fielded by Britain in the Second World War. Named after the English Civil War leader Oliver Cromwell, the Cromwell was the first tank put into service by the British to combine high speed from a powerful and reliable engine (the Rolls-Royce Meteor), and reasonable armour. ",
             "country-of-origin": "UK",
             "manufacturer": "Birmingham Railway Carriage and Wagon Company",
             "role": "Cruiser Tank",
@@ -1259,6 +1358,7 @@
     "Daimler Armoured Car": [{
         "default": {
             "name": "Daimler Armoured Car Mk I",
+            "text": "The Daimler Armoured Car was a successful British armoured car design of the Second World War that continued in service into the 1950s. It was designed for armed reconnaissance and liaison purposes. During the postwar era, it doubled as an internal security vehicle in a number of countries. Former British Daimler armoured cars were exported to various Commonwealth of Nations member states throughout the 1950s and 1960s. In 2012, some were still being operated by the Qatari Army.",
             "country-of-origin": "UK",
             "manufacturer": "Daimler",
             "role": "Armoured Car",
@@ -1268,6 +1368,7 @@
     "HIT Churchill_VII": [{
         "default": {
             "name": "A22 Infantry Tank MK IV Churchill VII",
+            "text": "The Tank, Infantry, Mk IV (A22) Churchill was a British heavy infantry tank used in the Second World War, best known for its heavy armour, large longitudinal chassis with all-around tracks with multiple bogies, its ability to climb steep slopes, and its use as the basis of many specialist vehicles. It was one of the heaviest Allied tanks of the war.",
             "country-of-origin": "UK",
             "manufacturer": "Vauxhall Motors",
             "role": "Infantry Tank",
@@ -1277,6 +1378,7 @@
     "HT Pz.Kpfw.VI Tiger I": [{
         "default": {
             "name": "Panzerkampfwagen VI Tiger Ausf. E",
+            "text": "The Tiger I was a German heavy tank of World War II that operated beginning in 1942 in Africa and in the Soviet Union, usually in independent heavy tank battalions. It was designated Panzerkampfwagen VI Ausf H during development but was changed to Panzerkampfwagen VI Ausf E during production. The Tiger I gave the German Army its first armoured fighting vehicle that mounted the 8.8 cm KwK 36 gun (derived from the 8.8 cm Flak 36). 1,347 were built between August 1942 and August 1944. After August 1944, production of the Tiger I was phased out in favour of the Tiger II. 1347 have been build.",
             "country-of-origin": "Germany",
             "manufacturer": "Henschel",
             "role": "Heavy Tank",
@@ -1286,6 +1388,7 @@
     "HT Pz.Kpfw.VI Ausf. B Tiger II": [{
         "default": {
             "name": "Panzerkampfwagen Tiger Ausf. B Tiger II",
+            "text": "The Tiger II was the successor to the Tiger I, combining the latter's thick armour with the armour sloping used on the Panther medium tank. The tank weighed almost 70 tonnes, and was protected by 100 to 185 mm (3.9 to 7.3 in) of armour to the front.It was armed with the long barrelled 8.8 cm KwK 43 L/71 anti-tank cannon. The chassis was also the basis for the Jagdtiger turretless Jagdpanzer anti-tank vehicle. The Tiger II was issued to heavy tank battalions of the Army and the Waffen-SS. It was first used in combat by 503rd Heavy Panzer Battalion during the Allied invasion of Normandy on 11 July 1944; on the Eastern Front, the first unit to be outfitted with the Tiger II was the 501st Heavy Panzer Battalion, which by 1 September 1944 listed 25 Tiger IIs operational.",
             "country-of-origin": "Germany",
             "manufacturer": "Henschel/Krupp",
             "role": "Heavy Tank",
@@ -1304,6 +1407,7 @@
     "IFV BMP-1": [{
         "default": {
             "name": "BMP-1",
+            "text": "The BMD-1 is a Soviet airborne amphibious tracked infantry fighting vehicle, which was introduced in 1969 and first seen by the West in 1970. BMD stands for Boyevaya Mashina Desanta (Боевая Машина Десанта, which literally translates to \"Combat Vehicle of the Airborne\"). It can be dropped by parachute and although it resembles the BMP-1 it is in fact much smaller. The BMD-1 was used as an IFV by the Soviet Army's airborne divisions. ",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Kurganmashzavod",
             "role": "Amphibious Infantry Fighting Vehicle",
@@ -1313,6 +1417,7 @@
     "IFV BMP-2": [{
         "default": {
             "name": "BMP-2",
+            "text": "The BMP-2 (Boyevaya Mashina Pekhoty, Russian: Боевая Машина Пехоты, literally \"infantry combat vehicle\") is a second-generation, amphibious infantry fighting vehicle introduced in the 1980s in the Soviet Union, following on from the BMP-1 of the 1960s.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Kurganmashzavod",
             "role": "Amphibious Infantry Fighting Vehicle",
@@ -1322,6 +1427,7 @@
     "IFV BMP-3": [{
         "default": {
             "name": "BMP-3",
+            "text": "The BMP-3 is a Soviet and Russian infantry fighting vehicle, successor to the BMP-1 and BMP-2. The abbreviation BMP stands for boevaya mashina pehoty (боевая машина пехоты, literally \"infantry combat vehicle\").",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Kurganmashzavod",
             "role": "Amphibious Infantry Fighting Vehicle",
@@ -1331,6 +1437,7 @@
     "IFV LAV-25": [{
         "default": {
             "name": "LAV-25",
+            "text": "The LAV-25 (Light Armored Vehicle) is an eight-wheeled amphibious armored reconnaissance vehicle built by General Dynamics Land Systems and used by the United States Marine Corps and the United States Army.",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Amphibious Armoured Car",
@@ -1340,6 +1447,7 @@
     "IFV M2A2 Bradley": [{
         "default": {
             "name": "M2A2 Bradley",
+            "text": "The M2 Bradley, or Bradley IFV, is an American infantry fighting vehicle that is a member of the Bradley Fighting Vehicle family. It is manufactured by BAE Systems Land & Armaments, which was formerly United Defense. The Bradley is designed for reconnaissance and to transport a squad of infantry, providing them protection from small arms fire, while also providing firepower to both suppress and eliminate most threats to friendly infantry. It is designed to be highly maneuverable and to be fast enough to keep up with heavy armor during an advance. The M2 holds a crew of three: a commander, a gunner and a driver, as well as six fully equipped soldiers. In the year 2000 the total cost of the program was $5,664,100,000 for 1602 units, giving an average unit cost of $3,166,000. If you want to know more than you ever wanted about the Bradley, watch the film 'The Pentagon Wars', its great!",
             "country-of-origin": "USA",
             "manufacturer": "United Defense",
             "role": "Infantry Fighting Vehicle",
@@ -1349,6 +1457,7 @@
     "IFV Marder": [{
         "default": {
             "name": "Marder 1A3",
+            "text": "The Marder (German for \"marten\") is a German infantry fighting vehicle operated by the German Army as the main weapon of the Panzergrenadiere (mechanized infantry) from the 1970s through to the present day. Developed as part of the rebuilding of Germany's armoured fighting vehicle industry, the Marder has proven to be a successful and solid infantry fighting vehicle design. While it used to include a few unique features, such as a fully remote machine gun on the rear deck and gun ports on the sides for infantry to fire through, these features have been deleted or streamlined in later upgrade packages to bring it more in line with modern IFV design. Around 2,100 were taken into service by the German Army in the early 1970s, but the vehicle in its German variant was not sold to any foreign militaries. As the German Army began to retire older vehicles, the Chilean government agreed to acquire 200 Marders; the government of Greece has considered the purchase of 450 retired vehicles in the past. Argentina uses a simplified and locally produced variant, the VCTP, and has a number of vehicles based on that platform constructed by Henschel and built by TAMSE.",
             "country-of-origin": "Germany",
             "manufacturer": "Rheinmetall Landsysteme",
             "role": "Infantry Fighting Vehicle",
@@ -1358,6 +1467,7 @@
     "IFV MCV-80": [{
         "default": {
             "name": "FV510 Warrior",
+            "text": "The Warrior tracked vehicle family is a series of British armoured vehicles, originally developed to replace the older FV430 series of armoured vehicles. The Warrior started life as the MCV-80, \"Mechanised Combat Vehicle for the 1980s\". One of the requirements of the new vehicle was a top speed able to keep up with the projected new MBT, the MBT-80 – later cancelled and replaced by what became the Challenger 1 – which the then-current FV432 armoured personnel carrier could not. ",
             "country-of-origin": "UK",
             "manufacturer": "GKN Sankey",
             "role": "Infantry Fighting Vehicle",
@@ -1367,6 +1477,7 @@
     "LAC M8 Greyhound": [{
         "default": {
             "name": "M8 Greyhound Light Armored Car",
+            "text": "The M8 Light Armored Car is a 6×6 armored car produced by the Ford Motor Company during World War II. It was used from 1943 by United States and British forces in Europe and the Pacific until the end of the war. The vehicle was widely exported and as of 2006 still remained in service with some countries.",
             "country-of-origin": "USA",
             "manufacturer": "Ford Motor Company",
             "role": "Light Armoured Car",
@@ -1376,6 +1487,7 @@
     "LT Mk VII Tetrarch": [{
         "default": {
             "name": "A17 Light Tank Mk VII Tetrarch",
+            "text": "The Light Tank Mk VII (A17), also known as the Tetrarch, was a British light tank produced by Vickers-Armstrongs in the late 1930s and used during the Second World War. The Tetrarch was the latest in the line of light tanks built by the company for the British Army. They where declered obsolete in 1946.",
             "country-of-origin": "UK",
             "manufacturer": "Vickers-Armstrongs",
             "role": "Airborne Light Tank",
@@ -1385,6 +1497,7 @@
     "M4 Tractor": [{
         "default": {
             "name": "M4 High-Speed Tractor",
+            "text": "The M4 High-Speed Tractor was an artillery tractor used by the US Army from 1943.",
             "country-of-origin": "USA",
             "manufacturer": "Allis-Chalmers",
             "role": "Tracked Cargo Transporter",
@@ -1403,6 +1516,7 @@
     "MBT Challenger II": [{
         "default": {
             "name": "FV4034 Challenger 2",
+            "text": "The FV4034 Challenger 2 is a third generation British main battle tank (MBT) in service with the armies of the United Kingdom and Oman. It has seen operational service in Bosnia and Herzegovina, Kosovo and Iraq.  To date, the only time the tank has been destroyed during operations was by another Challenger 2 in a \"blue on blue\" (friendly fire) incident at Basra in 2003 when the destroyed tank had its hatch open at the time of the incident.",
             "country-of-origin": "UK",
             "manufacturer": "Vickers Defence Systems",
             "role": "Main Battle Tank",
@@ -1412,6 +1526,7 @@
     "M12 GMC": [{
         "default": {
             "name": "M12 Gun Motor Carriage",
+            "text": "The 155 mm Gun Motor Carriage M12 was a U.S. self-propelled gun developed during the Second World War. It mounted a 155 mm gun derived from the French Canon de 155mm GPF field gun.",
             "country-of-origin": "USA",
             "manufacturer": "Pressed Steel Car Company",
             "role": "Self-Propelled Gun",
@@ -1421,6 +1536,7 @@
     "MBT Leclerc": [{
         "default": {
             "name": "Leclerc Séries 2",
+            "text": "The Leclerc tank (French: char Leclerc) is a main battle tank (MBT) built by GIAT, now Nexter of France. It was named in honour of General Philippe Leclerc de Hauteclocque, who led the French element of the drive towards Paris while in command of the Free French 2nd Armoured Division (2e DB) in World War II. The designation AMX-56 – while very popular – is incorrect. During the Iron spear exercise, October 2019, Leclerc tanks crewed by the Lynx 6 Tactical Inter-Service Sub-Group (S-GTIA) participated in an inter-alliance exercise and surpassed the American M1A2 Abrams, German, Spanish and Norwegian Leopard 2s, Italian Ariete C1 and Polish P91.",
             "country-of-origin": "France",
             "manufacturer": "GIAT Industries",
             "role": "Main Battle Tank",
@@ -1430,6 +1546,7 @@
     "MBT Leopard 1A3": [{
         "default": {
             "name": "Leopard 1A3",
+            "text": "The Leopard (or Leopard 1) is a main battle tank designed and produced by Porsche in West Germany that first entered service in 1965. Developed in an era when HEAT warheads were thought to make conventional heavy armour of limited value, the Leopard focused on firepower in the form of the German-built version of the British L7 105-mm gun, and improved cross-country performance that was unmatched by other designs of the era. The Leopard quickly became a standard of many European militaries, and eventually served as the main battle tank in over a dozen countries worldwide, with West Germany, Italy and the Netherlands being the largest operators until their retirement. Currently, the largest operators are Greece, with 520 vehicles, Turkey, with 397 vehicles and Brazil with 378 vehicles.", 
             "country-of-origin": "Germany",
             "manufacturer": "Krauss-Maffei",
             "role": "Main Battle Tank",
@@ -1439,6 +1556,7 @@
     "MBT Leopard-2": [{
         "default": {
             "name": "Leopard 2A6",
+            "text": "The Leopard 2 is a main battle tank developed by Krauss-Maffei in the 1970s for the West German Army. The tank first entered service in 1979 and succeeded the earlier Leopard 1 as the main battle tank of the German Army. It is armed with a 120 mm smoothbore cannon, and is powered by a V-12 twin-turbo diesel engine. Various versions have served in the armed forces of Germany and 12 other European countries, as well as several non-European nations, including Canada, Chile, Indonesia, Singapore, and Turkey. The Leopard 2 was used in Kosovo with the German Army, and has seen action in Afghanistan with the Dutch, Danish and Canadian contributions to the International Security Assistance Force, as well as seeing action in Syria with the Turkish Armed Forces.",
             "country-of-origin": "Germany",
             "manufacturer": "Krauss-Maffei",
             "role": "Main Battle Tank",
@@ -1448,6 +1566,7 @@
     "MBT M1A2 Abrams": [{
         "default": {
             "name": "M1A2 Abrams",
+            "text": "The M1 Abrams is a third-generation American main battle tank designed by Chrysler Defense (now General Dynamics Land Systems)[9] and named for General Creighton Abrams. Conceived for modern armored ground warfare and now one of the heaviest tanks in service at nearly 68 short tons. The M1 Abrams entered service in 1980 and currently serves as the main battle tank of the United States Army and Marine Corps. The export version is used by the armies of Egypt, Kuwait, Saudi Arabia, Australia, and Iraq. The Abrams was first used in combat in the Persian Gulf War and has seen combat in both the War in Afghanistan and Iraq War under U.S. service, while Iraqi Abrams tanks have seen action in the war against ISIL and have seen use by Saudi Arabia during the Yemeni Civil War.",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Main Battle Tank",
@@ -1457,6 +1576,7 @@
     "MBT M60A3 Patton": [{
         "default": {
             "name": "M60A3 \"Patton\"",
+            "text": "The M60 reached operational capability with fielding to US Army units in Europe beginning in December 1960. The first combat usage of the M60 was with Israel during the 1973 Yom Kippur War where it saw service under the \"Magach 6\" designation, performing well in combat against comparable tanks such as the T-62. In 1982 the Israelis once again used the M60 during the 1982 Lebanon War, equipped with upgrades such as explosive reactive armor to defend against guided missiles that proved very effective at destroying tanks. The M60 also saw use in 1983 with Operation Urgent Fury, supporting US Marines in an amphibious assault into Grenada. M60s delivered to Iran also served in the Iran–Iraq War. The United States' largest deployment of M60s was in the 1991 Gulf War, where the US Marines equipped with M60A1s effectively defeated Iraqi armored forces, including T-72 tanks. The United States readily retired the M60 from front-line combat after Operation Desert Storm, with the last tanks being retired from National Guard service in 1997.[16] M60-series vehicles continue in front-line service with a number of countries' militaries, though most of these have been highly modified and had their firepower, mobility and protection upgraded to increase their combat effectiveness on the modern battlefield.",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Main Battle Tank",
@@ -1466,6 +1586,7 @@
     "MBT Merkava Mk. 4": [{
         "default": {
             "name": "Merkava Mk IV",
+            "text": "The Merkava is a main battle tank used by the Israel Defense Forces. The tank began development in 1970, and entered official service in 1979. Four main variants of the tank have been deployed. It was first used extensively in the 1982 Lebanon War. The name \"Merkava\" was derived from the IDF's initial development program name. Design criteria include rapid repair of battle damage, survivability, cost-effectiveness and off-road performance. ",
             "country-of-origin": "Israel",
             "manufacturer": "MANTAK",
             "role": "Main Battle Tank",
@@ -1475,6 +1596,7 @@
     "MBT T-55": [{
         "default": {
             "name": "T-55A",
+            "text": "The T-54/55 series was the most-produced tank in history. Estimated production numbers for the series range from 86,000 to 100,000. They were replaced by the T-62, T-64, T-72, T-80 and T-90 tanks in the Soviet and Russian armies, but remain in use by up to 50 other armies worldwide, some having received sophisticated retrofitting. During the Cold War, Soviet tanks never directly faced their NATO adversaries in combat in Europe. However, the T-54/55's first appearance in the West around the period of the 1950s (then the beginning of the Cold War) spurred the United Kingdom to develop a new tank gun, the Royal Ordnance L7, and the United States to develop the M60 Patton.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Kharkiv/UralVagonZavod",
             "role": "Main Battle Tank",
@@ -1484,6 +1606,7 @@
     "MBT T-72B": [{
         "default": {
             "name": "T-72B with Kontakt-1 ERA",
+            "text": "The T-72 is a family of Soviet/Russian main battle tanks that first entered production in 1971. About 20,000 T-72 tanks have been built, and refurbishment has enabled many to remain in service for decades. The T-72A version introduced in 1979 is considered a second-generation main battle tank. It was widely exported and saw service in 40 countries and in numerous conflicts. The T-72B3 version introduced in 2010 is considered a third-generation main battle tank (MBT).",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "UralVagonZavod",
             "role": "Main Battle Tank",
@@ -1493,6 +1616,7 @@
     "MBT T-72B3": [{
         "default": {
             "name": "T-72B3 model 2011",
+            "text": "The T-72 is a family of Soviet/Russian main battle tanks that first entered production in 1971. About 20,000 T-72 tanks have been built, and refurbishment has enabled many to remain in service for decades. The T-72A version introduced in 1979 is considered a second-generation main battle tank. It was widely exported and saw service in 40 countries and in numerous conflicts. The T-72B3 version introduced in 2010 is considered a third-generation main battle tank (MBT).",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "UralVagonZavod",
             "role": "Main Battle Tank",
@@ -1502,6 +1626,7 @@
     "MBT T-80U": [{
         "default": {
             "name": "T-80U",
+            "text": "The T-80 is a main battle tank (MBT) designed and manufactured in the Soviet Union. When it entered service in 1976, it was the second MBT in the world to be equipped with a gas turbine engine after the Swedish Strv 103 and the first to use it as a primary propulsion engine. The T-80U was last produced in a factory in Omsk, Russia, while the T-80UD and further-developed T-84 continue to be produced in Ukraine. The T-80 and its variants are in service in Belarus, Cyprus, Egypt, Kazakhstan,[12] Pakistan, Russia, South Korea, and Ukraine.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Omsk Transmash",
             "role": "Main Battle Tank",
@@ -1511,6 +1636,7 @@
     "MBT T-90": [{
         "default": {
             "name": "T-90A",
+            "text": "The T-90 is a third-generation Russian main battle tank that entered service in 1993. The tank is a modern variation of the T-72B and incorporates many features found on the T-80U. Originally called the T-72BU, but later renamed to T-90, it is an advanced tank in service with Russian Ground Forces and the Naval Infantry. ",
             "country-of-origin": "Russia",
             "manufacturer": "UralVagonZavod",
             "role": "Main Battle Tank",
@@ -1520,6 +1646,7 @@
     "MLRS 9A52 Smerch": [{
         "default": {
             "name": "BM-30 Smerch (9M55K Cluster Rockets)",
+            "text": "The BM-30 Smerch (Russian: Смерч, \"tornado\", \"whirlwind\"), 9K58 Smerch or 9A52-2 Smerch-M is a Soviet heavy multiple rocket launcher. The system is intended to defeat personnel, armored, and soft targets in concentration areas, artillery batteries, command posts and ammunition depots.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Splav",
             "role": "Multiple-Launch Rocket System",
@@ -1529,6 +1656,7 @@
     "MLRS 9A52 Smerch HE": [{
         "default": {
             "name": "BM-30 Smerch (9M55K5 HE Rockets)",
+            "text": "The BM-30 Smerch (Russian: Смерч, \"tornado\", \"whirlwind\"), 9K58 Smerch or 9A52-2 Smerch-M is a Soviet heavy multiple rocket launcher. The system is intended to defeat personnel, armored, and soft targets in concentration areas, artillery batteries, command posts and ammunition depots.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Splav",
             "role": "Multiple-Launch Rocket System",
@@ -1538,6 +1666,7 @@
     "MLRS 9K57 Uragan BM-27": [{
         "default": {
             "name": "BM-27 Uragan",
+            "text": "The BM-27 Uragan (Russian: Ураган, lit. 'Hurricane'; GRAU index 9P140) is a self-propelled multiple rocket launcher system designed in the Soviet Union.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Splav",
             "role": "Multiple-Launch Rocket System",
@@ -1547,6 +1676,7 @@
     "MLRS BM-21 Grad": [{
         "default": {
             "name": "BM-21 Grad",
+            "text": "The BM-21 \"Grad\" (Russian: БМ-21 \"Град\", lit. 'hail') is a Soviet truck-mounted 122 mm multiple rocket launcher.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Splav",
             "role": "Multiple-Launch Rocket System",
@@ -1556,6 +1686,7 @@
     "MLRS FDDM": [{
         "default": {
             "name": "M1043 HMMWV with Fire Direction Data Manager",
+            "text": "The High Mobility Multipurpose Wheeled Vehicle with a Fire Direction Data Manager.",
             "country-of-origin": "USA",
             "role": "Fire Control Vehicle",
             "year-of-variant-introduction": "1993"
@@ -1564,6 +1695,7 @@
     "MLRS M270": [{
         "default": {
             "name": "M270 Multiple Launch Rocket System",
+            "text": "The M270 Multiple Launch Rocket System (M270 MLRS) is an armored, self-propelled, multiple rocket launcher (a type of rocket artillery). Since the first M270s were delivered to the U.S. Army in 1983, the MLRS has been adopted by several NATO countries. Some 1,300 M270 systems have been manufactured in the United States and in Europe, along with more than 700,000 rockets. The production of the M270 ended in 2003, when a last batch was delivered to the Egyptian Army.",
             "country-of-origin": "USA",
             "manufacturer": "Vought",
             "role": "Multiple-Launch Rocket System",
@@ -1573,6 +1705,7 @@
     "MT M4 Sherman": [{
         "default": {
             "name": "M4A2(75) Sherman",
+            "text": "The M4 Sherman, officially Medium Tank, M4, was the most widely used medium tank by the United States and Western Allies in World War II. The M4 Sherman proved to be reliable, relatively cheap to produce, and available in great numbers. It was also the basis of several successful tank destroyers, such as the M10, 17pdr SP Achilles and M36B1. Tens of thousands were distributed through the Lend-Lease program to the British Commonwealth and Soviet Union.",
             "country-of-origin": "USA",
             "manufacturer": "Fisher",
             "role": "Medium Tank",
@@ -1585,6 +1718,7 @@
     "MT M4A4 Sherman Firefly": [{
         "default": {
             "name": "M4A4 Sherman Firefly",
+            "text": "The Sherman Firefly was a tank used by the United Kingdom and some Commonwealth and Allied armoured formations in the Second World War. It was based on the US M4 Sherman, but fitted with the more powerful 3-inch (76.2 mm) calibre British 17-pounder anti-tank gun as its main weapon.",
             "country-of-origin": "USA/UK",
             "manufacturer": "Chrysler",
             "role": "Medium Tank",
@@ -1597,6 +1731,7 @@
     "MT Pz.Kpfw.IV Ausf.H": [{
         "default": {
             "name": "Panzerkampfwagen IV Ausf. H",
+            "text": "The Panzerkampfwagen IV (Pz.Kpfw. IV), commonly known as the Panzer IV, was a German medium tank developed in the late 1930s and used extensively during the Second World War. Its ordnance inventory designation was Sd.Kfz. 161. The Panzer IV was the most numerous German tank and the second-most numerous German armored fighting vehicle of the Second World War, with some 8,500 built. ",
             "country-of-origin": "Germany",
             "manufacturer": "Krupp-Gruson/Vomag/Nibelungenwerke",
             "role": "Medium Tank",
@@ -1606,6 +1741,7 @@
     "MT Pz.Kpfw.V Panther Ausf.G": [{
         "default": {
             "name": "Panzerkampfwagen V Panther Ausf. G",
+            "text": "The Panther is a German medium tank deployed during World War II on the Eastern and Western Fronts in Europe from mid-1943 to the war's end in 1945. The Panther was intended to counter the Soviet T-34 and to replace the Panzer III and Panzer IV. Nevertheless, it served alongside the Panzer IV and the heavier Tiger I until the end of the war. It is considered one of the best tanks of World War II for its excellent firepower and protection, although its reliability was less impressive.",
             "country-of-origin": "Germany",
             "manufacturer": "MAN/Daimler-Benz/MNH",
             "role": "Medium Tank",
@@ -1615,6 +1751,7 @@
     "SAM Avenger M1097": [{
         "default": {
             "name": "M1097 Heavy HMMWV Avenger",
+            "text": "The Avenger Air Defense System, designated AN/TWQ-1 under the Joint Electronics Type Designation System, is an American self-propelled surface-to-air missile system which provides mobile, short-range air defense protection for ground units against cruise missiles, unmanned aerial vehicles, low-flying fixed-wing aircraft, and helicopters.",
             "country-of-origin": "USA",
             "manufacturer": "Boeing",
             "role": "Self-Propelled Surface-to-Air Missile Launcher",
@@ -1624,6 +1761,7 @@
     "SAM Chaparral M48": [{
         "default": {
             "name": "M48 Chaparral",
+            "text": "The MIM-72A/M48 Chaparral is an American self-propelled surface-to-air missile system based on the AIM-9 Sidewinder air-to-air missile system. The launcher is based on the M113 family of vehicles. It entered service with the United States Army in 1969 and was phased out between 1990 and 1998.",
             "country-of-origin": "USA",
             "manufacturer": "Ford Motor Company",
             "role": "Self-Propelled Surface-to-Air Missile Launcher",
@@ -1633,6 +1771,7 @@
     "SAM Linebacker M6": [{
         "default": {
             "name": "M6 Linebacker",
+            "text": "The M6 Linebacker short-range air defense system was developed by Boeing to meet the US Army requirements. The new vehicle was intended to counter the threat posed by low-flying aircraft, helicopters, cruise missiles and unmanned aerial vehicles to forward armored formations. Initial production Linebackers entered service with the US Army in 1997. A total of 99 Bradley Linebackers were ordered, however in 2006 these were phased-out of service. The M6 is an all-weather system, capable of operating in day/night and all weather conditions. It is based on the M2 Bradley IFV and is equipped with a quadruple launcher with FIM-92 Stinger short-range surface-to-air missiles instead of the TOW ATGW.",
             "country-of-origin": "USA",
             "manufacturer": "United Defense",
             "role": "Self-Propelled Anti-Aircraft System",
@@ -1642,6 +1781,7 @@
     "SAM Roland ADS": [{
         "default": {
             "name": "Roland 2 (Marder Chassis)",
+            "text": "he Roland is a Franco-German mobile short-range surface-to-air missile (SAM) system. ",
             "country-of-origin": "France/Germany",
             "manufacturer": "Euromissile",
             "role": "Self-Propelled Surface-to-Air Missile Launcher",
@@ -1651,6 +1791,7 @@
     "SAM SA-13 Strela-10M3 9A35M3": [{
         "default": {
             "name": "SA-13 Gopher (9K35 Strela-10M3)",
+            "text": "The 9K35 Strela-10 (Russian: 9К35 «Стрела-10»; English: arrow) is a highly mobile, short-range surface-to-air missile system. It is visually aimed, and utilizes optical/infrared-guidance. The system is primarily intended to engage low-altitude threats, such as helicopters. \"9K35\" is its GRAU designation; its NATO reporting name is SA-13 \"Gopher\".",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Ulyanovsk",
             "role": "Self-Propelled Surface-to-Air Missile Launcher",
@@ -1660,6 +1801,7 @@
     "SAM SA-19 Tunguska 2S6": [{
         "default": {
             "name": "SA-19 Grison (2K22 Tunguska)",
+            "text": "The 2K22 Tunguska (Russian: 2К22 'Тунгуска') is a Russian tracked self-propelled anti-aircraft weapon armed with a surface-to-air gun and missile system. It is designed to provide day and night protection for infantry and tank regiments against low-flying aircraft, helicopters, and cruise missiles in all weather conditions. The NATO reporting name for the missile used by the weapon system is SA-19 \"Grison\".",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Ulyanovsk",
             "role": "Self-Propelled Anti-Aircraft System",
@@ -1669,6 +1811,7 @@
     "Sd.Kfz.184 Elefant": [{
         "default": {
             "name": "Sd.Kfz.184 Elefant",
+            "text": "The Elefant (German for \"elephant\") was a heavy tank destroyer used by German Wehrmacht Panzerjäger during World War II. Ninety-one units were built in 1943 under the name Ferdinand, after its designer Ferdinand Porsche, using tank hulls produced for the Tiger I tank design abandoned in favour of a Henschel design.",
             "country-of-origin": "Germany",
             "manufacturer": "Porsche/Nibelungenwerk",
             "role": "Tank Destroyer",
@@ -1678,6 +1821,7 @@
     "SPAAA Gepard": [{
         "default": {
             "name": "Flakpanzer Gepard",
+            "text": "The Flugabwehrkanonenpanzer Gepard (\"anti-aircraft cannon tank Cheetah\", better known as the Flakpanzer Gepard) is an all-weather-capable German self-propelled anti-aircraft gun (SPAAG).[1] It was developed in the 1960s and fielded in the 1970s, and has been upgraded several times with the latest electronics. It constituted a cornerstone of the air defence of the German Army (Bundeswehr) and a number of other NATO countries. In Germany, the Gepard was phased out in late 2010 and replaced by Wiesel 2 Ozelot Leichtes Flugabwehrsystem (LeFlaSys) with four FIM-92 Stinger or LFK NG missile launchers.",
             "country-of-origin": "West Germany",
             "manufacturer": "Krauss-Maffei",
             "role": "Self-Propelled Anti-Aircraft Gun",
@@ -1687,6 +1831,7 @@
     "SPAAA ZSU-23-4 Shilka": [{
         "default": {
             "name": "ZSU-23-4 Shilka",
+            "text": "The ZSU-23-4 \"Shilka\" is a lightly armored Soviet self-propelled, radar guided anti-aircraft weapon system (SPAAG). About 6500 have been build.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "MMZ",
             "role": "Self-Propelled Anti-Aircraft Gun",
@@ -1696,6 +1841,7 @@
     "SPG M1128 Stryker MGS": [{
         "default": {
             "name": "M1128 Stryker Mobile Gun System",
+            "text": "The M1128 Mobile Gun System is an eight-wheeled armored car of the Stryker armored fighting vehicle family, mounting a 105 mm tank gun, based on the Canadian LAV III light-armored vehicle manufactured by General Dynamics Land Systems. It is in service with the United States Army but will be retired by the end of 2022.",
             "country-of-origin": "USA",
             "manufacturer": "General Dynamics",
             "role": "Armoured Car",
@@ -1705,6 +1851,7 @@
     "SpGH Dana": [{
         "default": {
             "name": "SpGH DANA",
+            "text": "The DANA (the name being derived from \"dělo automobilní nabíjené automaticky\" (gun on truck loaded automatically)) is a wheeled self-propelled artillery piece.",
             "country-of-origin": "Czechoslovakia",
             "manufacturer": "ZTS",
             "role": "Self-Propelled Gun",
@@ -1714,6 +1861,7 @@
     "SPH 2S9 Nona": [{
         "default": {
             "name": "2S9 Nona-S",
+            "text": "The 2S9 NONA (Новейшее Орудие Наземной Артилерии - Newest Ordnance of Ground Artillery) is an extremely light-weight self-propelled and air-droppable 120 mm gun-mortar designed in the Soviet Union, which entered service in 1981. The 2S9 chassis is designated the S-120 and based on the aluminium hull of the BTR-D airborne multi-purpose tracked armoured personnel carrier. More generally, the 120 mm mortar is referred to as the Nona, with the 2S9 also known as the Nona-S. Although no figures have been released, it is estimated that well over 1,000 2S9 were built.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Motovilikha",
             "role": "Self-Propelled Mortar",
@@ -1723,6 +1871,7 @@
     "SPH 2S3 Akatsia": [{
         "default": {
             "name": "2S3 Akatsiya",
+            "text": "The SO-152 (Russian: СО-152) is a Soviet 152.4 mm self-propelled gun developed in 1968. It was a response to the American 155 mm M109. ",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Uraltransmash",
             "role": "Self-Propelled Gun",
@@ -1732,6 +1881,7 @@
     "SPH 2S1 Gvozdika": [{
         "default": {
             "name": "2S1 Gvozdika",
+            "text": "The 2S1 Gvozdika (Russian: 2С1 «Гвоздика», \"Carnation\") is a Soviet self-propelled howitzer based on the MT-LBu multi-purpose chassis, mounting a 122 mm 2A18 howitzer. ",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Kharkiv",
             "role": "Self-Propelled Gun",
@@ -1741,6 +1891,7 @@
     "SPH 2S19 Msta": [{
         "default": {
             "name": "2S19 Msta-S",
+            "text": "The 2S19 \"Msta-S\" (Russian: Мста, after the Msta River) is a 152.4 mm self-propelled howitzer designed by Soviet Union, which entered service in 1989 as the successor to the 2S3 Akatsiya. The vehicle is based on the T-80 tank hull, but is powered by the T-72's diesel engine.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Uraltransmash",
             "role": "Self-Propelled Gun",
@@ -1750,6 +1901,7 @@
     "SPH M109 Paladin": [{
         "default": {
             "name": "M109A6 Paladin",
+            "text": "The M109 is an American 155 mm turreted self-propelled howitzer, first introduced in the early 1960s to replace the M44.",
             "country-of-origin": "USA",
             "manufacturer": "United Defense",
             "role": "Self-Propelled Gun",
@@ -1759,6 +1911,7 @@
     "StuG III Ausf. G": [{
         "default": {
             "name": "Sturmgeschütz III Ausf. G",
+            "text": "The Sturmgeschütz III (StuG III) assault gun was Germany's most-produced fully tracked armoured fighting vehicle during World War II, and second-most produced German armored combat vehicle of any type after the Sd.Kfz. 251 half-track. It was built on a slightly modified Panzer III chassis, replacing the turret with an armored, fixed superstructure mounting a more powerful gun. Initially intended as a mobile assault gun for direct-fire support for infantry, the StuG III was continually modified, and much like the later Jagdpanzer vehicles, was employed as a tank destroyer.",
             "country-of-origin": "Germany",
             "manufacturer": "Alkett/MIAG",
             "role": "Assault Gun/Tank Destroyer",
@@ -1768,6 +1921,7 @@
     "StuG IV": [{
         "default": {
             "name": "Sturmgeschütz IV",
+            "text": "The Sturmgeschütz IV (StuG IV) (Sd.Kfz. 167) was a German assault gun variant of the Panzer IV used in the latter part of the Second World War. It was identical in role and concept to the highly successful StuG III assault gun variant of the Panzer III. Both StuG models were given an exclusively tank destroyer role in German formations and tactical planning in the last two years of the war, greatly augmenting the capability of the dwindling tank force available to the German army on the Eastern and Western fronts.",
             "country-of-origin": "Germany",
             "manufacturer": "Krupp",
             "role": "Assault Gun/Tank Destroyer",
@@ -1777,6 +1931,7 @@
     "Sturmpanzer IV Brummbär": [{
         "default": {
             "name": "Sturmpanzer IV Brummbär",
+            "text": "The Sturmpanzer (also known as Sturmpanzer 43 or Sd.Kfz. 166) was a German armoured infantry support gun based on the Panzer IV chassis used in the Second World War. It was used at the Battles of Kursk, Anzio, Normandy, and was deployed in the Warsaw Uprising. It was known by the nickname Brummbär (German: \"Grouch\") by Allied intelligence, a name which was not used by the Germans. German soldiers nicknamed it the \"Stupa\", a contraction of the term Sturmpanzer. Just over 300 vehicles were built and they were assigned to four independent battalions.",
             "country-of-origin": "Germany",
             "manufacturer": "Vienna Arsenal",
             "role": "Self-Propelled Gun",
@@ -1786,6 +1941,7 @@
     "TD Jagdpanther G1": [{
         "default": {
             "name": "Jagdpanther G1",
+            "text": "The Jagdpanther (German: \"hunting Panther\"), Sd.Kfz. 173, was a tank destroyer (Jagdpanzer, a self-propelled anti-tank gun) built by Germany during World War II. The Jagdpanther combined the 8.8 cm Pak 43 anti-tank gun, similar to the main gun of the Tiger II, and the armor and suspension of the Panther chassis.",
             "country-of-origin": "Germany",
             "manufacturer": "MIAG/MNH/MBA",
             "role": "Tank Destroyer",
@@ -1795,6 +1951,7 @@
     "TD Jagdpanzer IV": [{
         "default": {
             "name": "Jagdpanzer IV",
+            "text": "The Jagdpanzer IV, Sd.Kfz. 162, was a German tank destroyer based on the Panzer IV chassis.",
             "country-of-origin": "Germany",
             "manufacturer": "Vomag",
             "role": "Tank Destroyer",
@@ -1804,6 +1961,7 @@
     "TD M10 GMC": [{
         "default": {
             "name": "M10 3-inch Gun Motor Carriage",
+            "text": "The M10 tank destroyer was an American tank destroyer of World War II. The M10 was numerically the most important U.S. tank destroyer of World War II. It combined thin but sloped armor with the M4's reliable drivetrain and a reasonably potent anti-tank weapon mounted in an open-topped turret. Despite its obsolescence in the face of newer German tanks like the Panther and the introduction of more powerful and better-designed types as replacements, the M10 remained in service until the end of the war.",
             "country-of-origin": "USA",
             "manufacturer": "Fisher/Ford Motor Company",
             "role": "Tank Destroyer",
@@ -1816,6 +1974,7 @@
     "TPz Fuchs": [{
         "default": {
             "name": "TPz Fuchs",
+            "text": "The TPz (Transportpanzer) Fuchs (\"fox\") is a German armoured personnel carrier originally developed by Daimler-Benz but manufactured and further developed by the now Rheinmetall MAN Military Vehicles (RMMV). Fuchs was the second wheeled armoured vehicle to enter service with the Bundeswehr (West German Military) and it can be used for tasks including troop transport, engineer transport, bomb disposal, Nuclear, Biological and Chemical reconnaissance and electronic warfare. RMMV and its predecessors manufactured 1,236 Fuchs 1, mostly for the German Army.",
             "country-of-origin": "Germany",
             "manufacturer": "Rheinstahl Wehrtechnik",
             "role": "Armoured Personnel Carrier",
@@ -1825,6 +1984,7 @@
     "ZTZ-96B": [{
         "default": {
             "name": "Type 96B (ZTZ-96B)",
+            "text": "The Type 96 or ZTZ96 is a Chinese second generation main battle tank (MBT). The final evolution of the Type 88 design, the Type 96 entered service with the People's Liberation Army (PLA) in 1997. The later variants of the Type 96 are regarded as near-equivalents to China's third generation MBT.",
             "country-of-origin": "China",
             "manufacturer": "First Inner Mongolia Machinery Factory",
             "role": "Main Battle Tank",
@@ -1834,6 +1994,7 @@
     "ZBD-04A": [{
         "default": {
             "name": "Type 04A (ZBD-04A)",
+            "text": "The ZBD-04 or Type 04 (industrial designation WZ502) is a Chinese infantry fighting vehicle. It bears some external resemblance to the BMP-3, particularly with regards to its turret and main armament; however, the chassis and internal subsystems possesses a different layout.",
             "country-of-origin": "China",
             "manufacturer": "Norinco",
             "role": "Main Battle Tank",

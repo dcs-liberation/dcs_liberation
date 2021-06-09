@@ -22,17 +22,19 @@ class CombatGroupRole(Enum):
     LOGI = 6
     INFANTRY = 7
     ATGM = 8
+    RECON = 9
 
 
 DISTANCE_FROM_FRONTLINE = {
     CombatGroupRole.TANK: (2200, 3200),
-    CombatGroupRole.APC: (7500, 8500),
+    CombatGroupRole.APC: (2700, 3700),
     CombatGroupRole.IFV: (2700, 3700),
     CombatGroupRole.ARTILLERY: (16000, 18000),
-    CombatGroupRole.SHORAD: (12000, 13000),
+    CombatGroupRole.SHORAD: (5000, 8000),
     CombatGroupRole.LOGI: (18000, 20000),
     CombatGroupRole.INFANTRY: (2800, 3300),
     CombatGroupRole.ATGM: (5200, 6200),
+    CombatGroupRole.RECON: (2000, 3000),
 }
 
 GROUP_SIZES_BY_COMBAT_STANCE = {
@@ -74,6 +76,7 @@ class GroundPlanner:
         self.atgm_group: List[CombatGroup] = []
         self.logi_groups: List[CombatGroup] = []
         self.shorad_groups: List[CombatGroup] = []
+        self.recon_groups: List[CombatGroup] = []
 
         self.units_per_cp: Dict[int, List[CombatGroup]] = {}
         for cp in self.connected_enemy_cp:
@@ -115,6 +118,9 @@ class GroundPlanner:
             elif unit_type in GroundUnitClass.Shorads:
                 collection = self.shorad_groups
                 role = CombatGroupRole.SHORAD
+            elif unit_type in GroundUnitClass.Recon:
+                collection = self.recon_groups
+                role = CombatGroupRole.RECON
             else:
                 logging.warning(
                     f"Unused front line vehicle at base {unit_type}: unknown unit class"
