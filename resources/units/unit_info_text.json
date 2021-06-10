@@ -1081,6 +1081,16 @@
             "year-of-variant-introduction": "1943"
         }
     }],
+    "AAA S-60 57mm": [{
+        "default": {
+            "name": "S-60 57mm",
+            "text": "57 mm AZP S-60 (Russian: Автоматическая зенитная пушка С-60, abbrev. АЗП (AZP); literally: Automatic anti-aircraft gun S-60) is a Soviet towed, road-transportable, short- to medium-range, single-barrel anti-aircraft gun from the 1950s. The gun was extensively used in Warsaw Pact, Middle Eastern and South-East Asian countries.",
+            "country-of-origin": "Soviet Union",
+            "manufacturer": "TsAKB",
+            "role": "Anti-Aircraft Gun/Anti-Tank Gun",
+            "year-of-variant-introduction": "1950"
+        }
+    }],
     "AAA Bofors 40mm": [{
         "default": {
             "name": "Bofors 40 mm Gun",
@@ -1135,7 +1145,7 @@
             "year-of-variant-introduction": "1939"
         }
     }],
-    "AAA Vulcan M163": [{
+    "SPAAA Vulcan M163": [{
         "default": {
             "name": "M163 Vulcan Air Defense System",
             "text": "The M163 had a fairly limited range from the start. Its 20x102mm round gave it a low effective range of only 1,200 meters, and its standard air-defense load of HEI-T rounds would self-destruct at approximately 1800 meters, a hard limit on range. Additionally, the radar was a range-only set incapable of finding targets. In US and Israeli service, the VADS has rarely been needed in its intended purpose of providing defense against aerial threats—consequently, the Vulcan gun system was in use throughout the late 1980s and early 1990s primarily as a ground support weapon.",
@@ -1145,7 +1155,7 @@
             "year-of-variant-introduction": "1989"
         }
     }],
-    "AAA ZSU-57-2": [{
+    "SPAAA ZSU-57-2": [{
         "default": {
             "name": "ZSU-57-2 'Sparka'",
             "text": "The ZSU-57-2 Ob'yekt 500 is a Soviet self-propelled anti-aircraft gun (SPAAG), armed with two 57 mm autocannons. 'ZSU' stands for Zenitnaya Samokhodnaya Ustanovka (Russian: Зенитная Самоходная Установка), meaning \"anti-aircraft self-propelled mount\", '57' stands for the bore of the armament in millimetres and '2' stands for the number of gun barrels. It was the first Soviet mass-produced tracked SPAAG.",
@@ -1175,7 +1185,7 @@
             "year-of-variant-introduction": "1961"
         }
     }],
-    "AA gun QF 3,7\"": [{
+    "AAA QF 3,7\"": [{
         "default": {
             "name": "QF 3.7-inch AA Gun",
             "text": "The QF 3.7-inch AA was Britain's primary heavy anti-aircraft gun during World War II. It was roughly the equivalent of the German 88 mm FlaK and American 90 mm, but with a slightly larger calibre of 3.7 inches, approximately 94 mm. Production began in 1937 and it was used throughout World War II in all theatres except the Eastern Front. It remained in use after the war until AA guns were replaced by guided missiles beginning in 1957.",
@@ -1185,7 +1195,7 @@
             "year-of-variant-introduction": "1937"
         }
     }],
-    "AC Sd.Kfz.234/2 Puma": [{
+    "IFV Sd.Kfz.234/2 Puma": [{
         "default": {
             "name": "Sd.Kfz.234/2 Puma",
             "text": "The Sd.Kfz. 234 (Sonderkraftfahrzeug 234, Special Purpose Vehicle 234), was a family of armoured cars designed and built in Germany during World War II. The vehicles were lightly armoured, armed with a 20, 50 or 75 mm main gun, and powered by a Tatra V12 diesel engine.",
@@ -1195,7 +1205,7 @@
             "year-of-variant-introduction": "1943"
         }
     }],
-    "APC AAV-7": [{
+    "APC AAV-7 Amphibious": [{
         "default": {
             "name": "AAVP-7A1 'Amtrac'",
             "text": "The Assault Amphibious Vehicle (AAV)—official designation AAVP-7A1 (formerly known as Landing Vehicle, Tracked, Personnel-7 abbr. LVTP-7)—is a fully tracked amphibious landing vehicle manufactured by U.S. Combat Systems (previously by United Defense, a former division of FMC Corporation). The AAV-P7/A1 is the current amphibious troop transport of the United States Marine Corps. It is used by U.S. Marine Corps Assault Amphibian Battalions to land the surface assault elements of the landing force and their equipment in a single lift from assault shipping during amphibious operations to inland objectives and to conduct mechanized operations and related combat support in subsequent mechanized operations ashore. It is also operated by other forces.",
@@ -1215,7 +1225,7 @@
             "year-of-variant-introduction": "1986"
         }
     }],
-    "APC BTR-82A": [{
+    "IFV BTR-82A": [{
         "default": {
             "name": "BTR-82A",
             "text": "The BTR-80 (Russian: бронетранспортёр, romanized: Bronyetransportyor, literally \"Armoured Transporter\") is an 8×8 wheeled amphibious armoured personnel carrier (APC) designed in the USSR. It was adopted in 1985 and replaced the previous vehicles, the BTR-60 and BTR-70, in the Soviet Army. It was first deployed during the Soviet–Afghan War. This is a modernized Version of the BTR 80.",
@@ -1225,17 +1235,17 @@
             "year-of-variant-introduction": "2013"
         }
     }],
-    "APC Cobra": [{
+    "Scout Cobra": [{
         "default": {
             "name": "Cobra",
             "text": "The Cobra (Turkish: Kobra) is an armoured tactical vehicle developed by Turkish firm Otokar.",
             "country-of-origin": "Turkey",
             "manufacturer": "Otokar",
-            "role": "Armoured Car",
+            "role": "Recon",
             "year-of-variant-introduction": "1997"
         }
     }],
-    "APC M2A1": [{
+    "APC M2A1 Halftrack": [{
         "default": {
             "name": "M2A1 Half-Track",
             "text": "The M2 half-track car is an armored half-track produced by the United States during World War II. ",
@@ -1255,17 +1265,17 @@
             "year-of-variant-introduction": "1960"
         }
     }],
-    "APC M1043 HMMWV Armament": [{
+    "Scout HMMWV": [{
         "default": {
             "name": "M1043 HMMWV (M2 HMG)",
             "text": "The High Mobility Multipurpose Wheeled Vehicle (HMMWV; colloquial: Humvee) is a family of light, four-wheel drive, military trucks and utility vehicles produced by AM General.",
             "country-of-origin": "USA",
             "manufacturer": "AM General",
-            "role": "Armoured Car",
+            "role": "Recon",
             "year-of-variant-introduction": "1983"
         }
     }],
-    "APC M1126 Stryker ICV": [{
+    "IFV M1126 Stryker ICV": [{
         "default": {
             "name": "M1126 Stryker ICV (M2 HMG)",
             "text": "The ICV (Infantry Carrier Vehicle) Stryker is a family of eight-wheeled armored fighting vehicles derived from the Canadian LAV III. ",
@@ -1285,7 +1295,7 @@
             "year-of-variant-introduction": "1958"
         }
     }],
-    "APC Sd.Kfz.251": [{
+    "APC Sd.Kfz.251 Halftrack": [{
         "default": {
             "name": "Sd.Kfz.251 \"Hanomag\"",
             "text": "The Sd.Kfz. 251 (Sonderkraftfahrzeug 251) half-track was a World War II German armored personnel carrier designed by the Hanomag company, based on its earlier, unarmored Sd.Kfz. 11 vehicle. The Sd.Kfz. 251 was designed to transport the Panzergrenadier (German mechanized infantry) into battle. Sd.Kfz. 251s were the most widely produced German half-tracks of the war, with at least 15,252 vehicles and variants produced by seven manufacturers.",
@@ -1295,17 +1305,27 @@
             "year-of-variant-introduction": "1939"
         }
     }],
-    "ARV BRDM-2": [{
+    "Scout BRDM-2": [{
         "default": {
             "name": "BRDM-2",
-            "text": "The BRDM-2 (Boyevaya Razvedyvatelnaya Dozornaya Mashina, Боевая Разведывательная Дозорная Машина, literally \"Combat Reconnaissance/Patrol Vehicle\") is an amphibious armoured patrol car used by Russia and the former Soviet Union. It was also known under the designations BTR-40PB, BTR-40P-2 and GAZ 41-08. This vehicle, like many other Soviet designs, has been exported extensively and is in use in at least 38 countries.",
+            "text": "The PT-76 is a Soviet amphibious light tank that was introduced in the early 1950s and soon became the standard reconnaissance tank of the Soviet Army and the other Warsaw Pact armed forces. It was widely exported to other friendly states, like India, Iraq, Syria, North Korea and North Vietnam. Overall, some 25 countries used the PT-76. The tank's full name is Floating Tank–76 (плавающий танк, plavayushchiy tank, or ПТ-76). 76 stands for the caliber of the main armament: the 76.2 mm D-56T series rifled tank gun.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "GAZ",
             "role": "Amphibious Armoured Car",
             "year-of-variant-introduction": "1962"
         }
     }],
-    "ARV BTR-RD": [{
+    "LT PT-76": [{
+        "default": {
+            "name": "PT-76",
+            "text": "The BRDM-2 (Boyevaya Razvedyvatelnaya Dozornaya Mashina, Боевая Разведывательная Дозорная Машина, literally \"Combat Reconnaissance/Patrol Vehicle\") is an amphibious armoured patrol car used by Russia and the former Soviet Union. It was also known under the designations BTR-40PB, BTR-40P-2 and GAZ 41-08. This vehicle, like many other Soviet designs, has been exported extensively and is in use in at least 38 countries.",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "VTZ, Kirov Factory",
+            "role": "Recon light tank",
+            "year-of-variant-introduction": "1951"
+        }
+    }],
+    "APC BTR-RD": [{
         "default": {
             "name": "BTR-D",
             "text": "The BTR-D is a Soviet airborne multi-purpose tracked armoured personnel carrier which was introduced in 1974 and first seen by the West in 1979 during the Soviet–Afghan War. BTR-D stands for Bronetransportyor Desanta (БТР-Д, Бронетранспортер Десанта, literally \"armoured transporter of the Airborne\")",
@@ -1315,7 +1335,7 @@
             "year-of-variant-introduction": "1974"
         }
     }],
-    "ATGM M1045 HMMWV TOW": [{
+    "ATGM HMMWV": [{
         "default": {
             "name": "M1045 HMMWV (BGM-71 TOW)",
             "text": "The High Mobility Multipurpose Wheeled Vehicle (HMMWV; colloquial: Humvee) is a family of light, four-wheel drive, military trucks and utility vehicles produced by AM General. This verison carries a TOW for ATGM.",
@@ -1325,7 +1345,7 @@
             "year-of-variant-introduction": "1983"
         }
     }],
-    "ATGM M1134 Stryker": [{
+    "ATGM Stryker": [{
         "default": {
             "name": "M1134 Stryker ATGM (BGM-71 TOW)",
             "text": "The ICV (Infantry Carrier Vehicle) Stryker is a family of eight-wheeled armored fighting vehicles derived from the Canadian LAV III.",
@@ -1355,7 +1375,7 @@
             "year-of-variant-introduction": "1944"
         }
     }],
-    "Daimler Armoured Car": [{
+    "Car Daimler Armored": [{
         "default": {
             "name": "Daimler Armoured Car Mk I",
             "text": "The Daimler Armoured Car was a successful British armoured car design of the Second World War that continued in service into the 1950s. It was designed for armed reconnaissance and liaison purposes. During the postwar era, it doubled as an internal security vehicle in a number of countries. Former British Daimler armoured cars were exported to various Commonwealth of Nations member states throughout the 1950s and 1960s. In 2012, some were still being operated by the Qatari Army.",
@@ -1365,7 +1385,7 @@
             "year-of-variant-introduction": "1941"
         }
     }],
-    "HIT Churchill_VII": [{
+    "HIT Churchill VII": [{
         "default": {
             "name": "A22 Infantry Tank MK IV Churchill VII",
             "text": "The Tank, Infantry, Mk IV (A22) Churchill was a British heavy infantry tank used in the Second World War, best known for its heavy armour, large longitudinal chassis with all-around tracks with multiple bogies, its ability to climb steep slopes, and its use as the basis of many specialist vehicles. It was one of the heaviest Allied tanks of the war.",
@@ -1373,6 +1393,16 @@
             "manufacturer": "Vauxhall Motors",
             "role": "Infantry Tank",
             "year-of-variant-introduction": "1944"
+        }
+    }],
+    "MBT Chieftain Mk.3": [{
+        "default": {
+            "name": "A22 Infantry Tank MK IV Churchill VII",
+            "text": "The FV4201 Chieftain was the main battle tank of the United Kingdom during the 1960s, 1970s and 1980s.",
+            "country-of-origin": "UK",
+            "manufacturer": "Leyland Motors",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1966"
         }
     }],
     "HT Pz.Kpfw.VI Tiger I": [{
@@ -1398,6 +1428,7 @@
     "IFV BMD-1": [{
         "default": {
             "name": "BMD-1",
+            "text": "The BMD-1 is a Soviet airborne amphibious tracked infantry fighting vehicle, which was introduced in 1969 and first seen by the West in 1970. BMD stands for Boyevaya Mashina Desanta (Боевая Машина Десанта, which literally translates to \"Combat Vehicle of the Airborne\"). It can be dropped by parachute and although it resembles the BMP-1 it is in fact much smaller. The BMD-1 was used as an IFV by the Soviet Army's airborne divisions.",
             "country-of-origin": "USSR/Russia",
             "manufacturer": "Volgograd",
             "role": "Airborne Amphibious Infantry Fighting Vehicle",
@@ -1464,7 +1495,7 @@
             "year-of-variant-introduction": "1988"
         }
     }],
-    "IFV MCV-80": [{
+    "IFV Warrior ": [{
         "default": {
             "name": "FV510 Warrior",
             "text": "The Warrior tracked vehicle family is a series of British armoured vehicles, originally developed to replace the older FV430 series of armoured vehicles. The Warrior started life as the MCV-80, \"Mechanised Combat Vehicle for the 1980s\". One of the requirements of the new vehicle was a top speed able to keep up with the projected new MBT, the MBT-80 – later cancelled and replaced by what became the Challenger 1 – which the then-current FV432 armoured personnel carrier could not. ",
@@ -1474,7 +1505,7 @@
             "year-of-variant-introduction": "1984"
         }
     }],
-    "LAC M8 Greyhound": [{
+    "Car M8 Greyhound Armored": [{
         "default": {
             "name": "M8 Greyhound Light Armored Car",
             "text": "The M8 Light Armored Car is a 6×6 armored car produced by the Ford Motor Company during World War II. It was used from 1943 by United States and British forces in Europe and the Pacific until the end of the war. The vehicle was widely exported and as of 2006 still remained in service with some countries.",
@@ -1504,10 +1535,21 @@
             "year-of-variant-introduction": "1943"
         }
     }],
-    "M30 Cargo Carrier": [{
+    "Carrier Sd.Kfz.7 Tractor": [{
+        "default": {
+            "name": "Sd.Kfz.7 Tractor",
+            "text": "The Carrier Sd.Kfz.7 Tractor was a Artillery tow truck.",
+            "country-of-origin": "Germany",
+            "manufacturer": "Kraus Maffei",
+            "role": "Tracked Cargo Transporter",
+            "year-of-variant-introduction": "1938"
+        }
+    }],
+    "Carrier M30 Cargo": [{
         "default": {
             "name": "M30 Cargo Carrier",
             "country-of-origin": "USA",
+            "text": "The M30 Cargo carrier was a variant of the M12 Gun Motor Carriage (a US self-propelled gun), which itself was derived from the M3 Lee tank. Neither vehicle was extensively produced, around hundreds being manufactured. It was exclusively used in the Normandy theatre and followed the Allied push into Germany. It was judged obsolete after the war and retired from service.",
             "manufacturer": "Pressed Steel Car Company",
             "role": "Tracked Cargo Transporter",
             "year-of-variant-introduction": "1942"
@@ -1523,7 +1565,7 @@
             "year-of-variant-introduction": "1998"
         }
     }],
-    "M12 GMC": [{
+    "SPG M12 GMC 155mm": [{
         "default": {
             "name": "M12 Gun Motor Carriage",
             "text": "The 155 mm Gun Motor Carriage M12 was a U.S. self-propelled gun developed during the Second World War. It mounted a 155 mm gun derived from the French Canon de 155mm GPF field gun.",
@@ -1543,6 +1585,76 @@
             "year-of-variant-introduction": "1993"
         }
     }],
+    "TRM-2000 PAMELA": [{
+        "default": {
+            "name": "Pamela",
+            "text": "WIP - Mistral Missile on a Truck.",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "Shorad",
+            "year-of-variant-introduction": "1993"
+        }
+    }],
+    "Leclerc Série XXI": [{
+        "default": {
+            "name": "Leclerc Séries XXI",
+            "text": "The Leclerc tank (French: char Leclerc) is a main battle tank (MBT) built by GIAT, now Nexter of France. It was named in honour of General Philippe Leclerc de Hauteclocque, who led the French element of the drive towards Paris while in command of the Free French 2nd Armoured Division (2e DB) in World War II. The designation AMX-56 – while very popular – is incorrect. During the Iron spear exercise, October 2019, Leclerc tanks crewed by the Lynx 6 Tactical Inter-Service Sub-Group (S-GTIA) participated in an inter-alliance exercise and surpassed the American M1A2 Abrams, German, Spanish and Norwegian Leopard 2s, Italian Ariete C1 and Polish P91.",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "2001"
+        }
+    }],
+    "AMX-30B2": [{
+        "default": {
+            "name": "AMX.30B2",
+            "text": "The AMX-30 is a main battle tank designed by Ateliers de construction d'Issy-les-Moulineaux (AMX, then GIAT) and first delivered to the French Army in August 1965. ",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1965"
+        }
+    }],
+    "ERC-90": [{
+        "default": {
+            "name": "Panhard",
+            "text": "The Panhard ERC (Engin à Roues, Canon) is a French six-wheeled armoured car which is highly mobile and amphibious with an option of being NBC-proof.",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "Recon Vehicle",
+            "year-of-variant-introduction": "1975"
+        }
+    }],
+    "AMX-10RCR": [{
+        "default": {
+            "name": "Leclerc Séries 2",
+            "text": "The AMX-10 RC is a reconnaissance vehicle built by GIAT. Over 240 are in service in the French Army. In addition, 108 vehicles were sold to Morocco and 12 to Qatar. RC stands for Roues-Canon, or wheeled gun.",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "Recon Vehicle",
+            "year-of-variant-introduction": "1970"
+        }
+    }],
+    "ATGM VAB MEPHISTO": [{
+        "default": {
+            "name": "VAB Mephisto",
+            "text": "The VAB HOT Mephisto is a wheeled armoured vehicle personnel carrier VAB fitted with anti-tank missile launcher turret.",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "ATGM Vehicle",
+            "year-of-variant-introduction": "1990"
+        }
+    }],
+    "AMX-10RCR SEPAR": [{
+        "default": {
+            "name": "Leclerc Séries 2",
+            "text": "The AMX-10 RC is a reconnaissance vehicle built by GIAT. Over 240 are in service in the French Army. In addition, 108 vehicles were sold to Morocco and 12 to Qatar. RC stands for Roues-Canon, or wheeled gun.",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "Recon Vehicle",
+            "year-of-variant-introduction": "1970"
+        }
+    }],
     "MBT Leopard 1A3": [{
         "default": {
             "name": "Leopard 1A3",
@@ -1553,7 +1665,7 @@
             "year-of-variant-introduction": "1974"
         }
     }],
-    "MBT Leopard-2": [{
+    "MBT Leopard-2A6M": [{
         "default": {
             "name": "Leopard 2A6",
             "text": "The Leopard 2 is a main battle tank developed by Krauss-Maffei in the 1970s for the West German Army. The tank first entered service in 1979 and succeeded the earlier Leopard 1 as the main battle tank of the German Army. It is armed with a 120 mm smoothbore cannon, and is powered by a V-12 twin-turbo diesel engine. Various versions have served in the armed forces of Germany and 12 other European countries, as well as several non-European nations, including Canada, Chile, Indonesia, Singapore, and Turkey. The Leopard 2 was used in Kosovo with the German Army, and has seen action in Afghanistan with the Dutch, Danish and Canadian contributions to the International Security Assistance Force, as well as seeing action in Syria with the Turkish Armed Forces.",
@@ -1561,6 +1673,36 @@
             "manufacturer": "Krauss-Maffei",
             "role": "Main Battle Tank",
             "year-of-variant-introduction": "2001"
+        }
+    }],
+    "MBT Leopard-2A5": [{
+        "default": {
+            "name": "Leopard 2A5",
+            "text": "The Leopard 2 is a main battle tank developed by Krauss-Maffei in the 1970s for the West German Army. The tank first entered service in 1979 and succeeded the earlier Leopard 1 as the main battle tank of the German Army. It is armed with a 120 mm smoothbore cannon, and is powered by a V-12 twin-turbo diesel engine. Various versions have served in the armed forces of Germany and 12 other European countries, as well as several non-European nations, including Canada, Chile, Indonesia, Singapore, and Turkey. The Leopard 2 was used in Kosovo with the German Army, and has seen action in Afghanistan with the Dutch, Danish and Canadian contributions to the International Security Assistance Force, as well as seeing action in Syria with the Turkish Armed Forces.",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krauss-Maffei",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1995"
+        }
+    }],
+    "MBT Leopard-2A4": [{
+        "default": {
+            "name": "Leopard 2A4",
+            "text": "The Leopard 2 is a main battle tank developed by Krauss-Maffei in the 1970s for the West German Army. The tank first entered service in 1979 and succeeded the earlier Leopard 1 as the main battle tank of the German Army. It is armed with a 120 mm smoothbore cannon, and is powered by a V-12 twin-turbo diesel engine. Various versions have served in the armed forces of Germany and 12 other European countries, as well as several non-European nations, including Canada, Chile, Indonesia, Singapore, and Turkey. The Leopard 2 was used in Kosovo with the German Army, and has seen action in Afghanistan with the Dutch, Danish and Canadian contributions to the International Security Assistance Force, as well as seeing action in Syria with the Turkish Armed Forces.",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krauss-Maffei",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1991"
+        }
+    }],
+    "MBT Leopard-2A4 Trs": [{
+        "default": {
+            "name": "Leopard 2A4 Trs",
+            "text": "The Leopard 2 is a main battle tank developed by Krauss-Maffei in the 1970s for the West German Army. The tank first entered service in 1979 and succeeded the earlier Leopard 1 as the main battle tank of the German Army. It is armed with a 120 mm smoothbore cannon, and is powered by a V-12 twin-turbo diesel engine. Various versions have served in the armed forces of Germany and 12 other European countries, as well as several non-European nations, including Canada, Chile, Indonesia, Singapore, and Turkey. The Leopard 2 was used in Kosovo with the German Army, and has seen action in Afghanistan with the Dutch, Danish and Canadian contributions to the International Security Assistance Force, as well as seeing action in Syria with the Turkish Armed Forces.",
+            "country-of-origin": "Germany",
+            "manufacturer": "Krauss-Maffei",
+            "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1991"
         }
     }],
     "MBT M1A2 Abrams": [{
@@ -1583,7 +1725,7 @@
             "year-of-variant-introduction": "1960"
         }
     }],
-    "MBT Merkava Mk. 4": [{
+    "MBT Merkava IV": [{
         "default": {
             "name": "Merkava Mk IV",
             "text": "The Merkava is a main battle tank used by the Israel Defense Forces. The tank began development in 1970, and entered official service in 1979. Four main variants of the tank have been deployed. It was first used extensively in the 1982 Lebanon War. The name \"Merkava\" was derived from the IDF's initial development program name. Design criteria include rapid repair of battle damage, survivability, cost-effectiveness and off-road performance. ",
@@ -1643,7 +1785,7 @@
             "year-of-variant-introduction": "2004"
         }
     }],
-    "MLRS 9A52 Smerch": [{
+    "MLRS 9A52 Smerch CM 300mm": [{
         "default": {
             "name": "BM-30 Smerch (9M55K Cluster Rockets)",
             "text": "The BM-30 Smerch (Russian: Смерч, \"tornado\", \"whirlwind\"), 9K58 Smerch or 9A52-2 Smerch-M is a Soviet heavy multiple rocket launcher. The system is intended to defeat personnel, armored, and soft targets in concentration areas, artillery batteries, command posts and ammunition depots.",
@@ -1653,7 +1795,7 @@
             "year-of-variant-introduction": "1989"
         }
     }],
-    "MLRS 9A52 Smerch HE": [{
+    "MLRS 9A52 Smerch HE 300mm": [{
         "default": {
             "name": "BM-30 Smerch (9M55K5 HE Rockets)",
             "text": "The BM-30 Smerch (Russian: Смерч, \"tornado\", \"whirlwind\"), 9K58 Smerch or 9A52-2 Smerch-M is a Soviet heavy multiple rocket launcher. The system is intended to defeat personnel, armored, and soft targets in concentration areas, artillery batteries, command posts and ammunition depots.",
@@ -1663,7 +1805,7 @@
             "year-of-variant-introduction": "1989"
         }
     }],
-    "MLRS 9K57 Uragan BM-27": [{
+    "MLRS 9K57 Uragan BM-27 220mm": [{
         "default": {
             "name": "BM-27 Uragan",
             "text": "The BM-27 Uragan (Russian: Ураган, lit. 'Hurricane'; GRAU index 9P140) is a self-propelled multiple rocket launcher system designed in the Soviet Union.",
@@ -1673,7 +1815,7 @@
             "year-of-variant-introduction": "1975"
         }
     }],
-    "MLRS BM-21 Grad": [{
+    "MLRS BM-21 Grad 122mm": [{
         "default": {
             "name": "BM-21 Grad",
             "text": "The BM-21 \"Grad\" (Russian: БМ-21 \"Град\", lit. 'hail') is a Soviet truck-mounted 122 mm multiple rocket launcher.",
@@ -1692,7 +1834,7 @@
             "year-of-variant-introduction": "1993"
         }
     }],
-    "MLRS M270": [{
+    "MLRS M270 227mm": [{
         "default": {
             "name": "M270 Multiple Launch Rocket System",
             "text": "The M270 Multiple Launch Rocket System (M270 MLRS) is an armored, self-propelled, multiple rocket launcher (a type of rocket artillery). Since the first M270s were delivered to the U.S. Army in 1983, the MLRS has been adopted by several NATO countries. Some 1,300 M270 systems have been manufactured in the United States and in Europe, along with more than 700,000 rockets. The production of the M270 ended in 2003, when a last batch was delivered to the Egyptian Army.",
@@ -1702,7 +1844,7 @@
             "year-of-variant-introduction": "1983"
         }
     }],
-    "MT M4 Sherman": [{
+    "Tk M4 Sherman": [{
         "default": {
             "name": "M4A2(75) Sherman",
             "text": "The M4 Sherman, officially Medium Tank, M4, was the most widely used medium tank by the United States and Western Allies in World War II. The M4 Sherman proved to be reliable, relatively cheap to produce, and available in great numbers. It was also the basis of several successful tank destroyers, such as the M10, 17pdr SP Achilles and M36B1. Tens of thousands were distributed through the Lend-Lease program to the British Commonwealth and Soviet Union.",
@@ -1728,7 +1870,7 @@
             "name": "Sherman Firefly VC"
         }
     }],
-    "MT Pz.Kpfw.IV Ausf.H": [{
+    "Tk PzIV H": [{
         "default": {
             "name": "Panzerkampfwagen IV Ausf. H",
             "text": "The Panzerkampfwagen IV (Pz.Kpfw. IV), commonly known as the Panzer IV, was a German medium tank developed in the late 1930s and used extensively during the Second World War. Its ordnance inventory designation was Sd.Kfz. 161. The Panzer IV was the most numerous German tank and the second-most numerous German armored fighting vehicle of the Second World War, with some 8,500 built. ",
@@ -1748,7 +1890,7 @@
             "year-of-variant-introduction": "1944"
         }
     }],
-    "SAM Avenger M1097": [{
+    "SAM Avenger (Stinger)": [{
         "default": {
             "name": "M1097 Heavy HMMWV Avenger",
             "text": "The Avenger Air Defense System, designated AN/TWQ-1 under the Joint Electronics Type Designation System, is an American self-propelled surface-to-air missile system which provides mobile, short-range air defense protection for ground units against cruise missiles, unmanned aerial vehicles, low-flying fixed-wing aircraft, and helicopters.",
@@ -1768,13 +1910,23 @@
             "year-of-variant-introduction": "1969"
         }
     }],
-    "SAM Linebacker M6": [{
+    "SAM Linebacker - Bradley M6": [{
         "default": {
             "name": "M6 Linebacker",
             "text": "The M6 Linebacker short-range air defense system was developed by Boeing to meet the US Army requirements. The new vehicle was intended to counter the threat posed by low-flying aircraft, helicopters, cruise missiles and unmanned aerial vehicles to forward armored formations. Initial production Linebackers entered service with the US Army in 1997. A total of 99 Bradley Linebackers were ordered, however in 2006 these were phased-out of service. The M6 is an all-weather system, capable of operating in day/night and all weather conditions. It is based on the M2 Bradley IFV and is equipped with a quadruple launcher with FIM-92 Stinger short-range surface-to-air missiles instead of the TOW ATGW.",
             "country-of-origin": "USA",
             "manufacturer": "United Defense",
             "role": "Self-Propelled Anti-Aircraft System",
+            "year-of-variant-introduction": "1997"
+        }
+    }],
+    "Car Willys Jeep": [{
+        "default": {
+            "name": "Willys Jeep",
+            "text": "The jeep became the primary light wheeled transport vehicle of the United States military and its allies, with President Eisenhower once calling it \"one of three decisive weapons the U.S. had during WWII.\" After WW2 it served in many conflicts.",
+            "country-of-origin": "USA",
+            "manufacturer": "United Defense",
+            "role": "Recon Vehicle",
             "year-of-variant-introduction": "1997"
         }
     }],
@@ -1788,7 +1940,7 @@
             "year-of-variant-introduction": "1981"
         }
     }],
-    "SAM SA-13 Strela-10M3 9A35M3": [{
+    "SAM SA-13 Strela 10M3 \"Gopher\" TEL": [{
         "default": {
             "name": "SA-13 Gopher (9K35 Strela-10M3)",
             "text": "The 9K35 Strela-10 (Russian: 9К35 «Стрела-10»; English: arrow) is a highly mobile, short-range surface-to-air missile system. It is visually aimed, and utilizes optical/infrared-guidance. The system is primarily intended to engage low-altitude threats, such as helicopters. \"9K35\" is its GRAU designation; its NATO reporting name is SA-13 \"Gopher\".",
@@ -1798,7 +1950,27 @@
             "year-of-variant-introduction": "1981"
         }
     }],
-    "SAM SA-19 Tunguska 2S6": [{
+    "SAM SA-8 Osa \"Gecko\" TEL": [{
+        "default": {
+            "name": "SA-13 Gopher (9K35 Strela-10M3)",
+            "text": "The 9K33 Osa (Russian: 9К33 «Оса», literally \"wasp\"; NATO reporting name SA-8 Gecko) is a highly mobile, low-altitude, short-range tactical surface-to-air missile system developed in the Soviet Union in the 1960s and fielded in 1972. Its export version name is Romb.",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Ulyanovsk",
+            "role": "Self-Propelled Surface-to-Air Missile Launcher",
+            "year-of-variant-introduction": "1981"
+        }
+    }],
+    "SAM SA-15 Tor \"Gauntlet\"": [{
+        "default": {
+            "name": "SA-15 Tor",
+            "text": "The Tor missile system (Russian: \"Тор\"; English: torus) is an all-weather low to medium altitude, short-range surface-to-air missile system designed for destroying airplanes, helicopters, cruise missiles, precision guided munitions, unmanned aerial vehicles and short-range ballistic threats (anti-munitions).",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Znamya Truda Plant",
+            "role": "Self-Propelled Anti-Aircraft System",
+            "year-of-variant-introduction": "1971"
+        }
+    }],
+    "SAM SA-19 Tunguska \"Grison\" ": [{
         "default": {
             "name": "SA-19 Grison (2K22 Tunguska)",
             "text": "The 2K22 Tunguska (Russian: 2К22 'Тунгуска') is a Russian tracked self-propelled anti-aircraft weapon armed with a surface-to-air gun and missile system. It is designed to provide day and night protection for infantry and tank regiments against low-flying aircraft, helicopters, and cruise missiles in all weather conditions. The NATO reporting name for the missile used by the weapon system is SA-19 \"Grison\".",
@@ -1808,7 +1980,17 @@
             "year-of-variant-introduction": "1982"
         }
     }],
-    "Sd.Kfz.184 Elefant": [{
+    "SAM SA-9 Strela 1 \"Gaskin\" TEL": [{
+        "default": {
+            "name": "SA-9 Strela",
+            "text": "The 9K31 Strela-1 (Russian: 9К31 «Стрела-1»; English: arrow) is a highly mobile, short-range, low altitude infra-red guided surface-to-air missile system. Originally developed by the Soviet Union under the GRAU designation 9K31, it is commonly known by its NATO reporting name, SA-9 \"Gaskin\". The system consists of a BRDM-2 amphibious vehicle, mounting two pairs of ready-to-fire 9M31 missiles.",
+            "country-of-origin": "USSR/Russia",
+            "manufacturer": "Soviet state factories",
+            "role": "Self-Propelled Anti-Aircraft System",
+            "year-of-variant-introduction": "1966"
+        }
+    }],
+    "SPG Sd.Kfz.184 Elefant": [{
         "default": {
             "name": "Sd.Kfz.184 Elefant",
             "text": "The Elefant (German for \"elephant\") was a heavy tank destroyer used by German Wehrmacht Panzerjäger during World War II. Ninety-one units were built in 1943 under the name Ferdinand, after its designer Ferdinand Porsche, using tank hulls produced for the Tiger I tank design abandoned in favour of a Henschel design.",
@@ -1828,7 +2010,7 @@
             "year-of-variant-introduction": "1976"
         }
     }],
-    "SPAAA ZSU-23-4 Shilka": [{
+    "SPAAA ZSU-23-4 Shilka \"Gun Dish\"": [{
         "default": {
             "name": "ZSU-23-4 Shilka",
             "text": "The ZSU-23-4 \"Shilka\" is a lightly armored Soviet self-propelled, radar guided anti-aircraft weapon system (SPAAG). About 6500 have been build.",
@@ -1838,7 +2020,7 @@
             "year-of-variant-introduction": "1960"
         }
     }],
-    "SPG M1128 Stryker MGS": [{
+    "SPG Stryker MGS": [{
         "default": {
             "name": "M1128 Stryker Mobile Gun System",
             "text": "The M1128 Mobile Gun System is an eight-wheeled armored car of the Stryker armored fighting vehicle family, mounting a 105 mm tank gun, based on the Canadian LAV III light-armored vehicle manufactured by General Dynamics Land Systems. It is in service with the United States Army but will be retired by the end of 2022.",
@@ -1848,7 +2030,7 @@
             "year-of-variant-introduction": "2006"
         }
     }],
-    "SpGH Dana": [{
+    "SPH Dana vz77 152mm": [{
         "default": {
             "name": "SpGH DANA",
             "text": "The DANA (the name being derived from \"dělo automobilní nabíjené automaticky\" (gun on truck loaded automatically)) is a wheeled self-propelled artillery piece.",
@@ -1858,7 +2040,7 @@
             "year-of-variant-introduction": "1980"
         }
     }],
-    "SPH 2S9 Nona": [{
+    "SPM 2S9 Nona 120mm M": [{
         "default": {
             "name": "2S9 Nona-S",
             "text": "The 2S9 NONA (Новейшее Орудие Наземной Артилерии - Newest Ordnance of Ground Artillery) is an extremely light-weight self-propelled and air-droppable 120 mm gun-mortar designed in the Soviet Union, which entered service in 1981. The 2S9 chassis is designated the S-120 and based on the aluminium hull of the BTR-D airborne multi-purpose tracked armoured personnel carrier. More generally, the 120 mm mortar is referred to as the Nona, with the 2S9 also known as the Nona-S. Although no figures have been released, it is estimated that well over 1,000 2S9 were built.",
@@ -1868,7 +2050,7 @@
             "year-of-variant-introduction": "1981"
         }
     }],
-    "SPH 2S3 Akatsia": [{
+    "SPH 2S3 Akatsia 152mm": [{
         "default": {
             "name": "2S3 Akatsiya",
             "text": "The SO-152 (Russian: СО-152) is a Soviet 152.4 mm self-propelled gun developed in 1968. It was a response to the American 155 mm M109. ",
@@ -1878,7 +2060,7 @@
             "year-of-variant-introduction": "1971"
         }
     }],
-    "SPH 2S1 Gvozdika": [{
+    "SPH 2S1 Gvozdika 122mm": [{
         "default": {
             "name": "2S1 Gvozdika",
             "text": "The 2S1 Gvozdika (Russian: 2С1 «Гвоздика», \"Carnation\") is a Soviet self-propelled howitzer based on the MT-LBu multi-purpose chassis, mounting a 122 mm 2A18 howitzer. ",
@@ -1888,7 +2070,7 @@
             "year-of-variant-introduction": "1972"
         }
     }],
-    "SPH 2S19 Msta": [{
+    "SPH 2S19 Msta 152mm": [{
         "default": {
             "name": "2S19 Msta-S",
             "text": "The 2S19 \"Msta-S\" (Russian: Мста, after the Msta River) is a 152.4 mm self-propelled howitzer designed by Soviet Union, which entered service in 1989 as the successor to the 2S3 Akatsiya. The vehicle is based on the T-80 tank hull, but is powered by the T-72's diesel engine.",
@@ -1898,7 +2080,7 @@
             "year-of-variant-introduction": "1989"
         }
     }],
-    "SPH M109 Paladin": [{
+    "SPH M109 Paladin 155mm": [{
         "default": {
             "name": "M109A6 Paladin",
             "text": "The M109 is an American 155 mm turreted self-propelled howitzer, first introduced in the early 1960s to replace the M44.",
@@ -1908,7 +2090,17 @@
             "year-of-variant-introduction": "1994"
         }
     }],
-    "StuG III Ausf. G": [{
+    "SPH T155 Firtina 155mm": [{
+        "default": {
+            "name": "Firtina",
+            "text": "T-155 Fırtına (English: Storm) is a Turkish 155 mm self-propelled howitzer.",
+            "country-of-origin": "Turkey",
+            "manufacturer": "Turkey",
+            "role": "Self-Propelled Gun",
+            "year-of-variant-introduction": "1998"
+        }
+    }],
+    "SPG StuG III Ausf. G": [{
         "default": {
             "name": "Sturmgeschütz III Ausf. G",
             "text": "The Sturmgeschütz III (StuG III) assault gun was Germany's most-produced fully tracked armoured fighting vehicle during World War II, and second-most produced German armored combat vehicle of any type after the Sd.Kfz. 251 half-track. It was built on a slightly modified Panzer III chassis, replacing the turret with an armored, fixed superstructure mounting a more powerful gun. Initially intended as a mobile assault gun for direct-fire support for infantry, the StuG III was continually modified, and much like the later Jagdpanzer vehicles, was employed as a tank destroyer.",
@@ -1918,7 +2110,7 @@
             "year-of-variant-introduction": "1942"
         }
     }],
-    "StuG IV": [{
+    "SPG StuG IV": [{
         "default": {
             "name": "Sturmgeschütz IV",
             "text": "The Sturmgeschütz IV (StuG IV) (Sd.Kfz. 167) was a German assault gun variant of the Panzer IV used in the latter part of the Second World War. It was identical in role and concept to the highly successful StuG III assault gun variant of the Panzer III. Both StuG models were given an exclusively tank destroyer role in German formations and tactical planning in the last two years of the war, greatly augmenting the capability of the dwindling tank force available to the German army on the Eastern and Western fronts.",
@@ -1928,7 +2120,7 @@
             "year-of-variant-introduction": "1943"
         }
     }],
-    "Sturmpanzer IV Brummbär": [{
+    "SPG Sturmpanzer IV Brummbar": [{
         "default": {
             "name": "Sturmpanzer IV Brummbär",
             "text": "The Sturmpanzer (also known as Sturmpanzer 43 or Sd.Kfz. 166) was a German armoured infantry support gun based on the Panzer IV chassis used in the Second World War. It was used at the Battles of Kursk, Anzio, Normandy, and was deployed in the Warsaw Uprising. It was known by the nickname Brummbär (German: \"Grouch\") by Allied intelligence, a name which was not used by the Germans. German soldiers nicknamed it the \"Stupa\", a contraction of the term Sturmpanzer. Just over 300 vehicles were built and they were assigned to four independent battalions.",
@@ -1938,7 +2130,7 @@
             "year-of-variant-introduction": "1943"
         }
     }],
-    "TD Jagdpanther G1": [{
+    "SPG Jagdpanther G1": [{
         "default": {
             "name": "Jagdpanther G1",
             "text": "The Jagdpanther (German: \"hunting Panther\"), Sd.Kfz. 173, was a tank destroyer (Jagdpanzer, a self-propelled anti-tank gun) built by Germany during World War II. The Jagdpanther combined the 8.8 cm Pak 43 anti-tank gun, similar to the main gun of the Tiger II, and the armor and suspension of the Panther chassis.",
@@ -1948,7 +2140,7 @@
             "year-of-variant-introduction": "1944"
         }
     }],
-    "TD Jagdpanzer IV": [{
+    "SPG Jagdpanzer IV": [{
         "default": {
             "name": "Jagdpanzer IV",
             "text": "The Jagdpanzer IV, Sd.Kfz. 162, was a German tank destroyer based on the Panzer IV chassis.",
@@ -1958,7 +2150,7 @@
             "year-of-variant-introduction": "1944"
         }
     }],
-    "TD M10 GMC": [{
+    "SPG M10 GMC": [{
         "default": {
             "name": "M10 3-inch Gun Motor Carriage",
             "text": "The M10 tank destroyer was an American tank destroyer of World War II. The M10 was numerically the most important U.S. tank destroyer of World War II. It combined thin but sloped armor with the M4's reliable drivetrain and a reasonably potent anti-tank weapon mounted in an open-topped turret. Despite its obsolescence in the face of newer German tanks like the Panther and the introduction of more powerful and better-designed types as replacements, the M10 remained in service until the end of the war.",
@@ -1971,7 +2163,7 @@
             "name": "3in SPM M10 Achilles Mk II"
         }
     }],
-    "TPz Fuchs": [{
+    "APC TPz Fuchs ": [{
         "default": {
             "name": "TPz Fuchs",
             "text": "The TPz (Transportpanzer) Fuchs (\"fox\") is a German armoured personnel carrier originally developed by Daimler-Benz but manufactured and further developed by the now Rheinmetall MAN Military Vehicles (RMMV). Fuchs was the second wheeled armoured vehicle to enter service with the Bundeswehr (West German Military) and it can be used for tasks including troop transport, engineer transport, bomb disposal, Nuclear, Biological and Chemical reconnaissance and electronic warfare. RMMV and its predecessors manufactured 1,236 Fuchs 1, mostly for the German Army.",
@@ -1991,6 +2183,16 @@
             "year-of-variant-introduction": "1979"
         }
     }],
+    "HQ-7 Self-Propelled LN": [{
+        "default": {
+            "name": "HQ-7 Launcher",
+            "text": "The HQ-7 (FM-80) (Chinese: 红旗; pinyin: hóng qí, \"red flag\" or \"red banner\") is a Chinese short-range air defense missile reverse engineered from the French Crotale. The missile is deployed on both ships and land-based vehicles. China revealed the export version, FM-80, in the 1989 Dubai Air Show. Unit cost is around $162,000 per launcher and $24,500 per missile.",
+            "country-of-origin": "China",
+            "manufacturer": "Academy for Defense",
+            "role": "Shorad",
+            "year-of-variant-introduction": "1983"
+        }
+    }],
     "ZBD-04A": [{
         "default": {
             "name": "Type 04A (ZBD-04A)",
@@ -1998,6 +2200,16 @@
             "country-of-origin": "China",
             "manufacturer": "Norinco",
             "role": "Main Battle Tank",
+            "year-of-variant-introduction": "1999"
+        }
+    }],
+    "PLZ-05": [{
+        "default": {
+            "name": "PLZ-05",
+            "text": "The PLZ-05 or the Type 05 is a 155 mm self-propelled howitzer developed by the People's Liberation Army of China to replace the Type 59-1 130mm. The PLZ-05 was officially unveiled at the Military Museum of the Chinese People's Revolution to mark the 80th anniversary of the PLA in July 2007, and first entered service with the PLA in 2008.",
+            "country-of-origin": "China",
+            "manufacturer": "Norinco",
+            "role": "Self propelled artillery",
             "year-of-variant-introduction": "1999"
         }
     }]

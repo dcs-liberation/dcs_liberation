@@ -49,7 +49,7 @@ class VAB_T20_13(unittype.VehicleType):
 
 class VAB_MEPHISTO(unittype.VehicleType):
     id = "VAB_HOT"
-    name = "VAB MEPHISTO"
+    name = "ATGM VAB MEPHISTO"
     detection_range = 0
     threat_range = 4000
     air_weapon_dist = 4000
