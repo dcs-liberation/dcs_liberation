@@ -455,15 +455,14 @@ class Operation:
             "BlueAA": {},
         }  # type: ignore
 
-        if airsupportgen.air_support.tankers:
-            for tanker in airsupportgen.air_support.tankers:
-                luaData["Tankers"][tanker.callsign] = {
-                    "dcsGroupName": tanker.group_name,
-                    "callsign": tanker.callsign,
-                    "variant": tanker.variant,
-                    "radio": tanker.freq.mhz,
-                    "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
-                }
+        for tanker in airsupportgen.air_support.tankers:
+            luaData["Tankers"][tanker.callsign] = {
+                "dcsGroupName": tanker.group_name,
+                "callsign": tanker.callsign,
+                "variant": tanker.variant,
+                "radio": tanker.freq.mhz,
+                "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
+            }
 
         if airsupportgen.air_support.awacs:
             for awacs in airsupportgen.air_support.awacs:

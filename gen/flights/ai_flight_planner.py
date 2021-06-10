@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import operator
 import random
 from collections import defaultdict
@@ -528,19 +529,19 @@ class ObjectiveFinder:
         """Finds the friendly control point that is closest to any threats."""
         threat_zones = self.game.threat_zone_for(not self.is_player)
 
-        farthest = None
-        max_distance = nautical_miles(10000)
+        closest = None
+        min_distance = meters(math.inf)
         for cp in self.friendly_control_points():
             if isinstance(cp, OffMapSpawn):
                 continue
             distance = threat_zones.distance_to_threat(cp.position)
-            if distance < max_distance:
-                farthest = cp
-                max_distance = distance
+            if distance < min_distance:
+                closest = cp
+                min_distance = distance
 
-        if farthest is None:
+        if closest is None:
             raise RuntimeError("Found no friendly control points. You probably lost.")
-        return farthest
+        return closest
 
     def enemy_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all enemy control points."""
@@ -650,7 +651,6 @@ class CoalitionMissionPlanner:
         yield ProposedMission(
             self.objective_finder.closest_friendly_control_point(),
             [ProposedFlight(FlightType.REFUELING, 1, self.MAX_TANKER_RANGE)],
-            asap=False,
         )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.

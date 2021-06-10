@@ -1,5 +1,4 @@
 from __future__ import annotations
-from gen.tacan import TacanBand, TacanRegistry
 
 import logging
 import random
@@ -13,7 +12,6 @@ from dcs.action import AITaskPush, ActivateGroup
 from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
-from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, S_3B_Tanker
 from dcs.helicopters import UH_1H, helicopter_map
 from dcs.mapping import Point
 from dcs.mission import Mission, StartType
@@ -41,6 +39,7 @@ from dcs.planes import (
     Su_33,
     Tu_22M3,
 )
+from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, S_3B_Tanker
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
@@ -85,7 +84,7 @@ from game.data.weapons import Pylon
 from game.db import GUN_RELIANT_AIRFRAMES
 from game.factions.faction import Faction
 from game.settings import Settings
-from game.squadrons import Pilot, Squadron
+from game.squadrons import Pilot
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
@@ -108,6 +107,7 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
+from gen.tacan import TacanBand, TacanRegistry
 from .airsupportgen import AirSupport, AwacsInfo, TankerInfo
 from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
@@ -1497,13 +1497,13 @@ class AircraftConflictGenerator:
 
         if not isinstance(flight.flight_plan, RaceTrackRefuellingFlightPlan):
             logging.error(
-                f"Cannot configure racetrack refueling tasks for {flight} because it does not have an racetrack refueling flight plan."
+                f"Cannot configure racetrack refueling tasks for {flight} because it "
+                "does not have an racetrack refueling flight plan."
             )
             return
 
         self._setup_group(group, package, flight, dynamic_runways)
 
-        # Tanker task action
         self.configure_behavior(
             flight,
             group,

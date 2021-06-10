@@ -31,7 +31,6 @@ from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
-from game.squadrons import Pilot
 from game.theater import (
     Airfield,
     ControlPoint,

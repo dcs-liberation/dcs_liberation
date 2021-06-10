@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Set, Type
+from typing import Set, Type
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
@@ -13,7 +13,6 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 from dcs.helicopters import helicopter_map
-from dcs.task import CAP, CAS, AWACS, Refueling, Transport
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
@@ -44,8 +43,6 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
     def init_ui(self):
         main_layout = QVBoxLayout()
-
-        tasks = [CAP, CAS, AWACS, Refueling, Transport]
 
         scroll_content = QWidget()
         task_box_layout = QGridLayout()

@@ -183,9 +183,9 @@ class Package:
             FlightType.TARCAP,
             FlightType.BARCAP,
             FlightType.AEWC,
+            FlightType.REFUELING,
             FlightType.SWEEP,
             FlightType.ESCORT,
-            FlightType.REFUELING,
         ]
         for task in task_priorities:
             if flight_counts[task]:
