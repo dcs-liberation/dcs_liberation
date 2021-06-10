@@ -1,8 +1,0 @@
-{
-    "name": "Caucasus - Full Map",
-    "theater": "Caucasus",
-    "authors": "george",
-    "description": "<p>Full map of the Caucasus</p><p><strong>Note:</strong> This scenario is heavy on performance, enabling \"culling\" in settings is highly recommended.</p>",
-    "miz": "full_caucasus.miz",
-    "performance": 3
-}
