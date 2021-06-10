@@ -1,8 +1,0 @@
-{
-    "name": "Persian Gulf - Full Map",
-    "theater": "Persian Gulf",
-    "authors": "Plob",
-    "description": "<p>Full map of the Persian Gulf</p><p><strong>Note:</strong> This scenario is heavy on performance, enabling \"culling\" in settings is highly recommended.</p>",
-    "miz": "persian_gulf_full_map.miz",
-    "performance": 3
-}
