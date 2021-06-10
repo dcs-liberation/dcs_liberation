@@ -168,9 +168,10 @@ class Package:
         # likely to be the main task than others. For example, a package with
         # only CAP flights is a CAP package, a flight with CAP and strike is a
         # strike package, a flight with CAP and DEAD is a DEAD package, and a
-        # flight with strike and SEAD is an OCA/Strike package. The type of
-        # package is determined by the highest priority flight in the package.
-        task_priorities = [
+        # flight with strike and SEAD is an OCA/Strike package. This list defines the
+        # priority order for package task names. The package's primary task will be the
+        # first task in this list that matches a flight in the package.
+        tasks_by_priority = [
             FlightType.CAS,
             FlightType.STRIKE,
             FlightType.ANTISHIP,
@@ -187,7 +188,7 @@ class Package:
             FlightType.SWEEP,
             FlightType.ESCORT,
         ]
-        for task in task_priorities:
+        for task in tasks_by_priority:
             if flight_counts[task]:
                 return task
 
