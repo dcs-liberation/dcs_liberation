@@ -834,7 +834,7 @@ class AircraftConflictGenerator:
 
         if (
             flight.flight_type == FlightType.AEWC
-            or flight.flight_type == FlightType.AEWC
+            or flight.flight_type == FlightType.REFUELING
         ):
             channel = self.radio_registry.alloc_uhf()
         else:
