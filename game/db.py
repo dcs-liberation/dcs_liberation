@@ -798,6 +798,7 @@ CARRIER_CAPABLE = [
     Su_33,
     A_4E_C,
     S_3B,
+    S_3B_Tanker,
     E_2C,
     UH_1H,
     Mi_8MT,

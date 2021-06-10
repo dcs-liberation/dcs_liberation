@@ -143,4 +143,6 @@ class QUnitInfoWindow(QDialog):
             aircraft_tasks = aircraft_tasks + f"{FlightType.OCA_RUNWAY}, "
         if self.unit_type in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE:
             aircraft_tasks = aircraft_tasks + f"{FlightType.STRIKE}, "
+        if self.unit_type in gen.flights.ai_flight_planner_db.REFUELING_CAPABALE:
+            aircraft_tasks = aircraft_tasks + f"{FlightType.REFUELING}, "
         return aircraft_tasks[:-2]

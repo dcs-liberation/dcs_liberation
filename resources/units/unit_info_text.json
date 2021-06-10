@@ -422,6 +422,36 @@
             "year-of-variant-introduction": "1995"
         }
     }],
+    "KC130": [{
+        "default": {
+            "name": "KC-130",
+            "text": "The Lockheed Martin (previously Lockheed) KC-130 is a family of the extended-range tanker version of the C-130 Hercules transport aircraft modified for aerial refueling.",
+            "country-of-origin": "USA",
+            "manufacturer": "Lockheed Martin",
+            "role": "Tanker",
+            "year-of-variant-introduction": "1962"
+        }
+    }],
+    "KC-135": [{
+        "default": {
+            "name": "KC-135 Stratotanker",
+            "text": "The Boeing KC-135 Stratotanker is a military aerial refueling aircraft that was developed from the Boeing 367-80 prototype, alongside the Boeing 707 airliner.",
+            "country-of-origin": "USA",
+            "manufacturer": "Beoing",
+            "role": "Tanker",
+            "year-of-variant-introduction": "1957"
+        }
+    }],
+    "KC135MPRS": [{
+        "default": {
+            "name": "KC-135 Stratotanker MPRS",
+            "text": "The Boeing KC-135 Stratotanker is a military aerial refueling aircraft that was developed from the Boeing 367-80 prototype, alongside the Boeing 707 airliner.  This model has the Multi-point Refueling System modification, allowing for probe and drogue refuelling.",
+            "country-of-origin": "USA",
+            "manufacturer": "Beoing",
+            "role": "Tanker",
+            "year-of-variant-introduction": "1994"
+        }
+    }],
     "L-39C": [{
         "default": {
             "name": "L-39C Albatros",
@@ -740,6 +770,16 @@
             "country-of-origin": "USA",
             "manufacturer": "Lockheed",
             "role": "Carrier-based Attack",
+            "year-of-variant-introduction": "1984"
+        }
+    }],
+    "S-3B Tanker": [{
+            "default": {
+            "name": "S-3B Tanker",
+            "text": "The Lockheed S-3 Viking is a 4-crew, twin-engine turbofan-powered jet aircraft that was used by the U.S. Navy (USN) primarily for anti-submarine warfare. In the late 1990s, the S-3B's mission focus shifted to surface warfare and aerial refueling. The Viking also provided electronic warfare and surface surveillance capabilities to a carrier battle group. A carrier-based, subsonic, all-weather, long-range, multi-mission aircraft, it carried automated weapon systems and was capable of extended missions with in-flight refueling. Because of its characteristic sound, it was nicknamed the \"War Hoover\" after the vacuum cleaner brand. The S-3 was phased out from front-line fleet service aboard aircraft carriers in January 2009, with its missions taken over by aircraft like the P-3C Orion, P-8 Poseidon, Sikorsky SH-60 Seahawk and Boeing F/A-18E/F Super Hornet",
+            "country-of-origin": "USA",
+            "manufacturer": "Lockheed",
+            "role": "Carrier-based Tanker",
             "year-of-variant-introduction": "1984"
         }
     }],

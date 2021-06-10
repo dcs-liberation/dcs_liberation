@@ -39,10 +39,12 @@ from dcs.planes import (
     Su_33,
     Tu_22M3,
 )
+from dcs.planes import IL_78M
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
     AWACSTaskAction,
+    ActivateBeaconCommand,
     AntishipStrike,
     AttackGroup,
     Bombing,
@@ -61,8 +63,10 @@ from dcs.task import (
     OptReactOnThreat,
     OptRestrictJettison,
     OrbitAction,
+    Refueling,
     RunwayAttack,
     StartCommand,
+    Tanker,
     Targets,
     Transport,
     WeaponType,
@@ -80,7 +84,7 @@ from game.data.weapons import Pylon
 from game.db import GUN_RELIANT_AIRFRAMES
 from game.factions.faction import Faction
 from game.settings import Settings
-from game.squadrons import Pilot, Squadron
+from game.squadrons import Pilot
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
@@ -103,13 +107,15 @@ from gen.flights.flight import (
 )
 from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
 from gen.runways import RunwayData
-from .airsupportgen import AirSupport, AwacsInfo
+from gen.tacan import TacanBand, TacanRegistry
+from .airsupportgen import AirSupport, AwacsInfo, TankerInfo
 from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
     AwacsFlightPlan,
     CasFlightPlan,
     LoiterFlightPlan,
     PatrollingFlightPlan,
+    RefuelingFlightPlan,
     SweepFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
@@ -684,6 +690,7 @@ class AircraftConflictGenerator:
         settings: Settings,
         game: Game,
         radio_registry: RadioRegistry,
+        tacan_registry: TacanRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
     ) -> None:
@@ -691,6 +698,7 @@ class AircraftConflictGenerator:
         self.game = game
         self.settings = settings
         self.radio_registry = radio_registry
+        self.tacan_registy = tacan_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
         self.air_support = air_support
@@ -824,7 +832,10 @@ class AircraftConflictGenerator:
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
         )
 
-        if flight.flight_type == FlightType.AEWC:
+        if (
+            flight.flight_type == FlightType.AEWC
+            or flight.flight_type == FlightType.REFUELING
+        ):
             channel = self.radio_registry.alloc_uhf()
         else:
             channel = self.get_intra_flight_channel(unit_type)
@@ -875,6 +886,24 @@ class AircraftConflictGenerator:
                     depature_location=flight.departure.name,
                     end_time=flight.flight_plan.mission_departure_time,
                     start_time=flight.flight_plan.mission_start_time,
+                    blue=flight.departure.captured,
+                )
+            )
+
+        if isinstance(flight.flight_plan, RefuelingFlightPlan):
+            callsign = callsign_for_support_unit(group)
+
+            tacan = self.tacan_registy.alloc_for_band(TacanBand.Y)
+            variant = db.unit_type_name(flight.flight_plan.flight.unit_type)
+            self.air_support.tankers.append(
+                TankerInfo(
+                    group_name=str(group.name),
+                    callsign=callsign,
+                    variant=variant,
+                    freq=channel,
+                    tacan=tacan,
+                    start_time=flight.flight_plan.patrol_start_time,
+                    end_time=flight.flight_plan.patrol_end_time,
                     blue=flight.departure.captured,
                 )
             )
@@ -1457,6 +1486,32 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(AWACSTaskAction())
 
+    def configure_refueling(
+        self,
+        group: FlyingGroup,
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        group.task = Refueling.name
+
+        if not isinstance(flight.flight_plan, RefuelingFlightPlan):
+            logging.error(
+                f"Cannot configure racetrack refueling tasks for {flight} because it "
+                "does not have an racetrack refueling flight plan."
+            )
+            return
+
+        self._setup_group(group, package, flight, dynamic_runways)
+
+        self.configure_behavior(
+            flight,
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True,
+        )
+
     def configure_escort(
         self,
         group: FlyingGroup,
@@ -1535,6 +1590,8 @@ class AircraftConflictGenerator:
             self.configure_sweep(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.AEWC:
             self.configure_awacs(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.REFUELING:
+            self.configure_refueling(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.DEAD:
@@ -1602,7 +1659,7 @@ class AircraftConflictGenerator:
 
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
-                point, group, package, flight, self.m
+                point, group, package, flight, self.m, self.air_support
             ).build()
 
         # Set here rather than when the FlightData is created so they waypoints
@@ -1676,12 +1733,14 @@ class PydcsWaypointBuilder:
         package: Package,
         flight: Flight,
         mission: Mission,
+        air_support: AirSupport,
     ) -> None:
         self.waypoint = waypoint
         self.group = group
         self.package = package
         self.flight = flight
         self.mission = mission
+        self.air_support = air_support
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
@@ -1717,6 +1776,7 @@ class PydcsWaypointBuilder:
         package: Package,
         flight: Flight,
         mission: Mission,
+        air_support: AirSupport,
     ) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.DROP_OFF: CargoStopBuilder,
@@ -1736,7 +1796,7 @@ class PydcsWaypointBuilder:
             FlightWaypointType.PICKUP: CargoStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
-        return builder(waypoint, group, package, flight, mission)
+        return builder(waypoint, group, package, flight, mission, air_support)
 
     def _viggen_client_tot(self) -> bool:
         """Viggen player aircraft consider any waypoint with a TOT set to be a target ("M") waypoint.
@@ -2119,6 +2179,8 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         # is their first priority and they will not engage any targets because
         # they're fully focused on orbiting. If the STE task is first, they will
         # engage targets if available and orbit if they find nothing to shoot.
+        if self.flight.flight_type is FlightType.REFUELING:
+            self.configure_refueling_actions(waypoint)
 
         # TODO: Move the properties of this task into the flight plan?
         # CAP is the only current user of this so it's not a big deal, but might
@@ -2133,16 +2195,47 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
                 )
             )
 
-        racetrack = ControlledTask(
-            OrbitAction(
+        # TODO: Set orbit speeds for all race tracks and remove this special case.
+        if isinstance(flight_plan, RefuelingFlightPlan):
+            orbit = OrbitAction(
+                altitude=waypoint.alt,
+                pattern=OrbitAction.OrbitPattern.RaceTrack,
+                speed=int(flight_plan.patrol_speed.kph),
+            )
+        else:
+            orbit = OrbitAction(
                 altitude=waypoint.alt, pattern=OrbitAction.OrbitPattern.RaceTrack
             )
-        )
+
+        racetrack = ControlledTask(orbit)
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
         racetrack.stop_after_time(int(flight_plan.patrol_end_time.total_seconds()))
         waypoint.add_task(racetrack)
 
         return waypoint
+
+    def configure_refueling_actions(self, waypoint: MovingPoint) -> None:
+        waypoint.add_task(Tanker())
+
+        if self.flight.unit_type != IL_78M:
+            tanker_info = self.air_support.tankers[-1]
+            tacan = tanker_info.tacan
+            tacan_callsign = {
+                "Texaco": "TEX",
+                "Arco": "ARC",
+                "Shell": "SHL",
+            }.get(tanker_info.callsign)
+
+            waypoint.add_task(
+                ActivateBeaconCommand(
+                    tacan.number,
+                    tacan.band.value,
+                    tacan_callsign,
+                    bearing=True,
+                    unit_id=self.group.units[0].id,
+                    aa=True,
+                )
+            )
 
 
 class RaceTrackEndBuilder(PydcsWaypointBuilder):

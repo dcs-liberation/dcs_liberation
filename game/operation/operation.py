@@ -375,6 +375,7 @@ class Operation:
             cls.game.settings,
             cls.game,
             cls.radio_registry,
+            cls.tacan_registry,
             cls.unit_map,
             air_support=cls.airsupportgen.air_support,
         )

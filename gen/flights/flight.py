@@ -69,6 +69,7 @@ class FlightType(Enum):
     AEWC = "AEW&C"
     TRANSPORT = "Transport"
     SEAD_ESCORT = "SEAD Escort"
+    REFUELING = "Refueling"
 
     def __str__(self) -> str:
         return self.value
