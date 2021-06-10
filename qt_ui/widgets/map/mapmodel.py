@@ -508,14 +508,12 @@ class FlightJs(QObject):
         flight: Flight,
         selected: bool,
         theater: ConflictTheater,
-        faction: Faction,
         ato_model: AtoModel,
     ) -> None:
         super().__init__()
         self.flight = flight
         self._selected = selected
         self.theater = theater
-        self.faction = faction
         self.ato_model = ato_model
         self._waypoints = self.make_waypoints()
 
@@ -562,8 +560,7 @@ class FlightJs(QObject):
                 ShapelyPoint(end.x, end.y),
             ]
         )
-        doctrine = self.faction.doctrine
-        bubble = line.buffer(doctrine.cap_engagement_range.meters)
+        bubble = line.buffer(self.flight.flight_plan.engagement_distance.meters)
         return shapely_poly_to_leaflet_points(bubble, self.theater)
 
 
@@ -855,7 +852,6 @@ class MapModel(QObject):
                         flight,
                         selected=blue and (p_idx, f_idx) == self._selected_flight_index,
                         theater=self.game.theater,
-                        faction=self.game.faction_for(blue),
                         ato_model=self.game_model.ato_model_for(blue),
                     )
                 )
