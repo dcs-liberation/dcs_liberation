@@ -4,6 +4,10 @@ Saves from 3.x are not compatible with 4.0.
 
 ## Features/Improvements
 
+* **[Flight Planner]** Added ability to plan Tankers.
+* **[Campaign AI]** AI will plan Tanker flights.
+* **[Factions]** Added more tankers to factions.
+
 ## Fixes
 
 # 3.0.0

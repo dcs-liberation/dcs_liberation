@@ -123,6 +123,7 @@ class PilotControls(QHBoxLayout):
 
     def enable_and_reset(self) -> None:
         self.selector.rebuild()
+        self.player_checkbox.setEnabled(True)
         self.on_pilot_changed(self.selector.currentIndex())
 
     def disable_and_clear(self) -> None:

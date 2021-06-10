@@ -11,7 +11,6 @@ from dcs.vehicles import vehicle_map
 from shapely.geometry import LineString, Point as ShapelyPoint, Polygon, MultiPolygon
 
 from game import Game, db
-from game.factions.faction import Faction
 from game.navmesh import NavMesh
 from game.profiling import logged_duration
 from game.theater import (
@@ -27,7 +26,7 @@ from game.transfers import MultiGroupTransport, TransportMap
 from game.utils import meters, nautical_miles
 from gen.ato import AirTaskingOrder
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
-from gen.flights.flightplan import FlightPlan, PatrollingFlightPlan
+from gen.flights.flightplan import FlightPlan, PatrollingFlightPlan, CasFlightPlan
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel, AtoModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -508,14 +507,12 @@ class FlightJs(QObject):
         flight: Flight,
         selected: bool,
         theater: ConflictTheater,
-        faction: Faction,
         ato_model: AtoModel,
     ) -> None:
         super().__init__()
         self.flight = flight
         self._selected = selected
         self.theater = theater
-        self.faction = faction
         self.ato_model = ato_model
         self._waypoints = self.make_waypoints()
 
@@ -556,14 +553,19 @@ class FlightJs(QObject):
             return []
         start = self.flight.flight_plan.patrol_start
         end = self.flight.flight_plan.patrol_end
-        line = LineString(
-            [
-                ShapelyPoint(start.x, start.y),
-                ShapelyPoint(end.x, end.y),
-            ]
+        if isinstance(self.flight.flight_plan, CasFlightPlan):
+            center = self.flight.flight_plan.target.position
+            commit_center = ShapelyPoint(center.x, center.y)
+        else:
+            commit_center = LineString(
+                [
+                    ShapelyPoint(start.x, start.y),
+                    ShapelyPoint(end.x, end.y),
+                ]
+            )
+        bubble = commit_center.buffer(
+            self.flight.flight_plan.engagement_distance.meters
         )
-        doctrine = self.faction.doctrine
-        bubble = line.buffer(doctrine.cap_engagement_range.meters)
         return shapely_poly_to_leaflet_points(bubble, self.theater)
 
 
@@ -855,7 +857,6 @@ class MapModel(QObject):
                         flight,
                         selected=blue and (p_idx, f_idx) == self._selected_flight_index,
                         theater=self.game.theater,
-                        faction=self.game.faction_for(blue),
                         ato_model=self.game_model.ato_model_for(blue),
                     )
                 )

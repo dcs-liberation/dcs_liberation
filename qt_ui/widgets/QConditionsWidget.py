@@ -220,7 +220,7 @@ class QWeatherWidget(QGroupBox):
             precipitation = self.conditions.weather.clouds.precipitation
 
         if not cloud_density:
-            self.forecastClouds.setText("Sunny")
+            self.forecastClouds.setText("Clear")
             weather_type = "clear"
         elif cloud_density < 3:
             self.forecastClouds.setText("Partly Cloudy")

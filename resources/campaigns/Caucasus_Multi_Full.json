@@ -1,0 +1,11 @@
+{
+  "name": "Caucasus - Full",
+  "theater": "Caucasus",
+  "authors": "Doc_of_Mur",
+  "recommended_player_faction": "Bluefor Modern",
+  "recommended_enemy_faction": "Russia 2010",
+  "description": "<p>This is a complete map of every airbase in the Caucasus Region, all bases are fully defended by Air, Land and/or Sea. The player starts by invading southern Georgia and works their way through Russia. The Strike and SAM targets are limited for performance reasons. If this Scenario is too taxing for your computer you may use the Multi-Part Scenarios. They are copied from this Campaign and are catered toward less powerful machines.</p>",
+  "version": "6.0",
+  "miz": "Caucasus_Multi_Full.miz",
+  "performance": 3
+}

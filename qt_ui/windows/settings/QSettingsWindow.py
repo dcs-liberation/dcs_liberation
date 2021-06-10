@@ -494,6 +494,28 @@ class QSettingsWindow(QDialog):
         general_layout.addWidget(old_awac_label, 1, 0)
         general_layout.addWidget(old_awac, 1, 1, Qt.AlignRight)
 
+        def set_old_tanker(value: bool) -> None:
+            self.game.settings.disable_legacy_tanker = not value
+
+        old_tanker = QCheckBox()
+        old_tanker.setChecked(not self.game.settings.disable_legacy_tanker)
+        old_tanker.toggled.connect(set_old_tanker)
+
+        old_tanker_info = (
+            "If checked, an invulnerable friendly Tanker aircraft that begins the "
+            "mission on station will be be spawned. This behavior will be removed in a "
+            "future release."
+        )
+
+        old_tanker.setToolTip(old_tanker_info)
+        old_tanker_label = QLabel(
+            "Spawn invulnerable, always-available Tanker aircraft (deprecated)."
+        )
+        old_tanker_label.setToolTip(old_tanker_info)
+
+        general_layout.addWidget(old_tanker_label, 2, 0)
+        general_layout.addWidget(old_tanker, 2, 1, Qt.AlignRight)
+
         campaign_layout.addWidget(HqAutomationSettingsBox(self.game))
 
     def initGeneratorLayout(self):
