@@ -584,19 +584,22 @@ class HelipadGenerator:
             country_name = self.game.enemy_country
         country = self.m.country(country_name)
 
+        # Note : Helipad are generated as neutral object in order not to interfer with capture triggers
+        neutral_country = self.m.country(self.game.neutral_country.name)
+
         for i, helipad in enumerate(self.cp.helipads):
             name = self.cp.name + "_helipad_" + str(i)
             logging.info("Generating helipad : " + name)
-            pad = SingleHeliPad(name=(name + "_unit"))
+            pad = SingleHeliPad(name=name)
             pad.position = Point(helipad.x, helipad.y)
             pad.heading = helipad.heading
-            # pad.heliport_frequency = self.radio_registry.alloc_uhf() TODO : alloc radio & callsign
             sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
             sg.add_unit(pad)
             sp = StaticPoint()
             sp.position = pad.position
             sg.add_point(sp)
-            country.add_static_group(sg)
+            neutral_country.add_static_group(sg)
+
             helipad.static_unit = sg
             helipad.occupied = False
 

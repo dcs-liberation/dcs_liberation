@@ -4,9 +4,10 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Iterator
+from typing import Any, Dict, List
 
 from dcs.action import Coalition
+from dcs.countries import Switzerland, UnitedNationsPeacekeepers, USAFAggressors
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
@@ -16,7 +17,6 @@ from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
-from game.theater.theatergroundobject import MissileSiteGroundObject
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -34,7 +34,7 @@ from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
 from .settings import Settings, AutoAtoBehavior
-from .squadrons import Pilot, AirWing
+from .squadrons import AirWing
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
@@ -207,6 +207,17 @@ class Game:
     @property
     def enemy_faction(self) -> Faction:
         return db.FACTIONS[self.enemy_name]
+
+    @property
+    def neutral_country(self):
+        """Return the best fitting country that can be used as neutral faction in the generated mission"""
+        countries_in_use = [self.player_country, self.enemy_country]
+        if UnitedNationsPeacekeepers not in countries_in_use:
+            return UnitedNationsPeacekeepers
+        elif Switzerland.name not in countries_in_use:
+            return Switzerland
+        else:
+            return USAFAggressors
 
     def faction_for(self, player: bool) -> Faction:
         if player:

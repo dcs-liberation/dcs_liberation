@@ -16,7 +16,7 @@ from dcs.triggers import TriggerStart
 
 from game.plugins import LuaPluginManager
 from game.theater.theatergroundobject import TheaterGroundObject
-from gen import Conflict, FlightType, VisualGenerator
+from gen import Conflict, FlightType, VisualGenerator, Bullseye
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
 from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
@@ -114,15 +114,29 @@ class Operation:
         cls.current_mission.coalition["red"] = Coalition(
             "red", bullseye=cls.game.red_bullseye.to_pydcs()
         )
+        cls.current_mission.coalition["neutrals"] = Coalition(
+            "neutrals", bullseye=Bullseye(Point(0, 0)).to_pydcs()
+        )
 
         p_country = cls.game.player_country
         e_country = cls.game.enemy_country
+
         cls.current_mission.coalition["blue"].add_country(
             country_dict[db.country_id_from_name(p_country)]()
         )
         cls.current_mission.coalition["red"].add_country(
             country_dict[db.country_id_from_name(e_country)]()
         )
+
+        belligerents = [
+            db.country_id_from_name(p_country),
+            db.country_id_from_name(e_country),
+        ]
+        for country in country_dict.keys():
+            if country not in belligerents:
+                cls.current_mission.coalition["neutrals"].add_country(
+                    country_dict[country]()
+                )
 
     @classmethod
     def inject_lua_trigger(cls, contents: str, comment: str) -> None:
