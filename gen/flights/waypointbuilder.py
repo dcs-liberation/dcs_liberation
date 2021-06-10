@@ -364,53 +364,6 @@ class WaypointBuilder:
         )
 
     @staticmethod
-    def tanker_race_track_start(position: Point, altitude: Distance) -> FlightWaypoint:
-        """Creates a racetrack start waypoint.
-
-        Args:
-            position: Position of the waypoint.
-            altitude: Altitude of the racetrack.
-        """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.TANKER_RACETRACK_START, position.x, position.y, altitude
-        )
-        waypoint.name = "RACETRACK START"
-        waypoint.description = "Tanker orbit between this point and the next point"
-        waypoint.pretty_name = "Race-track start"
-        return waypoint
-
-    @staticmethod
-    def tanker_race_track_end(position: Point, altitude: Distance) -> FlightWaypoint:
-        """Creates a racetrack end waypoint.
-
-        Args:
-            position: Position of the waypoint.
-            altitude: Altitude of the racetrack.
-        """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.TANKER_RACETRACK_STOP, position.x, position.y, altitude
-        )
-        waypoint.name = "RACETRACK END"
-        waypoint.description = "Tanker orbit between this point and the previous point"
-        waypoint.pretty_name = "Race-track end"
-        return waypoint
-
-    def tanker_race_track(
-        self, start: Point, end: Point, altitude: Distance
-    ) -> Tuple[FlightWaypoint, FlightWaypoint]:
-        """Creates two waypoint for a racetrack orbit.
-
-        Args:
-            start: The beginning racetrack waypoint.
-            end: The ending racetrack waypoint.
-            altitude: The racetrack altitude.
-        """
-        return (
-            self.tanker_race_track_start(start, altitude),
-            self.tanker_race_track_end(end, altitude),
-        )
-
-    @staticmethod
     def orbit(start: Point, altitude: Distance) -> FlightWaypoint:
         """Creates an circular orbit point.
 

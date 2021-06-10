@@ -40,7 +40,7 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import Distance, Speed, feet, meters, nautical_miles
+from game.utils import Distance, Speed, feet, meters, nautical_miles, knots
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -779,61 +779,25 @@ class AwacsFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
-class RaceTrackRefuellingFlightPlan(FlightPlan):
+class RefuelingFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
-    nav_to: List[FlightWaypoint]
-    nav_from: List[FlightWaypoint]
-    racetrack_start: FlightWaypoint
-    racetrack_end: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
     bullseye: FlightWaypoint
 
-    #: Maximum time to remain on station.
-    racetrack_duration: timedelta
-
-    @property
-    def racetrack_start_time(self) -> timedelta:
-        return self.package.time_over_target
-
-    @property
-    def racetrack_end_time(self) -> timedelta:
-        return self.racetrack_start_time + self.racetrack_duration
-
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.racetrack_start:
-            return self.racetrack_start_time
-        return None
-
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.racetrack_end:
-            return self.racetrack_end_time
-        return None
+    #: Racetrack speed.
+    patrol_speed: Speed
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
         yield from self.nav_to
-        yield from [
-            self.racetrack_start,
-            self.racetrack_end,
-        ]
+        yield self.patrol_start
+        yield self.patrol_end
         yield from self.nav_from
         yield self.land
         if self.divert is not None:
             yield self.divert
         yield self.bullseye
-
-    @property
-    def package_speed_waypoints(self) -> Set[FlightWaypoint]:
-        return {self.racetrack_start, self.racetrack_end}
-
-    @property
-    def tot_waypoint(self) -> Optional[FlightWaypoint]:
-        return self.racetrack_start
-
-    @property
-    def mission_departure_time(self) -> timedelta:
-        return self.racetrack_end_time
 
 
 @dataclass(frozen=True)
@@ -1681,9 +1645,7 @@ class FlightPlanBuilder:
             bullseye=builder.bullseye(),
         )
 
-    def generate_refueling_racetrack(
-        self, flight: Flight
-    ) -> RaceTrackRefuellingFlightPlan:
+    def generate_refueling_racetrack(self, flight: Flight) -> RefuelingFlightPlan:
         location = self.package.target
 
         closest_boundary = self.threat_zones.closest_boundary(location.position)
@@ -1718,21 +1680,34 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(flight, self.game, self.is_player)
 
         tanker_type = flight.unit_type
-
         if tanker_type is KC_135:
-            altitude = Distance.from_feet(24000)
+            # ~300 knots IAS.
+            speed = knots(445)
+            altitude = feet(24000)
         elif tanker_type is KC135MPRS:
-            altitude = Distance.from_feet(23000)
+            # ~300 knots IAS.
+            speed = knots(440)
+            altitude = feet(23000)
         elif tanker_type is KC130:
-            altitude = Distance.from_feet(22000)
+            # ~210 knots IAS, roughly the max for the KC-130 at altitude.
+            speed = knots(370)
+            altitude = feet(22000)
         elif tanker_type is S_3B_Tanker:
-            altitude = Distance.from_feet(12000)
+            # ~265 knots IAS.
+            speed = knots(320)
+            altitude = feet(12000)
         elif tanker_type is IL_78M:
-            altitude = Distance.from_feet(21000)
+            # ~280 knots IAS.
+            speed = knots(400)
+            altitude = feet(21000)
+        else:
+            # ~280 knots IAS.
+            speed = knots(400)
+            altitude = feet(21000)
 
-        racetrack = builder.tanker_race_track(racetrack_start, racetrack_end, altitude)
+        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
 
-        return RaceTrackRefuellingFlightPlan(
+        return RefuelingFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
@@ -1740,12 +1715,16 @@ class FlightPlanBuilder:
                 flight.departure.position, racetrack_start, altitude
             ),
             nav_from=builder.nav_path(racetrack_end, flight.arrival.position, altitude),
-            racetrack_start=racetrack[0],
-            racetrack_end=racetrack[1],
+            patrol_start=racetrack[0],
+            patrol_end=racetrack[1],
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
-            racetrack_duration=timedelta(hours=1),
+            patrol_duration=timedelta(hours=1),
+            patrol_speed=speed,
+            # TODO: Factor out a common base of the combat and non-combat race-tracks.
+            # No harm in setting this, but we ought to clean up a bit.
+            engagement_distance=meters(0),
         )
 
     @staticmethod

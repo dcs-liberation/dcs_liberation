@@ -39,7 +39,7 @@ from dcs.planes import (
     Su_33,
     Tu_22M3,
 )
-from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, S_3B_Tanker
+from dcs.planes import IL_78M
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
@@ -115,7 +115,7 @@ from .flights.flightplan import (
     CasFlightPlan,
     LoiterFlightPlan,
     PatrollingFlightPlan,
-    RaceTrackRefuellingFlightPlan,
+    RefuelingFlightPlan,
     SweepFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
@@ -890,7 +890,7 @@ class AircraftConflictGenerator:
                 )
             )
 
-        if isinstance(flight.flight_plan, RaceTrackRefuellingFlightPlan):
+        if isinstance(flight.flight_plan, RefuelingFlightPlan):
             callsign = callsign_for_support_unit(group)
 
             tacan = self.tacan_registy.alloc_for_band(TacanBand.Y)
@@ -902,8 +902,8 @@ class AircraftConflictGenerator:
                     variant=variant,
                     freq=channel,
                     tacan=tacan,
-                    start_time=flight.flight_plan.racetrack_start_time,
-                    end_time=flight.flight_plan.racetrack_end_time,
+                    start_time=flight.flight_plan.patrol_start_time,
+                    end_time=flight.flight_plan.patrol_end_time,
                     blue=flight.departure.captured,
                 )
             )
@@ -1495,7 +1495,7 @@ class AircraftConflictGenerator:
     ) -> None:
         group.task = Refueling.name
 
-        if not isinstance(flight.flight_plan, RaceTrackRefuellingFlightPlan):
+        if not isinstance(flight.flight_plan, RefuelingFlightPlan):
             logging.error(
                 f"Cannot configure racetrack refueling tasks for {flight} because it "
                 "does not have an racetrack refueling flight plan."
@@ -1794,8 +1794,6 @@ class PydcsWaypointBuilder:
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP: CargoStopBuilder,
-            FlightWaypointType.TANKER_RACETRACK_START: TankerRaceTrackStartBuilder,
-            FlightWaypointType.TANKER_RACETRACK_STOP: TankerRaceTrackStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(waypoint, group, package, flight, mission, air_support)
@@ -2181,6 +2179,8 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         # is their first priority and they will not engage any targets because
         # they're fully focused on orbiting. If the STE task is first, they will
         # engage targets if available and orbit if they find nothing to shoot.
+        if self.flight.flight_type is FlightType.REFUELING:
+            self.configure_refueling_actions(waypoint)
 
         # TODO: Move the properties of this task into the flight plan?
         # CAP is the only current user of this so it's not a big deal, but might
@@ -2195,16 +2195,47 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
                 )
             )
 
-        racetrack = ControlledTask(
-            OrbitAction(
+        # TODO: Set orbit speeds for all race tracks and remove this special case.
+        if isinstance(flight_plan, RefuelingFlightPlan):
+            orbit = OrbitAction(
+                altitude=waypoint.alt,
+                pattern=OrbitAction.OrbitPattern.RaceTrack,
+                speed=int(flight_plan.patrol_speed.kph),
+            )
+        else:
+            orbit = OrbitAction(
                 altitude=waypoint.alt, pattern=OrbitAction.OrbitPattern.RaceTrack
             )
-        )
+
+        racetrack = ControlledTask(orbit)
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
         racetrack.stop_after_time(int(flight_plan.patrol_end_time.total_seconds()))
         waypoint.add_task(racetrack)
 
         return waypoint
+
+    def configure_refueling_actions(self, waypoint: MovingPoint) -> None:
+        waypoint.add_task(Tanker())
+
+        if self.flight.unit_type != IL_78M:
+            tanker_info = self.air_support.tankers[-1]
+            tacan = tanker_info.tacan
+            tacan_callsign = {
+                "Texaco": "TEX",
+                "Arco": "ARC",
+                "Shell": "SHL",
+            }.get(tanker_info.callsign)
+
+            waypoint.add_task(
+                ActivateBeaconCommand(
+                    tacan.number,
+                    tacan.band.value,
+                    tacan_callsign,
+                    bearing=True,
+                    unit_id=self.group.units[0].id,
+                    aa=True,
+                )
+            )
 
 
 class RaceTrackEndBuilder(PydcsWaypointBuilder):
@@ -2220,101 +2251,4 @@ class RaceTrackEndBuilder(PydcsWaypointBuilder):
             return waypoint
 
         self.waypoint.departure_time = self.flight.flight_plan.patrol_end_time
-        return waypoint
-
-
-class TankerRaceTrackStartBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-
-        flight_plan = self.flight.flight_plan
-
-        if not isinstance(flight_plan, RaceTrackRefuellingFlightPlan):
-            flight_plan_type = flight_plan.__class__.__name__
-            logging.error(
-                f"Cannot create race track for {self.flight} because "
-                f"{flight_plan_type} does not define a refuelling racetrack."
-            )
-            return waypoint
-
-        tanker_type = self.flight.unit_type
-
-        if self.flight.flight_plan.tot_waypoint is not None:
-            altitude = self.flight.flight_plan.tot_waypoint.alt.meters
-        else:
-            # Minimum planned altitude of any type.
-            altitude = Distance.from_feet(12000).meters
-
-        if tanker_type is KC_135:
-            # Around 300 knots IAS, at 24000 feet.
-            racetrack_orbit_speed = 825
-        elif tanker_type is KC135MPRS:
-            # Around 300 knots IAS, at 23000 feet.
-            racetrack_orbit_speed = 810
-        elif tanker_type is KC130:
-            # Around 210 knots IAS, at 22000 feet.  KC130 doesn't have the performance to fly fast at altitude.
-            racetrack_orbit_speed = 680
-        elif tanker_type is S_3B_Tanker:
-            # Around 265 knots IAS, at 12000 feet.
-            racetrack_orbit_speed = 590
-        elif tanker_type is IL_78M:
-            # Around 280 knots IAS, at 21000 feet.
-            racetrack_orbit_speed = 730
-
-        racetrack = ControlledTask(
-            OrbitAction(
-                altitude=altitude,
-                speed=racetrack_orbit_speed,
-                pattern=OrbitAction.OrbitPattern.RaceTrack,
-            )
-        )
-
-        self.set_waypoint_tot(waypoint, flight_plan.racetrack_start_time)
-        racetrack.stop_after_time(
-            int(flight_plan.mission_departure_time.total_seconds())
-        )
-
-        waypoint.add_task(Tanker())
-        waypoint.add_task(racetrack)
-
-        tanker_unit_type = self.flight.unit_type
-
-        if tanker_unit_type != IL_78M:
-
-            this_tanker = self.air_support.tankers[len(self.air_support.tankers) - 1]
-            tacan = this_tanker.tacan
-            callsign = callsign_for_support_unit(self.group)
-            tacan_callsign = {
-                "Texaco": "TEX",
-                "Arco": "ARC",
-                "Shell": "SHL",
-            }.get(callsign)
-
-            activate_tacan_task = ActivateBeaconCommand(
-                tacan.number,
-                tacan.band.value,
-                tacan_callsign,
-                True,
-                self.group.units[0].id,
-                True,
-            )
-
-            waypoint.add_task(activate_tacan_task)
-
-        return waypoint
-
-
-class TankerRaceTrackStopBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-
-        if not isinstance(self.flight.flight_plan, RaceTrackRefuellingFlightPlan):
-            flight_plan_type = self.flight.flight_plan.__class__.__name__
-            logging.error(
-                f"Cannot create race track for {self.flight} because "
-                f"{flight_plan_type} does not define a tanker racetrack."
-            )
-            return waypoint
-
-        self.waypoint.departure_time = self.flight.flight_plan.mission_departure_time
         return waypoint

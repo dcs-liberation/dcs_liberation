@@ -126,8 +126,6 @@ class FlightWaypointType(Enum):
     PICKUP = 26
     DROP_OFF = 27
     BULLSEYE = 28
-    TANKER_RACETRACK_START = 29
-    TANKER_RACETRACK_STOP = 30
 
 
 class FlightWaypoint:
