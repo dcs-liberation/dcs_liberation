@@ -1197,7 +1197,7 @@ class AircraftConflictGenerator:
 
                 # If the flight is an helicopter flight, then prioritize dedicated helipads
                 group = None
-                if flight.unit_type in helicopters.helicopter_map.values():
+                if flight.unit_type.helicopter:
                     helipad = cp.get_free_helipad()
                     if helipad is not None:
                         group = self._generate_at_group(

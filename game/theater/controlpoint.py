@@ -1133,7 +1133,7 @@ class Fob(ControlPoint):
         self.name = name
 
     def runway_is_operational(self) -> bool:
-        return False
+        return self.has_helipads
 
     def active_runway(
         self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]

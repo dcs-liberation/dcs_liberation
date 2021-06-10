@@ -25,11 +25,7 @@ class ClosestAirfields:
 
     @property
     def operational_airfields(self) -> Iterator[ControlPoint]:
-        return (
-            c
-            for c in self.closest_airfields
-            if c.runway_is_operational() or c.has_helipads
-        )
+        return (c for c in self.closest_airfields if c.runway_is_operational())
 
     def _airfields_within(
         self, distance: Distance, operational: bool
