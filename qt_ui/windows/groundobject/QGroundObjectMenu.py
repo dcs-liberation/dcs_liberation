@@ -16,13 +16,13 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 from dcs import Point
+from dcs import vehicles
 
 from game import Game, db
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.db import PRICES, PinpointStrike, REWARDS, unit_type_of
+from game.db import PRICES, REWARDS, unit_type_of
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
-    NavalGroundObject,
     VehicleGroupGroundObject,
     SamGroundObject,
     EwrGroundObject,
@@ -35,7 +35,6 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
-from dcs import vehicles
 
 
 class QGroundObjectMenu(QDialog):
