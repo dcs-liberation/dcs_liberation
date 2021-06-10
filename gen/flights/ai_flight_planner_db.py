@@ -51,10 +51,13 @@ from dcs.planes import (
     F_5E_3,
     F_86F_Sabre,
     IL_76MD,
-    I_16,
+    IL_78M,
     JF_17,
     J_11A,
     Ju_88A4,
+    KC130,
+    KC135MPRS,
+    KC_135,
     KJ_2000,
     L_39ZA,
     MQ_9_Reaper,
@@ -77,6 +80,7 @@ from dcs.planes import (
     P_51D_30_NA,
     RQ_1A_Predator,
     S_3B,
+    S_3B_Tanker,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
     Su_17M4,
@@ -104,6 +108,7 @@ from gen.flights.flight import FlightType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
+from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
 
@@ -134,6 +139,7 @@ CAP_CAPABLE = [
     FA_18C_hornet,
     F_16A,
     F_4E,
+    JAS39Gripen,
     JF_17,
     MiG_23MLD,
     MiG_21Bis,
@@ -174,6 +180,7 @@ CAS_CAPABLE = [
     FA_18C_hornet,
     Tornado_GR4,
     Tornado_IDS,
+    JAS39Gripen_AG,
     JF_17,
     AV8BNA,
     A_10A,
@@ -242,6 +249,7 @@ SEAD_CAPABLE = [
     A_4E_C,
     F_14B,
     F_14A_135_GR,
+    JAS39Gripen_AG,
     AV8BNA,
     Su_24M,
     Su_17M4,
@@ -257,6 +265,7 @@ DEAD_CAPABLE = [
     AJS37,
     F_14B,
     F_14A_135_GR,
+    JAS39Gripen_AG,
     B_1B,
     B_52H,
     Tu_160,
@@ -292,6 +301,7 @@ STRIKE_CAPABLE = [
     F_16A,
     F_14B,
     F_14A_135_GR,
+    JAS39Gripen_AG,
     Tornado_IDS,
     Su_17M4,
     Su_24MR,
@@ -342,6 +352,7 @@ ANTISHIP_CAPABLE = [
     AJS37,
     Tu_22M3,
     FA_18C_hornet,
+    JAS39Gripen_AG,
     Su_24M,
     Su_17M4,
     JF_17,
@@ -394,6 +405,15 @@ AEWC_CAPABLE = [
     KJ_2000,
 ]
 
+# Priority is given to the tankers that can carry the most fuel.
+REFUELING_CAPABALE = [
+    KC_135,
+    KC135MPRS,
+    IL_78M,
+    KC130,
+    S_3B_Tanker,
+]
+
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
@@ -421,6 +441,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return CAP_CAPABLE
     elif task == FlightType.AEWC:
         return AEWC_CAPABLE
+    elif task == FlightType.REFUELING:
+        return REFUELING_CAPABALE
     elif task == FlightType.TRANSPORT:
         return TRANSPORT_CAPABLE
     else:

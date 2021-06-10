@@ -15,16 +15,16 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from game.squadrons import Pilot
-from gen.flights.flight import Flight
+from gen.flights.flight import Flight, FlightRoster
 from qt_ui.models import PackageModel
 
 
 class PilotSelector(QComboBox):
     available_pilots_changed = Signal()
 
-    def __init__(self, flight: Flight, idx: int) -> None:
+    def __init__(self, roster: Optional[FlightRoster], idx: int) -> None:
         super().__init__()
-        self.flight = flight
+        self.roster = roster
         self.pilot_index = idx
         self.rebuild()
 
@@ -34,15 +34,15 @@ class PilotSelector(QComboBox):
 
     def _do_rebuild(self) -> None:
         self.clear()
-        if self.pilot_index >= self.flight.count:
+        if self.roster is None or self.pilot_index >= self.roster.max_size:
             self.addItem("No aircraft", None)
             self.setDisabled(True)
             return
 
         self.setEnabled(True)
         self.addItem("Unassigned", None)
-        choices = list(self.flight.squadron.available_pilots)
-        current_pilot = self.flight.pilots[self.pilot_index]
+        choices = list(self.roster.squadron.available_pilots)
+        current_pilot = self.roster.pilots[self.pilot_index]
         if current_pilot is not None:
             choices.append(current_pilot)
         # Put players first, otherwise alphabetically.
@@ -70,23 +70,27 @@ class PilotSelector(QComboBox):
             # The roster resize is handled separately, so we have no pilots to remove.
             return
         pilot = self.itemData(index)
-        if pilot == self.flight.pilots[self.pilot_index]:
+        if pilot == self.roster.pilots[self.pilot_index]:
             return
-        self.flight.set_pilot(self.pilot_index, pilot)
+        self.roster.set_pilot(self.pilot_index, pilot)
         self.available_pilots_changed.emit()
+
+    def replace(self, new_roster: Optional[FlightRoster]) -> None:
+        self.roster = new_roster
+        self.rebuild()
 
 
 class PilotControls(QHBoxLayout):
-    def __init__(self, flight: Flight, idx: int) -> None:
+    def __init__(self, roster: Optional[FlightRoster], idx: int) -> None:
         super().__init__()
-        self.flight = flight
+        self.roster = roster
         self.pilot_index = idx
 
-        self.selector = PilotSelector(flight, idx)
+        self.selector = PilotSelector(roster, idx)
         self.selector.currentIndexChanged.connect(self.on_pilot_changed)
         self.addWidget(self.selector)
 
-        self.player_checkbox = QCheckBox()
+        self.player_checkbox = QCheckBox(text="Player")
         self.player_checkbox.setToolTip("Checked if this pilot is a player.")
         self.on_pilot_changed(self.selector.currentIndex())
         self.addWidget(self.player_checkbox)
@@ -95,9 +99,9 @@ class PilotControls(QHBoxLayout):
 
     @property
     def pilot(self) -> Optional[Pilot]:
-        if self.pilot_index >= self.flight.count:
+        if self.roster is None or self.pilot_index >= self.roster.max_size:
             return None
-        return self.flight.pilots[self.pilot_index]
+        return self.roster.pilots[self.pilot_index]
 
     def on_player_toggled(self, checked: bool) -> None:
         pilot = self.pilot
@@ -119,6 +123,7 @@ class PilotControls(QHBoxLayout):
 
     def enable_and_reset(self) -> None:
         self.selector.rebuild()
+        self.player_checkbox.setEnabled(True)
         self.on_pilot_changed(self.selector.currentIndex())
 
     def disable_and_clear(self) -> None:
@@ -130,12 +135,21 @@ class PilotControls(QHBoxLayout):
         finally:
             self.player_checkbox.blockSignals(False)
 
+    def replace(self, new_roster: Optional[FlightRoster]) -> None:
+        self.roster = new_roster
+        if self.roster is None or self.pilot_index >= self.roster.max_size:
+            self.disable_and_clear()
+        else:
+            self.enable_and_reset()
+        self.selector.replace(new_roster)
+
 
 class FlightRosterEditor(QVBoxLayout):
     MAX_PILOTS = 4
 
-    def __init__(self, flight: Flight) -> None:
+    def __init__(self, roster: Optional[FlightRoster]) -> None:
         super().__init__()
+        self.roster = roster
 
         self.pilot_controls = []
         for pilot_idx in range(self.MAX_PILOTS):
@@ -146,7 +160,7 @@ class FlightRosterEditor(QVBoxLayout):
 
                 return callback
 
-            controls = PilotControls(flight, pilot_idx)
+            controls = PilotControls(roster, pilot_idx)
             controls.selector.available_pilots_changed.connect(
                 make_reset_callback(pilot_idx)
             )
@@ -166,6 +180,13 @@ class FlightRosterEditor(QVBoxLayout):
             controls.enable_and_reset()
         for controls in self.pilot_controls[new_size:]:
             controls.disable_and_clear()
+
+    def replace(self, new_roster: Optional[FlightRoster]) -> None:
+        if self.roster is not None:
+            self.roster.clear()
+        self.roster = new_roster
+        for controls in self.pilot_controls:
+            controls.replace(new_roster)
 
 
 class QFlightSlotEditor(QGroupBox):
@@ -196,7 +217,7 @@ class QFlightSlotEditor(QGroupBox):
         layout.addWidget(QLabel(str(self.flight.squadron)), 1, 1)
 
         layout.addWidget(QLabel("Assigned pilots:"), 2, 0)
-        self.roster_editor = FlightRosterEditor(flight)
+        self.roster_editor = FlightRosterEditor(flight.roster)
         layout.addLayout(self.roster_editor, 2, 1)
 
         self.setLayout(layout)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import timedelta
 from enum import Enum
 from typing import List, Optional, TYPE_CHECKING, Type, Union
@@ -68,6 +69,7 @@ class FlightType(Enum):
     AEWC = "AEW&C"
     TRANSPORT = "Transport"
     SEAD_ESCORT = "SEAD Escort"
+    REFUELING = "Refueling"
 
     def __str__(self) -> str:
         return self.value
@@ -200,6 +202,49 @@ class FlightWaypoint:
         return waypoint
 
 
+class FlightRoster:
+    def __init__(self, squadron: Squadron, initial_size: int = 0) -> None:
+        self.squadron = squadron
+        self.pilots: list[Optional[Pilot]] = []
+        self.resize(initial_size)
+
+    @property
+    def max_size(self) -> int:
+        return len(self.pilots)
+
+    @property
+    def player_count(self) -> int:
+        return len([p for p in self.pilots if p is not None and p.player])
+
+    @property
+    def missing_pilots(self) -> int:
+        return len([p for p in self.pilots if p is None])
+
+    def resize(self, new_size: int) -> None:
+        if self.max_size > new_size:
+            self.squadron.return_pilots(
+                [p for p in self.pilots[new_size:] if p is not None]
+            )
+            self.pilots = self.pilots[:new_size]
+            return
+        self.pilots.extend(
+            [
+                self.squadron.claim_available_pilot()
+                for _ in range(new_size - self.max_size)
+            ]
+        )
+
+    def set_pilot(self, index: int, pilot: Optional[Pilot]) -> None:
+        if pilot is not None:
+            self.squadron.claim_pilot(pilot)
+        if (current_pilot := self.pilots[index]) is not None:
+            self.squadron.return_pilot(current_pilot)
+        self.pilots[index] = pilot
+
+    def clear(self) -> None:
+        self.squadron.return_pilots([p for p in self.pilots if p is not None])
+
+
 class Flight:
     def __init__(
         self,
@@ -214,11 +259,15 @@ class Flight:
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
         cargo: Optional[TransferOrder] = None,
+        roster: Optional[FlightRoster] = None,
     ) -> None:
         self.package = package
         self.country = country
         self.squadron = squadron
-        self.pilots = [squadron.claim_available_pilot() for _ in range(count)]
+        if roster is None:
+            self.roster = FlightRoster(self.squadron, initial_size=count)
+        else:
+            self.roster = roster
         self.departure = departure
         self.arrival = arrival
         self.divert = divert
@@ -244,11 +293,11 @@ class Flight:
 
     @property
     def count(self) -> int:
-        return len(self.pilots)
+        return self.roster.max_size
 
     @property
     def client_count(self) -> int:
-        return len([p for p in self.pilots if p is not None and p.player])
+        return self.roster.player_count
 
     @property
     def unit_type(self) -> Type[FlyingType]:
@@ -263,32 +312,17 @@ class Flight:
         return self.flight_plan.waypoints[1:]
 
     def resize(self, new_size: int) -> None:
-        if self.count > new_size:
-            self.squadron.return_pilots(
-                p for p in self.pilots[new_size:] if p is not None
-            )
-            self.pilots = self.pilots[:new_size]
-            return
-        self.pilots.extend(
-            [
-                self.squadron.claim_available_pilot()
-                for _ in range(new_size - self.count)
-            ]
-        )
+        self.roster.resize(new_size)
 
     def set_pilot(self, index: int, pilot: Optional[Pilot]) -> None:
-        if pilot is not None:
-            self.squadron.claim_pilot(pilot)
-        if (current_pilot := self.pilots[index]) is not None:
-            self.squadron.return_pilot(current_pilot)
-        self.pilots[index] = pilot
+        self.roster.set_pilot(index, pilot)
 
     @property
     def missing_pilots(self) -> int:
-        return len([p for p in self.pilots if p is None])
+        return self.roster.missing_pilots
 
     def clear_roster(self) -> None:
-        self.squadron.return_pilots([p for p in self.pilots if p is not None])
+        self.roster.clear()
 
     def __repr__(self):
         name = db.unit_type_name(self.unit_type)

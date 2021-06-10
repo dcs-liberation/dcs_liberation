@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import operator
 import random
 from collections import defaultdict
@@ -180,7 +181,7 @@ class AircraftAllocator:
                 # Valid location with enough aircraft available. Find a squadron to fit
                 # the role.
                 for squadron in self.air_wing.squadrons_for(aircraft):
-                    if task not in squadron.mission_types:
+                    if task not in squadron.auto_assignable_mission_types:
                         continue
                     if len(squadron.available_pilots) >= flight.num_aircraft:
                         inventory.remove_aircraft(aircraft, flight.num_aircraft)
@@ -524,6 +525,24 @@ class ObjectiveFinder:
             raise RuntimeError("Found no friendly control points. You probably lost.")
         return farthest
 
+    def closest_friendly_control_point(self) -> ControlPoint:
+        """Finds the friendly control point that is closest to any threats."""
+        threat_zones = self.game.threat_zone_for(not self.is_player)
+
+        closest = None
+        min_distance = meters(math.inf)
+        for cp in self.friendly_control_points():
+            if isinstance(cp, OffMapSpawn):
+                continue
+            distance = threat_zones.distance_to_threat(cp.position)
+            if distance < min_distance:
+                closest = cp
+                min_distance = distance
+
+        if closest is None:
+            raise RuntimeError("Found no friendly control points. You probably lost.")
+        return closest
+
     def enemy_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all enemy control points."""
         return (
@@ -582,6 +601,7 @@ class CoalitionMissionPlanner:
     MAX_SEAD_RANGE = nautical_miles(150)
     MAX_STRIKE_RANGE = nautical_miles(150)
     MAX_AWEC_RANGE = nautical_miles(200)
+    MAX_TANKER_RANGE = nautical_miles(200)
 
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
@@ -604,7 +624,7 @@ class CoalitionMissionPlanner:
         for squadron in self.game.air_wing_for(self.is_player).iter_squadrons():
             if (
                 squadron.aircraft in all_compatible
-                and mission_type in squadron.mission_types
+                and mission_type in squadron.auto_assignable_mission_types
             ):
                 return True
         return False
@@ -626,6 +646,11 @@ class CoalitionMissionPlanner:
             [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
             # Supports all the early CAP flights, so should be in the air ASAP.
             asap=True,
+        )
+
+        yield ProposedMission(
+            self.objective_finder.closest_friendly_control_point(),
+            [ProposedFlight(FlightType.REFUELING, 1, self.MAX_TANKER_RANGE)],
         )
 
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
@@ -1006,7 +1031,7 @@ class CoalitionMissionPlanner:
             interval = (latest - earliest) // count
             for time in range(earliest, latest, interval):
                 error = random.randint(-margin, margin)
-                yield timedelta(minutes=max(0, time + error))
+                yield timedelta(seconds=max(0, time + error))
 
         dca_types = {
             FlightType.BARCAP,
@@ -1020,11 +1045,11 @@ class CoalitionMissionPlanner:
 
         start_time = start_time_generator(
             count=len(non_dca_packages),
-            earliest=5,
+            earliest=5 * 60,
             latest=int(
-                self.game.settings.desired_player_mission_duration.total_seconds() / 60
+                self.game.settings.desired_player_mission_duration.total_seconds()
             ),
-            margin=5,
+            margin=5 * 60,
         )
         for package in self.ato.packages:
             tot = TotEstimator(package).earliest_tot()

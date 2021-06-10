@@ -203,18 +203,22 @@ class QBaseMenu2(QDialog):
         parking = self.cp.total_aircraft_parking
         ground_unit_limit = self.cp.frontline_unit_count_limit
         deployable_unit_info = ""
+
+        allocated = self.cp.allocated_ground_units(self.game_model.game.transfers)
         unit_overage = max(
-            self.cp.base.total_armor - self.cp.frontline_unit_count_limit, 0
+            allocated.total_present - self.cp.frontline_unit_count_limit, 0
         )
         if self.cp.has_active_frontline:
             deployable_unit_info = (
                 f" (Up to {ground_unit_limit} deployable, {unit_overage} reserve)"
             )
+
         self.intel_summary.setText(
             "\n".join(
                 [
                     f"{aircraft}/{parking} aircraft",
                     f"{self.cp.base.total_armor} ground units" + deployable_unit_info,
+                    f"{allocated.total_transferring} more ground units en route, {allocated.total_ordered} ordered",
                     str(self.cp.runway_status),
                     f"{self.cp.active_ammo_depots_count}/{self.cp.total_ammo_depots_count} ammo depots",
                     f"{'Factory can produce units' if self.cp.has_factory else 'Does not have a factory'}",

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import singledispatchmethod
@@ -89,10 +90,9 @@ class TransferOrder:
         self.units.clear()
 
     def kill_unit(self, unit_type: Type[VehicleType]) -> None:
-        if unit_type in self.units:
-            self.units[unit_type] -= 1
-            return
-        raise KeyError
+        if unit_type not in self.units or not self.units[unit_type]:
+            raise KeyError(f"{self.destination} has no {unit_type} remaining")
+        self.units[unit_type] -= 1
 
     @property
     def size(self) -> int:
@@ -109,7 +109,7 @@ class TransferOrder:
 
     def disband_at(self, location: ControlPoint) -> None:
         logging.info(f"Units halting at {location}.")
-        location.base.commision_units(self.units)
+        location.base.commission_units(self.units)
         self.units.clear()
 
     @property
@@ -238,7 +238,7 @@ class AirliftPlanner:
                     for s in self.game.air_wing_for(self.for_player).squadrons_for(
                         unit_type
                     )
-                    if FlightType.TRANSPORT in s.mission_types
+                    if FlightType.TRANSPORT in s.auto_assignable_mission_types
                 ]
                 if not squadrons:
                     continue
@@ -254,11 +254,13 @@ class AirliftPlanner:
         self, squadron: Squadron, inventory: ControlPointAircraftInventory
     ) -> int:
         available = inventory.available(squadron.aircraft)
-        # 4 is the max flight size in DCS.
-        flight_size = min(self.transfer.size, available, 4)
+        capacity_each = 1 if squadron.aircraft.helicopter else 2
+        required = math.ceil(self.transfer.size / capacity_each)
+        flight_size = min(required, available, squadron.aircraft.group_size_max)
+        capacity = flight_size * capacity_each
 
-        if flight_size < self.transfer.size:
-            transfer = self.game.transfers.split_transfer(self.transfer, flight_size)
+        if capacity < self.transfer.size:
+            transfer = self.game.transfers.split_transfer(self.transfer, capacity)
         else:
             transfer = self.transfer
 
@@ -530,35 +532,37 @@ class PendingTransfers:
         return new_transfer
 
     @singledispatchmethod
-    def cancel_transport(self, transfer: TransferOrder, transport) -> None:
+    def cancel_transport(self, transport, transfer: TransferOrder) -> None:
         pass
 
     @cancel_transport.register
     def _cancel_transport_air(
-        self, _transfer: TransferOrder, transport: Airlift
+        self, transport: Airlift, _transfer: TransferOrder
     ) -> None:
         flight = transport.flight
         flight.package.remove_flight(flight)
+        if not flight.package.flights:
+            self.game.ato_for(transport.player_owned).remove_package(flight.package)
         self.game.aircraft_inventory.return_from_flight(flight)
         flight.clear_roster()
 
     @cancel_transport.register
     def _cancel_transport_convoy(
-        self, transfer: TransferOrder, transport: Convoy
+        self, transport: Convoy, transfer: TransferOrder
     ) -> None:
         self.convoys.remove(transport, transfer)
 
     @cancel_transport.register
     def _cancel_transport_cargo_ship(
-        self, transfer: TransferOrder, transport: CargoShip
+        self, transport: CargoShip, transfer: TransferOrder
     ) -> None:
         self.cargo_ships.remove(transport, transfer)
 
     def cancel_transfer(self, transfer: TransferOrder) -> None:
         if transfer.transport is not None:
-            self.cancel_transport(transfer, transfer.transport)
+            self.cancel_transport(transfer.transport, transfer)
         self.pending_transfers.remove(transfer)
-        transfer.origin.base.commision_units(transfer.units)
+        transfer.origin.base.commission_units(transfer.units)
 
     def perform_transfers(self) -> None:
         incomplete = []

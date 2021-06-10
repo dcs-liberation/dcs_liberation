@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Set, Type
+from typing import Set, Type
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
@@ -13,7 +13,6 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 from dcs.helicopters import helicopter_map
-from dcs.task import CAP, CAS, AWACS, Transport
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
@@ -44,8 +43,6 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
     def init_ui(self):
         main_layout = QVBoxLayout()
-
-        tasks = [CAP, CAS, AWACS, Transport]
 
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
@@ -164,16 +161,16 @@ class QHangarStatus(QHBoxLayout):
         self.setAlignment(Qt.AlignLeft)
 
     def update_label(self) -> None:
-        next_turn = self.control_point.expected_aircraft_next_turn(self.game_model.game)
+        next_turn = self.control_point.allocated_aircraft(self.game_model.game)
         max_amount = self.control_point.total_aircraft_parking
 
-        components = [f"{next_turn.present} present"]
-        if next_turn.ordered > 0:
-            components.append(f"{next_turn.ordered} purchased")
-        elif next_turn.ordered < 0:
-            components.append(f"{-next_turn.ordered} sold")
+        components = [f"{next_turn.total_present} present"]
+        if next_turn.total_ordered > 0:
+            components.append(f"{next_turn.total_ordered} purchased")
+        elif next_turn.total_ordered < 0:
+            components.append(f"{-next_turn.total_ordered} sold")
 
-        transferring = next_turn.transferring
+        transferring = next_turn.total_transferring
         if transferring > 0:
             components.append(f"{transferring} transferring in")
         if transferring < 0:

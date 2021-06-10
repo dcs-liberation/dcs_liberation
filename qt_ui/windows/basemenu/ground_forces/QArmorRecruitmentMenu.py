@@ -7,10 +7,8 @@ from PySide2.QtWidgets import (
     QScrollArea,
     QVBoxLayout,
     QWidget,
-    QMessageBox,
 )
-from dcs.task import PinpointStrike
-from dcs.unittype import FlyingType, UnitType
+from dcs.unittype import UnitType
 
 from game import db
 from game.theater import ControlPoint
@@ -32,31 +30,24 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
     def init_ui(self):
         main_layout = QVBoxLayout()
 
-        units = {
-            PinpointStrike: db.find_unittype(
-                PinpointStrike, self.game_model.game.player_name
-            ),
-        }
-
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
         row = 0
 
-        for task_type in units.keys():
-            units_column = list(set(units[task_type]))
-            if len(units_column) == 0:
-                continue
-            units_column.sort(
-                key=lambda u: db.unit_get_expanded_info(
-                    self.game_model.game.player_country, u, "name"
-                )
+        unit_types = list(
+            set(self.game_model.game.faction_for(player=True).ground_units)
+        )
+        unit_types.sort(
+            key=lambda u: db.unit_get_expanded_info(
+                self.game_model.game.player_country, u, "name"
             )
-            for unit_type in units_column:
-                row = self.add_purchase_row(unit_type, task_box_layout, row)
-            stretch = QVBoxLayout()
-            stretch.addStretch()
-            task_box_layout.addLayout(stretch, row, 0)
+        )
+        for unit_type in unit_types:
+            row = self.add_purchase_row(unit_type, task_box_layout, row)
+        stretch = QVBoxLayout()
+        stretch.addStretch()
+        task_box_layout.addLayout(stretch, row, 0)
 
         scroll_content.setLayout(task_box_layout)
         scroll = QScrollArea()

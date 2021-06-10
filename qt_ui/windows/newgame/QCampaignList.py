@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Union, Tuple
 
 import packaging.version
 from PySide2 import QtGui
-from PySide2.QtCore import QItemSelectionModel
+from PySide2.QtCore import QItemSelectionModel, QModelIndex, Qt
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QAbstractItemView, QListView
 
@@ -116,6 +116,7 @@ def load_campaigns() -> List[Campaign]:
 class QCampaignItem(QStandardItem):
     def __init__(self, campaign: Campaign) -> None:
         super(QCampaignItem, self).__init__()
+        self.setData(campaign, QCampaignList.CampaignRole)
         self.setIcon(QtGui.QIcon(CONST.ICONS[campaign.icon_name]))
         self.setEditable(False)
         if campaign.is_compatible:
@@ -126,31 +127,33 @@ class QCampaignItem(QStandardItem):
 
 
 class QCampaignList(QListView):
-    def __init__(self, campaigns: List[Campaign]) -> None:
+    CampaignRole = Qt.UserRole
+
+    def __init__(self, campaigns: list[Campaign], show_incompatible: bool) -> None:
         super(QCampaignList, self).__init__()
-        self.model = QStandardItemModel(self)
-        self.setModel(self.model)
+        self.campaign_model = QStandardItemModel(self)
+        self.setModel(self.campaign_model)
         self.setMinimumWidth(250)
         self.setMinimumHeight(350)
-        self.campaigns = []
+        self.campaigns = campaigns
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
-        self.setup_content(campaigns)
+        self.setup_content(show_incompatible)
 
-    def setup_content(self, campaigns: List[Campaign]) -> None:
-        for campaign in campaigns:
-            self.campaigns.append(campaign)
-            item = QCampaignItem(campaign)
-            self.model.appendRow(item)
-        self.setSelectedCampaign(0)
-        self.repaint()
+    @property
+    def selected_campaign(self) -> Campaign:
+        return self.currentIndex().data(QCampaignList.CampaignRole)
 
-    def setSelectedCampaign(self, row):
-        self.selectionModel().clearSelection()
-        index = self.model.index(row, 0)
-        if not index.isValid():
-            index = self.model.index(0, 0)
-        self.selectionModel().setCurrentIndex(index, QItemSelectionModel.Select)
-        self.repaint()
+    def setup_content(self, show_incompatible: bool) -> None:
+        self.selectionModel().blockSignals(True)
+        try:
+            self.campaign_model.clear()
+            for campaign in self.campaigns:
+                if show_incompatible or campaign.is_compatible:
+                    item = QCampaignItem(campaign)
+                    self.campaign_model.appendRow(item)
+        finally:
+            self.selectionModel().blockSignals(False)
 
-    def clear_layout(self):
-        self.model.removeRows(0, self.model.rowCount())
+        self.selectionModel().setCurrentIndex(
+            self.campaign_model.index(0, 0, QModelIndex()), QItemSelectionModel.Select
+        )

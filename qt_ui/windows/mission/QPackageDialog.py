@@ -221,6 +221,19 @@ class QNewPackageDialog(QPackageDialog):
         )
         self.ato_model = model
 
+        # In the *new* package dialog, a package has been created and may have aircraft
+        # assigned to it, but it is not a part of the ATO until the user saves it.
+        #
+        # Other actions (modifying settings, closing some other dialogs like the base
+        # menu) can cause a Game update which will forcibly close this window without
+        # either accepting or rejecting it, so we neither save the package nor release
+        # any allocated units.
+        #
+        # While it would be preferable to be able to update this dialog as needed in the
+        # event of game updates, the quick fix is to just not allow interaction with
+        # other UI elements until the new package has either been finalized or canceled.
+        self.setModal(True)
+
         self.save_button = QPushButton("Save")
         self.save_button.setProperty("style", "start-button")
         self.save_button.clicked.connect(self.accept)

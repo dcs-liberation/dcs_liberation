@@ -144,7 +144,7 @@ class Event:
     def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
         for package in ato.packages:
             for flight in package.flights:
-                for idx, pilot in enumerate(flight.pilots):
+                for idx, pilot in enumerate(flight.roster.pilots):
                     if pilot is None:
                         logging.error(
                             f"Cannot award experience to pilot #{idx} of {flight} "
@@ -202,19 +202,17 @@ class Event:
     @staticmethod
     def commit_airlift_losses(debriefing: Debriefing) -> None:
         for loss in debriefing.airlift_losses:
-            unit_type = loss.unit_type
             transfer = loss.transfer
-            available = loss.transfer.units.get(unit_type, 0)
             airlift_name = f"airlift from {transfer.origin} to {transfer.destination}"
-            if available <= 0:
-                logging.error(
-                    f"Found killed {unit_type} in {airlift_name} but that airlift has "
-                    "none available."
-                )
-                continue
-
-            logging.info(f"{unit_type} destroyed in {airlift_name}")
-            transfer.kill_unit(unit_type)
+            for unit_type in loss.cargo:
+                try:
+                    transfer.kill_unit(unit_type)
+                    logging.info(f"{unit_type} destroyed in {airlift_name}")
+                except KeyError:
+                    logging.exception(
+                        f"Found killed {unit_type} in {airlift_name} but that airlift "
+                        "has none available."
+                    )
 
     @staticmethod
     def commit_ground_object_losses(debriefing: Debriefing) -> None:
@@ -436,7 +434,7 @@ class Event:
             moved_units[frontline_unit] = int(count * move_factor)
             total_units_redeployed = total_units_redeployed + int(count * move_factor)
 
-        destination.base.commision_units(moved_units)
+        destination.base.commission_units(moved_units)
         source.base.commit_losses(moved_units)
 
         # Also transfer pending deliveries.

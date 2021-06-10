@@ -375,6 +375,7 @@ class Operation:
             cls.game.settings,
             cls.game,
             cls.radio_registry,
+            cls.tacan_registry,
             cls.unit_map,
             air_support=cls.airsupportgen.air_support,
         )
@@ -399,6 +400,7 @@ class Operation:
     @classmethod
     def _generate_ground_conflicts(cls) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""
+        cls.jtacs = []
         for front_line in cls.game.theater.conflicts():
             player_cp = front_line.blue_cp
             enemy_cp = front_line.red_cp

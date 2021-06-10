@@ -28,7 +28,11 @@ class SquadronSelector(QComboBox):
         self, task: Optional[FlightType], aircraft: Optional[Type[FlyingType]]
     ) -> None:
         current_squadron = self.currentData()
-        self.clear()
+        self.blockSignals(True)
+        try:
+            self.clear()
+        finally:
+            self.blockSignals(False)
         if task is None:
             self.addItem("No task selected", None)
             return

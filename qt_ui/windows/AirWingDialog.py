@@ -52,9 +52,10 @@ class SquadronDelegate(TwoColumnRowDelegate):
             return self.squadron(index).nickname
         elif (row, column) == (1, 1):
             squadron = self.squadron(index)
+            alive = squadron.number_of_living_pilots
             active = len(squadron.active_pilots)
             available = len(squadron.available_pilots)
-            return f"{squadron.size} pilots, {active} active, {available} unassigned"
+            return f"{alive} pilots, {active} active, {available} unassigned"
         return ""
 
 
@@ -115,7 +116,7 @@ class AircraftInventoryData:
         flight_type = flight.flight_type.value
         target = flight.package.target.name
         for idx in range(0, num_units):
-            pilot = flight.pilots[idx]
+            pilot = flight.roster.pilots[idx]
             if pilot is None:
                 pilot_name = "Unassigned"
                 player = ""
