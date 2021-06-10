@@ -832,7 +832,10 @@ class AircraftConflictGenerator:
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
         )
 
-        if flight.flight_type == FlightType.AEWC or FlightType.REFUELING:
+        if (
+            flight.flight_type == FlightType.AEWC
+            or flight.flight_type == FlightType.AEWC
+        ):
             channel = self.radio_registry.alloc_uhf()
         else:
             channel = self.get_intra_flight_channel(unit_type)
