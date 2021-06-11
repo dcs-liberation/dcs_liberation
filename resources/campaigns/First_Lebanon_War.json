@@ -1,0 +1,11 @@
+{
+  "name": "Syria - First Lebanon War",
+  "theater": "Syria",
+  "authors": "Mustang25",
+  "recommended_player_faction": "Israel 1982",
+  "recommended_enemy_faction": "Syria 1982",
+  "description": "<p> 1100HRS, 06 June 1982: H-hour for Operation Peace for Galilee. </p><p>Objective: Push North towards Beirut and into the Bekaa Valley, eliminating or displacing any PLO and Syrian resistance. Airbases and their surrounding infrastructure in Syria are not the main objective but are still viable strategic targets.</p> <p>Background: Years of PLO encroachment into the UN neutral zone and their resulting terror attacks against Israelis have pushed tension along the border to a breaking point. On June 3, the attempted assassination of Israeli Ambassador, Shlomo Argov by gunmen with ties to the PLO have finally pushed the Israelis to action.</p><p>Recommended Starting Budget:</p><p>$1500m for recommended factions, $$2000m for modern scenarios</p><p>Income Multiplier:</p><p>Blue: 1.0x</p><p>Red: 0.7x-1.0x</p>",
+  "miz": "First_Lebanon_War_v3.0.2.miz",
+  "version": "6.0",
+  "performance": 2
+  }
