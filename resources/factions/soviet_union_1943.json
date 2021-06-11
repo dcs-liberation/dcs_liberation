@@ -3,16 +3,17 @@
   "name": "Soviet Union 1943",
   "authors": "Khopa",
   "description": "<p>Soviet Union in 1943. Featuring the I16, and using some allies units to represent either lend leased vehicles or soviet equivalent vehicles. BM-21 is used to represent BM-13</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "SpitfireLFMkIX",
     "I_16"
   ],
   "frontline_units": [
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "APC_M2A1_Halftrack",
     "Car_Daimler_Armored",
     "LT_Mk_VII_Tetrarch",
-    "AAA_40mm_Bofors"
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad_122mm"

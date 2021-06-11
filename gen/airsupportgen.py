@@ -35,23 +35,25 @@ AWACS_ALT = 13000
 class AwacsInfo:
     """AWACS information for the kneeboard."""
 
-    dcsGroupName: str
+    group_name: str
     callsign: str
     freq: RadioFrequency
     depature_location: Optional[str]
     start_time: Optional[timedelta]
     end_time: Optional[timedelta]
+    blue: bool
 
 
 @dataclass
 class TankerInfo:
     """Tanker information for the kneeboard."""
 
-    dcsGroupName: str
+    group_name: str
     callsign: str
     variant: str
     freq: RadioFrequency
     tacan: TacanChannel
+    blue: bool
 
 
 @dataclass
@@ -92,9 +94,9 @@ class AirSupportConflictGenerator:
 
     def generate(self):
         player_cp = (
-            self.conflict.from_cp
-            if self.conflict.from_cp.captured
-            else self.conflict.to_cp
+            self.conflict.blue_cp
+            if self.conflict.blue_cp.captured
+            else self.conflict.red_cp
         )
 
         fallback_tanker_number = 0
@@ -107,8 +109,8 @@ class AirSupportConflictGenerator:
             freq = self.radio_registry.alloc_uhf()
             tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
             tanker_heading = (
-                self.conflict.to_cp.position.heading_between_point(
-                    self.conflict.from_cp.position
+                self.conflict.red_cp.position.heading_between_point(
+                    self.conflict.blue_cp.position
                 )
                 + TANKER_HEADING_OFFSET * i
             )
@@ -165,7 +167,14 @@ class AirSupportConflictGenerator:
             tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
             self.air_support.tankers.append(
-                TankerInfo(str(tanker_group.name), callsign, variant, freq, tacan)
+                TankerInfo(
+                    str(tanker_group.name),
+                    callsign,
+                    variant,
+                    freq,
+                    tacan,
+                    blue=True,
+                )
             )
 
         if not self.game.settings.disable_legacy_aewc:
@@ -196,12 +205,13 @@ class AirSupportConflictGenerator:
 
                 self.air_support.awacs.append(
                     AwacsInfo(
-                        dcsGroupName=str(awacs_flight.name),
+                        group_name=str(awacs_flight.name),
                         callsign=callsign_for_support_unit(awacs_flight),
                         freq=freq,
                         depature_location=None,
                         start_time=None,
                         end_time=None,
+                        blue=True,
                     )
                 )
             else:

@@ -128,10 +128,7 @@ class QUnitInfoWindow(QDialog):
                 aircraft_tasks
                 + f"{FlightType.BARCAP}, {FlightType.ESCORT}, {FlightType.INTERCEPTION}, {FlightType.SWEEP}, {FlightType.TARCAP}, "
             )
-        if (
-            self.unit_type in gen.flights.ai_flight_planner_db.CAS_CAPABLE
-            or self.unit_type in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE
-        ):
+        if self.unit_type in gen.flights.ai_flight_planner_db.CAS_CAPABLE:
             aircraft_tasks = (
                 aircraft_tasks
                 + f"{FlightType.CAS}, {FlightType.BAI}, {FlightType.OCA_AIRCRAFT}, "
@@ -144,9 +141,6 @@ class QUnitInfoWindow(QDialog):
             aircraft_tasks = aircraft_tasks + f"{FlightType.ANTISHIP}, "
         if self.unit_type in gen.flights.ai_flight_planner_db.RUNWAY_ATTACK_CAPABLE:
             aircraft_tasks = aircraft_tasks + f"{FlightType.OCA_RUNWAY}, "
-        if (
-            self.unit_type in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE
-            or self.unit_type in gen.flights.ai_flight_planner_db.TRANSPORT_CAPABLE
-        ):
+        if self.unit_type in gen.flights.ai_flight_planner_db.STRIKE_CAPABLE:
             aircraft_tasks = aircraft_tasks + f"{FlightType.STRIKE}, "
         return aircraft_tasks[:-2]

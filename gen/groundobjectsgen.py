@@ -12,9 +12,10 @@ import random
 from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type, List
 
 from dcs import Mission, Point, unitgroup
+from dcs.action import SceneryDestructionZone
 from dcs.country import Country
 from dcs.point import StaticPoint
-from dcs.statics import fortification_map, warehouse_map, Warehouse
+from dcs.statics import Fortification, fortification_map, warehouse_map
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
@@ -22,7 +23,8 @@ from dcs.task import (
     OptAlarmState,
     FireAtPoint,
 )
-from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad, Static
+from dcs.triggers import TriggerStart, TriggerZone
+from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
 from dcs.vehicles import vehicle_map
@@ -34,13 +36,15 @@ from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
+    FactoryGroundObject,
     GenericCarrierGroundObject,
     LhaGroundObject,
     ShipGroundObject,
     MissileSiteGroundObject,
+    SceneryGroundObject,
 )
 from game.unitmap import UnitMap
-from game.utils import knots, mps
+from game.utils import feet, knots, mps
 from .radios import RadioFrequency, RadioRegistry
 from .runways import RunwayData
 from .tacan import TacanBand, TacanChannel, TacanRegistry
@@ -72,8 +76,12 @@ class GenericGroundObjectGenerator:
         self.m = mission
         self.unit_map = unit_map
 
+    @property
+    def culled(self) -> bool:
+        return self.game.position_culled(self.ground_object.position)
+
     def generate(self) -> None:
-        if self.game.position_culled(self.ground_object.position):
+        if self.culled:
             return
 
         for group in self.ground_object.groups:
@@ -92,13 +100,11 @@ class GenericGroundObjectGenerator:
                 position=group.position,
                 heading=group.units[0].heading,
             )
-            vg.units[0].name = self.m.string(group.units[0].name)
+            vg.units[0].name = group.units[0].name
             vg.units[0].player_can_drive = True
             for i, u in enumerate(group.units):
                 if i > 0:
-                    vehicle = Vehicle(
-                        self.m.next_unit_id(), self.m.string(u.name), u.type
-                    )
+                    vehicle = Vehicle(self.m.next_unit_id(), u.name, u.type)
                     vehicle.position.x = u.position.x
                     vehicle.position.y = u.position.y
                     vehicle.heading = u.heading
@@ -128,6 +134,12 @@ class GenericGroundObjectGenerator:
 
 
 class MissileSiteGenerator(GenericGroundObjectGenerator):
+    @property
+    def culled(self) -> bool:
+        # Don't cull missile sites - their range is long enough to make them easily
+        # culled despite being a threat.
+        return False
+
     def generate(self) -> None:
         super(MissileSiteGenerator, self).generate()
         # Note : Only the SCUD missiles group can fire (V1 site cannot fire in game right now)
@@ -213,7 +225,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
                 f"{self.ground_object.dcs_identifier} not found in static maps"
             )
 
-    def generate_vehicle_group(self, unit_type: UnitType) -> None:
+    def generate_vehicle_group(self, unit_type: Type[UnitType]) -> None:
         if not self.ground_object.is_dead:
             group = self.m.vehicle_group(
                 country=self.country,
@@ -224,7 +236,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
             )
             self._register_fortification(group)
 
-    def generate_static(self, static_type: StaticType) -> None:
+    def generate_static(self, static_type: Type[StaticType]) -> None:
         group = self.m.static_group(
             country=self.country,
             name=self.ground_object.group_name,
@@ -242,6 +254,74 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator):
     def _register_building(self, building: StaticGroup) -> None:
         assert isinstance(self.ground_object, BuildingGroundObject)
         self.unit_map.add_building(self.ground_object, building)
+
+
+class FactoryGenerator(BuildingSiteGenerator):
+    """Generator for factory sites.
+
+    Factory sites are the buildings that allow the recruitment of ground units.
+    Destroying these prevents the owner from recruiting ground units at the connected
+    control point.
+    """
+
+    def generate(self) -> None:
+        if self.game.position_culled(self.ground_object.position):
+            return
+
+        # TODO: Faction specific?
+        self.generate_static(Fortification.Workshop_A)
+
+
+class SceneryGenerator(BuildingSiteGenerator):
+    def generate(self) -> None:
+        assert isinstance(self.ground_object, SceneryGroundObject)
+
+        trigger_zone = self.generate_trigger_zone(self.ground_object)
+
+        # DCS only visually shows a scenery object is dead when
+        # this trigger rule is applied.  Otherwise you can kill a
+        # structure twice.
+        if self.ground_object.is_dead:
+            self.generate_dead_trigger_rule(trigger_zone)
+
+        # Tell Liberation to manage this groundobjectsgen as part of the campaign.
+        self.register_scenery()
+
+    def generate_trigger_zone(self, scenery: SceneryGroundObject) -> TriggerZone:
+
+        zone = scenery.zone
+
+        # Align the trigger zones to the faction color on the DCS briefing/F10 map.
+        if scenery.is_friendly(to_player=True):
+            color = {1: 0.2, 2: 0.7, 3: 1, 4: 0.15}
+        else:
+            color = {1: 1, 2: 0.2, 3: 0.2, 4: 0.15}
+
+        # Create the smallest valid size trigger zone (16 feet) so that risk of overlap is minimized.
+        # As long as the triggerzone is over the scenery object, we're ok.
+        smallest_valid_radius = feet(16).meters
+
+        return self.m.triggers.add_triggerzone(
+            zone.position,
+            smallest_valid_radius,
+            zone.hidden,
+            zone.name,
+            color,
+            zone.properties,
+        )
+
+    def generate_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
+        # Add destruction zone trigger
+        t = TriggerStart(comment="Destruction")
+        t.actions.append(
+            SceneryDestructionZone(destruction_level=100, zone=trigger_zone.id)
+        )
+        self.m.triggerrules.triggers.append(t)
+
+    def register_scenery(self) -> None:
+        scenery = self.ground_object
+        assert isinstance(scenery, SceneryGroundObject)
+        self.unit_map.add_scenery(scenery)
 
 
 class GenericCarrierGenerator(GenericGroundObjectGenerator):
@@ -313,13 +393,13 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator):
             heading=group.units[0].heading,
         )
         ship_group.set_frequency(atc_channel.hertz)
-        ship_group.units[0].name = self.m.string(group.units[0].name)
+        ship_group.units[0].name = group.units[0].name
         return ship_group
 
     def create_ship(self, unit: Unit, atc_channel: RadioFrequency) -> Ship:
         ship = Ship(
             self.m.next_unit_id(),
-            self.m.string(unit.name),
+            unit.name,
             unit_type_from_name(unit.type),
         )
         ship.position.x = unit.position.x
@@ -464,11 +544,11 @@ class ShipObjectGenerator(GenericGroundObjectGenerator):
             position=group_def.position,
             heading=group_def.units[0].heading,
         )
-        group.units[0].name = self.m.string(group_def.units[0].name)
+        group.units[0].name = group_def.units[0].name
         # TODO: Skipping the first unit looks like copy pasta from the carrier.
         for unit in group_def.units[1:]:
             unit_type = unit_type_from_name(unit.type)
-            ship = Ship(self.m.next_unit_id(), self.m.string(unit.name), unit_type)
+            ship = Ship(self.m.next_unit_id(), unit.name, unit_type)
             ship.position.x = unit.position.x
             ship.position.y = unit.position.y
             ship.heading = unit.heading
@@ -507,11 +587,11 @@ class HelipadGenerator:
         for i, helipad in enumerate(self.cp.helipads):
             name = self.cp.name + "_helipad_" + str(i)
             logging.info("Generating helipad : " + name)
-            pad = SingleHeliPad(name=self.m.string(name + "_unit"))
+            pad = SingleHeliPad(name=(name + "_unit"))
             pad.position = Point(helipad.x, helipad.y)
             pad.heading = helipad.heading
             # pad.heliport_frequency = self.radio_registry.alloc_uhf() TODO : alloc radio & callsign
-            sg = unitgroup.StaticGroup(self.m.next_group_id(), self.m.string(name))
+            sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
             sg.add_unit(pad)
             sp = StaticPoint()
             sp.position = pad.position
@@ -557,7 +637,15 @@ class GroundObjectsGenerator:
             ).generate()
 
             for ground_object in cp.ground_objects:
-                if isinstance(ground_object, BuildingGroundObject):
+                if isinstance(ground_object, FactoryGroundObject):
+                    generator = FactoryGenerator(
+                        ground_object, country, self.game, self.m, self.unit_map
+                    )
+                elif isinstance(ground_object, SceneryGroundObject):
+                    generator = SceneryGenerator(
+                        ground_object, country, self.game, self.m, self.unit_map
+                    )
+                elif isinstance(ground_object, BuildingGroundObject):
                     generator = BuildingSiteGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
                     )

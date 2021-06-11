@@ -18,7 +18,7 @@ class ClosestAirfields:
         self.target = target
         # This cache is configured once on load, so it's important that it is
         # complete and deterministic to avoid different behaviors across loads.
-        # E.g. https://github.com/Khopa/dcs_liberation/issues/819
+        # E.g. https://github.com/dcs-liberation/dcs_liberation/issues/819
         self.closest_airfields: List[ControlPoint] = sorted(
             all_control_points, key=lambda c: self.target.distance_to(c)
         )
@@ -27,17 +27,35 @@ class ClosestAirfields:
     def operational_airfields(self) -> Iterator[ControlPoint]:
         return (c for c in self.closest_airfields if c.runway_is_operational())
 
-    def airfields_within(self, distance: Distance) -> Iterator[ControlPoint]:
+    def _airfields_within(
+        self, distance: Distance, operational: bool
+    ) -> Iterator[ControlPoint]:
+        airfields = (
+            self.operational_airfields if operational else self.closest_airfields
+        )
+        for cp in airfields:
+            if cp.distance_to(self.target) < distance.meters:
+                yield cp
+            else:
+                break
+
+    def operational_airfields_within(
+        self, distance: Distance
+    ) -> Iterator[ControlPoint]:
         """Iterates over all airfields within the given range of the target.
 
         Note that this iterates over *all* airfields, not just friendly
         airfields.
         """
-        for cp in self.closest_airfields:
-            if cp.distance_to(self.target) < distance.meters:
-                yield cp
-            else:
-                break
+        return self._airfields_within(distance, operational=True)
+
+    def all_airfields_within(self, distance: Distance) -> Iterator[ControlPoint]:
+        """Iterates over all airfields within the given range of the target.
+
+        Note that this iterates over *all* airfields, not just friendly
+        airfields.
+        """
+        return self._airfields_within(distance, operational=False)
 
 
 class ObjectiveDistanceCache:

@@ -3,6 +3,7 @@
   "name": "Russia 1990",
   "authors": "Khopa",
   "description": "<p>Soviet/Russian army in the 90s.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_25PD",
     "MiG_29S",
@@ -35,7 +36,7 @@
     "SAM_SA_13_Strela_10M3_Gopher_TEL"
   ],
   "artillery_units": [
-    "MLRS_BM_27_Uragan_220mm",
+    "MLRS_9K57_Uragan_BM_27_220mm",
     "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
@@ -85,7 +86,7 @@
   ],
   "requirements": {},
   "carrier_names": [
-    "Admiral Kuznetov",
+    "Admiral Kuznetsov",
     "Admiral Gorshkov"
   ],
   "navy_generators": [

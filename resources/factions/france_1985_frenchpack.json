@@ -3,6 +3,7 @@
   "name": "France 1985 (Frenchpack)",
   "authors": "Colonel Panic",
   "description": "<p>1980s French equipment using FrenchPack.</p>",
+  "locales": ["fr_FR"],
   "doctrine": "coldwar",
   "aircrafts": [
     "M_2000C",
@@ -23,13 +24,10 @@
     "ERC_90",
     "TRM_2000_PAMELA",
     "VAB__50",
-    "VAB_MEPHISTO",
-    "VAB_T20_13",
+    "ATGM_VAB_Mephisto",
     "VAB_T20_13",
     "VBL__50",
     "VBL_AANF1",
-    "VBAE_CRAB",
-    "VBAE_CRAB_MMP",
     "AMX_30B2",
     "SAM_Roland_ADS"
   ],

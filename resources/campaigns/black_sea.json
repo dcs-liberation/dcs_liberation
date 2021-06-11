@@ -4,5 +4,6 @@
   "authors": "Colonel Panic",
   "description": "<p>A medium sized theater with bases along the coast of the Black Sea.</p>",
   "miz": "black_sea.miz",
-  "performance": 2
+  "performance": 2,
+  "version": "6.0"
 }

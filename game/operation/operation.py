@@ -1,10 +1,9 @@
 from __future__ import annotations
-from game.theater.theatergroundobject import TheaterGroundObject
 
 import logging
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, List, Optional, Set
+from typing import Iterable, List, Set, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.action import DoScript, DoScriptFile
@@ -14,7 +13,9 @@ from dcs.lua.parse import loads
 from dcs.mapping import Point
 from dcs.translation import String
 from dcs.triggers import TriggerStart
+
 from game.plugins import LuaPluginManager
+from game.theater.theatergroundobject import TheaterGroundObject
 from gen import Conflict, FlightType, VisualGenerator
 from gen.aircraft import AIRCRAFT_DATA, AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
@@ -22,6 +23,8 @@ from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
 from gen.armor import GroundConflictGenerator, JtacInfo
 from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator, MissionInfoGenerator
+from gen.cargoshipgen import CargoShipGenerator
+from gen.convoygen import ConvoyGenerator
 from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
@@ -30,9 +33,8 @@ from gen.naming import namegen
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
-
 from .. import db
-from ..theater import Airfield
+from ..theater import Airfield, FrontLine
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -42,18 +44,13 @@ if TYPE_CHECKING:
 class Operation:
     """Static class for managing the final Mission generation"""
 
-    current_mission = None  # type: Mission
-    airgen = None  # type: AircraftConflictGenerator
-    triggersgen = None  # type: TriggersGenerator
-    airsupportgen = None  # type: AirSupportConflictGenerator
-    visualgen = None  # type: VisualGenerator
-    groundobjectgen = None  # type: GroundObjectsGenerator
-    briefinggen = None  # type: BriefingGenerator
-    forcedoptionsgen = None  # type: ForcedOptionsGenerator
-    radio_registry: Optional[RadioRegistry] = None
-    tacan_registry: Optional[TacanRegistry] = None
-    game = None  # type: Game
-    environment_settings = None
+    current_mission: Mission
+    airgen: AircraftConflictGenerator
+    airsupportgen: AirSupportConflictGenerator
+    groundobjectgen: GroundObjectsGenerator
+    radio_registry: RadioRegistry
+    tacan_registry: TacanRegistry
+    game: Game
     trigger_radius = TRIGGER_RADIUS_MEDIUM
     is_quick = None
     player_awacs_enabled = True
@@ -79,8 +76,7 @@ class Operation:
         for frontline in cls.game.theater.conflicts():
             yield Conflict(
                 cls.game.theater,
-                frontline.control_point_a,
-                frontline.control_point_b,
+                frontline,
                 cls.game.player_name,
                 cls.game.enemy_name,
                 cls.game.player_country,
@@ -98,8 +94,7 @@ class Operation:
         )
         return Conflict(
             cls.game.theater,
-            player_cp,
-            enemy_cp,
+            FrontLine(player_cp, enemy_cp),
             cls.game.player_name,
             cls.game.enemy_name,
             cls.game.player_country,
@@ -113,8 +108,12 @@ class Operation:
 
     @classmethod
     def _setup_mission_coalitions(cls):
-        cls.current_mission.coalition["blue"] = Coalition("blue")
-        cls.current_mission.coalition["red"] = Coalition("red")
+        cls.current_mission.coalition["blue"] = Coalition(
+            "blue", bullseye=cls.game.blue_bullseye.to_pydcs()
+        )
+        cls.current_mission.coalition["red"] = Coalition(
+            "red", bullseye=cls.game.red_bullseye.to_pydcs()
+        )
 
         p_country = cls.game.player_country
         e_country = cls.game.enemy_country
@@ -176,13 +175,16 @@ class Operation:
                 gen.add_dynamic_runway(dynamic_runway)
 
             for tanker in airsupportgen.air_support.tankers:
-                gen.add_tanker(tanker)
+                if tanker.blue:
+                    gen.add_tanker(tanker)
 
             for aewc in airsupportgen.air_support.awacs:
-                gen.add_awacs(aewc)
+                if aewc.blue:
+                    gen.add_awacs(aewc)
 
             for jtac in jtacs:
-                gen.add_jtac(jtac)
+                if jtac.blue:
+                    gen.add_jtac(jtac)
 
             for flight in airgen.flights:
                 gen.add_flight(flight)
@@ -308,6 +310,7 @@ class Operation:
         # Set mission time and weather conditions.
         EnvironmentGenerator(cls.current_mission, cls.game.conditions).generate()
         cls._generate_ground_units()
+        cls._generate_transports()
         cls._generate_destroyed_units()
         cls._generate_air_units()
         cls.assign_channels_to_flights(
@@ -321,13 +324,8 @@ class Operation:
 
         # Setup combined arms parameters
         cls.current_mission.groundControl.pilot_can_control_vehicles = cls.ca_slots > 0
-        if cls.game.player_country in [
-            country.name
-            for country in cls.current_mission.coalition["blue"].countries.values()
-        ]:
-            cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
-        else:
-            cls.current_mission.groundControl.red_tactical_commander = cls.ca_slots
+        cls.current_mission.groundControl.blue_tactical_commander = cls.ca_slots
+        cls.current_mission.groundControl.blue_observer = 1
 
         # Options
         forcedoptionsgen = ForcedOptionsGenerator(cls.current_mission, cls.game)
@@ -401,16 +399,16 @@ class Operation:
     @classmethod
     def _generate_ground_conflicts(cls) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""
-        for front_line in cls.game.theater.conflicts(True):
-            player_cp = front_line.control_point_a
-            enemy_cp = front_line.control_point_b
+        cls.jtacs = []
+        for front_line in cls.game.theater.conflicts():
+            player_cp = front_line.blue_cp
+            enemy_cp = front_line.red_cp
             conflict = Conflict.frontline_cas_conflict(
                 cls.game.player_name,
                 cls.game.enemy_name,
                 cls.current_mission.country(cls.game.player_country),
                 cls.current_mission.country(cls.game.enemy_country),
-                player_cp,
-                enemy_cp,
+                front_line,
                 cls.game.theater,
             )
             # Generate frontline ops
@@ -427,6 +425,12 @@ class Operation:
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)
+
+    @classmethod
+    def _generate_transports(cls) -> None:
+        """Generates convoys for unit transfers by road."""
+        ConvoyGenerator(cls.current_mission, cls.game, cls.unit_map).generate()
+        CargoShipGenerator(cls.current_mission, cls.game, cls.unit_map).generate()
 
     @classmethod
     def reset_naming_ids(cls):
@@ -452,7 +456,7 @@ class Operation:
 
         for tanker in airsupportgen.air_support.tankers:
             luaData["Tankers"][tanker.callsign] = {
-                "dcsGroupName": tanker.dcsGroupName,
+                "dcsGroupName": tanker.group_name,
                 "callsign": tanker.callsign,
                 "variant": tanker.variant,
                 "radio": tanker.freq.mhz,
@@ -462,14 +466,14 @@ class Operation:
         if airsupportgen.air_support.awacs:
             for awacs in airsupportgen.air_support.awacs:
                 luaData["AWACs"][awacs.callsign] = {
-                    "dcsGroupName": awacs.dcsGroupName,
+                    "dcsGroupName": awacs.group_name,
                     "callsign": awacs.callsign,
                     "radio": awacs.freq.mhz,
                 }
 
         for jtac in jtacs:
             luaData["JTACs"][jtac.callsign] = {
-                "dcsGroupName": jtac.dcsGroupName,
+                "dcsGroupName": jtac.group_name,
                 "callsign": jtac.callsign,
                 "zone": jtac.region,
                 "dcsUnit": jtac.unit_name,

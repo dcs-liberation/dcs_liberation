@@ -3,6 +3,7 @@
   "name": "Israel 2000",
   "authors": "Khopa",
   "description": "<p>Modern Israeli faction.</p>",
+  "locales": ["he_IL"],
   "aircrafts": [
     "F_4E",
     "F_15C",
@@ -21,7 +22,7 @@
   ],
   "frontline_units": [
     "APC_M113",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "MBT_Merkava_IV",
     "SPAAA_Vulcan_M163"

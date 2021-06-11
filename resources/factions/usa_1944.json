@@ -3,6 +3,7 @@
   "name": "USA 1944",
   "authors": "Khopa",
   "description": "<p>US army in 1944, western front.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "P_51D",
     "P_51D_30_NA",
@@ -15,7 +16,7 @@
   ],
   "frontline_units": [
     "MT_M4A4_Sherman_Firefly",
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "APC_M2A1_Halftrack",
     "Car_M8_Greyhound_Armored",
     "SPG_M10_GMC",

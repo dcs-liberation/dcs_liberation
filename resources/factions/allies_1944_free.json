@@ -14,9 +14,9 @@
     "A_20G"
   ],
   "frontline_units": [
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "APC_M2A1_Halftrack",
-    "AAA_40mm_Bofors"
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
   ],

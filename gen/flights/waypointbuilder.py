@@ -18,6 +18,7 @@ from dcs.unitgroup import Group, VehicleGroup
 
 if TYPE_CHECKING:
     from game import Game
+    from game.transfers import MultiGroupTransport
 
 from game.theater import (
     ControlPoint,
@@ -32,7 +33,7 @@ from .flight import Flight, FlightWaypoint, FlightWaypointType
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[VehicleGroup, TheaterGroundObject, Unit, Group]
+    target: Union[VehicleGroup, TheaterGroundObject, Unit, Group, MultiGroupTransport]
 
 
 class WaypointBuilder:
@@ -49,6 +50,7 @@ class WaypointBuilder:
         self.threat_zones = game.threat_zone_for(not player)
         self.navmesh = game.navmesh_for(player)
         self.targets = targets
+        self._bullseye = game.bullseye_for(player)
 
     @property
     def is_helo(self) -> bool:
@@ -144,6 +146,19 @@ class WaypointBuilder:
         waypoint.only_for_player = True
         return waypoint
 
+    def bullseye(self) -> FlightWaypoint:
+        waypoint = FlightWaypoint(
+            FlightWaypointType.BULLSEYE,
+            self._bullseye.position.x,
+            self._bullseye.position.y,
+            meters(0),
+        )
+        waypoint.pretty_name = "Bullseye"
+        waypoint.description = "Bullseye"
+        waypoint.name = "BULLSEYE"
+        waypoint.only_for_player = True
+        return waypoint
+
     def hold(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.LOITER,
@@ -201,8 +216,7 @@ class WaypointBuilder:
         waypoint.pretty_name = "INGRESS on " + objective.name
         waypoint.description = "INGRESS on " + objective.name
         waypoint.name = "INGRESS"
-        # TODO: This seems wrong, but it's what was there before.
-        waypoint.targets.append(objective)
+        waypoint.targets = objective.strike_targets
         return waypoint
 
     def egress(self, position: Point, target: MissionTarget) -> FlightWaypoint:
@@ -406,10 +420,13 @@ class WaypointBuilder:
             end: The end of the sweep.
             altitude: The sweep altitude.
         """
-        return (self.sweep_start(start, altitude), self.sweep_end(end, altitude))
+        return self.sweep_start(start, altitude), self.sweep_end(end, altitude)
 
     def escort(
-        self, ingress: Point, target: MissionTarget, egress: Point
+        self,
+        ingress: Point,
+        target: MissionTarget,
+        egress: Point,
     ) -> Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
         """Creates the waypoints needed to escort the package.
 
@@ -442,24 +459,69 @@ class WaypointBuilder:
         return ingress, waypoint, egress
 
     @staticmethod
-    def nav(position: Point, altitude: Distance) -> FlightWaypoint:
+    def pickup(control_point: ControlPoint) -> FlightWaypoint:
+        """Creates a cargo pickup waypoint.
+
+        Args:
+            control_point: Pick up location.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.PICKUP,
+            control_point.position.x,
+            control_point.position.y,
+            meters(0),
+        )
+        waypoint.alt_type = "RADIO"
+        waypoint.name = "PICKUP"
+        waypoint.description = f"Pick up cargo from {control_point}"
+        waypoint.pretty_name = "Pick up location"
+        return waypoint
+
+    @staticmethod
+    def drop_off(control_point: ControlPoint) -> FlightWaypoint:
+        """Creates a cargo drop-off waypoint.
+
+        Args:
+            control_point: Drop-off location.
+        """
+        waypoint = FlightWaypoint(
+            FlightWaypointType.PICKUP,
+            control_point.position.x,
+            control_point.position.y,
+            meters(0),
+        )
+        waypoint.alt_type = "RADIO"
+        waypoint.name = "DROP OFF"
+        waypoint.description = f"Drop off cargo at {control_point}"
+        waypoint.pretty_name = "Drop off location"
+        return waypoint
+
+    @staticmethod
+    def nav(
+        position: Point, altitude: Distance, altitude_is_agl: bool = False
+    ) -> FlightWaypoint:
         """Creates a navigation point.
 
         Args:
             position: Position of the waypoint.
             altitude: Altitude of the waypoint.
+            altitude_is_agl: True for altitude is AGL. False if altitude is MSL.
         """
         waypoint = FlightWaypoint(
             FlightWaypointType.NAV, position.x, position.y, altitude
         )
+        if altitude_is_agl:
+            waypoint.alt_type = "RADIO"
         waypoint.name = "NAV"
         waypoint.description = "NAV"
         waypoint.pretty_name = "Nav"
         return waypoint
 
-    def nav_path(self, a: Point, b: Point, altitude: Distance) -> List[FlightWaypoint]:
+    def nav_path(
+        self, a: Point, b: Point, altitude: Distance, altitude_is_agl: bool = False
+    ) -> List[FlightWaypoint]:
         path = self.clean_nav_points(self.navmesh.shortest_path(a, b))
-        return [self.nav(self.perturb(p), altitude) for p in path]
+        return [self.nav(self.perturb(p), altitude, altitude_is_agl) for p in path]
 
     def clean_nav_points(self, points: Iterable[Point]) -> Iterator[Point]:
         # Examine a sliding window of three waypoints. `current` is the waypoint

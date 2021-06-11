@@ -3,6 +3,7 @@
   "name": "Poland 2010",
   "authors": "Malakhit",
   "description": "<p>Polish army in the 2010s.</p>",
+  "locales": ["pl_PL"],
   "aircrafts": [
     "Su_17M4",
     "MiG_29A",
@@ -13,13 +14,13 @@
     "KC130"
   ],
   "frontline_units": [
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "IFV_M1126_Stryker_ICV",
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "IFV_BMP_1",
     "APC_MTLB",
-    "MBT_Leopard_2",
+    "MBT_Leopard_2A6M",
     "MBT_T_72B3"
   ],
   "artillery_units": [

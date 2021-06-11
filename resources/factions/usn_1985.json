@@ -3,6 +3,7 @@
   "name": "US Navy 1985",
   "authors": "HerrTom",
   "description": "<p>Highway to the Danger Zone! For Tomcat lovers.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "AH_1W",
     "F_4E",
@@ -21,7 +22,7 @@
   "frontline_units": [
     "MBT_M60A3_Patton",
     "APC_M113",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "SPAAA_Vulcan_M163"
   ],
   "artillery_units": [

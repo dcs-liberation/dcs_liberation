@@ -10,21 +10,18 @@ from dcs.condition import (
     FlagIsFalse,
     FlagIsTrue,
 )
-from dcs.unitgroup import FlyingGroup
 from dcs.mission import Mission
 from dcs.task import Option
 from dcs.translation import String
 from dcs.triggers import (
     Event,
     TriggerOnce,
-    TriggerZone,
     TriggerCondition,
 )
 from dcs.unit import Skill
 
 from game.theater import Airfield
 from game.theater.controlpoint import Fob
-
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -96,32 +93,15 @@ class TriggersGenerator:
         """
         for coalition_name, coalition in self.mission.coalition.items():
             if coalition_name == player_coalition:
-                skill_level = (
-                    self.game.settings.player_skill,
-                    self.game.settings.player_skill,
-                )
+                skill_level = Skill(self.game.settings.player_skill)
             elif coalition_name == enemy_coalition:
-                skill_level = (
-                    self.game.settings.enemy_skill,
-                    self.game.settings.enemy_vehicle_skill,
-                )
+                skill_level = Skill(self.game.settings.enemy_vehicle_skill)
             else:
                 continue
 
             for country in coalition.countries.values():
-                flying_groups = (
-                    country.plane_group + country.helicopter_group
-                )  # type: FlyingGroup
-                for flying_group in flying_groups:
-                    for plane_unit in flying_group.units:
-                        if (
-                            plane_unit.skill != Skill.Client
-                            and plane_unit.skill != Skill.Player
-                        ):
-                            plane_unit.skill = Skill(skill_level[0])
-
                 for vehicle_group in country.vehicle_group:
-                    vehicle_group.set_skill(Skill(skill_level[1]))
+                    vehicle_group.set_skill(skill_level)
 
     def _gen_markers(self):
         """
@@ -132,19 +112,22 @@ class TriggersGenerator:
             mark_trigger.add_condition(TimeAfter(1))
             v = 10
             for cp in self.game.theater.controlpoints:
-                added = []
+                seen = set()
                 for ground_object in cp.ground_objects:
-                    if ground_object.obj_name not in added:
+                    if ground_object.obj_name in seen:
+                        continue
+
+                    seen.add(ground_object.obj_name)
+                    for location in ground_object.mark_locations:
                         zone = self.mission.triggers.add_triggerzone(
-                            ground_object.position, radius=10, hidden=True, name="MARK"
+                            location, radius=10, hidden=True, name="MARK"
                         )
                         if cp.captured:
                             name = ground_object.obj_name + " [ALLY]"
                         else:
                             name = ground_object.obj_name + " [ENEMY]"
                         mark_trigger.add_action(MarkToAll(v, zone.id, String(name)))
-                        v = v + 1
-                    added.append(ground_object.obj_name)
+                        v += 1
             self.mission.triggerrules.triggers.append(mark_trigger)
 
     def _generate_capture_triggers(
@@ -208,16 +191,6 @@ class TriggersGenerator:
     def generate(self):
         player_coalition = "blue"
         enemy_coalition = "red"
-
-        player_cp, enemy_cp = self.game.theater.closest_opposing_control_points()
-        self.mission.coalition["blue"].bullseye = {
-            "x": enemy_cp.position.x,
-            "y": enemy_cp.position.y,
-        }
-        self.mission.coalition["red"].bullseye = {
-            "x": player_cp.position.x,
-            "y": player_cp.position.y,
-        }
 
         self._set_skill(player_coalition, enemy_coalition)
         self._set_allegiances(player_coalition, enemy_coalition)

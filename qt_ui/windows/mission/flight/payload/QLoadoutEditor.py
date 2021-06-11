@@ -18,11 +18,9 @@ class QLoadoutEditor(QGroupBox):
         self.flight = flight
         self.game = game
         self.setCheckable(True)
-        self.setChecked(flight.use_custom_loadout)
+        self.setChecked(flight.loadout.is_custom)
 
-        self.toggled.connect(self.on_toggle)
-
-        hboxLayout = QVBoxLayout(self)
+        vbox = QVBoxLayout(self)
         layout = QGridLayout(self)
 
         for i, pylon in enumerate(Pylon.iter_pylons(self.flight.unit_type)):
@@ -31,16 +29,15 @@ class QLoadoutEditor(QGroupBox):
             layout.addWidget(label, i, 0)
             layout.addWidget(QPylonEditor(game, flight, pylon), i, 1)
 
-        hboxLayout.addLayout(layout)
-        hboxLayout.addStretch()
-        self.setLayout(hboxLayout)
+        vbox.addLayout(layout)
+        vbox.addStretch()
+        self.setLayout(vbox)
 
-        if not self.isChecked():
-            for i in self.findChildren(QPylonEditor):
-                i.default_loadout()
+        for i in self.findChildren(QPylonEditor):
+            i.set_from(self.flight.loadout)
 
-    def on_toggle(self):
+    def reset_pylons(self) -> None:
         self.flight.use_custom_loadout = self.isChecked()
         if not self.isChecked():
             for i in self.findChildren(QPylonEditor):
-                i.default_loadout()
+                i.set_from(self.flight.loadout)

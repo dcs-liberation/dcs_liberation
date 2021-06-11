@@ -13,7 +13,7 @@
   "frontline_units": [
     "APC_BTR_80",
     "APC_MTLB",
-    "APC_Cobra__Scout",
+    "Scout_Cobra",
     "IFV_BMP_1",
     "IFV_BMP_2",
     "MBT_T_72B",
@@ -44,6 +44,9 @@
     "ZSU23Generator",
     "ZU23Generator",
     "ZU23UralGenerator"
+  ],
+  "navy_generators": [
+     "LaCombattanteIIGroupGenerator"
   ],
   "requirements": {},
   "has_jtac": true,

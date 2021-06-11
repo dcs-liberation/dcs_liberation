@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Iterator, TYPE_CHECKING
+from typing import Iterator, TYPE_CHECKING, List, Union
 
 from dcs.mapping import Point
+from dcs.unit import Unit
 
 if TYPE_CHECKING:
     from gen.flights.flight import FlightType
@@ -36,9 +37,13 @@ class MissionTarget:
             yield from [
                 FlightType.ESCORT,
                 FlightType.TARCAP,
-                FlightType.SEAD,
+                FlightType.SEAD_ESCORT,
                 FlightType.SWEEP,
                 # TODO: FlightType.ELINT,
                 # TODO: FlightType.EWAR,
                 # TODO: FlightType.RECON,
             ]
+
+    @property
+    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+        return []

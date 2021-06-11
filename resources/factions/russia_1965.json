@@ -3,6 +3,7 @@
   "name": "Russia 1965",
   "authors": "Khopa",
   "description": "<p>Soviet army in the 60s, ideal to fly the Mig-19 or the Mig-21.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_15bis",
     "MiG_19P",
@@ -17,11 +18,12 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "APC_BTR_80",
     "APC_BTR_RD",
     "IFV_BMD_1",
     "IFV_BMP_1",
+    "LT_PT_76",
     "MBT_T_55",
     "SPAAA_ZU_23_2_Mounted_Ural_375",
     "SPAAA_ZSU_57_2",

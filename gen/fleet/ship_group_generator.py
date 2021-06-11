@@ -8,6 +8,7 @@ from gen.fleet.dd_group import (
     ArleighBurkeGroupGenerator,
     OliverHazardPerryGroupGenerator,
 )
+from gen.fleet.lacombattanteII import LaCombattanteIIGroupGenerator
 from gen.fleet.lha_group import LHAGroupGenerator
 from gen.fleet.ru_dd_group import (
     RussianNavyGroupGenerator,
@@ -34,6 +35,7 @@ SHIP_MAP = {
     "KiloSubGroupGenerator": KiloSubGroupGenerator,
     "TangoSubGroupGenerator": TangoSubGroupGenerator,
     "Type54GroupGenerator": Type54GroupGenerator,
+    "LaCombattanteIIGroupGenerator": LaCombattanteIIGroupGenerator,
 }
 
 

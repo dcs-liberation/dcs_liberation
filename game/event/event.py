@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import logging
-import math
-from typing import Dict, Iterator, List, TYPE_CHECKING, Tuple, Type
+from typing import List, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
-from dcs.unittype import UnitType, VehicleType
+from dcs.unittype import VehicleType
 
 from game import persistency
 from game.debriefing import AirLosses, Debriefing
@@ -15,7 +14,6 @@ from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
-from ..db import PRICES
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -122,11 +120,15 @@ class Event:
             self.game.red_ato, debriefing.air_losses, for_player=False
         )
 
-    @staticmethod
-    def commit_air_losses(debriefing: Debriefing) -> None:
+    def commit_air_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
-            aircraft = loss.unit_type
-            cp = loss.departure
+            if (
+                not loss.pilot.player
+                or not self.game.settings.invulnerable_player_pilots
+            ):
+                loss.pilot.kill()
+            aircraft = loss.flight.unit_type
+            cp = loss.flight.departure
             available = cp.base.total_units_of_type(aircraft)
             if available <= 0:
                 logging.error(
@@ -137,6 +139,23 @@ class Event:
 
             logging.info(f"{aircraft} destroyed from {cp}")
             cp.base.aircraft[aircraft] -= 1
+
+    @staticmethod
+    def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
+        for package in ato.packages:
+            for flight in package.flights:
+                for idx, pilot in enumerate(flight.roster.pilots):
+                    if pilot is None:
+                        logging.error(
+                            f"Cannot award experience to pilot #{idx} of {flight} "
+                            "because no pilot is assigned"
+                        )
+                        continue
+                    pilot.record.missions_flown += 1
+
+    def commit_pilot_experience(self) -> None:
+        self._commit_pilot_experience(self.game.blue_ato)
+        self._commit_pilot_experience(self.game.red_ato)
 
     @staticmethod
     def commit_front_line_losses(debriefing: Debriefing) -> None:
@@ -153,6 +172,47 @@ class Event:
 
             logging.info(f"{unit_type} destroyed from {control_point}")
             control_point.base.armor[unit_type] -= 1
+
+    @staticmethod
+    def commit_convoy_losses(debriefing: Debriefing) -> None:
+        for loss in debriefing.convoy_losses:
+            unit_type = loss.unit_type
+            convoy = loss.convoy
+            available = loss.convoy.units.get(unit_type, 0)
+            convoy_name = f"convoy from {convoy.origin} to {convoy.destination}"
+            if available <= 0:
+                logging.error(
+                    f"Found killed {unit_type} in {convoy_name} but that convoy has "
+                    "none available."
+                )
+                continue
+
+            logging.info(f"{unit_type} destroyed in {convoy_name}")
+            convoy.kill_unit(unit_type)
+
+    @staticmethod
+    def commit_cargo_ship_losses(debriefing: Debriefing) -> None:
+        for ship in debriefing.cargo_ship_losses:
+            logging.info(
+                f"All units destroyed in cargo ship from {ship.origin} to "
+                f"{ship.destination}."
+            )
+            ship.kill_all()
+
+    @staticmethod
+    def commit_airlift_losses(debriefing: Debriefing) -> None:
+        for loss in debriefing.airlift_losses:
+            transfer = loss.transfer
+            airlift_name = f"airlift from {transfer.origin} to {transfer.destination}"
+            for unit_type in loss.cargo:
+                try:
+                    transfer.kill_unit(unit_type)
+                    logging.info(f"{unit_type} destroyed in {airlift_name}")
+                except KeyError:
+                    logging.exception(
+                        f"Found killed {unit_type} in {airlift_name} but that airlift "
+                        "has none available."
+                    )
 
     @staticmethod
     def commit_ground_object_losses(debriefing: Debriefing) -> None:
@@ -181,62 +241,41 @@ class Event:
         for damaged_runway in debriefing.damaged_runways:
             damaged_runway.damage_runway()
 
+    def commit_captures(self, debriefing: Debriefing) -> None:
+        for captured in debriefing.base_captures:
+            try:
+                if captured.captured_by_player:
+                    info = Information(
+                        f"{captured.control_point} captured!",
+                        f"We took control of {captured.control_point}.",
+                        self.game.turn,
+                    )
+                else:
+                    info = Information(
+                        f"{captured.control_point} lost!",
+                        f"The enemy took control of {captured.control_point}.",
+                        self.game.turn,
+                    )
+
+                self.game.informations.append(info)
+                captured.control_point.capture(self.game, captured.captured_by_player)
+                logging.info(f"Will run redeploy for {captured.control_point}")
+                self.redeploy_units(captured.control_point)
+            except Exception:
+                logging.exception(f"Could not process base capture {captured}")
+
     def commit(self, debriefing: Debriefing):
         logging.info("Committing mission results")
 
         self.commit_air_losses(debriefing)
+        self.commit_pilot_experience()
         self.commit_front_line_losses(debriefing)
+        self.commit_convoy_losses(debriefing)
+        self.commit_airlift_losses(debriefing)
         self.commit_ground_object_losses(debriefing)
         self.commit_building_losses(debriefing)
         self.commit_damaged_runways(debriefing)
-
-        # ------------------------------
-        # Captured bases
-        # if self.game.player_country in db.BLUEFOR_FACTIONS:
-        coalition = 2  # Value in DCS mission event for BLUE
-        # else:
-        #    coalition = 1 # Value in DCS mission event for RED
-
-        for captured in debriefing.base_capture_events:
-            try:
-                id = int(captured.split("||")[0])
-                new_owner_coalition = int(captured.split("||")[1])
-
-                captured_cps = []
-                for cp in self.game.theater.controlpoints:
-                    if cp.id == id:
-
-                        if cp.captured and new_owner_coalition != coalition:
-                            for_player = False
-                            info = Information(
-                                cp.name + " lost !",
-                                "The ennemy took control of "
-                                + cp.name
-                                + "\nShame on us !",
-                                self.game.turn,
-                            )
-                            self.game.informations.append(info)
-                            captured_cps.append(cp)
-                        elif not (cp.captured) and new_owner_coalition == coalition:
-                            for_player = True
-                            info = Information(
-                                cp.name + " captured !",
-                                "We took control of " + cp.name + "! Great job !",
-                                self.game.turn,
-                            )
-                            self.game.informations.append(info)
-                            captured_cps.append(cp)
-                        else:
-                            continue
-
-                        cp.capture(self.game, for_player)
-
-                for cp in captured_cps:
-                    logging.info("Will run redeploy for " + cp.name)
-                    self.redeploy_units(cp)
-            except Exception:
-                logging.exception(f"Could not process base capture {captured}")
-
+        self.commit_captures(debriefing)
         self.complete_aircraft_transfers(debriefing)
 
         # Destroyed units carcass
@@ -418,63 +457,3 @@ class Event:
             info = Information("Units redeployed", text, self.game.turn)
             self.game.informations.append(info)
             logging.info(text)
-
-
-class UnitsDeliveryEvent:
-    def __init__(self, control_point: ControlPoint) -> None:
-        self.to_cp = control_point
-        self.units: Dict[Type[UnitType], int] = {}
-
-    def __str__(self) -> str:
-        return "Pending delivery to {}".format(self.to_cp)
-
-    def order(self, units: Dict[Type[UnitType], int]) -> None:
-        for k, v in units.items():
-            self.units[k] = self.units.get(k, 0) + v
-
-    def sell(self, units: Dict[Type[UnitType], int]) -> None:
-        for k, v in units.items():
-            self.units[k] = self.units.get(k, 0) - v
-
-    def consume_each_order(self) -> Iterator[Tuple[Type[UnitType], int]]:
-        while self.units:
-            yield self.units.popitem()
-
-    def refund_all(self, game: Game) -> None:
-        for unit_type, count in self.consume_each_order():
-            try:
-                price = PRICES[unit_type]
-            except KeyError:
-                logging.error(f"Could not refund {unit_type.id}, price unknown")
-                continue
-
-            logging.info(f"Refunding {count} {unit_type.id} at {self.to_cp.name}")
-            game.adjust_budget(price * count, player=self.to_cp.captured)
-
-    def available_next_turn(self, unit_type: Type[UnitType]) -> int:
-        pending_units = self.units.get(unit_type)
-        if pending_units is None:
-            pending_units = 0
-        current_units = self.to_cp.base.total_units_of_type(unit_type)
-        return pending_units + current_units
-
-    def process(self, game: Game) -> None:
-        bought_units: Dict[Type[UnitType], int] = {}
-        sold_units: Dict[Type[UnitType], int] = {}
-        for unit_type, count in self.units.items():
-            coalition = "Ally" if self.to_cp.captured else "Enemy"
-            aircraft = unit_type.id
-            name = self.to_cp.name
-            if count >= 0:
-                bought_units[unit_type] = count
-                game.message(
-                    f"{coalition} reinforcements: {aircraft} x {count} at {name}"
-                )
-            else:
-                sold_units[unit_type] = -count
-                game.message(f"{coalition} sold: {aircraft} x {-count} at {name}")
-        self.to_cp.base.commision_units(bought_units)
-        self.to_cp.base.commit_losses(sold_units)
-        self.units = {}
-        bought_units = {}
-        sold_units = {}

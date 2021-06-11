@@ -63,26 +63,19 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
             return i + 1
 
         if self.include_frontlines:
-            for cp in self.game.theater.controlpoints:
-                if cp.captured:
-                    enemy_cp = [
-                        ecp
-                        for ecp in cp.connected_points
-                        if ecp.captured != cp.captured
-                    ]
-                    for ecp in enemy_cp:
-                        pos = Conflict.frontline_position(cp, ecp, self.game.theater)[0]
-                        wpt = FlightWaypoint(
-                            FlightWaypointType.CUSTOM,
-                            pos.x,
-                            pos.y,
-                            Distance.from_meters(800),
-                        )
-                        wpt.name = "Frontline " + cp.name + "/" + ecp.name + " [CAS]"
-                        wpt.alt_type = "RADIO"
-                        wpt.pretty_name = wpt.name
-                        wpt.description = "Frontline"
-                        i = add_model_item(i, model, wpt.pretty_name, wpt)
+            for front_line in self.game.theater.conflicts():
+                pos = Conflict.frontline_position(front_line, self.game.theater)[0]
+                wpt = FlightWaypoint(
+                    FlightWaypointType.CUSTOM,
+                    pos.x,
+                    pos.y,
+                    Distance.from_meters(800),
+                )
+                wpt.name = f"Frontline {front_line.name} [CAS]"
+                wpt.alt_type = "RADIO"
+                wpt.pretty_name = wpt.name
+                wpt.description = "Frontline"
+                i = add_model_item(i, model, wpt.pretty_name, wpt)
 
         if self.include_targets:
             for cp in self.game.theater.controlpoints:

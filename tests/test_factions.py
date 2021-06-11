@@ -82,7 +82,7 @@ class TestFactionLoader(unittest.TestCase):
             self.assertIn(Armor.IFV_M1126_Stryker_ICV, faction.frontline_units)
             self.assertIn(Armor.IFV_M2A2_Bradley, faction.frontline_units)
             self.assertIn(Armor.IFV_LAV_25, faction.frontline_units)
-            self.assertIn(Armor.APC_HMMWV__Scout, faction.frontline_units)
+            self.assertIn(Armor.Scout_HMMWV, faction.frontline_units)
             self.assertIn(Armor.ATGM_HMMWV, faction.frontline_units)
 
             self.assertIn(Artillery.MLRS_M270_227mm, faction.artillery_units)

@@ -22,7 +22,16 @@ from dcs.unittype import FlyingType, UnitType
 
 from game import db
 from game.theater import Airfield, ControlPoint
-from game.unitmap import Building, FrontLineUnit, GroundObjectUnit, UnitMap
+from game.transfers import CargoShip
+from game.unitmap import (
+    AirliftUnits,
+    Building,
+    ConvoyUnit,
+    FrontLineUnit,
+    GroundObjectUnit,
+    UnitMap,
+    FlyingUnit,
+)
 from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
@@ -33,24 +42,24 @@ DEBRIEFING_LOG_EXTENSION = "log"
 
 @dataclass(frozen=True)
 class AirLosses:
-    player: List[Flight]
-    enemy: List[Flight]
+    player: List[FlyingUnit]
+    enemy: List[FlyingUnit]
 
     @property
-    def losses(self) -> Iterator[Flight]:
+    def losses(self) -> Iterator[FlyingUnit]:
         return itertools.chain(self.player, self.enemy)
 
     def by_type(self, player: bool) -> Dict[Type[FlyingType], int]:
         losses_by_type: Dict[Type[FlyingType], int] = defaultdict(int)
         losses = self.player if player else self.enemy
         for loss in losses:
-            losses_by_type[loss.unit_type] += 1
+            losses_by_type[loss.flight.unit_type] += 1
         return losses_by_type
 
     def surviving_flight_members(self, flight: Flight) -> int:
         losses = 0
         for loss in self.losses:
-            if loss == flight:
+            if loss.flight == flight:
                 losses += 1
         return flight.count - losses
 
@@ -60,6 +69,15 @@ class GroundLosses:
     player_front_line: List[FrontLineUnit] = field(default_factory=list)
     enemy_front_line: List[FrontLineUnit] = field(default_factory=list)
 
+    player_convoy: List[ConvoyUnit] = field(default_factory=list)
+    enemy_convoy: List[ConvoyUnit] = field(default_factory=list)
+
+    player_cargo_ships: List[CargoShip] = field(default_factory=list)
+    enemy_cargo_ships: List[CargoShip] = field(default_factory=list)
+
+    player_airlifts: List[AirliftUnits] = field(default_factory=list)
+    enemy_airlifts: List[AirliftUnits] = field(default_factory=list)
+
     player_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
     enemy_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
 
@@ -68,6 +86,12 @@ class GroundLosses:
 
     player_airfields: List[Airfield] = field(default_factory=list)
     enemy_airfields: List[Airfield] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class BaseCaptureEvent:
+    control_point: ControlPoint
+    captured_by_player: bool
 
 
 @dataclass(frozen=True)
@@ -94,7 +118,10 @@ class StateData:
             killed_aircraft=data["killed_aircrafts"],
             # Airfields emit a new "dead" event every time a bomb is dropped on
             # them when they've already dead. Dedup.
-            killed_ground_units=list(set(data["killed_ground_units"])),
+            #
+            # Also normalize dead map objects (which are ints) to strings. The unit map
+            # only stores strings.
+            killed_ground_units=list({str(u) for u in data["killed_ground_units"]}),
             destroyed_statics=data["destroyed_objects_positions"],
             base_capture_events=data["base_capture_events"],
         )
@@ -105,6 +132,7 @@ class Debriefing:
         self, state_data: Dict[str, Any], game: Game, unit_map: UnitMap
     ) -> None:
         self.state_data = StateData.from_json(state_data)
+        self.game = game
         self.unit_map = unit_map
 
         self.player_country = game.player_country
@@ -114,11 +142,27 @@ class Debriefing:
 
         self.air_losses = self.dead_aircraft()
         self.ground_losses = self.dead_ground_units()
+        self.base_captures = self.base_capture_events()
 
     @property
     def front_line_losses(self) -> Iterator[FrontLineUnit]:
         yield from self.ground_losses.player_front_line
         yield from self.ground_losses.enemy_front_line
+
+    @property
+    def convoy_losses(self) -> Iterator[ConvoyUnit]:
+        yield from self.ground_losses.player_convoy
+        yield from self.ground_losses.enemy_convoy
+
+    @property
+    def cargo_ship_losses(self) -> Iterator[CargoShip]:
+        yield from self.ground_losses.player_cargo_ships
+        yield from self.ground_losses.enemy_cargo_ships
+
+    @property
+    def airlift_losses(self) -> Iterator[AirliftUnits]:
+        yield from self.ground_losses.player_airlifts
+        yield from self.ground_losses.enemy_airlifts
 
     @property
     def ground_object_losses(self) -> Iterator[GroundObjectUnit]:
@@ -148,6 +192,38 @@ class Debriefing:
             losses_by_type[loss.unit_type] += 1
         return losses_by_type
 
+    def convoy_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        if player:
+            losses = self.ground_losses.player_convoy
+        else:
+            losses = self.ground_losses.enemy_convoy
+        for loss in losses:
+            losses_by_type[loss.unit_type] += 1
+        return losses_by_type
+
+    def cargo_ship_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        if player:
+            ships = self.ground_losses.player_cargo_ships
+        else:
+            ships = self.ground_losses.enemy_cargo_ships
+        for ship in ships:
+            for unit_type, count in ship.units.items():
+                losses_by_type[unit_type] += count
+        return losses_by_type
+
+    def airlift_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
+        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+        if player:
+            losses = self.ground_losses.player_airlifts
+        else:
+            losses = self.ground_losses.enemy_airlifts
+        for loss in losses:
+            for unit_type in loss.cargo:
+                losses_by_type[unit_type] += 1
+        return losses_by_type
+
     def building_losses_by_type(self, player: bool) -> Dict[str, int]:
         losses_by_type: Dict[str, int] = defaultdict(int)
         if player:
@@ -165,14 +241,14 @@ class Debriefing:
         player_losses = []
         enemy_losses = []
         for unit_name in self.state_data.killed_aircraft:
-            flight = self.unit_map.flight(unit_name)
-            if flight is None:
+            aircraft = self.unit_map.flight(unit_name)
+            if aircraft is None:
                 logging.error(f"Could not find Flight matching {unit_name}")
                 continue
-            if flight.departure.captured:
-                player_losses.append(flight)
+            if aircraft.flight.departure.captured:
+                player_losses.append(aircraft)
             else:
-                enemy_losses.append(flight)
+                enemy_losses.append(aircraft)
         return AirLosses(player_losses, enemy_losses)
 
     def dead_ground_units(self) -> GroundLosses:
@@ -184,6 +260,22 @@ class Debriefing:
                     losses.player_front_line.append(front_line_unit)
                 else:
                     losses.enemy_front_line.append(front_line_unit)
+                continue
+
+            convoy_unit = self.unit_map.convoy_unit(unit_name)
+            if convoy_unit is not None:
+                if convoy_unit.convoy.player_owned:
+                    losses.player_convoy.append(convoy_unit)
+                else:
+                    losses.enemy_convoy.append(convoy_unit)
+                continue
+
+            cargo_ship = self.unit_map.cargo_ship(unit_name)
+            if cargo_ship is not None:
+                if cargo_ship.player_owned:
+                    losses.player_cargo_ships.append(cargo_ship)
+                else:
+                    losses.enemy_cargo_ships.append(cargo_ship)
                 continue
 
             ground_object_unit = self.unit_map.ground_object_unit(unit_name)
@@ -224,17 +316,46 @@ class Debriefing:
                 "have no effect. This may be normal behavior."
             )
 
+        for unit_name in self.state_data.killed_aircraft:
+            airlift_unit = self.unit_map.airlift_unit(unit_name)
+            if airlift_unit is not None:
+                if airlift_unit.transfer.player:
+                    losses.player_airlifts.append(airlift_unit)
+                else:
+                    losses.enemy_airlifts.append(airlift_unit)
+                continue
+
         return losses
 
-    @property
-    def base_capture_events(self):
+    def base_capture_events(self) -> List[BaseCaptureEvent]:
         """Keeps only the last instance of a base capture event for each base ID."""
-        reversed_captures = list(reversed(self.state_data.base_capture_events))
-        last_base_cap_indexes = []
-        for idx, base in enumerate(i.split("||")[0] for i in reversed_captures):
-            if base not in [x[1] for x in last_base_cap_indexes]:
-                last_base_cap_indexes.append((idx, base))
-        return [reversed_captures[idx[0]] for idx in last_base_cap_indexes]
+        blue_coalition_id = 2
+        seen = set()
+        captures = []
+        for capture in reversed(self.state_data.base_capture_events):
+            cp_id_str, new_owner_id_str, _name = capture.split("||")
+            cp_id = int(cp_id_str)
+
+            # Only the most recent capture event matters.
+            if cp_id in seen:
+                continue
+            seen.add(cp_id)
+
+            try:
+                control_point = self.game.theater.find_control_point_by_id(cp_id)
+            except KeyError:
+                # Captured base is not a part of the campaign. This happens when neutral
+                # bases are near the conflict. Nothing to do.
+                continue
+
+            captured_by_player = int(new_owner_id_str) == blue_coalition_id
+            if control_point.is_friendly(to_player=captured_by_player):
+                # Base is currently friendly to the new owner. Was captured and
+                # recaptured in the same mission. Nothing to do.
+                continue
+
+            captures.append(BaseCaptureEvent(control_point, captured_by_player))
+        return captures
 
 
 class PollDebriefingFileThread(threading.Thread):

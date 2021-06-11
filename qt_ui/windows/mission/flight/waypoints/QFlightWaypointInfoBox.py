@@ -1,22 +1,19 @@
-from PySide2.QtWidgets import QGroupBox, QGridLayout, QLabel, QHBoxLayout, QVBoxLayout
+from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QVBoxLayout
 
 from gen.flights.flight import FlightWaypoint
 
 
 class QFlightWaypointInfoBox(QGroupBox):
-    def __init__(self, flight_wpt: FlightWaypoint = None):
+    def __init__(self) -> None:
         super(QFlightWaypointInfoBox, self).__init__("Waypoint")
-        self.flight_wpt = flight_wpt
-        if flight_wpt is None:
-            self.flight_wpt = FlightWaypoint(0, 0, 0)
-        self.x_position_label = QLabel(str(self.flight_wpt.x))
-        self.y_position_label = QLabel(str(self.flight_wpt.y))
-        self.alt_label = QLabel(str(int(self.flight_wpt.alt.feet)))
-        self.name_label = QLabel(str(self.flight_wpt.name))
-        self.desc_label = QLabel(str(self.flight_wpt.description))
+        self.x_position_label = QLabel("0")
+        self.y_position_label = QLabel("0")
+        self.alt_label = QLabel("0")
+        self.name_label = QLabel("")
+        self.desc_label = QLabel("")
         self.init_ui()
 
-    def init_ui(self):
+    def init_ui(self) -> None:
 
         layout = QVBoxLayout()
 
@@ -53,13 +50,10 @@ class QFlightWaypointInfoBox(QGroupBox):
 
         self.setLayout(layout)
 
-    def set_flight_waypoint(self, flight_wpt: FlightWaypoint):
-        self.flight_wpt = flight_wpt
-        if flight_wpt is None:
-            self.flight_wpt = FlightWaypoint(0, 0, 0)
-        self.x_position_label.setText(str(self.flight_wpt.x))
-        self.y_position_label.setText(str(self.flight_wpt.y))
-        self.alt_label.setText(str(int(self.flight_wpt.alt.feet)))
-        self.name_label.setText(str(self.flight_wpt.name))
-        self.desc_label.setText(str(self.flight_wpt.description))
-        self.setTitle(self.flight_wpt.name)
+    def set_flight_waypoint(self, flight_wpt: FlightWaypoint) -> None:
+        self.x_position_label.setText(str(flight_wpt.x))
+        self.y_position_label.setText(str(flight_wpt.y))
+        self.alt_label.setText(str(int(flight_wpt.alt.feet)))
+        self.name_label.setText(str(flight_wpt.name))
+        self.desc_label.setText(str(flight_wpt.description))
+        self.setTitle(flight_wpt.name)

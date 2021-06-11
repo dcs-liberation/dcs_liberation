@@ -1,6 +1,7 @@
 import itertools
 
 from PySide2.QtWidgets import (
+    QCheckBox,
     QDialog,
     QFrame,
     QGridLayout,
@@ -42,9 +43,9 @@ class ScrollingFrame(QFrame):
 
 
 class EconomyIntelTab(ScrollingFrame):
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, player: bool) -> None:
         super().__init__()
-        self.addLayout(FinancesLayout(game, player=False))
+        self.addLayout(FinancesLayout(game, player=player))
 
 
 class IntelTableLayout(QGridLayout):
@@ -93,9 +94,9 @@ class AircraftIntelLayout(IntelTableLayout):
 
 
 class AircraftIntelTab(ScrollingFrame):
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, player: bool) -> None:
         super().__init__()
-        self.addLayout(AircraftIntelLayout(game, player=False))
+        self.addLayout(AircraftIntelLayout(game, player=player))
 
 
 class ArmyIntelLayout(IntelTableLayout):
@@ -120,18 +121,18 @@ class ArmyIntelLayout(IntelTableLayout):
 
 
 class ArmyIntelTab(ScrollingFrame):
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, player: bool) -> None:
         super().__init__()
-        self.addLayout(ArmyIntelLayout(game, player=False))
+        self.addLayout(ArmyIntelLayout(game, player=player))
 
 
 class IntelTabs(QTabWidget):
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, player: bool):
         super().__init__()
 
-        self.addTab(EconomyIntelTab(game), "Economy")
-        self.addTab(AircraftIntelTab(game), "Air forces")
-        self.addTab(ArmyIntelTab(game), "Ground forces")
+        self.addTab(EconomyIntelTab(game, player), "Economy")
+        self.addTab(AircraftIntelTab(game, player), "Air forces")
+        self.addTab(ArmyIntelTab(game, player), "Ground forces")
 
 
 class IntelWindow(QDialog):
@@ -139,12 +140,42 @@ class IntelWindow(QDialog):
         super().__init__()
 
         self.game = game
+        self.player = True
         self.setModal(True)
         self.setWindowTitle("Intelligence")
         self.setWindowIcon(ICONS["Statistics"])
         self.setMinimumSize(600, 500)
+        self.selected_intel_tab = 0
 
         layout = QVBoxLayout()
         self.setLayout(layout)
+        self.refresh_layout()
 
-        layout.addWidget(IntelTabs(game), stretch=1)
+    def on_faction_changed(self) -> None:
+        self.player = not self.player
+        self.refresh_layout()
+
+    def refresh_layout(self) -> None:
+
+        # Clear the existing layout
+        if self.layout():
+            idx = 0
+            while child := self.layout().itemAt(idx):
+                self.layout().removeItem(child)
+
+        # Add the new layout
+        own_faction = QCheckBox("Enemy Info")
+        own_faction.setChecked(not self.player)
+        own_faction.stateChanged.connect(self.on_faction_changed)
+
+        intel_tabs = IntelTabs(self.game, self.player)
+        intel_tabs.currentChanged.connect(self.on_tab_changed)
+
+        if self.selected_intel_tab:
+            intel_tabs.setCurrentIndex(self.selected_intel_tab)
+
+        self.layout().addWidget(own_faction)
+        self.layout().addWidget(intel_tabs, stretch=1)
+
+    def on_tab_changed(self, idx: int) -> None:
+        self.selected_intel_tab = idx

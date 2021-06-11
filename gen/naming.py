@@ -39,7 +39,7 @@ ALPHA_MILITARY = [
     "Zero",
 ]
 
-ANIMALS = [
+ANIMALS: tuple[str, ...] = (
     "SHARK",
     "TORTOISE",
     "BAT",
@@ -243,22 +243,26 @@ ANIMALS = [
     "CANARY",
     "WOODCHUCK",
     "ANACONDA",
-]
+)
 
 
 class NameGenerator:
     number = 0
     infantry_number = 0
     aircraft_number = 0
+    convoy_number = 0
+    cargo_ship_number = 0
 
-    ANIMALS = ANIMALS
+    animals: list[str] = list(ANIMALS)
     existing_alphas: List[str] = []
 
     @classmethod
     def reset(cls):
         cls.number = 0
         cls.infantry_number = 0
-        cls.ANIMALS = ANIMALS
+        cls.convoy_number = 0
+        cls.cargo_ship_number = 0
+        cls.animals = list(ANIMALS)
         cls.existing_alphas = []
 
     @classmethod
@@ -266,6 +270,8 @@ class NameGenerator:
         cls.number = 0
         cls.infantry_number = 0
         cls.aircraft_number = 0
+        cls.convoy_number = 0
+        cls.cargo_ship_number = 0
 
     @classmethod
     def next_aircraft_name(cls, country: Country, parent_base_id: int, flight: Flight):
@@ -306,10 +312,6 @@ class NameGenerator:
             db.unit_type_name(unit_type),
         )
 
-    @staticmethod
-    def next_basedefense_name():
-        return "basedefense_aa|0|0|"
-
     @classmethod
     def next_awacs_name(cls, country: Country):
         cls.number += 1
@@ -328,31 +330,36 @@ class NameGenerator:
         return "carrier|{}|{}|0|".format(country.id, cls.number)
 
     @classmethod
-    def random_objective_name(cls):
-        if len(cls.ANIMALS) == 0:
-            for i in range(10):
-                new_name_generated = True
-                alpha_mil_name = (
-                    random.choice(ALPHA_MILITARY).upper()
-                    + "#"
-                    + str(random.randint(0, 100))
-                )
-                for existing_name in cls.existing_alphas:
-                    if existing_name == alpha_mil_name:
-                        new_name_generated = False
-                if new_name_generated:
-                    cls.existing_alphas.append(alpha_mil_name)
-                    return alpha_mil_name
+    def next_convoy_name(cls) -> str:
+        cls.convoy_number += 1
+        return f"Convoy {cls.convoy_number:03}"
 
-            # At this point, give up trying - something has gone wrong and we haven't been able to make a new name in 10 tries.
-            # We'll just make a longer name using the current unix epoch in nanoseconds. That should be unique... right?
-            last_chance_name = alpha_mil_name + str(time.time_ns())
-            cls.existing_alphas.append(last_chance_name)
-            return last_chance_name
-        else:
-            animal = random.choice(cls.ANIMALS)
-            cls.ANIMALS.remove(animal)
+    @classmethod
+    def next_cargo_ship_name(cls) -> str:
+        cls.cargo_ship_number += 1
+        return f"Cargo Ship {cls.cargo_ship_number:03}"
+
+    @classmethod
+    def random_objective_name(cls):
+        if cls.animals:
+            animal = random.choice(cls.animals)
+            cls.animals.remove(animal)
             return animal
+
+        for _ in range(10):
+            alpha = random.choice(ALPHA_MILITARY).upper()
+            number = random.randint(0, 100)
+            alpha_mil_name = f"{alpha} #{number:02}"
+            if alpha_mil_name not in cls.existing_alphas:
+                cls.existing_alphas.append(alpha_mil_name)
+                return alpha_mil_name
+
+        # At this point, give up trying - something has gone wrong and we haven't been
+        # able to make a new name in 10 tries. We'll just make a longer name using the
+        # current unix epoch in nanoseconds. That should be unique... right?
+        last_chance_name = alpha_mil_name + str(time.time_ns())
+        cls.existing_alphas.append(last_chance_name)
+        return last_chance_name
 
 
 namegen = NameGenerator

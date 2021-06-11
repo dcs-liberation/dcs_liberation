@@ -451,7 +451,7 @@ AIRFIELD_DATA = {
             "12": ("IMA", MHz(111, 750)),
         },
     ),
-    "Al Minhad Intl": AirfieldData(
+    "Al Minhad AFB": AirfieldData(
         theater="Persian Gulf",
         icao="OMDM",
         elevation=190,
@@ -620,9 +620,9 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(78, TacanBand.X),
         tacan_callsign="BND",
         vor=("BND", MHz(117, 200)),
-        atc=AtcData(MHz(4, 250), MHz(39, 401), MHz(118, 100), MHz(251, 0)),
+        atc=AtcData(MHz(4, 250), MHz(39, 400), MHz(118, 100), MHz(251, 0)),
         ils={
-            "21": ("IBND", MHz(333, 800)),
+            "21": ("IBND", MHz(109, 900)),
         },
     ),
     "Jiroft": AirfieldData(
@@ -674,7 +674,7 @@ AIRFIELD_DATA = {
         vor=("DAN", MHz(108, 400)),
         atc=AtcData(MHz(3, 900), MHz(38, 700), MHz(122, 100), MHz(360, 100)),
         ils={
-            "50": ("IDAN", MHz(109, 300)),
+            "05": ("IDAN", MHz(109, 300)),
             "23": ("DANM", MHz(111, 700)),
         },
     ),

@@ -3,6 +3,7 @@
   "name": "Spain 1990",
   "authors": "Khopa",
   "description": "<p>Spain in the 90s</p>",
+  "locales": ["es_ES"],
   "aircrafts": [
     "FA_18C_hornet",
     "AV8BNA",
@@ -19,7 +20,7 @@
   ],
   "frontline_units": [
     "MBT_M60A3_Patton",
-    "MBT_Leopard_2",
+    "MBT_Leopard_2A4",
     "APC_M113",
     "SAM_Avenger__Stinger"
   ],
@@ -64,5 +65,22 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ_9_Reaper",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "Spain 111th Escuadron C.15-73",
+      "Spain 111th Escuadron C.15-88",
+	  "Spain 121th Escuadron C.15-45",
+	  "Spain 121th Escuadron C.15-50",
+	  "Spain 121th Escuadron C.15-60",
+	  "Spain 151th Escuadron C.15-14",
+	  "Spain 151th Escuadron C.15-18",
+	  "Spain 151th Escuadron C.15-23",
+	  "Spain 151th Escuadron C.15-24",
+	  "Spain 211th Escuadron C.15-76",
+	  "Spain 211th Escuadron C.15-77",
+	  "Spain 462th Escuadron C.15-79",
+	  "Spain 462th Escuadron C.15-90"
+    ]
+  }
 }

@@ -2,14 +2,20 @@ from __future__ import annotations
 
 import itertools
 import logging
-from typing import Iterator, List, TYPE_CHECKING
+from typing import Iterator, List, TYPE_CHECKING, Union
 
 from dcs.mapping import Point
+from dcs.triggers import TriggerZone
 from dcs.unit import Unit
 from dcs.unitgroup import Group
+from dcs.unittype import VehicleType
 
 from .. import db
-from ..data.radar_db import UNITS_WITH_RADAR
+from ..data.radar_db import (
+    TRACK_RADARS,
+    TELARS,
+    LAUNCHER_TRACKER_PAIRS,
+)
 from ..utils import Distance, meters
 
 if TYPE_CHECKING:
@@ -19,78 +25,25 @@ if TYPE_CHECKING:
 from .missiontarget import MissionTarget
 
 NAME_BY_CATEGORY = {
-    "power": "Power plant",
-    "ammo": "Ammo depot",
-    "fuel": "Fuel depot",
+    "ewr": "Early Warning Radar",
     "aa": "AA Defense Site",
-    "ware": "Warehouse",
-    "farp": "FARP",
-    "fob": "FOB",
-    "factory": "Factory",
-    "comms": "Comms. tower",
-    "oil": "Oil platform",
-    "derrick": "Derrick",
-    "ww2bunker": "Bunker",
-    "village": "Village",
     "allycamp": "Camp",
-    "EWR": "EWR",
-}
-
-ABBREV_NAME = {
-    "power": "PLANT",
-    "ammo": "AMMO",
-    "fuel": "FUEL",
-    "aa": "AA",
-    "ware": "WARE",
+    "ammo": "Ammo depot",
+    "armor": "Armor group",
+    "coastal": "Coastal defense",
+    "comms": "Communications tower",
+    "derrick": "Derrick",
+    "factory": "Factory",
     "farp": "FARP",
     "fob": "FOB",
-    "factory": "FACTORY",
-    "comms": "COMMST",
-    "oil": "OILP",
-    "derrick": "DERK",
-    "ww2bunker": "BUNK",
-    "village": "VLG",
-    "allycamp": "CMP",
-}
-
-CATEGORY_MAP = {
-    # Special cases
-    "CARRIER": ["CARRIER"],
-    "LHA": ["LHA"],
-    "aa": ["AA"],
-    # Buildings
-    "power": [
-        "Workshop A",
-        "Electric power box",
-        "Garage small A",
-        "Farm B",
-        "Repair workshop",
-        "Garage B",
-    ],
-    "ware": ["Warehouse", "Hangar A"],
-    "fuel": ["Tank", "Tank 2", "Tank 3", "Fuel tank"],
-    "ammo": [".Ammunition depot", "Hangar B"],
-    "farp": [
-        "FARP Tent",
-        "FARP Ammo Dump Coating",
-        "FARP Fuel Depot",
-        "FARP Command Post",
-        "FARP CP Blindage",
-    ],
-    "fob": ["Bunker 2", "Bunker 1", "Garage small B", ".Command Center", "Barracks 2"],
-    "factory": ["Tech combine", "Tech hangar A"],
-    "comms": ["TV tower", "Comms tower M"],
-    "oil": ["Oil platform"],
-    "derrick": ["Oil derrick", "Pump station", "Subsidiary structure 2"],
-    "ww2bunker": [
-        "Siegfried Line",
-        "Fire Control Bunker",
-        "SK_C_28_naval_gun",
-        "Concertina Wire",
-        "Czech hedgehogs 1",
-    ],
-    "village": ["Small house 1B", "Small House 1A", "Small warehouse 1"],
-    "allycamp": [],
+    "fuel": "Fuel depot",
+    "missile": "Missile site",
+    "oil": "Oil platform",
+    "power": "Power plant",
+    "ship": "Ship",
+    "village": "Village",
+    "ware": "Warehouse",
+    "ww2bunker": "Bunker",
 }
 
 
@@ -104,7 +57,6 @@ class TheaterGroundObject(MissionTarget):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        airbase_group: bool,
         sea_object: bool,
     ) -> None:
         super().__init__(name, position)
@@ -113,7 +65,6 @@ class TheaterGroundObject(MissionTarget):
         self.heading = heading
         self.control_point = control_point
         self.dcs_identifier = dcs_identifier
-        self.airbase_group = airbase_group
         self.sea_object = sea_object
         self.groups: List[Group] = []
 
@@ -127,6 +78,17 @@ class TheaterGroundObject(MissionTarget):
         :return: all the units at this location
         """
         return list(itertools.chain.from_iterable([g.units for g in self.groups]))
+
+    @property
+    def dead_units(self) -> List[Unit]:
+        """
+        :return: all the dead units at this location
+        """
+        return list(
+            itertools.chain.from_iterable(
+                [getattr(g, "units_losts", []) for g in self.groups]
+            )
+        )
 
     @property
     def group_name(self) -> str:
@@ -178,12 +140,11 @@ class TheaterGroundObject(MissionTarget):
         return False
 
     @property
-    def has_radar(self) -> bool:
-        """Returns True if the ground object contains a unit with radar."""
+    def has_live_radar_sam(self) -> bool:
+        """Returns True if the ground object contains a unit with working radar SAM."""
         for group in self.groups:
-            for unit in group.units:
-                if db.unit_type_from_name(unit.type) in UNITS_WITH_RADAR:
-                    return True
+            if self.threat_range(group, radar_only=True):
+                return True
         return False
 
     def _max_range_of_type(self, group: Group, range_type: str) -> Distance:
@@ -204,18 +165,45 @@ class TheaterGroundObject(MissionTarget):
                 max_range = max(max_range, meters(unit_range))
         return max_range
 
+    def max_detection_range(self) -> Distance:
+        return max(self.detection_range(g) for g in self.groups)
+
     def detection_range(self, group: Group) -> Distance:
         return self._max_range_of_type(group, "detection_range")
 
-    def threat_range(self, group: Group) -> Distance:
-        if not self.detection_range(group):
-            # For simple SAMs like shilkas, the unit has both a threat and
-            # detection range. For complex sites like SA-2s, the launcher has a
-            # threat range and the search/track radars have detection ranges. If
-            # the site has no detection range it has no radars and can't fire,
-            # so it's not actually a threat even if it still has launchers.
-            return meters(0)
+    def max_threat_range(self) -> Distance:
+        return max(self.threat_range(g) for g in self.groups)
+
+    def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
         return self._max_range_of_type(group, "threat_range")
+
+    @property
+    def is_factory(self) -> bool:
+        return self.category == "factory"
+
+    @property
+    def is_control_point(self) -> bool:
+        """True if this TGO is the group for the control point itself (CVs and FOBs)."""
+        return False
+
+    @property
+    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+        return self.units
+
+    @property
+    def mark_locations(self) -> Iterator[Point]:
+        yield self.position
+
+    def clear(self) -> None:
+        self.groups = []
+
+    @property
+    def capturable(self) -> bool:
+        raise NotImplementedError
+
+    @property
+    def purchasable(self) -> bool:
+        raise NotImplementedError
 
 
 class BuildingGroundObject(TheaterGroundObject):
@@ -229,7 +217,7 @@ class BuildingGroundObject(TheaterGroundObject):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        airbase_group=False,
+        is_fob_structure=False,
     ) -> None:
         super().__init__(
             name=name,
@@ -239,9 +227,9 @@ class BuildingGroundObject(TheaterGroundObject):
             heading=heading,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
-            airbase_group=airbase_group,
             sea_object=False,
         )
+        self.is_fob_structure = is_fob_structure
         self.object_id = object_id
         # Other TGOs track deadness based on the number of alive units, but
         # buildings don't have groups assigned to the TGO.
@@ -265,6 +253,90 @@ class BuildingGroundObject(TheaterGroundObject):
     def kill(self) -> None:
         self._dead = True
 
+    def iter_building_group(self) -> Iterator[TheaterGroundObject]:
+        for tgo in self.control_point.ground_objects:
+            if tgo.obj_name == self.obj_name and not tgo.is_dead:
+                yield tgo
+
+    @property
+    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+        return list(self.iter_building_group())
+
+    @property
+    def mark_locations(self) -> Iterator[Point]:
+        for building in self.iter_building_group():
+            yield building.position
+
+    @property
+    def is_control_point(self) -> bool:
+        return self.is_fob_structure
+
+    @property
+    def capturable(self) -> bool:
+        return True
+
+    @property
+    def purchasable(self) -> bool:
+        return False
+
+
+class SceneryGroundObject(BuildingGroundObject):
+    def __init__(
+        self,
+        name: str,
+        category: str,
+        group_id: int,
+        object_id: int,
+        position: Point,
+        control_point: ControlPoint,
+        dcs_identifier: str,
+        zone: TriggerZone,
+    ) -> None:
+        super().__init__(
+            name=name,
+            category=category,
+            group_id=group_id,
+            object_id=object_id,
+            position=position,
+            heading=0,
+            control_point=control_point,
+            dcs_identifier=dcs_identifier,
+            is_fob_structure=False,
+        )
+        self.zone = zone
+        try:
+            # In the default TriggerZone using "assign as..." in the DCS Mission Editor,
+            # property three has the scenery's object ID as its value.
+            self.map_object_id = self.zone.properties[3]["value"]
+        except (IndexError, KeyError):
+            logging.exception(
+                "Invalid TriggerZone for Scenery definition. The third property must "
+                "be the map object ID."
+            )
+            raise
+
+
+class FactoryGroundObject(BuildingGroundObject):
+    def __init__(
+        self,
+        name: str,
+        group_id: int,
+        position: Point,
+        heading: int,
+        control_point: ControlPoint,
+    ) -> None:
+        super().__init__(
+            name=name,
+            category="factory",
+            group_id=group_id,
+            object_id=0,
+            position=position,
+            heading=heading,
+            control_point=control_point,
+            dcs_identifier="Workshop A",
+            is_fob_structure=False,
+        )
+
 
 class NavalGroundObject(TheaterGroundObject):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
@@ -278,9 +350,19 @@ class NavalGroundObject(TheaterGroundObject):
     def might_have_aa(self) -> bool:
         return True
 
+    @property
+    def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
+        return False
+
 
 class GenericCarrierGroundObject(NavalGroundObject):
-    pass
+    @property
+    def is_control_point(self) -> bool:
+        return True
 
 
 # TODO: Why is this both a CP and a TGO?
@@ -294,7 +376,6 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="CARRIER",
-            airbase_group=True,
             sea_object=True,
         )
 
@@ -316,7 +397,6 @@ class LhaGroundObject(GenericCarrierGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="LHA",
-            airbase_group=True,
             sea_object=True,
         )
 
@@ -333,15 +413,22 @@ class MissileSiteGroundObject(TheaterGroundObject):
     ) -> None:
         super().__init__(
             name=name,
-            category="aa",
+            category="missile",
             group_id=group_id,
             position=position,
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=False,
         )
+
+    @property
+    def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
+        return False
 
 
 class CoastalSiteGroundObject(TheaterGroundObject):
@@ -355,32 +442,34 @@ class CoastalSiteGroundObject(TheaterGroundObject):
     ) -> None:
         super().__init__(
             name=name,
-            category="aa",
+            category="coastal",
             group_id=group_id,
             position=position,
             heading=heading,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=False,
         )
 
+    @property
+    def capturable(self) -> bool:
+        return False
 
-class BaseDefenseGroundObject(TheaterGroundObject):
-    """Base type for all base defenses."""
+    @property
+    def purchasable(self) -> bool:
+        return False
 
 
 # TODO: Differentiate types.
 # This type gets used both for AA sites (SAM, AAA, or SHORAD). These should each
 # be split into their own types.
-class SamGroundObject(BaseDefenseGroundObject):
+class SamGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
@@ -390,7 +479,6 @@ class SamGroundObject(BaseDefenseGroundObject):
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=for_airbase,
             sea_object=False,
         )
         # Set by the SAM unit generator if the generated group is compatible
@@ -411,53 +499,98 @@ class SamGroundObject(BaseDefenseGroundObject):
 
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
+            yield FlightType.SEAD
         yield from super().mission_types(for_player)
 
     @property
     def might_have_aa(self) -> bool:
         return True
 
+    def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
+        max_non_radar = meters(0)
+        live_trs = set()
+        max_telar_range = meters(0)
+        launchers = set()
+        for unit in group.units:
+            unit_type = db.unit_type_from_name(unit.type)
+            if unit_type is None or not issubclass(unit_type, VehicleType):
+                continue
+            if unit_type in TRACK_RADARS:
+                live_trs.add(unit_type)
+            elif unit_type in TELARS:
+                max_telar_range = max(
+                    max_telar_range, meters(getattr(unit_type, "threat_range", 0))
+                )
+            elif unit_type in LAUNCHER_TRACKER_PAIRS:
+                launchers.add(unit_type)
+            else:
+                max_non_radar = max(
+                    max_non_radar, meters(getattr(unit_type, "threat_range", 0))
+                )
+        max_tel_range = meters(0)
+        for launcher in launchers:
+            if LAUNCHER_TRACKER_PAIRS[launcher] in live_trs:
+                max_tel_range = max(
+                    max_tel_range, meters(getattr(launcher, "threat_range"))
+                )
+        if radar_only:
+            return max(max_tel_range, max_telar_range)
+        else:
+            return max(max_tel_range, max_telar_range, max_non_radar)
 
-class VehicleGroupGroundObject(BaseDefenseGroundObject):
+    @property
+    def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
+        return True
+
+
+class VehicleGroupGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
-            category="aa",
+            category="armor",
             group_id=group_id,
             position=position,
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=for_airbase,
             sea_object=False,
         )
 
+    @property
+    def capturable(self) -> bool:
+        return False
 
-class EwrGroundObject(BaseDefenseGroundObject):
+    @property
+    def purchasable(self) -> bool:
+        return True
+
+
+class EwrGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        for_airbase: bool,
     ) -> None:
         super().__init__(
             name=name,
-            category="EWR",
+            category="ewr",
             group_id=group_id,
             position=position,
             heading=0,
             control_point=control_point,
             dcs_identifier="EWR",
-            airbase_group=for_airbase,
             sea_object=False,
         )
 
@@ -477,6 +610,14 @@ class EwrGroundObject(BaseDefenseGroundObject):
     def might_have_aa(self) -> bool:
         return True
 
+    @property
+    def capturable(self) -> bool:
+        return False
+
+    @property
+    def purchasable(self) -> bool:
+        return True
+
 
 class ShipGroundObject(NavalGroundObject):
     def __init__(
@@ -484,13 +625,12 @@ class ShipGroundObject(NavalGroundObject):
     ) -> None:
         super().__init__(
             name=name,
-            category="aa",
+            category="ship",
             group_id=group_id,
             position=position,
             heading=0,
             control_point=control_point,
             dcs_identifier="AA",
-            airbase_group=False,
             sea_object=True,
         )
 

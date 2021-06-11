@@ -18,9 +18,10 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "MBT_T_55",
-    "MT_PzIV_H",
+    "LT_PT_76",
+    "Tk_PzIV_H",
     "SPG_StuG_III_Ausf__G",
     "SPG_Jagdpanzer_IV",
     "SPAAA_ZSU_57_2",

@@ -3,12 +3,16 @@
   "name": "USA 1975",
   "authors": "Khopa",
   "description": "<p>US army in the 70s at the end of the war in Vietnam.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
-    "F_5E_3",
-    "F_4E",
-    "F_14A_135_GR",
-    "S_3B",
     "B_52H",
+    "CH_47D",
+    "CH_53E",
+    "C_130",
+    "F_14A_135_GR",
+    "F_4E",
+    "F_5E_3",
+    "S_3B",
     "UH_1H"
   ],
   "awacs": [

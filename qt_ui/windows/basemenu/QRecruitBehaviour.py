@@ -1,7 +1,6 @@
 import logging
 from typing import Type
 
-from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
@@ -14,8 +13,8 @@ from PySide2.QtWidgets import (
 from dcs.unittype import UnitType
 
 from game import db
-from game.event import UnitsDeliveryEvent
 from game.theater import ControlPoint
+from game.unitdelivery import PendingUnitDeliveries
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QUnitInfoWindow import QUnitInfoWindow
@@ -27,17 +26,15 @@ class QRecruitBehaviour:
     existing_units_labels = None
     bought_amount_labels = None
     maximum_units = -1
-    recruitable_types = []
     BUDGET_FORMAT = "Available Budget: <b>${:.2f}M</b>"
 
     def __init__(self) -> None:
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
-        self.recruitable_types = []
         self.update_available_budget()
 
     @property
-    def pending_deliveries(self) -> UnitsDeliveryEvent:
+    def pending_deliveries(self) -> PendingUnitDeliveries:
         return self.cp.pending_unit_deliveries
 
     @property
@@ -53,7 +50,6 @@ class QRecruitBehaviour:
         unit_type: Type[UnitType],
         layout: QLayout,
         row: int,
-        disabled: bool = False,
     ) -> int:
         exist = QGroupBox()
         exist.setProperty("style", "buy-box")
@@ -97,19 +93,31 @@ class QRecruitBehaviour:
 
         buy = QPushButton("+")
         buy.setProperty("style", "btn-buy")
-        buy.setDisabled(disabled)
+        buy.setDisabled(not self.enable_purchase(unit_type))
         buy.setMinimumSize(16, 16)
         buy.setMaximumSize(16, 16)
-        buy.clicked.connect(lambda: self.buy(unit_type))
+
+        def on_buy():
+            self.buy(unit_type)
+            buy.setDisabled(not self.enable_purchase(unit_type))
+            sell.setDisabled(not self.enable_sale(unit_type))
+
+        buy.clicked.connect(on_buy)
         buy.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         sell = QPushButton("-")
         sell.setProperty("style", "btn-sell")
-        sell.setDisabled(disabled)
+        sell.setDisabled(not self.enable_sale(unit_type))
         sell.setMinimumSize(16, 16)
         sell.setMaximumSize(16, 16)
         sell.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
-        sell.clicked.connect(lambda: self.sell(unit_type))
+
+        def on_sell():
+            self.sell(unit_type)
+            sell.setDisabled(not self.enable_sale(unit_type))
+            buy.setDisabled(not self.enable_purchase(unit_type))
+
+        sell.clicked.connect(on_sell)
 
         info = QGroupBox()
         info.setProperty("style", "buy-box")
@@ -120,7 +128,6 @@ class QRecruitBehaviour:
 
         unitInfo = QPushButton("i")
         unitInfo.setProperty("style", "btn-info")
-        unitInfo.setDisabled(disabled)
         unitInfo.setMinimumSize(16, 16)
         unitInfo.setMaximumSize(16, 16)
         unitInfo.clicked.connect(lambda: self.info(unit_type))
@@ -166,13 +173,13 @@ class QRecruitBehaviour:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
 
     def buy(self, unit_type: Type[UnitType]):
+        if not self.enable_purchase(unit_type):
+            logging.error(f"Purchase of {unit_type.id} not allowed at {self.cp.name}")
+            return
+
         price = db.PRICES[unit_type]
-        if self.budget >= price:
-            self.pending_deliveries.order({unit_type: 1})
-            self.budget -= price
-        else:
-            # TODO : display modal warning
-            logging.info("Not enough money !")
+        self.pending_deliveries.order({unit_type: 1})
+        self.budget -= price
         self._update_count_label(unit_type)
         self.update_available_budget()
 
@@ -186,6 +193,13 @@ class QRecruitBehaviour:
         self._update_count_label(unit_type)
         self.update_available_budget()
 
+    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+        price = db.PRICES[unit_type]
+        return self.budget >= price
+
+    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+        return True
+
     def info(self, unit_type):
         self.info_window = QUnitInfoWindow(self.game_model.game, unit_type)
         self.info_window.show()
@@ -195,9 +209,3 @@ class QRecruitBehaviour:
         Set the maximum number of units that can be bought
         """
         self.maximum_units = maximum_units
-
-    def set_recruitable_types(self, recruitables_types):
-        """
-        Set the maximum number of units that can be bought
-        """
-        self.recruitables_types = recruitables_types

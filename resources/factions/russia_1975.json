@@ -3,6 +3,7 @@
   "name": "Russia 1975",
   "authors": "Khopa",
   "description": "<p>Soviet army in the late 70s, using their prototype Mig-29A.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_21Bis",
     "MiG_23MLD",
@@ -23,16 +24,17 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "APC_BTR_80",
     "IFV_BMD_1",
     "IFV_BMP_1",
+    "LT_PT_76",
     "MBT_T_55",
     "SAM_SA_8_Osa_Gecko_TEL"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad_122mm",
-    "SPH_2S9_Nona_120mm_M",
+    "SPM_2S9_Nona_120mm_M",
     "SPH_2S1_Gvozdika_122mm"
   ],
   "logistics_units": [

@@ -3,6 +3,7 @@
   "name": "Russia 1970 Limited Air",
   "authors": "Starfire",
   "description": "<p>1970 Soviet Russia, with limited air units intended for a Viggen campaign.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_19P",
 	"MiG_21Bis",
@@ -10,16 +11,17 @@
     "Mi_24V"
   ],
   "frontline_units": [
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "APC_BTR_80",
     "IFV_BMD_1",
     "IFV_BMP_1",
+    "LT_PT_76",
     "MBT_T_55",
     "SPAAA_ZSU_57_2"
   ],
   "artillery_units": [
     "MLRS_BM_21_Grad_122mm",
-    "SPH_2S9_Nona_120mm_M",
+    "SPM_2S9_Nona_120mm_M",
     "SPH_2S1_Gvozdika_122mm"
   ],
   "logistics_units": [

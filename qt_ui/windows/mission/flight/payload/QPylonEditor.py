@@ -4,10 +4,10 @@ from typing import Optional
 
 from PySide2.QtWidgets import QComboBox
 
-from game import Game, db
+from game import Game
 from game.data.weapons import Pylon, Weapon
 from gen.flights.flight import Flight
-from dcs import weapons_data
+from gen.flights.loadouts import Loadout
 
 
 class QPylonEditor(QComboBox):
@@ -16,8 +16,9 @@ class QPylonEditor(QComboBox):
         self.flight = flight
         self.pylon = pylon
         self.game = game
+        self.has_added_clean_item = False
 
-        current = self.flight.loadout.get(self.pylon.number)
+        current = self.flight.loadout.pylons.get(self.pylon.number)
 
         self.addItem("None", None)
         if self.game.settings.restrict_weapons_by_date:
@@ -34,57 +35,40 @@ class QPylonEditor(QComboBox):
 
     def on_pylon_change(self):
         selected: Optional[Weapon] = self.currentData()
-        self.flight.loadout[self.pylon.number] = selected
+        self.flight.loadout.pylons[self.pylon.number] = selected
 
         if selected is None:
             logging.debug(f"Pylon {self.pylon.number} emptied")
         else:
             logging.debug(f"Pylon {self.pylon.number} changed to {selected.name}")
 
-    def default_loadout(self) -> None:
-        self.flight.unit_type.load_payloads()
-        self.setCurrentText("None")
-        pylon_default_weapon = None
-        historical_weapon = None
-        loadout = None
-        # Iterate through each possible payload type for a given aircraft.
-        # Some aircraft have custom loadouts that in aren't the standard set.
-        for payload_override in db.EXPANDED_TASK_PAYLOAD_OVERRIDE.get(
-            self.flight.flight_type.name
-        ):
-            if loadout is None:
-                loadout = self.flight.unit_type.loadout_by_name(payload_override)
-        if loadout is not None:
-            for i in loadout:
-                if i[0] == self.pylon.number:
-                    pylon_default_weapon = i[1]["clsid"]
-                    # TODO: Handle removed pylons better.
-                    if pylon_default_weapon == "<CLEAN>":
-                        pylon_default_weapon = None
-        if pylon_default_weapon is not None:
-            if self.game.settings.restrict_weapons_by_date:
-                orig_weapon = Weapon.from_clsid(pylon_default_weapon)
-                if not orig_weapon.available_on(self.game.date):
-                    for fallback in orig_weapon.fallbacks:
-                        if historical_weapon is None:
-                            if not self.pylon.can_equip(fallback):
-                                continue
-                            if not fallback.available_on(self.game.date):
-                                continue
-                            historical_weapon = fallback
-                else:
-                    historical_weapon = orig_weapon
-                if historical_weapon is not None:
-                    self.setCurrentText(
-                        weapons_data.weapon_ids.get(historical_weapon.cls_id).get(
-                            "name"
-                        )
-                    )
-            else:
-                weapon = weapons_data.weapon_ids.get(pylon_default_weapon)
-                if weapon is not None:
-                    self.setCurrentText(
-                        weapons_data.weapon_ids.get(pylon_default_weapon).get("name")
-                    )
-                else:
-                    self.setCurrentText(pylon_default_weapon)
+    def weapon_from_loadout(self, loadout: Loadout) -> Optional[Weapon]:
+        weapon = loadout.pylons.get(self.pylon.number)
+        if weapon is None:
+            return None
+        # TODO: Fix pydcs to support the <CLEAN> "weapon".
+        # These are not exported in the pydcs weapon map, which causes the pydcs pylon
+        # exporter to fail to include them in the supported list. Since they aren't
+        # known to be compatible (and we can't show them as compatible for *every*
+        # pylon, because they aren't), we won't have populated a "Clean" weapon when
+        # creating the selection list, so it's not selectable. To work around this, add
+        # the item to the list the first time it's encountered for the pylon.
+        #
+        # A similar hack exists in Pylon to support forcibly equipping this even when
+        # it's not known to be compatible.
+        if weapon.cls_id == "<CLEAN>":
+            if not self.has_added_clean_item:
+                self.addItem("Clean", weapon)
+                self.has_added_clean_item = True
+        return weapon
+
+    def matching_weapon_name(self, loadout: Loadout) -> str:
+        if self.game.settings.restrict_weapons_by_date:
+            loadout = loadout.degrade_for_date(self.flight.unit_type, self.game.date)
+        weapon = self.weapon_from_loadout(loadout)
+        if weapon is None:
+            return "None"
+        return weapon.name
+
+    def set_from(self, loadout: Loadout) -> None:
+        self.setCurrentText(self.matching_weapon_name(loadout))

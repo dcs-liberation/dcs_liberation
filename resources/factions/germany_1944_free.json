@@ -3,13 +3,14 @@
   "name": "Germany 1944 (Free)",
   "authors": "Khopa",
   "description": "<p>WW2 germany faction that does not require the WW2 asset pack.</p>",
+  "locales": ["de_DE"],
   "aircrafts": [
     "FW_190A8",
     "FW_190D9",
     "Bf_109K_4"
   ],
   "frontline_units": [
-    "MT_PzIV_H",
+    "Tk_PzIV_H",
     "APC_Sd_Kfz_251_Halftrack",
     "AAA_8_8cm_Flak_18"
   ],

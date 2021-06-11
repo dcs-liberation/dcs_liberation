@@ -3,6 +3,7 @@
   "name": "Russia 2010",
   "authors": "Khopa",
   "description": "<p>Russian army in the early 2010s.</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_29S",
     "MiG_31",
@@ -34,14 +35,14 @@
     "IFV_BMP_2",
     "IFV_BMP_3",
     "APC_BTR_80",
-    "APC_BTR_82A",
+    "IFV_BTR_82A",
     "MBT_T_90",
     "MBT_T_80U",
     "MBT_T_72B3",
     "SAM_SA_19_Tunguska_Grison"
   ],
   "artillery_units": [
-    "MLRS_BM_27_Uragan_220mm",
+    "MLRS_9K57_Uragan_BM_27_220mm",
     "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
@@ -88,7 +89,7 @@
   ],
   "requirements": {},
   "carrier_names": [
-    "Admiral Kuznetov"
+    "Admiral Kuznetsov"
   ],
   "navy_generators": [
     "RussianNavyGroupGenerator"

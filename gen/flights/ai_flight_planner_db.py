@@ -5,8 +5,11 @@ from dcs.helicopters import (
     AH_1W,
     AH_64A,
     AH_64D,
+    CH_47D,
+    CH_53E,
     Ka_50,
     Mi_24V,
+    Mi_26,
     Mi_28N,
     Mi_8MT,
     OH_58D,
@@ -14,6 +17,7 @@ from dcs.helicopters import (
     SA342M,
     SH_60B,
     UH_1H,
+    UH_60A,
 )
 from dcs.planes import (
     AJS37,
@@ -23,11 +27,14 @@ from dcs.planes import (
     A_10C_2,
     A_20G,
     A_50,
+    An_26B,
     B_17G,
     B_1B,
     B_52H,
     Bf_109K_4,
     C_101CC,
+    C_130,
+    C_17A,
     E_2C,
     E_3A,
     FA_18C_hornet,
@@ -43,6 +50,7 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
+    IL_76MD,
     I_16,
     JF_17,
     J_11A,
@@ -88,12 +96,14 @@ from dcs.planes import (
     Tu_95MS,
     WingLoong_I,
     I_16,
+    Yak_40,
 )
 from dcs.unittype import FlyingType
 
 from gen.flights.flight import FlightType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
+from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
@@ -123,14 +133,15 @@ CAP_CAPABLE = [
     MiG_29A,
     F_16C_50,
     FA_18C_hornet,
-    F_15E,
     F_16A,
     F_4E,
+    JAS39Gripen,
     JF_17,
     MiG_23MLD,
     MiG_21Bis,
     Mirage_2000_5,
     M_2000C,
+    F_15E,
     F_5E_3,
     MiG_19P,
     A_4E_C,
@@ -155,10 +166,8 @@ CAP_CAPABLE = [
 # Used for CAS (Close air support) and BAI (Battlefield Interdiction)
 CAS_CAPABLE = [
     A_10C_2,
-    B_1B,
     A_10C,
-    F_14B,
-    F_14A_135_GR,
+    Hercules,
     Su_25TM,
     Su_25T,
     Su_25,
@@ -167,14 +176,19 @@ CAS_CAPABLE = [
     FA_18C_hornet,
     Tornado_GR4,
     Tornado_IDS,
+    JAS39Gripen_AG,
     JF_17,
+    AV8BNA,
     A_10A,
+    B_1B,
     A_4E_C,
+    F_14B,
+    F_14A_135_GR,
     AJS37,
     Su_24MR,
     Su_24M,
     Su_17M4,
-    AV8BNA,
+    F_4E,
     S_3B,
     Su_34,
     Su_30,
@@ -201,6 +215,7 @@ CAS_CAPABLE = [
     MB_339PAN,
     L_39ZA,
     A_20G,
+    Ju_88A4,
     P_47D_40,
     P_47D_30bl1,
     P_47D_30,
@@ -218,7 +233,7 @@ CAS_CAPABLE = [
 ]
 
 
-# Aircraft used for SEAD tasks
+# Aircraft used for SEAD and SEAD Escort tasks. Must be capable of the CAS DCS task.
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
@@ -228,6 +243,9 @@ SEAD_CAPABLE = [
     Su_25TM,
     F_4E,
     A_4E_C,
+    F_14B,
+    F_14A_135_GR,
+    JAS39Gripen_AG,
     AV8BNA,
     Su_24M,
     Su_17M4,
@@ -235,9 +253,21 @@ SEAD_CAPABLE = [
     Su_30,
     MiG_27K,
     Tornado_GR4,
-    F_117A,
-    B_17G,
+]
+
+
+# Aircraft used for DEAD tasks. Must be capable of the CAS DCS task.
+DEAD_CAPABLE = [
+    AJS37,
+    F_14B,
+    F_14A_135_GR,
+    JAS39Gripen_AG,
+    B_1B,
+    B_52H,
+    Tu_160,
+    Tu_95MS,
     A_20G,
+    Ju_88A4,
     P_47D_40,
     P_47D_30bl1,
     P_47D_30,
@@ -248,18 +278,6 @@ SEAD_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
-]
-
-
-# Aircraft used for DEAD tasks
-DEAD_CAPABLE = [
-    AJS37,
-    F_14B,
-    F_14A_135_GR,
-    B_1B,
-    B_52H,
-    Tu_160,
-    Tu_95MS,
 ] + SEAD_CAPABLE
 
 
@@ -279,6 +297,7 @@ STRIKE_CAPABLE = [
     F_16A,
     F_14B,
     F_14A_135_GR,
+    JAS39Gripen_AG,
     Tornado_IDS,
     Su_17M4,
     Su_24MR,
@@ -294,6 +313,7 @@ STRIKE_CAPABLE = [
     MiG_29G,
     MiG_29A,
     JF_17,
+    F_4E,
     A_10C_2,
     A_10C,
     AV8BNA,
@@ -310,6 +330,7 @@ STRIKE_CAPABLE = [
     L_39ZA,
     B_17G,
     A_20G,
+    Ju_88A4,
     P_47D_40,
     P_47D_30bl1,
     P_47D_30,
@@ -327,6 +348,7 @@ ANTISHIP_CAPABLE = [
     AJS37,
     Tu_22M3,
     FA_18C_hornet,
+    JAS39Gripen_AG,
     Su_24M,
     Su_17M4,
     JF_17,
@@ -354,9 +376,20 @@ RUNWAY_ATTACK_CAPABLE = [
 # For any aircraft that isn't necessarily directly involved in strike
 # missions in a direct combat sense, but can transport objects and infantry.
 TRANSPORT_CAPABLE = [
+    C_17A,
     Hercules,
-    Mi_8MT,
+    C_130,
+    IL_76MD,
+    An_26B,
+    Yak_40,
+    CH_53E,
+    CH_47D,
+    SH_60B,
+    UH_60A,
     UH_1H,
+    Mi_8MT,
+    Mi_8MT,
+    Mi_26,
 ]
 
 DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
@@ -370,7 +403,7 @@ AEWC_CAPABLE = [
 
 
 def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
-    cap_missions = (FlightType.BARCAP, FlightType.TARCAP)
+    cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE
     elif task == FlightType.ANTISHIP:
@@ -380,6 +413,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
     elif task == FlightType.CAS:
         return CAS_CAPABLE
     elif task == FlightType.SEAD:
+        return SEAD_CAPABLE
+    elif task == FlightType.SEAD_ESCORT:
         return SEAD_CAPABLE
     elif task == FlightType.DEAD:
         return DEAD_CAPABLE
@@ -393,6 +428,16 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return CAP_CAPABLE
     elif task == FlightType.AEWC:
         return AEWC_CAPABLE
+    elif task == FlightType.TRANSPORT:
+        return TRANSPORT_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []
+
+
+def tasks_for_aircraft(aircraft: Type[FlyingType]) -> list[FlightType]:
+    tasks = []
+    for task in FlightType:
+        if aircraft in aircraft_for_task(task):
+            tasks.append(task)
+    return tasks

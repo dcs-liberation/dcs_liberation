@@ -3,6 +3,7 @@
   "name": "Germany 1944",
   "authors": "Khopa",
   "description": "<p>Late war Germany with access to all the late-war ground units such as the Tiger and Tiger II tanks.</p>",
+  "locales": ["de_DE"],
   "aircrafts": [
     "FW_190A8",
     "FW_190D9",
@@ -11,7 +12,7 @@
   ],
   "frontline_units": [
     "MT_Pz_Kpfw_V_Panther_Ausf_G",
-    "MT_PzIV_H",
+    "Tk_PzIV_H",
     "HT_Pz_Kpfw_VI_Tiger_I",
     "HT_Pz_Kpfw_VI_Ausf__B_Tiger_II",
     "APC_Sd_Kfz_251_Halftrack",
@@ -22,10 +23,10 @@
     "SPG_StuG_III_Ausf__G",
     "SPG_StuG_IV",
     "AAA_8_8cm_Flak_18",
-    "AAA_8_8cm_Flak_41"
+    "AAA_8_8cm_Flak_41",
+    "SPG_Sturmpanzer_IV_Brummbar"
   ],
   "artillery_units": [
-    "SPG_Sturmpanzer_IV_Brummbar"
   ],
   "logistics_units": [
     "Truck_Opel_Blitz",

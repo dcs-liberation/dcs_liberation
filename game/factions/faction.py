@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.data.groundunitclass import GroundUnitClass
 
 import logging
 from dataclasses import dataclass, field
@@ -27,6 +28,9 @@ from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
 
 @dataclass
 class Faction:
+    #: List of locales to use when generating random names. If not set, Faker will
+    #: choose the default locale.
+    locales: Optional[List[str]]
 
     # Country used by this faction
     country: str = field(default="")
@@ -130,10 +134,19 @@ class Faction:
     #: both will use it.
     unrestricted_satnav: bool = False
 
+    def has_access_to_unittype(self, unitclass: GroundUnitClass) -> bool:
+        has_access = False
+        for vehicle in unitclass.unit_list:
+            if vehicle in self.frontline_units:
+                return True
+            if vehicle in self.artillery_units:
+                return True
+
+        return has_access
+
     @classmethod
     def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
-
-        faction = Faction()
+        faction = Faction(locales=json.get("locales"))
 
         faction.country = json.get("country", "/")
         if faction.country not in [c.name for c in country_dict.values()]:
@@ -153,6 +166,8 @@ class Faction:
         faction.aircrafts = load_all_aircraft(json.get("aircrafts", []))
         faction.awacs = load_all_aircraft(json.get("awacs", []))
         faction.tankers = load_all_aircraft(json.get("tankers", []))
+
+        faction.aircrafts = list(set(faction.aircrafts + faction.awacs))
 
         faction.frontline_units = load_all_vehicles(json.get("frontline_units", []))
         faction.artillery_units = load_all_vehicles(json.get("artillery_units", []))

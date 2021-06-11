@@ -4,7 +4,7 @@
 #define MyAppName "DCS Liberation"
 #define MyAppVersion "{{version}}"
 #define MyAppPublisher "Khopa"
-#define MyAppURL "https://github.com/Khopa/dcs_liberation/wiki"
+#define MyAppURL "https://github.com/dcs-liberation/dcs_liberation/wiki"
 #define MyAppExeName "liberation_main.exe"
 
 [Setup]

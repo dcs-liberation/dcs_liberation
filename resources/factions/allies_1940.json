@@ -1,0 +1,55 @@
+{
+  "country": "UK",
+  "name": "Allies 1940",
+  "authors": "Khopa",
+  "description": "<p>A generic WW2 ally factions for 1940 Battle of France or Battle of England.</p>",
+  "aircrafts": [
+    "SpitfireLFMkIX",
+    "SpitfireLFMkIXCW",
+    "A_20G"
+  ],
+  "frontline_units": [
+    "APC_M2A1_Halftrack",
+    "HIT_Churchill_VII",
+    "Car_Daimler_Armored",
+    "LT_Mk_VII_Tetrarch",
+    "AAA_QF_3_7",
+    "AAA_Bofors_40mm"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Truck_Bedford",
+    "Truck_GMC_Jimmy_6x6_Truck"
+  ],
+  "infantry_units": [
+    "Infantry_SMLE_No_4_Mk_1",
+    "Infantry_M1_Garand"
+  ],
+  "air_defenses": [
+    "AllyWW2FlakGenerator",
+    "BoforsGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+  ],
+  "cruisers": [
+  ],
+  "requirements": {
+    "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+    "WW2LSTGroupGenerator"
+  ],
+  "navy_group_count": 1,
+  "has_jtac": false,
+  "doctrine": "ww2",
+  "building_set": "ww2ally"
+}

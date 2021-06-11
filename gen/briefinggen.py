@@ -36,8 +36,8 @@ class CommInfo:
 class FrontLineInfo:
     def __init__(self, front_line: FrontLine):
         self.front_line: FrontLine = front_line
-        self.player_base: ControlPoint = front_line.control_point_a
-        self.enemy_base: ControlPoint = front_line.control_point_b
+        self.player_base: ControlPoint = front_line.blue_cp
+        self.enemy_base: ControlPoint = front_line.red_cp
         self.player_zero: bool = self.player_base.base.total_armor == 0
         self.enemy_zero: bool = self.enemy_base.base.total_armor == 0
         self.advantage: bool = (
@@ -164,7 +164,7 @@ class BriefingGenerator(MissionInfoGenerator):
 
     def _generate_frontline_info(self) -> None:
         """Build FrontLineInfo objects from FrontLine type and append to briefing."""
-        for front_line in self.game.theater.conflicts(from_player=True):
+        for front_line in self.game.theater.conflicts():
             self.add_frontline(FrontLineInfo(front_line))
 
     # TODO: This should determine if runway is friendly through a method more robust than the existing string match

@@ -14,18 +14,14 @@ class QBudgetBox(QGroupBox):
         super(QBudgetBox, self).__init__("Budget")
 
         self.game = game
-        self.money_icon = QLabel()
-        self.money_icon.setPixmap(CONST.ICONS["Money"])
-        self.money_amount = QLabel()
 
-        self.finances = QPushButton("Details")
+        self.finances = QPushButton()
         self.finances.setDisabled(True)
         self.finances.setProperty("style", "btn-primary")
+        self.finances.setIcon(CONST.ICONS["Money"])
         self.finances.clicked.connect(self.openFinances)
 
         self.layout = QHBoxLayout()
-        self.layout.addWidget(self.money_icon)
-        self.layout.addWidget(self.money_amount)
         self.layout.addWidget(self.finances)
         self.setLayout(self.layout)
 
@@ -35,7 +31,7 @@ class QBudgetBox(QGroupBox):
         :param budget: Current money available
         :param reward: Planned reward for next turn
         """
-        self.money_amount.setText(
+        self.finances.setText(
             str(round(budget, 2)) + "M (+" + str(round(reward, 2)) + "M)"
         )
 

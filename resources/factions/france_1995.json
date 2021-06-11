@@ -3,6 +3,7 @@
   "name": "France 1995",
   "authors": "Khopa",
   "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
+  "locales": ["fr_FR"],
   "aircrafts": [
     "M_2000C",
     "Mirage_2000_5",
@@ -20,11 +21,9 @@
   "frontline_units": [
     "MBT_Leclerc",
     "APC_TPz_Fuchs",
-    "APC_Cobra__Scout",
-    "ATGM_Stryker",
+    "Scout_Cobra",
     "IFV_LAV_25",
-    "APC_HMMWV__Scout",
-    "ATGM_HMMWV",
+    "ATGM_VAB_Mephisto",
     "SAM_Roland_ADS"
   ],
   "artillery_units": [

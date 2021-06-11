@@ -3,6 +3,7 @@
   "name": "USA 2005 Modded",
   "authors": "Khopa",
   "description": "<p>USA 2005 with the Raptor mod, with the F-22 mod by Grinelli Designs.</p>",
+  "locales": ["en_US"],
   "aircrafts": [
     "F_15C",
     "F_15E",
@@ -35,7 +36,7 @@
     "IFV_M1126_Stryker_ICV",
     "IFV_M2A2_Bradley",
     "IFV_LAV_25",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "ATGM_HMMWV",
     "SAM_Avenger__Stinger",
     "SAM_Linebacker___Bradley_M6"

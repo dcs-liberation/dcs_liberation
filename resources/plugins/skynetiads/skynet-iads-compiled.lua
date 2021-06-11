@@ -1,4 +1,4 @@
-env.info("--- SKYNET VERSION: 2.0.1 | BUILD TIME: 04.01.2021 0706Z ---")
+env.info("--- SKYNET VERSION: 2.1.0 | BUILD TIME: 27.03.2021 2125Z ---")
 do
 --this file contains the required units per sam type
 samTypesDB = {
@@ -387,6 +387,20 @@ end
 do
 -- this file contains the definitions for the HightDigitSAMSs: https://github.com/Auranis/HighDigitSAMs
 
+--EW radars used in multiple SAM systems:
+
+s300PMU164N6Esr = {
+	['name'] = {
+		['NATO'] = 'Big Bird',
+	},
+}
+
+s300PMU140B6MDsr = {
+	['name'] = {
+		['NATO'] = 'Clam Shell',
+	},
+}
+
 --[[ units in SA-10 group Gargoyle:
 2020-12-10 18:27:27.050 INFO    SCRIPTING: S-300PMU1 54K6 cp
 2020-12-10 18:27:27.050 INFO    SCRIPTING: S-300PMU1 5P85CE ln
@@ -399,21 +413,36 @@ do
 samTypesDB['S-300PMU1'] = {
 	['type'] = 'complex',
 	['searchRadar'] = {
-		['S-300PMU1 40B6MD sr'] = {
+		['S-300PMU1 40B6MD sr'] = s300PMU140B6MDsr,
+		['S-300PMU1 64N6E sr'] = s300PMU164N6Esr,
+		
+		['S-300PS 40B6MD sr'] = {
 			['name'] = {
-				['NATO'] = 'Clam Shell',
+				['NATO'] = '',
 			},
 		},
-		['S-300PMU1 64N6E sr'] = {
+		['S-300PS 64H6E sr'] = {
 			['name'] = {
-				['NATO'] = 'Big Bird',
+				['NATO'] = '',
 			},
 		},
 	},
 	['trackingRadar'] = {
 		['S-300PMU1 40B6M tr'] = {
+			['name'] = {
+				['NATO'] = 'Grave Stone',
+			},
 		},
 		['S-300PMU1 30N6E tr'] = {
+			['name'] = {
+				['NATO'] = 'Flap Lid',
+			},
+
+		},
+		['S-300PS 40B6M tr'] = {
+			['name'] = {
+				['NATO'] = '',
+			},
 		},
 	},
 	['misc'] = {
@@ -441,10 +470,6 @@ samTypesDB['S-300PMU1'] = {
 2020-12-11 16:40:52.072 INFO    SCRIPTING: S-300VM 9S32ME tr
 2020-12-11 16:40:52.072 INFO    SCRIPTING: S-300VM 9S457ME cp
 
-According to wikipedia:
-dem 9A83-Startfahrzeug die Bezeichnung SA-12A Gladiator zu geben; das größere 9A82-Startfahrzeug erhielt die Bezeichnung SA-12B Giant.
-9A83ME -> SA-23A Gladiator
-9A82ME -> SA-23B Giant
 ]]--
 samTypesDB['S-300VM'] = {
 	['type'] = 'complex',
@@ -476,7 +501,7 @@ samTypesDB['S-300VM'] = {
 		},
 	},
 	['name']  = {
-		['NATO'] = 'SA-23 Gladiator/Giant'
+		['NATO'] = 'SA-23 Antey-2500'
 	},
 	['harm_detection_chance'] = 90
 }	
@@ -494,6 +519,9 @@ samTypesDB['S-300PS'] = {
 	['type'] = 'complex',
 	['searchRadar'] = {
 		['S-300PS SA-10B 40B6MD MAST sr'] = {
+			['name'] = {
+				['NATO'] = 'Clam Shell',
+			},
 		},
 		['S-300PS 64H6E TRAILER sr'] = {
 		},
@@ -503,6 +531,12 @@ samTypesDB['S-300PS'] = {
 		},
 		['S-300PS SA-10B 40B6M MAST tr'] = {
 		},
+		['S-300PS 40B6M tr'] = {
+		},
+		['S-300PMU1 40B6M tr'] = {
+		},	
+		['S-300PMU1 30N6E tr'] = {
+		},		
 	},
 	['misc'] = {
 		['S-300PS SA-10B 54K6 cp'] = {
@@ -546,6 +580,9 @@ samTypesDB['Buk-M2'] = {
 	['type'] = 'complex',
 	['searchRadar'] = {
 		['SA-11 Buk SR 9S18M1'] = {
+			['name'] = {
+				['NATO'] = 'Snow Drift',
+			},
 		},
 	},
 	['launchers'] = {
@@ -581,6 +618,106 @@ New launcher for the SA-2 complex: HQ_2_Guideline_LN
 local s125launchers = samTypesDB['S-75']['launchers']
 s125launchers['HQ_2_Guideline_LN'] = {}
 
+--[[
+SA-12 Gladiator / Giant:
+2021-03-19 21:24:22.620 INFO    SCRIPTING: S-300V 9S15 sr
+2021-03-19 21:24:22.620 INFO    SCRIPTING: S-300V 9S19 sr
+2021-03-19 21:24:22.620 INFO    SCRIPTING: S-300V 9S32 tr
+2021-03-19 21:24:22.620 INFO    SCRIPTING: S-300V 9S457 cp
+2021-03-19 21:24:22.620 INFO    SCRIPTING: S-300V 9A83 ln
+2021-03-19 21:24:22.620 INFO    SCRIPTING: S-300V 9A82 ln
+--]]
+samTypesDB['S-300V'] = {
+	['type'] = 'complex',
+	['searchRadar'] = {
+		['S-300V 9S15 sr'] = {
+			['name'] = {
+				['NATO'] = 'Bill Board',
+			},
+		},
+		['S-300V 9S19 sr'] = {
+			['name'] = {
+				['NATO'] = 'High Screen',
+			},
+		},
+	},
+	['trackingRadar'] = {
+		['S-300V 9S32 tr'] = {
+			['NATO'] = 'Grill Pan',
+			},
+	},
+	['misc'] = {
+		['S-300V 9S457 cp'] = {
+			['required'] = true,
+		},
+	},
+	['launchers'] = {
+		['S-300V 9A83 ln'] = {
+		},
+		['S-300V 9A82 ln'] = {
+		},
+	},
+	['name']  = {
+		['NATO'] = 'SA-12 Gladiator/Giant'
+	},
+	['harm_detection_chance'] = 90
+}
+
+--[[
+SA-20B Gargoyle B:
+
+2021-03-25 19:15:02.135 INFO    SCRIPTING: S-300PMU2 64H6E2 sr
+2021-03-25 19:15:02.135 INFO    SCRIPTING: S-300PMU2 92H6E tr
+2021-03-25 19:15:02.135 INFO    SCRIPTING: S-300PMU2 5P85SE2 ln
+2021-03-25 19:15:02.135 INFO    SCRIPTING: S-300PMU2 54K6E2 cp
+--]]
+
+samTypesDB['S-300PMU2'] = {
+	['type'] = 'complex',
+	['searchRadar'] = {
+		['S-300PMU2 64H6E2 sr'] = {
+			['name'] = {
+				['NATO'] = '',
+			},
+		},
+		['S-300PMU1 40B6MD sr'] = s300PMU140B6MDsr,
+		['S-300PMU1 64N6E sr'] = s300PMU164N6Esr,
+		
+		['S-300PS 40B6MD sr'] = {
+			['name'] = {
+				['NATO'] = '',
+			},
+		},		
+		['S-300PS 64H6E sr'] = {
+			['name'] = {
+				['NATO'] = '',
+			},
+		},
+	},
+	['trackingRadar'] = {
+		['S-300PMU2 92H6E tr'] = {
+		},
+		['S-300PS 40B6M tr'] = {
+		},
+		['S-300PMU1 40B6M tr'] = {
+		},
+		['S-300PMU1 30N6E tr'] = {
+		},
+	},
+	['misc'] = {
+		['S-300PMU2 54K6E2 cp'] = {
+			['required'] = true,
+		},
+	},
+	['launchers'] = {
+		['S-300PMU2 5P85SE2 ln'] = {
+		},
+	},
+	['name']  = {
+		['NATO'] = 'SA-20B Gargoyle B'
+	},
+	['harm_detection_chance'] = 90
+}
 end
 
 
@@ -2545,6 +2682,10 @@ end
 function SkynetIADSAbstractRadarElement.finishHarmDefence(self)
 	mist.removeFunction(self.harmSilenceID)
 	self.harmSilenceID = nil
+	
+	if ( self:getAutonomousState() == true ) then
+		self:goAutonomous()
+	end	
 end
 
 function SkynetIADSAbstractRadarElement:getDetectedTargets()
@@ -2869,6 +3010,7 @@ function SkynetIADSEWRadar:setupElements()
 	for typeName, dataType in pairs(SkynetIADS.database) do
 		for entry, unitData in pairs(dataType) do
 			if entry == 'searchRadar' then
+				--buildSingleUnit checks to make sure the EW radar is defined in the Skynet database. If it is not, self.searchRadars will be 0 so no ew radar will be added
 				self:buildSingleUnit(unit, SkynetIADSSAMSearchRadar, self.searchRadars, unitData)
 				if #self.searchRadars > 0 then
 					local harmDetection = dataType['harm_detection_chance']

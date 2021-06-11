@@ -4,7 +4,7 @@
     "specificOptions": [],
     "scriptsWorkOrders": [
         {
-            "file": "SplashDamage.lua",
+            "file": "Weapons_Damage_Updated.lua",
             "mnemonic": "Splash Damage"
         }
     ],

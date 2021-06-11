@@ -3,6 +3,7 @@
   "name": "China 2010",
   "authors": "Khopa",
   "description": "<p>China in the late 2000s, early 2010s.</p>",
+  "locales": ["zh_CN"],
   "aircrafts": [
     "MiG_21Bis",
     "Su_30",
@@ -28,7 +29,7 @@
   "artillery_units": [
     "MLRS_9A52_Smerch_HE_300mm",
     "PLZ_05",
-    "SPH_2S9_Nona_120mm_M"
+    "SPM_2S9_Nona_120mm_M"
   ],
   "logistics_units": [
     "Truck_Ural_375",

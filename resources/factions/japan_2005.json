@@ -3,6 +3,7 @@
   "name": "Japan 2005",
   "authors": "Khopa",
   "description": "<p>Japanese self defense force, F-15C standing as F-15J, and F-16 as Mitsubishi F-2.</p><p>Ground units were also chosen to fit the existing vehicles of the japanese forces</p>",
+  "locales": ["ja_JP"],
   "aircrafts": [
     "F_15C",
     "F_16C_50",
@@ -23,7 +24,7 @@
     "IFV_Marder",
     "APC_TPz_Fuchs",
     "IFV_LAV_25",
-    "APC_HMMWV__Scout",
+    "Scout_HMMWV",
     "SPAAA_Gepard"
   ],
   "artillery_units": [

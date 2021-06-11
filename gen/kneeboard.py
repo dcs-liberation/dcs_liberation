@@ -23,24 +23,29 @@ only be added per airframe, so PvP missions where each side have the same
 aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
 import datetime
+import textwrap
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, List, Optional, TYPE_CHECKING, Tuple, Iterator
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
+from dcs.unit import Unit
 from dcs.unittype import FlyingType
 from tabulate import tabulate
 
+from game.data.alic import AlicCodes
+from game.db import unit_type_from_name
+from game.theater import ConflictTheater, TheaterGroundObject, LatLon
+from game.theater.bullseye import Bullseye
 from game.utils import meters
 from .aircraft import AIRCRAFT_DATA, FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
-from .flights.flight import FlightWaypoint, FlightWaypointType
+from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
 from .radios import RadioFrequency
 from .runways import RunwayData
-
 
 if TYPE_CHECKING:
     from game import Game
@@ -136,6 +141,11 @@ class KneeboardPage:
     def write(self, path: Path) -> None:
         """Writes the kneeboard page to the given path."""
         raise NotImplementedError
+
+    def format_ll(self, ll: LatLon) -> str:
+        ns = "N" if ll.latitude >= 0 else "S"
+        ew = "E" if ll.longitude >= 0 else "W"
+        return f"{ll.latitude:.4}°{ns} {ll.longitude:.4}°{ew}"
 
 
 @dataclass(frozen=True)
@@ -249,21 +259,16 @@ class BriefingPage(KneeboardPage):
     def __init__(
         self,
         flight: FlightData,
-        comms: List[CommInfo],
-        awacs: List[AwacsInfo],
-        tankers: List[TankerInfo],
-        jtacs: List[JtacInfo],
+        bullseye: Bullseye,
+        theater: ConflictTheater,
         start_time: datetime.datetime,
         dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
-        self.comms = list(comms)
-        self.awacs = awacs
-        self.tankers = tankers
-        self.jtacs = jtacs
+        self.bullseye = bullseye
+        self.theater = theater
         self.start_time = start_time
         self.dark_kneeboard = dark_kneeboard
-        self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
@@ -293,7 +298,8 @@ class BriefingPage(KneeboardPage):
             headers=["#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"],
         )
 
-        flight_plan_builder
+        writer.text(f"Bullseye: {self.bullseye.to_lat_lon(self.theater).format_dms()}")
+
         writer.table(
             [
                 [
@@ -303,6 +309,86 @@ class BriefingPage(KneeboardPage):
             ],
             ["Bingo", "Joker"],
         )
+
+        writer.write(path)
+
+    def airfield_info_row(
+        self, row_title: str, runway: Optional[RunwayData]
+    ) -> List[str]:
+        """Creates a table row for a given airfield.
+
+        Args:
+            row_title: Purpose of the airfield. e.g. "Departure", "Arrival" or
+                "Divert".
+            runway: The runway described by this row.
+
+        Returns:
+            A list of strings to be used as a row of the airfield table.
+        """
+        if runway is None:
+            return [row_title, "", "", "", "", ""]
+
+        atc = ""
+        if runway.atc is not None:
+            atc = self.format_frequency(runway.atc)
+        if runway.tacan is None:
+            tacan = ""
+        else:
+            tacan = str(runway.tacan)
+        if runway.ils is not None:
+            ils = str(runway.ils)
+        elif runway.icls is not None:
+            ils = str(runway.icls)
+        else:
+            ils = ""
+        return [
+            row_title,
+            "\n".join(textwrap.wrap(runway.airfield_name, width=24)),
+            atc,
+            tacan,
+            ils,
+            runway.runway_name,
+        ]
+
+    def format_frequency(self, frequency: RadioFrequency) -> str:
+        channel = self.flight.channel_for(frequency)
+        if channel is None:
+            return str(frequency)
+
+        namer = AIRCRAFT_DATA[self.flight.aircraft_type.id].channel_namer
+        channel_name = namer.channel_name(channel.radio_id, channel.channel)
+        return f"{channel_name}\n{frequency}"
+
+
+class SupportPage(KneeboardPage):
+    """A kneeboard page containing information about support units."""
+
+    def __init__(
+        self,
+        flight: FlightData,
+        comms: List[CommInfo],
+        awacs: List[AwacsInfo],
+        tankers: List[TankerInfo],
+        jtacs: List[JtacInfo],
+        start_time: datetime.datetime,
+        dark_kneeboard: bool,
+    ) -> None:
+        self.flight = flight
+        self.comms = list(comms)
+        self.awacs = awacs
+        self.tankers = tankers
+        self.jtacs = jtacs
+        self.start_time = start_time
+        self.dark_kneeboard = dark_kneeboard
+        self.comms.append(CommInfo("Flight", self.flight.intra_flight_channel))
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        if self.flight.custom_name is not None:
+            custom_name_title = ' ("{}")'.format(self.flight.custom_name)
+        else:
+            custom_name_title = ""
+        writer.title(f"{self.flight.callsign} Support Info{custom_name_title}")
 
         # AEW&C
         writer.heading("AEW&C")
@@ -361,44 +447,6 @@ class BriefingPage(KneeboardPage):
 
         writer.write(path)
 
-    def airfield_info_row(
-        self, row_title: str, runway: Optional[RunwayData]
-    ) -> List[str]:
-        """Creates a table row for a given airfield.
-
-        Args:
-            row_title: Purpose of the airfield. e.g. "Departure", "Arrival" or
-                "Divert".
-            runway: The runway described by this row.
-
-        Returns:
-            A list of strings to be used as a row of the airfield table.
-        """
-        if runway is None:
-            return [row_title, "", "", "", "", ""]
-
-        atc = ""
-        if runway.atc is not None:
-            atc = self.format_frequency(runway.atc)
-        if runway.tacan is None:
-            tacan = ""
-        else:
-            tacan = str(runway.tacan)
-        if runway.ils is not None:
-            ils = str(runway.ils)
-        elif runway.icls is not None:
-            ils = str(runway.icls)
-        else:
-            ils = ""
-        return [
-            row_title,
-            runway.airfield_name,
-            atc,
-            tacan,
-            ils,
-            runway.runway_name,
-        ]
-
     def format_frequency(self, frequency: RadioFrequency) -> str:
         channel = self.flight.channel_for(frequency)
         if channel is None:
@@ -413,6 +461,94 @@ class BriefingPage(KneeboardPage):
             return ""
         local_time = self.start_time + time
         return local_time.strftime(f"%H:%M:%S")
+
+
+class SeadTaskPage(KneeboardPage):
+    """A kneeboard page containing SEAD/DEAD target information."""
+
+    def __init__(
+        self, flight: FlightData, dark_kneeboard: bool, theater: ConflictTheater
+    ) -> None:
+        self.flight = flight
+        self.dark_kneeboard = dark_kneeboard
+        self.theater = theater
+
+    @property
+    def target_units(self) -> Iterator[Unit]:
+        if isinstance(self.flight.package.target, TheaterGroundObject):
+            yield from self.flight.package.target.units
+
+    @staticmethod
+    def alic_for(unit: Unit) -> str:
+        try:
+            return str(AlicCodes.code_for(unit))
+        except KeyError:
+            return ""
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        if self.flight.custom_name is not None:
+            custom_name_title = ' ("{}")'.format(self.flight.custom_name)
+        else:
+            custom_name_title = ""
+        task = "DEAD" if self.flight.flight_type == FlightType.DEAD else "SEAD"
+        writer.title(f"{self.flight.callsign} {task} Target Info{custom_name_title}")
+
+        writer.table(
+            [self.target_info_row(t) for t in self.target_units],
+            headers=["Description", "ALIC", "Location"],
+        )
+
+        writer.write(path)
+
+    def target_info_row(self, unit: Unit) -> List[str]:
+        ll = self.theater.point_to_ll(unit.position)
+        unit_type = unit_type_from_name(unit.type)
+        name = unit.name if unit_type is None else unit_type.name
+        return [name, self.alic_for(unit), ll.format_dms(include_decimal_seconds=True)]
+
+
+class StrikeTaskPage(KneeboardPage):
+    """A kneeboard page containing strike target information."""
+
+    def __init__(
+        self,
+        flight: FlightData,
+        dark_kneeboard: bool,
+        theater: ConflictTheater,
+    ) -> None:
+        self.flight = flight
+        self.dark_kneeboard = dark_kneeboard
+        self.theater = theater
+
+    @property
+    def targets(self) -> Iterator[NumberedWaypoint]:
+        for idx, waypoint in enumerate(self.flight.waypoints):
+            if waypoint.waypoint_type == FlightWaypointType.TARGET_POINT:
+                yield NumberedWaypoint(idx, waypoint)
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        if self.flight.custom_name is not None:
+            custom_name_title = ' ("{}")'.format(self.flight.custom_name)
+        else:
+            custom_name_title = ""
+        writer.title(f"{self.flight.callsign} Strike Task Info{custom_name_title}")
+
+        writer.table(
+            [self.target_info_row(t) for t in self.targets],
+            headers=["Steerpoint", "Description", "Location"],
+        )
+
+        writer.write(path)
+
+    def target_info_row(self, target: NumberedWaypoint) -> List[str]:
+        ll = self.theater.point_to_ll(target.waypoint.position)
+        return [
+            str(target.number),
+            target.waypoint.pretty_name,
+            ll.format_dms(include_decimal_seconds=True),
+        ]
 
 
 class KneeboardGenerator(MissionInfoGenerator):
@@ -456,10 +592,24 @@ class KneeboardGenerator(MissionInfoGenerator):
             )
         return all_flights
 
+    def generate_task_page(self, flight: FlightData) -> Optional[KneeboardPage]:
+        if flight.flight_type in (FlightType.DEAD, FlightType.SEAD):
+            return SeadTaskPage(flight, self.dark_kneeboard, self.game.theater)
+        elif flight.flight_type is FlightType.STRIKE:
+            return StrikeTaskPage(flight, self.dark_kneeboard, self.game.theater)
+        return None
+
     def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
-        return [
+        pages: List[KneeboardPage] = [
             BriefingPage(
+                flight,
+                self.game.bullseye_for(flight.friendly),
+                self.game.theater,
+                self.mission.start_time,
+                self.dark_kneeboard,
+            ),
+            SupportPage(
                 flight,
                 self.comms,
                 self.awacs,
@@ -469,3 +619,8 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.dark_kneeboard,
             ),
         ]
+
+        if (target_page := self.generate_task_page(flight)) is not None:
+            pages.append(target_page)
+
+        return pages

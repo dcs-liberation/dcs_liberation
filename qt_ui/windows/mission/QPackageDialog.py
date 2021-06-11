@@ -92,7 +92,7 @@ class QPackageDialog(QDialog):
         self.tot_column.addWidget(self.auto_asap)
 
         self.tot_help_label = QLabel(
-            '<a href="https://github.com/Khopa/dcs_liberation/wiki/Mission-planning"><span style="color:#FFFFFF;">Help</span></a>'
+            '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Mission-planning"><span style="color:#FFFFFF;">Help</span></a>'
         )
         self.tot_help_label.setAlignment(Qt.AlignCenter)
         self.tot_help_label.setOpenExternalLinks(True)
@@ -185,7 +185,6 @@ class QPackageDialog(QDialog):
         try:
             planner.populate_flight_plan(flight)
         except PlanningError as ex:
-            self.game.aircraft_inventory.return_from_flight(flight)
             self.package_model.delete_flight(flight)
             logging.exception("Could not create flight")
             QMessageBox.critical(
@@ -201,7 +200,6 @@ class QPackageDialog(QDialog):
         if flight is None:
             logging.error(f"Cannot delete flight when no flight is selected.")
             return
-        self.game.aircraft_inventory.return_from_flight(flight)
         self.package_model.delete_flight(flight)
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
@@ -216,8 +214,25 @@ class QNewPackageDialog(QPackageDialog):
     def __init__(
         self, game_model: GameModel, model: AtoModel, target: MissionTarget, parent=None
     ) -> None:
-        super().__init__(game_model, PackageModel(Package(target)), parent=parent)
+        super().__init__(
+            game_model,
+            PackageModel(Package(target, auto_asap=True), game_model),
+            parent=parent,
+        )
         self.ato_model = model
+
+        # In the *new* package dialog, a package has been created and may have aircraft
+        # assigned to it, but it is not a part of the ATO until the user saves it.
+        #
+        # Other actions (modifying settings, closing some other dialogs like the base
+        # menu) can cause a Game update which will forcibly close this window without
+        # either accepting or rejecting it, so we neither save the package nor release
+        # any allocated units.
+        #
+        # While it would be preferable to be able to update this dialog as needed in the
+        # event of game updates, the quick fix is to just not allow interaction with
+        # other UI elements until the new package has either been finalized or canceled.
+        self.setModal(True)
 
         self.save_button = QPushButton("Save")
         self.save_button.setProperty("style", "start-button")
@@ -237,6 +252,7 @@ class QNewPackageDialog(QPackageDialog):
         super().on_cancel()
         for flight in self.package_model.package.flights:
             self.game.aircraft_inventory.return_from_flight(flight)
+            flight.clear_roster()
 
 
 class QEditPackageDialog(QPackageDialog):

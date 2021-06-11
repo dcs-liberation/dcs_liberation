@@ -3,6 +3,7 @@
   "name": "Israel 1973",
   "authors": "Khopa",
   "description": "<p>Israel during the 1973 Yom Kippur War.</p>",
+  "locales": ["he_IL"],
   "aircrafts": [
     "F_4E",
     "A_4E_C",
@@ -16,7 +17,7 @@
     "KC130"
   ],
   "frontline_units": [
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "APC_M2A1_Halftrack",
     "MBT_M60A3_Patton",
     "APC_M113",

@@ -1,7 +1,6 @@
 """Widgets for displaying air tasking orders."""
 import logging
-from contextlib import contextmanager
-from typing import ContextManager, Optional
+from typing import Optional
 
 from PySide2.QtCore import (
     QItemSelectionModel,
@@ -11,10 +10,6 @@ from PySide2.QtCore import (
 )
 from PySide2.QtGui import (
     QContextMenuEvent,
-    QFont,
-    QFontMetrics,
-    QIcon,
-    QPainter,
 )
 from PySide2.QtWidgets import (
     QAbstractItemView,
@@ -26,120 +21,48 @@ from PySide2.QtWidgets import (
     QMenu,
     QPushButton,
     QSplitter,
-    QStyle,
-    QStyleOptionViewItem,
-    QStyledItemDelegate,
     QVBoxLayout,
 )
 
-from game import db
 from gen.ato import Package
 from gen.flights.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from ..delegates import TwoColumnRowDelegate
 from ..models import AtoModel, GameModel, NullListModel, PackageModel
 
 
-class FlightDelegate(QStyledItemDelegate):
-    FONT_SIZE = 10
-    HMARGIN = 4
-    VMARGIN = 4
-
+class FlightDelegate(TwoColumnRowDelegate):
     def __init__(self, package: Package) -> None:
-        super().__init__()
+        super().__init__(rows=2, columns=2, font_size=10)
         self.package = package
-
-    def get_font(self, option: QStyleOptionViewItem) -> QFont:
-        font = QFont(option.font)
-        font.setPointSize(self.FONT_SIZE)
-        return font
 
     @staticmethod
     def flight(index: QModelIndex) -> Flight:
         return index.data(PackageModel.FlightRole)
 
-    def first_row_text(self, index: QModelIndex) -> str:
+    def text_for(self, index: QModelIndex, row: int, column: int) -> str:
         flight = self.flight(index)
-        estimator = TotEstimator(self.package)
-        delay = estimator.mission_start_time(flight)
-        return f"{flight} in {delay}"
-
-    def second_row_text(self, index: QModelIndex) -> str:
-        flight = self.flight(index)
-        origin = flight.from_cp.name
-        if flight.arrival != flight.departure:
-            return f"From {origin} to {flight.arrival.name}"
-        return f"From {origin}"
-
-    def paint(
-        self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
-    ) -> None:
-        # Draw the list item with all the default selection styling, but with an
-        # invalid index so text formatting is left to us.
-        super().paint(painter, option, QModelIndex())
-
-        rect = option.rect.adjusted(
-            self.HMARGIN, self.VMARGIN, -self.HMARGIN, -self.VMARGIN
-        )
-
-        with painter_context(painter):
-            painter.setFont(self.get_font(option))
-
-            icon: Optional[QIcon] = index.data(Qt.DecorationRole)
-            if icon is not None:
-                icon.paint(
-                    painter,
-                    rect,
-                    Qt.AlignLeft | Qt.AlignVCenter,
-                    self.icon_mode(option),
-                    self.icon_state(option),
-                )
-
-            rect = rect.adjusted(self.icon_size(option).width() + self.HMARGIN, 0, 0, 0)
-            painter.drawText(rect, Qt.AlignLeft, self.first_row_text(index))
-            line2 = rect.adjusted(0, rect.height() / 2, 0, rect.height() / 2)
-            painter.drawText(line2, Qt.AlignLeft, self.second_row_text(index))
-
+        if (row, column) == (0, 0):
+            estimator = TotEstimator(self.package)
+            delay = estimator.mission_start_time(flight)
+            return f"{flight} in {delay}"
+        elif (row, column) == (0, 1):
             clients = self.num_clients(index)
-            if clients:
-                painter.drawText(rect, Qt.AlignRight, f"Player Slots: {clients}")
+            return f"Player Slots: {clients}" if clients else ""
+        elif (row, column) == (1, 0):
+            origin = flight.from_cp.name
+            if flight.arrival != flight.departure:
+                return f"From {origin} to {flight.arrival.name}"
+            return f"From {origin}"
+        elif (row, column) == (1, 1):
+            missing_pilots = flight.missing_pilots
+            return f"Missing pilots: {flight.missing_pilots}" if missing_pilots else ""
+        return ""
 
     def num_clients(self, index: QModelIndex) -> int:
         flight = self.flight(index)
         return flight.client_count
-
-    @staticmethod
-    def icon_mode(option: QStyleOptionViewItem) -> QIcon.Mode:
-        if not (option.state & QStyle.State_Enabled):
-            return QIcon.Disabled
-        elif option.state & QStyle.State_Selected:
-            return QIcon.Selected
-        elif option.state & QStyle.State_Active:
-            return QIcon.Active
-        return QIcon.Normal
-
-    @staticmethod
-    def icon_state(option: QStyleOptionViewItem) -> QIcon.State:
-        return QIcon.On if option.state & QStyle.State_Open else QIcon.Off
-
-    @staticmethod
-    def icon_size(option: QStyleOptionViewItem) -> QSize:
-        icon_size: Optional[QSize] = option.decorationSize
-        if icon_size is None:
-            return QSize(0, 0)
-        else:
-            return icon_size
-
-    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
-        left = self.icon_size(option).width() + self.HMARGIN
-        metrics = QFontMetrics(self.get_font(option))
-        first = metrics.size(0, self.first_row_text(index))
-        second = metrics.size(0, self.second_row_text(index))
-        text_width = max(first.width(), second.width())
-        return QSize(
-            left + text_width + 2 * self.HMARGIN,
-            first.height() + second.height() + 2 * self.VMARGIN,
-        )
 
 
 class QFlightList(QListView):
@@ -205,7 +128,6 @@ class QFlightList(QListView):
         )
 
     def delete_flight(self, index: QModelIndex) -> None:
-        self.game_model.game.aircraft_inventory.return_from_flight(self.selected_item)
         self.package_model.delete_flight_at_index(index)
         GameUpdateSignal.get_instance().redraw_flight_paths()
 
@@ -312,71 +234,35 @@ class QFlightPanel(QGroupBox):
         self.flight_list.delete_flight(index)
 
 
-@contextmanager
-def painter_context(painter: QPainter) -> ContextManager[None]:
-    try:
-        painter.save()
-        yield
-    finally:
-        painter.restore()
-
-
-class PackageDelegate(QStyledItemDelegate):
-    FONT_SIZE = 12
-    HMARGIN = 4
-    VMARGIN = 4
-
-    def get_font(self, option: QStyleOptionViewItem) -> QFont:
-        font = QFont(option.font)
-        font.setPointSize(self.FONT_SIZE)
-        return font
+class PackageDelegate(TwoColumnRowDelegate):
+    def __init__(self) -> None:
+        super().__init__(rows=2, columns=2)
 
     @staticmethod
     def package(index: QModelIndex) -> Package:
         return index.data(AtoModel.PackageRole)
 
-    def left_text(self, index: QModelIndex) -> str:
+    def text_for(self, index: QModelIndex, row: int, column: int) -> str:
         package = self.package(index)
-        return f"{package.package_description} {package.target.name}"
-
-    def right_text(self, index: QModelIndex) -> str:
-        package = self.package(index)
-        return f"TOT T+{package.time_over_target}"
-
-    def paint(
-        self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
-    ) -> None:
-        # Draw the list item with all the default selection styling, but with an
-        # invalid index so text formatting is left to us.
-        super().paint(painter, option, QModelIndex())
-
-        rect = option.rect.adjusted(
-            self.HMARGIN, self.VMARGIN, -self.HMARGIN, -self.VMARGIN
-        )
-
-        with painter_context(painter):
-            painter.setFont(self.get_font(option))
-
-            painter.drawText(rect, Qt.AlignLeft, self.left_text(index))
-            line2 = rect.adjusted(0, rect.height() / 2, 0, rect.height() / 2)
-            painter.drawText(line2, Qt.AlignLeft, self.right_text(index))
-
+        if (row, column) == (0, 0):
+            return f"{package.package_description} {package.target.name}"
+        elif (row, column) == (0, 1):
             clients = self.num_clients(index)
-            if clients:
-                painter.drawText(rect, Qt.AlignRight, f"Player Slots: {clients}")
+            return f"Player Slots: {clients}" if clients else ""
+        elif (row, column) == (1, 0):
+            return f"TOT T+{package.time_over_target}"
+        elif (row, column) == (1, 1):
+            unassigned_pilots = self.missing_pilots(index)
+            return f"Missing pilots: {unassigned_pilots}" if unassigned_pilots else ""
+        return ""
 
     def num_clients(self, index: QModelIndex) -> int:
         package = self.package(index)
         return sum(f.client_count for f in package.flights)
 
-    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
-        metrics = QFontMetrics(self.get_font(option))
-        left = metrics.size(0, self.left_text(index))
-        right = metrics.size(0, self.right_text(index))
-        return QSize(
-            max(left.width(), right.width()) + 2 * self.HMARGIN,
-            left.height() + right.height() + 2 * self.VMARGIN,
-        )
+    def missing_pilots(self, index: QModelIndex) -> int:
+        package = self.package(index)
+        return sum(f.missing_pilots for f in package.flights)
 
 
 class QPackageList(QListView):
@@ -387,7 +273,7 @@ class QPackageList(QListView):
         self.ato_model = model
         self.setModel(model)
         self.setItemDelegate(PackageDelegate())
-        self.setIconSize(QSize(91, 24))
+        self.setIconSize(QSize(0, 0))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.model().rowsInserted.connect(self.on_new_packages)
         self.doubleClicked.connect(self.on_double_click)

@@ -22,7 +22,6 @@ from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
-from qt_ui.displayoptions import DisplayGroup, DisplayOptions, DisplayRule
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
 from qt_ui.widgets.QTopPanel import QTopPanel
@@ -35,6 +34,8 @@ from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
 from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
     QLiberationPreferencesWindow,
 )
+from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
+from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 
 class QLiberationWindow(QMainWindow):
@@ -46,7 +47,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model)
+        self.liberation_map = QLiberationMap(self.game_model, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.setWindowTitle(f"DCS Liberation - v{VERSION}")
@@ -143,8 +144,18 @@ class QLiberationWindow(QMainWindow):
         self.openGithubAction = QAction("&Github Repo", self)
         self.openGithubAction.setIcon(CONST.ICONS["Github"])
         self.openGithubAction.triggered.connect(
-            lambda: webbrowser.open_new_tab("https://github.com/khopa/dcs_liberation")
+            lambda: webbrowser.open_new_tab(
+                "https://github.com/dcs-liberation/dcs_liberation"
+            )
         )
+
+        self.openSettingsAction = QAction("Settings", self)
+        self.openSettingsAction.setIcon(CONST.ICONS["Settings"])
+        self.openSettingsAction.triggered.connect(self.showSettingsDialog)
+
+        self.openStatsAction = QAction("Stats", self)
+        self.openStatsAction.setIcon(CONST.ICONS["Statistics"])
+        self.openStatsAction.triggered.connect(self.showStatsDialog)
 
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
@@ -156,7 +167,9 @@ class QLiberationWindow(QMainWindow):
         self.links_bar.addAction(self.openDiscordAction)
         self.links_bar.addAction(self.openGithubAction)
 
-        self.display_bar = self.addToolBar("Display")
+        self.actions_bar = self.addToolBar("Actions")
+        self.actions_bar.addAction(self.openSettingsAction)
+        self.actions_bar.addAction(self.openStatsAction)
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -172,37 +185,13 @@ class QLiberationWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction("E&xit", self.close)
 
-        displayMenu = self.menu.addMenu("&Display")
-
-        last_was_group = False
-        for item in DisplayOptions.menu_items():
-            if isinstance(item, DisplayRule):
-                if last_was_group:
-                    displayMenu.addSeparator()
-                    self.display_bar.addSeparator()
-                action = self.make_display_rule_action(item)
-                displayMenu.addAction(action)
-                if action.icon():
-                    self.display_bar.addAction(action)
-                last_was_group = False
-            elif isinstance(item, DisplayGroup):
-                displayMenu.addSeparator()
-                self.display_bar.addSeparator()
-                group = QActionGroup(displayMenu)
-                for display_rule in item:
-                    action = self.make_display_rule_action(display_rule, group)
-                    displayMenu.addAction(action)
-                    if action.icon():
-                        self.display_bar.addAction(action)
-                last_was_group = True
-
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction(self.openDiscordAction)
         help_menu.addAction(self.openGithubAction)
         help_menu.addAction(
             "&Releases",
             lambda: webbrowser.open_new_tab(
-                "https://github.com/Khopa/dcs_liberation/releases"
+                "https://github.com/dcs-liberation/dcs_liberation/releases"
             ),
         )
         help_menu.addAction(
@@ -252,14 +241,13 @@ class QLiberationWindow(QMainWindow):
         )
         if file is not None:
             game = persistency.load_game(file[0])
-            GameUpdateSignal.get_instance().updateGame(game)
+            GameUpdateSignal.get_instance().game_loaded.emit(game)
 
     def saveGame(self):
         logging.info("Saving game")
 
         if self.game.savepath:
             persistency.save_game(self.game)
-            GameUpdateSignal.get_instance().updateGame(self.game)
             liberation_install.setup_last_save_file(self.game.savepath)
             liberation_install.save_config()
         else:
@@ -281,7 +269,7 @@ class QLiberationWindow(QMainWindow):
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")
         self.game = game
-        GameUpdateSignal.get_instance().updateGame(self.game)
+        GameUpdateSignal.get_instance().game_loaded.emit(self.game)
 
     def setGame(self, game: Optional[Game]):
         try:
@@ -289,8 +277,7 @@ class QLiberationWindow(QMainWindow):
             if self.info_panel is not None:
                 self.info_panel.setGame(game)
             self.game_model.set(self.game)
-            if self.liberation_map is not None:
-                self.liberation_map.setGame(game)
+            self.liberation_map.set_game(game)
         except AttributeError:
             logging.exception("Incompatible save game")
             QMessageBox.critical(
@@ -309,7 +296,7 @@ class QLiberationWindow(QMainWindow):
             "<h3>DCS Liberation "
             + VERSION
             + "</h3>"
-            + "<b>Source code :</b> https://github.com/khopa/dcs_liberation"
+            + "<b>Source code :</b> https://github.com/dcs-liberation/dcs_liberation"
             + "<h4>Authors</h4>"
             + "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>."
             "<h4>Contributors</h4>"
@@ -331,6 +318,14 @@ class QLiberationWindow(QMainWindow):
     def showLiberationDialog(self):
         self.subwindow = QLiberationPreferencesWindow()
         self.subwindow.show()
+
+    def showSettingsDialog(self) -> None:
+        self.dialog = QSettingsWindow(self.game)
+        self.dialog.show()
+
+    def showStatsDialog(self):
+        self.dialog = QStatsWindow(self.game)
+        self.dialog.show()
 
     def onDebriefing(self, debrief: Debriefing):
         logging.info("On Debriefing")

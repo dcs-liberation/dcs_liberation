@@ -1,8 +1,25 @@
-<strong>Author(s): {{ campaign.authors }}</strong>
-<br/><br/>
+<p><strong>Author(s): {{ campaign.authors }}</strong></p>
 
-<strong>Default factions:</strong>
-<span style="color:#82A466">&nbsp;{{campaign.recommended_player_faction}}</span> VS <span style="color:orange">&nbsp;{{campaign.recommended_enemy_faction}}</span>
-<br/>
+{% if not campaign.version %}
+<p><strong style="color:orange">This campaign was created for an unknown version
+of DCS Liberation.</strong></p>
+<p>You can still attempt to play this campaign but there may be game breaking
+bugs.</p>
+{% elif campaign.is_out_of_date %}
+<p><strong style="color:orange">This campaign was created for an older version
+of DCS Liberation.</strong></p>
+<p>You can still attempt to play this campaign but there may be game breaking
+bugs.</p>
+{% elif campaign.is_from_future %}
+<p><strong style="color:orange">This campaign was created for a newer version
+of DCS Liberation.</strong></p>
+<p>You can still attempt to play this campaign but there may be game breaking
+bugs.</p>
+{% else %}
+<p><strong style="color:#82A466">This campaign is up to date.</strong></p>
+{% endif %}
+
+<p><strong>Default factions:</strong></p>
+<p><span style="color:#82A466">{{campaign.recommended_player_faction}}</span> VS <span style="color:orange">&nbsp;{{campaign.recommended_enemy_faction}}</span></p>
 
 {{ campaign.description|safe }}

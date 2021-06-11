@@ -3,6 +3,7 @@
   "name": "Sweden 1970s Alternate Universe",
   "authors": "Starfire",
   "description": "<p>Sweden 1970</p><p>Since we do not yet have Heatblur's AI Draken, this faction includes the Mirage 2000C in order to provide Sweden with some form of A2A capability.</p>",
+  "locales": ["sv_SE"],
   "aircrafts": [
     "AJS37",
     "M_2000C",
@@ -17,7 +18,7 @@
   ],
   "frontline_units": [
     "IFV_Warrior",
-    "MBT_Leopard_2",
+    "MBT_Leopard_2A4",
     "IFV_M1126_Stryker_ICV",
     "SAM_Chaparral_M48"
   ],

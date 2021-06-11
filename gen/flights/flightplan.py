@@ -10,18 +10,18 @@ from __future__ import annotations
 import logging
 import math
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
-from dcs.planes import E_3A, E_2C, A_50, KJ_2000
-
 from dcs.mapping import Point
+from dcs.planes import E_3A, E_2C, A_50, KJ_2000
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
+from game.squadrons import Pilot
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -41,6 +41,7 @@ from ..conflictgen import Conflict, FRONTLINE_LENGTH
 if TYPE_CHECKING:
     from game import Game
     from gen.ato import Package
+    from game.transfers import Convoy
 
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
@@ -124,6 +125,10 @@ class FlightPlan:
         """
         raise NotImplementedError
 
+    @property
+    def tot(self) -> timedelta:
+        return self.package.time_over_target + self.tot_offset
+
     @cached_property
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan"""
@@ -197,15 +202,28 @@ class FlightPlan:
     def dismiss_escort_at(self) -> Optional[FlightWaypoint]:
         return None
 
+    def escorted_waypoints(self) -> Iterator[FlightWaypoint]:
+        begin = self.request_escort_at()
+        end = self.dismiss_escort_at()
+        if begin is None or end is None:
+            return
+        escorting = False
+        for waypoint in self.waypoints:
+            if waypoint == begin:
+                escorting = True
+            if escorting:
+                yield waypoint
+            if waypoint == end:
+                return
+
     def takeoff_time(self) -> Optional[timedelta]:
         tot_waypoint = self.tot_waypoint
         if tot_waypoint is None:
             return None
 
-        time = self.tot_for_waypoint(tot_waypoint)
+        time = self.tot
         if time is None:
             return None
-        time += self.tot_offset
         return time - self._travel_time_to_waypoint(tot_waypoint)
 
     def startup_time(self) -> Optional[timedelta]:
@@ -242,7 +260,7 @@ class FlightPlan:
         if self.flight.from_cp.is_fleet:
             return timedelta(minutes=2)
         else:
-            return timedelta(minutes=5)
+            return timedelta(minutes=8)
 
     @property
     def mission_departure_time(self) -> timedelta:
@@ -425,6 +443,7 @@ class BarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -437,6 +456,7 @@ class BarCapFlightPlan(PatrollingFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
 
 @dataclass(frozen=True)
@@ -445,6 +465,7 @@ class CasFlightPlan(PatrollingFlightPlan):
     target: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -458,6 +479,7 @@ class CasFlightPlan(PatrollingFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     def request_escort_at(self) -> Optional[FlightWaypoint]:
         return self.patrol_start
@@ -471,6 +493,7 @@ class TarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
     lead_time: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -484,6 +507,7 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def tot_offset(self) -> timedelta:
@@ -499,7 +523,7 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         start = self.package.escort_start_time
         if start is not None:
             return start + self.tot_offset
-        return super().patrol_start_time + self.tot_offset
+        return self.tot
 
     @property
     def patrol_end_time(self) -> timedelta:
@@ -522,6 +546,8 @@ class StrikeFlightPlan(FormationFlightPlan):
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
+    lead_time: timedelta = field(default_factory=timedelta)
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -536,6 +562,7 @@ class StrikeFlightPlan(FormationFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def package_speed_waypoints(self) -> Set[FlightWaypoint]:
@@ -558,6 +585,13 @@ class StrikeFlightPlan(FormationFlightPlan):
     @property
     def tot_waypoint(self) -> FlightWaypoint:
         return self.targets[0]
+
+    @property
+    def tot_offset(self) -> timedelta:
+        try:
+            return -self.lead_time
+        except AttributeError:
+            return timedelta()
 
     @property
     def target_area_waypoint(self) -> FlightWaypoint:
@@ -592,10 +626,6 @@ class StrikeFlightPlan(FormationFlightPlan):
         return total
 
     @property
-    def mission_speed(self) -> Speed:
-        return GroundSpeed.for_flight(self.flight, self.ingress.alt)
-
-    @property
     def join_time(self) -> timedelta:
         travel_time = self.travel_time_between_waypoints(self.join, self.ingress)
         return self.ingress_time - travel_time
@@ -607,7 +637,7 @@ class StrikeFlightPlan(FormationFlightPlan):
 
     @property
     def ingress_time(self) -> timedelta:
-        tot = self.package.time_over_target
+        tot = self.tot
         travel_time = self.travel_time_between_waypoints(
             self.ingress, self.target_area_waypoint
         )
@@ -615,7 +645,7 @@ class StrikeFlightPlan(FormationFlightPlan):
 
     @property
     def egress_time(self) -> timedelta:
-        tot = self.package.time_over_target
+        tot = self.tot
         travel_time = self.travel_time_between_waypoints(
             self.target_area_waypoint, self.egress
         )
@@ -627,7 +657,7 @@ class StrikeFlightPlan(FormationFlightPlan):
         elif waypoint == self.egress:
             return self.egress_time
         elif waypoint in self.targets:
-            return self.package.time_over_target
+            return self.tot
         return super().tot_for_waypoint(waypoint)
 
 
@@ -640,6 +670,7 @@ class SweepFlightPlan(LoiterFlightPlan):
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
     lead_time: timedelta
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -652,6 +683,7 @@ class SweepFlightPlan(LoiterFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
@@ -670,7 +702,7 @@ class SweepFlightPlan(LoiterFlightPlan):
 
     @property
     def sweep_end_time(self) -> timedelta:
-        return self.package.time_over_target + self.tot_offset
+        return self.tot
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.sweep_start:
@@ -703,6 +735,7 @@ class AwacsFlightPlan(LoiterFlightPlan):
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
@@ -712,6 +745,7 @@ class AwacsFlightPlan(LoiterFlightPlan):
         yield self.land
         if self.divert is not None:
             yield self.divert
+        yield self.bullseye
 
     @property
     def mission_start_time(self) -> Optional[timedelta]:
@@ -733,6 +767,48 @@ class AwacsFlightPlan(LoiterFlightPlan):
     @property
     def mission_departure_time(self) -> timedelta:
         return self.push_time
+
+
+@dataclass(frozen=True)
+class AirliftFlightPlan(FlightPlan):
+    takeoff: FlightWaypoint
+    nav_to_pickup: List[FlightWaypoint]
+    pickup: Optional[FlightWaypoint]
+    nav_to_drop_off: List[FlightWaypoint]
+    drop_off: FlightWaypoint
+    nav_to_home: List[FlightWaypoint]
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to_pickup
+        if self.pickup:
+            yield self.pickup
+        yield from self.nav_to_drop_off
+        yield self.drop_off
+        yield from self.nav_to_home
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.drop_off
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        # TOT planning isn't really useful for transports. They're behind the front
+        # lines so no need to wait for escorts or for other missions to complete.
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        return None
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.package.time_over_target
 
 
 @dataclass(frozen=True)
@@ -782,11 +858,7 @@ class FlightPlanBuilder:
         self.game = game
         self.package = package
         self.is_player = is_player
-        if is_player:
-            faction = self.game.player_faction
-        else:
-            faction = self.game.enemy_faction
-        self.doctrine: Doctrine = faction.doctrine
+        self.doctrine: Doctrine = self.game.faction_for(self.is_player).doctrine
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
     def populate_flight_plan(
@@ -798,12 +870,12 @@ class FlightPlanBuilder:
         """Creates a default flight plan for the given mission."""
         if flight not in self.package.flights:
             raise RuntimeError("Flight must be a part of the package")
-        if self.package.waypoints is None:
-            self.regenerate_package_waypoints()
 
         from game.navmesh import NavMeshError
 
         try:
+            if self.package.waypoints is None:
+                self.regenerate_package_waypoints()
             flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
         except NavMeshError as ex:
             color = "blue" if self.is_player else "red"
@@ -835,6 +907,8 @@ class FlightPlanBuilder:
             return self.generate_runway_attack(flight)
         elif task == FlightType.SEAD:
             return self.generate_sead(flight, custom_targets)
+        elif task == FlightType.SEAD_ESCORT:
+            return self.generate_escort(flight)
         elif task == FlightType.STRIKE:
             return self.generate_strike(flight)
         elif task == FlightType.SWEEP:
@@ -843,6 +917,8 @@ class FlightPlanBuilder:
             return self.generate_tarcap(flight)
         elif task == FlightType.AEWC:
             return self.generate_aewc(flight)
+        elif task == FlightType.TRANSPORT:
+            return self.generate_transport(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
@@ -981,7 +1057,7 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        start = self.aewc_orbit(location)
+        orbit_location = self.aewc_orbit(location)
 
         # As high as possible to maximize detection and on-station time.
         if flight.unit_type == E_2C:
@@ -996,25 +1072,26 @@ class FlightPlanBuilder:
             patrol_alt = feet(25000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start = builder.orbit(start, patrol_alt)
+        orbit_location = builder.orbit(orbit_location, patrol_alt)
 
         return AwacsFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
-                flight.departure.position, start.position, patrol_alt
+                flight.departure.position, orbit_location.position, patrol_alt
             ),
             nav_from=builder.nav_path(
-                start.position, flight.arrival.position, patrol_alt
+                orbit_location.position, flight.arrival.position, patrol_alt
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
-            hold=start,
+            bullseye=builder.bullseye(),
+            hold=orbit_location,
             hold_duration=timedelta(hours=4),
         )
 
-    def generate_bai(self, flight: Flight) -> StrikeFlightPlan:
+    def generate_bai(self, flight: Flight) -> FlightPlan:
         """Generates a BAI flight plan.
 
         Args:
@@ -1022,17 +1099,27 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        if not isinstance(location, TheaterGroundObject):
-            raise InvalidObjectiveLocation(flight.flight_type, location)
+        from game.transfers import Convoy
 
         targets: List[StrikeTarget] = []
-        for group in location.groups:
-            if group.units:
-                targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
+        if isinstance(location, TheaterGroundObject):
+            for group in location.groups:
+                if group.units:
+                    targets.append(
+                        StrikeTarget(f"{group.name} at {location.name}", group)
+                    )
+        elif isinstance(location, Convoy):
+            targets.append(StrikeTarget(location.name, location))
+        else:
+            raise InvalidObjectiveLocation(flight.flight_type, location)
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_BAI, targets
         )
+
+    @staticmethod
+    def anti_ship_targets_for_tgo(tgo: TheaterGroundObject) -> List[StrikeTarget]:
+        return [StrikeTarget(f"{g.name} at {tgo.name}", g) for g in tgo.groups]
 
     def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:
         """Generates an anti-ship flight plan.
@@ -1042,19 +1129,19 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
+        from game.transfers import CargoShip
+
         if isinstance(location, ControlPoint):
-            if location.is_fleet:
-                # The first group generated will be the carrier group itself.
-                location = location.ground_objects[0]
-            else:
+            if not location.is_fleet:
                 raise InvalidObjectiveLocation(flight.flight_type, location)
-
-        if not isinstance(location, TheaterGroundObject):
+            # The first group generated will be the carrier group itself.
+            targets = self.anti_ship_targets_for_tgo(location.ground_objects[0])
+        elif isinstance(location, TheaterGroundObject):
+            targets = self.anti_ship_targets_for_tgo(location)
+        elif isinstance(location, CargoShip):
+            targets = [StrikeTarget(location.name, location)]
+        else:
             raise InvalidObjectiveLocation(flight.flight_type, location)
-
-        targets: List[StrikeTarget] = []
-        for group in location.groups:
-            targets.append(StrikeTarget(f"{group.name} at {location.name}", group))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_BAI, targets
@@ -1098,6 +1185,7 @@ class FlightPlanBuilder:
             patrol_end=end,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def generate_sweep(self, flight: Flight) -> SweepFlightPlan:
@@ -1134,6 +1222,59 @@ class FlightPlanBuilder:
             sweep_end=end,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
+        )
+
+    def generate_transport(self, flight: Flight) -> AirliftFlightPlan:
+        """Generate an airlift flight at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+        cargo = flight.cargo
+        if cargo is None:
+            raise PlanningError(
+                "Cannot plan transport mission for flight with no cargo."
+            )
+
+        altitude = feet(1500)
+        altitude_is_agl = True
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+
+        pickup = None
+        nav_to_pickup = []
+        if cargo.origin != flight.departure:
+            pickup = builder.pickup(cargo.origin)
+            nav_to_pickup = builder.nav_path(
+                flight.departure.position,
+                cargo.origin.position,
+                altitude,
+                altitude_is_agl,
+            )
+
+        return AirliftFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to_pickup=nav_to_pickup,
+            pickup=pickup,
+            nav_to_drop_off=builder.nav_path(
+                cargo.origin.position,
+                cargo.next_stop.position,
+                altitude,
+                altitude_is_agl,
+            ),
+            drop_off=builder.drop_off(cargo.next_stop),
+            nav_to_home=builder.nav_path(
+                cargo.origin.position,
+                flight.arrival.position,
+                altitude,
+                altitude_is_agl,
+            ),
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def racetrack_for_objective(
@@ -1198,29 +1339,31 @@ class FlightPlanBuilder:
         return start, end
 
     def aewc_orbit(self, location: MissionTarget) -> Point:
-        # in threat zone
+        closest_boundary = self.threat_zones.closest_boundary(location.position)
+        heading_to_threat_boundary = location.position.heading_between_point(
+            closest_boundary
+        )
+        distance_to_threat = meters(
+            location.position.distance_to_point(closest_boundary)
+        )
+        orbit_heading = heading_to_threat_boundary
+        # Station 100nm outside the threat zone.
+        threat_buffer = nautical_miles(100)
         if self.threat_zones.threatened(location.position):
-            # Borderpoint
-            closest_boundary = self.threat_zones.closest_boundary(location.position)
-
-            # Heading + Distance to border point
-            heading = location.position.heading_between_point(closest_boundary)
-            distance = location.position.distance_to_point(closest_boundary)
-
-            return location.position.point_from_heading(heading, distance)
-
-        # this Part is fine. No threat zone, just use our point
+            orbit_distance = distance_to_threat + threat_buffer
         else:
-            return location.position
+            orbit_distance = distance_to_threat - threat_buffer
+
+        return location.position.point_from_heading(
+            orbit_heading, orbit_distance.meters
+        )
 
     def racetrack_for_frontline(
         self, origin: Point, front_line: FrontLine
     ) -> Tuple[Point, Point]:
-        ally_cp, enemy_cp = front_line.control_points
-
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(
-            ally_cp, enemy_cp, self.game.theater
+            front_line, self.game.theater
         )
         center = ingress.point_from_heading(heading, distance / 2)
         orbit_center = center.point_from_heading(
@@ -1287,6 +1430,7 @@ class FlightPlanBuilder:
             patrol_end=end,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def generate_dead(
@@ -1380,7 +1524,11 @@ class FlightPlanBuilder:
                 targets.append(StrikeTarget(location.name, target))
 
         return self.strike_flightplan(
-            flight, location, FlightWaypointType.INGRESS_SEAD, targets
+            flight,
+            location,
+            FlightWaypointType.INGRESS_SEAD,
+            targets,
+            lead_time=timedelta(minutes=1),
         )
 
     def generate_escort(self, flight: Flight) -> StrikeFlightPlan:
@@ -1415,6 +1563,7 @@ class FlightPlanBuilder:
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     def generate_cas(self, flight: Flight) -> CasFlightPlan:
@@ -1429,7 +1578,7 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         ingress, heading, distance = Conflict.frontline_vector(
-            location.control_points[0], location.control_points[1], self.game.theater
+            location, self.game.theater
         )
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
@@ -1460,6 +1609,7 @@ class FlightPlanBuilder:
             patrol_end=builder.egress(egress, location),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
         )
 
     @staticmethod
@@ -1556,6 +1706,7 @@ class FlightPlanBuilder:
         location: MissionTarget,
         ingress_type: FlightWaypointType,
         targets: Optional[List[StrikeTarget]] = None,
+        lead_time: timedelta = timedelta(),
     ) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
         builder = WaypointBuilder(flight, self.game, self.is_player, targets)
@@ -1594,6 +1745,8 @@ class FlightPlanBuilder:
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
+            lead_time=lead_time,
         )
 
     def _retreating_rendezvous_point(self, attack_transition: Point) -> Point:
@@ -1658,7 +1811,7 @@ class FlightPlanBuilder:
         # We'll always have a package, but if this is being planned via the UI
         # it could be the first flight in the package.
         if not self.package.flights:
-            raise RuntimeError(
+            raise PlanningError(
                 "Cannot determine source airfield for package with no flights"
             )
 
@@ -1670,4 +1823,4 @@ class FlightPlanBuilder:
             for flight in self.package.flights:
                 if flight.departure == airfield:
                     return airfield
-        raise RuntimeError("Could not find any airfield assigned to this package")
+        raise PlanningError("Could not find any airfield assigned to this package")

@@ -3,6 +3,7 @@
   "name": "Israel 1948",
   "authors": "Khopa",
   "description": "<p>Israel during the 1948 Arab-Israeli war.</p>",
+  "locales": ["he_IL"],
   "aircrafts": [
     "SpitfireLFMkIXCW",
     "SpitfireLFMkIX",
@@ -14,9 +15,9 @@
   "frontline_units": [
     "MT_M4A4_Sherman_Firefly",
     "APC_M2A1_Halftrack",
-    "MT_M4_Sherman",
+    "Tk_M4_Sherman",
     "Car_M8_Greyhound_Armored",
-    "AAA_40mm_Bofors"
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
   ],

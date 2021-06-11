@@ -3,6 +3,7 @@
   "name": "Russia 1955",
   "authors": "Khopa",
   "description": "<p>Soviet army around 1955, during the Korean War</p>",
+  "locales": ["ru_RU"],
   "aircrafts": [
     "MiG_15bis"
   ],
@@ -13,10 +14,11 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "IFV_BRDM_2",
+    "Scout_BRDM_2",
     "Grad_MRL_FDDM__FC",
     "APC_MTLB",
     "MBT_T_55",
+    "LT_PT_76",
     "SPAAA_ZU_23_2_Mounted_Ural_375",
     "AAA_8_8cm_Flak_18",
     "AAA_S_60_57mm"

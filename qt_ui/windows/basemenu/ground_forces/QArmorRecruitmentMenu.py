@@ -1,3 +1,5 @@
+from typing import Type
+
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFrame,
@@ -65,14 +67,10 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
 
-    def sell(self, unit_type: UnitType):
-        if self.pending_deliveries.available_next_turn(unit_type) <= 0:
-            QMessageBox.critical(
-                self,
-                "Could not sell ground unit",
-                f"Attempted to sell one {unit_type.id} at {self.cp.name} "
-                "but none are available.",
-                QMessageBox.Ok,
-            )
-            return
-        super().sell(unit_type)
+    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+        if not super().enable_purchase(unit_type):
+            return False
+        return self.cp.has_ground_unit_source(self.game_model.game)
+
+    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+        return self.pending_deliveries.pending_orders(unit_type) > 0

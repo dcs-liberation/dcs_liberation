@@ -1,0 +1,77 @@
+{
+  "country": "Canada",
+  "name": "Canada 2005 (With C-130)",
+  "authors": "Khopa, SpaceEnthusiast",
+  "description": "<p>Canada in the 2000s, an F/A-18C Hornet focused faction.</p>",
+  "locales": ["en_US", "fr_CA"],
+  "aircrafts": [
+    "FA_18C_hornet",
+    "UH_1H",
+    "AH_1W",
+	"Hercules"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_Leopard_1A3",
+    "MBT_Leopard_2A4",
+    "MBT_Leopard_2A6M",
+    "IFV_LAV_25",
+    "APC_M113",
+    "IFV_Warrior",
+    "SAM_Avenger__Stinger"
+  ],
+  "artillery_units": [
+  ],
+  "logistics_units": [
+    "Truck_M818_6x6"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Infantry_M249",
+    "MANPADS_Stinger"
+  ],
+  "air_defenses": [
+    "AvengerGenerator",
+    "HawkGenerator"
+  ],
+  "ewrs": [
+    "HawkEwrGenerator"
+  ],
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "destroyers": [
+    "DDG_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+    "CG_Ticonderoga"
+  ],
+  "requirements": {
+    "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
+  },
+  "carrier_names": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "navy_generators": [
+    "ArleighBurkeGroupGenerator"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper",
+  "liveries_overrides": {
+    "FA_18C_hornet": [
+      "Canada 409th Squadron",
+      "Canada 425th Squadron"
+    ],
+	"Hercules": [
+      "Royal Canadian AF CC-130J"
+    ]
+  }
+}

@@ -6,19 +6,19 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-import dcs
-from dcs.weapons_data import weapon_ids
-
 from PySide2 import QtWidgets
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
+from dcs.payloads import PayloadDirectories
+from dcs.weapons_data import weapon_ids
 
-from game import Game, db, persistency, VERSION
+from game import Game, VERSION, persistency
 from game.data.weapons import (
     WEAPON_FALLBACK_MAP,
     WEAPON_INTRODUCTION_YEARS,
     Weapon,
 )
+from game.profiling import logged_duration
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui import (
@@ -35,8 +35,29 @@ from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
     QLiberationFirstStartWindow,
 )
 
+THIS_DIR = Path(__file__).parent
 
-def run_ui(game: Optional[Game] = None) -> None:
+
+def inject_custom_payloads(user_path: Path) -> None:
+    dev_payloads = THIS_DIR.parent / "resources/customized_payloads"
+    # The packaged release rearranges the file locations, so the release has the
+    # customized payloads in a different location.
+    release_payloads = THIS_DIR / "resources/customized_payloads"
+    if dev_payloads.exists():
+        payloads = dev_payloads
+    elif release_payloads.exists():
+        payloads = release_payloads
+    else:
+        raise RuntimeError(
+            f"Could not find customized payloads at {release_payloads} or "
+            f"{dev_payloads}. Aircraft will have no payloads."
+        )
+    # We configure these as fallbacks so that the user's payloads override ours.
+    PayloadDirectories.set_fallback(payloads)
+    PayloadDirectories.set_preferred(user_path / "MissionEditor" / "UnitPayloads")
+
+
+def run_ui(game: Optional[Game]) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
@@ -47,22 +68,6 @@ def run_ui(game: Optional[Game] = None) -> None:
     ) as stylesheet:
         logging.info("Loading stylesheet: %s", liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())
-
-    # Inject custom payload in pydcs framework
-    custom_payloads = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "..\\resources\\customized_payloads",
-    )
-    if os.path.exists(custom_payloads):
-        dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
-    else:
-        # For release version the path is different.
-        custom_payloads = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "resources\\customized_payloads",
-        )
-        if os.path.exists(custom_payloads):
-            dcs.unittype.FlyingType.payload_dirs.append(custom_payloads)
 
     first_start = liberation_install.init()
     if first_start:
@@ -75,6 +80,8 @@ def run_ui(game: Optional[Game] = None) -> None:
             liberation_install.get_dcs_install_directory()
         )
     )
+
+    inject_custom_payloads(Path(persistency.base_path()))
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -132,6 +139,9 @@ def parse_args() -> argparse.Namespace:
         help="Emits a warning for weapons without date or fallback information.",
     )
 
+    parser.add_argument("--new-map", help="Deprecated. Does nothing.")
+    parser.add_argument("--old-map", help="Deprecated. Does nothing.")
+
     new_game = subparsers.add_parser("new-game")
 
     new_game.add_argument(
@@ -158,6 +168,8 @@ def parse_args() -> argparse.Namespace:
         "--inverted", action="store_true", help="Invert the campaign."
     )
 
+    new_game.add_argument("--cheats", action="store_true", help="Enable cheats.")
+
     return parser.parse_args()
 
 
@@ -168,7 +180,23 @@ def create_game(
     supercarrier: bool,
     auto_procurement: bool,
     inverted: bool,
+    cheats: bool,
 ) -> Game:
+    first_start = liberation_install.init()
+    if first_start:
+        sys.exit(
+            "Cannot generate campaign without configuring DCS Liberation. Start the UI "
+            "for the first run configuration."
+        )
+
+    # This needs to run before the pydcs payload cache is created, which happens
+    # extremely early. It's not a problem that we inject these paths twice because we'll
+    # get the same answers each time.
+    #
+    # Without this, it is not possible to use next turn (or anything that needs to check
+    # for loadouts) without saving the generated campaign and reloading it the normal
+    # way.
+    inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
         blue,
@@ -179,6 +207,8 @@ def create_game(
             automate_runway_repair=auto_procurement,
             automate_front_line_reinforcements=auto_procurement,
             automate_aircraft_reinforcements=auto_procurement,
+            enable_frontline_cheats=cheats,
+            enable_base_capture_cheat=cheats,
         ),
         GeneratorSettings(
             start_date=datetime.today(),
@@ -207,8 +237,7 @@ def lint_weapon_data() -> None:
 def main():
     logging_config.init_logging(VERSION)
 
-    # Load eagerly to catch errors early.
-    db.FACTIONS.initialize()
+    logging.debug("Python version %s", sys.version)
 
     game: Optional[Game] = None
 
@@ -219,14 +248,16 @@ def main():
         lint_weapon_data()
 
     if args.subcommand == "new-game":
-        game = create_game(
-            args.campaign,
-            args.blue,
-            args.red,
-            args.supercarrier,
-            args.auto_procurement,
-            args.inverted,
-        )
+        with logged_duration("New game creation"):
+            game = create_game(
+                args.campaign,
+                args.blue,
+                args.red,
+                args.supercarrier,
+                args.auto_procurement,
+                args.inverted,
+                args.cheats,
+            )
 
     run_ui(game)
 

@@ -3,37 +3,30 @@ import dcs
 
 DEFAULT_AVAILABLE_BUILDINGS = [
     "fuel",
-    "ammo",
     "comms",
     "oil",
     "ware",
     "farp",
-    "fob",
     "power",
-    "factory",
     "derrick",
 ]
 
-WW2_FREE = ["fuel", "factory", "ware", "fob"]
+WW2_FREE = ["fuel", "ware"]
 WW2_GERMANY_BUILDINGS = [
     "fuel",
-    "factory",
     "ww2bunker",
     "ww2bunker",
     "ww2bunker",
     "allycamp",
     "allycamp",
-    "fob",
 ]
 WW2_ALLIES_BUILDINGS = [
     "fuel",
-    "factory",
     "allycamp",
     "allycamp",
     "allycamp",
     "allycamp",
     "allycamp",
-    "fob",
 ]
 
 FORTIFICATION_BUILDINGS = [

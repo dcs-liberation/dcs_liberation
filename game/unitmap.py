@@ -1,4 +1,6 @@
 """Maps generated units back to their Liberation types."""
+import itertools
+import math
 from dataclasses import dataclass
 from typing import Dict, Optional, Type
 
@@ -7,9 +9,17 @@ from dcs.unitgroup import FlyingGroup, Group, VehicleGroup
 from dcs.unittype import VehicleType
 
 from game import db
+from game.squadrons import Pilot
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
-from game.theater.theatergroundobject import BuildingGroundObject
+from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
+from game.transfers import CargoShip, Convoy, TransferOrder
 from gen.flights.flight import Flight
+
+
+@dataclass(frozen=True)
+class FlyingUnit:
+    flight: Flight
+    pilot: Pilot
 
 
 @dataclass(frozen=True)
@@ -26,28 +36,47 @@ class GroundObjectUnit:
 
 
 @dataclass(frozen=True)
+class ConvoyUnit:
+    unit_type: Type[VehicleType]
+    convoy: Convoy
+
+
+@dataclass(frozen=True)
+class AirliftUnits:
+    cargo: tuple[Type[VehicleType], ...]
+    transfer: TransferOrder
+
+
+@dataclass(frozen=True)
 class Building:
     ground_object: BuildingGroundObject
 
 
 class UnitMap:
     def __init__(self) -> None:
-        self.aircraft: Dict[str, Flight] = {}
+        self.aircraft: Dict[str, FlyingUnit] = {}
         self.airfields: Dict[str, Airfield] = {}
         self.front_line_units: Dict[str, FrontLineUnit] = {}
         self.ground_object_units: Dict[str, GroundObjectUnit] = {}
         self.buildings: Dict[str, Building] = {}
+        self.convoys: Dict[str, ConvoyUnit] = {}
+        self.cargo_ships: Dict[str, CargoShip] = {}
+        self.airlifts: Dict[str, AirliftUnits] = {}
 
     def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
-        for unit in group.units:
+        for pilot, unit in zip(flight.roster.pilots, group.units):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(unit.name)
             if name in self.aircraft:
                 raise RuntimeError(f"Duplicate unit name: {name}")
-            self.aircraft[name] = flight
+            if pilot is None:
+                raise ValueError(f"{name} has no pilot assigned")
+            self.aircraft[name] = FlyingUnit(flight, pilot)
+        if flight.cargo is not None:
+            self.add_airlift_units(group, flight.cargo)
 
-    def flight(self, unit_name: str) -> Optional[Flight]:
+    def flight(self, unit_name: str) -> Optional[FlyingUnit]:
         return self.aircraft.get(unit_name, None)
 
     def add_airfield(self, airfield: Airfield) -> None:
@@ -113,6 +142,65 @@ class UnitMap:
     def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit]:
         return self.ground_object_units.get(name, None)
 
+    def add_convoy_units(self, group: Group, convoy: Convoy) -> None:
+        for unit in group.units:
+            # The actual name is a String (the pydcs translatable string), which
+            # doesn't define __eq__.
+            name = str(unit.name)
+            if name in self.convoys:
+                raise RuntimeError(f"Duplicate convoy unit: {name}")
+            unit_type = db.unit_type_from_name(unit.type)
+            if unit_type is None:
+                raise RuntimeError(f"Unknown unit type: {unit.type}")
+            if not issubclass(unit_type, VehicleType):
+                raise RuntimeError(
+                    f"{name} is a {unit_type.__name__}, expected a VehicleType"
+                )
+            self.convoys[name] = ConvoyUnit(unit_type, convoy)
+
+    def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
+        return self.convoys.get(name, None)
+
+    def add_cargo_ship(self, group: Group, ship: CargoShip) -> None:
+        if len(group.units) > 1:
+            # Cargo ship "groups" are single units. Killing the one ship kills the whole
+            # transfer. If we ever want to add escorts or create multiple cargo ships in
+            # a convoy of ships that logic needs to change.
+            raise ValueError("Expected cargo ship to be a single unit group.")
+        unit = group.units[0]
+        # The actual name is a String (the pydcs translatable string), which
+        # doesn't define __eq__.
+        name = str(unit.name)
+        if name in self.cargo_ships:
+            raise RuntimeError(f"Duplicate cargo ship: {name}")
+        self.cargo_ships[name] = ship
+
+    def cargo_ship(self, name: str) -> Optional[CargoShip]:
+        return self.cargo_ships.get(name, None)
+
+    def add_airlift_units(self, group: FlyingGroup, transfer: TransferOrder) -> None:
+        capacity_each = math.ceil(transfer.size / len(group.units))
+        for idx, transport in enumerate(group.units):
+            # Slice the units in groups based on the capacity of each unit. Cargo is
+            # assigned arbitrarily to units in the order of the group. The last unit in
+            # the group will receive a partial load if there is not enough cargo to fill
+            # every transport.
+            base_idx = idx * capacity_each
+            cargo = tuple(
+                itertools.islice(
+                    transfer.iter_units(), base_idx, base_idx + capacity_each
+                )
+            )
+            # The actual name is a String (the pydcs translatable string), which
+            # doesn't define __eq__.
+            name = str(transport.name)
+            if name in self.airlifts:
+                raise RuntimeError(f"Duplicate airlift unit: {name}")
+            self.airlifts[name] = AirliftUnits(cargo, transfer)
+
+    def airlift_unit(self, name: str) -> Optional[AirliftUnits]:
+        return self.airlifts.get(name, None)
+
     def add_building(self, ground_object: BuildingGroundObject, group: Group) -> None:
         # The actual name is a String (the pydcs translatable string), which
         # doesn't define __eq__.
@@ -134,6 +222,16 @@ class UnitMap:
         name = str(unit.name)
         if name in self.buildings:
             raise RuntimeError(f"Duplicate TGO unit: {name}")
+        self.buildings[name] = Building(ground_object)
+
+    def add_scenery(self, ground_object: SceneryGroundObject) -> None:
+        name = str(ground_object.map_object_id)
+        if name in self.buildings:
+            raise RuntimeError(
+                f"Duplicate TGO unit: {name}. TriggerZone name: "
+                f"{ground_object.dcs_identifier}"
+            )
+
         self.buildings[name] = Building(ground_object)
 
     def building_or_fortification(self, name: str) -> Optional[Building]:

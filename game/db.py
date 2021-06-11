@@ -1,17 +1,20 @@
+import json
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Type, Union
-import json
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
     AH_1W,
     AH_64A,
     AH_64D,
+    CH_47D,
+    CH_53E,
     HelicopterType,
     Ka_50,
     Mi_24V,
+    Mi_26,
     Mi_28N,
     Mi_8MT,
     OH_58D,
@@ -43,6 +46,7 @@ from dcs.planes import (
     Bf_109K_4,
     C_101CC,
     C_130,
+    C_17A,
     E_3A,
     E_2C,
     FA_18C_hornet,
@@ -58,7 +62,6 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
-    F_A_18C,
     IL_76MD,
     IL_78M,
     JF_17,
@@ -68,7 +71,6 @@ from dcs.planes import (
     KC_135,
     KC135MPRS,
     KJ_2000,
-    L_39C,
     L_39ZA,
     MQ_9_Reaper,
     M_2000C,
@@ -88,7 +90,6 @@ from dcs.planes import (
     P_47D_40,
     P_51D,
     P_51D_30_NA,
-    PlaneType,
     RQ_1A_Predator,
     S_3B,
     S_3B_Tanker,
@@ -99,7 +100,6 @@ from dcs.planes import (
     Su_24MR,
     Su_25,
     Su_25T,
-    Su_25TM,
     Su_27,
     Su_30,
     Su_33,
@@ -113,6 +113,7 @@ from dcs.planes import (
     Yak_40,
     plane_map,
     I_16,
+    Tu_142,
 )
 from dcs.ships import (
     Boat_Armed_Hi_speed,
@@ -172,6 +173,7 @@ from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
+from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
 
@@ -182,6 +184,8 @@ plane_map["F-22A"] = F_22A
 plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Su-57"] = Su_57
 plane_map["Hercules"] = Hercules
+plane_map["JAS39Gripen"] = JAS39Gripen
+plane_map["JAS39Gripen_AG"] = JAS39Gripen_AG
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
@@ -413,6 +417,7 @@ PRICES = {
     F_22A: 40,
     Tornado_IDS: 20,
     Tornado_GR4: 20,
+    JAS39Gripen: 26,
     # bomber
     Su_17M4: 10,
     Su_25: 15,
@@ -426,6 +431,7 @@ PRICES = {
     A_10C: 22,
     A_10C_2: 24,
     S_3B: 10,
+    JAS39Gripen_AG: 26,
     # heli
     Ka_50: 13,
     SA342M: 8,
@@ -441,6 +447,10 @@ PRICES = {
     AH_64D: 30,
     OH_58D: 6,
     SH_60B: 6,
+    CH_47D: 4,
+    CH_53E: 4,
+    UH_60A: 4,
+    Mi_26: 4,
     # Bombers
     B_52H: 35,
     B_1B: 50,
@@ -448,6 +458,7 @@ PRICES = {
     Tu_160: 50,
     Tu_22M3: 40,
     Tu_95MS: 35,
+    Tu_142: 35,
     # special
     IL_76MD: 30,
     An_26B: 25,
@@ -464,6 +475,7 @@ PRICES = {
     E_2C: 50,
     C_130: 25,
     Hercules: 25,
+    C_17A: 20,
     # WW2
     P_51D_30_NA: 18,
     P_51D: 16,
@@ -478,10 +490,10 @@ PRICES = {
     # armor
     Armor.APC_MTLB: 4,
     Artillery.Grad_MRL_FDDM__FC: 4,
-    Armor.IFV_BRDM_2: 6,
+    Armor.Scout_BRDM_2: 6,
     Armor.APC_BTR_RD: 6,
     Armor.APC_BTR_80: 8,
-    Armor.APC_BTR_82A: 10,
+    Armor.IFV_BTR_82A: 10,
     Armor.MBT_T_55: 18,
     Armor.MBT_T_72B: 20,
     Armor.MBT_T_72B3: 25,
@@ -491,12 +503,14 @@ PRICES = {
     Armor.IFV_BMP_1: 14,
     Armor.IFV_BMP_2: 16,
     Armor.IFV_BMP_3: 18,
+    Armor.LT_PT_76: 9,
     Armor.ZBD_04A: 12,
     Armor.ZTZ_96B: 30,
-    Armor.APC_Cobra__Scout: 4,
+    Armor.Scout_Cobra: 4,
     Armor.APC_M113: 6,
-    Armor.APC_HMMWV__Scout: 2,
+    Armor.Scout_HMMWV: 2,
     Armor.ATGM_HMMWV: 8,
+    Armor.ATGM_VAB_Mephisto: 12,
     Armor.IFV_M2A2_Bradley: 12,
     Armor.IFV_M1126_Stryker_ICV: 10,
     Armor.SPG_Stryker_MGS: 14,
@@ -504,34 +518,49 @@ PRICES = {
     Armor.MBT_M60A3_Patton: 16,
     Armor.MBT_M1A2_Abrams: 25,
     Armor.MBT_Leclerc: 25,
-    Armor.MBT_Leopard_1A3: 20,
-    Armor.MBT_Leopard_2: 25,
+    Armor.MBT_Leopard_1A3: 18,
+    Armor.MBT_Leopard_2A4: 20,
+    Armor.MBT_Leopard_2A4_Trs: 20,
+    Armor.MBT_Leopard_2A5: 22,
+    Armor.MBT_Leopard_2A6M: 25,
     Armor.MBT_Merkava_IV: 25,
     Armor.APC_TPz_Fuchs: 5,
     Armor.MBT_Challenger_II: 25,
+    Armor.MBT_Chieftain_Mk_3: 20,
     Armor.IFV_Marder: 10,
     Armor.IFV_Warrior: 10,
     Armor.IFV_LAV_25: 7,
+    Armor.APC_AAV_7_Amphibious: 10,
     Artillery.MLRS_M270_227mm: 55,
     Artillery.SPH_M109_Paladin_155mm: 25,
-    Artillery.SPH_2S9_Nona_120mm_M: 12,
+    Artillery.SPM_2S9_Nona_120mm_M: 12,
     Artillery.SPH_2S1_Gvozdika_122mm: 18,
     Artillery.SPH_2S3_Akatsia_152mm: 24,
     Artillery.SPH_2S19_Msta_152mm: 30,
     Artillery.MLRS_BM_21_Grad_122mm: 15,
-    Artillery.MLRS_BM_27_Uragan_220mm: 50,
+    Artillery.MLRS_9K57_Uragan_BM_27_220mm: 50,
     Artillery.MLRS_9A52_Smerch_HE_300mm: 40,
     Artillery.Mortar_2B11_120mm: 4,
     Artillery.SPH_Dana_vz77_152mm: 26,
     Artillery.PLZ_05: 25,
+    Artillery.SPH_T155_Firtina_155mm: 28,
+    Artillery.MLRS_9A52_Smerch_CM_300mm: 60,
     Unarmed.LUV_UAZ_469_Jeep: 3,
     Unarmed.Truck_Ural_375: 3,
+    Unarmed.Truck_GAZ_3307: 2,
     Infantry.Infantry_M4: 1,
     Infantry.Infantry_AK_74: 1,
     Unarmed.Truck_M818_6x6: 3,
+    Unarmed.LUV_Land_Rover_109: 1,
+    Unarmed.Truck_GAZ_3308: 1,
+    Unarmed.Truck_GAZ_66: 1,
+    Unarmed.Truck_KAMAZ_43101: 1,
+    Unarmed.Truck_Land_Rover_101_FC: 1,
+    Unarmed.Truck_Ural_4320_31_Arm_d: 1,
+    Unarmed.Truck_Ural_4320T: 1,
     # WW2
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G: 24,
-    Armor.MT_PzIV_H: 16,
+    Armor.Tk_PzIV_H: 16,
     Armor.HT_Pz_Kpfw_VI_Tiger_I: 24,
     Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II: 26,
     Armor.SPG_Jagdpanther_G1: 18,
@@ -539,7 +568,7 @@ PRICES = {
     Armor.SPG_Sd_Kfz_184_Elefant: 18,
     Armor.APC_Sd_Kfz_251_Halftrack: 4,
     Armor.IFV_Sd_Kfz_234_2_Puma: 8,
-    Armor.MT_M4_Sherman: 12,
+    Armor.Tk_M4_Sherman: 12,
     Armor.MT_M4A4_Sherman_Firefly: 16,
     Armor.CT_Cromwell_IV: 12,
     Unarmed.Carrier_M30_Cargo: 2,
@@ -551,10 +580,17 @@ PRICES = {
     Armor.SPG_StuG_III_Ausf__G: 12,
     Armor.SPG_StuG_IV: 14,
     Artillery.SPG_M12_GMC_155mm: 10,
-    Artillery.SPG_Sturmpanzer_IV_Brummbar: 10,
+    Armor.SPG_Sturmpanzer_IV_Brummbar: 10,
     Armor.Car_Daimler_Armored: 8,
     Armor.LT_Mk_VII_Tetrarch: 8,
     Unarmed.Tractor_M4_Hi_Speed: 2,
+    Unarmed.Carrier_Sd_Kfz_7_Tractor: 1,
+    Unarmed.LUV_Kettenrad: 1,
+    Unarmed.LUV_Kubelwagen_82: 1,
+    Unarmed.Truck_Opel_Blitz: 1,
+    Unarmed.Truck_Bedford: 1,
+    Unarmed.Truck_GMC_Jimmy_6x6_Truck: 1,
+    Unarmed.Car_Willys_Jeep: 1,
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
@@ -578,7 +614,7 @@ PRICES = {
     AirDefence.SAM_Patriot_CR__AMG_AN_MRC_137: 35,
     AirDefence.SAM_Patriot_ECS: 30,
     AirDefence.SPAAA_Gepard: 24,
-    AirDefence.SAM_Hawk_Generator__PCP: 14,
+    AirDefence.SAM_Hawk_Platoon_Command_Post__PCP: 14,
     AirDefence.SPAAA_Vulcan_M163: 10,
     AirDefence.SAM_Hawk_LN_M192: 8,
     AirDefence.SAM_Chaparral_M48: 16,
@@ -596,15 +632,15 @@ PRICES = {
     AirDefence.AAA_ZU_23_Closed_Emplacement: 6,
     AirDefence.AAA_ZU_23_Emplacement: 6,
     AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375: 7,
-    AirDefence.AAA_ZU_23_Closed_Emplacement_Insurgent: 6,
+    AirDefence.AAA_ZU_23_Insurgent_Closed_Emplacement: 6,
     AirDefence.SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375: 7,
-    AirDefence.AAA_ZU_23_Insurgent: 6,
+    AirDefence.AAA_ZU_23_Insurgent_Emplacement: 6,
     AirDefence.MANPADS_SA_18_Igla_Grouse: 10,
     AirDefence.MANPADS_SA_18_Igla_Grouse_C2: 8,
     AirDefence.MANPADS_SA_18_Igla_S_Grouse: 12,
     AirDefence.MANPADS_SA_18_Igla_S_Grouse_C2: 8,
     AirDefence.EWR_1L13: 30,
-    AirDefence.SAM_SA_6_Kub_Long_Track_STR: 22,
+    AirDefence.SAM_SA_6_Kub_Straight_Flush_STR: 22,
     AirDefence.EWR_55G6: 30,
     AirDefence.MCC_SR_Sborka_Dog_Ear_SR: 10,
     AirDefence.SAM_Hawk_TR__AN_MPQ_46: 14,
@@ -631,7 +667,7 @@ PRICES = {
     AirDefence.PU_Maschinensatz_33: 10,
     AirDefence.AAA_8_8cm_Flak_41: 10,
     AirDefence.EWR_FuMG_401_Freya_LZ: 25,
-    AirDefence.AAA_40mm_Bofors: 8,
+    AirDefence.AAA_Bofors_40mm: 8,
     AirDefence.AAA_S_60_57mm: 8,
     AirDefence.AAA_M1_37mm: 7,
     AirDefence.AAA_M45_Quadmount_HB_12_7mm: 4,
@@ -729,42 +765,43 @@ Following tasks are present:
 """
 UNIT_BY_TASK = {
     CAP: [
+        A_4E_C,
+        Bf_109K_4,
+        C_101CC,
+        FA_18C_hornet,
+        FW_190A8,
+        FW_190D9,
+        F_14A_135_GR,
+        F_14B,
+        F_15C,
+        F_16A,
+        F_16C_50,
+        F_22A,
+        F_4E,
         F_5E_3,
-        Su_27,
-        Su_33,
-        Su_57,
+        I_16,
+        JAS39Gripen,
+        JF_17,
+        J_11A,
+        M_2000C,
         MiG_19P,
         MiG_21Bis,
         MiG_23MLD,
         MiG_25PD,
         MiG_29A,
+        MiG_29G,
         MiG_29S,
         MiG_31,
-        FA_18C_hornet,
-        F_15C,
-        F_22A,
-        F_14A_135_GR,
-        F_14B,
-        F_16A,
-        F_16C_50,
-        M_2000C,
         Mirage_2000_5,
-        P_51D_30_NA,
         P_51D,
-        MiG_29G,
-        Su_30,
-        J_11A,
-        JF_17,
-        F_4E,
-        C_101CC,
-        I_16,
-        Bf_109K_4,
-        FW_190D9,
-        FW_190A8,
-        SpitfireLFMkIXCW,
-        SpitfireLFMkIX,
-        A_4E_C,
+        P_51D_30_NA,
         SA342Mistral,
+        SpitfireLFMkIX,
+        SpitfireLFMkIXCW,
+        Su_27,
+        Su_30,
+        Su_33,
+        Su_57,
     ],
     CAS: [
         AH_1W,
@@ -782,6 +819,8 @@ UNIT_BY_TASK = {
         F_117A,
         F_15E,
         F_86F_Sabre,
+        Hercules,
+        JAS39Gripen_AG,
         Ju_88A4,
         Ka_50,
         L_39ZA,
@@ -797,10 +836,11 @@ UNIT_BY_TASK = {
         P_47D_30bl1,
         P_47D_40,
         RQ_1A_Predator,
-        S_3B,
         SA342L,
         SA342M,
         SA342Minigun,
+        SH_60B,
+        S_3B,
         Su_17M4,
         Su_24M,
         Su_24MR,
@@ -813,19 +853,33 @@ UNIT_BY_TASK = {
         Tu_22M3,
         Tu_95MS,
         UH_1H,
-        SH_60B,
         WingLoong_I,
-        Hercules,
     ],
-    Transport: [IL_76MD, An_26B, An_30M, Yak_40, C_130],
+    Transport: [
+        An_26B,
+        An_30M,
+        CH_47D,
+        CH_53E,
+        C_130,
+        C_17A,
+        IL_76MD,
+        Mi_26,
+        UH_60A,
+        Yak_40,
+    ],
     Refueling: [
         IL_78M,
-        KC_135,
         KC130,
-        S_3B_Tanker,
         KC135MPRS,
+        KC_135,
+        S_3B_Tanker,
     ],
-    AWACS: [E_3A, E_2C, A_50, KJ_2000],
+    AWACS: [
+        A_50,
+        E_2C,
+        E_3A,
+        KJ_2000,
+    ],
     PinpointStrike: [
         Armor.APC_MTLB,
         Armor.APC_MTLB,
@@ -837,9 +891,9 @@ UNIT_BY_TASK = {
         Artillery.Grad_MRL_FDDM__FC,
         Artillery.Grad_MRL_FDDM__FC,
         Artillery.Grad_MRL_FDDM__FC,
-        Armor.IFV_BRDM_2,
-        Armor.IFV_BRDM_2,
-        Armor.IFV_BRDM_2,
+        Armor.Scout_BRDM_2,
+        Armor.Scout_BRDM_2,
+        Armor.Scout_BRDM_2,
         Armor.APC_BTR_RD,
         Armor.APC_BTR_RD,
         Armor.APC_BTR_RD,
@@ -849,8 +903,8 @@ UNIT_BY_TASK = {
         Armor.APC_BTR_80,
         Armor.APC_BTR_80,
         Armor.APC_BTR_80,
-        Armor.APC_BTR_82A,
-        Armor.APC_BTR_82A,
+        Armor.IFV_BTR_82A,
+        Armor.IFV_BTR_82A,
         Armor.IFV_BMP_1,
         Armor.IFV_BMP_1,
         Armor.IFV_BMP_1,
@@ -859,6 +913,7 @@ UNIT_BY_TASK = {
         Armor.IFV_BMP_3,
         Armor.IFV_BMP_3,
         Armor.IFV_BMD_1,
+        Armor.LT_PT_76,
         Armor.ZBD_04A,
         Armor.ZBD_04A,
         Armor.ZBD_04A,
@@ -873,10 +928,10 @@ UNIT_BY_TASK = {
         Armor.MBT_T_80U,
         Armor.MBT_T_90,
         Armor.ZTZ_96B,
-        Armor.APC_Cobra__Scout,
-        Armor.APC_Cobra__Scout,
-        Armor.APC_Cobra__Scout,
-        Armor.APC_Cobra__Scout,
+        Armor.Scout_Cobra,
+        Armor.Scout_Cobra,
+        Armor.Scout_Cobra,
+        Armor.Scout_Cobra,
         Armor.APC_M113,
         Armor.APC_M113,
         Armor.APC_M113,
@@ -887,8 +942,10 @@ UNIT_BY_TASK = {
         Armor.APC_TPz_Fuchs,
         Armor.ATGM_HMMWV,
         Armor.ATGM_HMMWV,
-        Armor.APC_HMMWV__Scout,
-        Armor.APC_HMMWV__Scout,
+        Armor.ATGM_VAB_Mephisto,
+        Armor.ATGM_VAB_Mephisto,
+        Armor.Scout_HMMWV,
+        Armor.Scout_HMMWV,
         Armor.IFV_M2A2_Bradley,
         Armor.IFV_M2A2_Bradley,
         Armor.ATGM_Stryker,
@@ -913,11 +970,12 @@ UNIT_BY_TASK = {
         Armor.MBT_Leopard_1A3,
         Armor.MBT_M1A2_Abrams,
         Armor.MBT_Leclerc,
-        Armor.MBT_Leopard_2,
+        Armor.MBT_Leopard_2A6M,
         Armor.MBT_Challenger_II,
+        Armor.MBT_Chieftain_Mk_3,
         Armor.MBT_Merkava_IV,
         Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
-        Armor.MT_PzIV_H,
+        Armor.Tk_PzIV_H,
         Armor.HT_Pz_Kpfw_VI_Tiger_I,
         Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
         Armor.APC_Sd_Kfz_251_Halftrack,
@@ -926,7 +984,7 @@ UNIT_BY_TASK = {
         Armor.APC_Sd_Kfz_251_Halftrack,
         Armor.IFV_Sd_Kfz_234_2_Puma,
         Armor.IFV_Sd_Kfz_234_2_Puma,
-        Armor.MT_M4_Sherman,
+        Armor.Tk_M4_Sherman,
         Armor.MT_M4A4_Sherman_Firefly,
         Armor.CT_Cromwell_IV,
         Unarmed.Carrier_M30_Cargo,
@@ -936,7 +994,7 @@ UNIT_BY_TASK = {
         Armor.APC_M2A1_Halftrack,
         Armor.APC_M2A1_Halftrack,
         Armor.MT_Pz_Kpfw_V_Panther_Ausf_G,
-        Armor.MT_PzIV_H,
+        Armor.Tk_PzIV_H,
         Armor.HT_Pz_Kpfw_VI_Tiger_I,
         Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II,
         Armor.SPG_Jagdpanther_G1,
@@ -944,7 +1002,7 @@ UNIT_BY_TASK = {
         Armor.SPG_Sd_Kfz_184_Elefant,
         Armor.APC_Sd_Kfz_251_Halftrack,
         Armor.IFV_Sd_Kfz_234_2_Puma,
-        Armor.MT_M4_Sherman,
+        Armor.Tk_M4_Sherman,
         Armor.MT_M4A4_Sherman_Firefly,
         Armor.CT_Cromwell_IV,
         Unarmed.Carrier_M30_Cargo,
@@ -962,23 +1020,24 @@ UNIT_BY_TASK = {
         Armor.SPG_StuG_III_Ausf__G,
         Armor.SPG_StuG_IV,
         Artillery.SPG_M12_GMC_155mm,
-        Artillery.SPG_Sturmpanzer_IV_Brummbar,
+        Armor.SPG_Sturmpanzer_IV_Brummbar,
         Armor.Car_Daimler_Armored,
         Armor.LT_Mk_VII_Tetrarch,
         Artillery.MLRS_M270_227mm,
         Artillery.SPH_M109_Paladin_155mm,
-        Artillery.SPH_2S9_Nona_120mm_M,
+        Artillery.SPM_2S9_Nona_120mm_M,
         Artillery.SPH_2S1_Gvozdika_122mm,
         Artillery.SPH_2S3_Akatsia_152mm,
         Artillery.SPH_2S19_Msta_152mm,
         Artillery.MLRS_BM_21_Grad_122mm,
         Artillery.MLRS_BM_21_Grad_122mm,
-        Artillery.MLRS_BM_27_Uragan_220mm,
+        Artillery.MLRS_9K57_Uragan_BM_27_220mm,
         Artillery.MLRS_9A52_Smerch_HE_300mm,
         Artillery.SPH_Dana_vz77_152mm,
+        Artillery.SPH_T155_Firtina_155mm,
         Artillery.PLZ_05,
         Artillery.SPG_M12_GMC_155mm,
-        Artillery.SPG_Sturmpanzer_IV_Brummbar,
+        Armor.SPG_Sturmpanzer_IV_Brummbar,
         AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375,
         AirDefence.SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375,
         AirDefence.SPAAA_ZSU_57_2,
@@ -999,7 +1058,7 @@ UNIT_BY_TASK = {
         AirDefence.AAA_8_8cm_Flak_36,
         AirDefence.AAA_8_8cm_Flak_37,
         AirDefence.AAA_8_8cm_Flak_41,
-        AirDefence.AAA_40mm_Bofors,
+        AirDefence.AAA_Bofors_40mm,
         AirDefence.AAA_S_60_57mm,
         AirDefence.AAA_M1_37mm,
         AirDefence.AAA_QF_3_7,
@@ -1060,7 +1119,7 @@ SAM_BAN = [
     AirDefence.SAM_SA_6_Kub_Gainful_TEL,
     AirDefence.SAM_SA_8_Osa_Gecko_TEL,
     AirDefence.SAM_SA_3_S_125_Goa_LN,
-    AirDefence.SAM_Hawk_Generator__PCP,
+    AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
     AirDefence.SAM_SA_2_S_75_Guideline_LN,
     AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL,
 ]
@@ -1073,15 +1132,15 @@ SAM_CONVERT = {
     AirDefence.SAM_SA_3_S_125_Low_Blow_TR: AirDefence.SAM_SA_3_S_125_Goa_LN,
     AirDefence.SAM_SA_3_S_125_Goa_LN: AirDefence.SAM_SA_3_S_125_Goa_LN,
     AirDefence.SAM_SA_6_Kub_Gainful_TEL: AirDefence.SAM_SA_6_Kub_Gainful_TEL,
-    AirDefence.SAM_SA_6_Kub_Long_Track_STR: AirDefence.SAM_SA_6_Kub_Gainful_TEL,
+    AirDefence.SAM_SA_6_Kub_Straight_Flush_STR: AirDefence.SAM_SA_6_Kub_Gainful_TEL,
     AirDefence.SAM_SA_10_S_300_Grumble_TEL_C: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
     AirDefence.SAM_SA_10_S_300_Grumble_Clam_Shell_SR: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
     AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
     AirDefence.SAM_SA_10_S_300_Grumble_C2: AirDefence.SAM_SA_10_S_300_Grumble_TEL_C,
     AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR: AirDefence.SAM_SA_10_S_300_Grumble_C2,
-    AirDefence.SAM_Hawk_TR__AN_MPQ_46: AirDefence.SAM_Hawk_Generator__PCP,
-    AirDefence.SAM_Hawk_SR__AN_MPQ_50: AirDefence.SAM_Hawk_Generator__PCP,
-    AirDefence.SAM_Hawk_LN_M192: AirDefence.SAM_Hawk_Generator__PCP,
+    AirDefence.SAM_Hawk_TR__AN_MPQ_46: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
+    AirDefence.SAM_Hawk_SR__AN_MPQ_50: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
+    AirDefence.SAM_Hawk_LN_M192: AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
     "except": {
         # this radar is shared between the two S300's. if we attempt to find a SAM site at a base and can't find one
         #  model, we can safely assume the other was deployed
@@ -1152,140 +1211,6 @@ COMMON_OVERRIDE = {
 }
 
 """
-This is a list of mappings from the FlightType of a Flight to the type of payload defined in the
-resources/payloads/UNIT_TYPE.lua file. A Flight has no concept of a PyDCS task, so COMMON_OVERRIDE cannot be
-used here. This is used in the payload editor, for setting the default loadout of an object.
-The left element is the FlightType name, and the right element is a tuple containing what is used in the lua file.
-Some aircraft differ from the standard loadout names, so those have been included here too.
-The priority goes from first to last - the first element in the tuple will be tried first, then the second, etc.
-"""
-
-EXPANDED_TASK_PAYLOAD_OVERRIDE = {
-    "TARCAP": ("CAP HEAVY", "CAP"),
-    "BARCAP": ("CAP HEAVY", "CAP"),
-    "CAS": ("CAS MAVERICK F", "CAS"),
-    "INTERCEPTION": ("CAP HEAVY", "CAP"),
-    "STRIKE": ("STRIKE",),
-    "ANTISHIP": ("ANTISHIP",),
-    "SEAD": ("SEAD",),
-    "DEAD": ("SEAD",),
-    "ESCORT": ("CAP HEAVY", "CAP"),
-    "BAI": ("BAI", "CAS MAVERICK F", "CAS"),
-    "SWEEP": ("CAP HEAVY", "CAP"),
-    "OCA_RUNWAY": ("RUNWAY_ATTACK", "RUNWAY_STRIKE", "STRIKE"),
-    "OCA_AIRCRAFT": ("OCA", "CAS MAVERICK F", "CAS"),
-}
-
-PLANE_PAYLOAD_OVERRIDES: Dict[Type[PlaneType], Dict[Type[Task], str]] = {
-    B_1B: COMMON_OVERRIDE,
-    B_52H: COMMON_OVERRIDE,
-    F_117A: COMMON_OVERRIDE,
-    F_15E: COMMON_OVERRIDE,
-    FA_18C_hornet: {
-        CAP: "CAP HEAVY",
-        Intercept: "CAP HEAVY",
-        CAS: "CAS MAVERICK F",
-        PinpointStrike: "STRIKE",
-        SEAD: "SEAD",
-        AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE",
-        Escort: "CAP HEAVY",
-        FighterSweep: "CAP HEAVY",
-    },
-    F_A_18C: {
-        CAP: "CAP HEAVY",
-        Intercept: "CAP HEAVY",
-        CAS: "CAS MAVERICK F",
-        PinpointStrike: "STRIKE",
-        SEAD: "SEAD",
-        AntishipStrike: "ANTISHIP",
-        GroundAttack: "STRIKE",
-        Escort: "CAP HEAVY",
-        FighterSweep: "CAP HEAVY",
-    },
-    Tu_160: {
-        PinpointStrike: "Kh-65*12",
-    },
-    Tu_22M3: COMMON_OVERRIDE,
-    Tu_95MS: COMMON_OVERRIDE,
-    A_10A: COMMON_OVERRIDE,
-    A_10C: COMMON_OVERRIDE,
-    A_10C_2: COMMON_OVERRIDE,
-    AV8BNA: COMMON_OVERRIDE,
-    C_101CC: COMMON_OVERRIDE,
-    F_5E_3: COMMON_OVERRIDE,
-    F_14A_135_GR: COMMON_OVERRIDE,
-    F_14B: COMMON_OVERRIDE,
-    F_15C: COMMON_OVERRIDE,
-    F_22A: COMMON_OVERRIDE,
-    F_16C_50: COMMON_OVERRIDE,
-    JF_17: COMMON_OVERRIDE,
-    M_2000C: COMMON_OVERRIDE,
-    MiG_15bis: COMMON_OVERRIDE,
-    MiG_19P: COMMON_OVERRIDE,
-    MiG_21Bis: COMMON_OVERRIDE,
-    AJS37: COMMON_OVERRIDE,
-    Su_25T: COMMON_OVERRIDE,
-    Su_25: COMMON_OVERRIDE,
-    Su_27: COMMON_OVERRIDE,
-    Su_33: COMMON_OVERRIDE,
-    MiG_29A: COMMON_OVERRIDE,
-    MiG_29G: COMMON_OVERRIDE,
-    MiG_29S: COMMON_OVERRIDE,
-    Su_24M: COMMON_OVERRIDE,
-    Su_30: COMMON_OVERRIDE,
-    Su_34: COMMON_OVERRIDE,
-    Su_57: COMMON_OVERRIDE,
-    MiG_23MLD: COMMON_OVERRIDE,
-    MiG_27K: COMMON_OVERRIDE,
-    Tornado_GR4: COMMON_OVERRIDE,
-    Tornado_IDS: COMMON_OVERRIDE,
-    Mirage_2000_5: COMMON_OVERRIDE,
-    MiG_31: COMMON_OVERRIDE,
-    S_3B: COMMON_OVERRIDE,
-    SA342M: COMMON_OVERRIDE,
-    SA342L: COMMON_OVERRIDE,
-    SA342Mistral: COMMON_OVERRIDE,
-    Mi_8MT: COMMON_OVERRIDE,
-    Mi_24V: COMMON_OVERRIDE,
-    Mi_28N: COMMON_OVERRIDE,
-    Ka_50: COMMON_OVERRIDE,
-    L_39ZA: COMMON_OVERRIDE,
-    L_39C: COMMON_OVERRIDE,
-    Su_17M4: COMMON_OVERRIDE,
-    F_4E: COMMON_OVERRIDE,
-    P_47D_30: COMMON_OVERRIDE,
-    P_47D_30bl1: COMMON_OVERRIDE,
-    P_47D_40: COMMON_OVERRIDE,
-    B_17G: COMMON_OVERRIDE,
-    P_51D: COMMON_OVERRIDE,
-    P_51D_30_NA: COMMON_OVERRIDE,
-    FW_190D9: COMMON_OVERRIDE,
-    FW_190A8: COMMON_OVERRIDE,
-    Bf_109K_4: COMMON_OVERRIDE,
-    I_16: COMMON_OVERRIDE,
-    SpitfireLFMkIXCW: COMMON_OVERRIDE,
-    SpitfireLFMkIX: COMMON_OVERRIDE,
-    A_20G: COMMON_OVERRIDE,
-    A_4E_C: COMMON_OVERRIDE,
-    MB_339PAN: COMMON_OVERRIDE,
-    OH_58D: COMMON_OVERRIDE,
-    F_16A: COMMON_OVERRIDE,
-    MQ_9_Reaper: COMMON_OVERRIDE,
-    RQ_1A_Predator: COMMON_OVERRIDE,
-    WingLoong_I: COMMON_OVERRIDE,
-    AH_1W: COMMON_OVERRIDE,
-    AH_64D: COMMON_OVERRIDE,
-    AH_64A: COMMON_OVERRIDE,
-    SH_60B: COMMON_OVERRIDE,
-    Hercules: COMMON_OVERRIDE,
-    F_86F_Sabre: COMMON_OVERRIDE,
-    Su_25TM: {
-        SEAD: "Kh-31P*2_Kh-25ML*4_R-73*2_L-081_MPS410",
-    },
-}
-
-"""
 Aircraft livery overrides. Syntax as follows:
 
     `Identifier`: "LiveryName",
@@ -1349,7 +1274,8 @@ REWARDS = {
     "fuel": 2,
     "ammo": 2,
     "farp": 1,
-    "fob": 1,
+    # TODO: Should generate no cash once they generate units.
+    # https://github.com/dcs-liberation/dcs_liberation/issues/1036
     "factory": 10,
     "comms": 10,
     "oil": 10,
@@ -1442,11 +1368,11 @@ def unit_task(unit: UnitType) -> Optional[Task]:
     return None
 
 
-def find_unittype(for_task: Task, country_name: str) -> List[Type[UnitType]]:
+def find_unittype(for_task: Type[MainTask], country_name: str) -> List[Type[UnitType]]:
     return [x for x in UNIT_BY_TASK[for_task] if x in FACTIONS[country_name].units]
 
 
-MANPADS: List[VehicleType] = [
+MANPADS: List[Type[VehicleType]] = [
     AirDefence.MANPADS_SA_18_Igla_Grouse,
     AirDefence.MANPADS_SA_18_Igla_S_Grouse,
     AirDefence.MANPADS_Stinger,
@@ -1521,7 +1447,7 @@ def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> s
     default_value = None
     faction_value = None
     with UNITINFOTEXT_PATH.open("r", encoding="utf-8") as fdata:
-        data = json.load(fdata, encoding="utf-8")
+        data = json.load(fdata)
     type_exists = data.get(original_name)
     if type_exists is not None:
         for faction in type_exists:
@@ -1556,6 +1482,13 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return helicopter_map[name]
     else:
         return None
+
+
+def flying_type_from_name(name: str) -> Optional[Type[FlyingType]]:
+    unit_type = plane_map.get(name)
+    if unit_type is not None:
+        return unit_type
+    return helicopter_map.get(name)
 
 
 def unit_type_of(unit: Unit) -> UnitType:
@@ -1702,3 +1635,39 @@ F_16C_50.Liveries = DefaultLiveries
 P_51D_30_NA.Liveries = DefaultLiveries
 Ju_88A4.Liveries = DefaultLiveries
 B_17G.Liveries = DefaultLiveries
+
+# List of airframes that rely on their gun as a primary weapon. We confiscate bullets
+# from most AI air-to-ground missions since they aren't smart enough to RTB when they're
+# out of everything other than bullets (DCS does not have an all-but-gun winchester
+# option) and we don't want to be attacking fully functional Tors with a Vulcan.
+#
+# These airframes are the exceptions. They probably should be using their gun regardless
+# of the mission type.
+GUN_RELIANT_AIRFRAMES: List[Type[FlyingType]] = [
+    AH_1W,
+    AH_64A,
+    AH_64D,
+    A_10A,
+    A_10C,
+    A_10C_2,
+    A_20G,
+    Bf_109K_4,
+    FW_190A8,
+    FW_190D9,
+    F_86F_Sabre,
+    Ju_88A4,
+    Ka_50,
+    MiG_15bis,
+    MiG_19P,
+    Mi_24V,
+    Mi_28N,
+    P_47D_30,
+    P_47D_30bl1,
+    P_47D_40,
+    P_51D,
+    P_51D_30_NA,
+    SpitfireLFMkIX,
+    SpitfireLFMkIXCW,
+    Su_25,
+    Su_25T,
+]

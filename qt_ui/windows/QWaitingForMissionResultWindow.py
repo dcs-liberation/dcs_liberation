@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import json
 import os
-import timeit
-from datetime import timedelta
+from typing import Sized
 
 from PySide2 import QtCore
 from PySide2.QtCore import QObject, Qt, Signal
@@ -24,6 +23,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from game.debriefing import Debriefing, wait_for_debriefing
 from game.game import Event, Game, logging
 from game.persistency import base_path
+from game.profiling import logged_duration
 from game.unitmap import UnitMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
@@ -132,32 +132,50 @@ class QWaitingForMissionResultWindow(QDialog):
         self.layout.addLayout(self.gridLayout, 1, 0)
         self.setLayout(self.layout)
 
+    @staticmethod
+    def add_update_row(description: str, count: int, layout: QGridLayout) -> None:
+        row = layout.rowCount()
+        layout.addWidget(QLabel(f"<b>{description}</b>"), row, 0)
+        layout.addWidget(QLabel(f"{count}"), row, 1)
+
     def updateLayout(self, debriefing: Debriefing) -> None:
         updateBox = QGroupBox("Mission status")
-        updateLayout = QGridLayout()
-        updateBox.setLayout(updateLayout)
+        update_layout = QGridLayout()
+        updateBox.setLayout(update_layout)
         self.debriefing = debriefing
 
-        updateLayout.addWidget(QLabel("<b>Aircraft destroyed</b>"), 0, 0)
-        updateLayout.addWidget(
-            QLabel(str(len(list(debriefing.air_losses.losses)))), 0, 1
+        self.add_update_row(
+            "Aircraft destroyed", len(list(debriefing.air_losses.losses)), update_layout
         )
-
-        updateLayout.addWidget(QLabel("<b>Front line units destroyed</b>"), 1, 0)
-        updateLayout.addWidget(
-            QLabel(str(len(list(debriefing.front_line_losses)))), 1, 1
+        self.add_update_row(
+            "Front line units destroyed",
+            len(list(debriefing.front_line_losses)),
+            update_layout,
         )
-
-        updateLayout.addWidget(QLabel("<b>Other ground units destroyed</b>"), 2, 0)
-        updateLayout.addWidget(
-            QLabel(str(len(list(debriefing.ground_object_losses)))), 2, 1
+        self.add_update_row(
+            "Convoy units destroyed", len(list(debriefing.convoy_losses)), update_layout
         )
-
-        updateLayout.addWidget(QLabel("<b>Buildings destroyed</b>"), 3, 0)
-        updateLayout.addWidget(QLabel(str(len(list(debriefing.building_losses)))), 3, 1)
-
-        updateLayout.addWidget(QLabel("<b>Base Capture Events</b>"), 4, 0)
-        updateLayout.addWidget(QLabel(str(len(debriefing.base_capture_events))), 4, 1)
+        self.add_update_row(
+            "Shipping cargo destroyed",
+            len(list(debriefing.cargo_ship_losses)),
+            update_layout,
+        )
+        self.add_update_row(
+            "Airlift cargo destroyed",
+            sum(len(loss.cargo) for loss in debriefing.airlift_losses),
+            update_layout,
+        )
+        self.add_update_row(
+            "Ground units lost at objective areas",
+            len(list(debriefing.ground_object_losses)),
+            update_layout,
+        )
+        self.add_update_row(
+            "Buildings destroyed", len(list(debriefing.building_losses)), update_layout
+        )
+        self.add_update_row(
+            "Base capture events", len(debriefing.base_captures), update_layout
+        )
 
         # Clear previous content of the window
         for i in reversed(range(self.gridLayout.count())):
@@ -188,14 +206,12 @@ class QWaitingForMissionResultWindow(QDialog):
         )
 
     def process_debriefing(self):
-        start = timeit.default_timer()
-        self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
-        self.game.pass_turn()
+        with logged_duration("Turn processing"):
+            self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
+            self.game.pass_turn()
 
-        GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
-        GameUpdateSignal.get_instance().updateGame(self.game)
-        end = timeit.default_timer()
-        logging.info("Turn processing took %s", timedelta(seconds=end - start))
+            GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
+            GameUpdateSignal.get_instance().updateGame(self.game)
         self.close()
 
     def debriefing_directory_location(self) -> str:

@@ -134,6 +134,7 @@ RADIOS: List[Radio] = [
     Radio("AN/ARC-51BX", MHz(225), MHz(400), step=kHz(50)),
     Radio("AN/ARC-131", MHz(30), MHz(76), step=kHz(50)),
     Radio("AN/ARC-134", MHz(116), MHz(150), step=kHz(25)),
+    Radio("R&S Series 6000", MHz(100), MHz(156), step=kHz(25)),
 ]
 
 
@@ -206,7 +207,7 @@ class RadioRegistry:
         except StopIteration:
             # In the event of too many channel users, fail gracefully by reusing
             # the last channel.
-            # https://github.com/Khopa/dcs_liberation/issues/598
+            # https://github.com/dcs-liberation/dcs_liberation/issues/598
             channel = radio.last_channel
             logging.warning(
                 f"No more free channels for {radio.name}. Reusing {channel}."

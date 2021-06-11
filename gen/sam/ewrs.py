@@ -5,9 +5,16 @@ from gen.sam.group_generator import GroupGenerator
 
 
 class EwrGenerator(GroupGenerator):
-    @property
-    def unit_type(self) -> VehicleType:
-        raise NotImplementedError
+    unit_type: VehicleType
+
+    @classmethod
+    def name(cls) -> str:
+        return cls.unit_type.name
+
+    @staticmethod
+    def price() -> int:
+        # TODO: Differentiate sites.
+        return 20
 
     def generate(self) -> None:
         self.add_unit(
@@ -87,7 +94,7 @@ class StraightFlushGenerator(EwrGenerator):
     This is the SA-6 search/track radar, but used as an early warning radar.
     """
 
-    unit_type = AirDefence.SAM_SA_6_Kub_Long_Track_STR
+    unit_type = AirDefence.SAM_SA_6_Kub_Straight_Flush_STR
 
 
 class HawkEwrGenerator(EwrGenerator):

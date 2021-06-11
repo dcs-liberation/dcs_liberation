@@ -3,6 +3,7 @@
   "name": "Germany 1990",
   "authors": "Khopa",
   "description": "<p>1990s reunited Germany.</p>",
+  "locales": ["de_DE"],
   "aircrafts": [
     "MiG_29G",
     "Tornado_IDS",
@@ -21,7 +22,7 @@
   "frontline_units": [
     "APC_TPz_Fuchs",
     "MBT_Leopard_1A3",
-    "MBT_Leopard_2",
+    "MBT_Leopard_2A4",
     "IFV_Marder",
     "SPAAA_Gepard"
   ],
@@ -61,7 +62,8 @@
   "helicopter_carrier_names": [
   ],
   "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
+    "OliverHazardPerryGroupGenerator",
+    "LaCombattanteIIGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

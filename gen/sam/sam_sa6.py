@@ -18,7 +18,7 @@ class SA6Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_SA_6_Kub_Long_Track_STR,
+            AirDefence.SAM_SA_6_Kub_Straight_Flush_STR,
             "STR",
             self.position.x,
             self.position.y,

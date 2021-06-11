@@ -20,6 +20,7 @@ from gen.flights.flightplan import (
     PlanningError,
     StrikeFlightPlan,
 )
+from gen.flights.loadouts import Loadout
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import (
     QFlightWaypointList,
 )
@@ -29,6 +30,8 @@ from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow i
 
 
 class QFlightWaypointTab(QFrame):
+    loadout_changed = Signal()
+
     def __init__(self, game: Game, package: Package, flight: Flight):
         super(QFlightWaypointTab, self).__init__()
         self.game = game
@@ -161,6 +164,9 @@ class QFlightWaypointTab(QFrame):
                 QMessageBox.critical(
                     self, "Could not recreate flight", str(ex), QMessageBox.Ok
                 )
+            if not self.flight.loadout.is_custom:
+                self.flight.loadout = Loadout.default_for(self.flight)
+                self.loadout_changed.emit()
             self.flight_waypoint_list.update_list()
             self.on_change()
 

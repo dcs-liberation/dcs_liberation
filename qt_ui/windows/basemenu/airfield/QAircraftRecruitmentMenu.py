@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 from dcs.helicopters import helicopter_map
-from dcs.task import CAP, CAS, AWACS
+from dcs.task import CAP, CAS, AWACS, Transport
 from dcs.unittype import FlyingType, UnitType
 
 from game import db
@@ -34,7 +34,6 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         # Determine maximum number of aircrafts that can be bought
         self.set_maximum_units(self.cp.total_aircraft_parking)
-        self.set_recruitable_types([CAP, CAS])
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
@@ -46,30 +45,26 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
     def init_ui(self):
         main_layout = QVBoxLayout()
 
-        tasks = [CAP, CAS, AWACS]
+        tasks = [CAP, CAS, AWACS, Transport]
 
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
         row = 0
 
         unit_types: Set[Type[FlyingType]] = set()
-        for task in tasks:
-            units = db.find_unittype(task, self.game_model.game.player_name)
-            if not units:
+        for unit_type in self.game_model.game.player_faction.aircrafts:
+            if not issubclass(unit_type, FlyingType):
+                raise RuntimeError(f"Non-flying aircraft found in faction: {unit_type}")
+            if self.cp.is_carrier and unit_type not in db.CARRIER_CAPABLE:
                 continue
-            for unit in units:
-                if not issubclass(unit, FlyingType):
-                    continue
-                if self.cp.is_carrier and unit not in db.CARRIER_CAPABLE:
-                    continue
-                if self.cp.is_lha and unit not in db.LHA_CAPABLE:
-                    continue
-                if (
-                    self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
-                    and unit not in helicopter_map.values()
-                ):
-                    continue
-                unit_types.add(unit)
+            if self.cp.is_lha and unit_type not in db.LHA_CAPABLE:
+                continue
+            if (
+                self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
+                and unit_type not in helicopter_map.values()
+            ):
+                continue
+            unit_types.add(unit_type)
 
         sorted_units = sorted(
             unit_types,
@@ -78,12 +73,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
             ),
         )
         for unit_type in sorted_units:
-            row = self.add_purchase_row(
-                unit_type,
-                task_box_layout,
-                row,
-                disabled=not self.cp.can_operate(unit_type),
-            )
+            row = self.add_purchase_row(unit_type, task_box_layout, row)
             stretch = QVBoxLayout()
             stretch.addStretch()
             task_box_layout.addLayout(stretch, row, 0)
@@ -97,6 +87,22 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addLayout(self.hangar_status)
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
+
+    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+        if not super().enable_purchase(unit_type):
+            return False
+        if not issubclass(unit_type, FlyingType):
+            return False
+        if not self.cp.can_operate(unit_type):
+            return False
+        return True
+
+    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+        if not issubclass(unit_type, FlyingType):
+            return False
+        if not self.cp.can_operate(unit_type):
+            return False
+        return True
 
     def buy(self, unit_type):
         if self.maximum_units > 0:
@@ -158,16 +164,16 @@ class QHangarStatus(QHBoxLayout):
         self.setAlignment(Qt.AlignLeft)
 
     def update_label(self) -> None:
-        next_turn = self.control_point.expected_aircraft_next_turn(self.game_model.game)
+        next_turn = self.control_point.allocated_aircraft(self.game_model.game)
         max_amount = self.control_point.total_aircraft_parking
 
-        components = [f"{next_turn.present} present"]
-        if next_turn.ordered > 0:
-            components.append(f"{next_turn.ordered} purchased")
-        elif next_turn.ordered < 0:
-            components.append(f"{-next_turn.ordered} sold")
+        components = [f"{next_turn.total_present} present"]
+        if next_turn.total_ordered > 0:
+            components.append(f"{next_turn.total_ordered} purchased")
+        elif next_turn.total_ordered < 0:
+            components.append(f"{-next_turn.total_ordered} sold")
 
-        transferring = next_turn.transferring
+        transferring = next_turn.total_transferring
         if transferring > 0:
             components.append(f"{transferring} transferring in")
         if transferring < 0:
