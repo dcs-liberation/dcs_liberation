@@ -1,0 +1,17 @@
+description: "The Sukhoi Su-30 (Russian: \u0421\u0443\u0445\u043E\u0439 \u0421\u0443\
+  -30; NATO reporting name: Flanker-C/G/H) is a twin-engine, two-seat supermaneuverable\
+  \ fighter aircraft developed in the Soviet Union by Russia's Sukhoi Aviation Corporation.\
+  \ It is a multirole fighter for all-weather, air-to-air and air-to-surface deep\
+  \ interdiction missions. 630 numbers have been build."
+introduced: 1996
+manufacturer: Sukhoi
+origin: USSR/Russia
+price: 24
+role: Multirole Fighter
+variants:
+  Su-30 Flanker-C: {}
+  Su-30MKK Flanker-G:
+    introduced: 2000
+    manufacturer: Sukhoi
+    origin: USSR/Russia
+    role: Multirole Fighter

@@ -3,22 +3,24 @@
   "name": "Israel 2000",
   "authors": "Khopa",
   "description": "<p>Modern Israeli faction.</p>",
-  "locales": ["he_IL"],
+  "locales": [
+    "he_IL"
+  ],
   "aircrafts": [
-    "F_4E",
-    "F_15C",
-    "F_15E",
-    "F_16C_50",
-    "UH_1H",
-    "AH_1W",
-    "AH_64D"
+    "AH-1W SuperCobra",
+    "AH-64D Apache Longbow",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-4E Phantom II",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "APC_M113",
@@ -48,23 +50,16 @@
   "ewrs": [
     "HawkEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
-  "requirements": {
-  },
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
+  "requirements": {},
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

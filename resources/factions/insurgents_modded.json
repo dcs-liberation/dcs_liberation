@@ -3,8 +3,7 @@
   "name": "Insurgents (Modded)",
   "authors": "Khopa",
   "description": "<p>Insurgents faction using the modded insurgents units from the frenchpack mods.</p>",
-  "aircrafts": [
-  ],
+  "aircrafts": [],
   "frontline_units": [
     "DIM__TOYOTA_BLUE",
     "DIM__TOYOTA_DESERT",

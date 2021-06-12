@@ -1,0 +1,13 @@
+carrier_capable: true
+description: The UH-1 Iroquois, better known as the Huey, is one of the most iconic
+  helicopters in the world. Indispensable in the Vietnam War, the Huey continues to
+  serve in both military and civilian roles around the globe today.
+introduced: 1967
+lha_capable: true
+manufacturer: Bell
+origin: USA
+price: 4
+role: Transport/Light Attack
+variants:
+  UH-1D Iroquois: {}
+  UH-1H Iroquois: {}

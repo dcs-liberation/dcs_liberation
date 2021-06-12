@@ -1,0 +1,15 @@
+description: The M-2000C is a multi-role, French-designed, 4th generation fighter.
+  It was designed in the 1970s as a lightweight fighter and in excess of 600 M-2000C
+  aircraft have been built. The M2000C is a single-engine fighter will a low-set delta
+  wing with no horizontal tail. It has excellent maneuverability given its relaxed
+  stability and fly-by-wire flight control system. The M2000C also includes a multi-mode
+  RDI radar that is capable tracking and engaging targets at beyond visual ranges.
+  In addition to engaging other aircraft with cannon and missiles, the M2000C can
+  also engage ground targets with cannon, rockets and bombs.
+introduced: 1983
+manufacturer: Dassault
+origin: France
+price: 16
+role: Multirole Fighter
+variants:
+  Mirage 2000C: {}

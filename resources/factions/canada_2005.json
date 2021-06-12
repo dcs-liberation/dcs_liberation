@@ -3,18 +3,21 @@
   "name": "Canada 2005",
   "authors": "Khopa",
   "description": "<p>Canada in the 2000s, an F/A-18C Hornet focused faction.</p>",
-  "locales": ["en_US", "fr_CA"],
+  "locales": [
+    "en_US",
+    "fr_CA"
+  ],
   "aircrafts": [
-    "FA_18C_hornet",
-    "UH_1H",
-    "AH_1W"
+    "AH-1W SuperCobra",
+    "CF-188 Hornet",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_Leopard_1A3",
@@ -25,8 +28,7 @@
     "IFV_Warrior",
     "SAM_Avenger__Stinger"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
     "Truck_M818_6x6"
   ],
@@ -42,10 +44,8 @@
   "ewrs": [
     "HawkEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
   "destroyers": [
     "DDG_Arleigh_Burke_IIa"
   ],
@@ -53,17 +53,15 @@
     "CG_Ticonderoga"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
-    "FA_18C_hornet": [
+    "CF-188 Hornet": [
       "Canada 409th Squadron",
       "Canada 425th Squadron"
     ]

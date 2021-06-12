@@ -3,17 +3,19 @@
   "name": "Greece 2005",
   "authors": "Malakhit",
   "description": "<p>Hellenic army in the mid/late 2000s.</p>",
-  "locales": ["el_GR"],
+  "locales": [
+    "el_GR"
+  ],
   "aircrafts": [
-    "F_16C_50",
-    "F_4E",
-    "M_2000C",
-    "Mirage_2000_5",
-    "UH_1H",
-    "AH_64A"
+    "AH-64A Apache",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-4E Phantom II",
+    "Mirage 2000-5",
+    "Mirage 2000C",
+    "UH-1H Iroquois"
   ],
   "tankers": [
-    "KC130"
+    "KC-130"
   ],
   "frontline_units": [
     "MBT_Leopard_2A4",
@@ -48,8 +50,8 @@
     "FlatFaceGenerator"
   ],
   "navy_generators": [
-     "LaCombattanteIIGroupGenerator"
+    "LaCombattanteIIGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

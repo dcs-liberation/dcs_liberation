@@ -1,0 +1,18 @@
+description: The MiG-21bis is a delta wing, supersonic, fighter-interceptor jet aircraft.
+  Much like the AK-47 became the everyman's rifle, the MiG-21 has been operated by
+  more than 40 countries worldwide, and has enjoyed the longest production run of
+  any modern jet fighter to date. The MiG-21, in all of its variants, has fought in
+  wars stretching all the way from the Vietnam War in the 1960's to the modern day
+  Syrian Civil War. Owing to its unique blend of versatility, ruggedness and maintainability,
+  the MiG-21 remains in active service to this very day.
+introduced: 1972
+manufacturer: Mikoyan-Gurevich
+origin: USSR/Russia
+price: 8
+role: Fighter
+variants:
+  J-7B:
+    introduced: 1992
+    manufacturer: Chengdu
+    origin: China
+  MiG-21bis Fishbed-N: {}

@@ -3,17 +3,19 @@
   "name": "United Kingdom 1944",
   "authors": "Khopa",
   "description": "<p>United Kingdom army in 1944.</p>",
-  "locales": ["en_UK"],
+  "locales": [
+    "en_UK"
+  ],
   "aircrafts": [
-    "P_51D",
-    "P_51D_30_NA",
-    "P_47D_30",
-    "P_47D_30bl1",
-    "P_47D_40",
-    "SpitfireLFMkIX",
-    "SpitfireLFMkIXCW",
-    "A_20G",
-    "B_17G"
+    "Boston Mk.III",
+    "Fortress Mk.III",
+    "Mustang Mk.IV (Early)",
+    "Mustang Mk.IV (Late)",
+    "Spitfire LF Mk IX",
+    "Spitfire LF Mk IX (Clipped Wings)",
+    "Thunderbolt Mk.II (Early)",
+    "Thunderbolt Mk.II (Late)",
+    "Thunderbolt Mk.II (Mid)"
   ],
   "frontline_units": [
     "MT_M4A4_Sherman_Firefly",
@@ -26,8 +28,7 @@
     "LT_Mk_VII_Tetrarch",
     "AAA_Bofors_40mm"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
     "Truck_Bedford",
     "Truck_GMC_Jimmy_6x6_Truck"
@@ -39,21 +40,15 @@
     "AllyWW2FlakGenerator",
     "BoforsGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
   "requirements": {
     "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
   },
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "WW2LSTGroupGenerator"
   ],

@@ -3,20 +3,22 @@
   "name": "Italy 1990 (With MB339)",
   "authors": "Khopa",
   "description": "<p>Italy in the 90s, with the MB339 mod.</p>",
-  "locales": ["it_IT"],
+  "locales": [
+    "it_IT"
+  ],
   "aircrafts": [
-    "Tornado_IDS",
-    "AV8BNA",
-    "MB_339PAN",
-    "UH_1H",
-    "AH_1W"
+    "AH-1W SuperCobra",
+    "AV-8B Harrier II Night Attack",
+    "MB-339PAN",
+    "Tornado IDS",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_Leopard_1A3",
@@ -41,8 +43,7 @@
   "ewrs": [
     "HawkEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
+  "aircraft_carrier": [],
   "helicopter_carrier": [
     "LHA_1_Tarawa"
   ],
@@ -55,8 +56,7 @@
   "requirements": {
     "MB-339A/PAN by Frecce Tricolori Virtuali": "http://www.freccetricolorivirtuali.net/"
   },
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "Giuseppe Garibaldi",
     "Cavour"
@@ -65,5 +65,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

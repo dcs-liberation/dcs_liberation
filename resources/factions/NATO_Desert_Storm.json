@@ -4,35 +4,35 @@
   "authors": "Hawkmoon",
   "description": "<p>A faction to recreate the actual unit lineup during Desert Storm as closely as possible</p>",
   "aircrafts": [
-    "F_15C",
-    "F_14A_135_GR",
-    "F_14B",
-    "F_15E",
-    "F_16C_50",
-    "FA_18C_hornet",
-    "A_10A",
-    "AV8BNA",
-    "UH_1H",
-    "AH_64A",
-    "B_52H",
-    "B_1B",
-    "Tornado_IDS",
-    "F_4E",
-    "F_117A",	
-    "M_2000C",
-    "S_3B",
-    "SA342M",
-    "SA342L",
-    "SA342Mistral",
-    "OH_58D"
+    "A-10A Thunderbolt II",
+    "AH-64A Apache",
+    "AV-8B Harrier II Night Attack",
+    "B-1B Lancer",
+    "B-52H Stratofortress",
+    "F-117A Nighthawk",
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-14B Tomcat",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-4E Phantom II",
+    "F/A-18C Hornet (Lot 20)",
+    "Mirage 2000C",
+    "OH-58D Kiowa Warrior",
+    "S-3B Viking",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "SA 342M Gazelle Mistral",
+    "Tornado IDS",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A",
-    "E_2C"
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130",
+    "KC-130",
+    "KC-135 Stratotanker",
     "S-3B Tanker"
   ],
   "frontline_units": [
@@ -45,7 +45,7 @@
     "ATGM_HMMWV",
     "APC_TPz_Fuchs",
     "IFV_Warrior",
-    "MBT_Challenger_II",	
+    "MBT_Challenger_II",
     "MBT_M60A3_Patton",
     "SPG_Stryker_MGS",
     "SAM_Avenger__Stinger",
@@ -99,5 +99,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

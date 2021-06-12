@@ -3,18 +3,20 @@
   "name": "US Navy 1985",
   "authors": "HerrTom",
   "description": "<p>Highway to the Danger Zone! For Tomcat lovers.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "AH_1W",
-    "F_4E",
-    "F_14A_135_GR",
-    "F_14B",
-    "S_3B",
-    "SH_60B",
-    "UH_1H"
+    "AH-1W SuperCobra",
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-14B Tomcat",
+    "F-4E Phantom II",
+    "S-3B Viking",
+    "SH-60B Seahawk",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
     "S-3B Tanker"
@@ -75,14 +77,14 @@
   "requirements": {},
   "doctrine": "coldwar",
   "liveries_overrides": {
-    "FA_18C_hornet": [
-      "VFA-37",
+    "F/A-18C Hornet (Lot 20)": [
       "VFA-106",
       "VFA-113",
       "VFA-122",
       "VFA-131",
       "VFA-192",
       "VFA-34",
+      "VFA-37",
       "VFA-83",
       "VFA-87",
       "VFA-97"

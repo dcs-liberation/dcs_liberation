@@ -1,0 +1,20 @@
+carrier_capable: true
+description: The Sikorsky SH-60/MH-60 Seahawk (or Sea Hawk) is a twin turboshaft engine,
+  multi-mission United States Navy helicopter based on the United States Army UH-60
+  Black Hawk and a member of the Sikorsky S-70 family. The most significant modifications
+  are the folding main rotor and a hinged tail to reduce its footprint aboard ships.
+  The U.S. Navy uses the H-60 airframe under the model designations SH-60B, SH-60F,
+  HH-60H, MH-60R, and MH-60S. Able to deploy aboard any air-capable frigate, destroyer,
+  cruiser, fast combat support ship, amphibious assault ship, Littoral combat ship
+  or aircraft carrier, the Seahawk can handle anti-submarine warfare (ASW), anti-surface
+  warfare (ASUW), naval special warfare (NSW) insertion, search and rescue (SAR),
+  combat search and rescue (CSAR), vertical replenishment (VERTREP), and medical evacuation
+  (MEDEVAC).
+introduced: 1984
+lha_capable: true
+manufacturer: Sikorsky
+origin: USA
+price: 6
+role: Transport/Anti-Ship
+variants:
+  SH-60B Seahawk: {}

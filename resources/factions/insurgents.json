@@ -3,8 +3,7 @@
   "name": "Insurgents",
   "authors": "Khopa",
   "description": "<p>Insurgents faction.</p>",
-  "aircrafts": [
-  ],
+  "aircrafts": [],
   "frontline_units": [
     "Scout_Cobra",
     "APC_MTLB",
