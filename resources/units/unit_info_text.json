@@ -1635,6 +1635,16 @@
             "year-of-variant-introduction": "1970"
         }
     }],
+    "VAB_Mephisto": [{
+        "default": {
+            "name": "VAB Mephisto",
+            "text": "The VAB HOT Mephisto is a wheeled armoured vehicle personnel carrier VAB fitted with anti-tank missile launcher turret.",
+            "country-of-origin": "France",
+            "manufacturer": "GIAT Industries",
+            "role": "ATGM Vehicle",
+            "year-of-variant-introduction": "1990"
+        }
+    }],
     "VAB_HOT": [{
         "default": {
             "name": "VAB Mephisto",
