@@ -1,0 +1,28 @@
+description: 'The MiG-29 "Fulcrum" is a Russian-designed, twin-engine, supersonic
+  fighter. First operational in the early 1980s, the Fulcrum is a "light weight" fighter,
+  comparable to the American F/A-18 Hornet and F-16. Designed to work in conjunction
+  with the larger Su-27 Flanker, the MiG-29 is armed with an internal 30mm cannon
+  and both infrared and radar guided air-to-air missiles. For air-to-ground tasks,
+  the MiG-29 can be armed with a large array of unguided bombs and rockets.
+
+
+  In addition to a sophisticated pulse doppler radar, the MiG-29 is also equipped
+  with a passive Infrared Search and Track (IRST) sensor that allows the Fulcrum to
+  detect and target enemy aircraft just based on target infrared emissions. This allows
+  the MiG-29 to make stealthy attacks with no warning!
+
+
+  The Fulcrum is a highly-maneuverable fighter in a dogfight, and when paired with
+  the helmet mounted sight and the AA-11 "Archer" air-to-air missile, it is a very
+  lethal adversary.
+
+
+  The MiG-29 has also been widely exported and has served in many countries that include
+  Germany, Iran, Ukraine, and Poland.'
+introduced: 1993
+manufacturer: Mikoyan
+origin: USSR/Russia
+price: 18
+role: Multirole Fighter
+variants:
+  MiG-29G Fulcrum-A: {}

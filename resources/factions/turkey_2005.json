@@ -3,19 +3,21 @@
   "name": "Turkey 2005",
   "authors": "Khopa",
   "description": "<p>Turkish army in the mid/late 2000s.</p>",
-  "locales": ["tr_TR"],
+  "locales": [
+    "tr_TR"
+  ],
   "aircrafts": [
-    "F_16C_50",
-    "F_4E",
-    "UH_1H",
-    "AH_1W"
+    "AH-1W SuperCobra",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-4E Phantom II",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_Leopard_2A4_Trs",
@@ -51,5 +53,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

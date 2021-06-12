@@ -1,0 +1,12 @@
+description: The F-15 has often been labeled as the greatest U.S. fighter aircraft
+  from the 1970s until the early 21st century. The F-15C is a pure fighter with outstanding
+  performance and has scored over 100 air-to-air victories without suffering any confirmed
+  losses.
+introduced: 1978
+manufacturer: McDonnell Douglas
+origin: USA
+price: 22
+role: Air-Superiority Fighter
+variants:
+  F-15C Eagle: {}
+  F-15J Eagle: {}

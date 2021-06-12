@@ -3,29 +3,31 @@
   "name": "Russia 1990",
   "authors": "Khopa",
   "description": "<p>Soviet/Russian army in the 90s.</p>",
-  "locales": ["ru_RU"],
+  "locales": [
+    "ru_RU"
+  ],
   "aircrafts": [
-    "MiG_25PD",
-    "MiG_29S",
-    "MiG_31",
-    "Su_24M",
-    "Su_25",
-    "Su_25T",
-    "Su_27",
-    "Su_33",
-    "Ka_50",
-    "Mi_8MT",
-    "Mi_24V",
-    "Tu_22M3",
-    "Tu_95MS",
-    "Tu_142",
-    "Tu_160"
+    "Ka-50 Hokum",
+    "Mi-24V Hind-E",
+    "Mi-8MTV2 Hip",
+    "MiG-25PD Foxbat-E",
+    "MiG-29S Fulcrum-C",
+    "MiG-31 Foxhound",
+    "Su-24M Fencer-D",
+    "Su-25 Frogfoot",
+    "Su-25T Frogfoot",
+    "Su-27 Flanker-B",
+    "Su-33 Flanker-D",
+    "Tu-142 Bear-F",
+    "Tu-160 Blackjack",
+    "Tu-22M3 Backfire-C",
+    "Tu-95MS Bear-H"
   ],
   "awacs": [
-    "A_50"
+    "A-50"
   ],
   "tankers": [
-    "IL_78M"
+    "IL-78M"
   ],
   "frontline_units": [
     "APC_BTR_80",
@@ -74,10 +76,8 @@
   "aircraft_carrier": [
     "CV_1143_5_Admiral_Kuznetsov"
   ],
-  "helicopter_carrier": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "helicopter_carrier": [],
+  "helicopter_carrier_names": [],
   "destroyers": [
     "Frigate_1135M_Rezky"
   ],
@@ -93,5 +93,5 @@
     "RussianNavyGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

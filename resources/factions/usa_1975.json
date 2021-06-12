@@ -3,24 +3,26 @@
   "name": "USA 1975",
   "authors": "Khopa",
   "description": "<p>US army in the 70s at the end of the war in Vietnam.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "B_52H",
-    "CH_47D",
-    "CH_53E",
-    "C_130",
-    "F_14A_135_GR",
-    "F_4E",
-    "F_5E_3",
-    "S_3B",
-    "UH_1H"
+    "B-52H Stratofortress",
+    "C-130",
+    "CH-47D",
+    "CH-53E",
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-4E Phantom II",
+    "F-5E Tiger II",
+    "S-3B Viking",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_M60A3_Patton",

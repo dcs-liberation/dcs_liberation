@@ -3,36 +3,38 @@
   "name": "USA 1990",
   "authors": "Khopa",
   "description": "<p>US army in the 90s, Gulf War/Desert Storm.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "AH_64A",
-    "AV8BNA",
-    "A_10A",
-    "B_1B",
-    "B_52H",
-    "CH_47D",
-    "CH_53E",
-    "C_130",
-    "FA_18C_hornet",
-    "F_117A",
-    "F_14A_135_GR",
-    "F_14B",
-    "F_15C",
-    "F_15E",
-    "F_16C_50",
-    "SH_60B",
-    "SH_60B",
-    "S_3B",
-    "UH_1H",
-    "UH_60A"
+    "A-10A Thunderbolt II",
+    "AH-64A Apache",
+    "AV-8B Harrier II Night Attack",
+    "B-1B Lancer",
+    "B-52H Stratofortress",
+    "C-130",
+    "CH-47D",
+    "CH-53E",
+    "F-117A Nighthawk",
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-14B Tomcat",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F/A-18C Hornet (Lot 20)",
+    "S-3B Viking",
+    "SH-60B Seahawk",
+    "SH-60B Seahawk",
+    "UH-1H Iroquois",
+    "UH-60A"
   ],
   "awacs": [
-    "E_3A",
-    "E_2C"
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130",
+    "KC-130",
+    "KC-135 Stratotanker",
     "S-3B Tanker"
   ],
   "frontline_units": [
@@ -100,16 +102,16 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
-    "FA_18C_hornet": [
-      "VFA-37",
+    "F/A-18C Hornet (Lot 20)": [
       "VFA-106",
       "VFA-113",
       "VFA-122",
       "VFA-131",
       "VFA-192",
       "VFA-34",
+      "VFA-37",
       "VFA-83",
       "VFA-87",
       "VFA-97",

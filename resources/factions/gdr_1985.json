@@ -3,15 +3,17 @@
   "name": "German Democratic Republic 1985",
   "authors": "Colonel Panic",
   "description": "<p>The German Democratic Republic in 1985.</p>",
-  "locales": ["de_DE"],
+  "locales": [
+    "de_DE"
+  ],
   "doctrine": "coldwar",
   "aircrafts": [
-    "MiG_21Bis",
-    "MiG_23MLD",
-    "Su_17M4",
-    "L_39ZA",
-    "Mi_8MT",
-    "Mi_24V"
+    "L-39ZA Albatros",
+    "Mi-24V Hind-E",
+    "Mi-8MTV2 Hip",
+    "MiG-21bis Fishbed-N",
+    "MiG-23MLD Flogger-K",
+    "Su-17M4 Fitter-K"
   ],
   "awacs": [],
   "tankers": [],
@@ -62,5 +64,5 @@
   "helicopter_carrier_names": [],
   "navy_generators": [],
   "has_jtac": true,
-  "jtac_unit": "Mi_8MT"
+  "jtac_unit": "Mi-8MTV2 Hip"
 }

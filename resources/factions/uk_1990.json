@@ -3,20 +3,22 @@
   "name": "United Kingdom 1990",
   "authors": "Khopa",
   "description": "<p>United Kingdom Army in the 1990s.</p>",
-  "locales": ["en_UK"],
+  "locales": [
+    "en_UK"
+  ],
   "aircrafts": [
-    "Tornado_GR4",
-    "AV8BNA",
-    "F_4E",
-    "SA342M",
-    "AH_64A"
+    "AH-64A Apache",
+    "AV-8B Harrier II Night Attack",
+    "Gazelle AH.1",
+    "Phantom F.3",
+    "Tornado GR4"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_Challenger_II",
@@ -60,8 +62,7 @@
     "CG_Ticonderoga"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "HMS Invincible",
     "HMS Illustrious",
@@ -72,5 +73,5 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

@@ -3,22 +3,23 @@
   "name": "USA 1960",
   "authors": "Khopa",
   "description": "<p>US army in the 60s, pre-Vietnam war.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "B_52H",
-    "C_130",
-    "F_86F_Sabre",
-    "P_51D",
-    "P_51D_30_NA",
-    "UH_1H"
+    "B-52H Stratofortress",
+    "C-130",
+    "F-86F Sabre",
+    "P-51D-25-NA Mustang",
+    "P-51D-30-NA Mustang",
+    "UH-1H Iroquois"
   ],
   "frontline_units": [
     "MBT_M60A3_Patton",
     "APC_M113",
     "SPAAA_Vulcan_M163"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
     "Truck_M818_6x6"
   ],

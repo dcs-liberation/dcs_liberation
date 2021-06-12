@@ -3,19 +3,20 @@
   "name": "Germany 1944 (Free)",
   "authors": "Khopa",
   "description": "<p>WW2 germany faction that does not require the WW2 asset pack.</p>",
-  "locales": ["de_DE"],
+  "locales": [
+    "de_DE"
+  ],
   "aircrafts": [
-    "FW_190A8",
-    "FW_190D9",
-    "Bf_109K_4"
+    "Bf 109 K-4 Kurf\u00fcrst",
+    "Fw 190 A-8 Anton",
+    "Fw 190 D-9 Dora"
   ],
   "frontline_units": [
     "Tk_PzIV_H",
     "APC_Sd_Kfz_251_Halftrack",
     "AAA_8_8cm_Flak_18"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
     "Truck_Opel_Blitz"
   ],
@@ -25,25 +26,16 @@
   "air_defenses": [
     "Flak18Generator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
-  "requirements": {
-  },
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
-  "navy_generators": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
+  "requirements": {},
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
+  "navy_generators": [],
   "navy_group_count": 0,
-  "missiles": [
-  ],
+  "missiles": [],
   "missiles_group_count": 0,
   "has_jtac": false,
   "doctrine": "ww2",

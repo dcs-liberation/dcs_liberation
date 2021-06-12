@@ -3,20 +3,22 @@
   "name": "Japan 2005",
   "authors": "Khopa",
   "description": "<p>Japanese self defense force, F-15C standing as F-15J, and F-16 as Mitsubishi F-2.</p><p>Ground units were also chosen to fit the existing vehicles of the japanese forces</p>",
-  "locales": ["ja_JP"],
+  "locales": [
+    "ja_JP"
+  ],
   "aircrafts": [
-    "F_15C",
-    "F_16C_50",
-    "F_4E",
-    "AH_1W",
-    "AH_64D"
+    "AH-1W SuperCobra",
+    "AH-64D Apache Longbow",
+    "F-15J Eagle",
+    "F-2A",
+    "F-4EJ Kai Phantom II"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_Merkava_IV",
@@ -47,8 +49,7 @@
   "ewrs": [
     "PatriotEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
+  "aircraft_carrier": [],
   "helicopter_carrier": [
     "LHA_1_Tarawa"
   ],
@@ -58,10 +59,8 @@
   "cruisers": [
     "CG_Ticonderoga"
   ],
-  "requirements": {
-  },
-  "carrier_names": [
-  ],
+  "requirements": {},
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "Hyuga",
     "Ise"
@@ -70,5 +69,5 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

@@ -1,0 +1,9 @@
+description: The Lockheed Martin (previously Lockheed) KC-130 is a family of the extended-range
+  tanker version of the C-130 Hercules transport aircraft modified for aerial refueling.
+introduced: 1962
+manufacturer: Lockheed Martin
+origin: USA
+price: 25
+role: Tanker
+variants:
+  KC-130: {}

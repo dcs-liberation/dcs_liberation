@@ -1,0 +1,17 @@
+description: "The Tupolev Tu-95 (Russian: \u0422\u0443\u043F\u043E\u043B\u0435\u0432\
+  \ \u0422\u0443-95; NATO reporting name: \"Bear\") is a large, four-engine turboprop-powered\
+  \ strategic bomber and missile platform. First flown in 1952, the Tu-95 entered\
+  \ service with the Long-Range Aviation of the Soviet Air Forces in 1956 and is expected\
+  \ to serve the Russian Aerospace Forces until at least 2040. A development of the\
+  \ bomber for maritime patrol is designated Tu-142, while a passenger airliner derivative\
+  \ was called Tu-114. The aircraft has four Kuznetsov NK-12 engines with contra-rotating\
+  \ propellers. It is the only propeller-powered strategic bomber still in operational\
+  \ use today. The Tu-95 is one of the loudest military aircraft, particularly because\
+  \ the tips of the propeller blades move faster than the speed of sound"
+introduced: 1981
+manufacturer: Tupolev
+origin: USSR/Russia
+price: 35
+role: Strategic Bomber
+variants:
+  Tu-95MS Bear-H: {}

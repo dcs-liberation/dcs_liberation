@@ -3,20 +3,22 @@
   "name": "France 1995",
   "authors": "Khopa",
   "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
-  "locales": ["fr_FR"],
+  "locales": [
+    "fr_FR"
+  ],
   "aircrafts": [
-    "M_2000C",
-    "Mirage_2000_5",
-    "SA342M",
-    "SA342L",
-    "SA342Mistral"
+    "Mirage 2000-5",
+    "Mirage 2000C",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "SA 342M Gazelle Mistral"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_Leclerc",
@@ -46,8 +48,7 @@
   "ewrs": [
     "HawkEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
+  "aircraft_carrier": [],
   "helicopter_carrier": [
     "LHA_1_Tarawa"
   ],
@@ -59,8 +60,7 @@
     "CG_Ticonderoga"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "Jeanne d'Arc"
   ],
@@ -69,5 +69,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

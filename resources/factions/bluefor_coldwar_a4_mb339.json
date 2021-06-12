@@ -4,27 +4,27 @@
   "authors": "Khopa",
   "description": "<p>A generic bluefor coldwar faction. (With the A-4E-C and the MB-339 mods)</p>",
   "aircrafts": [
-    "F_14A_135_GR",
-    "F_14B",
-    "F_4E",
-    "F_5E_3",
-    "A_10A",
-    "AJS37",
-    "UH_1H",
-    "SA342M",
-    "SA342L",
-    "A_4E_C",
-    "MB_339PAN",
-    "B_52H"
+    "A-10A Thunderbolt II",
+    "A-4E Skyhawk",
+    "AJS-37 Viggen",
+    "B-52H Stratofortress",
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-14B Tomcat",
+    "F-4E Phantom II",
+    "F-5E Tiger II",
+    "MB-339PAN",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "C_130",
-    "E_3A",
-    "E_2C"
+    "C-130",
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_M60A3_Patton",
@@ -83,6 +83,6 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "doctrine": "coldwar"
 }

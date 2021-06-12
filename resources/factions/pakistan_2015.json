@@ -4,19 +4,19 @@
   "authors": "Khopa",
   "description": "<p>Pakistan circa 2015 for JF-17 and F-16 enthusiasts.</p>",
   "aircrafts": [
-    "JF_17",
-    "F_16C_50",
-    "MiG_21Bis",
-    "MiG_19P",
-    "Mi_8MT",
-    "UH_1H",
-    "AH_1W"
+    "AH-1W SuperCobra",
+    "F-16CM Fighting Falcon (Block 50)",
+    "JF-17 Thunder",
+    "Mi-8MTV2 Hip",
+    "MiG-19P Farmer-B",
+    "MiG-21bis Fishbed-N",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "KJ_2000"
+    "KJ-2000"
   ],
   "tankers": [
-    "IL_78M"
+    "IL-78M"
   ],
   "frontline_units": [
     "MBT_T_80U",
@@ -52,23 +52,17 @@
     "BoxSpringGenerator",
     "TallRackGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "carrier_names": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "helicopter_carrier_names": [
-  ],
-  "destroyers": [
-  ],
-  "cruiser": [
-  ],
+  "aircraft_carrier": [],
+  "carrier_names": [],
+  "helicopter_carrier": [],
+  "helicopter_carrier_names": [],
+  "destroyers": [],
+  "cruiser": [],
   "requirements": {},
   "navy_generators": [
     "Type54GroupGenerator",
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "WingLoong_I"
+  "jtac_unit": "WingLoong-I"
 }
