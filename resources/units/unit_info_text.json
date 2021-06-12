@@ -52,7 +52,7 @@
             "year-of-variant-introduction": "1962"
         }
     }],
-    "AH_1W": [{
+    "AH-1W": [{
         "default": {
             "name": "AH-1W SuperCobra",
             "text": "The AH-1 Cobra was developed in the mid-1960s as an interim gunship for the U.S. Army for use during the Vietnam War. The Cobra shared the proven transmission, rotor system, and the T53 turboshaft engine of the UH-1 'Huey'. By June 1967, the first AH-1G HueyCobras had been delivered. Bell built 1,116 AH-1Gs for the U.S. Army between 1967 and 1973, and the Cobras chalked up over a million operational hours in Vietnam.",
@@ -154,16 +154,6 @@
             "country-of-origin": "Spain",
             "manufacturer": "CASA",
             "role": "Light Attack",
-            "year-of-variant-introduction": "1980"
-        }
-    }],
-    "C-101EB": [{
-        "default": {
-            "name": "C-101EB Aviojet",
-            "text": "The C-101EB Aviojet is the primary jet trainer and aerobatic display aircraft of the Spanish Air Force.",
-            "country-of-origin": "Spain",
-            "manufacturer": "CASA",
-            "role": "Trainer",
             "year-of-variant-introduction": "1980"
         }
     }],
@@ -450,16 +440,6 @@
             "manufacturer": "Beoing",
             "role": "Tanker",
             "year-of-variant-introduction": "1994"
-        }
-    }],
-    "L-39C": [{
-        "default": {
-            "name": "L-39C Albatros",
-            "text": "Two seat Jet trainer aircraft L-39C is intended for basic and advanced pilot training in visual and instrument flight rules weather conditions, day and night and also for combat use against air and ground targets. Its development started in the middle 60s of the last century by the Czech “Aero Vodochody”. In the 70s the aircraft has entered service and is still in the operational use in over 30 countries worldwide.",
-            "country-of-origin": "Czechoslovakia",
-            "manufacturer": "Aero",
-            "role": "Trainer",
-            "year-of-variant-introduction": "1972"
         }
     }],
     "L-39ZA": [{

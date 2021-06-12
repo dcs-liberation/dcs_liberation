@@ -113,6 +113,7 @@ from dcs.planes import (
     plane_map,
     I_16,
     Tu_142,
+    MiG_25RBT,
 )
 from dcs.ships import (
     Boat_Armed_Hi_speed,
@@ -358,6 +359,7 @@ PRICES = {
     MiG_29S: 20,
     MiG_29G: 18,
     MiG_25PD: 20,
+    MiG_25RBT: 20,
     MiG_31: 30,
     J_11A: 26,
     JF_17: 20,
