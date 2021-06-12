@@ -938,12 +938,11 @@ def unit_type_name_2(unit_type) -> str:
 
 def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> str:
     original_name = unit_type.name and unit_type.name or unit_type.id
-    unit_type_id = unit_type.id
     default_value = None
     faction_value = None
     with UNITINFOTEXT_PATH.open("r", encoding="utf-8") as fdata:
         data = json.load(fdata)
-    type_exists = data.get(unit_type_id)
+    type_exists = data.get(unit_type.id)
     if type_exists is not None:
         for faction in type_exists:
             if default_value is None:
