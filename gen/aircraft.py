@@ -17,6 +17,7 @@ from dcs.mapping import Point
 from dcs.mission import Mission, StartType
 from dcs.planes import (
     AJS37,
+    AV8BNA,
     B_17G,
     B_52H,
     Bf_109K_4,
@@ -1197,7 +1198,7 @@ class AircraftConflictGenerator:
 
                 # If the flight is an helicopter flight, then prioritize dedicated helipads
                 group = None
-                if flight.unit_type.helicopter:
+                if flight.unit_type.helicopter or AV8BNA:
                     helipad = cp.get_free_helipad()
                     if helipad is not None:
                         group = self._generate_at_group(
