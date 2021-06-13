@@ -1,5 +1,6 @@
 carrier_capable: true
-description: The UH-1 Iroquois, better known as the Huey, is one of the most iconic
+description:
+  The UH-1 Iroquois, better known as the Huey, is one of the most iconic
   helicopters in the world. Indispensable in the Vietnam War, the Huey continues to
   serve in both military and civilian roles around the globe today.
 introduced: 1967
@@ -11,3 +12,14 @@ role: Transport/Light Attack
 variants:
   UH-1D Iroquois: {}
   UH-1H Iroquois: {}
+radios:
+  # Ideally this would use the AN/ARC-131 because that radio is supposed
+  # to be used for flight comms, but DCS won't allow it as the flight's
+  # frequency, nor will it allow the AN/ARC-134.
+  intra_flight: AN/ARC-51BX
+  inter_flight: AN/ARC-51BX
+  channels:
+    type: common
+    namer: huey
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1

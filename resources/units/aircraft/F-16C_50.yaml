@@ -1,4 +1,5 @@
-description: 'The F-16C is a single seat, single engine multirole fighter that was
+description:
+  "The F-16C is a single seat, single engine multirole fighter that was
   developed in the 1970s. More than 4,500 units were manufactured and are operated
   today by 26 countries where the aircraft performs numerous missions that include
   air superiority, close air support, precision bombing, air defense suppression,
@@ -20,7 +21,7 @@ description: 'The F-16C is a single seat, single engine multirole fighter that w
   The Viper is armed for air-to-air combat with Sidewinders, AMRAAMs, and an internal
   20mm 6-barrel Gatling gun. It can also be loaded with a wide range of air-to-ground
   weapons that include general purpose bombs, rockets, canister munition, Mavericks,
-  laser- and GPS-guided bombs, and more'
+  laser- and GPS-guided bombs, and more"
 introduced: 1991
 manufacturer: General Dynamics
 origin: USA
@@ -29,3 +30,13 @@ role: Multirole Fighter
 variants:
   F-16CM Fighting Falcon (Block 50): {}
   F-2A: {}
+radios:
+  intra_flight: AN/ARC-222
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    namer: viper
+    # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
+    # intra-flight communication to leave COM1 open for UHF inter-flight.
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1

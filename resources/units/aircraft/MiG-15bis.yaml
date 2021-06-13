@@ -1,5 +1,6 @@
 always_keeps_gun: true
-description: Developed in the years immediately following World War II, the MiG-15bis
+description:
+  Developed in the years immediately following World War II, the MiG-15bis
   was a first-generation jet fighter designed by the Mikoyan-Gurevich design bureau
   of the Soviet Union. The MiG-15bis is a single engine, swept-wing jet that saw over
   15,000 copies produced. The MiG-15 gained fame in the skies over Korea where it
@@ -16,3 +17,6 @@ price: 4
 role: Fighter
 variants:
   MiG-15bis Fagot: {}
+radios:
+  intra_flight: RSI-6K HF
+  inter_flight: RSI-6K HF

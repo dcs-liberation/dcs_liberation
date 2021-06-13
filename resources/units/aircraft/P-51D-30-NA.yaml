@@ -1,5 +1,6 @@
 always_keeps_gun: true
-description: The North American Aviation P-51 Mustang is an American long-range, single-seat
+description:
+  The North American Aviation P-51 Mustang is an American long-range, single-seat
   fighter and fighter-bomber used during World War II and the Korean War, among other
   conflicts. From late 1943, P-51Bs and P-51Cs (supplemented by P-51Ds from mid-1944)
   were used by the USAAF's Eighth Air Force to escort bombers in raids over Germany,
@@ -22,3 +23,11 @@ role: Fighter
 variants:
   Mustang Mk.IV (Late): {}
   P-51D-30-NA Mustang: {}
+radios:
+  intra_flight: SCR522
+  inter_flight: SCR522
+  channels:
+    type: common
+    namer: SCR-522
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1

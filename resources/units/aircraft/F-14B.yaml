@@ -1,5 +1,6 @@
 carrier_capable: true
-description: "The Grumman F-14 Tomcat is a two-crew, variable wing-geometry, maritime\
+description:
+  "The Grumman F-14 Tomcat is a two-crew, variable wing-geometry, maritime\
   \ air superiority fighter that served with the US Navy for 32 years and continues\
   \ to serve with the IRIAF in Iran. The F-14 was the US Navy's frontline fighter\
   \ from the 1970s to the mid-2000s. Over the course of its long service it also became\
@@ -22,3 +23,11 @@ price: 24
 role: Carrier-based Air-Superiority Fighter/Fighter Bomber
 variants:
   F-14B Tomcat: {}
+radios:
+  intra_flight: AN/ARC-182
+  inter_flight: AN/ARC-159
+  channels:
+    type: common
+    namer: tomcat
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1

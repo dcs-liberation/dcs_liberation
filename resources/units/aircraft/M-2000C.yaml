@@ -1,4 +1,5 @@
-description: The M-2000C is a multi-role, French-designed, 4th generation fighter.
+description:
+  The M-2000C is a multi-role, French-designed, 4th generation fighter.
   It was designed in the 1970s as a lightweight fighter and in excess of 600 M-2000C
   aircraft have been built. The M2000C is a single-engine fighter will a low-set delta
   wing with no horizontal tail. It has excellent maneuverability given its relaxed
@@ -13,3 +14,11 @@ price: 16
 role: Multirole Fighter
 variants:
   Mirage 2000C: {}
+radios:
+  intra_flight: TRT ERA 7200 UHF
+  inter_flight: TRT ERA 7000 V/UHF
+  channels:
+    type: common
+    namer: mirage
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1

@@ -1,5 +1,6 @@
 carrier_capable: true
-description: 'The AV-8B project was born in the early 1970''s as an effort to address
+description:
+  'The AV-8B project was born in the early 1970''s as an effort to address
   the operational inadequacies of the AV-8A first generation Harrier, aimed to dramatically
   improve the capabilities and performance of the early AV-8A''s. The AV-8B made its
   maiden flight in November 1981 and entered service with the United States Marine
@@ -28,3 +29,10 @@ price: 14
 role: V/STOL Attack
 variants:
   AV-8B Harrier II Night Attack: {}
+radios:
+  intra_flight: AN/ARC-210
+  inter_flight: AN/ARC-210
+  channels:
+    type: common
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 2

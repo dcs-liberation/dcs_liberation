@@ -16,6 +16,17 @@ from game.radio.channels import (
     ChannelNamer,
     RadioChannelAllocator,
     CommonRadioChannelAllocator,
+    HueyChannelNamer,
+    SCR522ChannelNamer,
+    ViggenChannelNamer,
+    ViperChannelNamer,
+    TomcatChannelNamer,
+    MirageChannelNamer,
+    SingleRadioChannelNamer,
+    FarmerRadioChannelAllocator,
+    SCR522RadioChannelAllocator,
+    ViggenRadioChannelAllocator,
+    NoOpChannelAllocator,
 )
 from game.utils import Speed, kph
 
@@ -55,11 +66,27 @@ class RadioConfig:
             alloc_type = data["type"]
         except KeyError:
             return None
-        return {"common": CommonRadioChannelAllocator}[alloc_type].from_cfg(data)
+        allocator_type: Type[RadioChannelAllocator] = {
+            "SCR-522": SCR522RadioChannelAllocator,
+            "common": CommonRadioChannelAllocator,
+            "farmer": FarmerRadioChannelAllocator,
+            "noop": NoOpChannelAllocator,
+            "viggen": ViggenRadioChannelAllocator,
+        }[alloc_type]
+        return allocator_type.from_cfg(data)
 
     @classmethod
     def make_namer(cls, config: dict[str, Any]) -> Type[ChannelNamer]:
-        return {"default": ChannelNamer}[config.get("namer", "default")]
+        return {
+            "SCR-522": SCR522ChannelNamer,
+            "default": ChannelNamer,
+            "huey": HueyChannelNamer,
+            "mirage": MirageChannelNamer,
+            "single": SingleRadioChannelNamer,
+            "tomcat": TomcatChannelNamer,
+            "viggen": ViggenChannelNamer,
+            "viper": ViperChannelNamer,
+        }[config.get("namer", "default")]
 
 
 @dataclass(frozen=True)
