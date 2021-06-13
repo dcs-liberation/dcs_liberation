@@ -40,12 +40,12 @@ class SquadronDelegate(TwoColumnRowDelegate):
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
         if (row, column) == (0, 0):
-            return self.air_wing_model.data(index, Qt.DisplayRole)
+            return self.squadron(index).name
         elif (row, column) == (0, 1):
             squadron = self.air_wing_model.data(index, AirWingModel.SquadronRole)
             return squadron.aircraft.name
         elif (row, column) == (1, 0):
-            return self.squadron(index).nickname
+            return self.squadron(index).nickname or ""
         elif (row, column) == (1, 1):
             squadron = self.squadron(index)
             alive = squadron.number_of_living_pilots
