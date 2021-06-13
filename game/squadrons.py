@@ -76,7 +76,7 @@ class Pilot:
 @dataclass
 class Squadron:
     name: str
-    nickname: str
+    nickname: Optional[str]
     country: str
     role: str
     aircraft: Type[FlyingType]
@@ -99,6 +99,8 @@ class Squadron:
         self.auto_assignable_mission_types = set(self.mission_types)
 
     def __str__(self) -> str:
+        if self.nickname is None:
+            return self.name
         return f'{self.name} "{self.nickname}"'
 
     def claim_available_pilot(self) -> Optional[Pilot]:
@@ -215,7 +217,7 @@ class Squadron:
 
         return Squadron(
             name=data["name"],
-            nickname=data["nickname"],
+            nickname=data.get("nickname"),
             country=data["country"],
             role=data["role"],
             aircraft=unit_type,
