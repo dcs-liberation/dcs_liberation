@@ -94,6 +94,10 @@ class AircraftType:
     dcs_unit_type: Type[FlyingType]
     name: str
     description: str
+    year_introduced: str
+    country_of_origin: str
+    manufacturer: str
+    role: str
     price: int
     carrier_capable: bool
     lha_capable: bool
@@ -189,11 +193,22 @@ class AircraftType:
 
         radio_config = RadioConfig.from_data(data.get("radios", {}))
 
+        try:
+            introduction = data["introduced"]
+            if introduction is None:
+                introduction = "N/A"
+        except KeyError:
+            introduction = "No data."
+
         for variant in data.get("variants", [aircraft.id]):
             yield AircraftType(
                 dcs_unit_type=aircraft,
                 name=variant,
                 description=data.get("description", "No data."),
+                year_introduced=introduction,
+                country_of_origin=data.get("origin", "No data."),
+                manufacturer=data.get("manufacturer", "No data."),
+                role=data.get("role", "No data."),
                 price=price,
                 carrier_capable=data.get("carrier_capable", False),
                 lha_capable=data.get("lha_capable", False),
