@@ -424,7 +424,7 @@ class SquadronModel(QAbstractListModel):
         self.squadron = squadron
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
-        return self.squadron.number_of_pilots_including_dead
+        return self.squadron.number_of_pilots_including_inactive
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
         if not index.isValid():
@@ -462,9 +462,9 @@ class SquadronModel(QAbstractListModel):
         pilot = self.pilot_at_index(index)
         self.beginResetModel()
         if pilot.on_leave:
-            pilot.return_from_leave()
+            self.squadron.return_from_leave(pilot)
         else:
-            pilot.send_on_leave()
+            self.squadron.send_on_leave(pilot)
         self.endResetModel()
 
     def is_auto_assignable(self, task: FlightType) -> bool:

@@ -327,10 +327,13 @@ class Game:
         # one hop ahead. ControlPoint.process_turn handles unit deliveries.
         self.transfers.perform_transfers()
 
-        # Needs to happen *before* planning transfers so we don't cancel the
+        # Needs to happen *before* planning transfers so we don't cancel them.
         self.reset_ato()
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
+
+        self.blue_air_wing.replenish()
+        self.red_air_wing.replenish()
 
         if not skipped and self.turn > 1:
             for cp in self.theater.player_points():

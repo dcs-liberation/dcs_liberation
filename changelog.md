@@ -4,9 +4,10 @@ Saves from 3.x are not compatible with 4.0.
 
 ## Features/Improvements
 
-* **[Flight Planner]** Added ability to plan Tankers.
+* **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
 * **[Campaign AI]** AI will plan Tanker flights.
 * **[Factions]** Added more tankers to factions.
+* **[Flight Planner]** Added ability to plan Tankers.
 
 ## Fixes
 

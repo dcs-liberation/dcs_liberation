@@ -80,8 +80,17 @@ class Squadron:
     aircraft: AircraftType
     livery: Optional[str]
     mission_types: tuple[FlightType, ...]
-    pilots: list[Pilot]
-    available_pilots: list[Pilot] = field(init=False, hash=False, compare=False)
+
+    #: The pool of pilots that have not yet been assigned to the squadron. This only
+    #: happens when a preset squadron defines more preset pilots than the squadron limit
+    #: allows. This pool will be consumed before random pilots are generated.
+    pilot_pool: list[Pilot]
+
+    current_roster: list[Pilot] = field(default_factory=list, init=False, hash=False)
+    available_pilots: list[Pilot] = field(
+        default_factory=list, init=False, hash=False, compare=False
+    )
+
     auto_assignable_mission_types: set[FlightType] = field(
         init=False, hash=False, compare=False
     )
@@ -93,7 +102,9 @@ class Squadron:
     player: bool
 
     def __post_init__(self) -> None:
-        self.available_pilots = list(self.active_pilots)
+        if any(p.status is not PilotStatus.Active for p in self.pilot_pool):
+            raise ValueError("Squadrons can only be created with active pilots.")
+        self._recruit_pilots(self.game.settings.squadron_pilot_limit)
         self.auto_assignable_mission_types = set(self.mission_types)
 
     def __str__(self) -> str:
@@ -102,11 +113,8 @@ class Squadron:
         return f'{self.name} "{self.nickname}"'
 
     def claim_available_pilot(self) -> Optional[Pilot]:
-        # No pilots available, so the preference is irrelevant. Create a new pilot and
-        # return it.
         if not self.available_pilots:
-            self.enlist_new_pilots(1)
-            return self.available_pilots.pop()
+            return None
 
         # For opfor, so player/AI option is irrelevant.
         if not self.player:
@@ -127,11 +135,12 @@ class Squadron:
         # No pilot was found that matched the user's preference.
         #
         # If they chose to *never* assign players and only players remain in the pool,
-        # we cannot fill the slot with the available pilots. Recruit a new one.
+        # we cannot fill the slot with the available pilots.
         #
-        # If they prefer players and we're out of players, just return an AI pilot.
+        # If they only *prefer* players and we're out of players, just return an AI
+        # pilot.
         if not prefer_players:
-            self.enlist_new_pilots(1)
+            return None
         return self.available_pilots.pop()
 
     def claim_pilot(self, pilot: Pilot) -> None:
@@ -151,23 +160,45 @@ class Squadron:
         # repopulating the same size flight from the same squadron.
         self.available_pilots.extend(reversed(pilots))
 
-    def enlist_new_pilots(self, count: int) -> None:
-        new_pilots = [Pilot(self.faker.name()) for _ in range(count)]
-        self.pilots.extend(new_pilots)
+    def _recruit_pilots(self, count: int) -> None:
+        new_pilots = self.pilot_pool[:count]
+        self.pilot_pool = self.pilot_pool[count:]
+        count -= len(new_pilots)
+        new_pilots.extend([Pilot(self.faker.name()) for _ in range(count)])
+        self.current_roster.extend(new_pilots)
         self.available_pilots.extend(new_pilots)
+
+    def replenish_lost_pilots(self) -> None:
+        replenish_count = min(
+            self.game.settings.squadron_replenishment_rate,
+            self.number_of_unfilled_pilot_slots,
+        )
+        if replenish_count > 0:
+            self._recruit_pilots(replenish_count)
 
     def return_all_pilots(self) -> None:
         self.available_pilots = list(self.active_pilots)
+
+    @staticmethod
+    def send_on_leave(pilot: Pilot) -> None:
+        pilot.send_on_leave()
+
+    def return_from_leave(self, pilot: Pilot):
+        if not self.has_unfilled_pilot_slots:
+            raise RuntimeError(
+                f"Cannot return {pilot} from leave because {self} is full"
+            )
+        pilot.return_from_leave()
 
     @property
     def faker(self) -> Faker:
         return self.game.faker_for(self.player)
 
     def _pilots_with_status(self, status: PilotStatus) -> list[Pilot]:
-        return [p for p in self.pilots if p.status == status]
+        return [p for p in self.current_roster if p.status == status]
 
     def _pilots_without_status(self, status: PilotStatus) -> list[Pilot]:
-        return [p for p in self.pilots if p.status != status]
+        return [p for p in self.current_roster if p.status != status]
 
     @property
     def active_pilots(self) -> list[Pilot]:
@@ -178,15 +209,30 @@ class Squadron:
         return self._pilots_with_status(PilotStatus.OnLeave)
 
     @property
-    def number_of_pilots_including_dead(self) -> int:
-        return len(self.pilots)
+    def number_of_pilots_including_inactive(self) -> int:
+        return len(self.current_roster)
 
     @property
-    def number_of_living_pilots(self) -> int:
-        return len(self._pilots_without_status(PilotStatus.Dead))
+    def number_of_unfilled_pilot_slots(self) -> int:
+        return self.game.settings.squadron_pilot_limit - len(self.active_pilots)
+
+    @property
+    def number_of_available_pilots(self) -> int:
+        return len(self.available_pilots)
+
+    @property
+    def has_available_pilots(self) -> bool:
+        return bool(self.available_pilots)
+
+    @property
+    def has_unfilled_pilot_slots(self) -> bool:
+        return self.number_of_unfilled_pilot_slots > 0
+
+    def can_auto_assign(self, task: FlightType) -> bool:
+        return task in self.auto_assignable_mission_types
 
     def pilot_at_index(self, index: int) -> Pilot:
-        return self.pilots[index]
+        return self.current_roster[index]
 
     @classmethod
     def from_yaml(cls, path: Path, game: Game, player: bool) -> Squadron:
@@ -223,7 +269,7 @@ class Squadron:
             aircraft=unit_type,
             livery=data.get("livery"),
             mission_types=tuple(mission_types),
-            pilots=pilots,
+            pilot_pool=pilots,
             game=game,
             player=player,
         )
@@ -313,7 +359,7 @@ class AirWing:
                     aircraft=aircraft,
                     livery=None,
                     mission_types=tuple(tasks_for_aircraft(aircraft)),
-                    pilots=[],
+                    pilot_pool=[],
                     game=game,
                     player=player,
                 )
@@ -327,6 +373,13 @@ class AirWing:
             if task in squadron.mission_types:
                 yield squadron
 
+    def auto_assignable_for_task_with_type(
+        self, aircraft: AircraftType, task: FlightType
+    ) -> Iterator[Squadron]:
+        for squadron in self.squadrons_for(aircraft):
+            if squadron.can_auto_assign(task) and squadron.has_available_pilots:
+                yield squadron
+
     def squadron_for(self, aircraft: AircraftType) -> Squadron:
         return self.squadrons_for(aircraft)[0]
 
@@ -335,6 +388,10 @@ class AirWing:
 
     def squadron_at_index(self, index: int) -> Squadron:
         return list(self.iter_squadrons())[index]
+
+    def replenish(self) -> None:
+        for squadron in self.iter_squadrons():
+            squadron.replenish_lost_pilots()
 
     def reset(self) -> None:
         for squadron in self.iter_squadrons():

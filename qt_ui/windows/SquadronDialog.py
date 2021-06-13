@@ -178,7 +178,9 @@ class SquadronDialog(QDialog):
         if self.check_disabled_button_states(self.toggle_leave_button, index):
             return
         pilot = self.squadron_model.pilot_at_index(index)
-        self.toggle_leave_button.setEnabled(True)
+        self.toggle_leave_button.setEnabled(
+            not pilot.on_leave or self.squadron_model.squadron.has_unfilled_pilot_slots
+        )
         self.toggle_leave_button.setText(
             "Return from leave" if pilot.on_leave else "Send on leave"
         )
