@@ -60,6 +60,18 @@ class ProcurementAi:
     def calculate_ground_unit_budget_share(self) -> float:
         armor_investment = 0
         aircraft_investment = 0
+
+        # faction has no ground units
+        if (
+            len(self.faction.artillery_units) is 0
+            and len(self.faction.frontline_units) is 0
+        ):
+            return 0
+
+        # faction has no planes
+        if len(self.faction.aircrafts) is 0:
+            return 1
+
         for cp in self.owned_points:
             cp_ground_units = cp.allocated_ground_units(self.game.transfers)
             armor_investment += cp_ground_units.total_value
@@ -141,6 +153,11 @@ class ProcurementAi:
             self.faction.artillery_units
         )
         of_class = set(unit_class.unit_list) & faction_units
+
+        # faction has no access to needed unit type, take a random unit
+        if len(of_class) is 0:
+            of_class = faction_units
+
         affordable_units = [u for u in of_class if db.PRICES[u] <= budget]
         if not affordable_units:
             return None
