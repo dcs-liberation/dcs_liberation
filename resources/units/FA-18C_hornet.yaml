@@ -10,10 +10,6 @@ radios:
   inter_flight: AN/ARC-210
   channels:
     type: common
-    # DCS will clobber channel 1 of the first radio compatible with the flight's
-    # assigned frequency. Since the F/A-18's two radios are both AN/ARC-210s,
-    # radio 1 will be compatible regardless of which frequency is assigned, so
-    # we must use radio 1 for the intra-flight radio.
     intra_flight_radio_index: 1
     inter_flight_radio_index: 2
 manufacturer: McDonnell Douglass

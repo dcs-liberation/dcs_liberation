@@ -1,5 +1,6 @@
 carrier_capable: true
-description: 'The F/A-18C Hornet is twin engine, supersonic fighter that is flown
+description:
+  'The F/A-18C Hornet is twin engine, supersonic fighter that is flown
   by a single pilot in a "glass cockpit". It combines extreme maneuverability , a
   deadly arsenal of weapons, and the ability to operate from an aircraft carrier.
   Operated by several nations, this multi-role fighter has been instrumental in conflicts
@@ -24,3 +25,14 @@ variants:
   CF-188 Hornet: {}
   EF-18A+ Hornet: {}
   F/A-18C Hornet (Lot 20): {}
+radios:
+  intra_flight: AN/ARC-210
+  inter_flight: AN/ARC-210
+  channels:
+    type: common
+    # DCS will clobber channel 1 of the first radio compatible with the flight's
+    # assigned frequency. Since the F/A-18's two radios are both AN/ARC-210s,
+    # radio 1 will be compatible regardless of which frequency is assigned, so
+    # we must use radio 1 for the intra-flight radio.
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 2
