@@ -17,14 +17,10 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
-    Type,
     TypeVar,
-    Union,
 )
 
-from dcs.unittype import FlyingType
-
-from game.factions.faction import Faction
+from game.dcs.aircrafttype import AircraftType
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
 from game.profiling import logged_duration, MultiEventTracer
@@ -167,8 +163,6 @@ class AircraftAllocator:
             flight.max_distance
         )
 
-        # Prefer using squadrons with pilots first
-        best_understaffed: Optional[Tuple[ControlPoint, Squadron]] = None
         for airfield in airfields_in_range:
             if not airfield.is_friendly(self.is_player):
                 continue
@@ -180,24 +174,14 @@ class AircraftAllocator:
                     continue
                 # Valid location with enough aircraft available. Find a squadron to fit
                 # the role.
-                for squadron in self.air_wing.squadrons_for(aircraft):
-                    if task not in squadron.auto_assignable_mission_types:
-                        continue
-                    if len(squadron.available_pilots) >= flight.num_aircraft:
+                squadrons = self.air_wing.auto_assignable_for_task_with_type(
+                    aircraft, task
+                )
+                for squadron in squadrons:
+                    if squadron.number_of_available_pilots >= flight.num_aircraft:
                         inventory.remove_aircraft(aircraft, flight.num_aircraft)
                         return airfield, squadron
-
-                    # A compatible squadron that doesn't have enough pilots. Remember it
-                    # as a fallback in case we find no better choices.
-                    if best_understaffed is None:
-                        best_understaffed = airfield, squadron
-
-        if best_understaffed is not None:
-            airfield, squadron = best_understaffed
-            self.global_inventory.for_control_point(airfield).remove_aircraft(
-                squadron.aircraft, flight.num_aircraft
-            )
-        return best_understaffed
+        return None
 
 
 class PackageBuilder:
@@ -256,7 +240,7 @@ class PackageBuilder:
         return True
 
     def find_divert_field(
-        self, aircraft: Type[FlyingType], arrival: ControlPoint
+        self, aircraft: AircraftType, arrival: ControlPoint
     ) -> Optional[ControlPoint]:
         divert_limit = nautical_miles(150)
         for airfield in self.closest_airfields.operational_airfields_within(
@@ -867,7 +851,7 @@ class CoalitionMissionPlanner:
         for cp in self.objective_finder.friendly_control_points():
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for aircraft, available in inventory.all_aircraft:
-                self.message("Unused aircraft", f"{available} {aircraft.id} from {cp}")
+                self.message("Unused aircraft", f"{available} {aircraft} from {cp}")
 
     def plan_flight(
         self,

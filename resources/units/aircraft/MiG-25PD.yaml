@@ -1,0 +1,28 @@
+description: "The Mikoyan-Gurevich MiG-25 (Russian: \u041C\u0438\u043A\u043E\u044F\
+  \u043D \u0438 \u0413\u0443\u0440\u0435\u0432\u0438\u0447 \u041C\u0438\u0413-25;\
+  \ NATO reporting name: Foxbat) is a supersonic interceptor and reconnaissance aircraft\
+  \ that was among the fastest military aircraft to enter service. It was designed\
+  \ by the Soviet Union's Mikoyan-Gurevich bureau and is one of the few combat aircraft\
+  \ built primarily using stainless steel. It was the last plane designed by Mikhail\
+  \ Gurevich before his retirement. The first prototype flew in 1964, and the aircraft\
+  \ entered service in 1970. The MiG-25 was theoretically capable of a maximum speed\
+  \ exceeding Mach 3 and a ceiling of 27 km (89,000 ft). Its high speed was problematic:\
+  \ although sufficient thrust was available to reach Mach 3.2, a limit of Mach 2.83\
+  \ had to be imposed as the engines tended to overspeed and overheat at higher air\
+  \ speeds, possibly damaging them beyond repair. The MiG-25 features powerful radar\
+  \ and four air-to-air missiles. When first seen in reconnaissance photography, the\
+  \ large wings suggested an enormous and highly maneuverable fighter, at a time when\
+  \ U.S. design theories were also evolving towards higher maneuverability due to\
+  \ combat performance in the Vietnam War. The appearance of the MiG-25 sparked serious\
+  \ concern in the West and prompted dramatic increases in performance for the McDonnell\
+  \ Douglas F-15 Eagle, then under development in the late 1960s. The capabilities\
+  \ of the MiG-25 were better understood by the west in 1976 when Soviet pilot Viktor\
+  \ Belenko defected in a MiG-25 to the United States via Japan. It turned out that\
+  \ the aircraft's weight necessitated its large wings."
+introduced: 1979
+manufacturer: Mikoyan-Gurevich
+origin: USSR/Russia
+price: 20
+role: Interceptor
+variants:
+  MiG-25PD Foxbat-E: {}

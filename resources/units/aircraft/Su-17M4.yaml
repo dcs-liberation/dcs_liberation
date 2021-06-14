@@ -1,0 +1,17 @@
+description: The Sukhoi Su-17 (izdeliye S-32) is a variable-sweep wing fighter-bomber
+  developed for the Soviet military. Its NATO reporting name is "Fitter". Developed
+  from the Sukhoi Su-7, the Su-17 was the first variable-sweep wing aircraft to enter
+  Soviet service. Two subsequent Sukhoi aircraft, the Su-20 and Su-22, have usually
+  been regarded as variants of the Su-17. The Su-17 has had a long career and has
+  been operated by many other air forces of including the Russian Federation, other
+  former Soviet republics, the former Warsaw Pact, countries in the Arab world, Angola
+  and Peru.
+introduced: 1981
+manufacturer: Sukhoi
+origin: USSR/Russia
+price: 10
+role: Fighter-Bomber
+variants:
+  Su-17M4 Fitter-K: {}
+  Su-22M4 Fitter-K:
+    introduced: 1983

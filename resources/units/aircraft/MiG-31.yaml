@@ -1,0 +1,18 @@
+description: "The Mikoyan MiG-31 (Russian: \u041C\u0438\u043A\u043E\u044F\u043D \u041C\
+  \u0438\u0413-31; NATO reporting name: Foxhound) is a supersonic interceptor aircraft\
+  \ that was developed for use by the Soviet Air Forces. The aircraft was designed\
+  \ by the Mikoyan design bureau as a replacement for the earlier MiG-25 \"Foxbat\"\
+  ; the MiG-31 is based on and shares design elements with the MiG-25. The MiG-31\
+  \ is among the fastest combat jets in the world. It continues to be operated by\
+  \ the Russian Air Force and the Kazakhstan Air Force following the end of the Cold\
+  \ War and the collapse of the Soviet Union in 1991. The Russian Defence Ministry\
+  \ expects the MiG-31 to remain in service until 2030 or beyond and was confirmed\
+  \ in 2020 when an announcement was made to extend the service lifetime from 2,500\
+  \ to 3,500 hours on the existing airframes."
+introduced: 1981
+manufacturer: Mikoyan
+origin: USSR/Russia
+price: 30
+role: Interceptor
+variants:
+  MiG-31 Foxhound: {}

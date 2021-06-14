@@ -4,26 +4,26 @@
   "authors": "Fuzzle",
   "description": "<p>A joint US Navy/Israeli modern faction for use with the Operation Allied Sword scenario.</p>",
   "aircrafts": [
-    "F_4E",
-    "F_15C",
-    "F_15E",
-    "F_16C_50",
-    "F_14B",
-    "FA_18C_hornet",
-    "AV8BNA",
-    "AH_1W",
-    "AH_64D",
-    "S_3B",
-    "SH_60B",
-    "UH_1H"
+    "AH-1W SuperCobra",
+    "AH-64D Apache Longbow",
+    "AV-8B Harrier II Night Attack",
+    "F-14B Tomcat",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-4E Phantom II",
+    "F/A-18C Hornet (Lot 20)",
+    "S-3B Viking",
+    "SH-60B Seahawk",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130",
-    "S_3B_Tanker"
+    "KC-130",
+    "KC-135 Stratotanker",
+    "S-3B Tanker"
   ],
   "frontline_units": [
     "APC_M113",
@@ -65,8 +65,7 @@
   "cruisers": [
     "CG_Ticonderoga"
   ],
-  "requirements": {
-  },
+  "requirements": {},
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",
@@ -84,25 +83,24 @@
   "navy_generators": [
     "ArleighBurkeGroupGenerator",
     "OliverHazardPerryGroupGenerator"
-
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "doctrine": "modern",
   "liveries_overrides": {
-    "F_14B": [
+    "F-14B Tomcat": [
       "VF-142 Ghostriders"
     ],
-    "FA_18C_hornet": [
+    "F/A-18C Hornet (Lot 20)": [
       "VMFA-251 high visibility"
     ],
-    "AV8BNA": [
+    "AV-8B Harrier II Night Attack": [
       "VMAT-542"
     ],
-    "AH_1W": [
+    "AH-1W SuperCobra": [
       "Marines"
     ],
-    "UH_1H": [
+    "UH-1H Iroquois": [
       "US NAVY"
     ]
   }

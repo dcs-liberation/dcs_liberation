@@ -4,22 +4,21 @@
   "authors": "Khopa",
   "description": "<p>A generic WW2 ally faction that does not requires the paid WW2 asset pack.</p>",
   "aircrafts": [
-    "P_51D",
-    "P_51D_30_NA",
-    "P_47D_30",
-    "P_47D_30bl1",
-    "P_47D_40",
-    "SpitfireLFMkIX",
-    "SpitfireLFMkIXCW",
-    "A_20G"
+    "A-20G Havoc",
+    "P-47D-30 Thunderbolt (Early)",
+    "P-47D-30 Thunderbolt (Late)",
+    "P-47D-40 Thunderbolt",
+    "P-51D-25-NA Mustang",
+    "P-51D-30-NA Mustang",
+    "Spitfire LF Mk IX",
+    "Spitfire LF Mk IX (Clipped Wings)"
   ],
   "frontline_units": [
     "Tk_M4_Sherman",
     "APC_M2A1_Halftrack",
     "AAA_Bofors_40mm"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
     "Truck_Bedford"
   ],
@@ -29,22 +28,14 @@
   "air_defenses": [
     "BoforsGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
-  "requirements": {
-  },
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
-  "navy_generators": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
+  "requirements": {},
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
+  "navy_generators": [],
   "navy_group_count": 0,
   "has_jtac": false,
   "doctrine": "ww2",

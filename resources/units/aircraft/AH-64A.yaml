@@ -1,0 +1,18 @@
+always_keeps_gun: true
+description: The legendary 'Apache' is an US twin-turboshaft attack helicopter for
+  a crew of two. It features a nose-mounted sensor suite for target acquisition and
+  night vision systems. It is armed with a 30 mm (1.18 in) M230 chain gun carried
+  between the main landing gear, under the aircraft's forward fuselage, and four hardpoints
+  mounted on stub-wing pylons for carrying armament and stores, typically a mixture
+  of AGM-114 Hellfire missiles and Hydra 70 rocket pods. The AH-64 has significant
+  systems redundancy to improve combat survivability. American AH-64s have served
+  in conflicts in Panama, the Persian Gulf, Kosovo, Afghanistan, and Iraq. Israel
+  used the Apache in its military conflicts in Lebanon and the Gaza Strip. British
+  and Dutch Apaches have seen deployments in wars in Afghanistan and Iraq.
+introduced: 1986
+manufacturer: Boeing
+origin: USA
+price: 24
+role: Attack
+variants:
+  AH-64A Apache: {}

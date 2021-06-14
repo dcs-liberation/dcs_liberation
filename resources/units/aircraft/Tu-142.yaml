@@ -1,0 +1,16 @@
+description: "The Tupolev Tu-142 (Russian: \u0422\u0443\u043F\u043E\u043B\u0435\u0432\
+  \ \u0422\u0443-142; NATO reporting name: Bear F/J) is a Soviet/Russian maritime\
+  \ reconnaissance and anti-submarine warfare (ASW) aircraft derived from the Tu-95\
+  \ turboprop strategic bomber. A specialised communications variant designated Tu-142MR\
+  \ was tasked with long-range communications duties with Soviet ballistic missile\
+  \ submarines. The Tu-142 was designed by the Tupolev design bureau, and manufactured\
+  \ by the Kuibyshev Aviation and Taganrog Machinery Plants from 1968 to 1994. Formerly\
+  \ operated by the Soviet Navy and Ukrainian Air Force, the Tu-142 currently serves\
+  \ with the Russian Navy."
+introduced: 1972
+manufacturer: Tupolev
+origin: USSR/Russia
+price: 35
+role: Maritime Patrol/Anti-Ship
+variants:
+  Tu-142 Bear-F: {}

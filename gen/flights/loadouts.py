@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import datetime
-from typing import Optional, List, Iterator, Type, TYPE_CHECKING, Mapping
-
-from dcs.unittype import FlyingType
+from typing import Optional, List, Iterator, TYPE_CHECKING, Mapping
 
 from game.data.weapons import Weapon, Pylon
+from game.dcs.aircrafttype import AircraftType
 
 if TYPE_CHECKING:
     from gen.flights.flight import Flight
@@ -27,9 +26,7 @@ class Loadout:
     def derive_custom(self, name: str) -> Loadout:
         return Loadout(name, self.pylons, self.date, is_custom=True)
 
-    def degrade_for_date(
-        self, unit_type: Type[FlyingType], date: datetime.date
-    ) -> Loadout:
+    def degrade_for_date(self, unit_type: AircraftType, date: datetime.date) -> Loadout:
         if self.date is not None and self.date <= date:
             return Loadout(self.name, self.pylons, self.date)
 
@@ -61,7 +58,7 @@ class Loadout:
         #       {"CLSID": class ID, "num": pylon number}
         #   "tasks": List (as a dict) of task IDs the payload is used by.
         # }
-        payloads = flight.unit_type.load_payloads()
+        payloads = flight.unit_type.dcs_unit_type.load_payloads()
         for payload in payloads.values():
             name = payload["name"]
             pylons = payload["pylons"]
@@ -126,8 +123,8 @@ class Loadout:
         for name in cls.default_loadout_names_for(flight):
             # This operation is cached, but must be called before load_by_name will
             # work.
-            flight.unit_type.load_payloads()
-            payload = flight.unit_type.loadout_by_name(name)
+            flight.unit_type.dcs_unit_type.load_payloads()
+            payload = flight.unit_type.dcs_unit_type.loadout_by_name(name)
             if payload is not None:
                 return Loadout(
                     name,

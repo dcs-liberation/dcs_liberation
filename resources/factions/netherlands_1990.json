@@ -3,26 +3,27 @@
   "name": "Netherlands 1990",
   "authors": "Khopa",
   "description": "<p>Netherlands forces in the 90s.</p>",
-  "locales": ["nl_NL"],
+  "locales": [
+    "nl_NL"
+  ],
   "aircrafts": [
-    "F_16C_50",
-    "F_5E_3",
-    "AH_64A"
+    "AH-64A Apache",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-5E Tiger II"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "APC_M113",
     "MBT_Leopard_1A3",
     "SAM_Avenger__Stinger"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
     "Truck_M818_6x6"
   ],
@@ -41,22 +42,16 @@
   "ewrs": [
     "PatriotEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
   "requirements": {},
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

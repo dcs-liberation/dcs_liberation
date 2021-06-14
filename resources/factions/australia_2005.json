@@ -4,17 +4,17 @@
   "authors": "Khopa",
   "description": "<p>The Australian army in 2005.</p><p>Some units might not be accurate, but were picked to represent at best this army.</p>",
   "aircrafts": [
-    "FA_18C_hornet",
-    "UH_1H",
-    "SH_60B",
-    "AH_1W"
+    "AH-1W SuperCobra",
+    "F/A-18C Hornet (Lot 20)",
+    "SH-60B Seahawk",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_M1A2_Abrams",
@@ -23,8 +23,7 @@
     "IFV_LAV_25",
     "IFV_Warrior"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
     "Truck_M818_6x6"
   ],
@@ -40,19 +39,16 @@
   "ewrs": [
     "HawkEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
+  "aircraft_carrier": [],
   "helicopter_carrier": [
     "LHA_1_Tarawa"
   ],
   "destroyers": [
     "DDG_Arleigh_Burke_IIa"
   ],
-  "cruisers": [
-  ],
+  "cruisers": [],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "HMAS Canberra",
     "HMAS Adelaide"
@@ -61,9 +57,9 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
-    "FA_18C_hornet": [
+    "F/A-18C Hornet (Lot 20)": [
       "Australian 75th Squadron",
       "Australian 77th Squadron"
     ]

@@ -25,16 +25,13 @@ if TYPE_CHECKING:
 class GroundSpeed:
     @classmethod
     def for_flight(cls, flight: Flight, altitude: Distance) -> Speed:
-        if not issubclass(flight.unit_type, FlyingType):
-            raise TypeError("Flight has non-flying unit")
-
         # TODO: Expose both a cruise speed and target speed.
         # The cruise speed can be used for ascent, hold, join, and RTB to save
         # on fuel, but mission speed will be fast enough to keep the flight
         # safer.
 
         # DCS's max speed is in kph at 0 MSL.
-        max_speed = kph(flight.unit_type.max_speed)
+        max_speed = flight.unit_type.max_speed
         if max_speed > SPEED_OF_SOUND_AT_SEA_LEVEL:
             # Aircraft is supersonic. Limit to mach 0.85 to conserve fuel and
             # account for heavily loaded jets.

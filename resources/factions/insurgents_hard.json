@@ -3,8 +3,7 @@
   "name": "Insurgents (Hard)",
   "authors": "Khopa",
   "description": "<p>Insurgents faction.</p>",
-  "aircrafts": [
-  ],
+  "aircrafts": [],
   "frontline_units": [
     "ATGM_HMMWV",
     "Scout_HMMWV",

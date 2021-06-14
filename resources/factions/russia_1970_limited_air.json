@@ -3,12 +3,14 @@
   "name": "Russia 1970 Limited Air",
   "authors": "Starfire",
   "description": "<p>1970 Soviet Russia, with limited air units intended for a Viggen campaign.</p>",
-  "locales": ["ru_RU"],
+  "locales": [
+    "ru_RU"
+  ],
   "aircrafts": [
-    "MiG_19P",
-	"MiG_21Bis",
-	"Mi_8MT",
-    "Mi_24V"
+    "Mi-24V Hind-E",
+    "Mi-8MTV2 Hip",
+    "MiG-19P Farmer-B",
+    "MiG-21bis Fishbed-N"
   ],
   "frontline_units": [
     "Scout_BRDM_2",
@@ -48,25 +50,19 @@
   "ewrs": [
     "FlatFaceGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "helicopter_carrier_names": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "helicopter_carrier_names": [],
+  "destroyers": [],
+  "cruisers": [],
   "missiles": [
     "ScudGenerator"
   ],
   "missiles_group_count": 1,
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "navy_generators": [
-	"RussianNavyGroupGenerator"
+    "RussianNavyGroupGenerator"
   ],
   "has_jtac": false,
   "doctrine": "coldwar"

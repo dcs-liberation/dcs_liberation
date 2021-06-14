@@ -3,21 +3,23 @@
   "name": "USA 1965",
   "authors": "Khopa",
   "description": "<p>US army in the late 60s, during Vietnam war.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "B_52H",
-    "CH_47D",
-    "C_130",
-    "F_4E",
-    "F_5E_3",
-    "UH_1H"
+    "B-52H Stratofortress",
+    "C-130",
+    "CH-47D",
+    "F-4E Phantom II",
+    "F-5E Tiger II",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "MBT_M60A3_Patton",

@@ -3,15 +3,17 @@
   "name": "Poland 2010",
   "authors": "Malakhit",
   "description": "<p>Polish army in the 2010s.</p>",
-  "locales": ["pl_PL"],
+  "locales": [
+    "pl_PL"
+  ],
   "aircrafts": [
-    "Su_17M4",
-    "MiG_29A",
-    "F_16C_50",
-    "Mi_8MT"
+    "F-16CM Fighting Falcon (Block 50)",
+    "Mi-8MTV2 Hip",
+    "MiG-29A Fulcrum-A",
+    "Su-22M4 Fitter-K"
   ],
   "tankers": [
-    "KC130"
+    "KC-130"
   ],
   "frontline_units": [
     "Scout_HMMWV",

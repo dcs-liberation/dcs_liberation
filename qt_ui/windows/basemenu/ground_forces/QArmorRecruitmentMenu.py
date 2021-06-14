@@ -8,9 +8,10 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from dcs.unittype import UnitType
+from dcs.unittype import UnitType, VehicleType
 
 from game import db
+from game.db import PRICES
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
@@ -65,3 +66,11 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
 
     def enable_sale(self, unit_type: Type[UnitType]) -> bool:
         return self.pending_deliveries.pending_orders(unit_type) > 0
+
+    def name_of(self, unit_type: Type[VehicleType]) -> str:
+        return db.unit_get_expanded_info(
+            self.game_model.game.player_country, unit_type, "name"
+        )
+
+    def price_of(self, unit_type: Type[VehicleType]) -> int:
+        return PRICES[unit_type]

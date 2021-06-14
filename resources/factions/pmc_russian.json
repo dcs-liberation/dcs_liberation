@@ -3,12 +3,14 @@
   "name": "Private Military Company - Russian",
   "authors": "Khopa",
   "description": "<p>A private military company using Russian units.</p>",
-  "locales": ["ru_RU"],
+  "locales": [
+    "ru_RU"
+  ],
   "aircrafts": [
-    "L_39ZA",
-    "Mi_8MT",
-    "Mi_24V",
-    "Ka_50"
+    "Ka-50 Hokum",
+    "L-39ZA Albatros",
+    "Mi-24V Hind-E",
+    "Mi-8MTV2 Hip"
   ],
   "frontline_units": [
     "Scout_Cobra",

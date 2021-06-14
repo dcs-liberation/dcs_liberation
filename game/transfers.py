@@ -18,8 +18,9 @@ from typing import (
 )
 
 from dcs.mapping import Point
-from dcs.unittype import FlyingType, VehicleType
+from dcs.unittype import VehicleType
 
+from game.dcs.aircrafttype import AircraftType
 from game.procurement import AircraftProcurementRequest
 from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
@@ -29,7 +30,7 @@ from game.theater.transitnetwork import (
 )
 from game.utils import meters, nautical_miles
 from gen.ato import Package
-from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
+from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE, aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import Flight, FlightType
 from gen.flights.flightplan import FlightPlanBuilder
@@ -191,9 +192,9 @@ class AirliftPlanner:
         self.package = Package(target=next_stop, auto_asap=True)
 
     def compatible_with_mission(
-        self, unit_type: Type[FlyingType], airfield: ControlPoint
+        self, unit_type: AircraftType, airfield: ControlPoint
     ) -> bool:
-        if not unit_type in TRANSPORT_CAPABLE:
+        if unit_type not in aircraft_for_task(FlightType.TRANSPORT):
             return False
         if not self.transfer.origin.can_operate(unit_type):
             return False
@@ -201,7 +202,7 @@ class AirliftPlanner:
             return False
 
         # Cargo planes have no maximum range.
-        if not unit_type.helicopter:
+        if not unit_type.dcs_unit_type.helicopter:
             return True
 
         # A helicopter that is transport capable and able to operate at both bases. Need
@@ -227,36 +228,42 @@ class AirliftPlanner:
         distance_cache = ObjectiveDistanceCache.get_closest_airfields(
             self.transfer.position
         )
+        air_wing = self.game.air_wing_for(self.for_player)
         for cp in distance_cache.closest_airfields:
             if cp.captured != self.for_player:
                 continue
 
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
-                squadrons = [
-                    s
-                    for s in self.game.air_wing_for(self.for_player).squadrons_for(
-                        unit_type
-                    )
-                    if FlightType.TRANSPORT in s.auto_assignable_mission_types
-                ]
-                if not squadrons:
-                    continue
-                squadron = squadrons[0]
-                if self.compatible_with_mission(unit_type, cp):
-                    while available and self.transfer.transport is None:
-                        flight_size = self.create_airlift_flight(squadron, inventory)
-                        available -= flight_size
+                squadrons = air_wing.auto_assignable_for_task_with_type(
+                    unit_type, FlightType.TRANSPORT
+                )
+                for squadron in squadrons:
+                    if self.compatible_with_mission(unit_type, cp):
+                        while (
+                            available
+                            and squadron.has_available_pilots
+                            and self.transfer.transport is None
+                        ):
+                            flight_size = self.create_airlift_flight(
+                                squadron, inventory
+                            )
+                            available -= flight_size
         if self.package.flights:
             self.game.ato_for(self.for_player).add_package(self.package)
 
     def create_airlift_flight(
         self, squadron: Squadron, inventory: ControlPointAircraftInventory
     ) -> int:
-        available = inventory.available(squadron.aircraft)
-        capacity_each = 1 if squadron.aircraft.helicopter else 2
+        available_aircraft = inventory.available(squadron.aircraft)
+        capacity_each = 1 if squadron.aircraft.dcs_unit_type.helicopter else 2
         required = math.ceil(self.transfer.size / capacity_each)
-        flight_size = min(required, available, squadron.aircraft.group_size_max)
+        flight_size = min(
+            required,
+            available_aircraft,
+            squadron.aircraft.dcs_unit_type.group_size_max,
+            squadron.number_of_available_pilots,
+        )
         capacity = flight_size * capacity_each
 
         if capacity < self.transfer.size:

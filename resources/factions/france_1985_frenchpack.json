@@ -3,20 +3,22 @@
   "name": "France 1985 (Frenchpack)",
   "authors": "Colonel Panic",
   "description": "<p>1980s French equipment using FrenchPack.</p>",
-  "locales": ["fr_FR"],
+  "locales": [
+    "fr_FR"
+  ],
   "doctrine": "coldwar",
   "aircrafts": [
-    "M_2000C",
-    "SA342M",
-    "SA342L",
-    "SA342Mistral"
+    "Mirage 2000C",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "SA 342M Gazelle Mistral"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
     "AMX_10RCR",
@@ -73,5 +75,5 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "SA342L"
+  "jtac_unit": "SA 342L Gazelle"
 }

@@ -22,15 +22,7 @@ class LossGrid(QGridLayout):
     def __init__(self, debriefing: Debriefing, player: bool) -> None:
         super().__init__()
 
-        if player:
-            country = debriefing.player_country
-        else:
-            country = debriefing.enemy_country
-
-        self.add_loss_rows(
-            debriefing.air_losses.by_type(player),
-            lambda u: db.unit_get_expanded_info(country, u, "name"),
-        )
+        self.add_loss_rows(debriefing.air_losses.by_type(player), lambda u: u.name)
         self.add_loss_rows(
             debriefing.front_line_losses_by_type(player),
             lambda u: db.unit_type_name(u),

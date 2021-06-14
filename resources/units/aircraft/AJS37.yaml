@@ -1,0 +1,31 @@
+description:
+  "The AJS-37 Viggen is a Swedish double-delta supersonic attack aircraft\
+  \ from the late Cold War. It was the backbone of the Swedish Air Force during the\
+  \ Cold war, serving as the main attack and anti-ship platform. The AJS is the 90\u2019\
+  s upgrade of this 70's era aircraft, adding several advanced weapons and systems\
+  \ functionalities. The aircraft was designed around the pilot, with an excellent\
+  \ man-machine interface, supporting the pilot through the smart use of autopilot\
+  \ systems, radar and HUD symbology in order to deliver the ordnance onto targets\
+  \ from treetop level with high speed attack runs.\n\nThe aircraft is armed with\
+  \ multiple weapon systems ranging from programmable stand-off weapons such as the\
+  \ RB-15F antiship missile to the BK90 Cluster munitions dispenser to various bombs,\
+  \ rockets and missiles for a wide range of target types. The aircraft can also carry\
+  \ gun pods and the Sidewinder series of infrared-guided missiles for air defence\
+  \ and self-protection purposes."
+introduced: 1993
+manufacturer: Saab
+origin: Sweden
+price: 12
+role: Attack/Reconnaissance
+variants:
+  AJS-37 Viggen: {}
+radios:
+  # The AJS37 has somewhat unique radio configuration. Two backup radio
+  # (FR 24) can only operate simultaneously with the main radio in guard
+  # mode. As such, we only use the main radio for both inter- and intra-
+  # flight communication.
+  intra_flight: FR 22
+  inter_flight: FR 22
+  channels:
+    type: viggen
+    namer: viggen

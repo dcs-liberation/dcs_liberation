@@ -6,113 +6,19 @@ from typing import List, Optional, Type, Union
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
-    AH_1W,
-    AH_64A,
-    AH_64D,
-    CH_47D,
-    CH_53E,
-    Ka_50,
-    Mi_24V,
-    Mi_26,
-    Mi_28N,
-    Mi_8MT,
     OH_58D,
-    SA342L,
-    SA342M,
-    SA342Minigun,
-    SA342Mistral,
-    SH_60B,
-    UH_1H,
-    UH_60A,
     helicopter_map,
 )
 from dcs.mapping import Point
 
 # mypy can't resolve these if they're wildcard imports for some reason.
 from dcs.planes import (
-    AJS37,
-    AV8BNA,
-    A_10A,
-    A_10C,
-    A_10C_2,
-    A_20G,
-    A_50,
-    An_26B,
-    An_30M,
     B_17G,
-    B_1B,
-    B_52H,
-    Bf_109K_4,
-    C_101CC,
-    C_130,
-    C_17A,
-    E_3A,
-    E_2C,
     FA_18C_hornet,
-    FW_190A8,
-    FW_190D9,
-    F_117A,
-    F_14A_135_GR,
-    F_14B,
-    F_15C,
-    F_15E,
-    F_16A,
     F_16C_50,
-    F_4E,
-    F_5E_3,
-    F_86F_Sabre,
-    IL_76MD,
-    IL_78M,
-    JF_17,
-    J_11A,
     Ju_88A4,
-    KC130,
-    KC_135,
-    KC135MPRS,
-    KJ_2000,
-    L_39ZA,
-    MQ_9_Reaper,
-    M_2000C,
-    MiG_15bis,
-    MiG_19P,
-    MiG_21Bis,
-    MiG_23MLD,
-    MiG_25PD,
-    MiG_27K,
-    MiG_29A,
-    MiG_29G,
-    MiG_29S,
-    MiG_31,
-    Mirage_2000_5,
-    P_47D_30,
-    P_47D_30bl1,
-    P_47D_40,
-    P_51D,
     P_51D_30_NA,
-    RQ_1A_Predator,
-    S_3B,
-    S_3B_Tanker,
-    SpitfireLFMkIX,
-    SpitfireLFMkIXCW,
-    Su_17M4,
-    Su_24M,
-    Su_24MR,
-    Su_25,
-    Su_25T,
-    Su_27,
-    Su_30,
-    Su_33,
-    Su_34,
-    Tornado_GR4,
-    Tornado_IDS,
-    Tu_160,
-    Tu_22M3,
-    Tu_95MS,
-    WingLoong_I,
-    Yak_40,
     plane_map,
-    I_16,
-    Tu_142,
 )
 from dcs.ships import (
     Boat_Armed_Hi_speed,
@@ -132,7 +38,7 @@ from dcs.ships import (
 from dcs.terrain.terrain import Airport
 from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import FlyingType, UnitType, VehicleType
+from dcs.unittype import UnitType, VehicleType
 from dcs.vehicles import (
     AirDefence,
     Armor,
@@ -350,120 +256,6 @@ This defines both price for the player (although only aircraft listed in CAP/CAS
 and prioritization for the enemy (i.e. less important bases will receive units with lower price)
 """
 PRICES = {
-    # fighter
-    MiG_23MLD: 13,
-    Su_27: 18,
-    Su_33: 22,
-    MiG_29A: 18,
-    MiG_29S: 20,
-    MiG_29G: 18,
-    MiG_25PD: 20,
-    MiG_31: 30,
-    J_11A: 26,
-    JF_17: 20,
-    Su_30: 24,
-    Su_57: 40,
-    SpitfireLFMkIX: 14,
-    SpitfireLFMkIXCW: 14,
-    I_16: 10,
-    Bf_109K_4: 14,
-    FW_190D9: 16,
-    FW_190A8: 14,
-    A_20G: 22,
-    Ju_88A4: 24,
-    F_5E_3: 8,
-    MiG_15bis: 4,
-    MiG_19P: 6,
-    F_86F_Sabre: 4,
-    MiG_21Bis: 8,
-    F_4E: 10,
-    AJS37: 12,
-    C_101CC: 6,
-    A_4E_C: 8,
-    MB_339PAN: 6,
-    AV8BNA: 14,
-    M_2000C: 16,
-    Mirage_2000_5: 20,
-    FA_18C_hornet: 22,
-    F_15C: 22,
-    F_15E: 24,
-    F_16C_50: 20,
-    F_16A: 14,
-    F_14A_135_GR: 20,
-    F_14B: 24,
-    F_22A: 40,
-    Tornado_IDS: 20,
-    Tornado_GR4: 20,
-    JAS39Gripen: 26,
-    # bomber
-    Su_17M4: 10,
-    Su_25: 15,
-    Su_25T: 18,
-    L_39ZA: 10,
-    Su_34: 24,
-    Su_24M: 20,
-    Su_24MR: 24,
-    MiG_27K: 20,
-    A_10A: 16,
-    A_10C: 22,
-    A_10C_2: 24,
-    S_3B: 10,
-    JAS39Gripen_AG: 26,
-    # heli
-    Ka_50: 13,
-    SA342M: 8,
-    SA342L: 5,
-    SA342Minigun: 4,
-    SA342Mistral: 8,
-    UH_1H: 4,
-    Mi_8MT: 5,
-    Mi_24V: 18,
-    Mi_28N: 24,
-    AH_1W: 20,
-    AH_64A: 24,
-    AH_64D: 30,
-    OH_58D: 6,
-    SH_60B: 6,
-    CH_47D: 4,
-    CH_53E: 4,
-    UH_60A: 4,
-    Mi_26: 4,
-    # Bombers
-    B_52H: 35,
-    B_1B: 50,
-    F_117A: 100,
-    Tu_160: 50,
-    Tu_22M3: 40,
-    Tu_95MS: 35,
-    Tu_142: 35,
-    # special
-    IL_76MD: 30,
-    An_26B: 25,
-    An_30M: 25,
-    Yak_40: 25,
-    S_3B_Tanker: 20,
-    IL_78M: 25,
-    KC_135: 25,
-    KC130: 25,
-    KC135MPRS: 25,
-    A_50: 50,
-    KJ_2000: 50,
-    E_3A: 50,
-    E_2C: 50,
-    C_130: 25,
-    Hercules: 25,
-    C_17A: 20,
-    # WW2
-    P_51D_30_NA: 18,
-    P_51D: 16,
-    P_47D_30: 17,
-    P_47D_30bl1: 16,
-    P_47D_40: 18,
-    B_17G: 30,
-    # Drones
-    MQ_9_Reaper: 12,
-    RQ_1A_Predator: 6,
-    WingLoong_I: 6,
     # armor
     Armor.APC_MTLB: 4,
     Artillery.Grad_MRL_FDDM__FC: 4,
@@ -507,6 +299,7 @@ PRICES = {
     Armor.IFV_Marder: 10,
     Armor.IFV_Warrior: 10,
     Armor.IFV_LAV_25: 7,
+    Armor.APC_AAV_7_Amphibious: 10,
     Artillery.MLRS_M270_227mm: 55,
     Artillery.SPH_M109_Paladin_155mm: 25,
     Artillery.SPM_2S9_Nona_120mm_M: 12,
@@ -520,11 +313,20 @@ PRICES = {
     Artillery.SPH_Dana_vz77_152mm: 26,
     Artillery.PLZ_05: 25,
     Artillery.SPH_T155_Firtina_155mm: 28,
+    Artillery.MLRS_9A52_Smerch_CM_300mm: 60,
     Unarmed.LUV_UAZ_469_Jeep: 3,
     Unarmed.Truck_Ural_375: 3,
+    Unarmed.Truck_GAZ_3307: 2,
     Infantry.Infantry_M4: 1,
     Infantry.Infantry_AK_74: 1,
     Unarmed.Truck_M818_6x6: 3,
+    Unarmed.LUV_Land_Rover_109: 1,
+    Unarmed.Truck_GAZ_3308: 1,
+    Unarmed.Truck_GAZ_66: 1,
+    Unarmed.Truck_KAMAZ_43101: 1,
+    Unarmed.Truck_Land_Rover_101_FC: 1,
+    Unarmed.Truck_Ural_4320_31_Arm_d: 1,
+    Unarmed.Truck_Ural_4320T: 1,
     # WW2
     Armor.MT_Pz_Kpfw_V_Panther_Ausf_G: 24,
     Armor.Tk_PzIV_H: 16,
@@ -557,6 +359,7 @@ PRICES = {
     Unarmed.Truck_Opel_Blitz: 1,
     Unarmed.Truck_Bedford: 1,
     Unarmed.Truck_GMC_Jimmy_6x6_Truck: 1,
+    Unarmed.Car_Willys_Jeep: 1,
     # ship
     CV_1143_5_Admiral_Kuznetsov: 100,
     CVN_74_John_C__Stennis: 100,
@@ -790,44 +593,6 @@ REWARDS = {
     "derrick": 8,
 }
 
-CARRIER_CAPABLE = [
-    FA_18C_hornet,
-    F_14A_135_GR,
-    F_14B,
-    AV8BNA,
-    Su_33,
-    A_4E_C,
-    S_3B,
-    S_3B_Tanker,
-    E_2C,
-    UH_1H,
-    Mi_8MT,
-    Ka_50,
-    AH_1W,
-    OH_58D,
-    UH_60A,
-    SH_60B,
-    SA342L,
-    SA342M,
-    SA342Minigun,
-    SA342Mistral,
-]
-
-LHA_CAPABLE = [
-    AV8BNA,
-    UH_1H,
-    Mi_8MT,
-    Ka_50,
-    AH_1W,
-    OH_58D,
-    UH_60A,
-    SH_60B,
-    SA342L,
-    SA342M,
-    SA342Minigun,
-    SA342Mistral,
-]
-
 """
 ---------- END OF CONFIGURATION SECTION
 """
@@ -925,13 +690,15 @@ def unit_type_name_2(unit_type) -> str:
     return unit_type.name and unit_type.name or unit_type.id
 
 
-def unit_get_expanded_info(country_name: str, unit_type, request_type: str) -> str:
+def unit_get_expanded_info(
+    country_name: str, unit_type: Type[UnitType], request_type: str
+) -> str:
     original_name = unit_type.name and unit_type.name or unit_type.id
     default_value = None
     faction_value = None
     with UNITINFOTEXT_PATH.open("r", encoding="utf-8") as fdata:
         data = json.load(fdata)
-    type_exists = data.get(original_name)
+    type_exists = data.get(unit_type.id)
     if type_exists is not None:
         for faction in type_exists:
             if default_value is None:
@@ -967,13 +734,6 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return None
 
 
-def flying_type_from_name(name: str) -> Optional[Type[FlyingType]]:
-    unit_type = plane_map.get(name)
-    if unit_type is not None:
-        return unit_type
-    return helicopter_map.get(name)
-
-
 def unit_type_of(unit: Unit) -> UnitType:
     if isinstance(unit, Vehicle):
         return vehicle_map[unit.type]
@@ -1000,39 +760,3 @@ F_16C_50.Liveries = DefaultLiveries
 P_51D_30_NA.Liveries = DefaultLiveries
 Ju_88A4.Liveries = DefaultLiveries
 B_17G.Liveries = DefaultLiveries
-
-# List of airframes that rely on their gun as a primary weapon. We confiscate bullets
-# from most AI air-to-ground missions since they aren't smart enough to RTB when they're
-# out of everything other than bullets (DCS does not have an all-but-gun winchester
-# option) and we don't want to be attacking fully functional Tors with a Vulcan.
-#
-# These airframes are the exceptions. They probably should be using their gun regardless
-# of the mission type.
-GUN_RELIANT_AIRFRAMES: List[Type[FlyingType]] = [
-    AH_1W,
-    AH_64A,
-    AH_64D,
-    A_10A,
-    A_10C,
-    A_10C_2,
-    A_20G,
-    Bf_109K_4,
-    FW_190A8,
-    FW_190D9,
-    F_86F_Sabre,
-    Ju_88A4,
-    Ka_50,
-    MiG_15bis,
-    MiG_19P,
-    Mi_24V,
-    Mi_28N,
-    P_47D_30,
-    P_47D_30bl1,
-    P_47D_40,
-    P_51D,
-    P_51D_30_NA,
-    SpitfireLFMkIX,
-    SpitfireLFMkIXCW,
-    Su_25,
-    Su_25T,
-]
