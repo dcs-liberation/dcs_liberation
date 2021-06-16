@@ -10,7 +10,7 @@ description: "The Tupolev Tu-160 (Russian: \u0422\u0443\u043F\u043E\u043B\u0435\
 introduced: 1987
 manufacturer: Tupolev
 origin: USSR/Russia
-price: 50
+price: 45
 role: Supersonic Strategic Bomber
 variants:
   Tu-160 Blackjack: {}

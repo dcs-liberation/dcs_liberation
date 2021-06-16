@@ -12,7 +12,7 @@ description: "The BF 109 series was, along with the Focke-Wulf Fw 190, the backb
   \ P-51D Mustang, Spitfire Mk. XIV and Hawker Tempest Mk. V."
 introduced: 1944
 manufacturer: Messerschmitt
-price: 14
+price: 4
 role: Fighter
 variants:
   "Bf 109 K-4 Kurf\xFCrst": {}

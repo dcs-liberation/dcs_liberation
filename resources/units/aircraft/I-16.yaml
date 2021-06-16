@@ -11,7 +11,7 @@ description: "I-16 - Soviet single-engine monoplane fighter of 1930s created by 
 introduced: 1935
 manufacturer: Polikarpov
 origin: USSR/Russia
-price: 10
+price: 2
 role: Fighter
 variants:
   I-16 Ishak: {}
