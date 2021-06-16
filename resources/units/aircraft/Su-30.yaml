@@ -6,7 +6,7 @@ description: "The Sukhoi Su-30 (Russian: \u0421\u0443\u0445\u043E\u0439 \u0421\u
 introduced: 1996
 manufacturer: Sukhoi
 origin: USSR/Russia
-price: 24
+price: 23
 role: Multirole Fighter
 variants:
   Su-30 Flanker-C: {}

@@ -6,6 +6,7 @@ Saves from 3.x are not compatible with 4.0.
 
 * **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
 * **[Campaign AI]** AI will plan Tanker flights.
+* **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
 * **[Factions]** Added more tankers to factions.
 * **[Flight Planner]** Added ability to plan Tankers.
 * **[Mods]** Added support for the Gripen mod.
