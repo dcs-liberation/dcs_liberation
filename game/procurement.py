@@ -63,13 +63,13 @@ class ProcurementAi:
 
         # faction has no ground units
         if (
-            len(self.faction.artillery_units) is 0
-            and len(self.faction.frontline_units) is 0
+            len(self.faction.artillery_units) == 0
+            and len(self.faction.frontline_units) == 0
         ):
             return 0
 
         # faction has no planes
-        if len(self.faction.aircrafts) is 0:
+        if len(self.faction.aircrafts) == 0:
             return 1
 
         for cp in self.owned_points:
