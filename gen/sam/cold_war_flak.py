@@ -29,7 +29,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
             for j in range(2):
                 index = index + 1
                 self.add_unit(
-                    AirDefence.AAA_8_8cm_Flak_18,
+                    AirDefence.Flak18,
                     "AAA#" + str(index),
                     self.position.x + spacing * i + random.randint(1, 5),
                     self.position.y + spacing * j + random.randint(1, 5),
@@ -38,14 +38,14 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
 
         # Medium range guns
         self.add_unit(
-            AirDefence.AAA_S_60_57mm,
+            AirDefence.S_60_Type59_Artillery,
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
             self.heading + 180,
         ),
         self.add_unit(
-            AirDefence.AAA_S_60_57mm,
+            AirDefence.S_60_Type59_Artillery,
             "SHO#2",
             self.position.x + spacing * 2 + 40,
             self.position.y + spacing + 40,
@@ -54,14 +54,14 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
 
         # Short range guns
         self.add_unit(
-            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            AirDefence.ZU_23_Emplacement_Closed,
             "SHO#3",
             self.position.x - 80,
             self.position.y - 40,
             self.heading + 180,
         ),
         self.add_unit(
-            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            AirDefence.ZU_23_Emplacement_Closed,
             "SHO#4",
             self.position.x + spacing * 2 + 80,
             self.position.y + spacing + 40,
@@ -102,7 +102,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
             for j in range(2):
                 index = index + 1
                 self.add_unit(
-                    AirDefence.AAA_8_8cm_Flak_18,
+                    AirDefence.Flak18,
                     "AAA#" + str(index),
                     self.position.x + spacing * i + random.randint(1, 5),
                     self.position.y + spacing * j + random.randint(1, 5),
@@ -111,14 +111,14 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
 
         # Medium range guns
         self.add_unit(
-            AirDefence.AAA_S_60_57mm,
+            AirDefence.S_60_Type59_Artillery,
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
             self.heading + 180,
         ),
         self.add_unit(
-            AirDefence.AAA_S_60_57mm,
+            AirDefence.S_60_Type59_Artillery,
             "SHO#2",
             self.position.x + spacing * 2 + 40,
             self.position.y + spacing + 40,
@@ -127,14 +127,14 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
 
         # Short range guns
         self.add_unit(
-            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            AirDefence.ZU_23_Emplacement_Closed,
             "SHO#3",
             self.position.x - 80,
             self.position.y - 40,
             self.heading + 180,
         ),
         self.add_unit(
-            AirDefence.AAA_ZU_23_Closed_Emplacement,
+            AirDefence.ZU_23_Emplacement_Closed,
             "SHO#4",
             self.position.x + spacing * 2 + 80,
             self.position.y + spacing + 40,
@@ -143,7 +143,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
 
         # Add a P19 Radar for EWR
         self.add_unit(
-            AirDefence.SAM_P19_Flat_Face_SR__SA_2_3,
+            AirDefence.P_19_s_125_sr,
             "SR#0",
             self.position.x - 60,
             self.position.y - 20,

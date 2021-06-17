@@ -25,7 +25,7 @@ class Flak18Generator(AirDefenseGroupGenerator):
             for j in range(2):
                 index = index + 1
                 self.add_unit(
-                    AirDefence.AAA_8_8cm_Flak_18,
+                    AirDefence.Flak18,
                     "AAA#" + str(index),
                     self.position.x + spacing * i + random.randint(1, 5),
                     self.position.y + spacing * j + random.randint(1, 5),

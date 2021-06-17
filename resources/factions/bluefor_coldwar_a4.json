@@ -26,18 +26,18 @@
     "KC130"
   ],
   "frontline_units": [
-    "MBT_M60A3_Patton",
-    "APC_M113",
-    "SAM_Chaparral_M48"
+    "M_60",
+    "M_113",
+    "M48_Chaparral"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm"
+    "M_109"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "M_818"
   ],
   "infantry_units": [
-    "Infantry_M4",
+    "Soldier_M4",
     "Infantry_M249"
   ],
   "air_defenses": [
@@ -50,10 +50,10 @@
     "HawkEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
     "DDG_Arleigh_Burke_IIa"

@@ -39,7 +39,7 @@ class RapierGenerator(AirDefenseGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_Rapier_LN,
+                AirDefence.Rapier_fsa_launcher,
                 "LN#" + str(i),
                 position[0],
                 position[1],

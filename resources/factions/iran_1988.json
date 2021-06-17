@@ -18,22 +18,22 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "APC_M113",
-    "APC_BTR_80",
-    "MBT_M60A3_Patton",
-    "MBT_Chieftain_Mk_3",
-    "IFV_BMP_1",
-    "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
-    "SPAAA_ZSU_57_2",
-    "SPAAA_ZU_23_2_Mounted_Ural_375"
+    "M_113",
+    "BTR_80",
+    "M_60",
+    "Chieftain_mk3",
+    "BMP_1",
+    "ZSU_23_4_Shilka",
+    "ZSU_57_2",
+    "Ural_375_ZU_23"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S1_Gvozdika_122mm"
+    "Grad_URAL",
+    "SAU_Gvozdika"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Paratrooper_AKS",

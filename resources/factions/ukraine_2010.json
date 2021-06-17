@@ -20,19 +20,19 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "Scout_HMMWV",
-    "IFV_BMP_3",
-    "IFV_BMP_2",
-    "APC_BTR_80",
-    "MBT_T_80U",
-    "MBT_T_72B",
-    "SAM_SA_13_Strela_10M3_Gopher_TEL"
+    "M1043_HMMWV_Armament",
+    "BMP_3",
+    "BMP_2",
+    "BTR_80",
+    "T_80UD",
+    "T_72B",
+    "Strela_10M3"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Paratrooper_AKS",

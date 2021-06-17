@@ -9,14 +9,14 @@
     "I_16"
   ],
   "frontline_units": [
-    "Tk_M4_Sherman",
-    "APC_M2A1_Halftrack",
-    "Car_Daimler_Armored",
-    "LT_Mk_VII_Tetrarch",
-    "AAA_Bofors_40mm"
+    "M4_Sherman",
+    "M2A1_halftrack",
+    "Daimler_AC",
+    "Tetrarch",
+    "Bofors40"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm"
+    "Grad_URAL"
   ],
   "logistics_units": [
     "Truck_Bedford",

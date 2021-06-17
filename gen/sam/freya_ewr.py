@@ -38,7 +38,7 @@ class FreyaGenerator(AirDefenseGroupGenerator):
         positions = self.get_circular_position(4, launcher_distance=100, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.AAA_8_8cm_Flak_18,
+                AirDefence.Flak18,
                 "AA#" + str(4 + i),
                 position[0],
                 position[1],

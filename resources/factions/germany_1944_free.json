@@ -10,9 +10,9 @@
     "Bf_109K_4"
   ],
   "frontline_units": [
-    "Tk_PzIV_H",
-    "APC_Sd_Kfz_251_Halftrack",
-    "AAA_8_8cm_Flak_18"
+    "Pz_IV_H",
+    "Sd_Kfz_251",
+    "Flak18"
   ],
   "artillery_units": [
   ],

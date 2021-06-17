@@ -28,20 +28,20 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "APC_BTR_80",
-    "IFV_BMP_1",
-    "IFV_BMP_2",
-    "MBT_T_72B",
-    "MBT_T_80U",
-    "SAM_SA_13_Strela_10M3_Gopher_TEL"
+    "BTR_80",
+    "BMP_1",
+    "BMP_2",
+    "T_72B",
+    "T_80UD",
+    "Strela_10M3"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPH_2S19_Msta_152mm"
+    "Uragan_BM_27",
+    "SAU_Msta"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Paratrooper_AKS",

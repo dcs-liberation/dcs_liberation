@@ -14,21 +14,21 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "Scout_BRDM_2",
-    "Grad_MRL_FDDM__FC",
-    "APC_MTLB",
-    "MBT_T_55",
-    "LT_PT_76",
-    "SPAAA_ZU_23_2_Mounted_Ural_375",
-    "AAA_8_8cm_Flak_18",
-    "AAA_S_60_57mm"
+    "BRDM_2",
+    "Grad_FDDM",
+    "MTLB",
+    "T_55",
+    "PT_76",
+    "Ural_375_ZU_23",
+    "Flak18",
+    "S_60_Type59_Artillery"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm"
+    "Grad_URAL"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Infantry_AK_74_Rus",

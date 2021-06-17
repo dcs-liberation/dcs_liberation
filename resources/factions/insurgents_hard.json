@@ -6,24 +6,24 @@
   "aircrafts": [
   ],
   "frontline_units": [
-    "ATGM_HMMWV",
-    "Scout_HMMWV",
-    "Scout_BRDM_2",
-    "APC_BTR_80",
-    "APC_BTR_RD",
-    "LT_PT_76",
-    "IFV_BMP_1",
-    "MBT_T_55",
-    "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375",
-    "SPAAA_ZSU_57_2"
+    "M1045_HMMWV_TOW",
+    "M1043_HMMWV_Armament",
+    "BRDM_2",
+    "BTR_80",
+    "BTR_D",
+    "PT_76",
+    "BMP_1",
+    "T_55",
+    "Ural_375_ZU_23_Insurgent",
+    "ZSU_57_2"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S19_Msta_152mm"
+    "Grad_URAL",
+    "SAU_Msta"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Insurgent_AK_74",

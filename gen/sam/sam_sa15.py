@@ -16,14 +16,14 @@ class SA15Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_SA_15_Tor_Gauntlet,
+            AirDefence.Tor_9A331,
             "ADS",
             self.position.x,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            Unarmed.LUV_UAZ_469_Jeep,
+            Unarmed.UAZ_469,
             "EWR",
             self.position.x + 40,
             self.position.y,

@@ -16,20 +16,20 @@
   "awacs": [],
   "tankers": [],
   "frontline_units": [
-    "IFV_BMP_1",
-    "IFV_BMP_2",
-    "Scout_BRDM_2",
-    "APC_MTLB",
-    "MBT_T_55",
-    "MBT_T_72B"
+    "BMP_1",
+    "BMP_2",
+    "BRDM_2",
+    "MTLB",
+    "T_55",
+    "T_72B"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S1_Gvozdika_122mm"
+    "Grad_URAL",
+    "SAU_Gvozdika"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Infantry_AK_74_Rus",

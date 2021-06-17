@@ -24,22 +24,22 @@
     "ERC_90",
     "TRM_2000_PAMELA",
     "VAB__50",
-    "ATGM_VAB_Mephisto",
+    "VAB_Mephisto",
     "VAB_T20_13",
     "VBL__50",
     "VBL_AANF1",
     "AMX_30B2",
-    "SAM_Roland_ADS"
+    "Roland_ADS"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "MLRS",
+    "M_109"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "M_818"
   ],
   "infantry_units": [
-    "Infantry_M4",
+    "Soldier_M4",
     "Infantry_M249",
     "MANPADS_Stinger"
   ],
@@ -49,7 +49,7 @@
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
     "DDG_Arleigh_Burke_IIa"

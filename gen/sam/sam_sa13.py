@@ -18,7 +18,7 @@ class SA13Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            Unarmed.LUV_UAZ_469_Jeep,
+            Unarmed.UAZ_469,
             "UAZ",
             self.position.x,
             self.position.y,
@@ -38,7 +38,7 @@ class SA13Generator(AirDefenseGroupGenerator):
         )
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_SA_13_Strela_10M3_Gopher_TEL,
+                AirDefence.Strela_10M3,
                 "LN#" + str(i),
                 position[0],
                 position[1],

@@ -19,18 +19,18 @@
     "KC130"
   ],
   "frontline_units": [
-    "MBT_Leopard_1A3",
-    "APC_M113",
-    "SAM_Avenger__Stinger"
+    "Leopard1A3",
+    "M_113",
+    "M1097_Avenger"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm"
+    "M_109"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "M_818"
   ],
   "infantry_units": [
-    "Infantry_M4",
+    "Soldier_M4",
     "Infantry_M249",
     "MANPADS_Stinger"
   ],
@@ -44,7 +44,7 @@
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
     "FFG_Oliver_Hazzard_Perry"

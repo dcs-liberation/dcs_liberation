@@ -41,7 +41,7 @@ class SilkwormGenerator(GroupGenerator):
 
         # Shorad
         self.add_unit(
-            AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
+            AirDefence.ZSU_23_4_Shilka,
             "SHILKA#0",
             self.position.x - 55,
             self.position.y - 38,
@@ -50,7 +50,7 @@ class SilkwormGenerator(GroupGenerator):
 
         # Shorad 2
         self.add_unit(
-            AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL,
+            AirDefence.Strela_1_9P31,
             "STRELA#0",
             self.position.x + 200,
             self.position.y + 15,

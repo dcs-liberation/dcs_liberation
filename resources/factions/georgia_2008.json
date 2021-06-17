@@ -11,23 +11,23 @@
     "UH_1H"
   ],
   "frontline_units": [
-    "APC_BTR_80",
-    "APC_MTLB",
-    "Scout_Cobra",
-    "IFV_BMP_1",
-    "IFV_BMP_2",
-    "MBT_T_72B",
-    "MBT_T_55",
-    "SAM_SA_13_Strela_10M3_Gopher_TEL"
+    "BTR_80",
+    "MTLB",
+    "Cobra",
+    "BMP_1",
+    "BMP_2",
+    "T_72B",
+    "T_55",
+    "Strela_10M3"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S1_Gvozdika_122mm",
-    "SPH_2S3_Akatsia_152mm"
+    "Grad_URAL",
+    "SAU_Gvozdika",
+    "SAU_Akatsia"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Paratrooper_AKS",

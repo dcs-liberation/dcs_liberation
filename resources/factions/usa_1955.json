@@ -12,19 +12,19 @@
     "P_51D_30_NA"
   ],
   "frontline_units": [
-    "Tk_M4_Sherman",
-    "MBT_M60A3_Patton",
-    "APC_M2A1_Halftrack",
-    "AAA_Bofors_40mm"
+    "M4_Sherman",
+    "M_60",
+    "M2A1_halftrack",
+    "Bofors40"
   ],
   "artillery_units": [
-    "SPG_M12_GMC_155mm"
+    "M12_GMC"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "M_818"
   ],
   "infantry_units": [
-    "Infantry_M4"
+    "Soldier_M4"
   ],
   "air_defenses": [
     "BoforsGenerator",

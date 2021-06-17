@@ -17,18 +17,18 @@
     "KC130"
   ],
   "frontline_units": [
-    "IFV_Warrior",
+    "MCV_80",
     "MBT_Leopard_2A4",
-    "IFV_M1126_Stryker_ICV",
-    "SAM_Chaparral_M48"
+    "M1126_Stryker_ICV",
+    "M48_Chaparral"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "M_818"
   ],
   "infantry_units": [
-    "Infantry_M4",
+    "Soldier_M4",
     "Infantry_M249"
   ],
   "air_defenses": [

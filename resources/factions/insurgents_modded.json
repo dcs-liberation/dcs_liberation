@@ -10,15 +10,15 @@
     "DIM__TOYOTA_DESERT",
     "DIM__TOYOTA_GREEN",
     "DIM__KAMIKAZE",
-    "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375"
+    "Ural_375_ZU_23_Insurgent"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S19_Msta_152mm"
+    "Grad_URAL",
+    "SAU_Msta"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "Ural_375",
+    "UAZ_469"
   ],
   "infantry_units": [
     "Insurgent_AK_74",

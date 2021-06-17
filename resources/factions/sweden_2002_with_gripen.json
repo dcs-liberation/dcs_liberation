@@ -18,18 +18,18 @@
     "KC130"
   ],
   "frontline_units": [
-    "IFV_Warrior",
+    "MCV_80",
     "MBT_Leopard_2A4",
-    "IFV_M1126_Stryker_ICV",
-    "SAM_Avenger__Stinger"
+    "M1126_Stryker_ICV",
+    "M1097_Avenger"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "M_818"
   ],
   "infantry_units": [
-    "Infantry_M4",
+    "Soldier_M4",
     "Infantry_M249",
     "MANPADS_Stinger"
   ],
