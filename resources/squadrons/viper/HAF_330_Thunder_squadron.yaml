@@ -1,0 +1,21 @@
+---
+name: 330 Squadron
+nickname: Thunder
+country: Greece
+role: Multirole Fighter
+aircraft: F-16C_50
+livery: haf_ 330_thunder
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
