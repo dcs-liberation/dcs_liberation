@@ -140,6 +140,20 @@
   "channel": null
  },
  {
+  "name": "MUT",
+  "callsign": "MUT",
+  "beacon_type": 4,
+  "hertz": 112300000,
+  "channel": null
+ },
+ {
+  "name": "DHEKELIA",
+  "callsign": "DKA",
+  "beacon_type": 10,
+  "hertz": 343000,
+  "channel": null
+ },
+ {
   "name": "",
   "callsign": "IADA",
   "beacon_type": 14,
@@ -157,7 +171,7 @@
   "name": "ADANA",
   "callsign": "ADN",
   "beacon_type": 11,
-  "hertz": 395000000,
+  "hertz": 395000,
   "channel": null
  },
  {
@@ -165,6 +179,41 @@
   "callsign": "ADA",
   "beacon_type": 4,
   "hertz": 112700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IAK",
+  "beacon_type": 14,
+  "hertz": 109700000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IAK",
+  "beacon_type": 15,
+  "hertz": 109700000,
+  "channel": null
+ },
+ {
+  "name": "Akrotiri",
+  "callsign": "AKR",
+  "beacon_type": 6,
+  "hertz": 116000000,
+  "channel": 107
+ },
+ {
+  "name": "Akrotiri",
+  "callsign": "AKR",
+  "beacon_type": 3,
+  "hertz": 116000000,
+  "channel": 107
+ },
+ {
+  "name": "AKROTIRI",
+  "callsign": "AK",
+  "beacon_type": 10,
+  "hertz": 365000,
   "channel": null
  },
  {
@@ -220,7 +269,7 @@
   "name": "BEIRUT",
   "callsign": "BOD",
   "beacon_type": 11,
-  "hertz": 351000000,
+  "hertz": 351000,
   "channel": null
  },
  {
@@ -255,14 +304,14 @@
   "name": "DAMASCUS",
   "callsign": "DAL",
   "beacon_type": 11,
-  "hertz": 342000000,
+  "hertz": 342000,
   "channel": null
  },
  {
   "name": "ABYAD",
   "callsign": "ABD",
   "beacon_type": 10,
-  "hertz": 264000,
+  "hertz": 264,
   "channel": null
  },
  {
@@ -270,6 +319,69 @@
   "callsign": "DAML",
   "beacon_type": 15,
   "hertz": 111100000,
+  "channel": null
+ },
+ {
+  "name": "ERCAN",
+  "callsign": "ECN",
+  "beacon_type": 4,
+  "hertz": 117000000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IGNP",
+  "beacon_type": 14,
+  "hertz": 109100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IGNP",
+  "beacon_type": 15,
+  "hertz": 109100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IGZP",
+  "beacon_type": 14,
+  "hertz": 108500000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IGZP",
+  "beacon_type": 15,
+  "hertz": 108500000,
+  "channel": null
+ },
+ {
+  "name": "ALANYA/GAZIPASA",
+  "callsign": "GZP",
+  "beacon_type": 4,
+  "hertz": 114200000,
+  "channel": null
+ },
+ {
+  "name": "GAZIPASA/ALANYA",
+  "callsign": "GZP",
+  "beacon_type": 10,
+  "hertz": 316000,
+  "channel": null
+ },
+ {
+  "name": "FAMAGUSTA_GECITKALE",
+  "callsign": "GKE",
+  "beacon_type": 4,
+  "hertz": 114300000,
+  "channel": null
+ },
+ {
+  "name": "GECITKALE",
+  "callsign": "GKE",
+  "beacon_type": 10,
+  "hertz": 435000,
   "channel": null
  },
  {
@@ -317,8 +429,8 @@
  {
   "name": "INCIRLIC",
   "callsign": "DAN",
-  "beacon_type": 6,
-  "hertz": 108400000,
+  "beacon_type": 5,
+  "hertz": null,
   "channel": 21
  },
  {
@@ -351,6 +463,34 @@
  },
  {
   "name": "",
+  "callsign": "ILC",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "Larnaca",
+  "callsign": "LCA",
+  "beacon_type": 4,
+  "hertz": 112800000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "ILC",
+  "beacon_type": 15,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "Larnaca",
+  "callsign": "LCA",
+  "beacon_type": 9,
+  "hertz": 432000,
+  "channel": null
+ },
+ {
+  "name": "",
   "callsign": "IBA",
   "beacon_type": 15,
   "hertz": 109100000,
@@ -373,8 +513,8 @@
  {
   "name": "LATAKIA",
   "callsign": "LTK",
-  "beacon_type": 11,
-  "hertz": 414000000,
+  "beacon_type": 9,
+  "hertz": 414000,
   "channel": null
  },
  {
@@ -392,10 +532,66 @@
   "channel": null
  },
  {
+  "name": "Pafos",
+  "callsign": "PHA",
+  "beacon_type": 10,
+  "hertz": 328000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IPA",
+  "beacon_type": 15,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IPA",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "Pafos",
+  "callsign": "IPA",
+  "beacon_type": 3,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "Pafos",
+  "callsign": "PHA",
+  "beacon_type": 4,
+  "hertz": 117900000,
+  "channel": null
+ },
+ {
   "name": "RAMATDAVID",
   "callsign": "RMD",
   "beacon_type": 10,
   "hertz": 368000,
+  "channel": null
+ },
+ {
+  "name": "RAMATDAVID",
+  "callsign": "RMD",
+  "beacon_type": 6,
+  "hertz": 113700000,
+  "channel": 84
+ },
+ {
+  "name": "",
+  "callsign": "RMD",
+  "beacon_type": 14,
+  "hertz": 111100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "RMD",
+  "beacon_type": 15,
+  "hertz": 111100000,
   "channel": null
  },
  {
