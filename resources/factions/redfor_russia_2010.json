@@ -97,13 +97,13 @@
     "Mitrofan Moskalenko"
   ],
   "destroyers": [
-    "Frigate_1135M_Rezky",
-    "Type_052B_Destroyer",
-    "Type_052C_Destroyer"
+    "REZKY",
+    "Type_052B",
+    "Type_052C"
   ],
   "cruisers": [
-    "Corvette_1241_1_Molniya",
-    "Type_054A_Frigate"
+    "MOLNIYA",
+    "Type_054A"
   ],
   "requirements": {},
   "carrier_names": [

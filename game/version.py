@@ -70,9 +70,9 @@ VERSION = _build_version_string()
 #: Version 4.2
 #: * Adds support for AAA objectives. Place with any of the following units (either red
 #:   or blue):
-#:     * AAA_8_8cm_Flak_18,
-#:     * SPAAA_Vulcan_M163,
-#:     * SPAAA_ZSU_23_4_Shilka_Gun_Dish,
+#:     * Flak18,
+#:     * Vulcan,
+#:     * ZSU_23_4_Shilka,
 #:
 #: Version 5.0
 #: * Ammunition Depots objective locations are now predetermined using the "Ammunition

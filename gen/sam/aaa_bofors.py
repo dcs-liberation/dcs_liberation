@@ -27,7 +27,7 @@ class BoforsGenerator(AirDefenseGroupGenerator):
             for j in range(grid_y):
                 index = index + 1
                 self.add_unit(
-                    AirDefence.AAA_Bofors_40mm,
+                    AirDefence.Bofors40,
                     "AAA#" + str(index),
                     self.position.x + spacing * i,
                     self.position.y + spacing * j,

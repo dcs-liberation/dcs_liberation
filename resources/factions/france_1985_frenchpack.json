@@ -54,10 +54,10 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {
     "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"

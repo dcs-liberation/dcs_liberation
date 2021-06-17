@@ -85,11 +85,11 @@
     "Wudang Shan"
   ],
   "destroyers": [
-    "Type_052B_Destroyer",
-    "Type_052C_Destroyer"
+    "Type_052B",
+    "Type_052C"
   ],
   "cruiser": [
-    "Type_054A_Frigate"
+    "Type_054A"
   ],
   "requirements": {},
   "navy_generators": [

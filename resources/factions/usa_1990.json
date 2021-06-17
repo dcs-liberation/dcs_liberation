@@ -76,11 +76,11 @@
     "LHA_1_Tarawa"
   ],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry",
-    "DDG_Arleigh_Burke_IIa"
+    "PERRY",
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
   "carrier_names": [

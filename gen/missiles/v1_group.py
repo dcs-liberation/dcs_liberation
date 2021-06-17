@@ -37,7 +37,7 @@ class V1GroupGenerator(GroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.LUV_Kubelwagen_82,
+            Unarmed.Kubelwagen_82,
             "Kubel#0",
             self.position.x - 35,
             self.position.y - 20,
@@ -45,9 +45,7 @@ class V1GroupGenerator(GroupGenerator):
         )
 
         # Self defense flak
-        flak_unit = random.choice(
-            [AirDefence.AAA_Flak_Vierling_38_Quad_20mm, AirDefence.AAA_Flak_38_20mm]
-        )
+        flak_unit = random.choice([AirDefence.Flak38, AirDefence.Flak30])
 
         self.add_unit(
             flak_unit,
@@ -58,7 +56,7 @@ class V1GroupGenerator(GroupGenerator):
         )
 
         self.add_unit(
-            Unarmed.Truck_Opel_Blitz,
+            Unarmed.Blitz_36_6700A,
             "Blitz#0",
             self.position.x + 200,
             self.position.y + 15,
