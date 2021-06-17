@@ -19,7 +19,7 @@ from gen.flights.flight import Flight
 @dataclass(frozen=True)
 class FlyingUnit:
     flight: Flight
-    pilot: Pilot
+    pilot: Optional[Pilot]
 
 
 @dataclass(frozen=True)
@@ -70,8 +70,6 @@ class UnitMap:
             name = str(unit.name)
             if name in self.aircraft:
                 raise RuntimeError(f"Duplicate unit name: {name}")
-            if pilot is None:
-                raise ValueError(f"{name} has no pilot assigned")
             self.aircraft[name] = FlyingUnit(flight, pilot)
         if flight.cargo is not None:
             self.add_airlift_units(group, flight.cargo)
