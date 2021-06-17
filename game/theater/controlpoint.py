@@ -25,10 +25,10 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.ships import (
-    CVN_74_John_C__Stennis,
-    CV_1143_5_Admiral_Kuznetsov,
-    LHA_1_Tarawa,
-    Type_071_Amphibious_Transport_Dock,
+    Stennis,
+    KUZNECOW,
+    LHA_Tarawa,
+    Type_071,
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
@@ -487,14 +487,14 @@ class ControlPoint(MissionTarget, ABC):
                     for group in g.groups:
                         for u in group.units:
                             if db.unit_type_from_name(u.type) in [
-                                CVN_74_John_C__Stennis,
-                                CV_1143_5_Admiral_Kuznetsov,
+                                Stennis,
+                                KUZNECOW,
                             ]:
                                 return group.name
                 elif g.dcs_identifier == "LHA":
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [LHA_1_Tarawa]:
+                            if db.unit_type_from_name(u.type) in [LHA_Tarawa]:
                                 return group.name
         return None
 
@@ -893,10 +893,10 @@ class NavalControlPoint(ControlPoint, ABC):
         for group in self.find_main_tgo().groups:
             for u in group.units:
                 if db.unit_type_from_name(u.type) in [
-                    CVN_74_John_C__Stennis,
-                    LHA_1_Tarawa,
-                    CV_1143_5_Admiral_Kuznetsov,
-                    Type_071_Amphibious_Transport_Dock,
+                    Stennis,
+                    LHA_Tarawa,
+                    KUZNECOW,
+                    Type_071,
                 ]:
                     return True
         return False
