@@ -122,7 +122,7 @@ class Event:
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
-            if (
+            if loss.pilot is not None and (
                 not loss.pilot.player
                 or not self.game.settings.invulnerable_player_pilots
             ):
