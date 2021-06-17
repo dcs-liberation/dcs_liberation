@@ -1,0 +1,21 @@
+---
+name: 341 Squadron
+nickname: Arrow
+country: Greece
+role: Multirole Fighter
+aircraft: F-16C_50
+livery: HAF_341_Arrow
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

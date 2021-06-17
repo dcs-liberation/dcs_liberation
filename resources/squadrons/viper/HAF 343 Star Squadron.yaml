@@ -1,0 +1,21 @@
+---
+name: 343 Squadron
+nickname: Star
+country: Greece
+role: Multirole Fighter
+aircraft: F-16C_50
+livery: HAF_343_Star
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

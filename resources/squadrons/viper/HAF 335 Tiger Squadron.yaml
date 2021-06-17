@@ -1,0 +1,21 @@
+---
+name: 335 Squadron
+nickname: Tiger
+country: Greece
+role: Multirole Fighter
+aircraft: F-16C_50
+livery: HAF_335_Tiger
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
