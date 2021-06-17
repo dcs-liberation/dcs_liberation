@@ -5,17 +5,20 @@
   "description": "<p>Turkish army in the mid/late 2000s.</p>",
   "locales": ["tr_TR"],
   "aircrafts": [
+    "AH_1W",
+    "C_130",
+    "CH_47D",
     "F_16C_50",
     "F_4E",
+    "OH_58D",
     "UH_1H",
-    "AH_1W"
+    "UH_60A"
   ],
   "awacs": [
     "E_3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC_135"
   ],
   "frontline_units": [
     "MBT_Leopard_2A4_Trs",
@@ -23,9 +26,12 @@
     "MBT_M60A3_Patton",
     "Scout_Cobra",
     "APC_BTR_80",
+    "APC_M113",
     "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm",
     "SPH_T155_Firtina_155mm"
   ],
   "logistics_units": [
