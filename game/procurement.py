@@ -154,7 +154,7 @@ class ProcurementAi:
         of_class = set(unit_class.unit_list) & faction_units
 
         # faction has no access to needed unit type, take a random unit
-        if len(of_class) is 0:
+        if not of_class:
             of_class = faction_units
 
         affordable_units = [u for u in of_class if db.PRICES[u] <= budget]
