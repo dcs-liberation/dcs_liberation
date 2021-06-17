@@ -4,7 +4,8 @@
 
 ## Fixes
 
-* Fixed problem with mission load when control point name contained an apostrophe.
+* **[Campaign AI]** Fix procurement for factions that lack some unit types.
+* **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 
 # 3.0.0
 
