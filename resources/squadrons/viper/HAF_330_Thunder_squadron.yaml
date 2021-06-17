@@ -4,7 +4,7 @@ nickname: Thunder
 country: Greece
 role: Multirole Fighter
 aircraft: F-16C_50
-livery: haf_ 330_thunder
+livery: HAF_ 330_Thunder
 mission_types:
   - BAI
   - BARCAP
