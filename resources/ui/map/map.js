@@ -428,6 +428,7 @@ class ControlPoint {
     return L.polyline([this.cp.position, destination], {
       color: Colors.Green,
       weight: 1,
+      interactive: false,
     });
   }
 
@@ -519,6 +520,7 @@ class TheaterGroundObject {
         color: detectionColor,
         fill: false,
         weight: 1,
+        interactive: false,
       }).addTo(detectionLayer);
     });
 
@@ -528,6 +530,7 @@ class TheaterGroundObject {
         color: threatColor,
         fill: false,
         weight: 2,
+        interactive: false,
       }).addTo(threatLayer);
     });
   }
@@ -737,12 +740,15 @@ class Flight {
     const color = this.flight.blue ? Colors.Blue : Colors.Red;
     const layer = this.flightPlanLayer();
     if (this.flight.selected) {
-      this.path = L.polyline(path, { color: Colors.Highlight })
+      this.path = L.polyline(path, {
+        color: Colors.Highlight,
+        interactive: false,
+      })
         .addTo(selectedFlightPlansLayer)
         .addTo(layer)
         .addTo(allFlightPlansLayer);
     } else {
-      this.path = L.polyline(path, { color: color })
+      this.path = L.polyline(path, { color: color, interactive: false })
         .addTo(layer)
         .addTo(allFlightPlansLayer);
     }
@@ -760,6 +766,7 @@ class Flight {
         this.commitBoundary = L.polyline(this.flight.commitBoundary, {
           color: Colors.Highlight,
           weight: 1,
+          interactive: false,
         })
           .addTo(selectedFlightPlansLayer)
           .addTo(this.flightPlanLayer())
@@ -819,6 +826,7 @@ function _drawThreatZones(zones, layer, player) {
       fill: true,
       fillOpacity: 0.4,
       noClip: true,
+      interactive: false,
     }).addTo(layer);
   }
 }
@@ -874,6 +882,7 @@ function drawNavmesh(zones, layer) {
       color: "#000000",
       weight: 1,
       fill: false,
+      interactive: false,
     }).addTo(layer);
   }
 }
@@ -896,6 +905,7 @@ function drawMapZones() {
       color: "#344455",
       fillColor: "#344455",
       fillOpacity: 1,
+      interactive: false,
     }).addTo(seaZones);
   }
 
@@ -904,6 +914,7 @@ function drawMapZones() {
       color: "#969696",
       fillColor: "#4b4b4b",
       fillOpacity: 1,
+      interactive: false,
     }).addTo(inclusionZones);
   }
 
@@ -912,6 +923,7 @@ function drawMapZones() {
       color: "#969696",
       fillColor: "#303030",
       fillOpacity: 1,
+      interactive: false,
     }).addTo(exclusionZones);
   }
 }
@@ -923,7 +935,8 @@ function drawUnculledZones() {
     L.circle(zone.position, {
       radius: zone.radius,
       color: "#b4ff8c",
-      stroke: false,
+      fill: false,
+      interactive: false,
     }).addTo(unculledZones);
   }
 }
