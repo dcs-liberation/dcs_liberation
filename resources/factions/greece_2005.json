@@ -5,12 +5,16 @@
   "description": "<p>Hellenic army in the mid/late 2000s.</p>",
   "locales": ["el_GR"],
   "aircrafts": [
+    "AH_64A",
+    "C_130",
     "F_16C_50",
     "F_4E",
     "M_2000C",
     "Mirage_2000_5",
-    "UH_1H",
-    "AH_64A"
+    "UH_1H"
+  ],
+  "awacs": [
+    "E_3A"
   ],
   "tankers": [
     "KC130"
@@ -38,13 +42,13 @@
   ],
   "air_defenses": [
     "HawkGenerator",
+    "PatriotGenerator",
     "SA8Generator",
     "SA10Generator",
     "SA15Generator",
     "ZU23Generator"
   ],
   "ewrs": [
-    "HawkEwrGenerator",
     "FlatFaceGenerator"
   ],
   "navy_generators": [
