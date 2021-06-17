@@ -593,8 +593,7 @@ class Operation:
             zone = data["zone"]
             laserCode = data["laserCode"]
             dcsUnit = data["dcsUnit"]
-            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone='{zone}', laserCode='{laserCode}', dcsUnit='{dcsUnit}' }}, \n"
-            # lua += f"    {{name='{dcsGroupName}', description='JTAC {callsign} ', information='Laser:{laserCode}', jtac={laserCode} }}, \n"
+            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone={repr(zone)}, laserCode='{laserCode}', dcsUnit='{dcsUnit}' }}, \n"
         lua += "}"
 
         # Process the Target Points

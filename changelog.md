@@ -1,3 +1,11 @@
+# 3.1.0
+
+## Features/Improvements
+
+## Fixes
+
+* Fixed problem with mission load when control point name contained an apostrophe.
+
 # 3.0.0
 
 Saves from 2.5 are not compatible with 3.0.
