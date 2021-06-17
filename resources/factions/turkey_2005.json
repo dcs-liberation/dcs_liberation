@@ -8,15 +8,18 @@
   ],
   "aircrafts": [
     "AH-1W SuperCobra",
+    "C-130",
+    "CH-47D",
     "F-16CM Fighting Falcon (Block 50)",
     "F-4E Phantom II",
-    "UH-1H Iroquois"
+    "OH-58D Kiowa Warrior",
+    "UH-1H Iroquois",
+    "UH-60A"
   ],
   "awacs": [
     "E-3A"
   ],
   "tankers": [
-    "KC-130",
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
@@ -25,9 +28,12 @@
     "MBT_M60A3_Patton",
     "Scout_Cobra",
     "APC_BTR_80",
+    "APC_M113",
     "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm",
     "SPH_T155_Firtina_155mm"
   ],
   "logistics_units": [
