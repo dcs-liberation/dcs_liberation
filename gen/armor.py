@@ -239,7 +239,7 @@ class GroundConflictGenerator:
                         self.mission.vehicle_group(
                             side,
                             namegen.next_infantry_name(side, cp.id, u),
-                            u,
+                            u.dcs_unit_type,
                             position=infantry_position,
                             group_size=1,
                             heading=forward_heading,
