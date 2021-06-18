@@ -824,9 +824,8 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def configure_eplrs(group: FlyingGroup, flight: Flight) -> None:
-        if hasattr(flight.unit_type, "eplrs"):
-            if flight.unit_type.dcs_unit_type.eplrs:
-                group.points[0].tasks.append(EPLRS(group.id))
+        if flight.unit_type.eplrs_capable:
+            group.points[0].tasks.append(EPLRS(group.id))
 
     def configure_cap(
         self,

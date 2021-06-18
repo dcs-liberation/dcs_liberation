@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import cached_property
 from typing import TypeVar, Generic, Type
 
 from dcs.unittype import UnitType as DcsUnitType
@@ -19,3 +20,7 @@ class UnitType(Generic[DcsUnitTypeT]):
 
     def __str__(self) -> str:
         return self.name
+
+    @cached_property
+    def eplrs_capable(self) -> bool:
+        return getattr(self.dcs_unit_type, "eplrs", False)

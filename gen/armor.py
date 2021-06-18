@@ -508,7 +508,7 @@ class GroundConflictGenerator:
             return
 
         for dcs_group, group in ally_groups:
-            if getattr(group.unit_type.dcs_unit_type, "eplrs", False):
+            if group.unit_type.eplrs_capable:
                 dcs_group.points[0].tasks.append(EPLRS(dcs_group.id))
 
             if group.role == CombatGroupRole.ARTILLERY:
