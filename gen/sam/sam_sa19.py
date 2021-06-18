@@ -21,7 +21,7 @@ class SA19Generator(AirDefenseGroupGenerator):
 
         if num_launchers == 1:
             self.add_unit(
-                AirDefence._2S6_Tunguska,
+                AirDefence.SAM_SA_19_Tunguska_Grison,
                 "LN#0",
                 self.position.x,
                 self.position.y,
@@ -33,7 +33,7 @@ class SA19Generator(AirDefenseGroupGenerator):
             )
             for i, position in enumerate(positions):
                 self.add_unit(
-                    AirDefence._2S6_Tunguska,
+                    AirDefence.SAM_SA_19_Tunguska_Grison,
                     "LN#" + str(i),
                     position[0],
                     position[1],

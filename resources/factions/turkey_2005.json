@@ -22,23 +22,23 @@
   ],
   "frontline_units": [
     "MBT_Leopard_2A4_Trs",
-    "Leopard1A3",
-    "M_60",
-    "Cobra",
-    "BTR_80",
-    "M_113",
-    "M1097_Avenger"
+    "MBT_Leopard_1A3",
+    "MBT_M60A3_Patton",
+    "Scout_Cobra",
+    "APC_BTR_80",
+    "APC_M113",
+    "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
-    "MLRS",
-    "M_109",
-    "T155_Firtina"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm",
+    "SPH_T155_Firtina_155mm"
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Infantry_M249",
     "Paratrooper_AKS",
     "MANPADS_SA_18_Igla_S_Grouse"

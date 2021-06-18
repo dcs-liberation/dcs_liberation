@@ -11,12 +11,12 @@
     "Ju_88A4"
   ],
   "frontline_units": [
-    "Pz_IV_H",
-    "Sd_Kfz_251",
-    "Sd_Kfz_234_2_Puma",
-    "JagdPz_IV",
-    "Flak18",
-    "SturmPzIV"
+    "Tk_PzIV_H",
+    "APC_Sd_Kfz_251_Halftrack",
+    "IFV_Sd_Kfz_234_2_Puma",
+    "SPG_Jagdpanzer_IV",
+    "AAA_8_8cm_Flak_18",
+    "SPG_Sturmpanzer_IV_Brummbar"
   ],
   "artillery_units": [
   ],

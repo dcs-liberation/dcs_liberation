@@ -10,18 +10,18 @@
     "SA342M"
   ],
   "frontline_units": [
-    "M1043_HMMWV_Armament",
-    "MCV_80",
-    "LAV_25",
-    "M1097_Avenger"
+    "Scout_HMMWV",
+    "IFV_Warrior",
+    "IFV_LAV_25",
+    "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Infantry_M249",
     "MANPADS_Stinger"
   ],

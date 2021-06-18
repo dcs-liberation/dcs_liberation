@@ -9,12 +9,12 @@
     "A_20G"
   ],
   "frontline_units": [
-    "M2A1_halftrack",
-    "Churchill_VII",
-    "Daimler_AC",
-    "Tetrarch",
-    "QF_37_AA",
-    "Bofors40"
+    "APC_M2A1_Halftrack",
+    "HIT_Churchill_VII",
+    "Car_Daimler_Armored",
+    "LT_Mk_VII_Tetrarch",
+    "AAA_QF_3_7",
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
   ],

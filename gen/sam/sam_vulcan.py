@@ -18,7 +18,7 @@ class VulcanGenerator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.Vulcan,
+            AirDefence.SPAAA_Vulcan_M163,
             "SPAAA",
             self.position.x,
             self.position.y,
@@ -26,14 +26,14 @@ class VulcanGenerator(AirDefenseGroupGenerator):
         )
         if random.randint(0, 1) == 1:
             self.add_unit(
-                AirDefence.Vulcan,
+                AirDefence.SPAAA_Vulcan_M163,
                 "SPAAA2",
                 self.position.x,
                 self.position.y,
                 self.heading,
             )
         self.add_unit(
-            Unarmed.M_818,
+            Unarmed.Truck_M818_6x6,
             "TRUCK",
             self.position.x + 80,
             self.position.y,

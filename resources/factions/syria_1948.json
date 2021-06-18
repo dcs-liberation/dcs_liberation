@@ -8,17 +8,17 @@
     "SpitfireLFMkIXCW"
   ],
   "frontline_units": [
-    "Sd_Kfz_234_2_Puma",
-    "Sd_Kfz_251",
-    "Pz_IV_H",
-    "M4_Sherman",
-    "Bofors40"
+    "IFV_Sd_Kfz_234_2_Puma",
+    "APC_Sd_Kfz_251_Halftrack",
+    "Tk_PzIV_H",
+    "Tk_M4_Sherman",
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "Ural_375",
-    "UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Infantry_SMLE_No_4_Mk_1"

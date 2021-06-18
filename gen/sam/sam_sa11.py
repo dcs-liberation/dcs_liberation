@@ -39,7 +39,7 @@ class SA11Generator(AirDefenseGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SA_11_Buk_LN_9A310M1,
+                AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL,
                 "LN#" + str(i),
                 position[0],
                 position[1],

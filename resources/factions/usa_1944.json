@@ -15,15 +15,15 @@
     "B_17G"
   ],
   "frontline_units": [
-    "M4A4_Sherman_FF",
-    "M4_Sherman",
-    "M2A1_halftrack",
-    "M8_Greyhound",
-    "M10_GMC",
-    "QF_37_AA"
+    "MT_M4A4_Sherman_Firefly",
+    "Tk_M4_Sherman",
+    "APC_M2A1_Halftrack",
+    "Car_M8_Greyhound_Armored",
+    "SPG_M10_GMC",
+    "AAA_QF_3_7"
   ],
   "artillery_units": [
-    "M12_GMC"
+    "SPG_M12_GMC_155mm"
   ],
   "logistics_units": [
     "Truck_GMC_Jimmy_6x6_Truck"

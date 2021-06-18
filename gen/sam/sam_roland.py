@@ -23,14 +23,14 @@ class RolandGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
         self.add_unit(
-            AirDefence.Roland_ADS,
+            AirDefence.SAM_Roland_ADS,
             "ADS",
             self.position.x,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            Unarmed.M_818,
+            Unarmed.Truck_M818_6x6,
             "TRUCK",
             self.position.x + 80,
             self.position.y,

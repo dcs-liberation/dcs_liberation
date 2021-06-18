@@ -12,20 +12,20 @@
     "P_47D_40"
   ],
   "frontline_units": [
-    "M4_Sherman",
-    "M_60",
-    "M2A1_halftrack",
-    "M8_Greyhound",
-    "Bofors40"
+    "Tk_M4_Sherman",
+    "MBT_M60A3_Patton",
+    "APC_M2A1_Halftrack",
+    "Car_M8_Greyhound_Armored",
+    "AAA_Bofors_40mm"
   ],
   "artillery_units": [
-    "M12_GMC"
+    "SPG_M12_GMC_155mm"
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4"
+    "Infantry_M4"
   ],
   "air_defenses": [
     "AllyWW2FlakGenerator",

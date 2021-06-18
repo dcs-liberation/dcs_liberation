@@ -21,18 +21,18 @@
     "KC130"
   ],
   "frontline_units": [
-    "M_113",
-    "M_60",
-    "Merkava_Mk4",
-    "Vulcan"
+    "APC_M113",
+    "MBT_M60A3_Patton",
+    "MBT_Merkava_IV",
+    "SPAAA_Vulcan_M163"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Infantry_M249"
   ],
   "air_defenses": [

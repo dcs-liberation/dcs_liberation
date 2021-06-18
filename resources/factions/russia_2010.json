@@ -31,23 +31,23 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "BMP_1",
-    "BMP_2",
-    "BMP_3",
-    "BTR_80",
-    "BTR_82A",
-    "T_90",
-    "T_80UD",
-    "T_72B3",
-    "_2S6_Tunguska"
+    "IFV_BMP_1",
+    "IFV_BMP_2",
+    "IFV_BMP_3",
+    "APC_BTR_80",
+    "IFV_BTR_82A",
+    "MBT_T_90",
+    "MBT_T_80U",
+    "MBT_T_72B3",
+    "SAM_SA_19_Tunguska_Grison"
   ],
   "artillery_units": [
-    "Uragan_BM_27",
-    "SAU_Msta"
+    "MLRS_9K57_Uragan_BM_27_220mm",
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Ural_375",
-    "UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Paratrooper_AKS",

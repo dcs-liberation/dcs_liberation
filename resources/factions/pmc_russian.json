@@ -11,17 +11,17 @@
     "Ka_50"
   ],
   "frontline_units": [
-    "Cobra",
-    "BTR_80",
-    "BRDM_2",
-    "Strela_10M3"
+    "Scout_Cobra",
+    "APC_BTR_80",
+    "Scout_BRDM_2",
+    "SAM_SA_13_Strela_10M3_Gopher_TEL"
   ],
   "artillery_units": [
-    "SAU_Msta"
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Ural_375",
-    "UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Paratrooper_AKS",

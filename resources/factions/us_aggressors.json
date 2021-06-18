@@ -31,23 +31,23 @@
     "KC130"
   ],
   "frontline_units": [
-    "M_1_Abrams",
+    "MBT_M1A2_Abrams",
     "MBT_Leopard_2A4",
-    "M1134_Stryker_ATGM",
-    "M_2_Bradley",
-    "LAV_25",
-    "M1043_HMMWV_Armament",
-    "M1097_Avenger"
+    "ATGM_Stryker",
+    "IFV_M2A2_Bradley",
+    "IFV_LAV_25",
+    "Scout_HMMWV",
+    "SAM_Avenger__Stinger"
   ],
   "artillery_units": [
-    "MLRS",
-    "M_109"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Infantry_M249"
   ],
   "air_defenses": [

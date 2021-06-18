@@ -21,21 +21,21 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "T_90",
-    "T_72B",
-    "BMP_2",
-    "_2S6_Tunguska"
+    "MBT_T_90",
+    "MBT_T_72B",
+    "IFV_BMP_2",
+    "SAM_SA_19_Tunguska_Grison"
   ],
   "artillery_units": [
-    "Uragan_BM_27",
-    "SAU_Msta"
+    "MLRS_9K57_Uragan_BM_27_220mm",
+    "SPH_2S19_Msta_152mm"
   ],
   "logistics_units": [
-    "Ural_375",
-    "UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Paratrooper_RPG_16",
     "MANPADS_SA_18_Igla_S_Grouse"
   ],

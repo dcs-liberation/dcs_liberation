@@ -37,7 +37,7 @@ class ScudGenerator(GroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.UAZ_469,
+            Unarmed.LUV_UAZ_469_Jeep,
             "Kubel#0",
             self.position.x - 35,
             self.position.y - 20,
@@ -46,7 +46,7 @@ class ScudGenerator(GroupGenerator):
 
         # Shorad
         self.add_unit(
-            AirDefence.ZSU_23_4_Shilka,
+            AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
             "SHILKA#0",
             self.position.x - 55,
             self.position.y - 38,
@@ -54,7 +54,7 @@ class ScudGenerator(GroupGenerator):
         )
 
         self.add_unit(
-            AirDefence.Strela_1_9P31,
+            AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL,
             "STRELA#0",
             self.position.x + 200,
             self.position.y + 15,

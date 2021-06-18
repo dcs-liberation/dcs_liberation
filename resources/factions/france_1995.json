@@ -19,22 +19,22 @@
     "KC130"
   ],
   "frontline_units": [
-    "Leclerc",
-    "TPZ",
-    "Cobra",
-    "LAV_25",
-    "VAB_Mephisto",
-    "Roland_ADS"
+    "MBT_Leclerc",
+    "APC_TPz_Fuchs",
+    "Scout_Cobra",
+    "IFV_LAV_25",
+    "ATGM_VAB_Mephisto",
+    "SAM_Roland_ADS"
   ],
   "artillery_units": [
-    "MLRS",
-    "M_109"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Infantry_M249",
     "MANPADS_Stinger",
     "Mortar_2B11_120mm"
@@ -49,7 +49,7 @@
   "aircraft_carrier": [
   ],
   "helicopter_carrier": [
-    "LHA_Tarawa"
+    "LHA_1_Tarawa"
   ],
   "destroyers": [
     "DDG_Arleigh_Burke_IIa",

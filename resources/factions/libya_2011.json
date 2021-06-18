@@ -17,20 +17,20 @@
     "IL_78M"
   ],
   "frontline_units": [
-    "BMP_1",
-    "BRDM_2",
-    "T_72B",
-    "T_55",
-    "PT_76",
-    "ZSU_23_4_Shilka",
-    "Osa_9A33_ln"
+    "IFV_BMP_1",
+    "Scout_BRDM_2",
+    "MBT_T_72B",
+    "MBT_T_55",
+    "LT_PT_76",
+    "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
+    "SAM_SA_8_Osa_Gecko_TEL"
   ],
   "artillery_units": [
-    "Grad_URAL"
+    "MLRS_BM_21_Grad_122mm"
   ],
   "logistics_units": [
-    "Ural_375",
-    "UAZ_469"
+    "Truck_Ural_375",
+    "LUV_UAZ_469_Jeep"
   ],
   "infantry_units": [
     "Insurgent_AK_74",

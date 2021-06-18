@@ -17,17 +17,17 @@
     "KC130"
   ],
   "frontline_units": [
-    "Leclerc",
-    "TPZ",
-    "BMP_3"
+    "MBT_Leclerc",
+    "APC_TPz_Fuchs",
+    "IFV_BMP_3"
   ],
   "artillery_units": [
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Infantry_M249",
     "MANPADS_SA_18_Igla_S_Grouse"
   ],

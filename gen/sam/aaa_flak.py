@@ -9,10 +9,10 @@ from gen.sam.airdefensegroupgenerator import (
 
 GFLAK = [
     AirDefence.AAA_Flak_Vierling_38_Quad_20mm,
-    AirDefence.Flak18,
-    AirDefence.Flak36,
-    AirDefence.Flak37,
-    AirDefence.Flak41,
+    AirDefence.AAA_8_8cm_Flak_18,
+    AirDefence.AAA_8_8cm_Flak_36,
+    AirDefence.AAA_8_8cm_Flak_37,
+    AirDefence.AAA_8_8cm_Flak_41,
     AirDefence.AAA_Flak_38_20mm,
 ]
 

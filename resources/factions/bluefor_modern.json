@@ -36,28 +36,28 @@
     "KC130"
   ],
   "frontline_units": [
-    "M_1_Abrams",
-    "Leopard_2",
-    "Merkava_Mk4",
-    "M1134_Stryker_ATGM",
-    "M_2_Bradley",
-    "Marder",
-    "LAV_25",
-    "M1043_HMMWV_Armament",
-    "M1045_HMMWV_TOW",
-    "M6_Linebacker",
-    "M1097_Avenger",
-    "VAB_Mephisto"
+    "MBT_M1A2_Abrams",
+    "MBT_Leopard_2A6M",
+    "MBT_Merkava_IV",
+    "ATGM_Stryker",
+    "IFV_M2A2_Bradley",
+    "IFV_Marder",
+    "IFV_LAV_25",
+    "Scout_HMMWV",
+    "ATGM_HMMWV",
+    "SAM_Linebacker___Bradley_M6",
+    "SAM_Avenger__Stinger",
+    "ATGM_VAB_Mephisto"
   ],
   "artillery_units": [
-    "MLRS",
-    "M_109"
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "M_818"
+    "Truck_M818_6x6"
   ],
   "infantry_units": [
-    "Soldier_M4",
+    "Infantry_M4",
     "Infantry_M249",
     "MANPADS_Stinger"
   ],
@@ -70,10 +70,10 @@
     "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
-    "Stennis"
+    "CVN_74_John_C__Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_Tarawa"
+    "LHA_1_Tarawa"
   ],
   "destroyers": [
     "DDG_Arleigh_Burke_IIa"

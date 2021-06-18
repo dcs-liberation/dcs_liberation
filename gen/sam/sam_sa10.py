@@ -22,12 +22,12 @@ class SA10Generator(AirDefenseGroupGenerator):
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
         super().__init__(game, ground_object)
-        self.sr1 = AirDefence.S_300PS_40B6MD_sr
-        self.sr2 = AirDefence.S_300PS_64H6E_sr
-        self.cp = AirDefence.S_300PS_54K6_cp
-        self.tr1 = AirDefence.S_300PS_40B6M_tr
-        self.tr2 = AirDefence.S_300PS_40B6M_tr
-        self.ln1 = AirDefence.S_300PS_5P85D_ln
+        self.sr1 = AirDefence.SAM_SA_10_S_300_Grumble_Clam_Shell_SR
+        self.sr2 = AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR
+        self.cp = AirDefence.SAM_SA_10_S_300_Grumble_C2
+        self.tr1 = AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR
+        self.tr2 = AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR
+        self.ln1 = AirDefence.SAM_SA_10_S_300_Grumble_TEL_C
         self.ln2 = AirDefence.SAM_SA_10_S_300_Grumble_TEL_D
 
     def generate(self):
@@ -84,7 +84,7 @@ class SA10Generator(AirDefenseGroupGenerator):
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(
                 aa_group,
-                AirDefence.ZSU_23_4_Shilka,
+                AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
                 f"AA#{i}",
                 Point(x, y),
                 heading,
@@ -109,7 +109,7 @@ class Tier2SA10Generator(SA10Generator):
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(
                 pd_group,
-                AirDefence.Tor_9A331,
+                AirDefence.SAM_SA_15_Tor_Gauntlet,
                 f"PD#{i}",
                 Point(x, y),
                 heading,
@@ -131,7 +131,7 @@ class Tier3SA10Generator(SA10Generator):
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(
                 aa_group,
-                AirDefence._2S6_Tunguska,
+                AirDefence.SAM_SA_19_Tunguska_Grison,
                 f"AA#{i}",
                 Point(x, y),
                 heading,
@@ -146,7 +146,7 @@ class Tier3SA10Generator(SA10Generator):
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(
                 pd_group,
-                AirDefence.Tor_9A331,
+                AirDefence.SAM_SA_15_Tor_Gauntlet,
                 f"PD#{i}",
                 Point(x, y),
                 heading,

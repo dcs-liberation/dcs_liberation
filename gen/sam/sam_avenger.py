@@ -20,7 +20,7 @@ class AvengerGenerator(AirDefenseGroupGenerator):
         num_launchers = random.randint(2, 3)
 
         self.add_unit(
-            Unarmed.M_818,
+            Unarmed.Truck_M818_6x6,
             "TRUCK",
             self.position.x,
             self.position.y,
@@ -31,7 +31,7 @@ class AvengerGenerator(AirDefenseGroupGenerator):
         )
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.M1097_Avenger,
+                AirDefence.SAM_Avenger__Stinger,
                 "SPAA#" + str(i),
                 position[0],
                 position[1],
