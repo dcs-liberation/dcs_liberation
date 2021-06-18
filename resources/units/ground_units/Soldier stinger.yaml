@@ -1,3 +1,5 @@
+class: MANPADS
+spawn_weight: 1
 price: 0
 variants:
   MANPADS Stinger: null
