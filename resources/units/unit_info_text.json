@@ -99,7 +99,7 @@
       }
     }
   ],
-  "AAA M45 Quadmount": [
+  "M45_Quadmount": [
     {
       "default": {
         "name": "M45 Quadmount",
@@ -147,7 +147,7 @@
       }
     }
   ],
-  "AAA ZU-23 on Ural-375": [
+  "Ural-375 ZU-23": [
     {
       "default": {
         "name": "ZU-23 on Ural-375",
@@ -159,7 +159,7 @@
       }
     }
   ],
-  "AAA ZU-23 Insurgent on Ural-375": [
+  "Ural-375 ZU-23 Insurgent": [
     {
       "default": {
         "name": "ZU-23 on Ural-375",
@@ -579,7 +579,7 @@
       }
     }
   ],
-  "M4 Tractor": [
+  "M4_Tractor": [
     {
       "default": {
         "name": "M4 High-Speed Tractor",
@@ -759,18 +759,6 @@
       }
     }
   ],
-  "MBT Leopard-2A6M": [
-    {
-      "default": {
-        "name": "Leopard 2A6",
-        "text": "The Leopard 2 is a main battle tank developed by Krauss-Maffei in the 1970s for the West German Army. The tank first entered service in 1979 and succeeded the earlier Leopard 1 as the main battle tank of the German Army. It is armed with a 120 mm smoothbore cannon, and is powered by a V-12 twin-turbo diesel engine. Various versions have served in the armed forces of Germany and 12 other European countries, as well as several non-European nations, including Canada, Chile, Indonesia, Singapore, and Turkey. The Leopard 2 was used in Kosovo with the German Army, and has seen action in Afghanistan with the Dutch, Danish and Canadian contributions to the International Security Assistance Force, as well as seeing action in Syria with the Turkish Armed Forces.",
-        "country-of-origin": "Germany",
-        "manufacturer": "Krauss-Maffei",
-        "role": "Main Battle Tank",
-        "year-of-variant-introduction": "2001"
-      }
-    }
-  ],
   "Leopard-2": [
     {
       "default": {
@@ -891,7 +879,7 @@
       }
     }
   ],
-  "T-80U": [
+  "T-80UD": [
     {
       "default": {
         "name": "T-80UD",
@@ -960,17 +948,6 @@
         "manufacturer": "Splav",
         "role": "Multiple-Launch Rocket System",
         "year-of-variant-introduction": "1963"
-      }
-    }
-  ],
-  "MLRS FDDM": [
-    {
-      "default": {
-        "name": "M1043 HMMWV with Fire Direction Data Manager",
-        "text": "The High Mobility Multipurpose Wheeled Vehicle with a Fire Direction Data Manager.",
-        "country-of-origin": "USA",
-        "role": "Fire Control Vehicle",
-        "year-of-variant-introduction": "1993"
       }
     }
   ],
