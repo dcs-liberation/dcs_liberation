@@ -14,21 +14,21 @@ class V1GroupGenerator(GroupGenerator):
 
         # Ramps
         self.add_unit(
-            MissilesSS.SSM_V_1_Launcher,
+            MissilesSS.V1_launcher,
             "V1#0",
             self.position.x,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.SSM_V_1_Launcher,
+            MissilesSS.V1_launcher,
             "V1#1",
             self.position.x + 50,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.SSM_V_1_Launcher,
+            MissilesSS.V1_launcher,
             "V1#2",
             self.position.x + 100,
             self.position.y + random.randint(1, 8),

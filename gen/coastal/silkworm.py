@@ -13,7 +13,7 @@ class SilkwormGenerator(GroupGenerator):
         positions = self.get_circular_position(5, launcher_distance=120, coverage=180)
 
         self.add_unit(
-            MissilesSS.AShM_Silkworm_SR,
+            MissilesSS.Silkworm_SR,
             "SR#0",
             self.position.x,
             self.position.y,
@@ -23,7 +23,7 @@ class SilkwormGenerator(GroupGenerator):
         # Launchers
         for i, p in enumerate(positions):
             self.add_unit(
-                MissilesSS.AShM_SS_N_2_Silkworm,
+                MissilesSS.Silkworm_SR,
                 "Missile#" + str(i),
                 p[0],
                 p[1],
