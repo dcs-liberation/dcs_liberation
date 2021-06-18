@@ -1,0 +1,10 @@
+class: Artillery
+description: "T-155 F\u0131rt\u0131na (English: Storm) is a Turkish 155 mm self-propelled\
+  \ howitzer."
+introduced: 1998
+manufacturer: Turkey
+origin: Turkey
+price: 28
+role: Self-Propelled Gun
+variants:
+  Firtina: {}

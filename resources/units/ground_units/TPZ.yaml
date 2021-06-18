@@ -1,0 +1,15 @@
+class: APC
+description: The TPz (Transportpanzer) Fuchs ("fox") is a German armoured personnel
+  carrier originally developed by Daimler-Benz but manufactured and further developed
+  by the now Rheinmetall MAN Military Vehicles (RMMV). Fuchs was the second wheeled
+  armoured vehicle to enter service with the Bundeswehr (West German Military) and
+  it can be used for tasks including troop transport, engineer transport, bomb disposal,
+  Nuclear, Biological and Chemical reconnaissance and electronic warfare. RMMV and
+  its predecessors manufactured 1,236 Fuchs 1, mostly for the German Army.
+introduced: 1979
+manufacturer: Rheinstahl Wehrtechnik
+origin: Germany
+price: 5
+role: Armoured Personnel Carrier
+variants:
+  TPz Fuchs: {}

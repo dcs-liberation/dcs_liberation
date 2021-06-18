@@ -1,0 +1,12 @@
+class: Recon
+description: "The M8 Light Armored Car is a 6\xD76 armored car produced by the Ford\
+  \ Motor Company during World War II. It was used from 1943 by United States and\
+  \ British forces in Europe and the Pacific until the end of the war. The vehicle\
+  \ was widely exported and as of 2006 still remained in service with some countries."
+introduced: 1943
+manufacturer: Ford Motor Company
+origin: USA
+price: 8
+role: Light Armoured Car
+variants:
+  M8 Greyhound Light Armored Car: {}

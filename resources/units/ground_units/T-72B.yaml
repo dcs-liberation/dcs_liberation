@@ -1,0 +1,14 @@
+class: Tank
+description: The T-72 is a family of Soviet/Russian main battle tanks that first entered
+  production in 1971. About 20,000 T-72 tanks have been built, and refurbishment has
+  enabled many to remain in service for decades. The T-72A version introduced in 1979
+  is considered a second-generation main battle tank. It was widely exported and saw
+  service in 40 countries and in numerous conflicts. The T-72B3 version introduced
+  in 2010 is considered a third-generation main battle tank (MBT).
+introduced: 1985
+manufacturer: UralVagonZavod
+origin: USSR/Russia
+price: 20
+role: Main Battle Tank
+variants:
+  T-72B with Kontakt-1 ERA: {}

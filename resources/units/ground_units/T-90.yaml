@@ -1,0 +1,13 @@
+class: Tank
+description: 'The T-90 is a third-generation Russian main battle tank that entered
+  service in 1993. The tank is a modern variation of the T-72B and incorporates many
+  features found on the T-80U. Originally called the T-72BU, but later renamed to
+  T-90, it is an advanced tank in service with Russian Ground Forces and the Naval
+  Infantry. '
+introduced: 2004
+manufacturer: UralVagonZavod
+origin: Russia
+price: 30
+role: Main Battle Tank
+variants:
+  T-90A: {}

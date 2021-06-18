@@ -1,0 +1,14 @@
+description: The M45 Quadmount (nicknamed the "meat chopper" and "Krautmower" for
+  its high rate of fire) was a weapon mounting consisting of four of the "HB", or
+  "heavy barrel" .50 caliber M2 Browning machine guns mounted in pairs on each side
+  of an open, electrically powered turret. It was developed by the W. L. Maxson Corporation
+  to replace the earlier M33 twin mount (also from Maxson). Although designed as an
+  anti-aircraft weapon, it was also used against ground targets. Introduced in 1943
+  during World War II, it remained in US service as late as the Vietnam War.
+introduced: 1943
+manufacturer: W. L. Maxson Corporation
+origin: USA
+price: 4
+role: Anti-Aircraft Gun
+variants:
+  M45 Quadmount: {}

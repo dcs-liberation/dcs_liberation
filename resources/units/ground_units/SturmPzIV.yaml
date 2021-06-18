@@ -1,0 +1,15 @@
+class: Tank
+description: "The Sturmpanzer (also known as Sturmpanzer 43 or Sd.Kfz. 166) was a\
+  \ German armoured infantry support gun based on the Panzer IV chassis used in the\
+  \ Second World War. It was used at the Battles of Kursk, Anzio, Normandy, and was\
+  \ deployed in the Warsaw Uprising. It was known by the nickname Brummb\xE4r (German:\
+  \ \"Grouch\") by Allied intelligence, a name which was not used by the Germans.\
+  \ German soldiers nicknamed it the \"Stupa\", a contraction of the term Sturmpanzer.\
+  \ Just over 300 vehicles were built and they were assigned to four independent battalions."
+introduced: 1943
+manufacturer: Vienna Arsenal
+origin: Germany
+price: 10
+role: Self-Propelled Gun
+variants:
+  "Sturmpanzer IV Brummb\xE4r": {}

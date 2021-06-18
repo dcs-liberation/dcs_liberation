@@ -1,0 +1,15 @@
+class: SHORADS
+description: "The ZSU-57-2 Ob'yekt 500 is a Soviet self-propelled anti-aircraft gun\
+  \ (SPAAG), armed with two 57 mm autocannons. 'ZSU' stands for Zenitnaya Samokhodnaya\
+  \ Ustanovka (Russian: \u0417\u0435\u043D\u0438\u0442\u043D\u0430\u044F \u0421\u0430\
+  \u043C\u043E\u0445\u043E\u0434\u043D\u0430\u044F \u0423\u0441\u0442\u0430\u043D\u043E\
+  \u0432\u043A\u0430), meaning \"anti-aircraft self-propelled mount\", '57' stands\
+  \ for the bore of the armament in millimetres and '2' stands for the number of gun\
+  \ barrels. It was the first Soviet mass-produced tracked SPAAG."
+introduced: 1961
+manufacturer: KBP/Ural
+origin: USSR/Russia
+price: 7
+role: Self-Propelled Anti-Aircraft Gun
+variants:
+  ZU-23 on Ural-375: {}

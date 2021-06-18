@@ -1,0 +1,15 @@
+class: Tank
+description: The Panther is a German medium tank deployed during World War II on the
+  Eastern and Western Fronts in Europe from mid-1943 to the war's end in 1945. The
+  Panther was intended to counter the Soviet T-34 and to replace the Panzer III and
+  Panzer IV. Nevertheless, it served alongside the Panzer IV and the heavier Tiger
+  I until the end of the war. It is considered one of the best tanks of World War
+  II for its excellent firepower and protection, although its reliability was less
+  impressive.
+introduced: 1944
+manufacturer: MAN/Daimler-Benz/MNH
+origin: Germany
+price: 24
+role: Medium Tank
+variants:
+  Panzerkampfwagen V Panther Ausf. G: {}

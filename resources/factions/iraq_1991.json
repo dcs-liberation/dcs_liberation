@@ -25,30 +25,30 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "IFV_BMP_1",
-    "APC_MTLB",
-    "MBT_T_55",
-    "MBT_T_72B",
-    "MBT_Chieftain_Mk_3",
-    "APC_BTR_80",
-    "Scout_BRDM_2",
-    "LT_PT_76",
-    "SPH_2S1_Gvozdika_122mm",
-    "SPAAA_ZSU_57_2",
-    "SPAAA_ZSU_23_4_Shilka_Gun_Dish"
+    "2S1 Gvozdika",
+    "A22 Infantry Tank MK IV Churchill VII",
+    "BMP-1",
+    "BRDM-2",
+    "BTR-80",
+    "MT-LB",
+    "PT-76",
+    "T-55A",
+    "T-72B with Kontakt-1 ERA",
+    "ZSU-23-4 Shilka",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm"
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_Grouse"
+    "Infantry AK-74 Rus",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "ColdWarFlakGenerator",

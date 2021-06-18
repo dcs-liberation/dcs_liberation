@@ -1,0 +1,10 @@
+class: Tank
+description: The FV4201 Chieftain was the main battle tank of the United Kingdom during
+  the 1960s, 1970s and 1980s.
+introduced: 1966
+manufacturer: Leyland Motors
+origin: UK
+price: 20
+role: Main Battle Tank
+variants:
+  A22 Infantry Tank MK IV Churchill VII: {}

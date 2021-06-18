@@ -21,25 +21,25 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Merkava_IV",
-    "MBT_M1A2_Abrams",
-    "IFV_Marder",
-    "APC_TPz_Fuchs",
-    "IFV_LAV_25",
-    "Scout_HMMWV",
-    "SPAAA_Gepard"
+    "Flakpanzer Gepard",
+    "LAV-25",
+    "M1043 HMMWV (M2 HMG)",
+    "M1A2 Abrams",
+    "Marder 1A3",
+    "Merkava Mk IV",
+    "TPz Fuchs"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm",
-    "MLRS_M270_227mm",
-    "MANPADS_Stinger"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System",
+    "MANPADS Stinger"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249"
+    "Infantry M249",
+    "Infantry M4"
   ],
   "air_defenses": [
     "GepardGenerator",

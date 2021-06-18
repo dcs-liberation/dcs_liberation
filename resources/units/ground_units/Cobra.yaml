@@ -1,0 +1,10 @@
+class: Recon
+description: 'The Cobra (Turkish: Kobra) is an armoured tactical vehicle developed
+  by Turkish firm Otokar.'
+introduced: 1997
+manufacturer: Otokar
+origin: Turkey
+price: 4
+role: Recon
+variants:
+  Cobra: {}

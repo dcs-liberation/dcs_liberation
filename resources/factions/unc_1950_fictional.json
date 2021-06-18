@@ -12,20 +12,20 @@
     "P-51D-30-NA Mustang"
   ],
   "frontline_units": [
-    "Tk_M4_Sherman",
-    "MBT_M60A3_Patton",
-    "APC_M2A1_Halftrack",
-    "Car_M8_Greyhound_Armored",
-    "AAA_Bofors_40mm"
+    "Bofors 40 mm Gun",
+    "M2A1 Half-Track",
+    "M4A2(75) Sherman",
+    "M60A3 \"Patton\"",
+    "M8 Greyhound Light Armored Car"
   ],
   "artillery_units": [
-    "SPG_M12_GMC_155mm"
+    "M12 Gun Motor Carriage"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4"
+    "Infantry M4"
   ],
   "air_defenses": [
     "AllyWW2FlakGenerator",

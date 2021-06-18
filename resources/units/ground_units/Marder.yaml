@@ -1,0 +1,23 @@
+class: IFV
+description: The Marder (German for "marten") is a German infantry fighting vehicle
+  operated by the German Army as the main weapon of the Panzergrenadiere (mechanized
+  infantry) from the 1970s through to the present day. Developed as part of the rebuilding
+  of Germany's armoured fighting vehicle industry, the Marder has proven to be a successful
+  and solid infantry fighting vehicle design. While it used to include a few unique
+  features, such as a fully remote machine gun on the rear deck and gun ports on the
+  sides for infantry to fire through, these features have been deleted or streamlined
+  in later upgrade packages to bring it more in line with modern IFV design. Around
+  2,100 were taken into service by the German Army in the early 1970s, but the vehicle
+  in its German variant was not sold to any foreign militaries. As the German Army
+  began to retire older vehicles, the Chilean government agreed to acquire 200 Marders;
+  the government of Greece has considered the purchase of 450 retired vehicles in
+  the past. Argentina uses a simplified and locally produced variant, the VCTP, and
+  has a number of vehicles based on that platform constructed by Henschel and built
+  by TAMSE.
+introduced: 1988
+manufacturer: Rheinmetall Landsysteme
+origin: Germany
+price: 10
+role: Infantry Fighting Vehicle
+variants:
+  Marder 1A3: {}

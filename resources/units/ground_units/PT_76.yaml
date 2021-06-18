@@ -1,0 +1,16 @@
+class: Recon
+description: "The BRDM-2 (Boyevaya Razvedyvatelnaya Dozornaya Mashina, \u0411\u043E\
+  \u0435\u0432\u0430\u044F \u0420\u0430\u0437\u0432\u0435\u0434\u044B\u0432\u0430\u0442\
+  \u0435\u043B\u044C\u043D\u0430\u044F \u0414\u043E\u0437\u043E\u0440\u043D\u0430\u044F\
+  \ \u041C\u0430\u0448\u0438\u043D\u0430, literally \"Combat Reconnaissance/Patrol\
+  \ Vehicle\") is an amphibious armoured patrol car used by Russia and the former\
+  \ Soviet Union. It was also known under the designations BTR-40PB, BTR-40P-2 and\
+  \ GAZ 41-08. This vehicle, like many other Soviet designs, has been exported extensively\
+  \ and is in use in at least 38 countries."
+introduced: 1951
+manufacturer: VTZ, Kirov Factory
+origin: USSR/Russia
+price: 9
+role: Recon light tank
+variants:
+  PT-76: {}

@@ -1,0 +1,13 @@
+class: SHORADS
+description: "The HQ-7 (FM-80) (Chinese: \u7EA2\u65D7; pinyin: h\xF3ng q\xED, \"red\
+  \ flag\" or \"red banner\") is a Chinese short-range air defense missile reverse\
+  \ engineered from the French Crotale. The missile is deployed on both ships and\
+  \ land-based vehicles. China revealed the export version, FM-80, in the 1989 Dubai\
+  \ Air Show. Unit cost is around $162,000 per launcher and $24,500 per missile."
+introduced: 1983
+manufacturer: Academy for Defense
+origin: China
+price: 20
+role: Shorad
+variants:
+  HQ-7 Launcher: {}

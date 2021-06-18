@@ -16,29 +16,29 @@
     "KC-130"
   ],
   "frontline_units": [
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "IFV_M1126_Stryker_ICV",
-    "Scout_BRDM_2",
-    "IFV_BMP_1",
-    "APC_MTLB",
-    "MBT_Leopard_2A6M",
-    "MBT_T_72B3"
+    "BMP-1",
+    "BRDM-2",
+    "Leopard 2",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M1126 Stryker ICV (M2 HMG)",
+    "MT-LB",
+    "T-72B3 model 2011"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S1_Gvozdika_122mm",
-    "SPH_Dana_vz77_152mm"
+    "2S1 Gvozdika",
+    "BM-21 Grad",
+    "SpGH DANA"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Infantry_RPG",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry AK-74 Rus",
+    "Infantry RPG",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS"
   ],
   "air_defenses": [
     "SA6Generator",

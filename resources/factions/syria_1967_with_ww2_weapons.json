@@ -17,26 +17,26 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "Scout_BRDM_2",
-    "MBT_T_55",
-    "LT_PT_76",
-    "Tk_PzIV_H",
-    "SPG_StuG_III_Ausf__G",
-    "SPG_Jagdpanzer_IV",
-    "SPAAA_ZSU_57_2",
-    "AAA_S_60_57mm"
+    "BRDM-2",
+    "Jagdpanzer IV",
+    "PT-76",
+    "Panzerkampfwagen IV Ausf. H",
+    "S-60 57mm",
+    "Sturmgesch\u00fctz III Ausf. G",
+    "T-55A",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm"
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Infantry_RPG"
+    "Infantry AK-74 Rus",
+    "Infantry RPG",
+    "Paratrooper AKS"
   ],
   "air_defenses": [
     "EarlyColdWarFlakGenerator",

@@ -22,23 +22,23 @@
     "S-3B Tanker"
   ],
   "frontline_units": [
-    "MBT_M60A3_Patton",
-    "APC_M113",
-    "Scout_HMMWV",
-    "SPAAA_Vulcan_M163"
+    "M1043 HMMWV (M2 HMG)",
+    "M113",
+    "M163 Vulcan Air Defense System",
+    "M60A3 \"Patton\""
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm",
-    "MLRS_M270_227mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "Mortar_2B11_120mm",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "ChaparralGenerator",

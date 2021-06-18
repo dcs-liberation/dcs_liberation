@@ -17,25 +17,25 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "IFV_BMP_1",
-    "Scout_BRDM_2",
-    "MBT_T_72B",
-    "MBT_T_55",
-    "LT_PT_76",
-    "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
-    "SAM_SA_8_Osa_Gecko_TEL"
+    "BMP-1",
+    "BRDM-2",
+    "PT-76",
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "T-55A",
+    "T-72B with Kontakt-1 ERA",
+    "ZSU-23-4 Shilka"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm"
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Insurgent_AK_74",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_Grouse"
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "HQ7Generator",

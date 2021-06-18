@@ -20,28 +20,28 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "APC_M113",
-    "APC_BTR_80",
-    "MBT_M60A3_Patton",
-    "MBT_Chieftain_Mk_3",
-    "IFV_BMP_1",
-    "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
-    "SPAAA_ZSU_57_2",
-    "SPAAA_ZU_23_2_Mounted_Ural_375"
+    "A22 Infantry Tank MK IV Churchill VII",
+    "BMP-1",
+    "BTR-80",
+    "M113",
+    "M60A3 \"Patton\"",
+    "ZSU-23-4 Shilka",
+    "ZSU-57-2 'Sparka'",
+    "ZU-23 on Ural-375"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S1_Gvozdika_122mm"
+    "2S1 Gvozdika",
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Insurgent_AK_74",
-    "Infantry_RPG",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry RPG",
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS"
   ],
   "air_defenses": [
     "HawkGenerator",

@@ -1,0 +1,12 @@
+class: Artillery
+description: "The BM-30 Smerch (Russian: \u0421\u043C\u0435\u0440\u0447, \"tornado\"\
+  , \"whirlwind\"), 9K58 Smerch or 9A52-2 Smerch-M is a Soviet heavy multiple rocket\
+  \ launcher. The system is intended to defeat personnel, armored, and soft targets\
+  \ in concentration areas, artillery batteries, command posts and ammunition depots."
+introduced: 1989
+manufacturer: Splav
+origin: USSR/Russia
+price: 40
+role: Multiple-Launch Rocket System
+variants:
+  BM-30 Smerch (9M55K5 HE Rockets): {}

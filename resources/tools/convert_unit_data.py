@@ -51,8 +51,8 @@ class Converter:
             if self.convert_unit(unit_name, data):
                 unit_data.pop(unit_name)
 
-        # with data_path.open("w", encoding="utf-8") as unit_data_file:
-        #     json.dump(unit_data, unit_data_file, indent=2)
+        with data_path.open("w", encoding="utf-8") as unit_data_file:
+            json.dump(unit_data, unit_data_file, indent=2)
 
         for unconverted in self.unconverted:
             self.generate_basic_info(unconverted)
@@ -106,7 +106,7 @@ class Converter:
                 output_file,
             )
 
-        self.variant_map[unit_type.id] = defaultdict(lambda: unit_type.id)
+        self.variant_map[unit_type.id] = defaultdict(lambda: unit_type.name)
 
     def convert_unit(
         self, pydcs_name: str, data: list[dict[str, dict[str, str]]]

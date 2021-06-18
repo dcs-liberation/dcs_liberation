@@ -1,0 +1,18 @@
+class: Tank
+description: The Leopard 2 is a main battle tank developed by Krauss-Maffei in the
+  1970s for the West German Army. The tank first entered service in 1979 and succeeded
+  the earlier Leopard 1 as the main battle tank of the German Army. It is armed with
+  a 120 mm smoothbore cannon, and is powered by a V-12 twin-turbo diesel engine. Various
+  versions have served in the armed forces of Germany and 12 other European countries,
+  as well as several non-European nations, including Canada, Chile, Indonesia, Singapore,
+  and Turkey. The Leopard 2 was used in Kosovo with the German Army, and has seen
+  action in Afghanistan with the Dutch, Danish and Canadian contributions to the International
+  Security Assistance Force, as well as seeing action in Syria with the Turkish Armed
+  Forces.
+introduced: 1991
+manufacturer: Krauss-Maffei
+origin: Germany
+price: 20
+role: Main Battle Tank
+variants:
+  Leopard 2A4 Trs: {}

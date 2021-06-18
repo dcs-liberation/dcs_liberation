@@ -1,0 +1,12 @@
+class: Recon
+description: The Sd.Kfz. 234 (Sonderkraftfahrzeug 234, Special Purpose Vehicle 234),
+  was a family of armoured cars designed and built in Germany during World War II.
+  The vehicles were lightly armoured, armed with a 20, 50 or 75 mm main gun, and powered
+  by a Tatra V12 diesel engine.
+introduced: 1943
+manufacturer: "Tatra/B\xFCssing/Daimler-Benz/Schichau"
+origin: Germany
+price: 8
+role: Recon Vehicle
+variants:
+  Sd.Kfz.234/2 Puma: {}

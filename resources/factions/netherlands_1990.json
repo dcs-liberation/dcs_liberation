@@ -19,18 +19,18 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "APC_M113",
-    "MBT_Leopard_1A3",
-    "SAM_Avenger__Stinger"
+    "Leopard 1A3",
+    "M1097 Heavy HMMWV Avenger",
+    "M113"
   ],
   "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "AvengerGenerator",

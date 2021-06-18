@@ -1,0 +1,16 @@
+class: SHORADS
+description: "The M163 had a fairly limited range from the start. Its 20x102mm round\
+  \ gave it a low effective range of only 1,200 meters, and its standard air-defense\
+  \ load of HEI-T rounds would self-destruct at approximately 1800 meters, a hard\
+  \ limit on range. Additionally, the radar was a range-only set incapable of finding\
+  \ targets. In US and Israeli service, the VADS has rarely been needed in its intended\
+  \ purpose of providing defense against aerial threats\u2014consequently, the Vulcan\
+  \ gun system was in use throughout the late 1980s and early 1990s primarily as a\
+  \ ground support weapon."
+introduced: 1989
+manufacturer: General Electric
+origin: USA
+price: 10
+role: Self-Propelled Anti-Aircraft Gun
+variants:
+  M163 Vulcan Air Defense System: {}

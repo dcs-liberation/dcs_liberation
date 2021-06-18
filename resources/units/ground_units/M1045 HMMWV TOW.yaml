@@ -1,0 +1,11 @@
+class: ATGM
+description: 'The High Mobility Multipurpose Wheeled Vehicle (HMMWV; colloquial: Humvee)
+  is a family of light, four-wheel drive, military trucks and utility vehicles produced
+  by AM General. This verison carries a TOW for ATGM.'
+introduced: 1983
+manufacturer: AM General
+origin: USA
+price: 8
+role: Armoured Car
+variants:
+  M1045 HMMWV (BGM-71 TOW): {}

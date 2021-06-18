@@ -1,0 +1,15 @@
+class: IFV
+description: "The BMD-1 is a Soviet airborne amphibious tracked infantry fighting\
+  \ vehicle, which was introduced in 1969 and first seen by the West in 1970. BMD\
+  \ stands for Boyevaya Mashina Desanta (\u0411\u043E\u0435\u0432\u0430\u044F \u041C\
+  \u0430\u0448\u0438\u043D\u0430 \u0414\u0435\u0441\u0430\u043D\u0442\u0430, which\
+  \ literally translates to \"Combat Vehicle of the Airborne\"). It can be dropped\
+  \ by parachute and although it resembles the BMP-1 it is in fact much smaller. The\
+  \ BMD-1 was used as an IFV by the Soviet Army's airborne divisions."
+introduced: 1969
+manufacturer: Volgograd
+origin: USSR/Russia
+price: 8
+role: Airborne Amphibious Infantry Fighting Vehicle
+variants:
+  BMD-1: {}

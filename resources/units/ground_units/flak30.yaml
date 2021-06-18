@@ -1,0 +1,13 @@
+description: The Flak 38 (Flugzeugabwehrkanone 30) and improved Flak 38 were 20 mm
+  anti-aircraft guns used by various German forces throughout World War II. It was
+  not only the primary German light anti-aircraft gun, but by far the most numerously
+  produced German artillery piece throughout the war. It was produced in a variety
+  of models, notably the Flakvierling 38 which combined four Flak 38 autocannons onto
+  a single carriage.
+introduced: 1934
+manufacturer: Mauser
+origin: Germany
+price: 6
+role: Anti-Aircraft Gun
+variants:
+  2 cm Flak 38: {}

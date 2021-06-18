@@ -33,30 +33,30 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "IFV_BMP_1",
-    "IFV_BMP_2",
-    "IFV_BMP_3",
-    "APC_BTR_80",
-    "IFV_BTR_82A",
-    "MBT_T_90",
-    "MBT_T_80U",
-    "MBT_T_72B3",
-    "SAM_SA_19_Tunguska_Grison"
+    "BMP-1",
+    "BMP-2",
+    "BMP-3",
+    "BTR-80",
+    "BTR-82A",
+    "SA-19 Grison (2K22 Tunguska)",
+    "T-72B3 model 2011",
+    "T-80UD",
+    "T-90A"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-27 Uragan"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16",
-    "Mortar_2B11_120mm",
-    "MANPADS_SA_18_Igla_Grouse"
+    "Infantry AK-74 Rus",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Mortar 2B11 120mm",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "SA8Generator",

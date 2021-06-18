@@ -1,0 +1,16 @@
+class: APC
+description: "The MT-LB (Russian: \u041C\u043D\u043E\u0433\u043E\u0446\u0435\u043B\
+  \u0435\u0432\u043E\u0439 \u0422\u044F\u0433\u0430\u0447 \u041B\u0435\u0433\u043A\
+  \u0438\u0439 \u0411\u0440\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\
+  \u0439, romanized: Mnogotselevoy tyagach legky bronirovanny, literally \"multi-purpose\
+  \ towing vehicle light armored\") is a Soviet multi-purpose fully amphibious auxiliary\
+  \ armored tracked vehicle, which was introduced in the 1950s. It is also produced\
+  \ in Poland, where (starting mid-1990s) its YaMZ engine was replaced by a Polish\
+  \ version."
+introduced: 1958
+manufacturer: Kharkiv
+origin: USSR/Russia
+price: 4
+role: Armoured Personnel Carrier
+variants:
+  MT-LB: {}

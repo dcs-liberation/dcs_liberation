@@ -1,0 +1,12 @@
+class: SHORADS
+description: "The Tor missile system (Russian: \"\u0422\u043E\u0440\"; English: torus)\
+  \ is an all-weather low to medium altitude, short-range surface-to-air missile system\
+  \ designed for destroying airplanes, helicopters, cruise missiles, precision guided\
+  \ munitions, unmanned aerial vehicles and short-range ballistic threats (anti-munitions)."
+introduced: 1971
+manufacturer: Znamya Truda Plant
+origin: USSR/Russia
+price: 40
+role: Self-Propelled Anti-Aircraft System
+variants:
+  SA-15 Tor: {}
