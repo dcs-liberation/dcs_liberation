@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
 from typing import Optional, Type, Union
 
 from dcs.countries import country_dict
@@ -47,8 +46,6 @@ from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
-
-UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["F-22A"] = F_22A
