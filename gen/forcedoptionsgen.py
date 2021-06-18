@@ -32,6 +32,8 @@ class ForcedOptionsGenerator:
             self.mission.forced_options.labels = ForcedOptions.Labels.Abbreviate
         elif self.game.settings.labels == "Dot Only":
             self.mission.forced_options.labels = ForcedOptions.Labels.DotOnly
+        elif self.game.settings.labels == "Neutral Dot":
+            self.mission.forced_options.labels = ForcedOptions.Labels.NeutralDot
         elif self.game.settings.labels == "Off":
             self.mission.forced_options.labels = ForcedOptions.Labels.None_
 

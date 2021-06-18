@@ -13,7 +13,7 @@ URLS: Dict[str, str] = {
     "Issues": "https://github.com/dcs-liberation/dcs_liberation/issues",
 }
 
-LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Off"]
+LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Neutral Dot", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
 AIRCRAFT_BANNERS: Dict[str, QPixmap] = {}

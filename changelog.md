@@ -20,6 +20,7 @@ Saves from 3.x are not compatible with 4.0.
 * **[Campaign AI]** Fix procurement for factions that lack some unit types.
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 * **[UI]** Made non-interactive map elements less obstructive.
+* **[UI]** Added support for Neutral Dot difficulty label
 
 # 3.0.0
 
