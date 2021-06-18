@@ -23,8 +23,8 @@ from dcs.planes import (
     A_10C_2,
 )
 from dcs.ships import (
-    CVN_74_John_C__Stennis,
-    LHA_1_Tarawa,
+    Stennis,
+    LHA_Tarawa,
     PERRY,
     USS_Arleigh_Burke_IIa,
     TICONDEROG,
@@ -77,28 +77,28 @@ class TestFactionLoader(unittest.TestCase):
             self.assertTrue(faction.has_jtac)
             self.assertEqual(faction.jtac_unit, MQ_9_Reaper)
 
-            self.assertIn(Armor.MBT_M1A2_Abrams, faction.frontline_units)
-            self.assertIn(Armor.ATGM_Stryker, faction.frontline_units)
-            self.assertIn(Armor.IFV_M1126_Stryker_ICV, faction.frontline_units)
-            self.assertIn(Armor.IFV_M2A2_Bradley, faction.frontline_units)
-            self.assertIn(Armor.IFV_LAV_25, faction.frontline_units)
-            self.assertIn(Armor.Scout_HMMWV, faction.frontline_units)
-            self.assertIn(Armor.ATGM_HMMWV, faction.frontline_units)
+            self.assertIn(Armor.M_1_Abrams, faction.frontline_units)
+            self.assertIn(Armor.M1134_Stryker_ATGM, faction.frontline_units)
+            self.assertIn(Armor.M1126_Stryker_ICV, faction.frontline_units)
+            self.assertIn(Armor.M_2_Bradley, faction.frontline_units)
+            self.assertIn(Armor.LAV_25, faction.frontline_units)
+            self.assertIn(Armor.M1043_HMMWV_Armament, faction.frontline_units)
+            self.assertIn(Armor.M1045_HMMWV_TOW, faction.frontline_units)
 
-            self.assertIn(Artillery.MLRS_M270_227mm, faction.artillery_units)
-            self.assertIn(Artillery.SPH_M109_Paladin_155mm, faction.artillery_units)
+            self.assertIn(Artillery.MLRS, faction.artillery_units)
+            self.assertIn(Artillery.M_109, faction.artillery_units)
 
             self.assertIn(Unarmed.M_818, faction.logistics_units)
 
-            self.assertIn(Infantry.Infantry_M4, faction.infantry_units)
-            self.assertIn(Infantry.Infantry_M249, faction.infantry_units)
+            self.assertIn(Infantry.Soldier_M4, faction.infantry_units)
+            self.assertIn(Infantry.Soldier_M249, faction.infantry_units)
 
             self.assertIn("AvengerGenerator", faction.air_defenses)
 
             self.assertIn("HawkGenerator", faction.air_defenses)
 
-            self.assertIn(CVN_74_John_C__Stennis, faction.aircraft_carrier)
-            self.assertIn(LHA_1_Tarawa, faction.helicopter_carrier)
+            self.assertIn(Stennis, faction.aircraft_carrier)
+            self.assertIn(LHA_Tarawa, faction.helicopter_carrier)
             self.assertIn(PERRY, faction.destroyers)
             self.assertIn(USS_Arleigh_Burke_IIa, faction.destroyers)
             self.assertIn(TICONDEROG, faction.cruisers)
