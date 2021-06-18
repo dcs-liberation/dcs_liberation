@@ -11,12 +11,6 @@ Saves from 3.x are not compatible with 4.0.
 
 ## Fixes
 
-# 3.1.0
-
-## Features/Improvements
-
-## Fixes
-
 * **[Campaign AI]** Fix procurement for factions that lack some unit types.
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 * **[UI]** Made non-interactive map elements less obstructive.
