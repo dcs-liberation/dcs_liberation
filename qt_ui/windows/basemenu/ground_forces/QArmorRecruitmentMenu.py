@@ -1,5 +1,3 @@
-from typing import Type
-
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFrame,
@@ -8,10 +6,8 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from dcs.unittype import UnitType, VehicleType
 
-from game import db
-from game.db import PRICES
+from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
@@ -39,11 +35,7 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         unit_types = list(
             set(self.game_model.game.faction_for(player=True).ground_units)
         )
-        unit_types.sort(
-            key=lambda u: db.unit_get_expanded_info(
-                self.game_model.game.player_country, u, "name"
-            )
-        )
+        unit_types.sort(key=lambda u: u.name)
         for unit_type in unit_types:
             row = self.add_purchase_row(unit_type, task_box_layout, row)
         stretch = QVBoxLayout()
@@ -59,18 +51,10 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
 
-    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+    def enable_purchase(self, unit_type: GroundUnitType) -> bool:
         if not super().enable_purchase(unit_type):
             return False
         return self.cp.has_ground_unit_source(self.game_model.game)
 
-    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+    def enable_sale(self, unit_type: GroundUnitType) -> bool:
         return self.pending_deliveries.pending_orders(unit_type) > 0
-
-    def name_of(self, unit_type: Type[VehicleType]) -> str:
-        return db.unit_get_expanded_info(
-            self.game_model.game.player_country, unit_type, "name"
-        )
-
-    def price_of(self, unit_type: Type[VehicleType]) -> int:
-        return PRICES[unit_type]

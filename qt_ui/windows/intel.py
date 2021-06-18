@@ -15,7 +15,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game.game import Game, db
+from game.game import Game
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.finances.QFinancesMenu import FinancesLayout
 
@@ -111,7 +111,7 @@ class ArmyIntelLayout(IntelTableLayout):
             for vehicle, count in base.armor.items():
                 if not count:
                     continue
-                self.add_row(vehicle.id, count)
+                self.add_row(vehicle.name, count)
 
         self.add_spacer()
         self.add_row("<b>Total</b>", total)

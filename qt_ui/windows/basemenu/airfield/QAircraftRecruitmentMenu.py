@@ -92,12 +92,6 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
             return False
         return True
 
-    def name_of(self, unit_type: AircraftType) -> str:
-        return unit_type.name
-
-    def price_of(self, unit_type: AircraftType) -> int:
-        return unit_type.price
-
     def buy(self, unit_type: AircraftType) -> None:
         if self.maximum_units > 0:
             if self.cp.unclaimed_parking(self.game_model.game) <= 0:

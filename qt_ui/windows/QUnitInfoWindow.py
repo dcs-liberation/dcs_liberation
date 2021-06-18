@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Type, Union
-
-import dcs
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import (
@@ -13,79 +9,23 @@ from PySide2.QtWidgets import (
     QTextBrowser,
     QFrame,
 )
-from dcs.unittype import VehicleType
 
 import gen.flights.ai_flight_planner_db
-from game import db
 from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
+from game.dcs.unittype import UnitType
 from game.game import Game
 from gen.flights.flight import FlightType
 from qt_ui.uiconstants import AIRCRAFT_BANNERS, VEHICLE_BANNERS
 
 
-@dataclass(frozen=True)
-class UnitInfo:
-    name: str
-    description: str
-    introduction_year: str
-    origin: str
-    manufacturer: str
-    role: str
-
-    @classmethod
-    def from_unit_type(
-        cls, country: str, unit_type: Union[AircraftType, Type[VehicleType]]
-    ) -> UnitInfo:
-        if isinstance(unit_type, AircraftType):
-            return cls.from_aircraft(unit_type)
-        else:
-            return cls.from_vehicle_type(country, unit_type)
-
-    @classmethod
-    def from_aircraft(cls, aircraft: AircraftType) -> UnitInfo:
-        return UnitInfo(
-            aircraft.name,
-            aircraft.description,
-            aircraft.year_introduced,
-            aircraft.country_of_origin,
-            aircraft.manufacturer,
-            aircraft.role,
-        )
-
-    @classmethod
-    def from_vehicle_type(cls, country: str, unit_type: Type[VehicleType]) -> UnitInfo:
-        name = db.unit_get_expanded_info(country, unit_type, "name")
-        manufacturer = db.unit_get_expanded_info(country, unit_type, "manufacturer")
-        origin = db.unit_get_expanded_info(country, unit_type, "country-of-origin")
-        role = db.unit_get_expanded_info(country, unit_type, "role")
-        introduction = db.unit_get_expanded_info(
-            country, unit_type, "year-of-variant-introduction"
-        )
-        description = db.unit_get_expanded_info(country, unit_type, "text")
-        return UnitInfo(
-            name,
-            description,
-            introduction,
-            origin,
-            manufacturer,
-            role,
-        )
-
-
 class QUnitInfoWindow(QDialog):
-    def __init__(
-        self, game: Game, unit_type: Union[AircraftType, Type[VehicleType]]
-    ) -> None:
+    def __init__(self, game: Game, unit_type: UnitType) -> None:
         super().__init__()
         self.setModal(True)
         self.game = game
         self.unit_type = unit_type
-        if isinstance(unit_type, AircraftType):
-            self.name = unit_type.name
-        else:
-            self.name = db.unit_get_expanded_info(
-                self.game.player_country, self.unit_type, "name"
-            )
+        self.name = unit_type.name
         self.setWindowTitle(f"Unit Info: {self.name}")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
@@ -101,8 +41,8 @@ class QUnitInfoWindow(QDialog):
 
         if isinstance(self.unit_type, AircraftType):
             pixmap = AIRCRAFT_BANNERS.get(self.unit_type.dcs_id)
-        elif dcs.vehicles.vehicle_map.get(self.unit_type.id) is not None:
-            pixmap = VEHICLE_BANNERS.get(self.unit_type.id)
+        elif isinstance(self.unit_type, GroundUnitType):
+            pixmap = VEHICLE_BANNERS.get(self.unit_type.dcs_id)
         if pixmap is None:
             pixmap = AIRCRAFT_BANNERS.get("Missing")
         header.setPixmap(pixmap.scaled(header.width(), header.height()))
@@ -115,20 +55,21 @@ class QUnitInfoWindow(QDialog):
         self.details_grid_layout = QGridLayout()
         self.details_grid_layout.setMargin(0)
 
-        unit_info = UnitInfo.from_unit_type(self.game.player_country, self.unit_type)
         self.name_box = QLabel(
-            f"<b>Name:</b> {unit_info.manufacturer} {unit_info.name}"
+            f"<b>Name:</b> {unit_type.manufacturer} {unit_type.name}"
         )
         self.name_box.setProperty("style", "info-element")
 
-        self.country_box = QLabel(f"<b>Country of Origin:</b> {unit_info.origin}")
+        self.country_box = QLabel(
+            f"<b>Country of Origin:</b> {unit_type.country_of_origin}"
+        )
         self.country_box.setProperty("style", "info-element")
 
-        self.role_box = QLabel(f"<b>Role:</b> {unit_info.role}")
+        self.role_box = QLabel(f"<b>Role:</b> {unit_type.role}")
         self.role_box.setProperty("style", "info-element")
 
         self.year_box = QLabel(
-            f"<b>Variant Introduction:</b> {unit_info.introduction_year}"
+            f"<b>Variant Introduction:</b> {unit_type.year_introduced}"
         )
         self.year_box.setProperty("style", "info-element")
 
@@ -152,7 +93,7 @@ class QUnitInfoWindow(QDialog):
         # Finally, add the description box.
         self.details_text = QTextBrowser()
         self.details_text.setProperty("style", "info-desc")
-        self.details_text.setText(unit_info.description)
+        self.details_text.setText(unit_type.description)
         self.gridLayout.addWidget(self.details_text, 3, 0)
 
         self.layout.addLayout(self.gridLayout, 1, 0)

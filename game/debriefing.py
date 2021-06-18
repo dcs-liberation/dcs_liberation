@@ -14,14 +14,12 @@ from typing import (
     Dict,
     Iterator,
     List,
-    Type,
     TYPE_CHECKING,
 )
 
-from dcs.unittype import UnitType
-
 from game import db
 from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
 from game.theater import Airfield, ControlPoint
 from game.transfers import CargoShip
 from game.unitmap import (
@@ -183,8 +181,8 @@ class Debriefing:
     def casualty_count(self, control_point: ControlPoint) -> int:
         return len([x for x in self.front_line_losses if x.origin == control_point])
 
-    def front_line_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
-        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+    def front_line_losses_by_type(self, player: bool) -> dict[GroundUnitType, int]:
+        losses_by_type: dict[GroundUnitType, int] = defaultdict(int)
         if player:
             losses = self.ground_losses.player_front_line
         else:
@@ -193,8 +191,8 @@ class Debriefing:
             losses_by_type[loss.unit_type] += 1
         return losses_by_type
 
-    def convoy_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
-        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+    def convoy_losses_by_type(self, player: bool) -> dict[GroundUnitType, int]:
+        losses_by_type: dict[GroundUnitType, int] = defaultdict(int)
         if player:
             losses = self.ground_losses.player_convoy
         else:
@@ -203,8 +201,8 @@ class Debriefing:
             losses_by_type[loss.unit_type] += 1
         return losses_by_type
 
-    def cargo_ship_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
-        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+    def cargo_ship_losses_by_type(self, player: bool) -> dict[GroundUnitType, int]:
+        losses_by_type: dict[GroundUnitType, int] = defaultdict(int)
         if player:
             ships = self.ground_losses.player_cargo_ships
         else:
@@ -214,8 +212,8 @@ class Debriefing:
                 losses_by_type[unit_type] += count
         return losses_by_type
 
-    def airlift_losses_by_type(self, player: bool) -> Dict[Type[UnitType], int]:
-        losses_by_type: Dict[Type[UnitType], int] = defaultdict(int)
+    def airlift_losses_by_type(self, player: bool) -> dict[GroundUnitType, int]:
+        losses_by_type: dict[GroundUnitType, int] = defaultdict(int)
         if player:
             losses = self.ground_losses.player_airlifts
         else:

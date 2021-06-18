@@ -1,15 +1,22 @@
 import random
 
+from game import Game
+from game.dcs.groundunittype import GroundUnitType
+from game.theater.theatergroundobject import VehicleGroupGroundObject
 from gen.sam.group_generator import GroupGenerator
 
 
 class ArmoredGroupGenerator(GroupGenerator):
-    def __init__(self, game, ground_object, unit_type):
-        super(ArmoredGroupGenerator, self).__init__(game, ground_object)
+    def __init__(
+        self,
+        game: Game,
+        ground_object: VehicleGroupGroundObject,
+        unit_type: GroundUnitType,
+    ) -> None:
+        super().__init__(game, ground_object)
         self.unit_type = unit_type
 
-    def generate(self):
-
+    def generate(self) -> None:
         grid_x = random.randint(2, 3)
         grid_y = random.randint(1, 2)
 
@@ -20,7 +27,7 @@ class ArmoredGroupGenerator(GroupGenerator):
             for j in range(grid_y):
                 index = index + 1
                 self.add_unit(
-                    self.unit_type,
+                    self.unit_type.dcs_unit_type,
                     "Armor#" + str(index),
                     self.position.x + spacing * i,
                     self.position.y + spacing * j,
@@ -29,8 +36,14 @@ class ArmoredGroupGenerator(GroupGenerator):
 
 
 class FixedSizeArmorGroupGenerator(GroupGenerator):
-    def __init__(self, game, ground_object, unit_type, size):
-        super(FixedSizeArmorGroupGenerator, self).__init__(game, ground_object)
+    def __init__(
+        self,
+        game: Game,
+        ground_object: VehicleGroupGroundObject,
+        unit_type: GroundUnitType,
+        size: int,
+    ) -> None:
+        super().__init__(game, ground_object)
         self.unit_type = unit_type
         self.size = size
 
@@ -41,7 +54,7 @@ class FixedSizeArmorGroupGenerator(GroupGenerator):
         for i in range(self.size):
             index = index + 1
             self.add_unit(
-                self.unit_type,
+                self.unit_type.dcs_unit_type,
                 "Armor#" + str(index),
                 self.position.x + spacing * i,
                 self.position.y,

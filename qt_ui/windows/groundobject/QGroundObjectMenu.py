@@ -20,7 +20,8 @@ from dcs import vehicles
 
 from game import Game, db
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.db import PRICES, REWARDS, unit_type_of
+from game.db import REWARDS
+from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
@@ -108,17 +109,18 @@ class QGroundObjectMenu(QDialog):
         for g in self.ground_object.groups:
             if not hasattr(g, "units_losts"):
                 g.units_losts = []
-            for u in g.units:
-                unit_display_name = u.type
-                unit_type = vehicles.vehicle_map.get(u.type)
-                if unit_type is not None:
-                    unit_display_name = db.unit_get_expanded_info(
-                        self.game.enemy_country, unit_type, "name"
-                    )
+            for unit in g.units:
+                unit_display_name = unit.type
+                dcs_unit_type = vehicles.vehicle_map.get(unit.type)
+                if dcs_unit_type is not None:
+                    # Hack: Don't know which variant is used.
+                    unit_display_name = next(
+                        GroundUnitType.for_dcs_type(dcs_unit_type)
+                    ).name
                 self.intelLayout.addWidget(
                     QLabel(
                         "<b>Unit #"
-                        + str(u.id)
+                        + str(unit.id)
                         + " - "
                         + str(unit_display_name)
                         + "</b>"
@@ -128,26 +130,30 @@ class QGroundObjectMenu(QDialog):
                 )
                 i = i + 1
 
-            for u in g.units_losts:
+            for unit in g.units_losts:
+                dcs_unit_type = vehicles.vehicle_map.get(unit.type)
+                if dcs_unit_type is None:
+                    continue
 
-                utype = unit_type_of(u)
-                if utype in PRICES:
-                    price = PRICES[utype]
-                else:
-                    price = 6
+                # Hack: Don't know which variant is used.
+                unit_type = next(GroundUnitType.for_dcs_type(dcs_unit_type))
 
                 self.intelLayout.addWidget(
                     QLabel(
-                        "<b>Unit #" + str(u.id) + " - " + str(u.type) + "</b> [DEAD]"
+                        "<b>Unit #"
+                        + str(unit.id)
+                        + " - "
+                        + str(unit_type)
+                        + "</b> [DEAD]"
                     ),
                     i,
                     0,
                 )
                 if self.cp.captured:
-                    repair = QPushButton("Repair [" + str(price) + "M]")
+                    repair = QPushButton(f"Repair [{unit_type.price}M]")
                     repair.setProperty("style", "btn-success")
                     repair.clicked.connect(
-                        lambda u=u, g=g, p=price: self.repair_unit(g, u, p)
+                        lambda u=unit, g=g, p=unit_type.price: self.repair_unit(g, u, p)
                     )
                     self.intelLayout.addWidget(repair, i, 1)
                 i = i + 1
@@ -217,13 +223,12 @@ class QGroundObjectMenu(QDialog):
 
     def update_total_value(self):
         total_value = 0
-        for group in self.ground_object.groups:
-            for u in group.units:
-                utype = unit_type_of(u)
-                if utype in PRICES:
-                    total_value = total_value + PRICES[utype]
-                else:
-                    total_value = total_value + 1
+        if not self.ground_object.purchasable:
+            return
+        for u in self.ground_object.units:
+            # Hack: Unknown variant.
+            unit_type = next(GroundUnitType.for_dcs_type(vehicles.vehicle_map[u.type]))
+            total_value += unit_type.price
         if self.sell_all_button is not None:
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
         self.total_value = total_value
@@ -340,10 +345,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         # Armored units
         for unit in set(faction.ground_units):
-            self.buyArmorCombo.addItem(
-                db.unit_type_name_2(unit) + " [$" + str(db.PRICES[unit]) + "M]",
-                userData=unit,
-            )
+            self.buyArmorCombo.addItem(f"{unit} [${unit.price}M]", userData=unit)
         self.buyArmorCombo.currentIndexChanged.connect(self.armorComboChanged)
 
         self.amount.setMinimum(2)
@@ -404,33 +406,19 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         )
 
     def armorComboChanged(self, index):
-        self.buyArmorButton.setText(
-            "Buy [$"
-            + str(db.PRICES[self.buyArmorCombo.itemData(index)] * self.amount.value())
-            + "M][-$"
-            + str(self.current_group_value)
-            + "M]"
-        )
+        unit_type = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
+        price = unit_type.price * self.amount.value()
+        self.buyArmorButton.setText(f"Buy [${price}M][-${self.current_group_value}M]")
 
     def amountComboChanged(self):
-        self.buyArmorButton.setText(
-            "Buy [$"
-            + str(
-                db.PRICES[
-                    self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
-                ]
-                * self.amount.value()
-            )
-            + "M][-$"
-            + str(self.current_group_value)
-            + "M]"
-        )
+        unit_type = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
+        price = unit_type.price * self.amount.value()
+        self.buyArmorButton.setText(f"Buy [${price}M][-${self.current_group_value}M]")
 
     def buyArmor(self):
         logging.info("Buying Armor ")
         utype = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
-        logging.info(utype)
-        price = db.PRICES[utype] * self.amount.value() - self.current_group_value
+        price = utype.price * self.amount.value() - self.current_group_value
         if price > self.game.budget:
             self.error_money()
             self.close()

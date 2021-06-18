@@ -2,13 +2,12 @@
 import itertools
 import math
 from dataclasses import dataclass
-from typing import Dict, Optional, Type
+from typing import Dict, Optional
 
 from dcs.unit import Unit
 from dcs.unitgroup import FlyingGroup, Group, VehicleGroup
-from dcs.unittype import VehicleType
 
-from game import db
+from game.dcs.groundunittype import GroundUnitType
 from game.squadrons import Pilot
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
@@ -24,7 +23,7 @@ class FlyingUnit:
 
 @dataclass(frozen=True)
 class FrontLineUnit:
-    unit_type: Type[VehicleType]
+    unit_type: GroundUnitType
     origin: ControlPoint
 
 
@@ -37,13 +36,13 @@ class GroundObjectUnit:
 
 @dataclass(frozen=True)
 class ConvoyUnit:
-    unit_type: Type[VehicleType]
+    unit_type: GroundUnitType
     convoy: Convoy
 
 
 @dataclass(frozen=True)
 class AirliftUnits:
-    cargo: tuple[Type[VehicleType], ...]
+    cargo: tuple[GroundUnitType, ...]
     transfer: TransferOrder
 
 
@@ -85,20 +84,15 @@ class UnitMap:
     def airfield(self, name: str) -> Optional[Airfield]:
         return self.airfields.get(name, None)
 
-    def add_front_line_units(self, group: Group, origin: ControlPoint) -> None:
+    def add_front_line_units(
+        self, group: Group, origin: ControlPoint, unit_type: GroundUnitType
+    ) -> None:
         for unit in group.units:
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(unit.name)
             if name in self.front_line_units:
                 raise RuntimeError(f"Duplicate front line unit: {name}")
-            unit_type = db.unit_type_from_name(unit.type)
-            if unit_type is None:
-                raise RuntimeError(f"Unknown unit type: {unit.type}")
-            if not issubclass(unit_type, VehicleType):
-                raise RuntimeError(
-                    f"{name} is a {unit_type.__name__}, expected a VehicleType"
-                )
             self.front_line_units[name] = FrontLineUnit(unit_type, origin)
 
     def front_line_unit(self, name: str) -> Optional[FrontLineUnit]:
@@ -141,19 +135,12 @@ class UnitMap:
         return self.ground_object_units.get(name, None)
 
     def add_convoy_units(self, group: Group, convoy: Convoy) -> None:
-        for unit in group.units:
+        for unit, unit_type in zip(group.units, convoy.iter_units()):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(unit.name)
             if name in self.convoys:
                 raise RuntimeError(f"Duplicate convoy unit: {name}")
-            unit_type = db.unit_type_from_name(unit.type)
-            if unit_type is None:
-                raise RuntimeError(f"Unknown unit type: {unit.type}")
-            if not issubclass(unit_type, VehicleType):
-                raise RuntimeError(
-                    f"{name} is a {unit_type.__name__}, expected a VehicleType"
-                )
             self.convoys[name] = ConvoyUnit(unit_type, convoy)
 
     def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
