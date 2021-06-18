@@ -131,39 +131,39 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "Liberation Strike",
+			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
+					["num"] = 7,
+				},
+				[2] = {
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
+					["num"] = 4,
+				},
+				[3] = {
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
+					["num"] = 6,
+				},
+				[4] = {
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 2,
+				},
+				[6] = {
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 8,
+				},
+				[7] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
 					["num"] = 9,
 				},
-				[2] = {
+				[8] = {
 					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
 					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
-					["num"] = 8,
-				},
-				[5] = {
-					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
-					["num"] = 6,
-				},
-				[6] = {
-					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
-					["num"] = 4,
-				},
-				[7] = {
-					["CLSID"] = "{GBU-31}",
-					["num"] = 3,
-				},
-				[8] = {
-					["CLSID"] = "{GBU-31}",
-					["num"] = 7,
 				},
 				[9] = {
 					["CLSID"] = "<CLEAN>",
@@ -175,7 +175,6 @@ local unitPayloads = {
 				},
 			},
 			["tasks"] = {
-				[1] = 33,
 			},
 		},
 		[5] = {
