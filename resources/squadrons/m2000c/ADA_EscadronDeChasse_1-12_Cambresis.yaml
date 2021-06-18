@@ -1,0 +1,13 @@
+---
+name: Escadron de chasse 1/12
+nickname: Cambresis
+country: France
+role: Fighter
+aircraft: Mirage 2000C
+livery: Cambresis
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
