@@ -8,6 +8,8 @@ Saves from 3.x are not compatible with 4.0.
 * **[Campaign AI]** AI will plan Tanker flights.
 * **[Factions]** Added more tankers to factions.
 * **[Flight Planner]** Added ability to plan Tankers.
+* **[Mods]** Added support for the Gripen mod.
+* **[Mission Generation]** Added support for "Neutral Dot" label options.
 
 ## Fixes
 
@@ -15,6 +17,7 @@ Saves from 3.x are not compatible with 4.0.
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 * **[UI]** Made non-interactive map elements less obstructive.
 * **[UI]** Added support for Neutral Dot difficulty label
+* **[UI]** Clear skies at night no longer described as "Sunny" by the weather widget.
 
 # 3.0.0
 
