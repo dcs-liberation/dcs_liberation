@@ -76,7 +76,7 @@ class PurchaseGroup(QGroupBox):
 class QRecruitBehaviour:
     game_model: GameModel
     cp: ControlPoint
-    purchase_groups: dict[UnitType, PurchaseGroup] = {}
+    purchase_groups: dict[UnitType, PurchaseGroup]
     existing_units_labels = None
     maximum_units = -1
     BUDGET_FORMAT = "Available Budget: <b>${:.2f}M</b>"
