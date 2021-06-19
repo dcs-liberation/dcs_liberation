@@ -1,10 +1,11 @@
 """Combo box for selecting a departure airfield."""
-from typing import Iterable, Type
+from typing import Iterable
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QComboBox
 from dcs.unittype import FlyingType
 
+from game.dcs.aircrafttype import AircraftType
 from game.inventory import GlobalAircraftInventory
 from game.theater.controlpoint import ControlPoint
 
@@ -22,7 +23,7 @@ class QOriginAirfieldSelector(QComboBox):
         self,
         global_inventory: GlobalAircraftInventory,
         origins: Iterable[ControlPoint],
-        aircraft: Type[FlyingType],
+        aircraft: AircraftType,
     ) -> None:
         super().__init__()
         self.global_inventory = global_inventory
