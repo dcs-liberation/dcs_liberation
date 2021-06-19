@@ -982,7 +982,7 @@ AIRFIELD_DATA = {
         icao="CY-0004",
         elevation=270,
         runway_length=3069,
-        atc=AtcData(MHz(121, 0), MHz(4, 650), MHz(40, 200), MHz(251, 750)),
+        atc=AtcData(MHz(4, 650), MHz(40, 200), MHz(121, 0), MHz(251, 750)),
     ),
     "Larnaca": AirfieldData(
         theater="Syria",
@@ -990,7 +990,7 @@ AIRFIELD_DATA = {
         elevation=16,
         runway_length=8009,
         vor=("LCA", MHz(112, 80)),
-        atc=AtcData(MHz(121, 200), MHz(4, 700), MHz(40, 300), MHz(251, 850)),
+        atc=AtcData(MHz(4, 700), MHz(40, 300), MHz(121, 200), MHz(251, 850)),
         ils={
             "22": ("ILC", MHz(110, 30)),
         },
@@ -1001,14 +1001,14 @@ AIRFIELD_DATA = {
         elevation=383,
         runway_length=7559,
         vor=("GKE", MHz(114, 30)),
-        atc=AtcData(MHz(120, 200), MHz(4, 750), MHz(40, 400), MHz(241, 950)),
+        atc=AtcData(MHz(4, 750), MHz(40, 400), MHz(120, 200), MHz(251, 950)),
     ),
     "Lakatamia": AirfieldData(
         theater="Syria",
         icao="CY-0001",
         elevation=757,
         runway_length=1230,
-        atc=AtcData(MHz(120, 200), MHz(4, 725), MHz(40, 350), MHz(251, 900)),
+        atc=AtcData(MHz(4, 725), MHz(40, 350), MHz(120, 200), MHz(251, 900)),
     ),
     "Nicosia": AirfieldData(
         theater="Syria",
@@ -1021,7 +1021,7 @@ AIRFIELD_DATA = {
         icao="CY-0003",
         elevation=770,
         runway_length=3364,
-        atc=AtcData(MHz(121, 000), MHz(4, 825), MHz(40, 550), MHz(252, 100)),
+        atc=AtcData(MHz(4, 825), MHz(40, 550), MHz(121, 000), MHz(252, 100)),
     ),
     "Akrotiri": AirfieldData(
         theater="Syria",
@@ -1031,7 +1031,7 @@ AIRFIELD_DATA = {
         tacan=TacanChannel(107, TacanBand.X),
         tacan_callsign="AKR",
         vor=("AKR", MHz(116, 0)),
-        atc=AtcData(MHz(128, 0), MHz(4, 625), MHz(40, 150), MHz(251, 700)),
+        atc=AtcData(MHz(4, 625), MHz(40, 150), MHz(128, 0), MHz(251, 700)),
         ils={
             "28": ("IAK", MHz(109, 70)),
         },
@@ -1042,7 +1042,7 @@ AIRFIELD_DATA = {
         elevation=40,
         runway_length=8425,
         vor=("PHA", MHz(117, 90)),
-        atc=AtcData(MHz(119, 900), MHz(4, 675), MHz(40, 250), MHz(251, 800)),
+        atc=AtcData(MHz(4, 675), MHz(40, 250), MHz(119, 900), MHz(251, 800)),
         ils={
             "29": ("IPA", MHz(108, 90)),
         },
@@ -1053,7 +1053,7 @@ AIRFIELD_DATA = {
         elevation=36,
         runway_length=6885,
         vor=("GZP", MHz(114, 20)),
-        atc=AtcData(MHz(119, 250), MHz(4, 600), MHz(40, 100), MHz(251, 650)),
+        atc=AtcData(MHz(4, 600), MHz(40, 100), MHz(119, 250), MHz(251, 650)),
         ils={
             "8": ("IGZP", MHz(108, 50)),
         },
