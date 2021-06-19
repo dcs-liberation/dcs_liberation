@@ -83,6 +83,7 @@ class QRecruitBehaviour:
 
     def __init__(self) -> None:
         self.existing_units_labels = {}
+        self.purchase_groups = {}
         self.update_available_budget()
 
     @property
