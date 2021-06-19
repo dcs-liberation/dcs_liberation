@@ -964,7 +964,10 @@ class Carrier(NavalControlPoint):
         return True
 
     def can_operate(self, aircraft: AircraftType) -> bool:
-        return aircraft.carrier_capable
+        try:
+            return aircraft.carrier_capable
+        except AttributeError:
+            return False
 
     @property
     def total_aircraft_parking(self) -> int:
@@ -998,7 +1001,10 @@ class Lha(NavalControlPoint):
         return True
 
     def can_operate(self, aircraft: AircraftType) -> bool:
-        return aircraft.lha_capable
+        try:
+            return aircraft.lha_capable
+        except AttributeError:
+            return False
 
     @property
     def total_aircraft_parking(self) -> int:
