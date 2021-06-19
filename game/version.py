@@ -87,4 +87,7 @@ VERSION = _build_version_string()
 #: Version 6.0
 #: * Random objective generation no is longer supported. Fixed objective locations were
 #:   added in 4.1.
-CAMPAIGN_FORMAT_VERSION = (6, 0)
+#:
+#: Version 6.1
+#: * Support for new Syrian airfields in DCS 2.7.2.7910.1 (Cyprus update).
+CAMPAIGN_FORMAT_VERSION = (6, 1)
