@@ -263,22 +263,23 @@ class QFlightCreator(QDialog):
     def update_max_size(self, available: int) -> None:
         self.flight_size_spinner.setMaximum(min(available, 4))
 
-        current_aircraft = self.departure.aircraft
-        default_size = 2
+        chosen_aircraft = self.departure.aircraft.dcs_unit_type
+
+        # Default flight size.
+        flight_size = 2
 
         if (
-            current_aircraft == KC130
-            or current_aircraft == KC135MPRS
-            or current_aircraft == KC_135
-            or current_aircraft == KC130
-            or current_aircraft == S_3B_Tanker
-            or current_aircraft == IL_78M
-            or current_aircraft == E_2C
-            or current_aircraft == E_3A
-            or current_aircraft == A_50
+            chosen_aircraft == KC130
+            or chosen_aircraft == KC135MPRS
+            or chosen_aircraft == KC_135
+            or chosen_aircraft == KC130
+            or chosen_aircraft == S_3B_Tanker
+            or chosen_aircraft == IL_78M
+            or chosen_aircraft == E_2C
+            or chosen_aircraft == E_3A
+            or chosen_aircraft == A_50
         ):
-            default_size = 1
+            flight_size = 1
 
         if self.flight_size_spinner.maximum() >= 2:
-            if self.flight_size_spinner.value() < 2:
-                self.flight_size_spinner.setValue(default_size)
+            self.flight_size_spinner.setValue(flight_size)
