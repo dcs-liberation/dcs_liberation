@@ -4,7 +4,7 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Iterator
+from typing import Any, Dict, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -16,7 +16,7 @@ from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
-from game.theater.theatergroundobject import MissileSiteGroundObject
+from gen import naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -34,7 +34,7 @@ from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
 from .settings import Settings, AutoAtoBehavior
-from .squadrons import Pilot, AirWing
+from .squadrons import AirWing
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
@@ -119,6 +119,7 @@ class Game:
         self.enemy_budget = enemy_budget
         self.current_unit_id = 0
         self.current_group_id = 0
+        self.name_generator = naming.namegen
 
         self.conditions = self.generate_conditions()
 
@@ -300,6 +301,14 @@ class Game:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self, game_still_initializing: bool = False) -> None:
+        if not hasattr(self, "name_generator"):
+            self.name_generator = naming.namegen
+        # Hack: Replace the global name generator state with the state from the save
+        # game.
+        #
+        # We need to persist this state so that names generated after game load don't
+        # conflict with those generated before exit.
+        naming.namegen = self.name_generator
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
