@@ -12,6 +12,7 @@ resources/tools/a.miz
 # User-specific stuff
 .idea/
 .env
+env/
 
 /kneeboards
 /liberation_preferences.json
