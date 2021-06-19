@@ -584,7 +584,7 @@ class CoalitionMissionPlanner:
     MAX_OCA_RANGE = nautical_miles(150)
     MAX_SEAD_RANGE = nautical_miles(150)
     MAX_STRIKE_RANGE = nautical_miles(150)
-    MAX_AWEC_RANGE = nautical_miles(200)
+    MAX_AWEC_RANGE = Distance.inf()
     MAX_TANKER_RANGE = nautical_miles(200)
 
     def __init__(self, game: Game, is_player: bool) -> None:
