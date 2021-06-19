@@ -22,6 +22,7 @@ Saves from 3.x are not compatible with 4.0.
 * **[UI]** Added support for Neutral Dot difficulty label
 * **[UI]** Clear skies at night no longer described as "Sunny" by the weather widget.
 * **[UI]** Removed ability to buy (useless) ground units at carriers and LHAs.
+* **[UI]** Fixed enable/disable of buy/sell buttons.
 
 # 3.0.0
 

@@ -38,9 +38,6 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         self.hangar_status = QHangarStatus(game_model, self.cp)
 
-        self.init_ui()
-
-    def init_ui(self):
         main_layout = QVBoxLayout()
 
         scroll_content = QWidget()
@@ -64,11 +61,11 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
             unit_types,
             key=lambda u: u.name,
         )
-        for unit_type in sorted_units:
-            row = self.add_purchase_row(unit_type, task_box_layout, row)
-            stretch = QVBoxLayout()
-            stretch.addStretch()
-            task_box_layout.addLayout(stretch, row, 0)
+        for row, unit_type in enumerate(sorted_units):
+            self.add_purchase_row(unit_type, task_box_layout, row)
+        stretch = QVBoxLayout()
+        stretch.addStretch()
+        task_box_layout.addLayout(stretch, row, 0)
 
         scroll_content.setLayout(task_box_layout)
         scroll = QScrollArea()

@@ -1,13 +1,15 @@
+from __future__ import annotations
+
 import logging
 
 from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QLayout,
     QPushButton,
     QSizePolicy,
     QSpacerItem,
+    QGridLayout,
 )
 
 from game.dcs.unittype import UnitType
@@ -18,16 +20,68 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QUnitInfoWindow import QUnitInfoWindow
 
 
+class PurchaseGroup(QGroupBox):
+    def __init__(self, unit_type: UnitType, recruiter: QRecruitBehaviour) -> None:
+        super().__init__()
+        self.unit_type = unit_type
+        self.recruiter = recruiter
+
+        self.setProperty("style", "buy-box")
+        self.setMaximumHeight(36)
+        self.setMinimumHeight(36)
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+
+        self.sell_button = QPushButton("-")
+        self.sell_button.setProperty("style", "btn-sell")
+        self.sell_button.setDisabled(not recruiter.enable_sale(unit_type))
+        self.sell_button.setMinimumSize(16, 16)
+        self.sell_button.setMaximumSize(16, 16)
+        self.sell_button.setSizePolicy(
+            QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        )
+
+        self.sell_button.clicked.connect(lambda: self.recruiter.sell(self.unit_type))
+
+        self.amount_bought = QLabel()
+        self.amount_bought.setSizePolicy(
+            QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        )
+
+        self.buy_button = QPushButton("+")
+        self.buy_button.setProperty("style", "btn-buy")
+        self.buy_button.setDisabled(not recruiter.enable_purchase(unit_type))
+        self.buy_button.setMinimumSize(16, 16)
+        self.buy_button.setMaximumSize(16, 16)
+
+        self.buy_button.clicked.connect(lambda: self.recruiter.buy(self.unit_type))
+        self.buy_button.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+
+        layout.addWidget(self.sell_button)
+        layout.addWidget(self.amount_bought)
+        layout.addWidget(self.buy_button)
+
+        self.update_state()
+
+    @property
+    def pending_units(self) -> int:
+        return self.recruiter.pending_deliveries.units.get(self.unit_type, 0)
+
+    def update_state(self) -> None:
+        self.buy_button.setEnabled(self.recruiter.enable_purchase(self.unit_type))
+        self.sell_button.setEnabled(self.recruiter.enable_sale(self.unit_type))
+        self.amount_bought.setText(f"<b>{self.pending_units}</b>")
+
+
 class QRecruitBehaviour:
     game_model: GameModel
     cp: ControlPoint
+    purchase_groups: dict[UnitType, PurchaseGroup] = {}
     existing_units_labels = None
-    bought_amount_labels = None
     maximum_units = -1
     BUDGET_FORMAT = "Available Budget: <b>${:.2f}M</b>"
 
     def __init__(self) -> None:
-        self.bought_amount_labels = {}
         self.existing_units_labels = {}
         self.update_available_budget()
 
@@ -46,9 +100,9 @@ class QRecruitBehaviour:
     def add_purchase_row(
         self,
         unit_type: UnitType,
-        layout: QLayout,
+        layout: QGridLayout,
         row: int,
-    ) -> int:
+    ) -> None:
         exist = QGroupBox()
         exist.setProperty("style", "buy-box")
         exist.setMaximumHeight(36)
@@ -57,7 +111,6 @@ class QRecruitBehaviour:
         exist.setLayout(existLayout)
 
         existing_units = self.cp.base.total_units_of_type(unit_type)
-        scheduled_units = self.pending_deliveries.units.get(unit_type, 0)
 
         unitName = QLabel(f"<b>{unit_type.name}</b>")
         unitName.setSizePolicy(
@@ -67,49 +120,13 @@ class QRecruitBehaviour:
         existing_units = QLabel(str(existing_units))
         existing_units.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
-        amount_bought = QLabel("<b>{}</b>".format(str(scheduled_units)))
-        amount_bought.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
-
         self.existing_units_labels[unit_type] = existing_units
-        self.bought_amount_labels[unit_type] = amount_bought
 
         price = QLabel(f"<b>$ {unit_type.price}</b> M")
         price.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
-        buysell = QGroupBox()
-        buysell.setProperty("style", "buy-box")
-        buysell.setMaximumHeight(36)
-        buysell.setMinimumHeight(36)
-        buysellayout = QHBoxLayout()
-        buysell.setLayout(buysellayout)
-
-        buy = QPushButton("+")
-        buy.setProperty("style", "btn-buy")
-        buy.setDisabled(not self.enable_purchase(unit_type))
-        buy.setMinimumSize(16, 16)
-        buy.setMaximumSize(16, 16)
-
-        def on_buy():
-            self.buy(unit_type)
-            buy.setDisabled(not self.enable_purchase(unit_type))
-            sell.setDisabled(not self.enable_sale(unit_type))
-
-        buy.clicked.connect(on_buy)
-        buy.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
-
-        sell = QPushButton("-")
-        sell.setProperty("style", "btn-sell")
-        sell.setDisabled(not self.enable_sale(unit_type))
-        sell.setMinimumSize(16, 16)
-        sell.setMaximumSize(16, 16)
-        sell.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
-
-        def on_sell():
-            self.sell(unit_type)
-            sell.setDisabled(not self.enable_sale(unit_type))
-            buy.setDisabled(not self.enable_purchase(unit_type))
-
-        sell.clicked.connect(on_sell)
+        purchase_group = PurchaseGroup(unit_type, self)
+        self.purchase_groups[unit_type] = purchase_group
 
         info = QGroupBox()
         info.setProperty("style", "buy-box")
@@ -135,30 +152,11 @@ class QRecruitBehaviour:
         )
         existLayout.addWidget(price)
 
-        buysellayout.addWidget(sell)
-        buysellayout.addWidget(amount_bought)
-        buysellayout.addWidget(buy)
-
         infolayout.addWidget(unitInfo)
 
         layout.addWidget(exist, row, 1)
-        layout.addWidget(buysell, row, 2)
+        layout.addWidget(purchase_group, row, 2)
         layout.addWidget(info, row, 3)
-
-        return row + 1
-
-    def _update_count_label(self, unit_type: UnitType) -> None:
-        self.bought_amount_labels[unit_type].setText(
-            "<b>{}</b>".format(
-                unit_type in self.pending_deliveries.units
-                and "{}".format(self.pending_deliveries.units[unit_type])
-                or "0"
-            )
-        )
-
-        self.existing_units_labels[unit_type].setText(
-            "<b>{}</b>".format(self.cp.base.total_units_of_type(unit_type))
-        )
 
     def update_available_budget(self) -> None:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
@@ -170,7 +168,7 @@ class QRecruitBehaviour:
 
         self.pending_deliveries.order({unit_type: 1})
         self.budget -= unit_type.price
-        self._update_count_label(unit_type)
+        self.update_purchase_controls()
         self.update_available_budget()
 
     def sell(self, unit_type: UnitType) -> None:
@@ -179,8 +177,12 @@ class QRecruitBehaviour:
             self.pending_deliveries.sell({unit_type: 1})
             if self.pending_deliveries.units[unit_type] == 0:
                 del self.pending_deliveries.units[unit_type]
-        self._update_count_label(unit_type)
+        self.update_purchase_controls()
         self.update_available_budget()
+
+    def update_purchase_controls(self) -> None:
+        for group in self.purchase_groups.values():
+            group.update_state()
 
     def enable_purchase(self, unit_type: UnitType) -> bool:
         return self.budget >= unit_type.price
