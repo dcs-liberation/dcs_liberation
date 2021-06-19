@@ -19,6 +19,12 @@ from game.unitdelivery import PendingUnitDeliveries
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QUnitInfoWindow import QUnitInfoWindow
+from enum import Enum
+
+
+class RecruitType(Enum):
+    BUY = 0
+    SELL = 1
 
 
 class PurchaseGroup(QGroupBox):
@@ -43,7 +49,7 @@ class PurchaseGroup(QGroupBox):
         )
 
         self.sell_button.clicked.connect(
-            lambda: self.recruiter.recruitHandler("sell", self.unit_type)
+            lambda: self.recruiter.recruit_handler(RecruitType.SELL, self.unit_type)
         )
 
         self.amount_bought = QLabel()
@@ -58,7 +64,7 @@ class PurchaseGroup(QGroupBox):
         self.buy_button.setMaximumSize(16, 16)
 
         self.buy_button.clicked.connect(
-            lambda: self.recruiter.recruitHandler("buy", self.unit_type)
+            lambda: self.recruiter.recruit_handler(RecruitType.BUY, self.unit_type)
         )
         self.buy_button.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
@@ -166,7 +172,7 @@ class QRecruitBehaviour:
     def update_available_budget(self) -> None:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
 
-    def recruitHandler(self, recruit_type: str, unit_type: UnitType) -> None:
+    def recruit_handler(self, recruit_type: RecruitType, unit_type: UnitType) -> None:
         # Lookup if Keyboard Modifiers were pressed
         # Shift = 10 times
         # CTRL = 5 Times
@@ -179,10 +185,10 @@ class QRecruitBehaviour:
             amount = 1
 
         for i in range(amount):
-            if recruit_type == "sell":
+            if recruit_type == RecruitType.SELL:
                 if not self.sell(unit_type):
                     return
-            elif recruit_type == "buy":
+            elif recruit_type == RecruitType.BUY:
                 if not self.buy(unit_type):
                     return
 
