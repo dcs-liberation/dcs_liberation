@@ -114,9 +114,12 @@ class QGroundObjectMenu(QDialog):
                 dcs_unit_type = vehicles.vehicle_map.get(unit.type)
                 if dcs_unit_type is not None:
                     # Hack: Don't know which variant is used.
-                    unit_display_name = next(
-                        GroundUnitType.for_dcs_type(dcs_unit_type)
-                    ).name
+                    try:
+                        unit_display_name = next(
+                            GroundUnitType.for_dcs_type(dcs_unit_type)
+                        ).name
+                    except StopIteration:
+                        pass
                 self.intelLayout.addWidget(
                     QLabel(
                         "<b>Unit #"
@@ -136,21 +139,20 @@ class QGroundObjectMenu(QDialog):
                     continue
 
                 # Hack: Don't know which variant is used.
-                unit_type = next(GroundUnitType.for_dcs_type(dcs_unit_type))
+
+                try:
+                    unit_type = next(GroundUnitType.for_dcs_type(dcs_unit_type))
+                    name = unit_type.name
+                    price = unit_type.price
+                except StopIteration:
+                    name = dcs_unit_type.name
+                    price = 0
 
                 self.intelLayout.addWidget(
-                    QLabel(
-                        "<b>Unit #"
-                        + str(unit.id)
-                        + " - "
-                        + str(unit_type)
-                        + "</b> [DEAD]"
-                    ),
-                    i,
-                    0,
+                    QLabel(f"<b>Unit #{unit.id} - {name}</b> [DEAD]"), i, 0
                 )
                 if self.cp.captured:
-                    repair = QPushButton(f"Repair [{unit_type.price}M]")
+                    repair = QPushButton(f"Repair [{price}M]")
                     repair.setProperty("style", "btn-success")
                     repair.clicked.connect(
                         lambda u=unit, g=g, p=unit_type.price: self.repair_unit(g, u, p)
