@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
@@ -10,6 +10,7 @@ from PySide2.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QGridLayout,
+    QApplication,
 )
 
 from game.dcs.unittype import UnitType
@@ -41,7 +42,9 @@ class PurchaseGroup(QGroupBox):
             QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         )
 
-        self.sell_button.clicked.connect(lambda: self.recruiter.sell(self.unit_type))
+        self.sell_button.clicked.connect(
+            lambda: self.recruiter.recruitHandler("sell", self.unit_type)
+        )
 
         self.amount_bought = QLabel()
         self.amount_bought.setSizePolicy(
@@ -54,7 +57,9 @@ class PurchaseGroup(QGroupBox):
         self.buy_button.setMinimumSize(16, 16)
         self.buy_button.setMaximumSize(16, 16)
 
-        self.buy_button.clicked.connect(lambda: self.recruiter.buy(self.unit_type))
+        self.buy_button.clicked.connect(
+            lambda: self.recruiter.recruitHandler("buy", self.unit_type)
+        )
         self.buy_button.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         layout.addWidget(self.sell_button)
@@ -161,17 +166,39 @@ class QRecruitBehaviour:
     def update_available_budget(self) -> None:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
 
-    def buy(self, unit_type: UnitType) -> None:
+    def recruitHandler(self, recruit_type: str, unit_type: UnitType) -> None:
+        # Lookup if Keyboard Modifiers were pressed
+        # Shift = 10 times
+        # CTRL = 5 Times
+        modifiers = QApplication.keyboardModifiers()
+        if modifiers == Qt.ShiftModifier:
+            amount = 10
+        elif modifiers == Qt.ControlModifier:
+            amount = 5
+        else:
+            amount = 1
+
+        for i in range(amount):
+            if recruit_type == "sell":
+                if not self.sell(unit_type):
+                    return
+            elif recruit_type == "buy":
+                if not self.buy(unit_type):
+                    return
+
+    def buy(self, unit_type: UnitType) -> bool:
+
         if not self.enable_purchase(unit_type):
             logging.error(f"Purchase of {unit_type} not allowed at {self.cp.name}")
-            return
+            return False
 
         self.pending_deliveries.order({unit_type: 1})
         self.budget -= unit_type.price
         self.update_purchase_controls()
         self.update_available_budget()
+        return True
 
-    def sell(self, unit_type: UnitType) -> None:
+    def sell(self, unit_type: UnitType) -> bool:
         if self.pending_deliveries.available_next_turn(unit_type) > 0:
             self.budget += unit_type.price
             self.pending_deliveries.sell({unit_type: 1})
@@ -179,6 +206,7 @@ class QRecruitBehaviour:
                 del self.pending_deliveries.units[unit_type]
         self.update_purchase_controls()
         self.update_available_budget()
+        return True
 
     def update_purchase_controls(self) -> None:
         for group in self.purchase_groups.values():

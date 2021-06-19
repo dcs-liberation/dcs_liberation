@@ -89,7 +89,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
             return False
         return True
 
-    def buy(self, unit_type: AircraftType) -> None:
+    def buy(self, unit_type: AircraftType) -> bool:
         if self.maximum_units > 0:
             if self.cp.unclaimed_parking(self.game_model.game) <= 0:
                 logging.debug(f"No space for additional aircraft at {self.cp}.")
@@ -100,7 +100,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     "another plane.",
                     QMessageBox.Ok,
                 )
-                return
+                return False
             # If we change our mind about selling, we want the aircraft to be put
             # back in the inventory immediately.
             elif self.pending_deliveries.units.get(unit_type, 0) < 0:
@@ -110,8 +110,9 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
 
         super().buy(unit_type)
         self.hangar_status.update_label()
+        return True
 
-    def sell(self, unit_type: AircraftType) -> None:
+    def sell(self, unit_type: AircraftType) -> bool:
         # Don't need to remove aircraft from the inventory if we're canceling
         # orders.
         if self.pending_deliveries.units.get(unit_type, 0) <= 0:
@@ -128,9 +129,11 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                     "assigned to a mission?",
                     QMessageBox.Ok,
                 )
-                return
+                return False
         super().sell(unit_type)
         self.hangar_status.update_label()
+
+        return True
 
 
 class QHangarStatus(QHBoxLayout):
