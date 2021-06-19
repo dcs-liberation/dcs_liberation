@@ -90,10 +90,15 @@ class QFlightWaypointTab(QFrame):
         self.setLayout(layout)
 
     def on_delete_waypoint(self):
-        wpt = self.flight_waypoint_list.selectionModel().currentIndex().row()
-        if wpt > 0:
-            self.delete_waypoint(self.flight.flight_plan.waypoints[wpt])
-            self.flight_waypoint_list.update_list()
+        waypoints = []
+        for (
+            selected_row
+        ) in self.flight_waypoint_list.selectionModel().selectedIndexes():
+            if selected_row.row() > 0:
+                waypoints.append(self.flight.flight_plan.waypoints[selected_row.row()])
+        for waypoint in waypoints:
+            self.delete_waypoint(waypoint)
+        self.flight_waypoint_list.update_list()
         self.on_change()
 
     def delete_waypoint(self, waypoint: FlightWaypoint) -> None:
