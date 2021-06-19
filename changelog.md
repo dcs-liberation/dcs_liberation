@@ -15,6 +15,7 @@ Saves from 3.x are not compatible with 4.0.
 
 * **[Campaign AI]** Fix procurement for factions that lack some unit types.
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
+* **[Mission Generation]** Fixed EWR group names so they contribute to Skynet again.
 * **[UI]** Made non-interactive map elements less obstructive.
 * **[UI]** Added support for Neutral Dot difficulty label
 * **[UI]** Clear skies at night no longer described as "Sunny" by the weather widget.
