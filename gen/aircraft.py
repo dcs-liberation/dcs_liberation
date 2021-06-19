@@ -305,7 +305,10 @@ class AircraftConflictGenerator:
         current_level = levels.index(base_skill)
         missions_for_skill_increase = 4
         increase = pilot.record.missions_flown // missions_for_skill_increase
-        new_level = min(current_level + increase, len(levels) - 1)
+        capped_increase = min(current_level + increase, len(levels) - 1)
+        new_level = (capped_increase, current_level)[
+            self.game.settings.ai_pilot_levelling
+        ]
         return levels[new_level]
 
     def set_skill(self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool) -> None:

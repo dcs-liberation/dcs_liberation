@@ -565,6 +565,23 @@ class QSettingsWindow(QDialog):
         general_layout.addWidget(squadron_replenishment_rate_label, 4, 0)
         general_layout.addWidget(squadron_replenishment_rate, 4, 1, Qt.AlignRight)
 
+        ai_pilot_levelling = QCheckBox()
+        ai_pilot_levelling.setChecked(self.game.settings.ai_pilot_levelling)
+        ai_pilot_levelling.toggled.connect(self.applySettings)
+
+        ai_pilot_levelling_info = (
+            "Set whether or not AI pilots will level up after completing a number of"
+            " sorties. Since pilot level affects the AI skill, you may wish to disable"
+            " this, lest you face an Ace!"
+        )
+
+        ai_pilot_levelling.setToolTip(ai_pilot_levelling_info)
+        ai_pilot_levelling_label = QLabel("Allow AI pilot levelling")
+        ai_pilot_levelling_label.setToolTip(ai_pilot_levelling_info)
+
+        general_layout.addWidget(ai_pilot_levelling_label, 5, 0)
+        general_layout.addWidget(ai_pilot_levelling, 5, 1, Qt.AlignRight)
+
         campaign_layout.addWidget(HqAutomationSettingsBox(self.game))
 
     def initGeneratorLayout(self):

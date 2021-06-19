@@ -5,6 +5,7 @@ Saves from 3.x are not compatible with 4.0.
 ## Features/Improvements
 
 * **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
+* **[Campaign]** Added an option to disable levelling up of AI pilots.
 * **[Campaign AI]** AI will plan Tanker flights.
 * **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
 * **[Factions]** Added more tankers to factions.
