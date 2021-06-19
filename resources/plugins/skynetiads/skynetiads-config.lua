@@ -89,18 +89,30 @@ if dcsLiberation and SkynetIADS then
             end
         end
 
-        local sites = iads:getSAMSites()
+        -- Add Point Defence Sites and let long range SAMs act as EWR
+        local sites = iads:getSAMSitesByPrefix(coalitionPrefix .. "|SAM|")
         for i = 1, #sites do
             local site = sites[i]
             local name = site:getDCSName()
-            if not string.match(name, "|PD") then
-                env.info(string.format("DCSLiberation|Skynet-IADS plugin - Checking %s for PD", name))
-                local pds = iads:getSAMSitesByPrefix(name .. "|PD")
+            if string.match(name, "|0|") then
+                -- Main Sam Site
+                nameWithoutPrefix = string.gsub(name,coalitionPrefix .. "|SAM|","")
+                mainSiteId = string.sub(nameWithoutPrefix, 1, string.find(nameWithoutPrefix,"|")-1)
+                pds = iads:getSAMSitesByPrefix(coalitionPrefix .. "|SAM|" .. mainSiteId)
+                -- Get the PDs
                 for j = 1, #pds do
                     pd = pds[j]
-                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - Adding %s as PD for %s", pd:getDCSName(), name))
-                    site:addPointDefence(pd)
-                    site:setIgnoreHARMSWhilePointDefencesHaveAmmo(true)
+                    pdSiteName = pd:getDCSName()
+                    if not string.match(pdSiteName, "|0|") then
+                        env.info(string.format("DCSLiberation|Skynet-IADS plugin - Adding %s as PD for %s", pdSiteName, name))
+                        site:addPointDefence(pd)
+                        site:setIgnoreHARMSWhilePointDefencesHaveAmmo(true)
+                    end
+                end
+                if string.match(name, "|long") then
+                    --Main Site EWR capable
+                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - %s now acting as EWR", name))
+                    site:setActAsEW(true)
                 end
             end
         end
