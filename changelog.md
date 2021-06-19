@@ -12,6 +12,8 @@ Saves from 3.x are not compatible with 4.0.
 * **[Flight Planner]** Added ability to plan Tankers.
 * **[Mods]** Added support for the Gripen mod.
 * **[Mission Generation]** Added support for "Neutral Dot" label options.
+* **[UI]** Ctrl click and shift click now buy or sell 5 or 10 units respectively.
+* **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
 
 ## Fixes
 
