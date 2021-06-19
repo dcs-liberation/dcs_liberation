@@ -613,33 +613,18 @@ class CoalitionMissionPlanner:
                 return True
         return False
 
-    def critical_missions(self) -> Iterator[ProposedMission]:
-        """Identifies the most important missions to plan this turn.
-
-        Non-critical missions that cannot be fulfilled will create purchase
-        orders for the next turn. Critical missions will create a purchase order
-        unless the mission can be doubly fulfilled. In other words, the AI will
-        attempt to have *double* the aircraft it needs for these missions to
-        ensure that they can be planned again next turn even if all aircraft are
-        eliminated this turn.
-        """
-
-        # Find farthest, friendly CP for AEWC.
-        yield ProposedMission(
-            self.objective_finder.farthest_friendly_control_point(),
-            [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
-            # Supports all the early CAP flights, so should be in the air ASAP.
-            asap=True,
+    @property
+    def oca_aircraft_plannable(self) -> bool:
+        return (
+            self.air_wing_can_plan(FlightType.OCA_AIRCRAFT)
+            and self.game.settings.default_start_type == "Cold"
         )
 
-        yield ProposedMission(
-            self.objective_finder.closest_friendly_control_point(),
-            [ProposedFlight(FlightType.REFUELING, 1, self.MAX_TANKER_RANGE)],
-        )
-
+    def propose_barcap(self) -> Iterator[ProposedMission]:
         # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
         for cp in self.objective_finder.vulnerable_control_points():
-            # Plan CAP in such a way, that it is established during the whole desired mission length
+            # Plan CAP in such a way, that it is established during the whole desired
+            # mission length.
             for _ in range(
                 0,
                 int(self.game.settings.desired_player_mission_duration.total_seconds()),
@@ -652,36 +637,31 @@ class CoalitionMissionPlanner:
                     ],
                 )
 
+    def propose_cas(self) -> Iterator[ProposedMission]:
         # Find front lines, plan CAS.
         for front_line in self.objective_finder.front_lines():
-            yield ProposedMission(
-                front_line,
-                [
-                    ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE),
-                    # This is *not* an escort because front lines don't create a threat
-                    # zone. Generating threat zones from front lines causes the front
-                    # line to push back BARCAPs as it gets closer to the base. While
-                    # front lines do have the same problem of potentially pulling
-                    # BARCAPs off bases to engage a front line TARCAP, that's probably
-                    # the one time where we do want that.
-                    #
-                    # TODO: Use intercepts and extra TARCAPs to cover bases near fronts.
-                    # We don't have intercept missions yet so this isn't something we
-                    # can do today, but we should probably return to having the front
-                    # line project a threat zone (so that strike missions will route
-                    # around it) and instead *not plan* a BARCAP at bases near the
-                    # front, since there isn't a place to put a barrier. Instead, the
-                    # aircraft that would have been a BARCAP could be used as additional
-                    # interceptors and TARCAPs which will defend the base but won't be
-                    # trying to avoid front line contacts.
-                    ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
+            flights = [ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE)]
+            if self.air_wing_can_plan(FlightType.TARCAP):
+                # This is *not* an escort because front lines don't create a threat
+                # zone. Generating threat zones from front lines causes the front
+                # line to push back BARCAPs as it gets closer to the base. While
+                # front lines do have the same problem of potentially pulling
+                # BARCAPs off bases to engage a front line TARCAP, that's probably
+                # the one time where we do want that.
+                #
+                # TODO: Use intercepts and extra TARCAPs to cover bases near fronts.
+                # We don't have intercept missions yet so this isn't something we
+                # can do today, but we should probably return to having the front
+                # line project a threat zone (so that strike missions will route
+                # around it) and instead *not plan* a BARCAP at bases near the
+                # front, since there isn't a place to put a barrier. Instead, the
+                # aircraft that would have been a BARCAP could be used as additional
+                # interceptors and TARCAPs which will defend the base but won't be
+                # trying to avoid front line contacts.
+                flights.append(ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE))
+            yield ProposedMission(front_line, flights)
 
-    def propose_missions(self) -> Iterator[ProposedMission]:
-        """Identifies and iterates over potential mission in priority order."""
-        yield from self.critical_missions()
-
+    def propose_dead(self) -> Iterator[ProposedMission]:
         # Find enemy SAM sites with ranges that cover friendly CPs, front lines,
         # or objects, plan DEAD.
         # Find enemy SAM sites with ranges that extend to within 50 nmi of
@@ -706,7 +686,10 @@ class CoalitionMissionPlanner:
             else:
                 flights.append(
                     ProposedFlight(
-                        FlightType.SEAD_ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.Sead
+                        FlightType.SEAD_ESCORT,
+                        2,
+                        self.MAX_SEAD_RANGE,
+                        EscortType.Sead,
                     )
                 )
             # TODO: Max escort range.
@@ -717,6 +700,7 @@ class CoalitionMissionPlanner:
             )
             yield ProposedMission(sam, flights)
 
+    def propose_convoy_interdiction(self) -> Iterator[ProposedMission]:
         # These will only rarely get planned. When a convoy is travelling multiple legs,
         # they're targetable after the first leg. The reason for this is that
         # procurement happens *after* mission planning so that the missions that could
@@ -745,6 +729,7 @@ class CoalitionMissionPlanner:
                 ],
             )
 
+    def propose_shipping_interdiction(self) -> Iterator[ProposedMission]:
         for ship in self.objective_finder.cargo_ships():
             yield ProposedMission(
                 ship,
@@ -760,6 +745,7 @@ class CoalitionMissionPlanner:
                 ],
             )
 
+    def propose_naval_strikes(self) -> Iterator[ProposedMission]:
         for group in self.objective_finder.threatening_ships():
             yield ProposedMission(
                 group,
@@ -775,6 +761,7 @@ class CoalitionMissionPlanner:
                 ],
             )
 
+    def propose_bai(self) -> Iterator[ProposedMission]:
         for group in self.objective_finder.threatening_vehicle_groups():
             yield ProposedMission(
                 group,
@@ -790,15 +777,24 @@ class CoalitionMissionPlanner:
                 ],
             )
 
+    def propose_oca_strikes(self) -> Iterator[ProposedMission]:
         for target in self.objective_finder.oca_targets(min_aircraft=20):
-            flights = [
-                ProposedFlight(FlightType.OCA_RUNWAY, 2, self.MAX_OCA_RANGE),
-            ]
-            if self.game.settings.default_start_type == "Cold":
+            flights = []
+            if self.air_wing_can_plan(FlightType.OCA_RUNWAY):
+                flights.append(
+                    ProposedFlight(FlightType.OCA_RUNWAY, 2, self.MAX_OCA_RANGE)
+                )
+            if self.oca_aircraft_plannable:
                 # Only schedule if the default start type is Cold. If the player
                 # has set anything else there are no targets to hit.
                 flights.append(
                     ProposedFlight(FlightType.OCA_AIRCRAFT, 2, self.MAX_OCA_RANGE)
+                )
+            if not flights:
+                raise RuntimeError(
+                    "Attempted planning of OCA strikes but neither OCA/Runway nor "
+                    f"OCA/Aircraft are plannable for {self.faction.name} with the "
+                    "current game settings."
                 )
             flights.extend(
                 [
@@ -813,7 +809,7 @@ class CoalitionMissionPlanner:
             )
             yield ProposedMission(target, flights)
 
-        # Plan strike missions.
+    def propose_building_strikes(self) -> Iterator[ProposedMission]:
         for target in self.objective_finder.strike_targets():
             yield ProposedMission(
                 target,
@@ -832,6 +828,48 @@ class CoalitionMissionPlanner:
                 ],
             )
 
+    def propose_missions(self) -> Iterator[ProposedMission]:
+        """Identifies and iterates over potential mission in priority order."""
+        # Find farthest, friendly CP for AEWC.
+        if self.air_wing_can_plan(FlightType.AEWC):
+            yield ProposedMission(
+                self.objective_finder.farthest_friendly_control_point(),
+                [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
+                # Supports all the early CAP flights, so should be in the air ASAP.
+                asap=True,
+            )
+
+        if self.air_wing_can_plan(FlightType.REFUELING):
+            yield ProposedMission(
+                self.objective_finder.closest_friendly_control_point(),
+                [ProposedFlight(FlightType.REFUELING, 1, self.MAX_TANKER_RANGE)],
+            )
+
+        if self.air_wing_can_plan(FlightType.BARCAP):
+            yield from self.propose_barcap()
+
+        if self.air_wing_can_plan(FlightType.CAS):
+            yield from self.propose_cas()
+
+        if self.air_wing_can_plan(FlightType.DEAD):
+            yield from self.propose_dead()
+
+        if self.air_wing_can_plan(FlightType.BAI):
+            yield from self.propose_convoy_interdiction()
+
+        if self.air_wing_can_plan(FlightType.ANTISHIP):
+            yield from self.propose_shipping_interdiction()
+            yield from self.propose_naval_strikes()
+
+        if self.air_wing_can_plan(FlightType.BAI):
+            yield from self.propose_bai()
+
+        if self.air_wing_can_plan(FlightType.OCA_RUNWAY) or self.oca_aircraft_plannable:
+            yield from self.propose_oca_strikes()
+
+        if self.air_wing_can_plan(FlightType.STRIKE):
+            yield from self.propose_building_strikes()
+
     def plan_missions(self) -> None:
         """Identifies and plans mission for the turn."""
         player = "Blue" if self.is_player else "Red"
@@ -839,11 +877,6 @@ class CoalitionMissionPlanner:
             with MultiEventTracer() as tracer:
                 for proposed_mission in self.propose_missions():
                     self.plan_mission(proposed_mission, tracer)
-
-        with logged_duration(f"{player} reserve mission planning"):
-            with MultiEventTracer() as tracer:
-                for critical_mission in self.critical_missions():
-                    self.plan_mission(critical_mission, tracer, reserves=True)
 
         with logged_duration(f"{player} mission scheduling"):
             self.stagger_missions()
