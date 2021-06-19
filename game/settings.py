@@ -20,6 +20,7 @@ class Settings:
     # Difficulty settings
     player_skill: str = "Good"
     enemy_skill: str = "Average"
+    ai_pilot_levelling: bool = True
     enemy_vehicle_skill: str = "Average"
     map_coalition_visibility: ForcedOptions.Views = ForcedOptions.Views.All
     labels: str = "Full"
