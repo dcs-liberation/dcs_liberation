@@ -71,6 +71,7 @@ class QLiberationWindow(QMainWindow):
                     logging.info("Loading last saved game : " + str(last_save_file))
                     game = persistency.load_game(last_save_file)
                     self.onGameGenerated(game)
+                    self.updateWindowTitle(last_save_file)
                 except:
                     logging.info("Error loading latest save game")
             else:
@@ -243,6 +244,8 @@ class QLiberationWindow(QMainWindow):
             game = persistency.load_game(file[0])
             GameUpdateSignal.get_instance().game_loaded.emit(game)
 
+            self.updateWindowTitle(file)
+
     def saveGame(self):
         logging.info("Saving game")
 
@@ -265,6 +268,16 @@ class QLiberationWindow(QMainWindow):
             persistency.save_game(self.game)
             liberation_install.setup_last_save_file(self.game.savepath)
             liberation_install.save_config()
+
+            self.updateWindowTitle(file)
+
+    def updateWindowTitle(self, file):
+        file_name = (
+            file[0].split("/")[-1].split(".liberation")[0]
+        )  # file is a tuple (path, extension)
+        self.setWindowTitle(
+            f"{self.windowTitle()} - {file_name}"
+        )  # append file name to end of existing title
 
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")
