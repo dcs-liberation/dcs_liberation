@@ -1000,7 +1000,7 @@ AIRFIELD_DATA = {
         icao="LCEN",
         elevation=383,
         runway_length=7559,
-        vor=("GKE", MHz(114, 30)),
+        vor=("ECN", MHz(117, 0)),
         atc=AtcData(MHz(4, 750), MHz(40, 400), MHz(120, 200), MHz(251, 950)),
     ),
     "Lakatamia": AirfieldData(
