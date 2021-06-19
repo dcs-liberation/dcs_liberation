@@ -109,9 +109,9 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                     self.include_friendly and cp.captured
                 ):
                     for ground_object in cp.ground_objects:
-                        if (
-                            not ground_object.is_dead
-                            and ground_object.dcs_identifier == "AA"
+                        if not ground_object.is_dead and (
+                            ground_object.dcs_identifier == "AA"
+                            or ground_object.dcs_identifier == "EWR"
                         ):
                             for g in ground_object.groups:
                                 for j, u in enumerate(g.units):
