@@ -966,7 +966,7 @@ AIRFIELD_DATA = {
         runway_length=8871,
         atc=AtcData(MHz(3, 775), MHz(38, 450), MHz(120, 100), MHz(250, 50)),
         ils={
-            "28": ("IGNP", MHz(109, 10)),
+            "28": ("IGNP", MHz(109, 100)),
         },
     ),
     "Gecitkale": AirfieldData(
@@ -974,7 +974,7 @@ AIRFIELD_DATA = {
         icao="LCGK",
         elevation=147,
         runway_length=8156,
-        vor=("GKE", MHz(114, 30)),
+        vor=("GKE", MHz(114, 300)),
         atc=AtcData(MHz(3, 775), MHz(4, 800), MHz(40, 500), MHz(252, 50)),
     ),
     "Kingsfield": AirfieldData(
@@ -982,7 +982,7 @@ AIRFIELD_DATA = {
         icao="CY-0004",
         elevation=270,
         runway_length=3069,
-        atc=AtcData(MHz(4, 650), MHz(40, 200), MHz(121, 0), MHz(251, 750)),
+        atc=AtcData(MHz(4, 650), MHz(40, 200), MHz(121), MHz(251, 750)),
     ),
     "Larnaca": AirfieldData(
         theater="Syria",
@@ -992,7 +992,7 @@ AIRFIELD_DATA = {
         vor=("LCA", MHz(112, 80)),
         atc=AtcData(MHz(4, 700), MHz(40, 300), MHz(121, 200), MHz(251, 850)),
         ils={
-            "22": ("ILC", MHz(110, 30)),
+            "22": ("ILC", MHz(110, 300)),
         },
     ),
     "Ercan": AirfieldData(
@@ -1000,7 +1000,7 @@ AIRFIELD_DATA = {
         icao="LCEN",
         elevation=383,
         runway_length=7559,
-        vor=("ECN", MHz(117, 0)),
+        vor=("ECN", MHz(117)),
         atc=AtcData(MHz(4, 750), MHz(40, 400), MHz(120, 200), MHz(251, 950)),
     ),
     "Lakatamia": AirfieldData(
@@ -1021,7 +1021,7 @@ AIRFIELD_DATA = {
         icao="CY-0003",
         elevation=770,
         runway_length=3364,
-        atc=AtcData(MHz(4, 825), MHz(40, 550), MHz(121, 000), MHz(252, 100)),
+        atc=AtcData(MHz(4, 825), MHz(40, 550), MHz(121), MHz(252, 100)),
     ),
     "Akrotiri": AirfieldData(
         theater="Syria",
@@ -1030,10 +1030,10 @@ AIRFIELD_DATA = {
         runway_length=8276,
         tacan=TacanChannel(107, TacanBand.X),
         tacan_callsign="AKR",
-        vor=("AKR", MHz(116, 0)),
-        atc=AtcData(MHz(4, 625), MHz(40, 150), MHz(128, 0), MHz(251, 700)),
+        vor=("AKR", MHz(116)),
+        atc=AtcData(MHz(4, 625), MHz(40, 150), MHz(128), MHz(251, 700)),
         ils={
-            "28": ("IAK", MHz(109, 70)),
+            "28": ("IAK", MHz(109, 700)),
         },
     ),
     "Paphos": AirfieldData(
@@ -1041,10 +1041,10 @@ AIRFIELD_DATA = {
         icao="LCPH",
         elevation=40,
         runway_length=8425,
-        vor=("PHA", MHz(117, 90)),
+        vor=("PHA", MHz(117, 900)),
         atc=AtcData(MHz(4, 675), MHz(40, 250), MHz(119, 900), MHz(251, 800)),
         ils={
-            "29": ("IPA", MHz(108, 90)),
+            "29": ("IPA", MHz(108, 900)),
         },
     ),
     "Gazipasa": AirfieldData(
@@ -1052,10 +1052,10 @@ AIRFIELD_DATA = {
         icao="LTFG",
         elevation=36,
         runway_length=6885,
-        vor=("GZP", MHz(114, 20)),
+        vor=("GZP", MHz(114, 200)),
         atc=AtcData(MHz(4, 600), MHz(40, 100), MHz(119, 250), MHz(251, 650)),
         ils={
-            "8": ("IGZP", MHz(108, 50)),
+            "8": ("IGZP", MHz(108, 500)),
         },
     ),
     # NTTR
