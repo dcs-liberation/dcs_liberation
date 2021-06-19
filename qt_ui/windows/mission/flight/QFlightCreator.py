@@ -12,6 +12,7 @@ from PySide2.QtWidgets import (
     QLineEdit,
     QHBoxLayout,
 )
+from dcs.planes import A_50, E_2C, E_3A, IL_78M, KC130, KC135MPRS, KC_135, S_3B_Tanker
 from dcs.unittype import FlyingType
 
 from game import Game
@@ -261,6 +262,23 @@ class QFlightCreator(QDialog):
 
     def update_max_size(self, available: int) -> None:
         self.flight_size_spinner.setMaximum(min(available, 4))
+
+        current_aircraft = self.departure.aircraft
+        default_size = 2
+
+        if (
+            current_aircraft == KC130
+            or current_aircraft == KC135MPRS
+            or current_aircraft == KC_135
+            or current_aircraft == KC130
+            or current_aircraft == S_3B_Tanker
+            or current_aircraft == IL_78M
+            or current_aircraft == E_2C
+            or current_aircraft == E_3A
+            or current_aircraft == A_50
+        ):
+            default_size = 1
+
         if self.flight_size_spinner.maximum() >= 2:
             if self.flight_size_spinner.value() < 2:
-                self.flight_size_spinner.setValue(2)
+                self.flight_size_spinner.setValue(default_size)
