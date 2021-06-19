@@ -226,7 +226,12 @@ class GroundObjectJs(QObject):
         if dcs_unit_type is not None:
             # TODO: Make the TGO contain GroundUnitType instead of the pydcs Group.
             # This is a hack because we can't know which variant was used.
-            unit_display_name = next(GroundUnitType.for_dcs_type(dcs_unit_type)).name
+            try:
+                unit_display_name = next(
+                    GroundUnitType.for_dcs_type(dcs_unit_type)
+                ).name
+            except StopIteration:
+                pass
         return f"Unit #{unit.id} - {unit_display_name}{dead_label}"
 
     @Property(list, notify=unitsChanged)
