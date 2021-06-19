@@ -45,7 +45,7 @@ class ScrollingFrame(QFrame):
 class EconomyIntelTab(ScrollingFrame):
     def __init__(self, game: Game, player: bool) -> None:
         super().__init__()
-        self.addLayout(FinancesLayout(game, player=player))
+        self.addLayout(FinancesLayout(game, player=player, total_at_top=True))
 
 
 class IntelTableLayout(QGridLayout):
