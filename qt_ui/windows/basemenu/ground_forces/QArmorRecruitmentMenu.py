@@ -18,7 +18,7 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         QFrame.__init__(self)
         self.cp = cp
         self.game_model = game_model
-
+        self.purchase_groups = {}
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
