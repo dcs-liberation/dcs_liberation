@@ -439,8 +439,8 @@ class Operation:
             "BlueAA": {},
         }  # type: ignore
 
-        for tanker in airsupportgen.air_support.tankers:
-            luaData["Tankers"][tanker.callsign] = {
+        for i, tanker in enumerate(airsupportgen.air_support.tankers):
+            luaData["Tankers"][i] = {
                 "dcsGroupName": tanker.group_name,
                 "callsign": tanker.callsign,
                 "variant": tanker.variant,
@@ -448,23 +448,22 @@ class Operation:
                 "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
             }
 
-        if airsupportgen.air_support.awacs:
-            for awacs in airsupportgen.air_support.awacs:
-                luaData["AWACs"][awacs.callsign] = {
-                    "dcsGroupName": awacs.group_name,
-                    "callsign": awacs.callsign,
-                    "radio": awacs.freq.mhz,
-                }
+        for i, awacs in enumerate(airsupportgen.air_support.awacs):
+            luaData["AWACs"][i] = {
+                "dcsGroupName": awacs.group_name,
+                "callsign": awacs.callsign,
+                "radio": awacs.freq.mhz,
+            }
 
-        for jtac in jtacs:
-            luaData["JTACs"][jtac.callsign] = {
+        for i, jtac in enumerate(jtacs):
+            luaData["JTACs"][i] = {
                 "dcsGroupName": jtac.group_name,
                 "callsign": jtac.callsign,
                 "zone": jtac.region,
                 "dcsUnit": jtac.unit_name,
                 "laserCode": jtac.code,
             }
-
+        flight_count = 0
         for flight in airgen.flights:
             if flight.friendly and flight.flight_type in [
                 FlightType.ANTISHIP,
@@ -485,7 +484,7 @@ class Operation:
                     elif hasattr(flightTarget, "name"):
                         flightTargetName = flightTarget.name
                         flightTargetType = flightType + " TGT (Airbase)"
-                    luaData["TargetPoints"][flightTargetName] = {
+                    luaData["TargetPoints"][flight_count] = {
                         "name": flightTargetName,
                         "type": flightTargetType,
                         "position": {
@@ -493,6 +492,7 @@ class Operation:
                             "y": flightTarget.position.y,
                         },
                     }
+                    flight_count += 1
 
         for cp in cls.game.theater.controlpoints:
             for ground_object in cp.ground_objects:
