@@ -10,9 +10,8 @@ from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
-from game.settings import Settings
-from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
-from game.factions.faction import Faction
+from game.settings import Settings, ModSettings
+from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
 from qt_ui.windows.newgame.QCampaignList import (
@@ -258,14 +257,6 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         self.blueFactionDescription.setText(blue_faction_txt)
         self.redFactionDescription.setText(red_faction_txt)
-
-    @property
-    def selected_blue_faction(self) -> Faction:
-        return db.FACTIONS[self.blueFactionSelect.currentText()]
-
-    @property
-    def selected_red_faction(self) -> Faction:
-        return db.FACTIONS[self.redFactionSelect.currentText()]
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
@@ -550,11 +541,6 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         high_digit_sams = QtWidgets.QCheckBox()
         self.registerField("high_digit_sams", high_digit_sams)
 
-        modHelpText = QtWidgets.QLabel(
-            "<p>Select the mods you have installed. If your chosen factions support them, you'll be able to use these mods in your campaign.</p>"
-        )
-        modHelpText.setAlignment(Qt.AlignCenter)
-
         modLayout = QtWidgets.QGridLayout()
         modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), 1, 0)
         modLayout.addWidget(a4_skyhawk, 1, 1)
@@ -575,7 +561,6 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         mlayout = QVBoxLayout()
         mlayout.addWidget(generatorSettingsGroup)
         mlayout.addWidget(modSettingsGroup)
-        mlayout.addWidget(modHelpText)
         self.setLayout(mlayout)
 
 
