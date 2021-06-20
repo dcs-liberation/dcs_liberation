@@ -35,5 +35,8 @@
     "ZSU57Generator",
     "ZU23Generator",
     "ZU23UralInsurgentGenerator"
+  ],
+  "missiles": [
+    "ScudGenerator"
   ]
 }
