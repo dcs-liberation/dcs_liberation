@@ -1,0 +1,15 @@
+---
+name: 69th Squadron
+nickname: Hammers
+country: Israel
+role: Strike Fighter
+aircraft: F-15E Strike Eagle
+livery: IDF No 69 Hammers Squadron
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+
