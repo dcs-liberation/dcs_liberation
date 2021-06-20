@@ -123,6 +123,10 @@ class QIntelBox(QGroupBox):
         )
         self.economic_strength.setText(self.economic_strength_text())
 
+        if self.game.turn == 0:
+            self.air_strength.setText("gathering intel")
+            self.ground_strength.setText("gathering intel")
+
     def open_details_window(self) -> None:
         self.details_window = IntelWindow(self.game)
         self.details_window.show()
