@@ -4,7 +4,7 @@ import datetime
 import inspect
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, Iterator, Optional, Set, Tuple, Union, cast
 
 from dcs.unitgroup import FlyingGroup
@@ -21,8 +21,8 @@ class Weapon:
     """Wraps a pydcs weapon dict in a hashable type."""
 
     cls_id: str
-    name: str
-    weight: int
+    name: str = field(compare=False)
+    weight: int = field(compare=False)
 
     def available_on(self, date: datetime.date) -> bool:
         introduction_year = WEAPON_INTRODUCTION_YEARS.get(self)
