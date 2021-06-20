@@ -1,4 +1,3 @@
-import logging
 from typing import Optional, Type
 
 from PySide2.QtCore import Qt, Signal
@@ -12,7 +11,6 @@ from PySide2.QtWidgets import (
     QLineEdit,
     QHBoxLayout,
 )
-from dcs.planes import A_50, E_2C, E_3A, IL_78M, KC130, KC135MPRS, KC_135, S_3B_Tanker
 from dcs.unittype import FlyingType
 
 from game import Game
@@ -261,9 +259,12 @@ class QFlightCreator(QDialog):
             )
 
     def update_max_size(self, available: int) -> None:
-        self.flight_size_spinner.setMaximum(
-            min(available, self.departure.aircraft.dcs_unit_type.group_size_max)
-        )
+        aircraft = self.aircraft_selector.currentData()
+        if aircraft is None:
+            self.flight_size_spinner.setMaximum(0)
+            return
+
+        self.flight_size_spinner.setMaximum(min(available, aircraft.max_group_size))
 
         if self.flight_size_spinner.maximum() >= 2:
             self.flight_size_spinner.setValue(2)
