@@ -50,7 +50,7 @@ class QLiberationWindow(QMainWindow):
         self.liberation_map = QLiberationMap(self.game_model, self)
 
         self.setGeometry(300, 100, 270, 100)
-        self.updateWindowTitle(None)
+        self.updateWindowTitle()
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage("Ready")
 
