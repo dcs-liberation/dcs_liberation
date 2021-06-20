@@ -600,10 +600,10 @@ class PendingTransfers:
 
     def current_airlift_capacity(self, control_point: ControlPoint) -> int:
         inventory = self.game.aircraft_inventory.for_control_point(control_point)
-        squadrons = self.game.air_wing_for(control_point.captured).squadrons_for_task(
-            FlightType.TRANSPORT
-        )
-        unit_types = {s.aircraft for s in squadrons}.intersection(TRANSPORT_CAPABLE)
+        squadrons = self.game.air_wing_for(
+            control_point.captured
+        ).auto_assignable_for_task(FlightType.TRANSPORT)
+        unit_types = {s.aircraft for s in squadrons}
         return sum(
             count
             for unit_type, count in inventory.all_aircraft

@@ -368,9 +368,9 @@ class AirWing:
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]
 
-    def squadrons_for_task(self, task: FlightType) -> Iterator[Squadron]:
+    def auto_assignable_for_task(self, task: FlightType) -> Iterator[Squadron]:
         for squadron in self.iter_squadrons():
-            if task in squadron.mission_types:
+            if squadron.can_auto_assign(task):
                 yield squadron
 
     def auto_assignable_for_task_with_type(
