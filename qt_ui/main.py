@@ -19,7 +19,7 @@ from game.data.weapons import (
     Weapon,
 )
 from game.profiling import logged_duration
-from game.settings import Settings
+from game.settings import ModSettings, Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui import (
     liberation_install,
@@ -220,6 +220,15 @@ def create_game(
             no_lha=False,
             no_player_navy=False,
             no_enemy_navy=False,
+        ),
+        ModSettings(
+            a4_skyhawk=False,
+            f22_raptor=False,
+            hercules=False,
+            jas39_gripen=False,
+            su57_felon=False,
+            frenchpack=False,
+            high_digit_sams=False,
         ),
     )
     return generator.generate()
