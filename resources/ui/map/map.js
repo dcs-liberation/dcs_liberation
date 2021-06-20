@@ -435,6 +435,7 @@ class ControlPoint {
   onDestinationChanged() {
     if (this.hasDestination()) {
       this.primaryMarker.setLatLng(this.cp.destination);
+      this.primaryMarker.setOpacity(0.5);
       this.secondaryMarker.addTo(controlPointsLayer);
       this.path.setLatLngs([this.cp.position, this.cp.destination]);
       this.path.addTo(controlPointsLayer);
@@ -442,6 +443,7 @@ class ControlPoint {
     } else {
       this.hideDestination();
       this.primaryMarker.setLatLng(this.cp.position);
+      this.primaryMarker.setOpacity(1);
     }
     this.attachTooltipsAndHandlers();
   }

@@ -15,6 +15,8 @@ Saves from 3.x are not compatible with 4.0.
 * **[Mission Generation]** Added support for "Neutral Dot" label options.
 * **[UI]** Ctrl click and shift click now buy or sell 5 or 10 units respectively.
 * **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
+* **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
+* **[UI]** Updated intel box text for first turn.
 
 ## Fixes
 
