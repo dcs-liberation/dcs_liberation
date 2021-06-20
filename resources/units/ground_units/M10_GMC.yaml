@@ -1,0 +1,16 @@
+class: ATGM
+description: The M10 tank destroyer was an American tank destroyer of World War II.
+  The M10 was numerically the most important U.S. tank destroyer of World War II.
+  It combined thin but sloped armor with the M4's reliable drivetrain and a reasonably
+  potent anti-tank weapon mounted in an open-topped turret. Despite its obsolescence
+  in the face of newer German tanks like the Panther and the introduction of more
+  powerful and better-designed types as replacements, the M10 remained in service
+  until the end of the war.
+introduced: 1942
+manufacturer: Fisher/Ford Motor Company
+origin: USA
+price: 14
+role: Tank Destroyer
+variants:
+  3in SPM M10 Achilles Mk II: {}
+  M10 3-inch Gun Motor Carriage: {}

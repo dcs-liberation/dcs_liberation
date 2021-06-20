@@ -3,58 +3,60 @@
   "name": "USA 2005 Modded",
   "authors": "Khopa",
   "description": "<p>USA 2005 with the Raptor mod, with the F-22 mod by Grinelli Designs.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "F_15C",
-    "F_15E",
-    "F_14B",
-    "FA_18C_hornet",
-    "F_16C_50",
-    "A_10C",
-    "A_10C_2",
-    "AV8BNA",
-    "UH_1H",
-    "S_3B",
-    "SH_60B",
-    "AH_64D",
-    "B_52H",
-    "B_1B",
-    "F_117A",
-    "F_22A"
+    "A-10C Thunderbolt II (Suite 3)",
+    "A-10C Thunderbolt II (Suite 7)",
+    "AH-64D Apache Longbow",
+    "AV-8B Harrier II Night Attack",
+    "B-1B Lancer",
+    "B-52H Stratofortress",
+    "F-117A Nighthawk",
+    "F-14B Tomcat",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-22A Raptor",
+    "F/A-18C Hornet (Lot 20)",
+    "S-3B Viking",
+    "SH-60B Seahawk",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A",
-    "E_2C"
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC135MPRS",
-    "KC130",
+    "KC-130",
+    "KC-135 Stratotanker",
+    "KC-135 Stratotanker MPRS",
     "S-3B Tanker"
   ],
   "frontline_units": [
-    "MBT_M1A2_Abrams",
-    "ATGM_Stryker",
-    "IFV_M1126_Stryker_ICV",
-    "IFV_M2A2_Bradley",
-    "IFV_LAV_25",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "SAM_Avenger__Stinger",
-    "SAM_Linebacker___Bradley_M6"
+    "LAV-25",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M1097 Heavy HMMWV Avenger",
+    "M1126 Stryker ICV (M2 HMG)",
+    "M1134 Stryker ATGM (BGM-71 TOW)",
+    "M1A2 Abrams",
+    "M2A2 Bradley",
+    "M6 Linebacker"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger",
-    "Mortar_2B11_120mm"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -66,16 +68,16 @@
     "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
@@ -98,16 +100,16 @@
     "F-22A mod by Grinnelli Designs": "https://bestf22modever.com"
   },
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
-    "FA_18C_hornet": [
-      "VFA-37",
+    "F/A-18C Hornet (Lot 20)": [
       "VFA-106",
       "VFA-113",
       "VFA-122",
       "VFA-131",
       "VFA-192",
       "VFA-34",
+      "VFA-37",
       "VFA-83",
       "VFA-87",
       "VFA-97",

@@ -38,7 +38,7 @@
     "SPH_M109_Paladin_155mm"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "M_818"
   ],
   "infantry_units": [
     "Infantry_M4",
@@ -51,17 +51,17 @@
     "HawkGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry",
-    "DDG_Arleigh_Burke_IIa"
+    "PERRY",
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {"mod": "Some mod is required"},
   "carrier_names": [

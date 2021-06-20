@@ -143,7 +143,7 @@ class PackageModel(QAbstractListModel):
     @staticmethod
     def icon_for_flight(flight: Flight) -> Optional[QIcon]:
         """Returns the icon that should be displayed for the flight."""
-        name = db.unit_type_name(flight.unit_type)
+        name = flight.unit_type.dcs_id
         if name in AIRCRAFT_ICONS:
             return QIcon(AIRCRAFT_ICONS[name])
         return None
@@ -402,7 +402,7 @@ class AirWingModel(QAbstractListModel):
     @staticmethod
     def icon_for_squadron(squadron: Squadron) -> Optional[QIcon]:
         """Returns the icon that should be displayed for the squadron."""
-        name = db.unit_type_name(squadron.aircraft)
+        name = squadron.aircraft.dcs_id
         if name in AIRCRAFT_ICONS:
             return QIcon(AIRCRAFT_ICONS[name])
         return None
@@ -424,7 +424,7 @@ class SquadronModel(QAbstractListModel):
         self.squadron = squadron
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
-        return self.squadron.number_of_pilots_including_dead
+        return self.squadron.number_of_pilots_including_inactive
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
         if not index.isValid():
@@ -462,9 +462,9 @@ class SquadronModel(QAbstractListModel):
         pilot = self.pilot_at_index(index)
         self.beginResetModel()
         if pilot.on_leave:
-            pilot.return_from_leave()
+            self.squadron.return_from_leave(pilot)
         else:
-            pilot.send_on_leave()
+            self.squadron.send_on_leave(pilot)
         self.endResetModel()
 
     def is_auto_assignable(self, task: FlightType) -> bool:

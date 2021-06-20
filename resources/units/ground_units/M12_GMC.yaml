@@ -1,0 +1,11 @@
+class: Artillery
+description: The 155 mm Gun Motor Carriage M12 was a U.S. self-propelled gun developed
+  during the Second World War. It mounted a 155 mm gun derived from the French Canon
+  de 155mm GPF field gun.
+introduced: 1942
+manufacturer: Pressed Steel Car Company
+origin: USA
+price: 10
+role: Self-Propelled Gun
+variants:
+  M12 Gun Motor Carriage: {}

@@ -4,64 +4,64 @@
   "authors": "Khopa",
   "description": "<p>A generic bluefor modern faction. This also includes many redfor units and is meant to be a faction that has access to most modern flyable modules.</p>",
   "aircrafts": [
-    "F_14B",
-    "F_15C",
-    "F_15E",
-    "F_16C_50",
-    "FA_18C_hornet",
-    "JF_17",
-    "M_2000C",
-    "F_5E_3",
-    "Su_27",
-    "Su_25T",
-    "A_10A",
-    "A_10C",
-    "A_10C_2",
-    "AV8BNA",
-    "AJS37",
-    "UH_1H",
-    "AH_64D",
-    "Ka_50",
-    "SA342M",
-    "SA342L",
-    "B_52H",
-    "B_1B"
+    "A-10A Thunderbolt II",
+    "A-10C Thunderbolt II (Suite 3)",
+    "A-10C Thunderbolt II (Suite 7)",
+    "AH-64D Apache Longbow",
+    "AJS-37 Viggen",
+    "AV-8B Harrier II Night Attack",
+    "B-1B Lancer",
+    "B-52H Stratofortress",
+    "F-14B Tomcat",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-5E Tiger II",
+    "F/A-18C Hornet (Lot 20)",
+    "JF-17 Thunder",
+    "Ka-50 Hokum",
+    "Mirage 2000C",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "Su-25T Frogfoot",
+    "Su-27 Flanker-B",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A",
-    "E_2C"
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC135MPRS",
-    "KC130",
+    "KC-130",
+    "KC-135 Stratotanker",
+    "KC-135 Stratotanker MPRS",
     "S-3B Tanker"
   ],
   "frontline_units": [
-    "MBT_M1A2_Abrams",
-    "MBT_Leopard_2A6M",
-    "MBT_Merkava_IV",
-    "ATGM_Stryker",
-    "IFV_M2A2_Bradley",
-    "IFV_Marder",
-    "IFV_LAV_25",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "SAM_Linebacker___Bradley_M6",
-    "SAM_Avenger__Stinger",
-    "ATGM_VAB_Mephisto"
+    "LAV-25",
+    "Leopard 2",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M1097 Heavy HMMWV Avenger",
+    "M1134 Stryker ATGM (BGM-71 TOW)",
+    "M1A2 Abrams",
+    "M2A2 Bradley",
+    "M6 Linebacker",
+    "Marder 1A3",
+    "Merkava Mk IV",
+    "VAB Mephisto"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -72,16 +72,16 @@
     "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
   "carrier_names": [
@@ -101,6 +101,6 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "unrestricted_satnav": true
 }

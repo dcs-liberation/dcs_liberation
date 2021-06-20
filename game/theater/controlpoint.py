@@ -16,7 +16,6 @@ from typing import (
     Optional,
     Set,
     TYPE_CHECKING,
-    Type,
     Union,
     Sequence,
     Iterable,
@@ -25,14 +24,13 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.ships import (
-    CVN_74_John_C__Stennis,
-    CV_1143_5_Admiral_Kuznetsov,
-    LHA_1_Tarawa,
-    Type_071_Amphibious_Transport_Dock,
+    Stennis,
+    KUZNECOW,
+    LHA_Tarawa,
+    Type_071,
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
-from dcs.unittype import FlyingType, VehicleType
 
 from game import db
 from game.point_with_heading import PointWithHeading
@@ -48,6 +46,8 @@ from .theatergroundobject import (
 )
 from ..db import PRICES
 from ..helipad import Helipad
+from ..dcs.aircrafttype import AircraftType
+from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
 from ..weather import Conditions
 
@@ -126,19 +126,19 @@ class PresetLocations:
 
 @dataclass(frozen=True)
 class AircraftAllocations:
-    present: dict[Type[FlyingType], int]
-    ordered: dict[Type[FlyingType], int]
-    transferring: dict[Type[FlyingType], int]
+    present: dict[AircraftType, int]
+    ordered: dict[AircraftType, int]
+    transferring: dict[AircraftType, int]
 
     @property
     def total_value(self) -> int:
         total: int = 0
         for unit_type, count in self.present.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
         for unit_type, count in self.ordered.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
         for unit_type, count in self.transferring.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
 
         return total
 
@@ -161,13 +161,13 @@ class AircraftAllocations:
 
 @dataclass(frozen=True)
 class GroundUnitAllocations:
-    present: dict[Type[VehicleType], int]
-    ordered: dict[Type[VehicleType], int]
-    transferring: dict[Type[VehicleType], int]
+    present: dict[GroundUnitType, int]
+    ordered: dict[GroundUnitType, int]
+    transferring: dict[GroundUnitType, int]
 
     @property
-    def all(self) -> dict[Type[VehicleType], int]:
-        combined: dict[Type[VehicleType], int] = defaultdict(int)
+    def all(self) -> dict[GroundUnitType, int]:
+        combined: dict[GroundUnitType, int] = defaultdict(int)
         for unit_type, count in itertools.chain(
             self.present.items(), self.ordered.items(), self.transferring.items()
         ):
@@ -178,11 +178,11 @@ class GroundUnitAllocations:
     def total_value(self) -> int:
         total: int = 0
         for unit_type, count in self.present.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
         for unit_type, count in self.ordered.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
         for unit_type, count in self.transferring.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
 
         return total
 
@@ -510,14 +510,14 @@ class ControlPoint(MissionTarget, ABC):
                     for group in g.groups:
                         for u in group.units:
                             if db.unit_type_from_name(u.type) in [
-                                CVN_74_John_C__Stennis,
-                                CV_1143_5_Admiral_Kuznetsov,
+                                Stennis,
+                                KUZNECOW,
                             ]:
                                 return group.name
                 elif g.dcs_identifier == "LHA":
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [LHA_1_Tarawa]:
+                            if db.unit_type_from_name(u.type) in [LHA_Tarawa]:
                                 return group.name
         return None
 
@@ -568,24 +568,16 @@ class ControlPoint(MissionTarget, ABC):
                 destination.control_point.base.commission_units({unit_type: 1})
                 destination = heapq.heappushpop(destinations, destination)
 
-    def capture_aircraft(
-        self, game: Game, airframe: Type[FlyingType], count: int
-    ) -> None:
-        try:
-            value = PRICES[airframe] * count
-        except KeyError:
-            logging.exception(f"Unknown price for {airframe.id}")
-            return
-
+    def capture_aircraft(self, game: Game, airframe: AircraftType, count: int) -> None:
+        value = airframe.price * count
         game.adjust_budget(value, player=not self.captured)
         game.message(
-            f"No valid retreat destination in range of {self.name} for "
-            f"{airframe.id}. {count} aircraft have been captured and sold for "
-            f"${value}M."
+            f"No valid retreat destination in range of {self.name} for {airframe}"
+            f"{count} aircraft have been captured and sold for ${value}M."
         )
 
     def aircraft_retreat_destination(
-        self, game: Game, airframe: Type[FlyingType]
+        self, game: Game, airframe: AircraftType
     ) -> Optional[ControlPoint]:
         closest = ObjectiveDistanceCache.get_closest_airfields(self)
         # TODO: Should be airframe dependent.
@@ -603,10 +595,10 @@ class ControlPoint(MissionTarget, ABC):
         return None
 
     def _retreat_air_units(
-        self, game: Game, airframe: Type[FlyingType], count: int
+        self, game: Game, airframe: AircraftType, count: int
     ) -> None:
         while count:
-            logging.debug(f"Retreating {count} {airframe.id} from {self.name}")
+            logging.debug(f"Retreating {count} {airframe} from {self.name}")
             destination = self.aircraft_retreat_destination(game, airframe)
             if destination is None:
                 self.capture_aircraft(game, airframe, count)
@@ -642,16 +634,16 @@ class ControlPoint(MissionTarget, ABC):
         self.base.set_strength_to_minimum()
 
     @abstractmethod
-    def can_operate(self, aircraft: Type[FlyingType]) -> bool:
+    def can_operate(self, aircraft: AircraftType) -> bool:
         ...
 
-    def aircraft_transferring(self, game: Game) -> dict[Type[FlyingType], int]:
+    def aircraft_transferring(self, game: Game) -> dict[AircraftType, int]:
         if self.captured:
             ato = game.blue_ato
         else:
             ato = game.red_ato
 
-        transferring: defaultdict[Type[FlyingType], int] = defaultdict(int)
+        transferring: defaultdict[AircraftType, int] = defaultdict(int)
         for package in ato.packages:
             for flight in package.flights:
                 if flight.departure == flight.arrival:
@@ -716,7 +708,7 @@ class ControlPoint(MissionTarget, ABC):
     def allocated_aircraft(self, game: Game) -> AircraftAllocations:
         on_order = {}
         for unit_bought, count in self.pending_unit_deliveries.units.items():
-            if issubclass(unit_bought, FlyingType):
+            if isinstance(unit_bought, AircraftType):
                 on_order[unit_bought] = count
 
         return AircraftAllocations(
@@ -728,10 +720,10 @@ class ControlPoint(MissionTarget, ABC):
     ) -> GroundUnitAllocations:
         on_order = {}
         for unit_bought, count in self.pending_unit_deliveries.units.items():
-            if issubclass(unit_bought, VehicleType):
+            if isinstance(unit_bought, GroundUnitType):
                 on_order[unit_bought] = count
 
-        transferring: dict[Type[VehicleType], int] = defaultdict(int)
+        transferring: dict[GroundUnitType, int] = defaultdict(int)
         for transfer in transfers:
             if transfer.destination == self:
                 for unit_type, count in transfer.units.items():
@@ -828,7 +820,7 @@ class Airfield(ControlPoint):
         self.airport = airport
         self._runway_status = RunwayStatus()
 
-    def can_operate(self, aircraft: FlyingType) -> bool:
+    def can_operate(self, aircraft: AircraftType) -> bool:
         # TODO: Allow helicopters.
         # Need to implement ground spawns so the helos don't use the runway.
         # TODO: Allow harrier.
@@ -940,10 +932,10 @@ class NavalControlPoint(ControlPoint, ABC):
         for group in self.find_main_tgo().groups:
             for u in group.units:
                 if db.unit_type_from_name(u.type) in [
-                    CVN_74_John_C__Stennis,
-                    LHA_1_Tarawa,
-                    CV_1143_5_Admiral_Kuznetsov,
-                    Type_071_Amphibious_Transport_Dock,
+                    Stennis,
+                    LHA_Tarawa,
+                    KUZNECOW,
+                    Type_071,
                 ]:
                     return True
         return False
@@ -1012,8 +1004,8 @@ class Carrier(NavalControlPoint):
     def is_carrier(self):
         return True
 
-    def can_operate(self, aircraft: FlyingType) -> bool:
-        return aircraft in db.CARRIER_CAPABLE
+    def can_operate(self, aircraft: AircraftType) -> bool:
+        return aircraft.carrier_capable
 
     @property
     def total_aircraft_parking(self) -> int:
@@ -1046,8 +1038,8 @@ class Lha(NavalControlPoint):
     def is_lha(self) -> bool:
         return True
 
-    def can_operate(self, aircraft: FlyingType) -> bool:
-        return aircraft in db.LHA_CAPABLE
+    def can_operate(self, aircraft: AircraftType) -> bool:
+        return aircraft.lha_capable
 
     @property
     def total_aircraft_parking(self) -> int:
@@ -1086,7 +1078,7 @@ class OffMapSpawn(ControlPoint):
     def total_aircraft_parking(self) -> int:
         return 1000
 
-    def can_operate(self, aircraft: FlyingType) -> bool:
+    def can_operate(self, aircraft: AircraftType) -> bool:
         return True
 
     @property

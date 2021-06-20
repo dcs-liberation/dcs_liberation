@@ -5,9 +5,9 @@ from typing import TYPE_CHECKING
 
 
 from dcs.ships import (
-    Type_052C_Destroyer,
-    Type_052B_Destroyer,
-    Type_054A_Frigate,
+    Type_052C,
+    Type_052B,
+    Type_054A,
 )
 
 from game.factions.faction import Faction
@@ -30,14 +30,14 @@ class ChineseNavyGroupGenerator(ShipGroupGenerator):
 
         if include_frigate:
             self.add_unit(
-                Type_054A_Frigate,
+                Type_054A,
                 "FF1",
                 self.position.x + 1200,
                 self.position.y + 900,
                 self.heading,
             )
             self.add_unit(
-                Type_054A_Frigate,
+                Type_054A,
                 "FF2",
                 self.position.x + 1200,
                 self.position.y - 900,
@@ -45,7 +45,7 @@ class ChineseNavyGroupGenerator(ShipGroupGenerator):
             )
 
         if include_dd:
-            dd_type = random.choice([Type_052C_Destroyer, Type_052B_Destroyer])
+            dd_type = random.choice([Type_052C, Type_052B])
             self.add_unit(
                 dd_type,
                 "DD1",
@@ -69,5 +69,5 @@ class Type54GroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(Type54GroupGenerator, self).__init__(
-            game, ground_object, faction, Type_054A_Frigate
+            game, ground_object, faction, Type_054A
         )

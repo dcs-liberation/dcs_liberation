@@ -17,6 +17,7 @@ from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
+from gen import naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -119,6 +120,7 @@ class Game:
         self.enemy_budget = enemy_budget
         self.current_unit_id = 0
         self.current_group_id = 0
+        self.name_generator = naming.namegen
 
         self.conditions = self.generate_conditions()
 
@@ -311,6 +313,14 @@ class Game:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self, game_still_initializing: bool = False) -> None:
+        if not hasattr(self, "name_generator"):
+            self.name_generator = naming.namegen
+        # Hack: Replace the global name generator state with the state from the save
+        # game.
+        #
+        # We need to persist this state so that names generated after game load don't
+        # conflict with those generated before exit.
+        naming.namegen = self.name_generator
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
@@ -338,10 +348,13 @@ class Game:
         # one hop ahead. ControlPoint.process_turn handles unit deliveries.
         self.transfers.perform_transfers()
 
-        # Needs to happen *before* planning transfers so we don't cancel the
+        # Needs to happen *before* planning transfers so we don't cancel them.
         self.reset_ato()
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
+
+        self.blue_air_wing.replenish()
+        self.red_air_wing.replenish()
 
         if not skipped and self.turn > 1:
             for cp in self.theater.player_points():

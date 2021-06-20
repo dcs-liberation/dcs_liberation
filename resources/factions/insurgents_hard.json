@@ -3,33 +3,32 @@
   "name": "Insurgents (Hard)",
   "authors": "Khopa",
   "description": "<p>Insurgents faction.</p>",
-  "aircrafts": [
-  ],
+  "aircrafts": [],
   "frontline_units": [
-    "ATGM_HMMWV",
-    "Scout_HMMWV",
-    "Scout_BRDM_2",
-    "APC_BTR_80",
-    "APC_BTR_RD",
-    "LT_PT_76",
-    "IFV_BMP_1",
-    "MBT_T_55",
-    "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375",
-    "SPAAA_ZSU_57_2"
+    "BMP-1",
+    "BRDM-2",
+    "BTR-80",
+    "BTR-D",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "PT-76",
+    "T-55A",
+    "ZSU-57-2 'Sparka'",
+    "ZU-23 on Ural-375"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Insurgent_AK_74",
-    "Infantry_RPG",
-    "Mortar_2B11_120mm",
-    "MANPADS_SA_18_Igla_Grouse"
+    "Infantry RPG",
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "SA9Generator",

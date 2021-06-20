@@ -1,0 +1,17 @@
+always_keeps_gun: true
+description: The A-10A Thunderbolt II, also known as the Warthog, is a 'flying gun'.
+  The aircraft was used extensively during Operation Desert Storm, in support of NATO
+  operations in response to the Kosovo crisis, in Operation Enduring Freedom in Afghanistan
+  and in Operation Iraqi Freedom. The A-10A is a high-survivability and versatile
+  aircraft, popular with pilots for the 'get home' effectiveness.The mission of the
+  aircraft is ground attack against tanks, armored vehicles and installations, and
+  close air support of ground forces. The Warthog is famous for its massive 30mm cannon,
+  but it can also be armed with Maverick guided missiles and several types of bombs
+  and rockets.
+introduced: 1977
+manufacturer: Fairchild Republic
+origin: USA
+price: 12
+role: Close Air Support/Attack
+variants:
+  A-10A Thunderbolt II: {}

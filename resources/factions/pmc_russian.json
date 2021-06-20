@@ -3,30 +3,33 @@
   "name": "Private Military Company - Russian",
   "authors": "Khopa",
   "description": "<p>A private military company using Russian units.</p>",
-  "locales": ["ru_RU"],
+  "locales": [
+    "ru_RU"
+  ],
   "aircrafts": [
-    "L_39ZA",
-    "Mi_8MT",
-    "Mi_24V",
-    "Ka_50"
+    "Ka-50 Hokum",
+    "L-39ZA Albatros",
+    "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
+    "Mi-8MTV2 Hip"
   ],
   "frontline_units": [
-    "Scout_Cobra",
-    "APC_BTR_80",
-    "Scout_BRDM_2",
-    "SAM_SA_13_Strela_10M3_Gopher_TEL"
+    "BRDM-2",
+    "BTR-80",
+    "Cobra",
+    "SA-13 Gopher (9K35 Strela-10M3)"
   ],
   "artillery_units": [
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "SA9Generator",

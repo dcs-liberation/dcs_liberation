@@ -1,0 +1,12 @@
+carrier_capable: true
+description: The Mil Mi-8MTV2 is an upgraded version of one of the most widely produced
+  helicopters in history and a combat transport and fire support veteran of countless
+  operations around the world.
+introduced: 1981
+lha_capable: true
+manufacturer: Mil
+origin: USSR/Russia
+price: 5
+role: Transport/Light Attack
+variants:
+  Mi-8MTV2 Hip: {}

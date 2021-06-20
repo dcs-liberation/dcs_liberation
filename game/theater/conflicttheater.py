@@ -16,10 +16,10 @@ from dcs.country import Country
 from dcs.mapping import Point
 from dcs.planes import F_15C
 from dcs.ships import (
-    Bulker_Handy_Wind,
-    CVN_74_John_C__Stennis,
-    DDG_Arleigh_Burke_IIa,
-    LHA_1_Tarawa,
+    HandyWind,
+    Stennis,
+    USS_Arleigh_Burke_IIa,
+    LHA_Tarawa,
 )
 from dcs.statics import Fortification, Warehouse
 from dcs.terrain import (
@@ -78,53 +78,53 @@ class MizCampaignLoader:
 
     OFF_MAP_UNIT_TYPE = F_15C.id
 
-    CV_UNIT_TYPE = CVN_74_John_C__Stennis.id
-    LHA_UNIT_TYPE = LHA_1_Tarawa.id
-    FRONT_LINE_UNIT_TYPE = Armor.APC_M113.id
-    SHIPPING_LANE_UNIT_TYPE = Bulker_Handy_Wind.id
+    CV_UNIT_TYPE = Stennis.id
+    LHA_UNIT_TYPE = LHA_Tarawa.id
+    FRONT_LINE_UNIT_TYPE = Armor.M_113.id
+    SHIPPING_LANE_UNIT_TYPE = HandyWind.id
 
-    FOB_UNIT_TYPE = Unarmed.Truck_SKP_11_Mobile_ATC.id
+    FOB_UNIT_TYPE = Unarmed.SKP_11.id
     FARP_HELIPAD = "SINGLE_HELIPAD"
 
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
-    SHIP_UNIT_TYPE = DDG_Arleigh_Burke_IIa.id
-    MISSILE_SITE_UNIT_TYPE = MissilesSS.SSM_SS_1C_Scud_B.id
-    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.AShM_SS_N_2_Silkworm.id
+    SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
+    MISSILE_SITE_UNIT_TYPE = MissilesSS.Scud_B.id
+    COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.Hy_launcher.id
 
     # Multiple options for air defenses so campaign designers can more accurately see
     # the coverage of their IADS for the expected type.
     LONG_RANGE_SAM_UNIT_TYPES = {
-        AirDefence.SAM_Patriot_LN.id,
-        AirDefence.SAM_SA_10_S_300_Grumble_TEL_C.id,
-        AirDefence.SAM_SA_10_S_300_Grumble_TEL_D.id,
+        AirDefence.Patriot_ln.id,
+        AirDefence.S_300PS_5P85C_ln.id,
+        AirDefence.S_300PS_5P85D_ln.id,
     }
 
     MEDIUM_RANGE_SAM_UNIT_TYPES = {
-        AirDefence.SAM_Hawk_LN_M192.id,
-        AirDefence.SAM_SA_2_S_75_Guideline_LN.id,
-        AirDefence.SAM_SA_3_S_125_Goa_LN.id,
+        AirDefence.Hawk_ln.id,
+        AirDefence.S_75M_Volhov.id,
+        AirDefence._5p73_s_125_ln.id,
     }
 
     SHORT_RANGE_SAM_UNIT_TYPES = {
-        AirDefence.SAM_Avenger__Stinger.id,
-        AirDefence.SAM_Rapier_LN.id,
-        AirDefence.SAM_SA_19_Tunguska_Grison.id,
-        AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL.id,
+        AirDefence.M1097_Avenger.id,
+        AirDefence.Rapier_fsa_launcher.id,
+        AirDefence._2S6_Tunguska.id,
+        AirDefence.Strela_1_9P31.id,
     }
 
     AAA_UNIT_TYPES = {
-        AirDefence.AAA_8_8cm_Flak_18.id,
-        AirDefence.SPAAA_Vulcan_M163.id,
-        AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish.id,
+        AirDefence.Flak18.id,
+        AirDefence.Vulcan.id,
+        AirDefence.ZSU_23_4_Shilka.id,
     }
 
-    EWR_UNIT_TYPE = AirDefence.EWR_1L13.id
+    EWR_UNIT_TYPE = AirDefence._1L13_EWR.id
 
-    ARMOR_GROUP_UNIT_TYPE = Armor.MBT_M1A2_Abrams.id
+    ARMOR_GROUP_UNIT_TYPE = Armor.M_1_Abrams.id
 
     FACTORY_UNIT_TYPE = Fortification.Workshop_A.id
 
-    AMMUNITION_DEPOT_UNIT_TYPE = Warehouse.Ammunition_depot.id
+    AMMUNITION_DEPOT_UNIT_TYPE = Warehouse._Ammunition_depot.id
 
     STRIKE_TARGET_UNIT_TYPE = Fortification.Tech_combine.id
 

@@ -1,0 +1,10 @@
+carrier_capable: true
+description: The Northrop Grumman E-2 Hawkeye is an American all-weather, carrier-capable
+  tactical airborne early warning (AEW) aircraft.
+introduced: 1973
+manufacturer: Northrop Grumman
+origin: USA
+price: 50
+role: AEW&C
+variants:
+  E-2C Hawkeye: {}

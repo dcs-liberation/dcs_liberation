@@ -58,6 +58,10 @@ class Distance:
     def from_nautical_miles(cls, value: float) -> Distance:
         return cls(value * NM_TO_METERS)
 
+    @classmethod
+    def inf(cls) -> Distance:
+        return cls.from_meters(math.inf)
+
     def __add__(self, other: Distance) -> Distance:
         return meters(self.meters + other.meters)
 

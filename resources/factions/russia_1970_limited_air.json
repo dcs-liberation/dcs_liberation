@@ -3,34 +3,36 @@
   "name": "Russia 1970 Limited Air",
   "authors": "Starfire",
   "description": "<p>1970 Soviet Russia, with limited air units intended for a Viggen campaign.</p>",
-  "locales": ["ru_RU"],
+  "locales": [
+    "ru_RU"
+  ],
   "aircrafts": [
-    "MiG_19P",
-	"MiG_21Bis",
-	"Mi_8MT",
-    "Mi_24V"
+    "Mi-24V Hind-E",
+    "Mi-8MTV2 Hip",
+    "MiG-19P Farmer-B",
+    "MiG-21bis Fishbed-N"
   ],
   "frontline_units": [
-    "Scout_BRDM_2",
-    "APC_BTR_80",
-    "IFV_BMD_1",
-    "IFV_BMP_1",
-    "LT_PT_76",
-    "MBT_T_55",
-    "SPAAA_ZSU_57_2"
+    "BMD-1",
+    "BMP-1",
+    "BRDM-2",
+    "BTR-80",
+    "PT-76",
+    "T-55A",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPM_2S9_Nona_120mm_M",
-    "SPH_2S1_Gvozdika_122mm"
+    "2S1 Gvozdika",
+    "2S9 Nona-S",
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Infantry_AK_74_Rus",
-    "Infantry_RPG"
+    "Infantry AK-74 Rus",
+    "Infantry RPG"
   ],
   "air_defenses": [
     "SA2Generator",
@@ -48,25 +50,19 @@
   "ewrs": [
     "FlatFaceGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "helicopter_carrier_names": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "helicopter_carrier_names": [],
+  "destroyers": [],
+  "cruisers": [],
   "missiles": [
     "ScudGenerator"
   ],
   "missiles_group_count": 1,
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "navy_generators": [
-	"RussianNavyGroupGenerator"
+    "RussianNavyGroupGenerator"
   ],
   "has_jtac": false,
   "doctrine": "coldwar"

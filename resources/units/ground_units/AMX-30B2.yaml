@@ -1,0 +1,11 @@
+class: Tank
+description: 'The AMX-30 is a main battle tank designed by Ateliers de construction
+  d''Issy-les-Moulineaux (AMX, then GIAT) and first delivered to the French Army in
+  August 1965. '
+introduced: 1965
+manufacturer: GIAT Industries
+origin: France
+price: 18
+role: Main Battle Tank
+variants:
+  AMX.30B2: {}

@@ -20,35 +20,35 @@ class PatriotGenerator(AirDefenseGroupGenerator):
     def generate(self):
         # Command Post
         self.add_unit(
-            AirDefence.SAM_Patriot_STR,
+            AirDefence.Patriot_str,
             "STR",
             self.position.x + 30,
             self.position.y + 30,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Patriot_CR__AMG_AN_MRC_137,
+            AirDefence.Patriot_AMG,
             "MRC",
             self.position.x,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Patriot_ECS,
+            AirDefence.Patriot_ECS,
             "MSQ",
             self.position.x + 30,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Patriot_C2_ICC,
+            AirDefence.Patriot_cp,
             "ICC",
             self.position.x + 60,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Patriot_EPP_III,
+            AirDefence.Patriot_EPP,
             "EPP",
             self.position.x,
             self.position.y + 30,
@@ -61,7 +61,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
         )
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_Patriot_LN,
+                AirDefence.Patriot_ln,
                 "LN#" + str(i),
                 position[0],
                 position[1],
@@ -77,7 +77,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(
                 aa_group,
-                AirDefence.SPAAA_Vulcan_M163,
+                AirDefence.Vulcan,
                 f"SPAAA#{i}",
                 Point(x, y),
                 heading,

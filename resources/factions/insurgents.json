@@ -3,28 +3,27 @@
   "name": "Insurgents",
   "authors": "Khopa",
   "description": "<p>Insurgents faction.</p>",
-  "aircrafts": [
-  ],
+  "aircrafts": [],
   "frontline_units": [
-    "Scout_Cobra",
-    "APC_MTLB",
-    "Scout_BRDM_2",
-    "LT_PT_76",
-    "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375"
+    "BRDM-2",
+    "Cobra",
+    "MT-LB",
+    "PT-76",
+    "ZU-23 on Ural-375"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Insurgent_AK_74",
-    "Infantry_RPG",
-    "Mortar_2B11_120mm",
-    "MANPADS_SA_18_Igla_Grouse"
+    "Infantry RPG",
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "SA9Generator",

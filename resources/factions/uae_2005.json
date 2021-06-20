@@ -4,32 +4,31 @@
   "authors": "Khopa",
   "description": "<p>UAR army in the 2000s.</p>",
   "aircrafts": [
-    "M_2000C",
-    "Mirage_2000_5",
-    "F_16C_50",
-    "AH_64D"
+    "AH-64D Apache Longbow",
+    "F-16CM Fighting Falcon (Block 50)",
+    "Mirage 2000-5",
+    "Mirage 2000C"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Leclerc",
-    "APC_TPz_Fuchs",
-    "IFV_BMP_3"
+    "BMP-3",
+    "Leclerc S\u00e9ries 2",
+    "TPz Fuchs"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS SA-18 Igla-S \"Grouse\""
   ],
   "air_defenses": [
     "HawkGenerator",
@@ -39,11 +38,10 @@
     "HawkEwrGenerator"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "WingLoong_I"
+  "jtac_unit": "WingLoong-I"
 }

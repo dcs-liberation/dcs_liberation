@@ -3,64 +3,67 @@
   "name": "Redfor (Russia) 2010",
   "authors": "Robert Peary",
   "description": "<p>Combined Redfor under Russia's leadership in the late 2000s, early 2010s.</p>",
-  "locales": ["ru_RU"],
+  "locales": [
+    "ru_RU"
+  ],
   "aircrafts": [
-    "J_11A",
-    "JF_17",
-    "Ka_50",
-    "L_39ZA",
-    "Mi_8MT",
-    "Mi_24V",
-    "Mi_28N",
-    "MiG_21Bis",
-    "MiG_29S",
-    "MiG_31",
-    "Su_24M",
-    "Su_25",
-    "Su_25T",
-    "Su_27",
-    "Su_30",
-    "Su_33",
-    "Su_34",
-    "Tu_22M3"
+    "J-11A Flanker-L",
+    "JF-17 Thunder",
+    "Ka-50 Hokum",
+    "L-39ZA Albatros",
+    "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
+    "Mi-28N Havoc",
+    "Mi-8MTV2 Hip",
+    "MiG-21bis Fishbed-N",
+    "MiG-29S Fulcrum-C",
+    "MiG-31 Foxhound",
+    "Su-24M Fencer-D",
+    "Su-25 Frogfoot",
+    "Su-25T Frogfoot",
+    "Su-27 Flanker-B",
+    "Su-30 Flanker-C",
+    "Su-33 Flanker-D",
+    "Su-34 Fullback",
+    "Tu-22M3 Backfire-C"
   ],
   "awacs": [
-    "A_50"
+    "A-50"
   ],
   "tankers": [
-    "IL_78M"
+    "IL-78M"
   ],
   "frontline_units": [
-    "APC_BTR_80",
-    "IFV_BTR_82A",
-    "HQ_7_Self_Propelled_LN",
-    "IFV_BMP_1",
-    "IFV_BMP_2",
-    "IFV_BMP_3",
-    "MBT_T_55",
-    "MBT_T_72B3",
-    "MBT_T_80U",
-    "MBT_T_90",
-    "SAM_SA_19_Tunguska_Grison",
-    "ZBD_04A",
-    "ZTZ_96B"
+    "BMP-1",
+    "BMP-2",
+    "BMP-3",
+    "BTR-80",
+    "BTR-82A",
+    "HQ-7 Launcher",
+    "SA-19 Grison (2K22 Tunguska)",
+    "T-55A",
+    "T-72B3 model 2011",
+    "T-80UD",
+    "T-90A",
+    "Type 04A (ZBD-04A)",
+    "Type 96B (ZTZ-96B)"
   ],
   "artillery_units": [
-    "MLRS_9A52_Smerch_HE_300mm",
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPM_2S9_Nona_120mm_M",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "2S9 Nona-S",
+    "BM-27 Uragan",
+    "BM-30 Smerch (9M55K5 HE Rockets)"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Mortar_2B11_120mm",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_AKS",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_Grouse"
+    "Infantry AK-74 Rus",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Mortar 2B11 120mm",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "HQ7Generator",
@@ -85,7 +88,7 @@
     "TallRackGenerator"
   ],
   "aircraft_carrier": [
-    "CV_1143_5_Admiral_Kuznetsov"
+    "KUZNECOW"
   ],
   "helicopter_carrier": [
     "Type_071_Amphibious_Transport_Dock"
@@ -95,13 +98,13 @@
     "Mitrofan Moskalenko"
   ],
   "destroyers": [
-    "Frigate_1135M_Rezky",
-    "Type_052B_Destroyer",
-    "Type_052C_Destroyer"
+    "REZKY",
+    "Type_052B",
+    "Type_052C"
   ],
   "cruisers": [
-    "Corvette_1241_1_Molniya",
-    "Type_054A_Frigate"
+    "MOLNIYA",
+    "Type_054A"
   ],
   "requirements": {},
   "carrier_names": [
@@ -112,5 +115,5 @@
     "KiloSubGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

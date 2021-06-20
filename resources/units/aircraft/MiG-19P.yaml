@@ -1,0 +1,28 @@
+always_keeps_gun: true
+description:
+  "The MiG-19P Farmer was designed by the legendary Mikoyan Design Bureau\
+  \ in the Early 1950\u2019s. The MiG-19 fighter was the Soviet Union\u2019s first\
+  \ true supersonic Interceptor that could exceed Mach 1 in level flight.\n\nDesigned\
+  \ to take on enemy fighters and bombers at any time of day or night and in any weather\
+  \ condition, the Farmer was equipped with the RP-5 lzumrud radar in the nose and\
+  \ armed with two NR-30 30mm cannons in the wing roots. The Farmer is also able to\
+  \ carry an array of ground attack weapons that includes S-5M rockets and various\
+  \ general-purpose bombs. It is a lethal interceptor with conventional ground attack\
+  \ capabilities."
+introduced: 1955
+manufacturer: Mikoyan-Gurevich
+origin: USSR/Russia
+price: 10
+role: Fighter
+variants:
+  J-6A:
+    introduced: 1962
+    manufacturer: Shenyang
+    origin: China
+  MiG-19P Farmer-B: {}
+radios:
+  intra_flight: RSIU-4V
+  inter_flight: RSIU-4V
+  channels:
+    type: farmer
+    namer: single

@@ -4,64 +4,64 @@
   "authors": "Hawkmoon",
   "description": "<p>A faction to recreate the actual unit lineup during Desert Storm as closely as possible</p>",
   "aircrafts": [
-    "F_15C",
-    "F_14A_135_GR",
-    "F_14B",
-    "F_15E",
-    "F_16C_50",
-    "FA_18C_hornet",
-    "A_10A",
-    "AV8BNA",
-    "UH_1H",
-    "AH_64A",
-    "B_52H",
-    "B_1B",
-    "Tornado_IDS",
-    "F_4E",
-    "F_117A",	
-    "M_2000C",
-    "S_3B",
-    "SA342M",
-    "SA342L",
-    "SA342Mistral",
-    "OH_58D"
+    "A-10A Thunderbolt II",
+    "AH-64A Apache",
+    "AV-8B Harrier II Night Attack",
+    "B-1B Lancer",
+    "B-52H Stratofortress",
+    "F-117A Nighthawk",
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-14B Tomcat",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-4E Phantom II",
+    "F/A-18C Hornet (Lot 20)",
+    "Mirage 2000C",
+    "OH-58D Kiowa Warrior",
+    "S-3B Viking",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "SA 342M Gazelle Mistral",
+    "Tornado IDS",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A",
-    "E_2C"
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130",
+    "KC-130",
+    "KC-135 Stratotanker",
     "S-3B Tanker"
   ],
   "frontline_units": [
-    "MBT_M1A2_Abrams",
-    "ATGM_Stryker",
-    "IFV_M2A2_Bradley",
-    "IFV_M1126_Stryker_ICV",
-    "IFV_LAV_25",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "APC_TPz_Fuchs",
-    "IFV_Warrior",
-    "MBT_Challenger_II",	
-    "MBT_M60A3_Patton",
-    "SPG_Stryker_MGS",
-    "SAM_Avenger__Stinger",
-    "ATGM_VAB_Mephisto"
+    "FV4034 Challenger 2",
+    "FV510 Warrior",
+    "LAV-25",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M1097 Heavy HMMWV Avenger",
+    "M1126 Stryker ICV (M2 HMG)",
+    "M1128 Stryker Mobile Gun System",
+    "M1134 Stryker ATGM (BGM-71 TOW)",
+    "M1A2 Abrams",
+    "M2A2 Bradley",
+    "M60A3 \"Patton\"",
+    "TPz Fuchs",
+    "VAB Mephisto"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -76,16 +76,16 @@
     "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry"
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
   "carrier_names": [
@@ -99,5 +99,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

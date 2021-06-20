@@ -1,0 +1,14 @@
+class: APC
+description: "The BTR-80 (Russian: \u0431\u0440\u043E\u043D\u0435\u0442\u0440\u0430\
+  \u043D\u0441\u043F\u043E\u0440\u0442\u0451\u0440, romanized: Bronyetransportyor,\
+  \ literally \"Armoured Transporter\") is an 8\xD78 wheeled amphibious armoured personnel\
+  \ carrier (APC) designed in the USSR. It was adopted in 1985 and replaced the previous\
+  \ vehicles, the BTR-60 and BTR-70, in the Soviet Army. It was first deployed during\
+  \ the Soviet\u2013Afghan War. This is a modernized Version of the BTR 80."
+introduced: 2013
+manufacturer: Arzamas
+origin: Russia
+price: 10
+role: Amphibious Armoured Personnel Carrier
+variants:
+  BTR-82A: {}

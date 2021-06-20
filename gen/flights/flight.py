@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import timedelta
 from enum import Enum
-from typing import List, Optional, TYPE_CHECKING, Type, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
 from dcs.unit import Unit
-from dcs.unittype import FlyingType
 
 from game import db
+from game.dcs.aircrafttype import AircraftType
 from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
@@ -302,7 +301,7 @@ class Flight:
         return self.roster.player_count
 
     @property
-    def unit_type(self) -> Type[FlyingType]:
+    def unit_type(self) -> AircraftType:
         return self.squadron.aircraft
 
     @property
@@ -327,13 +326,11 @@ class Flight:
         self.roster.clear()
 
     def __repr__(self):
-        name = db.unit_type_name(self.unit_type)
         if self.custom_name:
-            return f"{self.custom_name} {self.count} x {name}"
-        return f"[{self.flight_type}] {self.count} x {name}"
+            return f"{self.custom_name} {self.count} x {self.unit_type}"
+        return f"[{self.flight_type}] {self.count} x {self.unit_type}"
 
     def __str__(self):
-        name = db.unit_get_expanded_info(self.country, self.unit_type, "name")
         if self.custom_name:
-            return f"{self.custom_name} {self.count} x {name}"
-        return f"[{self.flight_type}] {self.count} x {name}"
+            return f"{self.custom_name} {self.count} x {self.unit_type}"
+        return f"[{self.flight_type}] {self.count} x {self.unit_type}"

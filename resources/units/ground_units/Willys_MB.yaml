@@ -1,0 +1,11 @@
+class: Logistics
+description: The jeep became the primary light wheeled transport vehicle of the United
+  States military and its allies, with President Eisenhower once calling it "one of
+  three decisive weapons the U.S. had during WWII." After WW2 it served in many conflicts.
+introduced: 1997
+manufacturer: United Defense
+origin: USA
+price: 1
+role: Recon Vehicle
+variants:
+  Willys Jeep: {}

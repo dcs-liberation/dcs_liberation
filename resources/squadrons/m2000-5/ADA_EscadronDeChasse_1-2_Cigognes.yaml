@@ -1,0 +1,13 @@
+---
+name: Escadron de chasse 1/2
+nickname: Cigognes
+country: France
+role: Fighter
+aircraft: Mirage 2000-5
+livery: ec1_2  spa12 `cigogne a ailes ouvertes`
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

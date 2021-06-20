@@ -1,0 +1,18 @@
+description: The Lockheed F-117 Nighthawk is a semi-retired American single-seat,
+  twin-engine stealth attack aircraft that was developed by Lockheed's secretive Skunk
+  Works division and operated by the United States Air Force (USAF). It was the first
+  operational aircraft to be designed around stealth technology. The F-117 was widely
+  publicized for its role in the Persian Gulf War of 1991. Although it was commonly
+  referred to as the 'Stealth Fighter', it was strictly a ground-attack aircraft.
+  F-117s took part in the conflict in Yugoslavia, where one was shot down and another
+  damaged by surface-to-air missiles (SAM) in 1999. The U.S. Air Force retired the
+  F-117 in April 2008, primarily due to the fielding of the F-22 Raptor. Despite the
+  type's retirement, a portion of the fleet has been kept in airworthy condition,
+  and Nighthawks have been observed flying in 2020.
+introduced: 1983
+manufacturer: Lockheed
+origin: USA
+price: 35
+role: Stealth Attack
+variants:
+  F-117A Nighthawk: {}

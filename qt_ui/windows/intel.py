@@ -15,7 +15,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game.game import Game, db
+from game.game import Game
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.finances.QFinancesMenu import FinancesLayout
 
@@ -45,7 +45,7 @@ class ScrollingFrame(QFrame):
 class EconomyIntelTab(ScrollingFrame):
     def __init__(self, game: Game, player: bool) -> None:
         super().__init__()
-        self.addLayout(FinancesLayout(game, player=player))
+        self.addLayout(FinancesLayout(game, player=player, total_at_top=True))
 
 
 class IntelTableLayout(QGridLayout):
@@ -84,10 +84,7 @@ class AircraftIntelLayout(IntelTableLayout):
             for airframe, count in base.aircraft.items():
                 if not count:
                     continue
-                self.add_row(
-                    db.unit_get_expanded_info(game.enemy_country, airframe, "name"),
-                    count,
-                )
+                self.add_row(airframe.name, count)
 
         self.add_spacer()
         self.add_row("<b>Total</b>", total)
@@ -114,7 +111,7 @@ class ArmyIntelLayout(IntelTableLayout):
             for vehicle, count in base.armor.items():
                 if not count:
                     continue
-                self.add_row(vehicle.id, count)
+                self.add_row(vehicle.name, count)
 
         self.add_spacer()
         self.add_row("<b>Total</b>", total)

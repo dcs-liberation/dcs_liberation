@@ -14,6 +14,7 @@ from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
+from ..dcs.groundunittype import GroundUnitType
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -122,7 +123,7 @@ class Event:
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
-            if (
+            if loss.pilot is not None and (
                 not loss.pilot.player
                 or not self.game.settings.invulnerable_player_pilots
             ):
@@ -439,7 +440,7 @@ class Event:
 
         # Also transfer pending deliveries.
         for unit_type, count in source.pending_unit_deliveries.units.items():
-            if not issubclass(unit_type, VehicleType):
+            if not isinstance(unit_type, GroundUnitType):
                 continue
             if count <= 0:
                 # Don't transfer *sales*...

@@ -1,0 +1,10 @@
+class: Artillery
+description: The M109 is an American 155 mm turreted self-propelled howitzer, first
+  introduced in the early 1960s to replace the M44.
+introduced: 1994
+manufacturer: United Defense
+origin: USA
+price: 25
+role: Self-Propelled Gun
+variants:
+  M109A6 Paladin: {}

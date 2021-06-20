@@ -1,0 +1,33 @@
+always_keeps_gun: true
+description:
+  The North American Aviation P-51 Mustang is an American long-range, single-seat
+  fighter and fighter-bomber used during World War II and the Korean War, among other
+  conflicts. From late 1943, P-51Bs and P-51Cs (supplemented by P-51Ds from mid-1944)
+  were used by the USAAF's Eighth Air Force to escort bombers in raids over Germany,
+  while the RAF's Second Tactical Air Force and the USAAF's Ninth Air Force used the
+  Merlin-powered Mustangs as fighter-bombers, roles in which the Mustang helped ensure
+  Allied air superiority in 1944. The P-51 was also used by Allied air forces in the
+  North African, Mediterranean, Italian, and Pacific theaters. During World War II,
+  Mustang pilots claimed to have destroyed 4,950 enemy aircraft. At the start of the
+  Korean War, the Mustang, by then redesignated F-51, was the main fighter of the
+  United States until jet fighters, including North American's F-86, took over this
+  role; the Mustang then became a specialized fighter-bomber. Despite the advent of
+  jet fighters, the Mustang remained in service with some air forces until the early
+  1980s. After the Korean War, Mustangs became popular civilian warbirds and air racing
+  aircraft.
+introduced: 1944
+manufacturer: North American
+origin: USA
+price: 4
+role: Fighter
+variants:
+  Mustang Mk.IV (Early): {}
+  P-51D-25-NA Mustang: {}
+radios:
+  intra_flight: SCR522
+  inter_flight: SCR522
+  channels:
+    type: common
+    namer: SCR-522
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1

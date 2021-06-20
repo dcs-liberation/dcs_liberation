@@ -1,0 +1,17 @@
+description: "I-16 - Soviet single-engine monoplane fighter of 1930s created by aircraft\
+  \ designer Nikolai Polikarpov\u2019s design bureau. It was the one of the world\u2019\
+  s first fighters with landing gear retraction system. It was I-16 which stood the\
+  \ air fighting against famous Messerschmitt Bf 109.\n\nOver a period of its history\
+  \ I-16 was upgraded a lot. New modifications of aircraft were created and adopted\
+  \ almost every year. I-16 type 24 was further development of I-16 type 18.\n\nIt\
+  \ is one of the most famous fighters taking part in World War II. It was different\
+  \ from all its \u201Ccontemporaries\u201D in configuration and flight characteristics.\
+  \ Its uniqueness and distinction were defined by minimum size, dome-shaped fuselage,\
+  \ small wing, dorsal spine."
+introduced: 1935
+manufacturer: Polikarpov
+origin: USSR/Russia
+price: 2
+role: Fighter
+variants:
+  I-16 Ishak: {}

@@ -1,0 +1,16 @@
+class: SHORADS
+description: The Flugabwehrkanonenpanzer Gepard ("anti-aircraft cannon tank Cheetah",
+  better known as the Flakpanzer Gepard) is an all-weather-capable German self-propelled
+  anti-aircraft gun (SPAAG).[1] It was developed in the 1960s and fielded in the 1970s,
+  and has been upgraded several times with the latest electronics. It constituted
+  a cornerstone of the air defence of the German Army (Bundeswehr) and a number of
+  other NATO countries. In Germany, the Gepard was phased out in late 2010 and replaced
+  by Wiesel 2 Ozelot Leichtes Flugabwehrsystem (LeFlaSys) with four FIM-92 Stinger
+  or LFK NG missile launchers.
+introduced: 1976
+manufacturer: Krauss-Maffei
+origin: West Germany
+price: 24
+role: Self-Propelled Anti-Aircraft Gun
+variants:
+  Flakpanzer Gepard: {}

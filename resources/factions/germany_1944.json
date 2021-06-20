@@ -3,59 +3,54 @@
   "name": "Germany 1944",
   "authors": "Khopa",
   "description": "<p>Late war Germany with access to all the late-war ground units such as the Tiger and Tiger II tanks.</p>",
-  "locales": ["de_DE"],
+  "locales": [
+    "de_DE"
+  ],
   "aircrafts": [
-    "FW_190A8",
-    "FW_190D9",
-    "Bf_109K_4",
-    "Ju_88A4"
+    "Bf 109 K-4 Kurf\u00fcrst",
+    "Fw 190 A-8 Anton",
+    "Fw 190 D-9 Dora",
+    "Ju 88 A-4"
   ],
   "frontline_units": [
-    "MT_Pz_Kpfw_V_Panther_Ausf_G",
-    "Tk_PzIV_H",
-    "HT_Pz_Kpfw_VI_Tiger_I",
-    "HT_Pz_Kpfw_VI_Ausf__B_Tiger_II",
-    "APC_Sd_Kfz_251_Halftrack",
-    "IFV_Sd_Kfz_234_2_Puma",
-    "SPG_Sd_Kfz_184_Elefant",
-    "SPG_Jagdpanther_G1",
-    "SPG_Jagdpanzer_IV",
-    "SPG_StuG_III_Ausf__G",
-    "SPG_StuG_IV",
-    "AAA_8_8cm_Flak_18",
-    "AAA_8_8cm_Flak_41",
-    "SPG_Sturmpanzer_IV_Brummbar"
+    "8.8 cm Flak 18",
+    "8.8 cm Flak 41",
+    "Jagdpanther G1",
+    "Jagdpanzer IV",
+    "Panzerkampfwagen IV Ausf. H",
+    "Panzerkampfwagen Tiger Ausf. B Tiger II",
+    "Panzerkampfwagen V Panther Ausf. G",
+    "Panzerkampfwagen VI Tiger Ausf. E",
+    "Sd.Kfz.184 Elefant",
+    "Sd.Kfz.234/2 Puma",
+    "Sd.Kfz.251 \"Hanomag\"",
+    "Sturmgesch\u00fctz III Ausf. G",
+    "Sturmgesch\u00fctz IV",
+    "Sturmpanzer IV Brummb\u00e4r"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
-    "Truck_Opel_Blitz",
-    "LUV_Kubelwagen_82",
-    "Carrier_Sd_Kfz_7_Tractor",
-    "LUV_Kettenrad"
+    "LUV Kettenrad",
+    "LUV Kubelwagen 82",
+    "Sd.Kfz.7 Tractor",
+    "Truck Opel Blitz"
   ],
   "infantry_units": [
-    "Infantry_Mauser_98"
+    "Infantry Mauser 98"
   ],
   "air_defenses": [
     "FlakGenerator",
     "FreyaGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
   "requirements": {
     "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
   },
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "SchnellbootGroupGenerator"
   ],

@@ -14,21 +14,21 @@ class ScudGenerator(GroupGenerator):
 
         # Scuds
         self.add_unit(
-            MissilesSS.SSM_SS_1C_Scud_B,
+            MissilesSS.Scud_B,
             "V1#0",
             self.position.x,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.SSM_SS_1C_Scud_B,
+            MissilesSS.Scud_B,
             "V1#1",
             self.position.x + 50,
             self.position.y + random.randint(1, 8),
             self.heading,
         )
         self.add_unit(
-            MissilesSS.SSM_SS_1C_Scud_B,
+            MissilesSS.Scud_B,
             "V1#2",
             self.position.x + 100,
             self.position.y + random.randint(1, 8),
@@ -37,7 +37,7 @@ class ScudGenerator(GroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.LUV_UAZ_469_Jeep,
+            Unarmed.UAZ_469,
             "Kubel#0",
             self.position.x - 35,
             self.position.y - 20,
@@ -46,7 +46,7 @@ class ScudGenerator(GroupGenerator):
 
         # Shorad
         self.add_unit(
-            AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
+            AirDefence.ZSU_23_4_Shilka,
             "SHILKA#0",
             self.position.x - 55,
             self.position.y - 38,
@@ -54,7 +54,7 @@ class ScudGenerator(GroupGenerator):
         )
 
         self.add_unit(
-            AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL,
+            AirDefence.Strela_1_9P31,
             "STRELA#0",
             self.position.x + 200,
             self.position.y + 15,

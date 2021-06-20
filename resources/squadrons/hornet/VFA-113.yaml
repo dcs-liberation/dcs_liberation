@@ -3,7 +3,7 @@ name: VFA-113
 nickname: Stingers
 country: USA
 role: Strike Fighter
-aircraft: FA-18C_hornet
+aircraft: F/A-18C Hornet (Lot 20)
 livery: VFA-113
 mission_types:
   - Anti-ship

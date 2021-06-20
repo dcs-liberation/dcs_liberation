@@ -2,7 +2,6 @@ import random
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Type
 
 from dcs.unitgroup import VehicleGroup
-from dcs.vehicles import AirDefence
 
 from game import Game
 from game.factions.faction import Faction
@@ -101,41 +100,6 @@ SAM_MAP: Dict[str, Type[AirDefenseGroupGenerator]] = {
     "SA20Generator": SA20Generator,
     "SA20BGenerator": SA20BGenerator,
     "SA23Generator": SA23Generator,
-}
-
-
-SAM_PRICES = {
-    AirDefence.SAM_Hawk_Platoon_Command_Post__PCP: 35,
-    AirDefence.AAA_ZU_23_Emplacement: 10,
-    AirDefence.AAA_ZU_23_Closed_Emplacement: 10,
-    AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375: 10,
-    AirDefence.SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375: 10,
-    AirDefence.AAA_ZU_23_Insurgent_Closed_Emplacement: 10,
-    AirDefence.AAA_ZU_23_Insurgent_Emplacement: 10,
-    AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish: 10,
-    AirDefence.SPAAA_Vulcan_M163: 15,
-    AirDefence.SAM_Linebacker___Bradley_M6: 20,
-    AirDefence.SAM_Rapier_LN: 20,
-    AirDefence.SAM_Avenger__Stinger: 22,
-    AirDefence.SPAAA_Gepard: 24,
-    AirDefence.SAM_Roland_ADS: 40,
-    AirDefence.SAM_Patriot_LN: 85,
-    AirDefence.SAM_Patriot_EPP_III: 85,
-    AirDefence.SAM_Chaparral_M48: 25,
-    AirDefence.AAA_Bofors_40mm: 15,
-    AirDefence.AAA_8_8cm_Flak_36: 15,
-    AirDefence.SAM_SA_2_S_75_Guideline_LN: 30,
-    AirDefence.SAM_SA_3_S_125_Goa_LN: 35,
-    AirDefence.SAM_SA_6_Kub_Gainful_TEL: 45,
-    AirDefence.SAM_SA_8_Osa_Gecko_TEL: 30,
-    AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL: 25,
-    AirDefence.SAM_SA_10_S_300_Grumble_TEL_C: 80,
-    AirDefence.SAM_SA_10_S_300_Grumble_C2: 80,
-    AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL: 60,
-    AirDefence.SAM_SA_13_Strela_10M3_Gopher_TEL: 30,
-    AirDefence.SAM_SA_15_Tor_Gauntlet: 40,
-    AirDefence.SAM_SA_19_Tunguska_Grison: 35,
-    AirDefence.HQ_7_Self_Propelled_LN: 35,
 }
 
 

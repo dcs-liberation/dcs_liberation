@@ -11,7 +11,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game import Game, db
+from game import Game
 from game.theater import ControlPoint
 
 
@@ -28,10 +28,8 @@ class QIntelInfo(QFrame):
         units_by_task: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
         for unit_type, count in self.cp.base.aircraft.items():
             if count:
-                name = db.unit_get_expanded_info(
-                    self.game.enemy_country, unit_type, "name"
-                )
-                units_by_task[unit_type.task_default.name][name] += count
+                task_type = unit_type.dcs_unit_type.task_default.name
+                units_by_task[task_type][unit_type.name] += count
 
         units_by_task = {
             task: units_by_task[task] for task in sorted(units_by_task.keys())
@@ -40,10 +38,7 @@ class QIntelInfo(QFrame):
         front_line_units = defaultdict(int)
         for unit_type, count in self.cp.base.armor.items():
             if count:
-                name = db.unit_get_expanded_info(
-                    self.game.enemy_country, unit_type, "name"
-                )
-                front_line_units[name] += count
+                front_line_units[unit_type.name] += count
 
         units_by_task["Front line units"] = front_line_units
         for task, unit_types in units_by_task.items():

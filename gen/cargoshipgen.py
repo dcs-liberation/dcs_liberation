@@ -4,7 +4,7 @@ import itertools
 from typing import TYPE_CHECKING
 
 from dcs import Mission
-from dcs.ships import Bulker_Handy_Wind
+from dcs.ships import HandyWind
 from dcs.unitgroup import ShipGroup
 
 from game.transfers import CargoShip
@@ -35,7 +35,7 @@ class CargoShipGenerator:
         group = self.mission.ship_group(
             country,
             ship.name,
-            Bulker_Handy_Wind,
+            HandyWind,
             position=waypoints[0],
             group_size=1,
         )

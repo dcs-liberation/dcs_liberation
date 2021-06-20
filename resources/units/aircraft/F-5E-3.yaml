@@ -1,0 +1,24 @@
+description: "The F-5E was developed by Northrop Corporation in early 1970s. The light\
+  \ tactical fighter is an upgraded version based on previous F-5A developments. The\
+  \ F-5s' combat role encompasses air superiority, ground support, and ground attack.\
+  \ Given its mission flexibility, ease of operation, and low cost, the Tiger II has,\
+  \ and continues to serve, air forces across the globe.\n\nThe F-5\u0415 is armed\
+  \ with two 20-mm \u041C39-\u04103 cannons with 280 rounds per each cannon. The cannons\
+  \ are located in the nose section, forward of the cockpit. Special deflectors are\
+  \ used to avoid compressor stall conditions caused by hot gas ingestion as a bi-product\
+  \ of operating the M-39-A3. Each cannon is capable of firing at a rate of 1500 to\
+  \ 1700 rounds per minute.\n\nEach wingtip incorporates a launcher rail capable of\
+  \ firing AIM-9 infrared-guided missiles.\n\nFive hard points (one centerline pylon\
+  \ and four underwing pylons) allow the aircraft to carry different types of air-to-ground\
+  \ weapons (bombs, cluster munitions, and rockets) 6,400 pounds (about 3000 kg) in\
+  \ total. In addition, illumination ammunition and cargo containers can be attached.\
+  \ To increase flight duration and range, external fuel tanks can be attached to\
+  \ three hard points (a centerline pylon and two inboard pylons). Maneuverability\
+  \ and speed can be maximized in combat by jettisoning all external stores."
+introduced: 1975
+manufacturer: Northrop
+origin: USA
+price: 12
+role: Light Fighter
+variants:
+  F-5E Tiger II: {}

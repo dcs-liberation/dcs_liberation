@@ -3,66 +3,68 @@
   "name": "France 2005 (Frenchpack)",
   "authors": "HerrTom",
   "description": "<p>French equipment using the Frenchpack, but without the Rafale mod.</p>",
-  "locales": ["fr_FR"],
+  "locales": [
+    "fr_FR"
+  ],
   "aircrafts": [
-    "M_2000C",
-    "Mirage_2000_5",
-    "SA342M",
-    "SA342L",
-    "SA342Mistral"
+    "Mirage 2000-5",
+    "Mirage 2000C",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "SA 342M Gazelle Mistral"
   ],
   "awacs": [
-    "E_3A",
-    "E_2C"
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "AMX_10RCR",
-    "AMX_10RCR_SEPAR",
-    "ERC_90",
-    "TRM_2000_PAMELA",
-    "VAB__50",
-    "VAB_T20_13",
-    "VAB_T20_13",
-    "VBL__50",
-    "VBL_AANF1",
-    "VBAE_CRAB",
-    "VBAE_CRAB_MMP",
-    "AMX_30B2",
-    "Leclerc_Serie_XXI",
-    "SAM_Roland_ADS",
-    "ATGM_VAB_Mephisto"
+    "AMX.30B2",
+    "Leclerc S\u00e9ries 2",
+    "Leclerc S\u00e9ries 2",
+    "Leclerc_XXI",
+    "Pamela",
+    "Panhard",
+    "Roland 2 (Marder Chassis)",
+    "VAB .50",
+    "VAB Mephisto",
+    "VAB T20/13",
+    "VAB T20/13",
+    "VBAE CRAB",
+    "VBAE CRAB MMP",
+    "VBL .50",
+    "VBL AANF1"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "RolandGenerator",
     "HawkGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {
     "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
@@ -80,5 +82,5 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

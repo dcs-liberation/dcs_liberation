@@ -1,0 +1,13 @@
+---
+name: Escadron de chasse 2/5
+nickname: Île De France
+country: France
+role: Fighter
+aircraft: Mirage 2000C
+livery: AdA_Chasse_2_5
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

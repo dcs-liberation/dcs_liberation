@@ -3,54 +3,56 @@
   "name": "USAF Aggressors",
   "authors": "Khopa",
   "description": "<p>USAF aggresors.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "F_15C",
-    "F_15E",
-    "F_14B",
-    "FA_18C_hornet",
-    "F_16C_50",
-    "A_10A",
-    "A_10C",
-    "AV8BNA",
-    "UH_1H",
-    "SH_60B",
-    "AH_64D",
-    "Ka_50",
-    "B_52H",
-    "B_1B",
-    "F_117A",
-    "Su_27"
+    "A-10A Thunderbolt II",
+    "A-10C Thunderbolt II (Suite 3)",
+    "AH-64D Apache Longbow",
+    "AV-8B Harrier II Night Attack",
+    "B-1B Lancer",
+    "B-52H Stratofortress",
+    "F-117A Nighthawk",
+    "F-14B Tomcat",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F/A-18C Hornet (Lot 20)",
+    "Ka-50 Hokum",
+    "SH-60B Seahawk",
+    "Su-27 Flanker-B",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A",
-    "E_2C"
+    "E-2C Hawkeye",
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC135MPRS",
-    "KC130",
+    "KC-130",
+    "KC-135 Stratotanker",
+    "KC-135 Stratotanker MPRS",
     "S-3B Tanker"
   ],
   "frontline_units": [
-    "MBT_M1A2_Abrams",
-    "MBT_Leopard_2A4",
-    "ATGM_Stryker",
-    "IFV_M2A2_Bradley",
-    "IFV_LAV_25",
-    "Scout_HMMWV",
-    "SAM_Avenger__Stinger"
+    "LAV-25",
+    "Leopard 2A4",
+    "M1043 HMMWV (M2 HMG)",
+    "M1097 Heavy HMMWV Avenger",
+    "M1134 Stryker ATGM (BGM-71 TOW)",
+    "M1A2 Abrams",
+    "M2A2 Bradley"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249"
+    "Infantry M249",
+    "Infantry M4"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -65,23 +67,24 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
-    "FA_18C_hornet": [
-      "NSAWC brown splinter",
+    "F/A-18C Hornet (Lot 20)": [
       "NAWDC black",
+      "NSAWC brown splinter",
       "VFC-12"
     ],
-    "F_15C": [
+    "F-15C Eagle": [
       "65th Aggressor SQN (WA) MiG",
       "65th Aggressor SQN (WA) MiG",
       "65th Aggressor SQN (WA) SUPER_Flanker"
     ],
-    "F_16C_50": [
+    "F-16CM Fighting Falcon (Block 50)": [
+      "64th_aggressor_squadron_ghost",
       "usaf 64th aggressor sqn - shark",
-      "usaf 64th aggressor sqn-splinter",
-      "64th_aggressor_squadron_ghost"
-    ], "F_14B": [
+      "usaf 64th aggressor sqn-splinter"
+    ],
+    "F-14B Tomcat": [
       "vf-74 adversary"
     ]
   }

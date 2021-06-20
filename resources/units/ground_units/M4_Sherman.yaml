@@ -1,0 +1,15 @@
+class: Tank
+description: The M4 Sherman, officially Medium Tank, M4, was the most widely used
+  medium tank by the United States and Western Allies in World War II. The M4 Sherman
+  proved to be reliable, relatively cheap to produce, and available in great numbers.
+  It was also the basis of several successful tank destroyers, such as the M10, 17pdr
+  SP Achilles and M36B1. Tens of thousands were distributed through the Lend-Lease
+  program to the British Commonwealth and Soviet Union.
+introduced: 1942
+manufacturer: Fisher
+origin: USA
+price: 12
+role: Medium Tank
+variants:
+  M4A2(75) Sherman: {}
+  Sherman III: {}

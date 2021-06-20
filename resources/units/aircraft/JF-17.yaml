@@ -1,0 +1,35 @@
+description:
+  "JF-17 is a single seat, single engine, multirole light fighter that\
+  \ was joint developed by AVIC Chengdu and Pakistan Aeronautical Complex (PAC). The\
+  \ design phase of JF-17 \"Thunder\" finished at May 31st, 2002, and the maiden flight\
+  \ was made on August 25th, 2003. The first plane delivered to PAF (Pakistan Air\
+  \ Force) in 2007. Currently several different blocks of JF-17s are in service in\
+  \ Pakistan and Myanmar air forces. There are also several countries interested in\
+  \ purchasing this fighter jet. On February 27th, 2019, \"Thunder\" has withstood\
+  \ the test of actual combat and helped PAF win an appreciable victory.\n\n\"Thunder\"\
+  \ is a type of fighter that specifically tailored for PAF. The development plan\
+  \ of her predecessor can even be traced back to 1985. At first, PAF was only looking\
+  \ for a fighter that can replace Shenyang J-6 (Chinese version of Mig-19), but they\
+  \ were not satisfied with Chengdu\u2019s J-7M. After more than 20 years of development,\
+  \ the final product \"Thunder\" becomes completely different from J-7M.\n\n\"Thunder\"\
+  \ has a bubble canopy of great view, pretty strake-wing layout and advanced avionics.\
+  \ KLJ-7 radar provides excellent air to ground capability. WMD-7 targeting pod can\
+  \ help \"Thunder\" searching for targets in combat."
+introduced: 2007
+manufacturer: PAC/CAC
+origin: Pakistan/China
+price: 24
+role: Multirole Fighter
+variants:
+  FC-1 Fierce Dragon:
+    introduced: null
+  JF-17 Thunder: {}
+radios:
+  intra_flight: R&S M3AR VHF
+  inter_flight: R&S M3AR UHF
+  channels:
+    type: common
+    # Same naming pattern as the Viper, so just reuse that.
+    namer: viper
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1

@@ -1,0 +1,16 @@
+class: Tank
+description: The Tiger I was a German heavy tank of World War II that operated beginning
+  in 1942 in Africa and in the Soviet Union, usually in independent heavy tank battalions.
+  It was designated Panzerkampfwagen VI Ausf H during development but was changed
+  to Panzerkampfwagen VI Ausf E during production. The Tiger I gave the German Army
+  its first armoured fighting vehicle that mounted the 8.8 cm KwK 36 gun (derived
+  from the 8.8 cm Flak 36). 1,347 were built between August 1942 and August 1944.
+  After August 1944, production of the Tiger I was phased out in favour of the Tiger
+  II. 1347 have been build.
+introduced: 1942
+manufacturer: Henschel
+origin: Germany
+price: 24
+role: Heavy Tank
+variants:
+  Panzerkampfwagen VI Tiger Ausf. E: {}

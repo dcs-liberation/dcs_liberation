@@ -24,7 +24,7 @@ class ZSU23Generator(AirDefenseGroupGenerator):
         )
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish,
+                AirDefence.ZSU_23_4_Shilka,
                 "SPAA#" + str(i),
                 position[0],
                 position[1],

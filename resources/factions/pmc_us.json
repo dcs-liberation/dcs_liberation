@@ -4,30 +4,29 @@
   "authors": "Khopa",
   "description": "<p>A private military company using western units.</p>",
   "aircrafts": [
-    "C_101CC",
-    "UH_1H",
-    "Mi_8MT",
-    "SA342M"
+    "C-101CC Aviojet",
+    "Mi-8MTV2 Hip",
+    "SA 342M Gazelle",
+    "UH-1H Iroquois"
   ],
   "frontline_units": [
-    "Scout_HMMWV",
-    "IFV_Warrior",
-    "IFV_LAV_25",
-    "SAM_Avenger__Stinger"
+    "FV510 Warrior",
+    "LAV-25",
+    "M1043 HMMWV (M2 HMG)",
+    "M1097 Heavy HMMWV Avenger"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "AvengerGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

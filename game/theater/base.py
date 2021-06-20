@@ -1,11 +1,10 @@
 import itertools
 import logging
-import typing
-from typing import Dict, Type
+from typing import Any
 
-from dcs.unittype import FlyingType, VehicleType, UnitType
-
-from game.db import PRICES
+from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
+from game.dcs.unittype import UnitType
 
 BASE_MAX_STRENGTH = 1
 BASE_MIN_STRENGTH = 0
@@ -13,8 +12,8 @@ BASE_MIN_STRENGTH = 0
 
 class Base:
     def __init__(self):
-        self.aircraft: Dict[Type[FlyingType], int] = {}
-        self.armor: Dict[Type[VehicleType], int] = {}
+        self.aircraft: dict[AircraftType, int] = {}
+        self.armor: dict[GroundUnitType, int] = {}
         self.strength = 1
 
     @property
@@ -29,13 +28,10 @@ class Base:
     def total_armor_value(self) -> int:
         total = 0
         for unit_type, count in self.armor.items():
-            try:
-                total += PRICES[unit_type] * count
-            except KeyError:
-                logging.exception(f"No price found for {unit_type.id}")
+            total += unit_type.price * count
         return total
 
-    def total_units_of_type(self, unit_type) -> int:
+    def total_units_of_type(self, unit_type: UnitType) -> int:
         return sum(
             [
                 c
@@ -44,43 +40,40 @@ class Base:
             ]
         )
 
-    def commission_units(self, units: typing.Dict[typing.Type[UnitType], int]):
+    def commission_units(self, units: dict[Any, int]):
         for unit_type, unit_count in units.items():
             if unit_count <= 0:
                 continue
 
-            if issubclass(unit_type, VehicleType):
-                target_dict = self.armor
-            elif issubclass(unit_type, FlyingType):
+            target_dict: dict[Any, int]
+            if isinstance(unit_type, AircraftType):
                 target_dict = self.aircraft
+            elif isinstance(unit_type, GroundUnitType):
+                target_dict = self.armor
             else:
-                logging.error(
-                    f"Unexpected unit type of {unit_type}: "
-                    f"{unit_type.__module__}.{unit_type.__name__}"
-                )
+                logging.error(f"Unexpected unit type of {unit_type}")
                 return
 
             target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
 
-    def commit_losses(self, units_lost: typing.Dict[typing.Any, int]):
-
+    def commit_losses(self, units_lost: dict[Any, int]):
         for unit_type, count in units_lost.items():
-
+            target_dict: dict[Any, int]
             if unit_type in self.aircraft:
-                target_array = self.aircraft
+                target_dict = self.aircraft
             elif unit_type in self.armor:
-                target_array = self.armor
+                target_dict = self.armor
             else:
                 print("Base didn't find event type {}".format(unit_type))
                 continue
 
-            if unit_type not in target_array:
+            if unit_type not in target_dict:
                 print("Base didn't find event type {}".format(unit_type))
                 continue
 
-            target_array[unit_type] = max(target_array[unit_type] - count, 0)
-            if target_array[unit_type] == 0:
-                del target_array[unit_type]
+            target_dict[unit_type] = max(target_dict[unit_type] - count, 0)
+            if target_dict[unit_type] == 0:
+                del target_dict[unit_type]
 
     def affect_strength(self, amount):
         self.strength += amount

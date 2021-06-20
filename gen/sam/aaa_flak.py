@@ -8,12 +8,12 @@ from gen.sam.airdefensegroupgenerator import (
 )
 
 GFLAK = [
-    AirDefence.AAA_Flak_Vierling_38_Quad_20mm,
-    AirDefence.AAA_8_8cm_Flak_18,
-    AirDefence.AAA_8_8cm_Flak_36,
-    AirDefence.AAA_8_8cm_Flak_37,
-    AirDefence.AAA_8_8cm_Flak_41,
-    AirDefence.AAA_Flak_38_20mm,
+    AirDefence.Flak38,
+    AirDefence.Flak18,
+    AirDefence.Flak36,
+    AirDefence.Flak37,
+    AirDefence.Flak41,
+    AirDefence.Flak30,
 ]
 
 
@@ -53,7 +53,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
         search_pos = self.get_circular_position(random.randint(2, 3), 80)
         for index, pos in enumerate(search_pos):
             self.add_unit(
-                AirDefence.SL_Flakscheinwerfer_37,
+                AirDefence.Flakscheinwerfer_37,
                 "SearchLight#" + str(index),
                 pos[0],
                 pos[1],
@@ -62,14 +62,14 @@ class FlakGenerator(AirDefenseGroupGenerator):
 
         # Support
         self.add_unit(
-            AirDefence.PU_Maschinensatz_33,
+            AirDefence.Maschinensatz_33,
             "MC33#",
             self.position.x - 20,
             self.position.y - 20,
             self.heading,
         )
         self.add_unit(
-            AirDefence.AAA_SP_Kdo_G_40,
+            AirDefence.KDO_Mod40,
             "KDO#",
             self.position.x - 25,
             self.position.y - 20,
@@ -78,7 +78,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
 
         # Commander
         self.add_unit(
-            Unarmed.LUV_Kubelwagen_82,
+            Unarmed.Kubelwagen_82,
             "Kubel#",
             self.position.x - 35,
             self.position.y - 20,
@@ -89,7 +89,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
         for i in range(int(max(1, grid_x / 2))):
             for j in range(int(max(1, grid_x / 2))):
                 self.add_unit(
-                    Unarmed.Truck_Opel_Blitz,
+                    Unarmed.Blitz_36_6700A,
                     "BLITZ#" + str(index),
                     self.position.x + 125 + 15 * i + random.randint(1, 5),
                     self.position.y + 15 * j + random.randint(1, 5),

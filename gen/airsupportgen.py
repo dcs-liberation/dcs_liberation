@@ -103,14 +103,13 @@ class AirSupportConflictGenerator:
         )
 
         if not self.game.settings.disable_legacy_tanker:
-
             fallback_tanker_number = 0
 
             for i, tanker_unit_type in enumerate(
                 self.game.faction_for(player=True).tankers
             ):
-                alt, airspeed = self._get_tanker_params(tanker_unit_type)
-                variant = db.unit_type_name(tanker_unit_type)
+                # TODO: Make loiter altitude a property of the unit type.
+                alt, airspeed = self._get_tanker_params(tanker_unit_type.dcs_unit_type)
                 freq = self.radio_registry.alloc_uhf()
                 tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
                 tanker_heading = (
@@ -175,7 +174,7 @@ class AirSupportConflictGenerator:
                     TankerInfo(
                         str(tanker_group.name),
                         callsign,
-                        variant,
+                        tanker_unit_type.name,
                         freq,
                         tacan,
                         blue=True,

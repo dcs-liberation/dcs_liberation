@@ -3,39 +3,40 @@
   "name": "Germany 1990",
   "authors": "Khopa",
   "description": "<p>1990s reunited Germany.</p>",
-  "locales": ["de_DE"],
+  "locales": [
+    "de_DE"
+  ],
   "aircrafts": [
-    "MiG_29G",
-    "Tornado_IDS",
-    "F_4E",
-    "UH_1H",
-    "SA342M",
-    "SA342L"
+    "F-4F Phantom II",
+    "MiG-29G Fulcrum-A",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "Tornado IDS",
+    "UH-1D Iroquois"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "APC_TPz_Fuchs",
-    "MBT_Leopard_1A3",
-    "MBT_Leopard_2A4",
-    "IFV_Marder",
-    "SPAAA_Gepard"
+    "Flakpanzer Gepard",
+    "Leopard 1A3",
+    "Leopard 2A4",
+    "Marder 1A3",
+    "TPz Fuchs"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "Mortar_2B11_120mm",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "GepardGenerator",
@@ -46,25 +47,21 @@
   "ewrs": [
     "PatriotEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry"
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator",
     "LaCombattanteIIGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

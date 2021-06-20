@@ -8,6 +8,7 @@ from dcs.helicopters import (
     CH_47D,
     CH_53E,
     Ka_50,
+    Mi_24P,
     Mi_24V,
     Mi_26,
     Mi_28N,
@@ -104,6 +105,7 @@ from dcs.planes import (
 )
 from dcs.unittype import FlyingType
 
+from game.dcs.aircrafttype import AircraftType
 from gen.flights.flight import FlightType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
@@ -208,6 +210,7 @@ CAS_CAPABLE = [
     SA342L,
     Ka_50,
     Mi_28N,
+    Mi_24P,
     Mi_24V,
     Mi_8MT,
     UH_1H,
@@ -415,7 +418,7 @@ REFUELING_CAPABALE = [
 ]
 
 
-def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+def dcs_types_for_task(task: FlightType) -> list[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE
@@ -450,7 +453,15 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return []
 
 
-def tasks_for_aircraft(aircraft: Type[FlyingType]) -> list[FlightType]:
+def aircraft_for_task(task: FlightType) -> list[AircraftType]:
+    dcs_types = dcs_types_for_task(task)
+    types: list[AircraftType] = []
+    for dcs_type in dcs_types:
+        types.extend(AircraftType.for_dcs_type(dcs_type))
+    return types
+
+
+def tasks_for_aircraft(aircraft: AircraftType) -> list[FlightType]:
     tasks = []
     for task in FlightType:
         if aircraft in aircraft_for_task(task):

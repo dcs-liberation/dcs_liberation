@@ -1,0 +1,13 @@
+class: Tank
+description: The Tank, Infantry, Mk IV (A22) Churchill was a British heavy infantry
+  tank used in the Second World War, best known for its heavy armour, large longitudinal
+  chassis with all-around tracks with multiple bogies, its ability to climb steep
+  slopes, and its use as the basis of many specialist vehicles. It was one of the
+  heaviest Allied tanks of the war.
+introduced: 1944
+manufacturer: Vauxhall Motors
+origin: UK
+price: 16
+role: Infantry Tank
+variants:
+  A22 Infantry Tank MK IV Churchill VII: {}

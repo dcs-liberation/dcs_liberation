@@ -1,0 +1,20 @@
+description: "The Mikoyan-Gurevich MiG-23 (Russian: \u041C\u0438\u043A\u043E\u044F\
+  \u043D \u0438 \u0413\u0443\u0440\u0435\u0432\u0438\u0447 \u041C\u0438\u0413-23;\
+  \ NATO reporting name: Flogger) is a variable-geometry fighter aircraft, designed\
+  \ by the Mikoyan-Gurevich design bureau in the Soviet Union. It is a third-generation\
+  \ jet fighter, the world's most-produced variable-geometry aircraft, along with\
+  \ similar Soviet aircraft such as the Su-17 'Fitter'. It was the first Soviet fighter\
+  \ to field a look-down/shoot-down radar, the RP-23 Sapfir, and one of the first\
+  \ to be armed with beyond-visual-range missiles. Production started in 1969 and\
+  \ reached large numbers with over 5,000 aircraft built, making it the most produced\
+  \ variable-sweep wing aircraft in history. Today the MiG-23 remains in limited service\
+  \ with some export customers."
+introduced: 1982
+manufacturer: Mikoyan-Gurevich
+origin: USSR/Russia
+price: 12
+role: Fighter
+variants:
+  MiG-23ML Flogger-G:
+    introduced: 1981
+  MiG-23MLD Flogger-K: {}

@@ -1,0 +1,25 @@
+class: Tank
+description: "The M60 reached operational capability with fielding to US Army units\
+  \ in Europe beginning in December 1960. The first combat usage of the M60 was with\
+  \ Israel during the 1973 Yom Kippur War where it saw service under the \"Magach\
+  \ 6\" designation, performing well in combat against comparable tanks such as the\
+  \ T-62. In 1982 the Israelis once again used the M60 during the 1982 Lebanon War,\
+  \ equipped with upgrades such as explosive reactive armor to defend against guided\
+  \ missiles that proved very effective at destroying tanks. The M60 also saw use\
+  \ in 1983 with Operation Urgent Fury, supporting US Marines in an amphibious assault\
+  \ into Grenada. M60s delivered to Iran also served in the Iran\u2013Iraq War. The\
+  \ United States' largest deployment of M60s was in the 1991 Gulf War, where the\
+  \ US Marines equipped with M60A1s effectively defeated Iraqi armored forces, including\
+  \ T-72 tanks. The United States readily retired the M60 from front-line combat after\
+  \ Operation Desert Storm, with the last tanks being retired from National Guard\
+  \ service in 1997.[16] M60-series vehicles continue in front-line service with a\
+  \ number of countries' militaries, though most of these have been highly modified\
+  \ and had their firepower, mobility and protection upgraded to increase their combat\
+  \ effectiveness on the modern battlefield."
+introduced: 1960
+manufacturer: General Dynamics
+origin: USA
+price: 16
+role: Main Battle Tank
+variants:
+  M60A3 "Patton": {}

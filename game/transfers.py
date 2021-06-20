@@ -12,14 +12,14 @@ from typing import (
     List,
     Optional,
     TYPE_CHECKING,
-    Type,
     TypeVar,
     Sequence,
 )
 
 from dcs.mapping import Point
-from dcs.unittype import FlyingType, VehicleType
 
+from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
 from game.procurement import AircraftProcurementRequest
 from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
@@ -29,7 +29,7 @@ from game.theater.transitnetwork import (
 )
 from game.utils import meters, nautical_miles
 from gen.ato import Package
-from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE
+from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE, aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import Flight, FlightType
 from gen.flights.flightplan import FlightPlanBuilder
@@ -72,7 +72,7 @@ class TransferOrder:
     player: bool = field(init=False)
 
     #: The units being transferred.
-    units: Dict[Type[VehicleType], int]
+    units: Dict[GroundUnitType, int]
 
     transport: Optional[Transport] = field(default=None)
 
@@ -89,7 +89,7 @@ class TransferOrder:
     def kill_all(self) -> None:
         self.units.clear()
 
-    def kill_unit(self, unit_type: Type[VehicleType]) -> None:
+    def kill_unit(self, unit_type: GroundUnitType) -> None:
         if unit_type not in self.units or not self.units[unit_type]:
             raise KeyError(f"{self.destination} has no {unit_type} remaining")
         self.units[unit_type] -= 1
@@ -98,7 +98,7 @@ class TransferOrder:
     def size(self) -> int:
         return sum(c for c in self.units.values())
 
-    def iter_units(self) -> Iterator[Type[VehicleType]]:
+    def iter_units(self) -> Iterator[GroundUnitType]:
         for unit_type, count in self.units.items():
             for _ in range(count):
                 yield unit_type
@@ -156,7 +156,7 @@ class Airlift(Transport):
         self.flight = flight
 
     @property
-    def units(self) -> Dict[Type[VehicleType], int]:
+    def units(self) -> Dict[GroundUnitType, int]:
         return self.transfer.units
 
     @property
@@ -191,9 +191,9 @@ class AirliftPlanner:
         self.package = Package(target=next_stop, auto_asap=True)
 
     def compatible_with_mission(
-        self, unit_type: Type[FlyingType], airfield: ControlPoint
+        self, unit_type: AircraftType, airfield: ControlPoint
     ) -> bool:
-        if not unit_type in TRANSPORT_CAPABLE:
+        if unit_type not in aircraft_for_task(FlightType.TRANSPORT):
             return False
         if not self.transfer.origin.can_operate(unit_type):
             return False
@@ -201,7 +201,7 @@ class AirliftPlanner:
             return False
 
         # Cargo planes have no maximum range.
-        if not unit_type.helicopter:
+        if not unit_type.dcs_unit_type.helicopter:
             return True
 
         # A helicopter that is transport capable and able to operate at both bases. Need
@@ -227,36 +227,42 @@ class AirliftPlanner:
         distance_cache = ObjectiveDistanceCache.get_closest_airfields(
             self.transfer.position
         )
+        air_wing = self.game.air_wing_for(self.for_player)
         for cp in distance_cache.closest_airfields:
             if cp.captured != self.for_player:
                 continue
 
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
-                squadrons = [
-                    s
-                    for s in self.game.air_wing_for(self.for_player).squadrons_for(
-                        unit_type
-                    )
-                    if FlightType.TRANSPORT in s.auto_assignable_mission_types
-                ]
-                if not squadrons:
-                    continue
-                squadron = squadrons[0]
-                if self.compatible_with_mission(unit_type, cp):
-                    while available and self.transfer.transport is None:
-                        flight_size = self.create_airlift_flight(squadron, inventory)
-                        available -= flight_size
+                squadrons = air_wing.auto_assignable_for_task_with_type(
+                    unit_type, FlightType.TRANSPORT
+                )
+                for squadron in squadrons:
+                    if self.compatible_with_mission(unit_type, cp):
+                        while (
+                            available
+                            and squadron.has_available_pilots
+                            and self.transfer.transport is None
+                        ):
+                            flight_size = self.create_airlift_flight(
+                                squadron, inventory
+                            )
+                            available -= flight_size
         if self.package.flights:
             self.game.ato_for(self.for_player).add_package(self.package)
 
     def create_airlift_flight(
         self, squadron: Squadron, inventory: ControlPointAircraftInventory
     ) -> int:
-        available = inventory.available(squadron.aircraft)
-        capacity_each = 1 if squadron.aircraft.helicopter else 2
+        available_aircraft = inventory.available(squadron.aircraft)
+        capacity_each = 1 if squadron.aircraft.dcs_unit_type.helicopter else 2
         required = math.ceil(self.transfer.size / capacity_each)
-        flight_size = min(required, available, squadron.aircraft.group_size_max)
+        flight_size = min(
+            required,
+            available_aircraft,
+            squadron.aircraft.dcs_unit_type.group_size_max,
+            squadron.number_of_available_pilots,
+        )
         capacity = flight_size * capacity_each
 
         if capacity < self.transfer.size:
@@ -308,7 +314,7 @@ class MultiGroupTransport(MissionTarget, Transport):
         transfer.transport = None
         self.transfers.remove(transfer)
 
-    def kill_unit(self, unit_type: Type[VehicleType]) -> None:
+    def kill_unit(self, unit_type: GroundUnitType) -> None:
         for transfer in self.transfers:
             try:
                 transfer.kill_unit(unit_type)
@@ -331,12 +337,17 @@ class MultiGroupTransport(MissionTarget, Transport):
         return sum(sum(t.units.values()) for t in self.transfers)
 
     @property
-    def units(self) -> Dict[Type[VehicleType], int]:
-        units: Dict[Type[VehicleType], int] = defaultdict(int)
+    def units(self) -> dict[GroundUnitType, int]:
+        units: Dict[GroundUnitType, int] = defaultdict(int)
         for transfer in self.transfers:
             for unit_type, count in transfer.units.items():
                 units[unit_type] += count
         return units
+
+    def iter_units(self) -> Iterator[GroundUnitType]:
+        for unit_type, count in self.units.items():
+            for _ in range(count):
+                yield unit_type
 
     @property
     def player_owned(self) -> bool:

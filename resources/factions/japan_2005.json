@@ -3,41 +3,43 @@
   "name": "Japan 2005",
   "authors": "Khopa",
   "description": "<p>Japanese self defense force, F-15C standing as F-15J, and F-16 as Mitsubishi F-2.</p><p>Ground units were also chosen to fit the existing vehicles of the japanese forces</p>",
-  "locales": ["ja_JP"],
+  "locales": [
+    "ja_JP"
+  ],
   "aircrafts": [
-    "F_15C",
-    "F_16C_50",
-    "F_4E",
-    "AH_1W",
-    "AH_64D"
+    "AH-1W SuperCobra",
+    "AH-64D Apache Longbow",
+    "F-15J Eagle",
+    "F-2A",
+    "F-4EJ Kai Phantom II"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Merkava_IV",
-    "MBT_M1A2_Abrams",
-    "IFV_Marder",
-    "APC_TPz_Fuchs",
-    "IFV_LAV_25",
-    "Scout_HMMWV",
-    "SPAAA_Gepard"
+    "Flakpanzer Gepard",
+    "LAV-25",
+    "M1043 HMMWV (M2 HMG)",
+    "M1A2 Abrams",
+    "Marder 1A3",
+    "Merkava Mk IV",
+    "TPz Fuchs"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm",
-    "MLRS_M270_227mm",
-    "MANPADS_Stinger"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System",
+    "MANPADS Stinger"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249"
+    "Infantry M249",
+    "Infantry M4"
   ],
   "air_defenses": [
     "GepardGenerator",
@@ -47,21 +49,18 @@
   "ewrs": [
     "PatriotEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
+  "aircraft_carrier": [],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
-  "requirements": {
-  },
-  "carrier_names": [
-  ],
+  "requirements": {},
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "Hyuga",
     "Ise"
@@ -70,5 +69,5 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

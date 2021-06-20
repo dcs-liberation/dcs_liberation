@@ -509,12 +509,78 @@ class QSettingsWindow(QDialog):
 
         old_tanker.setToolTip(old_tanker_info)
         old_tanker_label = QLabel(
-            "Spawn invulnerable, always-available Tanker aircraft (deprecated)."
+            "Spawn invulnerable, always-available Tanker aircraft (deprecated)"
         )
         old_tanker_label.setToolTip(old_tanker_info)
 
         general_layout.addWidget(old_tanker_label, 2, 0)
         general_layout.addWidget(old_tanker, 2, 1, Qt.AlignRight)
+
+        def set_squadron_pilot_limit(value: int) -> None:
+            self.game.settings.squadron_pilot_limit = value
+
+        pilot_limit = QSpinBox()
+        pilot_limit.setMinimum(12)
+        pilot_limit.setMaximum(72)
+        pilot_limit.setValue(self.game.settings.squadron_pilot_limit)
+        pilot_limit.valueChanged.connect(set_squadron_pilot_limit)
+
+        pilot_limit_info = (
+            "Sets the maximum number of pilots a squadron may have active. "
+            "Changing this value will not have an immediate effect, but will alter "
+            "replenishment for future turns."
+        )
+
+        pilot_limit.setToolTip(pilot_limit_info)
+        pilot_limit_label = QLabel("Maximum number of pilots per squadron")
+        pilot_limit_label.setToolTip(pilot_limit_info)
+
+        general_layout.addWidget(pilot_limit_label, 3, 0)
+        general_layout.addWidget(pilot_limit, 3, 1, Qt.AlignRight)
+
+        def set_squadron_replenishment_rate(value: int) -> None:
+            self.game.settings.squadron_replenishment_rate = value
+
+        squadron_replenishment_rate = QSpinBox()
+        squadron_replenishment_rate.setMinimum(1)
+        squadron_replenishment_rate.setMaximum(20)
+        squadron_replenishment_rate.setValue(
+            self.game.settings.squadron_replenishment_rate
+        )
+        squadron_replenishment_rate.valueChanged.connect(
+            set_squadron_replenishment_rate
+        )
+
+        squadron_replenishment_rate_info = (
+            "Sets the maximum number of pilots that will be recruited to each squadron "
+            "at the end of each turn. Squadrons will not recruit new pilots beyond the "
+            "pilot limit, but each squadron with room for more pilots will recruit "
+            "this many pilots each turn up to the limit."
+        )
+
+        squadron_replenishment_rate.setToolTip(squadron_replenishment_rate_info)
+        squadron_replenishment_rate_label = QLabel("Squadron pilot replenishment rate")
+        squadron_replenishment_rate_label.setToolTip(squadron_replenishment_rate_info)
+
+        general_layout.addWidget(squadron_replenishment_rate_label, 4, 0)
+        general_layout.addWidget(squadron_replenishment_rate, 4, 1, Qt.AlignRight)
+
+        ai_pilot_levelling = QCheckBox()
+        ai_pilot_levelling.setChecked(self.game.settings.ai_pilot_levelling)
+        ai_pilot_levelling.toggled.connect(self.applySettings)
+
+        ai_pilot_levelling_info = (
+            "Set whether or not AI pilots will level up after completing a number of"
+            " sorties. Since pilot level affects the AI skill, you may wish to disable"
+            " this, lest you face an Ace!"
+        )
+
+        ai_pilot_levelling.setToolTip(ai_pilot_levelling_info)
+        ai_pilot_levelling_label = QLabel("Allow AI pilot levelling")
+        ai_pilot_levelling_label.setToolTip(ai_pilot_levelling_info)
+
+        general_layout.addWidget(ai_pilot_levelling_label, 5, 0)
+        general_layout.addWidget(ai_pilot_levelling, 5, 1, Qt.AlignRight)
 
         campaign_layout.addWidget(HqAutomationSettingsBox(self.game))
 

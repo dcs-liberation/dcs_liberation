@@ -1,8 +1,11 @@
 import random
 
-from dcs.vehicles import Armor
+from dcs.unitgroup import VehicleGroup
 
-from game import db
+from game import db, Game
+from game.data.groundunitclass import GroundUnitClass
+from game.dcs.groundunittype import GroundUnitType
+from game.theater.theatergroundobject import VehicleGroupGroundObject
 from gen.defenses.armored_group_generator import (
     ArmoredGroupGenerator,
     FixedSizeArmorGroupGenerator,
@@ -14,8 +17,14 @@ def generate_armor_group(faction: str, game, ground_object):
     This generate a group of ground units
     :return: Generated group
     """
+    armor_types = (
+        GroundUnitClass.Apc,
+        GroundUnitClass.Atgm,
+        GroundUnitClass.Ifv,
+        GroundUnitClass.Tank,
+    )
     possible_unit = [
-        u for u in db.FACTIONS[faction].frontline_units if u in Armor.__dict__.values()
+        u for u in db.FACTIONS[faction].frontline_units if u.unit_class in armor_types
     ]
     if len(possible_unit) > 0:
         unit_type = random.choice(possible_unit)
@@ -23,7 +32,9 @@ def generate_armor_group(faction: str, game, ground_object):
     return None
 
 
-def generate_armor_group_of_type(game, ground_object, unit_type):
+def generate_armor_group_of_type(
+    game: Game, ground_object: VehicleGroupGroundObject, unit_type: GroundUnitType
+) -> VehicleGroup:
     """
     This generate a group of ground units of given type
     :return: Generated group
@@ -33,7 +44,12 @@ def generate_armor_group_of_type(game, ground_object, unit_type):
     return generator.get_generated_group()
 
 
-def generate_armor_group_of_type_and_size(game, ground_object, unit_type, size: int):
+def generate_armor_group_of_type_and_size(
+    game: Game,
+    ground_object: VehicleGroupGroundObject,
+    unit_type: GroundUnitType,
+    size: int,
+) -> VehicleGroup:
     """
     This generate a group of ground units of given type and size
     :return: Generated group

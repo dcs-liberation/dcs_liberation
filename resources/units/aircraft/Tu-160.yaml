@@ -1,0 +1,16 @@
+description: "The Tupolev Tu-160 (Russian: \u0422\u0443\u043F\u043E\u043B\u0435\u0432\
+  \ \u0422\u0443-160 \u0411\u0435\u043B\u044B\u0439 \u043B\u0435\u0431\u0435\u0434\
+  \u044C, romanized: Belyj Lebe\u010F, lit.\u2009'White Swan'; NATO reporting name:\
+  \ Blackjack) is a supersonic, variable-sweep wing heavy strategic bomber designed\
+  \ by the Tupolev Design Bureau in the Soviet Union in the 1970s. It is the largest\
+  \ and heaviest Mach 2+ supersonic military aircraft ever built and next to the experimental\
+  \ XB-70 Valkyrie in overall length. As of 2021, it is the largest and heaviest combat\
+  \ aircraft, the fastest bomber in use and the largest and heaviest variable-sweep\
+  \ wing airplane ever flown."
+introduced: 1987
+manufacturer: Tupolev
+origin: USSR/Russia
+price: 45
+role: Supersonic Strategic Bomber
+variants:
+  Tu-160 Blackjack: {}
