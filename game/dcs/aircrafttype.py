@@ -95,6 +95,7 @@ class AircraftType(UnitType[FlyingType]):
     carrier_capable: bool
     lha_capable: bool
     always_keeps_gun: bool
+    max_group_size: int
     intra_flight_radio: Optional[Radio]
     channel_allocator: Optional[RadioChannelAllocator]
     channel_namer: Type[ChannelNamer]
@@ -141,6 +142,12 @@ class AircraftType(UnitType[FlyingType]):
 
     def channel_name(self, radio_id: int, channel_id: int) -> str:
         return self.channel_namer.channel_name(radio_id, channel_id)
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        # Update any existing models with new data on load.
+        updated = AircraftType.named(state["name"])
+        state.update(updated.__dict__)
+        self.__dict__.update(state)
 
     @classmethod
     def register(cls, aircraft_type: AircraftType) -> None:
@@ -206,6 +213,7 @@ class AircraftType(UnitType[FlyingType]):
                 carrier_capable=data.get("carrier_capable", False),
                 lha_capable=data.get("lha_capable", False),
                 always_keeps_gun=data.get("always_keeps_gun", False),
+                max_group_size=data.get("max_group_size", aircraft.group_size_max),
                 intra_flight_radio=radio_config.intra_flight,
                 channel_allocator=radio_config.channel_allocator,
                 channel_namer=radio_config.channel_namer,
