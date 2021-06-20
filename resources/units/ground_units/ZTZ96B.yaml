@@ -1,0 +1,12 @@
+class: Tank
+description: The Type 96 or ZTZ96 is a Chinese second generation main battle tank
+  (MBT). The final evolution of the Type 88 design, the Type 96 entered service with
+  the People's Liberation Army (PLA) in 1997. The later variants of the Type 96 are
+  regarded as near-equivalents to China's third generation MBT.
+introduced: 1979
+manufacturer: First Inner Mongolia Machinery Factory
+origin: China
+price: 30
+role: Main Battle Tank
+variants:
+  Type 96B (ZTZ-96B): {}

@@ -12,6 +12,7 @@ from dcs.helicopters import helicopter_map
 from dcs.planes import plane_map
 from dcs.unittype import FlyingType
 
+from game.dcs.unittype import UnitType
 from game.radio.channels import (
     ChannelNamer,
     RadioChannelAllocator,
@@ -90,15 +91,7 @@ class RadioConfig:
 
 
 @dataclass(frozen=True)
-class AircraftType:
-    dcs_unit_type: Type[FlyingType]
-    name: str
-    description: str
-    year_introduced: str
-    country_of_origin: str
-    manufacturer: str
-    role: str
-    price: int
+class AircraftType(UnitType[FlyingType]):
     carrier_capable: bool
     lha_capable: bool
     always_keeps_gun: bool

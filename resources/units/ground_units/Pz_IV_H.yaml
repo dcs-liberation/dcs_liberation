@@ -1,0 +1,13 @@
+class: Tank
+description: 'The Panzerkampfwagen IV (Pz.Kpfw. IV), commonly known as the Panzer
+  IV, was a German medium tank developed in the late 1930s and used extensively during
+  the Second World War. Its ordnance inventory designation was Sd.Kfz. 161. The Panzer
+  IV was the most numerous German tank and the second-most numerous German armored
+  fighting vehicle of the Second World War, with some 8,500 built. '
+introduced: 1943
+manufacturer: Krupp-Gruson/Vomag/Nibelungenwerke
+origin: Germany
+price: 16
+role: Medium Tank
+variants:
+  Panzerkampfwagen IV Ausf. H: {}

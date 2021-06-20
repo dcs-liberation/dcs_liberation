@@ -1,0 +1,13 @@
+class: Tank
+description: 'The Cromwell tank, officially Tank, Cruiser, Mk VIII, Cromwell (A27M),
+  was one of the series of cruiser tanks fielded by Britain in the Second World War.
+  Named after the English Civil War leader Oliver Cromwell, the Cromwell was the first
+  tank put into service by the British to combine high speed from a powerful and reliable
+  engine (the Rolls-Royce Meteor), and reasonable armour. '
+introduced: 1944
+manufacturer: Birmingham Railway Carriage and Wagon Company
+origin: UK
+price: 12
+role: Cruiser Tank
+variants:
+  A27M Cruiser Tank MK VIII Cromwell IV: {}

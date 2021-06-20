@@ -14,6 +14,7 @@ from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
+from ..dcs.groundunittype import GroundUnitType
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -439,7 +440,7 @@ class Event:
 
         # Also transfer pending deliveries.
         for unit_type, count in source.pending_unit_deliveries.units.items():
-            if not issubclass(unit_type, VehicleType):
+            if not isinstance(unit_type, GroundUnitType):
                 continue
             if count <= 0:
                 # Don't transfer *sales*...

@@ -5,24 +5,24 @@
   "description": "<p>Insurgents faction using the modded insurgents units from the frenchpack mods.</p>",
   "aircrafts": [],
   "frontline_units": [
-    "DIM__TOYOTA_BLUE",
-    "DIM__TOYOTA_DESERT",
-    "DIM__TOYOTA_GREEN",
-    "DIM__KAMIKAZE",
-    "SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375"
+    "DIM' KAMIKAZE",
+    "DIM' TOYOTA BLUE",
+    "DIM' TOYOTA DESERT",
+    "DIM' TOYOTA GREEN",
+    "ZU-23 on Ural-375"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Insurgent_AK_74",
-    "Infantry_RPG",
-    "MANPADS_SA_18_Igla_Grouse"
+    "Infantry RPG",
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla \"Grouse\""
   ],
   "air_defenses": [
     "SA9Generator",

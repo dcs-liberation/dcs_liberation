@@ -597,7 +597,8 @@ class EwrGroundObject(TheaterGroundObject):
     @property
     def group_name(self) -> str:
         # Prefix the group names with the side color so Skynet can find them.
-        return f"{self.faction_color}|{super().group_name}"
+        # Use Group Id and uppercase EWR
+        return f"{self.faction_color}|EWR|{self.group_id}"
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType

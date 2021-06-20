@@ -1,0 +1,11 @@
+class: Artillery
+description: "The BM-27 Uragan (Russian: \u0423\u0440\u0430\u0433\u0430\u043D, lit.\u2009\
+  'Hurricane'; GRAU index 9P140) is a self-propelled multiple rocket launcher system\
+  \ designed in the Soviet Union."
+introduced: 1975
+manufacturer: Splav
+origin: USSR/Russia
+price: 50
+role: Multiple-Launch Rocket System
+variants:
+  BM-27 Uragan: {}

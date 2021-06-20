@@ -1,0 +1,14 @@
+class: APC
+description: "The BTR-D is a Soviet airborne multi-purpose tracked armoured personnel\
+  \ carrier which was introduced in 1974 and first seen by the West in 1979 during\
+  \ the Soviet\u2013Afghan War. BTR-D stands for Bronetransportyor Desanta (\u0411\
+  \u0422\u0420-\u0414, \u0411\u0440\u043E\u043D\u0435\u0442\u0440\u0430\u043D\u0441\
+  \u043F\u043E\u0440\u0442\u0435\u0440 \u0414\u0435\u0441\u0430\u043D\u0442\u0430\
+  , literally \"armoured transporter of the Airborne\")"
+introduced: 1974
+manufacturer: Volgograd
+origin: USSR/Russia
+price: 6
+role: Airborne Amphibious Armoured Personnel Carrier
+variants:
+  BTR-D: {}

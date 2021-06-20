@@ -12,7 +12,7 @@ description: "The Mikoyan MiG-31 (Russian: \u041C\u0438\u043A\u043E\u044F\u043D 
 introduced: 1981
 manufacturer: Mikoyan
 origin: USSR/Russia
-price: 30
+price: 24
 role: Interceptor
 variants:
   MiG-31 Foxhound: {}

@@ -1,0 +1,13 @@
+class: IFV
+description: "The BMP-2 (Boyevaya Mashina Pekhoty, Russian: \u0411\u043E\u0435\u0432\
+  \u0430\u044F \u041C\u0430\u0448\u0438\u043D\u0430 \u041F\u0435\u0445\u043E\u0442\
+  \u044B, literally \"infantry combat vehicle\") is a second-generation, amphibious\
+  \ infantry fighting vehicle introduced in the 1980s in the Soviet Union, following\
+  \ on from the BMP-1 of the 1960s."
+introduced: 1980
+manufacturer: Kurganmashzavod
+origin: USSR/Russia
+price: 16
+role: Amphibious Infantry Fighting Vehicle
+variants:
+  BMP-2: {}

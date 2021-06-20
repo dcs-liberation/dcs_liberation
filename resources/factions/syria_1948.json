@@ -8,19 +8,19 @@
     "Spitfire LF Mk IX (Clipped Wings)"
   ],
   "frontline_units": [
-    "IFV_Sd_Kfz_234_2_Puma",
-    "APC_Sd_Kfz_251_Halftrack",
-    "Tk_PzIV_H",
-    "Tk_M4_Sherman",
-    "AAA_Bofors_40mm"
+    "Bofors 40 mm Gun",
+    "M4A2(75) Sherman",
+    "Panzerkampfwagen IV Ausf. H",
+    "Sd.Kfz.234/2 Puma",
+    "Sd.Kfz.251 \"Hanomag\""
   ],
   "artillery_units": [],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Infantry_SMLE_No_4_Mk_1"
+    "Infantry SMLE No.4 Mk-1"
   ],
   "air_defenses": [
     "FlakGenerator"

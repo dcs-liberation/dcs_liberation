@@ -1,0 +1,13 @@
+class: SHORADS
+description: "The 9K35 Strela-10 (Russian: 9\u041A35 \xAB\u0421\u0442\u0440\u0435\u043B\
+  \u0430-10\xBB; English: arrow) is a highly mobile, short-range surface-to-air missile\
+  \ system. It is visually aimed, and utilizes optical/infrared-guidance. The system\
+  \ is primarily intended to engage low-altitude threats, such as helicopters. \"\
+  9K35\" is its GRAU designation; its NATO reporting name is SA-13 \"Gopher\"."
+introduced: 1981
+manufacturer: Ulyanovsk
+origin: USSR/Russia
+price: 16
+role: Self-Propelled Surface-to-Air Missile Launcher
+variants:
+  SA-13 Gopher (9K35 Strela-10M3): {}

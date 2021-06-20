@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import itertools
-from typing import Dict, TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 from dcs import Mission
 from dcs.mapping import Point
 from dcs.point import PointAction
 from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
-from dcs.unittype import VehicleType
 
+from game.dcs.groundunittype import GroundUnitType
 from game.transfers import Convoy
 from game.unitmap import UnitMap
 from game.utils import kph
@@ -50,7 +50,7 @@ class ConvoyGenerator:
         self,
         name: str,
         position: Point,
-        units: Dict[Type[VehicleType], int],
+        units: dict[GroundUnitType, int],
         for_player: bool,
     ) -> VehicleGroup:
         country = self.mission.country(
@@ -63,7 +63,7 @@ class ConvoyGenerator:
         group = self.mission.vehicle_group(
             country,
             name,
-            main_unit_type,
+            main_unit_type.dcs_unit_type,
             position=position,
             group_size=main_unit_count,
             move_formation=PointAction.OnRoad,
@@ -76,7 +76,7 @@ class ConvoyGenerator:
         for unit_type, count in unit_types[1:]:
             for i in range(count):
                 v = self.mission.vehicle(
-                    f"{name} Unit #{next(unit_name_counter)}", unit_type
+                    f"{name} Unit #{next(unit_name_counter)}", unit_type.dcs_unit_type
                 )
                 v.position.x = position.x
                 v.position.y = next(y)

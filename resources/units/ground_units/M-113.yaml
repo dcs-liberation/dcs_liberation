@@ -1,0 +1,17 @@
+class: APC
+description: The M113 is a fully tracked armored personnel carrier (APC) that was
+  developed and produced by the Food Machinery and Chemical Corporation (FMC). The
+  M113 was sent to United States Army Europe to replace the mechanized infantry's
+  M59 APCs from 1961. The M113 was first used in combat in April 1962 after the United
+  States provided the South Vietnamese Army (ARVN) with heavy weaponry such as the
+  M113, under the Military Assistance Command, Vietnam (MACV) program. Eventually,
+  the M113 was the most widely used armored vehicle of the U.S. Army in the Vietnam
+  War and was used to break through heavy thickets in the midst of the jungle to attack
+  and overrun enemy positions. About 80.000 have been build.
+introduced: 1960
+manufacturer: Food Machinery Corp
+origin: USA
+price: 6
+role: Armoured Personnel Carrier
+variants:
+  M113: {}

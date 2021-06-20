@@ -1,0 +1,10 @@
+class: APC
+description: 'The M2 half-track car is an armored half-track produced by the United
+  States during World War II. '
+introduced: 1940
+manufacturer: White Motor Company
+origin: USA
+price: 4
+role: Armoured Personnel Carrier
+variants:
+  M2A1 Half-Track: {}

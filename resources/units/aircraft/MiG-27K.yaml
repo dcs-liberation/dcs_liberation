@@ -11,7 +11,7 @@ description: "The Mikoyan MiG-27 (Russian: \u041C\u0438\u043A\u043E\u044F\u043D 
 introduced: 1975
 manufacturer: Mikoyan
 origin: USSR/Russia
-price: 20
+price: 15
 role: Attack
 variants:
   MiG-27K Flogger-J2: {}

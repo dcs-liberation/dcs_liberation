@@ -1,0 +1,12 @@
+class: Artillery
+description: "The 2S19 \"Msta-S\" (Russian: \u041C\u0441\u0442\u0430, after the Msta\
+  \ River) is a 152.4 mm self-propelled howitzer designed by Soviet Union, which entered\
+  \ service in 1989 as the successor to the 2S3 Akatsiya. The vehicle is based on\
+  \ the T-80 tank hull, but is powered by the T-72's diesel engine."
+introduced: 1989
+manufacturer: Uraltransmash
+origin: USSR/Russia
+price: 30
+role: Self-Propelled Gun
+variants:
+  2S19 Msta-S: {}

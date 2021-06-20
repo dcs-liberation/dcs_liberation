@@ -21,7 +21,7 @@ class ZSU57Generator(AirDefenseGroupGenerator):
         )
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SPAAA_ZSU_57_2,
+                AirDefence.ZSU_57_2,
                 "SPAA#" + str(i),
                 position[0],
                 position[1],

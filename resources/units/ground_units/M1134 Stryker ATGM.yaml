@@ -1,0 +1,10 @@
+class: ATGM
+description: The ICV (Infantry Carrier Vehicle) Stryker is a family of eight-wheeled
+  armored fighting vehicles derived from the Canadian LAV III.
+introduced: 2002
+manufacturer: General Dynamics
+origin: USA
+price: 12
+role: Armoured Car
+variants:
+  M1134 Stryker ATGM (BGM-71 TOW): {}

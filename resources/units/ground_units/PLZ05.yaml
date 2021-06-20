@@ -1,0 +1,13 @@
+class: Artillery
+description: The PLZ-05 or the Type 05 is a 155 mm self-propelled howitzer developed
+  by the People's Liberation Army of China to replace the Type 59-1 130mm. The PLZ-05
+  was officially unveiled at the Military Museum of the Chinese People's Revolution
+  to mark the 80th anniversary of the PLA in July 2007, and first entered service
+  with the PLA in 2008.
+introduced: 1999
+manufacturer: Norinco
+origin: China
+price: 25
+role: Self propelled artillery
+variants:
+  PLZ-05: {}

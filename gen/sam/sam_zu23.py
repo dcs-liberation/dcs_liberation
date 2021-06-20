@@ -27,7 +27,7 @@ class ZU23Generator(AirDefenseGroupGenerator):
             for j in range(grid_y):
                 index = index + 1
                 self.add_unit(
-                    AirDefence.AAA_ZU_23_Closed_Emplacement,
+                    AirDefence.ZU_23_Emplacement_Closed,
                     "AAA#" + str(index),
                     self.position.x + spacing * i,
                     self.position.y + spacing * j,

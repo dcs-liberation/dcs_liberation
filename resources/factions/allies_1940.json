@@ -9,21 +9,21 @@
     "Spitfire LF Mk IX (Clipped Wings)"
   ],
   "frontline_units": [
-    "APC_M2A1_Halftrack",
-    "HIT_Churchill_VII",
-    "Car_Daimler_Armored",
-    "LT_Mk_VII_Tetrarch",
-    "AAA_QF_3_7",
-    "AAA_Bofors_40mm"
+    "A17 Light Tank Mk VII Tetrarch",
+    "A22 Infantry Tank MK IV Churchill VII",
+    "Daimler Armoured Car Mk I",
+    "M2A1 Half-Track",
+    "QF 3.7-inch AA Gun",
+    "QF 40 mm Mark III"
   ],
   "artillery_units": [],
   "logistics_units": [
-    "Truck_Bedford",
-    "Truck_GMC_Jimmy_6x6_Truck"
+    "Truck Bedford",
+    "Truck GMC \"Jimmy\" 6x6 Truck"
   ],
   "infantry_units": [
-    "Infantry_SMLE_No_4_Mk_1",
-    "Infantry_M1_Garand"
+    "Infantry M1 Garand",
+    "Infantry SMLE No.4 Mk-1"
   ],
   "air_defenses": [
     "AllyWW2FlakGenerator",

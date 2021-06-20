@@ -21,25 +21,25 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Leclerc",
-    "APC_TPz_Fuchs",
-    "Scout_Cobra",
-    "IFV_LAV_25",
-    "ATGM_VAB_Mephisto",
-    "SAM_Roland_ADS"
+    "Cobra",
+    "LAV-25",
+    "Leclerc S\u00e9ries 2",
+    "Roland 2 (Marder Chassis)",
+    "TPz Fuchs",
+    "VAB Mephisto"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger",
-    "Mortar_2B11_120mm"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "RolandGenerator",
@@ -50,14 +50,14 @@
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa",
-    "FFG_Oliver_Hazzard_Perry"
+    "USS_Arleigh_Burke_IIa",
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
   "carrier_names": [],

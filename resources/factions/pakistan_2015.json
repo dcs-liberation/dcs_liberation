@@ -19,26 +19,26 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "MBT_T_80U",
-    "MBT_T_55",
-    "ZBD_04A",
-    "APC_BTR_80",
-    "APC_M113",
-    "HQ_7_Self_Propelled_LN"
+    "BTR-80",
+    "HQ-7 Launcher",
+    "M113",
+    "T-55A",
+    "T-80UD",
+    "Type 04A (ZBD-04A)"
   ],
   "artillery_units": [
-    "MLRS_9A52_Smerch_HE_300mm",
-    "SPM_2S9_Nona_120mm_M"
+    "2S9 Nona-S",
+    "BM-30 Smerch (9M55K5 HE Rockets)"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16",
-    "MANPADS_Stinger"
+    "Infantry AK-74 Rus",
+    "MANPADS Stinger",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "HQ7Generator",

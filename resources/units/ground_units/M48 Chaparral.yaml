@@ -1,0 +1,12 @@
+class: SHORADS
+description: The MIM-72A/M48 Chaparral is an American self-propelled surface-to-air
+  missile system based on the AIM-9 Sidewinder air-to-air missile system. The launcher
+  is based on the M113 family of vehicles. It entered service with the United States
+  Army in 1969 and was phased out between 1990 and 1998.
+introduced: 1969
+manufacturer: Ford Motor Company
+origin: USA
+price: 16
+role: Self-Propelled Surface-to-Air Missile Launcher
+variants:
+  M48 Chaparral: {}

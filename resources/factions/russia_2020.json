@@ -10,6 +10,7 @@
     "Ka-50 Hokum",
     "L-39ZA Albatros",
     "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
     "Mi-28N Havoc",
     "Mi-8MTV2 Hip",
     "MiG-29S Fulcrum-C",
@@ -34,26 +35,26 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "IFV_BMP_2",
-    "IFV_BMP_3",
-    "MBT_T_90",
-    "MBT_T_80U",
-    "MBT_T_72B",
-    "SAM_SA_19_Tunguska_Grison"
+    "BMP-2",
+    "BMP-3",
+    "SA-19 Grison (2K22 Tunguska)",
+    "T-72B with Kontakt-1 ERA",
+    "T-80UD",
+    "T-90A"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-27 Uragan"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry AK-74 Rus",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "SA8Generator",
@@ -73,15 +74,15 @@
     "TallRackGenerator"
   ],
   "aircraft_carrier": [
-    "CV_1143_5_Admiral_Kuznetsov"
+    "KUZNECOW"
   ],
   "helicopter_carrier": [],
   "helicopter_carrier_names": [],
   "destroyers": [
-    "Frigate_1135M_Rezky"
+    "REZKY"
   ],
   "cruisers": [
-    "Corvette_1241_1_Molniya"
+    "MOLNIYA"
   ],
   "requirements": {
     "SU-57 Felon By CubanAce Simulations": "https://www.digitalcombatsimulator.com/fr/files/2539621/"

@@ -16,7 +16,6 @@ from typing import (
     Optional,
     Set,
     TYPE_CHECKING,
-    Type,
     Union,
     Sequence,
     Iterable,
@@ -25,14 +24,13 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.ships import (
-    CVN_74_John_C__Stennis,
-    CV_1143_5_Admiral_Kuznetsov,
-    LHA_1_Tarawa,
-    Type_071_Amphibious_Transport_Dock,
+    Stennis,
+    KUZNECOW,
+    LHA_Tarawa,
+    Type_071,
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
-from dcs.unittype import VehicleType
 
 from game import db
 from game.point_with_heading import PointWithHeading
@@ -46,8 +44,8 @@ from .theatergroundobject import (
     GenericCarrierGroundObject,
     TheaterGroundObject,
 )
-from ..db import PRICES
 from ..dcs.aircrafttype import AircraftType
+from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
 from ..weather import Conditions
 
@@ -161,13 +159,13 @@ class AircraftAllocations:
 
 @dataclass(frozen=True)
 class GroundUnitAllocations:
-    present: dict[Type[VehicleType], int]
-    ordered: dict[Type[VehicleType], int]
-    transferring: dict[Type[VehicleType], int]
+    present: dict[GroundUnitType, int]
+    ordered: dict[GroundUnitType, int]
+    transferring: dict[GroundUnitType, int]
 
     @property
-    def all(self) -> dict[Type[VehicleType], int]:
-        combined: dict[Type[VehicleType], int] = defaultdict(int)
+    def all(self) -> dict[GroundUnitType, int]:
+        combined: dict[GroundUnitType, int] = defaultdict(int)
         for unit_type, count in itertools.chain(
             self.present.items(), self.ordered.items(), self.transferring.items()
         ):
@@ -178,11 +176,11 @@ class GroundUnitAllocations:
     def total_value(self) -> int:
         total: int = 0
         for unit_type, count in self.present.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
         for unit_type, count in self.ordered.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
         for unit_type, count in self.transferring.items():
-            total += PRICES[unit_type] * count
+            total += unit_type.price * count
 
         return total
 
@@ -487,14 +485,14 @@ class ControlPoint(MissionTarget, ABC):
                     for group in g.groups:
                         for u in group.units:
                             if db.unit_type_from_name(u.type) in [
-                                CVN_74_John_C__Stennis,
-                                CV_1143_5_Admiral_Kuznetsov,
+                                Stennis,
+                                KUZNECOW,
                             ]:
                                 return group.name
                 elif g.dcs_identifier == "LHA":
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [LHA_1_Tarawa]:
+                            if db.unit_type_from_name(u.type) in [LHA_Tarawa]:
                                 return group.name
         return None
 
@@ -697,10 +695,10 @@ class ControlPoint(MissionTarget, ABC):
     ) -> GroundUnitAllocations:
         on_order = {}
         for unit_bought, count in self.pending_unit_deliveries.units.items():
-            if type(unit_bought) == type and issubclass(unit_bought, VehicleType):
+            if isinstance(unit_bought, GroundUnitType):
                 on_order[unit_bought] = count
 
-        transferring: dict[Type[VehicleType], int] = defaultdict(int)
+        transferring: dict[GroundUnitType, int] = defaultdict(int)
         for transfer in transfers:
             if transfer.destination == self:
                 for unit_type, count in transfer.units.items():
@@ -893,10 +891,10 @@ class NavalControlPoint(ControlPoint, ABC):
         for group in self.find_main_tgo().groups:
             for u in group.units:
                 if db.unit_type_from_name(u.type) in [
-                    CVN_74_John_C__Stennis,
-                    LHA_1_Tarawa,
-                    CV_1143_5_Admiral_Kuznetsov,
-                    Type_071_Amphibious_Transport_Dock,
+                    Stennis,
+                    LHA_Tarawa,
+                    KUZNECOW,
+                    Type_071,
                 ]:
                     return True
         return False

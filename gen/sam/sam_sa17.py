@@ -17,14 +17,14 @@ class SA17Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_SA_11_Buk_Gadfly_Snow_Drift_SR,
+            AirDefence.SA_11_Buk_SR_9S18M1,
             "SR",
             self.position.x + 20,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_SA_11_Buk_Gadfly_C2,
+            AirDefence.SA_11_Buk_CC_9S470M1,
             "CC",
             self.position.x,
             self.position.y,

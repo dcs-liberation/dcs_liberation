@@ -18,26 +18,26 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "IFV_BMP_1",
-    "APC_MTLB",
-    "MBT_T_55",
-    "LT_PT_76",
-    "MBT_T_72B",
-    "SPAAA_ZU_23_2_Mounted_Ural_375",
-    "SPAAA_ZSU_57_2",
-    "AAA_S_60_57mm"
+    "BMP-1",
+    "MT-LB",
+    "PT-76",
+    "S-60 57mm",
+    "T-55A",
+    "T-72B with Kontakt-1 ERA",
+    "ZSU-57-2 'Sparka'",
+    "ZU-23 on Ural-375"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm"
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16"
+    "Infantry AK-74 Rus",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "ColdWarFlakGenerator",

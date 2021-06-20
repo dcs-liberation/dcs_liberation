@@ -22,25 +22,25 @@
     "KC-130"
   ],
   "frontline_units": [
-    "MBT_Leopard_2A4",
-    "MBT_Leopard_1A3",
-    "MBT_M60A3_Patton",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "APC_M113",
-    "IFV_BMP_1"
+    "BMP-1",
+    "Leopard 1A3",
+    "Leopard 2A4",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M113",
+    "M60A3 \"Patton\""
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm",
-    "MLRS_M270_227mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "HawkGenerator",

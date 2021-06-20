@@ -1,0 +1,17 @@
+class: Tank
+description: The T-54/55 series was the most-produced tank in history. Estimated production
+  numbers for the series range from 86,000 to 100,000. They were replaced by the T-62,
+  T-64, T-72, T-80 and T-90 tanks in the Soviet and Russian armies, but remain in
+  use by up to 50 other armies worldwide, some having received sophisticated retrofitting.
+  During the Cold War, Soviet tanks never directly faced their NATO adversaries in
+  combat in Europe. However, the T-54/55's first appearance in the West around the
+  period of the 1950s (then the beginning of the Cold War) spurred the United Kingdom
+  to develop a new tank gun, the Royal Ordnance L7, and the United States to develop
+  the M60 Patton.
+introduced: 1963
+manufacturer: Kharkiv/UralVagonZavod
+origin: USSR/Russia
+price: 18
+role: Main Battle Tank
+variants:
+  T-55A: {}

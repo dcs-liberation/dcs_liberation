@@ -18,7 +18,7 @@ class GepardGenerator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SPAAA_Gepard,
+            AirDefence.Gepard,
             "SPAAA",
             self.position.x,
             self.position.y,
@@ -26,14 +26,14 @@ class GepardGenerator(AirDefenseGroupGenerator):
         )
         if random.randint(0, 1) == 1:
             self.add_unit(
-                AirDefence.SPAAA_Gepard,
+                AirDefence.Gepard,
                 "SPAAA2",
                 self.position.x,
                 self.position.y,
                 self.heading,
             )
         self.add_unit(
-            Unarmed.Truck_M818_6x6,
+            Unarmed.M_818,
             "TRUCK",
             self.position.x + 80,
             self.position.y,

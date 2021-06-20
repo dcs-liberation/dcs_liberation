@@ -1,0 +1,15 @@
+class: IFV
+description: "The Warrior tracked vehicle family is a series of British armoured vehicles,\
+  \ originally developed to replace the older FV430 series of armoured vehicles. The\
+  \ Warrior started life as the MCV-80, \"Mechanised Combat Vehicle for the 1980s\"\
+  . One of the requirements of the new vehicle was a top speed able to keep up with\
+  \ the projected new MBT, the MBT-80 \u2013 later cancelled and replaced by what\
+  \ became the Challenger 1 \u2013 which the then-current FV432 armoured personnel\
+  \ carrier could not. "
+introduced: 1984
+manufacturer: GKN Sankey
+origin: UK
+price: 10
+role: Infantry Fighting Vehicle
+variants:
+  FV510 Warrior: {}

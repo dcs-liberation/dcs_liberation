@@ -1,0 +1,14 @@
+class: SHORADS
+description: "The 9K31 Strela-1 (Russian: 9\u041A31 \xAB\u0421\u0442\u0440\u0435\u043B\
+  \u0430-1\xBB; English: arrow) is a highly mobile, short-range, low altitude infra-red\
+  \ guided surface-to-air missile system. Originally developed by the Soviet Union\
+  \ under the GRAU designation 9K31, it is commonly known by its NATO reporting name,\
+  \ SA-9 \"Gaskin\". The system consists of a BRDM-2 amphibious vehicle, mounting\
+  \ two pairs of ready-to-fire 9M31 missiles."
+introduced: 1966
+manufacturer: Soviet state factories
+origin: USSR/Russia
+price: 12
+role: Self-Propelled Anti-Aircraft System
+variants:
+  SA-9 Strela: {}

@@ -19,14 +19,14 @@ class HQ7Generator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.HQ_7_Self_Propelled_STR,
+            AirDefence.HQ_7_STR_SP,
             "STR",
             self.position.x,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.HQ_7_Self_Propelled_LN,
+            AirDefence.HQ_7_LN_SP,
             "LN",
             self.position.x + 20,
             self.position.y,
@@ -37,14 +37,14 @@ class HQ7Generator(AirDefenseGroupGenerator):
         aa_group = self.add_auxiliary_group("AA")
         self.add_unit_to_group(
             aa_group,
-            AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375,
+            AirDefence.Ural_375_ZU_23,
             "AAA1",
             self.position + Point(20, 30),
             self.heading,
         )
         self.add_unit_to_group(
             aa_group,
-            AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375,
+            AirDefence.Ural_375_ZU_23,
             "AAA2",
             self.position - Point(20, 30),
             self.heading,
@@ -57,7 +57,7 @@ class HQ7Generator(AirDefenseGroupGenerator):
             )
             for i, position in enumerate(positions):
                 self.add_unit(
-                    AirDefence.HQ_7_Self_Propelled_LN,
+                    AirDefence.HQ_7_LN_SP,
                     "LN#" + str(i),
                     position[0],
                     position[1],

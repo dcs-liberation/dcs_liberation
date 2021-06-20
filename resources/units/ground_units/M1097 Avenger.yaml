@@ -1,0 +1,12 @@
+class: SHORADS
+description: The Avenger Air Defense System, designated AN/TWQ-1 under the Joint Electronics
+  Type Designation System, is an American self-propelled surface-to-air missile system
+  which provides mobile, short-range air defense protection for ground units against
+  cruise missiles, unmanned aerial vehicles, low-flying fixed-wing aircraft, and helicopters.
+introduced: 1990
+manufacturer: Boeing
+origin: USA
+price: 20
+role: Self-Propelled Surface-to-Air Missile Launcher
+variants:
+  M1097 Heavy HMMWV Avenger: {}

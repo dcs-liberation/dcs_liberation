@@ -1,0 +1,13 @@
+class: Logistics
+description: The M30 Cargo carrier was a variant of the M12 Gun Motor Carriage (a
+  US self-propelled gun), which itself was derived from the M3 Lee tank. Neither vehicle
+  was extensively produced, around hundreds being manufactured. It was exclusively
+  used in the Normandy theatre and followed the Allied push into Germany. It was judged
+  obsolete after the war and retired from service.
+introduced: 1942
+manufacturer: Pressed Steel Car Company
+origin: USA
+price: 2
+role: Tracked Cargo Transporter
+variants:
+  M30 Cargo Carrier: {}

@@ -1,0 +1,11 @@
+class: Recon
+description: The LAV-25 (Light Armored Vehicle) is an eight-wheeled amphibious armored
+  reconnaissance vehicle built by General Dynamics Land Systems and used by the United
+  States Marine Corps and the United States Army.
+introduced: 1983
+manufacturer: General Dynamics
+origin: USA
+price: 7
+role: Amphibious Armoured Car
+variants:
+  LAV-25: {}

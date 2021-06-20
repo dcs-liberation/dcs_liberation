@@ -8,6 +8,7 @@
   ],
   "aircrafts": [
     "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
     "MiG-21bis Fishbed-N",
     "MiG-23MLD Flogger-K",
@@ -26,27 +27,27 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "Scout_BRDM_2",
-    "APC_BTR_80",
-    "IFV_BMD_1",
-    "IFV_BMP_1",
-    "LT_PT_76",
-    "MBT_T_55",
-    "SAM_SA_8_Osa_Gecko_TEL"
+    "BMD-1",
+    "BMP-1",
+    "BRDM-2",
+    "BTR-80",
+    "PT-76",
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "T-55A"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPM_2S9_Nona_120mm_M",
-    "SPH_2S1_Gvozdika_122mm"
+    "2S1 Gvozdika",
+    "2S9 Nona-S",
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Infantry_AK_74_Rus",
-    "Infantry_RPG",
-    "Mortar_2B11_120mm"
+    "Infantry AK-74 Rus",
+    "Infantry RPG",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "ColdWarFlakGenerator",
