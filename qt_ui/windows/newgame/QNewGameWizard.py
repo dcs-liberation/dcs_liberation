@@ -10,7 +10,7 @@ from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
-from game.settings import Settings
+from game.settings import Settings, ModSettings
 from game.theater.start_generator import GameGenerator, GeneratorSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
@@ -102,6 +102,15 @@ class NewGameWizard(QtWidgets.QWizard):
             no_player_navy=self.field("no_player_navy"),
             no_enemy_navy=self.field("no_enemy_navy"),
         )
+        mod_settings = ModSettings(
+            a4_skyhawk=self.field("a4_skyhawk"),
+            f22_raptor=self.field("f22_raptor"),
+            hercules=self.field("hercules"),
+            jas39_gripen=self.field("jas39_gripen"),
+            su57_felon=self.field("su57_felon"),
+            frenchpack=self.field("frenchpack"),
+            high_digit_sams=self.field("high_digit_sams"),
+        )
 
         blue_faction = [c for c in db.FACTIONS][self.field("blueFaction")]
         red_faction = [c for c in db.FACTIONS][self.field("redFaction")]
@@ -111,6 +120,7 @@ class NewGameWizard(QtWidgets.QWizard):
             campaign.load_theater(),
             settings,
             generator_settings,
+            mod_settings,
         )
         self.generatedGame = generator.generate()
 
@@ -196,14 +206,6 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.factionsGroupLayout.addLayout(self.redGroupLayout)
         self.factionsGroup.setLayout(self.factionsGroupLayout)
 
-        # Create required mod layout
-        self.requiredModsGroup = QtWidgets.QGroupBox("Required Mods")
-        self.requiredModsGroupLayout = QtWidgets.QHBoxLayout()
-        self.requiredMods = QtWidgets.QLabel("<ul><li>None</li></ul>")
-        self.requiredMods.setOpenExternalLinks(True)
-        self.requiredModsGroupLayout.addWidget(self.requiredMods)
-        self.requiredModsGroup.setLayout(self.requiredModsGroupLayout)
-
         # Docs Link
         docsText = QtWidgets.QLabel(
             '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Factions"><span style="color:#FFFFFF;">How to create your own faction</span></a>'
@@ -218,7 +220,6 @@ class FactionSelection(QtWidgets.QWizardPage):
         # Build layout
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.factionsGroup)
-        layout.addWidget(self.requiredModsGroup)
         layout.addWidget(docsText)
         self.setLayout(layout)
         self.updateUnitRecap()
@@ -256,43 +257,6 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         self.blueFactionDescription.setText(blue_faction_txt)
         self.redFactionDescription.setText(red_faction_txt)
-
-        # Compute mod requirements txt
-        self.requiredMods.setText("<ul>")
-        has_mod = False
-        if len(red_faction.requirements.keys()) > 0:
-            has_mod = True
-            for mod in red_faction.requirements.keys():
-                self.requiredMods.setText(
-                    self.requiredMods.text()
-                    + "\n<li>"
-                    + mod
-                    + ': <a href="'
-                    + red_faction.requirements[mod]
-                    + '">'
-                    + red_faction.requirements[mod]
-                    + "</a></li>"
-                )
-
-        if len(blue_faction.requirements.keys()) > 0:
-            has_mod = True
-            for mod in blue_faction.requirements.keys():
-                if mod not in red_faction.requirements.keys():
-                    self.requiredMods.setText(
-                        self.requiredMods.text()
-                        + "\n<li>"
-                        + mod
-                        + ': <a href="'
-                        + blue_faction.requirements[mod]
-                        + '">'
-                        + blue_faction.requirements[mod]
-                        + "</a></li>"
-                    )
-
-        if has_mod:
-            self.requiredMods.setText(self.requiredMods.text() + "</ul>\n\n")
-        else:
-            self.requiredMods.setText(self.requiredMods.text() + "<li>None</li></ul>\n")
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
@@ -561,8 +525,42 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addLayout(desired_player_mission_duration, 6, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
+        modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")
+        a4_skyhawk = QtWidgets.QCheckBox()
+        self.registerField("a4_skyhawk", a4_skyhawk)
+        hercules = QtWidgets.QCheckBox()
+        self.registerField("hercules", hercules)
+        f22_raptor = QtWidgets.QCheckBox()
+        self.registerField("f22_raptor", f22_raptor)
+        jas39_gripen = QtWidgets.QCheckBox()
+        self.registerField("jas39_gripen", jas39_gripen)
+        su57_felon = QtWidgets.QCheckBox()
+        self.registerField("su57_felon", su57_felon)
+        frenchpack = QtWidgets.QCheckBox()
+        self.registerField("frenchpack", frenchpack)
+        high_digit_sams = QtWidgets.QCheckBox()
+        self.registerField("high_digit_sams", high_digit_sams)
+
+        modLayout = QtWidgets.QGridLayout()
+        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), 1, 0)
+        modLayout.addWidget(a4_skyhawk, 1, 1)
+        modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), 2, 0)
+        modLayout.addWidget(f22_raptor, 2, 1)
+        modLayout.addWidget(QtWidgets.QLabel("C-130J-30 Super Hercules"), 3, 0)
+        modLayout.addWidget(hercules, 3, 1)
+        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), 4, 0)
+        modLayout.addWidget(jas39_gripen, 4, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), 5, 0)
+        modLayout.addWidget(su57_felon, 5, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), 6, 0)
+        modLayout.addWidget(frenchpack, 6, 1)
+        modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 7, 0)
+        modLayout.addWidget(high_digit_sams, 7, 1)
+        modSettingsGroup.setLayout(modLayout)
+
         mlayout = QVBoxLayout()
         mlayout.addWidget(generatorSettingsGroup)
+        mlayout.addWidget(modSettingsGroup)
         self.setLayout(mlayout)
 
 

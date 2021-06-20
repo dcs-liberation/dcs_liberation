@@ -3,13 +3,11 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.highdigitsams import highdigitsams
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
 
 MODDED_AIRPLANES = [
     A_4E_C,
-    MB_339PAN,
     Su_57,
     F_22A,
     Hercules,

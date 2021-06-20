@@ -14,6 +14,7 @@ Saves from 3.x are not compatible with 4.0.
 
 * **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
 * **[Campaign]** Added an option to disable levelling up of AI pilots.
+* **[Campaign]** Added Russian Intervention 2015 campaign on Syria.
 * **[Campaign AI]** AI will plan Tanker flights.
 * **[Campaign AI]** Removed max distance for AEW&C auto planning.
 * **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
@@ -25,6 +26,8 @@ Saves from 3.x are not compatible with 4.0.
 * **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
 * **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
 * **[UI]** Updated intel box text for first turn.
+* **[Units/Factions/Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+. 
+* **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
 
 ## Fixes
 

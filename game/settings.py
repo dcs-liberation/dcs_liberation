@@ -110,3 +110,16 @@ class Settings:
         new_state = Settings().__dict__
         new_state.update(state)
         self.__dict__.update(new_state)
+
+
+@dataclass
+class ModSettings:
+    # Aircraft Mods
+    a4_skyhawk: bool = False
+    f22_raptor: bool = False
+    hercules: bool = False
+    jas39_gripen: bool = False
+    su57_felon: bool = False
+    # Ground Asset Mods
+    frenchpack: bool = False
+    high_digit_sams: bool = False
