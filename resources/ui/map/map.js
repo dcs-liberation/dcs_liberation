@@ -398,6 +398,7 @@ class ControlPoint {
       zIndexOffset: 1000,
       draggable: this.cp.mobile,
       autoPan: true,
+      opacity: 0.5,
     })
       .on("dragstart", () => {
         this.secondaryMarker.addTo(controlPointsLayer);
