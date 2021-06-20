@@ -14,6 +14,7 @@ introduced: 1984
 manufacturer: Lockheed
 origin: USA
 price: 20
+max_group_size: 1
 role: Carrier-based Tanker
 variants:
   S-3B Tanker: {}
