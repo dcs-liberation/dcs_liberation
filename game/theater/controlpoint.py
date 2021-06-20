@@ -31,6 +31,7 @@ from dcs.ships import (
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
+from dcs.unittype import FlyingType
 
 from game import db
 from game.point_with_heading import PointWithHeading
@@ -44,10 +45,9 @@ from .theatergroundobject import (
     GenericCarrierGroundObject,
     TheaterGroundObject,
 )
-from ..db import PRICES
-from ..helipad import Helipad
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
+from ..helipad import Helipad
 from ..utils import nautical_miles
 from ..weather import Conditions
 
@@ -1149,7 +1149,9 @@ class Fob(ControlPoint):
     def total_aircraft_parking(self) -> int:
         return len(self.helipads)
 
-    def can_operate(self, aircraft: FlyingType) -> bool:
+    def can_operate(self, aircraft: AircraftType) -> bool:
+        print(aircraft)
+        print(aircraft.helicopter)
         if aircraft.helicopter:
             return True
         else:

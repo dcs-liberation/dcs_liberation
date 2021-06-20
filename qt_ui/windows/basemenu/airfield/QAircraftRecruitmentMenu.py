@@ -52,7 +52,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
                 continue
             if (
                 self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
-                and unit_type not in helicopter_map.values()
+                and not unit_type.helicopter
             ):
                 continue
             unit_types.add(unit_type)

@@ -614,7 +614,7 @@ class HelipadGenerator:
             self.m.static_group(
                 country=country,
                 name=(name + "_ammo"),
-                _type=Fortification.FARP_Ammo_Storage,
+                _type=Fortification.FARP_Ammo_Dump_Coating,
                 position=pad.position.point_from_heading(
                     helipad.heading, 35
                 ).point_from_heading(helipad.heading + 90, 10),
