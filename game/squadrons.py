@@ -239,7 +239,7 @@ class Squadron:
         from gen.flights.ai_flight_planner_db import tasks_for_aircraft
         from gen.flights.flight import FlightType
 
-        with path.open() as squadron_file:
+        with path.open(encoding="utf8") as squadron_file:
             data = yaml.safe_load(squadron_file)
 
         name = data["aircraft"]
