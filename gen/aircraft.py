@@ -748,7 +748,7 @@ class AircraftConflictGenerator:
                         group = self._generate_at_group(
                             name=name,
                             side=country,
-                            unit_type=flight.unit_type,
+                            unit_type=flight.unit_type.dcs_unit_type,
                             count=flight.count,
                             start_type=flight.start_type,
                             at=helipad.static_unit,
@@ -772,7 +772,7 @@ class AircraftConflictGenerator:
                     group = self._generate_at_airport(
                         name=name,
                         side=country,
-                        unit_type=flight.unit_type,
+                        unit_type=flight.unit_type.dcs_unit_type,
                         count=flight.count,
                         start_type=flight.start_type,
                         airport=cp.airport,
