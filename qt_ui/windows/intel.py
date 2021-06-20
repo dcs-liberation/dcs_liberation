@@ -1,4 +1,5 @@
 import itertools
+from typing import Optional
 
 from PySide2.QtWidgets import (
     QCheckBox,
@@ -63,10 +64,11 @@ class IntelTableLayout(QGridLayout):
             0,
         )
 
-    def add_row(self, text: str, count: int) -> None:
+    def add_row(self, text: str, count: Optional[int] = None) -> None:
         row = next(self.row)
         self.addWidget(QLabel(text), row, 0)
-        self.addWidget(QLabel(str(count)), row, 1)
+        if count is not None:  # optional count for blank rows
+            self.addWidget(QLabel(str(count)), row, 1)
 
 
 class AircraftIntelLayout(IntelTableLayout):
@@ -80,14 +82,16 @@ class AircraftIntelLayout(IntelTableLayout):
             if not base.total_aircraft:
                 continue
 
-            self.add_header(control_point.name)
-            for airframe, count in base.aircraft.items():
+            self.add_header(f"{control_point.name} ({base.total_aircraft})")
+            for airframe in sorted(base.aircraft, key=lambda k: k.name):
+                count = base.aircraft[airframe]
                 if not count:
                     continue
-                self.add_row(airframe.name, count)
+                self.add_row(f"    {airframe.name}", count)
+            self.add_row("")
 
-        self.add_spacer()
         self.add_row("<b>Total</b>", total)
+        self.add_spacer()
 
 
 class AircraftIntelTab(ScrollingFrame):
@@ -107,14 +111,16 @@ class ArmyIntelLayout(IntelTableLayout):
             if not base.total_armor:
                 continue
 
-            self.add_header(control_point.name)
-            for vehicle, count in base.armor.items():
+            self.add_header(f"{control_point.name} ({base.total_armor})")
+            for vehicle in sorted(base.armor, key=lambda k: k.name):
+                count = base.armor[vehicle]
                 if not count:
                     continue
-                self.add_row(vehicle.name, count)
+                self.add_row(f"    {vehicle.name}", count)
+            self.add_row("")
 
-        self.add_spacer()
         self.add_row("<b>Total</b>", total)
+        self.add_spacer()
 
 
 class ArmyIntelTab(ScrollingFrame):

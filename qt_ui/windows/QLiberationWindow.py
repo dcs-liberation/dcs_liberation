@@ -50,7 +50,7 @@ class QLiberationWindow(QMainWindow):
         self.liberation_map = QLiberationMap(self.game_model, self)
 
         self.setGeometry(300, 100, 270, 100)
-        self.setWindowTitle(f"DCS Liberation - v{VERSION}")
+        self.updateWindowTitle()
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage("Ready")
 
@@ -71,6 +71,7 @@ class QLiberationWindow(QMainWindow):
                     logging.info("Loading last saved game : " + str(last_save_file))
                     game = persistency.load_game(last_save_file)
                     self.onGameGenerated(game)
+                    self.updateWindowTitle(last_save_file)
                 except:
                     logging.info("Error loading latest save game")
             else:
@@ -243,6 +244,8 @@ class QLiberationWindow(QMainWindow):
             game = persistency.load_game(file[0])
             GameUpdateSignal.get_instance().game_loaded.emit(game)
 
+            self.updateWindowTitle(file[0])
+
     def saveGame(self):
         logging.info("Saving game")
 
@@ -265,6 +268,18 @@ class QLiberationWindow(QMainWindow):
             persistency.save_game(self.game)
             liberation_install.setup_last_save_file(self.game.savepath)
             liberation_install.save_config()
+
+            self.updateWindowTitle(file[0])
+
+    def updateWindowTitle(self, save_path: Optional[str] = None) -> None:
+        """
+        to DCS Liberation - vX.X.X - file_name
+        """
+        window_title = f"DCS Liberation - v{VERSION}"
+        if save_path:  # appending the file name to title as it is updated
+            file_name = save_path.split("/")[-1].split(".liberation")[0]
+            window_title = f"{window_title} - {file_name}"
+        self.setWindowTitle(window_title)
 
     def onGameGenerated(self, game: Game):
         logging.info("On Game generated")

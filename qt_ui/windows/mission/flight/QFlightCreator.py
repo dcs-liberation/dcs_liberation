@@ -1,4 +1,3 @@
-import logging
 from typing import Optional, Type
 
 from PySide2.QtCore import Qt, Signal
@@ -260,7 +259,12 @@ class QFlightCreator(QDialog):
             )
 
     def update_max_size(self, available: int) -> None:
-        self.flight_size_spinner.setMaximum(min(available, 4))
+        aircraft = self.aircraft_selector.currentData()
+        if aircraft is None:
+            self.flight_size_spinner.setMaximum(0)
+            return
+
+        self.flight_size_spinner.setMaximum(min(available, aircraft.max_group_size))
+
         if self.flight_size_spinner.maximum() >= 2:
-            if self.flight_size_spinner.value() < 2:
-                self.flight_size_spinner.setValue(2)
+            self.flight_size_spinner.setValue(2)
