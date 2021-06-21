@@ -48,6 +48,7 @@
     "SA8Generator",
     "SA10Generator",
     "SA15Generator",
+    "SA20Generator",
     "ZU23Generator"
   ],
   "ewrs": [
