@@ -604,14 +604,7 @@ class CoalitionMissionPlanner:
         also possible for the player to exclude mission types from their squadron
         designs.
         """
-        all_compatible = aircraft_for_task(mission_type)
-        for squadron in self.game.air_wing_for(self.is_player).iter_squadrons():
-            if (
-                squadron.aircraft in all_compatible
-                and mission_type in squadron.auto_assignable_mission_types
-            ):
-                return True
-        return False
+        return self.game.air_wing_for(self.is_player).can_auto_plan(mission_type)
 
     def critical_missions(self) -> Iterator[ProposedMission]:
         """Identifies the most important missions to plan this turn.
