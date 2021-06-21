@@ -20,6 +20,7 @@ manufacturer: North American
 origin: USA
 price: 5
 role: Fighter
+gunfighter: true
 variants:
   Mustang Mk.IV (Late): {}
   P-51D-30-NA Mustang: {}

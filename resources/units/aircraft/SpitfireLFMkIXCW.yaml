@@ -38,5 +38,6 @@ manufacturer: Supermarine
 origin: UK
 price: 3
 role: Fighter
+gunfighter: true
 variants:
   Spitfire LF Mk IX (Clipped Wings): {}
