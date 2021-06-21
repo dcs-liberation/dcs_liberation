@@ -9,6 +9,7 @@
   "aircrafts": [
     "AH-1W SuperCobra",
     "AV-8B Harrier II Night Attack",
+    "C-130",
     "Tornado IDS",
     "UH-1H Iroquois"
   ],
@@ -62,5 +63,6 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ-9 Reaper"
+  "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "coldwar"
 }

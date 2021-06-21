@@ -60,6 +60,7 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "liveries_overrides": {
     "CF-188 Hornet": [
       "Canada 409th Squadron",

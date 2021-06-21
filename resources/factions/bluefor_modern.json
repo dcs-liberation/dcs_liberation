@@ -12,6 +12,8 @@
     "AV-8B Harrier II Night Attack",
     "B-1B Lancer",
     "B-52H Stratofortress",
+    "CH-47D",
+    "CH-53E",
     "F-14B Tomcat",
     "F-15C Eagle",
     "F-15E Strike Eagle",
@@ -102,5 +104,6 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "unrestricted_satnav": true
 }

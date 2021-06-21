@@ -9,6 +9,7 @@
   "aircrafts": [
     "AH-64A Apache",
     "AV-8B Harrier II Night Attack",
+    "C-130",
     "Gazelle AH.1",
     "Phantom F.3",
     "Tornado GR4"
@@ -73,5 +74,6 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ-9 Reaper"
+  "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "coldwar"
 }

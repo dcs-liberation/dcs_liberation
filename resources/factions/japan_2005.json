@@ -9,6 +9,7 @@
   "aircrafts": [
     "AH-1W SuperCobra",
     "AH-64D Apache Longbow",
+    "C-130",
     "F-15J Eagle",
     "F-2A",
     "F-4EJ Kai Phantom II"
@@ -69,5 +70,6 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ-9 Reaper"
+  "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern"
 }

@@ -6,7 +6,6 @@
   "locales": [
     "de_DE"
   ],
-  "doctrine": "coldwar",
   "aircrafts": [
     "L-39ZA Albatros",
     "Mi-24V Hind-E",
@@ -64,6 +63,7 @@
   "carrier_names": [],
   "helicopter_carrier_names": [],
   "navy_generators": [],
+  "doctrine": "coldwar",
   "has_jtac": true,
   "jtac_unit": "Mi-8MTV2 Hip"
 }

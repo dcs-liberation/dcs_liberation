@@ -13,6 +13,7 @@
     "AV-8B Harrier II Night Attack",
     "B-1B Lancer",
     "B-52H Stratofortress",
+    "C-17a",
     "F-117A Nighthawk",
     "F-14B Tomcat",
     "F-15C Eagle",
@@ -68,6 +69,7 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "liveries_overrides": {
     "F/A-18C Hornet (Lot 20)": [
       "NAWDC black",

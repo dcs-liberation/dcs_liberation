@@ -7,6 +7,7 @@
     "ru_RU"
   ],
   "aircrafts": [
+    "IL-76MD",
     "J-11A Flanker-L",
     "JF-17 Thunder",
     "Ka-50 Hokum",
@@ -115,5 +116,6 @@
     "KiloSubGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ-9 Reaper"
+  "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern"
 }

@@ -13,7 +13,6 @@
     "AV-8B Harrier II Night Attack",
     "B-1B Lancer",
     "B-52H Stratofortress",
-    "C-130",
     "C-130J-30 Super Hercules",
     "C-17A",
     "CH-47D",
@@ -106,6 +105,7 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "liveries_overrides": {
     "F/A-18C Hornet (Lot 20)": [
       "VFA-106",

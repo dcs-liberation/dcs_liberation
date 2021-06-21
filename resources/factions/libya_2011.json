@@ -4,6 +4,7 @@
   "authors": "Khopa",
   "description": "<p>Gaddafi's Lybian forces during the 2011 international intervention</p>",
   "aircrafts": [
+    "An-26B",
     "Mi-24V Hind-E",
     "Mi-24P Hind-F",
     "MiG-21bis Fishbed-N",
@@ -72,5 +73,9 @@
     "GrishaGroupGenerator",
     "MolniyaGroupGenerator",
     "LaCombattanteIIGroupGenerator"
-  ]
+    ],
+  "has_jtac": true,
+  "jtac_unit": "WingLoong-I",
+  "doctrine": "modern"
+
 }

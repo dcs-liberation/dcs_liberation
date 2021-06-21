@@ -104,6 +104,7 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "liveries_overrides": {
     "F/A-18C Hornet (Lot 20)": [
       "VFA-106",

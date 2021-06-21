@@ -28,5 +28,6 @@
     "AvengerGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ-9 Reaper"
+  "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "coldwar"
 }

@@ -32,5 +32,6 @@
     "MB-339A/PAN by Frecce Tricolori Virtuali": "http://www.freccetricolorivirtuali.net/"
   },
   "has_jtac": true,
-  "jtac_unit": "MQ-9 Reaper"
+  "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "coldwar"
 }

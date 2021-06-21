@@ -5,6 +5,7 @@
   "description": "<p>Combined Redfor under China's leadership in the late 2000s, early 2010s.</p>",
   "aircrafts": [
     "FC-1 Fierce Dragon",
+    "IL-76MD",
     "J-11A Flanker-L",
     "J-15 Flanker X-2",
     "J-7B",
@@ -117,5 +118,6 @@
     "Type54GroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "WingLoong-I"
+  "jtac_unit": "WingLoong-I",
+  "doctrine": "modern"
 }

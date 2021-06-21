@@ -6,7 +6,7 @@
   "locales": [
     "fr_FR"
   ],
-  "doctrine": "coldwar",
+
   "aircrafts": [
     "Mirage 2000C",
     "SA 342L Gazelle",
@@ -75,5 +75,6 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "SA 342L Gazelle"
+  "jtac_unit": "SA 342L Gazelle",
+  "doctrine": "coldwar"
 }
