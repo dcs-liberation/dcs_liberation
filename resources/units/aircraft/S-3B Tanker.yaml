@@ -16,5 +16,9 @@ origin: USA
 price: 20
 max_group_size: 1
 role: Carrier-based Tanker
+patrol:
+  # ~265 knots IAS.
+  speed: 320
+  altitude: 12000
 variants:
   S-3B Tanker: {}
