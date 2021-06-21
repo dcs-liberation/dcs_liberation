@@ -1093,13 +1093,13 @@ class FlightPlanBuilder:
         orbit_location = self.aewc_orbit(location)
 
         # As high as possible to maximize detection and on-station time.
-        if flight.unit_type == E_2C:
+        if flight.unit_type.dcs_unit_type == E_2C:
             patrol_alt = feet(30000)
-        elif flight.unit_type == E_3A:
+        elif flight.unit_type.dcs_unit_type == E_3A:
             patrol_alt = feet(35000)
-        elif flight.unit_type == A_50:
+        elif flight.unit_type.dcs_unit_type == A_50:
             patrol_alt = feet(33000)
-        elif flight.unit_type == KJ_2000:
+        elif flight.unit_type.dcs_unit_type == KJ_2000:
             patrol_alt = feet(40000)
         else:
             patrol_alt = feet(25000)
@@ -1680,23 +1680,23 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(flight, self.game, self.is_player)
 
         tanker_type = flight.unit_type
-        if tanker_type is KC_135:
+        if tanker_type.dcs_unit_type is KC_135:
             # ~300 knots IAS.
             speed = knots(445)
             altitude = feet(24000)
-        elif tanker_type is KC135MPRS:
+        elif tanker_type.dcs_unit_type is KC135MPRS:
             # ~300 knots IAS.
             speed = knots(440)
             altitude = feet(23000)
-        elif tanker_type is KC130:
+        elif tanker_type.dcs_unit_type is KC130:
             # ~210 knots IAS, roughly the max for the KC-130 at altitude.
             speed = knots(370)
             altitude = feet(22000)
-        elif tanker_type is S_3B_Tanker:
+        elif tanker_type.dcs_unit_type is S_3B_Tanker:
             # ~265 knots IAS.
             speed = knots(320)
             altitude = feet(12000)
-        elif tanker_type is IL_78M:
+        elif tanker_type.dcs_unit_type is IL_78M:
             # ~280 knots IAS.
             speed = knots(400)
             altitude = feet(21000)
