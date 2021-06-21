@@ -18,6 +18,7 @@ from game.data.weapons import (
     WEAPON_INTRODUCTION_YEARS,
     Weapon,
 )
+from game.db import FACTIONS
 from game.profiling import logged_duration
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
@@ -199,8 +200,8 @@ def create_game(
     inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
-        blue,
-        red,
+        FACTIONS[blue],
+        FACTIONS[red],
         campaign.load_theater(),
         Settings(
             supercarrier=supercarrier,
