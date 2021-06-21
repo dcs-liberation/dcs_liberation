@@ -550,6 +550,11 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         high_digit_sams = QtWidgets.QCheckBox()
         self.registerField("high_digit_sams", high_digit_sams)
 
+        modHelpText = QtWidgets.QLabel(
+            "<p>Select the mods you have installed. If your chosen factions support them, you'll be able to use these mods in your campaign.</p>"
+        )
+        modHelpText.setAlignment(Qt.AlignCenter)
+
         modLayout = QtWidgets.QGridLayout()
         modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), 1, 0)
         modLayout.addWidget(a4_skyhawk, 1, 1)
@@ -570,6 +575,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         mlayout = QVBoxLayout()
         mlayout.addWidget(generatorSettingsGroup)
         mlayout.addWidget(modSettingsGroup)
+        mlayout.addWidget(modHelpText)
         self.setLayout(mlayout)
 
 
