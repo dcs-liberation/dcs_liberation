@@ -40,7 +40,7 @@ from gen.fleet.ship_group_generator import (
 from gen.missiles.missiles_group_generator import generate_missile_group
 from gen.sam.airdefensegroupgenerator import AirDefenseRange
 from gen.sam.ewr_group_generator import generate_ewr_group
-from gen.sam.sam_group_generator import generate_anti_air_group
+from gen.sam.sam_group_generator import generate_anti_air_ground_object
 from . import (
     ConflictTheater,
     ControlPoint,
@@ -423,22 +423,23 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     ) -> None:
         group_id = self.game.next_group_id()
 
-        g = SamGroundObject(
+        ground_object = generate_anti_air_ground_object(
+            self.game,
             namegen.random_objective_name(),
             group_id,
             position,
             self.control_point,
+            self.faction,
+            ranges,
         )
-        groups = generate_anti_air_group(self.game, g, self.faction, ranges)
-        if not groups:
+        if not ground_object:
             logging.error(
                 "Could not generate air defense group for %s at %s",
-                g.name,
+                group_id,
                 self.control_point,
             )
             return
-        g.groups = groups
-        self.control_point.connected_objectives.append(g)
+        self.control_point.connected_objectives.append(ground_object)
 
     def generate_ewr_at(self, position: PointWithHeading) -> None:
         group_id = self.game.next_group_id()

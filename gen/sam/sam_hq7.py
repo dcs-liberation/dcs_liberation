@@ -34,7 +34,7 @@ class HQ7Generator(AirDefenseGroupGenerator):
         )
 
         # Triple A for close range defense
-        aa_group = self.add_auxiliary_group("AA")
+        aa_group = self.add_auxiliary_group(AirDefenseRange.AAA)
         self.add_unit_to_group(
             aa_group,
             AirDefence.Ural_375_ZU_23,

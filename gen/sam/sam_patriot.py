@@ -69,7 +69,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
             )
 
         # Short range protection for high value site
-        aa_group = self.add_auxiliary_group("AA")
+        aa_group = self.add_auxiliary_group(AirDefenseRange.AAA)
         num_launchers = random.randint(3, 4)
         positions = self.get_circular_position(
             num_launchers, launcher_distance=200, coverage=360

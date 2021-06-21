@@ -5,15 +5,8 @@ from typing import Iterator, List
 from dcs.unitgroup import VehicleGroup
 
 from game import Game
-from game.theater.theatergroundobject import SamGroundObject
+from game.theater.theatergroundobject import SamGroundObject, AirDefenseRange
 from gen.sam.group_generator import GroupGenerator
-
-
-class AirDefenseRange(Enum):
-    AAA = "AAA"
-    Short = "short"
-    Medium = "medium"
-    Long = "long"
 
 
 class AirDefenseGroupGenerator(GroupGenerator, ABC):
@@ -24,16 +17,17 @@ class AirDefenseGroupGenerator(GroupGenerator, ABC):
     price: int
 
     def __init__(self, game: Game, ground_object: SamGroundObject) -> None:
-        ground_object.skynet_capable = True
         super().__init__(game, ground_object)
 
         self.auxiliary_groups: List[VehicleGroup] = []
+        self.auxiliary_ranges: List[AirDefenseRange] = []
 
-    def add_auxiliary_group(self, name_suffix: str) -> VehicleGroup:
+    def add_auxiliary_group(self, aa_range: AirDefenseRange) -> VehicleGroup:
         group = VehicleGroup(
-            self.game.next_group_id(), "|".join([self.go.group_name, name_suffix])
+            self.game.next_group_id(), "|".join([self.go.group_name, aa_range.value])
         )
         self.auxiliary_groups.append(group)
+        self.auxiliary_ranges.append(aa_range)
         return group
 
     def get_generated_group(self) -> VehicleGroup:
@@ -47,6 +41,11 @@ class AirDefenseGroupGenerator(GroupGenerator, ABC):
     def groups(self) -> Iterator[VehicleGroup]:
         yield self.vg
         yield from self.auxiliary_groups
+
+    @property
+    def ranges(self) -> Iterator[AirDefenseRange]:
+        yield self.range()
+        yield from self.auxiliary_ranges
 
     @classmethod
     @abstractmethod

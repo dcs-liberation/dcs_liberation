@@ -42,6 +42,7 @@ from game.theater.theatergroundobject import (
     ShipGroundObject,
     MissileSiteGroundObject,
     SceneryGroundObject,
+    SamGroundObject,
 )
 from game.unitmap import UnitMap
 from game.utils import feet, knots, mps
@@ -93,9 +94,14 @@ class GenericGroundObjectGenerator:
             if unit_type is None:
                 raise RuntimeError(f"Unrecognized unit type: {group.units[0].type}")
 
+            if isinstance(self.ground_object, SamGroundObject):
+                group_name = self.ground_object.groups_name(group)
+            else:
+                group_name = group.name
+
             vg = self.m.vehicle_group(
                 self.country,
-                group.name,
+                group_name,
                 unit_type,
                 position=group.position,
                 heading=group.units[0].heading,

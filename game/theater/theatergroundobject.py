@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+from enum import Enum
 from typing import Iterator, List, TYPE_CHECKING, Union
 
 from dcs.mapping import Point
@@ -460,9 +461,14 @@ class CoastalSiteGroundObject(TheaterGroundObject):
         return False
 
 
-# TODO: Differentiate types.
-# This type gets used both for AA sites (SAM, AAA, or SHORAD). These should each
-# be split into their own types.
+class AirDefenseRange(Enum):
+    AAA = "AAA"
+    Short = "short"
+    Medium = "medium"
+    Long = "long"
+
+
+# This type is used for all types of AA. The Range is added as attribute
 class SamGroundObject(TheaterGroundObject):
     def __init__(
         self,
@@ -470,6 +476,7 @@ class SamGroundObject(TheaterGroundObject):
         group_id: int,
         position: Point,
         control_point: ControlPoint,
+        aa_range: AirDefenseRange,
     ) -> None:
         super().__init__(
             name=name,
@@ -481,18 +488,64 @@ class SamGroundObject(TheaterGroundObject):
             dcs_identifier="AA",
             sea_object=False,
         )
-        # Set by the SAM unit generator if the generated group is compatible
-        # with Skynet.
-        self.skynet_capable = False
+        self.aa_ranges: List[AirDefenseRange] = [aa_range]
 
     @property
+    # Returns the TGO Name
     def group_name(self) -> str:
-        if self.skynet_capable:
-            # Prefix the group names of SAM sites with the side color so Skynet
-            # can find them.
-            return f"{self.faction_color}|SAM|{self.group_id}"
+        return super().group_name
+
+    # Returns the name of one single group
+    def groups_name(self, group: Group) -> str:
+        try:
+            group_index = self.groups.index(group)
+            if self.skynet_capability_for_range(
+                self.aa_ranges[group_index], (group_index > 0)
+            ):
+                return self.skynet_group_name(group_index)
+        except AttributeError:  # Allow backwards compatibility
+            return self.skynet_group_name()
+        except ValueError:  # Allow backwards compatibility
+            pass
+
+        return super().group_name
+
+    def set_groups(self, groups: List[Group], ranges: List[AirDefenseRange]):
+        self.groups = groups
+        self.aa_ranges = ranges
+
+    def skynet_capability_for_range(
+        self, range: AirDefenseRange, is_point_defence: bool = False
+    ) -> bool:
+        # Mark the AA Group as skynet_capable so that it will be added it the IADS
+        if range in (AirDefenseRange.Long, AirDefenseRange.Medium):
+            # Long and Medium Range SAMs should be added to skynet
+            return True
+        elif is_point_defence and range == AirDefenseRange.Short:
+            # SHORAD SAMs which work as Point Defence will also be added to skynet
+            return True
         else:
-            return super().group_name
+            # AAA and SHORAD should not be added to Skynet
+            return False
+
+    def skynet_group_name(self, group_index: int = 0) -> str:
+        # <Faction>|SAM|<group_index>|<AirDefenseRange>|<group_id
+        # Prefix the group names of SAM sites with the side color so Skynet
+        # can find them.
+        # Group Index = 0 defines the main SAM Site
+        # Group Index > 0 defines auxiliary_groups like AAA or PD
+        # auxiliary_groups will be handled in the skynet config lua
+        skynet_prefix = f"{self.faction_color}|SAM"
+        try:
+            group_name = (
+                f"{skynet_prefix}"
+                f"|{group_index}"
+                f"|{self.aa_ranges[group_index].value}"
+                f"|{self.group_id}"
+            )
+        except AttributeError:  # Allow backwards compatibility
+            group_name = f"{skynet_prefix}" f"|{self.group_id}"
+        return group_name
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType

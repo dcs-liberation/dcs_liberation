@@ -2,9 +2,11 @@ import random
 from typing import Dict, Iterable, List, Optional, Sequence, Set, Type
 
 from dcs.unitgroup import VehicleGroup
+from dcs.mapping import Point
 
 from game import Game
 from game.factions.faction import Faction
+from game.theater import ControlPoint
 from game.theater.theatergroundobject import SamGroundObject
 from gen.sam.aaa_bofors import BoforsGenerator
 from gen.sam.aaa_flak import FlakGenerator
@@ -116,22 +118,32 @@ def get_faction_possible_sams_generator(
 def _generate_anti_air_from(
     generators: Sequence[Type[AirDefenseGroupGenerator]],
     game: Game,
-    ground_object: SamGroundObject,
-) -> List[VehicleGroup]:
+    name: str,
+    group_id: int,
+    position: Point,
+    control_point: ControlPoint,
+) -> Optional[SamGroundObject]:
     if not generators:
-        return []
+        return None
     sam_generator_class = random.choice(generators)
+    ground_object = SamGroundObject(
+        name, group_id, position, control_point, sam_generator_class.range()
+    )
     generator = sam_generator_class(game, ground_object)
     generator.generate()
-    return list(generator.groups)
+    ground_object.set_groups(list(generator.groups), list(generator.ranges))
+    return ground_object
 
 
-def generate_anti_air_group(
+def generate_anti_air_ground_object(
     game: Game,
-    ground_object: SamGroundObject,
+    name: str,
+    group_id: int,
+    position: Point,
+    control_point: ControlPoint,
     faction: Faction,
     ranges: Optional[Iterable[Set[AirDefenseRange]]] = None,
-) -> List[VehicleGroup]:
+) -> Optional[SamGroundObject]:
     """
     This generate a SAM group
     :param game: The Game.
@@ -161,7 +173,9 @@ def generate_anti_air_group(
 
     for range_options in ranges:
         generators_for_range = [g for g in generators if g.range() in range_options]
-        groups = _generate_anti_air_from(generators_for_range, game, ground_object)
-        if groups:
-            return groups
-    return []
+        ground_object = _generate_anti_air_from(
+            generators_for_range, game, name, group_id, position, control_point
+        )
+        if ground_object:
+            return ground_object
+    return None
