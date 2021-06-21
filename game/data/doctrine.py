@@ -1,9 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
-from dcs.task import Reconnaissance
 
-from game.utils import Distance, feet, nautical_miles
 from game.data.groundunitclass import GroundUnitClass
+from game.utils import Distance, feet, nautical_miles
 
 
 @dataclass
@@ -15,6 +14,15 @@ class GroundUnitProcurementRatios:
             return self.ratios[unit_class] / sum(self.ratios.values())
         except KeyError:
             return 0.0
+
+
+@dataclass(frozen=True)
+class MissionPlannerMaxRanges:
+    cap: Distance = field(default=nautical_miles(100))
+    cas: Distance = field(default=nautical_miles(50))
+    offensive: Distance = field(default=nautical_miles(150))
+    aewc: Distance = field(default=Distance.inf())
+    refueling: Distance = field(default=nautical_miles(200))
 
 
 @dataclass(frozen=True)
@@ -64,6 +72,8 @@ class Doctrine:
     sweep_distance: Distance
 
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
+
+    mission_ranges: MissionPlannerMaxRanges = field(default=MissionPlannerMaxRanges())
 
 
 MODERN_DOCTRINE = Doctrine(
