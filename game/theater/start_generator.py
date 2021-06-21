@@ -49,7 +49,7 @@ from . import (
     OffMapSpawn,
 )
 from ..profiling import logged_duration
-from ..settings import ModSettings, Settings
+from ..settings import Settings
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
 
@@ -119,7 +119,6 @@ class GameGenerator:
                 settings=self.settings,
                 player_budget=self.generator_settings.player_budget,
                 enemy_budget=self.generator_settings.enemy_budget,
-                mod_settings=self.mod_settings,
             )
 
             GroundObjectGenerator(game, self.generator_settings).generate()

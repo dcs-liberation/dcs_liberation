@@ -20,8 +20,8 @@ from game.data.weapons import (
 )
 from game.db import FACTIONS
 from game.profiling import logged_duration
-from game.settings import ModSettings, Settings
-from game.theater.start_generator import GameGenerator, GeneratorSettings
+from game.settings import Settings
+from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from qt_ui import (
     liberation_install,
     liberation_theme,
