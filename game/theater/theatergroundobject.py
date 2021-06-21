@@ -16,6 +16,7 @@ from ..data.radar_db import (
     TRACK_RADARS,
     TELARS,
     LAUNCHER_TRACKER_PAIRS,
+    UNITS_WITH_RADAR,
 )
 from ..utils import Distance, meters
 
@@ -91,10 +92,23 @@ class TheaterGroundObject(MissionTarget):
             )
         )
 
+    # This function returns the name of the whole group
+    # will be used for the mission generator as dcs unit name
     @property
     def group_name(self) -> str:
         """The name of the unit group."""
         return f"{self.category}|{self.group_id}"
+
+    # if the TGO has more than 1 group this function will be used
+    # it returns the unique group name of the specific group
+    # We currently have no tgo / global naming convention for the groups
+    # the group names will be set by the generator
+    # example: add_auxiliary_group for huge sam groups like patriots
+    def single_group_name(self, group_index: int) -> str:
+        try:
+            return self.groups[group_index].name
+        except IndexError:  # handling for possible backwards incompatibility
+            return self.group_name
 
     @property
     def waypoint_name(self) -> str:
@@ -490,43 +504,56 @@ class SamGroundObject(TheaterGroundObject):
         )
         self.aa_ranges: List[AirDefenseRange] = [aa_range]
 
-    @property
-    # Returns the TGO Name
-    def group_name(self) -> str:
-        return super().group_name
-
     # Returns the name of one single group
-    def groups_name(self, group: Group) -> str:
-        try:
-            group_index = self.groups.index(group)
-            if self.skynet_capability_for_range(
-                self.aa_ranges[group_index], (group_index > 0)
-            ):
-                return self.skynet_group_name(group_index)
-        except AttributeError:  # Allow backwards compatibility
-            return self.skynet_group_name()
-        except ValueError:  # Allow backwards compatibility
-            pass
+    # It also changes the group name to a skynet readable
+    # If the skynet conditions are true (skynet_capability_for_range)
+    def single_group_name(self, group_index: int) -> str:
 
-        return super().group_name
+        if self.is_skynet_capable(group_index):
+            # Return regular name if not skynet_capable
+            # Depends on the skynet_capability_for_range and
+            # if the search radar of the unit is alive
+            return self.skynet_group_name(group_index)
+
+        return super().single_group_name(group_index)
 
     def set_groups(self, groups: List[Group], ranges: List[AirDefenseRange]):
         self.groups = groups
         self.aa_ranges = ranges
 
-    def skynet_capability_for_range(
-        self, range: AirDefenseRange, is_point_defence: bool = False
-    ) -> bool:
+    # this function checks if a AA Group should be added to the skynet
+    # based on the AirDefenseRange of the group
+    # The docs recommend to not add AAA at all to skynet
+    # and SHORAD only if its used as Point defence
+    # Otherwise they will not be as efficient as regular
+    def is_skynet_capable(self, group_index: int) -> bool:
+        is_point_defence = group_index > 0
+        try:
+            aa_range = self.aa_ranges[group_index]
+        except (AttributeError, ValueError):
+            return True  # Allow to be backwards compatible
         # Mark the AA Group as skynet_capable so that it will be added it the IADS
-        if range in (AirDefenseRange.Long, AirDefenseRange.Medium):
+        if not (
             # Long and Medium Range SAMs should be added to skynet
-            return True
-        elif is_point_defence and range == AirDefenseRange.Short:
+            aa_range
+            in (AirDefenseRange.Long, AirDefenseRange.Medium)
+        ) and not (
             # SHORAD SAMs which work as Point Defence will also be added to skynet
-            return True
-        else:
+            is_point_defence
+            and aa_range == AirDefenseRange.Short
+        ):
+            # Everything else will be not skynet capable:
             # AAA and SHORAD should not be added to Skynet
             return False
+
+        # Check if first Unit is a Radar Unit and alive
+        if self.has_live_radar_sam and any(
+            (self.groups[group_index].units[0].type == unit.id)
+            for unit in UNITS_WITH_RADAR
+        ):
+            return True
+
+        return False
 
     def skynet_group_name(self, group_index: int = 0) -> str:
         # <Faction>|SAM|<group_index>|<AirDefenseRange>|<group_id
@@ -539,12 +566,12 @@ class SamGroundObject(TheaterGroundObject):
         try:
             group_name = (
                 f"{skynet_prefix}"
+                f"|{self.group_id}"
                 f"|{group_index}"
                 f"|{self.aa_ranges[group_index].value}"
-                f"|{self.group_id}"
             )
         except AttributeError:  # Allow backwards compatibility
-            group_name = f"{skynet_prefix}" f"|{self.group_id}"
+            group_name = f"{skynet_prefix}" f"|{self.group_id}|{group_index}"
         return group_name
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:

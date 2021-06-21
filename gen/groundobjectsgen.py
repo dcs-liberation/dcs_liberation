@@ -85,7 +85,7 @@ class GenericGroundObjectGenerator:
         if self.culled:
             return
 
-        for group in self.ground_object.groups:
+        for group_index, group in enumerate(self.ground_object.groups):
             if not group.units:
                 logging.warning(f"Found empty group in {self.ground_object}")
                 continue
@@ -94,14 +94,9 @@ class GenericGroundObjectGenerator:
             if unit_type is None:
                 raise RuntimeError(f"Unrecognized unit type: {group.units[0].type}")
 
-            if isinstance(self.ground_object, SamGroundObject):
-                group_name = self.ground_object.groups_name(group)
-            else:
-                group_name = group.name
-
             vg = self.m.vehicle_group(
                 self.country,
-                group_name,
+                self.ground_object.single_group_name(group_index),
                 unit_type,
                 position=group.position,
                 heading=group.units[0].heading,
