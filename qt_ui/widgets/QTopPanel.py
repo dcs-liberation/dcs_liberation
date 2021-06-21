@@ -267,8 +267,8 @@ class QTopPanel(QFrame):
             closest_cps[0],
             closest_cps[1],
             self.game.theater.controlpoints[0].position,
-            self.game.player_name,
-            self.game.enemy_name,
+            self.game.player_faction.name,
+            self.game.enemy_faction.name,
         )
 
         unit_map = self.game.initiate_event(game_event)

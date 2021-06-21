@@ -10,8 +10,9 @@ from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
-from game.settings import Settings, ModSettings
-from game.theater.start_generator import GameGenerator, GeneratorSettings
+from game.settings import Settings
+from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
+from game.factions.faction import Faction
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
 from qt_ui.windows.newgame.QCampaignList import (
@@ -112,8 +113,8 @@ class NewGameWizard(QtWidgets.QWizard):
             high_digit_sams=self.field("high_digit_sams"),
         )
 
-        blue_faction = [c for c in db.FACTIONS][self.field("blueFaction")]
-        red_faction = [c for c in db.FACTIONS][self.field("redFaction")]
+        blue_faction = self.faction_selection_page.selected_blue_faction
+        red_faction = self.faction_selection_page.selected_red_faction
         generator = GameGenerator(
             blue_faction,
             red_faction,
@@ -257,6 +258,14 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         self.blueFactionDescription.setText(blue_faction_txt)
         self.redFactionDescription.setText(red_faction_txt)
+
+    @property
+    def selected_blue_faction(self) -> Faction:
+        return db.FACTIONS[self.blueFactionSelect.currentText()]
+
+    @property
+    def selected_red_faction(self) -> Faction:
+        return db.FACTIONS[self.redFactionSelect.currentText()]
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):

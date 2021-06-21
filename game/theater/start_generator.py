@@ -49,7 +49,7 @@ from . import (
     OffMapSpawn,
 )
 from ..profiling import logged_duration
-from ..settings import ModSettings, Settings
+from ..settings import Settings
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
 
@@ -78,11 +78,22 @@ class GeneratorSettings:
     no_enemy_navy: bool
 
 
+@dataclass
+class ModSettings:
+    a4_skyhawk: bool = False
+    f22_raptor: bool = False
+    hercules: bool = False
+    jas39_gripen: bool = False
+    su57_felon: bool = False
+    frenchpack: bool = False
+    high_digit_sams: bool = False
+
+
 class GameGenerator:
     def __init__(
         self,
-        player: str,
-        enemy: str,
+        player: Faction,
+        enemy: Faction,
         theater: ConflictTheater,
         settings: Settings,
         generator_settings: GeneratorSettings,
@@ -101,14 +112,13 @@ class GameGenerator:
             namegen.reset()
             self.prepare_theater()
             game = Game(
-                player_name=self.player,
-                enemy_name=self.enemy,
+                player_faction=self.player.apply_mod_settings(self.mod_settings),
+                enemy_faction=self.enemy.apply_mod_settings(self.mod_settings),
                 theater=self.theater,
                 start_date=self.generator_settings.start_date,
                 settings=self.settings,
                 player_budget=self.generator_settings.player_budget,
                 enemy_budget=self.generator_settings.enemy_budget,
-                mod_settings=self.mod_settings,
             )
 
             GroundObjectGenerator(game, self.generator_settings).generate()
@@ -162,9 +172,9 @@ class ControlPointGroundObjectGenerator:
     @property
     def faction_name(self) -> str:
         if self.control_point.captured:
-            return self.game.player_name
+            return self.game.player_faction.name
         else:
-            return self.game.enemy_name
+            return self.game.enemy_faction.name
 
     @property
     def faction(self) -> Faction:

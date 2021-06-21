@@ -35,7 +35,7 @@ from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
-from .settings import ModSettings, Settings, AutoAtoBehavior
+from .settings import Settings, AutoAtoBehavior
 from .squadrons import AirWing
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
@@ -88,23 +88,21 @@ class TurnState(Enum):
 class Game:
     def __init__(
         self,
-        player_name: str,
-        enemy_name: str,
+        player_faction: Faction,
+        enemy_faction: Faction,
         theater: ConflictTheater,
         start_date: datetime,
         settings: Settings,
         player_budget: float,
         enemy_budget: float,
-        mod_settings: ModSettings,
     ) -> None:
         self.settings = settings
-        self.mod_settings = mod_settings
         self.events: List[Event] = []
         self.theater = theater
-        self.player_name = player_name
-        self.player_country = db.FACTIONS[player_name].country
-        self.enemy_name = enemy_name
-        self.enemy_country = db.FACTIONS[enemy_name].country
+        self.player_faction = player_faction
+        self.player_country = player_faction.country
+        self.enemy_faction = enemy_faction
+        self.enemy_country = enemy_faction.country
         # pass_turn() will be called when initialization is complete which will
         # increment this to turn 0 before it reaches the player.
         self.turn = -1
@@ -126,8 +124,6 @@ class Game:
         self.name_generator = naming.namegen
 
         self.conditions = self.generate_conditions()
-
-        self.apply_mods()
 
         self.blue_transit_network = TransitNetwork()
         self.red_transit_network = TransitNetwork()
@@ -207,92 +203,6 @@ class Game:
             else:
                 self.enemy_country = "Russia"
 
-    def apply_mods(self):
-        # aircraft
-        if not self.mod_settings.a4_skyhawk:
-            self.remove_aircraft("A-4E-C")
-        if not self.mod_settings.hercules:
-            self.remove_aircraft("Hercules")
-        if not self.mod_settings.f22_raptor:
-            self.remove_aircraft("F-22A")
-        if not self.mod_settings.jas39_gripen:
-            self.remove_aircraft("JAS39Gripen")
-            self.remove_aircraft("JAS39Gripen_AG")
-        if not self.mod_settings.su57_felon:
-            self.remove_aircraft("Su-57")
-        # frenchpack
-        if not self.mod_settings.frenchpack:
-            self.remove_vehicle("AMX10RCR")
-            self.remove_vehicle("SEPAR")
-            self.remove_vehicle("ERC")
-            self.remove_vehicle("M120")
-            self.remove_vehicle("AA20")
-            self.remove_vehicle("TRM2000")
-            self.remove_vehicle("TRM2000_Citerne")
-            self.remove_vehicle("TRM2000_AA20")
-            self.remove_vehicle("TRMMISTRAL")
-            self.remove_vehicle("VABH")
-            self.remove_vehicle("VAB_RADIO")
-            self.remove_vehicle("VAB_50")
-            self.remove_vehicle("VIB_VBR")
-            self.remove_vehicle("VAB_HOT")
-            self.remove_vehicle("VAB_MORTIER")
-            self.remove_vehicle("VBL50")
-            self.remove_vehicle("VBLANF1")
-            self.remove_vehicle("VBL-radio")
-            self.remove_vehicle("VBAE")
-            self.remove_vehicle("VBAE_MMP")
-            self.remove_vehicle("AMX-30B2")
-            self.remove_vehicle("Tracma")
-            self.remove_vehicle("JTACFP")
-            self.remove_vehicle("SHERIDAN")
-            self.remove_vehicle("Leclerc_XXI")
-            self.remove_vehicle("Toyota_bleu")
-            self.remove_vehicle("Toyota_vert")
-            self.remove_vehicle("Toyota_desert")
-            self.remove_vehicle("Kamikaze")
-        # high digit sams
-        if not self.mod_settings.high_digit_sams:
-            self.remove_air_defenses("SA10BGenerator")
-            self.remove_air_defenses("SA12Generator")
-            self.remove_air_defenses("SA20Generator")
-            self.remove_air_defenses("SA20BGenerator")
-            self.remove_air_defenses("SA23Generator")
-            self.remove_air_defenses("SA17Generator")
-            self.remove_air_defenses("KS19Generator")
-
-    def remove_aircraft(self, name):
-        for i in self.player_faction.aircrafts:
-            if i.dcs_unit_type.id == name:
-                self.player_faction.aircrafts.remove(i)
-        for i in self.enemy_faction.aircrafts:
-            if i.dcs_unit_type.id == name:
-                self.enemy_faction.aircrafts.remove(i)
-
-    def remove_air_defenses(self, name):
-        for i in self.player_faction.air_defenses:
-            if i == name:
-                self.player_faction.air_defenses.remove(i)
-        for i in self.enemy_faction.air_defenses:
-            if i == name:
-                self.enemy_faction.air_defenses.remove(i)
-
-    def remove_vehicle(self, name):
-        for i in self.player_faction.frontline_units:
-            if i.dcs_unit_type.id == name:
-                self.player_faction.frontline_units.remove(i)
-        for i in self.enemy_faction.frontline_units:
-            if i.dcs_unit_type.id == name:
-                self.enemy_faction.frontline_units.remove(i)
-
-    @property
-    def player_faction(self) -> Faction:
-        return db.FACTIONS[self.player_name]
-
-    @property
-    def enemy_faction(self) -> Faction:
-        return db.FACTIONS[self.enemy_name]
-
     def faction_for(self, player: bool) -> Faction:
         if player:
             return self.player_faction
@@ -332,8 +242,8 @@ class Game:
                 player_cp,
                 enemy_cp,
                 enemy_cp.position,
-                self.player_name,
-                self.enemy_name,
+                self.player_faction.name,
+                self.enemy_faction.name,
             )
         )
 
@@ -379,7 +289,7 @@ class Game:
             return (
                 event
                 and event.attacker_name
-                and event.attacker_name == self.player_name
+                and event.attacker_name == self.player_faction.name
             )
         else:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
