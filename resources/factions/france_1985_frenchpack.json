@@ -1,13 +1,13 @@
 {
   "country": "France",
-  "name": "France 1995",
-  "authors": "Khopa",
-  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
+  "name": "France 1985 (Frenchpack)",
+  "authors": "Colonel Panic",
+  "description": "<p>1980s French equipment using FrenchPack.</p>",
   "locales": [
     "fr_FR"
   ],
+
   "aircrafts": [
-    "Mirage 2000-5",
     "Mirage 2000C",
     "SA 342L Gazelle",
     "SA 342M Gazelle",
@@ -21,12 +21,17 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "Cobra",
-    "LAV-25",
+    "AMX.30B2",
     "Leclerc S\u00e9ries 2",
+    "Leclerc S\u00e9ries 2",
+    "Pamela",
+    "Panhard",
     "Roland 2 (Marder Chassis)",
-    "TPz Fuchs",
-    "VAB Mephisto"
+    "VAB .50",
+    "VAB Mephisto",
+    "VAB T20/13",
+    "VBL .50",
+    "VBL AANF1"
   ],
   "artillery_units": [
     "M109A6 Paladin",
@@ -38,37 +43,38 @@
   "infantry_units": [
     "Infantry M249",
     "Infantry M4",
-    "MANPADS Stinger",
-    "Mortar 2B11 120mm"
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "RolandGenerator",
     "HawkGenerator"
-  ],
-  "ewrs": [
-    "HawkEwrGenerator"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [
     "LHA_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa",
-    "PERRY"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
     "TICONDEROG"
   ],
-  "requirements": {},
-  "carrier_names": [],
+  "requirements": {
+    "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
+  },
+  "carrier_names": [
+    "R91 Charles de Gaulle"
+  ],
   "helicopter_carrier_names": [
-    "Jeanne d'Arc"
+    "R97 Jeanne d'Arc",
+    "L9013 Mistral",
+    "L9014 Tonerre",
+    "L9015 Dixmude"
   ],
   "navy_generators": [
-    "ArleighBurkeGroupGenerator",
-    "OliverHazardPerryGroupGenerator"
+    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ-9 Reaper",
+  "jtac_unit": "SA 342L Gazelle",
   "doctrine": "coldwar"
 }

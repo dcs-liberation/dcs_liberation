@@ -1,8 +1,8 @@
 {
   "country": "Russia",
-  "name": "Russia 2020 (Modded)",
+  "name": "Russia 2010 (High Digit SAMs)",
   "authors": "Khopa",
-  "description": "<p>Russia in 2020, using the Su-57 mod by Cubanace.</p>",
+  "description": "<p>Russian army in the early 2010s, featuring the High Digit SAMs mod units. </p>",
   "locales": [
     "ru_RU"
   ],
@@ -23,7 +23,6 @@
     "Su-30 Flanker-C",
     "Su-33 Flanker-D",
     "Su-34 Fullback",
-    "Su-57 Felon",
     "Tu-142 Bear-F",
     "Tu-160 Blackjack",
     "Tu-22M3 Backfire-C",
@@ -36,10 +35,13 @@
     "IL-78M"
   ],
   "frontline_units": [
+    "BMP-1",
     "BMP-2",
     "BMP-3",
+    "BTR-80",
+    "BTR-82A",
     "SA-19 Grison (2K22 Tunguska)",
-    "T-72B with Kontakt-1 ERA",
+    "T-72B3 model 2011",
     "T-80UD",
     "T-90A"
   ],
@@ -53,22 +55,21 @@
   ],
   "infantry_units": [
     "Infantry AK-74 Rus",
-    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Mortar 2B11 120mm",
     "Paratrooper AKS",
     "Paratrooper RPG-16"
   ],
   "air_defenses": [
-    "SA8Generator",
-    "SA9Generator",
-    "SA10Generator",
-    "SA11Generator",
+    "SA17Generator",
     "SA13Generator",
     "SA15Generator",
     "SA19Generator",
-    "Tier2SA10Generator",
-    "Tier3SA10Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "SA10BGenerator",
+    "SA12Generator",
+    "SA20Generator",
+    "SA20BGenerator",
+    "SA23Generator"
   ],
   "ewrs": [
     "BoxSpringGenerator",
@@ -86,7 +87,7 @@
     "MOLNIYA"
   ],
   "requirements": {
-    "SU-57 Felon By CubanAce Simulations": "https://www.digitalcombatsimulator.com/fr/files/2539621/"
+    "High Digit SAMs": "https://github.com/Auranis/HighDigitSAMs/releases"
   },
   "carrier_names": [
     "Admiral Kuznetsov"

@@ -50,6 +50,7 @@
     "LaCombattanteIIGroupGenerator"
   ],
   "requirements": {},
+  "doctrine": "modern",
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"
 }

@@ -34,5 +34,6 @@
   "air_defenses": [
     "SA9Generator",
     "SA13Generator"
-  ]
+  ],
+  "doctrine": "coldwar"
 }

@@ -1,10 +1,11 @@
 {
   "country": "USA",
-  "name": "Private Military Company - USA",
+  "name": "Private Military Company - USA (MB339)",
   "authors": "Khopa",
-  "description": "<p>A private military company using western units.</p>",
+  "description": "<p>A private military company using western units (And using the MB339 mod).</p>",
   "aircrafts": [
     "C-101CC Aviojet",
+    "MB-339PAN",
     "Mi-8MTV2 Hip",
     "SA 342M Gazelle",
     "UH-1H Iroquois"
@@ -27,6 +28,9 @@
   "air_defenses": [
     "AvengerGenerator"
   ],
+  "requirements": {
+    "MB-339A/PAN by Frecce Tricolori Virtuali": "http://www.freccetricolorivirtuali.net/"
+  },
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
   "doctrine": "coldwar"

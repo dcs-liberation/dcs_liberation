@@ -5,10 +5,6 @@
   "description": "<p>Insurgents faction.</p>",
   "aircrafts": [],
   "frontline_units": [
-    "DIM' KAMIKAZE",
-    "DIM' TOYOTA BLUE",
-    "DIM' TOYOTA DESERT",
-    "DIM' TOYOTA GREEN",
     "BRDM-2",
     "Cobra",
     "MT-LB",

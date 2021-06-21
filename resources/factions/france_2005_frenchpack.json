@@ -1,8 +1,8 @@
 {
   "country": "France",
-  "name": "France 1995",
-  "authors": "Khopa",
-  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
+  "name": "France 2005 (Frenchpack)",
+  "authors": "HerrTom",
+  "description": "<p>French equipment using the Frenchpack, but without the Rafale mod.</p>",
   "locales": [
     "fr_FR"
   ],
@@ -14,6 +14,7 @@
     "SA 342M Gazelle Mistral"
   ],
   "awacs": [
+    "E-2C Hawkeye",
     "E-3A"
   ],
   "tankers": [
@@ -21,12 +22,21 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "Cobra",
-    "LAV-25",
+    "AMX.30B2",
     "Leclerc S\u00e9ries 2",
+    "Leclerc S\u00e9ries 2",
+    "Leclerc_XXI",
+    "Pamela",
+    "Panhard",
     "Roland 2 (Marder Chassis)",
-    "TPz Fuchs",
-    "VAB Mephisto"
+    "VAB .50",
+    "VAB Mephisto",
+    "VAB T20/13",
+    "VAB T20/13",
+    "VBAE CRAB",
+    "VBAE CRAB MMP",
+    "VBL .50",
+    "VBL AANF1"
   ],
   "artillery_units": [
     "M109A6 Paladin",
@@ -38,37 +48,40 @@
   "infantry_units": [
     "Infantry M249",
     "Infantry M4",
-    "MANPADS Stinger",
-    "Mortar 2B11 120mm"
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "RolandGenerator",
     "HawkGenerator"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "aircraft_carrier": [
+    "Stennis"
   ],
-  "aircraft_carrier": [],
   "helicopter_carrier": [
     "LHA_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa",
-    "PERRY"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
     "TICONDEROG"
   ],
-  "requirements": {},
-  "carrier_names": [],
+  "requirements": {
+    "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
+  },
+  "carrier_names": [
+    "R91 Charles de Gaulle"
+  ],
   "helicopter_carrier_names": [
-    "Jeanne d'Arc"
+    "R97 Jeanne d'Arc",
+    "L9013 Mistral",
+    "L9014 Tonerre",
+    "L9015 Dixmude"
   ],
   "navy_generators": [
-    "ArleighBurkeGroupGenerator",
-    "OliverHazardPerryGroupGenerator"
+    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
-  "doctrine": "coldwar"
+  "doctrine": "modern"
 }

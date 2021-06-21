@@ -1,0 +1,35 @@
+{
+  "country": "Insurgents",
+  "name": "Insurgents (Modded)",
+  "authors": "Khopa",
+  "description": "<p>Insurgents faction using the modded insurgents units from the frenchpack mods.</p>",
+  "aircrafts": [],
+  "frontline_units": [
+    "DIM' KAMIKAZE",
+    "DIM' TOYOTA BLUE",
+    "DIM' TOYOTA DESERT",
+    "DIM' TOYOTA GREEN",
+    "ZU-23 on Ural-375"
+  ],
+  "artillery_units": [
+    "2S19 Msta-S",
+    "BM-21 Grad"
+  ],
+  "logistics_units": [
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
+  ],
+  "infantry_units": [
+    "Infantry RPG",
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla \"Grouse\""
+  ],
+  "air_defenses": [
+    "SA9Generator",
+    "ZU23Generator",
+    "ZSU23Generator"
+  ],
+  "requirements": {
+    "frenchpack V3.5": "https://forums.eagle.ru/showthread.php?t=279974"
+  }
+}

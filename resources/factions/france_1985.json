@@ -8,6 +8,7 @@
     ],
     "doctrine": "coldwar",
     "aircrafts": [
+	  "C-130"
       "Mirage 2000C",
       "SA 342L Gazelle",
       "SA 342M Gazelle",

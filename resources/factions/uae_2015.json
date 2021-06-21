@@ -48,5 +48,6 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "WingLoong-I"
+  "jtac_unit": "WingLoong-I",
+  "doctrine": "modern"
 }

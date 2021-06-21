@@ -7,13 +7,13 @@
     "en_US"
   ],
   "aircrafts": [
-    "A-4E Skyhawk",
     "A-10A Thunderbolt II",
     "A-10C Thunderbolt II (Suite 3)",
     "AH-64D Apache Longbow",
     "AV-8B Harrier II Night Attack",
     "B-1B Lancer",
     "B-52H Stratofortress",
+    "C-17a",
     "F-117A Nighthawk",
     "F-14B Tomcat",
     "F-15C Eagle",
@@ -21,7 +21,6 @@
     "F-16CM Fighting Falcon (Block 50)",
     "F/A-18C Hornet (Lot 20)",
     "Ka-50 Hokum",
-    "Mi-24P Hind-F",
     "SH-60B Seahawk",
     "Su-27 Flanker-B",
     "UH-1H Iroquois"
@@ -70,6 +69,7 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "liveries_overrides": {
     "F/A-18C Hornet (Lot 20)": [
       "NAWDC black",

@@ -51,7 +51,6 @@
     "SA10Generator",
     "SA11Generator",
     "SA13Generator",
-    "SA20BGenerator",
     "Tier2SA10Generator",
     "ZSU23Generator",
     "ZSU57Generator",
@@ -97,5 +96,6 @@
     "Type54GroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "WingLoong-I"
+  "jtac_unit": "WingLoong-I",
+  "doctrine": "modern"
 }

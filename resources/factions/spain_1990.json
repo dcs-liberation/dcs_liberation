@@ -7,6 +7,7 @@
     "es_ES"
   ],
   "aircrafts": [
+    "AN-26B",
     "AV-8B Harrier II Night Attack",
     "C-101CC Aviojet",
     "EF-18A+ Hornet",
@@ -67,6 +68,7 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "liveries_overrides": {
     "EF-18A+ Hornet": [
       "Spain 111th Escuadron C.15-73",

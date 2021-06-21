@@ -55,5 +55,6 @@
   "navy_generators": [
     "MolniyaGroupGenerator",
     "OliverHazardPerryGroupGenerator"
-  ]
+  ],
+  "doctrine": "modern"
 }

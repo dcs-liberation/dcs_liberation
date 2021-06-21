@@ -54,6 +54,7 @@
   "carrier_names": [],
   "helicopter_carrier_names": [],
   "navy_generators": [],
+  "doctrine": "coldwar",
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"
 }

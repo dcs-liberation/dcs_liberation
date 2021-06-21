@@ -4,6 +4,7 @@
   "authors": "Khopa",
   "description": "<p>Syria and Arab armies in the 1982 invasion of Lebanon</p>",
   "aircrafts": [
+    "AN-26B",
     "Mi-8MTV2 Hip",
     "MiG-19P Farmer-B",
     "MiG-21bis Fishbed-N",
@@ -69,5 +70,6 @@
   "carrier_names": [],
   "navy_generators": [
     "GrishaGroupGenerator"
-  ]
+  ],
+  "doctrine": "coldwar"
 }

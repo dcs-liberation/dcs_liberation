@@ -14,7 +14,6 @@
     "B-1B Lancer",
     "B-52H Stratofortress",
     "C-130",
-    "C-130J-30 Super Hercules",
     "C-17A",
     "CH-47D",
     "CH-53E",
@@ -23,7 +22,6 @@
     "F-15C Eagle",
     "F-15E Strike Eagle",
     "F-16CM Fighting Falcon (Block 50)",
-    "F-22A Raptor",
     "F/A-18C Hornet (Lot 20)",
     "S-3B Viking",
     "SH-60B Seahawk",
@@ -106,6 +104,7 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "doctrine": "modern",
   "liveries_overrides": {
     "F/A-18C Hornet (Lot 20)": [
       "VFA-106",

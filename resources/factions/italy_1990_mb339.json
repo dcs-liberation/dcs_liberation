@@ -1,17 +1,18 @@
 {
-  "country": "France",
-  "name": "France 1995",
+  "country": "Italy",
+  "name": "Italy 1990 (With MB339)",
   "authors": "Khopa",
-  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
+  "description": "<p>Italy in the 90s, with the MB339 mod.</p>",
   "locales": [
-    "fr_FR"
+    "it_IT"
   ],
   "aircrafts": [
-    "Mirage 2000-5",
-    "Mirage 2000C",
-    "SA 342L Gazelle",
-    "SA 342M Gazelle",
-    "SA 342M Gazelle Mistral"
+    "AH-1W SuperCobra",
+    "AV-8B Harrier II Night Attack",
+    "C-130",
+    "MB-339PAN",
+    "Tornado IDS",
+    "UH-1H Iroquois"
   ],
   "awacs": [
     "E-3A"
@@ -21,16 +22,12 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "Cobra",
-    "LAV-25",
-    "Leclerc S\u00e9ries 2",
-    "Roland 2 (Marder Chassis)",
-    "TPz Fuchs",
-    "VAB Mephisto"
+    "Leopard 1A3",
+    "M1097 Heavy HMMWV Avenger",
+    "M113"
   ],
   "artillery_units": [
-    "M109A6 Paladin",
-    "M270 Multiple Launch Rocket System"
+    "M109A6 Paladin"
   ],
   "logistics_units": [
     "Truck M818 6x6"
@@ -38,11 +35,10 @@
   "infantry_units": [
     "Infantry M249",
     "Infantry M4",
-    "MANPADS Stinger",
-    "Mortar 2B11 120mm"
+    "MANPADS Stinger"
   ],
   "air_defenses": [
-    "RolandGenerator",
+    "AvengerGenerator",
     "HawkGenerator"
   ],
   "ewrs": [
@@ -53,22 +49,23 @@
     "LHA_Tarawa"
   ],
   "destroyers": [
-    "USS_Arleigh_Burke_IIa",
     "PERRY"
   ],
   "cruisers": [
     "TICONDEROG"
   ],
-  "requirements": {},
+  "requirements": {
+    "MB-339A/PAN by Frecce Tricolori Virtuali": "http://www.freccetricolorivirtuali.net/"
+  },
   "carrier_names": [],
   "helicopter_carrier_names": [
-    "Jeanne d'Arc"
+    "Giuseppe Garibaldi",
+    "Cavour"
   ],
   "navy_generators": [
-    "ArleighBurkeGroupGenerator",
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
-  "doctrine": "coldwar"
+  "doctrine": "modern"
 }

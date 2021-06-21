@@ -74,5 +74,6 @@
     "GrishaGroupGenerator",
     "MolniyaGroupGenerator"
   ],
-  "has_jtac": false
+  "has_jtac": false,
+  "doctrine": "modern"
 }

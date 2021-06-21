@@ -1,7 +1,7 @@
 {
   "country": "Canada",
-  "name": "Canada 2005",
-  "authors": "Khopa",
+  "name": "Canada 2005 (With C-130)",
+  "authors": "Khopa, SpaceEnthusiast",
   "description": "<p>Canada in the 2000s, an F/A-18C Hornet focused faction.</p>",
   "locales": [
     "en_US",
@@ -9,6 +9,7 @@
   ],
   "aircrafts": [
     "AH-1W SuperCobra",
+    "C-130J-30 Super Hercules",
     "CF-188 Hornet",
     "UH-1H Iroquois"
   ],
@@ -52,7 +53,9 @@
   "cruisers": [
     "TICONDEROG"
   ],
-  "requirements": {},
+  "requirements": {
+    "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
+  },
   "carrier_names": [],
   "helicopter_carrier_names": [],
   "navy_generators": [
@@ -65,6 +68,9 @@
     "CF-188 Hornet": [
       "Canada 409th Squadron",
       "Canada 425th Squadron"
+    ],
+    "C-130J-30 Super Hercules": [
+      "Royal Canadian AF CC-130J"
     ]
   }
 }

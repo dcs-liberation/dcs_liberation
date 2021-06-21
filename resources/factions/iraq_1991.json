@@ -80,5 +80,7 @@
   "carrier_names": [],
   "navy_generators": [
     "GrishaGroupGenerator"
-  ]
+    ],
+    "doctrine": "coldwar"
+
 }
