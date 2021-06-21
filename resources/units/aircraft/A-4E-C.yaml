@@ -11,5 +11,6 @@ manufacturer: Douglas
 origin: USA
 price: 7
 role: Carrier-based Attack/Light Fighter
+gunfighter: true
 variants:
   A-4E Skyhawk: {}

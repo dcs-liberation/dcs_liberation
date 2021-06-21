@@ -110,6 +110,11 @@ class AircraftType(UnitType[FlyingType]):
     carrier_capable: bool
     lha_capable: bool
     always_keeps_gun: bool
+
+    # If true, the aircraft does not use the guns as the last resort weapons, but as a main weapon.
+    # It'll RTB when it doesn't have gun ammo left.
+    gunfighter: bool
+
     max_group_size: int
     patrol_altitude: Optional[Distance]
     patrol_speed: Optional[Speed]
@@ -231,6 +236,7 @@ class AircraftType(UnitType[FlyingType]):
                 carrier_capable=data.get("carrier_capable", False),
                 lha_capable=data.get("lha_capable", False),
                 always_keeps_gun=data.get("always_keeps_gun", False),
+                gunfighter=data.get("gunfighter", False),
                 max_group_size=data.get("max_group_size", aircraft.group_size_max),
                 patrol_altitude=patrol_config.altitude,
                 patrol_speed=patrol_config.speed,

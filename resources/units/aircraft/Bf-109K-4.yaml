@@ -14,5 +14,6 @@ introduced: 1944
 manufacturer: Messerschmitt
 price: 4
 role: Fighter
+gunfighter: true
 variants:
   "Bf 109 K-4 Kurf\xFCrst": {}

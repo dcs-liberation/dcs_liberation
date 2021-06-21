@@ -66,7 +66,6 @@ from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType
 
 from game import db
-from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.data.weapons import Pylon
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
@@ -840,7 +839,7 @@ class AircraftConflictGenerator:
         group.task = CAP.name
         self._setup_group(group, package, flight, dynamic_runways)
 
-        if flight.unit_type.dcs_unit_type not in GUNFIGHTERS:
+        if not flight.unit_type.gunfighter:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
@@ -857,7 +856,7 @@ class AircraftConflictGenerator:
         group.task = FighterSweep.name
         self._setup_group(group, package, flight, dynamic_runways)
 
-        if flight.unit_type.dcs_unit_type not in GUNFIGHTERS:
+        if not flight.unit_type.gunfighter:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
