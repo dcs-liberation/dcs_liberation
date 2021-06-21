@@ -592,7 +592,10 @@ class PendingTransfers:
 
     def order_airlift_assets(self) -> None:
         for control_point in self.game.theater.controlpoints:
-            self.order_airlift_assets_at(control_point)
+            if self.game.air_wing_for(control_point.captured).can_auto_plan(
+                FlightType.TRANSPORT
+            ):
+                self.order_airlift_assets_at(control_point)
 
     @staticmethod
     def desired_airlift_capacity(control_point: ControlPoint) -> int:

@@ -368,6 +368,13 @@ class AirWing:
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]
 
+    def can_auto_plan(self, task: FlightType) -> bool:
+        try:
+            next(self.auto_assignable_for_task(task))
+            return True
+        except StopIteration:
+            return False
+
     def auto_assignable_for_task(self, task: FlightType) -> Iterator[Squadron]:
         for squadron in self.iter_squadrons():
             if squadron.can_auto_assign(task):

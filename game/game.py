@@ -1,3 +1,4 @@
+from game.dcs.aircrafttype import AircraftType
 import itertools
 import logging
 import random
@@ -10,13 +11,14 @@ from dcs.action import Coalition
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
+from pydcs_extensions.a4ec.a4ec import A_4E_C
 from faker import Faker
 
 from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
-from gen import naming
+from gen import aircraft, naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -86,8 +88,8 @@ class TurnState(Enum):
 class Game:
     def __init__(
         self,
-        player_name: str,
-        enemy_name: str,
+        player_faction: Faction,
+        enemy_faction: Faction,
         theater: ConflictTheater,
         start_date: datetime,
         settings: Settings,
@@ -97,10 +99,10 @@ class Game:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
-        self.player_name = player_name
-        self.player_country = db.FACTIONS[player_name].country
-        self.enemy_name = enemy_name
-        self.enemy_country = db.FACTIONS[enemy_name].country
+        self.player_faction = player_faction
+        self.player_country = player_faction.country
+        self.enemy_faction = enemy_faction
+        self.enemy_country = enemy_faction.country
         # pass_turn() will be called when initialization is complete which will
         # increment this to turn 0 before it reaches the player.
         self.turn = -1
@@ -201,14 +203,6 @@ class Game:
             else:
                 self.enemy_country = "Russia"
 
-    @property
-    def player_faction(self) -> Faction:
-        return db.FACTIONS[self.player_name]
-
-    @property
-    def enemy_faction(self) -> Faction:
-        return db.FACTIONS[self.enemy_name]
-
     def faction_for(self, player: bool) -> Faction:
         if player:
             return self.player_faction
@@ -248,8 +242,8 @@ class Game:
                 player_cp,
                 enemy_cp,
                 enemy_cp.position,
-                self.player_name,
-                self.enemy_name,
+                self.player_faction.name,
+                self.enemy_faction.name,
             )
         )
 
@@ -295,7 +289,7 @@ class Game:
             return (
                 event
                 and event.attacker_name
-                and event.attacker_name == self.player_name
+                and event.attacker_name == self.player_faction.name
             )
         else:
             raise RuntimeError(f"{event} was passed when an Event type was expected")

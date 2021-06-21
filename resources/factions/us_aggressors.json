@@ -7,6 +7,7 @@
     "en_US"
   ],
   "aircrafts": [
+    "A-4E Skyhawk",
     "A-10A Thunderbolt II",
     "A-10C Thunderbolt II (Suite 3)",
     "AH-64D Apache Longbow",
@@ -20,6 +21,7 @@
     "F-16CM Fighting Falcon (Block 50)",
     "F/A-18C Hornet (Lot 20)",
     "Ka-50 Hokum",
+    "Mi-24P Hind-F",
     "SH-60B Seahawk",
     "Su-27 Flanker-B",
     "UH-1H Iroquois"

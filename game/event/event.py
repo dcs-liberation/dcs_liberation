@@ -54,7 +54,7 @@ class Event:
 
     @property
     def is_player_attacking(self) -> bool:
-        return self.attacker_name == self.game.player_name
+        return self.attacker_name == self.game.player_faction.name
 
     @property
     def tasks(self) -> List[Type[Task]]:

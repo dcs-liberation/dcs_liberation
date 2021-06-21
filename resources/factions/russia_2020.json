@@ -1,6 +1,6 @@
 {
   "country": "Russia",
-  "name": "Russia 2020 (Modded)",
+  "name": "Russia 2020",
   "authors": "Khopa",
   "description": "<p>Russia in 2020, using the Su-57 mod by Cubanace.</p>",
   "locales": [
@@ -63,9 +63,16 @@
     "SA11Generator",
     "SA13Generator",
     "SA15Generator",
+    "SA17Generator",
     "SA19Generator",
     "Tier2SA10Generator",
     "Tier3SA10Generator",
+    "SA10BGenerator",
+    "SA12Generator",
+    "SA20Generator",
+    "SA20BGenerator",
+    "SA23Generator",
+    "ZSU23Generator",
     "ZU23Generator",
     "ZU23UralGenerator"
   ],

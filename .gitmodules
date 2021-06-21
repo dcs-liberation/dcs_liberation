@@ -1,4 +1,0 @@
-[submodule "pydcs"]
-	path = pydcs
-	url = https://github.com/pydcs/dcs
-	branch = master

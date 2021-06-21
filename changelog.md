@@ -1,3 +1,11 @@
+# 5.0.0
+
+Saves from 3.x are not compatible with 5.0.
+
+## Features/Improvements
+
+## Fixes
+
 # 4.0.0
 
 Saves from 3.x are not compatible with 4.0.
@@ -6,6 +14,8 @@ Saves from 3.x are not compatible with 4.0.
 
 * **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
 * **[Campaign]** Added an option to disable levelling up of AI pilots.
+* **[Campaign]** Added Russian Intervention 2015 campaign on Syria, for a small and somewhat realistic Russian COIN scenario.
+* **[Campaign]** Added Operation Atilla campaign on Syria, for a reasonably large invasion of Cyprus scenario.
 * **[Campaign AI]** AI will plan Tanker flights.
 * **[Campaign AI]** Removed max distance for AEW&C auto planning.
 * **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
@@ -17,11 +27,13 @@ Saves from 3.x are not compatible with 4.0.
 * **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
 * **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
 * **[UI]** Updated intel box text for first turn.
+* **[Units/Factions/Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+. 
+* **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
 
 ## Fixes
 
 * **[Campaign AI]** Fix procurement for factions that lack some unit types.
-* **[Campaign AI]** Improved pruning of unplannable missions which should improve turn cycle time and prevent the auto-planner from quitting early.
+* **[Campaign AI]** Fix auto purchase of aircraft for factions that have no transport aircraft.
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 * **[Mission Generation]** Fixed EWR group names so they contribute to Skynet again.
 * **[Mission Generation]** Fixed duplicate name error when generating convoys and cargo ships when creating manual transfers after loading a game.
