@@ -5,5 +5,9 @@ manufacturer: Lockheed Martin
 origin: USA
 price: 25
 role: Tanker
+patrol:
+  # ~210 knots IAS, roughly the max for the KC-130 at altitude.
+  speed: 370
+  altitude: 22000
 variants:
   KC-130: {}

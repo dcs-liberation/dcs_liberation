@@ -29,7 +29,7 @@ from game.radio.channels import (
     ViggenRadioChannelAllocator,
     NoOpChannelAllocator,
 )
-from game.utils import Speed, kph
+from game.utils import Distance, Speed, feet, kph, knots
 
 if TYPE_CHECKING:
     from gen.aircraft import FlightData
@@ -91,11 +91,28 @@ class RadioConfig:
 
 
 @dataclass(frozen=True)
+class PatrolConfig:
+    altitude: Optional[Distance]
+    speed: Optional[Speed]
+
+    @classmethod
+    def from_data(cls, data: dict[str, Any]) -> PatrolConfig:
+        altitude = data.get("altitude", None)
+        speed = data.get("altitude", None)
+        return PatrolConfig(
+            feet(altitude) if altitude is not None else None,
+            knots(speed) if speed is not None else None,
+        )
+
+
+@dataclass(frozen=True)
 class AircraftType(UnitType[FlyingType]):
     carrier_capable: bool
     lha_capable: bool
     always_keeps_gun: bool
     max_group_size: int
+    patrol_altitude: Optional[Distance]
+    patrol_speed: Optional[Speed]
     intra_flight_radio: Optional[Radio]
     channel_allocator: Optional[RadioChannelAllocator]
     channel_namer: Type[ChannelNamer]
@@ -192,6 +209,7 @@ class AircraftType(UnitType[FlyingType]):
             raise KeyError(f"Missing required price field: {data_path}") from ex
 
         radio_config = RadioConfig.from_data(data.get("radios", {}))
+        patrol_config = PatrolConfig.from_data(data.get("patrol", {}))
 
         try:
             introduction = data["introduced"]
@@ -214,6 +232,8 @@ class AircraftType(UnitType[FlyingType]):
                 lha_capable=data.get("lha_capable", False),
                 always_keeps_gun=data.get("always_keeps_gun", False),
                 max_group_size=data.get("max_group_size", aircraft.group_size_max),
+                patrol_altitude=patrol_config.altitude,
+                patrol_speed=patrol_config.speed,
                 intra_flight_radio=radio_config.intra_flight,
                 channel_allocator=radio_config.channel_allocator,
                 channel_namer=radio_config.channel_namer,
