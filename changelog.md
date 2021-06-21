@@ -6,7 +6,8 @@ Saves from 3.x are not compatible with 4.0.
 
 * **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
 * **[Campaign]** Added an option to disable levelling up of AI pilots.
-* **[Campaign]** Added Russian Intervention 2015 campaign on Syria.
+* **[Campaign]** Added Russian Intervention 2015 campaign on Syria, for a small and somewhat realistic Russian COIN scenario.
+* **[Campaign]** Added Operation Atilla campaign on Syria, for a reasonably large invasion of Cyprus scenario.
 * **[Campaign AI]** AI will plan Tanker flights.
 * **[Campaign AI]** Removed max distance for AEW&C auto planning.
 * **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
