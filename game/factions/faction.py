@@ -257,6 +257,76 @@ class Faction:
             if unit.unit_class is unit_class:
                 yield unit
 
+    def apply_mod_settings(self, mod_settings) -> Faction:
+        # aircraft
+        if not mod_settings.a4_skyhawk:
+            self.remove_aircraft("A-4E-C")
+        if not mod_settings.hercules:
+            self.remove_aircraft("Hercules")
+        if not mod_settings.f22_raptor:
+            self.remove_aircraft("F-22A")
+        if not mod_settings.jas39_gripen:
+            self.remove_aircraft("JAS39Gripen")
+            self.remove_aircraft("JAS39Gripen_AG")
+        if not mod_settings.su57_felon:
+            self.remove_aircraft("Su-57")
+        # frenchpack
+        if not mod_settings.frenchpack:
+            self.remove_vehicle("AMX10RCR")
+            self.remove_vehicle("SEPAR")
+            self.remove_vehicle("ERC")
+            self.remove_vehicle("M120")
+            self.remove_vehicle("AA20")
+            self.remove_vehicle("TRM2000")
+            self.remove_vehicle("TRM2000_Citerne")
+            self.remove_vehicle("TRM2000_AA20")
+            self.remove_vehicle("TRMMISTRAL")
+            self.remove_vehicle("VABH")
+            self.remove_vehicle("VAB_RADIO")
+            self.remove_vehicle("VAB_50")
+            self.remove_vehicle("VIB_VBR")
+            self.remove_vehicle("VAB_HOT")
+            self.remove_vehicle("VAB_MORTIER")
+            self.remove_vehicle("VBL50")
+            self.remove_vehicle("VBLANF1")
+            self.remove_vehicle("VBL-radio")
+            self.remove_vehicle("VBAE")
+            self.remove_vehicle("VBAE_MMP")
+            self.remove_vehicle("AMX-30B2")
+            self.remove_vehicle("Tracma")
+            self.remove_vehicle("JTACFP")
+            self.remove_vehicle("SHERIDAN")
+            self.remove_vehicle("Leclerc_XXI")
+            self.remove_vehicle("Toyota_bleu")
+            self.remove_vehicle("Toyota_vert")
+            self.remove_vehicle("Toyota_desert")
+            self.remove_vehicle("Kamikaze")
+        # high digit sams
+        if not mod_settings.high_digit_sams:
+            self.remove_air_defenses("SA10BGenerator")
+            self.remove_air_defenses("SA12Generator")
+            self.remove_air_defenses("SA20Generator")
+            self.remove_air_defenses("SA20BGenerator")
+            self.remove_air_defenses("SA23Generator")
+            self.remove_air_defenses("SA17Generator")
+            self.remove_air_defenses("KS19Generator")
+        return self
+
+    def remove_aircraft(self, name):
+        for i in self.aircrafts:
+            if i.dcs_unit_type.id == name:
+                self.aircrafts.remove(i)
+
+    def remove_air_defenses(self, name):
+        for i in self.air_defenses:
+            if i == name:
+                self.air_defenses.remove(i)
+
+    def remove_vehicle(self, name):
+        for i in self.frontline_units:
+            if i.dcs_unit_type.id == name:
+                self.frontline_units.remove(i)
+
 
 def load_ship(name: str) -> Optional[Type[ShipType]]:
     if (ship := getattr(dcs.ships, name, None)) is not None:
