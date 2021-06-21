@@ -1,54 +1,39 @@
 from __future__ import annotations
 
 import logging
-import math
-import operator
 import random
 from collections import defaultdict
-from dataclasses import dataclass, field
 from datetime import timedelta
-from enum import Enum, auto
 from typing import (
     Dict,
     Iterable,
     Iterator,
-    List,
     Optional,
     Set,
     TYPE_CHECKING,
     Tuple,
-    TypeVar,
-    Any,
 )
 
+from game.commander import TheaterCommander
+from game.commander.missionproposals import ProposedFlight, ProposedMission, EscortType
+from game.commander.objectivefinder import ObjectiveFinder
+from game.data.doctrine import Doctrine
 from game.dcs.aircrafttype import AircraftType
+from game.factions.faction import Faction
 from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
 from game.profiling import logged_duration, MultiEventTracer
 from game.squadrons import AirWing, Squadron
 from game.theater import (
-    Airfield,
     ControlPoint,
-    Fob,
-    FrontLine,
     MissionTarget,
     OffMapSpawn,
-    SamGroundObject,
-    TheaterGroundObject,
 )
-from game.theater.theatergroundobject import (
-    BuildingGroundObject,
-    EwrGroundObject,
-    NavalGroundObject,
-    VehicleGroupGroundObject,
-)
-from game.transfers import CargoShip, Convoy
-from game.utils import Distance, nautical_miles, meters
+from game.utils import nautical_miles
 from gen.ato import Package
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import (
     ClosestAirfields,
-    ObjectiveDistanceCache,
 )
 from gen.flights.flight import (
     Flight,
@@ -61,61 +46,6 @@ from gen.flights.traveltime import TotEstimator
 if TYPE_CHECKING:
     from game import Game
     from game.inventory import GlobalAircraftInventory
-
-
-class EscortType(Enum):
-    AirToAir = auto()
-    Sead = auto()
-
-
-@dataclass(frozen=True)
-class ProposedFlight:
-    """A flight outline proposed by the mission planner.
-
-    Proposed flights haven't been assigned specific aircraft yet. They have only
-    a task, a required number of aircraft, and a maximum distance allowed
-    between the objective and the departure airfield.
-    """
-
-    #: The flight's role.
-    task: FlightType
-
-    #: The number of aircraft required.
-    num_aircraft: int
-
-    #: The maximum distance between the objective and the departure airfield.
-    max_distance: Distance
-
-    #: The type of threat this flight defends against if it is an escort. Escort
-    #: flights will be pruned if the rest of the package is not threatened by
-    #: the threat they defend against. If this flight is not an escort, this
-    #: field is None.
-    escort_type: Optional[EscortType] = field(default=None)
-
-    def __str__(self) -> str:
-        return f"{self.task} {self.num_aircraft} ship"
-
-
-@dataclass(frozen=True)
-class ProposedMission:
-    """A mission outline proposed by the mission planner.
-
-    Proposed missions haven't been assigned aircraft yet. They have only an
-    objective location and a list of proposed flights that are required for the
-    mission.
-    """
-
-    #: The mission objective.
-    location: MissionTarget
-
-    #: The proposed flights that are required for the mission.
-    flights: List[ProposedFlight]
-
-    asap: bool = field(default=False)
-
-    def __str__(self) -> str:
-        flights = ", ".join([str(f) for f in self.flights])
-        return f"{self.location.name}: {flights}"
 
 
 class AircraftAllocator:
@@ -271,289 +201,6 @@ class PackageBuilder:
             self.package.remove_flight(flight)
 
 
-MissionTargetType = TypeVar("MissionTargetType", bound=MissionTarget)
-
-
-class ObjectiveFinder:
-    """Identifies potential objectives for the mission planner."""
-
-    # TODO: Merge into doctrine.
-    AIRFIELD_THREAT_RANGE = nautical_miles(150)
-    SAM_THREAT_RANGE = nautical_miles(100)
-
-    def __init__(self, game: Game, is_player: bool) -> None:
-        self.game = game
-        self.is_player = is_player
-
-    def enemy_air_defenses(self) -> Iterator[tuple[TheaterGroundObject[Any], Distance]]:
-        """Iterates over all enemy SAM sites."""
-        doctrine = self.game.faction_for(self.is_player).doctrine
-        threat_zones = self.game.threat_zone_for(not self.is_player)
-        for cp in self.enemy_control_points():
-            for ground_object in cp.ground_objects:
-                if ground_object.is_dead:
-                    continue
-
-                if isinstance(ground_object, EwrGroundObject):
-                    if threat_zones.threatened_by_air_defense(ground_object):
-                        # This is a very weak heuristic for determining whether the EWR
-                        # is close enough to be worth targeting before a SAM that is
-                        # covering it. Ingress distance corresponds to the beginning of
-                        # the attack range and is sufficient for most standoff weapons,
-                        # so treating the ingress distance as the threat distance sorts
-                        # these EWRs such that they will be attacked before SAMs that do
-                        # not threaten the ingress point, but after those that do.
-                        target_range = doctrine.ingress_egress_distance
-                    else:
-                        # But if the EWR isn't covered then we should only be worrying
-                        # about its detection range.
-                        target_range = ground_object.max_detection_range()
-                elif isinstance(ground_object, SamGroundObject):
-                    target_range = ground_object.max_threat_range()
-                else:
-                    continue
-
-                yield ground_object, target_range
-
-    def threatening_air_defenses(self) -> Iterator[TheaterGroundObject[Any]]:
-        """Iterates over enemy SAMs in threat range of friendly control points.
-
-        SAM sites are sorted by their closest proximity to any friendly control
-        point (airfield or fleet).
-        """
-
-        target_ranges: list[tuple[TheaterGroundObject[Any], Distance]] = []
-        for target, threat_range in self.enemy_air_defenses():
-            ranges: list[Distance] = []
-            for cp in self.friendly_control_points():
-                ranges.append(meters(target.distance_to(cp)) - threat_range)
-            target_ranges.append((target, min(ranges)))
-
-        target_ranges = sorted(target_ranges, key=operator.itemgetter(1))
-        for target, _range in target_ranges:
-            yield target
-
-    def enemy_vehicle_groups(self) -> Iterator[VehicleGroupGroundObject]:
-        """Iterates over all enemy vehicle groups."""
-        for cp in self.enemy_control_points():
-            for ground_object in cp.ground_objects:
-                if not isinstance(ground_object, VehicleGroupGroundObject):
-                    continue
-
-                if ground_object.is_dead:
-                    continue
-
-                yield ground_object
-
-    def threatening_vehicle_groups(self) -> Iterator[MissionTarget]:
-        """Iterates over enemy vehicle groups near friendly control points.
-
-        Groups are sorted by their closest proximity to any friendly control
-        point (airfield or fleet).
-        """
-        return self._targets_by_range(self.enemy_vehicle_groups())
-
-    def enemy_ships(self) -> Iterator[NavalGroundObject]:
-        for cp in self.enemy_control_points():
-            for ground_object in cp.ground_objects:
-                if not isinstance(ground_object, NavalGroundObject):
-                    continue
-
-                if ground_object.is_dead:
-                    continue
-
-                yield ground_object
-
-    def threatening_ships(self) -> Iterator[MissionTarget]:
-        """Iterates over enemy ships near friendly control points.
-
-        Groups are sorted by their closest proximity to any friendly control
-        point (airfield or fleet).
-        """
-        return self._targets_by_range(self.enemy_ships())
-
-    def _targets_by_range(
-        self, targets: Iterable[MissionTargetType]
-    ) -> Iterator[MissionTargetType]:
-        target_ranges: list[tuple[MissionTargetType, float]] = []
-        for target in targets:
-            ranges: list[float] = []
-            for cp in self.friendly_control_points():
-                ranges.append(target.distance_to(cp))
-            target_ranges.append((target, min(ranges)))
-
-        target_ranges = sorted(target_ranges, key=operator.itemgetter(1))
-        for target, _range in target_ranges:
-            yield target
-
-    def strike_targets(self) -> Iterator[TheaterGroundObject[Any]]:
-        """Iterates over enemy strike targets.
-
-        Targets are sorted by their closest proximity to any friendly control
-        point (airfield or fleet).
-        """
-        targets: list[tuple[TheaterGroundObject[Any], float]] = []
-        # Building objectives are made of several individual TGOs (one per
-        # building).
-        found_targets: Set[str] = set()
-        for enemy_cp in self.enemy_control_points():
-            for ground_object in enemy_cp.ground_objects:
-                # TODO: Reuse ground_object.mission_types.
-                # The mission types for ground objects are currently not
-                # accurate because we include things like strike and BAI for all
-                # targets since they have different planning behavior (waypoint
-                # generation is better for players with strike when the targets
-                # are stationary, AI behavior against weaker air defenses is
-                # better with BAI), so that's not a useful filter. Once we have
-                # better control over planning profiles and target dependent
-                # loadouts we can clean this up.
-                if isinstance(ground_object, VehicleGroupGroundObject):
-                    # BAI target, not strike target.
-                    continue
-
-                if isinstance(ground_object, NavalGroundObject):
-                    # Anti-ship target, not strike target.
-                    continue
-
-                if isinstance(ground_object, SamGroundObject):
-                    # SAMs are targeted by DEAD. No need to double plan.
-                    continue
-
-                is_building = isinstance(ground_object, BuildingGroundObject)
-                is_fob = isinstance(enemy_cp, Fob)
-                if is_building and is_fob and ground_object.is_control_point:
-                    # This is the FOB structure itself. Can't be repaired or
-                    # targeted by the player, so shouldn't be targetable by the
-                    # AI.
-                    continue
-
-                if ground_object.is_dead:
-                    continue
-                if ground_object.name in found_targets:
-                    continue
-                ranges: list[float] = []
-                for friendly_cp in self.friendly_control_points():
-                    ranges.append(ground_object.distance_to(friendly_cp))
-                targets.append((ground_object, min(ranges)))
-                found_targets.add(ground_object.name)
-        targets = sorted(targets, key=operator.itemgetter(1))
-        for target, _range in targets:
-            yield target
-
-    def front_lines(self) -> Iterator[FrontLine]:
-        """Iterates over all active front lines in the theater."""
-        yield from self.game.theater.conflicts()
-
-    def vulnerable_control_points(self) -> Iterator[ControlPoint]:
-        """Iterates over friendly CPs that are vulnerable to enemy CPs.
-
-        Vulnerability is defined as any enemy CP within threat range of of the
-        CP.
-        """
-        for cp in self.friendly_control_points():
-            if isinstance(cp, OffMapSpawn):
-                # Off-map spawn locations don't need protection.
-                continue
-            airfields_in_proximity = self.closest_airfields_to(cp)
-            airfields_in_threat_range = (
-                airfields_in_proximity.operational_airfields_within(
-                    self.AIRFIELD_THREAT_RANGE
-                )
-            )
-            for airfield in airfields_in_threat_range:
-                if not airfield.is_friendly(self.is_player):
-                    yield cp
-                    break
-
-    def oca_targets(self, min_aircraft: int) -> Iterator[MissionTarget]:
-        airfields = []
-        for control_point in self.enemy_control_points():
-            if not isinstance(control_point, Airfield):
-                continue
-            if control_point.base.total_aircraft >= min_aircraft:
-                airfields.append(control_point)
-        return self._targets_by_range(airfields)
-
-    def convoys(self) -> Iterator[Convoy]:
-        for front_line in self.front_lines():
-            yield from self.game.transfers.convoys.travelling_to(
-                front_line.control_point_hostile_to(self.is_player)
-            )
-
-    def cargo_ships(self) -> Iterator[CargoShip]:
-        for front_line in self.front_lines():
-            yield from self.game.transfers.cargo_ships.travelling_to(
-                front_line.control_point_hostile_to(self.is_player)
-            )
-
-    def friendly_control_points(self) -> Iterator[ControlPoint]:
-        """Iterates over all friendly control points."""
-        return (
-            c for c in self.game.theater.controlpoints if c.is_friendly(self.is_player)
-        )
-
-    def farthest_friendly_control_point(self) -> ControlPoint:
-        """Finds the friendly control point that is farthest from any threats."""
-        threat_zones = self.game.threat_zone_for(not self.is_player)
-
-        farthest = None
-        max_distance = meters(0)
-        for cp in self.friendly_control_points():
-            if isinstance(cp, OffMapSpawn):
-                continue
-            distance = threat_zones.distance_to_threat(cp.position)
-            if distance > max_distance:
-                farthest = cp
-                max_distance = distance
-
-        if farthest is None:
-            raise RuntimeError("Found no friendly control points. You probably lost.")
-        return farthest
-
-    def closest_friendly_control_point(self) -> ControlPoint:
-        """Finds the friendly control point that is closest to any threats."""
-        threat_zones = self.game.threat_zone_for(not self.is_player)
-
-        closest = None
-        min_distance = meters(math.inf)
-        for cp in self.friendly_control_points():
-            if isinstance(cp, OffMapSpawn):
-                continue
-            distance = threat_zones.distance_to_threat(cp.position)
-            if distance < min_distance:
-                closest = cp
-                min_distance = distance
-
-        if closest is None:
-            raise RuntimeError("Found no friendly control points. You probably lost.")
-        return closest
-
-    def enemy_control_points(self) -> Iterator[ControlPoint]:
-        """Iterates over all enemy control points."""
-        return (
-            c
-            for c in self.game.theater.controlpoints
-            if not c.is_friendly(self.is_player)
-        )
-
-    def all_possible_targets(self) -> Iterator[MissionTarget]:
-        """Iterates over all possible mission targets in the theater.
-
-        Valid mission targets are control points (airfields and carriers), front
-        lines, and ground objects (SAM sites, factories, resource extraction
-        sites, etc).
-        """
-        for cp in self.game.theater.controlpoints:
-            yield cp
-            yield from cp.ground_objects
-        yield from self.front_lines()
-
-    @staticmethod
-    def closest_airfields_to(location: MissionTarget) -> ClosestAirfields:
-        """Returns the closest airfields to the given location."""
-        return ObjectiveDistanceCache.get_closest_airfields(location)
-
-
 class CoalitionMissionPlanner:
     """Coalition flight planning AI.
 
@@ -577,17 +224,6 @@ class CoalitionMissionPlanner:
     TODO: Stance and doctrine-specific planning behavior.
     """
 
-    # TODO: Merge into doctrine, also limit by aircraft.
-    MAX_CAP_RANGE = nautical_miles(100)
-    MAX_CAS_RANGE = nautical_miles(50)
-    MAX_ANTISHIP_RANGE = nautical_miles(150)
-    MAX_BAI_RANGE = nautical_miles(150)
-    MAX_OCA_RANGE = nautical_miles(150)
-    MAX_SEAD_RANGE = nautical_miles(150)
-    MAX_STRIKE_RANGE = nautical_miles(150)
-    MAX_AWEC_RANGE = Distance.inf()
-    MAX_TANKER_RANGE = nautical_miles(200)
-
     def __init__(self, game: Game, is_player: bool) -> None:
         self.game = game
         self.is_player = is_player
@@ -595,7 +231,11 @@ class CoalitionMissionPlanner:
         self.ato = self.game.blue_ato if is_player else self.game.red_ato
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
         self.procurement_requests = self.game.procurement_requests_for(self.is_player)
-        self.faction = self.game.faction_for(self.is_player)
+        self.faction: Faction = self.game.faction_for(self.is_player)
+
+    @property
+    def doctrine(self) -> Doctrine:
+        return self.faction.doctrine
 
     def air_wing_can_plan(self, mission_type: FlightType) -> bool:
         """Returns True if it is possible for the air wing to plan this mission type.
@@ -607,237 +247,13 @@ class CoalitionMissionPlanner:
         """
         return self.game.air_wing_for(self.is_player).can_auto_plan(mission_type)
 
-    def critical_missions(self) -> Iterator[ProposedMission]:
-        """Identifies the most important missions to plan this turn.
-
-        Non-critical missions that cannot be fulfilled will create purchase
-        orders for the next turn. Critical missions will create a purchase order
-        unless the mission can be doubly fulfilled. In other words, the AI will
-        attempt to have *double* the aircraft it needs for these missions to
-        ensure that they can be planned again next turn even if all aircraft are
-        eliminated this turn.
-        """
-
-        # Find farthest, friendly CP for AEWC.
-        yield ProposedMission(
-            self.objective_finder.farthest_friendly_control_point(),
-            [ProposedFlight(FlightType.AEWC, 1, self.MAX_AWEC_RANGE)],
-            # Supports all the early CAP flights, so should be in the air ASAP.
-            asap=True,
-        )
-
-        yield ProposedMission(
-            self.objective_finder.closest_friendly_control_point(),
-            [ProposedFlight(FlightType.REFUELING, 1, self.MAX_TANKER_RANGE)],
-        )
-
-        # Find friendly CPs within 100 nmi from an enemy airfield, plan CAP.
-        for cp in self.objective_finder.vulnerable_control_points():
-            # Plan CAP in such a way, that it is established during the whole desired mission length
-            for _ in range(
-                0,
-                int(self.game.settings.desired_player_mission_duration.total_seconds()),
-                int(self.faction.doctrine.cap_duration.total_seconds()),
-            ):
-                yield ProposedMission(
-                    cp,
-                    [
-                        ProposedFlight(FlightType.BARCAP, 2, self.MAX_CAP_RANGE),
-                    ],
-                )
-
-        # Find front lines, plan CAS.
-        for front_line in self.objective_finder.front_lines():
-            yield ProposedMission(
-                front_line,
-                [
-                    ProposedFlight(FlightType.CAS, 2, self.MAX_CAS_RANGE),
-                    # This is *not* an escort because front lines don't create a threat
-                    # zone. Generating threat zones from front lines causes the front
-                    # line to push back BARCAPs as it gets closer to the base. While
-                    # front lines do have the same problem of potentially pulling
-                    # BARCAPs off bases to engage a front line TARCAP, that's probably
-                    # the one time where we do want that.
-                    #
-                    # TODO: Use intercepts and extra TARCAPs to cover bases near fronts.
-                    # We don't have intercept missions yet so this isn't something we
-                    # can do today, but we should probably return to having the front
-                    # line project a threat zone (so that strike missions will route
-                    # around it) and instead *not plan* a BARCAP at bases near the
-                    # front, since there isn't a place to put a barrier. Instead, the
-                    # aircraft that would have been a BARCAP could be used as additional
-                    # interceptors and TARCAPs which will defend the base but won't be
-                    # trying to avoid front line contacts.
-                    ProposedFlight(FlightType.TARCAP, 2, self.MAX_CAP_RANGE),
-                ],
-            )
-
-    def propose_missions(self) -> Iterator[ProposedMission]:
-        """Identifies and iterates over potential mission in priority order."""
-        yield from self.critical_missions()
-
-        # Find enemy SAM sites with ranges that cover friendly CPs, front lines,
-        # or objects, plan DEAD.
-        # Find enemy SAM sites with ranges that extend to within 50 nmi of
-        # friendly CPs, front, lines, or objects, plan DEAD.
-        for sam in self.objective_finder.threatening_air_defenses():
-            flights = [ProposedFlight(FlightType.DEAD, 2, self.MAX_SEAD_RANGE)]
-
-            # Only include SEAD against SAMs that still have emitters. No need to
-            # suppress an EWR, and SEAD isn't useful against a SAM that no longer has a
-            # working track radar.
-            #
-            # For SAMs without track radars and EWRs, we still want a SEAD escort if
-            # needed.
-            #
-            # Note that there is a quirk here: we should potentially be included a SEAD
-            # escort *and* SEAD when the target is a radar SAM but the flight path is
-            # also threatened by SAMs. We don't want to include a SEAD escort if the
-            # package is *only* threatened by the target though. Could be improved, but
-            # needs a decent refactor to the escort planning to do so.
-            if sam.has_live_radar_sam:
-                flights.append(ProposedFlight(FlightType.SEAD, 2, self.MAX_SEAD_RANGE))
-            else:
-                flights.append(
-                    ProposedFlight(
-                        FlightType.SEAD_ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.Sead
-                    )
-                )
-            # TODO: Max escort range.
-            flights.append(
-                ProposedFlight(
-                    FlightType.ESCORT, 2, self.MAX_SEAD_RANGE, EscortType.AirToAir
-                )
-            )
-            yield ProposedMission(sam, flights)
-
-        # These will only rarely get planned. When a convoy is travelling multiple legs,
-        # they're targetable after the first leg. The reason for this is that
-        # procurement happens *after* mission planning so that the missions that could
-        # not be filled will guide the procurement process. Procurement is the stage
-        # that convoys are created (because they're created to move ground units that
-        # were just purchased), so we haven't created any yet. Any incomplete transfers
-        # from the previous turn (multi-leg journeys) will still be present though so
-        # they can be targeted.
-        #
-        # Even after this is fixed, the player's convoys that were created through the
-        # UI will never be targeted on the first turn of their journey because the AI
-        # stops planning after the start of the turn. We could potentially fix this by
-        # moving opfor mission planning until the takeoff button is pushed.
-        for convoy in self.objective_finder.convoys():
-            yield ProposedMission(
-                convoy,
-                [
-                    ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
-                    # TODO: Max escort range.
-                    ProposedFlight(
-                        FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
-                    ),
-                    ProposedFlight(
-                        FlightType.SEAD_ESCORT, 2, self.MAX_BAI_RANGE, EscortType.Sead
-                    ),
-                ],
-            )
-
-        for ship in self.objective_finder.cargo_ships():
-            yield ProposedMission(
-                ship,
-                [
-                    ProposedFlight(FlightType.ANTISHIP, 2, self.MAX_ANTISHIP_RANGE),
-                    # TODO: Max escort range.
-                    ProposedFlight(
-                        FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
-                    ),
-                    ProposedFlight(
-                        FlightType.SEAD_ESCORT, 2, self.MAX_BAI_RANGE, EscortType.Sead
-                    ),
-                ],
-            )
-
-        for group in self.objective_finder.threatening_ships():
-            yield ProposedMission(
-                group,
-                [
-                    ProposedFlight(FlightType.ANTISHIP, 2, self.MAX_ANTISHIP_RANGE),
-                    # TODO: Max escort range.
-                    ProposedFlight(
-                        FlightType.ESCORT,
-                        2,
-                        self.MAX_ANTISHIP_RANGE,
-                        EscortType.AirToAir,
-                    ),
-                ],
-            )
-
-        for group in self.objective_finder.threatening_vehicle_groups():
-            yield ProposedMission(
-                group,
-                [
-                    ProposedFlight(FlightType.BAI, 2, self.MAX_BAI_RANGE),
-                    # TODO: Max escort range.
-                    ProposedFlight(
-                        FlightType.ESCORT, 2, self.MAX_BAI_RANGE, EscortType.AirToAir
-                    ),
-                    ProposedFlight(
-                        FlightType.SEAD_ESCORT, 2, self.MAX_OCA_RANGE, EscortType.Sead
-                    ),
-                ],
-            )
-
-        for target in self.objective_finder.oca_targets(min_aircraft=20):
-            flights = [
-                ProposedFlight(FlightType.OCA_RUNWAY, 2, self.MAX_OCA_RANGE),
-            ]
-            if self.game.settings.default_start_type == "Cold":
-                # Only schedule if the default start type is Cold. If the player
-                # has set anything else there are no targets to hit.
-                flights.append(
-                    ProposedFlight(FlightType.OCA_AIRCRAFT, 2, self.MAX_OCA_RANGE)
-                )
-            flights.extend(
-                [
-                    # TODO: Max escort range.
-                    ProposedFlight(
-                        FlightType.ESCORT, 2, self.MAX_OCA_RANGE, EscortType.AirToAir
-                    ),
-                    ProposedFlight(
-                        FlightType.SEAD_ESCORT, 2, self.MAX_OCA_RANGE, EscortType.Sead
-                    ),
-                ]
-            )
-            yield ProposedMission(target, flights)
-
-        # Plan strike missions.
-        for target in self.objective_finder.strike_targets():
-            yield ProposedMission(
-                target,
-                [
-                    ProposedFlight(FlightType.STRIKE, 2, self.MAX_STRIKE_RANGE),
-                    # TODO: Max escort range.
-                    ProposedFlight(
-                        FlightType.ESCORT, 2, self.MAX_STRIKE_RANGE, EscortType.AirToAir
-                    ),
-                    ProposedFlight(
-                        FlightType.SEAD_ESCORT,
-                        2,
-                        self.MAX_STRIKE_RANGE,
-                        EscortType.Sead,
-                    ),
-                ],
-            )
-
     def plan_missions(self) -> None:
         """Identifies and plans mission for the turn."""
         player = "Blue" if self.is_player else "Red"
         with logged_duration(f"{player} mission identification and fulfillment"):
             with MultiEventTracer() as tracer:
-                for proposed_mission in self.propose_missions():
-                    self.plan_mission(proposed_mission, tracer)
-
-        with logged_duration(f"{player} reserve mission planning"):
-            with MultiEventTracer() as tracer:
-                for critical_mission in self.critical_missions():
-                    self.plan_mission(critical_mission, tracer, reserves=True)
+                commander = TheaterCommander(self.game, self.is_player)
+                commander.plan_missions(self, tracer)
 
         with logged_duration(f"{player} mission scheduling"):
             self.stagger_missions()
@@ -846,6 +262,9 @@ class CoalitionMissionPlanner:
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for aircraft, available in inventory.all_aircraft:
                 self.message("Unused aircraft", f"{available} {aircraft} from {cp}")
+
+        coalition_text = "player" if self.is_player else "opfor"
+        logging.debug(f"Planned {len(self.ato.packages)} {coalition_text} missions")
 
     def plan_flight(
         self,
