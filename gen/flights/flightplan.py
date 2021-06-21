@@ -16,17 +16,6 @@ from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
-from dcs.planes import (
-    E_3A,
-    E_2C,
-    A_50,
-    IL_78M,
-    KC130,
-    KC135MPRS,
-    KC_135,
-    KJ_2000,
-    S_3B_Tanker,
-)
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
@@ -1092,15 +1081,8 @@ class FlightPlanBuilder:
 
         orbit_location = self.aewc_orbit(location)
 
-        # As high as possible to maximize detection and on-station time.
-        if flight.unit_type.dcs_unit_type == E_2C:
-            patrol_alt = feet(30000)
-        elif flight.unit_type.dcs_unit_type == E_3A:
-            patrol_alt = feet(35000)
-        elif flight.unit_type.dcs_unit_type == A_50:
-            patrol_alt = feet(33000)
-        elif flight.unit_type.dcs_unit_type == KJ_2000:
-            patrol_alt = feet(40000)
+        if flight.unit_type.patrol_altitude is not None:
+            patrol_alt = flight.unit_type.patrol_altitude
         else:
             patrol_alt = feet(25000)
 
@@ -1680,30 +1662,16 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(flight, self.game, self.is_player)
 
         tanker_type = flight.unit_type
-        if tanker_type.dcs_unit_type is KC_135:
-            # ~300 knots IAS.
-            speed = knots(445)
-            altitude = feet(24000)
-        elif tanker_type.dcs_unit_type is KC135MPRS:
-            # ~300 knots IAS.
-            speed = knots(440)
-            altitude = feet(23000)
-        elif tanker_type.dcs_unit_type is KC130:
-            # ~210 knots IAS, roughly the max for the KC-130 at altitude.
-            speed = knots(370)
-            altitude = feet(22000)
-        elif tanker_type.dcs_unit_type is S_3B_Tanker:
-            # ~265 knots IAS.
-            speed = knots(320)
-            altitude = feet(12000)
-        elif tanker_type.dcs_unit_type is IL_78M:
-            # ~280 knots IAS.
-            speed = knots(400)
-            altitude = feet(21000)
+        if tanker_type.patrol_altitude is not None:
+            altitude = tanker_type.patrol_altitude
         else:
-            # ~280 knots IAS.
-            speed = knots(400)
             altitude = feet(21000)
+
+        if tanker_type.patrol_speed is not None:
+            speed = tanker_type.patrol_speed
+        else:
+            # ~280 knots IAS at 21000.
+            speed = knots(400)
 
         racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
 
