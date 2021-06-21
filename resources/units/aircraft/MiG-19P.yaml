@@ -14,6 +14,7 @@ manufacturer: Mikoyan-Gurevich
 origin: USSR/Russia
 price: 10
 role: Fighter
+gunfighter: true
 variants:
   J-6A:
     introduced: 1962

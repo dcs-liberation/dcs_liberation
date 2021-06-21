@@ -20,5 +20,6 @@ manufacturer: Northrop
 origin: USA
 price: 12
 role: Light Fighter
+gunfighter: true
 variants:
   F-5E Tiger II: {}

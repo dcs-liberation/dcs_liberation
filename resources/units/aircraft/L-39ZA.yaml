@@ -9,5 +9,6 @@ manufacturer: Aero
 origin: Czechoslovakia
 price: 10
 role: Light Attack
+gunfighter: true
 variants:
   L-39ZA Albatros: {}

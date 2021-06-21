@@ -14,5 +14,6 @@ manufacturer: Focke-Wulf
 origin: Germany
 price: 5
 role: Fighter
+gunfighter: true
 variants:
   Fw 190 D-9 Dora: {}
