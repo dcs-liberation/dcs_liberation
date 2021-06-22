@@ -17,8 +17,8 @@ class ArmoredGroupGenerator(GroupGenerator):
         self.unit_type = unit_type
 
     def generate(self) -> None:
-        grid_x = random.randint(2, 3)
-        grid_y = random.randint(1, 2)
+        grid_x = random.randint(2, 4)
+        grid_y = random.randint(2, 2)
 
         spacing = random.randint(30, 80)
 
