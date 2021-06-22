@@ -2,7 +2,7 @@ import random
 
 from dcs.unitgroup import VehicleGroup
 
-from game import db, Game
+from game import db, Game, settings
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.groundunittype import GroundUnitType
 from game.theater.theatergroundobject import VehicleGroupGroundObject
@@ -47,7 +47,7 @@ def generate_armor_group_of_type(
 
     vehicle_group = generator.get_generated_group()
 
-    if len(vehicle_group.units) >= 4:
+    if (settings.Settings.shorad_added_to_armor_groups):
         shorads = [
             u
             for u in db.FACTIONS[faction].frontline_units

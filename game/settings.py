@@ -33,6 +33,7 @@ class Settings:
     version: Optional[str] = None
     player_income_multiplier: float = 1.0
     enemy_income_multiplier: float = 1.0
+    shorad_added_to_armor_groups: bool = True
 
     #: The maximum number of pilots a squadron can have at one time. Changing this after
     #: the campaign has started will have no immediate effect; pilots already in the
