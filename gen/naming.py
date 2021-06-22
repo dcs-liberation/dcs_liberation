@@ -3,11 +3,9 @@ import time
 from typing import List
 
 from dcs.country import Country
-from dcs.unittype import UnitType
 
-from game import db
 from game.dcs.aircrafttype import AircraftType
-
+from game.dcs.unittype import UnitType
 from gen.flights.flight import Flight
 
 ALPHA_MILITARY = [
@@ -298,7 +296,7 @@ class NameGenerator:
     def next_unit_name(cls, country: Country, parent_base_id: int, unit_type: UnitType):
         cls.number += 1
         return "unit|{}|{}|{}|{}|".format(
-            country.id, cls.number, parent_base_id, db.unit_type_name(unit_type)
+            country.id, cls.number, parent_base_id, unit_type.name
         )
 
     @classmethod
@@ -310,7 +308,7 @@ class NameGenerator:
             country.id,
             cls.infantry_number,
             parent_base_id,
-            db.unit_type_name(unit_type),
+            unit_type.name,
         )
 
     @classmethod

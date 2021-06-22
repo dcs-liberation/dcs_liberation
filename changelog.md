@@ -1,3 +1,11 @@
+# 5.0.0
+
+Saves from 3.x are not compatible with 5.0.
+
+## Features/Improvements
+
+## Fixes
+
 # 4.0.0
 
 Saves from 3.x are not compatible with 4.0.
@@ -5,21 +13,36 @@ Saves from 3.x are not compatible with 4.0.
 ## Features/Improvements
 
 * **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
+* **[Campaign]** Added an option to disable levelling up of AI pilots.
+* **[Campaign]** Added Russian Intervention 2015 campaign on Syria, for a small and somewhat realistic Russian COIN scenario.
+* **[Campaign]** Added Operation Atilla campaign on Syria, for a reasonably large invasion of Cyprus scenario.
 * **[Campaign AI]** AI will plan Tanker flights.
+* **[Campaign AI]** Removed max distance for AEW&C auto planning.
+* **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
 * **[Factions]** Added more tankers to factions.
 * **[Flight Planner]** Added ability to plan Tankers.
-
-## Fixes
-
-# 3.1.0
-
-## Features/Improvements
+* **[Mods]** Added support for the Gripen mod.
+* **[Mission Generation]** Added support for "Neutral Dot" label options.
+* **[UI]** Ctrl click and shift click now buy or sell 5 or 10 units respectively.
+* **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
+* **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
+* **[UI]** Updated intel box text for first turn.
+* **[Units/Factions/Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+. 
+* **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
 
 ## Fixes
 
 * **[Campaign AI]** Fix procurement for factions that lack some unit types.
+* **[Campaign AI]** Fix auto purchase of aircraft for factions that have no transport aircraft.
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
+* **[Mission Generation]** Fixed EWR group names so they contribute to Skynet again.
+* **[Mission Generation]** Fixed duplicate name error when generating convoys and cargo ships when creating manual transfers after loading a game.
 * **[UI]** Made non-interactive map elements less obstructive.
+* **[UI]** Added support for Neutral Dot difficulty label
+* **[UI]** Clear skies at night no longer described as "Sunny" by the weather widget.
+* **[UI]** Removed ability to buy (useless) ground units at carriers and LHAs.
+* **[UI]** Fixed enable/disable of buy/sell buttons.
+* **[UI]** EWRs now appear in the custom waypoint list.
 
 # 3.0.0
 

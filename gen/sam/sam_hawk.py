@@ -19,21 +19,21 @@ class HawkGenerator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_Hawk_SR__AN_MPQ_50,
+            AirDefence.Hawk_sr,
             "SR",
             self.position.x + 20,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Hawk_Platoon_Command_Post__PCP,
+            AirDefence.Hawk_pcp,
             "PCP",
             self.position.x,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Hawk_TR__AN_MPQ_46,
+            AirDefence.Hawk_tr,
             "TR",
             self.position.x + 40,
             self.position.y,
@@ -44,7 +44,7 @@ class HawkGenerator(AirDefenseGroupGenerator):
         aa_group = self.add_auxiliary_group("AA")
         self.add_unit_to_group(
             aa_group,
-            AirDefence.SPAAA_Vulcan_M163,
+            AirDefence.Vulcan,
             "AAA",
             self.position + Point(20, 30),
             self.heading,
@@ -57,7 +57,7 @@ class HawkGenerator(AirDefenseGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_Hawk_LN_M192,
+                AirDefence.Hawk_ln,
                 "LN#" + str(i),
                 position[0],
                 position[1],

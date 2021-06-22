@@ -9,6 +9,7 @@
   "aircrafts": [
     "Ka-50 Hokum",
     "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
     "MiG-25PD Foxbat-E",
     "MiG-29S Fulcrum-C",
@@ -30,27 +31,27 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "APC_BTR_80",
-    "IFV_BMP_1",
-    "IFV_BMP_2",
-    "MBT_T_72B",
-    "MBT_T_80U",
-    "SAM_SA_13_Strela_10M3_Gopher_TEL"
+    "BMP-1",
+    "BMP-2",
+    "BTR-80",
+    "SA-13 Gopher (9K35 Strela-10M3)",
+    "T-72B with Kontakt-1 ERA",
+    "T-80UD"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-27 Uragan"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16",
-    "Mortar_2B11_120mm",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry AK-74 Rus",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Mortar 2B11 120mm",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "SA2Generator",
@@ -74,15 +75,15 @@
     "TallRackGenerator"
   ],
   "aircraft_carrier": [
-    "CV_1143_5_Admiral_Kuznetsov"
+    "KUZNECOW"
   ],
   "helicopter_carrier": [],
   "helicopter_carrier_names": [],
   "destroyers": [
-    "Frigate_1135M_Rezky"
+    "REZKY"
   ],
   "cruisers": [
-    "Corvette_1241_1_Molniya"
+    "MOLNIYA"
   ],
   "requirements": {},
   "carrier_names": [

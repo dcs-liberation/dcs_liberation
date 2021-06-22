@@ -23,23 +23,23 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "MBT_T_90",
-    "MBT_T_72B",
-    "IFV_BMP_2",
-    "SAM_SA_19_Tunguska_Grison"
+    "BMP-2",
+    "SA-19 Grison (2K22 Tunguska)",
+    "T-72B with Kontakt-1 ERA",
+    "T-90A"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-27 Uragan"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry M4",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "SA3Generator",
@@ -59,12 +59,12 @@
     "TallRackGenerator"
   ],
   "aircraft_carrier": [
-    "CV_1143_5_Admiral_Kuznetsov"
+    "KUZNECOW"
   ],
   "helicopter_carrier": [],
   "helicopter_carrier_names": [],
   "destroyers": [
-    "Frigate_1135M_Rezky"
+    "REZKY"
   ],
   "cruisers": [],
   "requirements": {},

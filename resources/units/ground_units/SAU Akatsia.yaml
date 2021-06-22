@@ -1,0 +1,10 @@
+class: Artillery
+description: "The SO-152 (Russian: \u0421\u041E-152) is a Soviet 152.4 mm self-propelled\
+  \ gun developed in 1968. It was a response to the American 155 mm M109. "
+introduced: 1971
+manufacturer: Uraltransmash
+origin: USSR/Russia
+price: 24
+role: Self-Propelled Gun
+variants:
+  2S3 Akatsiya: {}

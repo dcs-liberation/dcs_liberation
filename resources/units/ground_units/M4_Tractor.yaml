@@ -1,0 +1,9 @@
+description: The M4 High-Speed Tractor was an artillery tractor used by the US Army
+  from 1943.
+introduced: 1943
+manufacturer: Allis-Chalmers
+origin: USA
+price: 2
+role: Tracked Cargo Transporter
+variants:
+  M4 High-Speed Tractor: {}

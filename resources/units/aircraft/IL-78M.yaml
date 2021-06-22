@@ -1,3 +1,4 @@
-price: 25
+price: 20
+max_group_size: 1
 variants:
   IL-78M: null

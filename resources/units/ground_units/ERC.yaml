@@ -1,0 +1,10 @@
+class: Recon
+description: "The Panhard ERC (Engin \xE0 Roues, Canon) is a French six-wheeled armoured\
+  \ car which is highly mobile and amphibious with an option of being NBC-proof."
+introduced: 1975
+manufacturer: GIAT Industries
+origin: France
+price: 12
+role: Recon Vehicle
+variants:
+  Panhard: {}

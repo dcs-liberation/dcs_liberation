@@ -12,7 +12,7 @@ description: "The Focke-Wulf Fw 190 is widely regarded as Germany's best fighter
 introduced: 1944
 manufacturer: Focke-Wulf
 origin: Germany
-price: 16
+price: 5
 role: Fighter
 variants:
   Fw 190 D-9 Dora: {}

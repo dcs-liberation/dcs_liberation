@@ -18,14 +18,14 @@ class RapierGenerator(AirDefenseGroupGenerator):
 
     def generate(self):
         self.add_unit(
-            AirDefence.SAM_Rapier_Blindfire_TR,
+            AirDefence.Rapier_fsa_blindfire_radar,
             "BT",
             self.position.x,
             self.position.y,
             self.heading,
         )
         self.add_unit(
-            AirDefence.SAM_Rapier_Tracker,
+            AirDefence.Rapier_fsa_optical_tracker_unit,
             "OT",
             self.position.x + 20,
             self.position.y,
@@ -39,7 +39,7 @@ class RapierGenerator(AirDefenseGroupGenerator):
 
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SAM_Rapier_LN,
+                AirDefence.Rapier_fsa_launcher,
                 "LN#" + str(i),
                 position[0],
                 position[1],

@@ -1,8 +1,6 @@
-import json
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
-from typing import List, Optional, Type, Union
+from typing import Optional, Type, Union
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
@@ -21,30 +19,19 @@ from dcs.planes import (
     plane_map,
 )
 from dcs.ships import (
-    Boat_Armed_Hi_speed,
-    Bulker_Yakushev,
-    CVN_71_Theodore_Roosevelt,
-    CVN_72_Abraham_Lincoln,
-    CVN_73_George_Washington,
-    CVN_74_John_C__Stennis,
-    CVN_75_Harry_S__Truman,
-    CV_1143_5_Admiral_Kuznetsov,
-    CV_1143_5_Admiral_Kuznetsov_2017,
-    Cargo_Ivanov,
-    LHA_1_Tarawa,
-    Tanker_Elnya_160,
     ship_map,
+    Stennis,
+    KUZNECOW,
+    CVN_71,
+    CVN_75,
+    CVN_73,
+    CVN_72,
+    CV_1143_5,
 )
 from dcs.terrain.terrain import Airport
-from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import UnitType, VehicleType
+from dcs.unittype import UnitType
 from dcs.vehicles import (
-    AirDefence,
-    Armor,
-    Artillery,
-    Infantry,
-    Unarmed,
     vehicle_map,
 )
 
@@ -57,14 +44,10 @@ from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
-
-UNITINFOTEXT_PATH = Path("./resources/units/unit_info_text.json")
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["F-22A"] = F_22A
-plane_map["MB-339PAN"] = MB_339PAN
 plane_map["Su-57"] = Su_57
 plane_map["Hercules"] = Hercules
 plane_map["JAS39Gripen"] = JAS39Gripen
@@ -251,271 +234,6 @@ For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla
 RUNWAY_REPAIR_COST = 100
 
 """
-Prices for the aircraft. 
-This defines both price for the player (although only aircraft listed in CAP/CAS/Transport/Armor/AirDefense roles will be purchasable) 
-and prioritization for the enemy (i.e. less important bases will receive units with lower price)
-"""
-PRICES = {
-    # armor
-    Armor.APC_MTLB: 4,
-    Artillery.Grad_MRL_FDDM__FC: 4,
-    Armor.Scout_BRDM_2: 6,
-    Armor.APC_BTR_RD: 6,
-    Armor.APC_BTR_80: 8,
-    Armor.IFV_BTR_82A: 10,
-    Armor.MBT_T_55: 18,
-    Armor.MBT_T_72B: 20,
-    Armor.MBT_T_72B3: 25,
-    Armor.MBT_T_80U: 25,
-    Armor.MBT_T_90: 30,
-    Armor.IFV_BMD_1: 8,
-    Armor.IFV_BMP_1: 14,
-    Armor.IFV_BMP_2: 16,
-    Armor.IFV_BMP_3: 18,
-    Armor.LT_PT_76: 9,
-    Armor.ZBD_04A: 12,
-    Armor.ZTZ_96B: 30,
-    Armor.Scout_Cobra: 4,
-    Armor.APC_M113: 6,
-    Armor.Scout_HMMWV: 2,
-    Armor.ATGM_HMMWV: 8,
-    Armor.ATGM_VAB_Mephisto: 12,
-    Armor.IFV_M2A2_Bradley: 12,
-    Armor.IFV_M1126_Stryker_ICV: 10,
-    Armor.SPG_Stryker_MGS: 14,
-    Armor.ATGM_Stryker: 12,
-    Armor.MBT_M60A3_Patton: 16,
-    Armor.MBT_M1A2_Abrams: 25,
-    Armor.MBT_Leclerc: 25,
-    Armor.MBT_Leopard_1A3: 18,
-    Armor.MBT_Leopard_2A4: 20,
-    Armor.MBT_Leopard_2A4_Trs: 20,
-    Armor.MBT_Leopard_2A5: 22,
-    Armor.MBT_Leopard_2A6M: 25,
-    Armor.MBT_Merkava_IV: 25,
-    Armor.APC_TPz_Fuchs: 5,
-    Armor.MBT_Challenger_II: 25,
-    Armor.MBT_Chieftain_Mk_3: 20,
-    Armor.IFV_Marder: 10,
-    Armor.IFV_Warrior: 10,
-    Armor.IFV_LAV_25: 7,
-    Armor.APC_AAV_7_Amphibious: 10,
-    Artillery.MLRS_M270_227mm: 55,
-    Artillery.SPH_M109_Paladin_155mm: 25,
-    Artillery.SPM_2S9_Nona_120mm_M: 12,
-    Artillery.SPH_2S1_Gvozdika_122mm: 18,
-    Artillery.SPH_2S3_Akatsia_152mm: 24,
-    Artillery.SPH_2S19_Msta_152mm: 30,
-    Artillery.MLRS_BM_21_Grad_122mm: 15,
-    Artillery.MLRS_9K57_Uragan_BM_27_220mm: 50,
-    Artillery.MLRS_9A52_Smerch_HE_300mm: 40,
-    Artillery.Mortar_2B11_120mm: 4,
-    Artillery.SPH_Dana_vz77_152mm: 26,
-    Artillery.PLZ_05: 25,
-    Artillery.SPH_T155_Firtina_155mm: 28,
-    Artillery.MLRS_9A52_Smerch_CM_300mm: 60,
-    Unarmed.LUV_UAZ_469_Jeep: 3,
-    Unarmed.Truck_Ural_375: 3,
-    Unarmed.Truck_GAZ_3307: 2,
-    Infantry.Infantry_M4: 1,
-    Infantry.Infantry_AK_74: 1,
-    Unarmed.Truck_M818_6x6: 3,
-    Unarmed.LUV_Land_Rover_109: 1,
-    Unarmed.Truck_GAZ_3308: 1,
-    Unarmed.Truck_GAZ_66: 1,
-    Unarmed.Truck_KAMAZ_43101: 1,
-    Unarmed.Truck_Land_Rover_101_FC: 1,
-    Unarmed.Truck_Ural_4320_31_Arm_d: 1,
-    Unarmed.Truck_Ural_4320T: 1,
-    # WW2
-    Armor.MT_Pz_Kpfw_V_Panther_Ausf_G: 24,
-    Armor.Tk_PzIV_H: 16,
-    Armor.HT_Pz_Kpfw_VI_Tiger_I: 24,
-    Armor.HT_Pz_Kpfw_VI_Ausf__B_Tiger_II: 26,
-    Armor.SPG_Jagdpanther_G1: 18,
-    Armor.SPG_Jagdpanzer_IV: 11,
-    Armor.SPG_Sd_Kfz_184_Elefant: 18,
-    Armor.APC_Sd_Kfz_251_Halftrack: 4,
-    Armor.IFV_Sd_Kfz_234_2_Puma: 8,
-    Armor.Tk_M4_Sherman: 12,
-    Armor.MT_M4A4_Sherman_Firefly: 16,
-    Armor.CT_Cromwell_IV: 12,
-    Unarmed.Carrier_M30_Cargo: 2,
-    Armor.APC_M2A1_Halftrack: 4,
-    Armor.CT_Centaur_IV: 10,
-    Armor.HIT_Churchill_VII: 16,
-    Armor.Car_M8_Greyhound_Armored: 8,
-    Armor.SPG_M10_GMC: 14,
-    Armor.SPG_StuG_III_Ausf__G: 12,
-    Armor.SPG_StuG_IV: 14,
-    Artillery.SPG_M12_GMC_155mm: 10,
-    Armor.SPG_Sturmpanzer_IV_Brummbar: 10,
-    Armor.Car_Daimler_Armored: 8,
-    Armor.LT_Mk_VII_Tetrarch: 8,
-    Unarmed.Tractor_M4_Hi_Speed: 2,
-    Unarmed.Carrier_Sd_Kfz_7_Tractor: 1,
-    Unarmed.LUV_Kettenrad: 1,
-    Unarmed.LUV_Kubelwagen_82: 1,
-    Unarmed.Truck_Opel_Blitz: 1,
-    Unarmed.Truck_Bedford: 1,
-    Unarmed.Truck_GMC_Jimmy_6x6_Truck: 1,
-    Unarmed.Car_Willys_Jeep: 1,
-    # ship
-    CV_1143_5_Admiral_Kuznetsov: 100,
-    CVN_74_John_C__Stennis: 100,
-    LHA_1_Tarawa: 50,
-    Bulker_Yakushev: 10,
-    Boat_Armed_Hi_speed: 10,
-    Cargo_Ivanov: 10,
-    Tanker_Elnya_160: 10,
-    # Air Defence units
-    AirDefence.SAM_SA_19_Tunguska_Grison: 30,
-    AirDefence.SAM_SA_6_Kub_Gainful_TEL: 20,
-    AirDefence.SAM_SA_3_S_125_Goa_LN: 6,
-    AirDefence.SAM_SA_11_Buk_Gadfly_Fire_Dome_TEL: 30,
-    AirDefence.SAM_SA_11_Buk_Gadfly_C2: 25,
-    AirDefence.SAM_SA_11_Buk_Gadfly_Snow_Drift_SR: 28,
-    AirDefence.SAM_SA_8_Osa_Gecko_TEL: 28,
-    AirDefence.SAM_SA_15_Tor_Gauntlet: 40,
-    AirDefence.SAM_SA_13_Strela_10M3_Gopher_TEL: 16,
-    AirDefence.SAM_SA_9_Strela_1_Gaskin_TEL: 12,
-    AirDefence.SAM_SA_8_Osa_LD_9T217: 22,
-    AirDefence.SAM_Patriot_CR__AMG_AN_MRC_137: 35,
-    AirDefence.SAM_Patriot_ECS: 30,
-    AirDefence.SPAAA_Gepard: 24,
-    AirDefence.SAM_Hawk_Platoon_Command_Post__PCP: 14,
-    AirDefence.SPAAA_Vulcan_M163: 10,
-    AirDefence.SAM_Hawk_LN_M192: 8,
-    AirDefence.SAM_Chaparral_M48: 16,
-    AirDefence.SAM_Linebacker___Bradley_M6: 18,
-    AirDefence.SAM_Patriot_LN: 15,
-    AirDefence.SAM_Avenger__Stinger: 20,
-    AirDefence.SAM_Patriot_EPP_III: 15,
-    AirDefence.SAM_Patriot_C2_ICC: 18,
-    AirDefence.SAM_Roland_ADS: 12,
-    AirDefence.MANPADS_Stinger: 6,
-    AirDefence.MANPADS_Stinger_C2_Desert: 4,
-    AirDefence.MANPADS_Stinger_C2: 4,
-    AirDefence.SPAAA_ZSU_23_4_Shilka_Gun_Dish: 10,
-    AirDefence.SPAAA_ZSU_57_2: 12,
-    AirDefence.AAA_ZU_23_Closed_Emplacement: 6,
-    AirDefence.AAA_ZU_23_Emplacement: 6,
-    AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375: 7,
-    AirDefence.AAA_ZU_23_Insurgent_Closed_Emplacement: 6,
-    AirDefence.SPAAA_ZU_23_2_Insurgent_Mounted_Ural_375: 7,
-    AirDefence.AAA_ZU_23_Insurgent_Emplacement: 6,
-    AirDefence.MANPADS_SA_18_Igla_Grouse: 10,
-    AirDefence.MANPADS_SA_18_Igla_Grouse_C2: 8,
-    AirDefence.MANPADS_SA_18_Igla_S_Grouse: 12,
-    AirDefence.MANPADS_SA_18_Igla_S_Grouse_C2: 8,
-    AirDefence.EWR_1L13: 30,
-    AirDefence.SAM_SA_6_Kub_Straight_Flush_STR: 22,
-    AirDefence.EWR_55G6: 30,
-    AirDefence.MCC_SR_Sborka_Dog_Ear_SR: 10,
-    AirDefence.SAM_Hawk_TR__AN_MPQ_46: 14,
-    AirDefence.SAM_Hawk_SR__AN_MPQ_50: 18,
-    AirDefence.SAM_Patriot_STR: 22,
-    AirDefence.SAM_Hawk_CWAR_AN_MPQ_55: 20,
-    AirDefence.SAM_P19_Flat_Face_SR__SA_2_3: 14,
-    AirDefence.SAM_Roland_EWR: 16,
-    AirDefence.SAM_SA_3_S_125_Low_Blow_TR: 14,
-    AirDefence.SAM_SA_2_S_75_Guideline_LN: 8,
-    AirDefence.SAM_SA_2_S_75_Fan_Song_TR: 12,
-    AirDefence.SAM_Rapier_LN: 6,
-    AirDefence.SAM_Rapier_Tracker: 6,
-    AirDefence.SAM_Rapier_Blindfire_TR: 8,
-    AirDefence.HQ_7_Self_Propelled_LN: 20,
-    AirDefence.HQ_7_Self_Propelled_STR: 24,
-    AirDefence.AAA_8_8cm_Flak_18: 6,
-    AirDefence.AAA_Flak_38_20mm: 6,
-    AirDefence.AAA_8_8cm_Flak_36: 8,
-    AirDefence.AAA_8_8cm_Flak_37: 9,
-    AirDefence.AAA_Flak_Vierling_38_Quad_20mm: 5,
-    AirDefence.AAA_SP_Kdo_G_40: 8,
-    AirDefence.SL_Flakscheinwerfer_37: 4,
-    AirDefence.PU_Maschinensatz_33: 10,
-    AirDefence.AAA_8_8cm_Flak_41: 10,
-    AirDefence.EWR_FuMG_401_Freya_LZ: 25,
-    AirDefence.AAA_Bofors_40mm: 8,
-    AirDefence.AAA_S_60_57mm: 8,
-    AirDefence.AAA_M1_37mm: 7,
-    AirDefence.AAA_M45_Quadmount_HB_12_7mm: 4,
-    AirDefence.AAA_QF_3_7: 10,
-    # FRENCH PACK MOD
-    frenchpack.AMX_10RCR: 10,
-    frenchpack.AMX_10RCR_SEPAR: 12,
-    frenchpack.ERC_90: 12,
-    frenchpack.MO_120_RT: 10,
-    frenchpack._53T2: 4,
-    frenchpack.TRM_2000: 4,
-    frenchpack.TRM_2000_Fuel: 4,
-    frenchpack.TRM_2000_53T2: 8,
-    frenchpack.TRM_2000_PAMELA: 14,
-    frenchpack.VAB_MEDICAL: 8,
-    frenchpack.VAB: 6,
-    frenchpack.VAB__50: 4,
-    frenchpack.VAB_T20_13: 6,
-    frenchpack.VAB_MEPHISTO: 8,
-    frenchpack.VAB_MORTIER: 10,
-    frenchpack.VBL__50: 4,
-    frenchpack.VBL_AANF1: 2,
-    frenchpack.VBL: 1,
-    frenchpack.VBAE_CRAB: 8,
-    frenchpack.VBAE_CRAB_MMP: 12,
-    frenchpack.AMX_30B2: 18,
-    frenchpack.Tracma_TD_1500: 2,
-    frenchpack.Infantry_Soldier_JTAC: 1,
-    frenchpack.Leclerc_Serie_XXI: 35,
-    frenchpack.DIM__TOYOTA_BLUE: 2,
-    frenchpack.DIM__TOYOTA_GREEN: 2,
-    frenchpack.DIM__TOYOTA_DESERT: 2,
-    frenchpack.DIM__KAMIKAZE: 6,
-    # SA-10
-    AirDefence.SAM_SA_10_S_300_Grumble_C2: 18,
-    AirDefence.SAM_SA_10_S_300_Grumble_Flap_Lid_TR: 24,
-    AirDefence.SAM_SA_10_S_300_Grumble_Clam_Shell_SR: 30,
-    AirDefence.SAM_SA_10_S_300_Grumble_Big_Bird_SR: 30,
-    AirDefence.SAM_SA_10_S_300_Grumble_TEL_C: 22,
-    AirDefence.SAM_SA_10_S_300_Grumble_TEL_D: 22,
-    # High digit sams mod
-    highdigitsams.AAA_SON_9_Fire_Can: 8,
-    highdigitsams.AAA_100mm_KS_19: 10,
-    highdigitsams.SAM_SA_10B_S_300PS_54K6_CP: 20,
-    highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN: 24,
-    highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN: 24,
-    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE: 24,
-    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE: 24,
-    highdigitsams.SAM_SA_10B_S_300PS_30N6_TR: 26,
-    highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR: 26,
-    highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR: 32,
-    highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR: 32,
-    highdigitsams.SAM_SA_12_S_300V_9S457_CP: 22,
-    highdigitsams.SAM_SA_12_S_300V_9A82_LN: 26,
-    highdigitsams.SAM_SA_12_S_300V_9A83_LN: 26,
-    highdigitsams.SAM_SA_12_S_300V_9S15_SR: 34,
-    highdigitsams.SAM_SA_12_S_300V_9S19_SR: 34,
-    highdigitsams.SAM_SA_12_S_300V_9S32_TR: 28,
-    highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6: 26,
-    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E: 30,
-    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck: 32,
-    highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E: 38,
-    highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E: 38,
-    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE: 28,
-    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE: 28,
-    highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2: 27,
-    highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck: 33,
-    highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2: 40,
-    highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2: 30,
-    highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP: 30,
-    highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR: 45,
-    highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR: 45,
-    highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR: 35,
-    highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN: 32,
-    highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN: 32,
-    highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2: 40,
-}
-
-"""
 Units separated by country. 
 country : DCS Country name
 """
@@ -601,124 +319,23 @@ StartingPosition = Union[ShipGroup, StaticGroup, Airport, Point]
 
 
 def upgrade_to_supercarrier(unit, name: str):
-    if unit == CVN_74_John_C__Stennis:
+    if unit == Stennis:
         if name == "CVN-71 Theodore Roosevelt":
-            return CVN_71_Theodore_Roosevelt
+            return CVN_71
         elif name == "CVN-72 Abraham Lincoln":
-            return CVN_72_Abraham_Lincoln
+            return CVN_72
         elif name == "CVN-73 George Washington":
-            return CVN_73_George_Washington
+            return CVN_73
         elif name == "CVN-75 Harry S. Truman":
-            return CVN_75_Harry_S__Truman
+            return CVN_75
         elif name == "Carrier Strike Group 8":
-            return CVN_75_Harry_S__Truman
+            return CVN_75
         else:
-            return CVN_71_Theodore_Roosevelt
-    elif unit == CV_1143_5_Admiral_Kuznetsov:
-        return CV_1143_5_Admiral_Kuznetsov_2017
+            return CVN_71
+    elif unit == KUZNECOW:
+        return CV_1143_5
     else:
         return unit
-
-
-MANPADS: List[Type[VehicleType]] = [
-    AirDefence.MANPADS_SA_18_Igla_Grouse,
-    AirDefence.MANPADS_SA_18_Igla_S_Grouse,
-    AirDefence.MANPADS_Stinger,
-]
-
-INFANTRY: List[VehicleType] = [
-    Infantry.Paratrooper_AKS,
-    Infantry.Paratrooper_AKS,
-    Infantry.Paratrooper_AKS,
-    Infantry.Paratrooper_AKS,
-    Infantry.Paratrooper_AKS,
-    Infantry.Infantry_RPG,
-    Infantry.Infantry_M4,
-    Infantry.Infantry_M4,
-    Infantry.Infantry_M4,
-    Infantry.Infantry_M4,
-    Infantry.Infantry_M4,
-    Infantry.Infantry_M249,
-    Artillery.Mortar_2B11_120mm,
-    Infantry.Infantry_AK_74,
-    Infantry.Infantry_AK_74,
-    Infantry.Infantry_AK_74,
-    Infantry.Infantry_AK_74,
-    Infantry.Infantry_AK_74,
-    Infantry.Paratrooper_RPG_16,
-    Infantry.Infantry_M4_Georgia,
-    Infantry.Infantry_M4_Georgia,
-    Infantry.Infantry_M4_Georgia,
-    Infantry.Infantry_M4_Georgia,
-    Infantry.Infantry_AK_74_Rus,
-    Infantry.Infantry_AK_74_Rus,
-    Infantry.Infantry_AK_74_Rus,
-    Infantry.Infantry_AK_74_Rus,
-    Infantry.Infantry_SMLE_No_4_Mk_1,
-    Infantry.Infantry_SMLE_No_4_Mk_1,
-    Infantry.Infantry_SMLE_No_4_Mk_1,
-    Infantry.Infantry_Mauser_98,
-    Infantry.Infantry_Mauser_98,
-    Infantry.Infantry_Mauser_98,
-    Infantry.Infantry_Mauser_98,
-    Infantry.Infantry_M1_Garand,
-    Infantry.Infantry_M1_Garand,
-    Infantry.Infantry_M1_Garand,
-    Infantry.Insurgent_AK_74,
-    Infantry.Insurgent_AK_74,
-    Infantry.Insurgent_AK_74,
-]
-
-
-def find_manpad(country_name: str) -> List[VehicleType]:
-    return [x for x in MANPADS if x in FACTIONS[country_name].infantry_units]
-
-
-def find_infantry(country_name: str, allow_manpad: bool = False) -> List[VehicleType]:
-    if allow_manpad:
-        inf = INFANTRY + MANPADS
-    else:
-        inf = INFANTRY
-    return [x for x in inf if x in FACTIONS[country_name].infantry_units]
-
-
-def unit_type_name(unit_type) -> str:
-    return unit_type.id and unit_type.id or unit_type.name
-
-
-def unit_type_name_2(unit_type) -> str:
-    return unit_type.name and unit_type.name or unit_type.id
-
-
-def unit_get_expanded_info(
-    country_name: str, unit_type: Type[UnitType], request_type: str
-) -> str:
-    original_name = unit_type.name and unit_type.name or unit_type.id
-    default_value = None
-    faction_value = None
-    with UNITINFOTEXT_PATH.open("r", encoding="utf-8") as fdata:
-        data = json.load(fdata)
-    type_exists = data.get(unit_type.id)
-    if type_exists is not None:
-        for faction in type_exists:
-            if default_value is None:
-                default_exists = faction.get("default")
-                if default_exists is not None:
-                    default_value = default_exists.get(request_type)
-            if faction_value is None:
-                faction_exists = faction.get(country_name)
-                if faction_exists is not None:
-                    faction_value = faction_exists.get(request_type)
-    if default_value is None:
-        if request_type == "text":
-            return "WIP - This unit doesn't have any description text yet."
-        if request_type == "name":
-            return original_name
-        else:
-            return "Unknown"
-    if faction_value is None:
-        return default_value
-    return faction_value
 
 
 def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
@@ -732,15 +349,6 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return helicopter_map[name]
     else:
         return None
-
-
-def unit_type_of(unit: Unit) -> UnitType:
-    if isinstance(unit, Vehicle):
-        return vehicle_map[unit.type]
-    elif isinstance(unit, Ship):
-        return ship_map[unit.type]
-    else:
-        return unit.type
 
 
 def country_id_from_name(name):

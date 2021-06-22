@@ -1,0 +1,15 @@
+class: Tank
+description: The T-80 is a main battle tank (MBT) designed and manufactured in the
+  Soviet Union. When it entered service in 1976, it was the second MBT in the world
+  to be equipped with a gas turbine engine after the Swedish Strv 103 and the first
+  to use it as a primary propulsion engine. The T-80U was last produced in a factory
+  in Omsk, Russia, while the T-80UD and further-developed T-84 continue to be produced
+  in Ukraine. The T-80 and its variants are in service in Belarus, Cyprus, Egypt,
+  Kazakhstan,[12] Pakistan, Russia, South Korea, and Ukraine.
+introduced: 1985
+manufacturer: Omsk Transmash
+origin: USSR/Russia
+price: 25
+role: Main Battle Tank
+variants:
+  T-80UD: {}

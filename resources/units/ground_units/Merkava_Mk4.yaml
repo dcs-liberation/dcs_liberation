@@ -1,0 +1,14 @@
+class: Tank
+description: 'The Merkava is a main battle tank used by the Israel Defense Forces.
+  The tank began development in 1970, and entered official service in 1979. Four main
+  variants of the tank have been deployed. It was first used extensively in the 1982
+  Lebanon War. The name "Merkava" was derived from the IDF''s initial development
+  program name. Design criteria include rapid repair of battle damage, survivability,
+  cost-effectiveness and off-road performance. '
+introduced: 2004
+manufacturer: MANTAK
+origin: Israel
+price: 25
+role: Main Battle Tank
+variants:
+  Merkava Mk IV: {}

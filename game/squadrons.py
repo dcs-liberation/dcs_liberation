@@ -239,7 +239,7 @@ class Squadron:
         from gen.flights.ai_flight_planner_db import tasks_for_aircraft
         from gen.flights.flight import FlightType
 
-        with path.open() as squadron_file:
+        with path.open(encoding="utf8") as squadron_file:
             data = yaml.safe_load(squadron_file)
 
         name = data["aircraft"]
@@ -368,9 +368,16 @@ class AirWing:
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]
 
-    def squadrons_for_task(self, task: FlightType) -> Iterator[Squadron]:
+    def can_auto_plan(self, task: FlightType) -> bool:
+        try:
+            next(self.auto_assignable_for_task(task))
+            return True
+        except StopIteration:
+            return False
+
+    def auto_assignable_for_task(self, task: FlightType) -> Iterator[Squadron]:
         for squadron in self.iter_squadrons():
-            if task in squadron.mission_types:
+            if squadron.can_auto_assign(task):
                 yield squadron
 
     def auto_assignable_for_task_with_type(

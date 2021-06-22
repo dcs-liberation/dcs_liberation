@@ -1,0 +1,9 @@
+class: Logistics
+description: The Carrier Sd.Kfz.7 Tractor was a Artillery tow truck.
+introduced: 1938
+manufacturer: Kraus Maffei
+origin: Germany
+price: 1
+role: Tracked Cargo Transporter
+variants:
+  Sd.Kfz.7 Tractor: {}

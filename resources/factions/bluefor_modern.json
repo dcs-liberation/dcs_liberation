@@ -38,30 +38,30 @@
     "S-3B Tanker"
   ],
   "frontline_units": [
-    "MBT_M1A2_Abrams",
-    "MBT_Leopard_2A6M",
-    "MBT_Merkava_IV",
-    "ATGM_Stryker",
-    "IFV_M2A2_Bradley",
-    "IFV_Marder",
-    "IFV_LAV_25",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "SAM_Linebacker___Bradley_M6",
-    "SAM_Avenger__Stinger",
-    "ATGM_VAB_Mephisto"
+    "LAV-25",
+    "Leopard 2",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M1097 Heavy HMMWV Avenger",
+    "M1134 Stryker ATGM (BGM-71 TOW)",
+    "M1A2 Abrams",
+    "M2A2 Bradley",
+    "M6 Linebacker",
+    "Marder 1A3",
+    "Merkava Mk IV",
+    "VAB Mephisto"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -72,16 +72,16 @@
     "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
   "carrier_names": [

@@ -1,0 +1,13 @@
+---
+name: Escadron de chasse 1/30
+nickname: Alsace
+country: France
+role: Fighter
+aircraft: Mirage 2000C
+livery: AdA Alsace LF-2
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

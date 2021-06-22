@@ -11,7 +11,7 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game import Game, db
+from game import Game
 from game.theater import ControlPoint
 
 
@@ -38,10 +38,7 @@ class QIntelInfo(QFrame):
         front_line_units = defaultdict(int)
         for unit_type, count in self.cp.base.armor.items():
             if count:
-                name = db.unit_get_expanded_info(
-                    self.game.enemy_country, unit_type, "name"
-                )
-                front_line_units[name] += count
+                front_line_units[unit_type.name] += count
 
         units_by_task["Front line units"] = front_line_units
         for task, unit_types in units_by_task.items():

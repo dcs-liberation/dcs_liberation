@@ -29,6 +29,6 @@ class QBaseMenuTabs(QTabWidget):
         else:
             self.airfield_command = QAirfieldCommand(cp, game_model)
             self.addTab(self.airfield_command, "Airfield Command")
-            if not isinstance(cp, OffMapSpawn):
+            if cp.can_deploy_ground_units:
                 self.ground_forces_hq = QGroundForcesHQ(cp, game_model)
                 self.addTab(self.ground_forces_hq, "Ground Forces HQ")

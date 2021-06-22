@@ -1,0 +1,20 @@
+class: IFV
+description: 'The M2 Bradley, or Bradley IFV, is an American infantry fighting vehicle
+  that is a member of the Bradley Fighting Vehicle family. It is manufactured by BAE
+  Systems Land & Armaments, which was formerly United Defense. The Bradley is designed
+  for reconnaissance and to transport a squad of infantry, providing them protection
+  from small arms fire, while also providing firepower to both suppress and eliminate
+  most threats to friendly infantry. It is designed to be highly maneuverable and
+  to be fast enough to keep up with heavy armor during an advance. The M2 holds a
+  crew of three: a commander, a gunner and a driver, as well as six fully equipped
+  soldiers. In the year 2000 the total cost of the program was $5,664,100,000 for
+  1602 units, giving an average unit cost of $3,166,000. If you want to know more
+  than you ever wanted about the Bradley, watch the film ''The Pentagon Wars'', its
+  great!'
+introduced: 1988
+manufacturer: United Defense
+origin: USA
+price: 12
+role: Infantry Fighting Vehicle
+variants:
+  M2A2 Bradley: {}

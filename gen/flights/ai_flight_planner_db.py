@@ -8,6 +8,7 @@ from dcs.helicopters import (
     CH_47D,
     CH_53E,
     Ka_50,
+    Mi_24P,
     Mi_24V,
     Mi_26,
     Mi_28N,
@@ -110,7 +111,6 @@ from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
@@ -209,6 +209,7 @@ CAS_CAPABLE = [
     SA342L,
     Ka_50,
     Mi_28N,
+    Mi_24P,
     Mi_24V,
     Mi_8MT,
     UH_1H,
@@ -217,7 +218,6 @@ CAS_CAPABLE = [
     F_5E_3,
     F_86F_Sabre,
     C_101CC,
-    MB_339PAN,
     L_39ZA,
     A_20G,
     Ju_88A4,
@@ -330,7 +330,6 @@ STRIKE_CAPABLE = [
     MiG_15bis,
     F_5E_3,
     F_86F_Sabre,
-    MB_339PAN,
     C_101CC,
     L_39ZA,
     B_17G,

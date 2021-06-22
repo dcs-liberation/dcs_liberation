@@ -36,7 +36,7 @@ description: 'The British Spitfire is one of the most iconic fighter aircraft of
 introduced: 1943
 manufacturer: Supermarine
 origin: UK
-price: 14
+price: 3
 role: Fighter
 variants:
   Spitfire LF Mk IX: {}

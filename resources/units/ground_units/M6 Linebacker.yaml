@@ -1,0 +1,17 @@
+class: SHORADS
+description: The M6 Linebacker short-range air defense system was developed by Boeing
+  to meet the US Army requirements. The new vehicle was intended to counter the threat
+  posed by low-flying aircraft, helicopters, cruise missiles and unmanned aerial vehicles
+  to forward armored formations. Initial production Linebackers entered service with
+  the US Army in 1997. A total of 99 Bradley Linebackers were ordered, however in
+  2006 these were phased-out of service. The M6 is an all-weather system, capable
+  of operating in day/night and all weather conditions. It is based on the M2 Bradley
+  IFV and is equipped with a quadruple launcher with FIM-92 Stinger short-range surface-to-air
+  missiles instead of the TOW ATGW.
+introduced: 1997
+manufacturer: United Defense
+origin: USA
+price: 18
+role: Self-Propelled Anti-Aircraft System
+variants:
+  M6 Linebacker: {}

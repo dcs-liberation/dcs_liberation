@@ -6,6 +6,7 @@
   "aircrafts": [
     "L-39ZA Albatros",
     "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
     "MiG-21bis Fishbed-N",
     "MiG-23MLD Flogger-K",
@@ -23,33 +24,33 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "IFV_BMP_1",
-    "IFV_BMP_2",
-    "APC_BTR_80",
-    "Scout_BRDM_2",
-    "LT_PT_76",
-    "APC_MTLB",
-    "Scout_Cobra",
-    "MBT_T_55",
-    "MBT_T_72B",
-    "MBT_T_90",
-    "SPAAA_ZSU_57_2"
+    "BMP-1",
+    "BMP-2",
+    "BRDM-2",
+    "BTR-80",
+    "Cobra",
+    "MT-LB",
+    "PT-76",
+    "T-55A",
+    "T-72B with Kontakt-1 ERA",
+    "T-90A",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPM_2S9_Nona_120mm_M",
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S1_Gvozdika_122mm"
+    "2S1 Gvozdika",
+    "2S9 Nona-S",
+    "BM-21 Grad",
+    "BM-27 Uragan"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry AK-74 Rus",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "ColdWarFlakGenerator",
@@ -62,6 +63,7 @@
     "SA10Generator",
     "SA11Generator",
     "SA13Generator",
+    "SA17Generator",
     "SA19Generator",
     "ZSU23Generator",
     "ZU23Generator",

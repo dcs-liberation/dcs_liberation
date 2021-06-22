@@ -15,18 +15,18 @@
     "Spitfire LF Mk IX (Clipped Wings)"
   ],
   "frontline_units": [
-    "MT_M4A4_Sherman_Firefly",
-    "APC_M2A1_Halftrack",
-    "Tk_M4_Sherman",
-    "Car_M8_Greyhound_Armored",
-    "AAA_Bofors_40mm"
+    "Bofors 40 mm Gun",
+    "M2A1 Half-Track",
+    "M4A2(75) Sherman",
+    "M4A4 Sherman Firefly",
+    "M8 Greyhound Light Armored Car"
   ],
   "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_SMLE_No_4_Mk_1"
+    "Infantry SMLE No.4 Mk-1"
   ],
   "air_defenses": [
     "BoforsGenerator",

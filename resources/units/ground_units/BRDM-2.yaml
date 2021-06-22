@@ -1,0 +1,16 @@
+class: Recon
+description: "The PT-76 is a Soviet amphibious light tank that was introduced in the\
+  \ early 1950s and soon became the standard reconnaissance tank of the Soviet Army\
+  \ and the other Warsaw Pact armed forces. It was widely exported to other friendly\
+  \ states, like India, Iraq, Syria, North Korea and North Vietnam. Overall, some\
+  \ 25 countries used the PT-76. The tank's full name is Floating Tank\u201376 (\u043F\
+  \u043B\u0430\u0432\u0430\u044E\u0449\u0438\u0439 \u0442\u0430\u043D\u043A, plavayushchiy\
+  \ tank, or \u041F\u0422-76). 76 stands for the caliber of the main armament: the\
+  \ 76.2 mm D-56T series rifled tank gun."
+introduced: 1962
+manufacturer: GAZ
+origin: USSR/Russia
+price: 6
+role: Amphibious Armoured Car
+variants:
+  BRDM-2: {}

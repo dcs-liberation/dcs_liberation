@@ -1,0 +1,12 @@
+class: IFV
+description: The ZBD-04 or Type 04 (industrial designation WZ502) is a Chinese infantry
+  fighting vehicle. It bears some external resemblance to the BMP-3, particularly
+  with regards to its turret and main armament; however, the chassis and internal
+  subsystems possesses a different layout.
+introduced: 1999
+manufacturer: Norinco
+origin: China
+price: 12
+role: Main Battle Tank
+variants:
+  Type 04A (ZBD-04A): {}

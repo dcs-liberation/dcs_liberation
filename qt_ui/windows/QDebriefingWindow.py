@@ -11,7 +11,6 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from game import db
 from game.debriefing import Debriefing
 
 
@@ -24,25 +23,19 @@ class LossGrid(QGridLayout):
 
         self.add_loss_rows(debriefing.air_losses.by_type(player), lambda u: u.name)
         self.add_loss_rows(
-            debriefing.front_line_losses_by_type(player),
-            lambda u: db.unit_type_name(u),
+            debriefing.front_line_losses_by_type(player), lambda u: str(u)
         )
         self.add_loss_rows(
-            debriefing.convoy_losses_by_type(player),
-            lambda u: f"{db.unit_type_name(u)} from convoy",
+            debriefing.convoy_losses_by_type(player), lambda u: f"{u} from convoy"
         )
         self.add_loss_rows(
             debriefing.cargo_ship_losses_by_type(player),
-            lambda u: f"{db.unit_type_name(u)} from cargo ship",
+            lambda u: f"{u} from cargo ship",
         )
         self.add_loss_rows(
-            debriefing.airlift_losses_by_type(player),
-            lambda u: f"{db.unit_type_name(u)} from airlift",
+            debriefing.airlift_losses_by_type(player), lambda u: f"{u} from airlift"
         )
-        self.add_loss_rows(
-            debriefing.building_losses_by_type(player),
-            lambda u: u,
-        )
+        self.add_loss_rows(debriefing.building_losses_by_type(player), lambda u: u)
 
         # TODO: Display dead ground object units and runways.
 

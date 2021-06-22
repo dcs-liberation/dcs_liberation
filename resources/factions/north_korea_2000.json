@@ -5,6 +5,7 @@
   "description": "<p>North Korean army in the 2000s.</p>",
   "aircrafts": [
     "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
     "MiG-15bis Fagot",
     "MiG-19P Farmer-B",
@@ -19,30 +20,30 @@
     "IL-78M"
   ],
   "frontline_units": [
-    "Scout_BRDM_2",
-    "APC_BTR_80",
-    "IFV_BMP_1",
-    "MBT_T_55",
-    "MBT_T_72B",
-    "MBT_T_80U",
-    "LT_PT_76",
-    "SPAAA_ZSU_57_2",
-    "SAM_SA_9_Strela_1_Gaskin_TEL"
+    "BMP-1",
+    "BRDM-2",
+    "BTR-80",
+    "PT-76",
+    "SA-9 Strela",
+    "T-55A",
+    "T-72B with Kontakt-1 ERA",
+    "T-80UD",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "MLRS_9K57_Uragan_BM_27_220mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-21 Grad",
+    "BM-27 Uragan"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Infantry_AK_74_Rus",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry AK-74 Rus",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "SA2Generator",

@@ -1,0 +1,5 @@
+class: MANPADS
+spawn_weight: 1
+price: 0
+variants:
+  MANPADS SA-18 Igla "Grouse": null

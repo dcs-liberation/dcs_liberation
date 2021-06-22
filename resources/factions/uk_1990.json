@@ -21,25 +21,25 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Challenger_II",
-    "MBT_Chieftain_Mk_3",
-    "IFV_Warrior",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "SAM_Avenger__Stinger"
+    "Chieftain Mk.3",
+    "FV4034 Challenger 2",
+    "FV510 Warrior",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M1097 Heavy HMMWV Avenger"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "Mortar_2B11_120mm",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -50,16 +50,16 @@
     "HawkEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry"
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
   "carrier_names": [],

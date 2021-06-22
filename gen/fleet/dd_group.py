@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 
 from game.factions.faction import Faction
 from game.theater.theatergroundobject import TheaterGroundObject
 
 from gen.sam.group_generator import ShipGroupGenerator
 from dcs.unittype import ShipType
-from dcs.ships import FFG_Oliver_Hazzard_Perry, DDG_Arleigh_Burke_IIa
+from dcs.ships import PERRY, USS_Arleigh_Burke_IIa
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -18,7 +18,7 @@ class DDGroupGenerator(ShipGroupGenerator):
         game: Game,
         ground_object: TheaterGroundObject,
         faction: Faction,
-        ddtype: ShipType,
+        ddtype: Type[ShipType],
     ):
         super(DDGroupGenerator, self).__init__(game, ground_object, faction)
         self.ddtype = ddtype
@@ -46,7 +46,7 @@ class OliverHazardPerryGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(OliverHazardPerryGroupGenerator, self).__init__(
-            game, ground_object, faction, FFG_Oliver_Hazzard_Perry
+            game, ground_object, faction, PERRY
         )
 
 
@@ -55,5 +55,5 @@ class ArleighBurkeGroupGenerator(DDGroupGenerator):
         self, game: Game, ground_object: TheaterGroundObject, faction: Faction
     ):
         super(ArleighBurkeGroupGenerator, self).__init__(
-            game, ground_object, faction, DDG_Arleigh_Burke_IIa
+            game, ground_object, faction, USS_Arleigh_Burke_IIa
         )

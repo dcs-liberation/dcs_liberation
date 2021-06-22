@@ -77,8 +77,8 @@ class Operation:
             yield Conflict(
                 cls.game.theater,
                 frontline,
-                cls.game.player_name,
-                cls.game.enemy_name,
+                cls.game.player_faction.name,
+                cls.game.enemy_faction.name,
                 cls.game.player_country,
                 cls.game.enemy_country,
                 frontline.position,
@@ -95,8 +95,8 @@ class Operation:
         return Conflict(
             cls.game.theater,
             FrontLine(player_cp, enemy_cp),
-            cls.game.player_name,
-            cls.game.enemy_name,
+            cls.game.player_faction.name,
+            cls.game.enemy_faction.name,
             cls.game.player_country,
             cls.game.enemy_country,
             mid_point,
@@ -389,8 +389,8 @@ class Operation:
             player_cp = front_line.blue_cp
             enemy_cp = front_line.red_cp
             conflict = Conflict.frontline_cas_conflict(
-                cls.game.player_name,
-                cls.game.enemy_name,
+                cls.game.player_faction.name,
+                cls.game.enemy_faction.name,
                 cls.current_mission.country(cls.game.player_country),
                 cls.current_mission.country(cls.game.enemy_country),
                 front_line,

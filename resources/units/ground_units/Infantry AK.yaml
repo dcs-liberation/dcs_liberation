@@ -1,0 +1,5 @@
+class: Infantry
+price: 0
+spawn_weight: 4
+variants:
+  Infantry AK-74 Rus: null

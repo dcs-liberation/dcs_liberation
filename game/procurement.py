@@ -3,13 +3,12 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
-from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
-
-from dcs.unittype import FlyingType, VehicleType
+from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from game import db
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance
@@ -148,17 +147,17 @@ class ProcurementAi:
 
     def affordable_ground_unit_of_class(
         self, budget: float, unit_class: GroundUnitClass
-    ) -> Optional[Type[VehicleType]]:
+    ) -> Optional[GroundUnitType]:
         faction_units = set(self.faction.frontline_units) | set(
             self.faction.artillery_units
         )
-        of_class = set(unit_class.unit_list) & faction_units
+        of_class = {u for u in faction_units if u.unit_class is unit_class}
 
         # faction has no access to needed unit type, take a random unit
         if not of_class:
             of_class = faction_units
 
-        affordable_units = [u for u in of_class if db.PRICES[u] <= budget]
+        affordable_units = [u for u in of_class if u.price <= budget]
         if not affordable_units:
             return None
         return random.choice(affordable_units)
@@ -180,7 +179,7 @@ class ProcurementAi:
                 # Can't afford any more units.
                 break
 
-            budget -= db.PRICES[unit]
+            budget -= unit.price
             cp.pending_unit_deliveries.order({unit: 1})
 
         return budget
@@ -361,9 +360,9 @@ class ProcurementAi:
         class_cost = 0
         total_cost = 0
         for unit_type, count in allocations.all.items():
-            cost = db.PRICES[unit_type] * count
+            cost = unit_type.price * count
             total_cost += cost
-            if unit_type in unit_class:
+            if unit_type.unit_class is unit_class:
                 class_cost += cost
         if not total_cost:
             return 0

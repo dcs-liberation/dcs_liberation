@@ -1,7 +1,7 @@
 {
   "country": "Canada",
   "name": "Canada 2005",
-  "authors": "Khopa",
+  "authors": "Khopa, SpaceEnthusiast",
   "description": "<p>Canada in the 2000s, an F/A-18C Hornet focused faction.</p>",
   "locales": [
     "en_US",
@@ -9,6 +9,7 @@
   ],
   "aircrafts": [
     "AH-1W SuperCobra",
+    "C-130J-30 Super Hercules",
     "CF-188 Hornet",
     "UH-1H Iroquois"
   ],
@@ -20,22 +21,22 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Leopard_1A3",
-    "MBT_Leopard_2A4",
-    "MBT_Leopard_2A6M",
-    "IFV_LAV_25",
-    "APC_M113",
-    "IFV_Warrior",
-    "SAM_Avenger__Stinger"
+    "FV510 Warrior",
+    "LAV-25",
+    "Leopard 1A3",
+    "Leopard 2",
+    "Leopard 2A4",
+    "M1097 Heavy HMMWV Avenger",
+    "M113"
   ],
   "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -47,12 +48,14 @@
   "aircraft_carrier": [],
   "helicopter_carrier": [],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
-  "requirements": {},
+  "requirements": {
+    "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
+  },
   "carrier_names": [],
   "helicopter_carrier_names": [],
   "navy_generators": [
@@ -64,6 +67,9 @@
     "CF-188 Hornet": [
       "Canada 409th Squadron",
       "Canada 425th Squadron"
+    ],
+    "C-130J-30 Super Hercules": [
+      "Royal Canadian AF CC-130J"
     ]
   }
 }

@@ -1,0 +1,10 @@
+class: SHORADS
+description: The ZSU-23-4 "Shilka" is a lightly armored Soviet self-propelled, radar
+  guided anti-aircraft weapon system (SPAAG). About 6500 have been build.
+introduced: 1960
+manufacturer: MMZ
+origin: USSR/Russia
+price: 10
+role: Self-Propelled Anti-Aircraft Gun
+variants:
+  ZSU-23-4 Shilka: {}

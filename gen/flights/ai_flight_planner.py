@@ -584,7 +584,7 @@ class CoalitionMissionPlanner:
     MAX_OCA_RANGE = nautical_miles(150)
     MAX_SEAD_RANGE = nautical_miles(150)
     MAX_STRIKE_RANGE = nautical_miles(150)
-    MAX_AWEC_RANGE = nautical_miles(200)
+    MAX_AWEC_RANGE = Distance.inf()
     MAX_TANKER_RANGE = nautical_miles(200)
 
     def __init__(self, game: Game, is_player: bool) -> None:
@@ -604,14 +604,7 @@ class CoalitionMissionPlanner:
         also possible for the player to exclude mission types from their squadron
         designs.
         """
-        all_compatible = aircraft_for_task(mission_type)
-        for squadron in self.game.air_wing_for(self.is_player).iter_squadrons():
-            if (
-                squadron.aircraft in all_compatible
-                and mission_type in squadron.auto_assignable_mission_types
-            ):
-                return True
-        return False
+        return self.game.air_wing_for(self.is_player).can_auto_plan(mission_type)
 
     def critical_missions(self) -> Iterator[ProposedMission]:
         """Identifies the most important missions to plan this turn.

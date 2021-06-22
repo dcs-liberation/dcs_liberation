@@ -20,10 +20,10 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from dcs.task import PinpointStrike
 from dcs.unittype import UnitType
 
-from game import Game, db
+from game import Game
+from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint
 from game.transfers import TransferOrder
 from qt_ui.models import GameModel
@@ -63,12 +63,7 @@ class UnitTransferList(QFrame):
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
 
-        units_column = sorted(
-            cp.base.armor,
-            key=lambda u: db.unit_get_expanded_info(
-                self.game_model.game.player_country, u, "name"
-            ),
-        )
+        units_column = sorted(cp.base.armor, key=lambda u: u.name)
 
         count = 0
         for count, unit_type in enumerate(units_column):
@@ -169,9 +164,7 @@ class ScrollingUnitTransferGrid(QFrame):
         unit_types = set(self.game_model.game.faction_for(player=True).ground_units)
         sorted_units = sorted(
             {u for u in unit_types if self.cp.base.total_units_of_type(u)},
-            key=lambda u: db.unit_get_expanded_info(
-                self.game_model.game.player_country, u, "name"
-            ),
+            key=lambda u: u.name,
         )
         for row, unit_type in enumerate(sorted_units):
             self.add_unit_row(unit_type, task_box_layout, row)
@@ -190,7 +183,7 @@ class ScrollingUnitTransferGrid(QFrame):
 
     def add_unit_row(
         self,
-        unit_type: Type[UnitType],
+        unit_type: GroundUnitType,
         layout: QGridLayout,
         row: int,
     ) -> None:
@@ -203,13 +196,7 @@ class ScrollingUnitTransferGrid(QFrame):
 
         origin_inventory = self.cp.base.total_units_of_type(unit_type)
 
-        unit_name = QLabel(
-            "<b>"
-            + db.unit_get_expanded_info(
-                self.game_model.game.player_country, unit_type, "name"
-            )
-            + "</b>"
-        )
+        unit_name = QLabel(f"<b>{unit_type.name}</b>")
         unit_name.setSizePolicy(
             QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         )

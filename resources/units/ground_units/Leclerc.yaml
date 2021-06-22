@@ -1,0 +1,17 @@
+class: Tank
+description: "The Leclerc tank (French: char Leclerc) is a main battle tank (MBT)\
+  \ built by GIAT, now Nexter of France. It was named in honour of General Philippe\
+  \ Leclerc de Hauteclocque, who led the French element of the drive towards Paris\
+  \ while in command of the Free French 2nd Armoured Division (2e DB) in World War\
+  \ II. The designation AMX-56 \u2013 while very popular \u2013 is incorrect. During\
+  \ the Iron spear exercise, October 2019, Leclerc tanks crewed by the Lynx 6 Tactical\
+  \ Inter-Service Sub-Group (S-GTIA) participated in an inter-alliance exercise and\
+  \ surpassed the American M1A2 Abrams, German, Spanish and Norwegian Leopard 2s,\
+  \ Italian Ariete C1 and Polish P91."
+introduced: 1993
+manufacturer: GIAT Industries
+origin: France
+price: 25
+role: Main Battle Tank
+variants:
+  "Leclerc S\xE9ries 2": {}

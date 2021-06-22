@@ -12,15 +12,14 @@ from typing import (
     List,
     Optional,
     TYPE_CHECKING,
-    Type,
     TypeVar,
     Sequence,
 )
 
 from dcs.mapping import Point
-from dcs.unittype import VehicleType
 
 from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
 from game.procurement import AircraftProcurementRequest
 from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
@@ -73,7 +72,7 @@ class TransferOrder:
     player: bool = field(init=False)
 
     #: The units being transferred.
-    units: Dict[Type[VehicleType], int]
+    units: Dict[GroundUnitType, int]
 
     transport: Optional[Transport] = field(default=None)
 
@@ -90,7 +89,7 @@ class TransferOrder:
     def kill_all(self) -> None:
         self.units.clear()
 
-    def kill_unit(self, unit_type: Type[VehicleType]) -> None:
+    def kill_unit(self, unit_type: GroundUnitType) -> None:
         if unit_type not in self.units or not self.units[unit_type]:
             raise KeyError(f"{self.destination} has no {unit_type} remaining")
         self.units[unit_type] -= 1
@@ -99,7 +98,7 @@ class TransferOrder:
     def size(self) -> int:
         return sum(c for c in self.units.values())
 
-    def iter_units(self) -> Iterator[Type[VehicleType]]:
+    def iter_units(self) -> Iterator[GroundUnitType]:
         for unit_type, count in self.units.items():
             for _ in range(count):
                 yield unit_type
@@ -157,7 +156,7 @@ class Airlift(Transport):
         self.flight = flight
 
     @property
-    def units(self) -> Dict[Type[VehicleType], int]:
+    def units(self) -> Dict[GroundUnitType, int]:
         return self.transfer.units
 
     @property
@@ -315,7 +314,7 @@ class MultiGroupTransport(MissionTarget, Transport):
         transfer.transport = None
         self.transfers.remove(transfer)
 
-    def kill_unit(self, unit_type: Type[VehicleType]) -> None:
+    def kill_unit(self, unit_type: GroundUnitType) -> None:
         for transfer in self.transfers:
             try:
                 transfer.kill_unit(unit_type)
@@ -338,12 +337,17 @@ class MultiGroupTransport(MissionTarget, Transport):
         return sum(sum(t.units.values()) for t in self.transfers)
 
     @property
-    def units(self) -> Dict[Type[VehicleType], int]:
-        units: Dict[Type[VehicleType], int] = defaultdict(int)
+    def units(self) -> dict[GroundUnitType, int]:
+        units: Dict[GroundUnitType, int] = defaultdict(int)
         for transfer in self.transfers:
             for unit_type, count in transfer.units.items():
                 units[unit_type] += count
         return units
+
+    def iter_units(self) -> Iterator[GroundUnitType]:
+        for unit_type, count in self.units.items():
+            for _ in range(count):
+                yield unit_type
 
     @property
     def player_owned(self) -> bool:
@@ -588,7 +592,10 @@ class PendingTransfers:
 
     def order_airlift_assets(self) -> None:
         for control_point in self.game.theater.controlpoints:
-            self.order_airlift_assets_at(control_point)
+            if self.game.air_wing_for(control_point.captured).can_auto_plan(
+                FlightType.TRANSPORT
+            ):
+                self.order_airlift_assets_at(control_point)
 
     @staticmethod
     def desired_airlift_capacity(control_point: ControlPoint) -> int:
@@ -596,10 +603,10 @@ class PendingTransfers:
 
     def current_airlift_capacity(self, control_point: ControlPoint) -> int:
         inventory = self.game.aircraft_inventory.for_control_point(control_point)
-        squadrons = self.game.air_wing_for(control_point.captured).squadrons_for_task(
-            FlightType.TRANSPORT
-        )
-        unit_types = {s.aircraft for s in squadrons}.intersection(TRANSPORT_CAPABLE)
+        squadrons = self.game.air_wing_for(
+            control_point.captured
+        ).auto_assignable_for_task(FlightType.TRANSPORT)
+        unit_types = {s.aircraft for s in squadrons}
         return sum(
             count
             for unit_type, count in inventory.all_aircraft

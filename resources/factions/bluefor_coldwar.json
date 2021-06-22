@@ -2,9 +2,10 @@
   "country": "Combined Joint Task Forces Blue",
   "name": "Bluefor Coldwar",
   "authors": "Khopa",
-  "description": "<p>A generic bluefor coldwar faction.</p>",
+  "description": "<p>A generic bluefor coldwar faction. (With the A-4E-C mod)</p>",
   "aircrafts": [
     "A-10A Thunderbolt II",
+    "A-4E Skyhawk",
     "AJS-37 Viggen",
     "B-52H Stratofortress",
     "F-14A Tomcat (Block 135-GR Late)",
@@ -25,19 +26,19 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_M60A3_Patton",
-    "APC_M113",
-    "SAM_Chaparral_M48"
+    "M113",
+    "M48 Chaparral",
+    "M60A3 \"Patton\""
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249"
+    "Infantry M249",
+    "Infantry M4"
   ],
   "air_defenses": [
     "ChaparralGenerator",
@@ -49,18 +50,20 @@
     "HawkEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
-  "requirements": {},
+  "requirements": {
+    "Community A-4E": "https://heclak.github.io/community-a4e-c/"
+  },
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",

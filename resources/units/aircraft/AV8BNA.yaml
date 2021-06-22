@@ -25,7 +25,7 @@ introduced: 1989
 lha_capable: true
 manufacturer: McDonnell Douglas
 origin: USA/UK
-price: 14
+price: 15
 role: V/STOL Attack
 variants:
   AV-8B Harrier II Night Attack: {}

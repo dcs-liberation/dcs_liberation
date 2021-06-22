@@ -20,6 +20,7 @@ class Settings:
     # Difficulty settings
     player_skill: str = "Good"
     enemy_skill: str = "Average"
+    ai_pilot_levelling: bool = True
     enemy_vehicle_skill: str = "Average"
     map_coalition_visibility: ForcedOptions.Views = ForcedOptions.Views.All
     labels: str = "Full"
@@ -37,10 +38,10 @@ class Settings:
     #: the campaign has started will have no immediate effect; pilots already in the
     #: squadron will not be removed if the limit is lowered and pilots will not be
     #: immediately created if the limit is raised.
-    squadron_pilot_limit: int = 12
+    squadron_pilot_limit: int = 24
 
     #: The number of pilots a squadron can replace per turn.
-    squadron_replenishment_rate: int = 1
+    squadron_replenishment_rate: int = 4
 
     default_start_type: str = "Cold"
 

@@ -1,0 +1,17 @@
+class: Artillery
+description: "The 2S9 NONA (\u041D\u043E\u0432\u0435\u0439\u0448\u0435\u0435 \u041E\
+  \u0440\u0443\u0434\u0438\u0435 \u041D\u0430\u0437\u0435\u043C\u043D\u043E\u0439\
+  \ \u0410\u0440\u0442\u0438\u043B\u0435\u0440\u0438\u0438 - Newest Ordnance of Ground\
+  \ Artillery) is an extremely light-weight self-propelled and air-droppable 120 mm\
+  \ gun-mortar designed in the Soviet Union, which entered service in 1981. The 2S9\
+  \ chassis is designated the S-120 and based on the aluminium hull of the BTR-D airborne\
+  \ multi-purpose tracked armoured personnel carrier. More generally, the 120 mm mortar\
+  \ is referred to as the Nona, with the 2S9 also known as the Nona-S. Although no\
+  \ figures have been released, it is estimated that well over 1,000 2S9 were built."
+introduced: 1981
+manufacturer: Motovilikha
+origin: USSR/Russia
+price: 12
+role: Self-Propelled Mortar
+variants:
+  2S9 Nona-S: {}

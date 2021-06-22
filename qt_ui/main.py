@@ -18,9 +18,10 @@ from game.data.weapons import (
     WEAPON_INTRODUCTION_YEARS,
     Weapon,
 )
+from game.db import FACTIONS
 from game.profiling import logged_duration
 from game.settings import Settings
-from game.theater.start_generator import GameGenerator, GeneratorSettings
+from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from qt_ui import (
     liberation_install,
     liberation_theme,
@@ -199,8 +200,8 @@ def create_game(
     inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_json(campaign_path)
     generator = GameGenerator(
-        blue,
-        red,
+        FACTIONS[blue],
+        FACTIONS[red],
         campaign.load_theater(),
         Settings(
             supercarrier=supercarrier,
@@ -220,6 +221,15 @@ def create_game(
             no_lha=False,
             no_player_navy=False,
             no_enemy_navy=False,
+        ),
+        ModSettings(
+            a4_skyhawk=False,
+            f22_raptor=False,
+            hercules=False,
+            jas39_gripen=False,
+            su57_felon=False,
+            frenchpack=False,
+            high_digit_sams=False,
         ),
     )
     return generator.generate()
