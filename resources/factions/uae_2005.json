@@ -5,6 +5,7 @@
   "description": "<p>UAR army in the 2000s.</p>",
   "aircrafts": [
     "AH-64D Apache Longbow",
+    "C-130",
     "F-16CM Fighting Falcon (Block 50)",
     "Mirage 2000-5",
     "Mirage 2000C"

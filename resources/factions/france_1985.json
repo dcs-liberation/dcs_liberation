@@ -8,6 +8,7 @@
     ],
     "doctrine": "coldwar",
     "aircrafts": [
+      "C-130", 
       "Mirage 2000C",
       "SA 342L Gazelle",
       "SA 342M Gazelle",
@@ -75,5 +76,6 @@
       "ArleighBurkeGroupGenerator"
     ],
     "has_jtac": true,
-    "jtac_unit": "SA 342L Gazelle"
+    "jtac_unit": "MQ-9 Reaper"
   }
+
