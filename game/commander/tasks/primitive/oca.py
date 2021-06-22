@@ -14,7 +14,9 @@ class PlanOcaStrike(PackagePlanningTask[ControlPoint]):
     aircraft_cold_start: bool
 
     def preconditions_met(self, state: TheaterState) -> bool:
-        return self.target in state.oca_targets
+        if self.target not in state.oca_targets:
+            return False
+        return self.target_area_preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
         state.oca_targets.remove(self.target)

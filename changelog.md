@@ -4,6 +4,8 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Features/Improvements
 
+* **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
+
 ## Fixes
 
 # 4.1.0
