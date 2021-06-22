@@ -26,7 +26,6 @@ from dcs.planes import (
     Su_33,
     Tu_22M3,
 )
-from dcs.planes import IL_78M
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
@@ -1761,7 +1760,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
     def configure_refueling_actions(self, waypoint: MovingPoint) -> None:
         waypoint.add_task(Tanker())
 
-        if self.flight.unit_type.dcs_unit_type != IL_78M:
+        if self.flight.unit_type.dcs_unit_type.tacan:
             tanker_info = self.air_support.tankers[-1]
             tacan = tanker_info.tacan
             tacan_callsign = {
