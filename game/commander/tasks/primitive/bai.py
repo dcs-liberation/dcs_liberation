@@ -12,7 +12,9 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanBai(PackagePlanningTask[VehicleGroupGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        return self.target in state.enemy_garrisons
+        if self.target not in state.enemy_garrisons:
+            return False
+        return self.target_area_preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
         state.enemy_garrisons.remove(self.target)

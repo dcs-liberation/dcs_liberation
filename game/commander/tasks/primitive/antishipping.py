@@ -12,7 +12,9 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanAntiShipping(PackagePlanningTask[CargoShip]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        return self.target in state.enemy_shipping
+        if self.target not in state.enemy_shipping:
+            return False
+        return self.target_area_preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
         state.enemy_shipping.remove(self.target)

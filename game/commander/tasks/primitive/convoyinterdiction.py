@@ -12,7 +12,9 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanConvoyInterdiction(PackagePlanningTask[Convoy]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        return self.target in state.enemy_convoys
+        if self.target not in state.enemy_convoys:
+            return False
+        return self.target_area_preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
         state.enemy_convoys.remove(self.target)

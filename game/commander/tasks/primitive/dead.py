@@ -13,10 +13,12 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanDead(PackagePlanningTask[IadsGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        return self.target in state.threatening_air_defenses
+        if self.target not in state.threatening_air_defenses:
+            return False
+        return self.target_area_preconditions_met(state, ignore_iads=True)
 
     def apply_effects(self, state: TheaterState) -> None:
-        state.threatening_air_defenses.remove(self.target)
+        state.eliminate_air_defense(self.target)
 
     def propose_flights(self, doctrine: Doctrine) -> None:
         self.propose_flight(FlightType.DEAD, 2, doctrine.mission_ranges.offensive)

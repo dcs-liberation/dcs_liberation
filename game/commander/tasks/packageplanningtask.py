@@ -1,16 +1,19 @@
 from __future__ import annotations
 
+import itertools
+import operator
 from abc import abstractmethod
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Optional, Generic, TypeVar
+from typing import TYPE_CHECKING, Optional, Generic, TypeVar, Iterator, Union
 
 from game.commander.missionproposals import ProposedFlight, EscortType, ProposedMission
+from game.commander.tasks.theatercommandertask import TheaterCommanderTask
 from game.commander.theaterstate import TheaterState
 from game.data.doctrine import Doctrine
-from game.htn import PrimitiveTask
 from game.profiling import MultiEventTracer
 from game.theater import MissionTarget
-from game.utils import Distance
+from game.theater.theatergroundobject import IadsGroundObject, NavalGroundObject
+from game.utils import Distance, meters
 from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:
@@ -23,7 +26,7 @@ MissionTargetT = TypeVar("MissionTargetT", bound=MissionTarget)
 # TODO: Refactor so that we don't need to call up to the mission planner.
 # Bypass type checker due to https://github.com/python/mypy/issues/5374
 @dataclass  # type: ignore
-class PackagePlanningTask(PrimitiveTask[TheaterState], Generic[MissionTargetT]):
+class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
     target: MissionTargetT
     flights: list[ProposedFlight] = field(init=False)
 
@@ -71,3 +74,44 @@ class PackagePlanningTask(PrimitiveTask[TheaterState], Generic[MissionTargetT]):
             doctrine.mission_ranges.offensive,
             EscortType.AirToAir,
         )
+
+    def iter_iads_threats(
+        self, state: TheaterState
+    ) -> Iterator[Union[IadsGroundObject, NavalGroundObject]]:
+        target_ranges: list[
+            tuple[Union[IadsGroundObject, NavalGroundObject], Distance]
+        ] = []
+        all_iads: Iterator[
+            Union[IadsGroundObject, NavalGroundObject]
+        ] = itertools.chain(state.enemy_air_defenses, state.enemy_ships)
+        for target in all_iads:
+            distance = meters(target.distance_to(self.target))
+            threat_range = target.max_threat_range()
+            if not threat_range:
+                continue
+            # IADS out of range of our target area will have a positive
+            # distance_to_threat and should be pruned. The rest have a decreasing
+            # distance_to_threat as overlap increases. The most negative distance has
+            # the greatest coverage of the target and should be treated as the highest
+            # priority threat.
+            distance_to_threat = distance - threat_range
+            if distance_to_threat > meters(0):
+                continue
+            target_ranges.append((target, distance_to_threat))
+
+        # TODO: Prioritize IADS by vulnerability?
+        target_ranges = sorted(target_ranges, key=operator.itemgetter(1))
+        for target, _range in target_ranges:
+            yield target
+
+    def target_area_preconditions_met(
+        self, state: TheaterState, ignore_iads: bool = False
+    ) -> bool:
+        """Checks if the target area has been cleared of threats."""
+        threatened = False
+        if not ignore_iads:
+            for iads_threat in self.iter_iads_threats(state):
+                threatened = True
+                if iads_threat not in state.threatening_air_defenses:
+                    state.threatening_air_defenses.append(iads_threat)
+        return not threatened
