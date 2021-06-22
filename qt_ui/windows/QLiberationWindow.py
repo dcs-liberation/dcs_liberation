@@ -71,7 +71,7 @@ class QLiberationWindow(QMainWindow):
                     logging.info("Loading last saved game : " + str(last_save_file))
                     game = persistency.load_game(last_save_file)
                     self.onGameGenerated(game)
-                    self.updateWindowTitle(last_save_file)
+                    self.updateWindowTitle(last_save_file if game else None)
                 except:
                     logging.info("Error loading latest save game")
             else:
