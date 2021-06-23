@@ -240,7 +240,7 @@ class QLiberationWindow(QMainWindow):
             dir=persistency._dcs_saved_game_folder,
             filter="*.liberation",
         )
-        if file is not None:
+        if file is not None and file[0] != "":
             game = persistency.load_game(file[0])
             GameUpdateSignal.get_instance().game_loaded.emit(game)
 
@@ -282,6 +282,7 @@ class QLiberationWindow(QMainWindow):
         self.setWindowTitle(window_title)
 
     def onGameGenerated(self, game: Game):
+        self.updateWindowTitle()
         logging.info("On Game generated")
         self.game = game
         GameUpdateSignal.get_instance().game_loaded.emit(self.game)
