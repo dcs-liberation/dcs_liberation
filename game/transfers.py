@@ -6,7 +6,6 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import singledispatchmethod
 from typing import (
-    Dict,
     Generic,
     Iterator,
     List,
@@ -72,9 +71,17 @@ class TransferOrder:
     player: bool = field(init=False)
 
     #: The units being transferred.
-    units: Dict[GroundUnitType, int]
+    units: dict[GroundUnitType, int]
 
     transport: Optional[Transport] = field(default=None)
+
+    def __str__(self) -> str:
+        """Returns the text that should be displayed for the transfer."""
+        count = self.size
+        origin = self.origin.name
+        destination = self.destination.name
+        description = "Transfer" if self.player else "Enemy transfer"
+        return f"{description} of {count} units from {origin} to {destination}"
 
     def __post_init__(self) -> None:
         self.position = self.origin
@@ -91,12 +98,12 @@ class TransferOrder:
 
     def kill_unit(self, unit_type: GroundUnitType) -> None:
         if unit_type not in self.units or not self.units[unit_type]:
-            raise KeyError(f"{self.destination} has no {unit_type} remaining")
+            raise KeyError(f"{self} has no {unit_type} remaining")
         self.units[unit_type] -= 1
 
     @property
     def size(self) -> int:
-        return sum(c for c in self.units.values())
+        return sum(self.units.values())
 
     def iter_units(self) -> Iterator[GroundUnitType]:
         for unit_type, count in self.units.items():
@@ -105,7 +112,7 @@ class TransferOrder:
 
     @property
     def completed(self) -> bool:
-        return self.destination == self.position or not self.units
+        return self.destination == self.position or not self.size
 
     def disband_at(self, location: ControlPoint) -> None:
         logging.info(f"Units halting at {location}.")
@@ -156,7 +163,7 @@ class Airlift(Transport):
         self.flight = flight
 
     @property
-    def units(self) -> Dict[GroundUnitType, int]:
+    def units(self) -> dict[GroundUnitType, int]:
         return self.transfer.units
 
     @property
@@ -334,11 +341,11 @@ class MultiGroupTransport(MissionTarget, Transport):
 
     @property
     def size(self) -> int:
-        return sum(sum(t.units.values()) for t in self.transfers)
+        return sum(t.size for t in self.transfers)
 
     @property
     def units(self) -> dict[GroundUnitType, int]:
-        units: Dict[GroundUnitType, int] = defaultdict(int)
+        units: dict[GroundUnitType, int] = defaultdict(int)
         for transfer in self.transfers:
             for unit_type, count in transfer.units.items():
                 units[unit_type] += count
@@ -414,8 +421,8 @@ TransportType = TypeVar("TransportType", bound=MultiGroupTransport)
 class TransportMap(Generic[TransportType]):
     def __init__(self) -> None:
         # Dict of origin -> destination -> transport.
-        self.transports: Dict[
-            ControlPoint, Dict[ControlPoint, TransportType]
+        self.transports: dict[
+            ControlPoint, dict[ControlPoint, TransportType]
         ] = defaultdict(dict)
 
     def create_transport(
