@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Callable, Dict, Iterator, Optional, TypeVar
+from typing import Any, Callable, Iterator, Optional, TypeVar
 
 from PySide2.QtCore import (
     QAbstractListModel,
@@ -51,7 +51,7 @@ class DeletableChildModelManager:
     #: The type of model managed by this class.
     ModelType = TypeVar("ModelType")
 
-    ModelDict = Dict[DataType, ModelType]
+    ModelDict = dict[DataType, ModelType]
 
     def __init__(
         self,
