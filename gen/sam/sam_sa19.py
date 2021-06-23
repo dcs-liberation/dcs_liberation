@@ -17,7 +17,7 @@ class SA19Generator(AirDefenseGroupGenerator):
     price = 90
 
     def generate(self):
-        num_launchers = random.randint(1, 3)
+        num_launchers = 2
 
         if num_launchers == 1:
             self.add_unit(
