@@ -1,3 +1,34 @@
+"""Implements support for ground unit transfers between bases.
+
+Ground units can be transferred between bases via a number of transport methods, and
+doing so can take multiple turns.
+
+There are a few main concepts here:
+
+* A TransferOrder is a request to move units from one base to another. It is described
+  by its origin, destination, current position, and contents. TransferOrders persist
+  across turns, and if no Transport is available to move the units in a given turn it
+  will have no Transport assigned.
+* Transports: A Transport is the planned move of a group of units for a leg of the
+  journey *this turn*. A Transport has an assigned mode of transportation and has
+  vehicles assigned to move the units if needed. This might be a Convoy, a CargoShip, or
+  an Airlift.
+
+The TransportMap (more accurately, it's subtypes) is responsible for managing the
+transports moving from A to B for the turn. Transfers that are moving between A and B
+this turn will be added to the TransportMap, which will create a new transport if needed
+or add the units to an existing transport if one exists. This allows transfers from
+A->B->C and D->B->C to share a transport between B and C.
+
+AirLifts do not use TransportMap because no merging will take place between orders. It
+instead uses AirLiftPlanner to create transport packages.
+
+PendingTransfers manages all the incomplete transfer orders for the game. New transfer
+orders are registered with PendingTransfers and it is responsible for allocating
+transports and processing the turn's transit actions.
+
+Routing is handled by TransitNetwork.
+"""
 from __future__ import annotations
 
 import logging
@@ -28,7 +59,7 @@ from game.theater.transitnetwork import (
 )
 from game.utils import meters, nautical_miles
 from gen.ato import Package
-from gen.flights.ai_flight_planner_db import TRANSPORT_CAPABLE, aircraft_for_task
+from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import Flight, FlightType
 from gen.flights.flightplan import FlightPlanBuilder
