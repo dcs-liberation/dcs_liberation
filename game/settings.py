@@ -34,11 +34,14 @@ class Settings:
     player_income_multiplier: float = 1.0
     enemy_income_multiplier: float = 1.0
 
+    #: Feature flag for squadron limits.
+    enable_squadron_pilot_limits: bool = False
+
     #: The maximum number of pilots a squadron can have at one time. Changing this after
     #: the campaign has started will have no immediate effect; pilots already in the
     #: squadron will not be removed if the limit is lowered and pilots will not be
     #: immediately created if the limit is raised.
-    squadron_pilot_limit: int = 24
+    squadron_pilot_limit: int = 4
 
     #: The number of pilots a squadron can replace per turn.
     squadron_replenishment_rate: int = 4

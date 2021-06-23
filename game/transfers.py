@@ -299,8 +299,12 @@ class AirliftPlanner:
             required,
             available_aircraft,
             squadron.aircraft.dcs_unit_type.group_size_max,
-            squadron.number_of_available_pilots,
         )
+        # TODO: Use number_of_available_pilots directly once feature flag is gone.
+        # The number of currently available pilots is not relevant when pilot limits
+        # are disabled.
+        if not squadron.can_provide_pilots(flight_size):
+            flight_size = squadron.number_of_available_pilots
         capacity = flight_size * capacity_each
 
         if capacity < self.transfer.size:
