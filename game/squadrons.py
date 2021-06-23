@@ -112,9 +112,19 @@ class Squadron:
             return self.name
         return f'{self.name} "{self.nickname}"'
 
+    @property
+    def pilot_limits_enabled(self) -> bool:
+        return self.game.settings.enable_squadron_pilot_limits
+
+    def claim_new_pilot_if_allowed(self) -> Optional[Pilot]:
+        if self.pilot_limits_enabled:
+            return None
+        self._recruit_pilots(1)
+        return self.available_pilots.pop()
+
     def claim_available_pilot(self) -> Optional[Pilot]:
         if not self.available_pilots:
-            return None
+            return self.claim_new_pilot_if_allowed()
 
         # For opfor, so player/AI option is irrelevant.
         if not self.player:
@@ -140,7 +150,7 @@ class Squadron:
         # If they only *prefer* players and we're out of players, just return an AI
         # pilot.
         if not prefer_players:
-            return None
+            return self.claim_new_pilot_if_allowed()
         return self.available_pilots.pop()
 
     def claim_pilot(self, pilot: Pilot) -> None:
@@ -169,9 +179,12 @@ class Squadron:
         self.available_pilots.extend(new_pilots)
 
     def replenish_lost_pilots(self) -> None:
+        if not self.pilot_limits_enabled:
+            return
+
         replenish_count = min(
             self.game.settings.squadron_replenishment_rate,
-            self.number_of_unfilled_pilot_slots,
+            self._number_of_unfilled_pilot_slots,
         )
         if replenish_count > 0:
             self._recruit_pilots(replenish_count)
@@ -213,20 +226,23 @@ class Squadron:
         return len(self.current_roster)
 
     @property
-    def number_of_unfilled_pilot_slots(self) -> int:
+    def _number_of_unfilled_pilot_slots(self) -> int:
         return self.game.settings.squadron_pilot_limit - len(self.active_pilots)
 
     @property
     def number_of_available_pilots(self) -> int:
         return len(self.available_pilots)
 
+    def can_provide_pilots(self, count: int) -> bool:
+        return not self.pilot_limits_enabled or self.number_of_available_pilots >= count
+
     @property
     def has_available_pilots(self) -> bool:
-        return bool(self.available_pilots)
+        return not self.pilot_limits_enabled or bool(self.available_pilots)
 
     @property
     def has_unfilled_pilot_slots(self) -> bool:
-        return self.number_of_unfilled_pilot_slots > 0
+        return not self.pilot_limits_enabled or self._number_of_unfilled_pilot_slots > 0
 
     def can_auto_assign(self, task: FlightType) -> bool:
         return task in self.auto_assignable_mission_types
