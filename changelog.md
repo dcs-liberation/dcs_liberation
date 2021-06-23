@@ -28,6 +28,7 @@ Saves from 3.x are not compatible with 4.0.
 * **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
 * **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
 * **[UI]** Updated intel box text for first turn.
+* **[UI]** Base Capture Cheat is now usable at all bases and can also be used to transfer player-owned bases to OPFOR.
 * **[Units/Factions/Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+. 
 * **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
 
@@ -35,6 +36,7 @@ Saves from 3.x are not compatible with 4.0.
 
 * **[Campaign AI]** Fix procurement for factions that lack some unit types.
 * **[Campaign AI]** Fix auto purchase of aircraft for factions that have no transport aircraft.
+* **[Campaign AI]** Fix refunding of pending aircraft purchases when a side has no factory available.  
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 * **[Mission Generation]** Fixed EWR group names so they contribute to Skynet again.
 * **[Mission Generation]** Fixed duplicate name error when generating convoys and cargo ships when creating manual transfers after loading a game.
