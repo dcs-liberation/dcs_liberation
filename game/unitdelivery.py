@@ -45,6 +45,14 @@ class PendingUnitDeliveries:
         self.refund(game, self.units)
         self.units = defaultdict(int)
 
+    def refund_ground_units(self, game: Game) -> None:
+        ground_units = {
+            u: self.units[u] for u in self.units.keys() if isinstance(u, GroundUnitType)
+        }
+        self.refund(game, ground_units)
+        for gu in ground_units.keys():
+            del self.units[gu]
+
     def refund(self, game: Game, units: Dict[UnitType, int]) -> None:
         for unit_type, count in units.items():
             logging.info(f"Refunding {count} {unit_type} at {self.destination.name}")
@@ -69,8 +77,7 @@ class PendingUnitDeliveries:
                 f"{self.destination.name} lost its source for ground unit "
                 "reinforcements. Refunding purchase price."
             )
-            self.refund_all(game)
-            return
+            self.refund_ground_units(game)
 
         bought_units: Dict[UnitType, int] = {}
         units_needing_transfer: Dict[GroundUnitType, int] = {}
