@@ -45,6 +45,8 @@ class GroundUnitType(UnitType[VehicleType]):
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: Type[VehicleType]) -> Iterator[GroundUnitType]:
+        if not cls._loaded:
+            cls._load_all()
         yield from cls._by_unit_type[dcs_unit_type]
 
     @staticmethod
