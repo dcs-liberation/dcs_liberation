@@ -17,7 +17,7 @@ class AvengerGenerator(AirDefenseGroupGenerator):
     price = 62
 
     def generate(self):
-        num_launchers = random.randint(2, 3)
+        num_launchers = 2
 
         self.add_unit(
             Unarmed.M_818,
