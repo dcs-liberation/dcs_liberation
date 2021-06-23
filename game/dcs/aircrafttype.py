@@ -184,6 +184,8 @@ class AircraftType(UnitType[FlyingType]):
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: Type[FlyingType]) -> Iterator[AircraftType]:
+        if not cls._loaded:
+            cls._load_all()
         yield from cls._by_unit_type[dcs_unit_type]
 
     @staticmethod
