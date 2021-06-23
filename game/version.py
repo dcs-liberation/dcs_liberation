@@ -90,4 +90,10 @@ VERSION = _build_version_string()
 #:
 #: Version 6.1
 #: * Support for new Syrian airfields in DCS 2.7.2.7910.1 (Cyprus update).
-CAMPAIGN_FORMAT_VERSION = (6, 1)
+#:
+#: Version 7.0
+#: * DCS 2.7.2.7910.1 (Cyprus update) changed the IDs of scenery strike targets. Any
+#:   mission using map buildings as strike targets must check and potentially recreate
+#:   all those objectives. This definitely affects all Syria campaigns, other maps are
+#:   not yet verified.
+CAMPAIGN_FORMAT_VERSION = (7, 0)
