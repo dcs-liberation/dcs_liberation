@@ -76,6 +76,14 @@ class TransferOrder:
 
     transport: Optional[Transport] = field(default=None)
 
+    def __str__(self) -> str:
+        """Returns the text that should be displayed for the transfer."""
+        count = self.size
+        origin = self.origin.name
+        destination = self.destination.name
+        description = "Transfer" if self.player else "Enemy transfer"
+        return f"{description} of {count} units from {origin} to {destination}"
+
     def __post_init__(self) -> None:
         self.position = self.origin
         self.player = self.origin.is_friendly(to_player=True)
@@ -91,12 +99,12 @@ class TransferOrder:
 
     def kill_unit(self, unit_type: GroundUnitType) -> None:
         if unit_type not in self.units or not self.units[unit_type]:
-            raise KeyError(f"{self.destination} has no {unit_type} remaining")
+            raise KeyError(f"{self} has no {unit_type} remaining")
         self.units[unit_type] -= 1
 
     @property
     def size(self) -> int:
-        return sum(c for c in self.units.values())
+        return sum(self.units.values())
 
     def iter_units(self) -> Iterator[GroundUnitType]:
         for unit_type, count in self.units.items():
@@ -105,7 +113,7 @@ class TransferOrder:
 
     @property
     def completed(self) -> bool:
-        return self.destination == self.position or not self.units
+        return self.destination == self.position or not self.size
 
     def disband_at(self, location: ControlPoint) -> None:
         logging.info(f"Units halting at {location}.")
@@ -334,7 +342,7 @@ class MultiGroupTransport(MissionTarget, Transport):
 
     @property
     def size(self) -> int:
-        return sum(sum(t.units.values()) for t in self.transfers)
+        return sum(t.size for t in self.transfers)
 
     @property
     def units(self) -> dict[GroundUnitType, int]:

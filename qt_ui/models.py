@@ -334,11 +334,7 @@ class TransferModel(QAbstractListModel):
     @staticmethod
     def text_for_transfer(transfer: TransferOrder) -> str:
         """Returns the text that should be displayed for the transfer."""
-        count = sum(transfer.units.values())
-        origin = transfer.origin.name
-        destination = transfer.destination.name
-        description = "Transfer" if transfer.player else "Enemy transfer"
-        return f"{description} of {count} units from {origin} to {destination}"
+        return str(transfer)
 
     @staticmethod
     def icon_for_transfer(_transfer: TransferOrder) -> Optional[QIcon]:
