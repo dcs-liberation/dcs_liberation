@@ -4,8 +4,9 @@ Saves from 4.0.0 are compatible with 4.1.0.
 
 ## Features/Improvements
 
-* **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
+* **[Campaign]** Air defense sites now generate a fixed number of launchers per type.
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
+* **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
