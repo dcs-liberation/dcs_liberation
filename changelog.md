@@ -32,6 +32,7 @@ Saves from 3.x are not compatible with 4.0.
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 * **[Mission Generation]** Fixed EWR group names so they contribute to Skynet again.
 * **[Mission Generation]** Fixed duplicate name error when generating convoys and cargo ships when creating manual transfers after loading a game.
+* **[Mission Generation]** Fixed empty convoys not being disbanded when all units are killed/removed. 
 * **[UI]** Made non-interactive map elements less obstructive.
 * **[UI]** Added support for Neutral Dot difficulty label
 * **[UI]** Clear skies at night no longer described as "Sunny" by the weather widget.
