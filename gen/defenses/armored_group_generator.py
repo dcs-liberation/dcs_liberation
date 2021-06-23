@@ -17,20 +17,17 @@ class ArmoredGroupGenerator(GroupGenerator):
         self.unit_type = unit_type
 
     def generate(self) -> None:
-        grid_x = random.randint(2, 4)
-        grid_y = random.randint(2, 2)
-
-        spacing = random.randint(30, 80)
-
         index = 0
-        for i in range(grid_x):
-            for j in range(grid_y):
+        for i in range(2):
+            for j in range(2):
                 index = index + 1
+                spacing_x = random.randint(30, 80)
+                spacing_y = random.randint(30, 80)
                 self.add_unit(
                     self.unit_type.dcs_unit_type,
                     "Armor#" + str(index),
-                    self.position.x + spacing * i,
-                    self.position.y + spacing * j,
+                    self.position.x + spacing_x * i,
+                    self.position.y + spacing_y * j,
                     self.heading,
                 )
 

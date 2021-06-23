@@ -121,6 +121,8 @@ class MizCampaignLoader:
 
     ARMOR_GROUP_UNIT_TYPE = Armor.M_1_Abrams.id
 
+    LIGHT_ARMOR_GROUP_UNIT_TYPE = Armor.M_2_Bradley.id
+
     FACTORY_UNIT_TYPE = Fortification.Workshop_A.id
 
     AMMUNITION_DEPOT_UNIT_TYPE = Warehouse._Ammunition_depot.id
@@ -259,6 +261,12 @@ class MizCampaignLoader:
     def armor_groups(self) -> Iterator[VehicleGroup]:
         for group in itertools.chain(self.blue.vehicle_group, self.red.vehicle_group):
             if group.units[0].type in self.ARMOR_GROUP_UNIT_TYPE:
+                yield group
+
+    @property
+    def light_armor_groups(self) -> Iterator[VehicleGroup]:
+        for group in itertools.chain(self.blue.vehicle_group, self.red.vehicle_group):
+            if group.units[0].type in self.LIGHT_ARMOR_GROUP_UNIT_TYPE:
                 yield group
 
     @property
@@ -448,6 +456,12 @@ class MizCampaignLoader:
         for group in self.armor_groups:
             closest, distance = self.objective_info(group)
             closest.preset_locations.armor_groups.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.light_armor_groups:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.light_armor_groups.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 

@@ -18,11 +18,24 @@ def generate_armor_group(faction: str, game, ground_object):
     :return: Generated group
     """
     armor_types = (
-        GroundUnitClass.Apc,
         GroundUnitClass.Atgm,
-        GroundUnitClass.Ifv,
         GroundUnitClass.Tank,
     )
+    possible_unit = [
+        u for u in db.FACTIONS[faction].frontline_units if u.unit_class in armor_types
+    ]
+    if len(possible_unit) > 0:
+        unit_type = random.choice(possible_unit)
+        return generate_armor_group_of_type(game, ground_object, unit_type, faction)
+    return None
+
+
+def generate_light_armor_group(faction: str, game, ground_object):
+    """
+    This generate a group of ground units
+    :return: Generated group
+    """
+    armor_types = (GroundUnitClass.Apc, GroundUnitClass.Ifv)
     possible_unit = [
         u for u in db.FACTIONS[faction].frontline_units if u.unit_class in armor_types
     ]
@@ -47,7 +60,8 @@ def generate_armor_group_of_type(
 
     vehicle_group = generator.get_generated_group()
 
-    if (settings.Settings.shorad_added_to_armor_groups):
+    # add shorad to group if setting wants to
+    if settings.Settings.shorad_added_to_armor_groups:
         shorads = [
             u
             for u in db.FACTIONS[faction].frontline_units
@@ -55,18 +69,30 @@ def generate_armor_group_of_type(
         ]
         if len(shorads) > 0:
             shorad = random.choice(shorads)
-            spacing = (
-                vehicle_group.units[0].position.x - vehicle_group.units[1].position.x
+            s_posx, s_posy = caluclate_shorad_position(
+                vehicle_group.units[0].position.x,
+                vehicle_group.units[0].position.y,
+                vehicle_group.units[3].position.x,
+                vehicle_group.units[3].position.y,
             )
             generator.add_unit(
                 shorad.dcs_unit_type,
                 "group-shorad",
-                vehicle_group.units[0].position.x - spacing,
-                vehicle_group.units[0].position.y - spacing,
+                s_posx,
+                s_posy,
                 vehicle_group.units[0].heading,
             )
 
     return vehicle_group
+
+
+def caluclate_shorad_position(pos1_x: int, pos1_y: int, pos2_x: int, pos2_y: int):
+    middle_x = (pos1_x + pos2_x) / 2
+    middle_y = (pos1_y + pos2_y) / 2
+    spacing_x = random.randint(90, 100)
+    spacing_y = random.randint(90, 100)
+
+    return (middle_x + spacing_x, middle_y + spacing_y)
 
 
 def generate_armor_group_of_type_and_size(

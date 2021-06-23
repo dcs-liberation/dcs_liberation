@@ -31,7 +31,7 @@ from game.theater.theatergroundobject import (
 from game.version import VERSION
 from gen import namegen
 from gen.coastal.coastal_group_generator import generate_coastal_group
-from gen.defenses.armor_group_generator import generate_armor_group
+from gen.defenses.armor_group_generator import generate_armor_group, generate_light_armor_group
 from gen.fleet.ship_group_generator import (
     generate_carrier_group,
     generate_lha_group,
@@ -294,6 +294,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_ground_points(self) -> None:
         """Generate ground objects and AA sites for the control point."""
         self.generate_armor_groups()
+        self.generate_light_armor_groups()
         self.generate_aa()
         self.generate_ewrs()
         self.generate_scenery_sites()
@@ -312,6 +313,10 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         for position in self.control_point.preset_locations.armor_groups:
             self.generate_armor_at(position)
 
+    def generate_light_armor_groups(self) -> None:
+        for position in self.control_point.preset_locations.light_armor_groups:
+            self.generate_light_armor_at(position)
+
     def generate_armor_at(self, position: PointWithHeading) -> None:
         group_id = self.game.next_group_id()
 
@@ -323,6 +328,27 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         )
 
         group = generate_armor_group(self.faction_name, self.game, g)
+        if group is None:
+            logging.error(
+                "Could not generate armor group for %s at %s",
+                g.name,
+                self.control_point,
+            )
+            return
+        g.groups = [group]
+        self.control_point.connected_objectives.append(g)
+
+    def generate_light_armor_at(self, position: PointWithHeading) -> None:
+        group_id = self.game.next_group_id()
+
+        g = VehicleGroupGroundObject(
+            namegen.random_objective_name(),
+            group_id,
+            position,
+            self.control_point,
+        )
+
+        group = generate_light_armor_group(self.faction_name, self.game, g)
         if group is None:
             logging.error(
                 "Could not generate armor group for %s at %s",
