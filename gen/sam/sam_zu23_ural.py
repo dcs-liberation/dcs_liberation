@@ -17,7 +17,7 @@ class ZU23UralGenerator(AirDefenseGroupGenerator):
     price = 64
 
     def generate(self):
-        num_launchers = random.randint(2, 4)
+        num_launchers = 2
 
         positions = self.get_circular_position(
             num_launchers, launcher_distance=80, coverage=360
