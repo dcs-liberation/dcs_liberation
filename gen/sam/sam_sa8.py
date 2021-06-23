@@ -15,13 +15,19 @@ class SA8Generator(AirDefenseGroupGenerator):
     price = 55
 
     def generate(self):
-        self.add_unit(
-            AirDefence.Osa_9A33_ln,
-            "OSA",
-            self.position.x,
-            self.position.y,
-            self.heading,
+        num_launchers = 4
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=120, coverage=180
         )
+
+        for i, position in enumerate(positions):
+            self.add_unit(
+                AirDefence.Osa_9A33_ln,
+                "OSA" + str(i),
+                position[0],
+                position[1],
+                position[2],
+            )
         self.add_unit(
             AirDefence.SA_8_Osa_LD_9T217,
             "LD",

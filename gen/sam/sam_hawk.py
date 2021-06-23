@@ -50,7 +50,7 @@ class HawkGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(3, 6)
+        num_launchers = 4
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=180
         )

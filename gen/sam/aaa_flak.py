@@ -26,23 +26,19 @@ class FlakGenerator(AirDefenseGroupGenerator):
     price = 135
 
     def generate(self):
-        grid_x = random.randint(2, 3)
-        grid_y = random.randint(2, 3)
-
-        spacing = random.randint(20, 35)
-
         index = 0
         mixed = random.choice([True, False])
         unit_type = random.choice(GFLAK)
 
-        for i in range(grid_x):
-            for j in range(grid_y):
+        for i in range(4):
                 index = index + 1
+                spacing_x = random.randint(10, 40)
+                spacing_y = random.randint(10, 40)
                 self.add_unit(
                     unit_type,
                     "AAA#" + str(index),
-                    self.position.x + spacing * i + random.randint(1, 5),
-                    self.position.y + spacing * j + random.randint(1, 5),
+                    self.position.x + spacing_x * i + random.randint(1, 5),
+                    self.position.y + spacing_y * i + random.randint(1, 5),
                     self.heading,
                 )
 

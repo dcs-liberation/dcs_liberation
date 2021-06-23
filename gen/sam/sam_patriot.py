@@ -55,7 +55,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(3, 4)
+        num_launchers = 6
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=360
         )
@@ -70,7 +70,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
 
         # Short range protection for high value site
         aa_group = self.add_auxiliary_group("AA")
-        num_launchers = random.randint(3, 4)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=200, coverage=360
         )
@@ -79,6 +79,17 @@ class PatriotGenerator(AirDefenseGroupGenerator):
                 aa_group,
                 AirDefence.Vulcan,
                 f"SPAAA#{i}",
+                Point(x, y),
+                heading,
+            )
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=300, coverage=360
+        )
+        for i, (x, y, heading) in enumerate(positions):
+            self.add_unit_to_group(
+                aa_group,
+                AirDefence.Avenger,
+                f"Avenger#{i}",
                 Point(x, y),
                 heading,
             )

@@ -32,7 +32,7 @@ class SA13Generator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(2, 3)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=360
         )

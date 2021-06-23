@@ -25,13 +25,6 @@ class HQ7Generator(AirDefenseGroupGenerator):
             self.position.y,
             self.heading,
         )
-        self.add_unit(
-            AirDefence.HQ_7_LN_SP,
-            "LN",
-            self.position.x + 20,
-            self.position.y,
-            self.heading,
-        )
 
         # Triple A for close range defense
         aa_group = self.add_auxiliary_group("AA")
@@ -50,7 +43,7 @@ class HQ7Generator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(0, 3)
+        num_launchers = 2
         if num_launchers > 0:
             positions = self.get_circular_position(
                 num_launchers, launcher_distance=120, coverage=360

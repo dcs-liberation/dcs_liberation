@@ -15,13 +15,18 @@ class SA15Generator(AirDefenseGroupGenerator):
     price = 55
 
     def generate(self):
-        self.add_unit(
-            AirDefence.Tor_9A331,
-            "ADS",
-            self.position.x,
-            self.position.y,
-            self.heading,
+        num_launchers = 4
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=120, coverage=360
         )
+        for i, position in enumerate(positions):
+            self.add_unit(
+                AirDefence.Tor_9A331,
+                "ADS#" + str(i),
+                position[0],
+                position[1],
+                position[2],
+            )
         self.add_unit(
             Unarmed.UAZ_469,
             "EWR",
