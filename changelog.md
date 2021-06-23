@@ -21,6 +21,7 @@ Saves from 3.x are not compatible with 4.0.
 * **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
 * **[Factions]** Added more tankers to factions.
 * **[Flight Planner]** Added ability to plan Tankers.
+* **[Modding]** Campaign format version is now 7.0 to account for DCS map changes that made scenery strike targets incompatible with existing campaigns.
 * **[Mods]** Added support for the Gripen mod.
 * **[Mission Generation]** Added support for "Neutral Dot" label options.
 * **[UI]** Ctrl click and shift click now buy or sell 5 or 10 units respectively.
