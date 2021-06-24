@@ -284,7 +284,7 @@ class NewUnitTransferDialog(QDialog):
                 continue
 
             logging.info(
-                f"Transferring {count} {unit_type.id} from {self.origin} to "
+                f"Transferring {count} {unit_type} from {self.origin} to "
                 f"{destination}"
             )
             transfers[unit_type] = count
