@@ -305,8 +305,11 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         possible_sams = get_faction_possible_sams_generator(faction)
         for sam in possible_sams:
+            # Pre Generate SAM to get the real price
+            generator = sam(self.game, self.ground_object)
+            generator.generate()
             self.samCombo.addItem(
-                sam.name + " [$" + str(sam.price) + "M]", userData=sam
+                generator.name + " [$" + str(generator.price) + "M]", userData=generator
             )
         self.samCombo.currentIndexChanged.connect(self.samComboChanged)
 
@@ -331,8 +334,12 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         buy_ewr_layout.addWidget(self.ewr_selector, 0, 1, alignment=Qt.AlignRight)
         ewr_types = get_faction_possible_ewrs_generator(faction)
         for ewr_type in ewr_types:
+            # Pre Generate to get the real price
+            generator = ewr_type(self.game, self.ground_object)
+            generator.generate()
             self.ewr_selector.addItem(
-                f"{ewr_type.name()} [${ewr_type.price()}M]", ewr_type
+                generator.name() + " [$" + str(generator.price) + "M]",
+                userData=generator,
             )
         self.ewr_selector.currentIndexChanged.connect(self.on_ewr_selection_changed)
 
@@ -402,7 +409,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
     def on_ewr_selection_changed(self, index):
         ewr = self.ewr_selector.itemData(index)
         self.buy_ewr_button.setText(
-            f"Buy [${ewr.price()}M][-${self.current_group_value}M]"
+            f"Buy [${ewr.price}M][-${self.current_group_value}M]"
         )
 
     def armorComboChanged(self, index):
@@ -443,25 +450,20 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         else:
             self.game.budget -= price
 
-        # Generate SAM
-        generator = sam_generator(self.game, self.ground_object)
-        generator.generate()
-        self.ground_object.groups = list(generator.groups)
+        self.ground_object.groups = list(sam_generator.groups)
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_ewr(self):
         ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
-        price = ewr_generator.price() - self.current_group_value
+        price = ewr_generator.price - self.current_group_value
         if price > self.game.budget:
             self.error_money()
             return
         else:
             self.game.budget -= price
 
-        generator = ewr_generator(self.game, self.ground_object)
-        generator.generate()
-        self.ground_object.groups = [generator.vg]
+        self.ground_object.groups = [ewr_generator.vg]
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

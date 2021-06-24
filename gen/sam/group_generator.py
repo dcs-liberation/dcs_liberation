@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import math
 import random
 from typing import TYPE_CHECKING, Type
@@ -10,6 +11,7 @@ from dcs.point import PointAction
 from dcs.unit import Ship, Vehicle
 from dcs.unittype import VehicleType
 
+from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.theater.theatergroundobject import TheaterGroundObject
 
@@ -23,11 +25,15 @@ if TYPE_CHECKING:
 # care about in the format we want if we just generate our own group description
 # types rather than pydcs groups.
 class GroupGenerator:
+
+    price: int
+
     def __init__(self, game: Game, ground_object: TheaterGroundObject) -> None:
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
+        self.price = 0
         self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.go.group_name)
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
@@ -62,6 +68,14 @@ class GroupGenerator:
         unit.position = position
         unit.heading = heading
         group.add_unit(unit)
+
+        # get price of unit to calculate the real price of the whole group
+        try:
+            ground_unit_type = next(GroundUnitType.for_dcs_type(unit_type))
+            self.price += ground_unit_type.price
+        except StopIteration:
+            logging.error(f"Cannot get price for unit {unit_type.name}")
+
         return unit
 
     def get_circular_position(self, num_units, launcher_distance, coverage=90):
