@@ -5,7 +5,7 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -110,7 +110,7 @@ class Game:
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
-        self.ground_planners: Dict[int, GroundPlanner] = {}
+        self.ground_planners: dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
@@ -151,7 +151,7 @@ class Game:
 
         self.on_load(game_still_initializing=True)
 
-    def __getstate__(self) -> Dict[str, Any]:
+    def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         # Avoid persisting any volatile types that can be deterministically
         # recomputed on load for the sake of save compatibility.
@@ -163,7 +163,7 @@ class Game:
         del state["red_faker"]
         return state
 
-    def __setstate__(self, state: Dict[str, Any]) -> None:
+    def __setstate__(self, state: dict[str, Any]) -> None:
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
@@ -338,10 +338,10 @@ class Game:
         self.blue_air_wing.replenish()
         self.red_air_wing.replenish()
 
-        if not skipped and self.turn > 1:
+        if not skipped:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
-        else:
+        elif self.turn > 1:
             for cp in self.theater.player_points():
                 if not cp.is_carrier and not cp.is_lha:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)

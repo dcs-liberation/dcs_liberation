@@ -13,5 +13,6 @@ manufacturer: Polikarpov
 origin: USSR/Russia
 price: 2
 role: Fighter
+gunfighter: true
 variants:
   I-16 Ishak: {}

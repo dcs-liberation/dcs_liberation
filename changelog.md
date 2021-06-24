@@ -12,7 +12,7 @@ Saves from 3.x are not compatible with 4.0.
 
 ## Features/Improvements
 
-* **[Campaign]** Squadrons now have a maximum size and killed pilots replenish at a limited rate.
+* **[Campaign]** Squadrons now (optionally, off by default) have a maximum size and killed pilots replenish at a limited rate.
 * **[Campaign]** Added an option to disable levelling up of AI pilots.
 * **[Campaign]** Added Russian Intervention 2015 campaign on Syria, for a small and somewhat realistic Russian COIN scenario.
 * **[Campaign]** Added Operation Atilla campaign on Syria, for a reasonably large invasion of Cyprus scenario.
@@ -21,12 +21,16 @@ Saves from 3.x are not compatible with 4.0.
 * **[Economy]** Adjusted prices for aircraft to balance out some price inconsistencies.
 * **[Factions]** Added more tankers to factions.
 * **[Flight Planner]** Added ability to plan Tankers.
+* **[Modding]** Campaign format version is now 7.0 to account for DCS map changes that made scenery strike targets incompatible with existing campaigns.
 * **[Mods]** Added support for the Gripen mod.
 * **[Mission Generation]** Added support for "Neutral Dot" label options.
 * **[UI]** Ctrl click and shift click now buy or sell 5 or 10 units respectively.
 * **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
 * **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
 * **[UI]** Updated intel box text for first turn.
+* **[UI]** Base Capture Cheat is now usable at all bases and can also be used to transfer player-owned bases to OPFOR.
+* **[UI]** Pass Turn button is relabled as "Begin Campaign" on Turn 0.  
+* **[UI]** Added a ruler to the map.  
 * **[Units/Factions/Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+. 
 * **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
 
@@ -34,9 +38,13 @@ Saves from 3.x are not compatible with 4.0.
 
 * **[Campaign AI]** Fix procurement for factions that lack some unit types.
 * **[Campaign AI]** Fix auto purchase of aircraft for factions that have no transport aircraft.
+* **[Campaign AI]** Fix refunding of pending aircraft purchases when a side has no factory available.  
 * **[Mission Generation]** Fixed problem with mission load when control point name contained an apostrophe.
 * **[Mission Generation]** Fixed EWR group names so they contribute to Skynet again.
 * **[Mission Generation]** Fixed duplicate name error when generating convoys and cargo ships when creating manual transfers after loading a game.
+* **[Mission Generation]** Fixed empty convoys not being disbanded when all units are killed/removed.
+* **[Mission Generation]** Fixed player losing frontline progress when skipping from turn 0 to turn 1.
+* **[Mission Generation]** Fixed issue where frontline would only search to the right for valid locations.
 * **[UI]** Made non-interactive map elements less obstructive.
 * **[UI]** Added support for Neutral Dot difficulty label
 * **[UI]** Clear skies at night no longer described as "Sunny" by the weather widget.

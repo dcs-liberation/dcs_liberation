@@ -7,5 +7,6 @@ manufacturer: CASA
 origin: Spain
 price: 8
 role: Light Attack
+gunfighter: true
 variants:
   C-101CC Aviojet: {}

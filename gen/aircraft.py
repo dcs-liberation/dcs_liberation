@@ -26,7 +26,6 @@ from dcs.planes import (
     Su_33,
     Tu_22M3,
 )
-from dcs.planes import IL_78M
 from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
@@ -66,7 +65,6 @@ from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType
 
 from game import db
-from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.data.weapons import Pylon
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
@@ -840,7 +838,7 @@ class AircraftConflictGenerator:
         group.task = CAP.name
         self._setup_group(group, package, flight, dynamic_runways)
 
-        if flight.unit_type not in GUNFIGHTERS:
+        if not flight.unit_type.gunfighter:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
@@ -857,7 +855,7 @@ class AircraftConflictGenerator:
         group.task = FighterSweep.name
         self._setup_group(group, package, flight, dynamic_runways)
 
-        if flight.unit_type not in GUNFIGHTERS:
+        if not flight.unit_type.gunfighter:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
@@ -1182,7 +1180,7 @@ class AircraftConflictGenerator:
         # under the current flight plans.
         # TODO: Make this smarter, it currently selects a random unit in the group for target,
         # this could be updated to make it pick the "best" two targets in the group.
-        if flight.unit_type is AJS37 and flight.client_count:
+        if flight.unit_type.dcs_unit_type is AJS37 and flight.client_count:
             viggen_target_points = [
                 (idx, point)
                 for idx, point in enumerate(filtered_points)
@@ -1346,9 +1344,10 @@ class PydcsWaypointBuilder:
         """Viggen player aircraft consider any waypoint with a TOT set to be a target ("M") waypoint.
         If the flight is a player controlled Viggen flight, no TOT should be set on any waypoint except actual target waypoints.
         """
-        if (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and (
-            self.waypoint.waypoint_type not in TARGET_WAYPOINTS
-        ):
+        if (
+            self.flight.client_count > 0
+            and self.flight.unit_type.dcs_unit_type == AJS37
+        ) and (self.waypoint.waypoint_type not in TARGET_WAYPOINTS):
             return True
         else:
             return False
@@ -1761,7 +1760,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
     def configure_refueling_actions(self, waypoint: MovingPoint) -> None:
         waypoint.add_task(Tanker())
 
-        if self.flight.unit_type != IL_78M:
+        if self.flight.unit_type.dcs_unit_type.tacan:
             tanker_info = self.air_support.tankers[-1]
             tacan = tanker_info.tacan
             tacan_callsign = {

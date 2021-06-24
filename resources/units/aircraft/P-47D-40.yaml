@@ -19,6 +19,7 @@ manufacturer: Republic
 origin: USA
 price: 6
 role: Fighter-Bomber
+gunfighter: true
 variants:
   P-47D-40 Thunderbolt: {}
   Thunderbolt Mk.II (Late): {}

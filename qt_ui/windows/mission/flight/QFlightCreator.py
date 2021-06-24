@@ -147,6 +147,11 @@ class QFlightCreator(QDialog):
 
         self.on_departure_changed(self.departure.currentIndex())
 
+    def reject(self) -> None:
+        super().reject()
+        # Clear the roster to return pilots to the pool.
+        self.roster_editor.replace(None)
+
     def set_custom_name_text(self, text: str):
         self.custom_name_text = text
 
@@ -216,7 +221,7 @@ class QFlightCreator(QDialog):
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
-        self.close()
+        self.accept()
 
     def on_aircraft_changed(self, index: int) -> None:
         new_aircraft = self.aircraft_selector.itemData(index)
