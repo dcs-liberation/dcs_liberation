@@ -296,10 +296,10 @@ class QLiberationWindow(QMainWindow):
             self.liberation_map.set_game(game)
 
             if "debriefings" not in vars(game):
+                logging.debug("Adding debriefings attribute to old save game")
                 setattr(
                     game, "debriefings", [None for i in range(self.game.turn)]
                 )  # adding a debriefing attr to old games
-                print("attr added")
         except AttributeError:
             logging.exception("Incompatible save game")
             QMessageBox.critical(
