@@ -123,6 +123,30 @@ const map = L.map("map", {
 }).setView([0, 0], 3);
 L.control.scale({ maxWidth: 200 }).addTo(map);
 
+const rulerOptions = {
+  position: 'topleft',
+  circleMarker: {
+    color: Colors.Highlight,
+    radius: 2
+  },
+  lineStyle: {
+    color: Colors.Highlight,
+    dashArray: '1,6'
+  },
+  lengthUnit: {
+    display: "nm",
+    decimal: "2",
+    factor: 0.539956803,
+    label: "Distance:"
+  },
+  angleUnit: {
+    display: '&deg;',
+    decimal: 0,
+    label: "Bearing:"
+  }
+};
+L.control.ruler(rulerOptions).addTo(map);
+
 // https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html
 const baseLayers = {
   "Imagery Clarity": L.esri.basemapLayer("ImageryClarity", { maxZoom: 17 }),

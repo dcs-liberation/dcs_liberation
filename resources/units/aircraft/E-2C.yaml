@@ -8,5 +8,7 @@ manufacturer: Northrop Grumman
 origin: USA
 price: 50
 role: AEW&C
+patrol:
+  altitude: 30000
 variants:
   E-2C Hawkeye: {}

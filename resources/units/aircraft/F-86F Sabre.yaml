@@ -11,5 +11,6 @@ manufacturer: North American
 origin: USA
 price: 8
 role: Fighter
+gunfighter: true
 variants:
   F-86F Sabre: {}

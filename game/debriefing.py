@@ -382,15 +382,21 @@ class PollDebriefingFileThread(threading.Thread):
         else:
             last_modified = 0
         while not self.stopped():
-            if (
-                os.path.isfile("state.json")
-                and os.path.getmtime("state.json") > last_modified
-            ):
-                with open("state.json", "r") as json_file:
-                    json_data = json.load(json_file)
-                    debriefing = Debriefing(json_data, self.game, self.unit_map)
-                    self.callback(debriefing)
-                break
+            try:
+                if (
+                    os.path.isfile("state.json")
+                    and os.path.getmtime("state.json") > last_modified
+                ):
+                    with open("state.json", "r") as json_file:
+                        json_data = json.load(json_file)
+                        debriefing = Debriefing(json_data, self.game, self.unit_map)
+                        self.callback(debriefing)
+                    break
+            except json.JSONDecodeError:
+                logging.exception(
+                    "Failed to decode state.json. Probably attempted read while DCS "
+                    "was still writing the file. Will retry in 5 seconds."
+                )
             time.sleep(5)
 
 

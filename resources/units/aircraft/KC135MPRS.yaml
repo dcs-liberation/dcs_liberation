@@ -7,5 +7,9 @@ manufacturer: Boeing
 origin: USA
 price: 25
 role: Tanker
+patrol:
+  # 300 knots IAS.
+  speed: 440
+  altitude: 23000
 variants:
   KC-135 Stratotanker MPRS: {}

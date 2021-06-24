@@ -71,7 +71,7 @@ class QLiberationWindow(QMainWindow):
                     logging.info("Loading last saved game : " + str(last_save_file))
                     game = persistency.load_game(last_save_file)
                     self.onGameGenerated(game)
-                    self.updateWindowTitle(last_save_file)
+                    self.updateWindowTitle(last_save_file if game else None)
                 except:
                     logging.info("Error loading latest save game")
             else:
@@ -240,7 +240,7 @@ class QLiberationWindow(QMainWindow):
             dir=persistency._dcs_saved_game_folder,
             filter="*.liberation",
         )
-        if file is not None:
+        if file is not None and file[0] != "":
             game = persistency.load_game(file[0])
             GameUpdateSignal.get_instance().game_loaded.emit(game)
 
@@ -282,6 +282,7 @@ class QLiberationWindow(QMainWindow):
         self.setWindowTitle(window_title)
 
     def onGameGenerated(self, game: Game):
+        self.updateWindowTitle()
         logging.info("On Game generated")
         self.game = game
         GameUpdateSignal.get_instance().game_loaded.emit(self.game)

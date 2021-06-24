@@ -5,7 +5,7 @@
   "recommended_player_faction": "Bluefor Modern",
   "recommended_enemy_faction": "Turkey 2005",
   "description": "<p>This is a semi-fictional what-if scenario for Operation Peace Spring, during which Turkish forces that crossed into Syria on an offensive against Kurdish militias were emboldened by early successes to continue pushing further southward. Attempts to broker a ceasefire have failed. Members of Operation Inherent Resolve have gathered at Ramat David Airbase in Israel to launch a counter-offensive. Campaign inversion is available if you wish to play as Turkey.</p>",
-  "version": "6.0",
+  "version": "7.0",
   "miz": "operation_peace_spring.miz",
   "performance": 1
 }

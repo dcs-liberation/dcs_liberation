@@ -4,6 +4,7 @@
   "authors": "Hawkmoon",
   "description": "<p>Iraq forces during desert Storm</p>",
   "aircrafts": [
+    "IL-76MD",
     "L-39ZA Albatros",
     "Mi-24V Hind-E",
     "Mi-24P Hind-F",
@@ -80,5 +81,6 @@
   "carrier_names": [],
   "navy_generators": [
     "GrishaGroupGenerator"
-  ]
+  ],
+  "doctrine": "coldwar"
 }

@@ -1,0 +1,102 @@
+{
+  "country": "Combined Joint Task Forces Red",
+  "name": "Syria-Lebanon 2005 (Allied Sword)",
+  "authors": "Fuzzle",
+  "description": "<p>Syria-Lebanon alliance in a modern setting with several imported Russian assets. Designed for use with the Allied Sword scenario.</p>",
+  "aircrafts": [
+    "MiG-23ML Flogger-G",
+    "MiG-25RBT Foxbat-B",
+    "MiG-29A Fulcrum-A",
+    "Su-17M4 Fitter-K",
+    "Su-24M Fencer-D",
+    "Su-30 Flanker-C",
+    "Su-34 Fullback",
+    "L-39ZA Albatros",
+    "Tu-22M3 Backfire-C",
+    "Mi-24V Hind-E",
+    "Mi-8MTV2 Hip",
+    "SA 342M Gazelle",
+    "SA 342L Gazelle"
+  ],
+  "awacs": [
+    "A-50"
+  ],
+  "tankers": [
+    "IL-78M"
+  ],
+  "frontline_units": [
+    "BMP-1",
+    "BMP-2",
+    "BTR-80",
+    "BRDM-2",
+    "MT-LB",
+    "T-55A",
+    "T-72B with Kontakt-1 ERA",
+    "T-90A",
+    "ZSU-57-2 'Sparka'"
+  ],
+  "artillery_units": [
+    "BM-21 Grad",
+    "2S1 Gvozdika"
+  ],
+  "logistics_units": [
+    "Truck Ural-375",
+    "LUV UAZ-469 Jeep"
+  ],
+  "infantry_units": [
+    "Paratrooper AKS",
+    "Infantry AK-74 Rus",
+    "Paratrooper RPG-16",
+    "MANPADS SA-18 Igla-S \"Grouse\""
+  ],
+  "air_defenses": [
+    "ColdWarFlakGenerator",
+    "SA2Generator",
+    "SA3Generator",
+    "SA6Generator",
+    "SA8Generator",
+    "SA9Generator",
+    "SA10Generator",
+    "SA11Generator",
+    "SA13Generator",
+    "SA19Generator",
+    "ZSU23Generator",
+    "ZU23Generator",
+    "ZU23UralGenerator",
+    "ZSU57Generator"
+  ],
+  "ewrs": [
+    "BoxSpringGenerator",
+    "TallRackGenerator"
+  ],
+  "missiles": [
+    "ScudGenerator"
+  ],
+  "missiles_group_count": 2,
+    "coastal_defenses": [
+    "SilkwormGenerator"
+  ],
+  "coastal_group_count": 4,
+  "aircraft_carrier": [
+  ],
+  "helicopter_carrier": [
+  ],
+  "helicopter_carrier_names": [
+  ],
+  "destroyers": [
+    "REZKY",
+    "MOLNIYA"
+  ],
+  "cruisers": [
+  ],
+  "requirements": {},
+  "carrier_names": [
+  ],
+  "coastal_group_count": 8,
+  "navy_generators": [
+    "GrishaGroupGenerator",
+    "MolniyaGroupGenerator",
+    "RussianNavyGroupGenerator",
+    "LaCombattanteIIGroupGenerator"
+  ]
+}
