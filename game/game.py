@@ -386,25 +386,48 @@ class Game:
         self.blue_bullseye = Bullseye(enemy_cp.position)
         self.red_bullseye = Bullseye(player_cp.position)
 
-    def initialize_turn(self) -> None:
+    def initialize_turn(self, for_red: bool = True, for_blue: bool = True):
         self.events = []
         self._generate_events()
-
         self.set_bullseye()
 
         # Update statistics
         self.game_stats.update(self)
 
-        self.blue_air_wing.reset()
-        self.red_air_wing.reset()
-        self.aircraft_inventory.reset()
-        for cp in self.theater.controlpoints:
-            self.aircraft_inventory.set_from_control_point(cp)
-
         # Check for win or loss condition
         turn_state = self.check_win_loss()
         if turn_state in (TurnState.LOSS, TurnState.WIN):
             return self.process_win_loss(turn_state)
+
+        # Plan Coalition specific turn
+        if for_red:
+            self.initialize_turn_for(player=False)
+        if for_blue:
+            self.initialize_turn_for(player=True)
+
+        # Plan GroundWar
+        for cp in self.theater.controlpoints:
+            if cp.has_frontline:
+                gplanner = GroundPlanner(cp, self)
+                gplanner.plan_groundwar()
+                self.ground_planners[cp.id] = gplanner
+
+    def initialize_turn_for(self, player: bool) -> None:
+
+        self.ato_for(player).clear()
+        self.air_wing_for(player).reset()
+
+        self.aircraft_inventory.reset()
+        for cp in self.theater.controlpoints:
+            self.aircraft_inventory.set_from_control_point(cp)
+            # Refund all pending deliveries for opfor and if player
+            # has automate_aircraft_reinforcements
+            if (not player and not cp.captured) or (
+                player
+                and cp.captured
+                and self.settings.automate_aircraft_reinforcements
+            ):
+                cp.pending_unit_deliveries.refund_all(self)
 
         # Plan flights & combat for next turn
         with logged_duration("Computing conflict positions"):
@@ -415,55 +438,48 @@ class Game:
             self.compute_transit_networks()
         self.ground_planners = {}
 
-        self.blue_procurement_requests.clear()
-        self.red_procurement_requests.clear()
+        self.procurement_requests_for(player).clear()
 
         with logged_duration("Procurement of airlift assets"):
             self.transfers.order_airlift_assets()
         with logged_duration("Transport planning"):
             self.transfers.plan_transports()
 
-        with logged_duration("Blue mission planning"):
-            if self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled:
-                blue_planner = CoalitionMissionPlanner(self, is_player=True)
-                blue_planner.plan_missions()
+        if not player or (
+            player and self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
+        ):
+            color = "Blue" if player else "Red"
+            with logged_duration(f"{color} mission planning"):
+                mission_planner = CoalitionMissionPlanner(self, player)
+                mission_planner.plan_missions()
 
-        with logged_duration("Red mission planning"):
-            red_planner = CoalitionMissionPlanner(self, is_player=False)
-            red_planner.plan_missions()
+        self.plan_procurement_for(player)
 
-        for cp in self.theater.controlpoints:
-            if cp.has_frontline:
-                gplanner = GroundPlanner(cp, self)
-                gplanner.plan_groundwar()
-                self.ground_planners[cp.id] = gplanner
-
-        self.plan_procurement()
-
-    def plan_procurement(self) -> None:
+    def plan_procurement_for(self, for_player: bool) -> None:
         # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
         # gets much more of the budget that turn. Otherwise budget (after
         # repairs) is split evenly between air and ground. For the default
         # starting budget of 2000 this gives 600 to ground forces and 1400 to
         # aircraft. After that the budget will be spend proportionally based on how much is already invested
 
-        self.budget = ProcurementAi(
-            self,
-            for_player=True,
-            faction=self.player_faction,
-            manage_runways=self.settings.automate_runway_repair,
-            manage_front_line=self.settings.automate_front_line_reinforcements,
-            manage_aircraft=self.settings.automate_aircraft_reinforcements,
-        ).spend_budget(self.budget)
-
-        self.enemy_budget = ProcurementAi(
-            self,
-            for_player=False,
-            faction=self.enemy_faction,
-            manage_runways=True,
-            manage_front_line=True,
-            manage_aircraft=True,
-        ).spend_budget(self.enemy_budget)
+        if for_player:
+            self.budget = ProcurementAi(
+                self,
+                for_player=True,
+                faction=self.player_faction,
+                manage_runways=self.settings.automate_runway_repair,
+                manage_front_line=self.settings.automate_front_line_reinforcements,
+                manage_aircraft=self.settings.automate_aircraft_reinforcements,
+            ).spend_budget(self.budget)
+        else:
+            self.enemy_budget = ProcurementAi(
+                self,
+                for_player=False,
+                faction=self.enemy_faction,
+                manage_runways=True,
+                manage_front_line=True,
+                manage_aircraft=True,
+            ).spend_budget(self.enemy_budget)
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))
