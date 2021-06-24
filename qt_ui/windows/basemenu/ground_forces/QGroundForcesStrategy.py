@@ -56,6 +56,5 @@ class QGroundForcesStrategy(QGroupBox):
         self.cp.base.affect_strength(amount)
         enemy_point.base.affect_strength(-amount)
         # Clear the ATO to replan missions affected by the front line.
-        self.game.reset_ato()
         self.game.initialize_turn()
         GameUpdateSignal.get_instance().updateGame(self.game)
