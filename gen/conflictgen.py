@@ -153,6 +153,8 @@ class Conflict:
             if theater.is_on_land(pos):
                 return pos
             pos = initial.point_from_heading(opposite_heading(heading), distance)
+            if theater.is_on_land(pos):
+                return pos
         if coerce:
             pos = theater.nearest_land_pos(initial)
             return pos
