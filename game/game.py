@@ -170,9 +170,6 @@ class Game:
         # Regenerate any state that was not persisted.
         self.on_load()
 
-    def newAttr(self, debriefings: List[Debriefing]) -> None:
-        setattr(self, debriefings, debriefings)
-
     def ato_for(self, player: bool) -> AirTaskingOrder:
         if player:
             return self.blue_ato
