@@ -294,6 +294,12 @@ class QLiberationWindow(QMainWindow):
                 self.info_panel.setGame(game)
             self.game_model.set(self.game)
             self.liberation_map.set_game(game)
+
+            if "debriefings" not in vars(game):
+                setattr(
+                    game, "debriefings", [None for i in range(self.game.turn)]
+                )  # adding a debriefing attr to old games
+                print("attr added")
         except AttributeError:
             logging.exception("Incompatible save game")
             QMessageBox.critical(
@@ -343,9 +349,9 @@ class QLiberationWindow(QMainWindow):
         self.dialog = QStatsWindow(self.game)
         self.dialog.show()
 
-    def onDebriefing(self, debrief: Debriefing):
+    def onDebriefing(self):
         logging.info("On Debriefing")
-        self.debriefing = QDebriefingWindow(debrief)
+        self.debriefing = QDebriefingWindow(self.game.debriefings[-1])
         self.debriefing.show()
 
     def closeEvent(self, event: QCloseEvent) -> None:

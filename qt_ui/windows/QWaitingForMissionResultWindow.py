@@ -210,6 +210,13 @@ class QWaitingForMissionResultWindow(QDialog):
             self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
             self.game.pass_turn()
 
+            while (
+                len(self.game.debriefings) < self.game.turn - 1
+            ):  # catching debriefings up if there were passed turns
+                self.game.append_debriefing(None)
+
+            self.game.append_debriefing(self.debriefing)
+
             GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
             GameUpdateSignal.get_instance().updateGame(self.game)
         self.close()

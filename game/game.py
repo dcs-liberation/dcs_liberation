@@ -141,6 +141,8 @@ class Game:
 
         self.transfers = PendingTransfers(self)
 
+        self.debriefings: Debriefing = []  # where index is turn number
+
         self.sanitize_sides()
 
         self.blue_faker = Faker(self.player_faction.locales)
@@ -167,6 +169,9 @@ class Game:
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
+
+    def newAttr(self, debriefings: List[Debriefing]) -> None:
+        setattr(self, debriefings, debriefings)
 
     def ato_for(self, player: bool) -> AirTaskingOrder:
         if player:
