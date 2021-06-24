@@ -43,8 +43,6 @@ class AirDefenseGroupGenerator(GroupGenerator, ABC):
     This is the base for all SAM group generators
     """
 
-    price: int
-
     def __init__(self, game: Game, ground_object: SamGroundObject) -> None:
         super().__init__(game, ground_object)
 
