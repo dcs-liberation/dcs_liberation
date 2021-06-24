@@ -76,6 +76,7 @@ class GeneratorSettings:
     no_lha: bool
     no_player_navy: bool
     no_enemy_navy: bool
+    shorads_in_armor_groups: bool
 
 
 @dataclass
@@ -327,7 +328,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        group = generate_armor_group(self.faction_name, self.game, g)
+        group = generate_armor_group(self.faction_name, self.game, g, self.generator_settings.shorads_in_armor_groups)
         if group is None:
             logging.error(
                 "Could not generate armor group for %s at %s",
@@ -348,7 +349,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        group = generate_light_armor_group(self.faction_name, self.game, g)
+        group = generate_light_armor_group(self.faction_name, self.game, g, self.generator_settings.shorads_in_armor_groups)
         if group is None:
             logging.error(
                 "Could not generate armor group for %s at %s",

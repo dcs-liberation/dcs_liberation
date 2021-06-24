@@ -12,7 +12,7 @@ from gen.defenses.armored_group_generator import (
 )
 
 
-def generate_armor_group(faction: str, game, ground_object):
+def generate_armor_group(faction: str, game, ground_object, shorad_included: bool):
     """
     This generate a group of ground units
     :return: Generated group
@@ -26,11 +26,11 @@ def generate_armor_group(faction: str, game, ground_object):
     ]
     if len(possible_unit) > 0:
         unit_type = random.choice(possible_unit)
-        return generate_armor_group_of_type(game, ground_object, unit_type, faction)
+        return generate_armor_group_of_type(game, ground_object, unit_type, faction, shorad_included)
     return None
 
 
-def generate_light_armor_group(faction: str, game, ground_object):
+def generate_light_armor_group(faction: str, game, ground_object, shorad_included: bool):
     """
     This generate a group of ground units
     :return: Generated group
@@ -41,7 +41,7 @@ def generate_light_armor_group(faction: str, game, ground_object):
     ]
     if len(possible_unit) > 0:
         unit_type = random.choice(possible_unit)
-        return generate_armor_group_of_type(game, ground_object, unit_type, faction)
+        return generate_armor_group_of_type(game, ground_object, unit_type, faction, shorad_included)
     return None
 
 
@@ -50,6 +50,7 @@ def generate_armor_group_of_type(
     ground_object: VehicleGroupGroundObject,
     unit_type: GroundUnitType,
     faction: str,
+    shorad_included: bool,
 ) -> VehicleGroup:
     """
     This generate a group of ground units of given type
@@ -59,9 +60,9 @@ def generate_armor_group_of_type(
     generator.generate()
 
     vehicle_group = generator.get_generated_group()
-
+    
     # add shorad to group if setting wants to
-    if settings.Settings.shorad_added_to_armor_groups:
+    if shorad_included:
         shorads = [
             u
             for u in db.FACTIONS[faction].frontline_units

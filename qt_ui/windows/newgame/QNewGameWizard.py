@@ -102,6 +102,7 @@ class NewGameWizard(QtWidgets.QWizard):
             no_lha=self.field("no_lha"),
             no_player_navy=self.field("no_player_navy"),
             no_enemy_navy=self.field("no_enemy_navy"),
+            shorads_in_armor_groups=self.field("shorads_in_armor_groups"),
         )
         mod_settings = ModSettings(
             a4_skyhawk=self.field("a4_skyhawk"),
@@ -509,6 +510,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_lha", no_lha)
         supercarrier = QtWidgets.QCheckBox()
         self.registerField("supercarrier", supercarrier)
+        shorads_in_armor_groups = QtWidgets.QCheckBox()
+        self.registerField("shorads_in_armor_groups", shorads_in_armor_groups)
         no_player_navy = QtWidgets.QCheckBox()
         self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
@@ -531,7 +534,9 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
-        generatorLayout.addLayout(desired_player_mission_duration, 6, 0)
+        generatorLayout.addWidget(QtWidgets.QLabel("Add AAA to defensive armor groups"), 6, 0)
+        generatorLayout.addWidget(shorads_in_armor_groups, 6, 1)
+        generatorLayout.addLayout(desired_player_mission_duration, 7, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")
