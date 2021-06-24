@@ -19,10 +19,12 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
 * **[UI]** Control point name displayed with ground object group name on map.
+* **[UI]** Buy or Replace will now show the correct price for generated ground objects like sams.
 
 ## Fixes
 
 * **[Campaign]** Fixed the Silkworm generator to include launchers and not all radars.
+* **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[UI]** Statistics window tick marks are now always integers.
