@@ -13,11 +13,6 @@ class EwrGenerator(GroupGenerator):
     def name(cls) -> str:
         return cls.unit_type.name
 
-    @staticmethod
-    def price() -> int:
-        # TODO: Differentiate sites.
-        return 20
-
     def generate(self) -> None:
         self.add_unit(
             self.unit_type, "EWR", self.position.x, self.position.y, self.heading
