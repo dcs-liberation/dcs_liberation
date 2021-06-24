@@ -35,7 +35,10 @@ def generate_light_armor_group(faction: str, game, ground_object, shorad_include
     This generate a group of ground units
     :return: Generated group
     """
-    armor_types = (GroundUnitClass.Apc, GroundUnitClass.Ifv)
+    armor_types = (
+        GroundUnitClass.Apc, 
+        GroundUnitClass.Ifv
+    )
     possible_unit = [
         u for u in db.FACTIONS[faction].frontline_units if u.unit_class in armor_types
     ]
@@ -83,7 +86,6 @@ def generate_armor_group_of_type(
                 s_posy,
                 vehicle_group.units[0].heading,
             )
-
     return vehicle_group
 
 

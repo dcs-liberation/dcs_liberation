@@ -574,6 +574,10 @@ class VehicleGroupGroundObject(TheaterGroundObject):
     def purchasable(self) -> bool:
         return True
 
+    def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
+        # if group contains AAA, AAA Thread range, else none
+        return meters(0)
+
 
 class EwrGroundObject(TheaterGroundObject):
     def __init__(

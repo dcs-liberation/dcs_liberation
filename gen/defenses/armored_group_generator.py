@@ -18,18 +18,17 @@ class ArmoredGroupGenerator(GroupGenerator):
 
     def generate(self) -> None:
         index = 0
-        for i in range(2):
-            for j in range(2):
-                index = index + 1
-                spacing_x = random.randint(30, 80)
-                spacing_y = random.randint(30, 80)
-                self.add_unit(
-                    self.unit_type.dcs_unit_type,
-                    "Armor#" + str(index),
-                    self.position.x + spacing_x * i,
-                    self.position.y + spacing_y * j,
-                    self.heading,
-                )
+        for i in range(4):
+            index = index + 1
+            spacing_x = random.randint(30, 80)
+            spacing_y = random.randint(30, 80)
+            self.add_unit(
+                self.unit_type.dcs_unit_type,
+                "Armor#" + str(index),
+                self.position.x + spacing_x * i,
+                self.position.y + spacing_y * i,
+                self.heading,
+            )
 
 
 class FixedSizeArmorGroupGenerator(GroupGenerator):
