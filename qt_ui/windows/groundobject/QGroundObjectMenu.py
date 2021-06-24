@@ -259,6 +259,14 @@ class QGroundObjectMenu(QDialog):
         self.update_total_value()
         self.game.budget = self.game.budget + self.total_value
         self.ground_object.groups = []
+
+        # Replan if the tgo was a target of the redfor
+        if any(
+            package.target == self.ground_object
+            for package in self.game.ato_for(player=False).packages
+        ):
+            self.game.initialize_turn(for_red=True, for_blue=False)
+
         self.do_refresh_layout()
         GameUpdateSignal.get_instance().updateGame(self.game)
 
@@ -439,6 +447,9 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         )
         self.ground_object.groups = [group]
 
+        # Replan redfor missions
+        self.game.initialize_turn(for_red=True, for_blue=False)
+
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buySam(self):
@@ -452,6 +463,9 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         self.ground_object.groups = list(sam_generator.groups)
 
+        # Replan redfor missions
+        self.game.initialize_turn(for_red=True, for_blue=False)
+
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_ewr(self):
@@ -464,6 +478,9 @@ class QBuyGroupForGroundObjectDialog(QDialog):
             self.game.budget -= price
 
         self.ground_object.groups = [ewr_generator.vg]
+
+        # Replan redfor missions
+        self.game.initialize_turn(for_red=True, for_blue=False)
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 
