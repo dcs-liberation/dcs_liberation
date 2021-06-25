@@ -1,6 +1,6 @@
 import random
 
-from dcs.vehicles import AirDefence, Unarmed
+from dcs.vehicles import AirDefence
 
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
@@ -17,7 +17,13 @@ class ZU23Generator(AirDefenseGroupGenerator):
     price = 54
 
     def generate(self):
+        grid_x = random.randint(2, 3)
+        grid_y = random.randint(2, 3)
+
+        spacing = random.randint(10, 40)
+
         index = 0
+<<<<<<< HEAD
         for i in range(2):
             index = index + 1
             spacing_x = random.randint(10, 40)
@@ -36,6 +42,18 @@ class ZU23Generator(AirDefenseGroupGenerator):
             self.position.y,
             self.heading,
         )
+=======
+        for i in range(grid_x):
+            for j in range(grid_y):
+                index = index + 1
+                self.add_unit(
+                    AirDefence.ZU_23_Emplacement_Closed,
+                    "AAA#" + str(index),
+                    self.position.x + spacing * i,
+                    self.position.y + spacing * j,
+                    self.heading,
+                )
+>>>>>>> parent of 33bccd7c (removed random sam count)
 
     @classmethod
     def range(cls) -> AirDefenseRange:

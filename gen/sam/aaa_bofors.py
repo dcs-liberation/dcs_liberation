@@ -17,19 +17,22 @@ class BoforsGenerator(AirDefenseGroupGenerator):
     price = 75
 
     def generate(self):
+        grid_x = random.randint(2, 3)
+        grid_y = random.randint(2, 3)
+
+        spacing = random.randint(10, 40)
 
         index = 0
-        for i in range(2):
-            spacing_x = random.randint(10, 40)
-            spacing_y = random.randint(10, 40)
-            index = index + 1
-            self.add_unit(
-                AirDefence.Bofors40,
-                "AAA#" + str(index),
-                self.position.x + spacing_x * i,
-                self.position.y + spacing_y * i,
-                self.heading,
-            )
+        for i in range(grid_x):
+            for j in range(grid_y):
+                index = index + 1
+                self.add_unit(
+                    AirDefence.Bofors40,
+                    "AAA#" + str(index),
+                    self.position.x + spacing * i,
+                    self.position.y + spacing * j,
+                    self.heading,
+                )
 
     @classmethod
     def range(cls) -> AirDefenseRange:

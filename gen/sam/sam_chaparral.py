@@ -17,7 +17,7 @@ class ChaparralGenerator(AirDefenseGroupGenerator):
     price = 66
 
     def generate(self):
-        num_launchers = 2
+        num_launchers = random.randint(2, 4)
 
         self.add_unit(
             Unarmed.M_818,

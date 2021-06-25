@@ -54,7 +54,7 @@ class SA10Generator(AirDefenseGroupGenerator):
         )
 
         # 2 different launcher type (C & D)
-        num_launchers = 6
+        num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(
             num_launchers, launcher_distance=100, coverage=360
         )
@@ -77,7 +77,7 @@ class SA10Generator(AirDefenseGroupGenerator):
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
         aa_group = self.add_auxiliary_group("AA")
-        num_launchers = 2
+        num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(
             num_launchers, launcher_distance=210, coverage=360
         )
@@ -102,7 +102,7 @@ class Tier2SA10Generator(SA10Generator):
 
         # SA-15 for both shorter range targets and point defense.
         pd_group = self.add_auxiliary_group("PD")
-        num_launchers = 2
+        num_launchers = random.randint(2, 4)
         positions = self.get_circular_position(
             num_launchers, launcher_distance=140, coverage=360
         )
@@ -124,7 +124,7 @@ class Tier3SA10Generator(SA10Generator):
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
         aa_group = self.add_auxiliary_group("AA")
-        num_launchers = 2
+        num_launchers = random.randint(6, 8)
         positions = self.get_circular_position(
             num_launchers, launcher_distance=210, coverage=360
         )
@@ -139,7 +139,7 @@ class Tier3SA10Generator(SA10Generator):
 
         # SA-15 for both shorter range targets and point defense.
         pd_group = self.add_auxiliary_group("PD")
-        num_launchers = 2
+        num_launchers = random.randint(2, 4)
         positions = self.get_circular_position(
             num_launchers, launcher_distance=140, coverage=360
         )
