@@ -23,26 +23,6 @@ class ZU23Generator(AirDefenseGroupGenerator):
         spacing = random.randint(10, 40)
 
         index = 0
-<<<<<<< HEAD
-        for i in range(2):
-            index = index + 1
-            spacing_x = random.randint(10, 40)
-            spacing_y = random.randint(10, 40)
-            self.add_unit(
-                AirDefence.ZU_23_Emplacement_Closed,
-                "AAA#" + str(index),
-                self.position.x + spacing_x * i,
-                self.position.y + spacing_y * i,
-                self.heading,
-            )
-        self.add_unit(
-            Unarmed.M_818,
-            "TRUCK",
-            self.position.x + 80,
-            self.position.y,
-            self.heading,
-        )
-=======
         for i in range(grid_x):
             for j in range(grid_y):
                 index = index + 1
@@ -53,7 +33,6 @@ class ZU23Generator(AirDefenseGroupGenerator):
                     self.position.y + spacing * j,
                     self.heading,
                 )
->>>>>>> parent of 33bccd7c (removed random sam count)
 
     @classmethod
     def range(cls) -> AirDefenseRange:
