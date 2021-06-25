@@ -17,7 +17,7 @@ class ZU23UralInsurgentGenerator(AirDefenseGroupGenerator):
     price = 64
 
     def generate(self):
-        num_launchers = 2
+        num_launchers = random.randint(2, 4)
 
         positions = self.get_circular_position(
             num_launchers, launcher_distance=80, coverage=360
