@@ -5,7 +5,7 @@ import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List
+from typing import Any, List, Optional
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -141,7 +141,7 @@ class Game:
 
         self.transfers = PendingTransfers(self)
 
-        self.debriefings: Debriefing = []  # where index is turn number
+        self.debriefings: Optional[Debriefing] = []  # where index is turn number
 
         self.sanitize_sides()
 
