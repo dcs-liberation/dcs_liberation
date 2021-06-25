@@ -349,9 +349,9 @@ class QLiberationWindow(QMainWindow):
         self.dialog = QStatsWindow(self.game)
         self.dialog.show()
 
-    def onDebriefing(self):
+    def onDebriefing(self, debrief: Debriefing):
         logging.info("On Debriefing")
-        self.debriefing = QDebriefingWindow(self.game.debriefings[-1])
+        self.debriefing = QDebriefingWindow(debrief)
         self.debriefing.show()
 
     def closeEvent(self, event: QCloseEvent) -> None:
