@@ -17,7 +17,11 @@ class ZU23UralInsurgentGenerator(AirDefenseGroupGenerator):
     price = 64
 
     def generate(self):
+<<<<<<< HEAD
         num_launchers = random.randint(2, 8)
+=======
+        num_launchers = random.randint(2, 4)
+>>>>>>> parent of 9a8216d7 (removed random on missing zsu)
 
         positions = self.get_circular_position(
             num_launchers, launcher_distance=80, coverage=360
