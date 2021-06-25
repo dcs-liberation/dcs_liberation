@@ -27,8 +27,9 @@ from game.theater import (
     MissionTarget,
     SamGroundObject,
     TheaterGroundObject,
+    NavalControlPoint,
 )
-from game.theater.theatergroundobject import EwrGroundObject
+from game.theater.theatergroundobject import EwrGroundObject, NavalGroundObject
 from game.utils import Distance, Speed, feet, meters, nautical_miles, knots
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
@@ -1146,12 +1147,9 @@ class FlightPlanBuilder:
 
         from game.transfers import CargoShip
 
-        if isinstance(location, ControlPoint):
-            if not location.is_fleet:
-                raise InvalidObjectiveLocation(flight.flight_type, location)
-            # The first group generated will be the carrier group itself.
-            targets = self.anti_ship_targets_for_tgo(location.ground_objects[0])
-        elif isinstance(location, TheaterGroundObject):
+        if isinstance(location, NavalControlPoint):
+            targets = self.anti_ship_targets_for_tgo(location.find_main_tgo())
+        elif isinstance(location, NavalGroundObject):
             targets = self.anti_ship_targets_for_tgo(location)
         elif isinstance(location, CargoShip):
             targets = [StrikeTarget(location.name, location)]
