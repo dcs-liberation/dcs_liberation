@@ -264,14 +264,10 @@ class QGroundObjectMenu(QDialog):
         self.subwindow = QBuyGroupForGroundObjectDialog(
             self, self.ground_object, self.cp, self.game, self.total_value
         )
-        self.subwindow.changed.connect(self.do_refresh_layout)
         self.subwindow.show()
 
 
 class QBuyGroupForGroundObjectDialog(QDialog):
-
-    changed = QtCore.Signal()
-
     def __init__(
         self,
         parent,
@@ -436,9 +432,6 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 
-        self.changed.emit()
-        self.close()
-
     def buySam(self):
         sam_generator = self.samCombo.itemData(self.samCombo.currentIndex())
         price = sam_generator.price - self.current_group_value
@@ -455,9 +448,6 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 
-        self.changed.emit()
-        self.close()
-
     def buy_ewr(self):
         ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
         price = ewr_generator.price() - self.current_group_value
@@ -472,9 +462,6 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.ground_object.groups = [generator.vg]
 
         GameUpdateSignal.get_instance().updateGame(self.game)
-
-        self.changed.emit()
-        self.close()
 
     def error_money(self):
         msg = QMessageBox()
