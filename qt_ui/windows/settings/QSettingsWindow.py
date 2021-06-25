@@ -705,7 +705,10 @@ class QSettingsWindow(QDialog):
 
         start_type_label = QLabel(
             "Default start type for AI aircraft<br /><strong>Warning: "
-            "Any option other than Cold breaks OCA/Aircraft missions.</strong>"
+            "Options other than Cold will significantly reduce the<br />"
+            "number of targets available for OCA/Aircraft missions,<br />"
+            "and OCA/Aircraft flights will not be included in<br />"
+            "automatically planned OCA packages.</strong>"
         )
         start_type_label.setToolTip(START_TYPE_TOOLTIP)
         start_type = StartTypeComboBox(self.game.settings)
