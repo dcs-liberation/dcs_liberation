@@ -141,8 +141,7 @@ class Game:
 
         self.transfers = PendingTransfers(self)
 
-        self.debriefings: Optional[Debriefing]
-        self.debriefings = []  # where index is turn number
+        self.debriefings: List[Debriefing] = []  # where index is turn number
 
         self.sanitize_sides()
 
