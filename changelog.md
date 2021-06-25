@@ -29,6 +29,7 @@ Saves from 3.x are not compatible with 4.0.
 * **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
 * **[UI]** Updated intel box text for first turn.
 * **[UI]** Base Capture Cheat is now usable at all bases and can also be used to transfer player-owned bases to OPFOR.
+* **[UI]** Pass Turn button is relabled as "Begin Campaign" on Turn 0.  
 * **[UI]** Added a ruler to the map.  
 * **[Units/Factions/Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+. 
 * **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
@@ -42,7 +43,8 @@ Saves from 3.x are not compatible with 4.0.
 * **[Mission Generation]** Fixed EWR group names so they contribute to Skynet again.
 * **[Mission Generation]** Fixed duplicate name error when generating convoys and cargo ships when creating manual transfers after loading a game.
 * **[Mission Generation]** Fixed empty convoys not being disbanded when all units are killed/removed.
-* **[Mission Generation]** Fixed player losing frontline progress when skipping from turn 0 to turn 1.  
+* **[Mission Generation]** Fixed player losing frontline progress when skipping from turn 0 to turn 1.
+* **[Mission Generation]** Fixed issue where frontline would only search to the right for valid locations.
 * **[UI]** Made non-interactive map elements less obstructive.
 * **[UI]** Added support for Neutral Dot difficulty label
 * **[UI]** Clear skies at night no longer described as "Sunny" by the weather widget.
