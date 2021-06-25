@@ -31,19 +31,19 @@ class FlakGenerator(AirDefenseGroupGenerator):
         unit_type = random.choice(GFLAK)
 
         for i in range(4):
-                index = index + 1
-                spacing_x = random.randint(10, 40)
-                spacing_y = random.randint(10, 40)
-                self.add_unit(
-                    unit_type,
-                    "AAA#" + str(index),
-                    self.position.x + spacing_x * i + random.randint(1, 5),
-                    self.position.y + spacing_y * i + random.randint(1, 5),
-                    self.heading,
-                )
+            index = index + 1
+            spacing_x = random.randint(10, 40)
+            spacing_y = random.randint(10, 40)
+            self.add_unit(
+                unit_type,
+                "AAA#" + str(index),
+                self.position.x + spacing_x * i + random.randint(1, 5),
+                self.position.y + spacing_y * i + random.randint(1, 5),
+                self.heading,
+            )
 
-                if mixed:
-                    unit_type = random.choice(GFLAK)
+            if mixed:
+                unit_type = random.choice(GFLAK)
 
         # Search lights
         search_pos = self.get_circular_position(random.randint(2, 3), 80)

@@ -10,6 +10,7 @@ class RolandGenerator(AirDefenseGroupGenerator):
     """
     This generate a Roland group
     """
+
     name = "Roland Site"
     price = 40
 

@@ -36,7 +36,6 @@ class ZU23Generator(AirDefenseGroupGenerator):
             self.position.y,
             self.heading,
         )
-    
 
     @classmethod
     def range(cls) -> AirDefenseRange:

@@ -31,7 +31,10 @@ from game.theater.theatergroundobject import (
 from game.version import VERSION
 from gen import namegen
 from gen.coastal.coastal_group_generator import generate_coastal_group
-from gen.defenses.armor_group_generator import generate_armor_group, generate_light_armor_group
+from gen.defenses.armor_group_generator import (
+    generate_armor_group,
+    generate_light_armor_group,
+)
 from gen.fleet.ship_group_generator import (
     generate_carrier_group,
     generate_lha_group,
@@ -328,7 +331,12 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        group = generate_armor_group(self.faction_name, self.game, g, self.generator_settings.shorads_in_armor_groups)
+        group = generate_armor_group(
+            self.faction_name,
+            self.game,
+            g,
+            self.generator_settings.shorads_in_armor_groups,
+        )
         if group is None:
             logging.error(
                 "Could not generate armor group for %s at %s",
@@ -349,7 +357,12 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        group = generate_light_armor_group(self.faction_name, self.game, g, self.generator_settings.shorads_in_armor_groups)
+        group = generate_light_armor_group(
+            self.faction_name,
+            self.game,
+            g,
+            self.generator_settings.shorads_in_armor_groups,
+        )
         if group is None:
             logging.error(
                 "Could not generate armor group for %s at %s",
