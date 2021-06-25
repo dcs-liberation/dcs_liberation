@@ -534,7 +534,9 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
-        generatorLayout.addWidget(QtWidgets.QLabel("Add AAA to defensive armor groups"), 6, 0)
+        generatorLayout.addWidget(
+            QtWidgets.QLabel("Add AAA to defensive armor groups"), 6, 0
+        )
         generatorLayout.addWidget(shorads_in_armor_groups, 6, 1)
         generatorLayout.addLayout(desired_player_mission_duration, 7, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
