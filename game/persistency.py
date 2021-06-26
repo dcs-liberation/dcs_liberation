@@ -2,16 +2,18 @@ import logging
 import os
 import pickle
 import shutil
+from pathlib import Path
 from typing import Optional
+
 
 _dcs_saved_game_folder: Optional[str] = None
 
 
 def setup(user_folder: str):
     global _dcs_saved_game_folder
-    _dcs_saved_game_folder = os.path.join(user_folder, "Liberation", "Saves")
-    if not os.path.exists(_dcs_saved_game_folder):
-        os.makedirs(_dcs_saved_game_folder)
+    _dcs_saved_game_folder = user_folder
+    if not save_dir().exists():
+        save_dir().mkdir(parents=True)
 
 
 def base_path() -> str:
@@ -20,14 +22,16 @@ def base_path() -> str:
     return _dcs_saved_game_folder
 
 
+def save_dir() -> Path:
+    return Path(base_path()) / "Liberation" / "Saves"
+
+
 def _temporary_save_file() -> str:
-    assert _dcs_saved_game_folder
-    return os.path.join(_dcs_saved_game_folder, "tmpsave.liberation")
+    return str(save_dir() / "tmpsave.liberation")
 
 
 def _autosave_path() -> str:
-    assert _dcs_saved_game_folder
-    return os.path.join(_dcs_saved_game_folder, "autosave.liberation")
+    return str(save_dir() / "autosave.liberation")
 
 
 def mission_path_for(name: str) -> str:
