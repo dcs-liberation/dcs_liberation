@@ -27,10 +27,12 @@ def save_dir() -> Path:
 
 
 def _temporary_save_file() -> str:
+    assert _dcs_saved_game_folder
     return os.path.join(_dcs_saved_game_folder, "tmpsave.liberation")
 
 
 def _autosave_path() -> str:
+    assert _dcs_saved_game_folder
     return os.path.join(_dcs_saved_game_folder, "autosave.liberation")
 
 
