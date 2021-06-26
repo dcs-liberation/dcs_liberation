@@ -1,0 +1,11 @@
+class: Artillery
+description: "The 2S1 Gvozdika (Russian: 2\u04211 \xAB\u0413\u0432\u043E\u0437\u0434\
+  \u0438\u043A\u0430\xBB, \"Carnation\") is a Soviet self-propelled howitzer based\
+  \ on the MT-LBu multi-purpose chassis, mounting a 122 mm 2A18 howitzer. "
+introduced: 1972
+manufacturer: Kharkiv
+origin: USSR/Russia
+price: 18
+role: Self-Propelled Gun
+variants:
+  2S1 Gvozdika: {}

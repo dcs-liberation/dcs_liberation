@@ -1,0 +1,14 @@
+class: SHORADS
+description: "57 mm AZP S-60 (Russian: \u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\
+  \u0447\u0435\u0441\u043A\u0430\u044F \u0437\u0435\u043D\u0438\u0442\u043D\u0430\u044F\
+  \ \u043F\u0443\u0448\u043A\u0430 \u0421-60, abbrev. \u0410\u0417\u041F (AZP); literally:\
+  \ Automatic anti-aircraft gun S-60) is a Soviet towed, road-transportable, short-\
+  \ to medium-range, single-barrel anti-aircraft gun from the 1950s. The gun was extensively\
+  \ used in Warsaw Pact, Middle Eastern and South-East Asian countries."
+introduced: 1950
+manufacturer: TsAKB
+origin: Soviet Union
+price: 8
+role: Anti-Aircraft Gun/Anti-Tank Gun
+variants:
+  S-60 57mm: {}

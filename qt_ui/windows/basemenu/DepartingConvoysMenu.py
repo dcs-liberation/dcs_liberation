@@ -10,7 +10,6 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game import db
 from game.theater import ControlPoint
 from game.transfers import MultiGroupTransport
 from qt_ui.dialogs import Dialog
@@ -19,7 +18,7 @@ from qt_ui.uiconstants import VEHICLES_ICONS
 
 
 class DepartingConvoyInfo(QGroupBox):
-    def __init__(self, convoy: MultiGroupTransport, game_model: GameModel) -> None:
+    def __init__(self, convoy: MultiGroupTransport) -> None:
         super().__init__(f"{convoy.name} to {convoy.destination}")
         self.convoy = convoy
 
@@ -31,17 +30,14 @@ class DepartingConvoyInfo(QGroupBox):
 
         for idx, (unit_type, count) in enumerate(convoy.units.items()):
             icon = QLabel()
-            if unit_type.id in VEHICLES_ICONS.keys():
-                icon.setPixmap(VEHICLES_ICONS[unit_type.id])
+            if unit_type.dcs_id in VEHICLES_ICONS.keys():
+                icon.setPixmap(VEHICLES_ICONS[unit_type.dcs_id])
             else:
-                icon.setText("<b>" + unit_type.id[:8] + "</b>")
+                icon.setText("<b>" + unit_type.name + "</b>")
             icon.setProperty("style", "icon-armor")
             unit_layout.addWidget(icon, idx, 0)
-            unit_display_name = db.unit_get_expanded_info(
-                game_model.game.enemy_country, unit_type, "name"
-            )
             unit_layout.addWidget(
-                QLabel(f"{count} x <strong>{unit_display_name}</strong>"),
+                QLabel(f"{count} x <strong>{unit_type.name}</strong>"),
                 idx,
                 1,
             )
@@ -68,7 +64,6 @@ class DepartingConvoysList(QFrame):
     def __init__(self, cp: ControlPoint, game_model: GameModel):
         super().__init__()
         self.cp = cp
-        self.game_model = game_model
         self.setMinimumWidth(500)
 
         layout = QVBoxLayout()
@@ -79,11 +74,11 @@ class DepartingConvoysList(QFrame):
         scroll_content.setLayout(task_box_layout)
 
         for convoy in game_model.game.transfers.convoys.departing_from(cp):
-            group_info = DepartingConvoyInfo(convoy, game_model)
+            group_info = DepartingConvoyInfo(convoy)
             task_box_layout.addWidget(group_info)
 
         for cargo_ship in game_model.game.transfers.cargo_ships.departing_from(cp):
-            group_info = DepartingConvoyInfo(cargo_ship, game_model)
+            group_info = DepartingConvoyInfo(cargo_ship)
             task_box_layout.addWidget(group_info)
 
         scroll_content.setLayout(task_box_layout)

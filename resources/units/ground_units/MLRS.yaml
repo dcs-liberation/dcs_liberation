@@ -1,0 +1,14 @@
+class: Artillery
+description: The M270 Multiple Launch Rocket System (M270 MLRS) is an armored, self-propelled,
+  multiple rocket launcher (a type of rocket artillery). Since the first M270s were
+  delivered to the U.S. Army in 1983, the MLRS has been adopted by several NATO countries.
+  Some 1,300 M270 systems have been manufactured in the United States and in Europe,
+  along with more than 700,000 rockets. The production of the M270 ended in 2003,
+  when a last batch was delivered to the Egyptian Army.
+introduced: 1983
+manufacturer: Vought
+origin: USA
+price: 55
+role: Multiple-Launch Rocket System
+variants:
+  M270 Multiple Launch Rocket System: {}

@@ -3,39 +3,47 @@
   "name": "Turkey 2005",
   "authors": "Khopa",
   "description": "<p>Turkish army in the mid/late 2000s.</p>",
-  "locales": ["tr_TR"],
+  "locales": [
+    "tr_TR"
+  ],
   "aircrafts": [
-    "F_16C_50",
-    "F_4E",
-    "UH_1H",
-    "AH_1W"
+    "AH-1W SuperCobra",
+    "C-130",
+    "CH-47D",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-4E Phantom II",
+    "OH-58D Kiowa Warrior",
+    "UH-1H Iroquois",
+    "UH-60A"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Leopard_2A4_Trs",
-    "MBT_Leopard_1A3",
-    "MBT_M60A3_Patton",
-    "Scout_Cobra",
-    "APC_BTR_80",
-    "SAM_Avenger__Stinger"
+    "BTR-80",
+    "Cobra",
+    "Leopard 1A3",
+    "Leopard 2A4 Trs",
+    "M1097 Heavy HMMWV Avenger",
+    "M113",
+    "M60A3 \"Patton\""
   ],
   "artillery_units": [
-    "SPH_T155_Firtina_155mm"
+    "Firtina",
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "Paratrooper_AKS",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -51,5 +59,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

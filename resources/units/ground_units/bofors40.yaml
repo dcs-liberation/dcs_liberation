@@ -1,0 +1,16 @@
+class: SHORADS
+description: The Bofors 40 mm gun, often referred to simply as the Bofors gun, is
+  an anti-aircraft autocannon designed in the 1930s by the Swedish arms manufacturer
+  AB Bofors. It was one of the most popular medium-weight anti-aircraft systems during
+  World War II, used by most of the western Allies as well as some captured systems
+  being used by the Axis powers. A small number of these weapons remain in service
+  to this day, and saw action as late as the Persian Gulf War.
+introduced: 1934
+manufacturer: Bofors
+origin: Sweden
+price: 8
+role: Anti-Aircraft Gun
+variants:
+  Bofors 40 mm Gun: {}
+  QF 40 mm Mark III:
+    introduced: 1939

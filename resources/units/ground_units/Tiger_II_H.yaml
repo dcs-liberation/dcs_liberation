@@ -1,0 +1,18 @@
+class: Tank
+description: The Tiger II was the successor to the Tiger I, combining the latter's
+  thick armour with the armour sloping used on the Panther medium tank. The tank weighed
+  almost 70 tonnes, and was protected by 100 to 185 mm (3.9 to 7.3 in) of armour to
+  the front.It was armed with the long barrelled 8.8 cm KwK 43 L/71 anti-tank cannon.
+  The chassis was also the basis for the Jagdtiger turretless Jagdpanzer anti-tank
+  vehicle. The Tiger II was issued to heavy tank battalions of the Army and the Waffen-SS.
+  It was first used in combat by 503rd Heavy Panzer Battalion during the Allied invasion
+  of Normandy on 11 July 1944; on the Eastern Front, the first unit to be outfitted
+  with the Tiger II was the 501st Heavy Panzer Battalion, which by 1 September 1944
+  listed 25 Tiger IIs operational.
+introduced: 1944
+manufacturer: Henschel/Krupp
+origin: Germany
+price: 26
+role: Heavy Tank
+variants:
+  Panzerkampfwagen Tiger Ausf. B Tiger II: {}

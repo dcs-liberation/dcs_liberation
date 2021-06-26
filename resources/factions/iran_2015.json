@@ -3,49 +3,53 @@
   "name": "Iran 2015",
   "authors": "Khopa",
   "description": "<p>Iranian 2010s faction</p>",
-  "locales": ["fa_IR"],
+  "locales": [
+    "fa_IR"
+  ],
   "aircrafts": [
-    "MiG_21Bis",
-    "MiG_29A",
-    "F_4E",
-    "F_5E_3",
-    "F_14A_135_GR",
-    "Su_17M4",
-    "Su_24M",
-    "Su_25",
-    "Su_25T",
-    "Mi_28N",
-    "Mi_24V"
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-4E Phantom II",
+    "F-5E Tiger II",
+    "IL-76MD",
+    "Mi-24V Hind-E",
+    "Mi-24P Hind-F",
+    "Mi-28N Havoc",
+    "MiG-21bis Fishbed-N",
+    "MiG-29A Fulcrum-A",
+    "Su-22M4 Fitter-K",
+    "Su-24MK Fencer-D",
+    "Su-25 Frogfoot",
+    "Su-25T Frogfoot"
   ],
   "awacs": [
-    "A_50"
+    "A-50"
   ],
   "tankers": [
-    "IL_78M"
+    "IL-78M"
   ],
   "frontline_units": [
-    "APC_M113",
-    "APC_BTR_80",
-    "MBT_M60A3_Patton",
-    "MBT_Chieftain_Mk_3",
-    "IFV_BMP_1",
-    "MBT_T_72B",
-    "SPAAA_ZSU_23_4_Shilka_Gun_Dish",
-    "SPAAA_ZSU_57_2"
+    "Chieftain Mk.3",
+    "BMP-1",
+    "BTR-80",
+    "M113",
+    "M60A3 \"Patton\"",
+    "T-72B with Kontakt-1 ERA",
+    "ZSU-23-4 Shilka",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
-    "MLRS_BM_21_Grad_122mm",
-    "SPH_2S19_Msta_152mm"
+    "2S19 Msta-S",
+    "BM-21 Grad"
   ],
   "logistics_units": [
-    "Truck_Ural_375",
-    "LUV_UAZ_469_Jeep"
+    "LUV UAZ-469 Jeep",
+    "Truck Ural-375"
   ],
   "infantry_units": [
-    "Paratrooper_AKS",
-    "Insurgent_AK_74",
-    "Paratrooper_RPG_16",
-    "MANPADS_SA_18_Igla_S_Grouse"
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla-S \"Grouse\"",
+    "Paratrooper AKS",
+    "Paratrooper RPG-16"
   ],
   "air_defenses": [
     "HawkGenerator",
@@ -54,6 +58,7 @@
     "SA6Generator",
     "SA11Generator",
     "SA15Generator",
+    "SA17Generator",
     "VulcanGenerator",
     "ZSU23Generator",
     "ZU23Generator",
@@ -62,21 +67,17 @@
   "ewrs": [
     "TallRackGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "helicopter_carrier_names": [],
   "destroyers": [
-    "Frigate_1135M_Rezky"
+    "REZKY"
   ],
   "cruisers": [
-    "Corvette_1241_1_Molniya"
+    "MOLNIYA"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "missiles": [
     "ScudGenerator"
   ],
@@ -91,5 +92,5 @@
     "LaCombattanteIIGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

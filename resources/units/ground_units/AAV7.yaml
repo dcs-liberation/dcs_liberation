@@ -1,0 +1,18 @@
+class: APC
+description: "The Assault Amphibious Vehicle (AAV)\u2014official designation AAVP-7A1\
+  \ (formerly known as Landing Vehicle, Tracked, Personnel-7 abbr. LVTP-7)\u2014is\
+  \ a fully tracked amphibious landing vehicle manufactured by U.S. Combat Systems\
+  \ (previously by United Defense, a former division of FMC Corporation). The AAV-P7/A1\
+  \ is the current amphibious troop transport of the United States Marine Corps. It\
+  \ is used by U.S. Marine Corps Assault Amphibian Battalions to land the surface\
+  \ assault elements of the landing force and their equipment in a single lift from\
+  \ assault shipping during amphibious operations to inland objectives and to conduct\
+  \ mechanized operations and related combat support in subsequent mechanized operations\
+  \ ashore. It is also operated by other forces."
+introduced: 1971
+manufacturer: United Defense
+origin: USA
+price: 10
+role: Amphibious Armoured Personnel Carrier
+variants:
+  AAVP-7A1 'Amtrac': {}

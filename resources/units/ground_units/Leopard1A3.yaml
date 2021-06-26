@@ -1,0 +1,18 @@
+class: Tank
+description: The Leopard (or Leopard 1) is a main battle tank designed and produced
+  by Porsche in West Germany that first entered service in 1965. Developed in an era
+  when HEAT warheads were thought to make conventional heavy armour of limited value,
+  the Leopard focused on firepower in the form of the German-built version of the
+  British L7 105-mm gun, and improved cross-country performance that was unmatched
+  by other designs of the era. The Leopard quickly became a standard of many European
+  militaries, and eventually served as the main battle tank in over a dozen countries
+  worldwide, with West Germany, Italy and the Netherlands being the largest operators
+  until their retirement. Currently, the largest operators are Greece, with 520 vehicles,
+  Turkey, with 397 vehicles and Brazil with 378 vehicles.
+introduced: 1974
+manufacturer: Krauss-Maffei
+origin: Germany
+price: 18
+role: Main Battle Tank
+variants:
+  Leopard 1A3: {}

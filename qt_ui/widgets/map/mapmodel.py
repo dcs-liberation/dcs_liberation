@@ -10,7 +10,8 @@ from dcs.unit import Unit
 from dcs.vehicles import vehicle_map
 from shapely.geometry import LineString, Point as ShapelyPoint, Polygon, MultiPolygon
 
-from game import Game, db
+from game import Game
+from game.dcs.groundunittype import GroundUnitType
 from game.navmesh import NavMesh
 from game.profiling import logged_duration
 from game.theater import (
@@ -177,6 +178,7 @@ class ControlPointJs(QObject):
 
 class GroundObjectJs(QObject):
     nameChanged = Signal()
+    controlPointNameChanged = Signal()
     unitsChanged = Signal()
     blueChanged = Signal()
     positionChanged = Signal()
@@ -191,12 +193,6 @@ class GroundObjectJs(QObject):
         self.game = game
         self.theater = game.theater
         self.buildings = self.theater.find_ground_objects_by_obj_name(self.tgo.obj_name)
-
-        if self.tgo.is_friendly(to_player=True):
-            self.country = game.player_country
-        else:
-            self.country = game.enemy_country
-
         self.dialog: Optional[QGroundObjectMenu] = None
 
     @Slot()
@@ -219,18 +215,28 @@ class GroundObjectJs(QObject):
     def name(self) -> str:
         return self.tgo.name
 
+    @Property(str, notify=controlPointNameChanged)
+    def controlPointName(self) -> str:
+        return self.tgo.control_point.name
+
     @Property(str, notify=categoryChanged)
     def category(self) -> str:
         return self.tgo.category
 
-    def make_unit_name(self, unit: Unit, dead: bool) -> str:
+    @staticmethod
+    def make_unit_name(unit: Unit, dead: bool) -> str:
         dead_label = " [DEAD]" if dead else ""
         unit_display_name = unit.type
-        unit_type = vehicle_map.get(unit.type)
-        if unit_type is not None:
-            unit_display_name = db.unit_get_expanded_info(
-                self.country, unit_type, "name"
-            )
+        dcs_unit_type = vehicle_map.get(unit.type)
+        if dcs_unit_type is not None:
+            # TODO: Make the TGO contain GroundUnitType instead of the pydcs Group.
+            # This is a hack because we can't know which variant was used.
+            try:
+                unit_display_name = next(
+                    GroundUnitType.for_dcs_type(dcs_unit_type)
+                ).name
+            except StopIteration:
+                pass
         return f"Unit #{unit.id} - {unit_display_name}{dead_label}"
 
     @Property(list, notify=unitsChanged)

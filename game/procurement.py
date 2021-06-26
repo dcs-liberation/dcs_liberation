@@ -3,12 +3,12 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
-from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple, Type
-
-from dcs.unittype import FlyingType, VehicleType
+from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from game import db
 from game.data.groundunitclass import GroundUnitClass
+from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance
@@ -59,6 +59,18 @@ class ProcurementAi:
     def calculate_ground_unit_budget_share(self) -> float:
         armor_investment = 0
         aircraft_investment = 0
+
+        # faction has no ground units
+        if (
+            len(self.faction.artillery_units) == 0
+            and len(self.faction.frontline_units) == 0
+        ):
+            return 0
+
+        # faction has no planes
+        if len(self.faction.aircrafts) == 0:
+            return 1
+
         for cp in self.owned_points:
             cp_ground_units = cp.allocated_ground_units(self.game.transfers)
             armor_investment += cp_ground_units.total_value
@@ -113,7 +125,7 @@ class ProcurementAi:
                 if available % 2 == 0:
                     continue
                 inventory.remove_aircraft(aircraft, 1)
-                total += db.PRICES[aircraft]
+                total += aircraft.price
         return total
 
     def repair_runways(self, budget: float) -> float:
@@ -135,12 +147,17 @@ class ProcurementAi:
 
     def affordable_ground_unit_of_class(
         self, budget: float, unit_class: GroundUnitClass
-    ) -> Optional[Type[VehicleType]]:
+    ) -> Optional[GroundUnitType]:
         faction_units = set(self.faction.frontline_units) | set(
             self.faction.artillery_units
         )
-        of_class = set(unit_class.unit_list) & faction_units
-        affordable_units = [u for u in of_class if db.PRICES[u] <= budget]
+        of_class = {u for u in faction_units if u.unit_class is unit_class}
+
+        # faction has no access to needed unit type, take a random unit
+        if not of_class:
+            of_class = faction_units
+
+        affordable_units = [u for u in of_class if u.price <= budget]
         if not affordable_units:
             return None
         return random.choice(affordable_units)
@@ -162,7 +179,7 @@ class ProcurementAi:
                 # Can't afford any more units.
                 break
 
-            budget -= db.PRICES[unit]
+            budget -= unit.price
             cp.pending_unit_deliveries.order({unit: 1})
 
         return budget
@@ -198,12 +215,12 @@ class ProcurementAi:
         airbase: ControlPoint,
         number: int,
         max_price: float,
-    ) -> Optional[Type[FlyingType]]:
-        best_choice: Optional[Type[FlyingType]] = None
+    ) -> Optional[AircraftType]:
+        best_choice: Optional[AircraftType] = None
         for unit in aircraft_for_task(task):
             if unit not in self.faction.aircrafts:
                 continue
-            if db.PRICES[unit] * number > max_price:
+            if unit.price * number > max_price:
                 continue
             if not airbase.can_operate(unit):
                 continue
@@ -224,7 +241,7 @@ class ProcurementAi:
 
     def affordable_aircraft_for(
         self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
-    ) -> Optional[Type[FlyingType]]:
+    ) -> Optional[AircraftType]:
         return self._affordable_aircraft_for_task(
             request.task_capability, airbase, request.number, budget
         )
@@ -242,7 +259,7 @@ class ProcurementAi:
                 # able to operate expensive aircraft.
                 continue
 
-            budget -= db.PRICES[unit] * request.number
+            budget -= unit.price * request.number
             airbase.pending_unit_deliveries.order({unit: request.number})
             return budget, True
         return budget, False
@@ -343,9 +360,9 @@ class ProcurementAi:
         class_cost = 0
         total_cost = 0
         for unit_type, count in allocations.all.items():
-            cost = db.PRICES[unit_type] * count
+            cost = unit_type.price * count
             total_cost += cost
-            if unit_type in unit_class:
+            if unit_type.unit_class is unit_class:
                 class_cost += cost
         if not total_cost:
             return 0

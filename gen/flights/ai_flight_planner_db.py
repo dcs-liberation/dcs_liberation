@@ -8,6 +8,7 @@ from dcs.helicopters import (
     CH_47D,
     CH_53E,
     Ka_50,
+    Mi_24P,
     Mi_24V,
     Mi_26,
     Mi_28N,
@@ -51,10 +52,13 @@ from dcs.planes import (
     F_5E_3,
     F_86F_Sabre,
     IL_76MD,
-    I_16,
+    IL_78M,
     JF_17,
     J_11A,
     Ju_88A4,
+    KC130,
+    KC135MPRS,
+    KC_135,
     KJ_2000,
     L_39ZA,
     MQ_9_Reaper,
@@ -77,6 +81,7 @@ from dcs.planes import (
     P_51D_30_NA,
     RQ_1A_Predator,
     S_3B,
+    S_3B_Tanker,
     SpitfireLFMkIX,
     SpitfireLFMkIXCW,
     Su_17M4,
@@ -100,12 +105,12 @@ from dcs.planes import (
 )
 from dcs.unittype import FlyingType
 
+from game.dcs.aircrafttype import AircraftType
 from gen.flights.flight import FlightType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
-from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.hercules.hercules import Hercules
-from pydcs_extensions.mb339.mb339 import MB_339PAN
+from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
@@ -204,6 +209,7 @@ CAS_CAPABLE = [
     SA342L,
     Ka_50,
     Mi_28N,
+    Mi_24P,
     Mi_24V,
     Mi_8MT,
     UH_1H,
@@ -212,7 +218,6 @@ CAS_CAPABLE = [
     F_5E_3,
     F_86F_Sabre,
     C_101CC,
-    MB_339PAN,
     L_39ZA,
     A_20G,
     Ju_88A4,
@@ -325,7 +330,6 @@ STRIKE_CAPABLE = [
     MiG_15bis,
     F_5E_3,
     F_86F_Sabre,
-    MB_339PAN,
     C_101CC,
     L_39ZA,
     B_17G,
@@ -401,8 +405,17 @@ AEWC_CAPABLE = [
     KJ_2000,
 ]
 
+# Priority is given to the tankers that can carry the most fuel.
+REFUELING_CAPABALE = [
+    KC_135,
+    KC135MPRS,
+    IL_78M,
+    KC130,
+    S_3B_Tanker,
+]
 
-def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
+
+def dcs_types_for_task(task: FlightType) -> list[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE
@@ -428,6 +441,8 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return CAP_CAPABLE
     elif task == FlightType.AEWC:
         return AEWC_CAPABLE
+    elif task == FlightType.REFUELING:
+        return REFUELING_CAPABALE
     elif task == FlightType.TRANSPORT:
         return TRANSPORT_CAPABLE
     else:
@@ -435,7 +450,15 @@ def aircraft_for_task(task: FlightType) -> List[Type[FlyingType]]:
         return []
 
 
-def tasks_for_aircraft(aircraft: Type[FlyingType]) -> list[FlightType]:
+def aircraft_for_task(task: FlightType) -> list[AircraftType]:
+    dcs_types = dcs_types_for_task(task)
+    types: list[AircraftType] = []
+    for dcs_type in dcs_types:
+        types.extend(AircraftType.for_dcs_type(dcs_type))
+    return types
+
+
+def tasks_for_aircraft(aircraft: AircraftType) -> list[FlightType]:
     tasks = []
     for task in FlightType:
         if aircraft in aircraft_for_task(task):

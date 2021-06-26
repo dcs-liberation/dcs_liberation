@@ -1,0 +1,19 @@
+always_keeps_gun: true
+description: "The Focke-Wulf Fw 190 is widely regarded as Germany's best fighter aircraft\
+  \ of World War II. Its appearance in the skies over France in August 1941 was a\
+  \ rude shock to the Allies, as it was clearly superior to any other plane. For nearly\
+  \ a year, the Fw 190 was the unmatched champion of the air war in Europe. The Fw\
+  \ 190 had speed and high altitude performance as its two great assets.\n\nThe development\
+  \ of advanced allied fighters resulted in the Fw 190 D\u20139 variant which first\
+  \ saw service in September 1944. This variant had a larger nose that housed a more\
+  \ powerful Junkers Jumo engine that produced 2,100 hp with the MW-50 boost system.\
+  \ The D-9 was designed for high altitude aerial combat and is a worthy adversary\
+  \ to the P-51D Mustang."
+introduced: 1944
+manufacturer: Focke-Wulf
+origin: Germany
+price: 5
+role: Fighter
+gunfighter: true
+variants:
+  Fw 190 D-9 Dora: {}

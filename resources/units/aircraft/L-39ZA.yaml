@@ -1,0 +1,14 @@
+description: "Two seat Jet trainer aircraft L-39C is intended for basic and advanced\
+  \ pilot training in visual and instrument flight rules weather conditions, day and\
+  \ night and also for combat use against air and ground targets. Its development\
+  \ started in the middle 60s of the last century by the Czech \u201CAero Vodochody\u201D\
+  . In the 70s the aircraft has entered service and is still in the operational use\
+  \ in over 30 countries worldwide."
+introduced: 1977
+manufacturer: Aero
+origin: Czechoslovakia
+price: 10
+role: Light Attack
+gunfighter: true
+variants:
+  L-39ZA Albatros: {}

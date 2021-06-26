@@ -1,5 +1,3 @@
-from typing import Type
-
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QFrame,
@@ -7,12 +5,9 @@ from PySide2.QtWidgets import (
     QScrollArea,
     QVBoxLayout,
     QWidget,
-    QMessageBox,
 )
-from dcs.task import PinpointStrike
-from dcs.unittype import FlyingType, UnitType
 
-from game import db
+from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
@@ -23,7 +18,7 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         QFrame.__init__(self)
         self.cp = cp
         self.game_model = game_model
-
+        self.purchase_groups = {}
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
@@ -32,31 +27,20 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
     def init_ui(self):
         main_layout = QVBoxLayout()
 
-        units = {
-            PinpointStrike: db.find_unittype(
-                PinpointStrike, self.game_model.game.player_name
-            ),
-        }
-
         scroll_content = QWidget()
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
         row = 0
 
-        for task_type in units.keys():
-            units_column = list(set(units[task_type]))
-            if len(units_column) == 0:
-                continue
-            units_column.sort(
-                key=lambda u: db.unit_get_expanded_info(
-                    self.game_model.game.player_country, u, "name"
-                )
-            )
-            for unit_type in units_column:
-                row = self.add_purchase_row(unit_type, task_box_layout, row)
-            stretch = QVBoxLayout()
-            stretch.addStretch()
-            task_box_layout.addLayout(stretch, row, 0)
+        unit_types = list(
+            set(self.game_model.game.faction_for(player=True).ground_units)
+        )
+        unit_types.sort(key=lambda u: u.name)
+        for row, unit_type in enumerate(unit_types):
+            self.add_purchase_row(unit_type, task_box_layout, row)
+        stretch = QVBoxLayout()
+        stretch.addStretch()
+        task_box_layout.addLayout(stretch, row, 0)
 
         scroll_content.setLayout(task_box_layout)
         scroll = QScrollArea()
@@ -67,10 +51,10 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
 
-    def enable_purchase(self, unit_type: Type[UnitType]) -> bool:
+    def enable_purchase(self, unit_type: GroundUnitType) -> bool:
         if not super().enable_purchase(unit_type):
             return False
         return self.cp.has_ground_unit_source(self.game_model.game)
 
-    def enable_sale(self, unit_type: Type[UnitType]) -> bool:
+    def enable_sale(self, unit_type: GroundUnitType) -> bool:
         return self.pending_deliveries.pending_orders(unit_type) > 0

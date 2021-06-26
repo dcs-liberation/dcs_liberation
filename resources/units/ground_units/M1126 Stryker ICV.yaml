@@ -1,0 +1,10 @@
+class: APC
+description: 'The ICV (Infantry Carrier Vehicle) Stryker is a family of eight-wheeled
+  armored fighting vehicles derived from the Canadian LAV III. '
+introduced: 2002
+manufacturer: General Dynamics
+origin: USA
+price: 10
+role: Armoured Personnel Carrier
+variants:
+  M1126 Stryker ICV (M2 HMG): {}

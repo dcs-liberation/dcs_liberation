@@ -20,6 +20,7 @@ class Settings:
     # Difficulty settings
     player_skill: str = "Good"
     enemy_skill: str = "Average"
+    ai_pilot_levelling: bool = True
     enemy_vehicle_skill: str = "Average"
     map_coalition_visibility: ForcedOptions.Views = ForcedOptions.Views.All
     labels: str = "Full"
@@ -33,6 +34,18 @@ class Settings:
     player_income_multiplier: float = 1.0
     enemy_income_multiplier: float = 1.0
 
+    #: Feature flag for squadron limits.
+    enable_squadron_pilot_limits: bool = False
+
+    #: The maximum number of pilots a squadron can have at one time. Changing this after
+    #: the campaign has started will have no immediate effect; pilots already in the
+    #: squadron will not be removed if the limit is lowered and pilots will not be
+    #: immediately created if the limit is raised.
+    squadron_pilot_limit: int = 12
+
+    #: The number of pilots a squadron can replace per turn.
+    squadron_replenishment_rate: int = 4
+
     default_start_type: str = "Cold"
 
     # Mission specific
@@ -44,6 +57,7 @@ class Settings:
     automate_aircraft_reinforcements: bool = False
     restrict_weapons_by_date: bool = False
     disable_legacy_aewc: bool = True
+    disable_legacy_tanker: bool = True
     generate_dark_kneeboard: bool = False
     invulnerable_player_pilots: bool = True
     auto_ato_behavior: AutoAtoBehavior = AutoAtoBehavior.Default

@@ -2,42 +2,52 @@
   "country": "France",
   "name": "France 1995",
   "authors": "Khopa",
-  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
-  "locales": ["fr_FR"],
+  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice. Frenchpack 4.6+ mod is recommended to enable most of the ground units of this faction available.</p>",
+  "locales": [
+    "fr_FR"
+  ],
   "aircrafts": [
-    "M_2000C",
-    "Mirage_2000_5",
-    "SA342M",
-    "SA342L",
-    "SA342Mistral"
+    "C-130",
+    "Mirage 2000-5",
+    "Mirage 2000C",
+    "SA 342L Gazelle",
+    "SA 342M Gazelle",
+    "SA 342M Gazelle Mistral"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Leclerc",
-    "APC_TPz_Fuchs",
-    "Scout_Cobra",
-    "IFV_LAV_25",
-    "ATGM_VAB_Mephisto",
-    "SAM_Roland_ADS"
+    "AMX-10 RCR",
+    "AMX-13 90mm",
+    "AMX.30B2",
+    "Leclerc S\u00e9ries 2",
+    "Leclerc_XXI",
+    "Pamela",
+    "Panhard",
+    "Roland 2 (Marder Chassis)",
+    "VAB .50",
+    "VAB Mephisto",
+    "VAB T20/13",
+    "VBL .50",
+    "VBL AANF1"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger",
-    "Mortar_2B11_120mm"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "RolandGenerator",
@@ -46,21 +56,19 @@
   "ewrs": [
     "HawkEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
+  "aircraft_carrier": [],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa",
-    "FFG_Oliver_Hazzard_Perry"
+    "USS_Arleigh_Burke_IIa",
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "Jeanne d'Arc"
   ],
@@ -69,5 +77,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

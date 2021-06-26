@@ -3,35 +3,37 @@
   "name": "Spain 1990",
   "authors": "Khopa",
   "description": "<p>Spain in the 90s</p>",
-  "locales": ["es_ES"],
+  "locales": [
+    "es_ES"
+  ],
   "aircrafts": [
-    "FA_18C_hornet",
-    "AV8BNA",
-    "F_5E_3",
-    "C_101CC",
-    "UH_1H"
+    "AV-8B Harrier II Night Attack",
+    "C-130",
+    "C-101CC Aviojet",
+    "EF-18A+ Hornet",
+    "F-5E Tiger II",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_M60A3_Patton",
-    "MBT_Leopard_2A4",
-    "APC_M113",
-    "SAM_Avenger__Stinger"
+    "Leopard 2A4",
+    "M1097 Heavy HMMWV Avenger",
+    "M113",
+    "M60A3 \"Patton\""
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249"
+    "Infantry M249",
+    "Infantry M4"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -43,16 +45,16 @@
     "PatriotEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry"
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
   "carrier_names": [
@@ -65,22 +67,22 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
-    "FA_18C_hornet": [
+    "EF-18A+ Hornet": [
       "Spain 111th Escuadron C.15-73",
       "Spain 111th Escuadron C.15-88",
-	  "Spain 121th Escuadron C.15-45",
-	  "Spain 121th Escuadron C.15-50",
-	  "Spain 121th Escuadron C.15-60",
-	  "Spain 151th Escuadron C.15-14",
-	  "Spain 151th Escuadron C.15-18",
-	  "Spain 151th Escuadron C.15-23",
-	  "Spain 151th Escuadron C.15-24",
-	  "Spain 211th Escuadron C.15-76",
-	  "Spain 211th Escuadron C.15-77",
-	  "Spain 462th Escuadron C.15-79",
-	  "Spain 462th Escuadron C.15-90"
+      "Spain 121th Escuadron C.15-45",
+      "Spain 121th Escuadron C.15-50",
+      "Spain 121th Escuadron C.15-60",
+      "Spain 151th Escuadron C.15-14",
+      "Spain 151th Escuadron C.15-18",
+      "Spain 151th Escuadron C.15-23",
+      "Spain 151th Escuadron C.15-24",
+      "Spain 211th Escuadron C.15-76",
+      "Spain 211th Escuadron C.15-77",
+      "Spain 462th Escuadron C.15-79",
+      "Spain 462th Escuadron C.15-90"
     ]
   }
 }

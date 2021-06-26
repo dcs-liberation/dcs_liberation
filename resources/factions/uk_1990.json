@@ -3,41 +3,45 @@
   "name": "United Kingdom 1990",
   "authors": "Khopa",
   "description": "<p>United Kingdom Army in the 1990s.</p>",
-  "locales": ["en_UK"],
+  "locales": [
+    "en_UK"
+  ],
   "aircrafts": [
-    "Tornado_GR4",
-    "AV8BNA",
-    "F_4E",
-    "SA342M",
-    "AH_64A"
+    "AH-64A Apache",
+    "AV-8B Harrier II Night Attack",
+    "C-130",
+    "C-130J-30 Super Hercules",
+    "Gazelle AH.1",
+    "Phantom F.3",
+    "Tornado GR4"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "MBT_Challenger_II",
-    "MBT_Chieftain_Mk_3",
-    "IFV_Warrior",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "SAM_Avenger__Stinger"
+    "Chieftain Mk.3",
+    "FV4034 Challenger 2",
+    "FV510 Warrior",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M1097 Heavy HMMWV Avenger"
   ],
   "artillery_units": [
-    "MLRS_M270_227mm",
-    "SPH_M109_Paladin_155mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "Mortar_2B11_120mm",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -48,20 +52,19 @@
     "HawkEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry"
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "helicopter_carrier_names": [
     "HMS Invincible",
     "HMS Illustrious",
@@ -72,5 +75,5 @@
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

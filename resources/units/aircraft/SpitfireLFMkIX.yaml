@@ -1,0 +1,43 @@
+always_keeps_gun: true
+description: 'The British Spitfire is one of the most iconic fighter aircraft of World
+  War II. Most famous for its role in the Battle of Britain, the Spitfire served as
+  Britain''s primary fighter during the entirety of the war. The Spitfire combines
+  graceful lines, eye-watering dogfight performance, and heavy firepower in its later
+  variants.
+
+
+  The Spitfire Mk IX was originally developed as a stopgap measure as a response to
+  the appearance of the Focke-Wulf FW 190A.
+
+
+  The Spitfire IX is powered by the Merlin 66. This engine produces its best performance
+  at slightly lower altitudes than the older Merlin 61. Spitfires equipped with this
+  engine were designated LF Mk IX. This was the most numerous version of the Mk IX,
+  with 4,010 produced. The majority of Mk IXs of all types used the standard "c" wing,
+  which would often carry two 20mm cannon and four .303in machine guns.
+
+
+  The Mk IX was a significant improvement on the Mk V. It had a top speed of 409 mph
+  at 28,000 feet, an increase of 40 miles per hour. Its service ceiling rose from
+  36,200 feet to 43,000 feet. It could climb at 4,000 feet per minute. In July 1942,
+  an early Mk IX was flown against a captured Fw 190A, and the two aircraft were discovered
+  to have very similar capabilities. The RAF had its answer to the Fw 190 problem.
+
+
+  The Mk IX replaced the Mk V from June 1942. It allowed the RAF to go back onto the
+  offensive in occupied Europe, and resume the "circus", "ramrod" and "rodeo" raids.
+  Its first combat success came on 30 July 1942, when a Spitfire Mk IX shot down a
+  Fw 190. Amongst other notable achievements, the Mk IX took part in the highest altitude
+  combat of the Second World War, when it intercepted a Ju 86R at 43,000 feet over
+  Southampton on 12 September 1942. On 5 October 1944 Spitfire Mk IXs of 401 Squadron
+  were the first allied aircraft to shoot down an Me 262 Jet. The Mk IX remained in
+  service until the end of the war, even after the appearance of the Griffon powered
+  Mk XIV.'
+introduced: 1943
+manufacturer: Supermarine
+origin: UK
+price: 3
+role: Fighter
+gunfighter: true
+variants:
+  Spitfire LF Mk IX: {}

@@ -1,0 +1,16 @@
+class: ATGM
+description: "The Sturmgesch\xFCtz III (StuG III) assault gun was Germany's most-produced\
+  \ fully tracked armoured fighting vehicle during World War II, and second-most produced\
+  \ German armored combat vehicle of any type after the Sd.Kfz. 251 half-track. It\
+  \ was built on a slightly modified Panzer III chassis, replacing the turret with\
+  \ an armored, fixed superstructure mounting a more powerful gun. Initially intended\
+  \ as a mobile assault gun for direct-fire support for infantry, the StuG III was\
+  \ continually modified, and much like the later Jagdpanzer vehicles, was employed\
+  \ as a tank destroyer."
+introduced: 1942
+manufacturer: Alkett/MIAG
+origin: Germany
+price: 12
+role: Assault Gun/Tank Destroyer
+variants:
+  "Sturmgesch\xFCtz III Ausf. G": {}

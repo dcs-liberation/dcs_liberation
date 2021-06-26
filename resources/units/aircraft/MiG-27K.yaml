@@ -1,0 +1,17 @@
+description: "The Mikoyan MiG-27 (Russian: \u041C\u0438\u043A\u043E\u044F\u043D \u041C\
+  \u0438\u0413-27; NATO reporting name: Flogger-D/J) is a variable-sweep ground-attack\
+  \ aircraft, originally built by the Mikoyan-Gurevich design bureau in the Soviet\
+  \ Union and later licence-produced in India by Hindustan Aeronautics as the Bahadur\
+  \ ('Valiant'). It is based on the Mikoyan-Gurevich MiG-23 fighter aircraft, but\
+  \ optimised for air-to-ground attack. Unlike the MiG-23, the MiG-27 did not have\
+  \ widespread use outside Russia, as most countries opted for the Mikoyan-Gurevich\
+  \ MiG-23BN and Sukhoi Su-22 instead. It remains in service only with the Kazakh\
+  \ Air Forces in the ground attack role. All Russian, Indian and Ukrainian MiG-27s\
+  \ have been retired."
+introduced: 1975
+manufacturer: Mikoyan
+origin: USSR/Russia
+price: 15
+role: Attack
+variants:
+  MiG-27K Flogger-J2: {}

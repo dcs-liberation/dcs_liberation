@@ -1,0 +1,20 @@
+always_keeps_gun: true
+description: The Junkers Ju 88 is a German World War II Luftwaffe twin-engined multirole
+  combat aircraft. Junkers Aircraft and Motor Works (JFM) designed the plane in the
+  mid-1930s as a so-called Schnellbomber ('fast bomber') that would be too fast for
+  fighters of its era to intercept. It suffered from technical problems during its
+  development and early operational periods but became one of the most versatile combat
+  aircraft of the war. Like a number of other Luftwaffe bombers, it served as a bomber,
+  dive bomber, night fighter, torpedo bomber, reconnaissance aircraft, heavy fighter
+  and at the end of the war, as a flying bomb. Despite a protracted development, it
+  became one of the Luftwaffe's most important aircraft. The assembly line ran constantly
+  from 1936 to 1945 and more than 15,000 Ju 88s were built in dozens of variants,
+  more than any other twin-engine German aircraft of the period. Throughout production
+  the basic structure of the aircraft remained unchanged.
+introduced: 1940
+manufacturer: Junkers
+origin: Germany
+price: 14
+role: Tactical/Torpedo Bomber
+variants:
+  Ju 88 A-4: {}

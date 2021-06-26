@@ -3,33 +3,34 @@
   "name": "Sweden 1990",
   "authors": "Khopa",
   "description": "<p>Sweden in the 90s.</p><p>Note : Since we're missing the Draken and the Air-to-Air variant of the Viggen, this faction will struggle in air-to-air scenarios.</p>",
-  "locales": ["sv_SE"],
+  "locales": [
+    "sv_SE"
+  ],
   "aircrafts": [
-    "AJS37",
-    "UH_1H"
+    "AJS-37 Viggen",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_3A"
+    "E-3A"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "IFV_Warrior",
-    "MBT_Leopard_2A4",
-    "IFV_M1126_Stryker_ICV",
-    "SAM_Avenger__Stinger"
+    "FV510 Warrior",
+    "Leopard 2A4",
+    "M1097 Heavy HMMWV Avenger",
+    "M1126 Stryker ICV (M2 HMG)"
   ],
-  "artillery_units": [
-  ],
+  "artillery_units": [],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "AvengerGenerator",
@@ -42,5 +43,5 @@
     "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper"
+  "jtac_unit": "MQ-9 Reaper"
 }

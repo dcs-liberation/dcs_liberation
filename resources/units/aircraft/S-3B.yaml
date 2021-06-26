@@ -1,0 +1,20 @@
+carrier_capable: true
+description:
+  The Lockheed S-3 Viking is a 4-crew, twin-engine turbofan-powered jet
+  aircraft that was used by the U.S. Navy (USN) primarily for anti-submarine warfare.
+  In the late 1990s, the S-3B's mission focus shifted to surface warfare and aerial
+  refueling. The Viking also provided electronic warfare and surface surveillance
+  capabilities to a carrier battle group. A carrier-based, subsonic, all-weather,
+  long-range, multi-mission aircraft, it carried automated weapon systems and was
+  capable of extended missions with in-flight refueling. Because of its characteristic
+  sound, it was nicknamed the "War Hoover" after the vacuum cleaner brand. The S-3
+  was phased out from front-line fleet service aboard aircraft carriers in January
+  2009, with its missions taken over by aircraft like the P-3C Orion, P-8 Poseidon,
+  Sikorsky SH-60 Seahawk and Boeing F/A-18E/F Super Hornet
+introduced: 1984
+manufacturer: Lockheed
+origin: USA
+price: 10
+role: Carrier-based Attack
+variants:
+  S-3B Viking: {}

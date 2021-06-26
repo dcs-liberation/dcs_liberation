@@ -3,53 +3,49 @@
   "name": "USA 1944",
   "authors": "Khopa",
   "description": "<p>US army in 1944, western front.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "P_51D",
-    "P_51D_30_NA",
-    "P_47D_30",
-    "P_47D_30bl1",
-    "P_47D_40",
-    "SpitfireLFMkIX",
-    "A_20G",
-    "B_17G"
+    "A-20G Havoc",
+    "B-17G Flying Fortress",
+    "P-47D-30 Thunderbolt (Early)",
+    "P-47D-30 Thunderbolt (Late)",
+    "P-47D-40 Thunderbolt",
+    "P-51D-25-NA Mustang",
+    "P-51D-30-NA Mustang",
+    "Spitfire LF Mk IX"
   ],
   "frontline_units": [
-    "MT_M4A4_Sherman_Firefly",
-    "Tk_M4_Sherman",
-    "APC_M2A1_Halftrack",
-    "Car_M8_Greyhound_Armored",
-    "SPG_M10_GMC",
-    "AAA_QF_3_7"
+    "M10 3-inch Gun Motor Carriage",
+    "M2A1 Half-Track",
+    "M4A2(75) Sherman",
+    "M4A4 Sherman Firefly",
+    "M8 Greyhound Light Armored Car",
+    "QF 3.7-inch AA Gun"
   ],
   "artillery_units": [
-    "SPG_M12_GMC_155mm"
+    "M12 Gun Motor Carriage"
   ],
   "logistics_units": [
-    "Truck_GMC_Jimmy_6x6_Truck"
+    "Truck GMC \"Jimmy\" 6x6 Truck"
   ],
   "infantry_units": [
-    "Infantry_M1_Garand"
+    "Infantry M1 Garand"
   ],
   "air_defenses": [
     "AllyWW2FlakGenerator",
     "BoforsGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
   "requirements": {
     "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
   },
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "WW2LSTGroupGenerator"
   ],

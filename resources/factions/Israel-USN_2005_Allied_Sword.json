@@ -3,46 +3,49 @@
   "name": "Israel-USN 2005 (Allied Sword)",
   "authors": "Fuzzle",
   "description": "<p>A joint US Navy/Israeli modern faction for use with the Operation Allied Sword scenario.</p>",
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "F_4E",
-    "F_15C",
-    "F_15E",
-    "F_16C_50",
-    "F_14B",
-    "FA_18C_hornet",
-    "AV8BNA",
-    "AH_1W",
-    "AH_64D",
-    "S_3B",
-    "SH_60B",
-    "UH_1H"
+    "F-4E Phantom II",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F-14B Tomcat",
+    "F/A-18C Hornet (Lot 20)",
+    "AV-8B Harrier II Night Attack",
+    "AH-1W SuperCobra",
+    "AH-64A Apache",
+    "S-3B Viking",
+    "SH-60B Seahawk",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130",
-    "S_3B_Tanker"
+    "KC-135 Stratotanker",
+    "KC-130",
+    "S-3B Tanker"
   ],
   "frontline_units": [
-    "APC_M113",
-    "APC_HMMWV__Scout",
-    "ATGM_HMMWV",
-    "MBT_Merkava_IV",
-    "SPAAA_Vulcan_M163"
+    "M113",
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "Merkava Mk IV",
+    "M163 Vulcan Air Defense System"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm",
-    "MLRS_M270_227mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M4",
+    "Infantry M249",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "ChaparralGenerator",
@@ -54,16 +57,17 @@
     "HawkEwrGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "DDG_Arleigh_Burke_IIa"
+    "USS_Arleigh_Burke_IIa",
+	"PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "requirements": {
   },
@@ -84,25 +88,24 @@
   "navy_generators": [
     "ArleighBurkeGroupGenerator",
     "OliverHazardPerryGroupGenerator"
-
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "doctrine": "modern",
   "liveries_overrides": {
-    "F_14B": [
+    "F-14B Tomcat": [
       "VF-142 Ghostriders"
     ],
-    "FA_18C_hornet": [
+    "F/A-18C Hornet (Lot 20)": [
       "VMFA-251 high visibility"
     ],
-    "AV8BNA": [
+    "AV-8B Harrier II Night Attack": [
       "VMAT-542"
     ],
-    "AH_1W": [
+    "AH-1W SuperCobra": [
       "Marines"
     ],
-    "UH_1H": [
+    "UH-1H Iroquois": [
       "US NAVY"
     ]
   }

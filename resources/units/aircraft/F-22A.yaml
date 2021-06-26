@@ -1,0 +1,19 @@
+description:
+  The F-22A is an American single-seat, twin-engine, all-weather stealth
+  tactical fighter aircraft developed exclusively for the United States Air Force
+  (USAF). The result of the USAF's Advanced Tactical Fighter (ATF) program, the aircraft
+  was designed primarily as an air superiority fighter, but also has ground attack,
+  electronic warfare, and signal intelligence capabilities. Currently it is viewed
+  as the most advanced fighter in the world.
+introduced: 2005
+manufacturer: Lockheed Martin
+origin: USA
+price: 40
+role: Stealth Air-Superiority Fighter
+variants:
+  F-22A Raptor: {}
+radios:
+  # I seriously doubt this is using the Mustang's radio but this is what was
+  # here before.
+  intra_flight: SCR-522
+  inter_flight: SCR-522

@@ -3,12 +3,11 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, Optional, TYPE_CHECKING, Type
-
-from dcs.unittype import UnitType, VehicleType
+from typing import Optional, TYPE_CHECKING, Any
 
 from game.theater import ControlPoint
-from .db import PRICES
+from .dcs.groundunittype import GroundUnitType
+from .dcs.unittype import UnitType
 from .theater.transitnetwork import (
     NoPathError,
     TransitNetwork,
@@ -29,16 +28,16 @@ class PendingUnitDeliveries:
         self.destination = destination
 
         # Maps unit type to order quantity.
-        self.units: Dict[Type[UnitType], int] = defaultdict(int)
+        self.units: dict[UnitType, int] = defaultdict(int)
 
     def __str__(self) -> str:
         return f"Pending delivery to {self.destination}"
 
-    def order(self, units: Dict[Type[UnitType], int]) -> None:
+    def order(self, units: dict[UnitType, int]) -> None:
         for k, v in units.items():
             self.units[k] += v
 
-    def sell(self, units: Dict[Type[UnitType], int]) -> None:
+    def sell(self, units: dict[UnitType, int]) -> None:
         for k, v in units.items():
             self.units[k] -= v
 
@@ -46,24 +45,28 @@ class PendingUnitDeliveries:
         self.refund(game, self.units)
         self.units = defaultdict(int)
 
-    def refund(self, game: Game, units: Dict[Type[UnitType], int]) -> None:
+    def refund_ground_units(self, game: Game) -> None:
+        ground_units: dict[UnitType[Any], int] = {
+            u: self.units[u] for u in self.units.keys() if isinstance(u, GroundUnitType)
+        }
+        self.refund(game, ground_units)
+        for gu in ground_units.keys():
+            del self.units[gu]
+
+    def refund(self, game: Game, units: dict[UnitType, int]) -> None:
         for unit_type, count in units.items():
-            try:
-                price = PRICES[unit_type]
-            except KeyError:
-                logging.error(f"Could not refund {unit_type.id}, price unknown")
-                continue
+            logging.info(f"Refunding {count} {unit_type} at {self.destination.name}")
+            game.adjust_budget(
+                unit_type.price * count, player=self.destination.captured
+            )
 
-            logging.info(f"Refunding {count} {unit_type.id} at {self.destination.name}")
-            game.adjust_budget(price * count, player=self.destination.captured)
-
-    def pending_orders(self, unit_type: Type[UnitType]) -> int:
+    def pending_orders(self, unit_type: UnitType) -> int:
         pending_units = self.units.get(unit_type)
         if pending_units is None:
             pending_units = 0
         return pending_units
 
-    def available_next_turn(self, unit_type: Type[UnitType]) -> int:
+    def available_next_turn(self, unit_type: UnitType) -> int:
         current_units = self.destination.base.total_units_of_type(unit_type)
         return self.pending_orders(unit_type) + current_units
 
@@ -74,18 +77,16 @@ class PendingUnitDeliveries:
                 f"{self.destination.name} lost its source for ground unit "
                 "reinforcements. Refunding purchase price."
             )
-            self.refund_all(game)
-            return
+            self.refund_ground_units(game)
 
-        bought_units: Dict[Type[UnitType], int] = {}
-        units_needing_transfer: Dict[Type[VehicleType], int] = {}
-        sold_units: Dict[Type[UnitType], int] = {}
+        bought_units: dict[UnitType, int] = {}
+        units_needing_transfer: dict[GroundUnitType, int] = {}
+        sold_units: dict[UnitType, int] = {}
         for unit_type, count in self.units.items():
             coalition = "Ally" if self.destination.captured else "Enemy"
-            name = unit_type.id
-
+            d: dict[Any, int]
             if (
-                issubclass(unit_type, VehicleType)
+                isinstance(unit_type, GroundUnitType)
                 and self.destination != ground_unit_source
             ):
                 source = ground_unit_source
@@ -97,22 +98,27 @@ class PendingUnitDeliveries:
             if count >= 0:
                 d[unit_type] = count
                 game.message(
-                    f"{coalition} reinforcements: {name} x {count} at {source}"
+                    f"{coalition} reinforcements: {unit_type} x {count} at {source}"
                 )
             else:
                 sold_units[unit_type] = -count
-                game.message(f"{coalition} sold: {name} x {-count} at {source}")
+                game.message(f"{coalition} sold: {unit_type} x {-count} at {source}")
 
         self.units = defaultdict(int)
-        self.destination.base.commision_units(bought_units)
+        self.destination.base.commission_units(bought_units)
         self.destination.base.commit_losses(sold_units)
 
         if units_needing_transfer:
-            ground_unit_source.base.commision_units(units_needing_transfer)
+            if ground_unit_source is None:
+                raise RuntimeError(
+                    f"ground unit source could not be found for {self.destination} but still tried to "
+                    f"transfer units to there"
+                )
+            ground_unit_source.base.commission_units(units_needing_transfer)
             self.create_transfer(game, ground_unit_source, units_needing_transfer)
 
     def create_transfer(
-        self, game: Game, source: ControlPoint, units: Dict[Type[VehicleType], int]
+        self, game: Game, source: ControlPoint, units: dict[GroundUnitType, int]
     ) -> None:
         game.transfers.new_transfer(TransferOrder(source, self.destination, units))
 

@@ -1,0 +1,29 @@
+carrier_capable: true
+description: 'The Su-33 has been the backbone of Russian aircraft carrier aviation
+  since the late 1990s and is an all-weather fighter capable of engaging both air
+  and surface targets. Based on the powerful Su-27 "Flanker", the Su-33 is a navalized
+  version suited for operations aboard the Admiral Kuznetsov aircraft carrier. Changes
+  to the Su-33 include strengthened landing gear, folding wings, more powerful engines,
+  and the very visible canards.
+
+
+  The Su-33 is equipped with a powerful pulse doppler radar and an Infrared Search
+  and Track (IRST) for engaging aerial targets with a wide range of radar- and infrared-guided
+  missiles and its internal cannon. For air-to-surface attack, the Su-33 can be armed
+  with many types of unguided bombs, rockets, and cluster munitions.
+
+
+  Despite its large size, the Su-33 is very capable in a dogfight when combined with
+  its integral helmet-mounted sight and off-boresight missiles.'
+introduced: 1998
+manufacturer: Sukhoi
+origin: USSR/Russia
+price: 22
+role: Carrier-based Multirole Fighter
+variants:
+  J-15 Flanker X-2:
+    introduced: 2013
+    manufacturer: Shenyang
+    origin: China
+    role: Carrier-based Multirole Fighter
+  Su-33 Flanker-D: {}

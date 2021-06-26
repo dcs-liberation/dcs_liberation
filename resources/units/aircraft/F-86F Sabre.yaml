@@ -1,0 +1,16 @@
+always_keeps_gun: true
+description: "The North American F-86F Sabre was the most capable western fighter\
+  \ of the early- to mid-1950s. This swept wing, single engine jet was the most important\
+  \ western aircraft of the Korean War and often tangled with Russian-made MiG-15s\
+  \ over the infamous \u201CMiG Alley\u201D. It was a hard struggle not only for the\
+  \ Korean sky, but also between two excellent aircraft builders of the East and West.\
+  \ In addition to its primary role as an air-to-air fighter, the Sabre could also\
+  \ carry bombs and air-to-ground rockets to attack ground targets."
+introduced: 1953
+manufacturer: North American
+origin: USA
+price: 8
+role: Fighter
+gunfighter: true
+variants:
+  F-86F Sabre: {}

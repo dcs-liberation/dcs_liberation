@@ -123,6 +123,30 @@ const map = L.map("map", {
 }).setView([0, 0], 3);
 L.control.scale({ maxWidth: 200 }).addTo(map);
 
+const rulerOptions = {
+  position: 'topleft',
+  circleMarker: {
+    color: Colors.Highlight,
+    radius: 2
+  },
+  lineStyle: {
+    color: Colors.Highlight,
+    dashArray: '1,6'
+  },
+  lengthUnit: {
+    display: "nm",
+    decimal: "2",
+    factor: 0.539956803,
+    label: "Distance:"
+  },
+  angleUnit: {
+    display: '&deg;',
+    decimal: 0,
+    label: "Bearing:"
+  }
+};
+L.control.ruler(rulerOptions).addTo(map);
+
 // https://esri.github.io/esri-leaflet/api-reference/layers/basemap-layer.html
 const baseLayers = {
   "Imagery Clarity": L.esri.basemapLayer("ImageryClarity", { maxZoom: 17 }),
@@ -428,12 +452,14 @@ class ControlPoint {
     return L.polyline([this.cp.position, destination], {
       color: Colors.Green,
       weight: 1,
+      interactive: false,
     });
   }
 
   onDestinationChanged() {
     if (this.hasDestination()) {
       this.primaryMarker.setLatLng(this.cp.destination);
+      this.primaryMarker.setOpacity(0.5);
       this.secondaryMarker.addTo(controlPointsLayer);
       this.path.setLatLngs([this.cp.position, this.cp.destination]);
       this.path.addTo(controlPointsLayer);
@@ -441,6 +467,7 @@ class ControlPoint {
     } else {
       this.hideDestination();
       this.primaryMarker.setLatLng(this.cp.position);
+      this.primaryMarker.setOpacity(1);
     }
     this.attachTooltipsAndHandlers();
   }
@@ -519,6 +546,7 @@ class TheaterGroundObject {
         color: detectionColor,
         fill: false,
         weight: 1,
+        interactive: false,
       }).addTo(detectionLayer);
     });
 
@@ -528,6 +556,7 @@ class TheaterGroundObject {
         color: threatColor,
         fill: false,
         weight: 2,
+        interactive: false,
       }).addTo(threatLayer);
     });
   }
@@ -541,7 +570,7 @@ class TheaterGroundObject {
     }
 
     L.marker(this.tgo.position, { icon: this.icon() })
-      .bindTooltip(`${this.tgo.name}<br />${this.tgo.units.join("<br />")}`)
+      .bindTooltip(`${this.tgo.name} (${this.tgo.controlPointName})<br />${this.tgo.units.join("<br />")}`)
       .on("click", () => this.tgo.showInfoDialog())
       .on("contextmenu", () => this.tgo.showPackageDialog())
       .addTo(this.layer());
@@ -737,12 +766,15 @@ class Flight {
     const color = this.flight.blue ? Colors.Blue : Colors.Red;
     const layer = this.flightPlanLayer();
     if (this.flight.selected) {
-      this.path = L.polyline(path, { color: Colors.Highlight })
+      this.path = L.polyline(path, {
+        color: Colors.Highlight,
+        interactive: false,
+      })
         .addTo(selectedFlightPlansLayer)
         .addTo(layer)
         .addTo(allFlightPlansLayer);
     } else {
-      this.path = L.polyline(path, { color: color })
+      this.path = L.polyline(path, { color: color, interactive: false })
         .addTo(layer)
         .addTo(allFlightPlansLayer);
     }
@@ -760,6 +792,7 @@ class Flight {
         this.commitBoundary = L.polyline(this.flight.commitBoundary, {
           color: Colors.Highlight,
           weight: 1,
+          interactive: false,
         })
           .addTo(selectedFlightPlansLayer)
           .addTo(this.flightPlanLayer())
@@ -819,6 +852,7 @@ function _drawThreatZones(zones, layer, player) {
       fill: true,
       fillOpacity: 0.4,
       noClip: true,
+      interactive: false,
     }).addTo(layer);
   }
 }
@@ -874,6 +908,7 @@ function drawNavmesh(zones, layer) {
       color: "#000000",
       weight: 1,
       fill: false,
+      interactive: false,
     }).addTo(layer);
   }
 }
@@ -896,6 +931,7 @@ function drawMapZones() {
       color: "#344455",
       fillColor: "#344455",
       fillOpacity: 1,
+      interactive: false,
     }).addTo(seaZones);
   }
 
@@ -904,6 +940,7 @@ function drawMapZones() {
       color: "#969696",
       fillColor: "#4b4b4b",
       fillOpacity: 1,
+      interactive: false,
     }).addTo(inclusionZones);
   }
 
@@ -912,6 +949,7 @@ function drawMapZones() {
       color: "#969696",
       fillColor: "#303030",
       fillOpacity: 1,
+      interactive: false,
     }).addTo(exclusionZones);
   }
 }
@@ -923,7 +961,8 @@ function drawUnculledZones() {
     L.circle(zone.position, {
       radius: zone.radius,
       color: "#b4ff8c",
-      stroke: false,
+      fill: false,
+      interactive: false,
     }).addTo(unculledZones);
   }
 }

@@ -1,0 +1,18 @@
+class: Tank
+description: The M1 Abrams is a third-generation American main battle tank designed
+  by Chrysler Defense (now General Dynamics Land Systems)[9] and named for General
+  Creighton Abrams. Conceived for modern armored ground warfare and now one of the
+  heaviest tanks in service at nearly 68 short tons. The M1 Abrams entered service
+  in 1980 and currently serves as the main battle tank of the United States Army and
+  Marine Corps. The export version is used by the armies of Egypt, Kuwait, Saudi Arabia,
+  Australia, and Iraq. The Abrams was first used in combat in the Persian Gulf War
+  and has seen combat in both the War in Afghanistan and Iraq War under U.S. service,
+  while Iraqi Abrams tanks have seen action in the war against ISIL and have seen
+  use by Saudi Arabia during the Yemeni Civil War.
+introduced: 1992
+manufacturer: General Dynamics
+origin: USA
+price: 25
+role: Main Battle Tank
+variants:
+  M1A2 Abrams: {}

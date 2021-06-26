@@ -1,0 +1,14 @@
+class: Recon
+description: The Daimler Armoured Car was a successful British armoured car design
+  of the Second World War that continued in service into the 1950s. It was designed
+  for armed reconnaissance and liaison purposes. During the postwar era, it doubled
+  as an internal security vehicle in a number of countries. Former British Daimler
+  armoured cars were exported to various Commonwealth of Nations member states throughout
+  the 1950s and 1960s. In 2012, some were still being operated by the Qatari Army.
+introduced: 1941
+manufacturer: Daimler
+origin: UK
+price: 8
+role: Recon
+variants:
+  Daimler Armoured Car Mk I: {}

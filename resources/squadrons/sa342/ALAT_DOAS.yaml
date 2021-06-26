@@ -1,0 +1,9 @@
+---
+name: Détachement ALAT des opérations spéciales
+nickname: DOAS
+country: France
+role: Combat Helicopter
+aircraft: SA342Minigun
+livery: Combat
+mission_types:
+  - CAS

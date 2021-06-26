@@ -1,0 +1,33 @@
+always_keeps_gun: true
+description:
+  "The P-47 Thunderbolt, nicknamed the Jug, served the United States Army
+  Air Forces (USAAF) in World War II with distinction. In total 15,636 were built
+  between 1941 and 1945. France, the United Kingdom, the Soviet Union, Mexico and
+  Brazil also operated the P-47. It was armed with an impressive eight .50-caliber
+  machine guns with 425 rounds per gun. In addition the Jug was armed with bombs and
+  rockets and it excelled in the ground attack role. The P-47 also served in the bomber
+  escort role before the introduction of the P-51 Mustang which had longer range.
+
+
+  Powered by an R-2800-59 Double Wasp turbocharged radial engine, the aircraft enjoyed
+  exceptional power and durability. The Jug substantial weight gave it tremendous
+  dive speed acceleration but the aircraft suffered from quite low Mach limits and
+  hence the aircraft was equipped with dive flaps to avoid dangerous effects of compressibility.
+  The bubble canopy of the D version of the P-47 provided excellent all round visibility."
+introduced: 1944
+manufacturer: Republic
+origin: USA
+price: 6
+role: Fighter-Bomber
+gunfighter: true
+variants:
+  P-47D-40 Thunderbolt: {}
+  Thunderbolt Mk.II (Late): {}
+radios:
+  intra_flight: SCR522
+  inter_flight: SCR522
+  channels:
+    type: common
+    namer: SCR-522
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1

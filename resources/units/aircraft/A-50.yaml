@@ -1,0 +1,7 @@
+description: The A-50 is an AWACS plane.
+max_group_size: 1
+price: 50
+patrol:
+  altitude: 33000
+variants:
+  A-50: null

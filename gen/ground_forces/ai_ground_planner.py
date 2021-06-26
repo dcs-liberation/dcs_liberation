@@ -3,11 +3,9 @@ import random
 from enum import Enum
 from typing import Dict, List
 
-from dcs.unittype import VehicleType
-
-from game.theater import ControlPoint
-
 from game.data.groundunitclass import GroundUnitClass
+from game.dcs.groundunittype import GroundUnitType
+from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
 
 MAX_COMBAT_GROUP_PER_CP = 10
@@ -48,17 +46,19 @@ GROUP_SIZES_BY_COMBAT_STANCE = {
 
 
 class CombatGroup:
-    def __init__(self, role: CombatGroupRole):
-        self.units: List[VehicleType] = []
+    def __init__(
+        self, role: CombatGroupRole, unit_type: GroundUnitType, size: int
+    ) -> None:
+        self.unit_type = unit_type
+        self.size = size
         self.role = role
         self.assigned_enemy_cp = None
         self.start_position = None
 
     def __str__(self):
-        s = ""
-        s += "ROLE : " + str(self.role) + "\n"
-        if len(self.units) > 0:
-            s += "UNITS " + self.units[0].name + " * " + str(len(self.units))
+        s = f"ROLE : {self.role}\n"
+        if self.size:
+            s += f"UNITS {self.unit_type} * {self.size}"
         return s
 
 
@@ -97,28 +97,29 @@ class GroundPlanner:
 
         # Create combat groups and assign them randomly to each enemy CP
         for unit_type in self.cp.base.armor:
-            if unit_type in GroundUnitClass.Tank:
+            unit_class = unit_type.unit_class
+            if unit_class is GroundUnitClass.Tank:
                 collection = self.tank_groups
                 role = CombatGroupRole.TANK
-            elif unit_type in GroundUnitClass.Apc:
+            elif unit_class is GroundUnitClass.Apc:
                 collection = self.apc_group
                 role = CombatGroupRole.APC
-            elif unit_type in GroundUnitClass.Artillery:
+            elif unit_class is GroundUnitClass.Artillery:
                 collection = self.art_group
                 role = CombatGroupRole.ARTILLERY
-            elif unit_type in GroundUnitClass.Ifv:
+            elif unit_class is GroundUnitClass.Ifv:
                 collection = self.ifv_group
                 role = CombatGroupRole.IFV
-            elif unit_type in GroundUnitClass.Logistics:
+            elif unit_class is GroundUnitClass.Logistics:
                 collection = self.logi_groups
                 role = CombatGroupRole.LOGI
-            elif unit_type in GroundUnitClass.Atgm:
+            elif unit_class is GroundUnitClass.Atgm:
                 collection = self.atgm_group
                 role = CombatGroupRole.ATGM
-            elif unit_type in GroundUnitClass.Shorads:
+            elif unit_class is GroundUnitClass.Shorads:
                 collection = self.shorad_groups
                 role = CombatGroupRole.SHORAD
-            elif unit_type in GroundUnitClass.Recon:
+            elif unit_class is GroundUnitClass.Recon:
                 collection = self.recon_groups
                 role = CombatGroupRole.RECON
             else:
@@ -137,17 +138,17 @@ class GroundPlanner:
             while available > 0:
 
                 if role == CombatGroupRole.SHORAD:
-                    n = 1
+                    count = 1
                 else:
-                    n = random.choice(group_size_choice)
-                    if n > available:
+                    count = random.choice(group_size_choice)
+                    if count > available:
                         if available >= 2:
-                            n = 2
+                            count = 2
                         else:
-                            n = 1
-                available -= n
+                            count = 1
+                available -= count
 
-                group = CombatGroup(role)
+                group = CombatGroup(role, unit_type, count)
                 if len(self.connected_enemy_cp) > 0:
                     enemy_cp = random.choice(self.connected_enemy_cp).id
                     self.units_per_cp[enemy_cp].append(group)
@@ -155,9 +156,6 @@ class GroundPlanner:
                 else:
                     self.reserve.append(group)
                     group.assigned_enemy_cp = "__reserve__"
-
-                for i in range(n):
-                    group.units.append(unit_type)
                 collection.append(group)
 
             if remaining_available_frontline_units == 0:

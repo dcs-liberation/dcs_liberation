@@ -1,0 +1,14 @@
+---
+name: 106th Squadron
+nickname: Spearhead
+country: Israel
+role: Air Superiority Fighter
+aircraft: F-15C Eagle
+livery: 106th SQN (8th Airbase)
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+

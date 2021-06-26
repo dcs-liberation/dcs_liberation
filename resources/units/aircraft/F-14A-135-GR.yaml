@@ -1,0 +1,33 @@
+carrier_capable: true
+description:
+  "The Grumman F-14 Tomcat is a two-crew, variable wing-geometry, maritime\
+  \ air superiority fighter that served with the US Navy for 32 years and continues\
+  \ to serve with the IRIAF in Iran. The F-14 was the US Navy's frontline fighter\
+  \ from the 1970s to the mid-2000s. Over the course of its long service it also became\
+  \ one of the US Navy\u2019s premier precision ground-attack platform and its lone\
+  \ airborne reconnaissance asset.\n\nNoteworthy features of the Tomcat are its swing-wing\
+  \ configuration, two-man crew, and the powerful AN/AWG-9 Weapons Control System\
+  \ (WCS) and radar. The AWG-9 allows employment of the long-range AIM-54 Phoenix\
+  \ air-to-air missile, and the LANTIRN targeting pod allows precision ground strikes\
+  \ using laser-guided bombs. The F-14 Tomcat was present in several historic events\
+  \ that include the two Gulf of Sidra incidents, Operations Desert Storm Iraqi Freedom,\
+  \ the Yugoslavian conflict, and Operation Enduring Freedom over Afghanistan. It\
+  \ was also immortalized in the iconic motion picture, Top Gun, and starred in several\
+  \ other feature films including The Final Countdown, Executive Decision, and others.\n\
+  \nThe Tomcat was also played a vital role in the Iran-Iraq war of the 1980s, where\
+  \ is flew for the Islamic Republic of Iran Air Force."
+introduced: 1984
+manufacturer: Grumman
+origin: USA
+price: 22
+role: Carrier-based Air-Superiority Fighter/Fighter Bomber
+variants:
+  F-14A Tomcat (Block 135-GR Late): {}
+radios:
+  intra_flight: AN/ARC-182
+  inter_flight: AN/ARC-159
+  channels:
+    type: common
+    namer: tomcat
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1

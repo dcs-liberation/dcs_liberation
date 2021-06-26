@@ -1,0 +1,11 @@
+{
+  "name": "Syria - Full Map",
+  "theater": "Syria",
+  "authors": "Plob",
+  "recommended_player_faction": "Bluefor Modern",
+  "recommended_enemy_faction": "Syria 2011",
+  "description": "<p>A long campaign across the syria map, strap in.</p></p>Each turn after planning missions, enable culling to ensure correct culling behaviour.</p>",
+  "miz": "syria_full_map.miz",
+  "performance": 3,
+  "version": "7.0"
+}

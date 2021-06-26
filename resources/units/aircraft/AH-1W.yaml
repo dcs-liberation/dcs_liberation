@@ -1,0 +1,17 @@
+always_keeps_gun: true
+carrier_capable: true
+description: The AH-1 Cobra was developed in the mid-1960s as an interim gunship for
+  the U.S. Army for use during the Vietnam War. The Cobra shared the proven transmission,
+  rotor system, and the T53 turboshaft engine of the UH-1 'Huey'. By June 1967, the
+  first AH-1G HueyCobras had been delivered. Bell built 1,116 AH-1Gs for the U.S.
+  Army between 1967 and 1973, and the Cobras chalked up over a million operational
+  hours in Vietnam.
+introduced: 1986
+lha_capable: true
+manufacturer: Bell
+origin: USA
+price: 14
+role: Attack
+variants:
+  AH-1J SeaCobra: {}
+  AH-1W SuperCobra: {}

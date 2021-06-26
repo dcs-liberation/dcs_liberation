@@ -24,7 +24,7 @@ class ZU23UralGenerator(AirDefenseGroupGenerator):
         )
         for i, position in enumerate(positions):
             self.add_unit(
-                AirDefence.SPAAA_ZU_23_2_Mounted_Ural_375,
+                AirDefence.Ural_375_ZU_23,
                 "SPAA#" + str(i),
                 position[0],
                 position[1],

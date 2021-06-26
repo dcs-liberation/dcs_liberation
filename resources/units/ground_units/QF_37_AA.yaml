@@ -1,0 +1,14 @@
+class: SHORADS
+description: The QF 3.7-inch AA was Britain's primary heavy anti-aircraft gun during
+  World War II. It was roughly the equivalent of the German 88 mm FlaK and American
+  90 mm, but with a slightly larger calibre of 3.7 inches, approximately 94 mm. Production
+  began in 1937 and it was used throughout World War II in all theatres except the
+  Eastern Front. It remained in use after the war until AA guns were replaced by guided
+  missiles beginning in 1957.
+introduced: 1937
+manufacturer: Vickers
+origin: UK
+price: 10
+role: Anti-Aircraft Gun
+variants:
+  QF 3.7-inch AA Gun: {}

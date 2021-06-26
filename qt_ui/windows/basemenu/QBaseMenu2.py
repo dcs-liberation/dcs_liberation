@@ -118,18 +118,10 @@ class QBaseMenu2(QDialog):
 
     @property
     def cheat_capturable(self) -> bool:
-        if not self.game_model.game.settings.enable_base_capture_cheat:
-            return False
-        if self.cp.captured:
-            return False
-
-        for connected in self.cp.connected_points:
-            if connected.captured:
-                return True
-        return False
+        return self.game_model.game.settings.enable_base_capture_cheat
 
     def cheat_capture(self) -> None:
-        self.cp.capture(self.game_model.game, for_player=True)
+        self.cp.capture(self.game_model.game, for_player=not self.cp.captured)
         # Reinitialized ground planners and the like. The ATO needs to be reset because
         # missions planned against the flipped base are no longer valid.
         self.game_model.game.reset_ato()

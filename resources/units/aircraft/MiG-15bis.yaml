@@ -1,0 +1,23 @@
+always_keeps_gun: true
+description:
+  Developed in the years immediately following World War II, the MiG-15bis
+  was a first-generation jet fighter designed by the Mikoyan-Gurevich design bureau
+  of the Soviet Union. The MiG-15bis is a single engine, swept-wing jet that saw over
+  15,000 copies produced. The MiG-15 gained fame in the skies over Korea where it
+  battled the F-86 Sabre and other allied aircraft. It proved an excellent match to
+  the Sabre, and it often came down to the skill of the pilot that determined who
+  made it home and who was left dangling from a parachute. Having an excellent thrust-to-weight
+  ratio and good climbing characteristics, the MiG-15bis was also armed with two NR-23
+  23mm cannons and a single, powerful N-37 37mm cannon. Not surprisingly, it is considered
+  by many as one of the deadliest fighters of the era.
+introduced: 1950
+manufacturer: Mikoyan-Gurevich
+origin: USSR/Russia
+price: 8
+role: Fighter
+gunfighter: true
+variants:
+  MiG-15bis Fagot: {}
+radios:
+  intra_flight: RSI-6K HF
+  inter_flight: RSI-6K HF

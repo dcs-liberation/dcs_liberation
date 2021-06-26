@@ -3,13 +3,11 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.highdigitsams import highdigitsams
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.mb339.mb339 import MB_339PAN
 from pydcs_extensions.su57.su57 import Su_57
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
 
 MODDED_AIRPLANES = [
     A_4E_C,
-    MB_339PAN,
     Su_57,
     F_22A,
     Hercules,
@@ -51,6 +49,13 @@ MODDED_VEHICLES = [
     frenchpack.DIM__TOYOTA_GREEN,
     frenchpack.DIM__TOYOTA_DESERT,
     frenchpack.DIM__KAMIKAZE,
+    frenchpack.VBCI,
+    frenchpack.AMX_13_75mm,
+    frenchpack.AMX_13_90mm,
+    frenchpack.Char_T_62,
+    frenchpack.Char_T_64BV,
+    frenchpack.Char_T_72A,
+    frenchpack.KORNET_ATGM,
     highdigitsams.AAA_SON_9_Fire_Can,
     highdigitsams.AAA_100mm_KS_19,
     highdigitsams.SAM_SA_10B_S_300PS_54K6_CP,

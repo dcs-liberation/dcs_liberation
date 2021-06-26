@@ -3,40 +3,43 @@
   "name": "US Navy 1985",
   "authors": "HerrTom",
   "description": "<p>Highway to the Danger Zone! For Tomcat lovers.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
-    "AH_1W",
-    "F_4E",
-    "F_14A_135_GR",
-    "F_14B",
-    "S_3B",
-    "SH_60B",
-    "UH_1H"
+    "AH-1W SuperCobra",
+    "A-4E Skyhawk",
+    "F-14A Tomcat (Block 135-GR Late)",
+    "F-14B Tomcat",
+    "F-4E Phantom II",
+    "S-3B Viking",
+    "SH-60B Seahawk",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "S_3B_Tanker"
+    "S-3B Tanker"
   ],
   "frontline_units": [
-    "MBT_M60A3_Patton",
-    "APC_M113",
-    "Scout_HMMWV",
-    "SPAAA_Vulcan_M163"
+    "M1043 HMMWV (M2 HMG)",
+    "M113",
+    "M163 Vulcan Air Defense System",
+    "M60A3 \"Patton\""
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm",
-    "MLRS_M270_227mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "Mortar_2B11_120mm",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger",
+    "Mortar 2B11 120mm"
   ],
   "air_defenses": [
     "ChaparralGenerator",
@@ -44,16 +47,16 @@
     "VulcanGenerator"
   ],
   "aircraft_carrier": [
-    "CVN_74_John_C__Stennis"
+    "Stennis"
   ],
   "helicopter_carrier": [
-    "LHA_1_Tarawa"
+    "LHA_Tarawa"
   ],
   "destroyers": [
-    "FFG_Oliver_Hazzard_Perry"
+    "PERRY"
   ],
   "cruisers": [
-    "CG_Ticonderoga"
+    "TICONDEROG"
   ],
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
@@ -75,14 +78,14 @@
   "requirements": {},
   "doctrine": "coldwar",
   "liveries_overrides": {
-    "FA_18C_hornet": [
-      "VFA-37",
+    "F/A-18C Hornet (Lot 20)": [
       "VFA-106",
       "VFA-113",
       "VFA-122",
       "VFA-131",
       "VFA-192",
       "VFA-34",
+      "VFA-37",
       "VFA-83",
       "VFA-87",
       "VFA-97"

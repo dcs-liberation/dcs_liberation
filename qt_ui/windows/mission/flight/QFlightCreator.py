@@ -1,4 +1,3 @@
-import logging
 from typing import Optional, Type
 
 from PySide2.QtCore import Qt, Signal
@@ -148,6 +147,11 @@ class QFlightCreator(QDialog):
 
         self.on_departure_changed(self.departure.currentIndex())
 
+    def reject(self) -> None:
+        super().reject()
+        # Clear the roster to return pilots to the pool.
+        self.roster_editor.replace(None)
+
     def set_custom_name_text(self, text: str):
         self.custom_name_text = text
 
@@ -217,7 +221,7 @@ class QFlightCreator(QDialog):
 
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
-        self.close()
+        self.accept()
 
     def on_aircraft_changed(self, index: int) -> None:
         new_aircraft = self.aircraft_selector.itemData(index)
@@ -260,7 +264,12 @@ class QFlightCreator(QDialog):
             )
 
     def update_max_size(self, available: int) -> None:
-        self.flight_size_spinner.setMaximum(min(available, 4))
+        aircraft = self.aircraft_selector.currentData()
+        if aircraft is None:
+            self.flight_size_spinner.setMaximum(0)
+            return
+
+        self.flight_size_spinner.setMaximum(min(available, aircraft.max_group_size))
+
         if self.flight_size_spinner.maximum() >= 2:
-            if self.flight_size_spinner.value() < 2:
-                self.flight_size_spinner.setValue(2)
+            self.flight_size_spinner.setValue(2)

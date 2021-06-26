@@ -12,30 +12,17 @@ from dcs.action import AITaskPush, ActivateGroup
 from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
-from dcs.helicopters import UH_1H, helicopter_map
 from dcs.mapping import Point
 from dcs.mission import Mission, StartType
 from dcs.planes import (
     AJS37,
     B_17G,
     B_52H,
-    Bf_109K_4,
     C_101CC,
     C_101EB,
-    FW_190A8,
-    FW_190D9,
     F_14B,
-    I_16,
     JF_17,
-    Ju_88A4,
-    P_47D_30,
-    P_47D_30bl1,
-    P_47D_40,
-    P_51D,
-    P_51D_30_NA,
     PlaneType,
-    SpitfireLFMkIX,
-    SpitfireLFMkIXCW,
     Su_33,
     Tu_22M3,
 )
@@ -43,6 +30,7 @@ from dcs.point import MovingPoint, PointAction
 from dcs.task import (
     AWACS,
     AWACSTaskAction,
+    ActivateBeaconCommand,
     AntishipStrike,
     AttackGroup,
     Bombing,
@@ -61,8 +49,10 @@ from dcs.task import (
     OptReactOnThreat,
     OptRestrictJettison,
     OrbitAction,
+    Refueling,
     RunwayAttack,
     StartCommand,
+    Tanker,
     Targets,
     Transport,
     WeaponType,
@@ -72,15 +62,14 @@ from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
 from dcs.unit import Unit, Skill
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
-from dcs.unittype import FlyingType, UnitType
+from dcs.unittype import FlyingType
 
 from game import db
-from game.data.cap_capabilities_db import GUNFIGHTERS
 from game.data.weapons import Pylon
-from game.db import GUN_RELIANT_AIRFRAMES
+from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
 from game.settings import Settings
-from game.squadrons import Pilot, Squadron
+from game.squadrons import Pilot
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
@@ -101,15 +90,17 @@ from gen.flights.flight import (
     FlightWaypoint,
     FlightWaypointType,
 )
-from gen.radios import MHz, Radio, RadioFrequency, RadioRegistry, get_radio
+from gen.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
-from .airsupportgen import AirSupport, AwacsInfo
+from gen.tacan import TacanBand, TacanRegistry
+from .airsupportgen import AirSupport, AwacsInfo, TankerInfo
 from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
     AwacsFlightPlan,
     CasFlightPlan,
     LoiterFlightPlan,
     PatrollingFlightPlan,
+    RefuelingFlightPlan,
     SweepFlightPlan,
 )
 from .flights.traveltime import GroundSpeed, TotEstimator
@@ -125,136 +116,11 @@ RTB_ALTITUDE = meters(800)
 RTB_DISTANCE = 5000
 HELI_ALT = 500
 
-# Note that fallback radio channels will *not* be reserved. It's possible that
-# flights using these will overlap with other channels. This is because we would
-# need to make sure we fell back to a frequency that is not used by any beacon
-# or ATC, which we don't have the information to predict. Deal with the minor
-# annoyance for now since we'll be fleshing out radio info soon enough.
-ALLIES_WW2_CHANNEL = MHz(124)
-GERMAN_WW2_CHANNEL = MHz(40)
-HELICOPTER_CHANNEL = MHz(127)
-UHF_FALLBACK_CHANNEL = MHz(251)
-
 TARGET_WAYPOINTS = (
     FlightWaypointType.TARGET_GROUP_LOC,
     FlightWaypointType.TARGET_POINT,
     FlightWaypointType.TARGET_SHIP,
 )
-
-
-# TODO: Get radio information for all the special cases.
-def get_fallback_channel(unit_type: UnitType) -> RadioFrequency:
-    if unit_type in helicopter_map.values() and unit_type != UH_1H:
-        return HELICOPTER_CHANNEL
-
-    german_ww2_aircraft = [
-        Bf_109K_4,
-        FW_190A8,
-        FW_190D9,
-        Ju_88A4,
-    ]
-
-    if unit_type in german_ww2_aircraft:
-        return GERMAN_WW2_CHANNEL
-
-    allied_ww2_aircraft = [
-        I_16,
-        P_47D_30,
-        P_47D_30bl1,
-        P_47D_40,
-        P_51D,
-        P_51D_30_NA,
-        SpitfireLFMkIX,
-        SpitfireLFMkIXCW,
-    ]
-
-    if unit_type in allied_ww2_aircraft:
-        return ALLIES_WW2_CHANNEL
-
-    return UHF_FALLBACK_CHANNEL
-
-
-class ChannelNamer:
-    """Base class allowing channel name customization per-aircraft.
-
-    Most aircraft will want to customize this behavior, but the default is
-    reasonable for any aircraft with numbered radios.
-    """
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        """Returns the name of the channel for the given radio and channel."""
-        return f"COMM{radio_id} Ch {channel_id}"
-
-
-class SingleRadioChannelNamer(ChannelNamer):
-    """Channel namer for the aircraft with only a single radio.
-
-    Aircraft like the MiG-19P and the MiG-21bis only have a single radio, so
-    it's not necessary for us to name the radio when naming the channel.
-    """
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        return f"Ch {channel_id}"
-
-
-class HueyChannelNamer(ChannelNamer):
-    """Channel namer for the UH-1H."""
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        return f"COM3 Ch {channel_id}"
-
-
-class MirageChannelNamer(ChannelNamer):
-    """Channel namer for the M-2000."""
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        radio_name = ["V/UHF", "UHF"][radio_id - 1]
-        return f"{radio_name} Ch {channel_id}"
-
-
-class TomcatChannelNamer(ChannelNamer):
-    """Channel namer for the F-14."""
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        radio_name = ["UHF", "VHF/UHF"][radio_id - 1]
-        return f"{radio_name} Ch {channel_id}"
-
-
-class ViggenChannelNamer(ChannelNamer):
-    """Channel namer for the AJS37."""
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        if channel_id >= 4:
-            channel_letter = "EFGH"[channel_id - 4]
-            return f"FR 24 {channel_letter}"
-        return f"FR 22 Special {channel_id}"
-
-
-class ViperChannelNamer(ChannelNamer):
-    """Channel namer for the F-16."""
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        return f"COM{radio_id} Ch {channel_id}"
-
-
-class SCR522ChannelNamer(ChannelNamer):
-    """
-    Channel namer for P-51 & P-47D
-    """
-
-    @staticmethod
-    def channel_name(radio_id: int, channel_id: int) -> str:
-        if channel_id > 3:
-            return "?"
-        else:
-            return f"Button " + "ABCD"[channel_id - 1]
 
 
 @dataclass(frozen=True)
@@ -269,9 +135,6 @@ class FlightData:
 
     #: The package that the flight belongs to.
     package: Package
-
-    #: The country that the flight belongs to.
-    country: str
 
     flight_type: FlightType
 
@@ -313,7 +176,7 @@ class FlightData:
     def __init__(
         self,
         package: Package,
-        country: str,
+        aircraft_type: AircraftType,
         flight_type: FlightType,
         units: List[FlyingUnit],
         size: int,
@@ -329,7 +192,7 @@ class FlightData:
         custom_name: Optional[str],
     ) -> None:
         self.package = package
-        self.country = country
+        self.aircraft_type = aircraft_type
         self.flight_type = flight_type
         self.units = units
         self.size = size
@@ -350,11 +213,6 @@ class FlightData:
     def client_units(self) -> List[FlyingUnit]:
         """List of playable units in the flight."""
         return [u for u in self.units if u.is_human()]
-
-    @property
-    def aircraft_type(self) -> FlyingType:
-        """Returns the type of aircraft in this flight."""
-        return self.units[0].unit_type
 
     def num_radio_channels(self, radio_id: int) -> int:
         """Returns the number of preset channels for the given radio."""
@@ -381,302 +239,6 @@ class FlightData:
             )
 
 
-class RadioChannelAllocator:
-    """Base class for radio channel allocators."""
-
-    def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
-    ) -> None:
-        """Assigns mission frequencies to preset channels for the flight."""
-        raise NotImplementedError
-
-
-@dataclass(frozen=True)
-class CommonRadioChannelAllocator(RadioChannelAllocator):
-    """Radio channel allocator suitable for most aircraft.
-
-    Most of the aircraft with preset channels available have one or more radios
-    with 20 or more channels available (typically per-radio, but this is not the
-    case for the JF-17).
-    """
-
-    #: Index of the radio used for intra-flight communications. Matches the
-    #: index of the panel_radio field of the pydcs.dcs.planes object.
-    inter_flight_radio_index: Optional[int]
-
-    #: Index of the radio used for intra-flight communications. Matches the
-    #: index of the panel_radio field of the pydcs.dcs.planes object.
-    intra_flight_radio_index: Optional[int]
-
-    def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
-    ) -> None:
-        if self.intra_flight_radio_index is not None:
-            flight.assign_channel(
-                self.intra_flight_radio_index, 1, flight.intra_flight_channel
-            )
-
-        if self.inter_flight_radio_index is None:
-            return
-
-        # For cases where the inter-flight and intra-flight radios share presets
-        # (the JF-17 only has one set of channels, even though it can use two
-        # channels simultaneously), start assigning inter-flight channels at 2.
-        radio_id = self.inter_flight_radio_index
-        if self.intra_flight_radio_index == radio_id:
-            first_channel = 2
-        else:
-            first_channel = 1
-
-        last_channel = flight.num_radio_channels(radio_id)
-        channel_alloc = iter(range(first_channel, last_channel + 1))
-
-        if flight.departure.atc is not None:
-            flight.assign_channel(radio_id, next(channel_alloc), flight.departure.atc)
-
-        # TODO: If there ever are multiple AWACS, limit to mission relevant.
-        for awacs in air_support.awacs:
-            flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
-
-        if flight.arrival != flight.departure and flight.arrival.atc is not None:
-            flight.assign_channel(radio_id, next(channel_alloc), flight.arrival.atc)
-
-        try:
-            # TODO: Skip incompatible tankers.
-            for tanker in air_support.tankers:
-                flight.assign_channel(radio_id, next(channel_alloc), tanker.freq)
-
-            if flight.divert is not None and flight.divert.atc is not None:
-                flight.assign_channel(radio_id, next(channel_alloc), flight.divert.atc)
-        except StopIteration:
-            # Any remaining channels are nice-to-haves, but not necessary for
-            # the few aircraft with a small number of channels available.
-            pass
-
-
-@dataclass(frozen=True)
-class NoOpChannelAllocator(RadioChannelAllocator):
-    """Channel allocator for aircraft that don't support preset channels."""
-
-    def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
-    ) -> None:
-        pass
-
-
-@dataclass(frozen=True)
-class FarmerRadioChannelAllocator(RadioChannelAllocator):
-    """Preset channel allocator for the MiG-19P."""
-
-    def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
-    ) -> None:
-        # The Farmer only has 6 preset channels. It also only has a VHF radio,
-        # and currently our ATC data and AWACS are only in the UHF band.
-        radio_id = 1
-        flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
-        # TODO: Assign 4-6 to VHF frequencies of departure, arrival, and divert.
-        # TODO: Assign 2 and 3 to AWACS if it is VHF.
-
-
-@dataclass(frozen=True)
-class ViggenRadioChannelAllocator(RadioChannelAllocator):
-    """Preset channel allocator for the AJS37."""
-
-    def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
-    ) -> None:
-        # The Viggen's preset channels are handled differently from other
-        # aircraft. The aircraft automatically configures channels for every
-        # allied flight in the game (including AWACS) and for every airfield. As
-        # such, we don't need to allocate any of those. There are seven presets
-        # we can modify, however: three channels for the main radio intended for
-        # communication with wingmen, and four emergency channels for the backup
-        # radio. We'll set the first channel of the main radio to the
-        # intra-flight channel, and the first three emergency channels to each
-        # of the flight plan's airfields. The fourth emergency channel is always
-        # the guard channel.
-        radio_id = 1
-        flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
-        if flight.departure.atc is not None:
-            flight.assign_channel(radio_id, 4, flight.departure.atc)
-        if flight.arrival.atc is not None:
-            flight.assign_channel(radio_id, 5, flight.arrival.atc)
-        # TODO: Assign divert to 6 when we support divert airfields.
-
-
-@dataclass(frozen=True)
-class SCR522RadioChannelAllocator(RadioChannelAllocator):
-    """Preset channel allocator for the SCR522 WW2 radios. (4 channels)"""
-
-    def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
-    ) -> None:
-        radio_id = 1
-        flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
-        if flight.departure.atc is not None:
-            flight.assign_channel(radio_id, 2, flight.departure.atc)
-        if flight.arrival.atc is not None:
-            flight.assign_channel(radio_id, 3, flight.arrival.atc)
-
-        # TODO : Some GCI on Channel 4 ?
-
-
-@dataclass(frozen=True)
-class AircraftData:
-    """Additional aircraft data not exposed by pydcs."""
-
-    #: The type of radio used for inter-flight communications.
-    inter_flight_radio: Radio
-
-    #: The type of radio used for intra-flight communications.
-    intra_flight_radio: Radio
-
-    #: The radio preset channel allocator, if the aircraft supports channel
-    #: presets. If the aircraft does not support preset channels, this will be
-    #: None.
-    channel_allocator: Optional[RadioChannelAllocator]
-
-    #: Defines how channels should be named when printed in the kneeboard.
-    channel_namer: Type[ChannelNamer] = ChannelNamer
-
-
-# Indexed by the id field of the pydcs PlaneType.
-AIRCRAFT_DATA: Dict[str, AircraftData] = {
-    "A-10C": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-164"),
-        # VHF for intraflight is not accepted anymore by DCS
-        # (see https://forums.eagle.ru/showthread.php?p=4499738).
-        intra_flight_radio=get_radio("AN/ARC-164"),
-        channel_allocator=NoOpChannelAllocator(),
-    ),
-    "AJS37": AircraftData(
-        # The AJS37 has somewhat unique radio configuration. Two backup radio
-        # (FR 24) can only operate simultaneously with the main radio in guard
-        # mode. As such, we only use the main radio for both inter- and intra-
-        # flight communication.
-        inter_flight_radio=get_radio("FR 22"),
-        intra_flight_radio=get_radio("FR 22"),
-        channel_allocator=ViggenRadioChannelAllocator(),
-        channel_namer=ViggenChannelNamer,
-    ),
-    "AV8BNA": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-210"),
-        intra_flight_radio=get_radio("AN/ARC-210"),
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=2, intra_flight_radio_index=1
-        ),
-    ),
-    "F-14B": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-159"),
-        intra_flight_radio=get_radio("AN/ARC-182"),
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=1, intra_flight_radio_index=2
-        ),
-        channel_namer=TomcatChannelNamer,
-    ),
-    "F-16C_50": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-164"),
-        intra_flight_radio=get_radio("AN/ARC-222"),
-        # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
-        # intra-flight communication to leave COM1 open for UHF inter-flight.
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=1, intra_flight_radio_index=2
-        ),
-        channel_namer=ViperChannelNamer,
-    ),
-    "FA-18C_hornet": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-210"),
-        intra_flight_radio=get_radio("AN/ARC-210"),
-        # DCS will clobber channel 1 of the first radio compatible with the
-        # flight's assigned frequency. Since the F/A-18's two radios are both
-        # AN/ARC-210s, radio 1 will be compatible regardless of which frequency
-        # is assigned, so we must use radio 1 for the intra-flight radio.
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=2, intra_flight_radio_index=1
-        ),
-    ),
-    "JF-17": AircraftData(
-        inter_flight_radio=get_radio("R&S M3AR UHF"),
-        intra_flight_radio=get_radio("R&S M3AR VHF"),
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=1, intra_flight_radio_index=1
-        ),
-        # Same naming pattern as the Viper, so just reuse that.
-        channel_namer=ViperChannelNamer,
-    ),
-    "Ka-50": AircraftData(
-        inter_flight_radio=get_radio("R-800L1"),
-        intra_flight_radio=get_radio("R-800L1"),
-        # The R-800L1 doesn't have preset channels, and the other radio is for
-        # communications with FAC and ground units, which don't currently have
-        # radios assigned, so no channels to configure.
-        channel_allocator=NoOpChannelAllocator(),
-    ),
-    "M-2000C": AircraftData(
-        inter_flight_radio=get_radio("TRT ERA 7000 V/UHF"),
-        intra_flight_radio=get_radio("TRT ERA 7200 UHF"),
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=1, intra_flight_radio_index=2
-        ),
-        channel_namer=MirageChannelNamer,
-    ),
-    "MiG-15bis": AircraftData(
-        inter_flight_radio=get_radio("RSI-6K HF"),
-        intra_flight_radio=get_radio("RSI-6K HF"),
-        channel_allocator=NoOpChannelAllocator(),
-    ),
-    "MiG-19P": AircraftData(
-        inter_flight_radio=get_radio("RSIU-4V"),
-        intra_flight_radio=get_radio("RSIU-4V"),
-        channel_allocator=FarmerRadioChannelAllocator(),
-        channel_namer=SingleRadioChannelNamer,
-    ),
-    "MiG-21Bis": AircraftData(
-        inter_flight_radio=get_radio("RSIU-5V"),
-        intra_flight_radio=get_radio("RSIU-5V"),
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=1, intra_flight_radio_index=1
-        ),
-        channel_namer=SingleRadioChannelNamer,
-    ),
-    "P-51D": AircraftData(
-        inter_flight_radio=get_radio("SCR522"),
-        intra_flight_radio=get_radio("SCR522"),
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=1, intra_flight_radio_index=1
-        ),
-        channel_namer=SCR522ChannelNamer,
-    ),
-    "UH-1H": AircraftData(
-        inter_flight_radio=get_radio("AN/ARC-51BX"),
-        # Ideally this would use the AN/ARC-131 because that radio is supposed
-        # to be used for flight comms, but DCS won't allow it as the flight's
-        # frequency, nor will it allow the AN/ARC-134.
-        intra_flight_radio=get_radio("AN/ARC-51BX"),
-        channel_allocator=CommonRadioChannelAllocator(
-            inter_flight_radio_index=1, intra_flight_radio_index=1
-        ),
-        channel_namer=HueyChannelNamer,
-    ),
-    "F-22A": AircraftData(
-        inter_flight_radio=get_radio("SCR-522"),
-        intra_flight_radio=get_radio("SCR-522"),
-        channel_allocator=None,
-        channel_namer=SCR522ChannelNamer,
-    ),
-    "JAS39Gripen": AircraftData(
-        inter_flight_radio=get_radio("R&S Series 6000"),
-        intra_flight_radio=get_radio("R&S Series 6000"),
-        channel_allocator=None,
-    ),
-}
-AIRCRAFT_DATA["A-10C_2"] = AIRCRAFT_DATA["A-10C"]
-AIRCRAFT_DATA["P-51D-30-NA"] = AIRCRAFT_DATA["P-51D"]
-AIRCRAFT_DATA["P-47D-30"] = AIRCRAFT_DATA["P-51D"]
-AIRCRAFT_DATA["JAS39Gripen_AG"] = AIRCRAFT_DATA["JAS39Gripen"]
-
-
 class AircraftConflictGenerator:
     def __init__(
         self,
@@ -684,6 +246,7 @@ class AircraftConflictGenerator:
         settings: Settings,
         game: Game,
         radio_registry: RadioRegistry,
+        tacan_registry: TacanRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
     ) -> None:
@@ -691,6 +254,7 @@ class AircraftConflictGenerator:
         self.game = game
         self.settings = settings
         self.radio_registry = radio_registry
+        self.tacan_registy = tacan_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
         self.air_support = air_support
@@ -709,21 +273,6 @@ class AircraftConflictGenerator:
             for flight in package.flights:
                 total += flight.client_count
         return total
-
-    def get_intra_flight_channel(self, airframe: UnitType) -> RadioFrequency:
-        """Allocates an intra-flight channel to a group.
-
-        Args:
-            airframe: The type of aircraft a channel should be allocated for.
-
-        Returns:
-            The frequency of the intra-flight channel.
-        """
-        try:
-            aircraft_data = AIRCRAFT_DATA[airframe.id]
-            return self.radio_registry.alloc_for_radio(aircraft_data.intra_flight_radio)
-        except KeyError:
-            return get_fallback_channel(airframe)
 
     @staticmethod
     def _start_type(start_type: str) -> StartType:
@@ -754,7 +303,10 @@ class AircraftConflictGenerator:
         current_level = levels.index(base_skill)
         missions_for_skill_increase = 4
         increase = pilot.record.missions_flown // missions_for_skill_increase
-        new_level = min(current_level + increase, len(levels) - 1)
+        capped_increase = min(current_level + increase, len(levels) - 1)
+        new_level = (capped_increase, current_level)[
+            self.game.settings.ai_pilot_levelling
+        ]
         return levels[new_level]
 
     def set_skill(self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool) -> None:
@@ -824,10 +376,13 @@ class AircraftConflictGenerator:
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
         )
 
-        if flight.flight_type == FlightType.AEWC:
+        if (
+            flight.flight_type == FlightType.AEWC
+            or flight.flight_type == FlightType.REFUELING
+        ):
             channel = self.radio_registry.alloc_uhf()
         else:
-            channel = self.get_intra_flight_channel(unit_type)
+            channel = flight.unit_type.alloc_flight_radio(self.radio_registry)
         group.set_frequency(channel.mhz)
 
         divert = None
@@ -837,7 +392,7 @@ class AircraftConflictGenerator:
         self.flights.append(
             FlightData(
                 package=package,
-                country=self.game.faction_for(player=flight.departure.captured).country,
+                aircraft_type=flight.unit_type,
                 flight_type=flight.flight_type,
                 units=group.units,
                 size=len(group.units),
@@ -875,6 +430,23 @@ class AircraftConflictGenerator:
                     depature_location=flight.departure.name,
                     end_time=flight.flight_plan.mission_departure_time,
                     start_time=flight.flight_plan.mission_start_time,
+                    blue=flight.departure.captured,
+                )
+            )
+
+        if isinstance(flight.flight_plan, RefuelingFlightPlan):
+            callsign = callsign_for_support_unit(group)
+
+            tacan = self.tacan_registy.alloc_for_band(TacanBand.Y)
+            self.air_support.tankers.append(
+                TankerInfo(
+                    group_name=str(group.name),
+                    callsign=callsign,
+                    variant=flight.unit_type.name,
+                    freq=channel,
+                    tacan=tacan,
+                    start_time=flight.flight_plan.patrol_start_time,
+                    end_time=flight.flight_plan.patrol_end_time,
                     blue=flight.departure.captured,
                 )
             )
@@ -929,7 +501,7 @@ class AircraftConflictGenerator:
         group = self.m.flight_group(
             country=side,
             name=name,
-            aircraft_type=flight.unit_type,
+            aircraft_type=flight.unit_type.dcs_unit_type,
             airport=None,
             position=pos,
             altitude=alt.meters,
@@ -1063,7 +635,7 @@ class AircraftConflictGenerator:
         control_point: Airfield,
         country: Country,
         faction: Faction,
-        aircraft: Type[FlyingType],
+        aircraft: AircraftType,
         number: int,
     ) -> None:
         for _ in range(number):
@@ -1085,7 +657,7 @@ class AircraftConflictGenerator:
             group = self._generate_at_airport(
                 name=namegen.next_aircraft_name(country, control_point.id, flight),
                 side=country,
-                unit_type=aircraft,
+                unit_type=aircraft.dcs_unit_type,
                 count=1,
                 start_type="Cold",
                 airport=control_point.airport,
@@ -1159,7 +731,7 @@ class AircraftConflictGenerator:
                 group = self._generate_at_group(
                     name=name,
                     side=country,
-                    unit_type=flight.unit_type,
+                    unit_type=flight.unit_type.dcs_unit_type,
                     count=flight.count,
                     start_type=flight.start_type,
                     at=self.m.find_group(group_name),
@@ -1172,7 +744,7 @@ class AircraftConflictGenerator:
                 group = self._generate_at_airport(
                     name=name,
                     side=country,
-                    unit_type=flight.unit_type,
+                    unit_type=flight.unit_type.dcs_unit_type,
                     count=flight.count,
                     start_type=flight.start_type,
                     airport=cp.airport,
@@ -1214,7 +786,7 @@ class AircraftConflictGenerator:
         if flight.client_count > 0:
             return True
 
-        return flight.unit_type in GUN_RELIANT_AIRFRAMES
+        return flight.unit_type.always_keeps_gun
 
     def configure_behavior(
         self,
@@ -1253,9 +825,8 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def configure_eplrs(group: FlyingGroup, flight: Flight) -> None:
-        if hasattr(flight.unit_type, "eplrs"):
-            if flight.unit_type.eplrs:
-                group.points[0].tasks.append(EPLRS(group.id))
+        if flight.unit_type.eplrs_capable:
+            group.points[0].tasks.append(EPLRS(group.id))
 
     def configure_cap(
         self,
@@ -1267,7 +838,7 @@ class AircraftConflictGenerator:
         group.task = CAP.name
         self._setup_group(group, package, flight, dynamic_runways)
 
-        if flight.unit_type not in GUNFIGHTERS:
+        if not flight.unit_type.gunfighter:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
@@ -1284,7 +855,7 @@ class AircraftConflictGenerator:
         group.task = FighterSweep.name
         self._setup_group(group, package, flight, dynamic_runways)
 
-        if flight.unit_type not in GUNFIGHTERS:
+        if not flight.unit_type.gunfighter:
             ammo_type = OptRTBOnOutOfAmmo.Values.AAM
         else:
             ammo_type = OptRTBOnOutOfAmmo.Values.Cannon
@@ -1457,6 +1028,32 @@ class AircraftConflictGenerator:
 
         group.points[0].tasks.append(AWACSTaskAction())
 
+    def configure_refueling(
+        self,
+        group: FlyingGroup,
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        group.task = Refueling.name
+
+        if not isinstance(flight.flight_plan, RefuelingFlightPlan):
+            logging.error(
+                f"Cannot configure racetrack refueling tasks for {flight} because it "
+                "does not have an racetrack refueling flight plan."
+            )
+            return
+
+        self._setup_group(group, package, flight, dynamic_runways)
+
+        self.configure_behavior(
+            flight,
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True,
+        )
+
     def configure_escort(
         self,
         group: FlyingGroup,
@@ -1535,6 +1132,8 @@ class AircraftConflictGenerator:
             self.configure_sweep(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.AEWC:
             self.configure_awacs(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.REFUELING:
+            self.configure_refueling(group, package, flight, dynamic_runways)
         elif flight_type in [FlightType.CAS, FlightType.BAI]:
             self.configure_cas(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.DEAD:
@@ -1581,7 +1180,7 @@ class AircraftConflictGenerator:
         # under the current flight plans.
         # TODO: Make this smarter, it currently selects a random unit in the group for target,
         # this could be updated to make it pick the "best" two targets in the group.
-        if flight.unit_type is AJS37 and flight.client_count:
+        if flight.unit_type.dcs_unit_type is AJS37 and flight.client_count:
             viggen_target_points = [
                 (idx, point)
                 for idx, point in enumerate(filtered_points)
@@ -1602,7 +1201,7 @@ class AircraftConflictGenerator:
 
         for idx, point in enumerate(filtered_points):
             PydcsWaypointBuilder.for_waypoint(
-                point, group, package, flight, self.m
+                point, group, package, flight, self.m, self.air_support
             ).build()
 
         # Set here rather than when the FlightData is created so they waypoints
@@ -1676,12 +1275,14 @@ class PydcsWaypointBuilder:
         package: Package,
         flight: Flight,
         mission: Mission,
+        air_support: AirSupport,
     ) -> None:
         self.waypoint = waypoint
         self.group = group
         self.package = package
         self.flight = flight
         self.mission = mission
+        self.air_support = air_support
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
@@ -1717,6 +1318,7 @@ class PydcsWaypointBuilder:
         package: Package,
         flight: Flight,
         mission: Mission,
+        air_support: AirSupport,
     ) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.DROP_OFF: CargoStopBuilder,
@@ -1736,15 +1338,16 @@ class PydcsWaypointBuilder:
             FlightWaypointType.PICKUP: CargoStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
-        return builder(waypoint, group, package, flight, mission)
+        return builder(waypoint, group, package, flight, mission, air_support)
 
     def _viggen_client_tot(self) -> bool:
         """Viggen player aircraft consider any waypoint with a TOT set to be a target ("M") waypoint.
         If the flight is a player controlled Viggen flight, no TOT should be set on any waypoint except actual target waypoints.
         """
-        if (self.flight.client_count > 0 and self.flight.unit_type == AJS37) and (
-            self.waypoint.waypoint_type not in TARGET_WAYPOINTS
-        ):
+        if (
+            self.flight.client_count > 0
+            and self.flight.unit_type.dcs_unit_type == AJS37
+        ) and (self.waypoint.waypoint_type not in TARGET_WAYPOINTS):
             return True
         else:
             return False
@@ -2119,6 +1722,8 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         # is their first priority and they will not engage any targets because
         # they're fully focused on orbiting. If the STE task is first, they will
         # engage targets if available and orbit if they find nothing to shoot.
+        if self.flight.flight_type is FlightType.REFUELING:
+            self.configure_refueling_actions(waypoint)
 
         # TODO: Move the properties of this task into the flight plan?
         # CAP is the only current user of this so it's not a big deal, but might
@@ -2133,16 +1738,47 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
                 )
             )
 
-        racetrack = ControlledTask(
-            OrbitAction(
+        # TODO: Set orbit speeds for all race tracks and remove this special case.
+        if isinstance(flight_plan, RefuelingFlightPlan):
+            orbit = OrbitAction(
+                altitude=waypoint.alt,
+                pattern=OrbitAction.OrbitPattern.RaceTrack,
+                speed=int(flight_plan.patrol_speed.kph),
+            )
+        else:
+            orbit = OrbitAction(
                 altitude=waypoint.alt, pattern=OrbitAction.OrbitPattern.RaceTrack
             )
-        )
+
+        racetrack = ControlledTask(orbit)
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
         racetrack.stop_after_time(int(flight_plan.patrol_end_time.total_seconds()))
         waypoint.add_task(racetrack)
 
         return waypoint
+
+    def configure_refueling_actions(self, waypoint: MovingPoint) -> None:
+        waypoint.add_task(Tanker())
+
+        if self.flight.unit_type.dcs_unit_type.tacan:
+            tanker_info = self.air_support.tankers[-1]
+            tacan = tanker_info.tacan
+            tacan_callsign = {
+                "Texaco": "TEX",
+                "Arco": "ARC",
+                "Shell": "SHL",
+            }.get(tanker_info.callsign)
+
+            waypoint.add_task(
+                ActivateBeaconCommand(
+                    tacan.number,
+                    tacan.band.value,
+                    tacan_callsign,
+                    bearing=True,
+                    unit_id=self.group.units[0].id,
+                    aa=True,
+                )
+            )
 
 
 class RaceTrackEndBuilder(PydcsWaypointBuilder):

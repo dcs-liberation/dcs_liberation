@@ -1,0 +1,17 @@
+always_keeps_gun: true
+description: The Douglas A-20 Havoc (company designation DB-7) is an American medium
+  bomber, attack aircraft, night intruder, night fighter, and reconnaissance aircraft
+  of World War II. Designed to meet an Army Air Corps requirement for a bomber, it
+  was ordered by France for their air force before the USAAC decided it would also
+  meet their requirements. French DB-7s were the first to see combat; after the fall
+  of France the bomber, under the service name Boston continued with the Royal Air
+  Force. From 1941, night fighter and intruder versions were given the service name
+  Havoc. In 1942 USAAF A-20s saw combat in North Africa.
+introduced: 1943
+manufacturer: Douglas
+origin: USA
+price: 12
+role: Medium Bomber/Attack
+variants:
+  A-20G Havoc: {}
+  Boston Mk.III: {}

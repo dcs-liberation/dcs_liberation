@@ -16,13 +16,14 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 from dcs import Point
+from dcs import vehicles
 
-from game import Game, db
+from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.db import PRICES, PinpointStrike, REWARDS, unit_type_of
+from game.db import REWARDS
+from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
-    NavalGroundObject,
     VehicleGroupGroundObject,
     SamGroundObject,
     EwrGroundObject,
@@ -35,7 +36,6 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
-from dcs import vehicles
 
 
 class QGroundObjectMenu(QDialog):
@@ -56,7 +56,9 @@ class QGroundObjectMenu(QDialog):
             self.buildings = buildings
         self.cp = cp
         self.game = game
-        self.setWindowTitle("Location " + self.ground_object.obj_name)
+        self.setWindowTitle(
+            f"Location - {self.ground_object.obj_name} ({self.cp.name})"
+        )
         self.setWindowIcon(EVENT_ICONS["capture"])
         self.intelBox = QGroupBox("Units :")
         self.buildingBox = QGroupBox("Buildings :")
@@ -109,17 +111,21 @@ class QGroundObjectMenu(QDialog):
         for g in self.ground_object.groups:
             if not hasattr(g, "units_losts"):
                 g.units_losts = []
-            for u in g.units:
-                unit_display_name = u.type
-                unit_type = vehicles.vehicle_map.get(u.type)
-                if unit_type is not None:
-                    unit_display_name = db.unit_get_expanded_info(
-                        self.game.enemy_country, unit_type, "name"
-                    )
+            for unit in g.units:
+                unit_display_name = unit.type
+                dcs_unit_type = vehicles.vehicle_map.get(unit.type)
+                if dcs_unit_type is not None:
+                    # Hack: Don't know which variant is used.
+                    try:
+                        unit_display_name = next(
+                            GroundUnitType.for_dcs_type(dcs_unit_type)
+                        ).name
+                    except StopIteration:
+                        pass
                 self.intelLayout.addWidget(
                     QLabel(
                         "<b>Unit #"
-                        + str(u.id)
+                        + str(unit.id)
                         + " - "
                         + str(unit_display_name)
                         + "</b>"
@@ -129,26 +135,29 @@ class QGroundObjectMenu(QDialog):
                 )
                 i = i + 1
 
-            for u in g.units_losts:
+            for unit in g.units_losts:
+                dcs_unit_type = vehicles.vehicle_map.get(unit.type)
+                if dcs_unit_type is None:
+                    continue
 
-                utype = unit_type_of(u)
-                if utype in PRICES:
-                    price = PRICES[utype]
-                else:
-                    price = 6
+                # Hack: Don't know which variant is used.
+
+                try:
+                    unit_type = next(GroundUnitType.for_dcs_type(dcs_unit_type))
+                    name = unit_type.name
+                    price = unit_type.price
+                except StopIteration:
+                    name = dcs_unit_type.name
+                    price = 0
 
                 self.intelLayout.addWidget(
-                    QLabel(
-                        "<b>Unit #" + str(u.id) + " - " + str(u.type) + "</b> [DEAD]"
-                    ),
-                    i,
-                    0,
+                    QLabel(f"<b>Unit #{unit.id} - {name}</b> [DEAD]"), i, 0
                 )
                 if self.cp.captured:
-                    repair = QPushButton("Repair [" + str(price) + "M]")
+                    repair = QPushButton(f"Repair [{price}M]")
                     repair.setProperty("style", "btn-success")
                     repair.clicked.connect(
-                        lambda u=u, g=g, p=price: self.repair_unit(g, u, p)
+                        lambda u=unit, g=g, p=unit_type.price: self.repair_unit(g, u, p)
                     )
                     self.intelLayout.addWidget(repair, i, 1)
                 i = i + 1
@@ -218,13 +227,12 @@ class QGroundObjectMenu(QDialog):
 
     def update_total_value(self):
         total_value = 0
-        for group in self.ground_object.groups:
-            for u in group.units:
-                utype = unit_type_of(u)
-                if utype in PRICES:
-                    total_value = total_value + PRICES[utype]
-                else:
-                    total_value = total_value + 1
+        if not self.ground_object.purchasable:
+            return
+        for u in self.ground_object.units:
+            # Hack: Unknown variant.
+            unit_type = next(GroundUnitType.for_dcs_type(vehicles.vehicle_map[u.type]))
+            total_value += unit_type.price
         if self.sell_all_button is not None:
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
         self.total_value = total_value
@@ -252,20 +260,16 @@ class QGroundObjectMenu(QDialog):
         self.game.budget = self.game.budget + self.total_value
         self.ground_object.groups = []
         self.do_refresh_layout()
-        GameUpdateSignal.get_instance().updateBudget(self.game)
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_group(self):
         self.subwindow = QBuyGroupForGroundObjectDialog(
             self, self.ground_object, self.cp, self.game, self.total_value
         )
-        self.subwindow.changed.connect(self.do_refresh_layout)
         self.subwindow.show()
 
 
 class QBuyGroupForGroundObjectDialog(QDialog):
-
-    changed = QtCore.Signal()
-
     def __init__(
         self,
         parent,
@@ -340,15 +344,8 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         buy_ewr_layout.addLayout(stretch, 2, 0)
 
         # Armored units
-
-        armored_units = db.find_unittype(
-            PinpointStrike, faction.name
-        )  # Todo : refactor this legacy nonsense
-        for unit in set(armored_units):
-            self.buyArmorCombo.addItem(
-                db.unit_type_name_2(unit) + " [$" + str(db.PRICES[unit]) + "M]",
-                userData=unit,
-            )
+        for unit in set(faction.ground_units):
+            self.buyArmorCombo.addItem(f"{unit} [${unit.price}M]", userData=unit)
         self.buyArmorCombo.currentIndexChanged.connect(self.armorComboChanged)
 
         self.amount.setMinimum(2)
@@ -409,33 +406,19 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         )
 
     def armorComboChanged(self, index):
-        self.buyArmorButton.setText(
-            "Buy [$"
-            + str(db.PRICES[self.buyArmorCombo.itemData(index)] * self.amount.value())
-            + "M][-$"
-            + str(self.current_group_value)
-            + "M]"
-        )
+        unit_type = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
+        price = unit_type.price * self.amount.value()
+        self.buyArmorButton.setText(f"Buy [${price}M][-${self.current_group_value}M]")
 
     def amountComboChanged(self):
-        self.buyArmorButton.setText(
-            "Buy [$"
-            + str(
-                db.PRICES[
-                    self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
-                ]
-                * self.amount.value()
-            )
-            + "M][-$"
-            + str(self.current_group_value)
-            + "M]"
-        )
+        unit_type = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
+        price = unit_type.price * self.amount.value()
+        self.buyArmorButton.setText(f"Buy [${price}M][-${self.current_group_value}M]")
 
     def buyArmor(self):
         logging.info("Buying Armor ")
         utype = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
-        logging.info(utype)
-        price = db.PRICES[utype] * self.amount.value() - self.current_group_value
+        price = utype.price * self.amount.value() - self.current_group_value
         if price > self.game.budget:
             self.error_money()
             self.close()
@@ -449,10 +432,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         )
         self.ground_object.groups = [group]
 
-        GameUpdateSignal.get_instance().updateBudget(self.game)
-
-        self.changed.emit()
-        self.close()
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buySam(self):
         sam_generator = self.samCombo.itemData(self.samCombo.currentIndex())
@@ -468,10 +448,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         generator.generate()
         self.ground_object.groups = list(generator.groups)
 
-        GameUpdateSignal.get_instance().updateBudget(self.game)
-
-        self.changed.emit()
-        self.close()
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_ewr(self):
         ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
@@ -486,10 +463,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         generator.generate()
         self.ground_object.groups = [generator.vg]
 
-        GameUpdateSignal.get_instance().updateBudget(self.game)
-
-        self.changed.emit()
-        self.close()
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def error_money(self):
         msg = QMessageBox()

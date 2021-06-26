@@ -3,42 +3,46 @@
   "name": "Israel 2012'ish",
   "authors": "Headiii",
   "description": "<p>A more modern Israeli faction with fictional Imports.</p>",
-  "locales": ["he_IL"],
+  "locales": [
+    "he_IL"
+  ],
   "aircrafts": [
-    "A_10C",
-    "F_15C",
-    "F_15E",
-    "F_16C_50",
-    "FA_18C_hornet",
-    "M_2000C",
-    "UH_1H",
-    "AH_64D"
+    "A-10C Thunderbolt II (Suite 3)",
+    "AH-64D Apache Longbow",
+    "C-130",
+    "C-130J-30 Super Hercules",
+    "F-15C Eagle",
+    "F-15E Strike Eagle",
+    "F-16CM Fighting Falcon (Block 50)",
+    "F/A-18C Hornet (Lot 20)",
+    "Mirage 2000C",
+    "UH-1H Iroquois"
   ],
   "awacs": [
-    "E_2C"
+    "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC_135",
-    "KC130"
+    "KC-130",
+    "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "APC_M113",
-    "Scout_HMMWV",
-    "ATGM_HMMWV",
-    "MBT_Merkava_IV",
-    "SPAAA_Vulcan_M163"
+    "M1043 HMMWV (M2 HMG)",
+    "M1045 HMMWV (BGM-71 TOW)",
+    "M113",
+    "M163 Vulcan Air Defense System",
+    "Merkava Mk IV"
   ],
   "artillery_units": [
-    "SPH_M109_Paladin_155mm",
-    "MLRS_M270_227mm"
+    "M109A6 Paladin",
+    "M270 Multiple Launch Rocket System"
   ],
   "logistics_units": [
-    "Truck_M818_6x6"
+    "Truck M818 6x6"
   ],
   "infantry_units": [
-    "Infantry_M4",
-    "Infantry_M249",
-    "MANPADS_Stinger"
+    "Infantry M249",
+    "Infantry M4",
+    "MANPADS Stinger"
   ],
   "air_defenses": [
     "ChaparralGenerator",
@@ -49,51 +53,44 @@
   "ewrs": [
     "HawkEwrGenerator"
   ],
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "destroyers": [
-  ],
-  "cruisers": [
-  ],
-  "requirements": {
-  },
-  "carrier_names": [
-  ],
-  "helicopter_carrier_names": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "destroyers": [],
+  "cruisers": [],
+  "requirements": {},
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
   "navy_generators": [
     "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
-  "jtac_unit": "MQ_9_Reaper",
+  "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
-    "A_10C": [
+    "A-10C Thunderbolt II (Suite 3)": [
       "Fictional Israel 115 Sqn Flying Dragon"
     ],
-    "F_15C": [
-    "390th Fighter SQN"
+    "F-15C Eagle": [
+      "390th Fighter SQN"
     ],
-    "F_15E":[
-    "IDF No 69 Hammers Squadron"
+    "F-15E Strike Eagle": [
+      "IDF No 69 Hammers Squadron"
     ],
-    "F_16C_50": [
+    "F-16CM Fighting Falcon (Block 50)": [
       "IAF_101st_squadron",
       "IAF_110th_Squadron",
       "IAF_115th_Aggressors_Squadron",
       "IAF_117th_Squadron"
     ],
-    "UH_1H": [
+    "UH-1H Iroquois": [
       "Israel Army"
     ],
-    "AH_64D":[
+    "AH-64D Apache Longbow": [
       "ah-64_d_isr"
     ],
-    "FA_18C_hornet": [
+    "F/A-18C Hornet (Lot 20)": [
       "Fictional Israel Air Force"
     ],
-    "M_2000C": [
+    "Mirage 2000C": [
       "UAE Air Force"
     ]
   }

@@ -1,0 +1,14 @@
+class: SHORADS
+description: The 37 mm gun M1 was an anti-aircraft autocannon developed in the United
+  States. It was used by the US Army in World War II. In addition to the towed variant,
+  the gun was mounted, with two M2 machine guns, on the M2/M3 half-track, resulting
+  in the T28/T28E1/M15/M15A1 series of multiple gun motor carriages. In early World
+  War II, each Army Anti-Aircraft Artillery (AAA) Auto-Weapons battalion was authorized
+  a total of thirty-two 37 mm guns in its four firing batteries, plus other weapons.
+introduced: 1939
+manufacturer: Colt
+origin: USA
+price: 7
+role: Anti-Aircraft Gun
+variants:
+  M1 37mm Gun: {}

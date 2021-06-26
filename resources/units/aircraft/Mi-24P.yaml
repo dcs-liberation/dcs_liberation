@@ -1,0 +1,22 @@
+always_keeps_gun: true
+description: "The Mil Mi-24 (Russian: \u041C\u0438\u043B\u044C \u041C\u0438-24; NATO\
+  \ reporting name: Hind) is a large helicopter gunship, attack helicopter and low-capacity\
+  \ troop transport with room for eight passengers. It is produced by Mil Moscow Helicopter\
+  \ Plant and has been operated since 1972 by the Soviet Air Force and its successors,\
+  \ along with 48 other nations. Soviet pilots called the Mi-24 the 'flying tank'\
+  \ (Russian: \u043B\u0435\u0442\u0430\u044E\u0449\u0438\u0439 \u0442\u0430\u043D\u043A\
+  , romanized: letayushchiy tank), a term used historically with the famous World\
+  \ War II Soviet Il-2 Shturmovik armored ground attack aircraft. More common unofficial\
+  \ nicknames were 'Galina' (or 'Galya'), 'Crocodile' (Russian: \u041A\u0440\u043E\
+  \u043A\u043E\u0434\u0438\u043B, romanized: Krokodil), due to the helicopter's camouflage\
+  \ scheme, and 'Drinking Glass' (Russian: \u0421\u0442\u0430\u043A\u0430\u043D, romanized:\
+  \ Stakan), because of the flat glass plates that surround earlier Mi-24 variants'\
+  \ cockpits. It served to a great success in the Afghanistan war, until the Taliban\
+  \ where equipped with Stinger Missiles from the CIA."
+introduced: 1981
+manufacturer: Mil
+origin: USSR/Russia
+price: 14
+role: Attack/Transport
+variants:
+  Mi-24P Hind-F: {}

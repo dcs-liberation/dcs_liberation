@@ -1,0 +1,38 @@
+carrier_capable: true
+description:
+  'The AV-8B project was born in the early 1970''s as an effort to address
+  the operational inadequacies of the AV-8A first generation Harrier, aimed to dramatically
+  improve the capabilities and performance of the early AV-8A''s. The AV-8B made its
+  maiden flight in November 1981 and entered service with the United States Marine
+  Corps in January 1985. It later evolved into the AV-8B N/A (Night Attack) and AV-8B
+  Harrier II Plus.
+
+
+  First flight of a modified AV-8B in the night attack configuration was on June 26th,
+  1987. Deliveries to the USMC began in September of 1989 to VMA-214 at Yuma, Arizona.
+  Follow-up units based out of Yuma received their Night Attack AV-8Bs by the end
+  of 1992.The AV-8B N/A variant (originally known as the AV-8D) had its first operational
+  development in 1984 and included use of the NAVFLIR (Navigation Forward-Looking
+  Infrared camera, consisting of a GEC-Marconi FLIR system mounted in the nose) for
+  night operations. Additionally, GEC Cat''s Eyes night vision goggles were provided
+  to the pilot as well as a revised cockpit with color MFDs, a wider field-of-view
+  HUD display, a color CRT digital moving map, and a complete "heads-down" operation
+  capability. The AV-8B N/A also sports four Tracor ALE-39 countermeasures dispensers
+  along the top of the rear fuselage, in addition to two ALE-39 dispensers along the
+  lower rear of the fuselage. The AV-8B N/A also fields an updated version of the
+  Rolls-Royce Pegasus 11-61 (F402-RR-408) vectored-thrust turbofan engine.'
+introduced: 1989
+lha_capable: true
+manufacturer: McDonnell Douglas
+origin: USA/UK
+price: 15
+role: V/STOL Attack
+variants:
+  AV-8B Harrier II Night Attack: {}
+radios:
+  intra_flight: AN/ARC-210
+  inter_flight: AN/ARC-210
+  channels:
+    type: common
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 2

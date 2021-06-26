@@ -1,0 +1,18 @@
+carrier_capable: true
+description: The Bell OH-58 Kiowa is a family of single-engine, single-rotor, military
+  helicopters used for observation, utility, and direct fire support. Bell Helicopter
+  manufactured the OH-58 for the United States Army based on its Model 206A JetRanger
+  helicopter. The OH-58 was in continuous U.S. Army service from 1969 to 2017, when
+  it was replaced in these roles by the Boeing AH-64 Apache and Eurocopter UH-72 Lakota.
+  The latest model, the OH-58D Kiowa Warrior, is primarily operated in an armed reconnaissance
+  role in support of ground troops. The OH-58 has been exported to Austria, Canada,
+  Croatia, the Dominican Republic, Taiwan, Saudi Arabia, and Greece. It has also been
+  produced under license in Australia.
+introduced: 1983
+lha_capable: true
+manufacturer: Bell
+origin: USA
+price: 6
+role: Light Attack/Forward Air Control
+variants:
+  OH-58D Kiowa Warrior: {}

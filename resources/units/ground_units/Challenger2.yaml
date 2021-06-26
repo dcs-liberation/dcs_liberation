@@ -1,0 +1,14 @@
+class: Tank
+description: The FV4034 Challenger 2 is a third generation British main battle tank
+  (MBT) in service with the armies of the United Kingdom and Oman. It has seen operational
+  service in Bosnia and Herzegovina, Kosovo and Iraq.  To date, the only time the
+  tank has been destroyed during operations was by another Challenger 2 in a "blue
+  on blue" (friendly fire) incident at Basra in 2003 when the destroyed tank had its
+  hatch open at the time of the incident.
+introduced: 1998
+manufacturer: Vickers Defence Systems
+origin: UK
+price: 25
+role: Main Battle Tank
+variants:
+  FV4034 Challenger 2: {}

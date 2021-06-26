@@ -1,0 +1,10 @@
+class: ATGM
+description: The Jagdpanzer IV, Sd.Kfz. 162, was a German tank destroyer based on
+  the Panzer IV chassis.
+introduced: 1944
+manufacturer: Vomag
+origin: Germany
+price: 11
+role: Tank Destroyer
+variants:
+  Jagdpanzer IV: {}

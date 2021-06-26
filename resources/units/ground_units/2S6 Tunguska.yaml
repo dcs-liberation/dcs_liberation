@@ -1,0 +1,14 @@
+class: SHORADS
+description: "The 2K22 Tunguska (Russian: 2\u041A22 '\u0422\u0443\u043D\u0433\u0443\
+  \u0441\u043A\u0430') is a Russian tracked self-propelled anti-aircraft weapon armed\
+  \ with a surface-to-air gun and missile system. It is designed to provide day and\
+  \ night protection for infantry and tank regiments against low-flying aircraft,\
+  \ helicopters, and cruise missiles in all weather conditions. The NATO reporting\
+  \ name for the missile used by the weapon system is SA-19 \"Grison\"."
+introduced: 1982
+manufacturer: Ulyanovsk
+origin: USSR/Russia
+price: 30
+role: Self-Propelled Anti-Aircraft System
+variants:
+  SA-19 Grison (2K22 Tunguska): {}

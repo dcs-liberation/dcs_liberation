@@ -1,0 +1,11 @@
+class: Artillery
+description: "The DANA (the name being derived from \"d\u011Blo automobiln\xED nab\xED\
+  jen\xE9 automaticky\" (gun on truck loaded automatically)) is a wheeled self-propelled\
+  \ artillery piece."
+introduced: 1980
+manufacturer: ZTS
+origin: Czechoslovakia
+price: 26
+role: Self-Propelled Gun
+variants:
+  SpGH DANA: {}

@@ -1,0 +1,13 @@
+class: ATGM
+description: "The Elefant (German for \"elephant\") was a heavy tank destroyer used\
+  \ by German Wehrmacht Panzerj\xE4ger during World War II. Ninety-one units were\
+  \ built in 1943 under the name Ferdinand, after its designer Ferdinand Porsche,\
+  \ using tank hulls produced for the Tiger I tank design abandoned in favour of a\
+  \ Henschel design."
+introduced: 1944
+manufacturer: Porsche/Nibelungenwerk
+origin: Germany
+price: 18
+role: Tank Destroyer
+variants:
+  Sd.Kfz.184 Elefant: {}

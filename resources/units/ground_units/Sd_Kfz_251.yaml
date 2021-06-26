@@ -1,0 +1,14 @@
+class: APC
+description: The Sd.Kfz. 251 (Sonderkraftfahrzeug 251) half-track was a World War
+  II German armored personnel carrier designed by the Hanomag company, based on its
+  earlier, unarmored Sd.Kfz. 11 vehicle. The Sd.Kfz. 251 was designed to transport
+  the Panzergrenadier (German mechanized infantry) into battle. Sd.Kfz. 251s were
+  the most widely produced German half-tracks of the war, with at least 15,252 vehicles
+  and variants produced by seven manufacturers.
+introduced: 1939
+manufacturer: Hanomag
+origin: Germany
+price: 4
+role: Armoured Personnel Carrier
+variants:
+  Sd.Kfz.251 "Hanomag": {}

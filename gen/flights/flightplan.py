@@ -16,12 +16,10 @@ from functools import cached_property
 from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
-from dcs.planes import E_3A, E_2C, A_50, KJ_2000
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
-from game.squadrons import Pilot
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -29,9 +27,10 @@ from game.theater import (
     MissionTarget,
     SamGroundObject,
     TheaterGroundObject,
+    NavalControlPoint,
 )
-from game.theater.theatergroundobject import EwrGroundObject
-from game.utils import Distance, Speed, feet, meters, nautical_miles
+from game.theater.theatergroundobject import EwrGroundObject, NavalGroundObject
+from game.utils import Distance, Speed, feet, meters, nautical_miles, knots
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -770,6 +769,28 @@ class AwacsFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
+class RefuelingFlightPlan(PatrollingFlightPlan):
+    takeoff: FlightWaypoint
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
+
+    #: Racetrack speed.
+    patrol_speed: Speed
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
+        yield self.patrol_start
+        yield self.patrol_end
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+@dataclass(frozen=True)
 class AirliftFlightPlan(FlightPlan):
     takeoff: FlightWaypoint
     nav_to_pickup: List[FlightWaypoint]
@@ -919,6 +940,8 @@ class FlightPlanBuilder:
             return self.generate_aewc(flight)
         elif task == FlightType.TRANSPORT:
             return self.generate_transport(flight)
+        elif task == FlightType.REFUELING:
+            return self.generate_refueling_racetrack(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
@@ -1059,15 +1082,8 @@ class FlightPlanBuilder:
 
         orbit_location = self.aewc_orbit(location)
 
-        # As high as possible to maximize detection and on-station time.
-        if flight.unit_type == E_2C:
-            patrol_alt = feet(30000)
-        elif flight.unit_type == E_3A:
-            patrol_alt = feet(35000)
-        elif flight.unit_type == A_50:
-            patrol_alt = feet(33000)
-        elif flight.unit_type == KJ_2000:
-            patrol_alt = feet(40000)
+        if flight.unit_type.patrol_altitude is not None:
+            patrol_alt = flight.unit_type.patrol_altitude
         else:
             patrol_alt = feet(25000)
 
@@ -1131,12 +1147,9 @@ class FlightPlanBuilder:
 
         from game.transfers import CargoShip
 
-        if isinstance(location, ControlPoint):
-            if not location.is_fleet:
-                raise InvalidObjectiveLocation(flight.flight_type, location)
-            # The first group generated will be the carrier group itself.
-            targets = self.anti_ship_targets_for_tgo(location.ground_objects[0])
-        elif isinstance(location, TheaterGroundObject):
+        if isinstance(location, NavalControlPoint):
+            targets = self.anti_ship_targets_for_tgo(location.find_main_tgo())
+        elif isinstance(location, NavalGroundObject):
             targets = self.anti_ship_targets_for_tgo(location)
         elif isinstance(location, CargoShip):
             targets = [StrikeTarget(location.name, location)]
@@ -1610,6 +1623,74 @@ class FlightPlanBuilder:
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
+        )
+
+    def generate_refueling_racetrack(self, flight: Flight) -> RefuelingFlightPlan:
+        location = self.package.target
+
+        closest_boundary = self.threat_zones.closest_boundary(location.position)
+        heading_to_threat_boundary = location.position.heading_between_point(
+            closest_boundary
+        )
+        distance_to_threat = meters(
+            location.position.distance_to_point(closest_boundary)
+        )
+        orbit_heading = heading_to_threat_boundary
+
+        # Station 70nm outside the threat zone.
+        threat_buffer = nautical_miles(70)
+        if self.threat_zones.threatened(location.position):
+            orbit_distance = distance_to_threat + threat_buffer
+        else:
+            orbit_distance = distance_to_threat - threat_buffer
+
+        racetrack_center = location.position.point_from_heading(
+            orbit_heading, orbit_distance.meters
+        )
+
+        racetrack_half_distance = Distance.from_nautical_miles(20).meters
+
+        racetrack_start = racetrack_center.point_from_heading(
+            orbit_heading + 90, racetrack_half_distance
+        )
+        racetrack_end = racetrack_center.point_from_heading(
+            orbit_heading - 90, racetrack_half_distance
+        )
+
+        builder = WaypointBuilder(flight, self.game, self.is_player)
+
+        tanker_type = flight.unit_type
+        if tanker_type.patrol_altitude is not None:
+            altitude = tanker_type.patrol_altitude
+        else:
+            altitude = feet(21000)
+
+        if tanker_type.patrol_speed is not None:
+            speed = tanker_type.patrol_speed
+        else:
+            # ~280 knots IAS at 21000.
+            speed = knots(400)
+
+        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
+
+        return RefuelingFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(
+                flight.departure.position, racetrack_start, altitude
+            ),
+            nav_from=builder.nav_path(racetrack_end, flight.arrival.position, altitude),
+            patrol_start=racetrack[0],
+            patrol_end=racetrack[1],
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
+            patrol_duration=timedelta(hours=1),
+            patrol_speed=speed,
+            # TODO: Factor out a common base of the combat and non-combat race-tracks.
+            # No harm in setting this, but we ought to clean up a bit.
+            engagement_distance=meters(0),
         )
 
     @staticmethod

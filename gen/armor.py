@@ -10,7 +10,6 @@ from dcs.action import AITaskPush
 from dcs.condition import GroupLifeLess, Or, TimeAfter, UnitDamaged
 from dcs.country import Country
 from dcs.mapping import Point
-from dcs.planes import MQ_9_Reaper
 from dcs.point import PointAction
 from dcs.task import (
     EPLRS,
@@ -26,18 +25,18 @@ from dcs.task import (
 from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
-from dcs.unittype import VehicleType
-from game import db
+
+from game.data.groundunitclass import GroundUnitClass
+from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
+from game.theater.controlpoint import ControlPoint
 from game.unitmap import UnitMap
 from game.utils import heading_sum, opposite_heading
-from game.theater.controlpoint import ControlPoint
-
 from gen.ground_forces.ai_ground_planner import (
     DISTANCE_FROM_FRONTLINE,
     CombatGroup,
     CombatGroupRole,
 )
-
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
@@ -174,14 +173,14 @@ class GroundConflictGenerator:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
             code = 1688 - len(self.jtacs)
 
-            utype = MQ_9_Reaper
-            if self.game.player_faction.jtac_unit is not None:
-                utype = self.game.player_faction.jtac_unit
+            utype = self.game.player_faction.jtac_unit
+            if self.game.player_faction.jtac_unit is None:
+                utype = AircraftType.named("MQ-9 Reaper")
 
             jtac = self.mission.flight_group(
                 country=self.mission.country(self.game.player_country),
                 name=n,
-                aircraft_type=utype,
+                aircraft_type=utype.dcs_unit_type,
                 position=position[0],
                 airport=None,
                 altitude=5000,
@@ -225,23 +224,22 @@ class GroundConflictGenerator:
         else:
             cp = self.conflict.red_cp
 
-        if is_player:
-            faction = self.game.player_name
-        else:
-            faction = self.game.enemy_name
+        faction = self.game.faction_for(is_player)
 
         # Disable infantry unit gen if disabled
         if not self.game.settings.perf_infantry:
             if self.game.settings.manpads:
                 # 50% of armored units protected by manpad
                 if random.choice([True, False]):
-                    manpads = db.find_manpad(faction)
-                    if len(manpads) > 0:
-                        u = random.choice(manpads)
+                    manpads = list(faction.infantry_with_class(GroundUnitClass.Manpads))
+                    if manpads:
+                        u = random.choices(
+                            manpads, weights=[m.spawn_weight for m in manpads]
+                        )[0]
                         self.mission.vehicle_group(
                             side,
                             namegen.next_infantry_name(side, cp.id, u),
-                            u,
+                            u.dcs_unit_type,
                             position=infantry_position,
                             group_size=1,
                             heading=forward_heading,
@@ -249,30 +247,38 @@ class GroundConflictGenerator:
                         )
             return
 
-        possible_infantry_units = db.find_infantry(
-            faction, allow_manpad=self.game.settings.manpads
+        possible_infantry_units = set(
+            faction.infantry_with_class(GroundUnitClass.Infantry)
         )
-        if len(possible_infantry_units) == 0:
+        if self.game.settings.manpads:
+            possible_infantry_units |= set(
+                faction.infantry_with_class(GroundUnitClass.Manpads)
+            )
+        if not possible_infantry_units:
             return
 
-        u = random.choice(possible_infantry_units)
+        infantry_choices = list(possible_infantry_units)
+        units = random.choices(
+            infantry_choices,
+            weights=[u.spawn_weight for u in infantry_choices],
+            k=INFANTRY_GROUP_SIZE,
+        )
         self.mission.vehicle_group(
             side,
-            namegen.next_infantry_name(side, cp.id, u),
-            u,
+            namegen.next_infantry_name(side, cp.id, units[0]),
+            units[0].dcs_unit_type,
             position=infantry_position,
             group_size=1,
             heading=forward_heading,
             move_formation=PointAction.OffRoad,
         )
 
-        for i in range(INFANTRY_GROUP_SIZE):
-            u = random.choice(possible_infantry_units)
+        for unit in units[1:]:
             position = infantry_position.random_point_within(55, 5)
             self.mission.vehicle_group(
                 side,
-                namegen.next_infantry_name(side, cp.id, u),
-                u,
+                namegen.next_infantry_name(side, cp.id, unit),
+                unit.dcs_unit_type,
                 position=position,
                 group_size=1,
                 heading=forward_heading,
@@ -312,7 +318,7 @@ class GroundConflictGenerator:
         )
         artillery_trigger.add_condition(TimeAfter(seconds=random.randint(1, 45) * 60))
         # TODO: Update to fire at group instead of point
-        fire_task = FireAtPoint(target, len(gen_group.units) * 10, 100)
+        fire_task = FireAtPoint(target, gen_group.size * 10, 100)
         fire_task.number = 2 if stance != CombatStance.RETREAT else 1
         dcs_group.add_trigger_action(fire_task)
         artillery_trigger.add_action(AITaskPush(dcs_group.id, len(dcs_group.tasks)))
@@ -502,7 +508,7 @@ class GroundConflictGenerator:
             return
 
         for dcs_group, group in ally_groups:
-            if hasattr(group.units[0], "eplrs") and group.units[0].eplrs:
+            if group.unit_type.eplrs_capable:
                 dcs_group.points[0].tasks.append(EPLRS(dcs_group.id))
 
             if group.role == CombatGroupRole.ARTILLERY:
@@ -673,7 +679,7 @@ class GroundConflictGenerator:
         Search the enemy groups for a potential target suitable to an artillery unit
         """
         # TODO: Update to return a list of groups instead of a single point
-        rng = group.units[0].threat_range
+        rng = getattr(group.unit_type.dcs_unit_type, "threat_range", 0)
         if not enemy_groups:
             return None
         for _ in range(10):
@@ -690,7 +696,7 @@ class GroundConflictGenerator:
         """
         For artilery group, decide the distance from frontline with the range of the unit
         """
-        rg = group.units[0].threat_range - 7500
+        rg = getattr(group.unit_type.dcs_unit_type, "threat_range", 0) - 7500
         if rg > DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
             rg = random.randint(
                 DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][0],
@@ -723,7 +729,7 @@ class GroundConflictGenerator:
 
     def _generate_groups(
         self,
-        groups: List[CombatGroup],
+        groups: list[CombatGroup],
         frontline_vector: Tuple[Point, int, int],
         is_player: bool,
     ) -> List[Tuple[VehicleGroup, CombatGroup]]:
@@ -754,10 +760,9 @@ class GroundConflictGenerator:
             if final_position is not None:
                 g = self._generate_group(
                     self.mission.country(country),
-                    group.units[0],
-                    len(group.units),
+                    group.unit_type,
+                    group.size,
                     final_position,
-                    distance_from_frontline,
                     heading=opposite_heading(spawn_heading),
                 )
                 if is_player:
@@ -781,10 +786,9 @@ class GroundConflictGenerator:
     def _generate_group(
         self,
         side: Country,
-        unit: VehicleType,
+        unit_type: GroundUnitType,
         count: int,
         at: Point,
-        distance_from_frontline,
         move_formation: PointAction = PointAction.OffRoad,
         heading=0,
     ) -> VehicleGroup:
@@ -794,18 +798,17 @@ class GroundConflictGenerator:
         else:
             cp = self.conflict.red_cp
 
-        logging.info("armorgen: {} for {}".format(unit, side.id))
         group = self.mission.vehicle_group(
             side,
-            namegen.next_unit_name(side, cp.id, unit),
-            unit,
+            namegen.next_unit_name(side, cp.id, unit_type),
+            unit_type.dcs_unit_type,
             position=at,
             group_size=count,
             heading=heading,
             move_formation=move_formation,
         )
 
-        self.unit_map.add_front_line_units(group, cp)
+        self.unit_map.add_front_line_units(group, cp, unit_type)
 
         for c in range(count):
             vehicle: Vehicle = group.units[c]

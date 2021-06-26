@@ -1,15 +1,13 @@
 from __future__ import annotations
-from game.data.groundunitclass import GroundUnitClass
 
+import itertools
 import logging
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Type, List, Any, cast
+from typing import Optional, Dict, Type, List, Any, Iterator
 
 import dcs
 from dcs.countries import country_dict
-from dcs.planes import plane_map
-from dcs.unittype import FlyingType, ShipType, VehicleType, UnitType
-from dcs.vehicles import Armor, Unarmed, Infantry, Artillery, AirDefence
+from dcs.unittype import ShipType, UnitType
 
 from game.data.building_data import (
     WW2_ALLIES_BUILDINGS,
@@ -23,7 +21,9 @@ from game.data.doctrine import (
     COLDWAR_DOCTRINE,
     WWII_DOCTRINE,
 )
-from pydcs_extensions.mod_units import MODDED_VEHICLES, MODDED_AIRPLANES
+from game.data.groundunitclass import GroundUnitClass
+from game.dcs.aircrafttype import AircraftType
+from game.dcs.groundunittype import GroundUnitType
 
 
 @dataclass
@@ -45,25 +45,25 @@ class Faction:
     description: str = field(default="")
 
     # Available aircraft
-    aircrafts: List[Type[FlyingType]] = field(default_factory=list)
+    aircrafts: List[AircraftType] = field(default_factory=list)
 
     # Available awacs aircraft
-    awacs: List[Type[FlyingType]] = field(default_factory=list)
+    awacs: List[AircraftType] = field(default_factory=list)
 
     # Available tanker aircraft
-    tankers: List[Type[FlyingType]] = field(default_factory=list)
+    tankers: List[AircraftType] = field(default_factory=list)
 
     # Available frontline units
-    frontline_units: List[Type[VehicleType]] = field(default_factory=list)
+    frontline_units: List[GroundUnitType] = field(default_factory=list)
 
     # Available artillery units
-    artillery_units: List[Type[VehicleType]] = field(default_factory=list)
+    artillery_units: List[GroundUnitType] = field(default_factory=list)
 
     # Infantry units used
-    infantry_units: List[Type[VehicleType]] = field(default_factory=list)
+    infantry_units: List[GroundUnitType] = field(default_factory=list)
 
     # Logistics units used
-    logistics_units: List[Type[VehicleType]] = field(default_factory=list)
+    logistics_units: List[GroundUnitType] = field(default_factory=list)
 
     # Possible SAMS site generators for this faction
     air_defenses: List[str] = field(default_factory=list)
@@ -114,7 +114,7 @@ class Faction:
     has_jtac: bool = field(default=False)
 
     # Unit to use as JTAC for this faction
-    jtac_unit: Optional[Type[FlyingType]] = field(default=None)
+    jtac_unit: Optional[AircraftType] = field(default=None)
 
     # doctrine
     doctrine: Doctrine = field(default=MODERN_DOCTRINE)
@@ -123,7 +123,7 @@ class Faction:
     building_set: List[str] = field(default_factory=list)
 
     # List of default livery overrides
-    liveries_overrides: Dict[Type[UnitType], List[str]] = field(default_factory=dict)
+    liveries_overrides: Dict[AircraftType, List[str]] = field(default_factory=dict)
 
     #: Set to True if the faction should force the "Unrestricted satnav" option
     #: for the mission. This option enables GPS for capable aircraft regardless
@@ -134,15 +134,11 @@ class Faction:
     #: both will use it.
     unrestricted_satnav: bool = False
 
-    def has_access_to_unittype(self, unitclass: GroundUnitClass) -> bool:
-        has_access = False
-        for vehicle in unitclass.unit_list:
-            if vehicle in self.frontline_units:
+    def has_access_to_unittype(self, unit_class: GroundUnitClass) -> bool:
+        for vehicle in itertools.chain(self.frontline_units, self.artillery_units):
+            if vehicle.unit_class is unit_class:
                 return True
-            if vehicle in self.artillery_units:
-                return True
-
-        return has_access
+        return False
 
     @classmethod
     def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
@@ -163,16 +159,26 @@ class Faction:
         faction.authors = json.get("authors", "")
         faction.description = json.get("description", "")
 
-        faction.aircrafts = load_all_aircraft(json.get("aircrafts", []))
-        faction.awacs = load_all_aircraft(json.get("awacs", []))
-        faction.tankers = load_all_aircraft(json.get("tankers", []))
+        faction.aircrafts = [AircraftType.named(n) for n in json.get("aircrafts", [])]
+        faction.awacs = [AircraftType.named(n) for n in json.get("awacs", [])]
+        faction.tankers = [AircraftType.named(n) for n in json.get("tankers", [])]
 
-        faction.aircrafts = list(set(faction.aircrafts + faction.awacs))
+        faction.aircrafts = list(
+            set(faction.aircrafts + faction.awacs + faction.tankers)
+        )
 
-        faction.frontline_units = load_all_vehicles(json.get("frontline_units", []))
-        faction.artillery_units = load_all_vehicles(json.get("artillery_units", []))
-        faction.infantry_units = load_all_vehicles(json.get("infantry_units", []))
-        faction.logistics_units = load_all_vehicles(json.get("logistics_units", []))
+        faction.frontline_units = [
+            GroundUnitType.named(n) for n in json.get("frontline_units", [])
+        ]
+        faction.artillery_units = [
+            GroundUnitType.named(n) for n in json.get("artillery_units", [])
+        ]
+        faction.infantry_units = [
+            GroundUnitType.named(n) for n in json.get("infantry_units", [])
+        ]
+        faction.logistics_units = [
+            GroundUnitType.named(n) for n in json.get("logistics_units", [])
+        ]
 
         faction.ewrs = json.get("ewrs", [])
 
@@ -196,7 +202,7 @@ class Faction:
         faction.has_jtac = json.get("has_jtac", False)
         jtac_name = json.get("jtac_unit", None)
         if jtac_name is not None:
-            faction.jtac_unit = load_aircraft(jtac_name)
+            faction.jtac_unit = AircraftType.named(jtac_name)
         else:
             faction.jtac_unit = None
         faction.navy_group_count = int(json.get("navy_group_count", 1))
@@ -230,87 +236,110 @@ class Faction:
         # Load liveries override
         faction.liveries_overrides = {}
         liveries_overrides = json.get("liveries_overrides", {})
-        for k, v in liveries_overrides.items():
-            k = load_aircraft(k)
-            if k is not None:
-                faction.liveries_overrides[k] = [s.lower() for s in v]
+        for name, livery in liveries_overrides.items():
+            aircraft = AircraftType.named(name)
+            faction.liveries_overrides[aircraft] = [s.lower() for s in livery]
 
         faction.unrestricted_satnav = json.get("unrestricted_satnav", False)
 
         return faction
 
     @property
-    def units(self) -> List[Type[UnitType]]:
-        return (
-            self.infantry_units
-            + self.aircrafts
-            + self.awacs
-            + self.artillery_units
-            + self.frontline_units
-            + self.tankers
-            + self.logistics_units
-        )
+    def ground_units(self) -> Iterator[GroundUnitType]:
+        yield from self.artillery_units
+        yield from self.frontline_units
+        yield from self.logistics_units
 
+    def infantry_with_class(
+        self, unit_class: GroundUnitClass
+    ) -> Iterator[GroundUnitType]:
+        for unit in self.infantry_units:
+            if unit.unit_class is unit_class:
+                yield unit
 
-def unit_loader(unit: str, class_repository: List[Any]) -> Optional[Type[UnitType]]:
-    """
-    Find unit by name
-    :param unit: Unit name as string
-    :param class_repository: Repository of classes (Either a module, a class, or a list of classes)
-    :return: The unit as a PyDCS type
-    """
-    if unit is None:
-        return None
-    elif unit in plane_map.keys():
-        return plane_map[unit]
-    else:
-        for mother_class in class_repository:
-            if getattr(mother_class, unit, None) is not None:
-                return getattr(mother_class, unit)
-            if type(mother_class) is list:
-                for m in mother_class:
-                    if m.__name__ == unit:
-                        return m
-        logging.error(f"FACTION ERROR : Unable to find {unit} in pydcs")
-        return None
+    def apply_mod_settings(self, mod_settings) -> Faction:
+        # aircraft
+        if not mod_settings.a4_skyhawk:
+            self.remove_aircraft("A-4E-C")
+        if not mod_settings.hercules:
+            self.remove_aircraft("Hercules")
+        if not mod_settings.f22_raptor:
+            self.remove_aircraft("F-22A")
+        if not mod_settings.jas39_gripen:
+            self.remove_aircraft("JAS39Gripen")
+            self.remove_aircraft("JAS39Gripen_AG")
+        if not mod_settings.su57_felon:
+            self.remove_aircraft("Su-57")
+        # frenchpack
+        if not mod_settings.frenchpack:
+            self.remove_vehicle("AMX10RCR")
+            self.remove_vehicle("SEPAR")
+            self.remove_vehicle("ERC")
+            self.remove_vehicle("M120")
+            self.remove_vehicle("AA20")
+            self.remove_vehicle("TRM2000")
+            self.remove_vehicle("TRM2000_Citerne")
+            self.remove_vehicle("TRM2000_AA20")
+            self.remove_vehicle("TRMMISTRAL")
+            self.remove_vehicle("VABH")
+            self.remove_vehicle("VAB_RADIO")
+            self.remove_vehicle("VAB_50")
+            self.remove_vehicle("VIB_VBR")
+            self.remove_vehicle("VAB_HOT")
+            self.remove_vehicle("VAB_MORTIER")
+            self.remove_vehicle("VBL50")
+            self.remove_vehicle("VBLANF1")
+            self.remove_vehicle("VBL-radio")
+            self.remove_vehicle("VBAE")
+            self.remove_vehicle("VBAE_MMP")
+            self.remove_vehicle("AMX-30B2")
+            self.remove_vehicle("Tracma")
+            self.remove_vehicle("JTACFP")
+            self.remove_vehicle("SHERIDAN")
+            self.remove_vehicle("Leclerc_XXI")
+            self.remove_vehicle("Toyota_bleu")
+            self.remove_vehicle("Toyota_vert")
+            self.remove_vehicle("Toyota_desert")
+            self.remove_vehicle("Kamikaze")
+            self.remove_vehicle("AMX1375")
+            self.remove_vehicle("AMX1390")
+            self.remove_vehicle("VBCI")
+            self.remove_vehicle("T62")
+            self.remove_vehicle("T64BV")
+            self.remove_vehicle("T72M")
+            self.remove_vehicle("KORNET")
+        # high digit sams
+        if not mod_settings.high_digit_sams:
+            self.remove_air_defenses("SA10BGenerator")
+            self.remove_air_defenses("SA12Generator")
+            self.remove_air_defenses("SA20Generator")
+            self.remove_air_defenses("SA20BGenerator")
+            self.remove_air_defenses("SA23Generator")
+            self.remove_air_defenses("SA17Generator")
+            self.remove_air_defenses("KS19Generator")
+        return self
 
+    def remove_aircraft(self, name):
+        for i in self.aircrafts:
+            if i.dcs_unit_type.id == name:
+                self.aircrafts.remove(i)
 
-def load_aircraft(name: str) -> Optional[Type[FlyingType]]:
-    return cast(
-        Optional[FlyingType],
-        unit_loader(name, [dcs.planes, dcs.helicopters, MODDED_AIRPLANES]),
-    )
+    def remove_air_defenses(self, name):
+        for i in self.air_defenses:
+            if i == name:
+                self.air_defenses.remove(i)
 
-
-def load_all_aircraft(data) -> List[Type[FlyingType]]:
-    items = []
-    for name in data:
-        item = load_aircraft(name)
-        if item is not None:
-            items.append(item)
-    return items
-
-
-def load_vehicle(name: str) -> Optional[Type[VehicleType]]:
-    return cast(
-        Optional[FlyingType],
-        unit_loader(
-            name, [Infantry, Unarmed, Armor, AirDefence, Artillery, MODDED_VEHICLES]
-        ),
-    )
-
-
-def load_all_vehicles(data) -> List[Type[VehicleType]]:
-    items = []
-    for name in data:
-        item = load_vehicle(name)
-        if item is not None:
-            items.append(item)
-    return items
+    def remove_vehicle(self, name):
+        for i in self.frontline_units:
+            if i.dcs_unit_type.id == name:
+                self.frontline_units.remove(i)
 
 
 def load_ship(name: str) -> Optional[Type[ShipType]]:
-    return cast(Optional[FlyingType], unit_loader(name, [dcs.ships]))
+    if (ship := getattr(dcs.ships, name, None)) is not None:
+        return ship
+    logging.error(f"FACTION ERROR : Unable to find {name} in dcs.ships")
+    return None
 
 
 def load_all_ships(data) -> List[Type[ShipType]]:

@@ -1,0 +1,16 @@
+description: "The Tupolev Tu-22M (Russian: \u0422\u0443\u043F\u043E\u043B\u0435\u0432\
+  \ \u0422\u0443-22\u041C; NATO reporting name: Backfire) is a supersonic, variable-sweep\
+  \ wing, long-range strategic and maritime strike bomber developed by the Tupolev\
+  \ Design Bureau in the 1960s. According to some sources, the bomber was believed\
+  \ to be designated Tu-26 at one time. During the Cold War, the Tu-22M was operated\
+  \ by the Soviet Air Forces (VVS) in a missile carrier strategic bombing role, and\
+  \ by the Soviet Naval Aviation (Aviacija Vojenno-Morskogo Flota, AVMF) in a long-range\
+  \ maritime anti-shipping role. Significant numbers remain in service with the Russian\
+  \ Air Force, and as of 2014 more than 100 Tu-22Ms are in use."
+introduced: 1983
+manufacturer: Tupolev
+origin: USSR/Russia
+price: 40
+role: Strategic/Maritime Strike Bomber
+variants:
+  Tu-22M3 Backfire-C: {}

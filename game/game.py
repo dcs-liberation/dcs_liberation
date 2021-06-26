@@ -1,22 +1,24 @@
+from game.dcs.aircrafttype import AircraftType
 import itertools
 import logging
 import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Iterator
+from typing import Any, List
 
 from dcs.action import Coalition
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
+from pydcs_extensions.a4ec.a4ec import A_4E_C
 from faker import Faker
 
 from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
-from game.theater.theatergroundobject import MissileSiteGroundObject
+from gen import aircraft, naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -34,7 +36,7 @@ from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
 from .settings import Settings, AutoAtoBehavior
-from .squadrons import Pilot, AirWing
+from .squadrons import AirWing
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
@@ -86,8 +88,8 @@ class TurnState(Enum):
 class Game:
     def __init__(
         self,
-        player_name: str,
-        enemy_name: str,
+        player_faction: Faction,
+        enemy_faction: Faction,
         theater: ConflictTheater,
         start_date: datetime,
         settings: Settings,
@@ -97,10 +99,10 @@ class Game:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
-        self.player_name = player_name
-        self.player_country = db.FACTIONS[player_name].country
-        self.enemy_name = enemy_name
-        self.enemy_country = db.FACTIONS[enemy_name].country
+        self.player_faction = player_faction
+        self.player_country = player_faction.country
+        self.enemy_faction = enemy_faction
+        self.enemy_country = enemy_faction.country
         # pass_turn() will be called when initialization is complete which will
         # increment this to turn 0 before it reaches the player.
         self.turn = -1
@@ -108,7 +110,7 @@ class Game:
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
-        self.ground_planners: Dict[int, GroundPlanner] = {}
+        self.ground_planners: dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
@@ -119,6 +121,7 @@ class Game:
         self.enemy_budget = enemy_budget
         self.current_unit_id = 0
         self.current_group_id = 0
+        self.name_generator = naming.namegen
 
         self.conditions = self.generate_conditions()
 
@@ -148,7 +151,7 @@ class Game:
 
         self.on_load(game_still_initializing=True)
 
-    def __getstate__(self) -> Dict[str, Any]:
+    def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         # Avoid persisting any volatile types that can be deterministically
         # recomputed on load for the sake of save compatibility.
@@ -160,7 +163,7 @@ class Game:
         del state["red_faker"]
         return state
 
-    def __setstate__(self, state: Dict[str, Any]) -> None:
+    def __setstate__(self, state: dict[str, Any]) -> None:
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
@@ -199,14 +202,6 @@ class Game:
                 self.enemy_country = "USSR"
             else:
                 self.enemy_country = "Russia"
-
-    @property
-    def player_faction(self) -> Faction:
-        return db.FACTIONS[self.player_name]
-
-    @property
-    def enemy_faction(self) -> Faction:
-        return db.FACTIONS[self.enemy_name]
 
     def faction_for(self, player: bool) -> Faction:
         if player:
@@ -247,8 +242,8 @@ class Game:
                 player_cp,
                 enemy_cp,
                 enemy_cp.position,
-                self.player_name,
-                self.enemy_name,
+                self.player_faction.name,
+                self.enemy_faction.name,
             )
         )
 
@@ -294,12 +289,20 @@ class Game:
             return (
                 event
                 and event.attacker_name
-                and event.attacker_name == self.player_name
+                and event.attacker_name == self.player_faction.name
             )
         else:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self, game_still_initializing: bool = False) -> None:
+        if not hasattr(self, "name_generator"):
+            self.name_generator = naming.namegen
+        # Hack: Replace the global name generator state with the state from the save
+        # game.
+        #
+        # We need to persist this state so that names generated after game load don't
+        # conflict with those generated before exit.
+        naming.namegen = self.name_generator
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_conflicts_position()
@@ -327,15 +330,18 @@ class Game:
         # one hop ahead. ControlPoint.process_turn handles unit deliveries.
         self.transfers.perform_transfers()
 
-        # Needs to happen *before* planning transfers so we don't cancel the
+        # Needs to happen *before* planning transfers so we don't cancel them.
         self.reset_ato()
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
 
-        if not skipped and self.turn > 1:
+        self.blue_air_wing.replenish()
+        self.red_air_wing.replenish()
+
+        if not skipped:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
-        else:
+        elif self.turn > 1:
             for cp in self.theater.player_points():
                 if not cp.is_carrier and not cp.is_lha:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)

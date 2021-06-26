@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def _build_version_string() -> str:
-    components = ["3.0"]
+    components = ["4.0.0"]
     build_number_path = Path("resources/buildnumber")
     if build_number_path.exists():
         with build_number_path.open("r") as build_number_file:
@@ -70,9 +70,9 @@ VERSION = _build_version_string()
 #: Version 4.2
 #: * Adds support for AAA objectives. Place with any of the following units (either red
 #:   or blue):
-#:     * AAA_8_8cm_Flak_18,
-#:     * SPAAA_Vulcan_M163,
-#:     * SPAAA_ZSU_23_4_Shilka_Gun_Dish,
+#:     * Flak18,
+#:     * Vulcan,
+#:     * ZSU_23_4_Shilka,
 #:
 #: Version 5.0
 #: * Ammunition Depots objective locations are now predetermined using the "Ammunition
@@ -87,4 +87,13 @@ VERSION = _build_version_string()
 #: Version 6.0
 #: * Random objective generation no is longer supported. Fixed objective locations were
 #:   added in 4.1.
-CAMPAIGN_FORMAT_VERSION = (6, 0)
+#:
+#: Version 6.1
+#: * Support for new Syrian airfields in DCS 2.7.2.7910.1 (Cyprus update).
+#:
+#: Version 7.0
+#: * DCS 2.7.2.7910.1 (Cyprus update) changed the IDs of scenery strike targets. Any
+#:   mission using map buildings as strike targets must check and potentially recreate
+#:   all those objectives. This definitely affects all Syria campaigns, other maps are
+#:   not yet verified.
+CAMPAIGN_FORMAT_VERSION = (7, 0)

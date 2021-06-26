@@ -1,0 +1,16 @@
+carrier_capable: true
+description: The Skyhawk is a relatively lightweight aircraft, with a maximum takeoff
+  weight of 24,500 pounds (11,100 kg), and has a top speed of 670 miles per hour (1,080
+  km/h). The aircraft's five hardpoints support a variety of missiles, bombs, and
+  other munitions. Skyhawks played key roles in the Vietnam War, the Yom Kippur War,
+  and the Falklands War. Sixty years after the aircraft's first flight in 1954, some
+  of the 2,960 produced (through February 1979)[1] remain in service with the Argentine
+  Air Force and the Brazilian Naval Aviation.
+introduced: 1962
+manufacturer: Douglas
+origin: USA
+price: 7
+role: Carrier-based Attack/Light Fighter
+gunfighter: true
+variants:
+  A-4E Skyhawk: {}
