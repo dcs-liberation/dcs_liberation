@@ -1,4 +1,7 @@
 description: The E-3A is a AWACS aicraft.
 price: 50
+max_group_size: 1
+patrol:
+  altitude: 35000
 variants:
   E-3A: null

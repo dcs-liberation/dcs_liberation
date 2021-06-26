@@ -7,6 +7,7 @@
     "ru_RU"
   ],
   "aircrafts": [
+    "IL-76MD",
     "Ka-50 Hokum",
     "L-39ZA Albatros",
     "Mi-24V Hind-E",
@@ -66,9 +67,15 @@
     "SA11Generator",
     "SA13Generator",
     "SA15Generator",
+    "SA17Generator",
     "SA19Generator",
     "Tier2SA10Generator",
     "Tier3SA10Generator",
+    "SA10BGenerator",
+    "SA12Generator",
+    "SA20Generator",
+    "SA20BGenerator",
+    "SA23Generator",
     "ZSU23Generator",
     "ZU23Generator",
     "ZU23UralGenerator"

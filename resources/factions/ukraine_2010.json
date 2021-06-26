@@ -4,6 +4,7 @@
   "authors": "Khopa",
   "description": "<p>Ukrainian army in the 2010s.</p>",
   "aircrafts": [
+    "IL-76MD",
     "L-39ZA Albatros",
     "Mi-24V Hind-E",
     "Mi-24P Hind-F",
@@ -49,7 +50,9 @@
     "SA11Generator",
     "SA13Generator",
     "SA15Generator",
+    "SA17Generator",
     "SA19Generator",
+    "SA20Generator",
     "Tier2SA10Generator",
     "Tier3SA10Generator",
     "ZSU23Generator",

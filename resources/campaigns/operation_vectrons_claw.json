@@ -5,7 +5,7 @@
   "recommended_player_faction": "USA 2005",
   "recommended_enemy_faction": "Russia 1990",
   "description": "<p>United Nations Observer Mission in Georgia (UNOMIG) observers stationed in Georgia to monitor the ceasefire between Georgia and Abkhazia have been cut off from friendly forces by Russian troops backing the separatist state. The UNOMIG HQ at Sukhumi has been taken, and a small contingent of observers and troops at the Zugdidi Sector HQ will have to make a run for the coast, supported by offshore US naval aircraft. The contingent is aware that their best shot at survival is to swiftly retake Sukhumi before Russian forces have a chance to dig in, so that friendly ground forces can land and reinforce them.<br/></p><p><strong>Note:</strong> Ground unit purchase will not be available past Turn 0 until Sukhumi is retaken, so it is imperative you reach Sukhumi with at least one surviving ground unit to capture it. The player can either play the first leg of the scenario as an evacuation with a couple of light vehicles (e.g. Humvees) set on breakthrough (modifying waypoints in the mission editor so they are not charging head-on into enemy ground forces is suggested), or purchase heavier ground units if they wish to experience a more traditional ground war.</p>",
-  "version": "6.0",
+  "version": "7.0",
   "miz": "operation_vectrons_claw.miz",
   "performance": 1
 }

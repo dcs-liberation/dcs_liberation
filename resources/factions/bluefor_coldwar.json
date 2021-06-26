@@ -2,11 +2,14 @@
   "country": "Combined Joint Task Forces Blue",
   "name": "Bluefor Coldwar",
   "authors": "Khopa",
-  "description": "<p>A generic bluefor coldwar faction.</p>",
+  "description": "<p>A generic bluefor coldwar faction. (With the A-4E-C mod)</p>",
   "aircrafts": [
     "A-10A Thunderbolt II",
+    "A-4E Skyhawk",
     "AJS-37 Viggen",
     "B-52H Stratofortress",
+    "C-130",
+    "C-130J-30 Super Hercules",
     "F-14A Tomcat (Block 135-GR Late)",
     "F-14B Tomcat",
     "F-4E Phantom II",
@@ -16,7 +19,6 @@
     "UH-1H Iroquois"
   ],
   "awacs": [
-    "C-130",
     "E-2C Hawkeye",
     "E-3A"
   ],
@@ -60,7 +62,9 @@
   "cruisers": [
     "TICONDEROG"
   ],
-  "requirements": {},
+  "requirements": {
+    "Community A-4E": "https://heclak.github.io/community-a4e-c/"
+  },
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",

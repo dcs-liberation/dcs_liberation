@@ -8,10 +8,11 @@
   ],
   "aircrafts": [
     "FC-1 Fierce Dragon",
+    "IL-76MD",
     "J-11A Flanker-L",
     "J-15 Flanker X-2",
     "J-7B",
-    "Mi-28N Havoc",
+    "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
     "Su-30MKK Flanker-G"
   ],
@@ -51,6 +52,7 @@
     "SA10Generator",
     "SA11Generator",
     "SA13Generator",
+    "SA20BGenerator",
     "Tier2SA10Generator",
     "ZSU23Generator",
     "ZSU57Generator",

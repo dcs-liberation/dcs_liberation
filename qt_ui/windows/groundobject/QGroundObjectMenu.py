@@ -18,7 +18,7 @@ from PySide2.QtWidgets import (
 from dcs import Point
 from dcs import vehicles
 
-from game import Game, db
+from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
 from game.db import REWARDS
 from game.dcs.groundunittype import GroundUnitType
@@ -258,20 +258,16 @@ class QGroundObjectMenu(QDialog):
         self.game.budget = self.game.budget + self.total_value
         self.ground_object.groups = []
         self.do_refresh_layout()
-        GameUpdateSignal.get_instance().updateBudget(self.game)
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_group(self):
         self.subwindow = QBuyGroupForGroundObjectDialog(
             self, self.ground_object, self.cp, self.game, self.total_value
         )
-        self.subwindow.changed.connect(self.do_refresh_layout)
         self.subwindow.show()
 
 
 class QBuyGroupForGroundObjectDialog(QDialog):
-
-    changed = QtCore.Signal()
-
     def __init__(
         self,
         parent,
@@ -434,10 +430,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         )
         self.ground_object.groups = [group]
 
-        GameUpdateSignal.get_instance().updateBudget(self.game)
-
-        self.changed.emit()
-        self.close()
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buySam(self):
         sam_generator = self.samCombo.itemData(self.samCombo.currentIndex())
@@ -453,10 +446,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         generator.generate()
         self.ground_object.groups = list(generator.groups)
 
-        GameUpdateSignal.get_instance().updateBudget(self.game)
-
-        self.changed.emit()
-        self.close()
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_ewr(self):
         ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
@@ -471,10 +461,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         generator.generate()
         self.ground_object.groups = [generator.vg]
 
-        GameUpdateSignal.get_instance().updateBudget(self.game)
-
-        self.changed.emit()
-        self.close()
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def error_money(self):
         msg = QMessageBox()

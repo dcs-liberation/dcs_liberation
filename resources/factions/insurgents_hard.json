@@ -5,6 +5,10 @@
   "description": "<p>Insurgents faction.</p>",
   "aircrafts": [],
   "frontline_units": [
+    "DIM' KAMIKAZE",
+    "DIM' TOYOTA BLUE",
+    "DIM' TOYOTA DESERT",
+    "DIM' TOYOTA GREEN",
     "BMP-1",
     "BRDM-2",
     "BTR-80",
@@ -35,5 +39,8 @@
     "ZSU57Generator",
     "ZU23Generator",
     "ZU23UralInsurgentGenerator"
+  ],
+  "missiles": [
+    "ScudGenerator"
   ]
 }

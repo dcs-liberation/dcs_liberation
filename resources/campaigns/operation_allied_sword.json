@@ -2,8 +2,10 @@
     "name": "Syria - Operation Allied Sword",
     "theater": "Syria",
     "authors": "Fuzzle",
+    "recommended_player_faction": "Israel-USN 2005 (Allied Sword)",
+    "recommended_enemy_faction": "Syria-Lebanon 2005 (Allied Sword)",
     "description": "<p>In this fictional scenario, a US/Israeli coalition must push north from the Israeli border, through Syria and Lebanon to Aleppo.</p><p><strong>Backstory:</strong> A Syrian-Lebanese joint force (with Russian materiel support) has attacked Israel, attmepting to cross the northern border. With the arrival of a US carrier group, Israel prepares its counterattack. The US Navy will handle the Beirut region's coastal arena, while the IAF will push through Damascus and the inland mountain ranges.</p>",
-    "version": "6.0",
+    "version": "7.0",
     "miz": "operation_allied_sword.miz",
     "performance": 2
 }

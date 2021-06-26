@@ -15,6 +15,7 @@ manufacturer: Mikoyan-Gurevich
 origin: USSR/Russia
 price: 8
 role: Fighter
+gunfighter: true
 variants:
   MiG-15bis Fagot: {}
 radios:

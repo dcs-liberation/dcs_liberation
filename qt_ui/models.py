@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Callable, Dict, Iterator, Optional, TypeVar
+from typing import Any, Callable, Iterator, Optional, TypeVar
 
 from PySide2.QtCore import (
     QAbstractListModel,
@@ -51,7 +51,7 @@ class DeletableChildModelManager:
     #: The type of model managed by this class.
     ModelType = TypeVar("ModelType")
 
-    ModelDict = Dict[DataType, ModelType]
+    ModelDict = dict[DataType, ModelType]
 
     def __init__(
         self,
@@ -334,11 +334,7 @@ class TransferModel(QAbstractListModel):
     @staticmethod
     def text_for_transfer(transfer: TransferOrder) -> str:
         """Returns the text that should be displayed for the transfer."""
-        count = sum(transfer.units.values())
-        origin = transfer.origin.name
-        destination = transfer.destination.name
-        description = "Transfer" if transfer.player else "Enemy transfer"
-        return f"{description} of {count} units from {origin} to {destination}"
+        return str(transfer)
 
     @staticmethod
     def icon_for_transfer(_transfer: TransferOrder) -> Optional[QIcon]:

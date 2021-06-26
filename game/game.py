@@ -1,23 +1,25 @@
+from game.dcs.aircrafttype import AircraftType
 import itertools
 import logging
 import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, List
 
 from dcs.action import Coalition
 from dcs.countries import Switzerland, UnitedNationsPeacekeepers, USAFAggressors
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
+from pydcs_extensions.a4ec.a4ec import A_4E_C
 from faker import Faker
 
 from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
-from gen import naming
+from gen import aircraft, naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -87,8 +89,8 @@ class TurnState(Enum):
 class Game:
     def __init__(
         self,
-        player_name: str,
-        enemy_name: str,
+        player_faction: Faction,
+        enemy_faction: Faction,
         theater: ConflictTheater,
         start_date: datetime,
         settings: Settings,
@@ -98,10 +100,10 @@ class Game:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
-        self.player_name = player_name
-        self.player_country = db.FACTIONS[player_name].country
-        self.enemy_name = enemy_name
-        self.enemy_country = db.FACTIONS[enemy_name].country
+        self.player_faction = player_faction
+        self.player_country = player_faction.country
+        self.enemy_faction = enemy_faction
+        self.enemy_country = enemy_faction.country
         # pass_turn() will be called when initialization is complete which will
         # increment this to turn 0 before it reaches the player.
         self.turn = -1
@@ -109,7 +111,7 @@ class Game:
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
-        self.ground_planners: Dict[int, GroundPlanner] = {}
+        self.ground_planners: dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
@@ -150,7 +152,7 @@ class Game:
 
         self.on_load(game_still_initializing=True)
 
-    def __getstate__(self) -> Dict[str, Any]:
+    def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         # Avoid persisting any volatile types that can be deterministically
         # recomputed on load for the sake of save compatibility.
@@ -162,7 +164,7 @@ class Game:
         del state["red_faker"]
         return state
 
-    def __setstate__(self, state: Dict[str, Any]) -> None:
+    def __setstate__(self, state: dict[str, Any]) -> None:
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
@@ -202,13 +204,49 @@ class Game:
             else:
                 self.enemy_country = "Russia"
 
-    @property
-    def player_faction(self) -> Faction:
-        return db.FACTIONS[self.player_name]
+    def faction_for(self, player: bool) -> Faction:
+        if player:
+            return self.player_faction
+        return self.enemy_faction
 
-    @property
-    def enemy_faction(self) -> Faction:
-        return db.FACTIONS[self.enemy_name]
+    def faker_for(self, player: bool) -> Faker:
+        if player:
+            return self.blue_faker
+        return self.red_faker
+
+    def air_wing_for(self, player: bool) -> AirWing:
+        if player:
+            return self.blue_air_wing
+        return self.red_air_wing
+
+    def country_for(self, player: bool) -> str:
+        if player:
+            return self.player_country
+        return self.enemy_country
+
+    def bullseye_for(self, player: bool) -> Bullseye:
+        if player:
+            return self.blue_bullseye
+        return self.red_bullseye
+
+    def _roll(self, prob, mult):
+        if self.settings.version == "dev":
+            # always generate all events for dev
+            return 100
+        else:
+            return random.randint(1, 100) <= prob * mult
+
+    def _generate_player_event(self, event_class, player_cp, enemy_cp):
+        self.events.append(
+            event_class(
+                self,
+                player_cp,
+                enemy_cp,
+                enemy_cp.position,
+                self.player_faction.name,
+                self.enemy_faction.name,
+            )
+        )
 
     @property
     def neutral_country(self):
@@ -260,8 +298,8 @@ class Game:
                 player_cp,
                 enemy_cp,
                 enemy_cp.position,
-                self.player_name,
-                self.enemy_name,
+                self.player_faction.name,
+                self.enemy_faction.name,
             )
         )
 
@@ -307,7 +345,7 @@ class Game:
             return (
                 event
                 and event.attacker_name
-                and event.attacker_name == self.player_name
+                and event.attacker_name == self.player_faction.name
             )
         else:
             raise RuntimeError(f"{event} was passed when an Event type was expected")
@@ -356,10 +394,10 @@ class Game:
         self.blue_air_wing.replenish()
         self.red_air_wing.replenish()
 
-        if not skipped and self.turn > 1:
+        if not skipped:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
-        else:
+        elif self.turn > 1:
             for cp in self.theater.player_points():
                 if not cp.is_carrier and not cp.is_lha:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)

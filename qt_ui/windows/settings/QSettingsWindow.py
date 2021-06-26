@@ -179,6 +179,116 @@ class HqAutomationSettingsBox(QGroupBox):
         self.game.settings.auto_ato_player_missions_asap = value
 
 
+class PilotSettingsBox(QGroupBox):
+    def __init__(self, game: Game) -> None:
+        super().__init__("Pilots and Squadrons")
+        self.game = game
+
+        layout = QGridLayout()
+        self.setLayout(layout)
+
+        self.ai_pilot_levelling = QCheckBox()
+        self.ai_pilot_levelling.setChecked(self.game.settings.ai_pilot_levelling)
+        self.ai_pilot_levelling.toggled.connect(self.set_ai_pilot_leveling)
+
+        ai_pilot_levelling_info = (
+            "Set whether or not AI pilots will level up after completing a number of"
+            " sorties. Since pilot level affects the AI skill, you may wish to disable"
+            " this, lest you face an Ace!"
+        )
+
+        self.ai_pilot_levelling.setToolTip(ai_pilot_levelling_info)
+        ai_pilot_levelling_label = QLabel("Allow AI pilot levelling")
+        ai_pilot_levelling_label.setToolTip(ai_pilot_levelling_info)
+
+        layout.addWidget(ai_pilot_levelling_label, 0, 0)
+        layout.addWidget(self.ai_pilot_levelling, 0, 1, Qt.AlignRight)
+
+        enable_squadron_pilot_limits_info = (
+            "If set, squadrons will be limited to a maximum number of pilots and dead "
+            "pilots will replenish at a fixed rate, each defined with the settings"
+            "below. Auto-purchase may buy aircraft for which there are no pilots"
+            "available, so this feature is still a work-in-progress."
+        )
+
+        enable_squadron_pilot_limits_label = QLabel(
+            "Enable per-squadron pilot limtits (WIP)"
+        )
+        enable_squadron_pilot_limits_label.setToolTip(enable_squadron_pilot_limits_info)
+        enable_squadron_pilot_limits = QCheckBox()
+        enable_squadron_pilot_limits.setToolTip(enable_squadron_pilot_limits_info)
+        enable_squadron_pilot_limits.setChecked(
+            self.game.settings.enable_squadron_pilot_limits
+        )
+        enable_squadron_pilot_limits.toggled.connect(
+            self.set_enable_squadron_pilot_limits
+        )
+
+        layout.addWidget(enable_squadron_pilot_limits_label, 1, 0)
+        layout.addWidget(enable_squadron_pilot_limits, 1, 1, Qt.AlignRight)
+
+        self.pilot_limit = QSpinBox()
+        self.pilot_limit.setMinimum(12)
+        self.pilot_limit.setMaximum(72)
+        self.pilot_limit.setValue(self.game.settings.squadron_pilot_limit)
+        self.pilot_limit.setEnabled(self.game.settings.enable_squadron_pilot_limits)
+        self.pilot_limit.valueChanged.connect(self.set_squadron_pilot_limit)
+
+        pilot_limit_info = (
+            "Sets the maximum number of pilots a squadron may have active. "
+            "Changing this value will not have an immediate effect, but will alter "
+            "replenishment for future turns."
+        )
+
+        self.pilot_limit.setToolTip(pilot_limit_info)
+        pilot_limit_label = QLabel("Maximum number of pilots per squadron")
+        pilot_limit_label.setToolTip(pilot_limit_info)
+
+        layout.addWidget(pilot_limit_label, 2, 0)
+        layout.addWidget(self.pilot_limit, 2, 1, Qt.AlignRight)
+
+        self.squadron_replenishment_rate = QSpinBox()
+        self.squadron_replenishment_rate.setMinimum(1)
+        self.squadron_replenishment_rate.setMaximum(20)
+        self.squadron_replenishment_rate.setValue(
+            self.game.settings.squadron_replenishment_rate
+        )
+        self.squadron_replenishment_rate.setEnabled(
+            self.game.settings.enable_squadron_pilot_limits
+        )
+        self.squadron_replenishment_rate.valueChanged.connect(
+            self.set_squadron_replenishment_rate
+        )
+
+        squadron_replenishment_rate_info = (
+            "Sets the maximum number of pilots that will be recruited to each squadron "
+            "at the end of each turn. Squadrons will not recruit new pilots beyond the "
+            "pilot limit, but each squadron with room for more pilots will recruit "
+            "this many pilots each turn up to the limit."
+        )
+
+        self.squadron_replenishment_rate.setToolTip(squadron_replenishment_rate_info)
+        squadron_replenishment_rate_label = QLabel("Squadron pilot replenishment rate")
+        squadron_replenishment_rate_label.setToolTip(squadron_replenishment_rate_info)
+
+        layout.addWidget(squadron_replenishment_rate_label, 3, 0)
+        layout.addWidget(self.squadron_replenishment_rate, 3, 1, Qt.AlignRight)
+
+    def set_enable_squadron_pilot_limits(self, checked: bool) -> None:
+        self.game.settings.enable_squadron_pilot_limits = checked
+        self.pilot_limit.setEnabled(checked)
+        self.squadron_replenishment_rate.setEnabled(checked)
+
+    def set_squadron_pilot_limit(self, value: int) -> None:
+        self.game.settings.squadron_pilot_limit = value
+
+    def set_squadron_replenishment_rate(self, value: int) -> None:
+        self.game.settings.squadron_replenishment_rate = value
+
+    def set_ai_pilot_leveling(self, checked: bool) -> None:
+        self.game.settings.ai_pilot_levelling = checked
+
+
 START_TYPE_TOOLTIP = "Selects the start type used for AI aircraft."
 
 
@@ -516,72 +626,7 @@ class QSettingsWindow(QDialog):
         general_layout.addWidget(old_tanker_label, 2, 0)
         general_layout.addWidget(old_tanker, 2, 1, Qt.AlignRight)
 
-        def set_squadron_pilot_limit(value: int) -> None:
-            self.game.settings.squadron_pilot_limit = value
-
-        pilot_limit = QSpinBox()
-        pilot_limit.setMinimum(12)
-        pilot_limit.setMaximum(72)
-        pilot_limit.setValue(self.game.settings.squadron_pilot_limit)
-        pilot_limit.valueChanged.connect(set_squadron_pilot_limit)
-
-        pilot_limit_info = (
-            "Sets the maximum number of pilots a squadron may have active. "
-            "Changing this value will not have an immediate effect, but will alter "
-            "replenishment for future turns."
-        )
-
-        pilot_limit.setToolTip(pilot_limit_info)
-        pilot_limit_label = QLabel("Maximum number of pilots per squadron")
-        pilot_limit_label.setToolTip(pilot_limit_info)
-
-        general_layout.addWidget(pilot_limit_label, 3, 0)
-        general_layout.addWidget(pilot_limit, 3, 1, Qt.AlignRight)
-
-        def set_squadron_replenishment_rate(value: int) -> None:
-            self.game.settings.squadron_replenishment_rate = value
-
-        squadron_replenishment_rate = QSpinBox()
-        squadron_replenishment_rate.setMinimum(1)
-        squadron_replenishment_rate.setMaximum(20)
-        squadron_replenishment_rate.setValue(
-            self.game.settings.squadron_replenishment_rate
-        )
-        squadron_replenishment_rate.valueChanged.connect(
-            set_squadron_replenishment_rate
-        )
-
-        squadron_replenishment_rate_info = (
-            "Sets the maximum number of pilots that will be recruited to each squadron "
-            "at the end of each turn. Squadrons will not recruit new pilots beyond the "
-            "pilot limit, but each squadron with room for more pilots will recruit "
-            "this many pilots each turn up to the limit."
-        )
-
-        squadron_replenishment_rate.setToolTip(squadron_replenishment_rate_info)
-        squadron_replenishment_rate_label = QLabel("Squadron pilot replenishment rate")
-        squadron_replenishment_rate_label.setToolTip(squadron_replenishment_rate_info)
-
-        general_layout.addWidget(squadron_replenishment_rate_label, 4, 0)
-        general_layout.addWidget(squadron_replenishment_rate, 4, 1, Qt.AlignRight)
-
-        ai_pilot_levelling = QCheckBox()
-        ai_pilot_levelling.setChecked(self.game.settings.ai_pilot_levelling)
-        ai_pilot_levelling.toggled.connect(self.applySettings)
-
-        ai_pilot_levelling_info = (
-            "Set whether or not AI pilots will level up after completing a number of"
-            " sorties. Since pilot level affects the AI skill, you may wish to disable"
-            " this, lest you face an Ace!"
-        )
-
-        ai_pilot_levelling.setToolTip(ai_pilot_levelling_info)
-        ai_pilot_levelling_label = QLabel("Allow AI pilot levelling")
-        ai_pilot_levelling_label.setToolTip(ai_pilot_levelling_info)
-
-        general_layout.addWidget(ai_pilot_levelling_label, 5, 0)
-        general_layout.addWidget(ai_pilot_levelling, 5, 1, Qt.AlignRight)
-
+        campaign_layout.addWidget(PilotSettingsBox(self.game))
         campaign_layout.addWidget(HqAutomationSettingsBox(self.game))
 
     def initGeneratorLayout(self):

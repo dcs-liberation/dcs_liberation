@@ -4,6 +4,7 @@
   "authors": "Headiii",
   "description": "<p>Syrian Army with more modern Imports and supported by a Russian Expeditionary Force.</p>",
   "aircrafts": [
+    "IL-76MD",
     "L-39ZA Albatros",
     "Mi-24V Hind-E",
     "Mi-24P Hind-F",
@@ -64,6 +65,7 @@
     "SA10Generator",
     "SA11Generator",
     "SA13Generator",
+    "SA17Generator",
     "SA19Generator",
     "ZSU23Generator",
     "ZU23Generator",
