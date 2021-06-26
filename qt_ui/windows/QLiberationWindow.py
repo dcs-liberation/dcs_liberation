@@ -247,7 +247,7 @@ class QLiberationWindow(QMainWindow):
         file = QFileDialog.getOpenFileName(
             self,
             "Select game file to open",
-            dir=save_dir,
+            dir=self.game.savepath if self.game else persistency._dcs_saved_game_folder,
             filter="*.liberation",
         )
         if file is not None and file[0] != "":
@@ -274,7 +274,7 @@ class QLiberationWindow(QMainWindow):
         file = QFileDialog.getSaveFileName(
             self,
             "Save As",
-            dir=save_dir,
+            dir=self.game.savepath if self.game else persistency._dcs_saved_game_folder,
             filter="*.liberation",
         )
         if file is not None:
