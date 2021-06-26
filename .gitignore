@@ -13,6 +13,8 @@ resources/tools/a.miz
 .idea/
 .env
 env/
+env-LAP/
+env-PC/
 
 /kneeboards
 /liberation_preferences.json

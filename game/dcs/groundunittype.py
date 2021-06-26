@@ -91,7 +91,7 @@ class GroundUnitType(UnitType[VehicleType]):
                 name=variant,
                 description=data.get(
                     "description",
-                    f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\">Google {variant}</a>",
+                    f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",
                 ),
                 year_introduced=introduction,
                 country_of_origin=data.get("origin", "No data."),
