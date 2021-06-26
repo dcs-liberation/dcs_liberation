@@ -301,6 +301,13 @@ class Faction:
             self.remove_vehicle("Toyota_vert")
             self.remove_vehicle("Toyota_desert")
             self.remove_vehicle("Kamikaze")
+            self.remove_vehicle("AMX1375")
+            self.remove_vehicle("AMX1390")
+            self.remove_vehicle("VBCI")
+            self.remove_vehicle("T62")
+            self.remove_vehicle("T64BV")
+            self.remove_vehicle("T72M")
+            self.remove_vehicle("KORNET")
         # high digit sams
         if not mod_settings.high_digit_sams:
             self.remove_air_defenses("SA10BGenerator")

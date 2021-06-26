@@ -2,7 +2,7 @@
     "country": "France",
     "name": "France 1985",
     "authors": "Colonel Panic",
-    "description": "<p>1980s French equipment using FrenchPack.</p>",
+    "description": "<p>France 1985. Frenchpack 4.6+ mod is recommended to enable most of the ground units of this faction available.</p>",
     "locales": [
       "fr_FR"
     ],
@@ -32,6 +32,9 @@
       "VAB Mephisto",
       "VAB T20/13",
       "VBL .50",
+      "VBL AANF1",
+      "AMX-13 75mm",
+      "AMX-13 90mm",
       "VBL AANF1"
     ],
     "artillery_units": [
