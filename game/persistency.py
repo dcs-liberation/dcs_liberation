@@ -11,9 +11,9 @@ _dcs_saved_game_folder: Optional[str] = None
 
 def setup(user_folder: str):
     global _dcs_saved_game_folder
-    _dcs_saved_game_folder = user_folder
-    if not save_dir().exists():
-        save_dir().mkdir(parents=True)
+    _dcs_saved_game_folder = os.path.join(user_folder, "Liberation", "Saves")
+    if not os.path.exists(_dcs_saved_game_folder):
+        os.makedirs(_dcs_saved_game_folder)
 
 
 def base_path() -> str:
@@ -27,11 +27,11 @@ def save_dir() -> Path:
 
 
 def _temporary_save_file() -> str:
-    return str(save_dir() / "tmpsave.liberation")
+    return os.path.join(_dcs_saved_game_folder, "tmpsave.liberation")
 
 
 def _autosave_path() -> str:
-    return str(save_dir() / "autosave.liberation")
+    return os.path.join(_dcs_saved_game_folder, "autosave.liberation")
 
 
 def mission_path_for(name: str) -> str:
