@@ -121,6 +121,7 @@ class QTopPanel(QFrame):
             self.passTurnButton.setText("Pass Turn")
 
         if game and game.turn == 0:
+            self.passTurnButton.setText("Begin Campaign")
             self.proceedButton.setEnabled(False)
         else:
             self.proceedButton.setEnabled(True)
