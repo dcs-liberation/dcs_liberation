@@ -259,50 +259,6 @@ class Game:
         else:
             return USAFAggressors
 
-    def faction_for(self, player: bool) -> Faction:
-        if player:
-            return self.player_faction
-        return self.enemy_faction
-
-    def faker_for(self, player: bool) -> Faker:
-        if player:
-            return self.blue_faker
-        return self.red_faker
-
-    def air_wing_for(self, player: bool) -> AirWing:
-        if player:
-            return self.blue_air_wing
-        return self.red_air_wing
-
-    def country_for(self, player: bool) -> str:
-        if player:
-            return self.player_country
-        return self.enemy_country
-
-    def bullseye_for(self, player: bool) -> Bullseye:
-        if player:
-            return self.blue_bullseye
-        return self.red_bullseye
-
-    def _roll(self, prob, mult):
-        if self.settings.version == "dev":
-            # always generate all events for dev
-            return 100
-        else:
-            return random.randint(1, 100) <= prob * mult
-
-    def _generate_player_event(self, event_class, player_cp, enemy_cp):
-        self.events.append(
-            event_class(
-                self,
-                player_cp,
-                enemy_cp,
-                enemy_cp.position,
-                self.player_faction.name,
-                self.enemy_faction.name,
-            )
-        )
-
     def _generate_events(self):
         for front_line in self.theater.conflicts():
             self._generate_player_event(
