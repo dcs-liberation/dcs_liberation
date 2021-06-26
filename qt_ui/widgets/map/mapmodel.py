@@ -212,7 +212,7 @@ class GroundObjectJs(QObject):
 
     @Property(str, notify=nameChanged)
     def name(self) -> str:
-        return self.tgo.name
+        return f"{self.tgo.name} ({self.tgo.control_point.name})"
 
     @Property(str, notify=categoryChanged)
     def category(self) -> str:
