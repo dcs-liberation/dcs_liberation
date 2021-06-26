@@ -94,6 +94,9 @@ class QUnitInfoWindow(QDialog):
         self.details_text = QTextBrowser()
         self.details_text.setProperty("style", "info-desc")
         self.details_text.setText(unit_type.description)
+        self.details_text.setOpenExternalLinks(
+            True
+        )  # in aircrafttype.py and groundunittype.py, for the descriptions, if No Data. including a google search link
         self.gridLayout.addWidget(self.details_text, 3, 0)
 
         self.layout.addLayout(self.gridLayout, 1, 0)
