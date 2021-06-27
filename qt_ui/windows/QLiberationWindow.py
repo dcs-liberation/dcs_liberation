@@ -36,6 +36,7 @@ from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
 )
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
+from qt_ui.windows.notes.QNotesWindow import QNotesWindow
 
 
 class QLiberationWindow(QMainWindow):
@@ -158,6 +159,10 @@ class QLiberationWindow(QMainWindow):
         self.openStatsAction.setIcon(CONST.ICONS["Statistics"])
         self.openStatsAction.triggered.connect(self.showStatsDialog)
 
+        self.openNotesAction = QAction("Notes", self)
+        self.openNotesAction.setIcon(CONST.ICONS["Notes"])
+        self.openNotesAction.triggered.connect(self.showNotesDialog)
+
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
@@ -171,6 +176,7 @@ class QLiberationWindow(QMainWindow):
         self.actions_bar = self.addToolBar("Actions")
         self.actions_bar.addAction(self.openSettingsAction)
         self.actions_bar.addAction(self.openStatsAction)
+        self.actions_bar.addAction(self.openNotesAction)
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -349,6 +355,10 @@ class QLiberationWindow(QMainWindow):
 
     def showStatsDialog(self):
         self.dialog = QStatsWindow(self.game)
+        self.dialog.show()
+
+    def showNotesDialog(self):
+        self.dialog = QNotesWindow(self.game)
         self.dialog.show()
 
     def onDebriefing(self, debrief: Debriefing):
