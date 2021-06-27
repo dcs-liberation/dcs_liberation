@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 import os
+from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional
 
 from dcs import Mission
 from dcs.action import DoScript, DoScriptFile
@@ -40,43 +41,42 @@ class LuaGenerator:
         self.inject_plugins()
 
     def generate_plugin_data(self) -> None:
-        #  TODO: Refactor this
-        lua_data = {
-            "AircraftCarriers": {},
-            "Tankers": {},
-            "AWACs": {},
-            "JTACs": {},
-            "TargetPoints": {},
-            "RedAA": {},
-            "BlueAA": {},
-        }  # type: ignore
+        lua_data = LuaData("dcsLiberation")
 
-        for i, tanker in enumerate(self.air_support.tankers):
-            lua_data["Tankers"][i] = {
-                "dcsGroupName": tanker.group_name,
-                "callsign": tanker.callsign,
-                "variant": tanker.variant,
-                "radio": tanker.freq.mhz,
-                "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
-            }
+        install_path = lua_data.add_item("installPath")
+        install_path.set_value(os.path.abspath("."))
 
-        for i, awacs in enumerate(self.air_support.awacs):
-            lua_data["AWACs"][i] = {
-                "dcsGroupName": awacs.group_name,
-                "callsign": awacs.callsign,
-                "radio": awacs.freq.mhz,
-            }
+        lua_data.add_item("Airbases")
+        lua_data.add_item("Carriers")
 
-        for i, jtac in enumerate(self.air_support.jtacs):
-            lua_data["JTACs"][i] = {
-                "dcsGroupName": jtac.group_name,
-                "callsign": jtac.callsign,
-                "zone": jtac.region,
-                "dcsUnit": jtac.unit_name,
-                "laserCode": jtac.code,
-                "radio": jtac.freq.mhz,
-            }
-        flight_count = 0
+        tankers_object = lua_data.add_item("Tankers")
+        for tanker in self.air_support.tankers:
+            tanker_item = tankers_object.add_item()
+            tanker_item.add_key_value("dcsGroupName", tanker.group_name)
+            tanker_item.add_key_value("callsign", tanker.callsign)
+            tanker_item.add_key_value("variant", tanker.variant)
+            tanker_item.add_key_value("radio", str(tanker.freq.mhz))
+            tanker_item.add_key_value(
+                "tacan", str(tanker.tacan.number) + tanker.tacan.band.name
+            )
+
+        awacs_object = lua_data.add_item("AWACs")
+        for awacs in self.air_support.awacs:
+            awacs_item = awacs_object.add_item()
+            awacs_item.add_key_value("dcsGroupName", awacs.group_name)
+            awacs_item.add_key_value("callsign", awacs.callsign)
+            awacs_item.add_key_value("radio", str(awacs.freq.mhz))
+
+        jtacs_object = lua_data.add_item("JTACs")
+        for jtac in self.air_support.jtacs:
+            jtac_item = jtacs_object.add_item()
+            jtac_item.add_key_value("dcsGroupName", jtac.group_name)
+            jtac_item.add_key_value("callsign", jtac.callsign)
+            jtac_item.add_key_value("zone", jtac.region)
+            jtac_item.add_key_value("dcsUnit", jtac.unit_name)
+            jtac_item.add_key_value("laserCode", jtac.code)
+
+        target_points = lua_data.add_item("TargetPoints")
         for flight in self.flights:
             if flight.friendly and flight.flight_type in [
                 FlightType.ANTISHIP,
@@ -97,17 +97,24 @@ class LuaGenerator:
                     elif hasattr(flight_target, "name"):
                         flight_target_name = flight_target.name
                         flight_target_type = flight_type + " TGT (Airbase)"
-                    lua_data["TargetPoints"][flight_count] = {
-                        "name": flight_target_name,
-                        "type": flight_target_type,
-                        "position": {
-                            "x": flight_target.position.x,
-                            "y": flight_target.position.y,
-                        },
-                    }
-                    flight_count += 1
+                    target_item = target_points.add_item()
+                    if flight_target_name:
+                        target_item.add_key_value("name", flight_target_name)
+                    if flight_target_type:
+                        target_item.add_key_value("type", flight_target_type)
+                    target_item.add_key_value(
+                        "positionX", str(flight_target.position.x)
+                    )
+                    target_item.add_key_value(
+                        "positionY", str(flight_target.position.y)
+                    )
 
         for cp in self.game.theater.controlpoints:
+            coalition_object = (
+                lua_data.get_or_create_item("BlueAA")
+                if cp.captured
+                else lua_data.get_or_create_item("RedAA")
+            )
             for ground_object in cp.ground_objects:
                 if ground_object.might_have_aa and not ground_object.is_dead:
                     for g in ground_object.groups:
@@ -116,160 +123,18 @@ class LuaGenerator:
                         if not threat_range:
                             continue
 
-                        faction = "BlueAA" if cp.captured else "RedAA"
-
-                        lua_data[faction][g.name] = {
-                            "name": ground_object.name,
-                            "range": threat_range.meters,
-                            "position": {
-                                "x": ground_object.position.x,
-                                "y": ground_object.position.y,
-                            },
-                        }
-
-        # set a LUA table with data from Liberation that we want to set
-        # at the moment it contains Liberation's install path, and an overridable
-        # definition for the JTACAutoLase function later, we'll add data about the units
-        # and points having been generated, in order to facilitate the configuration of
-        # the plugin lua scripts
-        state_location = "[[" + os.path.abspath(".") + "]]"
-        lua = (
-            """
-            -- setting configuration table
-            env.info("DCSLiberation|: setting configuration table")
-
-            -- all data in this table is overridable.
-            dcsLiberation = {}
-
-            -- the base location for state.json; if non-existent, it'll be replaced with
-            -- LIBERATION_EXPORT_DIR, TEMP, or DCS working directory
-            dcsLiberation.installPath="""
-            + state_location
-            + """
-
-        """
-        )
-        # Process the tankers
-        lua += """
-
-        -- list the tankers generated by Liberation
-        dcsLiberation.Tankers = {
-        """
-        for key in lua_data["Tankers"]:
-            data = lua_data["Tankers"][key]
-            dcs_group_name = data["dcsGroupName"]
-            callsign = data["callsign"]
-            variant = data["variant"]
-            tacan = data["tacan"]
-            radio = data["radio"]
-            lua += (
-                f"    {{dcsGroupName='{dcs_group_name}', callsign='{callsign}', "
-                f"variant='{variant}', tacan='{tacan}', radio='{radio}' }}, \n"
-            )
-        lua += "}"
-
-        # Process the AWACSes
-        lua += """
-
-        -- list the AWACs generated by Liberation
-        dcsLiberation.AWACs = {
-        """
-        for key in lua_data["AWACs"]:
-            data = lua_data["AWACs"][key]
-            dcs_group_name = data["dcsGroupName"]
-            callsign = data["callsign"]
-            radio = data["radio"]
-            lua += (
-                f"    {{dcsGroupName='{dcs_group_name}', callsign='{callsign}', "
-                f"radio='{radio}' }}, \n"
-            )
-        lua += "}"
-
-        # Process the JTACs
-        lua += """
-
-        -- list the JTACs generated by Liberation
-        dcsLiberation.JTACs = {
-        """
-        for key in lua_data["JTACs"]:
-            data = lua_data["JTACs"][key]
-            dcs_group_name = data["dcsGroupName"]
-            callsign = data["callsign"]
-            zone = data["zone"]
-            laser_code = data["laserCode"]
-            dcs_unit = data["dcsUnit"]
-            radio = data["radio"]
-            lua += (
-                f"    {{dcsGroupName='{dcs_group_name}', callsign='{callsign}', "
-                f"zone={repr(zone)}, laserCode='{laser_code}', dcsUnit='{dcs_unit}', "
-                f"radio='{radio}' }}, \n"
-            )
-        lua += "}"
-
-        # Process the Target Points
-        lua += """
-
-        -- list the target points generated by Liberation
-        dcsLiberation.TargetPoints = {
-        """
-        for key in lua_data["TargetPoints"]:
-            data = lua_data["TargetPoints"][key]
-            name = data["name"]
-            point_type = data["type"]
-            position_x = data["position"]["x"]
-            position_y = data["position"]["y"]
-            lua += (
-                f"    {{name='{name}', pointType='{point_type}', "
-                f"positionX='{position_x}', positionY='{position_y}' }}, \n"
-            )
-        lua += "}"
-
-        lua += """
-
-        -- list the airbases generated by Liberation
-        -- dcsLiberation.Airbases = {}
-
-        -- list the aircraft carriers generated by Liberation
-        -- dcsLiberation.Carriers = {}
-
-        -- list the Red AA generated by Liberation
-        dcsLiberation.RedAA = {
-        """
-        for key in lua_data["RedAA"]:
-            data = lua_data["RedAA"][key]
-            name = data["name"]
-            radius = data["range"]
-            position_x = data["position"]["x"]
-            position_y = data["position"]["y"]
-            lua += (
-                f"    {{dcsGroupName='{key}', name='{name}', range='{radius}', "
-                f"positionX='{position_x}', positionY='{position_y}' }}, \n"
-            )
-        lua += "}"
-
-        lua += """
-
-        -- list the Blue AA generated by Liberation
-        dcsLiberation.BlueAA = {
-        """
-        for key in lua_data["BlueAA"]:
-            data = lua_data["BlueAA"][key]
-            name = data["name"]
-            radius = data["range"]
-            position_x = data["position"]["x"]
-            position_y = data["position"]["y"]
-            lua += (
-                f"    {{dcsGroupName='{key}', name='{name}', range='{radius}', "
-                f"positionX='{position_x}', positionY='{position_y}' }}, \n"
-            )
-        lua += "}"
-
-        lua += """
-
-        """
+                        aa_item = coalition_object.add_item()
+                        aa_item.add_key_value("name", ground_object.name)
+                        aa_item.add_key_value("range", str(threat_range.meters))
+                        aa_item.add_key_value(
+                            "positionX", str(ground_object.position.x)
+                        )
+                        aa_item.add_key_value(
+                            "positionY", str(ground_object.position.y)
+                        )
 
         trigger = TriggerStart(comment="Set DCS Liberation data")
-        trigger.add_action(DoScript(String(lua)))
+        trigger.add_action(DoScript(String(lua_data.create_operations_lua())))
         self.mission.triggerrules.triggers.append(trigger)
 
     def inject_lua_trigger(self, contents: str, comment: str) -> None:
@@ -307,3 +172,155 @@ class LuaGenerator:
             if plugin.enabled:
                 plugin.inject_scripts(self)
                 plugin.inject_configuration(self)
+
+
+class LuaValue:
+    key: Optional[str]
+    value: List[str]
+    is_array = False
+
+    def __init__(self, key: Optional[str], values: List[str]):
+        self.key = key
+        self.value = values
+
+    def escape_value(self, value: str) -> str:
+        value = value.replace('"', "'")  # Replace Double Quote as this is the delimiter
+        value = value.replace(os.sep, "/")  # Replace Backslash as path separator
+        return '"{0}"'.format(value)
+
+    def serialize(self) -> str:
+        serialized_value = ""
+        if self.key:
+            serialized_value += self.key + " = "
+        if self.value:
+            if self.is_array:
+                escaped_values = [self.escape_value(v) for v in self.value]
+                serialized_value += "{" + ", ".join(escaped_values) + "}"
+            else:
+                serialized_value += self.escape_value(self.value[0])
+        else:
+            serialized_value += "{}"
+        return serialized_value
+
+
+class LuaItem(ABC):
+    values: List[LuaValue]
+    name: Optional[str] = None
+    is_single_value = False
+
+    def __init__(self, name: Optional[str]):
+        self.values = []
+        self.name = name
+
+    def set_value(self, value: str) -> None:
+        self.is_single_value = True
+        self.values = [LuaValue(None, [value])]
+
+    def add_data_array(self, key: str, values: List[str]) -> None:
+        value = LuaValue(key, values)
+        value.is_array = True
+        self.values.append(value)
+
+    def add_key_value(self, key: str, value: str) -> None:
+        self.values.append(LuaValue(key, [value]))
+
+    @abstractmethod
+    def add_item(self, item_name: Optional[str] = None) -> LuaItem:
+        pass
+
+    @abstractmethod
+    def get_item(self, item_name: str) -> Optional[LuaItem]:
+        pass
+
+    @abstractmethod
+    def get_or_create_item(self, item_name: Optional[str] = None) -> LuaItem:
+        pass
+
+    @abstractmethod
+    def serialize(self) -> str:
+        serialized_data = [d.serialize() for d in self.values]
+        if self.is_single_value:
+            return serialized_data[0]
+        if len(self.values) > 0:
+            return "{" + ", ".join(serialized_data) + "}"
+        return "{}"
+
+
+class LuaData(LuaItem):
+    objects: List[LuaData]
+    base_name: Optional[str] = None
+
+    def __init__(self, name: Optional[str], is_base_name: bool = True):
+        self.objects = []
+        if is_base_name:
+            self.base_name = name
+        super().__init__(name)
+
+    def add_item(self, item_name: Optional[str] = None) -> LuaItem:
+        """adds a new item to the LuaArray without checking the existence"""
+        item = LuaData(item_name, False)
+        self.objects.append(item)
+        return item
+
+    def get_item(self, item_name: str) -> Optional[LuaItem]:
+        """gets item from LuaArray. Returns None if it does not exist"""
+        for lua_object in self.objects:
+            if lua_object.name == item_name:
+                return lua_object
+        return None
+
+    def get_or_create_item(self, item_name: Optional[str] = None) -> LuaItem:
+        """gets item from the LuaArray or creates one if it does not exist already"""
+        if item_name:
+            item = self.get_item(item_name)
+            if item:
+                return item
+        return self.add_item(item_name)
+
+    def serialize(self, level: int = 0) -> str:
+        """serialize the LuaData to a string"""
+        serialized_data: List[str] = []
+        serialized_name = ""
+        linebreak = "\n"
+        tab = "\t"
+        tab_end = ""
+        for _ in range(level):
+            tab += "\t"
+            tab_end += "\t"
+        if self.base_name:
+            # Only used for initialization of the object in lua
+            serialized_name += self.base_name + " = "
+        if self.objects:
+            # nested objects
+            serialized_objects = [o.serialize(level + 1) for o in self.objects]
+            if self.name:
+                if self.name is not self.base_name:
+                    serialized_name += self.name + " = "
+            serialized_data.append(
+                serialized_name
+                + "{"
+                + linebreak
+                + tab
+                + ("," + linebreak + tab).join(serialized_objects)
+                + linebreak
+                + tab_end
+                + "}"
+            )
+        else:
+            # key with value
+            if self.name:
+                serialized_data.append(self.name + " = " + super().serialize())
+            # only value
+            else:
+                serialized_data.append(super().serialize())
+
+        return "\n".join(serialized_data)
+
+    def create_operations_lua(self) -> str:
+        """crates the liberation lua script for the dcs mission"""
+        lua_prefix = """
+-- setting configuration table
+env.info("DCSLiberation|: setting configuration table")
+"""
+
+        return lua_prefix + self.serialize()
