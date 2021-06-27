@@ -14,7 +14,6 @@ class SA13Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-13 Strela Group"
-    price = 50
 
     def generate(self):
         self.add_unit(

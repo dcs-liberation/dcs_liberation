@@ -14,7 +14,6 @@ class LinebackerGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Linebacker Group"
-    price = 75
 
     def generate(self):
         num_launchers = 2
