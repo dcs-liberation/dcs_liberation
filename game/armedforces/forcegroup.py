@@ -19,6 +19,7 @@ from game.layout import LAYOUTS
 from game.layout.layout import TgoLayout, TgoLayoutGroup
 from game.point_with_heading import PointWithHeading
 from game.theater.theatergroup import TheaterGroup
+from game.utils import escape_string_for_lua
 
 if TYPE_CHECKING:
     from game import Game
@@ -251,7 +252,10 @@ class ForceGroup:
         # Assign UniqueID, name and align relative to ground_object
         for unit in units:
             unit.id = game.next_unit_id()
-            unit.name = unit.unit_type.name if unit.unit_type else unit.type.name
+            # Add unit name escaped so that we do not have scripting issues later
+            unit.name = escape_string_for_lua(
+                unit.unit_type.name if unit.unit_type else unit.type.name
+            )
             unit.position = PointWithHeading.from_point(
                 ground_object.position + unit.position,
                 # Align heading to GroundObject defined by the campaign designer
