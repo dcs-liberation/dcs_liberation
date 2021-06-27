@@ -16,7 +16,6 @@ class HawkGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Hawk Site"
-    price = 115
 
     def generate(self):
         self.add_unit(

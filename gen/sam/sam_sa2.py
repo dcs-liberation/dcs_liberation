@@ -14,7 +14,6 @@ class SA2Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-2/S-75 Site"
-    price = 74
 
     def generate(self):
         self.add_unit(

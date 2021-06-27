@@ -14,7 +14,6 @@ class ChaparralGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Chaparral Group"
-    price = 66
 
     def generate(self):
         num_launchers = 2

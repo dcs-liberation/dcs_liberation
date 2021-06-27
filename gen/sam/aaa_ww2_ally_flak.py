@@ -14,7 +14,6 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "WW2 Ally Flak Site"
-    price = 140
 
     def generate(self):
 
