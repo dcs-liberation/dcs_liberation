@@ -12,7 +12,9 @@ from gen.defenses.armored_group_generator import (
 )
 
 
-def generate_armor_group(faction: str, game, ground_object, shorad_included: bool):
+def generate_armor_group(
+    faction: str, game, ground_object, shorad_included_probability: int
+):
     """
     This generate a group of ground units
     :return: Generated group
@@ -27,13 +29,13 @@ def generate_armor_group(faction: str, game, ground_object, shorad_included: boo
     if len(possible_unit) > 0:
         unit_type = random.choice(possible_unit)
         return generate_armor_group_of_type(
-            game, ground_object, unit_type, faction, shorad_included
+            game, ground_object, unit_type, faction, shorad_included_probability
         )
     return None
 
 
 def generate_light_armor_group(
-    faction: str, game, ground_object, shorad_included: bool
+    faction: str, game, ground_object, shorad_included_probability: int
 ):
     """
     This generate a group of ground units
@@ -46,7 +48,7 @@ def generate_light_armor_group(
     if len(possible_unit) > 0:
         unit_type = random.choice(possible_unit)
         return generate_armor_group_of_type(
-            game, ground_object, unit_type, faction, shorad_included
+            game, ground_object, unit_type, faction, shorad_included_probability
         )
     return None
 
@@ -56,7 +58,7 @@ def generate_armor_group_of_type(
     ground_object: VehicleGroupGroundObject,
     unit_type: GroundUnitType,
     faction: str,
-    shorad_included: bool,
+    shorad_included_probability: int,
 ) -> VehicleGroup:
     """
     This generate a group of ground units of given type
@@ -67,8 +69,10 @@ def generate_armor_group_of_type(
 
     vehicle_group = generator.get_generated_group()
 
-    # add shorad to group if setting wants to
-    if shorad_included:
+    # add shorad to group if probability
+    random_percentage = random.randint(1, 100)
+
+    if random_percentage <= shorad_included_probability:
         shorads = [
             u
             for u in db.FACTIONS[faction].frontline_units

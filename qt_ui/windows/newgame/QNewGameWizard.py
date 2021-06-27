@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 import logging
 from datetime import timedelta
 from typing import List
-
+import qt_ui.uiconstants as CONST
 from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
-from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
+from PySide2.QtWidgets import QComboBox, QVBoxLayout, QTextEdit, QLabel, QCheckBox
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
@@ -510,8 +510,12 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_lha", no_lha)
         supercarrier = QtWidgets.QCheckBox()
         self.registerField("supercarrier", supercarrier)
-        shorads_in_armor_groups = QtWidgets.QCheckBox()
+        shorads_in_armor_groups = QComboBox()
+        for percentage in CONST.SHORAD_IN_AG_PROBABILITY:
+            shorads_in_armor_groups.addItem(percentage)
+
         self.registerField("shorads_in_armor_groups", shorads_in_armor_groups)
+
         no_player_navy = QtWidgets.QCheckBox()
         self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
@@ -539,6 +543,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         )
         generatorLayout.addWidget(shorads_in_armor_groups, 6, 1)
         generatorLayout.addLayout(desired_player_mission_duration, 7, 0)
+
         generatorSettingsGroup.setLayout(generatorLayout)
 
         modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")

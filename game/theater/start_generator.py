@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import qt_ui.uiconstants as CONST
 import logging
 import pickle
 import random
@@ -79,7 +80,7 @@ class GeneratorSettings:
     no_lha: bool
     no_player_navy: bool
     no_enemy_navy: bool
-    shorads_in_armor_groups: bool
+    shorads_in_armor_groups: int
 
 
 @dataclass
@@ -331,11 +332,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
+        shorad_in_ag_probability = self.generator_settings.shorads_in_armor_groups * 25
+
         group = generate_armor_group(
             self.faction_name,
             self.game,
             g,
-            self.generator_settings.shorads_in_armor_groups,
+            shorad_in_ag_probability,
         )
         if group is None:
             logging.error(
@@ -357,11 +360,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
+        shorad_in_ag_probability = self.generator_settings.shorads_in_armor_groups * 25
+
         group = generate_light_armor_group(
             self.faction_name,
             self.game,
             g,
-            self.generator_settings.shorads_in_armor_groups,
+            shorad_in_ag_probability,
         )
         if group is None:
             logging.error(

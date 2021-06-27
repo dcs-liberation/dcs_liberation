@@ -15,6 +15,7 @@ URLS: Dict[str, str] = {
 
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Neutral Dot", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
+SHORAD_IN_AG_PROBABILITY = ["None", "25%", "50%", "75%", "All"]
 
 AIRCRAFT_BANNERS: Dict[str, QPixmap] = {}
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
