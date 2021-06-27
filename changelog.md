@@ -13,6 +13,7 @@ Saves from 4.0.0 are compatible with 4.0.1.
 ## Features/Improvements
 
 ## Fixes
+* **[UI]** Statistics window tick marks are now always integers.
 
 # 4.0.0
 
