@@ -87,6 +87,14 @@ vehicle_map["Toyota_bleu"] = frenchpack.DIM__TOYOTA_BLUE
 vehicle_map["Toyota_vert"] = frenchpack.DIM__TOYOTA_GREEN
 vehicle_map["Toyota_desert"] = frenchpack.DIM__TOYOTA_DESERT
 vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
+vehicle_map["AMX1375"] = frenchpack.AMX_13_75mm
+vehicle_map["AMX1390"] = frenchpack.AMX_13_90mm
+vehicle_map["VBCI"] = frenchpack.VBCI
+vehicle_map["T62"] = frenchpack.Char_T_62
+vehicle_map["T64BV"] = frenchpack.Char_T_64BV
+vehicle_map["T72M"] = frenchpack.Char_T_72A
+vehicle_map["KORNET"] = frenchpack.KORNET_ATGM
+
 
 vehicle_map[highdigitsams.AAA_SON_9_Fire_Can.id] = highdigitsams.AAA_SON_9_Fire_Can
 vehicle_map[highdigitsams.AAA_100mm_KS_19.id] = highdigitsams.AAA_100mm_KS_19

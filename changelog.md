@@ -6,12 +6,21 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Fixes
 
+# 4.0.1
+
+Saves from 4.0.0 are compatible with 4.0.1.
+
+## Features/Improvements
+
+## Fixes
+
 # 4.0.0
 
 Saves from 3.x are not compatible with 4.0.
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS 2.7.2.7910.1 and newer, including Cyprus, F-16 JDAMs, and the Hind.
 * **[Campaign]** Squadrons now (optionally, off by default) have a maximum size and killed pilots replenish at a limited rate.
 * **[Campaign]** Added an option to disable levelling up of AI pilots.
 * **[Campaign]** Added Russian Intervention 2015 campaign on Syria, for a small and somewhat realistic Russian COIN scenario.
@@ -23,16 +32,17 @@ Saves from 3.x are not compatible with 4.0.
 * **[Flight Planner]** Added ability to plan Tankers.
 * **[Modding]** Campaign format version is now 7.0 to account for DCS map changes that made scenery strike targets incompatible with existing campaigns.
 * **[Mods]** Added support for the Gripen mod.
+* **[Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+.
 * **[Mission Generation]** Added support for "Neutral Dot" label options.
+* **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
 * **[UI]** Ctrl click and shift click now buy or sell 5 or 10 units respectively.
 * **[UI]** Multiple waypoints can now be deleted simultaneously if multiple waypoints are selected.
 * **[UI]** Carriers and LHAs now match the colour of airfields, and their destination icons are translucent.
 * **[UI]** Updated intel box text for first turn.
 * **[UI]** Base Capture Cheat is now usable at all bases and can also be used to transfer player-owned bases to OPFOR.
 * **[UI]** Pass Turn button is relabled as "Begin Campaign" on Turn 0.  
-* **[UI]** Added a ruler to the map.  
-* **[Units/Factions/Mods]** Removes MB-339PAN support, as the mod is now deprecated and no longer works with DCS 2.7+. 
-* **[New Game Wizard]** Mods are now selected via checkboxes in the new game wizard, not as separate factions.
+* **[UI]** Added a ruler to the map.
+* **[UI]** Liberation now saves games to `<DCS user directory>/Liberation/Saves` by default to declutter the main directory.
 
 ## Fixes
 

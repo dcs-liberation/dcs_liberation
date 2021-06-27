@@ -234,10 +234,14 @@ class QLiberationWindow(QMainWindow):
         wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def openFile(self):
+        if self.game is not None and self.game.savepath:
+            save_dir = self.game.savepath
+        else:
+            save_dir = str(persistency.save_dir())
         file = QFileDialog.getOpenFileName(
             self,
             "Select game file to open",
-            dir=persistency._dcs_saved_game_folder,
+            dir=save_dir,
             filter="*.liberation",
         )
         if file is not None and file[0] != "":
@@ -257,10 +261,14 @@ class QLiberationWindow(QMainWindow):
             self.saveGameAs()
 
     def saveGameAs(self):
+        if self.game is not None and self.game.savepath:
+            save_dir = self.game.savepath
+        else:
+            save_dir = str(persistency.save_dir())
         file = QFileDialog.getSaveFileName(
             self,
             "Save As",
-            dir=persistency._dcs_saved_game_folder,
+            dir=save_dir,
             filter="*.liberation",
         )
         if file is not None:

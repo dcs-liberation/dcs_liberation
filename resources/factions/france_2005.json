@@ -2,7 +2,7 @@
     "country": "France",
     "name": "France 2005",
     "authors": "HerrTom",
-    "description": "<p>French equipment using the Frenchpack, but without the Rafale mod.</p>",
+    "description": "<p>France 2005. Frenchpack 4.6+ mod is recommended to enable most of the ground units of this faction available.</p>",
     "locales": [
       "fr_FR"
     ],
@@ -23,8 +23,7 @@
       "KC-135 Stratotanker"
     ],
     "frontline_units": [
-      "AMX.30B2",
-      "Leclerc S\u00e9ries 2",
+      "AMX-10RCR SEPAR",
       "Leclerc S\u00e9ries 2",
       "Leclerc_XXI",
       "Pamela",
@@ -33,11 +32,9 @@
       "VAB .50",
       "VAB Mephisto",
       "VAB T20/13",
-      "VAB T20/13",
-      "VBAE CRAB",
-      "VBAE CRAB MMP",
       "VBL .50",
-      "VBL AANF1"
+      "VBL AANF1",
+      "VBCI"
     ],
     "artillery_units": [
       "M109A6 Paladin",
