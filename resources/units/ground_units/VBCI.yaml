@@ -1,0 +1,9 @@
+class: IFV
+description: "The Véhicule Blindé de Combat d'Infanterie (VBCI : Armoured vehicle for infantry combat) is a French Infantry fighting vehicle designed to replace the AMX-10P."
+introduced: 2005
+manufacturer: Nexter Systems
+origin: France
+price: 14
+role: Infantry Fighting Vehicle
+variants:
+  VBCI: {}

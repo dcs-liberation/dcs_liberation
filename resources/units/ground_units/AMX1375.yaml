@@ -1,0 +1,9 @@
+class: Tank
+description: "The AMX-13 is a French light tank produced from 1952 to 1987. It served with the French Army, as the Char 13t-75 Modèle 51, and was exported to more than 26 other nations. Named after its initial weight of 13 tonnes, and featuring a tough and reliable chassis,[1] it was fitted with an oscillating turret built by GIAT Industries (now Nexter) with revolver type magazines, which were also used on the Austrian SK-105 Kürassier.[1] Including prototypes and export versions, there are over a hundred variants including self-propelled guns, anti-aircraft systems, APCs, and ATGM versions. This specific version isan early one fitted with a 75mm gun."
+introduced: 1952
+manufacturer: Atelier de Construction d'Issy-les-Moulineaux
+origin: France
+price: 10
+role: Light Tank
+variants:
+  AMX-13 75mm: {}

@@ -41,7 +41,7 @@ class Settings:
     #: the campaign has started will have no immediate effect; pilots already in the
     #: squadron will not be removed if the limit is lowered and pilots will not be
     #: immediately created if the limit is raised.
-    squadron_pilot_limit: int = 4
+    squadron_pilot_limit: int = 12
 
     #: The number of pilots a squadron can replace per turn.
     squadron_replenishment_rate: int = 4
