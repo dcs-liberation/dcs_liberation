@@ -14,7 +14,6 @@ class GepardGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Gepard Group"
-    price = 50
 
     def generate(self):
         num_launchers = 2

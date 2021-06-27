@@ -17,7 +17,6 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Early Cold War Flak Site"
-    price = 74
 
     def generate(self):
 
@@ -90,7 +89,6 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Cold War Flak Site"
-    price = 72
 
     def generate(self):
 
