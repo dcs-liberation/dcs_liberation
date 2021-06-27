@@ -751,9 +751,14 @@ class AircraftConflictGenerator:
                             start_type=flight.start_type,
                             at=helipad.static_unit,
                         )
-                        # Note : A bit dirty, need better support required in pydcs
+
+                        # Note : A bit dirty, need better support in pydcs
                         group.points[0].action = PointAction.FromGroundArea
                         group.points[0].type = "TakeOffGround"
+                        if flight.start_type != "Cold":
+                            group.points[0].action = PointAction.FromGroundAreaHot
+                            group.points[0].type = "TakeOffGroundHot"
+
                         helipad.occupied = True
 
                     for i in range(flight.count - 1):

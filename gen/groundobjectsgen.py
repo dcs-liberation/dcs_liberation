@@ -24,7 +24,7 @@ from dcs.task import (
     FireAtPoint,
 )
 from dcs.triggers import TriggerStart, TriggerZone
-from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad
+from dcs.unit import Ship, Unit, Vehicle, InvisibleFARP
 from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, UnitType
 from dcs.vehicles import vehicle_map
@@ -590,7 +590,7 @@ class HelipadGenerator:
         for i, helipad in enumerate(self.cp.helipads):
             name = self.cp.name + "_helipad_" + str(i)
             logging.info("Generating helipad : " + name)
-            pad = SingleHeliPad(name=name)
+            pad = InvisibleFARP(name=name)
             pad.position = Point(helipad.x, helipad.y)
             pad.heading = helipad.heading
             sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
