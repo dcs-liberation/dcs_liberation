@@ -2,7 +2,7 @@
   "country": "France",
   "name": "France 1995",
   "authors": "Khopa",
-  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice.</p>",
+  "description": "<p>France in the late 90s before Rafale introduction. A Mirage-2000 centric faction choice. Frenchpack 4.6+ mod is recommended to enable most of the ground units of this faction available.</p>",
   "locales": [
     "fr_FR"
   ],
@@ -22,12 +22,19 @@
     "KC-135 Stratotanker"
   ],
   "frontline_units": [
-    "Cobra",
-    "LAV-25",
+    "AMX-10 RCR",
+    "AMX-13 90mm",
+    "AMX.30B2",
     "Leclerc S\u00e9ries 2",
+    "Leclerc_XXI",
+    "Pamela",
+    "Panhard",
     "Roland 2 (Marder Chassis)",
-    "TPz Fuchs",
-    "VAB Mephisto"
+    "VAB .50",
+    "VAB Mephisto",
+    "VAB T20/13",
+    "VBL .50",
+    "VBL AANF1"
   ],
   "artillery_units": [
     "M109A6 Paladin",

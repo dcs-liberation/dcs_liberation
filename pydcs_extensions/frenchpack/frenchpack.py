@@ -256,8 +256,8 @@ class _53T2(unittype.VehicleType):
     id = "AA20"
     name = "53T2"
     detection_range = 5000
-    threat_range = 2000
-    air_weapon_dist = 2000
+    threat_range = 4000
+    air_weapon_dist = 4000
 
 
 class TRM_2000_53T2(unittype.VehicleType):
@@ -276,6 +276,71 @@ class TRM_2000_PAMELA(unittype.VehicleType):
     threat_range = 10000
     air_weapon_dist = 10000
     eplrs = True
+
+
+class Leclerc_Serie_XXI_Desert(unittype.VehicleType):
+    id = "Leclerc_XXI_Desert"
+    name = "Leclerc Série XXI Désert"
+    detection_range = 0
+    threat_range = 4000
+    air_weapon_dist = 4000
+
+
+class AMX_13_75mm(unittype.VehicleType):
+    id = "AMX1375"
+    name = "AMX-13 75mm"
+    detection_range = 0
+    threat_range = 3500
+    air_weapon_dist = 3500
+
+
+class AMX_13_90mm(unittype.VehicleType):
+    id = "AMX1390"
+    name = "AMX-13 90mm"
+    detection_range = 0
+    threat_range = 3500
+    air_weapon_dist = 3500
+
+
+class VBCI(unittype.VehicleType):
+    id = "VBCI"
+    name = "VBCI"
+    detection_range = 0
+    threat_range = 3500
+    air_weapon_dist = 3500
+    eplrs = True
+
+
+class Char_T_62(unittype.VehicleType):
+    id = "T62"
+    name = "Char T-62"
+    detection_range = 0
+    threat_range = 4000
+    air_weapon_dist = 4000
+
+
+class Char_T_64BV(unittype.VehicleType):
+    id = "T64BV"
+    name = "Char T-64BV"
+    detection_range = 0
+    threat_range = 4000
+    air_weapon_dist = 4000
+
+
+class Char_T_72A(unittype.VehicleType):
+    id = "T72M"
+    name = "Char T-72A"
+    detection_range = 0
+    threat_range = 4000
+    air_weapon_dist = 4000
+
+
+class KORNET_ATGM(unittype.VehicleType):
+    id = "KORNET"
+    name = "KORNET ATGM"
+    detection_range = 0
+    threat_range = 0
+    air_weapon_dist = 0
 
 
 ## INFANTRY
