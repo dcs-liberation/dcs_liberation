@@ -112,6 +112,11 @@ class QTopPanel(QFrame):
         self.transfers.setEnabled(True)
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
+
+        self.conditionsWidget.setToolTip(
+            f"Cloud Base: {game.conditions.weather.clouds.base}m / {round(game.conditions.weather.clouds.base * 3.281)}ft"
+        )
+
         self.intel_box.set_game(game)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
