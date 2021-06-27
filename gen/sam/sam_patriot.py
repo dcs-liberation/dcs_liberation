@@ -14,7 +14,6 @@ class PatriotGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Patriot Battery"
-    price = 240
 
     def generate(self):
         # Command Post

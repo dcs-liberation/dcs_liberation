@@ -13,7 +13,6 @@ class RolandGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Roland Site"
-    price = 40
 
     def generate(self):
         num_launchers = 2

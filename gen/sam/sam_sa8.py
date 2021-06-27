@@ -12,7 +12,6 @@ class SA8Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-8 OSA Site"
-    price = 55
 
     def generate(self):
         num_launchers = 2

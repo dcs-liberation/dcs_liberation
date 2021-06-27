@@ -14,7 +14,6 @@ class SA19Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-19 Tunguska Group"
-    price = 90
 
     def generate(self):
         num_launchers = 2

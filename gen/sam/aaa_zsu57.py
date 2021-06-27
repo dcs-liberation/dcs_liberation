@@ -12,7 +12,6 @@ class ZSU57Generator(AirDefenseGroupGenerator):
     """
 
     name = "ZSU-57-2 Group"
-    price = 60
 
     def generate(self):
         num_launchers = 4

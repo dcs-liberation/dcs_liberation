@@ -13,7 +13,6 @@ class KS19Generator(AirDefenseGroupGenerator):
     """
 
     name = "KS-19 AAA Site"
-    price = 98
 
     def generate(self):
         self.add_unit(

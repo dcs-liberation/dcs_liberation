@@ -12,7 +12,6 @@ class FreyaGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Freya EWR Site"
-    price = 60
 
     def generate(self):
 

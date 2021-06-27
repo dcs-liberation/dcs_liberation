@@ -14,7 +14,6 @@ class SA9Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-9 Group"
-    price = 40
 
     def generate(self):
         self.add_unit(

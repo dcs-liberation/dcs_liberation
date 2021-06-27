@@ -14,7 +14,6 @@ class BoforsGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Bofors AAA"
-    price = 75
 
     def generate(self):
 
