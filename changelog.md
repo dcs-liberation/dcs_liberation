@@ -11,6 +11,7 @@ Saves from 3.x are not compatible with 5.0.
 Saves from 4.0.0 are compatible with 4.0.1.
 
 ## Features/Improvements
+* **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 
 ## Fixes
 
