@@ -178,6 +178,7 @@ class ControlPointJs(QObject):
 
 class GroundObjectJs(QObject):
     nameChanged = Signal()
+    controlPointNameChanged = Signal()
     unitsChanged = Signal()
     blueChanged = Signal()
     positionChanged = Signal()
@@ -213,6 +214,10 @@ class GroundObjectJs(QObject):
     @Property(str, notify=nameChanged)
     def name(self) -> str:
         return self.tgo.name
+
+    @Property(str, notify=controlPointNameChanged)
+    def controlPointName(self) -> str:
+        return self.tgo.control_point.name
 
     @Property(str, notify=categoryChanged)
     def category(self) -> str:

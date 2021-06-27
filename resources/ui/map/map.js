@@ -570,7 +570,7 @@ class TheaterGroundObject {
     }
 
     L.marker(this.tgo.position, { icon: this.icon() })
-      .bindTooltip(`${this.tgo.name}<br />${this.tgo.units.join("<br />")}`)
+      .bindTooltip(`${this.tgo.name} (${this.tgo.controlPointName})<br />${this.tgo.units.join("<br />")}`)
       .on("click", () => this.tgo.showInfoDialog())
       .on("contextmenu", () => this.tgo.showPackageDialog())
       .addTo(this.layer());

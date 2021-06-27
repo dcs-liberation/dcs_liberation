@@ -158,15 +158,17 @@ class TransferOrder:
             )
         return self.transport.destination
 
-    def proceed(self) -> None:
-        if self.transport is None:
-            return
+    def find_escape_route(self) -> Optional[ControlPoint]:
+        if self.transport is not None:
+            return self.transport.find_escape_route()
+        return None
 
+    def proceed(self) -> None:
         if not self.destination.is_friendly(self.player):
             logging.info(f"Transfer destination {self.destination} was captured.")
             if self.position.is_friendly(self.player):
                 self.disband_at(self.position)
-            elif (escape_route := self.transport.find_escape_route()) is not None:
+            elif (escape_route := self.find_escape_route()) is not None:
                 self.disband_at(escape_route)
             else:
                 logging.info(
@@ -174,6 +176,9 @@ class TransferOrder:
                     "during transfer."
                 )
                 self.kill_all()
+            return
+
+        if self.transport is None:
             return
 
         self.position = self.next_stop
