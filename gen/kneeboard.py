@@ -554,6 +554,28 @@ class StrikeTaskPage(KneeboardPage):
         ]
 
 
+class NotesPage(KneeboardPage):
+    """A kneeboard page containing the campaign owner's notes."""
+
+    def __init__(
+        self,
+        game: "Game",
+        dark_kneeboard: bool,
+    ) -> None:
+        self.game = game
+        self.dark_kneeboard = dark_kneeboard
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        writer.title(f"Notes")
+
+        try:
+            writer.text(self.game.notes)
+        except AttributeError:  # old saves may not have .notes ;)
+            writer.text("")
+        writer.write(path)
+
+
 class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
 
@@ -619,6 +641,10 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.tankers,
                 self.jtacs,
                 self.mission.start_time,
+                self.dark_kneeboard,
+            ),
+            NotesPage(
+                self.game,
                 self.dark_kneeboard,
             ),
         ]
