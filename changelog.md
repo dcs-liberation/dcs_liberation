@@ -4,6 +4,8 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Features/Improvements
 
+* **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
+
 ## Fixes
 
 # 4.0.1
