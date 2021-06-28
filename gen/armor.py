@@ -508,6 +508,7 @@ class GroundConflictGenerator:
             return
 
         for dcs_group, group in ally_groups:
+
             if group.unit_type.eplrs_capable:
                 dcs_group.points[0].tasks.append(EPLRS(dcs_group.id))
 
@@ -544,6 +545,14 @@ class GroundConflictGenerator:
                 )  # Another point to make the unit face the enemy
                 dcs_group.add_waypoint(retreat_point, PointAction.OffRoad)
                 dcs_group.add_waypoint(reposition_point, PointAction.OffRoad)
+
+            if len(dcs_group.points) >= 2:
+                try:
+                    dcs_group.points[1].ETA = from_cp.delayed_start.total_seconds()
+                    dcs_group.points[1].ETA_locked = True
+                    dcs_group.points[1].speed_locked = False
+                except AttributeError:  # old saves may not have delayed_start
+                    pass
 
     def add_morale_trigger(self, dcs_group: VehicleGroup, forward_heading: int) -> None:
         """

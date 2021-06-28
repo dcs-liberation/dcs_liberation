@@ -4,6 +4,8 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Features/Improvements
 
+* **[Mission Generator]** Added ability to delay the frontline movement.
+
 ## Fixes
 
 # 4.0.1

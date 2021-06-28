@@ -6,6 +6,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
+from datetime import timedelta
 from enum import Enum, unique, auto, IntEnum
 from functools import total_ordering, cached_property
 from typing import (
@@ -309,6 +310,7 @@ class ControlPoint(MissionTarget, ABC):
         self.captured_invert = False
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
+        self.delayed_start: timedelta = timedelta(seconds=0)
         self.connected_points: List[ControlPoint] = []
         self.convoy_routes: Dict[ControlPoint, Tuple[Point, ...]] = {}
         self.shipping_lanes: Dict[ControlPoint, Tuple[Point, ...]] = {}
