@@ -888,16 +888,16 @@ WEAPON_INTRODUCTION_YEARS = {
     Weapon.from_pydcs(Weapons.ALQ_184): 1989,
     Weapon.from_pydcs(Weapons.AN_ALQ_164_DECM_Pod): 1984,
     # TGP Pods
-    Weapon.from_pydcs(Weapons.AN_AAQ_28_LITENING___Targeting_Pod): 1995,
-    Weapon.from_pydcs(Weapons.AN_AAQ_28_LITENING___Targeting_Pod_): 1995,
-    Weapon.from_pydcs(Weapons.AN_ASQ_228_ATFLIR___Targeting_Pod): 1993,
+    Weapon.from_pydcs(Weapons.AN_AAQ_28_LITENING___Targeting_Pod): 1999,
+    Weapon.from_pydcs(Weapons.AN_AAQ_28_LITENING___Targeting_Pod_): 1999,
+    Weapon.from_pydcs(Weapons.AN_ASQ_228_ATFLIR___Targeting_Pod): 2003,
     Weapon.from_pydcs(
         Weapons.AN_ASQ_173_Laser_Spot_Tracker_Strike_CAMera__LST_SCAM_
     ): 1993,
     Weapon.from_pydcs(Weapons.AWW_13_DATALINK_POD): 1967,
-    Weapon.from_pydcs(Weapons.LANTIRN_Targeting_Pod): 1985,
-    Weapon.from_pydcs(Weapons.Lantirn_F_16): 1985,
-    Weapon.from_pydcs(Weapons.Lantirn_Target_Pod): 1985,
+    Weapon.from_pydcs(Weapons.LANTIRN_Targeting_Pod): 1990,
+    Weapon.from_pydcs(Weapons.Lantirn_F_16): 1990,
+    Weapon.from_pydcs(Weapons.Lantirn_Target_Pod): 1990,
     Weapon.from_pydcs(Weapons.Pavetack_F_111): 1982,
     # BLU-107
     Weapon.from_pydcs(Weapons.BLU_107___440lb_Anti_Runway_Penetrator_Bomb): 1983,
