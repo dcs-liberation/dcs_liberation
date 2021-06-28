@@ -20,7 +20,6 @@ class QNotesWindow(QDialog):
         super(QNotesWindow, self).__init__()
 
         self.game = game
-        self.setModal(True)
         self.setWindowTitle("Notes")
         self.setWindowIcon(CONST.ICONS["Notes"])
         self.setMinimumSize(400, 100)
