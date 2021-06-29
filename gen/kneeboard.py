@@ -569,8 +569,10 @@ class NotesPage(KneeboardPage):
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
         writer.title(f"Notes")
 
-        writer.text(self.game.notes)
-        writer.text("")
+        try:
+            writer.text(self.game.notes)
+        except AttributeError:  # old saves may not have .notes ;)
+            writer.text("")
         writer.write(path)
 
 
