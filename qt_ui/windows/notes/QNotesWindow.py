@@ -33,11 +33,8 @@ class QNotesWindow(QDialog):
         )
 
         self.textbox = QPlainTextEdit(self)
-        try:
-            self.textbox.setPlainText(self.game.notes)
-            self.textbox.moveCursor(QTextCursor.End)
-        except AttributeError:  # old save may not have game.notes
-            pass
+        self.textbox.setPlainText(self.game.notes)
+        self.textbox.moveCursor(QTextCursor.End)
         self.textbox.move(10, 10)
         self.textbox.resize(600, 450)
         self.textbox.setStyleSheet("background: #1D2731;")
