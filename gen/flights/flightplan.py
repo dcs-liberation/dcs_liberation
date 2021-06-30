@@ -30,7 +30,7 @@ from game.theater import (
     NavalControlPoint,
 )
 from game.theater.theatergroundobject import EwrGroundObject, NavalGroundObject
-from game.utils import Distance, Speed, feet, meters, nautical_miles, knots
+from game.utils import Distance, Heading, Speed, feet, meters, nautical_miles, knots
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -988,7 +988,7 @@ class FlightPlanBuilder:
             # threatened. Need to retreat out of the threat area.
             join_point = self.retreat_point(self.package_airfield().position)
 
-        attack_heading = join_point.heading_between_point(target)
+        attack_heading = Heading.from_degrees(join_point.heading_between_point(target))
         ingress_point = self._ingress_point(attack_heading)
         join_distance = meters(join_point.distance_to_point(target))
         ingress_distance = meters(ingress_point.distance_to_point(target))
@@ -1210,8 +1210,12 @@ class FlightPlanBuilder:
         assert self.package.waypoints is not None
         target = self.package.target.position
 
-        heading = self.package.waypoints.join.heading_between_point(target)
-        start = target.point_from_heading(heading, -self.doctrine.sweep_distance.meters)
+        heading = Heading.from_degrees(
+            self.package.waypoints.join.heading_between_point(target)
+        )
+        start = target.point_from_heading(
+            heading.degrees, -self.doctrine.sweep_distance.meters
+        )
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
         start, end = builder.sweep(start, target, self.doctrine.ingress_altitude)
@@ -1305,7 +1309,9 @@ class FlightPlanBuilder:
         else:
             raise PlanningError("Could not find any enemy airfields")
 
-        heading = location.position.heading_between_point(closest_airfield.position)
+        heading = Heading.from_degrees(
+            location.position.heading_between_point(closest_airfield.position)
+        )
 
         position = ShapelyPoint(
             self.package.target.position.x, self.package.target.position.y
@@ -1341,20 +1347,20 @@ class FlightPlanBuilder:
         )
 
         end = location.position.point_from_heading(
-            heading,
+            heading.degrees,
             random.randint(int(min_cap_distance.meters), int(max_cap_distance.meters)),
         )
         diameter = random.randint(
             int(self.doctrine.cap_min_track_length.meters),
             int(self.doctrine.cap_max_track_length.meters),
         )
-        start = end.point_from_heading(heading - 180, diameter)
+        start = end.point_from_heading(heading.opposite.degrees, diameter)
         return start, end
 
     def aewc_orbit(self, location: MissionTarget) -> Point:
         closest_boundary = self.threat_zones.closest_boundary(location.position)
-        heading_to_threat_boundary = location.position.heading_between_point(
-            closest_boundary
+        heading_to_threat_boundary = Heading.from_degrees(
+            location.position.heading_between_point(closest_boundary)
         )
         distance_to_threat = meters(
             location.position.distance_to_point(closest_boundary)
@@ -1368,7 +1374,7 @@ class FlightPlanBuilder:
             orbit_distance = distance_to_threat - threat_buffer
 
         return location.position.point_from_heading(
-            orbit_heading, orbit_distance.meters
+            orbit_heading.degrees, orbit_distance.meters
         )
 
     def racetrack_for_frontline(
@@ -1378,9 +1384,9 @@ class FlightPlanBuilder:
         ingress, heading, distance = Conflict.frontline_vector(
             front_line, self.game.theater
         )
-        center = ingress.point_from_heading(heading, distance / 2)
+        center = ingress.point_from_heading(heading.degrees, distance / 2)
         orbit_center = center.point_from_heading(
-            heading - 90,
+            heading.left.degrees,
             random.randint(
                 int(nautical_miles(6).meters), int(nautical_miles(15).meters)
             ),
@@ -1393,8 +1399,8 @@ class FlightPlanBuilder:
             combat_width = 35000
 
         radius = combat_width * 1.25
-        start = orbit_center.point_from_heading(heading, radius)
-        end = orbit_center.point_from_heading(heading + 180, radius)
+        start = orbit_center.point_from_heading(heading.degrees, radius)
+        end = orbit_center.point_from_heading(heading.opposite.degrees, radius)
 
         if end.distance_to_point(origin) < start.distance_to_point(origin):
             start, end = end, start
@@ -1593,8 +1599,8 @@ class FlightPlanBuilder:
         ingress, heading, distance = Conflict.frontline_vector(
             location, self.game.theater
         )
-        center = ingress.point_from_heading(heading, distance / 2)
-        egress = ingress.point_from_heading(heading, distance)
+        center = ingress.point_from_heading(heading.degrees, distance / 2)
+        egress = ingress.point_from_heading(heading.degrees, distance)
 
         ingress_distance = ingress.distance_to_point(flight.departure.position)
         egress_distance = egress.distance_to_point(flight.departure.position)
@@ -1629,8 +1635,8 @@ class FlightPlanBuilder:
         location = self.package.target
 
         closest_boundary = self.threat_zones.closest_boundary(location.position)
-        heading_to_threat_boundary = location.position.heading_between_point(
-            closest_boundary
+        heading_to_threat_boundary = Heading.from_degrees(
+            location.position.heading_between_point(closest_boundary)
         )
         distance_to_threat = meters(
             location.position.distance_to_point(closest_boundary)
@@ -1645,16 +1651,16 @@ class FlightPlanBuilder:
             orbit_distance = distance_to_threat - threat_buffer
 
         racetrack_center = location.position.point_from_heading(
-            orbit_heading, orbit_distance.meters
+            orbit_heading.degrees, orbit_distance.meters
         )
 
         racetrack_half_distance = Distance.from_nautical_miles(20).meters
 
         racetrack_start = racetrack_center.point_from_heading(
-            orbit_heading + 90, racetrack_half_distance
+            orbit_heading.right.degrees, racetrack_half_distance
         )
         racetrack_end = racetrack_center.point_from_heading(
-            orbit_heading - 90, racetrack_half_distance
+            orbit_heading.left.degrees, racetrack_half_distance
         )
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
@@ -1734,9 +1740,9 @@ class FlightPlanBuilder:
                 target.heading_between_point(origin), self.doctrine.push_distance.meters
             )
 
-        heading_to_join = origin.heading_between_point(join)
+        heading_to_join = Heading.from_degrees(origin.heading_between_point(join))
         hold_point = origin.point_from_heading(
-            heading_to_join, self.doctrine.push_distance.meters
+            heading_to_join.degrees, self.doctrine.push_distance.meters
         )
         hold_distance = meters(hold_point.distance_to_point(join))
         if hold_distance >= self.doctrine.push_distance:
@@ -1756,7 +1762,7 @@ class FlightPlanBuilder:
             - self.doctrine.join_distance.meters ** 2
         ) / (2 * self.doctrine.hold_distance.meters * origin_to_join)
         try:
-            theta = math.acos(cos_theta)
+            theta = Heading.from_degrees(math.acos(cos_theta))
         except ValueError:
             # No solution that maintains hold and join distances. Extend the
             # hold point away from the target.
@@ -1765,7 +1771,7 @@ class FlightPlanBuilder:
             )
 
         return origin.point_from_heading(
-            heading_to_join - theta, self.doctrine.hold_distance.meters
+            (heading_to_join - theta).degrees, self.doctrine.hold_distance.meters
         )
 
     # TODO: Make a model for the waypoint builder and use that in the UI.
@@ -1843,7 +1849,7 @@ class FlightPlanBuilder:
         """Creates a rendezvous point that advances toward the target."""
         heading = self._heading_to_package_airfield(attack_transition)
         return attack_transition.point_from_heading(
-            heading, -self.doctrine.join_distance.meters
+            heading.degrees, -self.doctrine.join_distance.meters
         )
 
     def _rendezvous_should_retreat(self, attack_transition: Point) -> bool:
@@ -1869,21 +1875,25 @@ class FlightPlanBuilder:
             return self._retreating_rendezvous_point(attack_transition)
         return self._advancing_rendezvous_point(attack_transition)
 
-    def _ingress_point(self, heading: int) -> Point:
+    def _ingress_point(self, heading: Heading) -> Point:
         return self.package.target.position.point_from_heading(
-            heading - 180 + 15, self.doctrine.ingress_egress_distance.meters
+            (heading.opposite + Heading.from_degrees(15)).degrees,
+            self.doctrine.ingress_egress_distance.meters,
         )
 
-    def _egress_point(self, heading: int) -> Point:
+    def _egress_point(self, heading: Heading) -> Point:
         return self.package.target.position.point_from_heading(
-            heading - 180 - 15, self.doctrine.ingress_egress_distance.meters
+            (heading.opposite - Heading.from_degrees(15)).degrees,
+            self.doctrine.ingress_egress_distance.meters,
         )
 
-    def _target_heading_to_package_airfield(self) -> int:
+    def _target_heading_to_package_airfield(self) -> Heading:
         return self._heading_to_package_airfield(self.package.target.position)
 
-    def _heading_to_package_airfield(self, point: Point) -> int:
-        return self.package_airfield().position.heading_between_point(point)
+    def _heading_to_package_airfield(self, point: Point) -> Heading:
+        return Heading.from_degrees(
+            self.package_airfield().position.heading_between_point(point)
+        )
 
     def _distance_to_package_airfield(self, point: Point) -> int:
         return self.package_airfield().position.distance_to_point(point)

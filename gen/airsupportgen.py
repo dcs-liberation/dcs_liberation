@@ -15,7 +15,7 @@ from dcs.task import (
     SetInvisibleCommand,
 )
 
-from game import db
+from game.utils import Heading
 from .flights.ai_flight_planner_db import AEWC_CAPABLE
 from .naming import namegen
 from .callsigns import callsign_for_support_unit
@@ -112,14 +112,14 @@ class AirSupportConflictGenerator:
                 alt, airspeed = self._get_tanker_params(tanker_unit_type.dcs_unit_type)
                 freq = self.radio_registry.alloc_uhf()
                 tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
-                tanker_heading = (
+                tanker_heading = Heading.from_degrees(
                     self.conflict.red_cp.position.heading_between_point(
                         self.conflict.blue_cp.position
                     )
                     + TANKER_HEADING_OFFSET * i
                 )
                 tanker_position = player_cp.position.point_from_heading(
-                    tanker_heading, TANKER_DISTANCE
+                    tanker_heading.degrees, TANKER_DISTANCE
                 )
                 tanker_group = self.mission.refuel_flight(
                     country=self.mission.country(self.game.player_country),

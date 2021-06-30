@@ -12,6 +12,7 @@ from dcs.unittype import VehicleType
 
 from game.factions.faction import Faction
 from game.theater.theatergroundobject import TheaterGroundObject
+from game.utils import Heading
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -27,7 +28,7 @@ class GroupGenerator:
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
-        self.heading = random.randint(0, 359)
+        self.heading: Heading = Heading.random()
         self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.go.group_name)
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
@@ -44,7 +45,7 @@ class GroupGenerator:
         name: str,
         pos_x: float,
         pos_y: float,
-        heading: int,
+        heading: Heading,
     ) -> Vehicle:
         return self.add_unit_to_group(
             self.vg, unit_type, name, Point(pos_x, pos_y), heading
@@ -56,11 +57,11 @@ class GroupGenerator:
         unit_type: Type[VehicleType],
         name: str,
         position: Point,
-        heading: int,
+        heading: Heading,
     ) -> Vehicle:
         unit = Vehicle(self.game.next_unit_id(), f"{group.name}|{name}", unit_type.id)
         unit.position = position
-        unit.heading = heading
+        unit.heading = heading.degrees
         group.add_unit(unit)
         return unit
 
@@ -86,9 +87,9 @@ class GroupGenerator:
         positions = []
 
         if num_units % 2 == 0:
-            current_offset = self.heading - ((coverage / (num_units - 1)) / 2)
+            current_offset = self.heading.degrees - ((coverage / (num_units - 1)) / 2)
         else:
-            current_offset = self.heading
+            current_offset = self.heading.degrees
         current_offset -= outer_offset * (math.ceil(num_units / 2) - 1)
         for x in range(1, num_units + 1):
             positions.append(
@@ -97,7 +98,7 @@ class GroupGenerator:
                     + launcher_distance * math.cos(math.radians(current_offset)),
                     self.position.y
                     + launcher_distance * math.sin(math.radians(current_offset)),
-                    current_offset,
+                    Heading.from_degrees(int(current_offset)),
                 )
             )
             current_offset += outer_offset
@@ -113,7 +114,7 @@ class ShipGroupGenerator(GroupGenerator):
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
-        self.heading = random.randint(0, 359)
+        self.heading = Heading.random()
         self.faction = faction
         self.vg = unitgroup.ShipGroup(self.game.next_group_id(), self.go.group_name)
         wp = self.vg.add_waypoint(self.position, 0)
@@ -123,6 +124,6 @@ class ShipGroupGenerator(GroupGenerator):
         unit = Ship(self.game.next_unit_id(), f"{self.go.group_name}|{name}", unit_type)
         unit.position.x = pos_x
         unit.position.y = pos_y
-        unit.heading = heading
+        unit.heading = heading.degrees
         self.vg.add_unit(unit)
         return unit

@@ -35,6 +35,7 @@ from dcs.unit import Unit
 from game import db
 from game.point_with_heading import PointWithHeading
 from game.scenery_group import SceneryGroup
+from game.utils import Heading
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
@@ -331,7 +332,7 @@ class ControlPoint(MissionTarget, ABC):
 
     @property
     @abstractmethod
-    def heading(self) -> int:
+    def heading(self) -> Heading:
         ...
 
     def __str__(self):
@@ -811,8 +812,8 @@ class Airfield(ControlPoint):
         return len(self.airport.parking_slots)
 
     @property
-    def heading(self) -> int:
-        return self.airport.runways[0].heading
+    def heading(self) -> Heading:
+        return Heading.from_degrees(self.airport.runways[0].heading)
 
     def runway_is_operational(self) -> bool:
         return not self.runway_status.damaged
@@ -876,8 +877,8 @@ class NavalControlPoint(ControlPoint, ABC):
         yield from super().mission_types(for_player)
 
     @property
-    def heading(self) -> int:
-        return 0  # TODO compute heading
+    def heading(self) -> Heading:
+        return Heading.from_degrees(0)  # TODO compute heading
 
     def find_main_tgo(self) -> TheaterGroundObject:
         for g in self.ground_objects:
@@ -903,7 +904,9 @@ class NavalControlPoint(ControlPoint, ABC):
         self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
     ) -> RunwayData:
         # TODO: Assign TACAN and ICLS earlier so we don't need this.
-        fallback = RunwayData(self.full_name, runway_heading=0, runway_name="")
+        fallback = RunwayData(
+            self.full_name, runway_heading=Heading.from_degrees(0), runway_name=""
+        )
         return dynamic_runways.get(self.name, fallback)
 
     @property
@@ -1041,14 +1044,16 @@ class OffMapSpawn(ControlPoint):
         return True
 
     @property
-    def heading(self) -> int:
-        return 0
+    def heading(self) -> Heading:
+        return Heading.from_degrees(0)
 
     def active_runway(
         self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
     ) -> RunwayData:
         logging.warning("TODO: Off map spawns have no runways.")
-        return RunwayData(self.full_name, runway_heading=0, runway_name="")
+        return RunwayData(
+            self.full_name, runway_heading=Heading.from_degrees(0), runway_name=""
+        )
 
     @property
     def runway_status(self) -> RunwayStatus:
@@ -1090,7 +1095,9 @@ class Fob(ControlPoint):
         self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
     ) -> RunwayData:
         logging.warning("TODO: FOBs have no runways.")
-        return RunwayData(self.full_name, runway_heading=0, runway_name="")
+        return RunwayData(
+            self.full_name, runway_heading=Heading.from_degrees(0), runway_name=""
+        )
 
     @property
     def runway_status(self) -> RunwayStatus:
@@ -1112,8 +1119,8 @@ class Fob(ControlPoint):
         return False
 
     @property
-    def heading(self) -> int:
-        return 0
+    def heading(self) -> Heading:
+        return Heading.from_degrees(0)
 
     @property
     def can_deploy_ground_units(self) -> bool:

@@ -81,7 +81,7 @@ from game.theater.missiontarget import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
-from game.utils import Distance, meters, nautical_miles
+from game.utils import Distance, Heading, meters, nautical_miles
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -554,8 +554,10 @@ class AircraftConflictGenerator:
 
         last_waypoint = group.points[-1]
         if last_waypoint is not None:
-            heading = position.heading_between_point(last_waypoint.position)
-            tod_location = position.point_from_heading(heading, RTB_DISTANCE)
+            heading = Heading.from_degrees(
+                position.heading_between_point(last_waypoint.position)
+            )
+            tod_location = position.point_from_heading(heading.degrees, RTB_DISTANCE)
             self._add_radio_waypoint(group, tod_location, last_waypoint.alt)
 
         destination_waypoint = self._add_radio_waypoint(group, position, RTB_ALTITUDE)

@@ -82,15 +82,6 @@ DESTINATION_SMOKE_TYPE_CHANCES = {
 }
 
 
-def turn_heading(heading, fac):
-    heading += fac
-    if heading > 359:
-        heading = heading - 359
-    if heading < 0:
-        heading = 359 + heading
-    return heading
-
-
 class VisualGenerator:
     def __init__(self, mission: Mission, game: Game):
         self.mission = mission
@@ -110,7 +101,7 @@ class VisualGenerator:
                 continue
 
             for offset in range(0, distance, self.game.settings.perf_smoke_spacing):
-                position = plane_start.point_from_heading(heading, offset)
+                position = plane_start.point_from_heading(heading.degrees, offset)
 
                 for k, v in FRONT_SMOKE_TYPE_CHANCES.items():
                     if random.randint(0, 100) <= k:

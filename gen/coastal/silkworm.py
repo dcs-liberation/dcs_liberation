@@ -1,5 +1,6 @@
 from dcs.vehicles import MissilesSS, Unarmed, AirDefence
 
+from game.utils import Heading
 from gen.sam.group_generator import GroupGenerator
 
 
@@ -54,5 +55,5 @@ class SilkwormGenerator(GroupGenerator):
             "STRELA#0",
             self.position.x + 200,
             self.position.y + 15,
-            90,
+            Heading.from_degrees(90),
         )

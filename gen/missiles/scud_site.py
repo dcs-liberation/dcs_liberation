@@ -3,6 +3,7 @@ import random
 from dcs.vehicles import Unarmed, MissilesSS, AirDefence
 
 from gen.sam.group_generator import GroupGenerator
+from game.utils import Heading
 
 
 class ScudGenerator(GroupGenerator):
@@ -58,5 +59,5 @@ class ScudGenerator(GroupGenerator):
             "STRELA#0",
             self.position.x + 200,
             self.position.y + 15,
-            90,
+            Heading.from_degrees(90),
         )

@@ -6,6 +6,7 @@ from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
 )
+from game.utils import Heading
 
 GFLAK = [
     AirDefence.Flak38,
@@ -93,7 +94,7 @@ class FlakGenerator(AirDefenseGroupGenerator):
                     "BLITZ#" + str(index),
                     self.position.x + 125 + 15 * i + random.randint(1, 5),
                     self.position.y + 15 * j + random.randint(1, 5),
-                    75,
+                    Heading.from_degrees(75),
                 )
 
     @classmethod
