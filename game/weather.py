@@ -33,7 +33,7 @@ class WindConditions:
 
 @dataclass(frozen=True)
 class Clouds:
-    base: Distance
+    base: int
     density: int
     thickness: int
     precipitation: PydcsWeather.Preceptions
@@ -48,7 +48,7 @@ class Clouds:
             presets = [p for p in clouds if "Rain" not in p.name]
         preset = random.choice(presets)
         return Clouds(
-            base=meters(random.randint(preset.min_base, preset.max_base)),
+            base=random.randint(preset.min_base, preset.max_base),
             density=0,
             thickness=0,
             precipitation=PydcsWeather.Preceptions.None_,
@@ -144,7 +144,7 @@ class Raining(Weather):
 class Thunderstorm(Weather):
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds(
-            base=meters(self.random_cloud_base()),
+            base=self.random_cloud_base(),
             density=random.randint(9, 10),
             thickness=self.random_cloud_thickness(),
             precipitation=PydcsWeather.Preceptions.Thunderstorm,
