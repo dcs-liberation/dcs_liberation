@@ -56,7 +56,9 @@ class QGroundObjectMenu(QDialog):
             self.buildings = buildings
         self.cp = cp
         self.game = game
-        self.setWindowTitle("Location " + self.ground_object.obj_name)
+        self.setWindowTitle(
+            f"Location - {self.ground_object.obj_name} ({self.cp.name})"
+        )
         self.setWindowIcon(EVENT_ICONS["capture"])
         self.intelBox = QGroupBox("Units :")
         self.buildingBox = QGroupBox("Buildings :")
