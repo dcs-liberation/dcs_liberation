@@ -110,6 +110,7 @@ class Game:
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
+        self.notes = ""
         self.ground_planners: dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
