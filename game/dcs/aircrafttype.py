@@ -229,7 +229,10 @@ class AircraftType(UnitType[FlyingType]):
             yield AircraftType(
                 dcs_unit_type=aircraft,
                 name=variant,
-                description=data.get("description", "No data."),
+                description=data.get(
+                    "description",
+                    f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",
+                ),
                 year_introduced=introduction,
                 country_of_origin=data.get("origin", "No data."),
                 manufacturer=data.get("manufacturer", "No data."),
