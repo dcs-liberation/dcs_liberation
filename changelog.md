@@ -14,6 +14,8 @@ Saves from 4.0.0 are compatible with 4.0.1.
 
 ## Fixes
 
+* **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
+
 # 4.0.0
 
 Saves from 3.x are not compatible with 4.0.
