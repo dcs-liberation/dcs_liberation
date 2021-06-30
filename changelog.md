@@ -1,8 +1,18 @@
+# 5.0.0
+
+Saves from 3.x are not compatible with 5.0.
+
+## Features/Improvements
+
+## Fixes
+
 # 4.0.1
 
 Saves from 4.0.0 are compatible with 4.0.1.
 
 ## Features/Improvements
+
+* **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 
 ## Fixes
 
