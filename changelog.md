@@ -9,6 +9,7 @@ Saves from 4.0.0 are compatible with 4.0.1.
 * **[UI]** Google search link added to unit information when there is no information provided.
 
 ## Fixes
+* **[UI]** Statistics window tick marks are now always integers.
 
 # 4.0.0
 
