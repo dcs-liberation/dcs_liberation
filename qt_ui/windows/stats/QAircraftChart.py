@@ -42,10 +42,16 @@ class QAircraftChart(QFrame):
         self.chart.setTitle("Aircraft forces over time")
 
         self.chart.createDefaultAxes()
+        self.chart.axisX().setTitleText("Turn")
+        self.chart.axisX().setLabelFormat("%i")
         self.chart.axisX().setRange(0, len(self.alliedAircraft))
+        self.chart.axisX().applyNiceNumbers()
+
+        self.chart.axisY().setLabelFormat("%i")
         self.chart.axisY().setRange(
             0, max(max(self.alliedAircraft), max(self.enemyAircraft)) + 10
         )
+        self.chart.axisY().applyNiceNumbers()
 
         self.chartView = QtCharts.QChartView(self.chart)
         self.chartView.setRenderHint(QPainter.Antialiasing)
