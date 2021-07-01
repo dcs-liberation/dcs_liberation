@@ -13,13 +13,14 @@ Saves from 4.0.0 are compatible with 4.0.1.
 ## Features/Improvements
 
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
+* **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
 
 ## Fixes
 * **[UI]** Statistics window tick marks are now always integers.
-
+* **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 
 # 4.0.0
