@@ -18,12 +18,7 @@ KPH_TO_MS = 1 / MS_TO_KPH
 
 def heading_sum(h, a) -> int:
     h += a
-    if h > 360:
-        return h - 360
-    elif h < 0:
-        return 360 + h
-    else:
-        return h
+    return h % 360
 
 
 def opposite_heading(h):
