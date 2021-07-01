@@ -483,7 +483,7 @@ class Game:
         self.current_unit_id += 1
         return self.current_unit_id
 
-    def next_group_id(self):
+    def next_group_id(self) -> int:
         """
         Next unit id for pre-generated units
         """

@@ -3,6 +3,7 @@ from dcs.vehicles import AirDefence, Unarmed
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
+    SkynetRole,
 )
 
 
@@ -40,3 +41,7 @@ class RolandGenerator(AirDefenseGroupGenerator):
     @classmethod
     def range(cls) -> AirDefenseRange:
         return AirDefenseRange.Short
+
+    @classmethod
+    def primary_group_role(cls) -> SkynetRole:
+        return SkynetRole.Sam
