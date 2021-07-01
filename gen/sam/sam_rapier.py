@@ -5,6 +5,7 @@ from dcs.vehicles import AirDefence
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
+    SkynetRole,
 )
 
 
@@ -49,3 +50,7 @@ class RapierGenerator(AirDefenseGroupGenerator):
     @classmethod
     def range(cls) -> AirDefenseRange:
         return AirDefenseRange.Short
+
+    @classmethod
+    def primary_group_role(cls) -> SkynetRole:
+        return SkynetRole.Sam
