@@ -93,9 +93,28 @@ if dcsLiberation and SkynetIADS then
         for i = 1, #sites do
             local site = sites[i]
             local name = site:getDCSName()
+
+            if string.match(name, "|SamAsEwr|") then
+                env.info(string.format("DCSLiberation|Skynet-IADS plugin - %s now acting as EWR", name))
+                site:setActAsEW(true)
+            end
+
             if not string.match(name, "|PD") then
-                env.info(string.format("DCSLiberation|Skynet-IADS plugin - Checking %s for PD", name))
-                local pds = iads:getSAMSitesByPrefix(name .. "|PD")
+                -- Name is prefixed with `$color|SAM|$tgoid`. For pre-4.1 generated
+                -- campaigns that's the full name of the primary SAM and any PD are just
+                -- that name suffixed with |PD.
+                --
+                -- For 4.1+ generated campaigns the name will be
+                -- `$color|SAM|$tgoid|$role|$gid`, so we need to replace the content
+                -- beginning with the third pipe with `|PD` to find our PDs.
+                local first_pipe = string.find(name, "|")
+                local second_pipe = string.find(name, "|", first_pipe + 1)
+                local third_pipe = string.find(name, "|", second_pipe + 1)
+                local pd_prefix = name .. "|PD"
+                if third_pipe ~= nil then
+                    pd_prefix = string.sub(name, 1, third_pipe) .. "PD"
+                end
+                local pds = iads:getSAMSitesByPrefix(pd_prefix)
                 for j = 1, #pds do
                     pd = pds[j]
                     env.info(string.format("DCSLiberation|Skynet-IADS plugin - Adding %s as PD for %s", pd:getDCSName(), name))

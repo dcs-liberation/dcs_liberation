@@ -6,6 +6,7 @@ from dcs.vehicles import AirDefence
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
+    SkynetRole,
 )
 
 
@@ -41,7 +42,7 @@ class HawkGenerator(AirDefenseGroupGenerator):
         )
 
         # Triple A for close range defense
-        aa_group = self.add_auxiliary_group("AA")
+        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
         self.add_unit_to_group(
             aa_group,
             AirDefence.Vulcan,
