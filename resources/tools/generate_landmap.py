@@ -32,7 +32,7 @@ def _geometry_collection_to_multipoly(obj: GeometryCollection) -> MultiPolygon:
     raise RuntimeError(f"Not sure how to convert collection to multipoly: {obj.wkt}")
 
 
-for terrain in ["cau", "nev", "syria", "channel", "normandy", "gulf"]:
+for terrain in ["marianaislands"]:
     print("Terrain " + terrain)
     m = Mission()
     m.load_file("./{}_terrain.miz".format(terrain))
