@@ -114,9 +114,12 @@ class QTopPanel(QFrame):
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
 
-        base_m = game.conditions.weather.clouds.base
-        base_ft = int(meters(base_m).feet)
-        self.conditionsWidget.setToolTip(f"Cloud Base: {base_m}m / {base_ft}ft")
+        if game.conditions.weather.clouds:
+            base_m = game.conditions.weather.clouds.base
+            base_ft = int(meters(base_m).feet)
+            self.conditionsWidget.setToolTip(f"Cloud Base: {base_m}m / {base_ft}ft")
+        else:
+            self.conditionsWidget.setToolTip("")
 
         self.intel_box.set_game(game)
         self.budgetBox.setGame(game)
