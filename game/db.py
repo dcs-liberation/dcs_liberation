@@ -317,6 +317,8 @@ REWARDS = {
     "comms": 10,
     "oil": 10,
     "derrick": 8,
+    "village": 0.25,
+    "allycamp": 0.5,
 }
 
 """
