@@ -57,7 +57,6 @@ class GroundUnitType(UnitType[VehicleType]):
     def _load_all(cls) -> None:
         for unit_type in cls._each_unit_type():
             for data in cls._each_variant_of(unit_type):
-                print(data.name, data.description)
                 cls.register(data)
         cls._loaded = True
 
