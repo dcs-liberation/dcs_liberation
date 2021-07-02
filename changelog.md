@@ -6,9 +6,9 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Fixes
 
-# 4.0.1
+# 4.1.0
 
-Saves from 4.0.0 are compatible with 4.0.1.
+Saves from 4.0.0 are compatible with 4.1.0.
 
 ## Features/Improvements
 
