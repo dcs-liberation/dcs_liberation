@@ -23,7 +23,7 @@ class SilkwormGenerator(GroupGenerator):
         # Launchers
         for i, p in enumerate(positions):
             self.add_unit(
-                MissilesSS.Silkworm_SR,
+                MissilesSS.Hy_launcher,
                 "Missile#" + str(i),
                 p[0],
                 p[1],
