@@ -13,9 +13,11 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[UI]** Control point name displayed with ground object group name on map.
 
 ## Fixes
-* **[UI]** Statistics window tick marks are now always integers.
-* **[Mission Generation]** The lua data for other plugins is now generated correctly
+
+* **[Campaign]** Fixed the Silkworm generator to include launchers and not all radars.
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
+* **[Mission Generation]** The lua data for other plugins is now generated correctly
+* **[UI]** Statistics window tick marks are now always integers.
 
 # 4.0.0
 
