@@ -1,5 +1,3 @@
-import random
-
 from dcs.mapping import Point
 from dcs.vehicles import AirDefence
 
@@ -8,6 +6,7 @@ from game.theater import SamGroundObject
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
+    SkynetRole,
 )
 from pydcs_extensions.highdigitsams import highdigitsams
 
@@ -44,17 +43,13 @@ class SA10Generator(AirDefenseGroupGenerator):
         # Command Post
         self.add_unit(self.cp, "CP", self.position.x, self.position.y, self.heading)
 
-        # 2 Tracking radars
+        # 1 Tracking radar
         self.add_unit(
             self.tr1, "TR1", self.position.x - 40, self.position.y - 40, self.heading
         )
 
-        self.add_unit(
-            self.tr2, "TR2", self.position.x + 40, self.position.y - 40, self.heading
-        )
-
         # 2 different launcher type (C & D)
-        num_launchers = random.randint(6, 8)
+        num_launchers = 6
         positions = self.get_circular_position(
             num_launchers, launcher_distance=100, coverage=360
         )
@@ -76,8 +71,8 @@ class SA10Generator(AirDefenseGroupGenerator):
 
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
-        aa_group = self.add_auxiliary_group("AA")
-        num_launchers = random.randint(6, 8)
+        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=210, coverage=360
         )
@@ -101,8 +96,8 @@ class Tier2SA10Generator(SA10Generator):
         super().generate_defensive_groups()
 
         # SA-15 for both shorter range targets and point defense.
-        pd_group = self.add_auxiliary_group("PD")
-        num_launchers = random.randint(2, 4)
+        pd_group = self.add_auxiliary_group(SkynetRole.PointDefense)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=140, coverage=360
         )
@@ -123,8 +118,8 @@ class Tier3SA10Generator(SA10Generator):
 
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
-        aa_group = self.add_auxiliary_group("AA")
-        num_launchers = random.randint(6, 8)
+        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=210, coverage=360
         )
@@ -138,8 +133,8 @@ class Tier3SA10Generator(SA10Generator):
             )
 
         # SA-15 for both shorter range targets and point defense.
-        pd_group = self.add_auxiliary_group("PD")
-        num_launchers = random.randint(2, 4)
+        pd_group = self.add_auxiliary_group(SkynetRole.PointDefense)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=140, coverage=360
         )

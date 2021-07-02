@@ -6,13 +6,24 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Fixes
 
-# 4.0.1
+# 4.1.0
 
-Saves from 4.0.0 are compatible with 4.0.1.
+Saves from 4.0.0 are compatible with 4.1.0.
 
 ## Features/Improvements
 
+* **[Campaign]** Air defense sites now generate a fixed number of launchers per type.
+* **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
+* **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
+* **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
+* **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
+* **[UI]** Google search link added to unit information when there is no information provided.
+* **[UI]** Control point name displayed with ground object group name on map.
+
 ## Fixes
+* **[UI]** Statistics window tick marks are now always integers.
+* **[Mission Generation]** The lua data for other plugins is now generated correctly
+* **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 
 # 4.0.0
 

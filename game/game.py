@@ -110,6 +110,7 @@ class Game:
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.game_stats.update(self)
+        self.notes = ""
         self.ground_planners: dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
@@ -482,7 +483,7 @@ class Game:
         self.current_unit_id += 1
         return self.current_unit_id
 
-    def next_group_id(self):
+    def next_group_id(self) -> int:
         """
         Next unit id for pre-generated units
         """

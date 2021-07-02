@@ -88,7 +88,10 @@ class GroundUnitType(UnitType[VehicleType]):
                 unit_class=unit_class,
                 spawn_weight=data.get("spawn_weight", 0),
                 name=variant,
-                description=data.get("description", "No data."),
+                description=data.get(
+                    "description",
+                    f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",
+                ),
                 year_introduced=introduction,
                 country_of_origin=data.get("origin", "No data."),
                 manufacturer=data.get("manufacturer", "No data."),

@@ -107,6 +107,7 @@ def load_icons():
     ICONS["PluginsOptions"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/pluginsoptions.png"
     )
+    ICONS["Notes"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/notes.png")
 
     ICONS["TaskCAS"] = QPixmap("./resources/ui/tasks/cas.png")
     ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")

@@ -14,10 +14,10 @@ class BuildingIncome:
     name: str
     category: str
     number: int
-    income_per_building: int
+    income_per_building: float
 
     @property
-    def income(self) -> int:
+    def income(self) -> float:
         return self.number * self.income_per_building
 
 

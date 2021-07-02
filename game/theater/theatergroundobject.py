@@ -460,9 +460,9 @@ class CoastalSiteGroundObject(TheaterGroundObject):
         return False
 
 
-# TODO: Differentiate types.
-# This type gets used both for AA sites (SAM, AAA, or SHORAD). These should each
-# be split into their own types.
+# The SamGroundObject represents all type of AA
+# The TGO can have multiple types of units (AAA,SAM,Support...)
+# Differentiation can be made during generation with the airdefensegroupgenerator
 class SamGroundObject(TheaterGroundObject):
     def __init__(
         self,
@@ -481,18 +481,6 @@ class SamGroundObject(TheaterGroundObject):
             dcs_identifier="AA",
             sea_object=False,
         )
-        # Set by the SAM unit generator if the generated group is compatible
-        # with Skynet.
-        self.skynet_capable = False
-
-    @property
-    def group_name(self) -> str:
-        if self.skynet_capable:
-            # Prefix the group names of SAM sites with the side color so Skynet
-            # can find them.
-            return f"{self.faction_color}|SAM|{self.group_id}"
-        else:
-            return super().group_name
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
