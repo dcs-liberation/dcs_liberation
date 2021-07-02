@@ -13,7 +13,6 @@ import qt_ui.uiconstants as CONST
 from game import Game
 from game.event.airwar import AirWarEvent
 from game.profiling import logged_duration
-from game.utils import meters
 from gen.ato import Package
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
@@ -113,11 +112,6 @@ class QTopPanel(QFrame):
         self.transfers.setEnabled(True)
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
-
-        base_m = game.conditions.weather.clouds.base
-        base_ft = int(meters(base_m).feet)
-        self.conditionsWidget.setToolTip(f"Cloud Base: {base_m}m / {base_ft}ft")
-
         self.intel_box.set_game(game)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
