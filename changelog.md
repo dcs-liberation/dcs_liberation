@@ -3,8 +3,8 @@
 Saves from 4.0.0 are compatible with 4.0.1.
 
 ## Features/Improvements
-* **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 
+* **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
