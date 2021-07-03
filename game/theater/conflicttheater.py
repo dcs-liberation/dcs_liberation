@@ -29,6 +29,7 @@ from dcs.terrain import (
     persiangulf,
     syria,
     thechannel,
+    marianaislands,
 )
 from dcs.terrain.terrain import Airport, Terrain
 from dcs.unitgroup import (
@@ -854,5 +855,24 @@ class SyriaTheater(ConflictTheater):
     @property
     def projection_parameters(self) -> TransverseMercator:
         from .syria import PARAMETERS
+
+        return PARAMETERS
+
+
+class MarianaIslandsTheater(ConflictTheater):
+    terrain = marianaislands.MarianaIslands()
+    overview_image = "marianaislands.gif"
+
+    landmap = load_landmap("resources\\marianaislandslandmap.p")
+    daytime_map = {
+        "dawn": (6, 8),
+        "day": (8, 16),
+        "dusk": (16, 18),
+        "night": (0, 5),
+    }
+
+    @property
+    def projection_parameters(self) -> TransverseMercator:
+        from .marianaislands import PARAMETERS
 
         return PARAMETERS
