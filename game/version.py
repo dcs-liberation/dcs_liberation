@@ -96,4 +96,7 @@ VERSION = _build_version_string()
 #:   mission using map buildings as strike targets must check and potentially recreate
 #:   all those objectives. This definitely affects all Syria campaigns, other maps are
 #:   not yet verified.
-CAMPAIGN_FORMAT_VERSION = (7, 0)
+#:
+#: Version 7.1
+#: * Support for Mariana Islands terrain
+CAMPAIGN_FORMAT_VERSION = (7, 1)

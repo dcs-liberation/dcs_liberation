@@ -5,10 +5,20 @@ import argparse
 from pathlib import Path
 from typing import List, Tuple, Union, Dict
 
-from dcs.terrain import Caucasus, PersianGulf, Syria, Nevada, Normandy, TheChannel
+from dcs.terrain import (
+    Caucasus,
+    PersianGulf,
+    Syria,
+    Nevada,
+    Normandy,
+    TheChannel,
+    MarianaIslands,
+)
 from dcs import Mission
 
-Terrain = Union[Caucasus, PersianGulf, Syria, Nevada, Normandy, TheChannel]
+Terrain = Union[
+    Caucasus, PersianGulf, Syria, Nevada, Normandy, TheChannel, MarianaIslands
+]
 
 SAVE_PATH = Path("resources/frontlines")
 
