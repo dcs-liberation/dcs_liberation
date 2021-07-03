@@ -133,4 +133,8 @@ class Loadout:
                 )
 
         # TODO: Try group.load_task_default_loadout(loadout_for_task)
+        return cls.empty_loadout()
+
+    @classmethod
+    def empty_loadout(cls) -> Loadout:
         return Loadout("Empty", {}, date=None)

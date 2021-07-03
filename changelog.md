@@ -29,6 +29,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
 * **[UI]** Statistics window tick marks are now always integers.
+* **[UI]** Toggling custom loadout for an aircraft with no preset loadouts no longer breaks the flight.
 
 # 4.0.0
 
