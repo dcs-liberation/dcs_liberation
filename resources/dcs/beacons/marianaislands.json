@@ -1,0 +1,135 @@
+[
+ {
+  "name": "MTMACAJNA",
+  "callsign": "AJA",
+  "beacon_type": 9,
+  "hertz": 385000,
+  "channel": null
+ },
+ {
+  "name": "Nimitz",
+  "callsign": "UNZ",
+  "beacon_type": 6,
+  "hertz": 115800000,
+  "channel": 105
+ },
+ {
+  "name": "SAIPAN",
+  "callsign": "SN",
+  "beacon_type": 9,
+  "hertz": 312000,
+  "channel": null
+ },
+ {
+  "name": "ANDERSEN",
+  "callsign": "UAM",
+  "beacon_type": 5,
+  "hertz": null,
+  "channel": 54
+ },
+ {
+  "name": "",
+  "callsign": "IPMY",
+  "beacon_type": 15,
+  "hertz": 110150000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IUAM",
+  "beacon_type": 15,
+  "hertz": 110100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IYIG",
+  "beacon_type": 15,
+  "hertz": 109350000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IAND",
+  "beacon_type": 15,
+  "hertz": 109300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IUAM",
+  "beacon_type": 14,
+  "hertz": 110100000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IAND",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IYIG",
+  "beacon_type": 14,
+  "hertz": 109350000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IPMY",
+  "beacon_type": 14,
+  "hertz": 110150000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IGUM",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "PGUM",
+  "beacon_type": 15,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IAWD",
+  "beacon_type": 14,
+  "hertz": 110900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "PGUM",
+  "beacon_type": 15,
+  "hertz": 110900000,
+  "channel": null
+ },
+ {
+  "name": "ROTA",
+  "callsign": "GRO",
+  "beacon_type": 9,
+  "hertz": 332000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "IGSN",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "PGSN",
+  "beacon_type": 15,
+  "hertz": 109900000,
+  "channel": null
+ }
+]
