@@ -127,7 +127,7 @@ class AirSupportConflictGenerator:
                         self.mission.country(self.game.player_country), tanker_unit_type
                     ),
                     airport=None,
-                    plane_type=tanker_unit_type,
+                    plane_type=tanker_unit_type.dcs_unit_type,
                     position=tanker_position,
                     altitude=alt,
                     race_distance=58000,
@@ -177,6 +177,8 @@ class AirSupportConflictGenerator:
                         tanker_unit_type.name,
                         freq,
                         tacan,
+                        start_time=None,
+                        end_time=None,
                         blue=True,
                     )
                 )

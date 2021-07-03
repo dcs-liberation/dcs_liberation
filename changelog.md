@@ -19,6 +19,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
+* **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
 * **[UI]** Statistics window tick marks are now always integers.
 
 # 4.0.0
