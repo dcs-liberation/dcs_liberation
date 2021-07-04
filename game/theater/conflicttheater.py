@@ -699,6 +699,7 @@ class ConflictTheater:
             "Normandy": NormandyTheater,
             "The Channel": TheChannelTheater,
             "Syria": SyriaTheater,
+            "MarianaIslands": MarianaIslandsTheater,
         }
         theater = theaters[data["theater"]]
         t = theater()
