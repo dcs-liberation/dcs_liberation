@@ -510,9 +510,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("no_lha", no_lha)
         supercarrier = QtWidgets.QCheckBox()
         self.registerField("supercarrier", supercarrier)
-        shorads_in_armor_groups = QComboBox()
-        for percentage in CONST.SHORAD_IN_AG_PROBABILITY:
-            shorads_in_armor_groups.addItem(percentage)
+        shorads_in_armor_groups = QtWidgets.QCheckBox()
 
         self.registerField("shorads_in_armor_groups", shorads_in_armor_groups)
 

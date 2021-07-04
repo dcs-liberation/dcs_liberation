@@ -120,9 +120,11 @@ class PresetLocations:
 
     #: Locations of stationary armor groups.
     armor_groups: List[PointWithHeading] = field(default_factory=list)
+    armor_shorad_groups: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of stationary light groups.
     light_armor_groups: List[PointWithHeading] = field(default_factory=list)
+    light_armor_shorad_groups: List[PointWithHeading] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

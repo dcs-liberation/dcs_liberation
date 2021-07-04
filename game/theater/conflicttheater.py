@@ -120,8 +120,10 @@ class MizCampaignLoader:
     EWR_UNIT_TYPE = AirDefence._1L13_EWR.id
 
     ARMOR_GROUP_UNIT_TYPE = Armor.M_1_Abrams.id
+    ARMOR_GROUP_SHORAD_UNIT_TYPE = Armor.T_72B.id
 
     LIGHT_ARMOR_GROUP_UNIT_TYPE = Armor.M_2_Bradley.id
+    LIGHT_ARMOR_GROUP_SHORAD_UNIT_TYPE = Armor.BMP_2.id
 
     FACTORY_UNIT_TYPE = Fortification.Workshop_A.id
 
@@ -264,9 +266,21 @@ class MizCampaignLoader:
                 yield group
 
     @property
+    def armor_shorad_groups(self) -> Iterator[VehicleGroup]:
+        for group in itertools.chain(self.blue.vehicle_group, self.red.vehicle_group):
+            if group.units[0].type in self.ARMOR_GROUP_SHORAD_UNIT_TYPE:
+                yield group
+
+    @property
     def light_armor_groups(self) -> Iterator[VehicleGroup]:
         for group in itertools.chain(self.blue.vehicle_group, self.red.vehicle_group):
             if group.units[0].type in self.LIGHT_ARMOR_GROUP_UNIT_TYPE:
+                yield group
+
+    @property
+    def light_armor_shorad_groups(self) -> Iterator[VehicleGroup]:
+        for group in itertools.chain(self.blue.vehicle_group, self.red.vehicle_group):
+            if group.units[0].type in self.LIGHT_ARMOR_GROUP_SHORAD_UNIT_TYPE:
                 yield group
 
     @property
@@ -459,9 +473,21 @@ class MizCampaignLoader:
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 
+        for group in self.armor_shorad_groups:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.armor_shorad_groups.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
         for group in self.light_armor_groups:
             closest, distance = self.objective_info(group)
             closest.preset_locations.light_armor_groups.append(
+                PointWithHeading.from_point(group.position, group.units[0].heading)
+            )
+
+        for group in self.light_armor_groups:
+            closest, distance = self.objective_info(group)
+            closest.preset_locations.light_armor_shorad_groups.append(
                 PointWithHeading.from_point(group.position, group.units[0].heading)
             )
 

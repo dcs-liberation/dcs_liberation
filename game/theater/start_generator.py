@@ -80,7 +80,7 @@ class GeneratorSettings:
     no_lha: bool
     no_player_navy: bool
     no_enemy_navy: bool
-    shorads_in_armor_groups: int
+    shorads_in_armor_groups: bool
 
 
 @dataclass
@@ -316,13 +316,17 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
     def generate_armor_groups(self) -> None:
         for position in self.control_point.preset_locations.armor_groups:
-            self.generate_armor_at(position)
+            self.generate_armor_at(position, False)
+        for position in self.control_point.preset_locations.armor_shorad_groups: 
+            self.generate_armor_at(position, True)
 
     def generate_light_armor_groups(self) -> None:
         for position in self.control_point.preset_locations.light_armor_groups:
-            self.generate_light_armor_at(position)
+            self.generate_light_armor_at(position, False)
+        for position in self.control_point.preset_locations.light_armor_shorad_groups:
+            self.generate_light_armor_at(position, True)
 
-    def generate_armor_at(self, position: PointWithHeading) -> None:
+    def generate_armor_at(self, position: PointWithHeading, shorad: bool) -> None:
         group_id = self.game.next_group_id()
 
         g = VehicleGroupGroundObject(
@@ -332,13 +336,14 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        shorad_in_ag_probability = self.generator_settings.shorads_in_armor_groups * 25
+        player_wants_shorad = self.generator_settings.shorads_in_armor_groups
 
         group = generate_armor_group(
             self.faction_name,
             self.game,
             g,
-            shorad_in_ag_probability,
+            shorad,
+            player_wants_shorad,
         )
         if group is None:
             logging.error(
@@ -350,7 +355,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g.groups = [group]
         self.control_point.connected_objectives.append(g)
 
-    def generate_light_armor_at(self, position: PointWithHeading) -> None:
+    def generate_light_armor_at(self, position: PointWithHeading, shorad: bool) -> None:
         group_id = self.game.next_group_id()
 
         g = VehicleGroupGroundObject(
@@ -360,13 +365,14 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        shorad_in_ag_probability = self.generator_settings.shorads_in_armor_groups * 25
+        player_wants_shorad = self.generator_settings.shorads_in_armor_groups
 
         group = generate_light_armor_group(
             self.faction_name,
             self.game,
             g,
-            shorad_in_ag_probability,
+            shorad,
+            player_wants_shorad,
         )
         if group is None:
             logging.error(
