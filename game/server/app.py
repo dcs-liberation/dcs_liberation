@@ -14,6 +14,7 @@ from . import (
     supplyroutes,
     tgos,
     waypoints,
+    iadsnetwork,
 )
 from .settings import ServerSettings
 
@@ -30,6 +31,7 @@ app.include_router(qt.router)
 app.include_router(supplyroutes.router)
 app.include_router(tgos.router)
 app.include_router(waypoints.router)
+app.include_router(iadsnetwork.router)
 
 
 origins = []

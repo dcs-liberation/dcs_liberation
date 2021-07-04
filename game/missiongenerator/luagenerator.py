@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import defaultdict
 
 import logging
 import os
@@ -134,6 +135,16 @@ class LuaGenerator:
                             "positionY", str(ground_object.position.y)
                         )
 
+        # Generate IADS Lua Item
+        iads_object = lua_data.add_item("IADS")
+        for node in self.game.theater.iads_network.skynet_nodes(self.game):
+            coalition = iads_object.get_or_create_item("BLUE" if node.player else "RED")
+            iads_type = coalition.get_or_create_item(node.iads_role.value)
+            iads_element = iads_type.add_item()
+            iads_element.add_key_value("dcsGroupName", node.dcs_name)
+            for role, connections in node.connections.items():
+                iads_element.add_data_array(role, connections)
+
         trigger = TriggerStart(comment="Set DCS Liberation data")
         trigger.add_action(DoScript(String(lua_data.create_operations_lua())))
         self.mission.triggerrules.triggers.append(trigger)
@@ -182,11 +193,6 @@ class LuaValue:
     def __init__(self, key: Optional[str], value: str | list[str]):
         self.key = key
         self.value = value
-
-    def _escape_value(self, value: str) -> str:
-        value = value.replace('"', "'")  # Replace Double Quote as this is the delimiter
-        value = value.replace(os.sep, "/")  # Replace Backslash as path separator
-        return '"{0}"'.format(value)
 
     def serialize(self) -> str:
         serialized_value = self.key + " = " if self.key else ""
@@ -255,20 +261,17 @@ class LuaData(LuaItem):
         super().__init__(name)
 
     def add_item(self, item_name: Optional[str] = None) -> LuaItem:
-        """adds a new item to the LuaArray without checking the existence"""
         item = LuaData(item_name, False)
         self.objects.append(item)
         return item
 
     def get_item(self, item_name: str) -> Optional[LuaItem]:
-        """gets item from LuaArray. Returns None if it does not exist"""
         for lua_object in self.objects:
             if lua_object.name == item_name:
                 return lua_object
         return None
 
     def get_or_create_item(self, item_name: Optional[str] = None) -> LuaItem:
-        """gets item from the LuaArray or creates one if it does not exist already"""
         if item_name:
             item = self.get_item(item_name)
             if item:

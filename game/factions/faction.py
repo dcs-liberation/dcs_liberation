@@ -17,6 +17,7 @@ from game.data.building_data import (
     WW2_GERMANY_BUILDINGS,
     WW2_FREE,
     REQUIRED_BUILDINGS,
+    IADS_BUILDINGS,
 )
 from game.data.doctrine import (
     Doctrine,
@@ -256,6 +257,7 @@ class Faction:
 
         # Add required buildings for the game logic (e.g. ammo, factory..)
         faction.building_set.extend(REQUIRED_BUILDINGS)
+        faction.building_set.extend(IADS_BUILDINGS)
 
         # Load liveries override
         faction.liveries_overrides = {}
