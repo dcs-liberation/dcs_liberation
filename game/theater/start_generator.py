@@ -317,7 +317,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_armor_groups(self) -> None:
         for position in self.control_point.preset_locations.armor_groups:
             self.generate_armor_at(position, False)
-        for position in self.control_point.preset_locations.armor_shorad_groups: 
+        for position in self.control_point.preset_locations.armor_shorad_groups:
             self.generate_armor_at(position, True)
 
     def generate_light_armor_groups(self) -> None:

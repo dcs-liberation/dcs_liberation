@@ -22,7 +22,7 @@ def generate_armor_group(
     include_shorad: bool = False
     if shorad == True and player_wants_shorad == True:
         include_shorad = True
-        
+
     armor_types = (
         GroundUnitClass.Atgm,
         GroundUnitClass.Tank,

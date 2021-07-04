@@ -537,7 +537,11 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
         generatorLayout.addWidget(
-            QtWidgets.QLabel("Activate AAA shorad placement from campaign design in armor groups"), 6, 0
+            QtWidgets.QLabel(
+                "Activate AAA shorad placement from campaign design in armor groups"
+            ),
+            6,
+            0,
         )
         generatorLayout.addWidget(shorads_in_armor_groups, 6, 1)
         generatorLayout.addLayout(desired_player_mission_duration, 7, 0)
