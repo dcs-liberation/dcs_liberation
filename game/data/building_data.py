@@ -7,13 +7,17 @@ REQUIRED_BUILDINGS = [
     "fob",
 ]
 
+IADS_BUILDINGS = [
+    "comms",
+    "power",
+    "commandcenter",
+]
+
 DEFAULT_AVAILABLE_BUILDINGS = [
     "fuel",
-    "comms",
     "oil",
     "ware",
     "farp",
-    "power",
     "derrick",
 ]
 

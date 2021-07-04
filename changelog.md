@@ -16,6 +16,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
 * **[UI]** Added separate images for the different carrier types.
 * **[Campaign]** Allow campaign designers to define default values for the economy settings (starting budget and multiplier).
+* **[Plugins]** Allow full support of the SkynetIADS plugin with all advanced features (connection nodes, power sources, command centers) if campaign supports it.
 
 ## Fixes
 

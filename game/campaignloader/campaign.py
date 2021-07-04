@@ -22,6 +22,7 @@ from game.theater import (
     SyriaTheater,
     TheChannelTheater,
 )
+from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
 from .mizcampaignloader import MizCampaignLoader
@@ -58,6 +59,7 @@ class Campaign:
     performance: int
     data: Dict[str, Any]
     path: Path
+    advanced_iads: bool
 
     @classmethod
     def from_file(cls, path: Path) -> Campaign:
@@ -109,9 +111,10 @@ class Campaign:
             data.get("performance", 0),
             data,
             path,
+            data.get("advanced_iads", False),
         )
 
-    def load_theater(self) -> ConflictTheater:
+    def load_theater(self, advanced_iads: bool) -> ConflictTheater:
         theaters = {
             "Caucasus": CaucasusTheater,
             "Nevada": NevadaTheater,
@@ -133,6 +136,10 @@ class Campaign:
 
         with logged_duration("Importing miz data"):
             MizCampaignLoader(self.path.parent / miz, t).populate_theater()
+
+        # Load IADS Config from campaign yaml
+        iads_data = self.data.get("iads_config", [])
+        t.iads_network = IadsNetwork(advanced_iads, iads_data)
         return t
 
     def load_air_wing_config(self, theater: ConflictTheater) -> CampaignAirWingConfig:

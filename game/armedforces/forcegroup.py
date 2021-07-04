@@ -15,16 +15,21 @@ from game.dcs.groundunittype import GroundUnitType
 from game.dcs.helpers import static_type_from_name
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
+from game.theater.theatergroundobject import (
+    IadsGroundObject,
+    IadsBuildingGroundObject,
+    NavalGroundObject,
+)
 from game.layout import LAYOUTS
 from game.layout.layout import TgoLayout, TgoLayoutGroup
 from game.point_with_heading import PointWithHeading
-from game.theater.theatergroup import TheaterGroup
+from game.theater.theatergroup import IadsGroundGroup, IadsRole, TheaterGroup
 from game.utils import escape_string_for_lua
 
 if TYPE_CHECKING:
     from game import Game
     from game.factions.faction import Faction
-    from game.theater import TheaterGroundObject, ControlPoint
+    from game.theater import TheaterGroundObject, ControlPoint, PresetLocation
 
 
 @dataclass
@@ -170,26 +175,26 @@ class ForceGroup:
     def generate(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
         game: Game,
     ) -> TheaterGroundObject:
         """Create a random TheaterGroundObject from the available templates"""
         layout = random.choice(self.layouts)
         return self.create_ground_object_for_layout(
-            layout, name, position, control_point, game
+            layout, name, location, control_point, game
         )
 
     def create_ground_object_for_layout(
         self,
         layout: TgoLayout,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
         game: Game,
     ) -> TheaterGroundObject:
         """Create a TheaterGroundObject for the given template"""
-        go = layout.create_ground_object(name, position, control_point)
+        go = layout.create_ground_object(name, location, control_point)
         # Generate all groups using the randomization if it defined
         for group_name, groups in layout.groups.items():
             for group in groups:
@@ -223,7 +228,11 @@ class ForceGroup:
         """Create a TheaterGroup and add it to the given TGO"""
         # Random UnitCounter if not forced
         if unit_count is None:
+            # Choose a random group_size based on the layouts unit_count
             unit_count = group.group_size
+        if unit_count == 0:
+            # No units to be created so dont create a theater group for them
+            return
         # Generate Units
         units = group.generate_units(ground_object, unit_type, unit_count)
         # Get or create the TheaterGroup
@@ -233,16 +242,27 @@ class ForceGroup:
             ground_group.units.extend(units)
         else:
             # TheaterGroup with the name was not created yet
-            ground_object.groups.append(
-                TheaterGroup.from_template(
-                    game.next_group_id(),
-                    group_name,
-                    units,
-                    ground_object,
-                    unit_type,
-                    unit_count,
-                )
+            ground_group = TheaterGroup.from_template(
+                game.next_group_id(), group_name, units, ground_object
             )
+            # Special handling when part of the IADS (SAM, EWR, IADS Building, Navy)
+            if (
+                isinstance(ground_object, IadsGroundObject)
+                or isinstance(ground_object, IadsBuildingGroundObject)
+                or isinstance(ground_object, NavalGroundObject)
+            ):
+                # Recreate the TheaterGroup as IadsGroundGroup
+                ground_group = IadsGroundGroup.from_group(ground_group)
+                if group.sub_task is not None:
+                    # Use the special sub_task of the TheaterGroup
+                    iads_task = group.sub_task
+                else:
+                    # Use the primary task of the ForceGroup
+                    iads_task = self.tasks[0]
+                # Set the iads_role according the the task for the group
+                ground_group.iads_role = IadsRole.for_task(iads_task)
+
+            ground_object.groups.append(ground_group)
 
         # A layout has to be created with an orientation of 0 deg.
         # Therefore the the clockwise rotation angle is always the heading of the
