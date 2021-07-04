@@ -15,13 +15,12 @@ from game.data.groups import GroupRole, GroupTask
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
-from game.point_with_heading import PointWithHeading
 from game.groundforces.template import GroundObjectTemplate
 
 if TYPE_CHECKING:
     from game import Game
     from game.factions.faction import Faction
-    from game.theater import TheaterGroundObject, ControlPoint
+    from game.theater import TheaterGroundObject, ControlPoint, PresetLocation
 
 
 @dataclass
@@ -99,7 +98,7 @@ class GroundForceGroup:
     def generate(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
         game: Game,
         template_name: str = "",
@@ -111,7 +110,7 @@ class GroundForceGroup:
                 self.templates
             )
             try:
-                return template.generate(name, position, control_point, game)
+                return template.generate(name, location, control_point, game)
             except NotImplementedError:
                 logging.error(f"Generator for {template.name} not implemented yet")
         else:

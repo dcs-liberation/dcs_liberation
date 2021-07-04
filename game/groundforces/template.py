@@ -37,7 +37,7 @@ from game import db
 if TYPE_CHECKING:
     from game import Game
     from game.factions.faction import Faction
-    from game.theater import TheaterGroundObject, ControlPoint
+    from game.theater import TheaterGroundObject, ControlPoint, PresetLocation
 
 
 @dataclass
@@ -236,14 +236,14 @@ class GroundObjectTemplate:
     def generate(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
         game: Game,
         merge_groups: bool = True,
     ) -> TheaterGroundObject:
 
         # Create the ground_object based on the type
-        ground_object = self._create_ground_object(name, position, control_point)
+        ground_object = self._create_ground_object(name, location, control_point)
         # Generate all groups using the randomization if it defined
         for g_id, group in enumerate(self.groups):
             if not group.should_be_generated:
@@ -320,7 +320,7 @@ class GroundObjectTemplate:
     def _create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
         raise NotImplementedError
@@ -361,14 +361,14 @@ class AntiAirTemplate(GroundObjectTemplate):
     def _create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> IadsGroundObject:
 
         if GroupTask.EWR in self.tasks:
-            return EwrGroundObject(name, position, position.heading, control_point)
+            return EwrGroundObject(name, location, control_point)
         elif any(tasking in self.tasks for tasking in ROLE_TASKINGS[GroupRole.AntiAir]):
-            return SamGroundObject(name, position, position.heading, control_point)
+            return SamGroundObject(name, location, control_point)
         raise RuntimeError(
             f" No Template for AntiAir tasking ({', '.join(task.value for task in self.tasks)})"
         )
@@ -378,14 +378,13 @@ class BuildingTemplate(GroundObjectTemplate):
     def _create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> BuildingGroundObject:
         return BuildingGroundObject(
             name,
             self.category,
-            position,
-            Heading.from_degrees(0),
+            location,
             control_point,
             self.category == "fob",
         )
@@ -402,11 +401,11 @@ class NavalTemplate(GroundObjectTemplate):
     def _create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
         if GroupTask.Navy in self.tasks:
-            return ShipGroundObject(name, position, control_point)
+            return ShipGroundObject(name, location, control_point)
         elif GroupTask.AircraftCarrier in self.tasks:
             return CarrierGroundObject(name, control_point)
         elif GroupTask.HelicopterCarrier in self.tasks:
@@ -418,17 +417,13 @@ class DefensesTemplate(GroundObjectTemplate):
     def _create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
         if GroupTask.Missile in self.tasks:
-            return MissileSiteGroundObject(
-                name, position, position.heading, control_point
-            )
+            return MissileSiteGroundObject(name, location, control_point)
         elif GroupTask.Coastal in self.tasks:
-            return CoastalSiteGroundObject(
-                name, position, control_point, position.heading
-            )
+            return CoastalSiteGroundObject(name, location, control_point)
         raise NotImplementedError
 
 
@@ -436,7 +431,7 @@ class GroundForceTemplate(GroundObjectTemplate):
     def _create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
-        return VehicleGroupGroundObject(name, position, position.heading, control_point)
+        return VehicleGroupGroundObject(name, location, control_point)

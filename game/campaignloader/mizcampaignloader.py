@@ -53,6 +53,10 @@ class MizCampaignLoader:
     MISSILE_SITE_UNIT_TYPE = MissilesSS.Scud_B.id
     COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.Hy_launcher.id
 
+    COMMAND_CENTER_UNIT_TYPE = Fortification._Command_Center.id
+    CONNECTION_NODE_UNIT_TYPE = Fortification.Comms_tower_M.id
+    POWER_SOURCE_UNIT_TYPE = Fortification.GeneratorF.id
+
     # Multiple options for air defenses so campaign designers can more accurately see
     # the coverage of their IADS for the expected type.
     LONG_RANGE_SAM_UNIT_TYPES = {
@@ -298,6 +302,24 @@ class MizCampaignLoader:
             if group.units[0].type == self.SHIPPING_LANE_UNIT_TYPE:
                 yield group
 
+    @property
+    def iads_command_centers(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.COMMAND_CENTER_UNIT_TYPE:
+                yield group
+
+    @property
+    def iads_connection_nodes(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.CONNECTION_NODE_UNIT_TYPE:
+                yield group
+
+    @property
+    def iads_power_sources(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.POWER_SOURCE_UNIT_TYPE:
+                yield group
+
     def add_supply_routes(self) -> None:
         for group in self.front_line_path_groups:
             # The unit will have its first waypoint at the source CP and the final
@@ -424,6 +446,24 @@ class MizCampaignLoader:
             closest, distance = self.objective_info(static)
             closest.preset_locations.buildings.append(
                 PresetLocation.from_group(static, GroupTask.StrikeTarget)
+            )
+
+        for iads_command_center in self.iads_command_centers:
+            closest, distance = self.objective_info(iads_command_center)
+            closest.preset_locations.iads_command_center.append(
+                PresetLocation.from_group(iads_command_center)
+            )
+
+        for iads_connection_node in self.iads_connection_nodes:
+            closest, distance = self.objective_info(iads_connection_node)
+            closest.preset_locations.iads_connection_node.append(
+                PresetLocation.from_group(iads_connection_node)
+            )
+
+        for iads_power_source in self.iads_power_sources:
+            closest, distance = self.objective_info(iads_power_source)
+            closest.preset_locations.iads_power_source.append(
+                PresetLocation.from_group(iads_power_source)
             )
 
         for preset_trigger in self.complex_presets:

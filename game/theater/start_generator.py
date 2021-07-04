@@ -14,6 +14,7 @@ from game.theater.theatergroundobject import (
     BuildingGroundObject,
     SceneryGroundUnit,
     GroundGroup,
+    IadsBuildingGroundObject,
 )
 from game.utils import Heading
 from game.version import VERSION
@@ -25,6 +26,7 @@ from . import (
     Fob,
     OffMapSpawn,
 )
+from .iadsnetwork import IADSRole
 from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
 from ..data.groups import GroupRole, GroupTask, ROLE_TASKINGS
 from game.groundforces.ground_force_group import GroundForceGroup
@@ -183,7 +185,7 @@ class ControlPointGroundObjectGenerator:
     def generate_ground_object_from_group(
         self,
         unit_group: GroundForceGroup,
-        position: PointWithHeading,
+        location: PresetLocation,
         forced_template: str = "",
     ) -> None:
         """Generate a ground_object for a GroundForceGroup"""
@@ -192,7 +194,7 @@ class ControlPointGroundObjectGenerator:
         ):
             ground_object = unit_group.generate(
                 namegen.random_objective_name(),
-                position,
+                location,
                 self.control_point,
                 self.game,
                 forced_template,
@@ -241,13 +243,16 @@ class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
         if not unit_group:
             logging.error(f"{self.faction_name} has no UnitGroup for AircraftCarrier")
             return False
+        self.control_point.name = random.choice(carrier_names)
         self.generate_ground_object_from_group(
             unit_group,
-            PointWithHeading.from_point(
-                self.control_point.position, self.control_point.heading
+            PresetLocation(
+                self.control_point.name,
+                PointWithHeading.from_point(
+                    self.control_point.position, self.control_point.heading
+                ),
             ),
         )
-        self.control_point.name = random.choice(carrier_names)
         return True
 
 
@@ -270,13 +275,16 @@ class LhaGroundObjectGenerator(ControlPointGroundObjectGenerator):
         if not unit_group:
             logging.error(f"{self.faction_name} has no UnitGroup for HelicopterCarrier")
             return False
+        self.control_point.name = random.choice(lha_names)
         self.generate_ground_object_from_group(
             unit_group,
-            PointWithHeading.from_point(
-                self.control_point.position, self.control_point.heading
+            PresetLocation(
+                self.control_point.name,
+                PointWithHeading.from_point(
+                    self.control_point.position, self.control_point.heading
+                ),
             ),
         )
-        self.control_point.name = random.choice(lha_names)
         return True
 
 
@@ -299,7 +307,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_ground_points(self) -> None:
         """Generate ground objects and AA sites for the control point."""
         self.generate_armor_groups()
-        self.generate_aa()
+        self.generate_iads()
         self.generate_scenery_sites()
         self.generate_buildings()
         self.generate_missile_sites()
@@ -346,7 +354,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_building_at(
         self,
         group_task: GroupTask,
-        position: PointWithHeading,
+        location: PresetLocation,
     ) -> None:
         # GroupTask is the type of the building to be generated
         unit_group = self.ground_forces.random_group_for_role_and_task(
@@ -357,10 +365,10 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 f"{self.faction_name} has no access to Building ({group_task.value})"
             )
             return
-        self.generate_ground_object_from_group(unit_group, position)
+        self.generate_ground_object_from_group(unit_group, location)
 
     def generate_random_aa_at(
-        self, position: PointWithHeading, tasks: list[GroupTask]
+        self, location: PresetLocation, tasks: list[GroupTask]
     ) -> None:
         for task in reversed(tasks):
             unit_group = self.ground_forces.random_group_for_role_and_task(
@@ -369,12 +377,39 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             if unit_group:
                 # Only take next (smaller) aa_range when no template available for the
                 # most requested range. Otherwise break the loop and continue
-                self.generate_ground_object_from_group(unit_group, position)
+                self.generate_ground_object_from_group(unit_group, location)
                 return
 
         logging.error(
             f"{self.faction_name} has no access to Anti Air ({', '.join([task.value for task in tasks])})"
         )
+
+    def generate_iads(self) -> None:
+        # TODO
+        self.generate_aa()
+        for iads_element in self.control_point.preset_locations.iads_command_center:
+            self.generate_iads_at(iads_element, IADSRole.CommandCenter)
+        for iads_element in self.control_point.preset_locations.iads_connection_node:
+            self.generate_iads_at(iads_element, IADSRole.ConnectionNode)
+        for iads_element in self.control_point.preset_locations.iads_power_source:
+            self.generate_iads_at(iads_element, IADSRole.PowerSource)
+
+    def generate_iads_at(
+        # TODO
+        self,
+        iads_element: PresetLocation,
+        iads_role: IADSRole,
+    ) -> None:
+        obj_name = namegen.random_objective_name()
+
+        g = IadsBuildingGroundObject(
+            obj_name,
+            iads_element,
+            self.control_point,
+            iads_role,
+        )
+
+        self.control_point.connected_objectives.append(g)
 
     def generate_scenery_sites(self) -> None:
         presets = self.control_point.preset_locations
@@ -386,14 +421,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g = BuildingGroundObject(
             namegen.random_objective_name(),
             scenery.task.value.lower(),
-            scenery.position,
-            scenery.heading,
+            scenery.location,
             self.control_point,
         )
         ground_group = GroundGroup(
             self.game.next_group_id(),
             scenery.zone.name,
-            PointWithHeading.from_point(scenery.position, scenery.heading),
+            scenery.location,
             [],
             g,
         )
@@ -453,8 +487,11 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
     def generate_fob(self) -> None:
         self.generate_building_at(
             GroupTask.FOB,
-            PointWithHeading.from_point(
-                self.control_point.position, self.control_point.heading
+            PresetLocation(
+                self.control_point.name,
+                PointWithHeading.from_point(
+                    self.control_point.position, self.control_point.heading
+                ),
             ),
         )
 

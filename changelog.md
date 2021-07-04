@@ -15,6 +15,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Modding]** Add F-104 mod support
 * **[Modding]** Updated Community A-4E-C mod version support to 2.0.0 release. Version 1.4.2 is no longer compatible, unless the mod default loadouts are deleted/modified.
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
+* **[Plugins]** Allow full support of the SkynetIADS plugin with all advanced features (connection nodes, power sources, command centers) if campaign supports it.
 
 ## Fixes
 

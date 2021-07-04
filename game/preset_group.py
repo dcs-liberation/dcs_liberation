@@ -3,8 +3,10 @@ from __future__ import annotations
 from game.data.groups import GroupTask
 from dcs.triggers import TriggerZone
 
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, TYPE_CHECKING
 
+from game.point_with_heading import PointWithHeading
+from game.theater import PresetLocation
 from game.utils import Heading
 
 
@@ -28,6 +30,12 @@ class PresetTrigger:
         self.task = task
         self.template = template
         self.unit_group = unit_group
+
+    @property
+    def location(self) -> PresetLocation:
+        return PresetLocation(
+            self.zone.name, PointWithHeading.from_point(self.position, self.heading)
+        )
 
     @property
     def is_scenery_object(self) -> bool:

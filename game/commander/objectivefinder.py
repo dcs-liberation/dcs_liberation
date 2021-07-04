@@ -17,6 +17,7 @@ from game.theater.theatergroundobject import (
     BuildingGroundObject,
     IadsGroundObject,
     NavalGroundObject,
+    IadsBuildingGroundObject,
 )
 from game.utils import meters, nautical_miles
 from gen.flights.closestairfields import ClosestAirfields, ObjectiveDistanceCache
@@ -112,6 +113,13 @@ class ObjectiveFinder:
                     # This is the FOB structure itself. Can't be repaired or
                     # targeted by the player, so shouldn't be targetable by the
                     # AI.
+                    continue
+
+                if isinstance(
+                    ground_object, IadsBuildingGroundObject
+                ) and not self.game.settings.plugin_option("skynetiads"):
+                    # Prevent strike targets on IADS Buildings when skynet features
+                    # are disabled as they do not serve any purpose
                     continue
 
                 if ground_object.is_dead:

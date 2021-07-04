@@ -320,7 +320,6 @@ TIME_PERIODS = {
 }
 
 REWARDS = {
-    "power": 4,
     "warehouse": 2,
     "ware": 2,
     "fuel": 2,
@@ -329,11 +328,9 @@ REWARDS = {
     # TODO: Should generate no cash once they generate units.
     # https://github.com/dcs-liberation/dcs_liberation/issues/1036
     "factory": 10,
-    "comms": 10,
     "oil": 10,
     "derrick": 8,
     "village": 0.25,
-    "allycamp": 0.5,
 }
 
 """

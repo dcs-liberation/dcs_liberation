@@ -36,7 +36,6 @@ from dcs.unitgroup import StaticGroup, VehicleGroup, ShipGroup
 
 from game import db
 from game.point_with_heading import PointWithHeading
-from game.preset_group import PresetTrigger
 from game.utils import Heading
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.combat_stance import CombatStance
@@ -59,6 +58,7 @@ from ..weather import Conditions
 
 if TYPE_CHECKING:
     from game import Game
+    from game.preset_group import PresetTrigger
     from ..ato.flighttype import FlightType
     from game.squadrons.squadron import Squadron
     from ..coalition import Coalition
@@ -168,6 +168,11 @@ class PresetLocations:
 
     #: Locations of stationary armor groups.
     armor_groups: List[PresetLocation] = field(default_factory=list)
+
+    #: Locations of skynet specific groups
+    iads_connection_node: List[PresetLocation] = field(default_factory=list)
+    iads_power_source: List[PresetLocation] = field(default_factory=list)
+    iads_command_center: List[PresetLocation] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

@@ -49,6 +49,7 @@ class GroupTask(Enum):
     Village = "Village"
     Ware = "Ware"
     WW2Bunker = "WW2Bunker"
+    CommandCenter = "CommandCenter"
 
 
 ROLE_TASKINGS: dict[GroupRole, list[GroupTask]] = {
