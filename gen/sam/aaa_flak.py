@@ -23,7 +23,6 @@ class FlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Flak Site"
-    price = 135
 
     def generate(self):
         index = 0

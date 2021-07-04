@@ -14,7 +14,6 @@ class VulcanGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Vulcan Group"
-    price = 25
 
     def generate(self):
         num_launchers = 2

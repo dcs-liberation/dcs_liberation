@@ -12,7 +12,6 @@ class SA15Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-15 Tor Group"
-    price = 55
 
     def generate(self):
         num_launchers = 2

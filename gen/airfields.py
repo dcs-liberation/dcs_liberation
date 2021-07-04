@@ -1521,4 +1521,47 @@ AIRFIELD_DATA = {
         runway_length=3953,
         atc=AtcData(MHz(3, 850), MHz(118, 200), MHz(38, 600), MHz(250, 200)),
     ),
+    "Antonio B. Won Pat Intl": AirfieldData(
+        theater="MarianaIslands",
+        icao="PGUM",
+        elevation=255,
+        runway_length=9359,
+        atc=AtcData(MHz(3, 825), MHz(118, 100), MHz(38, 550), MHz(340, 200)),
+        ils={
+            "06": ("IGUM", MHz(110, 30)),
+        },
+    ),
+    "Andersen AFB": AirfieldData(
+        theater="MarianaIslands",
+        icao="PGUA",
+        elevation=545,
+        runway_length=10490,
+        tacan=TacanChannel(54, TacanBand.X),
+        tacan_callsign="UAM",
+        atc=AtcData(MHz(3, 850), MHz(126, 200), MHz(38, 600), MHz(250, 100)),
+    ),
+    "Rota Intl": AirfieldData(
+        theater="MarianaIslands",
+        icao="PGRO",
+        elevation=568,
+        runway_length=6105,
+        atc=AtcData(MHz(3, 750), MHz(123, 600), MHz(38, 400), MHz(250, 0)),
+    ),
+    "Tinian Intl": AirfieldData(
+        theater="MarianaIslands",
+        icao="PGWT",
+        elevation=240,
+        runway_length=7777,
+        atc=AtcData(MHz(3, 800), MHz(123, 650), MHz(38, 500), MHz(250, 50)),
+    ),
+    "Saipan Intl": AirfieldData(
+        theater="MarianaIslands",
+        icao="PGSN",
+        elevation=213,
+        runway_length=7790,
+        atc=AtcData(MHz(3, 775), MHz(125, 700), MHz(38, 450), MHz(256, 900)),
+        ils={
+            "07": ("IGSN", MHz(109, 90)),
+        },
+    ),
 }

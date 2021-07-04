@@ -14,7 +14,6 @@ class ZU23UralInsurgentGenerator(AirDefenseGroupGenerator):
     """
 
     name = "ZU-23 Ural Insurgent Group"
-    price = 64
 
     def generate(self):
         num_launchers = 4

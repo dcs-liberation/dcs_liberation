@@ -13,6 +13,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 ## Features/Improvements
 
 * **[Campaign]** Air defense sites now generate a fixed number of launchers per type.
+* **[Campaign]** Added support for Mariana Islands map.  
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
@@ -22,11 +23,18 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Campaign]** Armor groups have a fixed size of 4 units.*
 * **[Campaign]** Campaign designers can determine wether tanks&atgm or APC/IFV will be placed as an armor group.*
 * **[Campaign]** Campaign designers can determine if a shorad will be added to those groups. A player must check the 'Activate AAA shorad placement from campaign design in armor groups' box for this to happen.*
+* **[UI]** Control point name displayed with ground object group name on map.
+* **[UI]** Buy or Replace will now show the correct price for generated ground objects like sams.
 
 ## Fixes
-* **[UI]** Statistics window tick marks are now always integers.
-* **[Mission Generation]** The lua data for other plugins is now generated correctly
+
+* **[Campaign]** Fixed the Silkworm generator to include launchers and not all radars.
+* **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
+* **[Mission Generation]** The lua data for other plugins is now generated correctly
+* **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
+* **[UI]** Statistics window tick marks are now always integers.
+* **[UI]** Toggling custom loadout for an aircraft with no preset loadouts no longer breaks the flight.
 
 # 4.0.0
 
