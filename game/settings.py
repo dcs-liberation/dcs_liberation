@@ -74,6 +74,10 @@ class Settings:
     perf_destroyed_units: bool = True
     reserves_procurement_target: int = 10
 
+    # Limit amount of assigned aircraft
+    perf_limit_aircraft: bool = False
+    perf_limit_aircraft_amount: int = 64
+
     # Performance culling
     perf_culling: bool = False
     perf_culling_distance: int = 100

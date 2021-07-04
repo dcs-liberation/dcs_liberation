@@ -346,6 +346,22 @@ class QPackagePanel(QGroupBox):
         )
         self.vbox.addWidget(self.tip)
 
+        # Planning Row
+        # Shows the current planned Flights / Available ones
+        # Lets user fill with ai generated packages
+        self.planning_row = QHBoxLayout()
+        self.vbox.addLayout(self.planning_row)
+
+        self.planning_status = QLabel(self.planning_status_text())
+        self.planning_row.addWidget(self.planning_status)
+
+        self.fill_button = QPushButton("Rerun the AI Planner")
+        self.fill_button.clicked.connect(self.on_fill)
+        self.planning_row.addWidget(self.fill_button)
+        self.assigned_aircraft_count = 0
+        self.available_aircraft_count = 0
+
+        # Package List
         self.package_list = QPackageList(self.ato_model)
         self.vbox.addWidget(self.package_list)
 
@@ -373,10 +389,18 @@ class QPackagePanel(QGroupBox):
     def on_current_changed(self) -> None:
         """Updates the status of the edit and delete buttons."""
         index = self.package_list.currentIndex()
-        enabled = index.isValid()
-        self.edit_button.setEnabled(enabled)
-        self.delete_button.setEnabled(enabled)
+        modify_enabled = index.isValid()
+        self.edit_button.setEnabled(modify_enabled)
+        self.delete_button.setEnabled(modify_enabled)
         self.change_map_package_selection(index)
+        self.update_aircraft_count()
+
+        fill_enabled = self.ato_model.game is not None and (
+            self.assigned_aircraft_count
+            < self.ato_model.game.settings.perf_limit_aircraft_amount
+        )
+        self.fill_button.setEnabled(fill_enabled)
+        self.planning_status.setText(self.planning_status_text())
 
     def change_map_package_selection(self, index: QModelIndex) -> None:
         if not index.isValid():
@@ -404,6 +428,41 @@ class QPackagePanel(QGroupBox):
             logging.error(f"Cannot delete package when no package is selected.")
             return
         self.package_list.delete_package(index)
+        self.on_current_changed()
+
+    def on_fill(self) -> None:
+        """Fills the ATO with AI generated packages."""
+        self.ato_model.game.blue.plan_missions()
+        GameUpdateSignal.get_instance().updateGame(self.ato_model.game)
+        self.on_current_changed()
+        return
+
+    def update_aircraft_count(self):
+        if self.ato_model.game:
+            aircraft_count = 0
+            for package in self.ato_model.packages:
+                for flight in package.flights:
+                    aircraft_count += flight.count
+            self.assigned_aircraft_count = aircraft_count
+
+            available = 0
+            for (
+                control_point,
+                inventory,
+            ) in self.ato_model.game.aircraft_inventory.inventories.items():
+                if control_point.captured:
+                    for aircraft, count in inventory.all_aircraft:
+                        if control_point.can_operate(aircraft):
+                            available += count
+            self.available_aircraft_count = available
+
+    def planning_status_text(self) -> str:
+        status_text = ""
+        if self.ato_model.game:
+            status_text = f"Aircraft assigned: {self.assigned_aircraft_count}/{self.assigned_aircraft_count + self.available_aircraft_count}"
+            if self.ato_model.game.settings.perf_limit_aircraft:
+                status_text += f" (Limit: {self.ato_model.game.settings.perf_limit_aircraft_amount})"
+        return status_text
 
 
 class QAirTaskingOrderPanel(QSplitter):

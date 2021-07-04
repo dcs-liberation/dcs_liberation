@@ -2,7 +2,7 @@ import logging
 from typing import Callable
 
 from PySide2.QtCore import QItemSelectionModel, QPoint, QSize, Qt
-from PySide2.QtGui import QStandardItem, QStandardItemModel
+from PySide2.QtGui import QStandardItem, QStandardItemModel, QCloseEvent
 from PySide2.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -24,6 +24,7 @@ import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.infos.information import Information
 from game.settings import Settings, AutoAtoBehavior
+from game.weather import TimeOfDay
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -415,6 +416,21 @@ class QSettingsWindow(QDialog):
     def init(self):
         pass
 
+    def closeEvent(self, event: QCloseEvent) -> None:
+
+        # If exclude night missions toggle was set
+        if self.conditions_reset_needed:
+            self.game.conditions = self.game.generate_conditions()
+
+        # If specific settings like aircraft limitation were enabled we have to replan
+        # the opfor AI to use this setting
+        if self.replan_needed:
+            self.game.initialize_turn_for(player=False)
+
+        GameUpdateSignal.get_instance().updateGame(self.game)
+
+        super().closeEvent(event)
+
     def initDifficultyLayout(self):
 
         self.difficultyPage = QWidget()
@@ -470,6 +486,7 @@ class QSettingsWindow(QDialog):
         self.manpads.setChecked(self.game.settings.manpads)
         self.manpads.toggled.connect(self.applySettings)
 
+        self.conditions_reset_needed = False
         self.noNightMission = QCheckBox()
         self.noNightMission.setChecked(self.game.settings.night_disabled)
         self.noNightMission.toggled.connect(self.applySettings)
@@ -770,6 +787,19 @@ class QSettingsWindow(QDialog):
         self.destroyed_units.setChecked(self.game.settings.perf_destroyed_units)
         self.destroyed_units.toggled.connect(self.applySettings)
 
+        self.limit_aircraft = QCheckBox()
+        self.limit_aircraft.setChecked(self.game.settings.perf_limit_aircraft)
+        self.limit_aircraft.toggled.connect(self.applySettings)
+
+        self.replan_needed = False
+        self.limit_aircraft_amount = QSpinBox()
+        self.limit_aircraft_amount.setMinimum(8)
+        self.limit_aircraft_amount.setMaximum(1000)
+        self.limit_aircraft_amount.setValue(
+            self.game.settings.perf_limit_aircraft_amount
+        )
+        self.limit_aircraft_amount.valueChanged.connect(self.applySettings)
+
         self.culling = QCheckBox()
         self.culling.setChecked(self.game.settings.perf_culling)
         self.culling.toggled.connect(self.applySettings)
@@ -818,20 +848,38 @@ class QSettingsWindow(QDialog):
             self.destroyed_units, 6, 1, alignment=Qt.AlignRight
         )
 
-        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 7, 0, 1, 2)
-        self.performanceLayout.addWidget(
-            QLabel("Culling of distant units enabled"), 8, 0
+        limit_aircraft_checkbox = QLabel("Limit maximum aircraft assigned per turn")
+        limit_aircraft_tooltip = (
+            "Activating will limit the maximum amount of assigned aircraft during the "
+            "initialization of the turn. "
+            "This will not update the currently planned aircrafts. "
+            "You have to manually update them!"
         )
-        self.performanceLayout.addWidget(self.culling, 8, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 9, 0)
+        limit_aircraft_checkbox.setToolTip(limit_aircraft_tooltip)
+        self.performanceLayout.addWidget(limit_aircraft_checkbox, 7, 0)
+        self.limit_aircraft.setToolTip(limit_aircraft_tooltip)
         self.performanceLayout.addWidget(
-            self.culling_distance, 9, 1, alignment=Qt.AlignRight
+            self.limit_aircraft, 7, 1, alignment=Qt.AlignRight
+        )
+        self.performanceLayout.addWidget(QLabel("maximum assigned aircraft"), 8, 0)
+        self.performanceLayout.addWidget(
+            self.limit_aircraft_amount, 8, 1, alignment=Qt.AlignRight
+        )
+
+        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 9, 0, 1, 2)
+        self.performanceLayout.addWidget(
+            QLabel("Culling of distant units enabled"), 10, 0
+        )
+        self.performanceLayout.addWidget(self.culling, 10, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 11, 0)
+        self.performanceLayout.addWidget(
+            self.culling_distance, 11, 1, alignment=Qt.AlignRight
         )
         self.performanceLayout.addWidget(
-            QLabel("Do not cull carrier's surroundings"), 10, 0
+            QLabel("Do not cull carrier's surroundings"), 12, 0
         )
         self.performanceLayout.addWidget(
-            self.culling_do_not_cull_carrier, 10, 1, alignment=Qt.AlignRight
+            self.culling_do_not_cull_carrier, 12, 1, alignment=Qt.AlignRight
         )
 
         self.generatorLayout.addWidget(self.gameplay)
@@ -904,6 +952,12 @@ class QSettingsWindow(QDialog):
         self.game.settings.labels = CONST.LABELS_OPTIONS[
             self.difficultyLabel.currentIndex()
         ]
+
+        self.conditions_reset_needed = (
+            self.noNightMission.isChecked()
+            and self.game.conditions.time_of_day is TimeOfDay.Night
+            and (not self.game.settings.night_disabled or self.conditions_reset_needed)
+        )
         self.game.settings.night_disabled = self.noNightMission.isChecked()
         self.game.settings.map_coalition_visibility = (
             self.mapVisibiitySelection.currentData()
@@ -931,6 +985,27 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
         self.game.settings.perf_destroyed_units = self.destroyed_units.isChecked()
+
+        # We have to replan opfor when the setting was either:
+        # activated, deactivated or value changed
+        self.replan_needed = (
+            self.limit_aircraft.isChecked()
+            and (
+                # On Enable
+                (not self.game.settings.perf_limit_aircraft or self.replan_needed)
+                # On Change
+                or self.game.settings.perf_limit_aircraft_amount
+                != self.limit_aircraft_amount.value()
+            )
+            # On Deactivate
+            or not self.limit_aircraft.isChecked()
+            and self.game.settings.perf_limit_aircraft
+            and not self.replan_needed
+        )
+        self.game.settings.perf_limit_aircraft = self.limit_aircraft.isChecked()
+        self.game.settings.perf_limit_aircraft_amount = int(
+            self.limit_aircraft_amount.value()
+        )
 
         self.game.settings.perf_culling = self.culling.isChecked()
         self.game.settings.perf_culling_distance = int(self.culling_distance.value())
