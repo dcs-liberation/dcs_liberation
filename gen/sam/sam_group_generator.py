@@ -129,6 +129,7 @@ def _generate_anti_air_from(
     sam_generator_class = random.choice(generators)
     generator = sam_generator_class(game, ground_object)
     generator.generate()
+    ground_object.iads_group_role = generator.iads_roles
     return list(generator.groups)
 
 

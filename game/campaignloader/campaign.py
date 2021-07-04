@@ -22,6 +22,7 @@ from game.theater import (
     SyriaTheater,
     TheChannelTheater,
 )
+from game.theater.iadsnetwork import IADSNetwork, IADSConfig
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
 from .mizcampaignloader import MizCampaignLoader
@@ -122,6 +123,9 @@ class Campaign:
 
         with logged_duration("Importing miz data"):
             MizCampaignLoader(self.path.parent / miz, t).populate_theater()
+
+        # Load IADS Config from campaign yaml
+        t.iads_network = IADSNetwork(self.load_iads_config())
         return t
 
     def load_air_wing_config(self, theater: ConflictTheater) -> CampaignAirWingConfig:
@@ -131,6 +135,18 @@ class Campaign:
             logging.warning(f"Campaign {self.name} does not define any squadrons")
             return CampaignAirWingConfig({})
         return CampaignAirWingConfig.from_campaign_data(squadron_data, theater)
+
+    def load_iads_config(self) -> IADSConfig:
+        advanced_iads: bool = False
+        try:
+            advanced_iads = self.data["advanced_iads"]
+            iads_data = self.data["iads"]
+        except KeyError:
+            logging.warning(
+                f"Campaign {self.name} does not define any iads configuration"
+            )
+            return IADSConfig([], advanced_iads)
+        return IADSConfig.from_campaign_data(iads_data)
 
     @property
     def is_out_of_date(self) -> bool:

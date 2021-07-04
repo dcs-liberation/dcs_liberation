@@ -17,6 +17,7 @@ from game.theater import TheaterGroundObject
 
 from .aircraft.flightdata import FlightData
 from .airsupport import AirSupport
+from ..theater.theatergroundobject import IADSRole, SamGroundObject
 
 if TYPE_CHECKING:
     from game import Game
@@ -131,6 +132,65 @@ class LuaGenerator:
                         )
                         aa_item.add_key_value(
                             "positionY", str(ground_object.position.y)
+                        )
+
+        # Generate IADS Lua Item
+        iads_object = lua_data.add_item("IADS")
+        for player in [True, False]:
+            coalition = "BLUE" if player else "RED"
+            coalition_iads = iads_object.add_item(coalition)
+            for iads_type in [
+                IADSRole.Ewr,
+                IADSRole.Sam,
+                IADSRole.CommandCenter,
+                IADSRole.SamAsEwr,
+            ]:
+                iads_types = coalition_iads.add_item(iads_type.value)
+                for primary_node in self.game.theater.iads_network.connections:
+                    primary_go = primary_node.ground_object
+                    if (
+                        not primary_node.participate
+                        or primary_node.iads_role != iads_type
+                        or not primary_go.is_friendly(player)
+                    ):
+                        continue
+                    iads_element = iads_types.add_item()
+                    group_name = (
+                        primary_go.group_name
+                        if primary_node.iads_role != IADSRole.Ewr
+                        or not primary_go.units
+                        # Unit Name for EWR as required by skynet
+                        else primary_go.units[0].name
+                    )
+                    iads_element.add_key_value("dcsGroupName", group_name)
+                    for connection_type in [
+                        IADSRole.ConnectionNode,
+                        IADSRole.PowerSource,
+                        IADSRole.PointDefense,
+                    ]:
+                        connected_nodes = [
+                            connected_node.ground_object.group_name
+                            for connected_node in primary_node.connected_nodes
+                            if connected_node.participate
+                            and connected_node.iads_role == connection_type
+                            and connected_node.ground_object.is_friendly(player)
+                        ]
+
+                        # special handling for SAM Sites which have their own PD
+                        if (
+                            connection_type == IADSRole.PointDefense
+                            and isinstance(primary_go, SamGroundObject)
+                            and IADSRole.PointDefense in primary_go.iads_group_role
+                        ):
+                            for i, group in enumerate(primary_go.groups):
+                                if (
+                                    primary_go.iads_group_role[i]
+                                    == IADSRole.PointDefense
+                                ):
+                                    connected_nodes.append(group.name)
+
+                        iads_element.add_data_array(
+                            connection_type.value, connected_nodes
                         )
 
         trigger = TriggerStart(comment="Set DCS Liberation data")

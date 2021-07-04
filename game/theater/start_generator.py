@@ -12,7 +12,7 @@ from dcs.mapping import Point
 from game import Game
 from game.factions.faction import Faction
 from game.scenery_group import SceneryGroup
-from game.theater import PointWithHeading
+from game.theater import PointWithHeading, PresetLocation
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
@@ -25,6 +25,7 @@ from game.theater.theatergroundobject import (
     SceneryGroundObject,
     VehicleGroupGroundObject,
     CoastalSiteGroundObject,
+    IadsBuildingGroundObject,
 )
 from game.utils import Heading
 from game.version import VERSION
@@ -47,6 +48,7 @@ from . import (
     Fob,
     OffMapSpawn,
 )
+from .iadsnetwork import IADSRole
 from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
 from ..profiling import logged_duration
 from ..settings import Settings
@@ -275,8 +277,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_ground_points(self) -> None:
         """Generate ground objects and AA sites for the control point."""
         self.generate_armor_groups()
-        self.generate_aa()
-        self.generate_ewrs()
+        self.generate_iads()
         self.generate_scenery_sites()
         self.generate_strike_targets()
         self.generate_offshore_strike_targets()
@@ -399,8 +400,34 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
         self.control_point.connected_objectives.append(g)
 
+    def generate_iads(self) -> None:
+        self.generate_aa()
+        self.generate_ewrs()
+        for iads_element in self.control_point.preset_locations.iads_command_center:
+            self.generate_iads_at(iads_element, IADSRole.CommandCenter)
+        for iads_element in self.control_point.preset_locations.iads_connection_node:
+            self.generate_iads_at(iads_element, IADSRole.ConnectionNode)
+        for iads_element in self.control_point.preset_locations.iads_power_source:
+            self.generate_iads_at(iads_element, IADSRole.PowerSource)
+
+    def generate_iads_at(
+        self, iads_element: PresetLocation, iads_role: IADSRole
+    ) -> None:
+        obj_name = namegen.random_objective_name()
+        group_id = self.game.next_group_id()
+
+        g = IadsBuildingGroundObject(
+            obj_name,
+            group_id,
+            iads_element,
+            self.control_point,
+            iads_role,
+        )
+
+        self.control_point.connected_objectives.append(g)
+
     def generate_aa_at(
-        self, position: Point, ranges: Iterable[Set[AirDefenseRange]]
+        self, position: PresetLocation, ranges: Iterable[Set[AirDefenseRange]]
     ) -> None:
         group_id = self.game.next_group_id()
 
@@ -421,7 +448,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g.groups = groups
         self.control_point.connected_objectives.append(g)
 
-    def generate_ewr_at(self, position: PointWithHeading) -> None:
+    def generate_ewr_at(self, position: PresetLocation) -> None:
         group_id = self.game.next_group_id()
 
         g = EwrGroundObject(
@@ -536,8 +563,7 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
         self.generate_armor_groups()
         self.generate_factories()
         self.generate_ammunition_depots()
-        self.generate_aa()
-        self.generate_ewrs()
+        self.generate_iads()
         self.generate_scenery_sites()
         self.generate_strike_targets()
         self.generate_offshore_strike_targets()

@@ -3,10 +3,10 @@ import random
 from dcs.mapping import Point
 from dcs.vehicles import AirDefence
 
+from game.theater.theatergroundobject import IADSRole
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
-    SkynetRole,
 )
 
 
@@ -27,7 +27,7 @@ class HQ7Generator(AirDefenseGroupGenerator):
         )
 
         # Triple A for close range defense
-        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
+        aa_group = self.add_auxiliary_group(IADSRole.NoBehavior)
         self.add_unit_to_group(
             aa_group,
             AirDefence.Ural_375_ZU_23,

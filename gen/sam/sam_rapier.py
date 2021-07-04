@@ -2,10 +2,10 @@ import random
 
 from dcs.vehicles import AirDefence
 
+from game.theater.theatergroundobject import IADSRole
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
-    SkynetRole,
 )
 
 
@@ -51,5 +51,5 @@ class RapierGenerator(AirDefenseGroupGenerator):
         return AirDefenseRange.Short
 
     @classmethod
-    def primary_group_role(cls) -> SkynetRole:
-        return SkynetRole.Sam
+    def primary_group_role(cls) -> IADSRole:
+        return IADSRole.Sam

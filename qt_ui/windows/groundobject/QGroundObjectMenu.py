@@ -462,6 +462,9 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         self.ground_object.groups = list(sam_generator.groups)
 
+        # Update IADS Roles
+        self.ground_object.iads_group_role = sam_generator.iads_roles
+
         # Replan redfor missions
         self.game.initialize_turn(for_red=True, for_blue=False)
 

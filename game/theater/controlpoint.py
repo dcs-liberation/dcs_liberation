@@ -21,6 +21,7 @@ from typing import (
     Sequence,
     Iterable,
     Tuple,
+    TypeVar,
 )
 
 from dcs.mapping import Point
@@ -33,6 +34,7 @@ from dcs.ships import (
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
+from dcs.unitgroup import StaticGroup, VehicleGroup, ShipGroup
 from dcs.unittype import FlyingType
 
 from game import db
@@ -80,54 +82,82 @@ class ControlPointType(Enum):
     OFF_MAP = 6
 
 
+GroupT = TypeVar("GroupT", StaticGroup, ShipGroup, VehicleGroup)
+
+
+class PresetLocation(PointWithHeading):
+    original_name: str  # Store the original name from the campaign miz
+
+    @classmethod
+    def from_group(cls, group: GroupT) -> PresetLocation:
+        return PresetLocation(
+            group.name,
+            PointWithHeading.from_point(
+                group.position, Heading.from_degrees(group.units[0].heading)
+            ),
+        )
+
+    def __init__(self, name: str, point: PointWithHeading) -> None:
+        super().__init__()
+        self.original_name = name
+        self.x = point.x
+        self.y = point.y
+        self.heading = point.heading
+
+
 @dataclass
 class PresetLocations:
     """Defines the preset locations loaded from the campaign mission file."""
 
     #: Locations used by non-carrier ships that will be spawned unless the faction has
     #: no navy or the player has disabled ship generation for the owning side.
-    ships: List[PointWithHeading] = field(default_factory=list)
+    ships: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by coastal defenses that are generated if the faction is capable.
-    coastal_defenses: List[PointWithHeading] = field(default_factory=list)
+    coastal_defenses: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by ground based strike objectives.
-    strike_locations: List[PointWithHeading] = field(default_factory=list)
+    strike_locations: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by offshore strike objectives.
-    offshore_strike_locations: List[PointWithHeading] = field(default_factory=list)
+    offshore_strike_locations: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by missile sites like scuds and V-2s that are generated if the
     #: faction is capable.
-    missile_sites: List[PointWithHeading] = field(default_factory=list)
+    missile_sites: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of long range SAMs.
-    long_range_sams: List[PointWithHeading] = field(default_factory=list)
+    long_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of medium range SAMs.
-    medium_range_sams: List[PointWithHeading] = field(default_factory=list)
+    medium_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of short range SAMs.
-    short_range_sams: List[PointWithHeading] = field(default_factory=list)
+    short_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of AAA groups.
-    aaa: List[PointWithHeading] = field(default_factory=list)
+    aaa: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of EWRs.
-    ewrs: List[PointWithHeading] = field(default_factory=list)
+    ewrs: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of map scenery to create zones for.
     scenery: List[SceneryGroup] = field(default_factory=list)
 
     #: Locations of factories for producing ground units.
-    factories: List[PointWithHeading] = field(default_factory=list)
+    factories: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of ammo depots for controlling number of units on the front line at a
     #: control point.
-    ammunition_depots: List[PointWithHeading] = field(default_factory=list)
+    ammunition_depots: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of stationary armor groups.
-    armor_groups: List[PointWithHeading] = field(default_factory=list)
+    armor_groups: List[PresetLocation] = field(default_factory=list)
+
+    #: Locations of skynet specific groups
+    iads_connection_node: List[PresetLocation] = field(default_factory=list)
+    iads_power_source: List[PresetLocation] = field(default_factory=list)
+    iads_command_center: List[PresetLocation] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

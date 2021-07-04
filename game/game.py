@@ -261,6 +261,12 @@ class Game:
 
     def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""
+        # Build the IADS Network
+        with logged_duration("Generate IADS Network"):
+            self.theater.iads_network.initialize_network(
+                list(self.theater.ground_objects())
+            )
+
         self.blue.preinit_turn_0()
         self.red.preinit_turn_0()
         self.initialize_turn()

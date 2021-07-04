@@ -15,11 +15,10 @@ from dcs.terrain import Airport
 from dcs.unitgroup import PlaneGroup, ShipGroup, VehicleGroup, StaticGroup
 from dcs.vehicles import Armor, Unarmed, MissilesSS, AirDefence
 
-from game.point_with_heading import PointWithHeading
 from game.positioned import Positioned
 from game.profiling import logged_duration
 from game.scenery_group import SceneryGroup
-from game.utils import Distance, meters, Heading
+from game.utils import Distance, meters
 from game.theater.controlpoint import (
     Airfield,
     Carrier,
@@ -27,6 +26,7 @@ from game.theater.controlpoint import (
     Fob,
     Lha,
     OffMapSpawn,
+    PresetLocation,
 )
 
 if TYPE_CHECKING:
@@ -51,6 +51,10 @@ class MizCampaignLoader:
     SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
     MISSILE_SITE_UNIT_TYPE = MissilesSS.Scud_B.id
     COASTAL_DEFENSE_UNIT_TYPE = MissilesSS.Hy_launcher.id
+
+    COMMAND_CENTER_UNIT_TYPE = Fortification._Command_Center.id
+    CONNECTION_NODE_UNIT_TYPE = Fortification.Comms_tower_M.id
+    POWER_SOURCE_UNIT_TYPE = Fortification.GeneratorF.id
 
     # Multiple options for air defenses so campaign designers can more accurately see
     # the coverage of their IADS for the expected type.
@@ -297,6 +301,24 @@ class MizCampaignLoader:
             if group.units[0].type == self.SHIPPING_LANE_UNIT_TYPE:
                 yield group
 
+    @property
+    def iads_command_centers(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.COMMAND_CENTER_UNIT_TYPE:
+                yield group
+
+    @property
+    def iads_connection_nodes(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.CONNECTION_NODE_UNIT_TYPE:
+                yield group
+
+    @property
+    def iads_power_sources(self) -> Iterator[StaticGroup]:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
+            if group.units[0].type in self.POWER_SOURCE_UNIT_TYPE:
+                yield group
+
     def add_supply_routes(self) -> None:
         for group in self.front_line_path_groups:
             # The unit will have its first waypoint at the source CP and the final
@@ -352,113 +374,93 @@ class MizCampaignLoader:
         for static in self.offshore_strike_targets:
             closest, distance = self.objective_info(static)
             closest.preset_locations.offshore_strike_locations.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
+                PresetLocation.from_group(static)
             )
 
         for ship in self.ships:
             closest, distance = self.objective_info(ship, allow_naval=True)
-            closest.preset_locations.ships.append(
-                PointWithHeading.from_point(
-                    ship.position, Heading.from_degrees(ship.units[0].heading)
-                )
-            )
+            closest.preset_locations.ships.append(PresetLocation.from_group(ship))
 
         for group in self.missile_sites:
             closest, distance = self.objective_info(group)
             closest.preset_locations.missile_sites.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.coastal_defenses:
             closest, distance = self.objective_info(group)
             closest.preset_locations.coastal_defenses.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.long_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.long_range_sams.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.medium_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.medium_range_sams.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.short_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.short_range_sams.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.aaa:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.aaa.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
-            )
+            closest.preset_locations.aaa.append(PresetLocation.from_group(group))
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ewrs.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
-            )
+            closest.preset_locations.ewrs.append(PresetLocation.from_group(group))
 
         for group in self.armor_groups:
             closest, distance = self.objective_info(group)
             closest.preset_locations.armor_groups.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for static in self.helipads:
             closest, distance = self.objective_info(static)
-            closest.helipads.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
-            )
+            closest.helipads.append(PresetLocation.from_group(static))
 
         for static in self.factories:
             closest, distance = self.objective_info(static)
-            closest.preset_locations.factories.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
-            )
+            closest.preset_locations.factories.append(PresetLocation.from_group(static))
 
         for static in self.ammunition_depots:
             closest, distance = self.objective_info(static)
             closest.preset_locations.ammunition_depots.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
+                PresetLocation.from_group(static)
             )
 
         for static in self.strike_targets:
             closest, distance = self.objective_info(static)
             closest.preset_locations.strike_locations.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
+                PresetLocation.from_group(static)
+            )
+
+        for iads_command_center in self.iads_command_centers:
+            closest, distance = self.objective_info(iads_command_center)
+            closest.preset_locations.iads_command_center.append(
+                PresetLocation.from_group(iads_command_center)
+            )
+
+        for iads_connection_node in self.iads_connection_nodes:
+            closest, distance = self.objective_info(iads_connection_node)
+            closest.preset_locations.iads_connection_node.append(
+                PresetLocation.from_group(iads_connection_node)
+            )
+
+        for iads_power_source in self.iads_power_sources:
+            closest, distance = self.objective_info(iads_power_source)
+            closest.preset_locations.iads_power_source.append(
+                PresetLocation.from_group(iads_power_source)
             )
 
         for scenery_group in self.scenery:

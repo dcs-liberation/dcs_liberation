@@ -1,10 +1,10 @@
 from dcs.mapping import Point
 from dcs.vehicles import AirDefence
 
+from game.theater.theatergroundobject import IADSRole
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
-    SkynetRole,
 )
 
 
@@ -64,7 +64,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
             )
 
         # Short range protection for high value site
-        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
+        aa_group = self.add_auxiliary_group(IADSRole.NoBehavior)
         positions = self.get_circular_position(2, launcher_distance=200, coverage=360)
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(

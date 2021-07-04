@@ -6,10 +6,10 @@ from dcs.vehicles import AirDefence
 
 from game import Game
 from game.theater import SamGroundObject
+from game.theater.theatergroundobject import IADSRole
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
-    SkynetRole,
 )
 from pydcs_extensions.highdigitsams import highdigitsams
 
@@ -73,7 +73,7 @@ class SA10Generator(AirDefenseGroupGenerator):
 
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
-        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
+        aa_group = self.add_auxiliary_group(IADSRole.NoBehavior)
         num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=210, coverage=360
@@ -97,7 +97,7 @@ class Tier2SA10Generator(SA10Generator):
         super().generate_defensive_groups()
 
         # SA-15 for both shorter range targets and point defense.
-        pd_group = self.add_auxiliary_group(SkynetRole.PointDefense)
+        pd_group = self.add_auxiliary_group(IADSRole.PointDefense)
         num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=140, coverage=360
@@ -118,7 +118,7 @@ class Tier3SA10Generator(SA10Generator):
 
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
-        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
+        aa_group = self.add_auxiliary_group(IADSRole.NoBehavior)
         num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=210, coverage=360
@@ -133,7 +133,7 @@ class Tier3SA10Generator(SA10Generator):
             )
 
         # SA-15 for both shorter range targets and point defense.
-        pd_group = self.add_auxiliary_group(SkynetRole.PointDefense)
+        pd_group = self.add_auxiliary_group(IADSRole.PointDefense)
         num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=140, coverage=360

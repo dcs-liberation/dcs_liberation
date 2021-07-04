@@ -20,6 +20,7 @@ from pyproj import CRS, Transformer
 from shapely import geometry, ops
 
 from .frontline import FrontLine
+from .iadsnetwork import IADSNetwork
 from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
 from .projections import TransverseMercator
@@ -46,6 +47,7 @@ class ConflictTheater:
     land_poly = None  # type: Polygon
     """
     daytime_map: Dict[str, Tuple[int, int]]
+    iads_network: IADSNetwork
 
     def __init__(self) -> None:
         self.controlpoints: List[ControlPoint] = []
@@ -81,6 +83,11 @@ class ConflictTheater:
 
     def add_controlpoint(self, point: ControlPoint) -> None:
         self.controlpoints.append(point)
+
+    def ground_objects(self) -> Iterator[TheaterGroundObject[Any]]:
+        for cp in self.controlpoints:
+            for go in cp.ground_objects:
+                yield go
 
     def find_ground_objects_by_obj_name(
         self, obj_name: str
