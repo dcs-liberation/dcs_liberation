@@ -130,7 +130,10 @@ class TransferOrder:
     def kill_unit(self, unit_type: GroundUnitType) -> None:
         if unit_type not in self.units or not self.units[unit_type]:
             raise KeyError(f"{self} has no {unit_type} remaining")
-        self.units[unit_type] -= 1
+        if self.units[unit_type] == 1:
+            del self.units[unit_type]
+        else:
+            self.units[unit_type] -= 1
 
     @property
     def size(self) -> int:
