@@ -34,7 +34,6 @@ from gen import namegen
 from gen.coastal.coastal_group_generator import generate_coastal_group
 from gen.defenses.armor_group_generator import (
     generate_armor_group,
-    generate_light_armor_group,
 )
 from gen.fleet.ship_group_generator import (
     generate_carrier_group,
