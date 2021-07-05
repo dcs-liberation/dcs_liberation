@@ -21,6 +21,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
+* **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
 * **[UI]** Statistics window tick marks are now always integers.
 * **[UI]** Toggling custom loadout for an aircraft with no preset loadouts no longer breaks the flight.
 
