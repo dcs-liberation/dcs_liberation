@@ -298,7 +298,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
     def generate_ground_points(self) -> None:
         """Generate ground objects and AA sites for the control point."""
         self.generate_armor_groups()
-        self.generate_light_armor_groups()
         self.generate_aa()
         self.generate_ewrs()
         self.generate_scenery_sites()
@@ -319,12 +318,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         for position in self.control_point.preset_locations.armor_shorad_groups:
             self.generate_armor_at(position, True)
 
-    def generate_light_armor_groups(self) -> None:
-        for position in self.control_point.preset_locations.light_armor_groups:
-            self.generate_light_armor_at(position, False)
-        for position in self.control_point.preset_locations.light_armor_shorad_groups:
-            self.generate_light_armor_at(position, True)
-
     def generate_armor_at(self, position: PointWithHeading, shorad: bool) -> None:
         group_id = self.game.next_group_id()
 
@@ -338,35 +331,6 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         player_wants_shorad = self.generator_settings.shorads_in_armor_groups
 
         group = generate_armor_group(
-            self.faction_name,
-            self.game,
-            g,
-            shorad,
-            player_wants_shorad,
-        )
-        if group is None:
-            logging.error(
-                "Could not generate armor group for %s at %s",
-                g.name,
-                self.control_point,
-            )
-            return
-        g.groups = [group]
-        self.control_point.connected_objectives.append(g)
-
-    def generate_light_armor_at(self, position: PointWithHeading, shorad: bool) -> None:
-        group_id = self.game.next_group_id()
-
-        g = VehicleGroupGroundObject(
-            namegen.random_objective_name(),
-            group_id,
-            position,
-            self.control_point,
-        )
-
-        player_wants_shorad = self.generator_settings.shorads_in_armor_groups
-
-        group = generate_light_armor_group(
             self.faction_name,
             self.game,
             g,
