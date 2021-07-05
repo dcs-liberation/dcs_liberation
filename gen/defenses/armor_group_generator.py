@@ -26,30 +26,9 @@ def generate_armor_group(
     armor_types = (
         GroundUnitClass.Atgm,
         GroundUnitClass.Tank,
+        GroundUnitClass.Apc,
+        GroundUnitClass.Ifv,
     )
-    possible_unit = [
-        u for u in db.FACTIONS[faction].frontline_units if u.unit_class in armor_types
-    ]
-    if len(possible_unit) > 0:
-        unit_type = random.choice(possible_unit)
-        return generate_armor_group_of_type(
-            game, ground_object, unit_type, faction, include_shorad
-        )
-    return None
-
-
-def generate_light_armor_group(
-    faction: str, game, ground_object, shorad: bool, player_wants_shorad: bool
-):
-    """
-    This generate a group of ground units
-    :return: Generated group
-    """
-    include_shorad: bool = False
-    if shorad == True and player_wants_shorad == True:
-        include_shorad = True
-
-    armor_types = (GroundUnitClass.Apc, GroundUnitClass.Ifv)
     possible_unit = [
         u for u in db.FACTIONS[faction].frontline_units if u.unit_class in armor_types
     ]
