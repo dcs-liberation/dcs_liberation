@@ -24,6 +24,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
 * **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
 * **[UI]** Statistics window tick marks are now always integers.
+* **[UI]** Statistics window now shows the correct info for the turn
 * **[UI]** Toggling custom loadout for an aircraft with no preset loadouts no longer breaks the flight.
 
 # 4.0.0
