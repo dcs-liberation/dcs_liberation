@@ -43,6 +43,10 @@ class GameStats:
         :param game: Game we want to save the data about
         """
 
+        # Remove the current turn if its just an update for this turn
+        if 0 < game.turn < len(self.data_per_turn):
+            del self.data_per_turn[-1]
+
         turn_data = GameTurnMetadata()
 
         for cp in game.theater.controlpoints:
