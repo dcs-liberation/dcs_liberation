@@ -316,6 +316,33 @@ class Game:
         self.red_ato.clear()
 
     def finish_turn(self, skipped: bool = False) -> None:
+        """Finalizes the current turn and advances to the next turn.
+
+        This handles the turn-end portion of passing a turn. Initialization of the next
+        turn is handled by `initialize_turn`. These are separate processes because while
+        turns may be initialized more than once under some circumstances (see the
+        documentation for `initialize_turn`), `finish_turn` performs the work that
+        should be guaranteed to happen only once per turn:
+
+        * Turn counter increment.
+        * Delivering units ordered the previous turn.
+        * Transfer progress.
+        * Squadron replenishment.
+        * Income distribution.
+        * Base strength (front line position) adjustment.
+        * Weather/time-of-day generation.
+
+        Some actions (like transit network assembly) will happen both here and in
+        `initialize_turn`. We need the network to be up to date so we can account for
+        base captures when processing the transfers that occurred last turn, but we also
+        need it to be up to date in the case of a re-initialization in `initialize_turn`
+        (such as to account for a cheat base capture) so that orders are only placed
+        where a supply route exists to the destination. This is a relatively cheap
+        operation so duplicating the effort is not a problem.
+
+        Args:
+            skipped: True if the turn was skipped.
+        """
         self.informations.append(
             Information("End of turn #" + str(self.turn), "-" * 40, 0)
         )
@@ -352,10 +379,18 @@ class Game:
         self.process_player_income()
 
     def begin_turn_0(self) -> None:
+        """Initialization for the first turn of the game."""
         self.turn = 0
         self.initialize_turn()
 
     def pass_turn(self, no_action: bool = False) -> None:
+        """Ends the current turn and initializes the new turn.
+
+        Called both when skipping a turn or by ending the turn as the result of combat.
+
+        Args:
+            no_action: True if the turn was skipped.
+        """
         logging.info("Pass turn")
         with logged_duration("Turn finalization"):
             self.finish_turn(no_action)
@@ -385,7 +420,40 @@ class Game:
         self.blue_bullseye = Bullseye(enemy_cp.position)
         self.red_bullseye = Bullseye(player_cp.position)
 
-    def initialize_turn(self, for_red: bool = True, for_blue: bool = True):
+    def initialize_turn(self, for_red: bool = True, for_blue: bool = True) -> None:
+        """Performs turn initialization for the specified players.
+
+        Turn initialization performs all of the beginning-of-turn actions. *End-of-turn*
+        processing happens in `pass_turn` (despite the name, it's called both for
+        skipping the turn and ending the turn after combat).
+
+        Special care needs to be taken here because initialization can occur more than
+        once per turn. A number of events can require re-initializing a turn:
+
+        * Cheat capture. Bases changing hands invalidates many missions in both ATOs,
+          purchase orders, threat zones, transit networks, etc. Practically speaking,
+          after a base capture the turn needs to be treated as fully new. The game might
+          even be over after a capture.
+        * Cheat front line position. CAS missions are no longer in the correct location,
+          and the ground planner may also need changes.
+        * Selling/buying units at TGOs. Selling a TGO might leave missions in the ATO
+          with invalid targets. Buying a new SAM (or even replacing some units in a SAM)
+          potentially changes the threat zone and may alter mission priorities and
+          flight planning.
+
+        Most of the work is delegated to initialize_turn_for, which handles the
+        coalition-specific turn initialization. In some cases only one coalition will be
+        (re-) initialized. This is the case when buying or selling TGO units, since we
+        don't want to force the player to redo all their planning just because they
+        repaired a SAM, but should replan opfor when that happens. On the other hand,
+        base captures are significant enough (and likely enough to be the first thing
+        the player does in a turn) that we replan blue as well. Front lines are less
+        impactful but also likely to be early, so they also cause a blue replan.
+
+        Args:
+            for_red: True if opfor should be re-initialized.
+            for_blue: True if the player coalition should be re-initialized.
+        """
         self.events = []
         self._generate_events()
         self.set_bullseye()
@@ -412,7 +480,15 @@ class Game:
                 self.ground_planners[cp.id] = gplanner
 
     def initialize_turn_for(self, player: bool) -> None:
+        """Processes coalition-specific turn initialization.
 
+        For more information on turn initialization in general, see the documentation
+        for `Game.initialize_turn`.
+
+        Args:
+            player: True if the player coalition is being initialized. False for opfor
+            initialization.
+        """
         self.ato_for(player).clear()
         self.air_wing_for(player).reset()
 
