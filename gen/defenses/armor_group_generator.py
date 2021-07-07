@@ -12,16 +12,11 @@ from gen.defenses.armored_group_generator import (
 )
 
 
-def generate_armor_group(
-    faction: str, game, ground_object, shorad: bool, player_wants_shorad: bool
-):
+def generate_armor_group(faction: str, game, ground_object, include_shorad: bool):
     """
     This generate a group of ground units
     :return: Generated group
     """
-    include_shorad: bool = False
-    if shorad == True and player_wants_shorad == True:
-        include_shorad = True
 
     armor_types = (
         GroundUnitClass.Atgm,

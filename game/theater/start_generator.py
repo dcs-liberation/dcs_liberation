@@ -327,14 +327,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        player_wants_shorad = self.generator_settings.shorads_in_armor_groups
+        add_shorad = self.generator_settings.shorads_in_armor_groups and ag_location.shoradIncluded
 
         group = generate_armor_group(
             self.faction_name,
             self.game,
             g,
             ag_location.shoradIncluded,
-            player_wants_shorad,
         )
         if group is None:
             logging.error(
