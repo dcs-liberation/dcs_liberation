@@ -3,10 +3,9 @@ from __future__ import unicode_literals
 import logging
 from datetime import timedelta
 from typing import List
-import qt_ui.uiconstants as CONST
 from PySide2 import QtGui, QtWidgets
 from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
-from PySide2.QtWidgets import QComboBox, QVBoxLayout, QTextEdit, QLabel, QCheckBox
+from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
@@ -538,7 +537,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
         generatorLayout.addWidget(
             QtWidgets.QLabel(
-                "Activate AAA shorad placement from campaign design in armor groups"
+                "Allow generating air defenses for garrisons groups."
             ),
             6,
             0,

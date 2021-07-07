@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import qt_ui.uiconstants as CONST
 import logging
 import pickle
 import random

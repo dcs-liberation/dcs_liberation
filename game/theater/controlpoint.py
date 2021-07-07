@@ -122,11 +122,6 @@ class PresetLocations:
     armor_groups: List[PointWithHeading] = field(default_factory=list)
     armor_shorad_groups: List[PointWithHeading] = field(default_factory=list)
 
-    #: Locations of stationary light groups.
-    light_armor_groups: List[PointWithHeading] = field(default_factory=list)
-    light_armor_shorad_groups: List[PointWithHeading] = field(default_factory=list)
-
-
 @dataclass(frozen=True)
 class AircraftAllocations:
     present: dict[AircraftType, int]

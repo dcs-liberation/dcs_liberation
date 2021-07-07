@@ -19,10 +19,8 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
-* **[UI]** Control point name displayed with ground object group name on map.* 
-* **[Campaign]** Armor groups have a fixed size of 4 units.*
-* **[Campaign]** Campaign designers can determine if a shorad will be added to those groups. A player must check the 'Activate AAA shorad placement from campaign design in armor groups' box for this to happen.*
-* **[UI]** Control point name displayed with ground object group name on map.
+* **[Campaign]** Armor groups have a fixed size of 4 units.
+* **[Campaign]** Campaign designers can determine if a shorad will be added to those groups. A player must check the 'Allow generating air defenses for garrisons groups.' box for this to happen.
 * **[UI]** Buy or Replace will now show the correct price for generated ground objects like sams.
 
 ## Fixes
