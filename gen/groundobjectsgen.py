@@ -637,6 +637,7 @@ class GroundObjectsGenerator:
             ).generate()
 
             for ground_object in cp.ground_objects:
+                generator: GenericGroundObjectGenerator
                 if isinstance(ground_object, FactoryGroundObject):
                     generator = FactoryGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
