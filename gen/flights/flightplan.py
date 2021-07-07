@@ -219,11 +219,7 @@ class FlightPlan:
         tot_waypoint = self.tot_waypoint
         if tot_waypoint is None:
             return None
-
-        time = self.tot
-        if time is None:
-            return None
-        return time - self._travel_time_to_waypoint(tot_waypoint)
+        return self.tot - self._travel_time_to_waypoint(tot_waypoint)
 
     def startup_time(self) -> Optional[timedelta]:
         takeoff_time = self.takeoff_time()
