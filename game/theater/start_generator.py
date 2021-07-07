@@ -327,7 +327,10 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        add_shorad = self.generator_settings.shorads_in_armor_groups and ag_location.shoradIncluded
+        add_shorad = (
+            self.generator_settings.shorads_in_armor_groups
+            and ag_location.shoradIncluded
+        )
 
         group = generate_armor_group(
             self.faction_name,
