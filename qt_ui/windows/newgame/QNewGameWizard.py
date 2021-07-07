@@ -536,9 +536,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
         generatorLayout.addWidget(
-            QtWidgets.QLabel(
-                "Allow generating air defenses for garrisons groups."
-            ),
+            QtWidgets.QLabel("Allow generating air defenses for garrisons groups."),
             6,
             0,
         )
