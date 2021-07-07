@@ -2,6 +2,8 @@ import itertools
 import logging
 from typing import Any
 
+from dcs.unit import UnitType as DcsUnitType
+
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.unittype import UnitType
@@ -31,7 +33,7 @@ class Base:
             total += unit_type.price * count
         return total
 
-    def total_units_of_type(self, unit_type: UnitType) -> int:
+    def total_units_of_type(self, unit_type: UnitType[DcsUnitType]) -> int:
         return sum(
             [
                 c
