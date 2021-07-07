@@ -519,14 +519,14 @@ class TransportMap(Generic[TransportType]):
             yield from destination_dict.values()
 
 
-class ConvoyMap(TransportMap):
+class ConvoyMap(TransportMap[Convoy]):
     def create_transport(
         self, origin: ControlPoint, destination: ControlPoint
     ) -> Convoy:
         return Convoy(origin, destination)
 
 
-class CargoShipMap(TransportMap):
+class CargoShipMap(TransportMap[CargoShip]):
     def create_transport(
         self, origin: ControlPoint, destination: ControlPoint
     ) -> CargoShip:
