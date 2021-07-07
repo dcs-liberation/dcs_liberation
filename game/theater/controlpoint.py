@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.armorGroupLocation import ArmorGroupLocation
 
 import heapq
 import itertools
@@ -119,8 +120,7 @@ class PresetLocations:
     ammunition_depots: List[PointWithHeading] = field(default_factory=list)
 
     #: Locations of stationary armor groups.
-    armor_groups: List[PointWithHeading] = field(default_factory=list)
-    armor_shorad_groups: List[PointWithHeading] = field(default_factory=list)
+    armor_groups: List[ArmorGroupLocation] = field(default_factory=list)
 
 @dataclass(frozen=True)
 class AircraftAllocations:

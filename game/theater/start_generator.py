@@ -11,7 +11,7 @@ from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 
-from game import Game, db
+from game import Game, armorGroupLocation, db
 from game.factions.faction import Faction
 from game.scenery_group import SceneryGroup
 from game.theater import Carrier, Lha, PointWithHeading
@@ -312,18 +312,16 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.generate_coastal_sites()
 
     def generate_armor_groups(self) -> None:
-        for position in self.control_point.preset_locations.armor_groups:
-            self.generate_armor_at(position, False)
-        for position in self.control_point.preset_locations.armor_shorad_groups:
-            self.generate_armor_at(position, True)
+        for ag_location in self.control_point.preset_locations.armor_groups:
+            self.generate_armor_at(ag_location)
 
-    def generate_armor_at(self, position: PointWithHeading, shorad: bool) -> None:
+    def generate_armor_at(self, ag_location: armorGroupLocation.ArmorGroupLocation) -> None:
         group_id = self.game.next_group_id()
 
         g = VehicleGroupGroundObject(
             namegen.random_objective_name(),
             group_id,
-            position,
+            ag_location.position,
             self.control_point,
         )
 
@@ -333,7 +331,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.faction_name,
             self.game,
             g,
-            shorad,
+            ag_location.shoradIncluded,
             player_wants_shorad,
         )
         if group is None:
