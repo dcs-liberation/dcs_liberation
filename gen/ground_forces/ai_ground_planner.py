@@ -52,7 +52,6 @@ class CombatGroup:
         self.unit_type = unit_type
         self.size = size
         self.role = role
-        self.assigned_enemy_cp = None
         self.start_position = None
 
     def __str__(self):
@@ -89,11 +88,9 @@ class GroundPlanner:
 
         remaining_available_frontline_units = ground_unit_limit
 
-        if hasattr(self.cp, "stance"):
-            group_size_choice = GROUP_SIZES_BY_COMBAT_STANCE[self.cp.stance]
-        else:
-            self.cp.stance = CombatStance.DEFENSIVE
-            group_size_choice = GROUP_SIZES_BY_COMBAT_STANCE[CombatStance.DEFENSIVE]
+        # TODO: Fix to handle the per-front stances.
+        # https://github.com/dcs-liberation/dcs_liberation/issues/1417
+        group_size_choice = GROUP_SIZES_BY_COMBAT_STANCE[CombatStance.DEFENSIVE]
 
         # Create combat groups and assign them randomly to each enemy CP
         for unit_type in self.cp.base.armor:
@@ -152,20 +149,9 @@ class GroundPlanner:
                 if len(self.connected_enemy_cp) > 0:
                     enemy_cp = random.choice(self.connected_enemy_cp).id
                     self.units_per_cp[enemy_cp].append(group)
-                    group.assigned_enemy_cp = enemy_cp
                 else:
                     self.reserve.append(group)
-                    group.assigned_enemy_cp = "__reserve__"
                 collection.append(group)
 
             if remaining_available_frontline_units == 0:
                 break
-
-        print("------------------")
-        print("Ground Planner : ")
-        print(self.cp.name)
-        print("------------------")
-        for unit_type in self.units_per_cp.keys():
-            print("For : #" + str(unit_type))
-            for group in self.units_per_cp[unit_type]:
-                print(str(group))

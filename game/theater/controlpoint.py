@@ -323,7 +323,7 @@ class ControlPoint(MissionTarget, ABC):
         self.target_position: Optional[Point] = None
 
     def __repr__(self):
-        return f"<{__class__}: {self.name}>"
+        return f"<{self.__class__}: {self.name}>"
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:

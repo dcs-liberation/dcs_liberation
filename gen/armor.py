@@ -136,6 +136,7 @@ class GroundConflictGenerator:
         position = Conflict.frontline_position(
             self.conflict.front_line, self.game.theater
         )
+
         frontline_vector = Conflict.frontline_vector(
             self.conflict.front_line, self.game.theater
         )
@@ -149,6 +150,13 @@ class GroundConflictGenerator:
         enemy_groups = self._generate_groups(
             self.enemy_planned_combat_groups, frontline_vector, False
         )
+
+        # TODO: Differentiate AirConflict and GroundConflict classes.
+        if self.conflict.heading is None:
+            raise RuntimeError(
+                "Cannot generate ground units for non-ground conflict. Ground unit "
+                "conflicts cannot have the heading `None`."
+            )
 
         # Plan combat actions for groups
         self.plan_action_for_groups(
@@ -174,7 +182,7 @@ class GroundConflictGenerator:
             code = 1688 - len(self.jtacs)
 
             utype = self.game.player_faction.jtac_unit
-            if self.game.player_faction.jtac_unit is None:
+            if utype is None:
                 utype = AircraftType.named("MQ-9 Reaper")
 
             jtac = self.mission.flight_group(
