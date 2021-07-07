@@ -122,6 +122,7 @@ class PresetLocations:
     #: Locations of stationary armor groups.
     armor_groups: List[ArmorGroupLocation] = field(default_factory=list)
 
+
 @dataclass(frozen=True)
 class AircraftAllocations:
     present: dict[AircraftType, int]

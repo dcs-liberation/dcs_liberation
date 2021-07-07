@@ -315,7 +315,9 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         for ag_location in self.control_point.preset_locations.armor_groups:
             self.generate_armor_at(ag_location)
 
-    def generate_armor_at(self, ag_location: armorGroupLocation.ArmorGroupLocation) -> None:
+    def generate_armor_at(
+        self, ag_location: armorGroupLocation.ArmorGroupLocation
+    ) -> None:
         group_id = self.game.next_group_id()
 
         g = VehicleGroupGroundObject(

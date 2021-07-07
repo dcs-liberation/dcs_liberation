@@ -456,17 +456,19 @@ class MizCampaignLoader:
 
         for group in self.armor_groups:
             closest, distance = self.objective_info(group)
-            ag_location = armorGroupLocation.ArmorGroupLocation(PointWithHeading.from_point(group.position, group.units[0].heading), False)
-            closest.preset_locations.armor_groups.append(
-                ag_location
+            ag_location = armorGroupLocation.ArmorGroupLocation(
+                PointWithHeading.from_point(group.position, group.units[0].heading),
+                False,
             )
+            closest.preset_locations.armor_groups.append(ag_location)
 
         for group in self.armor_shorad_groups:
             closest, distance = self.objective_info(group)
-            ag_location = armorGroupLocation.ArmorGroupLocation(PointWithHeading.from_point(group.position, group.units[0].heading), True)
-            closest.preset_locations.armor_groups.append(
-                ag_location
+            ag_location = armorGroupLocation.ArmorGroupLocation(
+                PointWithHeading.from_point(group.position, group.units[0].heading),
+                True,
             )
+            closest.preset_locations.armor_groups.append(ag_location)
 
         for group in self.helipads:
             closest, distance = self.objective_info(group)
