@@ -3,13 +3,15 @@ from __future__ import annotations
 import logging
 import math
 import random
-from typing import TYPE_CHECKING, Type
+from collections import Iterable
+from typing import TYPE_CHECKING, Type, TypeVar, Generic
 
 from dcs import unitgroup
 from dcs.mapping import Point
 from dcs.point import PointAction
 from dcs.unit import Ship, Vehicle
-from dcs.unittype import VehicleType
+from dcs.unitgroup import MovingGroup, ShipGroup
+from dcs.unittype import VehicleType, UnitType
 
 from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
@@ -19,12 +21,15 @@ if TYPE_CHECKING:
     from game.game import Game
 
 
+GroupType = TypeVar("GroupType", bound=MovingGroup)
+
+
 # TODO: Generate a group description rather than a pydcs group.
 # It appears that all of this work gets redone at miz generation time (see
 # groundobjectsgen for an example). We can do less work and include the data we
 # care about in the format we want if we just generate our own group description
 # types rather than pydcs groups.
-class GroupGenerator:
+class GroupGenerator(Generic[GroupType]):
 
     price: int
 
@@ -38,10 +43,10 @@ class GroupGenerator:
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
 
-    def generate(self):
+    def generate(self) -> None:
         raise NotImplementedError
 
-    def get_generated_group(self) -> unitgroup.VehicleGroup:
+    def get_generated_group(self) -> GroupType:
         return self.vg
 
     def add_unit(
@@ -58,7 +63,7 @@ class GroupGenerator:
 
     def add_unit_to_group(
         self,
-        group: unitgroup.VehicleGroup,
+        group: GroupType,
         unit_type: Type[VehicleType],
         name: str,
         position: Point,
@@ -78,7 +83,9 @@ class GroupGenerator:
 
         return unit
 
-    def get_circular_position(self, num_units, launcher_distance, coverage=90):
+    def get_circular_position(
+        self, num_units: int, launcher_distance: int, coverage: int = 90
+    ) -> Iterable[tuple[float, float, int]]:
         """
         Given a position on the map, array a group of units in a circle a uniform distance from the unit
         :param num_units:
@@ -104,21 +111,20 @@ class GroupGenerator:
         else:
             current_offset = self.heading
         current_offset -= outer_offset * (math.ceil(num_units / 2) - 1)
-        for x in range(1, num_units + 1):
-            positions.append(
-                (
-                    self.position.x
-                    + launcher_distance * math.cos(math.radians(current_offset)),
-                    self.position.y
-                    + launcher_distance * math.sin(math.radians(current_offset)),
-                    current_offset,
-                )
+        for _ in range(1, num_units + 1):
+            x: float = self.position.x + launcher_distance * math.cos(
+                math.radians(current_offset)
             )
+            y: float = self.position.y + launcher_distance * math.sin(
+                math.radians(current_offset)
+            )
+            heading = current_offset
+            positions.append((x, y, int(heading)))
             current_offset += outer_offset
         return positions
 
 
-class ShipGroupGenerator(GroupGenerator):
+class ShipGroupGenerator(GroupGenerator[ShipGroup]):
     """Abstract class for other ship generator classes"""
 
     def __init__(
@@ -133,7 +139,14 @@ class ShipGroupGenerator(GroupGenerator):
         wp = self.vg.add_waypoint(self.position, 0)
         wp.ETA_locked = True
 
-    def add_unit(self, unit_type, name, pos_x, pos_y, heading) -> Ship:
+    def add_unit(
+        self,
+        unit_type: Type[UnitType],
+        name: str,
+        pos_x: float,
+        pos_y: float,
+        heading: int,
+    ) -> Ship:
         unit = Ship(self.game.next_unit_id(), f"{self.go.group_name}|{name}", unit_type)
         unit.position.x = pos_x
         unit.position.y = pos_y

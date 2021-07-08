@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import itertools
 import math
+from collections import Iterable
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, Any
 
 METERS_TO_FEET = 3.28084
 FEET_TO_METERS = 1 / METERS_TO_FEET
@@ -16,12 +17,12 @@ MS_TO_KPH = 3.6
 KPH_TO_MS = 1 / MS_TO_KPH
 
 
-def heading_sum(h, a) -> int:
+def heading_sum(h: int, a: int) -> int:
     h += a
     return h % 360
 
 
-def opposite_heading(h):
+def opposite_heading(h: int) -> int:
     return heading_sum(h, 180)
 
 
@@ -180,7 +181,7 @@ def mach(value: float, altitude: Distance) -> Speed:
 SPEED_OF_SOUND_AT_SEA_LEVEL = knots(661.5)
 
 
-def pairwise(iterable):
+def pairwise(iterable: Iterable[Any]) -> Iterable[tuple[Any, Any]]:
     """
     itertools recipe
     s -> (s0,s1), (s1,s2), (s2, s3), ...

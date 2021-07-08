@@ -23,7 +23,7 @@ class DDGroupGenerator(ShipGroupGenerator):
         super(DDGroupGenerator, self).__init__(game, ground_object, faction)
         self.ddtype = ddtype
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             self.ddtype,
             "DD1",

@@ -29,6 +29,7 @@ from dcs.ships import (
     CV_1143_5,
 )
 from dcs.terrain.terrain import Airport
+from dcs.unit import Ship
 from dcs.unitgroup import ShipGroup, StaticGroup
 from dcs.unittype import UnitType
 from dcs.vehicles import (
@@ -326,7 +327,7 @@ REWARDS = {
 StartingPosition = Union[ShipGroup, StaticGroup, Airport, Point]
 
 
-def upgrade_to_supercarrier(unit, name: str):
+def upgrade_to_supercarrier(unit: Type[Ship], name: str) -> Type[Ship]:
     if unit == Stennis:
         if name == "CVN-71 Theodore Roosevelt":
             return CVN_71
@@ -359,7 +360,7 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return None
 
 
-def country_id_from_name(name):
+def country_id_from_name(name: str) -> int:
     for k, v in country_dict.items():
         if v.name == name:
             return k

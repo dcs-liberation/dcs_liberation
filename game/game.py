@@ -1,24 +1,21 @@
-from game.dcs.aircrafttype import AircraftType
 import itertools
 import logging
 import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List
+from typing import Any, List, Type, Union
 
 from dcs.action import Coalition
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
-from pydcs_extensions.a4ec.a4ec import A_4E_C
 from faker import Faker
 
-from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
-from gen import aircraft, naming
+from gen import naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -37,7 +34,7 @@ from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
 from .settings import Settings, AutoAtoBehavior
 from .squadrons import AirWing
-from .theater import ConflictTheater
+from .theater import ConflictTheater, ControlPoint
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .threatzones import ThreatZones
@@ -115,7 +112,7 @@ class Game:
         self.informations.append(Information("Game Start", "-" * 40, 0))
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
         self.__culling_zones: List[Point] = []
-        self.__destroyed_units: List[str] = []
+        self.__destroyed_units: list[dict[str, Union[float, str]]] = []
         self.savepath = ""
         self.budget = player_budget
         self.enemy_budget = enemy_budget
@@ -190,7 +187,7 @@ class Game:
             self.theater, self.current_day, self.current_turn_time_of_day, self.settings
         )
 
-    def sanitize_sides(self):
+    def sanitize_sides(self) -> None:
         """
         Make sure the opposing factions are using different countries
         :return:
@@ -228,14 +225,9 @@ class Game:
             return self.blue_bullseye
         return self.red_bullseye
 
-    def _roll(self, prob, mult):
-        if self.settings.version == "dev":
-            # always generate all events for dev
-            return 100
-        else:
-            return random.randint(1, 100) <= prob * mult
-
-    def _generate_player_event(self, event_class, player_cp, enemy_cp):
+    def _generate_player_event(
+        self, event_class: Type[Event], player_cp: ControlPoint, enemy_cp: ControlPoint
+    ) -> None:
         self.events.append(
             event_class(
                 self,
@@ -247,7 +239,7 @@ class Game:
             )
         )
 
-    def _generate_events(self):
+    def _generate_events(self) -> None:
         for front_line in self.theater.conflicts():
             self._generate_player_event(
                 FrontlineAttackEvent,
@@ -261,21 +253,22 @@ class Game:
         else:
             self.enemy_budget += amount
 
-    def process_player_income(self):
+    def process_player_income(self) -> None:
         self.budget += Income(self, player=True).total
 
-    def process_enemy_income(self):
+    def process_enemy_income(self) -> None:
         # TODO: Clean up save compat.
         if not hasattr(self, "enemy_budget"):
             self.enemy_budget = 0
         self.enemy_budget += Income(self, player=False).total
 
-    def initiate_event(self, event: Event) -> UnitMap:
+    @staticmethod
+    def initiate_event(event: Event) -> UnitMap:
         # assert event in self.events
         logging.info("Generating {} (regular)".format(event))
         return event.generate()
 
-    def finish_event(self, event: Event, debriefing: Debriefing):
+    def finish_event(self, event: Event, debriefing: Debriefing) -> None:
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
 
@@ -283,16 +276,6 @@ class Game:
             self.events.remove(event)
         else:
             logging.info("finish_event: event not in the events!")
-
-    def is_player_attack(self, event):
-        if isinstance(event, Event):
-            return (
-                event
-                and event.attacker_name
-                and event.attacker_name == self.player_faction.name
-            )
-        else:
-            raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self, game_still_initializing: bool = False) -> None:
         if not hasattr(self, "name_generator"):
@@ -400,7 +383,7 @@ class Game:
         # Autosave progress
         persistency.autosave(self)
 
-    def check_win_loss(self):
+    def check_win_loss(self) -> TurnState:
         player_airbases = {
             cp for cp in self.theater.player_points() if cp.runway_is_operational()
         }
@@ -567,7 +550,7 @@ class Game:
     def current_day(self) -> date:
         return self.date + timedelta(days=self.turn // 4)
 
-    def next_unit_id(self):
+    def next_unit_id(self) -> int:
         """
         Next unit id for pre-generated units
         """
@@ -608,7 +591,7 @@ class Game:
             return self.blue_navmesh
         return self.red_navmesh
 
-    def compute_conflicts_position(self):
+    def compute_conflicts_position(self) -> None:
         """
         Compute the current conflict center position(s), mainly used for culling calculation
         :return: List of points of interests
@@ -667,15 +650,15 @@ class Game:
 
         self.__culling_zones = zones
 
-    def add_destroyed_units(self, data):
+    def add_destroyed_units(self, data: dict[str, Union[float, str]]) -> None:
         pos = Point(data["x"], data["z"])
         if self.theater.is_on_land(pos):
             self.__destroyed_units.append(data)
 
-    def get_destroyed_units(self):
+    def get_destroyed_units(self) -> list[dict[str, Union[float, str]]]:
         return self.__destroyed_units
 
-    def position_culled(self, pos):
+    def position_culled(self, pos: Point) -> bool:
         """
         Check if unit can be generated at given position depending on culling performance settings
         :param pos: Position you are tryng to spawn stuff at
@@ -688,7 +671,7 @@ class Game:
                 return False
         return True
 
-    def get_culling_zones(self):
+    def get_culling_zones(self) -> list[Point]:
         """
         Check culling points
         :return: List of culling zones
@@ -696,30 +679,28 @@ class Game:
         return self.__culling_zones
 
     # 1 = red, 2 = blue
-    def get_player_coalition_id(self):
+    def get_player_coalition_id(self) -> int:
         return 2
 
-    def get_enemy_coalition_id(self):
+    def get_enemy_coalition_id(self) -> int:
         return 1
 
-    def get_player_coalition(self):
+    def get_player_coalition(self) -> Coalition:
         return Coalition.Blue
 
-    def get_enemy_coalition(self):
+    def get_enemy_coalition(self) -> Coalition:
         return Coalition.Red
 
-    def get_player_color(self):
+    def get_player_color(self) -> str:
         return "blue"
 
-    def get_enemy_color(self):
+    def get_enemy_color(self) -> str:
         return "red"
 
-    def process_win_loss(self, turn_state: TurnState):
+    def process_win_loss(self, turn_state: TurnState) -> None:
         if turn_state is TurnState.WIN:
-            return self.message(
-                "Congratulations, you are victorious!  Start a new campaign to continue."
+            self.message(
+                "Congratulations, you are victorious! Start a new campaign to continue."
             )
         elif turn_state is TurnState.LOSS:
-            return self.message(
-                "Game Over, you lose. Start a new campaign to continue."
-            )
+            self.message("Game Over, you lose. Start a new campaign to continue.")

@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 
 class RussianNavyGroupGenerator(ShipGroupGenerator):
-    def generate(self):
+    def generate(self) -> None:
 
         include_frigate = random.choice([True, True, False])
         include_dd = random.choice([True, False])

@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import logging
 import random
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
+
+if TYPE_CHECKING:
+    from game import Game
 
 MAX_COMBAT_GROUP_PER_CP = 10
 
@@ -54,7 +59,7 @@ class CombatGroup:
         self.role = role
         self.start_position = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         s = f"ROLE : {self.role}\n"
         if self.size:
             s += f"UNITS {self.unit_type} * {self.size}"
@@ -62,7 +67,7 @@ class CombatGroup:
 
 
 class GroundPlanner:
-    def __init__(self, cp: ControlPoint, game):
+    def __init__(self, cp: ControlPoint, game: Game) -> None:
         self.cp = cp
         self.game = game
         self.connected_enemy_cp = [
@@ -82,7 +87,7 @@ class GroundPlanner:
             self.units_per_cp[cp.id] = []
         self.reserve: List[CombatGroup] = []
 
-    def plan_groundwar(self):
+    def plan_groundwar(self) -> None:
 
         ground_unit_limit = self.cp.frontline_unit_count_limit
 

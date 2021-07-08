@@ -88,7 +88,7 @@ class FrontLine(MissionTarget):
         yield from super().mission_types(for_player)
 
     @property
-    def position(self):
+    def position(self) -> Point:
         """
         The position where the conflict should occur
         according to the current strength of each control point.
@@ -107,12 +107,12 @@ class FrontLine(MissionTarget):
         return self.blue_cp, self.red_cp
 
     @property
-    def attack_distance(self):
+    def attack_distance(self) -> float:
         """The total distance of all segments"""
         return sum(i.attack_distance for i in self.segments)
 
     @property
-    def attack_heading(self):
+    def attack_heading(self) -> float:
         """The heading of the active attack segment from player to enemy control point"""
         return self.active_segment.attack_heading
 

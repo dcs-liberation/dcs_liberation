@@ -30,7 +30,7 @@ class EnvironmentGenerator:
         self.mission.weather.wind_at_2000 = wind.at_2000m
         self.mission.weather.wind_at_8000 = wind.at_8000m
 
-    def generate(self):
+    def generate(self) -> None:
         self.mission.start_time = self.conditions.start_time
         self.set_clouds(self.conditions.weather.clouds)
         self.set_fog(self.conditions.weather.fog)

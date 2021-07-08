@@ -257,7 +257,7 @@ class NameGenerator:
     existing_alphas: List[str] = []
 
     @classmethod
-    def reset(cls):
+    def reset(cls) -> None:
         cls.number = 0
         cls.infantry_number = 0
         cls.convoy_number = 0
@@ -266,7 +266,7 @@ class NameGenerator:
         cls.existing_alphas = []
 
     @classmethod
-    def reset_numbers(cls):
+    def reset_numbers(cls) -> None:
         cls.number = 0
         cls.infantry_number = 0
         cls.aircraft_number = 0
@@ -274,7 +274,9 @@ class NameGenerator:
         cls.cargo_ship_number = 0
 
     @classmethod
-    def next_aircraft_name(cls, country: Country, parent_base_id: int, flight: Flight):
+    def next_aircraft_name(
+        cls, country: Country, parent_base_id: int, flight: Flight
+    ) -> str:
         cls.aircraft_number += 1
         try:
             if flight.custom_name:
@@ -315,17 +317,17 @@ class NameGenerator:
         )
 
     @classmethod
-    def next_awacs_name(cls, country: Country):
+    def next_awacs_name(cls, country: Country) -> str:
         cls.number += 1
         return "awacs|{}|{}|0|".format(country.id, cls.number)
 
     @classmethod
-    def next_tanker_name(cls, country: Country, unit_type: AircraftType):
+    def next_tanker_name(cls, country: Country, unit_type: AircraftType) -> str:
         cls.number += 1
         return "tanker|{}|{}|0|{}".format(country.id, cls.number, unit_type.name)
 
     @classmethod
-    def next_carrier_name(cls, country: Country):
+    def next_carrier_name(cls, country: Country) -> str:
         cls.number += 1
         return "carrier|{}|{}|0|".format(country.id, cls.number)
 
@@ -340,7 +342,7 @@ class NameGenerator:
         return f"Cargo Ship {cls.cargo_ship_number:03}"
 
     @classmethod
-    def random_objective_name(cls):
+    def random_objective_name(cls) -> str:
         if cls.animals:
             animal = random.choice(cls.animals)
             cls.animals.remove(animal)

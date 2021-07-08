@@ -15,7 +15,7 @@ class SA13Generator(AirDefenseGroupGenerator):
 
     name = "SA-13 Strela Group"
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             Unarmed.UAZ_469,
             "UAZ",
