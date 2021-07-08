@@ -91,7 +91,10 @@ class KneeboardPageWriter:
         return self.x, self.y
 
     def text(
-        self, text: str, font=None, fill: Tuple[int, int, int] = (0, 0, 0)
+        self,
+        text: str,
+        font: Optional[ImageFont.ImageFont] = None,
+        fill: Tuple[int, int, int] = (0, 0, 0),
     ) -> None:
         if font is None:
             font = self.content_font

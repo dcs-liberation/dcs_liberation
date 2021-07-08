@@ -1,4 +1,5 @@
 import random
+from typing import Optional
 
 from dcs.unitgroup import VehicleGroup
 
@@ -12,7 +13,9 @@ from gen.defenses.armored_group_generator import (
 )
 
 
-def generate_armor_group(faction: str, game, ground_object):
+def generate_armor_group(
+    faction: str, game: Game, ground_object: VehicleGroupGroundObject
+) -> Optional[VehicleGroup]:
     """
     This generate a group of ground units
     :return: Generated group

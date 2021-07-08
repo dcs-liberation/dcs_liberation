@@ -536,7 +536,11 @@ class AircraftConflictGenerator:
         )
 
     def _add_radio_waypoint(
-        self, group: FlyingGroup, position, altitude: Distance, airspeed: int = 600
+        self,
+        group: FlyingGroup,
+        position: Point,
+        altitude: Distance,
+        airspeed: int = 600,
     ) -> MovingPoint:
         point = group.add_waypoint(position, altitude.meters, airspeed)
         point.alt_type = "RADIO"
@@ -547,7 +551,7 @@ class AircraftConflictGenerator:
         group: FlyingGroup,
         cp: ControlPoint,
         at: Optional[db.StartingPosition] = None,
-    ):
+    ) -> MovingPoint:
         if at is None:
             at = cp.at
         position = at if isinstance(at, Point) else at.position
@@ -563,7 +567,8 @@ class AircraftConflictGenerator:
             group.land_at(at)
         return destination_waypoint
 
-    def _at_position(self, at) -> Point:
+    @staticmethod
+    def _at_position(at: Union[Point, ShipGroup, Type[Airport]]) -> Point:
         if isinstance(at, Point):
             return at
         elif isinstance(at, ShipGroup):
@@ -593,7 +598,10 @@ class AircraftConflictGenerator:
                 parking_slot.unit_id = None
 
     def generate_flights(
-        self, country, ato: AirTaskingOrder, dynamic_runways: Dict[str, RunwayData]
+        self,
+        country: Country,
+        ato: AirTaskingOrder,
+        dynamic_runways: Dict[str, RunwayData],
     ) -> None:
 
         for package in ato.packages:
@@ -719,7 +727,9 @@ class AircraftConflictGenerator:
 
         trigger.add_condition(CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
-    def generate_planned_flight(self, cp, country, flight: Flight):
+    def generate_planned_flight(
+        self, cp: ControlPoint, country: Country, flight: Flight
+    ) -> FlyingGroup:
         name = namegen.next_aircraft_name(country, cp.id, flight)
         try:
             if flight.start_type == "In Flight":

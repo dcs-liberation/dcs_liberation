@@ -51,11 +51,11 @@ class TriggersGenerator:
     capture_zone_types = (Fob,)
     capture_zone_flag = 600
 
-    def __init__(self, mission: Mission, game: Game):
+    def __init__(self, mission: Mission, game: Game) -> None:
         self.mission = mission
         self.game = game
 
-    def _set_allegiances(self, player_coalition: str, enemy_coalition: str):
+    def _set_allegiances(self, player_coalition: str, enemy_coalition: str) -> None:
         """
         Set airbase initial coalition
         """
@@ -87,7 +87,7 @@ class TriggersGenerator:
                     cp.captured and player_coalition or enemy_coalition
                 )
 
-    def _set_skill(self, player_coalition: str, enemy_coalition: str):
+    def _set_skill(self, player_coalition: str, enemy_coalition: str) -> None:
         """
         Set skill level for all aircraft in the mission
         """
@@ -103,7 +103,7 @@ class TriggersGenerator:
                 for vehicle_group in country.vehicle_group:
                     vehicle_group.set_skill(skill_level)
 
-    def _gen_markers(self):
+    def _gen_markers(self) -> None:
         """
         Generate markers on F10 map for each existing objective
         """
@@ -188,7 +188,7 @@ class TriggersGenerator:
                 recapture_trigger.add_action(ClearFlag(flag=flag))
                 self.mission.triggerrules.triggers.append(recapture_trigger)
 
-    def generate(self):
+    def generate(self) -> None:
         player_coalition = "blue"
         enemy_coalition = "red"
 
@@ -198,7 +198,7 @@ class TriggersGenerator:
         self._generate_capture_triggers(player_coalition, enemy_coalition)
 
     @classmethod
-    def get_capture_zone_flag(cls):
+    def get_capture_zone_flag(cls) -> int:
         flag = cls.capture_zone_flag
         cls.capture_zone_flag += 1
         return flag

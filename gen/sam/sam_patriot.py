@@ -15,7 +15,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
 
     name = "Patriot Battery"
 
-    def generate(self):
+    def generate(self) -> None:
         # Command Post
         self.add_unit(
             AirDefence.Patriot_str,

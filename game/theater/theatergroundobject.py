@@ -217,7 +217,7 @@ class BuildingGroundObject(TheaterGroundObject):
         heading: int,
         control_point: ControlPoint,
         dcs_identifier: str,
-        is_fob_structure=False,
+        is_fob_structure: bool = False,
     ) -> None:
         super().__init__(
             name=name,
@@ -438,7 +438,7 @@ class CoastalSiteGroundObject(TheaterGroundObject):
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        heading,
+        heading: int,
     ) -> None:
         super().__init__(
             name=name,

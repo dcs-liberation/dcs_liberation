@@ -290,9 +290,9 @@ class ControlPoint(MissionTarget, ABC):
         at: db.StartingPosition,
         size: int,
         importance: float,
-        has_frontline=True,
-        cptype=ControlPointType.AIRBASE,
-    ):
+        has_frontline: bool = True,
+        cptype: ControlPointType = ControlPointType.AIRBASE,
+    ) -> None:
         super().__init__(name, position)
         # TODO: Should be Airbase specific.
         self.id = cp_id
@@ -322,7 +322,7 @@ class ControlPoint(MissionTarget, ABC):
 
         self.target_position: Optional[Point] = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"
 
     @property
@@ -334,11 +334,11 @@ class ControlPoint(MissionTarget, ABC):
     def heading(self) -> int:
         ...
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @property
-    def is_global(self):
+    def is_global(self) -> bool:
         return not self.connected_points
 
     def transitive_connected_friendly_points(
@@ -405,21 +405,21 @@ class ControlPoint(MissionTarget, ABC):
         return False
 
     @property
-    def is_carrier(self):
+    def is_carrier(self) -> bool:
         """
         :return: Whether this control point is an aircraft carrier
         """
         return False
 
     @property
-    def is_fleet(self):
+    def is_fleet(self) -> bool:
         """
         :return: Whether this control point is a boat (mobile)
         """
         return False
 
     @property
-    def is_lha(self):
+    def is_lha(self) -> bool:
         """
         :return: Whether this control point is an LHA
         """
@@ -439,7 +439,7 @@ class ControlPoint(MissionTarget, ABC):
 
     @property
     @abstractmethod
-    def total_aircraft_parking(self):
+    def total_aircraft_parking(self) -> int:
         """
         :return: The maximum number of aircraft that can be stored in this
                  control point
@@ -471,7 +471,7 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     # TODO: Should be naval specific.
-    def get_carrier_group_name(self):
+    def get_carrier_group_name(self) -> Optional[str]:
         """
         Get the carrier group name if the airbase is a carrier
         :return: Carrier group name
@@ -497,10 +497,12 @@ class ControlPoint(MissionTarget, ABC):
         return None
 
     # TODO: Should be Airbase specific.
-    def is_connected(self, to) -> bool:
+    def is_connected(self, to: ControlPoint) -> bool:
         return to in self.connected_points
 
-    def find_ground_objects_by_obj_name(self, obj_name):
+    def find_ground_objects_by_obj_name(
+        self, obj_name: str
+    ) -> list[TheaterGroundObject]:
         found = []
         for g in self.ground_objects:
             if g.obj_name == obj_name:
@@ -522,7 +524,7 @@ class ControlPoint(MissionTarget, ABC):
             f"vehicles have been captured and sold for ${total}M."
         )
 
-    def retreat_ground_units(self, game: Game):
+    def retreat_ground_units(self, game: Game) -> None:
         # When there are multiple valid destinations, deliver units to whichever
         # base is least defended first. The closest approximation of unit
         # strength we have is price
@@ -764,8 +766,8 @@ class ControlPoint(MissionTarget, ABC):
 
 class Airfield(ControlPoint):
     def __init__(
-        self, airport: Airport, size: int, importance: float, has_frontline=True
-    ):
+        self, airport: Airport, size: int, importance: float, has_frontline: bool = True
+    ) -> None:
         super().__init__(
             airport.id,
             airport.name,
@@ -960,7 +962,7 @@ class Carrier(NavalControlPoint):
         raise RuntimeError("Carriers cannot be captured")
 
     @property
-    def is_carrier(self):
+    def is_carrier(self) -> bool:
         return True
 
     def can_operate(self, aircraft: AircraftType) -> bool:

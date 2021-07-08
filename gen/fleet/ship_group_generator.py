@@ -1,7 +1,17 @@
+from __future__ import annotations
+
 import logging
 import random
+from typing import TYPE_CHECKING, Optional
+
+from dcs.unitgroup import ShipGroup
 
 from game import db
+from game.theater.theatergroundobject import (
+    LhaGroundObject,
+    CarrierGroundObject,
+    ShipGroundObject,
+)
 from gen.fleet.carrier_group import CarrierGroupGenerator
 from gen.fleet.cn_dd_group import ChineseNavyGroupGenerator, Type54GroupGenerator
 from gen.fleet.dd_group import (
@@ -21,6 +31,9 @@ from gen.fleet.schnellboot import SchnellbootGroupGenerator
 from gen.fleet.uboat import UBoatGroupGenerator
 from gen.fleet.ww2lst import WW2LSTGroupGenerator
 
+if TYPE_CHECKING:
+    from game import Game
+
 
 SHIP_MAP = {
     "SchnellbootGroupGenerator": SchnellbootGroupGenerator,
@@ -39,10 +52,12 @@ SHIP_MAP = {
 }
 
 
-def generate_ship_group(game, ground_object, faction_name: str):
+def generate_ship_group(
+    game: Game, ground_object: ShipGroundObject, faction_name: str
+) -> Optional[ShipGroup]:
     """
     This generate a ship group
-    :return: Nothing, but put the group reference inside the ground object
+    :return: The generated group, or None if this faction does not support ships.
     """
     faction = db.FACTIONS[faction_name]
     if len(faction.navy_generators) > 0:
@@ -61,26 +76,30 @@ def generate_ship_group(game, ground_object, faction_name: str):
     return None
 
 
-def generate_carrier_group(faction: str, game, ground_object):
-    """
-    This generate a carrier group
-    :param parentCp: The parent control point
+def generate_carrier_group(
+    faction: str, game: Game, ground_object: CarrierGroundObject
+) -> ShipGroup:
+    """Generates a carrier group.
+
+    :param faction: The faction the TGO belongs to.
+    :param game: The Game the group is being generated for.
     :param ground_object: The ground object which will own the ship group
-    :param country: Owner country
-    :return: Nothing, but put the group reference inside the ground object
+    :return: The generated group.
     """
     generator = CarrierGroupGenerator(game, ground_object, db.FACTIONS[faction])
     generator.generate()
     return generator.get_generated_group()
 
 
-def generate_lha_group(faction: str, game, ground_object):
-    """
-    This generate a lha carrier group
-    :param parentCp: The parent control point
+def generate_lha_group(
+    faction: str, game: Game, ground_object: LhaGroundObject
+) -> ShipGroup:
+    """Generate an LHA group.
+
+    :param faction: The faction the TGO belongs to.
+    :param game: The Game the group is being generated for.
     :param ground_object: The ground object which will own the ship group
-    :param country: Owner country
-    :return: Nothing, but put the group reference inside the ground object
+    :return: The generated group.
     """
     generator = LHAGroupGenerator(game, ground_object, db.FACTIONS[faction])
     generator.generate()

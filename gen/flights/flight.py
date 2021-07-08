@@ -8,7 +8,6 @@ from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
 from dcs.unit import Unit
 
-from game import db
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import ControlPoint, MissionTarget
@@ -323,12 +322,12 @@ class Flight:
     def clear_roster(self) -> None:
         self.roster.clear()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {self.unit_type}"
         return f"[{self.flight_type}] {self.count} x {self.unit_type}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {self.unit_type}"
         return f"[{self.flight_type}] {self.count} x {self.unit_type}"

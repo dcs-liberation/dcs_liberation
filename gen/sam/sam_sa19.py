@@ -15,7 +15,7 @@ class SA19Generator(AirDefenseGroupGenerator):
 
     name = "SA-19 Tunguska Group"
 
-    def generate(self):
+    def generate(self) -> None:
         num_launchers = 2
 
         if num_launchers == 1:

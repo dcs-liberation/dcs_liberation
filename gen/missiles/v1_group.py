@@ -1,16 +1,22 @@
 import random
 
+from dcs.unitgroup import VehicleGroup
 from dcs.vehicles import Unarmed, MissilesSS, AirDefence
 
+from game import Game
+from game.factions.faction import Faction
+from game.theater.theatergroundobject import MissileSiteGroundObject
 from gen.sam.group_generator import GroupGenerator
 
 
-class V1GroupGenerator(GroupGenerator):
-    def __init__(self, game, ground_object, faction):
+class V1GroupGenerator(GroupGenerator[VehicleGroup]):
+    def __init__(
+        self, game: Game, ground_object: MissileSiteGroundObject, faction: Faction
+    ) -> None:
         super(V1GroupGenerator, self).__init__(game, ground_object)
         self.faction = faction
 
-    def generate(self):
+    def generate(self) -> None:
 
         # Ramps
         self.add_unit(

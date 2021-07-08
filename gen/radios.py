@@ -15,7 +15,7 @@ class RadioFrequency:
     #: The frequency in kilohertz.
     hertz: int
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.hertz >= 1000000:
             return self.format("MHz", 1000000)
         return self.format("kHz", 1000)

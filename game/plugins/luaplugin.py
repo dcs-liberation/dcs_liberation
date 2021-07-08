@@ -38,7 +38,7 @@ class PluginSettings:
         self.settings = Settings()
         self.initialize_settings()
 
-    def set_settings(self, settings: Settings):
+    def set_settings(self, settings: Settings) -> None:
         self.settings = settings
         self.initialize_settings()
 
@@ -146,7 +146,7 @@ class LuaPlugin(PluginSettings):
 
         return cls(definition)
 
-    def set_settings(self, settings: Settings):
+    def set_settings(self, settings: Settings) -> None:
         super().set_settings(settings)
         for option in self.definition.options:
             option.set_settings(self.settings)

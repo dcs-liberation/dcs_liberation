@@ -97,7 +97,7 @@ class GroundConflictGenerator:
         self.unit_map = unit_map
         self.jtacs: List[JtacInfo] = []
 
-    def _enemy_stance(self):
+    def _enemy_stance(self) -> CombatStance:
         """Picks the enemy stance according to the number of planned groups on the frontline for each side"""
         if len(self.enemy_planned_combat_groups) > len(
             self.player_planned_combat_groups
@@ -122,17 +122,7 @@ class GroundConflictGenerator:
                 ]
             )
 
-    @staticmethod
-    def _group_point(point: Point, base_distance) -> Point:
-        distance = random.randint(
-            int(base_distance * SPREAD_DISTANCE_FACTOR[0]),
-            int(base_distance * SPREAD_DISTANCE_FACTOR[1]),
-        )
-        return point.random_point_within(
-            distance, base_distance * SPREAD_DISTANCE_SIZE_FACTOR
-        )
-
-    def generate(self):
+    def generate(self) -> None:
         position = Conflict.frontline_position(
             self.conflict.front_line, self.game.theater
         )
@@ -724,7 +714,7 @@ class GroundConflictGenerator:
         distance_from_frontline: int,
         heading: int,
         spawn_heading: int,
-    ):
+    ) -> Point:
         shifted = conflict_position.point_from_heading(
             heading, random.randint(0, combat_width)
         )
@@ -798,7 +788,7 @@ class GroundConflictGenerator:
         count: int,
         at: Point,
         move_formation: PointAction = PointAction.OffRoad,
-        heading=0,
+        heading: int = 0,
     ) -> VehicleGroup:
 
         if side == self.conflict.attackers_country:

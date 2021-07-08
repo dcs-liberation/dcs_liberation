@@ -15,7 +15,7 @@ class ZSU23Generator(AirDefenseGroupGenerator):
 
     name = "ZSU-23 Group"
 
-    def generate(self):
+    def generate(self) -> None:
         num_launchers = 4
 
         positions = self.get_circular_position(

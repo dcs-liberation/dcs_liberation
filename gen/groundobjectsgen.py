@@ -624,7 +624,7 @@ class GroundObjectsGenerator:
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
 
-    def generate(self):
+    def generate(self) -> None:
         for cp in self.game.theater.controlpoints:
             if cp.captured:
                 country_name = self.game.player_country

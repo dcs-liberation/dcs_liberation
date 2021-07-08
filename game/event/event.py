@@ -38,13 +38,13 @@ class Event:
 
     def __init__(
         self,
-        game,
+        game: Game,
         from_cp: ControlPoint,
         target_cp: ControlPoint,
         location: Point,
         attacker_name: str,
         defender_name: str,
-    ):
+    ) -> None:
         self.game = game
         self.from_cp = from_cp
         self.to_cp = target_cp
@@ -265,7 +265,7 @@ class Event:
             except Exception:
                 logging.exception(f"Could not process base capture {captured}")
 
-    def commit(self, debriefing: Debriefing):
+    def commit(self, debriefing: Debriefing) -> None:
         logging.info("Committing mission results")
 
         self.commit_air_losses(debriefing)
