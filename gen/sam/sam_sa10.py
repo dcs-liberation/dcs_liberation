@@ -28,7 +28,7 @@ class SA10Generator(AirDefenseGroupGenerator):
         self.ln1 = AirDefence.S_300PS_5P85C_ln
         self.ln2 = AirDefence.S_300PS_5P85D_ln
 
-    def generate(self):
+    def generate(self) -> None:
         # Search Radar
         self.add_unit(
             self.sr1, "SR1", self.position.x, self.position.y + 40, self.heading

@@ -15,7 +15,7 @@ class SA6Generator(AirDefenseGroupGenerator):
 
     name = "SA-6 Kub Site"
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.Kub_1S91_str,
             "STR",

@@ -1057,7 +1057,7 @@ class CoalitionMissionPlanner:
                 # delayed until their takeoff time by AirConflictGenerator.
                 package.time_over_target = next(start_time) + tot
 
-    def message(self, title, text) -> None:
+    def message(self, title: str, text: str) -> None:
         """Emits a planning message to the player.
 
         If the mission planner belongs to the players coalition, this emits a

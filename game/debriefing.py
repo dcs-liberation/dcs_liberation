@@ -15,6 +15,7 @@ from typing import (
     Iterator,
     List,
     TYPE_CHECKING,
+    Union,
 )
 
 from game import db
@@ -104,8 +105,9 @@ class StateData:
     #: Names of vehicle (and ship) units that were killed during the mission.
     killed_ground_units: List[str]
 
-    #: Names of static units that were destroyed during the mission.
-    destroyed_statics: List[str]
+    #: List of descriptions of destroyed statics. Format of each element is a mapping of
+    #: the coordinate type ("x", "y", "z", "type", "orientation") to the value.
+    destroyed_statics: List[dict[str, Union[float, str]]]
 
     #: Mangled names of bases that were captured during the mission.
     base_capture_events: List[str]
@@ -370,13 +372,13 @@ class PollDebriefingFileThread(threading.Thread):
         self.game = game
         self.unit_map = unit_map
 
-    def stop(self):
+    def stop(self) -> None:
         self._stop_event.set()
 
-    def stopped(self):
+    def stopped(self) -> bool:
         return self._stop_event.is_set()
 
-    def run(self):
+    def run(self) -> None:
         if os.path.isfile("state.json"):
             last_modified = os.path.getmtime("state.json")
         else:
@@ -401,7 +403,7 @@ class PollDebriefingFileThread(threading.Thread):
 
 
 def wait_for_debriefing(
-    callback: Callable[[Debriefing], None], game: Game, unit_map
+    callback: Callable[[Debriefing], None], game: Game, unit_map: UnitMap
 ) -> PollDebriefingFileThread:
     thread = PollDebriefingFileThread(callback, game, unit_map)
     thread.start()

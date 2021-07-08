@@ -15,7 +15,7 @@ class BoforsGenerator(AirDefenseGroupGenerator):
 
     name = "Bofors AAA"
 
-    def generate(self):
+    def generate(self) -> None:
 
         index = 0
         for i in range(4):

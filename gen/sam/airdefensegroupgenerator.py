@@ -38,7 +38,7 @@ class AirDefenseRange(Enum):
         self.default_role = default_role
 
 
-class AirDefenseGroupGenerator(GroupGenerator, ABC):
+class AirDefenseGroupGenerator(GroupGenerator[VehicleGroup], ABC):
     """
     This is the base for all SAM group generators
     """

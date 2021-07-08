@@ -27,7 +27,10 @@ ThreatPoly = Union[MultiPolygon, Polygon]
 
 class ThreatZones:
     def __init__(
-        self, airbases: ThreatPoly, air_defenses: ThreatPoly, radar_sam_threats
+        self,
+        airbases: ThreatPoly,
+        air_defenses: ThreatPoly,
+        radar_sam_threats: ThreatPoly,
     ) -> None:
         self.airbases = airbases
         self.air_defenses = air_defenses
@@ -44,8 +47,10 @@ class ThreatZones:
         boundary = self.closest_boundary(point)
         return meters(boundary.distance_to_point(point))
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened(self, position) -> bool:
+    def threatened(self, position) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened.register
@@ -61,8 +66,10 @@ class ThreatZones:
             LineString([self.dcs_to_shapely_point(a), self.dcs_to_shapely_point(b)])
         )
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened_by_aircraft(self, target) -> bool:
+    def threatened_by_aircraft(self, target) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened_by_aircraft.register
@@ -82,8 +89,10 @@ class ThreatZones:
             LineString((self.dcs_to_shapely_point(p.position) for p in waypoints))
         )
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened_by_air_defense(self, target) -> bool:
+    def threatened_by_air_defense(self, target) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened_by_air_defense.register
@@ -102,8 +111,10 @@ class ThreatZones:
             self.dcs_to_shapely_point(target.position)
         )
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened_by_radar_sam(self, target) -> bool:
+    def threatened_by_radar_sam(self, target) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened_by_radar_sam.register

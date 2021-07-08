@@ -1,12 +1,13 @@
 from typing import Type
 
+from dcs.unitgroup import VehicleGroup
 from dcs.vehicles import AirDefence
 from dcs.unittype import VehicleType
 
 from gen.sam.group_generator import GroupGenerator
 
 
-class EwrGenerator(GroupGenerator):
+class EwrGenerator(GroupGenerator[VehicleGroup]):
     unit_type: Type[VehicleType]
 
     @classmethod

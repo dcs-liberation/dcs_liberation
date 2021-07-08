@@ -13,6 +13,7 @@ from typing import (
     Optional,
     Iterator,
     Sequence,
+    Any,
 )
 
 import yaml
@@ -196,7 +197,7 @@ class Squadron:
     def send_on_leave(pilot: Pilot) -> None:
         pilot.send_on_leave()
 
-    def return_from_leave(self, pilot: Pilot):
+    def return_from_leave(self, pilot: Pilot) -> None:
         if not self.has_unfilled_pilot_slots:
             raise RuntimeError(
                 f"Cannot return {pilot} from leave because {self} is full"
@@ -290,7 +291,7 @@ class Squadron:
             player=player,
         )
 
-    def __setstate__(self, state) -> None:
+    def __setstate__(self, state: dict[str, Any]) -> None:
         # TODO: Remove save compat.
         if "auto_assignable_mission_types" not in state:
             state["auto_assignable_mission_types"] = set(state["mission_types"])

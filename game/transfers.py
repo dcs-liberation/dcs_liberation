@@ -592,8 +592,14 @@ class PendingTransfers:
         self.pending_transfers.append(new_transfer)
         return new_transfer
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def cancel_transport(self, transport, transfer: TransferOrder) -> None:
+    def cancel_transport(  # type: ignore
+        self,
+        transport,
+        transfer: TransferOrder,
+    ) -> None:
         pass
 
     @cancel_transport.register

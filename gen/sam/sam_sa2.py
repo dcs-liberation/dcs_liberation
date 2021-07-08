@@ -15,7 +15,7 @@ class SA2Generator(AirDefenseGroupGenerator):
 
     name = "SA-2/S-75 Site"
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.P_19_s_125_sr,
             "SR",

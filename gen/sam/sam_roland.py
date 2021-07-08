@@ -14,7 +14,7 @@ class RolandGenerator(AirDefenseGroupGenerator):
 
     name = "Roland Site"
 
-    def generate(self):
+    def generate(self) -> None:
         num_launchers = 2
         self.add_unit(
             AirDefence.Roland_Radar,
