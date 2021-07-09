@@ -99,4 +99,9 @@ VERSION = _build_version_string()
 #:
 #: Version 7.1
 #: * Support for Mariana Islands terrain
-CAMPAIGN_FORMAT_VERSION = (7, 1)
+#:
+#: Version 7.2
+#: * Campaign designers can place armored groups with shorads, by placing a T72B tank.
+#:   They will only be present if the player also activates it in the menu.
+#: * Armored Groups have a fixed size of 4 units, excluding shorad.
+CAMPAIGN_FORMAT_VERSION = (7, 2)
