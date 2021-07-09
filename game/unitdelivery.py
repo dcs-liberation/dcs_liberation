@@ -30,16 +30,16 @@ class PendingUnitDeliveries:
         self.destination = destination
 
         # Maps unit type to order quantity.
-        self.units: dict[UnitType[DcsUnitType], int] = defaultdict(int)
+        self.units: dict[UnitType[Any], int] = defaultdict(int)
 
     def __str__(self) -> str:
         return f"Pending delivery to {self.destination}"
 
-    def order(self, units: dict[UnitType[DcsUnitType], int]) -> None:
+    def order(self, units: dict[UnitType[Any], int]) -> None:
         for k, v in units.items():
             self.units[k] += v
 
-    def sell(self, units: dict[UnitType[DcsUnitType], int]) -> None:
+    def sell(self, units: dict[UnitType[Any], int]) -> None:
         for k, v in units.items():
             self.units[k] -= v
 

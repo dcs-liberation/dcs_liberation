@@ -2,7 +2,7 @@
 import itertools
 import math
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 from dcs.unit import Unit
 from dcs.unitgroup import FlyingGroup, Group, VehicleGroup
@@ -29,7 +29,7 @@ class FrontLineUnit:
 
 @dataclass(frozen=True)
 class GroundObjectUnit:
-    ground_object: TheaterGroundObject
+    ground_object: TheaterGroundObject[Any]
     group: Group
     unit: Unit
 
@@ -100,7 +100,7 @@ class UnitMap:
 
     def add_ground_object_units(
         self,
-        ground_object: TheaterGroundObject,
+        ground_object: TheaterGroundObject[Any],
         persistence_group: Group,
         miz_group: Group,
     ) -> None:

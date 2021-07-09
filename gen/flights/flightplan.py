@@ -1130,7 +1130,7 @@ class FlightPlanBuilder:
         )
 
     @staticmethod
-    def anti_ship_targets_for_tgo(tgo: TheaterGroundObject) -> List[StrikeTarget]:
+    def anti_ship_targets_for_tgo(tgo: NavalGroundObject) -> List[StrikeTarget]:
         return [StrikeTarget(f"{g.name} at {tgo.name}", g) for g in tgo.groups]
 
     def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:
