@@ -6,7 +6,7 @@ import math
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.countries import (
@@ -61,6 +61,9 @@ from ..point_with_heading import PointWithHeading
 from ..profiling import logged_duration
 from ..scenery_group import SceneryGroup
 from ..utils import Distance, meters
+
+if TYPE_CHECKING:
+    from . import TheaterGroundObject
 
 SIZE_TINY = 150
 SIZE_SMALL = 600
@@ -523,7 +526,7 @@ class ConflictTheater:
     """
     daytime_map: Dict[str, Tuple[int, int]]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.controlpoints: List[ControlPoint] = []
         self.point_to_ll_transformer = Transformer.from_crs(
             self.projection_parameters.to_crs(), CRS("WGS84")
@@ -555,10 +558,12 @@ class ConflictTheater:
             CRS("WGS84"), self.projection_parameters.to_crs()
         )
 
-    def add_controlpoint(self, point: ControlPoint):
+    def add_controlpoint(self, point: ControlPoint) -> None:
         self.controlpoints.append(point)
 
-    def find_ground_objects_by_obj_name(self, obj_name):
+    def find_ground_objects_by_obj_name(
+        self, obj_name: str
+    ) -> list[TheaterGroundObject[Any]]:
         found = []
         for cp in self.controlpoints:
             for g in cp.ground_objects:

@@ -219,11 +219,7 @@ class FlightPlan:
         tot_waypoint = self.tot_waypoint
         if tot_waypoint is None:
             return None
-
-        time = self.tot
-        if time is None:
-            return None
-        return time - self._travel_time_to_waypoint(tot_waypoint)
+        return self.tot - self._travel_time_to_waypoint(tot_waypoint)
 
     def startup_time(self) -> Optional[timedelta]:
         takeoff_time = self.takeoff_time()
@@ -1134,7 +1130,7 @@ class FlightPlanBuilder:
         )
 
     @staticmethod
-    def anti_ship_targets_for_tgo(tgo: TheaterGroundObject) -> List[StrikeTarget]:
+    def anti_ship_targets_for_tgo(tgo: NavalGroundObject) -> List[StrikeTarget]:
         return [StrikeTarget(f"{g.name} at {tgo.name}", g) for g in tgo.groups]
 
     def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:

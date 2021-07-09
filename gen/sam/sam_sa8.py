@@ -13,7 +13,7 @@ class SA8Generator(AirDefenseGroupGenerator):
 
     name = "SA-8 OSA Site"
 
-    def generate(self):
+    def generate(self) -> None:
         num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=180

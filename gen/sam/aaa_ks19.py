@@ -14,7 +14,7 @@ class KS19Generator(AirDefenseGroupGenerator):
 
     name = "KS-19 AAA Site"
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             highdigitsams.AAA_SON_9_Fire_Can,
             "TR",

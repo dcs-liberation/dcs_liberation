@@ -18,6 +18,7 @@ from typing import (
     TYPE_CHECKING,
     Tuple,
     TypeVar,
+    Any,
 )
 
 from game.dcs.aircrafttype import AircraftType
@@ -284,7 +285,7 @@ class ObjectiveFinder:
         self.game = game
         self.is_player = is_player
 
-    def enemy_air_defenses(self) -> Iterator[tuple[TheaterGroundObject, Distance]]:
+    def enemy_air_defenses(self) -> Iterator[tuple[TheaterGroundObject[Any], Distance]]:
         """Iterates over all enemy SAM sites."""
         doctrine = self.game.faction_for(self.is_player).doctrine
         threat_zones = self.game.threat_zone_for(not self.is_player)
@@ -314,14 +315,14 @@ class ObjectiveFinder:
 
                 yield ground_object, target_range
 
-    def threatening_air_defenses(self) -> Iterator[TheaterGroundObject]:
+    def threatening_air_defenses(self) -> Iterator[TheaterGroundObject[Any]]:
         """Iterates over enemy SAMs in threat range of friendly control points.
 
         SAM sites are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
 
-        target_ranges: list[tuple[TheaterGroundObject, Distance]] = []
+        target_ranges: list[tuple[TheaterGroundObject[Any], Distance]] = []
         for target, threat_range in self.enemy_air_defenses():
             ranges: list[Distance] = []
             for cp in self.friendly_control_points():
@@ -385,13 +386,13 @@ class ObjectiveFinder:
         for target, _range in target_ranges:
             yield target
 
-    def strike_targets(self) -> Iterator[TheaterGroundObject]:
+    def strike_targets(self) -> Iterator[TheaterGroundObject[Any]]:
         """Iterates over enemy strike targets.
 
         Targets are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
-        targets: List[Tuple[TheaterGroundObject, int]] = []
+        targets: List[Tuple[TheaterGroundObject[Any], int]] = []
         # Building objectives are made of several individual TGOs (one per
         # building).
         found_targets: Set[str] = set()
@@ -1057,7 +1058,7 @@ class CoalitionMissionPlanner:
                 # delayed until their takeoff time by AirConflictGenerator.
                 package.time_over_target = next(start_time) + tot
 
-    def message(self, title, text) -> None:
+    def message(self, title: str, text: str) -> None:
         """Emits a planning message to the player.
 
         If the mission planner belongs to the players coalition, this emits a

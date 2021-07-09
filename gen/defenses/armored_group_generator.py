@@ -3,10 +3,10 @@ import random
 from game import Game
 from game.dcs.groundunittype import GroundUnitType
 from game.theater.theatergroundobject import VehicleGroupGroundObject
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import VehicleGroupGenerator
 
 
-class ArmoredGroupGenerator(GroupGenerator):
+class ArmoredGroupGenerator(VehicleGroupGenerator[VehicleGroupGroundObject]):
     def __init__(
         self,
         game: Game,
@@ -47,7 +47,7 @@ class ArmoredGroupGenerator(GroupGenerator):
             )
 
 
-class FixedSizeArmorGroupGenerator(GroupGenerator):
+class FixedSizeArmorGroupGenerator(VehicleGroupGenerator[VehicleGroupGroundObject]):
     def __init__(
         self,
         game: Game,
@@ -59,7 +59,7 @@ class FixedSizeArmorGroupGenerator(GroupGenerator):
         self.unit_type = unit_type
         self.size = size
 
-    def generate(self):
+    def generate(self) -> None:
         spacing = random.randint(20, 70)
 
         index = 0

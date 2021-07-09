@@ -10,6 +10,7 @@ from typing import (
     TYPE_CHECKING,
     Tuple,
     Union,
+    Any,
 )
 
 from dcs.mapping import Point
@@ -33,7 +34,9 @@ from .flight import Flight, FlightWaypoint, FlightWaypointType
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[VehicleGroup, TheaterGroundObject, Unit, Group, MultiGroupTransport]
+    target: Union[
+        VehicleGroup, TheaterGroundObject[Any], Unit, Group, MultiGroupTransport
+    ]
 
 
 class WaypointBuilder:

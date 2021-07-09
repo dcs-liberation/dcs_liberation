@@ -62,27 +62,13 @@ class Operation:
     plugin_scripts: List[str] = []
 
     @classmethod
-    def prepare(cls, game: Game):
+    def prepare(cls, game: Game) -> None:
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
         cls._set_mission(Mission(game.theater.terrain))
         cls.game = game
         cls._setup_mission_coalitions()
         cls.current_mission.options.load_from_dict(options_dict)
-
-    @classmethod
-    def conflicts(cls) -> Iterable[Conflict]:
-        assert cls.game
-        for frontline in cls.game.theater.conflicts():
-            yield Conflict(
-                cls.game.theater,
-                frontline,
-                cls.game.player_faction.name,
-                cls.game.enemy_faction.name,
-                cls.game.player_country,
-                cls.game.enemy_country,
-                frontline.position,
-            )
 
     @classmethod
     def air_conflict(cls) -> Conflict:
@@ -97,8 +83,8 @@ class Operation:
             FrontLine(player_cp, enemy_cp),
             cls.game.player_faction.name,
             cls.game.enemy_faction.name,
-            cls.game.player_country,
-            cls.game.enemy_country,
+            cls.current_mission.country(cls.game.player_country),
+            cls.current_mission.country(cls.game.enemy_country),
             mid_point,
         )
 
@@ -107,7 +93,7 @@ class Operation:
         cls.current_mission = mission
 
     @classmethod
-    def _setup_mission_coalitions(cls):
+    def _setup_mission_coalitions(cls) -> None:
         cls.current_mission.coalition["blue"] = Coalition(
             "blue", bullseye=cls.game.blue_bullseye.to_pydcs()
         )
@@ -163,7 +149,7 @@ class Operation:
         airsupportgen: AirSupportConflictGenerator,
         jtacs: List[JtacInfo],
         airgen: AircraftConflictGenerator,
-    ):
+    ) -> None:
         """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)"""
 
         gens: List[MissionInfoGenerator] = [
@@ -251,7 +237,7 @@ class Operation:
                 # beacon list.
 
     @classmethod
-    def _generate_ground_units(cls):
+    def _generate_ground_units(cls) -> None:
         cls.groundobjectgen = GroundObjectsGenerator(
             cls.current_mission,
             cls.game,
@@ -266,7 +252,12 @@ class Operation:
         """Add destroyed units to the Mission"""
         for d in cls.game.get_destroyed_units():
             try:
-                utype = db.unit_type_from_name(d["type"])
+                type_name = d["type"]
+                if not isinstance(type_name, str):
+                    raise TypeError(
+                        "Expected the type of the destroyed static to be a string"
+                    )
+                utype = db.unit_type_from_name(type_name)
             except KeyError:
                 continue
 
@@ -418,7 +409,7 @@ class Operation:
         CargoShipGenerator(cls.current_mission, cls.game, cls.unit_map).generate()
 
     @classmethod
-    def reset_naming_ids(cls):
+    def reset_naming_ids(cls) -> None:
         namegen.reset_numbers()
 
     @classmethod

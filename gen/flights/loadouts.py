@@ -19,7 +19,11 @@ class Loadout:
         is_custom: bool = False,
     ) -> None:
         self.name = name
-        self.pylons = {k: v for k, v in pylons.items() if v is not None}
+        # We clear unused pylon entries on initialization, but UI actions can still
+        # cause a pylon to be emptied, so make the optional type explicit.
+        self.pylons: Mapping[int, Optional[Weapon]] = {
+            k: v for k, v in pylons.items() if v is not None
+        }
         self.date = date
         self.is_custom = is_custom
 

@@ -1,4 +1,7 @@
+from typing import Type
+
 from dcs.mapping import Point
+from dcs.unittype import VehicleType
 from dcs.vehicles import AirDefence
 
 from game import Game
@@ -20,15 +23,15 @@ class SA10Generator(AirDefenseGroupGenerator):
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
         super().__init__(game, ground_object)
-        self.sr1 = AirDefence.S_300PS_40B6MD_sr
-        self.sr2 = AirDefence.S_300PS_64H6E_sr
-        self.cp = AirDefence.S_300PS_54K6_cp
-        self.tr1 = AirDefence.S_300PS_40B6M_tr
-        self.tr2 = AirDefence.S_300PS_40B6M_tr
-        self.ln1 = AirDefence.S_300PS_5P85C_ln
-        self.ln2 = AirDefence.S_300PS_5P85D_ln
+        self.sr1: Type[VehicleType] = AirDefence.S_300PS_40B6MD_sr
+        self.sr2: Type[VehicleType] = AirDefence.S_300PS_64H6E_sr
+        self.cp: Type[VehicleType] = AirDefence.S_300PS_54K6_cp
+        self.tr1: Type[VehicleType] = AirDefence.S_300PS_40B6M_tr
+        self.tr2: Type[VehicleType] = AirDefence.S_300PS_40B6M_tr
+        self.ln1: Type[VehicleType] = AirDefence.S_300PS_5P85C_ln
+        self.ln2: Type[VehicleType] = AirDefence.S_300PS_5P85D_ln
 
-    def generate(self):
+    def generate(self) -> None:
         # Search Radar
         self.add_unit(
             self.sr1, "SR1", self.position.x, self.position.y + 40, self.heading

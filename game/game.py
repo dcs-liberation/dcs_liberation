@@ -1,24 +1,21 @@
-from game.dcs.aircrafttype import AircraftType
 import itertools
 import logging
 import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List
+from typing import Any, List, Type, Union
 
 from dcs.action import Coalition
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
-from pydcs_extensions.a4ec.a4ec import A_4E_C
 from faker import Faker
 
-from game import db
 from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
-from gen import aircraft, naming
+from gen import naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
 from gen.flights.ai_flight_planner import CoalitionMissionPlanner
@@ -37,7 +34,7 @@ from .procurement import AircraftProcurementRequest, ProcurementAi
 from .profiling import logged_duration
 from .settings import Settings, AutoAtoBehavior
 from .squadrons import AirWing
-from .theater import ConflictTheater
+from .theater import ConflictTheater, ControlPoint
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .threatzones import ThreatZones
@@ -109,14 +106,13 @@ class Game:
         # NB: This is the *start* date. It is never updated.
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
-        self.game_stats.update(self)
         self.notes = ""
         self.ground_planners: dict[int, GroundPlanner] = {}
         self.informations = []
         self.informations.append(Information("Game Start", "-" * 40, 0))
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
         self.__culling_zones: List[Point] = []
-        self.__destroyed_units: List[str] = []
+        self.__destroyed_units: list[dict[str, Union[float, str]]] = []
         self.savepath = ""
         self.budget = player_budget
         self.enemy_budget = enemy_budget
@@ -191,7 +187,7 @@ class Game:
             self.theater, self.current_day, self.current_turn_time_of_day, self.settings
         )
 
-    def sanitize_sides(self):
+    def sanitize_sides(self) -> None:
         """
         Make sure the opposing factions are using different countries
         :return:
@@ -229,14 +225,9 @@ class Game:
             return self.blue_bullseye
         return self.red_bullseye
 
-    def _roll(self, prob, mult):
-        if self.settings.version == "dev":
-            # always generate all events for dev
-            return 100
-        else:
-            return random.randint(1, 100) <= prob * mult
-
-    def _generate_player_event(self, event_class, player_cp, enemy_cp):
+    def _generate_player_event(
+        self, event_class: Type[Event], player_cp: ControlPoint, enemy_cp: ControlPoint
+    ) -> None:
         self.events.append(
             event_class(
                 self,
@@ -248,7 +239,7 @@ class Game:
             )
         )
 
-    def _generate_events(self):
+    def _generate_events(self) -> None:
         for front_line in self.theater.conflicts():
             self._generate_player_event(
                 FrontlineAttackEvent,
@@ -262,21 +253,22 @@ class Game:
         else:
             self.enemy_budget += amount
 
-    def process_player_income(self):
+    def process_player_income(self) -> None:
         self.budget += Income(self, player=True).total
 
-    def process_enemy_income(self):
+    def process_enemy_income(self) -> None:
         # TODO: Clean up save compat.
         if not hasattr(self, "enemy_budget"):
             self.enemy_budget = 0
         self.enemy_budget += Income(self, player=False).total
 
-    def initiate_event(self, event: Event) -> UnitMap:
+    @staticmethod
+    def initiate_event(event: Event) -> UnitMap:
         # assert event in self.events
         logging.info("Generating {} (regular)".format(event))
         return event.generate()
 
-    def finish_event(self, event: Event, debriefing: Debriefing):
+    def finish_event(self, event: Event, debriefing: Debriefing) -> None:
         logging.info("Finishing event {}".format(event))
         event.commit(debriefing)
 
@@ -284,16 +276,6 @@ class Game:
             self.events.remove(event)
         else:
             logging.info("finish_event: event not in the events!")
-
-    def is_player_attack(self, event):
-        if isinstance(event, Event):
-            return (
-                event
-                and event.attacker_name
-                and event.attacker_name == self.player_faction.name
-            )
-        else:
-            raise RuntimeError(f"{event} was passed when an Event type was expected")
 
     def on_load(self, game_still_initializing: bool = False) -> None:
         if not hasattr(self, "name_generator"):
@@ -317,6 +299,33 @@ class Game:
         self.red_ato.clear()
 
     def finish_turn(self, skipped: bool = False) -> None:
+        """Finalizes the current turn and advances to the next turn.
+
+        This handles the turn-end portion of passing a turn. Initialization of the next
+        turn is handled by `initialize_turn`. These are separate processes because while
+        turns may be initialized more than once under some circumstances (see the
+        documentation for `initialize_turn`), `finish_turn` performs the work that
+        should be guaranteed to happen only once per turn:
+
+        * Turn counter increment.
+        * Delivering units ordered the previous turn.
+        * Transfer progress.
+        * Squadron replenishment.
+        * Income distribution.
+        * Base strength (front line position) adjustment.
+        * Weather/time-of-day generation.
+
+        Some actions (like transit network assembly) will happen both here and in
+        `initialize_turn`. We need the network to be up to date so we can account for
+        base captures when processing the transfers that occurred last turn, but we also
+        need it to be up to date in the case of a re-initialization in `initialize_turn`
+        (such as to account for a cheat base capture) so that orders are only placed
+        where a supply route exists to the destination. This is a relatively cheap
+        operation so duplicating the effort is not a problem.
+
+        Args:
+            skipped: True if the turn was skipped.
+        """
         self.informations.append(
             Information("End of turn #" + str(self.turn), "-" * 40, 0)
         )
@@ -353,10 +362,18 @@ class Game:
         self.process_player_income()
 
     def begin_turn_0(self) -> None:
+        """Initialization for the first turn of the game."""
         self.turn = 0
         self.initialize_turn()
 
     def pass_turn(self, no_action: bool = False) -> None:
+        """Ends the current turn and initializes the new turn.
+
+        Called both when skipping a turn or by ending the turn as the result of combat.
+
+        Args:
+            no_action: True if the turn was skipped.
+        """
         logging.info("Pass turn")
         with logged_duration("Turn finalization"):
             self.finish_turn(no_action)
@@ -366,7 +383,7 @@ class Game:
         # Autosave progress
         persistency.autosave(self)
 
-    def check_win_loss(self):
+    def check_win_loss(self) -> TurnState:
         player_airbases = {
             cp for cp in self.theater.player_points() if cp.runway_is_operational()
         }
@@ -386,25 +403,89 @@ class Game:
         self.blue_bullseye = Bullseye(enemy_cp.position)
         self.red_bullseye = Bullseye(player_cp.position)
 
-    def initialize_turn(self) -> None:
+    def initialize_turn(self, for_red: bool = True, for_blue: bool = True) -> None:
+        """Performs turn initialization for the specified players.
+
+        Turn initialization performs all of the beginning-of-turn actions. *End-of-turn*
+        processing happens in `pass_turn` (despite the name, it's called both for
+        skipping the turn and ending the turn after combat).
+
+        Special care needs to be taken here because initialization can occur more than
+        once per turn. A number of events can require re-initializing a turn:
+
+        * Cheat capture. Bases changing hands invalidates many missions in both ATOs,
+          purchase orders, threat zones, transit networks, etc. Practically speaking,
+          after a base capture the turn needs to be treated as fully new. The game might
+          even be over after a capture.
+        * Cheat front line position. CAS missions are no longer in the correct location,
+          and the ground planner may also need changes.
+        * Selling/buying units at TGOs. Selling a TGO might leave missions in the ATO
+          with invalid targets. Buying a new SAM (or even replacing some units in a SAM)
+          potentially changes the threat zone and may alter mission priorities and
+          flight planning.
+
+        Most of the work is delegated to initialize_turn_for, which handles the
+        coalition-specific turn initialization. In some cases only one coalition will be
+        (re-) initialized. This is the case when buying or selling TGO units, since we
+        don't want to force the player to redo all their planning just because they
+        repaired a SAM, but should replan opfor when that happens. On the other hand,
+        base captures are significant enough (and likely enough to be the first thing
+        the player does in a turn) that we replan blue as well. Front lines are less
+        impactful but also likely to be early, so they also cause a blue replan.
+
+        Args:
+            for_red: True if opfor should be re-initialized.
+            for_blue: True if the player coalition should be re-initialized.
+        """
         self.events = []
         self._generate_events()
-
         self.set_bullseye()
 
         # Update statistics
         self.game_stats.update(self)
 
-        self.blue_air_wing.reset()
-        self.red_air_wing.reset()
-        self.aircraft_inventory.reset()
-        for cp in self.theater.controlpoints:
-            self.aircraft_inventory.set_from_control_point(cp)
-
         # Check for win or loss condition
         turn_state = self.check_win_loss()
         if turn_state in (TurnState.LOSS, TurnState.WIN):
             return self.process_win_loss(turn_state)
+
+        # Plan Coalition specific turn
+        if for_red:
+            self.initialize_turn_for(player=False)
+        if for_blue:
+            self.initialize_turn_for(player=True)
+
+        # Plan GroundWar
+        for cp in self.theater.controlpoints:
+            if cp.has_frontline:
+                gplanner = GroundPlanner(cp, self)
+                gplanner.plan_groundwar()
+                self.ground_planners[cp.id] = gplanner
+
+    def initialize_turn_for(self, player: bool) -> None:
+        """Processes coalition-specific turn initialization.
+
+        For more information on turn initialization in general, see the documentation
+        for `Game.initialize_turn`.
+
+        Args:
+            player: True if the player coalition is being initialized. False for opfor
+            initialization.
+        """
+        self.ato_for(player).clear()
+        self.air_wing_for(player).reset()
+
+        self.aircraft_inventory.reset()
+        for cp in self.theater.controlpoints:
+            self.aircraft_inventory.set_from_control_point(cp)
+            # Refund all pending deliveries for opfor and if player
+            # has automate_aircraft_reinforcements
+            if (not player and not cp.captured) or (
+                player
+                and cp.captured
+                and self.settings.automate_aircraft_reinforcements
+            ):
+                cp.pending_unit_deliveries.refund_all(self)
 
         # Plan flights & combat for next turn
         with logged_duration("Computing conflict positions"):
@@ -415,55 +496,48 @@ class Game:
             self.compute_transit_networks()
         self.ground_planners = {}
 
-        self.blue_procurement_requests.clear()
-        self.red_procurement_requests.clear()
+        self.procurement_requests_for(player).clear()
 
         with logged_duration("Procurement of airlift assets"):
             self.transfers.order_airlift_assets()
         with logged_duration("Transport planning"):
             self.transfers.plan_transports()
 
-        with logged_duration("Blue mission planning"):
-            if self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled:
-                blue_planner = CoalitionMissionPlanner(self, is_player=True)
-                blue_planner.plan_missions()
+        if not player or (
+            player and self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
+        ):
+            color = "Blue" if player else "Red"
+            with logged_duration(f"{color} mission planning"):
+                mission_planner = CoalitionMissionPlanner(self, player)
+                mission_planner.plan_missions()
 
-        with logged_duration("Red mission planning"):
-            red_planner = CoalitionMissionPlanner(self, is_player=False)
-            red_planner.plan_missions()
+        self.plan_procurement_for(player)
 
-        for cp in self.theater.controlpoints:
-            if cp.has_frontline:
-                gplanner = GroundPlanner(cp, self)
-                gplanner.plan_groundwar()
-                self.ground_planners[cp.id] = gplanner
-
-        self.plan_procurement()
-
-    def plan_procurement(self) -> None:
+    def plan_procurement_for(self, for_player: bool) -> None:
         # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
         # gets much more of the budget that turn. Otherwise budget (after
         # repairs) is split evenly between air and ground. For the default
         # starting budget of 2000 this gives 600 to ground forces and 1400 to
         # aircraft. After that the budget will be spend proportionally based on how much is already invested
 
-        self.budget = ProcurementAi(
-            self,
-            for_player=True,
-            faction=self.player_faction,
-            manage_runways=self.settings.automate_runway_repair,
-            manage_front_line=self.settings.automate_front_line_reinforcements,
-            manage_aircraft=self.settings.automate_aircraft_reinforcements,
-        ).spend_budget(self.budget)
-
-        self.enemy_budget = ProcurementAi(
-            self,
-            for_player=False,
-            faction=self.enemy_faction,
-            manage_runways=True,
-            manage_front_line=True,
-            manage_aircraft=True,
-        ).spend_budget(self.enemy_budget)
+        if for_player:
+            self.budget = ProcurementAi(
+                self,
+                for_player=True,
+                faction=self.player_faction,
+                manage_runways=self.settings.automate_runway_repair,
+                manage_front_line=self.settings.automate_front_line_reinforcements,
+                manage_aircraft=self.settings.automate_aircraft_reinforcements,
+            ).spend_budget(self.budget)
+        else:
+            self.enemy_budget = ProcurementAi(
+                self,
+                for_player=False,
+                faction=self.enemy_faction,
+                manage_runways=True,
+                manage_front_line=True,
+                manage_aircraft=True,
+            ).spend_budget(self.enemy_budget)
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))
@@ -476,7 +550,7 @@ class Game:
     def current_day(self) -> date:
         return self.date + timedelta(days=self.turn // 4)
 
-    def next_unit_id(self):
+    def next_unit_id(self) -> int:
         """
         Next unit id for pre-generated units
         """
@@ -517,7 +591,7 @@ class Game:
             return self.blue_navmesh
         return self.red_navmesh
 
-    def compute_conflicts_position(self):
+    def compute_conflicts_position(self) -> None:
         """
         Compute the current conflict center position(s), mainly used for culling calculation
         :return: List of points of interests
@@ -576,15 +650,15 @@ class Game:
 
         self.__culling_zones = zones
 
-    def add_destroyed_units(self, data):
+    def add_destroyed_units(self, data: dict[str, Union[float, str]]) -> None:
         pos = Point(data["x"], data["z"])
         if self.theater.is_on_land(pos):
             self.__destroyed_units.append(data)
 
-    def get_destroyed_units(self):
+    def get_destroyed_units(self) -> list[dict[str, Union[float, str]]]:
         return self.__destroyed_units
 
-    def position_culled(self, pos):
+    def position_culled(self, pos: Point) -> bool:
         """
         Check if unit can be generated at given position depending on culling performance settings
         :param pos: Position you are tryng to spawn stuff at
@@ -597,7 +671,7 @@ class Game:
                 return False
         return True
 
-    def get_culling_zones(self):
+    def get_culling_zones(self) -> list[Point]:
         """
         Check culling points
         :return: List of culling zones
@@ -605,30 +679,28 @@ class Game:
         return self.__culling_zones
 
     # 1 = red, 2 = blue
-    def get_player_coalition_id(self):
+    def get_player_coalition_id(self) -> int:
         return 2
 
-    def get_enemy_coalition_id(self):
+    def get_enemy_coalition_id(self) -> int:
         return 1
 
-    def get_player_coalition(self):
+    def get_player_coalition(self) -> Coalition:
         return Coalition.Blue
 
-    def get_enemy_coalition(self):
+    def get_enemy_coalition(self) -> Coalition:
         return Coalition.Red
 
-    def get_player_color(self):
+    def get_player_color(self) -> str:
         return "blue"
 
-    def get_enemy_color(self):
+    def get_enemy_color(self) -> str:
         return "red"
 
-    def process_win_loss(self, turn_state: TurnState):
+    def process_win_loss(self, turn_state: TurnState) -> None:
         if turn_state is TurnState.WIN:
-            return self.message(
-                "Congratulations, you are victorious!  Start a new campaign to continue."
+            self.message(
+                "Congratulations, you are victorious! Start a new campaign to continue."
             )
         elif turn_state is TurnState.LOSS:
-            return self.message(
-                "Game Over, you lose. Start a new campaign to continue."
-            )
+            self.message("Game Over, you lose. Start a new campaign to continue.")

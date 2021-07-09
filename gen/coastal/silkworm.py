@@ -1,14 +1,19 @@
 from dcs.vehicles import MissilesSS, Unarmed, AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from game import Game
+from game.factions.faction import Faction
+from game.theater.theatergroundobject import CoastalSiteGroundObject
+from gen.sam.group_generator import VehicleGroupGenerator
 
 
-class SilkwormGenerator(GroupGenerator):
-    def __init__(self, game, ground_object, faction):
+class SilkwormGenerator(VehicleGroupGenerator[CoastalSiteGroundObject]):
+    def __init__(
+        self, game: Game, ground_object: CoastalSiteGroundObject, faction: Faction
+    ) -> None:
         super(SilkwormGenerator, self).__init__(game, ground_object)
         self.faction = faction
 
-    def generate(self):
+    def generate(self) -> None:
 
         positions = self.get_circular_position(5, launcher_distance=120, coverage=180)
 

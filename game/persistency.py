@@ -1,15 +1,19 @@
+from __future__ import annotations
+
 import logging
 import os
 import pickle
 import shutil
 from pathlib import Path
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from game import Game
 
 _dcs_saved_game_folder: Optional[str] = None
 
 
-def setup(user_folder: str):
+def setup(user_folder: str) -> None:
     global _dcs_saved_game_folder
     _dcs_saved_game_folder = user_folder
     if not save_dir().exists():
@@ -38,7 +42,7 @@ def mission_path_for(name: str) -> str:
     return os.path.join(base_path(), "Missions", name)
 
 
-def load_game(path):
+def load_game(path: str) -> Optional[Game]:
     with open(path, "rb") as f:
         try:
             save = pickle.load(f)
@@ -49,7 +53,7 @@ def load_game(path):
             return None
 
 
-def save_game(game) -> bool:
+def save_game(game: Game) -> bool:
     try:
         with open(_temporary_save_file(), "wb") as f:
             pickle.dump(game, f)
@@ -60,7 +64,7 @@ def save_game(game) -> bool:
         return False
 
 
-def autosave(game) -> bool:
+def autosave(game: Game) -> bool:
     """
     Autosave to the autosave location
     :param game: Game to save

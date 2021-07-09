@@ -83,7 +83,7 @@ class Weather:
         raise NotImplementedError
 
     @staticmethod
-    def random_wind(minimum: int, maximum) -> WindConditions:
+    def random_wind(minimum: int, maximum: int) -> WindConditions:
         wind_direction = random.randint(0, 360)
         at_0m_factor = 1
         at_2000m_factor = 2

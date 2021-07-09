@@ -15,7 +15,7 @@ class ZU23Generator(AirDefenseGroupGenerator):
 
     name = "ZU-23 Group"
 
-    def generate(self):
+    def generate(self) -> None:
         index = 0
         for i in range(4):
             index = index + 1

@@ -18,7 +18,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
 
     name = "Early Cold War Flak Site"
 
-    def generate(self):
+    def generate(self) -> None:
 
         spacing = random.randint(30, 60)
         index = 0
@@ -90,7 +90,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
 
     name = "Cold War Flak Site"
 
-    def generate(self):
+    def generate(self) -> None:
 
         spacing = random.randint(30, 60)
         index = 0

@@ -4,7 +4,7 @@ from gen.sam.group_generator import ShipGroupGenerator
 
 
 class LHAGroupGenerator(ShipGroupGenerator):
-    def generate(self):
+    def generate(self) -> None:
 
         # Add carrier
         if len(self.faction.helicopter_carrier) > 0:

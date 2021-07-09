@@ -130,7 +130,10 @@ class TransferOrder:
     def kill_unit(self, unit_type: GroundUnitType) -> None:
         if unit_type not in self.units or not self.units[unit_type]:
             raise KeyError(f"{self} has no {unit_type} remaining")
-        self.units[unit_type] -= 1
+        if self.units[unit_type] == 1:
+            del self.units[unit_type]
+        else:
+            self.units[unit_type] -= 1
 
     @property
     def size(self) -> int:
@@ -516,14 +519,14 @@ class TransportMap(Generic[TransportType]):
             yield from destination_dict.values()
 
 
-class ConvoyMap(TransportMap):
+class ConvoyMap(TransportMap[Convoy]):
     def create_transport(
         self, origin: ControlPoint, destination: ControlPoint
     ) -> Convoy:
         return Convoy(origin, destination)
 
 
-class CargoShipMap(TransportMap):
+class CargoShipMap(TransportMap[CargoShip]):
     def create_transport(
         self, origin: ControlPoint, destination: ControlPoint
     ) -> CargoShip:
@@ -589,8 +592,14 @@ class PendingTransfers:
         self.pending_transfers.append(new_transfer)
         return new_transfer
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def cancel_transport(self, transport, transfer: TransferOrder) -> None:
+    def cancel_transport(  # type: ignore
+        self,
+        transport,
+        transfer: TransferOrder,
+    ) -> None:
         pass
 
     @cancel_transport.register

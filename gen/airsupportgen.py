@@ -1,11 +1,12 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import List, Type, Tuple, Optional
+from typing import List, Type, Tuple, Optional, TYPE_CHECKING
 
 from dcs.mission import Mission, StartType
 from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135
-from dcs.unittype import UnitType
 from dcs.task import (
     AWACS,
     ActivateBeaconCommand,
@@ -14,15 +15,17 @@ from dcs.task import (
     SetImmortalCommand,
     SetInvisibleCommand,
 )
+from dcs.unittype import UnitType
 
-from game import db
-from .flights.ai_flight_planner_db import AEWC_CAPABLE
-from .naming import namegen
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
+from .flights.ai_flight_planner_db import AEWC_CAPABLE
+from .naming import namegen
 from .radios import RadioFrequency, RadioRegistry
 from .tacan import TacanBand, TacanChannel, TacanRegistry
 
+if TYPE_CHECKING:
+    from game import Game
 
 TANKER_DISTANCE = 15000
 TANKER_ALT = 4572
@@ -70,7 +73,7 @@ class AirSupportConflictGenerator:
         self,
         mission: Mission,
         conflict: Conflict,
-        game,
+        game: Game,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
     ) -> None:
@@ -95,7 +98,7 @@ class AirSupportConflictGenerator:
             return (TANKER_ALT + 500, 596)
         return (TANKER_ALT, 574)
 
-    def generate(self):
+    def generate(self) -> None:
         player_cp = (
             self.conflict.blue_cp
             if self.conflict.blue_cp.captured

@@ -97,7 +97,7 @@ class GroundConflictGenerator:
         self.unit_map = unit_map
         self.jtacs: List[JtacInfo] = []
 
-    def _enemy_stance(self):
+    def _enemy_stance(self) -> CombatStance:
         """Picks the enemy stance according to the number of planned groups on the frontline for each side"""
         if len(self.enemy_planned_combat_groups) > len(
             self.player_planned_combat_groups
@@ -122,20 +122,11 @@ class GroundConflictGenerator:
                 ]
             )
 
-    @staticmethod
-    def _group_point(point: Point, base_distance) -> Point:
-        distance = random.randint(
-            int(base_distance * SPREAD_DISTANCE_FACTOR[0]),
-            int(base_distance * SPREAD_DISTANCE_FACTOR[1]),
-        )
-        return point.random_point_within(
-            distance, base_distance * SPREAD_DISTANCE_SIZE_FACTOR
-        )
-
-    def generate(self):
+    def generate(self) -> None:
         position = Conflict.frontline_position(
             self.conflict.front_line, self.game.theater
         )
+
         frontline_vector = Conflict.frontline_vector(
             self.conflict.front_line, self.game.theater
         )
@@ -149,6 +140,13 @@ class GroundConflictGenerator:
         enemy_groups = self._generate_groups(
             self.enemy_planned_combat_groups, frontline_vector, False
         )
+
+        # TODO: Differentiate AirConflict and GroundConflict classes.
+        if self.conflict.heading is None:
+            raise RuntimeError(
+                "Cannot generate ground units for non-ground conflict. Ground unit "
+                "conflicts cannot have the heading `None`."
+            )
 
         # Plan combat actions for groups
         self.plan_action_for_groups(
@@ -174,7 +172,7 @@ class GroundConflictGenerator:
             code = 1688 - len(self.jtacs)
 
             utype = self.game.player_faction.jtac_unit
-            if self.game.player_faction.jtac_unit is None:
+            if utype is None:
                 utype = AircraftType.named("MQ-9 Reaper")
 
             jtac = self.mission.flight_group(
@@ -716,7 +714,7 @@ class GroundConflictGenerator:
         distance_from_frontline: int,
         heading: int,
         spawn_heading: int,
-    ):
+    ) -> Point:
         shifted = conflict_position.point_from_heading(
             heading, random.randint(0, combat_width)
         )
@@ -790,7 +788,7 @@ class GroundConflictGenerator:
         count: int,
         at: Point,
         move_formation: PointAction = PointAction.OffRoad,
-        heading=0,
+        heading: int = 0,
     ) -> VehicleGroup:
 
         if side == self.conflict.attackers_country:

@@ -5,7 +5,6 @@ from typing import List, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
-from dcs.unittype import VehicleType
 
 from game import persistency
 from game.debriefing import AirLosses, Debriefing
@@ -38,13 +37,13 @@ class Event:
 
     def __init__(
         self,
-        game,
+        game: Game,
         from_cp: ControlPoint,
         target_cp: ControlPoint,
         location: Point,
         attacker_name: str,
         defender_name: str,
-    ):
+    ) -> None:
         self.game = game
         self.from_cp = from_cp
         self.to_cp = target_cp
@@ -265,7 +264,7 @@ class Event:
             except Exception:
                 logging.exception(f"Could not process base capture {captured}")
 
-    def commit(self, debriefing: Debriefing):
+    def commit(self, debriefing: Debriefing) -> None:
         logging.info("Committing mission results")
 
         self.commit_air_losses(debriefing)

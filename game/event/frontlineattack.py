@@ -8,5 +8,5 @@ class FrontlineAttackEvent(Event):
     future unique Event handling
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Frontline attack"

@@ -5,7 +5,8 @@ import timeit
 from collections import defaultdict
 from contextlib import contextmanager
 from datetime import timedelta
-from typing import Iterator
+from types import TracebackType
+from typing import Iterator, Optional, Type
 
 
 @contextmanager
@@ -23,7 +24,12 @@ class MultiEventTracer:
     def __enter__(self) -> MultiEventTracer:
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
         for event, duration in self.events.items():
             logging.debug("%s took %s", event, duration)
 

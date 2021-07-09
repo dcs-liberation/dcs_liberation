@@ -15,7 +15,7 @@ class SA9Generator(AirDefenseGroupGenerator):
 
     name = "SA-9 Group"
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             Unarmed.UAZ_469,
             "UAZ",
