@@ -321,7 +321,7 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def livery_from_db(flight: Flight) -> Optional[str]:
-        return db.PLANE_LIVERY_OVERRIDES.get(flight.unit_type)
+        return db.PLANE_LIVERY_OVERRIDES.get(flight.unit_type.dcs_unit_type)
 
     def livery_from_faction(self, flight: Flight) -> Optional[str]:
         faction = self.game.faction_for(player=flight.departure.captured)
@@ -342,7 +342,7 @@ class AircraftConflictGenerator:
             return livery
         return None
 
-    def _setup_livery(self, flight: Flight, group: FlyingGroup) -> None:
+    def _setup_livery(self, flight: Flight, group: FlyingGroup[Any]) -> None:
         livery = self.livery_for(flight)
         if livery is None:
             return
@@ -458,8 +458,8 @@ class AircraftConflictGenerator:
         unit_type: Type[FlyingType],
         count: int,
         start_type: str,
-        airport: Optional[Airport] = None,
-    ) -> FlyingGroup:
+        airport: Airport,
+    ) -> FlyingGroup[Any]:
         assert count > 0
 
         logging.info("airgen: {} for {} at {}".format(unit_type, side.id, airport))
@@ -476,7 +476,7 @@ class AircraftConflictGenerator:
 
     def _generate_inflight(
         self, name: str, side: Country, flight: Flight, origin: ControlPoint
-    ) -> FlyingGroup:
+    ) -> FlyingGroup[Any]:
         assert flight.count > 0
         at = origin.position
 
@@ -521,7 +521,7 @@ class AircraftConflictGenerator:
         count: int,
         start_type: str,
         at: Union[ShipGroup, StaticGroup],
-    ) -> FlyingGroup:
+    ) -> FlyingGroup[Any]:
         assert count > 0
 
         logging.info("airgen: {} for {} at unit {}".format(unit_type, side.id, at))
@@ -546,27 +546,6 @@ class AircraftConflictGenerator:
         point.alt_type = "RADIO"
         return point
 
-    def _rtb_for(
-        self,
-        group: FlyingGroup[Any],
-        cp: ControlPoint,
-        at: Optional[db.StartingPosition] = None,
-    ) -> MovingPoint:
-        if at is None:
-            at = cp.at
-        position = at if isinstance(at, Point) else at.position
-
-        last_waypoint = group.points[-1]
-        if last_waypoint is not None:
-            heading = position.heading_between_point(last_waypoint.position)
-            tod_location = position.point_from_heading(heading, RTB_DISTANCE)
-            self._add_radio_waypoint(group, tod_location, last_waypoint.alt)
-
-        destination_waypoint = self._add_radio_waypoint(group, position, RTB_ALTITUDE)
-        if isinstance(at, Airport):
-            group.land_at(at)
-        return destination_waypoint
-
     @staticmethod
     def _at_position(at: Union[Point, ShipGroup, Type[Airport]]) -> Point:
         if isinstance(at, Point):
@@ -578,7 +557,7 @@ class AircraftConflictGenerator:
         else:
             assert False
 
-    def _setup_payload(self, flight: Flight, group: FlyingGroup) -> None:
+    def _setup_payload(self, flight: Flight, group: FlyingGroup[Any]) -> None:
         for p in group.units:
             p.pylons.clear()
 
@@ -729,7 +708,7 @@ class AircraftConflictGenerator:
 
     def generate_planned_flight(
         self, cp: ControlPoint, country: Country, flight: Flight
-    ) -> FlyingGroup:
+    ) -> FlyingGroup[Any]:
         name = namegen.next_aircraft_name(country, cp.id, flight)
         try:
             if flight.start_type == "In Flight":
@@ -738,13 +717,19 @@ class AircraftConflictGenerator:
                 )
             elif isinstance(cp, NavalControlPoint):
                 group_name = cp.get_carrier_group_name()
+                carrier_group = self.m.find_group(group_name)
+                if not isinstance(carrier_group, ShipGroup):
+                    raise RuntimeError(
+                        f"Carrier group {carrier_group} is a "
+                        "{carrier_group.__class__.__name__}, expected a ShipGroup"
+                    )
                 group = self._generate_at_group(
                     name=name,
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
                     count=flight.count,
                     start_type=flight.start_type,
-                    at=self.m.find_group(group_name),
+                    at=carrier_group,
                 )
             else:
                 if not isinstance(cp, Airfield):
@@ -775,7 +760,7 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def set_reduced_fuel(
-        flight: Flight, group: FlyingGroup[Any], unit_type: Type[PlaneType]
+        flight: Flight, group: FlyingGroup[Any], unit_type: Type[FlyingType]
     ) -> None:
         if unit_type is Su_33:
             for unit in group.units:
@@ -803,7 +788,7 @@ class AircraftConflictGenerator:
         flight: Flight,
         group: FlyingGroup[Any],
         react_on_threat: Optional[OptReactOnThreat.Values] = None,
-        roe: Optional[OptROE.Values] = None,
+        roe: Optional[int] = None,
         rtb_winchester: Optional[OptRTBOnOutOfAmmo.Values] = None,
         restrict_jettison: Optional[bool] = None,
         mission_uses_gun: bool = True,
@@ -1438,7 +1423,7 @@ class CasIngressBuilder(PydcsWaypointBuilder):
         if isinstance(self.flight.flight_plan, CasFlightPlan):
             waypoint.add_task(
                 EngageTargetsInZone(
-                    position=self.flight.flight_plan.target,
+                    position=self.flight.flight_plan.target.position,
                     radius=int(self.flight.flight_plan.engagement_distance.meters),
                     targets=[
                         Targets.All.GroundUnits.GroundVehicles,

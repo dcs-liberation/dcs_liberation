@@ -63,6 +63,8 @@ class Conflict:
             heading_sum(attack_heading, 90),
             theater,
         )
+        if position is None:
+            raise RuntimeError("Could not find front line position")
         return position, opposite_heading(attack_heading)
 
     @classmethod

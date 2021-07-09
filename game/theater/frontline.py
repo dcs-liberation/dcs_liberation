@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Iterator, List, Tuple
+from typing import Iterator, List, Tuple, Any
 
 from dcs.mapping import Point
 
@@ -66,7 +66,15 @@ class FrontLine(MissionTarget):
         self.segments: List[FrontLineSegment] = [
             FrontLineSegment(a, b) for a, b in pairwise(route)
         ]
-        self.name = f"Front line {blue_point}/{red_point}"
+        super().__init__(
+            f"Front line {blue_point}/{red_point}",
+            self.point_from_a(self._position_distance),
+        )
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        if not hasattr(self, "position"):
+            self.position = self.point_from_a(self._position_distance)
 
     def control_point_hostile_to(self, player: bool) -> ControlPoint:
         if player:
@@ -86,14 +94,6 @@ class FrontLine(MissionTarget):
             # TODO: FlightType.EVAC
         ]
         yield from super().mission_types(for_player)
-
-    @property
-    def position(self) -> Point:
-        """
-        The position where the conflict should occur
-        according to the current strength of each control point.
-        """
-        return self.point_from_a(self._position_distance)
 
     @property
     def points(self) -> Iterator[Point]:
@@ -149,6 +149,9 @@ class FrontLine(MissionTarget):
                 )
             else:
                 remaining_dist -= segment.attack_distance
+        raise RuntimeError(
+            f"Could not find front line point {distance} from {self.blue_cp}"
+        )
 
     @property
     def _position_distance(self) -> float:
