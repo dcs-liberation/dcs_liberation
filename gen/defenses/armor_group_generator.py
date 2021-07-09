@@ -53,7 +53,7 @@ def generate_armor_group_of_type(
     This generate a group of ground units of given type
     :return: Generated group
     """
-    shorad_type: Any = None
+    shorad_type: Any = None #if not any, will produce a 'not declared error'. Not used if include_shorad == False
     if include_shorad == True:
         shorads = [
             u
@@ -71,15 +71,6 @@ def generate_armor_group_of_type(
     generator.generate()
 
     return generator.get_generated_group()
-
-
-def caluclate_shorad_position(pos1_x: int, pos1_y: int, pos2_x: int, pos2_y: int):
-    middle_x = (pos1_x + pos2_x) / 2
-    middle_y = (pos1_y + pos2_y) / 2
-    spacing_x = random.randint(90, 100)
-    spacing_y = random.randint(90, 100)
-
-    return (middle_x + spacing_x, middle_y + spacing_y)
 
 
 def generate_armor_group_of_type_and_size(
