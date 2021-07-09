@@ -1,8 +1,9 @@
 import random
+from typing import Any
 
 from dcs.unitgroup import VehicleGroup
 
-from game import db, Game, settings
+from game import db, Game
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.groundunittype import GroundUnitType
 from game.theater.theatergroundobject import VehicleGroupGroundObject
@@ -46,11 +47,7 @@ def generate_armor_group_of_type(
     This generate a group of ground units of given type
     :return: Generated group
     """
-    generator = ArmoredGroupGenerator(game, ground_object, unit_type)
-    generator.generate()
-
-    vehicle_group = generator.get_generated_group()
-
+    shorad_type: Any = None
     if include_shorad == True:
         shorads = [
             u
@@ -58,21 +55,16 @@ def generate_armor_group_of_type(
             if u.unit_class == GroundUnitClass.Shorads
         ]
         if len(shorads) > 0:
-            shorad = random.choice(shorads)
-            s_posx, s_posy = caluclate_shorad_position(
-                vehicle_group.units[0].position.x,
-                vehicle_group.units[0].position.y,
-                vehicle_group.units[3].position.x,
-                vehicle_group.units[3].position.y,
-            )
-            generator.add_unit(
-                shorad.dcs_unit_type,
-                "group-shorad",
-                s_posx,
-                s_posy,
-                vehicle_group.units[0].heading,
-            )
-    return vehicle_group
+            shorad_type = random.choice(shorads)
+        else:
+            include_shorad = False
+
+    generator = ArmoredGroupGenerator(
+        game, ground_object, unit_type, include_shorad, shorad_type
+    )
+    generator.generate()
+
+    return generator.get_generated_group()
 
 
 def caluclate_shorad_position(pos1_x: int, pos1_y: int, pos2_x: int, pos2_y: int):

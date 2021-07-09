@@ -316,7 +316,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.generate_armor_at(ag_location)
 
     def generate_armor_at(
-        self, ag_location: armorGroupLocation.ArmorGroupLocation
+        self, ag_location: armorGroupLocation.armorgrouplocation
     ) -> None:
         group_id = self.game.next_group_id()
 
@@ -327,17 +327,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.control_point,
         )
 
-        add_shorad = (
-            self.generator_settings.shorads_in_armor_groups
-            and ag_location.shoradIncluded
-        )
-
         group = generate_armor_group(
             self.faction_name,
             self.game,
             g,
-            ag_location.shoradIncluded,
+            ag_location.shorad_included,
         )
+
         if group is None:
             logging.error(
                 "Could not generate armor group for %s at %s",

@@ -1,7 +1,7 @@
 from game.point_with_heading import PointWithHeading
 
 
-class ArmorGroupLocation:
-    def __init__(self, PointWithHeading, bool):
-        self.position = PointWithHeading
-        self.shoradIncluded = bool
+class armorgrouplocation:
+    def __init__(self, point_with_heading: PointWithHeading, shorad_included: bool):
+        self.position = point_with_heading
+        self.shorad_included = shorad_included
