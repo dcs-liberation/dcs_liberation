@@ -545,7 +545,7 @@ class ConflictTheater:
 
     def find_ground_objects_by_obj_name(
         self, obj_name: str
-    ) -> list[TheaterGroundObject]:
+    ) -> list[TheaterGroundObject[Any]]:
         found = []
         for cp in self.controlpoints:
             for g in cp.ground_objects:

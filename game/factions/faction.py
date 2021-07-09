@@ -84,10 +84,10 @@ class Faction:
     requirements: Dict[str, str] = field(default_factory=dict)
 
     # possible aircraft carrier units
-    aircraft_carrier: List[Type[UnitType]] = field(default_factory=list)
+    aircraft_carrier: List[Type[ShipType]] = field(default_factory=list)
 
     # possible helicopter carrier units
-    helicopter_carrier: List[Type[UnitType]] = field(default_factory=list)
+    helicopter_carrier: List[Type[ShipType]] = field(default_factory=list)
 
     # Possible carrier names
     carrier_names: List[str] = field(default_factory=list)

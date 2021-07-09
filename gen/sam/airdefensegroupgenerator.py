@@ -8,7 +8,7 @@ from dcs.unitgroup import VehicleGroup
 
 from game import Game
 from game.theater.theatergroundobject import SamGroundObject
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import VehicleGroupGenerator
 
 
 class SkynetRole(Enum):
@@ -38,7 +38,7 @@ class AirDefenseRange(Enum):
         self.default_role = default_role
 
 
-class AirDefenseGroupGenerator(GroupGenerator[VehicleGroup], ABC):
+class AirDefenseGroupGenerator(VehicleGroupGenerator[SamGroundObject], ABC):
     """
     This is the base for all SAM group generators
     """
