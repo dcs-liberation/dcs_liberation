@@ -751,7 +751,7 @@ class ControlPoint(MissionTarget, ABC):
         return len([obj for obj in self.connected_objectives if obj.category == "ammo"])
 
     @property
-    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+    def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:
         return []
 
     @property

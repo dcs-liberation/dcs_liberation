@@ -6,7 +6,7 @@ from datetime import timedelta
 from typing import List, Type, Tuple, Optional, TYPE_CHECKING
 
 from dcs.mission import Mission, StartType
-from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135
+from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, PlaneType
 from dcs.task import (
     AWACS,
     ActivateBeaconCommand,
@@ -111,6 +111,11 @@ class AirSupportConflictGenerator:
             for i, tanker_unit_type in enumerate(
                 self.game.faction_for(player=True).tankers
             ):
+                unit_type = tanker_unit_type.dcs_unit_type
+                if not issubclass(unit_type, PlaneType):
+                    logging.warning(f"Refueling aircraft {unit_type} must be a plane")
+                    continue
+
                 # TODO: Make loiter altitude a property of the unit type.
                 alt, airspeed = self._get_tanker_params(tanker_unit_type.dcs_unit_type)
                 freq = self.radio_registry.alloc_uhf()
@@ -130,7 +135,7 @@ class AirSupportConflictGenerator:
                         self.mission.country(self.game.player_country), tanker_unit_type
                     ),
                     airport=None,
-                    plane_type=tanker_unit_type.dcs_unit_type,
+                    plane_type=unit_type,
                     position=tanker_position,
                     altitude=alt,
                     race_distance=58000,
@@ -200,12 +205,17 @@ class AirSupportConflictGenerator:
             awacs_unit = possible_awacs[0]
             freq = self.radio_registry.alloc_uhf()
 
+            unit_type = awacs_unit.dcs_unit_type
+            if not issubclass(unit_type, PlaneType):
+                logging.warning(f"AWACS aircraft {unit_type} must be a plane")
+                return
+
             awacs_flight = self.mission.awacs_flight(
                 country=self.mission.country(self.game.player_country),
                 name=namegen.next_awacs_name(
                     self.mission.country(self.game.player_country)
                 ),
-                plane_type=awacs_unit,
+                plane_type=unit_type,
                 altitude=AWACS_ALT,
                 airport=None,
                 position=self.conflict.position.random_point_within(

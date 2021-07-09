@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import itertools
 import logging
+from collections import Sequence
 from typing import Iterator, List, TYPE_CHECKING, Union, Generic, TypeVar, Any
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
 from dcs.unit import Unit
-from dcs.unitgroup import Group, ShipGroup, VehicleGroup
-from dcs.unittype import VehicleType
+from dcs.unitgroup import ShipGroup, VehicleGroup
 
 from .. import db
 from ..data.radar_db import (
@@ -47,7 +47,7 @@ NAME_BY_CATEGORY = {
 }
 
 
-GroupT = TypeVar("GroupT", bound=Group)
+GroupT = TypeVar("GroupT", ShipGroup, VehicleGroup)
 
 
 class TheaterGroundObject(MissionTarget, Generic[GroupT]):
@@ -150,7 +150,7 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
                 return True
         return False
 
-    def _max_range_of_type(self, group: Group, range_type: str) -> Distance:
+    def _max_range_of_type(self, group: GroupT, range_type: str) -> Distance:
         if not self.might_have_aa:
             return meters(0)
 
@@ -171,13 +171,13 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
     def max_detection_range(self) -> Distance:
         return max(self.detection_range(g) for g in self.groups)
 
-    def detection_range(self, group: Group) -> Distance:
+    def detection_range(self, group: GroupT) -> Distance:
         return self._max_range_of_type(group, "detection_range")
 
     def max_threat_range(self) -> Distance:
         return max(self.threat_range(g) for g in self.groups)
 
-    def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
+    def threat_range(self, group: GroupT, radar_only: bool = False) -> Distance:
         return self._max_range_of_type(group, "threat_range")
 
     @property
@@ -190,7 +190,7 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
         return False
 
     @property
-    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+    def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:
         return self.units
 
     @property
@@ -497,33 +497,25 @@ class SamGroundObject(TheaterGroundObject[VehicleGroup]):
     def might_have_aa(self) -> bool:
         return True
 
-    def threat_range(self, group: Group, radar_only: bool = False) -> Distance:
+    def threat_range(self, group: VehicleGroup, radar_only: bool = False) -> Distance:
         max_non_radar = meters(0)
         live_trs = set()
         max_telar_range = meters(0)
         launchers = set()
         for unit in group.units:
-            unit_type = db.unit_type_from_name(unit.type)
-            if unit_type is None or not issubclass(unit_type, VehicleType):
-                continue
+            unit_type = db.vehicle_type_from_name(unit.type)
             if unit_type in TRACK_RADARS:
                 live_trs.add(unit_type)
             elif unit_type in TELARS:
-                max_telar_range = max(
-                    max_telar_range, meters(getattr(unit_type, "threat_range", 0))
-                )
+                max_telar_range = max(max_telar_range, meters(unit_type.threat_range))
             elif unit_type in LAUNCHER_TRACKER_PAIRS:
                 launchers.add(unit_type)
             else:
-                max_non_radar = max(
-                    max_non_radar, meters(getattr(unit_type, "threat_range", 0))
-                )
+                max_non_radar = max(max_non_radar, meters(unit_type.threat_range))
         max_tel_range = meters(0)
         for launcher in launchers:
             if LAUNCHER_TRACKER_PAIRS[launcher] in live_trs:
-                max_tel_range = max(
-                    max_tel_range, meters(getattr(launcher, "threat_range"))
-                )
+                max_tel_range = max(max_tel_range, meters(unit_type.threat_range))
         if radar_only:
             return max(max_tel_range, max_telar_range)
         else:

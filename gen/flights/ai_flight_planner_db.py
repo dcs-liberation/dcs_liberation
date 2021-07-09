@@ -1,5 +1,6 @@
 import logging
-from typing import List, Type
+from collections import Sequence
+from typing import Type
 
 from dcs.helicopters import (
     AH_1W,
@@ -415,7 +416,7 @@ REFUELING_CAPABALE = [
 ]
 
 
-def dcs_types_for_task(task: FlightType) -> list[Type[FlyingType]]:
+def dcs_types_for_task(task: FlightType) -> Sequence[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE

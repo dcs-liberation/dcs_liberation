@@ -5,14 +5,14 @@ import inspect
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, Iterator, Optional, Set, Tuple, Union, cast, Any
+from typing import Dict, Iterator, Optional, Set, Tuple, cast, Any
 
 from dcs.unitgroup import FlyingGroup
 from dcs.weapons_data import Weapons, weapon_ids
 
 from game.dcs.aircrafttype import AircraftType
 
-PydcsWeapon = Dict[str, Any]
+PydcsWeapon = Any
 PydcsWeaponAssignment = Tuple[int, PydcsWeapon]
 
 
@@ -83,7 +83,7 @@ class Pylon:
         # configuration.
         return weapon in self.allowed or weapon.cls_id == "<CLEAN>"
 
-    def equip(self, group: FlyingGroup, weapon: Weapon) -> None:
+    def equip(self, group: FlyingGroup[Any], weapon: Weapon) -> None:
         if not self.can_equip(weapon):
             logging.error(f"Pylon {self.number} cannot equip {weapon.name}")
         group.load_pylon(self.make_pydcs_assignment(weapon), self.number)

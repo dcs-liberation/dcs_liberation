@@ -15,7 +15,7 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.unit import Unit
-from dcs.unitgroup import Group, VehicleGroup
+from dcs.unitgroup import Group, VehicleGroup, ShipGroup
 
 if TYPE_CHECKING:
     from game import Game
@@ -35,7 +35,7 @@ from .flight import Flight, FlightWaypoint, FlightWaypointType
 class StrikeTarget:
     name: str
     target: Union[
-        VehicleGroup, TheaterGroundObject[Any], Unit, Group, MultiGroupTransport
+        VehicleGroup, TheaterGroundObject[Any], Unit, ShipGroup, MultiGroupTransport
     ]
 
 
@@ -444,7 +444,7 @@ class WaypointBuilder:
         # description in gen.aircraft.JoinPointBuilder), so instead we give
         # the escort flights a flight plan including the ingress point, target
         # area, and egress point.
-        ingress = self.ingress(FlightWaypointType.INGRESS_ESCORT, ingress, target)
+        ingress_wp = self.ingress(FlightWaypointType.INGRESS_ESCORT, ingress, target)
 
         waypoint = FlightWaypoint(
             FlightWaypointType.TARGET_GROUP_LOC,
@@ -458,8 +458,8 @@ class WaypointBuilder:
         waypoint.description = "Escort the package"
         waypoint.pretty_name = "Target area"
 
-        egress = self.egress(egress, target)
-        return ingress, waypoint, egress
+        egress_wp = self.egress(egress, target)
+        return ingress_wp, waypoint, egress_wp
 
     @staticmethod
     def pickup(control_point: ControlPoint) -> FlightWaypoint:
