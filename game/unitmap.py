@@ -2,10 +2,10 @@
 import itertools
 import math
 from dataclasses import dataclass
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, Union, TypeVar, Generic
 
-from dcs.unit import Unit
-from dcs.unitgroup import FlyingGroup, Group, VehicleGroup
+from dcs.unit import Vehicle, Ship
+from dcs.unitgroup import FlyingGroup, VehicleGroup, StaticGroup, ShipGroup, MovingGroup
 
 from game.dcs.groundunittype import GroundUnitType
 from game.squadrons import Pilot
@@ -27,11 +27,14 @@ class FrontLineUnit:
     origin: ControlPoint
 
 
+UnitT = TypeVar("UnitT", Ship, Vehicle)
+
+
 @dataclass(frozen=True)
-class GroundObjectUnit:
+class GroundObjectUnit(Generic[UnitT]):
     ground_object: TheaterGroundObject[Any]
-    group: Group
-    unit: Unit
+    group: MovingGroup[UnitT]
+    unit: UnitT
 
 
 @dataclass(frozen=True)
@@ -56,13 +59,13 @@ class UnitMap:
         self.aircraft: Dict[str, FlyingUnit] = {}
         self.airfields: Dict[str, Airfield] = {}
         self.front_line_units: Dict[str, FrontLineUnit] = {}
-        self.ground_object_units: Dict[str, GroundObjectUnit] = {}
+        self.ground_object_units: Dict[str, GroundObjectUnit[Any]] = {}
         self.buildings: Dict[str, Building] = {}
         self.convoys: Dict[str, ConvoyUnit] = {}
         self.cargo_ships: Dict[str, CargoShip] = {}
         self.airlifts: Dict[str, AirliftUnits] = {}
 
-    def add_aircraft(self, group: FlyingGroup, flight: Flight) -> None:
+    def add_aircraft(self, group: FlyingGroup[Any], flight: Flight) -> None:
         for pilot, unit in zip(flight.roster.pilots, group.units):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
@@ -85,7 +88,7 @@ class UnitMap:
         return self.airfields.get(name, None)
 
     def add_front_line_units(
-        self, group: Group, origin: ControlPoint, unit_type: GroundUnitType
+        self, group: VehicleGroup, origin: ControlPoint, unit_type: GroundUnitType
     ) -> None:
         for unit in group.units:
             # The actual name is a String (the pydcs translatable string), which
@@ -101,8 +104,8 @@ class UnitMap:
     def add_ground_object_units(
         self,
         ground_object: TheaterGroundObject[Any],
-        persistence_group: Group,
-        miz_group: Group,
+        persistence_group: Union[ShipGroup, VehicleGroup],
+        miz_group: Union[ShipGroup, VehicleGroup],
     ) -> None:
         """Adds a group associated with a TGO to the unit map.
 
@@ -131,10 +134,10 @@ class UnitMap:
                 ground_object, persistence_group, persistent_unit
             )
 
-    def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit]:
+    def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit[Any]]:
         return self.ground_object_units.get(name, None)
 
-    def add_convoy_units(self, group: Group, convoy: Convoy) -> None:
+    def add_convoy_units(self, group: VehicleGroup, convoy: Convoy) -> None:
         for unit, unit_type in zip(group.units, convoy.iter_units()):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
@@ -146,7 +149,7 @@ class UnitMap:
     def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
         return self.convoys.get(name, None)
 
-    def add_cargo_ship(self, group: Group, ship: CargoShip) -> None:
+    def add_cargo_ship(self, group: ShipGroup, ship: CargoShip) -> None:
         if len(group.units) > 1:
             # Cargo ship "groups" are single units. Killing the one ship kills the whole
             # transfer. If we ever want to add escorts or create multiple cargo ships in
@@ -163,7 +166,9 @@ class UnitMap:
     def cargo_ship(self, name: str) -> Optional[CargoShip]:
         return self.cargo_ships.get(name, None)
 
-    def add_airlift_units(self, group: FlyingGroup, transfer: TransferOrder) -> None:
+    def add_airlift_units(
+        self, group: FlyingGroup[Any], transfer: TransferOrder
+    ) -> None:
         capacity_each = math.ceil(transfer.size / len(group.units))
         for idx, transport in enumerate(group.units):
             # Slice the units in groups based on the capacity of each unit. Cargo is
@@ -186,7 +191,9 @@ class UnitMap:
     def airlift_unit(self, name: str) -> Optional[AirliftUnits]:
         return self.airlifts.get(name, None)
 
-    def add_building(self, ground_object: BuildingGroundObject, group: Group) -> None:
+    def add_building(
+        self, ground_object: BuildingGroundObject, group: StaticGroup
+    ) -> None:
         # The actual name is a String (the pydcs translatable string), which
         # doesn't define __eq__.
         # The name of the initiator in the DCS dead event will have " object"

@@ -157,7 +157,7 @@ class ShipGroupGenerator(
         super().__init__(
             game,
             ground_object,
-            unitgroup.ShipGroup(self.game.next_group_id(), self.go.group_name),
+            unitgroup.ShipGroup(game.next_group_id(), ground_object.group_name),
         )
         self.faction = faction
         wp = self.vg.add_waypoint(self.position, 0)

@@ -31,7 +31,7 @@ from dcs.ships import (
 from dcs.terrain.terrain import Airport
 from dcs.unit import Ship
 from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import UnitType
+from dcs.unittype import UnitType, FlyingType, ShipType, VehicleType
 from dcs.vehicles import (
     vehicle_map,
 )
@@ -256,7 +256,7 @@ Aircraft livery overrides. Syntax as follows:
 `Identifier` is aircraft identifier (as used troughout the file) and "LiveryName" (with double quotes) 
 is livery name as found in mission editor.
 """
-PLANE_LIVERY_OVERRIDES = {
+PLANE_LIVERY_OVERRIDES: dict[Type[FlyingType], str] = {
     FA_18C_hornet: "VFA-34",  # default livery for the hornet is blue angels one
 }
 
@@ -327,7 +327,7 @@ REWARDS = {
 StartingPosition = Union[ShipGroup, StaticGroup, Airport, Point]
 
 
-def upgrade_to_supercarrier(unit: Type[Ship], name: str) -> Type[Ship]:
+def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
     if unit == Stennis:
         if name == "CVN-71 Theodore Roosevelt":
             return CVN_71
@@ -358,6 +358,14 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return helicopter_map[name]
     else:
         return None
+
+
+def vehicle_type_from_name(name: str) -> Type[VehicleType]:
+    return vehicle_map[name]
+
+
+def ship_type_from_name(name: str) -> Type[ShipType]:
+    return ship_map[name]
 
 
 def country_id_from_name(name: str) -> int:

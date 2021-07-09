@@ -1084,22 +1084,22 @@ class FlightPlanBuilder:
             patrol_alt = feet(25000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        orbit_location = builder.orbit(orbit_location, patrol_alt)
+        orbit = builder.orbit(orbit_location, patrol_alt)
 
         return AwacsFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
-                flight.departure.position, orbit_location.position, patrol_alt
+                flight.departure.position, orbit.position, patrol_alt
             ),
             nav_from=builder.nav_path(
-                orbit_location.position, flight.arrival.position, patrol_alt
+                orbit.position, flight.arrival.position, patrol_alt
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
-            hold=orbit_location,
+            hold=orbit,
             hold_duration=timedelta(hours=4),
         )
 
@@ -1167,7 +1167,7 @@ class FlightPlanBuilder:
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        start, end = self.racetrack_for_objective(location, barcap=True)
+        start_pos, end_pos = self.racetrack_for_objective(location, barcap=True)
         patrol_alt = meters(
             random.randint(
                 int(self.doctrine.min_patrol_altitude.meters),
@@ -1176,7 +1176,7 @@ class FlightPlanBuilder:
         )
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start, end = builder.race_track(start, end, patrol_alt)
+        start, end = builder.race_track(start_pos, end_pos, patrol_alt)
 
         return BarCapFlightPlan(
             package=self.package,

@@ -78,8 +78,8 @@ class GroundLosses:
     player_airlifts: List[AirliftUnits] = field(default_factory=list)
     enemy_airlifts: List[AirliftUnits] = field(default_factory=list)
 
-    player_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
-    enemy_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
+    player_ground_objects: List[GroundObjectUnit[Any]] = field(default_factory=list)
+    enemy_ground_objects: List[GroundObjectUnit[Any]] = field(default_factory=list)
 
     player_buildings: List[Building] = field(default_factory=list)
     enemy_buildings: List[Building] = field(default_factory=list)
@@ -166,7 +166,7 @@ class Debriefing:
         yield from self.ground_losses.enemy_airlifts
 
     @property
-    def ground_object_losses(self) -> Iterator[GroundObjectUnit]:
+    def ground_object_losses(self) -> Iterator[GroundObjectUnit[Any]]:
         yield from self.ground_losses.player_ground_objects
         yield from self.ground_losses.enemy_ground_objects
 
