@@ -1,13 +1,12 @@
-from dcs.unitgroup import VehicleGroup
 from dcs.vehicles import MissilesSS, Unarmed, AirDefence
 
 from game import Game
 from game.factions.faction import Faction
 from game.theater.theatergroundobject import CoastalSiteGroundObject
-from gen.sam.group_generator import GroupGenerator
+from gen.sam.group_generator import VehicleGroupGenerator
 
 
-class SilkwormGenerator(GroupGenerator[VehicleGroup]):
+class SilkwormGenerator(VehicleGroupGenerator[CoastalSiteGroundObject]):
     def __init__(
         self, game: Game, ground_object: CoastalSiteGroundObject, faction: Faction
     ) -> None:

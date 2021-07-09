@@ -43,6 +43,7 @@ from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
     TheaterGroundObject,
+    NavalGroundObject,
 )
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
@@ -298,7 +299,7 @@ class ControlPoint(MissionTarget, ABC):
         self.id = cp_id
         self.full_name = name
         self.at = at
-        self.connected_objectives: List[TheaterGroundObject] = []
+        self.connected_objectives: List[TheaterGroundObject[Any]] = []
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
@@ -326,7 +327,7 @@ class ControlPoint(MissionTarget, ABC):
         return f"<{self.__class__}: {self.name}>"
 
     @property
-    def ground_objects(self) -> List[TheaterGroundObject]:
+    def ground_objects(self) -> List[TheaterGroundObject[Any]]:
         return list(self.connected_objectives)
 
     @property
@@ -502,7 +503,7 @@ class ControlPoint(MissionTarget, ABC):
 
     def find_ground_objects_by_obj_name(
         self, obj_name: str
-    ) -> list[TheaterGroundObject]:
+    ) -> list[TheaterGroundObject[Any]]:
         found = []
         for g in self.ground_objects:
             if g.obj_name == obj_name:
@@ -881,9 +882,12 @@ class NavalControlPoint(ControlPoint, ABC):
     def heading(self) -> int:
         return 0  # TODO compute heading
 
-    def find_main_tgo(self) -> TheaterGroundObject:
+    def find_main_tgo(self) -> GenericCarrierGroundObject:
         for g in self.ground_objects:
-            if g.dcs_identifier in ["CARRIER", "LHA"]:
+            if isinstance(g, GenericCarrierGroundObject) and g.dcs_identifier in [
+                "CARRIER",
+                "LHA",
+            ]:
                 return g
         raise RuntimeError(f"Found no carrier/LHA group for {self.name}")
 

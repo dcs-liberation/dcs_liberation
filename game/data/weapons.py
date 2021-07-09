@@ -5,14 +5,14 @@ import inspect
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Dict, Iterator, Optional, Set, Tuple, Union, cast
+from typing import Dict, Iterator, Optional, Set, Tuple, Union, cast, Any
 
 from dcs.unitgroup import FlyingGroup
 from dcs.weapons_data import Weapons, weapon_ids
 
 from game.dcs.aircrafttype import AircraftType
 
-PydcsWeapon = Dict[str, Union[int, str]]
+PydcsWeapon = Dict[str, Any]
 PydcsWeaponAssignment = Tuple[int, PydcsWeapon]
 
 

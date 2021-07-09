@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import itertools
 import logging
-from typing import Iterator, List, TYPE_CHECKING, Union
+from typing import Iterator, List, TYPE_CHECKING, Union, Generic, TypeVar, Any
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
 from dcs.unit import Unit
-from dcs.unitgroup import Group
+from dcs.unitgroup import Group, ShipGroup, VehicleGroup
 from dcs.unittype import VehicleType
 
 from .. import db
@@ -47,7 +47,10 @@ NAME_BY_CATEGORY = {
 }
 
 
-class TheaterGroundObject(MissionTarget):
+GroupT = TypeVar("GroupT", bound=Group)
+
+
+class TheaterGroundObject(MissionTarget, Generic[GroupT]):
     def __init__(
         self,
         name: str,
@@ -66,7 +69,7 @@ class TheaterGroundObject(MissionTarget):
         self.control_point = control_point
         self.dcs_identifier = dcs_identifier
         self.sea_object = sea_object
-        self.groups: List[Group] = []
+        self.groups: List[GroupT] = []
 
     @property
     def is_dead(self) -> bool:
@@ -206,7 +209,7 @@ class TheaterGroundObject(MissionTarget):
         raise NotImplementedError
 
 
-class BuildingGroundObject(TheaterGroundObject):
+class BuildingGroundObject(TheaterGroundObject[VehicleGroup]):
     def __init__(
         self,
         name: str,
@@ -253,7 +256,7 @@ class BuildingGroundObject(TheaterGroundObject):
     def kill(self) -> None:
         self._dead = True
 
-    def iter_building_group(self) -> Iterator[TheaterGroundObject]:
+    def iter_building_group(self) -> Iterator[TheaterGroundObject[Any]]:
         for tgo in self.control_point.ground_objects:
             if tgo.obj_name == self.obj_name and not tgo.is_dead:
                 yield tgo
@@ -338,7 +341,7 @@ class FactoryGroundObject(BuildingGroundObject):
         )
 
 
-class NavalGroundObject(TheaterGroundObject):
+class NavalGroundObject(TheaterGroundObject[ShipGroup]):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from gen.flights.flight import FlightType
 
@@ -407,7 +410,7 @@ class LhaGroundObject(GenericCarrierGroundObject):
         return f"{self.faction_color}|EWR|{super().group_name}"
 
 
-class MissileSiteGroundObject(TheaterGroundObject):
+class MissileSiteGroundObject(TheaterGroundObject[VehicleGroup]):
     def __init__(
         self, name: str, group_id: int, position: Point, control_point: ControlPoint
     ) -> None:
@@ -431,7 +434,7 @@ class MissileSiteGroundObject(TheaterGroundObject):
         return False
 
 
-class CoastalSiteGroundObject(TheaterGroundObject):
+class CoastalSiteGroundObject(TheaterGroundObject[VehicleGroup]):
     def __init__(
         self,
         name: str,
@@ -463,7 +466,7 @@ class CoastalSiteGroundObject(TheaterGroundObject):
 # The SamGroundObject represents all type of AA
 # The TGO can have multiple types of units (AAA,SAM,Support...)
 # Differentiation can be made during generation with the airdefensegroupgenerator
-class SamGroundObject(TheaterGroundObject):
+class SamGroundObject(TheaterGroundObject[VehicleGroup]):
     def __init__(
         self,
         name: str,
@@ -535,7 +538,7 @@ class SamGroundObject(TheaterGroundObject):
         return True
 
 
-class VehicleGroupGroundObject(TheaterGroundObject):
+class VehicleGroupGroundObject(TheaterGroundObject[VehicleGroup]):
     def __init__(
         self,
         name: str,
@@ -563,7 +566,7 @@ class VehicleGroupGroundObject(TheaterGroundObject):
         return True
 
 
-class EwrGroundObject(TheaterGroundObject):
+class EwrGroundObject(TheaterGroundObject[VehicleGroup]):
     def __init__(
         self,
         name: str,

@@ -5,7 +5,6 @@ from typing import List, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
-from dcs.unittype import VehicleType
 
 from game import persistency
 from game.debriefing import AirLosses, Debriefing

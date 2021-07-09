@@ -71,20 +71,6 @@ class Operation:
         cls.current_mission.options.load_from_dict(options_dict)
 
     @classmethod
-    def conflicts(cls) -> Iterable[Conflict]:
-        assert cls.game
-        for frontline in cls.game.theater.conflicts():
-            yield Conflict(
-                cls.game.theater,
-                frontline,
-                cls.game.player_faction.name,
-                cls.game.enemy_faction.name,
-                cls.game.player_country,
-                cls.game.enemy_country,
-                frontline.position,
-            )
-
-    @classmethod
     def air_conflict(cls) -> Conflict:
         assert cls.game
         player_cp, enemy_cp = cls.game.theater.closest_opposing_control_points()
@@ -97,8 +83,8 @@ class Operation:
             FrontLine(player_cp, enemy_cp),
             cls.game.player_faction.name,
             cls.game.enemy_faction.name,
-            cls.game.player_country,
-            cls.game.enemy_country,
+            cls.current_mission.country(cls.game.player_country),
+            cls.current_mission.country(cls.game.enemy_country),
             mid_point,
         )
 

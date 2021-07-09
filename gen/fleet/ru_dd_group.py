@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import random
 from typing import TYPE_CHECKING
 
@@ -12,11 +13,10 @@ from dcs.ships import (
     SOM,
 )
 
+from game.factions.faction import Faction
+from game.theater.theatergroundobject import ShipGroundObject
 from gen.fleet.dd_group import DDGroupGenerator
 from gen.sam.group_generator import ShipGroupGenerator
-from game.factions.faction import Faction
-from game.theater.theatergroundobject import TheaterGroundObject
-
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -85,32 +85,24 @@ class RussianNavyGroupGenerator(ShipGroupGenerator):
 
 
 class GrishaGroupGenerator(DDGroupGenerator):
-    def __init__(
-        self, game: Game, ground_object: TheaterGroundObject, faction: Faction
-    ):
+    def __init__(self, game: Game, ground_object: ShipGroundObject, faction: Faction):
         super(GrishaGroupGenerator, self).__init__(
             game, ground_object, faction, ALBATROS
         )
 
 
 class MolniyaGroupGenerator(DDGroupGenerator):
-    def __init__(
-        self, game: Game, ground_object: TheaterGroundObject, faction: Faction
-    ):
+    def __init__(self, game: Game, ground_object: ShipGroundObject, faction: Faction):
         super(MolniyaGroupGenerator, self).__init__(
             game, ground_object, faction, MOLNIYA
         )
 
 
 class KiloSubGroupGenerator(DDGroupGenerator):
-    def __init__(
-        self, game: Game, ground_object: TheaterGroundObject, faction: Faction
-    ):
+    def __init__(self, game: Game, ground_object: ShipGroundObject, faction: Faction):
         super(KiloSubGroupGenerator, self).__init__(game, ground_object, faction, KILO)
 
 
 class TangoSubGroupGenerator(DDGroupGenerator):
-    def __init__(
-        self, game: Game, ground_object: TheaterGroundObject, faction: Faction
-    ):
+    def __init__(self, game: Game, ground_object: ShipGroundObject, faction: Faction):
         super(TangoSubGroupGenerator, self).__init__(game, ground_object, faction, SOM)

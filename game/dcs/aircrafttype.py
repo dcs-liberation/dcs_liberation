@@ -106,7 +106,7 @@ class PatrolConfig:
 
 
 @dataclass(frozen=True)
-class AircraftType(UnitType[FlyingType]):
+class AircraftType(UnitType[Type[FlyingType]]):
     carrier_capable: bool
     lha_capable: bool
     always_keeps_gun: bool

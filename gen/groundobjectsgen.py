@@ -9,7 +9,17 @@ from __future__ import annotations
 
 import logging
 import random
-from typing import Dict, Iterator, Optional, TYPE_CHECKING, Type, List
+from typing import (
+    Dict,
+    Iterator,
+    Optional,
+    TYPE_CHECKING,
+    Type,
+    List,
+    TypeVar,
+    Any,
+    Generic,
+)
 
 from dcs import Mission, Point, unitgroup
 from dcs.action import SceneryDestructionZone
@@ -56,7 +66,10 @@ FARP_FRONTLINE_DISTANCE = 10000
 AA_CP_MIN_DISTANCE = 40000
 
 
-class GenericGroundObjectGenerator:
+TgoT = TypeVar("TgoT", bound=TheaterGroundObject[Any])
+
+
+class GenericGroundObjectGenerator(Generic[TgoT]):
     """An unspecialized ground object generator.
 
     Currently used only for SAM
@@ -64,7 +77,7 @@ class GenericGroundObjectGenerator:
 
     def __init__(
         self,
-        ground_object: TheaterGroundObject,
+        ground_object: TgoT,
         country: Country,
         game: Game,
         mission: Mission,
@@ -133,7 +146,7 @@ class GenericGroundObjectGenerator:
         )
 
 
-class MissileSiteGenerator(GenericGroundObjectGenerator):
+class MissileSiteGenerator(GenericGroundObjectGenerator[MissileSiteGroundObject]):
     @property
     def culled(self) -> bool:
         # Don't cull missile sites - their range is long enough to make them easily
@@ -196,7 +209,7 @@ class MissileSiteGenerator(GenericGroundObjectGenerator):
         return site_range
 
 
-class BuildingSiteGenerator(GenericGroundObjectGenerator):
+class BuildingSiteGenerator(GenericGroundObjectGenerator[BuildingGroundObject]):
     """Generator for building sites.
 
     Building sites are the primary type of non-airbase objective locations that
@@ -324,7 +337,7 @@ class SceneryGenerator(BuildingSiteGenerator):
         self.unit_map.add_scenery(scenery)
 
 
-class GenericCarrierGenerator(GenericGroundObjectGenerator):
+class GenericCarrierGenerator(GenericGroundObjectGenerator[GenericCarrierGroundObject]):
     """Base type for carrier group generation.
 
     Used by both CV(N) groups and LHA groups.
@@ -518,7 +531,7 @@ class LhaGenerator(GenericCarrierGenerator):
         )
 
 
-class ShipObjectGenerator(GenericGroundObjectGenerator):
+class ShipObjectGenerator(GenericGroundObjectGenerator[ShipGroundObject]):
     """Generator for non-carrier naval groups."""
 
     def generate(self) -> None:
@@ -637,7 +650,7 @@ class GroundObjectsGenerator:
             ).generate()
 
             for ground_object in cp.ground_objects:
-                generator: GenericGroundObjectGenerator
+                generator: GenericGroundObjectGenerator[Any]
                 if isinstance(ground_object, FactoryGroundObject):
                     generator = FactoryGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
