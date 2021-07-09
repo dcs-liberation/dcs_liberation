@@ -53,7 +53,7 @@ def generate_armor_group_of_type(
     This generate a group of ground units of given type
     :return: Generated group
     """
-    shorad_type: Any = None #if not any, will produce a 'not declared error'. Not used if include_shorad == False
+    shorad_type: Any = None  # if not any, will produce a 'not declared error'. Not used if include_shorad == False
     if include_shorad == True:
         shorads = [
             u
