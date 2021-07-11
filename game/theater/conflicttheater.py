@@ -1,5 +1,5 @@
 from __future__ import annotations
-from game import armorGroupLocation
+from game import armorgrouplocation
 
 import itertools
 import math
@@ -459,7 +459,7 @@ class MizCampaignLoader:
 
         for group in self.armor_groups:
             closest, distance = self.objective_info(group)
-            ag_location = armorGroupLocation.armorgrouplocation(
+            ag_location = armorgrouplocation.armorgrouplocation(
                 PointWithHeading.from_point(group.position, group.units[0].heading),
                 shorad_included=False,
             )
@@ -467,7 +467,7 @@ class MizCampaignLoader:
 
         for group in self.armor_shorad_groups:
             closest, distance = self.objective_info(group)
-            ag_location = armorGroupLocation.armorgrouplocation(
+            ag_location = armorgrouplocation.armorgrouplocation(
                 PointWithHeading.from_point(group.position, group.units[0].heading),
                 shorad_included=True,
             )

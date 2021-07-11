@@ -1,5 +1,5 @@
 from __future__ import annotations
-from game.armorGroupLocation import armorgrouplocation
+from game.armorgrouplocation import armorgrouplocation
 
 import heapq
 import itertools
