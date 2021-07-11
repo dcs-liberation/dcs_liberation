@@ -21,7 +21,7 @@ class MissionTarget:
         self.name = name
         self.position = position
 
-    def distance_to(self, other: MissionTarget) -> int:
+    def distance_to(self, other: MissionTarget) -> float:
         """Computes the distance to the given mission target."""
         return self.position.distance_to_point(other.position)
 

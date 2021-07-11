@@ -375,9 +375,9 @@ class ObjectiveFinder:
     def _targets_by_range(
         self, targets: Iterable[MissionTargetType]
     ) -> Iterator[MissionTargetType]:
-        target_ranges: List[Tuple[MissionTargetType, int]] = []
+        target_ranges: list[tuple[MissionTargetType, float]] = []
         for target in targets:
-            ranges: List[int] = []
+            ranges: list[float] = []
             for cp in self.friendly_control_points():
                 ranges.append(target.distance_to(cp))
             target_ranges.append((target, min(ranges)))
@@ -392,7 +392,7 @@ class ObjectiveFinder:
         Targets are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
-        targets: List[Tuple[TheaterGroundObject[Any], int]] = []
+        targets: list[tuple[TheaterGroundObject[Any], float]] = []
         # Building objectives are made of several individual TGOs (one per
         # building).
         found_targets: Set[str] = set()
@@ -431,7 +431,7 @@ class ObjectiveFinder:
                     continue
                 if ground_object.name in found_targets:
                     continue
-                ranges: List[int] = []
+                ranges: list[float] = []
                 for friendly_cp in self.friendly_control_points():
                     ranges.append(ground_object.distance_to(friendly_cp))
                 targets.append((ground_object, min(ranges)))

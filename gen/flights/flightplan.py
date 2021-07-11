@@ -1207,10 +1207,12 @@ class FlightPlanBuilder:
         target = self.package.target.position
 
         heading = self.package.waypoints.join.heading_between_point(target)
-        start = target.point_from_heading(heading, -self.doctrine.sweep_distance.meters)
+        start_pos = target.point_from_heading(
+            heading, -self.doctrine.sweep_distance.meters
+        )
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start, end = builder.sweep(start, target, self.doctrine.ingress_altitude)
+        start, end = builder.sweep(start_pos, target, self.doctrine.ingress_altitude)
 
         hold = builder.hold(self._hold_point(flight))
 
@@ -1865,23 +1867,23 @@ class FlightPlanBuilder:
             return self._retreating_rendezvous_point(attack_transition)
         return self._advancing_rendezvous_point(attack_transition)
 
-    def _ingress_point(self, heading: int) -> Point:
+    def _ingress_point(self, heading: float) -> Point:
         return self.package.target.position.point_from_heading(
             heading - 180 + 15, self.doctrine.ingress_egress_distance.meters
         )
 
-    def _egress_point(self, heading: int) -> Point:
+    def _egress_point(self, heading: float) -> Point:
         return self.package.target.position.point_from_heading(
             heading - 180 - 15, self.doctrine.ingress_egress_distance.meters
         )
 
-    def _target_heading_to_package_airfield(self) -> int:
+    def _target_heading_to_package_airfield(self) -> float:
         return self._heading_to_package_airfield(self.package.target.position)
 
-    def _heading_to_package_airfield(self, point: Point) -> int:
+    def _heading_to_package_airfield(self, point: Point) -> float:
         return self.package_airfield().position.heading_between_point(point)
 
-    def _distance_to_package_airfield(self, point: Point) -> int:
+    def _distance_to_package_airfield(self, point: Point) -> float:
         return self.package_airfield().position.distance_to_point(point)
 
     def package_airfield(self) -> ControlPoint:
