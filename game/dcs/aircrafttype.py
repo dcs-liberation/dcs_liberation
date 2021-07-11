@@ -105,6 +105,7 @@ class PatrolConfig:
         )
 
 
+# TODO: Split into PlaneType and HelicopterType?
 @dataclass(frozen=True)
 class AircraftType(UnitType[Type[FlyingType]]):
     carrier_capable: bool
@@ -144,12 +145,23 @@ class AircraftType(UnitType[Type[FlyingType]]):
         return kph(self.dcs_unit_type.max_speed)
 
     def alloc_flight_radio(self, radio_registry: RadioRegistry) -> RadioFrequency:
-        from gen.radios import ChannelInUseError, MHz
+        from gen.radios import ChannelInUseError, kHz
 
         if self.intra_flight_radio is not None:
             return radio_registry.alloc_for_radio(self.intra_flight_radio)
 
-        freq = MHz(self.dcs_unit_type.radio_frequency)
+        # The default radio frequency is set in megahertz. For some aircraft, it is a
+        # floating point value. For all current aircraft, adjusting to kilohertz will be
+        # sufficient to convert to an integer.
+        in_khz = float(self.dcs_unit_type.radio_frequency) * 1000
+        if not in_khz.is_integer():
+            logging.warning(
+                f"Found unexpected sub-kHz default radio for {self}: {in_khz} kHz. "
+                "Truncating to integer. The truncated frequency may not be valid for "
+                "the aircraft."
+            )
+
+        freq = kHz(int(in_khz))
         try:
             radio_registry.reserve(freq)
         except ChannelInUseError:

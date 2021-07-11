@@ -5,8 +5,6 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Optional, TYPE_CHECKING, Any
 
-from dcs.unittype import UnitType as DcsUnitType
-
 from game.theater import ControlPoint
 from .dcs.groundunittype import GroundUnitType
 from .dcs.unittype import UnitType
@@ -48,27 +46,27 @@ class PendingUnitDeliveries:
         self.units = defaultdict(int)
 
     def refund_ground_units(self, game: Game) -> None:
-        ground_units: dict[UnitType[DcsUnitType], int] = {
+        ground_units: dict[UnitType[Any], int] = {
             u: self.units[u] for u in self.units.keys() if isinstance(u, GroundUnitType)
         }
         self.refund(game, ground_units)
         for gu in ground_units.keys():
             del self.units[gu]
 
-    def refund(self, game: Game, units: dict[UnitType[DcsUnitType], int]) -> None:
+    def refund(self, game: Game, units: dict[UnitType[Any], int]) -> None:
         for unit_type, count in units.items():
             logging.info(f"Refunding {count} {unit_type} at {self.destination.name}")
             game.adjust_budget(
                 unit_type.price * count, player=self.destination.captured
             )
 
-    def pending_orders(self, unit_type: UnitType[DcsUnitType]) -> int:
+    def pending_orders(self, unit_type: UnitType[Any]) -> int:
         pending_units = self.units.get(unit_type)
         if pending_units is None:
             pending_units = 0
         return pending_units
 
-    def available_next_turn(self, unit_type: UnitType[DcsUnitType]) -> int:
+    def available_next_turn(self, unit_type: UnitType[Any]) -> int:
         current_units = self.destination.base.total_units_of_type(unit_type)
         return self.pending_orders(unit_type) + current_units
 
@@ -81,9 +79,9 @@ class PendingUnitDeliveries:
             )
             self.refund_ground_units(game)
 
-        bought_units: dict[UnitType[DcsUnitType], int] = {}
+        bought_units: dict[UnitType[Any], int] = {}
         units_needing_transfer: dict[GroundUnitType, int] = {}
-        sold_units: dict[UnitType[DcsUnitType], int] = {}
+        sold_units: dict[UnitType[Any], int] = {}
         for unit_type, count in self.units.items():
             coalition = "Ally" if self.destination.captured else "Enemy"
             d: dict[Any, int]

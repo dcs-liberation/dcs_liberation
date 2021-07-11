@@ -34,11 +34,10 @@ from dcs.terrain import (
 )
 from dcs.terrain.terrain import Airport, Terrain
 from dcs.unitgroup import (
-    FlyingGroup,
-    Group,
     ShipGroup,
     StaticGroup,
     VehicleGroup,
+    PlaneGroup,
 )
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 from pyproj import CRS, Transformer
@@ -58,6 +57,7 @@ from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
 from .projections import TransverseMercator
 from ..point_with_heading import PointWithHeading
+from ..positioned import Positioned
 from ..profiling import logged_duration
 from ..scenery_group import SceneryGroup
 from ..utils import Distance, meters
@@ -187,7 +187,7 @@ class MizCampaignLoader:
     def red(self) -> Country:
         return self.country(blue=False)
 
-    def off_map_spawns(self, blue: bool) -> Iterator[FlyingGroup]:
+    def off_map_spawns(self, blue: bool) -> Iterator[PlaneGroup]:
         for group in self.country(blue).plane_group:
             if group.units[0].type == self.OFF_MAP_UNIT_TYPE:
                 yield group
@@ -317,26 +317,26 @@ class MizCampaignLoader:
                 control_point.captured = blue
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
-            for group in self.carriers(blue):
+            for ship in self.carriers(blue):
                 # TODO: Name the carrier.
                 control_point = Carrier(
-                    "carrier", group.position, next(self.control_point_id)
+                    "carrier", ship.position, next(self.control_point_id)
                 )
                 control_point.captured = blue
-                control_point.captured_invert = group.late_activation
+                control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
-            for group in self.lhas(blue):
+            for ship in self.lhas(blue):
                 # TODO: Name the LHA.db
-                control_point = Lha("lha", group.position, next(self.control_point_id))
+                control_point = Lha("lha", ship.position, next(self.control_point_id))
                 control_point.captured = blue
-                control_point.captured_invert = group.late_activation
+                control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
-            for group in self.fobs(blue):
+            for fob in self.fobs(blue):
                 control_point = Fob(
-                    str(group.name), group.position, next(self.control_point_id)
+                    str(fob.name), fob.position, next(self.control_point_id)
                 )
                 control_point.captured = blue
-                control_point.captured_invert = group.late_activation
+                control_point.captured_invert = fob.late_activation
                 control_points[control_point.id] = control_point
 
         return control_points
@@ -397,22 +397,22 @@ class MizCampaignLoader:
                 origin, list(reversed(waypoints))
             )
 
-    def objective_info(self, group: Group) -> Tuple[ControlPoint, Distance]:
-        closest = self.theater.closest_control_point(group.position)
-        distance = meters(closest.position.distance_to_point(group.position))
+    def objective_info(self, near: Positioned) -> Tuple[ControlPoint, Distance]:
+        closest = self.theater.closest_control_point(near.position)
+        distance = meters(closest.position.distance_to_point(near.position))
         return closest, distance
 
     def add_preset_locations(self) -> None:
-        for group in self.offshore_strike_targets:
-            closest, distance = self.objective_info(group)
+        for static in self.offshore_strike_targets:
+            closest, distance = self.objective_info(static)
             closest.preset_locations.offshore_strike_locations.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(static.position, static.units[0].heading)
             )
 
-        for group in self.ships:
-            closest, distance = self.objective_info(group)
+        for ship in self.ships:
+            closest, distance = self.objective_info(ship)
             closest.preset_locations.ships.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(ship.position, ship.units[0].heading)
             )
 
         for group in self.missile_sites:
@@ -473,33 +473,33 @@ class MizCampaignLoader:
             )
             closest.preset_locations.armor_groups.append(ag_location)
 
-        for group in self.helipads:
-            closest, distance = self.objective_info(group)
+        for static in self.helipads:
+            closest, distance = self.objective_info(static)
             closest.helipads.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(static.position, static.units[0].heading)
             )
 
-        for group in self.factories:
-            closest, distance = self.objective_info(group)
+        for static in self.factories:
+            closest, distance = self.objective_info(static)
             closest.preset_locations.factories.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(static.position, static.units[0].heading)
             )
 
-        for group in self.ammunition_depots:
-            closest, distance = self.objective_info(group)
+        for static in self.ammunition_depots:
+            closest, distance = self.objective_info(static)
             closest.preset_locations.ammunition_depots.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(static.position, static.units[0].heading)
             )
 
-        for group in self.strike_targets:
-            closest, distance = self.objective_info(group)
+        for static in self.strike_targets:
+            closest, distance = self.objective_info(static)
             closest.preset_locations.strike_locations.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(static.position, static.units[0].heading)
             )
 
-        for group in self.scenery:
-            closest, distance = self.objective_info(group)
-            closest.preset_locations.scenery.append(group)
+        for scenery_group in self.scenery:
+            closest, distance = self.objective_info(scenery_group)
+            closest.preset_locations.scenery.append(scenery_group)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
@@ -605,12 +605,12 @@ class ConflictTheater:
 
         return True
 
-    def nearest_land_pos(self, point: Point, extend_dist: int = 50) -> Point:
+    def nearest_land_pos(self, near: Point, extend_dist: int = 50) -> Point:
         """Returns the nearest point inside a land exclusion zone from point
         `extend_dist` determines how far inside the zone the point should be placed"""
-        if self.is_on_land(point):
-            return point
-        point = geometry.Point(point.x, point.y)
+        if self.is_on_land(near):
+            return near
+        point = geometry.Point(near.x, near.y)
         nearest_points = []
         if not self.landmap:
             raise RuntimeError("Landmap not initialized")

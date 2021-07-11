@@ -77,7 +77,7 @@ class VehicleGroupGenerator(
         super().__init__(
             game,
             ground_object,
-            unitgroup.VehicleGroup(self.game.next_group_id(), self.go.group_name),
+            unitgroup.VehicleGroup(game.next_group_id(), ground_object.group_name),
         )
         wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
         wp.ETA_locked = True
@@ -157,7 +157,7 @@ class ShipGroupGenerator(
         super().__init__(
             game,
             ground_object,
-            unitgroup.ShipGroup(self.game.next_group_id(), self.go.group_name),
+            unitgroup.ShipGroup(game.next_group_id(), ground_object.group_name),
         )
         self.faction = faction
         wp = self.vg.add_waypoint(self.position, 0)

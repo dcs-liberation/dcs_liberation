@@ -1,10 +1,11 @@
 import itertools
 import logging
+import math
 import random
 import sys
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List, Type, Union
+from typing import Any, List, Type, Union, cast
 
 from dcs.action import Coalition
 from dcs.mapping import Point
@@ -614,7 +615,7 @@ class Game:
         # If there is no conflict take the center point between the two nearest opposing bases
         if len(zones) == 0:
             cpoint = None
-            min_distance = sys.maxsize
+            min_distance = math.inf
             for cp in self.theater.player_points():
                 for cp2 in self.theater.enemy_points():
                     d = cp.position.distance_to_point(cp2.position)
@@ -651,7 +652,7 @@ class Game:
         self.__culling_zones = zones
 
     def add_destroyed_units(self, data: dict[str, Union[float, str]]) -> None:
-        pos = Point(data["x"], data["z"])
+        pos = Point(cast(float, data["x"]), cast(float, data["z"]))
         if self.theater.is_on_land(pos):
             self.__destroyed_units.append(data)
 

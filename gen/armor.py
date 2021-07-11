@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import random
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Optional, Tuple
@@ -23,7 +24,7 @@ from dcs.task import (
     SetInvisibleCommand,
 )
 from dcs.triggers import Event, TriggerOnce
-from dcs.unit import Vehicle
+from dcs.unit import Vehicle, Skill
 from dcs.unitgroup import VehicleGroup
 
 from game.data.groundunitclass import GroundUnitClass
@@ -359,7 +360,6 @@ class GroundConflictGenerator:
             self.mission.triggerrules.triggers.append(artillery_fallback)
 
             for u in dcs_group.units:
-                u.initial = True
                 u.heading = forward_heading + random.randint(-5, 5)
             return True
         return False
@@ -568,10 +568,10 @@ class GroundConflictGenerator:
         )
 
         # Fallback task
-        fallback = ControlledTask(GoToWaypoint(to_index=len(dcs_group.points)))
-        fallback.enabled = False
+        task = ControlledTask(GoToWaypoint(to_index=len(dcs_group.points)))
+        task.enabled = False
         dcs_group.add_trigger_action(Hold())
-        dcs_group.add_trigger_action(fallback)
+        dcs_group.add_trigger_action(task)
 
         # Create trigger
         fallback = TriggerOnce(Event.NoEvent, "Morale manager #" + str(dcs_group.id))
@@ -632,7 +632,7 @@ class GroundConflictGenerator:
         @param enemy_groups Potential enemy groups
         @param n number of nearby groups to take
         """
-        targets = []  # type: List[Optional[VehicleGroup]]
+        targets = []  # type: List[VehicleGroup]
         sorted_list = sorted(
             enemy_groups,
             key=lambda group: player_group.points[0].position.distance_to_point(
@@ -656,7 +656,7 @@ class GroundConflictGenerator:
         @param group Group for which we should find the nearest ennemy
         @param enemy_groups Potential enemy groups
         """
-        min_distance = 99999999
+        min_distance = math.inf
         target = None
         for dcs_group, _ in enemy_groups:
             dist = player_group.points[0].position.distance_to_point(
@@ -694,7 +694,7 @@ class GroundConflictGenerator:
         """
         For artilery group, decide the distance from frontline with the range of the unit
         """
-        rg = getattr(group.unit_type.dcs_unit_type, "threat_range", 0) - 7500
+        rg = group.unit_type.dcs_unit_type.threat_range - 7500
         if rg > DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
             rg = random.randint(
                 DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][0],
@@ -714,7 +714,7 @@ class GroundConflictGenerator:
         distance_from_frontline: int,
         heading: int,
         spawn_heading: int,
-    ) -> Point:
+    ) -> Optional[Point]:
         shifted = conflict_position.point_from_heading(
             heading, random.randint(0, combat_width)
         )
@@ -764,9 +764,9 @@ class GroundConflictGenerator:
                     heading=opposite_heading(spawn_heading),
                 )
                 if is_player:
-                    g.set_skill(self.game.settings.player_skill)
+                    g.set_skill(Skill(self.game.settings.player_skill))
                 else:
-                    g.set_skill(self.game.settings.enemy_vehicle_skill)
+                    g.set_skill(Skill(self.game.settings.enemy_vehicle_skill))
                 positioned_groups.append((g, group))
 
                 if group.role in [CombatGroupRole.APC, CombatGroupRole.IFV]:

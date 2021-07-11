@@ -1084,22 +1084,22 @@ class FlightPlanBuilder:
             patrol_alt = feet(25000)
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        orbit_location = builder.orbit(orbit_location, patrol_alt)
+        orbit = builder.orbit(orbit_location, patrol_alt)
 
         return AwacsFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
-                flight.departure.position, orbit_location.position, patrol_alt
+                flight.departure.position, orbit.position, patrol_alt
             ),
             nav_from=builder.nav_path(
-                orbit_location.position, flight.arrival.position, patrol_alt
+                orbit.position, flight.arrival.position, patrol_alt
             ),
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
-            hold=orbit_location,
+            hold=orbit,
             hold_duration=timedelta(hours=4),
         )
 
@@ -1167,7 +1167,7 @@ class FlightPlanBuilder:
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        start, end = self.racetrack_for_objective(location, barcap=True)
+        start_pos, end_pos = self.racetrack_for_objective(location, barcap=True)
         patrol_alt = meters(
             random.randint(
                 int(self.doctrine.min_patrol_altitude.meters),
@@ -1176,7 +1176,7 @@ class FlightPlanBuilder:
         )
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start, end = builder.race_track(start, end, patrol_alt)
+        start, end = builder.race_track(start_pos, end_pos, patrol_alt)
 
         return BarCapFlightPlan(
             package=self.package,
@@ -1207,10 +1207,12 @@ class FlightPlanBuilder:
         target = self.package.target.position
 
         heading = self.package.waypoints.join.heading_between_point(target)
-        start = target.point_from_heading(heading, -self.doctrine.sweep_distance.meters)
+        start_pos = target.point_from_heading(
+            heading, -self.doctrine.sweep_distance.meters
+        )
 
         builder = WaypointBuilder(flight, self.game, self.is_player)
-        start, end = builder.sweep(start, target, self.doctrine.ingress_altitude)
+        start, end = builder.sweep(start_pos, target, self.doctrine.ingress_altitude)
 
         hold = builder.hold(self._hold_point(flight))
 
@@ -1865,23 +1867,23 @@ class FlightPlanBuilder:
             return self._retreating_rendezvous_point(attack_transition)
         return self._advancing_rendezvous_point(attack_transition)
 
-    def _ingress_point(self, heading: int) -> Point:
+    def _ingress_point(self, heading: float) -> Point:
         return self.package.target.position.point_from_heading(
             heading - 180 + 15, self.doctrine.ingress_egress_distance.meters
         )
 
-    def _egress_point(self, heading: int) -> Point:
+    def _egress_point(self, heading: float) -> Point:
         return self.package.target.position.point_from_heading(
             heading - 180 - 15, self.doctrine.ingress_egress_distance.meters
         )
 
-    def _target_heading_to_package_airfield(self) -> int:
+    def _target_heading_to_package_airfield(self) -> float:
         return self._heading_to_package_airfield(self.package.target.position)
 
-    def _heading_to_package_airfield(self, point: Point) -> int:
+    def _heading_to_package_airfield(self, point: Point) -> float:
         return self.package_airfield().position.heading_between_point(point)
 
-    def _distance_to_package_airfield(self, point: Point) -> int:
+    def _distance_to_package_airfield(self, point: Point) -> float:
         return self.package_airfield().position.distance_to_point(point)
 
     def package_airfield(self) -> ControlPoint:

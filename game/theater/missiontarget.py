@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Sequence
 from typing import Iterator, TYPE_CHECKING, List, Union
 
 from dcs.mapping import Point
@@ -20,7 +21,7 @@ class MissionTarget:
         self.name = name
         self.position = position
 
-    def distance_to(self, other: MissionTarget) -> int:
+    def distance_to(self, other: MissionTarget) -> float:
         """Computes the distance to the given mission target."""
         return self.position.distance_to_point(other.position)
 
@@ -45,5 +46,5 @@ class MissionTarget:
             ]
 
     @property
-    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+    def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:
         return []
