@@ -93,7 +93,7 @@ class KneeboardPageWriter:
     def text(
         self,
         text: str,
-        font: Optional[ImageFont.ImageFont] = None,
+        font: Optional[ImageFont.FreeTypeFont] = None,
         fill: Tuple[int, int, int] = (0, 0, 0),
     ) -> None:
         if font is None:
