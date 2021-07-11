@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Iterable, List, Set, TYPE_CHECKING
+from typing import Iterable, List, Set, TYPE_CHECKING, cast
 
 from dcs import Mission
 from dcs.action import DoScript, DoScriptFile
@@ -261,7 +261,7 @@ class Operation:
             except KeyError:
                 continue
 
-            pos = Point(d["x"], d["z"])
+            pos = Point(cast(float, d["x"]), cast(float, d["z"]))
             if (
                 utype is not None
                 and not cls.game.position_culled(pos)
