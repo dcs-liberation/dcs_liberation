@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import random
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Optional, Tuple
@@ -655,7 +656,7 @@ class GroundConflictGenerator:
         @param group Group for which we should find the nearest ennemy
         @param enemy_groups Potential enemy groups
         """
-        min_distance = 99999999
+        min_distance = math.inf
         target = None
         for dcs_group, _ in enemy_groups:
             dist = player_group.points[0].position.distance_to_point(
@@ -693,7 +694,7 @@ class GroundConflictGenerator:
         """
         For artilery group, decide the distance from frontline with the range of the unit
         """
-        rg = getattr(group.unit_type.dcs_unit_type, "threat_range", 0) - 7500
+        rg = group.unit_type.dcs_unit_type.threat_range - 7500
         if rg > DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
             rg = random.randint(
                 DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][0],
