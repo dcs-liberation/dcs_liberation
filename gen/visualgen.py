@@ -17,15 +17,15 @@ class MarkerSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 5
-    rate = 0.1
+    shape_name = 5  # type: ignore
+    rate = 0.1  # type: ignore
 
 
 class Smoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 2
+    shape_name = 2  # type: ignore
     rate = 1
 
 
@@ -33,7 +33,7 @@ class BigSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 3
+    shape_name = 3  # type: ignore
     rate = 1
 
 
@@ -41,7 +41,7 @@ class MassiveSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 4
+    shape_name = 4  # type: ignore
     rate = 1
 
 
@@ -56,7 +56,7 @@ def __monkey_static_dict(self: Static) -> dict[str, Any]:
 
 
 __original_static_dict = Static.dict
-Static.dict = __monkey_static_dict
+Static.dict = __monkey_static_dict  # type: ignore
 
 FRONT_SMOKE_RANDOM_SPREAD = 4000
 FRONT_SMOKE_TYPE_CHANCES = {

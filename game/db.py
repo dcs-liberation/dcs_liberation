@@ -383,7 +383,7 @@ class DefaultLiveries:
 
 
 OH_58D.Liveries = DefaultLiveries
-F_16C_50.Liveries = DefaultLiveries
+F_16C_50.Liveries = DefaultLiveries  # type: ignore
 P_51D_30_NA.Liveries = DefaultLiveries
 Ju_88A4.Liveries = DefaultLiveries
 B_17G.Liveries = DefaultLiveries

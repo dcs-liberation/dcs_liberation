@@ -219,10 +219,10 @@ class Event:
         for loss in debriefing.ground_object_losses:
             # TODO: This should be stored in the TGO, not in the pydcs Group.
             if not hasattr(loss.group, "units_losts"):
-                loss.group.units_losts = []
+                loss.group.units_losts = []  # type: ignore
 
             loss.group.units.remove(loss.unit)
-            loss.group.units_losts.append(loss.unit)
+            loss.group.units_losts.append(loss.unit)  # type: ignore
 
     def commit_building_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.building_losses:
