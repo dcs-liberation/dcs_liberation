@@ -1,8 +1,15 @@
 from pathlib import Path
 
 
+MAJOR_VERSION = 5
+MINOR_VERSION = 0
+MICRO_VERSION = 0
+
+
 def _build_version_string() -> str:
-    components = ["5.0.0"]
+    components = [
+        ".".join(str(v) for v in (MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION))
+    ]
     build_number_path = Path("resources/buildnumber")
     if build_number_path.exists():
         with build_number_path.open("r") as build_number_file:
