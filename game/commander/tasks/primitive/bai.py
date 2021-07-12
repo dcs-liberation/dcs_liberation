@@ -17,7 +17,7 @@ class PlanBai(PackagePlanningTask[VehicleGroupGroundObject]):
         return self.target_area_preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
-        state.enemy_garrisons.remove(self.target)
+        state.enemy_garrisons.eliminate(self.target)
 
     def propose_flights(self, doctrine: Doctrine) -> None:
         self.propose_flight(FlightType.BAI, 2, doctrine.mission_ranges.offensive)

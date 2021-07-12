@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+import dataclasses
 import itertools
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Union
 
+from game.commander.garrisons import Garrisons
 from game.commander.objectivefinder import ObjectiveFinder
 from game.data.doctrine import Doctrine
 from game.htn import WorldState
 from game.theater import ControlPoint, FrontLine, MissionTarget
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
-    VehicleGroupGroundObject,
     NavalGroundObject,
     IadsGroundObject,
 )
@@ -32,7 +33,7 @@ class TheaterState(WorldState["TheaterState"]):
     enemy_convoys: list[Convoy]
     enemy_shipping: list[CargoShip]
     enemy_ships: list[NavalGroundObject]
-    enemy_garrisons: list[VehicleGroupGroundObject]
+    enemy_garrisons: Garrisons
     oca_targets: list[ControlPoint]
     strike_targets: list[TheaterGroundObject[Any]]
     enemy_barcaps: list[ControlPoint]
@@ -69,7 +70,7 @@ class TheaterState(WorldState["TheaterState"]):
             enemy_convoys=list(self.enemy_convoys),
             enemy_shipping=list(self.enemy_shipping),
             enemy_ships=list(self.enemy_ships),
-            enemy_garrisons=list(self.enemy_garrisons),
+            enemy_garrisons=dataclasses.replace(self.enemy_garrisons),
             oca_targets=list(self.oca_targets),
             strike_targets=list(self.strike_targets),
             enemy_barcaps=list(self.enemy_barcaps),
@@ -97,7 +98,7 @@ class TheaterState(WorldState["TheaterState"]):
             enemy_convoys=list(finder.convoys()),
             enemy_shipping=list(finder.cargo_ships()),
             enemy_ships=list(finder.enemy_ships()),
-            enemy_garrisons=list(finder.threatening_vehicle_groups()),
+            enemy_garrisons=Garrisons.from_theater(game.theater, not player),
             oca_targets=list(finder.oca_targets(min_aircraft=20)),
             strike_targets=list(finder.strike_targets()),
             enemy_barcaps=list(game.theater.control_points_for(not player)),

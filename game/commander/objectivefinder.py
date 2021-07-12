@@ -65,14 +65,6 @@ class ObjectiveFinder:
 
                 yield ground_object
 
-    def threatening_vehicle_groups(self) -> Iterator[VehicleGroupGroundObject]:
-        """Iterates over enemy vehicle groups near friendly control points.
-
-        Groups are sorted by their closest proximity to any friendly control
-        point (airfield or fleet).
-        """
-        return self._targets_by_range(self.enemy_vehicle_groups())
-
     def enemy_ships(self) -> Iterator[NavalGroundObject]:
         for cp in self.enemy_control_points():
             for ground_object in cp.ground_objects:
