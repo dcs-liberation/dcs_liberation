@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Dict, Iterable, Iterator, Set, Tuple, TYPE_CHECKING, Type
-
-from dcs.unittype import FlyingType
+from typing import Dict, Iterable, Iterator, Set, Tuple, TYPE_CHECKING
 
 from game.dcs.aircrafttype import AircraftType
 from gen.flights.flight import Flight
@@ -86,10 +84,11 @@ class GlobalAircraftInventory:
             cp: ControlPointAircraftInventory(cp) for cp in control_points
         }
 
-    def reset(self) -> None:
-        """Clears all control points and their inventories."""
+    def reset(self, for_player: bool) -> None:
+        """Clears the inventory of every control point owned by the given coalition."""
         for inventory in self.inventories.values():
-            inventory.clear()
+            if inventory.control_point.captured == for_player:
+                inventory.clear()
 
     def set_from_control_point(self, control_point: ControlPoint) -> None:
         """Set the control point's aircraft inventory.

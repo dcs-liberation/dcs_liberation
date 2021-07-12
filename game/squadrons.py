@@ -20,10 +20,11 @@ import yaml
 from faker import Faker
 
 from game.dcs.aircrafttype import AircraftType
-from game.settings import AutoAtoBehavior
+from game.settings import AutoAtoBehavior, Settings
 
 if TYPE_CHECKING:
     from game import Game
+    from game.coalition import Coalition
     from gen.flights.flight import FlightType
 
 
@@ -96,16 +97,13 @@ class Squadron:
         init=False, hash=False, compare=False
     )
 
-    # We need a reference to the Game so that we can access the Faker without needing to
-    # persist it to the save game, or having to reconstruct it (it's not cheap) each
-    # time we create or load a squadron.
-    game: Game = field(hash=False, compare=False)
-    player: bool
+    coalition: Coalition = field(hash=False, compare=False)
+    settings: Settings = field(hash=False, compare=False)
 
     def __post_init__(self) -> None:
         if any(p.status is not PilotStatus.Active for p in self.pilot_pool):
             raise ValueError("Squadrons can only be created with active pilots.")
-        self._recruit_pilots(self.game.settings.squadron_pilot_limit)
+        self._recruit_pilots(self.settings.squadron_pilot_limit)
         self.auto_assignable_mission_types = set(self.mission_types)
 
     def __str__(self) -> str:
@@ -114,8 +112,12 @@ class Squadron:
         return f'{self.name} "{self.nickname}"'
 
     @property
+    def player(self) -> bool:
+        return self.coalition.player
+
+    @property
     def pilot_limits_enabled(self) -> bool:
-        return self.game.settings.enable_squadron_pilot_limits
+        return self.settings.enable_squadron_pilot_limits
 
     def claim_new_pilot_if_allowed(self) -> Optional[Pilot]:
         if self.pilot_limits_enabled:
@@ -131,7 +133,7 @@ class Squadron:
         if not self.player:
             return self.available_pilots.pop()
 
-        preference = self.game.settings.auto_ato_behavior
+        preference = self.settings.auto_ato_behavior
 
         # No preference, so the first pilot is fine.
         if preference is AutoAtoBehavior.Default:
@@ -184,7 +186,7 @@ class Squadron:
             return
 
         replenish_count = min(
-            self.game.settings.squadron_replenishment_rate,
+            self.settings.squadron_replenishment_rate,
             self._number_of_unfilled_pilot_slots,
         )
         if replenish_count > 0:
@@ -206,7 +208,7 @@ class Squadron:
 
     @property
     def faker(self) -> Faker:
-        return self.game.faker_for(self.player)
+        return self.coalition.faker
 
     def _pilots_with_status(self, status: PilotStatus) -> list[Pilot]:
         return [p for p in self.current_roster if p.status == status]
@@ -228,7 +230,7 @@ class Squadron:
 
     @property
     def _number_of_unfilled_pilot_slots(self) -> int:
-        return self.game.settings.squadron_pilot_limit - len(self.active_pilots)
+        return self.settings.squadron_pilot_limit - len(self.active_pilots)
 
     @property
     def number_of_available_pilots(self) -> int:
@@ -252,7 +254,7 @@ class Squadron:
         return self.current_roster[index]
 
     @classmethod
-    def from_yaml(cls, path: Path, game: Game, player: bool) -> Squadron:
+    def from_yaml(cls, path: Path, game: Game, coalition: Coalition) -> Squadron:
         from gen.flights.ai_flight_planner_db import tasks_for_aircraft
         from gen.flights.flight import FlightType
 
@@ -287,8 +289,8 @@ class Squadron:
             livery=data.get("livery"),
             mission_types=tuple(mission_types),
             pilot_pool=pilots,
-            game=game,
-            player=player,
+            coalition=coalition,
+            settings=game.settings,
         )
 
     def __setstate__(self, state: dict[str, Any]) -> None:
@@ -299,9 +301,9 @@ class Squadron:
 
 
 class SquadronLoader:
-    def __init__(self, game: Game, player: bool) -> None:
+    def __init__(self, game: Game, coalition: Coalition) -> None:
         self.game = game
-        self.player = player
+        self.coalition = coalition
 
     @staticmethod
     def squadron_directories() -> Iterator[Path]:
@@ -312,8 +314,8 @@ class SquadronLoader:
 
     def load(self) -> dict[AircraftType, list[Squadron]]:
         squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
-        country = self.game.country_for(self.player)
-        faction = self.game.faction_for(self.player)
+        country = self.coalition.country_name
+        faction = self.coalition.faction
         any_country = country.startswith("Combined Joint Task Forces ")
         for directory in self.squadron_directories():
             for path, squadron in self.load_squadrons_from(directory):
@@ -347,7 +349,7 @@ class SquadronLoader:
         for squadron_path in directory.glob("*/*.yaml"):
             try:
                 yield squadron_path, Squadron.from_yaml(
-                    squadron_path, self.game, self.player
+                    squadron_path, self.game, self.coalition
                 )
             except Exception as ex:
                 raise RuntimeError(
@@ -356,29 +358,28 @@ class SquadronLoader:
 
 
 class AirWing:
-    def __init__(self, game: Game, player: bool) -> None:
+    def __init__(self, game: Game, coalition: Coalition) -> None:
         from gen.flights.ai_flight_planner_db import tasks_for_aircraft
 
         self.game = game
-        self.player = player
-        self.squadrons = SquadronLoader(game, player).load()
+        self.squadrons = SquadronLoader(game, coalition).load()
 
         count = itertools.count(1)
-        for aircraft in game.faction_for(player).aircrafts:
+        for aircraft in coalition.faction.aircrafts:
             if aircraft in self.squadrons:
                 continue
             self.squadrons[aircraft] = [
                 Squadron(
                     name=f"Squadron {next(count):03}",
                     nickname=self.random_nickname(),
-                    country=game.country_for(player),
+                    country=coalition.country_name,
                     role="Flying Squadron",
                     aircraft=aircraft,
                     livery=None,
                     mission_types=tuple(tasks_for_aircraft(aircraft)),
                     pilot_pool=[],
-                    game=game,
-                    player=player,
+                    coalition=coalition,
+                    settings=game.settings,
                 )
             ]
 

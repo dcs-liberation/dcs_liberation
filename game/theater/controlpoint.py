@@ -40,11 +40,7 @@ from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
-from .theatergroundobject import (
-    GenericCarrierGroundObject,
-    TheaterGroundObject,
-    NavalGroundObject,
-)
+from .theatergroundobject import GenericCarrierGroundObject, TheaterGroundObject
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
@@ -606,7 +602,7 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
-        self.pending_unit_deliveries.refund_all(game)
+        self.pending_unit_deliveries.refund_all(game.coalition_for(for_player))
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
@@ -623,11 +619,7 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     def aircraft_transferring(self, game: Game) -> dict[AircraftType, int]:
-        if self.captured:
-            ato = game.blue_ato
-        else:
-            ato = game.red_ato
-
+        ato = game.coalition_for(self.captured).ato
         transferring: defaultdict[AircraftType, int] = defaultdict(int)
         for package in ato.packages:
             for flight in package.flights:

@@ -3,12 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Iterator
 
-from PySide2.QtCore import (
-    QItemSelectionModel,
-    QModelIndex,
-    Qt,
-    QSize,
-)
+from PySide2.QtCore import QItemSelectionModel, QModelIndex, QSize
 from PySide2.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -183,7 +178,7 @@ class AirInventoryView(QWidget):
         self.table.setSortingEnabled(True)
 
     def iter_allocated_aircraft(self) -> Iterator[AircraftInventoryData]:
-        for package in self.game_model.game.blue_ato.packages:
+        for package in self.game_model.game.blue.ato.packages:
             for flight in package.flights:
                 yield from AircraftInventoryData.from_flight(flight)
 

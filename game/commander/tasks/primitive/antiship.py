@@ -6,7 +6,7 @@ from game.commander.missionproposals import EscortType
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
 from game.data.doctrine import Doctrine
-from game.theater import NavalGroundObject
+from game.theater.theatergroundobject import NavalGroundObject
 from gen.flights.flight import FlightType
 
 

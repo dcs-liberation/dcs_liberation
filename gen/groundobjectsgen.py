@@ -25,7 +25,7 @@ from typing import (
 from dcs import Mission, Point, unitgroup
 from dcs.action import SceneryDestructionZone
 from dcs.country import Country
-from dcs.point import StaticPoint, MovingPoint
+from dcs.point import StaticPoint
 from dcs.statics import Fortification, fortification_map, warehouse_map
 from dcs.task import (
     ActivateBeaconCommand,
@@ -36,8 +36,8 @@ from dcs.task import (
 )
 from dcs.triggers import TriggerStart, TriggerZone
 from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad
-from dcs.unitgroup import Group, ShipGroup, StaticGroup, VehicleGroup
-from dcs.unittype import StaticType, UnitType, ShipType, VehicleType
+from dcs.unitgroup import ShipGroup, StaticGroup, VehicleGroup
+from dcs.unittype import StaticType, ShipType, VehicleType
 from dcs.vehicles import vehicle_map
 
 from game import db
@@ -587,13 +587,7 @@ class HelipadGenerator:
         self.tacan_registry = tacan_registry
 
     def generate(self) -> None:
-
-        if self.cp.captured:
-            country_name = self.game.player_country
-        else:
-            country_name = self.game.enemy_country
-        country = self.m.country(country_name)
-
+        country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
         for i, helipad in enumerate(self.cp.helipads):
             name = self.cp.name + "_helipad_" + str(i)
             logging.info("Generating helipad : " + name)
@@ -636,12 +630,7 @@ class GroundObjectsGenerator:
 
     def generate(self) -> None:
         for cp in self.game.theater.controlpoints:
-            if cp.captured:
-                country_name = self.game.player_country
-            else:
-                country_name = self.game.enemy_country
-            country = self.m.country(country_name)
-
+            country = self.m.country(self.game.coalition_for(cp.captured).country_name)
             HelipadGenerator(
                 self.m, cp, self.game, self.radio_registry, self.tacan_registry
             ).generate()

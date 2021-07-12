@@ -336,8 +336,12 @@ class SupplyRouteJs(QObject):
 
     def find_transports(self) -> List[MultiGroupTransport]:
         if self.sea_route:
-            return self.find_in_transport_map(self.game.transfers.cargo_ships)
-        return self.find_in_transport_map(self.game.transfers.convoys)
+            return self.find_in_transport_map(
+                self.game.blue.transfers.cargo_ships
+            ) + self.find_in_transport_map(self.game.red.transfers.cargo_ships)
+        return self.find_in_transport_map(
+            self.game.blue.transfers.convoys
+        ) + self.find_in_transport_map(self.game.red.transfers.convoys)
 
     @Property(list, notify=activeTransportsChanged)
     def activeTransports(self) -> List[str]:
@@ -672,8 +676,8 @@ class NavMeshJs(QObject):
     @classmethod
     def from_game(cls, game: Game) -> NavMeshJs:
         return NavMeshJs(
-            cls.to_polys(game.blue_navmesh, game.theater),
-            cls.to_polys(game.red_navmesh, game.theater),
+            cls.to_polys(game.blue.nav_mesh, game.theater),
+            cls.to_polys(game.red.nav_mesh, game.theater),
         )
 
 
@@ -870,8 +874,8 @@ class MapModel(QObject):
 
     def reset_atos(self) -> None:
         self._flights = self._flights_in_ato(
-            self.game.blue_ato, blue=True
-        ) + self._flights_in_ato(self.game.red_ato, blue=False)
+            self.game.blue.ato, blue=True
+        ) + self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
 
     @Property(list, notify=flightsChanged)

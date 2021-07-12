@@ -24,8 +24,8 @@ class QFactionsInfos(QGroupBox):
 
     def setGame(self, game: Game):
         if game is not None:
-            self.player_name.setText(game.player_faction.name)
-            self.enemy_name.setText(game.enemy_faction.name)
+            self.player_name.setText(game.blue.faction.name)
+            self.enemy_name.setText(game.red.faction.name)
         else:
             self.player_name.setText("")
             self.enemy_name.setText("")

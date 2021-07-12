@@ -1,7 +1,6 @@
 import logging
 from typing import List, Optional
 
-from PySide2 import QtCore
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import (
     QComboBox,
@@ -307,7 +306,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buySamBox = QGroupBox("Buy SAM site :")
         self.buyArmorBox = QGroupBox("Buy defensive position :")
 
-        faction = self.game.player_faction
+        faction = self.game.blue.faction
 
         # Sams
 

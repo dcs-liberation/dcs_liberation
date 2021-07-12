@@ -228,7 +228,7 @@ class CoalitionMissionPlanner:
         self.game = game
         self.is_player = is_player
         self.objective_finder = ObjectiveFinder(self.game, self.is_player)
-        self.ato = self.game.blue_ato if is_player else self.game.red_ato
+        self.ato = self.game.coalition_for(is_player).ato
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
         self.procurement_requests = self.game.procurement_requests_for(self.is_player)
         self.faction: Faction = self.game.faction_for(self.is_player)

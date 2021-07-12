@@ -195,7 +195,9 @@ class QBaseMenu2(QDialog):
         ground_unit_limit = self.cp.frontline_unit_count_limit
         deployable_unit_info = ""
 
-        allocated = self.cp.allocated_ground_units(self.game_model.game.transfers)
+        allocated = self.cp.allocated_ground_units(
+            self.game_model.game.coalition_for(self.cp.captured).transfers
+        )
         unit_overage = max(
             allocated.total_present - self.cp.frontline_unit_count_limit, 0
         )

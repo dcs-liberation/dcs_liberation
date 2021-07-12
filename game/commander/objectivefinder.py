@@ -14,9 +14,9 @@ from game.theater import (
     Airfield,
 )
 from game.theater.theatergroundobject import (
-    NavalGroundObject,
     BuildingGroundObject,
     IadsGroundObject,
+    NavalGroundObject,
 )
 from game.transfers import CargoShip, Convoy
 from game.utils import meters, nautical_miles
@@ -163,13 +163,17 @@ class ObjectiveFinder:
 
     def convoys(self) -> Iterator[Convoy]:
         for front_line in self.front_lines():
-            yield from self.game.transfers.convoys.travelling_to(
+            yield from self.game.coalition_for(
+                self.is_player
+            ).transfers.convoys.travelling_to(
                 front_line.control_point_hostile_to(self.is_player)
             )
 
     def cargo_ships(self) -> Iterator[CargoShip]:
         for front_line in self.front_lines():
-            yield from self.game.transfers.cargo_ships.travelling_to(
+            yield from self.game.coalition_for(
+                self.is_player
+            ).transfers.cargo_ships.travelling_to(
                 front_line.control_point_hostile_to(self.is_player)
             )
 

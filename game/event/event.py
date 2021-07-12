@@ -53,7 +53,7 @@ class Event:
 
     @property
     def is_player_attacking(self) -> bool:
-        return self.attacker_name == self.game.player_faction.name
+        return self.attacker_name == self.game.blue.faction.name
 
     @property
     def tasks(self) -> List[Type[Task]]:
@@ -114,10 +114,10 @@ class Event:
 
     def complete_aircraft_transfers(self, debriefing: Debriefing) -> None:
         self._transfer_aircraft(
-            self.game.blue_ato, debriefing.air_losses, for_player=True
+            self.game.blue.ato, debriefing.air_losses, for_player=True
         )
         self._transfer_aircraft(
-            self.game.red_ato, debriefing.air_losses, for_player=False
+            self.game.red.ato, debriefing.air_losses, for_player=False
         )
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
@@ -154,8 +154,8 @@ class Event:
                     pilot.record.missions_flown += 1
 
     def commit_pilot_experience(self) -> None:
-        self._commit_pilot_experience(self.game.blue_ato)
-        self._commit_pilot_experience(self.game.red_ato)
+        self._commit_pilot_experience(self.game.blue.ato)
+        self._commit_pilot_experience(self.game.red.ato)
 
     @staticmethod
     def commit_front_line_losses(debriefing: Debriefing) -> None:

@@ -316,7 +316,9 @@ class AirliftPlanner:
         capacity = flight_size * capacity_each
 
         if capacity < self.transfer.size:
-            transfer = self.game.transfers.split_transfer(self.transfer, capacity)
+            transfer = self.game.coalition_for(
+                self.for_player
+            ).transfers.split_transfer(self.transfer, capacity)
         else:
             transfer = self.transfer
 
@@ -534,8 +536,9 @@ class CargoShipMap(TransportMap[CargoShip]):
 
 
 class PendingTransfers:
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, player: bool) -> None:
         self.game = game
+        self.player = player
         self.convoys = ConvoyMap()
         self.cargo_ships = CargoShipMap()
         self.pending_transfers: List[TransferOrder] = []
@@ -609,7 +612,7 @@ class PendingTransfers:
         flight = transport.flight
         flight.package.remove_flight(flight)
         if not flight.package.flights:
-            self.game.ato_for(transport.player_owned).remove_package(flight.package)
+            self.game.ato_for(self.player).remove_package(flight.package)
         self.game.aircraft_inventory.return_from_flight(flight)
         flight.clear_roster()
 
@@ -647,7 +650,7 @@ class PendingTransfers:
                 self.arrange_transport(transfer)
 
     def order_airlift_assets(self) -> None:
-        for control_point in self.game.theater.controlpoints:
+        for control_point in self.game.theater.control_points_for(self.player):
             if self.game.air_wing_for(control_point.captured).can_auto_plan(
                 FlightType.TRANSPORT
             ):
@@ -682,7 +685,7 @@ class PendingTransfers:
             # aesthetic.
             gap += 1
 
-        self.game.procurement_requests_for(player=control_point.captured).append(
+        self.game.procurement_requests_for(self.player).append(
             AircraftProcurementRequest(
                 control_point, nautical_miles(200), FlightType.TRANSPORT, gap
             )
