@@ -46,7 +46,7 @@ class Garrisons:
             garrisons = [
                 tgo
                 for tgo in cp.ground_objects
-                if isinstance(tgo, VehicleGroupGroundObject)
+                if isinstance(tgo, VehicleGroupGroundObject) and not tgo.is_dead
             ]
             if not cp.has_active_frontline:
                 reserves.extend(garrisons)
