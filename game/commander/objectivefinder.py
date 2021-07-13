@@ -223,17 +223,18 @@ class ObjectiveFinder:
             if not c.is_friendly(self.is_player)
         )
 
-    def all_possible_targets(self) -> Iterator[MissionTarget]:
-        """Iterates over all possible mission targets in the theater.
-
-        Valid mission targets are control points (airfields and carriers), front
-        lines, and ground objects (SAM sites, factories, resource extraction
-        sites, etc).
-        """
-        for cp in self.game.theater.controlpoints:
-            yield cp
-            yield from cp.ground_objects
-        yield from self.front_lines()
+    def prioritized_unisolated_points(self) -> list[ControlPoint]:
+        prioritized = []
+        capturable_later = []
+        for cp in self.game.theater.control_points_for(not self.is_player):
+            if cp.is_isolated:
+                continue
+            if cp.has_active_frontline:
+                prioritized.append(cp)
+            else:
+                capturable_later.append(cp)
+        prioritized.extend(self._targets_by_range(capturable_later))
+        return prioritized
 
     @staticmethod
     def closest_airfields_to(location: MissionTarget) -> ClosestAirfields:

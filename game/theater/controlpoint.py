@@ -342,8 +342,12 @@ class ControlPoint(MissionTarget, ABC):
         return self.name
 
     @property
-    def is_global(self) -> bool:
+    def is_isolated(self) -> bool:
         return not self.connected_points
+
+    @property
+    def is_global(self) -> bool:
+        return self.is_isolated
 
     def transitive_connected_friendly_points(
         self, seen: Optional[Set[ControlPoint]] = None

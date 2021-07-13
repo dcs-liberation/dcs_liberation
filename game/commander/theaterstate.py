@@ -15,6 +15,7 @@ from game.theater.theatergroundobject import (
     TheaterGroundObject,
     NavalGroundObject,
     IadsGroundObject,
+    VehicleGroupGroundObject,
 )
 from game.threatzones import ThreatZones
 from game.transfers import Convoy, CargoShip
@@ -41,7 +42,7 @@ class TheaterState(WorldState["TheaterState"]):
     enemy_convoys: list[Convoy]
     enemy_shipping: list[CargoShip]
     enemy_ships: list[NavalGroundObject]
-    enemy_garrisons: Garrisons
+    enemy_garrisons: dict[ControlPoint, Garrisons]
     oca_targets: list[ControlPoint]
     strike_targets: list[TheaterGroundObject[Any]]
     enemy_barcaps: list[ControlPoint]
@@ -72,6 +73,12 @@ class TheaterState(WorldState["TheaterState"]):
         self.enemy_ships.remove(target)
         self._rebuild_threat_zones()
 
+    def has_garrison(self, target: VehicleGroupGroundObject) -> bool:
+        return target in self.enemy_garrisons[target.control_point]
+
+    def eliminate_garrison(self, target: VehicleGroupGroundObject) -> None:
+        self.enemy_garrisons[target.control_point].eliminate(target)
+
     def clone(self) -> TheaterState:
         # Do not use copy.deepcopy. Copying every TGO, control point, etc is absurdly
         # expensive.
@@ -89,7 +96,9 @@ class TheaterState(WorldState["TheaterState"]):
             enemy_convoys=list(self.enemy_convoys),
             enemy_shipping=list(self.enemy_shipping),
             enemy_ships=list(self.enemy_ships),
-            enemy_garrisons=dataclasses.replace(self.enemy_garrisons),
+            enemy_garrisons={
+                cp: dataclasses.replace(g) for cp, g in self.enemy_garrisons.items()
+            },
             oca_targets=list(self.oca_targets),
             strike_targets=list(self.strike_targets),
             enemy_barcaps=list(self.enemy_barcaps),
@@ -110,6 +119,7 @@ class TheaterState(WorldState["TheaterState"]):
         finder = ObjectiveFinder(game, player)
         auto_stance = game.settings.automate_front_line_stance
         auto_ato = game.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
+        ordered_capturable_points = finder.prioritized_unisolated_points()
         return TheaterState(
             player=player,
             stance_automation_enabled=auto_stance,
@@ -126,7 +136,9 @@ class TheaterState(WorldState["TheaterState"]):
             enemy_convoys=list(finder.convoys()),
             enemy_shipping=list(finder.cargo_ships()),
             enemy_ships=list(finder.enemy_ships()),
-            enemy_garrisons=Garrisons.from_theater(game.theater, not player),
+            enemy_garrisons={
+                cp: Garrisons.for_control_point(cp) for cp in ordered_capturable_points
+            },
             oca_targets=list(finder.oca_targets(min_aircraft=20)),
             strike_targets=list(finder.strike_targets()),
             enemy_barcaps=list(game.theater.control_points_for(not player)),

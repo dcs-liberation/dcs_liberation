@@ -14,12 +14,12 @@ class PlanBai(PackagePlanningTask[VehicleGroupGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
         if not super().preconditions_met(state):
             return False
-        if self.target not in state.enemy_garrisons:
+        if not state.has_garrison(self.target):
             return False
         return self.target_area_preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
-        state.enemy_garrisons.eliminate(self.target)
+        state.eliminate_garrison(self.target)
 
     def propose_flights(self, doctrine: Doctrine) -> None:
         self.propose_flight(FlightType.BAI, 2, doctrine.mission_ranges.offensive)
