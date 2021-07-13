@@ -19,6 +19,8 @@ class PlanBarcap(TheaterCommanderTask):
     target: ControlPoint
 
     def preconditions_met(self, state: TheaterState) -> bool:
+        if state.player and not state.ato_automation_enabled:
+            return False
         return self.target in state.vulnerable_control_points
 
     def apply_effects(self, state: TheaterState) -> None:

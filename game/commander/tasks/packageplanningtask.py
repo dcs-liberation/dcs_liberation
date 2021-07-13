@@ -40,6 +40,9 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
     def __post_init__(self) -> None:
         self.flights = []
 
+    def preconditions_met(self, state: TheaterState) -> bool:
+        return not state.player or state.ato_automation_enabled
+
     def execute(
         self, mission_planner: CoalitionMissionPlanner, tracer: MultiEventTracer
     ) -> None:

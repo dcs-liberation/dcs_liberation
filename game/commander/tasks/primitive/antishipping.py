@@ -12,6 +12,8 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanAntiShipping(PackagePlanningTask[CargoShip]):
     def preconditions_met(self, state: TheaterState) -> bool:
+        if not super().preconditions_met(state):
+            return False
         if self.target not in state.enemy_shipping:
             return False
         return self.target_area_preconditions_met(state)

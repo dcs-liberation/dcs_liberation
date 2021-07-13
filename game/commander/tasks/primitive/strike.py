@@ -13,6 +13,8 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanStrike(PackagePlanningTask[TheaterGroundObject[Any]]):
     def preconditions_met(self, state: TheaterState) -> bool:
+        if not super().preconditions_met(state):
+            return False
         if self.target not in state.strike_targets:
             return False
         return self.target_area_preconditions_met(state)

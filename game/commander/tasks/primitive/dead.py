@@ -13,6 +13,8 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanDead(PackagePlanningTask[IadsGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
+        if not super().preconditions_met(state):
+            return False
         if (
             self.target not in state.threatening_air_defenses
             and self.target not in state.detecting_air_defenses

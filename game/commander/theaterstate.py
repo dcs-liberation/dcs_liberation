@@ -3,12 +3,13 @@ from __future__ import annotations
 import dataclasses
 import itertools
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any, Union, Optional
 
 from game.commander.garrisons import Garrisons
 from game.commander.objectivefinder import ObjectiveFinder
 from game.data.doctrine import Doctrine
 from game.htn import WorldState
+from game.settings import AutoAtoBehavior
 from game.theater import ControlPoint, FrontLine, MissionTarget
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
@@ -17,6 +18,7 @@ from game.theater.theatergroundobject import (
 )
 from game.threatzones import ThreatZones
 from game.transfers import Convoy, CargoShip
+from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
     from game import Game
@@ -24,7 +26,12 @@ if TYPE_CHECKING:
 
 @dataclass
 class TheaterState(WorldState["TheaterState"]):
+    player: bool
+    stance_automation_enabled: bool
+    ato_automation_enabled: bool
     vulnerable_control_points: list[ControlPoint]
+    active_front_lines: list[FrontLine]
+    front_line_stances: dict[FrontLine, Optional[CombatStance]]
     vulnerable_front_lines: list[FrontLine]
     aewc_targets: list[MissionTarget]
     refueling_targets: list[MissionTarget]
@@ -69,7 +76,12 @@ class TheaterState(WorldState["TheaterState"]):
         # Do not use copy.deepcopy. Copying every TGO, control point, etc is absurdly
         # expensive.
         return TheaterState(
+            player=self.player,
+            stance_automation_enabled=self.stance_automation_enabled,
+            ato_automation_enabled=self.ato_automation_enabled,
             vulnerable_control_points=list(self.vulnerable_control_points),
+            active_front_lines=list(self.active_front_lines),
+            front_line_stances=dict(self.front_line_stances),
             vulnerable_front_lines=list(self.vulnerable_front_lines),
             aewc_targets=list(self.aewc_targets),
             refueling_targets=list(self.refueling_targets),
@@ -96,8 +108,15 @@ class TheaterState(WorldState["TheaterState"]):
     @classmethod
     def from_game(cls, game: Game, player: bool) -> TheaterState:
         finder = ObjectiveFinder(game, player)
+        auto_stance = game.settings.automate_front_line_stance
+        auto_ato = game.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
         return TheaterState(
+            player=player,
+            stance_automation_enabled=auto_stance,
+            ato_automation_enabled=auto_ato,
             vulnerable_control_points=list(finder.vulnerable_control_points()),
+            active_front_lines=list(finder.front_lines()),
+            front_line_stances={f: None for f in finder.front_lines()},
             vulnerable_front_lines=list(finder.front_lines()),
             aewc_targets=[finder.farthest_friendly_control_point()],
             refueling_targets=[finder.closest_friendly_control_point()],

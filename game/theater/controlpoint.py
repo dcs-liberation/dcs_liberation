@@ -271,6 +271,9 @@ class ControlPointStatus(IntEnum):
 
 
 class ControlPoint(MissionTarget, ABC):
+    # Not sure what distance DCS uses, but assuming it's about 2NM since that's roughly
+    # the distance of the circle on the map.
+    CAPTURE_DISTANCE = nautical_miles(2)
 
     position = None  # type: Point
     name = None  # type: str
@@ -726,6 +729,10 @@ class ControlPoint(MissionTarget, ABC):
             raise ValueError
 
         return self.captured != other.captured
+
+    @property
+    def deployable_front_line_units(self) -> int:
+        return min(self.frontline_unit_count_limit, self.base.total_armor)
 
     @property
     def frontline_unit_count_limit(self) -> int:

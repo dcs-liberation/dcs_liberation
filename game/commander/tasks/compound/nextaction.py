@@ -1,19 +1,19 @@
 from collections import Iterator
 from dataclasses import dataclass
 
-from game.commander.tasks.compound.aewcsupport import PlanAewcSupport
 from game.commander.tasks.compound.attackairinfrastructure import (
     AttackAirInfrastructure,
 )
 from game.commander.tasks.compound.attackbuildings import AttackBuildings
 from game.commander.tasks.compound.attackgarrisons import AttackGarrisons
+from game.commander.tasks.compound.capturebases import CaptureBases
+from game.commander.tasks.compound.defendbases import DefendBases
 from game.commander.tasks.compound.degradeiads import DegradeIads
-from game.commander.tasks.compound.frontlinedefense import FrontLineDefense
 from game.commander.tasks.compound.interdictreinforcements import (
     InterdictReinforcements,
 )
 from game.commander.tasks.compound.protectairspace import ProtectAirSpace
-from game.commander.tasks.compound.refuelingsupport import PlanRefuelingSupport
+from game.commander.tasks.compound.theatersupport import TheaterSupport
 from game.commander.theaterstate import TheaterState
 from game.htn import CompoundTask, Method
 
@@ -23,10 +23,10 @@ class PlanNextAction(CompoundTask[TheaterState]):
     aircraft_cold_start: bool
 
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
-        yield [PlanAewcSupport()]
-        yield [PlanRefuelingSupport()]
+        yield [TheaterSupport()]
         yield [ProtectAirSpace()]
-        yield [FrontLineDefense()]
+        yield [CaptureBases()]
+        yield [DefendBases()]
         yield [InterdictReinforcements()]
         yield [AttackGarrisons()]
         yield [AttackAirInfrastructure(self.aircraft_cold_start)]

@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import Iterator
 from dataclasses import dataclass
 
-from game.theater import ConflictTheater
+from game.theater import ConflictTheater, ControlPoint
 from game.theater.theatergroundobject import VehicleGroupGroundObject
 from game.utils import meters, nautical_miles
 
@@ -53,9 +53,7 @@ class Garrisons:
                 continue
 
             for garrison in garrisons:
-                # Not sure what distance DCS uses, but assuming it's about 2NM since
-                # that's roughly the distance of the circle on the map.
-                if meters(garrison.distance_to(cp)) < nautical_miles(2):
+                if meters(garrison.distance_to(cp)) < ControlPoint.CAPTURE_DISTANCE:
                     blocking.append(garrison)
                 else:
                     defending.append(garrison)

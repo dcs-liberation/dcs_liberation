@@ -24,6 +24,7 @@ from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
+from .commander import TheaterCommander
 from .debriefing import Debriefing
 from .event.event import Event
 from .event.frontlineattack import FrontlineAttackEvent
@@ -32,7 +33,7 @@ from .income import Income
 from .infos.information import Information
 from .navmesh import NavMesh
 from .procurement import AircraftProcurementRequest, ProcurementAi
-from .profiling import logged_duration
+from .profiling import logged_duration, MultiEventTracer
 from .settings import Settings, AutoAtoBehavior
 from .squadrons import AirWing
 from .theater import ConflictTheater, ControlPoint
@@ -504,13 +505,15 @@ class Game:
         with logged_duration("Transport planning"):
             self.transfers.plan_transports()
 
-        if not player or (
-            player and self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
-        ):
-            color = "Blue" if player else "Red"
-            with logged_duration(f"{color} mission planning"):
-                mission_planner = CoalitionMissionPlanner(self, player)
-                mission_planner.plan_missions()
+        color = "Blue" if player else "Red"
+        with MultiEventTracer() as tracer:
+            mission_planner = CoalitionMissionPlanner(self, player)
+            with tracer.trace(f"{color} mission planning"):
+                with tracer.trace(f"{color} mission identification"):
+                    commander = TheaterCommander(self, player)
+                    commander.plan_missions(mission_planner, tracer)
+                with tracer.trace(f"{color} mission fulfillment"):
+                    mission_planner.fulfill_missions()
 
         self.plan_procurement_for(player)
 

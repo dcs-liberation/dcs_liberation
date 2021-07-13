@@ -12,6 +12,8 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanCas(PackagePlanningTask[FrontLine]):
     def preconditions_met(self, state: TheaterState) -> bool:
+        if not super().preconditions_met(state):
+            return False
         return self.target in state.vulnerable_front_lines
 
     def apply_effects(self, state: TheaterState) -> None:

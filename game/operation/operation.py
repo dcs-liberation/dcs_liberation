@@ -397,6 +397,7 @@ class Operation:
                 player_gp,
                 enemy_gp,
                 player_cp.stances[enemy_cp.id],
+                enemy_cp.stances[player_cp.id],
                 cls.unit_map,
             )
             ground_conflict_gen.generate()

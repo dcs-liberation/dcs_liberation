@@ -247,14 +247,9 @@ class CoalitionMissionPlanner:
         """
         return self.game.air_wing_for(self.is_player).can_auto_plan(mission_type)
 
-    def plan_missions(self) -> None:
+    def fulfill_missions(self) -> None:
         """Identifies and plans mission for the turn."""
         player = "Blue" if self.is_player else "Red"
-        with logged_duration(f"{player} mission identification and fulfillment"):
-            with MultiEventTracer() as tracer:
-                commander = TheaterCommander(self.game, self.is_player)
-                commander.plan_missions(self, tracer)
-
         with logged_duration(f"{player} mission scheduling"):
             self.stagger_missions()
 
