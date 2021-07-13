@@ -14,7 +14,6 @@ from game.theater import (
     Airfield,
 )
 from game.theater.theatergroundobject import (
-    VehicleGroupGroundObject,
     NavalGroundObject,
     BuildingGroundObject,
     IadsGroundObject,
@@ -49,18 +48,6 @@ class ObjectiveFinder:
 
                 if isinstance(ground_object, IadsGroundObject):
                     yield ground_object
-
-    def enemy_vehicle_groups(self) -> Iterator[VehicleGroupGroundObject]:
-        """Iterates over all enemy vehicle groups."""
-        for cp in self.enemy_control_points():
-            for ground_object in cp.ground_objects:
-                if not isinstance(ground_object, VehicleGroupGroundObject):
-                    continue
-
-                if ground_object.is_dead:
-                    continue
-
-                yield ground_object
 
     def enemy_ships(self) -> Iterator[NavalGroundObject]:
         for cp in self.enemy_control_points():

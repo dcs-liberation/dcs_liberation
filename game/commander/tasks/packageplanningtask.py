@@ -4,6 +4,7 @@ import itertools
 import operator
 from abc import abstractmethod
 from dataclasses import dataclass, field
+from enum import unique, IntEnum, auto
 from typing import TYPE_CHECKING, Optional, Generic, TypeVar, Iterator, Union
 
 from game.commander.missionproposals import ProposedFlight, EscortType, ProposedMission
@@ -21,6 +22,12 @@ if TYPE_CHECKING:
 
 
 MissionTargetT = TypeVar("MissionTargetT", bound=MissionTarget)
+
+
+@unique
+class RangeType(IntEnum):
+    Detection = auto()
+    Threat = auto()
 
 
 # TODO: Refactor so that we don't need to call up to the mission planner.
@@ -75,8 +82,8 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
             EscortType.AirToAir,
         )
 
-    def iter_iads_threats(
-        self, state: TheaterState
+    def iter_iads_ranges(
+        self, state: TheaterState, range_type: RangeType
     ) -> Iterator[Union[IadsGroundObject, NavalGroundObject]]:
         target_ranges: list[
             tuple[Union[IadsGroundObject, NavalGroundObject], Distance]
@@ -86,15 +93,21 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         ] = itertools.chain(state.enemy_air_defenses, state.enemy_ships)
         for target in all_iads:
             distance = meters(target.distance_to(self.target))
-            threat_range = target.max_threat_range()
-            if not threat_range:
+            if range_type is RangeType.Detection:
+                target_range = target.max_detection_range()
+            elif range_type is RangeType.Threat:
+                target_range = target.max_threat_range()
+            else:
+                raise ValueError(f"Unknown RangeType: {range_type}")
+            if not target_range:
                 continue
+
             # IADS out of range of our target area will have a positive
             # distance_to_threat and should be pruned. The rest have a decreasing
             # distance_to_threat as overlap increases. The most negative distance has
             # the greatest coverage of the target and should be treated as the highest
             # priority threat.
-            distance_to_threat = distance - threat_range
+            distance_to_threat = distance - target_range
             if distance_to_threat > meters(0):
                 continue
             target_ranges.append((target, distance_to_threat))
@@ -104,11 +117,27 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         for target, _range in target_ranges:
             yield target
 
+    def iter_detecting_iads(
+        self, state: TheaterState
+    ) -> Iterator[Union[IadsGroundObject, NavalGroundObject]]:
+        return self.iter_iads_ranges(state, RangeType.Detection)
+
+    def iter_iads_threats(
+        self, state: TheaterState
+    ) -> Iterator[Union[IadsGroundObject, NavalGroundObject]]:
+        return self.iter_iads_ranges(state, RangeType.Threat)
+
     def target_area_preconditions_met(
         self, state: TheaterState, ignore_iads: bool = False
     ) -> bool:
         """Checks if the target area has been cleared of threats."""
         threatened = False
+
+        # Non-blocking, but analyzed so we can pick detectors worth eliminating.
+        for detector in self.iter_detecting_iads(state):
+            if detector not in state.detecting_air_defenses:
+                state.detecting_air_defenses.append(detector)
+
         if not ignore_iads:
             for iads_threat in self.iter_iads_threats(state):
                 threatened = True

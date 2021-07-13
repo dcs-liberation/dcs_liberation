@@ -30,6 +30,7 @@ class TheaterState(WorldState["TheaterState"]):
     refueling_targets: list[MissionTarget]
     enemy_air_defenses: list[IadsGroundObject]
     threatening_air_defenses: list[Union[IadsGroundObject, NavalGroundObject]]
+    detecting_air_defenses: list[Union[IadsGroundObject, NavalGroundObject]]
     enemy_convoys: list[Convoy]
     enemy_shipping: list[CargoShip]
     enemy_ships: list[NavalGroundObject]
@@ -49,12 +50,18 @@ class TheaterState(WorldState["TheaterState"]):
         )
 
     def eliminate_air_defense(self, target: IadsGroundObject) -> None:
-        self.threatening_air_defenses.remove(target)
+        if target in self.threatening_air_defenses:
+            self.threatening_air_defenses.remove(target)
+        if target in self.detecting_air_defenses:
+            self.detecting_air_defenses.remove(target)
         self.enemy_air_defenses.remove(target)
         self._rebuild_threat_zones()
 
     def eliminate_ship(self, target: NavalGroundObject) -> None:
-        self.threatening_air_defenses.remove(target)
+        if target in self.threatening_air_defenses:
+            self.threatening_air_defenses.remove(target)
+        if target in self.detecting_air_defenses:
+            self.detecting_air_defenses.remove(target)
         self.enemy_ships.remove(target)
         self._rebuild_threat_zones()
 
@@ -83,6 +90,7 @@ class TheaterState(WorldState["TheaterState"]):
             # would add the IADS that prevented it from being planned to the list of
             # IADS threats so that DegradeIads will consider it a threat later.
             threatening_air_defenses=self.threatening_air_defenses,
+            detecting_air_defenses=self.detecting_air_defenses,
         )
 
     @classmethod
@@ -95,6 +103,7 @@ class TheaterState(WorldState["TheaterState"]):
             refueling_targets=[finder.closest_friendly_control_point()],
             enemy_air_defenses=list(finder.enemy_air_defenses()),
             threatening_air_defenses=[],
+            detecting_air_defenses=[],
             enemy_convoys=list(finder.convoys()),
             enemy_shipping=list(finder.cargo_ships()),
             enemy_ships=list(finder.enemy_ships()),

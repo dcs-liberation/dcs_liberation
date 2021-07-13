@@ -13,7 +13,10 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanDead(PackagePlanningTask[IadsGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        if self.target not in state.threatening_air_defenses:
+        if (
+            self.target not in state.threatening_air_defenses
+            and self.target not in state.detecting_air_defenses
+        ):
             return False
         return self.target_area_preconditions_met(state, ignore_iads=True)
 
