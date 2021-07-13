@@ -6,12 +6,11 @@ from typing import TYPE_CHECKING
 
 from game.commander.tasks.theatercommandertask import TheaterCommanderTask
 from game.commander.theaterstate import TheaterState
-from game.profiling import MultiEventTracer
 from game.theater import FrontLine
 from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
-    from gen.flights.ai_flight_planner import CoalitionMissionPlanner
+    from game.coalition import Coalition
 
 
 class FrontLineStanceTask(TheaterCommanderTask, ABC):
@@ -27,7 +26,10 @@ class FrontLineStanceTask(TheaterCommanderTask, ABC):
 
     @staticmethod
     def management_allowed(state: TheaterState) -> bool:
-        return not state.player or state.stance_automation_enabled
+        return (
+            not state.context.coalition.player
+            or state.context.settings.automate_front_line_stance
+        )
 
     def better_stance_already_set(self, state: TheaterState) -> bool:
         current_stance = state.front_line_stances[self.front_line]
@@ -69,7 +71,5 @@ class FrontLineStanceTask(TheaterCommanderTask, ABC):
     def apply_effects(self, state: TheaterState) -> None:
         state.front_line_stances[self.front_line] = self.stance
 
-    def execute(
-        self, mission_planner: CoalitionMissionPlanner, tracer: MultiEventTracer
-    ) -> None:
+    def execute(self, coalition: Coalition) -> None:
         self.friendly_cp.stances[self.enemy_cp.id] = self.stance

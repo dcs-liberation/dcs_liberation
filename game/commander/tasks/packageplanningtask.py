@@ -8,18 +8,19 @@ from enum import unique, IntEnum, auto
 from typing import TYPE_CHECKING, Optional, Generic, TypeVar, Iterator, Union
 
 from game.commander.missionproposals import ProposedFlight, EscortType, ProposedMission
+from game.commander.packagefulfiller import PackageFulfiller
 from game.commander.tasks.theatercommandertask import TheaterCommanderTask
 from game.commander.theaterstate import TheaterState
 from game.data.doctrine import Doctrine
-from game.profiling import MultiEventTracer
+from game.settings import AutoAtoBehavior
 from game.theater import MissionTarget
 from game.theater.theatergroundobject import IadsGroundObject, NavalGroundObject
 from game.utils import Distance, meters
+from gen import Package
 from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:
-    from gen.flights.ai_flight_planner import CoalitionMissionPlanner
-
+    from game.coalition import Coalition
 
 MissionTargetT = TypeVar("MissionTargetT", bound=MissionTarget)
 
@@ -36,18 +37,26 @@ class RangeType(IntEnum):
 class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
     target: MissionTargetT
     flights: list[ProposedFlight] = field(init=False)
+    package: Optional[Package] = field(init=False, default=None)
 
     def __post_init__(self) -> None:
         self.flights = []
+        self.package = Package(self.target)
 
     def preconditions_met(self, state: TheaterState) -> bool:
-        return not state.player or state.ato_automation_enabled
+        if (
+            state.context.coalition.player
+            and state.context.settings.auto_ato_behavior is AutoAtoBehavior.Disabled
+        ):
+            return False
+        return self.fulfill_mission(state)
 
-    def execute(
-        self, mission_planner: CoalitionMissionPlanner, tracer: MultiEventTracer
-    ) -> None:
-        self.propose_flights(mission_planner.doctrine)
-        mission_planner.plan_mission(ProposedMission(self.target, self.flights), tracer)
+    def execute(self, coalition: Coalition) -> None:
+        if self.package is None:
+            raise RuntimeError("Attempted to execute failed package planning task")
+        for flight in self.package.flights:
+            coalition.aircraft_inventory.claim_for_flight(flight)
+        coalition.ato.add_package(self.package)
 
     @abstractmethod
     def propose_flights(self, doctrine: Doctrine) -> None:
@@ -69,6 +78,19 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
     @property
     def asap(self) -> bool:
         return False
+
+    def fulfill_mission(self, state: TheaterState) -> bool:
+        self.propose_flights(state.context.coalition.doctrine)
+        fulfiller = PackageFulfiller(
+            state.context.coalition,
+            state.context.theater,
+            state.available_aircraft,
+            state.context.settings,
+        )
+        self.package = fulfiller.plan_mission(
+            ProposedMission(self.target, self.flights), state.context.tracer
+        )
+        return self.package is not None
 
     def propose_common_escorts(self, doctrine: Doctrine) -> None:
         self.propose_flight(

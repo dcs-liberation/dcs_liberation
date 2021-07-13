@@ -8,10 +8,11 @@ from typing import TYPE_CHECKING, Any, Union, Optional
 
 from game.commander.garrisons import Garrisons
 from game.commander.objectivefinder import ObjectiveFinder
-from game.data.doctrine import Doctrine
 from game.htn import WorldState
-from game.settings import AutoAtoBehavior
-from game.theater import ControlPoint, FrontLine, MissionTarget
+from game.inventory import GlobalAircraftInventory
+from game.profiling import MultiEventTracer
+from game.settings import Settings
+from game.theater import ControlPoint, FrontLine, MissionTarget, ConflictTheater
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
     NavalGroundObject,
@@ -23,16 +24,22 @@ from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
     from game import Game
+    from game.coalition import Coalition
     from game.transfers import Convoy, CargoShip
+
+
+@dataclass(frozen=True)
+class PersistentContext:
+    coalition: Coalition
+    theater: ConflictTheater
+    settings: Settings
+    tracer: MultiEventTracer
 
 
 @dataclass
 class TheaterState(WorldState["TheaterState"]):
-    player: bool
-    stance_automation_enabled: bool
-    ato_automation_enabled: bool
-    barcap_rounds: int
-    vulnerable_control_points: list[ControlPoint]
+    context: PersistentContext
+    barcaps_needed: dict[ControlPoint, int]
     active_front_lines: list[FrontLine]
     front_line_stances: dict[FrontLine, Optional[CombatStance]]
     vulnerable_front_lines: list[FrontLine]
@@ -49,12 +56,12 @@ class TheaterState(WorldState["TheaterState"]):
     strike_targets: list[TheaterGroundObject[Any]]
     enemy_barcaps: list[ControlPoint]
     threat_zones: ThreatZones
-    opposing_doctrine: Doctrine
+    available_aircraft: GlobalAircraftInventory
 
     def _rebuild_threat_zones(self) -> None:
         """Recreates the theater's threat zones based on the current planned state."""
         self.threat_zones = ThreatZones.for_threats(
-            self.opposing_doctrine,
+            self.context.coalition.opponent.doctrine,
             barcap_locations=self.enemy_barcaps,
             air_defenses=itertools.chain(self.enemy_air_defenses, self.enemy_ships),
         )
@@ -85,11 +92,8 @@ class TheaterState(WorldState["TheaterState"]):
         # Do not use copy.deepcopy. Copying every TGO, control point, etc is absurdly
         # expensive.
         return TheaterState(
-            player=self.player,
-            stance_automation_enabled=self.stance_automation_enabled,
-            ato_automation_enabled=self.ato_automation_enabled,
-            barcap_rounds=self.barcap_rounds,
-            vulnerable_control_points=list(self.vulnerable_control_points),
+            context=self.context,
+            barcaps_needed=dict(self.barcaps_needed),
             active_front_lines=list(self.active_front_lines),
             front_line_stances=dict(self.front_line_stances),
             vulnerable_front_lines=list(self.vulnerable_front_lines),
@@ -106,7 +110,7 @@ class TheaterState(WorldState["TheaterState"]):
             strike_targets=list(self.strike_targets),
             enemy_barcaps=list(self.enemy_barcaps),
             threat_zones=self.threat_zones,
-            opposing_doctrine=self.opposing_doctrine,
+            available_aircraft=self.available_aircraft.clone(),
             # Persistent properties are not copied. These are a way for failed subtasks
             # to communicate requirements to other tasks. For example, the task to
             # attack enemy garrisons might fail because the target area has IADS
@@ -118,26 +122,26 @@ class TheaterState(WorldState["TheaterState"]):
         )
 
     @classmethod
-    def from_game(cls, game: Game, player: bool) -> TheaterState:
+    def from_game(
+        cls, game: Game, player: bool, tracer: MultiEventTracer
+    ) -> TheaterState:
+        coalition = game.coalition_for(player)
         finder = ObjectiveFinder(game, player)
-        auto_stance = game.settings.automate_front_line_stance
-        auto_ato = game.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
         ordered_capturable_points = finder.prioritized_unisolated_points()
+
+        context = PersistentContext(coalition, game.theater, game.settings, tracer)
 
         # Plan enough rounds of CAP that the target has coverage over the expected
         # mission duration.
         mission_duration = game.settings.desired_player_mission_duration.total_seconds()
-        barcap_duration = game.coalition_for(
-            player
-        ).doctrine.cap_duration.total_seconds()
+        barcap_duration = coalition.doctrine.cap_duration.total_seconds()
         barcap_rounds = math.ceil(mission_duration / barcap_duration)
 
         return TheaterState(
-            player=player,
-            stance_automation_enabled=auto_stance,
-            ato_automation_enabled=auto_ato,
-            barcap_rounds=barcap_rounds,
-            vulnerable_control_points=list(finder.vulnerable_control_points()),
+            context=context,
+            barcaps_needed={
+                cp: barcap_rounds for cp in finder.vulnerable_control_points()
+            },
             active_front_lines=list(finder.front_lines()),
             front_line_stances={f: None for f in finder.front_lines()},
             vulnerable_front_lines=list(finder.front_lines()),
@@ -156,5 +160,5 @@ class TheaterState(WorldState["TheaterState"]):
             strike_targets=list(finder.strike_targets()),
             enemy_barcaps=list(game.theater.control_points_for(not player)),
             threat_zones=game.threat_zone_for(not player),
-            opposing_doctrine=game.faction_for(not player).doctrine,
+            available_aircraft=game.aircraft_inventory.clone(),
         )

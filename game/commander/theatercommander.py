@@ -64,7 +64,6 @@ from game.profiling import MultiEventTracer
 
 if TYPE_CHECKING:
     from game import Game
-    from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 
 
 class TheaterCommander(Planner[TheaterState, TheaterCommanderTask]):
@@ -77,15 +76,13 @@ class TheaterCommander(Planner[TheaterState, TheaterCommanderTask]):
         self.game = game
         self.player = player
 
-    def plan_missions(
-        self, mission_planner: CoalitionMissionPlanner, tracer: MultiEventTracer
-    ) -> None:
-        state = TheaterState.from_game(self.game, self.player)
+    def plan_missions(self, tracer: MultiEventTracer) -> None:
+        state = TheaterState.from_game(self.game, self.player, tracer)
         while True:
             result = self.plan(state)
             if result is None:
                 # Planned all viable tasks this turn.
                 return
             for task in result.tasks:
-                task.execute(mission_planner, tracer)
+                task.execute(self.game.coalition_for(self.player))
             state = result.end_state

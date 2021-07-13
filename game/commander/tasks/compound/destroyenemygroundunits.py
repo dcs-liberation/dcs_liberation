@@ -14,6 +14,6 @@ class DestroyEnemyGroundUnits(CompoundTask[TheaterState]):
     front_line: FrontLine
 
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
-        yield [EliminationAttack(self.front_line, state.player)]
-        yield [AggressiveAttack(self.front_line, state.player)]
+        yield [EliminationAttack(self.front_line, state.context.coalition.player)]
+        yield [AggressiveAttack(self.front_line, state.context.coalition.player)]
         yield [PlanCas(self.front_line)]

@@ -15,5 +15,5 @@ class CaptureBase(CompoundTask[TheaterState]):
     front_line: FrontLine
 
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
-        yield [BreakthroughAttack(self.front_line, state.player)]
+        yield [BreakthroughAttack(self.front_line, state.context.coalition.player)]
         yield [DestroyEnemyGroundUnits(self.front_line)]

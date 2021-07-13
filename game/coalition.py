@@ -6,12 +6,13 @@ from dcs import Point
 from faker import Faker
 
 from game.commander import TheaterCommander
+from game.commander.missionscheduler import MissionScheduler
 from game.income import Income
+from game.inventory import GlobalAircraftInventory
 from game.navmesh import NavMesh
 from game.profiling import logged_duration, MultiEventTracer
 from game.threatzones import ThreatZones
 from game.transfers import PendingTransfers
-from gen.flights.ai_flight_planner import CoalitionMissionPlanner, MissionScheduler
 
 if TYPE_CHECKING:
     from game import Game
@@ -83,6 +84,10 @@ class Coalition:
     def nav_mesh(self) -> NavMesh:
         assert self._navmesh is not None
         return self._navmesh
+
+    @property
+    def aircraft_inventory(self) -> GlobalAircraftInventory:
+        return self.game.aircraft_inventory
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
@@ -181,16 +186,9 @@ class Coalition:
     def plan_missions(self) -> None:
         color = "Blue" if self.player else "Red"
         with MultiEventTracer() as tracer:
-            mission_planner = CoalitionMissionPlanner(
-                self,
-                self.game.theater,
-                self.game.aircraft_inventory,
-                self.game.settings,
-            )
             with tracer.trace(f"{color} mission planning"):
                 with tracer.trace(f"{color} mission identification"):
-                    commander = TheaterCommander(self.game, self.player)
-                    commander.plan_missions(mission_planner, tracer)
+                    TheaterCommander(self.game, self.player).plan_missions(tracer)
                 with tracer.trace(f"{color} mission scheduling"):
                     MissionScheduler(
                         self, self.game.settings.desired_player_mission_duration
