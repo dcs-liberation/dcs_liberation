@@ -4,11 +4,11 @@ from game.commander.tasks.frontlinestancetask import FrontLineStanceTask
 from gen.ground_forces.combat_stance import CombatStance
 
 
-class EliminationAttack(FrontLineStanceTask):
+class AggressiveAttack(FrontLineStanceTask):
     @property
     def stance(self) -> CombatStance:
-        return CombatStance.ELIMINATION
+        return CombatStance.AGGRESSIVE
 
     @property
     def have_sufficient_front_line_advantage(self) -> bool:
-        return self.ground_force_balance >= 1.5
+        return self.ground_force_balance >= 0.8
