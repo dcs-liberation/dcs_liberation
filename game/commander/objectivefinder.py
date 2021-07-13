@@ -3,27 +3,24 @@ from __future__ import annotations
 import math
 import operator
 from collections import Iterator, Iterable
-from typing import TypeVar, TYPE_CHECKING, Any
+from typing import TypeVar, TYPE_CHECKING
 
 from game.theater import (
     ControlPoint,
     OffMapSpawn,
-    TheaterGroundObject,
     MissionTarget,
     Fob,
     FrontLine,
     Airfield,
 )
 from game.theater.theatergroundobject import (
-    EwrGroundObject,
-    SamGroundObject,
     VehicleGroupGroundObject,
     NavalGroundObject,
     BuildingGroundObject,
     IadsGroundObject,
 )
 from game.transfers import CargoShip, Convoy
-from game.utils import meters, nautical_miles, Distance
+from game.utils import meters, nautical_miles
 from gen.flights.closestairfields import ObjectiveDistanceCache, ClosestAirfields
 
 if TYPE_CHECKING:
@@ -98,13 +95,13 @@ class ObjectiveFinder:
         for target, _range in target_ranges:
             yield target
 
-    def strike_targets(self) -> Iterator[TheaterGroundObject[Any]]:
+    def strike_targets(self) -> Iterator[BuildingGroundObject]:
         """Iterates over enemy strike targets.
 
         Targets are sorted by their closest proximity to any friendly control
         point (airfield or fleet).
         """
-        targets: list[tuple[TheaterGroundObject[Any], float]] = []
+        targets: list[tuple[BuildingGroundObject, float]] = []
         # Building objectives are made of several individual TGOs (one per
         # building).
         found_targets: set[str] = set()
@@ -119,21 +116,12 @@ class ObjectiveFinder:
                 # better with BAI), so that's not a useful filter. Once we have
                 # better control over planning profiles and target dependent
                 # loadouts we can clean this up.
-                if isinstance(ground_object, VehicleGroupGroundObject):
-                    # BAI target, not strike target.
+                if not isinstance(ground_object, BuildingGroundObject):
+                    # Other group types (like ships, SAMs, garrisons, etc) have better
+                    # suited mission types like anti-ship, DEAD, and BAI.
                     continue
 
-                if isinstance(ground_object, NavalGroundObject):
-                    # Anti-ship target, not strike target.
-                    continue
-
-                if isinstance(ground_object, SamGroundObject):
-                    # SAMs are targeted by DEAD. No need to double plan.
-                    continue
-
-                is_building = isinstance(ground_object, BuildingGroundObject)
-                is_fob = isinstance(enemy_cp, Fob)
-                if is_building and is_fob and ground_object.is_control_point:
+                if isinstance(enemy_cp, Fob) and ground_object.is_control_point:
                     # This is the FOB structure itself. Can't be repaired or
                     # targeted by the player, so shouldn't be targetable by the
                     # AI.
