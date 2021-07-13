@@ -58,6 +58,12 @@ class QLiberationFirstStartWindow(QDialog):
         
         <p>As you click on the button below, the file will be replaced in your DCS installation directory.</p>
         
+        <br/>
+        <p>If you leave the DCS Installation Directory empty, DCS Liberation can not automatically replace the MissionScripting.lua and will therefore not work correctly!
+        In this case, you need to edit the file yourself. The easiest way to do it is to replace the original file with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua).
+        <br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>
+
+        
         <br/><br/>
         
         <strong>Thank you for reading !</strong>

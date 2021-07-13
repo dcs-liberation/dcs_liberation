@@ -95,6 +95,22 @@ def run_ui(game: Optional[Game]) -> None:
     uiconstants.load_aircraft_banners()
     uiconstants.load_vehicle_banners()
 
+    # Show warning if no DCS Installation directory was set
+    if liberation_install.get_dcs_install_directory() == "":
+        QtWidgets.QMessageBox.warning(
+            splash,
+            "No DCS installation directory.",
+            "The DCS Installation directory is not set correctly. "
+            "This will prevent DCS Liberation to work properly as the MissionScripting "
+            "file will not be modified."
+            "<br/><br/>To solve this problem, you can set the Installation directory "
+            "within the preferences menu. You can also manually edit or replace the "
+            "following file:"
+            "<br/><br/><strong>&lt;dcs_installation_directory&gt;/Scripts/MissionScripting.lua</strong>"
+            "<br/><br/>The easiest way to do it is to replace the original file with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua)."
+            "<br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>",
+            QtWidgets.QMessageBox.StandardButton.Ok,
+        )
     # Replace DCS Mission scripting file to allow DCS Liberation to work
     try:
         liberation_install.replace_mission_scripting_file()

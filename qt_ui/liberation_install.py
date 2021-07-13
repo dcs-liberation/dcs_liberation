@@ -112,7 +112,7 @@ def replace_mission_scripting_file():
     )
     liberation_scripting_path = "./resources/scripts/MissionScripting.lua"
     backup_scripting_path = "./resources/scripts/MissionScripting.original.lua"
-    if os.path.isfile(mission_scripting_path):
+    if install_dir != "" and os.path.isfile(mission_scripting_path):
         with open(mission_scripting_path, "r") as ms:
             current_file_content = ms.read()
         with open(liberation_scripting_path, "r") as libe_ms:
@@ -133,5 +133,9 @@ def restore_original_mission_scripting():
     )
     backup_scripting_path = "./resources/scripts/MissionScripting.original.lua"
 
-    if os.path.isfile(backup_scripting_path) and os.path.isfile(mission_scripting_path):
+    if (
+        install_dir != ""
+        and os.path.isfile(backup_scripting_path)
+        and os.path.isfile(mission_scripting_path)
+    ):
         copyfile(backup_scripting_path, mission_scripting_path)
