@@ -340,7 +340,9 @@ class AirliftPlanner:
         transfer.transport = transport
 
         self.package.add_flight(flight)
-        planner = FlightPlanBuilder(self.game, self.package, self.for_player)
+        planner = FlightPlanBuilder(
+            self.package, self.game.coalition_for(self.for_player), self.game.theater
+        )
         planner.populate_flight_plan(flight)
         self.game.aircraft_inventory.claim_for_flight(flight)
         return flight_size

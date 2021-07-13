@@ -18,12 +18,12 @@ from game.theater.theatergroundobject import (
     IadsGroundObject,
     NavalGroundObject,
 )
-from game.transfers import CargoShip, Convoy
 from game.utils import meters, nautical_miles
 from gen.flights.closestairfields import ObjectiveDistanceCache, ClosestAirfields
 
 if TYPE_CHECKING:
     from game import Game
+    from game.transfers import CargoShip, Convoy
 
 MissionTargetType = TypeVar("MissionTargetType", bound=MissionTarget)
 

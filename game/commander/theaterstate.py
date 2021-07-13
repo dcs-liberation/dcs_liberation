@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import itertools
+import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Union, Optional
 
@@ -18,11 +19,11 @@ from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
 )
 from game.threatzones import ThreatZones
-from game.transfers import Convoy, CargoShip
 from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
     from game import Game
+    from game.transfers import Convoy, CargoShip
 
 
 @dataclass
@@ -30,6 +31,7 @@ class TheaterState(WorldState["TheaterState"]):
     player: bool
     stance_automation_enabled: bool
     ato_automation_enabled: bool
+    barcap_rounds: int
     vulnerable_control_points: list[ControlPoint]
     active_front_lines: list[FrontLine]
     front_line_stances: dict[FrontLine, Optional[CombatStance]]
@@ -86,6 +88,7 @@ class TheaterState(WorldState["TheaterState"]):
             player=self.player,
             stance_automation_enabled=self.stance_automation_enabled,
             ato_automation_enabled=self.ato_automation_enabled,
+            barcap_rounds=self.barcap_rounds,
             vulnerable_control_points=list(self.vulnerable_control_points),
             active_front_lines=list(self.active_front_lines),
             front_line_stances=dict(self.front_line_stances),
@@ -120,10 +123,20 @@ class TheaterState(WorldState["TheaterState"]):
         auto_stance = game.settings.automate_front_line_stance
         auto_ato = game.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
         ordered_capturable_points = finder.prioritized_unisolated_points()
+
+        # Plan enough rounds of CAP that the target has coverage over the expected
+        # mission duration.
+        mission_duration = game.settings.desired_player_mission_duration.total_seconds()
+        barcap_duration = game.coalition_for(
+            player
+        ).doctrine.cap_duration.total_seconds()
+        barcap_rounds = math.ceil(mission_duration / barcap_duration)
+
         return TheaterState(
             player=player,
             stance_automation_enabled=auto_stance,
             ato_automation_enabled=auto_ato,
+            barcap_rounds=barcap_rounds,
             vulnerable_control_points=list(finder.vulnerable_control_points()),
             active_front_lines=list(finder.front_lines()),
             front_line_stances={f: None for f in finder.front_lines()},

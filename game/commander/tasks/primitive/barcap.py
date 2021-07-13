@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 @dataclass
 class PlanBarcap(TheaterCommanderTask):
     target: ControlPoint
+    rounds: int
 
     def preconditions_met(self, state: TheaterState) -> bool:
         if state.player and not state.ato_automation_enabled:
@@ -29,19 +30,7 @@ class PlanBarcap(TheaterCommanderTask):
     def execute(
         self, mission_planner: CoalitionMissionPlanner, tracer: MultiEventTracer
     ) -> None:
-        # Plan enough rounds of CAP that the target has coverage over the expected
-        # mission duration.
-        mission_duration = int(
-            mission_planner.game.settings.desired_player_mission_duration.total_seconds()
-        )
-        barcap_duration = int(
-            mission_planner.faction.doctrine.cap_duration.total_seconds()
-        )
-        for _ in range(
-            0,
-            mission_duration,
-            barcap_duration,
-        ):
+        for _ in range(self.rounds):
             mission_planner.plan_mission(
                 ProposedMission(
                     self.target,

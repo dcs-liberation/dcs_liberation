@@ -14,26 +14,26 @@ from typing import (
     Tuple,
 )
 
-from game.commander import TheaterCommander
 from game.commander.missionproposals import ProposedFlight, ProposedMission, EscortType
-from game.commander.objectivefinder import ObjectiveFinder
 from game.data.doctrine import Doctrine
 from game.dcs.aircrafttype import AircraftType
-from game.factions.faction import Faction
-from game.infos.information import Information
 from game.procurement import AircraftProcurementRequest
-from game.profiling import logged_duration, MultiEventTracer
+from game.profiling import MultiEventTracer
+from game.settings import Settings
 from game.squadrons import AirWing, Squadron
 from game.theater import (
     ControlPoint,
     MissionTarget,
     OffMapSpawn,
+    ConflictTheater,
 )
+from game.threatzones import ThreatZones
 from game.utils import nautical_miles
-from gen.ato import Package
+from gen.ato import Package, AirTaskingOrder
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import (
     ClosestAirfields,
+    ObjectiveDistanceCache,
 )
 from gen.flights.flight import (
     Flight,
@@ -44,7 +44,7 @@ from gen.flights.traveltime import TotEstimator
 
 # Avoid importing some types that cause circular imports unless type checking.
 if TYPE_CHECKING:
-    from game import Game
+    from game.coalition import Coalition
     from game.inventory import GlobalAircraftInventory
 
 
@@ -201,6 +201,68 @@ class PackageBuilder:
             self.package.remove_flight(flight)
 
 
+class MissionScheduler:
+    def __init__(self, coalition: Coalition, desired_mission_length: timedelta) -> None:
+        self.coalition = coalition
+        self.desired_mission_length = desired_mission_length
+
+    def schedule_missions(self) -> None:
+        """Identifies and plans mission for the turn."""
+
+        def start_time_generator(
+            count: int, earliest: int, latest: int, margin: int
+        ) -> Iterator[timedelta]:
+            interval = (latest - earliest) // count
+            for time in range(earliest, latest, interval):
+                error = random.randint(-margin, margin)
+                yield timedelta(seconds=max(0, time + error))
+
+        dca_types = {
+            FlightType.BARCAP,
+            FlightType.TARCAP,
+        }
+
+        previous_cap_end_time: Dict[MissionTarget, timedelta] = defaultdict(timedelta)
+        non_dca_packages = [
+            p for p in self.coalition.ato.packages if p.primary_task not in dca_types
+        ]
+
+        start_time = start_time_generator(
+            count=len(non_dca_packages),
+            earliest=5 * 60,
+            latest=int(self.desired_mission_length.total_seconds()),
+            margin=5 * 60,
+        )
+        for package in self.coalition.ato.packages:
+            tot = TotEstimator(package).earliest_tot()
+            if package.primary_task in dca_types:
+                previous_end_time = previous_cap_end_time[package.target]
+                if tot > previous_end_time:
+                    # Can't get there exactly on time, so get there ASAP. This
+                    # will typically only happen for the first CAP at each
+                    # target.
+                    package.time_over_target = tot
+                else:
+                    package.time_over_target = previous_end_time
+
+                departure_time = package.mission_departure_time
+                # Should be impossible for CAPs
+                if departure_time is None:
+                    logging.error(f"Could not determine mission end time for {package}")
+                    continue
+                previous_cap_end_time[package.target] = departure_time
+            elif package.auto_asap:
+                package.set_tot_asap()
+            else:
+                # But other packages should be spread out a bit. Note that take
+                # times are delayed, but all aircraft will become active at
+                # mission start. This makes it more worthwhile to attack enemy
+                # airfields to hit grounded aircraft, since they're more likely
+                # to be present. Runway and air started aircraft will be
+                # delayed until their takeoff time by AirConflictGenerator.
+                package.time_over_target = next(start_time) + tot
+
+
 class CoalitionMissionPlanner:
     """Coalition flight planning AI.
 
@@ -224,18 +286,46 @@ class CoalitionMissionPlanner:
     TODO: Stance and doctrine-specific planning behavior.
     """
 
-    def __init__(self, game: Game, is_player: bool) -> None:
-        self.game = game
-        self.is_player = is_player
-        self.objective_finder = ObjectiveFinder(self.game, self.is_player)
-        self.ato = self.game.coalition_for(is_player).ato
-        self.threat_zones = self.game.threat_zone_for(not self.is_player)
-        self.procurement_requests = self.game.procurement_requests_for(self.is_player)
-        self.faction: Faction = self.game.faction_for(self.is_player)
+    def __init__(
+        self,
+        coalition: Coalition,
+        theater: ConflictTheater,
+        aircraft_inventory: GlobalAircraftInventory,
+        settings: Settings,
+    ) -> None:
+        self.coalition = coalition
+        self.theater = theater
+        self.aircraft_inventory = aircraft_inventory
+        self.player_missions_asap = settings.auto_ato_player_missions_asap
+        self.default_start_type = settings.default_start_type
+
+    @property
+    def is_player(self) -> bool:
+        return self.coalition.player
+
+    @property
+    def ato(self) -> AirTaskingOrder:
+        return self.coalition.ato
+
+    @property
+    def air_wing(self) -> AirWing:
+        return self.coalition.air_wing
 
     @property
     def doctrine(self) -> Doctrine:
-        return self.faction.doctrine
+        return self.coalition.doctrine
+
+    @property
+    def threat_zones(self) -> ThreatZones:
+        return self.coalition.opponent.threat_zone
+
+    def add_procurement_request(
+        self, request: AircraftProcurementRequest, priority: bool
+    ) -> None:
+        if priority:
+            self.coalition.procurement_requests.insert(0, request)
+        else:
+            self.coalition.procurement_requests.append(request)
 
     def air_wing_can_plan(self, mission_type: FlightType) -> bool:
         """Returns True if it is possible for the air wing to plan this mission type.
@@ -245,21 +335,7 @@ class CoalitionMissionPlanner:
         also possible for the player to exclude mission types from their squadron
         designs.
         """
-        return self.game.air_wing_for(self.is_player).can_auto_plan(mission_type)
-
-    def fulfill_missions(self) -> None:
-        """Identifies and plans mission for the turn."""
-        player = "Blue" if self.is_player else "Red"
-        with logged_duration(f"{player} mission scheduling"):
-            self.stagger_missions()
-
-        for cp in self.objective_finder.friendly_control_points():
-            inventory = self.game.aircraft_inventory.for_control_point(cp)
-            for aircraft, available in inventory.all_aircraft:
-                self.message("Unused aircraft", f"{available} {aircraft} from {cp}")
-
-        coalition_text = "player" if self.is_player else "opfor"
-        logging.debug(f"Planned {len(self.ato.packages)} {coalition_text} missions")
+        return self.air_wing.can_auto_plan(mission_type)
 
     def plan_flight(
         self,
@@ -277,12 +353,9 @@ class CoalitionMissionPlanner:
                 task_capability=flight.task,
                 number=flight.num_aircraft,
             )
-            if for_reserves:
-                # Reserves are planned for critical missions, so prioritize
-                # those orders over aircraft needed for non-critical missions.
-                self.procurement_requests.insert(0, purchase_order)
-            else:
-                self.procurement_requests.append(purchase_order)
+            # Reserves are planned for critical missions, so prioritize those orders
+            # over aircraft needed for non-critical missions.
+            self.add_procurement_request(purchase_order, priority=for_reserves)
 
     def scrub_mission_missing_aircraft(
         self,
@@ -300,10 +373,9 @@ class CoalitionMissionPlanner:
         missing_types_str = ", ".join(sorted([t.name for t in missing_types]))
         builder.release_planned_aircraft()
         desc = "reserve aircraft" if reserves else "aircraft"
-        self.message(
-            "Insufficient aircraft",
+        logging.debug(
             f"Not enough {desc} in range for {mission.location.name} "
-            f"capable of: {missing_types_str}",
+            f"capable of: {missing_types_str}"
         )
 
     def check_needed_escorts(self, builder: PackageBuilder) -> Dict[EscortType, bool]:
@@ -325,12 +397,12 @@ class CoalitionMissionPlanner:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
         builder = PackageBuilder(
             mission.location,
-            self.objective_finder.closest_airfields_to(mission.location),
-            self.game.aircraft_inventory,
-            self.game.air_wing_for(self.is_player),
+            ObjectiveDistanceCache.get_closest_airfields(mission.location),
+            self.aircraft_inventory,
+            self.air_wing,
             self.is_player,
-            self.game.country_for(self.is_player),
-            self.game.settings.default_start_type,
+            self.coalition.country_name,
+            self.default_start_type,
             mission.asap,
         )
 
@@ -374,7 +446,7 @@ class CoalitionMissionPlanner:
         # the other flights in the package. Escorts will not be able to
         # contribute to this.
         flight_plan_builder = FlightPlanBuilder(
-            self.game, builder.package, self.is_player
+            builder.package, self.coalition, self.theater
         )
         for flight in builder.package.flights:
             with tracer.trace("Flight plan population"):
@@ -410,75 +482,8 @@ class CoalitionMissionPlanner:
                 with tracer.trace("Flight plan population"):
                     flight_plan_builder.populate_flight_plan(flight)
 
-        if package.has_players and self.game.settings.auto_ato_player_missions_asap:
+        if package.has_players and self.player_missions_asap:
             package.auto_asap = True
             package.set_tot_asap()
 
         self.ato.add_package(package)
-
-    def stagger_missions(self) -> None:
-        def start_time_generator(
-            count: int, earliest: int, latest: int, margin: int
-        ) -> Iterator[timedelta]:
-            interval = (latest - earliest) // count
-            for time in range(earliest, latest, interval):
-                error = random.randint(-margin, margin)
-                yield timedelta(seconds=max(0, time + error))
-
-        dca_types = {
-            FlightType.BARCAP,
-            FlightType.TARCAP,
-        }
-
-        previous_cap_end_time: Dict[MissionTarget, timedelta] = defaultdict(timedelta)
-        non_dca_packages = [
-            p for p in self.ato.packages if p.primary_task not in dca_types
-        ]
-
-        start_time = start_time_generator(
-            count=len(non_dca_packages),
-            earliest=5 * 60,
-            latest=int(
-                self.game.settings.desired_player_mission_duration.total_seconds()
-            ),
-            margin=5 * 60,
-        )
-        for package in self.ato.packages:
-            tot = TotEstimator(package).earliest_tot()
-            if package.primary_task in dca_types:
-                previous_end_time = previous_cap_end_time[package.target]
-                if tot > previous_end_time:
-                    # Can't get there exactly on time, so get there ASAP. This
-                    # will typically only happen for the first CAP at each
-                    # target.
-                    package.time_over_target = tot
-                else:
-                    package.time_over_target = previous_end_time
-
-                departure_time = package.mission_departure_time
-                # Should be impossible for CAPs
-                if departure_time is None:
-                    logging.error(f"Could not determine mission end time for {package}")
-                    continue
-                previous_cap_end_time[package.target] = departure_time
-            elif package.auto_asap:
-                package.set_tot_asap()
-            else:
-                # But other packages should be spread out a bit. Note that take
-                # times are delayed, but all aircraft will become active at
-                # mission start. This makes it more worthwhile to attack enemy
-                # airfields to hit grounded aircraft, since they're more likely
-                # to be present. Runway and air started aircraft will be
-                # delayed until their takeoff time by AirConflictGenerator.
-                package.time_over_target = next(start_time) + tot
-
-    def message(self, title: str, text: str) -> None:
-        """Emits a planning message to the player.
-
-        If the mission planner belongs to the players coalition, this emits a
-        message to the info panel.
-        """
-        if self.is_player:
-            self.game.informations.append(Information(title, text, self.game.turn))
-        else:
-            logging.info(f"{title}: {text}")

@@ -28,8 +28,14 @@ from game.theater import (
     SamGroundObject,
     TheaterGroundObject,
     NavalControlPoint,
+    ConflictTheater,
 )
-from game.theater.theatergroundobject import EwrGroundObject, NavalGroundObject
+from game.theater.theatergroundobject import (
+    EwrGroundObject,
+    NavalGroundObject,
+    BuildingGroundObject,
+)
+from game.threatzones import ThreatZones
 from game.utils import Distance, Speed, feet, meters, nautical_miles, knots
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
@@ -38,8 +44,8 @@ from .waypointbuilder import StrikeTarget, WaypointBuilder
 from ..conflictgen import Conflict, FRONTLINE_LENGTH
 
 if TYPE_CHECKING:
-    from game import Game
     from gen.ato import Package
+    from game.coalition import Coalition
     from game.transfers import Convoy
 
 INGRESS_TYPES = {
@@ -864,7 +870,9 @@ class CustomFlightPlan(FlightPlan):
 class FlightPlanBuilder:
     """Generates flight plans for flights."""
 
-    def __init__(self, game: Game, package: Package, is_player: bool) -> None:
+    def __init__(
+        self, package: Package, coalition: Coalition, theater: ConflictTheater
+    ) -> None:
         # TODO: Plan similar altitudes for the in-country leg of the mission.
         # Waypoint altitudes for a given flight *shouldn't* differ too much
         # between the join and split points, so we don't need speeds for each
@@ -872,11 +880,21 @@ class FlightPlanBuilder:
         # hold too well right now since nothing is stopping each waypoint from
         # jumping 20k feet each time, but that's a huge waste of energy we
         # should be avoiding anyway.
-        self.game = game
         self.package = package
-        self.is_player = is_player
-        self.doctrine: Doctrine = self.game.faction_for(self.is_player).doctrine
-        self.threat_zones = self.game.threat_zone_for(not self.is_player)
+        self.coalition = coalition
+        self.theater = theater
+
+    @property
+    def is_player(self) -> bool:
+        return self.coalition.player
+
+    @property
+    def doctrine(self) -> Doctrine:
+        return self.coalition.doctrine
+
+    @property
+    def threat_zones(self) -> ThreatZones:
+        return self.coalition.opponent.threat_zone
 
     def populate_flight_plan(
         self,
@@ -1022,7 +1040,7 @@ class FlightPlanBuilder:
         )
 
     def preferred_join_point(self) -> Optional[Point]:
-        path = self.game.navmesh_for(self.is_player).shortest_path(
+        path = self.coalition.nav_mesh.shortest_path(
             self.package_airfield().position, self.package.target.position
         )
         for point in reversed(path):
@@ -1043,26 +1061,16 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         targets: List[StrikeTarget] = []
-        if len(location.groups) > 0 and location.dcs_identifier == "AA":
+        if isinstance(location, BuildingGroundObject):
+            # A building "group" is implemented as multiple TGOs with the same name.
+            for building in location.strike_targets:
+                targets.append(StrikeTarget(building.category, building))
+        else:
             # TODO: Replace with DEAD?
             # Strike missions on SEAD targets target units.
             for g in location.groups:
                 for j, u in enumerate(g.units):
                     targets.append(StrikeTarget(f"{u.type} #{j}", u))
-        else:
-            # TODO: Does this actually happen?
-            # ConflictTheater is built with the belief that multiple ground
-            # objects have the same name. If that's the case,
-            # TheaterGroundObject needs some refactoring because it behaves very
-            # differently for SAM sites than it does for strike targets.
-            buildings = self.game.theater.find_ground_objects_by_obj_name(
-                location.obj_name
-            )
-            for building in buildings:
-                if building.is_dead:
-                    continue
-
-                targets.append(StrikeTarget(building.category, building))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_STRIKE, targets
@@ -1083,7 +1091,7 @@ class FlightPlanBuilder:
         else:
             patrol_alt = feet(25000)
 
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
         orbit = builder.orbit(orbit_location, patrol_alt)
 
         return AwacsFlightPlan(
@@ -1175,7 +1183,7 @@ class FlightPlanBuilder:
             )
         )
 
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
         start, end = builder.race_track(start_pos, end_pos, patrol_alt)
 
         return BarCapFlightPlan(
@@ -1211,7 +1219,7 @@ class FlightPlanBuilder:
             heading, -self.doctrine.sweep_distance.meters
         )
 
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
         start, end = builder.sweep(start_pos, target, self.doctrine.ingress_altitude)
 
         hold = builder.hold(self._hold_point(flight))
@@ -1251,7 +1259,7 @@ class FlightPlanBuilder:
         altitude = feet(1500)
         altitude_is_agl = True
 
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
 
         pickup = None
         nav_to_pickup = []
@@ -1373,9 +1381,7 @@ class FlightPlanBuilder:
         self, origin: Point, front_line: FrontLine
     ) -> Tuple[Point, Point]:
         # Find targets waypoints
-        ingress, heading, distance = Conflict.frontline_vector(
-            front_line, self.game.theater
-        )
+        ingress, heading, distance = Conflict.frontline_vector(front_line, self.theater)
         center = ingress.point_from_heading(heading, distance / 2)
         orbit_center = center.point_from_heading(
             heading - 90,
@@ -1414,7 +1420,7 @@ class FlightPlanBuilder:
         )
 
         # Create points
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
 
         if isinstance(location, FrontLine):
             orbit0p, orbit1p = self.racetrack_for_frontline(
@@ -1545,7 +1551,7 @@ class FlightPlanBuilder:
     def generate_escort(self, flight: Flight) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
 
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
         ingress, target, egress = builder.escort(
             self.package.waypoints.ingress,
             self.package.target,
@@ -1588,9 +1594,7 @@ class FlightPlanBuilder:
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        ingress, heading, distance = Conflict.frontline_vector(
-            location, self.game.theater
-        )
+        ingress, heading, distance = Conflict.frontline_vector(location, self.theater)
         center = ingress.point_from_heading(heading, distance / 2)
         egress = ingress.point_from_heading(heading, distance)
 
@@ -1599,7 +1603,7 @@ class FlightPlanBuilder:
         if egress_distance < ingress_distance:
             ingress, egress = egress, ingress
 
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
 
         return CasFlightPlan(
             package=self.package,
@@ -1655,7 +1659,7 @@ class FlightPlanBuilder:
             orbit_heading - 90, racetrack_half_distance
         )
 
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
 
         tanker_type = flight.unit_type
         if tanker_type.patrol_altitude is not None:
@@ -1776,7 +1780,7 @@ class FlightPlanBuilder:
             flight: The flight to generate the landing waypoint for.
             arrival: Arrival airfield or carrier.
         """
-        builder = WaypointBuilder(flight, self.game, self.is_player)
+        builder = WaypointBuilder(flight, self.coalition)
         return builder.land(arrival)
 
     def strike_flightplan(
@@ -1788,7 +1792,7 @@ class FlightPlanBuilder:
         lead_time: timedelta = timedelta(),
     ) -> StrikeFlightPlan:
         assert self.package.waypoints is not None
-        builder = WaypointBuilder(flight, self.game, self.is_player, targets)
+        builder = WaypointBuilder(flight, self.coalition, targets)
 
         target_waypoints: List[FlightWaypoint] = []
         if targets is not None:

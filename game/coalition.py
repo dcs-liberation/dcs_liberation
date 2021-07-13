@@ -11,7 +11,7 @@ from game.navmesh import NavMesh
 from game.profiling import logged_duration, MultiEventTracer
 from game.threatzones import ThreatZones
 from game.transfers import PendingTransfers
-from gen.flights.ai_flight_planner import CoalitionMissionPlanner
+from gen.flights.ai_flight_planner import CoalitionMissionPlanner, MissionScheduler
 
 if TYPE_CHECKING:
     from game import Game
@@ -181,13 +181,20 @@ class Coalition:
     def plan_missions(self) -> None:
         color = "Blue" if self.player else "Red"
         with MultiEventTracer() as tracer:
-            mission_planner = CoalitionMissionPlanner(self.game, self.player)
+            mission_planner = CoalitionMissionPlanner(
+                self,
+                self.game.theater,
+                self.game.aircraft_inventory,
+                self.game.settings,
+            )
             with tracer.trace(f"{color} mission planning"):
                 with tracer.trace(f"{color} mission identification"):
                     commander = TheaterCommander(self.game, self.player)
                     commander.plan_missions(mission_planner, tracer)
-                with tracer.trace(f"{color} mission fulfillment"):
-                    mission_planner.fulfill_missions()
+                with tracer.trace(f"{color} mission scheduling"):
+                    MissionScheduler(
+                        self, self.game.settings.desired_player_mission_duration
+                    ).schedule_missions()
 
     def plan_procurement(self) -> None:
         # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it gets much

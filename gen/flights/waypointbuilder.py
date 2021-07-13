@@ -15,10 +15,10 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.unit import Unit
-from dcs.unitgroup import Group, VehicleGroup, ShipGroup
+from dcs.unitgroup import VehicleGroup, ShipGroup
 
 if TYPE_CHECKING:
-    from game import Game
+    from game.coalition import Coalition
     from game.transfers import MultiGroupTransport
 
 from game.theater import (
@@ -43,17 +43,15 @@ class WaypointBuilder:
     def __init__(
         self,
         flight: Flight,
-        game: Game,
-        player: bool,
+        coalition: Coalition,
         targets: Optional[List[StrikeTarget]] = None,
     ) -> None:
         self.flight = flight
-        self.conditions = game.conditions
-        self.doctrine = game.faction_for(player).doctrine
-        self.threat_zones = game.threat_zone_for(not player)
-        self.navmesh = game.navmesh_for(player)
+        self.doctrine = coalition.doctrine
+        self.threat_zones = coalition.opponent.threat_zone
+        self.navmesh = coalition.nav_mesh
         self.targets = targets
-        self._bullseye = game.bullseye_for(player)
+        self._bullseye = coalition.bullseye
 
     @property
     def is_helo(self) -> bool:

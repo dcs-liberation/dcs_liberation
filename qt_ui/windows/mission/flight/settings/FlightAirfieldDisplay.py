@@ -100,6 +100,6 @@ class FlightAirfieldDisplay(QGroupBox):
 
     def update_flight_plan(self) -> None:
         planner = FlightPlanBuilder(
-            self.game, self.package_model.package, is_player=True
+            self.package_model.package, self.game.blue, self.game.theater
         )
         planner.populate_flight_plan(self.flight)

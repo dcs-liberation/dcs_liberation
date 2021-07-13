@@ -4,7 +4,7 @@ import itertools
 import logging
 from abc import ABC
 from collections import Sequence
-from typing import Iterator, List, TYPE_CHECKING, Union, Generic, TypeVar, Any
+from typing import Iterator, List, TYPE_CHECKING, Union, Generic, TypeVar
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
@@ -257,13 +257,17 @@ class BuildingGroundObject(TheaterGroundObject[VehicleGroup]):
     def kill(self) -> None:
         self._dead = True
 
-    def iter_building_group(self) -> Iterator[TheaterGroundObject[Any]]:
+    def iter_building_group(self) -> Iterator[BuildingGroundObject]:
         for tgo in self.control_point.ground_objects:
-            if tgo.obj_name == self.obj_name and not tgo.is_dead:
+            if (
+                tgo.obj_name == self.obj_name
+                and not tgo.is_dead
+                and isinstance(tgo, BuildingGroundObject)
+            ):
                 yield tgo
 
     @property
-    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+    def strike_targets(self) -> List[BuildingGroundObject]:
         return list(self.iter_building_group())
 
     @property
