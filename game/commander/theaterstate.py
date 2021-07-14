@@ -97,6 +97,7 @@ class TheaterState(WorldState["TheaterState"]):
             if target.control_point != control_point:
                 continue
             if target.is_ammo_depot:
+                assert isinstance(target, BuildingGroundObject)
                 yield target
 
     def clone(self) -> TheaterState:
