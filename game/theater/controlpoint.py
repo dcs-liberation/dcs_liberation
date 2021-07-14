@@ -40,7 +40,11 @@ from gen.ground_forces.combat_stance import CombatStance
 from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
-from .theatergroundobject import GenericCarrierGroundObject, TheaterGroundObject
+from .theatergroundobject import (
+    GenericCarrierGroundObject,
+    TheaterGroundObject,
+    BuildingGroundObject,
+)
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
@@ -728,30 +732,47 @@ class ControlPoint(MissionTarget, ABC):
 
     @property
     def deployable_front_line_units(self) -> int:
-        return min(self.frontline_unit_count_limit, self.base.total_armor)
+        return self.deployable_front_line_units_with(self.active_ammo_depots_count)
+
+    def deployable_front_line_units_with(self, ammo_depot_count: int) -> int:
+        return min(
+            self.front_line_capacity_with(ammo_depot_count), self.base.total_armor
+        )
+
+    @classmethod
+    def front_line_capacity_with(cls, ammo_depot_count: int) -> int:
+        return (
+            FREE_FRONTLINE_UNIT_SUPPLY
+            + ammo_depot_count * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
+        )
 
     @property
     def frontline_unit_count_limit(self) -> int:
-        return (
-            FREE_FRONTLINE_UNIT_SUPPLY
-            + self.active_ammo_depots_count * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
-        )
+        return self.front_line_capacity_with(self.active_ammo_depots_count)
+
+    @property
+    def all_ammo_depots(self) -> Iterator[BuildingGroundObject]:
+        for tgo in self.connected_objectives:
+            if not tgo.is_ammo_depot:
+                continue
+            assert isinstance(tgo, BuildingGroundObject)
+            yield tgo
+
+    @property
+    def active_ammo_depots(self) -> Iterator[BuildingGroundObject]:
+        for tgo in self.all_ammo_depots:
+            if not tgo.is_dead:
+                yield tgo
 
     @property
     def active_ammo_depots_count(self) -> int:
         """Return the number of available ammo depots"""
-        return len(
-            [
-                obj
-                for obj in self.connected_objectives
-                if obj.category == "ammo" and not obj.is_dead
-            ]
-        )
+        return len(list(self.active_ammo_depots))
 
     @property
     def total_ammo_depots_count(self) -> int:
         """Return the number of ammo depots, including dead ones"""
-        return len([obj for obj in self.connected_objectives if obj.category == "ammo"])
+        return len(list(self.all_ammo_depots))
 
     @property
     def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:

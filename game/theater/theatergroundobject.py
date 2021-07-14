@@ -182,6 +182,10 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
         return self._max_range_of_type(group, "threat_range")
 
     @property
+    def is_ammo_depot(self) -> bool:
+        return self.category == "ammo"
+
+    @property
     def is_factory(self) -> bool:
         return self.category == "factory"
 

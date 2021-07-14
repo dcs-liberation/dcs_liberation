@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import itertools
 import math
+from collections import Iterator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Union, Optional
 
@@ -18,6 +19,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     IadsGroundObject,
     VehicleGroupGroundObject,
+    BuildingGroundObject,
 )
 from game.threatzones import ThreatZones
 from gen.ground_forces.combat_stance import CombatStance
@@ -87,6 +89,15 @@ class TheaterState(WorldState["TheaterState"]):
 
     def eliminate_garrison(self, target: VehicleGroupGroundObject) -> None:
         self.enemy_garrisons[target.control_point].eliminate(target)
+
+    def ammo_dumps_at(
+        self, control_point: ControlPoint
+    ) -> Iterator[BuildingGroundObject]:
+        for target in self.strike_targets:
+            if target.control_point != control_point:
+                continue
+            if target.is_ammo_depot:
+                yield target
 
     def clone(self) -> TheaterState:
         # Do not use copy.deepcopy. Copying every TGO, control point, etc is absurdly

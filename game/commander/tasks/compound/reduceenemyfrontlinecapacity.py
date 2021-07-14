@@ -1,19 +1,16 @@
 from collections import Iterator
 from dataclasses import dataclass
 
-from game.commander.tasks.primitive.aggressiveattack import AggressiveAttack
-from game.commander.tasks.primitive.cas import PlanCas
-from game.commander.tasks.primitive.eliminationattack import EliminationAttack
+from game.commander.tasks.primitive.strike import PlanStrike
 from game.commander.theaterstate import TheaterState
 from game.htn import CompoundTask, Method
-from game.theater import FrontLine
+from game.theater import ControlPoint
 
 
 @dataclass(frozen=True)
-class DestroyEnemyGroundUnits(CompoundTask[TheaterState]):
-    front_line: FrontLine
+class ReduceEnemyFrontLineCapacity(CompoundTask[TheaterState]):
+    control_point: ControlPoint
 
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
-        yield [EliminationAttack(self.front_line, state.context.coalition.player)]
-        yield [AggressiveAttack(self.front_line, state.context.coalition.player)]
-        yield [PlanCas(self.front_line)]
+        for ammo_dump in state.ammo_dumps_at(self.control_point):
+            yield [PlanStrike(ammo_dump)]
