@@ -1689,11 +1689,10 @@ class FlightPlanBuilder:
         origin = flight.departure.position
         target = self.package.target.position
         join = self.package.waypoints.join
-        origin_to_target = origin.distance_to_point(target)
-        join_to_target = join.distance_to_point(target)
-        if origin_to_target < join_to_target:
-            # If the origin airfield is closer to the target than the join
-            # point, plan the hold point such that it retreats from the origin
+        origin_to_join = origin.distance_to_point(join)
+        if meters(origin_to_join) < self.doctrine.push_distance:
+            # If the origin airfield is closer to the join point, than the minimum push
+            # distance. Plan the hold point such that it retreats from the origin
             # airfield.
             return join.point_from_heading(
                 target.heading_between_point(origin), self.doctrine.push_distance.meters
