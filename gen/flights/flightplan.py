@@ -998,11 +998,10 @@ class FlightPlanBuilder:
 
         ingress_point = self._ingress_point(self._target_heading_to_package_airfield())
         join_point = self._rendezvous_point(ingress_point)
-        split_point = self._rendezvous_point(ingress_point)
         self.package.waypoints = PackageWaypoints(
-            join_point,
+            WaypointBuilder.perturb(join_point),
             ingress_point,
-            split_point,
+            WaypointBuilder.perturb(join_point),
         )
 
     def safe_points_between(self, a: Point, b: Point) -> Iterator[Point]:
