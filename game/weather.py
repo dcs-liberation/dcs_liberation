@@ -144,7 +144,7 @@ class Weather:
 class ClearSkies(Weather):
     def generate_atmospheric(self) -> AtmosphericConditions:
         return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.92)
+            qnh_inches_mercury=self.random_pressure(29.96)
             temperature_celsius=self.random_temperature(22)
         )
 
@@ -161,7 +161,7 @@ class ClearSkies(Weather):
 class Cloudy(Weather):
     def generate_atmospheric(self) -> AtmosphericConditions:
         return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.92)
+            qnh_inches_mercury=self.random_pressure(29.90)
             temperature_celsius=self.random_temperature(20)
         )
 
@@ -179,7 +179,7 @@ class Cloudy(Weather):
 class Raining(Weather):
     def generate_atmospheric(self) -> AtmosphericConditions:
         return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.92)
+            qnh_inches_mercury=self.random_pressure(29.70)
             temperature_celsius=self.random_temperature(16)
         )
 
@@ -197,7 +197,7 @@ class Raining(Weather):
 class Thunderstorm(Weather):
     def generate_atmospheric(self) -> AtmosphericConditions:
         return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.92)
+            qnh_inches_mercury=self.random_pressure(29.60)
             temperature_celsius=self.random_temperature(15)
         )
 
