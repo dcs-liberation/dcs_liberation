@@ -959,30 +959,14 @@ class FlightPlanBuilder:
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
-        # The simple case is where the target is greater than the ingress
-        # distance into the threat zone and the target is not near the departure
-        # airfield. In this case, we can plan the shortest route from the
-        # departure airfield to the target, use the last non-threatened point as
-        # the join point, and plan the IP inside the threatened area.
-        #
-        # When the target is near the edge of the threat zone the IP may need to
-        # be placed outside the zone.
-        #
-        # +--------------+            +---------------+
-        # |              |            |               |
-        # |              |       IP---+-T             |
-        # |              |            |               |
-        # |              |            |               |
-        # +--------------+            +---------------+
-        #
-        # Here we want to place the IP first and route the flight to the IP
-        # rather than routing to the target and placing the IP based on the join
-        # point.
+        # The simple case is where the target is not near the departure airfield. In
+        # this case, we can plan the shortest route from the departure airfield to the
+        # target, use the nearest non-threatened point *that's farther from the target
+        # than the ingress point to avoid backtracking) as the join point.
         #
         # The other case that we need to handle is when the target is close to
-        # the origin airfield. In this case we also need to set up the IP first,
-        # but depending on the placement of the IP we may need to place the join
-        # point in a retreating position.
+        # the origin airfield. In this case we currently fall back to the old planning
+        # behavior.
         #
         # A messy (and very unlikely) case that we can't do much about:
         #
@@ -996,21 +980,18 @@ class FlightPlanBuilder:
 
         target = self.package.target.position
 
-        join_point = self.preferred_join_point()
-        if join_point is None:
-            # The whole path from the origin airfield to the target is
-            # threatened. Need to retreat out of the threat area.
-            join_point = self.retreat_point(self.package_airfield().position)
+        for join_point in self.preferred_join_points():
+            join_distance = meters(join_point.distance_to_point(target))
+            if join_distance > self.doctrine.ingress_egress_distance:
+                break
+        else:
+            # The entire path to the target is threatened. Use the fallback behavior for
+            # now.
+            self.legacy_package_waypoints_impl()
+            return
 
         attack_heading = join_point.heading_between_point(target)
         ingress_point = self._ingress_point(attack_heading)
-        join_distance = meters(join_point.distance_to_point(target))
-        ingress_distance = meters(ingress_point.distance_to_point(target))
-        if join_distance < ingress_distance:
-            # The second case described above. The ingress point is farther from
-            # the target than the join point. Use the fallback behavior for now.
-            self.legacy_package_waypoints_impl()
-            return
 
         # The first case described above. The ingress and join points are placed
         # reasonably relative to each other.
@@ -1031,7 +1012,7 @@ class FlightPlanBuilder:
         ingress_point = self._ingress_point(self._target_heading_to_package_airfield())
         egress_point = self._egress_point(self._target_heading_to_package_airfield())
         join_point = self._rendezvous_point(ingress_point)
-        split_point = self._rendezvous_point(egress_point)
+        split_point = self._rendezvous_point(self.package.target.position)
         self.package.waypoints = PackageWaypoints(
             join_point,
             ingress_point,
@@ -1039,14 +1020,16 @@ class FlightPlanBuilder:
             split_point,
         )
 
-    def preferred_join_point(self) -> Optional[Point]:
+    def preferred_join_points(self) -> Iterator[Point]:
         path = self.coalition.nav_mesh.shortest_path(
             self.package_airfield().position, self.package.target.position
         )
-        for point in reversed(path):
+        # Use non-threatened points along the path to the target (excluding the target
+        # itself) as the join point. We may need to try more than one in the event that
+        # the close non-threatened points are closer than the ingress point itself.
+        for point in reversed(path[:-1]):
             if not self.threat_zones.threatened(point):
-                return point
-        return None
+                yield point
 
     def generate_strike(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a strike flight plan.
