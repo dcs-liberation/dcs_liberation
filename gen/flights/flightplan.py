@@ -1005,7 +1005,7 @@ class FlightPlanBuilder:
         )
 
     def safe_points_between(self, a: Point, b: Point) -> Iterator[Point]:
-        for point in self.coalition.nav_mesh.shortest_path(a, b)[1:]:
+        for point in self.coalition.nav_mesh.shortest_path(a, b)[1:-1]:
             if not self.threat_zones.threatened(point):
                 yield point
 
