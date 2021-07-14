@@ -985,7 +985,9 @@ class FlightPlanBuilder:
         self.package.waypoints = PackageWaypoints(
             WaypointBuilder.perturb(join_point),
             ingress_point,
-            WaypointBuilder.perturb(join_point),
+            WaypointBuilder.perturb(
+                self.preferred_split_point(ingress_point, join_point)
+            ),
         )
 
     def retreat_point(self, origin: Point) -> Point:
@@ -1003,16 +1005,28 @@ class FlightPlanBuilder:
             split_point,
         )
 
-    def preferred_join_points(self) -> Iterator[Point]:
-        path = self.coalition.nav_mesh.shortest_path(
-            self.package_airfield().position, self.package.target.position
-        )
-        # Use non-threatened points along the path to the target (excluding the target
-        # itself) as the join point. We may need to try more than one in the event that
-        # the close non-threatened points are closer than the ingress point itself.
-        for point in reversed(path[:-1]):
+    def safe_points_between(self, a: Point, b: Point) -> Iterator[Point]:
+        for point in self.coalition.nav_mesh.shortest_path(a, b)[1:]:
             if not self.threat_zones.threatened(point):
                 yield point
+
+    def preferred_join_points(self) -> Iterator[Point]:
+        # Use non-threatened points along the path to the target as the join point. We
+        # may need to try more than one in the event that the close non-threatened
+        # points are closer than the ingress point itself.
+        return self.safe_points_between(
+            self.package.target.position, self.package_airfield().position
+        )
+
+    def preferred_split_point(self, ingress_point: Point, join_point: Point) -> Point:
+        # Use non-threatened points along the path to the target as the join point. We
+        # may need to try more than one in the event that the close non-threatened
+        # points are closer than the ingress point itself.
+        for point in self.safe_points_between(
+            ingress_point, self.package_airfield().position
+        ):
+            return point
+        return join_point
 
     def generate_strike(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a strike flight plan.
