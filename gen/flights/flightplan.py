@@ -998,7 +998,7 @@ class FlightPlanBuilder:
 
         ingress_point = self._ingress_point(self._target_heading_to_package_airfield())
         join_point = self._rendezvous_point(ingress_point)
-        split_point = self._rendezvous_point(self.package.target.position)
+        split_point = self._rendezvous_point(ingress_point)
         self.package.waypoints = PackageWaypoints(
             join_point,
             ingress_point,
