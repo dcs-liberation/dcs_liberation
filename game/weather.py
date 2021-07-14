@@ -26,7 +26,9 @@ class TimeOfDay(Enum):
 
 @dataclass(frozen=True)
 class AtmosphericConditions:
+    #: Pressure at sea level in inches of mercury.
     qnh_inches_mercury: float
+    #: Temperature at sea level in Celcius.
     temperature_celsius: float
 
 
@@ -119,7 +121,8 @@ class Weather:
 
     @staticmethod
     def random_pressure(average_pressure: float) -> float:
-        # "Safe" constants based roughly on ME and viper altimeter
+        # "Safe" constants based roughly on ME and viper altimeter.
+        # Units are inches of mercury.
         SAFE_MIN = 28.4
         SAFE_MAX = 30.9
         # Use normalvariate to get normal distribution, more realistic than uniform
@@ -128,7 +131,8 @@ class Weather:
 
     @staticmethod
     def random_temperature(average_temperature: float) -> float:
-        # "Safe" constants based roughly on ME
+        # "Safe" constants based roughly on ME.
+        # Temperatures are in Celcius.
         SAFE_MIN = -12
         SAFE_MAX = 49
         # Use normalvariate to get normal distribution, more realistic than uniform
