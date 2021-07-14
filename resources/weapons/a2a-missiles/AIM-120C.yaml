@@ -1,0 +1,7 @@
+name: AIM-120C
+year: 1996
+fallback: AIM-120B
+clsids:
+  - "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}"
+  - "{LAU-115 - AIM-120C}"
+  - "{LAU-115 - AIM-120C_R}"

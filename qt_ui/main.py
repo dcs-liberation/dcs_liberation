@@ -11,14 +11,9 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 from dcs.payloads import PayloadDirectories
-from dcs.weapons_data import weapon_ids
 
 from game import Game, VERSION, persistency
-from game.data.weapons import (
-    WEAPON_FALLBACK_MAP,
-    WEAPON_INTRODUCTION_YEARS,
-    Weapon,
-)
+from game.data.weapons import WeaponGroup
 from game.db import FACTIONS
 from game.profiling import logged_duration
 from game.settings import Settings
@@ -239,12 +234,8 @@ def create_game(
 
 
 def lint_weapon_data() -> None:
-    for clsid in weapon_ids:
-        weapon = Weapon.from_clsid(clsid)
-        if weapon not in WEAPON_INTRODUCTION_YEARS:
-            logging.warning(f"{weapon} has no introduction date")
-        if weapon not in WEAPON_FALLBACK_MAP:
-            logging.warning(f"{weapon} has no fallback")
+    for weapon in WeaponGroup.named("Unknown").weapons:
+        logging.warning(f"No weapon data for {weapon}: {weapon.clsid}")
 
 
 def main():
