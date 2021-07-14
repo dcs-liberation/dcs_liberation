@@ -170,10 +170,12 @@ class Conditions:
         time_of_day: TimeOfDay,
         settings: Settings,
     ) -> Conditions:
-        _start_time=cls.generate_start_time(theater, day, time_of_day, settings.night_disabled)
+        _start_time = cls.generate_start_time(
+            theater, day, time_of_day, settings.night_disabled
+        )
         return cls(
             time_of_day=time_of_day,
-            start_time=_start_time
+            start_time=_start_time,
             weather=cls.generate_weather(),
             pressure=cls.generate_pressure(),
             temperature=cls.generate_temperature(),
@@ -225,16 +227,16 @@ class Conditions:
         # Use normalvariate to get normal distribution, more realistic than uniform
         pressure = random.normalvariate(average_pressure, 0.2)
         return max(SAFE_MIN, min(SAFE_MAX, pressure))
-        
 
     @classmethod
     def generate_temperature(cls) -> float:
         # "Safe" constants based roughly on ME
-        SAFE_MIN = -6
+        SAFE_MIN = -12
         SAFE_MAX = 49
         # Future improvement: Use theater, day and time of day (?)
         # to get a more realistic average temperature.
         average_temperature = 20
         # Use normalvariate to get normal distribution, more realistic than uniform
         temperature = random.normalvariate(average_temperature, 4)
+        temperature = round(temperature)
         return max(SAFE_MIN, min(SAFE_MAX, temperature))
