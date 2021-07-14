@@ -508,8 +508,6 @@ class ConflictTheater:
     """
     daytime_map: Dict[str, Tuple[int, int]]
 
-    weather_characteristics: Dict[Dict[str, float]]
-
     def __init__(self) -> None:
         self.controlpoints: List[ControlPoint] = []
         self.point_to_ll_transformer = Transformer.from_crs(
@@ -748,19 +746,6 @@ class CaucasusTheater(ConflictTheater):
         "day": (9, 18),
         "dusk": (18, 20),
         "night": (0, 5),
-    }
-
-    weather_characteristics = {
-        "summer": {
-            "average_pressure": 30.01,
-            "average_temperature_day": 26,
-            "average_temperature_night": 18,
-        }
-        "winter": {
-            "average_pressure": 29.42,
-            "average_temperature": 5,
-            "average_temperature_night": -2,
-        }
     }
 
     @property

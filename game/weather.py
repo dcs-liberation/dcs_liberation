@@ -215,13 +215,26 @@ class Conditions:
         return weather_type()
 
     @classmethod
-    def generate_pressure(cls, theater: ConflictTheater, day: datetime.date) -> float:
-        # TODO: Get average pressure from theater's season, interpolated between seasons
-        # TODO: Random walk N times from average pressure - produces bell curve distribution
-        return 29.92
+    def generate_pressure(cls) -> float:
+        # "Safe" constants based roughly on ME and viper altimeter
+        SAFE_MIN = 28.4
+        SAFE_MAX = 30.9
+        # Future improvement: Use theater, day and time of day
+        # to get a more realistic average pressure.
+        average_pressure = 29.92
+        # Use normalvariate to get normal distribution, more realistic than uniform
+        pressure = random.normalvariate(average_pressure, 0.2)
+        return max(SAFE_MIN, min(SAFE_MAX, pressure))
+        
 
     @classmethod
-    def generate_temperature(cls, theater: ConflictTheater, day: datetime.date, time_of_day: TimeOfDay) -> float:
-        # TODO: Get average temp from theater's season, interpolated between seasons
-        # TODO: Random walk N times from average temp - produces bell curve distribution
-        return 20
+    def generate_temperature(cls) -> float:
+        # "Safe" constants based roughly on ME
+        SAFE_MIN = -6
+        SAFE_MAX = 49
+        # Future improvement: Use theater, day and time of day (?)
+        # to get a more realistic average temperature.
+        average_temperature = 20
+        # Use normalvariate to get normal distribution, more realistic than uniform
+        temperature = random.normalvariate(average_temperature, 4)
+        return max(SAFE_MIN, min(SAFE_MAX, temperature))
