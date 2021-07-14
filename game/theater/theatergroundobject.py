@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import itertools
 import logging
+from abc import ABC
 from collections import Sequence
-from typing import Iterator, List, TYPE_CHECKING, Union, Generic, TypeVar, Any
+from typing import Iterator, List, TYPE_CHECKING, Union, Generic, TypeVar
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
@@ -181,6 +182,10 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
         return self._max_range_of_type(group, "threat_range")
 
     @property
+    def is_ammo_depot(self) -> bool:
+        return self.category == "ammo"
+
+    @property
     def is_factory(self) -> bool:
         return self.category == "factory"
 
@@ -256,13 +261,17 @@ class BuildingGroundObject(TheaterGroundObject[VehicleGroup]):
     def kill(self) -> None:
         self._dead = True
 
-    def iter_building_group(self) -> Iterator[TheaterGroundObject[Any]]:
+    def iter_building_group(self) -> Iterator[BuildingGroundObject]:
         for tgo in self.control_point.ground_objects:
-            if tgo.obj_name == self.obj_name and not tgo.is_dead:
+            if (
+                tgo.obj_name == self.obj_name
+                and not tgo.is_dead
+                and isinstance(tgo, BuildingGroundObject)
+            ):
                 yield tgo
 
     @property
-    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+    def strike_targets(self) -> List[BuildingGroundObject]:
         return list(self.iter_building_group())
 
     @property
@@ -463,10 +472,19 @@ class CoastalSiteGroundObject(TheaterGroundObject[VehicleGroup]):
         return False
 
 
+class IadsGroundObject(TheaterGroundObject[VehicleGroup], ABC):
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from gen.flights.flight import FlightType
+
+        if not self.is_friendly(for_player):
+            yield FlightType.DEAD
+        yield from super().mission_types(for_player)
+
+
 # The SamGroundObject represents all type of AA
 # The TGO can have multiple types of units (AAA,SAM,Support...)
 # Differentiation can be made during generation with the airdefensegroupgenerator
-class SamGroundObject(TheaterGroundObject[VehicleGroup]):
+class SamGroundObject(IadsGroundObject):
     def __init__(
         self,
         name: str,
@@ -491,7 +509,11 @@ class SamGroundObject(TheaterGroundObject[VehicleGroup]):
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
             yield FlightType.SEAD
-        yield from super().mission_types(for_player)
+        for mission_type in super().mission_types(for_player):
+            # We yielded this ourselves to move it to the top of the list. Don't yield
+            # it twice.
+            if mission_type is not FlightType.DEAD:
+                yield mission_type
 
     @property
     def might_have_aa(self) -> bool:
@@ -558,7 +580,7 @@ class VehicleGroupGroundObject(TheaterGroundObject[VehicleGroup]):
         return True
 
 
-class EwrGroundObject(TheaterGroundObject[VehicleGroup]):
+class EwrGroundObject(IadsGroundObject):
     def __init__(
         self,
         name: str,
@@ -582,13 +604,6 @@ class EwrGroundObject(TheaterGroundObject[VehicleGroup]):
         # Prefix the group names with the side color so Skynet can find them.
         # Use Group Id and uppercase EWR
         return f"{self.faction_color}|EWR|{self.group_id}"
-
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
-
-        if not self.is_friendly(for_player):
-            yield FlightType.DEAD
-        yield from super().mission_types(for_player)
 
     @property
     def might_have_aa(self) -> bool:

@@ -1,0 +1,5 @@
+name: AGM-62 Walleye II
+year: 1972
+fallback: Mk 84
+clsids:
+  - "{C40A1E3A-DD05-40D9-85A4-217729E37FAE}"

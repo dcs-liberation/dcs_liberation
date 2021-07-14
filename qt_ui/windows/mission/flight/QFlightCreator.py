@@ -38,7 +38,7 @@ class QFlightCreator(QDialog):
         self.game = game
         self.package = package
         self.custom_name_text = None
-        self.country = self.game.player_country
+        self.country = self.game.blue.country_name
 
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -52,7 +52,6 @@ class QFlightCreator(QDialog):
 
         self.aircraft_selector = QAircraftTypeSelector(
             self.game.aircraft_inventory.available_types_for_player,
-            self.game.player_country,
             self.task_selector.currentData(),
         )
         self.aircraft_selector.setCurrentIndex(0)

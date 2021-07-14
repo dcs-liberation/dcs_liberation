@@ -86,42 +86,18 @@ class GroundConflictGenerator:
         player_planned_combat_groups: List[CombatGroup],
         enemy_planned_combat_groups: List[CombatGroup],
         player_stance: CombatStance,
+        enemy_stance: CombatStance,
         unit_map: UnitMap,
     ) -> None:
         self.mission = mission
         self.conflict = conflict
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
         self.player_planned_combat_groups = player_planned_combat_groups
-        self.player_stance = CombatStance(player_stance)
-        self.enemy_stance = self._enemy_stance()
+        self.player_stance = player_stance
+        self.enemy_stance = enemy_stance
         self.game = game
         self.unit_map = unit_map
         self.jtacs: List[JtacInfo] = []
-
-    def _enemy_stance(self) -> CombatStance:
-        """Picks the enemy stance according to the number of planned groups on the frontline for each side"""
-        if len(self.enemy_planned_combat_groups) > len(
-            self.player_planned_combat_groups
-        ):
-            return random.choice(
-                [
-                    CombatStance.AGGRESSIVE,
-                    CombatStance.AGGRESSIVE,
-                    CombatStance.AGGRESSIVE,
-                    CombatStance.ELIMINATION,
-                    CombatStance.BREAKTHROUGH,
-                ]
-            )
-        else:
-            return random.choice(
-                [
-                    CombatStance.DEFENSIVE,
-                    CombatStance.DEFENSIVE,
-                    CombatStance.DEFENSIVE,
-                    CombatStance.AMBUSH,
-                    CombatStance.AGGRESSIVE,
-                ]
-            )
 
     def generate(self) -> None:
         position = Conflict.frontline_position(
@@ -168,16 +144,16 @@ class GroundConflictGenerator:
         )
 
         # Add JTAC
-        if self.game.player_faction.has_jtac:
+        if self.game.blue.faction.has_jtac:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
             code = 1688 - len(self.jtacs)
 
-            utype = self.game.player_faction.jtac_unit
+            utype = self.game.blue.faction.jtac_unit
             if utype is None:
                 utype = AircraftType.named("MQ-9 Reaper")
 
             jtac = self.mission.flight_group(
-                country=self.mission.country(self.game.player_country),
+                country=self.mission.country(self.game.blue.country_name),
                 name=n,
                 aircraft_type=utype.dcs_unit_type,
                 position=position[0],
@@ -739,7 +715,7 @@ class GroundConflictGenerator:
             if is_player
             else int(heading_sum(heading, 90))
         )
-        country = self.game.player_country if is_player else self.game.enemy_country
+        country = self.game.coalition_for(is_player).country_name
         for group in groups:
             if group.role == CombatGroupRole.ARTILLERY:
                 distance_from_frontline = (

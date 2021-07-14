@@ -97,7 +97,7 @@ class VisualGenerator:
                             break
 
                         self.mission.static_group(
-                            self.mission.country(self.game.enemy_country),
+                            self.mission.country(self.game.red.country_name),
                             "",
                             _type=v,
                             position=pos,

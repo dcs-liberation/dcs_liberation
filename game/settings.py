@@ -55,6 +55,7 @@ class Settings:
     automate_runway_repair: bool = False
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
+    automate_front_line_stance: bool = True
     restrict_weapons_by_date: bool = False
     disable_legacy_aewc: bool = True
     disable_legacy_tanker: bool = True

@@ -22,7 +22,6 @@ from dcs.planes import (
     C_101EB,
     F_14B,
     JF_17,
-    PlaneType,
     Su_33,
     Tu_22M3,
 )
@@ -262,8 +261,8 @@ class AircraftConflictGenerator:
     @cached_property
     def use_client(self) -> bool:
         """True if Client should be used instead of Player."""
-        blue_clients = self.client_slots_in_ato(self.game.blue_ato)
-        red_clients = self.client_slots_in_ato(self.game.red_ato)
+        blue_clients = self.client_slots_in_ato(self.game.blue.ato)
+        red_clients = self.client_slots_in_ato(self.game.red.ato)
         return blue_clients + red_clients > 1
 
     @staticmethod
@@ -601,12 +600,11 @@ class AircraftConflictGenerator:
             if not isinstance(control_point, Airfield):
                 continue
 
+            faction = self.game.coalition_for(control_point.captured).faction
             if control_point.captured:
                 country = player_country
-                faction = self.game.player_faction
             else:
                 country = enemy_country
-                faction = self.game.enemy_faction
 
             for aircraft, available in inventory.all_aircraft:
                 try:
@@ -699,11 +697,7 @@ class AircraftConflictGenerator:
         if flight.from_cp.cptype != ControlPointType.AIRBASE:
             return
 
-        if flight.from_cp.captured:
-            coalition = self.game.get_player_coalition_id()
-        else:
-            coalition = self.game.get_enemy_coalition_id()
-
+        coalition = self.game.coalition_for(flight.departure.captured).coalition_id
         trigger.add_condition(CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
     def generate_planned_flight(

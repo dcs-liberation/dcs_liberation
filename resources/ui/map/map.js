@@ -904,10 +904,13 @@ function drawThreatZones() {
 
 function drawNavmesh(zones, layer) {
   for (const zone of zones) {
-    L.polyline(zone, {
+    L.polyline(zone.poly, {
       color: "#000000",
       weight: 1,
-      fill: false,
+      fillColor: zone.threatened ? "#ff0000" : "#00ff00",
+      fill: true,
+      fillOpacity: 0.1,
+      noClip: true,
       interactive: false,
     }).addTo(layer);
   }

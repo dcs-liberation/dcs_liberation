@@ -1,10 +1,8 @@
 """Inventory management APIs."""
 from __future__ import annotations
 
-from collections import defaultdict
-from typing import Dict, Iterable, Iterator, Set, Tuple, TYPE_CHECKING, Type
-
-from dcs.unittype import FlyingType
+from collections import defaultdict, Iterator, Iterable
+from typing import TYPE_CHECKING
 
 from game.dcs.aircrafttype import AircraftType
 from gen.flights.flight import Flight
@@ -18,7 +16,12 @@ class ControlPointAircraftInventory:
 
     def __init__(self, control_point: ControlPoint) -> None:
         self.control_point = control_point
-        self.inventory: Dict[AircraftType, int] = defaultdict(int)
+        self.inventory: dict[AircraftType, int] = defaultdict(int)
+
+    def clone(self) -> ControlPointAircraftInventory:
+        new = ControlPointAircraftInventory(self.control_point)
+        new.inventory = self.inventory.copy()
+        return new
 
     def add_aircraft(self, aircraft: AircraftType, count: int) -> None:
         """Adds aircraft to the inventory.
@@ -67,7 +70,7 @@ class ControlPointAircraftInventory:
                 yield aircraft
 
     @property
-    def all_aircraft(self) -> Iterator[Tuple[AircraftType, int]]:
+    def all_aircraft(self) -> Iterator[tuple[AircraftType, int]]:
         """Iterates over all available aircraft types, including amounts."""
         for aircraft, count in self.inventory.items():
             if count > 0:
@@ -82,14 +85,22 @@ class GlobalAircraftInventory:
     """Game-wide aircraft inventory."""
 
     def __init__(self, control_points: Iterable[ControlPoint]) -> None:
-        self.inventories: Dict[ControlPoint, ControlPointAircraftInventory] = {
+        self.inventories: dict[ControlPoint, ControlPointAircraftInventory] = {
             cp: ControlPointAircraftInventory(cp) for cp in control_points
         }
 
-    def reset(self) -> None:
-        """Clears all control points and their inventories."""
+    def clone(self) -> GlobalAircraftInventory:
+        new = GlobalAircraftInventory([])
+        new.inventories = {
+            cp: inventory.clone() for cp, inventory in self.inventories.items()
+        }
+        return new
+
+    def reset(self, for_player: bool) -> None:
+        """Clears the inventory of every control point owned by the given coalition."""
         for inventory in self.inventories.values():
-            inventory.clear()
+            if inventory.control_point.captured == for_player:
+                inventory.clear()
 
     def set_from_control_point(self, control_point: ControlPoint) -> None:
         """Set the control point's aircraft inventory.
@@ -110,7 +121,7 @@ class GlobalAircraftInventory:
     @property
     def available_types_for_player(self) -> Iterator[AircraftType]:
         """Iterates over all aircraft types available to the player."""
-        seen: Set[AircraftType] = set()
+        seen: set[AircraftType] = set()
         for control_point, inventory in self.inventories.items():
             if control_point.captured:
                 for aircraft in inventory.types_available:

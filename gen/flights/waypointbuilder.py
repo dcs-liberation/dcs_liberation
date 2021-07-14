@@ -15,10 +15,10 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.unit import Unit
-from dcs.unitgroup import Group, VehicleGroup, ShipGroup
+from dcs.unitgroup import VehicleGroup, ShipGroup
 
 if TYPE_CHECKING:
-    from game import Game
+    from game.coalition import Coalition
     from game.transfers import MultiGroupTransport
 
 from game.theater import (
@@ -43,17 +43,15 @@ class WaypointBuilder:
     def __init__(
         self,
         flight: Flight,
-        game: Game,
-        player: bool,
+        coalition: Coalition,
         targets: Optional[List[StrikeTarget]] = None,
     ) -> None:
         self.flight = flight
-        self.conditions = game.conditions
-        self.doctrine = game.faction_for(player).doctrine
-        self.threat_zones = game.threat_zone_for(not player)
-        self.navmesh = game.navmesh_for(player)
+        self.doctrine = coalition.doctrine
+        self.threat_zones = coalition.opponent.threat_zone
+        self.navmesh = coalition.nav_mesh
         self.targets = targets
-        self._bullseye = game.bullseye_for(player)
+        self._bullseye = coalition.bullseye
 
     @property
     def is_helo(self) -> bool:
@@ -429,21 +427,18 @@ class WaypointBuilder:
         self,
         ingress: Point,
         target: MissionTarget,
-        egress: Point,
-    ) -> Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
+    ) -> Tuple[FlightWaypoint, FlightWaypoint]:
         """Creates the waypoints needed to escort the package.
 
         Args:
             ingress: The package ingress point.
             target: The mission target.
-            egress: The package egress point.
         """
         # This would preferably be no points at all, and instead the Escort task
         # would begin on the join point and end on the split point, however the
         # escort task does not appear to work properly (see the longer
         # description in gen.aircraft.JoinPointBuilder), so instead we give
-        # the escort flights a flight plan including the ingress point, target
-        # area, and egress point.
+        # the escort flights a flight plan including the ingress point and target area.
         ingress_wp = self.ingress(FlightWaypointType.INGRESS_ESCORT, ingress, target)
 
         waypoint = FlightWaypoint(
@@ -457,9 +452,7 @@ class WaypointBuilder:
         waypoint.name = "TARGET"
         waypoint.description = "Escort the package"
         waypoint.pretty_name = "Target area"
-
-        egress_wp = self.egress(egress, target)
-        return ingress_wp, waypoint, egress_wp
+        return ingress_wp, waypoint
 
     @staticmethod
     def pickup(control_point: ControlPoint) -> FlightWaypoint:

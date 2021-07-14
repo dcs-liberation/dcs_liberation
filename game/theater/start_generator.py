@@ -174,14 +174,11 @@ class ControlPointGroundObjectGenerator:
 
     @property
     def faction_name(self) -> str:
-        if self.control_point.captured:
-            return self.game.player_faction.name
-        else:
-            return self.game.enemy_faction.name
+        return self.faction.name
 
     @property
     def faction(self) -> Faction:
-        return db.FACTIONS[self.faction_name]
+        return self.game.coalition_for(self.control_point.captured).faction
 
     def generate(self) -> bool:
         self.control_point.connected_objectives = []

@@ -44,7 +44,7 @@ from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
     TheaterGroundObject,
-    NavalGroundObject,
+    BuildingGroundObject,
 )
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
@@ -272,6 +272,9 @@ class ControlPointStatus(IntEnum):
 
 
 class ControlPoint(MissionTarget, ABC):
+    # Not sure what distance DCS uses, but assuming it's about 2NM since that's roughly
+    # the distance of the circle on the map.
+    CAPTURE_DISTANCE = nautical_miles(2)
 
     position = None  # type: Point
     name = None  # type: str
@@ -340,8 +343,12 @@ class ControlPoint(MissionTarget, ABC):
         return self.name
 
     @property
-    def is_global(self) -> bool:
+    def is_isolated(self) -> bool:
         return not self.connected_points
+
+    @property
+    def is_global(self) -> bool:
+        return self.is_isolated
 
     def transitive_connected_friendly_points(
         self, seen: Optional[Set[ControlPoint]] = None
@@ -600,7 +607,7 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
-        self.pending_unit_deliveries.refund_all(game)
+        self.pending_unit_deliveries.refund_all(game.coalition_for(for_player))
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
@@ -617,11 +624,7 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     def aircraft_transferring(self, game: Game) -> dict[AircraftType, int]:
-        if self.captured:
-            ato = game.blue_ato
-        else:
-            ato = game.red_ato
-
+        ato = game.coalition_for(self.captured).ato
         transferring: defaultdict[AircraftType, int] = defaultdict(int)
         for package in ato.packages:
             for flight in package.flights:
@@ -729,27 +732,48 @@ class ControlPoint(MissionTarget, ABC):
         return self.captured != other.captured
 
     @property
-    def frontline_unit_count_limit(self) -> int:
+    def deployable_front_line_units(self) -> int:
+        return self.deployable_front_line_units_with(self.active_ammo_depots_count)
+
+    def deployable_front_line_units_with(self, ammo_depot_count: int) -> int:
+        return min(
+            self.front_line_capacity_with(ammo_depot_count), self.base.total_armor
+        )
+
+    @classmethod
+    def front_line_capacity_with(cls, ammo_depot_count: int) -> int:
         return (
             FREE_FRONTLINE_UNIT_SUPPLY
-            + self.active_ammo_depots_count * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
+            + ammo_depot_count * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
         )
+
+    @property
+    def frontline_unit_count_limit(self) -> int:
+        return self.front_line_capacity_with(self.active_ammo_depots_count)
+
+    @property
+    def all_ammo_depots(self) -> Iterator[BuildingGroundObject]:
+        for tgo in self.connected_objectives:
+            if not tgo.is_ammo_depot:
+                continue
+            assert isinstance(tgo, BuildingGroundObject)
+            yield tgo
+
+    @property
+    def active_ammo_depots(self) -> Iterator[BuildingGroundObject]:
+        for tgo in self.all_ammo_depots:
+            if not tgo.is_dead:
+                yield tgo
 
     @property
     def active_ammo_depots_count(self) -> int:
         """Return the number of available ammo depots"""
-        return len(
-            [
-                obj
-                for obj in self.connected_objectives
-                if obj.category == "ammo" and not obj.is_dead
-            ]
-        )
+        return len(list(self.active_ammo_depots))
 
     @property
     def total_ammo_depots_count(self) -> int:
         """Return the number of ammo depots, including dead ones"""
-        return len([obj for obj in self.connected_objectives if obj.category == "ammo"])
+        return len(list(self.all_ammo_depots))
 
     @property
     def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:

@@ -38,8 +38,8 @@ class ForcedOptionsGenerator:
             self.mission.forced_options.labels = ForcedOptions.Labels.None_
 
     def _set_unrestricted_satnav(self) -> None:
-        blue = self.game.player_faction
-        red = self.game.enemy_faction
+        blue = self.game.blue.faction
+        red = self.game.red.faction
         if blue.unrestricted_satnav or red.unrestricted_satnav:
             self.mission.forced_options.unrestricted_satnav = True
 

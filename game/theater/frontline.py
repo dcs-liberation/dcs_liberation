@@ -71,15 +71,26 @@ class FrontLine(MissionTarget):
             self.point_from_a(self._position_distance),
         )
 
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, FrontLine):
+            return False
+        return (self.blue_cp, self.red_cp) == (other.blue_cp, other.red_cp)
+
+    def __hash__(self) -> int:
+        return hash((self.blue_cp, self.red_cp))
+
     def __setstate__(self, state: dict[str, Any]) -> None:
         self.__dict__.update(state)
         if not hasattr(self, "position"):
             self.position = self.point_from_a(self._position_distance)
 
-    def control_point_hostile_to(self, player: bool) -> ControlPoint:
+    def control_point_friendly_to(self, player: bool) -> ControlPoint:
         if player:
-            return self.red_cp
-        return self.blue_cp
+            return self.blue_cp
+        return self.red_cp
+
+    def control_point_hostile_to(self, player: bool) -> ControlPoint:
+        return self.control_point_friendly_to(not player)
 
     def is_friendly(self, to_player: bool) -> bool:
         """Returns True if the objective is in friendly territory."""

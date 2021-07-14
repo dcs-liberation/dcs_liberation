@@ -72,7 +72,9 @@ class ProcurementAi:
             return 1
 
         for cp in self.owned_points:
-            cp_ground_units = cp.allocated_ground_units(self.game.transfers)
+            cp_ground_units = cp.allocated_ground_units(
+                self.game.coalition_for(self.is_player).transfers
+            )
             armor_investment += cp_ground_units.total_value
             cp_aircraft = cp.allocated_aircraft(self.game)
             aircraft_investment += cp_aircraft.total_value
@@ -316,7 +318,9 @@ class ProcurementAi:
                 continue
 
             purchase_target = cp.frontline_unit_count_limit * FRONTLINE_RESERVES_FACTOR
-            allocated = cp.allocated_ground_units(self.game.transfers)
+            allocated = cp.allocated_ground_units(
+                self.game.coalition_for(self.is_player).transfers
+            )
             if allocated.total >= purchase_target:
                 # Control point is already sufficiently defended.
                 continue
@@ -343,7 +347,9 @@ class ProcurementAi:
             if not cp.can_recruit_ground_units(self.game):
                 continue
 
-            allocated = cp.allocated_ground_units(self.game.transfers)
+            allocated = cp.allocated_ground_units(
+                self.game.coalition_for(self.is_player).transfers
+            )
             if allocated.total >= self.game.settings.reserves_procurement_target:
                 continue
 
@@ -356,7 +362,9 @@ class ProcurementAi:
     def cost_ratio_of_ground_unit(
         self, control_point: ControlPoint, unit_class: GroundUnitClass
     ) -> float:
-        allocations = control_point.allocated_ground_units(self.game.transfers)
+        allocations = control_point.allocated_ground_units(
+            self.game.coalition_for(self.is_player).transfers
+        )
         class_cost = 0
         total_cost = 0
         for unit_type, count in allocations.all.items():

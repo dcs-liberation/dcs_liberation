@@ -1,0 +1,5 @@
+name: 2xAIM-120B
+year: 1994
+fallback: AIM-7MH
+clsids:
+  - "LAU-115_2*LAU-127_AIM-120B"

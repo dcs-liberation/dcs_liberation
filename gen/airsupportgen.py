@@ -105,6 +105,8 @@ class AirSupportConflictGenerator:
             else self.conflict.red_cp
         )
 
+        country = self.mission.country(self.game.blue.country_name)
+
         if not self.game.settings.disable_legacy_tanker:
             fallback_tanker_number = 0
 
@@ -130,10 +132,8 @@ class AirSupportConflictGenerator:
                     tanker_heading, TANKER_DISTANCE
                 )
                 tanker_group = self.mission.refuel_flight(
-                    country=self.mission.country(self.game.player_country),
-                    name=namegen.next_tanker_name(
-                        self.mission.country(self.game.player_country), tanker_unit_type
-                    ),
+                    country=country,
+                    name=namegen.next_tanker_name(country, tanker_unit_type),
                     airport=None,
                     plane_type=unit_type,
                     position=tanker_position,
@@ -211,10 +211,8 @@ class AirSupportConflictGenerator:
                 return
 
             awacs_flight = self.mission.awacs_flight(
-                country=self.mission.country(self.game.player_country),
-                name=namegen.next_awacs_name(
-                    self.mission.country(self.game.player_country)
-                ),
+                country=country,
+                name=namegen.next_awacs_name(country),
                 plane_type=unit_type,
                 altitude=AWACS_ALT,
                 airport=None,

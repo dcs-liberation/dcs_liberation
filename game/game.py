@@ -1,13 +1,11 @@
 import itertools
 import logging
 import math
-import random
-import sys
+from collections import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import Any, List, Type, Union, cast
 
-from dcs.action import Coalition
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
@@ -19,27 +17,25 @@ from game.plugins import LuaPluginManager
 from gen import naming
 from gen.ato import AirTaskingOrder
 from gen.conflictgen import Conflict
-from gen.flights.ai_flight_planner import CoalitionMissionPlanner
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
+from .coalition import Coalition
 from .debriefing import Debriefing
 from .event.event import Event
 from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
-from .income import Income
 from .infos.information import Information
 from .navmesh import NavMesh
-from .procurement import AircraftProcurementRequest, ProcurementAi
+from .procurement import AircraftProcurementRequest
 from .profiling import logged_duration
-from .settings import Settings, AutoAtoBehavior
+from .settings import Settings
 from .squadrons import AirWing
 from .theater import ConflictTheater, ControlPoint
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .threatzones import ThreatZones
-from .transfers import PendingTransfers
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
@@ -97,10 +93,6 @@ class Game:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
-        self.player_faction = player_faction
-        self.player_country = player_faction.country
-        self.enemy_faction = enemy_faction
-        self.enemy_country = enemy_faction.country
         # pass_turn() will be called when initialization is complete which will
         # increment this to turn 0 before it reaches the player.
         self.turn = -1
@@ -123,108 +115,70 @@ class Game:
 
         self.conditions = self.generate_conditions()
 
-        self.blue_transit_network = TransitNetwork()
-        self.red_transit_network = TransitNetwork()
-
-        self.blue_procurement_requests: List[AircraftProcurementRequest] = []
-        self.red_procurement_requests: List[AircraftProcurementRequest] = []
-
-        self.blue_ato = AirTaskingOrder()
-        self.red_ato = AirTaskingOrder()
-
-        self.blue_bullseye = Bullseye(Point(0, 0))
-        self.red_bullseye = Bullseye(Point(0, 0))
+        self.sanitize_sides(player_faction, enemy_faction)
+        self.blue = Coalition(self, player_faction, player_budget, player=True)
+        self.red = Coalition(self, enemy_faction, enemy_budget, player=False)
+        self.blue.set_opponent(self.red)
+        self.red.set_opponent(self.blue)
 
         self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
 
-        self.transfers = PendingTransfers(self)
-
-        self.sanitize_sides()
-
-        self.blue_faker = Faker(self.player_faction.locales)
-        self.red_faker = Faker(self.enemy_faction.locales)
-
-        self.blue_air_wing = AirWing(self, player=True)
-        self.red_air_wing = AirWing(self, player=False)
-
         self.on_load(game_still_initializing=True)
-
-    def __getstate__(self) -> dict[str, Any]:
-        state = self.__dict__.copy()
-        # Avoid persisting any volatile types that can be deterministically
-        # recomputed on load for the sake of save compatibility.
-        del state["blue_threat_zone"]
-        del state["red_threat_zone"]
-        del state["blue_navmesh"]
-        del state["red_navmesh"]
-        del state["blue_faker"]
-        del state["red_faker"]
-        return state
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
 
+    @property
+    def coalitions(self) -> Iterator[Coalition]:
+        yield self.blue
+        yield self.red
+
     def ato_for(self, player: bool) -> AirTaskingOrder:
-        if player:
-            return self.blue_ato
-        return self.red_ato
+        return self.coalition_for(player).ato
 
     def procurement_requests_for(
         self, player: bool
-    ) -> List[AircraftProcurementRequest]:
-        if player:
-            return self.blue_procurement_requests
-        return self.red_procurement_requests
+    ) -> list[AircraftProcurementRequest]:
+        return self.coalition_for(player).procurement_requests
 
     def transit_network_for(self, player: bool) -> TransitNetwork:
-        if player:
-            return self.blue_transit_network
-        return self.red_transit_network
+        return self.coalition_for(player).transit_network
 
     def generate_conditions(self) -> Conditions:
         return Conditions.generate(
             self.theater, self.current_day, self.current_turn_time_of_day, self.settings
         )
 
-    def sanitize_sides(self) -> None:
+    @staticmethod
+    def sanitize_sides(player_faction: Faction, enemy_faction: Faction) -> None:
         """
         Make sure the opposing factions are using different countries
         :return:
         """
-        if self.player_country == self.enemy_country:
-            if self.player_country == "USA":
-                self.enemy_country = "USAF Aggressors"
-            elif self.player_country == "Russia":
-                self.enemy_country = "USSR"
+        if player_faction.country == enemy_faction.country:
+            if player_faction.country == "USA":
+                enemy_faction.country = "USAF Aggressors"
+            elif player_faction.country == "Russia":
+                enemy_faction.country = "USSR"
             else:
-                self.enemy_country = "Russia"
+                enemy_faction.country = "Russia"
 
     def faction_for(self, player: bool) -> Faction:
-        if player:
-            return self.player_faction
-        return self.enemy_faction
+        return self.coalition_for(player).faction
 
     def faker_for(self, player: bool) -> Faker:
-        if player:
-            return self.blue_faker
-        return self.red_faker
+        return self.coalition_for(player).faker
 
     def air_wing_for(self, player: bool) -> AirWing:
-        if player:
-            return self.blue_air_wing
-        return self.red_air_wing
+        return self.coalition_for(player).air_wing
 
     def country_for(self, player: bool) -> str:
-        if player:
-            return self.player_country
-        return self.enemy_country
+        return self.coalition_for(player).country_name
 
     def bullseye_for(self, player: bool) -> Bullseye:
-        if player:
-            return self.blue_bullseye
-        return self.red_bullseye
+        return self.coalition_for(player).bullseye
 
     def _generate_player_event(
         self, event_class: Type[Event], player_cp: ControlPoint, enemy_cp: ControlPoint
@@ -235,8 +189,8 @@ class Game:
                 player_cp,
                 enemy_cp,
                 enemy_cp.position,
-                self.player_faction.name,
-                self.enemy_faction.name,
+                self.blue.faction.name,
+                self.red.faction.name,
             )
         )
 
@@ -248,20 +202,13 @@ class Game:
                 front_line.red_cp,
             )
 
-    def adjust_budget(self, amount: float, player: bool) -> None:
+    def coalition_for(self, player: bool) -> Coalition:
         if player:
-            self.budget += amount
-        else:
-            self.enemy_budget += amount
+            return self.blue
+        return self.red
 
-    def process_player_income(self) -> None:
-        self.budget += Income(self, player=True).total
-
-    def process_enemy_income(self) -> None:
-        # TODO: Clean up save compat.
-        if not hasattr(self, "enemy_budget"):
-            self.enemy_budget = 0
-        self.enemy_budget += Income(self, player=False).total
+    def adjust_budget(self, amount: float, player: bool) -> None:
+        self.coalition_for(player).adjust_budget(amount)
 
     @staticmethod
     def initiate_event(event: Event) -> UnitMap:
@@ -292,12 +239,6 @@ class Game:
         self.compute_conflicts_position()
         if not game_still_initializing:
             self.compute_threat_zones()
-        self.blue_faker = Faker(self.faction_for(player=True).locales)
-        self.red_faker = Faker(self.faction_for(player=False).locales)
-
-    def reset_ato(self) -> None:
-        self.blue_ato.clear()
-        self.red_ato.clear()
 
     def finish_turn(self, skipped: bool = False) -> None:
         """Finalizes the current turn and advances to the next turn.
@@ -332,22 +273,15 @@ class Game:
         )
         self.turn += 1
 
-        # Need to recompute before transfers and deliveries to account for captures.
-        # This happens in in initialize_turn as well, because cheating doesn't advance a
-        # turn but can capture bases so we need to recompute there as well.
-        self.compute_transit_networks()
+        # The coalition-specific turn finalization *must* happen before unit deliveries,
+        # since the coalition-specific finalization handles transit network updates and
+        # transfer processing. If in the other order, units may be delivered to captured
+        # bases, and freshly delivered units will spawn one leg through their journey.
+        self.blue.end_turn()
+        self.red.end_turn()
 
-        # Must happen *before* unit deliveries are handled, or else new units will spawn
-        # one hop ahead. ControlPoint.process_turn handles unit deliveries.
-        self.transfers.perform_transfers()
-
-        # Needs to happen *before* planning transfers so we don't cancel them.
-        self.reset_ato()
         for control_point in self.theater.controlpoints:
             control_point.process_turn(self)
-
-        self.blue_air_wing.replenish()
-        self.red_air_wing.replenish()
 
         if not skipped:
             for cp in self.theater.player_points():
@@ -358,9 +292,6 @@ class Game:
                     cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
         self.conditions = self.generate_conditions()
-
-        self.process_enemy_income()
-        self.process_player_income()
 
     def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""
@@ -401,8 +332,8 @@ class Game:
 
     def set_bullseye(self) -> None:
         player_cp, enemy_cp = self.theater.closest_opposing_control_points()
-        self.blue_bullseye = Bullseye(enemy_cp.position)
-        self.red_bullseye = Bullseye(player_cp.position)
+        self.blue.bullseye = Bullseye(enemy_cp.position)
+        self.red.bullseye = Bullseye(player_cp.position)
 
     def initialize_turn(self, for_red: bool = True, for_blue: bool = True) -> None:
         """Performs turn initialization for the specified players.
@@ -450,13 +381,20 @@ class Game:
         if turn_state in (TurnState.LOSS, TurnState.WIN):
             return self.process_win_loss(turn_state)
 
+        # Plan flights & combat for next turn
+        with logged_duration("Computing conflict positions"):
+            self.compute_conflicts_position()
+        with logged_duration("Threat zone computation"):
+            self.compute_threat_zones()
+
         # Plan Coalition specific turn
-        if for_red:
-            self.initialize_turn_for(player=False)
         if for_blue:
             self.initialize_turn_for(player=True)
+        if for_red:
+            self.initialize_turn_for(player=False)
 
         # Plan GroundWar
+        self.ground_planners = {}
         for cp in self.theater.controlpoints:
             if cp.has_frontline:
                 gplanner = GroundPlanner(cp, self)
@@ -464,81 +402,10 @@ class Game:
                 self.ground_planners[cp.id] = gplanner
 
     def initialize_turn_for(self, player: bool) -> None:
-        """Processes coalition-specific turn initialization.
-
-        For more information on turn initialization in general, see the documentation
-        for `Game.initialize_turn`.
-
-        Args:
-            player: True if the player coalition is being initialized. False for opfor
-            initialization.
-        """
-        self.ato_for(player).clear()
-        self.air_wing_for(player).reset()
-
-        self.aircraft_inventory.reset()
-        for cp in self.theater.controlpoints:
+        self.aircraft_inventory.reset(player)
+        for cp in self.theater.control_points_for(player):
             self.aircraft_inventory.set_from_control_point(cp)
-            # Refund all pending deliveries for opfor and if player
-            # has automate_aircraft_reinforcements
-            if (not player and not cp.captured) or (
-                player
-                and cp.captured
-                and self.settings.automate_aircraft_reinforcements
-            ):
-                cp.pending_unit_deliveries.refund_all(self)
-
-        # Plan flights & combat for next turn
-        with logged_duration("Computing conflict positions"):
-            self.compute_conflicts_position()
-        with logged_duration("Threat zone computation"):
-            self.compute_threat_zones()
-        with logged_duration("Transit network identification"):
-            self.compute_transit_networks()
-        self.ground_planners = {}
-
-        self.procurement_requests_for(player).clear()
-
-        with logged_duration("Procurement of airlift assets"):
-            self.transfers.order_airlift_assets()
-        with logged_duration("Transport planning"):
-            self.transfers.plan_transports()
-
-        if not player or (
-            player and self.settings.auto_ato_behavior is not AutoAtoBehavior.Disabled
-        ):
-            color = "Blue" if player else "Red"
-            with logged_duration(f"{color} mission planning"):
-                mission_planner = CoalitionMissionPlanner(self, player)
-                mission_planner.plan_missions()
-
-        self.plan_procurement_for(player)
-
-    def plan_procurement_for(self, for_player: bool) -> None:
-        # The first turn needs to buy a *lot* of aircraft to fill CAPs, so it
-        # gets much more of the budget that turn. Otherwise budget (after
-        # repairs) is split evenly between air and ground. For the default
-        # starting budget of 2000 this gives 600 to ground forces and 1400 to
-        # aircraft. After that the budget will be spend proportionally based on how much is already invested
-
-        if for_player:
-            self.budget = ProcurementAi(
-                self,
-                for_player=True,
-                faction=self.player_faction,
-                manage_runways=self.settings.automate_runway_repair,
-                manage_front_line=self.settings.automate_front_line_reinforcements,
-                manage_aircraft=self.settings.automate_aircraft_reinforcements,
-            ).spend_budget(self.budget)
-        else:
-            self.enemy_budget = ProcurementAi(
-                self,
-                for_player=False,
-                faction=self.enemy_faction,
-                manage_runways=True,
-                manage_front_line=True,
-                manage_aircraft=True,
-            ).spend_budget(self.enemy_budget)
+        self.coalition_for(player).initialize_turn()
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))
@@ -565,32 +432,20 @@ class Game:
         self.current_group_id += 1
         return self.current_group_id
 
-    def compute_transit_networks(self) -> None:
-        self.blue_transit_network = self.compute_transit_network_for(player=True)
-        self.red_transit_network = self.compute_transit_network_for(player=False)
-
     def compute_transit_network_for(self, player: bool) -> TransitNetwork:
         return TransitNetworkBuilder(self.theater, player).build()
 
     def compute_threat_zones(self) -> None:
-        self.blue_threat_zone = ThreatZones.for_faction(self, player=True)
-        self.red_threat_zone = ThreatZones.for_faction(self, player=False)
-        self.blue_navmesh = NavMesh.from_threat_zones(
-            self.red_threat_zone, self.theater
-        )
-        self.red_navmesh = NavMesh.from_threat_zones(
-            self.blue_threat_zone, self.theater
-        )
+        self.blue.compute_threat_zones()
+        self.red.compute_threat_zones()
+        self.blue.compute_nav_meshes()
+        self.red.compute_nav_meshes()
 
     def threat_zone_for(self, player: bool) -> ThreatZones:
-        if player:
-            return self.blue_threat_zone
-        return self.red_threat_zone
+        return self.coalition_for(player).threat_zone
 
     def navmesh_for(self, player: bool) -> NavMesh:
-        if player:
-            return self.blue_navmesh
-        return self.red_navmesh
+        return self.coalition_for(player).nav_mesh
 
     def compute_conflicts_position(self) -> None:
         """
@@ -633,7 +488,7 @@ class Game:
             if cpoint is not None:
                 zones.append(cpoint)
 
-        packages = itertools.chain(self.blue_ato.packages, self.red_ato.packages)
+        packages = itertools.chain(self.blue.ato.packages, self.red.ato.packages)
         for package in packages:
             if package.primary_task is FlightType.BARCAP:
                 # BARCAPs will be planned at most locations on smaller theaters,
@@ -678,25 +533,6 @@ class Game:
         :return: List of culling zones
         """
         return self.__culling_zones
-
-    # 1 = red, 2 = blue
-    def get_player_coalition_id(self) -> int:
-        return 2
-
-    def get_enemy_coalition_id(self) -> int:
-        return 1
-
-    def get_player_coalition(self) -> Coalition:
-        return Coalition.Blue
-
-    def get_enemy_coalition(self) -> Coalition:
-        return Coalition.Red
-
-    def get_player_color(self) -> str:
-        return "blue"
-
-    def get_enemy_color(self) -> str:
-        return "red"
 
     def process_win_loss(self, turn_state: TurnState) -> None:
         if turn_state is TurnState.WIN:
