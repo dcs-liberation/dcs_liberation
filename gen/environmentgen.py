@@ -30,8 +30,17 @@ class EnvironmentGenerator:
         self.mission.weather.wind_at_2000 = wind.at_2000m
         self.mission.weather.wind_at_8000 = wind.at_8000m
 
+    def set_pressure(self, pressure_inches_mercury: float) -> None:
+        inch_to_mm = 25.400002776728
+        self.mission.weather.qnh = pressure_inches_mercury * inch_to_mm
+
+    def set_temperature(self, temperature: float) -> None:
+        self.mission.weather.season_temperature = temperature
+
     def generate(self) -> None:
         self.mission.start_time = self.conditions.start_time
         self.set_clouds(self.conditions.weather.clouds)
         self.set_fog(self.conditions.weather.fog)
         self.set_wind(self.conditions.weather.wind)
+        self.set_pressure(self.conditions.pressure)
+        self.set_temperature(self.conditions.temperature)
