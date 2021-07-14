@@ -105,8 +105,9 @@ class PackageFulfiller:
 
         missing_types_str = ", ".join(sorted([t.name for t in missing_types]))
         builder.release_planned_aircraft()
+        color = "Blue" if self.is_player else "Red"
         logging.debug(
-            f"Not enough aircraft in range for {mission.location.name} "
+            f"{color}: not enough aircraft in range for {mission.location.name} "
             f"capable of: {missing_types_str}"
         )
 

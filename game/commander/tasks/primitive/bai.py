@@ -12,11 +12,11 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanBai(PackagePlanningTask[VehicleGroupGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        if not super().preconditions_met(state):
-            return False
         if not state.has_garrison(self.target):
             return False
-        return self.target_area_preconditions_met(state)
+        if not self.target_area_preconditions_met(state):
+            return False
+        return super().preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
         state.eliminate_garrison(self.target)

@@ -12,9 +12,9 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanBarcap(PackagePlanningTask[ControlPoint]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        if not super().preconditions_met(state):
+        if not state.barcaps_needed[self.target]:
             return False
-        return state.barcaps_needed[self.target] > 0
+        return super().preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
         state.barcaps_needed[self.target] -= 1

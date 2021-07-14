@@ -13,11 +13,11 @@ from gen.flights.flight import FlightType
 @dataclass
 class PlanAntiShip(PackagePlanningTask[NavalGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
-        if not super().preconditions_met(state):
-            return False
         if self.target not in state.threatening_air_defenses:
             return False
-        return self.target_area_preconditions_met(state, ignore_iads=True)
+        if not self.target_area_preconditions_met(state, ignore_iads=True):
+            return False
+        return super().preconditions_met(state)
 
     def apply_effects(self, state: TheaterState) -> None:
         state.eliminate_ship(self.target)
