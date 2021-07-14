@@ -427,21 +427,18 @@ class WaypointBuilder:
         self,
         ingress: Point,
         target: MissionTarget,
-        egress: Point,
-    ) -> Tuple[FlightWaypoint, FlightWaypoint, FlightWaypoint]:
+    ) -> Tuple[FlightWaypoint, FlightWaypoint]:
         """Creates the waypoints needed to escort the package.
 
         Args:
             ingress: The package ingress point.
             target: The mission target.
-            egress: The package egress point.
         """
         # This would preferably be no points at all, and instead the Escort task
         # would begin on the join point and end on the split point, however the
         # escort task does not appear to work properly (see the longer
         # description in gen.aircraft.JoinPointBuilder), so instead we give
-        # the escort flights a flight plan including the ingress point, target
-        # area, and egress point.
+        # the escort flights a flight plan including the ingress point and target area.
         ingress_wp = self.ingress(FlightWaypointType.INGRESS_ESCORT, ingress, target)
 
         waypoint = FlightWaypoint(
@@ -455,9 +452,7 @@ class WaypointBuilder:
         waypoint.name = "TARGET"
         waypoint.description = "Escort the package"
         waypoint.pretty_name = "Target area"
-
-        egress_wp = self.egress(egress, target)
-        return ingress_wp, waypoint, egress_wp
+        return ingress_wp, waypoint
 
     @staticmethod
     def pickup(control_point: ControlPoint) -> FlightWaypoint:

@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
+from typing import Any
 
 from game.data.groundunitclass import GroundUnitClass
+from game.savecompat import has_save_compat_for
 from game.utils import Distance, feet, nautical_miles
 
 
@@ -38,9 +40,8 @@ class Doctrine:
     push_distance: Distance
     join_distance: Distance
     split_distance: Distance
-    ingress_egress_distance: Distance
+    ingress_distance: Distance
     ingress_altitude: Distance
-    egress_altitude: Distance
 
     min_patrol_altitude: Distance
     max_patrol_altitude: Distance
@@ -75,6 +76,13 @@ class Doctrine:
 
     mission_ranges: MissionPlannerMaxRanges = field(default=MissionPlannerMaxRanges())
 
+    @has_save_compat_for(5)
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        if "ingress_distance" not in state:
+            state["ingress_distance"] = state["ingress_egress_distance"]
+            del state["ingress_egress_distance"]
+        self.__dict__.update(state)
+
 
 MODERN_DOCTRINE = Doctrine(
     cap=True,
@@ -87,9 +95,8 @@ MODERN_DOCTRINE = Doctrine(
     push_distance=nautical_miles(20),
     join_distance=nautical_miles(20),
     split_distance=nautical_miles(20),
-    ingress_egress_distance=nautical_miles(45),
+    ingress_distance=nautical_miles(45),
     ingress_altitude=feet(20000),
-    egress_altitude=feet(20000),
     min_patrol_altitude=feet(15000),
     max_patrol_altitude=feet(33000),
     pattern_altitude=feet(5000),
@@ -125,9 +132,8 @@ COLDWAR_DOCTRINE = Doctrine(
     push_distance=nautical_miles(10),
     join_distance=nautical_miles(10),
     split_distance=nautical_miles(10),
-    ingress_egress_distance=nautical_miles(30),
+    ingress_distance=nautical_miles(30),
     ingress_altitude=feet(18000),
-    egress_altitude=feet(18000),
     min_patrol_altitude=feet(10000),
     max_patrol_altitude=feet(24000),
     pattern_altitude=feet(5000),
@@ -163,9 +169,8 @@ WWII_DOCTRINE = Doctrine(
     join_distance=nautical_miles(5),
     split_distance=nautical_miles(5),
     rendezvous_altitude=feet(10000),
-    ingress_egress_distance=nautical_miles(7),
+    ingress_distance=nautical_miles(7),
     ingress_altitude=feet(8000),
-    egress_altitude=feet(8000),
     min_patrol_altitude=feet(4000),
     max_patrol_altitude=feet(15000),
     pattern_altitude=feet(5000),

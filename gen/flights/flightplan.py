@@ -542,7 +542,6 @@ class StrikeFlightPlan(FormationFlightPlan):
     join: FlightWaypoint
     ingress: FlightWaypoint
     targets: List[FlightWaypoint]
-    egress: FlightWaypoint
     split: FlightWaypoint
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
@@ -557,7 +556,6 @@ class StrikeFlightPlan(FormationFlightPlan):
         yield self.join
         yield self.ingress
         yield from self.targets
-        yield self.egress
         yield self.split
         yield from self.nav_from
         yield self.land
@@ -569,7 +567,6 @@ class StrikeFlightPlan(FormationFlightPlan):
     def package_speed_waypoints(self) -> Set[FlightWaypoint]:
         return {
             self.ingress,
-            self.egress,
             self.split,
         } | set(self.targets)
 
@@ -633,8 +630,8 @@ class StrikeFlightPlan(FormationFlightPlan):
 
     @property
     def split_time(self) -> timedelta:
-        travel_time = self.travel_time_between_waypoints(self.egress, self.split)
-        return self.egress_time + travel_time
+        travel_time = self.travel_time_between_waypoints(self.ingress, self.split)
+        return self.ingress_time + travel_time
 
     @property
     def ingress_time(self) -> timedelta:
@@ -644,19 +641,9 @@ class StrikeFlightPlan(FormationFlightPlan):
         )
         return tot - travel_time
 
-    @property
-    def egress_time(self) -> timedelta:
-        tot = self.tot
-        travel_time = self.travel_time_between_waypoints(
-            self.target_area_waypoint, self.egress
-        )
-        return tot + travel_time
-
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.ingress:
             return self.ingress_time
-        elif waypoint == self.egress:
-            return self.egress_time
         elif waypoint in self.targets:
             return self.tot
         return super().tot_for_waypoint(waypoint)
@@ -982,7 +969,7 @@ class FlightPlanBuilder:
 
         for join_point in self.preferred_join_points():
             join_distance = meters(join_point.distance_to_point(target))
-            if join_distance > self.doctrine.ingress_egress_distance:
+            if join_distance > self.doctrine.ingress_distance:
                 break
         else:
             # The entire path to the target is threatened. Use the fallback behavior for
@@ -995,11 +982,9 @@ class FlightPlanBuilder:
 
         # The first case described above. The ingress and join points are placed
         # reasonably relative to each other.
-        egress_point = self._egress_point(attack_heading)
         self.package.waypoints = PackageWaypoints(
             WaypointBuilder.perturb(join_point),
             ingress_point,
-            egress_point,
             WaypointBuilder.perturb(join_point),
         )
 
@@ -1010,13 +995,11 @@ class FlightPlanBuilder:
         from gen.ato import PackageWaypoints
 
         ingress_point = self._ingress_point(self._target_heading_to_package_airfield())
-        egress_point = self._egress_point(self._target_heading_to_package_airfield())
         join_point = self._rendezvous_point(ingress_point)
         split_point = self._rendezvous_point(self.package.target.position)
         self.package.waypoints = PackageWaypoints(
             join_point,
             ingress_point,
-            egress_point,
             split_point,
         )
 
@@ -1535,10 +1518,8 @@ class FlightPlanBuilder:
         assert self.package.waypoints is not None
 
         builder = WaypointBuilder(flight, self.coalition)
-        ingress, target, egress = builder.escort(
-            self.package.waypoints.ingress,
-            self.package.target,
-            self.package.waypoints.egress,
+        ingress, target = builder.escort(
+            self.package.waypoints.ingress, self.package.target
         )
         hold = builder.hold(self._hold_point(flight))
         join = builder.join(self.package.waypoints.join)
@@ -1556,7 +1537,6 @@ class FlightPlanBuilder:
             join=join,
             ingress=ingress,
             targets=[target],
-            egress=egress,
             split=split,
             nav_from=builder.nav_path(
                 split.position, flight.arrival.position, self.doctrine.ingress_altitude
@@ -1804,7 +1784,6 @@ class FlightPlanBuilder:
                 ingress_type, self.package.waypoints.ingress, location
             ),
             targets=target_waypoints,
-            egress=builder.egress(self.package.waypoints.egress, location),
             split=split,
             nav_from=builder.nav_path(
                 split.position, flight.arrival.position, self.doctrine.ingress_altitude
@@ -1848,7 +1827,7 @@ class FlightPlanBuilder:
         """Returns the position of the rendezvous point.
 
         Args:
-            attack_transition: The ingress or egress point for this rendezvous.
+            attack_transition: The ingress or target point for this rendezvous.
         """
         if self._rendezvous_should_retreat(attack_transition):
             return self._retreating_rendezvous_point(attack_transition)
@@ -1856,12 +1835,7 @@ class FlightPlanBuilder:
 
     def _ingress_point(self, heading: float) -> Point:
         return self.package.target.position.point_from_heading(
-            heading - 180 + 15, self.doctrine.ingress_egress_distance.meters
-        )
-
-    def _egress_point(self, heading: float) -> Point:
-        return self.package.target.position.point_from_heading(
-            heading - 180 - 15, self.doctrine.ingress_egress_distance.meters
+            heading - 180, self.doctrine.ingress_distance.meters
         )
 
     def _target_heading_to_package_airfield(self) -> float:
