@@ -175,8 +175,8 @@ class Conditions:
             time_of_day=time_of_day,
             start_time=_start_time
             weather=cls.generate_weather(),
-            pressure=cls.generate_pressure(theater, day),
-            temperature=cls.generate_temperature(theater, day, _start_time),
+            pressure=cls.generate_pressure(),
+            temperature=cls.generate_temperature(),
         )
 
     @classmethod
