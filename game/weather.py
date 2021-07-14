@@ -158,6 +158,8 @@ class Thunderstorm(Weather):
 class Conditions:
     time_of_day: TimeOfDay
     start_time: datetime.datetime
+    pressure: float
+    temperature: float
     weather: Weather
 
     @classmethod
@@ -168,12 +170,13 @@ class Conditions:
         time_of_day: TimeOfDay,
         settings: Settings,
     ) -> Conditions:
+        _start_time=cls.generate_start_time(theater, day, time_of_day, settings.night_disabled)
         return cls(
             time_of_day=time_of_day,
-            start_time=cls.generate_start_time(
-                theater, day, time_of_day, settings.night_disabled
-            ),
+            start_time=_start_time
             weather=cls.generate_weather(),
+            pressure=cls.generate_pressure(theater, day),
+            temperature=cls.generate_temperature(theater, day, _start_time),
         )
 
     @classmethod
@@ -210,3 +213,15 @@ class Conditions:
             list(chances.keys()), weights=list(chances.values())
         )[0]
         return weather_type()
+
+    @classmethod
+    def generate_pressure(cls, theater: ConflictTheater, day: datetime.date) -> float:
+        # TODO: Get average pressure from theater's season, interpolated between seasons
+        # TODO: Random walk N times from average pressure - produces bell curve distribution
+        return 29.92
+
+    @classmethod
+    def generate_temperature(cls, theater: ConflictTheater, day: datetime.date, time_of_day: TimeOfDay) -> float:
+        # TODO: Get average temp from theater's season, interpolated between seasons
+        # TODO: Random walk N times from average temp - produces bell curve distribution
+        return 20
