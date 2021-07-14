@@ -36,11 +36,20 @@ class Doctrine:
     antiship: bool
 
     rendezvous_altitude: Distance
+
+    #: The minimum distance between the departure airfield and the hold point.
     hold_distance: Distance
+
+    #: The minimum distance between the hold point and the join point.
     push_distance: Distance
+
+    #: The distance between the join point and the ingress point. Only used for the
+    #: fallback flight plan layout (when the departure airfield is near a threat zone).
     join_distance: Distance
-    split_distance: Distance
+
+    #: The distance between the ingress point (beginning of the attack) and target.
     ingress_distance: Distance
+
     ingress_altitude: Distance
 
     min_patrol_altitude: Distance
@@ -94,7 +103,6 @@ MODERN_DOCTRINE = Doctrine(
     hold_distance=nautical_miles(15),
     push_distance=nautical_miles(20),
     join_distance=nautical_miles(20),
-    split_distance=nautical_miles(20),
     ingress_distance=nautical_miles(45),
     ingress_altitude=feet(20000),
     min_patrol_altitude=feet(15000),
@@ -131,7 +139,6 @@ COLDWAR_DOCTRINE = Doctrine(
     hold_distance=nautical_miles(10),
     push_distance=nautical_miles(10),
     join_distance=nautical_miles(10),
-    split_distance=nautical_miles(10),
     ingress_distance=nautical_miles(30),
     ingress_altitude=feet(18000),
     min_patrol_altitude=feet(10000),
@@ -167,7 +174,6 @@ WWII_DOCTRINE = Doctrine(
     hold_distance=nautical_miles(5),
     push_distance=nautical_miles(5),
     join_distance=nautical_miles(5),
-    split_distance=nautical_miles(5),
     rendezvous_altitude=feet(10000),
     ingress_distance=nautical_miles(7),
     ingress_altitude=feet(8000),
