@@ -286,13 +286,6 @@ class BriefingPage(KneeboardPage):
             custom_name_title = ""
         writer.title(f"{self.flight.callsign} Mission Info{custom_name_title}")
 
-        writer.heading("Weather")
-        qnh_in_hg = "{:.2f}".format(self.weather.atmospheric.qnh_inches_mercury)
-        qnh_mm_hg = "{:.1f}".format(inches_hg_to_mm_hg(self.weather.atmospheric.qnh_inches_mercury))
-        qnh_hpa = "{:.1f}".format(inches_hg_to_hpa(self.weather.atmospheric.qnh_inches_mercury))
-        writer.text(f"QNH: {qnh_in_hg} inHg / {qnh_mm_hg} mmHg / {qnh_hpa} hPa")
-        writer.text(f"Temperature: {round(self.temperature)} °C at sea level")
-
         # TODO: Handle carriers.
         writer.heading("Airfield Info")
         writer.table(
@@ -314,6 +307,18 @@ class BriefingPage(KneeboardPage):
         )
 
         writer.text(f"Bullseye: {self.bullseye.to_lat_lon(self.theater).format_dms()}")
+
+        qnh_in_hg = "{:.2f}".format(self.weather.atmospheric.qnh_inches_mercury)
+        qnh_mm_hg = "{:.1f}".format(
+            inches_hg_to_mm_hg(self.weather.atmospheric.qnh_inches_mercury)
+        )
+        qnh_hpa = "{:.1f}".format(
+            inches_hg_to_hpa(self.weather.atmospheric.qnh_inches_mercury)
+        )
+        writer.text(
+            f"Temperature: {round(self.weather.atmospheric.temperature_celsius)} °C at sea level"
+        )
+        writer.text(f"QNH: {qnh_in_hg} inHg / {qnh_mm_hg} mmHg / {qnh_hpa} hPa")
 
         writer.table(
             [
