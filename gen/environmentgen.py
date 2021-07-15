@@ -5,6 +5,7 @@ from dcs.mission import Mission
 from game.weather import Clouds, Fog, Conditions, WindConditions, AtmosphericConditions
 from .units import inches_hg_to_mm_hg
 
+
 class EnvironmentGenerator:
     def __init__(self, mission: Mission, conditions: Conditions) -> None:
         self.mission = mission
