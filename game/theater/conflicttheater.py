@@ -496,6 +496,15 @@ class ReferencePoint:
     world_coordinates: Point
     image_coordinates: Point
 
+@dataclass
+class SeasonalConditions:
+    # Units are inHg and degrees Celsius
+    # Future improvement: add clouds/precipitation
+    summer_avg_pressure: float,
+    winter_avg_pressure: float,
+    summer_avg_temperature: float,
+    winter_avg_temperature: float,
+
 
 class ConflictTheater:
     terrain: Terrain
@@ -507,6 +516,7 @@ class ConflictTheater:
     land_poly = None  # type: Polygon
     """
     daytime_map: Dict[str, Tuple[int, int]]
+    seasonal_conditions: SeasonalConditions
 
     def __init__(self) -> None:
         self.controlpoints: List[ControlPoint] = []
@@ -747,6 +757,12 @@ class CaucasusTheater(ConflictTheater):
         "dusk": (18, 20),
         "night": (0, 5),
     }
+    seasonal_conditions = SeasonalConditions(
+        summer_avg_pressure=29.92, # TODO
+        winter_avg_pressure=29.92, # TODO
+        summer_avg_temperature=22.5,
+        winter_avg_temperature=3.0,
+    )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -769,6 +785,12 @@ class PersianGulfTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+    seasonal_conditions = SeasonalConditions(
+        summer_avg_pressure=29.92, # TODO
+        winter_avg_pressure=29.92, # TODO
+        summer_avg_temperature=32.5,
+        winter_avg_temperature=15.0,
+    )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -791,6 +813,12 @@ class NevadaTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
+    seasonal_conditions = SeasonalConditions(
+        summer_avg_pressure=29.92, # TODO
+        winter_avg_pressure=29.92, # TODO
+        summer_avg_temperature=31.5,
+        winter_avg_temperature=5.0,
+    )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -813,6 +841,12 @@ class NormandyTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
+    seasonal_conditions = SeasonalConditions(
+        summer_avg_pressure=29.92, # TODO
+        winter_avg_pressure=29.92, # TODO
+        summer_avg_temperature=20.0,
+        winter_avg_temperature=0.0,
+    )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -835,6 +869,12 @@ class TheChannelTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
+    seasonal_conditions = SeasonalConditions(
+        summer_avg_pressure=29.92, # TODO
+        winter_avg_pressure=29.92, # TODO
+        summer_avg_temperature=20.0,
+        winter_avg_temperature=0.0,
+    )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -857,6 +897,12 @@ class SyriaTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+    seasonal_conditions = SeasonalConditions(
+        summer_avg_pressure=29.92, # TODO
+        winter_avg_pressure=29.92, # TODO
+        summer_avg_temperature=28.5,
+        winter_avg_temperature=5.0,
+    )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -876,6 +922,12 @@ class MarianaIslandsTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+    seasonal_conditions = SeasonalConditions(
+        summer_avg_pressure=29.92, # TODO
+        winter_avg_pressure=29.92, # TODO
+        summer_avg_temperature=28.0,
+        winter_avg_temperature=27.0,
+    )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
