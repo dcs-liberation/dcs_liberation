@@ -237,8 +237,8 @@ class QGroundObjectMenu(QDialog):
         self.total_value = total_value
 
     def repair_unit(self, group, unit, price):
-        if self.game.budget > price:
-            self.game.budget -= price
+        if self.game.blue.budget > price:
+            self.game.blue.budget -= price
             group.units_losts = [u for u in group.units_losts if u.id != unit.id]
             group.units.append(unit)
             GameUpdateSignal.get_instance().updateGame(self.game)
@@ -256,7 +256,7 @@ class QGroundObjectMenu(QDialog):
 
     def sell_all(self):
         self.update_total_value()
-        self.game.budget = self.game.budget + self.total_value
+        self.game.blue.budget = self.game.blue.budget + self.total_value
         self.ground_object.groups = []
 
         # Replan if the tgo was a target of the redfor
@@ -433,12 +433,12 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         logging.info("Buying Armor ")
         utype = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
         price = utype.price * self.amount.value() - self.current_group_value
-        if price > self.game.budget:
+        if price > self.game.blue.budget:
             self.error_money()
             self.close()
             return
         else:
-            self.game.budget -= price
+            self.game.blue.budget -= price
 
         # Generate Armor
         group = generate_armor_group_of_type_and_size(
@@ -454,11 +454,11 @@ class QBuyGroupForGroundObjectDialog(QDialog):
     def buySam(self):
         sam_generator = self.samCombo.itemData(self.samCombo.currentIndex())
         price = sam_generator.price - self.current_group_value
-        if price > self.game.budget:
+        if price > self.game.blue.budget:
             self.error_money()
             return
         else:
-            self.game.budget -= price
+            self.game.blue.budget -= price
 
         self.ground_object.groups = list(sam_generator.groups)
 
@@ -470,11 +470,11 @@ class QBuyGroupForGroundObjectDialog(QDialog):
     def buy_ewr(self):
         ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
         price = ewr_generator.price - self.current_group_value
-        if price > self.game.budget:
+        if price > self.game.blue.budget:
             self.error_money()
             return
         else:
-            self.game.budget -= price
+            self.game.blue.budget -= price
 
         self.ground_object.groups = [ewr_generator.vg]
 

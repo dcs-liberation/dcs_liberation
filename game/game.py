@@ -107,8 +107,6 @@ class Game:
         self.__culling_zones: List[Point] = []
         self.__destroyed_units: list[dict[str, Union[float, str]]] = []
         self.savepath = ""
-        self.budget = player_budget
-        self.enemy_budget = enemy_budget
         self.current_unit_id = 0
         self.current_group_id = 0
         self.name_generator = naming.namegen

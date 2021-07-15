@@ -873,7 +873,7 @@ class QSettingsWindow(QDialog):
 
     def cheatMoney(self, amount):
         logging.info("CHEATING FOR AMOUNT : " + str(amount) + "M")
-        self.game.budget += amount
+        self.game.blue.budget += amount
         if amount > 0:
             self.game.informations.append(
                 Information(
