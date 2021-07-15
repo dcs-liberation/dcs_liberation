@@ -27,7 +27,12 @@ from game.transfers import MultiGroupTransport, TransportMap
 from game.utils import meters, nautical_miles
 from gen.ato import AirTaskingOrder
 from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
-from gen.flights.flightplan import FlightPlan, PatrollingFlightPlan, CasFlightPlan
+from gen.flights.flightplan import (
+    FlightPlan,
+    PatrollingFlightPlan,
+    CasFlightPlan,
+)
+from game.flightplan.ipzonegeometry import IpZoneGeometry
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel, AtoModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -38,6 +43,10 @@ LeafletLatLon = list[float]
 LeafletPoly = list[LeafletLatLon]
 
 MAX_SHIP_DISTANCE = nautical_miles(80)
+
+# Set to True to enable computing expensive debugging information. At the time of
+# writing this only controls computing the waypoint placement zones.
+ENABLE_EXPENSIVE_DEBUG_TOOLS = False
 
 # **EVERY PROPERTY NEEDS A NOTIFY SIGNAL**
 #
@@ -512,6 +521,19 @@ class FlightJs(QObject):
     selectedChanged = Signal()
     commitBoundaryChanged = Signal()
 
+    originChanged = Signal()
+
+    @Property(list, notify=originChanged)
+    def origin(self) -> LeafletLatLon:
+        return self._waypoints[0].position
+
+    targetChanged = Signal()
+
+    @Property(list, notify=targetChanged)
+    def target(self) -> LeafletLatLon:
+        ll = self.theater.point_to_ll(self.flight.package.target.position)
+        return [ll.latitude, ll.longitude]
+
     def __init__(
         self,
         flight: Flight,
@@ -769,6 +791,56 @@ class UnculledZone(QObject):
             )
 
 
+class IpZonesJs(QObject):
+    homeBubbleChanged = Signal()
+    ipBubbleChanged = Signal()
+    permissibleZoneChanged = Signal()
+    safeZoneChanged = Signal()
+
+    def __init__(
+        self,
+        home_bubble: list[LeafletPoly],
+        ip_bubble: list[LeafletPoly],
+        permissible_zone: list[LeafletPoly],
+        safe_zone: list[LeafletPoly],
+    ) -> None:
+        super().__init__()
+        self._home_bubble = home_bubble
+        self._ip_bubble = ip_bubble
+        self._permissible_zone = permissible_zone
+        self._safe_zone = safe_zone
+
+    @Property(list, notify=homeBubbleChanged)
+    def homeBubble(self) -> list[LeafletPoly]:
+        return self._home_bubble
+
+    @Property(list, notify=ipBubbleChanged)
+    def ipBubble(self) -> list[LeafletPoly]:
+        return self._ip_bubble
+
+    @Property(list, notify=permissibleZoneChanged)
+    def permissibleZone(self) -> list[LeafletPoly]:
+        return self._permissible_zone
+
+    @Property(list, notify=permissibleZoneChanged)
+    def safeZone(self) -> list[LeafletPoly]:
+        return self._safe_zone
+
+    @classmethod
+    def for_flight(cls, flight: Flight, game: Game) -> IpZonesJs:
+        target = flight.package.target
+        home = flight.departure
+        if not ENABLE_EXPENSIVE_DEBUG_TOOLS or target == home:
+            return IpZonesJs([], [], [], [])
+        geometry = IpZoneGeometry(target.position, home.position, game.blue)
+        return IpZonesJs(
+            shapely_to_leaflet_polys(geometry.home_bubble, game.theater),
+            shapely_to_leaflet_polys(geometry.ip_bubble, game.theater),
+            shapely_to_leaflet_polys(geometry.permissible_zone, game.theater),
+            shapely_to_leaflet_polys(geometry.safe_zone, game.theater),
+        )
+
+
 class MapModel(QObject):
     cleared = Signal()
 
@@ -782,6 +854,7 @@ class MapModel(QObject):
     navmeshesChanged = Signal()
     mapZonesChanged = Signal()
     unculledZonesChanged = Signal()
+    ipZonesChanged = Signal()
 
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
@@ -798,6 +871,7 @@ class MapModel(QObject):
         self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
+        self._ip_zones = IpZonesJs([], [], [], [])
         self._selected_flight_index: Optional[Tuple[int, int]] = None
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
@@ -821,6 +895,7 @@ class MapModel(QObject):
         self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
+        self._ip_zones = IpZonesJs([], [], [], [])
         self.cleared.emit()
 
     def set_package_selection(self, index: int) -> None:
@@ -896,11 +971,24 @@ class MapModel(QObject):
                 )
         return flights
 
+    def _get_selected_flight(self) -> Optional[Flight]:
+        for p_idx, package in enumerate(self.game.blue.ato.packages):
+            for f_idx, flight in enumerate(package.flights):
+                if (p_idx, f_idx) == self._selected_flight_index:
+                    return flight
+        return None
+
     def reset_atos(self) -> None:
         self._flights = self._flights_in_ato(
             self.game.blue.ato, blue=True
         ) + self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
+        selected_flight = self._get_selected_flight()
+        if selected_flight is not None:
+            self._ip_zones = IpZonesJs.for_flight(selected_flight, self.game)
+        else:
+            self._ip_zones = IpZonesJs([], [], [], [])
+        self.ipZonesChanged.emit()
 
     @Property(list, notify=flightsChanged)
     def flights(self) -> List[FlightJs]:
@@ -1028,6 +1116,10 @@ class MapModel(QObject):
     @Property(list, notify=unculledZonesChanged)
     def unculledZones(self) -> list[UnculledZone]:
         return self._unculled_zones
+
+    @Property(IpZonesJs, notify=ipZonesChanged)
+    def ipZones(self) -> IpZonesJs:
+        return self._ip_zones
 
     @property
     def game(self) -> Game:

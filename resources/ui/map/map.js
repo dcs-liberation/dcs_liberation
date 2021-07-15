@@ -1,3 +1,7 @@
+// Won't actually enable anything unless the same property is set in
+// mapmodel.py.
+const ENABLE_EXPENSIVE_DEBUG_TOOLS = false;
+
 const Colors = Object.freeze({
   Blue: "#0084ff",
   Red: "#c85050",
@@ -124,26 +128,26 @@ const map = L.map("map", {
 L.control.scale({ maxWidth: 200 }).addTo(map);
 
 const rulerOptions = {
-  position: 'topleft',
+  position: "topleft",
   circleMarker: {
     color: Colors.Highlight,
-    radius: 2
+    radius: 2,
   },
   lineStyle: {
     color: Colors.Highlight,
-    dashArray: '1,6'
+    dashArray: "1,6",
   },
   lengthUnit: {
     display: "nm",
     decimal: "2",
     factor: 0.539956803,
-    label: "Distance:"
+    label: "Distance:",
   },
   angleUnit: {
-    display: '&deg;',
+    display: "&deg;",
     decimal: 0,
-    label: "Bearing:"
-  }
+    label: "Bearing:",
+  },
 };
 L.control.ruler(rulerOptions).addTo(map);
 
@@ -194,6 +198,48 @@ const exclusionZones = L.layerGroup();
 const seaZones = L.layerGroup();
 const unculledZones = L.layerGroup();
 
+const homeBubble = L.layerGroup();
+const ipBubble = L.layerGroup();
+const permissibleZone = L.layerGroup();
+const safeZone = L.layerGroup();
+
+const debugControlGroups = {
+  "Blue Threat Zones": {
+    Hide: L.layerGroup().addTo(map),
+    Full: blueFullThreatZones,
+    Aircraft: blueAircraftThreatZones,
+    "Air Defenses": blueAirDefenseThreatZones,
+    "Radar SAMs": blueRadarSamThreatZones,
+  },
+  "Red Threat Zones": {
+    Hide: L.layerGroup().addTo(map),
+    Full: redFullThreatZones,
+    Aircraft: redAircraftThreatZones,
+    "Air Defenses": redAirDefenseThreatZones,
+    "Radar SAMs": redRadarSamThreatZones,
+  },
+  Navmeshes: {
+    Hide: L.layerGroup().addTo(map),
+    Blue: blueNavmesh,
+    Red: redNavmesh,
+  },
+  "Map Zones": {
+    "Inclusion zones": inclusionZones,
+    "Exclusion zones": exclusionZones,
+    "Sea zones": seaZones,
+    "Culling exclusion zones": unculledZones,
+  },
+};
+
+if (ENABLE_EXPENSIVE_DEBUG_TOOLS) {
+  debugControlGroups["IP Zones"] = {
+    "Home bubble": homeBubble,
+    "IP bubble": ipBubble,
+    "Permissible zone": permissibleZone,
+    "Safe zone": safeZone,
+  };
+}
+
 // Main map controls. These are the ones that we expect users to interact with.
 // These are always open, which unfortunately means that the scroll bar will not
 // appear if the menu doesn't fit. This fits in the smallest window size we
@@ -239,41 +285,11 @@ L.control
 // Debug map controls. Hover over to open. Not something most users will want or
 // need to interact with.
 L.control
-  .groupedLayers(
-    null,
-    {
-      "Blue Threat Zones": {
-        Hide: L.layerGroup().addTo(map),
-        Full: blueFullThreatZones,
-        Aircraft: blueAircraftThreatZones,
-        "Air Defenses": blueAirDefenseThreatZones,
-        "Radar SAMs": blueRadarSamThreatZones,
-      },
-      "Red Threat Zones": {
-        Hide: L.layerGroup().addTo(map),
-        Full: redFullThreatZones,
-        Aircraft: redAircraftThreatZones,
-        "Air Defenses": redAirDefenseThreatZones,
-        "Radar SAMs": redRadarSamThreatZones,
-      },
-      Navmeshes: {
-        Hide: L.layerGroup().addTo(map),
-        Blue: blueNavmesh,
-        Red: redNavmesh,
-      },
-      "Map Zones": {
-        "Inclusion zones": inclusionZones,
-        "Exclusion zones": exclusionZones,
-        "Sea zones": seaZones,
-        "Culling exclusion zones": unculledZones,
-      },
-    },
-    {
-      position: "topleft",
-      exclusiveGroups: ["Blue Threat Zones", "Red Threat Zones", "Navmeshes"],
-      groupCheckboxes: true,
-    }
-  )
+  .groupedLayers(null, debugControlGroups, {
+    position: "topleft",
+    exclusiveGroups: ["Blue Threat Zones", "Red Threat Zones", "Navmeshes"],
+    groupCheckboxes: true,
+  })
   .addTo(map);
 
 let game;
@@ -291,6 +307,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.navmeshesChanged.connect(drawNavmeshes);
   game.mapZonesChanged.connect(drawMapZones);
   game.unculledZonesChanged.connect(drawUnculledZones);
+  game.ipZonesChanged.connect(drawIpZones);
 });
 
 function recenterMap(center) {
@@ -570,7 +587,11 @@ class TheaterGroundObject {
     }
 
     L.marker(this.tgo.position, { icon: this.icon() })
-      .bindTooltip(`${this.tgo.name} (${this.tgo.controlPointName})<br />${this.tgo.units.join("<br />")}`)
+      .bindTooltip(
+        `${this.tgo.name} (${
+          this.tgo.controlPointName
+        })<br />${this.tgo.units.join("<br />")}`
+      )
       .on("click", () => this.tgo.showInfoDialog())
       .on("contextmenu", () => this.tgo.showPackageDialog())
       .addTo(this.layer());
@@ -970,6 +991,37 @@ function drawUnculledZones() {
   }
 }
 
+function drawIpZones() {
+  homeBubble.clearLayers();
+  ipBubble.clearLayers();
+  permissibleZone.clearLayers();
+  safeZone.clearLayers();
+
+  L.polygon(game.ipZones.homeBubble, {
+    color: Colors.Highlight,
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(homeBubble);
+
+  L.polygon(game.ipZones.ipBubble, {
+    color: "#bb89ff",
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(ipBubble);
+
+  L.polygon(game.ipZones.permissibleZone, {
+    color: "#ffffff",
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(permissibleZone);
+
+  L.polygon(game.ipZones.safeZone, {
+    color: Colors.Green,
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(safeZone);
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -981,6 +1033,7 @@ function drawInitialMap() {
   drawNavmeshes();
   drawMapZones();
   drawUnculledZones();
+  drawIpZones();
 }
 
 function clearAllLayers() {

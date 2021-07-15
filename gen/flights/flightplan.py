@@ -20,6 +20,7 @@ from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
+from game.flightplan import IpZoneGeometry
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -946,57 +947,35 @@ class FlightPlanBuilder:
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
-        # The simple case is where the target is not near the departure airfield. In
-        # this case, we can plan the shortest route from the departure airfield to the
-        # target, use the nearest non-threatened point *that's farther from the target
-        # than the ingress point to avoid backtracking) as the join point.
-        #
-        # The other case that we need to handle is when the target is close to
-        # the origin airfield. In this case we currently fall back to the old planning
-        # behavior.
-        #
-        # A messy (and very unlikely) case that we can't do much about:
-        #
-        # +--------------+   +---------------+
-        # |              |   |               |
-        # |           IP-+---+-T             |
-        # |              |   |               |
-        # |              |   |               |
-        # +--------------+   +---------------+
         from gen.ato import PackageWaypoints
 
-        target = self.package.target.position
+        # Start by picking the best IP for the attack.
+        ingress_point = IpZoneGeometry(
+            self.package.target.position,
+            self.package_airfield().position,
+            self.coalition,
+        ).find_best_ip()
 
-        for join_point in self.preferred_join_points():
-            join_distance = meters(join_point.distance_to_point(target))
-            if join_distance > self.doctrine.ingress_distance:
-                break
-        else:
+        # Pick the join point based on the best route to the IP.
+        join_point = self.preferred_join_point(ingress_point)
+        if join_point is None:
             # The entire path to the target is threatened. Use the fallback behavior for
             # now.
-            self.legacy_package_waypoints_impl()
+            self.legacy_package_waypoints_impl(ingress_point)
             return
 
-        attack_heading = join_point.heading_between_point(target)
-        ingress_point = self._ingress_point(attack_heading)
-
-        # The first case described above. The ingress and join points are placed
-        # reasonably relative to each other.
+        # And the split point based on the best route from the IP. Since that's no
+        # different than the best route *to* the IP, this is the same as the join point.
+        # TODO: Estimate attack completion point based on the IP and split from there?
         self.package.waypoints = PackageWaypoints(
             WaypointBuilder.perturb(join_point),
             ingress_point,
-            WaypointBuilder.perturb(
-                self.preferred_split_point(ingress_point, join_point)
-            ),
+            WaypointBuilder.perturb(join_point),
         )
 
-    def retreat_point(self, origin: Point) -> Point:
-        return self.threat_zones.closest_boundary(origin)
-
-    def legacy_package_waypoints_impl(self) -> None:
+    def legacy_package_waypoints_impl(self, ingress_point: Point) -> None:
         from gen.ato import PackageWaypoints
 
-        ingress_point = self._ingress_point(self._target_heading_to_package_airfield())
         join_point = self._rendezvous_point(ingress_point)
         self.package.waypoints = PackageWaypoints(
             WaypointBuilder.perturb(join_point),
@@ -1009,23 +988,15 @@ class FlightPlanBuilder:
             if not self.threat_zones.threatened(point):
                 yield point
 
-    def preferred_join_points(self) -> Iterator[Point]:
+    def preferred_join_point(self, ingress_point: Point) -> Optional[Point]:
         # Use non-threatened points along the path to the target as the join point. We
         # may need to try more than one in the event that the close non-threatened
         # points are closer than the ingress point itself.
-        return self.safe_points_between(
-            self.package.target.position, self.package_airfield().position
-        )
-
-    def preferred_split_point(self, ingress_point: Point, join_point: Point) -> Point:
-        # Use non-threatened points along the path to the target as the join point. We
-        # may need to try more than one in the event that the close non-threatened
-        # points are closer than the ingress point itself.
-        for point in self.safe_points_between(
+        for join_point in self.safe_points_between(
             ingress_point, self.package_airfield().position
         ):
-            return point
-        return join_point
+            return join_point
+        return None
 
     def generate_strike(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a strike flight plan.
@@ -1847,7 +1818,7 @@ class FlightPlanBuilder:
 
     def _ingress_point(self, heading: float) -> Point:
         return self.package.target.position.point_from_heading(
-            heading - 180, self.doctrine.ingress_distance.meters
+            heading - 180, self.doctrine.max_ingress_distance.meters
         )
 
     def _target_heading_to_package_airfield(self) -> float:
