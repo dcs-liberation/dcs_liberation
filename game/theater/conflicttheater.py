@@ -504,6 +504,7 @@ class SeasonalConditions:
     winter_avg_pressure: float,
     summer_avg_temperature: float,
     winter_avg_temperature: float,
+    temperature_day_night_difference: float,
 
 
 class ConflictTheater:
@@ -762,6 +763,7 @@ class CaucasusTheater(ConflictTheater):
         winter_avg_pressure=29.92, # TODO
         summer_avg_temperature=22.5,
         winter_avg_temperature=3.0,
+        temperature_day_night_difference: 6.0,
     )
 
     @property
@@ -790,6 +792,7 @@ class PersianGulfTheater(ConflictTheater):
         winter_avg_pressure=29.92, # TODO
         summer_avg_temperature=32.5,
         winter_avg_temperature=15.0,
+        temperature_day_night_difference: 2.0,
     )
 
     @property
@@ -818,6 +821,7 @@ class NevadaTheater(ConflictTheater):
         winter_avg_pressure=29.92, # TODO
         summer_avg_temperature=31.5,
         winter_avg_temperature=5.0,
+        temperature_day_night_difference: 6.0,
     )
 
     @property
@@ -846,6 +850,7 @@ class NormandyTheater(ConflictTheater):
         winter_avg_pressure=29.92, # TODO
         summer_avg_temperature=20.0,
         winter_avg_temperature=0.0,
+        temperature_day_night_difference: 5.0,
     )
 
     @property
@@ -874,6 +879,7 @@ class TheChannelTheater(ConflictTheater):
         winter_avg_pressure=29.92, # TODO
         summer_avg_temperature=20.0,
         winter_avg_temperature=0.0,
+        temperature_day_night_difference: 5.0,
     )
 
     @property
@@ -901,7 +907,8 @@ class SyriaTheater(ConflictTheater):
         summer_avg_pressure=29.92, # TODO
         winter_avg_pressure=29.92, # TODO
         summer_avg_temperature=28.5,
-        winter_avg_temperature=5.0,
+        winter_avg_temperature=10.0,
+        temperature_day_night_difference: 8.0,
     )
 
     @property
@@ -927,6 +934,7 @@ class MarianaIslandsTheater(ConflictTheater):
         winter_avg_pressure=29.92, # TODO
         summer_avg_temperature=28.0,
         winter_avg_temperature=27.0,
+        temperature_day_night_difference: 3.0,
     )
 
     @property

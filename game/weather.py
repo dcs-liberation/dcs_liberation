@@ -11,7 +11,7 @@ from dcs.cloud_presets import Clouds as PydcsClouds
 from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
 
 from game.settings import Settings
-from game.utils import Distance, meters
+from game.utils import Distance, meters, interpolate
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
@@ -23,6 +23,17 @@ class TimeOfDay(Enum):
     Dusk = "dusk"
     Night = "night"
 
+
+# NOTES FROM ATC GUY
+# 30.12 typical summer high pressure (nordics)
+# 29.68 lower bound typical summer rain (nordics)
+# conclusion: add/subtract 0.22 for clear vs rain
+# 27.91 crazy low, seen
+# 31.30 crazy high, seen
+# Thunderstorm keeps pressure high
+# conclusion: add 0.22 for thunderstorm
+# Pressure doesn't change much during night
+# Seasonal variations are smaller close to the equator
 
 @dataclass(frozen=True)
 class AtmosphericConditions:
@@ -71,15 +82,36 @@ class Fog:
 
 
 class Weather:
-    def __init__(self) -> None:
+    def __init__(self, seasonal_conditions: SeasonalConditions, day: datetime.date, time_of_day: TimeOfDay) -> None:
         # Future improvement: Use theater, day and time of day
         # to get a more realistic conditions
-        self.atmospheric = self.generate_atmospheric()
+        self.atmospheric = self.generate_atmospheric(seasonalConditions, day, time_of_day)
         self.clouds = self.generate_clouds()
         self.fog = self.generate_fog()
         self.wind = self.generate_wind()
 
-    def generate_atmospheric(self) -> AtmosphericConditions:
+    def generate_atmospheric(self, seasonal_conditions: SeasonalConditions, day: datetime.date, time_of_day: TimeOfDay) -> AtmosphericConditions:
+        pressure = self.interpolate_summer_winter(seasonal_conditions.summer_avg_pressure, seasonal_conditions.winter_avg_pressure, day)
+        print("!!! pressure!", pressure)
+        temperature = self.interpolate_summer_winter(seasonal_conditions.summer_avg_temperature, seasonal_conditions.winter_avg_temperature, day)
+        print("!!! temperature!", temperature)
+        if time_of_day == TimeOfDay.Day:
+            print("!!! is day")
+            temperature += seasonal_conditions.temperature_day_night_difference / 2
+        if time_of_day == TimeOfDay.Night:
+            print("!!! is night!")
+            temperature -= seasonal_conditions.temperature_day_night_difference / 2
+        pressure_adjustment = self.get_pressure_adjustment()
+        temperature_adjustment = self.get_temperature_adjustment()
+        return AtmosphericConditions(
+            qnh_inches_mercury=self.random_pressure(pressure + pressure_adjustment),
+            temperature_celsius=self.random_temperature(temperature + temperature_adjustment),
+        )
+
+    def get_pressure_adjustment(self) -> float:
+        raise NotImplementedError
+    
+    def get_temperature_adjustment(self) -> float:
         raise NotImplementedError
 
     def generate_clouds(self) -> Optional[Clouds]:
@@ -140,13 +172,24 @@ class Weather:
         temperature = round(temperature)
         return max(SAFE_MIN, min(SAFE_MAX, temperature))
 
+    @staticmethod
+    def interpolate_summer_winter(summer_value: float, winter_value: float, day: datetime.date) -> float:
+        day_of_year = day.timetuple().tm_yday
+        day_of_year_peak_summer = 183
+        distance_from_peak_summer = abs(-day_of_year_peak_summer + day_of_year)
+        winter_factor = distance_from_peak_summer / day_of_year_peak_summer
+        return interpolate(summer_value, winter_value, winter_factor, clamp=True)
+
+    # TODO: Day/night interpolation
+    
+
 
 class ClearSkies(Weather):
-    def generate_atmospheric(self) -> AtmosphericConditions:
-        return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.96),
-            temperature_celsius=self.random_temperature(22),
-        )
+    def get_pressure_adjustment(self) -> float:
+        return 0.22
+
+    def get_temperature_adjustment(self) -> float:
+        return 3.0
 
     def generate_clouds(self) -> Optional[Clouds]:
         return None
@@ -159,11 +202,11 @@ class ClearSkies(Weather):
 
 
 class Cloudy(Weather):
-    def generate_atmospheric(self) -> AtmosphericConditions:
-        return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.90),
-            temperature_celsius=self.random_temperature(20),
-        )
+    def get_pressure_adjustment(self) -> float:
+        return 0.0
+
+    def get_temperature_adjustment(self) -> float:
+        return 0.0
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=False)
@@ -177,11 +220,11 @@ class Cloudy(Weather):
 
 
 class Raining(Weather):
-    def generate_atmospheric(self) -> AtmosphericConditions:
-        return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.70),
-            temperature_celsius=self.random_temperature(16),
-        )
+    def get_pressure_adjustment(self) -> float:
+        return -0.22
+
+    def get_temperature_adjustment(self) -> float:
+        return -3.0
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=True)
@@ -195,11 +238,11 @@ class Raining(Weather):
 
 
 class Thunderstorm(Weather):
-    def generate_atmospheric(self) -> AtmosphericConditions:
-        return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(29.60),
-            temperature_celsius=self.random_temperature(15),
-        )
+    def get_pressure_adjustment(self) -> float:
+        return 0.1
+
+    def get_temperature_adjustment(self) -> float:
+        return -3.0
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds(
@@ -233,7 +276,7 @@ class Conditions:
         return cls(
             time_of_day=time_of_day,
             start_time=_start_time,
-            weather=cls.generate_weather(),
+            weather=cls.generate_weather(theater.seasonal_conditions, day, time_of_day),
         )
 
     @classmethod
@@ -259,7 +302,8 @@ class Conditions:
         return datetime.datetime.combine(day, time)
 
     @classmethod
-    def generate_weather(cls) -> Weather:
+    def generate_weather(cls, seasonal_conditions: SeasonalConditions, day: datetime.date, time_of_day: TimeOfDay) -> Weather:
+        # Here we could hook in seasonal weights
         chances = {
             Thunderstorm: 1,
             Raining: 20,
@@ -269,4 +313,4 @@ class Conditions:
         weather_type = random.choices(
             list(chances.keys()), weights=list(chances.values())
         )[0]
-        return weather_type()
+        return weather_type(seasonal_conditions, day, time_of_day)

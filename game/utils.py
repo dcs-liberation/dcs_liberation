@@ -189,3 +189,15 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[tuple[Any, Any]]:
     a, b = itertools.tee(iterable)
     next(b, None)
     return zip(a, b)
+
+
+def interpolate(value1: float, value2: float, factor: float, clamp: bool) -> float:
+    """ Inerpolate between two values, factor 0-1 """
+    interpolated = value1 + (value2 - value1) * factor
+
+    if clamp:
+        bigger_value = max(value1, value2)
+        smaller_value = min(value1, value2)
+        return min(bigger_value, max(smaller_value, interpolated))
+    else:
+        return interpolated
