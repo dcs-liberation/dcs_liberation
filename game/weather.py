@@ -25,18 +25,6 @@ class TimeOfDay(Enum):
     Night = "night"
 
 
-# NOTES FROM ATC GUY
-# 30.12 typical summer high pressure (nordics)
-# 29.68 lower bound typical summer rain (nordics)
-# conclusion: add/subtract 0.22 for clear vs rain
-# 27.91 crazy low, seen
-# 31.30 crazy high, seen
-# Thunderstorm keeps pressure high
-# conclusion: add 0.22 for thunderstorm
-# Pressure doesn't change much during night
-# Seasonal variations are smaller close to the equator
-
-
 @dataclass(frozen=True)
 class AtmosphericConditions:
     #: Pressure at sea level in inches of mercury.
@@ -105,13 +93,14 @@ class Weather:
         day: datetime.date,
         time_of_day: TimeOfDay,
     ) -> AtmosphericConditions:
+        print(self, day, time_of_day)
         pressure = self.interpolate_summer_winter(
             seasonal_conditions.summer_avg_pressure,
             seasonal_conditions.winter_avg_pressure,
             day,
         )
         print(
-            "!!! interpolated pressure between!",
+            "interpolated pressure between",
             seasonal_conditions.summer_avg_pressure,
             seasonal_conditions.winter_avg_pressure,
             pressure,
@@ -122,25 +111,29 @@ class Weather:
             day,
         )
         print(
-            "!!! interpolated temperature between!",
+            "interpolated temperature between",
             seasonal_conditions.summer_avg_temperature,
             seasonal_conditions.winter_avg_temperature,
             temperature,
         )
         if time_of_day == TimeOfDay.Day:
-            print("!!! is day")
+            print("is day")
             temperature += seasonal_conditions.temperature_day_night_difference / 2
         if time_of_day == TimeOfDay.Night:
-            print("!!! is night!")
+            print("is night")
             temperature -= seasonal_conditions.temperature_day_night_difference / 2
-        pressure_adjustment = self.get_pressure_adjustment()
-        temperature_adjustment = self.get_temperature_adjustment()
-        return AtmosphericConditions(
-            qnh_inches_mercury=self.random_pressure(pressure + pressure_adjustment),
-            temperature_celsius=self.random_temperature(
-                temperature + temperature_adjustment
-            ),
+        print("Temperature is now", temperature)
+        pressure += self.get_pressure_adjustment()
+        temperature += self.get_temperature_adjustment()
+        print("After weather type adjustment, temperature is", temperature)
+        print("After weather type adjustment, pressure is", pressure)
+        print("Randomizing and clamping...")
+        conditions = AtmosphericConditions(
+            qnh_inches_mercury=self.random_pressure(pressure),
+            temperature_celsius=self.random_temperature(temperature),
         )
+        print("Final conditions", conditions)
+        return conditions
 
     def get_pressure_adjustment(self) -> float:
         raise NotImplementedError
@@ -192,7 +185,7 @@ class Weather:
         SAFE_MIN = 28.4
         SAFE_MAX = 30.9
         # Use normalvariate to get normal distribution, more realistic than uniform
-        pressure = random.normalvariate(average_pressure, 0.2)
+        pressure = random.normalvariate(average_pressure, 0.1)
         return max(SAFE_MIN, min(SAFE_MAX, pressure))
 
     @staticmethod
@@ -202,7 +195,7 @@ class Weather:
         SAFE_MIN = -12
         SAFE_MAX = 49
         # Use normalvariate to get normal distribution, more realistic than uniform
-        temperature = random.normalvariate(average_temperature, 4)
+        temperature = random.normalvariate(average_temperature, 2)
         temperature = round(temperature)
         return max(SAFE_MIN, min(SAFE_MAX, temperature))
 
