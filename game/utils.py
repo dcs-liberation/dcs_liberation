@@ -192,7 +192,7 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[tuple[Any, Any]]:
 
 
 def interpolate(value1: float, value2: float, factor: float, clamp: bool) -> float:
-    """ Inerpolate between two values, factor 0-1 """
+    """Inerpolate between two values, factor 0-1"""
     interpolated = value1 + (value2 - value1) * factor
 
     if clamp:

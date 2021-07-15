@@ -496,15 +496,16 @@ class ReferencePoint:
     world_coordinates: Point
     image_coordinates: Point
 
+
 @dataclass
 class SeasonalConditions:
     # Units are inHg and degrees Celsius
     # Future improvement: add clouds/precipitation
-    summer_avg_pressure: float,
-    winter_avg_pressure: float,
-    summer_avg_temperature: float,
-    winter_avg_temperature: float,
-    temperature_day_night_difference: float,
+    summer_avg_pressure: float
+    winter_avg_pressure: float
+    summer_avg_temperature: float
+    winter_avg_temperature: float
+    temperature_day_night_difference: float
 
 
 class ConflictTheater:
@@ -759,11 +760,11 @@ class CaucasusTheater(ConflictTheater):
         "night": (0, 5),
     }
     seasonal_conditions = SeasonalConditions(
-        summer_avg_pressure=29.92, # TODO
-        winter_avg_pressure=29.92, # TODO
+        summer_avg_pressure=30.02,  # TODO: More science
+        winter_avg_pressure=29.72,  # TODO: More science
         summer_avg_temperature=22.5,
         winter_avg_temperature=3.0,
-        temperature_day_night_difference: 6.0,
+        temperature_day_night_difference=6.0,
     )
 
     @property
@@ -788,11 +789,11 @@ class PersianGulfTheater(ConflictTheater):
         "night": (0, 5),
     }
     seasonal_conditions = SeasonalConditions(
-        summer_avg_pressure=29.92, # TODO
-        winter_avg_pressure=29.92, # TODO
+        summer_avg_pressure=29.98,  # TODO: More science
+        winter_avg_pressure=29.80,  # TODO: More science
         summer_avg_temperature=32.5,
         winter_avg_temperature=15.0,
-        temperature_day_night_difference: 2.0,
+        temperature_day_night_difference=2.0,
     )
 
     @property
@@ -817,11 +818,11 @@ class NevadaTheater(ConflictTheater):
         "night": (0, 5),
     }
     seasonal_conditions = SeasonalConditions(
-        summer_avg_pressure=29.92, # TODO
-        winter_avg_pressure=29.92, # TODO
+        summer_avg_pressure=30.02,  # TODO: More science
+        winter_avg_pressure=29.72,  # TODO: More science
         summer_avg_temperature=31.5,
         winter_avg_temperature=5.0,
-        temperature_day_night_difference: 6.0,
+        temperature_day_night_difference=6.0,
     )
 
     @property
@@ -846,11 +847,11 @@ class NormandyTheater(ConflictTheater):
         "night": (0, 5),
     }
     seasonal_conditions = SeasonalConditions(
-        summer_avg_pressure=29.92, # TODO
-        winter_avg_pressure=29.92, # TODO
+        summer_avg_pressure=30.02,  # TODO: More science
+        winter_avg_pressure=29.72,  # TODO: More science
         summer_avg_temperature=20.0,
         winter_avg_temperature=0.0,
-        temperature_day_night_difference: 5.0,
+        temperature_day_night_difference=5.0,
     )
 
     @property
@@ -875,11 +876,11 @@ class TheChannelTheater(ConflictTheater):
         "night": (0, 5),
     }
     seasonal_conditions = SeasonalConditions(
-        summer_avg_pressure=29.92, # TODO
-        winter_avg_pressure=29.92, # TODO
+        summer_avg_pressure=30.02,  # TODO: More science
+        winter_avg_pressure=29.72,  # TODO: More science
         summer_avg_temperature=20.0,
         winter_avg_temperature=0.0,
-        temperature_day_night_difference: 5.0,
+        temperature_day_night_difference=5.0,
     )
 
     @property
@@ -904,11 +905,11 @@ class SyriaTheater(ConflictTheater):
         "night": (0, 5),
     }
     seasonal_conditions = SeasonalConditions(
-        summer_avg_pressure=29.92, # TODO
-        winter_avg_pressure=29.92, # TODO
+        summer_avg_pressure=29.98,  # TODO: More science
+        winter_avg_pressure=29.86,  # TODO: More science
         summer_avg_temperature=28.5,
         winter_avg_temperature=10.0,
-        temperature_day_night_difference: 8.0,
+        temperature_day_night_difference=8.0,
     )
 
     @property
@@ -930,11 +931,11 @@ class MarianaIslandsTheater(ConflictTheater):
         "night": (0, 5),
     }
     seasonal_conditions = SeasonalConditions(
-        summer_avg_pressure=29.92, # TODO
-        winter_avg_pressure=29.92, # TODO
+        summer_avg_pressure=30.02,  # TODO: More science
+        winter_avg_pressure=29.82,  # TODO: More science
         summer_avg_temperature=28.0,
         winter_avg_temperature=27.0,
-        temperature_day_night_difference: 3.0,
+        temperature_day_night_difference=1.0,
     )
 
     @property

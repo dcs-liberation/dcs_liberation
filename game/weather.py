@@ -15,6 +15,7 @@ from game.utils import Distance, meters, interpolate
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
+    from game.theater.conflicttheater import SeasonalConditions
 
 
 class TimeOfDay(Enum):
@@ -34,6 +35,7 @@ class TimeOfDay(Enum):
 # conclusion: add 0.22 for thunderstorm
 # Pressure doesn't change much during night
 # Seasonal variations are smaller close to the equator
+
 
 @dataclass(frozen=True)
 class AtmosphericConditions:
@@ -82,19 +84,49 @@ class Fog:
 
 
 class Weather:
-    def __init__(self, seasonal_conditions: SeasonalConditions, day: datetime.date, time_of_day: TimeOfDay) -> None:
+    def __init__(
+        self,
+        seasonal_conditions: SeasonalConditions,
+        day: datetime.date,
+        time_of_day: TimeOfDay,
+    ) -> None:
         # Future improvement: Use theater, day and time of day
         # to get a more realistic conditions
-        self.atmospheric = self.generate_atmospheric(seasonalConditions, day, time_of_day)
+        self.atmospheric = self.generate_atmospheric(
+            seasonal_conditions, day, time_of_day
+        )
         self.clouds = self.generate_clouds()
         self.fog = self.generate_fog()
         self.wind = self.generate_wind()
 
-    def generate_atmospheric(self, seasonal_conditions: SeasonalConditions, day: datetime.date, time_of_day: TimeOfDay) -> AtmosphericConditions:
-        pressure = self.interpolate_summer_winter(seasonal_conditions.summer_avg_pressure, seasonal_conditions.winter_avg_pressure, day)
-        print("!!! pressure!", pressure)
-        temperature = self.interpolate_summer_winter(seasonal_conditions.summer_avg_temperature, seasonal_conditions.winter_avg_temperature, day)
-        print("!!! temperature!", temperature)
+    def generate_atmospheric(
+        self,
+        seasonal_conditions: SeasonalConditions,
+        day: datetime.date,
+        time_of_day: TimeOfDay,
+    ) -> AtmosphericConditions:
+        pressure = self.interpolate_summer_winter(
+            seasonal_conditions.summer_avg_pressure,
+            seasonal_conditions.winter_avg_pressure,
+            day,
+        )
+        print(
+            "!!! interpolated pressure between!",
+            seasonal_conditions.summer_avg_pressure,
+            seasonal_conditions.winter_avg_pressure,
+            pressure,
+        )
+        temperature = self.interpolate_summer_winter(
+            seasonal_conditions.summer_avg_temperature,
+            seasonal_conditions.winter_avg_temperature,
+            day,
+        )
+        print(
+            "!!! interpolated temperature between!",
+            seasonal_conditions.summer_avg_temperature,
+            seasonal_conditions.winter_avg_temperature,
+            temperature,
+        )
         if time_of_day == TimeOfDay.Day:
             print("!!! is day")
             temperature += seasonal_conditions.temperature_day_night_difference / 2
@@ -105,12 +137,14 @@ class Weather:
         temperature_adjustment = self.get_temperature_adjustment()
         return AtmosphericConditions(
             qnh_inches_mercury=self.random_pressure(pressure + pressure_adjustment),
-            temperature_celsius=self.random_temperature(temperature + temperature_adjustment),
+            temperature_celsius=self.random_temperature(
+                temperature + temperature_adjustment
+            ),
         )
 
     def get_pressure_adjustment(self) -> float:
         raise NotImplementedError
-    
+
     def get_temperature_adjustment(self) -> float:
         raise NotImplementedError
 
@@ -173,7 +207,9 @@ class Weather:
         return max(SAFE_MIN, min(SAFE_MAX, temperature))
 
     @staticmethod
-    def interpolate_summer_winter(summer_value: float, winter_value: float, day: datetime.date) -> float:
+    def interpolate_summer_winter(
+        summer_value: float, winter_value: float, day: datetime.date
+    ) -> float:
         day_of_year = day.timetuple().tm_yday
         day_of_year_peak_summer = 183
         distance_from_peak_summer = abs(-day_of_year_peak_summer + day_of_year)
@@ -181,7 +217,6 @@ class Weather:
         return interpolate(summer_value, winter_value, winter_factor, clamp=True)
 
     # TODO: Day/night interpolation
-    
 
 
 class ClearSkies(Weather):
@@ -302,7 +337,12 @@ class Conditions:
         return datetime.datetime.combine(day, time)
 
     @classmethod
-    def generate_weather(cls, seasonal_conditions: SeasonalConditions, day: datetime.date, time_of_day: TimeOfDay) -> Weather:
+    def generate_weather(
+        cls,
+        seasonal_conditions: SeasonalConditions,
+        day: datetime.date,
+        time_of_day: TimeOfDay,
+    ) -> Weather:
         # Here we could hook in seasonal weights
         chances = {
             Thunderstorm: 1,
