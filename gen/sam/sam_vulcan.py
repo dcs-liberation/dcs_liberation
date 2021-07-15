@@ -14,9 +14,8 @@ class VulcanGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Vulcan Group"
-    price = 25
 
-    def generate(self):
+    def generate(self) -> None:
         num_launchers = 2
 
         positions = self.get_circular_position(

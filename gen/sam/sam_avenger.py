@@ -14,9 +14,8 @@ class AvengerGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Avenger Group"
-    price = 62
 
-    def generate(self):
+    def generate(self) -> None:
         num_launchers = 2
 
         self.add_unit(

@@ -15,9 +15,8 @@ class RapierGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Rapier AA Site"
-    price = 50
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.Rapier_fsa_blindfire_radar,
             "BT",

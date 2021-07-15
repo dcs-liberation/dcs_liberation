@@ -12,9 +12,8 @@ class FreyaGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Freya EWR Site"
-    price = 60
 
-    def generate(self):
+    def generate(self) -> None:
 
         # TODO : would be better with the Concrete structure that is supposed to protect it
         self.add_unit(

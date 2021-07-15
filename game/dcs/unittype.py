@@ -4,12 +4,12 @@ from typing import TypeVar, Generic, Type
 
 from dcs.unittype import UnitType as DcsUnitType
 
-DcsUnitTypeT = TypeVar("DcsUnitTypeT", bound=DcsUnitType)
+DcsUnitTypeT = TypeVar("DcsUnitTypeT", bound=Type[DcsUnitType])
 
 
 @dataclass(frozen=True)
 class UnitType(Generic[DcsUnitTypeT]):
-    dcs_unit_type: Type[DcsUnitTypeT]
+    dcs_unit_type: DcsUnitTypeT
     name: str
     description: str
     year_introduced: str

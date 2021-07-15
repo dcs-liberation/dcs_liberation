@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Iterable, List, Set, TYPE_CHECKING
+from typing import List, Set, TYPE_CHECKING, cast
 
 from dcs import Mission
 from dcs.action import DoScript, DoScriptFile
@@ -62,27 +62,13 @@ class Operation:
     plugin_scripts: List[str] = []
 
     @classmethod
-    def prepare(cls, game: Game):
+    def prepare(cls, game: Game) -> None:
         with open("resources/default_options.lua", "r") as f:
             options_dict = loads(f.read())["options"]
         cls._set_mission(Mission(game.theater.terrain))
         cls.game = game
         cls._setup_mission_coalitions()
         cls.current_mission.options.load_from_dict(options_dict)
-
-    @classmethod
-    def conflicts(cls) -> Iterable[Conflict]:
-        assert cls.game
-        for frontline in cls.game.theater.conflicts():
-            yield Conflict(
-                cls.game.theater,
-                frontline,
-                cls.game.player_faction.name,
-                cls.game.enemy_faction.name,
-                cls.game.player_country,
-                cls.game.enemy_country,
-                frontline.position,
-            )
 
     @classmethod
     def air_conflict(cls) -> Conflict:
@@ -95,10 +81,10 @@ class Operation:
         return Conflict(
             cls.game.theater,
             FrontLine(player_cp, enemy_cp),
-            cls.game.player_faction.name,
-            cls.game.enemy_faction.name,
-            cls.game.player_country,
-            cls.game.enemy_country,
+            cls.game.blue.faction.name,
+            cls.game.red.faction.name,
+            cls.current_mission.country(cls.game.blue.country_name),
+            cls.current_mission.country(cls.game.red.country_name),
             mid_point,
         )
 
@@ -107,16 +93,16 @@ class Operation:
         cls.current_mission = mission
 
     @classmethod
-    def _setup_mission_coalitions(cls):
+    def _setup_mission_coalitions(cls) -> None:
         cls.current_mission.coalition["blue"] = Coalition(
-            "blue", bullseye=cls.game.blue_bullseye.to_pydcs()
+            "blue", bullseye=cls.game.blue.bullseye.to_pydcs()
         )
         cls.current_mission.coalition["red"] = Coalition(
-            "red", bullseye=cls.game.red_bullseye.to_pydcs()
+            "red", bullseye=cls.game.red.bullseye.to_pydcs()
         )
 
-        p_country = cls.game.player_country
-        e_country = cls.game.enemy_country
+        p_country = cls.game.blue.country_name
+        e_country = cls.game.red.country_name
         cls.current_mission.coalition["blue"].add_country(
             country_dict[db.country_id_from_name(p_country)]()
         )
@@ -163,7 +149,7 @@ class Operation:
         airsupportgen: AirSupportConflictGenerator,
         jtacs: List[JtacInfo],
         airgen: AircraftConflictGenerator,
-    ):
+    ) -> None:
         """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)"""
 
         gens: List[MissionInfoGenerator] = [
@@ -251,7 +237,7 @@ class Operation:
                 # beacon list.
 
     @classmethod
-    def _generate_ground_units(cls):
+    def _generate_ground_units(cls) -> None:
         cls.groundobjectgen = GroundObjectsGenerator(
             cls.current_mission,
             cls.game,
@@ -266,18 +252,23 @@ class Operation:
         """Add destroyed units to the Mission"""
         for d in cls.game.get_destroyed_units():
             try:
-                utype = db.unit_type_from_name(d["type"])
+                type_name = d["type"]
+                if not isinstance(type_name, str):
+                    raise TypeError(
+                        "Expected the type of the destroyed static to be a string"
+                    )
+                utype = db.unit_type_from_name(type_name)
             except KeyError:
                 continue
 
-            pos = Point(d["x"], d["z"])
+            pos = Point(cast(float, d["x"]), cast(float, d["z"]))
             if (
                 utype is not None
                 and not cls.game.position_culled(pos)
                 and cls.game.settings.perf_destroyed_units
             ):
                 cls.current_mission.static_group(
-                    country=cls.current_mission.country(cls.game.player_country),
+                    country=cls.current_mission.country(cls.game.blue.country_name),
                     name="",
                     _type=utype,
                     hidden=True,
@@ -367,18 +358,18 @@ class Operation:
         cls.airgen.clear_parking_slots()
 
         cls.airgen.generate_flights(
-            cls.current_mission.country(cls.game.player_country),
-            cls.game.blue_ato,
+            cls.current_mission.country(cls.game.blue.country_name),
+            cls.game.blue.ato,
             cls.groundobjectgen.runways,
         )
         cls.airgen.generate_flights(
-            cls.current_mission.country(cls.game.enemy_country),
-            cls.game.red_ato,
+            cls.current_mission.country(cls.game.red.country_name),
+            cls.game.red.ato,
             cls.groundobjectgen.runways,
         )
         cls.airgen.spawn_unused_aircraft(
-            cls.current_mission.country(cls.game.player_country),
-            cls.current_mission.country(cls.game.enemy_country),
+            cls.current_mission.country(cls.game.blue.country_name),
+            cls.current_mission.country(cls.game.red.country_name),
         )
 
     @classmethod
@@ -389,10 +380,10 @@ class Operation:
             player_cp = front_line.blue_cp
             enemy_cp = front_line.red_cp
             conflict = Conflict.frontline_cas_conflict(
-                cls.game.player_faction.name,
-                cls.game.enemy_faction.name,
-                cls.current_mission.country(cls.game.player_country),
-                cls.current_mission.country(cls.game.enemy_country),
+                cls.game.blue.faction.name,
+                cls.game.red.faction.name,
+                cls.current_mission.country(cls.game.blue.country_name),
+                cls.current_mission.country(cls.game.red.country_name),
                 front_line,
                 cls.game.theater,
             )
@@ -406,6 +397,7 @@ class Operation:
                 player_gp,
                 enemy_gp,
                 player_cp.stances[enemy_cp.id],
+                enemy_cp.stances[player_cp.id],
                 cls.unit_map,
             )
             ground_conflict_gen.generate()
@@ -418,7 +410,7 @@ class Operation:
         CargoShipGenerator(cls.current_mission, cls.game, cls.unit_map).generate()
 
     @classmethod
-    def reset_naming_ids(cls):
+    def reset_naming_ids(cls) -> None:
         namegen.reset_numbers()
 
     @classmethod

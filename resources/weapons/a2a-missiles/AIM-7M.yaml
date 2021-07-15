@@ -1,0 +1,8 @@
+name: AIM-7M
+year: 1982
+fallback: AIM-7F
+clsids:
+  - "{SHOULDER AIM-7M}"
+  - "{BELLY AIM-7M}"
+  - "{8D399DDA-FF81-4F14-904D-099B34FE7918}"
+  - "{LAU-115 - AIM-7M}"

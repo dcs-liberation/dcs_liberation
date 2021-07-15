@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import random
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Optional, Tuple
@@ -23,7 +24,7 @@ from dcs.task import (
     SetInvisibleCommand,
 )
 from dcs.triggers import Event, TriggerOnce
-from dcs.unit import Vehicle
+from dcs.unit import Vehicle, Skill
 from dcs.unitgroup import VehicleGroup
 
 from game.data.groundunitclass import GroundUnitClass
@@ -85,57 +86,24 @@ class GroundConflictGenerator:
         player_planned_combat_groups: List[CombatGroup],
         enemy_planned_combat_groups: List[CombatGroup],
         player_stance: CombatStance,
+        enemy_stance: CombatStance,
         unit_map: UnitMap,
     ) -> None:
         self.mission = mission
         self.conflict = conflict
         self.enemy_planned_combat_groups = enemy_planned_combat_groups
         self.player_planned_combat_groups = player_planned_combat_groups
-        self.player_stance = CombatStance(player_stance)
-        self.enemy_stance = self._enemy_stance()
+        self.player_stance = player_stance
+        self.enemy_stance = enemy_stance
         self.game = game
         self.unit_map = unit_map
         self.jtacs: List[JtacInfo] = []
 
-    def _enemy_stance(self):
-        """Picks the enemy stance according to the number of planned groups on the frontline for each side"""
-        if len(self.enemy_planned_combat_groups) > len(
-            self.player_planned_combat_groups
-        ):
-            return random.choice(
-                [
-                    CombatStance.AGGRESSIVE,
-                    CombatStance.AGGRESSIVE,
-                    CombatStance.AGGRESSIVE,
-                    CombatStance.ELIMINATION,
-                    CombatStance.BREAKTHROUGH,
-                ]
-            )
-        else:
-            return random.choice(
-                [
-                    CombatStance.DEFENSIVE,
-                    CombatStance.DEFENSIVE,
-                    CombatStance.DEFENSIVE,
-                    CombatStance.AMBUSH,
-                    CombatStance.AGGRESSIVE,
-                ]
-            )
-
-    @staticmethod
-    def _group_point(point: Point, base_distance) -> Point:
-        distance = random.randint(
-            int(base_distance * SPREAD_DISTANCE_FACTOR[0]),
-            int(base_distance * SPREAD_DISTANCE_FACTOR[1]),
-        )
-        return point.random_point_within(
-            distance, base_distance * SPREAD_DISTANCE_SIZE_FACTOR
-        )
-
-    def generate(self):
+    def generate(self) -> None:
         position = Conflict.frontline_position(
             self.conflict.front_line, self.game.theater
         )
+
         frontline_vector = Conflict.frontline_vector(
             self.conflict.front_line, self.game.theater
         )
@@ -149,6 +117,13 @@ class GroundConflictGenerator:
         enemy_groups = self._generate_groups(
             self.enemy_planned_combat_groups, frontline_vector, False
         )
+
+        # TODO: Differentiate AirConflict and GroundConflict classes.
+        if self.conflict.heading is None:
+            raise RuntimeError(
+                "Cannot generate ground units for non-ground conflict. Ground unit "
+                "conflicts cannot have the heading `None`."
+            )
 
         # Plan combat actions for groups
         self.plan_action_for_groups(
@@ -169,16 +144,16 @@ class GroundConflictGenerator:
         )
 
         # Add JTAC
-        if self.game.player_faction.has_jtac:
+        if self.game.blue.faction.has_jtac:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
             code = 1688 - len(self.jtacs)
 
-            utype = self.game.player_faction.jtac_unit
-            if self.game.player_faction.jtac_unit is None:
+            utype = self.game.blue.faction.jtac_unit
+            if utype is None:
                 utype = AircraftType.named("MQ-9 Reaper")
 
             jtac = self.mission.flight_group(
-                country=self.mission.country(self.game.player_country),
+                country=self.mission.country(self.game.blue.country_name),
                 name=n,
                 aircraft_type=utype.dcs_unit_type,
                 position=position[0],
@@ -361,7 +336,6 @@ class GroundConflictGenerator:
             self.mission.triggerrules.triggers.append(artillery_fallback)
 
             for u in dcs_group.units:
-                u.initial = True
                 u.heading = forward_heading + random.randint(-5, 5)
             return True
         return False
@@ -570,10 +544,10 @@ class GroundConflictGenerator:
         )
 
         # Fallback task
-        fallback = ControlledTask(GoToWaypoint(to_index=len(dcs_group.points)))
-        fallback.enabled = False
+        task = ControlledTask(GoToWaypoint(to_index=len(dcs_group.points)))
+        task.enabled = False
         dcs_group.add_trigger_action(Hold())
-        dcs_group.add_trigger_action(fallback)
+        dcs_group.add_trigger_action(task)
 
         # Create trigger
         fallback = TriggerOnce(Event.NoEvent, "Morale manager #" + str(dcs_group.id))
@@ -634,7 +608,7 @@ class GroundConflictGenerator:
         @param enemy_groups Potential enemy groups
         @param n number of nearby groups to take
         """
-        targets = []  # type: List[Optional[VehicleGroup]]
+        targets = []  # type: List[VehicleGroup]
         sorted_list = sorted(
             enemy_groups,
             key=lambda group: player_group.points[0].position.distance_to_point(
@@ -658,7 +632,7 @@ class GroundConflictGenerator:
         @param group Group for which we should find the nearest ennemy
         @param enemy_groups Potential enemy groups
         """
-        min_distance = 99999999
+        min_distance = math.inf
         target = None
         for dcs_group, _ in enemy_groups:
             dist = player_group.points[0].position.distance_to_point(
@@ -696,7 +670,7 @@ class GroundConflictGenerator:
         """
         For artilery group, decide the distance from frontline with the range of the unit
         """
-        rg = getattr(group.unit_type.dcs_unit_type, "threat_range", 0) - 7500
+        rg = group.unit_type.dcs_unit_type.threat_range - 7500
         if rg > DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][1]:
             rg = random.randint(
                 DISTANCE_FROM_FRONTLINE[CombatGroupRole.ARTILLERY][0],
@@ -716,7 +690,7 @@ class GroundConflictGenerator:
         distance_from_frontline: int,
         heading: int,
         spawn_heading: int,
-    ):
+    ) -> Optional[Point]:
         shifted = conflict_position.point_from_heading(
             heading, random.randint(0, combat_width)
         )
@@ -741,7 +715,7 @@ class GroundConflictGenerator:
             if is_player
             else int(heading_sum(heading, 90))
         )
-        country = self.game.player_country if is_player else self.game.enemy_country
+        country = self.game.coalition_for(is_player).country_name
         for group in groups:
             if group.role == CombatGroupRole.ARTILLERY:
                 distance_from_frontline = (
@@ -766,9 +740,9 @@ class GroundConflictGenerator:
                     heading=opposite_heading(spawn_heading),
                 )
                 if is_player:
-                    g.set_skill(self.game.settings.player_skill)
+                    g.set_skill(Skill(self.game.settings.player_skill))
                 else:
-                    g.set_skill(self.game.settings.enemy_vehicle_skill)
+                    g.set_skill(Skill(self.game.settings.enemy_vehicle_skill))
                 positioned_groups.append((g, group))
 
                 if group.role in [CombatGroupRole.APC, CombatGroupRole.IFV]:
@@ -790,7 +764,7 @@ class GroundConflictGenerator:
         count: int,
         at: Point,
         move_formation: PointAction = PointAction.OffRoad,
-        heading=0,
+        heading: int = 0,
     ) -> VehicleGroup:
 
         if side == self.conflict.attackers_country:

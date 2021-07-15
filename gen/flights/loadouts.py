@@ -19,7 +19,11 @@ class Loadout:
         is_custom: bool = False,
     ) -> None:
         self.name = name
-        self.pylons = {k: v for k, v in pylons.items() if v is not None}
+        # We clear unused pylon entries on initialization, but UI actions can still
+        # cause a pylon to be emptied, so make the optional type explicit.
+        self.pylons: Mapping[int, Optional[Weapon]] = {
+            k: v for k, v in pylons.items() if v is not None
+        }
         self.date = date
         self.is_custom = is_custom
 
@@ -64,7 +68,7 @@ class Loadout:
             pylons = payload["pylons"]
             yield Loadout(
                 name,
-                {p["num"]: Weapon.from_clsid(p["CLSID"]) for p in pylons.values()},
+                {p["num"]: Weapon.with_clsid(p["CLSID"]) for p in pylons.values()},
                 date=None,
             )
 
@@ -128,9 +132,13 @@ class Loadout:
             if payload is not None:
                 return Loadout(
                     name,
-                    {i: Weapon.from_clsid(d["clsid"]) for i, d in payload},
+                    {i: Weapon.with_clsid(d["clsid"]) for i, d in payload},
                     date=None,
                 )
 
         # TODO: Try group.load_task_default_loadout(loadout_for_task)
+        return cls.empty_loadout()
+
+    @classmethod
+    def empty_loadout(cls) -> Loadout:
         return Loadout("Empty", {}, date=None)

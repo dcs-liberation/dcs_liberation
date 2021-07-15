@@ -39,6 +39,7 @@ from game.db import unit_type_from_name
 from game.dcs.aircrafttype import AircraftType
 from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.theater.bullseye import Bullseye
+from game.weather import Weather
 from game.utils import meters
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
@@ -46,6 +47,7 @@ from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
 from .radios import RadioFrequency
 from .runways import RunwayData
+from .units import inches_hg_to_mm_hg, inches_hg_to_hpa
 
 if TYPE_CHECKING:
     from game import Game
@@ -91,7 +93,10 @@ class KneeboardPageWriter:
         return self.x, self.y
 
     def text(
-        self, text: str, font=None, fill: Tuple[int, int, int] = (0, 0, 0)
+        self,
+        text: str,
+        font: Optional[ImageFont.FreeTypeFont] = None,
+        fill: Tuple[int, int, int] = (0, 0, 0),
     ) -> None:
         if font is None:
             font = self.content_font
@@ -262,12 +267,14 @@ class BriefingPage(KneeboardPage):
         flight: FlightData,
         bullseye: Bullseye,
         theater: ConflictTheater,
+        weather: Weather,
         start_time: datetime.datetime,
         dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
         self.bullseye = bullseye
         self.theater = theater
+        self.weather = weather
         self.start_time = start_time
         self.dark_kneeboard = dark_kneeboard
 
@@ -300,6 +307,18 @@ class BriefingPage(KneeboardPage):
         )
 
         writer.text(f"Bullseye: {self.bullseye.to_lat_lon(self.theater).format_dms()}")
+
+        qnh_in_hg = "{:.2f}".format(self.weather.atmospheric.qnh_inches_mercury)
+        qnh_mm_hg = "{:.1f}".format(
+            inches_hg_to_mm_hg(self.weather.atmospheric.qnh_inches_mercury)
+        )
+        qnh_hpa = "{:.1f}".format(
+            inches_hg_to_hpa(self.weather.atmospheric.qnh_inches_mercury)
+        )
+        writer.text(
+            f"Temperature: {round(self.weather.atmospheric.temperature_celsius)} °C at sea level"
+        )
+        writer.text(f"QNH: {qnh_in_hg} inHg / {qnh_mm_hg} mmHg / {qnh_hpa} hPa")
 
         writer.table(
             [
@@ -631,6 +650,7 @@ class KneeboardGenerator(MissionInfoGenerator):
                 flight,
                 self.game.bullseye_for(flight.friendly),
                 self.game.theater,
+                self.game.conditions.weather,
                 self.mission.start_time,
                 self.dark_kneeboard,
             ),

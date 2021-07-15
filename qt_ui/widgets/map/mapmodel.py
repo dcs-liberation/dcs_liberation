@@ -12,7 +12,7 @@ from shapely.geometry import LineString, Point as ShapelyPoint, Polygon, MultiPo
 
 from game import Game
 from game.dcs.groundunittype import GroundUnitType
-from game.navmesh import NavMesh
+from game.navmesh import NavMesh, NavMeshPoly
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
@@ -336,8 +336,12 @@ class SupplyRouteJs(QObject):
 
     def find_transports(self) -> List[MultiGroupTransport]:
         if self.sea_route:
-            return self.find_in_transport_map(self.game.transfers.cargo_ships)
-        return self.find_in_transport_map(self.game.transfers.convoys)
+            return self.find_in_transport_map(
+                self.game.blue.transfers.cargo_ships
+            ) + self.find_in_transport_map(self.game.red.transfers.cargo_ships)
+        return self.find_in_transport_map(
+            self.game.blue.transfers.convoys
+        ) + self.find_in_transport_map(self.game.red.transfers.convoys)
 
     @Property(list, notify=activeTransportsChanged)
     def activeTransports(self) -> List[str]:
@@ -642,11 +646,35 @@ class ThreatZoneContainerJs(QObject):
         return self._red
 
 
+class NavMeshPolyJs(QObject):
+    polyChanged = Signal()
+    threatenedChanged = Signal()
+
+    def __init__(self, poly: LeafletPoly, threatened: bool) -> None:
+        super().__init__()
+        self._poly = poly
+        self._threatened = threatened
+
+    @Property(list, notify=polyChanged)
+    def poly(self) -> LeafletPoly:
+        return self._poly
+
+    @Property(bool, notify=threatenedChanged)
+    def threatened(self) -> bool:
+        return self._threatened
+
+    @classmethod
+    def from_navmesh(cls, poly: NavMeshPoly, theater: ConflictTheater) -> NavMeshPolyJs:
+        return NavMeshPolyJs(
+            shapely_poly_to_leaflet_points(poly.poly, theater), poly.threatened
+        )
+
+
 class NavMeshJs(QObject):
     blueChanged = Signal()
     redChanged = Signal()
 
-    def __init__(self, blue: list[LeafletPoly], red: list[LeafletPoly]) -> None:
+    def __init__(self, blue: list[NavMeshPolyJs], red: list[NavMeshPolyJs]) -> None:
         super().__init__()
         self._blue = blue
         self._red = red
@@ -663,17 +691,17 @@ class NavMeshJs(QObject):
         return self._red
 
     @staticmethod
-    def to_polys(navmesh: NavMesh, theater: ConflictTheater) -> list[LeafletPoly]:
+    def to_polys(navmesh: NavMesh, theater: ConflictTheater) -> list[NavMeshPolyJs]:
         polys = []
         for poly in navmesh.polys:
-            polys.append(shapely_poly_to_leaflet_points(poly.poly, theater))
+            polys.append(NavMeshPolyJs.from_navmesh(poly, theater))
         return polys
 
     @classmethod
     def from_game(cls, game: Game) -> NavMeshJs:
         return NavMeshJs(
-            cls.to_polys(game.blue_navmesh, game.theater),
-            cls.to_polys(game.red_navmesh, game.theater),
+            cls.to_polys(game.blue.nav_mesh, game.theater),
+            cls.to_polys(game.red.nav_mesh, game.theater),
         )
 
 
@@ -870,8 +898,8 @@ class MapModel(QObject):
 
     def reset_atos(self) -> None:
         self._flights = self._flights_in_ato(
-            self.game.blue_ato, blue=True
-        ) + self._flights_in_ato(self.game.red_ato, blue=False)
+            self.game.blue.ato, blue=True
+        ) + self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
 
     @Property(list, notify=flightsChanged)

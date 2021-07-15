@@ -14,9 +14,12 @@ class ZU23UralInsurgentGenerator(AirDefenseGroupGenerator):
     """
 
     name = "ZU-23 Ural Insurgent Group"
-    price = 64
 
-    def generate(self):
+    @classmethod
+    def range(cls) -> AirDefenseRange:
+        return AirDefenseRange.AAA
+
+    def generate(self) -> None:
         num_launchers = 4
 
         positions = self.get_circular_position(
@@ -30,7 +33,3 @@ class ZU23UralInsurgentGenerator(AirDefenseGroupGenerator):
                 position[1],
                 position[2],
             )
-
-    @classmethod
-    def range(cls) -> AirDefenseRange:
-        return AirDefenseRange.AAA

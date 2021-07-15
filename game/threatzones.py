@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import singledispatchmethod
-from typing import Optional, TYPE_CHECKING, Union, Iterable
+from typing import Optional, TYPE_CHECKING, Union, Iterable, Any
 
 from dcs.mapping import Point as DcsPoint
 from shapely.geometry import (
@@ -13,7 +13,8 @@ from shapely.geometry import (
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import nearest_points, unary_union
 
-from game.theater import ControlPoint, MissionTarget
+from game.data.doctrine import Doctrine
+from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
 from game.utils import Distance, meters, nautical_miles
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import Flight, FlightWaypoint
@@ -27,7 +28,10 @@ ThreatPoly = Union[MultiPolygon, Polygon]
 
 class ThreatZones:
     def __init__(
-        self, airbases: ThreatPoly, air_defenses: ThreatPoly, radar_sam_threats
+        self,
+        airbases: ThreatPoly,
+        air_defenses: ThreatPoly,
+        radar_sam_threats: ThreatPoly,
     ) -> None:
         self.airbases = airbases
         self.air_defenses = air_defenses
@@ -44,8 +48,10 @@ class ThreatZones:
         boundary = self.closest_boundary(point)
         return meters(boundary.distance_to_point(point))
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened(self, position) -> bool:
+    def threatened(self, position) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened.register
@@ -61,8 +67,10 @@ class ThreatZones:
             LineString([self.dcs_to_shapely_point(a), self.dcs_to_shapely_point(b)])
         )
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened_by_aircraft(self, target) -> bool:
+    def threatened_by_aircraft(self, target) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened_by_aircraft.register
@@ -75,6 +83,10 @@ class ThreatZones:
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
         )
 
+    @threatened_by_aircraft.register
+    def _threatened_by_aircraft_mission_target(self, target: MissionTarget) -> bool:
+        return self.threatened_by_aircraft(self.dcs_to_shapely_point(target.position))
+
     def waypoints_threatened_by_aircraft(
         self, waypoints: Iterable[FlightWaypoint]
     ) -> bool:
@@ -82,8 +94,10 @@ class ThreatZones:
             LineString((self.dcs_to_shapely_point(p.position) for p in waypoints))
         )
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened_by_air_defense(self, target) -> bool:
+    def threatened_by_air_defense(self, target) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened_by_air_defense.register
@@ -102,8 +116,10 @@ class ThreatZones:
             self.dcs_to_shapely_point(target.position)
         )
 
+    # Type checking ignored because singledispatchmethod doesn't work with required type
+    # definitions. The implementation methods are all typed, so should be fine.
     @singledispatchmethod
-    def threatened_by_radar_sam(self, target) -> bool:
+    def threatened_by_radar_sam(self, target) -> bool:  # type: ignore
         raise NotImplementedError
 
     @threatened_by_radar_sam.register
@@ -134,8 +150,9 @@ class ThreatZones:
         return None
 
     @classmethod
-    def barcap_threat_range(cls, game: Game, control_point: ControlPoint) -> Distance:
-        doctrine = game.faction_for(control_point.captured).doctrine
+    def barcap_threat_range(
+        cls, doctrine: Doctrine, control_point: ControlPoint
+    ) -> Distance:
         cap_threat_range = (
             doctrine.cap_max_distance_from_cp + doctrine.cap_engagement_range
         )
@@ -174,33 +191,59 @@ class ThreatZones:
         """
         air_threats = []
         air_defenses = []
-        radar_sam_threats = []
-        for control_point in game.theater.controlpoints:
-            if control_point.captured != player:
-                continue
-            if control_point.runway_is_operational():
-                point = ShapelyPoint(control_point.position.x, control_point.position.y)
-                cap_threat_range = cls.barcap_threat_range(game, control_point)
-                air_threats.append(point.buffer(cap_threat_range.meters))
+        for control_point in game.theater.control_points_for(player):
+            air_threats.append(control_point)
+            air_defenses.extend(control_point.ground_objects)
 
-            for tgo in control_point.ground_objects:
-                for group in tgo.groups:
-                    threat_range = tgo.threat_range(group)
-                    # Any system with a shorter range than this is not worth
-                    # even avoiding.
-                    if threat_range > nautical_miles(3):
-                        point = ShapelyPoint(tgo.position.x, tgo.position.y)
-                        threat_zone = point.buffer(threat_range.meters)
-                        air_defenses.append(threat_zone)
-                    radar_threat_range = tgo.threat_range(group, radar_only=True)
-                    if radar_threat_range > nautical_miles(3):
-                        point = ShapelyPoint(tgo.position.x, tgo.position.y)
-                        threat_zone = point.buffer(threat_range.meters)
-                        radar_sam_threats.append(threat_zone)
+        return cls.for_threats(
+            game.faction_for(player).doctrine, air_threats, air_defenses
+        )
+
+    @classmethod
+    def for_threats(
+        cls,
+        doctrine: Doctrine,
+        barcap_locations: Iterable[ControlPoint],
+        air_defenses: Iterable[TheaterGroundObject[Any]],
+    ) -> ThreatZones:
+        """Generates the threat zones projected by the given locations.
+
+        Args:
+            doctrine: The doctrine of the owning coalition.
+            barcap_locations: The locations that will be considered for BARCAP planning.
+            air_defenses: TGOs that may have air defenses.
+
+        Returns:
+            The threat zones projected by the given locations. If the threat zone
+            belongs to the player, it is the zone that will be avoided by the enemy and
+            vice versa.
+        """
+        air_threats = []
+        air_defense_threats = []
+        radar_sam_threats = []
+        for barcap in barcap_locations:
+            point = ShapelyPoint(barcap.position.x, barcap.position.y)
+            cap_threat_range = cls.barcap_threat_range(doctrine, barcap)
+            air_threats.append(point.buffer(cap_threat_range.meters))
+
+        for tgo in air_defenses:
+            for group in tgo.groups:
+                threat_range = tgo.threat_range(group)
+                # Any system with a shorter range than this is not worth
+                # even avoiding.
+                if threat_range > nautical_miles(3):
+                    point = ShapelyPoint(tgo.position.x, tgo.position.y)
+                    threat_zone = point.buffer(threat_range.meters)
+                    air_defense_threats.append(threat_zone)
+                radar_threat_range = tgo.threat_range(group, radar_only=True)
+                if radar_threat_range > nautical_miles(3):
+                    point = ShapelyPoint(tgo.position.x, tgo.position.y)
+                    threat_zone = point.buffer(threat_range.meters)
+                    radar_sam_threats.append(threat_zone)
 
         return cls(
             airbases=unary_union(air_threats),
-            air_defenses=unary_union(air_defenses),
+            air_defenses=unary_union(air_defense_threats),
             radar_sam_threats=unary_union(radar_sam_threats),
         )
 

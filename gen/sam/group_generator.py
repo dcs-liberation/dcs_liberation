@@ -1,20 +1,30 @@
 from __future__ import annotations
 
+import logging
 import math
 import random
-from typing import TYPE_CHECKING, Type
+from collections import Iterable
+from typing import TYPE_CHECKING, Type, TypeVar, Generic, Any
 
 from dcs import unitgroup
 from dcs.mapping import Point
 from dcs.point import PointAction
-from dcs.unit import Ship, Vehicle
-from dcs.unittype import VehicleType
+from dcs.unit import Ship, Vehicle, Unit
+from dcs.unitgroup import ShipGroup, VehicleGroup
+from dcs.unittype import VehicleType, UnitType, ShipType
 
+from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
-from game.theater.theatergroundobject import TheaterGroundObject
+from game.theater.theatergroundobject import TheaterGroundObject, NavalGroundObject
 
 if TYPE_CHECKING:
     from game.game import Game
+
+
+GroupT = TypeVar("GroupT", VehicleGroup, ShipGroup)
+UnitT = TypeVar("UnitT", bound=Unit)
+UnitTypeT = TypeVar("UnitTypeT", bound=Type[UnitType])
+TgoT = TypeVar("TgoT", bound=TheaterGroundObject[Any])
 
 
 # TODO: Generate a group description rather than a pydcs group.
@@ -22,37 +32,62 @@ if TYPE_CHECKING:
 # groundobjectsgen for an example). We can do less work and include the data we
 # care about in the format we want if we just generate our own group description
 # types rather than pydcs groups.
-class GroupGenerator:
-    def __init__(self, game: Game, ground_object: TheaterGroundObject) -> None:
+class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
+    def __init__(self, game: Game, ground_object: TgoT, group: GroupT) -> None:
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
         self.heading = random.randint(0, 359)
-        self.vg = unitgroup.VehicleGroup(self.game.next_group_id(), self.go.group_name)
-        wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
-        wp.ETA_locked = True
+        self.price = 0
+        self.vg: GroupT = group
 
-    def generate(self):
+    def generate(self) -> None:
         raise NotImplementedError
 
-    def get_generated_group(self) -> unitgroup.VehicleGroup:
+    def get_generated_group(self) -> GroupT:
         return self.vg
 
     def add_unit(
         self,
-        unit_type: Type[VehicleType],
+        unit_type: UnitTypeT,
         name: str,
         pos_x: float,
         pos_y: float,
         heading: int,
-    ) -> Vehicle:
+    ) -> UnitT:
         return self.add_unit_to_group(
             self.vg, unit_type, name, Point(pos_x, pos_y), heading
         )
 
     def add_unit_to_group(
         self,
-        group: unitgroup.VehicleGroup,
+        group: GroupT,
+        unit_type: UnitTypeT,
+        name: str,
+        position: Point,
+        heading: int,
+    ) -> UnitT:
+        raise NotImplementedError
+
+
+class VehicleGroupGenerator(
+    Generic[TgoT], GroupGenerator[VehicleGroup, Vehicle, Type[VehicleType], TgoT]
+):
+    def __init__(self, game: Game, ground_object: TgoT) -> None:
+        super().__init__(
+            game,
+            ground_object,
+            unitgroup.VehicleGroup(game.next_group_id(), ground_object.group_name),
+        )
+        wp = self.vg.add_waypoint(self.position, PointAction.OffRoad, 0)
+        wp.ETA_locked = True
+
+    def generate(self) -> None:
+        raise NotImplementedError
+
+    def add_unit_to_group(
+        self,
+        group: VehicleGroup,
         unit_type: Type[VehicleType],
         name: str,
         position: Point,
@@ -62,9 +97,19 @@ class GroupGenerator:
         unit.position = position
         unit.heading = heading
         group.add_unit(unit)
+
+        # get price of unit to calculate the real price of the whole group
+        try:
+            ground_unit_type = next(GroundUnitType.for_dcs_type(unit_type))
+            self.price += ground_unit_type.price
+        except StopIteration:
+            logging.error(f"Cannot get price for unit {unit_type.name}")
+
         return unit
 
-    def get_circular_position(self, num_units, launcher_distance, coverage=90):
+    def get_circular_position(
+        self, num_units: int, launcher_distance: int, coverage: int = 90
+    ) -> Iterable[tuple[float, float, int]]:
         """
         Given a position on the map, array a group of units in a circle a uniform distance from the unit
         :param num_units:
@@ -90,39 +135,47 @@ class GroupGenerator:
         else:
             current_offset = self.heading
         current_offset -= outer_offset * (math.ceil(num_units / 2) - 1)
-        for x in range(1, num_units + 1):
-            positions.append(
-                (
-                    self.position.x
-                    + launcher_distance * math.cos(math.radians(current_offset)),
-                    self.position.y
-                    + launcher_distance * math.sin(math.radians(current_offset)),
-                    current_offset,
-                )
+        for _ in range(1, num_units + 1):
+            x: float = self.position.x + launcher_distance * math.cos(
+                math.radians(current_offset)
             )
+            y: float = self.position.y + launcher_distance * math.sin(
+                math.radians(current_offset)
+            )
+            heading = current_offset
+            positions.append((x, y, int(heading)))
             current_offset += outer_offset
         return positions
 
 
-class ShipGroupGenerator(GroupGenerator):
+class ShipGroupGenerator(
+    GroupGenerator[ShipGroup, Ship, Type[ShipType], NavalGroundObject]
+):
     """Abstract class for other ship generator classes"""
 
-    def __init__(
-        self, game: Game, ground_object: TheaterGroundObject, faction: Faction
-    ):
-        self.game = game
-        self.go = ground_object
-        self.position = ground_object.position
-        self.heading = random.randint(0, 359)
+    def __init__(self, game: Game, ground_object: NavalGroundObject, faction: Faction):
+        super().__init__(
+            game,
+            ground_object,
+            unitgroup.ShipGroup(game.next_group_id(), ground_object.group_name),
+        )
         self.faction = faction
-        self.vg = unitgroup.ShipGroup(self.game.next_group_id(), self.go.group_name)
         wp = self.vg.add_waypoint(self.position, 0)
         wp.ETA_locked = True
 
-    def add_unit(self, unit_type, name, pos_x, pos_y, heading) -> Ship:
+    def generate(self) -> None:
+        raise NotImplementedError
+
+    def add_unit_to_group(
+        self,
+        group: ShipGroup,
+        unit_type: Type[ShipType],
+        name: str,
+        position: Point,
+        heading: int,
+    ) -> Ship:
         unit = Ship(self.game.next_unit_id(), f"{self.go.group_name}|{name}", unit_type)
-        unit.position.x = pos_x
-        unit.position.y = pos_y
+        unit.position = position
         unit.heading = heading
-        self.vg.add_unit(unit)
+        group.add_unit(unit)
         return unit

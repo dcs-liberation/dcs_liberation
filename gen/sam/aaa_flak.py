@@ -23,9 +23,8 @@ class FlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Flak Site"
-    price = 135
 
-    def generate(self):
+    def generate(self) -> None:
         index = 0
         mixed = random.choice([True, False])
         unit_type = random.choice(GFLAK)

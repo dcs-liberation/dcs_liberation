@@ -1,13 +1,20 @@
 import logging
 import random
-from game import db
+from typing import Optional
+
+from dcs.unitgroup import VehicleGroup
+
+from game import db, Game
+from game.theater.theatergroundobject import MissileSiteGroundObject
 from gen.missiles.scud_site import ScudGenerator
 from gen.missiles.v1_group import V1GroupGenerator
 
 MISSILES_MAP = {"V1GroupGenerator": V1GroupGenerator, "ScudGenerator": ScudGenerator}
 
 
-def generate_missile_group(game, ground_object, faction_name: str):
+def generate_missile_group(
+    game: Game, ground_object: MissileSiteGroundObject, faction_name: str
+) -> Optional[VehicleGroup]:
     """
     This generate a missiles group
     :return: Nothing, but put the group reference inside the ground object

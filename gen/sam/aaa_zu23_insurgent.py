@@ -14,9 +14,8 @@ class ZU23InsurgentGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Zu-23 Site"
-    price = 56
 
-    def generate(self):
+    def generate(self) -> None:
         index = 0
         for i in range(4):
             index = index + 1

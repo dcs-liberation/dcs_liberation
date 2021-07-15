@@ -14,7 +14,7 @@ class Landmap:
     exclusion_zones: MultiPolygon
     sea_zones: MultiPolygon
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if not self.inclusion_zones.is_valid:
             raise RuntimeError("Inclusion zones not valid")
         if not self.exclusion_zones.is_valid:
@@ -36,13 +36,5 @@ def load_landmap(filename: str) -> Optional[Landmap]:
         return None
 
 
-def poly_contains(x, y, poly: Union[MultiPolygon, Polygon]):
+def poly_contains(x: float, y: float, poly: Union[MultiPolygon, Polygon]) -> bool:
     return poly.contains(geometry.Point(x, y))
-
-
-def poly_centroid(poly) -> Tuple[float, float]:
-    x_list = [vertex[0] for vertex in poly]
-    y_list = [vertex[1] for vertex in poly]
-    x = sum(x_list) / len(poly)
-    y = sum(y_list) / len(poly)
-    return (x, y)

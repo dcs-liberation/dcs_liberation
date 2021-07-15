@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import List, Optional, TYPE_CHECKING, Union, Sequence
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
 from dcs.unit import Unit
 
-from game import db
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import ControlPoint, MissionTarget
@@ -154,7 +153,7 @@ class FlightWaypoint:
         # Only used in the waypoint list in the flight edit page. No sense
         # having three names. A short and long form is enough.
         self.description = ""
-        self.targets: List[Union[MissionTarget, Unit]] = []
+        self.targets: Sequence[Union[MissionTarget, Unit]] = []
         self.obj_name = ""
         self.pretty_name = ""
         self.only_for_player = False
@@ -323,12 +322,12 @@ class Flight:
     def clear_roster(self) -> None:
         self.roster.clear()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {self.unit_type}"
         return f"[{self.flight_type}] {self.count} x {self.unit_type}"
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {self.unit_type}"
         return f"[{self.flight_type}] {self.count} x {self.unit_type}"

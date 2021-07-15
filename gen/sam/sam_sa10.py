@@ -1,4 +1,7 @@
+from typing import Type
+
 from dcs.mapping import Point
+from dcs.unittype import VehicleType
 from dcs.vehicles import AirDefence
 
 from game import Game
@@ -17,19 +20,18 @@ class SA10Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-10/S-300PS Battery - With ZSU-23"
-    price = 550
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
         super().__init__(game, ground_object)
-        self.sr1 = AirDefence.S_300PS_40B6MD_sr
-        self.sr2 = AirDefence.S_300PS_64H6E_sr
-        self.cp = AirDefence.S_300PS_54K6_cp
-        self.tr1 = AirDefence.S_300PS_40B6M_tr
-        self.tr2 = AirDefence.S_300PS_40B6M_tr
-        self.ln1 = AirDefence.S_300PS_5P85C_ln
-        self.ln2 = AirDefence.S_300PS_5P85D_ln
+        self.sr1: Type[VehicleType] = AirDefence.S_300PS_40B6MD_sr
+        self.sr2: Type[VehicleType] = AirDefence.S_300PS_64H6E_sr
+        self.cp: Type[VehicleType] = AirDefence.S_300PS_54K6_cp
+        self.tr1: Type[VehicleType] = AirDefence.S_300PS_40B6M_tr
+        self.tr2: Type[VehicleType] = AirDefence.S_300PS_40B6M_tr
+        self.ln1: Type[VehicleType] = AirDefence.S_300PS_5P85C_ln
+        self.ln2: Type[VehicleType] = AirDefence.S_300PS_5P85D_ln
 
-    def generate(self):
+    def generate(self) -> None:
         # Search Radar
         self.add_unit(
             self.sr1, "SR1", self.position.x, self.position.y + 40, self.heading
@@ -89,7 +91,6 @@ class SA10Generator(AirDefenseGroupGenerator):
 class Tier2SA10Generator(SA10Generator):
 
     name = "SA-10/S-300PS Battery - With SA-15 PD"
-    price = 650
 
     def generate_defensive_groups(self) -> None:
         # Create AAA the way the main group does.
@@ -114,7 +115,6 @@ class Tier2SA10Generator(SA10Generator):
 class Tier3SA10Generator(SA10Generator):
 
     name = "SA-10/S-300PS Battery - With SA-15 PD & SA-19 SHORAD"
-    price = 750
 
     def generate_defensive_groups(self) -> None:
         # AAA for defending against close targets.
@@ -150,7 +150,6 @@ class Tier3SA10Generator(SA10Generator):
 
 class SA10BGenerator(Tier3SA10Generator):
 
-    price = 700
     name = "SA-10B/S-300PS Battery"
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
@@ -166,7 +165,6 @@ class SA10BGenerator(Tier3SA10Generator):
 
 class SA12Generator(Tier3SA10Generator):
 
-    price = 750
     name = "SA-12/S-300V Battery"
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
@@ -182,7 +180,6 @@ class SA12Generator(Tier3SA10Generator):
 
 class SA20Generator(Tier3SA10Generator):
 
-    price = 800
     name = "SA-20/S-300PMU-1 Battery"
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
@@ -198,7 +195,6 @@ class SA20Generator(Tier3SA10Generator):
 
 class SA20BGenerator(Tier3SA10Generator):
 
-    price = 850
     name = "SA-20B/S-300PMU-2 Battery"
 
     def __init__(self, game: Game, ground_object: SamGroundObject):
@@ -214,7 +210,6 @@ class SA20BGenerator(Tier3SA10Generator):
 
 class SA23Generator(Tier3SA10Generator):
 
-    price = 950
     name = "SA-23/S-300VM Battery"
 
     def __init__(self, game: Game, ground_object: SamGroundObject):

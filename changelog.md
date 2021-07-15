@@ -4,6 +4,10 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Features/Improvements
 
+* **[Campaign]** Weapon data such as fallbacks and introduction years is now moddable. Due to the new architecture to support this, the old data was not automatically migrated.
+* **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
+* **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
+
 ## Fixes
 
 # 4.1.0
@@ -13,17 +17,27 @@ Saves from 4.0.0 are compatible with 4.1.0.
 ## Features/Improvements
 
 * **[Campaign]** Air defense sites now generate a fixed number of launchers per type.
+* **[Campaign]** Added support for Mariana Islands map.  
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
 * **[UI]** Control point name displayed with ground object group name on map.
+* **[UI]** Buy or Replace will now show the correct price for generated ground objects like sams.
 
 ## Fixes
-* **[UI]** Statistics window tick marks are now always integers.
-* **[Mission Generation]** The lua data for other plugins is now generated correctly
+
+* **[Campaign]** Fixed the Silkworm generator to include launchers and not all radars.
+* **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
+* **[Mission Generation]** The lua data for other plugins is now generated correctly
+* **[Mission Generation]** Fixed problem with opfor planning missions against sold ground objects like SAMs
+* **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
+* **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
+* **[UI]** Statistics window tick marks are now always integers.
+* **[UI]** Statistics window now shows the correct info for the turn
+* **[UI]** Toggling custom loadout for an aircraft with no preset loadouts no longer breaks the flight.
 
 # 4.0.0
 

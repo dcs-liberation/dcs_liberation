@@ -2,15 +2,20 @@ import random
 
 from dcs.vehicles import Unarmed, MissilesSS, AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from game import Game
+from game.factions.faction import Faction
+from game.theater.theatergroundobject import MissileSiteGroundObject
+from gen.sam.group_generator import VehicleGroupGenerator
 
 
-class ScudGenerator(GroupGenerator):
-    def __init__(self, game, ground_object, faction):
+class ScudGenerator(VehicleGroupGenerator[MissileSiteGroundObject]):
+    def __init__(
+        self, game: Game, ground_object: MissileSiteGroundObject, faction: Faction
+    ) -> None:
         super(ScudGenerator, self).__init__(game, ground_object)
         self.faction = faction
 
-    def generate(self):
+    def generate(self) -> None:
 
         # Scuds
         self.add_unit(

@@ -15,7 +15,7 @@ from game.dcs.unittype import UnitType
 
 
 @dataclass(frozen=True)
-class GroundUnitType(UnitType[VehicleType]):
+class GroundUnitType(UnitType[Type[VehicleType]]):
     unit_class: Optional[GroundUnitClass]
     spawn_weight: int
 

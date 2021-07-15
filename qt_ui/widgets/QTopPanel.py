@@ -168,7 +168,7 @@ class QTopPanel(QFrame):
             package.time_over_target = estimator.earliest_tot()
 
     def ato_has_clients(self) -> bool:
-        for package in self.game.blue_ato.packages:
+        for package in self.game.blue.ato.packages:
             for flight in package.flights:
                 if flight.client_count > 0:
                     return True
@@ -236,7 +236,7 @@ class QTopPanel(QFrame):
 
     def check_no_missing_pilots(self) -> bool:
         missing_pilots = []
-        for package in self.game.blue_ato.packages:
+        for package in self.game.blue.ato.packages:
             for flight in package.flights:
                 if flight.missing_pilots > 0:
                     missing_pilots.append((package, flight))
@@ -282,8 +282,8 @@ class QTopPanel(QFrame):
             closest_cps[0],
             closest_cps[1],
             self.game.theater.controlpoints[0].position,
-            self.game.player_faction.name,
-            self.game.enemy_faction.name,
+            self.game.blue.faction.name,
+            self.game.red.faction.name,
         )
 
         unit_map = self.game.initiate_event(game_event)

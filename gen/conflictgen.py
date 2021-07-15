@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from typing import Tuple, Optional
 
@@ -54,13 +56,15 @@ class Conflict:
     def frontline_position(
         cls, frontline: FrontLine, theater: ConflictTheater
     ) -> Tuple[Point, int]:
-        attack_heading = frontline.attack_heading
+        attack_heading = int(frontline.attack_heading)
         position = cls.find_ground_position(
             frontline.position,
             FRONTLINE_LENGTH,
             heading_sum(attack_heading, 90),
             theater,
         )
+        if position is None:
+            raise RuntimeError("Could not find front line position")
         return position, opposite_heading(attack_heading)
 
     @classmethod
@@ -91,7 +95,7 @@ class Conflict:
         defender: Country,
         front_line: FrontLine,
         theater: ConflictTheater,
-    ):
+    ) -> Conflict:
         assert cls.has_frontline_between(front_line.blue_cp, front_line.red_cp)
         position, heading, distance = cls.frontline_vector(front_line, theater)
         conflict = cls(
@@ -138,7 +142,7 @@ class Conflict:
         max_distance: int,
         heading: int,
         theater: ConflictTheater,
-        coerce=True,
+        coerce: bool = True,
     ) -> Optional[Point]:
         """
         Finds the nearest valid ground position along a provided heading and it's inverse up to max_distance.
