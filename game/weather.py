@@ -25,6 +25,14 @@ class TimeOfDay(Enum):
 
 
 @dataclass(frozen=True)
+class AtmosphericConditions:
+    #: Pressure at sea level in inches of mercury.
+    qnh_inches_mercury: float
+    #: Temperature at sea level in Celcius.
+    temperature_celsius: float
+
+
+@dataclass(frozen=True)
 class WindConditions:
     at_0m: Wind
     at_2000m: Wind
@@ -64,9 +72,15 @@ class Fog:
 
 class Weather:
     def __init__(self) -> None:
+        # Future improvement: Use theater, day and time of day
+        # to get a more realistic conditions
+        self.atmospheric = self.generate_atmospheric()
         self.clouds = self.generate_clouds()
         self.fog = self.generate_fog()
         self.wind = self.generate_wind()
+
+    def generate_atmospheric(self) -> AtmosphericConditions:
+        raise NotImplementedError
 
     def generate_clouds(self) -> Optional[Clouds]:
         raise NotImplementedError
@@ -105,8 +119,35 @@ class Weather:
     def random_cloud_thickness() -> int:
         return random.randint(100, 400)
 
+    @staticmethod
+    def random_pressure(average_pressure: float) -> float:
+        # "Safe" constants based roughly on ME and viper altimeter.
+        # Units are inches of mercury.
+        SAFE_MIN = 28.4
+        SAFE_MAX = 30.9
+        # Use normalvariate to get normal distribution, more realistic than uniform
+        pressure = random.normalvariate(average_pressure, 0.2)
+        return max(SAFE_MIN, min(SAFE_MAX, pressure))
+
+    @staticmethod
+    def random_temperature(average_temperature: float) -> float:
+        # "Safe" constants based roughly on ME.
+        # Temperatures are in Celcius.
+        SAFE_MIN = -12
+        SAFE_MAX = 49
+        # Use normalvariate to get normal distribution, more realistic than uniform
+        temperature = random.normalvariate(average_temperature, 4)
+        temperature = round(temperature)
+        return max(SAFE_MIN, min(SAFE_MAX, temperature))
+
 
 class ClearSkies(Weather):
+    def generate_atmospheric(self) -> AtmosphericConditions:
+        return AtmosphericConditions(
+            qnh_inches_mercury=self.random_pressure(29.96),
+            temperature_celsius=self.random_temperature(22),
+        )
+
     def generate_clouds(self) -> Optional[Clouds]:
         return None
 
@@ -118,6 +159,12 @@ class ClearSkies(Weather):
 
 
 class Cloudy(Weather):
+    def generate_atmospheric(self) -> AtmosphericConditions:
+        return AtmosphericConditions(
+            qnh_inches_mercury=self.random_pressure(29.90),
+            temperature_celsius=self.random_temperature(20),
+        )
+
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=False)
 
@@ -130,6 +177,12 @@ class Cloudy(Weather):
 
 
 class Raining(Weather):
+    def generate_atmospheric(self) -> AtmosphericConditions:
+        return AtmosphericConditions(
+            qnh_inches_mercury=self.random_pressure(29.70),
+            temperature_celsius=self.random_temperature(16),
+        )
+
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=True)
 
@@ -142,6 +195,12 @@ class Raining(Weather):
 
 
 class Thunderstorm(Weather):
+    def generate_atmospheric(self) -> AtmosphericConditions:
+        return AtmosphericConditions(
+            qnh_inches_mercury=self.random_pressure(29.60),
+            temperature_celsius=self.random_temperature(15),
+        )
+
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds(
             base=self.random_cloud_base(),
@@ -168,11 +227,12 @@ class Conditions:
         time_of_day: TimeOfDay,
         settings: Settings,
     ) -> Conditions:
+        _start_time = cls.generate_start_time(
+            theater, day, time_of_day, settings.night_disabled
+        )
         return cls(
             time_of_day=time_of_day,
-            start_time=cls.generate_start_time(
-                theater, day, time_of_day, settings.night_disabled
-            ),
+            start_time=_start_time,
             weather=cls.generate_weather(),
         )
 

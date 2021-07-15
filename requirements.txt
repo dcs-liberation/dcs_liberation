@@ -19,7 +19,7 @@ pathspec==0.8.1
 pefile==2019.4.18
 Pillow==8.2.0
 pre-commit==2.10.1
--e git://github.com/pydcs/dcs@1fa15385d2f8300a125155c8ac307d5c37e70152#egg=pydcs
+-e git://github.com/pydcs/dcs@2baba37e32bc55fed59ef977c43dad275c9821eb#egg=pydcs
 pyinstaller==4.3
 pyinstaller-hooks-contrib==2021.1
 pyparsing==2.4.7
