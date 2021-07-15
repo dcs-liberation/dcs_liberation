@@ -39,6 +39,7 @@ from game.db import unit_type_from_name
 from game.dcs.aircrafttype import AircraftType
 from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.theater.bullseye import Bullseye
+from game.weather import Weather
 from game.utils import meters
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
@@ -46,6 +47,7 @@ from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
 from .radios import RadioFrequency
 from .runways import RunwayData
+from .units import inches_hg_to_mm_hg, inches_hg_to_hpa
 
 if TYPE_CHECKING:
     from game import Game
@@ -265,12 +267,14 @@ class BriefingPage(KneeboardPage):
         flight: FlightData,
         bullseye: Bullseye,
         theater: ConflictTheater,
+        weather: Weather,
         start_time: datetime.datetime,
         dark_kneeboard: bool,
     ) -> None:
         self.flight = flight
         self.bullseye = bullseye
         self.theater = theater
+        self.weather = weather
         self.start_time = start_time
         self.dark_kneeboard = dark_kneeboard
 
@@ -281,6 +285,13 @@ class BriefingPage(KneeboardPage):
         else:
             custom_name_title = ""
         writer.title(f"{self.flight.callsign} Mission Info{custom_name_title}")
+
+        writer.heading("Weather")
+        qnh_in_hg = "{:.2f}".format(self.weather.atmospheric.qnh_inches_mercury)
+        qnh_mm_hg = "{:.1f}".format(inches_hg_to_mm_hg(self.weather.atmospheric.qnh_inches_mercury))
+        qnh_hpa = "{:.1f}".format(inches_hg_to_hpa(self.weather.atmospheric.qnh_inches_mercury))
+        writer.text(f"QNH: {qnh_in_hg} inHg / {qnh_mm_hg} mmHg / {qnh_hpa} hPa")
+        writer.text(f"Temperature: {round(self.temperature)} °C at sea level")
 
         # TODO: Handle carriers.
         writer.heading("Airfield Info")
@@ -634,6 +645,7 @@ class KneeboardGenerator(MissionInfoGenerator):
                 flight,
                 self.game.bullseye_for(flight.friendly),
                 self.game.theater,
+                self.game.conditions.weather,
                 self.mission.start_time,
                 self.dark_kneeboard,
             ),
