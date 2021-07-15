@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import Iterator, deque
+from collections import Iterator, deque, Sequence
 from dataclasses import dataclass
 from typing import Any, Generic, Optional, TypeVar
 
@@ -18,7 +18,7 @@ class Task(Generic[WorldStateT]):
     pass
 
 
-Method = list[Task[WorldStateT]]
+Method = Sequence[Task[WorldStateT]]
 
 
 class PrimitiveTask(Task[WorldStateT], Generic[WorldStateT], ABC):
@@ -104,18 +104,20 @@ class Planner(Generic[WorldStateT, PrimitiveTaskT]):
                     methods = planning_state.methods
                 try:
                     method = next(methods)
+                    # Push the current node back onto the stack so that we resume
+                    # handling this task when we pop back to this state.
+                    resume_tasks: deque[Task[WorldStateT]] = deque([task])
+                    resume_tasks.extend(planning_state.tasks_to_process)
                     history.push(
                         PlanningState(
                             planning_state.state.clone(),
-                            # Push the current node back onto the stack so that we
-                            # resume handling this task when we pop back to this state.
-                            planning_state.tasks_to_process + deque([task]),
+                            resume_tasks,
                             planning_state.plan,
                             methods,
                         )
                     )
                     planning_state.methods = None
-                    planning_state.tasks_to_process.extend(method)
+                    planning_state.tasks_to_process.extendleft(reversed(method))
                 except StopIteration:
                     try:
                         planning_state = history.pop()
