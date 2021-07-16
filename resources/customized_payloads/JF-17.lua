@@ -77,7 +77,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[3] = {
-					["CLSID"] = "DIS_WMD7",
+					["CLSID"] = "DIS_SPJ_POD",
 					["num"] = 4,
 				},
 				[4] = {
@@ -107,7 +107,7 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "DIS_WMD7",
+					["CLSID"] = "DIS_SPJ_POD",
 					["num"] = 4,
 				},
 				[2] = {
