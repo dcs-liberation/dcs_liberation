@@ -51,6 +51,7 @@ from .controlpoint import (
     MissionTarget,
     OffMapSpawn,
 )
+from .seasonalconditions import SeasonalConditions
 from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
@@ -755,6 +756,7 @@ class CaucasusTheater(ConflictTheater):
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .caucasus import SEASONAL_CONDITIONS
+
         return SEASONAL_CONDITIONS
 
     @property

@@ -1,12 +1,15 @@
 import datetime
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict
+
 
 class Season(Enum):
     Winter = "winter"
     Spring = "spring"
     Summer = "summer"
     Autumn = "autumn"
+
 
 def determine_season(day: datetime.date) -> Season:
     # Note: This logic doesn't need to be very precise
@@ -25,12 +28,14 @@ def determine_season(day: datetime.date) -> Season:
     else:
         return Season.Winter
 
+
 @dataclass(frozen=True)
 class WeatherTypeChances:
-    thunderstorm: float,
-    raining: float,
-    cloudy: float,
-    clear_skies: float,
+    thunderstorm: float
+    raining: float
+    cloudy: float
+    clear_skies: float
+
 
 @dataclass(frozen=True)
 class SeasonalConditions:

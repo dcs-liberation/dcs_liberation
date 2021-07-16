@@ -14,9 +14,11 @@ from game.savecompat import has_save_compat_for
 from game.settings import Settings
 from game.utils import Distance, meters, interpolate, Pressure, inches_hg
 
+from game.theater.seasonalconditions import determine_season
+
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
-    from game.theater.conflicttheater import SeasonalConditions
+    from game.theater.seasonalconditions import SeasonalConditions
 
 
 class TimeOfDay(Enum):
@@ -335,17 +337,17 @@ class Conditions:
         time_of_day: TimeOfDay,
     ) -> Weather:
         season = determine_season(day)
-        logging.info("Season is {}".format(season))
-        seasonal_chances = seasonal_conditions.weather_type_chances[season]
+        logging.debug("Season is {}".format(season))
+        weather_chances = seasonal_conditions.weather_type_chances[season]
         chances = {
-            Thunderstorm: weather_chances['thunderstorm'],
-            Raining: weather_chances['raining'],
-            Cloudy: weather_chances['cloudy'],
-            ClearSkies: weather_chances['clear_skies'],
+            Thunderstorm: weather_chances.thunderstorm,
+            Raining: weather_chances.raining,
+            Cloudy: weather_chances.cloudy,
+            ClearSkies: weather_chances.clear_skies,
         }
-        logging.info("Chances this season {}".format(seasonal_chances))
+        logging.debug("Chances this season {}".format(weather_chances))
         weather_type = random.choices(
             list(chances.keys()), weights=list(chances.values())
         )[0]
-        logging.info("Weather type is {}".format(weather_type))
+        logging.debug("Weather type is {}".format(weather_type))
         return weather_type(seasonal_conditions, day, time_of_day)
