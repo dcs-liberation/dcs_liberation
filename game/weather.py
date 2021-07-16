@@ -92,53 +92,36 @@ class Weather:
         seasonal_conditions: SeasonalConditions,
         day: datetime.date,
         time_of_day: TimeOfDay,
-    ) -> AtmosphericConditions:
-        print(self, day, time_of_day)
+    ) -> AtmosphericConditions
         pressure = self.interpolate_summer_winter(
             seasonal_conditions.summer_avg_pressure,
             seasonal_conditions.winter_avg_pressure,
             day,
-        )
-        print(
-            "interpolated pressure between",
-            seasonal_conditions.summer_avg_pressure,
-            seasonal_conditions.winter_avg_pressure,
-            pressure,
         )
         temperature = self.interpolate_summer_winter(
             seasonal_conditions.summer_avg_temperature,
             seasonal_conditions.winter_avg_temperature,
             day,
         )
-        print(
-            "interpolated temperature between",
-            seasonal_conditions.summer_avg_temperature,
-            seasonal_conditions.winter_avg_temperature,
-            temperature,
-        )
+        
         if time_of_day == TimeOfDay.Day:
-            print("is day")
             temperature += seasonal_conditions.temperature_day_night_difference / 2
         if time_of_day == TimeOfDay.Night:
-            print("is night")
             temperature -= seasonal_conditions.temperature_day_night_difference / 2
-        print("Temperature is now", temperature)
-        pressure += self.get_pressure_adjustment()
-        temperature += self.get_temperature_adjustment()
-        print("After weather type adjustment, temperature is", temperature)
-        print("After weather type adjustment, pressure is", pressure)
-        print("Randomizing and clamping...")
+        pressure += self.pressure_adjustment
+        temperature += self.temperature_adjustment
         conditions = AtmosphericConditions(
             qnh_inches_mercury=self.random_pressure(pressure),
             temperature_celsius=self.random_temperature(temperature),
         )
-        print("Final conditions", conditions)
         return conditions
 
-    def get_pressure_adjustment(self) -> float:
+    @property
+    def pressure_adjustment(self) -> float:
         raise NotImplementedError
 
-    def get_temperature_adjustment(self) -> float:
+    @property
+    def temperature_adjustment(self) -> float:
         raise NotImplementedError
 
     def generate_clouds(self) -> Optional[Clouds]:
@@ -209,14 +192,14 @@ class Weather:
         winter_factor = distance_from_peak_summer / day_of_year_peak_summer
         return interpolate(summer_value, winter_value, winter_factor, clamp=True)
 
-    # TODO: Day/night interpolation
-
 
 class ClearSkies(Weather):
-    def get_pressure_adjustment(self) -> float:
+    @property
+    def pressure_adjustment(self) -> float:
         return 0.22
 
-    def get_temperature_adjustment(self) -> float:
+    @property
+    def temperature_adjustment(self) -> float:
         return 3.0
 
     def generate_clouds(self) -> Optional[Clouds]:
@@ -230,10 +213,12 @@ class ClearSkies(Weather):
 
 
 class Cloudy(Weather):
-    def get_pressure_adjustment(self) -> float:
+    @property
+    def pressure_adjustment(self) -> float:
         return 0.0
 
-    def get_temperature_adjustment(self) -> float:
+    @property
+    def temperature_adjustment(self) -> float:
         return 0.0
 
     def generate_clouds(self) -> Optional[Clouds]:
@@ -248,10 +233,12 @@ class Cloudy(Weather):
 
 
 class Raining(Weather):
-    def get_pressure_adjustment(self) -> float:
+    @property
+    def pressure_adjustment(self) -> float:
         return -0.22
 
-    def get_temperature_adjustment(self) -> float:
+    @property
+    def temperature_adjustment(self) -> float:
         return -3.0
 
     def generate_clouds(self) -> Optional[Clouds]:
@@ -266,10 +253,12 @@ class Raining(Weather):
 
 
 class Thunderstorm(Weather):
-    def get_pressure_adjustment(self) -> float:
+    @property
+    def pressure_adjustment(self) -> float:
         return 0.1
 
-    def get_temperature_adjustment(self) -> float:
+    @property
+    def temperature_adjustment(self) -> float:
         return -3.0
 
     def generate_clouds(self) -> Optional[Clouds]:
@@ -336,7 +325,7 @@ class Conditions:
         day: datetime.date,
         time_of_day: TimeOfDay,
     ) -> Weather:
-        # Here we could hook in seasonal weights
+        # Future improvement: use seasonal weights for theaters
         chances = {
             Thunderstorm: 1,
             Raining: 20,
