@@ -13,32 +13,33 @@ SEASONAL_CONDITIONS = SeasonalConditions(
     summer_avg_temperature=32.5,
     winter_avg_temperature=15.0,
     temperature_day_night_difference=2.0,
-    
+
     weather_type_chances={
         # TODO: More science for all these values
         Season.Winter: WeatherTypeChances(
+            # Winter there is some rain in PG (Dubai)
             thunderstorm=1,
-            raining=20,
-            cloudy=60,
-            clear_skies=20,
+            raining=15,
+            cloudy=35,
+            clear_skies=50,
         ),
         Season.Spring: WeatherTypeChances(
             thunderstorm=1,
-            raining=20,
-            cloudy=40,
-            clear_skies=40,
+            raining=2,
+            cloudy=18,
+            clear_skies=80,
         ),
         Season.Summer: WeatherTypeChances(
             thunderstorm=1,
-            raining=10,
-            cloudy=30,
-            clear_skies=60,
+            raining=1,
+            cloudy=8,
+            clear_skies=90,
         ),
         Season.Autumn: WeatherTypeChances(
             thunderstorm=1,
-            raining=30,
-            cloudy=50,
-            clear_skies=20,
+            raining=2,
+            cloudy=18,
+            clear_skies=80,
         ),
     },
 )

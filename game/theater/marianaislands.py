@@ -19,25 +19,27 @@ SEASONAL_CONDITIONS = SeasonalConditions(
         Season.Winter: WeatherTypeChances(
             thunderstorm=1,
             raining=20,
-            cloudy=60,
-            clear_skies=20,
-        ),
-        Season.Spring: WeatherTypeChances(
-            thunderstorm=1,
-            raining=20,
             cloudy=40,
             clear_skies=40,
         ),
-        Season.Summer: WeatherTypeChances(
+        Season.Spring: WeatherTypeChances(
+            # Spring is dry/sunny in Marianas
             thunderstorm=1,
             raining=10,
             cloudy=30,
             clear_skies=60,
         ),
-        Season.Autumn: WeatherTypeChances(
+        Season.Summer: WeatherTypeChances(
             thunderstorm=1,
-            raining=30,
-            cloudy=50,
+            raining=20,
+            cloudy=40,
+            clear_skies=40,
+        ),
+        Season.Autumn: WeatherTypeChances(
+            # Rain season
+            thunderstorm=1,
+            raining=50,
+            cloudy=30,
             clear_skies=20,
         ),
     },

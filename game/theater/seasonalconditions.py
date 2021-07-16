@@ -13,7 +13,7 @@ class Season(Enum):
 
 def determine_season(day: datetime.date) -> Season:
     # Note: This logic doesn't need to be very precise
-    # TODO: Add support for inverted seasons on southern hemisphere
+    # Currently refers strictly to northern-hemisphere seasons
     day_of_year = day.timetuple().tm_yday
     season_length = 365.0 / 4
     winter_end_day = season_length / 2
