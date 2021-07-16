@@ -787,7 +787,6 @@ class PersianGulfTheater(ConflictTheater):
 
         return SEASONAL_CONDITIONS
 
-
     @property
     def projection_parameters(self) -> TransverseMercator:
         from .persiangulf import PARAMETERS

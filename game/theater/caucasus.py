@@ -14,7 +14,6 @@ SEASONAL_CONDITIONS = SeasonalConditions(
     summer_avg_temperature=22.5,
     winter_avg_temperature=3.0,
     temperature_day_night_difference=6.0,
-    
     weather_type_chances={
         # TODO: More science for all these values
         Season.Winter: WeatherTypeChances(

@@ -1,4 +1,5 @@
 from game.theater.projections import TransverseMercator
+from .seasonalconditions import SeasonalConditions, Season, WeatherTypeChances
 
 PARAMETERS = TransverseMercator(
     central_meridian=147,
@@ -13,7 +14,6 @@ SEASONAL_CONDITIONS = SeasonalConditions(
     summer_avg_temperature=28.0,
     winter_avg_temperature=27.0,
     temperature_day_night_difference=1.0,
-
     weather_type_chances={
         # TODO: More science for all these values
         Season.Winter: WeatherTypeChances(
