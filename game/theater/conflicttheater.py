@@ -731,7 +731,7 @@ class ConflictTheater:
         return t
 
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         raise NotImplementedError
 
     @property
@@ -764,7 +764,7 @@ class CaucasusTheater(ConflictTheater):
     }
 
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         return SeasonalConditions(
             summer_avg_pressure=30.02,  # TODO: More science
             winter_avg_pressure=29.72,  # TODO: More science
@@ -796,7 +796,7 @@ class PersianGulfTheater(ConflictTheater):
     }
 
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         return SeasonalConditions(
             summer_avg_pressure=29.98,  # TODO: More science
             winter_avg_pressure=29.80,  # TODO: More science
@@ -826,9 +826,9 @@ class NevadaTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
-    
+
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         return SeasonalConditions(
             summer_avg_pressure=30.02,  # TODO: More science
             winter_avg_pressure=29.72,  # TODO: More science
@@ -858,9 +858,9 @@ class NormandyTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
-    
+
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         return SeasonalConditions(
             summer_avg_pressure=30.02,  # TODO: More science
             winter_avg_pressure=29.72,  # TODO: More science
@@ -890,9 +890,9 @@ class TheChannelTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
-    
+
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         return SeasonalConditions(
             summer_avg_pressure=30.02,  # TODO: More science
             winter_avg_pressure=29.72,  # TODO: More science
@@ -922,9 +922,9 @@ class SyriaTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
-    
+
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         return SeasonalConditions(
             summer_avg_pressure=29.98,  # TODO: More science
             winter_avg_pressure=29.86,  # TODO: More science
@@ -953,7 +953,7 @@ class MarianaIslandsTheater(ConflictTheater):
     }
 
     @property
-    def seasonal_conditions(self) ->  SeasonalConditions:
+    def seasonal_conditions(self) -> SeasonalConditions:
         return SeasonalConditions(
             summer_avg_pressure=30.02,  # TODO: More science
             winter_avg_pressure=29.82,  # TODO: More science

@@ -92,7 +92,7 @@ class Weather:
         seasonal_conditions: SeasonalConditions,
         day: datetime.date,
         time_of_day: TimeOfDay,
-    ) -> AtmosphericConditions
+    ) -> AtmosphericConditions:
         pressure = self.interpolate_summer_winter(
             seasonal_conditions.summer_avg_pressure,
             seasonal_conditions.winter_avg_pressure,
@@ -103,7 +103,7 @@ class Weather:
             seasonal_conditions.winter_avg_temperature,
             day,
         )
-        
+
         if time_of_day == TimeOfDay.Day:
             temperature += seasonal_conditions.temperature_day_night_difference / 2
         if time_of_day == TimeOfDay.Night:
