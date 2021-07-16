@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 import operator
 from collections import Iterator, Iterable
-from typing import TypeVar, TYPE_CHECKING
+from typing import TypeVar, TYPE_CHECKING, Tuple
 
 from game.theater import (
     ControlPoint,
@@ -20,6 +20,7 @@ from game.theater.theatergroundobject import (
 )
 from game.utils import meters, nautical_miles
 from gen.flights.closestairfields import ObjectiveDistanceCache, ClosestAirfields
+from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:
     from game import Game
@@ -47,6 +48,16 @@ class ObjectiveFinder:
                     continue
 
                 if isinstance(ground_object, IadsGroundObject):
+                    # Check if already SEAD, SEAD_ESCORT or DEAD was planned
+                    if not (
+                        self.rounds_to_plan_for(ground_object, FlightType.SEAD) > 0
+                        and self.rounds_to_plan_for(
+                            ground_object, FlightType.SEAD_ESCORT
+                        )
+                        > 0
+                        and self.rounds_to_plan_for(ground_object, FlightType.DEAD) > 0
+                    ):
+                        continue
                     yield ground_object
 
     def enemy_ships(self) -> Iterator[NavalGroundObject]:
@@ -57,8 +68,8 @@ class ObjectiveFinder:
 
                 if ground_object.is_dead:
                     continue
-
-                yield ground_object
+                if self.rounds_to_plan_for(ground_object, FlightType.ANTISHIP) > 0:
+                    yield ground_object
 
     def threatening_ships(self) -> Iterator[NavalGroundObject]:
         """Iterates over enemy ships near friendly control points.
@@ -163,19 +174,23 @@ class ObjectiveFinder:
 
     def convoys(self) -> Iterator[Convoy]:
         for front_line in self.front_lines():
-            yield from self.game.coalition_for(
+            for convoy in self.game.coalition_for(
                 self.is_player
             ).transfers.convoys.travelling_to(
                 front_line.control_point_hostile_to(self.is_player)
-            )
+            ):
+                if self.rounds_to_plan_for(convoy, FlightType.BAI) > 0:
+                    yield convoy
 
     def cargo_ships(self) -> Iterator[CargoShip]:
         for front_line in self.front_lines():
-            yield from self.game.coalition_for(
+            for cargo_ship in self.game.coalition_for(
                 self.is_player
             ).transfers.cargo_ships.travelling_to(
                 front_line.control_point_hostile_to(self.is_player)
-            )
+            ):
+                if self.rounds_to_plan_for(cargo_ship, FlightType.ANTISHIP) > 0:
+                    yield cargo_ship
 
     def friendly_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over all friendly control points."""
@@ -244,3 +259,47 @@ class ObjectiveFinder:
     def closest_airfields_to(location: MissionTarget) -> ClosestAirfields:
         """Returns the closest airfields to the given location."""
         return ObjectiveDistanceCache.get_closest_airfields(location)
+
+    def for_flight_type(
+        self, flight_type: FlightType, rounds_requested: int = 1
+    ) -> Iterator[Tuple[MissionTarget, int]]:
+        mission_target: list[MissionTarget] = []
+        if FlightType.AEWC == flight_type:
+            # Return only the first found cp
+            mission_target = [self.farthest_friendly_control_point()]
+        elif FlightType.REFUELING == flight_type:
+            # Return only the first found cp
+            mission_target = [self.closest_friendly_control_point()]
+        elif FlightType.BARCAP == flight_type:
+            mission_target = list(self.vulnerable_control_points())
+        elif FlightType.CAS == flight_type:
+            mission_target = list(self.front_lines())
+
+        for target in mission_target:
+            yield target, self.rounds_to_plan_for(target, flight_type, rounds_requested)
+
+        return None
+
+    def targets_for_flight_type(
+        self, flight_type: FlightType, rounds_requested: int = 1
+    ) -> list[MissionTarget]:
+        return list(
+            target
+            for target, rounds in self.for_flight_type(flight_type, rounds_requested)
+            if rounds > 0
+        )
+
+    def rounds_to_plan_for(
+        self, objective: MissionTarget, task: FlightType, rounds_requested: int = 1
+    ) -> int:
+        """Checks if the objective is already addressed and more should be planned"""
+        # Refueling and AEWC should only be planned once, independent of the target cp
+        already_assigned = sum(
+            (
+                task in (FlightType.AEWC, FlightType.REFUELING)
+                or package.target == objective
+            )
+            and package.primary_task == task
+            for package in self.game.coalition_for(self.is_player).ato.packages
+        )
+        return rounds_requested - already_assigned

@@ -539,3 +539,13 @@ class Game:
             )
         elif turn_state is TurnState.LOSS:
             self.message("Game Over, you lose. Start a new campaign to continue.")
+
+    def assignable_aircraft_count_for(self, player: bool) -> int:
+        if self.settings.perf_limit_aircraft:
+            already_assigned = 0
+            for package in self.blue.ato.packages if player else self.red.ato.packages:
+                for planned_flight in package.flights:
+                    already_assigned += planned_flight.count
+
+            return self.settings.perf_limit_aircraft_amount - already_assigned
+        return -1  # Unlimited

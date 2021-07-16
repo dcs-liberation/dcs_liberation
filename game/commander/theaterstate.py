@@ -22,6 +22,7 @@ from game.theater.theatergroundobject import (
     BuildingGroundObject,
 )
 from game.threatzones import ThreatZones
+from gen.flights.flight import FlightType
 from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
@@ -41,10 +42,10 @@ class PersistentContext:
 @dataclass
 class TheaterState(WorldState["TheaterState"]):
     context: PersistentContext
-    barcaps_needed: dict[ControlPoint, int]
+    barcaps_needed: dict[MissionTarget, int]
     active_front_lines: list[FrontLine]
     front_line_stances: dict[FrontLine, Optional[CombatStance]]
-    vulnerable_front_lines: list[FrontLine]
+    vulnerable_front_lines: list[MissionTarget]
     aewc_targets: list[MissionTarget]
     refueling_targets: list[MissionTarget]
     enemy_air_defenses: list[IadsGroundObject]
@@ -55,10 +56,11 @@ class TheaterState(WorldState["TheaterState"]):
     enemy_ships: list[NavalGroundObject]
     enemy_garrisons: dict[ControlPoint, Garrisons]
     oca_targets: list[ControlPoint]
-    strike_targets: list[TheaterGroundObject[Any]]
+    strike_targets: list[MissionTarget]
     enemy_barcaps: list[ControlPoint]
     threat_zones: ThreatZones
     available_aircraft: GlobalAircraftInventory
+    assignable_aircraft: int
 
     def _rebuild_threat_zones(self) -> None:
         """Recreates the theater's threat zones based on the current planned state."""
@@ -94,6 +96,7 @@ class TheaterState(WorldState["TheaterState"]):
         self, control_point: ControlPoint
     ) -> Iterator[BuildingGroundObject]:
         for target in self.strike_targets:
+            assert isinstance(target, TheaterGroundObject)
             if target.control_point != control_point:
                 continue
             if target.is_ammo_depot:
@@ -123,6 +126,7 @@ class TheaterState(WorldState["TheaterState"]):
             enemy_barcaps=list(self.enemy_barcaps),
             threat_zones=self.threat_zones,
             available_aircraft=self.available_aircraft.clone(),
+            assignable_aircraft=self.assignable_aircraft,
             # Persistent properties are not copied. These are a way for failed subtasks
             # to communicate requirements to other tasks. For example, the task to
             # attack enemy garrisons might fail because the target area has IADS
@@ -152,13 +156,16 @@ class TheaterState(WorldState["TheaterState"]):
         return TheaterState(
             context=context,
             barcaps_needed={
-                cp: barcap_rounds for cp in finder.vulnerable_control_points()
+                cp: rounds
+                for cp, rounds in finder.for_flight_type(
+                    FlightType.BARCAP, barcap_rounds
+                )
             },
             active_front_lines=list(finder.front_lines()),
             front_line_stances={f: None for f in finder.front_lines()},
-            vulnerable_front_lines=list(finder.front_lines()),
-            aewc_targets=[finder.farthest_friendly_control_point()],
-            refueling_targets=[finder.closest_friendly_control_point()],
+            vulnerable_front_lines=finder.targets_for_flight_type(FlightType.CAS),
+            aewc_targets=finder.targets_for_flight_type(FlightType.AEWC),
+            refueling_targets=finder.targets_for_flight_type(FlightType.REFUELING),
             enemy_air_defenses=list(finder.enemy_air_defenses()),
             threatening_air_defenses=[],
             detecting_air_defenses=[],
@@ -169,8 +176,9 @@ class TheaterState(WorldState["TheaterState"]):
                 cp: Garrisons.for_control_point(cp) for cp in ordered_capturable_points
             },
             oca_targets=list(finder.oca_targets(min_aircraft=20)),
-            strike_targets=list(finder.strike_targets()),
+            strike_targets=finder.targets_for_flight_type(FlightType.STRIKE),
             enemy_barcaps=list(game.theater.control_points_for(not player)),
             threat_zones=game.threat_zone_for(not player),
             available_aircraft=game.aircraft_inventory.clone(),
+            assignable_aircraft=game.assignable_aircraft_count_for(player),
         )
