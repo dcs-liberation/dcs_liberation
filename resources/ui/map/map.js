@@ -1001,6 +1001,10 @@ function drawUnculledZones() {
 function drawIpZones() {
   ipZones.clearLayers();
 
+  if (!ENABLE_EXPENSIVE_DEBUG_TOOLS) {
+    return;
+  }
+
   L.polygon(game.ipZones.homeBubble, {
     color: Colors.Highlight,
     fillOpacity: 0.1,
@@ -1030,6 +1034,10 @@ function drawIpZones() {
 
 function drawJoinZones() {
   joinZones.clearLayers();
+
+  if (!ENABLE_EXPENSIVE_DEBUG_TOOLS) {
+    return;
+  }
 
   L.polygon(game.joinZones.homeBubble, {
     color: Colors.Highlight,
@@ -1068,6 +1076,10 @@ function drawJoinZones() {
 
 function drawHoldZones() {
   holdZones.clearLayers();
+
+  if (!ENABLE_EXPENSIVE_DEBUG_TOOLS) {
+    return;
+  }
 
   L.polygon(game.holdZones.homeBubble, {
     color: Colors.Highlight,
