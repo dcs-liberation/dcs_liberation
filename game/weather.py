@@ -334,14 +334,18 @@ class Conditions:
         day: datetime.date,
         time_of_day: TimeOfDay,
     ) -> Weather:
-        # Future improvement: use seasonal weights for theaters
+        season = determine_season(day)
+        logging.info("Season is {}".format(season))
+        seasonal_chances = seasonal_conditions.weather_type_chances[season]
         chances = {
-            Thunderstorm: 1,
-            Raining: 20,
-            Cloudy: 60,
-            ClearSkies: 20,
+            Thunderstorm: weather_chances['thunderstorm'],
+            Raining: weather_chances['raining'],
+            Cloudy: weather_chances['cloudy'],
+            ClearSkies: weather_chances['clear_skies'],
         }
+        logging.info("Chances this season {}".format(seasonal_chances))
         weather_type = random.choices(
             list(chances.keys()), weights=list(chances.values())
         )[0]
+        logging.info("Weather type is {}".format(weather_type))
         return weather_type(seasonal_conditions, day, time_of_day)
