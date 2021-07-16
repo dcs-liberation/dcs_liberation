@@ -198,10 +198,8 @@ const exclusionZones = L.layerGroup();
 const seaZones = L.layerGroup();
 const unculledZones = L.layerGroup();
 
-const homeBubble = L.layerGroup();
-const ipBubble = L.layerGroup();
-const permissibleZone = L.layerGroup();
-const safeZone = L.layerGroup();
+const ipZones = L.layerGroup();
+const joinZones = L.layerGroup().addTo(map);
 
 const debugControlGroups = {
   "Blue Threat Zones": {
@@ -232,11 +230,9 @@ const debugControlGroups = {
 };
 
 if (ENABLE_EXPENSIVE_DEBUG_TOOLS) {
-  debugControlGroups["IP Zones"] = {
-    "Home bubble": homeBubble,
-    "IP bubble": ipBubble,
-    "Permissible zone": permissibleZone,
-    "Safe zone": safeZone,
+  debugControlGroups["Waypoint Zones"] = {
+    "IP Zones": ipZones,
+    "Join Zones": joinZones,
   };
 }
 
@@ -287,7 +283,12 @@ L.control
 L.control
   .groupedLayers(null, debugControlGroups, {
     position: "topleft",
-    exclusiveGroups: ["Blue Threat Zones", "Red Threat Zones", "Navmeshes"],
+    exclusiveGroups: [
+      "Blue Threat Zones",
+      "Red Threat Zones",
+      "Navmeshes",
+      "Waypoint Zones",
+    ],
     groupCheckboxes: true,
   })
   .addTo(map);
@@ -308,6 +309,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.mapZonesChanged.connect(drawMapZones);
   game.unculledZonesChanged.connect(drawUnculledZones);
   game.ipZonesChanged.connect(drawIpZones);
+  game.joinZonesChanged.connect(drawJoinZones);
 });
 
 function recenterMap(center) {
@@ -992,34 +994,65 @@ function drawUnculledZones() {
 }
 
 function drawIpZones() {
-  homeBubble.clearLayers();
-  ipBubble.clearLayers();
-  permissibleZone.clearLayers();
-  safeZone.clearLayers();
+  ipZones.clearLayers();
 
   L.polygon(game.ipZones.homeBubble, {
     color: Colors.Highlight,
     fillOpacity: 0.1,
     interactive: false,
-  }).addTo(homeBubble);
+  }).addTo(ipZones);
 
   L.polygon(game.ipZones.ipBubble, {
     color: "#bb89ff",
     fillOpacity: 0.1,
     interactive: false,
-  }).addTo(ipBubble);
+  }).addTo(ipZones);
 
   L.polygon(game.ipZones.permissibleZone, {
     color: "#ffffff",
     fillOpacity: 0.1,
     interactive: false,
-  }).addTo(permissibleZone);
+  }).addTo(ipZones);
 
   L.polygon(game.ipZones.safeZone, {
     color: Colors.Green,
     fillOpacity: 0.1,
     interactive: false,
-  }).addTo(safeZone);
+  }).addTo(ipZones);
+}
+
+function drawJoinZones() {
+  joinZones.clearLayers();
+
+  L.polygon(game.joinZones.homeBubble, {
+    color: Colors.Highlight,
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(joinZones);
+
+  L.polygon(game.joinZones.targetBubble, {
+    color: "#bb89ff",
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(joinZones);
+
+  L.polygon(game.joinZones.ipBubble, {
+    color: "#ffffff",
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(joinZones);
+
+  L.polygon(game.joinZones.excludedZone, {
+    color: "#ffa500",
+    fillOpacity: 0.2,
+    stroke: false,
+    interactive: false,
+  }).addTo(joinZones);
+
+  L.polyline(game.joinZones.permissibleLine, {
+    color: Colors.Green,
+    interactive: false,
+  }).addTo(joinZones);
 }
 
 function drawInitialMap() {
@@ -1034,6 +1067,7 @@ function drawInitialMap() {
   drawMapZones();
   drawUnculledZones();
   drawIpZones();
+  drawJoinZones();
 }
 
 function clearAllLayers() {

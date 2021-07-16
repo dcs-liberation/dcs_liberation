@@ -20,7 +20,7 @@ from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
-from game.flightplan import IpZoneGeometry
+from game.flightplan import IpZoneGeometry, JoinZoneGeometry
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -949,20 +949,22 @@ class FlightPlanBuilder:
     def regenerate_package_waypoints(self) -> None:
         from gen.ato import PackageWaypoints
 
+        package_airfield = self.package_airfield()
+
         # Start by picking the best IP for the attack.
         ingress_point = IpZoneGeometry(
             self.package.target.position,
-            self.package_airfield().position,
+            package_airfield.position,
             self.coalition,
         ).find_best_ip()
 
-        # Pick the join point based on the best route to the IP.
-        join_point = self.preferred_join_point(ingress_point)
-        if join_point is None:
-            # The entire path to the target is threatened. Use the fallback behavior for
-            # now.
-            self.legacy_package_waypoints_impl(ingress_point)
-            return
+        join_point = JoinZoneGeometry(
+            self.package.target.position,
+            package_airfield.position,
+            ingress_point,
+            self.coalition,
+            self.theater,
+        ).find_best_join_point()
 
         # And the split point based on the best route from the IP. Since that's no
         # different than the best route *to* the IP, this is the same as the join point.
