@@ -198,8 +198,10 @@ const exclusionZones = L.layerGroup();
 const seaZones = L.layerGroup();
 const unculledZones = L.layerGroup();
 
+const noWaypointZones = L.layerGroup();
 const ipZones = L.layerGroup();
-const joinZones = L.layerGroup().addTo(map);
+const joinZones = L.layerGroup();
+const holdZones = L.layerGroup().addTo(map);
 
 const debugControlGroups = {
   "Blue Threat Zones": {
@@ -231,8 +233,10 @@ const debugControlGroups = {
 
 if (ENABLE_EXPENSIVE_DEBUG_TOOLS) {
   debugControlGroups["Waypoint Zones"] = {
+    None: noWaypointZones,
     "IP Zones": ipZones,
     "Join Zones": joinZones,
+    "Hold Zones": holdZones,
   };
 }
 
@@ -310,6 +314,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.unculledZonesChanged.connect(drawUnculledZones);
   game.ipZonesChanged.connect(drawIpZones);
   game.joinZonesChanged.connect(drawJoinZones);
+  game.holdZonesChanged.connect(drawHoldZones);
 });
 
 function recenterMap(center) {
@@ -1014,11 +1019,13 @@ function drawIpZones() {
     interactive: false,
   }).addTo(ipZones);
 
-  L.polygon(game.ipZones.safeZone, {
-    color: Colors.Green,
-    fillOpacity: 0.1,
-    interactive: false,
-  }).addTo(ipZones);
+  for (const zone of game.ipZones.safeZones) {
+    L.polygon(zone, {
+      color: Colors.Green,
+      fillOpacity: 0.1,
+      interactive: false,
+    }).addTo(ipZones);
+  }
 }
 
 function drawJoinZones() {
@@ -1042,17 +1049,59 @@ function drawJoinZones() {
     interactive: false,
   }).addTo(joinZones);
 
-  L.polygon(game.joinZones.excludedZone, {
-    color: "#ffa500",
-    fillOpacity: 0.2,
-    stroke: false,
-    interactive: false,
-  }).addTo(joinZones);
+  for (const zone of game.joinZones.excludedZones) {
+    L.polygon(zone, {
+      color: "#ffa500",
+      fillOpacity: 0.2,
+      stroke: false,
+      interactive: false,
+    }).addTo(joinZones);
+  }
 
-  L.polyline(game.joinZones.permissibleLine, {
-    color: Colors.Green,
+  for (const line of game.joinZones.permissibleLines) {
+    L.polyline(line, {
+      color: Colors.Green,
+      interactive: false,
+    }).addTo(joinZones);
+  }
+}
+
+function drawHoldZones() {
+  holdZones.clearLayers();
+
+  L.polygon(game.holdZones.homeBubble, {
+    color: Colors.Highlight,
+    fillOpacity: 0.1,
     interactive: false,
-  }).addTo(joinZones);
+  }).addTo(holdZones);
+
+  L.polygon(game.holdZones.targetBubble, {
+    color: Colors.Highlight,
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(holdZones);
+
+  L.polygon(game.holdZones.joinBubble, {
+    color: Colors.Highlight,
+    fillOpacity: 0.1,
+    interactive: false,
+  }).addTo(holdZones);
+
+  for (const zone of game.holdZones.excludedZones) {
+    L.polygon(zone, {
+      color: "#ffa500",
+      fillOpacity: 0.2,
+      stroke: false,
+      interactive: false,
+    }).addTo(holdZones);
+  }
+
+  for (const zone of game.holdZones.permissibleZones) {
+    L.polygon(zone, {
+      color: Colors.Green,
+      interactive: false,
+    }).addTo(holdZones);
+  }
 }
 
 function drawInitialMap() {
@@ -1068,6 +1117,7 @@ function drawInitialMap() {
   drawUnculledZones();
   drawIpZones();
   drawJoinZones();
+  drawHoldZones();
 }
 
 function clearAllLayers() {

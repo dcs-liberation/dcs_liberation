@@ -8,11 +8,17 @@ from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
 from dcs.unit import Unit
 from dcs.vehicles import vehicle_map
-from shapely.geometry import LineString, Point as ShapelyPoint, Polygon, MultiPolygon
+from shapely.geometry import (
+    LineString,
+    Point as ShapelyPoint,
+    Polygon,
+    MultiPolygon,
+    MultiLineString,
+)
 
 from game import Game
 from game.dcs.groundunittype import GroundUnitType
-from game.flightplan import JoinZoneGeometry
+from game.flightplan import JoinZoneGeometry, HoldZoneGeometry
 from game.navmesh import NavMesh, NavMeshPoly
 from game.profiling import logged_duration
 from game.theater import (
@@ -87,6 +93,12 @@ def shapely_line_to_leaflet_points(
     line: LineString, theater: ConflictTheater
 ) -> list[LeafletLatLon]:
     return [theater.point_to_ll(Point(x, y)).as_list() for x, y in line.coords]
+
+
+def shapely_lines_to_leaflet_points(
+    lines: MultiLineString, theater: ConflictTheater
+) -> list[list[LeafletLatLon]]:
+    return [shapely_line_to_leaflet_points(l, theater) for l in lines.geoms]
 
 
 class ControlPointJs(QObject):
@@ -802,36 +814,36 @@ class IpZonesJs(QObject):
     homeBubbleChanged = Signal()
     ipBubbleChanged = Signal()
     permissibleZoneChanged = Signal()
-    safeZoneChanged = Signal()
+    safeZonesChanged = Signal()
 
     def __init__(
         self,
-        home_bubble: list[LeafletPoly],
-        ip_bubble: list[LeafletPoly],
-        permissible_zone: list[LeafletPoly],
-        safe_zone: list[LeafletPoly],
+        home_bubble: LeafletPoly,
+        ip_bubble: LeafletPoly,
+        permissible_zone: LeafletPoly,
+        safe_zones: list[LeafletPoly],
     ) -> None:
         super().__init__()
         self._home_bubble = home_bubble
         self._ip_bubble = ip_bubble
         self._permissible_zone = permissible_zone
-        self._safe_zone = safe_zone
+        self._safe_zones = safe_zones
 
     @Property(list, notify=homeBubbleChanged)
-    def homeBubble(self) -> list[LeafletPoly]:
+    def homeBubble(self) -> LeafletPoly:
         return self._home_bubble
 
     @Property(list, notify=ipBubbleChanged)
-    def ipBubble(self) -> list[LeafletPoly]:
+    def ipBubble(self) -> LeafletPoly:
         return self._ip_bubble
 
     @Property(list, notify=permissibleZoneChanged)
-    def permissibleZone(self) -> list[LeafletPoly]:
+    def permissibleZone(self) -> LeafletPoly:
         return self._permissible_zone
 
-    @Property(list, notify=safeZoneChanged)
-    def safeZone(self) -> list[LeafletPoly]:
-        return self._safe_zone
+    @Property(list, notify=safeZonesChanged)
+    def safeZones(self) -> list[LeafletPoly]:
+        return self._safe_zones
 
     @classmethod
     def empty(cls) -> IpZonesJs:
@@ -845,10 +857,10 @@ class IpZonesJs(QObject):
         home = flight.departure
         geometry = IpZoneGeometry(target.position, home.position, game.blue)
         return IpZonesJs(
-            shapely_to_leaflet_polys(geometry.home_bubble, game.theater),
-            shapely_to_leaflet_polys(geometry.ip_bubble, game.theater),
-            shapely_to_leaflet_polys(geometry.permissible_zone, game.theater),
-            shapely_to_leaflet_polys(geometry.safe_zone, game.theater),
+            shapely_poly_to_leaflet_points(geometry.home_bubble, game.theater),
+            shapely_poly_to_leaflet_points(geometry.ip_bubble, game.theater),
+            shapely_poly_to_leaflet_points(geometry.permissible_zone, game.theater),
+            shapely_to_leaflet_polys(geometry.safe_zones, game.theater),
         )
 
 
@@ -856,43 +868,43 @@ class JoinZonesJs(QObject):
     homeBubbleChanged = Signal()
     targetBubbleChanged = Signal()
     ipBubbleChanged = Signal()
-    excludedZoneChanged = Signal()
-    permissibleLineChanged = Signal()
+    excludedZonesChanged = Signal()
+    permissibleLinesChanged = Signal()
 
     def __init__(
         self,
-        home_bubble: list[LeafletPoly],
-        target_bubble: list[LeafletPoly],
-        ip_bubble: list[LeafletPoly],
-        excluded_zone: list[LeafletPoly],
-        permissible_line: list[LeafletLatLon],
+        home_bubble: LeafletPoly,
+        target_bubble: LeafletPoly,
+        ip_bubble: LeafletPoly,
+        excluded_zones: list[LeafletPoly],
+        permissible_lines: list[list[LeafletLatLon]],
     ) -> None:
         super().__init__()
         self._home_bubble = home_bubble
         self._target_bubble = target_bubble
         self._ip_bubble = ip_bubble
-        self._excluded_zone = excluded_zone
-        self._permissible_line = permissible_line
+        self._excluded_zones = excluded_zones
+        self._permissible_lines = permissible_lines
 
     @Property(list, notify=homeBubbleChanged)
-    def homeBubble(self) -> list[LeafletPoly]:
+    def homeBubble(self) -> LeafletPoly:
         return self._home_bubble
 
     @Property(list, notify=targetBubbleChanged)
-    def targetBubble(self) -> list[LeafletPoly]:
+    def targetBubble(self) -> LeafletPoly:
         return self._target_bubble
 
     @Property(list, notify=ipBubbleChanged)
-    def ipBubble(self) -> list[LeafletPoly]:
+    def ipBubble(self) -> LeafletPoly:
         return self._ip_bubble
 
-    @Property(list, notify=excludedZoneChanged)
-    def excludedZone(self) -> list[LeafletPoly]:
-        return self._excluded_zone
+    @Property(list, notify=excludedZonesChanged)
+    def excludedZones(self) -> list[LeafletPoly]:
+        return self._excluded_zones
 
-    @Property(list, notify=permissibleLineChanged)
-    def permissibleLine(self) -> list[LeafletLatLon]:
-        return self._permissible_line
+    @Property(list, notify=permissibleLinesChanged)
+    def permissibleLines(self) -> list[list[LeafletLatLon]]:
+        return self._permissible_lines
 
     @classmethod
     def empty(cls) -> JoinZonesJs:
@@ -911,11 +923,87 @@ class JoinZonesJs(QObject):
             target.position, home.position, ip, game.blue, game.theater
         )
         return JoinZonesJs(
-            shapely_to_leaflet_polys(geometry.home_bubble, game.theater),
-            shapely_to_leaflet_polys(geometry.target_bubble, game.theater),
-            shapely_to_leaflet_polys(geometry.ip_bubble, game.theater),
-            shapely_to_leaflet_polys(geometry.excluded_zone, game.theater),
-            shapely_line_to_leaflet_points(geometry.permissible_line, game.theater),
+            shapely_poly_to_leaflet_points(geometry.home_bubble, game.theater),
+            shapely_poly_to_leaflet_points(geometry.target_bubble, game.theater),
+            shapely_poly_to_leaflet_points(geometry.ip_bubble, game.theater),
+            shapely_to_leaflet_polys(geometry.excluded_zones, game.theater),
+            shapely_lines_to_leaflet_points(geometry.permissible_lines, game.theater),
+        )
+
+
+class HoldZonesJs(QObject):
+    homeBubbleChanged = Signal()
+    targetBubbleChanged = Signal()
+    joinBubbleChanged = Signal()
+    excludedZonesChanged = Signal()
+    permissibleZonesChanged = Signal()
+    permissibleLinesChanged = Signal()
+
+    def __init__(
+        self,
+        home_bubble: LeafletPoly,
+        target_bubble: LeafletPoly,
+        join_bubble: LeafletPoly,
+        excluded_zones: list[LeafletPoly],
+        permissible_zones: list[LeafletPoly],
+        permissible_lines: list[list[LeafletLatLon]],
+    ) -> None:
+        super().__init__()
+        self._home_bubble = home_bubble
+        self._target_bubble = target_bubble
+        self._join_bubble = join_bubble
+        self._excluded_zones = excluded_zones
+        self._permissible_zones = permissible_zones
+        self._permissible_lines = permissible_lines
+
+    @Property(list, notify=homeBubbleChanged)
+    def homeBubble(self) -> LeafletPoly:
+        return self._home_bubble
+
+    @Property(list, notify=targetBubbleChanged)
+    def targetBubble(self) -> LeafletPoly:
+        return self._target_bubble
+
+    @Property(list, notify=joinBubbleChanged)
+    def joinBubble(self) -> LeafletPoly:
+        return self._join_bubble
+
+    @Property(list, notify=excludedZonesChanged)
+    def excludedZones(self) -> list[LeafletPoly]:
+        return self._excluded_zones
+
+    @Property(list, notify=permissibleZonesChanged)
+    def permissibleZones(self) -> list[LeafletPoly]:
+        return self._permissible_zones
+
+    @Property(list, notify=permissibleLinesChanged)
+    def permissibleLines(self) -> list[list[LeafletLatLon]]:
+        return self._permissible_lines
+
+    @classmethod
+    def empty(cls) -> HoldZonesJs:
+        return HoldZonesJs([], [], [], [], [], [])
+
+    @classmethod
+    def for_flight(cls, flight: Flight, game: Game) -> HoldZonesJs:
+        if not ENABLE_EXPENSIVE_DEBUG_TOOLS:
+            return JoinZonesJs.empty()
+        target = flight.package.target
+        home = flight.departure
+        if flight.package.waypoints is None:
+            return HoldZonesJs.empty()
+        ip = flight.package.waypoints.ingress
+        join = flight.package.waypoints.join
+        geometry = HoldZoneGeometry(
+            target.position, home.position, ip, join, game.blue, game.theater
+        )
+        return HoldZonesJs(
+            shapely_poly_to_leaflet_points(geometry.home_bubble, game.theater),
+            shapely_poly_to_leaflet_points(geometry.target_bubble, game.theater),
+            shapely_poly_to_leaflet_points(geometry.join_bubble, game.theater),
+            shapely_to_leaflet_polys(geometry.excluded_zones, game.theater),
+            shapely_to_leaflet_polys(geometry.permissible_zones, game.theater),
+            [],  # shapely_to_leaflet_polys(geometry.permissible_lines, game.theater),
         )
 
 
@@ -934,6 +1022,7 @@ class MapModel(QObject):
     unculledZonesChanged = Signal()
     ipZonesChanged = Signal()
     joinZonesChanged = Signal()
+    holdZonesChanged = Signal()
 
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
@@ -952,6 +1041,7 @@ class MapModel(QObject):
         self._unculled_zones = []
         self._ip_zones = IpZonesJs.empty()
         self._join_zones = JoinZonesJs.empty()
+        self._hold_zones = HoldZonesJs.empty()
         self._selected_flight_index: Optional[Tuple[int, int]] = None
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
@@ -1067,11 +1157,14 @@ class MapModel(QObject):
         if selected_flight is None:
             self._ip_zones = IpZonesJs.empty()
             self._join_zones = JoinZonesJs.empty()
+            self._hold_zones = HoldZonesJs.empty()
         else:
             self._ip_zones = IpZonesJs.for_flight(selected_flight, self.game)
             self._join_zones = JoinZonesJs.for_flight(selected_flight, self.game)
+            self._hold_zones = HoldZonesJs.for_flight(selected_flight, self.game)
         self.ipZonesChanged.emit()
         self.joinZonesChanged.emit()
+        self.holdZonesChanged.emit()
 
     @Property(list, notify=flightsChanged)
     def flights(self) -> List[FlightJs]:
@@ -1207,6 +1300,10 @@ class MapModel(QObject):
     @Property(JoinZonesJs, notify=joinZonesChanged)
     def joinZones(self) -> JoinZonesJs:
         return self._join_zones
+
+    @Property(HoldZonesJs, notify=holdZonesChanged)
+    def holdZones(self) -> HoldZonesJs:
+        return self._hold_zones
 
     @property
     def game(self) -> Game:

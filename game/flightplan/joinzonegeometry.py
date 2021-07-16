@@ -4,7 +4,12 @@ from typing import TYPE_CHECKING
 
 import shapely.ops
 from dcs import Point
-from shapely.geometry import Point as ShapelyPoint, Polygon
+from shapely.geometry import (
+    Point as ShapelyPoint,
+    Polygon,
+    MultiPolygon,
+    MultiLineString,
+)
 
 from game.theater import ConflictTheater
 from game.utils import nautical_miles
@@ -51,9 +56,13 @@ class JoinZoneGeometry:
 
         self.home_bubble = self.home.buffer(min_distance_from_home.meters)
 
-        self.excluded_zone = shapely.ops.unary_union(
-            [self.home_bubble, self.ip_bubble, self.target_bubble, self.threat_zone]
+        excluded_zones = shapely.ops.unary_union(
+            [self.ip_bubble, self.target_bubble, self.threat_zone]
         )
+
+        if not isinstance(excluded_zones, MultiPolygon):
+            excluded_zones = MultiPolygon([excluded_zones])
+        self.excluded_zones = excluded_zones
 
         ip_heading = target.heading_between_point(ip)
 
@@ -73,12 +82,14 @@ class JoinZoneGeometry:
             ]
         )
 
-        self.permissible_line = (
-            coalition.nav_mesh.map_bounds(theater)
-            .intersection(ip_direction_limit_wedge)
-            .intersection(self.excluded_zone.boundary)
-        )
+        permissible_lines = ip_direction_limit_wedge.intersection(
+            self.excluded_zones.boundary
+        ).difference(self.home_bubble)
+
+        if not isinstance(permissible_lines, MultiLineString):
+            permissible_lines = MultiLineString([permissible_lines])
+        self.permissible_lines = permissible_lines
 
     def find_best_join_point(self) -> Point:
-        join, _ = shapely.ops.nearest_points(self.permissible_line, self.home)
+        join, _ = shapely.ops.nearest_points(self.permissible_lines, self.home)
         return Point(join.x, join.y)

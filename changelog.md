@@ -7,6 +7,7 @@ Saves from 3.x are not compatible with 5.0.
 * **[Campaign]** Weapon data such as fallbacks and introduction years is now moddable. Due to the new architecture to support this, the old data was not automatically migrated.
 * **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
 * **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
+* **[Campaign AI]** Reworked layout of hold, join, split, and ingress points. Should result in much shorter flight plans in general while still maintaining safe join/split/hold points.
 
 ## Fixes
 

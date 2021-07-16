@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import shapely.ops
 from dcs import Point
-from shapely.geometry import Point as ShapelyPoint
+from shapely.geometry import Point as ShapelyPoint, MultiPolygon
 
 from game.utils import nautical_miles, meters
 
@@ -81,9 +81,13 @@ class IpZoneGeometry:
             # the home bubble.
             self.permissible_zone = self.ip_bubble
 
-        self.safe_zone = self.permissible_zone.difference(
+        safe_zones = self.permissible_zone.difference(
             self.threat_zone.buffer(attack_distance_buffer.meters)
         )
+
+        if not isinstance(safe_zones, MultiPolygon):
+            safe_zones = MultiPolygon([safe_zones])
+        self.safe_zones = safe_zones
 
     def _unsafe_ip(self) -> ShapelyPoint:
         unthreatened_home_zone = self.home_bubble.difference(self.threat_zone)
@@ -104,10 +108,10 @@ class IpZoneGeometry:
     def _safe_ip(self) -> ShapelyPoint:
         # We have a zone of possible IPs that are safe, close enough, and in range. Pick
         # the IP in the zone that's closest to the target.
-        return shapely.ops.nearest_points(self.safe_zone, self.home)[0]
+        return shapely.ops.nearest_points(self.safe_zones, self.home)[0]
 
     def find_best_ip(self) -> Point:
-        if self.safe_zone.is_empty:
+        if self.safe_zones.is_empty:
             ip = self._unsafe_ip()
         else:
             ip = self._safe_ip()
