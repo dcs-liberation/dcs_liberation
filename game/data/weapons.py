@@ -181,6 +181,8 @@ class WeaponGroup:
 
     @classmethod
     def load_all(cls) -> None:
+        if cls._loaded:
+            return
         seen_clsids: set[str] = set()
         for group in cls._each_weapon_group():
             cls.register(group)
