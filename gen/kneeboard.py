@@ -47,7 +47,6 @@ from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
 from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
 from .radios import RadioFrequency
 from .runways import RunwayData
-from .units import inches_hg_to_mm_hg, inches_hg_to_hpa
 
 if TYPE_CHECKING:
     from game import Game
@@ -308,13 +307,9 @@ class BriefingPage(KneeboardPage):
 
         writer.text(f"Bullseye: {self.bullseye.to_lat_lon(self.theater).format_dms()}")
 
-        qnh_in_hg = "{:.2f}".format(self.weather.atmospheric.qnh_inches_mercury)
-        qnh_mm_hg = "{:.1f}".format(
-            inches_hg_to_mm_hg(self.weather.atmospheric.qnh_inches_mercury)
-        )
-        qnh_hpa = "{:.1f}".format(
-            inches_hg_to_hpa(self.weather.atmospheric.qnh_inches_mercury)
-        )
+        qnh_in_hg = f"{self.weather.atmospheric.qnh.inches_hg:.2f}"
+        qnh_mm_hg = f"{self.weather.atmospheric.qnh.mm_hg:.1f}"
+        qnh_hpa = f"{self.weather.atmospheric.qnh.hecto_pascals:.1f}"
         writer.text(
             f"Temperature: {round(self.weather.atmospheric.temperature_celsius)} °C at sea level"
         )

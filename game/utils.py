@@ -16,6 +16,9 @@ KPH_TO_KNOTS = 1 / KNOTS_TO_KPH
 MS_TO_KPH = 3.6
 KPH_TO_MS = 1 / MS_TO_KPH
 
+INHG_TO_HPA = 33.86389
+INHG_TR_MMHG = 25.400002776728
+
 
 def heading_sum(h: int, a: int) -> int:
     h += a
@@ -179,6 +182,27 @@ def mach(value: float, altitude: Distance) -> Speed:
 
 
 SPEED_OF_SOUND_AT_SEA_LEVEL = knots(661.5)
+
+
+@dataclass(frozen=True, order=True)
+class Pressure:
+    pressure_in_inches_hg: float
+
+    @property
+    def inches_hg(self) -> float:
+        return self.pressure_in_inches_hg
+
+    @property
+    def mm_hg(self) -> float:
+        return self.pressure_in_inches_hg * INHG_TR_MMHG
+
+    @property
+    def hecto_pascals(self) -> float:
+        return self.pressure_in_inches_hg * INHG_TO_HPA
+
+
+def inches_hg(value: float) -> Pressure:
+    return Pressure(value)
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[tuple[Any, Any]]:
