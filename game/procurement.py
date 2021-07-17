@@ -11,7 +11,7 @@ from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.theater import ControlPoint, MissionTarget
-from game.utils import Distance
+from game.utils import meters
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
@@ -25,15 +25,13 @@ FRONTLINE_RESERVES_FACTOR = 1.3
 @dataclass(frozen=True)
 class AircraftProcurementRequest:
     near: MissionTarget
-    range: Distance
     task_capability: FlightType
     number: int
 
     def __str__(self) -> str:
         task = self.task_capability.value
-        distance = self.range.nautical_miles
         target = self.near.name
-        return f"{self.number} ship {task} within {distance} nm of {target}"
+        return f"{self.number} ship {task} near {target}"
 
 
 class ProcurementAi:
@@ -211,24 +209,24 @@ class ProcurementAi:
             return GroundUnitClass.Tank
         return worst_balanced
 
-    def _affordable_aircraft_for_task(
-        self,
-        task: FlightType,
-        airbase: ControlPoint,
-        number: int,
-        max_price: float,
+    def affordable_aircraft_for(
+        self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
     ) -> Optional[AircraftType]:
         best_choice: Optional[AircraftType] = None
-        for unit in aircraft_for_task(task):
+        for unit in aircraft_for_task(request.task_capability):
             if unit not in self.faction.aircrafts:
                 continue
-            if unit.price * number > max_price:
+            if unit.price * request.number > budget:
                 continue
             if not airbase.can_operate(unit):
                 continue
 
+            distance_to_target = meters(request.near.distance_to(airbase))
+            if distance_to_target > unit.max_mission_range:
+                continue
+
             for squadron in self.air_wing.squadrons_for(unit):
-                if task in squadron.auto_assignable_mission_types:
+                if request.task_capability in squadron.auto_assignable_mission_types:
                     break
             else:
                 continue
@@ -240,13 +238,6 @@ class ProcurementAi:
             if random.choice([True, False]):
                 break
         return best_choice
-
-    def affordable_aircraft_for(
-        self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
-    ) -> Optional[AircraftType]:
-        return self._affordable_aircraft_for_task(
-            request.task_capability, airbase, request.number, budget
-        )
 
     def fulfill_aircraft_request(
         self, request: AircraftProcurementRequest, budget: float
@@ -293,7 +284,7 @@ class ProcurementAi:
     ) -> Iterator[ControlPoint]:
         distance_cache = ObjectiveDistanceCache.get_closest_airfields(request.near)
         threatened = []
-        for cp in distance_cache.operational_airfields_within(request.range):
+        for cp in distance_cache.operational_airfields:
             if not cp.is_friendly(self.is_player):
                 continue
             if cp.unclaimed_parking(self.game) < request.number:

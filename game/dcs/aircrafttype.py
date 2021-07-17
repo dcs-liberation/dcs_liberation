@@ -29,7 +29,7 @@ from game.radio.channels import (
     ViggenRadioChannelAllocator,
     NoOpChannelAllocator,
 )
-from game.utils import Distance, Speed, feet, kph, knots
+from game.utils import Distance, Speed, feet, kph, knots, nautical_miles
 
 if TYPE_CHECKING:
     from gen.aircraft import FlightData
@@ -112,13 +112,18 @@ class AircraftType(UnitType[Type[FlyingType]]):
     lha_capable: bool
     always_keeps_gun: bool
 
-    # If true, the aircraft does not use the guns as the last resort weapons, but as a main weapon.
-    # It'll RTB when it doesn't have gun ammo left.
+    # If true, the aircraft does not use the guns as the last resort weapons, but as a
+    # main weapon. It'll RTB when it doesn't have gun ammo left.
     gunfighter: bool
 
     max_group_size: int
     patrol_altitude: Optional[Distance]
     patrol_speed: Optional[Speed]
+
+    #: The maximum range between the origin airfield and the target for which the auto-
+    #: planner will consider this aircraft usable for a mission.
+    max_mission_range: Distance
+
     intra_flight_radio: Optional[Radio]
     channel_allocator: Optional[RadioChannelAllocator]
     channel_namer: Type[ChannelNamer]
@@ -231,6 +236,13 @@ class AircraftType(UnitType[Type[FlyingType]]):
         patrol_config = PatrolConfig.from_data(data.get("patrol", {}))
 
         try:
+            mission_range = nautical_miles(int(data["max_range"]))
+        except (KeyError, ValueError):
+            mission_range = (
+                nautical_miles(50) if aircraft.helicopter else nautical_miles(150)
+            )
+
+        try:
             introduction = data["introduced"]
             if introduction is None:
                 introduction = "N/A"
@@ -257,6 +269,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 max_group_size=data.get("max_group_size", aircraft.group_size_max),
                 patrol_altitude=patrol_config.altitude,
                 patrol_speed=patrol_config.speed,
+                max_mission_range=mission_range,
                 intra_flight_radio=radio_config.intra_flight,
                 channel_allocator=radio_config.channel_allocator,
                 channel_namer=radio_config.channel_namer,

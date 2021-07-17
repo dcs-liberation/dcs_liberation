@@ -9,6 +9,7 @@ Saves from 3.x are not compatible with 5.0.
 * **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
 * **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
 * **[Campaign AI]** Reworked layout of hold, join, split, and ingress points. Should result in much shorter flight plans in general while still maintaining safe join/split/hold points.
+* **[Campaign AI]** Auto-planning mission range limits are now specified per-aircraft. On average this means that longer range missions will now be plannable. The limit only accounts for the direct distance to the target, not the path taken.
 * **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable or rename squadrons.
 
 ## Fixes

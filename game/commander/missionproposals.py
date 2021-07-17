@@ -3,7 +3,6 @@ from enum import Enum, auto
 from typing import Optional
 
 from game.theater import MissionTarget
-from game.utils import Distance
 from gen.flights.flight import FlightType
 
 
@@ -26,9 +25,6 @@ class ProposedFlight:
 
     #: The number of aircraft required.
     num_aircraft: int
-
-    #: The maximum distance between the objective and the departure airfield.
-    max_distance: Distance
 
     #: The type of threat this flight defends against if it is an escort. Escort
     #: flights will be pruned if the rest of the package is not threatened by

@@ -3,7 +3,8 @@ from typing import Optional, Tuple
 from game.commander.missionproposals import ProposedFlight
 from game.inventory import GlobalAircraftInventory
 from game.squadrons import AirWing, Squadron
-from game.theater import ControlPoint
+from game.theater import ControlPoint, MissionTarget
+from game.utils import meters
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ClosestAirfields
 from gen.flights.flight import FlightType
@@ -25,7 +26,7 @@ class AircraftAllocator:
         self.is_player = is_player
 
     def find_squadron_for_flight(
-        self, flight: ProposedFlight
+        self, target: MissionTarget, flight: ProposedFlight
     ) -> Optional[Tuple[ControlPoint, Squadron]]:
         """Finds aircraft suitable for the given mission.
 
@@ -45,17 +46,13 @@ class AircraftAllocator:
         on subsequent calls. If the found aircraft are not used, the caller is
         responsible for returning them to the inventory.
         """
-        return self.find_aircraft_for_task(flight, flight.task)
+        return self.find_aircraft_for_task(target, flight, flight.task)
 
     def find_aircraft_for_task(
-        self, flight: ProposedFlight, task: FlightType
+        self, target: MissionTarget, flight: ProposedFlight, task: FlightType
     ) -> Optional[Tuple[ControlPoint, Squadron]]:
         types = aircraft_for_task(task)
-        airfields_in_range = self.closest_airfields.operational_airfields_within(
-            flight.max_distance
-        )
-
-        for airfield in airfields_in_range:
+        for airfield in self.closest_airfields.operational_airfields:
             if not airfield.is_friendly(self.is_player):
                 continue
             inventory = self.global_inventory.for_control_point(airfield)
@@ -63,6 +60,9 @@ class AircraftAllocator:
                 if not airfield.can_operate(aircraft):
                     continue
                 if inventory.available(aircraft) < flight.num_aircraft:
+                    continue
+                distance_to_target = meters(target.distance_to(airfield))
+                if distance_to_target > aircraft.max_mission_range:
                     continue
                 # Valid location with enough aircraft available. Find a squadron to fit
                 # the role.

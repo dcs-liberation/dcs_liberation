@@ -59,28 +59,23 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         coalition.ato.add_package(self.package)
 
     @abstractmethod
-    def propose_flights(self, doctrine: Doctrine) -> None:
+    def propose_flights(self) -> None:
         ...
 
     def propose_flight(
         self,
         task: FlightType,
         num_aircraft: int,
-        max_distance: Optional[Distance],
         escort_type: Optional[EscortType] = None,
     ) -> None:
-        if max_distance is None:
-            max_distance = Distance.inf()
-        self.flights.append(
-            ProposedFlight(task, num_aircraft, max_distance, escort_type)
-        )
+        self.flights.append(ProposedFlight(task, num_aircraft, escort_type))
 
     @property
     def asap(self) -> bool:
         return False
 
     def fulfill_mission(self, state: TheaterState) -> bool:
-        self.propose_flights(state.context.coalition.doctrine)
+        self.propose_flights()
         fulfiller = PackageFulfiller(
             state.context.coalition,
             state.context.theater,
@@ -92,20 +87,9 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         )
         return self.package is not None
 
-    def propose_common_escorts(self, doctrine: Doctrine) -> None:
-        self.propose_flight(
-            FlightType.SEAD_ESCORT,
-            2,
-            doctrine.mission_ranges.offensive,
-            EscortType.Sead,
-        )
-
-        self.propose_flight(
-            FlightType.ESCORT,
-            2,
-            doctrine.mission_ranges.offensive,
-            EscortType.AirToAir,
-        )
+    def propose_common_escorts(self) -> None:
+        self.propose_flight(FlightType.SEAD_ESCORT, 2, EscortType.Sead)
+        self.propose_flight(FlightType.ESCORT, 2, EscortType.AirToAir)
 
     def iter_iads_ranges(
         self, state: TheaterState, range_type: RangeType

@@ -1,4 +1,5 @@
-description: The Lockheed Martin C-130J Super Hercules is a four-engine turboprop
+description:
+  The Lockheed Martin C-130J Super Hercules is a four-engine turboprop
   military transport aircraft. The C-130J is a comprehensive update of the Lockheed
   C-130 Hercules, with new engines, flight deck, and other systems. As of February
   2018, 400 C-130J aircraft have been delivered to 17 nations.
@@ -7,5 +8,6 @@ manufacturer: Lockheed
 origin: USA
 price: 18
 role: Transport
+max_range: 1000
 variants:
   C-130J-30 Super Hercules: {}

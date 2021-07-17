@@ -5,7 +5,6 @@ from typing import Any
 
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.theater.theatergroundobject import TheaterGroundObject
 from gen.flights.flight import FlightType
 
@@ -22,6 +21,6 @@ class PlanStrike(PackagePlanningTask[TheaterGroundObject[Any]]):
     def apply_effects(self, state: TheaterState) -> None:
         state.strike_targets.remove(self.target)
 
-    def propose_flights(self, doctrine: Doctrine) -> None:
-        self.propose_flight(FlightType.STRIKE, 2, doctrine.mission_ranges.offensive)
-        self.propose_common_escorts(doctrine)
+    def propose_flights(self) -> None:
+        self.propose_flight(FlightType.STRIKE, 2)
+        self.propose_common_escorts()

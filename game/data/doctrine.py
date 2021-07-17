@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any
 
@@ -16,15 +16,6 @@ class GroundUnitProcurementRatios:
             return self.ratios[unit_class] / sum(self.ratios.values())
         except KeyError:
             return 0.0
-
-
-@dataclass(frozen=True)
-class MissionPlannerMaxRanges:
-    cap: Distance = field(default=nautical_miles(100))
-    cas: Distance = field(default=nautical_miles(50))
-    offensive: Distance = field(default=nautical_miles(150))
-    aewc: Distance = field(default=Distance.inf())
-    refueling: Distance = field(default=nautical_miles(200))
 
 
 @dataclass(frozen=True)
@@ -88,8 +79,6 @@ class Doctrine:
 
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
 
-    mission_ranges: MissionPlannerMaxRanges = field(default=MissionPlannerMaxRanges())
-
     @has_save_compat_for(5)
     def __setstate__(self, state: dict[str, Any]) -> None:
         if "max_ingress_distance" not in state:
@@ -109,6 +98,12 @@ class Doctrine:
             state["min_ingress_distance"] = min_ip
 
         self.__dict__.update(state)
+
+
+class MissionPlannerMaxRanges:
+    @has_save_compat_for(5)
+    def __init__(self) -> None:
+        pass
 
 
 MODERN_DOCTRINE = Doctrine(

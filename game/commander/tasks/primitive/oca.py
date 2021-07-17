@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.theater import ControlPoint
 from gen.flights.flight import FlightType
 
@@ -23,10 +22,8 @@ class PlanOcaStrike(PackagePlanningTask[ControlPoint]):
     def apply_effects(self, state: TheaterState) -> None:
         state.oca_targets.remove(self.target)
 
-    def propose_flights(self, doctrine: Doctrine) -> None:
-        self.propose_flight(FlightType.OCA_RUNWAY, 2, doctrine.mission_ranges.offensive)
+    def propose_flights(self) -> None:
+        self.propose_flight(FlightType.OCA_RUNWAY, 2)
         if self.aircraft_cold_start:
-            self.propose_flight(
-                FlightType.OCA_AIRCRAFT, 2, doctrine.mission_ranges.offensive
-            )
-        self.propose_common_escorts(doctrine)
+            self.propose_flight(FlightType.OCA_AIRCRAFT, 2)
+        self.propose_common_escorts()
