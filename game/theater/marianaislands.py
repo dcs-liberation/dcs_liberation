@@ -17,7 +17,7 @@ SEASONAL_CONDITIONS = SeasonalConditions(
     weather_type_chances={
         # TODO: More science for all these values
         Season.Winter: WeatherTypeChances(
-            thunderstorm=1,
+            thunderstorm=2,
             raining=20,
             cloudy=40,
             clear_skies=40,
@@ -30,15 +30,15 @@ SEASONAL_CONDITIONS = SeasonalConditions(
             clear_skies=60,
         ),
         Season.Summer: WeatherTypeChances(
-            thunderstorm=1,
+            thunderstorm=2,
             raining=20,
             cloudy=40,
             clear_skies=40,
         ),
         Season.Fall: WeatherTypeChances(
             # Rain season
-            thunderstorm=1,
-            raining=50,
+            thunderstorm=5,
+            raining=45,
             cloudy=30,
             clear_skies=20,
         ),
