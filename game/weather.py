@@ -121,9 +121,17 @@ class Weather:
             temperature -= seasonal_conditions.temperature_day_night_difference / 2
         pressure += self.pressure_adjustment
         temperature += self.temperature_adjustment
+        logging.debug(
+            "Weather: Before random: temp {} press {}".format(temperature, pressure)
+        )
         conditions = AtmosphericConditions(
             qnh=self.random_pressure(pressure),
             temperature_celsius=self.random_temperature(temperature),
+        )
+        logging.debug(
+            "Weather: After random: temp {} press {}".format(
+                conditions.temperature_celsius, conditions.qnh.pressure_in_inches_hg
+            )
         )
         return conditions
 
@@ -337,7 +345,7 @@ class Conditions:
         time_of_day: TimeOfDay,
     ) -> Weather:
         season = determine_season(day)
-        logging.debug("Season is {}".format(season))
+        logging.debug("Weather: Season {}".format(season))
         weather_chances = seasonal_conditions.weather_type_chances[season]
         chances = {
             Thunderstorm: weather_chances.thunderstorm,
@@ -345,9 +353,9 @@ class Conditions:
             Cloudy: weather_chances.cloudy,
             ClearSkies: weather_chances.clear_skies,
         }
-        logging.debug("Chances this season {}".format(weather_chances))
+        logging.debug("Weather: Chances {}".format(weather_chances))
         weather_type = random.choices(
             list(chances.keys()), weights=list(chances.values())
         )[0]
-        logging.debug("Weather type is {}".format(weather_type))
+        logging.debug("Weather: Type {}".format(weather_type))
         return weather_type(seasonal_conditions, day, time_of_day)
