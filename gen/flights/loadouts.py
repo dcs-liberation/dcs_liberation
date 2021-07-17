@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import datetime
-from typing import Optional, List, Iterator, TYPE_CHECKING, Mapping
+from collections import Iterable
+from typing import Optional, Iterator, TYPE_CHECKING, Mapping
 
-from game.data.weapons import Weapon, Pylon
+from game.data.weapons import Weapon, Pylon, WeaponType
 from game.dcs.aircrafttype import AircraftType
 
 if TYPE_CHECKING:
@@ -30,9 +31,28 @@ class Loadout:
     def derive_custom(self, name: str) -> Loadout:
         return Loadout(name, self.pylons, self.date, is_custom=True)
 
+    @staticmethod
+    def _fallback_for(
+        weapon: Weapon,
+        pylon: Pylon,
+        date: datetime.date,
+        skip_types: Optional[Iterable[WeaponType]] = None,
+    ) -> Optional[Weapon]:
+        if skip_types is None:
+            skip_types = set()
+        for fallback in weapon.fallbacks:
+            if not pylon.can_equip(fallback):
+                continue
+            if not fallback.available_on(date):
+                continue
+            if fallback.weapon_group.type in skip_types:
+                continue
+            return fallback
+        return None
+
     def degrade_for_date(self, unit_type: AircraftType, date: datetime.date) -> Loadout:
         if self.date is not None and self.date <= date:
-            return Loadout(self.name, self.pylons, self.date)
+            return Loadout(self.name, self.pylons, self.date, self.is_custom)
 
         new_pylons = dict(self.pylons)
         for pylon_number, weapon in self.pylons.items():
@@ -41,16 +61,41 @@ class Loadout:
                 continue
             if not weapon.available_on(date):
                 pylon = Pylon.for_aircraft(unit_type, pylon_number)
-                for fallback in weapon.fallbacks:
-                    if not pylon.can_equip(fallback):
-                        continue
-                    if not fallback.available_on(date):
-                        continue
-                    new_pylons[pylon_number] = fallback
-                    break
-                else:
+                fallback = self._fallback_for(weapon, pylon, date)
+                if fallback is None:
                     del new_pylons[pylon_number]
-        return Loadout(f"{self.name} ({date.year})", new_pylons, date)
+                else:
+                    new_pylons[pylon_number] = fallback
+        loadout = Loadout(self.name, new_pylons, date, self.is_custom)
+        # If this is not a custom loadout, we should replace any LGBs with iron bombs if
+        # the loadout lost its TGP.
+        #
+        # If the loadout was chosen explicitly by the user, assume they know what
+        # they're doing. They may be coordinating buddy-lase.
+        if not loadout.is_custom:
+            loadout.replace_lgbs_if_no_tgp(unit_type, date)
+        return loadout
+
+    def replace_lgbs_if_no_tgp(
+        self, unit_type: AircraftType, date: datetime.date
+    ) -> None:
+        for weapon in self.pylons.values():
+            if weapon is not None and weapon.weapon_group.type is WeaponType.TGP:
+                # Have a TGP. Nothing to do.
+                return
+
+        new_pylons = dict(self.pylons)
+        for pylon_number, weapon in self.pylons.items():
+            if weapon is not None and weapon.weapon_group.type is WeaponType.LGB:
+                pylon = Pylon.for_aircraft(unit_type, pylon_number)
+                fallback = self._fallback_for(
+                    weapon, pylon, date, skip_types={WeaponType.LGB}
+                )
+                if fallback is None:
+                    del new_pylons[pylon_number]
+                else:
+                    new_pylons[pylon_number] = fallback
+        self.pylons = new_pylons
 
     @classmethod
     def iter_for(cls, flight: Flight) -> Iterator[Loadout]:
@@ -71,10 +116,6 @@ class Loadout:
                 {p["num"]: Weapon.with_clsid(p["CLSID"]) for p in pylons.values()},
                 date=None,
             )
-
-    @classmethod
-    def all_for(cls, flight: Flight) -> List[Loadout]:
-        return list(cls.iter_for(flight))
 
     @classmethod
     def default_loadout_names_for(cls, flight: Flight) -> Iterator[str]:

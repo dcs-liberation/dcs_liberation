@@ -1,5 +1,7 @@
 name: GBU-12
+type: LGB
 year: 1976
+fallback: Mk 82
 clsids:
   - "DIS_GBU_12"
   - "{BRU-32 GBU-12}"

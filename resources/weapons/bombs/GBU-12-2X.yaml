@@ -1,5 +1,7 @@
 name: 2xGBU-12
+type: LGB
 year: 1976
+fallback: 2xMk 82
 clsids:
   - "{M2KC_RAFAUT_GBU12}"
   - "{BRU33_2X_GBU-12}"

@@ -1,4 +1,5 @@
 name: AN/ASQ-228 ATFLIR
+type: TGP
 year: 2003
 # A bit of a hack, but fixes the common case where the Hornet cheek station is
 # empty because no TGP is available.

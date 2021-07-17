@@ -1,4 +1,5 @@
 name: AN/AAQ-28 LITENING
+type: TGP
 year: 1999
 # A bit of a hack, but fixes the common case where the Hornet cheek station is
 # empty because no TGP is available. For the Viper this will have no effect

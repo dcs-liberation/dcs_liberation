@@ -1,4 +1,5 @@
 name: GBU-24
+type: LGB
 year: 1986
 fallback: GBU-10
 clsids:
