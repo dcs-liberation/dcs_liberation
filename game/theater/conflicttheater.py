@@ -389,8 +389,10 @@ class MizCampaignLoader:
                 origin, list(reversed(waypoints))
             )
 
-    def objective_info(self, near: Positioned) -> Tuple[ControlPoint, Distance]:
-        closest = self.theater.closest_control_point(near.position)
+    def objective_info(
+        self, near: Positioned, allow_naval: bool = False
+    ) -> Tuple[ControlPoint, Distance]:
+        closest = self.theater.closest_control_point(near.position, allow_naval)
         distance = meters(closest.position.distance_to_point(near.position))
         return closest, distance
 
@@ -402,7 +404,7 @@ class MizCampaignLoader:
             )
 
         for ship in self.ships:
-            closest, distance = self.objective_info(ship)
+            closest, distance = self.objective_info(ship, allow_naval=True)
             closest.preset_locations.ships.append(
                 PointWithHeading.from_point(ship.position, ship.units[0].heading)
             )
@@ -644,10 +646,14 @@ class ConflictTheater:
     def enemy_points(self) -> List[ControlPoint]:
         return list(self.control_points_for(player=False))
 
-    def closest_control_point(self, point: Point) -> ControlPoint:
+    def closest_control_point(
+        self, point: Point, allow_naval: bool = False
+    ) -> ControlPoint:
         closest = self.controlpoints[0]
         closest_distance = point.distance_to_point(closest.position)
         for control_point in self.controlpoints[1:]:
+            if control_point.is_fleet and not allow_naval:
+                continue
             distance = point.distance_to_point(control_point.position)
             if distance < closest_distance:
                 closest = control_point

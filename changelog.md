@@ -13,6 +13,8 @@ Saves from 3.x are not compatible with 5.0.
 
 ## Fixes
 
+* **[Campaign]** Naval control points will no longer claim ground objectives during campaign generation and prevent them from spawning.
+
 # 4.1.0
 
 Saves from 4.0.0 are compatible with 4.1.0.
