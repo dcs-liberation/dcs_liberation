@@ -37,6 +37,7 @@ from tabulate import tabulate
 from game.data.alic import AlicCodes
 from game.db import unit_type_from_name
 from game.dcs.aircrafttype import AircraftType
+from game.savecompat import has_save_compat_for
 from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.theater.bullseye import Bullseye
 from game.utils import meters
@@ -564,20 +565,16 @@ class NotesPage(KneeboardPage):
 
     def __init__(
         self,
-        game: "Game",
+        notes: str,
         dark_kneeboard: bool,
     ) -> None:
-        self.game = game
+        self.notes = notes
         self.dark_kneeboard = dark_kneeboard
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
         writer.title(f"Notes")
-
-        try:
-            writer.text(self.game.notes)
-        except AttributeError:  # old saves may not have .notes ;)
-            writer.text("")
+        writer.text(self.notes)
         writer.write(path)
 
 
@@ -629,6 +626,7 @@ class KneeboardGenerator(MissionInfoGenerator):
             return StrikeTaskPage(flight, self.dark_kneeboard, self.game.theater)
         return None
 
+    @has_save_compat_for(4)
     def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
         pages: List[KneeboardPage] = [
@@ -648,11 +646,11 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.mission.start_time,
                 self.dark_kneeboard,
             ),
-            NotesPage(
-                self.game,
-                self.dark_kneeboard,
-            ),
         ]
+
+        # Only create the notes page if there are notes to show.
+        if notes := getattr(self.game, "notes", ""):
+            pages.append(NotesPage(notes, self.dark_kneeboard))
 
         if (target_page := self.generate_task_page(flight)) is not None:
             pages.append(target_page)
