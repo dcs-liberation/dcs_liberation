@@ -34,7 +34,7 @@ SEASONAL_CONDITIONS = SeasonalConditions(
             cloudy=25,
             clear_skies=70,
         ),
-        Season.Autumn: WeatherTypeChances(
+        Season.Fall: WeatherTypeChances(
             thunderstorm=1,
             raining=10,
             cloudy=45,

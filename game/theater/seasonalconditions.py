@@ -8,7 +8,7 @@ class Season(Enum):
     Winter = "winter"
     Spring = "spring"
     Summer = "summer"
-    Autumn = "autumn"
+    Fall = "fall"
 
 
 def determine_season(day: datetime.date) -> Season:
@@ -24,7 +24,7 @@ def determine_season(day: datetime.date) -> Season:
     elif day_of_year < winter_end_day + season_length * 2:
         return Season.Summer
     elif day_of_year < winter_end_day + season_length * 3:
-        return Season.Autumn
+        return Season.Fall
     else:
         return Season.Winter
 
