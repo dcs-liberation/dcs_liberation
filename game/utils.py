@@ -17,7 +17,7 @@ MS_TO_KPH = 3.6
 KPH_TO_MS = 1 / MS_TO_KPH
 
 INHG_TO_HPA = 33.86389
-INHG_TR_MMHG = 25.400002776728
+INHG_TO_MMHG = 25.400002776728
 
 
 def heading_sum(h: int, a: int) -> int:
@@ -194,7 +194,7 @@ class Pressure:
 
     @property
     def mm_hg(self) -> float:
-        return self.pressure_in_inches_hg * INHG_TR_MMHG
+        return self.pressure_in_inches_hg * INHG_TO_MMHG
 
     @property
     def hecto_pascals(self) -> float:
