@@ -578,20 +578,16 @@ class NotesPage(KneeboardPage):
 
     def __init__(
         self,
-        game: "Game",
+        notes: str,
         dark_kneeboard: bool,
     ) -> None:
-        self.game = game
+        self.notes = notes
         self.dark_kneeboard = dark_kneeboard
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
         writer.title(f"Notes")
-
-        try:
-            writer.text(self.game.notes)
-        except AttributeError:  # old saves may not have .notes ;)
-            writer.text("")
+        writer.text(self.notes)
         writer.write(path)
 
 
@@ -663,11 +659,11 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.mission.start_time,
                 self.dark_kneeboard,
             ),
-            NotesPage(
-                self.game,
-                self.dark_kneeboard,
-            ),
         ]
+
+        # Only create the notes page if there are notes to show.
+        if notes := self.game.notes:
+            pages.append(NotesPage(notes, self.dark_kneeboard))
 
         if (target_page := self.generate_task_page(flight)) is not None:
             pages.append(target_page)
