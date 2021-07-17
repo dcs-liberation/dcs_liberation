@@ -9,13 +9,13 @@ PARAMETERS = TransverseMercator(
 )
 
 SEASONAL_CONDITIONS = SeasonalConditions(
-    summer_avg_pressure=30.02,  # TODO: More science
-    winter_avg_pressure=29.82,  # TODO: More science
+    summer_avg_pressure=30.02,  # TODO: Find real-world data
+    winter_avg_pressure=29.82,  # TODO: Find real-world data
     summer_avg_temperature=28.0,
     winter_avg_temperature=27.0,
     temperature_day_night_difference=1.0,
     weather_type_chances={
-        # TODO: More science for all these values
+        # TODO: Find real-world data for all these values
         Season.Winter: WeatherTypeChances(
             thunderstorm=2,
             raining=20,
