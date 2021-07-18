@@ -241,6 +241,10 @@ class AircraftType(UnitType[Type[FlyingType]]):
             mission_range = (
                 nautical_miles(50) if aircraft.helicopter else nautical_miles(150)
             )
+            logging.warning(
+                f"{aircraft.id} does not specify a max_range. Defaulting to "
+                f"{mission_range.nautical_miles}NM"
+            )
 
         try:
             introduction = data["introduced"]
