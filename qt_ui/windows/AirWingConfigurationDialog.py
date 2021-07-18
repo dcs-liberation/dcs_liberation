@@ -1,21 +1,20 @@
-import itertools
-import logging
-from collections import defaultdict
-from typing import Optional, Callable, Iterator
+from typing import Optional, Callable
 
 from PySide2.QtCore import (
     QItemSelectionModel,
     QModelIndex,
     QSize,
     Qt,
+    QItemSelection,
+    Signal,
 )
+from PySide2.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PySide2.QtWidgets import (
     QAbstractItemView,
     QDialog,
     QListView,
     QVBoxLayout,
     QGroupBox,
-    QGridLayout,
     QLabel,
     QWidget,
     QScrollArea,
@@ -23,12 +22,15 @@ from PySide2.QtWidgets import (
     QTextEdit,
     QCheckBox,
     QHBoxLayout,
+    QStackedLayout,
 )
 
 from game import Game
+from game.dcs.aircrafttype import AircraftType
 from game.squadrons import Squadron, AirWing, Pilot
 from gen.flights.flight import FlightType
 from qt_ui.models import AirWingModel, SquadronModel
+from qt_ui.uiconstants import AIRCRAFT_ICONS
 from qt_ui.windows.AirWingDialog import SquadronDelegate
 from qt_ui.windows.SquadronDialog import SquadronDialog
 
@@ -151,60 +153,33 @@ class SquadronConfigurationBox(QGroupBox):
         return self.squadron
 
 
-class AirWingConfigurationLayout(QVBoxLayout):
-    def __init__(self, air_wing: AirWing) -> None:
+class SquadronConfigurationLayout(QVBoxLayout):
+    def __init__(self, squadrons: list[Squadron]) -> None:
         super().__init__()
-        self.air_wing = air_wing
         self.squadron_configs = []
-
-        doc_url = (
-            "https://github.com/dcs-liberation/dcs_liberation/wiki/Squadrons-and-pilots"
-        )
-        doc_label = QLabel(
-            "Use this opportunity to customize the squadrons available to your "
-            "coalition. <strong>This is your<br />"
-            "only opportunity to make changes.</strong><br />"
-            "<br />"
-            "To accept your changes and continue, close this window.<br />"
-            "<br />"
-            "To remove a squadron from the game, uncheck the box in the title. New "
-            "squadrons cannot<br />"
-            "be added via the UI at this time. To add a custom squadron, see "
-            f'<a style="color:#ffffff" href="{doc_url}">the wiki</a>.'
-        )
-
-        doc_label.setOpenExternalLinks(True)
-        self.addWidget(doc_label)
-        for squadron in self.air_wing.iter_squadrons():
+        for squadron in squadrons:
             squadron_config = SquadronConfigurationBox(squadron)
             self.squadron_configs.append(squadron_config)
             self.addWidget(squadron_config)
 
-    def apply(self) -> None:
-        keep_squadrons = defaultdict(list)
+    def apply(self) -> list[Squadron]:
+        keep_squadrons = []
         for squadron_config in self.squadron_configs:
             if squadron_config.isChecked():
-                squadron = squadron_config.apply()
-                keep_squadrons[squadron.aircraft].append(squadron)
-        self.air_wing.squadrons = keep_squadrons
+                keep_squadrons.append(squadron_config.apply())
+        return keep_squadrons
 
 
-class AirWingConfigurationDialog(QDialog):
-    """Dialog window for air wing configuration."""
+class AircraftSquadronsPage(QWidget):
+    def __init__(self, squadrons: list[Squadron]) -> None:
+        super().__init__()
+        layout = QVBoxLayout()
+        self.setLayout(layout)
 
-    def __init__(self, game: Game, parent) -> None:
-        super().__init__(parent)
-        self.air_wing = game.blue.air_wing
+        self.squadrons_config = SquadronConfigurationLayout(squadrons)
 
-        self.setMinimumSize(500, 800)
-        self.setWindowTitle(f"Air Wing Configuration")
-        # TODO: self.setWindowIcon()
-
-        self.air_wing_config = AirWingConfigurationLayout(self.air_wing)
-
-        scrolling_layout = QVBoxLayout()
         scrolling_widget = QWidget()
-        scrolling_widget.setLayout(self.air_wing_config)
+        scrolling_widget.setLayout(self.squadrons_config)
 
         scrolling_area = QScrollArea()
         scrolling_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -212,9 +187,112 @@ class AirWingConfigurationDialog(QDialog):
         scrolling_area.setWidgetResizable(True)
         scrolling_area.setWidget(scrolling_widget)
 
-        scrolling_layout.addWidget(scrolling_area)
-        self.setLayout(scrolling_layout)
+        layout.addWidget(scrolling_area)
+
+    def apply(self) -> list[Squadron]:
+        return self.squadrons_config.apply()
+
+
+class AircraftSquadronsPanel(QStackedLayout):
+    def __init__(self, air_wing: AirWing) -> None:
+        super().__init__()
+        self.air_wing = air_wing
+        self.squadrons_pages: dict[AircraftType, AircraftSquadronsPage] = {}
+        for aircraft, squadrons in self.air_wing.squadrons.items():
+            page = AircraftSquadronsPage(squadrons)
+            self.addWidget(page)
+            self.squadrons_pages[aircraft] = page
+
+    def apply(self) -> None:
+        for aircraft, page in self.squadrons_pages.items():
+            self.air_wing.squadrons[aircraft] = page.apply()
+
+
+class AircraftTypeList(QListView):
+    page_index_changed = Signal(int)
+
+    def __init__(self, air_wing: AirWing) -> None:
+        super().__init__()
+        self.setIconSize(QSize(91, 24))
+        self.setMinimumWidth(300)
+
+        model = QStandardItemModel(self)
+        self.setModel(model)
+
+        self.selectionModel().setCurrentIndex(
+            model.index(0, 0), QItemSelectionModel.Select
+        )
+        self.selectionModel().selectionChanged.connect(self.on_selection_changed)
+        for aircraft in air_wing.squadrons:
+            aircraft_item = QStandardItem(aircraft.name)
+            icon = self.icon_for(aircraft)
+            if icon is not None:
+                aircraft_item.setIcon(icon)
+            aircraft_item.setEditable(False)
+            aircraft_item.setSelectable(True)
+            model.appendRow(aircraft_item)
+
+    def on_selection_changed(
+        self, selected: QItemSelection, _deselected: QItemSelection
+    ) -> None:
+        indexes = selected.indexes()
+        if len(indexes) > 1:
+            raise RuntimeError("Aircraft list should not allow multi-selection")
+        if not indexes:
+            return
+        self.page_index_changed.emit(indexes[0].row())
+
+    @staticmethod
+    def icon_for(aircraft: AircraftType) -> Optional[QIcon]:
+        name = aircraft.dcs_id
+        if name in AIRCRAFT_ICONS:
+            return QIcon(AIRCRAFT_ICONS[name])
+        return None
+
+
+class AirWingConfigurationDialog(QDialog):
+    """Dialog window for air wing configuration."""
+
+    def __init__(self, game: Game, parent) -> None:
+        super().__init__(parent)
+        self.setMinimumSize(500, 800)
+        self.setWindowTitle(f"Air Wing Configuration")
+        # TODO: self.setWindowIcon()
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        doc_url = (
+            "https://github.com/dcs-liberation/dcs_liberation/wiki/Squadrons-and-pilots"
+        )
+        doc_label = QLabel(
+            "Use this opportunity to customize the squadrons available to your "
+            "coalition. <strong>This is your only opportunity to make changes.</strong>"
+            "<br /><br />"
+            "To accept your changes and continue, close this window.<br />"
+            "<br />"
+            "To remove a squadron from the game, uncheck the box in the title. New "
+            "squadrons cannot be added via the UI at this time. To add a custom "
+            "squadron,<br />"
+            f'see <a style="color:#ffffff" href="{doc_url}">the wiki</a>.'
+        )
+
+        doc_label.setOpenExternalLinks(True)
+        layout.addWidget(doc_label)
+
+        columns = QHBoxLayout()
+        layout.addLayout(columns)
+
+        type_list = AircraftTypeList(game.blue.air_wing)
+        type_list.page_index_changed.connect(self.on_aircraft_changed)
+        columns.addWidget(type_list)
+
+        self.squadrons_panel = AircraftSquadronsPanel(game.blue.air_wing)
+        columns.addLayout(self.squadrons_panel)
 
     def reject(self) -> None:
-        self.air_wing_config.apply()
+        self.squadrons_panel.apply()
         super().reject()
+
+    def on_aircraft_changed(self, index: QModelIndex) -> None:
+        self.squadrons_panel.setCurrentIndex(index)
