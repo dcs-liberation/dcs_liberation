@@ -105,6 +105,35 @@ class PatrolConfig:
         )
 
 
+@dataclass(frozen=True)
+class FuelConsumption:
+    #: The estimated taxi fuel requirement, in pounds.
+    taxi: int
+
+    #: The estimated fuel consumption for a takeoff climb, in pounds per nautical mile.
+    climb: float
+
+    #: The estimated fuel consumption for cruising, in pounds per nautical mile.
+    cruise: float
+
+    #: The estimated fuel consumption for combat speeds, in pounds per nautical mile.
+    combat: float
+
+    #: The minimum amount of fuel that the aircraft should land with, in pounds. This is
+    #: a reserve amount for landing delays or emergencies.
+    min_safe: int
+
+    @classmethod
+    def from_data(cls, data: dict[str, Any]) -> FuelConsumption:
+        return FuelConsumption(
+            int(data["taxi"]),
+            float(data["climb_ppm"]),
+            float(data["cruise_ppm"]),
+            float(data["combat_ppm"]),
+            int(data["min_safe"]),
+        )
+
+
 # TODO: Split into PlaneType and HelicopterType?
 @dataclass(frozen=True)
 class AircraftType(UnitType[Type[FlyingType]]):
@@ -123,6 +152,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
     #: The maximum range between the origin airfield and the target for which the auto-
     #: planner will consider this aircraft usable for a mission.
     max_mission_range: Distance
+
+    fuel_consumption: Optional[FuelConsumption]
 
     intra_flight_radio: Optional[Radio]
     channel_allocator: Optional[RadioChannelAllocator]
@@ -246,6 +277,14 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 f"{mission_range.nautical_miles}NM"
             )
 
+        fuel_data = data.get("fuel")
+        if fuel_data is not None:
+            fuel_consumption: Optional[FuelConsumption] = FuelConsumption.from_data(
+                fuel_data
+            )
+        else:
+            fuel_consumption = None
+
         try:
             introduction = data["introduced"]
             if introduction is None:
@@ -274,6 +313,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 patrol_altitude=patrol_config.altitude,
                 patrol_speed=patrol_config.speed,
                 max_mission_range=mission_range,
+                fuel_consumption=fuel_consumption,
                 intra_flight_radio=radio_config.intra_flight,
                 channel_allocator=radio_config.channel_allocator,
                 channel_namer=radio_config.channel_namer,

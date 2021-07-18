@@ -23,6 +23,7 @@ only be added per airframe, so PvP missions where each side have the same
 aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
 import datetime
+import math
 import textwrap
 from collections import defaultdict
 from dataclasses import dataclass
@@ -39,8 +40,8 @@ from game.db import unit_type_from_name
 from game.dcs.aircrafttype import AircraftType
 from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.theater.bullseye import Bullseye
-from game.weather import Weather
 from game.utils import meters
+from game.weather import Weather
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
@@ -111,12 +112,17 @@ class KneeboardPageWriter:
         self.text(text, font=self.heading_font, fill=self.foreground_fill)
 
     def table(
-        self, cells: List[List[str]], headers: Optional[List[str]] = None
+        self,
+        cells: List[List[str]],
+        headers: Optional[List[str]] = None,
+        font: Optional[ImageFont.FreeTypeFont] = None,
     ) -> None:
         if headers is None:
             headers = []
+        if font is None:
+            font = self.table_font
         table = tabulate(cells, headers=headers, numalign="right")
-        self.text(table, font=self.table_font, fill=self.foreground_fill)
+        self.text(table, font, fill=self.foreground_fill)
 
     def write(self, path: Path) -> None:
         self.image.save(path)
@@ -199,6 +205,7 @@ class FlightPlanBuilder:
                 self._ground_speed(self.target_points[0].waypoint),
                 self._format_time(self.target_points[0].waypoint.tot),
                 self._format_time(self.target_points[0].waypoint.departure_time),
+                self._format_min_fuel(self.target_points[0].waypoint.min_fuel),
             ]
         )
         self.last_waypoint = self.target_points[-1].waypoint
@@ -216,6 +223,7 @@ class FlightPlanBuilder:
                 self._ground_speed(waypoint.waypoint),
                 self._format_time(waypoint.waypoint.tot),
                 self._format_time(waypoint.waypoint.departure_time),
+                self._format_min_fuel(waypoint.waypoint.min_fuel),
             ]
         )
 
@@ -254,6 +262,12 @@ class FlightPlanBuilder:
         duration = (waypoint.tot - last_time).total_seconds() / 3600
         return f"{int(distance.nautical_miles / duration)} kt"
 
+    @staticmethod
+    def _format_min_fuel(min_fuel: Optional[float]) -> str:
+        if min_fuel is None:
+            return ""
+        return str(math.ceil(min_fuel / 100) * 100)
+
     def build(self) -> List[List[str]]:
         return self.rows
 
@@ -276,6 +290,11 @@ class BriefingPage(KneeboardPage):
         self.weather = weather
         self.start_time = start_time
         self.dark_kneeboard = dark_kneeboard
+        self.flight_plan_font = ImageFont.truetype(
+            "resources/fonts/Inconsolata.otf",
+            16,
+            layout_engine=ImageFont.LAYOUT_BASIC,
+        )
 
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
@@ -302,7 +321,17 @@ class BriefingPage(KneeboardPage):
             flight_plan_builder.add_waypoint(num, waypoint)
         writer.table(
             flight_plan_builder.build(),
-            headers=["#", "Action", "Alt", "Dist", "GSPD", "Time", "Departure"],
+            headers=[
+                "#",
+                "Action",
+                "Alt",
+                "Dist",
+                "GSPD",
+                "Time",
+                "Departure",
+                "Min fuel",
+            ],
+            font=self.flight_plan_font,
         )
 
         writer.text(f"Bullseye: {self.bullseye.to_lat_lon(self.theater).format_dms()}")

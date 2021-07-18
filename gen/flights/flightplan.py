@@ -20,6 +20,7 @@ from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.data.doctrine import Doctrine
+from game.dcs.aircrafttype import FuelConsumption
 from game.flightplan import IpZoneGeometry, JoinZoneGeometry, HoldZoneGeometry
 from game.theater import (
     Airfield,
@@ -138,6 +139,17 @@ class FlightPlan:
     @cached_property
     def bingo_fuel(self) -> int:
         """Bingo fuel value for the FlightPlan"""
+        if (fuel := self.flight.unit_type.fuel_consumption) is not None:
+            return self._bingo_estimate(fuel)
+        return self._legacy_bingo_estimate()
+
+    def _bingo_estimate(self, fuel: FuelConsumption) -> int:
+        distance_to_arrival = self.max_distance_from(self.flight.arrival)
+        fuel_consumed = fuel.cruise * distance_to_arrival.nautical_miles
+        bingo = fuel_consumed + fuel.min_safe
+        return math.ceil(bingo / 100) * 100
+
+    def _legacy_bingo_estimate(self) -> int:
         distance_to_arrival = self.max_distance_from(self.flight.arrival)
 
         bingo = 1000.0  # Minimum Emergency Fuel

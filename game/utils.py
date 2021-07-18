@@ -4,7 +4,7 @@ import itertools
 import math
 from collections import Iterable
 from dataclasses import dataclass
-from typing import Union, Any
+from typing import Union, Any, TypeVar
 
 METERS_TO_FEET = 3.28084
 FEET_TO_METERS = 1 / METERS_TO_FEET
@@ -205,7 +205,10 @@ def inches_hg(value: float) -> Pressure:
     return Pressure(value)
 
 
-def pairwise(iterable: Iterable[Any]) -> Iterable[tuple[Any, Any]]:
+PairwiseT = TypeVar("PairwiseT")
+
+
+def pairwise(iterable: Iterable[PairwiseT]) -> Iterable[tuple[PairwiseT, PairwiseT]]:
     """
     itertools recipe
     s -> (s0,s1), (s1,s2), (s2, s3), ...
