@@ -23,6 +23,7 @@ from PySide2.QtWidgets import (
     QCheckBox,
     QHBoxLayout,
     QStackedLayout,
+    QTabWidget,
 )
 
 from game import Game
@@ -118,14 +119,22 @@ class SquadronConfigurationBox(QGroupBox):
         self.nickname_edit.textChanged.connect(self.on_nickname_changed)
         left_column.addWidget(self.nickname_edit)
 
-        left_column.addWidget(
-            QLabel("Players (one per line, leave empty for an AI-only squadron):")
-        )
-        players = [p for p in squadron.available_pilots if p.player]
+        if squadron.player:
+            player_label = QLabel(
+                "Players (one per line, leave empty for an AI-only squadron):"
+            )
+        else:
+            player_label = QLabel("Player slots not available for opfor")
+        left_column.addWidget(player_label)
+
+        players = [p for p in squadron.pilot_pool if p.player]
         for player in players:
-            squadron.available_pilots.remove(player)
+            squadron.pilot_pool.remove(player)
+        if not squadron.player:
+            players = []
         self.player_list = QTextEdit("<br />".join(p.name for p in players))
         self.player_list.setAcceptRichText(False)
+        self.player_list.setEnabled(squadron.player)
         left_column.addWidget(self.player_list)
 
         left_column.addStretch()
@@ -250,6 +259,27 @@ class AircraftTypeList(QListView):
         return None
 
 
+class AirWingConfigurationTab(QWidget):
+    def __init__(self, air_wing: AirWing) -> None:
+        super().__init__()
+
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+
+        type_list = AircraftTypeList(air_wing)
+        type_list.page_index_changed.connect(self.on_aircraft_changed)
+        layout.addWidget(type_list)
+
+        self.squadrons_panel = AircraftSquadronsPanel(air_wing)
+        layout.addLayout(self.squadrons_panel)
+
+    def apply(self) -> None:
+        self.squadrons_panel.apply()
+
+    def on_aircraft_changed(self, index: QModelIndex) -> None:
+        self.squadrons_panel.setCurrentIndex(index)
+
+
 class AirWingConfigurationDialog(QDialog):
     """Dialog window for air wing configuration."""
 
@@ -280,19 +310,17 @@ class AirWingConfigurationDialog(QDialog):
         doc_label.setOpenExternalLinks(True)
         layout.addWidget(doc_label)
 
-        columns = QHBoxLayout()
-        layout.addLayout(columns)
+        tab_widget = QTabWidget()
+        layout.addWidget(tab_widget)
 
-        type_list = AircraftTypeList(game.blue.air_wing)
-        type_list.page_index_changed.connect(self.on_aircraft_changed)
-        columns.addWidget(type_list)
-
-        self.squadrons_panel = AircraftSquadronsPanel(game.blue.air_wing)
-        columns.addLayout(self.squadrons_panel)
+        self.tabs = []
+        for coalition in game.coalitions:
+            coalition_tab = AirWingConfigurationTab(coalition.air_wing)
+            name = "Blue" if coalition.player else "Red"
+            tab_widget.addTab(coalition_tab, name)
+            self.tabs.append(coalition_tab)
 
     def reject(self) -> None:
-        self.squadrons_panel.apply()
+        for tab in self.tabs:
+            tab.apply()
         super().reject()
-
-    def on_aircraft_changed(self, index: QModelIndex) -> None:
-        self.squadrons_panel.setCurrentIndex(index)
