@@ -11,7 +11,6 @@ from shapely.geometry import (
     MultiLineString,
 )
 
-from game.theater import ConflictTheater
 from game.utils import nautical_miles
 
 if TYPE_CHECKING:
@@ -26,12 +25,7 @@ class JoinZoneGeometry:
     """
 
     def __init__(
-        self,
-        target: Point,
-        home: Point,
-        ip: Point,
-        coalition: Coalition,
-        theater: ConflictTheater,
+        self, target: Point, home: Point, ip: Point, coalition: Coalition
     ) -> None:
         # Normal join placement is based on the path from home to the IP. If no path is
         # found it means that the target is on a direct path. In that case we instead
@@ -82,14 +76,28 @@ class JoinZoneGeometry:
             ]
         )
 
-        permissible_lines = ip_direction_limit_wedge.intersection(
+        permissible_zones = ip_direction_limit_wedge.difference(
+            self.excluded_zones
+        ).difference(self.home_bubble)
+        if permissible_zones.is_empty:
+            permissible_zones = MultiPolygon([])
+        if not isinstance(permissible_zones, MultiPolygon):
+            permissible_zones = MultiPolygon([permissible_zones])
+        self.permissible_zones = permissible_zones
+
+        preferred_lines = ip_direction_limit_wedge.intersection(
             self.excluded_zones.boundary
         ).difference(self.home_bubble)
 
-        if not isinstance(permissible_lines, MultiLineString):
-            permissible_lines = MultiLineString([permissible_lines])
-        self.permissible_lines = permissible_lines
+        if preferred_lines.is_empty:
+            preferred_lines = MultiLineString([])
+        if not isinstance(preferred_lines, MultiLineString):
+            preferred_lines = MultiLineString([preferred_lines])
+        self.preferred_lines = preferred_lines
 
     def find_best_join_point(self) -> Point:
-        join, _ = shapely.ops.nearest_points(self.permissible_lines, self.home)
+        if self.preferred_lines.is_empty:
+            join, _ = shapely.ops.nearest_points(self.permissible_zones, self.ip)
+        else:
+            join, _ = shapely.ops.nearest_points(self.preferred_lines, self.home)
         return Point(join.x, join.y)

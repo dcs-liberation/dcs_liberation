@@ -1066,7 +1066,14 @@ function drawJoinZones() {
     }).addTo(joinZones);
   }
 
-  for (const line of game.joinZones.permissibleLines) {
+  for (const zone of game.joinZones.permissibleZones) {
+    L.polygon(zone, {
+      color: Colors.Green,
+      interactive: false,
+    }).addTo(joinZones);
+  }
+
+  for (const line of game.joinZones.preferredLines) {
     L.polyline(line, {
       color: Colors.Green,
       interactive: false,
@@ -1110,6 +1117,13 @@ function drawHoldZones() {
 
   for (const zone of game.holdZones.permissibleZones) {
     L.polygon(zone, {
+      color: Colors.Green,
+      interactive: false,
+    }).addTo(holdZones);
+  }
+
+  for (const line of game.holdZones.preferredLines) {
+    L.polyline(line, {
       color: Colors.Green,
       interactive: false,
     }).addTo(holdZones);

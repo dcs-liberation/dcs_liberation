@@ -975,7 +975,6 @@ class FlightPlanBuilder:
             package_airfield.position,
             ingress_point,
             self.coalition,
-            self.theater,
         ).find_best_join_point()
 
         # And the split point based on the best route from the IP. Since that's no
