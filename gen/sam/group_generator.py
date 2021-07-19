@@ -143,7 +143,7 @@ class VehicleGroupGenerator(
             y: float = self.position.y + launcher_distance * math.sin(
                 math.radians(current_offset)
             )
-            positions.append((x, y, heading = Heading.from_degrees(current_offset)))
+            positions.append((x, y, Heading.from_degrees(current_offset)))
             current_offset += outer_offset
         return positions
 
