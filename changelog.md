@@ -1,6 +1,6 @@
 # 5.0.0
 
-Saves from 3.x are not compatible with 5.0.
+Saves from 4.x are not compatible with 5.0.
 
 ## Features/Improvements
 
