@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Iterator, List, Tuple
+from typing import Iterator, List, Tuple, Any
 
 from dcs.mapping import Point
 
@@ -66,12 +66,31 @@ class FrontLine(MissionTarget):
         self.segments: List[FrontLineSegment] = [
             FrontLineSegment(a, b) for a, b in pairwise(route)
         ]
-        self.name = f"Front line {blue_point}/{red_point}"
+        super().__init__(
+            f"Front line {blue_point}/{red_point}",
+            self.point_from_a(self._position_distance),
+        )
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, FrontLine):
+            return False
+        return (self.blue_cp, self.red_cp) == (other.blue_cp, other.red_cp)
+
+    def __hash__(self) -> int:
+        return hash((self.blue_cp, self.red_cp))
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        if not hasattr(self, "position"):
+            self.position = self.point_from_a(self._position_distance)
+
+    def control_point_friendly_to(self, player: bool) -> ControlPoint:
+        if player:
+            return self.blue_cp
+        return self.red_cp
 
     def control_point_hostile_to(self, player: bool) -> ControlPoint:
-        if player:
-            return self.red_cp
-        return self.blue_cp
+        return self.control_point_friendly_to(not player)
 
     def is_friendly(self, to_player: bool) -> bool:
         """Returns True if the objective is in friendly territory."""
@@ -88,14 +107,6 @@ class FrontLine(MissionTarget):
         yield from super().mission_types(for_player)
 
     @property
-    def position(self):
-        """
-        The position where the conflict should occur
-        according to the current strength of each control point.
-        """
-        return self.point_from_a(self._position_distance)
-
-    @property
     def points(self) -> Iterator[Point]:
         yield self.segments[0].point_a
         for segment in self.segments:
@@ -107,7 +118,7 @@ class FrontLine(MissionTarget):
         return self.blue_cp, self.red_cp
 
     @property
-    def attack_distance(self):
+    def attack_distance(self) -> float:
         """The total distance of all segments"""
         return sum(i.attack_distance for i in self.segments)
 
@@ -149,6 +160,9 @@ class FrontLine(MissionTarget):
                 )
             else:
                 remaining_dist -= segment.attack_distance
+        raise RuntimeError(
+            f"Could not find front line point {distance} from {self.blue_cp}"
+        )
 
     @property
     def _position_distance(self) -> float:

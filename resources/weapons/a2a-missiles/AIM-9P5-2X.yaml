@@ -1,0 +1,6 @@
+name: 2xAIM-9P5
+year: 1980
+fallback: 2xAIM-9P
+clsids:
+  - "LAU-105_2*AIM-9P5"
+  - "{F4-2-AIM9P5}"

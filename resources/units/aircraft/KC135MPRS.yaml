@@ -1,4 +1,5 @@
-description: The Boeing KC-135 Stratotanker is a military aerial refueling aircraft
+description:
+  The Boeing KC-135 Stratotanker is a military aerial refueling aircraft
   that was developed from the Boeing 367-80 prototype, alongside the Boeing 707 airliner. This
   model has the Multi-point Refueling System modification, allowing for probe and
   drogue refuelling.
@@ -7,6 +8,7 @@ manufacturer: Boeing
 origin: USA
 price: 25
 role: Tanker
+max_range: 1000
 patrol:
   # 300 knots IAS.
   speed: 440

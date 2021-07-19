@@ -1,5 +1,6 @@
 carrier_capable: true
-description: The Lockheed S-3 Viking is a 4-crew, twin-engine turbofan-powered jet
+description:
+  The Lockheed S-3 Viking is a 4-crew, twin-engine turbofan-powered jet
   aircraft that was used by the U.S. Navy (USN) primarily for anti-submarine warfare.
   In the late 1990s, the S-3B's mission focus shifted to surface warfare and aerial
   refueling. The Viking also provided electronic warfare and surface surveillance
@@ -16,6 +17,7 @@ origin: USA
 price: 20
 max_group_size: 1
 role: Carrier-based Tanker
+max_range: 1000
 patrol:
   # ~265 knots IAS.
   speed: 320

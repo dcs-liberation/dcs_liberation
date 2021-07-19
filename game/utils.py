@@ -3,8 +3,9 @@ from __future__ import annotations
 import itertools
 import math
 import random
+from collections import Iterable
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, Any, TypeVar
 
 METERS_TO_FEET = 3.28084
 FEET_TO_METERS = 1 / METERS_TO_FEET
@@ -16,6 +17,8 @@ KPH_TO_KNOTS = 1 / KNOTS_TO_KPH
 MS_TO_KPH = 3.6
 KPH_TO_MS = 1 / MS_TO_KPH
 
+INHG_TO_HPA = 33.86389
+INHG_TO_MMHG = 25.400002776728
 
 @dataclass(frozen=True, order=True)
 class Distance:
@@ -226,7 +229,30 @@ class Heading:
         return Heading.from_degrees(self.degrees - other.degrees)
 
 
-def pairwise(iterable):
+class Pressure:
+    pressure_in_inches_hg: float
+
+    @property
+    def inches_hg(self) -> float:
+        return self.pressure_in_inches_hg
+
+    @property
+    def mm_hg(self) -> float:
+        return self.pressure_in_inches_hg * INHG_TO_MMHG
+
+    @property
+    def hecto_pascals(self) -> float:
+        return self.pressure_in_inches_hg * INHG_TO_HPA
+
+
+def inches_hg(value: float) -> Pressure:
+    return Pressure(value)
+
+
+PairwiseT = TypeVar("PairwiseT")
+
+
+def pairwise(iterable: Iterable[PairwiseT]) -> Iterable[tuple[PairwiseT, PairwiseT]]:
     """
     itertools recipe
     s -> (s0,s1), (s1,s2), (s2, s3), ...
@@ -234,3 +260,15 @@ def pairwise(iterable):
     a, b = itertools.tee(iterable)
     next(b, None)
     return zip(a, b)
+
+
+def interpolate(value1: float, value2: float, factor: float, clamp: bool) -> float:
+    """Inerpolate between two values, factor 0-1"""
+    interpolated = value1 + (value2 - value1) * factor
+
+    if clamp:
+        bigger_value = max(value1, value2)
+        smaller_value = min(value1, value2)
+        return min(bigger_value, max(smaller_value, interpolated))
+    else:
+        return interpolated

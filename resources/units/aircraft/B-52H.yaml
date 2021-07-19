@@ -1,4 +1,5 @@
-description: The Boeing B-52 Stratofortress is capable of carrying up to 70,000 pounds
+description:
+  The Boeing B-52 Stratofortress is capable of carrying up to 70,000 pounds
   (32,000 kg) of weapons, and has a typical combat range of more than 8,800 miles
   (14,080 km) without aerial refueling. The B-52 completed sixty years of continuous
   service with its original operator in 2015. After being upgraded between 2013 and
@@ -8,5 +9,6 @@ manufacturer: Boeing
 origin: USA
 price: 35
 role: Strategic Bomber
+max_range: 2000
 variants:
   B-52H Stratofortress: {}

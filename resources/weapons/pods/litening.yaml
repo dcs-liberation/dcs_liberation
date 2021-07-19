@@ -1,0 +1,15 @@
+name: AN/AAQ-28 LITENING
+type: TGP
+year: 1999
+# A bit of a hack, but fixes the common case where the Hornet cheek station is
+# empty because no TGP is available. For the Viper this will have no effect
+# because missiles can't be put on that station, but for the Viper an empty
+# pylon is the correct replacement for a TGP anyway (the jammer goes on the
+# other fuselage station, HTS isn't a good replacement, and we don't have
+# LANTIRN for the Viper).
+#
+# For the A-10 an empty pylon is also fine.
+fallback: AIM-120C
+clsids:
+  - "{A111396E-D3E8-4b9c-8AC9-2432489304D5}"
+  - "{AAQ-28_LEFT}"

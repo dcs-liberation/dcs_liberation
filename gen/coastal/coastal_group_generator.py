@@ -1,6 +1,11 @@
 import logging
 import random
-from game import db
+from typing import Optional
+
+from dcs.unitgroup import VehicleGroup
+
+from game import db, Game
+from game.theater.theatergroundobject import CoastalSiteGroundObject
 from gen.coastal.silkworm import SilkwormGenerator
 
 COASTAL_MAP = {
@@ -8,10 +13,13 @@ COASTAL_MAP = {
 }
 
 
-def generate_coastal_group(game, ground_object, faction_name: str):
+def generate_coastal_group(
+    game: Game, ground_object: CoastalSiteGroundObject, faction_name: str
+) -> Optional[VehicleGroup]:
     """
     This generate a coastal defenses group
-    :return: Nothing, but put the group reference inside the ground object
+    :return: The generated group, or None if this faction does not support coastal
+    defenses.
     """
     faction = db.FACTIONS[faction_name]
     if len(faction.coastal_defenses) > 0:

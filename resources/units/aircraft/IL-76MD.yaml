@@ -1,3 +1,4 @@
 price: 20
+max_range: 1000
 variants:
   IL-76MD: null

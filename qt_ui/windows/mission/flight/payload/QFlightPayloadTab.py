@@ -47,8 +47,20 @@ class QFlightPayloadTab(QFrame):
     def reload_from_flight(self) -> None:
         self.loadout_selector.setCurrentText(self.flight.loadout.name)
 
+    def loadout_at(self, index: int) -> Loadout:
+        loadout = self.loadout_selector.itemData(index)
+        if loadout is None:
+            return Loadout.empty_loadout()
+        return loadout
+
+    def current_loadout(self) -> Loadout:
+        loadout = self.loadout_selector.currentData()
+        if loadout is None:
+            return Loadout.empty_loadout()
+        return loadout
+
     def on_new_loadout(self, index: int) -> None:
-        self.flight.loadout = self.loadout_selector.itemData(index)
+        self.flight.loadout = self.loadout_at(index)
         self.payload_editor.reset_pylons()
 
     def on_custom_toggled(self, use_custom: bool) -> None:
@@ -56,5 +68,5 @@ class QFlightPayloadTab(QFrame):
         if use_custom:
             self.flight.loadout = self.flight.loadout.derive_custom("Custom")
         else:
-            self.flight.loadout = self.loadout_selector.currentData()
+            self.flight.loadout = self.current_loadout()
             self.payload_editor.reset_pylons()

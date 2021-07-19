@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
 from enum import Enum, unique
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 from dcs.forcedoptions import ForcedOptions
 
@@ -55,6 +55,7 @@ class Settings:
     automate_runway_repair: bool = False
     automate_front_line_reinforcements: bool = False
     automate_aircraft_reinforcements: bool = False
+    automate_front_line_stance: bool = True
     restrict_weapons_by_date: bool = False
     disable_legacy_aewc: bool = True
     disable_legacy_tanker: bool = True
@@ -104,7 +105,7 @@ class Settings:
     def set_plugin_option(self, identifier: str, enabled: bool) -> None:
         self.plugins[self.plugin_settings_key(identifier)] = enabled
 
-    def __setstate__(self, state) -> None:
+    def __setstate__(self, state: dict[str, Any]) -> None:
         # __setstate__ is called with the dict of the object being unpickled. We
         # can provide save compatibility for new settings options (which
         # normally would not be present in the unpickled object) by creating a

@@ -5,7 +5,6 @@ from typing import List, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
 from dcs.task import Task
-from dcs.unittype import VehicleType
 
 from game import persistency
 from game.debriefing import AirLosses, Debriefing
@@ -38,13 +37,13 @@ class Event:
 
     def __init__(
         self,
-        game,
+        game: Game,
         from_cp: ControlPoint,
         target_cp: ControlPoint,
         location: Point,
         attacker_name: str,
         defender_name: str,
-    ):
+    ) -> None:
         self.game = game
         self.from_cp = from_cp
         self.to_cp = target_cp
@@ -54,7 +53,7 @@ class Event:
 
     @property
     def is_player_attacking(self) -> bool:
-        return self.attacker_name == self.game.player_faction.name
+        return self.attacker_name == self.game.blue.faction.name
 
     @property
     def tasks(self) -> List[Type[Task]]:
@@ -115,10 +114,10 @@ class Event:
 
     def complete_aircraft_transfers(self, debriefing: Debriefing) -> None:
         self._transfer_aircraft(
-            self.game.blue_ato, debriefing.air_losses, for_player=True
+            self.game.blue.ato, debriefing.air_losses, for_player=True
         )
         self._transfer_aircraft(
-            self.game.red_ato, debriefing.air_losses, for_player=False
+            self.game.red.ato, debriefing.air_losses, for_player=False
         )
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
@@ -155,8 +154,8 @@ class Event:
                     pilot.record.missions_flown += 1
 
     def commit_pilot_experience(self) -> None:
-        self._commit_pilot_experience(self.game.blue_ato)
-        self._commit_pilot_experience(self.game.red_ato)
+        self._commit_pilot_experience(self.game.blue.ato)
+        self._commit_pilot_experience(self.game.red.ato)
 
     @staticmethod
     def commit_front_line_losses(debriefing: Debriefing) -> None:
@@ -220,10 +219,10 @@ class Event:
         for loss in debriefing.ground_object_losses:
             # TODO: This should be stored in the TGO, not in the pydcs Group.
             if not hasattr(loss.group, "units_losts"):
-                loss.group.units_losts = []
+                loss.group.units_losts = []  # type: ignore
 
             loss.group.units.remove(loss.unit)
-            loss.group.units_losts.append(loss.unit)
+            loss.group.units_losts.append(loss.unit)  # type: ignore
 
     def commit_building_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.building_losses:
@@ -265,7 +264,7 @@ class Event:
             except Exception:
                 logging.exception(f"Could not process base capture {captured}")
 
-    def commit(self, debriefing: Debriefing):
+    def commit(self, debriefing: Debriefing) -> None:
         logging.info("Committing mission results")
 
         self.commit_air_losses(debriefing)

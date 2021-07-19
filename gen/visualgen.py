@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from dcs.mapping import Point
 from dcs.mission import Mission
 from dcs.unit import Static
 from dcs.unittype import StaticType
@@ -11,22 +10,22 @@ from dcs.unittype import StaticType
 if TYPE_CHECKING:
     from game import Game
 
-from .conflictgen import Conflict, FRONTLINE_LENGTH
+from .conflictgen import Conflict
 
 
 class MarkerSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 5
-    rate = 0.1
+    shape_name = 5  # type: ignore
+    rate = 0.1  # type: ignore
 
 
 class Smoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 2
+    shape_name = 2  # type: ignore
     rate = 1
 
 
@@ -34,7 +33,7 @@ class BigSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 3
+    shape_name = 3  # type: ignore
     rate = 1
 
 
@@ -42,17 +41,11 @@ class MassiveSmoke(StaticType):
     id = "big_smoke"
     category = "Effects"
     name = "big_smoke"
-    shape_name = 4
+    shape_name = 4  # type: ignore
     rate = 1
 
 
-class Outpost(StaticType):
-    id = "outpost"
-    name = "outpost"
-    category = "Fortifications"
-
-
-def __monkey_static_dict(self: Static):
+def __monkey_static_dict(self: Static) -> dict[str, Any]:
     global __original_static_dict
 
     d = __original_static_dict(self)
@@ -63,9 +56,8 @@ def __monkey_static_dict(self: Static):
 
 
 __original_static_dict = Static.dict
-Static.dict = __monkey_static_dict
+Static.dict = __monkey_static_dict  # type: ignore
 
-FRONT_SMOKE_SPACING = 800
 FRONT_SMOKE_RANDOM_SPREAD = 4000
 FRONT_SMOKE_TYPE_CHANCES = {
     2: MassiveSmoke,
@@ -74,20 +66,13 @@ FRONT_SMOKE_TYPE_CHANCES = {
     100: Smoke,
 }
 
-DESTINATION_SMOKE_AMOUNT_FACTOR = 0.03
-DESTINATION_SMOKE_DISTANCE_FACTOR = 1
-DESTINATION_SMOKE_TYPE_CHANCES = {
-    5: BigSmoke,
-    100: Smoke,
-}
-
 
 class VisualGenerator:
-    def __init__(self, mission: Mission, game: Game):
+    def __init__(self, mission: Mission, game: Game) -> None:
         self.mission = mission
         self.game = game
 
-    def _generate_frontline_smokes(self):
+    def _generate_frontline_smokes(self) -> None:
         for front_line in self.game.theater.conflicts():
             from_cp = front_line.blue_cp
             to_cp = front_line.red_cp
@@ -112,68 +97,12 @@ class VisualGenerator:
                             break
 
                         self.mission.static_group(
-                            self.mission.country(self.game.enemy_country),
+                            self.mission.country(self.game.red.country_name),
                             "",
                             _type=v,
                             position=pos,
                         )
                         break
 
-    def _generate_stub_planes(self):
-        pass
-        """
-        mission_units = set()
-        for coalition_name, coalition in self.mission.coalition.items():
-            for country in coalition.countries.values():
-                for group in country.plane_group + country.helicopter_group + country.vehicle_group:
-                    for unit in group.units:
-                        mission_units.add(db.unit_type_of(unit))
-
-        for unit_type in mission_units:
-            self.mission.static_group(self.mission.country(self.game.player_country), "a", unit_type, Point(0, 300000), hidden=True)"""
-
-    def generate_target_smokes(self, target):
-        spread = target.size * DESTINATION_SMOKE_DISTANCE_FACTOR
-        for _ in range(
-            0,
-            int(
-                target.size
-                * DESTINATION_SMOKE_AMOUNT_FACTOR
-                * (1.1 - target.base.strength)
-            ),
-        ):
-            for k, v in DESTINATION_SMOKE_TYPE_CHANCES.items():
-                if random.randint(0, 100) <= k:
-                    position = target.position.random_point_within(0, spread)
-                    if not self.game.theater.is_on_land(position):
-                        break
-
-                    self.mission.static_group(
-                        self.mission.country(self.game.enemy_country),
-                        "",
-                        _type=v,
-                        position=position,
-                        hidden=True,
-                    )
-                    break
-
-    def generate_transportation_marker(self, at: Point):
-        self.mission.static_group(
-            self.mission.country(self.game.player_country),
-            "",
-            _type=MarkerSmoke,
-            position=at,
-        )
-
-    def generate_transportation_destination(self, at: Point):
-        self.generate_transportation_marker(at.point_from_heading(0, 20))
-        self.mission.static_group(
-            self.mission.country(self.game.player_country),
-            "",
-            _type=Outpost,
-            position=at,
-        )
-
-    def generate(self):
+    def generate(self) -> None:
         self._generate_frontline_smokes()
-        self._generate_stub_planes()

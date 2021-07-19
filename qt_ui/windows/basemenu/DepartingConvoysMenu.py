@@ -73,11 +73,15 @@ class DepartingConvoysList(QFrame):
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
 
-        for convoy in game_model.game.transfers.convoys.departing_from(cp):
+        for convoy in game_model.game.coalition_for(
+            cp.captured
+        ).transfers.convoys.departing_from(cp):
             group_info = DepartingConvoyInfo(convoy)
             task_box_layout.addWidget(group_info)
 
-        for cargo_ship in game_model.game.transfers.cargo_ships.departing_from(cp):
+        for cargo_ship in game_model.game.coalition_for(
+            cp.captured
+        ).transfers.cargo_ships.departing_from(cp):
             group_info = DepartingConvoyInfo(cargo_ship)
             task_box_layout.addWidget(group_info)
 

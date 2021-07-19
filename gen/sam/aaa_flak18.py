@@ -14,9 +14,8 @@ class Flak18Generator(AirDefenseGroupGenerator):
     """
 
     name = "WW2 Flak Site"
-    price = 40
 
-    def generate(self):
+    def generate(self) -> None:
 
         spacing = random.randint(30, 60)
         index = 0

@@ -13,6 +13,7 @@ import qt_ui.uiconstants as CONST
 from game import Game
 from game.event.airwar import AirWarEvent
 from game.profiling import logged_duration
+from game.utils import meters
 from gen.ato import Package
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
@@ -112,6 +113,14 @@ class QTopPanel(QFrame):
         self.transfers.setEnabled(True)
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
+
+        if game.conditions.weather.clouds:
+            base_m = game.conditions.weather.clouds.base
+            base_ft = int(meters(base_m).feet)
+            self.conditionsWidget.setToolTip(f"Cloud Base: {base_m}m / {base_ft}ft")
+        else:
+            self.conditionsWidget.setToolTip("")
+
         self.intel_box.set_game(game)
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
@@ -159,7 +168,7 @@ class QTopPanel(QFrame):
             package.time_over_target = estimator.earliest_tot()
 
     def ato_has_clients(self) -> bool:
-        for package in self.game.blue_ato.packages:
+        for package in self.game.blue.ato.packages:
             for flight in package.flights:
                 if flight.client_count > 0:
                     return True
@@ -227,7 +236,7 @@ class QTopPanel(QFrame):
 
     def check_no_missing_pilots(self) -> bool:
         missing_pilots = []
-        for package in self.game.blue_ato.packages:
+        for package in self.game.blue.ato.packages:
             for flight in package.flights:
                 if flight.missing_pilots > 0:
                     missing_pilots.append((package, flight))
@@ -273,8 +282,8 @@ class QTopPanel(QFrame):
             closest_cps[0],
             closest_cps[1],
             self.game.theater.controlpoints[0].position,
-            self.game.player_faction.name,
-            self.game.enemy_faction.name,
+            self.game.blue.faction.name,
+            self.game.red.faction.name,
         )
 
         unit_map = self.game.initiate_event(game_event)

@@ -15,9 +15,8 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "WW2 Ally Flak Site"
-    price = 140
 
-    def generate(self):
+    def generate(self) -> None:
 
         positions = self.get_circular_position(4, launcher_distance=30, coverage=360)
         for i, position in enumerate(positions):

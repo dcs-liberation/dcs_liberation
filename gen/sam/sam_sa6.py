@@ -14,9 +14,8 @@ class SA6Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-6 Kub Site"
-    price = 102
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.Kub_1S91_str,
             "STR",
@@ -25,7 +24,7 @@ class SA6Generator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(2, 4)
+        num_launchers = 4
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=360
         )

@@ -15,6 +15,7 @@ from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSe
 from game.factions.faction import Faction
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
+from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
 from qt_ui.windows.newgame.QCampaignList import (
     Campaign,
     QCampaignList,
@@ -124,6 +125,10 @@ class NewGameWizard(QtWidgets.QWizard):
             mod_settings,
         )
         self.generatedGame = generator.generate()
+
+        AirWingConfigurationDialog(self.generatedGame, self).exec_()
+
+        self.generatedGame.begin_turn_0()
 
         super(NewGameWizard, self).accept()
 

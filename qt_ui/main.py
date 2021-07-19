@@ -11,14 +11,9 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 from dcs.payloads import PayloadDirectories
-from dcs.weapons_data import weapon_ids
 
 from game import Game, VERSION, persistency
-from game.data.weapons import (
-    WEAPON_FALLBACK_MAP,
-    WEAPON_INTRODUCTION_YEARS,
-    Weapon,
-)
+from game.data.weapons import WeaponGroup
 from game.db import FACTIONS
 from game.profiling import logged_duration
 from game.settings import Settings
@@ -100,6 +95,22 @@ def run_ui(game: Optional[Game]) -> None:
     uiconstants.load_aircraft_banners()
     uiconstants.load_vehicle_banners()
 
+    # Show warning if no DCS Installation directory was set
+    if liberation_install.get_dcs_install_directory() == "":
+        QtWidgets.QMessageBox.warning(
+            splash,
+            "No DCS installation directory.",
+            "The DCS Installation directory is not set correctly. "
+            "This will prevent DCS Liberation to work properly as the MissionScripting "
+            "file will not be modified."
+            "<br/><br/>To solve this problem, you can set the Installation directory "
+            "within the preferences menu. You can also manually edit or replace the "
+            "following file:"
+            "<br/><br/><strong>&lt;dcs_installation_directory&gt;/Scripts/MissionScripting.lua</strong>"
+            "<br/><br/>The easiest way to do it is to replace the original file with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua)."
+            "<br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>",
+            QtWidgets.QMessageBox.StandardButton.Ok,
+        )
     # Replace DCS Mission scripting file to allow DCS Liberation to work
     try:
         liberation_install.replace_mission_scripting_file()
@@ -235,16 +246,14 @@ def create_game(
             high_digit_sams=False,
         ),
     )
-    return generator.generate()
+    game = generator.generate()
+    game.begin_turn_0()
+    return game
 
 
 def lint_weapon_data() -> None:
-    for clsid in weapon_ids:
-        weapon = Weapon.from_clsid(clsid)
-        if weapon not in WEAPON_INTRODUCTION_YEARS:
-            logging.warning(f"{weapon} has no introduction date")
-        if weapon not in WEAPON_FALLBACK_MAP:
-            logging.warning(f"{weapon} has no fallback")
+    for weapon in WeaponGroup.named("Unknown").weapons:
+        logging.warning(f"No weapon data for {weapon}: {weapon.clsid}")
 
 
 def main():

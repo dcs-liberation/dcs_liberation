@@ -13,9 +13,8 @@ class SA17Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-17 Grizzly Battery"
-    price = 180
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.SA_11_Buk_SR_9S18M1,
             "SR",

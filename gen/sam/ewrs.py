@@ -1,22 +1,18 @@
 from typing import Type
 
-from dcs.vehicles import AirDefence
 from dcs.unittype import VehicleType
+from dcs.vehicles import AirDefence
 
-from gen.sam.group_generator import GroupGenerator
+from game.theater.theatergroundobject import EwrGroundObject
+from gen.sam.group_generator import VehicleGroupGenerator
 
 
-class EwrGenerator(GroupGenerator):
+class EwrGenerator(VehicleGroupGenerator[EwrGroundObject]):
     unit_type: Type[VehicleType]
 
     @classmethod
     def name(cls) -> str:
         return cls.unit_type.name
-
-    @staticmethod
-    def price() -> int:
-        # TODO: Differentiate sites.
-        return 20
 
     def generate(self) -> None:
         self.add_unit(

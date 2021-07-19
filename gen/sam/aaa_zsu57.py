@@ -12,10 +12,9 @@ class ZSU57Generator(AirDefenseGroupGenerator):
     """
 
     name = "ZSU-57-2 Group"
-    price = 60
 
-    def generate(self):
-        num_launchers = 5
+    def generate(self) -> None:
+        num_launchers = 4
         positions = self.get_circular_position(
             num_launchers, launcher_distance=110, coverage=360
         )

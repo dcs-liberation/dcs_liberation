@@ -27,6 +27,7 @@ manufacturer: General Dynamics
 origin: USA
 price: 22
 role: Multirole Fighter
+max_range: 200
 variants:
   F-16CM Fighting Falcon (Block 50): {}
   F-2A: {}

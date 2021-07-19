@@ -1,11 +1,12 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import List, Type, Tuple, Optional
+from typing import List, Type, Tuple, Optional, TYPE_CHECKING
 
 from dcs.mission import Mission, StartType
-from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135
-from dcs.unittype import UnitType
+from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, PlaneType
 from dcs.task import (
     AWACS,
     ActivateBeaconCommand,
@@ -14,15 +15,20 @@ from dcs.task import (
     SetImmortalCommand,
     SetInvisibleCommand,
 )
+from dcs.unittype import UnitType
 
 from game.utils import Heading
 from .flights.ai_flight_planner_db import AEWC_CAPABLE
 from .naming import namegen
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
+from .flights.ai_flight_planner_db import AEWC_CAPABLE
+from .naming import namegen
 from .radios import RadioFrequency, RadioRegistry
 from .tacan import TacanBand, TacanChannel, TacanRegistry
 
+if TYPE_CHECKING:
+    from game import Game
 
 TANKER_DISTANCE = 15000
 TANKER_ALT = 4572
@@ -70,7 +76,7 @@ class AirSupportConflictGenerator:
         self,
         mission: Mission,
         conflict: Conflict,
-        game,
+        game: Game,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
     ) -> None:
@@ -95,12 +101,14 @@ class AirSupportConflictGenerator:
             return (TANKER_ALT + 500, 596)
         return (TANKER_ALT, 574)
 
-    def generate(self):
+    def generate(self) -> None:
         player_cp = (
             self.conflict.blue_cp
             if self.conflict.blue_cp.captured
             else self.conflict.red_cp
         )
+
+        country = self.mission.country(self.game.blue.country_name)
 
         if not self.game.settings.disable_legacy_tanker:
             fallback_tanker_number = 0
@@ -108,6 +116,11 @@ class AirSupportConflictGenerator:
             for i, tanker_unit_type in enumerate(
                 self.game.faction_for(player=True).tankers
             ):
+                unit_type = tanker_unit_type.dcs_unit_type
+                if not issubclass(unit_type, PlaneType):
+                    logging.warning(f"Refueling aircraft {unit_type} must be a plane")
+                    continue
+
                 # TODO: Make loiter altitude a property of the unit type.
                 alt, airspeed = self._get_tanker_params(tanker_unit_type.dcs_unit_type)
                 freq = self.radio_registry.alloc_uhf()
@@ -122,12 +135,10 @@ class AirSupportConflictGenerator:
                     tanker_heading.degrees, TANKER_DISTANCE
                 )
                 tanker_group = self.mission.refuel_flight(
-                    country=self.mission.country(self.game.player_country),
-                    name=namegen.next_tanker_name(
-                        self.mission.country(self.game.player_country), tanker_unit_type
-                    ),
+                    country=country,
+                    name=namegen.next_tanker_name(country, tanker_unit_type),
                     airport=None,
-                    plane_type=tanker_unit_type,
+                    plane_type=unit_type,
                     position=tanker_position,
                     altitude=alt,
                     race_distance=58000,
@@ -177,6 +188,8 @@ class AirSupportConflictGenerator:
                         tanker_unit_type.name,
                         freq,
                         tacan,
+                        start_time=None,
+                        end_time=None,
                         blue=True,
                     )
                 )
@@ -195,12 +208,15 @@ class AirSupportConflictGenerator:
             awacs_unit = possible_awacs[0]
             freq = self.radio_registry.alloc_uhf()
 
+            unit_type = awacs_unit.dcs_unit_type
+            if not issubclass(unit_type, PlaneType):
+                logging.warning(f"AWACS aircraft {unit_type} must be a plane")
+                return
+
             awacs_flight = self.mission.awacs_flight(
-                country=self.mission.country(self.game.player_country),
-                name=namegen.next_awacs_name(
-                    self.mission.country(self.game.player_country)
-                ),
-                plane_type=awacs_unit,
+                country=country,
+                name=namegen.next_awacs_name(country),
+                plane_type=unit_type,
                 altitude=AWACS_ALT,
                 airport=None,
                 position=self.conflict.position.random_point_within(

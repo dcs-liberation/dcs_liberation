@@ -1,0 +1,7 @@
+name: AIM-120B
+year: 1994
+fallback: AIM-7MH
+clsids:
+  - "{C8E06185-7CD6-4C90-959F-044679E90751}"
+  - "{LAU-115 - AIM-120B}"
+  - "{LAU-115 - AIM-120B_R}"

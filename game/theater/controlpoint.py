@@ -44,6 +44,7 @@ from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
     TheaterGroundObject,
+    BuildingGroundObject,
 )
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
@@ -271,6 +272,9 @@ class ControlPointStatus(IntEnum):
 
 
 class ControlPoint(MissionTarget, ABC):
+    # Not sure what distance DCS uses, but assuming it's about 2NM since that's roughly
+    # the distance of the circle on the map.
+    CAPTURE_DISTANCE = nautical_miles(2)
 
     position = None  # type: Point
     name = None  # type: str
@@ -291,15 +295,15 @@ class ControlPoint(MissionTarget, ABC):
         at: db.StartingPosition,
         size: int,
         importance: float,
-        has_frontline=True,
-        cptype=ControlPointType.AIRBASE,
-    ):
+        has_frontline: bool = True,
+        cptype: ControlPointType = ControlPointType.AIRBASE,
+    ) -> None:
         super().__init__(name, position)
         # TODO: Should be Airbase specific.
         self.id = cp_id
         self.full_name = name
         self.at = at
-        self.connected_objectives: List[TheaterGroundObject] = []
+        self.connected_objectives: List[TheaterGroundObject[Any]] = []
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
@@ -323,11 +327,11 @@ class ControlPoint(MissionTarget, ABC):
 
         self.target_position: Optional[Point] = None
 
-    def __repr__(self):
-        return f"<{__class__}: {self.name}>"
+    def __repr__(self) -> str:
+        return f"<{self.__class__}: {self.name}>"
 
     @property
-    def ground_objects(self) -> List[TheaterGroundObject]:
+    def ground_objects(self) -> List[TheaterGroundObject[Any]]:
         return list(self.connected_objectives)
 
     @property
@@ -335,12 +339,16 @@ class ControlPoint(MissionTarget, ABC):
     def heading(self) -> Heading:
         ...
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @property
-    def is_global(self):
+    def is_isolated(self) -> bool:
         return not self.connected_points
+
+    @property
+    def is_global(self) -> bool:
+        return self.is_isolated
 
     def transitive_connected_friendly_points(
         self, seen: Optional[Set[ControlPoint]] = None
@@ -406,21 +414,21 @@ class ControlPoint(MissionTarget, ABC):
         return False
 
     @property
-    def is_carrier(self):
+    def is_carrier(self) -> bool:
         """
         :return: Whether this control point is an aircraft carrier
         """
         return False
 
     @property
-    def is_fleet(self):
+    def is_fleet(self) -> bool:
         """
         :return: Whether this control point is a boat (mobile)
         """
         return False
 
     @property
-    def is_lha(self):
+    def is_lha(self) -> bool:
         """
         :return: Whether this control point is an LHA
         """
@@ -440,7 +448,7 @@ class ControlPoint(MissionTarget, ABC):
 
     @property
     @abstractmethod
-    def total_aircraft_parking(self):
+    def total_aircraft_parking(self) -> int:
         """
         :return: The maximum number of aircraft that can be stored in this
                  control point
@@ -472,7 +480,7 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     # TODO: Should be naval specific.
-    def get_carrier_group_name(self):
+    def get_carrier_group_name(self) -> Optional[str]:
         """
         Get the carrier group name if the airbase is a carrier
         :return: Carrier group name
@@ -498,10 +506,12 @@ class ControlPoint(MissionTarget, ABC):
         return None
 
     # TODO: Should be Airbase specific.
-    def is_connected(self, to) -> bool:
+    def is_connected(self, to: ControlPoint) -> bool:
         return to in self.connected_points
 
-    def find_ground_objects_by_obj_name(self, obj_name):
+    def find_ground_objects_by_obj_name(
+        self, obj_name: str
+    ) -> list[TheaterGroundObject[Any]]:
         found = []
         for g in self.ground_objects:
             if g.obj_name == obj_name:
@@ -523,7 +533,7 @@ class ControlPoint(MissionTarget, ABC):
             f"vehicles have been captured and sold for ${total}M."
         )
 
-    def retreat_ground_units(self, game: Game):
+    def retreat_ground_units(self, game: Game) -> None:
         # When there are multiple valid destinations, deliver units to whichever
         # base is least defended first. The closest approximation of unit
         # strength we have is price
@@ -597,7 +607,7 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
-        self.pending_unit_deliveries.refund_all(game)
+        self.pending_unit_deliveries.refund_all(game.coalition_for(for_player))
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
@@ -614,11 +624,7 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     def aircraft_transferring(self, game: Game) -> dict[AircraftType, int]:
-        if self.captured:
-            ato = game.blue_ato
-        else:
-            ato = game.red_ato
-
+        ato = game.coalition_for(self.captured).ato
         transferring: defaultdict[AircraftType, int] = defaultdict(int)
         for package in ato.packages:
             for flight in package.flights:
@@ -726,30 +732,51 @@ class ControlPoint(MissionTarget, ABC):
         return self.captured != other.captured
 
     @property
-    def frontline_unit_count_limit(self) -> int:
+    def deployable_front_line_units(self) -> int:
+        return self.deployable_front_line_units_with(self.active_ammo_depots_count)
+
+    def deployable_front_line_units_with(self, ammo_depot_count: int) -> int:
+        return min(
+            self.front_line_capacity_with(ammo_depot_count), self.base.total_armor
+        )
+
+    @classmethod
+    def front_line_capacity_with(cls, ammo_depot_count: int) -> int:
         return (
             FREE_FRONTLINE_UNIT_SUPPLY
-            + self.active_ammo_depots_count * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
+            + ammo_depot_count * AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION
         )
+
+    @property
+    def frontline_unit_count_limit(self) -> int:
+        return self.front_line_capacity_with(self.active_ammo_depots_count)
+
+    @property
+    def all_ammo_depots(self) -> Iterator[BuildingGroundObject]:
+        for tgo in self.connected_objectives:
+            if not tgo.is_ammo_depot:
+                continue
+            assert isinstance(tgo, BuildingGroundObject)
+            yield tgo
+
+    @property
+    def active_ammo_depots(self) -> Iterator[BuildingGroundObject]:
+        for tgo in self.all_ammo_depots:
+            if not tgo.is_dead:
+                yield tgo
 
     @property
     def active_ammo_depots_count(self) -> int:
         """Return the number of available ammo depots"""
-        return len(
-            [
-                obj
-                for obj in self.connected_objectives
-                if obj.category == "ammo" and not obj.is_dead
-            ]
-        )
+        return len(list(self.active_ammo_depots))
 
     @property
     def total_ammo_depots_count(self) -> int:
         """Return the number of ammo depots, including dead ones"""
-        return len([obj for obj in self.connected_objectives if obj.category == "ammo"])
+        return len(list(self.all_ammo_depots))
 
     @property
-    def strike_targets(self) -> List[Union[MissionTarget, Unit]]:
+    def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:
         return []
 
     @property
@@ -765,8 +792,8 @@ class ControlPoint(MissionTarget, ABC):
 
 class Airfield(ControlPoint):
     def __init__(
-        self, airport: Airport, size: int, importance: float, has_frontline=True
-    ):
+        self, airport: Airport, size: int, importance: float, has_frontline: bool = True
+    ) -> None:
         super().__init__(
             airport.id,
             airport.name,
@@ -880,9 +907,12 @@ class NavalControlPoint(ControlPoint, ABC):
     def heading(self) -> Heading:
         return Heading.from_degrees(0)  # TODO compute heading
 
-    def find_main_tgo(self) -> TheaterGroundObject:
+    def find_main_tgo(self) -> GenericCarrierGroundObject:
         for g in self.ground_objects:
-            if g.dcs_identifier in ["CARRIER", "LHA"]:
+            if isinstance(g, GenericCarrierGroundObject) and g.dcs_identifier in [
+                "CARRIER",
+                "LHA",
+            ]:
                 return g
         raise RuntimeError(f"Found no carrier/LHA group for {self.name}")
 
@@ -963,7 +993,7 @@ class Carrier(NavalControlPoint):
         raise RuntimeError("Carriers cannot be captured")
 
     @property
-    def is_carrier(self):
+    def is_carrier(self) -> bool:
         return True
 
     def can_operate(self, aircraft: AircraftType) -> bool:

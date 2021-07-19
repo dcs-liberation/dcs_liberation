@@ -42,10 +42,16 @@ class QArmorChart(QFrame):
         self.chart.setTitle("Combat vehicles over time")
 
         self.chart.createDefaultAxes()
+        self.chart.axisX().setTitleText("Turn")
+        self.chart.axisX().setLabelFormat("%i")
         self.chart.axisX().setRange(0, len(self.alliedArmor))
+        self.chart.axisX().applyNiceNumbers()
+
+        self.chart.axisY().setLabelFormat("%i")
         self.chart.axisY().setRange(
             0, max(max(self.alliedArmor), max(self.enemyArmor)) + 10
         )
+        self.chart.axisY().applyNiceNumbers()
 
         self.chartView = QtCharts.QChartView(self.chart)
         self.chartView.setRenderHint(QPainter.Antialiasing)

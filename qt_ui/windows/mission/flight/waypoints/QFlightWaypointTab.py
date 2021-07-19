@@ -37,7 +37,7 @@ class QFlightWaypointTab(QFrame):
         self.game = game
         self.package = package
         self.flight = flight
-        self.planner = FlightPlanBuilder(self.game, package, is_player=True)
+        self.planner = FlightPlanBuilder(package, game.blue, game.theater)
 
         self.flight_waypoint_list: Optional[QFlightWaypointList] = None
         self.rtb_waypoint: Optional[QPushButton] = None

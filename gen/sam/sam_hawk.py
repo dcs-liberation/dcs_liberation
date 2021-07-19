@@ -6,6 +6,7 @@ from dcs.vehicles import AirDefence
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
+    SkynetRole,
 )
 
 
@@ -15,9 +16,8 @@ class HawkGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Hawk Site"
-    price = 115
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.Hawk_sr,
             "SR",
@@ -41,7 +41,7 @@ class HawkGenerator(AirDefenseGroupGenerator):
         )
 
         # Triple A for close range defense
-        aa_group = self.add_auxiliary_group("AA")
+        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
         self.add_unit_to_group(
             aa_group,
             AirDefence.Vulcan,
@@ -50,7 +50,7 @@ class HawkGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(3, 6)
+        num_launchers = 6
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=180
         )

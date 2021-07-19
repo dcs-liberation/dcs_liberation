@@ -14,23 +14,20 @@ class VulcanGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Vulcan Group"
-    price = 25
 
-    def generate(self):
-        self.add_unit(
-            AirDefence.Vulcan,
-            "SPAAA",
-            self.position.x,
-            self.position.y,
-            self.heading,
+    def generate(self) -> None:
+        num_launchers = 2
+
+        positions = self.get_circular_position(
+            num_launchers, launcher_distance=120, coverage=180
         )
-        if random.randint(0, 1) == 1:
+        for i, position in enumerate(positions):
             self.add_unit(
                 AirDefence.Vulcan,
-                "SPAAA2",
-                self.position.x,
-                self.position.y,
-                self.heading,
+                "SPAA#" + str(i),
+                position[0],
+                position[1],
+                position[2],
             )
         self.add_unit(
             Unarmed.M_818,

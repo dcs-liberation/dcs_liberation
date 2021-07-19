@@ -1,0 +1,18 @@
+name: 2xMk 82
+fallback: Mk 82
+clsids:
+  - "{M2KC_RAFAUT_MK82}"
+  - "{BRU33_2X_MK-82}"
+  - "DIS_MK_82_DUAL_GDJ_II19_L"
+  - "DIS_MK_82_DUAL_GDJ_II19_R"
+  - "{D5D51E24-348C-4702-96AF-97A714E72697}"
+  - "{TER_9A_2L*MK-82}"
+  - "{TER_9A_2R*MK-82}"
+  - "{BRU-42_2*Mk-82_LEFT}"
+  - "{BRU-42_2*Mk-82_RIGHT}"
+  - "{BRU42_2*MK82 RS}"
+  - "{BRU3242_2*MK82 RS}"
+  - "{PHXBRU3242_2*MK82 RS}"
+  - "{BRU42_2*MK82 LS}"
+  - "{BRU3242_2*MK82 LS}"
+  - "{PHXBRU3242_2*MK82 LS}"

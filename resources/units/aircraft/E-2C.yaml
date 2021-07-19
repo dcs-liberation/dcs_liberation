@@ -8,6 +8,7 @@ manufacturer: Northrop Grumman
 origin: USA
 price: 50
 role: AEW&C
+max_range: 2000
 patrol:
   altitude: 30000
 variants:

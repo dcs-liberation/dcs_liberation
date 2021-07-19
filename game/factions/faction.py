@@ -3,7 +3,7 @@ from __future__ import annotations
 import itertools
 import logging
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Type, List, Any, Iterator
+from typing import Optional, Dict, Type, List, Any, Iterator, TYPE_CHECKING
 
 import dcs
 from dcs.countries import country_dict
@@ -24,6 +24,9 @@ from game.data.doctrine import (
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
+
+if TYPE_CHECKING:
+    from game.theater.start_generator import ModSettings
 
 
 @dataclass
@@ -81,10 +84,10 @@ class Faction:
     requirements: Dict[str, str] = field(default_factory=dict)
 
     # possible aircraft carrier units
-    aircraft_carrier: List[Type[UnitType]] = field(default_factory=list)
+    aircraft_carrier: List[Type[ShipType]] = field(default_factory=list)
 
     # possible helicopter carrier units
-    helicopter_carrier: List[Type[UnitType]] = field(default_factory=list)
+    helicopter_carrier: List[Type[ShipType]] = field(default_factory=list)
 
     # Possible carrier names
     carrier_names: List[str] = field(default_factory=list)
@@ -257,7 +260,7 @@ class Faction:
             if unit.unit_class is unit_class:
                 yield unit
 
-    def apply_mod_settings(self, mod_settings) -> Faction:
+    def apply_mod_settings(self, mod_settings: ModSettings) -> Faction:
         # aircraft
         if not mod_settings.a4_skyhawk:
             self.remove_aircraft("A-4E-C")
@@ -319,17 +322,17 @@ class Faction:
             self.remove_air_defenses("KS19Generator")
         return self
 
-    def remove_aircraft(self, name):
+    def remove_aircraft(self, name: str) -> None:
         for i in self.aircrafts:
             if i.dcs_unit_type.id == name:
                 self.aircrafts.remove(i)
 
-    def remove_air_defenses(self, name):
+    def remove_air_defenses(self, name: str) -> None:
         for i in self.air_defenses:
             if i == name:
                 self.air_defenses.remove(i)
 
-    def remove_vehicle(self, name):
+    def remove_vehicle(self, name: str) -> None:
         for i in self.frontline_units:
             if i.dcs_unit_type.id == name:
                 self.frontline_units.remove(i)
@@ -342,7 +345,7 @@ def load_ship(name: str) -> Optional[Type[ShipType]]:
     return None
 
 
-def load_all_ships(data) -> List[Type[ShipType]]:
+def load_all_ships(data: list[str]) -> List[Type[ShipType]]:
     items = []
     for name in data:
         item = load_ship(name)

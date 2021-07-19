@@ -1,0 +1,8 @@
+name: GBU-10
+type: LGB
+year: 1976
+fallback: Mk 84
+clsids:
+  - "DIS_GBU_10"
+  - "{BRU-32 GBU-10}"
+  - "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}"

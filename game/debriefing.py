@@ -15,9 +15,9 @@ from typing import (
     Iterator,
     List,
     TYPE_CHECKING,
+    Union,
 )
 
-from game import db
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import Airfield, ControlPoint
@@ -77,8 +77,8 @@ class GroundLosses:
     player_airlifts: List[AirliftUnits] = field(default_factory=list)
     enemy_airlifts: List[AirliftUnits] = field(default_factory=list)
 
-    player_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
-    enemy_ground_objects: List[GroundObjectUnit] = field(default_factory=list)
+    player_ground_objects: List[GroundObjectUnit[Any]] = field(default_factory=list)
+    enemy_ground_objects: List[GroundObjectUnit[Any]] = field(default_factory=list)
 
     player_buildings: List[Building] = field(default_factory=list)
     enemy_buildings: List[Building] = field(default_factory=list)
@@ -104,8 +104,9 @@ class StateData:
     #: Names of vehicle (and ship) units that were killed during the mission.
     killed_ground_units: List[str]
 
-    #: Names of static units that were destroyed during the mission.
-    destroyed_statics: List[str]
+    #: List of descriptions of destroyed statics. Format of each element is a mapping of
+    #: the coordinate type ("x", "y", "z", "type", "orientation") to the value.
+    destroyed_statics: List[dict[str, Union[float, str]]]
 
     #: Mangled names of bases that were captured during the mission.
     base_capture_events: List[str]
@@ -134,10 +135,8 @@ class Debriefing:
         self.game = game
         self.unit_map = unit_map
 
-        self.player_country = game.player_country
-        self.enemy_country = game.enemy_country
-        self.player_country_id = db.country_id_from_name(game.player_country)
-        self.enemy_country_id = db.country_id_from_name(game.enemy_country)
+        self.player_country = game.blue.country_name
+        self.enemy_country = game.red.country_name
 
         self.air_losses = self.dead_aircraft()
         self.ground_losses = self.dead_ground_units()
@@ -164,7 +163,7 @@ class Debriefing:
         yield from self.ground_losses.enemy_airlifts
 
     @property
-    def ground_object_losses(self) -> Iterator[GroundObjectUnit]:
+    def ground_object_losses(self) -> Iterator[GroundObjectUnit[Any]]:
         yield from self.ground_losses.player_ground_objects
         yield from self.ground_losses.enemy_ground_objects
 
@@ -370,13 +369,13 @@ class PollDebriefingFileThread(threading.Thread):
         self.game = game
         self.unit_map = unit_map
 
-    def stop(self):
+    def stop(self) -> None:
         self._stop_event.set()
 
-    def stopped(self):
+    def stopped(self) -> bool:
         return self._stop_event.is_set()
 
-    def run(self):
+    def run(self) -> None:
         if os.path.isfile("state.json"):
             last_modified = os.path.getmtime("state.json")
         else:
@@ -401,7 +400,7 @@ class PollDebriefingFileThread(threading.Thread):
 
 
 def wait_for_debriefing(
-    callback: Callable[[Debriefing], None], game: Game, unit_map
+    callback: Callable[[Debriefing], None], game: Game, unit_map: UnitMap
 ) -> PollDebriefingFileThread:
     thread = PollDebriefingFileThread(callback, game, unit_map)
     thread.start()

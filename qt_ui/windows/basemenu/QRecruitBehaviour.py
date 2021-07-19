@@ -103,11 +103,11 @@ class QRecruitBehaviour:
 
     @property
     def budget(self) -> float:
-        return self.game_model.game.budget
+        return self.game_model.game.blue.budget
 
     @budget.setter
     def budget(self, value: int) -> None:
-        self.game_model.game.budget = value
+        self.game_model.game.blue.budget = value
 
     def add_purchase_row(
         self,

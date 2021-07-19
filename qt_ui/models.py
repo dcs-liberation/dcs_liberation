@@ -12,11 +12,10 @@ from PySide2.QtCore import (
 )
 from PySide2.QtGui import QIcon
 
-from game import db
 from game.game import Game
 from game.squadrons import Squadron, Pilot
 from game.theater.missiontarget import MissionTarget
-from game.transfers import TransferOrder
+from game.transfers import TransferOrder, PendingTransfers
 from gen.ato import AirTaskingOrder, Package
 from gen.flights.flight import Flight, FlightType
 from gen.flights.traveltime import TotEstimator
@@ -281,9 +280,9 @@ class AtoModel(QAbstractListModel):
         self.package_models.clear()
         if self.game is not None:
             if player:
-                self.ato = self.game.blue_ato
+                self.ato = self.game.blue.ato
             else:
-                self.ato = self.game.red_ato
+                self.ato = self.game.red.ato
         else:
             self.ato = AirTaskingOrder()
         self.endResetModel()
@@ -316,8 +315,12 @@ class TransferModel(QAbstractListModel):
         super().__init__()
         self.game_model = game_model
 
+    @property
+    def transfers(self) -> PendingTransfers:
+        return self.game_model.game.coalition_for(player=True).transfers
+
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
-        return self.game_model.game.transfers.pending_transfer_count
+        return self.transfers.pending_transfer_count
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
         if not index.isValid():
@@ -345,7 +348,7 @@ class TransferModel(QAbstractListModel):
         """Updates the game with the new unit transfer."""
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         # TODO: Needs to regenerate base inventory tab.
-        self.game_model.game.transfers.new_transfer(transfer)
+        self.transfers.new_transfer(transfer)
         self.endInsertRows()
 
     def cancel_transfer_at_index(self, index: QModelIndex) -> None:
@@ -354,15 +357,15 @@ class TransferModel(QAbstractListModel):
 
     def cancel_transfer(self, transfer: TransferOrder) -> None:
         """Cancels the planned unit transfer at the given index."""
-        index = self.game_model.game.transfers.index_of_transfer(transfer)
+        index = self.transfers.index_of_transfer(transfer)
         self.beginRemoveRows(QModelIndex(), index, index)
         # TODO: Needs to regenerate base inventory tab.
-        self.game_model.game.transfers.cancel_transfer(transfer)
+        self.transfers.cancel_transfer(transfer)
         self.endRemoveRows()
 
     def transfer_at_index(self, index: QModelIndex) -> TransferOrder:
         """Returns the transfer located at the given index."""
-        return self.game_model.game.transfers.transfer_at_index(index.row())
+        return self.transfers.transfer_at_index(index.row())
 
 
 class AirWingModel(QAbstractListModel):
@@ -488,8 +491,8 @@ class GameModel:
             self.ato_model = AtoModel(self, AirTaskingOrder())
             self.red_ato_model = AtoModel(self, AirTaskingOrder())
         else:
-            self.ato_model = AtoModel(self, self.game.blue_ato)
-            self.red_ato_model = AtoModel(self, self.game.red_ato)
+            self.ato_model = AtoModel(self, self.game.blue.ato)
+            self.red_ato_model = AtoModel(self, self.game.red.ato)
 
     def ato_model_for(self, player: bool) -> AtoModel:
         if player:

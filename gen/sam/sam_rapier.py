@@ -5,6 +5,7 @@ from dcs.vehicles import AirDefence
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
+    SkynetRole,
 )
 
 
@@ -14,9 +15,8 @@ class RapierGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Rapier AA Site"
-    price = 50
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.Rapier_fsa_blindfire_radar,
             "BT",
@@ -32,7 +32,7 @@ class RapierGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(3, 6)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=80, coverage=240
         )
@@ -49,3 +49,7 @@ class RapierGenerator(AirDefenseGroupGenerator):
     @classmethod
     def range(cls) -> AirDefenseRange:
         return AirDefenseRange.Short
+
+    @classmethod
+    def primary_group_role(cls) -> SkynetRole:
+        return SkynetRole.Sam
