@@ -403,7 +403,6 @@ class MizCampaignLoader:
                 PointWithHeading.from_point(
                     static.position, Heading.from_degrees(static.units[0].heading)
                 )
-
             )
 
         for ship in self.ships:

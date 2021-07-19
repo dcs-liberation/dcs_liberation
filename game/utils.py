@@ -20,6 +20,7 @@ KPH_TO_MS = 1 / MS_TO_KPH
 INHG_TO_HPA = 33.86389
 INHG_TO_MMHG = 25.400002776728
 
+
 @dataclass(frozen=True, order=True)
 class Distance:
     distance_in_meters: float
