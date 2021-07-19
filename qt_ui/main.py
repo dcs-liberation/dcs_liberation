@@ -183,6 +183,19 @@ def parse_args() -> argparse.Namespace:
         "--inverted", action="store_true", help="Invert the campaign."
     )
 
+    new_game.add_argument(
+        "--date",
+        type=datetime.fromisoformat,
+        default=datetime.today(),
+        help="Start date of the campaign.",
+    )
+
+    new_game.add_argument(
+        "--restrict-weapons-by-date",
+        action="store_true",
+        help="Enable campaign date restricted weapons.",
+    )
+
     new_game.add_argument("--cheats", action="store_true", help="Enable cheats.")
 
     return parser.parse_args()
@@ -196,6 +209,8 @@ def create_game(
     auto_procurement: bool,
     inverted: bool,
     cheats: bool,
+    start_date: datetime,
+    restrict_weapons_by_date: bool,
 ) -> Game:
     first_start = liberation_install.init()
     if first_start:
@@ -224,9 +239,10 @@ def create_game(
             automate_aircraft_reinforcements=auto_procurement,
             enable_frontline_cheats=cheats,
             enable_base_capture_cheat=cheats,
+            restrict_weapons_by_date=restrict_weapons_by_date,
         ),
         GeneratorSettings(
-            start_date=datetime.today(),
+            start_date=start_date,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
             midgame=False,
@@ -279,6 +295,8 @@ def main():
                 args.auto_procurement,
                 args.inverted,
                 args.cheats,
+                args.date,
+                args.restrict_weapons_by_date,
             )
 
     run_ui(game)
