@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import itertools
 import logging
 import random
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
     from game import Game
     from game.coalition import Coalition
     from gen.flights.flight import FlightType
+    from game.theater import ControlPoint
 
 
 @dataclass
@@ -73,6 +75,33 @@ class Pilot:
         return Pilot(faker.name())
 
 
+@dataclass(frozen=True)
+class OperatingBases:
+    shore: bool
+    carrier: bool
+    lha: bool
+
+    @classmethod
+    def default_for_aircraft(cls, aircraft: AircraftType) -> OperatingBases:
+        if aircraft.dcs_unit_type.helicopter:
+            # Helicopters operate from anywhere by default.
+            return OperatingBases(shore=True, carrier=True, lha=True)
+        if aircraft.lha_capable:
+            # Marine aircraft operate from LHAs and the shore by default.
+            return OperatingBases(shore=True, carrier=False, lha=True)
+        if aircraft.carrier_capable:
+            # Carrier aircraft operate from carriers by default.
+            return OperatingBases(shore=False, carrier=True, lha=False)
+        # And the rest are only capable of shore operation.
+        return OperatingBases(shore=True, carrier=False, lha=False)
+
+    @classmethod
+    def from_yaml(cls, aircraft: AircraftType, data: dict[str, bool]) -> OperatingBases:
+        return dataclasses.replace(
+            OperatingBases.default_for_aircraft(aircraft), **data
+        )
+
+
 @dataclass
 class Squadron:
     name: str
@@ -82,6 +111,7 @@ class Squadron:
     aircraft: AircraftType
     livery: Optional[str]
     mission_types: tuple[FlightType, ...]
+    operating_bases: OperatingBases
 
     #: The pool of pilots that have not yet been assigned to the squadron. This only
     #: happens when a preset squadron defines more preset pilots than the squadron limit
@@ -252,6 +282,14 @@ class Squadron:
     def can_auto_assign(self, task: FlightType) -> bool:
         return task in self.auto_assignable_mission_types
 
+    def operates_from(self, control_point: ControlPoint) -> bool:
+        if control_point.is_carrier:
+            return self.operating_bases.carrier
+        elif control_point.is_lha:
+            return self.operating_bases.lha
+        else:
+            return self.operating_bases.shore
+
     def pilot_at_index(self, index: int) -> Pilot:
         return self.current_roster[index]
 
@@ -290,6 +328,7 @@ class Squadron:
             aircraft=unit_type,
             livery=data.get("livery"),
             mission_types=tuple(mission_types),
+            operating_bases=OperatingBases.from_yaml(unit_type, data.get("bases", {})),
             pilot_pool=pilots,
             coalition=coalition,
             settings=game.settings,
@@ -379,6 +418,7 @@ class AirWing:
                     aircraft=aircraft,
                     livery=None,
                     mission_types=tuple(tasks_for_aircraft(aircraft)),
+                    operating_bases=OperatingBases.default_for_aircraft(aircraft),
                     pilot_pool=[],
                     coalition=coalition,
                     settings=game.settings,

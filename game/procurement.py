@@ -226,7 +226,11 @@ class ProcurementAi:
                 continue
 
             for squadron in self.air_wing.squadrons_for(unit):
-                if request.task_capability in squadron.auto_assignable_mission_types:
+                if (
+                    squadron.operates_from(airbase)
+                    and request.task_capability
+                    in squadron.auto_assignable_mission_types
+                ):
                     break
             else:
                 continue

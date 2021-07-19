@@ -70,7 +70,9 @@ class AircraftAllocator:
                     aircraft, task
                 )
                 for squadron in squadrons:
-                    if squadron.can_provide_pilots(flight.num_aircraft):
+                    if squadron.operates_from(airfield) and squadron.can_provide_pilots(
+                        flight.num_aircraft
+                    ):
                         inventory.remove_aircraft(aircraft, flight.num_aircraft)
                         return airfield, squadron
         return None
