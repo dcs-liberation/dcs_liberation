@@ -32,6 +32,11 @@ from game.theater import (
     NavalControlPoint,
     ConflictTheater,
 )
+from game.theater.theatergroundobject import (
+    EwrGroundObject,
+    NavalGroundObject,
+    BuildingGroundObject,
+)
 
 from game.threatzones import ThreatZones
 from game.utils import Distance, Heading, Speed, feet, meters, nautical_miles, knots

@@ -66,7 +66,7 @@ class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
         unit_type: UnitTypeT,
         name: str,
         position: Point,
-        heading: int,
+        heading: Heading,
     ) -> UnitT:
         raise NotImplementedError
 
@@ -110,7 +110,7 @@ class VehicleGroupGenerator(
 
     def get_circular_position(
         self, num_units: int, launcher_distance: int, coverage: int = 90
-    ) -> Iterable[tuple[float, float, int]]:
+    ) -> Iterable[tuple[float, float, Heading]]:
         """
         Given a position on the map, array a group of units in a circle a uniform distance from the unit
         :param num_units:
@@ -172,7 +172,7 @@ class ShipGroupGenerator(
         unit_type: Type[ShipType],
         name: str,
         position: Point,
-        heading: int,
+        heading: Heading,
     ) -> Ship:
         unit = Ship(self.game.next_unit_id(), f"{self.go.group_name}|{name}", unit_type)
         unit.position = position

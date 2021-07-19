@@ -5,6 +5,7 @@ from dcs.vehicles import Unarmed, MissilesSS, AirDefence
 from game import Game
 from game.factions.faction import Faction
 from game.theater.theatergroundobject import MissileSiteGroundObject
+from game.utils import Heading
 from gen.sam.group_generator import VehicleGroupGenerator
 
 
@@ -65,5 +66,5 @@ class V1GroupGenerator(VehicleGroupGenerator[MissileSiteGroundObject]):
             "Blitz#0",
             self.position.x + 200,
             self.position.y + 15,
-            90,
+            Heading.from_degrees(90),
         )

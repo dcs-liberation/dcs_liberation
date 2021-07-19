@@ -207,7 +207,7 @@ class Heading:
         return Heading.from_degrees(angle_between)
 
     @staticmethod
-    def reduce_angle(angle) -> int:
+    def reduce_angle(angle: int) -> int:
         return angle % 360
 
     @classmethod
@@ -220,7 +220,7 @@ class Heading:
         return cls(Heading.reduce_angle(deg))
 
     @classmethod
-    def random(cls, min_angle: int = 0, max_angle: int = 0):
+    def random(cls, min_angle: int = 0, max_angle: int = 0) -> Heading:
         return Heading.from_degrees(random.randint(min_angle, max_angle))
 
     def __add__(self, other: Heading) -> Heading:
@@ -230,6 +230,7 @@ class Heading:
         return Heading.from_degrees(self.degrees - other.degrees)
 
 
+@dataclass(frozen=True, order=True)
 class Pressure:
     pressure_in_inches_hg: float
 

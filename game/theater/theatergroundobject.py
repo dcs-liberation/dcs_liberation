@@ -450,7 +450,7 @@ class CoastalSiteGroundObject(TheaterGroundObject[VehicleGroup]):
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        heading: int,
+        heading: Heading,
     ) -> None:
         super().__init__(
             name=name,
