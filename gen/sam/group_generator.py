@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
+import operator
 import random
 from collections import Iterable
 from typing import TYPE_CHECKING, Type, TypeVar, Generic, Any
@@ -15,6 +16,7 @@ from dcs.unittype import VehicleType, UnitType, ShipType
 
 from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
+from game.theater import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject, NavalGroundObject
 
 if TYPE_CHECKING:
@@ -68,6 +70,27 @@ class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
         heading: int,
     ) -> UnitT:
         raise NotImplementedError
+
+    def heading_to_conflict(self) -> int:
+        # Heading for a Group to the enemy.
+        # Should be the point between the nearest and the most distant conflict
+        conflicts: dict[MissionTarget, float] = {}
+
+        for conflict in self.game.theater.conflicts():
+            conflicts[conflict] = conflict.distance_to(self.go)
+
+        if len(conflicts) == 0:
+            return self.heading
+
+        closest_conflict = min(conflicts.items(), key=operator.itemgetter(1))[0]
+        most_distant_conflict = max(conflicts.items(), key=operator.itemgetter(1))[0]
+
+        conflict_center = Point(
+            (closest_conflict.position.x + most_distant_conflict.position.x) / 2,
+            (closest_conflict.position.y + most_distant_conflict.position.y) / 2,
+        )
+
+        return int(self.go.position.heading_between_point(conflict_center))
 
 
 class VehicleGroupGenerator(
