@@ -48,6 +48,7 @@ class AirDefenseGroupGenerator(VehicleGroupGenerator[SamGroundObject], ABC):
 
         self.vg.name = self.group_name_for_role(self.vg.id, self.primary_group_role())
         self.auxiliary_groups: List[VehicleGroup] = []
+        self.heading = self.heading_to_conflict()
 
     def add_auxiliary_group(self, role: SkynetRole) -> VehicleGroup:
         gid = self.game.next_group_id()
