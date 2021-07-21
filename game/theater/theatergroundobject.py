@@ -17,7 +17,7 @@ from ..data.radar_db import (
     TELARS,
     LAUNCHER_TRACKER_PAIRS,
 )
-from ..utils import Distance, meters
+from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint
@@ -58,7 +58,7 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
         category: str,
         group_id: int,
         position: Point,
-        heading: int,
+        heading: Heading,
         control_point: ControlPoint,
         dcs_identifier: str,
         sea_object: bool,
@@ -222,7 +222,7 @@ class BuildingGroundObject(TheaterGroundObject[VehicleGroup]):
         group_id: int,
         object_id: int,
         position: Point,
-        heading: int,
+        heading: Heading,
         control_point: ControlPoint,
         dcs_identifier: str,
         is_fob_structure: bool = False,
@@ -310,7 +310,7 @@ class SceneryGroundObject(BuildingGroundObject):
             group_id=group_id,
             object_id=object_id,
             position=position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier=dcs_identifier,
             is_fob_structure=False,
@@ -334,7 +334,7 @@ class FactoryGroundObject(BuildingGroundObject):
         name: str,
         group_id: int,
         position: Point,
-        heading: int,
+        heading: Heading,
         control_point: ControlPoint,
     ) -> None:
         super().__init__(
@@ -385,7 +385,7 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             category="CARRIER",
             group_id=group_id,
             position=control_point.position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier="CARRIER",
             sea_object=True,
@@ -406,7 +406,7 @@ class LhaGroundObject(GenericCarrierGroundObject):
             category="LHA",
             group_id=group_id,
             position=control_point.position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier="LHA",
             sea_object=True,
@@ -428,7 +428,7 @@ class MissileSiteGroundObject(TheaterGroundObject[VehicleGroup]):
             category="missile",
             group_id=group_id,
             position=position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier="AA",
             sea_object=False,
@@ -450,7 +450,7 @@ class CoastalSiteGroundObject(TheaterGroundObject[VehicleGroup]):
         group_id: int,
         position: Point,
         control_point: ControlPoint,
-        heading: int,
+        heading: Heading,
     ) -> None:
         super().__init__(
             name=name,
@@ -497,7 +497,7 @@ class SamGroundObject(IadsGroundObject):
             category="aa",
             group_id=group_id,
             position=position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier="AA",
             sea_object=False,
@@ -565,7 +565,7 @@ class VehicleGroupGroundObject(TheaterGroundObject[VehicleGroup]):
             category="armor",
             group_id=group_id,
             position=position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier="AA",
             sea_object=False,
@@ -593,7 +593,7 @@ class EwrGroundObject(IadsGroundObject):
             category="ewr",
             group_id=group_id,
             position=position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier="EWR",
             sea_object=False,
@@ -627,7 +627,7 @@ class ShipGroundObject(NavalGroundObject):
             category="ship",
             group_id=group_id,
             position=position,
-            heading=0,
+            heading=Heading.from_degrees(0),
             control_point=control_point,
             dcs_identifier="AA",
             sea_object=True,

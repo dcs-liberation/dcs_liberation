@@ -41,7 +41,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.S_60_Type59_Artillery,
@@ -57,7 +57,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#3",
             self.position.x - 80,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.ZU_23_Emplacement_Closed,
@@ -113,7 +113,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.S_60_Type59_Artillery,
@@ -129,7 +129,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#3",
             self.position.x - 80,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.ZU_23_Emplacement_Closed,

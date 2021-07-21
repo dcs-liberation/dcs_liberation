@@ -8,6 +8,7 @@ from typing import Iterator, Optional
 from dcs.terrain.terrain import Airport
 
 from game.weather import Conditions
+from game.utils import Heading
 from .airfields import AIRFIELD_DATA
 from .radios import RadioFrequency
 from .tacan import TacanChannel
@@ -16,7 +17,7 @@ from .tacan import TacanChannel
 @dataclass(frozen=True)
 class RunwayData:
     airfield_name: str
-    runway_heading: int
+    runway_heading: Heading
     runway_name: str
     atc: Optional[RadioFrequency] = None
     tacan: Optional[TacanChannel] = None
@@ -26,7 +27,7 @@ class RunwayData:
 
     @classmethod
     def for_airfield(
-        cls, airport: Airport, runway_heading: int, runway_name: str
+        cls, airport: Airport, runway_heading: Heading, runway_name: str
     ) -> RunwayData:
         """Creates RunwayData for the given runway of an airfield.
 
@@ -66,12 +67,14 @@ class RunwayData:
             runway_number = runway.heading // 10
             runway_side = ["", "L", "R"][runway.leftright]
             runway_name = f"{runway_number:02}{runway_side}"
-            yield cls.for_airfield(airport, runway.heading, runway_name)
+            yield cls.for_airfield(
+                airport, Heading.from_degrees(runway.heading), runway_name
+            )
 
             # pydcs only exposes one runway per physical runway, so to expose
             # both sides of the runway we need to generate the other.
-            heading = (runway.heading + 180) % 360
-            runway_number = heading // 10
+            heading = Heading.from_degrees(runway.heading).opposite
+            runway_number = heading.degrees // 10
             runway_side = ["", "R", "L"][runway.leftright]
             runway_name = f"{runway_number:02}{runway_side}"
             yield cls.for_airfield(airport, heading, runway_name)
@@ -81,10 +84,10 @@ class RunwayAssigner:
     def __init__(self, conditions: Conditions):
         self.conditions = conditions
 
-    def angle_off_headwind(self, runway: RunwayData) -> int:
-        wind = self.conditions.weather.wind.at_0m.direction
-        ideal_heading = (wind + 180) % 360
-        return abs(runway.runway_heading - ideal_heading)
+    def angle_off_headwind(self, runway: RunwayData) -> Heading:
+        wind = Heading.from_degrees(self.conditions.weather.wind.at_0m.direction)
+        ideal_heading = wind.opposite
+        return runway.runway_heading.angle_between(ideal_heading)
 
     def get_preferred_runway(self, airport: Airport) -> RunwayData:
         """Returns the preferred runway for the given airport.

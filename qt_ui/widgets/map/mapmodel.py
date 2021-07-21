@@ -417,12 +417,12 @@ class FrontLineJs(QObject):
     def extents(self) -> List[LeafletLatLon]:
         a = self.theater.point_to_ll(
             self.front_line.position.point_from_heading(
-                self.front_line.attack_heading + 90, nautical_miles(2).meters
+                self.front_line.attack_heading.right.degrees, nautical_miles(2).meters
             )
         )
         b = self.theater.point_to_ll(
             self.front_line.position.point_from_heading(
-                self.front_line.attack_heading + 270, nautical_miles(2).meters
+                self.front_line.attack_heading.left.degrees, nautical_miles(2).meters
             )
         )
         return [[a.latitude, a.longitude], [b.latitude, b.longitude]]

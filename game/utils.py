@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 import math
+import random
 from collections import Iterable
 from dataclasses import dataclass
 from typing import Union, Any, TypeVar
@@ -18,15 +19,6 @@ KPH_TO_MS = 1 / MS_TO_KPH
 
 INHG_TO_HPA = 33.86389
 INHG_TO_MMHG = 25.400002776728
-
-
-def heading_sum(h: int, a: int) -> int:
-    h += a
-    return h % 360
-
-
-def opposite_heading(h: int) -> int:
-    return heading_sum(h, 180)
 
 
 @dataclass(frozen=True, order=True)
@@ -182,6 +174,60 @@ def mach(value: float, altitude: Distance) -> Speed:
 
 
 SPEED_OF_SOUND_AT_SEA_LEVEL = knots(661.5)
+
+
+@dataclass(frozen=True, order=True)
+class Heading:
+    heading_in_degrees: int
+
+    @property
+    def degrees(self) -> int:
+        return Heading.reduce_angle(self.heading_in_degrees)
+
+    @property
+    def radians(self) -> float:
+        return math.radians(Heading.reduce_angle(self.heading_in_degrees))
+
+    @property
+    def opposite(self) -> Heading:
+        return self + Heading.from_degrees(180)
+
+    @property
+    def right(self) -> Heading:
+        return self + Heading.from_degrees(90)
+
+    @property
+    def left(self) -> Heading:
+        return self - Heading.from_degrees(90)
+
+    def angle_between(self, other: Heading) -> Heading:
+        angle_between = abs(self.degrees - other.degrees)
+        if angle_between > 180:
+            angle_between = 360 - angle_between
+        return Heading.from_degrees(angle_between)
+
+    @staticmethod
+    def reduce_angle(angle: int) -> int:
+        return angle % 360
+
+    @classmethod
+    def from_degrees(cls, angle: Union[int, float]) -> Heading:
+        return cls(Heading.reduce_angle(round(angle)))
+
+    @classmethod
+    def from_radians(cls, angle: Union[int, float]) -> Heading:
+        deg = round(math.degrees(angle))
+        return cls(Heading.reduce_angle(deg))
+
+    @classmethod
+    def random(cls, min_angle: int = 0, max_angle: int = 0) -> Heading:
+        return Heading.from_degrees(random.randint(min_angle, max_angle))
+
+    def __add__(self, other: Heading) -> Heading:
+        return Heading.from_degrees(self.degrees + other.degrees)
+
+    def __sub__(self, other: Heading) -> Heading:
+        return Heading.from_degrees(self.degrees - other.degrees)
 
 
 @dataclass(frozen=True, order=True)

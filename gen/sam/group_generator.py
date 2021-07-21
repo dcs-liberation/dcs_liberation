@@ -16,6 +16,7 @@ from dcs.unittype import VehicleType, UnitType, ShipType
 from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.theater.theatergroundobject import TheaterGroundObject, NavalGroundObject
+from game.utils import Heading
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -37,7 +38,7 @@ class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
         self.game = game
         self.go = ground_object
         self.position = ground_object.position
-        self.heading = random.randint(0, 359)
+        self.heading: Heading = Heading.random()
         self.price = 0
         self.vg: GroupT = group
 
@@ -53,7 +54,7 @@ class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
         name: str,
         pos_x: float,
         pos_y: float,
-        heading: int,
+        heading: Heading,
     ) -> UnitT:
         return self.add_unit_to_group(
             self.vg, unit_type, name, Point(pos_x, pos_y), heading
@@ -65,7 +66,7 @@ class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
         unit_type: UnitTypeT,
         name: str,
         position: Point,
-        heading: int,
+        heading: Heading,
     ) -> UnitT:
         raise NotImplementedError
 
@@ -91,11 +92,11 @@ class VehicleGroupGenerator(
         unit_type: Type[VehicleType],
         name: str,
         position: Point,
-        heading: int,
+        heading: Heading,
     ) -> Vehicle:
         unit = Vehicle(self.game.next_unit_id(), f"{group.name}|{name}", unit_type.id)
         unit.position = position
-        unit.heading = heading
+        unit.heading = heading.degrees
         group.add_unit(unit)
 
         # get price of unit to calculate the real price of the whole group
@@ -109,7 +110,7 @@ class VehicleGroupGenerator(
 
     def get_circular_position(
         self, num_units: int, launcher_distance: int, coverage: int = 90
-    ) -> Iterable[tuple[float, float, int]]:
+    ) -> Iterable[tuple[float, float, Heading]]:
         """
         Given a position on the map, array a group of units in a circle a uniform distance from the unit
         :param num_units:
@@ -131,9 +132,9 @@ class VehicleGroupGenerator(
         positions = []
 
         if num_units % 2 == 0:
-            current_offset = self.heading - ((coverage / (num_units - 1)) / 2)
+            current_offset = self.heading.degrees - ((coverage / (num_units - 1)) / 2)
         else:
-            current_offset = self.heading
+            current_offset = self.heading.degrees
         current_offset -= outer_offset * (math.ceil(num_units / 2) - 1)
         for _ in range(1, num_units + 1):
             x: float = self.position.x + launcher_distance * math.cos(
@@ -142,8 +143,7 @@ class VehicleGroupGenerator(
             y: float = self.position.y + launcher_distance * math.sin(
                 math.radians(current_offset)
             )
-            heading = current_offset
-            positions.append((x, y, int(heading)))
+            positions.append((x, y, Heading.from_degrees(current_offset)))
             current_offset += outer_offset
         return positions
 
@@ -172,10 +172,10 @@ class ShipGroupGenerator(
         unit_type: Type[ShipType],
         name: str,
         position: Point,
-        heading: int,
+        heading: Heading,
     ) -> Ship:
         unit = Ship(self.game.next_unit_id(), f"{self.go.group_name}|{name}", unit_type)
         unit.position = position
-        unit.heading = heading
+        unit.heading = heading.degrees
         group.add_unit(unit)
         return unit

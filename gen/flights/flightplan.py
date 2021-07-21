@@ -37,8 +37,10 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     BuildingGroundObject,
 )
+
 from game.threatzones import ThreatZones
-from game.utils import Distance, Speed, feet, meters, nautical_miles, knots
+from game.utils import Distance, Heading, Speed, feet, meters, nautical_miles, knots
+
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -1151,10 +1153,11 @@ class FlightPlanBuilder:
         """
         assert self.package.waypoints is not None
         target = self.package.target.position
-
-        heading = self.package.waypoints.join.heading_between_point(target)
+        heading = Heading.from_degrees(
+            self.package.waypoints.join.heading_between_point(target)
+        )
         start_pos = target.point_from_heading(
-            heading, -self.doctrine.sweep_distance.meters
+            heading.degrees, -self.doctrine.sweep_distance.meters
         )
 
         builder = WaypointBuilder(flight, self.coalition)
@@ -1249,7 +1252,9 @@ class FlightPlanBuilder:
         else:
             raise PlanningError("Could not find any enemy airfields")
 
-        heading = location.position.heading_between_point(closest_airfield.position)
+        heading = Heading.from_degrees(
+            location.position.heading_between_point(closest_airfield.position)
+        )
 
         position = ShapelyPoint(
             self.package.target.position.x, self.package.target.position.y
@@ -1285,20 +1290,20 @@ class FlightPlanBuilder:
         )
 
         end = location.position.point_from_heading(
-            heading,
+            heading.degrees,
             random.randint(int(min_cap_distance.meters), int(max_cap_distance.meters)),
         )
         diameter = random.randint(
             int(self.doctrine.cap_min_track_length.meters),
             int(self.doctrine.cap_max_track_length.meters),
         )
-        start = end.point_from_heading(heading - 180, diameter)
+        start = end.point_from_heading(heading.opposite.degrees, diameter)
         return start, end
 
     def aewc_orbit(self, location: MissionTarget) -> Point:
         closest_boundary = self.threat_zones.closest_boundary(location.position)
-        heading_to_threat_boundary = location.position.heading_between_point(
-            closest_boundary
+        heading_to_threat_boundary = Heading.from_degrees(
+            location.position.heading_between_point(closest_boundary)
         )
         distance_to_threat = meters(
             location.position.distance_to_point(closest_boundary)
@@ -1312,7 +1317,7 @@ class FlightPlanBuilder:
             orbit_distance = distance_to_threat - threat_buffer
 
         return location.position.point_from_heading(
-            orbit_heading, orbit_distance.meters
+            orbit_heading.degrees, orbit_distance.meters
         )
 
     def racetrack_for_frontline(
@@ -1320,9 +1325,9 @@ class FlightPlanBuilder:
     ) -> Tuple[Point, Point]:
         # Find targets waypoints
         ingress, heading, distance = Conflict.frontline_vector(front_line, self.theater)
-        center = ingress.point_from_heading(heading, distance / 2)
+        center = ingress.point_from_heading(heading.degrees, distance / 2)
         orbit_center = center.point_from_heading(
-            heading - 90,
+            heading.left.degrees,
             random.randint(
                 int(nautical_miles(6).meters), int(nautical_miles(15).meters)
             ),
@@ -1335,8 +1340,8 @@ class FlightPlanBuilder:
             combat_width = 35000
 
         radius = combat_width * 1.25
-        start = orbit_center.point_from_heading(heading, radius)
-        end = orbit_center.point_from_heading(heading + 180, radius)
+        start = orbit_center.point_from_heading(heading.degrees, radius)
+        end = orbit_center.point_from_heading(heading.opposite.degrees, radius)
 
         if end.distance_to_point(origin) < start.distance_to_point(origin):
             start, end = end, start
@@ -1530,8 +1535,8 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         ingress, heading, distance = Conflict.frontline_vector(location, self.theater)
-        center = ingress.point_from_heading(heading, distance / 2)
-        egress = ingress.point_from_heading(heading, distance)
+        center = ingress.point_from_heading(heading.degrees, distance / 2)
+        egress = ingress.point_from_heading(heading.degrees, distance)
 
         ingress_distance = ingress.distance_to_point(flight.departure.position)
         egress_distance = egress.distance_to_point(flight.departure.position)
@@ -1566,8 +1571,8 @@ class FlightPlanBuilder:
         location = self.package.target
 
         closest_boundary = self.threat_zones.closest_boundary(location.position)
-        heading_to_threat_boundary = location.position.heading_between_point(
-            closest_boundary
+        heading_to_threat_boundary = Heading.from_degrees(
+            location.position.heading_between_point(closest_boundary)
         )
         distance_to_threat = meters(
             location.position.distance_to_point(closest_boundary)
@@ -1582,16 +1587,16 @@ class FlightPlanBuilder:
             orbit_distance = distance_to_threat - threat_buffer
 
         racetrack_center = location.position.point_from_heading(
-            orbit_heading, orbit_distance.meters
+            orbit_heading.degrees, orbit_distance.meters
         )
 
         racetrack_half_distance = Distance.from_nautical_miles(20).meters
 
         racetrack_start = racetrack_center.point_from_heading(
-            orbit_heading + 90, racetrack_half_distance
+            orbit_heading.right.degrees, racetrack_half_distance
         )
         racetrack_end = racetrack_center.point_from_heading(
-            orbit_heading - 90, racetrack_half_distance
+            orbit_heading.left.degrees, racetrack_half_distance
         )
 
         builder = WaypointBuilder(flight, self.coalition)

@@ -4,6 +4,7 @@ from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
 )
+from game.utils import Heading
 
 
 class FreyaGenerator(AirDefenseGroupGenerator):
@@ -101,7 +102,7 @@ class FreyaGenerator(AirDefenseGroupGenerator):
             "Inf#3",
             self.position.x + 20,
             self.position.y - 24,
-            self.heading + 45,
+            self.heading + Heading.from_degrees(45),
         )
 
     @classmethod

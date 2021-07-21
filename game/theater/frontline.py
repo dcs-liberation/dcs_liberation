@@ -11,7 +11,7 @@ from .controlpoint import (
     ControlPoint,
     MissionTarget,
 )
-from ..utils import pairwise
+from ..utils import Heading, pairwise
 
 
 FRONTLINE_MIN_CP_DISTANCE = 5000
@@ -27,9 +27,9 @@ class FrontLineSegment:
     point_b: Point
 
     @property
-    def attack_heading(self) -> float:
+    def attack_heading(self) -> Heading:
         """The heading of the frontline segment from player to enemy control point"""
-        return self.point_a.heading_between_point(self.point_b)
+        return Heading.from_degrees(self.point_a.heading_between_point(self.point_b))
 
     @property
     def attack_distance(self) -> float:
@@ -123,7 +123,7 @@ class FrontLine(MissionTarget):
         return sum(i.attack_distance for i in self.segments)
 
     @property
-    def attack_heading(self) -> float:
+    def attack_heading(self) -> Heading:
         """The heading of the active attack segment from player to enemy control point"""
         return self.active_segment.attack_heading
 
@@ -150,13 +150,13 @@ class FrontLine(MissionTarget):
         """
         if distance < self.segments[0].attack_distance:
             return self.blue_cp.position.point_from_heading(
-                self.segments[0].attack_heading, distance
+                self.segments[0].attack_heading.degrees, distance
             )
         remaining_dist = distance
         for segment in self.segments:
             if remaining_dist < segment.attack_distance:
                 return segment.point_a.point_from_heading(
-                    segment.attack_heading, remaining_dist
+                    segment.attack_heading.degrees, remaining_dist
                 )
             else:
                 remaining_dist -= segment.attack_distance
