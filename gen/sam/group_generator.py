@@ -72,7 +72,7 @@ class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
     ) -> UnitT:
         raise NotImplementedError
 
-    def heading_to_conflict(self) -> int:
+    def heading_to_conflict(self) -> Heading:
         # Heading for a Group to the enemy.
         # Should be the point between the nearest and the most distant conflict
         conflicts: dict[MissionTarget, float] = {}
@@ -91,7 +91,9 @@ class GroupGenerator(Generic[GroupT, UnitT, UnitTypeT, TgoT]):
             (closest_conflict.position.y + most_distant_conflict.position.y) / 2,
         )
 
-        return int(self.go.position.heading_between_point(conflict_center))
+        return Heading.from_degrees(
+            self.go.position.heading_between_point(conflict_center)
+        )
 
 
 class VehicleGroupGenerator(
