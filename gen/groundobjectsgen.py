@@ -425,7 +425,7 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator[GenericCarrierGroundO
         return ship
 
     def steam_into_wind(self, group: ShipGroup) -> Optional[Heading]:
-        wind = self.game.conditions.weather.wind.at_0m.direction
+        wind = self.game.conditions.weather.wind.at_0m
         brc = Heading.from_degrees(wind.direction).opposite
         # Aim for 25kts over the deck.
         carrier_speed = knots(25) - mps(wind.speed)

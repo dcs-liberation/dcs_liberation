@@ -12,7 +12,7 @@ from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
 
 from game.savecompat import has_save_compat_for
 from game.settings import Settings
-from game.utils import Distance, meters, interpolate, Pressure, inches_hg
+from game.utils import Distance, Heading, meters, interpolate, Pressure, inches_hg
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
@@ -149,7 +149,7 @@ class Weather:
 
     @staticmethod
     def random_wind(minimum: int, maximum: int) -> WindConditions:
-        wind_direction = random.randint(0, 360)
+        wind_direction = Heading.random()
         at_0m_factor = 1
         at_2000m_factor = 2
         at_8000m_factor = 3
@@ -157,9 +157,9 @@ class Weather:
 
         return WindConditions(
             # Always some wind to make the smoke move a bit.
-            at_0m=Wind(wind_direction, max(1, base_wind * at_0m_factor)),
-            at_2000m=Wind(wind_direction, base_wind * at_2000m_factor),
-            at_8000m=Wind(wind_direction, base_wind * at_8000m_factor),
+            at_0m=Wind(wind_direction.degrees, max(1, base_wind * at_0m_factor)),
+            at_2000m=Wind(wind_direction.degrees, base_wind * at_2000m_factor),
+            at_8000m=Wind(wind_direction.degrees, base_wind * at_8000m_factor),
         )
 
     @staticmethod
