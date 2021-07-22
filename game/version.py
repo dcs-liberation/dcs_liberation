@@ -106,4 +106,8 @@ VERSION = _build_version_string()
 #:
 #: Version 7.1
 #: * Support for Mariana Islands terrain
-CAMPAIGN_FORMAT_VERSION = (7, 1)
+#:
+#: Version 8.0
+#: * DCS 2.7.4.9632 changed scenery target IDs. Any mission using map buildings as
+#:   strike targets must check and potentially recreate all those objectives.
+CAMPAIGN_FORMAT_VERSION = (8, 0)
