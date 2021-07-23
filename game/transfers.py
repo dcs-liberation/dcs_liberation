@@ -166,21 +166,58 @@ class TransferOrder:
             return self.transport.find_escape_route()
         return None
 
-    def proceed(self) -> None:
-        if not self.destination.is_friendly(self.player):
-            logging.info(f"Transfer destination {self.destination} was captured.")
-            if self.position.is_friendly(self.player):
-                self.disband_at(self.position)
-            elif (escape_route := self.find_escape_route()) is not None:
-                self.disband_at(escape_route)
-            else:
-                logging.info(
-                    f"No escape route available. Units were surrounded and destroyed "
-                    "during transfer."
-                )
-                self.kill_all()
-            return
+    def disband(self) -> None:
+        """
+        Disbands the specific transfer at the current position if friendly, at a
+        possible escape route or kills all units if none is possible
+        """
+        if self.position.is_friendly(self.player):
+            self.disband_at(self.position)
+        elif (escape_route := self.find_escape_route()) is not None:
+            self.disband_at(escape_route)
+        else:
+            logging.info(
+                f"No escape route available. Units were surrounded and destroyed "
+                "during transfer."
+            )
+            self.kill_all()
 
+    def is_completable(self, network: TransitNetwork) -> bool:
+        """
+        Checks if the transfer can be completed with the current theater state / transit
+        network to ensure that there is possible route between the current position and
+        the planned destination. This also ensures that the points are friendly.
+        """
+        if self.transport is None:
+            # Check if unplanned transfers could be completed
+            if not self.position.is_friendly(self.player):
+                logging.info(
+                    f"Current position ({self.position}) "
+                    f"of the halting transfer was captured."
+                )
+                return False
+            if not network.has_path_between(self.position, self.destination):
+                logging.info(
+                    f"Destination of transfer ({self.destination}) "
+                    f"can not be reached anymore."
+                )
+                return False
+
+        if self.transport is not None and not self.next_stop.is_friendly(self.player):
+            # check if already proceeding transfers can reach the next stop
+            logging.info(
+                f"The next stop of the transfer ({self.next_stop}) "
+                f"was captured while transfer was on route."
+            )
+            return False
+
+        return True
+
+    def proceed(self) -> None:
+        """
+        Let the transfer proceed to the next stop and disbands it if the next stop
+        is the destination
+        """
         if self.transport is None:
             return
 
@@ -637,6 +674,12 @@ class PendingTransfers:
         transfer.origin.base.commission_units(transfer.units)
 
     def perform_transfers(self) -> None:
+        """
+        Performs completable transfers from the list of pending transfers and adds
+        uncompleted transfers which are en route back to the list of pending transfers.
+        Disbands all convoys and cargo ships
+        """
+        self.disband_uncompletable_transfers()
         incomplete = []
         for transfer in self.pending_transfers:
             transfer.proceed()
@@ -647,9 +690,30 @@ class PendingTransfers:
         self.cargo_ships.disband_all()
 
     def plan_transports(self) -> None:
+        """
+        Plan transports for all pending and completable transfers which don't have a
+        transport assigned already. This calculates the shortest path between current
+        position and destination on every execution to ensure the route is adopted to
+        recent changes in the theater state / transit network.
+        """
+        self.disband_uncompletable_transfers()
         for transfer in self.pending_transfers:
             if transfer.transport is None:
                 self.arrange_transport(transfer)
+
+    def disband_uncompletable_transfers(self) -> None:
+        """
+        Disbands all transfers from the list of pending_transfers which can not be
+        completed anymore because the theater state changed or the transit network does
+        not allow a route to the destination anymore
+        """
+        completable_transfers = []
+        for transfer in self.pending_transfers:
+            if not transfer.is_completable(self.network_for(transfer.position)):
+                transfer.disband()
+            else:
+                completable_transfers.append(transfer)
+        self.pending_transfers = completable_transfers
 
     def order_airlift_assets(self) -> None:
         for control_point in self.game.theater.control_points_for(self.player):
