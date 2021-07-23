@@ -98,7 +98,7 @@ class PatrolConfig:
     @classmethod
     def from_data(cls, data: dict[str, Any]) -> PatrolConfig:
         altitude = data.get("altitude", None)
-        speed = data.get("altitude", None)
+        speed = data.get("speed", None)
         return PatrolConfig(
             feet(altitude) if altitude is not None else None,
             knots(speed) if speed is not None else None,
