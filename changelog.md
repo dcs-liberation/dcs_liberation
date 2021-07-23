@@ -44,6 +44,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** Fixed problem with opfor planning missions against sold ground objects like SAMs
 * **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
 * **[Mission Generation]** Prevent the creation of a transfer order with 0 units for a rare situtation when a point was captured.
+* **[Mission Generation]** Planned transfers which will be impossible after a base capture will no longer prevent the mission result submit.
 * **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
 * **[UI]** Statistics window tick marks are now always integers.
 * **[UI]** Statistics window now shows the correct info for the turn
