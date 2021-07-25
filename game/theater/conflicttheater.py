@@ -51,7 +51,7 @@ from .controlpoint import (
     MissionTarget,
     OffMapSpawn,
 )
-from seasonalconditions import SeasonalConditions
+from .seasonalconditions import SeasonalConditions
 from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
