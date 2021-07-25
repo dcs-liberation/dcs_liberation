@@ -755,7 +755,7 @@ class CaucasusTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .caucasus import SEASONAL_CONDITIONS
+        from .seasonalconditions.caucasus import SEASONAL_CONDITIONS
 
         return SEASONAL_CONDITIONS
 
@@ -783,9 +783,10 @@ class PersianGulfTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .persiangulf import SEASONAL_CONDITIONS
+        from .seasonalconditions.persiangulf import SEASONAL_CONDITIONS
 
         return SEASONAL_CONDITIONS
+
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -811,7 +812,7 @@ class NevadaTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .nevada import SEASONAL_CONDITIONS
+        from .seasonalconditions.nevada import SEASONAL_CONDITIONS
 
         return SEASONAL_CONDITIONS
 
@@ -839,7 +840,7 @@ class NormandyTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .normandy import SEASONAL_CONDITIONS
+        from .seasonalconditions.normandy import SEASONAL_CONDITIONS
 
         return SEASONAL_CONDITIONS
 
@@ -867,7 +868,7 @@ class TheChannelTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .thechannel import SEASONAL_CONDITIONS
+        from .seasonalconditions.thechannel import SEASONAL_CONDITIONS
 
         return SEASONAL_CONDITIONS
 
@@ -895,7 +896,7 @@ class SyriaTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .syria import SEASONAL_CONDITIONS
+        from .seasonalconditions.syria import SEASONAL_CONDITIONS
 
         return SEASONAL_CONDITIONS
 
@@ -920,7 +921,7 @@ class MarianaIslandsTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .marianaislands import SEASONAL_CONDITIONS
+        from .seasonalconditions.marianaislands import SEASONAL_CONDITIONS
 
         return SEASONAL_CONDITIONS
 
