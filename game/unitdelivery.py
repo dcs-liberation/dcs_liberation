@@ -39,7 +39,10 @@ class PendingUnitDeliveries:
 
     def sell(self, units: dict[UnitType[Any], int]) -> None:
         for k, v in units.items():
-            self.units[k] -= v
+            if self.units[k] > v:
+                self.units[k] -= v
+            else:
+                del self.units[k]
 
     def refund_all(self, game: Game) -> None:
         self.refund(game, self.units)
