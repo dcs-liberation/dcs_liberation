@@ -755,9 +755,9 @@ class CaucasusTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.caucasus import SEASONAL_CONDITIONS
+        from .seasonalconditions.caucasus import CONDITIONS
 
-        return SEASONAL_CONDITIONS
+        return CONDITIONS
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -783,9 +783,9 @@ class PersianGulfTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.persiangulf import SEASONAL_CONDITIONS
+        from .seasonalconditions.persiangulf import CONDITIONS
 
-        return SEASONAL_CONDITIONS
+        return CONDITIONS
 
 
     @property
@@ -812,9 +812,9 @@ class NevadaTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.nevada import SEASONAL_CONDITIONS
+        from .seasonalconditions.nevada import CONDITIONS
 
-        return SEASONAL_CONDITIONS
+        return CONDITIONS
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -840,9 +840,9 @@ class NormandyTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.normandy import SEASONAL_CONDITIONS
+        from .seasonalconditions.normandy import CONDITIONS
 
-        return SEASONAL_CONDITIONS
+        return CONDITIONS
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -868,9 +868,9 @@ class TheChannelTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.thechannel import SEASONAL_CONDITIONS
+        from .seasonalconditions.thechannel import CONDITIONS
 
-        return SEASONAL_CONDITIONS
+        return CONDITIONS
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -896,9 +896,9 @@ class SyriaTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.syria import SEASONAL_CONDITIONS
+        from .seasonalconditions.syria import CONDITIONS
 
-        return SEASONAL_CONDITIONS
+        return CONDITIONS
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -921,9 +921,9 @@ class MarianaIslandsTheater(ConflictTheater):
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.marianaislands import SEASONAL_CONDITIONS
+        from .seasonalconditions.marianaislands import CONDITIONS
 
-        return SEASONAL_CONDITIONS
+        return CONDITIONS
 
     @property
     def projection_parameters(self) -> TransverseMercator:
