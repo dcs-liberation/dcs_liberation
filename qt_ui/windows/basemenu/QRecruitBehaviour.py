@@ -209,8 +209,6 @@ class QRecruitBehaviour:
         if self.pending_deliveries.available_next_turn(unit_type) > 0:
             self.budget += unit_type.price
             self.pending_deliveries.sell({unit_type: 1})
-            if self.pending_deliveries.units[unit_type] == 0:
-                del self.pending_deliveries.units[unit_type]
         self.update_purchase_controls()
         self.update_available_budget()
         return True
