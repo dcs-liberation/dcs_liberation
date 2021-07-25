@@ -1,7 +1,6 @@
 import datetime
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict
 
 
 class Season(Enum):
@@ -46,4 +45,4 @@ class SeasonalConditions:
     winter_avg_temperature: float
     temperature_day_night_difference: float
 
-    weather_type_chances: Dict[Season, WeatherTypeChances]
+    weather_type_chances: dict[Season, WeatherTypeChances]
