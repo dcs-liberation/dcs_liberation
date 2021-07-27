@@ -383,7 +383,7 @@ class Event:
                         delta = MINOR_DEFEAT_INFLUENCE
 
                 # Handle the case where there are no casualties at all on either side but both sides still have units
-                if delta < MINOR_DEFEAT_INFLUENCE:
+                if delta == 0.0:
                     print(status_msg)
                     info = Information(
                         "Frontline Report",
@@ -391,28 +391,28 @@ class Event:
                         self.game.turn,
                     )
                     self.game.informations.append(info)
-
-                if player_won:
-                    print(status_msg)
-                    cp.base.affect_strength(delta)
-                    enemy_cp.base.affect_strength(-delta)
-                    info = Information(
-                        "Frontline Report",
-                        f"Our ground forces from {cp.name} are making progress toward {enemy_cp.name}.  {status_msg}",
-                        self.game.turn,
-                    )
-                    self.game.informations.append(info)
                 else:
-                    print(status_msg)
-                    enemy_cp.base.affect_strength(delta)
-                    cp.base.affect_strength(-delta)
-                    info = Information(
-                        "Frontline Report",
-                        f"Our ground forces from {cp.name} are losing ground against the enemy forces from "
-                        f"{enemy_cp.name}. {status_msg}",
-                        self.game.turn,
-                    )
-                    self.game.informations.append(info)
+                    if player_won:
+                        print(status_msg)
+                        cp.base.affect_strength(delta)
+                        enemy_cp.base.affect_strength(-delta)
+                        info = Information(
+                            "Frontline Report",
+                            f"Our ground forces from {cp.name} are making progress toward {enemy_cp.name}.  {status_msg}",
+                            self.game.turn,
+                        )
+                        self.game.informations.append(info)
+                    else:
+                        print(status_msg)
+                        enemy_cp.base.affect_strength(delta)
+                        cp.base.affect_strength(-delta)
+                        info = Information(
+                            "Frontline Report",
+                            f"Our ground forces from {cp.name} are losing ground against the enemy forces from "
+                            f"{enemy_cp.name}. {status_msg}",
+                            self.game.turn,
+                        )
+                        self.game.informations.append(info)
 
     def redeploy_units(self, cp: ControlPoint) -> None:
         """ "
