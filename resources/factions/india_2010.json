@@ -57,7 +57,8 @@
   ],
   "ewrs": [
     "BoxSpringGenerator",
-    "TallRackGenerator"
+    "TallRackGenerator",
+    "TinShieldGenerator"
   ],
   "aircraft_carrier": [
     "KUZNECOW"

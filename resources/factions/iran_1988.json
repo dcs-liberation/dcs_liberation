@@ -53,7 +53,8 @@
     "ColdWarFlakGenerator"
   ],
   "ewrs": [
-    "TallRackGenerator"
+    "TallRackGenerator",
+    "TinShieldGenerator"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],
