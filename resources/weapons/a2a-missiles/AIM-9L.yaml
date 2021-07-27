@@ -1,0 +1,11 @@
+name: AIM-9L
+year: 1977
+clsids:
+  - "{AIM-9L}"
+  - "LAU-105_1*AIM-9L_L"
+  - "LAU-105_1*AIM-9L_R"
+  - "LAU-115_LAU-127_AIM-9L"
+  - "LAU-115_LAU-127_AIM-9L_R"
+  - "LAU-127_AIM-9L"
+  - "{LAU-138 wtip - AIM-9L}"
+  - "{LAU-7 - AIM-9L}"

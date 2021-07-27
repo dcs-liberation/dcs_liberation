@@ -28,6 +28,7 @@ from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
     CoastalSiteGroundObject,
 )
+from game.utils import Heading
 from game.version import VERSION
 from gen import namegen
 from gen.coastal.coastal_group_generator import generate_coastal_group
@@ -123,7 +124,6 @@ class GameGenerator:
 
             GroundObjectGenerator(game, self.generator_settings).generate()
         game.settings.version = VERSION
-        game.begin_turn_0()
         return game
 
     def prepare_theater(self) -> None:
@@ -386,7 +386,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 group_id,
                 object_id,
                 position + template_point,
-                unit["heading"],
+                Heading.from_degrees(unit["heading"]),
                 self.control_point,
                 unit["type"],
             )
@@ -586,7 +586,7 @@ class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):
                 group_id,
                 object_id,
                 point + template_point,
-                unit["heading"],
+                Heading.from_degrees(unit["heading"]),
                 self.control_point,
                 unit["type"],
                 is_fob_structure=True,

@@ -1,0 +1,5 @@
+name: CBU-97
+year: 1992
+fallback: CBU-87
+clsids:
+  - "{5335D97A-35A5-4643-9D9B-026C75961E52}"

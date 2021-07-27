@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import logging
 import random
 from dataclasses import dataclass
@@ -80,7 +81,7 @@ from game.theater.missiontarget import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
-from game.utils import Distance, meters, nautical_miles
+from game.utils import Distance, Heading, meters, nautical_miles, pairwise
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -1194,8 +1195,57 @@ class AircraftConflictGenerator:
             ).build()
 
         # Set here rather than when the FlightData is created so they waypoints
-        # have their TOTs set.
-        self.flights[-1].waypoints = [takeoff_point] + flight.points
+        # have their TOTs and fuel minimums set. Once we're more confident in our fuel
+        # estimation ability the minimum fuel amounts will be calculated during flight
+        # plan construction, but for now it's only used by the kneeboard so is generated
+        # late.
+        waypoints = [takeoff_point] + flight.points
+        self._estimate_min_fuel_for(flight, waypoints)
+        self.flights[-1].waypoints = waypoints
+
+    @staticmethod
+    def _estimate_min_fuel_for(flight: Flight, waypoints: list[FlightWaypoint]) -> None:
+        if flight.unit_type.fuel_consumption is None:
+            return
+
+        combat_speed_types = {
+            FlightWaypointType.INGRESS_BAI,
+            FlightWaypointType.INGRESS_CAS,
+            FlightWaypointType.INGRESS_DEAD,
+            FlightWaypointType.INGRESS_ESCORT,
+            FlightWaypointType.INGRESS_OCA_AIRCRAFT,
+            FlightWaypointType.INGRESS_OCA_RUNWAY,
+            FlightWaypointType.INGRESS_SEAD,
+            FlightWaypointType.INGRESS_STRIKE,
+            FlightWaypointType.INGRESS_SWEEP,
+            FlightWaypointType.SPLIT,
+        } | set(TARGET_WAYPOINTS)
+
+        consumption = flight.unit_type.fuel_consumption
+        min_fuel: float = consumption.min_safe
+
+        # The flight plan (in reverse) up to and including the arrival point.
+        main_flight_plan = reversed(waypoints)
+        try:
+            while waypoint := next(main_flight_plan):
+                if waypoint.waypoint_type is FlightWaypointType.LANDING_POINT:
+                    waypoint.min_fuel = min_fuel
+                    main_flight_plan = itertools.chain([waypoint], main_flight_plan)
+                    break
+        except StopIteration:
+            # Some custom flight plan without a landing point. Skip it.
+            return
+
+        for b, a in pairwise(main_flight_plan):
+            distance = meters(a.position.distance_to_point(b.position))
+            if a.waypoint_type is FlightWaypointType.TAKEOFF:
+                ppm = consumption.climb
+            elif b.waypoint_type in combat_speed_types:
+                ppm = consumption.combat
+            else:
+                ppm = consumption.cruise
+            min_fuel += distance.nautical_miles * ppm
+            a.min_fuel = min_fuel
 
     def should_delay_flight(self, flight: Flight, start_time: timedelta) -> bool:
         if start_time.total_seconds() <= 0:

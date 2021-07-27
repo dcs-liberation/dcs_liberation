@@ -4,8 +4,8 @@
   "authors": "Colonel Panic",
   "recommended_player_faction": "Iran 2015",
   "recommended_enemy_faction": "United Arab Emirates 2015",
-  "description": "<p>You have managed to establish a foothold at Khasab. Continue pushing south.</p>",
+  "description": "<p>You have managed to establish a foothold near Ras Al Khaima. Continue pushing south.</p>",
   "miz": "battle_of_abu_dhabi.miz",
   "performance": 2,
-  "version": "7.0"
+  "version": "8.0"
 }

@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from game.commander.missionproposals import EscortType
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.theater.theatergroundobject import NavalGroundObject
 from gen.flights.flight import FlightType
 
@@ -22,11 +21,6 @@ class PlanAntiShip(PackagePlanningTask[NavalGroundObject]):
     def apply_effects(self, state: TheaterState) -> None:
         state.eliminate_ship(self.target)
 
-    def propose_flights(self, doctrine: Doctrine) -> None:
-        self.propose_flight(FlightType.ANTISHIP, 2, doctrine.mission_ranges.offensive)
-        self.propose_flight(
-            FlightType.ESCORT,
-            2,
-            doctrine.mission_ranges.offensive,
-            EscortType.AirToAir,
-        )
+    def propose_flights(self) -> None:
+        self.propose_flight(FlightType.ANTISHIP, 2)
+        self.propose_flight(FlightType.ESCORT, 2, EscortType.AirToAir)

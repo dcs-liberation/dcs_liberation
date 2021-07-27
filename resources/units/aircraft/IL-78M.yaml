@@ -1,5 +1,6 @@
 price: 20
 max_group_size: 1
+max_range: 1000
 patrol:
   # ~280 knots IAS.
   speed: 400

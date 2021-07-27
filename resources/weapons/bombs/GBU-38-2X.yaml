@@ -1,0 +1,8 @@
+name: 2xGBU-38
+year: 2002
+fallback: 2xGBU-12
+clsids:
+  - "{BRU55_2*GBU-38}"
+  - "{BRU57_2*GBU-38}"
+  - "{BRU-42_2*GBU-38_LEFT}"
+  - "{BRU-42_2*GBU-38_RIGHT}"

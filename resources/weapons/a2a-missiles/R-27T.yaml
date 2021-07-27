@@ -1,0 +1,5 @@
+name: R-27T
+year: 1983
+fallback: R-24T
+clsids:
+  - "{88DAC840-9F75-4531-8689-B46E64E42E53}"

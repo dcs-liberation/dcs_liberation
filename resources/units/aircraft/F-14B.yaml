@@ -21,6 +21,7 @@ manufacturer: Grumman
 origin: USA
 price: 26
 role: Carrier-based Air-Superiority Fighter/Fighter Bomber
+max_range: 250
 variants:
   F-14B Tomcat: {}
 radios:

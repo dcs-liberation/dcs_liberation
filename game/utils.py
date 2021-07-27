@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import itertools
 import math
+import random
 from collections import Iterable
 from dataclasses import dataclass
-from typing import Union, Any
+from typing import Union, Any, TypeVar
 
 METERS_TO_FEET = 3.28084
 FEET_TO_METERS = 1 / METERS_TO_FEET
@@ -16,14 +17,8 @@ KPH_TO_KNOTS = 1 / KNOTS_TO_KPH
 MS_TO_KPH = 3.6
 KPH_TO_MS = 1 / MS_TO_KPH
 
-
-def heading_sum(h: int, a: int) -> int:
-    h += a
-    return h % 360
-
-
-def opposite_heading(h: int) -> int:
-    return heading_sum(h, 180)
+INHG_TO_HPA = 33.86389
+INHG_TO_MMHG = 25.400002776728
 
 
 @dataclass(frozen=True, order=True)
@@ -181,7 +176,85 @@ def mach(value: float, altitude: Distance) -> Speed:
 SPEED_OF_SOUND_AT_SEA_LEVEL = knots(661.5)
 
 
-def pairwise(iterable: Iterable[Any]) -> Iterable[tuple[Any, Any]]:
+@dataclass(frozen=True, order=True)
+class Heading:
+    heading_in_degrees: int
+
+    @property
+    def degrees(self) -> int:
+        return Heading.reduce_angle(self.heading_in_degrees)
+
+    @property
+    def radians(self) -> float:
+        return math.radians(Heading.reduce_angle(self.heading_in_degrees))
+
+    @property
+    def opposite(self) -> Heading:
+        return self + Heading.from_degrees(180)
+
+    @property
+    def right(self) -> Heading:
+        return self + Heading.from_degrees(90)
+
+    @property
+    def left(self) -> Heading:
+        return self - Heading.from_degrees(90)
+
+    def angle_between(self, other: Heading) -> Heading:
+        angle_between = abs(self.degrees - other.degrees)
+        if angle_between > 180:
+            angle_between = 360 - angle_between
+        return Heading.from_degrees(angle_between)
+
+    @staticmethod
+    def reduce_angle(angle: int) -> int:
+        return angle % 360
+
+    @classmethod
+    def from_degrees(cls, angle: Union[int, float]) -> Heading:
+        return cls(Heading.reduce_angle(round(angle)))
+
+    @classmethod
+    def from_radians(cls, angle: Union[int, float]) -> Heading:
+        deg = round(math.degrees(angle))
+        return cls(Heading.reduce_angle(deg))
+
+    @classmethod
+    def random(cls, min_angle: int = 0, max_angle: int = 0) -> Heading:
+        return Heading.from_degrees(random.randint(min_angle, max_angle))
+
+    def __add__(self, other: Heading) -> Heading:
+        return Heading.from_degrees(self.degrees + other.degrees)
+
+    def __sub__(self, other: Heading) -> Heading:
+        return Heading.from_degrees(self.degrees - other.degrees)
+
+
+@dataclass(frozen=True, order=True)
+class Pressure:
+    pressure_in_inches_hg: float
+
+    @property
+    def inches_hg(self) -> float:
+        return self.pressure_in_inches_hg
+
+    @property
+    def mm_hg(self) -> float:
+        return self.pressure_in_inches_hg * INHG_TO_MMHG
+
+    @property
+    def hecto_pascals(self) -> float:
+        return self.pressure_in_inches_hg * INHG_TO_HPA
+
+
+def inches_hg(value: float) -> Pressure:
+    return Pressure(value)
+
+
+PairwiseT = TypeVar("PairwiseT")
+
+
+def pairwise(iterable: Iterable[PairwiseT]) -> Iterable[tuple[PairwiseT, PairwiseT]]:
     """
     itertools recipe
     s -> (s0,s1), (s1,s2), (s2, s3), ...
@@ -189,3 +262,15 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[tuple[Any, Any]]:
     a, b = itertools.tee(iterable)
     next(b, None)
     return zip(a, b)
+
+
+def interpolate(value1: float, value2: float, factor: float, clamp: bool) -> float:
+    """Inerpolate between two values, factor 0-1"""
+    interpolated = value1 + (value2 - value1) * factor
+
+    if clamp:
+        bigger_value = max(value1, value2)
+        smaller_value = min(value1, value2)
+        return min(bigger_value, max(smaller_value, interpolated))
+    else:
+        return interpolated

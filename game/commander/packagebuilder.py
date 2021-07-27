@@ -44,7 +44,7 @@ class PackageBuilder:
         caller should return any previously planned flights to the inventory
         using release_planned_aircraft.
         """
-        assignment = self.allocator.find_squadron_for_flight(plan)
+        assignment = self.allocator.find_squadron_for_flight(self.package.target, plan)
         if assignment is None:
             return False
         airfield, squadron = assignment

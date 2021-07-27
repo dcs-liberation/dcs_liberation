@@ -59,7 +59,7 @@ from ..point_with_heading import PointWithHeading
 from ..positioned import Positioned
 from ..profiling import logged_duration
 from ..scenery_group import SceneryGroup
-from ..utils import Distance, meters
+from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
     from . import TheaterGroundObject
@@ -389,8 +389,10 @@ class MizCampaignLoader:
                 origin, list(reversed(waypoints))
             )
 
-    def objective_info(self, near: Positioned) -> Tuple[ControlPoint, Distance]:
-        closest = self.theater.closest_control_point(near.position)
+    def objective_info(
+        self, near: Positioned, allow_naval: bool = False
+    ) -> Tuple[ControlPoint, Distance]:
+        closest = self.theater.closest_control_point(near.position, allow_naval)
         distance = meters(closest.position.distance_to_point(near.position))
         return closest, distance
 
@@ -398,85 +400,113 @@ class MizCampaignLoader:
         for static in self.offshore_strike_targets:
             closest, distance = self.objective_info(static)
             closest.preset_locations.offshore_strike_locations.append(
-                PointWithHeading.from_point(static.position, static.units[0].heading)
+                PointWithHeading.from_point(
+                    static.position, Heading.from_degrees(static.units[0].heading)
+                )
             )
 
         for ship in self.ships:
-            closest, distance = self.objective_info(ship)
+            closest, distance = self.objective_info(ship, allow_naval=True)
             closest.preset_locations.ships.append(
-                PointWithHeading.from_point(ship.position, ship.units[0].heading)
+                PointWithHeading.from_point(
+                    ship.position, Heading.from_degrees(ship.units[0].heading)
+                )
             )
 
         for group in self.missile_sites:
             closest, distance = self.objective_info(group)
             closest.preset_locations.missile_sites.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for group in self.coastal_defenses:
             closest, distance = self.objective_info(group)
             closest.preset_locations.coastal_defenses.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for group in self.long_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.long_range_sams.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for group in self.medium_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.medium_range_sams.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for group in self.short_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.short_range_sams.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for group in self.aaa:
             closest, distance = self.objective_info(group)
             closest.preset_locations.aaa.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
             closest.preset_locations.ewrs.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for group in self.armor_groups:
             closest, distance = self.objective_info(group)
             closest.preset_locations.armor_groups.append(
-                PointWithHeading.from_point(group.position, group.units[0].heading)
+                PointWithHeading.from_point(
+                    group.position, Heading.from_degrees(group.units[0].heading)
+                )
             )
 
         for static in self.helipads:
             closest, distance = self.objective_info(static)
             closest.helipads.append(
-                PointWithHeading.from_point(static.position, static.units[0].heading)
+                PointWithHeading.from_point(
+                    static.position, Heading.from_degrees(static.units[0].heading)
+                )
             )
 
         for static in self.factories:
             closest, distance = self.objective_info(static)
             closest.preset_locations.factories.append(
-                PointWithHeading.from_point(static.position, static.units[0].heading)
+                PointWithHeading.from_point(
+                    static.position, Heading.from_degrees(static.units[0].heading)
+                )
             )
 
         for static in self.ammunition_depots:
             closest, distance = self.objective_info(static)
             closest.preset_locations.ammunition_depots.append(
-                PointWithHeading.from_point(static.position, static.units[0].heading)
+                PointWithHeading.from_point(
+                    static.position, Heading.from_degrees(static.units[0].heading)
+                )
             )
 
         for static in self.strike_targets:
             closest, distance = self.objective_info(static)
             closest.preset_locations.strike_locations.append(
-                PointWithHeading.from_point(static.position, static.units[0].heading)
+                PointWithHeading.from_point(
+                    static.position, Heading.from_degrees(static.units[0].heading)
+                )
             )
 
         for scenery_group in self.scenery:
@@ -495,6 +525,17 @@ class MizCampaignLoader:
 class ReferencePoint:
     world_coordinates: Point
     image_coordinates: Point
+
+
+@dataclass(frozen=True)
+class SeasonalConditions:
+    # Units are inHg and degrees Celsius
+    # Future improvement: add clouds/precipitation
+    summer_avg_pressure: float
+    winter_avg_pressure: float
+    summer_avg_temperature: float
+    winter_avg_temperature: float
+    temperature_day_night_difference: float
 
 
 class ConflictTheater:
@@ -633,10 +674,14 @@ class ConflictTheater:
     def enemy_points(self) -> List[ControlPoint]:
         return list(self.control_points_for(player=False))
 
-    def closest_control_point(self, point: Point) -> ControlPoint:
+    def closest_control_point(
+        self, point: Point, allow_naval: bool = False
+    ) -> ControlPoint:
         closest = self.controlpoints[0]
         closest_distance = point.distance_to_point(closest.position)
         for control_point in self.controlpoints[1:]:
+            if control_point.is_fleet and not allow_naval:
+                continue
             distance = point.distance_to_point(control_point.position)
             if distance < closest_distance:
                 closest = control_point
@@ -720,6 +765,10 @@ class ConflictTheater:
         return t
 
     @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        raise NotImplementedError
+
+    @property
     def projection_parameters(self) -> TransverseMercator:
         raise NotImplementedError
 
@@ -749,6 +798,16 @@ class CaucasusTheater(ConflictTheater):
     }
 
     @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        return SeasonalConditions(
+            summer_avg_pressure=30.02,  # TODO: More science
+            winter_avg_pressure=29.72,  # TODO: More science
+            summer_avg_temperature=22.5,
+            winter_avg_temperature=3.0,
+            temperature_day_night_difference=6.0,
+        )
+
+    @property
     def projection_parameters(self) -> TransverseMercator:
         from .caucasus import PARAMETERS
 
@@ -769,6 +828,16 @@ class PersianGulfTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        return SeasonalConditions(
+            summer_avg_pressure=29.98,  # TODO: More science
+            winter_avg_pressure=29.80,  # TODO: More science
+            summer_avg_temperature=32.5,
+            winter_avg_temperature=15.0,
+            temperature_day_night_difference=2.0,
+        )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -793,6 +862,16 @@ class NevadaTheater(ConflictTheater):
     }
 
     @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        return SeasonalConditions(
+            summer_avg_pressure=30.02,  # TODO: More science
+            winter_avg_pressure=29.72,  # TODO: More science
+            summer_avg_temperature=31.5,
+            winter_avg_temperature=5.0,
+            temperature_day_night_difference=6.0,
+        )
+
+    @property
     def projection_parameters(self) -> TransverseMercator:
         from .nevada import PARAMETERS
 
@@ -813,6 +892,16 @@ class NormandyTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
+
+    @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        return SeasonalConditions(
+            summer_avg_pressure=30.02,  # TODO: More science
+            winter_avg_pressure=29.72,  # TODO: More science
+            summer_avg_temperature=20.0,
+            winter_avg_temperature=0.0,
+            temperature_day_night_difference=5.0,
+        )
 
     @property
     def projection_parameters(self) -> TransverseMercator:
@@ -837,6 +926,16 @@ class TheChannelTheater(ConflictTheater):
     }
 
     @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        return SeasonalConditions(
+            summer_avg_pressure=30.02,  # TODO: More science
+            winter_avg_pressure=29.72,  # TODO: More science
+            summer_avg_temperature=20.0,
+            winter_avg_temperature=0.0,
+            temperature_day_night_difference=5.0,
+        )
+
+    @property
     def projection_parameters(self) -> TransverseMercator:
         from .thechannel import PARAMETERS
 
@@ -859,6 +958,16 @@ class SyriaTheater(ConflictTheater):
     }
 
     @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        return SeasonalConditions(
+            summer_avg_pressure=29.98,  # TODO: More science
+            winter_avg_pressure=29.86,  # TODO: More science
+            summer_avg_temperature=28.5,
+            winter_avg_temperature=10.0,
+            temperature_day_night_difference=8.0,
+        )
+
+    @property
     def projection_parameters(self) -> TransverseMercator:
         from .syria import PARAMETERS
 
@@ -876,6 +985,16 @@ class MarianaIslandsTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        return SeasonalConditions(
+            summer_avg_pressure=30.02,  # TODO: More science
+            winter_avg_pressure=29.82,  # TODO: More science
+            summer_avg_temperature=28.0,
+            winter_avg_temperature=27.0,
+            temperature_day_night_difference=1.0,
+        )
 
     @property
     def projection_parameters(self) -> TransverseMercator:

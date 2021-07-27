@@ -21,6 +21,16 @@ manufacturer: McDonnell Douglas
 origin: USA
 price: 24
 role: Carrier-based Multirole Fighter
+fuel:
+  # Parking A1 to RWY 32 at Akrotiri.
+  taxi: 170
+  # AB takeoff to 350/0.85, reduce to MIL and maintain 350 to 25k ft.
+  climb_ppm: 44.25
+  # 0.85 mach for 100NM.
+  cruise_ppm: 22.1
+  # ~0.9 mach for 100NM. Occasional AB use.
+  combat_ppm: 27.5
+  min_safe: 2000
 variants:
   CF-188 Hornet: {}
   EF-18A+ Hornet: {}

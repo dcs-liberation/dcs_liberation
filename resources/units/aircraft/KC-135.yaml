@@ -8,6 +8,7 @@ manufacturer: Beoing
 origin: USA
 price: 25
 role: Tanker
+max_range: 1000
 patrol:
   # ~300 knots IAS.
   speed: 445

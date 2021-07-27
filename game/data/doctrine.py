@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any
 
@@ -16,15 +16,6 @@ class GroundUnitProcurementRatios:
             return self.ratios[unit_class] / sum(self.ratios.values())
         except KeyError:
             return 0.0
-
-
-@dataclass(frozen=True)
-class MissionPlannerMaxRanges:
-    cap: Distance = field(default=nautical_miles(100))
-    cas: Distance = field(default=nautical_miles(50))
-    offensive: Distance = field(default=nautical_miles(150))
-    aewc: Distance = field(default=Distance.inf())
-    refueling: Distance = field(default=nautical_miles(200))
 
 
 @dataclass(frozen=True)
@@ -47,8 +38,13 @@ class Doctrine:
     #: fallback flight plan layout (when the departure airfield is near a threat zone).
     join_distance: Distance
 
-    #: The distance between the ingress point (beginning of the attack) and target.
-    ingress_distance: Distance
+    #: The maximum distance between the ingress point (beginning of the attack) and
+    #: target.
+    max_ingress_distance: Distance
+
+    #: The minimum distance between the ingress point (beginning of the attack) and
+    #: target.
+    min_ingress_distance: Distance
 
     ingress_altitude: Distance
 
@@ -83,14 +79,31 @@ class Doctrine:
 
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
 
-    mission_ranges: MissionPlannerMaxRanges = field(default=MissionPlannerMaxRanges())
-
     @has_save_compat_for(5)
     def __setstate__(self, state: dict[str, Any]) -> None:
-        if "ingress_distance" not in state:
-            state["ingress_distance"] = state["ingress_egress_distance"]
-            del state["ingress_egress_distance"]
+        if "max_ingress_distance" not in state:
+            try:
+                state["max_ingress_distance"] = state["ingress_distance"]
+                del state["ingress_distance"]
+            except KeyError:
+                state["max_ingress_distance"] = state["ingress_egress_distance"]
+                del state["ingress_egress_distance"]
+
+        max_ip: Distance = state["max_ingress_distance"]
+        if "min_ingress_distance" not in state:
+            if max_ip < nautical_miles(10):
+                min_ip = nautical_miles(5)
+            else:
+                min_ip = nautical_miles(10)
+            state["min_ingress_distance"] = min_ip
+
         self.__dict__.update(state)
+
+
+class MissionPlannerMaxRanges:
+    @has_save_compat_for(5)
+    def __init__(self) -> None:
+        pass
 
 
 MODERN_DOCTRINE = Doctrine(
@@ -100,10 +113,11 @@ MODERN_DOCTRINE = Doctrine(
     strike=True,
     antiship=True,
     rendezvous_altitude=feet(25000),
-    hold_distance=nautical_miles(15),
+    hold_distance=nautical_miles(25),
     push_distance=nautical_miles(20),
     join_distance=nautical_miles(20),
-    ingress_distance=nautical_miles(45),
+    max_ingress_distance=nautical_miles(45),
+    min_ingress_distance=nautical_miles(10),
     ingress_altitude=feet(20000),
     min_patrol_altitude=feet(15000),
     max_patrol_altitude=feet(33000),
@@ -136,10 +150,11 @@ COLDWAR_DOCTRINE = Doctrine(
     strike=True,
     antiship=True,
     rendezvous_altitude=feet(22000),
-    hold_distance=nautical_miles(10),
+    hold_distance=nautical_miles(15),
     push_distance=nautical_miles(10),
     join_distance=nautical_miles(10),
-    ingress_distance=nautical_miles(30),
+    max_ingress_distance=nautical_miles(30),
+    min_ingress_distance=nautical_miles(10),
     ingress_altitude=feet(18000),
     min_patrol_altitude=feet(10000),
     max_patrol_altitude=feet(24000),
@@ -171,11 +186,12 @@ WWII_DOCTRINE = Doctrine(
     sead=False,
     strike=True,
     antiship=True,
-    hold_distance=nautical_miles(5),
+    hold_distance=nautical_miles(10),
     push_distance=nautical_miles(5),
     join_distance=nautical_miles(5),
     rendezvous_altitude=feet(10000),
-    ingress_distance=nautical_miles(7),
+    max_ingress_distance=nautical_miles(7),
+    min_ingress_distance=nautical_miles(5),
     ingress_altitude=feet(8000),
     min_patrol_altitude=feet(4000),
     max_patrol_altitude=feet(15000),

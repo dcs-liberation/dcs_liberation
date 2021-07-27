@@ -1,0 +1,15 @@
+name: 2xGBU-12
+type: LGB
+year: 1976
+fallback: 2xMk 82
+clsids:
+  - "{M2KC_RAFAUT_GBU12}"
+  - "{BRU33_2X_GBU-12}"
+  - "DIS_GBU_12_DUAL_GDJ_II19_L"
+  - "DIS_GBU_12_DUAL_GDJ_II19_R"
+  - "{TER_9A_2L*GBU-12}"
+  - "{TER_9A_2R*GBU-12}"
+  - "{89D000B0-0360-461A-AD83-FB727E2ABA98}"
+  - "{BRU-42_2xGBU-12_right}"
+  - "{BRU-42_2*GBU-12_LEFT}"
+  - "{BRU-42_2*GBU-12_RIGHT}"

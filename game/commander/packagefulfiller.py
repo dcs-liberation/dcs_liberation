@@ -83,7 +83,6 @@ class PackageFulfiller:
             missing_types.add(flight.task)
             purchase_order = AircraftProcurementRequest(
                 near=mission.location,
-                range=flight.max_distance,
                 task_capability=flight.task,
                 number=flight.num_aircraft,
             )

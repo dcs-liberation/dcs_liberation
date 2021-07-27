@@ -13,8 +13,9 @@ from PySide2.QtWidgets import QApplication, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
-from game.data.weapons import WeaponGroup
+from game.data.weapons import WeaponGroup, Pylon, Weapon
 from game.db import FACTIONS
+from game.dcs.aircrafttype import AircraftType
 from game.profiling import logged_duration
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
@@ -183,7 +184,23 @@ def parse_args() -> argparse.Namespace:
         "--inverted", action="store_true", help="Invert the campaign."
     )
 
+    new_game.add_argument(
+        "--date",
+        type=datetime.fromisoformat,
+        default=datetime.today(),
+        help="Start date of the campaign.",
+    )
+
+    new_game.add_argument(
+        "--restrict-weapons-by-date",
+        action="store_true",
+        help="Enable campaign date restricted weapons.",
+    )
+
     new_game.add_argument("--cheats", action="store_true", help="Enable cheats.")
+
+    lint_weapons = subparsers.add_parser("lint-weapons")
+    lint_weapons.add_argument("aircraft", help="Name of the aircraft variant to lint.")
 
     return parser.parse_args()
 
@@ -196,6 +213,8 @@ def create_game(
     auto_procurement: bool,
     inverted: bool,
     cheats: bool,
+    start_date: datetime,
+    restrict_weapons_by_date: bool,
 ) -> Game:
     first_start = liberation_install.init()
     if first_start:
@@ -224,9 +243,10 @@ def create_game(
             automate_aircraft_reinforcements=auto_procurement,
             enable_frontline_cheats=cheats,
             enable_base_capture_cheat=cheats,
+            restrict_weapons_by_date=restrict_weapons_by_date,
         ),
         GeneratorSettings(
-            start_date=datetime.today(),
+            start_date=start_date,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
             midgame=False,
@@ -246,12 +266,24 @@ def create_game(
             high_digit_sams=False,
         ),
     )
-    return generator.generate()
+    game = generator.generate()
+    game.begin_turn_0()
+    return game
 
 
-def lint_weapon_data() -> None:
+def lint_all_weapon_data() -> None:
     for weapon in WeaponGroup.named("Unknown").weapons:
         logging.warning(f"No weapon data for {weapon}: {weapon.clsid}")
+
+
+def lint_weapon_data_for_aircraft(aircraft: AircraftType) -> None:
+    all_weapons: set[Weapon] = set()
+    for pylon in Pylon.iter_pylons(aircraft):
+        all_weapons |= pylon.allowed
+
+    for weapon in all_weapons:
+        if weapon.weapon_group.name == "Unknown":
+            logging.warning(f'{weapon.clsid} "{weapon.name}" has no weapon data')
 
 
 def main():
@@ -265,7 +297,7 @@ def main():
 
     # TODO: Flesh out data and then make unconditional.
     if args.warn_missing_weapon_data:
-        lint_weapon_data()
+        lint_all_weapon_data()
 
     if args.subcommand == "new-game":
         with logged_duration("New game creation"):
@@ -277,7 +309,12 @@ def main():
                 args.auto_procurement,
                 args.inverted,
                 args.cheats,
+                args.date,
+                args.restrict_weapons_by_date,
             )
+    if args.subcommand == "lint-weapons":
+        lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
+        return
 
     run_ui(game)
 

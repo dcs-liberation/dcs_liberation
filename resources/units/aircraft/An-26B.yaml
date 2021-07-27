@@ -1,4 +1,5 @@
 description: The An-26B is a military transport aircraft.
 price: 15
+max_range: 800
 variants:
   An-26B: null

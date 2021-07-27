@@ -3,7 +3,6 @@ from typing import Optional
 from dcs.mission import Mission
 
 from game.weather import Clouds, Fog, Conditions, WindConditions, AtmosphericConditions
-from .units import inches_hg_to_mm_hg
 
 
 class EnvironmentGenerator:
@@ -12,7 +11,7 @@ class EnvironmentGenerator:
         self.conditions = conditions
 
     def set_atmospheric(self, atmospheric: AtmosphericConditions) -> None:
-        self.mission.weather.qnh = inches_hg_to_mm_hg(atmospheric.qnh_inches_mercury)
+        self.mission.weather.qnh = atmospheric.qnh.mm_hg
         self.mission.weather.season_temperature = atmospheric.temperature_celsius
 
     def set_clouds(self, clouds: Optional[Clouds]) -> None:

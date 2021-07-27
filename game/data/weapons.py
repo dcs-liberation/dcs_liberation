@@ -4,6 +4,7 @@ import datetime
 import inspect
 import logging
 from dataclasses import dataclass, field
+from enum import unique, Enum
 from functools import cached_property
 from pathlib import Path
 from typing import Iterator, Optional, Any, ClassVar
@@ -61,7 +62,7 @@ class Weapon:
             duplicate = cls._by_clsid[weapon.clsid]
             raise ValueError(
                 "Weapon CLSID used in more than one weapon type: "
-                f"{duplicate.name} and {weapon.name}"
+                f"{duplicate.name} and {weapon.name}: {weapon.clsid}"
             )
         cls._by_clsid[weapon.clsid] = weapon
 
@@ -91,6 +92,13 @@ class Weapon:
             fallback = fallback.fallback
 
 
+@unique
+class WeaponType(Enum):
+    LGB = "LGB"
+    TGP = "TGP"
+    UNKNOWN = "unknown"
+
+
 @dataclass(frozen=True)
 class WeaponGroup:
     """Group of "identical" weapons loaded from resources/weapons.
@@ -101,7 +109,10 @@ class WeaponGroup:
     """
 
     #: The name of the weapon group in the resource file.
-    name: str = field(compare=False)
+    name: str
+
+    #: The type of the weapon group.
+    type: WeaponType = field(compare=False)
 
     #: The year of introduction.
     introduction_year: Optional[int] = field(compare=False)
@@ -152,9 +163,13 @@ class WeaponGroup:
             with group_file_path.open(encoding="utf8") as group_file:
                 data = yaml.safe_load(group_file)
             name = data["name"]
+            try:
+                weapon_type = WeaponType(data["type"])
+            except KeyError:
+                weapon_type = WeaponType.UNKNOWN
             year = data.get("year")
             fallback_name = data.get("fallback")
-            group = WeaponGroup(name, year, fallback_name)
+            group = WeaponGroup(name, weapon_type, year, fallback_name)
             for clsid in data["clsids"]:
                 weapon = Weapon(clsid, group)
                 Weapon.register(weapon)
@@ -163,7 +178,12 @@ class WeaponGroup:
 
     @classmethod
     def register_clean_pylon(cls) -> None:
-        group = WeaponGroup("Clean pylon", introduction_year=None, fallback_name=None)
+        group = WeaponGroup(
+            "Clean pylon",
+            type=WeaponType.UNKNOWN,
+            introduction_year=None,
+            fallback_name=None,
+        )
         cls.register(group)
         weapon = Weapon("<CLEAN>", group)
         Weapon.register(weapon)
@@ -172,7 +192,12 @@ class WeaponGroup:
     @classmethod
     def register_unknown_weapons(cls, seen_clsids: set[str]) -> None:
         unknown_weapons = set(weapon_ids.keys()) - seen_clsids
-        group = WeaponGroup("Unknown", introduction_year=None, fallback_name=None)
+        group = WeaponGroup(
+            "Unknown",
+            type=WeaponType.UNKNOWN,
+            introduction_year=None,
+            fallback_name=None,
+        )
         cls.register(group)
         for clsid in unknown_weapons:
             weapon = Weapon(clsid, group)
@@ -181,6 +206,8 @@ class WeaponGroup:
 
     @classmethod
     def load_all(cls) -> None:
+        if cls._loaded:
+            return
         seen_clsids: set[str] = set()
         for group in cls._each_weapon_group():
             cls.register(group)

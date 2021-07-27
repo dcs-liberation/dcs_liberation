@@ -21,6 +21,6 @@ class PlanConvoyInterdiction(PackagePlanningTask[Convoy]):
     def apply_effects(self, state: TheaterState) -> None:
         state.enemy_convoys.remove(self.target)
 
-    def propose_flights(self, doctrine: Doctrine) -> None:
-        self.propose_flight(FlightType.BAI, 2, doctrine.mission_ranges.offensive)
-        self.propose_common_escorts(doctrine)
+    def propose_flights(self) -> None:
+        self.propose_flight(FlightType.BAI, 2)
+        self.propose_common_escorts()

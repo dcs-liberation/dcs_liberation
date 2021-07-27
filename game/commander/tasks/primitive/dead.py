@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from game.commander.missionproposals import EscortType
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.theater.theatergroundobject import IadsGroundObject
 from gen.flights.flight import FlightType
 
@@ -25,8 +24,8 @@ class PlanDead(PackagePlanningTask[IadsGroundObject]):
     def apply_effects(self, state: TheaterState) -> None:
         state.eliminate_air_defense(self.target)
 
-    def propose_flights(self, doctrine: Doctrine) -> None:
-        self.propose_flight(FlightType.DEAD, 2, doctrine.mission_ranges.offensive)
+    def propose_flights(self) -> None:
+        self.propose_flight(FlightType.DEAD, 2)
 
         # Only include SEAD against SAMs that still have emitters. No need to
         # suppress an EWR, and SEAD isn't useful against a SAM that no longer has a
@@ -41,18 +40,7 @@ class PlanDead(PackagePlanningTask[IadsGroundObject]):
         # package is *only* threatened by the target though. Could be improved, but
         # needs a decent refactor to the escort planning to do so.
         if self.target.has_live_radar_sam:
-            self.propose_flight(FlightType.SEAD, 2, doctrine.mission_ranges.offensive)
+            self.propose_flight(FlightType.SEAD, 2)
         else:
-            self.propose_flight(
-                FlightType.SEAD_ESCORT,
-                2,
-                doctrine.mission_ranges.offensive,
-                EscortType.Sead,
-            )
-
-        self.propose_flight(
-            FlightType.ESCORT,
-            2,
-            doctrine.mission_ranges.offensive,
-            EscortType.AirToAir,
-        )
+            self.propose_flight(FlightType.SEAD_ESCORT, 2, EscortType.Sead)
+        self.propose_flight(FlightType.ESCORT, 2, EscortType.AirToAir)

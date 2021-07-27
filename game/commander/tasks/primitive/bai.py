@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.theater.theatergroundobject import VehicleGroupGroundObject
 from gen.flights.flight import FlightType
 
@@ -21,6 +20,6 @@ class PlanBai(PackagePlanningTask[VehicleGroupGroundObject]):
     def apply_effects(self, state: TheaterState) -> None:
         state.eliminate_garrison(self.target)
 
-    def propose_flights(self, doctrine: Doctrine) -> None:
-        self.propose_flight(FlightType.BAI, 2, doctrine.mission_ranges.offensive)
-        self.propose_common_escorts(doctrine)
+    def propose_flights(self) -> None:
+        self.propose_flight(FlightType.BAI, 2)
+        self.propose_common_escorts()

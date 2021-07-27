@@ -86,7 +86,7 @@ class VisualGenerator:
                 continue
 
             for offset in range(0, distance, self.game.settings.perf_smoke_spacing):
-                position = plane_start.point_from_heading(heading, offset)
+                position = plane_start.point_from_heading(heading.degrees, offset)
 
                 for k, v in FRONT_SMOKE_TYPE_CHANCES.items():
                     if random.randint(0, 100) <= k:

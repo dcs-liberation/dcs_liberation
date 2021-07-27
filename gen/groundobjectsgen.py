@@ -55,7 +55,7 @@ from game.theater.theatergroundobject import (
     SceneryGroundObject,
 )
 from game.unitmap import UnitMap
-from game.utils import feet, knots, mps
+from game.utils import Heading, feet, knots, mps
 from .radios import RadioFrequency, RadioRegistry
 from .runways import RunwayData
 from .tacan import TacanBand, TacanChannel, TacanRegistry
@@ -166,7 +166,7 @@ class MissileSiteGenerator(GenericGroundObjectGenerator[MissileSiteGroundObject]
                 if targets:
                     target = random.choice(targets)
                     real_target = target.point_from_heading(
-                        random.randint(0, 360), random.randint(0, 2500)
+                        Heading.random().degrees, random.randint(0, 2500)
                     )
                     vg.points[0].add_task(FireAtPoint(real_target))
                     logging.info("Set up fire task for missile group.")
@@ -246,7 +246,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator[BuildingGroundObject]):
                 name=self.ground_object.group_name,
                 _type=unit_type,
                 position=self.ground_object.position,
-                heading=self.ground_object.heading,
+                heading=self.ground_object.heading.degrees,
             )
             self._register_fortification(group)
 
@@ -256,7 +256,7 @@ class BuildingSiteGenerator(GenericGroundObjectGenerator[BuildingGroundObject]):
             name=self.ground_object.group_name,
             _type=static_type,
             position=self.ground_object.position,
-            heading=self.ground_object.heading,
+            heading=self.ground_object.heading.degrees,
             dead=self.ground_object.is_dead,
         )
         self._register_building(group)
@@ -387,7 +387,9 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator[GenericCarrierGroundO
             # time as the recovery window.
             brc = self.steam_into_wind(ship_group)
             self.activate_beacons(ship_group, tacan, tacan_callsign, icls)
-            self.add_runway_data(brc or 0, atc, tacan, tacan_callsign, icls)
+            self.add_runway_data(
+                brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
+            )
             self._register_unit_group(group, ship_group)
 
     def get_carrier_type(self, group: ShipGroup) -> Type[ShipType]:
@@ -422,14 +424,14 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator[GenericCarrierGroundO
         ship.set_frequency(atc_channel.hertz)
         return ship
 
-    def steam_into_wind(self, group: ShipGroup) -> Optional[int]:
+    def steam_into_wind(self, group: ShipGroup) -> Optional[Heading]:
         wind = self.game.conditions.weather.wind.at_0m
-        brc = wind.direction + 180
+        brc = Heading.from_degrees(wind.direction).opposite
         # Aim for 25kts over the deck.
         carrier_speed = knots(25) - mps(wind.speed)
         for attempt in range(5):
             point = group.points[0].position.point_from_heading(
-                brc, 100000 - attempt * 20000
+                brc.degrees, 100000 - attempt * 20000
             )
             if self.game.theater.is_in_sea(point):
                 group.points[0].speed = carrier_speed.meters_per_second
@@ -459,7 +461,7 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator[GenericCarrierGroundO
 
     def add_runway_data(
         self,
-        brc: int,
+        brc: Heading,
         atc: RadioFrequency,
         tacan: TacanChannel,
         callsign: str,
@@ -593,7 +595,7 @@ class HelipadGenerator:
             logging.info("Generating helipad : " + name)
             pad = SingleHeliPad(name=(name + "_unit"))
             pad.position = Point(helipad.x, helipad.y)
-            pad.heading = helipad.heading
+            pad.heading = helipad.heading.degrees
             # pad.heliport_frequency = self.radio_registry.alloc_uhf() TODO : alloc radio & callsign
             sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
             sg.add_unit(pad)

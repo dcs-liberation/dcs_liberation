@@ -1,14 +1,22 @@
 # 5.0.0
 
-Saves from 3.x are not compatible with 5.0.
+Saves from 4.x are not compatible with 5.0.
 
 ## Features/Improvements
 
 * **[Campaign]** Weapon data such as fallbacks and introduction years is now moddable. Due to the new architecture to support this, the old data was not automatically migrated.
+* **[Campaign]** Era-restricted loadouts will now skip LGBs when no TGP is available in the loadout. This only applies to default loadouts; buddy-lasing can be coordinated with custom loadouts.
 * **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
 * **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
+* **[Campaign AI]** Reworked layout of hold, join, split, and ingress points. Should result in much shorter flight plans in general while still maintaining safe join/split/hold points.
+* **[Campaign AI]** Auto-planning mission range limits are now specified per-aircraft. On average this means that longer range missions will now be plannable. The limit only accounts for the direct distance to the target, not the path taken.
+* **[Campaign AI]** Aircraft will now only be automatically purchased or assigned at appropriate bases. Naval aircraft will default to only operating from carriers, Harriers will default to LHAs and shore bases, helicopters will operate from anywhere. This can be customized per-squadron.
+* **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet).
+* **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable or rename squadrons.
 
 ## Fixes
+
+* **[Campaign]** Naval control points will no longer claim ground objectives during campaign generation and prevent them from spawning.
 
 # 4.1.0
 
@@ -19,6 +27,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Campaign]** Air defense sites now generate a fixed number of launchers per type.
 * **[Campaign]** Added support for Mariana Islands map.  
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
+* **[Mission Generation]** SAM sites are now headed towards the center of the conflict
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
@@ -34,6 +43,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Mission Generation]** Fixed problem with opfor planning missions against sold ground objects like SAMs
 * **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
+* **[Mission Generation]** Prevent the creation of a transfer order with 0 units for a rare situtation when a point was captured.
 * **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
 * **[UI]** Statistics window tick marks are now always integers.
 * **[UI]** Statistics window now shows the correct info for the turn

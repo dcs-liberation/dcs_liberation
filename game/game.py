@@ -294,6 +294,8 @@ class Game:
     def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""
         self.turn = 0
+        self.blue.preinit_turn_0()
+        self.red.preinit_turn_0()
         self.initialize_turn()
 
     def pass_turn(self, no_action: bool = False) -> None:

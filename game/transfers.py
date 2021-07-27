@@ -688,7 +688,5 @@ class PendingTransfers:
             gap += 1
 
         self.game.procurement_requests_for(self.player).append(
-            AircraftProcurementRequest(
-                control_point, nautical_miles(200), FlightType.TRANSPORT, gap
-            )
+            AircraftProcurementRequest(control_point, FlightType.TRANSPORT, gap)
         )

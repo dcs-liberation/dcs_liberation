@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.theater import MissionTarget
 from gen.flights.flight import FlightType
 
@@ -19,8 +18,8 @@ class PlanAewc(PackagePlanningTask[MissionTarget]):
     def apply_effects(self, state: TheaterState) -> None:
         state.aewc_targets.remove(self.target)
 
-    def propose_flights(self, doctrine: Doctrine) -> None:
-        self.propose_flight(FlightType.AEWC, 1, doctrine.mission_ranges.aewc)
+    def propose_flights(self) -> None:
+        self.propose_flight(FlightType.AEWC, 1)
 
     @property
     def asap(self) -> bool:
