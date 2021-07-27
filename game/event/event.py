@@ -390,7 +390,7 @@ class Event:
                         f"Our ground forces from {cp.name} reached a stalemate with enemy forces from {enemy_cp.name}.",
                         self.game.turn,
                     )
-                    self.game.information.append(info)
+                    self.game.informations.append(info)
 
                 if player_won:
                     print(status_msg)
