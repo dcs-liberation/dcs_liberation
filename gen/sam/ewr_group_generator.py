@@ -18,6 +18,7 @@ from gen.sam.ewrs import (
     StraightFlushGenerator,
     TallRackGenerator,
     EwrGenerator,
+    TinShieldGenerator,
 )
 
 EWR_MAP = {
@@ -31,6 +32,7 @@ EWR_MAP = {
     "SnowDriftGenerator": SnowDriftGenerator,
     "StraightFlushGenerator": StraightFlushGenerator,
     "HawkEwrGenerator": HawkEwrGenerator,
+    "TinShieldGenerator": TinShieldGenerator,
 }
 
 

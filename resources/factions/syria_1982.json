@@ -54,7 +54,8 @@
     "ZSU57Generator"
   ],
   "ewrs": [
-    "BoxSpringGenerator"
+    "BoxSpringGenerator",
+    "TinShieldGenerator"
   ],
   "missiles": [
     "ScudGenerator"

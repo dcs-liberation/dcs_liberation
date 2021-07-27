@@ -65,7 +65,8 @@
     "ZU23UralGenerator"
   ],
   "ewrs": [
-    "TallRackGenerator"
+    "TallRackGenerator",
+    "TinShieldGenerator"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],
