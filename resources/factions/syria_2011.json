@@ -71,7 +71,8 @@
   ],
   "ewrs": [
     "BoxSpringGenerator",
-    "TallRackGenerator"
+    "TallRackGenerator",
+    "TinShieldGenerator"
   ],
   "missiles": [
     "ScudGenerator"

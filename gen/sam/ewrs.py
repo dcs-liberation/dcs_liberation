@@ -102,3 +102,9 @@ class HawkEwrGenerator(EwrGenerator):
     """
 
     unit_type = AirDefence.Hawk_sr
+
+
+class TinShieldGenerator(EwrGenerator):
+    """19ZH6 "Tin Shield" EWR."""
+
+    unit_type = AirDefence.RLS_19J6

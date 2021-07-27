@@ -52,7 +52,8 @@
     "ZU23Generator"
   ],
   "ewrs": [
-    "FlatFaceGenerator"
+    "FlatFaceGenerator",
+    "TinShieldGenerator"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],
