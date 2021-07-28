@@ -68,7 +68,8 @@
   "air_defenses": [
     "AvengerGenerator",
     "LinebackerGenerator",
-    "PatriotGenerator"
+    "PatriotGenerator",
+    "NasamCGenerator"
   ],
   "ewrs": [
     "PatriotEwrGenerator"

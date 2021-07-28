@@ -28,6 +28,7 @@ from gen.sam.sam_gepard import GepardGenerator
 from gen.sam.sam_hawk import HawkGenerator
 from gen.sam.sam_hq7 import HQ7Generator
 from gen.sam.sam_linebacker import LinebackerGenerator
+from gen.sam.sam_nasams import NasamBGenerator, NasamCGenerator
 from gen.sam.sam_patriot import PatriotGenerator
 from gen.sam.sam_rapier import RapierGenerator
 from gen.sam.sam_roland import RolandGenerator
@@ -100,6 +101,8 @@ SAM_MAP: Dict[str, Type[AirDefenseGroupGenerator]] = {
     "SA20Generator": SA20Generator,
     "SA20BGenerator": SA20BGenerator,
     "SA23Generator": SA23Generator,
+    "NasamBGenerator": NasamBGenerator,
+    "NasamCGenerator": NasamCGenerator,
 }
 
 
