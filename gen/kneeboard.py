@@ -487,8 +487,15 @@ class SupportPage(KneeboardPage):
         writer.heading("JTAC")
         jtacs = []
         for jtac in self.jtacs:
-            jtacs.append([jtac.callsign, jtac.region, jtac.code])
-        writer.table(jtacs, headers=["Callsign", "Region", "Laser Code"])
+            jtacs.append(
+                [
+                    jtac.callsign,
+                    jtac.region,
+                    jtac.code,
+                    self.format_frequency(jtac.freq),
+                ]
+            )
+        writer.table(jtacs, headers=["Callsign", "Region", "Laser Code", "FREQ"])
 
         writer.write(path)
 

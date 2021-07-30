@@ -108,6 +108,6 @@ AWACS:
 {%- if jtacs|length > 0 %}
 JTACS [F-10 菜单] :
 ====================
-{% for jtac in jtacs %}前线 {{ jtac.region }} -- 激光编码 : {{ jtac.code }}
+{% for jtac in jtacs %}前线 {{ jtac.region }} -- 激光编码 : {{ jtac.code }}, 频率 : {{ jtac.freq.mhz }}
 {% endfor %}
 {% endif %}

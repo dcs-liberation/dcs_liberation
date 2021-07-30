@@ -455,6 +455,7 @@ class Operation:
                 "zone": jtac.region,
                 "dcsUnit": jtac.unit_name,
                 "laserCode": jtac.code,
+                "radio": jtac.freq.mhz,
             }
         flight_count = 0
         for flight in airgen.flights:
@@ -571,7 +572,8 @@ class Operation:
             zone = data["zone"]
             laserCode = data["laserCode"]
             dcsUnit = data["dcsUnit"]
-            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone={repr(zone)}, laserCode='{laserCode}', dcsUnit='{dcsUnit}' }}, \n"
+            radio = data["radio"]
+            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone={repr(zone)}, laserCode='{laserCode}', dcsUnit='{dcsUnit}', radio='{radio}' }}, \n"
         lua += "}"
 
         # Process the Target Points
