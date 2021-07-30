@@ -13,9 +13,11 @@ from dcs.country import Country
 from dcs.mapping import Point
 from dcs.point import PointAction
 from dcs.task import (
+    AFAC,
     EPLRS,
     AttackGroup,
     ControlledTask,
+    FAC,
     FireAtPoint,
     GoToWaypoint,
     Hold,
@@ -42,7 +44,7 @@ from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
 from .naming import namegen
-from .radios import RadioRegistry
+from .radios import MHz, RadioFrequency, RadioRegistry
 
 if TYPE_CHECKING:
     from game import Game
@@ -75,7 +77,7 @@ class JtacInfo:
     region: str
     code: str
     blue: bool
-    # TODO: Radio info? Type?
+    freq: RadioFrequency
 
 
 class GroundConflictGenerator:
@@ -150,6 +152,7 @@ class GroundConflictGenerator:
         if self.game.blue.faction.has_jtac:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
             code = 1688 - len(self.jtacs)
+            freq = self.radio_registry.alloc_uhf()
 
             utype = self.game.blue.faction.jtac_unit
             if utype is None:
@@ -162,6 +165,10 @@ class GroundConflictGenerator:
                 position=position[0],
                 airport=None,
                 altitude=5000,
+                maintask=AFAC,
+            )
+            jtac.points[0].tasks.append(
+                FAC(callsign=len(self.jtacs) + 1, frequency=int(freq.mhz))
             )
             jtac.points[0].tasks.append(SetInvisibleCommand(True))
             jtac.points[0].tasks.append(SetImmortalCommand(True))
@@ -181,6 +188,7 @@ class GroundConflictGenerator:
                     frontline,
                     str(code),
                     blue=True,
+                    freq=freq,
                 )
             )
 
