@@ -44,6 +44,7 @@ from .airsupport import AirSupport, JtacInfo
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
+from .lasercoderegistry import LaserCodeRegistry
 from .naming import namegen
 from .radios import MHz, RadioFrequency, RadioRegistry
 
@@ -81,6 +82,7 @@ class GroundConflictGenerator:
         unit_map: UnitMap,
         radio_registry: RadioRegistry,
         air_support: AirSupport,
+        laser_code_registry: LaserCodeRegistry,
     ) -> None:
         self.mission = mission
         self.conflict = conflict
@@ -92,6 +94,7 @@ class GroundConflictGenerator:
         self.unit_map = unit_map
         self.radio_registry = radio_registry
         self.air_support = air_support
+        self.laser_code_registry = laser_code_registry
 
     def generate(self) -> None:
         position = Conflict.frontline_position(
@@ -140,7 +143,7 @@ class GroundConflictGenerator:
         # Add JTAC
         if self.game.blue.faction.has_jtac:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
-            code = 1688 - len(self.air_support.jtacs)
+            code: int = self.laser_code_registry.get_next_laser_code()
             freq = self.radio_registry.alloc_uhf()
 
             utype = self.game.blue.faction.jtac_unit

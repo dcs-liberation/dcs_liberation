@@ -29,6 +29,7 @@ from gen.environmentgen import EnvironmentGenerator
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator
+from gen.lasercoderegistry import LaserCodeRegistry
 from gen.naming import namegen
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
@@ -50,6 +51,7 @@ class Operation:
     groundobjectgen: GroundObjectsGenerator
     radio_registry: RadioRegistry
     tacan_registry: TacanRegistry
+    laser_code_registry: LaserCodeRegistry
     game: Game
     trigger_radius = TRIGGER_RADIUS_MEDIUM
     is_quick = None
@@ -193,6 +195,10 @@ class Operation:
             cls.radio_registry.reserve(frequency)
 
     @classmethod
+    def create_laser_code_registry(cls) -> None:
+        cls.laser_code_registry = LaserCodeRegistry()
+
+    @classmethod
     def assign_channels_to_flights(
         cls, flights: List[FlightData], air_support: AirSupport
     ) -> None:
@@ -282,6 +288,7 @@ class Operation:
         cls.air_support = AirSupport()
         cls.create_unit_map()
         cls.create_radio_registries()
+        cls.create_laser_code_registry()
         # Set mission time and weather conditions.
         EnvironmentGenerator(cls.current_mission, cls.game.conditions).generate()
         cls._generate_ground_units()
@@ -399,6 +406,7 @@ class Operation:
                 cls.unit_map,
                 cls.radio_registry,
                 cls.air_support,
+                cls.laser_code_registry,
             )
             ground_conflict_gen.generate()
 
