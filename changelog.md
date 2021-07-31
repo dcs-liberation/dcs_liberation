@@ -7,6 +7,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Campaign]** Air defense sites now generate a fixed number of launchers per type.
 * **[Campaign]** Added support for Mariana Islands map.  
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
+* **[Mods]** Support for latest version of Gripen mod. In-progress campaigns may need to re-plan Gripen flights to pick up updated loadouts.
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
