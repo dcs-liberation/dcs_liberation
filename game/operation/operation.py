@@ -399,6 +399,7 @@ class Operation:
                 player_cp.stances[enemy_cp.id],
                 enemy_cp.stances[player_cp.id],
                 cls.unit_map,
+                cls.radio_registry,
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)
@@ -454,6 +455,7 @@ class Operation:
                 "zone": jtac.region,
                 "dcsUnit": jtac.unit_name,
                 "laserCode": jtac.code,
+                "radio": jtac.freq.mhz,
             }
         flight_count = 0
         for flight in airgen.flights:
@@ -570,7 +572,8 @@ class Operation:
             zone = data["zone"]
             laserCode = data["laserCode"]
             dcsUnit = data["dcsUnit"]
-            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone={repr(zone)}, laserCode='{laserCode}', dcsUnit='{dcsUnit}' }}, \n"
+            radio = data["radio"]
+            lua += f"    {{dcsGroupName='{dcsGroupName}', callsign='{callsign}', zone={repr(zone)}, laserCode='{laserCode}', dcsUnit='{dcsUnit}', radio='{radio}' }}, \n"
         lua += "}"
 
         # Process the Target Points
