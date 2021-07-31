@@ -67,7 +67,7 @@ Your flights:
 {% for flight in flights if flight.client_units %}
 --------------------------------------------------
 {{ flight.flight_type }} {{ flight.units[0].type }} x {{ flight.size }}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
-Freq : {{ intra_flight_channel(flight) }}
+Freq : {{ flight|intra_flight_channel }}
 {% for waypoint in flight.waypoints %}
 {{ loop.index0 }} {{waypoint|waypoint_timing("Depart ")}}-- {{waypoint.name}} : {{ waypoint.description}}
 {% endfor %}
