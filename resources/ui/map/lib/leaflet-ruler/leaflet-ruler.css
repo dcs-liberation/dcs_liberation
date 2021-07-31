@@ -1,0 +1,41 @@
+.leaflet-ruler{
+  height: 35px;
+  width: 35px;
+  background-image: url("ruler.png"); /* <div>Icons made by <a href="https://www.flaticon.com/authors/monkik" title="monkik">monkik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.leaflet-ruler:hover{
+  background-image: url("ruler.png"); /* <div>Icon made by <a href="https://www.flaticon.com/authors/monkik" title="monkik">monkik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> */
+}
+.leaflet-ruler-clicked{
+  height: 35px;
+  width: 35px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("ruler.png");
+  border-color: chartreuse !important;
+}
+.leaflet-bar{
+  background-color: #ffffff;
+}
+.leaflet-control {
+  cursor: pointer;
+}
+.result-tooltip{
+  background-color: white;
+  border-width: medium;
+  border-color: #de0000;
+  font-size: smaller;
+}
+.moving-tooltip{
+  background-color: rgba(255, 255, 255, .7);
+  background-clip: padding-box;
+  opacity: 0.5;
+  border: dotted;
+  border-color: red;
+  font-size: smaller;
+}
+.plus-length{
+  padding-left: 45px;
+}
