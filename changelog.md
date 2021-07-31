@@ -49,6 +49,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** Prevent the creation of a transfer order with 0 units for a rare situtation when a point was captured.
 * **[Mission Generation]** Planned transfers which will be impossible after a base capture will no longer prevent the mission result submit.
 * **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
+* **[Mission Generation]** Fixed a potential bug with laser code generation where it would generate invalid codes.  
 * **[UI]** Statistics window tick marks are now always integers.
 * **[UI]** Statistics window now shows the correct info for the turn
 * **[UI]** Toggling custom loadout for an aircraft with no preset loadouts no longer breaks the flight.
