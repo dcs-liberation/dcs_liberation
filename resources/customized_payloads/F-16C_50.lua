@@ -242,7 +242,7 @@ local unitPayloads = {
 					["num"] = 8,
 				},
 				[5] = {
-					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
+					["CLSID"] = "{AGM-154A}",
 					["num"] = 7,
 				},
 				[6] = {
@@ -250,7 +250,7 @@ local unitPayloads = {
 					["num"] = 6,
 				},
 				[7] = {
-					["CLSID"] = "{5335D97A-35A5-4643-9D9B-026C75961E52}",
+					["CLSID"] = "{AGM-154A}",
 					["num"] = 3,
 				},
 				[8] = {
