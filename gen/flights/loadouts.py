@@ -137,6 +137,7 @@ class Loadout:
             FlightType.CAS: ("CAS MAVERICK F", "CAS"),
             FlightType.STRIKE: ("STRIKE",),
             FlightType.ANTISHIP: ("ANTISHIP",),
+            FlightType.DEAD: ("DEAD",),
             FlightType.SEAD: ("SEAD",),
             FlightType.BAI: ("BAI",),
             FlightType.OCA_RUNWAY: ("RUNWAY_ATTACK", "RUNWAY_STRIKE"),
