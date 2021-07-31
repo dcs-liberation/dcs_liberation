@@ -5,7 +5,7 @@
   "recommended_player_faction": "USA 2005",
   "recommended_enemy_faction": "Russia 1975",
   "description": "<p>This campaign is designed to be beginner friendly in that the number of aircraft slot have been limited.  Other than the starting point and the 'boss' base the max slots in each of the airbases have a mere 3-5 slots.</p><p>This should prevent the airpower rush escperienced in most of the other larger campaign.</p>",
-  "version": "7.0",
+  "version": "8.0",
   "miz": "nevada_limited_air.miz",
   "performance": 1
 }
