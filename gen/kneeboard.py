@@ -78,7 +78,7 @@ class KneeboardPageWriter:
             "arial.ttf", 24, layout_engine=ImageFont.LAYOUT_BASIC
         )
         self.content_font = ImageFont.truetype(
-            "arial.ttf", 20, layout_engine=ImageFont.LAYOUT_BASIC
+            "arial.ttf", 16, layout_engine=ImageFont.LAYOUT_BASIC
         )
         self.table_font = ImageFont.truetype(
             "resources/fonts/Inconsolata.otf", 20, layout_engine=ImageFont.LAYOUT_BASIC
