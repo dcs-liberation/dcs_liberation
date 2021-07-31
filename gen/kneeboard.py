@@ -408,6 +408,8 @@ class BriefingPage(KneeboardPage):
 class SupportPage(KneeboardPage):
     """A kneeboard page containing information about support units."""
 
+    JTAC_REGION_MAX_LEN = 25
+
     def __init__(
         self,
         flight: FlightData,
@@ -490,7 +492,10 @@ class SupportPage(KneeboardPage):
             jtacs.append(
                 [
                     jtac.callsign,
-                    jtac.region,
+                    KneeboardPageWriter.wrap_line(
+                        jtac.region,
+                        self.JTAC_REGION_MAX_LEN,
+                    ),
                     jtac.code,
                     self.format_frequency(jtac.freq),
                 ]

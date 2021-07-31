@@ -40,6 +40,7 @@ from gen.ground_forces.ai_ground_planner import (
     CombatGroup,
     CombatGroupRole,
 )
+from .airsupport import AirSupport, JtacInfo
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
@@ -67,19 +68,6 @@ RANDOM_OFFSET_ATTACK = 250
 INFANTRY_GROUP_SIZE = 5
 
 
-@dataclass(frozen=True)
-class JtacInfo:
-    """JTAC information."""
-
-    group_name: str
-    unit_name: str
-    callsign: str
-    region: str
-    code: str
-    blue: bool
-    freq: RadioFrequency
-
-
 class GroundConflictGenerator:
     def __init__(
         self,
@@ -92,6 +80,7 @@ class GroundConflictGenerator:
         enemy_stance: CombatStance,
         unit_map: UnitMap,
         radio_registry: RadioRegistry,
+        air_support: AirSupport,
     ) -> None:
         self.mission = mission
         self.conflict = conflict
@@ -102,7 +91,7 @@ class GroundConflictGenerator:
         self.game = game
         self.unit_map = unit_map
         self.radio_registry = radio_registry
-        self.jtacs: List[JtacInfo] = []
+        self.air_support = air_support
 
     def generate(self) -> None:
         position = Conflict.frontline_position(
@@ -151,7 +140,7 @@ class GroundConflictGenerator:
         # Add JTAC
         if self.game.blue.faction.has_jtac:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
-            code = 1688 - len(self.jtacs)
+            code = 1688 - len(self.air_support.jtacs)
             freq = self.radio_registry.alloc_uhf()
 
             utype = self.game.blue.faction.jtac_unit
@@ -168,7 +157,7 @@ class GroundConflictGenerator:
                 maintask=AFAC,
             )
             jtac.points[0].tasks.append(
-                FAC(callsign=len(self.jtacs) + 1, frequency=int(freq.mhz))
+                FAC(callsign=len(self.air_support.jtacs) + 1, frequency=int(freq.mhz))
             )
             jtac.points[0].tasks.append(SetInvisibleCommand(True))
             jtac.points[0].tasks.append(SetImmortalCommand(True))
@@ -180,7 +169,7 @@ class GroundConflictGenerator:
             )
             # Note: Will need to change if we ever add ground based JTAC.
             callsign = callsign_for_support_unit(jtac)
-            self.jtacs.append(
+            self.air_support.jtacs.append(
                 JtacInfo(
                     str(jtac.name),
                     n,

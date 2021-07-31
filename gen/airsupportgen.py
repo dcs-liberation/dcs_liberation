@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
-from datetime import timedelta
-from typing import List, Type, Tuple, Optional, TYPE_CHECKING
+from typing import List, Type, Tuple, TYPE_CHECKING
 
 from dcs.mission import Mission, StartType
 from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, PlaneType
@@ -18,14 +16,14 @@ from dcs.task import (
 from dcs.unittype import UnitType
 
 from game.utils import Heading
-from .flights.ai_flight_planner_db import AEWC_CAPABLE
-from .naming import namegen
+from . import AirSupport
+from .airsupport import TankerInfo, AwacsInfo
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .flights.ai_flight_planner_db import AEWC_CAPABLE
 from .naming import namegen
-from .radios import RadioFrequency, RadioRegistry
-from .tacan import TacanBand, TacanChannel, TacanRegistry
+from .radios import RadioRegistry
+from .tacan import TacanBand, TacanRegistry
 
 if TYPE_CHECKING:
     from game import Game
@@ -38,39 +36,6 @@ AWACS_DISTANCE = 150000
 AWACS_ALT = 13000
 
 
-@dataclass
-class AwacsInfo:
-    """AWACS information for the kneeboard."""
-
-    group_name: str
-    callsign: str
-    freq: RadioFrequency
-    depature_location: Optional[str]
-    start_time: Optional[timedelta]
-    end_time: Optional[timedelta]
-    blue: bool
-
-
-@dataclass
-class TankerInfo:
-    """Tanker information for the kneeboard."""
-
-    group_name: str
-    callsign: str
-    variant: str
-    freq: RadioFrequency
-    tacan: TacanChannel
-    start_time: Optional[timedelta]
-    end_time: Optional[timedelta]
-    blue: bool
-
-
-@dataclass
-class AirSupport:
-    awacs: List[AwacsInfo] = field(default_factory=list)
-    tankers: List[TankerInfo] = field(default_factory=list)
-
-
 class AirSupportConflictGenerator:
     def __init__(
         self,
@@ -79,13 +44,14 @@ class AirSupportConflictGenerator:
         game: Game,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
+        air_support: AirSupport,
     ) -> None:
         self.mission = mission
         self.conflict = conflict
         self.game = game
-        self.air_support = AirSupport()
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
+        self.air_support = air_support
 
     @classmethod
     def support_tasks(cls) -> List[Type[MainTask]]:
@@ -94,12 +60,12 @@ class AirSupportConflictGenerator:
     @staticmethod
     def _get_tanker_params(unit_type: Type[UnitType]) -> Tuple[int, int]:
         if unit_type is KC130:
-            return (TANKER_ALT - 500, 596)
+            return TANKER_ALT - 500, 596
         elif unit_type is KC_135:
-            return (TANKER_ALT, 770)
+            return TANKER_ALT, 770
         elif unit_type is KC135MPRS:
-            return (TANKER_ALT + 500, 596)
-        return (TANKER_ALT, 574)
+            return TANKER_ALT + 500, 596
+        return TANKER_ALT, 574
 
     def generate(self) -> None:
         player_cp = (

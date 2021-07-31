@@ -81,7 +81,7 @@ from game.theater.missiontarget import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
-from game.utils import Distance, Heading, meters, nautical_miles, pairwise
+from game.utils import Distance, meters, nautical_miles, pairwise
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -93,7 +93,7 @@ from gen.flights.flight import (
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
 from gen.tacan import TacanBand, TacanRegistry
-from .airsupportgen import AirSupport, AwacsInfo, TankerInfo
+from .airsupport import AirSupport, AwacsInfo, TankerInfo
 from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
     AwacsFlightPlan,

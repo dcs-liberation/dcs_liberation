@@ -16,11 +16,11 @@ from dcs.triggers import TriggerStart
 
 from game.plugins import LuaPluginManager
 from game.theater.theatergroundobject import TheaterGroundObject
-from gen import Conflict, FlightType, VisualGenerator
+from gen import Conflict, FlightType, VisualGenerator, AirSupport
 from gen.aircraft import AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
-from gen.airsupportgen import AirSupport, AirSupportConflictGenerator
-from gen.armor import GroundConflictGenerator, JtacInfo
+from gen.airsupportgen import AirSupportConflictGenerator
+from gen.armor import GroundConflictGenerator
 from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator, MissionInfoGenerator
 from gen.cargoshipgen import CargoShipGenerator
@@ -58,8 +58,8 @@ class Operation:
     enemy_awacs_enabled = True
     ca_slots = 1
     unit_map: UnitMap
-    jtacs: List[JtacInfo] = []
     plugin_scripts: List[str] = []
+    air_support = AirSupport()
 
     @classmethod
     def prepare(cls, game: Game) -> None:
@@ -146,8 +146,7 @@ class Operation:
     def notify_info_generators(
         cls,
         groundobjectgen: GroundObjectsGenerator,
-        airsupportgen: AirSupportConflictGenerator,
-        jtacs: List[JtacInfo],
+        air_support: AirSupport,
         airgen: AircraftConflictGenerator,
     ) -> None:
         """Generates subscribed MissionInfoGenerator objects (currently kneeboards and briefings)"""
@@ -160,15 +159,15 @@ class Operation:
             for dynamic_runway in groundobjectgen.runways.values():
                 gen.add_dynamic_runway(dynamic_runway)
 
-            for tanker in airsupportgen.air_support.tankers:
+            for tanker in air_support.tankers:
                 if tanker.blue:
                     gen.add_tanker(tanker)
 
-            for aewc in airsupportgen.air_support.awacs:
+            for aewc in air_support.awacs:
                 if aewc.blue:
                     gen.add_awacs(aewc)
 
-            for jtac in jtacs:
+            for jtac in air_support.jtacs:
                 if jtac.blue:
                     gen.add_jtac(jtac)
 
@@ -280,6 +279,7 @@ class Operation:
     @classmethod
     def generate(cls) -> UnitMap:
         """Build the final Mission to be exported"""
+        cls.air_support = AirSupport()
         cls.create_unit_map()
         cls.create_radio_registries()
         # Set mission time and weather conditions.
@@ -288,10 +288,10 @@ class Operation:
         cls._generate_transports()
         cls._generate_destroyed_units()
         cls._generate_air_units()
+        cls._generate_ground_conflicts()
         cls.assign_channels_to_flights(
             cls.airgen.flights, cls.airsupportgen.air_support
         )
-        cls._generate_ground_conflicts()
 
         # Triggers
         triggersgen = TriggersGenerator(cls.current_mission, cls.game)
@@ -311,7 +311,7 @@ class Operation:
         if cls.game.settings.perf_smoke_gen:
             visualgen.generate()
 
-        cls.generate_lua(cls.airgen, cls.airsupportgen, cls.jtacs)
+        cls.generate_lua(cls.airgen, cls.air_support)
 
         # Inject Plugins Lua Scripts and data
         cls.plugin_scripts.clear()
@@ -323,9 +323,7 @@ class Operation:
         cls.assign_channels_to_flights(
             cls.airgen.flights, cls.airsupportgen.air_support
         )
-        cls.notify_info_generators(
-            cls.groundobjectgen, cls.airsupportgen, cls.jtacs, cls.airgen
-        )
+        cls.notify_info_generators(cls.groundobjectgen, cls.air_support, cls.airgen)
         cls.reset_naming_ids()
         return cls.unit_map
 
@@ -341,6 +339,7 @@ class Operation:
             cls.game,
             cls.radio_registry,
             cls.tacan_registry,
+            cls.air_support,
         )
         cls.airsupportgen.generate()
 
@@ -375,7 +374,6 @@ class Operation:
     @classmethod
     def _generate_ground_conflicts(cls) -> None:
         """For each frontline in the Operation, generate the ground conflicts and JTACs"""
-        cls.jtacs = []
         for front_line in cls.game.theater.conflicts():
             player_cp = front_line.blue_cp
             enemy_cp = front_line.red_cp
@@ -400,9 +398,9 @@ class Operation:
                 enemy_cp.stances[player_cp.id],
                 cls.unit_map,
                 cls.radio_registry,
+                cls.air_support,
             )
             ground_conflict_gen.generate()
-            cls.jtacs.extend(ground_conflict_gen.jtacs)
 
     @classmethod
     def _generate_transports(cls) -> None:
@@ -416,10 +414,7 @@ class Operation:
 
     @classmethod
     def generate_lua(
-        cls,
-        airgen: AircraftConflictGenerator,
-        airsupportgen: AirSupportConflictGenerator,
-        jtacs: List[JtacInfo],
+        cls, airgen: AircraftConflictGenerator, air_support: AirSupport
     ) -> None:
         #  TODO: Refactor this
         luaData = {
@@ -432,7 +427,7 @@ class Operation:
             "BlueAA": {},
         }  # type: ignore
 
-        for i, tanker in enumerate(airsupportgen.air_support.tankers):
+        for i, tanker in enumerate(air_support.tankers):
             luaData["Tankers"][i] = {
                 "dcsGroupName": tanker.group_name,
                 "callsign": tanker.callsign,
@@ -441,14 +436,14 @@ class Operation:
                 "tacan": str(tanker.tacan.number) + tanker.tacan.band.name,
             }
 
-        for i, awacs in enumerate(airsupportgen.air_support.awacs):
+        for i, awacs in enumerate(air_support.awacs):
             luaData["AWACs"][i] = {
                 "dcsGroupName": awacs.group_name,
                 "callsign": awacs.callsign,
                 "radio": awacs.freq.mhz,
             }
 
-        for i, jtac in enumerate(jtacs):
+        for i, jtac in enumerate(air_support.jtacs):
             luaData["JTACs"][i] = {
                 "dcsGroupName": jtac.group_name,
                 "callsign": jtac.callsign,
