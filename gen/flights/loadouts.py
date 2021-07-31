@@ -31,6 +31,12 @@ class Loadout:
     def derive_custom(self, name: str) -> Loadout:
         return Loadout(name, self.pylons, self.date, is_custom=True)
 
+    def has_weapon_of_type(self, weapon_type: WeaponType) -> bool:
+        for weapon in self.pylons.values():
+            if weapon is not None and weapon.weapon_group.type is weapon_type:
+                return True
+        return False
+
     @staticmethod
     def _fallback_for(
         weapon: Weapon,
@@ -79,10 +85,8 @@ class Loadout:
     def replace_lgbs_if_no_tgp(
         self, unit_type: AircraftType, date: datetime.date
     ) -> None:
-        for weapon in self.pylons.values():
-            if weapon is not None and weapon.weapon_group.type is WeaponType.TGP:
-                # Have a TGP. Nothing to do.
-                return
+        if self.has_weapon_of_type(WeaponType.TGP):
+            return
 
         new_pylons = dict(self.pylons)
         for pylon_number, weapon in self.pylons.items():

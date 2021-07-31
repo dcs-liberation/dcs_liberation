@@ -354,6 +354,12 @@ class BriefingPage(KneeboardPage):
             ["Bingo", "Joker"],
         )
 
+        if any(self.flight.laser_codes):
+            codes: list[list[str]] = []
+            for idx, code in enumerate(self.flight.laser_codes, start=1):
+                codes.append([str(idx), "" if code is None else str(code)])
+            writer.table(codes, ["#", "Laser Code"])
+
         writer.write(path)
 
     def airfield_info_row(

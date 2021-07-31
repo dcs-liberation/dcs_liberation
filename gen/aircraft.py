@@ -3,7 +3,7 @@ from __future__ import annotations
 import itertools
 import logging
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import cached_property
 from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union, Iterable, Any
@@ -65,7 +65,7 @@ from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType
 
 from game import db
-from game.data.weapons import Pylon
+from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
 from game.settings import Settings
@@ -90,6 +90,7 @@ from gen.flights.flight import (
     FlightWaypoint,
     FlightWaypointType,
 )
+from gen.lasercoderegistry import LaserCodeRegistry
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
 from gen.tacan import TacanBand, TacanRegistry
@@ -138,6 +139,8 @@ class FlightData:
 
     flight_type: FlightType
 
+    aircraft_type: AircraftType
+
     #: All units in the flight.
     units: List[FlyingUnit]
 
@@ -165,49 +168,24 @@ class FlightData:
     #: Radio frequency for intra-flight communications.
     intra_flight_channel: RadioFrequency
 
-    #: Map of radio frequencies to their assigned radio and channel, if any.
-    frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment]
-
     #: Bingo fuel value in lbs.
     bingo_fuel: Optional[int]
 
     joker_fuel: Optional[int]
 
-    def __init__(
-        self,
-        package: Package,
-        aircraft_type: AircraftType,
-        flight_type: FlightType,
-        units: List[FlyingUnit],
-        size: int,
-        friendly: bool,
-        departure_delay: timedelta,
-        departure: RunwayData,
-        arrival: RunwayData,
-        divert: Optional[RunwayData],
-        waypoints: List[FlightWaypoint],
-        intra_flight_channel: RadioFrequency,
-        bingo_fuel: Optional[int],
-        joker_fuel: Optional[int],
-        custom_name: Optional[str],
-    ) -> None:
-        self.package = package
-        self.aircraft_type = aircraft_type
-        self.flight_type = flight_type
-        self.units = units
-        self.size = size
-        self.friendly = friendly
-        self.departure_delay = departure_delay
-        self.departure = departure
-        self.arrival = arrival
-        self.divert = divert
-        self.waypoints = waypoints
-        self.intra_flight_channel = intra_flight_channel
-        self.frequency_to_channel_map = {}
-        self.bingo_fuel = bingo_fuel
-        self.joker_fuel = joker_fuel
+    laser_codes: list[Optional[int]]
+
+    custom_name: Optional[str]
+
+    callsign: str = field(init=False)
+
+    #: Map of radio frequencies to their assigned radio and channel, if any.
+    frequency_to_channel_map: Dict[RadioFrequency, ChannelAssignment] = field(
+        init=False, default_factory=dict
+    )
+
+    def __post_init__(self) -> None:
         self.callsign = create_group_callsign_from_unit(self.units[0])
-        self.custom_name = custom_name
 
     @property
     def client_units(self) -> List[FlyingUnit]:
@@ -247,6 +225,7 @@ class AircraftConflictGenerator:
         game: Game,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
+        laser_code_registry: LaserCodeRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
     ) -> None:
@@ -255,6 +234,7 @@ class AircraftConflictGenerator:
         self.settings = settings
         self.radio_registry = radio_registry
         self.tacan_registy = tacan_registry
+        self.laser_code_registry = laser_code_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
         self.air_support = air_support
@@ -361,12 +341,18 @@ class AircraftConflictGenerator:
         self._setup_payload(flight, group)
         self._setup_livery(flight, group)
 
+        laser_codes = []
         for unit, pilot in zip(group.units, flight.roster.pilots):
             player = pilot is not None and pilot.player
             self.set_skill(unit, pilot, blue=flight.departure.captured)
             # Do not generate player group with late activation.
             if player and group.late_activation:
                 group.late_activation = False
+
+            code: Optional[int] = None
+            if flight.loadout.has_weapon_of_type(WeaponTypeEnum.TGP) and player:
+                code = self.laser_code_registry.get_next_laser_code()
+            laser_codes.append(code)
 
             # Set up F-14 Client to have pre-stored alignment
             if unit_type is F_14B:
@@ -423,6 +409,7 @@ class AircraftConflictGenerator:
                 bingo_fuel=flight.flight_plan.bingo_fuel,
                 joker_fuel=flight.flight_plan.joker_fuel,
                 custom_name=flight.custom_name,
+                laser_codes=laser_codes,
             )
         )
 

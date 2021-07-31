@@ -294,8 +294,10 @@ class Operation:
         cls._generate_ground_units()
         cls._generate_transports()
         cls._generate_destroyed_units()
-        cls._generate_air_units()
+        # Generate ground conflicts first so the JTACs get the first laser code (1688)
+        # rather than the first player flight with a TGP.
         cls._generate_ground_conflicts()
+        cls._generate_air_units()
         cls.assign_channels_to_flights(
             cls.airgen.flights, cls.airsupportgen.air_support
         )
@@ -357,6 +359,7 @@ class Operation:
             cls.game,
             cls.radio_registry,
             cls.tacan_registry,
+            cls.laser_code_registry,
             cls.unit_map,
             air_support=cls.airsupportgen.air_support,
         )
