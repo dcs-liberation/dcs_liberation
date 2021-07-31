@@ -453,7 +453,7 @@ class SupportPage(KneeboardPage):
             aewc_ladder.append(
                 [
                     str(single_aewc.callsign),
-                    str(single_aewc.freq),
+                    self.format_frequency(single_aewc.freq),
                     str(single_aewc.depature_location),
                     str(dep),
                     str(arr),
