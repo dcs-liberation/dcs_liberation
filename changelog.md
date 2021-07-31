@@ -15,6 +15,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[UI]** Control point name displayed with ground object group name on map.
 * **[UI]** Buy or Replace will now show the correct price for generated ground objects like sams.
 * **[UI]** Improved logging for frontline movement to be more descriptive about what happened and why.
+* **[UI]** Brought ruler map module into source, which should fix file integrity issues with the module.
 
 ## Fixes
 
