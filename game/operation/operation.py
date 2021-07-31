@@ -399,6 +399,7 @@ class Operation:
                 player_cp.stances[enemy_cp.id],
                 enemy_cp.stances[player_cp.id],
                 cls.unit_map,
+                cls.radio_registry,
             )
             ground_conflict_gen.generate()
             cls.jtacs.extend(ground_conflict_gen.jtacs)

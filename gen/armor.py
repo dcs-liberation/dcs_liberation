@@ -42,6 +42,7 @@ from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .ground_forces.combat_stance import CombatStance
 from .naming import namegen
+from .radios import RadioRegistry
 
 if TYPE_CHECKING:
     from game import Game
@@ -88,6 +89,7 @@ class GroundConflictGenerator:
         player_stance: CombatStance,
         enemy_stance: CombatStance,
         unit_map: UnitMap,
+        radio_registry: RadioRegistry,
     ) -> None:
         self.mission = mission
         self.conflict = conflict
@@ -97,6 +99,7 @@ class GroundConflictGenerator:
         self.enemy_stance = enemy_stance
         self.game = game
         self.unit_map = unit_map
+        self.radio_registry = radio_registry
         self.jtacs: List[JtacInfo] = []
 
     def generate(self) -> None:
