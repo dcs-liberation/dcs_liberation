@@ -297,15 +297,16 @@ class Event:
 
                 delta = 0.0
                 player_won = True
+                status_msg: str = ""
                 ally_casualties = debriefing.casualty_count(cp)
                 enemy_casualties = debriefing.casualty_count(enemy_cp)
                 ally_units_alive = cp.base.total_armor
                 enemy_units_alive = enemy_cp.base.total_armor
 
-                print(ally_units_alive)
-                print(enemy_units_alive)
-                print(ally_casualties)
-                print(enemy_casualties)
+                print(f"Remaining allied units: {ally_units_alive}")
+                print(f"Remaining enemy units: {enemy_units_alive}")
+                print(f"Allied casualties {ally_casualties}")
+                print(f"Enemy casualties {enemy_casualties}")
 
                 ratio = (1.0 + enemy_casualties) / (1.0 + ally_casualties)
 
@@ -318,24 +319,31 @@ class Event:
                 if ally_units_alive == 0:
                     player_won = False
                     delta = STRONG_DEFEAT_INFLUENCE
+                    status_msg = f"No allied units alive at {cp.name}-{enemy_cp.name} frontline.  Allied ground forces suffer a strong defeat."
                 elif enemy_units_alive == 0:
                     player_won = True
                     delta = STRONG_DEFEAT_INFLUENCE
+                    status_msg = f"No enemy units alive at {cp.name}-{enemy_cp.name} frontline.  Allied ground forces win a strong victory."
                 elif cp.stances[enemy_cp.id] == CombatStance.RETREAT:
                     player_won = False
                     delta = STRONG_DEFEAT_INFLUENCE
+                    status_msg = f"Allied forces are retreating along the {cp.name}-{enemy_cp.name} frontline, suffering a strong defeat."
                 else:
                     if enemy_casualties > ally_casualties:
                         player_won = True
                         if cp.stances[enemy_cp.id] == CombatStance.BREAKTHROUGH:
                             delta = STRONG_DEFEAT_INFLUENCE
+                            status_msg = f"Allied forces break through the {cp.name}-{enemy_cp.name} frontline, winning a strong victory"
                         else:
                             if ratio > 3:
                                 delta = STRONG_DEFEAT_INFLUENCE
+                                status_msg = f"Enemy casualties massively outnumber allied casualties along the {cp.name}-{enemy_cp.name} frontline.  Allied forces win a strong victory."
                             elif ratio < 1.5:
                                 delta = MINOR_DEFEAT_INFLUENCE
+                                status_msg = f"Enemy casualties minorly outnumber allied casualties along the {cp.name}-{enemy_cp.name} frontline.  Allied forces win a minor victory."
                             else:
                                 delta = DEFEAT_INFLUENCE
+                                status_msg = f"Enemy casualties outnumber allied casualties along the {cp.name}-{enemy_cp.name} frontline.  Allied forces claim a victory."
                     elif ally_casualties > enemy_casualties:
 
                         if (
@@ -345,54 +353,66 @@ class Event:
                             # Even with casualties if the enemy is overwhelmed, they are going to lose ground
                             player_won = True
                             delta = MINOR_DEFEAT_INFLUENCE
+                            status_msg = f"Despite suffering losses, allied forces still outnumber enemy forces along the {cp.name}-{enemy_cp.name} frontline.  Due to allied force's aggressive posture, allied forces claim a minor victory."
                         elif (
                             ally_units_alive > 3 * enemy_units_alive
                             and player_aggresive
                         ):
                             player_won = True
                             delta = STRONG_DEFEAT_INFLUENCE
+                            status_msg = f"Despite suffering losses, allied forces still heavily outnumber enemy forces along the {cp.name}-{enemy_cp.name} frontline.  Due to allied force's aggressive posture, allied forces claim a major victory."
                         else:
-                            # But is the enemy is not outnumbered, we lose
+                            # But if the enemy is not outnumbered, we lose
                             player_won = False
                             if cp.stances[enemy_cp.id] == CombatStance.BREAKTHROUGH:
                                 delta = STRONG_DEFEAT_INFLUENCE
+                                status_msg = f"Allied casualties outnumber enemy casualties along the {cp.name}-{enemy_cp.name} frontline.  Allied forces have overextended themselves, suffering a major defeat."
                             else:
-                                delta = STRONG_DEFEAT_INFLUENCE
+                                delta = DEFEAT_INFLUENCE
+                                status_msg = f"Allied casualties outnumber enemy casualties along the {cp.name}-{enemy_cp.name} frontline.  Allied forces suffer a defeat."
 
                     # No progress with defensive strategies
                     if player_won and cp.stances[enemy_cp.id] in [
                         CombatStance.DEFENSIVE,
                         CombatStance.AMBUSH,
                     ]:
-                        print("Defensive stance, progress is limited")
+                        print(
+                            f"Allied forces have adopted a defensive stance along the {cp.name}-{enemy_cp.name} "
+                            f"frontline, making only limited progress."
+                        )
                         delta = MINOR_DEFEAT_INFLUENCE
 
-                if player_won:
-                    print(cp.name + " won !  factor > " + str(delta))
-                    cp.base.affect_strength(delta)
-                    enemy_cp.base.affect_strength(-delta)
+                # Handle the case where there are no casualties at all on either side but both sides still have units
+                if delta == 0.0:
+                    print(status_msg)
                     info = Information(
                         "Frontline Report",
-                        "Our ground forces from "
-                        + cp.name
-                        + " are making progress toward "
-                        + enemy_cp.name,
+                        f"Our ground forces from {cp.name} reached a stalemate with enemy forces from {enemy_cp.name}.",
                         self.game.turn,
                     )
                     self.game.informations.append(info)
                 else:
-                    print(cp.name + " lost !  factor > " + str(delta))
-                    enemy_cp.base.affect_strength(delta)
-                    cp.base.affect_strength(-delta)
-                    info = Information(
-                        "Frontline Report",
-                        "Our ground forces from "
-                        + cp.name
-                        + " are losing ground against the enemy forces from "
-                        + enemy_cp.name,
-                        self.game.turn,
-                    )
-                    self.game.informations.append(info)
+                    if player_won:
+                        print(status_msg)
+                        cp.base.affect_strength(delta)
+                        enemy_cp.base.affect_strength(-delta)
+                        info = Information(
+                            "Frontline Report",
+                            f"Our ground forces from {cp.name} are making progress toward {enemy_cp.name}.  {status_msg}",
+                            self.game.turn,
+                        )
+                        self.game.informations.append(info)
+                    else:
+                        print(status_msg)
+                        enemy_cp.base.affect_strength(delta)
+                        cp.base.affect_strength(-delta)
+                        info = Information(
+                            "Frontline Report",
+                            f"Our ground forces from {cp.name} are losing ground against the enemy forces from "
+                            f"{enemy_cp.name}. {status_msg}",
+                            self.game.turn,
+                        )
+                        self.game.informations.append(info)
 
     def redeploy_units(self, cp: ControlPoint) -> None:
         """ "
