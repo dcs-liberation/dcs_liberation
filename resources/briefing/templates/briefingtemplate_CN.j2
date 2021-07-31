@@ -67,6 +67,7 @@ DCS Liberation 第 {{ game.turn }} 回合
 {% for flight in flights if flight.client_units %}
 --------------------------------------------------
 {{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
+频率 : {{ intra_flight_channel(flight) }}
 {% for waypoint in flight.waypoints %}
 {{ loop.index0 }} {{waypoint|waypoint_timing("Depart ")}}-- {{waypoint.name}} : {{ waypoint.description}}
 {% endfor %}
