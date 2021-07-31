@@ -383,7 +383,18 @@ class AircraftConflictGenerator:
             channel = self.radio_registry.alloc_uhf()
         else:
             channel = flight.unit_type.alloc_flight_radio(self.radio_registry)
-        group.set_frequency(channel.mhz)
+
+        try:
+            group.set_frequency(channel.mhz)
+        except TypeError:
+            # TODO: Remote try/except when pydcs bug is fixed.
+            # https://github.com/pydcs/dcs/issues/175
+            # pydcs now emits an error when attempting to set a preset channel for an
+            # aircraft that doesn't support them. We're not choosing to set a preset
+            # here, we're just trying to set the AI's frequency. pydcs automatically
+            # tries to set channel 1 when it does that and doesn't suppress this new
+            # error.
+            pass
 
         divert = None
         if flight.divert is not None:
