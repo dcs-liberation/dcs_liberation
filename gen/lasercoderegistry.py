@@ -3,14 +3,14 @@ from typing import Iterator
 
 
 class OutOfLaserCodesError(RuntimeError):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             f"All JTAC laser codes have been allocated.  No available codes."
         )
 
 
 class LaserCodeRegistry:
-    def __init__(self):
+    def __init__(self) -> None:
         self.allocated_codes: set[int] = set()
         self.allocator: Iterator[int] = LaserCodeRegistry.__laser_code_generator()
 
