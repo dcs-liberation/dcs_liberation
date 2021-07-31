@@ -14,9 +14,11 @@ from game.savecompat import has_save_compat_for
 from game.settings import Settings
 from game.utils import Distance, Heading, meters, interpolate, Pressure, inches_hg
 
+from game.theater.seasonalconditions import determine_season
+
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
-    from game.theater.conflicttheater import SeasonalConditions
+    from game.theater.seasonalconditions import SeasonalConditions
 
 
 class TimeOfDay(Enum):
@@ -119,9 +121,17 @@ class Weather:
             temperature -= seasonal_conditions.temperature_day_night_difference / 2
         pressure += self.pressure_adjustment
         temperature += self.temperature_adjustment
+        logging.debug(
+            "Weather: Before random: temp {} press {}".format(temperature, pressure)
+        )
         conditions = AtmosphericConditions(
             qnh=self.random_pressure(pressure),
             temperature_celsius=self.random_temperature(temperature),
+        )
+        logging.debug(
+            "Weather: After random: temp {} press {}".format(
+                conditions.temperature_celsius, conditions.qnh.pressure_in_inches_hg
+            )
         )
         return conditions
 
@@ -334,14 +344,18 @@ class Conditions:
         day: datetime.date,
         time_of_day: TimeOfDay,
     ) -> Weather:
-        # Future improvement: use seasonal weights for theaters
+        season = determine_season(day)
+        logging.debug("Weather: Season {}".format(season))
+        weather_chances = seasonal_conditions.weather_type_chances[season]
         chances = {
-            Thunderstorm: 1,
-            Raining: 20,
-            Cloudy: 60,
-            ClearSkies: 20,
+            Thunderstorm: weather_chances.thunderstorm,
+            Raining: weather_chances.raining,
+            Cloudy: weather_chances.cloudy,
+            ClearSkies: weather_chances.clear_skies,
         }
+        logging.debug("Weather: Chances {}".format(weather_chances))
         weather_type = random.choices(
             list(chances.keys()), weights=list(chances.values())
         )[0]
+        logging.debug("Weather: Type {}".format(weather_type))
         return weather_type(seasonal_conditions, day, time_of_day)
