@@ -1,4 +1,4 @@
-env.info("--- SKYNET VERSION: 2.1.0 | BUILD TIME: 27.03.2021 2125Z ---")
+env.info("--- SKYNET VERSION: 2.2.0 | BUILD TIME: 28.07.2021 1023Z ---")
 do
 --this file contains the required units per sam type
 samTypesDB = {
@@ -194,7 +194,31 @@ samTypesDB = {
 			['NATO'] = 'Roland ADS',
 		},
 		['harm_detection_chance'] = 60
-	},		
+	},	
+
+	['NASAM'] = {
+		['type'] = 'complex',
+		['searchRadar'] = {
+			['NASAMS_Radar_MPQ64F1'] = {
+			},
+		},
+		['launchers'] = {
+			['NASAMS_LN_B'] = {		
+			},
+			['NASAMS_LN_C'] = {		
+			},
+		},
+		
+		['name'] = {
+			['NATO'] = 'NASAM',
+		},
+		['misc'] = {
+			['NASAMS_Command_Post'] = {
+				['required'] = false,
+			},
+		},
+	},	
+	
 	['2S6 Tunguska'] = {
 		['type'] = 'single',
 		['searchRadar'] = {

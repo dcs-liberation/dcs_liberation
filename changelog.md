@@ -30,6 +30,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** SAM sites are now headed towards the center of the conflict
 * **[Mods]** Support for latest version of Gripen mod. In-progress campaigns may need to re-plan Gripen flights to pick up updated loadouts.
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
+* **[Plugins]** Updated SkynetIADS to 2.2.0 (adds NASAMS support).  
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
 * **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
