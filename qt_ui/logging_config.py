@@ -3,6 +3,8 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
+from qt_ui.logging_handler import HookableInMemoryHandler
+
 
 def init_logging(version: str) -> None:
     """Initializes the logging configuration."""
@@ -10,13 +12,22 @@ def init_logging(version: str) -> None:
         os.mkdir("logs")
 
     fmt = "%(asctime)s :: %(levelname)s :: %(message)s"
+    formatter = logging.Formatter(fmt)
+
     logging.basicConfig(level=logging.DEBUG, format=fmt)
     logger = logging.getLogger()
 
-    handler = RotatingFileHandler("./logs/liberation.log", "a", 5000000, 1)
-    handler.setLevel(logging.DEBUG)
-    handler.setFormatter(logging.Formatter(fmt))
+    rotating_file_handler = RotatingFileHandler(
+        "./logs/liberation.log", "a", 5000000, 1
+    )
+    rotating_file_handler.setLevel(logging.DEBUG)
+    rotating_file_handler.setFormatter(formatter)
 
-    logger.addHandler(handler)
+    hookable_in_memory_handler = HookableInMemoryHandler()
+    hookable_in_memory_handler.setLevel(logging.DEBUG)
+    hookable_in_memory_handler.setFormatter(formatter)
+
+    logger.addHandler(rotating_file_handler)
+    logger.addHandler(hookable_in_memory_handler)
 
     logger.info(f"DCS Liberation {version}")
