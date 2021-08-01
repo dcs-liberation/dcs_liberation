@@ -1116,11 +1116,12 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         start_pos, end_pos = self.racetrack_for_objective(location, barcap=True)
-        patrol_alt = meters(
-            random.randint(
-                int(self.doctrine.min_patrol_altitude.meters),
-                int(self.doctrine.max_patrol_altitude.meters),
-            )
+
+        preferred_alt = flight.unit_type.preferred_patrol_altitude
+        randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
+        patrol_alt = max(
+            self.doctrine.min_patrol_altitude,
+            min(self.doctrine.max_patrol_altitude, randomized_alt),
         )
 
         builder = WaypointBuilder(flight, self.coalition)
@@ -1355,11 +1356,11 @@ class FlightPlanBuilder:
         """
         location = self.package.target
 
-        patrol_alt = meters(
-            random.randint(
-                int(self.doctrine.min_patrol_altitude.meters),
-                int(self.doctrine.max_patrol_altitude.meters),
-            )
+        preferred_alt = flight.unit_type.preferred_patrol_altitude
+        randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
+        patrol_alt = max(
+            self.doctrine.min_patrol_altitude,
+            min(self.doctrine.max_patrol_altitude, randomized_alt),
         )
 
         # Create points

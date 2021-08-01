@@ -180,6 +180,34 @@ class AircraftType(UnitType[Type[FlyingType]]):
     def max_speed(self) -> Speed:
         return kph(self.dcs_unit_type.max_speed)
 
+    @property
+    def preferred_patrol_altitude(self) -> Distance:
+        if self.patrol_altitude:
+            return self.patrol_altitude
+        else:
+            # Estimate based on max speed
+            # Aircaft with max speed 200 kph will prefer patrol at 5000 ft
+            # Aircraft with max speed 2700 kph will prefer pratrol at 33 000 ft
+            altitude_for_lowest_speed = feet(5 * 100)
+            altitude_for_highest_speed = feet(33 * 1000)
+            lowest_speed = kph(200)
+            highest_speed = kph(2700)
+            factor = (self.max_speed - lowest_speed).kph / (
+                highest_speed - lowest_speed
+            ).kph
+            altitude = (
+                altitude_for_lowest_speed
+                + (altitude_for_highest_speed - altitude_for_lowest_speed) * factor
+            )
+            logging.debug(
+                f"Preferred patrol altitude for {self.dcs_unit_type.id}: {altitude.feet}"
+            )
+            rounded_altitude = feet(round(1000 * round(altitude.feet / 1000)))
+            return max(
+                altitude_for_lowest_speed,
+                min(altitude_for_highest_speed, rounded_altitude),
+            )
+
     def alloc_flight_radio(self, radio_registry: RadioRegistry) -> RadioFrequency:
         from gen.radios import ChannelInUseError, kHz
 
