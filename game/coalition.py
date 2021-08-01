@@ -10,7 +10,9 @@ from game.commander.missionscheduler import MissionScheduler
 from game.income import Income
 from game.inventory import GlobalAircraftInventory
 from game.navmesh import NavMesh
+from game.orderedset import OrderedSet
 from game.profiling import logged_duration, MultiEventTracer
+from game.savecompat import has_save_compat_for
 from game.threatzones import ThreatZones
 from game.transfers import PendingTransfers
 
@@ -35,7 +37,7 @@ class Coalition:
         self.budget = budget
         self.ato = AirTaskingOrder()
         self.transit_network = TransitNetwork()
-        self.procurement_requests: list[AircraftProcurementRequest] = []
+        self.procurement_requests: OrderedSet[AircraftProcurementRequest] = OrderedSet()
         self.bullseye = Bullseye(Point(0, 0))
         self.faker = Faker(self.faction.locales)
         self.air_wing = AirWing(game, self)
@@ -98,7 +100,14 @@ class Coalition:
         del state["faker"]
         return state
 
+    @has_save_compat_for(5)
     def __setstate__(self, state: dict[str, Any]) -> None:
+        # Begin save compat
+        old_procurement_requests = state["procurement_requests"]
+        if isinstance(old_procurement_requests, list):
+            state["procurement_requests"] = OrderedSet(old_procurement_requests)
+        # End save compat
+
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
@@ -225,3 +234,6 @@ class Coalition:
             manage_front_line,
             manage_aircraft,
         ).spend_budget(self.budget)
+
+    def add_procurement_request(self, request: AircraftProcurementRequest) -> None:
+        self.procurement_requests.add(request)

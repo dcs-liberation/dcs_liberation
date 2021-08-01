@@ -9,4 +9,4 @@ class ProtectAirSpace(CompoundTask[TheaterState]):
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
         for cp, needed in state.barcaps_needed.items():
             if needed > 0:
-                yield [PlanBarcap(cp)]
+                yield [PlanBarcap(cp, needed)]

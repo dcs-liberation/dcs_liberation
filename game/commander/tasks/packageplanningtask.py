@@ -74,6 +74,27 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
     def asap(self) -> bool:
         return False
 
+    @property
+    def purchase_multiplier(self) -> int:
+        """The multiplier for aircraft quantity when missions could not be fulfilled.
+
+        For missions that do not schedule in rounds like BARCAPs do, this should be one
+        to ensure that the we only purchase enough aircraft to plan the mission once.
+
+        For missions that repeat within the same turn, however, we may need to buy for
+        the same mission more than once. If three rounds of BARCAP still need to be
+        fulfilled, this would return 3, and we'd triplicate the purchase order.
+
+        There is a small misbehavior here that's not symptomatic for our current mission
+        planning: multi-round, multi-flight packages will only purchase multiple sets of
+        aircraft for whatever is unavailable for the *first* failed package. For
+        example, if we extend this to CAS and have no CAS aircraft but enough TARCAP
+        aircraft for one round, we'll order CAS for every round but will not order any
+        TARCAP aircraft, since we can't know that TARCAP aircraft are needed until we
+        attempt to plan the second mission *without returning the first round aircraft*.
+        """
+        return 1
+
     def fulfill_mission(self, state: TheaterState) -> bool:
         self.propose_flights()
         fulfiller = PackageFulfiller(
@@ -83,7 +104,9 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
             state.context.settings,
         )
         self.package = fulfiller.plan_mission(
-            ProposedMission(self.target, self.flights), state.context.tracer
+            ProposedMission(self.target, self.flights),
+            self.purchase_multiplier,
+            state.context.tracer,
         )
         return self.package is not None
 

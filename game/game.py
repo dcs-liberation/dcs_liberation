@@ -136,11 +136,6 @@ class Game:
     def ato_for(self, player: bool) -> AirTaskingOrder:
         return self.coalition_for(player).ato
 
-    def procurement_requests_for(
-        self, player: bool
-    ) -> list[AircraftProcurementRequest]:
-        return self.coalition_for(player).procurement_requests
-
     def transit_network_for(self, player: bool) -> TransitNetwork:
         return self.coalition_for(player).transit_network
 

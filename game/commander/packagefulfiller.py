@@ -60,7 +60,7 @@ class PackageFulfiller:
         return self.coalition.opponent.threat_zone
 
     def add_procurement_request(self, request: AircraftProcurementRequest) -> None:
-        self.coalition.procurement_requests.append(request)
+        self.coalition.add_procurement_request(request)
 
     def air_wing_can_plan(self, mission_type: FlightType) -> bool:
         """Returns True if it is possible for the air wing to plan this mission type.
@@ -78,13 +78,14 @@ class PackageFulfiller:
         flight: ProposedFlight,
         builder: PackageBuilder,
         missing_types: Set[FlightType],
+        purchase_multiplier: int,
     ) -> None:
         if not builder.plan_flight(flight):
             missing_types.add(flight.task)
             purchase_order = AircraftProcurementRequest(
                 near=mission.location,
                 task_capability=flight.task,
-                number=flight.num_aircraft,
+                number=flight.num_aircraft * purchase_multiplier,
             )
             # Reserves are planned for critical missions, so prioritize those orders
             # over aircraft needed for non-critical missions.
@@ -96,11 +97,14 @@ class PackageFulfiller:
         builder: PackageBuilder,
         missing_types: Set[FlightType],
         not_attempted: Iterable[ProposedFlight],
+        purchase_multiplier: int,
     ) -> None:
         # Try to plan the rest of the mission just so we can count the missing
         # types to buy.
         for flight in not_attempted:
-            self.plan_flight(mission, flight, builder, missing_types)
+            self.plan_flight(
+                mission, flight, builder, missing_types, purchase_multiplier
+            )
 
         missing_types_str = ", ".join(sorted([t.name for t in missing_types]))
         builder.release_planned_aircraft()
@@ -124,7 +128,10 @@ class PackageFulfiller:
         return threats
 
     def plan_mission(
-        self, mission: ProposedMission, tracer: MultiEventTracer
+        self,
+        mission: ProposedMission,
+        purchase_multiplier: int,
+        tracer: MultiEventTracer,
     ) -> Optional[Package]:
         """Allocates aircraft for a proposed mission and adds it to the ATO."""
         builder = PackageBuilder(
@@ -155,11 +162,17 @@ class PackageFulfiller:
                 escorts.append(proposed_flight)
                 continue
             with tracer.trace("Flight planning"):
-                self.plan_flight(mission, proposed_flight, builder, missing_types)
+                self.plan_flight(
+                    mission,
+                    proposed_flight,
+                    builder,
+                    missing_types,
+                    purchase_multiplier,
+                )
 
         if missing_types:
             self.scrub_mission_missing_aircraft(
-                mission, builder, missing_types, escorts
+                mission, builder, missing_types, escorts, purchase_multiplier
             )
             return None
 
@@ -189,13 +202,15 @@ class PackageFulfiller:
             assert escort.escort_type is not None
             if needed_escorts[escort.escort_type]:
                 with tracer.trace("Flight planning"):
-                    self.plan_flight(mission, escort, builder, missing_types)
+                    self.plan_flight(
+                        mission, escort, builder, missing_types, purchase_multiplier
+                    )
 
         # Check again for unavailable aircraft. If the escort was required and
         # none were found, scrub the mission.
         if missing_types:
             self.scrub_mission_missing_aircraft(
-                mission, builder, missing_types, escorts
+                mission, builder, missing_types, escorts, purchase_multiplier
             )
             return None
 

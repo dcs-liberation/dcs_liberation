@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from game import db
@@ -262,7 +262,7 @@ class ProcurementAi:
         return budget, False
 
     def purchase_aircraft(self, budget: float) -> float:
-        for request in self.game.procurement_requests_for(self.is_player):
+        for request in self.game.coalition_for(self.is_player).procurement_requests:
             if not list(self.best_airbases_for(request)):
                 # No airbases in range of this request. Skip it.
                 continue

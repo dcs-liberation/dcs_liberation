@@ -10,6 +10,8 @@ from gen.flights.flight import FlightType
 
 @dataclass
 class PlanBarcap(PackagePlanningTask[ControlPoint]):
+    max_orders: int
+
     def preconditions_met(self, state: TheaterState) -> bool:
         if not state.barcaps_needed[self.target]:
             return False
@@ -20,3 +22,7 @@ class PlanBarcap(PackagePlanningTask[ControlPoint]):
 
     def propose_flights(self) -> None:
         self.propose_flight(FlightType.BARCAP, 2)
+
+    @property
+    def purchase_multiplier(self) -> int:
+        return self.max_orders

@@ -751,6 +751,6 @@ class PendingTransfers:
             # aesthetic.
             gap += 1
 
-        self.game.procurement_requests_for(self.player).append(
+        self.game.coalition_for(self.player).add_procurement_request(
             AircraftProcurementRequest(control_point, FlightType.TRANSPORT, gap)
         )
