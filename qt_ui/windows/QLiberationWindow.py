@@ -37,6 +37,7 @@ from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 from qt_ui.windows.notes.QNotesWindow import QNotesWindow
+from qt_ui.windows.logs.QLogsWindow import QLogsWindow
 
 
 class QLiberationWindow(QMainWindow):
@@ -151,6 +152,9 @@ class QLiberationWindow(QMainWindow):
             )
         )
 
+        self.openLogsAction = QAction("Show &logs", self)
+        self.openLogsAction.triggered.connect(self.showLogsDialog)
+
         self.openSettingsAction = QAction("Settings", self)
         self.openSettingsAction.setIcon(CONST.ICONS["Settings"])
         self.openSettingsAction.triggered.connect(self.showSettingsDialog)
@@ -210,6 +214,7 @@ class QLiberationWindow(QMainWindow):
         help_menu.addAction(
             "Report an &issue", lambda: webbrowser.open_new_tab(URLS["Issues"])
         )
+        help_menu.addAction(self.openLogsAction)
 
         help_menu.addSeparator()
         help_menu.addAction(self.showAboutDialogAction)
@@ -359,6 +364,10 @@ class QLiberationWindow(QMainWindow):
 
     def showNotesDialog(self):
         self.dialog = QNotesWindow(self.game)
+        self.dialog.show()
+
+    def showLogsDialog(self):
+        self.dialog = QLogsWindow()
         self.dialog.show()
 
     def onDebriefing(self, debrief: Debriefing):
