@@ -10,7 +10,6 @@ mission_types:
   - Escort
   - Intercept
   - OCA/Aircraft
-  - Strike
   - Fighter sweep
   - BARCAP
   - TARCAP
