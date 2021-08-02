@@ -709,6 +709,7 @@ class AircraftConflictGenerator:
                 group = self._generate_inflight(
                     name=name, side=country, flight=flight, origin=cp
                 )
+                return group
             elif isinstance(cp, NavalControlPoint):
                 group_name = cp.get_carrier_group_name()
                 carrier_group = self.m.find_group(group_name)
@@ -725,8 +726,8 @@ class AircraftConflictGenerator:
                     start_type=flight.start_type,
                     at=carrier_group,
                 )
+                return group
             else:
-
                 # If the flight is an helicopter flight, then prioritize dedicated helipads
                 if flight.unit_type.helicopter:
                     helipad = cp.get_free_helipad()
@@ -748,26 +749,30 @@ class AircraftConflictGenerator:
                             group.points[0].type = "TakeOffGroundHot"
 
                         helipad.occupied = True
+                        group_generated = True
 
-                    for i in range(flight.count - 1):
-                        helipad = cp.get_free_helipad()
-                        if helipad is not None:
-                            helipad.occupied = True
-                            group.units[1 + i].position = Point(helipad.x, helipad.y)
+                        for i in range(flight.count - 1):
+                            helipad = cp.get_free_helipad()
+                            if helipad is not None:
+                                helipad.occupied = True
+                                group.units[1 + i].position = Point(
+                                    helipad.x, helipad.y
+                                )
+                        return group
 
-                if group is None:
-                    if not isinstance(cp, Airfield):
-                        raise RuntimeError(
-                            f"Attempted to spawn at airfield for non-airfield {cp}"
-                        )
-                    group = self._generate_at_airport(
-                        name=name,
-                        side=country,
-                        unit_type=flight.unit_type.dcs_unit_type,
-                        count=flight.count,
-                        start_type=flight.start_type,
-                        airport=cp.airport,
+                if not isinstance(cp, Airfield):
+                    raise RuntimeError(
+                        f"Attempted to spawn at airfield for non-airfield {cp}"
                     )
+                group = self._generate_at_airport(
+                    name=name,
+                    side=country,
+                    unit_type=flight.unit_type.dcs_unit_type,
+                    count=flight.count,
+                    start_type=flight.start_type,
+                    airport=cp.airport,
+                )
+                return group
         except Exception as e:
             # Generated when there is no place on Runway or on Parking Slots
             logging.error(e)
@@ -779,8 +784,7 @@ class AircraftConflictGenerator:
                 name=name, side=country, flight=flight, origin=cp
             )
             group.points[0].alt = 1500
-
-        return group
+            return group
 
     @staticmethod
     def set_reduced_fuel(
