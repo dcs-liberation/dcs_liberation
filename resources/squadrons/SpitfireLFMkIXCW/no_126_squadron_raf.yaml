@@ -1,10 +1,10 @@
 ---
-name: RAF, No. 16 Squadron
-nickname: No. 16
+name: RAF, No. 126 Squadron
+nickname: Harrowbeer
 country: UK
 role: Fighter
-aircraft: Spitfire LF Mk IX
-livery: RAF, No. 16 Squadron
+aircraft: Spitfire LF Mk IX (Clipped Wings)
+livery: RAF, No. 126 Squadron, Harrowbeer
 mission_types:
   - CAS
   - Escort

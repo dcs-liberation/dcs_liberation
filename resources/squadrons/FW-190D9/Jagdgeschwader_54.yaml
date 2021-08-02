@@ -1,10 +1,9 @@
----
-name: RAF, No. 16 Squadron
-nickname: No. 16
-country: UK
+name: Jagdgeschwader 54
+nickname: Grünherz
+country: Third Reich
 role: Fighter
-aircraft: Spitfire LF Mk IX
-livery: RAF, No. 16 Squadron
+aircraft: Fw 190 D-9 Dora
+livery: FW-190D9_JG54
 mission_types:
   - CAS
   - Escort

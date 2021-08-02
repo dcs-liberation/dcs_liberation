@@ -1,10 +1,9 @@
 ---
-name: RAF, No. 107 Squadron
-nickname: Lowestoft's 'own' Squadron
-country: UK
+name: Küstenfliegergruppe 106
+nickname: Kü.Fl.Gr.206.
+country: Third Reich
 role: Medium Bomber
-aircraft: Boston Mk.III
-livery: 107 Sqn
+aircraft: Ju 88 A-4
 mission_types:
   - Anti-ship
   - BAI
