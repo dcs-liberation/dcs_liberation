@@ -65,7 +65,8 @@ class KneeboardPageWriter:
         else:
             self.foreground_fill = (15, 15, 15)
             self.background_fill = (255, 252, 252)
-        self.image = Image.new("RGB", (768, 1024), self.background_fill)
+        self.image_size = (768, 1024)
+        self.image = Image.new("RGB", self.image_size, self.background_fill)
         # These font sizes create a relatively full page for current sorties. If
         # we start generating more complicated flight plans, or start including
         # more information in the comm ladder (the latter of which we should
@@ -84,6 +85,7 @@ class KneeboardPageWriter:
             "resources/fonts/Inconsolata.otf", 20, layout_engine=ImageFont.LAYOUT_BASIC
         )
         self.draw = ImageDraw.Draw(self.image)
+        self.page_margin = page_margin
         self.x = page_margin
         self.y = page_margin
         self.line_spacing = line_spacing
@@ -97,11 +99,20 @@ class KneeboardPageWriter:
         text: str,
         font: Optional[ImageFont.FreeTypeFont] = None,
         fill: Optional[Tuple[int, int, int]] = None,
+        wrap: bool = False,
     ) -> None:
         if font is None:
             font = self.content_font
         if fill is None:
             fill = self.foreground_fill
+
+        if wrap:
+            text = "\n".join(
+                self.wrap_line_with_font(
+                    line, self.image_size[0] - self.page_margin - self.x, font
+                )
+                for line in text.splitlines()
+            )
 
         self.draw.text(self.position, text, font=font, fill=fill)
         width, height = self.draw.textsize(text, font=font)
@@ -142,6 +153,24 @@ class KneeboardPageWriter:
                 combo = output + "\n" + token
                 segments.append(combo)
                 output = ""
+            else:
+                output = combo
+        return "".join(segments + [output]).strip()
+
+    @staticmethod
+    def wrap_line_with_font(
+        inputstr: str, max_width: int, font: ImageFont.FreeTypeFont
+    ) -> str:
+        if font.getsize(inputstr)[0] <= max_width:
+            return inputstr
+        tokens = inputstr.split(" ")
+        output = ""
+        segments = []
+        for token in tokens:
+            combo = output + " " + token
+            if font.getsize(combo)[0] > max_width:
+                segments.append(output + "\n")
+                output = token
             else:
                 output = combo
         return "".join(segments + [output]).strip()
@@ -631,7 +660,7 @@ class NotesPage(KneeboardPage):
     def write(self, path: Path) -> None:
         writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
         writer.title(f"Notes")
-        writer.text(self.notes)
+        writer.text(self.notes, wrap=True)
         writer.write(path)
 
 
