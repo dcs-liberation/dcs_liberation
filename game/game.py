@@ -8,6 +8,7 @@ from typing import Any, List, Type, Union, cast
 
 from dcs.action import Coalition
 from dcs.countries import Switzerland, UnitedNationsPeacekeepers, USAFAggressors
+from dcs.country import Country
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
@@ -189,7 +190,7 @@ class Game:
         )
 
     @property
-    def neutral_country(self):
+    def neutral_country(self) -> Type[Country]:
         """Return the best fitting country that can be used as neutral faction in the generated mission"""
         countries_in_use = [self.red.country_name, self.blue.country_name]
         if UnitedNationsPeacekeepers not in countries_in_use:

@@ -8,7 +8,7 @@ from game.utils import Heading
 
 
 class Helipad(PointWithHeading):
-    def __init__(self):
+    def __init__(self) -> None:
         super(Helipad, self).__init__()
         self.heading = Heading.from_degrees(0)
         self.occupied = False
