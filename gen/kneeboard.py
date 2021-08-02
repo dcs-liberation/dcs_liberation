@@ -94,10 +94,12 @@ class KneeboardPageWriter:
         self,
         text: str,
         font: Optional[ImageFont.FreeTypeFont] = None,
-        fill: Tuple[int, int, int] = (0, 0, 0),
+        fill: Optional[Tuple[int, int, int]] = None,
     ) -> None:
         if font is None:
             font = self.content_font
+        if fill is None:
+            fill = self.foreground_fill
 
         self.draw.text(self.position, text, font=font, fill=fill)
         width, height = self.draw.textsize(text, font=font)
