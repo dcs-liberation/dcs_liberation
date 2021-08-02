@@ -4,7 +4,7 @@ nickname: Île De France
 country: France
 role: Fighter
 aircraft: Mirage 2000C
-livery: AdA_Chasse_2_5
+livery: AdA Chasse 2-5
 mission_types:
   - BARCAP
   - Escort
