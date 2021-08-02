@@ -5,7 +5,10 @@ Saves from 4.0.0 are compatible with 4.1.0.
 ## Features/Improvements
 
 * **[Campaign]** Air defense sites now generate a fixed number of launchers per type.
-* **[Campaign]** Added support for Mariana Islands map.  
+* **[Campaign]** Added support for Mariana Islands map.
+* **[Campaign AI]** Adjustments to aircraft selection priorities for most mission types.
+* **[Engine]** Support for DCS 2.7.4.9632 and newer, including the Marianas map, F-16 JSOWs, NASAMS, and Tin Shield EWR.
+* **[Flight Planning]** CAP patrol altitudes are now set per-aircraft. By default the altitude will be set based on the aircraft's maximum speed.
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
 * **[Mods]** Support for latest version of Gripen mod. In-progress campaigns may need to re-plan Gripen flights to pick up updated loadouts.
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
@@ -21,6 +24,8 @@ Saves from 4.0.0 are compatible with 4.1.0.
 ## Fixes
 
 * **[Campaign]** Fixed the Silkworm generator to include launchers and not all radars.
+* **[Data]** Fixed Introduction dates for targeting pods (ATFLIR and LITENING were both a few years too early).
+* **[Data]** Removed SA-10 from Syria 2011 faction.
 * **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
