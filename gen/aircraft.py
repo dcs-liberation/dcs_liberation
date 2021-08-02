@@ -703,7 +703,7 @@ class AircraftConflictGenerator:
         self, cp: ControlPoint, country: Country, flight: Flight
     ) -> FlyingGroup[Any]:
         name = namegen.next_aircraft_name(country, cp.id, flight)
-        group: Optional[FlyingGroup[Any]] = None
+        group: FlyingGroup[Any]
         try:
             if flight.start_type == "In Flight":
                 group = self._generate_inflight(
@@ -730,7 +730,7 @@ class AircraftConflictGenerator:
                 # If the flight is an helicopter flight, then prioritize dedicated helipads
                 if flight.unit_type.helicopter:
                     helipad = cp.get_free_helipad()
-                    if helipad is not None:
+                    if helipad is not None and helipad.static_unit is not None:
                         group = self._generate_at_group(
                             name=name,
                             side=country,
