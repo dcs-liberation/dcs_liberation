@@ -1,0 +1,15 @@
+---
+name: RAF, No. 126 Squadron
+nickname: Harrowbeer
+country: UK
+role: Fighter
+aircraft: Spitfire LF Mk IX (Clipped Wings)
+livery: RAF, No. 126 Squadron, Harrowbeer
+mission_types:
+  - CAS
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - Fighter sweep
+  - BARCAP
+  - TARCAP
