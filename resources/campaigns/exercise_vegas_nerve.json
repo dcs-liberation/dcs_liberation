@@ -5,7 +5,7 @@
   "recommended_player_faction": "Bluefor Modern",
   "recommended_enemy_faction": "Redfor (China) 2010",
   "description": "<p>This is an asymmetrical Red Flag Exercise scenario for the NTTR comprising 4 control points. You start off in control of the two Tonopah airports, and will push south to capture Groom Lake and Nellis AFBs. Taking down Nellis AFB's IADS and striking their resource sites ASAP once Groom Lake has been captured is recommended to offset their resource advantage.</p>",
-  "version": "8.0",
+  "version": "8.1",
   "miz": "exercise_vegas_nerve.miz",
   "performance": 0
 }

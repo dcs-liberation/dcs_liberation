@@ -5,7 +5,7 @@
   "recommended_player_faction": "Bluefor Modern",
   "recommended_enemy_faction": "Russia 2010",
   "description": "<p>This is part 2 of the Caucasus Multi-part campaign. After completing Multi-Part Georgia, play this campaign to invade Russia and finish the theater. As this is now Russia the recommended enemy faction has changed. To simulate still owning Georgia the player income has been supplemented through an increased number of blue strike targets at the starting bases. This is a more difficult scenario with a higher concentration of Redfor SAMs and Strike targets than usual.</p>",
-  "version": "8.0",
+  "version": "8.1",
   "miz": "Caucasus_Multi_Russia.miz",
   "performance": 2
 }
