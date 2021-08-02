@@ -614,7 +614,7 @@ class HelipadGenerator:
                 country=country,
                 name=(name + "_fuel"),
                 _type=Fortification.FARP_Fuel_Depot,
-                position=pad.position.point_from_heading(helipad.heading, 35),
+                position=pad.position.point_from_heading(helipad.heading.degrees, 35),
                 heading=pad.heading,
             )
             self.m.static_group(
@@ -622,8 +622,8 @@ class HelipadGenerator:
                 name=(name + "_ammo"),
                 _type=Fortification.FARP_Ammo_Dump_Coating,
                 position=pad.position.point_from_heading(
-                    helipad.heading, 35
-                ).point_from_heading(helipad.heading + 90, 10),
+                    helipad.heading.degrees, 35
+                ).point_from_heading(helipad.heading.degrees + 90, 10),
                 heading=pad.heading,
             )
 

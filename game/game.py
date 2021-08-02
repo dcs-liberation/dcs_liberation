@@ -30,7 +30,6 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .navmesh import NavMesh
-from .procurement import AircraftProcurementRequest
 from .profiling import logged_duration
 from .settings import Settings
 from .squadrons import AirWing
@@ -192,7 +191,7 @@ class Game:
     @property
     def neutral_country(self):
         """Return the best fitting country that can be used as neutral faction in the generated mission"""
-        countries_in_use = [self.player_country, self.enemy_country]
+        countries_in_use = [self.red.country_name, self.blue.country_name]
         if UnitedNationsPeacekeepers not in countries_in_use:
             return UnitedNationsPeacekeepers
         elif Switzerland.name not in countries_in_use:

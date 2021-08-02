@@ -51,11 +51,11 @@ from .controlpoint import (
     MissionTarget,
     OffMapSpawn,
 )
-from .seasonalconditions import SeasonalConditions
 from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
 from .projections import TransverseMercator
+from .seasonalconditions import SeasonalConditions
 from ..helipad import Helipad
 from ..point_with_heading import PointWithHeading
 from ..positioned import Positioned
@@ -89,7 +89,7 @@ class MizCampaignLoader:
     SHIPPING_LANE_UNIT_TYPE = HandyWind.id
 
     FOB_UNIT_TYPE = Unarmed.SKP_11.id
-    FARP_HELIPAD = "SINGLE_HELIPAD"
+    FARP_HELIPAD = "Invisible FARP"
 
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
     SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
@@ -271,6 +271,7 @@ class MizCampaignLoader:
     def helipads(self) -> Iterator[StaticGroup]:
         for group in self.blue.static_group:
             if group.units[0].type == self.FARP_HELIPAD:
+                print("helooooo")
                 yield group
 
     @property
@@ -482,7 +483,7 @@ class MizCampaignLoader:
         for static in self.helipads:
             closest, distance = self.objective_info(static)
             closest.helipads.append(
-                PointWithHeading.from_point(
+                Helipad.from_point(
                     static.position, Heading.from_degrees(static.units[0].heading)
                 )
             )
