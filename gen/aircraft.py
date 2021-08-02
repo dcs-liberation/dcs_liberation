@@ -81,7 +81,7 @@ from game.theater.missiontarget import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
-from game.utils import Distance, meters, nautical_miles, pairwise
+from game.utils import Distance, Speed, meters, nautical_miles, pairwise
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -1775,17 +1775,11 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
                 )
             )
 
-        # TODO: Set orbit speeds for all race tracks and remove this special case.
-        if isinstance(flight_plan, RefuelingFlightPlan):
-            orbit = OrbitAction(
-                altitude=waypoint.alt,
-                pattern=OrbitAction.OrbitPattern.RaceTrack,
-                speed=int(flight_plan.patrol_speed.kph),
-            )
-        else:
-            orbit = OrbitAction(
-                altitude=waypoint.alt, pattern=OrbitAction.OrbitPattern.RaceTrack
-            )
+        orbit = OrbitAction(
+            altitude=waypoint.alt,
+            pattern=OrbitAction.OrbitPattern.RaceTrack,
+            speed=int(flight_plan.patrol_speed.kph),
+        )
 
         racetrack = ControlledTask(orbit)
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)

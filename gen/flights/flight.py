@@ -142,7 +142,7 @@ class FlightWaypoint:
             x: X coordinate of the waypoint.
             y: Y coordinate of the waypoint.
             alt: Altitude of the waypoint. By default this is AGL, but it can be
-            changed to MSL by setting alt_type to "RADIO".
+            changed to MSL by setting alt_type to "RADIO". // Mags: Isn't this incorrect? Both the default and the explanation?
         """
         self.waypoint_type = waypoint_type
         self.x = x
