@@ -6,7 +6,6 @@ from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import Any, List, Type, Union, cast
 
-from dcs.action import Coalition
 from dcs.countries import Switzerland, UnitedNationsPeacekeepers, USAFAggressors
 from dcs.country import Country
 from dcs.mapping import Point
