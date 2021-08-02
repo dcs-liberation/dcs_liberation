@@ -1,5 +1,6 @@
 import logging
-from typing import List, Type
+from collections import Sequence
+from typing import Type
 
 from dcs.helicopters import (
     AH_1W,
@@ -124,29 +125,30 @@ from pydcs_extensions.su57.su57 import Su_57
 CAP_CAPABLE = [
     Su_57,
     F_22A,
-    MiG_31,
+    F_15C,
     F_14B,
     F_14A_135_GR,
-    MiG_25PD,
     Su_33,
+    Su_34,
+    J_11A,
     Su_30,
     Su_27,
-    J_11A,
-    F_15C,
     MiG_29S,
-    MiG_29G,
-    MiG_29A,
     F_16C_50,
     FA_18C_hornet,
+    JF_17,
+    JAS39Gripen,
     F_16A,
     F_4E,
-    JAS39Gripen,
-    JF_17,
+    MiG_31,
+    MiG_25PD,
+    MiG_29G,
+    MiG_29A,
     MiG_23MLD,
     MiG_21Bis,
     Mirage_2000_5,
-    M_2000C,
     F_15E,
+    M_2000C,
     F_5E_3,
     MiG_19P,
     A_4E_C,
@@ -173,6 +175,7 @@ CAS_CAPABLE = [
     A_10C_2,
     A_10C,
     Hercules,
+    Su_34,
     Su_25TM,
     Su_25T,
     Su_25,
@@ -190,17 +193,16 @@ CAS_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     AJS37,
-    Su_24MR,
     Su_24M,
     Su_17M4,
+    Su_33,
     F_4E,
     S_3B,
-    Su_34,
     Su_30,
-    MiG_19P,
     MiG_29S,
     MiG_27K,
     MiG_29A,
+    MiG_21Bis,
     AH_64D,
     AH_64A,
     AH_1W,
@@ -212,13 +214,14 @@ CAS_CAPABLE = [
     Mi_24P,
     Mi_24V,
     Mi_8MT,
-    UH_1H,
+    MiG_19P,
     MiG_15bis,
     M_2000C,
     F_5E_3,
     F_86F_Sabre,
     C_101CC,
     L_39ZA,
+    UH_1H,
     A_20G,
     Ju_88A4,
     P_47D_40,
@@ -299,13 +302,14 @@ STRIKE_CAPABLE = [
     Tornado_GR4,
     F_16C_50,
     FA_18C_hornet,
+    AV8BNA,
+    JF_17,
     F_16A,
     F_14B,
     F_14A_135_GR,
     JAS39Gripen_AG,
     Tornado_IDS,
     Su_17M4,
-    Su_24MR,
     Su_24M,
     Su_25TM,
     Su_25T,
@@ -317,11 +321,9 @@ STRIKE_CAPABLE = [
     MiG_29S,
     MiG_29G,
     MiG_29A,
-    JF_17,
     F_4E,
     A_10C_2,
     A_10C,
-    AV8BNA,
     S_3B,
     A_4E_C,
     M_2000C,
@@ -375,6 +377,7 @@ RUNWAY_ATTACK_CAPABLE = [
     Su_34,
     Su_30,
     Tornado_IDS,
+    M_2000C,
 ] + STRIKE_CAPABLE
 
 # For any aircraft that isn't necessarily directly involved in strike
@@ -415,7 +418,7 @@ REFUELING_CAPABALE = [
 ]
 
 
-def dcs_types_for_task(task: FlightType) -> list[Type[FlyingType]]:
+def dcs_types_for_task(task: FlightType) -> Sequence[Type[FlyingType]]:
     cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
     if task in cap_missions:
         return CAP_CAPABLE

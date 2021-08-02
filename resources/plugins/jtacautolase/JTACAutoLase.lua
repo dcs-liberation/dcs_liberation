@@ -161,9 +161,9 @@ function JTACAutoLase(jtacGroupName, laserCode,smoke,lock,colour)
         local tempUnit = Unit.getByName(tempUnitInfo.name)
 
         if tempUnit ~= nil and tempUnit:getLife() > 0 and tempUnit:isActive() == true then
-            notify(jtacGroupName .. " target " .. tempUnitInfo.unitType .. " lost. Scanning for Targets. ", 10)
+            notify(jtacGroupName .. " target " .. tempUnitInfo.unitType .. " lost. Scanning for Targets. ", 20)
         else
-            notify(jtacGroupName .. " target " .. tempUnitInfo.unitType .. " KIA. Good Job! Scanning for Targets. ", 10)
+            notify(jtacGroupName .. " target " .. tempUnitInfo.unitType .. " KIA. Good Job! Scanning for Targets. ", 20)
         end
 
         --remove from smoke list
@@ -186,7 +186,7 @@ function JTACAutoLase(jtacGroupName, laserCode,smoke,lock,colour)
             -- store current target for easy lookup
             GLOBAL_JTAC_CURRENT_TARGETS[jtacGroupName] = { name = enemyUnit:getName(), unitType = enemyUnit:getTypeName(), unitId = enemyUnit:getID() }
 
-            notify(jtacGroupName .. " lasing new target " .. enemyUnit:getTypeName() .. '. CODE: ' .. laserCode ..getPositionString(enemyUnit) , 10)
+            notify(jtacGroupName .. " lasing new target " .. enemyUnit:getTypeName() .. '. CODE: ' .. laserCode ..getPositionString(enemyUnit) , 30)
 
             -- create smoke
             if smoke == true then
@@ -554,7 +554,7 @@ function getJTACStatus()
         end
     end
 
-    notify(message, 25)
+    notify(message, 60)
 end
 
 

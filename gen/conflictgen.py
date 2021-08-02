@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from typing import Tuple, Optional
 
@@ -7,7 +9,7 @@ from shapely.geometry import LineString, Point as ShapelyPoint
 
 from game.theater.conflicttheater import ConflictTheater, FrontLine
 from game.theater.controlpoint import ControlPoint
-from game.utils import heading_sum, opposite_heading
+from game.utils import Heading
 
 
 FRONTLINE_LENGTH = 80000
@@ -23,7 +25,7 @@ class Conflict:
         attackers_country: Country,
         defenders_country: Country,
         position: Point,
-        heading: Optional[int] = None,
+        heading: Optional[Heading] = None,
         size: Optional[int] = None,
     ):
 
@@ -53,26 +55,28 @@ class Conflict:
     @classmethod
     def frontline_position(
         cls, frontline: FrontLine, theater: ConflictTheater
-    ) -> Tuple[Point, int]:
+    ) -> Tuple[Point, Heading]:
         attack_heading = frontline.attack_heading
         position = cls.find_ground_position(
             frontline.position,
             FRONTLINE_LENGTH,
-            heading_sum(attack_heading, 90),
+            attack_heading.right,
             theater,
         )
-        return position, opposite_heading(attack_heading)
+        if position is None:
+            raise RuntimeError("Could not find front line position")
+        return position, attack_heading.opposite
 
     @classmethod
     def frontline_vector(
         cls, front_line: FrontLine, theater: ConflictTheater
-    ) -> Tuple[Point, int, int]:
+    ) -> Tuple[Point, Heading, int]:
         """
         Returns a vector for a valid frontline location avoiding exclusion zones.
         """
         center_position, heading = cls.frontline_position(front_line, theater)
-        left_heading = heading_sum(heading, -90)
-        right_heading = heading_sum(heading, 90)
+        left_heading = heading.left
+        right_heading = heading.right
         left_position = cls.extend_ground_position(
             center_position, int(FRONTLINE_LENGTH / 2), left_heading, theater
         )
@@ -91,7 +95,7 @@ class Conflict:
         defender: Country,
         front_line: FrontLine,
         theater: ConflictTheater,
-    ):
+    ) -> Conflict:
         assert cls.has_frontline_between(front_line.blue_cp, front_line.red_cp)
         position, heading, distance = cls.frontline_vector(front_line, theater)
         conflict = cls(
@@ -109,10 +113,14 @@ class Conflict:
 
     @classmethod
     def extend_ground_position(
-        cls, initial: Point, max_distance: int, heading: int, theater: ConflictTheater
+        cls,
+        initial: Point,
+        max_distance: int,
+        heading: Heading,
+        theater: ConflictTheater,
     ) -> Point:
         """Finds the first intersection with an exclusion zone in one heading from an initial point up to max_distance"""
-        extended = initial.point_from_heading(heading, max_distance)
+        extended = initial.point_from_heading(heading.degrees, max_distance)
         if theater.landmap is None:
             # TODO: Why is this possible?
             return extended
@@ -129,16 +137,16 @@ class Conflict:
             return extended
 
         # Otherwise extend the front line only up to the intersection.
-        return initial.point_from_heading(heading, p0.distance(intersection))
+        return initial.point_from_heading(heading.degrees, p0.distance(intersection))
 
     @classmethod
     def find_ground_position(
         cls,
         initial: Point,
         max_distance: int,
-        heading: int,
+        heading: Heading,
         theater: ConflictTheater,
-        coerce=True,
+        coerce: bool = True,
     ) -> Optional[Point]:
         """
         Finds the nearest valid ground position along a provided heading and it's inverse up to max_distance.
@@ -149,10 +157,10 @@ class Conflict:
         if theater.is_on_land(pos):
             return pos
         for distance in range(0, int(max_distance), 100):
-            pos = initial.point_from_heading(heading, distance)
+            pos = initial.point_from_heading(heading.degrees, distance)
             if theater.is_on_land(pos):
                 return pos
-            pos = initial.point_from_heading(opposite_heading(heading), distance)
+            pos = initial.point_from_heading(heading.opposite.degrees, distance)
             if theater.is_on_land(pos):
                 return pos
         if coerce:

@@ -136,6 +136,16 @@ def format_waypoint_time(waypoint: FlightWaypoint, depart_prefix: str) -> str:
     return ""
 
 
+def format_intra_flight_channel(flight: FlightData) -> str:
+    frequency = flight.intra_flight_channel
+    channel = flight.channel_for(frequency)
+    if channel is None:
+        return str(frequency)
+
+    channel_name = flight.aircraft_type.channel_name(channel.radio_id, channel.channel)
+    return f"{channel_name} ({frequency})"
+
+
 class BriefingGenerator(MissionInfoGenerator):
     def __init__(self, mission: Mission, game: Game):
         super().__init__(mission, game)
@@ -151,6 +161,7 @@ class BriefingGenerator(MissionInfoGenerator):
             lstrip_blocks=True,
         )
         env.filters["waypoint_timing"] = format_waypoint_time
+        env.filters["intra_flight_channel"] = format_intra_flight_channel
         self.template = env.get_template("briefingtemplate_EN.j2")
 
     def generate(self) -> None:

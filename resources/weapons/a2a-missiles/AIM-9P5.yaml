@@ -1,0 +1,6 @@
+name: AIM-9P5
+year: 1980
+fallback: AIM-9P
+clsids:
+  - "{AIM-9P5}"
+  - "{AIM-9P5-ON-ADAPTER}"

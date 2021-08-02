@@ -14,10 +14,9 @@ class LinebackerGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Linebacker Group"
-    price = 75
 
-    def generate(self):
-        num_launchers = random.randint(2, 4)
+    def generate(self) -> None:
+        num_launchers = 2
 
         self.add_unit(
             Unarmed.M_818,

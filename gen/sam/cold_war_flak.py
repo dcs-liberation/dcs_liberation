@@ -17,9 +17,8 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Early Cold War Flak Site"
-    price = 74
 
-    def generate(self):
+    def generate(self) -> None:
 
         spacing = random.randint(30, 60)
         index = 0
@@ -42,7 +41,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.S_60_Type59_Artillery,
@@ -58,7 +57,7 @@ class EarlyColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#3",
             self.position.x - 80,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.ZU_23_Emplacement_Closed,
@@ -90,9 +89,8 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Cold War Flak Site"
-    price = 72
 
-    def generate(self):
+    def generate(self) -> None:
 
         spacing = random.randint(30, 60)
         index = 0
@@ -115,7 +113,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#1",
             self.position.x - 40,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.S_60_Type59_Artillery,
@@ -131,7 +129,7 @@ class ColdWarFlakGenerator(AirDefenseGroupGenerator):
             "SHO#3",
             self.position.x - 80,
             self.position.y - 40,
-            self.heading + 180,
+            self.heading.opposite,
         ),
         self.add_unit(
             AirDefence.ZU_23_Emplacement_Closed,

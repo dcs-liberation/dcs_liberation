@@ -57,10 +57,7 @@ class FinancesLayout(QGridLayout):
             middle=f"Income multiplier: {income.multiplier:.1f}",
             right=f"<b>{income.total}M</b>",
         )
-        if player:
-            budget = game.budget
-        else:
-            budget = game.enemy_budget
+        budget = game.coalition_for(player).budget
         self.add_row(middle="Balance", right=f"<b>{budget}M</b>")
         self.setRowStretch(next(self.row), 1)
 

@@ -1,7 +1,6 @@
 import logging
 from typing import List, Optional
 
-from PySide2 import QtCore
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import (
     QComboBox,
@@ -238,8 +237,8 @@ class QGroundObjectMenu(QDialog):
         self.total_value = total_value
 
     def repair_unit(self, group, unit, price):
-        if self.game.budget > price:
-            self.game.budget -= price
+        if self.game.blue.budget > price:
+            self.game.blue.budget -= price
             group.units_losts = [u for u in group.units_losts if u.id != unit.id]
             group.units.append(unit)
             GameUpdateSignal.get_instance().updateGame(self.game)
@@ -257,8 +256,16 @@ class QGroundObjectMenu(QDialog):
 
     def sell_all(self):
         self.update_total_value()
-        self.game.budget = self.game.budget + self.total_value
+        self.game.blue.budget = self.game.blue.budget + self.total_value
         self.ground_object.groups = []
+
+        # Replan if the tgo was a target of the redfor
+        if any(
+            package.target == self.ground_object
+            for package in self.game.ato_for(player=False).packages
+        ):
+            self.game.initialize_turn(for_red=True, for_blue=False)
+
         self.do_refresh_layout()
         GameUpdateSignal.get_instance().updateGame(self.game)
 
@@ -299,14 +306,17 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buySamBox = QGroupBox("Buy SAM site :")
         self.buyArmorBox = QGroupBox("Buy defensive position :")
 
-        faction = self.game.player_faction
+        faction = self.game.blue.faction
 
         # Sams
 
         possible_sams = get_faction_possible_sams_generator(faction)
         for sam in possible_sams:
+            # Pre Generate SAM to get the real price
+            generator = sam(self.game, self.ground_object)
+            generator.generate()
             self.samCombo.addItem(
-                sam.name + " [$" + str(sam.price) + "M]", userData=sam
+                generator.name + " [$" + str(generator.price) + "M]", userData=generator
             )
         self.samCombo.currentIndexChanged.connect(self.samComboChanged)
 
@@ -331,8 +341,12 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         buy_ewr_layout.addWidget(self.ewr_selector, 0, 1, alignment=Qt.AlignRight)
         ewr_types = get_faction_possible_ewrs_generator(faction)
         for ewr_type in ewr_types:
+            # Pre Generate to get the real price
+            generator = ewr_type(self.game, self.ground_object)
+            generator.generate()
             self.ewr_selector.addItem(
-                f"{ewr_type.name()} [${ewr_type.price()}M]", ewr_type
+                generator.name() + " [$" + str(generator.price) + "M]",
+                userData=generator,
             )
         self.ewr_selector.currentIndexChanged.connect(self.on_ewr_selection_changed)
 
@@ -402,7 +416,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
     def on_ewr_selection_changed(self, index):
         ewr = self.ewr_selector.itemData(index)
         self.buy_ewr_button.setText(
-            f"Buy [${ewr.price()}M][-${self.current_group_value}M]"
+            f"Buy [${ewr.price}M][-${self.current_group_value}M]"
         )
 
     def armorComboChanged(self, index):
@@ -419,12 +433,12 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         logging.info("Buying Armor ")
         utype = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
         price = utype.price * self.amount.value() - self.current_group_value
-        if price > self.game.budget:
+        if price > self.game.blue.budget:
             self.error_money()
             self.close()
             return
         else:
-            self.game.budget -= price
+            self.game.blue.budget -= price
 
         # Generate Armor
         group = generate_armor_group_of_type_and_size(
@@ -432,36 +446,40 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         )
         self.ground_object.groups = [group]
 
+        # Replan redfor missions
+        self.game.initialize_turn(for_red=True, for_blue=False)
+
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buySam(self):
         sam_generator = self.samCombo.itemData(self.samCombo.currentIndex())
         price = sam_generator.price - self.current_group_value
-        if price > self.game.budget:
+        if price > self.game.blue.budget:
             self.error_money()
             return
         else:
-            self.game.budget -= price
+            self.game.blue.budget -= price
 
-        # Generate SAM
-        generator = sam_generator(self.game, self.ground_object)
-        generator.generate()
-        self.ground_object.groups = list(generator.groups)
+        self.ground_object.groups = list(sam_generator.groups)
+
+        # Replan redfor missions
+        self.game.initialize_turn(for_red=True, for_blue=False)
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_ewr(self):
         ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
-        price = ewr_generator.price() - self.current_group_value
-        if price > self.game.budget:
+        price = ewr_generator.price - self.current_group_value
+        if price > self.game.blue.budget:
             self.error_money()
             return
         else:
-            self.game.budget -= price
+            self.game.blue.budget -= price
 
-        generator = ewr_generator(self.game, self.ground_object)
-        generator.generate()
-        self.ground_object.groups = [generator.vg]
+        self.ground_object.groups = [ewr_generator.vg]
+
+        # Replan redfor missions
+        self.game.initialize_turn(for_red=True, for_blue=False)
 
         GameUpdateSignal.get_instance().updateGame(self.game)
 

@@ -27,6 +27,7 @@ manufacturer: McDonnell Douglas
 origin: USA/UK
 price: 15
 role: V/STOL Attack
+max_range: 100
 variants:
   AV-8B Harrier II Night Attack: {}
 radios:

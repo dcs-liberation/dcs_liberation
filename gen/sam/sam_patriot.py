@@ -1,11 +1,10 @@
-import random
-
 from dcs.mapping import Point
 from dcs.vehicles import AirDefence
 
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
+    SkynetRole,
 )
 
 
@@ -15,9 +14,8 @@ class PatriotGenerator(AirDefenseGroupGenerator):
     """
 
     name = "Patriot Battery"
-    price = 240
 
-    def generate(self):
+    def generate(self) -> None:
         # Command Post
         self.add_unit(
             AirDefence.Patriot_str,
@@ -55,10 +53,7 @@ class PatriotGenerator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(3, 4)
-        positions = self.get_circular_position(
-            num_launchers, launcher_distance=120, coverage=360
-        )
+        positions = self.get_circular_position(8, launcher_distance=120, coverage=360)
         for i, position in enumerate(positions):
             self.add_unit(
                 AirDefence.Patriot_ln,
@@ -69,16 +64,22 @@ class PatriotGenerator(AirDefenseGroupGenerator):
             )
 
         # Short range protection for high value site
-        aa_group = self.add_auxiliary_group("AA")
-        num_launchers = random.randint(3, 4)
-        positions = self.get_circular_position(
-            num_launchers, launcher_distance=200, coverage=360
-        )
+        aa_group = self.add_auxiliary_group(SkynetRole.NoSkynetBehavior)
+        positions = self.get_circular_position(2, launcher_distance=200, coverage=360)
         for i, (x, y, heading) in enumerate(positions):
             self.add_unit_to_group(
                 aa_group,
                 AirDefence.Vulcan,
                 f"SPAAA#{i}",
+                Point(x, y),
+                heading,
+            )
+        positions = self.get_circular_position(2, launcher_distance=300, coverage=360)
+        for i, (x, y, heading) in enumerate(positions):
+            self.add_unit_to_group(
+                aa_group,
+                AirDefence.M1097_Avenger,
+                f"Avenger#{i}",
                 Point(x, y),
                 heading,
             )

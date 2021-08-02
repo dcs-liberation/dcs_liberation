@@ -24,12 +24,13 @@ class CargoShipGenerator:
 
     def generate(self) -> None:
         # Reset the count to make generation deterministic.
-        for ship in self.game.transfers.cargo_ships:
-            self.generate_cargo_ship(ship)
+        for coalition in self.game.coalitions:
+            for ship in coalition.transfers.cargo_ships:
+                self.generate_cargo_ship(ship)
 
     def generate_cargo_ship(self, ship: CargoShip) -> ShipGroup:
         country = self.mission.country(
-            self.game.player_country if ship.player_owned else self.game.enemy_country
+            self.game.coalition_for(ship.player_owned).country_name
         )
         waypoints = ship.route
         group = self.mission.ship_group(

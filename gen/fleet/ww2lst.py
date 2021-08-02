@@ -6,7 +6,7 @@ from gen.sam.group_generator import ShipGroupGenerator
 
 
 class WW2LSTGroupGenerator(ShipGroupGenerator):
-    def generate(self):
+    def generate(self) -> None:
 
         # Add LS Samuel Chase
         self.add_unit(

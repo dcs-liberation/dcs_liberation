@@ -22,12 +22,12 @@
     "S-3B Tanker"
   ],
   "frontline_units": [
-    "M113",
+    "AAVP-7A1 'Amtrac'",
     "M1043 HMMWV (M2 HMG)",
     "M1045 HMMWV (BGM-71 TOW)",
+    "M1097 Heavy HMMWV Avenger",
     "M1A2 Abrams",
-	"LAV-25",
-    "M163 Vulcan Air Defense System"
+    "LAV-25"
   ],
   "artillery_units": [
     "M270 Multiple Launch Rocket System"

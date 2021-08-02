@@ -14,9 +14,8 @@ class SA9Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-9 Group"
-    price = 40
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             Unarmed.UAZ_469,
             "UAZ",
@@ -32,7 +31,7 @@ class SA9Generator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(2, 3)
+        num_launchers = 2
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=360
         )

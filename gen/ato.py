@@ -40,7 +40,6 @@ class Task:
 class PackageWaypoints:
     join: Point
     ingress: Point
-    egress: Point
     split: Point
 
 

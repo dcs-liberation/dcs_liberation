@@ -18,7 +18,7 @@ env/
 /liberation_preferences.json
 /state.json
 
-logs/
+/logs/
 
 qt_ui/logs/liberation.log
 

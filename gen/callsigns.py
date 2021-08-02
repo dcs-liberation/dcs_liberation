@@ -1,12 +1,13 @@
 """Support for working with DCS group callsigns."""
 import logging
 import re
+from typing import Any
 
 from dcs.unitgroup import FlyingGroup
 from dcs.flyingunit import FlyingUnit
 
 
-def callsign_for_support_unit(group: FlyingGroup) -> str:
+def callsign_for_support_unit(group: FlyingGroup[Any]) -> str:
     # Either something like Overlord11 for Western AWACS, or else just a number.
     # Convert to either "Overlord" or "Flight 123".
     lead = group.units[0]

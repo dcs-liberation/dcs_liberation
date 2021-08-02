@@ -45,7 +45,7 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         row = 0
 
         unit_types: Set[AircraftType] = set()
-        for unit_type in self.game_model.game.player_faction.aircrafts:
+        for unit_type in self.game_model.game.blue.faction.aircrafts:
             if self.cp.is_carrier and not unit_type.carrier_capable:
                 continue
             if self.cp.is_lha and not unit_type.lha_capable:

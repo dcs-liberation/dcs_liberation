@@ -108,7 +108,7 @@ class QBaseMenu2(QDialog):
             capture_button.clicked.connect(self.cheat_capture)
 
         self.budget_display = QLabel(
-            QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.budget)
+            QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.blue.budget)
         )
         self.budget_display.setAlignment(Qt.AlignRight | Qt.AlignBottom)
         self.budget_display.setProperty("style", "budget-label")
@@ -124,7 +124,6 @@ class QBaseMenu2(QDialog):
         self.cp.capture(self.game_model.game, for_player=not self.cp.captured)
         # Reinitialized ground planners and the like. The ATO needs to be reset because
         # missions planned against the flipped base are no longer valid.
-        self.game_model.game.reset_ato()
         self.game_model.game.initialize_turn()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
@@ -140,7 +139,7 @@ class QBaseMenu2(QDialog):
 
     @property
     def can_afford_runway_repair(self) -> bool:
-        return self.game_model.game.budget >= db.RUNWAY_REPAIR_COST
+        return self.game_model.game.blue.budget >= db.RUNWAY_REPAIR_COST
 
     def begin_runway_repair(self) -> None:
         if not self.can_afford_runway_repair:
@@ -148,7 +147,7 @@ class QBaseMenu2(QDialog):
                 self,
                 "Cannot repair runway",
                 f"Runway repair costs ${db.RUNWAY_REPAIR_COST}M but you have "
-                f"only ${self.game_model.game.budget}M available.",
+                f"only ${self.game_model.game.blue.budget}M available.",
                 QMessageBox.Ok,
             )
             return
@@ -162,7 +161,7 @@ class QBaseMenu2(QDialog):
             return
 
         self.cp.begin_runway_repair()
-        self.game_model.game.budget -= db.RUNWAY_REPAIR_COST
+        self.game_model.game.blue.budget -= db.RUNWAY_REPAIR_COST
         self.update_repair_button()
         self.update_intel_summary()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
@@ -196,7 +195,9 @@ class QBaseMenu2(QDialog):
         ground_unit_limit = self.cp.frontline_unit_count_limit
         deployable_unit_info = ""
 
-        allocated = self.cp.allocated_ground_units(self.game_model.game.transfers)
+        allocated = self.cp.allocated_ground_units(
+            self.game_model.game.coalition_for(self.cp.captured).transfers
+        )
         unit_overage = max(
             allocated.total_present - self.cp.frontline_unit_count_limit, 0
         )
@@ -256,4 +257,6 @@ class QBaseMenu2(QDialog):
         NewUnitTransferDialog(self.game_model, self.cp, parent=self.window()).show()
 
     def update_budget(self, game: Game) -> None:
-        self.budget_display.setText(QRecruitBehaviour.BUDGET_FORMAT.format(game.budget))
+        self.budget_display.setText(
+            QRecruitBehaviour.BUDGET_FORMAT.format(game.blue.budget)
+        )

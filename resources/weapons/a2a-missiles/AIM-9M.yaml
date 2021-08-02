@@ -1,0 +1,13 @@
+name: AIM-9M
+year: 1982
+fallback: AIM-9P5
+clsids:
+  - "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}"
+  - "LAU-105_1*AIM-9M_L"
+  - "LAU-105_1*AIM-9M_R"
+  - "LAU-115_LAU-127_AIM-9M"
+  - "LAU-115_LAU-127_AIM-9M_R"
+  - "LAU-127_AIM-9M"
+  - "{LAU-138 wtip - AIM-9M}"
+  - "{LAU-7 - AIM-9M}"
+  - "{AIM-9M-ON-ADAPTER}"

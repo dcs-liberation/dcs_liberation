@@ -6,6 +6,7 @@ from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
     AirDefenseGroupGenerator,
 )
+from game.utils import Heading
 
 
 class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
@@ -14,9 +15,8 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
     """
 
     name = "WW2 Ally Flak Site"
-    price = 140
 
-    def generate(self):
+    def generate(self) -> None:
 
         positions = self.get_circular_position(4, launcher_distance=30, coverage=360)
         for i, position in enumerate(positions):
@@ -54,28 +54,28 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
             "CMD#1",
             self.position.x,
             self.position.y - 20,
-            random.randint(0, 360),
+            Heading.random(),
         )
         self.add_unit(
             Unarmed.M30_CC,
             "LOG#1",
             self.position.x,
             self.position.y + 20,
-            random.randint(0, 360),
+            Heading.random(),
         )
         self.add_unit(
             Unarmed.M4_Tractor,
             "LOG#2",
             self.position.x + 20,
             self.position.y,
-            random.randint(0, 360),
+            Heading.random(),
         )
         self.add_unit(
             Unarmed.Bedford_MWD,
             "LOG#3",
             self.position.x - 20,
             self.position.y,
-            random.randint(0, 360),
+            Heading.random(),
         )
 
     @classmethod

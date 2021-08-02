@@ -1,0 +1,8 @@
+name: GBU-24
+type: LGB
+year: 1986
+fallback: GBU-10
+clsids:
+  - "{BRU-32 GBU-24}"
+  - "{34759BBC-AF1E-4AEE-A581-498FF7A6EBCE}"
+  - "{GBU-24}"

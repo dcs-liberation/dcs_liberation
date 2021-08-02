@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from datetime import timedelta
-from dcs.task import Reconnaissance
+from typing import Any
 
-from game.utils import Distance, feet, nautical_miles
 from game.data.groundunitclass import GroundUnitClass
+from game.savecompat import has_save_compat_for
+from game.utils import Distance, feet, nautical_miles
 
 
 @dataclass
@@ -26,13 +27,26 @@ class Doctrine:
     antiship: bool
 
     rendezvous_altitude: Distance
+
+    #: The minimum distance between the departure airfield and the hold point.
     hold_distance: Distance
+
+    #: The minimum distance between the hold point and the join point.
     push_distance: Distance
+
+    #: The distance between the join point and the ingress point. Only used for the
+    #: fallback flight plan layout (when the departure airfield is near a threat zone).
     join_distance: Distance
-    split_distance: Distance
-    ingress_egress_distance: Distance
+
+    #: The maximum distance between the ingress point (beginning of the attack) and
+    #: target.
+    max_ingress_distance: Distance
+
+    #: The minimum distance between the ingress point (beginning of the attack) and
+    #: target.
+    min_ingress_distance: Distance
+
     ingress_altitude: Distance
-    egress_altitude: Distance
 
     min_patrol_altitude: Distance
     max_patrol_altitude: Distance
@@ -65,6 +79,32 @@ class Doctrine:
 
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
 
+    @has_save_compat_for(5)
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        if "max_ingress_distance" not in state:
+            try:
+                state["max_ingress_distance"] = state["ingress_distance"]
+                del state["ingress_distance"]
+            except KeyError:
+                state["max_ingress_distance"] = state["ingress_egress_distance"]
+                del state["ingress_egress_distance"]
+
+        max_ip: Distance = state["max_ingress_distance"]
+        if "min_ingress_distance" not in state:
+            if max_ip < nautical_miles(10):
+                min_ip = nautical_miles(5)
+            else:
+                min_ip = nautical_miles(10)
+            state["min_ingress_distance"] = min_ip
+
+        self.__dict__.update(state)
+
+
+class MissionPlannerMaxRanges:
+    @has_save_compat_for(5)
+    def __init__(self) -> None:
+        pass
+
 
 MODERN_DOCTRINE = Doctrine(
     cap=True,
@@ -73,13 +113,12 @@ MODERN_DOCTRINE = Doctrine(
     strike=True,
     antiship=True,
     rendezvous_altitude=feet(25000),
-    hold_distance=nautical_miles(15),
+    hold_distance=nautical_miles(25),
     push_distance=nautical_miles(20),
     join_distance=nautical_miles(20),
-    split_distance=nautical_miles(20),
-    ingress_egress_distance=nautical_miles(45),
+    max_ingress_distance=nautical_miles(45),
+    min_ingress_distance=nautical_miles(10),
     ingress_altitude=feet(20000),
-    egress_altitude=feet(20000),
     min_patrol_altitude=feet(15000),
     max_patrol_altitude=feet(33000),
     pattern_altitude=feet(5000),
@@ -111,13 +150,12 @@ COLDWAR_DOCTRINE = Doctrine(
     strike=True,
     antiship=True,
     rendezvous_altitude=feet(22000),
-    hold_distance=nautical_miles(10),
+    hold_distance=nautical_miles(15),
     push_distance=nautical_miles(10),
     join_distance=nautical_miles(10),
-    split_distance=nautical_miles(10),
-    ingress_egress_distance=nautical_miles(30),
+    max_ingress_distance=nautical_miles(30),
+    min_ingress_distance=nautical_miles(10),
     ingress_altitude=feet(18000),
-    egress_altitude=feet(18000),
     min_patrol_altitude=feet(10000),
     max_patrol_altitude=feet(24000),
     pattern_altitude=feet(5000),
@@ -148,14 +186,13 @@ WWII_DOCTRINE = Doctrine(
     sead=False,
     strike=True,
     antiship=True,
-    hold_distance=nautical_miles(5),
+    hold_distance=nautical_miles(10),
     push_distance=nautical_miles(5),
     join_distance=nautical_miles(5),
-    split_distance=nautical_miles(5),
     rendezvous_altitude=feet(10000),
-    ingress_egress_distance=nautical_miles(7),
+    max_ingress_distance=nautical_miles(7),
+    min_ingress_distance=nautical_miles(5),
     ingress_altitude=feet(8000),
-    egress_altitude=feet(8000),
     min_patrol_altitude=feet(4000),
     max_patrol_altitude=feet(15000),
     pattern_altitude=feet(5000),

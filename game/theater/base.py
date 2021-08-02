@@ -6,15 +6,15 @@ from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.unittype import UnitType
 
-BASE_MAX_STRENGTH = 1
-BASE_MIN_STRENGTH = 0
+BASE_MAX_STRENGTH = 1.0
+BASE_MIN_STRENGTH = 0.0
 
 
 class Base:
-    def __init__(self):
+    def __init__(self) -> None:
         self.aircraft: dict[AircraftType, int] = {}
         self.armor: dict[GroundUnitType, int] = {}
-        self.strength = 1
+        self.strength = 1.0
 
     @property
     def total_aircraft(self) -> int:
@@ -31,7 +31,7 @@ class Base:
             total += unit_type.price * count
         return total
 
-    def total_units_of_type(self, unit_type: UnitType) -> int:
+    def total_units_of_type(self, unit_type: UnitType[Any]) -> int:
         return sum(
             [
                 c
@@ -40,7 +40,7 @@ class Base:
             ]
         )
 
-    def commission_units(self, units: dict[Any, int]):
+    def commission_units(self, units: dict[Any, int]) -> None:
         for unit_type, unit_count in units.items():
             if unit_count <= 0:
                 continue
@@ -56,7 +56,7 @@ class Base:
 
             target_dict[unit_type] = target_dict.get(unit_type, 0) + unit_count
 
-    def commit_losses(self, units_lost: dict[Any, int]):
+    def commit_losses(self, units_lost: dict[Any, int]) -> None:
         for unit_type, count in units_lost.items():
             target_dict: dict[Any, int]
             if unit_type in self.aircraft:
@@ -75,7 +75,7 @@ class Base:
             if target_dict[unit_type] == 0:
                 del target_dict[unit_type]
 
-    def affect_strength(self, amount):
+    def affect_strength(self, amount: float) -> None:
         self.strength += amount
         if self.strength > BASE_MAX_STRENGTH:
             self.strength = BASE_MAX_STRENGTH

@@ -1,0 +1,7 @@
+name: 2xMk 83
+fallback: Mk 83
+clsids:
+  - "{BRU33_2X_MK-83}"
+  - "{18617C93-78E7-4359-A8CE-D754103EDF63}"
+  - "{BRU-42_2*Mk-83_LEFT}"
+  - "{BRU-42_2*Mk-83_RIGHT}"

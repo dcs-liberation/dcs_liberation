@@ -19,7 +19,7 @@ pathspec==0.8.1
 pefile==2019.4.18
 Pillow==8.2.0
 pre-commit==2.10.1
--e git://github.com/pydcs/dcs@7dea4f516d943c1f48454a46043b5f38d42a35f0#egg=pydcs
+-e git://github.com/pydcs/dcs@eb0b9f2de660393ccd6ba17b2d82371d44e0d27b#egg=pydcs
 pyinstaller==4.3
 pyinstaller-hooks-contrib==2021.1
 pyparsing==2.4.7
@@ -36,5 +36,6 @@ tabulate==0.8.7
 text-unidecode==1.3
 toml==0.10.2
 typed-ast==1.4.2
+types-Pillow==8.3.1
 typing-extensions==3.7.4.3
 virtualenv==20.4.2

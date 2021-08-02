@@ -1,4 +1,5 @@
-description: The Rockwell B-1 Lancer is a supersonic variable-sweep wing, heavy bomber
+description:
+  The Rockwell B-1 Lancer is a supersonic variable-sweep wing, heavy bomber
   used by the United States Air Force. It is commonly called the 'Bone' (from 'B-One').It
   is one of three strategic bombers in the U.S. Air Force fleet as of 2021, the other
   two being the B-2 Spirit and the B-52 Stratofortress. It first served in combat
@@ -12,5 +13,6 @@ manufacturer: Rockwell
 origin: USA
 price: 45
 role: Supersonic Strategic Bomber
+max_range: 2000
 variants:
   B-1B Lancer: {}

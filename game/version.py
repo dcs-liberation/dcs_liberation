@@ -1,8 +1,15 @@
 from pathlib import Path
 
 
+MAJOR_VERSION = 5
+MINOR_VERSION = 0
+MICRO_VERSION = 0
+
+
 def _build_version_string() -> str:
-    components = ["5.0.0"]
+    components = [
+        ".".join(str(v) for v in (MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION))
+    ]
     build_number_path = Path("resources/buildnumber")
     if build_number_path.exists():
         with build_number_path.open("r") as build_number_file:
@@ -96,4 +103,11 @@ VERSION = _build_version_string()
 #:   mission using map buildings as strike targets must check and potentially recreate
 #:   all those objectives. This definitely affects all Syria campaigns, other maps are
 #:   not yet verified.
-CAMPAIGN_FORMAT_VERSION = (7, 0)
+#:
+#: Version 7.1
+#: * Support for Mariana Islands terrain
+#:
+#: Version 8.0
+#: * DCS 2.7.4.9632 changed scenery target IDs. Any mission using map buildings as
+#:   strike targets must check and potentially recreate all those objectives.
+CAMPAIGN_FORMAT_VERSION = (8, 0)

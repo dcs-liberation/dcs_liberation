@@ -14,9 +14,8 @@ class SA3Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-3/S-125 Site"
-    price = 80
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.P_19_s_125_sr,
             "SR",
@@ -32,7 +31,7 @@ class SA3Generator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(3, 6)
+        num_launchers = 4
         positions = self.get_circular_position(
             num_launchers, launcher_distance=120, coverage=180
         )

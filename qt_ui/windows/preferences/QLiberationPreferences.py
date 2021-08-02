@@ -22,6 +22,7 @@ class QLiberationPreferences(QFrame):
         super(QLiberationPreferences, self).__init__()
         self.saved_game_dir = ""
         self.dcs_install_dir = ""
+        self.install_dir_ignore_warning = False
 
         self.dcs_install_dir = liberation_install.get_dcs_install_directory()
         self.saved_game_dir = liberation_install.get_saved_game_dir()
@@ -102,17 +103,38 @@ class QLiberationPreferences(QFrame):
             error_dialog.exec_()
             return False
 
-        if not os.path.isdir(self.dcs_install_dir):
+        if self.install_dir_ignore_warning and self.dcs_install_dir == "":
+            warning_dialog = QMessageBox.warning(
+                self,
+                "The DCS Installation directory was not set",
+                "You set an empty DCS Installation directory! "
+                "<br/><br/>Without this directory, DCS Liberation can not replace the MissionScripting.lua for you and will not work properly. "
+                "In this case, you need to edit the MissionScripting.lua yourself. The easiest way to do it is to replace the original file (&lt;dcs_installation_directory&gt;/Scripts/MissionScripting.lua) with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua)."
+                "<br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>"
+                "<br/><br/>Are you sure that you want to leave the installation directory empty?"
+                "<br/><br/><strong>This is only recommended for expert users!</strong>",
+                QMessageBox.StandardButton.Yes,
+                QMessageBox.StandardButton.No,
+            )
+            if warning_dialog == QMessageBox.No:
+                return False
+        elif not os.path.isdir(self.dcs_install_dir):
             error_dialog = QMessageBox.critical(
                 self,
                 "Wrong DCS installation directory.",
-                self.dcs_install_dir + " is not a valid directory",
+                self.dcs_install_dir
+                + " is not a valid directory. DCS Liberation requires the installation directory to replace the MissionScripting.lua"
+                "<br/><br/>If you ignore this Error, DCS Liberation can not work properly and needs your attention. "
+                "In this case, you need to edit the MissionScripting.lua yourself. The easiest way to do it is to replace the original file (&lt;dcs_installation_directory&gt;/Scripts/MissionScripting.lua) with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua)."
+                "<br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>"
+                "<br/><br/><strong>This is only recommended for expert users!</strong>",
+                QMessageBox.StandardButton.Ignore,
                 QMessageBox.StandardButton.Ok,
             )
-            error_dialog.exec_()
+            if error_dialog == QMessageBox.Ignore:
+                self.install_dir_ignore_warning = True
             return False
-
-        if not os.path.isdir(
+        elif not os.path.isdir(
             os.path.join(self.dcs_install_dir, "Scripts")
         ) and os.path.isfile(os.path.join(self.dcs_install_dir, "bin", "DCS.exe")):
             error_dialog = QMessageBox.critical(

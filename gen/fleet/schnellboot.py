@@ -6,7 +6,7 @@ from gen.sam.group_generator import ShipGroupGenerator
 
 
 class SchnellbootGroupGenerator(ShipGroupGenerator):
-    def generate(self):
+    def generate(self) -> None:
 
         for i in range(random.randint(2, 4)):
             self.add_unit(

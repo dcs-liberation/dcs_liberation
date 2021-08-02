@@ -68,6 +68,7 @@ def load_icons():
     ICONS["Terrain_Normandy"] = QPixmap("./resources/ui/terrain_normandy.gif")
     ICONS["Terrain_TheChannel"] = QPixmap("./resources/ui/terrain_channel.gif")
     ICONS["Terrain_Syria"] = QPixmap("./resources/ui/terrain_syria.gif")
+    ICONS["Terrain_MarianaIslands"] = QPixmap("./resources/ui/terrain_marianas.gif")
 
     ICONS["Dawn"] = QPixmap("./resources/ui/conditions/timeofday/dawn.png")
     ICONS["Day"] = QPixmap("./resources/ui/conditions/timeofday/day.png")
@@ -106,6 +107,7 @@ def load_icons():
     ICONS["PluginsOptions"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/pluginsoptions.png"
     )
+    ICONS["Notes"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/notes.png")
 
     ICONS["TaskCAS"] = QPixmap("./resources/ui/tasks/cas.png")
     ICONS["TaskCAP"] = QPixmap("./resources/ui/tasks/cap.png")

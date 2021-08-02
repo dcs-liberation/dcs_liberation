@@ -14,9 +14,8 @@ class SA11Generator(AirDefenseGroupGenerator):
     """
 
     name = "SA-11 Buk Battery"
-    price = 180
 
-    def generate(self):
+    def generate(self) -> None:
         self.add_unit(
             AirDefence.SA_11_Buk_SR_9S18M1,
             "SR",
@@ -32,7 +31,7 @@ class SA11Generator(AirDefenseGroupGenerator):
             self.heading,
         )
 
-        num_launchers = random.randint(2, 4)
+        num_launchers = 4
         positions = self.get_circular_position(
             num_launchers, launcher_distance=140, coverage=180
         )

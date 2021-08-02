@@ -7,18 +7,15 @@ from pathlib import Path
 from typing import Optional
 
 from PySide2 import QtWidgets
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 from dcs.payloads import PayloadDirectories
-from dcs.weapons_data import weapon_ids
 
 from game import Game, VERSION, persistency
-from game.data.weapons import (
-    WEAPON_FALLBACK_MAP,
-    WEAPON_INTRODUCTION_YEARS,
-    Weapon,
-)
+from game.data.weapons import WeaponGroup, Pylon, Weapon
 from game.db import FACTIONS
+from game.dcs.aircrafttype import AircraftType
 from game.profiling import logged_duration
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
@@ -62,6 +59,8 @@ def run_ui(game: Optional[Game]) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
+    app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
+
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()
     with open(
@@ -97,6 +96,22 @@ def run_ui(game: Optional[Game]) -> None:
     uiconstants.load_aircraft_banners()
     uiconstants.load_vehicle_banners()
 
+    # Show warning if no DCS Installation directory was set
+    if liberation_install.get_dcs_install_directory() == "":
+        QtWidgets.QMessageBox.warning(
+            splash,
+            "No DCS installation directory.",
+            "The DCS Installation directory is not set correctly. "
+            "This will prevent DCS Liberation to work properly as the MissionScripting "
+            "file will not be modified."
+            "<br/><br/>To solve this problem, you can set the Installation directory "
+            "within the preferences menu. You can also manually edit or replace the "
+            "following file:"
+            "<br/><br/><strong>&lt;dcs_installation_directory&gt;/Scripts/MissionScripting.lua</strong>"
+            "<br/><br/>The easiest way to do it is to replace the original file with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua)."
+            "<br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>",
+            QtWidgets.QMessageBox.StandardButton.Ok,
+        )
     # Replace DCS Mission scripting file to allow DCS Liberation to work
     try:
         liberation_install.replace_mission_scripting_file()
@@ -169,7 +184,23 @@ def parse_args() -> argparse.Namespace:
         "--inverted", action="store_true", help="Invert the campaign."
     )
 
+    new_game.add_argument(
+        "--date",
+        type=datetime.fromisoformat,
+        default=datetime.today(),
+        help="Start date of the campaign.",
+    )
+
+    new_game.add_argument(
+        "--restrict-weapons-by-date",
+        action="store_true",
+        help="Enable campaign date restricted weapons.",
+    )
+
     new_game.add_argument("--cheats", action="store_true", help="Enable cheats.")
+
+    lint_weapons = subparsers.add_parser("lint-weapons")
+    lint_weapons.add_argument("aircraft", help="Name of the aircraft variant to lint.")
 
     return parser.parse_args()
 
@@ -182,6 +213,8 @@ def create_game(
     auto_procurement: bool,
     inverted: bool,
     cheats: bool,
+    start_date: datetime,
+    restrict_weapons_by_date: bool,
 ) -> Game:
     first_start = liberation_install.init()
     if first_start:
@@ -210,9 +243,10 @@ def create_game(
             automate_aircraft_reinforcements=auto_procurement,
             enable_frontline_cheats=cheats,
             enable_base_capture_cheat=cheats,
+            restrict_weapons_by_date=restrict_weapons_by_date,
         ),
         GeneratorSettings(
-            start_date=datetime.today(),
+            start_date=start_date,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
             midgame=False,
@@ -232,16 +266,24 @@ def create_game(
             high_digit_sams=False,
         ),
     )
-    return generator.generate()
+    game = generator.generate()
+    game.begin_turn_0()
+    return game
 
 
-def lint_weapon_data() -> None:
-    for clsid in weapon_ids:
-        weapon = Weapon.from_clsid(clsid)
-        if weapon not in WEAPON_INTRODUCTION_YEARS:
-            logging.warning(f"{weapon} has no introduction date")
-        if weapon not in WEAPON_FALLBACK_MAP:
-            logging.warning(f"{weapon} has no fallback")
+def lint_all_weapon_data() -> None:
+    for weapon in WeaponGroup.named("Unknown").weapons:
+        logging.warning(f"No weapon data for {weapon}: {weapon.clsid}")
+
+
+def lint_weapon_data_for_aircraft(aircraft: AircraftType) -> None:
+    all_weapons: set[Weapon] = set()
+    for pylon in Pylon.iter_pylons(aircraft):
+        all_weapons |= pylon.allowed
+
+    for weapon in all_weapons:
+        if weapon.weapon_group.name == "Unknown":
+            logging.warning(f'{weapon.clsid} "{weapon.name}" has no weapon data')
 
 
 def main():
@@ -255,7 +297,7 @@ def main():
 
     # TODO: Flesh out data and then make unconditional.
     if args.warn_missing_weapon_data:
-        lint_weapon_data()
+        lint_all_weapon_data()
 
     if args.subcommand == "new-game":
         with logged_duration("New game creation"):
@@ -267,7 +309,12 @@ def main():
                 args.auto_procurement,
                 args.inverted,
                 args.cheats,
+                args.date,
+                args.restrict_weapons_by_date,
             )
+    if args.subcommand == "lint-weapons":
+        lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
+        return
 
     run_ui(game)
 

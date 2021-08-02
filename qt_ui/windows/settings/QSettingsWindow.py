@@ -101,7 +101,7 @@ class HqAutomationSettingsBox(QGroupBox):
 
         front_line = QCheckBox()
         front_line.setChecked(self.game.settings.automate_front_line_reinforcements)
-        front_line.toggled.connect(self.set_front_line_automation)
+        front_line.toggled.connect(self.set_front_line_reinforcement_automation)
 
         layout.addWidget(QLabel("Automate front-line purchases"), 1, 0)
         layout.addWidget(front_line, 1, 1, Qt.AlignRight)
@@ -147,11 +147,29 @@ class HqAutomationSettingsBox(QGroupBox):
         )
         layout.addWidget(self.auto_ato_player_missions_asap, 4, 1, Qt.AlignRight)
 
+        self.automate_front_line_stance = QCheckBox()
+        self.automate_front_line_stance.setChecked(
+            self.game.settings.automate_front_line_stance
+        )
+        self.automate_front_line_stance.toggled.connect(
+            self.set_front_line_stance_automation
+        )
+
+        layout.addWidget(
+            QLabel("Automatically manage front line stances"),
+            5,
+            0,
+        )
+        layout.addWidget(self.automate_front_line_stance, 5, 1, Qt.AlignRight)
+
     def set_runway_automation(self, value: bool) -> None:
         self.game.settings.automate_runway_repair = value
 
-    def set_front_line_automation(self, value: bool) -> None:
+    def set_front_line_reinforcement_automation(self, value: bool) -> None:
         self.game.settings.automate_front_line_reinforcements = value
+
+    def set_front_line_stance_automation(self, value: bool) -> None:
+        self.game.settings.automate_front_line_stance = value
 
     def set_aircraft_automation(self, value: bool) -> None:
         self.game.settings.automate_aircraft_reinforcements = value
@@ -855,7 +873,7 @@ class QSettingsWindow(QDialog):
 
     def cheatMoney(self, amount):
         logging.info("CHEATING FOR AMOUNT : " + str(amount) + "M")
-        self.game.budget += amount
+        self.game.blue.budget += amount
         if amount > 0:
             self.game.informations.append(
                 Information(

@@ -1,12 +1,13 @@
 import random
 
 from gen.sam.group_generator import ShipGroupGenerator
+from game.utils import Heading
 
 from dcs.ships import USS_Arleigh_Burke_IIa, TICONDEROG
 
 
 class CarrierGroupGenerator(ShipGroupGenerator):
-    def generate(self):
+    def generate(self) -> None:
 
         # Carrier Strike Group 8
         if self.faction.carrier_names[0] == "Carrier Strike Group 8":
@@ -54,7 +55,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
             )
 
             # Add Ticonderoga escort
-            if self.heading >= 180:
+            if self.heading >= Heading.from_degrees(180):
                 self.add_unit(
                     TICONDEROG,
                     "USS Hué City",

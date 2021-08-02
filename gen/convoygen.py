@@ -27,8 +27,9 @@ class ConvoyGenerator:
 
     def generate(self) -> None:
         # Reset the count to make generation deterministic.
-        for convoy in self.game.transfers.convoys:
-            self.generate_convoy(convoy)
+        for coalition in self.game.coalitions:
+            for convoy in coalition.transfers.convoys:
+                self.generate_convoy(convoy)
 
     def generate_convoy(self, convoy: Convoy) -> VehicleGroup:
         group = self._create_mixed_unit_group(
@@ -53,9 +54,7 @@ class ConvoyGenerator:
         units: dict[GroundUnitType, int],
         for_player: bool,
     ) -> VehicleGroup:
-        country = self.mission.country(
-            self.game.player_country if for_player else self.game.enemy_country
-        )
+        country = self.mission.country(self.game.coalition_for(for_player).country_name)
 
         unit_types = list(units.items())
         main_unit_type, main_unit_count = unit_types[0]

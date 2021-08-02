@@ -1,0 +1,5 @@
+name: 3xCBU-87
+year: 1986
+fallback: 3xMk 82
+clsids:
+  - "{TER_9A_3*CBU-87}"
