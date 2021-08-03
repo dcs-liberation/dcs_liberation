@@ -1561,7 +1561,6 @@ class FlightPlanBuilder:
         # CAS doesn't use OrbitAction. But all PatrollingFlightPlan are expected
         # to have patrol_speed
         is_helo = flight.unit_type.dcs_unit_type.helicopter
-        logging.debug(f"Is {flight.unit_type.name} helicopter? {is_helo}")
         ingress_egress_altitude = (
             self.doctrine.ingress_altitude if not is_helo else meters(50)
         )
