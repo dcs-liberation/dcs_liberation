@@ -1735,11 +1735,19 @@ class FlightPlanBuilder:
             )
 
         is_helo = flight.unit_type.dcs_unit_type.helicopter
-        ingress=builder.ingress(ingress_type, self.package.waypoints.ingress, location)
-        
-        hold = builder.hold(self._hold_point(flight) if not is_helo else ingress)
-        join = builder.join(self.package.waypoints.join if not is_helo else ingress)
-        split = builder.split(self.package.waypoints.split if not is_helo else ingress)
+        ingress = builder.ingress(
+            ingress_type, self.package.waypoints.ingress, location
+        )
+
+        hold = builder.hold(
+            self._hold_point(flight) if not is_helo else ingress.position
+        )
+        join = builder.join(
+            self.package.waypoints.join if not is_helo else ingress.position
+        )
+        split = builder.split(
+            self.package.waypoints.split if not is_helo else ingress.position
+        )
 
         return StrikeFlightPlan(
             package=self.package,
