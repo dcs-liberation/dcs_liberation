@@ -1734,9 +1734,12 @@ class FlightPlanBuilder:
                 self.target_area_waypoint(flight, location, builder)
             )
 
-        hold = builder.hold(self._hold_point(flight))
-        join = builder.join(self.package.waypoints.join)
-        split = builder.split(self.package.waypoints.split)
+        is_helo = flight.unit_type.dcs_unit_type.helicopter
+        ingress=builder.ingress(ingress_type, self.package.waypoints.ingress, location)
+        
+        hold = builder.hold(self._hold_point(flight) if not is_helo else ingress)
+        join = builder.join(self.package.waypoints.join if not is_helo else ingress)
+        split = builder.split(self.package.waypoints.split if not is_helo else ingress)
 
         return StrikeFlightPlan(
             package=self.package,
@@ -1748,9 +1751,7 @@ class FlightPlanBuilder:
                 hold.position, join.position, self.doctrine.ingress_altitude
             ),
             join=join,
-            ingress=builder.ingress(
-                ingress_type, self.package.waypoints.ingress, location
-            ),
+            ingress=ingress,
             targets=target_waypoints,
             split=split,
             nav_from=builder.nav_path(
