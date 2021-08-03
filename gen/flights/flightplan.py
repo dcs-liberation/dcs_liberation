@@ -1126,7 +1126,7 @@ class FlightPlanBuilder:
 
         patrol_speed = flight.unit_type.preferred_patrol_speed(patrol_alt)
         logging.debug(
-            f"TARCAP patrol speed for {flight.unit_type.name} at {patrol_alt.feet}ft: {patrol_speed.knots} KTAS"
+            f"BARCAP patrol speed for {flight.unit_type.name} at {patrol_alt.feet}ft: {patrol_speed.knots} KTAS"
         )
 
         builder = WaypointBuilder(flight, self.coalition)
@@ -1563,12 +1563,9 @@ class FlightPlanBuilder:
         is_helo = flight.unit_type.dcs_unit_type.helicopter
         logging.debug(f"Is {flight.unit_type.name} helicopter? {is_helo}")
         ingress_egress_altitude = (
-            self.doctrine.ingress_altitude if not is_helo else feet(3000)
+            self.doctrine.ingress_altitude if not is_helo else meters(50)
         )
         patrol_speed = flight.unit_type.preferred_patrol_speed(ingress_egress_altitude)
-        logging.debug(
-            f"CAS patrol speed for {flight.unit_type.name} at {ingress_egress_altitude.feet}ft: {patrol_speed.knots} KTAS"
-        )
         use_agl_ingress_egress = is_helo
 
         return CasFlightPlan(

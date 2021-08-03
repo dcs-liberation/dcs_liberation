@@ -57,7 +57,6 @@ class WaypointBuilder:
     @property
     def is_helo(self) -> bool:
         return self.flight.unit_type.dcs_unit_type.helicopter
-        # return getattr(self.flight.unit_type, "helicopter", False)
 
     def takeoff(self, departure: ControlPoint) -> FlightWaypoint:
         """Create takeoff waypoint for the given arrival airfield or carrier.
@@ -313,7 +312,6 @@ class WaypointBuilder:
             position.y,
             meters(50) if self.is_helo else meters(1000),
         )
-        logging.debug(f"CAS waypoint, is helo? {self.is_helo}")
         waypoint.alt_type = "RADIO"
         waypoint.description = "Provide CAS"
         waypoint.name = "CAS"
