@@ -411,6 +411,9 @@ class PatrollingFlightPlan(FlightPlan):
     #: Maximum time to remain on station.
     patrol_duration: timedelta
 
+    #: Racetrack speed TAS.
+    patrol_speed: Speed
+
     #: The engagement range of any Search Then Engage task, or the radius of a
     #: Search Then Engage in Zone task. Any enemies of the appropriate type for
     #: this mission within this range of the flight's current position (or the
@@ -779,9 +782,6 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
     divert: Optional[FlightWaypoint]
     bullseye: FlightWaypoint
 
-    #: Racetrack speed.
-    patrol_speed: Speed
-
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
         yield from self.nav_to
@@ -1124,6 +1124,11 @@ class FlightPlanBuilder:
             min(self.doctrine.max_patrol_altitude, randomized_alt),
         )
 
+        patrol_speed = flight.unit_type.preferred_patrol_speed(patrol_alt)
+        logging.debug(
+            f"BARCAP patrol speed for {flight.unit_type.name} at {patrol_alt.feet}ft: {patrol_speed.knots} KTAS"
+        )
+
         builder = WaypointBuilder(flight, self.coalition)
         start, end = builder.race_track(start_pos, end_pos, patrol_alt)
 
@@ -1131,6 +1136,7 @@ class FlightPlanBuilder:
             package=self.package,
             flight=flight,
             patrol_duration=self.doctrine.cap_duration,
+            patrol_speed=patrol_speed,
             engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
@@ -1362,6 +1368,10 @@ class FlightPlanBuilder:
             self.doctrine.min_patrol_altitude,
             min(self.doctrine.max_patrol_altitude, randomized_alt),
         )
+        patrol_speed = flight.unit_type.preferred_patrol_speed(patrol_alt)
+        logging.debug(
+            f"TARCAP patrol speed for {flight.unit_type.name} at {patrol_alt.feet}ft: {patrol_speed.knots} KTAS"
+        )
 
         # Create points
         builder = WaypointBuilder(flight, self.coalition)
@@ -1383,6 +1393,7 @@ class FlightPlanBuilder:
             # requests an escort the CAP flight will remain on station for the
             # duration of the escorted mission, or until it is winchester/bingo.
             patrol_duration=self.doctrine.cap_duration,
+            patrol_speed=patrol_speed,
             engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(flight.departure.position, orbit0p, patrol_alt),
@@ -1546,16 +1557,33 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(flight, self.coalition)
 
+        # 2021-08-02: patrol_speed will currently have no effect because
+        # CAS doesn't use OrbitAction. But all PatrollingFlightPlan are expected
+        # to have patrol_speed
+        is_helo = flight.unit_type.dcs_unit_type.helicopter
+        ingress_egress_altitude = (
+            self.doctrine.ingress_altitude if not is_helo else meters(50)
+        )
+        patrol_speed = flight.unit_type.preferred_patrol_speed(ingress_egress_altitude)
+        use_agl_ingress_egress = is_helo
+
         return CasFlightPlan(
             package=self.package,
             flight=flight,
             patrol_duration=self.doctrine.cas_duration,
+            patrol_speed=patrol_speed,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
-                flight.departure.position, ingress, self.doctrine.ingress_altitude
+                flight.departure.position,
+                ingress,
+                ingress_egress_altitude,
+                use_agl_ingress_egress,
             ),
             nav_from=builder.nav_path(
-                egress, flight.arrival.position, self.doctrine.ingress_altitude
+                egress,
+                flight.arrival.position,
+                ingress_egress_altitude,
+                use_agl_ingress_egress,
             ),
             patrol_start=builder.ingress(
                 FlightWaypointType.INGRESS_CAS, ingress, location
@@ -1608,6 +1636,7 @@ class FlightPlanBuilder:
         else:
             altitude = feet(21000)
 
+        # TODO: Could use flight.unit_type.preferred_patrol_speed(altitude) instead.
         if tanker_type.patrol_speed is not None:
             speed = tanker_type.patrol_speed
         else:
