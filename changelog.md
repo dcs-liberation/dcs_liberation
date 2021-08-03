@@ -28,7 +28,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Data]** Fixed Introduction dates for targeting pods (ATFLIR and LITENING were both a few years too early).
 * **[Data]** Removed SA-10 from Syria 2011 faction.
 * **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
-* **[Flight Planning]** Helicopters are now correctly identified, and will fly ingress/CAS/egress and similar at low altitude. Known issue: BAI for helicopters is still planned at high altitudes.
+* **[Flight Planning]** Helicopters are now correctly identified, and will fly ingress/CAS/BAI/egress and similar at low altitude.
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Mission Generation]** Fixed problem with opfor planning missions against sold ground objects like SAMs
