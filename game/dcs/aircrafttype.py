@@ -29,7 +29,14 @@ from game.radio.channels import (
     ViggenRadioChannelAllocator,
     NoOpChannelAllocator,
 )
-from game.utils import Distance, Speed, feet, kph, knots
+from game.utils import (
+    Distance,
+    SPEED_OF_SOUND_AT_SEA_LEVEL,
+    Speed,
+    feet,
+    kph,
+    knots,
+)
 
 if TYPE_CHECKING:
     from gen.aircraft import FlightData
@@ -146,7 +153,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     @property
     def preferred_patrol_altitude(self) -> Distance:
-        if self.patrol_altitude:
+        if self.patrol_altitude is not None:
             return self.patrol_altitude
         else:
             # Estimate based on max speed.
@@ -171,6 +178,40 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 altitude_for_lowest_speed,
                 min(altitude_for_highest_speed, rounded_altitude),
             )
+
+    def preferred_patrol_speed(self, altitude: Distance) -> Speed:
+        """Preferred true airspeed when patrolling"""
+        if self.patrol_speed is not None:
+            return self.patrol_speed
+        else:
+            # Estimate based on max speed.
+            max_speed = self.max_speed
+            if max_speed > SPEED_OF_SOUND_AT_SEA_LEVEL * 1.6:
+                # Fast airplanes, should manage pretty high patrol speed
+                return (
+                    Speed.from_mach(0.85, altitude)
+                    if altitude.feet > 20000
+                    else Speed.from_mach(0.7, altitude)
+                )
+            elif max_speed > SPEED_OF_SOUND_AT_SEA_LEVEL * 1.2:
+                # Medium-fast like F/A-18C
+                return (
+                    Speed.from_mach(0.8, altitude)
+                    if altitude.feet > 20000
+                    else Speed.from_mach(0.65, altitude)
+                )
+            elif max_speed > SPEED_OF_SOUND_AT_SEA_LEVEL * 0.7:
+                # Semi-fast like airliners or similar
+                return (
+                    Speed.from_mach(0.5, altitude)
+                    if altitude.feet > 20000
+                    else Speed.from_mach(0.4, altitude)
+                )
+            else:
+                # Slow like warbirds or helicopters
+                # Use whichever is slowest - mach 0.35 or 70% of max speed
+                logging.debug(f"{self.name} max_speed * 0.7 is {max_speed * 0.7}")
+                return min(Speed.from_mach(0.35, altitude), max_speed * 0.7)
 
     def alloc_flight_radio(self, radio_registry: RadioRegistry) -> RadioFrequency:
         from gen.radios import ChannelInUseError, kHz

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 
 import random
 from dataclasses import dataclass
@@ -57,7 +58,7 @@ class WaypointBuilder:
 
     @property
     def is_helo(self) -> bool:
-        return getattr(self.flight.unit_type, "helicopter", False)
+        return self.flight.unit_type.dcs_unit_type.helicopter
 
     def takeoff(self, departure: ControlPoint) -> FlightWaypoint:
         """Create takeoff waypoint for the given arrival airfield or carrier.
