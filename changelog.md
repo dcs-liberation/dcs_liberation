@@ -30,6 +30,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Campaign AI]** Adjustments to aircraft selection priorities for most mission types.
 * **[Engine]** Support for DCS 2.7.4.9632 and newer, including the Marianas map, F-16 JSOWs, NASAMS, and Tin Shield EWR.
 * **[Flight Planning]** CAP patrol altitudes are now set per-aircraft. By default the altitude will be set based on the aircraft's maximum speed.
+* **[Flight Planning]** CAP patrol speeds are now set per-aircraft to be more suitable/sensible. By default the speed will be set based on the aircraft's maximum speed.
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
 * **[Mission Generation]** SAM sites are now headed towards the center of the conflict
 * **[Mods]** Support for latest version of Gripen mod. In-progress campaigns may need to re-plan Gripen flights to pick up updated loadouts.
@@ -49,6 +50,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Data]** Fixed Introduction dates for targeting pods (ATFLIR and LITENING were both a few years too early).
 * **[Data]** Removed SA-10 from Syria 2011 faction.
 * **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
+* **[Flight Planning]** Helicopters are now correctly identified, and will fly ingress/CAS/egress and similar at low altitude. Known issue: BAI for helicopters is still planned at high altitudes.
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Mission Generation]** Fixed problem with opfor planning missions against sold ground objects like SAMs
