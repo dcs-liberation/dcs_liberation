@@ -23,8 +23,8 @@ CONDITIONS = SeasonalConditions(
         Season.Summer: WeatherTypeChances(
             thunderstorm=1,
             raining=10,
-            cloudy=30,
-            clear_skies=60,
+            cloudy=35,
+            clear_skies=55,
         ),
         Season.Fall: WeatherTypeChances(
             thunderstorm=1,

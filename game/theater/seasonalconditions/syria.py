@@ -11,8 +11,8 @@ CONDITIONS = SeasonalConditions(
         Season.Winter: WeatherTypeChances(
             thunderstorm=1,
             raining=25,
-            cloudy=25,
-            clear_skies=50,
+            cloudy=35,
+            clear_skies=40,
         ),
         Season.Spring: WeatherTypeChances(
             thunderstorm=1,
@@ -22,15 +22,15 @@ CONDITIONS = SeasonalConditions(
         ),
         Season.Summer: WeatherTypeChances(
             thunderstorm=1,
-            raining=3,
-            cloudy=20,
-            clear_skies=77,
+            raining=5,
+            cloudy=30,
+            clear_skies=65,
         ),
         Season.Fall: WeatherTypeChances(
             thunderstorm=1,
-            raining=10,
-            cloudy=30,
-            clear_skies=60,
+            raining=15,
+            cloudy=35,
+            clear_skies=50,
         ),
     },
 )
