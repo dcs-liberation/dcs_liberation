@@ -117,11 +117,16 @@ RADIOS: List[Radio] = [
     Radio("AN/ARC-164", (RadioRange(MHz(225), MHz(400), step=MHz(1)),)),
     Radio("AN/ARC-186(V) AM", (RadioRange(MHz(116), MHz(152), step=MHz(1)),)),
     Radio("AN/ARC-186(V) FM", (RadioRange(MHz(30), MHz(76), step=MHz(1)),)),
-    # The AN/ARC-210 can also use [30, 88) and [108, 118), but the current
-    # implementation can't implement the gap and the radio can't transmit on the
-    # latter. There's still plenty of channels between 118 MHz and 400 MHz, so
-    # not worth worrying about.
-    Radio("AN/ARC-210", (RadioRange(MHz(118), MHz(400), step=MHz(1)),)),
+    Radio(
+        "AN/ARC-210",
+        (
+            RadioRange(MHz(225), MHz(400), MHz(1), frozenset((MHz(243),))),
+            RadioRange(MHz(136), MHz(155), MHz(1)),
+            RadioRange(MHz(156), MHz(174), MHz(1)),
+            RadioRange(MHz(118), MHz(136), MHz(1)),
+            RadioRange(MHz(30), MHz(88), MHz(1)),
+        ),
+    ),
     Radio("AN/ARC-222", (RadioRange(MHz(116), MHz(174), step=MHz(1)),)),
     Radio("SCR-522", (RadioRange(MHz(100), MHz(156), step=MHz(1)),)),
     Radio("A.R.I. 1063", (RadioRange(MHz(100), MHz(156), step=MHz(1)),)),
