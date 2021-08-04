@@ -722,9 +722,39 @@ class PendingTransfers:
             ):
                 self.order_airlift_assets_at(control_point)
 
-    @staticmethod
-    def desired_airlift_capacity(control_point: ControlPoint) -> int:
-        return 4 if control_point.has_factory else 0
+    def desired_airlift_capacity(self, control_point: ControlPoint) -> int:
+
+        if control_point.has_factory:
+            is_major_hub = control_point.total_aircraft_parking > 0
+            # Check if there is a CP which is only reachable via Airlift
+            transit_network = self.network_for(control_point)
+            for cp in self.game.theater.control_points_for(self.player):
+                # check if the CP has no factory, is reachable from the current
+                # position and can only be reached with airlift connections
+                if (
+                    cp.can_deploy_ground_units
+                    and not cp.has_factory
+                    and transit_network.has_link(control_point, cp)
+                    and not any(
+                        link_type
+                        for link, link_type in transit_network.nodes[cp].items()
+                        if not link_type == TransitConnection.Airlift
+                    )
+                ):
+                    return 4
+
+                if (
+                    is_major_hub
+                    and cp.has_factory
+                    and cp.total_aircraft_parking > control_point.total_aircraft_parking
+                ):
+                    is_major_hub = False
+
+            if is_major_hub:
+                # If the current CP is a major hub keep always 2 planes on reserve
+                return 2
+
+        return 0
 
     def current_airlift_capacity(self, control_point: ControlPoint) -> int:
         inventory = self.game.aircraft_inventory.for_control_point(control_point)
@@ -739,9 +769,16 @@ class PendingTransfers:
         )
 
     def order_airlift_assets_at(self, control_point: ControlPoint) -> None:
-        gap = self.desired_airlift_capacity(
-            control_point
-        ) - self.current_airlift_capacity(control_point)
+        unclaimed_parking = control_point.unclaimed_parking(self.game)
+        # Buy a maximum of unclaimed_parking only to prevent that aircraft procurement
+        # take place at another base
+        gap = min(
+            [
+                self.desired_airlift_capacity(control_point)
+                - self.current_airlift_capacity(control_point),
+                unclaimed_parking,
+            ]
+        )
 
         if gap <= 0:
             return
@@ -750,6 +787,10 @@ class PendingTransfers:
             # Always buy in pairs since we're not trying to fill odd squadrons. Purely
             # aesthetic.
             gap += 1
+
+        if gap > unclaimed_parking:
+            # Prevent to buy more aircraft than possible
+            return
 
         self.game.coalition_for(self.player).add_procurement_request(
             AircraftProcurementRequest(control_point, FlightType.TRANSPORT, gap)
