@@ -168,6 +168,8 @@ class WaypointBuilder:
             position.y,
             meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
         )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
         waypoint.pretty_name = "Hold"
         waypoint.description = "Wait until push time"
         waypoint.name = "HOLD"
