@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.savecompat import has_save_compat_for
 
 import logging
 import random
@@ -81,7 +82,7 @@ from game.theater.missiontarget import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
-from game.utils import Distance, meters, nautical_miles
+from game.utils import Distance, kph, meters, nautical_miles
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -1710,6 +1711,7 @@ class CargoStopBuilder(PydcsWaypointBuilder):
 
 
 class RaceTrackBuilder(PydcsWaypointBuilder):
+    @has_save_compat_for(4)
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
@@ -1747,7 +1749,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         orbit = OrbitAction(
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.RaceTrack,
-            speed=int(flight_plan.patrol_speed.kph),
+            speed=int(getattr(flight_plan, "patrol_speed", kph(600)).kph),
         )
 
         racetrack = ControlledTask(orbit)
