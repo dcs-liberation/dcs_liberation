@@ -1,4 +1,5 @@
 from __future__ import annotations
+from game.savecompat import has_save_compat_for
 
 import logging
 import random
@@ -1710,6 +1711,7 @@ class CargoStopBuilder(PydcsWaypointBuilder):
 
 
 class RaceTrackBuilder(PydcsWaypointBuilder):
+    @has_save_compat_for(4)
     def build(self) -> MovingPoint:
         waypoint = super().build()
 
@@ -1747,7 +1749,9 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         orbit = OrbitAction(
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.RaceTrack,
-            speed=int(flight_plan.patrol_speed.kph),
+            speed=int(
+                flight_plan.patrol_speed.kph if hasattr(self, "patrol_speed") else 600
+            ),
         )
 
         racetrack = ControlledTask(orbit)
