@@ -82,7 +82,7 @@ from game.theater.missiontarget import MissionTarget
 from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
-from game.utils import Distance, meters, nautical_miles
+from game.utils import Distance, kph, meters, nautical_miles
 from gen.ato import AirTaskingOrder, Package
 from gen.callsigns import create_group_callsign_from_unit
 from gen.flights.flight import (
@@ -1749,9 +1749,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         orbit = OrbitAction(
             altitude=waypoint.alt,
             pattern=OrbitAction.OrbitPattern.RaceTrack,
-            speed=int(
-                flight_plan.patrol_speed.kph if hasattr(self, "patrol_speed") else 600
-            ),
+            speed=int(getattr(flight_plan, "patrol_speed", kph(600)).kph),
         )
 
         racetrack = ControlledTask(orbit)
