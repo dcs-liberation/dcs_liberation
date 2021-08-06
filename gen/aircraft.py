@@ -68,6 +68,7 @@ from game import db
 from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
+from game.helipad import Helipad
 from game.settings import Settings
 from game.squadrons import Pilot
 from game.theater.controlpoint import (
@@ -533,6 +534,53 @@ class AircraftConflictGenerator:
             group_size=count,
         )
 
+    def _generate_at_cp_helipad(
+        self,
+        name: str,
+        side: Country,
+        unit_type: Type[FlyingType],
+        count: int,
+        start_type: str,
+        cp: ControlPoint,
+    ) -> FlyingGroup[Any]:
+        assert count > 0
+
+        logging.info(
+            "airgen at cp's helipads : {} for {} at {}".format(
+                unit_type, side.id, cp.name
+            )
+        )
+        helipad = cp.get_free_helipad()
+        if helipad is not None and helipad.static_unit is not None:
+            group = self._generate_at_group(
+                name=name,
+                side=side,
+                unit_type=unit_type,
+                count=count,
+                start_type=start_type,
+                at=helipad.static_unit,
+            )
+
+            # Note : A bit dirty, need better support in pydcs
+            group.points[0].action = PointAction.FromGroundArea
+            group.points[0].type = "TakeOffGround"
+            if start_type != "Cold":
+                group.points[0].action = PointAction.FromGroundAreaHot
+                group.points[0].type = "TakeOffGroundHot"
+
+            helipad.occupied = True
+
+            for i in range(count - 1):
+                helipad = cp.get_free_helipad()
+                if helipad is not None:
+                    helipad.occupied = True
+                    group.units[1 + i].position = Point(helipad.x, helipad.y)
+                else:
+                    raise RuntimeError(
+                        f"Control Point {cp.name} does not have enough helipads"
+                    )
+            return group
+
     def _add_radio_waypoint(
         self,
         group: FlyingGroup[Any],
@@ -718,7 +766,7 @@ class AircraftConflictGenerator:
                         f"Carrier group {carrier_group} is a "
                         "{carrier_group.__class__.__name__}, expected a ShipGroup"
                     )
-                group = self._generate_at_group(
+                return self._generate_at_group(
                     name=name,
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
@@ -726,44 +774,23 @@ class AircraftConflictGenerator:
                     start_type=flight.start_type,
                     at=carrier_group,
                 )
-                return group
             else:
                 # If the flight is an helicopter flight, then prioritize dedicated helipads
                 if flight.unit_type.helicopter:
-                    helipad = cp.get_free_helipad()
-                    if helipad is not None and helipad.static_unit is not None:
-                        group = self._generate_at_group(
-                            name=name,
-                            side=country,
-                            unit_type=flight.unit_type.dcs_unit_type,
-                            count=flight.count,
-                            start_type=flight.start_type,
-                            at=helipad.static_unit,
-                        )
-
-                        # Note : A bit dirty, need better support in pydcs
-                        group.points[0].action = PointAction.FromGroundArea
-                        group.points[0].type = "TakeOffGround"
-                        if flight.start_type != "Cold":
-                            group.points[0].action = PointAction.FromGroundAreaHot
-                            group.points[0].type = "TakeOffGroundHot"
-
-                        helipad.occupied = True
-
-                        for i in range(flight.count - 1):
-                            helipad = cp.get_free_helipad()
-                            if helipad is not None:
-                                helipad.occupied = True
-                                group.units[1 + i].position = Point(
-                                    helipad.x, helipad.y
-                                )
-                        return group
+                    return self._generate_at_cp_helipad(
+                        name=name,
+                        side=country,
+                        unit_type=flight.unit_type.dcs_unit_type,
+                        count=flight.count,
+                        start_type=flight.start_type,
+                        cp=cp,
+                    )
 
                 if not isinstance(cp, Airfield):
                     raise RuntimeError(
                         f"Attempted to spawn at airfield for non-airfield {cp}"
                     )
-                group = self._generate_at_airport(
+                return self._generate_at_airport(
                     name=name,
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
@@ -771,7 +798,6 @@ class AircraftConflictGenerator:
                     start_type=flight.start_type,
                     airport=cp.airport,
                 )
-                return group
         except Exception as e:
             # Generated when there is no place on Runway or on Parking Slots
             logging.error(e)
