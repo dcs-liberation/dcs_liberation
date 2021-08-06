@@ -749,7 +749,6 @@ class AircraftConflictGenerator:
                             group.points[0].type = "TakeOffGroundHot"
 
                         helipad.occupied = True
-                        group_generated = True
 
                         for i in range(flight.count - 1):
                             helipad = cp.get_free_helipad()

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from dcs import Point
@@ -15,7 +17,7 @@ class Helipad(PointWithHeading):
         self.static_unit: Optional[StaticGroup] = None
 
     @staticmethod
-    def from_point(point: Point, heading: Heading) -> "Helipad":
+    def from_point(point: Point, heading: Heading) -> Helipad:
         h = Helipad()
         h.x = point.x
         h.y = point.y

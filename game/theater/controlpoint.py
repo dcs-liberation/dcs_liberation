@@ -405,7 +405,7 @@ class ControlPoint(MissionTarget, ABC):
         """
         Returns true if cp has a free helipad
         """
-        return False in [h.occupied for h in self.helipads]
+        return not all(h.occupied for h in self.helipads)
 
     def get_free_helipad(self) -> Optional[Helipad]:
         """
@@ -1187,8 +1187,6 @@ class Fob(ControlPoint):
         return len(self.helipads)
 
     def can_operate(self, aircraft: AircraftType) -> bool:
-        print(aircraft)
-        print(aircraft.helicopter)
         if aircraft.helicopter:
             return True
         else:
