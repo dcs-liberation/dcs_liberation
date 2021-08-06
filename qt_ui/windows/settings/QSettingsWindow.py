@@ -230,7 +230,7 @@ class PilotSettingsBox(QGroupBox):
         )
 
         enable_squadron_pilot_limits_label = QLabel(
-            "Enable per-squadron pilot limtits (WIP)"
+            "Enable per-squadron pilot limits (WIP)"
         )
         enable_squadron_pilot_limits_label.setToolTip(enable_squadron_pilot_limits_info)
         enable_squadron_pilot_limits = QCheckBox()
