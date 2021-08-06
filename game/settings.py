@@ -33,6 +33,7 @@ class Settings:
     labels: str = "Full"
     map_coalition_visibility: ForcedOptions.Views = ForcedOptions.Views.All
     external_views_allowed: bool = True
+    battle_damage_assessment_allowed: bool = True
 
     # Campaign management
     # General

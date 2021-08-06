@@ -43,8 +43,15 @@ class ForcedOptionsGenerator:
         if blue.unrestricted_satnav or red.unrestricted_satnav:
             self.mission.forced_options.unrestricted_satnav = True
 
+    def _set_battle_damage_assessment(self) -> None:
+        if not self.game.settings.battle_damage_assessment_allowed:
+            self.mission.forced_options.battle_damage_assessment = (
+                self.game.settings.battle_damage_assessment_allowed
+            )
+
     def generate(self) -> None:
         self._set_options_view()
         self._set_external_views()
         self._set_labels()
         self._set_unrestricted_satnav()
+        self._set_battle_damage_assessment()
