@@ -517,6 +517,18 @@ class QSettingsWindow(QDialog):
         self.ext_views.setChecked(self.game.settings.external_views_allowed)
         self.ext_views.toggled.connect(self.applySettings)
 
+        self.battleDamageAssessment = QComboBox()
+        self.battleDamageAssessment.addItem("Player preference", None)
+        self.battleDamageAssessment.addItem("Enforced on", True)
+        self.battleDamageAssessment.addItem("Enforced off", False)
+        if self.game.settings.battle_damage_assessment is None:
+            self.battleDamageAssessment.setCurrentIndex(0)
+        elif self.game.settings.battle_damage_assessment is True:
+            self.battleDamageAssessment.setCurrentIndex(1)
+        else:
+            self.battleDamageAssessment.setCurrentIndex(2)
+        self.battleDamageAssessment.currentIndexChanged.connect(self.applySettings)
+
         def set_invulnerable_player_pilots(checked: bool) -> None:
             self.game.settings.invulnerable_player_pilots = checked
 
@@ -568,6 +580,14 @@ class QSettingsWindow(QDialog):
         )
         self.missionRestrictionsLayout.addWidget(QLabel("Allow external views"), 2, 0)
         self.missionRestrictionsLayout.addWidget(self.ext_views, 2, 1, Qt.AlignRight)
+
+        self.missionRestrictionsLayout.addWidget(
+            QLabel("Battle damage assessment"), 3, 0
+        )
+        self.missionRestrictionsLayout.addWidget(
+            self.battleDamageAssessment, 3, 1, Qt.AlignRight
+        )
+
         self.missionRestrictionsSettings.setLayout(self.missionRestrictionsLayout)
         self.difficultyLayout.addWidget(self.missionRestrictionsSettings)
 
@@ -909,6 +929,9 @@ class QSettingsWindow(QDialog):
             self.mapVisibiitySelection.currentData()
         )
         self.game.settings.external_views_allowed = self.ext_views.isChecked()
+        self.game.settings.battle_damage_assessment = (
+            self.battleDamageAssessment.currentData()
+        )
         self.game.settings.generate_marks = self.generate_marks.isChecked()
         self.game.settings.never_delay_player_flights = (
             self.never_delay_players.isChecked()
