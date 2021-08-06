@@ -564,6 +564,7 @@ class AircraftConflictGenerator:
             # Note : A bit dirty, need better support in pydcs
             group.points[0].action = PointAction.FromGroundArea
             group.points[0].type = "TakeOffGround"
+            group.units[0].heading = helipad.heading
             if start_type != "Cold":
                 group.points[0].action = PointAction.FromGroundAreaHot
                 group.points[0].type = "TakeOffGroundHot"
@@ -575,11 +576,14 @@ class AircraftConflictGenerator:
                 if helipad is not None:
                     helipad.occupied = True
                     group.units[1 + i].position = Point(helipad.x, helipad.y)
+                    group.units[1 + i].heading = helipad.heading
                 else:
                     raise RuntimeError(
                         f"Control Point {cp.name} does not have enough helipads"
                     )
             return group
+        else:
+            raise RuntimeError(f"Control Point {cp.name} does not have enough helipads")
 
     def _add_radio_waypoint(
         self,
