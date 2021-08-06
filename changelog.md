@@ -4,6 +4,8 @@ Saves from 4.x are not compatible with 5.0.
 
 ## Features/Improvements
 
+
+* **[Campaign]** Weather! Theaters now experience weather that is more realistic for the region and its current season. For example, Persian Gulf will have very hot, sunny summers and Marianas will experience lots of rain during fall. These changes affect pressure, temperature, clouds and precipitation. Additionally, temperature will drop during the night, by an amount that is somewhat realistic for the region.
 * **[Campaign]** Weapon data such as fallbacks and introduction years is now moddable. Due to the new architecture to support this, the old data was not automatically migrated.
 * **[Campaign]** Era-restricted loadouts will now skip LGBs when no TGP is available in the loadout. This only applies to default loadouts; buddy-lasing can be coordinated with custom loadouts.
 * **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
@@ -13,6 +15,7 @@ Saves from 4.x are not compatible with 5.0.
 * **[Campaign AI]** Transport aircraft will now be bought only if necessary at control points which can produce ground units and are capable to operate transport aircraft.
 * **[Campaign AI]** Aircraft will now only be automatically purchased or assigned at appropriate bases. Naval aircraft will default to only operating from carriers, Harriers will default to LHAs and shore bases, helicopters will operate from anywhere. This can be customized per-squadron.
 * **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet).
+* **[Kneeboard]** QNH (pressure MSL) and temperature have been added to the kneeboard.
 * **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable or rename squadrons.
 
 ## Fixes
