@@ -375,6 +375,7 @@ class Operation:
             cls.laser_code_registry,
             cls.unit_map,
             air_support=cls.airsupportgen.air_support,
+            helipads=cls.groundobjectgen.helipads,
         )
 
         cls.airgen.clear_parking_slots()

@@ -68,7 +68,6 @@ from game import db
 from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
-from game.helipad import Helipad
 from game.settings import Settings
 from game.squadrons import Pilot
 from game.theater.controlpoint import (
@@ -229,6 +228,7 @@ class AircraftConflictGenerator:
         laser_code_registry: LaserCodeRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
+        helipads: dict[ControlPoint, list[StaticGroup]],
     ) -> None:
         self.m = mission
         self.game = game
@@ -239,6 +239,7 @@ class AircraftConflictGenerator:
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
         self.air_support = air_support
+        self.helipads = helipads
 
     @cached_property
     def use_client(self) -> bool:
@@ -550,40 +551,37 @@ class AircraftConflictGenerator:
                 unit_type, side.id, cp.name
             )
         )
-        helipad = cp.get_free_helipad()
-        if helipad is not None and helipad.static_unit is not None:
-            group = self._generate_at_group(
-                name=name,
-                side=side,
-                unit_type=unit_type,
-                count=count,
-                start_type=start_type,
-                at=helipad.static_unit,
-            )
 
-            # Note : A bit dirty, need better support in pydcs
-            group.points[0].action = PointAction.FromGroundArea
-            group.points[0].type = "TakeOffGround"
-            group.units[0].heading = helipad.heading
-            if start_type != "Cold":
-                group.points[0].action = PointAction.FromGroundAreaHot
-                group.points[0].type = "TakeOffGroundHot"
+        try:
+            helipad = self.helipads[cp].pop()
+        except IndexError as ex:
+            raise RuntimeError(f"Not enough helipads available at {cp}") from ex
 
-            helipad.occupied = True
+        group = self._generate_at_group(
+            name=name,
+            side=side,
+            unit_type=unit_type,
+            count=count,
+            start_type=start_type,
+            at=helipad,
+        )
 
-            for i in range(count - 1):
-                helipad = cp.get_free_helipad()
-                if helipad is not None:
-                    helipad.occupied = True
-                    group.units[1 + i].position = Point(helipad.x, helipad.y)
-                    group.units[1 + i].heading = helipad.heading
-                else:
-                    raise RuntimeError(
-                        f"Control Point {cp.name} does not have enough helipads"
-                    )
-            return group
-        else:
-            raise RuntimeError(f"Control Point {cp.name} does not have enough helipads")
+        # Note : A bit dirty, need better support in pydcs
+        group.points[0].action = PointAction.FromGroundArea
+        group.points[0].type = "TakeOffGround"
+        group.units[0].heading = helipad.units[0].heading
+        if start_type != "Cold":
+            group.points[0].action = PointAction.FromGroundAreaHot
+            group.points[0].type = "TakeOffGroundHot"
+
+        for i in range(count - 1):
+            try:
+                helipad = self.helipads[cp].pop()
+                group.units[1 + i].position = Point(helipad.x, helipad.y)
+                group.units[1 + i].heading = helipad.units[0].heading
+            except IndexError as ex:
+                raise RuntimeError(f"Not enough helipads available at {cp}") from ex
+        return group
 
     def _add_radio_waypoint(
         self,

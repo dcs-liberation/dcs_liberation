@@ -49,7 +49,6 @@ from .theatergroundobject import (
 )
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
-from ..helipad import Helipad
 from ..utils import nautical_miles
 from ..weather import Conditions
 
@@ -307,7 +306,7 @@ class ControlPoint(MissionTarget, ABC):
         self.at = at
         self.connected_objectives: List[TheaterGroundObject[Any]] = []
         self.preset_locations = PresetLocations()
-        self.helipads: List[Helipad] = []
+        self.helipads: List[PointWithHeading] = []
 
         # TODO: Should be Airbase specific.
         self.size = size
@@ -399,22 +398,6 @@ class ControlPoint(MissionTarget, ABC):
         Returns true if cp has helipads
         """
         return len(self.helipads) > 0
-
-    @property
-    def has_free_helipad(self) -> bool:
-        """
-        Returns true if cp has a free helipad
-        """
-        return not all(h.occupied for h in self.helipads)
-
-    def get_free_helipad(self) -> Optional[Helipad]:
-        """
-        Returns the first free additional helipad
-        """
-        for h in self.helipads:
-            if not h.occupied:
-                return h
-        return None
 
     def can_recruit_ground_units(self, game: Game) -> bool:
         """Returns True if this control point is capable of recruiting ground units."""

@@ -56,7 +56,6 @@ from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
 from .projections import TransverseMercator
 from .seasonalconditions import SeasonalConditions
-from ..helipad import Helipad
 from ..point_with_heading import PointWithHeading
 from ..positioned import Positioned
 from ..profiling import logged_duration
@@ -482,7 +481,7 @@ class MizCampaignLoader:
         for static in self.helipads:
             closest, distance = self.objective_info(static)
             closest.helipads.append(
-                Helipad.from_point(
+                PointWithHeading.from_point(
                     static.position, Heading.from_degrees(static.units[0].heading)
                 )
             )
