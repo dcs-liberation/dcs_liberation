@@ -1187,10 +1187,7 @@ class Fob(ControlPoint):
         return len(self.helipads)
 
     def can_operate(self, aircraft: AircraftType) -> bool:
-        if aircraft.helicopter:
-            return True
-        else:
-            return False
+        return aircraft.helicopter
 
     @property
     def heading(self) -> Heading:
