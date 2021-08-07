@@ -4,7 +4,7 @@ import dataclasses
 import itertools
 import logging
 import random
-from collections import defaultdict
+from collections import defaultdict, Iterable
 from dataclasses import dataclass, field
 from enum import unique, Enum
 from pathlib import Path
@@ -145,6 +145,10 @@ class Squadron:
     @property
     def pilot_limits_enabled(self) -> bool:
         return self.settings.enable_squadron_pilot_limits
+
+    def set_allowed_mission_types(self, mission_types: Iterable[FlightType]) -> None:
+        self.mission_types = tuple(mission_types)
+        self.auto_assignable_mission_types.intersection_update(self.mission_types)
 
     def claim_new_pilot_if_allowed(self) -> Optional[Pilot]:
         if self.pilot_limits_enabled:

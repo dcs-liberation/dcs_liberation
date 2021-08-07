@@ -158,7 +158,9 @@ class SquadronConfigurationBox(QGroupBox):
         self.squadron.pilot_pool = [
             Pilot(n, player=True) for n in player_names
         ] + self.squadron.pilot_pool
-        self.squadron.mission_types = tuple(self.allowed_missions.allowed_mission_types)
+        self.squadron.set_allowed_mission_types(
+            self.allowed_missions.allowed_mission_types
+        )
         return self.squadron
 
 
