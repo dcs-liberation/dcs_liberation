@@ -28,6 +28,16 @@ origin: USA
 price: 22
 role: Multirole Fighter
 max_range: 200
+fuel:
+  # Parking 44 to RWY 06L at Anderson AFB.
+  taxi: 200
+  # AB takeoff to 350/0.75, reduce to MIL and maintain 350/0.75 to 25k ft.
+  climb_ppm: 28.33
+  # 0.85 mach for 100NM.
+  cruise_ppm: 12
+  # MIL for 100NM. Occasional AB use.
+  combat_ppm: 26
+  min_safe: 1000
 variants:
   F-16CM Fighting Falcon (Block 50): {}
   F-2A: {}
