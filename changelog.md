@@ -11,7 +11,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Flight Planning]** CAP patrol altitudes are now set per-aircraft. By default the altitude will be set based on the aircraft's maximum speed.
 * **[Flight Planning]** CAP patrol speeds are now set per-aircraft to be more suitable/sensible. By default the speed will be set based on the aircraft's maximum speed.
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
-* **[Mods]** Support for latest version of Gripen mod. In-progress campaigns may need to re-plan Gripen flights to pick up updated loadouts.
+* **[Mods]** Support for version v1.5.0-Beta of Gripen mod. In-progress campaigns may need to re-plan Gripen flights to pick up updated loadouts.
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[Plugins]** Updated SkynetIADS to 2.2.0 (adds NASAMS support).  
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
