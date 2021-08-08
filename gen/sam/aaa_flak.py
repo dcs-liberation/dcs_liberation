@@ -81,8 +81,10 @@ class FlakGenerator(AirDefenseGroupGenerator):
         )
 
         # Some Opel Blitz trucks
+        index = 0
         for i in range(int(max(1, 2))):
             for j in range(int(max(1, 2))):
+                index += 1
                 self.add_unit(
                     Unarmed.Blitz_36_6700A,
                     "BLITZ#" + str(index),
