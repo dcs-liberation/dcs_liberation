@@ -51,7 +51,6 @@ from dcs.mapping import Point
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.procurement import AircraftProcurementRequest
-from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
 from game.theater.transitnetwork import (
     TransitConnection,
@@ -68,6 +67,7 @@ from gen.naming import namegen
 if TYPE_CHECKING:
     from game import Game
     from game.inventory import ControlPointAircraftInventory
+    from game.squadrons import Squadron
 
 
 class Transport:
@@ -318,7 +318,7 @@ class AirliftPlanner:
             inventory = self.game.aircraft_inventory.for_control_point(cp)
             for unit_type, available in inventory.all_aircraft:
                 squadrons = air_wing.auto_assignable_for_task_with_type(
-                    unit_type, FlightType.TRANSPORT
+                    unit_type, FlightType.TRANSPORT, cp
                 )
                 for squadron in squadrons:
                     if self.compatible_with_mission(unit_type, cp):

@@ -1,10 +1,10 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
-from game.theater import ControlPointType
+from game.theater import ControlPointType, BuildingGroundObject
 from game.utils import Distance
-from gen import BuildingGroundObject, Conflict, FlightWaypointType
-from gen.flights.flight import FlightWaypoint
+from gen.conflictgen import Conflict
+from gen.flights.flight import FlightWaypoint, FlightWaypointType
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 
 

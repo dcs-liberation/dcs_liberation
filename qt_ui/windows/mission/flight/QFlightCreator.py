@@ -14,7 +14,7 @@ from PySide2.QtWidgets import (
 from dcs.unittype import FlyingType
 
 from game import Game
-from game.squadrons import Squadron
+from game.squadrons.squadron import Squadron
 from game.theater import ControlPoint, OffMapSpawn
 from gen.ato import Package
 from gen.flights.flight import Flight, FlightRoster

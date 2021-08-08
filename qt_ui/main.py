@@ -233,10 +233,12 @@ def create_game(
     # way.
     inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_file(campaign_path)
+    theater = campaign.load_theater()
     generator = GameGenerator(
         FACTIONS[blue],
         FACTIONS[red],
-        campaign.load_theater(),
+        theater,
+        campaign.load_air_wing_config(theater),
         Settings(
             supercarrier=supercarrier,
             automate_runway_repair=auto_procurement,

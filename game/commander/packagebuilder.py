@@ -3,10 +3,10 @@ from typing import Optional
 from game.commander.missionproposals import ProposedFlight
 from game.dcs.aircrafttype import AircraftType
 from game.inventory import GlobalAircraftInventory
-from game.squadrons import AirWing
+from game.squadrons.airwing import AirWing
 from game.theater import MissionTarget, OffMapSpawn, ControlPoint
 from game.utils import nautical_miles
-from gen import Package
+from gen.ato import Package
 from game.commander.aircraftallocator import AircraftAllocator
 from gen.flights.closestairfields import ClosestAirfields
 from gen.flights.flight import Flight

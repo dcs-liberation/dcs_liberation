@@ -16,16 +16,18 @@ from dcs.triggers import TriggerStart
 
 from game.plugins import LuaPluginManager
 from game.theater.theatergroundobject import TheaterGroundObject
-from gen import Conflict, FlightType, VisualGenerator, AirSupport
 from gen.aircraft import AircraftConflictGenerator, FlightData
 from gen.airfields import AIRFIELD_DATA
+from gen.airsupport import AirSupport
 from gen.airsupportgen import AirSupportConflictGenerator
 from gen.armor import GroundConflictGenerator
 from gen.beacons import load_beacons_for_terrain
 from gen.briefinggen import BriefingGenerator, MissionInfoGenerator
 from gen.cargoshipgen import CargoShipGenerator
+from gen.conflictgen import Conflict
 from gen.convoygen import ConvoyGenerator
 from gen.environmentgen import EnvironmentGenerator
+from gen.flights.flight import FlightType
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator
@@ -34,6 +36,7 @@ from gen.naming import namegen
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.tacan import TacanRegistry
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
+from gen.visualgen import VisualGenerator
 from .. import db
 from ..theater import Airfield, FrontLine
 from ..unitmap import UnitMap

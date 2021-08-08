@@ -10,7 +10,6 @@ from typing import Optional, TYPE_CHECKING, Any
 from dcs.cloud_presets import Clouds as PydcsClouds
 from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
 
-from game.savecompat import has_save_compat_for
 from game.settings import Settings
 from game.utils import Distance, Heading, meters, interpolate, Pressure, inches_hg
 
@@ -35,13 +34,6 @@ class AtmosphericConditions:
 
     #: Temperature at sea level in Celcius.
     temperature_celsius: float
-
-    @has_save_compat_for(5)
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        if "qnh" not in state:
-            state["qnh"] = inches_hg(state["qnh_inches_mercury"])
-            del state["qnh_inches_mercury"]
-        self.__dict__.update(state)
 
 
 @dataclass(frozen=True)

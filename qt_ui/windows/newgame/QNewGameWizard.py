@@ -113,10 +113,12 @@ class NewGameWizard(QtWidgets.QWizard):
 
         blue_faction = self.faction_selection_page.selected_blue_faction
         red_faction = self.faction_selection_page.selected_red_faction
+        theater = campaign.load_theater()
         generator = GameGenerator(
             blue_faction,
             red_faction,
-            campaign.load_theater(),
+            theater,
+            campaign.load_air_wing_config(theater),
             settings,
             generator_settings,
             mod_settings,

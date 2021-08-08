@@ -241,6 +241,12 @@ class ConflictTheater:
                 return i
         raise KeyError(f"Cannot find ControlPoint with ID {id}")
 
+    def control_point_named(self, name: str) -> ControlPoint:
+        for cp in self.controlpoints:
+            if cp.name == name:
+                return cp
+        raise KeyError(f"Cannot find ControlPoint named {name}")
+
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
         raise NotImplementedError

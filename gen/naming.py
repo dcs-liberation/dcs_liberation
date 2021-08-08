@@ -1,12 +1,16 @@
+from __future__ import annotations
+
 import random
 import time
-from typing import List, Any
+from typing import List, Any, TYPE_CHECKING
 
 from dcs.country import Country
 
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.unittype import UnitType
-from gen.flights.flight import Flight
+
+if TYPE_CHECKING:
+    from gen.flights.flight import Flight
 
 ALPHA_MILITARY = [
     "Alpha",

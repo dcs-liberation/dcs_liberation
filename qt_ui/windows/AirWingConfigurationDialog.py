@@ -28,7 +28,7 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from game.dcs.aircrafttype import AircraftType
-from game.squadrons import Squadron, AirWing, Pilot
+from game.squadrons import AirWing, Pilot, Squadron
 from gen.flights.flight import FlightType
 from qt_ui.models import AirWingModel, SquadronModel
 from qt_ui.uiconstants import AIRCRAFT_ICONS

@@ -11,12 +11,11 @@ from game.commander.missionproposals import ProposedFlight, EscortType, Proposed
 from game.commander.packagefulfiller import PackageFulfiller
 from game.commander.tasks.theatercommandertask import TheaterCommanderTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.settings import AutoAtoBehavior
 from game.theater import MissionTarget
 from game.theater.theatergroundobject import IadsGroundObject, NavalGroundObject
 from game.utils import Distance, meters
-from gen import Package
+from gen.ato import Package
 from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:

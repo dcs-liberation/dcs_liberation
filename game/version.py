@@ -110,4 +110,9 @@ VERSION = _build_version_string()
 #: Version 8.0
 #: * DCS 2.7.4.9632 changed scenery target IDs. Any mission using map buildings as
 #:   strike targets must check and potentially recreate all those objectives.
-CAMPAIGN_FORMAT_VERSION = (8, 0)
+#:
+#: Version 9.0
+#: * Campaign files now define the initial squadron layouts. See TODO.
+#: * CV and LHA control points now get their names from the group name in the campaign
+#:   miz.
+CAMPAIGN_FORMAT_VERSION = (9, 0)
