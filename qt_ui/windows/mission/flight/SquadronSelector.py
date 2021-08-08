@@ -4,7 +4,7 @@ from typing import Type, Optional
 from PySide2.QtWidgets import QComboBox
 from dcs.unittype import FlyingType
 
-from game.squadrons import AirWing
+from game.squadrons.airwing import AirWing
 from gen.flights.flight import FlightType
 
 

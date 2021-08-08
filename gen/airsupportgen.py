@@ -16,8 +16,7 @@ from dcs.task import (
 from dcs.unittype import UnitType
 
 from game.utils import Heading
-from . import AirSupport
-from .airsupport import TankerInfo, AwacsInfo
+from .airsupport import AirSupport, TankerInfo, AwacsInfo
 from .callsigns import callsign_for_support_unit
 from .conflictgen import Conflict
 from .flights.ai_flight_planner_db import AEWC_CAPABLE

@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Any
 
 from game.data.groundunitclass import GroundUnitClass
-from game.savecompat import has_save_compat_for
 from game.utils import Distance, feet, nautical_miles
 
 
@@ -78,32 +76,6 @@ class Doctrine:
     sweep_distance: Distance
 
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
-
-    @has_save_compat_for(5)
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        if "max_ingress_distance" not in state:
-            try:
-                state["max_ingress_distance"] = state["ingress_distance"]
-                del state["ingress_distance"]
-            except KeyError:
-                state["max_ingress_distance"] = state["ingress_egress_distance"]
-                del state["ingress_egress_distance"]
-
-        max_ip: Distance = state["max_ingress_distance"]
-        if "min_ingress_distance" not in state:
-            if max_ip < nautical_miles(10):
-                min_ip = nautical_miles(5)
-            else:
-                min_ip = nautical_miles(10)
-            state["min_ingress_distance"] = min_ip
-
-        self.__dict__.update(state)
-
-
-class MissionPlannerMaxRanges:
-    @has_save_compat_for(5)
-    def __init__(self) -> None:
-        pass
 
 
 MODERN_DOCTRINE = Doctrine(

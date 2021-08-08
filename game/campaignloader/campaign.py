@@ -10,7 +10,6 @@ from typing import Tuple, Dict, Any
 from packaging.version import Version
 import yaml
 
-from game.campaignloader.mizcampaignloader import MizCampaignLoader
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
@@ -23,6 +22,8 @@ from game.theater import (
     MarianaIslandsTheater,
 )
 from game.version import CAMPAIGN_FORMAT_VERSION
+from .campaignairwingconfig import CampaignAirWingConfig
+from .mizcampaignloader import MizCampaignLoader
 
 
 PERF_FRIENDLY = 0
@@ -102,6 +103,14 @@ class Campaign:
         with logged_duration("Importing miz data"):
             MizCampaignLoader(self.path.parent / miz, t).populate_theater()
         return t
+
+    def load_air_wing_config(self, theater: ConflictTheater) -> CampaignAirWingConfig:
+        try:
+            squadron_data = self.data["squadrons"]
+        except KeyError:
+            logging.warning(f"Campaign {self.name} does not define any squadrons")
+            return CampaignAirWingConfig({})
+        return CampaignAirWingConfig.from_campaign_data(squadron_data, theater)
 
     @property
     def is_out_of_date(self) -> bool:

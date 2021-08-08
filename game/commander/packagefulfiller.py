@@ -13,8 +13,8 @@ from game.settings import Settings
 from game.squadrons import AirWing
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
-from gen import AirTaskingOrder, Package
 from game.commander.packagebuilder import PackageBuilder
+from gen.ato import AirTaskingOrder, Package
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
 from gen.flights.flightplan import FlightPlanBuilder

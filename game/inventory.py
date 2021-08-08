@@ -5,10 +5,10 @@ from collections import defaultdict, Iterator, Iterable
 from typing import TYPE_CHECKING
 
 from game.dcs.aircrafttype import AircraftType
-from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
     from game.theater import ControlPoint
+    from gen.flights.flight import Flight
 
 
 class ControlPointAircraftInventory:

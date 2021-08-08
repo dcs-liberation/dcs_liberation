@@ -45,22 +45,10 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         row = 0
 
         unit_types: Set[AircraftType] = set()
-        for unit_type in self.game_model.game.blue.faction.aircrafts:
-            if self.cp.is_carrier and not unit_type.carrier_capable:
-                continue
-            if self.cp.is_lha and not unit_type.lha_capable:
-                continue
-            if (
-                self.cp.cptype in [ControlPointType.FOB, ControlPointType.FARP]
-                and unit_type not in helicopter_map.values()
-            ):
-                continue
-            unit_types.add(unit_type)
+        for squadron in cp.squadrons:
+            unit_types.add(squadron.aircraft)
 
-        sorted_units = sorted(
-            unit_types,
-            key=lambda u: u.name,
-        )
+        sorted_units = sorted(unit_types, key=lambda u: u.name)
         for row, unit_type in enumerate(sorted_units):
             self.add_purchase_row(unit_type, task_box_layout, row)
         stretch = QVBoxLayout()

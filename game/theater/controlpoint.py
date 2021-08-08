@@ -54,6 +54,7 @@ from ..weather import Conditions
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
+    from game.squadrons.squadron import Squadron
     from ..transfers import PendingTransfers
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
@@ -321,6 +322,8 @@ class ControlPoint(MissionTarget, ABC):
         self.pending_unit_deliveries = PendingUnitDeliveries(self)
 
         self.target_position: Optional[Point] = None
+
+        self.squadrons: list[Squadron] = []
 
     def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"

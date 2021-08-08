@@ -34,13 +34,17 @@ class SquadronDelegate(TwoColumnRowDelegate):
         return index.data(AirWingModel.SquadronRole)
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
+        squadron = self.squadron(index)
         if (row, column) == (0, 0):
-            return self.squadron(index).name
+            if squadron.nickname:
+                nickname = f' "{squadron.nickname}"'
+            else:
+                nickname = ""
+            return f"{squadron.name}{nickname}"
         elif (row, column) == (0, 1):
-            squadron = self.air_wing_model.data(index, AirWingModel.SquadronRole)
             return squadron.aircraft.name
         elif (row, column) == (1, 0):
-            return self.squadron(index).nickname or ""
+            return squadron.location.name
         elif (row, column) == (1, 1):
             squadron = self.squadron(index)
             active = len(squadron.active_pilots)

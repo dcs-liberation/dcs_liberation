@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import itertools
 import logging
 import math
 from collections import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List, Type, Union, cast
+from typing import Any, List, Type, Union, cast, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
@@ -21,6 +23,7 @@ from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
+from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition
 from .debriefing import Debriefing
 from .event.event import Event
@@ -28,16 +31,17 @@ from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .navmesh import NavMesh
-from .procurement import AircraftProcurementRequest
 from .profiling import logged_duration
 from .settings import Settings
-from .squadrons import AirWing
 from .theater import ConflictTheater, ControlPoint
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .threatzones import ThreatZones
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
+
+if TYPE_CHECKING:
+    from .squadrons import AirWing
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -85,6 +89,7 @@ class Game:
         player_faction: Faction,
         enemy_faction: Faction,
         theater: ConflictTheater,
+        air_wing_config: CampaignAirWingConfig,
         start_date: datetime,
         settings: Settings,
         player_budget: float,
@@ -118,6 +123,9 @@ class Game:
         self.red = Coalition(self, enemy_faction, enemy_budget, player=False)
         self.blue.set_opponent(self.red)
         self.red.set_opponent(self.blue)
+
+        self.blue.configure_default_air_wing(air_wing_config)
+        self.red.configure_default_air_wing(air_wing_config)
 
         self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
 

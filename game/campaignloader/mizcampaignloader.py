@@ -255,16 +255,16 @@ class MizCampaignLoader:
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.carriers(blue):
-                # TODO: Name the carrier.
                 control_point = Carrier(
-                    "carrier", ship.position, next(self.control_point_id)
+                    ship.name, ship.position, next(self.control_point_id)
                 )
                 control_point.captured = blue
                 control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.lhas(blue):
-                # TODO: Name the LHA.db
-                control_point = Lha("lha", ship.position, next(self.control_point_id))
+                control_point = Lha(
+                    ship.name, ship.position, next(self.control_point_id)
+                )
                 control_point.captured = blue
                 control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point

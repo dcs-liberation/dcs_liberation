@@ -11,7 +11,7 @@ from game.debriefing import AirLosses, Debriefing
 from game.infos.information import Information
 from game.operation.operation import Operation
 from game.theater import ControlPoint
-from gen import AirTaskingOrder
+from gen.ato import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
 from ..dcs.groundunittype import GroundUnitType
 from ..unitmap import UnitMap

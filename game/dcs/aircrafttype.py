@@ -41,8 +41,8 @@ from game.utils import (
 
 if TYPE_CHECKING:
     from gen.aircraft import FlightData
-    from gen import AirSupport, RadioFrequency, RadioRegistry
-    from gen.radios import Radio
+    from gen.airsupport import AirSupport
+    from gen.radios import Radio, RadioFrequency, RadioRegistry
 
 
 @dataclass(frozen=True)

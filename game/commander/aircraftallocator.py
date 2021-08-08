@@ -2,7 +2,8 @@ from typing import Optional, Tuple
 
 from game.commander.missionproposals import ProposedFlight
 from game.inventory import GlobalAircraftInventory
-from game.squadrons import AirWing, Squadron
+from game.squadrons.squadron import Squadron
+from game.squadrons.airwing import AirWing
 from game.theater import ControlPoint, MissionTarget
 from game.utils import meters
 from gen.flights.ai_flight_planner_db import aircraft_for_task
@@ -67,7 +68,7 @@ class AircraftAllocator:
                 # Valid location with enough aircraft available. Find a squadron to fit
                 # the role.
                 squadrons = self.air_wing.auto_assignable_for_task_with_type(
-                    aircraft, task
+                    aircraft, task, airfield
                 )
                 for squadron in squadrons:
                     if squadron.operates_from(airfield) and squadron.can_provide_pilots(

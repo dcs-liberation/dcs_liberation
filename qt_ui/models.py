@@ -13,7 +13,7 @@ from PySide2.QtCore import (
 from PySide2.QtGui import QIcon
 
 from game.game import Game
-from game.squadrons import Squadron, Pilot
+from game.squadrons.squadron import Pilot, Squadron
 from game.theater.missiontarget import MissionTarget
 from game.transfers import TransferOrder, PendingTransfers
 from gen.ato import AirTaskingOrder, Package

@@ -2,20 +2,19 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
-from typing import List, Optional, TYPE_CHECKING, Union, Sequence, Any
+from typing import List, Optional, TYPE_CHECKING, Union, Sequence
 
 from dcs.mapping import Point
 from dcs.point import MovingPoint, PointAction
 from dcs.unit import Unit
 
 from game.dcs.aircrafttype import AircraftType
-from game.savecompat import has_save_compat_for
-from game.squadrons import Pilot, Squadron
 from game.theater.controlpoint import ControlPoint, MissionTarget
 from game.utils import Distance, meters
 from gen.flights.loadouts import Loadout
 
 if TYPE_CHECKING:
+    from game.squadrons import Pilot, Squadron
     from game.transfers import TransferOrder
     from gen.ato import Package
     from gen.flights.flightplan import FlightPlan
@@ -50,6 +49,8 @@ class FlightType(Enum):
       strike-like missions will need more specialized control.
     * ai_flight_planner.py: Use the new mission type in propose_missions so the AI will
       plan the new mission type.
+    * FlightType.is_air_to_air and FlightType.is_air_to_ground: If the new mission type
+      fits either of these categories, update those methods accordingly.
     """
 
     TARCAP = "TARCAP"
@@ -79,6 +80,30 @@ class FlightType(Enum):
             if name == entry.value:
                 return entry
         raise KeyError(f"No FlightType with name {name}")
+
+    @property
+    def is_air_to_air(self) -> bool:
+        return self in {
+            FlightType.TARCAP,
+            FlightType.BARCAP,
+            FlightType.INTERCEPTION,
+            FlightType.ESCORT,
+            FlightType.SWEEP,
+        }
+
+    @property
+    def is_air_to_ground(self) -> bool:
+        return self in {
+            FlightType.CAS,
+            FlightType.STRIKE,
+            FlightType.ANTISHIP,
+            FlightType.SEAD,
+            FlightType.DEAD,
+            FlightType.BAI,
+            FlightType.OCA_RUNWAY,
+            FlightType.OCA_AIRCRAFT,
+            FlightType.SEAD_ESCORT,
+        }
 
 
 class FlightWaypointType(Enum):
@@ -168,12 +193,6 @@ class FlightWaypoint:
         # flight's offset in the UI.
         self.tot: Optional[timedelta] = None
         self.departure_time: Optional[timedelta] = None
-
-    @has_save_compat_for(5)
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        if "min_fuel" not in state:
-            state["min_fuel"] = None
-        self.__dict__.update(state)
 
     @property
     def position(self) -> Point:

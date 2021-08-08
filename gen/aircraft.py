@@ -69,7 +69,6 @@ from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
 from game.settings import Settings
-from game.squadrons import Pilot
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
@@ -109,6 +108,7 @@ from .naming import namegen
 
 if TYPE_CHECKING:
     from game import Game
+    from game.squadrons import Pilot
 
 WARM_START_HELI_ALT = meters(500)
 WARM_START_ALTITUDE = meters(3000)

@@ -14,7 +14,6 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QPushButton,
     QHBoxLayout,
-    QGridLayout,
     QLabel,
     QCheckBox,
 )

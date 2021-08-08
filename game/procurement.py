@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from game import db
@@ -10,6 +10,7 @@ from game.data.groundunitclass import GroundUnitClass
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
+from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
 from game.utils import meters
 from gen.flights.ai_flight_planner_db import aircraft_for_task
@@ -209,30 +210,36 @@ class ProcurementAi:
             return GroundUnitClass.Tank
         return worst_balanced
 
+    @staticmethod
+    def _compatible_squadron_at(
+        aircraft: AircraftType, airbase: ControlPoint, task: FlightType, count: int
+    ) -> Optional[Squadron]:
+        for squadron in airbase.squadrons:
+            if squadron.aircraft != aircraft:
+                continue
+            if not squadron.can_auto_assign(task):
+                continue
+            if not squadron.can_provide_pilots(count):
+                continue
+            return squadron
+        return None
+
     def affordable_aircraft_for(
         self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
     ) -> Optional[AircraftType]:
         best_choice: Optional[AircraftType] = None
         for unit in aircraft_for_task(request.task_capability):
-            if unit not in self.faction.aircrafts:
-                continue
             if unit.price * request.number > budget:
                 continue
-            if not airbase.can_operate(unit):
+
+            squadron = self._compatible_squadron_at(
+                unit, airbase, request.task_capability, request.number
+            )
+            if squadron is None:
                 continue
 
             distance_to_target = meters(request.near.distance_to(airbase))
             if distance_to_target > unit.max_mission_range:
-                continue
-
-            for squadron in self.air_wing.squadrons_for(unit):
-                if (
-                    squadron.operates_from(airbase)
-                    and request.task_capability
-                    in squadron.auto_assignable_mission_types
-                ):
-                    break
-            else:
                 continue
 
             # Affordable, compatible, and we have a squadron capable of the task. To
