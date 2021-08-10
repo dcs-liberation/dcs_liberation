@@ -129,7 +129,6 @@ CAP_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     Su_33,
-    Su_34,
     J_11A,
     Su_30,
     Su_27,
