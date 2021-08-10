@@ -29,6 +29,7 @@ Saves from 4.1.0 are compatible with 4.1.1.
 ## Fixes
 
 * **[Campaign]** Fixed broken support for Mariana Islands map.
+* **[Mission Generation]** Fix SAM sites pointing towards the center of the conflict.
 
 # 4.1.0
 
