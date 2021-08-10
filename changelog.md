@@ -6,6 +6,7 @@ Saves from 4.1.0 are compatible with 4.1.1.
 
 * **[Campaign]** Fixed broken support for Mariana Islands map.
 * **[Mission Generation]** Fix SAM sites pointing towards the center of the conflict.
+* **[Flight Planning]** No longer using Su-34 for CAP missions.
 
 # 4.1.0
 
