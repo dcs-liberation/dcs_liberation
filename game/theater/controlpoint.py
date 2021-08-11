@@ -293,8 +293,6 @@ class ControlPoint(MissionTarget, ABC):
         name: str,
         position: Point,
         at: db.StartingPosition,
-        size: int,
-        importance: float,
         has_frontline: bool = True,
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
@@ -307,9 +305,6 @@ class ControlPoint(MissionTarget, ABC):
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
-        # TODO: Should be Airbase specific.
-        self.size = size
-        self.importance = importance
         self.captured = False
         self.captured_invert = False
         # TODO: Should be Airbase specific.
@@ -791,16 +786,12 @@ class ControlPoint(MissionTarget, ABC):
 
 
 class Airfield(ControlPoint):
-    def __init__(
-        self, airport: Airport, size: int, importance: float, has_frontline: bool = True
-    ) -> None:
+    def __init__(self, airport: Airport, has_frontline: bool = True) -> None:
         super().__init__(
             airport.id,
             airport.name,
             airport.position,
             airport,
-            size,
-            importance,
             has_frontline,
             cptype=ControlPointType.AIRBASE,
         )
@@ -966,15 +957,11 @@ class NavalControlPoint(ControlPoint, ABC):
 
 class Carrier(NavalControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
-        import game.theater.conflicttheater
-
         super().__init__(
             cp_id,
             name,
             at,
             at,
-            game.theater.conflicttheater.SIZE_SMALL,
-            1,
             has_frontline=False,
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
@@ -1010,15 +997,11 @@ class Carrier(NavalControlPoint):
 
 class Lha(NavalControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
-        import game.theater.conflicttheater
-
         super().__init__(
             cp_id,
             name,
             at,
             at,
-            game.theater.conflicttheater.SIZE_SMALL,
-            1,
             has_frontline=False,
             cptype=ControlPointType.LHA_GROUP,
         )
@@ -1047,15 +1030,11 @@ class OffMapSpawn(ControlPoint):
         return True
 
     def __init__(self, cp_id: int, name: str, position: Point):
-        from . import IMPORTANCE_MEDIUM, SIZE_REGULAR
-
         super().__init__(
             cp_id,
             name,
             position,
             at=position,
-            size=SIZE_REGULAR,
-            importance=IMPORTANCE_MEDIUM,
             has_frontline=False,
             cptype=ControlPointType.OFF_MAP,
         )
@@ -1104,15 +1083,11 @@ class OffMapSpawn(ControlPoint):
 
 class Fob(ControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
-        import game.theater.conflicttheater
-
         super().__init__(
             cp_id,
             name,
             at,
             at,
-            game.theater.conflicttheater.SIZE_SMALL,
-            1,
             has_frontline=True,
             cptype=ControlPointType.FOB,
         )
