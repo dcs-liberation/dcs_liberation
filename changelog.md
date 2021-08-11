@@ -1,3 +1,13 @@
+# 4.1.2
+
+Saves from 4.1.1 are compatible with 4.1.2.
+
+## Features/Improvements
+
+* **[Mission Generation]** EWRs are now also headed towards the center of the conflict
+
+## Fixes
+
 # 4.1.1
 
 Saves from 4.1.0 are compatible with 4.1.1.
