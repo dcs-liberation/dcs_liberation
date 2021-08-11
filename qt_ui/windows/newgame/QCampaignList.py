@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Union, Tuple
 
 import packaging.version
+import yaml
 from PySide2 import QtGui
 from PySide2.QtCore import QItemSelectionModel, QModelIndex, Qt
 from PySide2.QtGui import QStandardItem, QStandardItemModel
@@ -41,9 +42,12 @@ class Campaign:
     path: Path
 
     @classmethod
-    def from_json(cls, path: Path) -> Campaign:
+    def from_file(cls, path: Path) -> Campaign:
         with path.open() as campaign_file:
-            data = json.load(campaign_file)
+            if path.suffix == ".yaml":
+                data = yaml.safe_load(campaign_file)
+            else:
+                data = json.load(campaign_file)
 
         sanitized_theater = data["theater"].replace(" ", "")
         version_field = data.get("version", "0")
@@ -68,7 +72,7 @@ class Campaign:
         )
 
     def load_theater(self) -> ConflictTheater:
-        return ConflictTheater.from_json(self.path.parent, self.data)
+        return ConflictTheater.from_file_data(self.path.parent, self.data)
 
     @property
     def is_out_of_date(self) -> bool:
@@ -105,7 +109,7 @@ def load_campaigns() -> List[Campaign]:
     for path in campaign_dir.glob("*.json"):
         try:
             logging.debug(f"Loading campaign from {path}...")
-            campaign = Campaign.from_json(path)
+            campaign = Campaign.from_file(path)
             campaigns.append(campaign)
         except RuntimeError:
             logging.exception(f"Unable to load campaign from {path}")

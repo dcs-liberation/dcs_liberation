@@ -231,7 +231,7 @@ def create_game(
     # for loadouts) without saving the generated campaign and reloading it the normal
     # way.
     inject_custom_payloads(Path(persistency.base_path()))
-    campaign = Campaign.from_json(campaign_path)
+    campaign = Campaign.from_file(campaign_path)
     generator = GameGenerator(
         FACTIONS[blue],
         FACTIONS[red],

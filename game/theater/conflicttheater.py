@@ -244,7 +244,7 @@ class ConflictTheater:
         raise KeyError(f"Cannot find ControlPoint with ID {id}")
 
     @staticmethod
-    def from_json(directory: Path, data: Dict[str, Any]) -> ConflictTheater:
+    def from_file_data(directory: Path, data: Dict[str, Any]) -> ConflictTheater:
         theaters = {
             "Caucasus": CaucasusTheater,
             "Nevada": NevadaTheater,
