@@ -40,9 +40,8 @@ class PendingUnitDeliveries:
 
     def sell(self, units: dict[UnitType[Any], int]) -> None:
         for k, v in units.items():
-            if self.units[k] > v:
-                self.units[k] -= v
-            else:
+            self.units[k] -= v
+            if self.units[k] == 0:
                 del self.units[k]
 
     def refund_all(self, coalition: Coalition) -> None:

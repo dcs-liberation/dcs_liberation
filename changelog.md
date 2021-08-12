@@ -22,6 +22,7 @@ Saves from 4.x are not compatible with 5.0.
 ## Fixes
 
 * **[Campaign]** Naval control points will no longer claim ground objectives during campaign generation and prevent them from spawning.
+* **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
 
 # 4.1.1
 
