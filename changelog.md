@@ -18,6 +18,7 @@ Saves from 4.x are not compatible with 5.0.
 * **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet).
 * **[Kneeboard]** QNH (pressure MSL) and temperature have been added to the kneeboard.
 * **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable or rename squadrons.
+* **[UI]** Sell Button for aircraft will be disabled if there are no units available to be sold or all are already assigned to a mission
 
 ## Fixes
 

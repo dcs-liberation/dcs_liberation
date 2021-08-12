@@ -85,9 +85,13 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         return True
 
     def enable_sale(self, unit_type: AircraftType) -> bool:
-        if not self.cp.can_operate(unit_type):
-            return False
-        return True
+        return self.can_be_sold(unit_type)
+
+    def sell_tooltip(self, is_enabled: bool) -> str:
+        if is_enabled:
+            return "Sell unit. Use Shift or Ctrl key to sell multiple units at once."
+        else:
+            return "Can not be sold because either no aircraft are available or are already assigned to a mission."
 
     def buy(self, unit_type: AircraftType) -> bool:
         if self.maximum_units > 0:
@@ -112,24 +116,32 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         self.hangar_status.update_label()
         return True
 
+    def can_be_sold(self, unit_type: AircraftType) -> bool:
+        inventory = self.game_model.game.aircraft_inventory.for_control_point(self.cp)
+        pending_deliveries = self.pending_deliveries.units.get(unit_type, 0)
+        return self.cp.can_operate(unit_type) and (
+            pending_deliveries > 0 or inventory.available(unit_type) > 0
+        )
+
     def sell(self, unit_type: AircraftType) -> bool:
         # Don't need to remove aircraft from the inventory if we're canceling
         # orders.
-        if self.pending_deliveries.units.get(unit_type, 0) <= 0:
-            global_inventory = self.game_model.game.aircraft_inventory
-            inventory = global_inventory.for_control_point(self.cp)
-            try:
-                inventory.remove_aircraft(unit_type, 1)
-            except ValueError:
-                QMessageBox.critical(
-                    self,
-                    "Could not sell aircraft",
-                    f"Attempted to sell one {unit_type} at {self.cp.name} "
-                    "but none are available. Are all aircraft currently "
-                    "assigned to a mission?",
-                    QMessageBox.Ok,
-                )
-                return False
+        if not self.can_be_sold(unit_type):
+            QMessageBox.critical(
+                self,
+                "Could not sell aircraft",
+                f"Attempted to sell one {unit_type} at {self.cp.name} "
+                "but none are available. Are all aircraft currently "
+                "assigned to a mission?",
+                QMessageBox.Ok,
+            )
+            return False
+
+        inventory = self.game_model.game.aircraft_inventory.for_control_point(self.cp)
+        pending_deliveries = self.pending_deliveries.units.get(unit_type, 0)
+        if pending_deliveries <= 0 < inventory.available(unit_type):
+            inventory.remove_aircraft(unit_type, 1)
+
         super().sell(unit_type)
         self.hangar_status.update_label()
 
