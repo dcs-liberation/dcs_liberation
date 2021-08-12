@@ -10,6 +10,7 @@ Saves from 4.1.1 are compatible with 4.1.2.
 ## Fixes
 
 * **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
+* **[Mission Generation]** Mission results and other files will now be opened with enforced utf-8 encoding to prevent an issue where destroyed ground units were untracked because of special characters in their names.
 
 # 4.1.1
 

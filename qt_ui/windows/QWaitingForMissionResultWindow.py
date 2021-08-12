@@ -228,7 +228,7 @@ class QWaitingForMissionResultWindow(QDialog):
         )
         print(file)
         try:
-            with open(file[0], "r") as json_file:
+            with open(file[0], "r", encoding="utf-8") as json_file:
                 json_data = json.load(json_file)
                 json_data["mission_ended"] = True
                 debriefing = Debriefing(json_data, self.game, self.unit_map)

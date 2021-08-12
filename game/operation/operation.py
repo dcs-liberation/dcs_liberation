@@ -63,7 +63,7 @@ class Operation:
 
     @classmethod
     def prepare(cls, game: Game) -> None:
-        with open("resources/default_options.lua", "r") as f:
+        with open("resources/default_options.lua", "r", encoding="utf-8") as f:
             options_dict = loads(f.read())["options"]
         cls._set_mission(Mission(game.theater.terrain))
         cls.game = game

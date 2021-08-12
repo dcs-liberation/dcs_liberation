@@ -68,7 +68,8 @@ def run_ui(game: Optional[Game]) -> None:
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()
     with open(
-        "./resources/stylesheets/" + liberation_theme.get_theme_css_file()
+        "./resources/stylesheets/" + liberation_theme.get_theme_css_file(),
+        encoding="utf-8",
     ) as stylesheet:
         logging.info("Loading stylesheet: %s", liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())

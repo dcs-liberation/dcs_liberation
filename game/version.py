@@ -12,7 +12,7 @@ def _build_version_string() -> str:
     ]
     build_number_path = Path("resources/buildnumber")
     if build_number_path.exists():
-        with build_number_path.open("r") as build_number_file:
+        with build_number_path.open("r", encoding="utf-8") as build_number_file:
             components.append(build_number_file.readline())
 
     if not Path("resources/final").exists():

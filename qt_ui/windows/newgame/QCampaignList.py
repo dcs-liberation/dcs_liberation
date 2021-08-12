@@ -42,7 +42,7 @@ class Campaign:
 
     @classmethod
     def from_json(cls, path: Path) -> Campaign:
-        with path.open() as campaign_file:
+        with path.open(encoding="utf-8") as campaign_file:
             data = json.load(campaign_file)
 
         sanitized_theater = data["theater"].replace(" ", "")
