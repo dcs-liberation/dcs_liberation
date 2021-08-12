@@ -8,6 +8,8 @@ Saves from 4.1.1 are compatible with 4.1.2.
 
 ## Fixes
 
+* **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
+
 # 4.1.1
 
 Saves from 4.1.0 are compatible with 4.1.1.
