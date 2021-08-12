@@ -386,7 +386,7 @@ class PollDebriefingFileThread(threading.Thread):
                     os.path.isfile("state.json")
                     and os.path.getmtime("state.json") > last_modified
                 ):
-                    with open("state.json", "r") as json_file:
+                    with open("state.json", "r", encoding="utf-8") as json_file:
                         json_data = json.load(json_file)
                         debriefing = Debriefing(json_data, self.game, self.unit_map)
                         self.callback(debriefing)

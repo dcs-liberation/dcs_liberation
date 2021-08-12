@@ -325,7 +325,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
             logging.warning(f"No data for {aircraft.id}; it will not be available")
             return
 
-        with data_path.open() as data_file:
+        with data_path.open(encoding="utf-8") as data_file:
             data = yaml.safe_load(data_file)
 
         try:

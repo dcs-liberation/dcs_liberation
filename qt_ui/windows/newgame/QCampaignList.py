@@ -43,7 +43,7 @@ class Campaign:
 
     @classmethod
     def from_file(cls, path: Path) -> Campaign:
-        with path.open() as campaign_file:
+        with path.open(encoding="utf-8") as campaign_file:
             if path.suffix == ".yaml":
                 data = yaml.safe_load(campaign_file)
             else:
