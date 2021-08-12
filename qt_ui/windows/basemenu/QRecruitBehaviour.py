@@ -80,7 +80,13 @@ class PurchaseGroup(QGroupBox):
 
     def update_state(self) -> None:
         self.buy_button.setEnabled(self.recruiter.enable_purchase(self.unit_type))
+        self.buy_button.setToolTip(
+            self.recruiter.purchase_tooltip(self.buy_button.isEnabled())
+        )
         self.sell_button.setEnabled(self.recruiter.enable_sale(self.unit_type))
+        self.sell_button.setToolTip(
+            self.recruiter.sell_tooltip(self.sell_button.isEnabled())
+        )
         self.amount_bought.setText(f"<b>{self.pending_units}</b>")
 
 
@@ -222,6 +228,18 @@ class QRecruitBehaviour:
 
     def enable_sale(self, unit_type: UnitType) -> bool:
         return True
+
+    def purchase_tooltip(self, is_enabled: bool) -> str:
+        if is_enabled:
+            return "Buy unit. Use Shift or Ctrl key to buy multiple units at once."
+        else:
+            return "Unit can not be bought."
+
+    def sell_tooltip(self, is_enabled: bool) -> str:
+        if is_enabled:
+            return "Sell unit. Use Shift or Ctrl key to buy multiple units at once."
+        else:
+            return "Unit can not be sold."
 
     def info(self, unit_type: UnitType) -> None:
         self.info_window = QUnitInfoWindow(self.game_model.game, unit_type)

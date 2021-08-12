@@ -5,6 +5,7 @@ Saves from 4.1.1 are compatible with 4.1.2.
 ## Features/Improvements
 
 * **[Mission Generation]** EWRs are now also headed towards the center of the conflict
+* **[UI]** Sell Button for aircraft will be disabled if there are no units available to be sold or all are already assigned to a mission
 
 ## Fixes
 
