@@ -1327,31 +1327,17 @@ class FlightPlanBuilder:
             orbit_heading.degrees, orbit_distance.meters
         )
 
-    def racetrack_for_frontline(
+    def cap_racetrack_for_frontline(
         self, origin: Point, front_line: FrontLine
     ) -> Tuple[Point, Point]:
-        # Find targets waypoints
-        ingress, heading, distance = Conflict.frontline_vector(front_line, self.theater)
-        center = ingress.point_from_heading(heading.degrees, distance / 2)
-        orbit_center = center.point_from_heading(
-            heading.left.degrees,
-            random.randint(
-                int(nautical_miles(6).meters), int(nautical_miles(15).meters)
-            ),
-        )
+        hostile_cp = front_line.control_point_hostile_to(self.is_player)
+        frontline_center = front_line.position
+        heading = hostile_cp.position.heading_between_point(frontline_center)
 
-        combat_width = distance / 2
-        if combat_width > 500000:
-            combat_width = 500000
-        if combat_width < 35000:
-            combat_width = 35000
+        # TODO: Use doctrine random distances
+        start = frontline_center.point_from_heading(heading.degrees, -5000)
+        end = frontline_center.point_from_heading(heading.degrees, -20000)
 
-        radius = combat_width * 1.25
-        start = orbit_center.point_from_heading(heading.degrees, radius)
-        end = orbit_center.point_from_heading(heading.opposite.degrees, radius)
-
-        if end.distance_to_point(origin) < start.distance_to_point(origin):
-            start, end = end, start
         return start, end
 
     def generate_tarcap(self, flight: Flight) -> TarCapFlightPlan:
@@ -1377,7 +1363,7 @@ class FlightPlanBuilder:
         builder = WaypointBuilder(flight, self.coalition)
 
         if isinstance(location, FrontLine):
-            orbit0p, orbit1p = self.racetrack_for_frontline(
+            orbit0p, orbit1p = self.cap_racetrack_for_frontline(
                 flight.departure.position, location
             )
         else:
