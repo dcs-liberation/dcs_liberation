@@ -1332,11 +1332,11 @@ class FlightPlanBuilder:
     ) -> Tuple[Point, Point]:
         hostile_cp = front_line.control_point_hostile_to(self.is_player)
         frontline_center = front_line.position
-        heading = hostile_cp.position.heading_between_point(frontline_center)
+        heading = frontline_center.heading_between_point(hostile_cp.position)
 
         # TODO: Use doctrine random distances
-        start = frontline_center.point_from_heading(heading.degrees, -5000)
-        end = frontline_center.point_from_heading(heading.degrees, -20000)
+        start = frontline_center.point_from_heading(heading, -20000)
+        end = frontline_center.point_from_heading(heading, -5000)
 
         return start, end
 
