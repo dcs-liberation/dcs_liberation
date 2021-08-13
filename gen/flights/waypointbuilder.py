@@ -213,7 +213,7 @@ class WaypointBuilder:
             ingress_type,
             position.x,
             position.y,
-            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
         )
         if self.is_helo:
             waypoint.alt_type = "RADIO"
@@ -228,7 +228,7 @@ class WaypointBuilder:
             FlightWaypointType.EGRESS,
             position.x,
             position.y,
-            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
         )
         if self.is_helo:
             waypoint.alt_type = "RADIO"
@@ -312,7 +312,7 @@ class WaypointBuilder:
             FlightWaypointType.CAS,
             position.x,
             position.y,
-            meters(50) if self.is_helo else meters(1000),
+            meters(60) if self.is_helo else meters(1000),
         )
         waypoint.alt_type = "RADIO"
         waypoint.description = "Provide CAS"
@@ -448,7 +448,7 @@ class WaypointBuilder:
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position.x,
             target.position.y,
-            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
         )
         if self.is_helo:
             waypoint.alt_type = "RADIO"
