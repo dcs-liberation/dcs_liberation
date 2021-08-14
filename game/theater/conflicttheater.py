@@ -292,7 +292,7 @@ class CaucasusTheater(ConflictTheater):
         ReferencePoint(caucasus.Batumi.position, Point(1307, 1205)),
     )
 
-    landmap = load_landmap("resources\\caulandmap.p")
+    landmap = load_landmap(Path("resources/caulandmap.p"))
     daytime_map = {
         "dawn": (6, 9),
         "day": (9, 18),
@@ -320,7 +320,7 @@ class PersianGulfTheater(ConflictTheater):
         ReferencePoint(persiangulf.Jiroft.position, Point(1692, 1343)),
         ReferencePoint(persiangulf.Liwa_AFB.position, Point(358, 3238)),
     )
-    landmap = load_landmap("resources\\gulflandmap.p")
+    landmap = load_landmap(Path("resources/gulflandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
         "day": (8, 16),
@@ -348,7 +348,7 @@ class NevadaTheater(ConflictTheater):
         ReferencePoint(nevada.Mina_Airport_3Q0.position, Point(252, 295)),
         ReferencePoint(nevada.Laughlin_Airport.position, Point(844, 909)),
     )
-    landmap = load_landmap("resources\\nevlandmap.p")
+    landmap = load_landmap(Path("resources/nevlandmap.p"))
     daytime_map = {
         "dawn": (4, 6),
         "day": (6, 17),
@@ -376,7 +376,7 @@ class NormandyTheater(ConflictTheater):
         ReferencePoint(normandy.Needs_Oar_Point.position, Point(515, 329)),
         ReferencePoint(normandy.Evreux.position, Point(2029, 1709)),
     )
-    landmap = load_landmap("resources\\normandylandmap.p")
+    landmap = load_landmap(Path("resources/normandylandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
         "day": (10, 17),
@@ -404,7 +404,7 @@ class TheChannelTheater(ConflictTheater):
         ReferencePoint(thechannel.Abbeville_Drucat.position, Point(2005, 2390)),
         ReferencePoint(thechannel.Detling.position, Point(706, 382)),
     )
-    landmap = load_landmap("resources\\channellandmap.p")
+    landmap = load_landmap(Path("resources/channellandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
         "day": (10, 17),
@@ -432,7 +432,7 @@ class SyriaTheater(ConflictTheater):
         ReferencePoint(syria.Eyn_Shemer.position, Point(564, 1289)),
         ReferencePoint(syria.Tabqa.position, Point(1329, 491)),
     )
-    landmap = load_landmap("resources\\syrialandmap.p")
+    landmap = load_landmap(Path("resources/syrialandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
         "day": (8, 16),
@@ -457,7 +457,7 @@ class MarianaIslandsTheater(ConflictTheater):
     terrain = marianaislands.MarianaIslands()
     overview_image = "marianaislands.gif"
 
-    landmap = load_landmap("resources\\marianaislandslandmap.p")
+    landmap = load_landmap(Path("resources/marianaislandslandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
         "day": (8, 16),
