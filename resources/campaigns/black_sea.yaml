@@ -5,4 +5,147 @@ authors: Colonel Panic
 description: <p>A medium sized theater with bases along the coast of the Black Sea.</p>
 miz: black_sea.miz
 performance: 2,
-version: "8.0"
+version: "9.0"
+squadrons:
+  # Anapa-Vityazevo
+  12:
+    - primary: BARCAP
+      aircraft:
+        - Su-30 Flanker-C
+        - Su-27 Flanker-B
+    - primary: AEW&C
+      aircraft:
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+    - primary: Transport
+      aircraft:
+        - IL-78MD
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Tu-160 Blackjack
+  # Krasnodar-Center
+  13:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-31 Foxhound
+        - MiG-25PD Foxbat-E
+    - primary: SEAD
+      secondary: any
+    - primary: DEAD
+      secondary: any
+  # Maykop-Khanskaya
+  16:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-25 Frogfoot
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Su-34 Fullback
+        - Su-24M Fencer-D
+    - primary: DEAD
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+        - Mi-24P Hind-E
+  # Senaki-Kholki
+  23:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+        - A-10C Thunderbolt II (Suite 3)
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - F-15E Strike Eagle
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: Transport
+      aircraft:
+        - UH-60A
+  # Kobuleti
+  24:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-15C Eagle
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+  # Kutaisi
+  25:
+    - primary: BARCAP
+      aircraft:
+        - F-15C Eagle
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+    - primary: Transport
+      aircraft:
+        - C-17A
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+  Blue CV:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-14B Tomcat
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14B Tomcat
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+  Blue LHA:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
+  Red CV:
+    - primary: BARCAP
+      secondary: air-to-air
+    - primary: BARCAP
+      secondary: any
+    - primary: Strike
+      secondary: any
+    - primary: BAI
+      secondary: any
+    - primary: Refueling
+  Red LHA:
+    - primary: BAI
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
