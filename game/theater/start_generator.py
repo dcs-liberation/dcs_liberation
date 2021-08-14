@@ -54,17 +54,6 @@ from ..settings import Settings
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
 
-UNIT_VARIETY = 6
-UNIT_AMOUNT_FACTOR = 16
-UNIT_COUNT_IMPORTANCE_LOG = 1.3
-
-COUNT_BY_TASK = {
-    PinpointStrike: 12,
-    CAP: 8,
-    CAS: 4,
-    AirDefence: 1,
-}
-
 
 @dataclass(frozen=True)
 class GeneratorSettings:

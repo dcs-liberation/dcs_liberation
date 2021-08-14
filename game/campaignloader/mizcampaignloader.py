@@ -20,7 +20,7 @@ from game.positioned import Positioned
 from game.profiling import logged_duration
 from game.scenery_group import SceneryGroup
 from game.utils import Distance, meters, Heading
-from .controlpoint import (
+from game.theater.controlpoint import (
     Airfield,
     Carrier,
     ControlPoint,
@@ -30,7 +30,7 @@ from .controlpoint import (
 )
 
 if TYPE_CHECKING:
-    from .conflicttheater import ConflictTheater
+    from game.theater.conflicttheater import ConflictTheater
 
 
 class MizCampaignLoader:
