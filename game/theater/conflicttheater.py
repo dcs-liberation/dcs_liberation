@@ -23,13 +23,11 @@ from .controlpoint import (
     ControlPoint,
     MissionTarget,
 )
-from .mizcampaignloader import MizCampaignLoader
-from .seasonalconditions import SeasonalConditions
 from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
 from .projections import TransverseMercator
-from ..profiling import logged_duration
+from .seasonalconditions import SeasonalConditions
 
 if TYPE_CHECKING:
     from . import TheaterGroundObject
@@ -242,30 +240,6 @@ class ConflictTheater:
             if i.id == id:
                 return i
         raise KeyError(f"Cannot find ControlPoint with ID {id}")
-
-    @staticmethod
-    def from_file_data(directory: Path, data: Dict[str, Any]) -> ConflictTheater:
-        theaters = {
-            "Caucasus": CaucasusTheater,
-            "Nevada": NevadaTheater,
-            "Persian Gulf": PersianGulfTheater,
-            "Normandy": NormandyTheater,
-            "The Channel": TheChannelTheater,
-            "Syria": SyriaTheater,
-            "MarianaIslands": MarianaIslandsTheater,
-        }
-        theater = theaters[data["theater"]]
-        t = theater()
-
-        miz = data.get("miz", None)
-        if miz is None:
-            raise RuntimeError(
-                "Old format (non-miz) campaigns are no longer supported."
-            )
-
-        with logged_duration("Importing miz data"):
-            MizCampaignLoader(directory / miz, t).populate_theater()
-        return t
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
