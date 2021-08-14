@@ -104,7 +104,7 @@ class Campaign:
 
 
 def load_campaigns() -> List[Campaign]:
-    campaign_dir = Path("resources\\campaigns")
+    campaign_dir = Path("resources/campaigns")
     campaigns = []
     for path in campaign_dir.glob("*.json"):
         try:
