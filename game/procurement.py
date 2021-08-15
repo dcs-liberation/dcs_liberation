@@ -227,7 +227,6 @@ class ProcurementAi:
     def affordable_aircraft_for(
         self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
     ) -> Optional[AircraftType]:
-        best_choice: Optional[AircraftType] = None
         for unit in aircraft_for_task(request.task_capability):
             if unit.price * request.number > budget:
                 continue
@@ -242,13 +241,9 @@ class ProcurementAi:
             if distance_to_target > unit.max_mission_range:
                 continue
 
-            # Affordable, compatible, and we have a squadron capable of the task. To
-            # keep some variety, skip with a 50/50 chance. Might be a good idea to have
-            # the chance to skip based on the price compared to the rest of the choices.
-            best_choice = unit
-            if random.choice([True, False]):
-                break
-        return best_choice
+            # Affordable, compatible, and we have a squadron capable of the task.
+            return unit
+        return None
 
     def fulfill_aircraft_request(
         self, request: AircraftProcurementRequest, budget: float
