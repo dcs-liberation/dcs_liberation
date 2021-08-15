@@ -13,7 +13,6 @@ from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 from faker import Faker
 
-from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from gen import naming
@@ -126,8 +125,6 @@ class Game:
 
         self.blue.configure_default_air_wing(air_wing_config)
         self.red.configure_default_air_wing(air_wing_config)
-
-        self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
 
         self.on_load(game_still_initializing=True)
 
@@ -392,9 +389,9 @@ class Game:
 
         # Plan Coalition specific turn
         if for_blue:
-            self.initialize_turn_for(player=True)
+            self.blue.initialize_turn()
         if for_red:
-            self.initialize_turn_for(player=False)
+            self.red.initialize_turn()
 
         # Plan GroundWar
         self.ground_planners = {}
@@ -403,12 +400,6 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
-
-    def initialize_turn_for(self, player: bool) -> None:
-        self.aircraft_inventory.reset(player)
-        for cp in self.theater.control_points_for(player):
-            self.aircraft_inventory.set_from_control_point(cp)
-        self.coalition_for(player).initialize_turn()
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))

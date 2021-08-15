@@ -177,7 +177,6 @@ class QPackageDialog(QDialog):
 
     def add_flight(self, flight: Flight) -> None:
         """Adds the new flight to the package."""
-        self.game.aircraft_inventory.claim_for_flight(flight)
         self.package_model.add_flight(flight)
         planner = FlightPlanBuilder(
             self.package_model.package, self.game.blue, self.game.theater
@@ -251,8 +250,7 @@ class QNewPackageDialog(QPackageDialog):
     def on_cancel(self) -> None:
         super().on_cancel()
         for flight in self.package_model.package.flights:
-            self.game.aircraft_inventory.return_from_flight(flight)
-            flight.clear_roster()
+            flight.return_pilots_and_aircraft()
 
 
 class QEditPackageDialog(QPackageDialog):

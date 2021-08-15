@@ -10,9 +10,9 @@ from typing import TYPE_CHECKING, Any, Union, Optional
 from game.commander.garrisons import Garrisons
 from game.commander.objectivefinder import ObjectiveFinder
 from game.htn import WorldState
-from game.inventory import GlobalAircraftInventory
 from game.profiling import MultiEventTracer
 from game.settings import Settings
+from game.squadrons import AirWing
 from game.theater import ControlPoint, FrontLine, MissionTarget, ConflictTheater
 from game.theater.theatergroundobject import (
     TheaterGroundObject,
@@ -58,7 +58,6 @@ class TheaterState(WorldState["TheaterState"]):
     strike_targets: list[TheaterGroundObject[Any]]
     enemy_barcaps: list[ControlPoint]
     threat_zones: ThreatZones
-    available_aircraft: GlobalAircraftInventory
 
     def _rebuild_threat_zones(self) -> None:
         """Recreates the theater's threat zones based on the current planned state."""
@@ -122,7 +121,6 @@ class TheaterState(WorldState["TheaterState"]):
             strike_targets=list(self.strike_targets),
             enemy_barcaps=list(self.enemy_barcaps),
             threat_zones=self.threat_zones,
-            available_aircraft=self.available_aircraft.clone(),
             # Persistent properties are not copied. These are a way for failed subtasks
             # to communicate requirements to other tasks. For example, the task to
             # attack enemy garrisons might fail because the target area has IADS
@@ -172,5 +170,4 @@ class TheaterState(WorldState["TheaterState"]):
             strike_targets=list(finder.strike_targets()),
             enemy_barcaps=list(game.theater.control_points_for(not player)),
             threat_zones=game.threat_zone_for(not player),
-            available_aircraft=game.aircraft_inventory.clone(),
         )

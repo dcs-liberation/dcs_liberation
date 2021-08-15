@@ -7,13 +7,12 @@ from dcs.mapping import Point
 from dcs.task import Task
 
 from game import persistency
-from game.debriefing import AirLosses, Debriefing
+from game.debriefing import Debriefing
 from game.infos.information import Information
 from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen.ato import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
-from ..dcs.groundunittype import GroundUnitType
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -67,59 +66,6 @@ class Event:
         )
         return unit_map
 
-    @staticmethod
-    def _transfer_aircraft(
-        ato: AirTaskingOrder, losses: AirLosses, for_player: bool
-    ) -> None:
-        for package in ato.packages:
-            for flight in package.flights:
-                # No need to transfer to the same location.
-                if flight.departure == flight.arrival:
-                    continue
-
-                # Don't transfer to bases that were captured. Note that if the
-                # airfield was back-filling transfers it may overflow. We could
-                # attempt to be smarter in the future by performing transfers in
-                # order up a graph to prevent transfers to full airports and
-                # send overflow off-map, but overflow is fine for now.
-                if flight.arrival.captured != for_player:
-                    logging.info(
-                        f"Not transferring {flight} because {flight.arrival} "
-                        "was captured"
-                    )
-                    continue
-
-                transfer_count = losses.surviving_flight_members(flight)
-                if transfer_count < 0:
-                    logging.error(
-                        f"{flight} had {flight.count} aircraft but "
-                        f"{transfer_count} losses were recorded."
-                    )
-                    continue
-
-                aircraft = flight.unit_type
-                available = flight.departure.base.total_units_of_type(aircraft)
-                if available < transfer_count:
-                    logging.error(
-                        f"Found killed {aircraft} from {flight.departure} but "
-                        f"that airbase has only {available} available."
-                    )
-                    continue
-
-                flight.departure.base.aircraft[aircraft] -= transfer_count
-                if aircraft not in flight.arrival.base.aircraft:
-                    # TODO: Should use defaultdict.
-                    flight.arrival.base.aircraft[aircraft] = 0
-                flight.arrival.base.aircraft[aircraft] += transfer_count
-
-    def complete_aircraft_transfers(self, debriefing: Debriefing) -> None:
-        self._transfer_aircraft(
-            self.game.blue.ato, debriefing.air_losses, for_player=True
-        )
-        self._transfer_aircraft(
-            self.game.red.ato, debriefing.air_losses, for_player=False
-        )
-
     def commit_air_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
             if loss.pilot is not None and (
@@ -127,18 +73,18 @@ class Event:
                 or not self.game.settings.invulnerable_player_pilots
             ):
                 loss.pilot.kill()
+            squadron = loss.flight.squadron
             aircraft = loss.flight.unit_type
-            cp = loss.flight.departure
-            available = cp.base.total_units_of_type(aircraft)
+            available = squadron.owned_aircraft
             if available <= 0:
                 logging.error(
-                    f"Found killed {aircraft} from {cp} but that airbase has "
+                    f"Found killed {aircraft} from {squadron} but that airbase has "
                     "none available."
                 )
                 continue
 
-            logging.info(f"{aircraft} destroyed from {cp}")
-            cp.base.aircraft[aircraft] -= 1
+            logging.info(f"{aircraft} destroyed from {squadron}")
+            squadron.owned_aircraft -= 1
 
     @staticmethod
     def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
@@ -276,7 +222,6 @@ class Event:
         self.commit_building_losses(debriefing)
         self.commit_damaged_runways(debriefing)
         self.commit_captures(debriefing)
-        self.complete_aircraft_transfers(debriefing)
 
         # Destroyed units carcass
         # -------------------------
@@ -458,15 +403,10 @@ class Event:
         source.base.commit_losses(moved_units)
 
         # Also transfer pending deliveries.
-        for unit_type, count in source.pending_unit_deliveries.units.items():
-            if not isinstance(unit_type, GroundUnitType):
-                continue
-            if count <= 0:
-                # Don't transfer *sales*...
-                continue
+        for unit_type, count in source.ground_unit_orders.units.items():
             move_count = int(count * move_factor)
-            source.pending_unit_deliveries.sell({unit_type: move_count})
-            destination.pending_unit_deliveries.order({unit_type: move_count})
+            source.ground_unit_orders.sell({unit_type: move_count})
+            destination.ground_unit_orders.order({unit_type: move_count})
             total_units_redeployed += move_count
 
         if total_units_redeployed > 0:

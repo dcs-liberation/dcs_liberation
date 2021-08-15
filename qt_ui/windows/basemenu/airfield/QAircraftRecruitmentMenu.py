@@ -1,37 +1,37 @@
-import logging
 from typing import Set
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
-    QFrame,
     QGridLayout,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QScrollArea,
     QVBoxLayout,
     QWidget,
 )
-from dcs.helicopters import helicopter_map
 
 from game.dcs.aircrafttype import AircraftType
-from game.theater import ControlPoint, ControlPointType
+from game.squadrons import Squadron
+from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
-from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
+from qt_ui.windows.basemenu.UnitTransactionFrame import UnitTransactionFrame
+from game.purchaseadapter import AircraftPurchaseAdapter
 
 
-class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
+class QAircraftRecruitmentMenu(UnitTransactionFrame[Squadron]):
     def __init__(self, cp: ControlPoint, game_model: GameModel) -> None:
-        QFrame.__init__(self)
+        super().__init__(
+            game_model,
+            AircraftPurchaseAdapter(
+                cp, game_model.game.coalition_for(cp.captured), game_model.game
+            ),
+        )
         self.cp = cp
         self.game_model = game_model
         self.purchase_groups = {}
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
-
-        # Determine maximum number of aircrafts that can be bought
-        self.set_maximum_units(self.cp.total_aircraft_parking)
 
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
@@ -48,9 +48,9 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         for squadron in cp.squadrons:
             unit_types.add(squadron.aircraft)
 
-        sorted_units = sorted(unit_types, key=lambda u: u.name)
-        for row, unit_type in enumerate(sorted_units):
-            self.add_purchase_row(unit_type, task_box_layout, row)
+        sorted_squadrons = sorted(cp.squadrons, key=lambda s: (s.aircraft.name, s.name))
+        for row, squadron in enumerate(sorted_squadrons):
+            self.add_purchase_row(squadron, task_box_layout, row)
         stretch = QVBoxLayout()
         stretch.addStretch()
         task_box_layout.addLayout(stretch, row, 0)
@@ -65,75 +65,18 @@ class QAircraftRecruitmentMenu(QFrame, QRecruitBehaviour):
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
 
-    def enable_purchase(self, unit_type: AircraftType) -> bool:
-        if not super().enable_purchase(unit_type):
-            return False
-        if not self.cp.can_operate(unit_type):
-            return False
-        return True
-
-    def enable_sale(self, unit_type: AircraftType) -> bool:
-        return self.can_be_sold(unit_type)
-
     def sell_tooltip(self, is_enabled: bool) -> str:
         if is_enabled:
             return "Sell unit. Use Shift or Ctrl key to sell multiple units at once."
         else:
-            return "Can not be sold because either no aircraft are available or are already assigned to a mission."
-
-    def buy(self, unit_type: AircraftType) -> bool:
-        if self.maximum_units > 0:
-            if self.cp.unclaimed_parking(self.game_model.game) <= 0:
-                logging.debug(f"No space for additional aircraft at {self.cp}.")
-                QMessageBox.warning(
-                    self,
-                    "No space for additional aircraft",
-                    f"There is no parking space left at {self.cp.name} to accommodate "
-                    "another plane.",
-                    QMessageBox.Ok,
-                )
-                return False
-            # If we change our mind about selling, we want the aircraft to be put
-            # back in the inventory immediately.
-            elif self.pending_deliveries.units.get(unit_type, 0) < 0:
-                global_inventory = self.game_model.game.aircraft_inventory
-                inventory = global_inventory.for_control_point(self.cp)
-                inventory.add_aircraft(unit_type, 1)
-
-        super().buy(unit_type)
-        self.hangar_status.update_label()
-        return True
-
-    def can_be_sold(self, unit_type: AircraftType) -> bool:
-        inventory = self.game_model.game.aircraft_inventory.for_control_point(self.cp)
-        pending_deliveries = self.pending_deliveries.units.get(unit_type, 0)
-        return self.cp.can_operate(unit_type) and (
-            pending_deliveries > 0 or inventory.available(unit_type) > 0
-        )
-
-    def sell(self, unit_type: AircraftType) -> bool:
-        # Don't need to remove aircraft from the inventory if we're canceling
-        # orders.
-        if not self.can_be_sold(unit_type):
-            QMessageBox.critical(
-                self,
-                "Could not sell aircraft",
-                f"Attempted to sell one {unit_type} at {self.cp.name} "
-                "but none are available. Are all aircraft currently "
-                "assigned to a mission?",
-                QMessageBox.Ok,
+            return (
+                "Can not be sold because either no aircraft are available or are "
+                "already assigned to a mission."
             )
-            return False
 
-        inventory = self.game_model.game.aircraft_inventory.for_control_point(self.cp)
-        pending_deliveries = self.pending_deliveries.units.get(unit_type, 0)
-        if pending_deliveries <= 0 < inventory.available(unit_type):
-            inventory.remove_aircraft(unit_type, 1)
-
-        super().sell(unit_type)
+    def post_transaction_update(self) -> None:
+        super().post_transaction_update()
         self.hangar_status.update_label()
-
-        return True
 
 
 class QHangarStatus(QHBoxLayout):

@@ -1,13 +1,12 @@
 from typing import Optional
 
+from game.commander.aircraftallocator import AircraftAllocator
 from game.commander.missionproposals import ProposedFlight
 from game.dcs.aircrafttype import AircraftType
-from game.inventory import GlobalAircraftInventory
 from game.squadrons.airwing import AirWing
 from game.theater import MissionTarget, OffMapSpawn, ControlPoint
 from game.utils import nautical_miles
 from gen.ato import Package
-from game.commander.aircraftallocator import AircraftAllocator
 from gen.flights.closestairfields import ClosestAirfields
 from gen.flights.flight import Flight
 
@@ -19,7 +18,6 @@ class PackageBuilder:
         self,
         location: MissionTarget,
         closest_airfields: ClosestAirfields,
-        global_inventory: GlobalAircraftInventory,
         air_wing: AirWing,
         is_player: bool,
         package_country: str,
@@ -30,10 +28,7 @@ class PackageBuilder:
         self.is_player = is_player
         self.package_country = package_country
         self.package = Package(location, auto_asap=asap)
-        self.allocator = AircraftAllocator(
-            air_wing, closest_airfields, global_inventory, is_player
-        )
-        self.global_inventory = global_inventory
+        self.allocator = AircraftAllocator(air_wing, closest_airfields, is_player)
         self.start_type = start_type
 
     def plan_flight(self, plan: ProposedFlight) -> bool:
@@ -93,6 +88,5 @@ class PackageBuilder:
         """Returns any planned flights to the inventory."""
         flights = list(self.package.flights)
         for flight in flights:
-            self.global_inventory.return_from_flight(flight)
-            flight.clear_roster()
+            flight.return_pilots_and_aircraft()
             self.package.remove_flight(flight)

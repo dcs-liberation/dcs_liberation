@@ -66,7 +66,6 @@ from gen.naming import namegen
 
 if TYPE_CHECKING:
     from game import Game
-    from game.inventory import ControlPointAircraftInventory
     from game.squadrons import Squadron
 
 
@@ -315,29 +314,20 @@ class AirliftPlanner:
             if cp.captured != self.for_player:
                 continue
 
-            inventory = self.game.aircraft_inventory.for_control_point(cp)
-            for unit_type, available in inventory.all_aircraft:
-                squadrons = air_wing.auto_assignable_for_task_with_type(
-                    unit_type, FlightType.TRANSPORT, cp
-                )
-                for squadron in squadrons:
-                    if self.compatible_with_mission(unit_type, cp):
-                        while (
-                            available
-                            and squadron.has_available_pilots
-                            and self.transfer.transport is None
-                        ):
-                            flight_size = self.create_airlift_flight(
-                                squadron, inventory
-                            )
-                            available -= flight_size
+            squadrons = air_wing.auto_assignable_for_task_at(FlightType.TRANSPORT, cp)
+            for squadron in squadrons:
+                if self.compatible_with_mission(squadron.aircraft, cp):
+                    while (
+                        squadron.untasked_aircraft
+                        and squadron.has_available_pilots
+                        and self.transfer.transport is None
+                    ):
+                        self.create_airlift_flight(squadron)
         if self.package.flights:
             self.game.ato_for(self.for_player).add_package(self.package)
 
-    def create_airlift_flight(
-        self, squadron: Squadron, inventory: ControlPointAircraftInventory
-    ) -> int:
-        available_aircraft = inventory.available(squadron.aircraft)
+    def create_airlift_flight(self, squadron: Squadron) -> int:
+        available_aircraft = squadron.untasked_aircraft
         capacity_each = 1 if squadron.aircraft.dcs_unit_type.helicopter else 2
         required = math.ceil(self.transfer.size / capacity_each)
         flight_size = min(
@@ -348,8 +338,8 @@ class AirliftPlanner:
         # TODO: Use number_of_available_pilots directly once feature flag is gone.
         # The number of currently available pilots is not relevant when pilot limits
         # are disabled.
-        if not squadron.can_provide_pilots(flight_size):
-            flight_size = squadron.number_of_available_pilots
+        if not squadron.can_fulfill_flight(flight_size):
+            flight_size = squadron.max_fulfillable_aircraft
         capacity = flight_size * capacity_each
 
         if capacity < self.transfer.size:
@@ -359,16 +349,15 @@ class AirliftPlanner:
         else:
             transfer = self.transfer
 
-        player = inventory.control_point.captured
         flight = Flight(
             self.package,
-            self.game.country_for(player),
+            self.game.country_for(squadron.player),
             squadron,
             flight_size,
             FlightType.TRANSPORT,
             self.game.settings.default_start_type,
-            departure=inventory.control_point,
-            arrival=inventory.control_point,
+            departure=squadron.location,
+            arrival=squadron.location,
             divert=None,
             cargo=transfer,
         )
@@ -381,7 +370,6 @@ class AirliftPlanner:
             self.package, self.game.coalition_for(self.for_player), self.game.theater
         )
         planner.populate_flight_plan(flight)
-        self.game.aircraft_inventory.claim_for_flight(flight)
         return flight_size
 
 
@@ -652,8 +640,7 @@ class PendingTransfers:
         flight.package.remove_flight(flight)
         if not flight.package.flights:
             self.game.ato_for(self.player).remove_package(flight.package)
-        self.game.aircraft_inventory.return_from_flight(flight)
-        flight.clear_roster()
+        flight.return_pilots_and_aircraft()
 
     @cancel_transport.register
     def _cancel_transport_convoy(
@@ -756,16 +743,12 @@ class PendingTransfers:
 
         return 0
 
-    def current_airlift_capacity(self, control_point: ControlPoint) -> int:
-        inventory = self.game.aircraft_inventory.for_control_point(control_point)
-        squadrons = self.game.air_wing_for(
-            control_point.captured
-        ).auto_assignable_for_task(FlightType.TRANSPORT)
-        unit_types = {s.aircraft for s in squadrons}
+    @staticmethod
+    def current_airlift_capacity(control_point: ControlPoint) -> int:
         return sum(
-            count
-            for unit_type, count in inventory.all_aircraft
-            if unit_type in unit_types
+            s.owned_aircraft
+            for s in control_point.squadrons
+            if s.can_auto_assign(FlightType.TRANSPORT)
         )
 
     def order_airlift_assets_at(self, control_point: ControlPoint) -> None:

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import logging
+from enum import Enum
+from typing import TypeVar, Generic
+
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
     QGroupBox,
@@ -11,15 +14,15 @@ from PySide2.QtWidgets import (
     QSpacerItem,
     QGridLayout,
     QApplication,
+    QFrame,
+    QMessageBox,
 )
 
 from game.dcs.unittype import UnitType
-from game.theater import ControlPoint
-from game.unitdelivery import PendingUnitDeliveries
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QUnitInfoWindow import QUnitInfoWindow
-from enum import Enum
+from game.purchaseadapter import PurchaseAdapter, TransactionError
 
 
 class RecruitType(Enum):
@@ -27,21 +30,28 @@ class RecruitType(Enum):
     SELL = 1
 
 
-class PurchaseGroup(QGroupBox):
-    def __init__(self, unit_type: UnitType, recruiter: QRecruitBehaviour) -> None:
+TransactionItemType = TypeVar("TransactionItemType")
+
+
+class PurchaseGroup(QGroupBox, Generic[TransactionItemType]):
+    def __init__(
+        self,
+        item: TransactionItemType,
+        recruiter: UnitTransactionFrame[TransactionItemType],
+    ) -> None:
         super().__init__()
-        self.unit_type = unit_type
+        self.item = item
         self.recruiter = recruiter
 
         self.setProperty("style", "buy-box")
-        self.setMaximumHeight(36)
+        self.setMaximumHeight(72)
         self.setMinimumHeight(36)
         layout = QHBoxLayout()
         self.setLayout(layout)
 
         self.sell_button = QPushButton("-")
         self.sell_button.setProperty("style", "btn-sell")
-        self.sell_button.setDisabled(not recruiter.enable_sale(unit_type))
+        self.sell_button.setDisabled(not recruiter.enable_sale(item))
         self.sell_button.setMinimumSize(16, 16)
         self.sell_button.setMaximumSize(16, 16)
         self.sell_button.setSizePolicy(
@@ -49,7 +59,7 @@ class PurchaseGroup(QGroupBox):
         )
 
         self.sell_button.clicked.connect(
-            lambda: self.recruiter.recruit_handler(RecruitType.SELL, self.unit_type)
+            lambda: self.recruiter.recruit_handler(RecruitType.SELL, self.item)
         )
 
         self.amount_bought = QLabel()
@@ -59,12 +69,12 @@ class PurchaseGroup(QGroupBox):
 
         self.buy_button = QPushButton("+")
         self.buy_button.setProperty("style", "btn-buy")
-        self.buy_button.setDisabled(not recruiter.enable_purchase(unit_type))
+        self.buy_button.setDisabled(not recruiter.enable_purchase(item))
         self.buy_button.setMinimumSize(16, 16)
         self.buy_button.setMaximumSize(16, 16)
 
         self.buy_button.clicked.connect(
-            lambda: self.recruiter.recruit_handler(RecruitType.BUY, self.unit_type)
+            lambda: self.recruiter.recruit_handler(RecruitType.BUY, self.item)
         )
         self.buy_button.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
@@ -76,36 +86,53 @@ class PurchaseGroup(QGroupBox):
 
     @property
     def pending_units(self) -> int:
-        return self.recruiter.pending_deliveries.units.get(self.unit_type, 0)
+        return self.recruiter.pending_delivery_quantity(self.item)
 
     def update_state(self) -> None:
-        self.buy_button.setEnabled(self.recruiter.enable_purchase(self.unit_type))
+        self.buy_button.setEnabled(self.recruiter.enable_purchase(self.item))
         self.buy_button.setToolTip(
             self.recruiter.purchase_tooltip(self.buy_button.isEnabled())
         )
-        self.sell_button.setEnabled(self.recruiter.enable_sale(self.unit_type))
+        self.sell_button.setEnabled(self.recruiter.enable_sale(self.item))
         self.sell_button.setToolTip(
             self.recruiter.sell_tooltip(self.sell_button.isEnabled())
         )
         self.amount_bought.setText(f"<b>{self.pending_units}</b>")
 
 
-class QRecruitBehaviour:
-    game_model: GameModel
-    cp: ControlPoint
-    purchase_groups: dict[UnitType, PurchaseGroup]
-    existing_units_labels = None
-    maximum_units = -1
+class UnitTransactionFrame(QFrame, Generic[TransactionItemType]):
     BUDGET_FORMAT = "Available Budget: <b>${:.2f}M</b>"
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        game_model: GameModel,
+        purchase_adapter: PurchaseAdapter[TransactionItemType],
+    ) -> None:
+        super().__init__()
+        self.game_model = game_model
+        self.purchase_adapter = purchase_adapter
         self.existing_units_labels = {}
-        self.purchase_groups = {}
+        self.purchase_groups: dict[
+            TransactionItemType, PurchaseGroup[TransactionItemType]
+        ] = {}
         self.update_available_budget()
 
-    @property
-    def pending_deliveries(self) -> PendingUnitDeliveries:
-        return self.cp.pending_unit_deliveries
+    def current_quantity_of(self, item: TransactionItemType) -> int:
+        return self.purchase_adapter.current_quantity_of(item)
+
+    def pending_delivery_quantity(self, item: TransactionItemType) -> int:
+        return self.purchase_adapter.pending_delivery_quantity(item)
+
+    def expected_quantity_next_turn(self, item: TransactionItemType) -> int:
+        return self.purchase_adapter.expected_quantity_next_turn(item)
+
+    def display_name_of(
+        self, item: TransactionItemType, multiline: bool = False
+    ) -> str:
+        return self.purchase_adapter.name_of(item, multiline)
+
+    def price_of(self, item: TransactionItemType) -> int:
+        return self.purchase_adapter.price_of(item)
 
     @property
     def budget(self) -> float:
@@ -117,20 +144,20 @@ class QRecruitBehaviour:
 
     def add_purchase_row(
         self,
-        unit_type: UnitType,
+        item: TransactionItemType,
         layout: QGridLayout,
         row: int,
     ) -> None:
         exist = QGroupBox()
         exist.setProperty("style", "buy-box")
-        exist.setMaximumHeight(36)
+        exist.setMaximumHeight(72)
         exist.setMinimumHeight(36)
         existLayout = QHBoxLayout()
         exist.setLayout(existLayout)
 
-        existing_units = self.cp.base.total_units_of_type(unit_type)
+        existing_units = self.current_quantity_of(item)
 
-        unitName = QLabel(f"<b>{unit_type.name}</b>")
+        unitName = QLabel(f"<b>{self.display_name_of(item, multiline=True)}</b>")
         unitName.setSizePolicy(
             QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         )
@@ -138,17 +165,17 @@ class QRecruitBehaviour:
         existing_units = QLabel(str(existing_units))
         existing_units.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
-        self.existing_units_labels[unit_type] = existing_units
+        self.existing_units_labels[item] = existing_units
 
-        price = QLabel(f"<b>$ {unit_type.price}</b> M")
+        price = QLabel(f"<b>$ {self.price_of(item)}</b> M")
         price.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
-        purchase_group = PurchaseGroup(unit_type, self)
-        self.purchase_groups[unit_type] = purchase_group
+        purchase_group = PurchaseGroup(item, self)
+        self.purchase_groups[item] = purchase_group
 
         info = QGroupBox()
         info.setProperty("style", "buy-box")
-        info.setMaximumHeight(36)
+        info.setMaximumHeight(72)
         info.setMinimumHeight(36)
         infolayout = QHBoxLayout()
         info.setLayout(infolayout)
@@ -157,7 +184,7 @@ class QRecruitBehaviour:
         unitInfo.setProperty("style", "btn-info")
         unitInfo.setMinimumSize(16, 16)
         unitInfo.setMaximumSize(16, 16)
-        unitInfo.clicked.connect(lambda: self.info(unit_type))
+        unitInfo.clicked.connect(lambda: self.info(item))
         unitInfo.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
         existLayout.addWidget(unitName)
@@ -179,7 +206,9 @@ class QRecruitBehaviour:
     def update_available_budget(self) -> None:
         GameUpdateSignal.get_instance().updateBudget(self.game_model.game)
 
-    def recruit_handler(self, recruit_type: RecruitType, unit_type: UnitType) -> None:
+    def recruit_handler(
+        self, recruit_type: RecruitType, item: TransactionItemType
+    ) -> None:
         # Lookup if Keyboard Modifiers were pressed
         # Shift = 10 times
         # CTRL = 5 Times
@@ -191,51 +220,54 @@ class QRecruitBehaviour:
         else:
             amount = 1
 
-        for i in range(amount):
-            if recruit_type == RecruitType.SELL:
-                if not self.sell(unit_type):
-                    return
-            elif recruit_type == RecruitType.BUY:
-                if not self.buy(unit_type):
-                    return
+        if recruit_type == RecruitType.SELL:
+            self.sell(item, amount)
+        elif recruit_type == RecruitType.BUY:
+            self.buy(item, amount)
 
-    def buy(self, unit_type: UnitType) -> bool:
-
-        if not self.enable_purchase(unit_type):
-            logging.error(f"Purchase of {unit_type} not allowed at {self.cp.name}")
-            return False
-
-        self.pending_deliveries.order({unit_type: 1})
-        self.budget -= unit_type.price
+    def post_transaction_update(self) -> None:
         self.update_purchase_controls()
         self.update_available_budget()
+
+    def buy(self, item: TransactionItemType, quantity: int) -> bool:
+        try:
+            self.purchase_adapter.buy(item, quantity)
+        except TransactionError as ex:
+            logging.exception(f"Purchase of {self.display_name_of(item)} failed")
+            QMessageBox.warning(self, "Purchase failed", str(ex), QMessageBox.Ok)
+            return False
+        self.post_transaction_update()
         return True
 
-    def sell(self, unit_type: UnitType) -> bool:
-        if self.pending_deliveries.available_next_turn(unit_type) > 0:
-            self.budget += unit_type.price
-            self.pending_deliveries.sell({unit_type: 1})
-        self.update_purchase_controls()
-        self.update_available_budget()
+    def sell(self, item: TransactionItemType, quantity: int) -> bool:
+        try:
+            self.purchase_adapter.sell(item, quantity)
+        except TransactionError as ex:
+            logging.exception(f"Sale of {self.display_name_of(item)} failed")
+            QMessageBox.warning(self, "Sale failed", str(ex), QMessageBox.Ok)
+            return False
+        self.post_transaction_update()
         return True
 
     def update_purchase_controls(self) -> None:
         for group in self.purchase_groups.values():
             group.update_state()
 
-    def enable_purchase(self, unit_type: UnitType) -> bool:
-        return self.budget >= unit_type.price
+    def enable_purchase(self, item: TransactionItemType) -> bool:
+        return self.purchase_adapter.can_buy(item)
 
-    def enable_sale(self, unit_type: UnitType) -> bool:
-        return True
+    def enable_sale(self, item: TransactionItemType) -> bool:
+        return self.purchase_adapter.can_sell_or_cancel(item)
 
-    def purchase_tooltip(self, is_enabled: bool) -> str:
+    @staticmethod
+    def purchase_tooltip(is_enabled: bool) -> str:
         if is_enabled:
             return "Buy unit. Use Shift or Ctrl key to buy multiple units at once."
         else:
             return "Unit can not be bought."
 
-    def sell_tooltip(self, is_enabled: bool) -> str:
+    @staticmethod
+    def sell_tooltip(is_enabled: bool) -> str:
         if is_enabled:
             return "Sell unit. Use Shift or Ctrl key to buy multiple units at once."
         else:
@@ -244,9 +276,3 @@ class QRecruitBehaviour:
     def info(self, unit_type: UnitType) -> None:
         self.info_window = QUnitInfoWindow(self.game_model.game, unit_type)
         self.info_window.show()
-
-    def set_maximum_units(self, maximum_units):
-        """
-        Set the maximum number of units that can be bought
-        """
-        self.maximum_units = maximum_units

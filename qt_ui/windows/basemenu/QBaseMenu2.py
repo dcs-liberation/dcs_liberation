@@ -24,7 +24,7 @@ from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.NewUnitTransferDialog import NewUnitTransferDialog
 from qt_ui.windows.basemenu.QBaseMenuTabs import QBaseMenuTabs
-from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
+from qt_ui.windows.basemenu.UnitTransactionFrame import UnitTransactionFrame
 
 
 class QBaseMenu2(QDialog):
@@ -108,7 +108,7 @@ class QBaseMenu2(QDialog):
             capture_button.clicked.connect(self.cheat_capture)
 
         self.budget_display = QLabel(
-            QRecruitBehaviour.BUDGET_FORMAT.format(self.game_model.game.blue.budget)
+            UnitTransactionFrame.BUDGET_FORMAT.format(self.game_model.game.blue.budget)
         )
         self.budget_display.setAlignment(Qt.AlignRight | Qt.AlignBottom)
         self.budget_display.setProperty("style", "budget-label")
@@ -190,7 +190,7 @@ class QBaseMenu2(QDialog):
         self.repair_button.setDisabled(True)
 
     def update_intel_summary(self) -> None:
-        aircraft = self.cp.base.total_aircraft
+        aircraft = self.cp.allocated_aircraft(self.game_model.game).total_present
         parking = self.cp.total_aircraft_parking
         ground_unit_limit = self.cp.frontline_unit_count_limit
         deployable_unit_info = ""
@@ -258,5 +258,5 @@ class QBaseMenu2(QDialog):
 
     def update_budget(self, game: Game) -> None:
         self.budget_display.setText(
-            QRecruitBehaviour.BUDGET_FORMAT.format(game.blue.budget)
+            UnitTransactionFrame.BUDGET_FORMAT.format(game.blue.budget)
         )

@@ -7,7 +7,6 @@ from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from game import db
 from game.data.groundunitclass import GroundUnitClass
-from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.squadrons import Squadron
@@ -98,36 +97,9 @@ class ProcurementAi:
             budget -= armor_budget
             budget += self.reinforce_front_line(armor_budget)
 
-        # Don't sell overstock aircraft until after we've bought runways and
-        # front lines. Any budget we free up should be earmarked for aircraft.
-        if not self.is_player:
-            budget += self.sell_incomplete_squadrons()
         if self.manage_aircraft:
             budget = self.purchase_aircraft(budget)
         return budget
-
-    def sell_incomplete_squadrons(self) -> float:
-        # Selling incomplete squadrons gives us more money to spend on the next
-        # turn. This serves as a short term fix for
-        # https://github.com/dcs-liberation/dcs_liberation/issues/41.
-        #
-        # Only incomplete squadrons which are unlikely to get used will be sold
-        # rather than all unused aircraft because the unused aircraft are what
-        # make OCA strikes worthwhile.
-        #
-        # This option is only used by the AI since players cannot cancel sales
-        # (https://github.com/dcs-liberation/dcs_liberation/issues/365).
-        total = 0.0
-        for cp in self.game.theater.control_points_for(self.is_player):
-            inventory = self.game.aircraft_inventory.for_control_point(cp)
-            for aircraft, available in inventory.all_aircraft:
-                # We only ever plan even groups, so the odd aircraft is unlikely
-                # to get used.
-                if available % 2 == 0:
-                    continue
-                inventory.remove_aircraft(aircraft, 1)
-                total += aircraft.price
-        return total
 
     def repair_runways(self, budget: float) -> float:
         for control_point in self.owned_points:
@@ -181,7 +153,7 @@ class ProcurementAi:
                 break
 
             budget -= unit.price
-            cp.pending_unit_deliveries.order({unit: 1})
+            cp.ground_unit_orders.order({unit: 1})
 
         return budget
 
@@ -211,64 +183,28 @@ class ProcurementAi:
         return worst_balanced
 
     @staticmethod
-    def _compatible_squadron_at(
-        aircraft: AircraftType, airbase: ControlPoint, task: FlightType, count: int
-    ) -> Optional[Squadron]:
-        for squadron in airbase.squadrons:
-            if squadron.aircraft != aircraft:
-                continue
-            if not squadron.can_auto_assign(task):
-                continue
-            if not squadron.can_provide_pilots(count):
-                continue
-            return squadron
-        return None
-
-    def affordable_aircraft_for(
-        self, request: AircraftProcurementRequest, airbase: ControlPoint, budget: float
-    ) -> Optional[AircraftType]:
-        for unit in aircraft_for_task(request.task_capability):
-            if unit.price * request.number > budget:
-                continue
-
-            squadron = self._compatible_squadron_at(
-                unit, airbase, request.task_capability, request.number
-            )
-            if squadron is None:
-                continue
-
-            distance_to_target = meters(request.near.distance_to(airbase))
-            if distance_to_target > unit.max_mission_range:
-                continue
-
-            # Affordable, compatible, and we have a squadron capable of the task.
-            return unit
-        return None
-
     def fulfill_aircraft_request(
-        self, request: AircraftProcurementRequest, budget: float
+        squadrons: list[Squadron], quantity: int, budget: float
     ) -> Tuple[float, bool]:
-        for airbase in self.best_airbases_for(request):
-            unit = self.affordable_aircraft_for(request, airbase, budget)
-            if unit is None:
-                # Can't afford any aircraft capable of performing the
-                # required mission that can operate from this airbase. We
-                # might be able to afford aircraft at other airbases though,
-                # in the case where the airbase we attempted to use is only
-                # able to operate expensive aircraft.
+        for squadron in squadrons:
+            price = squadron.aircraft.price * quantity
+            if price > budget:
                 continue
 
-            budget -= unit.price * request.number
-            airbase.pending_unit_deliveries.order({unit: request.number})
+            squadron.pending_deliveries += quantity
+            budget -= price
             return budget, True
         return budget, False
 
     def purchase_aircraft(self, budget: float) -> float:
         for request in self.game.coalition_for(self.is_player).procurement_requests:
-            if not list(self.best_airbases_for(request)):
+            squadrons = list(self.best_squadrons_for(request))
+            if not squadrons:
                 # No airbases in range of this request. Skip it.
                 continue
-            budget, fulfilled = self.fulfill_aircraft_request(request, budget)
+            budget, fulfilled = self.fulfill_aircraft_request(
+                squadrons, request.number, budget
+            )
             if not fulfilled:
                 # The request was not fulfilled because we could not afford any suitable
                 # aircraft. Rather than continuing, which could proceed to buy tons of
@@ -285,9 +221,32 @@ class ProcurementAi:
         else:
             return self.game.theater.enemy_points()
 
-    def best_airbases_for(
+    @staticmethod
+    def squadron_rank_for_task(squadron: Squadron, task: FlightType) -> int:
+        return aircraft_for_task(task).index(squadron.aircraft)
+
+    def compatible_squadrons_at_airbase(
+        self, airbase: ControlPoint, request: AircraftProcurementRequest
+    ) -> Iterator[Squadron]:
+        compatible: list[Squadron] = []
+        for squadron in airbase.squadrons:
+            if not squadron.can_auto_assign(request.task_capability):
+                continue
+            if not squadron.can_provide_pilots(request.number):
+                continue
+
+            distance_to_target = meters(request.near.distance_to(airbase))
+            if distance_to_target > squadron.aircraft.max_mission_range:
+                continue
+            compatible.append(squadron)
+        yield from sorted(
+            compatible,
+            key=lambda s: self.squadron_rank_for_task(s, request.task_capability),
+        )
+
+    def best_squadrons_for(
         self, request: AircraftProcurementRequest
-    ) -> Iterator[ControlPoint]:
+    ) -> Iterator[Squadron]:
         distance_cache = ObjectiveDistanceCache.get_closest_airfields(request.near)
         threatened = []
         for cp in distance_cache.operational_airfields:
@@ -297,8 +256,10 @@ class ProcurementAi:
                 continue
             if self.threat_zones.threatened(cp.position):
                 threatened.append(cp)
-            yield cp
-        yield from threatened
+                continue
+            yield from self.compatible_squadrons_at_airbase(cp, request)
+        for threatened_base in threatened:
+            yield from self.compatible_squadrons_at_airbase(threatened_base, request)
 
     def ground_reinforcement_candidate(self) -> Optional[ControlPoint]:
         worst_supply = math.inf

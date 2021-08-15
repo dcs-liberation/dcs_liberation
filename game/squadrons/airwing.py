@@ -5,12 +5,12 @@ from collections import defaultdict
 from typing import Sequence, Iterator, TYPE_CHECKING
 
 from game.dcs.aircrafttype import AircraftType
-from gen.flights.flight import FlightType
 from .squadron import Squadron
 from ..theater import ControlPoint
 
 if TYPE_CHECKING:
     from game import Game
+    from gen.flights.flight import FlightType
 
 
 class AirWing:
@@ -32,9 +32,24 @@ class AirWing:
         except StopIteration:
             return False
 
+    @property
+    def available_aircraft_types(self) -> Iterator[AircraftType]:
+        for aircraft, squadrons in self.squadrons.items():
+            for squadron in squadrons:
+                if squadron.untasked_aircraft:
+                    yield aircraft
+                    break
+
     def auto_assignable_for_task(self, task: FlightType) -> Iterator[Squadron]:
         for squadron in self.iter_squadrons():
             if squadron.can_auto_assign(task):
+                yield squadron
+
+    def auto_assignable_for_task_at(
+        self, task: FlightType, base: ControlPoint
+    ) -> Iterator[Squadron]:
+        for squadron in self.iter_squadrons():
+            if squadron.can_auto_assign(task) and squadron.location == base:
                 yield squadron
 
     def auto_assignable_for_task_with_type(
@@ -67,7 +82,7 @@ class AirWing:
 
     def reset(self) -> None:
         for squadron in self.iter_squadrons():
-            squadron.return_all_pilots()
+            squadron.return_all_pilots_and_aircraft()
 
     @property
     def size(self) -> int:

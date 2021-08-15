@@ -53,8 +53,6 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
     def execute(self, coalition: Coalition) -> None:
         if self.package is None:
             raise RuntimeError("Attempted to execute failed package planning task")
-        for flight in self.package.flights:
-            coalition.aircraft_inventory.claim_for_flight(flight)
         coalition.ato.add_package(self.package)
 
     @abstractmethod
@@ -99,7 +97,6 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         fulfiller = PackageFulfiller(
             state.context.coalition,
             state.context.theater,
-            state.available_aircraft,
             state.context.settings,
         )
         self.package = fulfiller.plan_mission(

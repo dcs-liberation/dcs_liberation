@@ -290,6 +290,7 @@ class Flight:
         self.package = package
         self.country = country
         self.squadron = squadron
+        self.squadron.claim_inventory(count)
         if roster is None:
             self.roster = FlightRoster(self.squadron, initial_size=count)
         else:
@@ -338,6 +339,7 @@ class Flight:
         return self.flight_plan.waypoints[1:]
 
     def resize(self, new_size: int) -> None:
+        self.squadron.claim_inventory(new_size - self.count)
         self.roster.resize(new_size)
 
     def set_pilot(self, index: int, pilot: Optional[Pilot]) -> None:
@@ -347,8 +349,9 @@ class Flight:
     def missing_pilots(self) -> int:
         return self.roster.missing_pilots
 
-    def clear_roster(self) -> None:
+    def return_pilots_and_aircraft(self) -> None:
         self.roster.clear()
+        self.squadron.claim_inventory(-self.count)
 
     def __repr__(self) -> str:
         if self.custom_name:

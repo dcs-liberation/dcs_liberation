@@ -54,6 +54,10 @@ class Squadron:
 
     location: ControlPoint
 
+    owned_aircraft: int = field(init=False, hash=False, compare=False, default=0)
+    untasked_aircraft: int = field(init=False, hash=False, compare=False, default=0)
+    pending_deliveries: int = field(init=False, hash=False, compare=False, default=0)
+
     def __post_init__(self) -> None:
         self.auto_assignable_mission_types = set(self.mission_types)
 
@@ -61,6 +65,17 @@ class Squadron:
         if self.nickname is None:
             return self.name
         return f'{self.name} "{self.nickname}"'
+
+    def __hash__(self) -> int:
+        return hash(
+            (
+                self.name,
+                self.nickname,
+                self.country,
+                self.role,
+                self.aircraft,
+            )
+        )
 
     @property
     def player(self) -> bool:
@@ -165,8 +180,9 @@ class Squadron:
         if replenish_count > 0:
             self._recruit_pilots(replenish_count)
 
-    def return_all_pilots(self) -> None:
+    def return_all_pilots_and_aircraft(self) -> None:
         self.available_pilots = list(self.active_pilots)
+        self.untasked_aircraft = self.owned_aircraft
 
     @staticmethod
     def send_on_leave(pilot: Pilot) -> None:
@@ -237,6 +253,29 @@ class Squadron:
 
     def pilot_at_index(self, index: int) -> Pilot:
         return self.current_roster[index]
+
+    def claim_inventory(self, count: int) -> None:
+        if self.untasked_aircraft < count:
+            raise ValueError(
+                f"Cannot remove {count} from {self.name}. Only have "
+                f"{self.untasked_aircraft}."
+            )
+        self.untasked_aircraft -= count
+
+    def can_fulfill_flight(self, count: int) -> bool:
+        return self.can_provide_pilots(count) and self.untasked_aircraft >= count
+
+    def refund_orders(self) -> None:
+        self.coalition.adjust_budget(self.aircraft.price * self.pending_deliveries)
+        self.pending_deliveries = 0
+
+    def deliver_orders(self) -> None:
+        self.owned_aircraft += self.pending_deliveries
+        self.pending_deliveries = 0
+
+    @property
+    def max_fulfillable_aircraft(self) -> int:
+        return max(self.number_of_available_pilots, self.untasked_aircraft)
 
     @classmethod
     def create_from(

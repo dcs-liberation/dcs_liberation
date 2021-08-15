@@ -1,30 +1,27 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import (
-    QFrame,
-    QGridLayout,
-    QScrollArea,
-    QVBoxLayout,
-    QWidget,
-)
+from PySide2.QtWidgets import QGridLayout, QScrollArea, QVBoxLayout, QWidget
 
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
-from qt_ui.windows.basemenu.QRecruitBehaviour import QRecruitBehaviour
+from qt_ui.windows.basemenu.UnitTransactionFrame import UnitTransactionFrame
+from game.purchaseadapter import GroundUnitPurchaseAdapter
 
 
-class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
+class QArmorRecruitmentMenu(UnitTransactionFrame[GroundUnitType]):
     def __init__(self, cp: ControlPoint, game_model: GameModel):
-        QFrame.__init__(self)
+        super().__init__(
+            game_model,
+            GroundUnitPurchaseAdapter(
+                cp, game_model.game.coalition_for(cp.captured), game_model.game
+            ),
+        )
         self.cp = cp
         self.game_model = game_model
         self.purchase_groups = {}
         self.bought_amount_labels = {}
         self.existing_units_labels = {}
 
-        self.init_ui()
-
-    def init_ui(self):
         main_layout = QVBoxLayout()
 
         scroll_content = QWidget()
@@ -50,11 +47,3 @@ class QArmorRecruitmentMenu(QFrame, QRecruitBehaviour):
         scroll.setWidget(scroll_content)
         main_layout.addWidget(scroll)
         self.setLayout(main_layout)
-
-    def enable_purchase(self, unit_type: GroundUnitType) -> bool:
-        if not super().enable_purchase(unit_type):
-            return False
-        return self.cp.has_ground_unit_source(self.game_model.game)
-
-    def enable_sale(self, unit_type: GroundUnitType) -> bool:
-        return self.pending_deliveries.pending_orders(unit_type) > 0

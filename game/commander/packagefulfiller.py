@@ -5,15 +5,14 @@ from collections import defaultdict
 from typing import Set, Iterable, Dict, TYPE_CHECKING, Optional
 
 from game.commander.missionproposals import ProposedMission, ProposedFlight, EscortType
+from game.commander.packagebuilder import PackageBuilder
 from game.data.doctrine import Doctrine
-from game.inventory import GlobalAircraftInventory
 from game.procurement import AircraftProcurementRequest
 from game.profiling import MultiEventTracer
 from game.settings import Settings
 from game.squadrons import AirWing
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
-from game.commander.packagebuilder import PackageBuilder
 from gen.ato import AirTaskingOrder, Package
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
@@ -27,15 +26,10 @@ class PackageFulfiller:
     """Responsible for package aircraft allocation and flight plan layout."""
 
     def __init__(
-        self,
-        coalition: Coalition,
-        theater: ConflictTheater,
-        aircraft_inventory: GlobalAircraftInventory,
-        settings: Settings,
+        self, coalition: Coalition, theater: ConflictTheater, settings: Settings
     ) -> None:
         self.coalition = coalition
         self.theater = theater
-        self.aircraft_inventory = aircraft_inventory
         self.player_missions_asap = settings.auto_ato_player_missions_asap
         self.default_start_type = settings.default_start_type
 
@@ -137,7 +131,6 @@ class PackageFulfiller:
         builder = PackageBuilder(
             mission.location,
             ObjectiveDistanceCache.get_closest_airfields(mission.location),
-            self.aircraft_inventory,
             self.air_wing,
             self.is_player,
             self.coalition.country_name,

@@ -10,7 +10,6 @@ from game.campaignloader.defaultsquadronassigner import DefaultSquadronAssigner
 from game.commander import TheaterCommander
 from game.commander.missionscheduler import MissionScheduler
 from game.income import Income
-from game.inventory import GlobalAircraftInventory
 from game.navmesh import NavMesh
 from game.orderedset import OrderedSet
 from game.profiling import logged_duration, MultiEventTracer
@@ -87,10 +86,6 @@ class Coalition:
     def nav_mesh(self) -> NavMesh:
         assert self._navmesh is not None
         return self._navmesh
-
-    @property
-    def aircraft_inventory(self) -> GlobalAircraftInventory:
-        return self.game.aircraft_inventory
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
@@ -196,7 +191,9 @@ class Coalition:
             return
 
         for cp in self.game.theater.control_points_for(self.player):
-            cp.pending_unit_deliveries.refund_all(self)
+            cp.ground_unit_orders.refund_all(self)
+        for squadron in self.air_wing.iter_squadrons():
+            squadron.refund_orders()
 
     def plan_missions(self) -> None:
         color = "Blue" if self.player else "Red"

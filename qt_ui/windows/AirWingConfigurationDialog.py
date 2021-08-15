@@ -122,14 +122,6 @@ class SquadronBaseSelector(QComboBox):
         self.model().sort(0)
         self.setCurrentText(self.squadron.location.name)
 
-    @property
-    def available(self) -> int:
-        origin = self.currentData()
-        if origin is None:
-            return 0
-        inventory = self.global_inventory.for_control_point(origin)
-        return inventory.available(self.aircraft)
-
 
 class SquadronConfigurationBox(QGroupBox):
     def __init__(self, squadron: Squadron, theater: ConflictTheater) -> None:

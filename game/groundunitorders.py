@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING
 
 from game.theater import ControlPoint
 from .coalition import Coalition
 from .dcs.groundunittype import GroundUnitType
-from .dcs.unittype import UnitType
 from .theater.transitnetwork import (
     NoPathError,
     TransitNetwork,
@@ -19,57 +17,40 @@ if TYPE_CHECKING:
     from .game import Game
 
 
-@dataclass(frozen=True)
-class GroundUnitSource:
-    control_point: ControlPoint
-
-
-class PendingUnitDeliveries:
+class GroundUnitOrders:
     def __init__(self, destination: ControlPoint) -> None:
         self.destination = destination
 
         # Maps unit type to order quantity.
-        self.units: dict[UnitType[Any], int] = defaultdict(int)
+        self.units: dict[GroundUnitType, int] = defaultdict(int)
 
     def __str__(self) -> str:
-        return f"Pending delivery to {self.destination}"
+        return f"Pending ground unit delivery to {self.destination}"
 
-    def order(self, units: dict[UnitType[Any], int]) -> None:
+    def order(self, units: dict[GroundUnitType, int]) -> None:
         for k, v in units.items():
             self.units[k] += v
 
-    def sell(self, units: dict[UnitType[Any], int]) -> None:
+    def sell(self, units: dict[GroundUnitType, int]) -> None:
         for k, v in units.items():
             self.units[k] -= v
             if self.units[k] == 0:
                 del self.units[k]
 
     def refund_all(self, coalition: Coalition) -> None:
-        self.refund(coalition, self.units)
+        self._refund(coalition, self.units)
         self.units = defaultdict(int)
 
-    def refund_ground_units(self, coalition: Coalition) -> None:
-        ground_units: dict[UnitType[Any], int] = {
-            u: self.units[u] for u in self.units.keys() if isinstance(u, GroundUnitType)
-        }
-        self.refund(coalition, ground_units)
-        for gu in ground_units.keys():
-            del self.units[gu]
-
-    def refund(self, coalition: Coalition, units: dict[UnitType[Any], int]) -> None:
+    def _refund(self, coalition: Coalition, units: dict[GroundUnitType, int]) -> None:
         for unit_type, count in units.items():
             logging.info(f"Refunding {count} {unit_type} at {self.destination.name}")
             coalition.adjust_budget(unit_type.price * count)
 
-    def pending_orders(self, unit_type: UnitType[Any]) -> int:
+    def pending_orders(self, unit_type: GroundUnitType) -> int:
         pending_units = self.units.get(unit_type)
         if pending_units is None:
             pending_units = 0
         return pending_units
-
-    def available_next_turn(self, unit_type: UnitType[Any]) -> int:
-        current_units = self.destination.base.total_units_of_type(unit_type)
-        return self.pending_orders(unit_type) + current_units
 
     def process(self, game: Game) -> None:
         coalition = game.coalition_for(self.destination.captured)
@@ -79,36 +60,33 @@ class PendingUnitDeliveries:
                 f"{self.destination.name} lost its source for ground unit "
                 "reinforcements. Refunding purchase price."
             )
-            self.refund_ground_units(coalition)
+            self.refund_all(coalition)
 
-        bought_units: dict[UnitType[Any], int] = {}
+        bought_units: dict[GroundUnitType, int] = {}
         units_needing_transfer: dict[GroundUnitType, int] = {}
-        sold_units: dict[UnitType[Any], int] = {}
         for unit_type, count in self.units.items():
             allegiance = "Ally" if self.destination.captured else "Enemy"
-            d: dict[Any, int]
-            if (
-                isinstance(unit_type, GroundUnitType)
-                and self.destination != ground_unit_source
-            ):
+            d: dict[GroundUnitType, int]
+            if self.destination != ground_unit_source:
                 source = ground_unit_source
                 d = units_needing_transfer
             else:
                 source = self.destination
                 d = bought_units
 
-            if count >= 0:
+            if count < 0:
+                logging.error(
+                    f"Attempted sale of {unit_type} at {self.destination} but ground "
+                    "units cannot be sold"
+                )
+            elif count > 0:
                 d[unit_type] = count
                 game.message(
                     f"{allegiance} reinforcements: {unit_type} x {count} at {source}"
                 )
-            else:
-                sold_units[unit_type] = -count
-                game.message(f"{allegiance} sold: {unit_type} x {-count} at {source}")
 
         self.units = defaultdict(int)
         self.destination.base.commission_units(bought_units)
-        self.destination.base.commit_losses(sold_units)
 
         if units_needing_transfer:
             if ground_unit_source is None:
