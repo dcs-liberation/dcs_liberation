@@ -1,5 +1,6 @@
 carrier_capable: true
-description: 'The Su-33 has been the backbone of Russian aircraft carrier aviation
+description:
+  'The Su-33 has been the backbone of Russian aircraft carrier aviation
   since the late 1990s and is an all-weather fighter capable of engaging both air
   and surface targets. Based on the powerful Su-27 "Flanker", the Su-33 is a navalized
   version suited for operations aboard the Admiral Kuznetsov aircraft carrier. Changes
@@ -20,6 +21,7 @@ manufacturer: Sukhoi
 origin: USSR/Russia
 price: 22
 role: Carrier-based Multirole Fighter
+max_range: 300
 variants:
   J-15 Flanker X-2:
     introduced: 2013
