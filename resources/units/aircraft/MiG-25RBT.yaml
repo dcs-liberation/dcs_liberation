@@ -1,4 +1,5 @@
-description: "The Mikoyan-Gurevich MiG-25 (Russian: \u041C\u0438\u043A\u043E\u044F\
+description:
+  "The Mikoyan-Gurevich MiG-25 (Russian: \u041C\u0438\u043A\u043E\u044F\
   \u043D \u0438 \u0413\u0443\u0440\u0435\u0432\u0438\u0447 \u041C\u0438\u0413-25;\
   \ NATO reporting name: Foxbat) is a supersonic interceptor and reconnaissance aircraft\
   \ that was among the fastest military aircraft to enter service. It was designed\
@@ -24,5 +25,6 @@ manufacturer: Mikoyan-Gurevich
 origin: USSR/Russia
 price: 17
 role: Strike Fighter
+max_range: 500
 variants:
   MiG-25RBT Foxbat-B: {}

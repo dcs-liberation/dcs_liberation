@@ -1,4 +1,5 @@
-description: "The Sukhoi Su-34 (Russian: \u0421\u0443\u0445\u043E\u0439 \u0421\u0443\
+description:
+  "The Sukhoi Su-34 (Russian: \u0421\u0443\u0445\u043E\u0439 \u0421\u0443\
   -34; NATO reporting name: Fullback) is a Soviet-origin Russian twin-engine, twin-seat,\
   \ all-weather supersonic medium-range fighter-bomber/strike aircraft. It first flew\
   \ in 1990, intended for the Soviet Air Forces, and it entered service in 2014 with\
@@ -16,5 +17,6 @@ manufacturer: Sukhoi
 origin: USSR/Russia
 price: 26
 role: Fighter-Bomber/Strike Fighter
+max_range: 300
 variants:
   Su-34 Fullback: {}

@@ -1,5 +1,6 @@
 always_keeps_gun: true
-description: The Su-25 'Grach' (Rook), NATO callsigned 'Frogfoot', is a dedicated
+description:
+  The Su-25 'Grach' (Rook), NATO callsigned 'Frogfoot', is a dedicated
   strike attack aircraft designed for the close air support and anti-tank roles. The
   Su-25 has seen combat in several conflicts during its more than 30 years in service.
   The Su-25 combines excellent pilot protection and high speed compared to most dedicated
@@ -10,5 +11,6 @@ manufacturer: Sukhoi
 origin: USSR/Russia
 price: 11
 role: Close Air Support/Attack
+max_range: 200
 variants:
   Su-25 Frogfoot: {}
