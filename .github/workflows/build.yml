@@ -36,6 +36,11 @@ jobs:
       run: |
         ./venv/scripts/activate
         mypy gen
+
+    - name: mypy tests
+      run: |
+        ./venv/scripts/activate
+        mypy tests
       
     - name: update build number
       run: |
