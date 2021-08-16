@@ -1,0 +1,11 @@
+---
+name: 766th Squadron
+nickname: 766th
+country: Syria
+role: Attack Helicopter
+aircraft: Mi-24V Hind-E
+livery: "standard"
+mission_types:
+  - CAS
+  - BAI
+  - Transport

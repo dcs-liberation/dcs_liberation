@@ -1,0 +1,14 @@
+---
+name: 680th Squadron
+nickname: 680th
+country: Syria
+role: Air Superiority Fighter
+aircraft: MiG-21bis Fishbed-N
+livery: "Syria (2)"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
