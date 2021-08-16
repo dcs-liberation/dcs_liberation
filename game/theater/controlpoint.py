@@ -836,6 +836,11 @@ class Airfield(ControlPoint):
 
     @property
     def total_aircraft_parking(self) -> int:
+        """
+        Return total aircraft parking slots available
+        Note : additional helipads shouldn't contribute to this score as it could allow airfield
+        to buy more planes than what they are able to host
+        """
         return len(self.airport.parking_slots)
 
     @property
