@@ -32,6 +32,7 @@ from .seasonalconditions import SeasonalConditions
 if TYPE_CHECKING:
     from . import TheaterGroundObject
 
+
 @dataclass
 class ReferencePoint:
     world_coordinates: Point
