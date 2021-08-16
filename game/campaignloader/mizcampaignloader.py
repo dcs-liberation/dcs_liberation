@@ -45,7 +45,7 @@ class MizCampaignLoader:
     SHIPPING_LANE_UNIT_TYPE = HandyWind.id
 
     FOB_UNIT_TYPE = Unarmed.SKP_11.id
-    FARP_HELIPAD = "SINGLE_HELIPAD"
+    FARP_HELIPADS_TYPE = ["Invisible FARP", "SINGLE_HELIPAD"]
 
     OFFSHORE_STRIKE_TARGET_UNIT_TYPE = Fortification.Oil_platform.id
     SHIP_UNIT_TYPE = USS_Arleigh_Burke_IIa.id
@@ -213,7 +213,7 @@ class MizCampaignLoader:
     @property
     def helipads(self) -> Iterator[StaticGroup]:
         for group in self.blue.static_group:
-            if group.units[0].type == self.FARP_HELIPAD:
+            if group.units[0].type in self.FARP_HELIPADS_TYPE:
                 yield group
 
     @property
