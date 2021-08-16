@@ -1115,7 +1115,7 @@ class FlightPlanBuilder:
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        start_pos, end_pos = self.racetrack_for_objective(location, barcap=True)
+        start_pos, end_pos = self.cap_racetrack_for_objective(location, barcap=True)
 
         preferred_alt = flight.unit_type.preferred_patrol_altitude
         randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
@@ -1244,7 +1244,7 @@ class FlightPlanBuilder:
             bullseye=builder.bullseye(),
         )
 
-    def racetrack_for_objective(
+    def cap_racetrack_for_objective(
         self, location: MissionTarget, barcap: bool
     ) -> Tuple[Point, Point]:
         closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
@@ -1276,6 +1276,7 @@ class FlightPlanBuilder:
                 - self.doctrine.cap_engagement_range
                 - nautical_miles(5)
             )
+            max_track_length = self.doctrine.cap_max_track_length
         else:
             # Other race tracks (TARCAPs, currently) just try to keep some
             # distance from the nearest enemy airbase, but since they are by
@@ -1289,6 +1290,11 @@ class FlightPlanBuilder:
             )
             distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
 
+            # TARCAPs fly short racetracks because they need to react faster.
+            max_track_length = self.doctrine.cap_min_track_length + 0.3 * (
+                self.doctrine.cap_max_track_length - self.doctrine.cap_min_track_length
+            )
+
         min_cap_distance = min(
             self.doctrine.cap_min_distance_from_cp, distance_to_no_fly
         )
@@ -1300,11 +1306,12 @@ class FlightPlanBuilder:
             heading.degrees,
             random.randint(int(min_cap_distance.meters), int(max_cap_distance.meters)),
         )
-        diameter = random.randint(
+
+        track_length = random.randint(
             int(self.doctrine.cap_min_track_length.meters),
-            int(self.doctrine.cap_max_track_length.meters),
+            int(max_track_length.meters),
         )
-        start = end.point_from_heading(heading.opposite.degrees, diameter)
+        start = end.point_from_heading(heading.opposite.degrees, track_length)
         return start, end
 
     def aewc_orbit(self, location: MissionTarget) -> Point:
@@ -1327,19 +1334,6 @@ class FlightPlanBuilder:
             orbit_heading.degrees, orbit_distance.meters
         )
 
-    def cap_racetrack_for_frontline(
-        self, origin: Point, front_line: FrontLine
-    ) -> Tuple[Point, Point]:
-        hostile_cp = front_line.control_point_hostile_to(self.is_player)
-        frontline_center = front_line.position
-        heading = frontline_center.heading_between_point(hostile_cp.position)
-
-        # TODO: Use doctrine random distances
-        start = frontline_center.point_from_heading(heading, -20000)
-        end = frontline_center.point_from_heading(heading, -5000)
-
-        return start, end
-
     def generate_tarcap(self, flight: Flight) -> TarCapFlightPlan:
         """Generate a CAP flight plan for the given front line.
 
@@ -1361,13 +1355,7 @@ class FlightPlanBuilder:
 
         # Create points
         builder = WaypointBuilder(flight, self.coalition)
-
-        if isinstance(location, FrontLine):
-            orbit0p, orbit1p = self.cap_racetrack_for_frontline(
-                flight.departure.position, location
-            )
-        else:
-            orbit0p, orbit1p = self.racetrack_for_objective(location, barcap=False)
+        orbit0p, orbit1p = self.cap_racetrack_for_objective(location, barcap=False)
 
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
         return TarCapFlightPlan(
