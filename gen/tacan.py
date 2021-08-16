@@ -73,12 +73,13 @@ class TacanRegistry:
             self.band_allocators[band] = band.range()
 
     def alloc_for_band(
-        self, band: TacanBand, intendedUsage: TacanUsage
+        self, band: TacanBand, intended_usage: TacanUsage
     ) -> TacanChannel:
         """Allocates a TACAN channel in the given band.
 
         Args:
             band: The TACAN band to allocate a channel for.
+            intended_usage: What the caller intends to use the tacan channel for.
 
         Returns:
             A TACAN channel in the given band.
@@ -88,7 +89,7 @@ class TacanRegistry:
                 already allocated.
         """
         allocator = self.band_allocators[band]
-        unavailable = UNAVAILABLE[intendedUsage][band]
+        unavailable = UNAVAILABLE[intended_usage][band]
         try:
             while True:
                 channel = next(allocator)
@@ -100,24 +101,21 @@ class TacanRegistry:
         except StopIteration:
             raise OutOfTacanChannelsError(band)
 
-    def reserve(self, channel: TacanChannel, intendedUsage: TacanUsage) -> None:
+    def reserve(self, channel: TacanChannel, intended_usage: TacanUsage) -> None:
         """Reserves the given channel.
 
         Reserving a channel ensures that it will not be allocated in the future.
 
         Args:
             channel: The channel to reserve.
+            intended_usage: What the caller intends to use the tacan channel for.
 
         Raises:
             TacanChannelInUseError: The given frequency is already in use.
             TacanChannelForbiddenError: The given frequency is forbidden.
         """
-        print(f"Trying to reserve {channel}")
-        if channel.number in UNAVAILABLE[intendedUsage][channel.band]:
+        if channel.number in UNAVAILABLE[intended_usage][channel.band]:
             raise TacanChannelForbiddenError(channel)
-        print(
-            f"Channel {channel} not found in {UNAVAILABLE[intendedUsage][channel.band]}"
-        )
         if channel in self.allocated_channels:
             raise TacanChannelInUseError(channel)
         self.allocated_channels.add(channel)

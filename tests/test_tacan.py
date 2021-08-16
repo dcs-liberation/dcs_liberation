@@ -64,7 +64,6 @@ def test_reserve_invalid_a2a_channels() -> None:
         TacanChannel(99, TacanBand.Y),
     ]
     for chan in some_invalid_channels:
-        print("Testing", chan)
         with pytest.raises(TacanChannelForbiddenError):
             registry.reserve(chan, TacanUsage.AirToAir)
 
