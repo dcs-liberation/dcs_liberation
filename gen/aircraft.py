@@ -92,7 +92,7 @@ from gen.flights.flight import (
 from gen.lasercoderegistry import LaserCodeRegistry
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
-from gen.tacan import TacanBand, TacanRegistry
+from gen.tacan import TacanBand, TacanRegistry, TacanUsage
 from .airsupport import AirSupport, AwacsInfo, TankerInfo
 from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
@@ -435,7 +435,7 @@ class AircraftConflictGenerator:
         if isinstance(flight.flight_plan, RefuelingFlightPlan):
             callsign = callsign_for_support_unit(group)
 
-            tacan = self.tacan_registy.alloc_for_band(TacanBand.Y)
+            tacan = self.tacan_registy.alloc_for_band(TacanBand.Y, TacanUsage.AirToAir)
             self.air_support.tankers.append(
                 TankerInfo(
                     group_name=str(group.name),

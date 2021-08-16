@@ -90,7 +90,8 @@ class TacanRegistry:
         allocator = self.band_allocators[band]
         unavailable = UNAVAILABLE[intendedUsage][band]
         try:
-            while channel := next(allocator):
+            while True:
+                channel = next(allocator)
                 if (
                     channel not in self.allocated_channels
                     and channel.number not in unavailable
