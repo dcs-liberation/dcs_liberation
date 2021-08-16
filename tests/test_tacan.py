@@ -11,12 +11,27 @@ import pytest
 
 def test_allocate_first_few_channels() -> None:
     registry = TacanRegistry()
-    chan1 = registry.alloc_for_band(TacanBand.X)
-    chan2 = registry.alloc_for_band(TacanBand.X)
-    chan3 = registry.alloc_for_band(TacanBand.X)
+    chan1 = registry.alloc_for_band(TacanBand.X, TacanUsage.TransmitReceive)
+    chan2 = registry.alloc_for_band(TacanBand.X, TacanUsage.TransmitReceive)
+    chan3 = registry.alloc_for_band(TacanBand.X, TacanUsage.TransmitReceive)
     assert chan1 == TacanChannel(1, TacanBand.X)
     assert chan2 == TacanChannel(31, TacanBand.X)
     assert chan3 == TacanChannel(32, TacanBand.X)
+
+
+@pytest.mark.skip(reason="TODO")
+def test_reserve_all_valid_transmit_receive() -> None:
+    pass
+
+
+@pytest.mark.skip(reason="TODO")
+def test_reserve_all_valid_a2a() -> None:
+    pass
+
+
+@pytest.mark.skip(reason="TODO")
+def test_allocate_all() -> None:
+    pass
 
 
 def test_reserve_invalid_tr_channels() -> None:
@@ -49,6 +64,7 @@ def test_reserve_invalid_a2a_channels() -> None:
         TacanChannel(99, TacanBand.Y),
     ]
     for chan in some_invalid_channels:
+        print("Testing", chan)
         with pytest.raises(TacanChannelForbiddenError):
             registry.reserve(chan, TacanUsage.AirToAir)
 

@@ -14,19 +14,21 @@ class TacanBand(Enum):
 
 
 class TacanUsage(Enum):
-    TransmitReceive = "TransmitReceive"
-    AirToAir = "AirToAir"
+    TransmitReceive = "transmit receive"
+    AirToAir = "air to air"
 
 
 # Avoid certain TACAN channels for various reasons
 # https://forums.eagle.ru/topic/276390-datalink-issue/
-UNAVAILABLE_T_R = {
-    TacanBand.X: set(range(2, 30)) | set(range(47, 63)),
-    TacanBand.Y: set(range(2, 30)) | set(range(64, 92)),
-}
-UNAVAILABLE_A2A = {
-    TacanBand.X: set(range(1, 36)) | set(range(64, 99)),
-    TacanBand.Y: set(range(1, 36)) | set(range(64, 99)),
+UNAVAILABLE = {
+    TacanUsage.TransmitReceive: {
+        TacanBand.X: set(range(2, 30 + 1)) | set(range(47, 63 + 1)),
+        TacanBand.Y: set(range(2, 30 + 1)) | set(range(64, 92 + 1)),
+    },
+    TacanUsage.AirToAir: {
+        TacanBand.X: set(range(1, 36 + 1)) | set(range(64, 99 + 1)),
+        TacanBand.Y: set(range(1, 36 + 1)) | set(range(64, 99 + 1)),
+    },
 }
 
 
@@ -70,7 +72,9 @@ class TacanRegistry:
         for band in TacanBand:
             self.band_allocators[band] = band.range()
 
-    def alloc_for_band(self, band: TacanBand) -> TacanChannel:
+    def alloc_for_band(
+        self, band: TacanBand, intendedUsage: TacanUsage
+    ) -> TacanChannel:
         """Allocates a TACAN channel in the given band.
 
         Args:
@@ -84,10 +88,14 @@ class TacanRegistry:
                 already allocated.
         """
         allocator = self.band_allocators[band]
+        unavailable = UNAVAILABLE[intendedUsage][band]
         try:
-            while (channel := next(allocator)) in self.allocated_channels:
-                pass
-            return channel
+            while channel := next(allocator):
+                if (
+                    channel not in self.allocated_channels
+                    and channel.number not in unavailable
+                ):
+                    return channel
         except StopIteration:
             raise OutOfTacanChannelsError(band)
 
@@ -103,6 +111,12 @@ class TacanRegistry:
             TacanChannelInUseError: The given frequency is already in use.
             TacanChannelForbiddenError: The given frequency is forbidden.
         """
+        print(f"Trying to reserve {channel}")
+        if channel.number in UNAVAILABLE[intendedUsage][channel.band]:
+            raise TacanChannelForbiddenError(channel)
+        print(
+            f"Channel {channel} not found in {UNAVAILABLE[intendedUsage][channel.band]}"
+        )
         if channel in self.allocated_channels:
             raise TacanChannelInUseError(channel)
         self.allocated_channels.add(channel)
