@@ -39,6 +39,7 @@ from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 from gen.visualgen import VisualGenerator
 from .. import db
 from ..theater import Airfield, FrontLine
+from ..theater.bullseye import Bullseye
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
