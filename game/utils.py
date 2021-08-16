@@ -62,6 +62,8 @@ class Distance:
     def __mul__(self, other: Union[float, int]) -> Distance:
         return meters(self.meters * other)
 
+    __rmul__ = __mul__
+
     def __truediv__(self, other: Union[float, int]) -> Distance:
         return meters(self.meters / other)
 
@@ -146,6 +148,8 @@ class Speed:
 
     def __mul__(self, other: Union[float, int]) -> Speed:
         return kph(self.kph * other)
+
+    __rmul__ = __mul__
 
     def __truediv__(self, other: Union[float, int]) -> Speed:
         return kph(self.kph / other)
