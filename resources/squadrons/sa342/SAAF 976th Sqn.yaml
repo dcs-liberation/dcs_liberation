@@ -1,0 +1,10 @@
+---
+name: 976th Squadron
+nickname: 976th
+country: Syria
+role: Anti-Tank Helicopter
+aircraft: SA 342L Gazelle
+livery: "Syria Fictional"
+mission_types:
+  - CAS
+  - BAI
