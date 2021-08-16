@@ -3,18 +3,20 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Iterator, Set
 
+
 class TacanBand(Enum):
     X = "X"
     Y = "Y"
 
     def range(self) -> Iterator["TacanChannel"]:
         """Returns an iterator over the channels in this band."""
-        # TODO: Shouldn't this be 1-126?
-        return (TacanChannel(x, self) for x in range(1, 100))
+        return (TacanChannel(x, self) for x in range(1, 126))
+
 
 class TacanUsage(Enum):
     TransmitReceive = "TransmitReceive"
     AirToAir = "AirToAir"
+
 
 # Avoid certain TACAN channels for various reasons
 # https://forums.eagle.ru/topic/276390-datalink-issue/
@@ -26,6 +28,7 @@ UNAVAILABLE_A2A = {
     TacanBand.X: set(range(1, 36)) | set(range(64, 99)),
     TacanBand.Y: set(range(1, 36)) | set(range(64, 99)),
 }
+
 
 @dataclass(frozen=True)
 class TacanChannel:
@@ -49,11 +52,13 @@ class TacanChannelInUseError(RuntimeError):
     def __init__(self, channel: TacanChannel) -> None:
         super().__init__(f"{channel} is already in use")
 
+
 class TacanChannelForbiddenError(RuntimeError):
     """Raised when attempting to reserve a, for technical reasons, forbidden channel."""
 
     def __init__(self, channel: TacanChannel) -> None:
         super().__init__(f"{channel} is forbidden")
+
 
 class TacanRegistry:
     """Manages allocation of TACAN channels."""
