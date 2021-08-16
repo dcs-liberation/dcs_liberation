@@ -3,6 +3,7 @@ import pickle
 from functools import cached_property
 from typing import Optional, Tuple, Union
 import logging
+from pathlib import Path
 
 from shapely import geometry
 from shapely.geometry import MultiPolygon, Polygon
@@ -27,7 +28,7 @@ class Landmap:
         return self.inclusion_zones - self.exclusion_zones - self.sea_zones
 
 
-def load_landmap(filename: str) -> Optional[Landmap]:
+def load_landmap(filename: Path) -> Optional[Landmap]:
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)

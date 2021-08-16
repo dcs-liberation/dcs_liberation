@@ -51,7 +51,6 @@ from dcs.mapping import Point
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.procurement import AircraftProcurementRequest
-from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
 from game.theater.transitnetwork import (
     TransitConnection,
@@ -67,7 +66,7 @@ from gen.naming import namegen
 
 if TYPE_CHECKING:
     from game import Game
-    from game.inventory import ControlPointAircraftInventory
+    from game.squadrons import Squadron
 
 
 class Transport:
@@ -315,29 +314,20 @@ class AirliftPlanner:
             if cp.captured != self.for_player:
                 continue
 
-            inventory = self.game.aircraft_inventory.for_control_point(cp)
-            for unit_type, available in inventory.all_aircraft:
-                squadrons = air_wing.auto_assignable_for_task_with_type(
-                    unit_type, FlightType.TRANSPORT
-                )
-                for squadron in squadrons:
-                    if self.compatible_with_mission(unit_type, cp):
-                        while (
-                            available
-                            and squadron.has_available_pilots
-                            and self.transfer.transport is None
-                        ):
-                            flight_size = self.create_airlift_flight(
-                                squadron, inventory
-                            )
-                            available -= flight_size
+            squadrons = air_wing.auto_assignable_for_task_at(FlightType.TRANSPORT, cp)
+            for squadron in squadrons:
+                if self.compatible_with_mission(squadron.aircraft, cp):
+                    while (
+                        squadron.untasked_aircraft
+                        and squadron.has_available_pilots
+                        and self.transfer.transport is None
+                    ):
+                        self.create_airlift_flight(squadron)
         if self.package.flights:
             self.game.ato_for(self.for_player).add_package(self.package)
 
-    def create_airlift_flight(
-        self, squadron: Squadron, inventory: ControlPointAircraftInventory
-    ) -> int:
-        available_aircraft = inventory.available(squadron.aircraft)
+    def create_airlift_flight(self, squadron: Squadron) -> int:
+        available_aircraft = squadron.untasked_aircraft
         capacity_each = 1 if squadron.aircraft.dcs_unit_type.helicopter else 2
         required = math.ceil(self.transfer.size / capacity_each)
         flight_size = min(
@@ -348,8 +338,8 @@ class AirliftPlanner:
         # TODO: Use number_of_available_pilots directly once feature flag is gone.
         # The number of currently available pilots is not relevant when pilot limits
         # are disabled.
-        if not squadron.can_provide_pilots(flight_size):
-            flight_size = squadron.number_of_available_pilots
+        if not squadron.can_fulfill_flight(flight_size):
+            flight_size = squadron.max_fulfillable_aircraft
         capacity = flight_size * capacity_each
 
         if capacity < self.transfer.size:
@@ -359,16 +349,15 @@ class AirliftPlanner:
         else:
             transfer = self.transfer
 
-        player = inventory.control_point.captured
         flight = Flight(
             self.package,
-            self.game.country_for(player),
+            self.game.country_for(squadron.player),
             squadron,
             flight_size,
             FlightType.TRANSPORT,
             self.game.settings.default_start_type,
-            departure=inventory.control_point,
-            arrival=inventory.control_point,
+            departure=squadron.location,
+            arrival=squadron.location,
             divert=None,
             cargo=transfer,
         )
@@ -381,7 +370,6 @@ class AirliftPlanner:
             self.package, self.game.coalition_for(self.for_player), self.game.theater
         )
         planner.populate_flight_plan(flight)
-        self.game.aircraft_inventory.claim_for_flight(flight)
         return flight_size
 
 
@@ -652,8 +640,7 @@ class PendingTransfers:
         flight.package.remove_flight(flight)
         if not flight.package.flights:
             self.game.ato_for(self.player).remove_package(flight.package)
-        self.game.aircraft_inventory.return_from_flight(flight)
-        flight.clear_roster()
+        flight.return_pilots_and_aircraft()
 
     @cancel_transport.register
     def _cancel_transport_convoy(
@@ -722,26 +709,59 @@ class PendingTransfers:
             ):
                 self.order_airlift_assets_at(control_point)
 
-    @staticmethod
-    def desired_airlift_capacity(control_point: ControlPoint) -> int:
-        return 4 if control_point.has_factory else 0
+    def desired_airlift_capacity(self, control_point: ControlPoint) -> int:
 
-    def current_airlift_capacity(self, control_point: ControlPoint) -> int:
-        inventory = self.game.aircraft_inventory.for_control_point(control_point)
-        squadrons = self.game.air_wing_for(
-            control_point.captured
-        ).auto_assignable_for_task(FlightType.TRANSPORT)
-        unit_types = {s.aircraft for s in squadrons}
+        if control_point.has_factory:
+            is_major_hub = control_point.total_aircraft_parking > 0
+            # Check if there is a CP which is only reachable via Airlift
+            transit_network = self.network_for(control_point)
+            for cp in self.game.theater.control_points_for(self.player):
+                # check if the CP has no factory, is reachable from the current
+                # position and can only be reached with airlift connections
+                if (
+                    cp.can_deploy_ground_units
+                    and not cp.has_factory
+                    and transit_network.has_link(control_point, cp)
+                    and not any(
+                        link_type
+                        for link, link_type in transit_network.nodes[cp].items()
+                        if not link_type == TransitConnection.Airlift
+                    )
+                ):
+                    return 4
+
+                if (
+                    is_major_hub
+                    and cp.has_factory
+                    and cp.total_aircraft_parking > control_point.total_aircraft_parking
+                ):
+                    is_major_hub = False
+
+            if is_major_hub:
+                # If the current CP is a major hub keep always 2 planes on reserve
+                return 2
+
+        return 0
+
+    @staticmethod
+    def current_airlift_capacity(control_point: ControlPoint) -> int:
         return sum(
-            count
-            for unit_type, count in inventory.all_aircraft
-            if unit_type in unit_types
+            s.owned_aircraft
+            for s in control_point.squadrons
+            if s.can_auto_assign(FlightType.TRANSPORT)
         )
 
     def order_airlift_assets_at(self, control_point: ControlPoint) -> None:
-        gap = self.desired_airlift_capacity(
-            control_point
-        ) - self.current_airlift_capacity(control_point)
+        unclaimed_parking = control_point.unclaimed_parking(self.game)
+        # Buy a maximum of unclaimed_parking only to prevent that aircraft procurement
+        # take place at another base
+        gap = min(
+            [
+                self.desired_airlift_capacity(control_point)
+                - self.current_airlift_capacity(control_point),
+                unclaimed_parking,
+            ]
+        )
 
         if gap <= 0:
             return
@@ -750,6 +770,10 @@ class PendingTransfers:
             # Always buy in pairs since we're not trying to fill odd squadrons. Purely
             # aesthetic.
             gap += 1
+
+        if gap > unclaimed_parking:
+            # Prevent to buy more aircraft than possible
+            return
 
         self.game.coalition_for(self.player).add_procurement_request(
             AircraftProcurementRequest(control_point, FlightType.TRANSPORT, gap)

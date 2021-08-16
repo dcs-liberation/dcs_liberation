@@ -16,7 +16,11 @@ class EwrGenerator(VehicleGroupGenerator[EwrGroundObject]):
 
     def generate(self) -> None:
         self.add_unit(
-            self.unit_type, "EWR", self.position.x, self.position.y, self.heading
+            self.unit_type,
+            "EWR",
+            self.position.x,
+            self.position.y,
+            self.heading_to_conflict(),
         )
 
 

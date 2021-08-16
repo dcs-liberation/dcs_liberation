@@ -69,7 +69,6 @@ from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
 from game.settings import Settings
-from game.squadrons import Pilot
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
@@ -109,6 +108,7 @@ from .naming import namegen
 
 if TYPE_CHECKING:
     from game import Game
+    from game.squadrons import Pilot, Squadron
 
 WARM_START_HELI_ALT = meters(500)
 WARM_START_ALTITUDE = meters(3000)
@@ -644,8 +644,7 @@ class AircraftConflictGenerator:
     def spawn_unused_aircraft(
         self, player_country: Country, enemy_country: Country
     ) -> None:
-        inventories = self.game.aircraft_inventory.inventories
-        for control_point, inventory in inventories.items():
+        for control_point in self.game.theater.controlpoints:
             if not isinstance(control_point, Airfield):
                 continue
 
@@ -655,11 +654,9 @@ class AircraftConflictGenerator:
             else:
                 country = enemy_country
 
-            for aircraft, available in inventory.all_aircraft:
+            for squadron in control_point.squadrons:
                 try:
-                    self._spawn_unused_at(
-                        control_point, country, faction, aircraft, available
-                    )
+                    self._spawn_unused_at(control_point, country, faction, squadron)
                 except NoParkingSlotError:
                     # If we run out of parking, stop spawning aircraft.
                     return
@@ -669,17 +666,16 @@ class AircraftConflictGenerator:
         control_point: Airfield,
         country: Country,
         faction: Faction,
-        aircraft: AircraftType,
-        number: int,
+        squadron: Squadron,
     ) -> None:
-        for _ in range(number):
+        for _ in range(squadron.untasked_aircraft):
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
             flight = Flight(
                 Package(control_point),
                 faction.country,
-                self.game.air_wing_for(control_point.captured).squadron_for(aircraft),
+                squadron,
                 1,
                 FlightType.BARCAP,
                 "Cold",
@@ -691,16 +687,13 @@ class AircraftConflictGenerator:
             group = self._generate_at_airport(
                 name=namegen.next_aircraft_name(country, control_point.id, flight),
                 side=country,
-                unit_type=aircraft.dcs_unit_type,
+                unit_type=squadron.aircraft.dcs_unit_type,
                 count=1,
                 start_type="Cold",
                 airport=control_point.airport,
             )
 
-            if aircraft in faction.liveries_overrides:
-                livery = random.choice(faction.liveries_overrides[aircraft])
-                for unit in group.units:
-                    unit.livery_id = livery
+            self._setup_livery(flight, group)
 
             group.uncontrolled = True
             self.unit_map.add_aircraft(group, flight)
@@ -1837,17 +1830,11 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
                 )
             )
 
-        # TODO: Set orbit speeds for all race tracks and remove this special case.
-        if isinstance(flight_plan, RefuelingFlightPlan):
-            orbit = OrbitAction(
-                altitude=waypoint.alt,
-                pattern=OrbitAction.OrbitPattern.RaceTrack,
-                speed=int(flight_plan.patrol_speed.kph),
-            )
-        else:
-            orbit = OrbitAction(
-                altitude=waypoint.alt, pattern=OrbitAction.OrbitPattern.RaceTrack
-            )
+        orbit = OrbitAction(
+            altitude=waypoint.alt,
+            pattern=OrbitAction.OrbitPattern.RaceTrack,
+            speed=int(flight_plan.patrol_speed.kph),
+        )
 
         racetrack = ControlledTask(orbit)
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)

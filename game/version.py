@@ -12,7 +12,7 @@ def _build_version_string() -> str:
     ]
     build_number_path = Path("resources/buildnumber")
     if build_number_path.exists():
-        with build_number_path.open("r") as build_number_file:
+        with build_number_path.open("r", encoding="utf-8") as build_number_file:
             components.append(build_number_file.readline())
 
     if not Path("resources/final").exists():
@@ -114,4 +114,8 @@ VERSION = _build_version_string()
 #: Version 8.1
 #: * You can now add "Invisible FARP" static to FOB to add helicopter slots
 #:
-CAMPAIGN_FORMAT_VERSION = (8, 1)
+#: Version 9.0
+#: * Campaign files now define the initial squadron layouts. See TODO.
+#: * CV and LHA control points now get their names from the group name in the campaign
+#:   miz.
+CAMPAIGN_FORMAT_VERSION = (9, 0)

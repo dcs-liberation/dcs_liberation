@@ -1,4 +1,4 @@
-from typing import Optional, Callable
+from typing import Optional, Callable, Iterable
 
 from PySide2.QtCore import (
     QItemSelectionModel,
@@ -24,11 +24,13 @@ from PySide2.QtWidgets import (
     QHBoxLayout,
     QStackedLayout,
     QTabWidget,
+    QComboBox,
 )
 
 from game import Game
 from game.dcs.aircrafttype import AircraftType
-from game.squadrons import Squadron, AirWing, Pilot
+from game.squadrons import AirWing, Pilot, Squadron
+from game.theater import ControlPoint, ConflictTheater
 from gen.flights.flight import FlightType
 from qt_ui.models import AirWingModel, SquadronModel
 from qt_ui.uiconstants import AIRCRAFT_ICONS
@@ -96,8 +98,33 @@ class AllowedMissionTypeControls(QVBoxLayout):
             self.allowed_mission_types.remove(task)
 
 
+class SquadronBaseSelector(QComboBox):
+    """A combo box for selecting a squadrons home air base.
+
+    The combo box will automatically be populated with all air bases compatible with the
+    squadron.
+    """
+
+    def __init__(
+        self,
+        bases: Iterable[ControlPoint],
+        squadron: Squadron,
+    ) -> None:
+        super().__init__()
+        self.bases = list(bases)
+        self.squadron = squadron
+        self.setSizeAdjustPolicy(self.AdjustToContents)
+
+        for base in self.bases:
+            if not base.can_operate(self.squadron.aircraft):
+                continue
+            self.addItem(base.name, base)
+        self.model().sort(0)
+        self.setCurrentText(self.squadron.location.name)
+
+
 class SquadronConfigurationBox(QGroupBox):
-    def __init__(self, squadron: Squadron) -> None:
+    def __init__(self, squadron: Squadron, theater: ConflictTheater) -> None:
         super().__init__()
         self.setCheckable(True)
         self.squadron = squadron
@@ -118,6 +145,13 @@ class SquadronConfigurationBox(QGroupBox):
         self.nickname_edit = QLineEdit(squadron.nickname)
         self.nickname_edit.textChanged.connect(self.on_nickname_changed)
         left_column.addWidget(self.nickname_edit)
+
+        left_column.addWidget(QLabel("Base:"))
+        self.base_selector = SquadronBaseSelector(
+            theater.control_points_for(squadron.player), squadron
+        )
+        self.base_selector.currentIndexChanged.connect(self.on_base_changed)
+        left_column.addWidget(self.base_selector)
 
         if squadron.player:
             player_label = QLabel(
@@ -149,6 +183,12 @@ class SquadronConfigurationBox(QGroupBox):
     def on_nickname_changed(self, text: str) -> None:
         self.squadron.nickname = text
 
+    def on_base_changed(self, index: int) -> None:
+        base = self.base_selector.itemData(index)
+        if base is None:
+            raise RuntimeError("Base cannot be none")
+        self.squadron.assign_to_base(base)
+
     def reset_title(self) -> None:
         self.setTitle(f"{self.squadron.name} - {self.squadron.aircraft}")
 
@@ -158,16 +198,18 @@ class SquadronConfigurationBox(QGroupBox):
         self.squadron.pilot_pool = [
             Pilot(n, player=True) for n in player_names
         ] + self.squadron.pilot_pool
-        self.squadron.mission_types = tuple(self.allowed_missions.allowed_mission_types)
+        self.squadron.set_allowed_mission_types(
+            self.allowed_missions.allowed_mission_types
+        )
         return self.squadron
 
 
 class SquadronConfigurationLayout(QVBoxLayout):
-    def __init__(self, squadrons: list[Squadron]) -> None:
+    def __init__(self, squadrons: list[Squadron], theater: ConflictTheater) -> None:
         super().__init__()
         self.squadron_configs = []
         for squadron in squadrons:
-            squadron_config = SquadronConfigurationBox(squadron)
+            squadron_config = SquadronConfigurationBox(squadron, theater)
             self.squadron_configs.append(squadron_config)
             self.addWidget(squadron_config)
 
@@ -180,12 +222,12 @@ class SquadronConfigurationLayout(QVBoxLayout):
 
 
 class AircraftSquadronsPage(QWidget):
-    def __init__(self, squadrons: list[Squadron]) -> None:
+    def __init__(self, squadrons: list[Squadron], theater: ConflictTheater) -> None:
         super().__init__()
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.squadrons_config = SquadronConfigurationLayout(squadrons)
+        self.squadrons_config = SquadronConfigurationLayout(squadrons, theater)
 
         scrolling_widget = QWidget()
         scrolling_widget.setLayout(self.squadrons_config)
@@ -203,12 +245,12 @@ class AircraftSquadronsPage(QWidget):
 
 
 class AircraftSquadronsPanel(QStackedLayout):
-    def __init__(self, air_wing: AirWing) -> None:
+    def __init__(self, air_wing: AirWing, theater: ConflictTheater) -> None:
         super().__init__()
         self.air_wing = air_wing
         self.squadrons_pages: dict[AircraftType, AircraftSquadronsPage] = {}
         for aircraft, squadrons in self.air_wing.squadrons.items():
-            page = AircraftSquadronsPage(squadrons)
+            page = AircraftSquadronsPage(squadrons, theater)
             self.addWidget(page)
             self.squadrons_pages[aircraft] = page
 
@@ -260,7 +302,7 @@ class AircraftTypeList(QListView):
 
 
 class AirWingConfigurationTab(QWidget):
-    def __init__(self, air_wing: AirWing) -> None:
+    def __init__(self, air_wing: AirWing, theater: ConflictTheater) -> None:
         super().__init__()
 
         layout = QHBoxLayout()
@@ -270,7 +312,7 @@ class AirWingConfigurationTab(QWidget):
         type_list.page_index_changed.connect(self.on_aircraft_changed)
         layout.addWidget(type_list)
 
-        self.squadrons_panel = AircraftSquadronsPanel(air_wing)
+        self.squadrons_panel = AircraftSquadronsPanel(air_wing, theater)
         layout.addLayout(self.squadrons_panel)
 
     def apply(self) -> None:
@@ -315,7 +357,7 @@ class AirWingConfigurationDialog(QDialog):
 
         self.tabs = []
         for coalition in game.coalitions:
-            coalition_tab = AirWingConfigurationTab(coalition.air_wing)
+            coalition_tab = AirWingConfigurationTab(coalition.air_wing, game.theater)
             name = "Blue" if coalition.player else "Red"
             tab_widget.addTab(coalition_tab, name)
             self.tabs.append(coalition_tab)

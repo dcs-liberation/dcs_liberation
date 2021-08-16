@@ -14,7 +14,7 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
-from game.squadrons import Pilot
+from game.squadrons.pilot import Pilot
 from gen.flights.flight import Flight, FlightRoster
 from qt_ui.models import PackageModel
 
@@ -195,8 +195,7 @@ class QFlightSlotEditor(QGroupBox):
         self.package_model = package_model
         self.flight = flight
         self.game = game
-        self.inventory = self.game.aircraft_inventory.for_control_point(flight.from_cp)
-        available = self.inventory.available(self.flight.unit_type)
+        available = self.flight.squadron.untasked_aircraft
         max_count = self.flight.count + available
         if max_count > 4:
             max_count = 4
@@ -225,21 +224,18 @@ class QFlightSlotEditor(QGroupBox):
     def _changed_aircraft_count(self):
         old_count = self.flight.count
         new_count = int(self.aircraft_count_spinner.value())
-        self.game.aircraft_inventory.return_from_flight(self.flight)
-        self.flight.resize(new_count)
         try:
-            self.game.aircraft_inventory.claim_for_flight(self.flight)
+            self.flight.resize(new_count)
         except ValueError:
             # The UI should have prevented this, but if we ran out of aircraft
             # then roll back the inventory change.
             difference = new_count - self.flight.count
-            available = self.inventory.available(self.flight.unit_type)
+            available = self.flight.squadron.untasked_aircraft
             logging.error(
                 f"Could not add {difference} additional aircraft to "
                 f"{self.flight} because {self.flight.departure} has only "
                 f"{available} {self.flight.unit_type} remaining"
             )
-            self.game.aircraft_inventory.claim_for_flight(self.flight)
             self.flight.resize(old_count)
             return
         self.roster_editor.resize(new_count)

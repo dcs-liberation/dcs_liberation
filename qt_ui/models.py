@@ -13,7 +13,7 @@ from PySide2.QtCore import (
 from PySide2.QtGui import QIcon
 
 from game.game import Game
-from game.squadrons import Squadron, Pilot
+from game.squadrons.squadron import Pilot, Squadron
 from game.theater.missiontarget import MissionTarget
 from game.transfers import TransferOrder, PendingTransfers
 from gen.ato import AirTaskingOrder, Package
@@ -165,8 +165,7 @@ class PackageModel(QAbstractListModel):
         self.beginRemoveRows(QModelIndex(), index, index)
         if flight.cargo is not None:
             flight.cargo.transport = None
-        self.game_model.game.aircraft_inventory.return_from_flight(flight)
-        flight.clear_roster()
+        flight.return_pilots_and_aircraft()
         self.package.remove_flight(flight)
         self.endRemoveRows()
         self.update_tot()
@@ -258,8 +257,7 @@ class AtoModel(QAbstractListModel):
         self.beginRemoveRows(QModelIndex(), index, index)
         self.ato.remove_package(package)
         for flight in package.flights:
-            self.game.aircraft_inventory.return_from_flight(flight)
-            flight.clear_roster()
+            flight.return_pilots_and_aircraft()
             if flight.cargo is not None:
                 flight.cargo.transport = None
         self.endRemoveRows()

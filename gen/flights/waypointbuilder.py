@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 
 import random
 from dataclasses import dataclass
@@ -55,7 +56,7 @@ class WaypointBuilder:
 
     @property
     def is_helo(self) -> bool:
-        return getattr(self.flight.unit_type, "helicopter", False)
+        return self.flight.unit_type.dcs_unit_type.helicopter
 
     def takeoff(self, departure: ControlPoint) -> FlightWaypoint:
         """Create takeoff waypoint for the given arrival airfield or carrier.
@@ -167,6 +168,8 @@ class WaypointBuilder:
             position.y,
             meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
         )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
         waypoint.pretty_name = "Hold"
         waypoint.description = "Wait until push time"
         waypoint.name = "HOLD"
@@ -210,7 +213,7 @@ class WaypointBuilder:
             ingress_type,
             position.x,
             position.y,
-            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
         )
         if self.is_helo:
             waypoint.alt_type = "RADIO"
@@ -225,7 +228,7 @@ class WaypointBuilder:
             FlightWaypointType.EGRESS,
             position.x,
             position.y,
-            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
         )
         if self.is_helo:
             waypoint.alt_type = "RADIO"
@@ -309,7 +312,7 @@ class WaypointBuilder:
             FlightWaypointType.CAS,
             position.x,
             position.y,
-            meters(50) if self.is_helo else meters(1000),
+            meters(60) if self.is_helo else meters(1000),
         )
         waypoint.alt_type = "RADIO"
         waypoint.description = "Provide CAS"
@@ -445,7 +448,7 @@ class WaypointBuilder:
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position.x,
             target.position.y,
-            meters(50) if self.is_helo else self.doctrine.ingress_altitude,
+            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
         )
         if self.is_helo:
             waypoint.alt_type = "RADIO"

@@ -77,14 +77,15 @@ class AircraftIntelLayout(IntelTableLayout):
 
         total = 0
         for control_point in game.theater.control_points_for(player):
-            base = control_point.base
-            total += base.total_aircraft
-            if not base.total_aircraft:
+            allocation = control_point.allocated_aircraft(game)
+            base_total = allocation.total_present
+            total += base_total
+            if not base_total:
                 continue
 
-            self.add_header(f"{control_point.name} ({base.total_aircraft})")
-            for airframe in sorted(base.aircraft, key=lambda k: k.name):
-                count = base.aircraft[airframe]
+            self.add_header(f"{control_point.name} ({base_total})")
+            for airframe in sorted(allocation.present, key=lambda k: k.name):
+                count = allocation.present[airframe]
                 if not count:
                     continue
                 self.add_row(f"    {airframe.name}", count)

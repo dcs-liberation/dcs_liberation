@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import itertools
 import logging
 import math
 from collections import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List, Type, Union, cast
+from typing import Any, List, Type, Union, cast, TYPE_CHECKING
 
 from dcs.countries import Switzerland, UnitedNationsPeacekeepers, USAFAggressors
 from dcs.country import Country
@@ -13,7 +15,6 @@ from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 from faker import Faker
 
-from game.inventory import GlobalAircraftInventory
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from gen import naming
@@ -23,6 +24,7 @@ from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.flights.flight import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
+from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition
 from .debriefing import Debriefing
 from .event.event import Event
@@ -32,13 +34,15 @@ from .infos.information import Information
 from .navmesh import NavMesh
 from .profiling import logged_duration
 from .settings import Settings
-from .squadrons import AirWing
 from .theater import ConflictTheater, ControlPoint
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .threatzones import ThreatZones
 from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
+
+if TYPE_CHECKING:
+    from .squadrons import AirWing
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -86,6 +90,7 @@ class Game:
         player_faction: Faction,
         enemy_faction: Faction,
         theater: ConflictTheater,
+        air_wing_config: CampaignAirWingConfig,
         start_date: datetime,
         settings: Settings,
         player_budget: float,
@@ -120,7 +125,8 @@ class Game:
         self.blue.set_opponent(self.red)
         self.red.set_opponent(self.blue)
 
-        self.aircraft_inventory = GlobalAircraftInventory(self.theater.controlpoints)
+        self.blue.configure_default_air_wing(air_wing_config)
+        self.red.configure_default_air_wing(air_wing_config)
 
         self.on_load(game_still_initializing=True)
 
@@ -396,9 +402,9 @@ class Game:
 
         # Plan Coalition specific turn
         if for_blue:
-            self.initialize_turn_for(player=True)
+            self.blue.initialize_turn()
         if for_red:
-            self.initialize_turn_for(player=False)
+            self.red.initialize_turn()
 
         # Plan GroundWar
         self.ground_planners = {}
@@ -407,12 +413,6 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
-
-    def initialize_turn_for(self, player: bool) -> None:
-        self.aircraft_inventory.reset(player)
-        for cp in self.theater.control_points_for(player):
-            self.aircraft_inventory.set_from_control_point(cp)
-        self.coalition_for(player).initialize_turn()
 
     def message(self, text: str) -> None:
         self.informations.append(Information(text, turn=self.turn))

@@ -411,6 +411,9 @@ class PatrollingFlightPlan(FlightPlan):
     #: Maximum time to remain on station.
     patrol_duration: timedelta
 
+    #: Racetrack speed TAS.
+    patrol_speed: Speed
+
     #: The engagement range of any Search Then Engage task, or the radius of a
     #: Search Then Engage in Zone task. Any enemies of the appropriate type for
     #: this mission within this range of the flight's current position (or the
@@ -779,9 +782,6 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
     divert: Optional[FlightWaypoint]
     bullseye: FlightWaypoint
 
-    #: Racetrack speed.
-    patrol_speed: Speed
-
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
         yield from self.nav_to
@@ -1115,13 +1115,18 @@ class FlightPlanBuilder:
         if isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        start_pos, end_pos = self.racetrack_for_objective(location, barcap=True)
+        start_pos, end_pos = self.cap_racetrack_for_objective(location, barcap=True)
 
         preferred_alt = flight.unit_type.preferred_patrol_altitude
         randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
         patrol_alt = max(
             self.doctrine.min_patrol_altitude,
             min(self.doctrine.max_patrol_altitude, randomized_alt),
+        )
+
+        patrol_speed = flight.unit_type.preferred_patrol_speed(patrol_alt)
+        logging.debug(
+            f"BARCAP patrol speed for {flight.unit_type.name} at {patrol_alt.feet}ft: {patrol_speed.knots} KTAS"
         )
 
         builder = WaypointBuilder(flight, self.coalition)
@@ -1131,6 +1136,7 @@ class FlightPlanBuilder:
             package=self.package,
             flight=flight,
             patrol_duration=self.doctrine.cap_duration,
+            patrol_speed=patrol_speed,
             engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
@@ -1238,7 +1244,7 @@ class FlightPlanBuilder:
             bullseye=builder.bullseye(),
         )
 
-    def racetrack_for_objective(
+    def cap_racetrack_for_objective(
         self, location: MissionTarget, barcap: bool
     ) -> Tuple[Point, Point]:
         closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
@@ -1270,6 +1276,7 @@ class FlightPlanBuilder:
                 - self.doctrine.cap_engagement_range
                 - nautical_miles(5)
             )
+            max_track_length = self.doctrine.cap_max_track_length
         else:
             # Other race tracks (TARCAPs, currently) just try to keep some
             # distance from the nearest enemy airbase, but since they are by
@@ -1283,6 +1290,11 @@ class FlightPlanBuilder:
             )
             distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
 
+            # TARCAPs fly short racetracks because they need to react faster.
+            max_track_length = self.doctrine.cap_min_track_length + 0.3 * (
+                self.doctrine.cap_max_track_length - self.doctrine.cap_min_track_length
+            )
+
         min_cap_distance = min(
             self.doctrine.cap_min_distance_from_cp, distance_to_no_fly
         )
@@ -1294,11 +1306,12 @@ class FlightPlanBuilder:
             heading.degrees,
             random.randint(int(min_cap_distance.meters), int(max_cap_distance.meters)),
         )
-        diameter = random.randint(
+
+        track_length = random.randint(
             int(self.doctrine.cap_min_track_length.meters),
-            int(self.doctrine.cap_max_track_length.meters),
+            int(max_track_length.meters),
         )
-        start = end.point_from_heading(heading.opposite.degrees, diameter)
+        start = end.point_from_heading(heading.opposite.degrees, track_length)
         return start, end
 
     def aewc_orbit(self, location: MissionTarget) -> Point:
@@ -1321,33 +1334,6 @@ class FlightPlanBuilder:
             orbit_heading.degrees, orbit_distance.meters
         )
 
-    def racetrack_for_frontline(
-        self, origin: Point, front_line: FrontLine
-    ) -> Tuple[Point, Point]:
-        # Find targets waypoints
-        ingress, heading, distance = Conflict.frontline_vector(front_line, self.theater)
-        center = ingress.point_from_heading(heading.degrees, distance / 2)
-        orbit_center = center.point_from_heading(
-            heading.left.degrees,
-            random.randint(
-                int(nautical_miles(6).meters), int(nautical_miles(15).meters)
-            ),
-        )
-
-        combat_width = distance / 2
-        if combat_width > 500000:
-            combat_width = 500000
-        if combat_width < 35000:
-            combat_width = 35000
-
-        radius = combat_width * 1.25
-        start = orbit_center.point_from_heading(heading.degrees, radius)
-        end = orbit_center.point_from_heading(heading.opposite.degrees, radius)
-
-        if end.distance_to_point(origin) < start.distance_to_point(origin):
-            start, end = end, start
-        return start, end
-
     def generate_tarcap(self, flight: Flight) -> TarCapFlightPlan:
         """Generate a CAP flight plan for the given front line.
 
@@ -1362,16 +1348,14 @@ class FlightPlanBuilder:
             self.doctrine.min_patrol_altitude,
             min(self.doctrine.max_patrol_altitude, randomized_alt),
         )
+        patrol_speed = flight.unit_type.preferred_patrol_speed(patrol_alt)
+        logging.debug(
+            f"TARCAP patrol speed for {flight.unit_type.name} at {patrol_alt.feet}ft: {patrol_speed.knots} KTAS"
+        )
 
         # Create points
         builder = WaypointBuilder(flight, self.coalition)
-
-        if isinstance(location, FrontLine):
-            orbit0p, orbit1p = self.racetrack_for_frontline(
-                flight.departure.position, location
-            )
-        else:
-            orbit0p, orbit1p = self.racetrack_for_objective(location, barcap=False)
+        orbit0p, orbit1p = self.cap_racetrack_for_objective(location, barcap=False)
 
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
         return TarCapFlightPlan(
@@ -1383,6 +1367,7 @@ class FlightPlanBuilder:
             # requests an escort the CAP flight will remain on station for the
             # duration of the escorted mission, or until it is winchester/bingo.
             patrol_duration=self.doctrine.cap_duration,
+            patrol_speed=patrol_speed,
             engagement_distance=self.doctrine.cap_engagement_range,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(flight.departure.position, orbit0p, patrol_alt),
@@ -1546,16 +1531,33 @@ class FlightPlanBuilder:
 
         builder = WaypointBuilder(flight, self.coalition)
 
+        # 2021-08-02: patrol_speed will currently have no effect because
+        # CAS doesn't use OrbitAction. But all PatrollingFlightPlan are expected
+        # to have patrol_speed
+        is_helo = flight.unit_type.dcs_unit_type.helicopter
+        ingress_egress_altitude = (
+            self.doctrine.ingress_altitude if not is_helo else meters(50)
+        )
+        patrol_speed = flight.unit_type.preferred_patrol_speed(ingress_egress_altitude)
+        use_agl_ingress_egress = is_helo
+
         return CasFlightPlan(
             package=self.package,
             flight=flight,
             patrol_duration=self.doctrine.cas_duration,
+            patrol_speed=patrol_speed,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
-                flight.departure.position, ingress, self.doctrine.ingress_altitude
+                flight.departure.position,
+                ingress,
+                ingress_egress_altitude,
+                use_agl_ingress_egress,
             ),
             nav_from=builder.nav_path(
-                egress, flight.arrival.position, self.doctrine.ingress_altitude
+                egress,
+                flight.arrival.position,
+                ingress_egress_altitude,
+                use_agl_ingress_egress,
             ),
             patrol_start=builder.ingress(
                 FlightWaypointType.INGRESS_CAS, ingress, location
@@ -1608,6 +1610,7 @@ class FlightPlanBuilder:
         else:
             altitude = feet(21000)
 
+        # TODO: Could use flight.unit_type.preferred_patrol_speed(altitude) instead.
         if tanker_type.patrol_speed is not None:
             speed = tanker_type.patrol_speed
         else:

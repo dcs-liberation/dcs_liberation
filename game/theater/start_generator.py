@@ -30,7 +30,7 @@ from game.theater.theatergroundobject import (
 )
 from game.utils import Heading
 from game.version import VERSION
-from gen import namegen
+from gen.naming import namegen
 from gen.coastal.coastal_group_generator import generate_coastal_group
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import (
@@ -49,21 +49,11 @@ from . import (
     Fob,
     OffMapSpawn,
 )
+from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
 from ..profiling import logged_duration
 from ..settings import Settings
 
 GroundObjectTemplates = Dict[str, Dict[str, Any]]
-
-UNIT_VARIETY = 6
-UNIT_AMOUNT_FACTOR = 16
-UNIT_COUNT_IMPORTANCE_LOG = 1.3
-
-COUNT_BY_TASK = {
-    PinpointStrike: 12,
-    CAP: 8,
-    CAS: 4,
-    AirDefence: 1,
-}
 
 
 @dataclass(frozen=True)
@@ -96,6 +86,7 @@ class GameGenerator:
         player: Faction,
         enemy: Faction,
         theater: ConflictTheater,
+        air_wing_config: CampaignAirWingConfig,
         settings: Settings,
         generator_settings: GeneratorSettings,
         mod_settings: ModSettings,
@@ -103,6 +94,7 @@ class GameGenerator:
         self.player = player
         self.enemy = enemy
         self.theater = theater
+        self.air_wing_config = air_wing_config
         self.settings = settings
         self.generator_settings = generator_settings
         self.mod_settings = mod_settings
@@ -116,6 +108,7 @@ class GameGenerator:
                 player_faction=self.player.apply_mod_settings(self.mod_settings),
                 enemy_faction=self.enemy.apply_mod_settings(self.mod_settings),
                 theater=self.theater,
+                air_wing_config=self.air_wing_config,
                 start_date=self.generator_settings.start_date,
                 settings=self.settings,
                 player_budget=self.generator_settings.player_budget,

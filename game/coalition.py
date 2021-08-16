@@ -5,14 +5,15 @@ from typing import TYPE_CHECKING, Any, Optional
 from dcs import Point
 from faker import Faker
 
+from game.campaignloader import CampaignAirWingConfig
+from game.campaignloader.defaultsquadronassigner import DefaultSquadronAssigner
 from game.commander import TheaterCommander
 from game.commander.missionscheduler import MissionScheduler
 from game.income import Income
-from game.inventory import GlobalAircraftInventory
 from game.navmesh import NavMesh
 from game.orderedset import OrderedSet
 from game.profiling import logged_duration, MultiEventTracer
-from game.savecompat import has_save_compat_for
+from game.squadrons import AirWing
 from game.threatzones import ThreatZones
 from game.transfers import PendingTransfers
 
@@ -21,10 +22,9 @@ if TYPE_CHECKING:
 from game.data.doctrine import Doctrine
 from game.factions.faction import Faction
 from game.procurement import AircraftProcurementRequest, ProcurementAi
-from game.squadrons import AirWing
 from game.theater.bullseye import Bullseye
 from game.theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
-from gen import AirTaskingOrder
+from gen.ato import AirTaskingOrder
 
 
 class Coalition:
@@ -40,7 +40,7 @@ class Coalition:
         self.procurement_requests: OrderedSet[AircraftProcurementRequest] = OrderedSet()
         self.bullseye = Bullseye(Point(0, 0))
         self.faker = Faker(self.faction.locales)
-        self.air_wing = AirWing(game, self)
+        self.air_wing = AirWing(game)
         self.transfers = PendingTransfers(game, player)
 
         # Late initialized because the two coalitions in the game are mutually
@@ -87,10 +87,6 @@ class Coalition:
         assert self._navmesh is not None
         return self._navmesh
 
-    @property
-    def aircraft_inventory(self) -> GlobalAircraftInventory:
-        return self.game.aircraft_inventory
-
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         # Avoid persisting any volatile types that can be deterministically
@@ -100,14 +96,7 @@ class Coalition:
         del state["faker"]
         return state
 
-    @has_save_compat_for(5)
     def __setstate__(self, state: dict[str, Any]) -> None:
-        # Begin save compat
-        old_procurement_requests = state["procurement_requests"]
-        if isinstance(old_procurement_requests, list):
-            state["procurement_requests"] = OrderedSet(old_procurement_requests)
-        # End save compat
-
         self.__dict__.update(state)
         # Regenerate any state that was not persisted.
         self.on_load()
@@ -119,6 +108,11 @@ class Coalition:
         if self._opponent is not None:
             raise RuntimeError("Double-initialization of Coalition.opponent")
         self._opponent = opponent
+
+    def configure_default_air_wing(
+        self, air_wing_config: CampaignAirWingConfig
+    ) -> None:
+        DefaultSquadronAssigner(air_wing_config, self.game, self).assign()
 
     def adjust_budget(self, amount: float) -> None:
         self.budget += amount
@@ -197,7 +191,9 @@ class Coalition:
             return
 
         for cp in self.game.theater.control_points_for(self.player):
-            cp.pending_unit_deliveries.refund_all(self)
+            cp.ground_unit_orders.refund_all(self)
+        for squadron in self.air_wing.iter_squadrons():
+            squadron.refund_orders()
 
     def plan_missions(self) -> None:
         color = "Blue" if self.player else "Red"

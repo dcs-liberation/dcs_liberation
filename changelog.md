@@ -4,20 +4,40 @@ Saves from 4.x are not compatible with 5.0.
 
 ## Features/Improvements
 
+* **[Campaign]** Weather! Theaters now experience weather that is more realistic for the region and its current season. For example, Persian Gulf will have very hot, sunny summers and Marianas will experience lots of rain during fall. These changes affect pressure, temperature, clouds and precipitation. Additionally, temperature will drop during the night, by an amount that is somewhat realistic for the region.
 * **[Campaign]** Weapon data such as fallbacks and introduction years is now moddable. Due to the new architecture to support this, the old data was not automatically migrated.
 * **[Campaign]** Era-restricted loadouts will now skip LGBs when no TGP is available in the loadout. This only applies to default loadouts; buddy-lasing can be coordinated with custom loadouts.
 * **[Campaign]** FOBs control point can have FARP/helipad slot and host helicopters. To enable this feature on a FOB, add "Invisible FARP" statics objects near the FOB location in the campaign definition file.
+* **[Campaign]** (WIP) Squadrons now have a home base and will not operate out of other bases. See https://github.com/dcs-liberation/dcs_liberation/issues/1145 for status.
+* **[Campaign]** Aircraft now belong to squadrons rather than bases to support squadron location transfers.
 * **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
 * **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
 * **[Campaign AI]** Reworked layout of hold, join, split, and ingress points. Should result in much shorter flight plans in general while still maintaining safe join/split/hold points.
 * **[Campaign AI]** Auto-planning mission range limits are now specified per-aircraft. On average this means that longer range missions will now be plannable. The limit only accounts for the direct distance to the target, not the path taken.
+* **[Campaign AI]** Transport aircraft will now be bought only if necessary at control points which can produce ground units and are capable to operate transport aircraft.
 * **[Campaign AI]** Aircraft will now only be automatically purchased or assigned at appropriate bases. Naval aircraft will default to only operating from carriers, Harriers will default to LHAs and shore bases, helicopters will operate from anywhere. This can be customized per-squadron.
+* **[Mission Generation]** EWRs are now also headed towards the center of the conflict
+* **[Modding]** Campaigns now specify the squadrons that are present in the campaign, their roles, and their starting bases. Players can customize this at game start but the campaign will choose the defaults.
 * **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet).
-* **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable or rename squadrons.
+* **[Kneeboard]** QNH (pressure MSL) and temperature have been added to the kneeboard.
+* **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable, relocate, or rename squadrons.
+* **[UI]** Sell Button for aircraft will be disabled if there are no units available to be sold or all are already assigned to a mission
 
 ## Fixes
 
 * **[Campaign]** Naval control points will no longer claim ground objectives during campaign generation and prevent them from spawning.
+* **[Mission Generation]** Mission results and other files will now be opened with enforced utf-8 encoding to prevent an issue where destroyed ground units were untracked because of special characters in their names.
+* **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
+
+# 4.1.1
+
+Saves from 4.1.0 are compatible with 4.1.1.
+
+## Fixes
+
+* **[Campaign]** Fixed broken support for Mariana Islands map.
+* **[Mission Generation]** Fix SAM sites pointing towards the center of the conflict.
+* **[Flight Planning]** No longer using Su-34 for CAP missions.
 
 # 4.1.0
 
@@ -30,6 +50,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Campaign AI]** Adjustments to aircraft selection priorities for most mission types.
 * **[Engine]** Support for DCS 2.7.4.9632 and newer, including the Marianas map, F-16 JSOWs, NASAMS, and Tin Shield EWR.
 * **[Flight Planning]** CAP patrol altitudes are now set per-aircraft. By default the altitude will be set based on the aircraft's maximum speed.
+* **[Flight Planning]** CAP patrol speeds are now set per-aircraft to be more suitable/sensible. By default the speed will be set based on the aircraft's maximum speed.
 * **[Mission Generation]** Improvements for better support of the Skynet Plugin and long range SAMs are now acting as EWR
 * **[Mission Generation]** SAM sites are now headed towards the center of the conflict
 * **[Mods]** Support for latest version of Gripen mod. In-progress campaigns may need to re-plan Gripen flights to pick up updated loadouts.
@@ -49,6 +70,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Data]** Fixed Introduction dates for targeting pods (ATFLIR and LITENING were both a few years too early).
 * **[Data]** Removed SA-10 from Syria 2011 faction.
 * **[Economy]** EWRs can now be bought and sold for the correct price and can no longer be used to generate money
+* **[Flight Planning]** Helicopters are now correctly identified, and will fly ingress/CAS/BAI/egress and similar at low altitude.
 * **[Flight Planning]** Fixed potential issue with angles > 360° or < 0° being generated when summing two angles.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Mission Generation]** Fixed problem with opfor planning missions against sold ground objects like SAMs
@@ -56,6 +78,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** Prevent the creation of a transfer order with 0 units for a rare situtation when a point was captured.
 * **[Mission Generation]** Planned transfers which will be impossible after a base capture will no longer prevent the mission result submit.
 * **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
+* **[Mission Generation]** Fix for AAA Flak generator using Opel Blitz preventing the mission from being generated because duplicate unit names were used.
 * **[Mission Generation]** Fixed a potential bug with laser code generation where it would generate invalid codes.  
 * **[UI]** Statistics window tick marks are now always integers.
 * **[UI]** Statistics window now shows the correct info for the turn

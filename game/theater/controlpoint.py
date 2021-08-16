@@ -55,6 +55,7 @@ from ..weather import Conditions
 if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
+    from game.squadrons.squadron import Squadron
     from ..transfers import PendingTransfers
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
@@ -294,8 +295,6 @@ class ControlPoint(MissionTarget, ABC):
         name: str,
         position: Point,
         at: db.StartingPosition,
-        size: int,
-        importance: float,
         has_frontline: bool = True,
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
@@ -308,9 +307,6 @@ class ControlPoint(MissionTarget, ABC):
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
-        # TODO: Should be Airbase specific.
-        self.size = size
-        self.importance = importance
         self.captured = False
         self.captured_invert = False
         # TODO: Should be Airbase specific.
@@ -322,11 +318,13 @@ class ControlPoint(MissionTarget, ABC):
         self.cptype = cptype
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
-        from ..unitdelivery import PendingUnitDeliveries
+        from ..groundunitorders import GroundUnitOrders
 
-        self.pending_unit_deliveries = PendingUnitDeliveries(self)
+        self.ground_unit_orders = GroundUnitOrders(self)
 
         self.target_position: Optional[Point] = None
+
+        self.squadrons: list[Squadron] = []
 
     def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"
@@ -588,25 +586,14 @@ class ControlPoint(MissionTarget, ABC):
                 return airbase
         return None
 
-    def _retreat_air_units(
-        self, game: Game, airframe: AircraftType, count: int
-    ) -> None:
-        while count:
-            logging.debug(f"Retreating {count} {airframe} from {self.name}")
-            destination = self.aircraft_retreat_destination(game, airframe)
-            if destination is None:
-                self.capture_aircraft(game, airframe, count)
-                return
-            parking = destination.unclaimed_parking(game)
-            transfer_amount = min([parking, count])
-            destination.base.commission_units({airframe: transfer_amount})
-            count -= transfer_amount
+    @staticmethod
+    def _retreat_squadron(squadron: Squadron) -> None:
+        logging.error("Air unit retreat not currently implemented")
 
     def retreat_air_units(self, game: Game) -> None:
         # TODO: Capture in order of price to retain maximum value?
-        while self.base.aircraft:
-            airframe, count = self.base.aircraft.popitem()
-            self._retreat_air_units(game, airframe, count)
+        for squadron in self.squadrons:
+            self._retreat_squadron(squadron)
 
     def depopulate_uncapturable_tgos(self) -> None:
         for tgo in self.connected_objectives:
@@ -615,7 +602,10 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
-        self.pending_unit_deliveries.refund_all(game.coalition_for(for_player))
+        coalition = game.coalition_for(for_player)
+        self.ground_unit_orders.refund_all(coalition)
+        for squadron in self.squadrons:
+            squadron.refund_orders()
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
@@ -630,19 +620,6 @@ class ControlPoint(MissionTarget, ABC):
     @abstractmethod
     def can_operate(self, aircraft: AircraftType) -> bool:
         ...
-
-    def aircraft_transferring(self, game: Game) -> dict[AircraftType, int]:
-        ato = game.coalition_for(self.captured).ato
-        transferring: defaultdict[AircraftType, int] = defaultdict(int)
-        for package in ato.packages:
-            for flight in package.flights:
-                if flight.departure == flight.arrival:
-                    continue
-                if flight.departure == self:
-                    transferring[flight.unit_type] -= flight.count
-                elif flight.arrival == self:
-                    transferring[flight.unit_type] += flight.count
-        return transferring
 
     def unclaimed_parking(self, game: Game) -> int:
         return self.total_aircraft_parking - self.allocated_aircraft(game).total
@@ -673,7 +650,9 @@ class ControlPoint(MissionTarget, ABC):
         self.runway_status.begin_repair()
 
     def process_turn(self, game: Game) -> None:
-        self.pending_unit_deliveries.process(game)
+        self.ground_unit_orders.process(game)
+        for squadron in self.squadrons:
+            squadron.deliver_orders()
 
         runway_status = self.runway_status
         if runway_status is not None:
@@ -695,21 +674,22 @@ class ControlPoint(MissionTarget, ABC):
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
 
-    def allocated_aircraft(self, game: Game) -> AircraftAllocations:
-        on_order = {}
-        for unit_bought, count in self.pending_unit_deliveries.units.items():
-            if isinstance(unit_bought, AircraftType):
-                on_order[unit_bought] = count
+    def allocated_aircraft(self, _game: Game) -> AircraftAllocations:
+        present: dict[AircraftType, int] = defaultdict(int)
+        on_order: dict[AircraftType, int] = defaultdict(int)
+        for squadron in self.squadrons:
+            present[squadron.aircraft] += squadron.owned_aircraft
+            # TODO: Only if this is the squadron destination, not location.
+            on_order[squadron.aircraft] += squadron.pending_deliveries
 
-        return AircraftAllocations(
-            self.base.aircraft, on_order, self.aircraft_transferring(game)
-        )
+        # TODO: Implement squadron transfers.
+        return AircraftAllocations(present, on_order, transferring={})
 
     def allocated_ground_units(
         self, transfers: PendingTransfers
     ) -> GroundUnitAllocations:
         on_order = {}
-        for unit_bought, count in self.pending_unit_deliveries.units.items():
+        for unit_bought, count in self.ground_unit_orders.units.items():
             if isinstance(unit_bought, GroundUnitType):
                 on_order[unit_bought] = count
 
@@ -815,16 +795,12 @@ class ControlPoint(MissionTarget, ABC):
 
 
 class Airfield(ControlPoint):
-    def __init__(
-        self, airport: Airport, size: int, importance: float, has_frontline: bool = True
-    ) -> None:
+    def __init__(self, airport: Airport, has_frontline: bool = True) -> None:
         super().__init__(
             airport.id,
             airport.name,
             airport.position,
             airport,
-            size,
-            importance,
             has_frontline,
             cptype=ControlPointType.AIRBASE,
         )
@@ -990,15 +966,11 @@ class NavalControlPoint(ControlPoint, ABC):
 
 class Carrier(NavalControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
-        import game.theater.conflicttheater
-
         super().__init__(
             cp_id,
             name,
             at,
             at,
-            game.theater.conflicttheater.SIZE_SMALL,
-            1,
             has_frontline=False,
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
@@ -1034,15 +1006,11 @@ class Carrier(NavalControlPoint):
 
 class Lha(NavalControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
-        import game.theater.conflicttheater
-
         super().__init__(
             cp_id,
             name,
             at,
             at,
-            game.theater.conflicttheater.SIZE_SMALL,
-            1,
             has_frontline=False,
             cptype=ControlPointType.LHA_GROUP,
         )
@@ -1071,15 +1039,11 @@ class OffMapSpawn(ControlPoint):
         return True
 
     def __init__(self, cp_id: int, name: str, position: Point):
-        from . import IMPORTANCE_MEDIUM, SIZE_REGULAR
-
         super().__init__(
             cp_id,
             name,
             position,
             at=position,
-            size=SIZE_REGULAR,
-            importance=IMPORTANCE_MEDIUM,
             has_frontline=False,
             cptype=ControlPointType.OFF_MAP,
         )
@@ -1128,15 +1092,11 @@ class OffMapSpawn(ControlPoint):
 
 class Fob(ControlPoint):
     def __init__(self, name: str, at: Point, cp_id: int):
-        import game.theater.conflicttheater
-
         super().__init__(
             cp_id,
             name,
             at,
             at,
-            game.theater.conflicttheater.SIZE_SMALL,
-            1,
             has_frontline=True,
             cptype=ControlPointType.FOB,
         )

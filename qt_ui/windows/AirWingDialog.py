@@ -16,7 +16,6 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game.inventory import ControlPointAircraftInventory
 from game.squadrons import Squadron
 from gen.flights.flight import Flight
 from qt_ui.delegates import TwoColumnRowDelegate
@@ -34,13 +33,17 @@ class SquadronDelegate(TwoColumnRowDelegate):
         return index.data(AirWingModel.SquadronRole)
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
+        squadron = self.squadron(index)
         if (row, column) == (0, 0):
-            return self.squadron(index).name
+            if squadron.nickname:
+                nickname = f' "{squadron.nickname}"'
+            else:
+                nickname = ""
+            return f"{squadron.name}{nickname}"
         elif (row, column) == (0, 1):
-            squadron = self.air_wing_model.data(index, AirWingModel.SquadronRole)
             return squadron.aircraft.name
         elif (row, column) == (1, 0):
-            return self.squadron(index).nickname or ""
+            return squadron.location.name
         elif (row, column) == (1, 1):
             squadron = self.squadron(index)
             active = len(squadron.active_pilots)
@@ -123,19 +126,13 @@ class AircraftInventoryData:
             )
 
     @classmethod
-    def each_from_inventory(
-        cls, inventory: ControlPointAircraftInventory
+    def each_untasked_from_squadron(
+        cls, squadron: Squadron
     ) -> Iterator[AircraftInventoryData]:
-        for unit_type, num_units in inventory.all_aircraft:
-            for _ in range(0, num_units):
-                yield AircraftInventoryData(
-                    inventory.control_point.name,
-                    unit_type.name,
-                    "Idle",
-                    "N/A",
-                    "N/A",
-                    "N/A",
-                )
+        for _ in range(0, squadron.untasked_aircraft):
+            yield AircraftInventoryData(
+                squadron.name, squadron.aircraft.name, "Idle", "N/A", "N/A", "N/A"
+            )
 
 
 class AirInventoryView(QWidget):
@@ -184,9 +181,8 @@ class AirInventoryView(QWidget):
 
     def iter_unallocated_aircraft(self) -> Iterator[AircraftInventoryData]:
         game = self.game_model.game
-        for control_point, inventory in game.aircraft_inventory.inventories.items():
-            if control_point.captured:
-                yield from AircraftInventoryData.each_from_inventory(inventory)
+        for squadron in game.blue.air_wing.iter_squadrons():
+            yield from AircraftInventoryData.each_untasked_from_squadron(squadron)
 
     def get_data(self, only_unallocated: bool) -> Iterator[AircraftInventoryData]:
         yield from self.iter_unallocated_aircraft()

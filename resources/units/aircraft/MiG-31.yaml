@@ -1,4 +1,5 @@
-description: "The Mikoyan MiG-31 (Russian: \u041C\u0438\u043A\u043E\u044F\u043D \u041C\
+description:
+  "The Mikoyan MiG-31 (Russian: \u041C\u0438\u043A\u043E\u044F\u043D \u041C\
   \u0438\u0413-31; NATO reporting name: Foxhound) is a supersonic interceptor aircraft\
   \ that was developed for use by the Soviet Air Forces. The aircraft was designed\
   \ by the Mikoyan design bureau as a replacement for the earlier MiG-25 \"Foxbat\"\
@@ -14,5 +15,6 @@ manufacturer: Mikoyan
 origin: USSR/Russia
 price: 24
 role: Interceptor
+max_range: 800
 variants:
   MiG-31 Foxhound: {}

@@ -1,8 +1,8 @@
 from typing import Optional, Tuple
 
 from game.commander.missionproposals import ProposedFlight
-from game.inventory import GlobalAircraftInventory
-from game.squadrons import AirWing, Squadron
+from game.squadrons.airwing import AirWing
+from game.squadrons.squadron import Squadron
 from game.theater import ControlPoint, MissionTarget
 from game.utils import meters
 from gen.flights.ai_flight_planner_db import aircraft_for_task
@@ -14,15 +14,10 @@ class AircraftAllocator:
     """Finds suitable aircraft for proposed missions."""
 
     def __init__(
-        self,
-        air_wing: AirWing,
-        closest_airfields: ClosestAirfields,
-        global_inventory: GlobalAircraftInventory,
-        is_player: bool,
+        self, air_wing: AirWing, closest_airfields: ClosestAirfields, is_player: bool
     ) -> None:
         self.air_wing = air_wing
         self.closest_airfields = closest_airfields
-        self.global_inventory = global_inventory
         self.is_player = is_player
 
     def find_squadron_for_flight(
@@ -55,11 +50,8 @@ class AircraftAllocator:
         for airfield in self.closest_airfields.operational_airfields:
             if not airfield.is_friendly(self.is_player):
                 continue
-            inventory = self.global_inventory.for_control_point(airfield)
             for aircraft in types:
                 if not airfield.can_operate(aircraft):
-                    continue
-                if inventory.available(aircraft) < flight.num_aircraft:
                     continue
                 distance_to_target = meters(target.distance_to(airfield))
                 if distance_to_target > aircraft.max_mission_range:
@@ -67,12 +59,11 @@ class AircraftAllocator:
                 # Valid location with enough aircraft available. Find a squadron to fit
                 # the role.
                 squadrons = self.air_wing.auto_assignable_for_task_with_type(
-                    aircraft, task
+                    aircraft, task, airfield
                 )
                 for squadron in squadrons:
-                    if squadron.operates_from(airfield) and squadron.can_provide_pilots(
+                    if squadron.operates_from(airfield) and squadron.can_fulfill_flight(
                         flight.num_aircraft
                     ):
-                        inventory.remove_aircraft(aircraft, flight.num_aircraft)
                         return airfield, squadron
         return None

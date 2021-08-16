@@ -10,17 +10,14 @@ from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
+from game.campaignloader.campaign import Campaign
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from game.factions.faction import Faction
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
 from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
-from qt_ui.windows.newgame.QCampaignList import (
-    Campaign,
-    QCampaignList,
-    load_campaigns,
-)
+from qt_ui.windows.newgame.QCampaignList import QCampaignList
 
 jinja_env = Environment(
     loader=FileSystemLoader("resources/ui/templates"),
@@ -41,7 +38,7 @@ class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
 
-        self.campaigns = load_campaigns()
+        self.campaigns = list(sorted(Campaign.load_each(), key=lambda x: x.name))
 
         self.faction_selection_page = FactionSelection()
         self.addPage(IntroPage())
@@ -116,10 +113,12 @@ class NewGameWizard(QtWidgets.QWizard):
 
         blue_faction = self.faction_selection_page.selected_blue_faction
         red_faction = self.faction_selection_page.selected_red_faction
+        theater = campaign.load_theater()
         generator = GameGenerator(
             blue_faction,
             red_faction,
-            campaign.load_theater(),
+            theater,
+            campaign.load_air_wing_config(theater),
             settings,
             generator_settings,
             mod_settings,
@@ -369,6 +368,11 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
             )
             campaign = campaignList.selected_campaign
             self.setField("selectedCampaign", campaign)
+            if campaign is None:
+                self.campaignMapDescription.setText("No campaign selected")
+                self.performanceText.setText("No campaign selected")
+                return
+
             self.campaignMapDescription.setText(template.render({"campaign": campaign}))
             self.faction_selection.setDefaultFactions(campaign)
             self.performanceText.setText(

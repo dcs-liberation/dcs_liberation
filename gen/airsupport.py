@@ -5,7 +5,8 @@ from datetime import timedelta
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from gen import RadioFrequency, TacanChannel
+    from gen.radios import RadioFrequency
+    from gen.tacan import TacanChannel
 
 
 @dataclass

@@ -27,7 +27,7 @@ from qt_ui import (
 )
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
-from qt_ui.windows.newgame.QCampaignList import Campaign
+from game.campaignloader.campaign import Campaign
 from qt_ui.windows.newgame.QNewGameWizard import DEFAULT_BUDGET
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
     QLiberationFirstStartWindow,
@@ -64,7 +64,8 @@ def run_ui(game: Optional[Game]) -> None:
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()
     with open(
-        "./resources/stylesheets/" + liberation_theme.get_theme_css_file()
+        "./resources/stylesheets/" + liberation_theme.get_theme_css_file(),
+        encoding="utf-8",
     ) as stylesheet:
         logging.info("Loading stylesheet: %s", liberation_theme.get_theme_css_file())
         app.setStyleSheet(stylesheet.read())
@@ -231,11 +232,13 @@ def create_game(
     # for loadouts) without saving the generated campaign and reloading it the normal
     # way.
     inject_custom_payloads(Path(persistency.base_path()))
-    campaign = Campaign.from_json(campaign_path)
+    campaign = Campaign.from_file(campaign_path)
+    theater = campaign.load_theater()
     generator = GameGenerator(
         FACTIONS[blue],
         FACTIONS[red],
-        campaign.load_theater(),
+        theater,
+        campaign.load_air_wing_config(theater),
         Settings(
             supercarrier=supercarrier,
             automate_runway_repair=auto_procurement,

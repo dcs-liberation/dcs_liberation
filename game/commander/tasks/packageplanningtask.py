@@ -11,12 +11,11 @@ from game.commander.missionproposals import ProposedFlight, EscortType, Proposed
 from game.commander.packagefulfiller import PackageFulfiller
 from game.commander.tasks.theatercommandertask import TheaterCommanderTask
 from game.commander.theaterstate import TheaterState
-from game.data.doctrine import Doctrine
 from game.settings import AutoAtoBehavior
 from game.theater import MissionTarget
 from game.theater.theatergroundobject import IadsGroundObject, NavalGroundObject
 from game.utils import Distance, meters
-from gen import Package
+from gen.ato import Package
 from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:
@@ -54,8 +53,6 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
     def execute(self, coalition: Coalition) -> None:
         if self.package is None:
             raise RuntimeError("Attempted to execute failed package planning task")
-        for flight in self.package.flights:
-            coalition.aircraft_inventory.claim_for_flight(flight)
         coalition.ato.add_package(self.package)
 
     @abstractmethod
@@ -100,7 +97,6 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         fulfiller = PackageFulfiller(
             state.context.coalition,
             state.context.theater,
-            state.available_aircraft,
             state.context.settings,
         )
         self.package = fulfiller.plan_mission(
