@@ -40,11 +40,11 @@ RESOURCES_DIR = THIS_DIR / "resources"
 
 
 class TestFactionLoader(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         pass
 
     @pytest.mark.skip(reason="Faction unit names in the json files are outdated")
-    def test_load_valid_faction(self):
+    def test_load_valid_faction(self) -> None:
         with (RESOURCES_DIR / "valid_faction.json").open("r") as data:
             faction = Faction.from_json(json.load(data))
 
@@ -115,7 +115,7 @@ class TestFactionLoader(unittest.TestCase):
             self.assertIn("ArleighBurkeGroupGenerator", faction.navy_generators)
 
     @pytest.mark.skip(reason="Faction unit names in the json files are outdated")
-    def test_load_valid_faction_with_invalid_country(self):
+    def test_load_valid_faction_with_invalid_country(self) -> None:
 
         with (RESOURCES_DIR / "invalid_faction_country.json").open("r") as data:
             try:

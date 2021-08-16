@@ -9,7 +9,7 @@ from gen.tacan import (
 import pytest
 
 
-def test_allocate_first_few_channels():
+def test_allocate_first_few_channels() -> None:
     registry = TacanRegistry()
     chan1 = registry.alloc_for_band(TacanBand.X)
     chan2 = registry.alloc_for_band(TacanBand.X)
@@ -19,7 +19,7 @@ def test_allocate_first_few_channels():
     assert chan3 == TacanChannel(32, TacanBand.X)
 
 
-def test_reserve_invalid_tr_channels():
+def test_reserve_invalid_tr_channels() -> None:
     registry = TacanRegistry()
     some_invalid_channels = [
         TacanChannel(2, TacanBand.X),
@@ -36,7 +36,7 @@ def test_reserve_invalid_tr_channels():
             registry.reserve(chan, TacanUsage.TransmitReceive)
 
 
-def test_reserve_invalid_a2a_channels():
+def test_reserve_invalid_a2a_channels() -> None:
     registry = TacanRegistry()
     some_invalid_channels = [
         TacanChannel(1, TacanBand.X),
@@ -53,7 +53,7 @@ def test_reserve_invalid_a2a_channels():
             registry.reserve(chan, TacanUsage.AirToAir)
 
 
-def test_reserve_again():
+def test_reserve_again() -> None:
     registry = TacanRegistry()
     with pytest.raises(TacanChannelInUseError):
         registry.reserve(TacanChannel(1, TacanBand.X), TacanUsage.TransmitReceive)
