@@ -3,15 +3,29 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Iterator, Set
 
-
 class TacanBand(Enum):
     X = "X"
     Y = "Y"
 
     def range(self) -> Iterator["TacanChannel"]:
         """Returns an iterator over the channels in this band."""
+        # TODO: Shouldn't this be 1-126?
         return (TacanChannel(x, self) for x in range(1, 100))
 
+class TacanUsage(Enum):
+    TransmitReceive = "TransmitReceive"
+    AirToAir = "AirToAir"
+
+# Avoid certain TACAN channels for various reasons
+# https://forums.eagle.ru/topic/276390-datalink-issue/
+UNAVAILABLE_T_R = {
+    TacanBand.X: set(range(2, 30)) | set(range(47, 63)),
+    TacanBand.Y: set(range(2, 30)) | set(range(64, 92)),
+}
+UNAVAILABLE_A2A = {
+    TacanBand.X: set(range(1, 36)) | set(range(64, 99)),
+    TacanBand.Y: set(range(1, 36)) | set(range(64, 99)),
+}
 
 @dataclass(frozen=True)
 class TacanChannel:
@@ -35,6 +49,11 @@ class TacanChannelInUseError(RuntimeError):
     def __init__(self, channel: TacanChannel) -> None:
         super().__init__(f"{channel} is already in use")
 
+class TacanChannelForbiddenError(RuntimeError):
+    """Raised when attempting to reserve a, for technical reasons, forbidden channel."""
+
+    def __init__(self, channel: TacanChannel) -> None:
+        super().__init__(f"{channel} is forbidden")
 
 class TacanRegistry:
     """Manages allocation of TACAN channels."""
@@ -56,7 +75,7 @@ class TacanRegistry:
             A TACAN channel in the given band.
 
         Raises:
-            OutOfChannelsError: All channels compatible with the given radio are
+            OutOfTacanChannelsError: All channels compatible with the given radio are
                 already allocated.
         """
         allocator = self.band_allocators[band]
@@ -67,7 +86,7 @@ class TacanRegistry:
         except StopIteration:
             raise OutOfTacanChannelsError(band)
 
-    def reserve(self, channel: TacanChannel) -> None:
+    def reserve(self, channel: TacanChannel, intendedUsage: TacanUsage) -> None:
         """Reserves the given channel.
 
         Reserving a channel ensures that it will not be allocated in the future.
@@ -76,7 +95,8 @@ class TacanRegistry:
             channel: The channel to reserve.
 
         Raises:
-            ChannelInUseError: The given frequency is already in use.
+            TacanChannelInUseError: The given frequency is already in use.
+            TacanChannelForbiddenError: The given frequency is forbidden.
         """
         if channel in self.allocated_channels:
             raise TacanChannelInUseError(channel)
