@@ -24,6 +24,15 @@ def test_allocate_first_few_channels() -> None:
     assert chan3 == TacanChannel(32, TacanBand.X)
 
 
+def test_reserve_ignoring_rules() -> None:
+    registry = TacanRegistry()
+    with pytest.raises(TacanChannelForbiddenError):
+        registry.reserve(TacanChannel(16, TacanBand.X), TacanUsage.TransmitReceive)
+    registry.reserve(
+        TacanChannel(16, TacanBand.X), TacanUsage.TransmitReceive, ignore_rules=True
+    )
+
+
 def test_allocate_different_usages() -> None:
     """Make sure unallocated channels for one use don't make channels unavailable for other usage"""
     registry = TacanRegistry()

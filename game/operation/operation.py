@@ -229,7 +229,9 @@ class Operation:
                     logging.error(f"TACAN beacon has no channel: {beacon.callsign}")
                 else:
                     cls.tacan_registry.reserve(
-                        beacon.tacan_channel, TacanUsage.TransmitReceive
+                        beacon.tacan_channel,
+                        TacanUsage.TransmitReceive,
+                        ignore_rules=True,
                     )
 
     @classmethod
