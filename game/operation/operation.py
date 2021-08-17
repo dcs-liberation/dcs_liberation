@@ -34,7 +34,7 @@ from gen.kneeboard import KneeboardGenerator
 from gen.lasercoderegistry import LaserCodeRegistry
 from gen.naming import namegen
 from gen.radios import RadioFrequency, RadioRegistry
-from gen.tacan import TacanRegistry
+from gen.tacan import TacanRegistry, TacanUsage
 from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 from gen.visualgen import VisualGenerator
 from .. import db
@@ -228,7 +228,9 @@ class Operation:
                 if beacon.channel is None:
                     logging.error(f"TACAN beacon has no channel: {beacon.callsign}")
                 else:
-                    cls.tacan_registry.reserve(beacon.tacan_channel)
+                    cls.tacan_registry.reserve(
+                        beacon.tacan_channel, TacanUsage.TransmitReceive
+                    )
 
     @classmethod
     def _create_radio_registry(

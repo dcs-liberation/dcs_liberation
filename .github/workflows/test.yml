@@ -1,4 +1,4 @@
-name: Build
+name: Test
 
 on: [push, pull_request]
 
@@ -27,32 +27,7 @@ jobs:
         # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
         Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
 
-    - name: mypy game
+    - name: run tests
       run: |
         ./venv/scripts/activate
-        mypy game
-
-    - name: mypy gen
-      run: |
-        ./venv/scripts/activate
-        mypy gen
-
-    - name: mypy tests
-      run: |
-        ./venv/scripts/activate
-        mypy tests
-      
-    - name: update build number
-      run: |
-        [IO.File]::WriteAllLines($pwd.path + "\resources\buildnumber", $env:GITHUB_RUN_NUMBER)
-
-    - name: Build binaries
-      run: |
-        ./venv/scripts/activate
-        $env:PYTHONPATH=".;./pydcs"
-        pyinstaller pyinstaller.spec
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: dcs_liberation
-        path: dist/
+        pytest tests

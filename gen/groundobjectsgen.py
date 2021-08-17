@@ -58,7 +58,7 @@ from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
 from .radios import RadioFrequency, RadioRegistry
 from .runways import RunwayData
-from .tacan import TacanBand, TacanChannel, TacanRegistry
+from .tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
 
 if TYPE_CHECKING:
     from game import Game
@@ -377,7 +377,9 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator[GenericCarrierGroundO
             for unit in group.units[1:]:
                 ship_group.add_unit(self.create_ship(unit, atc))
 
-            tacan = self.tacan_registry.alloc_for_band(TacanBand.X)
+            tacan = self.tacan_registry.alloc_for_band(
+                TacanBand.X, TacanUsage.TransmitReceive
+            )
             tacan_callsign = self.tacan_callsign()
             icls = next(self.icls_alloc)
 

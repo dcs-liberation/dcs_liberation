@@ -4,13 +4,37 @@ from enum import Enum
 from typing import Dict, Iterator, Set
 
 
+class TacanUsage(Enum):
+    TransmitReceive = "transmit receive"
+    AirToAir = "air to air"
+
+
 class TacanBand(Enum):
     X = "X"
     Y = "Y"
 
     def range(self) -> Iterator["TacanChannel"]:
         """Returns an iterator over the channels in this band."""
-        return (TacanChannel(x, self) for x in range(1, 100))
+        return (TacanChannel(x, self) for x in range(1, 126 + 1))
+
+    def valid_channels(self, usage: TacanUsage) -> Iterator["TacanChannel"]:
+        for x in self.range():
+            if x.number not in UNAVAILABLE[usage][self]:
+                yield x
+
+
+# Avoid certain TACAN channels for various reasons
+# https://forums.eagle.ru/topic/276390-datalink-issue/
+UNAVAILABLE = {
+    TacanUsage.TransmitReceive: {
+        TacanBand.X: set(range(2, 30 + 1)) | set(range(47, 63 + 1)),
+        TacanBand.Y: set(range(2, 30 + 1)) | set(range(64, 92 + 1)),
+    },
+    TacanUsage.AirToAir: {
+        TacanBand.X: set(range(1, 36 + 1)) | set(range(64, 99 + 1)),
+        TacanBand.Y: set(range(1, 36 + 1)) | set(range(64, 99 + 1)),
+    },
+}
 
 
 @dataclass(frozen=True)
@@ -36,30 +60,42 @@ class TacanChannelInUseError(RuntimeError):
         super().__init__(f"{channel} is already in use")
 
 
+class TacanChannelForbiddenError(RuntimeError):
+    """Raised when attempting to reserve a, for technical reasons, forbidden channel."""
+
+    def __init__(self, channel: TacanChannel) -> None:
+        super().__init__(f"{channel} is forbidden")
+
+
 class TacanRegistry:
     """Manages allocation of TACAN channels."""
 
     def __init__(self) -> None:
         self.allocated_channels: Set[TacanChannel] = set()
-        self.band_allocators: Dict[TacanBand, Iterator[TacanChannel]] = {}
+        self.allocators: Dict[TacanBand, Dict[TacanUsage, Iterator[TacanChannel]]] = {}
 
         for band in TacanBand:
-            self.band_allocators[band] = band.range()
+            self.allocators[band] = {}
+            for usage in TacanUsage:
+                self.allocators[band][usage] = band.valid_channels(usage)
 
-    def alloc_for_band(self, band: TacanBand) -> TacanChannel:
+    def alloc_for_band(
+        self, band: TacanBand, intended_usage: TacanUsage
+    ) -> TacanChannel:
         """Allocates a TACAN channel in the given band.
 
         Args:
             band: The TACAN band to allocate a channel for.
+            intended_usage: What the caller intends to use the tacan channel for.
 
         Returns:
             A TACAN channel in the given band.
 
         Raises:
-            OutOfChannelsError: All channels compatible with the given radio are
+            OutOfTacanChannelsError: All channels compatible with the given radio are
                 already allocated.
         """
-        allocator = self.band_allocators[band]
+        allocator = self.allocators[band][intended_usage]
         try:
             while (channel := next(allocator)) in self.allocated_channels:
                 pass
@@ -67,17 +103,21 @@ class TacanRegistry:
         except StopIteration:
             raise OutOfTacanChannelsError(band)
 
-    def reserve(self, channel: TacanChannel) -> None:
+    def reserve(self, channel: TacanChannel, intended_usage: TacanUsage) -> None:
         """Reserves the given channel.
 
         Reserving a channel ensures that it will not be allocated in the future.
 
         Args:
             channel: The channel to reserve.
+            intended_usage: What the caller intends to use the tacan channel for.
 
         Raises:
-            ChannelInUseError: The given frequency is already in use.
+            TacanChannelInUseError: The given channel is already in use.
+            TacanChannelForbiddenError: The given channel is forbidden.
         """
+        if channel.number in UNAVAILABLE[intended_usage][channel.band]:
+            raise TacanChannelForbiddenError(channel)
         if channel in self.allocated_channels:
             raise TacanChannelInUseError(channel)
         self.allocated_channels.add(channel)
