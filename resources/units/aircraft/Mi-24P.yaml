@@ -11,8 +11,9 @@ description: "The Mil Mi-24 (Russian: \u041C\u0438\u043B\u044C \u041C\u0438-24; 
   \u043A\u043E\u0434\u0438\u043B, romanized: Krokodil), due to the helicopter's camouflage\
   \ scheme, and 'Drinking Glass' (Russian: \u0421\u0442\u0430\u043A\u0430\u043D, romanized:\
   \ Stakan), because of the flat glass plates that surround earlier Mi-24 variants'\
-  \ cockpits. It served to a great success in the Afghanistan war, until the Taliban\
+  \ cockpits. It served to a great success inb: Afghanistan war, until the Taliban\
   \ where equipped with Stinger Missiles from the CIA."
+lha_capable: true
 introduced: 1981
 manufacturer: Mil
 origin: USSR/Russia
