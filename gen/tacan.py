@@ -60,13 +60,6 @@ class TacanChannelInUseError(RuntimeError):
         super().__init__(f"{channel} is already in use")
 
 
-class TacanChannelForbiddenError(RuntimeError):
-    """Raised when attempting to reserve a, for technical reasons, forbidden channel."""
-
-    def __init__(self, channel: TacanChannel) -> None:
-        super().__init__(f"{channel} is forbidden")
-
-
 class TacanRegistry:
     """Manages allocation of TACAN channels."""
 
@@ -103,28 +96,17 @@ class TacanRegistry:
         except StopIteration:
             raise OutOfTacanChannelsError(band)
 
-    def reserve(
-        self,
-        channel: TacanChannel,
-        intended_usage: TacanUsage,
-        ignore_rules: bool = False,
-    ) -> None:
+    def mark_unavailable(self, channel: TacanChannel) -> None:
         """Reserves the given channel.
 
         Reserving a channel ensures that it will not be allocated in the future.
 
         Args:
             channel: The channel to reserve.
-            intended_usage: What the caller intends to use the tacan channel for.
-            ignore_rules: Whether to reserve regardless of recommended rules.
 
         Raises:
             TacanChannelInUseError: The given channel is already in use.
-            TacanChannelForbiddenError: The given channel is forbidden.
         """
-        if not ignore_rules:
-            if channel.number in UNAVAILABLE[intended_usage][channel.band]:
-                raise TacanChannelForbiddenError(channel)
         if channel in self.allocated_channels:
             raise TacanChannelInUseError(channel)
         self.allocated_channels.add(channel)

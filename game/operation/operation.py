@@ -228,11 +228,7 @@ class Operation:
                 if beacon.channel is None:
                     logging.error(f"TACAN beacon has no channel: {beacon.callsign}")
                 else:
-                    cls.tacan_registry.reserve(
-                        beacon.tacan_channel,
-                        TacanUsage.TransmitReceive,
-                        ignore_rules=True,
-                    )
+                    cls.tacan_registry.mark_unavailable(beacon.tacan_channel)
 
     @classmethod
     def _create_radio_registry(
