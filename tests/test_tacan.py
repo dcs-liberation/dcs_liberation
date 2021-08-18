@@ -24,15 +24,6 @@ def test_allocate_first_few_channels() -> None:
     assert chan3 == TacanChannel(32, TacanBand.X)
 
 
-def test_reserve_ignoring_rules() -> None:
-    registry = TacanRegistry()
-    with pytest.raises(TacanChannelForbiddenError):
-        registry.reserve(TacanChannel(16, TacanBand.X), TacanUsage.TransmitReceive)
-    registry.reserve(
-        TacanChannel(16, TacanBand.X), TacanUsage.TransmitReceive, ignore_rules=True
-    )
-
-
 def test_allocate_different_usages() -> None:
     """Make sure unallocated channels for one use don't make channels unavailable for other usage"""
     registry = TacanRegistry()
@@ -53,7 +44,7 @@ def test_reserve_all_valid_transmit_receive() -> None:
     print("All valid x", ALL_VALID_X_TR)
 
     for num in ALL_VALID_X_TR:
-        registry.reserve(TacanChannel(num, TacanBand.X), TacanUsage.TransmitReceive)
+        registry.mark_unavailable(TacanChannel(num, TacanBand.X))
 
     with pytest.raises(OutOfTacanChannelsError):
         registry.alloc_for_band(TacanBand.X, TacanUsage.TransmitReceive)
@@ -69,7 +60,7 @@ def test_reserve_all_valid_a2a() -> None:
     print("All valid x", ALL_VALID_X_A2A)
 
     for num in ALL_VALID_X_A2A:
-        registry.reserve(TacanChannel(num, TacanBand.X), TacanUsage.AirToAir)
+        registry.mark_unavailable(TacanChannel(num, TacanBand.X))
 
     with pytest.raises(OutOfTacanChannelsError):
         registry.alloc_for_band(TacanBand.X, TacanUsage.AirToAir)
@@ -80,47 +71,8 @@ def test_reserve_all_valid_a2a() -> None:
     assert chanTR == TacanChannel(1, TacanBand.X)
 
 
-@pytest.mark.skip(reason="TODO")
-def test_allocate_all() -> None:
-    pass
-
-
-def test_reserve_invalid_tr_channels() -> None:
-    registry = TacanRegistry()
-    some_invalid_channels = [
-        TacanChannel(2, TacanBand.X),
-        TacanChannel(30, TacanBand.X),
-        TacanChannel(47, TacanBand.X),
-        TacanChannel(63, TacanBand.X),
-        TacanChannel(2, TacanBand.Y),
-        TacanChannel(30, TacanBand.Y),
-        TacanChannel(64, TacanBand.Y),
-        TacanChannel(92, TacanBand.Y),
-    ]
-    for chan in some_invalid_channels:
-        with pytest.raises(TacanChannelForbiddenError):
-            registry.reserve(chan, TacanUsage.TransmitReceive)
-
-
-def test_reserve_invalid_a2a_channels() -> None:
-    registry = TacanRegistry()
-    some_invalid_channels = [
-        TacanChannel(1, TacanBand.X),
-        TacanChannel(36, TacanBand.X),
-        TacanChannel(64, TacanBand.X),
-        TacanChannel(99, TacanBand.X),
-        TacanChannel(1, TacanBand.Y),
-        TacanChannel(36, TacanBand.Y),
-        TacanChannel(64, TacanBand.Y),
-        TacanChannel(99, TacanBand.Y),
-    ]
-    for chan in some_invalid_channels:
-        with pytest.raises(TacanChannelForbiddenError):
-            registry.reserve(chan, TacanUsage.AirToAir)
-
-
 def test_reserve_again() -> None:
     registry = TacanRegistry()
     with pytest.raises(TacanChannelInUseError):
-        registry.reserve(TacanChannel(1, TacanBand.X), TacanUsage.TransmitReceive)
-        registry.reserve(TacanChannel(1, TacanBand.X), TacanUsage.TransmitReceive)
+        registry.mark_unavailable(TacanChannel(1, TacanBand.X))
+        registry.mark_unavailable(TacanChannel(1, TacanBand.X))
