@@ -2,7 +2,6 @@ from gen.tacan import (
     OutOfTacanChannelsError,
     TacanBand,
     TacanChannel,
-    TacanChannelForbiddenError,
     TacanChannelInUseError,
     TacanRegistry,
     TacanUsage,

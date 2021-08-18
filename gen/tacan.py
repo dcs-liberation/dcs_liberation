@@ -60,13 +60,6 @@ class TacanChannelInUseError(RuntimeError):
         super().__init__(f"{channel} is already in use")
 
 
-class TacanChannelForbiddenError(RuntimeError):
-    """Raised when attempting to reserve a, for technical reasons, forbidden channel."""
-
-    def __init__(self, channel: TacanChannel) -> None:
-        super().__init__(f"{channel} is forbidden")
-
-
 class TacanRegistry:
     """Manages allocation of TACAN channels."""
 
