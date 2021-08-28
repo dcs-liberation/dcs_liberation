@@ -252,7 +252,6 @@ def create_game(
             start_date=start_date,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
-            midgame=False,
             inverted=inverted,
             no_carrier=False,
             no_lha=False,

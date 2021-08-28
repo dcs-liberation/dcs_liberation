@@ -752,7 +752,7 @@ class PendingTransfers:
         )
 
     def order_airlift_assets_at(self, control_point: ControlPoint) -> None:
-        unclaimed_parking = control_point.unclaimed_parking(self.game)
+        unclaimed_parking = control_point.unclaimed_parking()
         # Buy a maximum of unclaimed_parking only to prevent that aircraft procurement
         # take place at another base
         gap = min(

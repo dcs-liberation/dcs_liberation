@@ -77,7 +77,7 @@ class AircraftIntelLayout(IntelTableLayout):
 
         total = 0
         for control_point in game.theater.control_points_for(player):
-            allocation = control_point.allocated_aircraft(game)
+            allocation = control_point.allocated_aircraft()
             base_total = allocation.total_present
             total += base_total
             if not base_total:

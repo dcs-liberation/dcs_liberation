@@ -11,22 +11,20 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game import Game
 from game.theater import ControlPoint
 
 
 class QIntelInfo(QFrame):
-    def __init__(self, cp: ControlPoint, game: Game):
+    def __init__(self, cp: ControlPoint):
         super(QIntelInfo, self).__init__()
         self.cp = cp
-        self.game = game
 
         layout = QVBoxLayout()
         scroll_content = QWidget()
         intel_layout = QVBoxLayout()
 
         units_by_task: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-        for unit_type, count in self.cp.allocated_aircraft(game).present.items():
+        for unit_type, count in self.cp.allocated_aircraft().present.items():
             if count:
                 task_type = unit_type.dcs_unit_type.task_default.name
                 units_by_task[task_type][unit_type.name] += count

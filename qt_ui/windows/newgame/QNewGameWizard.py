@@ -94,7 +94,6 @@ class NewGameWizard(QtWidgets.QWizard):
             enemy_budget=int(self.field("enemy_starting_money")),
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
             # give 0.1 to 5.0.
-            midgame=False,
             inverted=self.field("invertMap"),
             no_carrier=self.field("no_carrier"),
             no_lha=self.field("no_lha"),

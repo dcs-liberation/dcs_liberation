@@ -74,7 +74,7 @@ class ProcurementAi:
                 self.game.coalition_for(self.is_player).transfers
             )
             armor_investment += cp_ground_units.total_value
-            cp_aircraft = cp.allocated_aircraft(self.game)
+            cp_aircraft = cp.allocated_aircraft()
             aircraft_investment += cp_aircraft.total_value
 
         total_investment = aircraft_investment + armor_investment
@@ -252,7 +252,7 @@ class ProcurementAi:
         for cp in distance_cache.operational_airfields:
             if not cp.is_friendly(self.is_player):
                 continue
-            if cp.unclaimed_parking(self.game) < request.number:
+            if cp.unclaimed_parking() < request.number:
                 continue
             if self.threat_zones.threatened(cp.position):
                 threatened.append(cp)

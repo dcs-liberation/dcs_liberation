@@ -190,7 +190,7 @@ class QBaseMenu2(QDialog):
         self.repair_button.setDisabled(True)
 
     def update_intel_summary(self) -> None:
-        aircraft = self.cp.allocated_aircraft(self.game_model.game).total_present
+        aircraft = self.cp.allocated_aircraft().total_present
         parking = self.cp.total_aircraft_parking
         ground_unit_limit = self.cp.frontline_unit_count_limit
         deployable_unit_info = ""

@@ -21,12 +21,7 @@ from game.purchaseadapter import AircraftPurchaseAdapter
 
 class QAircraftRecruitmentMenu(UnitTransactionFrame[Squadron]):
     def __init__(self, cp: ControlPoint, game_model: GameModel) -> None:
-        super().__init__(
-            game_model,
-            AircraftPurchaseAdapter(
-                cp, game_model.game.coalition_for(cp.captured), game_model.game
-            ),
-        )
+        super().__init__(game_model, AircraftPurchaseAdapter(cp))
         self.cp = cp
         self.game_model = game_model
         self.purchase_groups = {}
@@ -96,7 +91,7 @@ class QHangarStatus(QHBoxLayout):
         self.setAlignment(Qt.AlignLeft)
 
     def update_label(self) -> None:
-        next_turn = self.control_point.allocated_aircraft(self.game_model.game)
+        next_turn = self.control_point.allocated_aircraft()
         max_amount = self.control_point.total_aircraft_parking
 
         components = [f"{next_turn.total_present} present"]

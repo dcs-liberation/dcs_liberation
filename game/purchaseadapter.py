@@ -92,12 +92,9 @@ class PurchaseAdapter(Generic[ItemType]):
 
 
 class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
-    def __init__(
-        self, control_point: ControlPoint, coalition: Coalition, game: Game
-    ) -> None:
-        super().__init__(coalition)
+    def __init__(self, control_point: ControlPoint) -> None:
+        super().__init__(control_point.coalition)
         self.control_point = control_point
-        self.game = game
 
     def pending_delivery_quantity(self, item: Squadron) -> int:
         return item.pending_deliveries
@@ -106,10 +103,7 @@ class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
         return item.owned_aircraft
 
     def can_buy(self, item: Squadron) -> bool:
-        return (
-            super().can_buy(item)
-            and self.control_point.unclaimed_parking(self.game) > 0
-        )
+        return super().can_buy(item) and self.control_point.unclaimed_parking() > 0
 
     def can_sell(self, item: Squadron) -> bool:
         return item.untasked_aircraft > 0

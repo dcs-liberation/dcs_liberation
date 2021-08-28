@@ -123,6 +123,9 @@ class Game:
         self.blue.set_opponent(self.red)
         self.red.set_opponent(self.blue)
 
+        for control_point in self.theater.controlpoints:
+            control_point.finish_init(self)
+
         self.blue.configure_default_air_wing(air_wing_config)
         self.red.configure_default_air_wing(air_wing_config)
 

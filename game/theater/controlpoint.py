@@ -55,6 +55,7 @@ if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
     from game.squadrons.squadron import Squadron
+    from ..coalition import Coalition
     from ..transfers import PendingTransfers
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
@@ -280,7 +281,6 @@ class ControlPoint(MissionTarget, ABC):
     position = None  # type: Point
     name = None  # type: str
 
-    captured = False
     has_frontline = True
 
     alt = 0
@@ -294,6 +294,7 @@ class ControlPoint(MissionTarget, ABC):
         name: str,
         position: Point,
         at: db.StartingPosition,
+        starts_blue: bool,
         has_frontline: bool = True,
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
@@ -302,11 +303,12 @@ class ControlPoint(MissionTarget, ABC):
         self.id = cp_id
         self.full_name = name
         self.at = at
+        self.starts_blue = starts_blue
         self.connected_objectives: List[TheaterGroundObject[Any]] = []
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
-        self.captured = False
+        self._coalition: Optional[Coalition] = None
         self.captured_invert = False
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
@@ -327,6 +329,20 @@ class ControlPoint(MissionTarget, ABC):
 
     def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"
+
+    @property
+    def coalition(self) -> Coalition:
+        if self._coalition is None:
+            raise RuntimeError("ControlPoint not fully initialized: coalition not set")
+        return self._coalition
+
+    def finish_init(self, game: Game) -> None:
+        assert self._coalition is None
+        self._coalition = game.coalition_for(self.starts_blue)
+
+    @property
+    def captured(self) -> bool:
+        return self.coalition.player
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject[Any]]:
@@ -561,7 +577,7 @@ class ControlPoint(MissionTarget, ABC):
         )
 
     def aircraft_retreat_destination(
-        self, game: Game, airframe: AircraftType
+        self, airframe: AircraftType
     ) -> Optional[ControlPoint]:
         closest = ObjectiveDistanceCache.get_closest_airfields(self)
         # TODO: Should be airframe dependent.
@@ -574,7 +590,7 @@ class ControlPoint(MissionTarget, ABC):
                 continue
             if airbase.captured != self.captured:
                 continue
-            if airbase.unclaimed_parking(game) > 0:
+            if airbase.unclaimed_parking() > 0:
                 return airbase
         return None
 
@@ -594,27 +610,23 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
-        coalition = game.coalition_for(for_player)
-        self.ground_unit_orders.refund_all(coalition)
+        new_coalition = game.coalition_for(for_player)
+        self.ground_unit_orders.refund_all(self.coalition)
         for squadron in self.squadrons:
             squadron.refund_orders()
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
 
-        if for_player:
-            self.captured = True
-        else:
-            self.captured = False
-
+        self._coalition = new_coalition
         self.base.set_strength_to_minimum()
 
     @abstractmethod
     def can_operate(self, aircraft: AircraftType) -> bool:
         ...
 
-    def unclaimed_parking(self, game: Game) -> int:
-        return self.total_aircraft_parking - self.allocated_aircraft(game).total
+    def unclaimed_parking(self) -> int:
+        return self.total_aircraft_parking - self.allocated_aircraft().total
 
     @abstractmethod
     def active_runway(
@@ -666,7 +678,7 @@ class ControlPoint(MissionTarget, ABC):
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
 
-    def allocated_aircraft(self, _game: Game) -> AircraftAllocations:
+    def allocated_aircraft(self) -> AircraftAllocations:
         present: dict[AircraftType, int] = defaultdict(int)
         on_order: dict[AircraftType, int] = defaultdict(int)
         for squadron in self.squadrons:
@@ -771,13 +783,14 @@ class ControlPoint(MissionTarget, ABC):
 
 
 class Airfield(ControlPoint):
-    def __init__(self, airport: Airport, has_frontline: bool = True) -> None:
+    def __init__(self, airport: Airport, starts_blue: bool) -> None:
         super().__init__(
             airport.id,
             airport.name,
             airport.position,
             airport,
-            has_frontline,
+            starts_blue,
+            has_frontline=True,
             cptype=ControlPointType.AIRBASE,
         )
         self.airport = airport
@@ -941,12 +954,13 @@ class NavalControlPoint(ControlPoint, ABC):
 
 
 class Carrier(NavalControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int):
+    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             at,
             at,
+            starts_blue,
             has_frontline=False,
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
@@ -981,12 +995,13 @@ class Carrier(NavalControlPoint):
 
 
 class Lha(NavalControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int):
+    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             at,
             at,
+            starts_blue,
             has_frontline=False,
             cptype=ControlPointType.LHA_GROUP,
         )
@@ -1014,12 +1029,13 @@ class OffMapSpawn(ControlPoint):
     def runway_is_operational(self) -> bool:
         return True
 
-    def __init__(self, cp_id: int, name: str, position: Point):
+    def __init__(self, cp_id: int, name: str, position: Point, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             position,
-            at=position,
+            position,
+            starts_blue,
             has_frontline=False,
             cptype=ControlPointType.OFF_MAP,
         )
@@ -1067,12 +1083,13 @@ class OffMapSpawn(ControlPoint):
 
 
 class Fob(ControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int):
+    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             at,
             at,
+            starts_blue,
             has_frontline=True,
             cptype=ControlPointType.FOB,
         )
