@@ -1,0 +1,14 @@
+---
+name: 335th FS
+nickname: Chiefs
+country: USA
+role: Strike Fighter
+aircraft: F-15E Strike Eagle
+livery: 335th Fighter SQN (SJ)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
