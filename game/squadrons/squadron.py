@@ -167,6 +167,10 @@ class Squadron:
             raise ValueError("Squadrons can only be created with active pilots.")
         self._recruit_pilots(self.settings.squadron_pilot_limit)
 
+    def end_turn(self) -> None:
+        self.replenish_lost_pilots()
+        self.deliver_orders()
+
     def replenish_lost_pilots(self) -> None:
         if not self.pilot_limits_enabled:
             return

@@ -704,8 +704,6 @@ class ControlPoint(MissionTarget, ABC):
 
     def process_turn(self, game: Game) -> None:
         self.ground_unit_orders.process(game)
-        for squadron in self.squadrons:
-            squadron.deliver_orders()
 
         runway_status = self.runway_status
         if runway_status is not None:

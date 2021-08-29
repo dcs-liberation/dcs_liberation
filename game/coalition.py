@@ -139,7 +139,7 @@ class Coalition:
         For more information on turn finalization in general, see the documentation for
         `Game.finish_turn`.
         """
-        self.air_wing.replenish()
+        self.air_wing.end_turn()
         self.budget += Income(self.game, self.player).total
 
         # Need to recompute before transfers and deliveries to account for captures.

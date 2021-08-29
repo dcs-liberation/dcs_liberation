@@ -75,9 +75,9 @@ class AirWing:
         for squadron in self.iter_squadrons():
             squadron.populate_for_turn_0()
 
-    def replenish(self) -> None:
+    def end_turn(self) -> None:
         for squadron in self.iter_squadrons():
-            squadron.replenish_lost_pilots()
+            squadron.end_turn()
 
     def reset(self) -> None:
         for squadron in self.iter_squadrons():
