@@ -1,0 +1,14 @@
+---
+name: 58th FS
+nickname: Gorillas
+country: USA
+role: Air Superiority Fighter
+aircraft: F-15C Eagle
+livery: 58th Fighter SQN (EG)
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+
