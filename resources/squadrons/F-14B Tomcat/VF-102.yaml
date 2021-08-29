@@ -1,0 +1,20 @@
+---
+name: VF-102
+nickname: Diamond Backs
+country: USA
+role: Strike Fighter
+aircraft: F-14B Tomcat
+livery: VF-102 Diamondbacks 102 (2000)
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - Strike
+  - Fighter sweep
+  - TARCAP
