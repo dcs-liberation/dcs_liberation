@@ -1,0 +1,14 @@
+---
+name: 115th Guards Aviation Regiment
+nickname: 115th GvIAP
+country: Russia
+role: Air Superiority Fighter
+aircraft: MiG-29S Fulcrum-C
+livery: "115 GvIAP_Termez"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

@@ -1,0 +1,14 @@
+---
+name: 773rd Aviation Regiment
+nickname: 773rd IAP
+country: Russia
+role: Air Superiority Fighter
+aircraft: MiG-29S Fulcrum-C
+livery: "773 IAP_Damgarten"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
