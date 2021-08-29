@@ -17,6 +17,7 @@ from PySide2.QtWidgets import (
 )
 
 from game.squadrons import Squadron
+from game.theater import ConflictTheater
 from gen.flights.flight import Flight
 from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.models import GameModel, AirWingModel, SquadronModel
@@ -56,9 +57,10 @@ class SquadronDelegate(TwoColumnRowDelegate):
 class SquadronList(QListView):
     """List view for displaying the air wing's squadrons."""
 
-    def __init__(self, air_wing_model: AirWingModel) -> None:
+    def __init__(self, air_wing_model: AirWingModel, theater: ConflictTheater) -> None:
         super().__init__()
         self.air_wing_model = air_wing_model
+        self.theater = theater
         self.dialog: Optional[SquadronDialog] = None
 
         self.setIconSize(QSize(91, 24))
@@ -76,7 +78,9 @@ class SquadronList(QListView):
         if not index.isValid():
             return
         self.dialog = SquadronDialog(
-            SquadronModel(self.air_wing_model.squadron_at_index(index)), self
+            SquadronModel(self.air_wing_model.squadron_at_index(index)),
+            self.theater,
+            self,
         )
         self.dialog.show()
 
@@ -194,7 +198,10 @@ class AirWingTabs(QTabWidget):
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
 
-        self.addTab(SquadronList(game_model.blue_air_wing_model), "Squadrons")
+        self.addTab(
+            SquadronList(game_model.blue_air_wing_model, game_model.game.theater),
+            "Squadrons",
+        )
         self.addTab(AirInventoryView(game_model), "Inventory")
 
 

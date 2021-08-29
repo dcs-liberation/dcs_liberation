@@ -53,6 +53,9 @@ class Squadron:
     settings: Settings = field(hash=False, compare=False)
 
     location: ControlPoint
+    destination: Optional[ControlPoint] = field(
+        init=False, hash=False, compare=False, default=None
+    )
 
     owned_aircraft: int = field(init=False, hash=False, compare=False, default=0)
     untasked_aircraft: int = field(init=False, hash=False, compare=False, default=0)
@@ -168,6 +171,8 @@ class Squadron:
         self._recruit_pilots(self.settings.squadron_pilot_limit)
 
     def end_turn(self) -> None:
+        if self.destination is not None:
+            self.relocate_to(self.destination)
         self.replenish_lost_pilots()
         self.deliver_orders()
 
@@ -280,6 +285,8 @@ class Squadron:
 
     def relocate_to(self, destination: ControlPoint) -> None:
         self.location = destination
+        if self.location == self.destination:
+            self.destination = None
 
     def cancel_overflow_orders(self) -> None:
         if self.pending_deliveries <= 0:
@@ -296,6 +303,42 @@ class Squadron:
     @property
     def max_fulfillable_aircraft(self) -> int:
         return max(self.number_of_available_pilots, self.untasked_aircraft)
+
+    @property
+    def expected_size_next_turn(self) -> int:
+        return self.owned_aircraft + self.pending_deliveries
+
+    def plan_relocation(self, destination: ControlPoint) -> None:
+        if destination == self.location:
+            logging.warning(
+                f"Attempted to plan relocation of {self} to current location "
+                f"{destination}. Ignoring."
+            )
+            return
+        if destination == self.destination:
+            logging.warning(
+                f"Attempted to plan relocation of {self} to current destination "
+                f"{destination}. Ignoring."
+            )
+            return
+
+        if self.expected_size_next_turn >= destination.unclaimed_parking():
+            raise RuntimeError(f"Not enough parking for {self} at {destination}.")
+        if not destination.can_operate(self.aircraft):
+            raise RuntimeError(f"{self} cannot operate at {destination}.")
+        self.destination = destination
+
+    def cancel_relocation(self) -> None:
+        if self.destination is None:
+            logging.warning(
+                f"Attempted to cancel relocation of squadron with no transfer order. "
+                "Ignoring."
+            )
+            return
+
+        if self.expected_size_next_turn >= self.location.unclaimed_parking():
+            raise RuntimeError(f"Not enough parking for {self} at {self.location}.")
+        self.destination = None
 
     @classmethod
     def create_from(

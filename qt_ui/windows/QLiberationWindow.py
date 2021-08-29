@@ -24,6 +24,7 @@ from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import URLS
+from qt_ui.uncaughtexceptionhandler import UncaughtExceptionHandler
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
@@ -42,7 +43,9 @@ from qt_ui.windows.logs.QLogsWindow import QLogsWindow
 
 class QLiberationWindow(QMainWindow):
     def __init__(self, game: Optional[Game]) -> None:
-        super(QLiberationWindow, self).__init__()
+        super().__init__()
+
+        self._uncaught_exception_handler = UncaughtExceptionHandler(self)
 
         self.game = game
         self.game_model = GameModel(game)
