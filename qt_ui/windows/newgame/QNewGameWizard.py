@@ -66,6 +66,8 @@ class NewGameWizard(QtWidgets.QWizard):
 
         campaign = self.field("selectedCampaign")
         if campaign is None:
+            campaign = self.theater_page.campaignList.selected_campaign
+        if campaign is None:
             campaign = self.campaigns[0]
 
         if self.field("usePreset"):
@@ -299,13 +301,13 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
             text="Show incompatible campaigns"
         )
         show_incompatible_campaigns_checkbox.setChecked(False)
-        campaignList = QCampaignList(
+        self.campaignList = QCampaignList(
             campaigns, show_incompatible_campaigns_checkbox.isChecked()
         )
         show_incompatible_campaigns_checkbox.toggled.connect(
-            lambda checked: campaignList.setup_content(show_incompatible=checked)
+            lambda checked: self.campaignList.setup_content(show_incompatible=checked)
         )
-        self.registerField("selectedCampaign", campaignList)
+        self.registerField("selectedCampaign", self.campaignList)
 
         # Faction description
         self.campaignMapDescription = QTextEdit("")
@@ -365,7 +367,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
             template_perf = jinja_env.get_template(
                 "campaign_performance_template_EN.j2"
             )
-            campaign = campaignList.selected_campaign
+            campaign = self.campaignList.selected_campaign
             self.setField("selectedCampaign", campaign)
             if campaign is None:
                 self.campaignMapDescription.setText("No campaign selected")
@@ -378,11 +380,13 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
                 template_perf.render({"performance": campaign.performance})
             )
 
-        campaignList.selectionModel().setCurrentIndex(
-            campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
+        self.campaignList.selectionModel().setCurrentIndex(
+            self.campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
         )
 
-        campaignList.selectionModel().selectionChanged.connect(on_campaign_selected)
+        self.campaignList.selectionModel().selectionChanged.connect(
+            on_campaign_selected
+        )
         on_campaign_selected()
 
         docsText = QtWidgets.QLabel(
@@ -409,7 +413,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         layout = QtWidgets.QGridLayout()
         layout.setColumnMinimumWidth(0, 20)
-        layout.addWidget(campaignList, 0, 0, 5, 1)
+        layout.addWidget(self.campaignList, 0, 0, 5, 1)
         layout.addWidget(show_incompatible_campaigns_checkbox, 5, 0, 1, 1)
         layout.addWidget(docsText, 6, 0, 1, 1)
         layout.addWidget(self.campaignMapDescription, 0, 1, 1, 1)
