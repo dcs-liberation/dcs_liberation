@@ -19,7 +19,6 @@ class AirWing:
         self.squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
 
     def add_squadron(self, squadron: Squadron) -> None:
-        squadron.location.squadrons.append(squadron)
         self.squadrons[squadron.aircraft].append(squadron)
 
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:

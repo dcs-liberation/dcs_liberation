@@ -82,9 +82,7 @@ class Squadron:
         return self.coalition.player
 
     def assign_to_base(self, base: ControlPoint) -> None:
-        self.location.squadrons.remove(self)
         self.location = base
-        self.location.squadrons.append(self)
         logging.debug(f"Assigned {self} to {base}")
 
     @property

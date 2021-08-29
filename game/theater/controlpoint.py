@@ -325,8 +325,6 @@ class ControlPoint(MissionTarget, ABC):
 
         self.target_position: Optional[Point] = None
 
-        self.squadrons: list[Squadron] = []
-
     def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"
 
@@ -347,6 +345,12 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def ground_objects(self) -> List[TheaterGroundObject[Any]]:
         return list(self.connected_objectives)
+
+    @property
+    def squadrons(self) -> Iterator[Squadron]:
+        for squadron in self.coalition.air_wing.iter_squadrons():
+            if squadron.location == self:
+                yield squadron
 
     @property
     @abstractmethod
