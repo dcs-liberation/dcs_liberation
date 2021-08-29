@@ -1,0 +1,14 @@
+---
+name: 28th Guards Aviation Regiment
+nickname: 28th GvIAP
+country: Russia
+role: Air Superiority Fighter
+aircraft: MiG-29S Fulcrum-C
+livery: "28 GvIAP_Andreapol"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
