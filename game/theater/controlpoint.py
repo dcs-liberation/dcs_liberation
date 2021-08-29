@@ -728,13 +728,19 @@ class ControlPoint(MissionTarget, ABC):
     def allocated_aircraft(self) -> AircraftAllocations:
         present: dict[AircraftType, int] = defaultdict(int)
         on_order: dict[AircraftType, int] = defaultdict(int)
+        transferring: dict[AircraftType, int] = defaultdict(int)
         for squadron in self.squadrons:
             present[squadron.aircraft] += squadron.owned_aircraft
-            # TODO: Only if this is the squadron destination, not location.
-            on_order[squadron.aircraft] += squadron.pending_deliveries
+            if squadron.destination is None:
+                on_order[squadron.aircraft] += squadron.pending_deliveries
+            else:
+                transferring[squadron.aircraft] -= squadron.owned_aircraft
+        for squadron in self.coalition.air_wing.iter_squadrons():
+            if squadron.destination == self:
+                on_order[squadron.aircraft] += squadron.pending_deliveries
+                transferring[squadron.aircraft] += squadron.owned_aircraft
 
-        # TODO: Implement squadron transfers.
-        return AircraftAllocations(present, on_order, transferring={})
+        return AircraftAllocations(present, on_order, transferring)
 
     def allocated_ground_units(
         self, transfers: PendingTransfers

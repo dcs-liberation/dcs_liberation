@@ -1,5 +1,5 @@
 import logging
-from typing import Callable
+from typing import Callable, Iterator, Optional
 
 from PySide2.QtCore import (
     QItemSelectionModel,
@@ -16,11 +16,14 @@ from PySide2.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QCheckBox,
+    QComboBox,
 )
 
-from game.squadrons import Pilot
+from game.squadrons import Pilot, Squadron
+from game.theater import ControlPoint, ConflictTheater
 from gen.flights.flight import FlightType
 from qt_ui.delegates import TwoColumnRowDelegate
+from qt_ui.errorreporter import report_errors
 from qt_ui.models import SquadronModel
 
 
@@ -90,10 +93,50 @@ class AutoAssignedTaskControls(QVBoxLayout):
         self.squadron_model.set_auto_assignable(task, checked)
 
 
+class SquadronDestinationComboBox(QComboBox):
+    def __init__(self, squadron: Squadron, theater: ConflictTheater) -> None:
+        super().__init__()
+        self.squadron = squadron
+        self.theater = theater
+
+        room = squadron.location.unclaimed_parking()
+        self.addItem(
+            f"Remain at {squadron.location} (room for {room} more aircraft)", None
+        )
+        selected_index: Optional[int] = None
+        for idx, destination in enumerate(sorted(self.iter_destinations(), key=str), 1):
+            if destination == squadron.destination:
+                selected_index = idx
+            room = destination.unclaimed_parking()
+            self.addItem(
+                f"Transfer to {destination} (room for {room} more aircraft)",
+                destination,
+            )
+
+        if squadron.destination is None:
+            selected_index = 0
+
+        if selected_index is not None:
+            self.setCurrentIndex(selected_index)
+
+    def iter_destinations(self) -> Iterator[ControlPoint]:
+        size = self.squadron.expected_size_next_turn
+        for control_point in self.theater.control_points_for(self.squadron.player):
+            if control_point == self:
+                continue
+            if not control_point.can_operate(self.squadron.aircraft):
+                continue
+            if control_point.unclaimed_parking() < size:
+                continue
+            yield control_point
+
+
 class SquadronDialog(QDialog):
     """Dialog window showing a squadron."""
 
-    def __init__(self, squadron_model: SquadronModel, parent) -> None:
+    def __init__(
+        self, squadron_model: SquadronModel, theater: ConflictTheater, parent
+    ) -> None:
         super().__init__(parent)
         self.squadron_model = squadron_model
 
@@ -117,6 +160,15 @@ class SquadronDialog(QDialog):
         columns.addWidget(self.pilot_list)
 
         button_panel = QHBoxLayout()
+
+        self.transfer_destination = SquadronDestinationComboBox(
+            squadron_model.squadron, theater
+        )
+        self.transfer_destination.currentIndexChanged.connect(
+            self.on_destination_changed
+        )
+        button_panel.addWidget(self.transfer_destination)
+
         button_panel.addStretch()
         layout.addLayout(button_panel)
 
@@ -131,6 +183,18 @@ class SquadronDialog(QDialog):
         self.toggle_leave_button.setProperty("style", "start-button")
         self.toggle_leave_button.clicked.connect(self.toggle_leave)
         button_panel.addWidget(self.toggle_leave_button, alignment=Qt.AlignRight)
+
+    @property
+    def squadron(self) -> Squadron:
+        return self.squadron_model.squadron
+
+    def on_destination_changed(self, index: int) -> None:
+        with report_errors("Could not change squadron destination", self):
+            destination = self.transfer_destination.itemData(index)
+            if destination is None:
+                self.squadron.cancel_relocation()
+            else:
+                self.squadron.plan_relocation(destination)
 
     def check_disabled_button_states(
         self, button: QPushButton, index: QModelIndex
