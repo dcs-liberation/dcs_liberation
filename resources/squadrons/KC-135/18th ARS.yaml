@@ -1,0 +1,8 @@
+---
+name: 18th Air Refueling Squadron
+nickname:
+country: USA
+role: Air-to-Air Refueling
+aircraft: KC-135 Stratotanker
+mission_types:
+  - Refueling
