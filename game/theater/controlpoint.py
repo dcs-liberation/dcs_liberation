@@ -3,6 +3,7 @@ from __future__ import annotations
 import heapq
 import itertools
 import logging
+import math
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -576,36 +577,82 @@ class ControlPoint(MissionTarget, ABC):
         value = airframe.price * count
         game.adjust_budget(value, player=not self.captured)
         game.message(
-            f"No valid retreat destination in range of {self.name} for {airframe}"
+            f"No valid retreat destination in range of {self.name} for {airframe} "
             f"{count} aircraft have been captured and sold for ${value}M."
         )
 
     def aircraft_retreat_destination(
-        self, airframe: AircraftType
+        self, squadron: Squadron
     ) -> Optional[ControlPoint]:
         closest = ObjectiveDistanceCache.get_closest_airfields(self)
-        # TODO: Should be airframe dependent.
-        max_retreat_distance = nautical_miles(200)
+        max_retreat_distance = squadron.aircraft.max_mission_range
         # Skip the first airbase because that's the airbase we're retreating
         # from.
         airfields = list(closest.operational_airfields_within(max_retreat_distance))[1:]
+        not_preferred: Optional[ControlPoint] = None
+        overfull: list[ControlPoint] = []
         for airbase in airfields:
-            if not airbase.can_operate(airframe):
-                continue
             if airbase.captured != self.captured:
                 continue
-            if airbase.unclaimed_parking() > 0:
-                return airbase
-        return None
 
-    @staticmethod
-    def _retreat_squadron(squadron: Squadron) -> None:
-        logging.error("Air unit retreat not currently implemented")
+            if airbase.unclaimed_parking() < squadron.owned_aircraft:
+                if airbase.can_operate(squadron.aircraft):
+                    overfull.append(airbase)
+                continue
+
+            if squadron.operates_from(airbase):
+                # Has room, is a preferred base type for this squadron, and is the
+                # closest choice. No need to keep looking.
+                return airbase
+
+            if not_preferred is None and airbase.can_operate(squadron.aircraft):
+                # Has room and is capable of operating from this base, but it isn't
+                # preferred. Remember this option and use it if we can't find a
+                # preferred base type with room.
+                not_preferred = airbase
+        if not_preferred is not None:
+            # It's not our best choice but the other choices don't have room for the
+            # squadron and would lead to aircraft being captured.
+            return not_preferred
+
+        # No base was available with enough room. Find whichever base has the most room
+        # available so we lose as little as possible. The overfull list is already
+        # sorted by distance, and filtered for appropriate destinations.
+        base_for_fewest_losses: Optional[ControlPoint] = None
+        loss_count = math.inf
+        for airbase in overfull:
+            overflow = -(
+                airbase.unclaimed_parking()
+                - squadron.owned_aircraft
+                - squadron.pending_deliveries
+            )
+            if overflow < loss_count:
+                loss_count = overflow
+                base_for_fewest_losses = airbase
+        return base_for_fewest_losses
+
+    def _retreat_squadron(self, game: Game, squadron: Squadron) -> None:
+        destination = self.aircraft_retreat_destination(squadron)
+        if destination is None:
+            squadron.refund_orders()
+            self.capture_aircraft(game, squadron.aircraft, squadron.owned_aircraft)
+            return
+        logging.debug(f"{squadron} retreating to {destination} from {self}")
+        squadron.relocate_to(destination)
+        squadron.cancel_overflow_orders()
+        overflow = -destination.unclaimed_parking()
+        if overflow > 0:
+            logging.debug(
+                f"Not enough room for {squadron} at {destination}. Capturing "
+                f"{overflow} aircraft."
+            )
+            self.capture_aircraft(game, squadron.aircraft, overflow)
+            squadron.owned_aircraft -= overflow
 
     def retreat_air_units(self, game: Game) -> None:
         # TODO: Capture in order of price to retain maximum value?
         for squadron in self.squadrons:
-            self._retreat_squadron(squadron)
+            self._retreat_squadron(game, squadron)
 
     def depopulate_uncapturable_tgos(self) -> None:
         for tgo in self.connected_objectives:
@@ -616,8 +663,6 @@ class ControlPoint(MissionTarget, ABC):
     def capture(self, game: Game, for_player: bool) -> None:
         new_coalition = game.coalition_for(for_player)
         self.ground_unit_orders.refund_all(self.coalition)
-        for squadron in self.squadrons:
-            squadron.refund_orders()
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()

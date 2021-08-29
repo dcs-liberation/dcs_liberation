@@ -263,13 +263,31 @@ class Squadron:
     def can_fulfill_flight(self, count: int) -> bool:
         return self.can_provide_pilots(count) and self.untasked_aircraft >= count
 
-    def refund_orders(self) -> None:
-        self.coalition.adjust_budget(self.aircraft.price * self.pending_deliveries)
-        self.pending_deliveries = 0
+    def refund_orders(self, count: Optional[int] = None) -> None:
+        if count is None:
+            count = self.pending_deliveries
+        self.coalition.adjust_budget(self.aircraft.price * count)
+        self.pending_deliveries -= count
 
     def deliver_orders(self) -> None:
+        self.cancel_overflow_orders()
         self.owned_aircraft += self.pending_deliveries
         self.pending_deliveries = 0
+
+    def relocate_to(self, destination: ControlPoint) -> None:
+        self.location = destination
+
+    def cancel_overflow_orders(self) -> None:
+        if self.pending_deliveries <= 0:
+            return
+        overflow = -self.location.unclaimed_parking()
+        if overflow > 0:
+            sell_count = min(overflow, self.pending_deliveries)
+            logging.debug(
+                f"{self.location} is overfull by {overflow} aircraft. Cancelling "
+                f"orders for {sell_count} aircraft to make room."
+            )
+            self.refund_orders(sell_count)
 
     @property
     def max_fulfillable_aircraft(self) -> int:
