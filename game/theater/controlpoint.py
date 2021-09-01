@@ -670,6 +670,10 @@ class ControlPoint(MissionTarget, ABC):
         self._coalition = new_coalition
         self.base.set_strength_to_minimum()
 
+    @property
+    def required_aircraft_start_type(self) -> Optional[str]:
+        return None
+
     @abstractmethod
     def can_operate(self, aircraft: AircraftType) -> bool:
         ...
@@ -1105,6 +1109,10 @@ class OffMapSpawn(ControlPoint):
 
     def can_operate(self, aircraft: AircraftType) -> bool:
         return True
+
+    @property
+    def required_aircraft_start_type(self) -> Optional[str]:
+        return "In Flight"
 
     @property
     def heading(self) -> Heading:

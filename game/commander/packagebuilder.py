@@ -43,9 +43,8 @@ class PackageBuilder:
         if assignment is None:
             return False
         airfield, squadron = assignment
-        if isinstance(airfield, OffMapSpawn):
-            start_type = "In Flight"
-        else:
+        start_type = airfield.required_aircraft_start_type
+        if start_type is None:
             start_type = self.start_type
 
         flight = Flight(

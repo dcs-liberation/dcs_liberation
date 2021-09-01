@@ -349,13 +349,17 @@ class AirliftPlanner:
         else:
             transfer = self.transfer
 
+        start_type = squadron.location.required_aircraft_start_type
+        if start_type is None:
+            start_type = self.game.settings.default_start_type
+
         flight = Flight(
             self.package,
             self.game.country_for(squadron.player),
             squadron,
             flight_size,
             FlightType.TRANSPORT,
-            self.game.settings.default_start_type,
+            start_type,
             departure=squadron.location,
             arrival=squadron.location,
             divert=None,
