@@ -37,10 +37,8 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     BuildingGroundObject,
 )
-
 from game.threatzones import ThreatZones
 from game.utils import Distance, Heading, Speed, feet, meters, nautical_miles, knots
-
 from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
 from .traveltime import GroundSpeed, TravelTime
@@ -837,6 +835,39 @@ class AirliftFlightPlan(FlightPlan):
 
 
 @dataclass(frozen=True)
+class FerryFlightPlan(FlightPlan):
+    takeoff: FlightWaypoint
+    nav_to_destination: list[FlightWaypoint]
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to_destination
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return self.land
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        # TOT planning isn't really useful for ferries. They're behind the front
+        # lines so no need to wait for escorts or for other missions to complete.
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        return None
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.package.time_over_target
+
+
+@dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
     custom_waypoints: List[FlightWaypoint]
 
@@ -958,6 +989,8 @@ class FlightPlanBuilder:
             return self.generate_transport(flight)
         elif task == FlightType.REFUELING:
             return self.generate_refueling_racetrack(flight)
+        elif task == FlightType.FERRY:
+            return self.generate_ferry(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
@@ -1235,6 +1268,42 @@ class FlightPlanBuilder:
             drop_off=builder.drop_off(cargo.next_stop),
             nav_to_home=builder.nav_path(
                 cargo.origin.position,
+                flight.arrival.position,
+                altitude,
+                altitude_is_agl,
+            ),
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
+        )
+
+    def generate_ferry(self, flight: Flight) -> FerryFlightPlan:
+        """Generate a ferry flight at a given location.
+
+        Args:
+            flight: The flight to generate the flight plan for.
+        """
+
+        if flight.departure == flight.arrival:
+            raise PlanningError(
+                f"Cannot plan ferry flight: departure and arrival are both "
+                f"{flight.departure}"
+            )
+
+        altitude_is_agl = flight.unit_type.dcs_unit_type.helicopter
+        altitude = (
+            feet(1500)
+            if altitude_is_agl
+            else flight.unit_type.preferred_patrol_altitude
+        )
+
+        builder = WaypointBuilder(flight, self.coalition)
+        return FerryFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to_destination=builder.nav_path(
+                flight.departure.position,
                 flight.arrival.position,
                 altitude,
                 altitude_is_agl,

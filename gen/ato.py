@@ -183,6 +183,7 @@ class Package:
             FlightType.TARCAP,
             FlightType.BARCAP,
             FlightType.AEWC,
+            FlightType.FERRY,
             FlightType.REFUELING,
             FlightType.SWEEP,
             FlightType.ESCORT,

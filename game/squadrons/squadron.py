@@ -11,17 +11,19 @@ from typing import (
 
 from faker import Faker
 
-from game.dcs.aircrafttype import AircraftType
 from game.settings import AutoAtoBehavior, Settings
-from game.squadrons.operatingbases import OperatingBases
-from game.squadrons.pilot import Pilot, PilotStatus
-from game.squadrons.squadrondef import SquadronDef
+from gen.ato import Package
+from gen.flights.flight import FlightType, Flight
+from gen.flights.flightplan import FlightPlanBuilder
+from .pilot import Pilot, PilotStatus
 
 if TYPE_CHECKING:
     from game import Game
     from game.coalition import Coalition
-    from gen.flights.flight import FlightType
-    from game.theater import ControlPoint
+    from game.dcs.aircrafttype import AircraftType
+    from game.theater import ControlPoint, ConflictTheater
+    from .operatingbases import OperatingBases
+    from .squadrondef import SquadronDef
 
 
 @dataclass
@@ -312,7 +314,9 @@ class Squadron:
     def arrival(self) -> ControlPoint:
         return self.location if self.destination is None else self.destination
 
-    def plan_relocation(self, destination: ControlPoint) -> None:
+    def plan_relocation(
+        self, destination: ControlPoint, theater: ConflictTheater
+    ) -> None:
         if destination == self.location:
             logging.warning(
                 f"Attempted to plan relocation of {self} to current location "
@@ -331,6 +335,7 @@ class Squadron:
         if not destination.can_operate(self.aircraft):
             raise RuntimeError(f"{self} cannot operate at {destination}.")
         self.destination = destination
+        self.replan_ferry_flights(theater)
 
     def cancel_relocation(self) -> None:
         if self.destination is None:
@@ -343,6 +348,55 @@ class Squadron:
         if self.expected_size_next_turn >= self.location.unclaimed_parking():
             raise RuntimeError(f"Not enough parking for {self} at {self.location}.")
         self.destination = None
+        self.cancel_ferry_flights()
+
+    def replan_ferry_flights(self, theater: ConflictTheater) -> None:
+        self.cancel_ferry_flights()
+        self.plan_ferry_flights(theater)
+
+    def cancel_ferry_flights(self) -> None:
+        for package in self.coalition.ato.packages:
+            # Copy the list so our iterator remains consistent throughout the removal.
+            for flight in list(package.flights):
+                if flight.squadron == self and flight.flight_type is FlightType.FERRY:
+                    package.remove_flight(flight)
+                    flight.return_pilots_and_aircraft()
+            if not package.flights:
+                self.coalition.ato.remove_package(package)
+
+    def plan_ferry_flights(self, theater: ConflictTheater) -> None:
+        if self.destination is None:
+            raise RuntimeError(
+                f"Cannot plan ferry flights for {self} because there is no destination."
+            )
+        package = Package(self.destination)
+        builder = FlightPlanBuilder(package, self.coalition, theater)
+        remaining = self.untasked_aircraft
+        while remaining:
+            size = min(remaining, self.aircraft.max_group_size)
+            self.plan_ferry_flight(builder, package, size)
+            remaining -= size
+        package.set_tot_asap()
+        self.coalition.ato.add_package(package)
+
+    def plan_ferry_flight(
+        self, builder: FlightPlanBuilder, package: Package, size: int
+    ) -> None:
+        start_type = self.location.required_aircraft_start_type
+        if start_type is None:
+            start_type = self.settings.default_start_type
+
+        flight = Flight(
+            package,
+            self.coalition.country_name,
+            self,
+            size,
+            FlightType.FERRY,
+            start_type,
+            divert=None,
+        )
+        package.add_flight(flight)
+        builder.populate_flight_plan(flight)
 
     @classmethod
     def create_from(

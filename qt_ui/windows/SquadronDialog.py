@@ -24,7 +24,7 @@ from game.theater import ControlPoint, ConflictTheater
 from gen.flights.flight import FlightType
 from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.errorreporter import report_errors
-from qt_ui.models import SquadronModel
+from qt_ui.models import SquadronModel, AtoModel
 
 
 class PilotDelegate(TwoColumnRowDelegate):
@@ -135,10 +135,16 @@ class SquadronDialog(QDialog):
     """Dialog window showing a squadron."""
 
     def __init__(
-        self, squadron_model: SquadronModel, theater: ConflictTheater, parent
+        self,
+        ato_model: AtoModel,
+        squadron_model: SquadronModel,
+        theater: ConflictTheater,
+        parent,
     ) -> None:
         super().__init__(parent)
+        self.ato_model = ato_model
         self.squadron_model = squadron_model
+        self.theater = theater
 
         self.setMinimumSize(1000, 440)
         self.setWindowTitle(str(squadron_model.squadron))
@@ -194,7 +200,8 @@ class SquadronDialog(QDialog):
             if destination is None:
                 self.squadron.cancel_relocation()
             else:
-                self.squadron.plan_relocation(destination)
+                self.squadron.plan_relocation(destination, self.theater)
+            self.ato_model.replace_from_game(player=True)
 
     def check_disabled_button_states(
         self, button: QPushButton, index: QModelIndex

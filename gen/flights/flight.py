@@ -70,6 +70,7 @@ class FlightType(Enum):
     TRANSPORT = "Transport"
     SEAD_ESCORT = "SEAD Escort"
     REFUELING = "Refueling"
+    FERRY = "Ferry"
 
     def __str__(self) -> str:
         return self.value

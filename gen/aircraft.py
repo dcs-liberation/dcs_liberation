@@ -57,6 +57,7 @@ from dcs.task import (
     Transport,
     WeaponType,
     TargetType,
+    Nothing,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -1086,6 +1087,23 @@ class AircraftConflictGenerator:
             restrict_jettison=True,
         )
 
+    def configure_ferry(
+        self,
+        group: FlyingGroup[Any],
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        group.task = Nothing.name
+        self._setup_group(group, package, flight, dynamic_runways)
+        self.configure_behavior(
+            flight,
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True,
+        )
+
     def configure_unknown_task(self, group: FlyingGroup[Any], flight: Flight) -> None:
         logging.error(f"Unhandled flight type: {flight.flight_type}")
         self.configure_behavior(flight, group)
@@ -1130,6 +1148,8 @@ class AircraftConflictGenerator:
             self.configure_oca_strike(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.TRANSPORT:
             self.configure_transport(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.FERRY:
+            self.configure_ferry(group, package, flight, dynamic_runways)
         else:
             self.configure_unknown_task(group, flight)
 
