@@ -274,16 +274,32 @@ local unitPayloads = {
 			["name"] = "Liberation Ferry",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "MXU-648-TP",
-					["num"] = 5,
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 9,
 				},
 				[2] = {
-					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
-					["num"] = 4,
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 8,
 				},
 				[3] = {
-					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
+					["CLSID"] = "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["num"] = 1,
+				},
+				[4] = {
+					["CLSID"] = "{5CE2FF2A-645A-4197-B48D-8720AC69394F}",
+					["num"] = 2,
+				},
+				[5] = {
+					["CLSID"] = "MXU-648-TP",
 					["num"] = 6,
+				},
+				[6] = {
+					["CLSID"] = "MXU-648-TP",
+					["num"] = 4,
+				},
+				[7] = {
+					["CLSID"] = "{8A0BE8AE-58D4-4572-9263-3144C0D06364}",
+					["num"] = 5,
 				},
 			},
 			["tasks"] = {
