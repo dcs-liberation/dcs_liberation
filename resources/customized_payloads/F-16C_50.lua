@@ -270,6 +270,25 @@ local unitPayloads = {
 				[1] = 31,
 			},
 		},
+		[7] = {
+			["name"] = "Liberation Ferry",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "MXU-648-TP",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
+					["num"] = 4,
+				},
+				[3] = {
+					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
+					["num"] = 6,
+				},
+			},
+			["tasks"] = {
+			},
+		},
 	},
 	["unitType"] = "F-16C_50",
 }
