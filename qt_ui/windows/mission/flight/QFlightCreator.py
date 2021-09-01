@@ -223,6 +223,7 @@ class QFlightCreator(QDialog):
 
     def on_squadron_changed(self, index: int) -> None:
         squadron: Optional[Squadron] = self.squadron_selector.itemData(index)
+        self.update_max_size(self.squadron_selector.aircraft_available)
         # Clear the roster first so we return the pilots to the pool. This way if we end
         # up repopulating from the same squadron we'll get the same pilots back.
         self.roster_editor.replace(None)
