@@ -160,6 +160,7 @@ class FlightWaypoint:
         x: float,
         y: float,
         alt: Distance = meters(0),
+        control_point: Optional[ControlPoint] = None,
     ) -> None:
         """Creates a flight waypoint.
 
@@ -169,11 +170,14 @@ class FlightWaypoint:
             y: Y coordinate of the waypoint.
             alt: Altitude of the waypoint. By default this is MSL, but it can be
             changed to AGL by setting alt_type to "RADIO"
+            control_point: The control point to associate with this waypoint. Needed for
+            landing points.
         """
         self.waypoint_type = waypoint_type
         self.x = x
         self.y = y
         self.alt = alt
+        self.control_point = control_point
         self.alt_type = "BARO"
         self.name = ""
         # TODO: Merge with pretty_name.

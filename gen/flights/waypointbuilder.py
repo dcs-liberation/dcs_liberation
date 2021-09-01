@@ -110,7 +110,11 @@ class WaypointBuilder:
             waypoint.pretty_name = "Exit theater"
         else:
             waypoint = FlightWaypoint(
-                FlightWaypointType.LANDING_POINT, position.x, position.y, meters(0)
+                FlightWaypointType.LANDING_POINT,
+                position.x,
+                position.y,
+                meters(0),
+                control_point=arrival,
             )
             waypoint.name = "LANDING"
             waypoint.alt_type = "RADIO"
@@ -139,7 +143,11 @@ class WaypointBuilder:
             altitude_type = "RADIO"
 
         waypoint = FlightWaypoint(
-            FlightWaypointType.DIVERT, position.x, position.y, altitude
+            FlightWaypointType.DIVERT,
+            position.x,
+            position.y,
+            altitude,
+            control_point=divert,
         )
         waypoint.alt_type = altitude_type
         waypoint.name = "DIVERT"
@@ -488,6 +496,7 @@ class WaypointBuilder:
             control_point.position.x,
             control_point.position.y,
             meters(0),
+            control_point=control_point,
         )
         waypoint.alt_type = "RADIO"
         waypoint.name = "DROP OFF"

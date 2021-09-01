@@ -1736,6 +1736,8 @@ class LandingPointBuilder(PydcsWaypointBuilder):
         waypoint = super().build()
         waypoint.type = "Land"
         waypoint.action = PointAction.Landing
+        if (control_point := self.waypoint.control_point) is not None:
+            waypoint.airdrome_id = control_point.airdrome_id_for_landing
         return waypoint
 
 
@@ -1745,6 +1747,8 @@ class CargoStopBuilder(PydcsWaypointBuilder):
         waypoint.type = "LandingReFuAr"
         waypoint.action = PointAction.LandingReFuAr
         waypoint.landing_refuel_rearm_time = 2  # Minutes.
+        if (control_point := self.waypoint.control_point) is not None:
+            waypoint.airdrome_id = control_point.airdrome_id_for_landing
         return waypoint
 
 

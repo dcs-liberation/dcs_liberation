@@ -688,6 +688,10 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     @property
+    def airdrome_id_for_landing(self) -> Optional[int]:
+        return None
+
+    @property
     def parking_slots(self) -> Iterator[ParkingSlot]:
         yield from []
 
@@ -903,6 +907,10 @@ class Airfield(ControlPoint):
     ) -> RunwayData:
         assigner = RunwayAssigner(conditions)
         return assigner.get_preferred_runway(self.airport)
+
+    @property
+    def airdrome_id_for_landing(self) -> Optional[int]:
+        return self.airport.id
 
     @property
     def parking_slots(self) -> Iterator[ParkingSlot]:
