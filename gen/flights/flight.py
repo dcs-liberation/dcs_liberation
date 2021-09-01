@@ -280,8 +280,6 @@ class Flight:
         count: int,
         flight_type: FlightType,
         start_type: str,
-        departure: ControlPoint,
-        arrival: ControlPoint,
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
         cargo: Optional[TransferOrder] = None,
@@ -295,8 +293,8 @@ class Flight:
             self.roster = FlightRoster(self.squadron, initial_size=count)
         else:
             self.roster = roster
-        self.departure = departure
-        self.arrival = arrival
+        self.departure = self.squadron.location
+        self.arrival = self.squadron.arrival
         self.divert = divert
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.

@@ -360,8 +360,6 @@ class AirliftPlanner:
             flight_size,
             FlightType.TRANSPORT,
             start_type,
-            departure=squadron.location,
-            arrival=squadron.location,
             divert=None,
             cargo=transfer,
         )

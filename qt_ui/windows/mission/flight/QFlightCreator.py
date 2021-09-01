@@ -182,8 +182,6 @@ class QFlightCreator(QDialog):
             roster.max_size,
             task,
             self.start_type.currentText(),
-            squadron.location,
-            squadron.location,
             divert,
             custom_name=self.custom_name_text,
             roster=roster,

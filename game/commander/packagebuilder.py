@@ -54,8 +54,6 @@ class PackageBuilder:
             plan.num_aircraft,
             plan.task,
             start_type,
-            departure=airfield,
-            arrival=airfield,
             divert=self.find_divert_field(squadron.aircraft, airfield),
         )
         self.package.add_flight(flight)

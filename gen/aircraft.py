@@ -606,41 +606,36 @@ class AircraftConflictGenerator:
 
             for squadron in control_point.squadrons:
                 try:
-                    self._spawn_unused_at(control_point, country, faction, squadron)
+                    self._spawn_unused_for(squadron, country, faction)
                 except NoParkingSlotError:
                     # If we run out of parking, stop spawning aircraft.
                     return
 
-    def _spawn_unused_at(
-        self,
-        control_point: Airfield,
-        country: Country,
-        faction: Faction,
-        squadron: Squadron,
+    def _spawn_unused_for(
+        self, squadron: Squadron, country: Country, faction: Faction
     ) -> None:
+        assert isinstance(squadron.location, Airfield)
         for _ in range(squadron.untasked_aircraft):
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
             flight = Flight(
-                Package(control_point),
+                Package(squadron.location),
                 faction.country,
                 squadron,
                 1,
                 FlightType.BARCAP,
                 "Cold",
-                departure=control_point,
-                arrival=control_point,
                 divert=None,
             )
 
             group = self._generate_at_airport(
-                name=namegen.next_aircraft_name(country, control_point.id, flight),
+                name=namegen.next_aircraft_name(country, flight.departure.id, flight),
                 side=country,
                 unit_type=squadron.aircraft.dcs_unit_type,
                 count=1,
                 start_type="Cold",
-                airport=control_point.airport,
+                airport=squadron.location.airport,
             )
 
             self._setup_livery(flight, group)

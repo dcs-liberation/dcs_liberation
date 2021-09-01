@@ -308,6 +308,10 @@ class Squadron:
     def expected_size_next_turn(self) -> int:
         return self.owned_aircraft + self.pending_deliveries
 
+    @property
+    def arrival(self) -> ControlPoint:
+        return self.location if self.destination is None else self.destination
+
     def plan_relocation(self, destination: ControlPoint) -> None:
         if destination == self.location:
             logging.warning(
