@@ -13,6 +13,7 @@ if dcsLiberation then
 
     -- specific options
     local smoke = false
+    local russianLaserCode = false
 
     -- retrieve specific options values
     if dcsLiberation.plugins then
@@ -22,6 +23,9 @@ if dcsLiberation then
             env.info("DCSLiberation|JTACAutolase plugin - dcsLiberation.plugins.jtacautolase")
             smoke = dcsLiberation.plugins.jtacautolase.smoke
             env.info(string.format("DCSLiberation|JTACAutolase plugin - smoke = %s",tostring(smoke)))
+
+            russianLaserCode = dcsLiberation.plugins.jtacautolase.russianLaserCode
+            env.info(string.format("DCSLiberation|JTACAutolase plugin - russianLaserCode = %s",tostring(russianLaserCode)))
         end
     end
     
@@ -29,6 +33,11 @@ if dcsLiberation then
     for _, jtac in pairs(dcsLiberation.JTACs) do
         env.info(string.format("DCSLiberation|JTACAutolase plugin - setting up %s",jtac.dcsUnit))
         if JTACAutoLase then 
+            if russianLaserCode then
+                -- If russianLaserCode is enabled in the plugin configuration, force the JTAC
+                -- laser code to 1113 to allow lasing for Su-25T Frogfoots
+                jtac.laserCode = 1113
+            end
             env.info("DCSLiberation|JTACAutolase plugin - calling JTACAutoLase")
             JTACAutoLase(jtac.dcsUnit, jtac.laserCode, smoke, 'vehicle') 
         end
