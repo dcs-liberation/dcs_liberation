@@ -1,9 +1,11 @@
 from abc import abstractmethod
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Any
 
 from game import Game
 from game.coalition import Coalition
+from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
+from game.dcs.unittype import UnitType
 from game.squadrons import Squadron
 from game.theater import ControlPoint
 
@@ -90,6 +92,10 @@ class PurchaseAdapter(Generic[ItemType]):
     def name_of(self, item: ItemType, multiline: bool = False) -> str:
         ...
 
+    @abstractmethod
+    def unit_type_of(self, item: ItemType) -> UnitType[Any]:
+        ...
+
 
 class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
     def __init__(self, control_point: ControlPoint) -> None:
@@ -132,6 +138,9 @@ class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
             separator = " "
         return separator.join([item.aircraft.name, str(item)])
 
+    def unit_type_of(self, item: Squadron) -> AircraftType:
+        return item.aircraft
+
 
 class GroundUnitPurchaseAdapter(PurchaseAdapter[GroundUnitType]):
     def __init__(
@@ -172,3 +181,6 @@ class GroundUnitPurchaseAdapter(PurchaseAdapter[GroundUnitType]):
 
     def name_of(self, item: GroundUnitType, multiline: bool = False) -> str:
         return f"{item}"
+
+    def unit_type_of(self, item: GroundUnitType) -> GroundUnitType:
+        return item
