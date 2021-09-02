@@ -369,9 +369,12 @@ class Squadron:
             raise RuntimeError(
                 f"Cannot plan ferry flights for {self} because there is no destination."
             )
+        remaining = self.untasked_aircraft
+        if not remaining:
+            return
+
         package = Package(self.destination)
         builder = FlightPlanBuilder(package, self.coalition, theater)
-        remaining = self.untasked_aircraft
         while remaining:
             size = min(remaining, self.aircraft.max_group_size)
             self.plan_ferry_flight(builder, package, size)
