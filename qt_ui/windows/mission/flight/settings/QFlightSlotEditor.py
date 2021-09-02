@@ -176,6 +176,8 @@ class FlightRosterEditor(QVBoxLayout):
     def resize(self, new_size: int) -> None:
         if new_size > self.MAX_PILOTS:
             raise ValueError("A flight may not have more than four pilots.")
+        if self.roster is not None:
+            self.roster.resize(new_size)
         for controls in self.pilot_controls[:new_size]:
             controls.enable_and_reset()
         for controls in self.pilot_controls[new_size:]:

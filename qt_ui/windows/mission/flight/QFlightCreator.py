@@ -85,7 +85,7 @@ class QFlightCreator(QDialog):
                 squadron, initial_size=self.flight_size_spinner.value()
             )
         self.roster_editor = FlightRosterEditor(roster)
-        self.flight_size_spinner.valueChanged.connect(self.resize_roster)
+        self.flight_size_spinner.valueChanged.connect(self.roster_editor.resize)
         self.squadron_selector.currentIndexChanged.connect(self.on_squadron_changed)
         roster_layout = QHBoxLayout()
         layout.addLayout(roster_layout)
@@ -135,10 +135,6 @@ class QFlightCreator(QDialog):
 
     def set_custom_name_text(self, text: str):
         self.custom_name_text = text
-
-    def resize_roster(self, new_size: int) -> None:
-        self.roster_editor.roster.resize(new_size)
-        self.roster_editor.resize(new_size)
 
     def verify_form(self) -> Optional[str]:
         aircraft: Optional[Type[FlyingType]] = self.aircraft_selector.currentData()
@@ -196,7 +192,6 @@ class QFlightCreator(QDialog):
         self.squadron_selector.update_items(
             self.task_selector.currentData(), new_aircraft
         )
-        self.departure.change_aircraft(new_aircraft)
         self.divert.change_aircraft(new_aircraft)
 
     def on_departure_changed(self, departure: ControlPoint) -> None:
@@ -229,7 +224,7 @@ class QFlightCreator(QDialog):
             self.roster_editor.replace(
                 FlightRoster(squadron, self.flight_size_spinner.value())
             )
-        self.on_departure_changed(squadron.location)
+            self.on_departure_changed(squadron.location)
 
     def update_max_size(self, available: int) -> None:
         aircraft = self.aircraft_selector.currentData()
