@@ -16,12 +16,13 @@ from gen.ato import Package
 from gen.flights.flight import FlightType, Flight
 from gen.flights.flightplan import FlightPlanBuilder
 from .pilot import Pilot, PilotStatus
+from ..utils import meters
 
 if TYPE_CHECKING:
     from game import Game
     from game.coalition import Coalition
     from game.dcs.aircrafttype import AircraftType
-    from game.theater import ControlPoint, ConflictTheater
+    from game.theater import ControlPoint, ConflictTheater, MissionTarget
     from .operatingbases import OperatingBases
     from .squadrondef import SquadronDef
 
@@ -251,6 +252,17 @@ class Squadron:
 
     def can_auto_assign(self, task: FlightType) -> bool:
         return task in self.auto_assignable_mission_types
+
+    def can_auto_assign_mission(
+        self, location: MissionTarget, task: FlightType, size: int, this_turn: bool
+    ) -> bool:
+        if not self.can_auto_assign(task):
+            return False
+        if this_turn and not self.can_fulfill_flight(size):
+            return False
+
+        distance_to_target = meters(location.distance_to(self.location))
+        return distance_to_target <= self.aircraft.max_mission_range
 
     def operates_from(self, control_point: ControlPoint) -> bool:
         if control_point.is_carrier:

@@ -40,7 +40,7 @@ class Coalition:
         self.procurement_requests: OrderedSet[AircraftProcurementRequest] = OrderedSet()
         self.bullseye = Bullseye(Point(0, 0))
         self.faker = Faker(self.faction.locales)
-        self.air_wing = AirWing(game)
+        self.air_wing = AirWing(player)
         self.transfers = PendingTransfers(game, player)
 
         # Late initialized because the two coalitions in the game are mutually
