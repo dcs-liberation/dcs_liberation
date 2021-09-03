@@ -22,6 +22,7 @@ Saves from 4.x are not compatible with 5.0.
 * **[Kneeboard]** QNH (pressure MSL) and temperature have been added to the kneeboard.
 * **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable, relocate, or rename squadrons.
 * **[UI]** Sell Button for aircraft will be disabled if there are no units available to be sold or all are already assigned to a mission
+* **[UI]** Enemy aircraft inventory now viewable in the air wing menu.
 
 ## Fixes
 

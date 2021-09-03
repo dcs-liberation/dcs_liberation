@@ -14,6 +14,7 @@ from PySide2.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QWidget,
+    QHBoxLayout,
 )
 
 from game.squadrons import Squadron
@@ -149,30 +150,47 @@ class AircraftInventoryData:
 class AirInventoryView(QWidget):
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
-
         self.game_model = game_model
-        self.country = self.game_model.game.country_for(player=True)
+
+        self.only_unallocated = False
+        self.enemy_info = False
 
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.only_unallocated_cb = QCheckBox("Unallocated Only?")
-        self.only_unallocated_cb.toggled.connect(self.update_table)
+        checkbox_row = QHBoxLayout()
+        layout.addLayout(checkbox_row)
 
-        layout.addWidget(self.only_unallocated_cb)
+        self.only_unallocated_cb = QCheckBox("Unallocated only")
+        self.only_unallocated_cb.toggled.connect(self.set_only_unallocated)
+        checkbox_row.addWidget(self.only_unallocated_cb)
+
+        self.enemy_info_cb = QCheckBox("Show enemy info")
+        self.enemy_info_cb.toggled.connect(self.set_enemy_info)
+        checkbox_row.addWidget(self.enemy_info_cb)
+
+        checkbox_row.addStretch()
 
         self.table = QTableWidget()
         layout.addWidget(self.table)
 
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.verticalHeader().setVisible(False)
-        self.update_table(False)
+        self.set_only_unallocated(False)
 
-    def update_table(self, only_unallocated: bool) -> None:
+    def set_only_unallocated(self, value: bool) -> None:
+        self.only_unallocated = value
+        self.update_table()
+
+    def set_enemy_info(self, value: bool) -> None:
+        self.enemy_info = value
+        self.update_table()
+
+    def update_table(self) -> None:
         self.table.setSortingEnabled(False)
         self.table.clear()
 
-        inventory_rows = list(self.get_data(only_unallocated))
+        inventory_rows = list(self.get_data())
         self.table.setRowCount(len(inventory_rows))
         headers = AircraftInventoryData.headers()
         self.table.setColumnCount(len(headers))
@@ -186,18 +204,19 @@ class AirInventoryView(QWidget):
         self.table.setSortingEnabled(True)
 
     def iter_allocated_aircraft(self) -> Iterator[AircraftInventoryData]:
-        for package in self.game_model.game.blue.ato.packages:
+        coalition = self.game_model.game.coalition_for(not self.enemy_info)
+        for package in coalition.ato.packages:
             for flight in package.flights:
                 yield from AircraftInventoryData.from_flight(flight)
 
     def iter_unallocated_aircraft(self) -> Iterator[AircraftInventoryData]:
-        game = self.game_model.game
-        for squadron in game.blue.air_wing.iter_squadrons():
+        coalition = self.game_model.game.coalition_for(not self.enemy_info)
+        for squadron in coalition.air_wing.iter_squadrons():
             yield from AircraftInventoryData.each_untasked_from_squadron(squadron)
 
-    def get_data(self, only_unallocated: bool) -> Iterator[AircraftInventoryData]:
+    def get_data(self) -> Iterator[AircraftInventoryData]:
         yield from self.iter_unallocated_aircraft()
-        if not only_unallocated:
+        if not self.only_unallocated:
             yield from self.iter_allocated_aircraft()
 
 
