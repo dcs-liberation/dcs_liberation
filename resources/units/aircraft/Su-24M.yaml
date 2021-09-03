@@ -1,15 +1,17 @@
-description: 'The Sukhoi Su-24 (NATO reporting name: Fencer) is a supersonic, all-weather
+description:
+  "The Sukhoi Su-24 (NATO reporting name: Fencer) is a supersonic, all-weather
   attack aircraft developed in the Soviet Union. The aircraft has a variable-sweep
   wing, twin-engines and a side-by-side seating arrangement for its crew of two. It
-  was the first of the USSR''s aircraft to carry an integrated digital navigation/attack
+  was the first of the USSR's aircraft to carry an integrated digital navigation/attack
   system. It remains in service with the Russian Air Force, Syrian Air Force, Ukrainian
   Air Force, Azerbaijan Air Force , Iraqi Air Force and various air forces to which
-  it was exported.'
+  it was exported."
 introduced: 1983
 manufacturer: Sukhoi
 origin: USSR/Russia
 price: 14
 role: Attack
+range: 200
 variants:
   Su-24M Fencer-D: {}
   Su-24MK Fencer-D:

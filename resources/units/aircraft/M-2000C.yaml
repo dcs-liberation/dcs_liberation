@@ -12,6 +12,7 @@ manufacturer: Dassault
 origin: France
 price: 17
 role: Multirole Fighter
+range: 400
 variants:
   Mirage 2000C: {}
 radios:

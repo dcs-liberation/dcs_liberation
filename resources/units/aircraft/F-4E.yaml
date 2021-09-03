@@ -1,4 +1,5 @@
-description: Proving highly adaptable, the F-4 entered service with the Navy in 1961
+description:
+  Proving highly adaptable, the F-4 entered service with the Navy in 1961
   before it was adopted by the United States Marine Corps and the United States Air
   Force, and by the mid-1960s it had become a major part of their air arms. Phantom
   production ran from 1958 to 1981 with a total of 5,195 aircraft built, making it
@@ -12,6 +13,7 @@ manufacturer: McDonnell Douglas
 origin: USA
 price: 10
 role: Fighter-Bomber
+range: 200
 variants:
   F-4E Phantom II: {}
   F-4EJ Kai Phantom II: {}
