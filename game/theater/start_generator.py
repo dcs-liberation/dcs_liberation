@@ -12,7 +12,7 @@ from dcs.mapping import Point
 from game import Game
 from game.factions.faction import Faction
 from game.scenery_group import SceneryGroup
-from game.theater import Carrier, Lha, PointWithHeading
+from game.theater import PointWithHeading
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
@@ -88,13 +88,12 @@ class GameGenerator:
         generator_settings: GeneratorSettings,
         mod_settings: ModSettings,
     ) -> None:
-        self.player = player
-        self.enemy = enemy
+        self.player = player.apply_mod_settings(mod_settings)
+        self.enemy = enemy.apply_mod_settings(mod_settings)
         self.theater = theater
         self.air_wing_config = air_wing_config
         self.settings = settings
         self.generator_settings = generator_settings
-        self.mod_settings = mod_settings
 
     def generate(self) -> Game:
         with logged_duration("TGO population"):
@@ -102,8 +101,8 @@ class GameGenerator:
             namegen.reset()
             self.prepare_theater()
             game = Game(
-                player_faction=self.player.apply_mod_settings(self.mod_settings),
-                enemy_faction=self.enemy.apply_mod_settings(self.mod_settings),
+                player_faction=self.player,
+                enemy_faction=self.enemy,
                 theater=self.theater,
                 air_wing_config=self.air_wing_config,
                 start_date=self.generator_settings.start_date,
@@ -116,18 +115,26 @@ class GameGenerator:
         game.settings.version = VERSION
         return game
 
+    def should_remove_carrier(self, player: bool) -> bool:
+        faction = self.player if player else self.enemy
+        return self.generator_settings.no_carrier or not faction.carrier_names
+
+    def should_remove_lha(self, player: bool) -> bool:
+        faction = self.player if player else self.enemy
+        return self.generator_settings.no_lha or not faction.helicopter_carrier_names
+
     def prepare_theater(self) -> None:
         to_remove: List[ControlPoint] = []
 
         # Remove carrier and lha, invert situation if needed
         for cp in self.theater.controlpoints:
-            if isinstance(cp, Carrier) and self.generator_settings.no_carrier:
-                to_remove.append(cp)
-            elif isinstance(cp, Lha) and self.generator_settings.no_lha:
-                to_remove.append(cp)
-
             if self.generator_settings.inverted:
                 cp.starts_blue = cp.captured_invert
+
+            if cp.is_carrier and self.should_remove_carrier(cp.starts_blue):
+                to_remove.append(cp)
+            elif cp.is_lha and self.should_remove_lha(cp.starts_blue):
+                to_remove.append(cp)
 
         # do remove
         for cp in to_remove:

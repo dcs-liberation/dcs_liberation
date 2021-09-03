@@ -35,10 +35,10 @@ class DefaultSquadronAssigner:
             pass
 
     def assign(self) -> None:
-        for control_point, squadron_configs in self.config.by_location.items():
-            if not control_point.is_friendly(self.coalition.player):
-                continue
-            for squadron_config in squadron_configs:
+        for control_point in self.game.theater.control_points_for(
+            self.coalition.player
+        ):
+            for squadron_config in self.config.by_location[control_point]:
                 squadron_def = self.find_squadron_for(squadron_config, control_point)
                 if squadron_def is None:
                     logging.info(
