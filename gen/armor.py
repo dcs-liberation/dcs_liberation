@@ -143,8 +143,16 @@ class GroundConflictGenerator:
         # Add JTAC
         if self.game.blue.faction.has_jtac:
             n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
-            code: int = self.laser_code_registry.get_next_laser_code()
+            code: int
             freq = self.radio_registry.alloc_uhf()
+
+            # If the option fc3LaserCode is enabled, force all JTAC
+            # laser codes to 1113 to allow lasing for Su-25 Frogfoots and A-10A Warthogs.
+            # Otherwise use 1688 for the first JTAC, 1687 for the second etc.
+            if self.game.settings.plugins["plugins.jtacautolase.fc3LaserCode"]:
+                code = 1113
+            else:
+                code = self.laser_code_registry.get_next_laser_code()
 
             utype = self.game.blue.faction.jtac_unit
             if utype is None:

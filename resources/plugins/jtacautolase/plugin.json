@@ -8,8 +8,8 @@
             "defaultValue": true
         },
         {
-            "nameInUI": "Use Russian laser code (1113)",
-            "mnemonic": "russianLaserCode",
+            "nameInUI": "Use FC3 laser code (1113)",
+            "mnemonic": "fc3LaserCode",
             "defaultValue": false
         }
     ],
