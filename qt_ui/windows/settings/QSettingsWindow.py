@@ -22,7 +22,6 @@ from dcs.forcedoptions import ForcedOptions
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
-from game.infos.information import Information
 from game.settings import Settings, AutoAtoBehavior
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs
@@ -894,18 +893,6 @@ class QSettingsWindow(QDialog):
     def cheatMoney(self, amount):
         logging.info("CHEATING FOR AMOUNT : " + str(amount) + "M")
         self.game.blue.budget += amount
-        if amount > 0:
-            self.game.informations.append(
-                Information(
-                    "CHEATER",
-                    "You are a cheater and you should feel bad",
-                    self.game.turn,
-                )
-            )
-        else:
-            self.game.informations.append(
-                Information("CHEATER", "You are still a cheater !", self.game.turn)
-            )
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def applySettings(self):

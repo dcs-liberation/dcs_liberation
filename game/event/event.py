@@ -8,7 +8,6 @@ from dcs.task import Task
 
 from game import persistency
 from game.debriefing import Debriefing
-from game.infos.information import Information
 from game.operation.operation import Operation
 from game.theater import ControlPoint
 from gen.ato import AirTaskingOrder
@@ -173,13 +172,10 @@ class Event:
     def commit_building_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.building_losses:
             loss.ground_object.kill()
-            self.game.informations.append(
-                Information(
-                    "Building destroyed",
-                    f"{loss.ground_object.dcs_identifier} has been destroyed at "
-                    f"location {loss.ground_object.obj_name}",
-                    self.game.turn,
-                )
+            self.game.message(
+                "Building destroyed",
+                f"{loss.ground_object.dcs_identifier} has been destroyed at "
+                f"location {loss.ground_object.obj_name}",
             )
 
     @staticmethod
@@ -191,19 +187,16 @@ class Event:
         for captured in debriefing.base_captures:
             try:
                 if captured.captured_by_player:
-                    info = Information(
+                    self.game.message(
                         f"{captured.control_point} captured!",
                         f"We took control of {captured.control_point}.",
-                        self.game.turn,
                     )
                 else:
-                    info = Information(
+                    self.game.message(
                         f"{captured.control_point} lost!",
                         f"The enemy took control of {captured.control_point}.",
-                        self.game.turn,
                     )
 
-                self.game.informations.append(info)
                 captured.control_point.capture(self.game, captured.captured_by_player)
                 logging.info(f"Will run redeploy for {captured.control_point}")
                 self.redeploy_units(captured.control_point)
@@ -330,34 +323,28 @@ class Event:
                 # Handle the case where there are no casualties at all on either side but both sides still have units
                 if delta == 0.0:
                     print(status_msg)
-                    info = Information(
+                    self.game.message(
                         "Frontline Report",
                         f"Our ground forces from {cp.name} reached a stalemate with enemy forces from {enemy_cp.name}.",
-                        self.game.turn,
                     )
-                    self.game.informations.append(info)
                 else:
                     if player_won:
                         print(status_msg)
                         cp.base.affect_strength(delta)
                         enemy_cp.base.affect_strength(-delta)
-                        info = Information(
+                        self.game.message(
                             "Frontline Report",
-                            f"Our ground forces from {cp.name} are making progress toward {enemy_cp.name}.  {status_msg}",
-                            self.game.turn,
+                            f"Our ground forces from {cp.name} are making progress toward {enemy_cp.name}. {status_msg}",
                         )
-                        self.game.informations.append(info)
                     else:
                         print(status_msg)
                         enemy_cp.base.affect_strength(delta)
                         cp.base.affect_strength(-delta)
-                        info = Information(
+                        self.game.message(
                             "Frontline Report",
                             f"Our ground forces from {cp.name} are losing ground against the enemy forces from "
                             f"{enemy_cp.name}. {status_msg}",
-                            self.game.turn,
                         )
-                        self.game.informations.append(info)
 
     def redeploy_units(self, cp: ControlPoint) -> None:
         """ "
@@ -410,10 +397,8 @@ class Event:
             total_units_redeployed += move_count
 
         if total_units_redeployed > 0:
-            text = (
+            self.game.message(
+                "Units redeployed",
                 f"{total_units_redeployed}  units have been redeployed from "
-                f"{source.name} to {destination.name}"
+                f"{source.name} to {destination.name}",
             )
-            info = Information("Units redeployed", text, self.game.turn)
-            self.game.informations.append(info)
-            logging.info(text)
