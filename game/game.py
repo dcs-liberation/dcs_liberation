@@ -285,10 +285,6 @@ class Game:
         if not skipped:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
-        elif self.turn > 1:
-            for cp in self.theater.player_points():
-                if not cp.is_carrier and not cp.is_lha:
-                    cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
         self.conditions = self.generate_conditions()
 

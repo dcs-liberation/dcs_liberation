@@ -9,6 +9,7 @@ Saves from 4.x are not compatible with 5.0.
 * **[Campaign]** Era-restricted loadouts will now skip LGBs when no TGP is available in the loadout. This only applies to default loadouts; buddy-lasing can be coordinated with custom loadouts.
 * **[Campaign]** Squadrons now have a home base and will not operate out of other bases. See https://github.com/dcs-liberation/dcs_liberation/discussions/1550 for details.
 * **[Campaign]** Aircraft now belong to squadrons rather than bases to support squadron location transfers.
+* **[Campaign]** Skipped turns are no longer counted as defeats on front lines.
 * **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
 * **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
 * **[Campaign AI]** Reworked layout of hold, join, split, and ingress points. Should result in much shorter flight plans in general while still maintaining safe join/split/hold points.
