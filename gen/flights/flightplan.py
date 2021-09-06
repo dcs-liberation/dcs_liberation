@@ -245,7 +245,9 @@ class FlightPlan:
         if takeoff_time is None:
             return None
 
-        start_time: timedelta = takeoff_time - self.estimate_startup() - self.estimate_ground_ops()
+        start_time: timedelta = (
+            takeoff_time - self.estimate_startup() - self.estimate_ground_ops()
+        )
 
         # In case FP math has given us some barely below zero time, round to
         # zero.
