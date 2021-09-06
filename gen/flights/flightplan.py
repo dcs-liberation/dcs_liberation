@@ -245,19 +245,28 @@ class FlightPlan:
         if takeoff_time is None:
             return None
 
-        start_time = takeoff_time - self.estimate_startup() - self.estimate_ground_ops()
+        start_time: timedelta = takeoff_time - self.estimate_startup() - self.estimate_ground_ops()
 
         # In case FP math has given us some barely below zero time, round to
         # zero.
         if math.isclose(start_time.total_seconds(), 0):
-            return timedelta()
+            start_time = timedelta()
 
         # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
         # and they're not interesting from a mission planning perspective so we
         # don't want them in the UI.
         #
         # Round down so *barely* above zero start times are just zero.
-        return timedelta(seconds=math.floor(start_time.total_seconds()))
+        start_time = timedelta(seconds=math.floor(start_time.total_seconds()))
+
+        # Feature request #1309: Carrier planes should start at +1s
+        # This is a workaround to a DCS problem: some AI planes spawn on
+        # the 'sixpack' when start_time is zero and cause a deadlock.
+        # Workaround: force the start_time to 1 second for these planes.
+        if self.flight.from_cp.is_fleet and start_time.total_seconds() == 0:
+            start_time = timedelta(seconds=1)
+
+        return start_time
 
     def estimate_startup(self) -> timedelta:
         if self.flight.start_type == "Cold":
