@@ -39,6 +39,7 @@ from gen.triggergen import TRIGGER_RADIUS_MEDIUM, TriggersGenerator
 from gen.visualgen import VisualGenerator
 from .. import db
 from ..theater import Airfield, FrontLine
+from ..theater.bullseye import Bullseye
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -105,6 +106,9 @@ class Operation:
         cls.current_mission.coalition["red"] = Coalition(
             "red", bullseye=cls.game.red.bullseye.to_pydcs()
         )
+        cls.current_mission.coalition["neutrals"] = Coalition(
+            "neutrals", bullseye=Bullseye(Point(0, 0)).to_pydcs()
+        )
 
         p_country = cls.game.blue.country_name
         e_country = cls.game.red.country_name
@@ -114,6 +118,16 @@ class Operation:
         cls.current_mission.coalition["red"].add_country(
             country_dict[db.country_id_from_name(e_country)]()
         )
+
+        belligerents = [
+            db.country_id_from_name(p_country),
+            db.country_id_from_name(e_country),
+        ]
+        for country in country_dict.keys():
+            if country not in belligerents:
+                cls.current_mission.coalition["neutrals"].add_country(
+                    country_dict[country]()
+                )
 
     @classmethod
     def inject_lua_trigger(cls, contents: str, comment: str) -> None:
@@ -365,6 +379,7 @@ class Operation:
             cls.laser_code_registry,
             cls.unit_map,
             air_support=cls.airsupportgen.air_support,
+            helipads=cls.groundobjectgen.helipads,
         )
 
         cls.airgen.clear_parking_slots()

@@ -220,6 +220,8 @@ class FlightWaypoint:
             PointAction.FromParkingArea: FlightWaypointType.TAKEOFF,
             PointAction.FromParkingAreaHot: FlightWaypointType.TAKEOFF,
             PointAction.FromRunway: FlightWaypointType.TAKEOFF,
+            PointAction.FromGroundArea: FlightWaypointType.TAKEOFF,
+            PointAction.FromGroundAreaHot: FlightWaypointType.TAKEOFF,
         }[point.action]
         if waypoint.waypoint_type == FlightWaypointType.NAV:
             waypoint.name = "NAV"

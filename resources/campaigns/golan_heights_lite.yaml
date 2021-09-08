@@ -1,0 +1,104 @@
+---
+name: Syria - Battle for Golan Heights
+theater: Syria
+authors: Khopa
+recommended_player_faction: Israel 2000
+recommended_enemy_faction: Syria 2011
+description: <p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/><br/>This scenario is designed to be performance and helicopter friendly.</p>
+miz: golan_heights_lite.miz
+performance: 1
+version: "9.0"
+squadrons:
+  # Ramat-David
+  30:
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+    - primary: Transport
+      aircraft:
+        - C-130
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-15C Eagle
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-4E Phantom II
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-15E Strike Eagle
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+  # Golan South
+  Golan South:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-1W SuperCobra
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+    - primary: Transport
+      aircraft:
+        - UH-1H Iroquois
+  # Golan North
+  Golan North:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+    - primary: CAS
+      aircraft:
+        - SA 342M Gazelle
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - Mi-8MTV2 Hip
+  # Marj Ruhayyil
+  23:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-23MLD Flogger-K
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-17M4 Fitter-K
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-17M4 Fitter-K
+  # Damascus
+  7:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-29S Fulcrum-C
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-25PD Foxbat-E
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-24M Fencer-D
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-17M4 Fitter-K

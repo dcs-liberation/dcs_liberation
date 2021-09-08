@@ -8,6 +8,8 @@ from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import Any, List, Type, Union, cast, TYPE_CHECKING
 
+from dcs.countries import Switzerland, UnitedNationsPeacekeepers, USAFAggressors
+from dcs.country import Country
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
@@ -194,6 +196,17 @@ class Game:
                 self.red.faction.name,
             )
         )
+
+    @property
+    def neutral_country(self) -> Type[Country]:
+        """Return the best fitting country that can be used as neutral faction in the generated mission"""
+        countries_in_use = [self.red.country_name, self.blue.country_name]
+        if UnitedNationsPeacekeepers not in countries_in_use:
+            return UnitedNationsPeacekeepers
+        elif Switzerland.name not in countries_in_use:
+            return Switzerland
+        else:
+            return USAFAggressors
 
     def _generate_events(self) -> None:
         for front_line in self.theater.conflicts():

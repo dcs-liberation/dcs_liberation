@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 import random
+from collections import defaultdict
 from typing import (
     Dict,
     Iterator,
@@ -35,7 +36,7 @@ from dcs.task import (
     FireAtPoint,
 )
 from dcs.triggers import TriggerStart, TriggerZone
-from dcs.unit import Ship, Unit, Vehicle, SingleHeliPad
+from dcs.unit import Ship, Unit, Vehicle, InvisibleFARP
 from dcs.unitgroup import ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, ShipType, VehicleType
 from dcs.vehicles import vehicle_map
@@ -589,22 +590,45 @@ class HelipadGenerator:
         self.game = game
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
+        self.helipads: list[StaticGroup] = []
 
     def generate(self) -> None:
+
+        # Note : Helipad are generated as neutral object in order not to interfer with capture triggers
+        neutral_country = self.m.country(self.game.neutral_country.name)
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
         for i, helipad in enumerate(self.cp.helipads):
             name = self.cp.name + "_helipad_" + str(i)
-            logging.info("Generating helipad : " + name)
-            pad = SingleHeliPad(name=(name + "_unit"))
+            logging.info("Generating helipad static : " + name)
+            pad = InvisibleFARP(name=name)
             pad.position = Point(helipad.x, helipad.y)
             pad.heading = helipad.heading.degrees
-            # pad.heliport_frequency = self.radio_registry.alloc_uhf() TODO : alloc radio & callsign
             sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
             sg.add_unit(pad)
             sp = StaticPoint()
             sp.position = pad.position
             sg.add_point(sp)
-            country.add_static_group(sg)
+            neutral_country.add_static_group(sg)
+
+            self.helipads.append(sg)
+
+            # Generate a FARP Ammo and Fuel stack for each pad
+            self.m.static_group(
+                country=country,
+                name=(name + "_fuel"),
+                _type=Fortification.FARP_Fuel_Depot,
+                position=pad.position.point_from_heading(helipad.heading.degrees, 35),
+                heading=pad.heading,
+            )
+            self.m.static_group(
+                country=country,
+                name=(name + "_ammo"),
+                _type=Fortification.FARP_Ammo_Dump_Coating,
+                position=pad.position.point_from_heading(
+                    helipad.heading.degrees, 35
+                ).point_from_heading(helipad.heading.degrees + 90, 10),
+                heading=pad.heading,
+            )
 
 
 class GroundObjectsGenerator:
@@ -631,13 +655,18 @@ class GroundObjectsGenerator:
         self.unit_map = unit_map
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
+        self.helipads: dict[ControlPoint, list[StaticGroup]] = defaultdict(list)
 
     def generate(self) -> None:
         for cp in self.game.theater.controlpoints:
             country = self.m.country(self.game.coalition_for(cp.captured).country_name)
-            HelipadGenerator(
+
+            # Generate helipads
+            helipad_gen = HelipadGenerator(
                 self.m, cp, self.game, self.radio_registry, self.tacan_registry
-            ).generate()
+            )
+            helipad_gen.generate()
+            self.helipads[cp] = helipad_gen.helipads
 
             for ground_object in cp.ground_objects:
                 generator: GenericGroundObjectGenerator[Any]

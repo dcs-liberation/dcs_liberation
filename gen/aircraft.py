@@ -229,6 +229,7 @@ class AircraftConflictGenerator:
         laser_code_registry: LaserCodeRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
+        helipads: dict[ControlPoint, list[StaticGroup]],
     ) -> None:
         self.m = mission
         self.game = game
@@ -239,6 +240,7 @@ class AircraftConflictGenerator:
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
         self.air_support = air_support
+        self.helipads = helipads
 
     @cached_property
     def use_client(self) -> bool:
@@ -534,6 +536,54 @@ class AircraftConflictGenerator:
             group_size=count,
         )
 
+    def _generate_at_cp_helipad(
+        self,
+        name: str,
+        side: Country,
+        unit_type: Type[FlyingType],
+        count: int,
+        start_type: str,
+        cp: ControlPoint,
+    ) -> FlyingGroup[Any]:
+        assert count > 0
+
+        logging.info(
+            "airgen at cp's helipads : {} for {} at {}".format(
+                unit_type, side.id, cp.name
+            )
+        )
+
+        try:
+            helipad = self.helipads[cp].pop()
+        except IndexError as ex:
+            raise RuntimeError(f"Not enough helipads available at {cp}") from ex
+
+        group = self._generate_at_group(
+            name=name,
+            side=side,
+            unit_type=unit_type,
+            count=count,
+            start_type=start_type,
+            at=helipad,
+        )
+
+        # Note : A bit dirty, need better support in pydcs
+        group.points[0].action = PointAction.FromGroundArea
+        group.points[0].type = "TakeOffGround"
+        group.units[0].heading = helipad.units[0].heading
+        if start_type != "Cold":
+            group.points[0].action = PointAction.FromGroundAreaHot
+            group.points[0].type = "TakeOffGroundHot"
+
+        for i in range(count - 1):
+            try:
+                helipad = self.helipads[cp].pop()
+                group.units[1 + i].position = Point(helipad.x, helipad.y)
+                group.units[1 + i].heading = helipad.units[0].heading
+            except IndexError as ex:
+                raise RuntimeError(f"Not enough helipads available at {cp}") from ex
+        return group
+
     def _add_radio_waypoint(
         self,
         group: FlyingGroup[Any],
@@ -692,11 +742,13 @@ class AircraftConflictGenerator:
         self, cp: ControlPoint, country: Country, flight: Flight
     ) -> FlyingGroup[Any]:
         name = namegen.next_aircraft_name(country, cp.id, flight)
+        group: FlyingGroup[Any]
         try:
             if flight.start_type == "In Flight":
                 group = self._generate_inflight(
                     name=name, side=country, flight=flight, origin=cp
                 )
+                return group
             elif isinstance(cp, NavalControlPoint):
                 group_name = cp.get_carrier_group_name()
                 carrier_group = self.m.find_group(group_name)
@@ -705,7 +757,7 @@ class AircraftConflictGenerator:
                         f"Carrier group {carrier_group} is a "
                         "{carrier_group.__class__.__name__}, expected a ShipGroup"
                     )
-                group = self._generate_at_group(
+                return self._generate_at_group(
                     name=name,
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
@@ -714,11 +766,22 @@ class AircraftConflictGenerator:
                     at=carrier_group,
                 )
             else:
+                # If the flight is an helicopter flight, then prioritize dedicated helipads
+                if flight.unit_type.helicopter:
+                    return self._generate_at_cp_helipad(
+                        name=name,
+                        side=country,
+                        unit_type=flight.unit_type.dcs_unit_type,
+                        count=flight.count,
+                        start_type=flight.start_type,
+                        cp=cp,
+                    )
+
                 if not isinstance(cp, Airfield):
                     raise RuntimeError(
                         f"Attempted to spawn at airfield for non-airfield {cp}"
                     )
-                group = self._generate_at_airport(
+                return self._generate_at_airport(
                     name=name,
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
@@ -737,8 +800,7 @@ class AircraftConflictGenerator:
                 name=name, side=country, flight=flight, origin=cp
             )
             group.points[0].alt = 1500
-
-        return group
+            return group
 
     @staticmethod
     def set_reduced_fuel(

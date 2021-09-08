@@ -111,6 +111,9 @@ VERSION = _build_version_string()
 #: * DCS 2.7.4.9632 changed scenery target IDs. Any mission using map buildings as
 #:   strike targets must check and potentially recreate all those objectives.
 #:
+#: Version 8.1
+#: * You can now add "Invisible FARP" static to FOB to add helicopter slots
+#:
 #: Version 9.0
 #: * Campaign files now define the initial squadron layouts. See TODO.
 #: * CV and LHA control points now get their names from the group name in the campaign

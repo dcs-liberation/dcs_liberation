@@ -32,6 +32,7 @@ from dcs.ships import (
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
+from dcs.unittype import FlyingType
 
 from game import db
 from game.point_with_heading import PointWithHeading
@@ -409,6 +410,13 @@ class ControlPoint(MissionTarget, ABC):
             if tgo.is_factory and not tgo.is_dead:
                 return True
         return False
+
+    @property
+    def has_helipads(self) -> bool:
+        """
+        Returns true if cp has helipads
+        """
+        return len(self.helipads) > 0
 
     def can_recruit_ground_units(self, game: Game) -> bool:
         """Returns True if this control point is capable of recruiting ground units."""
@@ -829,6 +837,22 @@ class ControlPoint(MissionTarget, ABC):
         return len(list(self.all_ammo_depots))
 
     @property
+    def active_fuel_depots_count(self) -> int:
+        """Return the number of available fuel depots"""
+        return len(
+            [
+                obj
+                for obj in self.connected_objectives
+                if obj.category == "fuel" and not obj.is_dead
+            ]
+        )
+
+    @property
+    def total_fuel_depots_count(self) -> int:
+        """Return the number of fuel depots, including dead ones"""
+        return len([obj for obj in self.connected_objectives if obj.category == "fuel"])
+
+    @property
     def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:
         return []
 
@@ -886,6 +910,11 @@ class Airfield(ControlPoint):
 
     @property
     def total_aircraft_parking(self) -> int:
+        """
+        Return total aircraft parking slots available
+        Note : additional helipads shouldn't contribute to this score as it could allow airfield
+        to buy more planes than what they are able to host
+        """
         return len(self.airport.parking_slots)
 
     @property
@@ -1165,7 +1194,7 @@ class Fob(ControlPoint):
         self.name = name
 
     def runway_is_operational(self) -> bool:
-        return False
+        return self.has_helipads
 
     def active_runway(
         self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
@@ -1189,10 +1218,10 @@ class Fob(ControlPoint):
 
     @property
     def total_aircraft_parking(self) -> int:
-        return 0
+        return len(self.helipads)
 
     def can_operate(self, aircraft: AircraftType) -> bool:
-        return False
+        return aircraft.helicopter
 
     @property
     def heading(self) -> Heading:
