@@ -1,0 +1,19 @@
+---
+name: VF-211
+nickname: Fighting Checkmates
+country: USA
+role: Strike Fighter
+aircraft: F-14B Tomcat
+livery: VF-211 Fighting Checkmates
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+  - Fighter sweep
+  - TARCAP

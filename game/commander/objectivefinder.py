@@ -157,10 +157,7 @@ class ObjectiveFinder:
         for control_point in self.enemy_control_points():
             if not isinstance(control_point, Airfield):
                 continue
-            if (
-                control_point.allocated_aircraft(self.game).total_present
-                >= min_aircraft
-            ):
+            if control_point.allocated_aircraft().total_present >= min_aircraft:
                 airfields.append(control_point)
         return self._targets_by_range(airfields)
 

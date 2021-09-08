@@ -40,7 +40,7 @@ class Coalition:
         self.procurement_requests: OrderedSet[AircraftProcurementRequest] = OrderedSet()
         self.bullseye = Bullseye(Point(0, 0))
         self.faker = Faker(self.faction.locales)
-        self.air_wing = AirWing(game)
+        self.air_wing = AirWing(player)
         self.transfers = PendingTransfers(game, player)
 
         # Late initialized because the two coalitions in the game are mutually
@@ -139,7 +139,7 @@ class Coalition:
         For more information on turn finalization in general, see the documentation for
         `Game.finish_turn`.
         """
-        self.air_wing.replenish()
+        self.air_wing.end_turn()
         self.budget += Income(self.game, self.player).total
 
         # Need to recompute before transfers and deliveries to account for captures.

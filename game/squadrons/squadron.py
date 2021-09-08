@@ -11,17 +11,20 @@ from typing import (
 
 from faker import Faker
 
-from game.dcs.aircrafttype import AircraftType
 from game.settings import AutoAtoBehavior, Settings
-from game.squadrons.operatingbases import OperatingBases
-from game.squadrons.pilot import Pilot, PilotStatus
-from game.squadrons.squadrondef import SquadronDef
+from gen.ato import Package
+from gen.flights.flight import FlightType, Flight
+from gen.flights.flightplan import FlightPlanBuilder
+from .pilot import Pilot, PilotStatus
+from ..utils import meters
 
 if TYPE_CHECKING:
     from game import Game
     from game.coalition import Coalition
-    from gen.flights.flight import FlightType
-    from game.theater import ControlPoint
+    from game.dcs.aircrafttype import AircraftType
+    from game.theater import ControlPoint, ConflictTheater, MissionTarget
+    from .operatingbases import OperatingBases
+    from .squadrondef import SquadronDef
 
 
 @dataclass
@@ -53,6 +56,9 @@ class Squadron:
     settings: Settings = field(hash=False, compare=False)
 
     location: ControlPoint
+    destination: Optional[ControlPoint] = field(
+        init=False, hash=False, compare=False, default=None
+    )
 
     owned_aircraft: int = field(init=False, hash=False, compare=False, default=0)
     untasked_aircraft: int = field(init=False, hash=False, compare=False, default=0)
@@ -82,9 +88,7 @@ class Squadron:
         return self.coalition.player
 
     def assign_to_base(self, base: ControlPoint) -> None:
-        self.location.squadrons.remove(self)
         self.location = base
-        self.location.squadrons.append(self)
         logging.debug(f"Assigned {self} to {base}")
 
     @property
@@ -169,6 +173,12 @@ class Squadron:
             raise ValueError("Squadrons can only be created with active pilots.")
         self._recruit_pilots(self.settings.squadron_pilot_limit)
 
+    def end_turn(self) -> None:
+        if self.destination is not None:
+            self.relocate_to(self.destination)
+        self.replenish_lost_pilots()
+        self.deliver_orders()
+
     def replenish_lost_pilots(self) -> None:
         if not self.pilot_limits_enabled:
             return
@@ -243,6 +253,17 @@ class Squadron:
     def can_auto_assign(self, task: FlightType) -> bool:
         return task in self.auto_assignable_mission_types
 
+    def can_auto_assign_mission(
+        self, location: MissionTarget, task: FlightType, size: int, this_turn: bool
+    ) -> bool:
+        if not self.can_auto_assign(task):
+            return False
+        if this_turn and not self.can_fulfill_flight(size):
+            return False
+
+        distance_to_target = meters(location.distance_to(self.location))
+        return distance_to_target <= self.aircraft.max_mission_range
+
     def operates_from(self, control_point: ControlPoint) -> bool:
         if control_point.is_carrier:
             return self.operating_bases.carrier
@@ -265,17 +286,132 @@ class Squadron:
     def can_fulfill_flight(self, count: int) -> bool:
         return self.can_provide_pilots(count) and self.untasked_aircraft >= count
 
-    def refund_orders(self) -> None:
-        self.coalition.adjust_budget(self.aircraft.price * self.pending_deliveries)
-        self.pending_deliveries = 0
+    def refund_orders(self, count: Optional[int] = None) -> None:
+        if count is None:
+            count = self.pending_deliveries
+        self.coalition.adjust_budget(self.aircraft.price * count)
+        self.pending_deliveries -= count
 
     def deliver_orders(self) -> None:
+        self.cancel_overflow_orders()
         self.owned_aircraft += self.pending_deliveries
         self.pending_deliveries = 0
+
+    def relocate_to(self, destination: ControlPoint) -> None:
+        self.location = destination
+        if self.location == self.destination:
+            self.destination = None
+
+    def cancel_overflow_orders(self) -> None:
+        if self.pending_deliveries <= 0:
+            return
+        overflow = -self.location.unclaimed_parking()
+        if overflow > 0:
+            sell_count = min(overflow, self.pending_deliveries)
+            logging.debug(
+                f"{self.location} is overfull by {overflow} aircraft. Cancelling "
+                f"orders for {sell_count} aircraft to make room."
+            )
+            self.refund_orders(sell_count)
 
     @property
     def max_fulfillable_aircraft(self) -> int:
         return max(self.number_of_available_pilots, self.untasked_aircraft)
+
+    @property
+    def expected_size_next_turn(self) -> int:
+        return self.owned_aircraft + self.pending_deliveries
+
+    @property
+    def arrival(self) -> ControlPoint:
+        return self.location if self.destination is None else self.destination
+
+    def plan_relocation(
+        self, destination: ControlPoint, theater: ConflictTheater
+    ) -> None:
+        if destination == self.location:
+            logging.warning(
+                f"Attempted to plan relocation of {self} to current location "
+                f"{destination}. Ignoring."
+            )
+            return
+        if destination == self.destination:
+            logging.warning(
+                f"Attempted to plan relocation of {self} to current destination "
+                f"{destination}. Ignoring."
+            )
+            return
+
+        if self.expected_size_next_turn >= destination.unclaimed_parking():
+            raise RuntimeError(f"Not enough parking for {self} at {destination}.")
+        if not destination.can_operate(self.aircraft):
+            raise RuntimeError(f"{self} cannot operate at {destination}.")
+        self.destination = destination
+        self.replan_ferry_flights(theater)
+
+    def cancel_relocation(self) -> None:
+        if self.destination is None:
+            logging.warning(
+                f"Attempted to cancel relocation of squadron with no transfer order. "
+                "Ignoring."
+            )
+            return
+
+        if self.expected_size_next_turn >= self.location.unclaimed_parking():
+            raise RuntimeError(f"Not enough parking for {self} at {self.location}.")
+        self.destination = None
+        self.cancel_ferry_flights()
+
+    def replan_ferry_flights(self, theater: ConflictTheater) -> None:
+        self.cancel_ferry_flights()
+        self.plan_ferry_flights(theater)
+
+    def cancel_ferry_flights(self) -> None:
+        for package in self.coalition.ato.packages:
+            # Copy the list so our iterator remains consistent throughout the removal.
+            for flight in list(package.flights):
+                if flight.squadron == self and flight.flight_type is FlightType.FERRY:
+                    package.remove_flight(flight)
+                    flight.return_pilots_and_aircraft()
+            if not package.flights:
+                self.coalition.ato.remove_package(package)
+
+    def plan_ferry_flights(self, theater: ConflictTheater) -> None:
+        if self.destination is None:
+            raise RuntimeError(
+                f"Cannot plan ferry flights for {self} because there is no destination."
+            )
+        remaining = self.untasked_aircraft
+        if not remaining:
+            return
+
+        package = Package(self.destination)
+        builder = FlightPlanBuilder(package, self.coalition, theater)
+        while remaining:
+            size = min(remaining, self.aircraft.max_group_size)
+            self.plan_ferry_flight(builder, package, size)
+            remaining -= size
+        package.set_tot_asap()
+        self.coalition.ato.add_package(package)
+
+    def plan_ferry_flight(
+        self, builder: FlightPlanBuilder, package: Package, size: int
+    ) -> None:
+        start_type = self.location.required_aircraft_start_type
+        if start_type is None:
+            start_type = self.settings.default_start_type
+
+        flight = Flight(
+            package,
+            self.coalition.country_name,
+            self,
+            size,
+            FlightType.FERRY,
+            start_type,
+            divert=None,
+        )
+        package.add_flight(flight)
+        builder.populate_flight_plan(flight)
 
     @classmethod
     def create_from(

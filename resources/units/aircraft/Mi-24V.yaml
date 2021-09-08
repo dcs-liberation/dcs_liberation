@@ -13,6 +13,7 @@ description: "The Mil Mi-24 (Russian: \u041C\u0438\u043B\u044C \u041C\u0438-24; 
   \ Stakan), because of the flat glass plates that surround earlier Mi-24 variants'\
   \ cockpits. It served to a great success in the Afghanistan war, until the Taliban\
   \ where equiped with Stinger Misseles from the CIA."
+lha_capable: true
 introduced: 1976
 manufacturer: Mil
 origin: USSR/Russia

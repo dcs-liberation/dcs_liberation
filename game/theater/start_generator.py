@@ -8,13 +8,11 @@ from datetime import datetime
 from typing import Any, Dict, Iterable, List, Set
 
 from dcs.mapping import Point
-from dcs.task import CAP, CAS, PinpointStrike
-from dcs.vehicles import AirDefence
 
 from game import Game
 from game.factions.faction import Faction
 from game.scenery_group import SceneryGroup
-from game.theater import Carrier, Lha, PointWithHeading
+from game.theater import PointWithHeading
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
     CarrierGroundObject,
@@ -30,7 +28,6 @@ from game.theater.theatergroundobject import (
 )
 from game.utils import Heading
 from game.version import VERSION
-from gen.naming import namegen
 from gen.coastal.coastal_group_generator import generate_coastal_group
 from gen.defenses.armor_group_generator import generate_armor_group
 from gen.fleet.ship_group_generator import (
@@ -39,6 +36,7 @@ from gen.fleet.ship_group_generator import (
     generate_ship_group,
 )
 from gen.missiles.missiles_group_generator import generate_missile_group
+from gen.naming import namegen
 from gen.sam.airdefensegroupgenerator import AirDefenseRange
 from gen.sam.ewr_group_generator import generate_ewr_group
 from gen.sam.sam_group_generator import generate_anti_air_group
@@ -61,7 +59,6 @@ class GeneratorSettings:
     start_date: datetime
     player_budget: int
     enemy_budget: int
-    midgame: bool
     inverted: bool
     no_carrier: bool
     no_lha: bool
@@ -91,13 +88,12 @@ class GameGenerator:
         generator_settings: GeneratorSettings,
         mod_settings: ModSettings,
     ) -> None:
-        self.player = player
-        self.enemy = enemy
+        self.player = player.apply_mod_settings(mod_settings)
+        self.enemy = enemy.apply_mod_settings(mod_settings)
         self.theater = theater
         self.air_wing_config = air_wing_config
         self.settings = settings
         self.generator_settings = generator_settings
-        self.mod_settings = mod_settings
 
     def generate(self) -> Game:
         with logged_duration("TGO population"):
@@ -105,8 +101,8 @@ class GameGenerator:
             namegen.reset()
             self.prepare_theater()
             game = Game(
-                player_faction=self.player.apply_mod_settings(self.mod_settings),
-                enemy_faction=self.enemy.apply_mod_settings(self.mod_settings),
+                player_faction=self.player,
+                enemy_faction=self.enemy,
                 theater=self.theater,
                 air_wing_config=self.air_wing_config,
                 start_date=self.generator_settings.start_date,
@@ -119,36 +115,30 @@ class GameGenerator:
         game.settings.version = VERSION
         return game
 
+    def should_remove_carrier(self, player: bool) -> bool:
+        faction = self.player if player else self.enemy
+        return self.generator_settings.no_carrier or not faction.carrier_names
+
+    def should_remove_lha(self, player: bool) -> bool:
+        faction = self.player if player else self.enemy
+        return self.generator_settings.no_lha or not faction.helicopter_carrier_names
+
     def prepare_theater(self) -> None:
         to_remove: List[ControlPoint] = []
-        # Auto-capture half the bases if midgame.
-        if self.generator_settings.midgame:
-            control_points = self.theater.controlpoints
-            for control_point in control_points[: len(control_points) // 2]:
-                control_point.captured = True
 
         # Remove carrier and lha, invert situation if needed
         for cp in self.theater.controlpoints:
-            if isinstance(cp, Carrier) and self.generator_settings.no_carrier:
-                to_remove.append(cp)
-            elif isinstance(cp, Lha) and self.generator_settings.no_lha:
-                to_remove.append(cp)
-
             if self.generator_settings.inverted:
-                cp.captured = cp.captured_invert
+                cp.starts_blue = cp.captured_invert
+
+            if cp.is_carrier and self.should_remove_carrier(cp.starts_blue):
+                to_remove.append(cp)
+            elif cp.is_lha and self.should_remove_lha(cp.starts_blue):
+                to_remove.append(cp)
 
         # do remove
         for cp in to_remove:
             self.theater.controlpoints.remove(cp)
-
-        # TODO: Fix this. This captures all bases for blue.
-        # reapply midgame inverted if needed
-        if self.generator_settings.midgame and self.generator_settings.inverted:
-            for i, cp in enumerate(reversed(self.theater.controlpoints)):
-                if i > len(self.theater.controlpoints):
-                    break
-                else:
-                    cp.captured = True
 
 
 class ControlPointGroundObjectGenerator:

@@ -74,7 +74,7 @@ class ProcurementAi:
                 self.game.coalition_for(self.is_player).transfers
             )
             armor_investment += cp_ground_units.total_value
-            cp_aircraft = cp.allocated_aircraft(self.game)
+            cp_aircraft = cp.allocated_aircraft()
             aircraft_investment += cp_aircraft.total_value
 
         total_investment = aircraft_investment + armor_investment
@@ -221,45 +221,22 @@ class ProcurementAi:
         else:
             return self.game.theater.enemy_points()
 
-    @staticmethod
-    def squadron_rank_for_task(squadron: Squadron, task: FlightType) -> int:
-        return aircraft_for_task(task).index(squadron.aircraft)
-
-    def compatible_squadrons_at_airbase(
-        self, airbase: ControlPoint, request: AircraftProcurementRequest
-    ) -> Iterator[Squadron]:
-        compatible: list[Squadron] = []
-        for squadron in airbase.squadrons:
-            if not squadron.can_auto_assign(request.task_capability):
-                continue
-            if not squadron.can_provide_pilots(request.number):
-                continue
-
-            distance_to_target = meters(request.near.distance_to(airbase))
-            if distance_to_target > squadron.aircraft.max_mission_range:
-                continue
-            compatible.append(squadron)
-        yield from sorted(
-            compatible,
-            key=lambda s: self.squadron_rank_for_task(s, request.task_capability),
-        )
-
     def best_squadrons_for(
         self, request: AircraftProcurementRequest
     ) -> Iterator[Squadron]:
-        distance_cache = ObjectiveDistanceCache.get_closest_airfields(request.near)
         threatened = []
-        for cp in distance_cache.operational_airfields:
-            if not cp.is_friendly(self.is_player):
+        for squadron in self.air_wing.best_squadrons_for(
+            request.near, request.task_capability, request.number, this_turn=False
+        ):
+            if not squadron.can_provide_pilots(request.number):
                 continue
-            if cp.unclaimed_parking(self.game) < request.number:
+            if squadron.location.unclaimed_parking() < request.number:
                 continue
-            if self.threat_zones.threatened(cp.position):
-                threatened.append(cp)
+            if self.threat_zones.threatened(squadron.location.position):
+                threatened.append(squadron)
                 continue
-            yield from self.compatible_squadrons_at_airbase(cp, request)
-        for threatened_base in threatened:
-            yield from self.compatible_squadrons_at_airbase(threatened_base, request)
+            yield squadron
+        yield from threatened
 
     def ground_reinforcement_candidate(self) -> Optional[ControlPoint]:
         worst_supply = math.inf

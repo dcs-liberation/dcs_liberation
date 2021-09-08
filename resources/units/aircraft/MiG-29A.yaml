@@ -1,4 +1,5 @@
-description: 'The MiG-29 "Fulcrum" is a Russian-designed, twin-engine, supersonic
+description:
+  'The MiG-29 "Fulcrum" is a Russian-designed, twin-engine, supersonic
   fighter. First operational in the early 1980s, the Fulcrum is a "light weight" fighter,
   comparable to the American F/A-18 Hornet and F-16. Designed to work in conjunction
   with the larger Su-27 Flanker, the MiG-29 is armed with an internal 30mm cannon
@@ -24,5 +25,6 @@ manufacturer: Mikoyan
 origin: USSR/Russia
 price: 15
 role: Multirole Fighter
+range: 150
 variants:
   MiG-29A Fulcrum-A: {}

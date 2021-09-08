@@ -57,6 +57,7 @@ from dcs.task import (
     Transport,
     WeaponType,
     TargetType,
+    Nothing,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
@@ -92,7 +93,7 @@ from gen.flights.flight import (
 from gen.lasercoderegistry import LaserCodeRegistry
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
-from gen.tacan import TacanBand, TacanRegistry
+from gen.tacan import TacanBand, TacanRegistry, TacanUsage
 from .airsupport import AirSupport, AwacsInfo, TankerInfo
 from .callsigns import callsign_for_support_unit
 from .flights.flightplan import (
@@ -437,7 +438,7 @@ class AircraftConflictGenerator:
         if isinstance(flight.flight_plan, RefuelingFlightPlan):
             callsign = callsign_for_support_unit(group)
 
-            tacan = self.tacan_registy.alloc_for_band(TacanBand.Y)
+            tacan = self.tacan_registy.alloc_for_band(TacanBand.Y, TacanUsage.AirToAir)
             self.air_support.tankers.append(
                 TankerInfo(
                     group_name=str(group.name),
@@ -656,41 +657,36 @@ class AircraftConflictGenerator:
 
             for squadron in control_point.squadrons:
                 try:
-                    self._spawn_unused_at(control_point, country, faction, squadron)
+                    self._spawn_unused_for(squadron, country, faction)
                 except NoParkingSlotError:
                     # If we run out of parking, stop spawning aircraft.
                     return
 
-    def _spawn_unused_at(
-        self,
-        control_point: Airfield,
-        country: Country,
-        faction: Faction,
-        squadron: Squadron,
+    def _spawn_unused_for(
+        self, squadron: Squadron, country: Country, faction: Faction
     ) -> None:
+        assert isinstance(squadron.location, Airfield)
         for _ in range(squadron.untasked_aircraft):
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
             flight = Flight(
-                Package(control_point),
+                Package(squadron.location),
                 faction.country,
                 squadron,
                 1,
                 FlightType.BARCAP,
                 "Cold",
-                departure=control_point,
-                arrival=control_point,
                 divert=None,
             )
 
             group = self._generate_at_airport(
-                name=namegen.next_aircraft_name(country, control_point.id, flight),
+                name=namegen.next_aircraft_name(country, flight.departure.id, flight),
                 side=country,
                 unit_type=squadron.aircraft.dcs_unit_type,
                 count=1,
                 start_type="Cold",
-                airport=control_point.airport,
+                airport=squadron.location.airport,
             )
 
             self._setup_livery(flight, group)
@@ -1153,6 +1149,23 @@ class AircraftConflictGenerator:
             restrict_jettison=True,
         )
 
+    def configure_ferry(
+        self,
+        group: FlyingGroup[Any],
+        package: Package,
+        flight: Flight,
+        dynamic_runways: Dict[str, RunwayData],
+    ) -> None:
+        group.task = Nothing.name
+        self._setup_group(group, package, flight, dynamic_runways)
+        self.configure_behavior(
+            flight,
+            group,
+            react_on_threat=OptReactOnThreat.Values.EvadeFire,
+            roe=OptROE.Values.WeaponHold,
+            restrict_jettison=True,
+        )
+
     def configure_unknown_task(self, group: FlyingGroup[Any], flight: Flight) -> None:
         logging.error(f"Unhandled flight type: {flight.flight_type}")
         self.configure_behavior(flight, group)
@@ -1197,6 +1210,8 @@ class AircraftConflictGenerator:
             self.configure_oca_strike(group, package, flight, dynamic_runways)
         elif flight_type == FlightType.TRANSPORT:
             self.configure_transport(group, package, flight, dynamic_runways)
+        elif flight_type == FlightType.FERRY:
+            self.configure_ferry(group, package, flight, dynamic_runways)
         else:
             self.configure_unknown_task(group, flight)
 
@@ -1783,6 +1798,8 @@ class LandingPointBuilder(PydcsWaypointBuilder):
         waypoint = super().build()
         waypoint.type = "Land"
         waypoint.action = PointAction.Landing
+        if (control_point := self.waypoint.control_point) is not None:
+            waypoint.airdrome_id = control_point.airdrome_id_for_landing
         return waypoint
 
 
@@ -1792,6 +1809,8 @@ class CargoStopBuilder(PydcsWaypointBuilder):
         waypoint.type = "LandingReFuAr"
         waypoint.action = PointAction.LandingReFuAr
         waypoint.landing_refuel_rearm_time = 2  # Minutes.
+        if (control_point := self.waypoint.control_point) is not None:
+            waypoint.airdrome_id = control_point.airdrome_id_for_landing
         return waypoint
 
 

@@ -273,6 +273,8 @@ class UnitTransactionFrame(QFrame, Generic[TransactionItemType]):
         else:
             return "Unit can not be sold."
 
-    def info(self, unit_type: UnitType) -> None:
-        self.info_window = QUnitInfoWindow(self.game_model.game, unit_type)
+    def info(self, item: TransactionItemType) -> None:
+        self.info_window = QUnitInfoWindow(
+            self.game_model.game, self.purchase_adapter.unit_type_of(item)
+        )
         self.info_window.show()

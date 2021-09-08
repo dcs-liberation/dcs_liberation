@@ -1,14 +1,18 @@
-from typing import Optional
+from __future__ import annotations
 
-from game.commander.aircraftallocator import AircraftAllocator
-from game.commander.missionproposals import ProposedFlight
-from game.dcs.aircrafttype import AircraftType
-from game.squadrons.airwing import AirWing
-from game.theater import MissionTarget, OffMapSpawn, ControlPoint
+from typing import Optional, TYPE_CHECKING
+
 from game.utils import nautical_miles
 from gen.ato import Package
-from gen.flights.closestairfields import ClosestAirfields
+from game.theater import MissionTarget, OffMapSpawn, ControlPoint
 from gen.flights.flight import Flight
+
+
+if TYPE_CHECKING:
+    from game.dcs.aircrafttype import AircraftType
+    from game.squadrons.airwing import AirWing
+    from gen.flights.closestairfields import ClosestAirfields
+    from .missionproposals import ProposedFlight
 
 
 class PackageBuilder:
@@ -28,7 +32,7 @@ class PackageBuilder:
         self.is_player = is_player
         self.package_country = package_country
         self.package = Package(location, auto_asap=asap)
-        self.allocator = AircraftAllocator(air_wing, closest_airfields, is_player)
+        self.air_wing = air_wing
         self.start_type = start_type
 
     def plan_flight(self, plan: ProposedFlight) -> bool:
@@ -39,13 +43,13 @@ class PackageBuilder:
         caller should return any previously planned flights to the inventory
         using release_planned_aircraft.
         """
-        assignment = self.allocator.find_squadron_for_flight(self.package.target, plan)
-        if assignment is None:
+        squadron = self.air_wing.best_squadron_for(
+            self.package.target, plan.task, plan.num_aircraft, this_turn=True
+        )
+        if squadron is None:
             return False
-        airfield, squadron = assignment
-        if isinstance(airfield, OffMapSpawn):
-            start_type = "In Flight"
-        else:
+        start_type = squadron.location.required_aircraft_start_type
+        if start_type is None:
             start_type = self.start_type
 
         flight = Flight(
@@ -55,9 +59,7 @@ class PackageBuilder:
             plan.num_aircraft,
             plan.task,
             start_type,
-            departure=airfield,
-            arrival=airfield,
-            divert=self.find_divert_field(squadron.aircraft, airfield),
+            divert=self.find_divert_field(squadron.aircraft, squadron.location),
         )
         self.package.add_flight(flight)
         return True

@@ -107,8 +107,8 @@ class Game:
         self.game_stats = GameStats()
         self.notes = ""
         self.ground_planners: dict[int, GroundPlanner] = {}
-        self.informations = []
-        self.informations.append(Information("Game Start", "-" * 40, 0))
+        self.informations: list[Information] = []
+        self.message("Game Start", "-" * 40)
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
         self.__culling_zones: List[Point] = []
         self.__destroyed_units: list[dict[str, Union[float, str]]] = []
@@ -124,6 +124,9 @@ class Game:
         self.red = Coalition(self, enemy_faction, enemy_budget, player=False)
         self.blue.set_opponent(self.red)
         self.red.set_opponent(self.blue)
+
+        for control_point in self.theater.controlpoints:
+            control_point.finish_init(self)
 
         self.blue.configure_default_air_wing(air_wing_config)
         self.red.configure_default_air_wing(air_wing_config)
@@ -279,9 +282,7 @@ class Game:
         Args:
             skipped: True if the turn was skipped.
         """
-        self.informations.append(
-            Information("End of turn #" + str(self.turn), "-" * 40, 0)
-        )
+        self.message("End of turn #" + str(self.turn), "-" * 40)
         self.turn += 1
 
         # The coalition-specific turn finalization *must* happen before unit deliveries,
@@ -297,10 +298,6 @@ class Game:
         if not skipped:
             for cp in self.theater.player_points():
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
-        elif self.turn > 1:
-            for cp in self.theater.player_points():
-                if not cp.is_carrier and not cp.is_lha:
-                    cp.base.affect_strength(-PLAYER_BASE_STRENGTH_RECOVERY)
 
         self.conditions = self.generate_conditions()
 
@@ -414,8 +411,8 @@ class Game:
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
 
-    def message(self, text: str) -> None:
-        self.informations.append(Information(text, turn=self.turn))
+    def message(self, title: str, text: str = "") -> None:
+        self.informations.append(Information(title, text, turn=self.turn))
 
     @property
     def current_turn_time_of_day(self) -> TimeOfDay:

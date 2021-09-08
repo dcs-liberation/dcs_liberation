@@ -1,0 +1,19 @@
+---
+name: VF-142
+nickname: Ghostriders
+country: USA
+role: Strike Fighter
+aircraft: F-14B Tomcat
+livery: VF-142 Ghostriders
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+  - Fighter sweep
+  - TARCAP

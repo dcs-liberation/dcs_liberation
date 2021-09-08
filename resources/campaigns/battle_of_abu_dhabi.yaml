@@ -7,4 +7,208 @@ recommended_enemy_faction: United Arab Emirates 2015
 description: <p>You have managed to establish a foothold near Ras Al Khaima. Continue pushing south.</p>
 miz: battle_of_abu_dhabi.miz
 performance: 2
-version": "8.0"
+version: "9.0"
+squadrons:
+  # Blue CPs:
+  # The default faction is Iran, but the F-14B is given higher precedence so
+  # that it is used if the faction is something US. The F-14A will be used if
+  # the player picks some Iran faction that for some reason has carriers.
+
+  # Bandar Abbas:
+  # This is the main transit hub for blue, so it contains all the logistics-type
+  # squadrons: airlift, refueling, and AEW&C. It also contains an air-to-air
+  # squadron for self defense, a bomber squadron, and some air-to-ground
+  # squadrons.
+  #
+  # Due to its location, this will be the primary airbase for the initial phase
+  # of the campaign.
+  2:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - F-4E Phantom II
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+    - primary: Transport
+      aircraft:
+        - C-17A
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+        - Su-24MK Fencer-D
+
+  # Kish:
+  # This airbase has better access to the theater as the front-line moves south
+  # west. It contains combat squadrons only.
+  24:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - MiG-29A Fulcrum-A
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+        - A-10C Thunderbolt II (Suite 3)
+        - Su-25 Frogfoot
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - Su-24MK Fencer-D
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+
+  Blue CV:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-14B Tomcat
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14B Tomcat
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+
+  Blue LHA:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
+        - SH-60B Seahawk
+
+  # Red CPs:
+  # Squadrons are designed to work with either UAE 2015 (the default) or a
+  # typical Russian-sourced aircraft faction.
+
+  # Al Dhafra AFB:
+  # This CP has factories attached and is the largest red base, so is the main
+  # logistics hub, with an airlift, AEW&C, and refueling squadron.
+  #
+  # For combat this base operates two pure air-to-air squadrons, two pure air-
+  # to-ground, and four multi-role. Al Minhad is closest to the front so CAS
+  # squadrons are placed there, but will retreat here after capture.
+  4:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - Mirage 2000-5
+        - Mirage 2000C
+        - Su-30 Flanker-C
+        - Su-27 Flanker-B
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - MiG-31 Foxhound
+        - MiG-25PD Foxbat-E
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - Tu-160 Blackjack
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - Su-34 Fullback
+        - Su-24M Fencer-D
+    - primary: BAI
+      secondary: any
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: DEAD
+      secondary: any
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+        - IL-78M
+    - primary: Transport
+      aircraft:
+        - C-17A
+        - IL-78MD
+
+  # Al Minhad AFB:
+  # The initial front line base. Contains CAS aircraft, as well as an air-to-air
+  # squadron and an air-to-ground squadron.
+  12:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+        - Mi-24V Hind-E
+        - Mi-24P Hind-F
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - Su-25 Frogfoot
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - Mirage 2000-5
+        - Mirage 2000C
+        - Su-30 Flanker-C
+        - Su-27 Flanker-B
+    - primary: BAI
+      secondary: any
+
+  # Liwa AFB:
+  # The last-stand base. Contains some factories as well. Begins with only an
+  # air-to-air squadron. Other squadrons can retreat here as the front-line
+  # moves.
+  29:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - Mirage 2000-5
+        - Mirage 2000C
+        - MiG-31 Foxhound
+        - MiG-25PD Foxbat-E

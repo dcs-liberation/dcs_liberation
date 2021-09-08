@@ -85,7 +85,7 @@ class QFlightCreator(QDialog):
                 squadron, initial_size=self.flight_size_spinner.value()
             )
         self.roster_editor = FlightRosterEditor(roster)
-        self.flight_size_spinner.valueChanged.connect(self.resize_roster)
+        self.flight_size_spinner.valueChanged.connect(self.roster_editor.resize)
         self.squadron_selector.currentIndexChanged.connect(self.on_squadron_changed)
         roster_layout = QHBoxLayout()
         layout.addLayout(roster_layout)
@@ -136,10 +136,6 @@ class QFlightCreator(QDialog):
     def set_custom_name_text(self, text: str):
         self.custom_name_text = text
 
-    def resize_roster(self, new_size: int) -> None:
-        self.roster_editor.roster.resize(new_size)
-        self.roster_editor.resize(new_size)
-
     def verify_form(self) -> Optional[str]:
         aircraft: Optional[Type[FlyingType]] = self.aircraft_selector.currentData()
         squadron: Optional[Squadron] = self.squadron_selector.currentData()
@@ -182,8 +178,6 @@ class QFlightCreator(QDialog):
             roster.max_size,
             task,
             self.start_type.currentText(),
-            squadron.location,
-            squadron.location,
             divert,
             custom_name=self.custom_name_text,
             roster=roster,
@@ -198,7 +192,6 @@ class QFlightCreator(QDialog):
         self.squadron_selector.update_items(
             self.task_selector.currentData(), new_aircraft
         )
-        self.departure.change_aircraft(new_aircraft)
         self.divert.change_aircraft(new_aircraft)
 
     def on_departure_changed(self, departure: ControlPoint) -> None:
@@ -223,6 +216,7 @@ class QFlightCreator(QDialog):
 
     def on_squadron_changed(self, index: int) -> None:
         squadron: Optional[Squadron] = self.squadron_selector.itemData(index)
+        self.update_max_size(self.squadron_selector.aircraft_available)
         # Clear the roster first so we return the pilots to the pool. This way if we end
         # up repopulating from the same squadron we'll get the same pilots back.
         self.roster_editor.replace(None)
@@ -230,7 +224,7 @@ class QFlightCreator(QDialog):
             self.roster_editor.replace(
                 FlightRoster(squadron, self.flight_size_spinner.value())
             )
-        self.on_departure_changed(squadron.location)
+            self.on_departure_changed(squadron.location)
 
     def update_max_size(self, available: int) -> None:
         aircraft = self.aircraft_selector.currentData()

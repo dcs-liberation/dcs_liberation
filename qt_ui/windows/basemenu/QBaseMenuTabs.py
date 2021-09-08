@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QTabWidget
 
-from game.theater import ControlPoint, OffMapSpawn, Fob
+from game.theater import ControlPoint, Fob
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.DepartingConvoysMenu import DepartingConvoysMenu
 from qt_ui.windows.basemenu.airfield.QAirfieldCommand import QAirfieldCommand
@@ -13,7 +13,7 @@ class QBaseMenuTabs(QTabWidget):
         super(QBaseMenuTabs, self).__init__()
 
         if not cp.captured:
-            self.intel = QIntelInfo(cp, game_model.game)
+            self.intel = QIntelInfo(cp)
             self.addTab(self.intel, "Intel")
 
             self.departing_convoys = DepartingConvoysMenu(cp, game_model)

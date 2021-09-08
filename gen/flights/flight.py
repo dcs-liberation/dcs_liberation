@@ -70,6 +70,7 @@ class FlightType(Enum):
     TRANSPORT = "Transport"
     SEAD_ESCORT = "SEAD Escort"
     REFUELING = "Refueling"
+    FERRY = "Ferry"
 
     def __str__(self) -> str:
         return self.value
@@ -159,6 +160,7 @@ class FlightWaypoint:
         x: float,
         y: float,
         alt: Distance = meters(0),
+        control_point: Optional[ControlPoint] = None,
     ) -> None:
         """Creates a flight waypoint.
 
@@ -168,11 +170,14 @@ class FlightWaypoint:
             y: Y coordinate of the waypoint.
             alt: Altitude of the waypoint. By default this is MSL, but it can be
             changed to AGL by setting alt_type to "RADIO"
+            control_point: The control point to associate with this waypoint. Needed for
+            landing points.
         """
         self.waypoint_type = waypoint_type
         self.x = x
         self.y = y
         self.alt = alt
+        self.control_point = control_point
         self.alt_type = "BARO"
         self.name = ""
         # TODO: Merge with pretty_name.
@@ -282,8 +287,6 @@ class Flight:
         count: int,
         flight_type: FlightType,
         start_type: str,
-        departure: ControlPoint,
-        arrival: ControlPoint,
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
         cargo: Optional[TransferOrder] = None,
@@ -297,8 +300,8 @@ class Flight:
             self.roster = FlightRoster(self.squadron, initial_size=count)
         else:
             self.roster = roster
-        self.departure = departure
-        self.arrival = arrival
+        self.departure = self.squadron.location
+        self.arrival = self.squadron.arrival
         self.divert = divert
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.

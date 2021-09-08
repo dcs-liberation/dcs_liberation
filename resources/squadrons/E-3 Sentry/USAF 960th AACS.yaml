@@ -1,0 +1,9 @@
+---
+name: 960th AAC Squadron
+nickname: Vikings
+country: USA
+role: AEW&C
+aircraft: E-3A
+livery: usaf standard
+mission_types:
+  - AEW&C

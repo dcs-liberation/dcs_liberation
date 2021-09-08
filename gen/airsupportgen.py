@@ -22,7 +22,7 @@ from .conflictgen import Conflict
 from .flights.ai_flight_planner_db import AEWC_CAPABLE
 from .naming import namegen
 from .radios import RadioRegistry
-from .tacan import TacanBand, TacanRegistry
+from .tacan import TacanBand, TacanRegistry, TacanUsage
 
 if TYPE_CHECKING:
     from game import Game
@@ -89,7 +89,9 @@ class AirSupportConflictGenerator:
                 # TODO: Make loiter altitude a property of the unit type.
                 alt, airspeed = self._get_tanker_params(tanker_unit_type.dcs_unit_type)
                 freq = self.radio_registry.alloc_uhf()
-                tacan = self.tacan_registry.alloc_for_band(TacanBand.Y)
+                tacan = self.tacan_registry.alloc_for_band(
+                    TacanBand.Y, TacanUsage.AirToAir
+                )
                 tanker_heading = Heading.from_degrees(
                     self.conflict.red_cp.position.heading_between_point(
                         self.conflict.blue_cp.position

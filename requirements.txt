@@ -1,5 +1,6 @@
 altgraph==0.17
 appdirs==1.4.4
+attrs==21.2.0
 black==21.4b0
 certifi==2020.12.5
 cfgv==3.2.0
@@ -9,7 +10,9 @@ Faker==8.2.1
 filelock==3.0.12
 future==0.18.2
 identify==1.5.13
+iniconfig==1.1.1
 Jinja2==2.11.3
+macholib==1.14
 MarkupSafe==1.1.1
 mypy==0.812
 mypy-extensions==0.4.3
@@ -17,14 +20,17 @@ nodeenv==1.5.0
 packaging==20.9
 pathspec==0.8.1
 pefile==2019.4.18
-Pillow==8.2.0
+Pillow==8.3.2
+pluggy==0.13.1
 pre-commit==2.10.1
--e git://github.com/pydcs/dcs@eb0b9f2de660393ccd6ba17b2d82371d44e0d27b#egg=pydcs
+py==1.10.0
+-e git://github.com/pydcs/dcs@5ec61b22a174ad8ddc762958998868db3150c947#egg=pydcs
 pyinstaller==4.3
 pyinstaller-hooks-contrib==2021.1
 pyparsing==2.4.7
 pyproj==3.0.1
 PySide2==5.15.2
+pytest==6.2.4
 python-dateutil==2.8.1
 pywin32-ctypes==0.2.0
 PyYAML==5.4.1

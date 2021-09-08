@@ -1,9 +1,11 @@
 from abc import abstractmethod
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Any
 
 from game import Game
 from game.coalition import Coalition
+from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
+from game.dcs.unittype import UnitType
 from game.squadrons import Squadron
 from game.theater import ControlPoint
 
@@ -90,14 +92,15 @@ class PurchaseAdapter(Generic[ItemType]):
     def name_of(self, item: ItemType, multiline: bool = False) -> str:
         ...
 
+    @abstractmethod
+    def unit_type_of(self, item: ItemType) -> UnitType[Any]:
+        ...
+
 
 class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
-    def __init__(
-        self, control_point: ControlPoint, coalition: Coalition, game: Game
-    ) -> None:
-        super().__init__(coalition)
+    def __init__(self, control_point: ControlPoint) -> None:
+        super().__init__(control_point.coalition)
         self.control_point = control_point
-        self.game = game
 
     def pending_delivery_quantity(self, item: Squadron) -> int:
         return item.pending_deliveries
@@ -106,10 +109,7 @@ class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
         return item.owned_aircraft
 
     def can_buy(self, item: Squadron) -> bool:
-        return (
-            super().can_buy(item)
-            and self.control_point.unclaimed_parking(self.game) > 0
-        )
+        return super().can_buy(item) and self.control_point.unclaimed_parking() > 0
 
     def can_sell(self, item: Squadron) -> bool:
         return item.untasked_aircraft > 0
@@ -137,6 +137,9 @@ class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
         else:
             separator = " "
         return separator.join([item.aircraft.name, str(item)])
+
+    def unit_type_of(self, item: Squadron) -> AircraftType:
+        return item.aircraft
 
 
 class GroundUnitPurchaseAdapter(PurchaseAdapter[GroundUnitType]):
@@ -178,3 +181,6 @@ class GroundUnitPurchaseAdapter(PurchaseAdapter[GroundUnitType]):
 
     def name_of(self, item: GroundUnitType, multiline: bool = False) -> str:
         return f"{item}"
+
+    def unit_type_of(self, item: GroundUnitType) -> GroundUnitType:
+        return item

@@ -8,26 +8,32 @@ Saves from 4.x are not compatible with 5.0.
 * **[Campaign]** Weapon data such as fallbacks and introduction years is now moddable. Due to the new architecture to support this, the old data was not automatically migrated.
 * **[Campaign]** Era-restricted loadouts will now skip LGBs when no TGP is available in the loadout. This only applies to default loadouts; buddy-lasing can be coordinated with custom loadouts.
 * **[Campaign]** FOBs control point can have FARP/helipad slot and host helicopters. To enable this feature on a FOB, add "Invisible FARP" statics objects near the FOB location in the campaign definition file.
-* **[Campaign]** (WIP) Squadrons now have a home base and will not operate out of other bases. See https://github.com/dcs-liberation/dcs_liberation/issues/1145 for status.
+* **[Campaign]** Squadrons now have a home base and will not operate out of other bases. See https://github.com/dcs-liberation/dcs_liberation/issues/1145 for status.
 * **[Campaign]** Aircraft now belong to squadrons rather than bases to support squadron location transfers.
+* **[Campaign]** Skipped turns are no longer counted as defeats on front lines.
 * **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
 * **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
 * **[Campaign AI]** Reworked layout of hold, join, split, and ingress points. Should result in much shorter flight plans in general while still maintaining safe join/split/hold points.
 * **[Campaign AI]** Auto-planning mission range limits are now specified per-aircraft. On average this means that longer range missions will now be plannable. The limit only accounts for the direct distance to the target, not the path taken.
 * **[Campaign AI]** Transport aircraft will now be bought only if necessary at control points which can produce ground units and are capable to operate transport aircraft.
 * **[Campaign AI]** Aircraft will now only be automatically purchased or assigned at appropriate bases. Naval aircraft will default to only operating from carriers, Harriers will default to LHAs and shore bases, helicopters will operate from anywhere. This can be customized per-squadron.
+* **[Engine]** Support for DCS 2.7.5.10869 and newer, including support for F-16 CBU-105s.
 * **[Mission Generation]** EWRs are now also headed towards the center of the conflict
+* **[Mission Generation]** FACs can now use FC3 compatible laser codes. Note that this setting is global, not per FAC.
 * **[Modding]** Campaigns now specify the squadrons that are present in the campaign, their roles, and their starting bases. Players can customize this at game start but the campaign will choose the defaults.
 * **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet).
 * **[Kneeboard]** QNH (pressure MSL) and temperature have been added to the kneeboard.
 * **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable, relocate, or rename squadrons.
 * **[UI]** Sell Button for aircraft will be disabled if there are no units available to be sold or all are already assigned to a mission
+* **[UI]** Enemy aircraft inventory now viewable in the air wing menu.
 
 ## Fixes
 
 * **[Campaign]** Naval control points will no longer claim ground objectives during campaign generation and prevent them from spawning.
 * **[Mission Generation]** Mission results and other files will now be opened with enforced utf-8 encoding to prevent an issue where destroyed ground units were untracked because of special characters in their names.
+* **[Mission Generation]** Fixed generation of landing waypoints so that the AI obeys them.
 * **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
+* **[UI]** Fixed bug where an incompatible campaign could be generated if no action is taken on the campaign selection screen.
 
 # 4.1.1
 

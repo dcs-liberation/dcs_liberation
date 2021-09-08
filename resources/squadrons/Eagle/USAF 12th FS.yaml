@@ -1,0 +1,14 @@
+---
+name: 12th FS
+nickname: Dirty Dozen
+country: USA
+role: Air Superiority Fighter
+aircraft: F-15C Eagle
+livery: 12th Fighter SQN (AK)
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+

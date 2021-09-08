@@ -1,4 +1,5 @@
-description: "The Dassault Mirage 2000 is a French multirole, single-engined, fourth-generation\
+description:
+  "The Dassault Mirage 2000 is a French multirole, single-engined, fourth-generation\
   \ jet fighter manufactured by Dassault Aviation. It was designed in the late 1970s\
   \ as a lightweight fighter to replace the Mirage III for the French Air Force (Arm\xE9\
   e de l'air). The Mirage 2000 evolved into a multirole aircraft with several variants\
@@ -11,5 +12,6 @@ manufacturer: Dassault
 origin: France
 price: 18
 role: Multirole Fighter
+range: 400
 variants:
   Mirage 2000-5: {}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import heapq
 import itertools
 import logging
+import math
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -56,6 +57,7 @@ if TYPE_CHECKING:
     from game import Game
     from gen.flights.flight import FlightType
     from game.squadrons.squadron import Squadron
+    from ..coalition import Coalition
     from ..transfers import PendingTransfers
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
@@ -281,7 +283,6 @@ class ControlPoint(MissionTarget, ABC):
     position = None  # type: Point
     name = None  # type: str
 
-    captured = False
     has_frontline = True
 
     alt = 0
@@ -295,6 +296,7 @@ class ControlPoint(MissionTarget, ABC):
         name: str,
         position: Point,
         at: db.StartingPosition,
+        starts_blue: bool,
         has_frontline: bool = True,
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
@@ -303,11 +305,12 @@ class ControlPoint(MissionTarget, ABC):
         self.id = cp_id
         self.full_name = name
         self.at = at
+        self.starts_blue = starts_blue
         self.connected_objectives: List[TheaterGroundObject[Any]] = []
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
-        self.captured = False
+        self._coalition: Optional[Coalition] = None
         self.captured_invert = False
         # TODO: Should be Airbase specific.
         self.has_frontline = has_frontline
@@ -324,14 +327,32 @@ class ControlPoint(MissionTarget, ABC):
 
         self.target_position: Optional[Point] = None
 
-        self.squadrons: list[Squadron] = []
-
     def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"
 
     @property
+    def coalition(self) -> Coalition:
+        if self._coalition is None:
+            raise RuntimeError("ControlPoint not fully initialized: coalition not set")
+        return self._coalition
+
+    def finish_init(self, game: Game) -> None:
+        assert self._coalition is None
+        self._coalition = game.coalition_for(self.starts_blue)
+
+    @property
+    def captured(self) -> bool:
+        return self.coalition.player
+
+    @property
     def ground_objects(self) -> List[TheaterGroundObject[Any]]:
         return list(self.connected_objectives)
+
+    @property
+    def squadrons(self) -> Iterator[Squadron]:
+        for squadron in self.coalition.air_wing.iter_squadrons():
+            if squadron.location == self:
+                yield squadron
 
     @property
     @abstractmethod
@@ -564,36 +585,82 @@ class ControlPoint(MissionTarget, ABC):
         value = airframe.price * count
         game.adjust_budget(value, player=not self.captured)
         game.message(
-            f"No valid retreat destination in range of {self.name} for {airframe}"
+            f"No valid retreat destination in range of {self.name} for {airframe} "
             f"{count} aircraft have been captured and sold for ${value}M."
         )
 
     def aircraft_retreat_destination(
-        self, game: Game, airframe: AircraftType
+        self, squadron: Squadron
     ) -> Optional[ControlPoint]:
         closest = ObjectiveDistanceCache.get_closest_airfields(self)
-        # TODO: Should be airframe dependent.
-        max_retreat_distance = nautical_miles(200)
+        max_retreat_distance = squadron.aircraft.max_mission_range
         # Skip the first airbase because that's the airbase we're retreating
         # from.
         airfields = list(closest.operational_airfields_within(max_retreat_distance))[1:]
+        not_preferred: Optional[ControlPoint] = None
+        overfull: list[ControlPoint] = []
         for airbase in airfields:
-            if not airbase.can_operate(airframe):
-                continue
             if airbase.captured != self.captured:
                 continue
-            if airbase.unclaimed_parking(game) > 0:
-                return airbase
-        return None
 
-    @staticmethod
-    def _retreat_squadron(squadron: Squadron) -> None:
-        logging.error("Air unit retreat not currently implemented")
+            if airbase.unclaimed_parking() < squadron.owned_aircraft:
+                if airbase.can_operate(squadron.aircraft):
+                    overfull.append(airbase)
+                continue
+
+            if squadron.operates_from(airbase):
+                # Has room, is a preferred base type for this squadron, and is the
+                # closest choice. No need to keep looking.
+                return airbase
+
+            if not_preferred is None and airbase.can_operate(squadron.aircraft):
+                # Has room and is capable of operating from this base, but it isn't
+                # preferred. Remember this option and use it if we can't find a
+                # preferred base type with room.
+                not_preferred = airbase
+        if not_preferred is not None:
+            # It's not our best choice but the other choices don't have room for the
+            # squadron and would lead to aircraft being captured.
+            return not_preferred
+
+        # No base was available with enough room. Find whichever base has the most room
+        # available so we lose as little as possible. The overfull list is already
+        # sorted by distance, and filtered for appropriate destinations.
+        base_for_fewest_losses: Optional[ControlPoint] = None
+        loss_count = math.inf
+        for airbase in overfull:
+            overflow = -(
+                airbase.unclaimed_parking()
+                - squadron.owned_aircraft
+                - squadron.pending_deliveries
+            )
+            if overflow < loss_count:
+                loss_count = overflow
+                base_for_fewest_losses = airbase
+        return base_for_fewest_losses
+
+    def _retreat_squadron(self, game: Game, squadron: Squadron) -> None:
+        destination = self.aircraft_retreat_destination(squadron)
+        if destination is None:
+            squadron.refund_orders()
+            self.capture_aircraft(game, squadron.aircraft, squadron.owned_aircraft)
+            return
+        logging.debug(f"{squadron} retreating to {destination} from {self}")
+        squadron.relocate_to(destination)
+        squadron.cancel_overflow_orders()
+        overflow = -destination.unclaimed_parking()
+        if overflow > 0:
+            logging.debug(
+                f"Not enough room for {squadron} at {destination}. Capturing "
+                f"{overflow} aircraft."
+            )
+            self.capture_aircraft(game, squadron.aircraft, overflow)
+            squadron.owned_aircraft -= overflow
 
     def retreat_air_units(self, game: Game) -> None:
         # TODO: Capture in order of price to retain maximum value?
         for squadron in self.squadrons:
-            self._retreat_squadron(squadron)
+            self._retreat_squadron(game, squadron)
 
     def depopulate_uncapturable_tgos(self) -> None:
         for tgo in self.connected_objectives:
@@ -602,33 +669,35 @@ class ControlPoint(MissionTarget, ABC):
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, for_player: bool) -> None:
-        coalition = game.coalition_for(for_player)
-        self.ground_unit_orders.refund_all(coalition)
-        for squadron in self.squadrons:
-            squadron.refund_orders()
+        new_coalition = game.coalition_for(for_player)
+        self.ground_unit_orders.refund_all(self.coalition)
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
 
-        if for_player:
-            self.captured = True
-        else:
-            self.captured = False
-
+        self._coalition = new_coalition
         self.base.set_strength_to_minimum()
+
+    @property
+    def required_aircraft_start_type(self) -> Optional[str]:
+        return None
 
     @abstractmethod
     def can_operate(self, aircraft: AircraftType) -> bool:
         ...
 
-    def unclaimed_parking(self, game: Game) -> int:
-        return self.total_aircraft_parking - self.allocated_aircraft(game).total
+    def unclaimed_parking(self) -> int:
+        return self.total_aircraft_parking - self.allocated_aircraft().total
 
     @abstractmethod
     def active_runway(
         self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
     ) -> RunwayData:
         ...
+
+    @property
+    def airdrome_id_for_landing(self) -> Optional[int]:
+        return None
 
     @property
     def parking_slots(self) -> Iterator[ParkingSlot]:
@@ -651,8 +720,6 @@ class ControlPoint(MissionTarget, ABC):
 
     def process_turn(self, game: Game) -> None:
         self.ground_unit_orders.process(game)
-        for squadron in self.squadrons:
-            squadron.deliver_orders()
 
         runway_status = self.runway_status
         if runway_status is not None:
@@ -674,16 +741,22 @@ class ControlPoint(MissionTarget, ABC):
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
 
-    def allocated_aircraft(self, _game: Game) -> AircraftAllocations:
+    def allocated_aircraft(self) -> AircraftAllocations:
         present: dict[AircraftType, int] = defaultdict(int)
         on_order: dict[AircraftType, int] = defaultdict(int)
+        transferring: dict[AircraftType, int] = defaultdict(int)
         for squadron in self.squadrons:
             present[squadron.aircraft] += squadron.owned_aircraft
-            # TODO: Only if this is the squadron destination, not location.
-            on_order[squadron.aircraft] += squadron.pending_deliveries
+            if squadron.destination is None:
+                on_order[squadron.aircraft] += squadron.pending_deliveries
+            else:
+                transferring[squadron.aircraft] -= squadron.owned_aircraft
+        for squadron in self.coalition.air_wing.iter_squadrons():
+            if squadron.destination == self:
+                on_order[squadron.aircraft] += squadron.pending_deliveries
+                transferring[squadron.aircraft] += squadron.owned_aircraft
 
-        # TODO: Implement squadron transfers.
-        return AircraftAllocations(present, on_order, transferring={})
+        return AircraftAllocations(present, on_order, transferring)
 
     def allocated_ground_units(
         self, transfers: PendingTransfers
@@ -795,13 +868,14 @@ class ControlPoint(MissionTarget, ABC):
 
 
 class Airfield(ControlPoint):
-    def __init__(self, airport: Airport, has_frontline: bool = True) -> None:
+    def __init__(self, airport: Airport, starts_blue: bool) -> None:
         super().__init__(
             airport.id,
             airport.name,
             airport.position,
             airport,
-            has_frontline,
+            starts_blue,
+            has_frontline=True,
             cptype=ControlPointType.AIRBASE,
         )
         self.airport = airport
@@ -862,6 +936,10 @@ class Airfield(ControlPoint):
     ) -> RunwayData:
         assigner = RunwayAssigner(conditions)
         return assigner.get_preferred_runway(self.airport)
+
+    @property
+    def airdrome_id_for_landing(self) -> Optional[int]:
+        return self.airport.id
 
     @property
     def parking_slots(self) -> Iterator[ParkingSlot]:
@@ -970,12 +1048,13 @@ class NavalControlPoint(ControlPoint, ABC):
 
 
 class Carrier(NavalControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int):
+    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             at,
             at,
+            starts_blue,
             has_frontline=False,
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
@@ -1010,12 +1089,13 @@ class Carrier(NavalControlPoint):
 
 
 class Lha(NavalControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int):
+    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             at,
             at,
+            starts_blue,
             has_frontline=False,
             cptype=ControlPointType.LHA_GROUP,
         )
@@ -1043,12 +1123,13 @@ class OffMapSpawn(ControlPoint):
     def runway_is_operational(self) -> bool:
         return True
 
-    def __init__(self, cp_id: int, name: str, position: Point):
+    def __init__(self, cp_id: int, name: str, position: Point, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             position,
-            at=position,
+            position,
+            starts_blue,
             has_frontline=False,
             cptype=ControlPointType.OFF_MAP,
         )
@@ -1065,6 +1146,10 @@ class OffMapSpawn(ControlPoint):
 
     def can_operate(self, aircraft: AircraftType) -> bool:
         return True
+
+    @property
+    def required_aircraft_start_type(self) -> Optional[str]:
+        return "In Flight"
 
     @property
     def heading(self) -> Heading:
@@ -1096,12 +1181,13 @@ class OffMapSpawn(ControlPoint):
 
 
 class Fob(ControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int):
+    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
         super().__init__(
             cp_id,
             name,
             at,
             at,
+            starts_blue,
             has_frontline=True,
             cptype=ControlPointType.FOB,
         )

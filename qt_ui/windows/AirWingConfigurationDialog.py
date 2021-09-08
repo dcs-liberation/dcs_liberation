@@ -10,7 +10,6 @@ from PySide2.QtCore import (
 )
 from PySide2.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PySide2.QtWidgets import (
-    QAbstractItemView,
     QDialog,
     QListView,
     QVBoxLayout,
@@ -32,38 +31,7 @@ from game.dcs.aircrafttype import AircraftType
 from game.squadrons import AirWing, Pilot, Squadron
 from game.theater import ControlPoint, ConflictTheater
 from gen.flights.flight import FlightType
-from qt_ui.models import AirWingModel, SquadronModel
 from qt_ui.uiconstants import AIRCRAFT_ICONS
-from qt_ui.windows.AirWingDialog import SquadronDelegate
-from qt_ui.windows.SquadronDialog import SquadronDialog
-
-
-class SquadronList(QListView):
-    """List view for displaying the air wing's squadrons."""
-
-    def __init__(self, air_wing_model: AirWingModel) -> None:
-        super().__init__()
-        self.air_wing_model = air_wing_model
-        self.dialog: Optional[SquadronDialog] = None
-
-        self.setIconSize(QSize(91, 24))
-        self.setItemDelegate(SquadronDelegate(self.air_wing_model))
-        self.setModel(self.air_wing_model)
-        self.selectionModel().setCurrentIndex(
-            self.air_wing_model.index(0, 0, QModelIndex()), QItemSelectionModel.Select
-        )
-
-        # self.setIconSize(QSize(91, 24))
-        self.setSelectionBehavior(QAbstractItemView.SelectItems)
-        self.doubleClicked.connect(self.on_double_click)
-
-    def on_double_click(self, index: QModelIndex) -> None:
-        if not index.isValid():
-            return
-        self.dialog = SquadronDialog(
-            SquadronModel(self.air_wing_model.squadron_at_index(index)), self
-        )
-        self.dialog.show()
 
 
 class AllowedMissionTypeControls(QVBoxLayout):
