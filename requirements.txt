@@ -20,7 +20,7 @@ nodeenv==1.5.0
 packaging==20.9
 pathspec==0.8.1
 pefile==2019.4.18
-Pillow==8.2.0
+Pillow==8.3.2
 pluggy==0.13.1
 pre-commit==2.10.1
 py==1.10.0
