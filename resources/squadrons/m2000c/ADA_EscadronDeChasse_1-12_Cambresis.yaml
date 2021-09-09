@@ -11,3 +11,8 @@ mission_types:
   - Intercept
   - Fighter sweep
   - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
