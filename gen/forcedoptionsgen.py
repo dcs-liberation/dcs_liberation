@@ -25,6 +25,12 @@ class ForcedOptionsGenerator:
                 self.game.settings.external_views_allowed
             )
 
+    def _set_easy_communications(self) -> None:
+        if not self.game.settings.easy_communications_allowed:
+            self.mission.forced_options.easy_communication = (
+                self.game.settings.easy_communications_allowed
+            )
+
     def _set_labels(self) -> None:
         # TODO: Fix settings to use the real type.
         # TODO: Allow forcing "full" and have default do nothing.
@@ -46,5 +52,6 @@ class ForcedOptionsGenerator:
     def generate(self) -> None:
         self._set_options_view()
         self._set_external_views()
+        self._set_easy_communications()
         self._set_labels()
         self._set_unrestricted_satnav()

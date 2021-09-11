@@ -27,6 +27,7 @@ class Settings:
     only_player_takeoff: bool = True  # Legacy parameter do not use
     night_disabled: bool = False
     external_views_allowed: bool = True
+    easy_communications_allowed: bool = True
     supercarrier: bool = False
     generate_marks: bool = True
     manpads: bool = True
