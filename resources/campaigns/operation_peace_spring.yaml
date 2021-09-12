@@ -1,0 +1,136 @@
+---
+name: Syria - Operation Peace Spring
+theater: Syria
+authors: Starfire
+recommended_player_faction: Bluefor Modern
+recommended_enemy_faction: Turkey 2005
+description: <p>This is a semi-fictional what-if scenario for Operation Peace Spring, during which Turkish forces that crossed into Syria on an offensive against Kurdish militias were emboldened by early successes to continue pushing further southward. Attempts to broker a ceasefire have failed. Members of Operation Inherent Resolve have gathered at Ramat David Airbase in Israel to launch a counter-offensive.</p><p><strong>Note:</strong> While Turkey 2005 is the default faction for historical reasons, the OPFOR squadron complement in this campaign scenario has also been specifically customised to work just as well with the Iraq 1991 faction.</p>
+miz: operation_peace_spring.miz
+performance: 1
+version: "9.0"
+squadrons:
+# Ramat David
+  30:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-15C Eagle
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-14B Tomcat
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - Mirage 2000C
+        - F/A-18C Hornet (Lot 20)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - JF-17 Thunder
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - F-15E Strike Eagle
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - AJS-37 Viggen
+        - F-117A Nighthawk
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker MPRS
+    - primary: Transport
+      aircraft:
+        - C-130    
+# Damascus
+  7:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-4E Phantom II
+        - MiG-21bis Fishbed-N        
+# Tiyas
+  39:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - MiG-23ML Flogger-G
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - Su-24M Fencer-D
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-1W SuperCobra
+        - Su-25T Frogfoot
+        - Su-25 Frogfoot
+    - primary: Transport
+      aircraft:
+        - UH-60A
+        - Mi-8MTV2 Hip
+# Abu Al Duhur
+#  1:
+# Gaziantep
+#  11:
+# Incirlik
+  16:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+            - F-16CM Fighting Falcon (Block 50)
+            - MiG-29A Fulcrum-A
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-4E Phantom II
+        - Tu-22M3 Backfire-C
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-1W SuperCobra
+        - Su-22M4 Fitter-K
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker MPRS
+        - KC-135 Stratotanker
+        - IL-78M
+    - primary: Transport
+      aircraft:
+        - C-130
+        - IL-76MD
