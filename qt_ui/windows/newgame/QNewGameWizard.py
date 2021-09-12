@@ -15,7 +15,7 @@ from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from game.factions.faction import Faction
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
-from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
+from qt_ui.widgets.spinsliders import FloatSpinSlider, TimeInputs, CurrencySpinner
 from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
 from qt_ui.windows.newgame.QCampaignList import QCampaignList
 
@@ -472,11 +472,12 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         economy_layout = QtWidgets.QVBoxLayout()
         economy_group.setLayout(economy_layout)
 
-        player_income = TenthsSpinSlider("Player income multiplier", 0, 50, 10)
+        # TODO: Put labels back.
+        player_income = FloatSpinSlider(0, 5, 1, divisor=10)
         self.registerField("player_income_multiplier", player_income.spinner)
         economy_layout.addLayout(player_income)
 
-        enemy_income = TenthsSpinSlider("Enemy income multiplier", 0, 50, 10)
+        enemy_income = FloatSpinSlider(0, 5, 1, divisor=10)
         self.registerField("enemy_income_multiplier", enemy_income.spinner)
         economy_layout.addLayout(enemy_income)
 

@@ -1,4 +1,5 @@
 import logging
+import textwrap
 from typing import Callable
 
 from PySide2.QtCore import QItemSelectionModel, QPoint, QSize, Qt
@@ -18,13 +19,19 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from dcs.forcedoptions import ForcedOptions
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
-from game.settings import Settings, AutoAtoBehavior
+from game.settings import (
+    Settings,
+    AutoAtoBehavior,
+    OptionDescription,
+    BooleanOption,
+    ChoicesOption,
+    BoundedFloatOption,
+)
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
-from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs
+from qt_ui.widgets.spinsliders import FloatSpinSlider, TimeInputs
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
 from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
@@ -321,6 +328,86 @@ class StartTypeComboBox(QComboBox):
         self.settings.default_start_type = value
 
 
+class AutoSettingsLayout(QGridLayout):
+    def __init__(self, page: str, section: str, settings: Settings) -> None:
+        super().__init__()
+        self.settings = settings
+
+        for row, (name, description) in enumerate(Settings.fields(page, section)):
+            self.add_label(row, description)
+            if isinstance(description, BooleanOption):
+                self.add_checkbox_for(row, name)
+            elif isinstance(description, ChoicesOption):
+                self.add_combobox_for(row, name, description)
+            elif isinstance(description, BoundedFloatOption):
+                self.add_float_spin_slider_for(row, name, description)
+            else:
+                raise TypeError(f"Unhandled option type: {description}")
+
+    def add_label(self, row: int, description: OptionDescription) -> None:
+        text = description.text
+        if description.detail is not None:
+            wrapped = "<br />".join(textwrap.wrap(description.detail, width=55))
+            text += f"<br /><strong>{wrapped}</strong>"
+        label = QLabel(text)
+        self.addWidget(label, row, 0)
+
+    def add_checkbox_for(self, row: int, name: str) -> None:
+        def on_toggle(value: bool) -> None:
+            self.settings.__dict__[name] = value
+
+        checkbox = QCheckBox()
+        checkbox.setChecked(self.settings.__dict__[name])
+        checkbox.toggled.connect(on_toggle)
+        self.addWidget(checkbox, row, 1, Qt.AlignRight)
+
+    def add_combobox_for(self, row: int, name: str, description: ChoicesOption) -> None:
+        combobox = QComboBox()
+
+        def on_changed(index: int) -> None:
+            self.settings.__dict__[name] = combobox.itemData(index)
+
+        for text, value in description.choices.items():
+            combobox.addItem(text, value)
+        combobox.setCurrentText(
+            description.text_for_value(self.settings.__dict__[name])
+        )
+        combobox.currentIndexChanged.connect(on_changed)
+        self.addWidget(combobox, row, 1, Qt.AlignRight)
+
+    def add_float_spin_slider_for(
+        self, row: int, name: str, description: BoundedFloatOption
+    ) -> None:
+        spinner = FloatSpinSlider(
+            description.min,
+            description.max,
+            self.settings.__dict__[name],
+            divisor=description.divisor,
+        )
+        self.addLayout(spinner, row, 1, Qt.AlignRight)
+
+
+class AutoSettingsGroup(QGroupBox):
+    def __init__(self, page: str, section: str, settings: Settings) -> None:
+        super().__init__(section)
+        self.setLayout(AutoSettingsLayout(page, section, settings))
+
+
+class AutoSettingsPageLayout(QVBoxLayout):
+    def __init__(self, page: str, settings: Settings) -> None:
+        super().__init__()
+        self.setAlignment(Qt.AlignTop)
+
+        for section in Settings.sections(page):
+            self.addWidget(AutoSettingsGroup(page, section, settings))
+
+
+class AutoSettingsPage(QWidget):
+    def __init__(self, page: str, settings: Settings) -> None:
+        super().__init__()
+        self.setLayout(AutoSettingsPageLayout(page, settings))
+
+
 class QSettingsWindow(QDialog):
     def __init__(self, game: Game):
         super().__init__()
@@ -329,6 +416,10 @@ class QSettingsWindow(QDialog):
         self.pluginsPage = None
         self.pluginsOptionsPage = None
         self.campaign_management_page = QWidget()
+
+        self.pages: dict[str, AutoSettingsPage] = {}
+        for page in Settings.pages():
+            self.pages[page] = AutoSettingsPage(page, game.settings)
 
         self.setModal(True)
         self.setWindowTitle("Settings")
@@ -349,13 +440,16 @@ class QSettingsWindow(QDialog):
 
         self.categoryList.setIconSize(QSize(32, 32))
 
-        self.initDifficultyLayout()
-        difficulty = QStandardItem("Difficulty")
-        difficulty.setIcon(CONST.ICONS["Missile"])
-        difficulty.setEditable(False)
-        difficulty.setSelectable(True)
-        self.categoryModel.appendRow(difficulty)
-        self.right_layout.addWidget(self.difficultyPage)
+        for name, page in self.pages.items():
+            page_item = QStandardItem(name)
+            if name in CONST.ICONS:
+                page_item.setIcon(CONST.ICONS[name])
+            else:
+                page_item.setIcon(CONST.ICONS["Generator"])
+            page_item.setEditable(False)
+            page_item.setSelectable(True)
+            self.categoryModel.appendRow(page_item)
+            self.right_layout.addWidget(page)
 
         self.init_campaign_management_layout()
         campaign_management = QStandardItem("Campaign Management")
@@ -413,182 +507,6 @@ class QSettingsWindow(QDialog):
 
     def init(self):
         pass
-
-    def initDifficultyLayout(self):
-
-        self.difficultyPage = QWidget()
-        self.difficultyLayout = QVBoxLayout()
-        self.difficultyLayout.setAlignment(Qt.AlignTop)
-        self.difficultyPage.setLayout(self.difficultyLayout)
-
-        # DCS AI difficulty settings
-        self.aiDifficultySettings = QGroupBox("AI Difficulty")
-        self.aiDifficultyLayout = QGridLayout()
-        self.playerCoalitionSkill = QComboBox()
-        self.enemyCoalitionSkill = QComboBox()
-        self.enemyAASkill = QComboBox()
-        for skill in CONST.SKILL_OPTIONS:
-            self.playerCoalitionSkill.addItem(skill)
-            self.enemyCoalitionSkill.addItem(skill)
-            self.enemyAASkill.addItem(skill)
-
-        self.playerCoalitionSkill.setCurrentIndex(
-            CONST.SKILL_OPTIONS.index(self.game.settings.player_skill)
-        )
-        self.enemyCoalitionSkill.setCurrentIndex(
-            CONST.SKILL_OPTIONS.index(self.game.settings.enemy_skill)
-        )
-        self.enemyAASkill.setCurrentIndex(
-            CONST.SKILL_OPTIONS.index(self.game.settings.enemy_vehicle_skill)
-        )
-
-        self.player_income = TenthsSpinSlider(
-            "Player income multiplier",
-            0,
-            50,
-            int(self.game.settings.player_income_multiplier * 10),
-        )
-        self.player_income.spinner.valueChanged.connect(self.applySettings)
-        self.enemy_income = TenthsSpinSlider(
-            "Enemy income multiplier",
-            0,
-            50,
-            int(self.game.settings.enemy_income_multiplier * 10),
-        )
-        self.enemy_income.spinner.valueChanged.connect(self.applySettings)
-
-        self.playerCoalitionSkill.currentIndexChanged.connect(self.applySettings)
-        self.enemyCoalitionSkill.currentIndexChanged.connect(self.applySettings)
-        self.enemyAASkill.currentIndexChanged.connect(self.applySettings)
-
-        # Mission generation settings related to difficulty
-        self.missionSettings = QGroupBox("Mission Difficulty")
-        self.missionLayout = QGridLayout()
-
-        self.manpads = QCheckBox()
-        self.manpads.setChecked(self.game.settings.manpads)
-        self.manpads.toggled.connect(self.applySettings)
-
-        self.noNightMission = QCheckBox()
-        self.noNightMission.setChecked(self.game.settings.night_disabled)
-        self.noNightMission.toggled.connect(self.applySettings)
-
-        # DCS Mission options
-        self.missionRestrictionsSettings = QGroupBox("Mission Restrictions")
-        self.missionRestrictionsLayout = QGridLayout()
-
-        self.difficultyLabel = QComboBox()
-        [self.difficultyLabel.addItem(t) for t in CONST.LABELS_OPTIONS]
-        self.difficultyLabel.setCurrentIndex(
-            CONST.LABELS_OPTIONS.index(self.game.settings.labels)
-        )
-        self.difficultyLabel.currentIndexChanged.connect(self.applySettings)
-
-        self.mapVisibiitySelection = QComboBox()
-        self.mapVisibiitySelection.addItem("All", ForcedOptions.Views.All)
-        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.All:
-            self.mapVisibiitySelection.setCurrentIndex(0)
-        self.mapVisibiitySelection.addItem("Fog of War", ForcedOptions.Views.Allies)
-        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.Allies:
-            self.mapVisibiitySelection.setCurrentIndex(1)
-        self.mapVisibiitySelection.addItem(
-            "Allies Only", ForcedOptions.Views.OnlyAllies
-        )
-        if (
-            self.game.settings.map_coalition_visibility
-            == ForcedOptions.Views.OnlyAllies
-        ):
-            self.mapVisibiitySelection.setCurrentIndex(2)
-        self.mapVisibiitySelection.addItem(
-            "Own Aircraft Only", ForcedOptions.Views.MyAircraft
-        )
-        if (
-            self.game.settings.map_coalition_visibility
-            == ForcedOptions.Views.MyAircraft
-        ):
-            self.mapVisibiitySelection.setCurrentIndex(3)
-        self.mapVisibiitySelection.addItem("Map Only", ForcedOptions.Views.OnlyMap)
-        if self.game.settings.map_coalition_visibility == ForcedOptions.Views.OnlyMap:
-            self.mapVisibiitySelection.setCurrentIndex(4)
-        self.mapVisibiitySelection.currentIndexChanged.connect(self.applySettings)
-
-        self.ext_views = QCheckBox()
-        self.ext_views.setChecked(self.game.settings.external_views_allowed)
-        self.ext_views.toggled.connect(self.applySettings)
-
-        self.battleDamageAssessment = QComboBox()
-        self.battleDamageAssessment.addItem("Player preference", None)
-        self.battleDamageAssessment.addItem("Enforced on", True)
-        self.battleDamageAssessment.addItem("Enforced off", False)
-        if self.game.settings.battle_damage_assessment is None:
-            self.battleDamageAssessment.setCurrentIndex(0)
-        elif self.game.settings.battle_damage_assessment is True:
-            self.battleDamageAssessment.setCurrentIndex(1)
-        else:
-            self.battleDamageAssessment.setCurrentIndex(2)
-        self.battleDamageAssessment.currentIndexChanged.connect(self.applySettings)
-
-        def set_invulnerable_player_pilots(checked: bool) -> None:
-            self.game.settings.invulnerable_player_pilots = checked
-
-        invulnerable_player_pilots_label = QLabel(
-            "Player pilots cannot be killed<br />"
-            "<strong>Aircraft are vulnerable, but the player's pilot will be<br />"
-            "returned to the squadron at the end of the mission</strong>"
-        )
-
-        invulnerable_player_pilots_checkbox = QCheckBox()
-        invulnerable_player_pilots_checkbox.setChecked(
-            self.game.settings.invulnerable_player_pilots
-        )
-        invulnerable_player_pilots_checkbox.toggled.connect(
-            set_invulnerable_player_pilots
-        )
-
-        self.aiDifficultyLayout.addWidget(QLabel("Player coalition skill"), 0, 0)
-        self.aiDifficultyLayout.addWidget(
-            self.playerCoalitionSkill, 0, 1, Qt.AlignRight
-        )
-        self.aiDifficultyLayout.addWidget(QLabel("Enemy coalition skill"), 1, 0)
-        self.aiDifficultyLayout.addWidget(self.enemyCoalitionSkill, 1, 1, Qt.AlignRight)
-        self.aiDifficultyLayout.addWidget(QLabel("Enemy AA and vehicles skill"), 2, 0)
-        self.aiDifficultyLayout.addWidget(self.enemyAASkill, 2, 1, Qt.AlignRight)
-        self.aiDifficultyLayout.addLayout(self.player_income, 3, 0)
-        self.aiDifficultyLayout.addLayout(self.enemy_income, 4, 0)
-        self.aiDifficultyLayout.addWidget(invulnerable_player_pilots_label, 5, 0)
-        self.aiDifficultyLayout.addWidget(
-            invulnerable_player_pilots_checkbox, 5, 1, Qt.AlignRight
-        )
-        self.aiDifficultySettings.setLayout(self.aiDifficultyLayout)
-        self.difficultyLayout.addWidget(self.aiDifficultySettings)
-
-        self.missionLayout.addWidget(QLabel("Manpads on frontlines"), 0, 0)
-        self.missionLayout.addWidget(self.manpads, 0, 1, Qt.AlignRight)
-        self.missionLayout.addWidget(QLabel("No night missions"), 1, 0)
-        self.missionLayout.addWidget(self.noNightMission, 1, 1, Qt.AlignRight)
-        self.missionSettings.setLayout(self.missionLayout)
-        self.difficultyLayout.addWidget(self.missionSettings)
-
-        self.missionRestrictionsLayout.addWidget(QLabel("In Game Labels"), 0, 0)
-        self.missionRestrictionsLayout.addWidget(
-            self.difficultyLabel, 0, 1, Qt.AlignRight
-        )
-        self.missionRestrictionsLayout.addWidget(QLabel("Map visibility options"), 1, 0)
-        self.missionRestrictionsLayout.addWidget(
-            self.mapVisibiitySelection, 1, 1, Qt.AlignRight
-        )
-        self.missionRestrictionsLayout.addWidget(QLabel("Allow external views"), 2, 0)
-        self.missionRestrictionsLayout.addWidget(self.ext_views, 2, 1, Qt.AlignRight)
-
-        self.missionRestrictionsLayout.addWidget(
-            QLabel("Battle damage assessment"), 3, 0
-        )
-        self.missionRestrictionsLayout.addWidget(
-            self.battleDamageAssessment, 3, 1, Qt.AlignRight
-        )
-
-        self.missionRestrictionsSettings.setLayout(self.missionRestrictionsLayout)
-        self.difficultyLayout.addWidget(self.missionRestrictionsSettings)
 
     def init_campaign_management_layout(self) -> None:
         campaign_layout = QVBoxLayout()

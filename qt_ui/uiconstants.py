@@ -100,6 +100,7 @@ def load_icons():
     ICONS["Missile"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/missile.png"
     )
+    ICONS["Difficulty"] = ICONS["Missile"]
     ICONS["Cheat"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/cheat.png")
     ICONS["Plugins"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/plugins.png"
