@@ -3,10 +3,9 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 
 from game.utils import nautical_miles
-from gen.ato import Package
+from ..ato.package import Package
 from game.theater import MissionTarget, OffMapSpawn, ControlPoint
-from gen.flights.flight import Flight
-
+from ..ato.flight import Flight
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType

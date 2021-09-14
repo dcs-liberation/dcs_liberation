@@ -6,7 +6,7 @@ from typing import Any
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
 from game.theater.theatergroundobject import TheaterGroundObject
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 
 
 @dataclass

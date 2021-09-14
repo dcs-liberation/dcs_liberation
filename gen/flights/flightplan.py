@@ -37,18 +37,22 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     BuildingGroundObject,
 )
-from game.threatzones import ThreatZones
 from game.utils import Distance, Heading, Speed, feet, meters, nautical_miles, knots
 from .closestairfields import ObjectiveDistanceCache
-from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flight import Flight
 from .traveltime import GroundSpeed, TravelTime
 from .waypointbuilder import StrikeTarget, WaypointBuilder
 from ..conflictgen import Conflict, FRONTLINE_LENGTH
 
 if TYPE_CHECKING:
-    from gen.ato import Package
+    from game.ato.package import Package
     from game.coalition import Coalition
+    from game.threatzones import ThreatZones
     from game.transfers import Convoy
+
 
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
@@ -1005,7 +1009,7 @@ class FlightPlanBuilder:
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
-        from gen.ato import PackageWaypoints
+        from game.ato.packagewaypoints import PackageWaypoints
 
         package_airfield = self.package_airfield()
 

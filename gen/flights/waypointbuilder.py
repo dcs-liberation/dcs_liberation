@@ -29,7 +29,9 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.utils import Distance, meters, nautical_miles
-from .flight import Flight, FlightWaypoint, FlightWaypointType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flight import Flight
 
 
 @dataclass(frozen=True)

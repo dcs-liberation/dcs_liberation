@@ -56,7 +56,7 @@ from ..weather import Conditions
 
 if TYPE_CHECKING:
     from game import Game
-    from gen.flights.flight import FlightType
+    from ..ato.flighttype import FlightType
     from game.squadrons.squadron import Squadron
     from ..coalition import Coalition
     from ..transfers import PendingTransfers
@@ -892,7 +892,7 @@ class Airfield(ControlPoint):
         return self.runway_is_operational()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield from [
@@ -975,7 +975,7 @@ class NavalControlPoint(ControlPoint, ABC):
         return True
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if self.is_friendly(for_player):
             yield from [
@@ -1063,7 +1063,7 @@ class Carrier(NavalControlPoint):
         )
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         yield from super().mission_types(for_player)
         if self.is_friendly(for_player):
@@ -1212,7 +1212,7 @@ class Fob(ControlPoint):
         return RunwayStatus()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield FlightType.STRIKE

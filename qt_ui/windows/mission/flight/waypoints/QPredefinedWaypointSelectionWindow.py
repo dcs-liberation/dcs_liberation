@@ -9,7 +9,7 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import (
     QPredefinedWaypointSelectionComboBox,

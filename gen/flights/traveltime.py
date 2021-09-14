@@ -16,10 +16,10 @@ from game.utils import (
     mach,
     meters,
 )
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 
 if TYPE_CHECKING:
-    from gen.ato import Package
+    from game.ato.package import Package
 
 
 class GroundSpeed:

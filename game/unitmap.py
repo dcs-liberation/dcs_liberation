@@ -12,7 +12,7 @@ from game.squadrons import Pilot
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
 from game.transfers import CargoShip, Convoy, TransferOrder
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 
 
 @dataclass(frozen=True)

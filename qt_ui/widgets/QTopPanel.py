@@ -14,7 +14,7 @@ from game import Game
 from game.event.airwar import AirWarEvent
 from game.profiling import logged_duration
 from game.utils import meters
-from gen.ato import Package
+from game.ato.package import Package
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox

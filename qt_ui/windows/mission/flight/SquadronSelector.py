@@ -5,7 +5,7 @@ from PySide2.QtWidgets import QComboBox
 
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons.airwing import AirWing
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 
 
 class SquadronSelector(QComboBox):

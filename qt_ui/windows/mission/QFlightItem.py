@@ -1,7 +1,7 @@
 from PySide2.QtGui import QStandardItem, QIcon
 
-from gen.ato import Package
-from gen.flights.flight import Flight
+from game.ato.package import Package
+from game.ato.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 

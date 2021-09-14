@@ -2,7 +2,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QFrame, QLabel, QComboBox, QVBoxLayout
 
 from game import Game
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from gen.flights.loadouts import Loadout
 from qt_ui.windows.mission.flight.payload.QLoadoutEditor import QLoadoutEditor
 

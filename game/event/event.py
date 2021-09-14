@@ -10,7 +10,7 @@ from game import persistency
 from game.debriefing import Debriefing
 from game.operation.operation import Operation
 from game.theater import ControlPoint
-from gen.ato import AirTaskingOrder
+from ..ato.airtaaskingorder import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
 from ..unitmap import UnitMap
 

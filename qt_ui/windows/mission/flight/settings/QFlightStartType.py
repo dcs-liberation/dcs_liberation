@@ -6,7 +6,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from qt_ui.models import PackageModel
 
 

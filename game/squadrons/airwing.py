@@ -7,11 +7,11 @@ from typing import Sequence, Iterator, TYPE_CHECKING, Optional
 from game.dcs.aircrafttype import AircraftType
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from .squadron import Squadron
 from ..theater import ControlPoint, MissionTarget
 
 if TYPE_CHECKING:
-    from gen.flights.flight import FlightType
+    from ..ato.flighttype import FlightType
+    from .squadron import Squadron
 
 
 class AirWing:

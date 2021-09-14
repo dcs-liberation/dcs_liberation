@@ -18,10 +18,8 @@ from faker import Faker
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from gen import naming
-from gen.ato import AirTaskingOrder
-from gen.conflictgen import Conflict
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import FlightType
+from .ato.flighttype import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
 from .campaignloader import CampaignAirWingConfig
@@ -31,18 +29,20 @@ from .event.event import Event
 from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
-from .navmesh import NavMesh
 from .profiling import logged_duration
 from .settings import Settings
 from .theater import ConflictTheater, ControlPoint
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
-from .threatzones import ThreatZones
-from .unitmap import UnitMap
 from .weather import Conditions, TimeOfDay
 
 if TYPE_CHECKING:
+    from gen.conflictgen import Conflict
+    from .ato.airtaaskingorder import AirTaskingOrder
+    from .navmesh import NavMesh
     from .squadrons import AirWing
+    from .threatzones import ThreatZones
+    from .unitmap import UnitMap
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -453,6 +453,8 @@ class Game:
         Compute the current conflict center position(s), mainly used for culling calculation
         :return: List of points of interests
         """
+        from gen.conflictgen import Conflict
+
         zones = []
 
         # By default, use the existing frontline conflict position

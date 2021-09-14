@@ -83,14 +83,13 @@ from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
 from game.utils import Distance, meters, nautical_miles, pairwise
-from gen.ato import AirTaskingOrder, Package
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.package import Package
 from gen.callsigns import create_group_callsign_from_unit
-from gen.flights.flight import (
-    Flight,
-    FlightType,
-    FlightWaypoint,
-    FlightWaypointType,
-)
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flight import Flight
 from gen.lasercoderegistry import LaserCodeRegistry
 from gen.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData

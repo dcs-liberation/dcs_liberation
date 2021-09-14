@@ -27,7 +27,7 @@ from gen.cargoshipgen import CargoShipGenerator
 from gen.conflictgen import Conflict
 from gen.convoygen import ConvoyGenerator
 from gen.environmentgen import EnvironmentGenerator
-from gen.flights.flight import FlightType
+from ..ato.flighttype import FlightType
 from gen.forcedoptionsgen import ForcedOptionsGenerator
 from gen.groundobjectsgen import GroundObjectsGenerator
 from gen.kneeboard import KneeboardGenerator

@@ -6,7 +6,7 @@ from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
 from game.data.doctrine import Doctrine
 from game.transfers import Convoy
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 
 
 @dataclass

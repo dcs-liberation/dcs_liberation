@@ -16,8 +16,10 @@ from game.game import Game
 from game.squadrons.squadron import Pilot, Squadron
 from game.theater.missiontarget import MissionTarget
 from game.transfers import TransferOrder, PendingTransfers
-from gen.ato import AirTaskingOrder, Package
-from gen.flights.flight import Flight, FlightType
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.package import Package
+from game.ato.flighttype import FlightType
+from game.ato.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 

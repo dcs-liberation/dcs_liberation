@@ -3,7 +3,7 @@ import logging
 from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 
 from game import Game
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder, PlanningError
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import PackageModel

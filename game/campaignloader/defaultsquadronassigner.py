@@ -6,7 +6,7 @@ from typing import Optional, TYPE_CHECKING
 from game.squadrons import Squadron
 from game.squadrons.squadrondef import SquadronDef
 from game.squadrons.squadrondefloader import SquadronDefLoader
-from gen.flights.flight import FlightType
+from ..ato.flighttype import FlightType
 from .campaignairwingconfig import CampaignAirWingConfig, SquadronConfig
 from .squadrondefgenerator import SquadronDefGenerator
 from ..dcs.aircrafttype import AircraftType

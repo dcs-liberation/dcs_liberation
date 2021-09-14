@@ -1,7 +1,7 @@
 """Application-wide dialog management."""
 from typing import Optional
 
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from game.theater.missiontarget import MissionTarget
 from .models import GameModel, PackageModel
 from .windows.mission.QEditFlightDialog import QEditFlightDialog

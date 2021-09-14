@@ -45,7 +45,9 @@ from game.weather import Weather
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
-from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
 from .radios import RadioFrequency
 from .runways import RunwayData
 

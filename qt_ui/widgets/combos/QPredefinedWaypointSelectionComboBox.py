@@ -4,7 +4,8 @@ from game import Game
 from game.theater import ControlPointType, BuildingGroundObject
 from game.utils import Distance
 from gen.conflictgen import Conflict
-from gen.flights.flight import FlightWaypoint, FlightWaypointType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 
 

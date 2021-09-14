@@ -15,7 +15,7 @@ from game.theater import ControlPoint, FrontLine
 from .aircraft import FlightData
 from .airsupportgen import AwacsInfo, TankerInfo
 from .armor import JtacInfo
-from .flights.flight import FlightWaypoint
+from game.ato.flightwaypoint import FlightWaypoint
 from .ground_forces.combat_stance import CombatStance
 from .radios import RadioFrequency
 from .runways import RunwayData
