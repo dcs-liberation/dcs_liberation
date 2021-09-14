@@ -211,7 +211,7 @@ class MizCampaignLoader:
 
     @property
     def helipads(self) -> Iterator[StaticGroup]:
-        for group in self.blue.static_group:
+        for group in itertools.chain(self.blue.static_group, self.red.static_group):
             if group.units[0].type in self.FARP_HELIPADS_TYPE:
                 yield group
 
