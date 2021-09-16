@@ -224,7 +224,7 @@ class Heading:
         return cls(Heading.reduce_angle(deg))
 
     @classmethod
-    def random(cls, min_angle: int = 0, max_angle: int = 0) -> Heading:
+    def random(cls, min_angle: int = 0, max_angle: int = 360) -> Heading:
         return Heading.from_degrees(random.randint(min_angle, max_angle))
 
     def __add__(self, other: Heading) -> Heading:
