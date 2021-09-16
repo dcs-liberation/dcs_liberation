@@ -152,6 +152,8 @@ class Weather:
     @staticmethod
     def random_wind(minimum: int, maximum: int) -> WindConditions:
         wind_direction = Heading.random()
+        wind_direction_2000m = wind_direction + Heading.random(-90, 90)
+        wind_direction_8000m = wind_direction + Heading.random(-90, 90)
         at_0m_factor = 1
         at_2000m_factor = 2
         at_8000m_factor = 3
@@ -160,8 +162,8 @@ class Weather:
         return WindConditions(
             # Always some wind to make the smoke move a bit.
             at_0m=Wind(wind_direction.degrees, max(1, base_wind * at_0m_factor)),
-            at_2000m=Wind(wind_direction.degrees, base_wind * at_2000m_factor),
-            at_8000m=Wind(wind_direction.degrees, base_wind * at_8000m_factor),
+            at_2000m=Wind(wind_direction_2000m.degrees, base_wind * at_2000m_factor),
+            at_8000m=Wind(wind_direction_8000m.degrees, base_wind * at_8000m_factor),
         )
 
     @staticmethod
@@ -220,7 +222,7 @@ class ClearSkies(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(0, 0)
+        return self.random_wind(1, 4)
 
 
 class Cloudy(Weather):
@@ -240,7 +242,7 @@ class Cloudy(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(0, 4)
+        return self.random_wind(1, 4)
 
 
 class Raining(Weather):
@@ -260,7 +262,7 @@ class Raining(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(0, 6)
+        return self.random_wind(1, 6)
 
 
 class Thunderstorm(Weather):
@@ -281,7 +283,7 @@ class Thunderstorm(Weather):
         )
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(0, 8)
+        return self.random_wind(1, 8)
 
 
 @dataclass
