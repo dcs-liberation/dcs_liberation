@@ -374,10 +374,6 @@ class JAS39Gripen_AG(PlaneType):
         JAS39_DWS39 = (2, JAS39GripenWeapons.JAS39_DWS39)
         Mk_82___500lb_GP_Bomb_LD = (2, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_83___1000lb_GP_Bomb_LD = (2, Weapons.Mk_83___1000lb_GP_Bomb_LD)
-        BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_ = (
-            2,
-            Weapons.BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_,
-        )
         JAS39_M71LD = (2, JAS39GripenWeapons.JAS39_M71LD)
         JAS39_M70BHE = (2, JAS39GripenWeapons.JAS39_M70BHE)
         JAS39_M70BAP = (2, JAS39GripenWeapons.JAS39_M70BAP)
@@ -417,10 +413,6 @@ class JAS39Gripen_AG(PlaneType):
         Mk_82___500lb_GP_Bomb_LD = (3, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_83___1000lb_GP_Bomb_LD = (3, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (3, Weapons.Mk_84___2000lb_GP_Bomb_LD)
-        BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_ = (
-            3,
-            Weapons.BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_,
-        )
         JAS39_M71LD = (3, JAS39GripenWeapons.JAS39_M71LD)
         JAS39_TANK1100 = (3, JAS39GripenWeapons.JAS39_TANK1100)
         JAS39_TANK1700 = (3, JAS39GripenWeapons.JAS39_TANK1700)
@@ -442,10 +434,6 @@ class JAS39Gripen_AG(PlaneType):
         Mk_82___500lb_GP_Bomb_LD = (4, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (4, Weapons.Mk_84___2000lb_GP_Bomb_LD)
-        BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_ = (
-            4,
-            Weapons.BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_,
-        )
         JAS39_M71LD = (4, JAS39GripenWeapons.JAS39_M71LD)
         JAS39_TANK1100 = (4, JAS39GripenWeapons.JAS39_TANK1100)
 
@@ -481,10 +469,6 @@ class JAS39Gripen_AG(PlaneType):
         Mk_82___500lb_GP_Bomb_LD = (6, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_83___1000lb_GP_Bomb_LD = (6, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (6, Weapons.Mk_84___2000lb_GP_Bomb_LD)
-        BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_ = (
-            6,
-            Weapons.BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_,
-        )
         JAS39_M71LD = (6, JAS39GripenWeapons.JAS39_M71LD)
         JAS39_TANK1100 = (6, JAS39GripenWeapons.JAS39_TANK1100)
         JAS39_TANK1700 = (6, JAS39GripenWeapons.JAS39_TANK1700)
@@ -512,10 +496,6 @@ class JAS39Gripen_AG(PlaneType):
         JAS39_DWS39 = (7, JAS39GripenWeapons.JAS39_DWS39)
         Mk_82___500lb_GP_Bomb_LD = (7, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_83___1000lb_GP_Bomb_LD = (7, Weapons.Mk_83___1000lb_GP_Bomb_LD)
-        BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_ = (
-            7,
-            Weapons.BRU_33_with_2_x_Mk_82___500lb_GP_Bomb_LD_,
-        )
         JAS39_M71LD = (7, JAS39GripenWeapons.JAS39_M71LD)
         JAS39_M70BHE = (7, JAS39GripenWeapons.JAS39_M70BHE)
         JAS39_M70BAP = (7, JAS39GripenWeapons.JAS39_M70BAP)
