@@ -103,6 +103,7 @@ from dcs.planes import (
     WingLoong_I,
     I_16,
     Yak_40,
+    MosquitoFBMkVI,
 )
 from dcs.unittype import FlyingType
 
@@ -159,6 +160,7 @@ CAP_CAPABLE = [
     P_51D,
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
+    MosquitoFBMkVI,
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
@@ -230,6 +232,7 @@ CAS_CAPABLE = [
     P_51D,
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
+    MosquitoFBMkVI,
     I_16,
     Bf_109K_4,
     FW_190D9,
@@ -282,6 +285,7 @@ DEAD_CAPABLE = [
     P_51D,
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
+    MosquitoFBMkVI,
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
@@ -343,6 +347,7 @@ STRIKE_CAPABLE = [
     P_51D,
     SpitfireLFMkIXCW,
     SpitfireLFMkIX,
+    MosquitoFBMkVI,
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
@@ -365,6 +370,7 @@ ANTISHIP_CAPABLE = [
     S_3B,
     A_20G,
     Ju_88A4,
+    MosquitoFBMkVI,
     C_101CC,
     SH_60B,
 ]

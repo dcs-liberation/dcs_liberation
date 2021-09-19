@@ -1,0 +1,8 @@
+description: The de Havilland DH.98 Mosquito is a British twin-engined, shoulder-winged multirole combat aircraft, introduced during the Second World War.
+introduced: 1941
+manufacturer: De Havilland Aircraft Co
+origin: UK
+price: 6
+role: Light Bomber, Fighter Bomber, Night Fighter, Maritime Strike Aircraft, Photo Recon Aircraft
+variants:
+  MosquitoFBMkVI: {}
