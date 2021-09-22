@@ -75,6 +75,7 @@ class Settings:
     perf_red_alert_state: bool = True
     perf_artillery: bool = True
     perf_moving_units: bool = True
+    perf_moving_convoys: bool = True
     perf_infantry: bool = True
     perf_destroyed_units: bool = True
     # Performance culling

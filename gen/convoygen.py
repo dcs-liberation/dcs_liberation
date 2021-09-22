@@ -32,17 +32,46 @@ class ConvoyGenerator:
                 self.generate_convoy(convoy)
 
     def generate_convoy(self, convoy: Convoy) -> VehicleGroup:
-        group = self._create_mixed_unit_group(
-            convoy.name,
-            convoy.route_start,
-            convoy.units,
-            convoy.player_owned,
-        )
-        group.add_waypoint(
-            convoy.route_end,
-            speed=kph(40).kph,
-            move_formation=PointAction.OnRoad,
-        )
+        if self.game.settings.perf_moving_convoys:
+            group = self._create_mixed_unit_group(
+                convoy.name,
+                convoy.route_start,
+                convoy.units,
+                convoy.player_owned,
+            )
+
+            group.add_waypoint(
+                convoy.route_end,
+                speed=kph(40).kph,
+                move_formation=PointAction.OnRoad,
+            )
+
+        else:
+            # perf_moving_convoys is disabled, so add the convoy between the route start and route end.
+            # This option aims to remove long routes for ground vehicles between control points,
+            # since the CPU load for long routes on DCS is pretty heavy.
+            # Put a some distance between the convoy and its first waypoint, so it'll move a little
+            # before stopping and possibly find a road to drive on.
+            start_x = (1.1 * convoy.route_start.x + convoy.route_end.x) / 2
+            start_y = (1.1 * convoy.route_start.y + convoy.route_end.y) / 2
+            waypoint_x = (convoy.route_start.x + 1.1 * convoy.route_end.x) / 2
+            waypoint_y = (convoy.route_start.y + 1.1 * convoy.route_end.y) / 2
+
+            convoy_start = Point(start_x, start_y)
+            convoy_waypoint = Point(waypoint_x, waypoint_y)
+            group = self._create_mixed_unit_group(
+                convoy.name,
+                convoy_start,
+                convoy.units,
+                convoy.player_owned,
+            )
+
+            group.add_waypoint(
+                convoy_waypoint,
+                speed=kph(40).kph,
+                move_formation=PointAction.OnRoad,
+            )
+
         self.make_drivable(group)
         self.unit_map.add_convoy_units(group, convoy)
         return group

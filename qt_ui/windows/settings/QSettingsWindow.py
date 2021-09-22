@@ -781,6 +781,10 @@ class QSettingsWindow(QDialog):
         self.moving_units.setChecked(self.game.settings.perf_moving_units)
         self.moving_units.toggled.connect(self.applySettings)
 
+        self.moving_convoys = QCheckBox()
+        self.moving_convoys.setChecked(self.game.settings.perf_moving_convoys)
+        self.moving_convoys.toggled.connect(self.applySettings)
+
         self.infantry = QCheckBox()
         self.infantry.setChecked(self.game.settings.perf_infantry)
         self.infantry.toggled.connect(self.applySettings)
@@ -826,31 +830,35 @@ class QSettingsWindow(QDialog):
         self.performanceLayout.addWidget(
             self.moving_units, 4, 1, alignment=Qt.AlignRight
         )
+        self.performanceLayout.addWidget(QLabel("Moving convoys between CPs"), 5, 0)
         self.performanceLayout.addWidget(
-            QLabel("Generate infantry squads along vehicles"), 5, 0
-        )
-        self.performanceLayout.addWidget(self.infantry, 5, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(
-            QLabel("Include destroyed units carcass"), 6, 0
+            self.moving_convoys, 5, 1, alignment=Qt.AlignRight
         )
         self.performanceLayout.addWidget(
-            self.destroyed_units, 6, 1, alignment=Qt.AlignRight
+            QLabel("Generate infantry squads along vehicles"), 6, 0
+        )
+        self.performanceLayout.addWidget(self.infantry, 6, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(
+            QLabel("Include destroyed units carcass"), 7, 0
+        )
+        self.performanceLayout.addWidget(
+            self.destroyed_units, 7, 1, alignment=Qt.AlignRight
         )
 
-        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 7, 0, 1, 2)
+        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 8, 0, 1, 2)
         self.performanceLayout.addWidget(
-            QLabel("Culling of distant units enabled"), 8, 0
+            QLabel("Culling of distant units enabled"), 9, 0
         )
-        self.performanceLayout.addWidget(self.culling, 8, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 9, 0)
+        self.performanceLayout.addWidget(self.culling, 9, 1, alignment=Qt.AlignRight)
+        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 10, 0)
         self.performanceLayout.addWidget(
-            self.culling_distance, 9, 1, alignment=Qt.AlignRight
-        )
-        self.performanceLayout.addWidget(
-            QLabel("Do not cull carrier's surroundings"), 10, 0
+            self.culling_distance, 10, 1, alignment=Qt.AlignRight
         )
         self.performanceLayout.addWidget(
-            self.culling_do_not_cull_carrier, 10, 1, alignment=Qt.AlignRight
+            QLabel("Do not cull carrier's surroundings"), 11, 0
+        )
+        self.performanceLayout.addWidget(
+            self.culling_do_not_cull_carrier, 11, 1, alignment=Qt.AlignRight
         )
 
         self.generatorLayout.addWidget(self.gameplay)
@@ -939,6 +947,7 @@ class QSettingsWindow(QDialog):
         self.game.settings.perf_smoke_spacing = self.smoke_spacing.value()
         self.game.settings.perf_artillery = self.arti.isChecked()
         self.game.settings.perf_moving_units = self.moving_units.isChecked()
+        self.game.settings.perf_moving_convoys = self.moving_convoys.isChecked()
         self.game.settings.perf_infantry = self.infantry.isChecked()
         self.game.settings.perf_destroyed_units = self.destroyed_units.isChecked()
 
