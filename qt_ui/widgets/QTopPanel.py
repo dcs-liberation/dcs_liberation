@@ -287,8 +287,8 @@ class QTopPanel(QFrame):
         )
 
         unit_map = self.game.initiate_event(game_event)
-        waiting = QWaitingForMissionResultWindow(game_event, self.game, unit_map)
-        waiting.show()
+        waiting = QWaitingForMissionResultWindow(game_event, self.game, unit_map, self)
+        waiting.exec_()
 
     def budget_update(self, game: Game):
         self.budgetBox.setGame(game)

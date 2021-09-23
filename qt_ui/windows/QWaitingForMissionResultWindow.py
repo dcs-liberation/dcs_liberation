@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Sized
+from typing import Sized, Optional
 
 from PySide2 import QtCore
 from PySide2.QtCore import QObject, Qt, Signal
-from PySide2.QtGui import QIcon, QMovie, QPixmap
+from PySide2.QtGui import QIcon, QMovie, QPixmap, QWindow
 from PySide2.QtWidgets import (
     QDialog,
     QFileDialog,
@@ -17,6 +17,7 @@ from PySide2.QtWidgets import (
     QMessageBox,
     QPushButton,
     QTextBrowser,
+    QWidget
 )
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -49,9 +50,9 @@ DebriefingFileWrittenSignal()
 
 
 class QWaitingForMissionResultWindow(QDialog):
-    def __init__(self, gameEvent: Event, game: Game, unit_map: UnitMap) -> None:
-        super(QWaitingForMissionResultWindow, self).__init__()
-        self.setModal(True)
+    def __init__(self, gameEvent: Event, game: Game, unit_map: UnitMap, parent: Optional[QWidget] = None) -> None:
+        super(QWaitingForMissionResultWindow, self).__init__(parent=parent)
+        self.setWindowModality(QtCore.Qt.WindowModal)
         self.gameEvent = gameEvent
         self.game = game
         self.unit_map = unit_map
