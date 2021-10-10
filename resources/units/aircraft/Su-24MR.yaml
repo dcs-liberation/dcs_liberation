@@ -1,4 +1,4 @@
 price: 15
-range: 200
+max_range: 200
 variants:
   Su-24MR: null

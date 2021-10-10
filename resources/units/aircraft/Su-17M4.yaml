@@ -12,7 +12,7 @@ manufacturer: Sukhoi
 origin: USSR/Russia
 price: 10
 role: Fighter-Bomber
-range: 300
+max_range: 300
 variants:
   Su-17M4 Fitter-K: {}
   Su-22M4 Fitter-K:
