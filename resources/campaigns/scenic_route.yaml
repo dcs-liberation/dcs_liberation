@@ -1,0 +1,142 @@
+---
+name: Persian Gulf - Scenic Route
+theater: Persian Gulf
+authors: Fuzzle
+description: <p>A lightweight naval campaign involving a US Navy carrier group pushing across the coast of Iran. <strong>Note that the ground units purchased on turn zero must sustain you until you've taken the first hostile FOB. The starting point does not have a factory to simulate a Marine Expeditionary Force deploying from the carrier group.</strong></p><p><strong>Backstory:</strong> Iran has declared war on all US forces in the Gulf resulting in all local allies withdrawing their support for American troops. A lone carrier group must pacify the southern coast of Iran and hold out until backup can arrive lest the US and her interests be ejected from the region permanently.</p>
+version: 9.0
+recommended_player_faction: US Navy 2005
+recommended_enemy_faction: Iran 2015
+miz: scenic_route.miz
+performance: 1
+squadrons:
+  #BLUFOR CVN
+  Naval-1:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - VF-143
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - VFA-113
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - VMFA-251
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+    - primary: Refueling
+      aircraft:
+        - VS-35
+    - primary: Transport
+      aircraft:
+        - HSM-40
+  # BLUFOR LHA
+  Naval-2:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (AH-1W)
+  # BLUFOR Start FOB
+  FOB Bandar-e-Jask:
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-269 (UH-1H)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-269 (AH-1W)
+  # OPFOR CVN
+  Naval-3:
+    - primary: BARCAP
+      secondary: any
+    - primary: Strike
+      secondary: any
+    - primary: BAI
+      secondary: any
+    - primary: Refueling
+  # Kish Intl
+  24:
+    - primary: AEW&C
+      aircraft:
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+    - primary: Transport
+      aircraft:
+        - IL-78MD
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24MK Fencer-D
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-4E Phantom II
+  # Havadarya
+  9:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+      - F-4E Phantom II
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+      - Su-25 Frogfoot
+  # Bandar Abbas Intl
+  2:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - F-5E Tiger II
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24MK
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - F-4E Phantom II
+  # OPFOR First FOB
+  FOB Seerik:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-E
+  # OPFOR Second FOB
+  FOB Kohnehshahr:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-F
+  # OPFOR Third FOB
+  FOB Khvosh:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+  # OPFOR Last FOB
+  FOB Charak:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc

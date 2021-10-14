@@ -1,0 +1,15 @@
+---
+name: VS-35
+nickname: Blue Wolves
+country: USA
+role: Carrier-based Attack
+aircraft: S-3B Viking
+livery: usaf standard
+mission_types:
+  - Anti-ship
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
