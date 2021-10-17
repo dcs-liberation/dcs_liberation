@@ -24,7 +24,7 @@ from game.theater import (
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
 from .mizcampaignloader import MizCampaignLoader
-
+from .. import persistency
 
 PERF_FRIENDLY = 0
 PERF_MEDIUM = 1
@@ -141,10 +141,16 @@ class Campaign:
         return True
 
     @staticmethod
-    def iter_campaign_defs() -> Iterator[Path]:
-        campaign_dir = Path("resources/campaigns")
-        yield from campaign_dir.glob("*.json")
-        yield from campaign_dir.glob("*.yaml")
+    def iter_campaigns_in_dir(path: Path) -> Iterator[Path]:
+        yield from path.glob("*.yaml")
+        yield from path.glob("*.json")
+
+    @classmethod
+    def iter_campaign_defs(cls) -> Iterator[Path]:
+        yield from cls.iter_campaigns_in_dir(
+            Path(persistency.base_path()) / "Liberation/Campaigns"
+        )
+        yield from cls.iter_campaigns_in_dir(Path("resources/campaigns"))
 
     @classmethod
     def load_each(cls) -> Iterator[Campaign]:
