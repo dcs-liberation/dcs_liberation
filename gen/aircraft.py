@@ -659,8 +659,8 @@ class AircraftConflictGenerator:
                 try:
                     self._spawn_unused_for(squadron, country, faction)
                 except NoParkingSlotError:
-                    # If we run out of parking, stop spawning aircraft.
-                    return
+                    # If we run out of parking, stop spawning aircraft at this base.
+                    break
 
     def _spawn_unused_for(
         self, squadron: Squadron, country: Country, faction: Faction
