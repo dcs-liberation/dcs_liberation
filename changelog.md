@@ -37,6 +37,7 @@ Saves from 4.x are not compatible with 5.0.
 * **[Mission Generation]** Fixed generation of landing waypoints so that the AI obeys them.
 * **[Mission Generation]** AI carrier aircraft with a start time of T+0 will now start at T+1s to avoid traffic jams.
 * **[Mission Generation]** Fixed cases of unused aircraft not being spawned at airfields as soon as any airport filled up.
+* **[Mission Generation]** Fixed cases with multiple client flights of the same airframe all received the same preset channels.
 * **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
 * **[UI]** Fixed bug where an incompatible campaign could be generated if no action is taken on the campaign selection screen.
 
