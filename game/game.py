@@ -99,9 +99,7 @@ class Game:
         self.settings = settings
         self.events: List[Event] = []
         self.theater = theater
-        # pass_turn() will be called when initialization is complete which will
-        # increment this to turn 0 before it reaches the player.
-        self.turn = -1
+        self.turn = 0
         # NB: This is the *start* date. It is never updated.
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
@@ -303,7 +301,6 @@ class Game:
 
     def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""
-        self.turn = 0
         self.blue.preinit_turn_0()
         self.red.preinit_turn_0()
         self.initialize_turn()

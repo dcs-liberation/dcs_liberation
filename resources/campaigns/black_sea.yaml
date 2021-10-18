@@ -3,9 +3,12 @@ name: Caucasus - Black Sea
 theater: Caucasus
 authors: Colonel Panic
 description: <p>A medium sized theater with bases along the coast of the Black Sea.</p>
+recommended_player_faction: USA 2005
+recommended_enemy_faction: Russia 2010
+recommended_start_date: 2004-01-07
 miz: black_sea.miz
 performance: 2
-version: "9.0"
+version: "9.1"
 squadrons:
   # Anapa-Vityazevo
   12:

@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QFrame, QGridLayout, QGroupBox, QVBoxLayout
+from PySide2.QtWidgets import QFrame, QGroupBox, QHBoxLayout, QVBoxLayout
 
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
@@ -16,14 +16,13 @@ class QAirfieldCommand(QFrame):
         self.init_ui()
 
     def init_ui(self):
-        layout = QGridLayout()
-        layout.setHorizontalSpacing(1)
-        layout.addWidget(QAircraftRecruitmentMenu(self.cp, self.game_model), 0, 0)
+        layout = QHBoxLayout()
+        layout.addWidget(QAircraftRecruitmentMenu(self.cp, self.game_model), stretch=5)
 
         planned = QGroupBox("Planned Flights")
         planned_layout = QVBoxLayout()
         planned_layout.addWidget(QPlannedFlightsView(self.game_model, self.cp))
         planned.setLayout(planned_layout)
-        layout.addWidget(planned, 0, 1)
+        layout.addWidget(planned, stretch=3)
 
         self.setLayout(layout)
