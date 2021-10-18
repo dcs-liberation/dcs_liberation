@@ -380,6 +380,14 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
                 template_perf.render({"performance": campaign.performance})
             )
 
+            if (start_date := campaign.recommended_start_date) is not None:
+                self.calendar.setSelectedDate(
+                    QDate(start_date.year, start_date.month, start_date.day)
+                )
+                timePeriodPreset.setChecked(False)
+            else:
+                timePeriodPreset.setChecked(True)
+
         self.campaignList.selectionModel().setCurrentIndex(
             self.campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
         )

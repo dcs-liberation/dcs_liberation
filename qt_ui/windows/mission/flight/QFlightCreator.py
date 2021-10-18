@@ -234,5 +234,5 @@ class QFlightCreator(QDialog):
 
         self.flight_size_spinner.setMaximum(min(available, aircraft.max_group_size))
 
-        if self.flight_size_spinner.maximum() >= 2:
-            self.flight_size_spinner.setValue(2)
+        default_size = max(2, available, aircraft.max_group_size)
+        self.flight_size_spinner.setValue(default_size)

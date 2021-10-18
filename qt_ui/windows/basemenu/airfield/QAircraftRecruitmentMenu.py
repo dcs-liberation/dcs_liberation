@@ -54,8 +54,6 @@ class QAircraftRecruitmentMenu(UnitTransactionFrame[Squadron]):
 
         scroll_content.setLayout(task_box_layout)
         scroll = QScrollArea()
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         scroll.setWidgetResizable(True)
         scroll.setWidget(scroll_content)
         main_layout.addLayout(self.hangar_status)

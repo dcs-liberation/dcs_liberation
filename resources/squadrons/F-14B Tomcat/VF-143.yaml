@@ -1,0 +1,22 @@
+---
+name: VF-143
+nickname: Pukin' Dogs
+country: USA
+role: Strike Fighter
+aircraft: F-14B Tomcat
+bases:
+    carrier: true
+    shore: true
+livery: VF-143 Pukin Dogs CAG
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+  - Fighter sweep
+  - TARCAP

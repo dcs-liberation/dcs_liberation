@@ -18,6 +18,8 @@ Saves from 4.x are not compatible with 5.0.
 * **[Campaign AI]** Transport aircraft will now be bought only if necessary at control points which can produce ground units and are capable to operate transport aircraft.
 * **[Campaign AI]** Aircraft will now only be automatically purchased or assigned at appropriate bases. Naval aircraft will default to only operating from carriers, Harriers will default to LHAs and shore bases, helicopters will operate from anywhere. This can be customized per-squadron.
 * **[Engine]** Support for DCS 2.7.5.10869 and newer, including support for F-16 CBU-105s.
+* **[Modding]** Can now install custom campaigns to <DCS saved games>/Liberation/Campaigns instead of the Liberation install directory.
+* **[Modding]** Campaigns can now define a default start date.
 * **[Mission Generation]** EWRs are now also headed towards the center of the conflict
 * **[Mission Generation]** FACs can now use FC3 compatible laser codes. Note that this setting is global, not per FAC.
 * **[Modding]** Campaigns now specify the squadrons that are present in the campaign, their roles, and their starting bases. Players can customize this at game start but the campaign will choose the defaults.
@@ -30,8 +32,11 @@ Saves from 4.x are not compatible with 5.0.
 ## Fixes
 
 * **[Campaign]** Naval control points will no longer claim ground objectives during campaign generation and prevent them from spawning.
+* **[Campaign]** Units aboard suck cargo ships will now have their losses tracked properly.
 * **[Mission Generation]** Mission results and other files will now be opened with enforced utf-8 encoding to prevent an issue where destroyed ground units were untracked because of special characters in their names.
 * **[Mission Generation]** Fixed generation of landing waypoints so that the AI obeys them.
+* **[Mission Generation]** AI carrier aircraft with a start time of T+0 will now start at T+1s to avoid traffic jams.
+* **[Mission Generation]** Fixed cases of unused aircraft not being spawned at airfields as soon as any airport filled up.
 * **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
 * **[UI]** Fixed bug where an incompatible campaign could be generated if no action is taken on the campaign selection screen.
 

@@ -43,6 +43,7 @@
   ],
   "air_defenses": [
     "SA3Generator",
+    "SA5Generator",
     "SA6Generator",
     "SA8Generator",
     "SA9Generator",

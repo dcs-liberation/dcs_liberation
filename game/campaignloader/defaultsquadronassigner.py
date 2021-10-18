@@ -109,8 +109,13 @@ class DefaultSquadronAssigner:
 
     @staticmethod
     def squadron_compatible_with(
-        squadron: SquadronDef, task: FlightType, control_point: ControlPoint
+        squadron: SquadronDef,
+        task: FlightType,
+        control_point: ControlPoint,
+        ignore_base_preference: bool = False,
     ) -> bool:
+        if ignore_base_preference:
+            return control_point.can_operate(squadron.aircraft)
         return squadron.operates_from(control_point) and task in squadron.mission_types
 
     def find_squadron_for_airframe(
@@ -127,7 +132,7 @@ class DefaultSquadronAssigner:
         for squadrons in self.squadron_defs.values():
             for squadron in squadrons:
                 if squadron.name == name and self.squadron_compatible_with(
-                    squadron, task, control_point
+                    squadron, task, control_point, ignore_base_preference=True
                 ):
                     return squadron
         return None
