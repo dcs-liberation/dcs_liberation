@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import datetime
 import json
 import logging
 from collections import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Tuple, Dict, Any
+from typing import Optional, Tuple, Dict, Any
 
 from packaging.version import Version
 import yaml
@@ -46,6 +47,7 @@ class Campaign:
 
     recommended_player_faction: str
     recommended_enemy_faction: str
+    recommended_start_date: Optional[datetime.date]
     performance: int
     data: Dict[str, Any]
     path: Path
@@ -67,6 +69,23 @@ class Campaign:
                 f"Non-string campaign version in {path}. Parse may be incorrect."
             )
             version = Version(str(version_field))
+
+        start_date_raw = data.get("recommended_start_date")
+
+        # YAML automatically parses dates, but while we still support JSON campaigns we
+        # need to be able to handle parsing dates from strings ourselves as well.
+        start_date: Optional[datetime.date]
+        if isinstance(start_date_raw, str):
+            start_date = datetime.date.fromisoformat(start_date_raw)
+        elif isinstance(start_date_raw, datetime.date):
+            start_date = start_date_raw
+        elif start_date_raw is None:
+            start_date = None
+        else:
+            raise RuntimeError(
+                f"Invalid value for recommended_start_date in {path}: {start_date_raw}"
+            )
+
         return cls(
             data["name"],
             f"Terrain_{sanitized_theater}",
@@ -75,6 +94,7 @@ class Campaign:
             (version.major, version.minor),
             data.get("recommended_player_faction", "USA 2005"),
             data.get("recommended_enemy_faction", "Russia 1990"),
+            start_date,
             data.get("performance", 0),
             data,
             path,
