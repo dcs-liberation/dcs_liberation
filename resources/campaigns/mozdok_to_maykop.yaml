@@ -40,7 +40,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
-        - Mi-24P Hind-E
+        - Mi-24V Hind-E
     - primary: CAS
       secondary: air-to-ground
       aircraft:
