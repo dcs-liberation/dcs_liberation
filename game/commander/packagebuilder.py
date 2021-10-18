@@ -64,8 +64,8 @@ class PackageBuilder:
 
         if {
             flight.from_cp.is_fleet
-             and flight.from_cp.ground_objects[0].units[0].type == "KUZNECOW"
-             and squadron.aircraft.dcs_id == "Su-33"
+            and flight.from_cp.ground_objects[0].units[0].type == "KUZNECOW"
+            and squadron.aircraft.dcs_id == "Su-33"
         }:
             # Change the start_type for generated Su-33 flights from carriers
             # to "Takeoff from runway" to work around DCS AI issue preventing
