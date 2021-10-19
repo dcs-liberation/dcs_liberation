@@ -268,9 +268,9 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def _start_type_at_group(
-            start_type: str,
-            unit_type: Type[FlyingType],
-            at: Union[ShipGroup, StaticGroup],
+        start_type: str,
+        unit_type: Type[FlyingType],
+        at: Union[ShipGroup, StaticGroup],
     ) -> StartType:
         group_units = at.dict().get("units")
         if (
