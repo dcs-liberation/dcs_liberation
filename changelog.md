@@ -18,13 +18,13 @@ Saves from 4.x are not compatible with 5.0.
 * **[Campaign AI]** Transport aircraft will now be bought only if necessary at control points which can produce ground units and are capable to operate transport aircraft.
 * **[Campaign AI]** Aircraft will now only be automatically purchased or assigned at appropriate bases. Naval aircraft will default to only operating from carriers, Harriers will default to LHAs and shore bases, helicopters will operate from anywhere. This can be customized per-squadron.
 * **[Engine]** Support for DCS 2.7.5.10869 and newer, including support for F-16 CBU-105s.
-* **[Modding]** Can now install custom campaigns to <DCS saved games>/Liberation/Campaigns instead of the Liberation install directory.
-* **[Modding]** Campaigns can now define a default start date.
-* **[Mission Generation]** EWRs are now also headed towards the center of the conflict
-* **[Mission Generation]** FACs can now use FC3 compatible laser codes. Note that this setting is global, not per FAC.
-* **[Modding]** Campaigns now specify the squadrons that are present in the campaign, their roles, and their starting bases. Players can customize this at game start but the campaign will choose the defaults.
 * **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet).
 * **[Kneeboard]** QNH (pressure MSL) and temperature have been added to the kneeboard.
+* **[Mission Generation]** EWRs are now also headed towards the center of the conflict
+* **[Mission Generation]** FACs can now use FC3 compatible laser codes. Note that this setting is global, not per FAC.
+* **[Modding]** Can now install custom campaigns to <DCS saved games>/Liberation/Campaigns instead of the Liberation install directory.
+* **[Modding]** Campaigns can now define a default start date.
+* **[Modding]** Campaigns now specify the squadrons that are present in the campaign, their roles, and their starting bases. Players can customize this at game start but the campaign will choose the defaults.
 * **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable, relocate, or rename squadrons.
 * **[UI]** Sell Button for aircraft will be disabled if there are no units available to be sold or all are already assigned to a mission
 * **[UI]** Enemy aircraft inventory now viewable in the air wing menu.
