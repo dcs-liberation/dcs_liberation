@@ -210,6 +210,7 @@ class Event:
         self.commit_pilot_experience()
         self.commit_front_line_losses(debriefing)
         self.commit_convoy_losses(debriefing)
+        self.commit_cargo_ship_losses(debriefing)
         self.commit_airlift_losses(debriefing)
         self.commit_ground_object_losses(debriefing)
         self.commit_building_losses(debriefing)

@@ -66,6 +66,8 @@ class FrontLineStanceTask(TheaterCommanderTask, ABC):
             return False
         if self.better_stance_already_set(state):
             return False
+        if self.friendly_cp.deployable_front_line_units == 0:
+            return False
         return self.have_sufficient_front_line_advantage
 
     def apply_effects(self, state: TheaterState) -> None:

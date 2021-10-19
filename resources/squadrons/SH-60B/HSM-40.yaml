@@ -1,0 +1,10 @@
+---
+name: HSM-40
+nickname: Airwolves
+country: USA
+role: Transport/Anti-Ship
+aircraft: SH-60B Seahawk
+livery: standard
+mission_types:
+  - Transport
+  - Anti-ship
