@@ -17,7 +17,7 @@ from PySide2.QtWidgets import (
     QMessageBox,
     QPushButton,
     QTextBrowser,
-    QWidget
+    QWidget,
 )
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -50,7 +50,13 @@ DebriefingFileWrittenSignal()
 
 
 class QWaitingForMissionResultWindow(QDialog):
-    def __init__(self, gameEvent: Event, game: Game, unit_map: UnitMap, parent: Optional[QWidget] = None) -> None:
+    def __init__(
+        self,
+        gameEvent: Event,
+        game: Game,
+        unit_map: UnitMap,
+        parent: Optional[QWidget] = None,
+    ) -> None:
         super(QWaitingForMissionResultWindow, self).__init__(parent=parent)
         self.setWindowModality(QtCore.Qt.WindowModal)
         self.gameEvent = gameEvent
