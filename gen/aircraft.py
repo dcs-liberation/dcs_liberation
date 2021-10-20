@@ -272,18 +272,17 @@ class AircraftConflictGenerator:
         unit_type: Type[FlyingType],
         at: Union[ShipGroup, StaticGroup],
     ) -> StartType:
-        group_units = at.dict().get("units")
+        group_units = at.units
+        # Setting Su-33s starting from the non-supercarrier Kuznetsov to take off from runway
+        # to work around a DCS AI issue preventing Su-33s from taking off when set to "Takeoff from ramp" (#1352)
         if (
             unit_type.id == Su_33.id
-            and group_units[1] is not None
-            and group_units[1]["type"] == KUZNECOW.id
+            and group_units[0] is not None
+            and group_units[0].type == KUZNECOW.id
         ):
             return StartType.Runway
-        elif start_type == "Runway":
-            return StartType.Runway
-        elif start_type == "Cold":
-            return StartType.Cold
-        return StartType.Warm
+        else:
+            return AircraftConflictGenerator._start_type(start_type)
 
     def skill_level_for(
         self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool
