@@ -32,6 +32,7 @@ class PackageFulfiller:
         self.theater = theater
         self.player_missions_asap = settings.auto_ato_player_missions_asap
         self.default_start_type = settings.default_start_type
+        self.settings = settings
 
     @property
     def is_player(self) -> bool:
@@ -136,6 +137,7 @@ class PackageFulfiller:
             self.coalition.country_name,
             self.default_start_type,
             mission.asap,
+            settings=self.settings,
         )
 
         # Attempt to plan all the main elements of the mission first. Escorts
