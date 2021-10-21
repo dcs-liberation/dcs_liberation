@@ -11,7 +11,7 @@ manufacturer: Mikoyan-Gurevich
 origin: USSR/Russia
 price: 12
 role: Fighter
-range: 200
+max_range: 200
 gunfighter: true
 variants:
   J-7B:

@@ -1,0 +1,11 @@
+---
+name: HMLA-269 (UH-1H)
+nickname: Gunrunners
+country: USA
+role: Transport/Light Attack
+aircraft: UH-1H Iroquois
+livery: US NAVY
+mission_types:
+  - CAS
+  - OCA/Aircraft
+  - Transport

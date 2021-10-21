@@ -387,5 +387,6 @@ class QLiberationWindow(QMainWindow):
         )
         if result == QMessageBox.Yes:
             super().closeEvent(event)
+            self.dialog = None
         else:
             event.ignore()

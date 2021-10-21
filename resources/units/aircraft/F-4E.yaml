@@ -13,7 +13,7 @@ manufacturer: McDonnell Douglas
 origin: USA
 price: 10
 role: Fighter-Bomber
-range: 200
+max_range: 200
 variants:
   F-4E Phantom II: {}
   F-4EJ Kai Phantom II: {}

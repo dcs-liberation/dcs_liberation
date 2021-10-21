@@ -1,0 +1,141 @@
+---
+name: Syria - Operation Blackball
+theater: Syria
+authors: Fuzzle
+description: <p>A lightweight fictional showcase of Cyprus for the Syria terrain. A US Navy force must deploy from a FOB and carrier group to push from the north-east down through the island. <strong>Note that the ground units purchased on turn zero must sustain you until you've taken the first hostile FOB. The starting point does not have a factory to simulate a Marine Expeditionary Force deploying from the carrier group.</strong></p><p><strong>Backstory:</strong> The world is at war. With the help of her eastern allies Russia has taken the Suez Canal and deployed a large naval force to the Mediterranean trapping a US carrier group near the Turkish-Syrian border. Now they must break out by taking Cyprus back.</p>
+version: 9.0
+recommended_player_faction: US Navy 2005
+recommended_enemy_faction: Russia 2010
+miz: operation_blackball.miz
+performance: 1
+squadrons:
+  # BLUFOR CVN
+  Naval-1:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - VF-142
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - VFA-106
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - VMFA-122
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+    - primary: Refueling
+      aircraft:
+        - VS-35
+    - primary: Transport
+      aircraft:
+        - HSM-40
+  # BLUFOR LHA
+  Naval-2:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-269 (UH-1H)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-269 (AH-1W)
+  # BLUFOR Start FOB
+  FOB Andreas:
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (AH-1W)
+  # OPFOR CVN
+  Naval-3:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - Su-33 Flanker-D
+    - primary: TARCAP
+      secondary: air-to-ground
+      aircraft:
+        - Su-33 Flanker-D
+  # OPFOR LHA
+  Naval-4:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Ka-50 Hokum
+  # Larnaca
+  47:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+      - MiG-29S Fulcrum-C
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+      - Su-25 Frogfoot
+  # Akrotiri
+  44:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+      - Su-27 Flanker-B
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+      - Su-34 Fullback
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+      - Tu-95MS Bear-H
+  # Paphos
+  46:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+      - Su-30 Flanker-C
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+      - Su-34 Fullback
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+      - Tu-160 Blackjack
+    - primary: AEW&C
+      aircraft:
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+    - primary: Transport
+      aircraft:
+        - IL-78MD
+  # OPFOR First FOB
+  FOB Gecitkale:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR Second FOB
+  FOB Guzelyurt:
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - Mi-8MTV2 Hip
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F

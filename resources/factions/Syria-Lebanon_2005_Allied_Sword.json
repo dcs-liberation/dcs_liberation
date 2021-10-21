@@ -16,14 +16,11 @@
     "Mi-24V Hind-E",
     "Mi-8MTV2 Hip",
     "SA 342M Gazelle",
-    "SA 342L Gazelle"
+    "SA 342L Gazelle",
+    "IL-76MD"
   ],
-  "awacs": [
-    "A-50"
-  ],
-  "tankers": [
-    "IL-78M"
-  ],
+  "awacs": ["A-50"],
+  "tankers": ["IL-78M"],
   "frontline_units": [
     "BMP-1",
     "BMP-2",
@@ -35,14 +32,8 @@
     "T-90A",
     "ZSU-57-2 'Sparka'"
   ],
-  "artillery_units": [
-    "BM-21 Grad",
-    "2S1 Gvozdika"
-  ],
-  "logistics_units": [
-    "Truck Ural-375",
-    "LUV UAZ-469 Jeep"
-  ],
+  "artillery_units": ["BM-21 Grad", "2S1 Gvozdika"],
+  "logistics_units": ["Truck Ural-375", "LUV UAZ-469 Jeep"],
   "infantry_units": [
     "Paratrooper AKS",
     "Infantry AK-74 Rus",
@@ -65,33 +56,18 @@
     "ZU23UralGenerator",
     "ZSU57Generator"
   ],
-  "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator"
-  ],
-  "missiles": [
-    "ScudGenerator"
-  ],
+  "ewrs": ["BoxSpringGenerator", "TallRackGenerator"],
+  "missiles": ["ScudGenerator"],
   "missiles_group_count": 2,
-    "coastal_defenses": [
-    "SilkwormGenerator"
-  ],
+  "coastal_defenses": ["SilkwormGenerator"],
   "coastal_group_count": 4,
-  "aircraft_carrier": [
-  ],
-  "helicopter_carrier": [
-  ],
-  "helicopter_carrier_names": [
-  ],
-  "destroyers": [
-    "REZKY",
-    "MOLNIYA"
-  ],
-  "cruisers": [
-  ],
+  "aircraft_carrier": [],
+  "helicopter_carrier": [],
+  "helicopter_carrier_names": [],
+  "destroyers": ["REZKY", "MOLNIYA"],
+  "cruisers": [],
   "requirements": {},
-  "carrier_names": [
-  ],
+  "carrier_names": [],
   "coastal_group_count": 8,
   "navy_generators": [
     "GrishaGroupGenerator",

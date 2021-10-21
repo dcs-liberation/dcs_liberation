@@ -27,6 +27,7 @@ from dcs.planes import (
     Tu_22M3,
 )
 from dcs.point import MovingPoint, PointAction
+from dcs.ships import KUZNECOW
 from dcs.task import (
     AWACS,
     AWACSTaskAction,
@@ -264,6 +265,24 @@ class AircraftConflictGenerator:
         elif start_type == "Cold":
             return StartType.Cold
         return StartType.Warm
+
+    @staticmethod
+    def _start_type_at_group(
+        start_type: str,
+        unit_type: Type[FlyingType],
+        at: Union[ShipGroup, StaticGroup],
+    ) -> StartType:
+        group_units = at.units
+        # Setting Su-33s starting from the non-supercarrier Kuznetsov to take off from runway
+        # to work around a DCS AI issue preventing Su-33s from taking off when set to "Takeoff from ramp" (#1352)
+        if (
+            unit_type.id == Su_33.id
+            and group_units[0] is not None
+            and group_units[0].type == KUZNECOW.id
+        ):
+            return StartType.Runway
+        else:
+            return AircraftConflictGenerator._start_type(start_type)
 
     def skill_level_for(
         self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool
@@ -532,7 +551,7 @@ class AircraftConflictGenerator:
             aircraft_type=unit_type,
             pad_group=at,
             maintask=None,
-            start_type=self._start_type(start_type),
+            start_type=self._start_type_at_group(start_type, unit_type, at),
             group_size=count,
         )
 
@@ -659,8 +678,8 @@ class AircraftConflictGenerator:
                 try:
                     self._spawn_unused_for(squadron, country, faction)
                 except NoParkingSlotError:
-                    # If we run out of parking, stop spawning aircraft.
-                    return
+                    # If we run out of parking, stop spawning aircraft at this base.
+                    break
 
     def _spawn_unused_for(
         self, squadron: Squadron, country: Country, faction: Faction
