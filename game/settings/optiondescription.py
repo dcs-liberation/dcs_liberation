@@ -11,3 +11,4 @@ class OptionDescription:
     section: str
     text: str
     detail: Optional[str]
+    tooltip: Optional[str]

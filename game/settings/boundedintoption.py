@@ -18,12 +18,13 @@ def bounded_int_option(
     min: int,
     max: int,
     detail: Optional[str] = None,
+    tooltip: Optional[str] = None,
     **kwargs: Any,
 ) -> int:
     return field(
         metadata={
             SETTING_DESCRIPTION_KEY: BoundedIntOption(
-                page, section, text, detail, min, max
+                page, section, text, detail, tooltip, min, max
             )
         },
         default=default,

@@ -98,6 +98,7 @@ def load_icons():
     ICONS["Generator"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/generator.png"
     )
+    ICONS["Mission Generation"] = ICONS["Generator"]
     ICONS["Missile"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/missile.png"
     )

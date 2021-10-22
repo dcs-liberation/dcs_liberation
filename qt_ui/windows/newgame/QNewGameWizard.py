@@ -535,7 +535,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField("no_enemy_navy", no_enemy_navy)
         desired_player_mission_duration = TimeInputs(
-            "Desired mission duration", DEFAULT_MISSION_LENGTH
+            DEFAULT_MISSION_LENGTH, minimum=30, maximum=150
         )
         self.registerField(
             "desired_player_mission_duration", desired_player_mission_duration.spinner
@@ -552,7 +552,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
-        generatorLayout.addLayout(desired_player_mission_duration, 6, 0)
+        generatorLayout.addWidget(QtWidgets.QLabel("Desired mission duration"), 6, 0)
+        generatorLayout.addLayout(desired_player_mission_duration, 7, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")

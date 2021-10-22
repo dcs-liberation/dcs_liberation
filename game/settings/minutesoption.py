@@ -1,28 +1,31 @@
 from dataclasses import dataclass, field
+from datetime import timedelta
 from typing import Any, Optional
 
 from .optiondescription import OptionDescription, SETTING_DESCRIPTION_KEY
 
 
 @dataclass(frozen=True)
-class BooleanOption(OptionDescription):
-    invert: bool
+class MinutesOption(OptionDescription):
+    min: int
+    max: int
 
 
-def boolean_option(
+def minutes_option(
     text: str,
     page: str,
     section: str,
-    default: bool,
-    invert: bool = False,
+    default: timedelta,
+    min: int,
+    max: int,
     detail: Optional[str] = None,
     tooltip: Optional[str] = None,
     **kwargs: Any,
-) -> bool:
+) -> timedelta:
     return field(
         metadata={
-            SETTING_DESCRIPTION_KEY: BooleanOption(
-                page, section, text, detail, tooltip, invert
+            SETTING_DESCRIPTION_KEY: MinutesOption(
+                page, section, text, detail, tooltip, min, max
             )
         },
         default=default,

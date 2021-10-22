@@ -30,25 +30,22 @@ class FloatSpinSlider(QHBoxLayout):
         return self.spinner.real_value
 
 
-class TimeInputs(QtWidgets.QGridLayout):
-    def __init__(self, label: str, initial: timedelta) -> None:
+class TimeInputs(QtWidgets.QHBoxLayout):
+    def __init__(self, initial: timedelta, minimum: int, maximum: int) -> None:
         super().__init__()
-        self.addWidget(QtWidgets.QLabel(label), 0, 0)
 
-        minimum_minutes = 30
-        maximum_minutes = 150
         initial_minutes = int(initial.total_seconds() / 60)
 
         slider = QtWidgets.QSlider(Qt.Horizontal)
-        slider.setMinimum(minimum_minutes)
-        slider.setMaximum(maximum_minutes)
+        slider.setMinimum(minimum)
+        slider.setMaximum(maximum)
         slider.setValue(initial_minutes)
-        self.spinner = TimeSpinner(minimum_minutes, maximum_minutes, initial_minutes)
+        self.spinner = TimeSpinner(minimum, maximum, initial_minutes)
         slider.valueChanged.connect(lambda x: self.spinner.setValue(x))
         self.spinner.valueChanged.connect(lambda x: slider.setValue(x))
 
-        self.addWidget(slider, 1, 0)
-        self.addWidget(self.spinner, 1, 1)
+        self.addWidget(slider)
+        self.addWidget(self.spinner)
 
     @property
     def value(self) -> timedelta:

@@ -10,6 +10,7 @@ from .booleanoption import boolean_option
 from .boundedfloatoption import bounded_float_option
 from .boundedintoption import bounded_int_option
 from .choicesoption import choices_option
+from .minutesoption import minutes_option
 from .optiondescription import OptionDescription, SETTING_DESCRIPTION_KEY
 from .skilloption import skill_option
 
@@ -33,6 +34,15 @@ CAMPAIGN_MANAGEMENT_PAGE = "Campaign Management"
 GENERAL_SECTION = "General"
 PILOTS_AND_SQUADRONS_SECTION = "Pilots and Squadrons"
 HQ_AUTOMATION_SECTION = "HQ Automation"
+
+MISSION_GENERATOR_PAGE = "Mission Generator"
+
+GAMEPLAY_SECTION = "Gameplay"
+
+# TODO: Make sections a type and add headers.
+# This section had the header: "Disabling settings below may improve performance, but
+# will impact the overall quality of the experience."
+PERFORMANCE_SECTION = "Performance"
 
 
 @dataclass
@@ -275,27 +285,135 @@ class Settings:
 
     # Mission Generator
     # Gameplay
-    supercarrier: bool = False
-    generate_marks: bool = True
-    generate_dark_kneeboard: bool = False
-    never_delay_player_flights: bool = False
-    default_start_type: str = "Cold"
+    supercarrier: bool = boolean_option(
+        "Use supercarrier module",
+        MISSION_GENERATOR_PAGE,
+        GAMEPLAY_SECTION,
+        default=False,
+    )
+    generate_marks: bool = boolean_option(
+        "Put objective markers on the map",
+        MISSION_GENERATOR_PAGE,
+        GAMEPLAY_SECTION,
+        default=True,
+    )
+    generate_dark_kneeboard: bool = boolean_option(
+        "Generate dark kneeboard",
+        MISSION_GENERATOR_PAGE,
+        GAMEPLAY_SECTION,
+        default=False,
+        detail=(
+            "Dark kneeboard for night missions. This will likely make the kneeboard on "
+            "the pilot leg unreadable."
+        ),
+    )
+    never_delay_player_flights: bool = boolean_option(
+        "Player flights ignore TOT and spawn immediately",
+        MISSION_GENERATOR_PAGE,
+        GAMEPLAY_SECTION,
+        default=False,
+        detail=(
+            "Does not adjust package waypoint times. Should not be used if players "
+            "have runway or in-air starts."
+        ),
+        tooltip=(
+            "Always spawns player aircraft immediately, even if their start time is "
+            "more than 10 minutes after the start of the mission. <strong>This does "
+            "not alter the timing of your mission. Your TOT will not change. This "
+            "option only allows the player to wait on the ground.</strong>"
+        ),
+    )
+    default_start_type: str = choices_option(
+        "Default start type for AI aircraft",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        choices=["Cold", "Warm", "Runway", "In Flight"],
+        default="Cold",
+        detail=(
+            "Warning: Options other than Cold will significantly reduce the number of "
+            "targets available for OCA/Aircraft missions, and OCA/Aircraft flights "
+            "will not be included in automatically planned OCA packages."
+        ),
+    )
     # Mission specific
-    desired_player_mission_duration: timedelta = timedelta(minutes=60)
-    # Performance
-    perf_smoke_gen: bool = True
-    perf_smoke_spacing = 1600
-    perf_red_alert_state: bool = True
-    perf_artillery: bool = True
-    perf_moving_units: bool = True
-    perf_infantry: bool = True
-    perf_destroyed_units: bool = True
-    # Performance culling
-    perf_culling: bool = False
-    perf_culling_distance: int = 100
-    perf_do_not_cull_carrier = True
+    desired_player_mission_duration: timedelta = minutes_option(
+        "Desired mission duration",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=timedelta(minutes=60),
+        min=30,
+        max=150,
+    )
 
-    # Cheating
+    # Performance
+    perf_smoke_gen: bool = boolean_option(
+        "Smoke visual effect on the front line",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+    perf_smoke_spacing: int = bounded_int_option(
+        "Smoke generator spacing (higher means less smoke)",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=1600,
+        min=800,
+        max=24000,
+    )
+    perf_red_alert_state: bool = boolean_option(
+        "SAM starts in red alert mode",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+    perf_artillery: bool = boolean_option(
+        "Artillery strikes",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+    perf_moving_units: bool = boolean_option(
+        "Moving ground units",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+    perf_infantry: bool = boolean_option(
+        "Generate infantry squads alongside vehicles",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+    perf_destroyed_units: bool = boolean_option(
+        "Generate carcasses for units destroyed in previous turns",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+    # Performance culling
+    perf_culling: bool = boolean_option(
+        "Culling of distant units enabled",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=False,
+    )
+    perf_culling_distance: int = bounded_int_option(
+        "Culling distance (km)",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=100,
+        min=10,
+        max=10000,
+    )
+    perf_do_not_cull_carrier: bool = boolean_option(
+        "Do not cull carrier's surroundings",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+
+    # Cheating. Not using auto settings because the same page also has buttons which do
+    # not alter settings.
     show_red_ato: bool = False
     enable_frontline_cheats: bool = False
     enable_base_capture_cheat: bool = False

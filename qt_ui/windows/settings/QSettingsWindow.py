@@ -27,13 +27,13 @@ from game.settings import (
     BoundedFloatOption,
     BoundedIntOption,
     ChoicesOption,
+    MinutesOption,
     OptionDescription,
     Settings,
 )
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import FloatSpinSlider, TimeInputs
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from qt_ui.windows.finances.QFinancesMenu import QHorizontalSeparationLine
 from qt_ui.windows.settings.plugins import PluginOptionsPage, PluginsPage
 
 
@@ -81,131 +81,6 @@ class CheatSettingsBox(QGroupBox):
         return self.base_capture_cheat_checkbox.isChecked()
 
 
-class PilotSettingsBox(QGroupBox):
-    def __init__(self, game: Game) -> None:
-        super().__init__("Pilots and Squadrons")
-        self.game = game
-
-        layout = QGridLayout()
-        self.setLayout(layout)
-
-        self.ai_pilot_levelling = QCheckBox()
-        self.ai_pilot_levelling.setChecked(self.game.settings.ai_pilot_levelling)
-        self.ai_pilot_levelling.toggled.connect(self.set_ai_pilot_leveling)
-
-        ai_pilot_levelling_info = (
-            "Set whether or not AI pilots will level up after completing a number of"
-            " sorties. Since pilot level affects the AI skill, you may wish to disable"
-            " this, lest you face an Ace!"
-        )
-
-        self.ai_pilot_levelling.setToolTip(ai_pilot_levelling_info)
-        ai_pilot_levelling_label = QLabel("Allow AI pilot levelling")
-        ai_pilot_levelling_label.setToolTip(ai_pilot_levelling_info)
-
-        layout.addWidget(ai_pilot_levelling_label, 0, 0)
-        layout.addWidget(self.ai_pilot_levelling, 0, 1, Qt.AlignRight)
-
-        enable_squadron_pilot_limits_info = (
-            "If set, squadrons will be limited to a maximum number of pilots and dead "
-            "pilots will replenish at a fixed rate, each defined with the settings"
-            "below. Auto-purchase may buy aircraft for which there are no pilots"
-            "available, so this feature is still a work-in-progress."
-        )
-
-        enable_squadron_pilot_limits_label = QLabel(
-            "Enable per-squadron pilot limits (WIP)"
-        )
-        enable_squadron_pilot_limits_label.setToolTip(enable_squadron_pilot_limits_info)
-        enable_squadron_pilot_limits = QCheckBox()
-        enable_squadron_pilot_limits.setToolTip(enable_squadron_pilot_limits_info)
-        enable_squadron_pilot_limits.setChecked(
-            self.game.settings.enable_squadron_pilot_limits
-        )
-        enable_squadron_pilot_limits.toggled.connect(
-            self.set_enable_squadron_pilot_limits
-        )
-
-        layout.addWidget(enable_squadron_pilot_limits_label, 1, 0)
-        layout.addWidget(enable_squadron_pilot_limits, 1, 1, Qt.AlignRight)
-
-        self.pilot_limit = QSpinBox()
-        self.pilot_limit.setMinimum(12)
-        self.pilot_limit.setMaximum(72)
-        self.pilot_limit.setValue(self.game.settings.squadron_pilot_limit)
-        self.pilot_limit.setEnabled(self.game.settings.enable_squadron_pilot_limits)
-        self.pilot_limit.valueChanged.connect(self.set_squadron_pilot_limit)
-
-        pilot_limit_info = (
-            "Sets the maximum number of pilots a squadron may have active. "
-            "Changing this value will not have an immediate effect, but will alter "
-            "replenishment for future turns."
-        )
-
-        self.pilot_limit.setToolTip(pilot_limit_info)
-        pilot_limit_label = QLabel("Maximum number of pilots per squadron")
-        pilot_limit_label.setToolTip(pilot_limit_info)
-
-        layout.addWidget(pilot_limit_label, 2, 0)
-        layout.addWidget(self.pilot_limit, 2, 1, Qt.AlignRight)
-
-        self.squadron_replenishment_rate = QSpinBox()
-        self.squadron_replenishment_rate.setMinimum(1)
-        self.squadron_replenishment_rate.setMaximum(20)
-        self.squadron_replenishment_rate.setValue(
-            self.game.settings.squadron_replenishment_rate
-        )
-        self.squadron_replenishment_rate.setEnabled(
-            self.game.settings.enable_squadron_pilot_limits
-        )
-        self.squadron_replenishment_rate.valueChanged.connect(
-            self.set_squadron_replenishment_rate
-        )
-
-        squadron_replenishment_rate_info = (
-            "Sets the maximum number of pilots that will be recruited to each squadron "
-            "at the end of each turn. Squadrons will not recruit new pilots beyond the "
-            "pilot limit, but each squadron with room for more pilots will recruit "
-            "this many pilots each turn up to the limit."
-        )
-
-        self.squadron_replenishment_rate.setToolTip(squadron_replenishment_rate_info)
-        squadron_replenishment_rate_label = QLabel("Squadron pilot replenishment rate")
-        squadron_replenishment_rate_label.setToolTip(squadron_replenishment_rate_info)
-
-        layout.addWidget(squadron_replenishment_rate_label, 3, 0)
-        layout.addWidget(self.squadron_replenishment_rate, 3, 1, Qt.AlignRight)
-
-    def set_enable_squadron_pilot_limits(self, checked: bool) -> None:
-        self.game.settings.enable_squadron_pilot_limits = checked
-        self.pilot_limit.setEnabled(checked)
-        self.squadron_replenishment_rate.setEnabled(checked)
-
-    def set_squadron_pilot_limit(self, value: int) -> None:
-        self.game.settings.squadron_pilot_limit = value
-
-    def set_squadron_replenishment_rate(self, value: int) -> None:
-        self.game.settings.squadron_replenishment_rate = value
-
-    def set_ai_pilot_leveling(self, checked: bool) -> None:
-        self.game.settings.ai_pilot_levelling = checked
-
-
-START_TYPE_TOOLTIP = "Selects the start type used for AI aircraft."
-
-
-class StartTypeComboBox(QComboBox):
-    def __init__(self, settings: Settings) -> None:
-        super().__init__()
-        self.settings = settings
-        self.addItems(["Cold", "Warm", "Runway", "In Flight"])
-        self.currentTextChanged.connect(self.on_change)
-        self.setToolTip(START_TYPE_TOOLTIP)
-
-    def on_change(self, value: str) -> None:
-        self.settings.default_start_type = value
-
-
 class AutoSettingsLayout(QGridLayout):
     def __init__(self, page: str, section: str, settings: Settings) -> None:
         super().__init__()
@@ -221,6 +96,8 @@ class AutoSettingsLayout(QGridLayout):
                 self.add_float_spin_slider_for(row, name, description)
             elif isinstance(description, BoundedIntOption):
                 self.add_spinner_for(row, name, description)
+            elif isinstance(description, MinutesOption):
+                self.add_duration_controls_for(row, name, description)
             else:
                 raise TypeError(f"Unhandled option type: {description}")
 
@@ -230,6 +107,8 @@ class AutoSettingsLayout(QGridLayout):
             wrapped = "<br />".join(textwrap.wrap(description.detail, width=55))
             text += f"<br /><strong>{wrapped}</strong>"
         label = QLabel(text)
+        if description.tooltip is not None:
+            label.setToolTip(description.tooltip)
         self.addWidget(label, row, 0)
 
     def add_checkbox_for(self, row: int, name: str, description: BooleanOption) -> None:
@@ -289,6 +168,19 @@ class AutoSettingsLayout(QGridLayout):
 
         spinner.valueChanged.connect(on_changed)
         self.addWidget(spinner, row, 1, Qt.AlignRight)
+
+    def add_duration_controls_for(
+        self, row: int, name: str, description: MinutesOption
+    ) -> None:
+        inputs = TimeInputs(
+            self.settings.__dict__[name], description.min, description.max
+        )
+
+        def on_changed() -> None:
+            self.settings.__dict__[name] = inputs.value
+
+        inputs.spinner.valueChanged.connect(on_changed)
+        self.addLayout(inputs, row, 1, Qt.AlignRight)
 
 
 class AutoSettingsGroup(QGroupBox):
@@ -354,14 +246,6 @@ class QSettingsWindow(QDialog):
             self.categoryModel.appendRow(page_item)
             self.right_layout.addWidget(page)
 
-        self.initGeneratorLayout()
-        generator = QStandardItem("Mission Generator")
-        generator.setIcon(CONST.ICONS["Generator"])
-        generator.setEditable(False)
-        generator.setSelectable(True)
-        self.categoryModel.appendRow(generator)
-        self.right_layout.addWidget(self.generatorPage)
-
         self.initCheatLayout()
         cheat = QStandardItem("Cheat Menu")
         cheat.setIcon(CONST.ICONS["Cheat"])
@@ -401,202 +285,7 @@ class QSettingsWindow(QDialog):
         self.setLayout(self.layout)
 
     def init(self):
-        pass
-
-    def initGeneratorLayout(self):
-        self.generatorPage = QWidget()
-        self.generatorLayout = QVBoxLayout()
-        self.generatorLayout.setAlignment(Qt.AlignTop)
-        self.generatorPage.setLayout(self.generatorLayout)
-
-        self.gameplay = QGroupBox("Gameplay")
-        self.gameplayLayout = QGridLayout()
-        self.gameplayLayout.setAlignment(Qt.AlignTop)
-        self.gameplay.setLayout(self.gameplayLayout)
-
-        self.supercarrier = QCheckBox()
-        self.supercarrier.setChecked(self.game.settings.supercarrier)
-        self.supercarrier.toggled.connect(self.applySettings)
-
-        self.generate_marks = QCheckBox()
-        self.generate_marks.setChecked(self.game.settings.generate_marks)
-        self.generate_marks.toggled.connect(self.applySettings)
-
-        self.generate_dark_kneeboard = QCheckBox()
-        self.generate_dark_kneeboard.setChecked(
-            self.game.settings.generate_dark_kneeboard
-        )
-        self.generate_dark_kneeboard.toggled.connect(self.applySettings)
-
-        self.never_delay_players = QCheckBox()
-        self.never_delay_players.setChecked(
-            self.game.settings.never_delay_player_flights
-        )
-        self.never_delay_players.toggled.connect(self.applySettings)
-        self.never_delay_players.setToolTip(
-            "When checked, player flights with a delayed start time will be "
-            "spawned immediately. AI wingmen may begin startup immediately."
-        )
-
-        self.desired_player_mission_duration = TimeInputs(
-            "Desired mission duration",
-            self.game.settings.desired_player_mission_duration,
-        )
-        self.desired_player_mission_duration.spinner.valueChanged.connect(
-            self.applySettings
-        )
-
-        self.gameplayLayout.addWidget(QLabel("Use Supercarrier Module"), 0, 0)
-        self.gameplayLayout.addWidget(self.supercarrier, 0, 1, Qt.AlignRight)
-        self.gameplayLayout.addWidget(QLabel("Put Objective Markers on Map"), 1, 0)
-        self.gameplayLayout.addWidget(self.generate_marks, 1, 1, Qt.AlignRight)
-
-        dark_kneeboard_label = QLabel(
-            "Generate Dark Kneeboard <br />"
-            "<strong>Dark kneeboard for night missions.<br />"
-            "This will likely make the kneeboard on the pilot leg unreadable.</strong>"
-        )
-        self.gameplayLayout.addWidget(dark_kneeboard_label, 2, 0)
-        self.gameplayLayout.addWidget(self.generate_dark_kneeboard, 2, 1, Qt.AlignRight)
-        self.gameplayLayout.addLayout(
-            self.desired_player_mission_duration, 5, 0, Qt.AlignRight
-        )
-
-        spawn_players_immediately_tooltip = (
-            "Always spawns player aircraft immediately, even if their start time is "
-            "more than 10 minutes after the start of the mission. <strong>This does "
-            "not alter the timing of your mission. Your TOT will not change. This "
-            "option only allows the player to wait on the ground.</strong>"
-        )
-        spawn_immediately_label = QLabel(
-            "Player flights ignore TOT and spawn immediately<br />"
-            "<strong>Does not adjust package waypoint times.<br />"
-            "Should not be used if players have runway or in-air starts.</strong>"
-        )
-        spawn_immediately_label.setToolTip(spawn_players_immediately_tooltip)
-        self.gameplayLayout.addWidget(spawn_immediately_label, 3, 0)
-        self.gameplayLayout.addWidget(self.never_delay_players, 3, 1, Qt.AlignRight)
-
-        start_type_label = QLabel(
-            "Default start type for AI aircraft<br /><strong>Warning: "
-            "Options other than Cold will significantly reduce the<br />"
-            "number of targets available for OCA/Aircraft missions,<br />"
-            "and OCA/Aircraft flights will not be included in<br />"
-            "automatically planned OCA packages.</strong>"
-        )
-        start_type_label.setToolTip(START_TYPE_TOOLTIP)
-        start_type = StartTypeComboBox(self.game.settings)
-        start_type.setCurrentText(self.game.settings.default_start_type)
-
-        self.gameplayLayout.addWidget(start_type_label, 4, 0)
-        self.gameplayLayout.addWidget(start_type, 4, 1)
-
-        self.performance = QGroupBox("Performance")
-        self.performanceLayout = QGridLayout()
-        self.performanceLayout.setAlignment(Qt.AlignTop)
-        self.performance.setLayout(self.performanceLayout)
-
-        self.smoke = QCheckBox()
-        self.smoke.setChecked(self.game.settings.perf_smoke_gen)
-        self.smoke.toggled.connect(self.applySettings)
-
-        self.smoke_spacing = QSpinBox()
-        self.smoke_spacing.setMinimum(800)
-        self.smoke_spacing.setMaximum(24000)
-        self.smoke_spacing.setValue(self.game.settings.perf_smoke_spacing)
-        self.smoke_spacing.valueChanged.connect(self.applySettings)
-
-        self.red_alert = QCheckBox()
-        self.red_alert.setChecked(self.game.settings.perf_red_alert_state)
-        self.red_alert.toggled.connect(self.applySettings)
-
-        self.arti = QCheckBox()
-        self.arti.setChecked(self.game.settings.perf_artillery)
-        self.arti.toggled.connect(self.applySettings)
-
-        self.moving_units = QCheckBox()
-        self.moving_units.setChecked(self.game.settings.perf_moving_units)
-        self.moving_units.toggled.connect(self.applySettings)
-
-        self.infantry = QCheckBox()
-        self.infantry.setChecked(self.game.settings.perf_infantry)
-        self.infantry.toggled.connect(self.applySettings)
-
-        self.destroyed_units = QCheckBox()
-        self.destroyed_units.setChecked(self.game.settings.perf_destroyed_units)
-        self.destroyed_units.toggled.connect(self.applySettings)
-
-        self.culling = QCheckBox()
-        self.culling.setChecked(self.game.settings.perf_culling)
-        self.culling.toggled.connect(self.applySettings)
-
-        self.culling_distance = QSpinBox()
-        self.culling_distance.setMinimum(10)
-        self.culling_distance.setMaximum(10000)
-        self.culling_distance.setValue(self.game.settings.perf_culling_distance)
-        self.culling_distance.valueChanged.connect(self.applySettings)
-
-        self.culling_do_not_cull_carrier = QCheckBox()
-        self.culling_do_not_cull_carrier.setChecked(
-            self.game.settings.perf_do_not_cull_carrier
-        )
-        self.culling_do_not_cull_carrier.toggled.connect(self.applySettings)
-
-        self.performanceLayout.addWidget(
-            QLabel("Smoke visual effect on frontline"), 0, 0
-        )
-        self.performanceLayout.addWidget(self.smoke, 0, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(
-            QLabel("Smoke generator spacing (higher means less smoke)"),
-            1,
-            0,
-            alignment=Qt.AlignRight,
-        )
-        self.performanceLayout.addWidget(
-            self.smoke_spacing, 1, 1, alignment=Qt.AlignRight
-        )
-        self.performanceLayout.addWidget(QLabel("SAM starts in RED alert mode"), 2, 0)
-        self.performanceLayout.addWidget(self.red_alert, 2, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Artillery strikes"), 3, 0)
-        self.performanceLayout.addWidget(self.arti, 3, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Moving ground units"), 4, 0)
-        self.performanceLayout.addWidget(
-            self.moving_units, 4, 1, alignment=Qt.AlignRight
-        )
-        self.performanceLayout.addWidget(
-            QLabel("Generate infantry squads along vehicles"), 5, 0
-        )
-        self.performanceLayout.addWidget(self.infantry, 5, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(
-            QLabel("Include destroyed units carcass"), 6, 0
-        )
-        self.performanceLayout.addWidget(
-            self.destroyed_units, 6, 1, alignment=Qt.AlignRight
-        )
-
-        self.performanceLayout.addWidget(QHorizontalSeparationLine(), 7, 0, 1, 2)
-        self.performanceLayout.addWidget(
-            QLabel("Culling of distant units enabled"), 8, 0
-        )
-        self.performanceLayout.addWidget(self.culling, 8, 1, alignment=Qt.AlignRight)
-        self.performanceLayout.addWidget(QLabel("Culling distance (km)"), 9, 0)
-        self.performanceLayout.addWidget(
-            self.culling_distance, 9, 1, alignment=Qt.AlignRight
-        )
-        self.performanceLayout.addWidget(
-            QLabel("Do not cull carrier's surroundings"), 10, 0
-        )
-        self.performanceLayout.addWidget(
-            self.culling_do_not_cull_carrier, 10, 1, alignment=Qt.AlignRight
-        )
-
-        self.generatorLayout.addWidget(self.gameplay)
-        self.generatorLayout.addWidget(
-            QLabel(
-                "Disabling settings below may improve performance, but will impact the overall quality of the experience."
-            )
-        )
-        self.generatorLayout.addWidget(self.performance)
+        raise RuntimeError
 
     def initCheatLayout(self):
 
@@ -633,58 +322,6 @@ class QSettingsWindow(QDialog):
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def applySettings(self):
-        self.game.settings.player_skill = CONST.SKILL_OPTIONS[
-            self.playerCoalitionSkill.currentIndex()
-        ]
-        self.game.settings.enemy_skill = CONST.SKILL_OPTIONS[
-            self.enemyCoalitionSkill.currentIndex()
-        ]
-        self.game.settings.enemy_vehicle_skill = CONST.SKILL_OPTIONS[
-            self.enemyAASkill.currentIndex()
-        ]
-        self.game.settings.player_income_multiplier = self.player_income.value
-        self.game.settings.enemy_income_multiplier = self.enemy_income.value
-        self.game.settings.manpads = self.manpads.isChecked()
-        self.game.settings.labels = CONST.LABELS_OPTIONS[
-            self.difficultyLabel.currentIndex()
-        ]
-        self.game.settings.night_disabled = self.noNightMission.isChecked()
-        self.game.settings.map_coalition_visibility = (
-            self.mapVisibiitySelection.currentData()
-        )
-        self.game.settings.external_views_allowed = self.ext_views.isChecked()
-        self.game.settings.battle_damage_assessment = (
-            self.battleDamageAssessment.currentData()
-        )
-        self.game.settings.generate_marks = self.generate_marks.isChecked()
-        self.game.settings.never_delay_player_flights = (
-            self.never_delay_players.isChecked()
-        )
-
-        self.game.settings.supercarrier = self.supercarrier.isChecked()
-
-        self.game.settings.generate_dark_kneeboard = (
-            self.generate_dark_kneeboard.isChecked()
-        )
-
-        self.game.settings.desired_player_mission_duration = (
-            self.desired_player_mission_duration.value
-        )
-
-        self.game.settings.perf_red_alert_state = self.red_alert.isChecked()
-        self.game.settings.perf_smoke_gen = self.smoke.isChecked()
-        self.game.settings.perf_smoke_spacing = self.smoke_spacing.value()
-        self.game.settings.perf_artillery = self.arti.isChecked()
-        self.game.settings.perf_moving_units = self.moving_units.isChecked()
-        self.game.settings.perf_infantry = self.infantry.isChecked()
-        self.game.settings.perf_destroyed_units = self.destroyed_units.isChecked()
-
-        self.game.settings.perf_culling = self.culling.isChecked()
-        self.game.settings.perf_culling_distance = int(self.culling_distance.value())
-        self.game.settings.perf_do_not_cull_carrier = (
-            self.culling_do_not_cull_carrier.isChecked()
-        )
-
         self.game.settings.show_red_ato = self.cheat_options.show_red_ato
         self.game.settings.enable_frontline_cheats = (
             self.cheat_options.show_frontline_cheat

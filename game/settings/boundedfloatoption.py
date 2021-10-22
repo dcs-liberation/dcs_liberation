@@ -20,12 +20,13 @@ def bounded_float_option(
     max: float,
     divisor: int,
     detail: Optional[str] = None,
+    tooltip: Optional[str] = None,
     **kwargs: Any,
 ) -> float:
     return field(
         metadata={
             SETTING_DESCRIPTION_KEY: BoundedFloatOption(
-                page, section, text, detail, min, max, divisor
+                page, section, text, detail, tooltip, min, max, divisor
             )
         },
         default=default,

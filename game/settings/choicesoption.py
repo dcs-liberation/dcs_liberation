@@ -24,6 +24,7 @@ def choices_option(
     default: ValueT,
     choices: Union[Iterable[str], Mapping[str, ValueT]],
     detail: Optional[str] = None,
+    tooltip: Optional[str] = None,
     **kwargs: Any,
 ) -> ValueT:
     if not isinstance(choices, Mapping):
@@ -35,6 +36,7 @@ def choices_option(
                 section,
                 text,
                 detail,
+                tooltip,
                 dict(choices),
             )
         },
