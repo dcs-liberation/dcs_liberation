@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from dcs.mission import Mission
@@ -6,9 +7,12 @@ from game.weather import Clouds, Fog, Conditions, WindConditions, AtmosphericCon
 
 
 class EnvironmentGenerator:
-    def __init__(self, mission: Mission, conditions: Conditions) -> None:
+    def __init__(
+        self, mission: Mission, conditions: Conditions, time: datetime
+    ) -> None:
         self.mission = mission
         self.conditions = conditions
+        self.time = time
 
     def set_atmospheric(self, atmospheric: AtmosphericConditions) -> None:
         self.mission.weather.qnh = atmospheric.qnh.mm_hg
@@ -35,7 +39,7 @@ class EnvironmentGenerator:
         self.mission.weather.wind_at_8000 = wind.at_8000m
 
     def generate(self) -> None:
-        self.mission.start_time = self.conditions.start_time
+        self.mission.start_time = self.time
         self.set_atmospheric(self.conditions.weather.atmospheric)
         self.set_clouds(self.conditions.weather.clouds)
         self.set_fog(self.conditions.weather.fog)

@@ -9,8 +9,7 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class JoinPointBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         if self.flight.flight_type == FlightType.ESCORT:
             self.configure_escort_tasks(
                 waypoint,
@@ -23,7 +22,6 @@ class JoinPointBuilder(PydcsWaypointBuilder):
             self.configure_escort_tasks(
                 waypoint, [Targets.All.GroundUnits.AirDefence.AAA.SAMRelated]
             )
-        return waypoint
 
     @staticmethod
     def configure_escort_tasks(

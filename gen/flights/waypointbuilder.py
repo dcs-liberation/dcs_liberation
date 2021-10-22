@@ -18,10 +18,6 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import VehicleGroup, ShipGroup
 
-if TYPE_CHECKING:
-    from game.coalition import Coalition
-    from game.transfers import MultiGroupTransport
-
 from game.theater import (
     ControlPoint,
     MissionTarget,
@@ -31,7 +27,11 @@ from game.theater import (
 from game.utils import Distance, meters, nautical_miles
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.flightwaypoint import FlightWaypoint
-from game.ato.flight import Flight
+
+if TYPE_CHECKING:
+    from game.ato.flight import Flight
+    from game.coalition import Coalition
+    from game.transfers import MultiGroupTransport
 
 
 @dataclass(frozen=True)

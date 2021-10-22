@@ -9,9 +9,7 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class BaiIngressBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         # TODO: Add common "UnitGroupTarget" base type.
         group_names = []
         target = self.package.target
@@ -25,7 +23,7 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
                 "Unexpected target type for BAI mission: %s",
                 target.__class__.__name__,
             )
-            return waypoint
+            return
 
         for group_name in group_names:
             group = self.mission.find_group(group_name)
@@ -39,4 +37,3 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
             task.params["altitudeEnabled"] = False
             task.params["groupAttack"] = True
             waypoint.tasks.append(task)
-        return waypoint

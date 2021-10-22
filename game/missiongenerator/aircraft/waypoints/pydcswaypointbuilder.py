@@ -28,6 +28,7 @@ class PydcsWaypointBuilder:
         group: FlyingGroup[Any],
         flight: Flight,
         mission: Mission,
+        elapsed_mission_time: timedelta,
         air_support: AirSupport,
     ) -> None:
         self.waypoint = waypoint
@@ -35,6 +36,7 @@ class PydcsWaypointBuilder:
         self.package = flight.package
         self.flight = flight
         self.mission = mission
+        self.elapsed_mission_time = elapsed_mission_time
         self.air_support = air_support
 
     def build(self) -> MovingPoint:
@@ -54,12 +56,16 @@ class PydcsWaypointBuilder:
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
         if tot is not None:
             self.set_waypoint_tot(waypoint, tot)
+        self.add_tasks(waypoint)
         return waypoint
+
+    def add_tasks(self, waypoint: MovingPoint) -> None:
+        pass
 
     def set_waypoint_tot(self, waypoint: MovingPoint, tot: timedelta) -> None:
         self.waypoint.tot = tot
         if not self._viggen_client_tot():
-            waypoint.ETA = int(tot.total_seconds())
+            waypoint.ETA = int((tot - self.elapsed_mission_time).total_seconds())
             waypoint.ETA_locked = True
             waypoint.speed_locked = False
 

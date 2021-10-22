@@ -9,8 +9,7 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class CasIngressBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         if isinstance(self.flight.flight_plan, CasFlightPlan):
             waypoint.add_task(
                 EngageTargetsInZone(
@@ -35,4 +34,3 @@ class CasIngressBuilder(PydcsWaypointBuilder):
                     ],
                 )
             )
-        return waypoint

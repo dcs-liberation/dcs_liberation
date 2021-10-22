@@ -286,6 +286,34 @@ class Settings:
 
     # Mission Generator
     # Gameplay
+    fast_forward_to_first_contact: bool = boolean_option(
+        "Fast forward mission to first contact (WIP)",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=False,
+        detail=(
+            "If enabled, the mission will be generated at the point of first contact."
+        ),
+    )
+    player_mission_interrupts_sim_at: Optional[StartType] = choices_option(
+        "Player missions interrupt fast forward",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=None,
+        choices={
+            "Never": None,
+            "At startup time": StartType.COLD,
+            "At taxi time": StartType.WARM,
+            "At takeoff time": StartType.RUNWAY,
+        },
+        detail=(
+            "Determines what player mission states will interrupt fast-forwarding to "
+            "first contact, if enabled. If never is selected player missions will not "
+            "impact simulation and player missions may be generated mid-flight. The "
+            "other options will cause the mission to be generated as soon as a player "
+            "mission reaches the set state or at first contact, whichever comes first."
+        ),
+    )
     supercarrier: bool = boolean_option(
         "Use supercarrier module",
         MISSION_GENERATOR_PAGE,

@@ -43,11 +43,11 @@ from .closestairfields import ObjectiveDistanceCache
 from game.ato.flighttype import FlightType
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.flightwaypoint import FlightWaypoint
-from game.ato.flight import Flight
 from .traveltime import GroundSpeed, TravelTime
 from .waypointbuilder import StrikeTarget, WaypointBuilder
 
 if TYPE_CHECKING:
+    from game.ato.flight import Flight
     from game.ato.package import Package
     from game.coalition import Coalition
     from game.threatzones import ThreatZones

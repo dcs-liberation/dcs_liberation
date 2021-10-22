@@ -8,8 +8,7 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class SeadIngressBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         self.register_special_waypoints(self.waypoint.targets)
 
         target = self.package.target
@@ -18,7 +17,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 "Unexpected target type for SEAD mission: %s",
                 target.__class__.__name__,
             )
-            return waypoint
+            return
 
         for group in target.groups:
             miz_group = self.mission.find_group(group.name)
@@ -33,4 +32,3 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
             task.params["altitudeEnabled"] = False
             task.params["groupAttack"] = True
             waypoint.tasks.append(task)
-        return waypoint

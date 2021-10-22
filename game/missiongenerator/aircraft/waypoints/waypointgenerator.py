@@ -1,6 +1,6 @@
 import itertools
 import random
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 from dcs import Mission
@@ -12,15 +12,13 @@ from dcs.triggers import Event, TriggerOnce, TriggerRule
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightWaypoint
+from game.ato.flightstate import InFlight, WaitingForStart
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
 from game.missiongenerator.airsupport import AirSupport
 from game.settings import Settings
 from game.theater import ControlPointType
 from game.utils import meters, pairwise
-from gen.flights.traveltime import TotEstimator
-
-from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
 from .baiingress import BaiIngressBuilder
 from .cargostop import CargoStopBuilder
 from .casingress import CasIngressBuilder
@@ -31,6 +29,7 @@ from .joinpoint import JoinPointBuilder
 from .landingpoint import LandingPointBuilder
 from .ocaaircraftingress import OcaAircraftIngressBuilder
 from .ocarunwayingress import OcaRunwayIngressBuilder
+from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
 from .racetrack import RaceTrackBuilder
 from .racetrackend import RaceTrackEndBuilder
 from .seadingress import SeadIngressBuilder
@@ -44,12 +43,16 @@ class WaypointGenerator:
         flight: Flight,
         group: FlyingGroup[Any],
         mission: Mission,
+        turn_start_time: datetime,
+        time: datetime,
         settings: Settings,
         air_support: AirSupport,
     ) -> None:
         self.flight = flight
         self.group = group
         self.mission = mission
+        self.elapsed_mission_time = time - turn_start_time
+        self.time = time
         self.settings = settings
         self.air_support = air_support
 
@@ -57,17 +60,22 @@ class WaypointGenerator:
         for waypoint in self.flight.points:
             waypoint.tot = None
 
-        takeoff_point = FlightWaypoint.from_pydcs(
-            self.group.points[0], self.flight.from_cp
-        )
-        mission_start_time = self.set_takeoff_time(takeoff_point)
+        waypoints = self.flight.flight_plan.waypoints
+        mission_start_time = self.set_takeoff_time(waypoints[0])
 
         filtered_points: list[FlightWaypoint] = []
-
         for point in self.flight.points:
             if point.only_for_player and not self.flight.client_count:
                 continue
-            filtered_points.append(point)
+            if isinstance(self.flight.state, InFlight):
+                if point == self.flight.state.current_waypoint:
+                    # We don't need to build this waypoint because pydcs did that for
+                    # us, but we do need to configure the tasks for it so that mid-
+                    # mission aircraft starting at a waypoint with tasks behave
+                    # correctly.
+                    self.builder_for_waypoint(point).add_tasks(self.group.points[0])
+                if point not in self.flight.state.passed_waypoints:
+                    filtered_points.append(point)
         # Only add 1 target waypoint for Viggens.  This only affects player flights, the
         # Viggen can't have more than 9 waypoints which leaves us with two target point
         # under the current flight plans.
@@ -100,7 +108,6 @@ class WaypointGenerator:
         # estimation ability the minimum fuel amounts will be calculated during flight
         # plan construction, but for now it's only used by the kneeboard so is generated
         # late.
-        waypoints = [takeoff_point] + self.flight.points
         self._estimate_min_fuel_for(waypoints)
         return mission_start_time, waypoints
 
@@ -124,7 +131,12 @@ class WaypointGenerator:
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(
-            waypoint, self.group, self.flight, self.mission, self.air_support
+            waypoint,
+            self.group,
+            self.flight,
+            self.mission,
+            self.elapsed_mission_time,
+            self.air_support,
         )
 
     def _estimate_min_fuel_for(self, waypoints: list[FlightWaypoint]) -> None:
@@ -171,23 +183,25 @@ class WaypointGenerator:
             a.min_fuel = min_fuel
 
     def set_takeoff_time(self, waypoint: FlightWaypoint) -> timedelta:
-        estimator = TotEstimator(self.flight.package)
-        start_time = estimator.mission_start_time(self.flight)
+        if isinstance(self.flight.state, WaitingForStart):
+            delay = self.flight.state.time_remaining(self.time)
+        else:
+            delay = timedelta()
 
-        if self.should_delay_flight(start_time):
+        if self.should_delay_flight():
             if self.should_activate_late():
                 # Late activation causes the aircraft to not be spawned
                 # until triggered.
-                self.set_activation_time(start_time)
+                self.set_activation_time(delay)
             elif self.flight.start_type is StartType.COLD:
                 # Setting the start time causes the AI to wait until the
                 # specified time to begin their startup sequence.
-                self.set_startup_time(start_time)
+                self.set_startup_time(delay)
 
         # And setting *our* waypoint TOT causes the takeoff time to show up in
         # the player's kneeboard.
         waypoint.tot = self.flight.flight_plan.takeoff_time()
-        return start_time
+        return delay
 
     def set_activation_time(self, delay: timedelta) -> None:
         # Note: Late activation causes the waypoint TOTs to look *weird* in the
@@ -232,17 +246,17 @@ class WaypointGenerator:
         activation_trigger.add_action(AITaskPush(self.group.id, len(self.group.tasks)))
         self.mission.triggerrules.triggers.append(activation_trigger)
 
-    def should_delay_flight(self, start_time: timedelta) -> bool:
-        if start_time.total_seconds() <= 0:
+    def should_delay_flight(self) -> bool:
+        if not isinstance(self.flight.state, WaitingForStart):
             return False
 
         if not self.flight.client_count:
             return True
 
-        if start_time < timedelta(minutes=10):
-            # Don't bother delaying client flights with short start delays. Much
-            # more than ten minutes starts to eat into fuel a bit more
-            # (espeicially for something fuel limited like a Harrier).
+        if self.flight.state.time_remaining(self.time) < timedelta(minutes=10):
+            # Don't bother delaying client flights with short start delays. Much more
+            # than ten minutes starts to eat into fuel a bit more (especially for
+            # something fuel limited like a Harrier).
             return False
 
         return not self.settings.never_delay_player_flights
