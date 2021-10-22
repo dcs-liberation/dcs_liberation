@@ -109,10 +109,10 @@ class AutoSettingsLayout(QGridLayout):
                 raise TypeError(f"Unhandled option type: {description}")
 
     def add_label(self, row: int, description: OptionDescription) -> None:
-        text = description.text
+        text = f"<strong>{description.text}</strong>"
         if description.detail is not None:
             wrapped = "<br />".join(textwrap.wrap(description.detail, width=55))
-            text += f"<br /><strong>{wrapped}</strong>"
+            text += f"<br />{wrapped}"
         label = QLabel(text)
         if description.tooltip is not None:
             label.setToolTip(description.tooltip)
