@@ -8,6 +8,7 @@ import threading
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import (
     Any,
     Callable,
@@ -35,6 +36,7 @@ from game.ato.flight import Flight
 
 if TYPE_CHECKING:
     from game import Game
+    from game.sim import MissionSimulation
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
@@ -361,13 +363,14 @@ class PollDebriefingFileThread(threading.Thread):
     regularly for the stopped() condition."""
 
     def __init__(
-        self, callback: Callable[[Debriefing], None], game: Game, unit_map: UnitMap
+        self,
+        callback: Callable[[Debriefing], None],
+        mission_simulation: MissionSimulation,
     ) -> None:
         super().__init__()
         self._stop_event = threading.Event()
         self.callback = callback
-        self.game = game
-        self.unit_map = unit_map
+        self.mission_sim = mission_simulation
 
     def stop(self) -> None:
         self._stop_event.set()
@@ -386,10 +389,9 @@ class PollDebriefingFileThread(threading.Thread):
                     os.path.isfile("state.json")
                     and os.path.getmtime("state.json") > last_modified
                 ):
-                    with open("state.json", "r", encoding="utf-8") as json_file:
-                        json_data = json.load(json_file)
-                        debriefing = Debriefing(json_data, self.game, self.unit_map)
-                        self.callback(debriefing)
+                    self.callback(
+                        self.mission_sim.debrief_current_state(Path("state.json"))
+                    )
                     break
             except json.JSONDecodeError:
                 logging.exception(
@@ -400,8 +402,8 @@ class PollDebriefingFileThread(threading.Thread):
 
 
 def wait_for_debriefing(
-    callback: Callable[[Debriefing], None], game: Game, unit_map: UnitMap
+    callback: Callable[[Debriefing], None], mission_simulation: MissionSimulation
 ) -> PollDebriefingFileThread:
-    thread = PollDebriefingFileThread(callback, game, unit_map)
+    thread = PollDebriefingFileThread(callback, mission_simulation)
     thread.start()
     return thread

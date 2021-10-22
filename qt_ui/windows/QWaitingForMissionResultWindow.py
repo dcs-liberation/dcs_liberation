@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import json
+import logging
 import os
-from typing import Sized, Optional
+from pathlib import Path
+from typing import Optional
 
 from PySide2 import QtCore
-from PySide2.QtCore import QObject, Qt, Signal
-from PySide2.QtGui import QIcon, QMovie, QPixmap, QWindow
+from PySide2.QtCore import QObject, Signal
+from PySide2.QtGui import QIcon, QMovie, QPixmap
 from PySide2.QtWidgets import (
     QDialog,
     QFileDialog,
@@ -14,18 +15,17 @@ from PySide2.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QPushButton,
     QTextBrowser,
     QWidget,
 )
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from game import Game
 from game.debriefing import Debriefing, wait_for_debriefing
-from game.game import Event, Game, logging
 from game.persistency import base_path
 from game.profiling import logged_duration
-from game.unitmap import UnitMap
+from game.sim import MissionSimulation
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
@@ -52,16 +52,14 @@ DebriefingFileWrittenSignal()
 class QWaitingForMissionResultWindow(QDialog):
     def __init__(
         self,
-        gameEvent: Event,
         game: Game,
-        unit_map: UnitMap,
+        mission_simulation: MissionSimulation,
         parent: Optional[QWidget] = None,
     ) -> None:
         super(QWaitingForMissionResultWindow, self).__init__(parent=parent)
         self.setWindowModality(QtCore.Qt.WindowModal)
-        self.gameEvent = gameEvent
         self.game = game
-        self.unit_map = unit_map
+        self.mission_sim = mission_simulation
         self.setWindowTitle("Waiting for mission completion.")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
@@ -71,9 +69,7 @@ class QWaitingForMissionResultWindow(QDialog):
             self.updateLayout
         )
         self.wait_thread = wait_for_debriefing(
-            lambda debriefing: self.on_debriefing_update(debriefing),
-            self.game,
-            self.unit_map,
+            lambda debriefing: self.on_debriefing_update(debriefing), self.mission_sim
         )
 
     def initUi(self):
@@ -209,12 +205,12 @@ class QWaitingForMissionResultWindow(QDialog):
         except Exception:
             logging.exception("Got an error while sending debriefing")
         self.wait_thread = wait_for_debriefing(
-            lambda d: self.on_debriefing_update(d), self.game, self.unit_map
+            lambda d: self.on_debriefing_update(d), self.mission_sim
         )
 
     def process_debriefing(self):
         with logged_duration("Turn processing"):
-            self.game.finish_event(event=self.gameEvent, debriefing=self.debriefing)
+            self.mission_sim.process_results(self.debriefing)
             self.game.pass_turn()
 
             GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
@@ -233,20 +229,7 @@ class QWaitingForMissionResultWindow(QDialog):
         file = QFileDialog.getOpenFileName(
             self, "Select game file to open", filter="json(*.json)", dir="."
         )
-        print(file)
-        try:
-            with open(file[0], "r", encoding="utf-8") as json_file:
-                json_data = json.load(json_file)
-                json_data["mission_ended"] = True
-                debriefing = Debriefing(json_data, self.game, self.unit_map)
-                self.on_debriefing_update(debriefing)
-        except Exception as e:
-            logging.error(e)
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("Invalid file : " + file[0])
-            msg.setWindowTitle("Invalid file.")
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.setWindowFlags(Qt.WindowStaysOnTopHint)
-            msg.exec_()
-            return
+        logging.debug("Processing manually submitted %s", file[0])
+        self.on_debriefing_update(
+            self.mission_sim.debrief_current_state(Path(file[0], force_end=True))
+        )

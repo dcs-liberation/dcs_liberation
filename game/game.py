@@ -6,9 +6,9 @@ import math
 from collections import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List, Type, Union, cast, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING, Type, Union, cast
 
-from dcs.countries import Switzerland, UnitedNationsPeacekeepers, USAFAggressors
+from dcs.countries import Switzerland, USAFAggressors, UnitedNationsPeacekeepers
 from dcs.country import Country
 from dcs.mapping import Point
 from dcs.task import CAP, CAS, PinpointStrike
@@ -19,19 +19,16 @@ from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from gen import naming
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from .ato.flighttype import FlightType
 from gen.ground_forces.ai_ground_planner import GroundPlanner
 from . import persistency
+from .ato.flighttype import FlightType
 from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition
-from .debriefing import Debriefing
-from .event.event import Event
-from .event.frontlineattack import FrontlineAttackEvent
 from .factions.faction import Faction
 from .infos.information import Information
 from .profiling import logged_duration
 from .settings import Settings
-from .theater import ConflictTheater, ControlPoint
+from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .weather import Conditions, TimeOfDay
@@ -44,7 +41,6 @@ if TYPE_CHECKING:
     from .navmesh import NavMesh
     from .squadrons import AirWing
     from .threatzones import ThreatZones
-    from .unitmap import UnitMap
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -99,7 +95,6 @@ class Game:
         enemy_budget: float,
     ) -> None:
         self.settings = settings
-        self.events: List[Event] = []
         self.theater = theater
         self.turn = 0
         # NB: This is the *start* date. It is never updated.
@@ -183,20 +178,6 @@ class Game:
     def bullseye_for(self, player: bool) -> Bullseye:
         return self.coalition_for(player).bullseye
 
-    def _generate_player_event(
-        self, event_class: Type[Event], player_cp: ControlPoint, enemy_cp: ControlPoint
-    ) -> None:
-        self.events.append(
-            event_class(
-                self,
-                player_cp,
-                enemy_cp,
-                enemy_cp.position,
-                self.blue.faction.name,
-                self.red.faction.name,
-            )
-        )
-
     @property
     def neutral_country(self) -> Type[Country]:
         """Return the best fitting country that can be used as neutral faction in the generated mission"""
@@ -208,14 +189,6 @@ class Game:
         else:
             return USAFAggressors
 
-    def _generate_events(self) -> None:
-        for front_line in self.theater.conflicts():
-            self._generate_player_event(
-                FrontlineAttackEvent,
-                front_line.blue_cp,
-                front_line.red_cp,
-            )
-
     def coalition_for(self, player: bool) -> Coalition:
         if player:
             return self.blue
@@ -223,21 +196,6 @@ class Game:
 
     def adjust_budget(self, amount: float, player: bool) -> None:
         self.coalition_for(player).adjust_budget(amount)
-
-    @staticmethod
-    def initiate_event(event: Event) -> UnitMap:
-        # assert event in self.events
-        logging.info("Generating {} (regular)".format(event))
-        return event.generate()
-
-    def finish_event(self, event: Event, debriefing: Debriefing) -> None:
-        logging.info("Finishing event {}".format(event))
-        event.commit(debriefing)
-
-        if event in self.events:
-            self.events.remove(event)
-        else:
-            logging.info("finish_event: event not in the events!")
 
     def on_load(self, game_still_initializing: bool = False) -> None:
         if not hasattr(self, "name_generator"):
@@ -378,8 +336,6 @@ class Game:
             for_red: True if opfor should be re-initialized.
             for_blue: True if the player coalition should be re-initialized.
         """
-        self.events = []
-        self._generate_events()
         self.set_bullseye()
 
         # Update statistics

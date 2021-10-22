@@ -1,18 +1,12 @@
 from __future__ import annotations
 
 import logging
-from typing import List, TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
-from dcs.mapping import Point
-from dcs.task import Task
-
-from game import persistency
 from game.debriefing import Debriefing
 from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
 from ..ato.airtaaskingorder import AirTaskingOrder
-from ..missiongenerator import MissionGenerator
-from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
     from ..game import Game
@@ -23,44 +17,24 @@ DEFEAT_INFLUENCE = 0.3
 STRONG_DEFEAT_INFLUENCE = 0.5
 
 
-class Event:
-    silent = False
-    informational = False
-
-    game = None  # type: Game
-    location = None  # type: Point
-    from_cp = None  # type: ControlPoint
-    to_cp = None  # type: ControlPoint
-    difficulty = 1  # type: int
-
-    def __init__(
-        self,
-        game: Game,
-        from_cp: ControlPoint,
-        target_cp: ControlPoint,
-        location: Point,
-        attacker_name: str,
-        defender_name: str,
-    ) -> None:
+class MissionResultsProcessor:
+    def __init__(self, game: Game) -> None:
         self.game = game
-        self.from_cp = from_cp
-        self.to_cp = target_cp
-        self.location = location
-        self.attacker_name = attacker_name
-        self.defender_name = defender_name
 
-    @property
-    def is_player_attacking(self) -> bool:
-        return self.attacker_name == self.game.blue.faction.name
-
-    @property
-    def tasks(self) -> List[Type[Task]]:
-        return []
-
-    def generate(self) -> UnitMap:
-        return MissionGenerator(self.game).generate_miz(
-            persistency.mission_path_for("liberation_nextturn.miz")
-        )
+    def commit(self, debriefing: Debriefing) -> None:
+        logging.info("Committing mission results")
+        self.commit_air_losses(debriefing)
+        self.commit_pilot_experience()
+        self.commit_front_line_losses(debriefing)
+        self.commit_convoy_losses(debriefing)
+        self.commit_cargo_ship_losses(debriefing)
+        self.commit_airlift_losses(debriefing)
+        self.commit_ground_object_losses(debriefing)
+        self.commit_building_losses(debriefing)
+        self.commit_damaged_runways(debriefing)
+        self.commit_captures(debriefing)
+        self.commit_front_line_battle_impact(debriefing)
+        self.record_carcasses(debriefing)
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:
@@ -200,27 +174,11 @@ class Event:
             except Exception:
                 logging.exception(f"Could not process base capture {captured}")
 
-    def commit(self, debriefing: Debriefing) -> None:
-        logging.info("Committing mission results")
-
-        self.commit_air_losses(debriefing)
-        self.commit_pilot_experience()
-        self.commit_front_line_losses(debriefing)
-        self.commit_convoy_losses(debriefing)
-        self.commit_cargo_ship_losses(debriefing)
-        self.commit_airlift_losses(debriefing)
-        self.commit_ground_object_losses(debriefing)
-        self.commit_building_losses(debriefing)
-        self.commit_damaged_runways(debriefing)
-        self.commit_captures(debriefing)
-
-        # Destroyed units carcass
-        # -------------------------
+    def record_carcasses(self, debriefing: Debriefing) -> None:
         for destroyed_unit in debriefing.state_data.destroyed_statics:
             self.game.add_destroyed_units(destroyed_unit)
 
-        # -----------------------------------
-        # Compute damage to bases
+    def commit_front_line_battle_impact(self, debriefing: Debriefing) -> None:
         for cp in self.game.theater.player_points():
             enemy_cps = [e for e in cp.connected_points if not e.captured]
             for enemy_cp in enemy_cps:
