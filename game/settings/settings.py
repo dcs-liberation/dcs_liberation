@@ -410,6 +410,7 @@ class Settings:
         page=MISSION_GENERATOR_PAGE,
         section=PERFORMANCE_SECTION,
         default=True,
+        causes_expensive_game_update=True,
     )
 
     # Cheating. Not using auto settings because the same page also has buttons which do

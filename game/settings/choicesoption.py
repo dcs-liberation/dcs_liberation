@@ -37,7 +37,8 @@ def choices_option(
                 text,
                 detail,
                 tooltip,
-                dict(choices),
+                causes_expensive_game_update=False,
+                choices=dict(choices),
             )
         },
         default=default,

@@ -24,7 +24,14 @@ def bounded_int_option(
     return field(
         metadata={
             SETTING_DESCRIPTION_KEY: BoundedIntOption(
-                page, section, text, detail, tooltip, min, max
+                page,
+                section,
+                text,
+                detail,
+                tooltip,
+                causes_expensive_game_update=False,
+                min=min,
+                max=max,
             )
         },
         default=default,

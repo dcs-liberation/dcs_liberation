@@ -12,3 +12,4 @@ class OptionDescription:
     text: str
     detail: Optional[str]
     tooltip: Optional[str]
+    causes_expensive_game_update: bool

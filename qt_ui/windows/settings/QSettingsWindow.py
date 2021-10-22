@@ -82,9 +82,16 @@ class CheatSettingsBox(QGroupBox):
 
 
 class AutoSettingsLayout(QGridLayout):
-    def __init__(self, page: str, section: str, settings: Settings) -> None:
+    def __init__(
+        self,
+        page: str,
+        section: str,
+        settings: Settings,
+        write_full_settings: Callable[[], None],
+    ) -> None:
         super().__init__()
         self.settings = settings
+        self.write_full_settings = write_full_settings
 
         for row, (name, description) in enumerate(Settings.fields(page, section)):
             self.add_label(row, description)
@@ -116,6 +123,8 @@ class AutoSettingsLayout(QGridLayout):
             if description.invert:
                 value = not value
             self.settings.__dict__[name] = value
+            if description.causes_expensive_game_update:
+                self.write_full_settings()
 
         checkbox = QCheckBox()
         value = self.settings.__dict__[name]
@@ -184,24 +193,42 @@ class AutoSettingsLayout(QGridLayout):
 
 
 class AutoSettingsGroup(QGroupBox):
-    def __init__(self, page: str, section: str, settings: Settings) -> None:
+    def __init__(
+        self,
+        page: str,
+        section: str,
+        settings: Settings,
+        write_full_settings: Callable[[], None],
+    ) -> None:
         super().__init__(section)
-        self.setLayout(AutoSettingsLayout(page, section, settings))
+        self.setLayout(AutoSettingsLayout(page, section, settings, write_full_settings))
 
 
 class AutoSettingsPageLayout(QVBoxLayout):
-    def __init__(self, page: str, settings: Settings) -> None:
+    def __init__(
+        self,
+        page: str,
+        settings: Settings,
+        write_full_settings: Callable[[], None],
+    ) -> None:
         super().__init__()
         self.setAlignment(Qt.AlignTop)
 
         for section in Settings.sections(page):
-            self.addWidget(AutoSettingsGroup(page, section, settings))
+            self.addWidget(
+                AutoSettingsGroup(page, section, settings, write_full_settings)
+            )
 
 
 class AutoSettingsPage(QWidget):
-    def __init__(self, page: str, settings: Settings) -> None:
+    def __init__(
+        self,
+        page: str,
+        settings: Settings,
+        write_full_settings: Callable[[], None],
+    ) -> None:
         super().__init__()
-        self.setLayout(AutoSettingsPageLayout(page, settings))
+        self.setLayout(AutoSettingsPageLayout(page, settings, write_full_settings))
 
 
 class QSettingsWindow(QDialog):
@@ -214,7 +241,7 @@ class QSettingsWindow(QDialog):
 
         self.pages: dict[str, AutoSettingsPage] = {}
         for page in Settings.pages():
-            self.pages[page] = AutoSettingsPage(page, game.settings)
+            self.pages[page] = AutoSettingsPage(page, game.settings, self.applySettings)
 
         self.setModal(True)
         self.setWindowTitle("Settings")
@@ -283,9 +310,6 @@ class QSettingsWindow(QDialog):
         self.layout.addLayout(self.right_layout, 0, 1, 5, 1)
 
         self.setLayout(self.layout)
-
-    def init(self):
-        raise RuntimeError
 
     def initCheatLayout(self):
 

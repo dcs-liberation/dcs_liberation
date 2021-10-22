@@ -26,7 +26,15 @@ def bounded_float_option(
     return field(
         metadata={
             SETTING_DESCRIPTION_KEY: BoundedFloatOption(
-                page, section, text, detail, tooltip, min, max, divisor
+                page,
+                section,
+                text,
+                detail,
+                tooltip,
+                causes_expensive_game_update=False,
+                min=min,
+                max=max,
+                divisor=divisor,
             )
         },
         default=default,

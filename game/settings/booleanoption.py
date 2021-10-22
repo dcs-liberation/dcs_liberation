@@ -17,12 +17,19 @@ def boolean_option(
     invert: bool = False,
     detail: Optional[str] = None,
     tooltip: Optional[str] = None,
+    causes_expensive_game_update: bool = False,
     **kwargs: Any,
 ) -> bool:
     return field(
         metadata={
             SETTING_DESCRIPTION_KEY: BooleanOption(
-                page, section, text, detail, tooltip, invert
+                page,
+                section,
+                text,
+                detail,
+                tooltip,
+                causes_expensive_game_update,
+                invert,
             )
         },
         default=default,
