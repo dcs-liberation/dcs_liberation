@@ -5,22 +5,26 @@ from .optiondescription import OptionDescription, SETTING_DESCRIPTION_KEY
 
 
 @dataclass(frozen=True)
-class BooleanOption(OptionDescription):
-    invert: bool
+class BoundedIntOption(OptionDescription):
+    min: int
+    max: int
 
 
-def boolean_option(
+def bounded_int_option(
     text: str,
     page: str,
     section: str,
-    default: bool,
-    invert: bool = False,
+    default: int,
+    min: int,
+    max: int,
     detail: Optional[str] = None,
     **kwargs: Any,
-) -> bool:
+) -> int:
     return field(
         metadata={
-            SETTING_DESCRIPTION_KEY: BooleanOption(page, section, text, detail, invert)
+            SETTING_DESCRIPTION_KEY: BoundedIntOption(
+                page, section, text, detail, min, max
+            )
         },
         default=default,
         **kwargs,

@@ -7,6 +7,7 @@ def skill_option(
     text: str,
     page: str,
     section: str,
+    default: str,
     detail: Optional[str] = None,
     **kwargs: Any,
 ) -> str:
@@ -14,6 +15,7 @@ def skill_option(
         text,
         page,
         section,
+        default,
         ["Average", "Good", "High", "Excellent"],
         detail=detail,
         **kwargs,

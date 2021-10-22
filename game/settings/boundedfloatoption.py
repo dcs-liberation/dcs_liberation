@@ -15,6 +15,7 @@ def bounded_float_option(
     text: str,
     page: str,
     section: str,
+    default: float,
     min: float,
     max: float,
     divisor: int,
@@ -27,5 +28,6 @@ def bounded_float_option(
                 page, section, text, detail, min, max, divisor
             )
         },
+        default=default,
         **kwargs,
     )

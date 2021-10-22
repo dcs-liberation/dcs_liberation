@@ -23,12 +23,12 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game.game import Game
 from game.settings import (
-    Settings,
-    AutoAtoBehavior,
-    OptionDescription,
     BooleanOption,
-    ChoicesOption,
     BoundedFloatOption,
+    BoundedIntOption,
+    ChoicesOption,
+    OptionDescription,
+    Settings,
 )
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import FloatSpinSlider, TimeInputs
@@ -79,128 +79,6 @@ class CheatSettingsBox(QGroupBox):
     @property
     def show_base_capture_cheat(self) -> bool:
         return self.base_capture_cheat_checkbox.isChecked()
-
-
-class AutoAtoBehaviorSelector(QComboBox):
-    def __init__(self, default: AutoAtoBehavior) -> None:
-        super().__init__()
-
-        for behavior in AutoAtoBehavior:
-            self.addItem(behavior.value, behavior)
-        self.setCurrentText(default.value)
-
-
-class HqAutomationSettingsBox(QGroupBox):
-    def __init__(self, game: Game) -> None:
-        super().__init__("HQ Automation")
-        self.game = game
-
-        layout = QGridLayout()
-        self.setLayout(layout)
-
-        runway_repair = QCheckBox()
-        runway_repair.setChecked(self.game.settings.automate_runway_repair)
-        runway_repair.toggled.connect(self.set_runway_automation)
-
-        layout.addWidget(QLabel("Automate runway repairs"), 0, 0)
-        layout.addWidget(runway_repair, 0, 1, Qt.AlignRight)
-
-        front_line = QCheckBox()
-        front_line.setChecked(self.game.settings.automate_front_line_reinforcements)
-        front_line.toggled.connect(self.set_front_line_reinforcement_automation)
-
-        layout.addWidget(QLabel("Automate front-line purchases"), 1, 0)
-        layout.addWidget(front_line, 1, 1, Qt.AlignRight)
-
-        self.automate_aircraft_reinforcements = QCheckBox()
-        self.automate_aircraft_reinforcements.setChecked(
-            self.game.settings.automate_aircraft_reinforcements
-        )
-        self.automate_aircraft_reinforcements.toggled.connect(
-            self.set_aircraft_automation
-        )
-
-        layout.addWidget(QLabel("Automate aircraft purchases"), 2, 0)
-        layout.addWidget(self.automate_aircraft_reinforcements, 2, 1, Qt.AlignRight)
-
-        self.auto_ato_behavior = AutoAtoBehaviorSelector(
-            self.game.settings.auto_ato_behavior
-        )
-        self.auto_ato_behavior.currentIndexChanged.connect(self.set_auto_ato_behavior)
-        layout.addWidget(
-            QLabel(
-                "Automatic package planning behavior<br>"
-                "<strong>Aircraft auto-purchase is directed by the auto-planner,<br />"
-                "so disabling auto-planning disables auto-purchase.</strong>"
-            ),
-            3,
-            0,
-        )
-        layout.addWidget(self.auto_ato_behavior, 3, 1)
-
-        self.auto_ato_player_missions_asap = QCheckBox()
-        self.auto_ato_player_missions_asap.setChecked(
-            self.game.settings.auto_ato_player_missions_asap
-        )
-        self.auto_ato_player_missions_asap.toggled.connect(
-            self.set_auto_ato_player_missions_asap
-        )
-
-        layout.addWidget(
-            QLabel("Automatically generated packages with players are scheduled ASAP"),
-            4,
-            0,
-        )
-        layout.addWidget(self.auto_ato_player_missions_asap, 4, 1, Qt.AlignRight)
-
-        self.automate_front_line_stance = QCheckBox()
-        self.automate_front_line_stance.setChecked(
-            self.game.settings.automate_front_line_stance
-        )
-        self.automate_front_line_stance.toggled.connect(
-            self.set_front_line_stance_automation
-        )
-
-        layout.addWidget(
-            QLabel("Automatically manage front line stances"),
-            5,
-            0,
-        )
-        layout.addWidget(self.automate_front_line_stance, 5, 1, Qt.AlignRight)
-
-    def set_runway_automation(self, value: bool) -> None:
-        self.game.settings.automate_runway_repair = value
-
-    def set_front_line_reinforcement_automation(self, value: bool) -> None:
-        self.game.settings.automate_front_line_reinforcements = value
-
-    def set_front_line_stance_automation(self, value: bool) -> None:
-        self.game.settings.automate_front_line_stance = value
-
-    def set_aircraft_automation(self, value: bool) -> None:
-        self.game.settings.automate_aircraft_reinforcements = value
-
-    def set_auto_ato_behavior(self, index: int) -> None:
-        behavior = self.auto_ato_behavior.itemData(index)
-        self.game.settings.auto_ato_behavior = behavior
-        if behavior in (AutoAtoBehavior.Disabled, AutoAtoBehavior.Never):
-            self.auto_ato_player_missions_asap.setChecked(False)
-            self.auto_ato_player_missions_asap.setEnabled(False)
-            if behavior is AutoAtoBehavior.Disabled:
-                self.automate_aircraft_reinforcements.setChecked(False)
-                self.automate_aircraft_reinforcements.setEnabled(False)
-        else:
-            self.auto_ato_player_missions_asap.setEnabled(True)
-            self.auto_ato_player_missions_asap.setChecked(
-                self.game.settings.auto_ato_player_missions_asap
-            )
-            self.automate_aircraft_reinforcements.setEnabled(True)
-            self.automate_aircraft_reinforcements.setChecked(
-                self.game.settings.automate_aircraft_reinforcements
-            )
-
-    def set_auto_ato_player_missions_asap(self, value: bool) -> None:
-        self.game.settings.auto_ato_player_missions_asap = value
 
 
 class PilotSettingsBox(QGroupBox):
@@ -336,11 +214,13 @@ class AutoSettingsLayout(QGridLayout):
         for row, (name, description) in enumerate(Settings.fields(page, section)):
             self.add_label(row, description)
             if isinstance(description, BooleanOption):
-                self.add_checkbox_for(row, name)
+                self.add_checkbox_for(row, name, description)
             elif isinstance(description, ChoicesOption):
                 self.add_combobox_for(row, name, description)
             elif isinstance(description, BoundedFloatOption):
                 self.add_float_spin_slider_for(row, name, description)
+            elif isinstance(description, BoundedIntOption):
+                self.add_spinner_for(row, name, description)
             else:
                 raise TypeError(f"Unhandled option type: {description}")
 
@@ -352,12 +232,17 @@ class AutoSettingsLayout(QGridLayout):
         label = QLabel(text)
         self.addWidget(label, row, 0)
 
-    def add_checkbox_for(self, row: int, name: str) -> None:
+    def add_checkbox_for(self, row: int, name: str, description: BooleanOption) -> None:
         def on_toggle(value: bool) -> None:
+            if description.invert:
+                value = not value
             self.settings.__dict__[name] = value
 
         checkbox = QCheckBox()
-        checkbox.setChecked(self.settings.__dict__[name])
+        value = self.settings.__dict__[name]
+        if description.invert:
+            value = not value
+        checkbox.setChecked(value)
         checkbox.toggled.connect(on_toggle)
         self.addWidget(checkbox, row, 1, Qt.AlignRight)
 
@@ -384,7 +269,26 @@ class AutoSettingsLayout(QGridLayout):
             self.settings.__dict__[name],
             divisor=description.divisor,
         )
+
+        def on_changed() -> None:
+            self.settings.__dict__[name] = spinner.value
+
+        spinner.spinner.valueChanged.connect(on_changed)
         self.addLayout(spinner, row, 1, Qt.AlignRight)
+
+    def add_spinner_for(
+        self, row: int, name: str, description: BoundedIntOption
+    ) -> None:
+        def on_changed(value: int) -> None:
+            self.settings.__dict__[name] = value
+
+        spinner = QSpinBox()
+        spinner.setMinimum(description.min)
+        spinner.setMaximum(description.max)
+        spinner.setValue(self.settings.__dict__[name])
+
+        spinner.valueChanged.connect(on_changed)
+        self.addWidget(spinner, row, 1, Qt.AlignRight)
 
 
 class AutoSettingsGroup(QGroupBox):
@@ -415,7 +319,6 @@ class QSettingsWindow(QDialog):
         self.game = game
         self.pluginsPage = None
         self.pluginsOptionsPage = None
-        self.campaign_management_page = QWidget()
 
         self.pages: dict[str, AutoSettingsPage] = {}
         for page in Settings.pages():
@@ -450,14 +353,6 @@ class QSettingsWindow(QDialog):
             page_item.setSelectable(True)
             self.categoryModel.appendRow(page_item)
             self.right_layout.addWidget(page)
-
-        self.init_campaign_management_layout()
-        campaign_management = QStandardItem("Campaign Management")
-        campaign_management.setIcon(CONST.ICONS["Money"])
-        campaign_management.setEditable(False)
-        campaign_management.setSelectable(True)
-        self.categoryModel.appendRow(campaign_management)
-        self.right_layout.addWidget(self.campaign_management_page)
 
         self.initGeneratorLayout()
         generator = QStandardItem("Mission Generator")
@@ -507,82 +402,6 @@ class QSettingsWindow(QDialog):
 
     def init(self):
         pass
-
-    def init_campaign_management_layout(self) -> None:
-        campaign_layout = QVBoxLayout()
-        campaign_layout.setAlignment(Qt.AlignTop)
-        self.campaign_management_page.setLayout(campaign_layout)
-
-        general = QGroupBox("General")
-        campaign_layout.addWidget(general)
-
-        general_layout = QGridLayout()
-        general.setLayout(general_layout)
-
-        def set_restict_weapons_by_date(value: bool) -> None:
-            self.game.settings.restrict_weapons_by_date = value
-
-        restrict_weapons = QCheckBox()
-        restrict_weapons.setChecked(self.game.settings.restrict_weapons_by_date)
-        restrict_weapons.toggled.connect(set_restict_weapons_by_date)
-
-        tooltip_text = (
-            "Restricts weapon availability based on the campaign date. Data is "
-            "extremely incomplete so does not affect all weapons."
-        )
-        restrict_weapons.setToolTip(tooltip_text)
-        restrict_weapons_label = QLabel("Restrict weapons by date (WIP)")
-        restrict_weapons_label.setToolTip(tooltip_text)
-
-        general_layout.addWidget(restrict_weapons_label, 0, 0)
-        general_layout.addWidget(restrict_weapons, 0, 1, Qt.AlignRight)
-
-        def set_old_awec(value: bool) -> None:
-            self.game.settings.disable_legacy_aewc = not value
-
-        old_awac = QCheckBox()
-        old_awac.setChecked(not self.game.settings.disable_legacy_aewc)
-        old_awac.toggled.connect(set_old_awec)
-
-        old_awec_info = (
-            "If checked, an invulnerable friendly AEW&C aircraft that begins the "
-            "mission on station will be be spawned. This behavior will be removed in a "
-            "future release."
-        )
-
-        old_awac.setToolTip(old_awec_info)
-        old_awac_label = QLabel(
-            "Spawn invulnerable, always-available AEW&C aircraft (deprecated)"
-        )
-        old_awac_label.setToolTip(old_awec_info)
-
-        general_layout.addWidget(old_awac_label, 1, 0)
-        general_layout.addWidget(old_awac, 1, 1, Qt.AlignRight)
-
-        def set_old_tanker(value: bool) -> None:
-            self.game.settings.disable_legacy_tanker = not value
-
-        old_tanker = QCheckBox()
-        old_tanker.setChecked(not self.game.settings.disable_legacy_tanker)
-        old_tanker.toggled.connect(set_old_tanker)
-
-        old_tanker_info = (
-            "If checked, an invulnerable friendly Tanker aircraft that begins the "
-            "mission on station will be be spawned. This behavior will be removed in a "
-            "future release."
-        )
-
-        old_tanker.setToolTip(old_tanker_info)
-        old_tanker_label = QLabel(
-            "Spawn invulnerable, always-available Tanker aircraft (deprecated)"
-        )
-        old_tanker_label.setToolTip(old_tanker_info)
-
-        general_layout.addWidget(old_tanker_label, 2, 0)
-        general_layout.addWidget(old_tanker, 2, 1, Qt.AlignRight)
-
-        campaign_layout.addWidget(PilotSettingsBox(self.game))
-        campaign_layout.addWidget(HqAutomationSettingsBox(self.game))
 
     def initGeneratorLayout(self):
         self.generatorPage = QWidget()

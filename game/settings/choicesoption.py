@@ -21,6 +21,7 @@ def choices_option(
     text: str,
     page: str,
     section: str,
+    default: ValueT,
     choices: Union[Iterable[str], Mapping[str, ValueT]],
     detail: Optional[str] = None,
     **kwargs: Any,
@@ -37,5 +38,6 @@ def choices_option(
                 dict(choices),
             )
         },
+        default=default,
         **kwargs,
     )

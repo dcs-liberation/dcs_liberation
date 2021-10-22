@@ -8,6 +8,7 @@ from dcs.forcedoptions import ForcedOptions
 
 from .booleanoption import boolean_option
 from .boundedfloatoption import bounded_float_option
+from .boundedintoption import bounded_int_option
 from .choicesoption import choices_option
 from .optiondescription import OptionDescription, SETTING_DESCRIPTION_KEY
 from .skilloption import skill_option
@@ -26,6 +27,12 @@ DIFFICULTY_PAGE = "Difficulty"
 AI_DIFFICULTY_SECTION = "AI Difficulty"
 MISSION_DIFFICULTY_SECTION = "Mission Difficulty"
 MISSION_RESTRICTIONS_SECTION = "Mission Restrictions"
+
+CAMPAIGN_MANAGEMENT_PAGE = "Campaign Management"
+
+GENERAL_SECTION = "General"
+PILOTS_AND_SQUADRONS_SECTION = "Pilots and Squadrons"
+HQ_AUTOMATION_SECTION = "HQ Automation"
 
 
 @dataclass
@@ -130,27 +137,140 @@ class Settings:
 
     # Campaign management
     # General
-    restrict_weapons_by_date: bool = False
-    disable_legacy_aewc: bool = True
-    disable_legacy_tanker: bool = True
+    restrict_weapons_by_date: bool = boolean_option(
+        "Restrict weapons by date (WIP)",
+        page=CAMPAIGN_MANAGEMENT_PAGE,
+        section=GENERAL_SECTION,
+        default=False,
+        detail=(
+            "Restricts weapon availability based on the campaign date. Data is "
+            "extremely incomplete so does not affect all weapons."
+        ),
+    )
+    disable_legacy_aewc: bool = boolean_option(
+        "Spawn invulnerable, always-available AEW&C aircraft (deprecated)",
+        page=CAMPAIGN_MANAGEMENT_PAGE,
+        section=GENERAL_SECTION,
+        default=True,
+        invert=True,
+        detail=(
+            "If checked, an invulnerable friendly AEW&C aircraft that begins the "
+            "mission on station will be be spawned. This behavior will be removed in a "
+            "future release."
+        ),
+    )
+    disable_legacy_tanker: bool = boolean_option(
+        "Spawn invulnerable, always-available tanker aircraft (deprecated)",
+        page=CAMPAIGN_MANAGEMENT_PAGE,
+        section=GENERAL_SECTION,
+        default=True,
+        invert=True,
+        detail=(
+            "If checked, an invulnerable friendly tanker aircraft that begins the "
+            "mission on station will be be spawned. This behavior will be removed in a "
+            "future release."
+        ),
+    )
     # Pilots and Squadrons
-    ai_pilot_levelling: bool = True
+    ai_pilot_levelling: bool = boolean_option(
+        "Allow AI pilot leveling",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        PILOTS_AND_SQUADRONS_SECTION,
+        default=True,
+        detail=(
+            "Set whether or not AI pilots will level up after completing a number of"
+            " sorties. Since pilot level affects the AI skill, you may wish to disable"
+            " this, lest you face an Ace!"
+        ),
+    )
     #: Feature flag for squadron limits.
-    enable_squadron_pilot_limits: bool = False
+    enable_squadron_pilot_limits: bool = boolean_option(
+        "Enable per-squadron pilot limits (WIP)",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        PILOTS_AND_SQUADRONS_SECTION,
+        default=False,
+        detail=(
+            "If set, squadrons will be limited to a maximum number of pilots and dead "
+            "pilots will replenish at a fixed rate, each defined with the settings"
+            "below. Auto-purchase may buy aircraft for which there are no pilots"
+            "available, so this feature is still a work-in-progress."
+        ),
+    )
     #: The maximum number of pilots a squadron can have at one time. Changing this after
     #: the campaign has started will have no immediate effect; pilots already in the
     #: squadron will not be removed if the limit is lowered and pilots will not be
     #: immediately created if the limit is raised.
-    squadron_pilot_limit: int = 12
+    squadron_pilot_limit: int = bounded_int_option(
+        "Maximum number of pilots per squadron",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        PILOTS_AND_SQUADRONS_SECTION,
+        default=12,
+        min=12,
+        max=72,
+        detail=(
+            "Sets the maximum number of pilots a squadron may have active. "
+            "Changing this value will not have an immediate effect, but will alter "
+            "replenishment for future turns."
+        ),
+    )
     #: The number of pilots a squadron can replace per turn.
-    squadron_replenishment_rate: int = 4
+    squadron_replenishment_rate: int = bounded_int_option(
+        "Squadron pilot replenishment rate",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        PILOTS_AND_SQUADRONS_SECTION,
+        default=4,
+        min=1,
+        max=20,
+        detail=(
+            "Sets the maximum number of pilots that will be recruited to each squadron "
+            "at the end of each turn. Squadrons will not recruit new pilots beyond the "
+            "pilot limit, but each squadron with room for more pilots will recruit "
+            "this many pilots each turn up to the limit."
+        ),
+    )
+
     # HQ Automation
-    automate_runway_repair: bool = False
-    automate_front_line_reinforcements: bool = False
-    automate_aircraft_reinforcements: bool = False
-    auto_ato_behavior: AutoAtoBehavior = AutoAtoBehavior.Default
-    auto_ato_player_missions_asap: bool = True
-    automate_front_line_stance: bool = True
+    automate_runway_repair: bool = boolean_option(
+        "Automate runway repairs",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        HQ_AUTOMATION_SECTION,
+        default=False,
+    )
+    automate_front_line_reinforcements: bool = boolean_option(
+        "Automate front-line purchases",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        HQ_AUTOMATION_SECTION,
+        default=False,
+    )
+    automate_aircraft_reinforcements: bool = boolean_option(
+        "Automate aircraft purchases",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        HQ_AUTOMATION_SECTION,
+        default=False,
+    )
+    auto_ato_behavior: AutoAtoBehavior = choices_option(
+        "Automatic package planning behavior",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        HQ_AUTOMATION_SECTION,
+        default=AutoAtoBehavior.Default,
+        choices={v.value: v for v in AutoAtoBehavior},
+        detail=(
+            "Aircraft auto-purchase is directed by the auto-planner, so disabling "
+            "auto-planning disables auto-purchase."
+        ),
+    )
+    auto_ato_player_missions_asap: bool = boolean_option(
+        "Automatically generated packages with players are scheduled ASAP",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        HQ_AUTOMATION_SECTION,
+        default=True,
+    )
+    automate_front_line_stance: bool = boolean_option(
+        "Automatically manage front line stances",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        HQ_AUTOMATION_SECTION,
+        default=True,
+    )
     reserves_procurement_target: int = 10
 
     # Mission Generator
