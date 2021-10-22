@@ -12,14 +12,14 @@ from typing import (
 from faker import Faker
 
 from game.settings import AutoAtoBehavior, Settings
-from gen.ato import Package
-from gen.flights.flight import FlightType, Flight
+from game.ato import Flight, FlightType
 from gen.flights.flightplan import FlightPlanBuilder
 from .pilot import Pilot, PilotStatus
 from ..utils import meters
 
 if TYPE_CHECKING:
     from game import Game
+    from game.ato import Package
     from game.coalition import Coalition
     from game.dcs.aircrafttype import AircraftType
     from game.theater import ControlPoint, ConflictTheater, MissionTarget

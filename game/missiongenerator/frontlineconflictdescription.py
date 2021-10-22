@@ -15,7 +15,7 @@ from game.utils import Heading
 FRONTLINE_LENGTH = 80000
 
 
-class Conflict:
+class FrontLineConflictDescription:
     def __init__(
         self,
         theater: ConflictTheater,
@@ -95,7 +95,7 @@ class Conflict:
         defender: Country,
         front_line: FrontLine,
         theater: ConflictTheater,
-    ) -> Conflict:
+    ) -> FrontLineConflictDescription:
         assert cls.has_frontline_between(front_line.blue_cp, front_line.red_cp)
         position, heading, distance = cls.frontline_vector(front_line, theater)
         conflict = cls(

@@ -10,7 +10,7 @@ from dcs.unittype import StaticType
 if TYPE_CHECKING:
     from game import Game
 
-from .conflictgen import Conflict
+from .frontlineconflictdescription import FrontLineConflictDescription
 
 
 class MarkerSmoke(StaticType):
@@ -67,7 +67,7 @@ FRONT_SMOKE_TYPE_CHANCES = {
 }
 
 
-class VisualGenerator:
+class VisualsGenerator:
     def __init__(self, mission: Mission, game: Game) -> None:
         self.mission = mission
         self.game = game
@@ -79,7 +79,11 @@ class VisualGenerator:
             if from_cp.is_global or to_cp.is_global:
                 continue
 
-            plane_start, heading, distance = Conflict.frontline_vector(
+            (
+                plane_start,
+                heading,
+                distance,
+            ) = FrontLineConflictDescription.frontline_vector(
                 front_line, self.game.theater
             )
             if not plane_start:
@@ -105,4 +109,5 @@ class VisualGenerator:
                         break
 
     def generate(self) -> None:
-        self._generate_frontline_smokes()
+        if self.game.settings.perf_smoke_gen:
+            self._generate_frontline_smokes()

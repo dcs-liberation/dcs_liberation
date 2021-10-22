@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QVBoxLayout
 
-from gen.flights.flight import FlightWaypoint
+from game.ato.flightwaypoint import FlightWaypoint
 
 
 class QFlightWaypointInfoBox(QGroupBox):

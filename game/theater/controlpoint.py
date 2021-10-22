@@ -25,6 +25,7 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.ships import (
+    Forrestal,
     Stennis,
     KUZNECOW,
     LHA_Tarawa,
@@ -48,6 +49,7 @@ from .theatergroundobject import (
     TheaterGroundObject,
     BuildingGroundObject,
 )
+from ..ato.starttype import StartType
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
@@ -55,7 +57,7 @@ from ..weather import Conditions
 
 if TYPE_CHECKING:
     from game import Game
-    from gen.flights.flight import FlightType
+    from ..ato.flighttype import FlightType
     from game.squadrons.squadron import Squadron
     from ..coalition import Coalition
     from ..transfers import PendingTransfers
@@ -521,6 +523,7 @@ class ControlPoint(MissionTarget, ABC):
                     for group in g.groups:
                         for u in group.units:
                             if db.unit_type_from_name(u.type) in [
+                                Forrestal,
                                 Stennis,
                                 KUZNECOW,
                             ]:
@@ -679,7 +682,7 @@ class ControlPoint(MissionTarget, ABC):
         self.base.set_strength_to_minimum()
 
     @property
-    def required_aircraft_start_type(self) -> Optional[str]:
+    def required_aircraft_start_type(self) -> Optional[StartType]:
         return None
 
     @abstractmethod
@@ -890,7 +893,7 @@ class Airfield(ControlPoint):
         return self.runway_is_operational()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield from [
@@ -973,7 +976,7 @@ class NavalControlPoint(ControlPoint, ABC):
         return True
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if self.is_friendly(for_player):
             yield from [
@@ -1005,6 +1008,7 @@ class NavalControlPoint(ControlPoint, ABC):
         for group in self.find_main_tgo().groups:
             for u in group.units:
                 if db.unit_type_from_name(u.type) in [
+                    Forrestal,
                     Stennis,
                     LHA_Tarawa,
                     KUZNECOW,
@@ -1060,7 +1064,7 @@ class Carrier(NavalControlPoint):
         )
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         yield from super().mission_types(for_player)
         if self.is_friendly(for_player):
@@ -1148,8 +1152,8 @@ class OffMapSpawn(ControlPoint):
         return True
 
     @property
-    def required_aircraft_start_type(self) -> Optional[str]:
-        return "In Flight"
+    def required_aircraft_start_type(self) -> Optional[StartType]:
+        return StartType.IN_FLIGHT
 
     @property
     def heading(self) -> Heading:
@@ -1209,7 +1213,7 @@ class Fob(ControlPoint):
         return RunwayStatus()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield FlightType.STRIKE

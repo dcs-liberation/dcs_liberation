@@ -17,7 +17,7 @@ from game.data.doctrine import Doctrine
 from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
 from game.utils import Distance, meters, nautical_miles
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import Flight, FlightWaypoint
+from game.ato import Flight, FlightWaypoint
 
 if TYPE_CHECKING:
     from game import Game

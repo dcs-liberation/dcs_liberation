@@ -14,7 +14,7 @@ from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
 from dcs.mapping import Point
-from dcs.mission import Mission, StartType
+from dcs.mission import Mission, StartType as DcsStartType
 from dcs.planes import (
     AJS37,
     B_17G,
@@ -67,6 +67,7 @@ from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType
 
 from game import db
+from game.ato.starttype import StartType
 from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
@@ -83,21 +84,18 @@ from game.theater.theatergroundobject import TheaterGroundObject
 from game.transfers import MultiGroupTransport
 from game.unitmap import UnitMap
 from game.utils import Distance, meters, nautical_miles, pairwise
-from gen.ato import AirTaskingOrder, Package
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.package import Package
 from gen.callsigns import create_group_callsign_from_unit
-from gen.flights.flight import (
-    Flight,
-    FlightType,
-    FlightWaypoint,
-    FlightWaypointType,
-)
-from gen.lasercoderegistry import LaserCodeRegistry
-from gen.radios import RadioFrequency, RadioRegistry
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flight import Flight
+from game.radio.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
-from gen.tacan import TacanBand, TacanRegistry, TacanUsage
-from .airsupport import AirSupport, AwacsInfo, TankerInfo
-from .callsigns import callsign_for_support_unit
-from .flights.flightplan import (
+from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
+from gen.callsigns import callsign_for_support_unit
+from gen.flights.flightplan import (
     AwacsFlightPlan,
     CasFlightPlan,
     LoiterFlightPlan,
@@ -105,8 +103,11 @@ from .flights.flightplan import (
     RefuelingFlightPlan,
     SweepFlightPlan,
 )
-from .flights.traveltime import GroundSpeed, TotEstimator
-from .naming import namegen
+from gen.flights.traveltime import GroundSpeed, TotEstimator
+from gen.naming import namegen
+
+from .airsupport import AirSupport, AwacsInfo, TankerInfo
+from .lasercoderegistry import LaserCodeRegistry
 
 if TYPE_CHECKING:
     from game import Game
@@ -219,7 +220,7 @@ class FlightData:
             )
 
 
-class AircraftConflictGenerator:
+class AircraftGenerator:
     def __init__(
         self,
         mission: Mission,
@@ -259,19 +260,19 @@ class AircraftConflictGenerator:
         return total
 
     @staticmethod
-    def _start_type(start_type: str) -> StartType:
+    def _start_type(start_type: str) -> DcsStartType:
         if start_type == "Runway":
-            return StartType.Runway
+            return DcsStartType.Runway
         elif start_type == "Cold":
-            return StartType.Cold
-        return StartType.Warm
+            return DcsStartType.Cold
+        return DcsStartType.Warm
 
     @staticmethod
     def _start_type_at_group(
         start_type: str,
         unit_type: Type[FlyingType],
         at: Union[ShipGroup, StaticGroup],
-    ) -> StartType:
+    ) -> DcsStartType:
         group_units = at.units
         # Setting Su-33s starting from the non-supercarrier Kuznetsov to take off from runway
         # to work around a DCS AI issue preventing Su-33s from taking off when set to "Takeoff from ramp" (#1352)
@@ -280,9 +281,9 @@ class AircraftConflictGenerator:
             and group_units[0] is not None
             and group_units[0].type == KUZNECOW.id
         ):
-            return StartType.Runway
+            return DcsStartType.Runway
         else:
-            return AircraftConflictGenerator._start_type(start_type)
+            return AircraftGenerator._start_type(start_type)
 
     def skill_level_for(
         self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool
@@ -367,9 +368,6 @@ class AircraftConflictGenerator:
         for unit, pilot in zip(group.units, flight.roster.pilots):
             player = pilot is not None and pilot.player
             self.set_skill(unit, pilot, blue=flight.departure.captured)
-            # Do not generate player group with late activation.
-            if player and group.late_activation:
-                group.late_activation = False
 
             code: Optional[int] = None
             if flight.loadout.has_weapon_of_type(WeaponTypeEnum.TGP) and player:
@@ -494,7 +492,7 @@ class AircraftConflictGenerator:
             parking_slots=None,
         )
 
-    def _generate_inflight(
+    def _generate_over_departure(
         self, name: str, side: Country, flight: Flight, origin: ControlPoint
     ) -> FlyingGroup[Any]:
         assert flight.count > 0
@@ -656,7 +654,7 @@ class AircraftConflictGenerator:
                 continue
             for flight in package.flights:
                 logging.info(f"Generating flight: {flight.unit_type}")
-                group = self.generate_planned_flight(flight.from_cp, country, flight)
+                group = self.generate_planned_flight(country, flight)
                 self.unit_map.add_aircraft(group, flight)
                 self.setup_flight_group(group, package, flight, dynamic_runways)
                 self.create_waypoints(group, package, flight)
@@ -695,7 +693,7 @@ class AircraftConflictGenerator:
                 squadron,
                 1,
                 FlightType.BARCAP,
-                "Cold",
+                StartType.COLD,
                 divert=None,
             )
 
@@ -757,14 +755,14 @@ class AircraftConflictGenerator:
         coalition = self.game.coalition_for(flight.departure.captured).coalition_id
         trigger.add_condition(CoalitionHasAirdrome(coalition, flight.from_cp.id))
 
-    def generate_planned_flight(
-        self, cp: ControlPoint, country: Country, flight: Flight
+    def generate_flight_at_departure(
+        self, country: Country, flight: Flight, start_type: StartType
     ) -> FlyingGroup[Any]:
-        name = namegen.next_aircraft_name(country, cp.id, flight)
-        group: FlyingGroup[Any]
+        name = namegen.next_aircraft_name(country, flight.departure.id, flight)
+        cp = flight.departure
         try:
-            if flight.start_type == "In Flight":
-                group = self._generate_inflight(
+            if start_type is StartType.IN_FLIGHT:
+                group = self._generate_over_departure(
                     name=name, side=country, flight=flight, origin=cp
                 )
                 return group
@@ -781,7 +779,7 @@ class AircraftConflictGenerator:
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
                     count=flight.count,
-                    start_type=flight.start_type,
+                    start_type=start_type.value,
                     at=carrier_group,
                 )
             else:
@@ -792,7 +790,7 @@ class AircraftConflictGenerator:
                         side=country,
                         unit_type=flight.unit_type.dcs_unit_type,
                         count=flight.count,
-                        start_type=flight.start_type,
+                        start_type=start_type.value,
                         cp=cp,
                     )
 
@@ -805,21 +803,25 @@ class AircraftConflictGenerator:
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
                     count=flight.count,
-                    start_type=flight.start_type,
+                    start_type=start_type.value,
                     airport=cp.airport,
                 )
-        except Exception as e:
+        except NoParkingSlotError:
             # Generated when there is no place on Runway or on Parking Slots
-            logging.error(e)
-            logging.warning(
+            logging.exception(
                 "No room on runway or parking slots. Starting from the air."
             )
-            flight.start_type = "In Flight"
-            group = self._generate_inflight(
+            flight.start_type = StartType.IN_FLIGHT
+            group = self._generate_over_departure(
                 name=name, side=country, flight=flight, origin=cp
             )
             group.points[0].alt = 1500
             return group
+
+    def generate_planned_flight(
+        self, country: Country, flight: Flight
+    ) -> FlyingGroup[Any]:
+        return self.generate_flight_at_departure(country, flight, flight.start_type)
 
     @staticmethod
     def set_reduced_fuel(
@@ -1364,7 +1366,7 @@ class AircraftConflictGenerator:
                 # Late activation causes the aircraft to not be spawned
                 # until triggered.
                 self.set_activation_time(flight, group, start_time)
-            elif flight.start_type == "Cold":
+            elif flight.start_type is StartType.COLD:
                 # Setting the start time causes the AI to wait until the
                 # specified time to begin their startup sequence.
                 self.set_startup_time(flight, group, start_time)
@@ -1378,7 +1380,7 @@ class AircraftConflictGenerator:
 
     @staticmethod
     def should_activate_late(flight: Flight) -> bool:
-        if flight.start_type != "Cold":
+        if flight.start_type is StartType.COLD:
             # Avoid spawning aircraft in the air or on the runway until it's
             # time for their mission. Also avoid burning through gas spawning
             # hot aircraft hours before their takeoff time.

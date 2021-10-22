@@ -114,7 +114,7 @@ def create_mission(terrain: Terrain) -> Path:
 
     mission_path = persistency.mission_path_for(f"export_{terrain.name.lower()}.miz")
     m.save(mission_path)
-    return Path(mission_path)
+    return mission_path
 
 
 def load_coordinate_data(data: Dict[str, Any]) -> Dict[str, Coordinates]:

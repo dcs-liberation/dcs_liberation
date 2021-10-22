@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import math
 import random
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from dcs import Mission
@@ -40,13 +39,14 @@ from gen.ground_forces.ai_ground_planner import (
     CombatGroup,
     CombatGroupRole,
 )
+from gen.callsigns import callsign_for_support_unit
+from gen.ground_forces.combat_stance import CombatStance
+from gen.naming import namegen
+from game.radio.radios import RadioRegistry
+
 from .airsupport import AirSupport, JtacInfo
-from .callsigns import callsign_for_support_unit
-from .conflictgen import Conflict
-from .ground_forces.combat_stance import CombatStance
+from .frontlineconflictdescription import FrontLineConflictDescription
 from .lasercoderegistry import LaserCodeRegistry
-from .naming import namegen
-from .radios import MHz, RadioFrequency, RadioRegistry
 
 if TYPE_CHECKING:
     from game import Game
@@ -69,11 +69,11 @@ RANDOM_OFFSET_ATTACK = 250
 INFANTRY_GROUP_SIZE = 5
 
 
-class GroundConflictGenerator:
+class FlotGenerator:
     def __init__(
         self,
         mission: Mission,
-        conflict: Conflict,
+        conflict: FrontLineConflictDescription,
         game: Game,
         player_planned_combat_groups: List[CombatGroup],
         enemy_planned_combat_groups: List[CombatGroup],
@@ -97,11 +97,11 @@ class GroundConflictGenerator:
         self.laser_code_registry = laser_code_registry
 
     def generate(self) -> None:
-        position = Conflict.frontline_position(
+        position = FrontLineConflictDescription.frontline_position(
             self.conflict.front_line, self.game.theater
         )
 
-        frontline_vector = Conflict.frontline_vector(
+        frontline_vector = FrontLineConflictDescription.frontline_vector(
             self.conflict.front_line, self.game.theater
         )
 
@@ -712,7 +712,7 @@ class GroundConflictGenerator:
         desired_point = shifted.point_from_heading(
             spawn_heading.degrees, distance_from_frontline
         )
-        return Conflict.find_ground_position(
+        return FrontLineConflictDescription.find_ground_position(
             desired_point, combat_width, heading, self.conflict.theater
         )
 

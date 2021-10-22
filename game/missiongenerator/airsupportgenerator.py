@@ -16,13 +16,14 @@ from dcs.task import (
 from dcs.unittype import UnitType
 
 from game.utils import Heading
+from gen.callsigns import callsign_for_support_unit
+from gen.flights.ai_flight_planner_db import AEWC_CAPABLE
+from gen.naming import namegen
+from game.radio.radios import RadioRegistry
+from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
+
 from .airsupport import AirSupport, TankerInfo, AwacsInfo
-from .callsigns import callsign_for_support_unit
-from .conflictgen import Conflict
-from .flights.ai_flight_planner_db import AEWC_CAPABLE
-from .naming import namegen
-from .radios import RadioRegistry
-from .tacan import TacanBand, TacanRegistry, TacanUsage
+from .frontlineconflictdescription import FrontLineConflictDescription
 
 if TYPE_CHECKING:
     from game import Game
@@ -35,11 +36,11 @@ AWACS_DISTANCE = 150000
 AWACS_ALT = 13000
 
 
-class AirSupportConflictGenerator:
+class AirSupportGenerator:
     def __init__(
         self,
         mission: Mission,
-        conflict: Conflict,
+        conflict: FrontLineConflictDescription,
         game: Game,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,

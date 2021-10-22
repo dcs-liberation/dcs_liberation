@@ -8,7 +8,7 @@ from game.data.weapons import Weapon, Pylon, WeaponType
 from game.dcs.aircrafttype import AircraftType
 
 if TYPE_CHECKING:
-    from gen.flights.flight import Flight
+    from game.ato.flight import Flight
 
 
 class Loadout:
@@ -123,7 +123,7 @@ class Loadout:
 
     @classmethod
     def default_loadout_names_for(cls, flight: Flight) -> Iterator[str]:
-        from gen.flights.flight import FlightType
+        from game.ato.flighttype import FlightType
 
         # This is a list of mappings from the FlightType of a Flight to the type of
         # payload defined in the resources/payloads/UNIT_TYPE.lua file. A Flight has no

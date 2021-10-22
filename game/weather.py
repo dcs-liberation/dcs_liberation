@@ -5,17 +5,16 @@ import logging
 import random
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional, TYPE_CHECKING, Any
+from typing import Optional, TYPE_CHECKING
 
 from dcs.cloud_presets import Clouds as PydcsClouds
 from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
-
-from game.settings import Settings
 from game.utils import Distance, Heading, meters, interpolate, Pressure, inches_hg
 
 from game.theater.seasonalconditions import determine_season
 
 if TYPE_CHECKING:
+    from game.settings import Settings
     from game.theater import ConflictTheater
     from game.theater.seasonalconditions import SeasonalConditions
 

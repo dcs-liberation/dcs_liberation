@@ -12,13 +12,14 @@ from dcs.mission import Mission
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game.theater import ControlPoint, FrontLine
-from .aircraft import FlightData
-from .airsupportgen import AwacsInfo, TankerInfo
-from .armor import JtacInfo
-from .flights.flight import FlightWaypoint
-from .ground_forces.combat_stance import CombatStance
-from .radios import RadioFrequency
-from .runways import RunwayData
+from game.ato.flightwaypoint import FlightWaypoint
+from gen.ground_forces.combat_stance import CombatStance
+from game.radio.radios import RadioFrequency
+from gen.runways import RunwayData
+
+from .aircraftgenerator import FlightData
+from .airsupportgenerator import AwacsInfo, TankerInfo
+from .flotgenerator import JtacInfo
 
 
 if TYPE_CHECKING:

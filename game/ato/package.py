@@ -1,46 +1,19 @@
-"""Air Tasking Orders.
-
-The classes of the Air Tasking Order (ATO) define all of the missions that have
-been planned, and which aircraft have been assigned to them. Each planned
-mission, or "package" is composed of individual flights. The package may contain
-dissimilar aircraft performing different roles, but all for the same goal. For
-example, the package to strike an enemy airfield may contain an escort flight,
-a SEAD flight, and the strike aircraft themselves. CAP packages may contain only
-the single CAP flight.
-"""
 from __future__ import annotations
 
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Dict, List, Optional
+from typing import List, Optional, Dict, TYPE_CHECKING
 
-from dcs.mapping import Point
-
-from game.theater.missiontarget import MissionTarget
+from game.ato import Flight, FlightType
+from game.ato.packagewaypoints import PackageWaypoints
 from game.utils import Speed
-from .flights.flight import Flight, FlightType
-from .flights.flightplan import FormationFlightPlan
-from .flights.traveltime import TotEstimator
+from gen.flights.flightplan import FormationFlightPlan
+from gen.flights.traveltime import TotEstimator
 
-
-@dataclass(frozen=True)
-class Task:
-    """The main task of a flight or package."""
-
-    #: The type of task.
-    task_type: FlightType
-
-    #: The location of the objective.
-    location: str
-
-
-@dataclass(frozen=True)
-class PackageWaypoints:
-    join: Point
-    ingress: Point
-    split: Point
+if TYPE_CHECKING:
+    from game.theater import MissionTarget
 
 
 @dataclass
@@ -212,23 +185,3 @@ class Package:
     def __hash__(self) -> int:
         # TODO: Far from perfect. Number packages?
         return hash(self.target.name)
-
-
-@dataclass
-class AirTaskingOrder:
-    """The entire ATO for one coalition."""
-
-    #: The set of all planned packages in the ATO.
-    packages: List[Package] = field(default_factory=list)
-
-    def add_package(self, package: Package) -> None:
-        """Adds a package to the ATO."""
-        self.packages.append(package)
-
-    def remove_package(self, package: Package) -> None:
-        """Removes a package from the ATO."""
-        self.packages.remove(package)
-
-    def clear(self) -> None:
-        """Removes all packages from the ATO."""
-        self.packages.clear()

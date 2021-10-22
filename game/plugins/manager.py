@@ -1,10 +1,11 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from game.settings import Settings
-from game.plugins.luaplugin import LuaPlugin
+
+from .luaplugin import LuaPlugin
 
 
 class LuaPluginManager:

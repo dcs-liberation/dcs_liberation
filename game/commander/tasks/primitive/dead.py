@@ -6,7 +6,7 @@ from game.commander.missionproposals import EscortType
 from game.commander.tasks.packageplanningtask import PackagePlanningTask
 from game.commander.theaterstate import TheaterState
 from game.theater.theatergroundobject import IadsGroundObject
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 
 
 @dataclass

@@ -15,7 +15,7 @@ from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from game.factions.faction import Faction
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
-from qt_ui.widgets.spinsliders import TenthsSpinSlider, TimeInputs, CurrencySpinner
+from qt_ui.widgets.spinsliders import FloatSpinSlider, TimeInputs, CurrencySpinner
 from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
 from qt_ui.windows.newgame.QCampaignList import QCampaignList
 
@@ -472,11 +472,12 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         economy_layout = QtWidgets.QVBoxLayout()
         economy_group.setLayout(economy_layout)
 
-        player_income = TenthsSpinSlider("Player income multiplier", 0, 50, 10)
+        # TODO: Put labels back.
+        player_income = FloatSpinSlider(0, 5, 1, divisor=10)
         self.registerField("player_income_multiplier", player_income.spinner)
         economy_layout.addLayout(player_income)
 
-        enemy_income = TenthsSpinSlider("Enemy income multiplier", 0, 50, 10)
+        enemy_income = FloatSpinSlider(0, 5, 1, divisor=10)
         self.registerField("enemy_income_multiplier", enemy_income.spinner)
         economy_layout.addLayout(enemy_income)
 
@@ -534,7 +535,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField("no_enemy_navy", no_enemy_navy)
         desired_player_mission_duration = TimeInputs(
-            "Desired mission duration", DEFAULT_MISSION_LENGTH
+            DEFAULT_MISSION_LENGTH, minimum=30, maximum=150
         )
         self.registerField(
             "desired_player_mission_duration", desired_player_mission_duration.spinner
@@ -551,7 +552,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorLayout.addWidget(no_player_navy, 4, 1)
         generatorLayout.addWidget(QtWidgets.QLabel("No Enemy Navy"), 5, 0)
         generatorLayout.addWidget(no_enemy_navy, 5, 1)
-        generatorLayout.addLayout(desired_player_mission_duration, 6, 0)
+        generatorLayout.addWidget(QtWidgets.QLabel("Desired mission duration"), 6, 0)
+        generatorLayout.addLayout(desired_player_mission_duration, 7, 0)
         generatorSettingsGroup.setLayout(generatorLayout)
 
         modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")

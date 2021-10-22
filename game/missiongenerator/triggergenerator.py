@@ -47,7 +47,7 @@ class Silence(Option):
     Key = 7
 
 
-class TriggersGenerator:
+class TriggerGenerator:
     capture_zone_types = (Fob,)
     capture_zone_flag = 600
 

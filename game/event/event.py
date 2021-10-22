@@ -8,10 +8,10 @@ from dcs.task import Task
 
 from game import persistency
 from game.debriefing import Debriefing
-from game.operation.operation import Operation
 from game.theater import ControlPoint
-from gen.ato import AirTaskingOrder
 from gen.ground_forces.combat_stance import CombatStance
+from ..ato.airtaaskingorder import AirTaskingOrder
+from ..missiongenerator import MissionGenerator
 from ..unitmap import UnitMap
 
 if TYPE_CHECKING:
@@ -58,12 +58,9 @@ class Event:
         return []
 
     def generate(self) -> UnitMap:
-        Operation.prepare(self.game)
-        unit_map = Operation.generate()
-        Operation.current_mission.save(
+        return MissionGenerator(self.game).generate_miz(
             persistency.mission_path_for("liberation_nextturn.miz")
         )
-        return unit_map
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
         for loss in debriefing.air_losses.losses:

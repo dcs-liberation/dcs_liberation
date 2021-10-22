@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from qt_ui.models import GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal

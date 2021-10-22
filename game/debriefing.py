@@ -31,7 +31,7 @@ from game.unitmap import (
     UnitMap,
     FlyingUnit,
 )
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 
 if TYPE_CHECKING:
     from game import Game

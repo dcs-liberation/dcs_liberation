@@ -11,13 +11,10 @@ from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
-from game.utils import meters
-from gen.flights.ai_flight_planner_db import aircraft_for_task
-from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:
     from game import Game
+    from game.ato import FlightType
 
 FRONTLINE_RESERVES_FACTOR = 1.3
 

@@ -21,7 +21,7 @@ from PySide2.QtWidgets import (
 
 from game.squadrons import Pilot, Squadron
 from game.theater import ControlPoint, ConflictTheater
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.errorreporter import report_errors
 from qt_ui.models import SquadronModel, AtoModel

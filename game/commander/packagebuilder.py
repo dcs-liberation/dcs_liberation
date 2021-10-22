@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 
 from game.utils import nautical_miles
-from gen.ato import Package
+from ..ato.package import Package
 from game.theater import MissionTarget, OffMapSpawn, ControlPoint
-from gen.flights.flight import Flight
-
+from ..ato.flight import Flight
+from ..ato.starttype import StartType
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
@@ -25,7 +25,7 @@ class PackageBuilder:
         air_wing: AirWing,
         is_player: bool,
         package_country: str,
-        start_type: str,
+        start_type: StartType,
         asap: bool,
     ) -> None:
         self.closest_airfields = closest_airfields

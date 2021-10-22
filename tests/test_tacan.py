@@ -1,4 +1,4 @@
-from gen.tacan import (
+from game.radio.tacan import (
     OutOfTacanChannelsError,
     TacanBand,
     TacanChannel,

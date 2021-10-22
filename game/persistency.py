@@ -38,8 +38,8 @@ def _autosave_path() -> str:
     return str(save_dir() / "autosave.liberation")
 
 
-def mission_path_for(name: str) -> str:
-    return os.path.join(base_path(), "Missions", name)
+def mission_path_for(name: str) -> Path:
+    return Path(base_path()) / "Missions" / name
 
 
 def load_game(path: str) -> Optional[Game]:

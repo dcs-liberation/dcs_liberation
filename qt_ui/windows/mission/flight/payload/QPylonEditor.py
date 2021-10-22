@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QComboBox
 
 from game import Game
 from game.data.weapons import Pylon, Weapon
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from gen.flights.loadouts import Loadout
 
 

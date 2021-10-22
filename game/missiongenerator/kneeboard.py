@@ -42,12 +42,15 @@ from game.theater import ConflictTheater, TheaterGroundObject, LatLon
 from game.theater.bullseye import Bullseye
 from game.utils import meters
 from game.weather import Weather
-from .aircraft import FlightData
-from .airsupportgen import AwacsInfo, TankerInfo
-from .briefinggen import CommInfo, JtacInfo, MissionInfoGenerator
-from .flights.flight import FlightWaypoint, FlightWaypointType, FlightType
-from .radios import RadioFrequency
-from .runways import RunwayData
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.radio.radios import RadioFrequency
+from gen.runways import RunwayData
+
+from .aircraftgenerator import FlightData
+from .airsupportgenerator import AwacsInfo, TankerInfo
+from .briefinggenerator import CommInfo, JtacInfo, MissionInfoGenerator
 
 if TYPE_CHECKING:
     from game import Game

@@ -17,8 +17,8 @@ from PySide2.QtWidgets import (
 
 from game.game import Game
 from game.theater.missiontarget import MissionTarget
-from gen.ato import Package
-from gen.flights.flight import Flight
+from game.ato.package import Package
+from game.ato.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder, PlanningError
 from qt_ui.models import AtoModel, GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
