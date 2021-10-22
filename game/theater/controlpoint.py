@@ -25,6 +25,7 @@ from typing import (
 
 from dcs.mapping import Point
 from dcs.ships import (
+    Forrestal,
     Stennis,
     KUZNECOW,
     LHA_Tarawa,
@@ -521,6 +522,7 @@ class ControlPoint(MissionTarget, ABC):
                     for group in g.groups:
                         for u in group.units:
                             if db.unit_type_from_name(u.type) in [
+                                Forrestal,
                                 Stennis,
                                 KUZNECOW,
                             ]:
@@ -1005,6 +1007,7 @@ class NavalControlPoint(ControlPoint, ABC):
         for group in self.find_main_tgo().groups:
             for u in group.units:
                 if db.unit_type_from_name(u.type) in [
+                    Forrestal,
                     Stennis,
                     LHA_Tarawa,
                     KUZNECOW,
