@@ -19,6 +19,7 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
+from game.ato.starttype import StartType
 from game.data.doctrine import Doctrine
 from game.dcs.aircrafttype import FuelConsumption
 from game.flightplan import IpZoneGeometry, JoinZoneGeometry, HoldZoneGeometry
@@ -275,7 +276,7 @@ class FlightPlan:
         return start_time
 
     def estimate_startup(self) -> timedelta:
-        if self.flight.start_type == "Cold":
+        if self.flight.start_type is StartType.COLD:
             if self.flight.client_count:
                 return timedelta(minutes=10)
             else:
@@ -284,7 +285,7 @@ class FlightPlan:
         return timedelta()
 
     def estimate_ground_ops(self) -> timedelta:
-        if self.flight.start_type in ("Runway", "In Flight"):
+        if self.flight.start_type in {StartType.RUNWAY, StartType.IN_FLIGHT}:
             return timedelta()
         if self.flight.from_cp.is_fleet:
             return timedelta(minutes=2)

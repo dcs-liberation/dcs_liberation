@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Optional, List, TYPE_CHECKING
+from datetime import datetime, timedelta
+from typing import Any, Optional, List, TYPE_CHECKING
 
 from gen.flights.loadouts import Loadout
 
@@ -14,6 +15,7 @@ if TYPE_CHECKING:
     from .flighttype import FlightType
     from .flightwaypoint import FlightWaypoint
     from .package import Package
+    from .starttype import StartType
 
 
 class Flight:
@@ -24,7 +26,7 @@ class Flight:
         squadron: Squadron,
         count: int,
         flight_type: FlightType,
-        start_type: str,
+        start_type: StartType,
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
         cargo: Optional[TransferOrder] = None,

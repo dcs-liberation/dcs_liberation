@@ -13,6 +13,7 @@ from .choicesoption import choices_option
 from .minutesoption import minutes_option
 from .optiondescription import OptionDescription, SETTING_DESCRIPTION_KEY
 from .skilloption import skill_option
+from ..ato.starttype import StartType
 
 
 @unique
@@ -323,12 +324,12 @@ class Settings:
             "option only allows the player to wait on the ground.</strong>"
         ),
     )
-    default_start_type: str = choices_option(
+    default_start_type: StartType = choices_option(
         "Default start type for AI aircraft",
         page=MISSION_GENERATOR_PAGE,
         section=GAMEPLAY_SECTION,
-        choices=["Cold", "Warm", "Runway", "In Flight"],
-        default="Cold",
+        choices={v.value: v for v in StartType},
+        default=StartType.COLD,
         detail=(
             "Warning: Options other than Cold will significantly reduce the number of "
             "targets available for OCA/Aircraft missions, and OCA/Aircraft flights "

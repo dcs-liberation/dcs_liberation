@@ -49,6 +49,7 @@ from .theatergroundobject import (
     TheaterGroundObject,
     BuildingGroundObject,
 )
+from ..ato.starttype import StartType
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
@@ -681,7 +682,7 @@ class ControlPoint(MissionTarget, ABC):
         self.base.set_strength_to_minimum()
 
     @property
-    def required_aircraft_start_type(self) -> Optional[str]:
+    def required_aircraft_start_type(self) -> Optional[StartType]:
         return None
 
     @abstractmethod
@@ -1151,8 +1152,8 @@ class OffMapSpawn(ControlPoint):
         return True
 
     @property
-    def required_aircraft_start_type(self) -> Optional[str]:
-        return "In Flight"
+    def required_aircraft_start_type(self) -> Optional[StartType]:
+        return StartType.IN_FLIGHT
 
     @property
     def heading(self) -> Heading:
