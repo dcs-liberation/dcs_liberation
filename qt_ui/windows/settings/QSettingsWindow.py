@@ -307,7 +307,6 @@ class PilotSettingsBox(QGroupBox):
 
 
 START_TYPE_TOOLTIP = "Selects the start type used for AI aircraft."
-START_TYPE_TOOLTIP_CLIENT = "Selects the start type used for Player aircraft."
 
 
 class StartTypeComboBox(QComboBox):
@@ -320,14 +319,6 @@ class StartTypeComboBox(QComboBox):
 
     def on_change(self, value: str) -> None:
         self.settings.default_start_type = value
-
-class StartTypeComboBoxClient(StartTypeComboBox):
-    def __init__(self, settings: Settings) -> None:
-        super().__init__(settings)
-        self.setToolTip(START_TYPE_TOOLTIP_CLIENT)
-
-    def on_change(self, value: str) -> None:
-        self.settings.default_start_type_client = value
 
 
 class QSettingsWindow(QDialog):
@@ -731,7 +722,7 @@ class QSettingsWindow(QDialog):
         self.gameplayLayout.addWidget(dark_kneeboard_label, 2, 0)
         self.gameplayLayout.addWidget(self.generate_dark_kneeboard, 2, 1, Qt.AlignRight)
         self.gameplayLayout.addLayout(
-            self.desired_player_mission_duration, 6, 0, Qt.AlignRight
+            self.desired_player_mission_duration, 5, 0, Qt.AlignRight
         )
 
         spawn_players_immediately_tooltip = (
@@ -762,16 +753,6 @@ class QSettingsWindow(QDialog):
 
         self.gameplayLayout.addWidget(start_type_label, 4, 0)
         self.gameplayLayout.addWidget(start_type, 4, 1)
-
-        start_type_client_label = QLabel(
-            "Default start type for Player aircraft"
-        )
-        start_type_client_label.setToolTip(START_TYPE_TOOLTIP_CLIENT)
-        start_type_client = StartTypeComboBoxClient(self.game.settings)
-        start_type_client.setCurrentText(self.game.settings.default_start_type_client)
-
-        self.gameplayLayout.addWidget(start_type_client_label, 5, 0)
-        self.gameplayLayout.addWidget(start_type_client, 5, 1)
 
         self.performance = QGroupBox("Performance")
         self.performanceLayout = QGridLayout()

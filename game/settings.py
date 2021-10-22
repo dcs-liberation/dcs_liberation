@@ -67,7 +67,6 @@ class Settings:
     generate_dark_kneeboard: bool = False
     never_delay_player_flights: bool = False
     default_start_type: str = "Cold"
-    default_start_type_client: str = "Cold"
     # Mission specific
     desired_player_mission_duration: timedelta = timedelta(minutes=60)
     # Performance
