@@ -37,7 +37,9 @@ from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .weather import Conditions, TimeOfDay
 
 if TYPE_CHECKING:
-    from gen.conflictgen import Conflict
+    from game.missiongenerator.frontlineconflictdescription import (
+        FrontLineConflictDescription,
+    )
     from .ato.airtaaskingorder import AirTaskingOrder
     from .navmesh import NavMesh
     from .squadrons import AirWing
@@ -453,13 +455,17 @@ class Game:
         Compute the current conflict center position(s), mainly used for culling calculation
         :return: List of points of interests
         """
-        from gen.conflictgen import Conflict
+        from game.missiongenerator.frontlineconflictdescription import (
+            FrontLineConflictDescription,
+        )
 
         zones = []
 
         # By default, use the existing frontline conflict position
         for front_line in self.theater.conflicts():
-            position = Conflict.frontline_position(front_line, self.theater)
+            position = FrontLineConflictDescription.frontline_position(
+                front_line, self.theater
+            )
             zones.append(position[0])
             zones.append(front_line.blue_cp.position)
             zones.append(front_line.red_cp.position)

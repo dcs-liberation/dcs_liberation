@@ -16,7 +16,7 @@ class FlightType(Enum):
 
     * flightplan.py: Add waypoint population in generate_flight_plan. Add a new flight
       plan type if necessary, though most are a subclass of StrikeFlightPlan.
-    * aircraft.py: Add a configuration method and call it in setup_flight_group. This is
+    * aircraftgenerator.py: Add a configuration method and call it in setup_flight_group. This is
       responsible for configuring waypoint 0 actions like setting ROE, threat reaction,
       and mission abort parameters (winchester, bingo, etc).
     * Implementations of MissionTarget.mission_types: A mission type can only be planned
@@ -28,7 +28,7 @@ class FlightType(Enum):
     You may also need to update:
 
     * flightwaypointtype.py: Add a new waypoint type if necessary. Most mission types
-      will need these, as aircraft.py uses the ingress point type to specialize AI
+      will need these, as aircraftgenerator.py uses the ingress point type to specialize AI
       tasks, and non-strike-like missions will need more specialized control.
     * ai_flight_planner.py: Use the new mission type in propose_missions so the AI will
       plan the new mission type.

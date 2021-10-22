@@ -3,7 +3,9 @@ from PySide2.QtGui import QStandardItem, QStandardItemModel
 from game import Game
 from game.theater import ControlPointType, BuildingGroundObject
 from game.utils import Distance
-from gen.conflictgen import Conflict
+from game.missiongenerator.frontlineconflictdescription import (
+    FrontLineConflictDescription,
+)
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.flightwaypoint import FlightWaypoint
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
@@ -65,7 +67,9 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
 
         if self.include_frontlines:
             for front_line in self.game.theater.conflicts():
-                pos = Conflict.frontline_position(front_line, self.game.theater)[0]
+                pos = FrontLineConflictDescription.frontline_position(
+                    front_line, self.game.theater
+                )[0]
                 wpt = FlightWaypoint(
                     FlightWaypointType.CUSTOM,
                     pos.x,

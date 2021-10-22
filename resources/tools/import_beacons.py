@@ -32,8 +32,7 @@ from typing import Dict, Iterable, Union
 
 import lupa
 
-import game  # Needed to resolve cyclic import, for some reason.
-from gen.beacons import Beacon, BeaconType, BEACONS_RESOURCE_PATH
+from game.missiongenerator.beacons import Beacon, BeaconType, BEACONS_RESOURCE_PATH
 
 THIS_DIR = Path(__file__).parent.resolve()
 SRC_DIR = THIS_DIR.parents[1]

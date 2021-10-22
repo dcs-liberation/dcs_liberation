@@ -12,7 +12,7 @@ class FlightWaypointType(Enum):
     * waypointbuilder.py: Add a builder to simplify construction of the new waypoint
       type unless the new waypoint type will be a parameter to an existing builder
       method (such as how escort ingress waypoints work).
-    * aircraft.py: Associate AI actions with the new waypoint type by subclassing
+    * aircraftgenerator.py: Associate AI actions with the new waypoint type by subclassing
       PydcsWaypointBuilder and using it in PydcsWaypointBuilder.for_waypoint.
     """
 

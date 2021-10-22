@@ -57,9 +57,9 @@ from game.theater.theatergroundobject import (
 )
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
-from .radios import RadioFrequency, RadioRegistry
-from .runways import RunwayData
-from .tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
+from game.radio.radios import RadioFrequency, RadioRegistry
+from gen.runways import RunwayData
+from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
 
 if TYPE_CHECKING:
     from game import Game
@@ -183,7 +183,6 @@ class MissileSiteGenerator(GenericGroundObjectGenerator[MissileSiteGroundObject]
     def possible_missile_targets(self) -> List[Point]:
         """
         Find enemy control points in range
-        :param vg: Vehicle group we are searching a target for (There is always only oe group right now)
         :return: List of possible missile targets
         """
         targets: List[Point] = []
@@ -312,8 +311,8 @@ class SceneryGenerator(BuildingSiteGenerator):
         else:
             color = {1: 1, 2: 0.2, 3: 0.2, 4: 0.15}
 
-        # Create the smallest valid size trigger zone (16 feet) so that risk of overlap is minimized.
-        # As long as the triggerzone is over the scenery object, we're ok.
+        # Create the smallest valid size trigger zone (16 feet) so that risk of overlap
+        # is minimized. As long as the triggerzone is over the scenery object, we're ok.
         smallest_valid_radius = feet(16).meters
 
         return self.m.triggers.add_triggerzone(
@@ -594,7 +593,8 @@ class HelipadGenerator:
 
     def generate(self) -> None:
 
-        # Note : Helipad are generated as neutral object in order not to interfer with capture triggers
+        # Note: Helipad are generated as neutral object in order not to interfer with
+        # capture triggers
         neutral_country = self.m.country(self.game.neutral_country.name)
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
         for i, helipad in enumerate(self.cp.helipads):
@@ -631,7 +631,7 @@ class HelipadGenerator:
             )
 
 
-class GroundObjectsGenerator:
+class TgoGenerator:
     """Creates DCS groups and statics for the theater during mission generation.
 
     Most of the work of group/static generation is delegated to the other

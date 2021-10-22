@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 from datetime import timedelta
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence, TYPE_CHECKING, Union
 
 from dcs import Point
 from dcs.point import MovingPoint, PointAction
 from dcs.unit import Unit
 
-from game.theater import ControlPoint, MissionTarget
 from game.utils import Distance, meters
 from game.ato.flightwaypointtype import FlightWaypointType
+
+if TYPE_CHECKING:
+    from game.theater import ControlPoint, MissionTarget
 
 
 class FlightWaypoint:

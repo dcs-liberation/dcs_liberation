@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 from typing import Iterable, Optional
 
-from gen.radios import RadioFrequency
-from gen.tacan import TacanBand, TacanChannel
+from game.radio.radios import RadioFrequency
+from game.radio.tacan import TacanBand, TacanChannel
 
 
 BEACONS_RESOURCE_PATH = Path("resources/dcs/beacons")

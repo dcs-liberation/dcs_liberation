@@ -46,7 +46,6 @@ from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flight import Flight
 from .traveltime import GroundSpeed, TravelTime
 from .waypointbuilder import StrikeTarget, WaypointBuilder
-from ..conflictgen import Conflict, FRONTLINE_LENGTH
 
 if TYPE_CHECKING:
     from game.ato.package import Package
@@ -1605,7 +1604,13 @@ class FlightPlanBuilder:
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        ingress, heading, distance = Conflict.frontline_vector(location, self.theater)
+        from game.missiongenerator.frontlineconflictdescription import (
+            FrontLineConflictDescription,
+        )
+
+        ingress, heading, distance = FrontLineConflictDescription.frontline_vector(
+            location, self.theater
+        )
         center = ingress.point_from_heading(heading.degrees, distance / 2)
         egress = ingress.point_from_heading(heading.degrees, distance)
 
@@ -1625,6 +1630,8 @@ class FlightPlanBuilder:
         )
         patrol_speed = flight.unit_type.preferred_patrol_speed(ingress_egress_altitude)
         use_agl_ingress_egress = is_helo
+
+        from game.missiongenerator.frontlineconflictdescription import FRONTLINE_LENGTH
 
         return CasFlightPlan(
             package=self.package,

@@ -1,15 +1,19 @@
+from __future__ import annotations
+
 import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, TYPE_CHECKING
 
 from game.ato import Flight, FlightType
 from game.ato.packagewaypoints import PackageWaypoints
-from game.theater import MissionTarget
 from game.utils import Speed
 from gen.flights.flightplan import FormationFlightPlan
 from gen.flights.traveltime import TotEstimator
+
+if TYPE_CHECKING:
+    from game.theater import MissionTarget
 
 
 @dataclass

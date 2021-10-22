@@ -40,9 +40,9 @@ from game.utils import (
 )
 
 if TYPE_CHECKING:
-    from gen.aircraft import FlightData
-    from gen.airsupport import AirSupport
-    from gen.radios import Radio, RadioFrequency, RadioRegistry
+    from game.missiongenerator.aircraftgenerator import FlightData
+    from game.missiongenerator.airsupport import AirSupport
+    from game.radio.radios import Radio, RadioFrequency, RadioRegistry
 
 
 @dataclass(frozen=True)
@@ -63,7 +63,7 @@ class RadioConfig:
 
     @classmethod
     def make_radio(cls, name: Optional[str]) -> Optional[Radio]:
-        from gen.radios import get_radio
+        from game.radio.radios import get_radio
 
         if name is None:
             return None
@@ -255,7 +255,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 return min(Speed.from_mach(0.35, altitude), max_speed * 0.7)
 
     def alloc_flight_radio(self, radio_registry: RadioRegistry) -> RadioFrequency:
-        from gen.radios import ChannelInUseError, kHz
+        from game.radio.radios import ChannelInUseError, kHz
 
         if self.intra_flight_radio is not None:
             return radio_registry.alloc_for_radio(self.intra_flight_radio)

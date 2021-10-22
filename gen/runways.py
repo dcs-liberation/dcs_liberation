@@ -10,8 +10,8 @@ from dcs.terrain.terrain import Airport
 from game.weather import Conditions
 from game.utils import Heading
 from .airfields import AIRFIELD_DATA
-from .radios import RadioFrequency
-from .tacan import TacanChannel
+from game.radio.radios import RadioFrequency
+from game.radio.tacan import TacanChannel
 
 
 @dataclass(frozen=True)

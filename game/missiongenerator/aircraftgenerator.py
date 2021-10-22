@@ -91,13 +91,11 @@ from game.ato.flighttype import FlightType
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flight import Flight
-from gen.lasercoderegistry import LaserCodeRegistry
-from gen.radios import RadioFrequency, RadioRegistry
+from game.radio.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
-from gen.tacan import TacanBand, TacanRegistry, TacanUsage
-from .airsupport import AirSupport, AwacsInfo, TankerInfo
-from .callsigns import callsign_for_support_unit
-from .flights.flightplan import (
+from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
+from gen.callsigns import callsign_for_support_unit
+from gen.flights.flightplan import (
     AwacsFlightPlan,
     CasFlightPlan,
     LoiterFlightPlan,
@@ -105,8 +103,11 @@ from .flights.flightplan import (
     RefuelingFlightPlan,
     SweepFlightPlan,
 )
-from .flights.traveltime import GroundSpeed, TotEstimator
-from .naming import namegen
+from gen.flights.traveltime import GroundSpeed, TotEstimator
+from gen.naming import namegen
+
+from .airsupport import AirSupport, AwacsInfo, TankerInfo
+from .lasercoderegistry import LaserCodeRegistry
 
 if TYPE_CHECKING:
     from game import Game
@@ -219,7 +220,7 @@ class FlightData:
             )
 
 
-class AircraftConflictGenerator:
+class AircraftGenerator:
     def __init__(
         self,
         mission: Mission,
@@ -282,7 +283,7 @@ class AircraftConflictGenerator:
         ):
             return DcsStartType.Runway
         else:
-            return AircraftConflictGenerator._start_type(start_type)
+            return AircraftGenerator._start_type(start_type)
 
     def skill_level_for(
         self, unit: FlyingUnit, pilot: Optional[Pilot], blue: bool

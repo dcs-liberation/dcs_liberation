@@ -8,8 +8,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, Optional, Tuple
 
-from .radios import MHz, RadioFrequency
-from .tacan import TacanBand, TacanChannel
+from game.radio.radios import MHz, RadioFrequency
+from game.radio.tacan import TacanBand, TacanChannel
 
 
 @dataclass
