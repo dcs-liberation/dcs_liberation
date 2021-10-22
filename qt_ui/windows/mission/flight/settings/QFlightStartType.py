@@ -1,3 +1,4 @@
+from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
     QComboBox,
     QGroupBox,
@@ -12,7 +13,13 @@ from qt_ui.models import PackageModel
 
 
 class QFlightStartType(QGroupBox):
-    def __init__(self, package_model: PackageModel, flight: Flight, game: Game):
+    def __init__(
+        self,
+        package_model: PackageModel,
+        flight: Flight,
+        game: Game,
+        pilots_changed: Signal,
+    ):
         super().__init__()
         self.package_model = package_model
         self.flight = flight
@@ -41,7 +48,9 @@ class QFlightStartType(QGroupBox):
         )
         self.setLayout(self.layout)
 
-    def pilot_selected(self):
+        pilots_changed.connect(self.on_pilot_selected)
+
+    def on_pilot_selected(self):
         # Pilot selection detected. If this is a player flight, set start_type
         # as configured for players in the settings.
         # Otherwise, set the start_type as configured for AI.
