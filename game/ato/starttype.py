@@ -9,7 +9,7 @@ class StartType(Enum):
     IN_FLIGHT.
     """
 
-    IN_FLIGHT = "In Flight"
-    RUNWAY = "Runway"
     COLD = "Cold"
     WARM = "Warm"
+    RUNWAY = "Runway"
+    IN_FLIGHT = "In Flight"
