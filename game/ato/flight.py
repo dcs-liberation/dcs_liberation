@@ -6,6 +6,7 @@ from typing import Any, Optional, List, TYPE_CHECKING
 from gen.flights.loadouts import Loadout
 
 from .flightroster import FlightRoster
+from ..settings import Settings
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 class Flight:
     def __init__(
         self,
+        settings: Settings,
         package: Package,
         country: str,
         squadron: Squadron,
@@ -47,12 +49,18 @@ class Flight:
         # TODO: Replace with FlightPlan.
         self.targets: List[MissionTarget] = []
         self.loadout = Loadout.default_for(self)
-        self.start_type = start_type
         self.use_custom_loadout = False
         self.custom_name = custom_name
 
         # Only used by transport missions.
         self.cargo = cargo
+
+        # If this is a client flight, set the start_type again to match the configured default
+        # https://github.com/dcs-liberation/dcs_liberation/issues/1567
+        if self.roster is not None and self.roster.player_count > 0:
+            self.start_type = settings.default_start_type_client
+        else:
+            self.start_type = start_type
 
         # Will be replaced with a more appropriate FlightPlan by
         # FlightPlanBuilder, but an empty flight plan the flight begins with an

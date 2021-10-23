@@ -9,6 +9,7 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from game.ato.flight import Flight, FlightRoster
+from game.ato.starttype import StartType
 from qt_ui.models import PackageModel
 from game.ato.starttype import StartType
 
@@ -31,10 +32,9 @@ class QFlightStartType(QGroupBox):
         self.start_type_label = QLabel("Start type:")
         self.start_type = QComboBox()
 
-        for i, st in enumerate([b for b in ["Cold", "Warm", "Runway", "In Flight"]]):
-            self.start_type.addItem(st, st)
-            if flight.start_type.value == st:
-                self.start_type.setCurrentIndex(i)
+        for start_type in StartType:
+            self.start_type.addItem(start_type.value, start_type)
+        self.start_type.setCurrentText(flight.start_type.value)
 
         self.start_type.currentTextChanged.connect(self._on_start_type_selected)
         self.main_row.addWidget(self.start_type_label)
