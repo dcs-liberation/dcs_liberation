@@ -272,7 +272,7 @@ class AircraftGenerator:
         start_type: str,
         airfield: Airfield,
     ) -> DcsStartType:
-        if airfield.override_aircraft_parking is not None:
+        if airfield.override_aircraft_parking_enabled:
             # If the campaign designer has defined a custom number of aircraft parking slots,
             # make every aircraft start on runway
             return DcsStartType.Runway
@@ -697,7 +697,7 @@ class AircraftGenerator:
         self, squadron: Squadron, country: Country, faction: Faction
     ) -> None:
         assert isinstance(squadron.location, Airfield)
-        if squadron.location.override_aircraft_parking is None:
+        if squadron.location.override_aircraft_parking_enabled:
             # Stop here if the campaign designer has defined a custom number of aircraft parking slots
             # since it's possible there are more unused aircraft at the airfield than actual parking slots
             return

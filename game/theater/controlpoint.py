@@ -289,7 +289,8 @@ class ControlPoint(MissionTarget, ABC):
 
     alt = 0
 
-    override_aircraft_parking: int
+    override_aircraft_parking_enabled: bool
+    override_aircraft_parking_slots: int
 
     # TODO: Only airbases have IDs.
     # TODO: has_frontline is only reasonable for airbases.
@@ -324,7 +325,8 @@ class ControlPoint(MissionTarget, ABC):
         self.base: Base = Base()
         self.cptype = cptype
 
-        self.override_aircraft_parking = None
+        self.override_aircraft_parking_enabled = False
+        self.override_aircraft_parking_slots = 0
 
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
@@ -695,10 +697,15 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     def unclaimed_parking(self) -> int:
-        if self.override_aircraft_parking is not None:
-            return self.override_aircraft_parking - self.allocated_aircraft().total
-        else:
+        if (
+            self.override_aircraft_parking_slots is None
+            or not self.override_aircraft_parking_enabled
+        ):
             return self.total_aircraft_parking - self.allocated_aircraft().total
+        else:
+            return (
+                self.override_aircraft_parking_slots - self.allocated_aircraft().total
+            )
 
     @abstractmethod
     def active_runway(
@@ -892,6 +899,9 @@ class Airfield(ControlPoint):
         self.airport = airport
         self._runway_status = RunwayStatus()
 
+        self.override_aircraft_parking_enabled = False
+        self.override_aircraft_parking_slots = 0
+
     def can_operate(self, aircraft: AircraftType) -> bool:
         # TODO: Allow helicopters.
         # Need to implement ground spawns so the helos don't use the runway.
@@ -926,10 +936,13 @@ class Airfield(ControlPoint):
         Note : additional helipads shouldn't contribute to this score as it could allow airfield
         to buy more planes than what they are able to host
         """
-        if self.override_aircraft_parking is not None:
-            return self.override_aircraft_parking
-        else:
+        if (
+            self.override_aircraft_parking_slots is None
+            or not self.override_aircraft_parking_enabled
+        ):
             return len(self.airport.parking_slots)
+        else:
+            return self.override_aircraft_parking_slots
 
     @property
     def heading(self) -> Heading:

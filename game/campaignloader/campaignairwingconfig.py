@@ -17,7 +17,8 @@ class SquadronConfig:
     primary: FlightType
     secondary: list[FlightType]
     aircraft: list[str]
-    override_aircraft_parking: int
+    override_aircraft_parking_enabled: bool
+    override_aircraft_parking_slots: int
 
     @property
     def auto_assignable(self) -> set[FlightType]:
@@ -25,11 +26,18 @@ class SquadronConfig:
 
     @classmethod
     def from_data(cls, data: dict[str, Any]) -> SquadronConfig:
+        print(data)
 
         try:
-            override_aircraft_parking = data.get("override_aircraft_parking")
+            override_aircraft_parking_slots = data.get("override_aircraft_parking")
         except KeyError:
-            override_aircraft_parking = None
+            override_aircraft_parking_enabled = False
+            override_aircraft_parking_slots = 0
+
+        if override_aircraft_parking_slots is not None:
+            override_aircraft_parking_enabled = True
+        else:
+            override_aircraft_parking_enabled = False
 
         secondary_raw = data.get("secondary")
         if secondary_raw is None:
@@ -49,11 +57,16 @@ class SquadronConfig:
                 FlightType(primary),
                 secondary,
                 data.get("aircraft", []),
-                override_aircraft_parking,
+                override_aircraft_parking_enabled,
+                override_aircraft_parking_slots,
             )
         else:
             squadron_config = SquadronConfig(
-                None, secondary, data.get("aircraft", []), override_aircraft_parking
+                None,
+                secondary,
+                data.get("aircraft", []),
+                override_aircraft_parking_enabled,
+                override_aircraft_parking_slots,
             )
 
         return squadron_config
@@ -86,9 +99,16 @@ class CampaignAirWingConfig:
 
             for squadron_data in squadron_configs:
                 squadron_config = SquadronConfig.from_data(squadron_data)
-                if squadron_config.override_aircraft_parking is not None:
-                    base.override_aircraft_parking = (
-                        squadron_config.override_aircraft_parking
+                if squadron_config.override_aircraft_parking_enabled:
+                    base.override_aircraft_parking_enabled = True
+                    base.override_aircraft_parking_slots = (
+                        squadron_config.override_aircraft_parking_slots
+                    )
+                    print(
+                        "Set the number of parking slots at "
+                        + base.name
+                        + " to "
+                        + str(base.override_aircraft_parking_slots)
                     )
                 by_location[base].append(squadron_config)
 
