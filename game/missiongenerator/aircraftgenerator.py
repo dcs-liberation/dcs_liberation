@@ -268,18 +268,6 @@ class AircraftGenerator:
         return DcsStartType.Warm
 
     @staticmethod
-    def _start_type_at_airfield(
-        start_type: str,
-        airfield: Airfield,
-    ) -> DcsStartType:
-        if airfield.override_aircraft_parking is not None:
-            # If the campaign designer has defined a custom number of aircraft parking slots,
-            # make every aircraft start on runway
-            return DcsStartType.Runway
-        else:
-            return AircraftGenerator._start_type(start_type)
-
-    @staticmethod
     def _start_type_at_group(
         start_type: str,
         unit_type: Type[FlyingType],
@@ -481,27 +469,25 @@ class AircraftGenerator:
                 )
             )
 
-    def _generate_at_airfield(
+    def _generate_at_airport(
         self,
         name: str,
         side: Country,
         unit_type: Type[FlyingType],
         count: int,
         start_type: str,
-        airfield: Airfield,
+        airport: Airport,
     ) -> FlyingGroup[Any]:
         assert count > 0
 
-        logging.info(
-            "airgen: {} for {} at {}".format(unit_type, side.id, airfield.airport)
-        )
+        logging.info("airgen: {} for {} at {}".format(unit_type, side.id, airport))
         return self.m.flight_group_from_airport(
             country=side,
             name=name,
             aircraft_type=unit_type,
-            airport=airfield.airport,
+            airport=airport,
             maintask=None,
-            start_type=self._start_type_at_airfield(start_type, airfield),
+            start_type=self._start_type(start_type),
             group_size=count,
             parking_slots=None,
         )
@@ -697,10 +683,6 @@ class AircraftGenerator:
         self, squadron: Squadron, country: Country, faction: Faction
     ) -> None:
         assert isinstance(squadron.location, Airfield)
-        if squadron.location.override_aircraft_parking is None:
-            # Stop here if the campaign designer has defined a custom number of aircraft parking slots
-            # since it's possible there are more unused aircraft at the airfield than actual parking slots
-            return
         for _ in range(squadron.untasked_aircraft):
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
@@ -715,13 +697,13 @@ class AircraftGenerator:
                 divert=None,
             )
 
-            group = self._generate_at_airfield(
+            group = self._generate_at_airport(
                 name=namegen.next_aircraft_name(country, flight.departure.id, flight),
                 side=country,
                 unit_type=squadron.aircraft.dcs_unit_type,
                 count=1,
                 start_type="Cold",
-                airfield=squadron.location,
+                airport=squadron.location.airport,
             )
 
             self._setup_livery(flight, group)
@@ -816,13 +798,13 @@ class AircraftGenerator:
                     raise RuntimeError(
                         f"Attempted to spawn at airfield for non-airfield {cp}"
                     )
-                return self._generate_at_airfield(
+                return self._generate_at_airport(
                     name=name,
                     side=country,
                     unit_type=flight.unit_type.dcs_unit_type,
                     count=flight.count,
                     start_type=start_type.value,
-                    airfield=cp,
+                    airport=cp.airport,
                 )
         except NoParkingSlotError:
             # Generated when there is no place on Runway or on Parking Slots
