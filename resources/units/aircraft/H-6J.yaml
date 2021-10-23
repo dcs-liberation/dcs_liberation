@@ -1,0 +1,16 @@
+description:
+  "The Xian H-6J naval bomber is a licence-built version of the Soviet Tupolev Tu-16 twin-engine jet bomber,
+  built for China's People's Liberation Army Air Force (PLAAF).
+  It has the capability to carry KD-20 and KD-63 cruise missiles."
+introduced: 1969
+manufacturer: Xian
+origin: China
+price: 40
+role: Maritime Strike Bomber
+max_range: 2000
+variants:
+  H-6J Badger: {}
+  Tu-16 Badger:
+    introduced: 1954
+    manufacturer: Tupolev
+    origin: USSR/Russia
