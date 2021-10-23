@@ -25,13 +25,12 @@ class QGeneralFlightSettingsTab(QFrame):
         layout = QGridLayout()
         layout.addWidget(QFlightTypeTaskInfo(flight), 0, 0)
         layout.addWidget(FlightAirfieldDisplay(game, package_model, flight), 1, 0)
-        flight_start_type = QFlightStartType(
-            package_model, flight, game, self.pilots_changed
-        )
         layout.addWidget(
             QFlightSlotEditor(package_model, flight, game, self.pilots_changed), 2, 0
         )
-        layout.addWidget(flight_start_type, 3, 0)
+        layout.addWidget(
+            QFlightStartType(package_model, flight, game, self.pilots_changed), 3, 0
+        )
         layout.addWidget(QFlightCustomName(flight), 4, 0)
         vstretch = QVBoxLayout()
         vstretch.addStretch()

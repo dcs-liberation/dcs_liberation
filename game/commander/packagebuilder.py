@@ -27,6 +27,7 @@ class PackageBuilder:
         package_country: str,
         start_type: StartType,
         asap: bool,
+        settings: Settings,
     ) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
@@ -34,6 +35,7 @@ class PackageBuilder:
         self.package = Package(location, auto_asap=asap)
         self.air_wing = air_wing
         self.start_type = start_type
+        self.settings = settings
 
     def plan_flight(self, plan: ProposedFlight) -> bool:
         """Allocates aircraft for the given flight and adds them to the package.
@@ -61,6 +63,12 @@ class PackageBuilder:
             start_type,
             divert=self.find_divert_field(squadron.aircraft, squadron.location),
         )
+
+        # If this is a client flight, set the start_type again to match the configured default
+        # https://github.com/dcs-liberation/dcs_liberation/issues/1567
+        if flight.roster is not None and flight.roster.player_count > 0:
+            flight.start_type = self.settings.default_start_type_client
+
         self.package.add_flight(flight)
         return True
 

@@ -19,6 +19,7 @@ from game.theater import ControlPoint, OffMapSpawn
 from game.ato.package import Package
 from game.ato.flightroster import FlightRoster
 from game.ato.flight import Flight
+from game.ato.starttype import StartType
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
@@ -31,6 +32,7 @@ from qt_ui.windows.mission.flight.settings.QFlightSlotEditor import FlightRoster
 
 class QFlightCreator(QDialog):
     created = Signal(Flight)
+    pilots_changed = Signal()
 
     def __init__(self, game: Game, package: Package, parent=None) -> None:
         super().__init__(parent=parent)
@@ -85,7 +87,7 @@ class QFlightCreator(QDialog):
             roster = FlightRoster(
                 squadron, initial_size=self.flight_size_spinner.value()
             )
-        self.roster_editor = FlightRosterEditor(roster)
+        self.roster_editor = FlightRosterEditor(roster, self.pilots_changed)
         self.flight_size_spinner.valueChanged.connect(self.roster_editor.resize)
         self.squadron_selector.currentIndexChanged.connect(self.on_squadron_changed)
         roster_layout = QHBoxLayout()
@@ -93,13 +95,15 @@ class QFlightCreator(QDialog):
         roster_layout.addWidget(QLabel("Assigned pilots:"))
         roster_layout.addLayout(self.roster_editor)
 
+        self.pilots_changed.connect(self.on_pilot_selected)
+
         # When an off-map spawn overrides the start type to in-flight, we save
         # the selected type into this value. If a non-off-map spawn is selected
         # we restore the previous choice.
         self.restore_start_type: Optional[str] = None
         self.start_type = QComboBox()
         self.start_type.addItems(["Cold", "Warm", "Runway", "In Flight"])
-        self.start_type.setCurrentText(self.game.settings.default_start_type)
+        self.start_type.setCurrentText(self.game.settings.default_start_type.value)
         layout.addLayout(
             QLabeledWidget(
                 "Start type:",
@@ -178,7 +182,7 @@ class QFlightCreator(QDialog):
             # the roster is passed explicitly. Needs a refactor.
             roster.max_size,
             task,
-            self.start_type.currentText(),
+            StartType(self.start_type.currentText()),
             divert,
             custom_name=self.custom_name_text,
             roster=roster,
@@ -197,7 +201,7 @@ class QFlightCreator(QDialog):
 
     def on_departure_changed(self, departure: ControlPoint) -> None:
         if isinstance(departure, OffMapSpawn):
-            previous_type = self.start_type.currentText()
+            previous_type = StartType(self.start_type.currentText())
             if previous_type != "In Flight":
                 self.restore_start_type = previous_type
             self.start_type.setCurrentText("In Flight")
@@ -237,3 +241,20 @@ class QFlightCreator(QDialog):
 
         default_size = max(2, available, aircraft.max_group_size)
         self.flight_size_spinner.setValue(default_size)
+
+    def on_pilot_selected(self):
+        # Pilot selection detected. If this is a player flight, set start_type
+        # as configured for players in the settings.
+        # Otherwise, set the start_type as configured for AI.
+        # https://github.com/dcs-liberation/dcs_liberation/issues/1567
+
+        roster = self.roster_editor.roster
+
+        if roster.player_count > 0:
+            start_type = self.game.settings.default_start_type_client
+        else:
+            start_type = self.game.settings.default_start_type
+
+        for i, st in enumerate([b for b in ["Cold", "Warm", "Runway", "In Flight"]]):
+            if start_type.value == st:
+                self.start_type.setCurrentIndex(i)
