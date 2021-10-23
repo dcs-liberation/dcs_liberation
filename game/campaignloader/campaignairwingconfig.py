@@ -17,7 +17,6 @@ class SquadronConfig:
     primary: FlightType
     secondary: list[FlightType]
     aircraft: list[str]
-    override_aircraft_parking: int
 
     @property
     def auto_assignable(self) -> set[FlightType]:
@@ -25,12 +24,6 @@ class SquadronConfig:
 
     @classmethod
     def from_data(cls, data: dict[str, Any]) -> SquadronConfig:
-
-        try:
-            override_aircraft_parking = data.get("override_aircraft_parking")
-        except KeyError:
-            override_aircraft_parking = None
-
         secondary_raw = data.get("secondary")
         if secondary_raw is None:
             secondary = []
@@ -39,24 +32,9 @@ class SquadronConfig:
         else:
             secondary = [FlightType(s) for s in secondary_raw]
 
-        try:
-            primary = data["primary"]
-        except KeyError:
-            primary = None
-
-        if primary is not None:
-            squadron_config = SquadronConfig(
-                FlightType(primary),
-                secondary,
-                data.get("aircraft", []),
-                override_aircraft_parking,
-            )
-        else:
-            squadron_config = SquadronConfig(
-                None, secondary, data.get("aircraft", []), override_aircraft_parking
-            )
-
-        return squadron_config
+        return SquadronConfig(
+            FlightType(data["primary"]), secondary, data.get("aircraft", [])
+        )
 
     @staticmethod
     def expand_secondary_alias(alias: str) -> list[FlightType]:
@@ -85,11 +63,6 @@ class CampaignAirWingConfig:
                 base = theater.control_point_named(base_id)
 
             for squadron_data in squadron_configs:
-                squadron_config = SquadronConfig.from_data(squadron_data)
-                if squadron_config.override_aircraft_parking is not None:
-                    base.override_aircraft_parking = (
-                        squadron_config.override_aircraft_parking
-                    )
-                by_location[base].append(squadron_config)
+                by_location[base].append(SquadronConfig.from_data(squadron_data))
 
         return CampaignAirWingConfig(by_location)

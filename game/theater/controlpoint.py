@@ -289,8 +289,6 @@ class ControlPoint(MissionTarget, ABC):
 
     alt = 0
 
-    override_aircraft_parking: int
-
     # TODO: Only airbases have IDs.
     # TODO: has_frontline is only reasonable for airbases.
     # TODO: cptype is obsolete.
@@ -323,9 +321,6 @@ class ControlPoint(MissionTarget, ABC):
         self.shipping_lanes: Dict[ControlPoint, Tuple[Point, ...]] = {}
         self.base: Base = Base()
         self.cptype = cptype
-
-        self.override_aircraft_parking = None
-
         # TODO: Should be Airbase specific.
         self.stances: Dict[int, CombatStance] = {}
         from ..groundunitorders import GroundUnitOrders
@@ -695,10 +690,7 @@ class ControlPoint(MissionTarget, ABC):
         ...
 
     def unclaimed_parking(self) -> int:
-        if self.override_aircraft_parking is not None:
-            return self.override_aircraft_parking - self.allocated_aircraft().total
-        else:
-            return self.total_aircraft_parking - self.allocated_aircraft().total
+        return self.total_aircraft_parking - self.allocated_aircraft().total
 
     @abstractmethod
     def active_runway(
@@ -926,10 +918,7 @@ class Airfield(ControlPoint):
         Note : additional helipads shouldn't contribute to this score as it could allow airfield
         to buy more planes than what they are able to host
         """
-        if self.override_aircraft_parking is not None:
-            return self.override_aircraft_parking
-        else:
-            return len(self.airport.parking_slots)
+        return len(self.airport.parking_slots)
 
     @property
     def heading(self) -> Heading:
