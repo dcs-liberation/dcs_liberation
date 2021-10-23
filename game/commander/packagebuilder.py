@@ -7,6 +7,7 @@ from ..ato.package import Package
 from game.theater import MissionTarget, OffMapSpawn, ControlPoint
 from ..ato.flight import Flight
 from ..ato.starttype import StartType
+from ..settings import Settings
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
