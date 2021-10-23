@@ -32,8 +32,10 @@ from game.theater import (
 from game.threatzones import ThreatZones
 from game.transfers import MultiGroupTransport, TransportMap
 from game.utils import meters, nautical_miles
-from gen.ato import AirTaskingOrder
-from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flight import Flight
 from gen.flights.flightplan import (
     FlightPlan,
     PatrollingFlightPlan,

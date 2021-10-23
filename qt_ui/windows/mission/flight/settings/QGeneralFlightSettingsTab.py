@@ -2,7 +2,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QFrame, QGridLayout, QVBoxLayout
 
 from game import Game
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from qt_ui.models import PackageModel
 from qt_ui.windows.mission.flight.settings.FlightAirfieldDisplay import (
     FlightAirfieldDisplay,

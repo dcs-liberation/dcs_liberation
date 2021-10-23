@@ -34,6 +34,7 @@ if TYPE_CHECKING:
 class PersistentContext:
     coalition: Coalition
     theater: ConflictTheater
+    turn: int
     settings: Settings
     tracer: MultiEventTracer
 
@@ -139,7 +140,9 @@ class TheaterState(WorldState["TheaterState"]):
         finder = ObjectiveFinder(game, player)
         ordered_capturable_points = finder.prioritized_unisolated_points()
 
-        context = PersistentContext(coalition, game.theater, game.settings, tracer)
+        context = PersistentContext(
+            coalition, game.theater, game.turn, game.settings, tracer
+        )
 
         # Plan enough rounds of CAP that the target has coverage over the expected
         # mission duration.

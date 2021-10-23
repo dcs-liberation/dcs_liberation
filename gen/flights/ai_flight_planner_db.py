@@ -108,7 +108,7 @@ from dcs.planes import (
 from dcs.unittype import FlyingType
 
 from game.dcs.aircrafttype import AircraftType
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules

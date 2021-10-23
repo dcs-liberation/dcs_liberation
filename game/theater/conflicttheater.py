@@ -19,10 +19,6 @@ from dcs.terrain.terrain import Terrain
 from pyproj import CRS, Transformer
 from shapely import geometry, ops
 
-from .controlpoint import (
-    ControlPoint,
-    MissionTarget,
-)
 from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
@@ -30,7 +26,8 @@ from .projections import TransverseMercator
 from .seasonalconditions import SeasonalConditions
 
 if TYPE_CHECKING:
-    from . import TheaterGroundObject
+    from .controlpoint import ControlPoint, MissionTarget
+    from .theatergroundobject import TheaterGroundObject
 
 
 @dataclass

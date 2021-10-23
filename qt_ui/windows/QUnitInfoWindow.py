@@ -15,7 +15,7 @@ from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.unittype import UnitType
 from game.game import Game
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 from qt_ui.uiconstants import AIRCRAFT_BANNERS, VEHICLE_BANNERS
 
 

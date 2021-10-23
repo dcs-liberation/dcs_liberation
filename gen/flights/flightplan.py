@@ -19,6 +19,7 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
+from game.ato.starttype import StartType
 from game.data.doctrine import Doctrine
 from game.dcs.aircrafttype import FuelConsumption
 from game.flightplan import IpZoneGeometry, JoinZoneGeometry, HoldZoneGeometry
@@ -37,18 +38,21 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
     BuildingGroundObject,
 )
-from game.threatzones import ThreatZones
 from game.utils import Distance, Heading, Speed, feet, meters, nautical_miles, knots
 from .closestairfields import ObjectiveDistanceCache
-from .flight import Flight, FlightType, FlightWaypoint, FlightWaypointType
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flight import Flight
 from .traveltime import GroundSpeed, TravelTime
 from .waypointbuilder import StrikeTarget, WaypointBuilder
-from ..conflictgen import Conflict, FRONTLINE_LENGTH
 
 if TYPE_CHECKING:
-    from gen.ato import Package
+    from game.ato.package import Package
     from game.coalition import Coalition
+    from game.threatzones import ThreatZones
     from game.transfers import Convoy
+
 
 INGRESS_TYPES = {
     FlightWaypointType.INGRESS_CAS,
@@ -245,22 +249,33 @@ class FlightPlan:
         if takeoff_time is None:
             return None
 
-        start_time = takeoff_time - self.estimate_startup() - self.estimate_ground_ops()
+        start_time: timedelta = (
+            takeoff_time - self.estimate_startup() - self.estimate_ground_ops()
+        )
 
         # In case FP math has given us some barely below zero time, round to
         # zero.
         if math.isclose(start_time.total_seconds(), 0):
-            return timedelta()
+            start_time = timedelta()
 
         # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
         # and they're not interesting from a mission planning perspective so we
         # don't want them in the UI.
         #
         # Round down so *barely* above zero start times are just zero.
-        return timedelta(seconds=math.floor(start_time.total_seconds()))
+        start_time = timedelta(seconds=math.floor(start_time.total_seconds()))
+
+        # Feature request #1309: Carrier planes should start at +1s
+        # This is a workaround to a DCS problem: some AI planes spawn on
+        # the 'sixpack' when start_time is zero and cause a deadlock.
+        # Workaround: force the start_time to 1 second for these planes.
+        if self.flight.from_cp.is_fleet and start_time.total_seconds() == 0:
+            start_time = timedelta(seconds=1)
+
+        return start_time
 
     def estimate_startup(self) -> timedelta:
-        if self.flight.start_type == "Cold":
+        if self.flight.start_type is StartType.COLD:
             if self.flight.client_count:
                 return timedelta(minutes=10)
             else:
@@ -269,7 +284,7 @@ class FlightPlan:
         return timedelta()
 
     def estimate_ground_ops(self) -> timedelta:
-        if self.flight.start_type in ("Runway", "In Flight"):
+        if self.flight.start_type in {StartType.RUNWAY, StartType.IN_FLIGHT}:
             return timedelta()
         if self.flight.from_cp.is_fleet:
             return timedelta(minutes=2)
@@ -994,7 +1009,7 @@ class FlightPlanBuilder:
         raise PlanningError(f"{task} flight plan generation not implemented")
 
     def regenerate_package_waypoints(self) -> None:
-        from gen.ato import PackageWaypoints
+        from game.ato.packagewaypoints import PackageWaypoints
 
         package_airfield = self.package_airfield()
 
@@ -1589,7 +1604,13 @@ class FlightPlanBuilder:
         if not isinstance(location, FrontLine):
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
-        ingress, heading, distance = Conflict.frontline_vector(location, self.theater)
+        from game.missiongenerator.frontlineconflictdescription import (
+            FrontLineConflictDescription,
+        )
+
+        ingress, heading, distance = FrontLineConflictDescription.frontline_vector(
+            location, self.theater
+        )
         center = ingress.point_from_heading(heading.degrees, distance / 2)
         egress = ingress.point_from_heading(heading.degrees, distance)
 
@@ -1609,6 +1630,8 @@ class FlightPlanBuilder:
         )
         patrol_speed = flight.unit_type.preferred_patrol_speed(ingress_egress_altitude)
         use_agl_ingress_egress = is_helo
+
+        from game.missiongenerator.frontlineconflictdescription import FRONTLINE_LENGTH
 
         return CasFlightPlan(
             package=self.package,

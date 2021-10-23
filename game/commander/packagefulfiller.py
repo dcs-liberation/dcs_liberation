@@ -13,9 +13,10 @@ from game.settings import Settings
 from game.squadrons import AirWing
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
-from gen.ato import AirTaskingOrder, Package
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.package import Package
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 from gen.flights.flightplan import FlightPlanBuilder
 
 if TYPE_CHECKING:

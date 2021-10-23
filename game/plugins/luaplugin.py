@@ -5,12 +5,12 @@ import logging
 import textwrap
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, TYPE_CHECKING, Type
+from typing import List, Optional, TYPE_CHECKING
 
 from game.settings import Settings
 
 if TYPE_CHECKING:
-    from game.operation.operation import Operation
+    from game.missiongenerator.luagenerator import LuaGenerator
 
 
 class LuaPluginWorkOrder:
@@ -22,11 +22,11 @@ class LuaPluginWorkOrder:
         self.mnemonic = mnemonic
         self.disable = disable
 
-    def work(self, operation: Type[Operation]) -> None:
+    def work(self, lua_generator: LuaGenerator) -> None:
         if self.disable:
-            operation.bypass_plugin_script(self.mnemonic)
+            lua_generator.bypass_plugin_script(self.mnemonic)
         else:
-            operation.inject_plugin_script(
+            lua_generator.inject_plugin_script(
                 self.parent_mnemonic, self.filename, self.mnemonic
             )
 
@@ -151,11 +151,11 @@ class LuaPlugin(PluginSettings):
         for option in self.definition.options:
             option.set_settings(self.settings)
 
-    def inject_scripts(self, operation: Type[Operation]) -> None:
+    def inject_scripts(self, lua_generator: LuaGenerator) -> None:
         for work_order in self.definition.work_orders:
-            work_order.work(operation)
+            work_order.work(lua_generator)
 
-    def inject_configuration(self, operation: Type[Operation]) -> None:
+    def inject_configuration(self, lua_generator: LuaGenerator) -> None:
         # inject the plugin options
         if self.options:
             option_decls = []
@@ -181,7 +181,9 @@ class LuaPlugin(PluginSettings):
             """
             )
 
-            operation.inject_lua_trigger(lua, f"{self.identifier} plugin configuration")
+            lua_generator.inject_lua_trigger(
+                lua, f"{self.identifier} plugin configuration"
+            )
 
         for work_order in self.definition.config_work_orders:
-            work_order.work(operation)
+            work_order.work(lua_generator)

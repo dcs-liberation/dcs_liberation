@@ -16,7 +16,7 @@ from game.squadrons.operatingbases import OperatingBases
 from game.squadrons.pilot import Pilot
 
 if TYPE_CHECKING:
-    from gen.flights.flight import FlightType
+    from game.ato.flighttype import FlightType
     from game.theater import ControlPoint
 
 
@@ -62,7 +62,7 @@ class SquadronDef:
     @classmethod
     def from_yaml(cls, path: Path) -> SquadronDef:
         from gen.flights.ai_flight_planner_db import tasks_for_aircraft
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         with path.open(encoding="utf8") as squadron_file:
             data = yaml.safe_load(squadron_file)

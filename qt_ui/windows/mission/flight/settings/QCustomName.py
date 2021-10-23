@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel
 
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 
 
 class QFlightCustomName(QGroupBox):

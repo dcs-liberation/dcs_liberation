@@ -24,8 +24,8 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from gen.ato import Package
-from gen.flights.flight import Flight
+from game.ato.package import Package
+from game.ato.flight import Flight
 from gen.flights.traveltime import TotEstimator
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from ..delegates import TwoColumnRowDelegate

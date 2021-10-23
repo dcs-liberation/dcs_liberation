@@ -10,11 +10,11 @@ from PySide2.QtWidgets import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game
-from game.event.airwar import AirWarEvent
+from game import Game, persistency
+from game.ato.package import Package
 from game.profiling import logged_duration
+from game.sim import MissionSimulation
 from game.utils import meters
-from gen.ato import Package
 from gen.flights.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.widgets.QBudgetBox import QBudgetBox
@@ -276,19 +276,12 @@ class QTopPanel(QFrame):
         if negative_starts:
             if not self.confirm_negative_start_time(negative_starts):
                 return
-        closest_cps = self.game.theater.closest_opposing_control_points()
-        game_event = AirWarEvent(
-            self.game,
-            closest_cps[0],
-            closest_cps[1],
-            self.game.theater.controlpoints[0].position,
-            self.game.blue.faction.name,
-            self.game.red.faction.name,
-        )
 
-        unit_map = self.game.initiate_event(game_event)
-        waiting = QWaitingForMissionResultWindow(game_event, self.game, unit_map)
-        waiting.show()
+        sim = MissionSimulation(self.game)
+        sim.generate_miz(persistency.mission_path_for("liberation_nextturn.miz"))
+
+        waiting = QWaitingForMissionResultWindow(self.game, sim, self)
+        waiting.exec_()
 
     def budget_update(self, game: Game):
         self.budgetBox.setGame(game)
