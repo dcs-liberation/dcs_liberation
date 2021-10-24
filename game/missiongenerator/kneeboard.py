@@ -48,7 +48,7 @@ from game.ato.flightwaypoint import FlightWaypoint
 from game.radio.radios import RadioFrequency
 from gen.runways import RunwayData
 
-from .aircraftgenerator import FlightData
+from .aircraft.flightdata import FlightData
 from .airsupportgenerator import AwacsInfo, TankerInfo
 from .briefinggenerator import CommInfo, JtacInfo, MissionInfoGenerator
 
