@@ -52,6 +52,7 @@ from dcs.planes import (
     F_4E,
     F_5E_3,
     F_86F_Sabre,
+    H_6J,
     IL_76MD,
     IL_78M,
     JF_17,
@@ -215,6 +216,7 @@ CAS_CAPABLE = [
     Mi_24P,
     Mi_24V,
     Mi_8MT,
+    H_6J,
     MiG_19P,
     MiG_15bis,
     M_2000C,
@@ -276,6 +278,7 @@ DEAD_CAPABLE = [
     B_52H,
     Tu_160,
     Tu_95MS,
+    H_6J,
     A_20G,
     Ju_88A4,
     P_47D_40,
@@ -300,6 +303,7 @@ STRIKE_CAPABLE = [
     Tu_160,
     Tu_95MS,
     Tu_22M3,
+    H_6J,
     F_15E,
     AJS37,
     Tornado_GR4,
@@ -357,6 +361,7 @@ STRIKE_CAPABLE = [
 ANTISHIP_CAPABLE = [
     AJS37,
     Tu_22M3,
+    H_6J,
     FA_18C_hornet,
     JAS39Gripen_AG,
     Su_24M,
@@ -383,6 +388,7 @@ RUNWAY_ATTACK_CAPABLE = [
     Su_30,
     Tornado_IDS,
     M_2000C,
+    H_6J,
 ] + STRIKE_CAPABLE
 
 # For any aircraft that isn't necessarily directly involved in strike

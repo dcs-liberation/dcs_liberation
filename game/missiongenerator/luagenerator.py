@@ -14,7 +14,7 @@ from game.ato import FlightType
 from game.plugins import LuaPluginManager
 from game.theater import TheaterGroundObject
 
-from .aircraftgenerator import FlightData
+from .aircraft.flightdata import FlightData
 from .airsupport import AirSupport
 
 if TYPE_CHECKING:

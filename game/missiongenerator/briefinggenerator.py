@@ -17,7 +17,7 @@ from gen.ground_forces.combat_stance import CombatStance
 from game.radio.radios import RadioFrequency
 from gen.runways import RunwayData
 
-from .aircraftgenerator import FlightData
+from .aircraft.flightdata import FlightData
 from .airsupportgenerator import AwacsInfo, TankerInfo
 from .flotgenerator import JtacInfo
 

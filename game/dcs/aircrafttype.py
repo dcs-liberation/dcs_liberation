@@ -40,7 +40,7 @@ from game.utils import (
 )
 
 if TYPE_CHECKING:
-    from game.missiongenerator.aircraftgenerator import FlightData
+    from game.missiongenerator.aircraft.flightdata import FlightData
     from game.missiongenerator.airsupport import AirSupport
     from game.radio.radios import Radio, RadioFrequency, RadioRegistry
 
