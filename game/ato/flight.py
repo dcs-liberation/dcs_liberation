@@ -40,8 +40,6 @@ class Flight:
             self.roster = FlightRoster(self.squadron, initial_size=count)
         else:
             self.roster = roster
-        self.departure = self.squadron.location
-        self.arrival = self.squadron.arrival
         self.divert = divert
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.
@@ -62,6 +60,14 @@ class Flight:
         self.flight_plan: FlightPlan = CustomFlightPlan(
             package=package, flight=self, custom_waypoints=[]
         )
+
+    @property
+    def departure(self) -> ControlPoint:
+        return self.squadron.location
+
+    @property
+    def arrival(self) -> ControlPoint:
+        return self.squadron.arrival
 
     @property
     def count(self) -> int:

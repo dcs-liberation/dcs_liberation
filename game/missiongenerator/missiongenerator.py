@@ -17,7 +17,10 @@ from game.theater import Airfield, FrontLine
 from game.unitmap import UnitMap
 from gen.airfields import AIRFIELD_DATA
 from gen.naming import namegen
-from .aircraftgenerator import AircraftGenerator, FlightData
+from game.missiongenerator.aircraft.aircraftgenerator import (
+    AircraftGenerator,
+)
+from .aircraft.flightdata import FlightData
 from .airsupport import AirSupport
 from .airsupportgenerator import AirSupportGenerator
 from .beacons import load_beacons_for_terrain

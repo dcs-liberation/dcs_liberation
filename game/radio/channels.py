@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Optional, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from game.missiongenerator.aircraftgenerator import FlightData
+    from game.missiongenerator.aircraft.flightdata import FlightData
     from game.missiongenerator.airsupport import AirSupport
 
 
