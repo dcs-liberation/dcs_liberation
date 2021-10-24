@@ -26,7 +26,7 @@ class Flight:
         squadron: Squadron,
         count: int,
         flight_type: FlightType,
-        start_type: StartType,
+        custom_start_type: Optional[StartType],
         divert: Optional[ControlPoint],
         custom_name: Optional[str] = None,
         cargo: Optional[TransferOrder] = None,
@@ -45,7 +45,7 @@ class Flight:
         # TODO: Replace with FlightPlan.
         self.targets: List[MissionTarget] = []
         self.loadout = Loadout.default_for(self)
-        self.start_type = start_type
+        self.custom_start_type = custom_start_type
         self.use_custom_loadout = False
         self.custom_name = custom_name
 
@@ -103,6 +103,22 @@ class Flight:
     def return_pilots_and_aircraft(self) -> None:
         self.roster.clear()
         self.squadron.claim_inventory(-self.count)
+
+    @property
+    def get_start_type(self) -> StartType:
+        if self.custom_start_type is not None:
+            return self.custom_start_type
+        else:
+            # TODO Fix this to return the selected custom start type
+            # from Settings after fixing the circular import
+            return StartType.COLD
+
+    @property
+    def get_player_start_type_value(self) -> str:
+        if self.custom_start_type is not None:
+            return self.custom_start_type.value
+        else:
+            return "Default"
 
     def __repr__(self) -> str:
         if self.custom_name:

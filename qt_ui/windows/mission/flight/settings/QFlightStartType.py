@@ -29,16 +29,19 @@ class QFlightStartType(QGroupBox):
 
         self.layout = QVBoxLayout()
         self.main_row = QHBoxLayout()
-        self.start_type_label = QLabel("Start type:")
-        self.start_type = QComboBox()
+        self.start_type_combobox_label = QLabel("Start type:")
+        self.start_type_combobox = QComboBox()
 
+        self.start_type_combobox.addItem("Default", None)
         for start_type in StartType:
-            self.start_type.addItem(start_type.value, start_type)
-        self.start_type.setCurrentText(flight.start_type.value)
+            self.start_type_combobox.addItem(start_type.value, start_type)
+        self.start_type_combobox.setCurrentText(flight.get_player_start_type_value)
 
-        self.start_type.currentTextChanged.connect(self._on_start_type_selected)
-        self.main_row.addWidget(self.start_type_label)
-        self.main_row.addWidget(self.start_type)
+        self.start_type_combobox.currentTextChanged.connect(
+            self._on_start_type_selected
+        )
+        self.main_row.addWidget(self.start_type_combobox_label)
+        self.main_row.addWidget(self.start_type_combobox)
 
         self.layout.addLayout(self.main_row)
         self.layout.addWidget(
@@ -57,18 +60,19 @@ class QFlightStartType(QGroupBox):
         # Otherwise, set the start_type as configured for AI.
         # https://github.com/dcs-liberation/dcs_liberation/issues/1567
 
-        if self.flight.roster.player_count > 0:
-            self.flight.start_type = self.game.settings.default_start_type_client
-        else:
-            self.flight.start_type = self.game.settings.default_start_type
+        if self.start_type_combobox.currentData() is None:
+            if self.flight.roster.player_count > 0:
+                start_type = self.game.settings.default_start_type_client
+            else:
+                start_type = self.game.settings.default_start_type
 
-        for i, st in enumerate([b for b in ["Cold", "Warm", "Runway", "In Flight"]]):
-            if self.flight.start_type.value == st:
-                self.start_type.setCurrentIndex(i)
+            self.start_type_combobox.setCurrentText(
+                "Default (" + start_type.value + ")"
+            )
 
         self.package_model.update_tot()
 
     def _on_start_type_selected(self):
-        selected = self.start_type.currentData()
-        self.flight.start_type = StartType(selected)
+        selected = self.start_type_combobox.currentData()
+        self.flight.custom_start_type = StartType(selected)
         self.package_model.update_tot()

@@ -102,14 +102,15 @@ class QFlightCreator(QDialog):
         # the selected type into this value. If a non-off-map spawn is selected
         # we restore the previous choice.
         self.restore_start_type: Optional[str] = None
-        self.start_type = QComboBox()
+        self.start_type_combobox = QComboBox()
+        self.start_type_combobox.addItem("Default", None)
         for start_type in StartType:
-            self.start_type.addItem(start_type.value, start_type)
-        self.start_type.setCurrentText(self.game.settings.default_start_type.value)
+            self.start_type_combobox.addItem(start_type.value, start_type)
+        self.start_type_combobox.setCurrentText("Default")
         layout.addLayout(
             QLabeledWidget(
                 "Start type:",
-                self.start_type,
+                self.start_type_combobox,
                 tooltip="Selects the start type for this flight.",
             )
         )
@@ -184,7 +185,7 @@ class QFlightCreator(QDialog):
             # the roster is passed explicitly. Needs a refactor.
             roster.max_size,
             task,
-            self.start_type.currentData(),
+            self.start_type_combobox.currentData(),
             divert,
             custom_name=self.custom_name_text,
             roster=roster,
@@ -203,15 +204,15 @@ class QFlightCreator(QDialog):
 
     def on_departure_changed(self, departure: ControlPoint) -> None:
         if isinstance(departure, OffMapSpawn):
-            previous_type = self.start_type.currentData()
+            previous_type = self.start_type_combobox.currentData()
             if previous_type != StartType.IN_FLIGHT:
                 self.restore_start_type = previous_type
-            self.start_type.setCurrentText(StartType.IN_FLIGHT.value)
-            self.start_type.setEnabled(False)
+            self.start_type_combobox.setCurrentText(StartType.IN_FLIGHT.value)
+            self.start_type_combobox.setEnabled(False)
         else:
-            self.start_type.setEnabled(True)
+            self.start_type_combobox.setEnabled(True)
             if self.restore_start_type is not None:
-                self.start_type.setCurrentText(self.restore_start_type)
+                self.start_type_combobox.setCurrentText(self.restore_start_type)
                 self.restore_start_type = None
 
     def on_task_changed(self, index: int) -> None:
@@ -252,11 +253,12 @@ class QFlightCreator(QDialog):
 
         roster = self.roster_editor.roster
 
-        if roster.player_count > 0:
-            start_type = self.game.settings.default_start_type_client
-        else:
-            start_type = self.game.settings.default_start_type
+        if self.start_type_combobox.currentData() is None:
+            if roster.player_count > 0:
+                start_type = self.game.settings.default_start_type_client
+            else:
+                start_type = self.game.settings.default_start_type
 
-        for i, st in enumerate([b for b in ["Cold", "Warm", "Runway", "In Flight"]]):
-            if start_type.value == st:
-                self.start_type.setCurrentIndex(i)
+            self.start_type_combobox.setCurrentText(
+                "Default (" + start_type.value + ")"
+            )

@@ -60,7 +60,7 @@ class FlightGroupSpawner:
         )
         cp = self.flight.departure
         try:
-            if self.flight.start_type is StartType.IN_FLIGHT:
+            if self.flight.get_start_type is StartType.IN_FLIGHT:
                 group = self._generate_over_departure(name, cp)
                 return group
             elif isinstance(cp, NavalControlPoint):
@@ -88,7 +88,7 @@ class FlightGroupSpawner:
             logging.exception(
                 "No room on runway or parking slots. Starting from the air."
             )
-            self.flight.start_type = StartType.IN_FLIGHT
+            self.flight.custom_start_type = StartType.IN_FLIGHT
             group = self._generate_over_departure(name, cp)
             group.points[0].alt = 1500
             return group
@@ -169,7 +169,7 @@ class FlightGroupSpawner:
         group.points[0].action = PointAction.FromGroundArea
         group.points[0].type = "TakeOffGround"
         group.units[0].heading = helipad.units[0].heading
-        if self.flight.start_type != "Cold":
+        if self.flight.get_start_type != "Cold":
             group.points[0].action = PointAction.FromGroundAreaHot
             group.points[0].type = "TakeOffGroundHot"
 
@@ -183,14 +183,14 @@ class FlightGroupSpawner:
         return group
 
     def dcs_start_type(self) -> DcsStartType:
-        if self.flight.start_type is StartType.RUNWAY:
+        if self.flight.get_start_type is StartType.RUNWAY:
             return DcsStartType.Runway
-        elif self.flight.start_type is StartType.COLD:
+        elif self.flight.get_start_type is StartType.COLD:
             return DcsStartType.Cold
-        elif self.flight.start_type is StartType.WARM:
+        elif self.flight.get_start_type is StartType.WARM:
             return DcsStartType.Warm
         raise ValueError(
-            f"There is no pydcs StartType matching {self.flight.start_type}"
+            f"There is no pydcs StartType matching {self.flight.get_start_type}"
         )
 
     def _start_type_at_group(

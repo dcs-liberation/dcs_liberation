@@ -66,9 +66,10 @@ class PackageBuilder:
         )
 
         # If this is a client flight, set the start_type again to match the configured default
+        # TODO Remove this once the Flight / Settings circular import is fixed
         # https://github.com/dcs-liberation/dcs_liberation/issues/1567
         if flight.roster is not None and flight.roster.player_count > 0:
-            flight.start_type = self.settings.default_start_type_client
+            flight.custom_start_type = self.settings.default_start_type_client
 
         self.package.add_flight(flight)
         return True

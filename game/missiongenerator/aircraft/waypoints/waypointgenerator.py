@@ -179,7 +179,7 @@ class WaypointGenerator:
                 # Late activation causes the aircraft to not be spawned
                 # until triggered.
                 self.set_activation_time(start_time)
-            elif self.flight.start_type is StartType.COLD:
+            elif self.flight.get_start_type is StartType.COLD:
                 # Setting the start time causes the AI to wait until the
                 # specified time to begin their startup sequence.
                 self.set_startup_time(start_time)
@@ -248,7 +248,7 @@ class WaypointGenerator:
         return not self.settings.never_delay_player_flights
 
     def should_activate_late(self) -> bool:
-        if self.flight.start_type is StartType.COLD:
+        if self.flight.get_start_type is StartType.COLD:
             # Avoid spawning aircraft in the air or on the runway until it's
             # time for their mission. Also avoid burning through gas spawning
             # hot aircraft hours before their takeoff time.
