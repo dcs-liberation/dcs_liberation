@@ -101,6 +101,7 @@ from dcs.planes import (
     Tu_160,
     Tu_22M3,
     Tu_95MS,
+    Tu_142,
     WingLoong_I,
     I_16,
     Yak_40,
@@ -360,6 +361,7 @@ STRIKE_CAPABLE = [
 
 ANTISHIP_CAPABLE = [
     AJS37,
+    Tu_142,
     Tu_22M3,
     H_6J,
     FA_18C_hornet,
