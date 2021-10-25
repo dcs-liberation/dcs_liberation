@@ -7,18 +7,16 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class StrikeIngressBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         if self.group.units[0].unit_type in [B_17G, B_52H, Tu_22M3]:
-            return self.build_bombing()
+            self.add_bombing_tasks(waypoint)
         else:
-            return self.build_strike()
+            self.add_strike_tasks(waypoint)
 
-    def build_bombing(self) -> MovingPoint:
-        waypoint = super().build()
-
+    def add_bombing_tasks(self, waypoint: MovingPoint) -> None:
         targets = self.waypoint.targets
         if not targets:
-            return waypoint
+            return
 
         center = Point(0, 0)
         for target in targets:
@@ -33,10 +31,8 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
         bombing.params["altitudeEnabled"] = False
         bombing.params["groupAttack"] = True
         waypoint.tasks.append(bombing)
-        return waypoint
 
-    def build_strike(self) -> MovingPoint:
-        waypoint = super().build()
+    def add_strike_tasks(self, waypoint: MovingPoint) -> None:
         for target in self.waypoint.targets:
             bombing = Bombing(target.position, weapon_type=WeaponType.Auto)
             # If there is only one target, drop all ordnance in one pass.
@@ -47,4 +43,3 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
 
             # Register special waypoints
             self.register_special_waypoints(self.waypoint.targets)
-        return waypoint

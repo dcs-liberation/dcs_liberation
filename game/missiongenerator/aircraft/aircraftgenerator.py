@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from functools import cached_property
 from typing import Any, Dict, List, TYPE_CHECKING
 
@@ -11,6 +12,7 @@ from dcs.unitgroup import FlyingGroup, StaticGroup
 
 from game.ato.airtaaskingorder import AirTaskingOrder
 from game.ato.flight import Flight
+from game.ato.flightstate import Completed
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.ato.starttype import StartType
@@ -42,6 +44,7 @@ class AircraftGenerator:
         mission: Mission,
         settings: Settings,
         game: Game,
+        time: datetime,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
         laser_code_registry: LaserCodeRegistry,
@@ -49,9 +52,10 @@ class AircraftGenerator:
         air_support: AirSupport,
         helipads: dict[ControlPoint, list[StaticGroup]],
     ) -> None:
-        self.m = mission
-        self.game = game
+        self.mission = mission
         self.settings = settings
+        self.game = game
+        self.time = time
         self.radio_registry = radio_registry
         self.tacan_registy = tacan_registry
         self.laser_code_registry = laser_code_registry
@@ -144,9 +148,10 @@ class AircraftGenerator:
                 StartType.COLD,
                 divert=None,
             )
+            flight.state = Completed(flight, self.game.settings)
 
             group = FlightGroupSpawner(
-                flight, country, self.m, self.helipads
+                flight, country, self.mission, self.helipads
             ).create_idle_aircraft()
             AircraftPainter(flight, group).apply_livery()
             self.unit_map.add_aircraft(group, flight)
@@ -154,15 +159,17 @@ class AircraftGenerator:
     def create_and_configure_flight(
         self, flight: Flight, country: Country, dynamic_runways: Dict[str, RunwayData]
     ) -> FlyingGroup[Any]:
+        """Creates and configures the flight group in the mission."""
         group = FlightGroupSpawner(
-            flight, country, self.m, self.helipads
+            flight, country, self.mission, self.helipads
         ).create_flight_group()
         self.flights.append(
             FlightGroupConfigurator(
                 flight,
                 group,
                 self.game,
-                self.m,
+                self.mission,
+                self.time,
                 self.radio_registry,
                 self.tacan_registy,
                 self.laser_code_registry,

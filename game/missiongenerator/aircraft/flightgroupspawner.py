@@ -12,6 +12,7 @@ from dcs.terrain import Airport, NoParkingSlotError
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 
 from game.ato import Flight
+from game.ato.flightstate import InFlight
 from game.ato.starttype import StartType
 from game.theater import Airfield, ControlPoint, NavalControlPoint, OffMapSpawn
 from game.utils import meters
@@ -40,7 +41,31 @@ class FlightGroupSpawner:
         self.helipads = helipads
 
     def create_flight_group(self) -> FlyingGroup[Any]:
-        return self.generate_flight_at_departure()
+        """Creates the group for the flight and adds it to the mission.
+
+        Each flight is spawned according to its FlightState at the time of mission
+        generation. Aircraft that are WaitingForStart will be set up based on their
+        StartType with a delay. Note that delays are actually created during waypoint
+        generation.
+
+        Aircraft that are *not* WaitingForStart will be spawned in their current state.
+        We cannot spawn aircraft mid-taxi, so when the simulated state is near the end
+        of a long taxi period the aircraft will be spawned in their parking spot. This
+        could lead to problems but that's what loiter points are for. The other pre-
+        flight states have the same problem but are much shorter and more easily covered
+        by the loiter time. Player flights that are spawned near the end of their cold
+        start have the biggest problem but players are able to cut corners to make up
+        for lost time.
+
+        Aircraft that are already in the air will be spawned at their estimated
+        location, speed, and altitude based on their flight plan.
+        """
+        if (
+            self.flight.state.is_waiting_for_start
+            or self.flight.state.spawn_type is not StartType.IN_FLIGHT
+        ):
+            return self.generate_flight_at_departure()
+        return self.generate_mid_mission()
 
     def create_idle_aircraft(self) -> FlyingGroup[Any]:
         assert isinstance(self.flight.squadron.location, Airfield)
@@ -54,13 +79,17 @@ class FlightGroupSpawner:
         group.uncontrolled = True
         return group
 
+    @property
+    def start_type(self) -> StartType:
+        return self.flight.state.spawn_type
+
     def generate_flight_at_departure(self) -> FlyingGroup[Any]:
         name = namegen.next_aircraft_name(
             self.country, self.flight.departure.id, self.flight
         )
         cp = self.flight.departure
         try:
-            if self.flight.start_type is StartType.IN_FLIGHT:
+            if self.start_type is StartType.IN_FLIGHT:
                 group = self._generate_over_departure(name, cp)
                 return group
             elif isinstance(cp, NavalControlPoint):
@@ -69,7 +98,7 @@ class FlightGroupSpawner:
                 if not isinstance(carrier_group, ShipGroup):
                     raise RuntimeError(
                         f"Carrier group {carrier_group} is a "
-                        "{carrier_group.__class__.__name__}, expected a ShipGroup"
+                        f"{carrier_group.__class__.__name__}, expected a ShipGroup"
                     )
                 return self._generate_at_group(name, carrier_group)
             else:
@@ -88,10 +117,32 @@ class FlightGroupSpawner:
             logging.exception(
                 "No room on runway or parking slots. Starting from the air."
             )
-            self.flight.start_type = StartType.IN_FLIGHT
             group = self._generate_over_departure(name, cp)
             group.points[0].alt = 1500
             return group
+
+    def generate_mid_mission(self) -> FlyingGroup[Any]:
+        assert isinstance(self.flight.state, InFlight)
+        name = namegen.next_aircraft_name(
+            self.country, self.flight.departure.id, self.flight
+        )
+        speed = self.flight.state.estimate_speed()
+        pos = self.flight.state.estimate_position()
+        alt, alt_type = self.flight.state.estimate_altitude()
+        group = self.mission.flight_group(
+            country=self.country,
+            name=name,
+            aircraft_type=self.flight.unit_type.dcs_unit_type,
+            airport=None,
+            position=pos,
+            altitude=alt.meters,
+            speed=speed.kph,
+            maintask=None,
+            group_size=self.flight.count,
+        )
+
+        group.points[0].alt_type = alt_type
+        return group
 
     def _generate_at_airport(self, name: str, airport: Airport) -> FlyingGroup[Any]:
         # TODO: Delayed runway starts should be converted to air starts for multiplayer.
@@ -169,7 +220,7 @@ class FlightGroupSpawner:
         group.points[0].action = PointAction.FromGroundArea
         group.points[0].type = "TakeOffGround"
         group.units[0].heading = helipad.units[0].heading
-        if self.flight.start_type != "Cold":
+        if self.start_type is not StartType.COLD:
             group.points[0].action = PointAction.FromGroundAreaHot
             group.points[0].type = "TakeOffGroundHot"
 
@@ -183,15 +234,13 @@ class FlightGroupSpawner:
         return group
 
     def dcs_start_type(self) -> DcsStartType:
-        if self.flight.start_type is StartType.RUNWAY:
+        if self.start_type is StartType.RUNWAY:
             return DcsStartType.Runway
-        elif self.flight.start_type is StartType.COLD:
+        elif self.start_type is StartType.COLD:
             return DcsStartType.Cold
-        elif self.flight.start_type is StartType.WARM:
+        elif self.start_type is StartType.WARM:
             return DcsStartType.Warm
-        raise ValueError(
-            f"There is no pydcs StartType matching {self.flight.start_type}"
-        )
+        raise ValueError(f"There is no pydcs StartType matching {self.start_type}")
 
     def _start_type_at_group(
         self,

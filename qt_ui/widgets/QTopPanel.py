@@ -278,6 +278,7 @@ class QTopPanel(QFrame):
                 return
 
         sim = MissionSimulation(self.game)
+        sim.run()
         sim.generate_miz(persistency.mission_path_for("liberation_nextturn.miz"))
 
         waiting = QWaitingForMissionResultWindow(self.game, sim, self)

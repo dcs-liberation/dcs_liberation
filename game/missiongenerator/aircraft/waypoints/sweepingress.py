@@ -9,16 +9,14 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class SweepIngressBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         if not isinstance(self.flight.flight_plan, SweepFlightPlan):
             flight_plan_type = self.flight.flight_plan.__class__.__name__
             logging.error(
                 f"Cannot create sweep for {self.flight} because "
                 f"{flight_plan_type} is not a sweep flight plan."
             )
-            return waypoint
+            return
 
         waypoint.tasks.append(
             EngageTargets(
@@ -29,5 +27,3 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
                 ],
             )
         )
-
-        return waypoint

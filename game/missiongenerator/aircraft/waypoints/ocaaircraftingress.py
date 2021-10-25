@@ -9,16 +9,14 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class OcaAircraftIngressBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         target = self.package.target
         if not isinstance(target, Airfield):
             logging.error(
                 "Unexpected target type for OCA Strike mission: %s",
                 target.__class__.__name__,
             )
-            return waypoint
+            return
 
         task = EngageTargetsInZone(
             position=target.position,
@@ -32,4 +30,3 @@ class OcaAircraftIngressBuilder(PydcsWaypointBuilder):
         task.params["altitudeEnabled"] = False
         task.params["groupAttack"] = True
         waypoint.tasks.append(task)
-        return waypoint
