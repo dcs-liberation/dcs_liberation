@@ -7,11 +7,12 @@ recommended_enemy_faction: Russia 1990
 description: <p>United Nations Observer Mission in Georgia (UNOMIG) observers stationed in Georgia to monitor the ceasefire between Georgia and Abkhazia have been cut off from friendly forces by Russian troops backing the separatist state. The UNOMIG HQ at Sukhumi has been taken, and a small contingent of observers and troops at the Zugdidi Sector HQ will have to make a run for the coast, supported by offshore US naval aircraft. The contingent is aware that their best shot at survival is to swiftly retake Sukhumi before Russian forces have a chance to dig in, so that friendly ground forces can land and reinforce them.</p><p><strong>Note:</strong> Ground unit purchase will not be available past Turn 0 until Sukhumi is retaken, so it is imperative you reach Sukhumi with at least one surviving ground unit to capture it. Two Hueys are available at Zugdidi for some close air support. The player can either play the first leg of the scenario as an evacuation with a couple of light vehicles (e.g. Humvees) set on breakthrough (modifying waypoints in the mission editor so they are not charging head-on into enemy ground forces is suggested), or purchase heavier ground units if they wish to experience a more traditional frontline ground war. Once Sukhumi has been captured, squadrons based in Incirlik Turkey can be ferried in via the "From Incirlik" off-map spawn point.</p>
 miz: operation_vectrons_claw.miz
 performance: 1
-version: "9.0"
+recommended_start_date: 2008-08-08
+version: "9.1"
 squadrons:
   Blue CV:
     - primary: BARCAP
-      secondary: air-to-air
+      secondary: any
       aircraft:
         - F-14B Tomcat
         - F-14A Tomcat (Block 135-GR Late)
@@ -24,7 +25,7 @@ squadrons:
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-    - primary: BAI
+    - primary: DEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
@@ -64,7 +65,7 @@ squadrons:
         - E-3A
     - primary: Refueling
       aircraft:
-        - KC-135 Stratotanker MPRS
+        - KC-135 Stratotanker
     - primary: Transport
       aircraft:
         - C-130
@@ -87,28 +88,16 @@ squadrons:
       secondary: any
       aircraft:
        - MiG-29S Fulcrum-C
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - Su-25T Frogfoot
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Ka-50 Hokum
+        - Su-24M Fencer-D
 #Anapa-Vityazevo
   12:
-    - primary: BARCAP
-      secondary: any
-      aircraft:
-        - Su-27 Flanker-B
-    - primary: SEAD
+    - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Su-24M Fencer-D
-    - primary: Strike
-      secondary: air-to-ground
-      aircraft:
-        - Tu-22M3 Backfire-C
+        - Su-25T Frogfoot
     - primary: AEW&C
       aircraft:
         - A-50
@@ -123,8 +112,9 @@ squadrons:
       secondary: any
       aircraft:
         - SU-33 Flanker-D
+ # I am aware there is no Russian LHA. This is just for campaign inversion.
   Red LHA:
     - primary: BAI
       secondary: air-to-ground
       aircraft:
-        - Mi-8MTV2 Hip
+        - AV-8B Harrier II Night Attack
