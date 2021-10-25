@@ -27,7 +27,7 @@ class WaitingForStart(FlightState):
 
     @property
     def start_type(self) -> StartType:
-        return self.flight.start_type
+        return self.flight.get_start_type
 
     def on_game_tick(self, time: datetime, duration: timedelta) -> None:
         if time < self.start_time:
@@ -53,4 +53,4 @@ class WaitingForStart(FlightState):
 
     @property
     def spawn_type(self) -> StartType:
-        return self.flight.start_type
+        return self.flight.get_start_type

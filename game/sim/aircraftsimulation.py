@@ -70,16 +70,16 @@ class AircraftSimulation:
                 )
 
     def set_active_flight_state(self, flight: Flight, now: datetime) -> None:
-        if flight.start_type is StartType.COLD:
+        if flight.get_start_type is StartType.COLD:
             flight.set_state(StartUp(flight, self.game.settings, now))
-        elif flight.start_type is StartType.WARM:
+        elif flight.get_start_type is StartType.WARM:
             flight.set_state(Taxi(flight, self.game.settings, now))
-        elif flight.start_type is StartType.RUNWAY:
+        elif flight.get_start_type is StartType.RUNWAY:
             flight.set_state(Takeoff(flight, self.game.settings, now))
-        elif flight.start_type is StartType.IN_FLIGHT:
+        elif flight.get_start_type is StartType.IN_FLIGHT:
             flight.set_state(InFlight(flight, self.game.settings))
         else:
-            raise ValueError(f"Unknown start type {flight.start_type} for {flight}")
+            raise ValueError(f"Unknown start type {flight.get_start_type} for {flight}")
 
     def reset(self) -> None:
         self.time = self.game.conditions.start_time
