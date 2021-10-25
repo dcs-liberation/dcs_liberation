@@ -220,7 +220,7 @@ class FlightGroupSpawner:
         group.points[0].action = PointAction.FromGroundArea
         group.points[0].type = "TakeOffGround"
         group.units[0].heading = helipad.units[0].heading
-        if self.get_start_type is not StartType.COLD:
+        if self.start_type is not StartType.COLD:
             group.points[0].action = PointAction.FromGroundAreaHot
             group.points[0].type = "TakeOffGroundHot"
 
@@ -234,13 +234,13 @@ class FlightGroupSpawner:
         return group
 
     def dcs_start_type(self) -> DcsStartType:
-        if self.get_start_type is StartType.RUNWAY:
+        if self.start_type is StartType.RUNWAY:
             return DcsStartType.Runway
-        elif self.get_start_type is StartType.COLD:
+        elif self.start_type is StartType.COLD:
             return DcsStartType.Cold
-        elif self.get_start_type is StartType.WARM:
+        elif self.start_type is StartType.WARM:
             return DcsStartType.Warm
-        raise ValueError(f"There is no pydcs StartType matching {self.get_start_type}")
+        raise ValueError(f"There is no pydcs StartType matching {self.start_type}")
 
     def _start_type_at_group(
         self,
