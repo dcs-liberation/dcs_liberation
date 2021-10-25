@@ -128,7 +128,7 @@ class Flight:
         else:
             # TODO Fix this to return the selected custom start type
             # from Settings after fixing the circular import
-            return "Cold"
+            return StartType("Cold")
 
     def __repr__(self) -> str:
         if self.custom_name:
