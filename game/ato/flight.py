@@ -128,14 +128,7 @@ class Flight:
         else:
             # TODO Fix this to return the selected custom start type
             # from Settings after fixing the circular import
-            return StartType.COLD
-
-    @property
-    def get_player_start_type_value(self) -> str:
-        if self.custom_start_type is not None:
-            return self.custom_start_type.value
-        else:
-            return "Default"
+            return "Cold"
 
     def __repr__(self) -> str:
         if self.custom_name:

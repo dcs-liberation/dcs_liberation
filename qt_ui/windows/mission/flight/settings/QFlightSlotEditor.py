@@ -18,7 +18,6 @@ from game.squadrons.pilot import Pilot
 from game.ato.flightroster import FlightRoster
 from game.ato.flight import Flight
 from qt_ui.models import PackageModel
-from qt_ui.windows.mission.flight.settings.QFlightStartType import QFlightStartType
 
 
 class PilotSelector(QComboBox):

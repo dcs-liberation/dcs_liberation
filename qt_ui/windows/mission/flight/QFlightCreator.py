@@ -103,10 +103,13 @@ class QFlightCreator(QDialog):
         # we restore the previous choice.
         self.restore_start_type: Optional[str] = None
         self.start_type_combobox = QComboBox()
-        self.start_type_combobox.addItem("Default", None)
+        default_start_type_str = (
+            "Default (" + game.settings.default_start_type.value + ")"
+        )
+        self.start_type_combobox.addItem(default_start_type_str, None)
         for start_type in StartType:
             self.start_type_combobox.addItem(start_type.value, start_type)
-        self.start_type_combobox.setCurrentText("Default")
+        self.start_type_combobox.setCurrentText(default_start_type_str)
         layout.addLayout(
             QLabeledWidget(
                 "Start type:",
