@@ -16,9 +16,7 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class RaceTrackBuilder(PydcsWaypointBuilder):
-    def build(self) -> MovingPoint:
-        waypoint = super().build()
-
+    def add_tasks(self, waypoint: MovingPoint) -> None:
         flight_plan = self.flight.flight_plan
 
         if not isinstance(flight_plan, PatrollingFlightPlan):
@@ -27,7 +25,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
                 f"Cannot create race track for {self.flight} because "
                 f"{flight_plan_type} does not define a patrol."
             )
-            return waypoint
+            return
 
         # NB: It's important that the engage task comes before the orbit task.
         # Though they're on the same waypoint, if the orbit task comes first it
@@ -58,10 +56,9 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
 
         racetrack = ControlledTask(orbit)
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
-        racetrack.stop_after_time(int(flight_plan.patrol_end_time.total_seconds()))
+        loiter_duration = flight_plan.patrol_end_time - self.elapsed_mission_time
+        racetrack.stop_after_time(int(loiter_duration.total_seconds()))
         waypoint.add_task(racetrack)
-
-        return waypoint
 
     def configure_refueling_actions(self, waypoint: MovingPoint) -> None:
         waypoint.add_task(Tanker())

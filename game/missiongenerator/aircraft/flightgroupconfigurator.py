@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from typing import Any, Optional, TYPE_CHECKING
 
 from dcs import Mission
@@ -36,6 +37,7 @@ class FlightGroupConfigurator:
         group: FlyingGroup[Any],
         game: Game,
         mission: Mission,
+        time: datetime,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
         laser_code_registry: LaserCodeRegistry,
@@ -47,6 +49,7 @@ class FlightGroupConfigurator:
         self.group = group
         self.game = game
         self.mission = mission
+        self.time = time
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
         self.laser_code_registry = laser_code_registry
@@ -72,7 +75,13 @@ class FlightGroupConfigurator:
             )
 
         mission_start_time, waypoints = WaypointGenerator(
-            self.flight, self.group, self.mission, self.game.settings, self.air_support
+            self.flight,
+            self.group,
+            self.mission,
+            self.game.conditions.start_time,
+            self.time,
+            self.game.settings,
+            self.air_support,
         ).create_waypoints()
 
         return FlightData(

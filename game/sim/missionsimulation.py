@@ -6,6 +6,7 @@ from typing import Optional, TYPE_CHECKING
 
 from game.debriefing import Debriefing
 from game.missiongenerator import MissionGenerator
+from game.sim.aircraftsimulation import AircraftSimulation
 from game.sim.missionresultsprocessor import MissionResultsProcessor
 from game.unitmap import UnitMap
 
@@ -17,9 +18,15 @@ class MissionSimulation:
     def __init__(self, game: Game) -> None:
         self.game = game
         self.unit_map: Optional[UnitMap] = None
+        self.time = game.conditions.start_time
+
+    def run(self) -> None:
+        sim = AircraftSimulation(self.game)
+        sim.run()
+        self.time = sim.time
 
     def generate_miz(self, output: Path) -> None:
-        self.unit_map = MissionGenerator(self.game).generate_miz(output)
+        self.unit_map = MissionGenerator(self.game, self.time).generate_miz(output)
 
     def debrief_current_state(
         self, state_path: Path, force_end: bool = False
