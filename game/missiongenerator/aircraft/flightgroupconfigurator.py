@@ -6,7 +6,7 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.flyingunit import FlyingUnit
-from dcs.planes import C_101CC, C_101EB, F_14B, Su_33
+from dcs.planes import C_101CC, C_101EB, F_14A_135_GR, F_14B, Su_33
 from dcs.task import CAP
 from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
@@ -118,6 +118,8 @@ class FlightGroupConfigurator:
             laser_codes.append(None)
         if unit.unit_type is F_14B:
             unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
+        elif unit.unit_type is F_14A_135_GR:
+            unit.set_property(F_14A_135_GR.Properties.INSAlignmentStored.id, True)
 
     def setup_radios(self) -> RadioFrequency:
         if self.flight.flight_type in {FlightType.AEWC, FlightType.REFUELING}:
