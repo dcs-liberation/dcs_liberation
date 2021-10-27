@@ -123,6 +123,15 @@ class InFlight(FlightState):
                 "ingress point"
             )
             return True
+
+        threat_zone = self.flight.squadron.coalition.opponent.threat_zone
+        if threat_zone.threatened_by_air_defense(self.estimate_position()):
+            logging.info(
+                f"Interrupting simulation because {self.flight} has encountered enemy "
+                "air defenses"
+            )
+            return True
+
         return False
 
     @property
