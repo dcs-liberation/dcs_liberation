@@ -290,7 +290,7 @@ class Settings:
         "Fast forward mission to first contact (WIP)",
         page=MISSION_GENERATOR_PAGE,
         section=GAMEPLAY_SECTION,
-        default=False,
+        default=True,
         detail=(
             "If enabled, the mission will be generated at the point of first contact."
         ),

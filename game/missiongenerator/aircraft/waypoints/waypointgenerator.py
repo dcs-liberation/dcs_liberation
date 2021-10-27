@@ -74,7 +74,7 @@ class WaypointGenerator:
                     # mission aircraft starting at a waypoint with tasks behave
                     # correctly.
                     self.builder_for_waypoint(point).add_tasks(self.group.points[0])
-                if point not in self.flight.state.passed_waypoints:
+                if not self.flight.state.has_passed_waypoint(point):
                     filtered_points.append(point)
             else:
                 filtered_points.append(point)

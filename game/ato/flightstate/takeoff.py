@@ -11,6 +11,7 @@ from ..starttype import StartType
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.aircraftengagementzones import AircraftEngagementZones
 
 
 class Takeoff(FlightState):
@@ -22,7 +23,7 @@ class Takeoff(FlightState):
     def on_game_tick(self, time: datetime, duration: timedelta) -> None:
         if time < self.completion_time:
             return
-        self.flight.set_state(InFlight(self.flight, self.settings))
+        self.flight.set_state(InFlight(self.flight, self.settings, waypoint_index=0))
 
     @property
     def is_waiting_for_start(self) -> bool:
@@ -32,7 +33,7 @@ class Takeoff(FlightState):
     def spawn_type(self) -> StartType:
         return StartType.RUNWAY
 
-    def should_halt_sim(self) -> bool:
+    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
         if (
             self.flight.client_count > 0
             and self.settings.player_mission_interrupts_sim_at is StartType.RUNWAY

@@ -10,6 +10,7 @@ from .flightstate import Uninitialized, FlightState
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
+    from game.sim.aircraftengagementzones import AircraftEngagementZones
     from game.squadrons import Squadron, Pilot
     from game.theater import ControlPoint, MissionTarget
     from game.transfers import TransferOrder
@@ -137,5 +138,5 @@ class Flight:
     def on_game_tick(self, time: datetime, duration: timedelta) -> None:
         self.state.on_game_tick(time, duration)
 
-    def should_halt_sim(self) -> bool:
-        return self.state.should_halt_sim()
+    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
+        return self.state.should_halt_sim(enemy_aircraft_coverage)
