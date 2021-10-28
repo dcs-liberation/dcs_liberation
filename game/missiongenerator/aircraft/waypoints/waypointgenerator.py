@@ -76,6 +76,8 @@ class WaypointGenerator:
                     self.builder_for_waypoint(point).add_tasks(self.group.points[0])
                 if point not in self.flight.state.passed_waypoints:
                     filtered_points.append(point)
+            else:
+                filtered_points.append(point)
         # Only add 1 target waypoint for Viggens.  This only affects player flights, the
         # Viggen can't have more than 9 waypoints which leaves us with two target point
         # under the current flight plans.

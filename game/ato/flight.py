@@ -134,6 +134,8 @@ class Flight:
     def set_state(self, state: FlightState) -> None:
         self.state = state
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> bool:
+    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
         self.state.on_game_tick(time, duration)
+
+    def should_halt_sim(self) -> bool:
         return self.state.should_halt_sim()

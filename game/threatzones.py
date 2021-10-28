@@ -105,6 +105,10 @@ class ThreatZones:
         return self.air_defenses.intersects(position)
 
     @threatened_by_air_defense.register
+    def _threatened_by_air_defense_dcs_point(self, position: DcsPoint) -> bool:
+        return self.threatened_by_air_defense(self.dcs_to_shapely_point(position))
+
+    @threatened_by_air_defense.register
     def _threatened_by_air_defense_flight(self, flight: Flight) -> bool:
         return self.threatened_by_air_defense(
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))

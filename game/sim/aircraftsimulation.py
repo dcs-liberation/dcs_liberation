@@ -47,7 +47,8 @@ class AircraftSimulation:
     def tick(self) -> bool:
         interrupt_sim = False
         for flight in self.iter_flights():
-            if flight.on_game_tick(self.time, TICK):
+            flight.on_game_tick(self.time, TICK)
+            if flight.should_halt_sim():
                 interrupt_sim = True
 
         # TODO: Check for SAM or A2A contact.
