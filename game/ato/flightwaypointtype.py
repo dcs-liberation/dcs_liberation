@@ -45,3 +45,4 @@ class FlightWaypointType(Enum):
     PICKUP = 26
     DROP_OFF = 27
     BULLSEYE = 28
+    REFUEL = 29
