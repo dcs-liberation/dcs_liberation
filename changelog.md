@@ -50,6 +50,7 @@ Saves from 4.x are not compatible with 5.0.
 * **[Mission Generation]** Fixed cases of unused aircraft not being spawned at airfields as soon as any airport filled up.
 * **[Mission Generation]** Fixed cases with multiple client flights of the same airframe all received the same preset channels.
 * **[Mission Generation]** F-14A is now generated with stored alignment.
+* **[Mission Generation]** Su-33s set to cold or warm start on the Kuznetsov will always be generated as runway starts to avoid the AI getting stuck.
 * **[Mods]** Fixed broken A-4 support causing no weapons to be available.
 * **[UI]** Selling of Units is now visible again in the UI dialog and shows the correct amount of sold units
 * **[UI]** Fixed bug where an incompatible campaign could be generated if no action is taken on the campaign selection screen.
