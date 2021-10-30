@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from .flightstate import FlightState
 from .inflight import InFlight
 from ..starttype import StartType
+from ...utils import LBS_TO_KG
 
 if TYPE_CHECKING:
     from game.ato.flight import Flight
@@ -32,6 +33,12 @@ class Takeoff(FlightState):
     @property
     def spawn_type(self) -> StartType:
         return StartType.RUNWAY
+
+    def estimate_fuel(self) -> float:
+        initial_fuel = super().estimate_fuel()
+        if self.flight.unit_type.fuel_consumption is None:
+            return initial_fuel
+        return initial_fuel - self.flight.unit_type.fuel_consumption.taxi * LBS_TO_KG
 
     def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
         if (

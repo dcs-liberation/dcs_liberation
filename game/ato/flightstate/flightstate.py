@@ -37,3 +37,9 @@ class FlightState(ABC):
 
     def a2a_commit_region(self) -> Optional[ThreatPoly]:
         return None
+
+    def estimate_fuel(self) -> float:
+        """Returns the estimated remaining fuel **in kilograms**."""
+        if (max_takeoff_fuel := self.flight.max_takeoff_fuel()) is not None:
+            return max_takeoff_fuel
+        return self.flight.unit_type.dcs_unit_type.fuel_max

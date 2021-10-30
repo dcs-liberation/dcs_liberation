@@ -29,6 +29,10 @@ class Loiter(InFlight):
     def estimate_speed(self) -> Speed:
         return self.flight.unit_type.preferred_patrol_speed(self.estimate_altitude()[0])
 
+    def estimate_fuel(self) -> float:
+        # TODO: Estimate loiter consumption per minute?
+        return self.estimate_fuel_at_current_waypoint()
+
     def next_waypoint_state(self) -> FlightState:
         # Do not automatically advance to the next waypoint. Just proceed from the
         # current one with the normal flying state.

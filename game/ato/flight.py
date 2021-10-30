@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Any, Optional, List, TYPE_CHECKING
+from typing import Any, List, Optional, TYPE_CHECKING
+
+from dcs.planes import C_101CC, C_101EB, Su_33
 
 from gen.flights.loadouts import Loadout
-
 from .flightroster import FlightRoster
-from .flightstate import Uninitialized, FlightState
+from .flightstate import FlightState, Uninitialized
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
@@ -121,6 +122,18 @@ class Flight:
     def return_pilots_and_aircraft(self) -> None:
         self.roster.clear()
         self.squadron.claim_inventory(-self.count)
+
+    def max_takeoff_fuel(self) -> Optional[float]:
+        # Special case so Su 33 and C101 can take off
+        unit_type = self.unit_type.dcs_unit_type
+        if unit_type == Su_33:
+            if self.flight_type.is_air_to_air:
+                return Su_33.fuel_max / 2.2
+            else:
+                return Su_33.fuel_max * 0.8
+        elif unit_type in {C_101EB, C_101CC}:
+            return unit_type.fuel_max * 0.5
+        return None
 
     def __repr__(self) -> str:
         if self.custom_name:

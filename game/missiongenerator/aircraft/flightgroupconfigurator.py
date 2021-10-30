@@ -6,8 +6,7 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.flyingunit import FlyingUnit
-from dcs.planes import C_101CC, C_101EB, F_14B, Su_33
-from dcs.task import CAP
+from dcs.planes import F_14B
 from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
 
@@ -208,14 +207,21 @@ class FlightGroupConfigurator:
             pylon.equip(self.group, weapon)
 
     def setup_fuel(self) -> None:
-        # Special case so Su 33 and C101 can take off
-        unit_type = self.flight.unit_type.dcs_unit_type
-        if unit_type == Su_33:
-            for unit in self.group.units:
-                if self.group.task == CAP:
-                    unit.fuel = Su_33.fuel_max / 2.2
-                else:
-                    unit.fuel = Su_33.fuel_max * 0.8
-        elif unit_type in {C_101EB, C_101CC}:
-            for unit in self.group.units:
-                unit.fuel = unit_type.fuel_max * 0.5
+        fuel = self.flight.state.estimate_fuel()
+        if fuel < 0:
+            logging.warning(
+                f"Flight {self.flight} is estimated to have no fuel at mission start. "
+                "This estimate does not account for external fuel tanks. Setting "
+                "starting fuel to 100kg."
+            )
+            fuel = 100
+        for unit, pilot in zip(self.group.units, self.flight.roster.pilots):
+            if pilot is not None and pilot.player:
+                unit.fuel = fuel
+            elif (max_takeoff_fuel := self.flight.max_takeoff_fuel()) is not None:
+                unit.fuel = max_takeoff_fuel
+            else:
+                # pydcs arbitrarily reduces the fuel of in-flight spawns by 10%. We do
+                # our own tracking, so undo that.
+                # https://github.com/pydcs/dcs/commit/303a81a8e0c778599fe136dd22cb2ae8123639a6
+                unit.fuel = self.flight.unit_type.dcs_unit_type.fuel_max

@@ -40,6 +40,10 @@ class RaceTrack(InFlight):
     def estimate_speed(self) -> Speed:
         return self.flight.unit_type.preferred_patrol_speed(self.estimate_altitude()[0])
 
+    def estimate_fuel(self) -> float:
+        # TODO: Estimate loiter consumption per minute?
+        return self.estimate_fuel_at_current_waypoint()
+
     def travel_time_between_waypoints(self) -> timedelta:
         return self.patrol_duration
 

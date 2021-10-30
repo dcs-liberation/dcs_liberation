@@ -11,7 +11,7 @@ from game.ato.flightstate.flightstate import FlightState
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
-from game.utils import Distance, Speed, meters
+from game.utils import Distance, LBS_TO_KG, Speed, meters, pairwise
 from gen.flights.flightplan import LoiterFlightPlan
 
 if TYPE_CHECKING:
@@ -82,6 +82,30 @@ class InFlight(FlightState):
         return self.flight.flight_plan.speed_between_waypoints(
             self.current_waypoint, self.next_waypoint
         )
+
+    def estimate_fuel_at_current_waypoint(self) -> float:
+        initial_fuel = super().estimate_fuel()
+        if self.flight.unit_type.fuel_consumption is None:
+            return initial_fuel
+        initial_fuel -= self.flight.unit_type.fuel_consumption.taxi * LBS_TO_KG
+        waypoints = self.flight.flight_plan.waypoints[: self.waypoint_index + 1]
+        for a, b in pairwise(waypoints[:-1]):
+            consumption = self.flight.flight_plan.fuel_consumption_between_points(a, b)
+            assert consumption is not None
+            initial_fuel -= consumption * LBS_TO_KG
+        return initial_fuel
+
+    def estimate_fuel(self) -> float:
+        initial_fuel = self.estimate_fuel_at_current_waypoint()
+        ppm = self.flight.flight_plan.fuel_rate_to_between_points(
+            self.current_waypoint, self.next_waypoint
+        )
+        if ppm is None:
+            return initial_fuel
+        position = self.estimate_position()
+        distance = meters(self.current_waypoint.position.distance_to_point(position))
+        consumption = distance.nautical_miles * ppm * LBS_TO_KG
+        return initial_fuel - consumption
 
     def next_waypoint_state(self) -> FlightState:
         from game.ato.flightstate.loiter import Loiter
