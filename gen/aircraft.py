@@ -6,7 +6,7 @@ import random
 from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import cached_property
-from typing import Dict, List, Optional, TYPE_CHECKING, Type, Union, Iterable, Any
+from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Type, Union
 
 from dcs import helicopters
 from dcs.action import AITaskPush, ActivateGroup
@@ -21,6 +21,7 @@ from dcs.planes import (
     B_52H,
     C_101CC,
     C_101EB,
+    F_14A_135_GR,
     F_14B,
     JF_17,
     Su_33,
@@ -44,6 +45,7 @@ from dcs.task import (
     EngageTargetsInZone,
     FighterSweep,
     GroundAttack,
+    Nothing,
     OptROE,
     OptRTBOnBingoFuel,
     OptRTBOnOutOfAmmo,
@@ -54,15 +56,14 @@ from dcs.task import (
     RunwayAttack,
     StartCommand,
     Tanker,
+    TargetType,
     Targets,
     Transport,
     WeaponType,
-    TargetType,
-    Nothing,
 )
 from dcs.terrain.terrain import Airport, NoParkingSlotError
 from dcs.triggers import Event, TriggerOnce, TriggerRule
-from dcs.unit import Unit, Skill
+from dcs.unit import Skill, Unit
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from dcs.unittype import FlyingType
 
@@ -379,6 +380,8 @@ class AircraftConflictGenerator:
             # Set up F-14 Client to have pre-stored alignment
             if unit_type is F_14B:
                 unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
+            elif unit_type is F_14A_135_GR:
+                unit.set_property(F_14A_135_GR.Properties.INSAlignmentStored.id, True)
 
         group.points[0].tasks.append(
             OptReactOnThreat(OptReactOnThreat.Values.EvadeFire)
