@@ -45,4 +45,4 @@ class FlightWaypointType(Enum):
     PICKUP = 26
     DROP_OFF = 27
     BULLSEYE = 28
-    REFUEL = 29
+    REFUEL = 29  # Should look for nearby tanker to refuel from.

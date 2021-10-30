@@ -199,6 +199,19 @@ class WaypointBuilder:
         waypoint.name = "JOIN"
         return waypoint
 
+    def refuel(self, position: Point) -> FlightWaypoint:
+        waypoint = FlightWaypoint(
+            FlightWaypointType.REFUEL,
+            position.x,
+            position.y,
+            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+        )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
+        waypoint.pretty_name = "Refuel"
+        waypoint.description = "Refuel from tanker"
+        waypoint.name = "REFUEL"
+
     def split(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             FlightWaypointType.SPLIT,
