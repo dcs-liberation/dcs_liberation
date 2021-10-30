@@ -16,18 +16,17 @@ if TYPE_CHECKING:
 class RefuelZoneGeometry:
     def __init__(
         self,
-        target: Point,
-        home: Point,
-        hold: Point,
-        ip: Point,
+        package_home: Point,
         join: Point,
         coalition: Coalition,
-        theater: ConflictTheater,
     ) -> None:
-        self.target = target
-        self.home = home
-        self.hold = hold
-        self.ip = ip
+        self.package_home = package_home
         self.join = join
         self.coalition = coalition
-        self.theater = theater
+
+    def find_best_refuel_point(self) -> Point:
+        # Do simple at first.
+        # TODO: Consider threats.
+        distance = 0.75 * self.package_home.distance_to_point(self.join)
+        heading = self.package_home.heading_between_point(self.join)
+        self.package_home.point_from_heading(heading, distance)

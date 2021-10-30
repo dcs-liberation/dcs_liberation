@@ -26,6 +26,7 @@ from game.ato.starttype import StartType
 from game.data.doctrine import Doctrine
 from game.dcs.aircrafttype import FuelConsumption
 from game.flightplan import HoldZoneGeometry, IpZoneGeometry, JoinZoneGeometry
+from game.flightplan.refuelzonegeometry import RefuelZoneGeometry
 from game.theater import (
     Airfield,
     ConflictTheater,
@@ -362,6 +363,7 @@ class LoiterFlightPlan(FlightPlan):
 class FormationFlightPlan(LoiterFlightPlan):
     join: FlightWaypoint
     split: FlightWaypoint
+    refuel: Optional[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         raise NotImplementedError
@@ -616,6 +618,8 @@ class StrikeFlightPlan(FormationFlightPlan):
         yield self.ingress
         yield from self.targets
         yield self.split
+        if self.refuel is not None:
+            yield self.refuel
         yield from self.nav_from
         yield self.land
         if self.divert is not None:
@@ -1055,14 +1059,29 @@ class FlightPlanBuilder:
             self.coalition,
         ).find_best_join_point()
 
-        # And the split point based on the best route from the IP. Since that's no
-        # different than the best route *to* the IP, this is the same as the join point.
-        # TODO: Estimate attack completion point based on the IP and split from there?
-        self.package.waypoints = PackageWaypoints(
-            WaypointBuilder.perturb(join_point),
-            ingress_point,
-            WaypointBuilder.perturb(join_point),
-        )
+        if self.package.has_tankers:
+            refuel_point = RefuelZoneGeometry(
+                package_airfield.position,
+                join_point,
+                self.coalition,
+            ).find_best_refuel_point()
+            self.package.waypoints = PackageWaypoints(
+                WaypointBuilder.perturb(join_point),
+                ingress_point,
+                WaypointBuilder.perturb(join_point),
+                refuel_point,
+            )
+            print("This package has tankers! " + self.package.package_description)
+        else:
+            # And the split point based on the best route from the IP. Since that's no
+            # different than the best route *to* the IP, this is the same as the join point.
+            # TODO: Estimate attack completion point based on the IP and split from there?
+            self.package.waypoints = PackageWaypoints(
+                WaypointBuilder.perturb(join_point),
+                ingress_point,
+                WaypointBuilder.perturb(join_point),
+                None,
+            )
 
     def generate_strike(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a strike flight plan.
@@ -1599,6 +1618,9 @@ class FlightPlanBuilder:
         hold = builder.hold(self._hold_point(flight))
         join = builder.join(self.package.waypoints.join)
         split = builder.split(self.package.waypoints.split)
+        refuel = None
+        if self.package.waypoints.refuel is not None:
+            refuel = builder.refuel(self.package.waypoints.refuel)
 
         return StrikeFlightPlan(
             package=self.package,
@@ -1613,6 +1635,7 @@ class FlightPlanBuilder:
             ingress=ingress,
             targets=[target],
             split=split,
+            refuel=refuel,
             nav_from=builder.nav_path(
                 split.position, flight.arrival.position, self.doctrine.ingress_altitude
             ),
@@ -1831,6 +1854,9 @@ class FlightPlanBuilder:
         hold = builder.hold(self._hold_point(flight))
         join = builder.join(self.package.waypoints.join)
         split = builder.split(self.package.waypoints.split)
+        refuel = None
+        if self.package.waypoints.refuel is not None:
+            refuel = builder.refuel(self.package.waypoints.refuel)
 
         return StrikeFlightPlan(
             package=self.package,
@@ -1847,6 +1873,7 @@ class FlightPlanBuilder:
             ),
             targets=target_waypoints,
             split=split,
+            refuel=refuel,
             nav_from=builder.nav_path(
                 split.position, flight.arrival.position, self.doctrine.ingress_altitude
             ),

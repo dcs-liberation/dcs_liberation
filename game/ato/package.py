@@ -40,6 +40,13 @@ class Package:
     waypoints: Optional[PackageWaypoints] = field(default=None)
 
     @property
+    def has_tankers(self) -> bool:
+        for flight in self.flights:
+            if flight.flight_type == FlightType.REFUELING:
+                return True
+        return False
+
+    @property
     def has_players(self) -> bool:
         return any(flight.client_count for flight in self.flights)
 
