@@ -59,10 +59,15 @@ squadrons:
       secondary: air-to-air
     - primary: Strike
       secondary: any
+    - primary: Anti-ship
+      secondary: any
     - primary: BAI
       secondary: any
     - primary: CAS
       secondary: air-to-ground
+    - primary: AEW&C
+    - primary: Refueling
+    - primary: Transport
   # Antonio B. Won Pat Intl
   4:
     - primary: BARCAP
@@ -70,6 +75,8 @@ squadrons:
     - primary: BARCAP
       secondary: air-to-air
     - primary: Strike
+      secondary: any
+    - primary: Anti-ship
       secondary: any
     - primary: BAI
       secondary: any

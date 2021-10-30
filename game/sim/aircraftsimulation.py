@@ -17,6 +17,7 @@ from game.ato.flightstate import (
     WaitingForStart,
 )
 from game.ato.starttype import StartType
+from game.sim.aircraftengagementzones import AircraftEngagementZones
 from gen.flights.traveltime import TotEstimator
 
 if TYPE_CHECKING:
@@ -45,18 +46,17 @@ class AircraftSimulation:
                 return
 
     def tick(self) -> bool:
-        interrupt_sim = False
         for flight in self.iter_flights():
             flight.on_game_tick(self.time, TICK)
-            if flight.should_halt_sim():
-                interrupt_sim = True
 
-        # TODO: Check for SAM or A2A contact.
-        # Generate an engagement poly for all active air-to-air aircraft per-coalition
-        # and compare those against aircraft positions. If any aircraft intersects an
-        # enemy air-threat region, generate the mission. Also check against enemy SAM
-        # zones.
-        return interrupt_sim
+        # Finish updating all flights before computing engagement zones so that the new
+        # positions are used.
+        blue_a2a = AircraftEngagementZones.from_ato(self.game.blue.ato)
+        red_a2a = AircraftEngagementZones.from_ato(self.game.red.ato)
+        for flight in self.iter_flights():
+            if flight.should_halt_sim(red_a2a if flight.squadron.player else blue_a2a):
+                return True
+        return False
 
     def set_initial_flight_states(self) -> None:
         now = self.game.conditions.start_time
@@ -78,7 +78,7 @@ class AircraftSimulation:
         elif flight.start_type is StartType.RUNWAY:
             flight.set_state(Takeoff(flight, self.game.settings, now))
         elif flight.start_type is StartType.IN_FLIGHT:
-            flight.set_state(InFlight(flight, self.game.settings))
+            flight.set_state(InFlight(flight, self.game.settings, waypoint_index=0))
         else:
             raise ValueError(f"Unknown start type {flight.start_type} for {flight}")
 

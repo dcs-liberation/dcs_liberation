@@ -18,7 +18,7 @@ from game.ato.starttype import StartType
 from game.missiongenerator.airsupport import AirSupport
 from game.settings import Settings
 from game.theater import ControlPointType
-from game.utils import meters, pairwise
+from game.utils import pairwise
 from .baiingress import BaiIngressBuilder
 from .cargostop import CargoStopBuilder
 from .casingress import CasIngressBuilder
@@ -75,7 +75,7 @@ class WaypointGenerator:
                     # mission aircraft starting at a waypoint with tasks behave
                     # correctly.
                     self.builder_for_waypoint(point).add_tasks(self.group.points[0])
-                if point not in self.flight.state.passed_waypoints:
+                if not self.flight.state.has_passed_waypoint(point):
                     filtered_points.append(point)
             else:
                 filtered_points.append(point)
@@ -147,19 +147,6 @@ class WaypointGenerator:
         if self.flight.unit_type.fuel_consumption is None:
             return
 
-        combat_speed_types = {
-            FlightWaypointType.INGRESS_BAI,
-            FlightWaypointType.INGRESS_CAS,
-            FlightWaypointType.INGRESS_DEAD,
-            FlightWaypointType.INGRESS_ESCORT,
-            FlightWaypointType.INGRESS_OCA_AIRCRAFT,
-            FlightWaypointType.INGRESS_OCA_RUNWAY,
-            FlightWaypointType.INGRESS_SEAD,
-            FlightWaypointType.INGRESS_STRIKE,
-            FlightWaypointType.INGRESS_SWEEP,
-            FlightWaypointType.SPLIT,
-        } | set(TARGET_WAYPOINTS)
-
         consumption = self.flight.unit_type.fuel_consumption
         min_fuel: float = consumption.min_safe
 
@@ -176,14 +163,10 @@ class WaypointGenerator:
             return
 
         for b, a in pairwise(main_flight_plan):
-            distance = meters(a.position.distance_to_point(b.position))
-            if a.waypoint_type is FlightWaypointType.TAKEOFF:
-                ppm = consumption.climb
-            elif b.waypoint_type in combat_speed_types:
-                ppm = consumption.combat
-            else:
-                ppm = consumption.cruise
-            min_fuel += distance.nautical_miles * ppm
+            for_leg = self.flight.flight_plan.fuel_consumption_between_points(a, b)
+            if for_leg is None:
+                continue
+            min_fuel += for_leg
             a.min_fuel = min_fuel
 
     def set_takeoff_time(self, waypoint: FlightWaypoint) -> timedelta:

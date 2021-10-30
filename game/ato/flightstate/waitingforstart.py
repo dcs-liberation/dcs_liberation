@@ -41,7 +41,7 @@ class WaitingForStart(FlightState):
         elif self.start_type is StartType.RUNWAY:
             new_state = Takeoff(self.flight, self.settings, time)
         else:
-            new_state = InFlight(self.flight, self.settings)
+            new_state = InFlight(self.flight, self.settings, waypoint_index=0)
         self.flight.set_state(new_state)
 
     @property
