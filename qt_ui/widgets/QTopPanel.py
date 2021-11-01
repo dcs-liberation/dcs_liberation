@@ -38,7 +38,7 @@ class QTopPanel(QFrame):
 
         self.setMaximumHeight(70)
 
-        self.conditionsWidget = QConditionsWidget()
+        self.conditionsWidget = QConditionsWidget(sim_controller)
         self.budgetBox = QBudgetBox(self.game)
 
         pass_turn_text = "Pass Turn"

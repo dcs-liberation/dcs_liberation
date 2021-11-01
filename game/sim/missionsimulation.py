@@ -32,6 +32,7 @@ class MissionSimulation:
         self.time = self.game.conditions.start_time
 
     def begin_simulation(self) -> None:
+        self.time = self.game.conditions.start_time
         self.aircraft_simulation.begin_simulation()
 
     def tick(self) -> bool:

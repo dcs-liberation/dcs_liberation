@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Callable, TYPE_CHECKING
 
@@ -21,6 +22,10 @@ class GameLoop:
         self.sim = MissionSimulation(self.game)
         self.started = False
         self.completed = False
+
+    @property
+    def current_time_in_sim(self) -> datetime:
+        return self.sim.time
 
     def start(self) -> None:
         if self.started:
@@ -67,7 +72,5 @@ class GameLoop:
                 self.pause()
                 logging.info(f"Simulation completed at {self.sim.time}")
                 self.on_complete()
-            else:
-                logging.info(f"Simulation continued at {self.sim.time}")
         except SimulationAlreadyCompletedError:
             logging.exception("Attempted to tick already completed sim")
