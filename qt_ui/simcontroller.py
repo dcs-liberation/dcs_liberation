@@ -44,6 +44,9 @@ class SimController(QObject):
         self.recreate_game_loop(game)
         self.sim_speed_reset.emit(SimSpeedSetting.PAUSED)
 
+    def shut_down(self) -> None:
+        self._sim_update_thread.stop()
+
     def recreate_game_loop(self, game: Optional[Game]) -> None:
         if self.game_loop is not None:
             self._sim_update_thread.on_sim_pause()

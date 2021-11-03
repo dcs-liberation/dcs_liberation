@@ -389,6 +389,7 @@ class QLiberationWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if result == QMessageBox.Yes:
+            self.sim_controller.shut_down()
             super().closeEvent(event)
             self.dialog = None
         else:
