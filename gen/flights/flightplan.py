@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import math
 import random
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import cached_property
@@ -75,7 +76,7 @@ class InvalidObjectiveLocation(PlanningError):
 
 
 @dataclass(frozen=True)
-class FlightPlan:
+class FlightPlan(ABC):
     package: Package
     flight: Flight
 
@@ -84,9 +85,10 @@ class FlightPlan:
         """A list of all waypoints in the flight plan, in order."""
         return list(self.iter_waypoints())
 
+    @abstractmethod
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         """Iterates over all waypoints in the flight plan, in order."""
-        raise NotImplementedError
+        ...
 
     def edges(
         self, until: Optional[FlightWaypoint] = None
@@ -128,7 +130,7 @@ class FlightPlan:
 
     @property
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
-        raise NotImplementedError
+        return set()
 
     def fuel_consumption_between_points(
         self, a: FlightWaypoint, b: FlightWaypoint
@@ -151,6 +153,7 @@ class FlightPlan:
         return self.flight.unit_type.fuel_consumption.cruise
 
     @property
+    @abstractmethod
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
         """The waypoint that is associated with the package TOT, or None.
 
@@ -158,7 +161,7 @@ class FlightPlan:
         user-planned missions without any useful waypoints and flight plans that
         failed to generate. Nevertheless, we have to defend against it.
         """
-        raise NotImplementedError
+        ...
 
     @property
     def tot(self) -> timedelta:
@@ -236,11 +239,13 @@ class FlightPlan:
             a.position, b.position, self.speed_between_waypoints(a, b)
         )
 
+    @abstractmethod
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        raise NotImplementedError
+        ...
 
     def request_escort_at(self) -> Optional[FlightWaypoint]:
         return None
@@ -316,9 +321,10 @@ class FlightPlan:
             return timedelta(minutes=8)
 
     @property
+    @abstractmethod
     def mission_departure_time(self) -> timedelta:
         """The time that the mission is complete and the flight RTBs."""
-        raise NotImplementedError
+        ...
 
 
 @dataclass(frozen=True)
@@ -326,19 +332,23 @@ class LoiterFlightPlan(FlightPlan):
     hold: FlightWaypoint
     hold_duration: timedelta
 
+    @abstractmethod
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def push_time(self) -> timedelta:
-        raise NotImplementedError
+        ...
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.hold:
@@ -354,8 +364,9 @@ class LoiterFlightPlan(FlightPlan):
         return travel_time + self.hold_duration
 
     @property
+    @abstractmethod
     def mission_departure_time(self) -> timedelta:
-        raise NotImplementedError
+        ...
 
 
 @dataclass(frozen=True)
@@ -363,20 +374,23 @@ class FormationFlightPlan(LoiterFlightPlan):
     join: FlightWaypoint
     split: FlightWaypoint
 
+    @abstractmethod
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def package_speed_waypoints(self) -> set[FlightWaypoint]:
-        raise NotImplementedError
+        ...
 
     @property
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
         return self.package_speed_waypoints
 
     @property
+    @abstractmethod
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
-        raise NotImplementedError
+        ...
 
     def request_escort_at(self) -> Optional[FlightWaypoint]:
         return self.join
@@ -415,12 +429,14 @@ class FormationFlightPlan(LoiterFlightPlan):
         return self._travel_time_to_waypoint(self.join)
 
     @property
+    @abstractmethod
     def join_time(self) -> timedelta:
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def split_time(self) -> timedelta:
-        raise NotImplementedError
+        ...
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.join:
@@ -482,8 +498,9 @@ class PatrollingFlightPlan(FlightPlan):
             return self.patrol_end_time
         return None
 
+    @abstractmethod
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        raise NotImplementedError
+        ...
 
     @property
     def package_speed_waypoints(self) -> Set[FlightWaypoint]:
@@ -541,6 +558,10 @@ class CasFlightPlan(PatrollingFlightPlan):
             yield self.divert
         yield self.bullseye
 
+    @property
+    def combat_speed_waypoints(self) -> set[FlightWaypoint]:
+        return {self.patrol_start, self.target, self.patrol_end}
+
     def request_escort_at(self) -> Optional[FlightWaypoint]:
         return self.patrol_start
 
@@ -568,6 +589,10 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         if self.divert is not None:
             yield self.divert
         yield self.bullseye
+
+    @property
+    def combat_speed_waypoints(self) -> set[FlightWaypoint]:
+        return {self.patrol_start, self.patrol_end}
 
     @property
     def tot_offset(self) -> timedelta:
@@ -731,6 +756,10 @@ class SweepFlightPlan(LoiterFlightPlan):
         if self.divert is not None:
             yield self.divert
         yield self.bullseye
+
+    @property
+    def combat_speed_waypoints(self) -> set[FlightWaypoint]:
+        return {self.sweep_end}
 
     @property
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
