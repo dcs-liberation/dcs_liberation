@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
-from typing import List, Optional, Tuple, Union, Iterator
+from typing import Iterator, List, Optional, Tuple, Union
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
@@ -10,40 +10,38 @@ from dcs.unit import Unit
 from dcs.vehicles import vehicle_map
 from shapely.geometry import (
     LineString,
+    MultiLineString,
+    MultiPolygon,
     Point as ShapelyPoint,
     Polygon,
-    MultiPolygon,
-    MultiLineString,
 )
 
 from game import Game
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.flight import Flight
+from game.ato.flightstate import InFlight
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flightwaypointtype import FlightWaypointType
 from game.dcs.groundunittype import GroundUnitType
-from game.flightplan import JoinZoneGeometry, HoldZoneGeometry
+from game.flightplan import HoldZoneGeometry, JoinZoneGeometry
+from game.flightplan.ipzonegeometry import IpZoneGeometry
 from game.navmesh import NavMesh, NavMeshPoly
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
     ControlPoint,
-    TheaterGroundObject,
+    ControlPointStatus,
     FrontLine,
     LatLon,
-    ControlPointStatus,
+    TheaterGroundObject,
 )
 from game.threatzones import ThreatZones
 from game.transfers import MultiGroupTransport, TransportMap
 from game.utils import meters, nautical_miles
-from game.ato.airtaaskingorder import AirTaskingOrder
-from game.ato.flightwaypointtype import FlightWaypointType
-from game.ato.flightwaypoint import FlightWaypoint
-from game.ato.flight import Flight
-from gen.flights.flightplan import (
-    FlightPlan,
-    PatrollingFlightPlan,
-    CasFlightPlan,
-)
-from game.flightplan.ipzonegeometry import IpZoneGeometry
+from gen.flights.flightplan import CasFlightPlan, FlightPlan, PatrollingFlightPlan
 from qt_ui.dialogs import Dialog
-from qt_ui.models import GameModel, AtoModel
+from qt_ui.models import AtoModel, GameModel
+from qt_ui.simcontroller import SimController
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
@@ -537,6 +535,7 @@ class WaypointJs(QObject):
 
 
 class FlightJs(QObject):
+    positionChanged = Signal()
     flightPlanChanged = Signal()
     blueChanged = Signal()
     selectedChanged = Signal()
@@ -587,6 +586,13 @@ class FlightJs(QObject):
             waypoint.positionChanged.connect(self.update_waypoints)
             waypoints.append(waypoint)
         return waypoints
+
+    @Property(list, notify=positionChanged)
+    def position(self) -> LeafletLatLon:
+        if isinstance(self.flight.state, InFlight):
+            ll = self.theater.point_to_ll(self.flight.state.estimate_position())
+            return [ll.latitude, ll.longitude]
+        return []
 
     @Property(list, notify=flightPlanChanged)
     def flightPlan(self) -> List[WaypointJs]:
@@ -1032,7 +1038,7 @@ class MapModel(QObject):
     joinZonesChanged = Signal()
     holdZonesChanged = Signal()
 
-    def __init__(self, game_model: GameModel) -> None:
+    def __init__(self, game_model: GameModel, sim_controller: SimController) -> None:
         super().__init__()
         self.game_model = game_model
         self._map_center = [0, 0]
@@ -1059,6 +1065,7 @@ class MapModel(QObject):
         GameUpdateSignal.get_instance().flight_selection_changed.connect(
             self.set_flight_selection
         )
+        sim_controller.sim_update.connect(self.on_sim_update)
         self.reset()
 
     def clear(self) -> None:
@@ -1075,6 +1082,10 @@ class MapModel(QObject):
         self._unculled_zones = []
         self._ip_zones = IpZonesJs.empty()
         self.cleared.emit()
+
+    def on_sim_update(self) -> None:
+        for flight in self._flights:
+            flight.positionChanged.emit()
 
     def set_package_selection(self, index: int) -> None:
         # Optional[int] isn't a valid type for a Qt signal. None will be converted to

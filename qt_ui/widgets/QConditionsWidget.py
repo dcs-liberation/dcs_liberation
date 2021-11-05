@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import (
     QFrame,
@@ -12,6 +14,7 @@ from dcs.weather import CloudPreset, Weather as PydcsWeather
 import qt_ui.uiconstants as CONST
 from game.utils import mps
 from game.weather import Conditions, TimeOfDay
+from qt_ui.simcontroller import SimController
 
 
 class QTimeTurnWidget(QGroupBox):
@@ -19,8 +22,9 @@ class QTimeTurnWidget(QGroupBox):
     UI Component to display current turn and time info
     """
 
-    def __init__(self):
+    def __init__(self, sim_controller: SimController) -> None:
         super(QTimeTurnWidget, self).__init__("Turn")
+        self.sim_controller = sim_controller
         self.setStyleSheet(
             "padding: 0px; margin-left: 5px; margin-right: 0px; margin-top: 1ex; margin-bottom: 5px; border-right: 0px"
         )
@@ -49,16 +53,29 @@ class QTimeTurnWidget(QGroupBox):
         self.time_display = QLabel()
         self.time_column.addWidget(self.time_display)
 
-    def setCurrentTurn(self, turn: int, conditions: Conditions) -> None:
+        sim_controller.sim_update.connect(self.on_sim_update)
+
+    def on_sim_update(self) -> None:
+        time = self.sim_controller.current_time_in_sim
+        if time is None:
+            self.date_display.setText("")
+            self.time_display.setText("")
+        else:
+            self.set_date_and_time(time)
+
+    def set_current_turn(self, turn: int, conditions: Conditions) -> None:
         """Sets the turn information display.
 
         :arg turn Current turn number.
         :arg conditions Current time and weather conditions.
         """
         self.daytime_icon.setPixmap(self.icons[conditions.time_of_day])
-        self.date_display.setText(conditions.start_time.strftime("%d %b %Y"))
-        self.time_display.setText(conditions.start_time.strftime("%H:%M:%S Local"))
+        self.set_date_and_time(conditions.start_time)
         self.setTitle(f"Turn {turn}")
+
+    def set_date_and_time(self, time: datetime) -> None:
+        self.date_display.setText(time.strftime("%d %b %Y"))
+        self.time_display.setText(time.strftime("%H:%M:%S Local"))
 
 
 class QWeatherWidget(QGroupBox):
@@ -265,7 +282,7 @@ class QConditionsWidget(QFrame):
     UI Component to display Turn Number, Day Time & Hour and weather combined.
     """
 
-    def __init__(self):
+    def __init__(self, sim_controller: SimController) -> None:
         super(QConditionsWidget, self).__init__()
         self.setProperty("style", "QConditionsWidget")
 
@@ -275,7 +292,7 @@ class QConditionsWidget(QFrame):
         self.layout.setVerticalSpacing(0)
         self.setLayout(self.layout)
 
-        self.time_turn_widget = QTimeTurnWidget()
+        self.time_turn_widget = QTimeTurnWidget(sim_controller)
         self.time_turn_widget.setStyleSheet("QGroupBox { margin-right: 0px; }")
         self.layout.addWidget(self.time_turn_widget, 0, 0)
 
@@ -292,6 +309,6 @@ class QConditionsWidget(QFrame):
         :arg turn Current turn number.
         :arg conditions Current time and weather conditions.
         """
-        self.time_turn_widget.setCurrentTurn(turn, conditions)
+        self.time_turn_widget.set_current_turn(turn, conditions)
         self.weather_widget.setCurrentTurn(turn, conditions)
         self.weather_widget.show()

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import itertools
-import logging
 from collections import Iterator
 from datetime import datetime, timedelta
 
@@ -24,30 +23,17 @@ if TYPE_CHECKING:
     from game import Game
 
 
-TICK = timedelta(seconds=1)
-
-
 class AircraftSimulation:
     def __init__(self, game: Game) -> None:
         self.game = game
-        self.time = self.game.conditions.start_time
 
-    def run(self) -> None:
+    def begin_simulation(self) -> None:
         self.reset()
         self.set_initial_flight_states()
-        if self.game.settings.fast_forward_to_first_contact:
-            self.simulate_until_first_contact()
-            logging.info(f"Mission simulation completed at {self.time}")
 
-    def simulate_until_first_contact(self) -> None:
-        while True:
-            self.time += TICK
-            if self.tick():
-                return
-
-    def tick(self) -> bool:
+    def on_game_tick(self, time: datetime, duration: timedelta) -> bool:
         for flight in self.iter_flights():
-            flight.on_game_tick(self.time, TICK)
+            flight.on_game_tick(time, duration)
 
         # Finish updating all flights before computing engagement zones so that the new
         # positions are used.
@@ -83,7 +69,6 @@ class AircraftSimulation:
             raise ValueError(f"Unknown start type {flight.start_type} for {flight}")
 
     def reset(self) -> None:
-        self.time = self.game.conditions.start_time
         for flight in self.iter_flights():
             flight.set_state(Uninitialized(flight, self.game.settings))
 
