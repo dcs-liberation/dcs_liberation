@@ -1529,6 +1529,8 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
                 group_names.append(group.name)
         elif isinstance(target, MultiGroupTransport):
             group_names.append(target.name)
+        elif isinstance(target, NavalControlPoint):
+            group_names.append(target.get_carrier_group_name())
         else:
             logging.error(
                 "Unexpected target type for BAI mission: %s",
