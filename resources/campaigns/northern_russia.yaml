@@ -15,6 +15,9 @@ squadrons:
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker MPRS
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
     - primary: AEW&C
       aircraft:
         - E-3A
@@ -134,6 +137,10 @@ squadrons:
     - primary: BARCAP
       aircraft:
         - MiG-29A Fulcrum-A
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - Su-24M Fencer-D
   # Mineralnye Vody
   26:
     - primary: BARCAP
