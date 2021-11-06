@@ -36,7 +36,7 @@ Saves from 4.x are not compatible with 5.0.
 * **[Modding]** Campaigns can now define a default start date.
 * **[Modding]** Campaigns now specify the squadrons that are present in the campaign, their roles, and their starting bases. Players can customize this at game start but the campaign will choose the defaults.
 * **[New Game Wizard]** Can now customize the player's air wing before campaign start to disable, relocate, or rename squadrons.
-* **[Plugins]** Updated SkynetIADS to 2.3.0 (adds SA-5 support).
+* **[Plugins]** Updated SkynetIADS to 2.4.0 (adds SA-5 support).
 * **[UI]** Sell Button for aircraft will be disabled if there are no units available to be sold or all are already assigned to a mission
 * **[UI]** Enemy aircraft inventory now viewable in the air wing menu.
 
