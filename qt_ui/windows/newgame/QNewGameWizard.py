@@ -5,17 +5,17 @@ from datetime import timedelta
 from typing import List
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QItemSelectionModel, QPoint, Qt, QDate
-from PySide2.QtWidgets import QVBoxLayout, QTextEdit, QLabel, QCheckBox
+from PySide2.QtCore import QDate, QItemSelectionModel, QPoint, Qt
+from PySide2.QtWidgets import QCheckBox, QLabel, QTextEdit, QVBoxLayout
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
 from game.campaignloader.campaign import Campaign
+from game.factions.faction import Faction
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
-from game.factions.faction import Faction
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
-from qt_ui.widgets.spinsliders import FloatSpinSlider, TimeInputs, CurrencySpinner
+from qt_ui.widgets.spinsliders import CurrencySpinner, FloatSpinSlider, TimeInputs
 from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
 from qt_ui.windows.newgame.QCampaignList import QCampaignList
 
@@ -472,11 +472,12 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         economy_layout = QtWidgets.QVBoxLayout()
         economy_group.setLayout(economy_layout)
 
-        # TODO: Put labels back.
+        economy_layout.addWidget(QLabel("Player income multiplier"))
         player_income = FloatSpinSlider(0, 5, 1, divisor=10)
         self.registerField("player_income_multiplier", player_income.spinner)
         economy_layout.addLayout(player_income)
 
+        economy_layout.addWidget(QLabel("Enemy income multiplier"))
         enemy_income = FloatSpinSlider(0, 5, 1, divisor=10)
         self.registerField("enemy_income_multiplier", enemy_income.spinner)
         economy_layout.addLayout(enemy_income)
