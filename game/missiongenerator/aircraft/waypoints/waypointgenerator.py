@@ -60,6 +60,9 @@ class WaypointGenerator:
     def create_waypoints(self) -> tuple[timedelta, list[FlightWaypoint]]:
         for waypoint in self.flight.points:
             waypoint.tot = None
+            if waypoint.waypoint_type == FlightWaypointType.REFUEL:
+                # do nothing, just need a breakpoint
+                randomvar = 5
 
         waypoints = self.flight.flight_plan.waypoints
         mission_start_time = self.set_takeoff_time(waypoints[0])

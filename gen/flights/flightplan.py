@@ -18,6 +18,7 @@ from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 from dcs.mapping import Point
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
+from game.ato import flighttype
 
 from game.ato.flighttype import FlightType
 from game.ato.flightwaypoint import FlightWaypoint
@@ -1002,6 +1003,8 @@ class FlightPlanBuilder:
 
         try:
             if self.package.waypoints is None:
+                self.regenerate_package_waypoints()
+            elif flight.flight_type == FlightType.REFUELING:
                 self.regenerate_package_waypoints()
             flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
         except NavMeshError as ex:
