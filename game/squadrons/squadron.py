@@ -3,16 +3,12 @@ from __future__ import annotations
 import logging
 from collections import Iterable
 from dataclasses import dataclass, field
-from typing import (
-    TYPE_CHECKING,
-    Optional,
-    Sequence,
-)
+from typing import Optional, Sequence, TYPE_CHECKING
 
 from faker import Faker
 
-from game.settings import AutoAtoBehavior, Settings
 from game.ato import Flight, FlightType
+from game.settings import AutoAtoBehavior, Settings
 from gen.flights.flightplan import FlightPlanBuilder
 from .pilot import Pilot, PilotStatus
 from ..utils import meters
@@ -265,6 +261,8 @@ class Squadron:
         return distance_to_target <= self.aircraft.max_mission_range
 
     def operates_from(self, control_point: ControlPoint) -> bool:
+        if not control_point.can_operate(self.aircraft):
+            return False
         if control_point.is_carrier:
             return self.operating_bases.carrier
         elif control_point.is_lha:
