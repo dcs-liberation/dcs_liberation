@@ -606,6 +606,10 @@ class FlightJs(QObject):
     def selected(self) -> bool:
         return self._selected
 
+    def set_selected(self, value: bool) -> None:
+        self._selected = value
+        self.selectedChanged.emit()
+
     @Property(list, notify=commitBoundaryChanged)
     def commitBoundary(self) -> LeafletPoly:
         if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
@@ -1045,7 +1049,7 @@ class MapModel(QObject):
         self._control_points = []
         self._ground_objects = []
         self._supply_routes = []
-        self._flights = []
+        self._flights: dict[tuple[bool, int, int], FlightJs] = {}
         self._front_lines = []
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
@@ -1072,7 +1076,7 @@ class MapModel(QObject):
         self._control_points = []
         self._supply_routes = []
         self._ground_objects = []
-        self._flights = []
+        self._flights = {}
         self._front_lines = []
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
@@ -1084,19 +1088,21 @@ class MapModel(QObject):
         self.cleared.emit()
 
     def on_sim_update(self) -> None:
-        for flight in self._flights:
+        for flight in self._flights.values():
             flight.positionChanged.emit()
 
     def set_package_selection(self, index: int) -> None:
+        self.deselect_current_flight()
         # Optional[int] isn't a valid type for a Qt signal. None will be converted to
         # zero automatically. We use -1 to indicate no selection.
         if index == -1:
             self._selected_flight_index = None
         else:
             self._selected_flight_index = index, 0
-        self.reset_atos()
+        self.select_current_flight()
 
     def set_flight_selection(self, index: int) -> None:
+        self.deselect_current_flight()
         if self._selected_flight_index is None:
             if index != -1:
                 # We don't know what order update_package_selection and
@@ -1111,7 +1117,27 @@ class MapModel(QObject):
         if index == -1:
             self._selected_flight_index = self._selected_flight_index[0], None
         self._selected_flight_index = self._selected_flight_index[0], index
-        self.reset_atos()
+        self.select_current_flight()
+
+    @property
+    def _selected_flight(self) -> Optional[FlightJs]:
+        if self._selected_flight_index is None:
+            return None
+        package_index, flight_index = self._selected_flight_index
+        blue = True
+        return self._flights[blue, package_index, flight_index]
+
+    def deselect_current_flight(self) -> None:
+        flight = self._selected_flight
+        if flight is None:
+            return None
+        flight.set_selected(False)
+
+    def select_current_flight(self):
+        flight = self._selected_flight
+        if flight is None:
+            return None
+        flight.set_selected(True)
 
     @staticmethod
     def leaflet_coord_for(point: Point, theater: ConflictTheater) -> LeafletLatLon:
@@ -1146,17 +1172,17 @@ class MapModel(QObject):
     def mapCenter(self) -> LeafletLatLon:
         return self._map_center
 
-    def _flights_in_ato(self, ato: AirTaskingOrder, blue: bool) -> List[FlightJs]:
-        flights = []
+    def _flights_in_ato(
+        self, ato: AirTaskingOrder, blue: bool
+    ) -> dict[tuple[bool, int, int], FlightJs]:
+        flights = {}
         for p_idx, package in enumerate(ato.packages):
             for f_idx, flight in enumerate(package.flights):
-                flights.append(
-                    FlightJs(
-                        flight,
-                        selected=blue and (p_idx, f_idx) == self._selected_flight_index,
-                        theater=self.game.theater,
-                        ato_model=self.game_model.ato_model_for(blue),
-                    )
+                flights[blue, p_idx, f_idx] = FlightJs(
+                    flight,
+                    selected=blue and (p_idx, f_idx) == self._selected_flight_index,
+                    theater=self.game.theater,
+                    ato_model=self.game_model.ato_model_for(blue),
                 )
         return flights
 
@@ -1170,7 +1196,7 @@ class MapModel(QObject):
     def reset_atos(self) -> None:
         self._flights = self._flights_in_ato(
             self.game.blue.ato, blue=True
-        ) + self._flights_in_ato(self.game.red.ato, blue=False)
+        ) | self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
         selected_flight = self._get_selected_flight()
         if selected_flight is None:
@@ -1186,8 +1212,8 @@ class MapModel(QObject):
         self.holdZonesChanged.emit()
 
     @Property(list, notify=flightsChanged)
-    def flights(self) -> List[FlightJs]:
-        return self._flights
+    def flights(self) -> list[FlightJs]:
+        return list(self._flights.values())
 
     def reset_control_points(self) -> None:
         self._control_points = [

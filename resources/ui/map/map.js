@@ -797,6 +797,7 @@ class Flight {
     this.aircraft = null;
     this.path = null;
     this.commitBoundary = null;
+    this.flight.selectedChanged.connect(() => this.draw());
     this.flight.positionChanged.connect(() => this.drawAircraftLocation());
     this.flight.flightPlanChanged.connect(() => this.drawFlightPlan());
     this.flight.commitBoundaryChanged.connect(() => this.drawCommitBoundary());
