@@ -11,14 +11,14 @@ Saves from 4.x are not compatible with 5.0.
 * **[Campaign]** Squadrons now have a home base and will not operate out of other bases. See https://github.com/dcs-liberation/dcs_liberation/issues/1145 for status.
 * **[Campaign]** Aircraft now belong to squadrons rather than bases to support squadron location transfers.
 * **[Campaign]** Skipped turns are no longer counted as defeats on front lines.
-* **[Campaign AI]** Overhauled campaign AI target prioritization. This currently only affects the ordering of DEAD missions.
+* **[Campaign AI]** Overhauled campaign AI target prioritization.
 * **[Campaign AI]** Player front line stances can now be automated. Improved stance selection for AI.
 * **[Campaign AI]** Reworked layout of hold, join, split, and ingress points. Should result in much shorter flight plans in general while still maintaining safe join/split/hold points.
 * **[Campaign AI]** Auto-planning mission range limits are now specified per-aircraft. On average this means that longer range missions will now be plannable. The limit only accounts for the direct distance to the target, not the path taken.
 * **[Campaign AI]** Transport aircraft will now be bought only if necessary at control points which can produce ground units and are capable to operate transport aircraft.
 * **[Campaign AI]** Aircraft will now only be automatically purchased or assigned at appropriate bases. Naval aircraft will default to only operating from carriers, Harriers will default to LHAs and shore bases, helicopters will operate from anywhere. This can be customized per-squadron.
 * **[Engine]** Support for DCS 2.7.7.14727 and newer, including support for F-16 CBU-105s, SA-5s, and the Forrestal.
-* **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet).
+* **[Kneeboard]** Minimum required fuel estimates have been added to the kneeboard for aircraft with supporting data (currently only the Hornet and Viper).
 * **[Kneeboard]** QNH (pressure MSL) and temperature have been added to the kneeboard.
 * **[Mission Generation]** EWRs are now also headed towards the center of the conflict
 * **[Mission Generation]** FACs can now use FC3 compatible laser codes. Note that this setting is global, not per FAC.
