@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Callable, TYPE_CHECKING
 
@@ -26,6 +26,10 @@ class GameLoop:
     @property
     def current_time_in_sim(self) -> datetime:
         return self.sim.time
+
+    @property
+    def elapsed_time(self) -> timedelta:
+        return self.sim.time - self.game.conditions.start_time
 
     def start(self) -> None:
         if self.started:

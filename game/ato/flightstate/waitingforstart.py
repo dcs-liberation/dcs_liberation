@@ -54,3 +54,7 @@ class WaitingForStart(FlightState):
     @property
     def spawn_type(self) -> StartType:
         return self.flight.start_type
+
+    @property
+    def description(self) -> str:
+        return f"Waiting for startup at {self.start_time:%H:%M:%S}"

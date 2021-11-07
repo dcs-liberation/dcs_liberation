@@ -49,9 +49,9 @@ class QLiberationWindow(QMainWindow):
         self._uncaught_exception_handler = UncaughtExceptionHandler(self)
 
         self.game = game
-        self.game_model = GameModel(game)
-        Dialog.set_game(self.game_model)
         self.sim_controller = SimController(self.game)
+        self.game_model = GameModel(game, self.sim_controller)
+        Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
         self.liberation_map = QLiberationMap(self.game_model, self.sim_controller, self)

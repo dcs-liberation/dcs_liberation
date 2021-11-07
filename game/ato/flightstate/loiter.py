@@ -40,3 +40,7 @@ class Loiter(InFlight):
 
     def travel_time_between_waypoints(self) -> timedelta:
         return self.hold_duration
+
+    @property
+    def description(self) -> str:
+        return f"Loitering for {self.hold_duration - self.elapsed_time}"

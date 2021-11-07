@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Callable, Optional, TYPE_CHECKING
 
@@ -39,6 +39,12 @@ class SimController(QObject):
         if self.game_loop is None:
             return None
         return self.game_loop.current_time_in_sim
+
+    @property
+    def elapsed_time(self) -> timedelta:
+        if self.game_loop is None:
+            return timedelta()
+        return self.game_loop.elapsed_time
 
     def set_game(self, game: Optional[Game]) -> None:
         self.recreate_game_loop(game)

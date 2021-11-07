@@ -43,3 +43,9 @@ class FlightState(ABC):
         if (max_takeoff_fuel := self.flight.max_takeoff_fuel()) is not None:
             return max_takeoff_fuel
         return self.flight.unit_type.dcs_unit_type.fuel_max
+
+    @property
+    @abstractmethod
+    def description(self) -> str:
+        """Describes the current flight state."""
+        ...
