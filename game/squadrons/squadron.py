@@ -7,7 +7,7 @@ from typing import Optional, Sequence, TYPE_CHECKING
 
 from faker import Faker
 
-from game.ato import Flight, FlightType
+from game.ato import Flight, FlightType, Package
 from game.settings import AutoAtoBehavior, Settings
 from gen.flights.flightplan import FlightPlanBuilder
 from .pilot import Pilot, PilotStatus
@@ -15,7 +15,6 @@ from ..utils import meters
 
 if TYPE_CHECKING:
     from game import Game
-    from game.ato import Package
     from game.coalition import Coalition
     from game.dcs.aircrafttype import AircraftType
     from game.theater import ControlPoint, ConflictTheater, MissionTarget
