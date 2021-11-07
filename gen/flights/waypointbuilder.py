@@ -211,6 +211,7 @@ class WaypointBuilder:
         waypoint.pretty_name = "Refuel"
         waypoint.description = "Refuel from tanker"
         waypoint.name = "REFUEL"
+        return waypoint
 
     def split(self, position: Point) -> FlightWaypoint:
         waypoint = FlightWaypoint(

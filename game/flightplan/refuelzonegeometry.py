@@ -29,4 +29,4 @@ class RefuelZoneGeometry:
         # TODO: Consider threats.
         distance = 0.75 * self.package_home.distance_to_point(self.join)
         heading = self.package_home.heading_between_point(self.join)
-        self.package_home.point_from_heading(heading, distance)
+        return self.package_home.point_from_heading(heading, distance)
