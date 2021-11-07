@@ -40,7 +40,11 @@ class AircraftSimulation:
         blue_a2a = AircraftEngagementZones.from_ato(self.game.blue.ato)
         red_a2a = AircraftEngagementZones.from_ato(self.game.red.ato)
         for flight in self.iter_flights():
-            if flight.should_halt_sim(red_a2a if flight.squadron.player else blue_a2a):
+            flight.check_for_combat(red_a2a if flight.squadron.player else blue_a2a)
+
+        # After updating all combat states, check for halts.
+        for flight in self.iter_flights():
+            if flight.should_halt_sim():
                 return True
         return False
 

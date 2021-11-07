@@ -151,5 +151,10 @@ class Flight:
     def on_game_tick(self, time: datetime, duration: timedelta) -> None:
         self.state.on_game_tick(time, duration)
 
-    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
-        return self.state.should_halt_sim(enemy_aircraft_coverage)
+    def check_for_combat(
+        self, enemy_aircraft_coverage: AircraftEngagementZones
+    ) -> None:
+        self.state.check_for_combat(enemy_aircraft_coverage)
+
+    def should_halt_sim(self) -> bool:
+        return self.state.should_halt_sim()

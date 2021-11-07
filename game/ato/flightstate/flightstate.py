@@ -22,7 +22,12 @@ class FlightState(ABC):
     def on_game_tick(self, time: datetime, duration: timedelta) -> None:
         ...
 
-    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
+    def check_for_combat(
+        self, enemy_aircraft_coverage: AircraftEngagementZones
+    ) -> None:
+        pass
+
+    def should_halt_sim(self) -> bool:
         return False
 
     @property

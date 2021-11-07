@@ -11,7 +11,6 @@ from ..starttype import StartType
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
-    from game.sim.aircraftengagementzones import AircraftEngagementZones
 
 
 class Taxi(FlightState):
@@ -32,7 +31,7 @@ class Taxi(FlightState):
     def spawn_type(self) -> StartType:
         return StartType.WARM
 
-    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
+    def should_halt_sim(self) -> bool:
         if (
             self.flight.client_count > 0
             and self.settings.player_mission_interrupts_sim_at is StartType.WARM
