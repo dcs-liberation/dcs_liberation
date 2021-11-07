@@ -8,7 +8,7 @@ from typing_extensions import TYPE_CHECKING
 
 from game.ato import Flight
 from game.ato.flightstate import (
-    InFlight,
+    Navigating,
     StartUp,
     Takeoff,
     Taxi,
@@ -16,8 +16,8 @@ from game.ato.flightstate import (
     WaitingForStart,
 )
 from game.ato.starttype import StartType
-from game.sim.aircraftengagementzones import AircraftEngagementZones
 from gen.flights.traveltime import TotEstimator
+from .combat import CombatInitiator, FrozenCombat
 
 if TYPE_CHECKING:
     from game import Game
@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 class AircraftSimulation:
     def __init__(self, game: Game) -> None:
         self.game = game
+        self.combats: list[FrozenCombat] = []
 
     def begin_simulation(self) -> None:
         self.reset()
@@ -35,12 +36,9 @@ class AircraftSimulation:
         for flight in self.iter_flights():
             flight.on_game_tick(time, duration)
 
-        # Finish updating all flights before computing engagement zones so that the new
+        # Finish updating all flights before checking for combat so that the new
         # positions are used.
-        blue_a2a = AircraftEngagementZones.from_ato(self.game.blue.ato)
-        red_a2a = AircraftEngagementZones.from_ato(self.game.red.ato)
-        for flight in self.iter_flights():
-            flight.check_for_combat(red_a2a if flight.squadron.player else blue_a2a)
+        CombatInitiator(self.game, self.combats).update_active_combats()
 
         # After updating all combat states, check for halts.
         for flight in self.iter_flights():
@@ -68,7 +66,7 @@ class AircraftSimulation:
         elif flight.start_type is StartType.RUNWAY:
             flight.set_state(Takeoff(flight, self.game.settings, now))
         elif flight.start_type is StartType.IN_FLIGHT:
-            flight.set_state(InFlight(flight, self.game.settings, waypoint_index=0))
+            flight.set_state(Navigating(flight, self.game.settings, waypoint_index=0))
         else:
             raise ValueError(f"Unknown start type {flight.start_type} for {flight}")
 

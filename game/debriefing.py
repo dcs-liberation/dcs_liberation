@@ -13,23 +13,23 @@ from typing import (
     Union,
 )
 
-from game.ato.flight import Flight
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import Airfield, ControlPoint
-from game.transfers import CargoShip
-from game.unitmap import (
-    AirliftUnits,
-    Building,
-    ConvoyUnit,
-    FlyingUnit,
-    FrontLineUnit,
-    GroundObjectUnit,
-    UnitMap,
-)
 
 if TYPE_CHECKING:
     from game import Game
+    from game.ato.flight import Flight
+    from game.transfers import CargoShip
+    from game.unitmap import (
+        AirliftUnits,
+        Building,
+        ConvoyUnit,
+        FlyingUnit,
+        FrontLineUnit,
+        GroundObjectUnit,
+        UnitMap,
+    )
 
 DEBRIEFING_LOG_EXTENSION = "log"
 

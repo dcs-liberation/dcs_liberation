@@ -10,18 +10,18 @@ from .inflight import InFlight
 from ..starttype import StartType
 
 if TYPE_CHECKING:
-    from game.sim.aircraftengagementzones import AircraftEngagementZones
+    from game.sim.combat import FrozenCombat
 
 
 class InCombat(InFlight):
-    def __init__(self, previous_state: InFlight, description: str) -> None:
+    def __init__(self, previous_state: InFlight, combat: FrozenCombat) -> None:
         super().__init__(
             previous_state.flight,
             previous_state.settings,
             previous_state.waypoint_index,
         )
         self.previous_state = previous_state
-        self._description = description
+        self.combat = combat
 
     def estimate_position(self) -> Point:
         return self.previous_state.estimate_position()
@@ -36,16 +36,27 @@ class InCombat(InFlight):
         raise RuntimeError("Cannot simulate combat")
 
     @property
+    def is_at_ip(self) -> bool:
+        return False
+
+    @property
     def is_waiting_for_start(self) -> bool:
         return False
 
     def should_halt_sim(self) -> bool:
         return True
 
-    def check_for_combat(
-        self, enemy_aircraft_coverage: AircraftEngagementZones
-    ) -> None:
-        pass
+    @property
+    def vulnerable_to_intercept(self) -> bool:
+        # Interception results in the interceptor joining the existing combat rather
+        # than creating a new combat.
+        return False
+
+    @property
+    def vulnerable_to_sam(self) -> bool:
+        # SAM contact results in the SAM joining the existing combat rather than
+        # creating a new combat.
+        return False
 
     @property
     def spawn_type(self) -> StartType:
@@ -53,4 +64,4 @@ class InCombat(InFlight):
 
     @property
     def description(self) -> str:
-        return self._description
+        return self.combat.describe()

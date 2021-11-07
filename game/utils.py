@@ -7,6 +7,9 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import TypeVar, Union
 
+from dcs import Point
+from shapely.geometry import Point as ShapelyPoint
+
 METERS_TO_FEET = 3.28084
 FEET_TO_METERS = 1 / METERS_TO_FEET
 NM_TO_METERS = 1852
@@ -280,3 +283,7 @@ def interpolate(value1: float, value2: float, factor: float, clamp: bool) -> flo
         return min(bigger_value, max(smaller_value, interpolated))
     else:
         return interpolated
+
+
+def dcs_to_shapely_point(point: Point) -> ShapelyPoint:
+    return ShapelyPoint(point.x, point.y)

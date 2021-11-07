@@ -57,7 +57,7 @@ class FlightDelegate(TwoColumnRowDelegate):
             missing_pilots = flight.missing_pilots
             return f"Missing pilots: {flight.missing_pilots}" if missing_pilots else ""
         elif (row, column) == (2, 0):
-            return flight.state.description
+            return flight.state.description.title()
         return ""
 
     def num_clients(self, index: QModelIndex) -> int:

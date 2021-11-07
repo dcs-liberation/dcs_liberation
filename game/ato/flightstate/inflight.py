@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
@@ -18,7 +17,6 @@ from gen.flights.flightplan import LoiterFlightPlan
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
-    from game.sim.aircraftengagementzones import AircraftEngagementZones
 
 
 class InFlight(FlightState, ABC):
@@ -95,11 +93,8 @@ class InFlight(FlightState, ABC):
         if self.elapsed_time > self.total_time_to_next_waypoint:
             self.advance_to_next_waypoint()
 
-    def check_for_combat(
-        self, enemy_aircraft_coverage: AircraftEngagementZones
-    ) -> None:
-        from game.ato.flightstate.incombat import InCombat
-
+    @property
+    def is_at_ip(self) -> bool:
         contact_types = {
             FlightWaypointType.INGRESS_BAI,
             FlightWaypointType.INGRESS_CAS,
@@ -109,30 +104,19 @@ class InFlight(FlightState, ABC):
             FlightWaypointType.INGRESS_SEAD,
             FlightWaypointType.INGRESS_STRIKE,
         }
+        return self.current_waypoint.waypoint_type in contact_types
 
-        if self.current_waypoint.waypoint_type in contact_types:
-            logging.info(
-                f"Interrupting simulation because {self.flight} has reached its "
-                "ingress point"
-            )
-            self.flight.set_state(InCombat(self, "At IP"))
+    @property
+    def vulnerable_to_intercept(self) -> bool:
+        return True
 
-        threat_zone = self.flight.squadron.coalition.opponent.threat_zone
-        if threat_zone.threatened_by_air_defense(self.estimate_position()):
-            logging.info(
-                f"Interrupting simulation because {self.flight} has encountered enemy "
-                "air defenses"
-            )
-            self.flight.set_state(InCombat(self, "In combat with enemy air defenses"))
+    @property
+    def vulnerable_to_sam(self) -> bool:
+        return True
 
-        if enemy_aircraft_coverage.covers(self.estimate_position()):
-            logging.info(
-                f"Interrupting simulation because {self.flight} has encountered enemy "
-                "air-to-air patrol"
-            )
-            self.flight.set_state(
-                InCombat(self, "In combat with enemy air-to-air patrol")
-            )
+    @property
+    def will_join_air_combat(self) -> bool:
+        return self.flight.flight_type.is_air_to_air
 
     @property
     def is_waiting_for_start(self) -> bool:
