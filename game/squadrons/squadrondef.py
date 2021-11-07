@@ -4,10 +4,7 @@ import logging
 from collections import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import (
-    TYPE_CHECKING,
-    Optional,
-)
+from typing import Optional, TYPE_CHECKING
 
 import yaml
 
@@ -52,6 +49,8 @@ class SquadronDef:
         return task in self.auto_assignable_mission_types
 
     def operates_from(self, control_point: ControlPoint) -> bool:
+        if not control_point.can_operate(self.aircraft):
+            return False
         if control_point.is_carrier:
             return self.operating_bases.carrier
         elif control_point.is_lha:

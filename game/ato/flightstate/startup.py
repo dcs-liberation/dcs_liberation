@@ -43,3 +43,7 @@ class StartUp(FlightState):
             )
             return True
         return False
+
+    @property
+    def description(self) -> str:
+        return "Starting up"

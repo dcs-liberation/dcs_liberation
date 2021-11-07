@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from gen.flights.traveltime import TotEstimator
 from .flightstate import FlightState
 from ..starttype import StartType
 
@@ -15,3 +16,9 @@ class Uninitialized(FlightState):
     @property
     def spawn_type(self) -> StartType:
         raise RuntimeError("Attempted to simulate flight that is not fully initialized")
+
+    @property
+    def description(self) -> str:
+        estimator = TotEstimator(self.flight.package)
+        delay = estimator.mission_start_time(self.flight)
+        return f"Starting in {delay}"

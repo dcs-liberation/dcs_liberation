@@ -51,3 +51,7 @@ class Takeoff(FlightState):
             )
             return True
         return False
+
+    @property
+    def description(self) -> str:
+        return "Taking off"

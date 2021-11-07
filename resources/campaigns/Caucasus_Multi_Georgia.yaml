@@ -1,17 +1,17 @@
 ---
-name: Caucasus - Northern Russia
+name: Caucasus - Muti-Part Georgia
 theater: Caucasus
-authors: Plob
-description: <p><p>A medium campaign through the north eastern part of the Caucasus map.</p><p>Russia has invaded Georgia through the eastern mountains. Mount a counter offense and push them back!</p>
+authors: Doc_of_Mur
+description: <p><p>This is part 2 of the Caucasus Multi-part campaign. After completing Multi-Part Georgia, play this campaign to invade Russia and finish the theater. As this is now Russia the recommended enemy faction has changed. To simulate still owning Georgia the player income has been supplemented through an increased number of blue strike targets at the starting bases. This is a more difficult scenario with a higher concentration of Redfor SAMs and Strike targets than usual.</p>
 recommended_player_faction: Bluefor Modern
-recommended_enemy_faction: Russia 1975
+recommended_enemy_faction: Georgia 2008
 recommended_start_date: 1995-06-13
-miz: northern_russia.miz
+miz: Caucasus_Multi_Georgia.miz
 performance: 2
 version: "9.1"
 squadrons:
   # Kutaisi
-  25:
+  22:
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker MPRS
@@ -72,101 +72,89 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
-    
-  # Tbilisi-Lochini
-  29:
+
+  # Kobuleti
+  24:
     - primary: BARCAP
       aircraft:
-        - MiG-21bis Fishbed-N
-    - primary: BARCAP
-      aircraft:
-        - MiG-29A Fulcrum-A
+        - L-39ZA Albatros
     - primary: BAI
       secondary: air-to-ground
       aircraft:
-        - Mi-24V Hind-E
-  # Beslan
-  32:
-    - primary: BARCAP
-      aircraft:
-        - MiG-23MLD Flogger-K
-    - primary: BARCAP
-      aircraft:
-        - MiG-21bis Fishbed-N
-    - primary: BARCAP
-      aircraft:
-        - MiG-21bis Fishbed-N
+        - Mi-8MTV2 Hip
     - primary: BAI
       secondary: air-to-ground
       aircraft:
-        - Mi-24V Hind-E
-    - primary: Strike
+        - Mi-24P Hind-F
+
+  # Senaki-Kolkhi
+  23:
+    - primary: BARCAP
       aircraft:
-        - Su-25 Frogfoot
+        - L-39ZA Albatros
     - primary: BAI
+      secondary: air-to-ground
       aircraft:
-        - Su-25 Frogfoot
-  # Mozdok
-  28:
-    - primary: BARCAP
-      aircraft:
-        - MiG-23MLD Flogger-K
-    - primary: BARCAP
-      aircraft:
-        - MiG-21bis Fishbed-N
+        - Mi-8MTV2 Hip
     - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
+
+  # Kataisi
+  25:
+    - primary: BARCAP
+      aircraft:
+        - L-39ZA Albatros
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-8MTV2 Hip
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+
+  # Sukhumi-Babushara
+  20:
+    - primary: BARCAP
+      aircraft:
+        - L-39ZA Albatros
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-8MTV2 Hip
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+
+  # Gudauta
+  21:
+    - primary: BARCAP
+      aircraft:
+        - L-39ZA Albatros
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-8MTV2 Hip
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+    - primary: Strike
+      secondary: air-to-ground
       aircraft:
         - Su-25 Frogfoot
-    - primary: Strike
-      aircraft:
-        - Tu-95MS Bear-H
-    - primary: SEAD
-      aircraft:
-        - Su-17M4 Fitter-K
-    - primary: Strike
-      aircraft:
-        - Su-17M4 Fitter-K
-  # Nalchik
-  27:
-    - primary: BARCAP
-      aircraft:
-        - MiG-25PD Foxbat-E
-    - primary: BARCAP
-      aircraft:
-        - MiG-21bis Fishbed-N
-    - primary: BARCAP
-      aircraft:
-        - MiG-29A Fulcrum-A
     - primary: OCA/Runway
       secondary: air-to-ground
       aircraft:
-        - Su-24M Fencer-D
-  # Mineralnye Vody
-  26:
-    - primary: BARCAP
-      aircraft:
-        - MiG-25PD Foxbat-E
-    - primary: BARCAP
-      aircraft:
-        - MiG-21bis Fishbed-N
-    - primary: BARCAP
-      aircraft:
-        - MiG-25PD Foxbat-E
-    - primary: BARCAP
-      aircraft:
-        - MiG-23MLD Flogger-K
-    - primary: BARCAP
-      aircraft:
-        - MiG-23MLD Flogger-K
-    - primary: Strike
-      aircraft:
         - Su-25 Frogfoot
-    - primary: AEW&C
-      aircraft:
-        - A-50
-    - primary: Refueling
-      aircraft:
-        - IL-78M
+
   Blue CV:
     - primary: BARCAP
       secondary: air-to-air

@@ -108,16 +108,28 @@ class AirIcons {
   constructor() {
     this.icons = {};
     for (const player of [true, false]) {
-      this.icons[player] = this.loadIcon("unspecified", player);
+      this.icons[player] = {};
+      for (const selected of [true, false]) {
+        this.icons[player][selected] = this.loadIcon(
+          "unspecified",
+          player,
+          selected
+        );
+      }
     }
   }
 
-  icon(_category, player, _state) {
-    return this.icons[player];
+  icon(_category, player, selected) {
+    return this.icons[player][selected];
   }
 
-  loadIcon(category, player) {
-    const color = player ? "blue" : "red";
+  loadIcon(category, player, selected) {
+    var color;
+    if (selected) {
+      color = "selected";
+    } else {
+      color = player ? "blue" : "red";
+    }
     return new L.Icon({
       iconUrl: `../air_assets/${category}_${color}.svg`,
       iconSize: [24, 24],
@@ -797,6 +809,7 @@ class Flight {
     this.aircraft = null;
     this.path = null;
     this.commitBoundary = null;
+    this.flight.selectedChanged.connect(() => this.draw());
     this.flight.positionChanged.connect(() => this.drawAircraftLocation());
     this.flight.flightPlanChanged.connect(() => this.drawFlightPlan());
     this.flight.commitBoundaryChanged.connect(() => this.drawCommitBoundary());
@@ -848,7 +861,11 @@ class Flight {
     const position = this.flight.position;
     if (position.length > 0) {
       this.aircraft = L.marker(position, {
-        icon: Icons.AirIcons.icon("fighter", this.flight.blue),
+        icon: Icons.AirIcons.icon(
+          "fighter",
+          this.flight.blue,
+          this.flight.selected
+        ),
       }).addTo(aircraftLayer);
     }
   }

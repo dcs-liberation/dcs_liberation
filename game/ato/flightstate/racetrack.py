@@ -51,3 +51,7 @@ class RaceTrack(InFlight):
         if self.flight.flight_type in {FlightType.BARCAP, FlightType.TARCAP}:
             return self.commit_region
         return None
+
+    @property
+    def description(self) -> str:
+        return f"Patrolling for {self.patrol_duration - self.elapsed_time}"

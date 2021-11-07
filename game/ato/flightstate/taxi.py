@@ -43,3 +43,7 @@ class Taxi(FlightState):
             )
             return True
         return False
+
+    @property
+    def description(self) -> str:
+        return "Taxiing"
