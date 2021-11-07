@@ -1006,6 +1006,8 @@ class FlightPlanBuilder:
                 self.regenerate_package_waypoints()
             elif flight.flight_type == FlightType.REFUELING:
                 self.regenerate_package_waypoints()
+                for existing_flight in self.package.flights:
+                    existing_flight.package.waypoints = self.package.waypoints
             flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
         except NavMeshError as ex:
             color = "blue" if self.is_player else "red"
@@ -1050,6 +1052,7 @@ class FlightPlanBuilder:
         elif task == FlightType.TRANSPORT:
             return self.generate_transport(flight)
         elif task == FlightType.REFUELING:
+            # TODO: Add alternate method for package support.
             return self.generate_refueling_racetrack(flight)
         elif task == FlightType.FERRY:
             return self.generate_ferry(flight)
