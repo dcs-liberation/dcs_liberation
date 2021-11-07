@@ -1006,8 +1006,7 @@ class FlightPlanBuilder:
                 self.regenerate_package_waypoints()
             elif flight.flight_type == FlightType.REFUELING:
                 self.regenerate_package_waypoints()
-                for existing_flight in self.package.flights:
-                    existing_flight.package.waypoints = self.package.waypoints
+                self.regenerate_flight_plans()
             flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
         except NavMeshError as ex:
             color = "blue" if self.is_player else "red"
@@ -1057,6 +1056,14 @@ class FlightPlanBuilder:
         elif task == FlightType.FERRY:
             return self.generate_ferry(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
+
+    def regenerate_flight_plans(self) -> None:
+        new_flights: list[Flight] = []
+        for old_flight in self.package.flights:
+            # TODO: Don't lose custom targets here.
+            old_flight.flight_plan = self.generate_flight_plan(old_flight, None)
+            new_flights.append(old_flight)
+        self.package.flights = new_flights
 
     def regenerate_package_waypoints(self) -> None:
         from game.ato.packagewaypoints import PackageWaypoints
