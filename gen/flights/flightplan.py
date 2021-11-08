@@ -424,11 +424,17 @@ class FormationFlightPlan(LoiterFlightPlan):
     def split_time(self) -> timedelta:
         raise NotImplementedError
 
+    @property
+    def refuel_time(self) -> timedelta:
+        raise NotImplementedError
+
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.join:
             return self.join_time
         elif waypoint == self.split:
             return self.split_time
+        elif waypoint == self.refuel:
+            return self.refuel_time
         return None
 
     @property
@@ -703,6 +709,12 @@ class StrikeFlightPlan(FormationFlightPlan):
     def split_time(self) -> timedelta:
         travel_time = self.travel_time_between_waypoints(self.ingress, self.split)
         return self.ingress_time + travel_time
+
+    @property
+    def refuel_time(self) -> timedelta:
+        assert self.refuel is not None
+        travel_time = self.travel_time_between_waypoints(self.split, self.refuel)
+        return self.split_time + travel_time
 
     @property
     def ingress_time(self) -> timedelta:
