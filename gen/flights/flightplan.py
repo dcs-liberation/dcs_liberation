@@ -18,7 +18,6 @@ from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
 from dcs.mapping import Point
 from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
-from game.ato import flighttype
 
 from game.ato.flighttype import FlightType
 from game.ato.flightwaypoint import FlightWaypoint
@@ -1739,36 +1738,78 @@ class FlightPlanBuilder:
         )
 
     def generate_refueling_racetrack(self, flight: Flight) -> RefuelingFlightPlan:
-        location = self.package.target
+        is_deployment_support: bool = False
 
-        closest_boundary = self.threat_zones.closest_boundary(location.position)
-        heading_to_threat_boundary = Heading.from_degrees(
-            location.position.heading_between_point(closest_boundary)
-        )
-        distance_to_threat = meters(
-            location.position.distance_to_point(closest_boundary)
-        )
-        orbit_heading = heading_to_threat_boundary
-
-        # Station 70nm outside the threat zone.
-        threat_buffer = nautical_miles(70)
-        if self.threat_zones.threatened(location.position):
-            orbit_distance = distance_to_threat + threat_buffer
-        else:
-            orbit_distance = distance_to_threat - threat_buffer
-
-        racetrack_center = location.position.point_from_heading(
-            orbit_heading.degrees, orbit_distance.meters
-        )
+        package_waypoints = self.package.waypoints
+        assert package_waypoints is not None
 
         racetrack_half_distance = Distance.from_nautical_miles(20).meters
 
-        racetrack_start = racetrack_center.point_from_heading(
-            orbit_heading.right.degrees, racetrack_half_distance
-        )
-        racetrack_end = racetrack_center.point_from_heading(
-            orbit_heading.left.degrees, racetrack_half_distance
-        )
+        patrol_duration = timedelta(hours=1)
+
+        # Determine if tanker is supporting a package.
+        if package_waypoints is not None and package_waypoints.refuel is not None:
+            is_deployment_support = True
+
+        # Tanker is supporting a package
+        if is_deployment_support:
+
+            assert package_waypoints.refuel is not None
+
+            # TODO: Only consider aircraft that can refuel with this tanker type.
+            refuel_time_minutes = 5
+            for flight in self.package.flights:
+                flight_size = flight.roster.max_size
+                refuel_time_minutes = refuel_time_minutes + 3 * flight_size + 1
+
+            patrol_duration = timedelta(minutes=refuel_time_minutes)
+
+            racetrack_center = package_waypoints.refuel
+
+            split_heading = Heading.from_degrees(
+                racetrack_center.heading_between_point(package_waypoints.split)
+            )
+            home_heading = split_heading.opposite
+
+            racetrack_start = racetrack_center.point_from_heading(
+                split_heading.degrees, racetrack_half_distance
+            )
+
+            racetrack_end = racetrack_center.point_from_heading(
+                home_heading.degrees, racetrack_half_distance
+            )
+
+        # Tanker is not supporting a package.
+        else:
+            location = self.package.target
+
+            closest_boundary = self.threat_zones.closest_boundary(location.position)
+            heading_to_threat_boundary = Heading.from_degrees(
+                location.position.heading_between_point(closest_boundary)
+            )
+            distance_to_threat = meters(
+                location.position.distance_to_point(closest_boundary)
+            )
+            orbit_heading = heading_to_threat_boundary
+
+            # Station 70nm outside the threat zone.
+            threat_buffer = nautical_miles(70)
+            if self.threat_zones.threatened(location.position):
+                orbit_distance = distance_to_threat + threat_buffer
+            else:
+                orbit_distance = distance_to_threat - threat_buffer
+
+            racetrack_center = location.position.point_from_heading(
+                orbit_heading.degrees, orbit_distance.meters
+            )
+
+            racetrack_start = racetrack_center.point_from_heading(
+                orbit_heading.right.degrees, racetrack_half_distance
+            )
+
+            racetrack_end = racetrack_center.point_from_heading(
+                orbit_heading.left.degrees, racetrack_half_distance
+            )
 
         builder = WaypointBuilder(flight, self.coalition)
 
@@ -1800,7 +1841,7 @@ class FlightPlanBuilder:
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
-            patrol_duration=timedelta(hours=1),
+            patrol_duration=patrol_duration,
             patrol_speed=speed,
             # TODO: Factor out a common base of the combat and non-combat race-tracks.
             # No harm in setting this, but we ought to clean up a bit.
