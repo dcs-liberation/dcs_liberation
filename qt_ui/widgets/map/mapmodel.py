@@ -1125,7 +1125,7 @@ class MapModel(QObject):
             return None
         package_index, flight_index = self._selected_flight_index
         blue = True
-        return self._flights[blue, package_index, flight_index]
+        return self._flights.get((blue, package_index, flight_index))
 
     def deselect_current_flight(self) -> None:
         flight = self._selected_flight
