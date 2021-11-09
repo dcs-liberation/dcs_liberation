@@ -707,8 +707,20 @@ class StrikeFlightPlan(FormationFlightPlan):
 
     @property
     def split_time(self) -> timedelta:
-        travel_time = self.travel_time_between_waypoints(self.ingress, self.split)
-        return self.ingress_time + travel_time
+        travel_time_ingress = self.travel_time_between_waypoints(
+            self.ingress, self.target_area_waypoint
+        )
+        travel_time_egress = self.travel_time_between_waypoints(
+            self.target_area_waypoint, self.split
+        )
+        minutes_at_target = 0.75 * len(self.targets)
+        timedelta_at_target = timedelta(minutes=minutes_at_target)
+        return (
+            self.ingress_time
+            + travel_time_ingress
+            + timedelta_at_target
+            + travel_time_egress
+        )
 
     @property
     def refuel_time(self) -> timedelta:
@@ -850,6 +862,51 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
     bullseye: FlightWaypoint
+
+    def target_area_waypoint(self) -> FlightWaypoint:
+        return FlightWaypoint(
+            FlightWaypointType.TARGET_GROUP_LOC,
+            self.package.target.position.x,
+            self.package.target.position.y,
+            meters(0),
+        )
+
+    @property
+    def patrol_start_time(self) -> timedelta:
+        if (
+            self.package.waypoints is not None
+            and self.package.waypoints.refuel is not None
+        ):
+
+            arbitrary_altitude: Distance = feet(20000)
+
+            # Cheat in a FlightWaypoint for the split point.  Arbitrary altitude.
+            split: Point = self.package.waypoints.split
+            split_waypoint: FlightWaypoint = FlightWaypoint(
+                FlightWaypointType.SPLIT, split.x, split.y, arbitrary_altitude
+            )
+
+            # Cheat in a FlightWaypoint for the refuel point.  Arbitrary altitude.
+            refuel: Point = self.package.waypoints.refuel
+            refuel_waypoint: FlightWaypoint = FlightWaypoint(
+                FlightWaypointType.REFUEL, refuel.x, refuel.y, arbitrary_altitude
+            )
+
+            delay_target_to_split: timedelta = self.travel_time_between_waypoints(
+                self.target_area_waypoint(), split_waypoint
+            )
+            delay_split_to_refuel: timedelta = self.travel_time_between_waypoints(
+                split_waypoint, refuel_waypoint
+            )
+
+            return (
+                self.package.time_over_target
+                + delay_target_to_split
+                + delay_split_to_refuel
+                - timedelta(minutes=1.5)
+            )
+
+        return self.package.time_over_target
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.takeoff
