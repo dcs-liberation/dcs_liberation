@@ -563,6 +563,7 @@ class CasFlightPlan(PatrollingFlightPlan):
 @dataclass(frozen=True)
 class TarCapFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
+    refuel: Optional[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
     bullseye: FlightWaypoint
@@ -575,6 +576,8 @@ class TarCapFlightPlan(PatrollingFlightPlan):
             self.patrol_start,
             self.patrol_end,
         ]
+        if self.refuel is not None:
+            yield self.refuel
         yield from self.nav_from
         yield self.land
         if self.divert is not None:
@@ -588,6 +591,11 @@ class TarCapFlightPlan(PatrollingFlightPlan):
     @property
     def tot_offset(self) -> timedelta:
         return -self.lead_time
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        if waypoint == self.refuel:
+            return self.refuel_time
+        return None
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.patrol_end:
@@ -607,6 +615,12 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         if end is not None:
             return end
         return super().patrol_end_time
+
+    @property
+    def refuel_time(self) -> timedelta:
+        assert self.refuel is not None
+        travel_time = self.travel_time_between_waypoints(self.patrol_end, self.refuel)
+        return self.patrol_end_time + travel_time
 
 
 @dataclass(frozen=True)
@@ -750,6 +764,7 @@ class SweepFlightPlan(LoiterFlightPlan):
     nav_to: List[FlightWaypoint]
     sweep_start: FlightWaypoint
     sweep_end: FlightWaypoint
+    refuel: Optional[FlightWaypoint]
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
@@ -762,6 +777,8 @@ class SweepFlightPlan(LoiterFlightPlan):
         yield from self.nav_to
         yield self.sweep_start
         yield self.sweep_end
+        if self.refuel is not None:
+            yield self.refuel
         yield from self.nav_from
         yield self.land
         if self.divert is not None:
@@ -796,6 +813,8 @@ class SweepFlightPlan(LoiterFlightPlan):
             return self.sweep_start_time
         if waypoint == self.sweep_end:
             return self.sweep_end_time
+        if waypoint == self.refuel:
+            return self.refuel_time
         return None
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
@@ -813,6 +832,12 @@ class SweepFlightPlan(LoiterFlightPlan):
 
     def mission_departure_time(self) -> timedelta:
         return self.sweep_end_time
+
+    @property
+    def refuel_time(self) -> timedelta:
+        assert self.refuel is not None
+        travel_time = self.travel_time_between_waypoints(self.sweep_end, self.refuel)
+        return self.mission_departure_time() + travel_time
 
 
 @dataclass(frozen=True)
@@ -1164,7 +1189,6 @@ class FlightPlanBuilder:
                 WaypointBuilder.perturb(join_point),
                 refuel_point,
             )
-            print("This package has tankers! " + self.package.package_description)
         else:
             # And the split point based on the best route from the IP. Since that's no
             # different than the best route *to* the IP, this is the same as the join point.
@@ -1341,7 +1365,7 @@ class FlightPlanBuilder:
         )
 
     def generate_sweep(self, flight: Flight) -> SweepFlightPlan:
-        """Generate a BARCAP flight at a given location.
+        """Generate a FighterSweep flight at a given location.
 
         Args:
             flight: The flight to generate the flight plan for.
@@ -1360,6 +1384,15 @@ class FlightPlanBuilder:
 
         hold = builder.hold(self._hold_point(flight))
 
+        refuel = None
+
+        if (
+            self.package.has_tankers
+            and self.package.waypoints is not None
+            and self.package.waypoints.refuel is not None
+        ):
+            refuel = builder.refuel(self.package.waypoints.refuel)
+
         return SweepFlightPlan(
             package=self.package,
             flight=flight,
@@ -1375,6 +1408,7 @@ class FlightPlanBuilder:
             ),
             sweep_start=start,
             sweep_end=end,
+            refuel=refuel,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
@@ -1582,6 +1616,16 @@ class FlightPlanBuilder:
         orbit0p, orbit1p = self.cap_racetrack_for_objective(location, barcap=False)
 
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
+
+        refuel = None
+
+        if (
+            self.package.has_tankers
+            and self.package.waypoints is not None
+            and self.package.waypoints.refuel is not None
+        ):
+            refuel = builder.refuel(self.package.waypoints.refuel)
+
         return TarCapFlightPlan(
             package=self.package,
             flight=flight,
@@ -1598,6 +1642,7 @@ class FlightPlanBuilder:
             nav_from=builder.nav_path(orbit1p, flight.arrival.position, patrol_alt),
             patrol_start=start,
             patrol_end=end,
+            refuel=refuel,
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
@@ -1829,7 +1874,7 @@ class FlightPlanBuilder:
             refuel_time_minutes = 5
             for flight in self.package.flights:
                 flight_size = flight.roster.max_size
-                refuel_time_minutes = refuel_time_minutes + 3 * flight_size + 1
+                refuel_time_minutes = refuel_time_minutes + 4 * flight_size + 1
 
             patrol_duration = timedelta(minutes=refuel_time_minutes)
 
