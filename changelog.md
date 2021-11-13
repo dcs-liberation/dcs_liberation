@@ -1,3 +1,11 @@
+# 5.0.1
+
+Saves from 5.0.0 are compatible with 5.0.1.
+
+## Features/Improvements
+
+## Fixes
+
 # 5.0.0
 
 Saves from 4.x are not compatible with 5.0.

@@ -3,7 +3,7 @@ from pathlib import Path
 
 MAJOR_VERSION = 5
 MINOR_VERSION = 0
-MICRO_VERSION = 0
+MICRO_VERSION = 1
 
 
 def _build_version_string() -> str:
