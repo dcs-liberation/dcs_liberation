@@ -423,17 +423,11 @@ class FormationFlightPlan(LoiterFlightPlan):
     def split_time(self) -> timedelta:
         raise NotImplementedError
 
-    @property
-    def refuel_time(self) -> timedelta:
-        raise NotImplementedError
-
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.join:
             return self.join_time
         elif waypoint == self.split:
             return self.split_time
-        elif waypoint == self.refuel:
-            return self.refuel_time
         return None
 
     @property
@@ -591,11 +585,6 @@ class TarCapFlightPlan(PatrollingFlightPlan):
     def tot_offset(self) -> timedelta:
         return -self.lead_time
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.refuel:
-            return self.refuel_time
-        return None
-
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
         if waypoint == self.patrol_end:
             return self.patrol_end_time
@@ -614,12 +603,6 @@ class TarCapFlightPlan(PatrollingFlightPlan):
         if end is not None:
             return end
         return super().patrol_end_time
-
-    @property
-    def refuel_time(self) -> timedelta:
-        assert self.refuel is not None
-        travel_time = self.travel_time_between_waypoints(self.patrol_end, self.refuel)
-        return self.patrol_end_time + travel_time
 
 
 @dataclass(frozen=True)
@@ -736,12 +719,6 @@ class StrikeFlightPlan(FormationFlightPlan):
         )
 
     @property
-    def refuel_time(self) -> timedelta:
-        assert self.refuel is not None
-        travel_time = self.travel_time_between_waypoints(self.split, self.refuel)
-        return self.split_time + travel_time
-
-    @property
     def ingress_time(self) -> timedelta:
         tot = self.tot
         travel_time = self.travel_time_between_waypoints(
@@ -812,8 +789,6 @@ class SweepFlightPlan(LoiterFlightPlan):
             return self.sweep_start_time
         if waypoint == self.sweep_end:
             return self.sweep_end_time
-        if waypoint == self.refuel:
-            return self.refuel_time
         return None
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
@@ -831,11 +806,6 @@ class SweepFlightPlan(LoiterFlightPlan):
 
     def mission_departure_time(self) -> timedelta:
         return self.sweep_end_time
-
-    @property
-    def refuel_time(self) -> timedelta:
-        travel_time = self.travel_time_between_waypoints(self.sweep_end, self.refuel)
-        return self.mission_departure_time() + travel_time
 
 
 @dataclass(frozen=True)
