@@ -1070,9 +1070,6 @@ class FlightPlanBuilder:
         try:
             if self.package.waypoints is None:
                 self.regenerate_package_waypoints()
-            elif flight.flight_type == FlightType.REFUELING:
-                self.regenerate_package_waypoints()
-                self.regenerate_flight_plans()
             flight.flight_plan = self.generate_flight_plan(flight, custom_targets)
         except NavMeshError as ex:
             color = "blue" if self.is_player else "red"
