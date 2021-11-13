@@ -32,6 +32,7 @@ from .ocarunwayingress import OcaRunwayIngressBuilder
 from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
 from .racetrack import RaceTrackBuilder
 from .racetrackend import RaceTrackEndBuilder
+from .refuel import RefuelPointBuilder
 from .seadingress import SeadIngressBuilder
 from .strikeingress import StrikeIngressBuilder
 from .sweepingress import SweepIngressBuilder
@@ -130,6 +131,7 @@ class WaypointGenerator:
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP: CargoStopBuilder,
+            FlightWaypointType.REFUEL: RefuelPointBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(

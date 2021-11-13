@@ -48,7 +48,7 @@ class Package:
         """The speed of the package when in formation.
 
         If none of the flights in the package will join a formation, this
-        returns None. This is nto uncommon, since only strike-like (strike,
+        returns None. This is not uncommon, since only strike-like (strike,
         DEAD, anti-ship, BAI, etc.) flights and their escorts fly in formation.
         Others (CAP and CAS, currently) will coordinate in target timing but
         fly their own path to the target.

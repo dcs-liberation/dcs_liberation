@@ -5,6 +5,7 @@ Saves from 5.x are not compatible with 6.0.
 ## Features/Improvements
 
 * **[Mission Generation]** Added an option to fast-forward mission generation until the point of first contact (WIP).
+* **[Flight Planning]** Added the ability to plan tankers for recovery on package flights.  AI does not plan.
 
 ## Fixes
 
