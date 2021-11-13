@@ -5,7 +5,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, TYPE_CHECKING, Union
 
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 from game.theater.controlpoint import ControlPoint
 
 if TYPE_CHECKING:

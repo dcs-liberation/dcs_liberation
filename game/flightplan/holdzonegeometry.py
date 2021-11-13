@@ -6,11 +6,11 @@ import shapely.ops
 from dcs import Point
 from shapely.geometry import Point as ShapelyPoint, Polygon, MultiPolygon
 
-from game.theater import ConflictTheater
 from game.utils import nautical_miles
 
 if TYPE_CHECKING:
     from game.coalition import Coalition
+    from game.theater import ConflictTheater
 
 
 class HoldZoneGeometry:

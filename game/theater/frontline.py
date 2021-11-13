@@ -2,16 +2,15 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Iterator, List, Tuple, Any
+from typing import Iterator, List, Tuple, Any, TYPE_CHECKING
 
 from dcs.mapping import Point
 
-from gen.flights.flight import FlightType
-from .controlpoint import (
-    ControlPoint,
-    MissionTarget,
-)
+from .controlpoint import ControlPoint, MissionTarget
 from ..utils import Heading, pairwise
+
+if TYPE_CHECKING:
+    from game.ato import FlightType
 
 
 FRONTLINE_MIN_CP_DISTANCE = 5000
@@ -97,6 +96,8 @@ class FrontLine(MissionTarget):
         return False
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from game.ato import FlightType
+
         yield from [
             FlightType.CAS,
             FlightType.AEWC,

@@ -3,7 +3,7 @@ from enum import Enum, auto
 from typing import Optional
 
 from game.theater import MissionTarget
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 
 
 class EscortType(Enum):

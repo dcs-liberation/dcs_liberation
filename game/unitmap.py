@@ -1,8 +1,10 @@
 """Maps generated units back to their Liberation types."""
+from __future__ import annotations
+
 import itertools
 import math
 from dataclasses import dataclass
-from typing import Dict, Optional, Any, Union, TypeVar, Generic
+from typing import Dict, Optional, Any, TYPE_CHECKING, Union, TypeVar, Generic
 
 from dcs.unit import Vehicle, Ship
 from dcs.unitgroup import FlyingGroup, VehicleGroup, StaticGroup, ShipGroup, MovingGroup
@@ -11,8 +13,10 @@ from game.dcs.groundunittype import GroundUnitType
 from game.squadrons import Pilot
 from game.theater import Airfield, ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
-from game.transfers import CargoShip, Convoy, TransferOrder
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
+
+if TYPE_CHECKING:
+    from game.transfers import CargoShip, Convoy, TransferOrder
 
 
 @dataclass(frozen=True)

@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QTabWidget
 
 from game import Game
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from qt_ui.models import PackageModel
 from qt_ui.windows.mission.flight.payload.QFlightPayloadTab import QFlightPayloadTab
 from qt_ui.windows.mission.flight.settings.QGeneralFlightSettingsTab import (

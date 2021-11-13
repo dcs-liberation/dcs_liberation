@@ -1,7 +1,40 @@
-env.info("--- SKYNET VERSION: 2.2.0 | BUILD TIME: 28.07.2021 1023Z ---")
+env.info("--- SKYNET VERSION: 2.4.0 | BUILD TIME: 05.11.2021 1737Z ---")
 do
 --this file contains the required units per sam type
 samTypesDB = {
+
+	['S-200'] = {
+        ['type'] = 'complex',
+        ['searchRadar'] = {
+            ['RLS_19J6'] = {
+                ['name'] = {
+                    ['NATO'] = 'Tin Shield',
+                },
+			}, 
+			['p-19 s-125 sr'] = {
+				['name'] = {
+					['NATO'] = 'Flat Face',
+				},
+			},	
+		},
+        ['EWR P-37 BAR LOCK'] = {
+            ['Name'] = {
+              ['NATO'] = "Bar lock",
+            },   
+        },
+        ['trackingRadar'] = {
+            ['RPC_5N62V'] = {
+            },
+        },
+        ['launchers'] = {
+            ['S-200_Launcher'] = {
+            },
+        },
+        ['name'] = {
+            ['NATO'] = 'SA-5 Gammon',
+        },
+        ['harm_detection_chance'] = 60
+    },
 	['S-300'] = {
 		['type'] = 'complex',
 		['searchRadar'] = {

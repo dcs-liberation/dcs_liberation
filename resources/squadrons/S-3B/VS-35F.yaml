@@ -1,0 +1,9 @@
+---
+name: VS-35 (Tanker)
+nickname: Blue Wolves
+country: USA
+role: Tanker
+aircraft: S-3B Tanker
+livery: NAVY Standard
+mission_types:
+  - Refueling

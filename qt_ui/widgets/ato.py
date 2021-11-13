@@ -1,5 +1,6 @@
 """Widgets for displaying air tasking orders."""
 import logging
+from datetime import timedelta
 from typing import Optional
 
 from PySide2.QtCore import (
@@ -24,9 +25,8 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from gen.ato import Package
-from gen.flights.flight import Flight
-from gen.flights.traveltime import TotEstimator
+from game.ato.flight import Flight
+from game.ato.package import Package
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from ..delegates import TwoColumnRowDelegate
 from ..models import AtoModel, GameModel, NullListModel, PackageModel
@@ -34,7 +34,7 @@ from ..models import AtoModel, GameModel, NullListModel, PackageModel
 
 class FlightDelegate(TwoColumnRowDelegate):
     def __init__(self, package: Package) -> None:
-        super().__init__(rows=2, columns=2, font_size=10)
+        super().__init__(rows=3, columns=2, font_size=10)
         self.package = package
 
     @staticmethod
@@ -44,9 +44,7 @@ class FlightDelegate(TwoColumnRowDelegate):
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
         flight = self.flight(index)
         if (row, column) == (0, 0):
-            estimator = TotEstimator(self.package)
-            delay = estimator.mission_start_time(flight)
-            return f"{flight} in {delay}"
+            return f"{flight}"
         elif (row, column) == (0, 1):
             clients = self.num_clients(index)
             return f"Player Slots: {clients}" if clients else ""
@@ -58,6 +56,8 @@ class FlightDelegate(TwoColumnRowDelegate):
         elif (row, column) == (1, 1):
             missing_pilots = flight.missing_pilots
             return f"Missing pilots: {flight.missing_pilots}" if missing_pilots else ""
+        elif (row, column) == (2, 0):
+            return flight.state.description
         return ""
 
     def num_clients(self, index: QModelIndex) -> int:
@@ -235,8 +235,9 @@ class QFlightPanel(QGroupBox):
 
 
 class PackageDelegate(TwoColumnRowDelegate):
-    def __init__(self) -> None:
+    def __init__(self, game_model: GameModel) -> None:
         super().__init__(rows=2, columns=2)
+        self.game_model = game_model
 
     @staticmethod
     def package(index: QModelIndex) -> Package:
@@ -250,7 +251,16 @@ class PackageDelegate(TwoColumnRowDelegate):
             clients = self.num_clients(index)
             return f"Player Slots: {clients}" if clients else ""
         elif (row, column) == (1, 0):
-            return f"TOT T+{package.time_over_target}"
+            tot_delay = (
+                package.time_over_target - self.game_model.sim_controller.elapsed_time
+            )
+            if tot_delay >= timedelta():
+                return f"TOT in {tot_delay}"
+            game = self.game_model.game
+            if game is None:
+                raise RuntimeError("Package TOT has elapsed but no game is loaded")
+            tot_time = game.conditions.start_time + package.time_over_target
+            return f"TOT passed at {tot_time:%H:%M:%S}"
         elif (row, column) == (1, 1):
             unassigned_pilots = self.missing_pilots(index)
             return f"Missing pilots: {unassigned_pilots}" if unassigned_pilots else ""
@@ -268,11 +278,11 @@ class PackageDelegate(TwoColumnRowDelegate):
 class QPackageList(QListView):
     """List view for displaying the packages of an ATO."""
 
-    def __init__(self, model: AtoModel) -> None:
+    def __init__(self, game_model: GameModel, model: AtoModel) -> None:
         super().__init__()
         self.ato_model = model
         self.setModel(model)
-        self.setItemDelegate(PackageDelegate())
+        self.setItemDelegate(PackageDelegate(game_model))
         self.setIconSize(QSize(0, 0))
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.model().rowsInserted.connect(self.on_new_packages)
@@ -331,9 +341,9 @@ class QPackagePanel(QGroupBox):
     delete buttons for package management.
     """
 
-    def __init__(self, model: AtoModel) -> None:
+    def __init__(self, game_model: GameModel, ato_model: AtoModel) -> None:
         super().__init__("Packages")
-        self.ato_model = model
+        self.ato_model = ato_model
         self.ato_model.layoutChanged.connect(self.on_current_changed)
 
         self.vbox = QVBoxLayout()
@@ -346,7 +356,7 @@ class QPackagePanel(QGroupBox):
         )
         self.vbox.addWidget(self.tip)
 
-        self.package_list = QPackageList(self.ato_model)
+        self.package_list = QPackageList(game_model, self.ato_model)
         self.vbox.addWidget(self.package_list)
 
         self.button_row = QHBoxLayout()
@@ -418,7 +428,7 @@ class QAirTaskingOrderPanel(QSplitter):
         super().__init__(Qt.Vertical)
         self.ato_model = game_model.ato_model
 
-        self.package_panel = QPackagePanel(self.ato_model)
+        self.package_panel = QPackagePanel(game_model, self.ato_model)
         self.package_panel.current_changed.connect(self.on_package_change)
         self.addWidget(self.package_panel)
 

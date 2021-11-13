@@ -6,20 +6,18 @@ from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from dcs.mapping import Point
-from dcs.unittype import FlyingType
 
 from game.utils import (
     Distance,
     SPEED_OF_SOUND_AT_SEA_LEVEL,
     Speed,
-    kph,
     mach,
     meters,
 )
-from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
-    from gen.ato import Package
+    from game.ato.flight import Flight
+    from game.ato.package import Package
 
 
 class GroundSpeed:

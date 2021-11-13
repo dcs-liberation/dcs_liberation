@@ -23,7 +23,8 @@
     "Su-27 Flanker-B",
     "Su-30MKK Flanker-G",
     "Su-34 Fullback",
-    "Tu-22M3 Backfire-C"
+    "Tu-22M3 Backfire-C",
+	"H-6J Badger"
   ],
   "awacs": [
     "KJ-2000"
@@ -120,7 +121,7 @@
   ],
   "requirements": {},
   "navy_generators": [
-    "Type54GroupGenerator"
+    "ChineseNavyGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "WingLoong-I"

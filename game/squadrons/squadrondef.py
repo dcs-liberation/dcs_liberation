@@ -4,10 +4,7 @@ import logging
 from collections import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import (
-    TYPE_CHECKING,
-    Optional,
-)
+from typing import Optional, TYPE_CHECKING
 
 import yaml
 
@@ -16,7 +13,7 @@ from game.squadrons.operatingbases import OperatingBases
 from game.squadrons.pilot import Pilot
 
 if TYPE_CHECKING:
-    from gen.flights.flight import FlightType
+    from game.ato.flighttype import FlightType
     from game.theater import ControlPoint
 
 
@@ -52,6 +49,8 @@ class SquadronDef:
         return task in self.auto_assignable_mission_types
 
     def operates_from(self, control_point: ControlPoint) -> bool:
+        if not control_point.can_operate(self.aircraft):
+            return False
         if control_point.is_carrier:
             return self.operating_bases.carrier
         elif control_point.is_lha:
@@ -62,7 +61,7 @@ class SquadronDef:
     @classmethod
     def from_yaml(cls, path: Path) -> SquadronDef:
         from gen.flights.ai_flight_planner_db import tasks_for_aircraft
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         with path.open(encoding="utf8") as squadron_file:
             data = yaml.safe_load(squadron_file)

@@ -1,5 +1,5 @@
 {
-  "country": "Israel",
+  "country": "Combined Joint Task Forces Blue",
   "name": "Israel-USN 2005 (Allied Sword)",
   "authors": "Fuzzle",
   "description": "<p>A joint US Navy/Israeli modern faction for use with the Operation Allied Sword scenario.</p>",
@@ -15,7 +15,7 @@
     "F/A-18C Hornet (Lot 20)",
     "AV-8B Harrier II Night Attack",
     "AH-1W SuperCobra",
-    "AH-64A Apache",
+    "AH-64D Apache Longbow",
     "S-3B Viking",
     "SH-60B Seahawk",
     "UH-1H Iroquois"
@@ -24,7 +24,6 @@
     "E-2C Hawkeye"
   ],
   "tankers": [
-    "KC-135 Stratotanker",
     "KC-130",
     "S-3B Tanker"
   ],
@@ -108,5 +107,6 @@
     "UH-1H Iroquois": [
       "US NAVY"
     ]
-  }
+  },
+  "unrestricted_satnav": true
 }

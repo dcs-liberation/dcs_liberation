@@ -25,6 +25,6 @@ manufacturer: Mikoyan
 origin: USSR/Russia
 price: 15
 role: Multirole Fighter
-range: 150
+max_range: 150
 variants:
   MiG-29A Fulcrum-A: {}

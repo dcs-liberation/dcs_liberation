@@ -17,7 +17,7 @@ from game.theater import (
     FREE_FRONTLINE_UNIT_SUPPLY,
     AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
 )
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS

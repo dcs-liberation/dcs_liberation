@@ -2,27 +2,27 @@ from __future__ import annotations
 
 import logging
 from enum import Enum
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import (
+    QApplication,
+    QFrame,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QLayout,
+    QMessageBox,
     QPushButton,
     QSizePolicy,
     QSpacerItem,
-    QGridLayout,
-    QApplication,
-    QFrame,
-    QMessageBox,
 )
 
-from game.dcs.unittype import UnitType
+from game.purchaseadapter import PurchaseAdapter, TransactionError
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QUnitInfoWindow import QUnitInfoWindow
-from game.purchaseadapter import PurchaseAdapter, TransactionError
 
 
 class RecruitType(Enum):
@@ -153,6 +153,7 @@ class UnitTransactionFrame(QFrame, Generic[TransactionItemType]):
         exist.setMaximumHeight(72)
         exist.setMinimumHeight(36)
         existLayout = QHBoxLayout()
+        existLayout.setSizeConstraint(QLayout.SetMinimumSize)
         exist.setLayout(existLayout)
 
         existing_units = self.current_quantity_of(item)

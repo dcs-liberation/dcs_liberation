@@ -4,8 +4,8 @@ from dataclasses import dataclass
 from typing import Optional, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from gen.aircraft import FlightData
-    from gen.airsupport import AirSupport
+    from game.missiongenerator.aircraft.flightdata import FlightData
+    from game.missiongenerator.airsupport import AirSupport
 
 
 class RadioChannelAllocator:

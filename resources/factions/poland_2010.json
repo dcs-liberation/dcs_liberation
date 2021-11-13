@@ -44,6 +44,7 @@
     "Paratrooper AKS"
   ],
   "air_defenses": [
+    "SA5Generator",
     "SA6Generator",
     "SA8Generator",
     "ZSU23Generator",
@@ -58,5 +59,6 @@
   "navy_generators": [
     "MolniyaGroupGenerator",
     "OliverHazardPerryGroupGenerator"
-  ]
+  ],
+  "unrestricted_satnav": true
 }

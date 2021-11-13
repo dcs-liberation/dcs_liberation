@@ -12,8 +12,10 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
-from gen.ato import Package
-from gen.flights.flight import Flight, FlightType, FlightWaypoint
+from game.ato.package import Package
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flight import Flight
 from gen.flights.flightplan import (
     CustomFlightPlan,
     FlightPlanBuilder,

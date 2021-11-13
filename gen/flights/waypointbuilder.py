@@ -18,10 +18,6 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 from dcs.unitgroup import VehicleGroup, ShipGroup
 
-if TYPE_CHECKING:
-    from game.coalition import Coalition
-    from game.transfers import MultiGroupTransport
-
 from game.theater import (
     ControlPoint,
     MissionTarget,
@@ -29,7 +25,13 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.utils import Distance, meters, nautical_miles
-from .flight import Flight, FlightWaypoint, FlightWaypointType
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.flightwaypoint import FlightWaypoint
+
+if TYPE_CHECKING:
+    from game.ato.flight import Flight
+    from game.coalition import Coalition
+    from game.transfers import MultiGroupTransport
 
 
 @dataclass(frozen=True)
@@ -195,6 +197,20 @@ class WaypointBuilder:
         waypoint.pretty_name = "Join"
         waypoint.description = "Rendezvous with package"
         waypoint.name = "JOIN"
+        return waypoint
+
+    def refuel(self, position: Point) -> FlightWaypoint:
+        waypoint = FlightWaypoint(
+            FlightWaypointType.REFUEL,
+            position.x,
+            position.y,
+            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+        )
+        if self.is_helo:
+            waypoint.alt_type = "RADIO"
+        waypoint.pretty_name = "Refuel"
+        waypoint.description = "Refuel from tanker"
+        waypoint.name = "REFUEL"
         return waypoint
 
     def split(self, position: Point) -> FlightWaypoint:

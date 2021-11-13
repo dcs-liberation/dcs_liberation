@@ -8,7 +8,7 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from game.data.weapons import Pylon
-from gen.flights.flight import Flight
+from game.ato.flight import Flight
 from qt_ui.windows.mission.flight.payload.QPylonEditor import QPylonEditor
 
 

@@ -30,7 +30,7 @@ from game import Game
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons import AirWing, Pilot, Squadron
 from game.theater import ControlPoint, ConflictTheater
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 
 

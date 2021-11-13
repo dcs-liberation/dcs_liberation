@@ -7,7 +7,7 @@ from dcs.mapping import Point
 from dcs.unit import Unit
 
 if TYPE_CHECKING:
-    from gen.flights.flight import FlightType
+    from game.ato.flighttype import FlightType
 
 
 class MissionTarget:
@@ -30,7 +30,7 @@ class MissionTarget:
         raise NotImplementedError
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if self.is_friendly(for_player):
             yield FlightType.BARCAP

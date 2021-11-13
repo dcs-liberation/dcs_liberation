@@ -14,7 +14,8 @@
     "J-7B",
     "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
-    "Su-30MKK Flanker-G"
+    "Su-30MKK Flanker-G",
+	"H-6J Badger"
   ],
   "awacs": [
     "KJ-2000"
@@ -95,7 +96,7 @@
   ],
   "requirements": {},
   "navy_generators": [
-    "Type54GroupGenerator"
+    "ChineseNavyGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "WingLoong-I"

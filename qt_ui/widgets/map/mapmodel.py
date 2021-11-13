@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
-from typing import List, Optional, Tuple, Union, Iterator
+from typing import Iterator, List, Optional, Tuple, Union
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
@@ -10,38 +10,38 @@ from dcs.unit import Unit
 from dcs.vehicles import vehicle_map
 from shapely.geometry import (
     LineString,
+    MultiLineString,
+    MultiPolygon,
     Point as ShapelyPoint,
     Polygon,
-    MultiPolygon,
-    MultiLineString,
 )
 
 from game import Game
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.flight import Flight
+from game.ato.flightstate import InFlight
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flightwaypointtype import FlightWaypointType
 from game.dcs.groundunittype import GroundUnitType
-from game.flightplan import JoinZoneGeometry, HoldZoneGeometry
+from game.flightplan import HoldZoneGeometry, JoinZoneGeometry
+from game.flightplan.ipzonegeometry import IpZoneGeometry
 from game.navmesh import NavMesh, NavMeshPoly
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
     ControlPoint,
-    TheaterGroundObject,
+    ControlPointStatus,
     FrontLine,
     LatLon,
-    ControlPointStatus,
+    TheaterGroundObject,
 )
 from game.threatzones import ThreatZones
 from game.transfers import MultiGroupTransport, TransportMap
 from game.utils import meters, nautical_miles
-from gen.ato import AirTaskingOrder
-from gen.flights.flight import Flight, FlightWaypoint, FlightWaypointType
-from gen.flights.flightplan import (
-    FlightPlan,
-    PatrollingFlightPlan,
-    CasFlightPlan,
-)
-from game.flightplan.ipzonegeometry import IpZoneGeometry
+from gen.flights.flightplan import CasFlightPlan, FlightPlan, PatrollingFlightPlan
 from qt_ui.dialogs import Dialog
-from qt_ui.models import GameModel, AtoModel
+from qt_ui.models import AtoModel, GameModel
+from qt_ui.simcontroller import SimController
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
@@ -535,6 +535,7 @@ class WaypointJs(QObject):
 
 
 class FlightJs(QObject):
+    positionChanged = Signal()
     flightPlanChanged = Signal()
     blueChanged = Signal()
     selectedChanged = Signal()
@@ -586,6 +587,13 @@ class FlightJs(QObject):
             waypoints.append(waypoint)
         return waypoints
 
+    @Property(list, notify=positionChanged)
+    def position(self) -> LeafletLatLon:
+        if isinstance(self.flight.state, InFlight):
+            ll = self.theater.point_to_ll(self.flight.state.estimate_position())
+            return [ll.latitude, ll.longitude]
+        return []
+
     @Property(list, notify=flightPlanChanged)
     def flightPlan(self) -> List[WaypointJs]:
         return self._waypoints
@@ -597,6 +605,10 @@ class FlightJs(QObject):
     @Property(bool, notify=selectedChanged)
     def selected(self) -> bool:
         return self._selected
+
+    def set_selected(self, value: bool) -> None:
+        self._selected = value
+        self.selectedChanged.emit()
 
     @Property(list, notify=commitBoundaryChanged)
     def commitBoundary(self) -> LeafletPoly:
@@ -1030,14 +1042,14 @@ class MapModel(QObject):
     joinZonesChanged = Signal()
     holdZonesChanged = Signal()
 
-    def __init__(self, game_model: GameModel) -> None:
+    def __init__(self, game_model: GameModel, sim_controller: SimController) -> None:
         super().__init__()
         self.game_model = game_model
         self._map_center = [0, 0]
         self._control_points = []
         self._ground_objects = []
         self._supply_routes = []
-        self._flights = []
+        self._flights: dict[tuple[bool, int, int], FlightJs] = {}
         self._front_lines = []
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
@@ -1057,13 +1069,14 @@ class MapModel(QObject):
         GameUpdateSignal.get_instance().flight_selection_changed.connect(
             self.set_flight_selection
         )
+        sim_controller.sim_update.connect(self.on_sim_update)
         self.reset()
 
     def clear(self) -> None:
         self._control_points = []
         self._supply_routes = []
         self._ground_objects = []
-        self._flights = []
+        self._flights = {}
         self._front_lines = []
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
@@ -1074,16 +1087,22 @@ class MapModel(QObject):
         self._ip_zones = IpZonesJs.empty()
         self.cleared.emit()
 
+    def on_sim_update(self) -> None:
+        for flight in self._flights.values():
+            flight.positionChanged.emit()
+
     def set_package_selection(self, index: int) -> None:
+        self.deselect_current_flight()
         # Optional[int] isn't a valid type for a Qt signal. None will be converted to
         # zero automatically. We use -1 to indicate no selection.
         if index == -1:
             self._selected_flight_index = None
         else:
             self._selected_flight_index = index, 0
-        self.reset_atos()
+        self.select_current_flight()
 
     def set_flight_selection(self, index: int) -> None:
+        self.deselect_current_flight()
         if self._selected_flight_index is None:
             if index != -1:
                 # We don't know what order update_package_selection and
@@ -1098,7 +1117,27 @@ class MapModel(QObject):
         if index == -1:
             self._selected_flight_index = self._selected_flight_index[0], None
         self._selected_flight_index = self._selected_flight_index[0], index
-        self.reset_atos()
+        self.select_current_flight()
+
+    @property
+    def _selected_flight(self) -> Optional[FlightJs]:
+        if self._selected_flight_index is None:
+            return None
+        package_index, flight_index = self._selected_flight_index
+        blue = True
+        return self._flights.get((blue, package_index, flight_index))
+
+    def deselect_current_flight(self) -> None:
+        flight = self._selected_flight
+        if flight is None:
+            return None
+        flight.set_selected(False)
+
+    def select_current_flight(self):
+        flight = self._selected_flight
+        if flight is None:
+            return None
+        flight.set_selected(True)
 
     @staticmethod
     def leaflet_coord_for(point: Point, theater: ConflictTheater) -> LeafletLatLon:
@@ -1133,17 +1172,17 @@ class MapModel(QObject):
     def mapCenter(self) -> LeafletLatLon:
         return self._map_center
 
-    def _flights_in_ato(self, ato: AirTaskingOrder, blue: bool) -> List[FlightJs]:
-        flights = []
+    def _flights_in_ato(
+        self, ato: AirTaskingOrder, blue: bool
+    ) -> dict[tuple[bool, int, int], FlightJs]:
+        flights = {}
         for p_idx, package in enumerate(ato.packages):
             for f_idx, flight in enumerate(package.flights):
-                flights.append(
-                    FlightJs(
-                        flight,
-                        selected=blue and (p_idx, f_idx) == self._selected_flight_index,
-                        theater=self.game.theater,
-                        ato_model=self.game_model.ato_model_for(blue),
-                    )
+                flights[blue, p_idx, f_idx] = FlightJs(
+                    flight,
+                    selected=blue and (p_idx, f_idx) == self._selected_flight_index,
+                    theater=self.game.theater,
+                    ato_model=self.game_model.ato_model_for(blue),
                 )
         return flights
 
@@ -1157,7 +1196,7 @@ class MapModel(QObject):
     def reset_atos(self) -> None:
         self._flights = self._flights_in_ato(
             self.game.blue.ato, blue=True
-        ) + self._flights_in_ato(self.game.red.ato, blue=False)
+        ) | self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
         selected_flight = self._get_selected_flight()
         if selected_flight is None:
@@ -1173,8 +1212,8 @@ class MapModel(QObject):
         self.holdZonesChanged.emit()
 
     @Property(list, notify=flightsChanged)
-    def flights(self) -> List[FlightJs]:
-        return self._flights
+    def flights(self) -> list[FlightJs]:
+        return list(self._flights.values())
 
     def reset_control_points(self) -> None:
         self._control_points = [

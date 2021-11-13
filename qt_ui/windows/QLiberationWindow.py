@@ -23,6 +23,7 @@ from game.debriefing import Debriefing
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
+from qt_ui.simcontroller import SimController
 from qt_ui.uiconstants import URLS
 from qt_ui.uncaughtexceptionhandler import UncaughtExceptionHandler
 from qt_ui.widgets.QTopPanel import QTopPanel
@@ -31,14 +32,14 @@ from qt_ui.widgets.map.QLiberationMap import QLiberationMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
+from qt_ui.windows.logs.QLogsWindow import QLogsWindow
 from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
+from qt_ui.windows.notes.QNotesWindow import QNotesWindow
 from qt_ui.windows.preferences.QLiberationPreferencesWindow import (
     QLiberationPreferencesWindow,
 )
 from qt_ui.windows.settings.QSettingsWindow import QSettingsWindow
 from qt_ui.windows.stats.QStatsWindow import QStatsWindow
-from qt_ui.windows.notes.QNotesWindow import QNotesWindow
-from qt_ui.windows.logs.QLogsWindow import QLogsWindow
 
 
 class QLiberationWindow(QMainWindow):
@@ -48,11 +49,12 @@ class QLiberationWindow(QMainWindow):
         self._uncaught_exception_handler = UncaughtExceptionHandler(self)
 
         self.game = game
-        self.game_model = GameModel(game)
+        self.sim_controller = SimController(self.game)
+        self.game_model = GameModel(game, self.sim_controller)
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model, self)
+        self.liberation_map = QLiberationMap(self.game_model, self.sim_controller, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.updateWindowTitle()
@@ -99,7 +101,7 @@ class QLiberationWindow(QMainWindow):
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
-        vbox.addWidget(QTopPanel(self.game_model))
+        vbox.addWidget(QTopPanel(self.game_model, self.sim_controller))
         vbox.addWidget(hbox)
 
         central_widget = QWidget()
@@ -314,6 +316,7 @@ class QLiberationWindow(QMainWindow):
             self.game = game
             if self.info_panel is not None:
                 self.info_panel.setGame(game)
+            self.sim_controller.set_game(game)
             self.game_model.set(self.game)
             self.liberation_map.set_game(game)
         except AttributeError:
@@ -386,6 +389,8 @@ class QLiberationWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if result == QMessageBox.Yes:
+            self.sim_controller.shut_down()
             super().closeEvent(event)
+            self.dialog = None
         else:
             event.ignore()

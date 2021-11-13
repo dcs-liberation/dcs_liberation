@@ -57,10 +57,11 @@ from game.theater.transitnetwork import (
     TransitNetwork,
 )
 from game.utils import meters, nautical_miles
-from gen.ato import Package
+from game.ato.package import Package
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import Flight, FlightType
+from game.ato.flighttype import FlightType
+from game.ato.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder
 from gen.naming import namegen
 

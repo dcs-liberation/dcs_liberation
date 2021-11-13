@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-MAJOR_VERSION = 5
+MAJOR_VERSION = 6
 MINOR_VERSION = 0
 MICRO_VERSION = 0
 
@@ -115,7 +115,12 @@ VERSION = _build_version_string()
 #: * You can now add "Invisible FARP" static to FOB to add helicopter slots
 #:
 #: Version 9.0
-#: * Campaign files now define the initial squadron layouts. See TODO.
+#: * Campaign files now define the initial squadron layouts. See
+#:   https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Campaigns.
 #: * CV and LHA control points now get their names from the group name in the campaign
 #:   miz.
-CAMPAIGN_FORMAT_VERSION = (9, 0)
+#:
+#: Version 9.1
+#: * Campaign files can optionally define a start date with
+#:   `recommended_start_date: YYYY-MM-DD`.
+CAMPAIGN_FORMAT_VERSION = (9, 1)

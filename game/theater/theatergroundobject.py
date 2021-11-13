@@ -21,7 +21,7 @@ from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint
-    from gen.flights.flight import FlightType
+    from ..ato.flighttype import FlightType
 
 from .missiontarget import MissionTarget
 
@@ -121,7 +121,7 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
         return self.control_point.is_friendly(to_player)
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if self.is_friendly(for_player):
             yield from [
@@ -132,6 +132,7 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
             yield from [
                 FlightType.STRIKE,
                 FlightType.BAI,
+                FlightType.REFUELING,
             ]
         yield from super().mission_types(for_player)
 
@@ -352,7 +353,7 @@ class FactoryGroundObject(BuildingGroundObject):
 
 class NavalGroundObject(TheaterGroundObject[ShipGroup]):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield FlightType.ANTISHIP
@@ -474,7 +475,7 @@ class CoastalSiteGroundObject(TheaterGroundObject[VehicleGroup]):
 
 class IadsGroundObject(TheaterGroundObject[VehicleGroup], ABC):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
@@ -504,7 +505,7 @@ class SamGroundObject(IadsGroundObject):
         )
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from gen.flights.flight import FlightType
+        from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield FlightType.DEAD

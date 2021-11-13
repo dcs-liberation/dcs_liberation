@@ -1,0 +1,103 @@
+---
+name: Marianas - Guam - Mount Barrigada
+theater: MarianaIslands
+authors: Ghosti
+description: <p>The objective of this campaign is the capture of Guam. Blue side, having landed their forces on the beaches of Agat, controls Antonio B. Won Pat airfield and are pushing towards the enemy stronghold of Mount Barrigada.</p>
+miz: marianas_guam_barrigada.miz
+performance: 2
+version: "9.0"
+squadrons:
+  Blue CV:
+    - primary: BARCAP
+      secondary: air-to-air
+    - primary: BARCAP
+      secondary: any
+    - primary: Refueling
+    - primary: Strike
+      secondary: any
+    - primary: BAI
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+    - primary: AEW&C
+  Blue LHA:
+    - primary: Strike
+      secondary: any
+    - primary: BAI
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+  Red CV:
+    - primary: BARCAP
+      secondary: air-to-air
+    - primary: BARCAP
+      secondary: any
+    - primary: Refueling
+    - primary: Strike
+      secondary: any
+    - primary: BAI
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+    - primary: AEW&C
+  Red LHA:
+    - primary: Strike
+      secondary: any
+    - primary: BAI
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+  # Andersen AFB
+  6:
+    - primary: BARCAP
+      secondary: air-to-air
+    - primary: BARCAP
+      secondary: air-to-air
+    - primary: Strike
+      secondary: any
+    - primary: Anti-ship
+      secondary: any
+    - primary: BAI
+      secondary: any
+    - primary: CAS
+      secondary: air-to-ground
+    - primary: AEW&C
+    - primary: Refueling
+    - primary: Transport
+  # Antonio B. Won Pat Intl
+  4:
+    - primary: BARCAP
+      secondary: air-to-air
+    - primary: BARCAP
+      secondary: air-to-air
+    - primary: Strike
+      secondary: any
+    - primary: Anti-ship
+      secondary: any
+    - primary: BAI
+      secondary: any
+    - primary: CAS
+      secondary: any
+    - primary: CAS
+      secondary: air-to-ground
+    - primary: AEW&C
+    - primary: Refueling
+    - primary: Transport
+  Andersen AFB Northwest Field:
+    - primary: Strike
+      secondary: air-to-ground
+    - primary: BAI
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground
+  Orote Point:
+    - primary: Strike
+      secondary: air-to-ground
+    - primary: BAI
+      secondary: air-to-ground
+    - primary: CAS
+      secondary: air-to-ground

@@ -10,7 +10,7 @@ from game.dcs.aircrafttype import AircraftType
 from game.dcs.unittype import UnitType
 
 if TYPE_CHECKING:
-    from gen.flights.flight import Flight
+    from game.ato.flight import Flight
 
 ALPHA_MILITARY = [
     "Alpha",

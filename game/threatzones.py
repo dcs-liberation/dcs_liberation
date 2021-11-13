@@ -17,7 +17,7 @@ from game.data.doctrine import Doctrine
 from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
 from game.utils import Distance, meters, nautical_miles
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flight import Flight, FlightWaypoint
+from game.ato import Flight, FlightWaypoint
 
 if TYPE_CHECKING:
     from game import Game
@@ -103,6 +103,10 @@ class ThreatZones:
     @threatened_by_air_defense.register
     def _threatened_by_air_defense_geom(self, position: BaseGeometry) -> bool:
         return self.air_defenses.intersects(position)
+
+    @threatened_by_air_defense.register
+    def _threatened_by_air_defense_dcs_point(self, position: DcsPoint) -> bool:
+        return self.threatened_by_air_defense(self.dcs_to_shapely_point(position))
 
     @threatened_by_air_defense.register
     def _threatened_by_air_defense_flight(self, flight: Flight) -> bool:

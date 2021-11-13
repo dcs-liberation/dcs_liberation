@@ -5,7 +5,7 @@ import math
 import random
 from collections import Iterable
 from dataclasses import dataclass
-from typing import Union, Any, TypeVar
+from typing import TypeVar, Union
 
 METERS_TO_FEET = 3.28084
 FEET_TO_METERS = 1 / METERS_TO_FEET
@@ -19,6 +19,8 @@ KPH_TO_MS = 1 / MS_TO_KPH
 
 INHG_TO_HPA = 33.86389
 INHG_TO_MMHG = 25.400002776728
+
+LBS_TO_KG = 0.453592
 
 
 @dataclass(frozen=True, order=True)

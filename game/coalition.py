@@ -24,7 +24,7 @@ from game.factions.faction import Faction
 from game.procurement import AircraftProcurementRequest, ProcurementAi
 from game.theater.bullseye import Bullseye
 from game.theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
-from gen.ato import AirTaskingOrder
+from game.ato.airtaaskingorder import AirTaskingOrder
 
 
 class Coalition:

@@ -15,8 +15,8 @@ from game.settings import AutoAtoBehavior
 from game.theater import MissionTarget
 from game.theater.theatergroundobject import IadsGroundObject, NavalGroundObject
 from game.utils import Distance, meters
-from gen.ato import Package
-from gen.flights.flight import FlightType
+from game.ato.package import Package
+from game.ato.flighttype import FlightType
 
 if TYPE_CHECKING:
     from game.coalition import Coalition

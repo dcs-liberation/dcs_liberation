@@ -1,16 +1,11 @@
 from __future__ import annotations
 
 import itertools
-import json
 import logging
-import os
-import threading
-import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import (
     Any,
-    Callable,
     Dict,
     Iterator,
     List,
@@ -18,6 +13,7 @@ from typing import (
     Union,
 )
 
+from game.ato.flight import Flight
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import Airfield, ControlPoint
@@ -26,12 +22,11 @@ from game.unitmap import (
     AirliftUnits,
     Building,
     ConvoyUnit,
+    FlyingUnit,
     FrontLineUnit,
     GroundObjectUnit,
     UnitMap,
-    FlyingUnit,
 )
-from gen.flights.flight import Flight
 
 if TYPE_CHECKING:
     from game import Game
@@ -354,54 +349,3 @@ class Debriefing:
 
             captures.append(BaseCaptureEvent(control_point, captured_by_player))
         return captures
-
-
-class PollDebriefingFileThread(threading.Thread):
-    """Thread class with a stop() method. The thread itself has to check
-    regularly for the stopped() condition."""
-
-    def __init__(
-        self, callback: Callable[[Debriefing], None], game: Game, unit_map: UnitMap
-    ) -> None:
-        super().__init__()
-        self._stop_event = threading.Event()
-        self.callback = callback
-        self.game = game
-        self.unit_map = unit_map
-
-    def stop(self) -> None:
-        self._stop_event.set()
-
-    def stopped(self) -> bool:
-        return self._stop_event.is_set()
-
-    def run(self) -> None:
-        if os.path.isfile("state.json"):
-            last_modified = os.path.getmtime("state.json")
-        else:
-            last_modified = 0
-        while not self.stopped():
-            try:
-                if (
-                    os.path.isfile("state.json")
-                    and os.path.getmtime("state.json") > last_modified
-                ):
-                    with open("state.json", "r", encoding="utf-8") as json_file:
-                        json_data = json.load(json_file)
-                        debriefing = Debriefing(json_data, self.game, self.unit_map)
-                        self.callback(debriefing)
-                    break
-            except json.JSONDecodeError:
-                logging.exception(
-                    "Failed to decode state.json. Probably attempted read while DCS "
-                    "was still writing the file. Will retry in 5 seconds."
-                )
-            time.sleep(5)
-
-
-def wait_for_debriefing(
-    callback: Callable[[Debriefing], None], game: Game, unit_map: UnitMap
-) -> PollDebriefingFileThread:
-    thread = PollDebriefingFileThread(callback, game, unit_map)
-    thread.start()
-    return thread

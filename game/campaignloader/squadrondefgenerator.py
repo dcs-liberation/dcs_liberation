@@ -9,7 +9,7 @@ from game.squadrons.operatingbases import OperatingBases
 from game.squadrons.squadrondef import SquadronDef
 from game.theater import ControlPoint
 from gen.flights.ai_flight_planner_db import aircraft_for_task, tasks_for_aircraft
-from gen.flights.flight import FlightType
+from game.ato.flighttype import FlightType
 
 if TYPE_CHECKING:
     from game.coalition import Coalition
