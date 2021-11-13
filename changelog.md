@@ -44,7 +44,7 @@ Saves from 4.x are not compatible with 5.0.
 ## Fixes
 
 * **[Campaign]** Naval control points will no longer claim ground objectives during campaign generation and prevent them from spawning.
-* **[Campaign]** Units aboard suck cargo ships will now have their losses tracked properly.
+* **[Campaign]** Units aboard sunk cargo ships will now have their losses tracked properly.
 * **[Mission Generation]** Mission results and other files will now be opened with enforced utf-8 encoding to prevent an issue where destroyed ground units were untracked because of special characters in their names.
 * **[Mission Generation]** Fixed generation of landing waypoints so that the AI obeys them.
 * **[Mission Generation]** AI carrier aircraft with a start time of T+0 will now start at T+1s to avoid traffic jams.
