@@ -44,7 +44,6 @@ class MissionTarget:
                 # TODO: FlightType.EWAR,
                 # TODO: FlightType.RECON,
             ]
-        yield FlightType.REFUELING
 
     @property
     def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:

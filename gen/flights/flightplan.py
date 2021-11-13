@@ -1147,10 +1147,12 @@ class FlightPlanBuilder:
         elif task == FlightType.TRANSPORT:
             return self.generate_transport(flight)
         elif task == FlightType.REFUELING:
-            if self.package.waypoints is not None:
-                return self.generate_refueling_package_support(flight)
-            else:
+            if self.package.target.is_friendly(self.is_player) or isinstance(
+                self.package.target, FrontLine
+            ):
                 return self.generate_refueling_racetrack(flight)
+            else:
+                return self.generate_refueling_package_support(flight)
         elif task == FlightType.FERRY:
             return self.generate_ferry(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")

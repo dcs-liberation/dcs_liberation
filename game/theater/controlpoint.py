@@ -906,10 +906,11 @@ class Airfield(ControlPoint):
         if self.is_friendly(for_player):
             yield from [
                 FlightType.AEWC,
-                FlightType.REFUELING,
                 # TODO: FlightType.INTERCEPTION
                 # TODO: FlightType.LOGISTICS
             ]
+
+        yield FlightType.REFUELING
 
     @property
     def total_aircraft_parking(self) -> int:
