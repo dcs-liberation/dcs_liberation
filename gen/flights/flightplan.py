@@ -898,10 +898,7 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
 
     @property
     def patrol_start_time(self) -> timedelta:
-        if (
-            self.package.waypoints is not None
-            and self.package.waypoints.refuel is not None
-        ):
+        if self.package.waypoints is not None:
 
             arbitrary_altitude: Distance = feet(20000)
 
@@ -1177,28 +1174,21 @@ class FlightPlanBuilder:
             self.coalition,
         ).find_best_join_point()
 
-        if self.package.has_tankers:
-            refuel_point = RefuelZoneGeometry(
-                package_airfield.position,
-                join_point,
-                self.coalition,
-            ).find_best_refuel_point()
-            self.package.waypoints = PackageWaypoints(
-                WaypointBuilder.perturb(join_point),
-                ingress_point,
-                WaypointBuilder.perturb(join_point),
-                refuel_point,
-            )
-        else:
-            # And the split point based on the best route from the IP. Since that's no
-            # different than the best route *to* the IP, this is the same as the join point.
-            # TODO: Estimate attack completion point based on the IP and split from there?
-            self.package.waypoints = PackageWaypoints(
-                WaypointBuilder.perturb(join_point),
-                ingress_point,
-                WaypointBuilder.perturb(join_point),
-                None,
-            )
+        refuel_point = RefuelZoneGeometry(
+            package_airfield.position,
+            join_point,
+            self.coalition,
+        ).find_best_refuel_point()
+
+        # And the split point based on the best route from the IP. Since that's no
+        # different than the best route *to* the IP, this is the same as the join point.
+        # TODO: Estimate attack completion point based on the IP and split from there?
+        self.package.waypoints = PackageWaypoints(
+            WaypointBuilder.perturb(join_point),
+            ingress_point,
+            WaypointBuilder.perturb(join_point),
+            refuel_point,
+        )
 
     def generate_strike(self, flight: Flight) -> StrikeFlightPlan:
         """Generates a strike flight plan.
@@ -1386,11 +1376,7 @@ class FlightPlanBuilder:
 
         refuel = None
 
-        if (
-            self.package.has_tankers
-            and self.package.waypoints is not None
-            and self.package.waypoints.refuel is not None
-        ):
+        if self.package.waypoints is not None:
             refuel = builder.refuel(self.package.waypoints.refuel)
 
         return SweepFlightPlan(
@@ -1619,11 +1605,7 @@ class FlightPlanBuilder:
 
         refuel = None
 
-        if (
-            self.package.has_tankers
-            and self.package.waypoints is not None
-            and self.package.waypoints.refuel is not None
-        ):
+        if self.package.waypoints is not None:
             refuel = builder.refuel(self.package.waypoints.refuel)
 
         return TarCapFlightPlan(
@@ -1862,7 +1844,7 @@ class FlightPlanBuilder:
         patrol_duration = timedelta(hours=1)
 
         # Determine if tanker is supporting a package.
-        if package_waypoints is not None and package_waypoints.refuel is not None:
+        if package_waypoints is not None:
             is_deployment_support = True
 
         # Tanker is supporting a package

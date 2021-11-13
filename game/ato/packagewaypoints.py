@@ -9,4 +9,4 @@ class PackageWaypoints:
     join: Point
     ingress: Point
     split: Point
-    refuel: Optional[Point]
+    refuel: Point
