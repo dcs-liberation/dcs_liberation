@@ -900,18 +900,21 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
     def patrol_start_time(self) -> timedelta:
         if self.package.waypoints is not None:
 
-            arbitrary_altitude: Distance = feet(20000)
+            altitude: Optional[Distance] = self.flight.unit_type.patrol_altitude
 
-            # Cheat in a FlightWaypoint for the split point.  Arbitrary altitude.
+            if altitude is None:
+                altitude = Distance.from_feet(20000)
+
+            # Cheat in a FlightWaypoint for the split point.
             split: Point = self.package.waypoints.split
             split_waypoint: FlightWaypoint = FlightWaypoint(
-                FlightWaypointType.SPLIT, split.x, split.y, arbitrary_altitude
+                FlightWaypointType.SPLIT, split.x, split.y, altitude
             )
 
-            # Cheat in a FlightWaypoint for the refuel point.  Arbitrary altitude.
+            # Cheat in a FlightWaypoint for the refuel point.
             refuel: Point = self.package.waypoints.refuel
             refuel_waypoint: FlightWaypoint = FlightWaypoint(
-                FlightWaypointType.REFUEL, refuel.x, refuel.y, arbitrary_altitude
+                FlightWaypointType.REFUEL, refuel.x, refuel.y, altitude
             )
 
             delay_target_to_split: timedelta = self.travel_time_between_waypoints(
