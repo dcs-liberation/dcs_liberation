@@ -7,7 +7,8 @@ recommended_enemy_faction: Redfor (China) 2010
 description: <p>This is an asymmetrical Red Flag Exercise scenario for the NTTR comprising 4 control points. You start off in control of the two Tonopah airports, and will push south to capture Groom Lake and Nellis AFBs. Taking down Nellis AFB's IADS and striking their resource sites ASAP once Groom Lake has been captured is recommended to offset their substantial resource advantage.</p>
 miz: exercise_vegas_nerve.miz
 performance: 1
-version: "9.0"
+recommended_start_date: 2011-04-24
+version: "9.1"
 squadrons:
 # Tonopah Airport
   17:
@@ -24,14 +25,17 @@ squadrons:
         - E-3A
     - primary: Refueling
       aircraft:
+        - KC-135 Stratotanker
+    - primary: Refueling
+      aircraft:
         - KC-135 Stratotanker MPRS
     - primary: Transport
       aircraft:
-        - CH-47D
+        - C-130
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - F-15E Strike Eagle      
+        - F-15E Strike Eagle
 # Tonopah Test Range
   18:
     - primary: CAS
@@ -53,43 +57,23 @@ squadrons:
 # Groom Lake
   2:
     - primary: BARCAP
-      secondary: air-to-air
-      aircraft:
-        - J-11A Flanker-L
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - Su-25T Frogfoot
-    - primary: DEAD
       secondary: any
       aircraft:
-        - Su-30MKK Flanker-G
+        - J-11A Flanker-L
     - primary: BAI
       secondary: air-to-ground
       aircraft:
         - Su-34 Fullback
 # Nellis AFB
   4:
-    - primary: TARCAP
+    - primary: DEAD
       secondary: any
       aircraft:
-        - J-15 Flanker X-2
-    - primary: BARCAP
-      secondary: any
-      aircraft:
-        - MiG-29S Fulcrum-C
-    - primary: SEAD
-      secondary: any
-      aircraft:
-        - FC-1 Fierce Dragon
+        - Su-30MKK Flanker-G
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - Su-24M Fencer-D
-    - primary: Strike
-      secondary: air-to-ground
-      aircraft:
-        - Tu-22M3 Backfire-C
+        - H-6J Badger
     - primary: AEW&C
       aircraft:
         - KJ-2000
@@ -98,4 +82,4 @@ squadrons:
         - IL-78M
     - primary: Transport
       aircraft:
-        - Mi-8MTV2 Hip
+        - IL-76MD

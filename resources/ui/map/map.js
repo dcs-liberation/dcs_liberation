@@ -104,9 +104,43 @@ class TgoIcons {
   }
 }
 
+class AirIcons {
+  constructor() {
+    this.icons = {};
+    for (const player of [true, false]) {
+      this.icons[player] = {};
+      for (const selected of [true, false]) {
+        this.icons[player][selected] = this.loadIcon(
+          "unspecified",
+          player,
+          selected
+        );
+      }
+    }
+  }
+
+  icon(_category, player, selected) {
+    return this.icons[player][selected];
+  }
+
+  loadIcon(category, player, selected) {
+    var color;
+    if (selected) {
+      color = "selected";
+    } else {
+      color = player ? "blue" : "red";
+    }
+    return new L.Icon({
+      iconUrl: `../air_assets/${category}_${color}.svg`,
+      iconSize: [24, 24],
+    });
+  }
+}
+
 const Icons = Object.freeze({
   ControlPoints: new CpIcons(),
   Objectives: new TgoIcons(),
+  AirIcons: new AirIcons(),
 });
 
 function metersToNauticalMiles(meters) {
@@ -163,6 +197,7 @@ defaultBaseMap.addTo(map);
 
 // Enabled by default, so addTo(map).
 const controlPointsLayer = L.layerGroup().addTo(map);
+const aircraftLayer = L.layerGroup().addTo(map);
 const airDefensesLayer = L.layerGroup().addTo(map);
 const factoriesLayer = L.layerGroup().addTo(map);
 const shipsLayer = L.layerGroup().addTo(map);
@@ -249,8 +284,9 @@ L.control
   .groupedLayers(
     baseLayers,
     {
-      "Points of Interest": {
+      "Units and locations": {
         "Control points": controlPointsLayer,
+        Aircraft: aircraftLayer,
         "Air defenses": airDefensesLayer,
         Factories: factoriesLayer,
         Ships: shipsLayer,
@@ -307,7 +343,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.groundObjectsChanged.connect(drawGroundObjects);
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.frontLinesChanged.connect(drawFrontLines);
-  game.flightsChanged.connect(drawFlightPlans);
+  game.flightsChanged.connect(drawAircraft);
   game.threatZonesChanged.connect(drawThreatZones);
   game.navmeshesChanged.connect(drawNavmeshes);
   game.mapZonesChanged.connect(drawMapZones);
@@ -770,9 +806,12 @@ class Flight {
   constructor(flight) {
     this.flight = flight;
     this.flightPlan = this.flight.flightPlan.map((p) => new Waypoint(p, this));
+    this.aircraft = null;
     this.path = null;
     this.commitBoundary = null;
-    this.flight.flightPlanChanged.connect(() => this.draw());
+    this.flight.selectedChanged.connect(() => this.draw());
+    this.flight.positionChanged.connect(() => this.drawAircraftLocation());
+    this.flight.flightPlanChanged.connect(() => this.drawFlightPlan());
     this.flight.commitBoundaryChanged.connect(() => this.drawCommitBoundary());
   }
 
@@ -808,6 +847,29 @@ class Flight {
     }
   }
 
+  draw() {
+    this.drawAircraftLocation();
+    this.drawFlightPlan();
+    this.drawCommitBoundary();
+  }
+
+  drawAircraftLocation() {
+    if (this.aircraft != null) {
+      this.aircraft.removeFrom(aircraftLayer);
+      this.aircraft = null;
+    }
+    const position = this.flight.position;
+    if (position.length > 0) {
+      this.aircraft = L.marker(position, {
+        icon: Icons.AirIcons.icon(
+          "fighter",
+          this.flight.blue,
+          this.flight.selected
+        ),
+      }).addTo(aircraftLayer);
+    }
+  }
+
   drawCommitBoundary() {
     if (this.commitBoundary != null) {
       this.commitBoundary
@@ -829,7 +891,7 @@ class Flight {
     }
   }
 
-  draw() {
+  drawFlightPlan() {
     const path = [];
     this.flightPlan.forEach((waypoint) => {
       if (waypoint.includeInPath()) {
@@ -844,11 +906,11 @@ class Flight {
     });
 
     this.drawPath(path);
-    this.drawCommitBoundary();
   }
 }
 
-function drawFlightPlans() {
+function drawAircraft() {
+  aircraftLayer.clearLayers();
   blueFlightPlansLayer.clearLayers();
   redFlightPlansLayer.clearLayers();
   selectedFlightPlansLayer.clearLayers();
@@ -1136,7 +1198,7 @@ function drawInitialMap() {
   drawGroundObjects();
   drawSupplyRoutes();
   drawFrontLines();
-  drawFlightPlans();
+  drawAircraft();
   drawThreatZones();
   drawNavmeshes();
   drawMapZones();

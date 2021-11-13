@@ -55,6 +55,7 @@ from dcs.planes import (
     H_6J,
     IL_76MD,
     IL_78M,
+    I_16,
     JF_17,
     J_11A,
     Ju_88A4,
@@ -76,6 +77,7 @@ from dcs.planes import (
     MiG_29S,
     MiG_31,
     Mirage_2000_5,
+    MosquitoFBMkVI,
     P_47D_30,
     P_47D_30bl1,
     P_47D_40,
@@ -88,7 +90,6 @@ from dcs.planes import (
     SpitfireLFMkIXCW,
     Su_17M4,
     Su_24M,
-    Su_24MR,
     Su_25,
     Su_25T,
     Su_25TM,
@@ -98,18 +99,17 @@ from dcs.planes import (
     Su_34,
     Tornado_GR4,
     Tornado_IDS,
+    Tu_142,
     Tu_160,
     Tu_22M3,
     Tu_95MS,
     WingLoong_I,
-    I_16,
     Yak_40,
-    MosquitoFBMkVI,
 )
 from dcs.unittype import FlyingType
 
-from game.dcs.aircrafttype import AircraftType
 from game.ato.flighttype import FlightType
+from game.dcs.aircrafttype import AircraftType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
@@ -360,6 +360,7 @@ STRIKE_CAPABLE = [
 
 ANTISHIP_CAPABLE = [
     AJS37,
+    Tu_142,
     Tu_22M3,
     H_6J,
     FA_18C_hornet,
@@ -381,7 +382,9 @@ ANTISHIP_CAPABLE = [
 ]
 
 
-# Duplicates some list entries but that's fine.
+# This list does not "inherit" from the strike list because some strike aircraft can
+# only carry guided weapons, and the AI cannot do runway attack with dguided weapons.
+# https://github.com/dcs-liberation/dcs_liberation/issues/1703
 RUNWAY_ATTACK_CAPABLE = [
     JF_17,
     Su_34,
@@ -389,7 +392,61 @@ RUNWAY_ATTACK_CAPABLE = [
     Tornado_IDS,
     M_2000C,
     H_6J,
-] + STRIKE_CAPABLE
+    B_1B,
+    B_52H,
+    Tu_22M3,
+    H_6J,
+    F_15E,
+    AJS37,
+    F_16C_50,
+    FA_18C_hornet,
+    AV8BNA,
+    JF_17,
+    F_16A,
+    F_14B,
+    F_14A_135_GR,
+    JAS39Gripen_AG,
+    Tornado_IDS,
+    Su_17M4,
+    Su_24M,
+    Su_25TM,
+    Su_25T,
+    Su_25,
+    Su_34,
+    Su_33,
+    Su_30,
+    Su_27,
+    MiG_29S,
+    MiG_29G,
+    MiG_29A,
+    F_4E,
+    A_10C_2,
+    A_10C,
+    S_3B,
+    A_4E_C,
+    M_2000C,
+    MiG_27K,
+    MiG_21Bis,
+    MiG_15bis,
+    F_5E_3,
+    F_86F_Sabre,
+    C_101CC,
+    L_39ZA,
+    B_17G,
+    A_20G,
+    Ju_88A4,
+    P_47D_40,
+    P_47D_30bl1,
+    P_47D_30,
+    P_51D_30_NA,
+    P_51D,
+    SpitfireLFMkIXCW,
+    SpitfireLFMkIX,
+    MosquitoFBMkVI,
+    Bf_109K_4,
+    FW_190D9,
+    FW_190A8,
+]
 
 # For any aircraft that isn't necessarily directly involved in strike
 # missions in a direct combat sense, but can transport objects and infantry.

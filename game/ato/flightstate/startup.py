@@ -11,6 +11,7 @@ from ..starttype import StartType
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.aircraftengagementzones import AircraftEngagementZones
 
 
 class StartUp(FlightState):
@@ -31,7 +32,7 @@ class StartUp(FlightState):
     def spawn_type(self) -> StartType:
         return StartType.COLD
 
-    def should_halt_sim(self) -> bool:
+    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
         if (
             self.flight.client_count > 0
             and self.settings.player_mission_interrupts_sim_at is StartType.COLD
@@ -42,3 +43,7 @@ class StartUp(FlightState):
             )
             return True
         return False
+
+    @property
+    def description(self) -> str:
+        return "Starting up"

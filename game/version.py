@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-MAJOR_VERSION = 5
+MAJOR_VERSION = 6
 MINOR_VERSION = 0
 MICRO_VERSION = 0
 
