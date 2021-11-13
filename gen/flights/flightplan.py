@@ -52,7 +52,6 @@ if TYPE_CHECKING:
     from game.ato.package import Package
     from game.coalition import Coalition
     from game.threatzones import ThreatZones
-    from game.transfers import Convoy
 
 
 INGRESS_TYPES = {
@@ -363,7 +362,7 @@ class LoiterFlightPlan(FlightPlan):
 class FormationFlightPlan(LoiterFlightPlan):
     join: FlightWaypoint
     split: FlightWaypoint
-    refuel: Optional[FlightWaypoint]
+    refuel: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         raise NotImplementedError
@@ -764,7 +763,7 @@ class SweepFlightPlan(LoiterFlightPlan):
     nav_to: List[FlightWaypoint]
     sweep_start: FlightWaypoint
     sweep_end: FlightWaypoint
-    refuel: Optional[FlightWaypoint]
+    refuel: FlightWaypoint
     nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
@@ -835,7 +834,6 @@ class SweepFlightPlan(LoiterFlightPlan):
 
     @property
     def refuel_time(self) -> timedelta:
-        assert self.refuel is not None
         travel_time = self.travel_time_between_waypoints(self.sweep_end, self.refuel)
         return self.mission_departure_time() + travel_time
 
@@ -888,49 +886,8 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
     divert: Optional[FlightWaypoint]
     bullseye: FlightWaypoint
 
-    def target_area_waypoint(self) -> FlightWaypoint:
-        return FlightWaypoint(
-            FlightWaypointType.TARGET_GROUP_LOC,
-            self.package.target.position.x,
-            self.package.target.position.y,
-            meters(0),
-        )
-
     @property
     def patrol_start_time(self) -> timedelta:
-        if self.package.waypoints is not None:
-
-            altitude: Optional[Distance] = self.flight.unit_type.patrol_altitude
-
-            if altitude is None:
-                altitude = Distance.from_feet(20000)
-
-            # Cheat in a FlightWaypoint for the split point.
-            split: Point = self.package.waypoints.split
-            split_waypoint: FlightWaypoint = FlightWaypoint(
-                FlightWaypointType.SPLIT, split.x, split.y, altitude
-            )
-
-            # Cheat in a FlightWaypoint for the refuel point.
-            refuel: Point = self.package.waypoints.refuel
-            refuel_waypoint: FlightWaypoint = FlightWaypoint(
-                FlightWaypointType.REFUEL, refuel.x, refuel.y, altitude
-            )
-
-            delay_target_to_split: timedelta = self.travel_time_between_waypoints(
-                self.target_area_waypoint(), split_waypoint
-            )
-            delay_split_to_refuel: timedelta = self.travel_time_between_waypoints(
-                split_waypoint, refuel_waypoint
-            )
-
-            return (
-                self.package.time_over_target
-                + delay_target_to_split
-                + delay_split_to_refuel
-                - timedelta(minutes=1.5)
-            )
-
         return self.package.time_over_target
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -943,6 +900,50 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
         if self.divert is not None:
             yield self.divert
         yield self.bullseye
+
+
+@dataclass(frozen=True)
+class PackageRefuelingFlightPlan(RefuelingFlightPlan):
+    def target_area_waypoint(self) -> FlightWaypoint:
+        return FlightWaypoint(
+            FlightWaypointType.TARGET_GROUP_LOC,
+            self.package.target.position.x,
+            self.package.target.position.y,
+            meters(0),
+        )
+
+    @property
+    def patrol_start_time(self) -> timedelta:
+        altitude: Optional[Distance] = self.flight.unit_type.patrol_altitude
+
+        if altitude is None:
+            altitude = Distance.from_feet(20000)
+
+        # Cheat in a FlightWaypoint for the split point.
+        split: Point = self.package.waypoints.split
+        split_waypoint: FlightWaypoint = FlightWaypoint(
+            FlightWaypointType.SPLIT, split.x, split.y, altitude
+        )
+
+        # Cheat in a FlightWaypoint for the refuel point.
+        refuel: Point = self.package.waypoints.refuel
+        refuel_waypoint: FlightWaypoint = FlightWaypoint(
+            FlightWaypointType.REFUEL, refuel.x, refuel.y, altitude
+        )
+
+        delay_target_to_split: timedelta = self.travel_time_between_waypoints(
+            self.target_area_waypoint(), split_waypoint
+        )
+        delay_split_to_refuel: timedelta = self.travel_time_between_waypoints(
+            split_waypoint, refuel_waypoint
+        )
+
+        return (
+            self.package.time_over_target
+            + delay_target_to_split
+            + delay_split_to_refuel
+            - timedelta(minutes=1.5)
+        )
 
 
 @dataclass(frozen=True)
@@ -1144,8 +1145,10 @@ class FlightPlanBuilder:
         elif task == FlightType.TRANSPORT:
             return self.generate_transport(flight)
         elif task == FlightType.REFUELING:
-            # TODO: Add alternate method for package support.
-            return self.generate_refueling_racetrack(flight)
+            if self.package.waypoints is not None:
+                return self.generate_refueling_package_support(flight)
+            else:
+                return self.generate_refueling_racetrack(flight)
         elif task == FlightType.FERRY:
             return self.generate_ferry(flight)
         raise PlanningError(f"{task} flight plan generation not implemented")
@@ -1837,78 +1840,40 @@ class FlightPlanBuilder:
         )
 
     def generate_refueling_racetrack(self, flight: Flight) -> RefuelingFlightPlan:
-        is_deployment_support: bool = False
-
-        package_waypoints = self.package.waypoints
-        assert package_waypoints is not None
 
         racetrack_half_distance = Distance.from_nautical_miles(20).meters
 
         patrol_duration = timedelta(hours=1)
 
-        # Determine if tanker is supporting a package.
-        if package_waypoints is not None:
-            is_deployment_support = True
+        location = self.package.target
 
-        # Tanker is supporting a package
-        if is_deployment_support:
+        closest_boundary = self.threat_zones.closest_boundary(location.position)
+        heading_to_threat_boundary = Heading.from_degrees(
+            location.position.heading_between_point(closest_boundary)
+        )
+        distance_to_threat = meters(
+            location.position.distance_to_point(closest_boundary)
+        )
+        orbit_heading = heading_to_threat_boundary
 
-            assert package_waypoints.refuel is not None
-
-            # TODO: Only consider aircraft that can refuel with this tanker type.
-            refuel_time_minutes = 5
-            for flight in self.package.flights:
-                flight_size = flight.roster.max_size
-                refuel_time_minutes = refuel_time_minutes + 4 * flight_size + 1
-
-            patrol_duration = timedelta(minutes=refuel_time_minutes)
-
-            racetrack_center = package_waypoints.refuel
-
-            split_heading = Heading.from_degrees(
-                racetrack_center.heading_between_point(package_waypoints.split)
-            )
-            home_heading = split_heading.opposite
-
-            racetrack_start = racetrack_center.point_from_heading(
-                split_heading.degrees, racetrack_half_distance
-            )
-
-            racetrack_end = racetrack_center.point_from_heading(
-                home_heading.degrees, racetrack_half_distance
-            )
-
-        # Tanker is not supporting a package.
+        # Station 70nm outside the threat zone.
+        threat_buffer = nautical_miles(70)
+        if self.threat_zones.threatened(location.position):
+            orbit_distance = distance_to_threat + threat_buffer
         else:
-            location = self.package.target
+            orbit_distance = distance_to_threat - threat_buffer
 
-            closest_boundary = self.threat_zones.closest_boundary(location.position)
-            heading_to_threat_boundary = Heading.from_degrees(
-                location.position.heading_between_point(closest_boundary)
-            )
-            distance_to_threat = meters(
-                location.position.distance_to_point(closest_boundary)
-            )
-            orbit_heading = heading_to_threat_boundary
+        racetrack_center = location.position.point_from_heading(
+            orbit_heading.degrees, orbit_distance.meters
+        )
 
-            # Station 70nm outside the threat zone.
-            threat_buffer = nautical_miles(70)
-            if self.threat_zones.threatened(location.position):
-                orbit_distance = distance_to_threat + threat_buffer
-            else:
-                orbit_distance = distance_to_threat - threat_buffer
+        racetrack_start = racetrack_center.point_from_heading(
+            orbit_heading.right.degrees, racetrack_half_distance
+        )
 
-            racetrack_center = location.position.point_from_heading(
-                orbit_heading.degrees, orbit_distance.meters
-            )
-
-            racetrack_start = racetrack_center.point_from_heading(
-                orbit_heading.right.degrees, racetrack_half_distance
-            )
-
-            racetrack_end = racetrack_center.point_from_heading(
-                orbit_heading.left.degrees, racetrack_half_distance
-            )
+        racetrack_end = racetrack_center.point_from_heading(
+            orbit_heading.left.degrees, racetrack_half_distance
+        )
 
         builder = WaypointBuilder(flight, self.coalition)
 
@@ -1928,6 +1893,73 @@ class FlightPlanBuilder:
         racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
 
         return RefuelingFlightPlan(
+            package=self.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            nav_to=builder.nav_path(
+                flight.departure.position, racetrack_start, altitude
+            ),
+            nav_from=builder.nav_path(racetrack_end, flight.arrival.position, altitude),
+            patrol_start=racetrack[0],
+            patrol_end=racetrack[1],
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
+            patrol_duration=patrol_duration,
+            patrol_speed=speed,
+            # TODO: Factor out a common base of the combat and non-combat race-tracks.
+            # No harm in setting this, but we ought to clean up a bit.
+            engagement_distance=meters(0),
+        )
+
+    def generate_refueling_package_support(
+        self, flight: Flight
+    ) -> PackageRefuelingFlightPlan:
+        package_waypoints = self.package.waypoints
+        assert package_waypoints is not None
+
+        racetrack_half_distance = Distance.from_nautical_miles(20).meters
+        # TODO: Only consider aircraft that can refuel with this tanker type.
+        refuel_time_minutes = 5
+        for flight in self.package.flights:
+            flight_size = flight.roster.max_size
+            refuel_time_minutes = refuel_time_minutes + 4 * flight_size + 1
+
+        patrol_duration = timedelta(minutes=refuel_time_minutes)
+
+        racetrack_center = package_waypoints.refuel
+
+        split_heading = Heading.from_degrees(
+            racetrack_center.heading_between_point(package_waypoints.split)
+        )
+        home_heading = split_heading.opposite
+
+        racetrack_start = racetrack_center.point_from_heading(
+            split_heading.degrees, racetrack_half_distance
+        )
+
+        racetrack_end = racetrack_center.point_from_heading(
+            home_heading.degrees, racetrack_half_distance
+        )
+
+        builder = WaypointBuilder(flight, self.coalition)
+
+        tanker_type = flight.unit_type
+        if tanker_type.patrol_altitude is not None:
+            altitude = tanker_type.patrol_altitude
+        else:
+            altitude = feet(21000)
+
+        # TODO: Could use flight.unit_type.preferred_patrol_speed(altitude) instead.
+        if tanker_type.patrol_speed is not None:
+            speed = tanker_type.patrol_speed
+        else:
+            # ~280 knots IAS at 21000.
+            speed = knots(400)
+
+        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
+
+        return PackageRefuelingFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
