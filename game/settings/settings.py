@@ -407,6 +407,12 @@ class Settings:
         section=PERFORMANCE_SECTION,
         default=True,
     )
+    perf_moving_convoys: bool = boolean_option(
+        "Moving convoys between CPs",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
     perf_infantry: bool = boolean_option(
         "Generate infantry squads alongside vehicles",
         page=MISSION_GENERATOR_PAGE,

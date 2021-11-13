@@ -52,10 +52,10 @@ class ConvoyGenerator:
             # since the CPU load for long routes on DCS is pretty heavy.
             # Put a some distance between the convoy and its first waypoint, so it'll move a little
             # before stopping and possibly find a road to drive on.
-            start_x = (1.1 * convoy.route_start.x + convoy.route_end.x) / 2
-            start_y = (1.1 * convoy.route_start.y + convoy.route_end.y) / 2
-            waypoint_x = (convoy.route_start.x + 1.1 * convoy.route_end.x) / 2
-            waypoint_y = (convoy.route_start.y + 1.1 * convoy.route_end.y) / 2
+            start_x = (3 * convoy.route_start.x + convoy.route_end.x) / 4
+            start_y = (3 * convoy.route_start.y + convoy.route_end.y) / 4
+            waypoint_x = (2 * convoy.route_start.x + convoy.route_end.x) / 3
+            waypoint_y = (2 * convoy.route_start.y + convoy.route_end.y) / 3
 
             convoy_start = Point(start_x, start_y)
             convoy_waypoint = Point(waypoint_x, waypoint_y)
