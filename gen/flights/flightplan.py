@@ -919,6 +919,8 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
         if altitude is None:
             altitude = Distance.from_feet(20000)
 
+        assert self.package.waypoints is not None
+
         # Cheat in a FlightWaypoint for the split point.
         split: Point = self.package.waypoints.split
         split_waypoint: FlightWaypoint = FlightWaypoint(
