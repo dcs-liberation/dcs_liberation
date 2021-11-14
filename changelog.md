@@ -9,6 +9,8 @@ Saves from 5.x are not compatible with 6.0.
 
 ## Fixes
 
+* **[Mission Generator]** Fixed incorrect radio specification for the AN/ARC-222.
+
 # 5.0.0
 
 Saves from 4.x are not compatible with 5.0.
