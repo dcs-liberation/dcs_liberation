@@ -28,6 +28,7 @@ from .beacons import load_beacons_for_terrain
 from .briefinggenerator import BriefingGenerator, MissionInfoGenerator
 from .cargoshipgenerator import CargoShipGenerator
 from .convoygenerator import ConvoyGenerator
+from .drawingsgenerator import DrawingsGenerator
 from .environmentgenerator import EnvironmentGenerator
 from .flotgenerator import FlotGenerator
 from .forcedoptionsgenerator import ForcedOptionsGenerator
@@ -101,6 +102,7 @@ class MissionGenerator:
         ForcedOptionsGenerator(self.mission, self.game).generate()
         VisualsGenerator(self.mission, self.game).generate()
         LuaGenerator(self.game, self.mission, air_support, flights).generate()
+        DrawingsGenerator(self.mission, self.game).generate()
 
         self.setup_combined_arms()
 
