@@ -31,7 +31,7 @@ class DrawingsGenerator:
         self.game = game
         self.player_layer = self.mission.drawings.get_layer(StandardLayer.Blue)
 
-    def generate_cps_markers(self):
+    def generate_cps_markers(self) -> None:
         """
         Generate cps as circles
         """
@@ -50,7 +50,7 @@ class DrawingsGenerator:
             )
             shape.name = cp.name
 
-    def generate_routes(self):
+    def generate_routes(self) -> None:
         """
         Generate routes drawing between cps
         """
@@ -82,7 +82,7 @@ class DrawingsGenerator:
                     )
                     shape.name = "path from " + cp.name + " to " + destination.name
 
-    def generate_frontlines_drawing(self):
+    def generate_frontlines_drawing(self) -> None:
         """
         Generate a frontline "line" for each active frontline
         """
@@ -105,7 +105,7 @@ class DrawingsGenerator:
             )
             shape.name = front_line.name
 
-    def generate_liberation_version_informations(self):
+    def generate_liberation_version_informations(self) -> None:
         """
         Put Liberation version info on the map
         """
