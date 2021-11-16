@@ -7,40 +7,33 @@ from typing import Sequence, Iterator, TYPE_CHECKING, Optional
 from game.dcs.aircrafttype import AircraftType
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from .squadron import Squadron
+from .squadrondef import SquadronDef
+from .squadrondefloader import SquadronDefLoader
+from ..campaignloader.squadrondefgenerator import SquadronDefGenerator
+from ..factions.faction import Faction
 from ..theater import ControlPoint, MissionTarget
 
-from ..observer import Observable
-
 if TYPE_CHECKING:
+    from game.game import Game
     from gen.flights.flight import FlightType
+    from .squadron import Squadron
 
 
-class AirWing(Observable):
-    def __init__(self, player: bool) -> None:
-        super().__init__()
+class AirWing:
+    def __init__(self, player: bool, game: Game, faction: Faction) -> None:
         self.player = player
         self.squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
+        self.squadron_defs = SquadronDefLoader(game, faction).load()
+        self.squadron_def_generator = SquadronDefGenerator(faction)
+
+    def unclaim_squadron_def(self, squadron: Squadron) -> None:
+        if squadron.aircraft in self.squadron_defs:
+            for squadron_def in self.squadron_defs[squadron.aircraft]:
+                if squadron_def.claimed and squadron_def.name == squadron.name:
+                    squadron_def.claimed = False
 
     def add_squadron(self, squadron: Squadron) -> None:
-        new_aircraft_type = squadron.aircraft not in self.squadrons
-
         self.squadrons[squadron.aircraft].append(squadron)
-
-        if new_aircraft_type:
-            self.fire(type="add_aircraft_type", obj=squadron.aircraft)
-        self.fire(type="add_squadron", obj=squadron)
-
-    def remove_squadron(self, toRemove: Squadron) -> None:
-        if toRemove.aircraft in self.squadrons:
-            self.squadrons[toRemove.aircraft].remove(toRemove)
-            self.fire(type="remove_squadron", obj=toRemove)
-            if len(self.squadrons[toRemove.aircraft]) == 0:
-                self.remove_aircraft_type(toRemove.aircraft)
-
-    def remove_aircraft_type(self, toRemove: AircraftType) -> None:
-        self.squadrons.pop(toRemove)
-        self.fire(type="remove_aircraft_type", obj=toRemove)
 
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]

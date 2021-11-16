@@ -419,6 +419,7 @@ class Squadron:
         coalition: Coalition,
         game: Game,
     ) -> Squadron:
+        squadron_def.claimed = True
         return Squadron(
             squadron_def.name,
             squadron_def.nickname,

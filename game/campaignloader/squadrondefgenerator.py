@@ -12,12 +12,12 @@ from gen.flights.ai_flight_planner_db import aircraft_for_task, tasks_for_aircra
 from gen.flights.flight import FlightType
 
 if TYPE_CHECKING:
-    from game.coalition import Coalition
+    from game.factions.faction import Faction
 
 
 class SquadronDefGenerator:
-    def __init__(self, coalition: Coalition) -> None:
-        self.coalition = coalition
+    def __init__(self, faction: Faction) -> None:
+        self.faction = faction
         self.count = itertools.count(1)
         self.used_nicknames: set[str] = set()
 
@@ -26,7 +26,7 @@ class SquadronDefGenerator:
     ) -> Optional[SquadronDef]:
         aircraft_choice: Optional[AircraftType] = None
         for aircraft in aircraft_for_task(task):
-            if aircraft not in self.coalition.faction.aircrafts:
+            if aircraft not in self.faction.aircrafts:
                 continue
             if not control_point.can_operate(aircraft):
                 continue
@@ -44,7 +44,7 @@ class SquadronDefGenerator:
         return SquadronDef(
             name=f"Squadron {next(self.count):03}",
             nickname=self.random_nickname(),
-            country=self.coalition.country_name,
+            country=self.faction.country,
             role="Flying Squadron",
             aircraft=aircraft,
             livery=None,
