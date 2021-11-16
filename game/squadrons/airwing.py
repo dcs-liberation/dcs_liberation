@@ -9,18 +9,38 @@ from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from ..theater import ControlPoint, MissionTarget
 
+from ..observer import Observable
+
 if TYPE_CHECKING:
     from ..ato.flighttype import FlightType
     from .squadron import Squadron
 
 
-class AirWing:
+class AirWing(Observable):
     def __init__(self, player: bool) -> None:
+        super().__init__()
         self.player = player
         self.squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
 
     def add_squadron(self, squadron: Squadron) -> None:
+        new_aircraft_type = squadron.aircraft not in self.squadrons
+
         self.squadrons[squadron.aircraft].append(squadron)
+
+        if new_aircraft_type:
+            self.fire(type="add_aircraft_type", obj=squadron.aircraft)
+        self.fire(type="add_squadron", obj=squadron)
+
+    def remove_squadron(self, toRemove: Squadron) -> None:
+        if toRemove.aircraft in self.squadrons:
+            self.squadrons[toRemove.aircraft].remove(toRemove)
+            self.fire(type="remove_squadron", obj=toRemove)
+            if len(self.squadrons[toRemove.aircraft]) == 0:
+                self.remove_aircraft_type(toRemove.aircraft)
+
+    def remove_aircraft_type(self, toRemove: AircraftType) -> None:
+        self.squadrons.pop(toRemove)
+        self.fire(type="remove_aircraft_type", obj=toRemove)
 
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]
