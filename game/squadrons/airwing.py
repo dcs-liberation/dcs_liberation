@@ -10,17 +10,34 @@ from gen.flights.closestairfields import ObjectiveDistanceCache
 from .squadron import Squadron
 from ..theater import ControlPoint, MissionTarget
 
+from ..observer import Observable
+
 if TYPE_CHECKING:
     from gen.flights.flight import FlightType
 
 
-class AirWing:
+class AirWing(Observable):
     def __init__(self, player: bool) -> None:
+        super().__init__()
         self.player = player
         self.squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
 
     def add_squadron(self, squadron: Squadron) -> None:
         self.squadrons[squadron.aircraft].append(squadron)
+        self.fire(type="add_squadron", obj=self)
+
+    def remove_squadron(self, toRemove: Squadron) -> None:
+        if len(self.squadrons[toRemove.aircraft]) == 1:
+            self.squadrons.pop(toRemove.aircraft)
+        else:
+            self.squadrons[toRemove.aircraft] = self.squadrons[
+                toRemove.aircraft
+            ].remove(toRemove)
+        self.fire(type="remove_squadron", obj=self)
+
+    def remove_aircraft_type(self, toRemove: AircraftType):
+        self.squadrons.pop(toRemove)
+        self.fire(type="remove_aircraft_type", obj=self)
 
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]

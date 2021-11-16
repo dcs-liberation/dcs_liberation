@@ -24,6 +24,8 @@ from PySide2.QtWidgets import (
     QStackedLayout,
     QTabWidget,
     QComboBox,
+    QPushButton,
+    QGridLayout,
 )
 
 from game import Game
@@ -235,6 +237,8 @@ class AircraftTypeList(QListView):
         self.setIconSize(QSize(91, 24))
         self.setMinimumWidth(300)
 
+        self.air_wing = air_wing
+
         model = QStandardItemModel(self)
         self.setModel(model)
 
@@ -242,7 +246,8 @@ class AircraftTypeList(QListView):
             model.index(0, 0), QItemSelectionModel.Select
         )
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
-        for aircraft in air_wing.squadrons:
+
+        for aircraft in self.air_wing.squadrons:
             aircraft_item = QStandardItem(aircraft.name)
             icon = self.icon_for(aircraft)
             if icon is not None:
@@ -250,6 +255,25 @@ class AircraftTypeList(QListView):
             aircraft_item.setEditable(False)
             aircraft_item.setSelectable(True)
             model.appendRow(aircraft_item)
+
+        air_wing.subscribe(self.handleChanges)
+
+    def handleChanges(self, event):
+        if event.type == "remove_aircraft_type":
+            # self.air_wing = event.obj
+            model = QStandardItemModel(self)
+            for aircraft in self.air_wing.squadrons:
+                aircraft_item = QStandardItem(aircraft.name)
+                icon = self.icon_for(aircraft)
+                if icon is not None:
+                    aircraft_item.setIcon(icon)
+                aircraft_item.setEditable(False)
+                aircraft_item.setSelectable(True)
+                model.appendRow(aircraft_item)
+
+            self.setModel(model)
+            self.selectionModel().clearSelection
+            self.update()
 
     def on_selection_changed(
         self, selected: QItemSelection, _deselected: QItemSelection
@@ -260,6 +284,22 @@ class AircraftTypeList(QListView):
         if not indexes:
             return
         self.page_index_changed.emit(indexes[0].row())
+
+    def deleteSelectedType(self) -> None:
+        if self.selectionModel().currentIndex().isValid():
+            aircraftName = str(self.selectionModel().currentIndex().data())
+            print("Removing..." + aircraftName)
+            to_remove = None
+            for type in self.air_wing.squadrons:
+                if str(type) == aircraftName:
+                    to_remove = type
+            if to_remove != None:
+                self.air_wing.remove_aircraft_type(to_remove)
+            else:
+                raise RuntimeError("No aircraft was selected for removal")
+
+    def addAircraftType(self) -> None:
+        print()
 
     @staticmethod
     def icon_for(aircraft: AircraftType) -> Optional[QIcon]:
@@ -272,22 +312,39 @@ class AircraftTypeList(QListView):
 class AirWingConfigurationTab(QWidget):
     def __init__(self, air_wing: AirWing, theater: ConflictTheater) -> None:
         super().__init__()
-
-        layout = QHBoxLayout()
+        self.air_wing = air_wing
+        self.theater = theater
+        layout = QGridLayout()
         self.setLayout(layout)
 
-        type_list = AircraftTypeList(air_wing)
+        type_list = AircraftTypeList(self.air_wing)
         type_list.page_index_changed.connect(self.on_aircraft_changed)
-        layout.addWidget(type_list)
+        layout.addWidget(type_list, 1, 1, 1, 2)
 
-        self.squadrons_panel = AircraftSquadronsPanel(air_wing, theater)
-        layout.addLayout(self.squadrons_panel)
+        add_button = QPushButton("Add aircraft type")
+        add_button.clicked.connect(lambda state: type_list.addAircraftType())
+        layout.addWidget(add_button, 2, 1, 1, 1)
+
+        remove_button = QPushButton("Remove selected")
+        remove_button.clicked.connect(lambda state: type_list.deleteSelectedType())
+        layout.addWidget(remove_button, 2, 2, 1, 1)
+
+        self.squadrons_panel = AircraftSquadronsPanel(self.air_wing, self.theater)
+        layout.addLayout(self.squadrons_panel, 1, 3, 2, 1)
+
+        air_wing.subscribe(self.handleChanges)
 
     def apply(self) -> None:
         self.squadrons_panel.apply()
 
     def on_aircraft_changed(self, index: QModelIndex) -> None:
         self.squadrons_panel.setCurrentIndex(index)
+
+    def handleChanges(self, event) -> None:
+        if event.type == "remove_aircraft_type":
+            self.squadrons_panel = AircraftSquadronsPanel(self.air_wing, self.theater)
+            self.layout().addLayout(self.squadrons_panel, 1, 3, 2, 1)
+        self.update()
 
 
 class AirWingConfigurationDialog(QDialog):
