@@ -10,13 +10,13 @@ from .squadrondef import SquadronDef
 
 if TYPE_CHECKING:
     from game import Game
-    from game.coalition import Coalition
+    from ..factions.faction import Faction
 
 
 class SquadronDefLoader:
-    def __init__(self, game: Game, coalition: Coalition) -> None:
+    def __init__(self, game: Game, faction: Faction) -> None:
         self.game = game
-        self.coalition = coalition
+        self.faction = faction
 
     @staticmethod
     def squadron_directories() -> Iterator[Path]:
@@ -27,8 +27,8 @@ class SquadronDefLoader:
 
     def load(self) -> dict[AircraftType, list[SquadronDef]]:
         squadrons: dict[AircraftType, list[SquadronDef]] = defaultdict(list)
-        country = self.coalition.country_name
-        faction = self.coalition.faction
+        country = self.faction.country
+        faction = self.faction
         any_country = country.startswith("Combined Joint Task Forces ")
         for directory in self.squadron_directories():
             for path, squadron_def in self.load_squadrons_from(directory):

@@ -28,6 +28,7 @@ class SquadronDef:
     mission_types: tuple[FlightType, ...]
     operating_bases: OperatingBases
     pilot_pool: list[Pilot]
+    claimed: bool = False
 
     auto_assignable_mission_types: set[FlightType] = field(
         init=False, hash=False, compare=False
