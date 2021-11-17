@@ -1,0 +1,137 @@
+---
+name: Marianas - Pacific Repartee
+theater: MarianaIslands
+authors: Fuzzle
+description: <p>A naval campaign where a US carrier group must retake Guam, Saipan and the Marianas Islands from the Chinese. <strong>This is a purely offensive air campaign, with no frontline gameplay. Upon securing the area around a FOB, you may either ignore it, bomb it to dust or use the cheats to capture it.</strong></p><p><strong>Backstory:</strong> After an escalation in the South China Sea, the PLAN has taken the US by surprise and invaded Guam, setting up supporting positions throughout the Marianas island chain. With the rest of the US Navy engaged near Japan, a carrier task group must push through China's forces, assist a small Marine contingent holding out on Farallon de Pajaros and liberate Guam.</p>
+version: "9.1"
+recommended_player_faction: US Navy 2005
+recommended_enemy_faction: China 2010
+miz: pacific_repartee.miz
+performance: 1
+recommended_start_date: 2006-02-17
+squadrons:
+  #BLUFOR CVN
+  Naval-1:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - VF-143
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - VMFA-251
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - VMFA-122
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+    - primary: Refueling
+      aircraft:
+        - VS-35 (Tanker)
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - VS-35
+    - primary: Transport
+      aircraft:
+        - HSM-40
+  # BLUFOR LHA
+  Naval-2:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (AH-1W)
+  # OPFOR CVN 1
+  Naval-3:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+  # OPFOR CVN 2
+  Naval-4:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+  # OPFOR CVN 3
+  Naval-28:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+  # OPFOR LHA
+  OPLHA:
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - Mi-24P Hind-F
+  # Saipan Intl
+  2:
+    - primary: Transport
+      aircraft:
+        - IL-76MD
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - J-7B
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - FC-1 Fierce Dragon
+  # Tinian Intl
+  3:
+    - primary: AEW&C
+      aircraft:
+        - KJ-2000
+  # Andersen AFB
+  6:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - J-11A Flanker-L
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - FC-1 Fierce Dragon
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - H-6J Badger
+    - primary: Transport
+      aircraft:
+        - IL-76MD
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+  # Antonio B. Won Pat Intl
+  4:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - J-7B
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - FC-1 Fierce Dragon

@@ -96,7 +96,7 @@
   ],
   "requirements": {},
   "navy_generators": [
-    "Type54GroupGenerator"
+    "ChineseNavyGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "WingLoong-I"

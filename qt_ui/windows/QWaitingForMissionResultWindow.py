@@ -22,10 +22,10 @@ from PySide2.QtWidgets import (
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import Game
-from game.debriefing import Debriefing, wait_for_debriefing
+from game.debriefing import Debriefing
 from game.persistency import base_path
 from game.profiling import logged_duration
-from game.sim import MissionSimulation
+from qt_ui.simcontroller import SimController
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
@@ -53,13 +53,13 @@ class QWaitingForMissionResultWindow(QDialog):
     def __init__(
         self,
         game: Game,
-        mission_simulation: MissionSimulation,
+        sim_controller: SimController,
         parent: Optional[QWidget] = None,
     ) -> None:
         super(QWaitingForMissionResultWindow, self).__init__(parent=parent)
         self.setWindowModality(QtCore.Qt.WindowModal)
         self.game = game
-        self.mission_sim = mission_simulation
+        self.sim_controller = sim_controller
         self.setWindowTitle("Waiting for mission completion.")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
@@ -68,8 +68,8 @@ class QWaitingForMissionResultWindow(QDialog):
         DebriefingFileWrittenSignal.get_instance().debriefingReceived.connect(
             self.updateLayout
         )
-        self.wait_thread = wait_for_debriefing(
-            lambda debriefing: self.on_debriefing_update(debriefing), self.mission_sim
+        self.wait_thread = sim_controller.wait_for_debriefing(
+            lambda debriefing: self.on_debriefing_update(debriefing)
         )
 
     def initUi(self):
@@ -204,13 +204,13 @@ class QWaitingForMissionResultWindow(QDialog):
             DebriefingFileWrittenSignal.get_instance().sendDebriefing(debriefing)
         except Exception:
             logging.exception("Got an error while sending debriefing")
-        self.wait_thread = wait_for_debriefing(
-            lambda d: self.on_debriefing_update(d), self.mission_sim
+        self.wait_thread = self.sim_controller.wait_for_debriefing(
+            lambda d: self.on_debriefing_update(d)
         )
 
     def process_debriefing(self):
         with logged_duration("Turn processing"):
-            self.mission_sim.process_results(self.debriefing)
+            self.sim_controller.process_results(self.debriefing)
             self.game.pass_turn()
 
             GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
@@ -231,5 +231,5 @@ class QWaitingForMissionResultWindow(QDialog):
         )
         logging.debug("Processing manually submitted %s", file[0])
         self.on_debriefing_update(
-            self.mission_sim.debrief_current_state(Path(file[0], force_end=True))
+            self.sim_controller.debrief_current_state(Path(file[0], force_end=True))
         )

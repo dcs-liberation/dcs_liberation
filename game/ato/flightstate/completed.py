@@ -16,3 +16,7 @@ class Completed(FlightState):
     def spawn_type(self) -> StartType:
         # TODO: May want to do something different to make these uncontrolled?
         return StartType.COLD
+
+    @property
+    def description(self) -> str:
+        return "Completed"
