@@ -408,7 +408,7 @@ class Settings:
         default=True,
     )
     perf_moving_convoys: bool = boolean_option(
-        "Moving convoys between CPs",
+        "Convoys drive the full distance between control points",
         page=MISSION_GENERATOR_PAGE,
         section=PERFORMANCE_SECTION,
         default=True,
