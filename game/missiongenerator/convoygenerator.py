@@ -10,6 +10,7 @@ from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
 
 from game.dcs.groundunittype import GroundUnitType
+from game.theater import FrontLine
 from game.transfers import Convoy
 from game.unitmap import UnitMap
 from game.utils import kph
@@ -50,24 +51,24 @@ class ConvoyGenerator:
             # perf_moving_convoys is disabled, so add the convoy between the route start and route end.
             # This option aims to remove long routes for ground vehicles between control points,
             # since the CPU load for long routes on DCS is pretty heavy.
-            # Put a some distance between the convoy and its first waypoint, so it'll move a little
-            # before stopping and possibly find a road to drive on.
-            start_x = (3 * convoy.route_start.x + convoy.route_end.x) / 4
-            start_y = (3 * convoy.route_start.y + convoy.route_end.y) / 4
-            waypoint_x = (2 * convoy.route_start.x + convoy.route_end.x) / 3
-            waypoint_y = (2 * convoy.route_start.y + convoy.route_end.y) / 3
+            frontline = FrontLine(convoy.origin, convoy.destination)
 
-            convoy_start = Point(start_x, start_y)
-            convoy_waypoint = Point(waypoint_x, waypoint_y)
+            # Select a segment roughly a third of the way from the origin towards the destination
+            # so the convoy spawns between the control points but is still close enough to the
+            # origin CP to be targeted by BAI flights and within the protection umbrella of the CP.
+            # Convoy start and end waypoints are not the same, so it'll move a little
+            # before stopping and hopefully find a road to drive on.
+            convoy_segment = int(0.3 * len(frontline.segments))
+
             group = self._create_mixed_unit_group(
                 convoy.name,
-                convoy_start,
+                frontline.segments[convoy_segment].point_a,
                 convoy.units,
                 convoy.player_owned,
             )
 
             group.add_waypoint(
-                convoy_waypoint,
+                frontline.segments[convoy_segment].point_b,
                 speed=kph(40).kph,
                 move_formation=PointAction.OnRoad,
             )
