@@ -128,6 +128,7 @@ class FlightGroupSpawner:
         )
         speed = self.flight.state.estimate_speed()
         pos = self.flight.state.estimate_position()
+        pos += Point(random.randint(100, 1000), random.randint(100, 1000))
         alt, alt_type = self.flight.state.estimate_altitude()
         group = self.mission.flight_group(
             country=self.country,
