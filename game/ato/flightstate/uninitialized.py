@@ -21,4 +21,14 @@ class Uninitialized(FlightState):
     def description(self) -> str:
         estimator = TotEstimator(self.flight.package)
         delay = estimator.mission_start_time(self.flight)
-        return f"Starting in {delay}"
+        if self.flight.start_type is StartType.COLD:
+            action = "Starting up"
+        elif self.flight.start_type is StartType.WARM:
+            action = "Taxiing"
+        elif self.flight.start_type is StartType.RUNWAY:
+            action = "Taking off"
+        elif self.flight.start_type is StartType.IN_FLIGHT:
+            action = "In flight"
+        else:
+            raise ValueError(f"Unhandled StartType: {self.flight.start_type}")
+        return f"{action} in {delay}"
