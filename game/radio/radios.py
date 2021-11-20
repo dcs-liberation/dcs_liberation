@@ -2,7 +2,7 @@
 import itertools
 import logging
 from dataclasses import dataclass
-from typing import Dict, FrozenSet, Iterator, List, Reversible, Set, Tuple
+from typing import Dict, FrozenSet, Iterator, List, Set, Tuple
 
 
 @dataclass(frozen=True)
@@ -127,7 +127,7 @@ RADIOS: List[Radio] = [
             RadioRange(MHz(30), MHz(88), MHz(1)),
         ),
     ),
-    Radio("AN/ARC-222", (RadioRange(MHz(116), MHz(174), step=MHz(1)),)),
+    Radio("AN/ARC-222", (RadioRange(MHz(116), MHz(152), step=MHz(1)),)),
     Radio("SCR-522", (RadioRange(MHz(100), MHz(156), step=MHz(1)),)),
     Radio("A.R.I. 1063", (RadioRange(MHz(100), MHz(156), step=MHz(1)),)),
     Radio("BC-1206", (RadioRange(kHz(200), kHz(400), step=kHz(10)),)),

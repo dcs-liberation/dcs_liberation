@@ -71,5 +71,6 @@
     "C-130J-30 Super Hercules": [
       "Royal Canadian AF CC-130J"
     ]
-  }
+  },
+  "unrestricted_satnav": true
 }

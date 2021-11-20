@@ -28,26 +28,25 @@ import textwrap
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, TYPE_CHECKING, Tuple, Iterator
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
 from dcs.unit import Unit
 from tabulate import tabulate
 
+from game.ato.flighttype import FlightType
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flightwaypointtype import FlightWaypointType
 from game.data.alic import AlicCodes
 from game.db import unit_type_from_name
 from game.dcs.aircrafttype import AircraftType
-from game.theater import ConflictTheater, TheaterGroundObject, LatLon
+from game.radio.radios import RadioFrequency
+from game.theater import ConflictTheater, LatLon, TheaterGroundObject
 from game.theater.bullseye import Bullseye
 from game.utils import meters
 from game.weather import Weather
-from game.ato.flighttype import FlightType
-from game.ato.flightwaypointtype import FlightWaypointType
-from game.ato.flightwaypoint import FlightWaypoint
-from game.radio.radios import RadioFrequency
 from gen.runways import RunwayData
-
 from .aircraft.flightdata import FlightData
 from .airsupportgenerator import AwacsInfo, TankerInfo
 from .briefinggenerator import CommInfo, JtacInfo, MissionInfoGenerator
@@ -723,7 +722,7 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.game.bullseye_for(flight.friendly),
                 self.game.theater,
                 self.game.conditions.weather,
-                self.mission.start_time,
+                self.game.conditions.start_time,
                 self.dark_kneeboard,
             ),
             SupportPage(
@@ -732,7 +731,7 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.awacs,
                 self.tankers,
                 self.jtacs,
-                self.mission.start_time,
+                self.game.conditions.start_time,
                 self.dark_kneeboard,
             ),
         ]

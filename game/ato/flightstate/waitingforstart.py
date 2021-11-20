@@ -41,7 +41,7 @@ class WaitingForStart(FlightState):
         elif self.start_type is StartType.RUNWAY:
             new_state = Takeoff(self.flight, self.settings, time)
         else:
-            new_state = InFlight(self.flight, self.settings)
+            new_state = InFlight(self.flight, self.settings, waypoint_index=0)
         self.flight.set_state(new_state)
 
     @property
@@ -54,3 +54,17 @@ class WaitingForStart(FlightState):
     @property
     def spawn_type(self) -> StartType:
         return self.flight.start_type
+
+    @property
+    def description(self) -> str:
+        if self.start_type is StartType.COLD:
+            start_type = "startup"
+        elif self.start_type is StartType.WARM:
+            start_type = "taxi"
+        elif self.start_type is StartType.RUNWAY:
+            start_type = "takeoff"
+        elif self.start_type is StartType.IN_FLIGHT:
+            start_type = "air start"
+        else:
+            raise ValueError(f"Unhandled StartType: {self.start_type}")
+        return f"Waiting for {start_type} at {self.start_time:%H:%M:%S}"

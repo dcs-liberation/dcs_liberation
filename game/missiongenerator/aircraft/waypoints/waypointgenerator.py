@@ -18,7 +18,7 @@ from game.ato.starttype import StartType
 from game.missiongenerator.airsupport import AirSupport
 from game.settings import Settings
 from game.theater import ControlPointType
-from game.utils import meters, pairwise
+from game.utils import pairwise
 from .baiingress import BaiIngressBuilder
 from .cargostop import CargoStopBuilder
 from .casingress import CasIngressBuilder
@@ -32,6 +32,7 @@ from .ocarunwayingress import OcaRunwayIngressBuilder
 from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
 from .racetrack import RaceTrackBuilder
 from .racetrackend import RaceTrackEndBuilder
+from .refuel import RefuelPointBuilder
 from .seadingress import SeadIngressBuilder
 from .strikeingress import StrikeIngressBuilder
 from .sweepingress import SweepIngressBuilder
@@ -74,7 +75,7 @@ class WaypointGenerator:
                     # mission aircraft starting at a waypoint with tasks behave
                     # correctly.
                     self.builder_for_waypoint(point).add_tasks(self.group.points[0])
-                if point not in self.flight.state.passed_waypoints:
+                if not self.flight.state.has_passed_waypoint(point):
                     filtered_points.append(point)
             else:
                 filtered_points.append(point)
@@ -130,6 +131,7 @@ class WaypointGenerator:
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP: CargoStopBuilder,
+            FlightWaypointType.REFUEL: RefuelPointBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(
@@ -144,19 +146,6 @@ class WaypointGenerator:
     def _estimate_min_fuel_for(self, waypoints: list[FlightWaypoint]) -> None:
         if self.flight.unit_type.fuel_consumption is None:
             return
-
-        combat_speed_types = {
-            FlightWaypointType.INGRESS_BAI,
-            FlightWaypointType.INGRESS_CAS,
-            FlightWaypointType.INGRESS_DEAD,
-            FlightWaypointType.INGRESS_ESCORT,
-            FlightWaypointType.INGRESS_OCA_AIRCRAFT,
-            FlightWaypointType.INGRESS_OCA_RUNWAY,
-            FlightWaypointType.INGRESS_SEAD,
-            FlightWaypointType.INGRESS_STRIKE,
-            FlightWaypointType.INGRESS_SWEEP,
-            FlightWaypointType.SPLIT,
-        } | set(TARGET_WAYPOINTS)
 
         consumption = self.flight.unit_type.fuel_consumption
         min_fuel: float = consumption.min_safe
@@ -174,14 +163,10 @@ class WaypointGenerator:
             return
 
         for b, a in pairwise(main_flight_plan):
-            distance = meters(a.position.distance_to_point(b.position))
-            if a.waypoint_type is FlightWaypointType.TAKEOFF:
-                ppm = consumption.climb
-            elif b.waypoint_type in combat_speed_types:
-                ppm = consumption.combat
-            else:
-                ppm = consumption.cruise
-            min_fuel += distance.nautical_miles * ppm
+            for_leg = self.flight.flight_plan.fuel_consumption_between_points(a, b)
+            if for_leg is None:
+                continue
+            min_fuel += for_leg
             a.min_fuel = min_fuel
 
     def set_takeoff_time(self, waypoint: FlightWaypoint) -> timedelta:
@@ -264,7 +249,7 @@ class WaypointGenerator:
         return not self.settings.never_delay_player_flights
 
     def should_activate_late(self) -> bool:
-        if self.flight.start_type is StartType.COLD:
+        if self.flight.start_type is not StartType.COLD:
             # Avoid spawning aircraft in the air or on the runway until it's
             # time for their mission. Also avoid burning through gas spawning
             # hot aircraft hours before their takeoff time.

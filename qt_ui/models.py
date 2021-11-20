@@ -12,15 +12,16 @@ from PySide2.QtCore import (
 )
 from PySide2.QtGui import QIcon
 
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.flight import Flight
+from game.ato.flighttype import FlightType
+from game.ato.package import Package
 from game.game import Game
 from game.squadrons.squadron import Pilot, Squadron
 from game.theater.missiontarget import MissionTarget
-from game.transfers import TransferOrder, PendingTransfers
-from game.ato.airtaaskingorder import AirTaskingOrder
-from game.ato.package import Package
-from game.ato.flighttype import FlightType
-from game.ato.flight import Flight
+from game.transfers import PendingTransfers, TransferOrder
 from gen.flights.traveltime import TotEstimator
+from qt_ui.simcontroller import SimController
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 
 
@@ -116,6 +117,7 @@ class PackageModel(QAbstractListModel):
         super().__init__()
         self.package = package
         self.game_model = game_model
+        self.game_model.sim_controller.sim_update.connect(self.on_sim_update)
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
         return len(self.package.flights)
@@ -209,6 +211,9 @@ class PackageModel(QAbstractListModel):
         for flight in self.package.flights:
             yield flight
 
+    def on_sim_update(self) -> None:
+        self.dataChanged.emit(self.index(0), self.index(self.rowCount()))
+
 
 class AtoModel(QAbstractListModel):
     """The model for an AirTaskingOrder."""
@@ -222,6 +227,7 @@ class AtoModel(QAbstractListModel):
         self.game_model = game_model
         self.ato = ato
         self.package_models = DeletableChildModelManager(PackageModel, game_model)
+        self.game_model.sim_controller.sim_update.connect(self.on_sim_update)
 
     @property
     def game(self) -> Optional[Game]:
@@ -304,6 +310,9 @@ class AtoModel(QAbstractListModel):
         """Iterates over all the packages in the ATO."""
         for package in self.ato.packages:
             yield self.package_models.acquire(package)
+
+    def on_sim_update(self) -> None:
+        self.dataChanged.emit(self.index(0), self.index(self.rowCount()))
 
 
 class TransferModel(QAbstractListModel):
@@ -483,8 +492,9 @@ class GameModel:
     its ATO objects.
     """
 
-    def __init__(self, game: Optional[Game]) -> None:
+    def __init__(self, game: Optional[Game], sim_controller: SimController) -> None:
         self.game: Optional[Game] = game
+        self.sim_controller = sim_controller
         self.transfer_model = TransferModel(self)
         self.blue_air_wing_model = AirWingModel(self, player=True)
         if self.game is None:

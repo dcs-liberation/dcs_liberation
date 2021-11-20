@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from game.ato.starttype import StartType
 
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.aircraftengagementzones import AircraftEngagementZones
+    from game.threatzones import ThreatPoly
 
 
 class FlightState(ABC):
@@ -20,7 +22,7 @@ class FlightState(ABC):
     def on_game_tick(self, time: datetime, duration: timedelta) -> None:
         ...
 
-    def should_halt_sim(self) -> bool:
+    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
         return False
 
     @property
@@ -31,4 +33,19 @@ class FlightState(ABC):
     @property
     @abstractmethod
     def spawn_type(self) -> StartType:
+        ...
+
+    def a2a_commit_region(self) -> Optional[ThreatPoly]:
+        return None
+
+    def estimate_fuel(self) -> float:
+        """Returns the estimated remaining fuel **in kilograms**."""
+        if (max_takeoff_fuel := self.flight.max_takeoff_fuel()) is not None:
+            return max_takeoff_fuel
+        return self.flight.unit_type.dcs_unit_type.fuel_max
+
+    @property
+    @abstractmethod
+    def description(self) -> str:
+        """Describes the current flight state."""
         ...

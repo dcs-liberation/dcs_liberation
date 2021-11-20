@@ -1,4 +1,4 @@
-from dcs.vehicles import AirDefence
+from dcs.vehicles import AirDefence, Unarmed
 
 from gen.sam.airdefensegroupgenerator import (
     AirDefenseRange,
@@ -14,6 +14,7 @@ class SA5Generator(AirDefenseGroupGenerator):
     name = "SA-5/S-200 Site"
 
     def generate(self) -> None:
+
         self.add_unit(
             AirDefence.RLS_19J6,
             "SR",
@@ -25,6 +26,13 @@ class SA5Generator(AirDefenseGroupGenerator):
             AirDefence.RPC_5N62V,
             "TR",
             self.position.x + 20,
+            self.position.y,
+            self.heading,
+        )
+        self.add_unit(
+            Unarmed.Ural_375,
+            "LOGI",
+            self.position.x - 20,
             self.position.y,
             self.heading,
         )

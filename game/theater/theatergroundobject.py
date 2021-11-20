@@ -132,6 +132,7 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
             yield from [
                 FlightType.STRIKE,
                 FlightType.BAI,
+                FlightType.REFUELING,
             ]
         yield from super().mission_types(for_player)
 

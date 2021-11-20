@@ -114,7 +114,7 @@ class FlightGroupSpawner:
                 return self._generate_at_airport(name, cp.airport)
         except NoParkingSlotError:
             # Generated when there is no place on Runway or on Parking Slots
-            logging.exception(
+            logging.warning(
                 "No room on runway or parking slots. Starting from the air."
             )
             group = self._generate_over_departure(name, cp)
@@ -128,6 +128,7 @@ class FlightGroupSpawner:
         )
         speed = self.flight.state.estimate_speed()
         pos = self.flight.state.estimate_position()
+        pos += Point(random.randint(100, 1000), random.randint(100, 1000))
         alt, alt_type = self.flight.state.estimate_altitude()
         group = self.mission.flight_group(
             country=self.country,

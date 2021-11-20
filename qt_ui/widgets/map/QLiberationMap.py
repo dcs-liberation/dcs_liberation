@@ -15,6 +15,7 @@ from PySide2.QtWebEngineWidgets import (
 
 from game import Game
 from qt_ui.models import GameModel
+from qt_ui.simcontroller import SimController
 from qt_ui.widgets.map.mapmodel import MapModel
 
 
@@ -35,11 +36,13 @@ class LoggingWebPage(QWebEnginePage):
 
 
 class QLiberationMap(QWebEngineView):
-    def __init__(self, game_model: GameModel, parent) -> None:
+    def __init__(
+        self, game_model: GameModel, sim_controller: SimController, parent
+    ) -> None:
         super().__init__(parent)
         self.game_model = game_model
         self.setMinimumSize(800, 600)
-        self.map_model = MapModel(game_model)
+        self.map_model = MapModel(game_model, sim_controller)
 
         self.channel = QWebChannel()
         self.channel.registerObject("game", self.map_model)
