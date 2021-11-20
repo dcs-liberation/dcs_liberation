@@ -1,8 +1,10 @@
-# 5.0.1
+# 5.1.0
 
-Saves from 5.0.0 are compatible with 5.0.1.
+Saves from 5.0.0 are not compatible with 5.1.0
 
 ## Features/Improvements
+
+* **[Engine]** Support for DCS DCS 2.7.8.16140 and newer, including the HTS.
 
 ## Fixes
 
