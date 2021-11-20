@@ -212,6 +212,7 @@ class SquadronConfigurationLayout(QVBoxLayout):
         if squadron in self.squadron_configs:
             self.removeWidget(self.squadron_configs[squadron])
             self.squadron_configs.pop(squadron)
+            self.update()
 
 
 class AircraftSquadronsPage(QWidget):
