@@ -3,13 +3,16 @@ class Event(object):
 
 
 class Observable(object):
-    def __init__(self):
+    def __init__(self) -> None:
         self.callbacks = []
 
-    def subscribe(self, callback):
+    def subscribe(self, callback) -> None:
         self.callbacks.append(callback)
 
-    def fire(self, **attrs):
+    def unsubscribe(self, callback) -> None:
+        self.callbacks.remove(callback)
+
+    def fire(self, **attrs) -> None:
         e = Event()
         e.source = self
         for k, v in attrs.items():

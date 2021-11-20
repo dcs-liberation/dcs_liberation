@@ -23,21 +23,24 @@ class AirWing(Observable):
         self.squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
 
     def add_squadron(self, squadron: Squadron) -> None:
+        new_aircraft_type = squadron.aircraft not in self.squadrons
+
         self.squadrons[squadron.aircraft].append(squadron)
-        self.fire(type="add_squadron", obj=self)
+
+        if new_aircraft_type:
+            self.fire(type="add_aircraft_type", obj=squadron.aircraft)
+        self.fire(type="add_squadron", obj=squadron)
 
     def remove_squadron(self, toRemove: Squadron) -> None:
-        if len(self.squadrons[toRemove.aircraft]) == 1:
-            self.squadrons.pop(toRemove.aircraft)
-        else:
-            self.squadrons[toRemove.aircraft] = self.squadrons[
-                toRemove.aircraft
-            ].remove(toRemove)
-        self.fire(type="remove_squadron", obj=self)
+        if toRemove.aircraft in self.squadrons:
+            self.squadrons[toRemove.aircraft].remove(toRemove)
+            self.fire(type="remove_squadron", obj=toRemove)
+            if len(self.squadrons[toRemove.aircraft]) == 0:
+                self.remove_aircraft_type(toRemove.aircraft)
 
-    def remove_aircraft_type(self, toRemove: AircraftType):
+    def remove_aircraft_type(self, toRemove: AircraftType) -> None:
         self.squadrons.pop(toRemove)
-        self.fire(type="remove_aircraft_type", obj=self)
+        self.fire(type="remove_aircraft_type", obj=toRemove)
 
     def squadrons_for(self, aircraft: AircraftType) -> Sequence[Squadron]:
         return self.squadrons[aircraft]
