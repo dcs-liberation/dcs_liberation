@@ -487,7 +487,12 @@ REFUELING_CAPABALE = [
 
 
 def dcs_types_for_task(task: FlightType) -> Sequence[Type[FlyingType]]:
-    cap_missions = (FlightType.BARCAP, FlightType.TARCAP, FlightType.SWEEP)
+    cap_missions = (
+        FlightType.BARCAP,
+        FlightType.INTERCEPTION,
+        FlightType.SWEEP,
+        FlightType.TARCAP,
+    )
     if task in cap_missions:
         return CAP_CAPABLE
     elif task == FlightType.ANTISHIP:
@@ -530,8 +535,11 @@ def aircraft_for_task(task: FlightType) -> list[AircraftType]:
 
 
 def tasks_for_aircraft(aircraft: AircraftType) -> list[FlightType]:
-    tasks = []
+    tasks: list[FlightType] = []
     for task in FlightType:
+        if task is FlightType.FERRY:
+            # Not a plannable task, so skip it.
+            continue
         if aircraft in aircraft_for_task(task):
             tasks.append(task)
     return tasks

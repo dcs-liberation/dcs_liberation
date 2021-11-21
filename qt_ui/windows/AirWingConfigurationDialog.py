@@ -1,36 +1,36 @@
-from typing import Optional, Callable, Iterable
+from typing import Callable, Iterable, Optional
 
 from PySide6.QtCore import (
+    QItemSelection,
     QItemSelectionModel,
     QModelIndex,
     QSize,
     Qt,
-    QItemSelection,
     Signal,
 )
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QIcon
+from PySide6.QtGui import QIcon, QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import (
-    QDialog,
-    QListView,
-    QVBoxLayout,
-    QGroupBox,
-    QLabel,
-    QWidget,
-    QScrollArea,
-    QLineEdit,
-    QTextEdit,
     QCheckBox,
+    QComboBox,
+    QDialog,
+    QGroupBox,
     QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QListView,
+    QScrollArea,
     QStackedLayout,
     QTabWidget,
-    QComboBox,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 
 from game import Game
+from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons import AirWing, Pilot, Squadron
-from game.theater import ControlPoint, ConflictTheater
-from game.ato.flighttype import FlightType
+from game.theater import ConflictTheater, ControlPoint
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 
 
@@ -49,6 +49,9 @@ class AllowedMissionTypeControls(QVBoxLayout):
             return callback
 
         for task in FlightType:
+            if task is FlightType.FERRY:
+                # Not plannable so just skip it.
+                continue
             enabled = task in squadron.mission_types
             if enabled:
                 self.allowed_mission_types.add(task)
