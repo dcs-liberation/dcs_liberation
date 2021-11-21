@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel
 
 from game.ato.flight import Flight
 

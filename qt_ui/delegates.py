@@ -1,9 +1,9 @@
 from contextlib import contextmanager
 from typing import ContextManager, Optional
 
-from PySide2.QtCore import QModelIndex, Qt, QSize
-from PySide2.QtGui import QPainter, QFont, QFontMetrics, QIcon
-from PySide2.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem, QStyle
+from PySide6.QtCore import QModelIndex, Qt, QSize
+from PySide6.QtGui import QPainter, QFont, QFontMetrics, QIcon
+from PySide6.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem, QStyle
 
 
 @contextmanager

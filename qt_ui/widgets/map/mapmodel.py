@@ -4,7 +4,7 @@ import logging
 from datetime import timedelta
 from typing import Iterator, List, Optional, Tuple, Union
 
-from PySide2.QtCore import Property, QObject, Signal, Slot
+from PySide6.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
 from dcs.unit import Unit
 from dcs.vehicles import vehicle_map
@@ -59,7 +59,7 @@ ENABLE_EXPENSIVE_DEBUG_TOOLS = False
 #
 # https://bugreports.qt.io/browse/PYSIDE-1426
 #
-# PySide2 5.15.2 released 6 days before the fix for this was merged, but presumably we
+# PySide6 5.15.2 released 6 days before the fix for this was merged, but presumably we
 # can clean up after 5.15.3 (or a future version) is released.
 #
 # Until then, all properties must use a notify signal. For some reason the error doesn't

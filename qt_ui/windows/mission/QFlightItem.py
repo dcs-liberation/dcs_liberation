@@ -1,4 +1,4 @@
-from PySide2.QtGui import QStandardItem, QIcon
+from PySide6.QtGui import QStandardItem, QIcon
 
 from game.ato.package import Package
 from game.ato.flight import Flight

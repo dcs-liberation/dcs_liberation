@@ -6,10 +6,10 @@ from typing import (
     Optional,
 )
 
-from PySide2.QtCore import QUrl
-from PySide2.QtWebChannel import QWebChannel
-from PySide2.QtWebEngineWidgets import (
-    QWebEnginePage,
+from PySide6.QtCore import QUrl
+from PySide6.QtWebChannel import QWebChannel
+from PySide6.QtWebEngineCore import QWebEnginePage
+from PySide6.QtWebEngineWidgets import (
     QWebEngineView,
 )
 
@@ -27,6 +27,7 @@ class LoggingWebPage(QWebEnginePage):
         line_number: int,
         source: str,
     ) -> None:
+        super().javaScriptConsoleMessage(level, message, line_number, source)
         if level == QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel:
             logging.error(message)
         elif level == QWebEnginePage.JavaScriptConsoleMessageLevel.WarningMessageLevel:
@@ -48,11 +49,11 @@ class QLiberationMap(QWebEngineView):
         self.channel.registerObject("game", self.map_model)
 
         self.page = LoggingWebPage(self)
+        self.setPage(self.page)
         self.page.setWebChannel(self.channel)
         self.page.load(
             QUrl.fromLocalFile(str(Path("resources/ui/map/canvas.html").resolve()))
         )
-        self.setPage(self.page)
 
     def set_game(self, game: Optional[Game]) -> None:
         if game is None:

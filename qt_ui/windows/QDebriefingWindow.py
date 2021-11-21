@@ -1,8 +1,8 @@
 import logging
 from typing import Callable, Dict, TypeVar
 
-from PySide2.QtGui import QIcon, QPixmap
-from PySide2.QtWidgets import (
+from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtWidgets import (
     QDialog,
     QGridLayout,
     QGroupBox,

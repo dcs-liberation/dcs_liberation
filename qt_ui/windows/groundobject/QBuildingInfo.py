@@ -1,7 +1,7 @@
 import os
 
-from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel
 from game.db import REWARDS
 
 

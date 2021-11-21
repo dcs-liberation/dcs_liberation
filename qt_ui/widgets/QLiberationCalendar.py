@@ -1,5 +1,5 @@
-from PySide2 import QtCore, QtGui
-from PySide2.QtWidgets import QCalendarWidget
+from PySide6 import QtCore, QtGui
+from PySide6.QtWidgets import QCalendarWidget
 
 
 class QLiberationCalendar(QCalendarWidget):

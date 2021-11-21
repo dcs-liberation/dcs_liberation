@@ -1,6 +1,6 @@
 from typing import Optional
 
-from PySide2.QtWidgets import QSpinBox
+from PySide6.QtWidgets import QSpinBox
 
 
 class FloatSpinner(QSpinBox):

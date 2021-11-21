@@ -1,9 +1,9 @@
 from datetime import timedelta
 from typing import Optional
 
-from PySide2 import QtWidgets
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QSlider, QHBoxLayout
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QSlider, QHBoxLayout
 
 from qt_ui.widgets.floatspinners import FloatSpinner
 

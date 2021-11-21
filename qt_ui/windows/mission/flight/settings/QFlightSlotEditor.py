@@ -1,8 +1,8 @@
 import logging
 from typing import Optional, Callable
 
-from PySide2.QtCore import Signal, QModelIndex
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Signal, QModelIndex
+from PySide6.QtWidgets import (
     QLabel,
     QGroupBox,
     QSpinBox,

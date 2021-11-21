@@ -1,6 +1,6 @@
 from typing import List
 
-from PySide2.QtGui import QStandardItem
+from PySide6.QtGui import QStandardItem
 
 from game.ato.flightwaypoint import FlightWaypoint
 

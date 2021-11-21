@@ -1,8 +1,8 @@
 from datetime import timedelta
 
-from PySide2.QtCore import QItemSelectionModel, QPoint
-from PySide2.QtGui import QStandardItem, QStandardItemModel
-from PySide2.QtWidgets import QHeaderView, QTableView
+from PySide6.QtCore import QItemSelectionModel, QPoint
+from PySide6.QtGui import QStandardItem, QStandardItemModel
+from PySide6.QtWidgets import QHeaderView, QTableView
 
 from game.ato.package import Package
 from game.ato.flightwaypointtype import FlightWaypointType

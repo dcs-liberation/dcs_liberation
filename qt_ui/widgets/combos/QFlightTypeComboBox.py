@@ -1,6 +1,6 @@
 """Combo box for selecting a flight's task type."""
 
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 
 from game.theater import ConflictTheater, MissionTarget
 

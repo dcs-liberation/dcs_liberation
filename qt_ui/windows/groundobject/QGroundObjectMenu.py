@@ -1,8 +1,8 @@
 import logging
 from typing import List, Optional
 
-from PySide2.QtGui import Qt
-from PySide2.QtWidgets import (
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
     QGridLayout,

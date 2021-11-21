@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QFrame, QGridLayout
+from PySide6.QtWidgets import QFrame, QGridLayout
 
 from game.theater import ControlPoint
 from qt_ui.models import GameModel

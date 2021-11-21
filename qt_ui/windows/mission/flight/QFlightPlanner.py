@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QTabWidget
+from PySide6.QtWidgets import QTabWidget
 
 from game import Game
 from game.ato.flight import Flight

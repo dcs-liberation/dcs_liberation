@@ -1,7 +1,7 @@
 """Combo box for selecting squadrons."""
 from typing import Optional
 
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons.airwing import AirWing

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import (
     QDialog,
     QGridLayout,
     QLabel,

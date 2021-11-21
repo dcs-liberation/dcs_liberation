@@ -1,6 +1,6 @@
 from collections import Callable
 
-from PySide2.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QPushButton
+from PySide6.QtWidgets import QGroupBox, QLabel, QVBoxLayout, QPushButton
 
 from game import Game
 from game.theater import ControlPoint

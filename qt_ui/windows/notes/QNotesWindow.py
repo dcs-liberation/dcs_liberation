@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog,
     QPlainTextEdit,
     QVBoxLayout,
@@ -6,8 +6,8 @@ from PySide2.QtWidgets import (
     QPushButton,
     QLabel,
 )
-from PySide2.QtGui import QTextCursor
-from PySide2.QtCore import QTimer
+from PySide6.QtGui import QTextCursor
+from PySide6.QtCore import QTimer
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
