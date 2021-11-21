@@ -600,7 +600,7 @@ class HelipadGenerator:
         for i, helipad in enumerate(self.cp.helipads):
             name = self.cp.name + "_helipad_" + str(i)
             logging.info("Generating helipad static : " + name)
-            pad = InvisibleFARP(name=name)
+            pad = InvisibleFARP(unit_id=self.m.next_unit_id(), name=name)
             pad.position = Point(helipad.x, helipad.y)
             pad.heading = helipad.heading.degrees
             sg = unitgroup.StaticGroup(self.m.next_group_id(), name)

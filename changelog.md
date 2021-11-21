@@ -11,6 +11,7 @@ Saves from 5.x are not compatible with 6.0.
 ## Fixes
 
 * **[Mission Generator]** Fixed incorrect radio specification for the AN/ARC-222.
+* **[Mission Generator]** Fixed mission scripting error when using a dedicated server.
 
 # 5.0.0
 
