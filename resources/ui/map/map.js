@@ -808,6 +808,7 @@ class Flight {
     this.flightPlan = this.flight.flightPlan.map((p) => new Waypoint(p, this));
     this.aircraft = null;
     this.path = null;
+    this.markers = [];
     this.commitBoundary = null;
     this.flight.selectedChanged.connect(() => this.draw());
     this.flight.positionChanged.connect(() => this.drawAircraftLocation());
@@ -891,18 +892,36 @@ class Flight {
     }
   }
 
+  clearFlightPlan() {
+    for (const marker of this.markers) {
+      marker
+        .removeFrom(selectedFlightPlansLayer)
+        .removeFrom(this.flightPlanLayer())
+        .removeFrom(allFlightPlansLayer);
+    }
+    this.markers = [];
+    if (this.path != null) {
+      this.path
+        .removeFrom(selectedFlightPlansLayer)
+        .removeFrom(this.flightPlanLayer())
+        .removeFrom(allFlightPlansLayer);
+    }
+  }
+
   drawFlightPlan() {
+    this.clearFlightPlan();
     this.flight.flightIsInAto().then((inAto) => {
       if (!inAto) {
         // HACK: The signal to redraw the ATO following package/flight deletion
         // and the signal to change flight/package selection due to UI selection
-        // change come in an arbitrary order. If redraw signal comes first the UI
-        // will clear the map and redraw, but then when the UI updates selection
-        // away from the (now deleted) flight/package it calls deselect, which
-        // redraws the deleted flight plan in its deselected state.
+        // change come in an arbitrary order. If redraw signal comes first the
+        // UI will clear the map and redraw, but then when the UI updates
+        // selection away from the (now deleted) flight/package it calls
+        // deselect, which redraws the deleted flight plan in its deselected
+        // state.
         //
-        // Avoid this by checking that the flight is still in the coalition's ATO
-        // before drawing.
+        // Avoid this by checking that the flight is still in the coalition's
+        // ATO before drawing.
         return;
       }
       const path = [];
@@ -915,6 +934,7 @@ class Flight {
             .addTo(selectedFlightPlansLayer)
             .addTo(this.flightPlanLayer())
             .addTo(allFlightPlansLayer);
+          this.markers.push(waypoint.marker);
         }
       });
 
