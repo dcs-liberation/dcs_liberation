@@ -1,5 +1,5 @@
 import logging
-from collections import Sequence
+from collections.abc import Sequence
 from typing import Type
 
 from dcs.helicopters import (

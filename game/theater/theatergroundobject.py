@@ -3,8 +3,8 @@ from __future__ import annotations
 import itertools
 import logging
 from abc import ABC
-from collections import Sequence
-from typing import Iterator, List, TYPE_CHECKING, Union, Generic, TypeVar
+from collections.abc import Sequence
+from typing import Generic, Iterator, List, TYPE_CHECKING, TypeVar, Union
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
@@ -12,11 +12,7 @@ from dcs.unit import Unit
 from dcs.unitgroup import ShipGroup, VehicleGroup
 
 from .. import db
-from ..data.radar_db import (
-    TRACK_RADARS,
-    TELARS,
-    LAUNCHER_TRACKER_PAIRS,
-)
+from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:

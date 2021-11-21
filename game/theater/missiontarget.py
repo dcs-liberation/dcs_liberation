@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from collections import Sequence
-from typing import Iterator, TYPE_CHECKING, List, Union
+from collections.abc import Sequence
+from typing import Iterator, TYPE_CHECKING, Union
 
 from dcs.mapping import Point
 from dcs.unit import Unit

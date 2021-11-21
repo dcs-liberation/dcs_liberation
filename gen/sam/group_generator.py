@@ -3,21 +3,20 @@ from __future__ import annotations
 import logging
 import math
 import operator
-import random
-from collections import Iterable
-from typing import TYPE_CHECKING, Type, TypeVar, Generic, Any
+from collections.abc import Iterable
+from typing import Any, Generic, TYPE_CHECKING, Type, TypeVar
 
 from dcs import unitgroup
 from dcs.mapping import Point
 from dcs.point import PointAction
-from dcs.unit import Ship, Vehicle, Unit
+from dcs.unit import Ship, Unit, Vehicle
 from dcs.unitgroup import ShipGroup, VehicleGroup
-from dcs.unittype import VehicleType, UnitType, ShipType
+from dcs.unittype import ShipType, UnitType, VehicleType
 
 from game.dcs.groundunittype import GroundUnitType
 from game.factions.faction import Faction
 from game.theater import MissionTarget
-from game.theater.theatergroundobject import TheaterGroundObject, NavalGroundObject
+from game.theater.theatergroundobject import NavalGroundObject, TheaterGroundObject
 from game.utils import Heading
 
 if TYPE_CHECKING:
