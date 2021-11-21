@@ -25,7 +25,7 @@ jobs:
         ./venv/scripts/activate
         python -m pip install -r requirements.txt
         # For some reason the shiboken6.abi3.dll is not found properly, so I copy it instead
-        Copy-Item .\venv\Lib\site-packages\shiboken6\shiboken6.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
+        Copy-Item .\venv\Lib\site-packages\shiboken6\shiboken6.abi3.dll .\venv\Lib\site-packages\PySide6\ -Force
 
     - name: mypy game
       run: |
