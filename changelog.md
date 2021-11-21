@@ -6,6 +6,8 @@ Saves from 5.0.0 are compatible with 5.0.1.
 
 ## Fixes
 
+* **[Mission Generation]** Fixed mission scripting error when using a dedicated server.
+
 # 5.0.0
 
 Saves from 4.x are not compatible with 5.0.
