@@ -1,5 +1,5 @@
-from collections import Iterator, Iterable
-from typing import Generic, TypeVar, Optional
+from collections.abc import Iterable, Iterator
+from typing import Generic, Optional, TypeVar
 
 ValueT = TypeVar("ValueT")
 

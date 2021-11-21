@@ -1,5 +1,5 @@
 import logging
-from collections import Iterator
+from collections.abc import Iterator
 from contextlib import contextmanager
 from typing import Type
 

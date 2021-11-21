@@ -1,4 +1,4 @@
-from collections import Iterator
+from collections.abc import Iterator
 
 from game.commander.tasks.primitive.cas import PlanCas
 from game.commander.theaterstate import TheaterState

@@ -3,7 +3,7 @@ from __future__ import annotations
 import itertools
 import logging
 import math
-from collections import Iterator
+from collections.abc import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import Any, List, TYPE_CHECKING, Type, Union, cast

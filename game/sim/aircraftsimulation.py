@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import itertools
-from collections import Iterator
+from collections.abc import Iterator
 from datetime import datetime, timedelta
 
 from typing_extensions import TYPE_CHECKING

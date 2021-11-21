@@ -1,4 +1,4 @@
-from collections import Iterator
+from collections.abc import Iterator
 
 from game.commander.tasks.primitive.antishipping import PlanAntiShipping
 from game.commander.tasks.primitive.convoyinterdiction import PlanConvoyInterdiction

@@ -1,4 +1,4 @@
-from collections import Iterator
+from collections.abc import Iterator
 from dataclasses import Field, dataclass, field, fields
 from datetime import timedelta
 from enum import Enum, unique
