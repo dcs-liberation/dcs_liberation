@@ -1,5 +1,6 @@
 import itertools
 import random
+from collections.abc import Iterator
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -151,7 +152,7 @@ class WaypointGenerator:
         min_fuel: float = consumption.min_safe
 
         # The flight plan (in reverse) up to and including the arrival point.
-        main_flight_plan = reversed(waypoints)
+        main_flight_plan: Iterator[FlightWaypoint] = reversed(waypoints)
         try:
             while waypoint := next(main_flight_plan):
                 if waypoint.waypoint_type is FlightWaypointType.LANDING_POINT:
