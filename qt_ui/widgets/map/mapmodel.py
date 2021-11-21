@@ -606,6 +606,14 @@ class FlightJs(QObject):
     def selected(self) -> bool:
         return self._selected
 
+    @Slot(result=bool)
+    def flightIsInAto(self) -> bool:
+        if self.flight.package not in self.flight.squadron.coalition.ato.packages:
+            return False
+        if self.flight not in self.flight.package.flights:
+            return False
+        return True
+
     def set_selected(self, value: bool) -> None:
         self._selected = value
         self.selectedChanged.emit()
@@ -1186,19 +1194,14 @@ class MapModel(QObject):
                 )
         return flights
 
-    def _get_selected_flight(self) -> Optional[Flight]:
-        for p_idx, package in enumerate(self.game.blue.ato.packages):
-            for f_idx, flight in enumerate(package.flights):
-                if (p_idx, f_idx) == self._selected_flight_index:
-                    return flight
-        return None
-
     def reset_atos(self) -> None:
         self._flights = self._flights_in_ato(
             self.game.blue.ato, blue=True
         ) | self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
-        selected_flight = self._get_selected_flight()
+        selected_flight = None
+        if self._selected_flight is not None:
+            selected_flight = self._selected_flight.flight
         if selected_flight is None:
             self._ip_zones = IpZonesJs.empty()
             self._join_zones = JoinZonesJs.empty()

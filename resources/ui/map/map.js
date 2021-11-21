@@ -892,20 +892,34 @@ class Flight {
   }
 
   drawFlightPlan() {
-    const path = [];
-    this.flightPlan.forEach((waypoint) => {
-      if (waypoint.includeInPath()) {
-        path.push(waypoint.position());
+    this.flight.flightIsInAto().then((inAto) => {
+      if (!inAto) {
+        // HACK: The signal to redraw the ATO following package/flight deletion
+        // and the signal to change flight/package selection due to UI selection
+        // change come in an arbitrary order. If redraw signal comes first the UI
+        // will clear the map and redraw, but then when the UI updates selection
+        // away from the (now deleted) flight/package it calls deselect, which
+        // redraws the deleted flight plan in its deselected state.
+        //
+        // Avoid this by checking that the flight is still in the coalition's ATO
+        // before drawing.
+        return;
       }
-      if (this.shouldMark(waypoint)) {
-        waypoint.marker
-          .addTo(selectedFlightPlansLayer)
-          .addTo(this.flightPlanLayer())
-          .addTo(allFlightPlansLayer);
-      }
-    });
+      const path = [];
+      this.flightPlan.forEach((waypoint) => {
+        if (waypoint.includeInPath()) {
+          path.push(waypoint.position());
+        }
+        if (this.shouldMark(waypoint)) {
+          waypoint.marker
+            .addTo(selectedFlightPlansLayer)
+            .addTo(this.flightPlanLayer())
+            .addTo(allFlightPlansLayer);
+        }
+      });
 
-    this.drawPath(path);
+      this.drawPath(path);
+    });
   }
 }
 
