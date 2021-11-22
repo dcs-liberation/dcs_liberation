@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union, Type
 
 from dcs.unittype import ShipType
 
@@ -34,7 +34,7 @@ class CampaignCarrierConfig:
     def from_campaign_data(
         cls, data: dict[Union[str, int], Any], theater: ConflictTheater
     ) -> CampaignCarrierConfig:
-        by_location: dict[ControlPoint, CarrierConfig] = defaultdict(CarrierConfig)
+        by_location: dict[ControlPoint, CarrierConfig] = defaultdict()
         print(data)
         for base_id, carrier_configs in data.items():
             if isinstance(base_id, int):

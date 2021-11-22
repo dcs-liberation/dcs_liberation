@@ -374,6 +374,7 @@ def load_carriers(json: Dict[str, Any]) -> Dict[Type[ShipType], List[str]]:
     carriers = json.get("carriers", {})
     for carrier_shiptype, shipname in carriers.items():
         shiptype = load_ship(carrier_shiptype)
-        items[shiptype] = shipname
+        if shiptype is not None:
+            items[shiptype] = shipname
 
     return items

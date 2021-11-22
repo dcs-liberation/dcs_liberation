@@ -21,6 +21,7 @@ from typing import (
     Sequence,
     Iterable,
     Tuple,
+    Type,
 )
 
 from dcs.mapping import Point
@@ -288,8 +289,8 @@ class ControlPoint(MissionTarget, ABC):
     has_frontline = True
 
     # Preferred carrier type and name, if any
-    preferred_type = None
-    preferred_name = None
+    preferred_name: Optional[str] = None
+    preferred_type: Optional[Type[ShipType]] = None
 
     alt = 0
 
