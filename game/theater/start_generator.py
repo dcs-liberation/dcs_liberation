@@ -48,6 +48,7 @@ from . import (
     Fob,
     OffMapSpawn,
 )
+from ..campaignloader import CampaignCarrierConfig
 from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
 from ..profiling import logged_duration
 from ..settings import Settings
@@ -86,6 +87,7 @@ class GameGenerator:
         enemy: Faction,
         theater: ConflictTheater,
         air_wing_config: CampaignAirWingConfig,
+        carrier_config: CampaignCarrierConfig,
         settings: Settings,
         generator_settings: GeneratorSettings,
         mod_settings: ModSettings,
@@ -94,6 +96,7 @@ class GameGenerator:
         self.enemy = enemy.apply_mod_settings(mod_settings)
         self.theater = theater
         self.air_wing_config = air_wing_config
+        self.carrier_config = carrier_config
         self.settings = settings
         self.generator_settings = generator_settings
 
@@ -226,11 +229,14 @@ class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
         self.control_point.connected_objectives.append(g)
 
         # If the campaign designer has specified a preferred name, use that
-        if self.control_point.preferred_name:
+        carrier_type = ship_type_from_name(group.units[0].type)
+        if (
+            self.control_point.preferred_name
+            and self.control_point.preferred_name in self.faction.carriers[carrier_type]
+        ):
             self.control_point.name = self.control_point.preferred_name
         else:
             # Otherwise pick randomly from the names specified for that particular carrier type
-            carrier_type = ship_type_from_name(group.units[0].type)
             carrier_names = self.faction.carriers[carrier_type]
             self.control_point.name = random.choice(carrier_names)
         # Prevents duplicate carrier or LHA names in campaigns with more that one of either.

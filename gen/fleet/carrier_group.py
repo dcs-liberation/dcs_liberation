@@ -13,7 +13,10 @@ class CarrierGroupGenerator(ShipGroupGenerator):
 
         if self.faction.carriers:
             # If the campaign designer has specified a preferred type, use that
-            if control_point.preferred_type:
+            if (
+                control_point.preferred_type
+                and control_point.preferred_type in self.faction.carriers.keys()
+            ):
                 carrier_type = control_point.preferred_type
             else:
                 # Otherwise pick randomly from the carrier types in the faction

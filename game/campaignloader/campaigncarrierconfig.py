@@ -7,7 +7,7 @@ from typing import Any, TYPE_CHECKING, Union
 
 from dcs.unittype import ShipType
 
-from game.ato.flighttype import FlightType
+from game.db import ship_type_from_name
 from game.theater.controlpoint import ControlPoint
 
 if TYPE_CHECKING:
@@ -17,16 +17,12 @@ if TYPE_CHECKING:
 @dataclass(frozen=True)
 class CarrierConfig:
     preferred_name: str
-    preferred_type: ShipType
-
-    @property
-    def auto_assignable(self) -> set[FlightType]:
-        return set(self.secondary) | {self.primary}
+    preferred_type: Type[ShipType]
 
     @classmethod
     def from_data(cls, data: dict[str, Any]) -> CarrierConfig:
         return CarrierConfig(
-            str(data["preferred_name"]), ShipType.named(data["preferred_type"])
+            str(data["preferred_name"]), ship_type_from_name(data["preferred_type"])
         )
 
 
@@ -40,17 +36,15 @@ class CampaignCarrierConfig:
     ) -> CampaignCarrierConfig:
         by_location: dict[ControlPoint, CarrierConfig] = defaultdict(CarrierConfig)
         print(data)
-        for base_id in data.items():
+        for base_id, carrier_configs in data.items():
             if isinstance(base_id, int):
                 base = theater.find_control_point_by_id(base_id)
             else:
                 base = theater.control_point_named(base_id)
 
-            carrier_config = CarrierConfig.from_data(data.items())
+            carrier_config = CarrierConfig.from_data(carrier_configs)
             base.preferred_name = carrier_config.preferred_name
-            print("Set preferred name as " + base.preferred_name)
             base.preferred_type = carrier_config.preferred_type
-            print("Set preferred type as " + base.preferred_type)
             by_location[base] = carrier_config
             # for carrier_data in carrier_configs:
             #    CarrierConfig.from_data(squadron_data)
