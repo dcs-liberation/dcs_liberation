@@ -6,9 +6,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from PySide6 import QtWidgets
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QSplashScreen
+from PySide2 import QtWidgets
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QPixmap
+from PySide2.QtWidgets import QApplication, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
@@ -57,6 +58,8 @@ def inject_custom_payloads(user_path: Path) -> None:
 def run_ui(game: Optional[Game]) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
+
+    app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
 
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()
@@ -128,7 +131,7 @@ def run_ui(game: Optional[Game]) -> None:
     window = QLiberationWindow(game)
     window.showMaximized()
     splash.finish(window)
-    qt_execution_code = app.exec()
+    qt_execution_code = app.exec_()
 
     # Restore Mission Scripting file
     logging.info("QT App terminated with status code : " + str(qt_execution_code))

@@ -1,6 +1,6 @@
 from typing import Callable, Iterable, Optional
 
-from PySide6.QtCore import (
+from PySide2.QtCore import (
     QItemSelection,
     QItemSelectionModel,
     QModelIndex,
@@ -8,9 +8,8 @@ from PySide6.QtCore import (
     Qt,
     Signal,
 )
-from PySide6.QtGui import QIcon, QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import (
-    QCheckBox,
+from PySide2.QtGui import QIcon, QStandardItem, QStandardItemModel
+from PySide2.QtWidgets import (
     QComboBox,
     QDialog,
     QGroupBox,

@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QLabel, QComboBox, QVBoxLayout
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QFrame, QLabel, QComboBox, QVBoxLayout
 
 from game import Game
 from game.ato.flight import Flight

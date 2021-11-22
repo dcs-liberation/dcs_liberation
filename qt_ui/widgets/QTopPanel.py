@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from PySide6.QtWidgets import (
+from PySide2.QtWidgets import (
     QDialog,
     QFrame,
     QGroupBox,

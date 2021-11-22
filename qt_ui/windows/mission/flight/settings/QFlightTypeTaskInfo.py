@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QLabel, QGroupBox, QGridLayout
+from PySide2.QtWidgets import QLabel, QGroupBox, QGridLayout
 
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 

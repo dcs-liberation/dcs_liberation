@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (
+from PySide2.QtWidgets import (
     QComboBox,
     QGroupBox,
     QHBoxLayout,

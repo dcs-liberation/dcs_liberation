@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Optional
 
-from PySide6 import QtGui
-from PySide6.QtCore import QItemSelectionModel, QModelIndex, Qt
-from PySide6.QtGui import QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QAbstractItemView, QListView
+from PySide2 import QtGui
+from PySide2.QtCore import QItemSelectionModel, QModelIndex, Qt
+from PySide2.QtGui import QStandardItem, QStandardItemModel
+from PySide2.QtWidgets import QAbstractItemView, QListView
 
 import qt_ui.uiconstants as CONST
 from game.campaignloader.campaign import Campaign

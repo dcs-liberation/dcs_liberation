@@ -1,7 +1,7 @@
 import itertools
 from typing import Optional
 
-from PySide6.QtWidgets import (
+from PySide2.QtWidgets import (
     QCheckBox,
     QDialog,
     QFrame,

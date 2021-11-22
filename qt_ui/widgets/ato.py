@@ -3,18 +3,18 @@ import logging
 from datetime import timedelta
 from typing import Optional
 
-from PySide6.QtCore import (
+from PySide2.QtCore import (
     QItemSelectionModel,
     QModelIndex,
     QSize,
     Qt,
 )
-from PySide6.QtGui import (
-    QAction,
+from PySide2.QtGui import (
     QContextMenuEvent,
 )
-from PySide6.QtWidgets import (
+from PySide2.QtWidgets import (
     QAbstractItemView,
+    QAction,
     QGroupBox,
     QHBoxLayout,
     QLabel,

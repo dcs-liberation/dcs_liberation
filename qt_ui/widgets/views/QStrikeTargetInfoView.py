@@ -1,7 +1,7 @@
 import random
 
-from PySide6.QtGui import QStandardItemModel, QStandardItem
-from PySide6.QtWidgets import (
+from PySide2.QtGui import QStandardItemModel, QStandardItem
+from PySide2.QtWidgets import (
     QGroupBox,
     QLabel,
     QWidget,

@@ -3,9 +3,12 @@ import traceback
 import webbrowser
 from typing import Optional
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction, QActionGroup, QCloseEvent, QGuiApplication, QIcon
-from PySide6.QtWidgets import (
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QCloseEvent, QIcon
+from PySide2.QtWidgets import (
+    QAction,
+    QActionGroup,
+    QDesktopWidget,
     QFileDialog,
     QMainWindow,
     QMessageBox,
@@ -64,7 +67,7 @@ class QLiberationWindow(QMainWindow):
         self.initMenuBar()
         self.connectSignals()
 
-        screen = QGuiApplication.primaryScreen().availableSize()
+        screen = QDesktopWidget().screenGeometry()
         self.setGeometry(0, 0, screen.width(), screen.height())
         self.setWindowState(Qt.WindowMaximized)
 
@@ -97,7 +100,7 @@ class QLiberationWindow(QMainWindow):
         vbox.setSizes([600, 100])
 
         vbox = QVBoxLayout()
-        vbox.setContentsMargins(0, 0, 0, 0)
+        vbox.setMargin(0)
         vbox.addWidget(QTopPanel(self.game_model, self.sim_controller))
         vbox.addWidget(hbox)
 

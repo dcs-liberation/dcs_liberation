@@ -1,12 +1,13 @@
-from PySide6.QtCore import (
+from PySide2.QtCore import (
     QItemSelection,
     QItemSelectionModel,
     QModelIndex,
     Qt,
 )
-from PySide6.QtGui import QAction, QContextMenuEvent
-from PySide6.QtWidgets import (
+from PySide2.QtGui import QContextMenuEvent
+from PySide2.QtWidgets import (
     QAbstractItemView,
+    QAction,
     QDialog,
     QHBoxLayout,
     QListView,

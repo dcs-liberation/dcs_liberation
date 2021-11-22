@@ -1,8 +1,8 @@
 from datetime import timedelta
 
-from PySide6.QtCore import QItemSelectionModel, QSize
-from PySide6.QtGui import QStandardItemModel
-from PySide6.QtWidgets import QAbstractItemView, QListView
+from PySide2.QtCore import QItemSelectionModel, QSize
+from PySide2.QtGui import QStandardItemModel
+from PySide2.QtWidgets import QAbstractItemView, QListView
 
 from qt_ui.models import GameModel
 from qt_ui.windows.mission.QFlightItem import QFlightItem

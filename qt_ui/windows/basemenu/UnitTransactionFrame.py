@@ -4,8 +4,8 @@ import logging
 from enum import Enum
 from typing import Generic, TypeVar
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import (
     QApplication,
     QFrame,
     QGridLayout,
