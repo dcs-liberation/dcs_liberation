@@ -230,25 +230,23 @@ class UnitTransactionFrame(QFrame, Generic[TransactionItemType]):
         self.update_purchase_controls()
         self.update_available_budget()
 
-    def buy(self, item: TransactionItemType, quantity: int) -> bool:
+    def buy(self, item: TransactionItemType, quantity: int) -> None:
         try:
             self.purchase_adapter.buy(item, quantity)
         except TransactionError as ex:
             logging.exception(f"Purchase of {self.display_name_of(item)} failed")
             QMessageBox.warning(self, "Purchase failed", str(ex), QMessageBox.Ok)
-            return False
-        self.post_transaction_update()
-        return True
+        finally:
+            self.post_transaction_update()
 
-    def sell(self, item: TransactionItemType, quantity: int) -> bool:
+    def sell(self, item: TransactionItemType, quantity: int) -> None:
         try:
             self.purchase_adapter.sell(item, quantity)
         except TransactionError as ex:
             logging.exception(f"Sale of {self.display_name_of(item)} failed")
             QMessageBox.warning(self, "Sale failed", str(ex), QMessageBox.Ok)
-            return False
-        self.post_transaction_update()
-        return True
+        finally:
+            self.post_transaction_update()
 
     def update_purchase_controls(self) -> None:
         for group in self.purchase_groups.values():
