@@ -33,7 +33,7 @@ from dcs.ships import (
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
-from dcs.unittype import FlyingType
+from dcs.unittype import FlyingType, ShipType
 
 from game import db
 from game.point_with_heading import PointWithHeading
@@ -286,6 +286,10 @@ class ControlPoint(MissionTarget, ABC):
     name = None  # type: str
 
     has_frontline = True
+
+    # Preferred carrier type and name, if any
+    preferred_type = None
+    preferred_name = None
 
     alt = 0
 

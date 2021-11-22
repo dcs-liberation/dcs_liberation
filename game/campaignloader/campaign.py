@@ -23,6 +23,7 @@ from game.theater import (
     TheChannelTheater,
 )
 from game.version import CAMPAIGN_FORMAT_VERSION
+from .campaigncarrierconfig import CampaignCarrierConfig
 from .campaignairwingconfig import CampaignAirWingConfig
 from .mizcampaignloader import MizCampaignLoader
 from .. import persistency
@@ -131,6 +132,14 @@ class Campaign:
             logging.warning(f"Campaign {self.name} does not define any squadrons")
             return CampaignAirWingConfig({})
         return CampaignAirWingConfig.from_campaign_data(squadron_data, theater)
+
+    def load_carrier_config(self, theater: ConflictTheater) -> CampaignCarrierConfig:
+        try:
+            squadron_data = self.data["carriers"]
+        except KeyError:
+            logging.warning(f"Campaign {self.name} does not define any carriers")
+            return CampaignCarrierConfig({})
+        return CampaignCarrierConfig.from_campaign_data(squadron_data, theater)
 
     @property
     def is_out_of_date(self) -> bool:

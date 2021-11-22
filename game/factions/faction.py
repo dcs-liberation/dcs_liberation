@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Type, List, Any, Iterator, TYPE_CHECKING
 
@@ -84,13 +85,10 @@ class Faction:
     requirements: Dict[str, str] = field(default_factory=dict)
 
     # possible aircraft carrier units
-    aircraft_carrier: List[Type[ShipType]] = field(default_factory=list)
+    carriers: Dict[Type[ShipType], List[str]] = field(default_factory=dict)
 
     # possible helicopter carrier units
     helicopter_carrier: List[Type[ShipType]] = field(default_factory=list)
-
-    # Possible carrier names
-    carrier_names: List[str] = field(default_factory=list)
 
     # Possible helicopter carrier names
     helicopter_carrier_names: List[str] = field(default_factory=list)
@@ -195,10 +193,22 @@ class Faction:
         faction.coastal_defenses = json.get("coastal_defenses", [])
         faction.requirements = json.get("requirements", {})
 
-        faction.carrier_names = json.get("carrier_names", [])
+        # First try to load the carriers in the new format which
+        # specifies different names for different carrier types
+        loaded_carriers = load_carriers(json)
+        if not loaded_carriers:
+            # If there's no carriers element in the faction file,
+            # fall back to the previous type with separate aircraft_carrier and carrier_names
+            carrier_names = json.get("carrier_names", [])
+            aircraft_carrier = load_all_ships(json.get("aircraft_carrier", []))
+            for carrier_shiptype in aircraft_carrier:
+                shiptype = carrier_shiptype
+                faction.carriers[shiptype] = carrier_names
+        else:
+            faction.carriers = loaded_carriers
+
         faction.helicopter_carrier_names = json.get("helicopter_carrier_names", [])
         faction.navy_generators = json.get("navy_generators", [])
-        faction.aircraft_carrier = load_all_ships(json.get("aircraft_carrier", []))
         faction.helicopter_carrier = load_all_ships(json.get("helicopter_carrier", []))
         faction.destroyers = load_all_ships(json.get("destroyers", []))
         faction.cruisers = load_all_ships(json.get("cruisers", []))
@@ -355,4 +365,15 @@ def load_all_ships(data: list[str]) -> List[Type[ShipType]]:
         item = load_ship(name)
         if item is not None:
             items.append(item)
+    return items
+
+
+def load_carriers(json: Dict[str, Any]) -> Dict[Type[ShipType], List[str]]:
+    # Load carriers
+    items: Dict[Type[ShipType], List[str]] = defaultdict(List[str])
+    carriers = json.get("carriers", {})
+    for carrier_shiptype, shipname in carriers.items():
+        shiptype = load_ship(carrier_shiptype)
+        items[shiptype] = shipname
+
     return items

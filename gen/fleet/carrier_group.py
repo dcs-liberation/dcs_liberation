@@ -1,5 +1,7 @@
 import random
 
+from game.theater import ControlPoint
+from game.theater.theatergroundobject import CarrierGroundObject
 from gen.sam.group_generator import ShipGroupGenerator
 from game.utils import Heading
 
@@ -7,11 +9,20 @@ from dcs.ships import USS_Arleigh_Burke_IIa, TICONDEROG
 
 
 class CarrierGroupGenerator(ShipGroupGenerator):
-    def generate(self) -> None:
+    def generate(self, control_point: ControlPoint) -> None:
+
+        if self.faction.carriers:
+            # If the campaign designer has specified a preferred type, use that
+            if control_point.preferred_type:
+                carrier_type = control_point.preferred_type
+            else:
+                # Otherwise pick randomly from the carrier types in the faction
+                carrier_type = random.choice(list(self.faction.carriers.keys()))
+        else:
+            return
 
         # Carrier Strike Group 8
-        if self.faction.carrier_names[0] == "Carrier Strike Group 8":
-            carrier_type = random.choice(self.faction.aircraft_carrier)
+        if list(self.faction.carriers.values())[0] == "Carrier Strike Group 8":
 
             self.add_unit(
                 carrier_type,
@@ -76,8 +87,7 @@ class CarrierGroupGenerator(ShipGroupGenerator):
         ##################################################################################################
         # Add carrier for normal generation
         else:
-            if len(self.faction.aircraft_carrier) > 0:
-                carrier_type = random.choice(self.faction.aircraft_carrier)
+            if self.faction.carriers:
                 self.add_unit(
                     carrier_type,
                     "Carrier",
