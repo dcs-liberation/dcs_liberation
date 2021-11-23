@@ -1,6 +1,5 @@
 import random
 
-from game.theater import ControlPoint
 from game.theater.theatergroundobject import CarrierGroundObject
 from gen.sam.group_generator import ShipGroupGenerator
 from game.utils import Heading
@@ -9,15 +8,19 @@ from dcs.ships import USS_Arleigh_Burke_IIa, TICONDEROG
 
 
 class CarrierGroupGenerator(ShipGroupGenerator):
-    def generate(self, control_point: ControlPoint) -> None:
+    ground_object: CarrierGroundObject
+
+    def generate(self) -> None:
 
         if self.faction.carriers:
+            print(self.ground_object.control_point)
             # If the campaign designer has specified a preferred type, use that
             if (
-                control_point.preferred_type
-                and control_point.preferred_type in self.faction.carriers.keys()
+                self.ground_object.control_point.preferred_type
+                and self.ground_object.control_point.preferred_type
+                in self.faction.carriers.keys()
             ):
-                carrier_type = control_point.preferred_type
+                carrier_type = self.ground_object.control_point.preferred_type
             else:
                 # Otherwise pick randomly from the carrier types in the faction
                 carrier_type = random.choice(list(self.faction.carriers.keys()))

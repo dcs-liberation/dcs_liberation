@@ -87,7 +87,8 @@ def generate_carrier_group(
     :return: The generated group.
     """
     generator = CarrierGroupGenerator(game, ground_object, db.FACTIONS[faction])
-    generator.generate(ground_object.control_point)
+    generator.ground_object = ground_object
+    generator.generate()
     return generator.get_generated_group()
 
 
