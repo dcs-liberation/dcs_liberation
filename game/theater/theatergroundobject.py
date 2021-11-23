@@ -3,10 +3,13 @@ from __future__ import annotations
 import itertools
 import uuid
 from abc import ABC
+from typing import Type
 from typing import Any, Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
+
 from dcs.unittype import VehicleType
+from dcs.unittype import ShipType
 from shapely.geometry import Point as ShapelyPoint
 
 from game.sidc import (

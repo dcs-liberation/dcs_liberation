@@ -21,13 +21,26 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
+    Type,
 )
 from uuid import UUID
 
 from dcs.mapping import Point
-from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unitgroup import ShipGroup, StaticGroup
+from dcs.unittype import ShipType
+from dcs.ships import (
+    CVN_71,
+    CVN_72,
+    CVN_73,
+    CVN_75,
+    CV_1143_5,
+    KUZNECOW,
+    Stennis,
+    Forrestal,
+    LHA_Tarawa,
+    Type_071,
+)
 
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ground_forces.combat_stance import CombatStance
@@ -611,6 +624,60 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                         ]:
                             return group.group_name
         return None
+
+    def get_carrier_group_type(
+        self, always_supercarrier: bool = False
+    ) -> Optional[Type[ShipType]]:
+        """
+        Get the carrier group type if the airbase is a carrier. Arguments:
+            always_supercarrier: True if should always return the supercarrier type, False if should only
+                return the supercarrier type when the supercarrier option is enabled in settings.
+        :return: Carrier group type
+        """
+        if self.cptype in [
+            ControlPointType.AIRCRAFT_CARRIER_GROUP,
+            ControlPointType.LHA_GROUP,
+        ]:
+            for g in self.ground_objects:
+                for group in g.groups:
+                    u = group.units[0]
+                    carrier_type = u.type
+                    if (
+                        u.unit_type
+                        and u.unit_type.unit_class
+                        in [
+                            UnitClass.AIRCRAFT_CARRIER,
+                            UnitClass.HELICOPTER_CARRIER,
+                        ]
+                        and issubclass(carrier_type, ShipType)
+                    ):
+                        if (
+                            self.coalition.game.settings.supercarrier
+                            or always_supercarrier
+                        ):
+                            return self.upgrade_to_supercarrier(carrier_type, self.name)
+                        return carrier_type
+        return None
+
+    @staticmethod
+    def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
+        if unit == Stennis:
+            if name == "CVN-71 Theodore Roosevelt":
+                return CVN_71
+            elif name == "CVN-72 Abraham Lincoln":
+                return CVN_72
+            elif name == "CVN-73 George Washington":
+                return CVN_73
+            elif name == "CVN-75 Harry S. Truman":
+                return CVN_75
+            elif name == "Carrier Strike Group 8":
+                return CVN_75
+            else:
+                return CVN_71
+        elif unit == KUZNECOW:
+            return CV_1143_5
+        else:
+            return unit
 
     # TODO: Should be Airbase specific.
     def is_connected(self, to: ControlPoint) -> bool:

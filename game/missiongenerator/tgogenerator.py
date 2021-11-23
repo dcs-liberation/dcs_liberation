@@ -17,15 +17,7 @@ from dcs.action import DoScript, SceneryDestructionZone
 from dcs.condition import MapObjectIsDead
 from dcs.country import Country
 from dcs.point import StaticPoint
-from dcs.ships import (
-    CVN_71,
-    CVN_72,
-    CVN_73,
-    CVN_75,
-    CV_1143_5,
-    KUZNECOW,
-    Stennis,
-)
+
 from dcs.statics import Fortification
 from dcs.task import (
     ActivateBeaconCommand,
@@ -361,9 +353,14 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
             # Set Carrier Specific Options
             if g_id == 0:
-                # Correct unit type for the carrier.
-                # This is only used for the super carrier setting
-                ship_group.units[0].type = self.get_carrier_type(group).id
+                # Get Correct unit type for the carrier.
+                # This will upgrade to super carrier if option is enabled
+                carrier_type = self.carrier_type
+                if carrier_type is None:
+                    raise RuntimeError(
+                        f"Error generating carrier group for {self.control_point.name}"
+                    )
+                ship_group.units[0].type = carrier_type.id
                 tacan = self.tacan_registry.alloc_for_band(
                     TacanBand.X, TacanUsage.TransmitReceive
                 )
@@ -374,11 +371,9 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                     brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
                 )
 
-    def get_carrier_type(self, group: TheaterGroup) -> Type[ShipType]:
-        carrier_type = group.units[0].type
-        if issubclass(carrier_type, ShipType):
-            return carrier_type
-        raise RuntimeError(f"First unit of TGO {group.name} is no Ship")
+    @property
+    def carrier_type(self) -> Optional[Type[ShipType]]:
+        return self.control_point.get_carrier_group_type()
 
     def steam_into_wind(self, group: ShipGroup) -> Optional[Heading]:
         wind = self.game.conditions.weather.wind.at_0m
@@ -444,32 +439,6 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
 class CarrierGenerator(GenericCarrierGenerator):
     """Generator for CV(N) groups."""
-
-    def get_carrier_type(self, group: TheaterGroup) -> Type[ShipType]:
-        unit_type = super().get_carrier_type(group)
-        if self.game.settings.supercarrier:
-            unit_type = self.upgrade_to_supercarrier(unit_type, self.control_point.name)
-        return unit_type
-
-    @staticmethod
-    def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
-        if unit == Stennis:
-            if name == "CVN-71 Theodore Roosevelt":
-                return CVN_71
-            elif name == "CVN-72 Abraham Lincoln":
-                return CVN_72
-            elif name == "CVN-73 George Washington":
-                return CVN_73
-            elif name == "CVN-75 Harry S. Truman":
-                return CVN_75
-            elif name == "Carrier Strike Group 8":
-                return CVN_75
-            else:
-                return CVN_71
-        elif unit == KUZNECOW:
-            return CV_1143_5
-        else:
-            return unit
 
     def tacan_callsign(self) -> str:
         # TODO: Assign these properly.
