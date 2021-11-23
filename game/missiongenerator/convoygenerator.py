@@ -33,42 +33,30 @@ class ConvoyGenerator:
                 self.generate_convoy(convoy)
 
     def generate_convoy(self, convoy: Convoy) -> VehicleGroup:
-        if self.game.settings.perf_moving_convoys:
-            group = self._create_mixed_unit_group(
-                convoy.name,
-                convoy.route_start,
-                convoy.units,
-                convoy.player_owned,
-            )
+        group = self._create_mixed_unit_group(
+            convoy.name,
+            convoy.route_start,
+            convoy.units,
+            convoy.player_owned,
+        )
 
+        if self.game.settings.perf_moving_convoys:
             group.add_waypoint(
                 convoy.route_end,
                 speed=kph(40).kph,
                 move_formation=PointAction.OnRoad,
             )
-
         else:
             # perf_moving_convoys is disabled, so add the convoy between the route start and route end.
             # This option aims to remove long routes for ground vehicles between control points,
             # since the CPU load for long routes on DCS is pretty heavy.
             frontline = FrontLine(convoy.origin, convoy.destination)
 
-            # Select a segment roughly a third of the way from the origin towards the destination
-            # so the convoy spawns between the control points but is still close enough to the
-            # origin CP to be targeted by BAI flights and within the protection umbrella of the CP.
-            # Convoy start and end waypoints are not the same, so it'll move a little
-            # before stopping and hopefully find a road to drive on.
-            convoy_segment = int(0.3 * len(frontline.segments))
-
-            group = self._create_mixed_unit_group(
-                convoy.name,
-                frontline.segments[convoy_segment].point_a,
-                convoy.units,
-                convoy.player_owned,
-            )
-
+            # Select the first route segment from the origin towards the destination
+            # so the convoy spawns at the origin CP. This allows the convoy to be
+            # targeted by BAI flights and starts it within the protection umbrella of the CP.
             group.add_waypoint(
-                frontline.segments[convoy_segment].point_b,
+                frontline.segments[0].point_b,
                 speed=kph(40).kph,
                 move_formation=PointAction.OnRoad,
             )
