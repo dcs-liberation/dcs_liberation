@@ -13,7 +13,6 @@ class CarrierGroupGenerator(ShipGroupGenerator):
     def generate(self) -> None:
 
         if self.faction.carriers:
-            print(self.ground_object.control_point)
             # If the campaign designer has specified a preferred type, use that
             if (
                 self.ground_object.control_point.preferred_type
