@@ -23,6 +23,12 @@ class AutoAtoBehavior(Enum):
     Prefer = "Prefer player pilots"
 
 
+class NightMissions(Enum):
+    DayAndNight = "nightmissions_nightandday"
+    OnlyDay = "nightmissions_onlyday"
+    OnlyNight = "nightmissions_onlynight"
+
+
 DIFFICULTY_PAGE = "Difficulty"
 
 AI_DIFFICULTY_SECTION = "AI Difficulty"
@@ -104,11 +110,16 @@ class Settings:
         section=MISSION_DIFFICULTY_SECTION,
         default=True,
     )
-    night_disabled: bool = boolean_option(
-        "No night missions",
+    night_day_missions: NightMissions = choices_option(
+        "Night/day mission options",
         page=DIFFICULTY_PAGE,
         section=MISSION_DIFFICULTY_SECTION,
-        default=False,
+        choices={
+            "Generate night and day missions": NightMissions.DayAndNight,
+            "Only generate day missions": NightMissions.OnlyDay,
+            "Only generate night missions": NightMissions.OnlyNight,
+        },
+        default=NightMissions.DayAndNight,
     )
     # Mission Restrictions
     labels: str = choices_option(

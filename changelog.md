@@ -7,6 +7,7 @@ Saves from 5.0.0 are compatible with 5.1.0
 * **[Engine]** Support for DCS 2.7.9.17830 and newer, including the HTS and ECM pod.
 * **[Campaign]** Add option to manually add and remove squadrons and different aircraft type in the new game wizard / air wing configuration dialog.
 * **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
+* **[Mission Generation]** Add Option to select between only night missions, day missions or any time (default).
 * **[Modding]** Add F-104 mod support
 
 ## Fixes
