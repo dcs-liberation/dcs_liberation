@@ -111,6 +111,12 @@ class Settings:
         section=MISSION_DIFFICULTY_SECTION,
         default=False,
     )
+    night_missions_only: bool = boolean_option(
+        "Only night missions",
+        page=DIFFICULTY_PAGE,
+        section=MISSION_DIFFICULTY_SECTION,
+        default=False,
+    )
     # Mission Restrictions
     labels: str = choices_option(
         "In game labels",

@@ -300,7 +300,11 @@ class Conditions:
         settings: Settings,
     ) -> Conditions:
         _start_time = cls.generate_start_time(
-            theater, day, time_of_day, settings.night_disabled
+            theater,
+            day,
+            time_of_day,
+            settings.night_disabled,
+            settings.night_missions_only,
         )
         return cls(
             time_of_day=time_of_day,
@@ -315,6 +319,7 @@ class Conditions:
         day: datetime.date,
         time_of_day: TimeOfDay,
         night_disabled: bool,
+        night_missions_only: bool,
     ) -> datetime.datetime:
         if night_disabled:
             logging.info("Skip Night mission due to user settings")
@@ -323,6 +328,14 @@ class Conditions:
                 TimeOfDay.Day: (10, 12),
                 TimeOfDay.Dusk: (12, 14),
                 TimeOfDay.Night: (14, 17),
+            }[time_of_day]
+        elif night_missions_only:
+            logging.info("Skip Day mission due to user settings")
+            time_range = {
+                TimeOfDay.Dawn: (0, 3),
+                TimeOfDay.Day: (3, 6),
+                TimeOfDay.Dusk: (21, 22),
+                TimeOfDay.Night: (22, 23),
             }[time_of_day]
         else:
             time_range = theater.daytime_map[time_of_day.value]
