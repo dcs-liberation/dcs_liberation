@@ -99,7 +99,7 @@ class TestFactionLoader(unittest.TestCase):
 
             self.assertIn("HawkGenerator", faction.air_defenses)
 
-            self.assertIn(Stennis, faction.aircraft_carrier)
+            self.assertIn(Stennis, faction.carriers.keys())
             self.assertIn(LHA_Tarawa, faction.helicopter_carrier)
             self.assertIn(PERRY, faction.destroyers)
             self.assertIn(USS_Arleigh_Burke_IIa, faction.destroyers)
@@ -108,7 +108,7 @@ class TestFactionLoader(unittest.TestCase):
             self.assertIn("mod", faction.requirements.keys())
             self.assertIn("Some mod is required", faction.requirements.values())
 
-            self.assertEqual(4, len(faction.carrier_names))
+            self.assertEqual(4, len(faction.carriers.values()))
             self.assertEqual(5, len(faction.helicopter_carrier_names))
 
             self.assertIn("OliverHazardPerryGroupGenerator", faction.navy_generators)
