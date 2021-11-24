@@ -24,6 +24,7 @@ from game.theater import (
 )
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
+from .campaignairbaseconfig import CampaignAirBaseConfig
 from .mizcampaignloader import MizCampaignLoader
 from .. import persistency
 
@@ -131,6 +132,13 @@ class Campaign:
             logging.warning(f"Campaign {self.name} does not define any squadrons")
             return CampaignAirWingConfig({})
         return CampaignAirWingConfig.from_campaign_data(squadron_data, theater)
+
+    def load_air_base_config(self, theater: ConflictTheater) -> CampaignAirBaseConfig:
+        try:
+            airbase_data = self.data["airbases"]
+        except KeyError:
+            return CampaignAirBaseConfig({})
+        return CampaignAirBaseConfig.from_campaign_data(airbase_data, theater)
 
     @property
     def is_out_of_date(self) -> bool:

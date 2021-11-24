@@ -120,6 +120,7 @@ class NewGameWizard(QtWidgets.QWizard):
             red_faction,
             theater,
             campaign.load_air_wing_config(theater),
+            campaign.load_air_base_config(theater),
             settings,
             generator_settings,
             mod_settings,
