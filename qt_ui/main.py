@@ -239,7 +239,6 @@ def create_game(
         FACTIONS[red],
         theater,
         campaign.load_air_wing_config(theater),
-        campaign.load_air_base_config(theater),
         Settings(
             supercarrier=supercarrier,
             automate_runway_repair=auto_procurement,
@@ -268,6 +267,7 @@ def create_game(
             frenchpack=False,
             high_digit_sams=False,
         ),
+        campaign.load_air_base_config(theater),
     )
     game = generator.generate()
     game.begin_turn_0()
