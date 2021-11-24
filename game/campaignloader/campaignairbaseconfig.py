@@ -31,13 +31,13 @@ class CampaignAirBaseConfig:
         cls, data: dict[Union[str, int], Any], theater: ConflictTheater
     ) -> CampaignAirBaseConfig:
         by_location: dict[ControlPoint, list[AirBaseConfig]] = defaultdict(list)
-        for base_id, airbase_configs in data.items():
+        for base_id, airbase_config_data in data.items():
             if isinstance(base_id, int):
                 base = theater.find_control_point_by_id(base_id)
             else:
                 base = theater.control_point_named(base_id)
 
-            airbase_config = AirBaseConfig.from_data(airbase_configs)
+            airbase_config = AirBaseConfig.from_data(airbase_config_data)
             base.increased_aircraft_autoplanner_variety = (
                 airbase_config.increased_aircraft_autoplanner_variety
             )
