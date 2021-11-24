@@ -137,7 +137,6 @@ class Campaign:
         try:
             carrier_data = self.data["carriers"]
         except KeyError:
-            logging.warning(f"Campaign {self.name} does not define any carriers")
             return CampaignCarrierConfig({})
         return CampaignCarrierConfig.from_campaign_data(carrier_data, theater)
 

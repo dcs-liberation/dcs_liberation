@@ -229,6 +229,8 @@ class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
         self.control_point.connected_objectives.append(g)
 
         # If the campaign designer has specified a preferred name, use that
+        # Note that the preferred name needs to exist in the faction, so we
+        # don't end up with Kuznetsov carriers called CV-59 Forrestal
         carrier_type = ship_type_from_name(group.units[0].type)
         if (
             self.control_point.preferred_name
