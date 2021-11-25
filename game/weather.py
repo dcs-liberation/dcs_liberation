@@ -19,6 +19,12 @@ if TYPE_CHECKING:
     from game.theater.seasonalconditions import SeasonalConditions
 
 
+class NightMissions(Enum):
+    DayAndNight = "nightmissions_nightandday"
+    OnlyDay = "nightmissions_onlyday"
+    OnlyNight = "nightmissions_onlynight"
+
+
 class TimeOfDay(Enum):
     Dawn = "dawn"
     Day = "day"
@@ -303,8 +309,7 @@ class Conditions:
             theater,
             day,
             time_of_day,
-            settings.night_disabled,
-            settings.night_missions_only,
+            settings.night_day_missions,
         )
         return cls(
             time_of_day=time_of_day,
@@ -318,10 +323,9 @@ class Conditions:
         theater: ConflictTheater,
         day: datetime.date,
         time_of_day: TimeOfDay,
-        night_disabled: bool,
-        night_missions_only: bool,
+        night_day_missions: NightMissions,
     ) -> datetime.datetime:
-        if night_disabled:
+        if night_day_missions == NightMissions.OnlyDay:
             logging.info("Skip Night mission due to user settings")
             time_range = {
                 TimeOfDay.Dawn: (8, 9),
@@ -329,7 +333,7 @@ class Conditions:
                 TimeOfDay.Dusk: (12, 14),
                 TimeOfDay.Night: (14, 17),
             }[time_of_day]
-        elif night_missions_only:
+        elif night_day_missions == NightMissions.OnlyNight:
             logging.info("Skip Day mission due to user settings")
             time_range = {
                 TimeOfDay.Dawn: (0, 3),

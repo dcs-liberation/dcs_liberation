@@ -14,6 +14,7 @@ from .minutesoption import minutes_option
 from .optiondescription import OptionDescription, SETTING_DESCRIPTION_KEY
 from .skilloption import skill_option
 from ..ato.starttype import StartType
+from ..weather import NightMissions
 
 
 @unique
@@ -105,17 +106,16 @@ class Settings:
         section=MISSION_DIFFICULTY_SECTION,
         default=True,
     )
-    night_disabled: bool = boolean_option(
-        "No night missions",
+    night_day_missions: NightMissions = choices_option(
+        "Night/day mission options",
         page=DIFFICULTY_PAGE,
-        section=MISSION_DIFFICULTY_SECTION,
-        default=False,
-    )
-    night_missions_only: bool = boolean_option(
-        "Only night missions",
-        page=DIFFICULTY_PAGE,
-        section=MISSION_DIFFICULTY_SECTION,
-        default=False,
+        section=MISSION_RESTRICTIONS_SECTION,
+        choices={
+            "Generate night and day missions": NightMissions.DayAndNight,
+            "Only generate day missions": NightMissions.OnlyDay,
+            "Only generate night missions": NightMissions.OnlyNight,
+        },
+        default=NightMissions.DayAndNight,
     )
     # Mission Restrictions
     labels: str = choices_option(
