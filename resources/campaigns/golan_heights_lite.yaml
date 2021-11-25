@@ -7,7 +7,95 @@ recommended_enemy_faction: Syria 2011
 description: <p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/><br/>This scenario is designed to be performance and helicopter friendly.</p>
 miz: golan_heights_lite.miz
 performance: 1
-version: "9.0"
+version: "10.1"
+advanced_iads: true # Campaign has connection_nodes / power_sources / command_centers
+iads_config:
+  - LHA-1 Tarawa # A Naval Group without connections but still participating as EWR
+  - Naval-2 # 2 Ship as EWR
+  - CVN-74 John Stennis # Aircraft Carrier as EWR
+  - Golan North-100:
+    - IADS_CN2
+    - IADS_PS4
+    - IADS_PS3
+  - Golan North-11:
+    - IADS_CN2
+    - IADS_PS3
+  - Golan North-139:
+    - IADS_PS2
+    - IADS_CN6
+  - Golan North-15:
+    - IADS_PS5
+    - IADS_PS6
+    - IADS_CN3
+    - IADS_CN1
+  - Golan North-150:
+    - IADS_PS2
+    - IADS_CN1
+    - IADS_CN6
+  - Golan North-158:
+    - IADS_PS6
+    - IADS_CN1
+  - Golan North-159:
+    - IADS_PS3
+    - IADS_CN4
+  - Golan North-17:
+    - IADS_PS4
+    - IADS_CN7
+    - IADS_CN5
+  - Golan North-5:
+    - IADS_PS3
+    - IADS_CN4
+  - Golan North-6:
+    - IADS_PS3
+    - IADS_CN4
+  - Golan North-74:
+    - IADS_PS6
+    - IADS_CN1
+  - Golan North-81:
+    - IADS_PS1
+    - IADS_CN6
+    - IADS_CN8
+  - Golan North-84:
+    - IADS_PS2
+    - IADS_CN6
+  - Golan North-88:
+    - IADS_PS6
+    - IADS_PS2
+    - IADS_CN1
+    - IADS_CN6
+    - IADS_CN8
+  - Golan North-9:
+    - IADS_PS1
+    - IADS_CN8
+  - Golan North-99:
+    - IADS_PS4
+    - IADS_CN7
+    - IADS_CN2
+  - Golan North-146:
+    - IADS_PS2
+    - IADS_CN6
+  - Golan North-52:
+    - IADS_PS5
+    - IADS_CN3
+    - IADS_CN5
+  - Golan North-118:
+    - IADS_PS3
+    - IADS_CN4
+  - Golan North-119:
+    - IADS_PS4
+    - IADS_CN7
+    - IADS_CN5
+  - Golan North-122:
+    - IADS_PS2
+    - IADS_CN6
+  - IADS Blue Command Center:
+    - IADS_PS3
+    - IADS_CN4
+    - IADS_CN2
+  - IADS Red Command Center:
+    - IADS_PS1
+    - IADS_CN6
+    - IADS_CN8
 squadrons:
   # Ramat-David
   30:
