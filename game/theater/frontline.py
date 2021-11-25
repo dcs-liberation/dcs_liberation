@@ -161,9 +161,15 @@ class FrontLine(MissionTarget):
                 )
             else:
                 remaining_dist -= segment.attack_distance
-        raise RuntimeError(
-            f"Could not find front line point {distance} from {self.blue_cp}"
-        )
+        if distance > 100:
+            # Failed to find front line point the intended distance away.
+            # Control points are probably closer to each other than FRONTLINE_MIN_CP_DISTANCE
+            # Recursively try again with shorter distance until succeeds.
+            return self.point_from_a(distance - 100)
+        else:
+            raise RuntimeError(
+                f"Could not find front line point {distance} from {self.blue_cp}"
+            )
 
     @property
     def _position_distance(self) -> float:
