@@ -109,7 +109,7 @@ class Settings:
     night_day_missions: NightMissions = choices_option(
         "Night/day mission options",
         page=DIFFICULTY_PAGE,
-        section=MISSION_RESTRICTIONS_SECTION,
+        section=MISSION_DIFFICULTY_SECTION,
         choices={
             "Generate night and day missions": NightMissions.DayAndNight,
             "Only generate day missions": NightMissions.OnlyDay,
