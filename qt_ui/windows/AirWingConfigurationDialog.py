@@ -23,6 +23,7 @@ from PySide2.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
+    QCheckBox,
 )
 
 from game import Game
