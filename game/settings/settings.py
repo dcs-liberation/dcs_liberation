@@ -378,6 +378,12 @@ class Settings:
         section=PERFORMANCE_SECTION,
         default=True,
     )
+    convoys_travel_full_distance: bool = boolean_option(
+        "Convoys drive the full distance between control points",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
     perf_infantry: bool = boolean_option(
         "Generate infantry squads alongside vehicles",
         page=MISSION_GENERATOR_PAGE,
