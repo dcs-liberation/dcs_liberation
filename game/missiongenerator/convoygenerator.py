@@ -40,26 +40,24 @@ class ConvoyGenerator:
             convoy.player_owned,
         )
 
-        if self.game.settings.perf_moving_convoys:
-            group.add_waypoint(
-                convoy.route_end,
-                speed=kph(40).kph,
-                move_formation=PointAction.OnRoad,
-            )
+        if self.game.settings.convoys_travel_full_distance:
+            end_point = convoy.route_end
         else:
-            # perf_moving_convoys is disabled, so add the convoy between the route start and route end.
+            # convoys_travel_full_distance is disabled, so have the convoy only move the first segment on the route.
             # This option aims to remove long routes for ground vehicles between control points,
-            # since the CPU load for long routes on DCS is pretty heavy.
+            # since the CPU load for pathfinding long routes on DCS can be pretty heavy.
             frontline = FrontLine(convoy.origin, convoy.destination)
 
             # Select the first route segment from the origin towards the destination
             # so the convoy spawns at the origin CP. This allows the convoy to be
             # targeted by BAI flights and starts it within the protection umbrella of the CP.
-            group.add_waypoint(
-                frontline.segments[0].point_b,
-                speed=kph(40).kph,
-                move_formation=PointAction.OnRoad,
-            )
+            end_point = frontline.segments[0].point_b
+
+        group.add_waypoint(
+            end_point,
+            speed=kph(40).kph,
+            move_formation=PointAction.OnRoad,
+        )
 
         self.make_drivable(group)
         self.unit_map.add_convoy_units(group, convoy)
