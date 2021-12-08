@@ -1,0 +1,7 @@
+name: AIM-54A-MK47
+year: 1974
+fallback: AIM-7MH
+clsids:
+  - "{SHOULDER AIM_54A_Mk47 R}"
+  - "{SHOULDER AIM_54A_Mk47 L}"
+  - "{AIM_54A_Mk47}"
