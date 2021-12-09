@@ -1,0 +1,5 @@
+name: AGM-65E
+year: 1985
+fallback: 2xMk 82
+clsids:
+  - "{F16A4DE0-116C-4A71-97F0-2CF85B0313EC}"
