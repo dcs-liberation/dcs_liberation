@@ -1,4 +1,5 @@
 name: Mk 84
+fallback: 2xMk 83
 clsids:
   - "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}"
   - "{BRU-32 MK-84}"

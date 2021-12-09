@@ -1,4 +1,5 @@
 name: Mk 83
+fallback: 2xMk 82
 clsids:
   - "{MAK79_MK83 1R}"
   - "{MAK79_MK83 1L}"
