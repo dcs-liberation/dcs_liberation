@@ -1,5 +1,5 @@
 name: AGM-65F
 year: 1991
-fallback: 2xMk 82
+fallback: AGM-62 Walleye II
 clsids:
   - "LAU_117_AGM_65F"
