@@ -1,0 +1,5 @@
+name: LAU-131 pod - 7 x 2.75\" Hydra, Laser Guided Rkts M282, MPP APKWS
+year: 2012
+fallback: AGM-65F
+clsids:
+  - "{LAU-131 - 7 AGR-20 M282}"
