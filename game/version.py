@@ -123,4 +123,8 @@ VERSION = _build_version_string()
 #: Version 9.1
 #: * Campaign files can optionally define a start date with
 #:   `recommended_start_date: YYYY-MM-DD`.
-CAMPAIGN_FORMAT_VERSION = (9, 1)
+#:
+#: Version 9.2
+#: * Campaign files can optionally define the iads configuration
+#:   It is possible to define if the campaign supports advanced iads
+CAMPAIGN_FORMAT_VERSION = (9, 2)
