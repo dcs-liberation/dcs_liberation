@@ -9,6 +9,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from dcs.ships import Stennis, KUZNECOW
 
 from game import Game
 from game.ato.flighttype import FlightType
@@ -245,43 +246,25 @@ class QBaseMenu2(QDialog):
         except:
             game = None
 
-        if self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
-            for ground_object in self.cp.ground_objects:
-                for group in ground_object.groups:
-                    for unit in group.units:
-                        if unit.type == "Forrestal":
-                            return "./resources/ui/carrier_cv59.png"
-                        elif (
-                            unit.type == "Stennis"
-                            and game is not None
-                            and game.settings.supercarrier
-                            or unit.type == "CVN_71"
-                            or unit.type == "CVN_72"
-                            or unit.type == "CVN_73"
-                            or unit.type == "CVN_75"
-                        ):
-                            return "./resources/ui/carrier_cvn75.png"
-                        elif (
-                            unit.type == "KUZNECOW"
-                            and game is not None
-                            and not game.settings.supercarrier
-                        ):
-                            return "./resources/ui/carrier_kuz.png"
-                        elif (
-                            unit.type == "KUZNECOW"
-                            and game is not None
-                            and game.settings.supercarrier
-                            or unit.type == "CV_1143_5"
-                        ):
-                            return "./resources/ui/carrier_kuz_2017.png"
-            return "./resources/ui/carrier.png"
-        elif self.cp.cptype == ControlPointType.LHA_GROUP:
-            for ground_object in self.cp.ground_objects:
-                for group in ground_object.groups:
-                    for unit in group.units:
-                        if unit.type == "Type_071":
-                            return "./resources/ui/lha_type071.png"
-            return "./resources/ui/lha.png"
+        if (
+            self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP
+            or self.cp.cptype == ControlPointType.LHA_GROUP
+        ):
+            carrier_type = self.cp.get_carrier_group_type()
+            if (
+                db.ship_type_from_name(carrier_type)
+                in [
+                    Stennis,
+                    KUZNECOW,
+                ]
+                and game is not None
+                and game.settings.supercarrier
+            ):
+                supercarrier_type = db.upgrade_to_supercarrier(
+                    db.ship_type_from_name(carrier_type), self.cp.name
+                ).id
+                return "./resources/ui/units/ships/" + str(supercarrier_type) + ".png"
+            return "./resources/ui/units/ships/" + str(carrier_type) + ".png"
         elif self.cp.cptype == ControlPointType.FOB and self.cp.has_helipads:
             return "./resources/ui/heliport.png"
         elif self.cp.cptype == ControlPointType.FOB:
