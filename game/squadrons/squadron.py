@@ -43,6 +43,15 @@ class Squadron:
         default_factory=list, init=False, hash=False, compare=False
     )
 
+    #: A separate list of pilots for the autoplanner.
+    #: The pilots will be reserved from here during each turn when running the autoplanner,
+    #: before actual aircraft orders are made. This will prevent the autoplanner from making
+    #: several overlapping orders for the same squadron, potentially causing the number of
+    #: ordered aircraft from exceeding the number of available pilots.
+    autoplannable_pilots: list[Pilot] = field(
+        default_factory=list, init=False, hash=False, compare=False
+    )
+
     auto_assignable_mission_types: set[FlightType] = field(
         init=False, hash=False, compare=False
     )
@@ -189,6 +198,17 @@ class Squadron:
         self.available_pilots = list(self.active_pilots)
         self.untasked_aircraft = self.owned_aircraft
 
+    def release_autoplanner_pilot_reservations(self) -> None:
+        self.autoplannable_pilots = self.available_pilots
+
+    def autoplanner_reserve_pilots(self, number_of_pilots: int) -> bool:
+        # Remove the reserved pilots from the autoplanner pool for this turn
+        if number_of_pilots > self.number_of_autoplannable_pilots:
+            return False
+        for pilot in range(number_of_pilots):
+            self.autoplannable_pilots.pop()
+        return True
+
     @staticmethod
     def send_on_leave(pilot: Pilot) -> None:
         pilot.send_on_leave()
@@ -234,8 +254,29 @@ class Squadron:
     def number_of_available_pilots(self) -> int:
         return len(self.available_pilots)
 
+    @property
+    def number_of_autoplannable_pilots(self) -> int:
+        return len(self.autoplannable_pilots)
+
     def can_provide_pilots(self, count: int) -> bool:
-        return not self.pilot_limits_enabled or self.number_of_available_pilots >= count
+        if self.pilot_limits_enabled:
+            # Include the potential pilot reinforcements in the number of available pilots,
+            # because any ordered aircraft will be delivered next turn when pilots may have also
+            # been replenished.
+            number_of_reinf_pilots = min(
+                self.settings.squadron_replenishment_rate,
+                self.settings.squadron_pilot_limit
+                - self.number_of_pilots_including_inactive,
+            )
+            number_of_autoplannable_pilots = (
+                self.number_of_autoplannable_pilots + number_of_reinf_pilots
+            )
+            if number_of_autoplannable_pilots > self.settings.squadron_pilot_limit:
+                number_of_autoplannable_pilots = self.settings.squadron_pilot_limit
+
+            return number_of_autoplannable_pilots >= count
+        else:
+            return True
 
     @property
     def has_available_pilots(self) -> bool:
@@ -254,6 +295,8 @@ class Squadron:
         if not self.can_auto_assign(task):
             return False
         if this_turn and not self.can_fulfill_flight(size):
+            return False
+        if not self.can_provide_pilots(size):
             return False
 
         distance_to_target = meters(location.distance_to(self.location))

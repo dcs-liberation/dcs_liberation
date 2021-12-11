@@ -51,6 +51,10 @@ class ProcurementAi:
         self.manage_aircraft = manage_aircraft
         self.threat_zones = self.game.threat_zone_for(not self.is_player)
 
+        for squadrons in self.air_wing.squadrons.values():
+            for squadron in squadrons:
+                squadron.release_autoplanner_pilot_reservations()
+
     def calculate_ground_unit_budget_share(self) -> float:
         armor_investment = 0
         aircraft_investment = 0
@@ -185,11 +189,21 @@ class ProcurementAi:
     ) -> Tuple[float, bool]:
         for squadron in squadrons:
             price = squadron.aircraft.price * quantity
+
+            # Final check to make sure the number of aircraft won't exceed the number of available pilots
+            # after fulfilling this aircraft request.
+            if (
+                squadron.pilot_limits_enabled
+                and squadron.owned_aircraft + squadron.pending_deliveries + quantity
+                > squadron.max_size
+            ):
+                continue
             if price > budget:
                 continue
 
             squadron.pending_deliveries += quantity
             budget -= price
+            squadron.release_autoplanner_pilot_reservations()
             return budget, True
         return budget, False
 
