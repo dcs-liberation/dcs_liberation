@@ -243,7 +243,7 @@ class QBaseMenu2(QDialog):
     def get_base_image(self):
         try:
             game = self.game_model.game
-        except:
+        except AttributeError:
             game = None
 
         if (
@@ -263,8 +263,8 @@ class QBaseMenu2(QDialog):
                 supercarrier_type = db.upgrade_to_supercarrier(
                     db.ship_type_from_name(carrier_type), self.cp.name
                 ).id
-                return "./resources/ui/units/ships/" + str(supercarrier_type) + ".png"
-            return "./resources/ui/units/ships/" + str(carrier_type) + ".png"
+                return f"./resources/ui/units/ships/{supercarrier_type}.png"
+            return f"./resources/ui/units/ships/{carrier_type}.png"
         elif self.cp.cptype == ControlPointType.FOB and self.cp.has_helipads:
             return "./resources/ui/heliport.png"
         elif self.cp.cptype == ControlPointType.FOB:
