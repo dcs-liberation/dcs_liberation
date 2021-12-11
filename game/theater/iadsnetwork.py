@@ -20,8 +20,9 @@ def find_tgo_by_original_name(
     return [
         go
         for go in ground_objects
-        if isinstance(go, IadsGroundObject)
-        or isinstance(go, IadsBuildingGroundObject)
+        if (
+            isinstance(go, IadsGroundObject) or isinstance(go, IadsBuildingGroundObject)
+        )
         and go.original_name == name
     ]
 
