@@ -138,6 +138,15 @@ class Settings:
         MISSION_RESTRICTIONS_SECTION,
         default=True,
     )
+
+    easy_communication: Optional[bool] = choices_option(
+        "Easy Communication",
+        page=DIFFICULTY_PAGE,
+        section=MISSION_RESTRICTIONS_SECTION,
+        choices={"Player preference": None, "Enforced on": True, "Enforced off": False},
+        default=None,
+    )
+
     battle_damage_assessment: Optional[bool] = choices_option(
         "Battle damage assessment",
         page=DIFFICULTY_PAGE,

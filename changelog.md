@@ -7,6 +7,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Engine]** Support for DCS DCS 2.7.8.16140 and newer, including the HTS.
 * **[Mission Generation]** Added an option to fast-forward mission generation until the point of first contact (WIP).
 * **[Flight Planning]** Added the ability to plan tankers for recovery on package flights.  AI does not plan.
+* **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
 
 ## Fixes
 
