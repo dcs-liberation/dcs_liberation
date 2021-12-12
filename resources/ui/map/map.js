@@ -4,6 +4,8 @@ const ENABLE_EXPENSIVE_DEBUG_TOOLS = false;
 
 const Colors = Object.freeze({
   Blue: "#0084ff",
+  SkyBlue: "#87CEEB",
+  LightOrange: "#FFD580",
   Red: "#c85050",
   Green: "#80BA80",
   Highlight: "#ffff00",
@@ -215,6 +217,8 @@ const redSamDetectionLayer = L.layerGroup();
 const redFlightPlansLayer = L.layerGroup();
 const selectedFlightPlansLayer = L.layerGroup();
 const allFlightPlansLayer = L.layerGroup();
+const blueIadsNetworkLayer = L.layerGroup();
+const redIadsNetworkLayer = L.layerGroup();
 
 const blueFullThreatZones = L.layerGroup();
 const blueAircraftThreatZones = L.layerGroup();
@@ -299,10 +303,12 @@ L.control
       "Enemy Air Defenses": {
         "Enemy SAM threat range": redSamThreatLayer,
         "Enemy SAM detection range": redSamDetectionLayer,
+        "Enemy IADS Network": redIadsNetworkLayer, // TODO how to hide if campaign does not suppot advanced iads?
       },
       "Allied Air Defenses": {
         "Ally SAM threat range": blueSamThreatLayer,
         "Ally SAM detection range": blueSamDetectionLayer,
+        "Ally IADS Network": blueIadsNetworkLayer, // TODO how to hide if campaign does not suppot advanced iads?
       },
       "Flight Plans": {
         Hide: L.layerGroup(),
@@ -345,6 +351,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.groundObjectsChanged.connect(drawGroundObjects);
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.frontLinesChanged.connect(drawFrontLines);
+  game.iadsConnectionsChanged.connect(drawIadsNetwork);
   game.flightsChanged.connect(drawAircraft);
   game.threatZonesChanged.connect(drawThreatZones);
   game.navmeshesChanged.connect(drawNavmeshes);
@@ -1031,6 +1038,29 @@ function drawThreatZones() {
   );
 }
 
+function _drawIadsConnection(connection, layer) {
+    const color = connection.is_power_connection ? Colors.LightOrange : Colors.SkyBlue;
+    L.polyline(connection.points, {
+      color: color,
+      weight: 1,
+      fill: true,
+      fillOpacity: 0.4,
+      noClip: true,
+      interactive: false,
+    }).addTo(layer);
+}
+
+function drawIadsNetwork() {
+    blueIadsNetworkLayer.clearLayers();
+    redIadsNetworkLayer.clearLayers();
+    for (const connection of game.iadsConnections) {
+        _drawIadsConnection(
+            connection,
+            connection.blue ? blueIadsNetworkLayer : redIadsNetworkLayer,
+        );
+    }
+}
+
 function drawNavmesh(zones, layer) {
   for (const zone of zones) {
     L.polyline(zone.poly, {
@@ -1274,6 +1304,7 @@ function drawInitialMap() {
   drawJoinZones();
   drawHoldZones();
   drawCombat();
+  drawIadsNetwork();
 }
 
 function clearAllLayers() {

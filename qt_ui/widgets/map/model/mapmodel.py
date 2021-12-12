@@ -26,6 +26,7 @@ from .flightjs import FlightJs
 from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
 from .holdzonesjs import HoldZonesJs
+from .iadsnetworkjs import IadsConnectionJs
 from .ipcombatjs import IpCombatJs
 from .ipzonesjs import IpZonesJs
 from .joinzonesjs import JoinZonesJs
@@ -74,6 +75,7 @@ class MapModel(QObject):
     airCombatsChanged = Signal()
     samCombatsChanged = Signal()
     ipCombatsChanged = Signal()
+    iadsConnectionsChanged = Signal()
 
     def __init__(self, game_model: GameModel, sim_controller: SimController) -> None:
         super().__init__()
@@ -97,6 +99,7 @@ class MapModel(QObject):
         self._air_combats = []
         self._sam_combats = []
         self._ip_combats = []
+        self._iads_connections = []
 
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
@@ -125,6 +128,7 @@ class MapModel(QObject):
         self._air_combats = []
         self._sam_combats = []
         self._ip_combats = []
+        self._iads_connections = []
         self.cleared.emit()
 
     def on_sim_update(self, events: GameUpdateEvents) -> None:
@@ -207,6 +211,7 @@ class MapModel(QObject):
             self.reset_map_zones()
             self.reset_unculled_zones()
             self.reset_combats()
+            self.reset_iads_connections()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -332,6 +337,39 @@ class MapModel(QObject):
     @Property(list, notify=supplyRoutesChanged)
     def supplyRoutes(self) -> List[SupplyRouteJs]:
         return self._supply_routes
+
+    def reset_iads_connections(self) -> None:
+        # TODO Fallback if basic connection?
+        self._iads_connections = []
+        for connection in self.game.theater.iads_network.connections:
+            if not connection.participate:
+                continue  # Skip
+            for connected_node in connection.connected_nodes:
+                if not connected_node.participate:
+                    continue  # Skip
+                if connected_node.ground_object.is_friendly(
+                    True
+                ) != connection.ground_object.is_friendly(True):
+                    continue  # Skip connections which are not from same coalition
+                points = [
+                    self.leaflet_coord_for(
+                        connection.ground_object.position, self.game.theater
+                    ),
+                    self.leaflet_coord_for(
+                        connected_node.ground_object.position, self.game.theater
+                    ),
+                ]
+                self._iads_connections.append(
+                    IadsConnectionJs(
+                        connection.ground_object, connected_node.ground_object, points
+                    )
+                )
+
+        self.iadsConnectionsChanged.emit()
+
+    @Property(list, notify=iadsConnectionsChanged)
+    def iadsConnections(self) -> List[IadsConnectionJs]:
+        return self._iads_connections
 
     def reset_front_lines(self) -> None:
         self._front_lines = [

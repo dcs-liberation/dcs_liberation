@@ -91,7 +91,7 @@ class GroundObjectJs(QObject):
         else:
             for building in self.buildings:
                 dead = " [DEAD]" if building.is_dead else ""
-                units.append(f"{building.dcs_identifier}{dead}")
+                units.append(f"{building.display_name}{dead}")
         return units
 
     @Property(bool, notify=blueChanged)

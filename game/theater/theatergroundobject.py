@@ -99,6 +99,11 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
         return f"{self.category}|{self.group_id}"
 
     @property
+    def display_name(self) -> str:
+        """The display name of the tgo which will be shown on the map."""
+        return self.group_name
+
+    @property
     def waypoint_name(self) -> str:
         return f"[{self.name}] {self.category}"
 
@@ -247,6 +252,10 @@ class BuildingGroundObject(TheaterGroundObject[VehicleGroup]):
     def group_name(self) -> str:
         """The name of the unit group."""
         return f"{self.category}|{self.group_id}|{self.object_id}"
+
+    @property
+    def display_name(self) -> str:
+        return f"{self.category} #{self.group_id}|{self.object_id}".title()
 
     @property
     def waypoint_name(self) -> str:
@@ -709,6 +718,10 @@ class IadsBuildingGroundObject(BuildingGroundObject):
         )
         self.original_name = preset_location.original_name  # store original name
         self.iads_role = iads_role
+
+    @property
+    def display_name(self) -> str:
+        return f"IADS {self.iads_role.value} #{self.group_id}"
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
