@@ -5,6 +5,7 @@ Saves from 5.0.0 are not compatible with 5.1.0
 ## Features/Improvements
 
 * **[Engine]** Support for DCS DCS 2.7.8.16140 and newer, including the HTS.
+* **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
 
 ## Fixes
 
