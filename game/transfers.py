@@ -699,6 +699,8 @@ class PendingTransfers:
         completable_transfers = []
         for transfer in self.pending_transfers:
             if not transfer.is_completable(self.network_for(transfer.position)):
+                if transfer.transport:
+                    self.cancel_transport(transfer.transport, transfer)
                 transfer.disband()
             else:
                 completable_transfers.append(transfer)
