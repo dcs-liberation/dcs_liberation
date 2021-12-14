@@ -241,10 +241,7 @@ class QBaseMenu2(QDialog):
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     def get_base_image(self):
-        try:
-            game = self.game_model.game
-        except AttributeError:
-            game = None
+        game = self.game_model.game
 
         if (
             self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP
@@ -257,7 +254,6 @@ class QBaseMenu2(QDialog):
                     Stennis,
                     KUZNECOW,
                 ]
-                and game is not None
                 and game.settings.supercarrier
             ):
                 supercarrier_type = db.upgrade_to_supercarrier(
