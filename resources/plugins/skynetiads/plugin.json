@@ -1,6 +1,6 @@
 {
     "nameInUI": "Skynet IADS",
-    "defaultValue": false,
+    "defaultValue": true,
     "specificOptions": [
         {
             "nameInUI": "create IADS for RED coalition",
