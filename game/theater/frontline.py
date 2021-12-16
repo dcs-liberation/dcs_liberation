@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from math import sqrt
 from typing import Iterator, List, Tuple, Any, TYPE_CHECKING
 
 from dcs.mapping import Point
@@ -65,10 +66,23 @@ class FrontLine(MissionTarget):
         self.segments: List[FrontLineSegment] = [
             FrontLineSegment(a, b) for a, b in pairwise(route)
         ]
-        super().__init__(
-            f"Front line {blue_point}/{red_point}",
-            self.point_from_a(self._position_distance),
-        )
+        try:
+            super().__init__(
+                f"Front line {blue_point}/{red_point}",
+                self.point_from_a(self._position_distance),
+            )
+        except RuntimeError:
+            # Failed to find front line point the intended distance away.
+            # Control points are probably closer to each other than FRONTLINE_MIN_CP_DISTANCE
+            # Fallback: try again with the middle point between the control points.
+            distance_between = sqrt(
+                ((blue_point.position.x - red_point.position.x) ** 2)
+                + ((blue_point.position.y - red_point.position.y) ** 2)
+            )
+            super().__init__(
+                f"Front line {blue_point}/{red_point}",
+                self.point_from_a(distance_between / 2),
+            )
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, FrontLine):
@@ -161,15 +175,9 @@ class FrontLine(MissionTarget):
                 )
             else:
                 remaining_dist -= segment.attack_distance
-        if distance > 100:
-            # Failed to find front line point the intended distance away.
-            # Control points are probably closer to each other than FRONTLINE_MIN_CP_DISTANCE
-            # Recursively try again with shorter distance until succeeds.
-            return self.point_from_a(distance - 100)
-        else:
-            raise RuntimeError(
-                f"Could not find front line point {distance} from {self.blue_cp}"
-            )
+        raise RuntimeError(
+            f"Could not find front line point {distance} from {self.blue_cp}"
+        )
 
     @property
     def _position_distance(self) -> float:
