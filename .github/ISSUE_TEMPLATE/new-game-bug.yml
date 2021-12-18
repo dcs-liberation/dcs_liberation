@@ -1,5 +1,5 @@
 ---
-name: "New Game" wizard failed
+name: New Game wizard failed
 description: >
   Use for bugs that prevent the "New Game" wizard from completing successfully.
   If the wizard completes without issue, use the normal bug report template.
@@ -104,8 +104,8 @@ body:
       description: >
         Attach the Liberation log file. The log file is located at
         `<Liberation install directory>/logs/liberation.log`.
-        
-        
+
+
         You can attach files to the bug by dragging and dropping the file
         into this text box.
     validations:
