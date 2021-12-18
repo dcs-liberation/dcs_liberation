@@ -1,0 +1,89 @@
+---
+name: Bug report
+description: >
+  Use for any bug that happens after campaign generation. If the New Game wizard
+  failed, use the "New Game wizard failed" template instead.
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Before filing, please search the issue tracker to see if the issue has
+        already been reported.
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: Affected versions
+      multiple: true
+      description: >
+        Select all DCS Liberation versions in which you have observed this bug.
+        You do not need to test all of them, but the information is useful if
+        you have it.
+
+
+        If you do not see your version listed here you are on an old release
+        that is not supported, and the bug may already be fixed in a newer
+        release. Check that the bug still exists in a newer release before
+        filing.
+
+
+        If the bug was found in a development build, select "Development build"
+        and provide a link to the build in the field below.
+      options:
+        - 5.0.0
+        - Development build
+  - type: input
+    attributes:
+      label: Development build
+      description: A link to the development build, if applicable.
+  - type: textarea
+    attributes:
+      label: Description
+      description: >
+        Describe the bug. What went wrong? What did you expect to happen
+        instead? What steps should we take to reproduce the error? If an error
+        dialog was shown, include the full text.
+
+
+        If possible, also include the save game. If the bug prevented the game
+        from being generated at all this will not be possible, but if the bug is
+        that the wizard generated something incorrectly, the save game will help
+        us see what went wrong.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Save game and other files
+      description: >
+        Attach any files needed to reproduce the bug here. **A save game is
+        required.** We typically cannot help without a save game (the
+        `.liberation` file found in
+        `%USERPROFILE%/Saved Games/DCS/Liberation/Saves`), so most bugs filed
+        without saved games will be closed without investigation.
+
+
+        Other useful files to include are:
+
+
+        The Liberation log file. The log file is located at
+        `<Liberation install directory>/logs/liberation.log`. The log often
+        includes data about non-fatal errors that could be the root cause of the
+        problem.
+
+
+        The `liberation_nextturn.miz` or a track file. This should always be
+        included for bugs where the mission was generated incorrectly or where
+        the in-game AI is misbehaving.
+
+
+        The `state.json` file for the most recently completed turn, located at
+        `<Liberation install directory>/state.json`. This file is essential for
+        investigating any issues with end-of-turn results processing.
+
+
+        You can attach files to the bug by dragging and dropping the file
+        into this text box. GitHub will not allow uploads of all file types, so
+        attach a zip of the files if needed.
+    validations:
+      required: true
