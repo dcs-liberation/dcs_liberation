@@ -44,12 +44,6 @@ body:
         Describe the bug. What went wrong? What did you expect to happen
         instead? What steps should we take to reproduce the error? If an error
         dialog was shown, include the full text.
-
-
-        If possible, also include the save game. If the bug prevented the game
-        from being generated at all this will not be possible, but if the bug is
-        that the wizard generated something incorrectly, the save game will help
-        us see what went wrong.
     validations:
       required: true
   - type: textarea
