@@ -170,6 +170,19 @@ class QLiberationWindow(QMainWindow):
         self.openNotesAction.setIcon(CONST.ICONS["Notes"])
         self.openNotesAction.triggered.connect(self.showNotesDialog)
 
+        self.enable_game_actions(False)
+
+    def enable_game_actions(self, enabled: bool):
+        self.openSettingsAction.setVisible(enabled)
+        self.openStatsAction.setVisible(enabled)
+        self.openNotesAction.setVisible(enabled)
+
+        # Also Disable SaveAction to prevent Keyboard Shortcut
+        self.saveGameAction.setEnabled(enabled)
+        self.saveGameAction.setVisible(enabled)
+        self.saveAsAction.setEnabled(enabled)
+        self.saveAsAction.setVisible(enabled)
+
     def initToolbar(self):
         self.tool_bar = self.addToolBar("File")
         self.tool_bar.addAction(self.newGameAction)
@@ -328,6 +341,8 @@ class QLiberationWindow(QMainWindow):
                 QMessageBox.Ok,
             )
             GameUpdateSignal.get_instance().updateGame(None)
+        finally:
+            self.enable_game_actions(self.game is not None)
 
     def showAboutDialog(self):
         text = (
