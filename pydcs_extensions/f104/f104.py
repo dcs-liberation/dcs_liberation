@@ -1606,7 +1606,7 @@ class VSN_F104G(PlaneType):
     class Pylon11:
         L_081_Fantasmagoria_ELINT_pod = (11, Weapons.L_081_Fantasmagoria_ELINT_pod)
 
-    pylons: Set[int] = {1, 2, 4, 5, 6, 7, 8, 10, 11}
+    pylons = {1, 2, 4, 5, 6, 7, 8, 10, 11}
 
     tasks = [
         task.CAP,
@@ -1958,7 +1958,7 @@ class VSN_F104S(PlaneType):
     class Pylon11:
         L_081_Fantasmagoria_ELINT_pod = (11, Weapons.L_081_Fantasmagoria_ELINT_pod)
 
-    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+    pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
     tasks = [
         task.CAP,
@@ -2512,7 +2512,7 @@ class VSN_F104S_AG(PlaneType):
     class Pylon11:
         L_081_Fantasmagoria_ELINT_pod = (11, Weapons.L_081_Fantasmagoria_ELINT_pod)
 
-    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+    pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
 
     tasks = [
         task.CAP,
