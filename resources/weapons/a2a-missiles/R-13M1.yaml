@@ -1,0 +1,5 @@
+name: R-13M1 - AAM, IR guided
+year: 1976
+fallback: R-13M - AAM, IR guided
+clsids:
+  - "{R-13M1}"

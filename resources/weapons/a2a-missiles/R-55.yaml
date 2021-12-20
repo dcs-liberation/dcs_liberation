@@ -1,0 +1,5 @@
+name: R-55 - AAM, IR guided
+year: 1967
+fallback: R-3S - AAM, IR guided
+clsids:
+  - "{R-55}"

@@ -1,0 +1,5 @@
+name: R-13M - AAM, IR guided
+year: 1974
+fallback: R-60
+clsids:
+  - "{R-13M}"

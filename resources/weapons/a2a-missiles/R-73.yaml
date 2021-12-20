@@ -1,0 +1,6 @@
+name: R-73 (AA-11 Archer) - Infra Red
+year: 1984
+fallback: R-60M x 2
+clsids:
+  - "{FBC29BFE-3D24-4C64-B81D-941239D12249}"
+  - "{CBC29BFE-3D24-4C64-B81D-941239D12249}"

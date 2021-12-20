@@ -1,0 +1,5 @@
+name: R-3S - AAM, IR guided
+year: 1962
+fallback: RS2US - AAM, beam-rider
+clsids:
+  - "{R-3S}"

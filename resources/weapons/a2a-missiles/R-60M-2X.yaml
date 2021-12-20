@@ -1,0 +1,8 @@
+name: R-60M x 2
+year: 1982
+fallback: R-60 x 2
+clsids:
+  - "{B0DBC591-0F52-4F7D-AD7B-51E67725FB81}"
+  - "{275A2855-4A79-4B2D-B082-91EA2ADF4691}"
+  - "{R-60M 2L}"
+  - "{R-60M 2R}"

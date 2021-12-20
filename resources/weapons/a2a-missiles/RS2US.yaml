@@ -1,0 +1,5 @@
+name: RS2US - AAM, beam-rider
+year: 1957
+fallback: 
+clsids:
+  - "{RS-2US}"
