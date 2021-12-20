@@ -1,0 +1,96 @@
+---
+name: Normandy - From Caen to Evreux
+theater: Normandy
+authors: Khopa
+description: <p>This is a light scenario on the Normandy map.</p><p>August 1944, allied forces are pushing from Caen/Carpiquet to the cities of Lisieux and Evreux.<p>Lisieux is an important logistic hub for the Werhmacht, and Evreux airbase is hosting most of the Luftwaffe forces in the region.</p>
+recommended_player_faction: Allies 1944
+recommended_enemy_faction: Germany 1944
+recommended_start_date: 1944-07-04
+miz: caen_to_evreux.miz
+performance: 1
+version: "9.0"
+squadrons:
+  # Evreux
+  26:
+    - primary: BARCAP
+      aircraft:
+        - Bf 109 K-4 Kurf\u00fcrst
+    - primary: BARCAP
+      aircraft:
+        - Fw 190 A-8 Anton
+    - primary: BARCAP
+      aircraft:
+        - Fw 190 D-9 Dora
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Ju 88 A-4
+    - primary: AEW&C
+    - primary: Refueling
+    - primary: Transport
+  # Conches
+  40:
+    - primary: BARCAP
+      aircraft:
+        - Bf 109 K-4 Kurf\u00fcrst
+    - primary: BARCAP
+      aircraft:
+        - Fw 190 A-8 Anton
+    - primary: BARCAP
+      aircraft:
+        - Fw 190 D-9 Dora
+    - primary: SEAD
+      secondary: any
+    - primary: DEAD
+      secondary: any
+  # Carpiquet
+  19:
+    - primary: BARCAP
+      aircraft:
+        - Thunderbolt Mk.II (Late)
+        - P-47D-40 Thunderbolt
+    - primary: BARCAP
+      aircraft:
+        - Mustang Mk.IV (Late)
+        - P-51D-30-NA Mustang
+    - primary: BARCAP
+      aircraft:
+        - Spitfire LF Mk IX
+    - primary: BARCAP
+      aircraft:
+        - Spitfire LF Mk IX (Clipped Wings)
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - MosquitoFBMkVI
+    - primary: SEAD
+      secondary: any
+    - primary: DEAD
+      secondary: any
+  # Ford_AF 
+  31:
+    - primary: BARCAP
+      aircraft:
+        - Thunderbolt Mk.II (Mid)
+        - P-47D-30 Thunderbolt (Late)
+    - primary: BARCAP
+      aircraft:
+        - Thunderbolt Mk.II (Early)
+        - P-47D-30 Thunderbolt (Early)
+    - primary: BARCAP
+      aircraft:
+        - Mustang Mk.IV (Early)
+        - P-51D-25-NA Mustang
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Boston Mk.III
+        - A-20G Havoc
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Fortress Mk.III
+        - B-17G Flying Fortress
+    - primary: AEW&C
+    - primary: Refueling
+    - primary: Transport
