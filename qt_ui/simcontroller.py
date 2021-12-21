@@ -8,7 +8,9 @@ from typing import Callable, Optional, TYPE_CHECKING
 from PySide2.QtCore import QObject, Signal
 
 from game.polldebriefingfilethread import PollDebriefingFileThread
+from game.sim.combat import FrozenCombat
 from game.sim.gameloop import GameLoop
+from game.sim.gameupdatecallbacks import GameUpdateCallbacks
 from game.sim.simspeedsetting import SimSpeedSetting
 from qt_ui.simupdatethread import SimUpdateThread
 
@@ -21,6 +23,8 @@ class SimController(QObject):
     sim_update = Signal()
     sim_speed_reset = Signal(SimSpeedSetting)
     simulation_complete = Signal()
+    on_add_combat = Signal(FrozenCombat)
+    on_combat_changed = Signal(FrozenCombat)
 
     def __init__(self, game: Optional[Game]) -> None:
         super().__init__()
@@ -59,7 +63,14 @@ class SimController(QObject):
             self.game_loop.pause()
         self.game_loop = None
         if game is not None:
-            self.game_loop = GameLoop(game, self.on_simulation_complete)
+            self.game_loop = GameLoop(
+                game,
+                GameUpdateCallbacks(
+                    self.on_simulation_complete,
+                    self.on_add_combat.emit,
+                    self.on_combat_changed.emit,
+                ),
+            )
         self.started = False
 
     def set_simulation_speed(self, simulation_speed: SimSpeedSetting) -> None:

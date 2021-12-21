@@ -12,6 +12,7 @@ from .atip import AtIp
 from .defendingsam import DefendingSam
 from .joinablecombat import JoinableCombat
 from .samengagementzones import SamEngagementZones
+from ..gameupdatecallbacks import GameUpdateCallbacks
 
 if TYPE_CHECKING:
     from game import Game
@@ -20,9 +21,12 @@ if TYPE_CHECKING:
 
 
 class CombatInitiator:
-    def __init__(self, game: Game, combats: list[FrozenCombat]) -> None:
+    def __init__(
+        self, game: Game, combats: list[FrozenCombat], callbacks: GameUpdateCallbacks
+    ) -> None:
         self.game = game
         self.combats = combats
+        self.callbacks = callbacks
 
     def update_active_combats(self) -> None:
         blue_a2a = AircraftEngagementZones.from_ato(self.game.blue.ato)
@@ -60,6 +64,7 @@ class CombatInitiator:
             logging.info(f"{flight} is joining existing combat {joined}")
             joined.join(flight)
             own_a2a.remove_flight(flight)
+            self.callbacks.on_combat_changed(joined)
         elif (combat := self.check_flight_for_new_combat(flight, a2a, sam)) is not None:
             logging.info(f"Interrupting simulation because {combat.because()}")
             combat.update_flight_states()
@@ -70,6 +75,7 @@ class CombatInitiator:
             a2a.update_for_combat(combat)
             own_a2a.update_for_combat(combat)
             self.combats.append(combat)
+            self.callbacks.on_add_combat(combat)
 
     def check_flight_for_joined_combat(
         self, flight: Flight

@@ -3,9 +3,10 @@ from __future__ import annotations
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from .gamelooptimer import GameLoopTimer
+from .gameupdatecallbacks import GameUpdateCallbacks
 from .missionsimulation import MissionSimulation, SimulationAlreadyCompletedError
 from .simspeedsetting import SimSpeedSetting
 
@@ -15,11 +16,11 @@ if TYPE_CHECKING:
 
 
 class GameLoop:
-    def __init__(self, game: Game, on_complete: Callable[[], None]) -> None:
+    def __init__(self, game: Game, callbacks: GameUpdateCallbacks) -> None:
         self.game = game
-        self.on_complete = on_complete
+        self.callbacks = callbacks
         self.timer = GameLoopTimer(self.tick)
-        self.sim = MissionSimulation(self.game)
+        self.sim = MissionSimulation(self.game, self.callbacks)
         self.started = False
         self.completed = False
 
@@ -75,6 +76,6 @@ class GameLoop:
             if self.completed:
                 self.pause()
                 logging.info(f"Simulation completed at {self.sim.time}")
-                self.on_complete()
+                self.callbacks.on_simulation_complete()
         except SimulationAlreadyCompletedError:
             logging.exception("Attempted to tick already completed sim")

@@ -9,6 +9,7 @@ from game.debriefing import Debriefing
 from game.missiongenerator import MissionGenerator
 from game.unitmap import UnitMap
 from .aircraftsimulation import AircraftSimulation
+from .gameupdatecallbacks import GameUpdateCallbacks
 from .missionresultsprocessor import MissionResultsProcessor
 
 if TYPE_CHECKING:
@@ -24,10 +25,10 @@ class SimulationAlreadyCompletedError(RuntimeError):
 
 
 class MissionSimulation:
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, callbacks: GameUpdateCallbacks) -> None:
         self.game = game
         self.unit_map: Optional[UnitMap] = None
-        self.aircraft_simulation = AircraftSimulation(self.game)
+        self.aircraft_simulation = AircraftSimulation(self.game, callbacks)
         self.completed = False
         self.time = self.game.conditions.start_time
 
