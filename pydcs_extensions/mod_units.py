@@ -1,4 +1,5 @@
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.highdigitsams import highdigitsams
@@ -10,6 +11,9 @@ MODDED_AIRPLANES = [
     A_4E_C,
     Su_57,
     F_22A,
+    VSN_F104G,
+    VSN_F104S,
+    VSN_F104S_AG,
     Hercules,
     JAS39Gripen,
     JAS39Gripen_AG,
