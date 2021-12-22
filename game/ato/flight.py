@@ -15,6 +15,7 @@ from .loadouts import Loadout
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
     from game.sim.gameupdateevents import GameUpdateEvents
+    from game.sim.simulationresults import SimulationResults
     from game.squadrons import Squadron, Pilot
     from game.theater import ControlPoint, MissionTarget
     from game.transfers import TransferOrder
@@ -180,3 +181,27 @@ class Flight:
 
     def should_halt_sim(self) -> bool:
         return self.state.should_halt_sim()
+
+    def kill(self, results: SimulationResults) -> None:
+        # This is a bit messy while we're in transition from turn-based to turnless
+        # because we want the simulation to have minimal impact on the save game while
+        # turns exist so that loading a game is essentially a way to reset the
+        # simulation to the start of the turn. As such, we don't actually want to mark
+        # pilots killed or reduce squadron aircraft availability, but we do still need
+        # the UI to reflect that aircraft were lost and avoid generating those flights
+        # when the mission is generated.
+        #
+        # For now we do this by removing the flight from the ATO and logging the kill in
+        # the SimulationResults, which is similar to the Debriefing. If a flight is
+        # killed and the player saves and reloads, those pilots/aircraft will be
+        # unusable until the next turn, but otherwise will survive.
+        #
+        # This is going to be extremely temporary since the solution for other killable
+        # game objects (killed SAMs, sinking carriers, bombed out runways) will not be
+        # so easily worked around.
+        # TODO: Support partial kills.
+        # TODO: Remove empty packages from the ATO?
+        self.package.remove_flight(self)
+        for pilot in self.roster.pilots:
+            if pilot is not None:
+                results.kill_pilot(self, pilot)

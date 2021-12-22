@@ -20,6 +20,7 @@ from game.theater import Airfield, ControlPoint
 if TYPE_CHECKING:
     from game import Game
     from game.ato.flight import Flight
+    from game.sim.simulationresults import SimulationResults
     from game.transfers import CargoShip
     from game.unitmap import (
         AirliftUnits,
@@ -36,8 +37,8 @@ DEBRIEFING_LOG_EXTENSION = "log"
 
 @dataclass(frozen=True)
 class AirLosses:
-    player: List[FlyingUnit]
-    enemy: List[FlyingUnit]
+    player: list[FlyingUnit]
+    enemy: list[FlyingUnit]
 
     @property
     def losses(self) -> Iterator[FlyingUnit]:
@@ -136,6 +137,13 @@ class Debriefing:
         self.air_losses = self.dead_aircraft()
         self.ground_losses = self.dead_ground_units()
         self.base_captures = self.base_capture_events()
+
+    def merge_simulation_results(self, results: SimulationResults) -> None:
+        for air_loss in results.air_losses:
+            if air_loss.flight.squadron.player:
+                self.air_losses.player.append(air_loss)
+            else:
+                self.air_losses.enemy.append(air_loss)
 
     @property
     def front_line_losses(self) -> Iterator[FrontLineUnit]:

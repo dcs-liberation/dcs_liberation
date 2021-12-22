@@ -323,6 +323,18 @@ class Settings:
             "mission reaches the set state or at first contact, whichever comes first."
         ),
     )
+    auto_resolve_combat: bool = boolean_option(
+        "Auto-resolve combat during fast-forward (WIP)",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=False,
+        detail=(
+            "If enabled, aircraft entering combat during fast forward will have their "
+            "combat auto-resolved after a period of time. This allows the simulation "
+            "to advance further into the mission before requiring mission generation, "
+            "but simulation is currently very rudimentary so may result in huge losses."
+        ),
+    )
     supercarrier: bool = boolean_option(
         "Use supercarrier module",
         MISSION_GENERATOR_PAGE,

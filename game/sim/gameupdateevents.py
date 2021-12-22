@@ -16,6 +16,7 @@ class GameUpdateEvents:
     simulation_complete = False
     new_combats: list[FrozenCombat] = field(default_factory=list)
     updated_combats: list[FrozenCombat] = field(default_factory=list)
+    ended_combats: list[FrozenCombat] = field(default_factory=list)
     updated_flight_positions: list[tuple[Flight, Point]] = field(default_factory=list)
     navmesh_updates: set[bool] = field(default_factory=set)
     unculled_zones_updated: bool = False
@@ -42,6 +43,9 @@ class GameUpdateEvents:
     def update_combat(self, combat: FrozenCombat) -> GameUpdateEvents:
         self.updated_combats.append(combat)
         return self
+
+    def end_combat(self, combat: FrozenCombat) -> None:
+        self.ended_combats.append(combat)
 
     def update_flight_position(
         self, flight: Flight, new_position: Point

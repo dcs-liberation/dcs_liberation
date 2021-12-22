@@ -1,20 +1,24 @@
 from __future__ import annotations
 
+import logging
+import random
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from shapely.ops import unary_union
 
-from game.ato.flightstate import InFlight
+from game.ato.flightstate import InCombat, InFlight
 from game.utils import dcs_to_shapely_point
 from .joinablecombat import JoinableCombat
 
 if TYPE_CHECKING:
     from game.ato import Flight
+    from ..simulationresults import SimulationResults
 
 
 class AirCombat(JoinableCombat):
-    def __init__(self, flights: list[Flight]) -> None:
-        super().__init__(flights)
+    def __init__(self, freeze_duration: timedelta, flights: list[Flight]) -> None:
+        super().__init__(freeze_duration, flights)
         footprints = []
         for flight in self.flights:
             if (region := flight.state.a2a_commit_region()) is not None:
@@ -37,7 +41,7 @@ class AirCombat(JoinableCombat):
             return True
         return False
 
-    def because(self) -> str:
+    def __str__(self) -> str:
         blue_flights = []
         red_flights = []
         for flight in self.flights:
@@ -48,7 +52,46 @@ class AirCombat(JoinableCombat):
 
         blue = ", ".join(blue_flights)
         red = ", ".join(red_flights)
-        return f"of air combat {blue} vs {red}"
+        return f"air combat {blue} vs {red}"
+
+    def because(self) -> str:
+        return f"of {self}"
 
     def describe(self) -> str:
         return f"in air-to-air combat"
+
+    def resolve(self, results: SimulationResults) -> None:
+        blue = []
+        red = []
+        for flight in self.flights:
+            if flight.squadron.player:
+                blue.append(flight)
+            else:
+                red.append(flight)
+        if len(blue) > len(red):
+            winner = blue
+            loser = red
+        elif len(blue) < len(red):
+            winner = red
+            loser = blue
+        elif random.random() >= 0.5:
+            winner = blue
+            loser = red
+        else:
+            winner = red
+            loser = blue
+
+        if winner == blue:
+            logging.debug(f"{self} auto-resolved as blue victory")
+        else:
+            logging.debug(f"{self} auto-resolved as red victory")
+
+        for flight in loser:
+            flight.kill(results)
+
+        for flight in winner:
+            assert isinstance(flight.state, InCombat)
+            if random.random() / flight.count >= 0.5:
+                flight.kill(results)
+            else:
+                flight.state.exit_combat()

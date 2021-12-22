@@ -24,6 +24,14 @@ class InCombat(InFlight):
         self.previous_state = previous_state
         self.combat = combat
 
+    def exit_combat(self) -> None:
+        # TODO: Account for time passed while frozen.
+        self.flight.set_state(self.previous_state)
+
+    @property
+    def in_combat(self) -> bool:
+        return True
+
     def estimate_position(self) -> Point:
         return self.previous_state.estimate_position()
 
@@ -36,7 +44,9 @@ class InCombat(InFlight):
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
-        raise RuntimeError("Cannot simulate combat")
+        # Combat ticking is handled elsewhere because combat objects may be shared
+        # across multiple flights.
+        pass
 
     @property
     def is_at_ip(self) -> bool:
@@ -45,9 +55,6 @@ class InCombat(InFlight):
     @property
     def is_waiting_for_start(self) -> bool:
         return False
-
-    def should_halt_sim(self) -> bool:
-        return True
 
     @property
     def vulnerable_to_intercept(self) -> bool:

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import itertools
+import logging
 from collections.abc import Iterator
 from datetime import datetime, timedelta
 
 from typing_extensions import TYPE_CHECKING
 
-from game.ato import Flight
 from game.ato.flightstate import (
     Navigating,
     StartUp,
@@ -18,9 +18,11 @@ from game.ato.flightstate import (
 from game.ato.starttype import StartType
 from game.ato.traveltime import TotEstimator
 from .combat import CombatInitiator, FrozenCombat
+from .simulationresults import SimulationResults
 
 if TYPE_CHECKING:
     from game import Game
+    from game.ato import Flight
     from .gameupdateevents import GameUpdateEvents
 
 
@@ -28,6 +30,7 @@ class AircraftSimulation:
     def __init__(self, game: Game) -> None:
         self.game = game
         self.combats: list[FrozenCombat] = []
+        self.results = SimulationResults()
 
     def begin_simulation(self) -> None:
         self.reset()
@@ -36,6 +39,22 @@ class AircraftSimulation:
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
+        if not self.game.settings.auto_resolve_combat and self.combats:
+            logging.error(
+                "Cannot resume simulation because aircraft are in combat and "
+                "auto-resolve is disabled"
+            )
+            events.complete_simulation()
+            return
+
+        still_active = []
+        for combat in self.combats:
+            if combat.on_game_tick(duration, self.results):
+                events.end_combat(combat)
+            else:
+                still_active.append(combat)
+        self.combats = still_active
+
         for flight in self.iter_flights():
             flight.on_game_tick(events, time, duration)
 
@@ -48,6 +67,9 @@ class AircraftSimulation:
             if flight.should_halt_sim():
                 events.complete_simulation()
                 return
+
+        if not self.game.settings.auto_resolve_combat and self.combats:
+            events.complete_simulation()
 
     def set_initial_flight_states(self) -> None:
         now = self.game.conditions.start_time

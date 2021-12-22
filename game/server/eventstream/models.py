@@ -18,6 +18,7 @@ class GameUpdateEventsJs(BaseModel):
     updated_flight_positions: dict[UUID, LeafletLatLon]
     new_combats: list[FrozenCombatJs]
     updated_combats: list[FrozenCombatJs]
+    ended_combats: list[UUID]
     navmesh_updates: set[bool]
     unculled_zones_updated: bool
     threat_zones_updated: bool
@@ -41,6 +42,7 @@ class GameUpdateEventsJs(BaseModel):
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
             ],
+            ended_combats=[c.id for c in events.ended_combats],
             navmesh_updates=events.navmesh_updates,
             unculled_zones_updated=events.unculled_zones_updated,
             threat_zones_updated=events.threat_zones_updated,

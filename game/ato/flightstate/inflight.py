@@ -30,6 +30,10 @@ class InFlight(FlightState, ABC):
         self.total_time_to_next_waypoint = self.travel_time_between_waypoints()
         self.elapsed_time = timedelta()
 
+    @property
+    def in_flight(self) -> bool:
+        return True
+
     def has_passed_waypoint(self, waypoint: FlightWaypoint) -> bool:
         index = self.flight.flight_plan.waypoints.index(waypoint)
         return index <= self.waypoint_index

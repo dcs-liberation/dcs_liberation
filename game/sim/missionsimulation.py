@@ -62,7 +62,9 @@ class MissionSimulation:
             data = json.load(state_file)
         if force_end:
             data["mission_ended"] = True
-        return Debriefing(data, self.game, self.unit_map)
+        debriefing = Debriefing(data, self.game, self.unit_map)
+        debriefing.merge_simulation_results(self.aircraft_simulation.results)
+        return debriefing
 
     def process_results(self, debriefing: Debriefing) -> None:
         if self.unit_map is None:

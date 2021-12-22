@@ -27,6 +27,18 @@ class FlightState(ABC):
         ...
 
     @property
+    def in_flight(self) -> bool:
+        return False
+
+    @property
+    def is_at_ip(self) -> bool:
+        return False
+
+    @property
+    def in_combat(self) -> bool:
+        return False
+
+    @property
     def vulnerable_to_intercept(self) -> bool:
         return False
 

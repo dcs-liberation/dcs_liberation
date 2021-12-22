@@ -1,18 +1,28 @@
 from __future__ import annotations
 
+import logging
+import random
 from collections.abc import Iterator
-from typing import Any, TYPE_CHECKING
+from datetime import timedelta
+from typing import TYPE_CHECKING
 
+from game.ato.flightstate import InCombat
 from .frozencombat import FrozenCombat
 
 if TYPE_CHECKING:
     from game.ato import Flight
     from game.theater import TheaterGroundObject
+    from ..simulationresults import SimulationResults
 
 
 class DefendingSam(FrozenCombat):
-    def __init__(self, flight: Flight, air_defenses: list[TheaterGroundObject]) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        freeze_duration: timedelta,
+        flight: Flight,
+        air_defenses: list[TheaterGroundObject],
+    ) -> None:
+        super().__init__(freeze_duration)
         self.flight = flight
         self.air_defenses = air_defenses
 
@@ -25,3 +35,14 @@ class DefendingSam(FrozenCombat):
 
     def iter_flights(self) -> Iterator[Flight]:
         yield self.flight
+
+    def resolve(self, results: SimulationResults) -> None:
+        assert isinstance(self.flight.state, InCombat)
+        if random.random() / self.flight.count >= 0.5:
+            logging.debug(f"Air defense combat auto-resolved with {self.flight} lost")
+            self.flight.kill(results)
+        else:
+            logging.debug(
+                f"Air defense combat auto-resolved with {self.flight} surviving"
+            )
+            self.flight.state.exit_combat()

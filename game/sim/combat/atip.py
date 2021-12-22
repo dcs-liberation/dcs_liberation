@@ -1,17 +1,20 @@
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterator
+from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from .frozencombat import FrozenCombat
 
 if TYPE_CHECKING:
     from game.ato import Flight
+    from ..simulationresults import SimulationResults
 
 
 class AtIp(FrozenCombat):
-    def __init__(self, flight: Flight) -> None:
-        super().__init__()
+    def __init__(self, freeze_duration: timedelta, flight: Flight) -> None:
+        super().__init__(freeze_duration)
         self.flight = flight
 
     def because(self) -> str:
@@ -22,3 +25,9 @@ class AtIp(FrozenCombat):
 
     def iter_flights(self) -> Iterator[Flight]:
         yield self.flight
+
+    def resolve(self, results: SimulationResults) -> None:
+        logging.debug(
+            f"{self.flight} attack on {self.flight.package.target} auto-resolved with "
+            "mission failure but no losses"
+        )

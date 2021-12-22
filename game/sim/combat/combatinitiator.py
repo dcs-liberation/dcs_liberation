@@ -3,9 +3,9 @@ from __future__ import annotations
 import itertools
 import logging
 from collections.abc import Iterator
+from datetime import timedelta
 from typing import Optional, TYPE_CHECKING
 
-from game.ato.flightstate import InFlight
 from .aircombat import AirCombat
 from .aircraftengagementzones import AircraftEngagementZones
 from .atip import AtIp
@@ -43,6 +43,9 @@ class CombatInitiator:
         # aircraft has entered combat it will not be rechecked later in the loop or on
         # another tick.
         for flight in self.iter_flights():
+            if flight.state.in_combat:
+                return
+
             if flight.squadron.player:
                 a2a = red_a2a
                 own_a2a = blue_a2a
@@ -66,7 +69,7 @@ class CombatInitiator:
             own_a2a.remove_flight(flight)
             self.events.update_combat(joined)
         elif (combat := self.check_flight_for_new_combat(flight, a2a, sam)) is not None:
-            logging.info(f"Interrupting simulation because {combat.because()}")
+            logging.info(f"Creating new combat because {combat.because()}")
             combat.update_flight_states()
             # Remove any preoccupied flights from the list of potential air-to-air
             # threats. This prevents BARCAPs (and other air-to-air types) from getting
@@ -89,21 +92,23 @@ class CombatInitiator:
     def check_flight_for_new_combat(
         flight: Flight, a2a: AircraftEngagementZones, sam: SamEngagementZones
     ) -> Optional[FrozenCombat]:
-        if not isinstance(flight.state, InFlight):
+        if not flight.state.in_flight:
             return None
 
         if flight.state.is_at_ip:
-            return AtIp(flight)
+            return AtIp(timedelta(minutes=1), flight)
 
         position = flight.state.estimate_position()
 
         if flight.state.vulnerable_to_intercept and a2a.covers(position):
             flights = [flight]
             flights.extend(a2a.iter_intercepting_flights(position))
-            return AirCombat(flights)
+            return AirCombat(timedelta(minutes=1), flights)
 
         if flight.state.vulnerable_to_sam and sam.covers(position):
-            return DefendingSam(flight, list(sam.iter_threatening_sams(position)))
+            return DefendingSam(
+                timedelta(minutes=1), flight, list(sam.iter_threatening_sams(position))
+            )
 
         return None
 

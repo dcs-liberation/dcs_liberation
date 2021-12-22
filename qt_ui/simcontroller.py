@@ -56,10 +56,7 @@ class SimController(QObject):
         if game is not None:
             self.game_loop = GameLoop(
                 game,
-                GameUpdateCallbacks(
-                    self.on_simulation_complete,
-                    self.sim_update.emit,
-                ),
+                GameUpdateCallbacks(self.on_simulation_complete, self.sim_update.emit),
             )
         self.started = False
 

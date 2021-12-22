@@ -400,6 +400,10 @@ function handleStreamedEvents(events) {
     redrawCombat(combat);
   }
 
+  for (const combatId of events.ended_combats) {
+    clearCombat(combatId);
+  }
+
   for (const player of events.navmesh_updates) {
     drawNavmesh(player);
   }
@@ -1355,18 +1359,23 @@ function drawHoldZones(id) {
 
 var COMBATS = {};
 
-function redrawCombat(combat) {
-  if (combat.id in COMBATS) {
-    for (layer in COMBATS[combat.id]) {
+function clearCombat(id) {
+  if (id in COMBATS) {
+    for (const layer of COMBATS[id]) {
       layer.removeFrom(combatLayer);
     }
+    delete COMBATS[id];
   }
+}
+
+function redrawCombat(combat) {
+  clearCombat(combat.id);
 
   const layers = [];
 
   if (combat.footprint) {
     layers.push(
-      L.polygon(airCombat.footprint, {
+      L.polygon(combat.footprint, {
         color: Colors.Red,
         interactive: false,
         fillOpacity: 0.2,
