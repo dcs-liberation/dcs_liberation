@@ -5,7 +5,9 @@ Saves from 5.0.0 are not compatible with 5.1.0
 ## Features/Improvements
 
 * **[Engine]** Support for DCS DCS 2.7.8.16140 and newer, including the HTS.
+* **[Campaign]** Add option to manually add and remove squadrons and different aircraft type in the new game wizard / air wing configuration dialog.
 * **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
+* **[Modding]** Add F-104 mod support
 
 ## Fixes
 
