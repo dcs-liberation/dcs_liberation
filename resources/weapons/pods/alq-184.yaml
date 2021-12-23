@@ -1,0 +1,5 @@
+name: AN/ALQ-184 ECM
+# https://www.deagel.com/Protection%20Systems/ANALQ-184/a001666
+year: 1987
+clsids:
+  - "ALQ_184"
