@@ -5,6 +5,7 @@ from PySide2.QtCore import Property, QObject, Signal
 from game import Game
 from game.ato import Flight
 from game.flightplan import JoinZoneGeometry
+from .config import ENABLE_EXPENSIVE_DEBUG_TOOLS
 from .leaflet import LeafletLatLon, LeafletPoly
 from .shapelyutil import ShapelyUtil
 
