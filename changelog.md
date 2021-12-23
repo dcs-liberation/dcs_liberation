@@ -5,10 +5,12 @@ Saves from 5.x are not compatible with 6.0.
 ## Features/Improvements
 
 * **[Engine]** Support for DCS DCS 2.7.8.16140 and newer, including the HTS.
+* **[Campaign]** Add option to manually add and remove squadrons and different aircraft type in the new game wizard / air wing configuration dialog.
 * **[Mission Generation]** Added an option to fast-forward mission generation until the point of first contact (WIP).
-* **[Flight Planning]** Added the ability to plan tankers for recovery on package flights.  AI does not plan.
 * **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
-
+* **[Flight Planning]** Added the ability to plan tankers for recovery on package flights.  AI does not plan.
+* **[Modding]** Add F-104 mod support
+* 
 ## Fixes
 
 * **[Mission Generator]** Fixed incorrect radio specification for the AN/ARC-222.
