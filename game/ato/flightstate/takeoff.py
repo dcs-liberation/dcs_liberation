@@ -12,6 +12,7 @@ from ...utils import LBS_TO_KG
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class Takeoff(FlightState):
@@ -20,7 +21,9 @@ class Takeoff(FlightState):
         # TODO: Not accounted for in FlightPlan, can cause discrepancy without loiter.
         self.completion_time = now + timedelta(seconds=30)
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         if time < self.completion_time:
             return
         self.flight.set_state(Navigating(self.flight, self.settings, waypoint_index=0))

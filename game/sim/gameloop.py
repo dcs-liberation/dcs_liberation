@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from .gamelooptimer import GameLoopTimer
 from .gameupdatecallbacks import GameUpdateCallbacks
+from .gameupdateevents import GameUpdateEvents
 from .missionsimulation import MissionSimulation, SimulationAlreadyCompletedError
 from .simspeedsetting import SimSpeedSetting
 
@@ -20,7 +21,9 @@ class GameLoop:
         self.game = game
         self.callbacks = callbacks
         self.timer = GameLoopTimer(self.tick)
-        self.sim = MissionSimulation(self.game, self.callbacks)
+        self.sim = MissionSimulation(self.game)
+        self.events = GameUpdateEvents()
+        self.last_update_time = datetime.now()
         self.started = False
         self.completed = False
 
@@ -53,7 +56,7 @@ class GameLoop:
         self.pause()
         logging.info("Running sim to first contact")
         while not self.completed:
-            self.tick()
+            self.tick(suppress_events=True)
 
     def pause_and_generate_miz(self, output: Path) -> None:
         self.pause()
@@ -68,13 +71,25 @@ class GameLoop:
         self.sim.process_results(debriefing)
         self.completed = True
 
-    def tick(self) -> None:
+    def send_update(self, rate_limit: bool) -> None:
+        now = datetime.now()
+        time_since_update = now - self.last_update_time
+        if not rate_limit or time_since_update >= timedelta(seconds=1 / 60):
+            self.callbacks.on_update(self.events)
+            self.events = GameUpdateEvents()
+            self.last_update_time = now
+
+    def tick(self, suppress_events: bool = False) -> None:
         if not self.started:
             raise RuntimeError("Attempted to tick game loop before initialization")
         try:
-            self.completed = self.sim.tick()
+            self.sim.tick(self.events)
+            self.completed = self.events.simulation_complete
+            if not suppress_events:
+                self.send_update(rate_limit=True)
             if self.completed:
                 self.pause()
+                self.send_update(rate_limit=False)
                 logging.info(f"Simulation completed at {self.sim.time}")
                 self.callbacks.on_simulation_complete()
         except SimulationAlreadyCompletedError:

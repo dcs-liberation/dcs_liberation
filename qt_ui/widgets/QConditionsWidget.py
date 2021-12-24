@@ -12,6 +12,7 @@ from PySide2.QtWidgets import (
 from dcs.weather import CloudPreset, Weather as PydcsWeather
 
 import qt_ui.uiconstants as CONST
+from game.sim.gameupdateevents import GameUpdateEvents
 from game.utils import mps
 from game.weather import Conditions, TimeOfDay
 from qt_ui.simcontroller import SimController
@@ -55,7 +56,7 @@ class QTimeTurnWidget(QGroupBox):
 
         sim_controller.sim_update.connect(self.on_sim_update)
 
-    def on_sim_update(self) -> None:
+    def on_sim_update(self, _events: GameUpdateEvents) -> None:
         time = self.sim_controller.current_time_in_sim
         if time is None:
             self.date_display.setText("")

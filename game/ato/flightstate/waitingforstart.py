@@ -13,6 +13,7 @@ from .taxi import Taxi
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class WaitingForStart(FlightState):
@@ -29,7 +30,9 @@ class WaitingForStart(FlightState):
     def start_type(self) -> StartType:
         return self.flight.start_type
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         if time < self.start_time:
             return
 

@@ -17,6 +17,7 @@ from gen.flights.flightplan import LoiterFlightPlan
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class InFlight(FlightState, ABC):
@@ -88,7 +89,9 @@ class InFlight(FlightState, ABC):
     def advance_to_next_waypoint(self) -> None:
         self.flight.set_state(self.next_waypoint_state())
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         self.elapsed_time += duration
         if self.elapsed_time > self.total_time_to_next_waypoint:
             self.advance_to_next_waypoint()

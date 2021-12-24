@@ -13,6 +13,7 @@ from game.sim.combat import FrozenCombat
 from game.sim.combat.aircombat import AirCombat
 from game.sim.combat.atip import AtIp
 from game.sim.combat.defendingsam import DefendingSam
+from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import (
     ConflictTheater,
 )
@@ -106,8 +107,6 @@ class MapModel(QObject):
             self.set_flight_selection
         )
         sim_controller.sim_update.connect(self.on_sim_update)
-        sim_controller.on_add_combat.connect(self.on_add_combat)
-        sim_controller.on_combat_changed.connect(self.on_combat_changed)
         self.reset()
 
     def clear(self) -> None:
@@ -128,9 +127,17 @@ class MapModel(QObject):
         self._ip_combats = []
         self.cleared.emit()
 
-    def on_sim_update(self) -> None:
+    def on_sim_update(self, events: GameUpdateEvents) -> None:
+        # TODO: Only update flights with changes.
+        # We have the signal of which flights have updates, but no fast lookup for
+        # Flight -> FlightJs since Flight isn't hashable. Faster to update every flight
+        # than do do the O(n^2) filtered update.
         for flight in self._flights.values():
             flight.positionChanged.emit()
+        for combat in events.new_combats:
+            self.on_add_combat(combat)
+        for combat in events.updated_combats:
+            self.on_combat_changed(combat)
 
     def set_package_selection(self, index: int) -> None:
         self.deselect_current_flight()

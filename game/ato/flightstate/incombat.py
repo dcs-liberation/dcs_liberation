@@ -11,6 +11,7 @@ from ..starttype import StartType
 
 if TYPE_CHECKING:
     from game.sim.combat import FrozenCombat
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class InCombat(InFlight):
@@ -32,7 +33,9 @@ class InCombat(InFlight):
     def estimate_speed(self) -> Speed:
         return self.previous_state.estimate_speed()
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         raise RuntimeError("Cannot simulate combat")
 
     @property

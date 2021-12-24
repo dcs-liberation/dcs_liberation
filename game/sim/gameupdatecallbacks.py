@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from game.sim.combat import FrozenCombat
+from game.sim.gameupdateevents import GameUpdateEvents
 
 
 # Ought to be frozen but mypy can't handle that:
@@ -13,5 +11,4 @@ if TYPE_CHECKING:
 @dataclass
 class GameUpdateCallbacks:
     on_simulation_complete: Callable[[], None]
-    on_add_combat: Callable[[FrozenCombat], None]
-    on_combat_changed: Callable[[FrozenCombat], None]
+    on_update: Callable[[GameUpdateEvents], None]

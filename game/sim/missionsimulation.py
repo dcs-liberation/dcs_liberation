@@ -9,11 +9,11 @@ from game.debriefing import Debriefing
 from game.missiongenerator import MissionGenerator
 from game.unitmap import UnitMap
 from .aircraftsimulation import AircraftSimulation
-from .gameupdatecallbacks import GameUpdateCallbacks
 from .missionresultsprocessor import MissionResultsProcessor
 
 if TYPE_CHECKING:
     from game import Game
+    from .gameupdateevents import GameUpdateEvents
 
 
 TICK = timedelta(seconds=1)
@@ -25,10 +25,10 @@ class SimulationAlreadyCompletedError(RuntimeError):
 
 
 class MissionSimulation:
-    def __init__(self, game: Game, callbacks: GameUpdateCallbacks) -> None:
+    def __init__(self, game: Game) -> None:
         self.game = game
         self.unit_map: Optional[UnitMap] = None
-        self.aircraft_simulation = AircraftSimulation(self.game, callbacks)
+        self.aircraft_simulation = AircraftSimulation(self.game)
         self.completed = False
         self.time = self.game.conditions.start_time
 
@@ -36,12 +36,13 @@ class MissionSimulation:
         self.time = self.game.conditions.start_time
         self.aircraft_simulation.begin_simulation()
 
-    def tick(self) -> bool:
+    def tick(self, events: GameUpdateEvents) -> GameUpdateEvents:
         self.time += TICK
         if self.completed:
             raise RuntimeError("Simulation already completed")
-        self.completed = self.aircraft_simulation.on_game_tick(self.time, TICK)
-        return self.completed
+        self.aircraft_simulation.on_game_tick(events, self.time, TICK)
+        self.completed = events.simulation_complete
+        return events
 
     def generate_miz(self, output: Path) -> None:
         self.unit_map = MissionGenerator(self.game, self.time).generate_miz(output)

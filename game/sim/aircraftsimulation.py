@@ -18,35 +18,36 @@ from game.ato.flightstate import (
 from game.ato.starttype import StartType
 from gen.flights.traveltime import TotEstimator
 from .combat import CombatInitiator, FrozenCombat
-from .gameupdatecallbacks import GameUpdateCallbacks
 
 if TYPE_CHECKING:
     from game import Game
+    from .gameupdateevents import GameUpdateEvents
 
 
 class AircraftSimulation:
-    def __init__(self, game: Game, callbacks: GameUpdateCallbacks) -> None:
+    def __init__(self, game: Game) -> None:
         self.game = game
-        self.callbacks = callbacks
         self.combats: list[FrozenCombat] = []
 
     def begin_simulation(self) -> None:
         self.reset()
         self.set_initial_flight_states()
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> bool:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         for flight in self.iter_flights():
-            flight.on_game_tick(time, duration)
+            flight.on_game_tick(events, time, duration)
 
         # Finish updating all flights before checking for combat so that the new
         # positions are used.
-        CombatInitiator(self.game, self.combats, self.callbacks).update_active_combats()
+        CombatInitiator(self.game, self.combats, events).update_active_combats()
 
         # After updating all combat states, check for halts.
         for flight in self.iter_flights():
             if flight.should_halt_sim():
-                return True
-        return False
+                events.complete_simulation()
+                return
 
     def set_initial_flight_states(self) -> None:
         now = self.game.conditions.start_time

@@ -11,6 +11,7 @@ from .flightstate import FlightState, Uninitialized
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
+    from game.sim.gameupdateevents import GameUpdateEvents
     from game.squadrons import Squadron, Pilot
     from game.theater import ControlPoint, MissionTarget
     from game.transfers import TransferOrder
@@ -147,8 +148,10 @@ class Flight:
     def set_state(self, state: FlightState) -> None:
         self.state = state
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
-        self.state.on_game_tick(time, duration)
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
+        self.state.on_game_tick(events, time, duration)
 
     def should_halt_sim(self) -> bool:
         return self.state.should_halt_sim()

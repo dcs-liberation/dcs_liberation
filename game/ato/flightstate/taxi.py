@@ -11,6 +11,7 @@ from ..starttype import StartType
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class Taxi(FlightState):
@@ -18,7 +19,9 @@ class Taxi(FlightState):
         super().__init__(flight, settings)
         self.completion_time = now + flight.flight_plan.estimate_ground_ops()
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         if time < self.completion_time:
             return
         self.flight.set_state(Takeoff(self.flight, self.settings, time))

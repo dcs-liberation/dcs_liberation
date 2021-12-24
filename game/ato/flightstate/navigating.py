@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 from dcs import Point
@@ -9,7 +10,7 @@ from game.ato.starttype import StartType
 from game.utils import Distance, LBS_TO_KG, Speed, meters
 
 if TYPE_CHECKING:
-    pass
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
 def lerp(v0: float, v1: float, t: float) -> float:
@@ -17,6 +18,12 @@ def lerp(v0: float, v1: float, t: float) -> float:
 
 
 class Navigating(InFlight):
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
+        super().on_game_tick(events, time, duration)
+        events.update_flight(self.flight)
+
     def progress(self) -> float:
         return (
             self.elapsed_time.total_seconds()
