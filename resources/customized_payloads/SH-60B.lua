@@ -2,7 +2,7 @@ local unitPayloads = {
 	["name"] = "SH-60B",
 	["payloads"] = {
 		[1] = {
-			["name"] = "ANTISHIP",
+			["name"] = "Liberation Anti-ship",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{7B8DCEB4-820B-4015-9B48-1028A4195692}",
@@ -10,7 +10,7 @@ local unitPayloads = {
 				},
 			},
 			["tasks"] = {
-				[1] = 30,
+				[1] = 35,
 			},
 		},
 	},

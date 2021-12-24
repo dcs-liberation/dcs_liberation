@@ -2,15 +2,15 @@ local unitPayloads = {
 	["name"] = "OH-58D",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAS",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "oh-58-brauning",
-					["num"] = 1,
+					["CLSID"] = "AGM114x2_OH_58",
+					["num"] = 2,
 				},
 				[2] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 2,
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -18,15 +18,16 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 1,
+					["num"] = 2,
 				},
 				[2] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 2,
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -34,15 +35,16 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "CAP",
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 1,
+					["num"] = 2,
 				},
 				[2] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 2,
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -50,15 +52,16 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 1,
+					["num"] = 2,
 				},
 				[2] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 2,
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -66,15 +69,16 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 1,
+					["num"] = 2,
 				},
 				[2] = {
 					["CLSID"] = "AGM114x2_OH_58",
-					["num"] = 2,
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {

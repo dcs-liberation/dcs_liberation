@@ -2,25 +2,17 @@ local unitPayloads = {
 	["name"] = "Tu-22M3",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAS",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
 					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{E1AAE713-5FC3-4CAA-9FF5-3FDCFB899E33}",
-					["num"] = 4,
-				},
-				[3] = {
 					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
 					["num"] = 3,
 				},
-				[4] = {
-					["CLSID"] = "{E1AAE713-5FC3-4CAA-9FF5-3FDCFB899E33}",
-					["num"] = 2,
-				},
-				[5] = {
+				[3] = {
 					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
 					["num"] = 1,
 				},
@@ -30,7 +22,8 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "CAP",
+			["displayName"] = "Liberation Anti-ship",
+			["name"] = "Liberation Anti-ship",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
@@ -50,7 +43,7 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "STRIKE",
+			["name"] = "Liberation OCA/Runway",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{E1AAE713-5FC3-4CAA-9FF5-3FDCFB899E33}",
@@ -61,7 +54,7 @@ local unitPayloads = {
 					["num"] = 4,
 				},
 				[3] = {
-					["CLSID"] = "{AD5E5863-08FC-4283-B92C-162E2B2BD3FF}",
+					["CLSID"] = "{BDAD04AA-4D4A-4E51-B958-180A89F963CF}",
 					["num"] = 3,
 				},
 				[4] = {
@@ -70,46 +63,6 @@ local unitPayloads = {
 				},
 				[5] = {
 					["CLSID"] = "{E1AAE713-5FC3-4CAA-9FF5-3FDCFB899E33}",
-					["num"] = 1,
-				},
-			},
-			["tasks"] = {
-				[1] = 30,
-			},
-		},
-		[4] = {
-			["name"] = "SEAD",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
-					["num"] = 5,
-				},
-				[2] = {
-					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
-					["num"] = 3,
-				},
-			},
-			["tasks"] = {
-				[1] = 30,
-			},
-		},
-		[5] = {
-			["name"] = "ANTISHIP",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
-					["num"] = 5,
-				},
-				[2] = {
-					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
-					["num"] = 3,
-				},
-				[3] = {
-					["CLSID"] = "{12429ECF-03F0-4DF6-BCBD-5D38B6343DE1}",
 					["num"] = 1,
 				},
 			},

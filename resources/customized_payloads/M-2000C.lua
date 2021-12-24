@@ -2,31 +2,31 @@ local unitPayloads = {
 	["name"] = "M-2000C",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAP",
+			["name"] = "Liberation TARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{MMagicII}",
-					["num"] = 9,
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
 				},
 				[2] = {
 					["CLSID"] = "{MMagicII}",
-					["num"] = 1,
+					["num"] = 9,
 				},
 				[3] = {
-					["CLSID"] = "{Matra_S530D}",
-					["num"] = 8,
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
 				},
 				[4] = {
 					["CLSID"] = "{Matra_S530D}",
-					["num"] = 2,
+					["num"] = 8,
 				},
 				[5] = {
-					["CLSID"] = "{M2KC_RPL_522}",
-					["num"] = 5,
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 2,
 				},
 				[6] = {
-					["CLSID"] = "{Eclair}",
-					["num"] = 10,
+					["CLSID"] = "{M2KC_RPL_522}",
+					["num"] = 5,
 				},
 			},
 			["tasks"] = {
@@ -34,31 +34,32 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation BARCAP",
+			["name"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{Matra155RocketPod}",
-					["num"] = 9,
-				},
-				[2] = {
-					["CLSID"] = "{Matra155RocketPod}",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{Matra155RocketPod}",
-					["num"] = 8,
-				},
-				[4] = {
-					["CLSID"] = "{Matra155RocketPod}",
-					["num"] = 2,
-				},
-				[5] = {
-					["CLSID"] = "{M2KC_RPL_522}",
-					["num"] = 5,
-				},
-				[6] = {
 					["CLSID"] = "{Eclair}",
 					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 9,
+				},
+				[3] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
+				},
+				[4] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 8,
+				},
+				[5] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 2,
+				},
+				[6] = {
+					["CLSID"] = "{M2KC_RPL_522}",
+					["num"] = 5,
 				},
 			},
 			["tasks"] = {
@@ -66,47 +67,32 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{MMagicII}",
-					["num"] = 9,
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
 				},
 				[2] = {
 					["CLSID"] = "{MMagicII}",
-					["num"] = 1,
+					["num"] = 9,
 				},
 				[3] = {
-					["CLSID"] = "{M2KC_RAFAUT_MK82}",
-					["num"] = 8,
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
 				},
 				[4] = {
-					["CLSID"] = "{M2KC_RAFAUT_MK82}",
-					["num"] = 2,
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 8,
 				},
 				[5] = {
-					["CLSID"] = "{M2KC_RPL_522}",
-					["num"] = 5,
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 2,
 				},
 				[6] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 6,
-				},
-				[7] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 3,
-				},
-				[8] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 4,
-				},
-				[9] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 7,
-				},
-				[10] = {
-					["CLSID"] = "{Eclair}",
-					["num"] = 10,
+					["CLSID"] = "{M2KC_RPL_522}",
+					["num"] = 5,
 				},
 			},
 			["tasks"] = {
@@ -114,47 +100,32 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{MMagicII}",
-					["num"] = 9,
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
 				},
 				[2] = {
 					["CLSID"] = "{MMagicII}",
-					["num"] = 1,
+					["num"] = 9,
 				},
 				[3] = {
-					["CLSID"] = "{M2KC_RAFAUT_MK82}",
-					["num"] = 8,
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
 				},
 				[4] = {
-					["CLSID"] = "{M2KC_RAFAUT_MK82}",
-					["num"] = 2,
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 8,
 				},
 				[5] = {
-					["CLSID"] = "{M2KC_RPL_522}",
-					["num"] = 5,
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 2,
 				},
 				[6] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 6,
-				},
-				[7] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 3,
-				},
-				[8] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 4,
-				},
-				[9] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 7,
-				},
-				[10] = {
-					["CLSID"] = "{Eclair}",
-					["num"] = 10,
+					["CLSID"] = "{M2KC_RPL_522}",
+					["num"] = 5,
 				},
 			},
 			["tasks"] = {
@@ -162,47 +133,47 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "SEAD",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{M2KC_RAFAUT_BLG66}",
+					["num"] = 8,
+				},
+				[3] = {
+					["CLSID"] = "{M2KC_RAFAUT_BLG66}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 7,
+				},
+				[5] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 3,
+				},
+				[6] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 4,
+				},
+				[7] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 6,
+				},
+				[8] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 5,
+				},
+				[9] = {
 					["CLSID"] = "{MMagicII}",
 					["num"] = 9,
 				},
-				[2] = {
+				[10] = {
 					["CLSID"] = "{MMagicII}",
 					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{M2KC_RAFAUT_MK82}",
-					["num"] = 8,
-				},
-				[4] = {
-					["CLSID"] = "{M2KC_RAFAUT_MK82}",
-					["num"] = 2,
-				},
-				[5] = {
-					["CLSID"] = "{M2KC_RPL_522}",
-					["num"] = 5,
-				},
-				[6] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 6,
-				},
-				[7] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 3,
-				},
-				[8] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 4,
-				},
-				[9] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 7,
-				},
-				[10] = {
-					["CLSID"] = "{Eclair}",
-					["num"] = 10,
 				},
 			},
 			["tasks"] = {
@@ -210,51 +181,216 @@ local unitPayloads = {
 			},
 		},
 		[6] = {
-			["name"] = "RUNWAY_ATTACK",
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{Eclair}",
 					["num"] = 10,
 				},
 				[2] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 8,
+				},
+				[3] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["num"] = 7,
+				},
+				[5] = {
+					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["num"] = 3,
+				},
+				[6] = {
+					["CLSID"] = "{M2KC_RAFAUT_GBU12}",
+					["num"] = 5,
+				},
+				[7] = {
 					["CLSID"] = "{MMagicII}",
 					["num"] = 9,
 				},
-				[3] = {
+				[8] = {
 					["CLSID"] = "{MMagicII}",
 					["num"] = 1,
 				},
-				[4] = {
-					["CLSID"] = "{BLG66_BELOUGA_AC}",
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[7] = {
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{M2KC_RAFAUT_BLG66}",
 					["num"] = 8,
 				},
-				[5] = {
-					["CLSID"] = "{BLG66_BELOUGA_AC}",
+				[3] = {
+					["CLSID"] = "{M2KC_RAFAUT_BLG66}",
 					["num"] = 2,
 				},
-				[6] = {
+				[4] = {
 					["CLSID"] = "{BLG66_BELOUGA_AC}",
 					["num"] = 7,
 				},
-				[7] = {
+				[5] = {
 					["CLSID"] = "{BLG66_BELOUGA_AC}",
 					["num"] = 3,
 				},
-				[8] = {
-					["CLSID"] = "{BLG66_BELOUGA_AC}",
-					["num"] = 4,
-				},
-				[9] = {
-					["CLSID"] = "{BLG66_BELOUGA_AC}",
-					["num"] = 6,
-				},
-				[10] = {
+				[6] = {
 					["CLSID"] = "{BLG66_BELOUGA_AC}",
 					["num"] = 5,
 				},
+				[7] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 9,
+				},
+				[8] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
+				},
+				[9] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 4,
+				},
+				[10] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 6,
+				},
 			},
 			["tasks"] = {
-				[1] = 34,
+				[1] = 11,
+			},
+		},
+		[8] = {
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 8,
+				},
+				[3] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["num"] = 7,
+				},
+				[5] = {
+					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["num"] = 3,
+				},
+				[6] = {
+					["CLSID"] = "{M2KC_RAFAUT_GBU12}",
+					["num"] = 5,
+				},
+				[7] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 9,
+				},
+				[8] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[9] = {
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 8,
+				},
+				[3] = {
+					["CLSID"] = "{Matra_S530D}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{M2KC_BAP100_18_RACK}",
+					["num"] = 5,
+				},
+				[5] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 9,
+				},
+				[6] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[10] = {
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{Eclair}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{M2KC_RAFAUT_BLG66}",
+					["num"] = 8,
+				},
+				[3] = {
+					["CLSID"] = "{M2KC_RAFAUT_BLG66}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 5,
+				},
+				[5] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 9,
+				},
+				[6] = {
+					["CLSID"] = "{MMagicII}",
+					["num"] = 1,
+				},
+				[7] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 7,
+				},
+				[8] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 3,
+				},
+				[9] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 4,
+				},
+				[10] = {
+					["CLSID"] = "{BLG66_BELOUGA_AC}",
+					["num"] = 6,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
 			},
 		},
 	},

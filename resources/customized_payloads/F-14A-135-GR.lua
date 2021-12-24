@@ -2,47 +2,48 @@ local unitPayloads = {
 	["name"] = "F-14A",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAP",
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{SHOULDER AIM_54C_Mk47 L}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{SHOULDER AIM_54C_Mk47 R}",
+					["CLSID"] = "{SHOULDER AIM-7M}",
 					["num"] = 9,
 				},
-				[5] = {
+				[3] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 8,
 				},
-				[6] = {
+				[4] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 3,
 				},
-				[7] = {
-					["CLSID"] = "{AIM_54C_Mk47}",
+				[5] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 7,
 				},
-				[8] = {
-					["CLSID"] = "{AIM_54C_Mk47}",
-					["num"] = 4,
-				},
-				[9] = {
-					["CLSID"] = "{AIM_54C_Mk47}",
+				[6] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 6,
 				},
-				[10] = {
-					["CLSID"] = "{AIM_54C_Mk47}",
+				[7] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 5,
+				},
+				[8] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[9] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[10] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -50,47 +51,48 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
-					["num"] = 1,
+					["CLSID"] = "{BRU-32 GBU-12}",
+					["num"] = 7,
 				},
 				[3] = {
-					["CLSID"] = "{F14-LANTIRN-TP}",
-					["num"] = 9,
+					["CLSID"] = "{BRU-32 GBU-12}",
+					["num"] = 6,
 				},
 				[4] = {
-					["CLSID"] = "{PHXBRU3242_2*LAU10 LS}",
-					["num"] = 2,
+					["CLSID"] = "{BRU-32 GBU-12}",
+					["num"] = 5,
 				},
 				[5] = {
-					["CLSID"] = "{F14-300gal}",
-					["num"] = 8,
+					["CLSID"] = "{BRU-32 GBU-12}",
+					["num"] = 4,
 				},
 				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[7] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 3,
 				},
-				[7] = {
-					["CLSID"] = "{BRU-32 MK-82}",
-					["num"] = 7,
-				},
 				[8] = {
-					["CLSID"] = "{BRU-32 MK-82}",
-					["num"] = 4,
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
 				},
 				[9] = {
-					["CLSID"] = "{BRU-32 MK-82}",
-					["num"] = 6,
+					["CLSID"] = "{F14-LANTIRN-TP}",
+					["num"] = 9,
 				},
 				[10] = {
-					["CLSID"] = "{BRU-32 MK-82}",
-					["num"] = 5,
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
 				},
 			},
 			["tasks"] = {
@@ -98,47 +100,48 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
-					["num"] = 1,
+					["CLSID"] = "{BRU-32 MK-84}",
+					["num"] = 7,
 				},
 				[3] = {
-					["CLSID"] = "{F14-LANTIRN-TP}",
-					["num"] = 9,
+					["CLSID"] = "{BRU-32 MK-84}",
+					["num"] = 6,
 				},
 				[4] = {
-					["CLSID"] = "{SHOULDER AIM-7MH}",
-					["num"] = 2,
+					["CLSID"] = "{BRU-32 MK-84}",
+					["num"] = 5,
 				},
 				[5] = {
-					["CLSID"] = "{F14-300gal}",
-					["num"] = 8,
+					["CLSID"] = "{BRU-32 MK-84}",
+					["num"] = 4,
 				},
 				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[7] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 3,
 				},
-				[7] = {
-					["CLSID"] = "{BRU-32 GBU-16}",
-					["num"] = 7,
-				},
 				[8] = {
-					["CLSID"] = "{BRU-32 GBU-16}",
-					["num"] = 4,
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
 				},
 				[9] = {
-					["CLSID"] = "{BRU-32 GBU-16}",
-					["num"] = 6,
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
 				},
 				[10] = {
-					["CLSID"] = "{BRU-32 GBU-16}",
-					["num"] = 5,
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
 				},
 			},
 			["tasks"] = {
@@ -146,47 +149,48 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "BAI",
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
-					["num"] = 1,
+					["CLSID"] = "{MAK79_MK82 4}",
+					["num"] = 7,
 				},
 				[3] = {
-					["CLSID"] = "{F14-LANTIRN-TP}",
-					["num"] = 9,
+					["CLSID"] = "{MAK79_MK82 3R}",
+					["num"] = 6,
 				},
 				[4] = {
-					["CLSID"] = "{PHXBRU3242_2*LAU10 LS}",
-					["num"] = 2,
+					["CLSID"] = "{MAK79_MK82 3L}",
+					["num"] = 5,
 				},
 				[5] = {
-					["CLSID"] = "{F14-300gal}",
-					["num"] = 8,
+					["CLSID"] = "{MAK79_MK82 4}",
+					["num"] = 4,
 				},
 				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[7] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 3,
 				},
-				[7] = {
-					["CLSID"] = "{BRU-32 MK-82}",
-					["num"] = 7,
-				},
 				[8] = {
-					["CLSID"] = "{BRU-32 MK-82}",
-					["num"] = 4,
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
 				},
 				[9] = {
-					["CLSID"] = "{BRU-32 MK-20}",
-					["num"] = 6,
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
 				},
 				[10] = {
-					["CLSID"] = "{BRU-32 MK-20}",
-					["num"] = 5,
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
 				},
 			},
 			["tasks"] = {
@@ -194,43 +198,93 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{F14-LANTIRN-TP}",
-					["num"] = 9,
-				},
-				[2] = {
 					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
 					["num"] = 10,
 				},
+				[2] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
+				},
 				[3] = {
-					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
-					["num"] = 1,
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
 				},
 				[4] = {
-					["CLSID"] = "{PHXBRU3242_2*LAU10 LS}",
-					["num"] = 2,
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 3,
 				},
 				[5] = {
-					["CLSID"] = "{BRU-32 GBU-16}",
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 7,
 				},
 				[6] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
+					["num"] = 6,
+				},
+				[7] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
+					["num"] = 5,
+				},
+				[8] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[9] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[10] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
+					["num"] = 4,
+				},
+			},
+			["tasks"] = {
+				[1] = 10,
+			},
+		},
+		[6] = {
+			["displayName"] = "Liberation CAS",
+			["name"] = "Liberation CAS",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 7,
+				},
+				[3] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 6,
+				},
+				[4] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 5,
+				},
+				[5] = {
 					["CLSID"] = "{BRU-32 GBU-16}",
 					["num"] = 4,
 				},
+				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
 				[7] = {
-					["CLSID"] = "{BRU3242_ADM141}",
-					["num"] = 6,
-				},
-				[8] = {
-					["CLSID"] = "{BRU3242_ADM141}",
-					["num"] = 5,
-				},
-				[9] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 3,
+				},
+				[8] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[9] = {
+					["CLSID"] = "{F14-LANTIRN-TP}",
+					["num"] = 9,
 				},
 				[10] = {
 					["CLSID"] = "{F14-300gal}",
@@ -241,55 +295,105 @@ local unitPayloads = {
 				[1] = 10,
 			},
 		},
-		[6] = {
-			["name"] = "Liberation DEAD",
+		[7] = {
+			["displayName"] = "Liberation BARCAP",
+			["name"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{SHOULDER AIM_54C_Mk47 L}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{SHOULDER AIM_54C_Mk47 R}",
+					["CLSID"] = "{SHOULDER AIM-7M}",
 					["num"] = 9,
 				},
-				[5] = {
+				[3] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 8,
 				},
-				[6] = {
+				[4] = {
 					["CLSID"] = "{F14-300gal}",
 					["num"] = 3,
 				},
-				[7] = {
-					["CLSID"] = "{MAK79_MK82 4}",
+				[5] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 7,
 				},
-				[8] = {
-					["CLSID"] = "{MAK79_MK82 3R}",
+				[6] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 6,
 				},
-				[9] = {
-					["CLSID"] = "{MAK79_MK82 3L}",
+				[7] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 5,
 				},
+				[8] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[9] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
 				[10] = {
-					["CLSID"] = "{MAK79_MK82 4}",
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 4,
 				},
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 10,
 			},
 		},
-		[7] = {
+		[8] = {
+			["displayName"] = "Liberation SEAD Escort",
+			["name"] = "Liberation SEAD Escort",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{BRU3242_ADM141}",
+					["num"] = 7,
+				},
+				[3] = {
+					["CLSID"] = "{BRU3242_ADM141}",
+					["num"] = 6,
+				},
+				[4] = {
+					["CLSID"] = "{BRU3242_ADM141}",
+					["num"] = 5,
+				},
+				[5] = {
+					["CLSID"] = "{BRU3242_ADM141}",
+					["num"] = 4,
+				},
+				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[7] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 3,
+				},
+				[8] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[9] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
+				},
+				[10] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
+				},
+			},
+			["tasks"] = {
+				[1] = 10,
+			},
+		},
+		[9] = {
 			["displayName"] = "Liberation SEAD",
 			["name"] = "Liberation SEAD",
 			["pylons"] = {
@@ -298,44 +402,191 @@ local unitPayloads = {
 					["num"] = 10,
 				},
 				[2] = {
-					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "{SHOULDER AIM_54C_Mk47 L}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{SHOULDER AIM_54C_Mk47 R}",
-					["num"] = 9,
-				},
-				[5] = {
-					["CLSID"] = "{F14-300gal}",
-					["num"] = 8,
-				},
-				[6] = {
-					["CLSID"] = "{F14-300gal}",
-					["num"] = 3,
-				},
-				[7] = {
 					["CLSID"] = "{BRU3242_ADM141}",
 					["num"] = 7,
 				},
-				[8] = {
+				[3] = {
 					["CLSID"] = "{BRU3242_ADM141}",
 					["num"] = 6,
 				},
-				[9] = {
+				[4] = {
 					["CLSID"] = "{BRU3242_ADM141}",
 					["num"] = 5,
 				},
-				[10] = {
+				[5] = {
 					["CLSID"] = "{BRU3242_ADM141}",
+					["num"] = 4,
+				},
+				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[7] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 3,
+				},
+				[8] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[9] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
+				},
+				[10] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
+				},
+			},
+			["tasks"] = {
+				[1] = 10,
+			},
+		},
+		[10] = {
+			["displayName"] = "Liberation TARCAP",
+			["name"] = "Liberation TARCAP",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
+				},
+				[3] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
+				},
+				[4] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
+					["num"] = 7,
+				},
+				[6] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
+					["num"] = 6,
+				},
+				[7] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
+					["num"] = 5,
+				},
+				[8] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[9] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[10] = {
+					["CLSID"] = "{AIM_54A_Mk60}",
 					["num"] = 4,
 				},
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 10,
+			},
+		},
+		[11] = {
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 7,
+				},
+				[3] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 6,
+				},
+				[4] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 5,
+				},
+				[5] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 4,
+				},
+				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[7] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 3,
+				},
+				[8] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[9] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
+				},
+				[10] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
+				},
+			},
+			["tasks"] = {
+				[1] = 10,
+			},
+		},
+		[12] = {
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 10,
+				},
+				[2] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 7,
+				},
+				[3] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 6,
+				},
+				[4] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 5,
+				},
+				[5] = {
+					["CLSID"] = "{BRU-32 GBU-16}",
+					["num"] = 4,
+				},
+				[6] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 2,
+				},
+				[7] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 3,
+				},
+				[8] = {
+					["CLSID"] = "{LAU-138 wtip - AIM-9M}",
+					["num"] = 1,
+				},
+				[9] = {
+					["CLSID"] = "{SHOULDER AIM-7M}",
+					["num"] = 9,
+				},
+				[10] = {
+					["CLSID"] = "{F14-300gal}",
+					["num"] = 8,
+				},
+			},
+			["tasks"] = {
+				[1] = 10,
 			},
 		},
 	},

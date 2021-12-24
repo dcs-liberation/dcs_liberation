@@ -2,138 +2,101 @@ local unitPayloads = {
 	["name"] = "UH-1H",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAS",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "M134_R",
+					["num"] = 6,
+				},
+				[2] = {
 					["CLSID"] = "M134_L",
 					["num"] = 1,
 				},
-				[2] = {
+				[3] = {
 					["CLSID"] = "XM158_MK5",
 					["num"] = 2,
 				},
-				[3] = {
+				[4] = {
 					["CLSID"] = "XM158_MK5",
 					["num"] = 5,
 				},
-				[4] = {
-					["CLSID"] = "M134_R",
-					["num"] = 6,
-				},
-			},
-			["tasks"] = {
-				[1] = 32,
-				[2] = 31,
-				[3] = 35,
-				[4] = 16,
-			},
-		},
-		[2] = {
-			["name"] = "CAP",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "M134_L",
-					["num"] = 1,
-				},
-				[2] = {
-					["CLSID"] = "M134_R",
-					["num"] = 6,
-				},
-				[3] = {
+				[5] = {
 					["CLSID"] = "M60_SIDE_R",
 					["num"] = 4,
 				},
-				[4] = {
+				[6] = {
 					["CLSID"] = "M60_SIDE_L",
 					["num"] = 3,
 				},
 			},
 			["tasks"] = {
-				[1] = 32,
-				[2] = 31,
-				[3] = 35,
-				[4] = 16,
+				[1] = 35,
+			},
+		},
+		[2] = {
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "M134_R",
+					["num"] = 6,
+				},
+				[2] = {
+					["CLSID"] = "M134_L",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "XM158_MK5",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "XM158_MK5",
+					["num"] = 5,
+				},
+				[5] = {
+					["CLSID"] = "M60_SIDE_R",
+					["num"] = 4,
+				},
+				[6] = {
+					["CLSID"] = "M60_SIDE_L",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 35,
 			},
 		},
 		[3] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "M134_L",
-					["num"] = 1,
-				},
-				[2] = {
-					["CLSID"] = "XM158_MK5",
-					["num"] = 2,
-				},
-				[3] = {
-					["CLSID"] = "XM158_MK5",
-					["num"] = 5,
-				},
-				[4] = {
 					["CLSID"] = "M134_R",
 					["num"] = 6,
 				},
-			},
-			["tasks"] = {
-				[1] = 32,
-				[2] = 31,
-				[3] = 35,
-				[4] = 16,
-			},
-		},
-		[4] = {
-			["name"] = "ANTISHIP",
-			["pylons"] = {
-				[1] = {
+				[2] = {
 					["CLSID"] = "M134_L",
 					["num"] = 1,
 				},
-				[2] = {
+				[3] = {
 					["CLSID"] = "XM158_MK5",
 					["num"] = 2,
 				},
-				[3] = {
+				[4] = {
 					["CLSID"] = "XM158_MK5",
 					["num"] = 5,
 				},
-				[4] = {
-					["CLSID"] = "M134_R",
-					["num"] = 6,
+				[5] = {
+					["CLSID"] = "M60_SIDE_R",
+					["num"] = 4,
+				},
+				[6] = {
+					["CLSID"] = "M60_SIDE_L",
+					["num"] = 3,
 				},
 			},
 			["tasks"] = {
-				[1] = 32,
-				[2] = 31,
-				[3] = 35,
-				[4] = 16,
-			},
-		},
-		[5] = {
-			["name"] = "STRIKE",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "M134_L",
-					["num"] = 1,
-				},
-				[2] = {
-					["CLSID"] = "XM158_MK5",
-					["num"] = 2,
-				},
-				[3] = {
-					["CLSID"] = "XM158_MK5",
-					["num"] = 5,
-				},
-				[4] = {
-					["CLSID"] = "M134_R",
-					["num"] = 6,
-				},
-			},
-			["tasks"] = {
-				[1] = 32,
-				[2] = 31,
-				[3] = 35,
-				[4] = 16,
+				[1] = 35,
 			},
 		},
 	},

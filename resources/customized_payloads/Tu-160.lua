@@ -2,7 +2,7 @@ local unitPayloads = {
 	["name"] = "Tu-160",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAS",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
@@ -14,10 +14,12 @@ local unitPayloads = {
 				},
 			},
 			["tasks"] = {
+				[1] = 33,
 			},
 		},
 		[2] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
@@ -29,51 +31,7 @@ local unitPayloads = {
 				},
 			},
 			["tasks"] = {
-			},
-		},
-		[3] = {
-			["name"] = "SEAD",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
-					["num"] = 2,
-				},
-				[2] = {
-					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
-					["num"] = 1,
-				},
-			},
-			["tasks"] = {
-			},
-		},
-		[4] = {
-			["name"] = "ANTISHIP",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
-					["num"] = 2,
-				},
-				[2] = {
-					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
-					["num"] = 1,
-				},
-			},
-			["tasks"] = {
-			},
-		},
-		[5] = {
-			["name"] = "CAP",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
-					["num"] = 2,
-				},
-				[2] = {
-					["CLSID"] = "{0290F5DE-014A-4BB1-9843-D717749B1DED}",
-					["num"] = 1,
-				},
-			},
-			["tasks"] = {
+				[1] = 33,
 			},
 		},
 	},

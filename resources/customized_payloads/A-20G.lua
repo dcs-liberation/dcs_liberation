@@ -2,7 +2,7 @@ local unitPayloads = {
 	["name"] = "A-20G",
 	["payloads"] = {
 		[1] = {
-			["name"] = "ANTISHIP",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{4xAN-M64_on_InvCountedAttachmentPoints}",
@@ -14,7 +14,8 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{4xAN-M64_on_InvCountedAttachmentPoints}",
@@ -26,7 +27,8 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation Anti-ship",
+			["name"] = "Liberation Anti-ship",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{4xAN-M64_on_InvCountedAttachmentPoints}",
@@ -38,7 +40,8 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "CAP",
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{4xAN-M64_on_InvCountedAttachmentPoints}",
@@ -50,7 +53,34 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{4xAN-M64_on_InvCountedAttachmentPoints}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[6] = {
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{4xAN-M64_on_InvCountedAttachmentPoints}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[7] = {
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{4xAN-M64_on_InvCountedAttachmentPoints}",
@@ -63,9 +93,6 @@ local unitPayloads = {
 		},
 	},
 	["tasks"] = {
-		[1] = 32,
-		[2] = 30,
-		[3] = 17,
 	},
 	["unitType"] = "A-20G",
 }

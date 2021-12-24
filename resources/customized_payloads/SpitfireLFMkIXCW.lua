@@ -2,71 +2,116 @@ local unitPayloads = {
 	["name"] = "SpitfireLFMkIXCW",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAP",
+			["name"] = "Liberation TARCAP",
 			["pylons"] = {
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 11,
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation BARCAP",
+			["name"] = "Liberation BARCAP",
 			["pylons"] = {
-				[1] = {
-					["CLSID"] = "British_GP_250LBS_Bomb_MK4_on_RH_Spitfire_Wing_Carrier",
-					["num"] = 3,
-				},
-				[2] = {
-					["CLSID"] = "British_GP_250LBS_Bomb_MK4_on_LH_Spitfire_Wing_Carrier",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
-					["num"] = 2,
-				},
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 11,
 			},
 		},
 		[3] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
 			["pylons"] = {
-				[1] = {
-					["CLSID"] = "British_GP_250LBS_Bomb_MK4_on_RH_Spitfire_Wing_Carrier",
-					["num"] = 3,
-				},
-				[2] = {
-					["CLSID"] = "British_GP_250LBS_Bomb_MK4_on_LH_Spitfire_Wing_Carrier",
-					["num"] = 1,
-				},
-				[3] = {
-					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
-					["num"] = 2,
-				},
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 11,
 			},
 		},
 		[4] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
+			["pylons"] = {
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[5] = {
+			["displayName"] = "Liberation CAS",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "British_GP_250LBS_Bomb_MK4_on_RH_Spitfire_Wing_Carrier",
-					["num"] = 3,
-				},
-				[2] = {
-					["CLSID"] = "British_GP_250LBS_Bomb_MK4_on_LH_Spitfire_Wing_Carrier",
-					["num"] = 1,
-				},
-				[3] = {
 					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
 					["num"] = 2,
 				},
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 11,
+			},
+		},
+		[6] = {
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[7] = {
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[8] = {
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[9] = {
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[10] = {
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "British_GP_500LBS_Bomb_MK4_on_British_UniversalBC_MK3",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
 			},
 		},
 	},

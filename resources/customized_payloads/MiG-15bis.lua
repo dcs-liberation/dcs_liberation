@@ -2,14 +2,15 @@ local unitPayloads = {
 	["name"] = "MiG-15bis",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAP",
+			["displayName"] = "Liberation TARCAP",
+			["name"] = "Liberation TARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "PTB300_MIG15",
+					["CLSID"] = "PTB600_MIG15",
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "PTB300_MIG15",
+					["CLSID"] = "PTB600_MIG15",
 					["num"] = 1,
 				},
 			},
@@ -17,14 +18,15 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation CAS",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "FAB_50",
+					["CLSID"] = "FAB_100M",
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "FAB_50",
+					["CLSID"] = "FAB_100M",
 					["num"] = 1,
 				},
 			},
@@ -32,14 +34,15 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "FAB_50",
+					["CLSID"] = "FAB_100M",
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "FAB_50",
+					["CLSID"] = "FAB_100M",
 					["num"] = 1,
 				},
 			},
@@ -47,14 +50,15 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation BARCAP",
+			["name"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "FAB_100M",
+					["CLSID"] = "PTB600_MIG15",
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "FAB_100M",
+					["CLSID"] = "PTB600_MIG15",
 					["num"] = 1,
 				},
 			},
@@ -62,14 +66,31 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "FAB_100M",
+					["CLSID"] = "PTB600_MIG15",
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "FAB_100M",
+					["CLSID"] = "PTB600_MIG15",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+			},
+		},
+		[6] = {
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "PTB600_MIG15",
+					["num"] = 2,
+				},
+				[2] = {
+					["CLSID"] = "PTB600_MIG15",
 					["num"] = 1,
 				},
 			},

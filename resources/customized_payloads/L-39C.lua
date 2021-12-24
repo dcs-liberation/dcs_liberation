@@ -2,64 +2,75 @@ local unitPayloads = {
 	["name"] = "L-39C",
 	["payloads"] = {
 		[1] = {
-			["name"] = "STRIKE",
+			["name"] = "Liberation TARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{FB3CE165-BF07-4979-887C-92B87F13276B}",
+					["CLSID"] = "{R-3S}",
 					["num"] = 3,
 				},
 				[2] = {
-					["CLSID"] = "{FB3CE165-BF07-4979-887C-92B87F13276B}",
+					["CLSID"] = "{R-3S}",
 					["num"] = 1,
 				},
 			},
 			["tasks"] = {
 				[1] = 31,
-				[2] = 30,
-				[3] = 32,
-				[4] = 34,
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation BARCAP",
+			["name"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{UB-16-57UMP}",
+					["CLSID"] = "{R-3S}",
 					["num"] = 3,
 				},
 				[2] = {
-					["CLSID"] = "{UB-16-57UMP}",
+					["CLSID"] = "{R-3S}",
 					["num"] = 1,
 				},
 			},
 			["tasks"] = {
 				[1] = 31,
-				[2] = 30,
-				[3] = 32,
-				[4] = 34,
 			},
 		},
 		[3] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{UB-16-57UMP}",
+					["CLSID"] = "{R-3S}",
 					["num"] = 3,
 				},
 				[2] = {
-					["CLSID"] = "{UB-16-57UMP}",
+					["CLSID"] = "{R-3S}",
 					["num"] = 1,
 				},
 			},
 			["tasks"] = {
 				[1] = 31,
-				[2] = 30,
-				[3] = 32,
-				[4] = 34,
 			},
 		},
 		[4] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{R-3S}",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "{R-3S}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[5] = {
+			["displayName"] = "Liberation CAS",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{UB-16-57UMP}",
@@ -72,20 +83,69 @@ local unitPayloads = {
 			},
 			["tasks"] = {
 				[1] = 31,
-				[2] = 30,
-				[3] = 32,
-				[4] = 34,
 			},
 		},
-		[5] = {
-			["name"] = "CAP",
+		[6] = {
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{R-3S}",
+					["CLSID"] = "{FB3CE165-BF07-4979-887C-92B87F13276B}",
 					["num"] = 3,
 				},
 				[2] = {
-					["CLSID"] = "{R-3S}",
+					["CLSID"] = "{FB3CE165-BF07-4979-887C-92B87F13276B}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[7] = {
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{UB-16-57UMP}",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "{UB-16-57UMP}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[8] = {
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{UB-16-57UMP}",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "{UB-16-57UMP}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[9] = {
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{UB-16-57UMP}",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "{UB-16-57UMP}",
 					["num"] = 1,
 				},
 			},

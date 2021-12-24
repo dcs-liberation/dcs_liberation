@@ -2,31 +2,31 @@ local unitPayloads = {
 	["name"] = "MiG-21Bis",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAP",
+			["name"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{PTB_490C_MIG21}",
-					["num"] = 3,
+					["CLSID"] = "{ASO-2}",
+					["num"] = 6,
 				},
 				[2] = {
-					["CLSID"] = "{R-3R}",
-					["num"] = 2,
+					["CLSID"] = "{R-60M}",
+					["num"] = 5,
 				},
 				[3] = {
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
+				},
+				[4] = {
 					["CLSID"] = "{R-3R}",
 					["num"] = 4,
 				},
-				[4] = {
-					["CLSID"] = "{R-60 2L}",
-					["num"] = 1,
-				},
 				[5] = {
-					["CLSID"] = "{R-60 2R}",
-					["num"] = 5,
+					["CLSID"] = "{R-3R}",
+					["num"] = 2,
 				},
 				[6] = {
-					["CLSID"] = "{ASO-2}",
-					["num"] = 6,
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -34,31 +34,32 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation TARCAP",
+			["name"] = "Liberation TARCAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ASO-2}",
 					["num"] = 6,
 				},
 				[2] = {
-					["CLSID"] = "{S-24B}",
+					["CLSID"] = "{R-60M}",
 					["num"] = 5,
 				},
 				[3] = {
-					["CLSID"] = "{UB-32_S5M}",
-					["num"] = 4,
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{UB-32_S5M}",
-					["num"] = 2,
+					["CLSID"] = "{R-3R}",
+					["num"] = 4,
 				},
 				[5] = {
-					["CLSID"] = "{S-24B}",
-					["num"] = 1,
+					["CLSID"] = "{R-3R}",
+					["num"] = 2,
 				},
 				[6] = {
-					["CLSID"] = "{PTB_490C_MIG21}",
-					["num"] = 3,
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -66,31 +67,32 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ASO-2}",
 					["num"] = 6,
 				},
 				[2] = {
-					["CLSID"] = "{S-24B}",
+					["CLSID"] = "{R-60M}",
 					["num"] = 5,
 				},
 				[3] = {
-					["CLSID"] = "{Kh-66_Grom}",
-					["num"] = 4,
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{Kh-66_Grom}",
-					["num"] = 2,
+					["CLSID"] = "{R-3R}",
+					["num"] = 4,
 				},
 				[5] = {
-					["CLSID"] = "{S-24B}",
-					["num"] = 1,
+					["CLSID"] = "{R-3R}",
+					["num"] = 2,
 				},
 				[6] = {
-					["CLSID"] = "{PTB_490C_MIG21}",
-					["num"] = 3,
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -98,31 +100,32 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ASO-2}",
 					["num"] = 6,
 				},
 				[2] = {
-					["CLSID"] = "{S-24B}",
+					["CLSID"] = "{R-60M}",
 					["num"] = 5,
 				},
 				[3] = {
-					["CLSID"] = "{Kh-66_Grom}",
-					["num"] = 4,
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{Kh-66_Grom}",
-					["num"] = 2,
+					["CLSID"] = "{R-3R}",
+					["num"] = 4,
 				},
 				[5] = {
-					["CLSID"] = "{S-24B}",
-					["num"] = 1,
+					["CLSID"] = "{R-3R}",
+					["num"] = 2,
 				},
 				[6] = {
-					["CLSID"] = "{PTB_490C_MIG21}",
-					["num"] = 3,
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -130,35 +133,167 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "STRIKE",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "{ASO-2}",
+					["num"] = 6,
+				},
+				[2] = {
 					["CLSID"] = "{PTB_800_MIG21}",
 					["num"] = 3,
 				},
-				[2] = {
-					["CLSID"] = "{35B698AC-9FEF-4EC4-AD29-484A0085F62B}",
+				[3] = {
+					["CLSID"] = "{Kh-66_Grom}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{Kh-66_Grom}",
 					["num"] = 2,
+				},
+				[5] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 5,
+				},
+				[6] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[6] = {
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{ASO-2}",
+					["num"] = 6,
+				},
+				[2] = {
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
 				},
 				[3] = {
 					["CLSID"] = "{35B698AC-9FEF-4EC4-AD29-484A0085F62B}",
 					["num"] = 4,
 				},
 				[4] = {
-					["CLSID"] = "{ASO-2}",
-					["num"] = 6,
+					["CLSID"] = "{35B698AC-9FEF-4EC4-AD29-484A0085F62B}",
+					["num"] = 2,
 				},
 				[5] = {
-					["CLSID"] = "{FB3CE165-BF07-4979-887C-92B87F13276B}",
-					["num"] = 1,
+					["CLSID"] = "{R-60M}",
+					["num"] = 5,
 				},
 				[6] = {
-					["CLSID"] = "{FB3CE165-BF07-4979-887C-92B87F13276B}",
-					["num"] = 5,
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
-				[1] = 32,
+				[1] = 11,
+			},
+		},
+		[7] = {
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{ASO-2}",
+					["num"] = 6,
+				},
+				[2] = {
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
+				},
+				[3] = {
+					["CLSID"] = "{08164777-5E9C-4B08-B48E-5AA7AFB246E2}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{08164777-5E9C-4B08-B48E-5AA7AFB246E2}",
+					["num"] = 2,
+				},
+				[5] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 5,
+				},
+				[6] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[8] = {
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{ASO-2}",
+					["num"] = 6,
+				},
+				[2] = {
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
+				},
+				[3] = {
+					["CLSID"] = "{UB-32_S5M}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{UB-32_S5M}",
+					["num"] = 2,
+				},
+				[5] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 5,
+				},
+				[6] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[9] = {
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{ASO-2}",
+					["num"] = 6,
+				},
+				[2] = {
+					["CLSID"] = "{PTB_800_MIG21}",
+					["num"] = 3,
+				},
+				[3] = {
+					["CLSID"] = "{BD289E34-DF84-4C5E-9220-4B14C346E79D}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{BD289E34-DF84-4C5E-9220-4B14C346E79D}",
+					["num"] = 2,
+				},
+				[5] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 5,
+				},
+				[6] = {
+					["CLSID"] = "{R-60M}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
 			},
 		},
 	},

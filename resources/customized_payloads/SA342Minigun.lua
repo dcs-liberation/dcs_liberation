@@ -1,5 +1,5 @@
 local unitPayloads = {
-	["name"] = "SA342L",
+	["name"] = "SA342Minigun",
 	["payloads"] = {
 		[1] = {
 			["name"] = "Liberation CAS",
@@ -7,10 +7,6 @@ local unitPayloads = {
 				[1] = {
 					["CLSID"] = "{IR_Deflector}",
 					["num"] = 6,
-				},
-				[2] = {
-					["CLSID"] = "{LAU_SNEB68G}",
-					["num"] = 2,
 				},
 			},
 			["tasks"] = {
@@ -25,10 +21,6 @@ local unitPayloads = {
 					["CLSID"] = "{IR_Deflector}",
 					["num"] = 6,
 				},
-				[2] = {
-					["CLSID"] = "{LAU_SNEB68G}",
-					["num"] = 2,
-				},
 			},
 			["tasks"] = {
 				[1] = 31,
@@ -37,6 +29,6 @@ local unitPayloads = {
 	},
 	["tasks"] = {
 	},
-	["unitType"] = "SA342L",
+	["unitType"] = "SA342Minigun",
 }
 return unitPayloads

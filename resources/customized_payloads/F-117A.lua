@@ -2,15 +2,15 @@ local unitPayloads = {
 	["name"] = "F-117A",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAS",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 1,
+					["CLSID"] = "{EF0A9419-01D6-473B-99A3-BEBDB923B14D}",
+					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 2,
+					["CLSID"] = "{EF0A9419-01D6-473B-99A3-BEBDB923B14D}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -18,15 +18,16 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 1,
+					["CLSID"] = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}",
+					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 2,
+					["CLSID"] = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
@@ -34,40 +35,17 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 1,
-				},
-				[2] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["CLSID"] = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}",
 					["num"] = 2,
 				},
-			},
-			["tasks"] = {
-				[1] = 33,
-			},
-		},
-		[4] = {
-			["name"] = "ANTISHIP",
-			["pylons"] = {
-				[1] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+				[2] = {
+					["CLSID"] = "{51F9AAE5-964F-4D21-83FB-502E3BFE5F8A}",
 					["num"] = 1,
 				},
-				[2] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
-					["num"] = 2,
-				},
-			},
-			["tasks"] = {
-				[1] = 33,
-			},
-		},
-		[5] = {
-			["name"] = "CAP",
-			["pylons"] = {
 			},
 			["tasks"] = {
 				[1] = 33,
