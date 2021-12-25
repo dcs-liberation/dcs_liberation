@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import itertools
-import random
 from collections import defaultdict
 from typing import Sequence, Iterator, TYPE_CHECKING, Optional
 
@@ -58,15 +57,9 @@ class AirWing:
     def best_squadron_for(
         self, location: MissionTarget, task: FlightType, size: int, this_turn: bool
     ) -> Optional[Squadron]:
-        best_squadrons = self.best_squadrons_for(location, task, size, this_turn)
-        if not best_squadrons:
-            return None
-        else:
-            # In case we have several best squadrons at this point,
-            # return a random squadron from the list of best squadrons for this MissionTarget
-            # so the autoplanner will reserve pilots and aircraft from several squadrons,
-            # not just the first one in the list.
-            return random.choice(best_squadrons)
+        for squadron in self.best_squadrons_for(location, task, size, this_turn):
+            return squadron
+        return None
 
     @property
     def available_aircraft_types(self) -> Iterator[AircraftType]:

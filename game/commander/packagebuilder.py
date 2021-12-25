@@ -48,11 +48,6 @@ class PackageBuilder:
         )
         if squadron is None:
             return False
-        # Reserve the pilots for this flight so the autoplanner will not
-        # assign them to another flights, potentially causing a squadron
-        # to buy more airframes than they have available pilots
-        if not squadron.autoplanner_reserve_pilots(plan.num_aircraft):
-            return False
         start_type = squadron.location.required_aircraft_start_type
         if start_type is None:
             start_type = self.start_type

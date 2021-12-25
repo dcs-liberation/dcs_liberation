@@ -122,8 +122,6 @@ class Flight:
     def return_pilots_and_aircraft(self) -> None:
         self.roster.clear()
         self.squadron.claim_inventory(-self.count)
-        # Also release any pilots reserved by the autoplanner
-        self.squadron.release_autoplanner_pilot_reservations()
 
     def max_takeoff_fuel(self) -> Optional[float]:
         # Special case so Su 33 and C101 can take off
