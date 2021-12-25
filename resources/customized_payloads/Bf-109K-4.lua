@@ -2,7 +2,8 @@ local unitPayloads = {
 	["name"] = "Bf-109K-4",
 	["payloads"] = {
 		[1] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "SC_501_SC500",
@@ -10,37 +11,25 @@ local unitPayloads = {
 				},
 			},
 			["tasks"] = {
-				[1] = 34,
-				[2] = 31,
-				[3] = 30,
-				[4] = 32,
+				[1] = 11,
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation TARCAP",
+			["name"] = "Liberation TARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "SC_501_SC250",
+					["CLSID"] = "BF109K_4_FUEL_TANK",
 					["num"] = 1,
 				},
 			},
 			["tasks"] = {
-				[1] = 34,
-				[2] = 31,
-				[3] = 30,
-				[4] = 32,
+				[1] = 11,
 			},
 		},
 		[3] = {
-			["name"] = "CAP",
-			["pylons"] = {
-			},
-			["tasks"] = {
-				[1] = 31,
-			},
-		},
-		[4] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "SC_501_SC500",
@@ -48,10 +37,96 @@ local unitPayloads = {
 				},
 			},
 			["tasks"] = {
-				[1] = 34,
-				[2] = 31,
-				[3] = 30,
-				[4] = 32,
+				[1] = 11,
+			},
+		},
+		[4] = {
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "BF109K_4_FUEL_TANK",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[5] = {
+			["name"] = "Liberation BARCAP",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "BF109K_4_FUEL_TANK",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[6] = {
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "BF109K_4_FUEL_TANK",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[7] = {
+			["name"] = "Liberation Strike",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[8] = {
+			["displayName"] = "Liberation CAS",
+			["name"] = "Liberation CAS",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[9] = {
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
+			},
+		},
+		[10] = {
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "SC_501_SC500",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 11,
 			},
 		},
 	},
