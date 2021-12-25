@@ -10,7 +10,8 @@ Saves from 5.x are not compatible with 6.0.
 * **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
 * **[Flight Planning]** Added the ability to plan tankers for recovery on package flights.  AI does not plan.
 * **[Modding]** Add F-104 mod support
-* 
+* **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
+
 ## Fixes
 
 * **[Mission Generator]** Fixed incorrect radio specification for the AN/ARC-222.

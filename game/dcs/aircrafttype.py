@@ -5,37 +5,38 @@ from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import ClassVar, Type, Iterator, TYPE_CHECKING, Optional, Any
+from typing import Any, ClassVar, Iterator, Optional, TYPE_CHECKING, Type
 
 import yaml
 from dcs.helicopters import helicopter_map
 from dcs.planes import plane_map
 from dcs.unittype import FlyingType
 
+from game.dcs.unitproperty import UnitProperty
 from game.dcs.unittype import UnitType
 from game.radio.channels import (
     ChannelNamer,
-    RadioChannelAllocator,
     CommonRadioChannelAllocator,
-    HueyChannelNamer,
-    SCR522ChannelNamer,
-    ViggenChannelNamer,
-    ViperChannelNamer,
-    TomcatChannelNamer,
-    MirageChannelNamer,
-    SingleRadioChannelNamer,
     FarmerRadioChannelAllocator,
-    SCR522RadioChannelAllocator,
-    ViggenRadioChannelAllocator,
+    HueyChannelNamer,
+    MirageChannelNamer,
     NoOpChannelAllocator,
+    RadioChannelAllocator,
+    SCR522ChannelNamer,
+    SCR522RadioChannelAllocator,
+    SingleRadioChannelNamer,
+    TomcatChannelNamer,
+    ViggenChannelNamer,
+    ViggenRadioChannelAllocator,
+    ViperChannelNamer,
 )
 from game.utils import (
     Distance,
     SPEED_OF_SOUND_AT_SEA_LEVEL,
     Speed,
     feet,
-    kph,
     knots,
+    kph,
     nautical_miles,
 )
 
@@ -286,6 +287,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     def channel_name(self, radio_id: int, channel_id: int) -> str:
         return self.channel_namer.channel_name(radio_id, channel_id)
+
+    def iter_props(self) -> Iterator[UnitProperty[Any]]:
+        return UnitProperty.for_aircraft(self.dcs_unit_type)
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         # Update any existing models with new data on load.

@@ -8,6 +8,7 @@ from dcs.planes import C_101CC, C_101EB, Su_33
 from gen.flights.loadouts import Loadout
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Uninitialized
+from ..savecompat import has_save_compat_for
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
@@ -55,6 +56,15 @@ class Flight:
         # Only used by transport missions.
         self.cargo = cargo
 
+        # Flight properties that can be set in the mission editor. This is used for
+        # things like HMD selection, ripple quantity, etc. Any values set here will take
+        # the place of the defaults defined by DCS.
+        #
+        # This is a part of the Flight rather than the Loadout because DCS does not
+        # associate these choices with the loadout, and we don't want to reset these
+        # options when players switch loadouts.
+        self.props: dict[str, Any] = {}
+
         # Used for simulating the travel to first contact.
         self.state: FlightState = Uninitialized(self, squadron.settings)
 
@@ -76,8 +86,11 @@ class Flight:
         del state["state"]
         return state
 
+    @has_save_compat_for(6)
     def __setstate__(self, state: dict[str, Any]) -> None:
         state["state"] = Uninitialized(self, state["squadron"].settings)
+        if "props" not in state:
+            state["props"] = {}
         self.__dict__.update(state)
 
     @property
