@@ -182,16 +182,35 @@ class ProcurementAi:
     @staticmethod
     def fulfill_aircraft_request(
         squadrons: list[Squadron], quantity: int, budget: float
-    ) -> Tuple[float, bool]:
+    ) -> Tuple[float, bool, bool]:
+        """
+        Purchases aircraft for a requested task. Arguments:
+            List of potential squadrons to consider the task.
+            Requested quantity.
+            Available budget.
+        Returns:
+            A tuple containing, respectively, a float (remaining budget), a bool (true if the request was fulfilled)
+            and a bool (false if the request was not fulfilled because of insufficient pilots, prompting a retry).
+        """
         for squadron in squadrons:
+            insufficient_pilots = False
             price = squadron.aircraft.price * quantity
+
+            # Final check to make sure the number of aircraft won't exceed the number of available pilots
+            # after fulfilling this aircraft request.
+            if (
+                squadron.pilot_limits_enabled
+                and squadron.expected_size_next_turn + quantity > squadron.max_size
+            ):
+                insufficient_pilots = True
+                continue
             if price > budget:
                 continue
 
             squadron.pending_deliveries += quantity
             budget -= price
-            return budget, True
-        return budget, False
+            return budget, True, insufficient_pilots
+        return budget, False, insufficient_pilots
 
     def purchase_aircraft(self, budget: float) -> float:
         for request in self.game.coalition_for(self.is_player).procurement_requests:
@@ -199,9 +218,13 @@ class ProcurementAi:
             if not squadrons:
                 # No airbases in range of this request. Skip it.
                 continue
-            budget, fulfilled = self.fulfill_aircraft_request(
+            budget, fulfilled, insufficient_pilots = self.fulfill_aircraft_request(
                 squadrons, request.number, budget
             )
+            if insufficient_pilots:
+                # The request was not fulfilled because there were not enough pilots in any of the provided squadrons
+                # and not because of insufficient budget. Continue processing the aircraft requests.
+                continue
             if not fulfilled:
                 # The request was not fulfilled because we could not afford any suitable
                 # aircraft. Rather than continuing, which could proceed to buy tons of
