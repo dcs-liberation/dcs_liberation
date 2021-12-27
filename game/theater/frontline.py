@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from math import sqrt
 from typing import Iterator, List, Tuple, Any, TYPE_CHECKING
 
 from dcs.mapping import Point
@@ -66,23 +65,10 @@ class FrontLine(MissionTarget):
         self.segments: List[FrontLineSegment] = [
             FrontLineSegment(a, b) for a, b in pairwise(route)
         ]
-        try:
-            super().__init__(
-                f"Front line {blue_point}/{red_point}",
-                self.point_from_a(self._position_distance),
-            )
-        except RuntimeError:
-            # Failed to find front line point the intended distance away.
-            # Control points are probably closer to each other than FRONTLINE_MIN_CP_DISTANCE
-            # Fallback: try again with the middle point between the control points.
-            distance_between = sqrt(
-                ((blue_point.position.x - red_point.position.x) ** 2)
-                + ((blue_point.position.y - red_point.position.y) ** 2)
-            )
-            super().__init__(
-                f"Front line {blue_point}/{red_point}",
-                self.point_from_a(distance_between / 2),
-            )
+        super().__init__(
+            f"Front line {blue_point}/{red_point}",
+            self.point_from_a(self._position_distance),
+        )
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, FrontLine):
