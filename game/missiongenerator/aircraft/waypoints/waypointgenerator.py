@@ -27,6 +27,7 @@ from .deadingress import DeadIngressBuilder
 from .default import DefaultWaypointBuilder
 from .holdpoint import HoldPointBuilder
 from .joinpoint import JoinPointBuilder
+from .splitpoint import SplitPointBuilder
 from .landingpoint import LandingPointBuilder
 from .ocaaircraftingress import OcaAircraftIngressBuilder
 from .ocarunwayingress import OcaRunwayIngressBuilder
@@ -127,6 +128,7 @@ class WaypointGenerator:
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
+            FlightWaypointType.SPLIT: SplitPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,

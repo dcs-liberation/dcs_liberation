@@ -1,7 +1,7 @@
 from typing import List, Type
 
 from dcs.point import MovingPoint
-from dcs.task import ControlledTask, EngageTargets, TargetType, Targets
+from dcs.task import ControlledTask, EngageTargets, OptECMUsing, TargetType, Targets
 
 from game.ato import FlightType
 from game.utils import nautical_miles
@@ -18,10 +18,23 @@ class JoinPointBuilder(PydcsWaypointBuilder):
                     Targets.All.Air.Planes.MultiroleFighters,
                 ],
             )
+
+            # Let the AI use ECM to defend themselves.
+            ecm_option = OptECMUsing(value=OptECMUsing.Values.UseIfOnlyLockByRadar)
+            waypoint.tasks.append(ecm_option)
+
         elif self.flight.flight_type == FlightType.SEAD_ESCORT:
             self.configure_escort_tasks(
                 waypoint, [Targets.All.GroundUnits.AirDefence.AAA.SAMRelated]
             )
+
+            # Let the AI use ECM to preemptively defend themselves.
+            ecm_option = OptECMUsing(value=OptECMUsing.Values.UseIfDetectedLockByRadar)
+            waypoint.tasks.append(ecm_option)
+        else:
+            # Let the AI use ECM to defend themselves.
+            ecm_option = OptECMUsing(value=OptECMUsing.Values.UseIfOnlyLockByRadar)
+            waypoint.tasks.append(ecm_option)
 
     @staticmethod
     def configure_escort_tasks(
