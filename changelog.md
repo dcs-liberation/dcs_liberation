@@ -11,6 +11,7 @@ Saves from 5.0.0 are not compatible with 5.1.0
 
 ## Fixes
 
+* **[Campaign]** Fixed some minor issues in campaigns which generated error messages in the log.
 * **[Mission Generator]** Fixed incorrect radio specification for the AN/ARC-222.
 * **[Mission Generator]** Fixed mission scripting error when using a dedicated server.
 * **[Mission Generator]** Fixed an issue where empty convoys lead to an index error when a point capture made a pending transfer of units not completable anymore.
