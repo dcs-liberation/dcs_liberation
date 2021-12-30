@@ -3,7 +3,7 @@ name: Syria - Operation Blackball
 theater: Syria
 authors: Fuzzle
 description: <p>A lightweight fictional showcase of Cyprus for the Syria terrain. A US Navy force must deploy from a FOB and carrier group to push from the north-east down through the island. <strong>Note that the ground units purchased on turn zero must sustain you until you've taken the first hostile FOB. The starting point does not have a factory to simulate a Marine Expeditionary Force deploying from the carrier group.</strong></p><p><strong>Backstory:</strong> The world is at war. With the help of her eastern allies Russia has taken the Suez Canal and deployed a large naval force to the Mediterranean trapping a US carrier group near the Turkish-Syrian border. Now they must break out by taking Cyprus back.</p>
-version: 9.1
+version: "9.1"
 recommended_player_faction: US Navy 2005
 recommended_enemy_faction: Russia 2010
 miz: operation_blackball.miz
