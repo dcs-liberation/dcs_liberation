@@ -10,11 +10,11 @@ local unitPayloads = {
 					["num"] = 4,
 				},
 				[2] = {
-					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
+					["CLSID"] = "{AIM-9L}",
 					["num"] = 5,
 				},
 				[3] = {
-					["CLSID"] = "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
+					["CLSID"] = "{AIM-9L}",
 					["num"] = 7,
 				},
 				[4] = {
