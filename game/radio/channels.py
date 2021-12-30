@@ -287,7 +287,7 @@ class ViggenChannelNamer(ChannelNamer):
         ]
         if channel_id >= 41:  # Special channels are 41-47
             return special_channels[channel_id - 41]
-        return f"FR 22 Group 10{channel_id-1}"
+        return f"FR 22 Group {99 + channel_id}"
 
     @classmethod
     def name(cls) -> str:
