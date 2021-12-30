@@ -17,7 +17,7 @@ squadrons:
       aircraft:
         - F-15C Eagle
     - primary: BARCAP
-      secondary: air-to-air
+      secondary: any
       aircraft:
         - F-14B Tomcat
     - primary: AEW&C
@@ -43,11 +43,11 @@ squadrons:
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
     - primary: SEAD
-      secondary: any
+      secondary: air-to-ground
       aircraft:
         - F/A-18C Hornet (Lot 20)
     - primary: DEAD
-      secondary: any
+      secondary: air-to-ground
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
     - primary: BAI
@@ -57,23 +57,29 @@ squadrons:
 # Groom Lake
   2:
     - primary: BARCAP
-      secondary: any
+      secondary: air-to-air
       aircraft:
         - J-11A Flanker-L
-    - primary: BAI
+    - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Su-34 Fullback
 # Nellis AFB
   4:
-    - primary: DEAD
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-25T Frogfoot
+    - primary: SEAD
       secondary: any
       aircraft:
-        - Su-30MKK Flanker-G
+        - FC-1 Fierce Dragon
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - H-6J Badger
+# Boulder City Airport
+  6:
     - primary: AEW&C
       aircraft:
         - KJ-2000
