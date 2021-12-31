@@ -5,7 +5,7 @@ authors: Ghosti
 description: <p>The objective of this campaign is the capture of Guam. Blue side, having landed their forces on the beaches of Agat, are pushing inland. <strong>Note:</strong> This campaign requires a carrier-capable (or LHA-capable) BLUFOR faction to be able to field aircraft.</p>
 miz: marianas_guam_landing_at_agat.miz
 performance: 2
-version: "9.0"
+version: "10.0"
 squadrons:
   Blue CV:
     - primary: BARCAP
