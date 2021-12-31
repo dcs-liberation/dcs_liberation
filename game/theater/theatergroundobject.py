@@ -316,16 +316,6 @@ class SceneryGroundObject(BuildingGroundObject):
             is_fob_structure=False,
         )
         self.zone = zone
-        try:
-            # In the default TriggerZone using "assign as..." in the DCS Mission Editor,
-            # property three has the scenery's object ID as its value.
-            self.map_object_id = self.zone.properties[3]["value"]
-        except (IndexError, KeyError):
-            logging.exception(
-                "Invalid TriggerZone for Scenery definition. The third property must "
-                "be the map object ID."
-            )
-            raise
 
 
 class FactoryGroundObject(BuildingGroundObject):

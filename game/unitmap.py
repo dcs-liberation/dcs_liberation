@@ -217,7 +217,7 @@ class UnitMap:
         self.buildings[name] = Building(ground_object)
 
     def add_scenery(self, ground_object: SceneryGroundObject) -> None:
-        name = str(ground_object.map_object_id)
+        name = str(ground_object.zone.name)
         if name in self.buildings:
             raise RuntimeError(
                 f"Duplicate TGO unit: {name}. TriggerZone name: "

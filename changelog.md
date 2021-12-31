@@ -12,6 +12,7 @@ Saves from 5.0.0 are compatible with 5.1.0
 ## Fixes
 
 * **[Campaign]** Fixed some minor issues in campaigns which generated error messages in the log.
+* **[Campaign]** Changed the way how map object / scenery kills where tracked. This fixes issues with kill recognition after map updates from ED which change the object ids and therefore prevent correct kill recognition.
 * **[Mission Generation]** Fixed incorrect radio specification for the AN/ARC-222.
 * **[Mission Generation]** Fixed mission scripting error when using a dedicated server.
 * **[Mission Generation]** Fixed an issue where empty convoys lead to an index error when a point capture made a pending transfer of units not completable anymore.
