@@ -24,7 +24,8 @@ from typing import (
 )
 
 from dcs import Mission, Point, unitgroup
-from dcs.action import SceneryDestructionZone
+from dcs.action import SceneryDestructionZone, DoScript
+from dcs.condition import MapObjectIsDead
 from dcs.country import Country
 from dcs.point import StaticPoint
 from dcs.statics import Fortification, fortification_map, warehouse_map
@@ -35,7 +36,8 @@ from dcs.task import (
     OptAlarmState,
     FireAtPoint,
 )
-from dcs.triggers import TriggerStart, TriggerZone
+from dcs.translation import String
+from dcs.triggers import TriggerStart, TriggerZone, Event, TriggerOnce
 from dcs.unit import Ship, Unit, Vehicle, InvisibleFARP
 from dcs.unitgroup import ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import StaticType, ShipType, VehicleType
@@ -296,7 +298,9 @@ class SceneryGenerator(BuildingSiteGenerator):
         # this trigger rule is applied.  Otherwise you can kill a
         # structure twice.
         if self.ground_object.is_dead:
-            self.generate_dead_trigger_rule(trigger_zone)
+            self.generate_destruction_trigger_rule(trigger_zone)
+        else:
+            self.generate_on_dead_trigger_rule(trigger_zone)
 
         # Tell Liberation to manage this groundobjectsgen as part of the campaign.
         self.register_scenery()
@@ -324,12 +328,23 @@ class SceneryGenerator(BuildingSiteGenerator):
             zone.properties,
         )
 
-    def generate_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
+    def generate_destruction_trigger_rule(self, trigger_zone: TriggerZone) -> None:
         # Add destruction zone trigger
         t = TriggerStart(comment="Destruction")
         t.actions.append(
             SceneryDestructionZone(destruction_level=100, zone=trigger_zone.id)
         )
+        self.m.triggerrules.triggers.append(t)
+
+    def generate_on_dead_trigger_rule(self, trigger_zone: TriggerZone) -> None:
+        # Add a TriggerRule with the MapObjectIsDead condition to recognize killed
+        # map objects and add them to the state.json with a DoScript
+        t = TriggerOnce(Event.NoEvent, f"MapObjectIsDead Trigger {trigger_zone.id}")
+        t.add_condition(MapObjectIsDead(trigger_zone.id))
+        script_string = String(
+            f'killed_map_objects[#killed_map_objects + 1] = "{trigger_zone.name}"'
+        )
+        t.actions.append(DoScript(script_string))
         self.m.triggerrules.triggers.append(t)
 
     def register_scenery(self) -> None:
