@@ -107,11 +107,14 @@ class FlightGroupSpawner:
                 if self.flight.unit_type.helicopter:
                     return self._generate_at_cp_helipad(name, cp)
 
-                if not isinstance(cp, Airfield):
+                if isinstance(cp, Airfield):
+                    return self._generate_at_airport(name, cp.airport)
+                elif isinstance(cp, OffMapSpawn):
+                    return self._generate_over_departure(name, cp)
+                else:
                     raise RuntimeError(
                         f"Attempted to spawn at airfield for non-airfield {cp}"
                     )
-                return self._generate_at_airport(name, cp.airport)
         except NoParkingSlotError:
             # Generated when there is no place on Runway or on Parking Slots
             logging.warning(
@@ -213,7 +216,11 @@ class FlightGroupSpawner:
         try:
             helipad = self.helipads[cp].pop()
         except IndexError as ex:
-            raise RuntimeError(f"Not enough helipads available at {cp}") from ex
+            logging.warning("Not enough helipads available at " + str(ex))
+            if isinstance(cp, Airfield):
+                return self._generate_at_airport(name, cp.airport)
+            else:
+                return None
 
         group = self._generate_at_group(name, helipad)
 
