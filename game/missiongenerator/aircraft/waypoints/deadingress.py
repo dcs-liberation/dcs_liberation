@@ -1,7 +1,7 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import AttackGroup, WeaponType
+from dcs.task import AttackGroup, OptECMUsing, WeaponType
 
 from game.theater import TheaterGroundObject
 from .pydcswaypointbuilder import PydcsWaypointBuilder
@@ -32,3 +32,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
             task.params["altitudeEnabled"] = False
             task.params["groupAttack"] = True
             waypoint.tasks.append(task)
+
+        # Preemptively use ECM to better avoid getting swatted.
+        ecm_option = OptECMUsing(value=OptECMUsing.Values.UseIfDetectedLockByRadar)
+        waypoint.tasks.append(ecm_option)
