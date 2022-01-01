@@ -6,28 +6,28 @@ local unitPayloads = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "VSN_F104G_L_PTB",
-					["num"] = 2,
-				},
-				[2] = {
-					["CLSID"] = "{FD90A1DC-9147-49FA-BF56-CB83EF0BD32B}",
-					["num"] = 8,
-				},
-				[3] = {
-					["CLSID"] = "VSN_F104G_R_PTB",
-					["num"] = 10,
-				},
-				[4] = {
-					["CLSID"] = "{FD90A1DC-9147-49FA-BF56-CB83EF0BD32B}",
+					["CLSID"] = "{AIM-9L}",
 					["num"] = 4,
 				},
-				[5] = {
+				[2] = {
 					["CLSID"] = "{AIM-9L}",
 					["num"] = 5,
 				},
-				[6] = {
+				[3] = {
 					["CLSID"] = "{AIM-9L}",
 					["num"] = 7,
+				},
+				[4] = {
+					["CLSID"] = "{AIM-9L}",
+					["num"] = 8,
+				},
+				[5] = {
+					["CLSID"] = "VSN_F104G_R_PTB",
+					["num"] = 10,
+				},
+				[6] = {
+					["CLSID"] = "VSN_F104G_L_PTB",
+					["num"] = 2,
 				},
 			},
 			["tasks"] = {
