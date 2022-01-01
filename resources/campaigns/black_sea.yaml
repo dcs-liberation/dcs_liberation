@@ -8,7 +8,7 @@ recommended_enemy_faction: Russia 2010
 recommended_start_date: 2004-01-07
 miz: black_sea.miz
 performance: 2
-version: "10.0"
+version: "9.1"
 squadrons:
   # Anapa-Vityazevo
   12:
