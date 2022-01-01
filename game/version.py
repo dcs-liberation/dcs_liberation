@@ -123,4 +123,8 @@ VERSION = _build_version_string()
 #: Version 9.1
 #: * Campaign files can optionally define a start date with
 #:   `recommended_start_date: YYYY-MM-DD`.
-CAMPAIGN_FORMAT_VERSION = (9, 1)
+#
+#: Version 10.0
+#: * DCS 2.7.9.17830 changed scenery target IDs. Any mission using map buildings as
+#:   strike targets must check and potentially recreate all those objectives.
+CAMPAIGN_FORMAT_VERSION = (10, 0)

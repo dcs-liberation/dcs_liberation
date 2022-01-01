@@ -8,7 +8,7 @@ recommended_enemy_faction: Russia 1975
 recommended_start_date: 1995-06-13
 miz: northern_russia.miz
 performance: 2
-version: "9.1"
+version: "10.0"
 squadrons:
   # Kutaisi
   25:

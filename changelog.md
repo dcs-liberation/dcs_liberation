@@ -15,9 +15,11 @@ Saves from 5.x are not compatible with 6.0.
 
 ## Fixes
 
-* **[Mission Generator]** Fixed incorrect radio specification for the AN/ARC-222.
-* **[Mission Generator]** Fixed mission scripting error when using a dedicated server.
-* **[Mission Generator]** Fixed an issue where empty convoys lead to an index error when a point capture made a pending transfer of units not completable anymore.
+* **[Campaign]** Fixed some minor issues in campaigns which generated error messages in the log.
+* **[Mission Generation]** Fixed incorrect radio specification for the AN/ARC-222.
+* **[Mission Generation]** Fixed mission scripting error when using a dedicated server.
+* **[Mission Generation]** Fixed an issue where empty convoys lead to an index error when a point capture made a pending transfer of units not completable anymore.
+* **[Mission Generation]** Corrected Viggen FR22 & FR24 preset channels for the DCS 2.7.9 update
 * **[UI]** Enable / Disable the settings, save and stats actions if no game is loaded to prevent an error as these functions can only be used on a valid game.
 
 # 5.0.0
