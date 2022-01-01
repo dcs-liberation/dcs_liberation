@@ -220,7 +220,7 @@ class FlightGroupSpawner:
             if isinstance(cp, Airfield):
                 return self._generate_at_airport(name, cp.airport)
             else:
-                return None
+                return self._generate_over_departure(name, cp)
 
         group = self._generate_at_group(name, helipad)
 
