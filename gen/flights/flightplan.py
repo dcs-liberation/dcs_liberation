@@ -1196,7 +1196,7 @@ class FlightPlanBuilder:
             flight: The flight to generate the flight plan for.
         """
 
-        racetrack_half_distance = Distance.from_nautical_miles(20).meters
+        racetrack_half_distance = Distance.from_nautical_miles(30).meters
 
         patrol_duration = timedelta(hours=4)
 
