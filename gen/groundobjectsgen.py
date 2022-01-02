@@ -343,7 +343,7 @@ class SceneryGenerator(BuildingSiteGenerator):
         t = TriggerOnce(Event.NoEvent, f"MapObjectIsDead Trigger {trigger_zone.id}")
         t.add_condition(MapObjectIsDead(trigger_zone.id))
         script_string = String(
-            f'killed_map_objects[#killed_map_objects + 1] = "{trigger_zone.name}"'
+            f'killed_ground_units[#killed_ground_units + 1] = "{trigger_zone.name}"'
         )
         t.actions.append(DoScript(script_string))
         self.m.triggerrules.triggers.append(t)
