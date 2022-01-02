@@ -9,7 +9,7 @@ from game.ato.starttype import StartType
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
-    from game.sim.aircraftengagementzones import AircraftEngagementZones
+    from game.sim.gameupdateevents import GameUpdateEvents
     from game.threatzones import ThreatPoly
 
 
@@ -19,10 +19,24 @@ class FlightState(ABC):
         self.settings = settings
 
     @abstractmethod
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         ...
 
-    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
+    @property
+    def vulnerable_to_intercept(self) -> bool:
+        return False
+
+    @property
+    def vulnerable_to_sam(self) -> bool:
+        return False
+
+    @property
+    def will_join_air_combat(self) -> bool:
+        return False
+
+    def should_halt_sim(self) -> bool:
         return False
 
     @property

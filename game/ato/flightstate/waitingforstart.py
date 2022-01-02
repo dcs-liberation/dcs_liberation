@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from game.ato.starttype import StartType
 from .flightstate import FlightState
-from .inflight import InFlight
+from .navigating import Navigating
 from .startup import StartUp
 from .takeoff import Takeoff
 from .taxi import Taxi
@@ -13,6 +13,7 @@ from .taxi import Taxi
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class WaitingForStart(FlightState):
@@ -29,7 +30,9 @@ class WaitingForStart(FlightState):
     def start_type(self) -> StartType:
         return self.flight.start_type
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         if time < self.start_time:
             return
 
@@ -41,7 +44,7 @@ class WaitingForStart(FlightState):
         elif self.start_type is StartType.RUNWAY:
             new_state = Takeoff(self.flight, self.settings, time)
         else:
-            new_state = InFlight(self.flight, self.settings, waypoint_index=0)
+            new_state = Navigating(self.flight, self.settings, waypoint_index=0)
         self.flight.set_state(new_state)
 
     @property

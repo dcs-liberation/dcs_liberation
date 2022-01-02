@@ -1,0 +1,112 @@
+---
+name: New Game wizard failed
+description: >
+  Use for bugs that prevent the "New Game" wizard from completing successfully.
+  If the wizard completes without issue, use the normal bug report template.
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Before filing, please search the issue tracker to see if the issue has
+        already been reported.
+
+
+        If the bug is not related to campaign generation (the campaign was
+        created successfully and as expected), use the normal bug report
+        template instead, as this template will not include the information we
+        need. We are unable to investigate incomplete bug reports, so they will
+        be closed and you will be asked to refile. If you're unsure, use your
+        best guess. Needing to refile is not the end of the world :)
+  - type: dropdown
+    validations:
+      required: true
+    attributes:
+      label: Affected versions
+      multiple: true
+      description: >
+        Select all DCS Liberation versions in which you have observed this bug.
+        You do not need to test all of them, but the information is useful if
+        you have it.
+
+
+        If you do not see your version listed here you are on an old release
+        that is not supported, and the bug may already be fixed in a newer
+        release. Check that the bug still exists in a newer release before
+        filing.
+
+
+        If the bug was found in a development build, select "Development build"
+        and provide a link to the build in the field below.
+      options:
+        - 5.0.0
+        - Development build
+  - type: input
+    attributes:
+      label: Development build
+      description: A link to the development build, if applicable.
+  - type: input
+    attributes:
+      label: Campaign name
+      description: >
+        The name of the campaign you selected. If the bug only occurs with a
+        custom campaign (or modifications to a stock campaign), upload the
+        campaign file as an attachment to the bug description field.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Blue faction
+      description: >
+        The name of the blue faction you selected. If the bug only occurs with a
+        custom faction (or modifications to a stock faction), upload the
+        faction file as an attachment to the bug description field.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Red faction
+      description: >
+        The name of the red faction you selected. If the bug only occurs with a
+        custom faction (or modifications to a stock faction), upload the
+        faction file as an attachment to the bug description field.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Modifications to default settings
+      description: >
+        Describe any modifications you made to the default campaign generation
+        settings.
+  - type: textarea
+    attributes:
+      label: Description
+      description: >
+        Describe the bug. What went wrong? If an error dialog was shown, include
+        the full text.
+
+
+        Attach any relevant files such as custom campaign files or factions
+        here. You can attach files to the bug by dragging and dropping the file
+        into this text box. GitHub will not allow uploads of all file types, so
+        attach a zip of the files if needed.
+
+
+        If possible, also include the save game. If the bug prevented the game
+        from being generated at all this will not be possible, but if the bug is
+        that the wizard generated something incorrectly, the save game will help
+        us see what went wrong.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Log file
+      description: >
+        Attach the Liberation log file. The log file is located at
+        `<Liberation install directory>/logs/liberation.log`.
+
+
+        You can attach files to the bug by dragging and dropping the file
+        into this text box.
+    validations:
+      required: true

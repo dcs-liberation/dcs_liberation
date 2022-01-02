@@ -288,6 +288,12 @@ class BuildingGroundObject(TheaterGroundObject[VehicleGroup]):
     def purchasable(self) -> bool:
         return False
 
+    def max_threat_range(self) -> Distance:
+        return meters(0)
+
+    def max_detection_range(self) -> Distance:
+        return meters(0)
+
 
 class SceneryGroundObject(BuildingGroundObject):
     def __init__(
@@ -313,16 +319,6 @@ class SceneryGroundObject(BuildingGroundObject):
             is_fob_structure=False,
         )
         self.zone = zone
-        try:
-            # In the default TriggerZone using "assign as..." in the DCS Mission Editor,
-            # property three has the scenery's object ID as its value.
-            self.map_object_id = self.zone.properties[3]["value"]
-        except (IndexError, KeyError):
-            logging.exception(
-                "Invalid TriggerZone for Scenery definition. The third property must "
-                "be the map object ID."
-            )
-            raise
 
 
 class FactoryGroundObject(BuildingGroundObject):
@@ -394,6 +390,9 @@ class CarrierGroundObject(GenericCarrierGroundObject):
         # add to EWR.
         return f"{self.faction_color}|EWR|{super().group_name}"
 
+    def __str__(self) -> str:
+        return f"CV {self.name}"
+
 
 # TODO: Why is this both a CP and a TGO?
 class LhaGroundObject(GenericCarrierGroundObject):
@@ -414,6 +413,9 @@ class LhaGroundObject(GenericCarrierGroundObject):
         # Prefix the group names with the side color so Skynet can find them,
         # add to EWR.
         return f"{self.faction_color}|EWR|{super().group_name}"
+
+    def __str__(self) -> str:
+        return f"LHA {self.name}"
 
 
 class MissileSiteGroundObject(TheaterGroundObject[VehicleGroup]):

@@ -13,23 +13,23 @@ from typing import (
     Union,
 )
 
-from game.ato.flight import Flight
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import Airfield, ControlPoint
-from game.transfers import CargoShip
-from game.unitmap import (
-    AirliftUnits,
-    Building,
-    ConvoyUnit,
-    FlyingUnit,
-    FrontLineUnit,
-    GroundObjectUnit,
-    UnitMap,
-)
 
 if TYPE_CHECKING:
     from game import Game
+    from game.ato.flight import Flight
+    from game.transfers import CargoShip
+    from game.unitmap import (
+        AirliftUnits,
+        Building,
+        ConvoyUnit,
+        FlyingUnit,
+        FrontLineUnit,
+        GroundObjectUnit,
+        UnitMap,
+    )
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
@@ -99,6 +99,9 @@ class StateData:
     #: Names of vehicle (and ship) units that were killed during the mission.
     killed_ground_units: List[str]
 
+    #: Names of map objects that were killed during the mission.
+    killed_map_objects: list[str]
+
     #: List of descriptions of destroyed statics. Format of each element is a mapping of
     #: the coordinate type ("x", "y", "z", "type", "orientation") to the value.
     destroyed_statics: List[dict[str, Union[float, str]]]
@@ -117,6 +120,7 @@ class StateData:
             # Also normalize dead map objects (which are ints) to strings. The unit map
             # only stores strings.
             killed_ground_units=list({str(u) for u in data["killed_ground_units"]}),
+            killed_map_objects=data["killed_map_objects"],
             destroyed_statics=data["destroyed_objects_positions"],
             base_capture_events=data["base_capture_events"],
         )
@@ -316,6 +320,16 @@ class Debriefing:
                     losses.player_airlifts.append(airlift_unit)
                 else:
                     losses.enemy_airlifts.append(airlift_unit)
+                continue
+
+        # Find killed map objects and mark them as loss
+        for map_object in self.state_data.killed_map_objects:
+            building = self.unit_map.building_or_fortification(map_object)
+            if building is not None:
+                if building.ground_object.control_point.captured:
+                    losses.player_buildings.append(building)
+                else:
+                    losses.enemy_buildings.append(building)
                 continue
 
         return losses

@@ -206,6 +206,7 @@ const supplyRoutesLayer = L.layerGroup().addTo(map);
 const frontLinesLayer = L.layerGroup().addTo(map);
 const redSamThreatLayer = L.layerGroup().addTo(map);
 const blueFlightPlansLayer = L.layerGroup().addTo(map);
+const combatLayer = L.layerGroup().addTo(map);
 
 // Added to map by the user via layer controls.
 const blueSamThreatLayer = L.layerGroup();
@@ -287,6 +288,7 @@ L.control
       "Units and locations": {
         "Control points": controlPointsLayer,
         Aircraft: aircraftLayer,
+        "Active combat": combatLayer,
         "Air defenses": airDefensesLayer,
         Factories: factoriesLayer,
         Ships: shipsLayer,
@@ -351,6 +353,9 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.ipZonesChanged.connect(drawIpZones);
   game.joinZonesChanged.connect(drawJoinZones);
   game.holdZonesChanged.connect(drawHoldZones);
+  game.airCombatsChanged.connect(drawCombat);
+  game.samCombatsChanged.connect(drawCombat);
+  game.ipCombatsChanged.connect(drawCombat);
 });
 
 function recenterMap(center) {
@@ -1226,6 +1231,34 @@ function drawHoldZones() {
   }
 }
 
+function drawCombat() {
+  combatLayer.clearLayers();
+
+  for (const airCombat of game.airCombats) {
+    L.polygon(airCombat.footprint, {
+      color: Colors.Red,
+      interactive: false,
+      fillOpacity: 0.2,
+    }).addTo(combatLayer);
+  }
+
+  for (const samCombat of game.samCombats) {
+    for (const airDefense of samCombat.airDefenses) {
+      L.polyline([samCombat.flight.position, airDefense.position], {
+        color: Colors.Red,
+        interactive: false,
+      }).addTo(combatLayer);
+    }
+  }
+
+  for (const ipCombat of game.ipCombats) {
+    L.polyline([ipCombat.flight.position, ipCombat.flight.target], {
+      color: Colors.Red,
+      interactive: false,
+    }).addTo(combatLayer);
+  }
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -1240,6 +1273,7 @@ function drawInitialMap() {
   drawIpZones();
   drawJoinZones();
   drawHoldZones();
+  drawCombat();
 }
 
 function clearAllLayers() {

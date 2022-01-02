@@ -42,6 +42,7 @@ import pydcs_extensions.highdigitsams.highdigitsams as highdigitsams
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
@@ -53,6 +54,9 @@ plane_map["Su-57"] = Su_57
 plane_map["Hercules"] = Hercules
 plane_map["JAS39Gripen"] = JAS39Gripen
 plane_map["JAS39Gripen_AG"] = JAS39Gripen_AG
+plane_map["VSN_F104G"] = VSN_F104G
+plane_map["VSN_F104S"] = VSN_F104S
+plane_map["VSN_F104S_AG"] = VSN_F104S_AG
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL

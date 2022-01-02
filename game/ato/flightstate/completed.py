@@ -1,11 +1,19 @@
+from __future__ import annotations
+
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 
 from .flightstate import FlightState
 from ..starttype import StartType
 
+if TYPE_CHECKING:
+    from game.sim.gameupdateevents import GameUpdateEvents
+
 
 class Completed(FlightState):
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         return
 
     @property

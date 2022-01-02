@@ -13,6 +13,7 @@ from .missionresultsprocessor import MissionResultsProcessor
 
 if TYPE_CHECKING:
     from game import Game
+    from .gameupdateevents import GameUpdateEvents
 
 
 TICK = timedelta(seconds=1)
@@ -35,12 +36,13 @@ class MissionSimulation:
         self.time = self.game.conditions.start_time
         self.aircraft_simulation.begin_simulation()
 
-    def tick(self) -> bool:
+    def tick(self, events: GameUpdateEvents) -> GameUpdateEvents:
         self.time += TICK
         if self.completed:
             raise RuntimeError("Simulation already completed")
-        self.completed = self.aircraft_simulation.on_game_tick(self.time, TICK)
-        return self.completed
+        self.aircraft_simulation.on_game_tick(events, self.time, TICK)
+        self.completed = events.simulation_complete
+        return events
 
     def generate_miz(self, output: Path) -> None:
         self.unit_map = MissionGenerator(self.game, self.time).generate_miz(output)

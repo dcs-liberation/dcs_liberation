@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from dcs import Point
 
 from game.ato.flightstate import FlightState, InFlight
+from game.ato.flightstate.navigating import Navigating
 from game.utils import Distance, Speed
 from gen.flights.flightplan import LoiterFlightPlan
 
@@ -36,7 +37,7 @@ class Loiter(InFlight):
     def next_waypoint_state(self) -> FlightState:
         # Do not automatically advance to the next waypoint. Just proceed from the
         # current one with the normal flying state.
-        return InFlight(self.flight, self.settings, self.waypoint_index)
+        return Navigating(self.flight, self.settings, self.waypoint_index)
 
     def travel_time_between_waypoints(self) -> timedelta:
         return self.hold_duration

@@ -4,12 +4,12 @@ from datetime import timedelta
 from typing import Optional, TYPE_CHECKING
 
 from dcs import Point
-from shapely.geometry import LineString, Point as ShapelyPoint
+from shapely.geometry import LineString
 
 from game.ato import FlightType
 from game.ato.flightstate import InFlight
 from game.threatzones import ThreatPoly
-from game.utils import Distance, Speed
+from game.utils import Distance, Speed, dcs_to_shapely_point
 from gen.flights.flightplan import PatrollingFlightPlan
 
 if TYPE_CHECKING:
@@ -24,8 +24,8 @@ class RaceTrack(InFlight):
         super().__init__(flight, settings, waypoint_index)
         self.commit_region = LineString(
             [
-                ShapelyPoint(self.current_waypoint.x, self.current_waypoint.y),
-                ShapelyPoint(self.next_waypoint.x, self.next_waypoint.y),
+                dcs_to_shapely_point(self.current_waypoint.position),
+                dcs_to_shapely_point(self.next_waypoint.position),
             ]
         ).buffer(flight.flight_plan.engagement_distance.meters)
 

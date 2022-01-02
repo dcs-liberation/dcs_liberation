@@ -105,6 +105,7 @@ class NewGameWizard(QtWidgets.QWizard):
         mod_settings = ModSettings(
             a4_skyhawk=self.field("a4_skyhawk"),
             f22_raptor=self.field("f22_raptor"),
+            f104_starfighter=self.field("f104_starfighter"),
             hercules=self.field("hercules"),
             jas39_gripen=self.field("jas39_gripen"),
             su57_felon=self.field("su57_felon"),
@@ -564,6 +565,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("hercules", hercules)
         f22_raptor = QtWidgets.QCheckBox()
         self.registerField("f22_raptor", f22_raptor)
+        f104_starfighter = QtWidgets.QCheckBox()
+        self.registerField("f104_starfighter", f104_starfighter)
         jas39_gripen = QtWidgets.QCheckBox()
         self.registerField("jas39_gripen", jas39_gripen)
         su57_felon = QtWidgets.QCheckBox()
@@ -583,16 +586,18 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(a4_skyhawk, 1, 1)
         modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), 2, 0)
         modLayout.addWidget(f22_raptor, 2, 1)
-        modLayout.addWidget(QtWidgets.QLabel("C-130J-30 Super Hercules"), 3, 0)
-        modLayout.addWidget(hercules, 3, 1)
-        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), 4, 0)
-        modLayout.addWidget(jas39_gripen, 4, 1)
-        modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), 5, 0)
-        modLayout.addWidget(su57_felon, 5, 1)
-        modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), 6, 0)
-        modLayout.addWidget(frenchpack, 6, 1)
-        modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 7, 0)
-        modLayout.addWidget(high_digit_sams, 7, 1)
+        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter"), 3, 0)
+        modLayout.addWidget(f104_starfighter, 3, 1)
+        modLayout.addWidget(QtWidgets.QLabel("C-130J-30 Super Hercules"), 4, 0)
+        modLayout.addWidget(hercules, 4, 1)
+        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), 5, 0)
+        modLayout.addWidget(jas39_gripen, 5, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), 6, 0)
+        modLayout.addWidget(su57_felon, 6, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), 7, 0)
+        modLayout.addWidget(frenchpack, 7, 1)
+        modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 8, 0)
+        modLayout.addWidget(high_digit_sams, 8, 1)
         modSettingsGroup.setLayout(modLayout)
 
         mlayout = QVBoxLayout()
