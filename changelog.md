@@ -18,6 +18,7 @@ Saves from 5.0.0 are compatible with 5.1.0
 * **[Mission Generation]** Fixed mission scripting error when using a dedicated server.
 * **[Mission Generation]** Fixed an issue where empty convoys lead to an index error when a point capture made a pending transfer of units not completable anymore.
 * **[Mission Generation]** Corrected Viggen FR22 & FR24 preset channels for the DCS 2.7.9 update
+* **[Mission Generation]** Fixed an issue which prevented the mission generation if two controlpoints are really close to each other (e.g. Marianas campaigns)
 * **[UI]** Enable / Disable the settings, save and stats actions if no game is loaded to prevent an error as these functions can only be used on a valid game.
 
 # 5.0.0
