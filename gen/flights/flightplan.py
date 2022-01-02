@@ -825,7 +825,7 @@ class AwacsFlightPlan(PatrollingFlightPlan):
 
     @property
     def mission_departure_time(self) -> timedelta:
-        return self.patrol_start_time
+        return self.patrol_start_time + self.patrol_duration
 
     @property
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
@@ -1211,8 +1211,8 @@ class FlightPlanBuilder:
         )
         orbit_heading = heading_to_threat_boundary
 
-        # Station 70nm outside the threat zone.
-        threat_buffer = nautical_miles(70)
+        # Station 80nm outside the threat zone.
+        threat_buffer = nautical_miles(80)
         if self.threat_zones.threatened(location.position):
             orbit_distance = distance_to_threat + threat_buffer
         else:
