@@ -96,11 +96,8 @@ class StateData:
     #: Names of aircraft units that were killed during the mission.
     killed_aircraft: List[str]
 
-    #: Names of vehicle (and ship) units that were killed during the mission.
+    #: Names of vehicles, ships or buildings that were killed during the mission.
     killed_ground_units: List[str]
-
-    #: Names of map objects that were killed during the mission.
-    killed_map_objects: list[str]
 
     #: List of descriptions of destroyed statics. Format of each element is a mapping of
     #: the coordinate type ("x", "y", "z", "type", "orientation") to the value.
@@ -120,7 +117,6 @@ class StateData:
             # Also normalize dead map objects (which are ints) to strings. The unit map
             # only stores strings.
             killed_ground_units=list({str(u) for u in data["killed_ground_units"]}),
-            killed_map_objects=data["killed_map_objects"],
             destroyed_statics=data["destroyed_objects_positions"],
             base_capture_events=data["base_capture_events"],
         )
@@ -320,16 +316,6 @@ class Debriefing:
                     losses.player_airlifts.append(airlift_unit)
                 else:
                     losses.enemy_airlifts.append(airlift_unit)
-                continue
-
-        # Find killed map objects and mark them as loss
-        for map_object in self.state_data.killed_map_objects:
-            building = self.unit_map.building_or_fortification(map_object)
-            if building is not None:
-                if building.ground_object.control_point.captured:
-                    losses.player_buildings.append(building)
-                else:
-                    losses.enemy_buildings.append(building)
                 continue
 
         return losses
