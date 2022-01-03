@@ -6,15 +6,15 @@ local unitPayloads = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 8,
 				},
 				[3] = {
-					["CLSID"] = "JAS39_TANK1100",
+					["CLSID"] = "{JAS39_TANK1100}",
 					["num"] = 4,
 				},
 				[4] = {
@@ -26,19 +26,19 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "JAS39_RBS15AI",
+					["CLSID"] = "{JAS39_RBS15AI}",
 					["num"] = 6,
 				},
 				[7] = {
-					["CLSID"] = "JAS39_RBS15AI",
+					["CLSID"] = "{JAS39_RBS15AI}",
 					["num"] = 7,
 				},
                 [8] = {
-					["CLSID"] = "JAS39_RBS15AI",
+					["CLSID"] = "{JAS39_RBS15AI}",
 					["num"] = 2,
 				},
                 [9] = {
-					["CLSID"] = "JAS39_RBS15AI",
+					["CLSID"] = "{JAS39_RBS15AI}",
 					["num"] = 3,
 				},
 			},
@@ -51,15 +51,15 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 8,
 				},
 				[3] = {
-					["CLSID"] = "JAS39_TANK1100",
+					["CLSID"] = "{JAS39_TANK1100}",
 					["num"] = 4,
 				},
 				[4] = {
@@ -71,19 +71,19 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "JAS39_MAR-1",
+					["CLSID"] = "{JAS39_MAR-1}",
 					["num"] = 2,
 				},
 				[7] = {
-					["CLSID"] = "JAS39_MAR-1",
+					["CLSID"] = "{JAS39_MAR-1}",
 					["num"] = 3,
 				},
                 [8] = {
-					["CLSID"] = "JAS39_MAR-1",
+					["CLSID"] = "{JAS39_MAR-1}",
 					["num"] = 6,
 				},
                 [9] = {
-					["CLSID"] = "JAS39_MAR-1",
+					["CLSID"] = "{JAS39_MAR-1}",
 					["num"] = 7,
 				},
 			},
@@ -96,15 +96,15 @@ local unitPayloads = {
 			["name"] = "DEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 8,
 				},
 				[3] = {
-					["CLSID"] = "JAS39_TANK1100",
+					["CLSID"] = "{JAS39_TANK1100}",
 					["num"] = 4,
 				},
 				[4] = {
@@ -116,19 +116,19 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "JAS39_STORMSHADOW",
+					["CLSID"] = "{JAS39_STORMSHADOW_ARM}",
 					["num"] = 3,
 				},
 				[7] = {
-					["CLSID"] = "JAS39_STORMSHADOW",
+					["CLSID"] = "{JAS39_STORMSHADOW_ARM}",
 					["num"] = 6,
 				},
                 [8] = {
-					["CLSID"] = "JAS39_MAR-1",
+					["CLSID"] = "{JAS39_MAR-1}",
 					["num"] = 2,
 				},
                 [9] = {
-					["CLSID"] = "JAS39_MAR-1",
+					["CLSID"] = "{JAS39_MAR-1}",
 					["num"] = 7,
 				},
 			},
@@ -141,15 +141,15 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 8,
 				},
 				[3] = {
-					["CLSID"] = "JAS39_TANK1100",
+					["CLSID"] = "{JAS39_TANK1100}",
 					["num"] = 4,
 				},
 				[4] = {
@@ -161,23 +161,23 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "JAS39_BRIMSTONE",
+					["CLSID"] = "{JAS39_BRIMSTONE}",
 					["num"] = 2,
 				},
 				[7] = {
-					["CLSID"] = "JAS39_BRIMSTONE",
+					["CLSID"] = "{JAS39_BRIMSTONE}",
 					["num"] = 3,
 				},
                 [8] = {
-					["CLSID"] = "JAS39_BRIMSTONE",
+					["CLSID"] = "{JAS39_BRIMSTONE}",
 					["num"] = 6,
 				},
                 [9] = {
-					["CLSID"] = "JAS39_BRIMSTONE",
+					["CLSID"] = "{JAS39_BRIMSTONE}",
 					["num"] = 7,
 				},
                 [10] = {
-					["CLSID"] = "JAS39_Litening",
+					["CLSID"] = "{JAS39_Litening}",
 					["num"] = 5,
 				},
 				[11] = {
@@ -194,15 +194,15 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 8,
 				},
 				[3] = {
-					["CLSID"] = "JAS39_TANK1100",
+					["CLSID"] = "{JAS39_TANK1100}",
 					["num"] = 4,
 				},
 				[4] = {
@@ -214,23 +214,23 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "JAS39_GBU31",
+					["CLSID"] = "{JAS39_GBU31}",
 					["num"] = 2,
 				},
 				[7] = {
-					["CLSID"] = "JAS39_GBU31",
+					["CLSID"] = "{JAS39_GBU31}",
 					["num"] = 7,
 				},
                 [8] = {
-					["CLSID"] = "JAS39_GBU49",
+					["CLSID"] = "{JAS39_GBU49}",
 					["num"] = 3,
 				},
                 [9] = {
-					["CLSID"] = "JAS39_GBU49",
+					["CLSID"] = "{JAS39_GBU49}",
 					["num"] = 6,
 				},
                 [10] = {
-					["CLSID"] = "JAS39_Litening",
+					["CLSID"] = "{JAS39_Litening}",
 					["num"] = 5,
 				},
 				[11] = {
@@ -247,15 +247,15 @@ local unitPayloads = {
 			["name"] = "OCA",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "JAS39_IRIS-T",
+					["CLSID"] = "{JAS39_IRIS-T}",
 					["num"] = 8,
 				},
 				[3] = {
-					["CLSID"] = "JAS39_TANK1100",
+					["CLSID"] = "{JAS39_TANK1100}",
 					["num"] = 4,
 				},
 				[4] = {
@@ -267,23 +267,23 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "JAS39_DWS39",
+					["CLSID"] = "{JAS39_DWS39_TV}",
 					["num"] = 2,
 				},
 				[7] = {
-					["CLSID"] = "JAS39_DWS39",
+					["CLSID"] = "{JAS39_DWS39_TV}",
 					["num"] = 7,
 				},
                 [8] = {
-					["CLSID"] = "JAS39_M70BHE",
+					["CLSID"] = "{JAS39_M70BHE}",
 					["num"] = 3,
 				},
                 [9] = {
-					["CLSID"] = "JAS39_M70BHE",
+					["CLSID"] = "{JAS39_M70BHE}",
 					["num"] = 6,
 				},
                 [10] = {
-					["CLSID"] = "JAS39_Litening",
+					["CLSID"] = "{JAS39_Litening}",
 					["num"] = 5,
 				},
 				[11] = {
