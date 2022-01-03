@@ -99,7 +99,8 @@ class FlightGroupSpawner:
                 group = self._generate_over_departure(name, cp)
                 return group
             elif isinstance(cp, NavalControlPoint):
-                carrier_group = cp.get_carrier_group()
+                carrier_group_name = cp.get_carrier_group().name
+                carrier_group = self.mission.find_group(carrier_group_name)
                 if not isinstance(carrier_group, ShipGroup):
                     raise RuntimeError(
                         f"Carrier group {carrier_group} is a "
