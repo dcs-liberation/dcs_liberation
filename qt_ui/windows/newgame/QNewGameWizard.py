@@ -569,14 +569,14 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("f104_starfighter", f104_starfighter)
         jas39_gripen = QtWidgets.QCheckBox()
         self.registerField("jas39_gripen", jas39_gripen)
-        eurofighter = QtWidgets.QCheckBox()
-        self.registerField("eurofighter", eurofighter)
         su57_felon = QtWidgets.QCheckBox()
         self.registerField("su57_felon", su57_felon)
         frenchpack = QtWidgets.QCheckBox()
         self.registerField("frenchpack", frenchpack)
         high_digit_sams = QtWidgets.QCheckBox()
         self.registerField("high_digit_sams", high_digit_sams)
+        eurofighter = QtWidgets.QCheckBox()
+        self.registerField("eurofighter", eurofighter)
 
         modHelpText = QtWidgets.QLabel(
             "<p>Select the mods you have installed. If your chosen factions support them, you'll be able to use these mods in your campaign.</p>"
