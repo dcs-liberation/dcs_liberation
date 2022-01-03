@@ -46,7 +46,7 @@ from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.eurofighter_typhoon.eurofighter import Eurofighter
+from pydcs_extensions.eurofighter.eurofighter import Eurofighter
 from pydcs_extensions.su57.su57 import Su_57
 
 plane_map["A-4E-C"] = A_4E_C
