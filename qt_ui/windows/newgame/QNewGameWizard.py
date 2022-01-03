@@ -108,6 +108,7 @@ class NewGameWizard(QtWidgets.QWizard):
             f104_starfighter=self.field("f104_starfighter"),
             hercules=self.field("hercules"),
             jas39_gripen=self.field("jas39_gripen"),
+            eurofighter=self.field("eurofighter"),
             su57_felon=self.field("su57_felon"),
             frenchpack=self.field("frenchpack"),
             high_digit_sams=self.field("high_digit_sams"),
