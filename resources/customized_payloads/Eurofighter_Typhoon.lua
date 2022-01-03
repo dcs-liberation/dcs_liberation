@@ -360,6 +360,6 @@ local unitPayloads = {
             }
         }
     },
-    ["unitType"] = "Eurofighter_Typhoon"
+    ["unitType"] = "Eurofighter"
 }
 return unitPayloads
