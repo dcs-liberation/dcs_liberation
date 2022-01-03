@@ -570,7 +570,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         jas39_gripen = QtWidgets.QCheckBox()
         self.registerField("jas39_gripen", jas39_gripen)
         eurofighter_typhoon = QtWidgets.QCheckBox()
-        self.registerField("eurofighter_typhoon", eurofighter_typhoon)
+        self.registerField("eurofighter", eurofighter)
         su57_felon = QtWidgets.QCheckBox()
         self.registerField("su57_felon", su57_felon)
         frenchpack = QtWidgets.QCheckBox()
