@@ -38,7 +38,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[9] = {
-					["CLSID"] = "JAS39_TANK1100",
+					["CLSID"] = "{JAS39_TANK1100}",
 					["num"] = 4,
 				},
 			},
