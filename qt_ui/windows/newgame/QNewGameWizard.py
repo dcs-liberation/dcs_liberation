@@ -569,6 +569,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("f104_starfighter", f104_starfighter)
         jas39_gripen = QtWidgets.QCheckBox()
         self.registerField("jas39_gripen", jas39_gripen)
+        eurofighter_typhoon = QtWidgets.QCheckBox()
+        self.registerField("eurofighter_typhoon", eurofighter_typhoon)
         su57_felon = QtWidgets.QCheckBox()
         self.registerField("su57_felon", su57_felon)
         frenchpack = QtWidgets.QCheckBox()
@@ -598,6 +600,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(frenchpack, 7, 1)
         modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 8, 0)
         modLayout.addWidget(high_digit_sams, 8, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Eurofighter Typhoon"), 9, 0)
+        modLayout.addWidget(eurofighter_typhoon, 9, 1)
         modSettingsGroup.setLayout(modLayout)
 
         mlayout = QVBoxLayout()
