@@ -268,7 +268,7 @@ class Faction:
             self.remove_aircraft("Hercules")
         if not mod_settings.f22_raptor:
             self.remove_aircraft("F-22A")
-        if not mod_settings.eurofighter_typhoon:
+        if not mod_settings.eurofighter
             self.remove_aircraft("Eurofighter")    
         if not mod_settings.f104_starfighter:
             self.remove_aircraft("VSN_F104G")
