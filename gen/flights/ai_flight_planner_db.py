@@ -115,7 +115,7 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.eurofighter_typhoon.eurofighter import Eurofighter_Typhoon
+from pydcs_extensions.eurofighter.eurofighter import Eurofighter
 from pydcs_extensions.su57.su57 import Su_57
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
@@ -141,7 +141,7 @@ CAP_CAPABLE = [
     FA_18C_hornet,
     JF_17,
     JAS39Gripen,
-    Eurofighter_Typhoon,
+    Eurofighter,
     F_16A,
     F_4E,
     MiG_31,
@@ -192,7 +192,7 @@ CAS_CAPABLE = [
     Tornado_GR4,
     Tornado_IDS,
     JAS39Gripen_AG,
-    Eurofighter_Typhoon,
+    Eurofighter,
     JF_17,
     AV8BNA,
     A_10A,
@@ -266,7 +266,7 @@ SEAD_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     JAS39Gripen_AG,
-    Eurofighter_Typhoon,
+    Eurofighter,
     AV8BNA,
     Su_24M,
     Su_17M4,
@@ -283,7 +283,7 @@ DEAD_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     JAS39Gripen_AG,
-    Eurofighter_Typhoon,
+    Eurofighter,
     B_1B,
     B_52H,
     Tu_160,
@@ -327,7 +327,7 @@ STRIKE_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     JAS39Gripen_AG,
-    Eurofighter_Typhoon,
+    Eurofighter,
     Tornado_IDS,
     Su_17M4,
     Su_24M,
@@ -386,7 +386,7 @@ ANTISHIP_CAPABLE = [
     Su_34,
     Su_30,
     Tornado_IDS,
-    Eurofighter_Typhoon,
+    Eurofighter,
     Tornado_GR4,
     AV8BNA,
     S_3B,
@@ -422,7 +422,7 @@ RUNWAY_ATTACK_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     JAS39Gripen_AG,
-    Eurofighter_Typhoon,
+    Eurofighter,
     Tornado_IDS,
     Su_17M4,
     Su_24M,

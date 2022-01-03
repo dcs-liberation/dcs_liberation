@@ -4,7 +4,7 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.highdigitsams import highdigitsams
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.eurofighter_typhoon.eurofighter import Eurofighter_Typhoon
+from pydcs_extensions.eurofighter.eurofighter import Eurofighter
 from pydcs_extensions.su57.su57 import Su_57
 import pydcs_extensions.frenchpack.frenchpack as frenchpack
 
@@ -18,7 +18,7 @@ MODDED_AIRPLANES = [
     Hercules,
     JAS39Gripen,
     JAS39Gripen_AG,
-    Eurofighter_Typhoon,
+    Eurofighter,
 ]
 MODDED_VEHICLES = [
     frenchpack._FIELD_HIDE,
