@@ -601,7 +601,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 8, 0)
         modLayout.addWidget(high_digit_sams, 8, 1)
         modLayout.addWidget(QtWidgets.QLabel("Eurofighter"), 9, 0)
-        modLayout.addWidget(eurofighter_typhoon, 9, 1)
+        modLayout.addWidget(eurofighter, 9, 1)
         modSettingsGroup.setLayout(modLayout)
 
         mlayout = QVBoxLayout()
