@@ -55,7 +55,7 @@
     "HawkGenerator",
     "RapierGenerator",
     "SA2Generator",
-    "SA5Generator",
+    "SA5FlatFaceGenerator",
     "SA6Generator",
     "SA11Generator",
     "SA15Generator",
