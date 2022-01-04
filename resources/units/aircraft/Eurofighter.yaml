@@ -1,0 +1,14 @@
+description: The Eurofighter Typhoon is a multinational twin-engine, canard
+  delta wing, multirole fighter. The Typhoon was designed originally as an
+  air superiority fighter and is manufactured by a consortium of Airbus,
+  BAE Systems and Leonardo that conducts the majority of the project through
+  a joint holding company, Eurofighter Jagdflugzeug GmbH. The NATO
+  Eurofighter and Tornado Management Agency, representing the UK, Germany,
+  Italy and Spain, manages the project and is the prime customer.
+introduced: 2003
+manufacturer: Eurofighter Jagdflugzeug GmbH
+origin: UK/Germany/Italy/Spain
+price: 22
+role: Air-Superiority Fighter
+variants:
+  Eurofighter: {}
