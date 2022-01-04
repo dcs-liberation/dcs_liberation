@@ -43,8 +43,6 @@ class SquadronDefLoader:
                         f"Not using squadron because {faction.name} cannot use "
                         f"{squadron_def.aircraft}: {path}"
                     )
-                    for aircraft in faction.aircrafts:
-                        logging.debug(f"factions {aircraft} does not match squadrons {squadron_def.aircraft}")
                     continue
                 logging.debug(
                     f"Found {squadron_def.name} {squadron_def.aircraft} "

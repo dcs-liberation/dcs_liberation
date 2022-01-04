@@ -269,7 +269,6 @@ class Faction:
         if not mod_settings.f22_raptor:
             self.remove_aircraft("F-22A")
         if not mod_settings.eurofighter:
-            logging.debug(f"Removing Eurofighter because it is disabled in mod_settings")
             self.remove_aircraft("Eurofighter")    
         if not mod_settings.f104_starfighter:
             self.remove_aircraft("VSN_F104G")
