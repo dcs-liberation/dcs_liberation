@@ -1,0 +1,248 @@
+---
+name: Persian Gulf - Scenic Route 2 - Dust To Dust
+theater: Persian Gulf
+authors: Fuzzle
+description: <p>A continuation of Scenic Route. A NATO coalition pushes inland along a protracted axis of advance. Built with helicopters/FOB-based gameplay in mind. <p><strong>Backstory:</strong> With Iran's coastal defences pacified and their forces pushed inland, a beleaguered US Navy is reinforced by a NATO coalition task force. The going will not be easy however; Iran has assembled the full might of its armoured and mechanized divisions alongside rotary support to defend their heartland. The conflict intensifies.</p>
+version: "9.1"
+advanced_iads: true
+recommended_player_faction: NATO OIF
+recommended_enemy_faction: Iran 2015
+miz: scenic_inland.miz
+performance: 2
+recommended_start_date: 2005-06-29
+squadrons:
+  # Bandar Abbas Intl
+  2:
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - Escadron de chasse 1/30
+        #French Mirage2000C
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - 77th FS
+        #USAF F-16C
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - No. 12 Squadron
+        #RAF Tornado GR.4
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - 101st Combat Aviation Brigade
+        #US Army UH-60
+  # Havadarya
+  9:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+      - 493rd FS
+      #USAF F-15C 
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+      - 81st FS
+      #USAF A-10CI
+  #BLUFOR CVN
+  BLUFOR CVN:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - VF-143
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - VMFA-251
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+    - primary: Refueling
+      aircraft:
+        - VS-35 (Tanker)
+  # BLUFOR LHA
+  BLUFOR LHA:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+  # BLUFOR Start FOB
+  FOB Anguran:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - SA 342M Gazelle
+        #French Gazelle
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - 229th Aviation Battalion
+        #US Army Apache AH-64D
+  # OPFOR L1F1
+  FOB Tang-e Dalan:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L1F2
+  FOB Fars Border:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L1F2 split
+  FOB Bikuyeh:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+  # Lar 
+  11:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-21bis Fishbed-N
+  # OPFOR L2F1
+  FOB Mansurabad:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L2F2
+  FOB Jahrom:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L2F3
+  FOB Tower:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L2F3 split
+  FOB Nouderan:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+  # Shiraz Intl
+  19:
+    - primary: AEW&C
+      aircraft:
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-4E Phantom II
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-22M4 Fitter-K
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-25T Frogfoot
+  # OPFOR L3F1
+  FOB Kherameh:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F2
+  FOB Tashk:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F3
+  FOB Chahak:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F4
+  FOB Plainhold:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F4 split
+  FOB Robat:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F5
+  FOB Plainguard:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F6
+  FOB Hasanabad:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F6 split
+  FOB Najafabad:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+  # OPFOR L3F7
+  FOB Kabutarkhan:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR L3F8
+  FOB Sa'di:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # Kerman
+  18:
+    - primary: AEW&C
+      aircraft:
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+    - primary: Transport
+      aircraft:
+        - IL-78MD
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14A Tomcat (Block 135-GR Late)
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24MK Fencer-D
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
