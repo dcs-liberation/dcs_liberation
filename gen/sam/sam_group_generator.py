@@ -49,7 +49,7 @@ from gen.sam.sam_sa17 import SA17Generator
 from gen.sam.sam_sa19 import SA19Generator
 from gen.sam.sam_sa2 import SA2Generator
 from gen.sam.sam_sa3 import SA3Generator
-from gen.sam.sam_sa5 import SA5Generator
+from gen.sam.sam_sa5 import SA5Generator, SA5FlatFaceGenerator
 from gen.sam.sam_sa6 import SA6Generator
 from gen.sam.sam_sa8 import SA8Generator
 from gen.sam.sam_sa9 import SA9Generator
@@ -79,6 +79,7 @@ SAM_MAP: Dict[str, Type[AirDefenseGroupGenerator]] = {
     "SA2Generator": SA2Generator,
     "SA3Generator": SA3Generator,
     "SA5Generator": SA5Generator,
+    "SA5FlatFaceGenerator": SA5FlatFaceGenerator,
     "SA6Generator": SA6Generator,
     "SA8Generator": SA8Generator,
     "SA9Generator": SA9Generator,
