@@ -12,22 +12,22 @@ class EurofighterWeapons:
         "clsid": "{irist}",
         "name": "Iris-T infrared-guided AAM",
         "weight": 85
-    },
+    }
     AIM_132 = {
         "clsid": "{aim132}",
         "name": "AIM-132 infrared-guided AAM",
         "weight": 90
-    },
+    }
     METEOR = {
         "clsid": "{Meteor}",
         "name": "Meteor active radar guided BVRAAM",
         "weight": 90
-    },
+    }
     EF_FuelTank_1000L = {
         "clsid": "{EF_FuelTank_1000L}",
         "name": "Central fuel tank (1000L)",
         "weight": 1190
-    },
+    }
 
 inject_weapons(EurofighterWeapons)
 
