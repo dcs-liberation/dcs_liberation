@@ -170,8 +170,21 @@ class FrontLine(MissionTarget):
         """
         total_strength = self.blue_cp.base.strength + self.red_cp.base.strength
         if self.blue_cp.base.strength == 0:
-            return 0
+            return self._keep_frontline_within_bounds(0)
         if self.red_cp.base.strength == 0:
-            return self.attack_distance
+            return self._keep_frontline_within_bounds(self.attack_distance)
         strength_pct = self.blue_cp.base.strength / total_strength
-        return strength_pct * self.attack_distance
+        return self._keep_frontline_within_bounds(strength_pct * self.attack_distance)
+
+    def _keep_frontline_within_bounds(self, distance: float) -> float:
+        """
+        Ensures the frontline conflict is always located between the control points
+        and cannot move behind either one, where we couldn't find route segments.
+        This is done by making sure the frontline is always placed at least
+        one segment away from either control point.
+        """
+        if distance > self.attack_distance - self.segments[-1].attack_distance:
+            distance = self.attack_distance - self.segments[-1].attack_distance
+        elif distance < self.segments[0].attack_distance:
+            distance = self.segments[0].attack_distance
+        return distance
