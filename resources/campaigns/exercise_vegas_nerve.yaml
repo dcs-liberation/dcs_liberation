@@ -4,7 +4,7 @@ theater: Nevada
 authors: Starfire
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Redfor (China) 2010
-description: <p>This is an asymmetrical Red Flag Exercise scenario for the NTTR comprising 4 control points. You start off in control of the two Tonopah airports, and will push south to capture Groom Lake and Nellis AFBs. Taking down Nellis AFB's IADS and striking their resource sites ASAP once Groom Lake has been captured is recommended to offset their substantial resource advantage.</p>
+description: <p>Welcome to Vegas Nerve, an asymmetrical Red Flag Exercise scenario. You start off in control of the two Tonopah airports, and will push south from there. For the duration of this exercise, Creech AFB has been cleared of all fixed wing aircraft and will function as a FARP. OPFOR has a substantial resource advantage and reducing that advantage will be key to your success. Good luck, Commander.</p>
 miz: exercise_vegas_nerve.miz
 performance: 1
 recommended_start_date: 2011-04-24
@@ -12,12 +12,12 @@ version: "9.1"
 squadrons:
 # Tonopah Airport
   17:
-    - primary: BARCAP
+    - primary: TARCAP
       secondary: air-to-air
       aircraft:
         - F-15C Eagle
     - primary: BARCAP
-      secondary: air-to-air
+      secondary: any
       aircraft:
         - F-14B Tomcat
     - primary: AEW&C
@@ -42,12 +42,16 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
     - primary: SEAD
-      secondary: any
+      secondary: air-to-ground
       aircraft:
         - F/A-18C Hornet (Lot 20)
     - primary: DEAD
-      secondary: any
+      secondary: air-to-ground
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
     - primary: BAI
@@ -57,23 +61,31 @@ squadrons:
 # Groom Lake
   2:
     - primary: BARCAP
-      secondary: any
+      secondary: air-to-air
       aircraft:
         - J-11A Flanker-L
     - primary: BAI
       secondary: air-to-ground
       aircraft:
         - Su-34 Fullback
+# Creech
+  Creech FARP:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
 # Nellis AFB
   4:
-    - primary: DEAD
+    - primary: SEAD
       secondary: any
       aircraft:
-        - Su-30MKK Flanker-G
+        - FC-1 Fierce Dragon
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - H-6J Badger
+# Boulder City Airport
+  6:
     - primary: AEW&C
       aircraft:
         - KJ-2000
