@@ -207,6 +207,7 @@ class FlightPlanBuilder:
         self.rows: List[List[str]] = []
         self.target_points: List[NumberedWaypoint] = []
         self.last_waypoint: Optional[FlightWaypoint] = None
+        self.is_metric = is_metric
 
     def add_waypoint(self, waypoint_num: int, waypoint: FlightWaypoint) -> None:
         if waypoint.waypoint_type == FlightWaypointType.TARGET_POINT:
