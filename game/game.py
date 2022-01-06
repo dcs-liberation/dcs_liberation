@@ -93,6 +93,7 @@ class Game:
         settings: Settings,
         player_budget: float,
         enemy_budget: float,
+        squadron_random_chance: int,
     ) -> None:
         self.settings = settings
         self.theater = theater
@@ -123,6 +124,7 @@ class Game:
         for control_point in self.theater.controlpoints:
             control_point.finish_init(self)
 
+        self.squadron_random_chance = squadron_random_chance
         self.blue.configure_default_air_wing(air_wing_config)
         self.red.configure_default_air_wing(air_wing_config)
 

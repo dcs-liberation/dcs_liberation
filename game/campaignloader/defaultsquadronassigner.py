@@ -75,7 +75,7 @@ class DefaultSquadronAssigner:
         # If we can't find any squadron matching the requirement, we should
         # create one.
         return self.squadron_def_generator.generate_for_task(
-            config.primary, control_point
+            config.primary, control_point, self.game.squadron_random_chance
         )
 
     def find_preferred_squadron(

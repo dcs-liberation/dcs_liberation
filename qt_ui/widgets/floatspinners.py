@@ -27,3 +27,24 @@ class FloatSpinner(QSpinBox):
     @property
     def real_value(self) -> float:
         return self.value() / self.divisor
+
+
+class PercentSpinner(FloatSpinner):
+    def __init__(
+        self,
+        divisor: int,
+        minimum: Optional[float] = None,
+        maximum: Optional[float] = None,
+        initial: Optional[float] = None,
+    ) -> None:
+        super().__init__(divisor, minimum, maximum, initial)
+
+    def textFromValue(self, val: int) -> str:
+        if self.divisor != 1:
+            return f"{val / self.divisor:.1f}%"
+        else:
+            return f"{val}%"
+
+    @property
+    def real_value(self) -> float:
+        return self.value() / self.divisor

@@ -64,6 +64,7 @@ class GeneratorSettings:
     no_lha: bool
     no_player_navy: bool
     no_enemy_navy: bool
+    squadron_random_chance: int
 
 
 @dataclass
@@ -109,6 +110,7 @@ class GameGenerator:
                 settings=self.settings,
                 player_budget=self.generator_settings.player_budget,
                 enemy_budget=self.generator_settings.enemy_budget,
+                squadron_random_chance=self.generator_settings.squadron_random_chance,
             )
 
             GroundObjectGenerator(game, self.generator_settings).generate()
