@@ -123,7 +123,6 @@ class NewGameWizard(QtWidgets.QWizard):
             settings,
             generator_settings,
             mod_settings,
-            campaign.load_air_base_config(theater),
         )
         self.generatedGame = generator.generate()
 

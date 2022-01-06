@@ -289,8 +289,6 @@ class ControlPoint(MissionTarget, ABC):
 
     alt = 0
 
-    increased_aircraft_autoplanner_variety = False
-
     # TODO: Only airbases have IDs.
     # TODO: has_frontline is only reasonable for airbases.
     # TODO: cptype is obsolete.

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import itertools
 from collections import defaultdict
-import random
 from typing import Sequence, Iterator, TYPE_CHECKING, Optional
 
 from game.dcs.aircrafttype import AircraftType
@@ -47,19 +46,12 @@ class AirWing:
                 if squadron.can_auto_assign_mission(location, task, size, this_turn):
                     capable_at_base.append(squadron)
 
-            if control_point.increased_aircraft_autoplanner_variety:
-                # If the Increased airframe variety with automatic aircraft purchases option is enabled,
-                # Shuffle the capable_at_base list so lower priority airframes will also be planned and procured
-                random.shuffle(capable_at_base)
-                ordered.extend(capable_at_base)
-            else:
-                # Otherwise prioritize the higher placed airframes in the priority lists
-                ordered.extend(
-                    sorted(
-                        capable_at_base,
-                        key=lambda s: best_aircraft.index(s.aircraft),
-                    )
+            ordered.extend(
+                sorted(
+                    capable_at_base,
+                    key=lambda s: best_aircraft.index(s.aircraft),
                 )
+            )
         return ordered
 
     def best_squadron_for(

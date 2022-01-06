@@ -48,7 +48,6 @@ from . import (
     OffMapSpawn,
 )
 from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
-from ..campaignloader.campaignairbaseconfig import CampaignAirBaseConfig
 from ..profiling import logged_duration
 from ..settings import Settings
 
@@ -88,7 +87,6 @@ class GameGenerator:
         settings: Settings,
         generator_settings: GeneratorSettings,
         mod_settings: ModSettings,
-        air_base_config: CampaignAirBaseConfig,
     ) -> None:
         self.player = player.apply_mod_settings(mod_settings)
         self.enemy = enemy.apply_mod_settings(mod_settings)

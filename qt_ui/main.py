@@ -267,7 +267,6 @@ def create_game(
             frenchpack=False,
             high_digit_sams=False,
         ),
-        campaign.load_air_base_config(theater),
     )
     game = generator.generate()
     game.begin_turn_0()
