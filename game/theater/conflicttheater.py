@@ -325,8 +325,8 @@ class NevadaTheater(ConflictTheater):
     terrain = nevada.Nevada()
     overview_image = "nevada.gif"
     reference_points = (
-        ReferencePoint(nevada.Mina_Airport_3Q0.position, Point(252, 295)),
-        ReferencePoint(nevada.Laughlin_Airport.position, Point(844, 909)),
+        ReferencePoint(nevada.Mina.position, Point(252, 295)),
+        ReferencePoint(nevada.Laughlin.position, Point(844, 909)),
     )
     landmap = load_landmap(Path("resources/nevlandmap.p"))
     daytime_map = {
