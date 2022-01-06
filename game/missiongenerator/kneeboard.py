@@ -44,7 +44,7 @@ from game.dcs.aircrafttype import AircraftType
 from game.radio.radios import RadioFrequency
 from game.theater import ConflictTheater, LatLon, TheaterGroundObject
 from game.theater.bullseye import Bullseye
-from game.utils import meters
+from game.utils import Distance, meters
 from game.weather import Weather
 from gen.runways import RunwayData
 from .aircraft.flightdata import FlightData
@@ -202,7 +202,7 @@ class FlightPlanBuilder:
 
     WAYPOINT_DESC_MAX_LEN = 25
 
-    def __init__(self, start_time: datetime.datetime) -> None:
+    def __init__(self, start_time: datetime.datetime, is_metric: bool) -> None:
         self.start_time = start_time
         self.rows: List[List[str]] = []
         self.target_points: List[NumberedWaypoint] = []
@@ -251,8 +251,9 @@ class FlightPlanBuilder:
                     waypoint.waypoint.pretty_name,
                     FlightPlanBuilder.WAYPOINT_DESC_MAX_LEN,
                 ),
-                str(int(waypoint.waypoint.alt.feet)),
+                self._format_alt(waypoint.waypoint.alt),
                 self._waypoint_distance(waypoint.waypoint),
+                self._waypoint_bearing(waypoint.waypoint),
                 self._ground_speed(waypoint.waypoint),
                 self._format_time(waypoint.waypoint.tot),
                 self._format_time(waypoint.waypoint.departure_time),
@@ -266,14 +267,33 @@ class FlightPlanBuilder:
         local_time = self.start_time + time
         return local_time.strftime(f"%H:%M:%S")
 
+    def _format_alt(self, alt: Distance) -> str:
+        if self.is_metric:
+            return f"{alt.meters:.0f} m"
+        else:
+            return f"{alt.feet:.0f} ft"
+
     def _waypoint_distance(self, waypoint: FlightWaypoint) -> str:
         if self.last_waypoint is None:
             return "-"
 
-        distance = meters(
-            self.last_waypoint.position.distance_to_point(waypoint.position)
-        )
-        return f"{distance.nautical_miles:.1f} NM"
+        if self.is_metric:
+            distance = meters(
+                self.last_waypoint.position.distance_to_point(waypoint.position)
+            )
+            return f"{(distance.meters / 1000):.1f} km"
+        else:
+            distance = meters(
+                self.last_waypoint.position.distance_to_point(waypoint.position)
+            )
+            return f"{distance.nautical_miles:.1f} nm"
+
+    def _waypoint_bearing(self, waypoint: FlightWaypoint) -> str:
+        if self.last_waypoint is None:
+            return "-"
+        bearing = self.last_waypoint.position.heading_between_point(waypoint.position)
+
+        return f"{(bearing):.0f} T"
 
     def _ground_speed(self, waypoint: FlightWaypoint) -> str:
         if self.last_waypoint is None:
@@ -293,7 +313,10 @@ class FlightPlanBuilder:
             self.last_waypoint.position.distance_to_point(waypoint.position)
         )
         duration = (waypoint.tot - last_time).total_seconds() / 3600
-        return f"{int(distance.nautical_miles / duration)} kt"
+        if self.is_metric:
+            return f"{int((distance.meters / 1000) / duration)} km/h"
+        else:
+            return f"{int(distance.nautical_miles / duration)} kt"
 
     @staticmethod
     def _format_min_fuel(min_fuel: Optional[float]) -> str:
@@ -349,7 +372,9 @@ class BriefingPage(KneeboardPage):
         )
 
         writer.heading("Flight Plan")
-        flight_plan_builder = FlightPlanBuilder(self.start_time)
+        flight_plan_builder = FlightPlanBuilder(
+            self.start_time, self.flight.aircraft_type.metric_kneeboard
+        )
         for num, waypoint in enumerate(self.flight.waypoints):
             flight_plan_builder.add_waypoint(num, waypoint)
         writer.table(
@@ -359,6 +384,7 @@ class BriefingPage(KneeboardPage):
                 "Action",
                 "Alt",
                 "Dist",
+                "Brg",
                 "GSPD",
                 "Time",
                 "Departure",

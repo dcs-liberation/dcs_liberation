@@ -644,6 +644,15 @@ class HelipadGenerator:
                 ).point_from_heading(helipad.heading.degrees + 90, 10),
                 heading=pad.heading,
             )
+            self.m.static_group(
+                country=country,
+                name=(name + "_ws"),
+                _type=Fortification.Windsock,
+                position=pad.position.point_from_heading(
+                    helipad.heading.degrees + 45, 35
+                ),
+                heading=pad.heading,
+            )
 
 
 class TgoGenerator:
