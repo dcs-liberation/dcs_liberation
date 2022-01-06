@@ -1058,20 +1058,20 @@ AIRFIELD_DATA = {
             "8": ("IGZP", MHz(108, 500)),
         },
     ),
-    # NTTR
-    "Mina Airport 3Q0": AirfieldData(
-        theater="NTTR",
+    # Nevada
+    "Mina": AirfieldData(
+        theater="Nevada",
         elevation=4562,
         runway_length=4222,
     ),
-    "Tonopah Airport": AirfieldData(
-        theater="NTTR",
+    "Tonopah": AirfieldData(
+        theater="Nevada",
         icao="KTPH",
         elevation=5394,
         runway_length=6715,
     ),
-    "Tonopah Test Range Airfield": AirfieldData(
-        theater="NTTR",
+    "Tonopah Test Range": AirfieldData(
+        theater="Nevada",
         icao="KTNX",
         elevation=5534,
         runway_length=11633,
@@ -1083,19 +1083,19 @@ AIRFIELD_DATA = {
             "14": ("I-RVP", MHz(108, 300)),
         },
     ),
-    "Beatty Airport": AirfieldData(
-        theater="NTTR",
+    "Beatty": AirfieldData(
+        theater="Nevada",
         icao="KBTY",
         elevation=3173,
         runway_length=5380,
     ),
-    "Pahute Mesa Airstrip": AirfieldData(
-        theater="NTTR",
+    "Pahute Mesa": AirfieldData(
+        theater="Nevada",
         elevation=5056,
         runway_length=5420,
     ),
-    "Groom Lake AFB": AirfieldData(
-        theater="NTTR",
+    "Groom Lake": AirfieldData(
+        theater="Nevada",
         icao="KXTA",
         elevation=4494,
         runway_length=11008,
@@ -1107,18 +1107,18 @@ AIRFIELD_DATA = {
         },
     ),
     "Lincoln County": AirfieldData(
-        theater="NTTR",
+        theater="Nevada",
         elevation=4815,
         runway_length=4408,
     ),
     "Mesquite": AirfieldData(
-        theater="NTTR",
+        theater="Nevada",
         icao="67L",
         elevation=1858,
         runway_length=4937,
     ),
-    "Creech AFB": AirfieldData(
-        theater="NTTR",
+    "Creech": AirfieldData(
+        theater="Nevada",
         icao="KINS",
         elevation=3126,
         runway_length=6100,
@@ -1130,7 +1130,7 @@ AIRFIELD_DATA = {
         },
     ),
     "Echo Bay": AirfieldData(
-        theater="NTTR",
+        theater="Nevada",
         icao="OL9",
         elevation=3126,
         runway_length=6100,
@@ -1138,8 +1138,8 @@ AIRFIELD_DATA = {
         tacan_callsign="INS",
         atc=AtcData(MHz(3, 825), MHz(118, 300), MHz(38, 550), MHz(360, 600)),
     ),
-    "Nellis AFB": AirfieldData(
-        theater="NTTR",
+    "Nellis": AirfieldData(
+        theater="Nevada",
         icao="KLSV",
         elevation=1841,
         runway_length=9454,
@@ -1151,14 +1151,14 @@ AIRFIELD_DATA = {
         },
     ),
     "North Las Vegas": AirfieldData(
-        theater="NTTR",
+        theater="Nevada",
         icao="KVGT",
         elevation=2228,
         runway_length=4734,
         atc=AtcData(MHz(3, 775), MHz(125, 700), MHz(38, 450), MHz(360, 750)),
     ),
-    "McCarran International Airport": AirfieldData(
-        theater="NTTR",
+    "McCarran International": AirfieldData(
+        theater="Nevada",
         icao="KLAS",
         elevation=2169,
         runway_length=10377,
@@ -1169,26 +1169,26 @@ AIRFIELD_DATA = {
             "25": ("I-LAS", MHz(110, 300)),
         },
     ),
-    "Henderson Executive Airport": AirfieldData(
-        theater="NTTR",
+    "Henderson Executive": AirfieldData(
+        theater="Nevada",
         icao="KHND",
         elevation=2491,
         runway_length=5999,
         atc=AtcData(MHz(3, 925), MHz(125, 100), MHz(38, 750), MHz(250, 100)),
     ),
-    "Boulder City Airport": AirfieldData(
-        theater="NTTR",
+    "Boulder City": AirfieldData(
+        theater="Nevada",
         icao="KBVU",
         elevation=2121,
         runway_length=4612,
     ),
-    "Jean Airport": AirfieldData(
-        theater="NTTR",
+    "Jean": AirfieldData(
+        theater="Nevada",
         elevation=2824,
         runway_length=4053,
     ),
-    "Laughlin Airport": AirfieldData(
-        theater="NTTR",
+    "Laughlin": AirfieldData(
+        theater="Nevada",
         icao="KIFP",
         elevation=656,
         runway_length=7139,
