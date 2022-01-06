@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import Iterator, deque, Sequence
+from collections import deque
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from typing import Any, Generic, Optional, TypeVar
 

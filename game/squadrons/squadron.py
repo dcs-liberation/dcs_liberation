@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from collections import Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Optional, Sequence, TYPE_CHECKING
 
@@ -418,6 +418,7 @@ class Squadron:
         coalition: Coalition,
         game: Game,
     ) -> Squadron:
+        squadron_def.claimed = True
         return Squadron(
             squadron_def.name,
             squadron_def.nickname,

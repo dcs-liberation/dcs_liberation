@@ -2,16 +2,16 @@ from __future__ import annotations
 
 import math
 import operator
-from collections import Iterator, Iterable
-from typing import TypeVar, TYPE_CHECKING
+from collections.abc import Iterable, Iterator
+from typing import TYPE_CHECKING, TypeVar
 
 from game.theater import (
+    Airfield,
     ControlPoint,
-    OffMapSpawn,
-    MissionTarget,
     Fob,
     FrontLine,
-    Airfield,
+    MissionTarget,
+    OffMapSpawn,
 )
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
@@ -19,7 +19,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
 )
 from game.utils import meters, nautical_miles
-from gen.flights.closestairfields import ObjectiveDistanceCache, ClosestAirfields
+from gen.flights.closestairfields import ClosestAirfields, ObjectiveDistanceCache
 
 if TYPE_CHECKING:
     from game import Game

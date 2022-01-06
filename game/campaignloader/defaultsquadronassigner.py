@@ -5,10 +5,8 @@ from typing import Optional, TYPE_CHECKING
 
 from game.squadrons import Squadron
 from game.squadrons.squadrondef import SquadronDef
-from game.squadrons.squadrondefloader import SquadronDefLoader
 from ..ato.flighttype import FlightType
 from .campaignairwingconfig import CampaignAirWingConfig, SquadronConfig
-from .squadrondefgenerator import SquadronDefGenerator
 from ..dcs.aircrafttype import AircraftType
 from ..theater import ControlPoint
 
@@ -25,14 +23,6 @@ class DefaultSquadronAssigner:
         self.game = game
         self.coalition = coalition
         self.air_wing = coalition.air_wing
-        self.squadron_defs = SquadronDefLoader(game, coalition).load()
-        self.squadron_def_generator = SquadronDefGenerator(self.coalition)
-
-    def claim_squadron_def(self, squadron: SquadronDef) -> None:
-        try:
-            self.squadron_defs[squadron.aircraft].remove(squadron)
-        except ValueError:
-            pass
 
     def assign(self) -> None:
         for control_point in self.game.theater.control_points_for(
@@ -47,7 +37,6 @@ class DefaultSquadronAssigner:
                     )
                     continue
 
-                self.claim_squadron_def(squadron_def)
                 squadron = Squadron.create_from(
                     squadron_def, control_point, self.coalition, self.game
                 )
@@ -74,7 +63,7 @@ class DefaultSquadronAssigner:
 
         # If we can't find any squadron matching the requirement, we should
         # create one.
-        return self.squadron_def_generator.generate_for_task(
+        return self.air_wing.squadron_def_generator.generate_for_task(
             config.primary, control_point, self.game.squadron_random_chance
         )
 
@@ -105,7 +94,7 @@ class DefaultSquadronAssigner:
 
         # No premade squadron available for this aircraft that meets the requirements,
         # so generate one if possible.
-        return self.squadron_def_generator.generate_for_aircraft(aircraft)
+        return self.air_wing.squadron_def_generator.generate_for_aircraft(aircraft)
 
     @staticmethod
     def squadron_compatible_with(
@@ -121,18 +110,24 @@ class DefaultSquadronAssigner:
     def find_squadron_for_airframe(
         self, aircraft: AircraftType, task: FlightType, control_point: ControlPoint
     ) -> Optional[SquadronDef]:
-        for squadron in self.squadron_defs[aircraft]:
-            if self.squadron_compatible_with(squadron, task, control_point):
+        for squadron in self.air_wing.squadron_defs[aircraft]:
+            if not squadron.claimed and self.squadron_compatible_with(
+                squadron, task, control_point
+            ):
                 return squadron
         return None
 
     def find_squadron_by_name(
         self, name: str, task: FlightType, control_point: ControlPoint
     ) -> Optional[SquadronDef]:
-        for squadrons in self.squadron_defs.values():
+        for squadrons in self.air_wing.squadron_defs.values():
             for squadron in squadrons:
-                if squadron.name == name and self.squadron_compatible_with(
-                    squadron, task, control_point, ignore_base_preference=True
+                if (
+                    not squadron.claimed
+                    and squadron.name == name
+                    and self.squadron_compatible_with(
+                        squadron, task, control_point, ignore_base_preference=True
+                    )
                 ):
                     return squadron
         return None
@@ -140,8 +135,10 @@ class DefaultSquadronAssigner:
     def find_squadron_for_task(
         self, task: FlightType, control_point: ControlPoint
     ) -> Optional[SquadronDef]:
-        for squadrons in self.squadron_defs.values():
+        for squadrons in self.air_wing.squadron_defs.values():
             for squadron in squadrons:
-                if self.squadron_compatible_with(squadron, task, control_point):
+                if not squadron.claimed and self.squadron_compatible_with(
+                    squadron, task, control_point
+                ):
                     return squadron
         return None

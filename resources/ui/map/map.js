@@ -206,6 +206,7 @@ const supplyRoutesLayer = L.layerGroup().addTo(map);
 const frontLinesLayer = L.layerGroup().addTo(map);
 const redSamThreatLayer = L.layerGroup().addTo(map);
 const blueFlightPlansLayer = L.layerGroup().addTo(map);
+const combatLayer = L.layerGroup().addTo(map);
 
 // Added to map by the user via layer controls.
 const blueSamThreatLayer = L.layerGroup();
@@ -287,6 +288,7 @@ L.control
       "Units and locations": {
         "Control points": controlPointsLayer,
         Aircraft: aircraftLayer,
+        "Active combat": combatLayer,
         "Air defenses": airDefensesLayer,
         Factories: factoriesLayer,
         Ships: shipsLayer,
@@ -351,6 +353,9 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.ipZonesChanged.connect(drawIpZones);
   game.joinZonesChanged.connect(drawJoinZones);
   game.holdZonesChanged.connect(drawHoldZones);
+  game.airCombatsChanged.connect(drawCombat);
+  game.samCombatsChanged.connect(drawCombat);
+  game.ipCombatsChanged.connect(drawCombat);
 });
 
 function recenterMap(center) {
@@ -808,6 +813,7 @@ class Flight {
     this.flightPlan = this.flight.flightPlan.map((p) => new Waypoint(p, this));
     this.aircraft = null;
     this.path = null;
+    this.markers = [];
     this.commitBoundary = null;
     this.flight.selectedChanged.connect(() => this.draw());
     this.flight.positionChanged.connect(() => this.drawAircraftLocation());
@@ -891,21 +897,54 @@ class Flight {
     }
   }
 
-  drawFlightPlan() {
-    const path = [];
-    this.flightPlan.forEach((waypoint) => {
-      if (waypoint.includeInPath()) {
-        path.push(waypoint.position());
-      }
-      if (this.shouldMark(waypoint)) {
-        waypoint.marker
-          .addTo(selectedFlightPlansLayer)
-          .addTo(this.flightPlanLayer())
-          .addTo(allFlightPlansLayer);
-      }
-    });
+  clearFlightPlan() {
+    for (const marker of this.markers) {
+      marker
+        .removeFrom(selectedFlightPlansLayer)
+        .removeFrom(this.flightPlanLayer())
+        .removeFrom(allFlightPlansLayer);
+    }
+    this.markers = [];
+    if (this.path != null) {
+      this.path
+        .removeFrom(selectedFlightPlansLayer)
+        .removeFrom(this.flightPlanLayer())
+        .removeFrom(allFlightPlansLayer);
+    }
+  }
 
-    this.drawPath(path);
+  drawFlightPlan() {
+    this.clearFlightPlan();
+    this.flight.flightIsInAto().then((inAto) => {
+      if (!inAto) {
+        // HACK: The signal to redraw the ATO following package/flight deletion
+        // and the signal to change flight/package selection due to UI selection
+        // change come in an arbitrary order. If redraw signal comes first the
+        // UI will clear the map and redraw, but then when the UI updates
+        // selection away from the (now deleted) flight/package it calls
+        // deselect, which redraws the deleted flight plan in its deselected
+        // state.
+        //
+        // Avoid this by checking that the flight is still in the coalition's
+        // ATO before drawing.
+        return;
+      }
+      const path = [];
+      this.flightPlan.forEach((waypoint) => {
+        if (waypoint.includeInPath()) {
+          path.push(waypoint.position());
+        }
+        if (this.shouldMark(waypoint)) {
+          waypoint.marker
+            .addTo(selectedFlightPlansLayer)
+            .addTo(this.flightPlanLayer())
+            .addTo(allFlightPlansLayer);
+          this.markers.push(waypoint.marker);
+        }
+      });
+
+      this.drawPath(path);
+    });
   }
 }
 
@@ -1192,6 +1231,34 @@ function drawHoldZones() {
   }
 }
 
+function drawCombat() {
+  combatLayer.clearLayers();
+
+  for (const airCombat of game.airCombats) {
+    L.polygon(airCombat.footprint, {
+      color: Colors.Red,
+      interactive: false,
+      fillOpacity: 0.2,
+    }).addTo(combatLayer);
+  }
+
+  for (const samCombat of game.samCombats) {
+    for (const airDefense of samCombat.airDefenses) {
+      L.polyline([samCombat.flight.position, airDefense.position], {
+        color: Colors.Red,
+        interactive: false,
+      }).addTo(combatLayer);
+    }
+  }
+
+  for (const ipCombat of game.ipCombats) {
+    L.polyline([ipCombat.flight.position, ipCombat.flight.target], {
+      color: Colors.Red,
+      interactive: false,
+    }).addTo(combatLayer);
+  }
+}
+
 function drawInitialMap() {
   recenterMap(game.mapCenter);
   drawControlPoints();
@@ -1206,6 +1273,7 @@ function drawInitialMap() {
   drawIpZones();
   drawJoinZones();
   drawHoldZones();
+  drawCombat();
 }
 
 function clearAllLayers() {

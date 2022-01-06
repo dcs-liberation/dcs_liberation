@@ -1,5 +1,6 @@
 import itertools
 import random
+from collections.abc import Iterator
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -26,6 +27,7 @@ from .deadingress import DeadIngressBuilder
 from .default import DefaultWaypointBuilder
 from .holdpoint import HoldPointBuilder
 from .joinpoint import JoinPointBuilder
+from .splitpoint import SplitPointBuilder
 from .landingpoint import LandingPointBuilder
 from .ocaaircraftingress import OcaAircraftIngressBuilder
 from .ocarunwayingress import OcaRunwayIngressBuilder
@@ -126,6 +128,7 @@ class WaypointGenerator:
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
+            FlightWaypointType.SPLIT: SplitPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
@@ -151,7 +154,7 @@ class WaypointGenerator:
         min_fuel: float = consumption.min_safe
 
         # The flight plan (in reverse) up to and including the arrival point.
-        main_flight_plan = reversed(waypoints)
+        main_flight_plan: Iterator[FlightWaypoint] = reversed(waypoints)
         try:
             while waypoint := next(main_flight_plan):
                 if waypoint.waypoint_type is FlightWaypointType.LANDING_POINT:

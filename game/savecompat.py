@@ -1,5 +1,5 @@
 """Tools for aiding in save compat removal after compatibility breaks."""
-from collections import Callable
+from collections.abc import Callable
 from typing import TypeVar
 
 from game.version import MAJOR_VERSION

@@ -1,4 +1,4 @@
-from collections import Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 from game.commander.tasks.compound.destroyenemygroundunits import (
@@ -10,7 +10,7 @@ from game.commander.tasks.compound.reduceenemyfrontlinecapacity import (
 from game.commander.tasks.primitive.breakthroughattack import BreakthroughAttack
 from game.commander.theaterstate import TheaterState
 from game.htn import CompoundTask, Method
-from game.theater import FrontLine, ControlPoint
+from game.theater import ControlPoint, FrontLine
 
 
 @dataclass(frozen=True)

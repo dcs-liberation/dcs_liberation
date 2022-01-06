@@ -1,12 +1,20 @@
+from __future__ import annotations
+
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 
 from gen.flights.traveltime import TotEstimator
 from .flightstate import FlightState
 from ..starttype import StartType
 
+if TYPE_CHECKING:
+    from game.sim.gameupdateevents import GameUpdateEvents
+
 
 class Uninitialized(FlightState):
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         raise RuntimeError("Attempted to simulate flight that is not fully initialized")
 
     @property

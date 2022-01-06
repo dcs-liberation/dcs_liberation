@@ -17,6 +17,7 @@ from game.ato.flight import Flight
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.game import Game
+from game.sim.gameupdateevents import GameUpdateEvents
 from game.squadrons.squadron import Pilot, Squadron
 from game.theater.missiontarget import MissionTarget
 from game.transfers import PendingTransfers, TransferOrder
@@ -211,7 +212,7 @@ class PackageModel(QAbstractListModel):
         for flight in self.package.flights:
             yield flight
 
-    def on_sim_update(self) -> None:
+    def on_sim_update(self, _events: GameUpdateEvents) -> None:
         self.dataChanged.emit(self.index(0), self.index(self.rowCount()))
 
 
@@ -311,7 +312,7 @@ class AtoModel(QAbstractListModel):
         for package in self.ato.packages:
             yield self.package_models.acquire(package)
 
-    def on_sim_update(self) -> None:
+    def on_sim_update(self, _events: GameUpdateEvents) -> None:
         self.dataChanged.emit(self.index(0), self.index(self.rowCount()))
 
 

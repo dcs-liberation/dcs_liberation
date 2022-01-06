@@ -59,6 +59,7 @@ class FlightGroupConfigurator:
     def configure(self) -> FlightData:
         AircraftBehavior(self.flight.flight_type).apply_to(self.flight, self.group)
         AircraftPainter(self.flight, self.group).apply_livery()
+        self.setup_props()
         self.setup_payload()
         self.setup_fuel()
         flight_channel = self.setup_radios()
@@ -193,6 +194,11 @@ class FlightGroupConfigurator:
             self.game.settings.ai_pilot_levelling
         ]
         return levels[new_level]
+
+    def setup_props(self) -> None:
+        for prop_id, value in self.flight.props.items():
+            for unit in self.group.units:
+                unit.set_property(prop_id, value)
 
     def setup_payload(self) -> None:
         for p in self.group.units:

@@ -1,0 +1,18 @@
+description:
+  "The Lockheed F-104 Starfighter is a single-engine, supersonic interceptor aircraft\
+  \ which was extensively deployed as a fighter-bomber during the Cold War. Created \
+  \ as a day fighter by Lockheed as one of the Century Series of fighter aircraft \
+  \ for the United States Air Force (USAF), it was developed into an all-weather \
+  \ multirole aircraft in the early 1960s and produced by several other nations, \
+  \ seeing widespread service outside the United States. \
+  \ The F-104G variant was used by West German Luftwaffe and Bundesmarine \
+  \ as well as other NATO countries."
+introduced: 1958
+manufacturer: Lockheed
+origin: USA
+price: 9
+role: Fighter-Bomber
+max_range: 100
+gunfighter: true
+variants:
+  F-104G Starfighter: {}

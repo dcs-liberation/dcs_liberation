@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import logging
+from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
@@ -11,20 +11,16 @@ from game.ato.flightstate.flightstate import FlightState
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
-from game.utils import Distance, LBS_TO_KG, Speed, meters, pairwise
+from game.utils import Distance, LBS_TO_KG, Speed, pairwise
 from gen.flights.flightplan import LoiterFlightPlan
 
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings
-    from game.sim.aircraftengagementzones import AircraftEngagementZones
+    from game.sim.gameupdateevents import GameUpdateEvents
 
 
-def lerp(v0: float, v1: float, t: float) -> float:
-    return (1 - t) * v0 + t * v1
-
-
-class InFlight(FlightState):
+class InFlight(FlightState, ABC):
     def __init__(self, flight: Flight, settings: Settings, waypoint_index: int) -> None:
         super().__init__(flight, settings)
         waypoints = self.flight.flight_plan.waypoints
@@ -52,36 +48,17 @@ class InFlight(FlightState):
             travel_time -= self.flight.flight_plan.hold_duration
         return travel_time
 
-    def progress(self) -> float:
-        return (
-            self.elapsed_time.total_seconds()
-            / self.total_time_to_next_waypoint.total_seconds()
-        )
-
+    @abstractmethod
     def estimate_position(self) -> Point:
-        x0 = self.current_waypoint.position.x
-        y0 = self.current_waypoint.position.y
-        x1 = self.next_waypoint.position.x
-        y1 = self.next_waypoint.position.y
-        progress = self.progress()
-        return Point(lerp(x0, x1, progress), lerp(y0, y1, progress))
+        ...
 
+    @abstractmethod
     def estimate_altitude(self) -> tuple[Distance, str]:
-        return (
-            meters(
-                lerp(
-                    self.current_waypoint.alt.meters,
-                    self.next_waypoint.alt.meters,
-                    self.progress(),
-                )
-            ),
-            self.current_waypoint.alt_type,
-        )
+        ...
 
+    @abstractmethod
     def estimate_speed(self) -> Speed:
-        return self.flight.flight_plan.speed_between_waypoints(
-            self.current_waypoint, self.next_waypoint
-        )
+        ...
 
     def estimate_fuel_at_current_waypoint(self) -> float:
         initial_fuel = super().estimate_fuel()
@@ -95,21 +72,10 @@ class InFlight(FlightState):
             initial_fuel -= consumption * LBS_TO_KG
         return initial_fuel
 
-    def estimate_fuel(self) -> float:
-        initial_fuel = self.estimate_fuel_at_current_waypoint()
-        ppm = self.flight.flight_plan.fuel_rate_to_between_points(
-            self.current_waypoint, self.next_waypoint
-        )
-        if ppm is None:
-            return initial_fuel
-        position = self.estimate_position()
-        distance = meters(self.current_waypoint.position.distance_to_point(position))
-        consumption = distance.nautical_miles * ppm * LBS_TO_KG
-        return initial_fuel - consumption
-
     def next_waypoint_state(self) -> FlightState:
-        from game.ato.flightstate.loiter import Loiter
-        from game.ato.flightstate.racetrack import RaceTrack
+        from .loiter import Loiter
+        from .racetrack import RaceTrack
+        from .navigating import Navigating
 
         new_index = self.waypoint_index + 1
         if self.next_waypoint.waypoint_type is FlightWaypointType.LANDING_POINT:
@@ -118,17 +84,20 @@ class InFlight(FlightState):
             return RaceTrack(self.flight, self.settings, new_index)
         if self.next_waypoint.waypoint_type is FlightWaypointType.LOITER:
             return Loiter(self.flight, self.settings, new_index)
-        return InFlight(self.flight, self.settings, new_index)
+        return Navigating(self.flight, self.settings, new_index)
 
     def advance_to_next_waypoint(self) -> None:
         self.flight.set_state(self.next_waypoint_state())
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
+    def on_game_tick(
+        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+    ) -> None:
         self.elapsed_time += duration
         if self.elapsed_time > self.total_time_to_next_waypoint:
             self.advance_to_next_waypoint()
 
-    def should_halt_sim(self, enemy_aircraft_coverage: AircraftEngagementZones) -> bool:
+    @property
+    def is_at_ip(self) -> bool:
         contact_types = {
             FlightWaypointType.INGRESS_BAI,
             FlightWaypointType.INGRESS_CAS,
@@ -138,30 +107,19 @@ class InFlight(FlightState):
             FlightWaypointType.INGRESS_SEAD,
             FlightWaypointType.INGRESS_STRIKE,
         }
+        return self.current_waypoint.waypoint_type in contact_types
 
-        if self.current_waypoint.waypoint_type in contact_types:
-            logging.info(
-                f"Interrupting simulation because {self.flight} has reached its "
-                "ingress point"
-            )
-            return True
+    @property
+    def vulnerable_to_intercept(self) -> bool:
+        return True
 
-        threat_zone = self.flight.squadron.coalition.opponent.threat_zone
-        if threat_zone.threatened_by_air_defense(self.estimate_position()):
-            logging.info(
-                f"Interrupting simulation because {self.flight} has encountered enemy "
-                "air defenses"
-            )
-            return True
+    @property
+    def vulnerable_to_sam(self) -> bool:
+        return True
 
-        if enemy_aircraft_coverage.covers(self.estimate_position()):
-            logging.info(
-                f"Interrupting simulation because {self.flight} has encountered enemy "
-                "air-to-air patrol"
-            )
-            return True
-
-        return False
+    @property
+    def will_join_air_combat(self) -> bool:
+        return self.flight.flight_type.is_air_to_air
 
     @property
     def is_waiting_for_start(self) -> bool:

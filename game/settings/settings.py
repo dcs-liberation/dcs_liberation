@@ -1,4 +1,4 @@
-from collections import Iterator
+from collections.abc import Iterator
 from dataclasses import Field, dataclass, field, fields
 from datetime import timedelta
 from enum import Enum, unique
@@ -138,6 +138,15 @@ class Settings:
         MISSION_RESTRICTIONS_SECTION,
         default=True,
     )
+
+    easy_communication: Optional[bool] = choices_option(
+        "Easy Communication",
+        page=DIFFICULTY_PAGE,
+        section=MISSION_RESTRICTIONS_SECTION,
+        choices={"Player preference": None, "Enforced on": True, "Enforced off": False},
+        default=None,
+    )
+
     battle_damage_assessment: Optional[bool] = choices_option(
         "Battle damage assessment",
         page=DIFFICULTY_PAGE,
@@ -403,6 +412,12 @@ class Settings:
     )
     perf_moving_units: bool = boolean_option(
         "Moving ground units",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
+    convoys_travel_full_distance: bool = boolean_option(
+        "Convoys drive the full distance between control points",
         page=MISSION_GENERATOR_PAGE,
         section=PERFORMANCE_SECTION,
         default=True,

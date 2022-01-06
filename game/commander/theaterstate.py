@@ -3,23 +3,22 @@ from __future__ import annotations
 import dataclasses
 import itertools
 import math
-from collections import Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Union, Optional
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from game.commander.garrisons import Garrisons
 from game.commander.objectivefinder import ObjectiveFinder
 from game.htn import WorldState
 from game.profiling import MultiEventTracer
 from game.settings import Settings
-from game.squadrons import AirWing
-from game.theater import ControlPoint, FrontLine, MissionTarget, ConflictTheater
+from game.theater import ConflictTheater, ControlPoint, FrontLine, MissionTarget
 from game.theater.theatergroundobject import (
-    TheaterGroundObject,
-    NavalGroundObject,
-    IadsGroundObject,
-    VehicleGroupGroundObject,
     BuildingGroundObject,
+    IadsGroundObject,
+    NavalGroundObject,
+    TheaterGroundObject,
+    VehicleGroupGroundObject,
 )
 from game.threatzones import ThreatZones
 from gen.ground_forces.combat_stance import CombatStance

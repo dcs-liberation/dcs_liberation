@@ -1,4 +1,4 @@
-from collections import Iterator
+from collections.abc import Iterator
 from typing import Union
 
 from game.commander.tasks.primitive.antiship import PlanAntiShip

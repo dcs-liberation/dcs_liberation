@@ -16,7 +16,7 @@ from PySide2.QtWebEngineWidgets import (
 from game import Game
 from qt_ui.models import GameModel
 from qt_ui.simcontroller import SimController
-from qt_ui.widgets.map.mapmodel import MapModel
+from .model import MapModel
 
 
 class LoggingWebPage(QWebEnginePage):

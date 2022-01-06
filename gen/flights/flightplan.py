@@ -809,44 +809,38 @@ class SweepFlightPlan(LoiterFlightPlan):
 
 
 @dataclass(frozen=True)
-class AwacsFlightPlan(LoiterFlightPlan):
+class AwacsFlightPlan(PatrollingFlightPlan):
     takeoff: FlightWaypoint
-    nav_to: List[FlightWaypoint]
-    nav_from: List[FlightWaypoint]
     land: FlightWaypoint
     divert: Optional[FlightWaypoint]
     bullseye: FlightWaypoint
 
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.takeoff
-        yield from self.nav_to
-        yield self.hold
-        yield from self.nav_from
-        yield self.land
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+    @property
+    def patrol_start_time(self) -> timedelta:
+        return self.package.time_over_target
 
     @property
     def mission_start_time(self) -> Optional[timedelta]:
         return self.takeoff_time()
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
-        if waypoint == self.hold:
-            return self.package.time_over_target
-        return None
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.patrol_start_time + self.patrol_duration
 
     @property
     def tot_waypoint(self) -> Optional[FlightWaypoint]:
-        return self.hold
+        return self.patrol_start
 
-    @property
-    def push_time(self) -> timedelta:
-        return self.package.time_over_target + self.hold_duration
-
-    @property
-    def mission_departure_time(self) -> timedelta:
-        return self.push_time
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield from self.nav_to
+        yield self.patrol_start
+        yield self.patrol_end
+        yield from self.nav_from
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
 
 
 @dataclass(frozen=True)
@@ -1110,7 +1104,7 @@ class FlightPlanBuilder:
         elif task == FlightType.TARCAP:
             return self.generate_tarcap(flight)
         elif task == FlightType.AEWC:
-            return self.generate_aewc(flight)
+            return self.generate_aewc_racetrack(flight)
         elif task == FlightType.TRANSPORT:
             return self.generate_transport(flight)
         elif task == FlightType.REFUELING:
@@ -1195,39 +1189,79 @@ class FlightPlanBuilder:
             flight, location, FlightWaypointType.INGRESS_STRIKE, targets
         )
 
-    def generate_aewc(self, flight: Flight) -> AwacsFlightPlan:
-        """Generate a AWACS flight at a given location.
+    def generate_aewc_racetrack(self, flight: Flight) -> AwacsFlightPlan:
+        """Generate a AWACS flight in racetrack orbit.
 
         Args:
             flight: The flight to generate the flight plan for.
         """
+
+        racetrack_half_distance = Distance.from_nautical_miles(30).meters
+
+        patrol_duration = timedelta(hours=4)
+
         location = self.package.target
 
-        orbit_location = self.aewc_orbit(location)
+        closest_boundary = self.threat_zones.closest_boundary(location.position)
+        heading_to_threat_boundary = Heading.from_degrees(
+            location.position.heading_between_point(closest_boundary)
+        )
+        distance_to_threat = meters(
+            location.position.distance_to_point(closest_boundary)
+        )
+        orbit_heading = heading_to_threat_boundary
 
-        if flight.unit_type.patrol_altitude is not None:
-            patrol_alt = flight.unit_type.patrol_altitude
+        # Station 80nm outside the threat zone.
+        threat_buffer = nautical_miles(80)
+        if self.threat_zones.threatened(location.position):
+            orbit_distance = distance_to_threat + threat_buffer
         else:
-            patrol_alt = feet(25000)
+            orbit_distance = distance_to_threat - threat_buffer
+
+        racetrack_center = location.position.point_from_heading(
+            orbit_heading.degrees, orbit_distance.meters
+        )
+
+        racetrack_start = racetrack_center.point_from_heading(
+            orbit_heading.right.degrees, racetrack_half_distance
+        )
+
+        racetrack_end = racetrack_center.point_from_heading(
+            orbit_heading.left.degrees, racetrack_half_distance
+        )
 
         builder = WaypointBuilder(flight, self.coalition)
-        orbit = builder.orbit(orbit_location, patrol_alt)
+
+        if flight.unit_type.patrol_altitude is not None:
+            altitude = flight.unit_type.patrol_altitude
+        else:
+            altitude = feet(25000)
+
+        if flight.unit_type.preferred_patrol_speed(altitude) is not None:
+            speed = flight.unit_type.preferred_patrol_speed(altitude)
+        else:
+            speed = knots(390)
+
+        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
 
         return AwacsFlightPlan(
             package=self.package,
             flight=flight,
             takeoff=builder.takeoff(flight.departure),
             nav_to=builder.nav_path(
-                flight.departure.position, orbit.position, patrol_alt
+                flight.departure.position, racetrack_start, altitude
             ),
-            nav_from=builder.nav_path(
-                orbit.position, flight.arrival.position, patrol_alt
-            ),
+            nav_from=builder.nav_path(racetrack_end, flight.arrival.position, altitude),
+            patrol_start=racetrack[0],
+            patrol_end=racetrack[1],
             land=builder.land(flight.arrival),
             divert=builder.divert(flight.divert),
             bullseye=builder.bullseye(),
-            hold=orbit,
-            hold_duration=timedelta(hours=4),
+            patrol_duration=patrol_duration,
+            patrol_speed=speed,
+            # TODO: Factor out a common base of the combat and non-combat race-tracks.
+            # No harm in setting this, but we ought to clean up a bit.
+            engagement_distance=meters(0),
         )
 
     def generate_bai(self, flight: Flight) -> FlightPlan:

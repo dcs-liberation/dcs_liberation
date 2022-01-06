@@ -1,10 +1,16 @@
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QFrame, QLabel, QComboBox, QVBoxLayout
+from PySide2.QtWidgets import (
+    QComboBox,
+    QFrame,
+    QLabel,
+    QVBoxLayout,
+)
 
 from game import Game
 from game.ato.flight import Flight
 from gen.flights.loadouts import Loadout
-from qt_ui.windows.mission.flight.payload.QLoadoutEditor import QLoadoutEditor
+from .QLoadoutEditor import QLoadoutEditor
+from .propertyeditor import PropertyEditor
 
 
 class DcsLoadoutSelector(QComboBox):
@@ -36,6 +42,7 @@ class QFlightPayloadTab(QFrame):
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)
 
+        layout.addLayout(PropertyEditor(self.flight))
         self.loadout_selector = DcsLoadoutSelector(flight)
         self.loadout_selector.currentIndexChanged.connect(self.on_new_loadout)
         layout.addWidget(self.loadout_selector)

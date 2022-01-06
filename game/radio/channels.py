@@ -144,22 +144,35 @@ class ViggenRadioChannelAllocator(RadioChannelAllocator):
         self, flight: FlightData, air_support: AirSupport
     ) -> None:
         # The Viggen's preset channels are handled differently from other
-        # aircraft. The aircraft automatically configures channels for every
-        # allied flight in the game (including AWACS) and for every airfield. As
-        # such, we don't need to allocate any of those. There are seven presets
-        # we can modify, however: three channels for the main radio intended for
-        # communication with wingmen, and four emergency channels for the backup
-        # radio. We'll set the first channel of the main radio to the
-        # intra-flight channel, and the first three emergency channels to each
+        # aircraft. Since 2.7.9 the group channels will not be generated automatically
+        # anymore. So we have to set AWACS and JTAC manually. There are also seven
+        # special channels we can modify. We'll set the first channel of the main radio
+        # to the intra-flight channel, and the first three emergency channels to each
         # of the flight plan's airfields. The fourth emergency channel is always
         # the guard channel.
         radio_id = 1
-        flight.assign_channel(radio_id, 1, flight.intra_flight_channel)
+
+        # Possible Group Channels (100-139)
+        channel_alloc = iter(range(1, 40))
+
+        # Intra-Flight channel on Special 1 and Group 100 (required by module)
+        flight.assign_channel(radio_id, 41, flight.intra_flight_channel)  # Special 1
+        flight.assign_channel(
+            radio_id, next(channel_alloc), flight.intra_flight_channel
+        )
+
+        for awacs in air_support.awacs:
+            flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
+
+        for jtac in air_support.jtacs:
+            flight.assign_channel(radio_id, next(channel_alloc), jtac.freq)
+
         if flight.departure.atc is not None:
-            flight.assign_channel(radio_id, 4, flight.departure.atc)
+            flight.assign_channel(radio_id, 44, flight.departure.atc)  # FR24 E
         if flight.arrival.atc is not None:
-            flight.assign_channel(radio_id, 5, flight.arrival.atc)
-        # TODO: Assign divert to 6 when we support divert airfields.
+            flight.assign_channel(radio_id, 45, flight.arrival.atc)  # FR24 F
+        if flight.divert is not None and flight.divert.atc is not None:
+            flight.assign_channel(radio_id, 46, flight.divert.atc)  # FR24 G
 
     @classmethod
     def name(cls) -> str:
@@ -263,10 +276,18 @@ class ViggenChannelNamer(ChannelNamer):
 
     @staticmethod
     def channel_name(radio_id: int, channel_id: int) -> str:
-        if channel_id >= 4:
-            channel_letter = "EFGH"[channel_id - 4]
-            return f"FR 24 {channel_letter}"
-        return f"FR 22 Special {channel_id}"
+        special_channels = [
+            "FR 22 Special 1",
+            "FR 22 Special 2",
+            "FR 22 Special 3",
+            "FR 24 E",
+            "FR 24 F",
+            "FR 24 G",
+            "FR 24 H",
+        ]
+        if channel_id >= 41:  # Special channels are 41-47
+            return special_channels[channel_id - 41]
+        return f"FR 22 Group {99 + channel_id}"
 
     @classmethod
     def name(cls) -> str:

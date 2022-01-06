@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import datetime
-from collections import Iterable
-from typing import Optional, Iterator, TYPE_CHECKING, Mapping
+from collections.abc import Iterable
+from typing import Iterator, Mapping, Optional, TYPE_CHECKING
 
-from game.data.weapons import Weapon, Pylon, WeaponType
+from game.data.weapons import Pylon, Weapon, WeaponType
 from game.dcs.aircrafttype import AircraftType
 
 if TYPE_CHECKING:

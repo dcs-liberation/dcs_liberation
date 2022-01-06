@@ -13,23 +13,23 @@ from typing import (
     Union,
 )
 
-from game.ato.flight import Flight
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import Airfield, ControlPoint
-from game.transfers import CargoShip
-from game.unitmap import (
-    AirliftUnits,
-    Building,
-    ConvoyUnit,
-    FlyingUnit,
-    FrontLineUnit,
-    GroundObjectUnit,
-    UnitMap,
-)
 
 if TYPE_CHECKING:
     from game import Game
+    from game.ato.flight import Flight
+    from game.transfers import CargoShip
+    from game.unitmap import (
+        AirliftUnits,
+        Building,
+        ConvoyUnit,
+        FlyingUnit,
+        FrontLineUnit,
+        GroundObjectUnit,
+        UnitMap,
+    )
 
 DEBRIEFING_LOG_EXTENSION = "log"
 
@@ -96,7 +96,7 @@ class StateData:
     #: Names of aircraft units that were killed during the mission.
     killed_aircraft: List[str]
 
-    #: Names of vehicle (and ship) units that were killed during the mission.
+    #: Names of vehicles, ships or buildings that were killed during the mission.
     killed_ground_units: List[str]
 
     #: List of descriptions of destroyed statics. Format of each element is a mapping of

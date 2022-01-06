@@ -8,13 +8,13 @@ from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 from game import db
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.groundunittype import GroundUnitType
-from game.factions.faction import Faction
-from game.squadrons import Squadron
 from game.theater import ControlPoint, MissionTarget
 
 if TYPE_CHECKING:
     from game import Game
     from game.ato import FlightType
+    from game.factions.faction import Faction
+    from game.squadrons import Squadron
 
 FRONTLINE_RESERVES_FACTOR = 1.3
 

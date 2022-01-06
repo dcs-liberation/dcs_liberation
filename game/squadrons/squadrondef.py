@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from collections import Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
@@ -28,6 +28,7 @@ class SquadronDef:
     mission_types: tuple[FlightType, ...]
     operating_bases: OperatingBases
     pilot_pool: list[Pilot]
+    claimed: bool = False
 
     auto_assignable_mission_types: set[FlightType] = field(
         init=False, hash=False, compare=False

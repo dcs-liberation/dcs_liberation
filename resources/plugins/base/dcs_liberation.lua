@@ -4,10 +4,10 @@ local WRITESTATE_SCHEDULE_IN_SECONDS = 60
 logger = mist.Logger:new("DCSLiberation", "info")
 logger:info("Check that json.lua is loaded : json = "..tostring(json))
 
-killed_aircrafts = {}
-killed_ground_units = {}
+killed_aircrafts = {} -- killed aircraft will be added via S_EVENT_CRASH event
+killed_ground_units = {} -- killed units will be added via S_EVENT_DEAD event
 base_capture_events = {}
-destroyed_objects_positions = {}
+destroyed_objects_positions = {} -- will be added via S_EVENT_DEAD event
 mission_ended = false
 
 local function ends_with(str, ending)

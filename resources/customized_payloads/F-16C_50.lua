@@ -5,7 +5,7 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "<CLEAN>",
+					["CLSID"] = "ALQ_184",
 					["num"] = 5,
 				},
 				[2] = {
@@ -80,7 +80,7 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[8] = {
-					["CLSID"] = "<CLEAN>",
+					["CLSID"] = "ALQ_184",
 					["num"] = 5,
 				},
 			},
@@ -166,7 +166,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[9] = {
-					["CLSID"] = "<CLEAN>",
+					["CLSID"] = "ALQ_184",
 					["num"] = 5,
 				},
 				[10] = {
@@ -198,7 +198,7 @@ local unitPayloads = {
 					["num"] = 6,
 				},
 				[5] = {
-					["CLSID"] = "<CLEAN>",
+					["CLSID"] = "ALQ_184",
 					["num"] = 5,
 				},
 				[6] = {
@@ -271,7 +271,7 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[10] = {
-					["CLSID"] = "<CLEAN>",
+					["CLSID"] = "ALQ_184",
 					["num"] = 5,
 				},
 				[11] = {

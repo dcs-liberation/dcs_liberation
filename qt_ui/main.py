@@ -14,7 +14,7 @@ from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
 from game.campaignloader.campaign import Campaign
-from game.data.weapons import WeaponGroup, Pylon, Weapon
+from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.db import FACTIONS
 from game.dcs.aircrafttype import AircraftType
 from game.profiling import logged_duration
@@ -261,6 +261,7 @@ def create_game(
         ModSettings(
             a4_skyhawk=False,
             f22_raptor=False,
+            f104_starfighter=False,
             hercules=False,
             jas39_gripen=False,
             su57_felon=False,

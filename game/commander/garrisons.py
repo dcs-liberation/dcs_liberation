@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 from game.theater import ControlPoint

@@ -3,24 +3,24 @@ from __future__ import annotations
 import datetime
 import json
 import logging
-from collections import Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Tuple, Dict, Any
+from typing import Any, Dict, Optional, Tuple
 
-from packaging.version import Version
 import yaml
+from packaging.version import Version
 
 from game.profiling import logged_duration
 from game.theater import (
-    ConflictTheater,
     CaucasusTheater,
-    NevadaTheater,
-    PersianGulfTheater,
-    NormandyTheater,
-    TheChannelTheater,
-    SyriaTheater,
+    ConflictTheater,
     MarianaIslandsTheater,
+    NevadaTheater,
+    NormandyTheater,
+    PersianGulfTheater,
+    SyriaTheater,
+    TheChannelTheater,
 )
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig

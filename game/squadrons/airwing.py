@@ -7,17 +7,30 @@ from typing import Sequence, Iterator, TYPE_CHECKING, Optional
 from game.dcs.aircrafttype import AircraftType
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
+from .squadrondef import SquadronDef
+from .squadrondefloader import SquadronDefLoader
+from ..campaignloader.squadrondefgenerator import SquadronDefGenerator
+from ..factions.faction import Faction
 from ..theater import ControlPoint, MissionTarget
 
 if TYPE_CHECKING:
+    from game.game import Game
     from ..ato.flighttype import FlightType
     from .squadron import Squadron
 
 
 class AirWing:
-    def __init__(self, player: bool) -> None:
+    def __init__(self, player: bool, game: Game, faction: Faction) -> None:
         self.player = player
         self.squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
+        self.squadron_defs = SquadronDefLoader(game, faction).load()
+        self.squadron_def_generator = SquadronDefGenerator(faction)
+
+    def unclaim_squadron_def(self, squadron: Squadron) -> None:
+        if squadron.aircraft in self.squadron_defs:
+            for squadron_def in self.squadron_defs[squadron.aircraft]:
+                if squadron_def.claimed and squadron_def.name == squadron.name:
+                    squadron_def.claimed = False
 
     def add_squadron(self, squadron: Squadron) -> None:
         self.squadrons[squadron.aircraft].append(squadron)

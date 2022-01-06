@@ -1,4 +1,4 @@
-from collections import Iterator
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 from game.commander.tasks.compound.defendbase import DefendBase
