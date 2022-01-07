@@ -1,0 +1,15 @@
+---
+name: No. 12 Squadron
+nickname: Shiny Twelve
+country: UK
+role: Strike Fighter
+aircraft: Tornado GR4
+livery: HAF_341_Arrow
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike

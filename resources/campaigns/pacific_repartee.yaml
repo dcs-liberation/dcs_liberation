@@ -102,9 +102,9 @@ squadrons:
         - FC-1 Fierce Dragon
   # Tinian Intl
   3:
-    - primary: AEW&C
+    - primary: Refueling
       aircraft:
-        - KJ-2000
+        - IL-78M
   # Andersen AFB
   6:
     - primary: TARCAP
@@ -122,9 +122,6 @@ squadrons:
     - primary: Transport
       aircraft:
         - IL-76MD
-    - primary: Refueling
-      aircraft:
-        - IL-78M
   # Antonio B. Won Pat Intl
   4:
     - primary: TARCAP

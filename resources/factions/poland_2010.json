@@ -44,7 +44,7 @@
     "Paratrooper AKS"
   ],
   "air_defenses": [
-    "SA5Generator",
+    "SA5FlatFaceGenerator",
     "SA6Generator",
     "SA8Generator",
     "ZSU23Generator",

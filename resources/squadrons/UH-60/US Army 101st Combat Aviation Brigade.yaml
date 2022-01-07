@@ -1,0 +1,11 @@
+---
+name: 101st Combat Aviation Brigade
+nickname: Bearcats
+country: USA
+role: Transport/Light Attack
+aircraft: UH-60A
+livery: standard
+mission_types:
+  - CAS
+  - OCA/Aircraft
+  - Transport

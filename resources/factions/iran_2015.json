@@ -30,15 +30,16 @@
   "frontline_units": [
     "Chieftain Mk.3",
     "BMP-1",
+    "BMP-2",
     "BTR-80",
     "M113",
     "M60A3 \"Patton\"",
     "T-72B with Kontakt-1 ERA",
-    "ZSU-23-4 Shilka",
-    "ZSU-57-2 'Sparka'"
+    "ZSU-23-4 Shilka"
   ],
   "artillery_units": [
-    "2S19 Msta-S",
+    "2S1 Gvozdika",
+    "M109A6 Paladin",
     "BM-21 Grad"
   ],
   "logistics_units": [
@@ -46,28 +47,25 @@
     "Truck Ural-375"
   ],
   "infantry_units": [
+    "Infantry RPG",
     "Insurgent AK-74",
-    "MANPADS SA-18 Igla-S \"Grouse\"",
-    "Paratrooper AKS",
-    "Paratrooper RPG-16"
+    "MANPADS SA-18 Igla \"Grouse\" Ins"
   ],
   "air_defenses": [
     "HawkGenerator",
     "RapierGenerator",
     "SA2Generator",
-    "SA5Generator",
+    "SA5FlatFaceGenerator",
     "SA6Generator",
     "SA11Generator",
     "SA15Generator",
-    "SA17Generator",
-    "VulcanGenerator",
     "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "ZU23InsurgentGenerator",
+    "ZU23UralInsurgentGenerator"
   ],
   "ewrs": [
-    "TallRackGenerator",
-    "TinShieldGenerator"
+    "FlatFaceGenerator",
+    "HawkEwrGenerator"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],
