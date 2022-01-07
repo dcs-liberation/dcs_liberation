@@ -1,3 +1,11 @@
+# 5.1.1
+
+Saves from 5.1.0 are compatible with 5.1.1.
+
+## Fixes
+
+*
+
 # 5.1.0
 
 Saves from 5.0.0 are compatible with 5.1.0
