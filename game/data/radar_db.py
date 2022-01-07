@@ -25,7 +25,7 @@ from dcs.vehicles import AirDefence
 
 TELARS = {
     AirDefence._2S6_Tunguska,
-    AirDefence.SA_11_Buk_SR_9S18M1,
+    AirDefence.SA_11_Buk_LN_9A310M1,
     AirDefence.Osa_9A33_ln,
     AirDefence.Tor_9A331,
     AirDefence.Roland_ADS,
@@ -38,6 +38,7 @@ TRACK_RADARS = {
     AirDefence.Hawk_tr,
     AirDefence.Patriot_str,
     AirDefence.SNR_75V,
+    AirDefence.RPC_5N62V,
     AirDefence.Rapier_fsa_blindfire_radar,
     AirDefence.HQ_7_STR_SP,
 }
@@ -52,6 +53,7 @@ LAUNCHER_TRACKER_PAIRS = {
     AirDefence.S_75M_Volhov: AirDefence.SNR_75V,
     AirDefence.Rapier_fsa_launcher: AirDefence.Rapier_fsa_blindfire_radar,
     AirDefence.HQ_7_LN_SP: AirDefence.HQ_7_STR_SP,
+    AirDefence.S_200_Launcher: AirDefence.RPC_5N62V,
 }
 
 UNITS_WITH_RADAR = {
@@ -80,6 +82,8 @@ UNITS_WITH_RADAR = {
     AirDefence.Roland_Radar,
     AirDefence.Snr_s_125_tr,
     AirDefence.SNR_75V,
+    AirDefence.RLS_19J6,
+    AirDefence.RPC_5N62V,
     AirDefence.Rapier_fsa_blindfire_radar,
     AirDefence.HQ_7_LN_SP,
     AirDefence.HQ_7_STR_SP,

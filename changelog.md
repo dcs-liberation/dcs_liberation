@@ -4,7 +4,7 @@ Saves from 5.1.0 are compatible with 5.1.1.
 
 ## Fixes
 
-*
+* **[Mission Generation]** Fixed incorrect SA-5 threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
 
 # 5.1.0
 
