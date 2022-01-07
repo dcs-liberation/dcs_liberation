@@ -21,7 +21,7 @@ INHG_TO_HPA = 33.86389
 INHG_TO_MMHG = 25.400002776728
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(frozen=True)
 class Distance:
     distance_in_meters: float
 
@@ -72,6 +72,18 @@ class Distance:
 
     def __bool__(self) -> bool:
         return not math.isclose(self.meters, 0.0)
+
+    def __lt__(self, other: Distance) -> bool:
+        return self.meters < other.meters
+
+    def __le__(self, other: Distance) -> bool:
+        return self.meters <= other.meters
+
+    def __gt__(self, other: Distance) -> bool:
+        return self.meters > other.meters
+
+    def __ge__(self, other: Distance) -> bool:
+        return self.meters >= other.meters
 
 
 def feet(value: float) -> Distance:
