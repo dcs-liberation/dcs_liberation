@@ -154,6 +154,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
     # main weapon. It'll RTB when it doesn't have gun ammo left.
     gunfighter: bool
 
+    # If true, kneeboards will be generated in metric units
+    metric_kneeboard: bool
+
     max_group_size: int
     patrol_altitude: Optional[Distance]
     patrol_speed: Optional[Speed]
@@ -395,4 +398,5 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 intra_flight_radio=radio_config.intra_flight,
                 channel_allocator=radio_config.channel_allocator,
                 channel_namer=radio_config.channel_namer,
+                metric_kneeboard=data.get("metric_kneeboard", False),
             )
