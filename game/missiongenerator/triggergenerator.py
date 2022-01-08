@@ -21,7 +21,7 @@ from dcs.triggers import (
 from dcs.unit import Skill
 
 from game.theater import Airfield
-from game.theater.controlpoint import Fob
+from game.theater.controlpoint import Fob, TRIGGER_RADIUS_CAPTURE
 
 if TYPE_CHECKING:
     from game.game import Game
@@ -156,7 +156,10 @@ class TriggerGenerator:
                     defend_coalition_int = 1
 
                 trigger_zone = self.mission.triggers.add_triggerzone(
-                    cp.position, radius=3000, hidden=False, name="CAPTURE"
+                    cp.position,
+                    radius=TRIGGER_RADIUS_CAPTURE,
+                    hidden=False,
+                    name="CAPTURE",
                 )
                 flag = self.get_capture_zone_flag()
                 capture_trigger = TriggerCondition(Event.NoEvent, "Capture Trigger")

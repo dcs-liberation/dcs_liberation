@@ -158,8 +158,11 @@ class FrontLine(MissionTarget):
                 )
             else:
                 remaining_dist -= segment.attack_distance
-        raise RuntimeError(
-            f"Could not find front line point {distance} from {self.blue_cp}"
+        # Point was not found in any of the segment point_a:s. Returning the point from the last evaluated segment
+        # point_b, with heading towards the point_a, distance of (attack_distance - remaining_dist) meters.
+        return segment.point_b.point_from_heading(
+            segment.attack_heading.degrees - 180,
+            segment.attack_distance - remaining_dist,
         )
 
     @property
@@ -170,21 +173,8 @@ class FrontLine(MissionTarget):
         """
         total_strength = self.blue_cp.base.strength + self.red_cp.base.strength
         if self.blue_cp.base.strength == 0:
-            return self._keep_frontline_within_bounds(0)
+            return 0
         if self.red_cp.base.strength == 0:
-            return self._keep_frontline_within_bounds(self.attack_distance)
+            return self.attack_distance
         strength_pct = self.blue_cp.base.strength / total_strength
-        return self._keep_frontline_within_bounds(strength_pct * self.attack_distance)
-
-    def _keep_frontline_within_bounds(self, distance: float) -> float:
-        """
-        Ensures the frontline conflict is always located between the control points
-        and cannot move behind either one, where we couldn't find route segments.
-        This is done by making sure the frontline is always placed at least
-        one segment away from either control point.
-        """
-        if distance > self.attack_distance - self.segments[-1].attack_distance:
-            distance = self.attack_distance - self.segments[-1].attack_distance
-        elif distance < self.segments[0].attack_distance:
-            distance = self.segments[0].attack_distance
-        return distance
+        return strength_pct * self.attack_distance
