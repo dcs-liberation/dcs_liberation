@@ -157,6 +157,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
     # If true, kneeboards will be generated in metric units
     metric_kneeboard: bool
 
+    # If true, kneeboards will display zulu times
+    utc_kneeboard: bool
+
     max_group_size: int
     patrol_altitude: Optional[Distance]
     patrol_speed: Optional[Speed]
@@ -399,4 +402,5 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 channel_allocator=radio_config.channel_allocator,
                 channel_namer=radio_config.channel_namer,
                 metric_kneeboard=data.get("metric_kneeboard", False),
+                utc_kneeboard=data.get("utc_kneeboard", False),
             )
