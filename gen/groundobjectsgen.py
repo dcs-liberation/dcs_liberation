@@ -648,6 +648,15 @@ class HelipadGenerator:
                 ),
                 heading=heading,
             )
+            self.m.static_group(
+                country=country,
+                name=(name_i + "_ws"),
+                _type=Fortification.Windsock,
+                position=pad.position.point_from_heading(
+                    helipad.heading.degrees + 45, 35
+                ),
+                heading=pad.heading,
+            )
 
 
 class GroundObjectsGenerator:
