@@ -48,8 +48,6 @@ class ConflictTheater:
     """
     daytime_map: Dict[str, Tuple[int, int]]
 
-    timezone: datetime.timezone
-
     def __init__(self) -> None:
         self.controlpoints: List[ControlPoint] = []
         self.point_to_ll_transformer = Transformer.from_crs(
@@ -58,8 +56,6 @@ class ConflictTheater:
         self.ll_to_point_transformer = Transformer.from_crs(
             CRS("WGS84"), self.projection_parameters.to_crs()
         )
-        # Set default timezone as UTC
-        self.timezone = datetime.timezone(datetime.timedelta(hours=0))
         """
         self.land_poly = geometry.Polygon(self.landmap[0][0])
         for x in self.landmap[1]:
@@ -250,6 +246,10 @@ class ConflictTheater:
         raise KeyError(f"Cannot find ControlPoint named {name}")
 
     @property
+    def timezone(self) -> datetime.timezone:
+        raise NotImplementedError
+
+    @property
     def seasonal_conditions(self) -> SeasonalConditions:
         raise NotImplementedError
 
@@ -282,7 +282,9 @@ class CaucasusTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    timezone = datetime.timezone(datetime.timedelta(hours=4))
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=4))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -312,7 +314,9 @@ class PersianGulfTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    timezone = datetime.timezone(datetime.timedelta(hours=4))
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=4))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -342,7 +346,9 @@ class NevadaTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    timezone = datetime.timezone(datetime.timedelta(hours=-8))
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=-8))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -372,7 +378,9 @@ class NormandyTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    timezone = datetime.timezone(datetime.timedelta(hours=0))
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=0))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -402,7 +410,9 @@ class TheChannelTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    timezone = datetime.timezone(datetime.timedelta(hours=2))
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=2))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -432,7 +442,9 @@ class SyriaTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    timezone = datetime.timezone(datetime.timedelta(hours=3))
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=3))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -459,7 +471,9 @@ class MarianaIslandsTheater(ConflictTheater):
         "night": (0, 5),
     }
 
-    timezone = datetime.timezone(datetime.timedelta(hours=10))
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=10))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
