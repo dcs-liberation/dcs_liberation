@@ -28,7 +28,5 @@ radios:
   intra_flight: SCR522
   inter_flight: SCR522
   channels:
-    type: common
+    type: SCR-522
     namer: SCR-522
-    intra_flight_radio_index: 1
-    inter_flight_radio_index: 1
