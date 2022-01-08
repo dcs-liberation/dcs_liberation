@@ -484,19 +484,35 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         for zone in scenery.zones:
 
             object_id += 1
-            local_position = zone.position
             local_dcs_identifier = zone.name
-
-            g = SceneryGroundObject(
-                obj_name,
-                category,
-                group_id,
-                object_id,
-                local_position,
-                self.control_point,
+            local_position = PresetLocation(
                 local_dcs_identifier,
-                zone,
+                PresetLocation.from_point(zone.position, Heading.from_degrees(0)),
             )
+
+            if category in ["comms", "power", "commandcenter"]:
+                # IADS TGO
+                g: SceneryGroundObject = IadsBuildingGroundObject(
+                    obj_name,
+                    group_id,
+                    local_position,
+                    self.control_point,
+                    IADSRole(category),
+                    object_id,
+                    zone,
+                )
+            else:
+                # Default Scenery TGO
+                g = SceneryGroundObject(
+                    obj_name,
+                    category,
+                    group_id,
+                    object_id,
+                    local_position,
+                    self.control_point,
+                    local_dcs_identifier,
+                    zone,
+                )
 
             self.control_point.connected_objectives.append(g)
 

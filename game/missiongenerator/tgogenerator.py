@@ -306,7 +306,7 @@ class SceneryGenerator(BuildingSiteGenerator):
         self.register_scenery()
 
     def generate_trigger_zone(self, scenery: SceneryGroundObject) -> TriggerZone:
-
+        assert scenery.zone
         zone = scenery.zone
 
         # Align the trigger zones to the faction color on the DCS briefing/F10 map.
@@ -698,7 +698,10 @@ class TgoGenerator:
                     generator = FactoryGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
                     )
-                elif isinstance(ground_object, SceneryGroundObject):
+                elif (
+                    isinstance(ground_object, SceneryGroundObject)
+                    and ground_object.zone
+                ):
                     generator = SceneryGenerator(
                         ground_object, country, self.game, self.m, self.unit_map
                     )

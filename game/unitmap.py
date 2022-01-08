@@ -221,6 +221,7 @@ class UnitMap:
         self.buildings[name] = Building(ground_object)
 
     def add_scenery(self, ground_object: SceneryGroundObject) -> None:
+        assert ground_object.zone
         name = str(ground_object.zone.name)
         if name in self.buildings:
             raise RuntimeError(

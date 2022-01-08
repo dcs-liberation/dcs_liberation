@@ -5,7 +5,7 @@ import logging
 from abc import ABC
 from collections.abc import Sequence
 from enum import Enum
-from typing import Generic, TypeVar, Any, Dict
+from typing import Generic, TypeVar, Optional
 from typing import Iterator, List, TYPE_CHECKING, Union
 
 from dcs.mapping import Point
@@ -31,6 +31,7 @@ NAME_BY_CATEGORY = {
     "ammo": "Ammo depot",
     "armor": "Armor group",
     "coastal": "Coastal defense",
+    "commandcenter": "Command Center",
     "comms": "Communications tower",
     "derrick": "Derrick",
     "factory": "Factory",
@@ -314,10 +315,10 @@ class SceneryGroundObject(BuildingGroundObject):
         category: str,
         group_id: int,
         object_id: int,
-        position: Point,
+        position: PresetLocation,
         control_point: ControlPoint,
         dcs_identifier: str,
-        zone: TriggerZone,
+        zone: Optional[TriggerZone],
     ) -> None:
         super().__init__(
             name=name,
@@ -325,7 +326,7 @@ class SceneryGroundObject(BuildingGroundObject):
             group_id=group_id,
             object_id=object_id,
             position=position,
-            heading=Heading.from_degrees(0),
+            heading=position.heading,
             control_point=control_point,
             dcs_identifier=dcs_identifier,
             is_fob_structure=False,
@@ -497,9 +498,9 @@ class IADSRole(Enum):
     Ewr = "Ewr"
 
     #: IADS Elements which allow the advanced functions of Skynet.
-    ConnectionNode = "ConnectionNode"
-    PowerSource = "PowerSource"
-    CommandCenter = "CommandCenter"
+    ConnectionNode = "comms"
+    PowerSource = "power"
+    CommandCenter = "commandcenter"
 
     #: All other types of groups that might be present in a SAM TGO. This includes
     #: SHORADS, AAA, supply trucks, etc. Anything that shouldn't be controlled by Skynet
@@ -695,7 +696,7 @@ class ShipGroundObject(NavalGroundObject):
         return f"{self.faction_color}|EWR|{super().group_name}"
 
 
-class IadsBuildingGroundObject(BuildingGroundObject):
+class IadsBuildingGroundObject(SceneryGroundObject):
     iads_role: IADSRole  # IadsBuilding GO has only one iads_role
 
     def __init__(
@@ -705,16 +706,18 @@ class IadsBuildingGroundObject(BuildingGroundObject):
         preset_location: PresetLocation,
         control_point: ControlPoint,
         iads_role: IADSRole,
+        object_id: int = 0,
+        zone: Optional[TriggerZone] = None,
     ) -> None:
         super().__init__(
             name=name,
             category=self.iads_category_for(iads_role),
             group_id=group_id,
-            object_id=0,  # Only 1 building
+            object_id=object_id,
             position=preset_location,
-            heading=preset_location.heading,
             control_point=control_point,
             dcs_identifier=self.iads_identifier_for(iads_role),
+            zone=zone,
         )
         self.original_name = preset_location.original_name  # store original name
         self.iads_role = iads_role
@@ -751,4 +754,4 @@ class IadsBuildingGroundObject(BuildingGroundObject):
         elif iads_role == IADSRole.PowerSource:
             return "power"
         else:
-            return "allycamp"
+            return "commandcenter"

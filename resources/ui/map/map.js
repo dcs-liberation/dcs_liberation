@@ -18,6 +18,7 @@ const Categories = Object.freeze([
   "armor",
   "coastal",
   "comms",
+  "commandcenter",
   "derrick",
   "ewr",
   "factory",
