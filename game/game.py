@@ -208,7 +208,7 @@ class Game:
         naming.namegen = self.name_generator
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
-        self.compute_conflicts_position()
+        self.compute_unculled_zones()
         if not game_still_initializing:
             self.compute_threat_zones()
 
@@ -347,8 +347,6 @@ class Game:
             return self.process_win_loss(turn_state)
 
         # Plan flights & combat for next turn
-        with logged_duration("Computing conflict positions"):
-            self.compute_conflicts_position()
         with logged_duration("Threat zone computation"):
             self.compute_threat_zones()
 
@@ -365,6 +363,10 @@ class Game:
                 gplanner = GroundPlanner(cp, self)
                 gplanner.plan_groundwar()
                 self.ground_planners[cp.id] = gplanner
+
+        # Update cull zones
+        with logged_duration("Computing culling positions"):
+            self.compute_unculled_zones()
 
     def message(self, title: str, text: str = "") -> None:
         self.informations.append(Information(title, text, turn=self.turn))
@@ -406,10 +408,9 @@ class Game:
     def navmesh_for(self, player: bool) -> NavMesh:
         return self.coalition_for(player).nav_mesh
 
-    def compute_conflicts_position(self) -> None:
+    def compute_unculled_zones(self) -> None:
         """
-        Compute the current conflict center position(s), mainly used for culling calculation
-        :return: List of points of interests
+        Compute the current conflict position(s) used for culling calculation
         """
         from game.missiongenerator.frontlineconflictdescription import (
             FrontLineConflictDescription,

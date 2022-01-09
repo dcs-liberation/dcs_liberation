@@ -448,6 +448,7 @@ class Settings:
         default=100,
         min=10,
         max=10000,
+        causes_expensive_game_update=True,
     )
     perf_do_not_cull_carrier: bool = boolean_option(
         "Do not cull carrier's surroundings",

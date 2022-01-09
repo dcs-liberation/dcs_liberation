@@ -169,6 +169,8 @@ class AutoSettingsLayout(QGridLayout):
     ) -> None:
         def on_changed(value: int) -> None:
             self.settings.__dict__[name] = value
+            if description.causes_expensive_game_update:
+                self.write_full_settings()
 
         spinner = QSpinBox()
         spinner.setMinimum(description.min)
@@ -354,7 +356,7 @@ class QSettingsWindow(QDialog):
             self.cheat_options.show_base_capture_cheat
         )
 
-        self.game.compute_conflicts_position()
+        self.game.compute_unculled_zones()
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def onSelectionChanged(self):
