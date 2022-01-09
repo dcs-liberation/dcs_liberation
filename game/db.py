@@ -14,6 +14,7 @@ from dcs.planes import (
     B_17G,
     FA_18C_hornet,
     F_16C_50,
+    F_14A,
     Ju_88A4,
     P_51D_30_NA,
     plane_map,
@@ -262,6 +263,7 @@ is livery name as found in mission editor.
 """
 PLANE_LIVERY_OVERRIDES: dict[Type[FlyingType], str] = {
     FA_18C_hornet: "VFA-34",  # default livery for the hornet is blue angels one
+    F_14A: "vf-142 `ghost riders`",  # default livery for the AI F-14A is the black demo scheme
 }
 
 """
