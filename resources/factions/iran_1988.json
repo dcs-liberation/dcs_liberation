@@ -26,7 +26,8 @@
     "M113",
     "M60A3 \"Patton\"",
     "ZSU-23-4 Shilka",
-    "ZU-23 on Ural-375"
+    "ZU-23 on Ural-375",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
     "2S1 Gvozdika",
@@ -49,6 +50,7 @@
     "ZSU23Generator",
     "ZU23InsurgentGenerator",
     "ZU23UralInsurgentGenerator",
+    "ZSU57Generator",
     "ColdWarFlakGenerator"
   ],
   "ewrs": [
