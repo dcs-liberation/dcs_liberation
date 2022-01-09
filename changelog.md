@@ -12,6 +12,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Flight Planning]** Air to Ground flights now have ECM enabled on lock at the join point, and SEAD/DEAD also have ECM enabled on detection and lock at ingress.
 * **[Flight Planning]** AWACS flightplan changed from orbit to a racetrack to reduce data link disconnects which were caused by blind spots as a result of the bank angle. 
 * **[Modding]** Add F-104 mod support
+* **[Modding]** Updated Community A-4E-C mod version support to 2.0.0 release. Version 1.4.2 is no longer compatible, unless the mod default loadouts are deleted/modified.
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
 
 ## Fixes

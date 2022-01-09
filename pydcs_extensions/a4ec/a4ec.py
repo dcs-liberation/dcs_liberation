@@ -43,33 +43,48 @@ class WeaponsA4EC:
     AN_M81__5__MER_ = {
         "clsid": "{AN-M81_MER_5_L}",
         "name": "AN-M81 *5 (MER)",
-        "weight": 689.3,
+        "weight": 689.4696,
     }
     AN_M81__5__MER__ = {
         "clsid": "{AN-M81_MER_5_R}",
         "name": "AN-M81 *5 (MER)",
-        "weight": 689.3,
+        "weight": 689.4696,
     }
     AN_M81__6__MER_ = {
         "clsid": "{AN-M81_MER_6_C}",
         "name": "AN-M81 *6 (MER)",
-        "weight": 807.2,
+        "weight": 807.40352,
     }
     AN_M88 = {"clsid": "{AN-M88}", "name": "AN-M88", "weight": 98.0665904}
     AN_M88__5__MER_ = {
         "clsid": "{AN-M88_MER_5_L}",
         "name": "AN-M88 *5 (MER)",
-        "weight": 589.8,
+        "weight": 590.132952,
     }
     AN_M88__5__MER__ = {
         "clsid": "{AN-M88_MER_5_R}",
         "name": "AN-M88 *5 (MER)",
-        "weight": 589.8,
+        "weight": 590.132952,
     }
     AN_M88__6__MER_ = {
         "clsid": "{AN-M88_MER_6_C}",
         "name": "AN-M88 *6 (MER)",
-        "weight": 687.8,
+        "weight": 688.1995424,
+    }
+    BDU_33__5__MER_ = {
+        "clsid": "{BDU-33_MER_5_L}",
+        "name": "BDU-33 *5 (MER)",
+        "weight": 156.3,
+    }
+    BDU_33__5__MER__ = {
+        "clsid": "{BDU-33_MER_5_R}",
+        "name": "BDU-33 *5 (MER)",
+        "weight": 156.3,
+    }
+    BDU_33__6__MER_ = {
+        "clsid": "{BDU-33_MER_6_C}",
+        "name": "BDU-33 *6 (MER)",
+        "weight": 167.6,
     }
     CBU_1_A = {"clsid": "{CBU-1/A}", "name": "CBU-1/A", "weight": 458.921706}
     CBU_1_A__2 = {
@@ -104,14 +119,14 @@ class WeaponsA4EC:
         "name": "CBU-2/A *2",
         "weight": 735.245472,
     }
-    D_704_Refueling_Pod = {
-        "clsid": "{D-704_BUDDY_POD}",
-        "name": "D-704 Refueling Pod",
-        "weight": 1234.532648,
-    }
     Fuel_Tank_150_gallons = {
         "clsid": "{DFT-150gal}",
         "name": "Fuel Tank 150 gallons",
+        "weight": 515.888512,
+    }
+    Fuel_Tank_150_gallons__EMPTY_ = {
+        "clsid": "{DFT-150gal_EMPTY}",
+        "name": "Fuel Tank 150 gallons (EMPTY)",
         "weight": 515.888512,
     }
     Fuel_Tank_300_gallons = {
@@ -124,9 +139,24 @@ class WeaponsA4EC:
         "name": "Fuel Tank 300 gallons",
         "weight": 998.664808,
     }
+    Fuel_Tank_300_gallons__EMPTY_ = {
+        "clsid": "{DFT-300gal_EMPTY}",
+        "name": "Fuel Tank 300 gallons (EMPTY)",
+        "weight": 991.407336,
+    }
+    Fuel_Tank_300_gallons__EMPTY__ = {
+        "clsid": "{DFT-300gal_LR_EMPTY}",
+        "name": "Fuel Tank 300 gallons (EMPTY)",
+        "weight": 998.664808,
+    }
     Fuel_Tank_400_gallons = {
         "clsid": "{DFT-400gal}",
         "name": "Fuel Tank 400 gallons",
+        "weight": 1320.06208,
+    }
+    Fuel_Tank_400_gallons__EMPTY_ = {
+        "clsid": "{DFT-400gal_EMPTY}",
+        "name": "Fuel Tank 400 gallons (EMPTY)",
         "weight": 1320.06208,
     }
     LAU_10_2___4_ZUNI_MK_71 = {
@@ -269,14 +299,6 @@ class WeaponsA4EC:
         "name": "LAU-68*3 - 7 FFAR Mk5 HEAT",
         "weight": 378.5393312,
     }
-    MAK79_2_MK_20 = {"clsid": "{MAK79_MK20 2L}", "name": "MAK79 2 MK-20", "weight": 464}
-    MAK79_2_MK_20_ = {
-        "clsid": "{MAK79_MK20 2R}",
-        "name": "MAK79 2 MK-20",
-        "weight": 464,
-    }
-    MAK79_MK_20 = {"clsid": "{MAK79_MK20 1R}", "name": "MAK79 MK-20", "weight": 232}
-    MAK79_MK_20_ = {"clsid": "{MAK79_MK20 1L}", "name": "MAK79 MK-20", "weight": 232}
     Mk4_HIPEG = {"clsid": "{Mk4 HIPEG}", "name": "Mk4 HIPEG", "weight": 612.35}
     Mk_20__2__TER_ = {
         "clsid": "{Mk-20_TER_2_L}",
@@ -324,17 +346,17 @@ class WeaponsA4EC:
     Mk_81SE__5__MER_ = {
         "clsid": "{Mk-81SE_MER_5_L}",
         "name": "Mk-81SE *5 (MER)",
-        "weight": 689.8,
+        "weight": 666.79,
     }
     Mk_81SE__5__MER__ = {
         "clsid": "{Mk-81SE_MER_5_R}",
         "name": "Mk-81SE *5 (MER)",
-        "weight": 689.8,
+        "weight": 666.79,
     }
     Mk_81SE__6__MER_ = {
         "clsid": "{Mk-81SE_MER_6_C}",
         "name": "Mk-81SE *6 (MER)",
-        "weight": 807.8,
+        "weight": 780.188,
     }
     Mk_81__5__MER_ = {
         "clsid": "{Mk-81_MER_5_L}",
@@ -411,27 +433,7 @@ class WeaponsA4EC:
         "name": "Mk-83 *3 (TER)",
         "weight": 1388.6,
     }
-    _3_LAU_61 = ({"clsid": "{TER,LAU-61*3}", "name": "3*LAU-61", "weight": 98},)
-    Fuel_Tank_150_gallons__EMPTY_ = {
-        "clsid": "{DFT-150gal_EMPTY}",
-        "name": "Fuel_Tank_150_gallons__EMPTY",
-        "weight": 61.688512,
-    }
-    Fuel_Tank_300_gallons__EMPTY_ = {
-        "clsid": "{DFT-300gal_EMPTY}",
-        "name": "Fuel_Tank_300_gallons__EMPTY",
-        "weight": 83.007336,
-    }
-    Fuel_Tank_300_gallons__EMPTY__ = {
-        "clsid": "{DFT-300gal_LR_EMPTY}",
-        "name": "Fuel_Tank_300_gallons__EMPTY",
-        "weight": 90.264808,
-    }
-    Fuel_Tank_400_gallons__EMPTY_ = {
-        "clsid": "{DFT-400gal_EMPTY}",
-        "name": "Fuel_Tank_400_gallons__EMPTY",
-        "weight": 108.86208,
-    }
+    _3_LAU_61 = {"clsid": "{TER,LAU-61*3}", "name": "3*LAU-61", "weight": 98}
 
 
 inject_weapons(WeaponsA4EC)
@@ -482,6 +484,7 @@ class A_4E_C(PlaneType):
 
     property_defaults = {
         "HideECMPanel": False,
+        "Auto_Catapult_Power": False,
         "CBU2ATPP": 0,
         "CBU2BATPP": 0,
         "CMS_BURSTS": 1,
@@ -493,6 +496,9 @@ class A_4E_C(PlaneType):
     class Properties:
         class HideECMPanel:
             id = "HideECMPanel"
+
+        class Auto_Catapult_Power:
+            id = "Auto_Catapult_Power"
 
         class CBU2ATPP:
             id = "CBU2ATPP"
@@ -560,215 +566,41 @@ class A_4E_C(PlaneType):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
-
-        class Syria(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Finland(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
 
         class Australia(Enum):
             Unmarked = "Unmarked"
+            International_Australia_Squadron_805 = (
+                "International Australia Squadron 805"
+            )
             International_Australia = "International Australia"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
-            International_New_Zealand = "International New Zealand"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+            International_Malaysia_TUDM = "International Malaysia TUDM"
+            International_New_Zealand_50th = "International New Zealand 50th"
+            International_New_Zealand_Kahu = "International New Zealand Kahu"
             International_New_Zealand_Kiwi_Red = "International New Zealand Kiwi Red"
             International_New_Zealand_Sqn_75 = "International New Zealand Sqn 75"
-
-        class Germany(Enum):
-            Unmarked = "Unmarked"
-            Trainer_BAE_Systems = "Trainer BAE Systems"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class SaudiArabia(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
 
         class Israel(Enum):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
             International_Israel = "International Israel"
 
-        class Croatia(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class CzechRepublic(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Norway(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Romania(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Spain(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Ukraine(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Belgium(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Slovakia(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Greece(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class UK(Enum):
-            Unmarked = "Unmarked"
-            Trainer_BAE_Systems = "Trainer BAE Systems"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Insurgents(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Hungary(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class France(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Abkhazia(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Russia(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Sweden(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Austria(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Switzerland(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Italy(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class SouthOssetia(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class SouthKorea(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Iran(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class China(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Pakistan(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Belarus(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class NorthKorea(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Iraq(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Kazakhstan(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Bulgaria(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class Serbia(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class India(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-
-        class USAFAggressors(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
-            Aggressor_USMC_TopGun_MiG_17 = "Aggressor USMC TopGun MiG-17"
-            Aggressor_USN_TopGun = "Aggressor USN TopGun"
-            Aggressor_USN_VF_126_Bandits = "Aggressor USN VF-126 Bandits"
-            Aggressor_USN_VF_127_Royal_Blues = "Aggressor USN VF-127 Royal Blues"
-            Aggressor_USN_VFA_127_Cyclons__Forest = (
-                "Aggressor USN VFA-127 Cyclons (Forest)"
-            )
-            Aggressor_USN_VFA_127_Cyclons__Sea = "Aggressor USN VFA-127 Cyclons (Sea)"
-
-        class USA(Enum):
+        class Combined_Joint_Task_Forces_Blue(Enum):
             Unmarked = "Unmarked"
             International_Argentina = "International Argentina"
+            International_Argentina_Brigada_IV = "International Argentina Brigada IV"
+            International_Argentina_Brigada_V = "International Argentina Brigada V"
+            International_Australia_Squadron_805 = (
+                "International Australia Squadron 805"
+            )
             International_Australia = "International Australia"
             Trainer_BAE_Systems = "Trainer BAE Systems"
             Blue_Angels_no_1 = "Blue Angels no 1"
@@ -777,16 +609,24 @@ class A_4E_C(PlaneType):
             Blue_Angels_no_4 = "Blue Angels no 4"
             Blue_Angels_no_5 = "Blue Angels no 5"
             Blue_Angels_no_6 = "Blue Angels no 6"
+            International_Brazil_VF_1_15_Anos = "International Brazil VF-1 15 Anos"
             International_Brazil = "International Brazil"
+            International_Brazil_LoViz = "International Brazil LoViz"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+            International_Finnish_Air_Force = "International Finnish Air Force"
             International_Israel = "International Israel"
             International_Kuwait = "International Kuwait"
-            International_New_Zealand = "International New Zealand"
+            International_Malaysia_TUDM = "International Malaysia TUDM"
+            Trainer_RAF_EPTS_Raspberry_Ripple = "Trainer RAF EPTS Raspberry Ripple"
+            International_New_Zealand_50th = "International New Zealand 50th"
+            International_New_Zealand_Kahu = "International New Zealand Kahu"
             International_New_Zealand_Kiwi_Red = "International New Zealand Kiwi Red"
             International_New_Zealand_Sqn_75 = "International New Zealand Sqn 75"
-            Trainer_USMC_PTMC = "Trainer USMC PTMC"
             Aggressor_USMC_TopGun_MiG_17 = "Aggressor USMC TopGun MiG-17"
+            Trainer_USMC_PTMC = "Trainer USMC PTMC"
             USMC_VMA_121_Green_Knights = "USMC VMA-121 Green Knights"
             USMC_VMA_124_Memphis_Marines = "USMC VMA-124 Memphis Marines"
             USMC_VMA_131_Diamondbacks = "USMC VMA-131 Diamondbacks"
@@ -795,10 +635,17 @@ class A_4E_C(PlaneType):
             USMC_VMA_311_Tomcats = "USMC VMA-311 Tomcats"
             USMC_VMA_322_Fighting_Gamecocks = "USMC VMA-322 Fighting Gamecocks"
             Trainer_USMC_VMAT_102 = "Trainer USMC VMAT-102"
+            Aggressor_USN_TopGun = "Aggressor USN TopGun"
+            Aggressor_USN_VF_126_Bandits = "Aggressor USN VF-126 Bandits"
+            Aggressor_USN_VF_127_Royal_Blues = "Aggressor USN VF-127 Royal Blues"
+            Aggressor_USN_VFA_127_Cyclons__Forest = (
+                "Aggressor USN VFA-127 Cyclons (Forest)"
+            )
+            Aggressor_USN_VFA_127_Cyclons__Sea = "Aggressor USN VFA-127 Cyclons (Sea)"
             Trainer_USN_Bare_Metal_1956 = "Trainer USN Bare Metal 1956"
             Trainer_USN_NFWS_Gray = "Trainer USN NFWS Gray"
             Trainer_USN_NFWS_Green = "Trainer USN NFWS Green"
-            Aggressor_USN_TopGun = "Aggressor USN TopGun"
+            USN_VA_106_Gladiators = "USN VA-106 Gladiators"
             USN_VA_144_Roadrunners = "USN VA-144 Roadrunners"
             USN_VA_153_Blue_Tail_Flies = "USN VA-153 Blue Tail Flies"
             USN_VA_163_Saints = "USN VA-163 Saints"
@@ -806,54 +653,483 @@ class A_4E_C(PlaneType):
             USN_VA_195_Dambusters = "USN VA-195 Dambusters"
             USN_VA_212_Rampant_Raiders = "USN VA-212 Rampant Raiders"
             USN_VA_45_Blackbirds = "USN VA-45 Blackbirds"
+            USN_VA_46_Clansmen = "USN VA-46 Clansmen"
             USN_VA_55_Warhorses = "USN VA-55 Warhorses"
             USN_VA_64_Black_Lancers = "USN VA-64 Black Lancers"
+            USN_VA_83_Rampagers = "USN VA-83 Rampagers"
             Trainer_USN_VC_1_FLECOMPRON_One = "Trainer USN VC-1 FLECOMPRON One"
             Trainer_USN_VC_5_Checkertails = "Trainer USN VC-5 Checkertails"
             USN_VC_7_Tallyhoers = "USN VC-7 Tallyhoers"
             Trainer_USN_VC_8_Redtails = "Trainer USN VC-8 Redtails"
+            Trainer_USN_VT_7_Eagles = "Trainer USN VT-7 Eagles"
+
+        class Norway(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Romania(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Iran(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Ukraine(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Belgium(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Slovakia(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Greece(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class UK(Enum):
+            Unmarked = "Unmarked"
+            Trainer_BAE_Systems = "Trainer BAE Systems"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+            Trainer_RAF_EPTS_Raspberry_Ripple = "Trainer RAF EPTS Raspberry Ripple"
+
+        class Hungary(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Abkhazia(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Switzerland(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class SouthOssetia(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class China(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Kuwait(Enum):
+            International_Kuwait = "International Kuwait"
+
+        class Serbia(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class India(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Egypt(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class TheNetherlands(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Poland(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Syria(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Finland(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+            International_Finnish_Air_Force = "International Finnish Air Force"
+
+        class Kazakhstan(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Denmark(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Sweden(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Croatia(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class CzechRepublic(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Bulgaria(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class SouthKorea(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Combined_Joint_Task_Forces_Red(Enum):
+            Unmarked = "Unmarked"
+            International_Argentina = "International Argentina"
+            International_Argentina_Brigada_IV = "International Argentina Brigada IV"
+            International_Argentina_Brigada_V = "International Argentina Brigada V"
+            International_Australia_Squadron_805 = (
+                "International Australia Squadron 805"
+            )
+            International_Australia = "International Australia"
+            Trainer_BAE_Systems = "Trainer BAE Systems"
+            Blue_Angels_no_1 = "Blue Angels no 1"
+            Blue_Angels_no_2 = "Blue Angels no 2"
+            Blue_Angels_no_3 = "Blue Angels no 3"
+            Blue_Angels_no_4 = "Blue Angels no 4"
+            Blue_Angels_no_5 = "Blue Angels no 5"
+            Blue_Angels_no_6 = "Blue Angels no 6"
+            International_Brazil_VF_1_15_Anos = "International Brazil VF-1 15 Anos"
+            International_Brazil = "International Brazil"
+            International_Brazil_LoViz = "International Brazil LoViz"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+            International_Finnish_Air_Force = "International Finnish Air Force"
+            International_Israel = "International Israel"
+            International_Kuwait = "International Kuwait"
+            International_Malaysia_TUDM = "International Malaysia TUDM"
+            Trainer_RAF_EPTS_Raspberry_Ripple = "Trainer RAF EPTS Raspberry Ripple"
+            International_New_Zealand_50th = "International New Zealand 50th"
+            International_New_Zealand_Kahu = "International New Zealand Kahu"
+            International_New_Zealand_Kiwi_Red = "International New Zealand Kiwi Red"
+            International_New_Zealand_Sqn_75 = "International New Zealand Sqn 75"
+            Aggressor_USMC_TopGun_MiG_17 = "Aggressor USMC TopGun MiG-17"
+            Trainer_USMC_PTMC = "Trainer USMC PTMC"
+            USMC_VMA_121_Green_Knights = "USMC VMA-121 Green Knights"
+            USMC_VMA_124_Memphis_Marines = "USMC VMA-124 Memphis Marines"
+            USMC_VMA_131_Diamondbacks = "USMC VMA-131 Diamondbacks"
+            USMC_VMA_142_Flying_Gators = "USMC VMA-142 Flying Gators"
+            USMC_VMA_211_Avengers = "USMC VMA-211 Avengers"
+            USMC_VMA_311_Tomcats = "USMC VMA-311 Tomcats"
+            USMC_VMA_322_Fighting_Gamecocks = "USMC VMA-322 Fighting Gamecocks"
+            Trainer_USMC_VMAT_102 = "Trainer USMC VMAT-102"
+            Aggressor_USN_TopGun = "Aggressor USN TopGun"
             Aggressor_USN_VF_126_Bandits = "Aggressor USN VF-126 Bandits"
             Aggressor_USN_VF_127_Royal_Blues = "Aggressor USN VF-127 Royal Blues"
             Aggressor_USN_VFA_127_Cyclons__Forest = (
                 "Aggressor USN VFA-127 Cyclons (Forest)"
             )
             Aggressor_USN_VFA_127_Cyclons__Sea = "Aggressor USN VFA-127 Cyclons (Sea)"
+            Trainer_USN_Bare_Metal_1956 = "Trainer USN Bare Metal 1956"
+            Trainer_USN_NFWS_Gray = "Trainer USN NFWS Gray"
+            Trainer_USN_NFWS_Green = "Trainer USN NFWS Green"
+            USN_VA_106_Gladiators = "USN VA-106 Gladiators"
+            USN_VA_144_Roadrunners = "USN VA-144 Roadrunners"
+            USN_VA_153_Blue_Tail_Flies = "USN VA-153 Blue Tail Flies"
+            USN_VA_163_Saints = "USN VA-163 Saints"
+            USN_VA_164_Ghostriders = "USN VA-164 Ghostriders"
+            USN_VA_195_Dambusters = "USN VA-195 Dambusters"
+            USN_VA_212_Rampant_Raiders = "USN VA-212 Rampant Raiders"
+            USN_VA_45_Blackbirds = "USN VA-45 Blackbirds"
+            USN_VA_46_Clansmen = "USN VA-46 Clansmen"
+            USN_VA_55_Warhorses = "USN VA-55 Warhorses"
+            USN_VA_64_Black_Lancers = "USN VA-64 Black Lancers"
+            USN_VA_83_Rampagers = "USN VA-83 Rampagers"
+            Trainer_USN_VC_1_FLECOMPRON_One = "Trainer USN VC-1 FLECOMPRON One"
+            Trainer_USN_VC_5_Checkertails = "Trainer USN VC-5 Checkertails"
+            USN_VC_7_Tallyhoers = "USN VC-7 Tallyhoers"
+            Trainer_USN_VC_8_Redtails = "Trainer USN VC-8 Redtails"
             Trainer_USN_VT_7_Eagles = "Trainer USN VT-7 Eagles"
 
-        class Denmark(Enum):
+        class Insurgents(Enum):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
 
-        class Egypt(Enum):
+        class SaudiArabia(Enum):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
 
-        class Canada(Enum):
+        class France(Enum):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
 
-        class TheNetherlands(Enum):
+        class USA(Enum):
+            Unmarked = "Unmarked"
+            International_Argentina = "International Argentina"
+            International_Argentina_Brigada_IV = "International Argentina Brigada IV"
+            International_Argentina_Brigada_V = "International Argentina Brigada V"
+            International_Australia_Squadron_805 = (
+                "International Australia Squadron 805"
+            )
+            International_Australia = "International Australia"
+            Trainer_BAE_Systems = "Trainer BAE Systems"
+            Blue_Angels_no_1 = "Blue Angels no 1"
+            Blue_Angels_no_2 = "Blue Angels no 2"
+            Blue_Angels_no_3 = "Blue Angels no 3"
+            Blue_Angels_no_4 = "Blue Angels no 4"
+            Blue_Angels_no_5 = "Blue Angels no 5"
+            Blue_Angels_no_6 = "Blue Angels no 6"
+            International_Brazil_VF_1_15_Anos = "International Brazil VF-1 15 Anos"
+            International_Brazil = "International Brazil"
+            International_Brazil_LoViz = "International Brazil LoViz"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+            International_Finnish_Air_Force = "International Finnish Air Force"
+            International_Israel = "International Israel"
+            International_Kuwait = "International Kuwait"
+            International_Malaysia_TUDM = "International Malaysia TUDM"
+            Trainer_RAF_EPTS_Raspberry_Ripple = "Trainer RAF EPTS Raspberry Ripple"
+            International_New_Zealand_50th = "International New Zealand 50th"
+            International_New_Zealand_Kahu = "International New Zealand Kahu"
+            International_New_Zealand_Kiwi_Red = "International New Zealand Kiwi Red"
+            International_New_Zealand_Sqn_75 = "International New Zealand Sqn 75"
+            Aggressor_USMC_TopGun_MiG_17 = "Aggressor USMC TopGun MiG-17"
+            Trainer_USMC_PTMC = "Trainer USMC PTMC"
+            USMC_VMA_121_Green_Knights = "USMC VMA-121 Green Knights"
+            USMC_VMA_124_Memphis_Marines = "USMC VMA-124 Memphis Marines"
+            USMC_VMA_131_Diamondbacks = "USMC VMA-131 Diamondbacks"
+            USMC_VMA_142_Flying_Gators = "USMC VMA-142 Flying Gators"
+            USMC_VMA_211_Avengers = "USMC VMA-211 Avengers"
+            USMC_VMA_311_Tomcats = "USMC VMA-311 Tomcats"
+            USMC_VMA_322_Fighting_Gamecocks = "USMC VMA-322 Fighting Gamecocks"
+            Trainer_USMC_VMAT_102 = "Trainer USMC VMAT-102"
+            Aggressor_USN_TopGun = "Aggressor USN TopGun"
+            Aggressor_USN_VF_126_Bandits = "Aggressor USN VF-126 Bandits"
+            Aggressor_USN_VF_127_Royal_Blues = "Aggressor USN VF-127 Royal Blues"
+            Aggressor_USN_VFA_127_Cyclons__Forest = (
+                "Aggressor USN VFA-127 Cyclons (Forest)"
+            )
+            Aggressor_USN_VFA_127_Cyclons__Sea = "Aggressor USN VFA-127 Cyclons (Sea)"
+            Trainer_USN_Bare_Metal_1956 = "Trainer USN Bare Metal 1956"
+            Trainer_USN_NFWS_Gray = "Trainer USN NFWS Gray"
+            Trainer_USN_NFWS_Green = "Trainer USN NFWS Green"
+            USN_VA_106_Gladiators = "USN VA-106 Gladiators"
+            USN_VA_144_Roadrunners = "USN VA-144 Roadrunners"
+            USN_VA_153_Blue_Tail_Flies = "USN VA-153 Blue Tail Flies"
+            USN_VA_163_Saints = "USN VA-163 Saints"
+            USN_VA_164_Ghostriders = "USN VA-164 Ghostriders"
+            USN_VA_195_Dambusters = "USN VA-195 Dambusters"
+            USN_VA_212_Rampant_Raiders = "USN VA-212 Rampant Raiders"
+            USN_VA_45_Blackbirds = "USN VA-45 Blackbirds"
+            USN_VA_46_Clansmen = "USN VA-46 Clansmen"
+            USN_VA_55_Warhorses = "USN VA-55 Warhorses"
+            USN_VA_64_Black_Lancers = "USN VA-64 Black Lancers"
+            USN_VA_83_Rampagers = "USN VA-83 Rampagers"
+            Trainer_USN_VC_1_FLECOMPRON_One = "Trainer USN VC-1 FLECOMPRON One"
+            Trainer_USN_VC_5_Checkertails = "Trainer USN VC-5 Checkertails"
+            USN_VC_7_Tallyhoers = "USN VC-7 Tallyhoers"
+            Trainer_USN_VC_8_Redtails = "Trainer USN VC-8 Redtails"
+            Trainer_USN_VT_7_Eagles = "Trainer USN VT-7 Eagles"
+
+        class Russia(Enum):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Austria(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Italy(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Chile(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
 
         class Turkey(Enum):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Pakistan(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Iraq(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Germany(Enum):
+            Unmarked = "Unmarked"
+            Trainer_BAE_Systems = "Trainer BAE Systems"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class USAFAggressors(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+            Aggressor_USMC_TopGun_MiG_17 = "Aggressor USMC TopGun MiG-17"
+            Aggressor_USN_TopGun = "Aggressor USN TopGun"
+            Aggressor_USN_VF_126_Bandits = "Aggressor USN VF-126 Bandits"
+            Aggressor_USN_VF_127_Royal_Blues = "Aggressor USN VF-127 Royal Blues"
+            Aggressor_USN_VFA_127_Cyclons__Forest = (
+                "Aggressor USN VFA-127 Cyclons (Forest)"
+            )
+            Aggressor_USN_VFA_127_Cyclons__Sea = "Aggressor USN VFA-127 Cyclons (Sea)"
+
+        class Brazil(Enum):
+            International_Brazil_VF_1_15_Anos = "International Brazil VF-1 15 Anos"
+            International_Brazil = "International Brazil"
+            International_Brazil_LoViz = "International Brazil LoViz"
+
+        class Spain(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Belarus(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class Canada(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
+
+        class NorthKorea(Enum):
+            Unmarked = "Unmarked"
+            Community_A_4E = "Community A-4E"
+            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
 
         class Japan(Enum):
             Unmarked = "Unmarked"
             Community_A_4E = "Community A-4E"
             Community_A_4E_II = "Community A-4E II"
-
-        class Poland(Enum):
-            Unmarked = "Unmarked"
-            Community_A_4E = "Community A-4E"
-            Community_A_4E_II = "Community A-4E II"
+            Community_A_4E_III = "Community A-4E III"
+            Community_A_4E_IV = "Community A-4E IV"
 
     class Pylon1:
         LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
@@ -897,7 +1173,6 @@ class A_4E_C(PlaneType):
             Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
         )
         AGM_45A_Shrike_ARM = (1, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {AGM12_B}
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             1,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -905,10 +1180,7 @@ class A_4E_C(PlaneType):
         Mk_81___250lb_GP_Bomb_LD = (1, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (1, WeaponsA4EC.Mk_81SE)
         Mk_82___500lb_GP_Bomb_LD = (1, Weapons.Mk_82___500lb_GP_Bomb_LD)
-        Mk_82_Snakeye___500lb_GP_Bomb_HD = (
-            1,
-            Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
-        )
+        Mk_82_Snakeye___500lb_GP_Bomb_HD = (1, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_77_mod_1 = (1, WeaponsA4EC.Mk_77_mod_1)
         AN_M30A1___100lb_GP_Bomb_LD = (1, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
         AN_M57___250lb_GP_Bomb_LD = (1, Weapons.AN_M57___250lb_GP_Bomb_LD)
@@ -934,15 +1206,9 @@ class A_4E_C(PlaneType):
 
     class Pylon2:
         Fuel_Tank_300_gallons_ = (2, WeaponsA4EC.Fuel_Tank_300_gallons_)
-        Fuel_Tank_300_gallons__EMPTY__ = (
-            2,
-            WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__,
-        )
+        Fuel_Tank_300_gallons__EMPTY__ = (2, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__)
         Fuel_Tank_150_gallons = (2, WeaponsA4EC.Fuel_Tank_150_gallons)
-        Fuel_Tank_150_gallons__EMPTY_ = (
-            2,
-            WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_,
-        )
+        Fuel_Tank_150_gallons__EMPTY_ = (2, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
         LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
             2,
             Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
@@ -991,12 +1257,6 @@ class A_4E_C(PlaneType):
         LAU_68_2___7_FFAR_Mk1_HE_ = (2, WeaponsA4EC.LAU_68_2___7_FFAR_Mk1_HE_)
         LAU_68_2___7_FFAR_Mk5_HEAT_ = (2, WeaponsA4EC.LAU_68_2___7_FFAR_Mk5_HEAT_)
         AGM_45A_Shrike_ARM = (2, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {AGM12_C}
-        # ERRR {AGM12_B}
-        AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_ = (
-            2,
-            Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
-        )
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             2,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -1004,10 +1264,7 @@ class A_4E_C(PlaneType):
         Mk_81___250lb_GP_Bomb_LD = (2, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (2, WeaponsA4EC.Mk_81SE)
         Mk_82___500lb_GP_Bomb_LD = (2, Weapons.Mk_82___500lb_GP_Bomb_LD)
-        Mk_82_Snakeye___500lb_GP_Bomb_HD = (
-            2,
-            Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
-        )
+        Mk_82_Snakeye___500lb_GP_Bomb_HD = (2, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (2, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (2, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         M117___750lb_GP_Bomb_LD = (2, Weapons.M117___750lb_GP_Bomb_LD)
@@ -1034,6 +1291,7 @@ class A_4E_C(PlaneType):
         AN_M57__2__TER_ = (2, WeaponsA4EC.AN_M57__2__TER_)
         AN_M81__5__MER_ = (2, WeaponsA4EC.AN_M81__5__MER_)
         AN_M88__5__MER_ = (2, WeaponsA4EC.AN_M88__5__MER_)
+        BDU_33__5__MER_ = (2, WeaponsA4EC.BDU_33__5__MER_)
         Mk4_HIPEG = (2, WeaponsA4EC.Mk4_HIPEG)
         Smokewinder___red = (2, Weapons.Smokewinder___red)
         Smokewinder___green = (2, Weapons.Smokewinder___green)
@@ -1052,18 +1310,9 @@ class A_4E_C(PlaneType):
         Fuel_Tank_400_gallons = (3, WeaponsA4EC.Fuel_Tank_400_gallons)
         Fuel_Tank_300_gallons = (3, WeaponsA4EC.Fuel_Tank_300_gallons)
         Fuel_Tank_150_gallons = (3, WeaponsA4EC.Fuel_Tank_150_gallons)
-        Fuel_Tank_400_gallons__EMPTY_ = (
-            3,
-            WeaponsA4EC.Fuel_Tank_400_gallons__EMPTY_,
-        )
-        Fuel_Tank_300_gallons__EMPTY_ = (
-            3,
-            WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY_,
-        )
-        Fuel_Tank_150_gallons__EMPTY_ = (
-            3,
-            WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_,
-        )
+        Fuel_Tank_400_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_400_gallons__EMPTY_)
+        Fuel_Tank_300_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY_)
+        Fuel_Tank_150_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
         # ERRR {3*LAU-61}
         BRU_42_with_3_x_LAU_68_pods___21_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
             3,
@@ -1111,11 +1360,6 @@ class A_4E_C(PlaneType):
         LAU_68_3___7_FFAR_M156_WP = (3, WeaponsA4EC.LAU_68_3___7_FFAR_M156_WP)
         LAU_68_3___7_FFAR_Mk1_HE = (3, WeaponsA4EC.LAU_68_3___7_FFAR_Mk1_HE)
         LAU_68_3___7_FFAR_Mk5_HEAT = (3, WeaponsA4EC.LAU_68_3___7_FFAR_Mk5_HEAT)
-        # ERRR {AGM12_B}
-        AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_ = (
-            3,
-            Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
-        )
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             3,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -1123,10 +1367,7 @@ class A_4E_C(PlaneType):
         Mk_81___250lb_GP_Bomb_LD = (3, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (3, WeaponsA4EC.Mk_81SE)
         Mk_82___500lb_GP_Bomb_LD = (3, Weapons.Mk_82___500lb_GP_Bomb_LD)
-        Mk_82_Snakeye___500lb_GP_Bomb_HD = (
-            3,
-            Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
-        )
+        Mk_82_Snakeye___500lb_GP_Bomb_HD = (3, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (3, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (3, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         M117___750lb_GP_Bomb_LD = (3, Weapons.M117___750lb_GP_Bomb_LD)
@@ -1156,6 +1397,7 @@ class A_4E_C(PlaneType):
         AN_M57__3__TER_ = (3, WeaponsA4EC.AN_M57__3__TER_)
         AN_M81__6__MER_ = (3, WeaponsA4EC.AN_M81__6__MER_)
         AN_M88__6__MER_ = (3, WeaponsA4EC.AN_M88__6__MER_)
+        BDU_33__6__MER_ = (3, WeaponsA4EC.BDU_33__6__MER_)
         Mk4_HIPEG = (3, WeaponsA4EC.Mk4_HIPEG)
         Smokewinder___red = (3, Weapons.Smokewinder___red)
         Smokewinder___green = (3, Weapons.Smokewinder___green)
@@ -1172,15 +1414,9 @@ class A_4E_C(PlaneType):
 
     class Pylon4:
         Fuel_Tank_300_gallons_ = (4, WeaponsA4EC.Fuel_Tank_300_gallons_)
-        Fuel_Tank_300_gallons__EMPTY__ = (
-            4,
-            WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__,
-        )
+        Fuel_Tank_300_gallons__EMPTY__ = (4, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__)
         Fuel_Tank_150_gallons = (4, WeaponsA4EC.Fuel_Tank_150_gallons)
-        Fuel_Tank_150_gallons__EMPTY_ = (
-            4,
-            WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_,
-        )
+        Fuel_Tank_150_gallons__EMPTY_ = (4, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
         LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
             4,
             Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
@@ -1229,12 +1465,6 @@ class A_4E_C(PlaneType):
         LAU_68_2___7_FFAR_Mk1_HE__ = (4, WeaponsA4EC.LAU_68_2___7_FFAR_Mk1_HE__)
         LAU_68_2___7_FFAR_Mk5_HEAT__ = (4, WeaponsA4EC.LAU_68_2___7_FFAR_Mk5_HEAT__)
         AGM_45A_Shrike_ARM = (4, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {AGM12_C}
-        # ERRR {AGM12_B}
-        AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_ = (
-            4,
-            Weapons.AGM_62_Walleye_II___Guided_Weapon_Mk_5__TV_Guided_,
-        )
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             4,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -1242,10 +1472,7 @@ class A_4E_C(PlaneType):
         Mk_81___250lb_GP_Bomb_LD = (4, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (4, WeaponsA4EC.Mk_81SE)
         Mk_82___500lb_GP_Bomb_LD = (4, Weapons.Mk_82___500lb_GP_Bomb_LD)
-        Mk_82_Snakeye___500lb_GP_Bomb_HD = (
-            4,
-            Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
-        )
+        Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (4, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         M117___750lb_GP_Bomb_LD = (4, Weapons.M117___750lb_GP_Bomb_LD)
@@ -1272,6 +1499,7 @@ class A_4E_C(PlaneType):
         AN_M57__2__TER__ = (4, WeaponsA4EC.AN_M57__2__TER__)
         AN_M81__5__MER__ = (4, WeaponsA4EC.AN_M81__5__MER__)
         AN_M88__5__MER__ = (4, WeaponsA4EC.AN_M88__5__MER__)
+        BDU_33__5__MER__ = (4, WeaponsA4EC.BDU_33__5__MER__)
         Mk4_HIPEG = (4, WeaponsA4EC.Mk4_HIPEG)
         Smokewinder___red = (4, Weapons.Smokewinder___red)
         Smokewinder___green = (4, Weapons.Smokewinder___green)
@@ -1328,7 +1556,6 @@ class A_4E_C(PlaneType):
             Weapons.LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT,
         )
         AGM_45A_Shrike_ARM = (5, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {AGM12_B}
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             5,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -1336,10 +1563,7 @@ class A_4E_C(PlaneType):
         Mk_81___250lb_GP_Bomb_LD = (5, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_81SE = (5, WeaponsA4EC.Mk_81SE)
         Mk_82___500lb_GP_Bomb_LD = (5, Weapons.Mk_82___500lb_GP_Bomb_LD)
-        Mk_82_Snakeye___500lb_GP_Bomb_HD = (
-            5,
-            Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD,
-        )
+        Mk_82_Snakeye___500lb_GP_Bomb_HD = (5, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_77_mod_1 = (5, WeaponsA4EC.Mk_77_mod_1)
         AN_M30A1___100lb_GP_Bomb_LD = (5, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
         AN_M57___250lb_GP_Bomb_LD = (5, Weapons.AN_M57___250lb_GP_Bomb_LD)
@@ -1361,7 +1585,7 @@ class A_4E_C(PlaneType):
             Weapons.SUU_25_x_8_LUU_2___Target_Marker_Flares,
         )
 
-    # ERRR <CLEAN>
+        # ERRR <CLEAN>
 
     pylons = {1, 2, 3, 4, 5}
 
@@ -1369,8 +1593,12 @@ class A_4E_C(PlaneType):
         task.CAP,
         task.CAS,
         task.SEAD,
+        task.Reconnaissance,
         task.GroundAttack,
         task.AFAC,
+        task.RunwayAttack,
+        task.AntishipStrike,
         task.Refueling,
+        task.Escort,
     ]
     task_default = task.CAS
