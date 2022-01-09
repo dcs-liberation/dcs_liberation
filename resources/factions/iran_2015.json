@@ -35,7 +35,8 @@
     "M113",
     "M60A3 \"Patton\"",
     "T-72B with Kontakt-1 ERA",
-    "ZSU-23-4 Shilka"
+    "ZSU-23-4 Shilka",
+    "ZSU-57-2 'Sparka'"
   ],
   "artillery_units": [
     "2S1 Gvozdika",
@@ -59,9 +60,11 @@
     "SA6Generator",
     "SA11Generator",
     "SA15Generator",
+    "SA17Generator",
     "ZSU23Generator",
     "ZU23InsurgentGenerator",
-    "ZU23UralInsurgentGenerator"
+    "ZU23UralInsurgentGenerator",
+    "ZSU57Generator"
   ],
   "ewrs": [
     "FlatFaceGenerator",
