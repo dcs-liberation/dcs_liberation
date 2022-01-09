@@ -266,7 +266,7 @@ class FlightPlanBuilder:
         if time is None:
             return ""
         local_time = self.start_time + time
-        return local_time.strftime(f"%H:%M:%S")
+        return f"{local_time.strftime('%H:%M:%S')}{'Z' if local_time.tzinfo is not None else ''}"
 
     def _format_alt(self, alt: Distance) -> str:
         if self.is_metric:
@@ -584,7 +584,7 @@ class SupportPage(KneeboardPage):
         if time is None:
             return ""
         local_time = self.start_time + time
-        return local_time.strftime(f"%H:%M:%S")
+        return f"{local_time.strftime('%H:%M:%S')}{'Z' if local_time.tzinfo is not None else ''}"
 
 
 class SeadTaskPage(KneeboardPage):
@@ -743,13 +743,21 @@ class KneeboardGenerator(MissionInfoGenerator):
 
     def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
+
+        if flight.aircraft_type.utc_kneeboard:
+            zoned_time = self.game.conditions.start_time.replace(
+                tzinfo=self.game.theater.timezone
+            ).astimezone(datetime.timezone.utc)
+        else:
+            zoned_time = self.game.conditions.start_time
+
         pages: List[KneeboardPage] = [
             BriefingPage(
                 flight,
                 self.game.bullseye_for(flight.friendly),
                 self.game.theater,
                 self.game.conditions.weather,
-                self.game.conditions.start_time,
+                zoned_time,
                 self.dark_kneeboard,
             ),
             SupportPage(
@@ -758,7 +766,7 @@ class KneeboardGenerator(MissionInfoGenerator):
                 self.awacs,
                 self.tankers,
                 self.jtacs,
-                self.game.conditions.start_time,
+                zoned_time,
                 self.dark_kneeboard,
             ),
         ]

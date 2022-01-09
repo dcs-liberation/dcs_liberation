@@ -46,3 +46,4 @@ radios:
     # we must use radio 1 for the intra-flight radio.
     intra_flight_radio_index: 1
     inter_flight_radio_index: 2
+utc_kneeboard: true

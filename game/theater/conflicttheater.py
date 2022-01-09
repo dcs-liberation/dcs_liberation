@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -245,6 +246,10 @@ class ConflictTheater:
         raise KeyError(f"Cannot find ControlPoint named {name}")
 
     @property
+    def timezone(self) -> datetime.timezone:
+        raise NotImplementedError
+
+    @property
     def seasonal_conditions(self) -> SeasonalConditions:
         raise NotImplementedError
 
@@ -278,6 +283,10 @@ class CaucasusTheater(ConflictTheater):
     }
 
     @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=4))
+
+    @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .seasonalconditions.caucasus import CONDITIONS
 
@@ -304,6 +313,10 @@ class PersianGulfTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=4))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -334,6 +347,10 @@ class NevadaTheater(ConflictTheater):
     }
 
     @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=-8))
+
+    @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .seasonalconditions.nevada import CONDITIONS
 
@@ -360,6 +377,10 @@ class NormandyTheater(ConflictTheater):
         "dusk": (17, 18),
         "night": (0, 5),
     }
+
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=0))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
@@ -390,6 +411,10 @@ class TheChannelTheater(ConflictTheater):
     }
 
     @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=2))
+
+    @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .seasonalconditions.thechannel import CONDITIONS
 
@@ -418,6 +443,10 @@ class SyriaTheater(ConflictTheater):
     }
 
     @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=3))
+
+    @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .seasonalconditions.syria import CONDITIONS
 
@@ -441,6 +470,10 @@ class MarianaIslandsTheater(ConflictTheater):
         "dusk": (16, 18),
         "night": (0, 5),
     }
+
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=10))
 
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
