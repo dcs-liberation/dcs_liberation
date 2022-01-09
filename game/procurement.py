@@ -221,10 +221,6 @@ class ProcurementAi:
             budget, fulfilled, insufficient_pilots = self.fulfill_aircraft_request(
                 squadrons, request.number, budget
             )
-            if insufficient_pilots:
-                # The request was not fulfilled because there were not enough pilots in any of the provided squadrons
-                # and not because of insufficient budget. Continue processing the aircraft requests.
-                continue
             if not fulfilled:
                 # The request was not fulfilled because we could not afford any suitable
                 # aircraft. Rather than continuing, which could proceed to buy tons of
