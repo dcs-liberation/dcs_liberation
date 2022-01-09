@@ -5,6 +5,7 @@ Saves from 5.1.0 are compatible with 5.2.0
 ## Features/Improvements
 
 * **[Modding]** Add UH-60L mod support
+* **[Modding]** Updated Community A-4E-C mod version support to 2.0.0 release. Version 1.4.2 is no longer compatible, unless the mod default loadouts are deleted/modified.
 * **[Campaign]** Vegas Nerve campaign update
 * **[Campaign]** Add 3 new campaigns from Sith1144
 ## Fixes
@@ -30,7 +31,6 @@ Saves from 5.0.0 are compatible with 5.1.0
 * **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
 * **[Mission Generation]** Add Option to select between only night missions, day missions or any time (default).
 * **[Modding]** Add F-104 mod support
-
 ## Fixes
 
 * **[Campaign]** Fixed some minor issues in campaigns which generated error messages in the log.
