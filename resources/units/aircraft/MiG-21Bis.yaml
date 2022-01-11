@@ -27,3 +27,4 @@ radios:
     namer: single
     intra_flight_radio_index: 1
     inter_flight_radio_index: 1
+kneeboard_units: "metric"

@@ -29,3 +29,4 @@ variants:
     origin: China
     role: Carrier-based Multirole Fighter
   Su-33 Flanker-D: {}
+kneeboard_units: "metric"

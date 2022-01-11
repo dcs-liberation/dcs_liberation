@@ -17,3 +17,4 @@ role: Fighter
 gunfighter: true
 variants:
   "Bf 109 K-4 Kurf\xFCrst": {}
+kneeboard_units: "metric"

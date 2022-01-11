@@ -12,3 +12,4 @@ role: Light Attack
 gunfighter: true
 variants:
   L-39ZA Albatros: {}
+kneeboard_units: "metric"

@@ -21,3 +21,4 @@ variants:
 radios:
   intra_flight: RSI-6K HF
   inter_flight: RSI-6K HF
+kneeboard_units: "metric"

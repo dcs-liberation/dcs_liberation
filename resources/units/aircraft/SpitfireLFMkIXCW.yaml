@@ -41,3 +41,4 @@ role: Fighter
 gunfighter: true
 variants:
   Spitfire LF Mk IX (Clipped Wings): {}
+kneeboard_units: "imperial"

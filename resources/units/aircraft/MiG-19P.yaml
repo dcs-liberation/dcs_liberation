@@ -27,3 +27,4 @@ radios:
   channels:
     type: farmer
     namer: single
+kneeboard_units: "metric"

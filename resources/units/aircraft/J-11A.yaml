@@ -10,3 +10,4 @@ price: 22
 role: Air-Superiority Fighter
 variants:
   J-11A Flanker-L: {}
+kneeboard_units: "metric"
