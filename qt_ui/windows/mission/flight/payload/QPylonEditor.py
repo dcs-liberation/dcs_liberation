@@ -46,7 +46,7 @@ class QPylonEditor(QComboBox):
         weapon = loadout.pylons.get(self.pylon.number)
         if weapon is None:
             return None
-        # TODO: Fix pydcs to support the <CLEAN> "weapon".
+        # TODO: Fix pydcs to support the <CLEAN> "weapon" and blank "" clsid.
         # These are not exported in the pydcs weapon map, which causes the pydcs pylon
         # exporter to fail to include them in the supported list. Since they aren't
         # known to be compatible (and we can't show them as compatible for *every*
@@ -56,7 +56,7 @@ class QPylonEditor(QComboBox):
         #
         # A similar hack exists in Pylon to support forcibly equipping this even when
         # it's not known to be compatible.
-        if weapon.clsid == "<CLEAN>":
+        if weapon.clsid in ("<CLEAN>", ""):
             if not self.has_added_clean_item:
                 self.addItem("Clean", weapon)
                 self.has_added_clean_item = True

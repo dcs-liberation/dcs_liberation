@@ -117,7 +117,11 @@ class Loadout:
             pylons = payload["pylons"]
             yield Loadout(
                 name,
-                {p["num"]: Weapon.with_clsid(p["CLSID"]) for p in pylons.values()},
+                {
+                    p["num"]: Weapon.with_clsid(p["CLSID"])
+                    for p in pylons.values()
+                    if p["CLSID"] not in ("<CLEAN>", "")
+                },
                 date=None,
             )
 
@@ -178,7 +182,11 @@ class Loadout:
             if payload is not None:
                 return Loadout(
                     name,
-                    {i: Weapon.with_clsid(d["clsid"]) for i, d in payload},
+                    {
+                        i: Weapon.with_clsid(d["clsid"])
+                        for i, d in payload
+                        if d["clsid"] not in ("<CLEAN>", "")
+                    },
                     date=None,
                 )
 
