@@ -52,18 +52,26 @@ local unitPayloads = {
 			["name"] = "Liberation OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "",
+					["num"] = 2,
+				},
+				[2] = {
+					["CLSID"] = "",
+					["num"] = 1,
+				},
+				[3] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 4,
 				},
-				[2] = {
+				[4] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 3,
 				},
-				[3] = {
+				[5] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_RIGHT_WING_RAILS}",
 					["num"] = 6,
 				},
-				[4] = {
+				[6] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_LEFT_WING_RAILS}",
 					["num"] = 5,
 				},
@@ -77,18 +85,26 @@ local unitPayloads = {
 			["name"] = "Liberation Anti-ship",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "",
+					["num"] = 2,
+				},
+				[2] = {
+					["CLSID"] = "",
+					["num"] = 1,
+				},
+				[3] = {
 					["CLSID"] = "{British_SAP_250LB_Bomb_Mk5_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 4,
 				},
-				[2] = {
+				[4] = {
 					["CLSID"] = "{British_SAP_250LB_Bomb_Mk5_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 3,
 				},
-				[3] = {
+				[5] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_RIGHT_WING_RAILS}",
 					["num"] = 6,
 				},
-				[4] = {
+				[6] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_LEFT_WING_RAILS}",
 					["num"] = 5,
 				},
@@ -111,18 +127,26 @@ local unitPayloads = {
 			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "",
+					["num"] = 2,
+				},
+				[2] = {
+					["CLSID"] = "",
+					["num"] = 1,
+				},
+				[3] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 4,
 				},
-				[2] = {
+				[4] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 3,
 				},
-				[3] = {
+				[5] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_RIGHT_WING_RAILS}",
 					["num"] = 6,
 				},
-				[4] = {
+				[6] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_LEFT_WING_RAILS}",
 					["num"] = 5,
 				},
@@ -160,18 +184,26 @@ local unitPayloads = {
 			["name"] = "Liberation BAI",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "",
+					["num"] = 2,
+				},
+				[2] = {
+					["CLSID"] = "",
+					["num"] = 1,
+				},
+				[3] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 4,
 				},
-				[2] = {
+				[4] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 3,
 				},
-				[3] = {
+				[5] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_RIGHT_WING_RAILS}",
 					["num"] = 6,
 				},
-				[4] = {
+				[6] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_LEFT_WING_RAILS}",
 					["num"] = 5,
 				},
@@ -185,18 +217,26 @@ local unitPayloads = {
 			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
+					["CLSID"] = "",
+					["num"] = 2,
+				},
+				[2] = {
+					["CLSID"] = "",
+					["num"] = 1,
+				},
+				[3] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 4,
 				},
-				[2] = {
+				[4] = {
 					["CLSID"] = "{British_MC_500LB_Bomb_Mk1_Short_on_Handley_Page_Type_B_Cut_Bar}",
 					["num"] = 3,
 				},
-				[3] = {
+				[5] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_RIGHT_WING_RAILS}",
 					["num"] = 6,
 				},
-				[4] = {
+				[6] = {
 					["CLSID"] = "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_LEFT_WING_RAILS}",
 					["num"] = 5,
 				},
