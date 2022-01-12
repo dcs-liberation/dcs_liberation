@@ -413,15 +413,16 @@ class BriefingPage(KneeboardPage):
 
         fl = self.flight
 
-        writer.table(
-            [
+        if fl.bingo_fuel and fl.joker_fuel:
+            writer.table(
                 [
-                    f"{units.mass(pounds(fl.bingo_fuel)):.0f} {units.mass_uom}",
-                    f"{units.mass(pounds(fl.joker_fuel)):.0f} {units.mass_uom}",
-                ]
-            ],
-            ["Bingo", "Joker"],
-        )
+                    [
+                        f"{units.mass(pounds(fl.bingo_fuel)):.0f} {units.mass_uom}",
+                        f"{units.mass(pounds(fl.joker_fuel)):.0f} {units.mass_uom}",
+                    ]
+                ],
+                ["Bingo", "Joker"],
+            )
 
         if any(self.flight.laser_codes):
             codes: list[list[str]] = []

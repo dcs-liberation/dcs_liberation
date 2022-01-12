@@ -381,7 +381,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
             introduction = "No data."
 
         units_data = data.get("kneeboard_units", "nautical").lower()
-        units = NauticalUnits()
+        units: UnitSystem = NauticalUnits()
         if units_data == "imperial":
             units = ImperialUnits()
         if units_data == "metric":
