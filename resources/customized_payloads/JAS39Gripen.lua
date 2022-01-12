@@ -6,7 +6,7 @@ local unitPayloads = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{JAS39_IRIS-T}",
+					["CLSID"] = "JAS39_IRIS-T",
 					["num"] = 8,
 				},
 				[2] = {
@@ -18,27 +18,27 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[4] = {
-					["CLSID"] = "{JAS39_IRIS-T}",
+					["CLSID"] = "JAS39_IRIS-T",
 					["num"] = 1,
 				},
 				[5] = {
-					["CLSID"] = "{JAS39_Meteor}",
+					["CLSID"] = "JAS39_Meteor",
 					["num"] = 7,
 				},
 				[6] = {
-					["CLSID"] = "{JAS39_Meteor}",
+					["CLSID"] = "JAS39_Meteor",
 					["num"] = 6,
 				},
 				[7] = {
-					["CLSID"] = "{JAS39_Meteor}",
+					["CLSID"] = "JAS39_Meteor",
 					["num"] = 2,
 				},
 				[8] = {
-					["CLSID"] = "{JAS39_Meteor}",
+					["CLSID"] = "JAS39_Meteor",
 					["num"] = 3,
 				},
 				[9] = {
-					["CLSID"] = "{JAS39_TANK1100}",
+					["CLSID"] = "JAS39_TANK1100",
 					["num"] = 4,
 				},
 			},
