@@ -6,3 +6,4 @@ price: 6
 role: Light Bomber, Fighter Bomber, Night Fighter, Maritime Strike Aircraft, Photo Recon Aircraft
 variants:
   MosquitoFBMkVI: {}
+kneeboard_units: "imperial"

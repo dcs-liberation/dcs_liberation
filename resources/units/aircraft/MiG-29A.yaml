@@ -28,3 +28,4 @@ role: Multirole Fighter
 max_range: 150
 variants:
   MiG-29A Fulcrum-A: {}
+kneeboard_units: "metric"

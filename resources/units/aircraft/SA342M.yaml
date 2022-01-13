@@ -18,3 +18,4 @@ variants:
     introduced: 1974
     manufacturer: Westland
   SA 342M Gazelle: {}
+kneeboard_units: "metric"

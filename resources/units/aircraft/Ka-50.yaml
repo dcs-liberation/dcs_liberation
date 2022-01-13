@@ -20,3 +20,4 @@ radios:
   # The R-800L1 doesn't have preset channels, and the other radio is for
   # communications with FAC and ground units, which don't currently have
   # radios assigned, so no channels to configure.
+kneeboard_units: "metric"

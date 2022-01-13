@@ -14,3 +14,4 @@ role: Close Air Support/Attack
 max_range: 200
 variants:
   Su-25 Frogfoot: {}
+kneeboard_units: "metric"

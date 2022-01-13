@@ -19,6 +19,6 @@ manufacturer: Mil
 origin: USSR/Russia
 price: 14
 role: Attack/Transport
-metric_kneeboard: true
+kneeboard_units: "metric"
 variants:
   Mi-24P Hind-F: {}

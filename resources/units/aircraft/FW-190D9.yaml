@@ -17,3 +17,4 @@ role: Fighter
 gunfighter: true
 variants:
   Fw 190 D-9 Dora: {}
+kneeboard_units: "metric"

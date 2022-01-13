@@ -28,3 +28,4 @@ role: Fighter
 gunfighter: true
 variants:
   Fw 190 A-8 Anton: {}
+kneeboard_units: "metric"

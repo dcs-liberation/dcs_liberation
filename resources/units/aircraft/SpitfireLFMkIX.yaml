@@ -41,3 +41,4 @@ role: Fighter
 gunfighter: true
 variants:
   Spitfire LF Mk IX: {}
+kneeboard_units: "imperial"

@@ -29,3 +29,4 @@ radios:
   channels:
     type: viggen
     namer: viggen
+kneeboard_units: "metric"
