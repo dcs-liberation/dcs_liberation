@@ -120,7 +120,7 @@ class Loadout:
                 {
                     p["num"]: Weapon.with_clsid(p["CLSID"])
                     for p in pylons.values()
-                    if p["CLSID"] not in ("<CLEAN>", "")
+                    if p["CLSID"] != ""
                 },
                 date=None,
             )
@@ -185,7 +185,7 @@ class Loadout:
                     {
                         i: Weapon.with_clsid(d["clsid"])
                         for i, d in payload
-                        if d["clsid"] not in ("<CLEAN>", "")
+                        if d["clsid"] != ""
                     },
                     date=None,
                 )
