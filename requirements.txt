@@ -26,7 +26,7 @@ Pillow==9.0.0
 pluggy==0.13.1
 pre-commit==2.10.1
 py==1.10.0
--e git+https://github.com/pydcs/dcs@5d1f581b260fdc6091744ab927a58cdee586e681#egg=pydcs
+-e git+https://github.com/pydcs/dcs@5a2abc26f79772837d445c28d6354accd3b76122#egg=pydcs
 pyinstaller==4.3
 pyinstaller-hooks-contrib==2021.1
 pyparsing==2.4.7
