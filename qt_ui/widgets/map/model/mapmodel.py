@@ -381,9 +381,6 @@ class MapModel(QObject):
         return self._map_zones
 
     def on_package_change(self) -> None:
-        if self.game_model.game is None:
-            return
-        self.game_model.game.compute_unculled_zones()
         self.reset_unculled_zones()
 
     def reset_unculled_zones(self) -> None:
