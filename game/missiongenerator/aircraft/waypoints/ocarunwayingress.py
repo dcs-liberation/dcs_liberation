@@ -1,7 +1,7 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import BombingRunway
+from dcs.task import BombingRunway, OptFormation
 
 from game.theater import Airfield
 from .pydcswaypointbuilder import PydcsWaypointBuilder
@@ -20,3 +20,4 @@ class OcaRunwayIngressBuilder(PydcsWaypointBuilder):
         waypoint.tasks.append(
             BombingRunway(airport_id=target.airport.id, group_attack=True)
         )
+        waypoint.tasks.append(OptFormation.trail_open())

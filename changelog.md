@@ -8,6 +8,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Campaign]** Add option to manually add and remove squadrons and different aircraft type in the new game wizard / air wing configuration dialog.
 * **[Mission Generation]** Added an option to fast-forward mission generation until the point of first contact (WIP).
 * **[Mission Generation]** Add Option to enforce the Easy Communication setting for the mission
+* **[Mission Generation]**  Added formation presets for different flight types at hold, join, ingress, and split waypoints.
 * **[Flight Planning]** Added the ability to plan tankers for recovery on package flights.  AI does not plan.
 * **[Flight Planning]** Air to Ground flights now have ECM enabled on lock at the join point, and SEAD/DEAD also have ECM enabled on detection and lock at ingress.
 * **[Flight Planning]** AWACS flightplan changed from orbit to a racetrack to reduce data link disconnects which were caused by blind spots as a result of the bank angle. 
