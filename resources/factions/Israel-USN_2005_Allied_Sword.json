@@ -47,13 +47,13 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "VulcanGenerator",
-    "PatriotGenerator"
+    "Chaparral Group",
+    "Hawk Site",
+    "Vulcan Group",
+    "Patriot Battery"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [
     "Stennis"
@@ -63,13 +63,12 @@
   ],
   "destroyers": [
     "USS_Arleigh_Burke_IIa",
-	"PERRY"
+    "PERRY"
   ],
   "cruisers": [
     "TICONDEROG"
   ],
-  "requirements": {
-  },
+  "requirements": {},
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",

@@ -35,10 +35,10 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "SA9Generator",
-    "ZSU57Generator",
-    "ZU23Generator",
-    "ZU23UralInsurgentGenerator"
+    "SA-9 Group",
+    "ZSU-57-2 Group",
+    "ZU-23 Group",
+    "ZU-23 Ural Insurgent Group"
   ],
   "missiles": [
     "ScudGenerator"

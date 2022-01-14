@@ -43,9 +43,9 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+    "Chaparral Group",
+    "Hawk Site",
+    "Vulcan Group"
   ],
   "aircraft_carrier": [
     "Stennis"

@@ -67,16 +67,16 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "ChaparralGenerator",
-    "VulcanGenerator",
-    "RolandGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+    "Avenger Group",
+    "Chaparral Group",
+    "Vulcan Group",
+    "Roland Site",
+    "Hawk Site",
+    "Patriot Battery",
+    "Rapier AA Site"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [
     "Stennis"

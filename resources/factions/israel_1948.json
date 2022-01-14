@@ -29,8 +29,8 @@
     "Infantry SMLE No.4 Mk-1"
   ],
   "air_defenses": [
-    "BoforsGenerator",
-    "EarlyColdWarFlakGenerator"
+    "Bofors AAA",
+    "EarlyColdWarFlak Site"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

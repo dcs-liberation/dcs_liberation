@@ -45,18 +45,18 @@
     "MANPADS SA-18 Igla \"Grouse\" Ins"
   ],
   "air_defenses": [
-    "HawkGenerator",
-    "RapierGenerator",
-    "SA2Generator",
-    "ZSU23Generator",
-    "ZU23InsurgentGenerator",
-    "ZU23UralInsurgentGenerator",
-    "ZSU57Generator",
-    "ColdWarFlakGenerator"
+    "Hawk Site",
+    "Rapier AA Site",
+    "SA-2/S-75 Site",
+    "ZSU-23 Group",
+    "Zu-23 Site",
+    "ZU-23 Ural Insurgent Group",
+    "ZSU-57-2 Group",
+    "ColdWarFlak Site"
   ],
   "ewrs": [
-    "FlatFaceGenerator",
-    "HawkEwrGenerator"
+    "SAM P19 \"Flat Face\" SR (SA-2/3)",
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

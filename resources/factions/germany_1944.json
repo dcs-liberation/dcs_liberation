@@ -39,8 +39,8 @@
     "Infantry Mauser 98"
   ],
   "air_defenses": [
-    "FlakGenerator",
-    "FreyaGenerator"
+    "Flak Site",
+    "Freya EWR Site"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

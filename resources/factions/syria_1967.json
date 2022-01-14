@@ -38,15 +38,15 @@
     "Paratrooper AKS"
   ],
   "air_defenses": [
-    "SA2Generator",
-    "SA3Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator",
-    "ZSU57Generator"
+    "SA-2/S-75 Site",
+    "SA-3/S-125 Site",
+    "ZSU-23 Group",
+    "ZU-23 Group",
+    "ZU-23 Ural Group",
+    "ZSU-57-2 Group"
   ],
   "ewrs": [
-    "FlatFaceGenerator"
+    "SAM P19 \"Flat Face\" SR (SA-2/3)"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

@@ -3,7 +3,9 @@
   "name": "USA 1975",
   "authors": "Khopa",
   "description": "<p>US army in the 70s at the end of the war in Vietnam.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
     "B-52H Stratofortress",
     "C-130",
@@ -16,27 +18,47 @@
     "S-3B Viking",
     "UH-1H Iroquois"
   ],
-  "awacs": ["E-2C Hawkeye"],
-  "tankers": ["KC-130", "KC-135 Stratotanker"],
+  "awacs": [
+    "E-2C Hawkeye"
+  ],
+  "tankers": [
+    "KC-130",
+    "KC-135 Stratotanker"
+  ],
   "frontline_units": [
     "M113",
     "M163 Vulcan Air Defense System",
     "M48 Chaparral",
     "M60A3 \"Patton\""
   ],
-  "artillery_units": ["M109A6 Paladin"],
-  "logistics_units": ["Truck M818 6x6"],
-  "infantry_units": ["Infantry M249", "Infantry M4"],
-  "air_defenses": [
-    "ChaparralGenerator",
-    "EarlyColdWarFlakGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+  "artillery_units": [
+    "M109A6 Paladin"
   ],
-  "ewrs": ["HawkEwrGenerator"],
-  "aircraft_carrier": ["Forrestal"],
-  "carrier_names": ["CVN-59 Forrestal"],
-  "navy_generators": ["OliverHazardPerryGroupGenerator"],
+  "logistics_units": [
+    "Truck M818 6x6"
+  ],
+  "infantry_units": [
+    "Infantry M249",
+    "Infantry M4"
+  ],
+  "air_defenses": [
+    "Chaparral Group",
+    "EarlyColdWarFlak Site",
+    "Hawk Site",
+    "Vulcan Group"
+  ],
+  "ewrs": [
+    "SAM Hawk SR (AN/MPQ-50)"
+  ],
+  "aircraft_carrier": [
+    "Forrestal"
+  ],
+  "carrier_names": [
+    "CVN-59 Forrestal"
+  ],
+  "navy_generators": [
+    "OliverHazardPerryGroupGenerator"
+  ],
   "requirements": {},
   "doctrine": "coldwar"
 }

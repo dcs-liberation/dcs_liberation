@@ -59,12 +59,12 @@
     "Infantry M4"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "PatriotGenerator"
+    "Avenger Group",
+    "Hawk Site",
+    "Patriot Battery"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "requirements": {},
   "navy_generators": [

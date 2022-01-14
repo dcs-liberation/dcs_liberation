@@ -40,13 +40,13 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "GepardGenerator",
-    "HawkGenerator",
-    "RolandGenerator",
-    "PatriotGenerator"
+    "Gepard Group",
+    "Hawk Site",
+    "Roland Site",
+    "Patriot Battery"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

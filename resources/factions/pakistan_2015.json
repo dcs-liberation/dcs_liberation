@@ -41,16 +41,16 @@
     "Paratrooper RPG-16"
   ],
   "air_defenses": [
-    "HQ7Generator",
-    "SA2Generator",
-    "SA10Generator",
-    "SA11Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "HQ-7 Site",
+    "SA-2/S-75 Site",
+    "SA-10/S-300PS Battery - With ZSU-23",
+    "SA-11 Buk Battery",
+    "ZU-23 Group",
+    "ZU-23 Ural Group"
   ],
   "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator"
+    "EWR 1L13",
+    "EWR 55G6"
   ],
   "aircraft_carrier": [],
   "carrier_names": [],

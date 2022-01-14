@@ -50,22 +50,22 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "ColdWarFlakGenerator",
-    "SA2Generator",
-    "SA3Generator",
-    "SA5Generator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA13Generator",
-    "ZSU23Generator",
-    "ZSU57Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "ColdWarFlak Site",
+    "SA-2/S-75 Site",
+    "SA-3/S-125 Site",
+    "SA-5/S-200 Site",
+    "SA-6 Kub Site",
+    "SA-8 OSA Site",
+    "SA-9 Group",
+    "SA-13 Strela Group",
+    "ZSU-23 Group",
+    "ZSU-57-2 Group",
+    "ZU-23 Group",
+    "ZU-23 Ural Group"
   ],
   "ewrs": [
-    "FlatFaceGenerator",
-    "TinShieldGenerator"
+    "SAM P19 \"Flat Face\" SR (SA-2/3)",
+    "SAM SA-5 S-200 ST-68U \"Tin Shield\" SR"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

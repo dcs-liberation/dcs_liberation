@@ -41,21 +41,21 @@
     "Paratrooper RPG-16"
   ],
   "air_defenses": [
-    "HQ7Generator",
-    "RapierGenerator",
-    "SA2Generator",
-    "SA3Generator",
-    "SA5FlatFaceGenerator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA13Generator",
-    "ZSU23Generator"
+    "HQ-7 Site",
+    "Rapier AA Site",
+    "SA-2/S-75 Site",
+    "SA-3/S-125 Site",
+    "SA-5/S-200 Site wit FlatFace SR",
+    "SA-6 Kub Site",
+    "SA-8 OSA Site",
+    "SA-9 Group",
+    "SA-13 Strela Group",
+    "ZSU-23 Group"
   ],
   "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator",
-    "TinShieldGenerator"
+    "EWR 1L13",
+    "EWR 55G6",
+    "SAM SA-5 S-200 ST-68U \"Tin Shield\" SR"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

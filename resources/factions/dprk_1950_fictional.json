@@ -32,8 +32,8 @@
     "Infantry RPG"
   ],
   "air_defenses": [
-    "FlakGenerator",
-    "EarlyColdWarFlakGenerator"
+    "Flak Site",
+    "EarlyColdWarFlak Site"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

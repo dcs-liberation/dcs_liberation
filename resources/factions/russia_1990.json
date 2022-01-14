@@ -55,26 +55,26 @@
     "Paratrooper RPG-16"
   ],
   "air_defenses": [
-    "SA2Generator",
-    "SA3Generator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA10Generator",
-    "SA11Generator",
-    "SA13Generator",
-    "SA15Generator",
-    "SA19Generator",
-    "Tier2SA10Generator",
-    "Tier3SA10Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "SA-2/S-75 Site",
+    "SA-3/S-125 Site",
+    "SA-6 Kub Site",
+    "SA-8 OSA Site",
+    "SA-9 Group",
+    "SA-10/S-300PS Battery - With ZSU-23",
+    "SA-11 Buk Battery",
+    "SA-13 Strela Group",
+    "SA-15 Tor Group",
+    "SA-19 Tunguska Group",
+    "Tier2SA-10/S-300PS Battery - With ZSU-23",
+    "Tier3SA-10/S-300PS Battery - With ZSU-23",
+    "ZSU-23 Group",
+    "ZU-23 Group",
+    "ZU-23 Ural Group"
   ],
   "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator",
-    "TinShieldGenerator"
+    "EWR 1L13",
+    "EWR 55G6",
+    "SAM SA-5 S-200 ST-68U \"Tin Shield\" SR"
   ],
   "aircraft_carrier": [
     "KUZNECOW"

@@ -33,13 +33,13 @@
     "Infantry M4"
   ],
   "air_defenses": [
-    "ChaparralGenerator",
-    "EarlyColdWarFlakGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+    "Chaparral Group",
+    "EarlyColdWarFlak Site",
+    "Hawk Site",
+    "Vulcan Group"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"

@@ -3,7 +3,9 @@
   "name": "US Navy 2005",
   "authors": "Fuzzle",
   "description": "<p>A modern representation of the US Navy/Marine Corps.</p>",
-  "locales": ["en_US"],
+  "locales": [
+    "en_US"
+  ],
   "aircrafts": [
     "F-14B Tomcat",
     "F/A-18C Hornet (Lot 20)",
@@ -13,8 +15,12 @@
     "SH-60B Seahawk",
     "UH-1H Iroquois"
   ],
-  "awacs": ["E-2C Hawkeye"],
-  "tankers": ["S-3B Tanker"],
+  "awacs": [
+    "E-2C Hawkeye"
+  ],
+  "tankers": [
+    "S-3B Tanker"
+  ],
   "frontline_units": [
     "M113",
     "M1043 HMMWV (M2 HMG)",
@@ -23,20 +29,38 @@
     "LAV-25",
     "M163 Vulcan Air Defense System"
   ],
-  "artillery_units": ["M270 Multiple Launch Rocket System"],
-  "logistics_units": ["Truck M818 6x6"],
-  "infantry_units": ["Infantry M4", "Infantry M249", "MANPADS Stinger"],
-  "air_defenses": [
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "VulcanGenerator",
-    "PatriotGenerator"
+  "artillery_units": [
+    "M270 Multiple Launch Rocket System"
   ],
-  "ewrs": ["HawkEwrGenerator"],
-  "aircraft_carrier": ["Stennis"],
-  "helicopter_carrier": ["LHA_Tarawa"],
-  "destroyers": ["USS_Arleigh_Burke_IIa"],
-  "cruisers": ["TICONDEROG"],
+  "logistics_units": [
+    "Truck M818 6x6"
+  ],
+  "infantry_units": [
+    "Infantry M4",
+    "Infantry M249",
+    "MANPADS Stinger"
+  ],
+  "air_defenses": [
+    "Chaparral Group",
+    "Hawk Site",
+    "Vulcan Group",
+    "Patriot Battery"
+  ],
+  "ewrs": [
+    "SAM Hawk SR (AN/MPQ-50)"
+  ],
+  "aircraft_carrier": [
+    "Stennis"
+  ],
+  "helicopter_carrier": [
+    "LHA_Tarawa"
+  ],
+  "destroyers": [
+    "USS_Arleigh_Burke_IIa"
+  ],
+  "cruisers": [
+    "TICONDEROG"
+  ],
   "requirements": {},
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
@@ -60,10 +84,20 @@
   "jtac_unit": "MQ-9 Reaper",
   "doctrine": "modern",
   "liveries_overrides": {
-    "F-14B Tomcat": ["VF-142 Ghostriders"],
-    "F/A-18C Hornet (Lot 20)": ["VMFA-251 high visibility"],
-    "AV-8B Harrier II Night Attack": ["VMAT-542"],
-    "AH-1W SuperCobra": ["Marines"],
-    "UH-1H Iroquois": ["US NAVY"]
+    "F-14B Tomcat": [
+      "VF-142 Ghostriders"
+    ],
+    "F/A-18C Hornet (Lot 20)": [
+      "VMFA-251 high visibility"
+    ],
+    "AV-8B Harrier II Night Attack": [
+      "VMAT-542"
+    ],
+    "AH-1W SuperCobra": [
+      "Marines"
+    ],
+    "UH-1H Iroquois": [
+      "US NAVY"
+    ]
   }
 }

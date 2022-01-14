@@ -50,11 +50,11 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "RolandGenerator",
-    "HawkGenerator"
+    "Roland Site",
+    "Hawk Site"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [

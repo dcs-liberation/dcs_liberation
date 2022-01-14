@@ -32,11 +32,11 @@
     "MANPADS SA-18 Igla-S \"Grouse\""
   ],
   "air_defenses": [
-    "HawkGenerator",
-    "RapierGenerator"
+    "Hawk Site",
+    "Rapier AA Site"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "requirements": {},
   "carrier_names": [],

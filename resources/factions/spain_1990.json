@@ -36,13 +36,13 @@
     "Infantry M4"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RolandGenerator"
+    "Avenger Group",
+    "Hawk Site",
+    "Patriot Battery",
+    "Roland Site"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [
     "Stennis"

@@ -44,15 +44,15 @@
     "Paratrooper AKS"
   ],
   "air_defenses": [
-    "SA5FlatFaceGenerator",
-    "SA6Generator",
-    "SA8Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "SA-5/S-200 Site wit FlatFace SR",
+    "SA-6 Kub Site",
+    "SA-8 OSA Site",
+    "ZSU-23 Group",
+    "ZU-23 Group",
+    "ZU-23 Ural Group"
   ],
   "ewrs": [
-    "BigBirdGenerator"
+    "SAM SA-10 S-300 \"Grumble\" Big Bird SR "
   ],
   "requirements": {},
   "carrier_names": [],

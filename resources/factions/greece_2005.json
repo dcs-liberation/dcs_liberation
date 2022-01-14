@@ -44,16 +44,16 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "HawkGenerator",
-    "PatriotGenerator",
-    "SA8Generator",
-    "SA10Generator",
-    "SA15Generator",
-    "SA20Generator",
-    "ZU23Generator"
+    "Hawk Site",
+    "Patriot Battery",
+    "SA-8 OSA Site",
+    "SA-10/S-300PS Battery - With ZSU-23",
+    "SA-15 Tor Group",
+    "SA-20/S-300PMU-1 Battery",
+    "ZU-23 Group"
   ],
   "ewrs": [
-    "FlatFaceGenerator"
+    "SAM P19 \"Flat Face\" SR (SA-2/3)"
   ],
   "navy_generators": [
     "LaCombattanteIIGroupGenerator"

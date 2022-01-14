@@ -44,12 +44,12 @@
     "Infantry M4"
   ],
   "air_defenses": [
-    "GepardGenerator",
-    "HawkGenerator",
-    "PatriotGenerator"
+    "Gepard Group",
+    "Hawk Site",
+    "Patriot Battery"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [

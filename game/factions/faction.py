@@ -240,13 +240,7 @@ class Faction:
         faction.logistics_units = [
             GroundUnitType.named(n) for n in json.get("logistics_units", [])
         ]
-
-        # Compatibility for old EWR handling
-        for ewr in json.get("ewrs", []):
-            try:
-                faction.ewrs.append(GroundUnitType.named(ewr))
-            except KeyError:
-                faction.ewrs.append(ewr)
+        faction.ewrs = [GroundUnitType.named(n) for n in json.get("ewrs", [])]
 
         faction.air_defenses = json.get("air_defenses", [])
         # Compatibility for older factions. All air defenses now belong to a

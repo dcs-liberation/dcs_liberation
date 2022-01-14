@@ -46,14 +46,14 @@
     "Paratrooper AKS"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "RapierGenerator",
-    "SA3Generator",
-    "ZSU23Generator"
+    "Avenger Group",
+    "Hawk Site",
+    "Rapier AA Site",
+    "SA-3/S-125 Site",
+    "ZSU-23 Group"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"

@@ -29,8 +29,8 @@
     "Infantry M4"
   ],
   "air_defenses": [
-    "BoforsGenerator",
-    "EarlyColdWarFlakGenerator"
+    "Bofors AAA",
+    "EarlyColdWarFlak Site"
   ],
   "doctrine": "ww2",
   "building_set": "ww2ally",

@@ -35,14 +35,14 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "GepardGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+    "Avenger Group",
+    "Gepard Group",
+    "Hawk Site",
+    "Patriot Battery",
+    "Rapier AA Site"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

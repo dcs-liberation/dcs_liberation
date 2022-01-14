@@ -36,12 +36,12 @@
     "MANPADS SA-18 Igla-S \"Grouse\""
   ],
   "air_defenses": [
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+    "Hawk Site",
+    "Patriot Battery",
+    "Rapier AA Site"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "requirements": {},
   "carrier_names": [],

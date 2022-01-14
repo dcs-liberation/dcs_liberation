@@ -62,13 +62,13 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "PatriotGenerator"
+    "Avenger Group",
+    "Chaparral Group",
+    "Hawk Site",
+    "Patriot Battery"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [
     "Stennis"

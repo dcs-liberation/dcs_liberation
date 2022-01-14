@@ -44,12 +44,12 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "RapierGenerator"
+    "Avenger Group",
+    "Hawk Site",
+    "Rapier AA Site"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [
     "Stennis"

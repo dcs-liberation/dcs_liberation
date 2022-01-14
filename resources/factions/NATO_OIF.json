@@ -18,7 +18,7 @@
     "F-15C Eagle",
     "F-15E Strike Eagle",
     "F-16CM Fighting Falcon (Block 50)",
-	"F-22A Raptor",
+    "F-22A Raptor",
     "F/A-18C Hornet (Lot 20)",
     "Mirage 2000C",
     "OH-58D Kiowa Warrior",
@@ -28,7 +28,7 @@
     "SA 342M Gazelle Mistral",
     "Tornado GR4",
     "UH-1H Iroquois",
-	"UH-60A"
+    "UH-60A"
   ],
   "awacs": [
     "E-2C Hawkeye",
@@ -49,7 +49,7 @@
     "M1134 Stryker ATGM (BGM-71 TOW)",
     "M1A2 Abrams",
     "M2A2 Bradley",
-	"M6 Linebacker",
+    "M6 Linebacker",
     "Marder 1A3",
     "VAB Mephisto"
   ],
@@ -66,16 +66,16 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "ChaparralGenerator",
-    "VulcanGenerator",
-    "RolandGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+    "Avenger Group",
+    "Chaparral Group",
+    "Vulcan Group",
+    "Roland Site",
+    "Hawk Site",
+    "Patriot Battery",
+    "Rapier AA Site"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [
     "Stennis"
@@ -99,7 +99,7 @@
   ],
   "navy_generators": [
     "ArleighBurkeGroupGenerator",
-	"OliverHazardPerryGroupGenerator"
+    "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"

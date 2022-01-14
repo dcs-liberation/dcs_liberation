@@ -25,7 +25,7 @@
     "Infantry AK-74 Rus"
   ],
   "air_defenses": [
-    "Flak18Generator"
+    "WW2 Flak Site"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],
@@ -47,7 +47,7 @@
       "Fictional IJN Carrier Akagi AI-103",
       "Fictional IJN Carrier Akagi AI-151",
       "Fictional IJN Carrier Soryu BI-112",
-	  "Fictional IJN OTU Tsukuba Tsu-102"
+      "Fictional IJN OTU Tsukuba Tsu-102"
     ],
     "I-16 Ishak": [
       "Japan"

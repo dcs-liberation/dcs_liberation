@@ -9,8 +9,8 @@
   "aircrafts": [
     "AH-1W SuperCobra",
     "AV-8B Harrier II Night Attack",
-	"F-104S Starfighter",
-	"F-104S Starfighter A/G",
+    "F-104S Starfighter",
+    "F-104S Starfighter A/G",
     "C-130",
     "Tornado IDS",
     "UH-1H Iroquois"
@@ -39,11 +39,11 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator"
+    "Avenger Group",
+    "Hawk Site"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [

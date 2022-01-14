@@ -34,11 +34,11 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "HawkGenerator",
-    "RapierGenerator"
+    "Hawk Site",
+    "Rapier AA Site"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [

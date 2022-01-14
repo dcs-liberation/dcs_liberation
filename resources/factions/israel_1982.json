@@ -36,12 +36,12 @@
     "Infantry M4"
   ],
   "air_defenses": [
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+    "Chaparral Group",
+    "Hawk Site",
+    "Vulcan Group"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

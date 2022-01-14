@@ -66,13 +66,13 @@
     "Mortar 2B11 120mm"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "LinebackerGenerator",
-    "PatriotGenerator",
-    "NasamCGenerator"
+    "Avenger Group",
+    "Linebacker Group",
+    "Patriot Battery",
+    "NASAMS AIM-120C"
   ],
   "ewrs": [
-    "PatriotEwrGenerator"
+    "SAM Patriot STR"
   ],
   "aircraft_carrier": [
     "Stennis"

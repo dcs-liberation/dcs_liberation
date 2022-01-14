@@ -33,11 +33,11 @@
     "MANPADS Stinger"
   ],
   "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator"
+    "Avenger Group",
+    "Hawk Site"
   ],
   "ewrs": [
-    "HawkEwrGenerator"
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
   "navy_generators": [
     "OliverHazardPerryGroupGenerator"

@@ -35,21 +35,21 @@
     "Infantry RPG"
   ],
   "air_defenses": [
-    "SA2Generator",
-    "SA3Generator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA11Generator",
-    "ColdWarFlakGenerator",
-    "ZSU23Generator",
-    "ZSU57Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+    "SA-2/S-75 Site",
+    "SA-3/S-125 Site",
+    "SA-6 Kub Site",
+    "SA-8 OSA Site",
+    "SA-9 Group",
+    "SA-11 Buk Battery",
+    "ColdWarFlak Site",
+    "ZSU-23 Group",
+    "ZSU-57-2 Group",
+    "ZU-23 Group",
+    "ZU-23 Ural Group"
   ],
   "ewrs": [
-    "FlatFaceGenerator",
-    "TinShieldGenerator"
+    "SAM P19 \"Flat Face\" SR (SA-2/3)",
+    "SAM SA-5 S-200 ST-68U \"Tin Shield\" SR"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],
