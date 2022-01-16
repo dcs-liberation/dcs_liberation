@@ -1,7 +1,7 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import ControlledTask, OrbitAction
+from dcs.task import ControlledTask, OptFormation, OrbitAction
 
 from gen.flights.flightplan import LoiterFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
@@ -26,3 +26,4 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             int((push_time - self.elapsed_mission_time).total_seconds())
         )
         waypoint.add_task(loiter)
+        waypoint.add_task(OptFormation.finger_four_close())

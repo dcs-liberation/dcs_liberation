@@ -1,7 +1,14 @@
 from typing import List, Type
 
 from dcs.point import MovingPoint
-from dcs.task import ControlledTask, EngageTargets, OptECMUsing, TargetType, Targets
+from dcs.task import (
+    ControlledTask,
+    EngageTargets,
+    OptECMUsing,
+    OptFormation,
+    TargetType,
+    Targets,
+)
 
 from game.ato import FlightType
 from game.utils import nautical_miles
@@ -19,6 +26,11 @@ class JoinPointBuilder(PydcsWaypointBuilder):
                 ],
             )
 
+            if self.flight.count < 4:
+                waypoint.tasks.append(OptFormation.line_abreast_open())
+            else:
+                waypoint.tasks.append(OptFormation.spread_four_open())
+
         elif self.flight.flight_type == FlightType.SEAD_ESCORT:
             self.configure_escort_tasks(
                 waypoint, [Targets.All.GroundUnits.AirDefence.AAA.SAMRelated]
@@ -28,6 +40,11 @@ class JoinPointBuilder(PydcsWaypointBuilder):
             ecm_option = OptECMUsing(value=OptECMUsing.Values.UseIfDetectedLockByRadar)
             waypoint.tasks.append(ecm_option)
 
+            if self.flight.count < 4:
+                waypoint.tasks.append(OptFormation.line_abreast_open())
+            else:
+                waypoint.tasks.append(OptFormation.spread_four_open())
+
         elif not self.flight.flight_type.is_air_to_air:
             # Capture any non A/A type to avoid issues with SPJs that use the primary radar such as the F/A-18C.
             # You can bully them with STT to not be able to fire radar guided missiles at you,
@@ -36,6 +53,8 @@ class JoinPointBuilder(PydcsWaypointBuilder):
             # Let the AI use ECM to defend themselves.
             ecm_option = OptECMUsing(value=OptECMUsing.Values.UseIfOnlyLockByRadar)
             waypoint.tasks.append(ecm_option)
+
+            waypoint.tasks.append(OptFormation.finger_four_open())
 
     @staticmethod
     def configure_escort_tasks(

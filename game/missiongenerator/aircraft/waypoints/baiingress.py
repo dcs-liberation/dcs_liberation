@@ -1,7 +1,7 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import AttackGroup, WeaponType
+from dcs.task import AttackGroup, OptFormation, WeaponType
 
 from game.theater import NavalControlPoint, TheaterGroundObject
 from game.transfers import MultiGroupTransport
@@ -39,3 +39,5 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
             task.params["altitudeEnabled"] = False
             task.params["groupAttack"] = True
             waypoint.tasks.append(task)
+
+        waypoint.tasks.append(OptFormation.trail_open())

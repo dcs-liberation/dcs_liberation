@@ -106,6 +106,12 @@ class MapModel(QObject):
         GameUpdateSignal.get_instance().flight_selection_changed.connect(
             self.set_flight_selection
         )
+        self.game_model.ato_model_for(True).packages_changed.connect(
+            self.on_package_change
+        ),
+        self.game_model.ato_model_for(False).packages_changed.connect(
+            self.on_package_change
+        ),
         sim_controller.sim_update.connect(self.on_sim_update)
         self.reset()
 
@@ -373,6 +379,9 @@ class MapModel(QObject):
     @Property(MapZonesJs, notify=mapZonesChanged)
     def mapZones(self) -> NavMeshJs:
         return self._map_zones
+
+    def on_package_change(self) -> None:
+        self.reset_unculled_zones()
 
     def reset_unculled_zones(self) -> None:
         self._unculled_zones = list(UnculledZone.each_from_game(self.game))

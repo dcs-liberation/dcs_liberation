@@ -1,7 +1,7 @@
 from dcs import Point
 from dcs.planes import B_17G, B_52H, Tu_22M3
 from dcs.point import MovingPoint
-from dcs.task import Bombing, WeaponType
+from dcs.task import Bombing, OptFormation, WeaponType
 
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
@@ -12,6 +12,8 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
             self.add_bombing_tasks(waypoint)
         else:
             self.add_strike_tasks(waypoint)
+
+        waypoint.tasks.append(OptFormation.trail_open())
 
     def add_bombing_tasks(self, waypoint: MovingPoint) -> None:
         targets = self.waypoint.targets
