@@ -95,7 +95,7 @@ class GenericGroundObjectGenerator(Generic[TgoT]):
 
     @property
     def culled(self) -> bool:
-        return self.game.position_culled(self.ground_object.position)
+        return self.game.iads_culled(self.ground_object)
 
     def generate(self) -> None:
         if self.culled:

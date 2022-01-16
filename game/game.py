@@ -6,7 +6,7 @@ import math
 from collections.abc import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List, TYPE_CHECKING, Type, Union, cast
+from typing import Any, List, TYPE_CHECKING, Type, TypeVar, Union, cast
 
 from dcs.countries import Switzerland, USAFAggressors, UnitedNationsPeacekeepers
 from dcs.country import Country
@@ -17,6 +17,7 @@ from faker import Faker
 
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
+from game.utils import Distance
 from gen import naming
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner
@@ -30,13 +31,11 @@ from .profiling import logged_duration
 from .settings import Settings
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
+from .theater.theatergroundobject import TheaterGroundObject
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .weather import Conditions, TimeOfDay
 
 if TYPE_CHECKING:
-    from game.missiongenerator.frontlineconflictdescription import (
-        FrontLineConflictDescription,
-    )
     from .ato.airtaaskingorder import AirTaskingOrder
     from .navmesh import NavMesh
     from .squadrons import AirWing
@@ -491,6 +490,40 @@ class Game:
             if z.distance_to_point(pos) < self.settings.perf_culling_distance * 1000:
                 return False
         return True
+
+    def iads_culled(self, iads: TheaterGroundObject) -> bool:
+        if not self.settings.perf_do_not_cull_threat_IADS:
+            return self.position_culled(iads.position)
+        else:
+            if self.settings.perf_culling:
+                if iads.dcs_identifier == "EWR":
+                    max_detection_range = iads.max_detection_range().meters
+                    for z in self.__culling_zones:
+                        seperation = z.distance_to_point(iads.position)
+                        # EWR detection range is very far.  If left at 100% range no EWR would ever be culled.
+                        if seperation < 0.25 * max_detection_range:
+                            return False
+                if iads.dcs_identifier == "AA":
+                    max_threat_range = iads.max_threat_range().meters
+                    for z in self.__culling_zones:
+                        seperation = z.distance_to_point(iads.position)
+                        # Need range so that SAM can be respected, but dont need huge respect if small SAM.
+                        respect_bubble = 1.15 * max_threat_range
+                        max_respect_range = (
+                            Distance.from_nautical_miles(16).meters + max_threat_range
+                        )
+                        min_respect_range = (
+                            Distance.from_nautical_miles(4).meters + max_threat_range
+                        )
+
+                        if respect_bubble > max_respect_range:
+                            respect_bubble = max_respect_range
+                        elif respect_bubble < min_respect_range:
+                            respect_bubble = min_respect_range
+
+                        if seperation < respect_bubble:
+                            return False
+            return self.position_culled(iads.position)
 
     def get_culling_zones(self) -> list[Point]:
         """

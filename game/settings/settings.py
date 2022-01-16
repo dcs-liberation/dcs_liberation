@@ -449,6 +449,12 @@ class Settings:
         min=10,
         max=10000,
     )
+    perf_do_not_cull_threat_IADS: bool = boolean_option(
+        "Do not cull threatening IADS",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        default=True,
+    )
     perf_do_not_cull_carrier: bool = boolean_option(
         "Do not cull carrier's surroundings",
         page=MISSION_GENERATOR_PAGE,
