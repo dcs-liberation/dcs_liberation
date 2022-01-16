@@ -492,22 +492,22 @@ class Game:
                 return False
         return True
 
-    def iads_culled(self, iads: TheaterGroundObject) -> bool:
+    def iads_considerate_culling(self, tgo: TheaterGroundObject[Any]) -> bool:
         if not self.settings.perf_do_not_cull_threat_IADS:
-            return self.position_culled(iads.position)
+            return self.position_culled(tgo.position)
         else:
             if self.settings.perf_culling:
-                if iads.dcs_identifier == "EWR":
-                    max_detection_range = iads.max_detection_range().meters
+                if tgo.dcs_identifier == "EWR":
+                    max_detection_range = tgo.max_detection_range().meters
                     for z in self.__culling_zones:
-                        seperation = z.distance_to_point(iads.position)
+                        seperation = z.distance_to_point(tgo.position)
                         # EWR detection range is very far.  If left at 100% range no EWR would ever be culled.
                         if seperation < 0.25 * max_detection_range:
                             return False
-                if iads.dcs_identifier == "AA":
-                    max_threat_range = iads.max_threat_range().meters
+                if tgo.dcs_identifier == "AA":
+                    max_threat_range = tgo.max_threat_range().meters
                     for z in self.__culling_zones:
-                        seperation = z.distance_to_point(iads.position)
+                        seperation = z.distance_to_point(tgo.position)
                         # Need range so that SAM can be respected, but dont need huge respect if small SAM.
                         respect_bubble = 1.15 * max_threat_range
                         max_respect_range = (
@@ -524,7 +524,7 @@ class Game:
 
                         if seperation < respect_bubble:
                             return False
-            return self.position_culled(iads.position)
+            return self.position_culled(tgo.position)
 
     def get_culling_zones(self) -> list[Point]:
         """
