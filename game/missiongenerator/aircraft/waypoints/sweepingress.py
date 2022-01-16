@@ -1,7 +1,7 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import EngageTargets, Targets
+from dcs.task import EngageTargets, OptFormation, Targets
 
 from game.utils import nautical_miles
 from gen.flights.flightplan import SweepFlightPlan
@@ -27,3 +27,8 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
                 ],
             )
         )
+
+        if self.flight.count < 4:
+            waypoint.tasks.append(OptFormation.line_abreast_open())
+        else:
+            waypoint.tasks.append(OptFormation.spread_four_open())
