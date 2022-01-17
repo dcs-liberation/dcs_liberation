@@ -31,7 +31,11 @@ from .profiling import logged_duration
 from .settings import Settings
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
-from .theater.theatergroundobject import TheaterGroundObject
+from .theater.theatergroundobject import (
+    EwrGroundObject,
+    SamGroundObject,
+    TheaterGroundObject,
+)
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .weather import Conditions, TimeOfDay
 
@@ -497,14 +501,14 @@ class Game:
             return self.position_culled(tgo.position)
         else:
             if self.settings.perf_culling:
-                if tgo.dcs_identifier == "EWR":
+                if isinstance(tgo, EwrGroundObject):
                     max_detection_range = tgo.max_detection_range().meters
                     for z in self.__culling_zones:
                         seperation = z.distance_to_point(tgo.position)
                         # EWR detection range is very far.  If left at 100% range no EWR would ever be culled.
                         if seperation < 0.25 * max_detection_range:
                             return False
-                if tgo.dcs_identifier == "AA":
+                if isinstance(tgo, SamGroundObject):
                     max_threat_range = tgo.max_threat_range().meters
                     for z in self.__culling_zones:
                         seperation = z.distance_to_point(tgo.position)
