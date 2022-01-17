@@ -1,0 +1,1249 @@
+{
+	"AirDefence": [
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Hawk Site 0"
+				},
+				{
+					"name": "Hawk Site 1"
+				}
+			],
+			"name": "Hawk Site",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ZU-23 Group 0"
+				}
+			],
+			"name": "ZU-23 Group",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ZU-23 Ural Group 0"
+				}
+			],
+			"name": "ZU-23 Ural Group",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ZU-23 Ural Insurgent Group 0"
+				}
+			],
+			"name": "ZU-23 Ural Insurgent Group",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Zu-23 Site 0"
+				}
+			],
+			"name": "Zu-23 Site",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ZSU-23 Group 0"
+				}
+			],
+			"name": "ZSU-23 Group",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Vulcan Group 0"
+				}
+			],
+			"name": "Vulcan Group",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Linebacker Group 0"
+				}
+			],
+			"name": "Linebacker Group",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Rapier AA Site 0"
+				}
+			],
+			"name": "Rapier AA Site",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Avenger Group 0"
+				}
+			],
+			"name": "Avenger Group",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Gepard Group 0"
+				}
+			],
+			"name": "Gepard Group",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Roland Site 0"
+				}
+			],
+			"name": "Roland Site",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Patriot Battery 0"
+				},
+				{
+					"name": "Patriot Battery 1"
+				}
+			],
+			"name": "Patriot Battery",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Chaparral Group 0"
+				}
+			],
+			"name": "Chaparral Group",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Bofors AAA 0"
+				}
+			],
+			"name": "Bofors AAA",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Flak Site 0"
+				}
+			],
+			"name": "Flak Site",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-2/S-75 Site 0"
+				}
+			],
+			"name": "SA-2/S-75 Site",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-3/S-125 Site 0"
+				}
+			],
+			"name": "SA-3/S-125 Site",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-5/S-200 Site 0"
+				}
+			],
+			"name": "SA-5/S-200 Site",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-5/S-200 Site wit FlatFace SR 0"
+				}
+			],
+			"name": "SA-5/S-200 Site wit FlatFace SR",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-6 Kub Site 0"
+				}
+			],
+			"name": "SA-6 Kub Site",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-8 OSA Site 0"
+				}
+			],
+			"name": "SA-8 OSA Site",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-9 Group 0"
+				}
+			],
+			"name": "SA-9 Group",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-10/S-300PS Battery - With ZSU-23 0"
+				},
+				{
+					"name": "SA-10/S-300PS Battery - With ZSU-23 1"
+				}
+			],
+			"name": "SA-10/S-300PS Battery - With ZSU-23",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-10/S-300PS Battery - With SA-15 PD 0"
+				},
+				{
+					"name": "SA-10/S-300PS Battery - With SA-15 PD 1"
+				},
+				{
+					"name": "SA-10/S-300PS Battery - With SA-15 PD 2"
+				}
+			],
+			"name": "SA-10/S-300PS Battery - With SA-15 PD",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-10/S-300PS Battery - With SA-15 PD & SA-19 SHORAD 0"
+				},
+				{
+					"name": "SA-10/S-300PS Battery - With SA-15 PD & SA-19 SHORAD 1"
+				},
+				{
+					"name": "SA-10/S-300PS Battery - With SA-15 PD & SA-19 SHORAD 2"
+				}
+			],
+			"name": "SA-10/S-300PS Battery - With SA-15 PD & SA-19 SHORAD",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-11 Buk Battery 0"
+				}
+			],
+			"name": "SA-11 Buk Battery",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-13 Strela Group 0"
+				}
+			],
+			"name": "SA-13 Strela Group",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-15 Tor Group 0"
+				}
+			],
+			"name": "SA-15 Tor Group",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-19 Tunguska Group 0"
+				}
+			],
+			"name": "SA-19 Tunguska Group",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "HQ-7 Site 0"
+				},
+				{
+					"name": "HQ-7 Site 1"
+				}
+			],
+			"name": "HQ-7 Site",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "WW2 Flak Site 0"
+				}
+			],
+			"name": "WW2 Flak Site",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Cold War Flak Site 0"
+				}
+			],
+			"name": "Cold War Flak Site",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Early Cold War Flak Site 0"
+				}
+			],
+			"name": "Early Cold War Flak Site",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Freya EWR Site 0"
+				}
+			],
+			"name": "Freya EWR Site",
+			"statics": [],
+			"template_type": "Short"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "WW2 Ally Flak Site 0"
+				}
+			],
+			"name": "WW2 Ally Flak Site",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ZSU-57-2 Group 0"
+				}
+			],
+			"name": "ZSU-57-2 Group",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "KS-19 AAA Site 0"
+				}
+			],
+			"name": "KS-19 AAA Site",
+			"statics": [],
+			"template_type": "AAA"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-10B/S-300PS Battery 0"
+				},
+				{
+					"name": "SA-10B/S-300PS Battery 1"
+				},
+				{
+					"name": "SA-10B/S-300PS Battery 2"
+				}
+			],
+			"name": "SA-10B/S-300PS Battery",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-12/S-300V Battery 0"
+				},
+				{
+					"name": "SA-12/S-300V Battery 1"
+				},
+				{
+					"name": "SA-12/S-300V Battery 2"
+				}
+			],
+			"name": "SA-12/S-300V Battery",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-17 Grizzly Battery 0"
+				}
+			],
+			"name": "SA-17 Grizzly Battery",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-20/S-300PMU-1 Battery 0"
+				},
+				{
+					"name": "SA-20/S-300PMU-1 Battery 1"
+				},
+				{
+					"name": "SA-20/S-300PMU-1 Battery 2"
+				}
+			],
+			"name": "SA-20/S-300PMU-1 Battery",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-20B/S-300PMU-2 Battery 0"
+				},
+				{
+					"name": "SA-20B/S-300PMU-2 Battery 1"
+				},
+				{
+					"name": "SA-20B/S-300PMU-2 Battery 2"
+				}
+			],
+			"name": "SA-20B/S-300PMU-2 Battery",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SA-23/S-300VM Battery 0"
+				},
+				{
+					"name": "SA-23/S-300VM Battery 1"
+				},
+				{
+					"name": "SA-23/S-300VM Battery 2"
+				}
+			],
+			"name": "SA-23/S-300VM Battery",
+			"statics": [],
+			"template_type": "Long"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "NASAMS AIM-120B 0"
+				}
+			],
+			"name": "NASAMS AIM-120B",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "NASAMS AIM-120C 0"
+				}
+			],
+			"name": "NASAMS AIM-120C",
+			"statics": [],
+			"template_type": "Medium"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Early-Warning Radar 0",
+					"randomizer": {
+						"count": 1,
+						"faction_types": [
+							"ewrs"
+						],
+						"type_classes": [],
+						"unit_types": [],
+						"units": []
+					}
+				}
+			],
+			"name": "Early-Warning Radar",
+			"statics": [],
+			"template_type": "EWR"
+		}
+	],
+	"Armor": [
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Armor Group with Anti-Air 0",
+					"randomizer": {
+						"count": [
+							2,
+							6
+						],
+						"faction_types": [
+							"frontline_units"
+						],
+						"type_classes": [
+							"APC",
+							"ATGM",
+							"IFV",
+							"Tank"
+						],
+						"unit_types": [],
+						"units": []
+					}
+				},
+				{
+					"name": "Armor Group with Anti-Air 1",
+					"optional": true,
+					"randomizer": {
+						"count": [
+							1,
+							2
+						],
+						"faction_types": [
+							"frontline_units",
+							"infantry_units"
+						],
+						"type_classes": [
+							"SHORADS",
+							"MANPADS"
+						],
+						"unit_types": [],
+						"units": []
+					}
+				}
+			],
+			"name": "Armor Group with Anti-Air",
+			"statics": [],
+			"template_type": "armor_aa"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Armor Group 0",
+					"randomizer": {
+						"count": [
+							2,
+							6
+						],
+						"faction_types": [
+							"frontline_units"
+						],
+						"type_classes": [
+							"APC",
+							"ATGM",
+							"IFV",
+							"Tank"
+						],
+						"unit_types": [],
+						"units": []
+					}
+				}
+			],
+			"name": "Armor Group",
+			"statics": [],
+			"template_type": "armor"
+		}
+	],
+	"Building": [
+		{
+			"description": "",
+			"groups": [],
+			"name": "fuel1",
+			"static_mapping": {
+				"name": "fuel1 0"
+			},
+			"statics": [
+				"fuel1 0-0",
+				"fuel1 0-1",
+				"fuel1 0-2",
+				"fuel1 0-3",
+				"fuel1 0-4",
+				"fuel1 0-5",
+				"fuel1 0-6",
+				"fuel1 0-7"
+			],
+			"template_type": "fuel"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "ammo1",
+			"static_mapping": {
+				"name": "ammo1 0"
+			},
+			"statics": [
+				"ammo1 0-0",
+				"ammo1 0-1",
+				"ammo1 0-2"
+			],
+			"template_type": "ammo"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "comms1",
+			"static_mapping": {
+				"name": "comms1 0"
+			},
+			"statics": [
+				"comms1 0-0"
+			],
+			"template_type": "comms"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "comms2",
+			"static_mapping": {
+				"name": "comms2 0"
+			},
+			"statics": [
+				"comms2 0-0"
+			],
+			"template_type": "comms"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "oil1",
+			"static_mapping": {
+				"name": "oil1 0"
+			},
+			"statics": [
+				"oil1 0-0",
+				"oil1 0-1",
+				"oil1 0-2",
+				"oil1 0-3"
+			],
+			"template_type": "oil"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "ware1",
+			"static_mapping": {
+				"name": "ware1 0"
+			},
+			"statics": [
+				"ware1 0-0",
+				"ware1 0-1",
+				"ware1 0-2",
+				"ware1 0-3"
+			],
+			"template_type": "ware"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "farp1",
+			"static_mapping": {
+				"name": "farp1 0"
+			},
+			"statics": [
+				"farp1 0-0",
+				"farp1 0-1",
+				"farp1 0-2",
+				"farp1 0-3",
+				"farp1 0-4",
+				"farp1 0-5",
+				"farp1 0-6",
+				"farp1 0-7",
+				"farp1 0-8"
+			],
+			"template_type": "farp"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "fob1",
+			"static_mapping": {
+				"name": "fob1 0"
+			},
+			"statics": [
+				"fob1 0-0",
+				"fob1 0-1",
+				"fob1 0-2",
+				"fob1 0-3",
+				"fob1 0-4",
+				"fob1 0-5"
+			],
+			"template_type": "fob"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "power1",
+			"static_mapping": {
+				"name": "power1 0"
+			},
+			"statics": [
+				"power1 0-0",
+				"power1 0-1",
+				"power1 0-2",
+				"power1 0-3",
+				"power1 0-4"
+			],
+			"template_type": "power"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "factory1",
+			"static_mapping": {
+				"name": "factory1 0"
+			},
+			"statics": [
+				"factory1 0-0",
+				"factory1 0-1",
+				"factory1 0-2",
+				"factory1 0-3"
+			],
+			"template_type": "factory"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "derrick1",
+			"static_mapping": {
+				"name": "derrick1 0"
+			},
+			"statics": [
+				"derrick1 0-0",
+				"derrick1 0-1",
+				"derrick1 0-2",
+				"derrick1 0-3",
+				"derrick1 0-4"
+			],
+			"template_type": "derrick"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "ww2bunker1",
+			"static_mapping": {
+				"name": "ww2bunker1 0"
+			},
+			"statics": [
+				"ww2bunker1 0-0",
+				"ww2bunker1 0-1",
+				"ww2bunker1 0-2",
+				"ww2bunker1 0-3",
+				"ww2bunker1 0-4",
+				"ww2bunker1 0-5",
+				"ww2bunker1 0-6",
+				"ww2bunker1 0-7"
+			],
+			"template_type": "ww2bunker"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "village1",
+			"static_mapping": {
+				"name": "village1 0"
+			},
+			"statics": [
+				"village1 0-0",
+				"village1 0-1",
+				"village1 0-2",
+				"village1 0-3",
+				"village1 0-4",
+				"village1 0-5",
+				"village1 0-6",
+				"village1 0-7",
+				"village1 0-8",
+				"village1 0-9",
+				"village1 0-10",
+				"village1 0-11",
+				"village1 0-12"
+			],
+			"template_type": "village"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "ww2bunker2",
+			"static_mapping": {
+				"name": "ww2bunker2 0"
+			},
+			"statics": [
+				"ww2bunker2 0-0",
+				"ww2bunker2 0-1",
+				"ww2bunker2 0-2",
+				"ww2bunker2 0-3",
+				"ww2bunker2 0-4",
+				"ww2bunker2 0-5",
+				"ww2bunker2 0-6",
+				"ww2bunker2 0-7",
+				"ww2bunker2 0-8",
+				"ww2bunker2 0-9",
+				"ww2bunker2 0-10",
+				"ww2bunker2 0-11",
+				"ww2bunker2 0-12",
+				"ww2bunker2 0-13",
+				"ww2bunker2 0-14",
+				"ww2bunker2 0-15",
+				"ww2bunker2 0-16",
+				"ww2bunker2 0-17",
+				"ww2bunker2 0-18"
+			],
+			"template_type": "ww2bunker"
+		},
+		{
+			"description": "",
+			"groups": [],
+			"name": "allycamp1",
+			"static_mapping": {
+				"name": "allycamp1 0"
+			},
+			"statics": [
+				"allycamp1 0-0",
+				"allycamp1 0-1",
+				"allycamp1 0-2",
+				"allycamp1 0-3",
+				"allycamp1 0-4",
+				"allycamp1 0-5",
+				"allycamp1 0-6",
+				"allycamp1 0-7",
+				"allycamp1 0-8",
+				"allycamp1 0-9",
+				"allycamp1 0-10",
+				"allycamp1 0-11",
+				"allycamp1 0-12",
+				"allycamp1 0-13",
+				"allycamp1 0-14",
+				"allycamp1 0-15",
+				"allycamp1 0-16",
+				"allycamp1 0-17",
+				"allycamp1 0-18",
+				"allycamp1 0-19",
+				"allycamp1 0-20",
+				"allycamp1 0-21",
+				"allycamp1 0-22",
+				"allycamp1 0-23",
+				"allycamp1 0-24",
+				"allycamp1 0-25",
+				"allycamp1 0-26",
+				"allycamp1 0-27",
+				"allycamp1 0-28",
+				"allycamp1 0-29",
+				"allycamp1 0-30",
+				"allycamp1 0-31",
+				"allycamp1 0-32",
+				"allycamp1 0-33",
+				"allycamp1 0-34",
+				"allycamp1 0-35",
+				"allycamp1 0-36",
+				"allycamp1 0-37",
+				"allycamp1 0-38",
+				"allycamp1 0-39",
+				"allycamp1 0-40",
+				"allycamp1 0-41",
+				"allycamp1 0-42",
+				"allycamp1 0-43",
+				"allycamp1 0-44",
+				"allycamp1 0-45"
+			],
+			"template_type": "allycamp"
+		}
+	],
+	"Coastal": [
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SilkwormGenerator 0"
+				}
+			],
+			"name": "SilkwormGenerator",
+			"statics": [],
+			"template_type": "Coastal"
+		}
+	],
+	"Missile": [
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "V1GroupGenerator 0"
+				}
+			],
+			"name": "V1GroupGenerator",
+			"statics": [],
+			"template_type": "Missile"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ScudGenerator 0"
+				}
+			],
+			"name": "ScudGenerator",
+			"statics": [],
+			"template_type": "Missile"
+		}
+	],
+	"Naval": [
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "SchnellbootGroupGenerator 0"
+				}
+			],
+			"name": "SchnellbootGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "WW2LSTGroupGenerator 0"
+				}
+			],
+			"name": "WW2LSTGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "UBoatGroupGenerator 0"
+				}
+			],
+			"name": "UBoatGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "OliverHazardPerryGroupGenerator 0"
+				}
+			],
+			"name": "OliverHazardPerryGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ArleighBurkeGroupGenerator 0"
+				}
+			],
+			"name": "ArleighBurkeGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "RussianNavyGroupGenerator 0"
+				}
+			],
+			"name": "RussianNavyGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "ChineseNavyGroupGenerator 0"
+				}
+			],
+			"name": "ChineseNavyGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "GrishaGroupGenerator 0"
+				}
+			],
+			"name": "GrishaGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "MolniyaGroupGenerator 0"
+				}
+			],
+			"name": "MolniyaGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "KiloSubGroupGenerator 0"
+				}
+			],
+			"name": "KiloSubGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "TangoSubGroupGenerator 0"
+				}
+			],
+			"name": "TangoSubGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Type54GroupGenerator 0"
+				}
+			],
+			"name": "Type54GroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "LaCombattanteIIGroupGenerator 0"
+				}
+			],
+			"name": "LaCombattanteIIGroupGenerator",
+			"statics": [],
+			"template_type": "ship"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Carrier Group 0",
+					"randomizer": {
+						"count": 1,
+						"faction_types": [
+							"aircraft_carrier"
+						],
+						"type_classes": [],
+						"unit_types": [],
+						"units": [
+							0
+						]
+					}
+				},
+				{
+					"name": "Carrier Group 1",
+					"randomizer": {
+						"count": 4,
+						"faction_types": [
+							"destroyers"
+						],
+						"type_classes": [],
+						"unit_types": [],
+						"units": []
+					}
+				}
+			],
+			"name": "Carrier Group",
+			"statics": [],
+			"template_type": "carrier"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "Carrier Strike Group 8 0",
+					"randomizer": {
+						"count": 1,
+						"faction_types": [
+							"aircraft_carrier"
+						],
+						"type_classes": [],
+						"unit_types": [],
+						"units": [
+							0
+						]
+					}
+				},
+				{
+					"name": "Carrier Strike Group 8 1",
+					"randomizer": {
+						"count": 5,
+						"faction_types": [
+							"destroyers"
+						],
+						"type_classes": [],
+						"unit_types": [],
+						"units": []
+					}
+				}
+			],
+			"name": "Carrier Strike Group 8",
+			"statics": [],
+			"template_type": "carrier"
+		},
+		{
+			"description": "",
+			"groups": [
+				{
+					"name": "LHA Group 0",
+					"randomizer": {
+						"count": 1,
+						"faction_types": [
+							"helicopter_carrier"
+						],
+						"type_classes": [],
+						"unit_types": [],
+						"units": [
+							0
+						]
+					}
+				},
+				{
+					"name": "LHA Group 1",
+					"randomizer": {
+						"count": 2,
+						"faction_types": [
+							"destroyers"
+						],
+						"type_classes": [],
+						"unit_types": [],
+						"units": []
+					}
+				}
+			],
+			"name": "LHA Group",
+			"statics": [],
+			"template_type": "lha"
+		}
+	]
+}

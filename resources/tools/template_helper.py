@@ -16,47 +16,42 @@ from dcs import Point
 from game import Game
 from game.campaignloader import CampaignAirWingConfig
 from game.db import FACTIONS
-from game.dcs.groundunittype import GroundUnitType
 from game.missiongenerator.tgogenerator import (
     GroundObjectGenerator,
 )
 from game.point_with_heading import PointWithHeading
 from game.settings import Settings
-from game.theater import CaucasusTheater, SamGroundObject, OffMapSpawn
+from game.theater import CaucasusTheater, OffMapSpawn
 from game.unitmap import UnitMap
 from game.utils import Heading
-from gen.to_remove.armored_group_generator import (
-    FixedSizeArmorGroupGenerator,
-    FixedSizeArmorGroupGeneratorWithAA,
-)
-from gen.to_remove.carrier_group import (
-    CarrierGroupGenerator,
-    CarrierStrikeGroup8Generator,
-)
-from gen.to_remove.lha_group import LHAGroupGenerator
-from gen.to_remove.ship_group_generator import SHIP_MAP
-from gen.to_remove.coastal_group_generator import COASTAL_MAP
+
+# from gen.to_remove.armored_group_generator import (
+#     FixedSizeArmorGroupGenerator,
+#     FixedSizeArmorGroupGeneratorWithAA,
+# )
+# from gen.to_remove.carrier_group import (
+#     CarrierGroupGenerator,
+#     CarrierStrikeGroup8Generator,
+# )
+# from gen.to_remove.lha_group import LHAGroupGenerator
+# from gen.to_remove.ship_group_generator import SHIP_MAP
+# from gen.to_remove.coastal_group_generator import COASTAL_MAP
 from gen.templates import (
     GroundObjectTemplates,
     TemplateCategory,
     GroupTemplate,
     UnitTemplate,
     TemplateEncoder,
-    MissileTemplate,
     BuildingTemplate,
-    CoastalTemplate,
-    NavalTemplate,
     TemplateRandomizer,
-    ArmorTemplate,
     TEMPLATE_TYPES,
-    AirDefenceTemplate,
 )
-from gen.to_remove.missiles_group_generator import MISSILES_MAP
-from gen.to_remove.airdefensegroupgenerator import AirDefenseGroupGenerator
-from gen.to_remove.ewr_group_generator import EWR_MAP
-from gen.to_remove.ewrs import EwrGenerator
-from gen.to_remove.sam_group_generator import SAM_MAP
-from gen.naming import namegen
+
+# from gen.to_remove.missiles_group_generator import MISSILES_MAP
+# from gen.to_remove.airdefensegroupgenerator import AirDefenseGroupGenerator
+# from gen.to_remove.ewr_group_generator import EWR_MAP
+# from gen.to_remove.ewrs import EwrGenerator
+# from gen.to_remove.sam_group_generator import SAM_MAP
 from qt_ui import liberation_install
 
 
@@ -463,241 +458,242 @@ def update_factions(generator_names) -> None:
     )
 
 
-def migrate_generators_to_templates(
-    input_miz: str,
-    templates_file: str,
-    miz_file: str,
-    template_map_file: str,
-    table_file: str,
-) -> None:
-
-    templates = GroundObjectTemplates()
-
-    theater = CaucasusTheater()
-
-    initial_position = Point(0, 0)
-    control_point = OffMapSpawn(1, "Spawn", initial_position, True)
-    theater.add_controlpoint(control_point)
-
-    game = Game(
-        FACTIONS["Bluefor Modern"],
-        FACTIONS["Russia 2010"],
-        theater,
-        CampaignAirWingConfig({control_point: []}),
-        datetime.today(),
-        Settings(),
-        10000,
-        10000,
-    )
-
-    generators: dict[TemplateCategory, dict[str, Any]] = {
-        TemplateCategory.AirDefence: SAM_MAP,
-        TemplateCategory.Naval: SHIP_MAP,
-        TemplateCategory.Missile: MISSILES_MAP,
-        TemplateCategory.Coastal: COASTAL_MAP,
-        TemplateCategory.Armor: {},
-    }
-
-    # Only use one EWR generator. The differnt units will be placed as randomizer
-    generators[TemplateCategory.AirDefence]["EWRGenerator"] = EwrGenerator
-
-    generators[TemplateCategory.Naval]["CarrierGroupGenerator"] = CarrierGroupGenerator
-    generators[TemplateCategory.Naval][
-        "CarrierStrikeGroup8Generator"
-    ] = CarrierStrikeGroup8Generator
-    generators[TemplateCategory.Naval]["LHAGroupGenerator"] = LHAGroupGenerator
-    generators[TemplateCategory.Armor][
-        "RandomArmorGroup"
-    ] = FixedSizeArmorGroupGenerator
-    generators[TemplateCategory.Armor][
-        "RandomArmorGroupWithAA"
-    ] = FixedSizeArmorGroupGeneratorWithAA
-
-    generator_names = []
-
-    for category, template_generators in generators.items():
-        for generator_name, generator_class in template_generators.items():
-            # Just reuse SamGroundObject to make it easy
-            ground_object = SamGroundObject(
-                namegen.random_objective_name(),
-                initial_position,
-                control_point,
-            )
-
-            if category in (
-                TemplateCategory.Naval,
-                TemplateCategory.Missile,
-                TemplateCategory.Coastal,
-            ):
-                generator = generator_class(game, ground_object, game.blue.faction)
-            elif category == TemplateCategory.Armor:
-                unit_type = next(
-                    GroundUnitType.for_dcs_type(dcs.vehicles.Armor.M_1_Abrams)
-                )
-                generator = generator_class(
-                    game,
-                    ground_object,
-                    unit_type,
-                    # Create a group of 8 Armored Vehicles
-                    8,
-                )
-            else:
-                generator = generator_class(game, ground_object)
-
-            # Generate the DCS Groups
-            generator.generate()
-
-            if isinstance(generator, EwrGenerator):
-                template = AirDefenceTemplate("Early-Warning Radar", "EWR")
-            elif isinstance(generator, AirDefenseGroupGenerator):
-                template = AirDefenceTemplate(generator.name, generator.range().name)
-            elif generator_name in MISSILES_MAP:
-                template = MissileTemplate(generator_name, category.name)
-            elif generator_name in COASTAL_MAP:
-                template = CoastalTemplate(generator_name, category.name)
-            elif category == TemplateCategory.Naval:
-                if generator_name == "CarrierGroupGenerator":
-                    template = NavalTemplate("Carrier Group", "carrier")
-                elif generator_name == "CarrierStrikeGroup8Generator":
-                    template = NavalTemplate("Carrier Strike Group 8", "carrier")
-                elif generator_name == "LHAGroupGenerator":
-                    template = NavalTemplate("LHA Group", "lha")
-                else:
-                    template = NavalTemplate(generator_name, "ship")
-            elif category == TemplateCategory.Armor:
-                if generator_name == "RandomArmorGroup":
-                    template = ArmorTemplate("Armor Group", "armor")
-                elif generator_name == "RandomArmorGroupWithAA":
-                    template = ArmorTemplate("Armor Group with Anti-Air", "armor_aa")
-            else:
-                raise RuntimeError("Generator handling missing")
-
-            groups = list(generator.groups)
-
-            # These have to be identical!
-            for i, group in enumerate(groups):
-                for j, unit in enumerate(group.units):
-                    unit.name = f"{template.name} {i}-{j}"
-
-                group_template = GroupTemplate(
-                    f"{template.name} #{str(i)}",
-                    [UnitTemplate.from_unit(unit) for unit in group.units],
-                )
-
-                if generator_name in [
-                    "CarrierGroupGenerator",
-                    "CarrierStrikeGroup8Generator",
-                ]:
-                    if i == 0:
-                        group_template.randomizer = TemplateRandomizer(
-                            [0], 1, ["aircraft_carrier"]
-                        )
-                    elif i == 1:
-                        count = (
-                            5 if generator_name == "CarrierStrikeGroup8Generator" else 4
-                        )
-                        group_template.randomizer = TemplateRandomizer(
-                            [], count, ["destroyers"]
-                        )
-                elif generator_name == "LHAGroupGenerator":
-                    if i == 0:
-                        group_template.randomizer = TemplateRandomizer(
-                            [0], 1, ["helicopter_carrier"]
-                        )
-                    elif i == 1:
-                        group_template.randomizer = TemplateRandomizer(
-                            [], 2, ["destroyers"]
-                        )
-                elif generator_name == "RandomArmorGroup" and i == 0:
-                    group_template.randomizer = TemplateRandomizer(
-                        [],
-                        [2, 6],
-                        ["frontline_units"],
-                        ["APC", "ATGM", "IFV", "Tank"],
-                    )
-                elif generator_name == "RandomArmorGroupWithAA":
-                    if i == 0:
-                        group_template.randomizer = TemplateRandomizer(
-                            [],
-                            [2, 6],
-                            ["frontline_units"],
-                            ["APC", "ATGM", "IFV", "Tank"],
-                        )
-                    elif i == 1:
-                        group_template.randomizer = TemplateRandomizer(
-                            [],
-                            [1, 2],
-                            ["frontline_units", "infantry_units"],
-                            ["SHORADS", "MANPADS"],
-                        )
-                        group_template.optional = True
-                elif generator_name == "EWRGenerator" and i == 0:
-                    for ewr_generator_name, ewr_generator in EWR_MAP.items():
-                        unit_type = next(
-                            GroundUnitType.for_dcs_type(ewr_generator.unit_type)
-                        )
-                        # Update all factions from generator to unit_type
-                        generator_names.append(
-                            [ewr_generator.unit_type.name, str(unit_type)]
-                        )
-                        # Update old generator names
-                        generator_names.append([ewr_generator_name, str(unit_type)])
-
-                    group_template.randomizer = TemplateRandomizer(
-                        [],
-                        1,
-                        ["ewrs"],  # Randomization based on faction template
-                    )
-
-                template.groups.append(group_template)
-
-            templates.add_template(category, template)
-            generator_names.append([generator_name, template.name])
-
-    # Load the basic templates
-    temp_mis = dcs.Mission()
-    temp_mis.load_file(input_miz)
-
-    position_for_template: dict[str, Point] = {}
-    group_for_template: dict[str, GroupTemplate] = {}
-    for static_group in (
-        temp_mis.country("USA").static_group
-        + temp_mis.country("USAF Aggressors").static_group
-    ):
-        # Naming is: fob1 #001 -> name: fob1, category fob, group_name: fob1 #001
-        template_name = str(static_group.name).split()[0]
-        category_name, idx = template_name[:-1], int(template_name[-1])
-
-        template = templates.by_name(template_name)
-        if not template:
-            template = BuildingTemplate(template_name, category_name)
-
-            # Store original position to make the template relative to TGO later
-            position_for_template[template_name] = static_group.position
-
-            # Create Group Template for the satic group. Within Liberation we map
-            # static units in groups even if dcs can not handle this. The dcs specific
-            # handling will happpen later in miz generation again.
-            group_template = GroupTemplate(f"{template.name}", [], True)
-            group_for_template[template_name] = group_template
-            template.groups.append(group_template)
-
-            templates.add_template(TemplateCategory.Building, template)
-
-        for u_id, unit in enumerate(static_group.units):
-            unit_template = UnitTemplate.from_unit(unit)
-            unit_template.position = Point(
-                int(unit_template.position.x - position_for_template[template_name].x),
-                int(unit_template.position.y - position_for_template[template_name].y),
-            )
-            group_for_template[template_name].units.append(unit_template)
-
-    # Dump the template_map as json
-    with open(templates_file, "w") as f:
-        json.dump(templates.to_json(), f, cls=TemplateEncoder, indent=4)
-
-    # Update Faction files
-    update_factions(generator_names)
+# def migrate_generators_to_templates(
+#     input_miz: str,
+#     templates_file: str,
+#     miz_file: str,
+#     template_map_file: str,
+#     table_file: str,
+# ) -> None:
+#
+#     templates = GroundObjectTemplates()
+#
+#     theater = CaucasusTheater()
+#
+#     initial_position = Point(0, 0)
+#     control_point = OffMapSpawn(1, "Spawn", initial_position, True)
+#     theater.add_controlpoint(control_point)
+#
+#     game = Game(
+#         FACTIONS["Bluefor Modern"],
+#         FACTIONS["Russia 2010"],
+#         theater,
+#         CampaignAirWingConfig({control_point: []}),
+#         datetime.today(),
+#         Settings(),
+#         10000,
+#         10000,
+#     )
+#
+#     generators: dict[TemplateCategory, dict[str, Any]] = {
+#         TemplateCategory.AirDefence: SAM_MAP,
+#         TemplateCategory.Naval: SHIP_MAP,
+#         TemplateCategory.Missile: MISSILES_MAP,
+#         TemplateCategory.Coastal: COASTAL_MAP,
+#         TemplateCategory.Armor: {},
+#     }
+#
+#     # Only use one EWR generator. The differnt units will be placed as randomizer
+#     generators[TemplateCategory.AirDefence]["EWRGenerator"] = EwrGenerator
+#
+#     generators[TemplateCategory.Naval]["CarrierGroupGenerator"] = CarrierGroupGenerator
+#     generators[TemplateCategory.Naval][
+#         "CarrierStrikeGroup8Generator"
+#     ] = CarrierStrikeGroup8Generator
+#     generators[TemplateCategory.Naval]["LHAGroupGenerator"] = LHAGroupGenerator
+#     generators[TemplateCategory.Armor][
+#         "RandomArmorGroup"
+#     ] = FixedSizeArmorGroupGenerator
+#     generators[TemplateCategory.Armor][
+#         "RandomArmorGroupWithAA"
+#     ] = FixedSizeArmorGroupGeneratorWithAA
+#
+#     generator_names = []
+#
+#     for category, template_generators in generators.items():
+#         for generator_name, generator_class in template_generators.items():
+#             # Just reuse SamGroundObject to make it easy
+#             ground_object = SamGroundObject(
+#                 namegen.random_objective_name(),
+#                 initial_position,
+#                 control_point,
+#             )
+#
+#             if category in (
+#                 TemplateCategory.Naval,
+#                 TemplateCategory.Missile,
+#                 TemplateCategory.Coastal,
+#             ):
+#                 generator = generator_class(game, ground_object, game.blue.faction)
+#             elif category == TemplateCategory.Armor:
+#                 unit_type = next(
+#                     GroundUnitType.for_dcs_type(dcs.vehicles.Armor.M_1_Abrams)
+#                 )
+#                 generator = generator_class(
+#                     game,
+#                     ground_object,
+#                     unit_type,
+#                     # Create a group of 8 Armored Vehicles
+#                     8,
+#                 )
+#             else:
+#                 generator = generator_class(game, ground_object)
+#
+#             # Generate the DCS Groups
+#             generator.generate()
+#
+#             if isinstance(generator, EwrGenerator):
+#                 template = AirDefenceTemplate("Early-Warning Radar", "EWR")
+#             elif isinstance(generator, AirDefenseGroupGenerator):
+#                 template = AirDefenceTemplate(generator.name, generator.range().name)
+#             elif generator_name in MISSILES_MAP:
+#                 template = MissileTemplate(generator_name, category.name)
+#             elif generator_name in COASTAL_MAP:
+#                 template = CoastalTemplate(generator_name, category.name)
+#             elif category == TemplateCategory.Naval:
+#                 if generator_name == "CarrierGroupGenerator":
+#                     template = NavalTemplate("Carrier Group", "carrier")
+#                 elif generator_name == "CarrierStrikeGroup8Generator":
+#                     template = NavalTemplate("Carrier Strike Group 8", "carrier")
+#                 elif generator_name == "LHAGroupGenerator":
+#                     template = NavalTemplate("LHA Group", "lha")
+#                 else:
+#                     template = NavalTemplate(generator_name, "ship")
+#             elif category == TemplateCategory.Armor:
+#                 if generator_name == "RandomArmorGroup":
+#                     template = ArmorTemplate("Armor Group", "armor")
+#                 elif generator_name == "RandomArmorGroupWithAA":
+#                     template = ArmorTemplate("Armor Group with Anti-Air", "armor_aa")
+#             else:
+#                 raise RuntimeError("Generator handling missing")
+#
+#             groups = list(generator.groups)
+#
+#             # These have to be identical!
+#             for i, group in enumerate(groups):
+#                 for j, unit in enumerate(group.units):
+#                     unit.name = f"{template.name} {i}-{j}"
+#
+#                 group_template = GroupTemplate(
+#                     f"{template.name} #{str(i)}",
+#                     [UnitTemplate.from_unit(unit) for unit in group.units],
+#                 )
+#
+#                 if generator_name in [
+#                     "CarrierGroupGenerator",
+#                     "CarrierStrikeGroup8Generator",
+#                 ]:
+#                     if i == 0:
+#                         group_template.randomizer = TemplateRandomizer(
+#                             [0], 1, ["aircraft_carrier"]
+#                         )
+#                     elif i == 1:
+#                         count = (
+#                             5 if generator_name == "CarrierStrikeGroup8Generator" else 4
+#                         )
+#                         group_template.randomizer = TemplateRandomizer(
+#                             [], count, ["destroyers"]
+#                         )
+#                 elif generator_name == "LHAGroupGenerator":
+#                     if i == 0:
+#                         group_template.randomizer = TemplateRandomizer(
+#                             [0], 1, ["helicopter_carrier"]
+#                         )
+#                     elif i == 1:
+#                         group_template.randomizer = TemplateRandomizer(
+#                             [], 2, ["destroyers"]
+#                         )
+#                 elif generator_name == "RandomArmorGroup" and i == 0:
+#                     group_template.randomizer = TemplateRandomizer(
+#                         [],
+#                         [2, 6],
+#                         ["frontline_units"],
+#                         ["APC", "ATGM", "IFV", "Tank"],
+#                     )
+#                 elif generator_name == "RandomArmorGroupWithAA":
+#                     if i == 0:
+#                         group_template.randomizer = TemplateRandomizer(
+#                             [],
+#                             [2, 6],
+#                             ["frontline_units"],
+#                             ["APC", "ATGM", "IFV", "Tank"],
+#                         )
+#                     elif i == 1:
+#                         group_template.randomizer = TemplateRandomizer(
+#                             [],
+#                             [1, 2],
+#                             ["frontline_units", "infantry_units"],
+#                             ["SHORADS", "MANPADS"],
+#                         )
+#                         group_template.optional = True
+#                 elif generator_name == "EWRGenerator" and i == 0:
+#                     for ewr_generator_name, ewr_generator in EWR_MAP.items():
+#                         unit_type = next(
+#                             GroundUnitType.for_dcs_type(ewr_generator.unit_type)
+#                         )
+#                         # Update all factions from generator to unit_type
+#                         generator_names.append(
+#                             [ewr_generator.unit_type.name, str(unit_type)]
+#                         )
+#                         # Update old generator names
+#                         generator_names.append([ewr_generator_name, str(unit_type)])
+#
+#                     group_template.randomizer = TemplateRandomizer(
+#                         [],
+#                         1,
+#                         ["ewrs"],  # Randomization based on faction template
+#                     )
+#
+#                 template.groups.append(group_template)
+#
+#             templates.add_template(category, template)
+#             generator_names.append([generator_name, template.name])
+#
+#     # Load the basic templates
+#     temp_mis = dcs.Mission()
+#     temp_mis.load_file(input_miz)
+#
+#     position_for_template: dict[str, Point] = {}
+#     group_for_template: dict[str, GroupTemplate] = {}
+#     for static_group in (
+#         temp_mis.country("USA").static_group
+#         + temp_mis.country("USAF Aggressors").static_group
+#     ):
+#         # Naming is: fob1 #001 -> name: fob1, category fob, group_name: fob1 #001
+#         template_name = str(static_group.name).split()[0]
+#         category_name, idx = template_name[:-1], int(template_name[-1])
+#
+#         template = templates.by_name(template_name)
+#         if not template:
+#             template = BuildingTemplate(template_name, category_name)
+#
+#             # Store original position to make the template relative to TGO later
+#             position_for_template[template_name] = static_group.position
+#
+#             # Create Group Template for the satic group. Within Liberation we map
+#             # static units in groups even if dcs can not handle this. The dcs specific
+#             # handling will happpen later in miz generation again.
+#             group_template = GroupTemplate(f"{template.name}", [], True)
+#             group_for_template[template_name] = group_template
+#             template.groups.append(group_template)
+#
+#             templates.add_template(TemplateCategory.Building, template)
+#
+#         for u_id, unit in enumerate(static_group.units):
+#             unit_template = UnitTemplate.from_unit(unit)
+#             unit_template.position = Point(
+#                 int(unit_template.position.x - position_for_template[template_name].x),
+#                 int(unit_template.position.y - position_for_template[template_name].y),
+#             )
+#             group_for_template[template_name].units.append(unit_template)
+#
+#     # Dump the template_map as json
+#     with open(templates_file, "w") as f:
+#         json.dump(templates.to_json(), f, cls=TemplateEncoder, indent=4)
+#
+#     # Update Faction files
+#     update_factions(generator_names)
+#
 
     print(
         "Migrate successful. To finish the migration also run export followed by an import again."
@@ -774,10 +770,10 @@ def main():
         export_templates(target_file, miz_file, template_map)
     elif args.Table:
         print_table(target_file, table_file)
-    elif args.Migrate:
-        migrate_generators_to_templates(
-            migrate_file, target_file, miz_file, template_map, table_file
-        )
+    # elif args.Migrate:
+    #     migrate_generators_to_templates(
+    #         migrate_file, target_file, miz_file, template_map, table_file
+    #     )
 
 
 if __name__ == "__main__":
