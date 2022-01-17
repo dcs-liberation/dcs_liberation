@@ -286,24 +286,21 @@ class MizCampaignLoader:
 
             # Verify that all control points are at least the capture distance away from each other.
             # If not, raise an exception to prevent the campaign generation.
-            for cp_index_a in control_points:
-                control_point_a = control_points[cp_index_a]
-                for cp_index_b in control_points:
-                    control_point_b = control_points[cp_index_b]
-                    if cp_index_a == cp_index_b:
-                        continue
-                    else:
-                        distance_between_cps = (
-                            control_point_a.position.distance_to_point(
-                                control_point_b.position
-                            )
+            for control_point_a, control_point_b in itertools.product(
+                control_points.values(), control_points.values()
+            ):
+                if control_point_a == control_point_b:
+                    continue
+                else:
+                    distance_between_cps = control_point_a.position.distance_to_point(
+                        control_point_b.position
+                    )
+                    if distance_between_cps < TRIGGER_RADIUS_CAPTURE:
+                        raise RuntimeError(
+                            f"Error in campaign definition: Control point {control_point_a.name} is too close "
+                            + f"to control point {control_point_b.name}. Distance is {distance_between_cps} meters "
+                            + f"while it must be longer than the capture distance of {TRIGGER_RADIUS_CAPTURE} meters."
                         )
-                        if distance_between_cps < TRIGGER_RADIUS_CAPTURE:
-                            raise RuntimeError(
-                                f"Error in campaign definition: Control point {control_point_a.name} is too close "
-                                + f"to control point {control_point_b.name}. Distance is {distance_between_cps} meters "
-                                + f"while it must be longer than the capture distance of {TRIGGER_RADIUS_CAPTURE} meters."
-                            )
 
         return control_points
 
