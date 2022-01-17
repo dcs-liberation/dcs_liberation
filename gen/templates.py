@@ -7,13 +7,14 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Iterator, Any, TYPE_CHECKING, Optional, Tuple, Union
+from typing import Iterator, Any, TYPE_CHECKING, Optional, Union
 
 from dcs import Point
 from dcs.ships import ship_map
 from dcs.unit import Unit
 from dcs.unittype import UnitType
 from dcs.vehicles import vehicle_map
+from game.data.radar_db import UNITS_WITH_RADAR
 
 from game.dcs.groundunittype import GroundUnitType
 from game.theater.theatergroundobject import (
@@ -329,19 +330,26 @@ class GroundObjectTemplate(ABC):
             for u_id, unit in enumerate(tgo_group.units):
                 unit.id = game.next_unit_id()
                 unit.name = f"{self.name} {g_id}-{u_id}"
-                if isinstance(self, AirDefenceTemplate):
-                    # Head SAM and EWR towards the center of the conflict
-                    unit.position.heading = (
-                        game.theater.heading_to_conflict_from(unit.position)
-                        or unit.position.heading
-                    )
                 unit.position = PointWithHeading.from_point(
                     Point(
                         ground_object.position.x + unit.position.x,
                         ground_object.position.y + unit.position.y,
                     ),
-                    unit.position.heading,
+                    # Align heading to GroundObject defined by the campaign designer
+                    unit.position.heading + ground_object.heading,
                 )
+                if (
+                    isinstance(self, AirDefenceTemplate)
+                    and unit.unit_type
+                    and unit.unit_type.dcs_unit_type in UNITS_WITH_RADAR
+                ):
+                    # Head Radars towards the center of the conflict
+                    unit.position.heading = (
+                        game.theater.heading_to_conflict_from(unit.position)
+                        or unit.position.heading
+                    )
+                # Rotate unit around the center to align the orientation of the group
+                unit.position.rotate(ground_object.position, ground_object.heading)
             ground_object.groups.append(tgo_group)
 
         return ground_object
@@ -422,9 +430,9 @@ class AirDefenceTemplate(GroundObjectTemplate):
         control_point: ControlPoint,
     ) -> IadsGroundObject:
         if self.template_type == "EWR":
-            return EwrGroundObject(name, position, control_point)
+            return EwrGroundObject(name, position, position.heading, control_point)
         elif self.template_type in ["Long", "Medium", "Short", "AAA"]:
-            return SamGroundObject(name, position, control_point)
+            return SamGroundObject(name, position, position.heading, control_point)
         raise RuntimeError(
             f" No Template Definition for AirDefence with subcategory {self.template_type}"
         )
@@ -480,7 +488,7 @@ class ArmorTemplate(GroundObjectTemplate):
         position: PointWithHeading,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
-        return VehicleGroupGroundObject(name, position, control_point)
+        return VehicleGroupGroundObject(name, position, position.heading, control_point)
 
 
 class MissileTemplate(GroundObjectTemplate):
@@ -490,7 +498,7 @@ class MissileTemplate(GroundObjectTemplate):
         position: PointWithHeading,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
-        return MissileSiteGroundObject(name, position, control_point)
+        return MissileSiteGroundObject(name, position, position.heading, control_point)
 
 
 TEMPLATE_TYPES = {
