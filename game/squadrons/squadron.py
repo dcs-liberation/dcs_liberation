@@ -215,6 +215,10 @@ class Squadron:
         return self.settings.squadron_pilot_limit
 
     @property
+    def expected_pilots_next_turn(self) -> int:
+        return len(self.active_pilots) + self.settings.squadron_replenishment_rate
+
+    @property
     def active_pilots(self) -> list[Pilot]:
         return self._pilots_with_status(PilotStatus.Active)
 

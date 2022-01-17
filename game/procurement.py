@@ -189,7 +189,8 @@ class ProcurementAi:
             # after fulfilling this aircraft request.
             if (
                 squadron.pilot_limits_enabled
-                and squadron.expected_size_next_turn + quantity > squadron.max_size
+                and squadron.expected_size_next_turn + quantity
+                > squadron.expected_pilots_next_turn
             ):
                 continue
             if price > budget:
