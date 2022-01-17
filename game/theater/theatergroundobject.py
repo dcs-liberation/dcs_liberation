@@ -470,12 +470,14 @@ class LhaGroundObject(GenericCarrierGroundObject):
 
 
 class MissileSiteGroundObject(TheaterGroundObject):
-    def __init__(self, name: str, position: Point, control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, position: Point, heading: Heading, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="missile",
             position=position,
-            heading=Heading.from_degrees(0),
+            heading=heading,
             control_point=control_point,
             sea_object=False,
         )
@@ -532,13 +534,14 @@ class SamGroundObject(IadsGroundObject):
         self,
         name: str,
         position: Point,
+        heading: Heading,
         control_point: ControlPoint,
     ) -> None:
         super().__init__(
             name=name,
             category="aa",
             position=position,
-            heading=Heading.from_degrees(0),
+            heading=heading,
             control_point=control_point,
             sea_object=False,
         )
@@ -597,13 +600,14 @@ class VehicleGroupGroundObject(TheaterGroundObject):
         self,
         name: str,
         position: Point,
+        heading: Heading,
         control_point: ControlPoint,
     ) -> None:
         super().__init__(
             name=name,
             category="armor",
             position=position,
-            heading=Heading.from_degrees(0),
+            heading=heading,
             control_point=control_point,
             sea_object=False,
         )
@@ -622,13 +626,14 @@ class EwrGroundObject(IadsGroundObject):
         self,
         name: str,
         position: Point,
+        heading: Heading,
         control_point: ControlPoint,
     ) -> None:
         super().__init__(
             name=name,
             category="ewr",
             position=position,
-            heading=Heading.from_degrees(0),
+            heading=heading,
             control_point=control_point,
             sea_object=False,
         )

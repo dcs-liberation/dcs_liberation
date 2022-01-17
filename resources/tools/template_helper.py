@@ -516,6 +516,7 @@ def update_factions(generator_names) -> None:
 #             ground_object = SamGroundObject(
 #                 namegen.random_objective_name(),
 #                 initial_position,
+#                 Heading.from_degrees(0),
 #                 control_point,
 #             )
 #
