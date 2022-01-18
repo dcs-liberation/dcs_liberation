@@ -29,8 +29,7 @@ class MissionResultsProcessor:
         self.commit_convoy_losses(debriefing)
         self.commit_cargo_ship_losses(debriefing)
         self.commit_airlift_losses(debriefing)
-        self.commit_ground_object_losses(debriefing)
-        self.commit_building_losses(debriefing)
+        self.commit_ground_losses(debriefing)
         self.commit_damaged_runways(debriefing)
         self.commit_captures(debriefing)
         self.commit_front_line_battle_impact(debriefing)
@@ -131,23 +130,11 @@ class MissionResultsProcessor:
                     )
 
     @staticmethod
-    def commit_ground_object_losses(debriefing: Debriefing) -> None:
-        for loss in debriefing.ground_object_losses:
-            # TODO: This should be stored in the TGO, not in the pydcs Group.
-            if not hasattr(loss.group, "units_losts"):
-                loss.group.units_losts = []  # type: ignore
-
-            loss.group.units.remove(loss.unit)
-            loss.group.units_losts.append(loss.unit)  # type: ignore
-
-    def commit_building_losses(self, debriefing: Debriefing) -> None:
-        for loss in debriefing.building_losses:
-            loss.ground_object.kill()
-            self.game.message(
-                "Building destroyed",
-                f"{loss.ground_object.dcs_identifier} has been destroyed at "
-                f"location {loss.ground_object.obj_name}",
-            )
+    def commit_ground_losses(debriefing: Debriefing) -> None:
+        for ground_object_loss in debriefing.ground_object_losses:
+            ground_object_loss.ground_unit.kill()
+        for scenery_object_loss in debriefing.scenery_object_losses:
+            scenery_object_loss.ground_unit.kill()
 
     @staticmethod
     def commit_damaged_runways(debriefing: Debriefing) -> None:

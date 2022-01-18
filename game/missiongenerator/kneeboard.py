@@ -32,7 +32,6 @@ from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 from dcs.mission import Mission
-from dcs.unit import Unit
 from tabulate import tabulate
 
 from game.ato.flighttype import FlightType
@@ -42,7 +41,7 @@ from game.data.alic import AlicCodes
 from game.db import unit_type_from_name
 from game.dcs.aircrafttype import AircraftType
 from game.radio.radios import RadioFrequency
-from game.theater import ConflictTheater, LatLon, TheaterGroundObject
+from game.theater import ConflictTheater, LatLon, TheaterGroundObject, GroundUnit
 from game.theater.bullseye import Bullseye
 from game.utils import Distance, UnitSystem, meters, mps, pounds
 from game.weather import Weather
@@ -608,14 +607,14 @@ class SeadTaskPage(KneeboardPage):
         self.theater = theater
 
     @property
-    def target_units(self) -> Iterator[Unit]:
+    def target_units(self) -> Iterator[GroundUnit]:
         if isinstance(self.flight.package.target, TheaterGroundObject):
-            yield from self.flight.package.target.units
+            yield from self.flight.package.target.strike_targets
 
     @staticmethod
-    def alic_for(unit: Unit) -> str:
+    def alic_for(unit_type: str) -> str:
         try:
-            return str(AlicCodes.code_for(unit))
+            return str(AlicCodes.code_for(unit_type))
         except KeyError:
             return ""
 
@@ -635,11 +634,15 @@ class SeadTaskPage(KneeboardPage):
 
         writer.write(path)
 
-    def target_info_row(self, unit: Unit) -> List[str]:
+    def target_info_row(self, unit: GroundUnit) -> List[str]:
         ll = self.theater.point_to_ll(unit.position)
         unit_type = unit_type_from_name(unit.type)
         name = unit.name if unit_type is None else unit_type.name
-        return [name, self.alic_for(unit), ll.format_dms(include_decimal_seconds=True)]
+        return [
+            name,
+            self.alic_for(unit.type),
+            ll.format_dms(include_decimal_seconds=True),
+        ]
 
 
 class StrikeTaskPage(KneeboardPage):

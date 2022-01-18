@@ -23,12 +23,12 @@ if TYPE_CHECKING:
     from game.transfers import CargoShip
     from game.unitmap import (
         AirliftUnits,
-        Building,
         ConvoyUnit,
         FlyingUnit,
         FrontLineUnit,
-        GroundObjectUnit,
+        GroundObjectMapping,
         UnitMap,
+        SceneryObjectMapping,
     )
 
 DEBRIEFING_LOG_EXTENSION = "log"
@@ -72,11 +72,11 @@ class GroundLosses:
     player_airlifts: List[AirliftUnits] = field(default_factory=list)
     enemy_airlifts: List[AirliftUnits] = field(default_factory=list)
 
-    player_ground_objects: List[GroundObjectUnit[Any]] = field(default_factory=list)
-    enemy_ground_objects: List[GroundObjectUnit[Any]] = field(default_factory=list)
+    player_ground_objects: List[GroundObjectMapping] = field(default_factory=list)
+    enemy_ground_objects: List[GroundObjectMapping] = field(default_factory=list)
 
-    player_buildings: List[Building] = field(default_factory=list)
-    enemy_buildings: List[Building] = field(default_factory=list)
+    player_scenery: List[SceneryObjectMapping] = field(default_factory=list)
+    enemy_scenery: List[SceneryObjectMapping] = field(default_factory=list)
 
     player_airfields: List[Airfield] = field(default_factory=list)
     enemy_airfields: List[Airfield] = field(default_factory=list)
@@ -158,14 +158,14 @@ class Debriefing:
         yield from self.ground_losses.enemy_airlifts
 
     @property
-    def ground_object_losses(self) -> Iterator[GroundObjectUnit[Any]]:
+    def ground_object_losses(self) -> Iterator[GroundObjectMapping]:
         yield from self.ground_losses.player_ground_objects
         yield from self.ground_losses.enemy_ground_objects
 
     @property
-    def building_losses(self) -> Iterator[Building]:
-        yield from self.ground_losses.player_buildings
-        yield from self.ground_losses.enemy_buildings
+    def scenery_object_losses(self) -> Iterator[SceneryObjectMapping]:
+        yield from self.ground_losses.player_scenery
+        yield from self.ground_losses.enemy_scenery
 
     @property
     def damaged_runways(self) -> Iterator[Airfield]:
@@ -217,17 +217,32 @@ class Debriefing:
                 losses_by_type[unit_type] += 1
         return losses_by_type
 
-    def building_losses_by_type(self, player: bool) -> Dict[str, int]:
+    def ground_object_losses_by_type(self, player: bool) -> Dict[str, int]:
         losses_by_type: Dict[str, int] = defaultdict(int)
         if player:
-            losses = self.ground_losses.player_buildings
+            losses = self.ground_losses.player_ground_objects
         else:
-            losses = self.ground_losses.enemy_buildings
+            losses = self.ground_losses.enemy_ground_objects
         for loss in losses:
-            if loss.ground_object.control_point.captured != player:
-                continue
+            # We do not have handling for ships and statics UniType yet so we have to
+            # take more care here. Fallback for ship and static is to use the type str
+            # which is the dcs_type.id
+            unit_type = (
+                loss.ground_unit.unit_type.name
+                if loss.ground_unit.unit_type
+                else loss.ground_unit.type
+            )
+            losses_by_type[unit_type] += 1
+        return losses_by_type
 
-            losses_by_type[loss.ground_object.dcs_identifier] += 1
+    def scenery_losses_by_type(self, player: bool) -> Dict[str, int]:
+        losses_by_type: Dict[str, int] = defaultdict(int)
+        if player:
+            losses = self.ground_losses.player_scenery
+        else:
+            losses = self.ground_losses.enemy_scenery
+        for loss in losses:
+            losses_by_type[loss.trigger_zone.name] += 1
         return losses_by_type
 
     def dead_aircraft(self) -> AirLosses:
@@ -271,25 +286,21 @@ class Debriefing:
                     losses.enemy_cargo_ships.append(cargo_ship)
                 continue
 
-            ground_object_unit = self.unit_map.ground_object_unit(unit_name)
-            if ground_object_unit is not None:
-                if ground_object_unit.ground_object.control_point.captured:
-                    losses.player_ground_objects.append(ground_object_unit)
+            ground_object = self.unit_map.ground_object(unit_name)
+            if ground_object is not None:
+                if ground_object.ground_unit.ground_object.is_friendly(to_player=True):
+                    losses.player_ground_objects.append(ground_object)
                 else:
-                    losses.enemy_ground_objects.append(ground_object_unit)
+                    losses.enemy_ground_objects.append(ground_object)
                 continue
 
-            building = self.unit_map.building_or_fortification(unit_name)
+            scenery_object = self.unit_map.scenery_object(unit_name)
             # Try appending object to the name, because we do this for building statics.
-            if building is None:
-                building = self.unit_map.building_or_fortification(
-                    f"{unit_name} object"
-                )
-            if building is not None:
-                if building.ground_object.control_point.captured:
-                    losses.player_buildings.append(building)
+            if scenery_object is not None:
+                if scenery_object.ground_unit.ground_object.is_friendly(to_player=True):
+                    losses.player_scenery.append(scenery_object)
                 else:
-                    losses.enemy_buildings.append(building)
+                    losses.enemy_scenery.append(scenery_object)
                 continue
 
             airfield = self.unit_map.airfield(unit_name)

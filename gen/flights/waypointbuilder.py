@@ -1,5 +1,4 @@
 from __future__ import annotations
-import logging
 
 import random
 from dataclasses import dataclass
@@ -11,12 +10,9 @@ from typing import (
     TYPE_CHECKING,
     Tuple,
     Union,
-    Any,
 )
 
 from dcs.mapping import Point
-from dcs.unit import Unit
-from dcs.unitgroup import VehicleGroup, ShipGroup
 
 from game.theater import (
     ControlPoint,
@@ -32,14 +28,13 @@ if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.coalition import Coalition
     from game.transfers import MultiGroupTransport
+    from game.theater.theatergroundobject import GroundUnit, GroundGroup
 
 
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[
-        VehicleGroup, TheaterGroundObject[Any], Unit, ShipGroup, MultiGroupTransport
-    ]
+    target: Union[TheaterGroundObject, GroundGroup, GroundUnit, MultiGroupTransport]
 
 
 class WaypointBuilder:

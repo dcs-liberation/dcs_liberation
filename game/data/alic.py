@@ -1,4 +1,3 @@
-from dcs.unit import Unit
 from dcs.vehicles import AirDefence
 
 
@@ -38,5 +37,5 @@ class AlicCodes:
     }
 
     @classmethod
-    def code_for(cls, unit: Unit) -> int:
-        return cls.CODES[unit.type]
+    def code_for(cls, unit_type: str) -> int:
+        return cls.CODES[unit_type]

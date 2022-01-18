@@ -19,7 +19,9 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
         elif isinstance(target, MultiGroupTransport):
             group_names.append(target.name)
         elif isinstance(target, NavalControlPoint):
-            group_names.append(target.get_carrier_group_name())
+            carrier_name = target.get_carrier_group_name()
+            if carrier_name:
+                group_names.append(carrier_name)
         else:
             logging.error(
                 "Unexpected target type for BAI mission: %s",
@@ -28,12 +30,12 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
             return
 
         for group_name in group_names:
-            group = self.mission.find_group(group_name)
-            if group is None:
+            miz_group = self.mission.find_group(group_name)
+            if miz_group is None:
                 logging.error("Could not find group for BAI mission %s", group_name)
                 continue
 
-            task = AttackGroup(group.id, weapon_type=WeaponType.Auto)
+            task = AttackGroup(miz_group.id, weapon_type=WeaponType.Auto)
             task.params["attackQtyLimit"] = False
             task.params["directionEnabled"] = False
             task.params["altitudeEnabled"] = False

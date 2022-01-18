@@ -2,6 +2,7 @@ from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
 from game.theater import ControlPointType, BuildingGroundObject
+from game.theater.theatergroundobject import IadsGroundObject
 from game.utils import Distance
 from game.missiongenerator.frontlineconflictdescription import (
     FrontLineConflictDescription,
@@ -115,8 +116,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                 ):
                     for ground_object in cp.ground_objects:
                         if not ground_object.is_dead and (
-                            ground_object.dcs_identifier == "AA"
-                            or ground_object.dcs_identifier == "EWR"
+                            isinstance(ground_object, IadsGroundObject)
                         ):
                             for g in ground_object.groups:
                                 for j, u in enumerate(g.units):

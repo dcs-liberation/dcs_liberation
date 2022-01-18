@@ -11,7 +11,7 @@ from game.utils import Distance, meters
 from game.ato.flightwaypointtype import FlightWaypointType
 
 if TYPE_CHECKING:
-    from game.theater import ControlPoint, MissionTarget
+    from game.theater import ControlPoint, MissionTarget, GroundUnit
 
 
 class FlightWaypoint:
@@ -45,7 +45,7 @@ class FlightWaypoint:
         # Only used in the waypoint list in the flight edit page. No sense
         # having three names. A short and long form is enough.
         self.description = ""
-        self.targets: Sequence[Union[MissionTarget, Unit]] = []
+        self.targets: list[GroundUnit] = []
         self.obj_name = ""
         self.pretty_name = ""
         self.only_for_player = False

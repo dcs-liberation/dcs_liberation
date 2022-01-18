@@ -1,6 +1,7 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
+from game.theater import SamGroundObject
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 
 
@@ -53,7 +54,7 @@ class QStrikeTargetSelectionComboBox(QFilteredComboBox):
                 target.location = g
                 target.name = g.obj_name
 
-                if g.dcs_identifier == "AA":
+                if isinstance(g, SamGroundObject):
                     target.name = g.obj_name + " [units]"
                     for group in g.groups:
                         for u in group.units:

@@ -11,9 +11,7 @@ if TYPE_CHECKING:
 
 
 class DefendingSam(FrozenCombat):
-    def __init__(
-        self, flight: Flight, air_defenses: list[TheaterGroundObject[Any]]
-    ) -> None:
+    def __init__(self, flight: Flight, air_defenses: list[TheaterGroundObject]) -> None:
         super().__init__()
         self.flight = flight
         self.air_defenses = air_defenses

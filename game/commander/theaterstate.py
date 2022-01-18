@@ -55,7 +55,7 @@ class TheaterState(WorldState["TheaterState"]):
     enemy_ships: list[NavalGroundObject]
     enemy_garrisons: dict[ControlPoint, Garrisons]
     oca_targets: list[ControlPoint]
-    strike_targets: list[TheaterGroundObject[Any]]
+    strike_targets: list[TheaterGroundObject]
     enemy_barcaps: list[ControlPoint]
     threat_zones: ThreatZones
 
