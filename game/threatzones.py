@@ -208,7 +208,7 @@ class ThreatZones:
         cls,
         doctrine: Doctrine,
         barcap_locations: Iterable[ControlPoint],
-        air_defenses: Iterable[TheaterGroundObject[Any]],
+        air_defenses: Iterable[TheaterGroundObject],
     ) -> ThreatZones:
         """Generates the threat zones projected by the given locations.
 

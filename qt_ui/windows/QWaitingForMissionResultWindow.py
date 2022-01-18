@@ -169,12 +169,14 @@ class QWaitingForMissionResultWindow(QDialog):
             update_layout,
         )
         self.add_update_row(
-            "Ground units lost at objective areas",
+            "Ground Objects destroyed",
             len(list(debriefing.ground_object_losses)),
             update_layout,
         )
         self.add_update_row(
-            "Buildings destroyed", len(list(debriefing.building_losses)), update_layout
+            "Scenery Objects destroyed",
+            len(list(debriefing.scenery_object_losses)),
+            update_layout,
         )
         self.add_update_row(
             "Base capture events", len(debriefing.base_captures), update_layout

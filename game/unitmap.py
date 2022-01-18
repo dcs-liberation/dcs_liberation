@@ -4,16 +4,17 @@ from __future__ import annotations
 import itertools
 import math
 from dataclasses import dataclass
-from typing import Dict, Optional, Any, TYPE_CHECKING, Union, TypeVar, Generic
+from typing import Dict, Optional, Any, TYPE_CHECKING
 
-from dcs.unit import Vehicle, Ship
-from dcs.unitgroup import FlyingGroup, VehicleGroup, StaticGroup, ShipGroup, MovingGroup
+from dcs.triggers import TriggerZone
+from dcs.unit import Unit
+from dcs.unitgroup import FlyingGroup, VehicleGroup, ShipGroup
 
 from game.dcs.groundunittype import GroundUnitType
 from game.squadrons import Pilot
-from game.theater import Airfield, ControlPoint, TheaterGroundObject
-from game.theater.theatergroundobject import BuildingGroundObject, SceneryGroundObject
+from game.theater import Airfield, ControlPoint, GroundUnit
 from game.ato.flight import Flight
+from game.theater.theatergroundobject import SceneryGroundUnit
 
 if TYPE_CHECKING:
     from game.transfers import CargoShip, Convoy, TransferOrder
@@ -31,14 +32,16 @@ class FrontLineUnit:
     origin: ControlPoint
 
 
-UnitT = TypeVar("UnitT", Ship, Vehicle)
+@dataclass(frozen=True)
+class GroundObjectMapping:
+    ground_unit: GroundUnit
+    dcs_unit: Unit
 
 
 @dataclass(frozen=True)
-class GroundObjectUnit(Generic[UnitT]):
-    ground_object: TheaterGroundObject[Any]
-    group: MovingGroup[UnitT]
-    unit: UnitT
+class SceneryObjectMapping:
+    ground_unit: GroundUnit
+    trigger_zone: TriggerZone
 
 
 @dataclass(frozen=True)
@@ -53,18 +56,13 @@ class AirliftUnits:
     transfer: TransferOrder
 
 
-@dataclass(frozen=True)
-class Building:
-    ground_object: BuildingGroundObject
-
-
 class UnitMap:
     def __init__(self) -> None:
         self.aircraft: Dict[str, FlyingUnit] = {}
         self.airfields: Dict[str, Airfield] = {}
         self.front_line_units: Dict[str, FrontLineUnit] = {}
-        self.ground_object_units: Dict[str, GroundObjectUnit[Any]] = {}
-        self.buildings: Dict[str, Building] = {}
+        self.ground_objects: Dict[str, GroundObjectMapping] = {}
+        self.scenery_objects: Dict[str, SceneryObjectMapping] = {}
         self.convoys: Dict[str, ConvoyUnit] = {}
         self.cargo_ships: Dict[str, CargoShip] = {}
         self.airlifts: Dict[str, AirliftUnits] = {}
@@ -105,41 +103,18 @@ class UnitMap:
     def front_line_unit(self, name: str) -> Optional[FrontLineUnit]:
         return self.front_line_units.get(name, None)
 
-    def add_ground_object_units(
-        self,
-        ground_object: TheaterGroundObject[Any],
-        persistence_group: Union[ShipGroup, VehicleGroup],
-        miz_group: Union[ShipGroup, VehicleGroup],
+    def add_ground_object_mapping(
+        self, ground_unit: GroundUnit, dcs_unit: Unit
     ) -> None:
-        """Adds a group associated with a TGO to the unit map.
+        # Deaths for units at TGOs are recorded in the corresponding GroundUnit within
+        # the GroundGroup, so we have to match the dcs unit with the liberation unit
+        name = str(dcs_unit.name)
+        if name in self.ground_objects:
+            raise RuntimeError(f"Duplicate TGO unit: {name}")
+        self.ground_objects[name] = GroundObjectMapping(ground_unit, dcs_unit)
 
-        Args:
-            ground_object: The TGO the group is associated with.
-            persistence_group: The Group tracked by the TGO itself.
-            miz_group: The Group spawned for the miz to match persistence_group.
-        """
-        # Deaths for units at TGOs are recorded in the Group that is contained
-        # by the TGO, but when groundobjectsgen populates the miz it creates new
-        # groups based on that template, so the units and groups in the miz are
-        # not a direct match for the units and groups that persist in the TGO.
-        #
-        # This means that we need to map the spawned unit names back to the
-        # original TGO units, not the ones in the miz.
-        if len(persistence_group.units) != len(miz_group.units):
-            raise ValueError("Persistent group does not match generated group")
-        unit_pairs = zip(persistence_group.units, miz_group.units)
-        for persistent_unit, miz_unit in unit_pairs:
-            # The actual name is a String (the pydcs translatable string), which
-            # doesn't define __eq__.
-            name = str(miz_unit.name)
-            if name in self.ground_object_units:
-                raise RuntimeError(f"Duplicate TGO unit: {name}")
-            self.ground_object_units[name] = GroundObjectUnit(
-                ground_object, persistence_group, persistent_unit
-            )
-
-    def ground_object_unit(self, name: str) -> Optional[GroundObjectUnit[Any]]:
-        return self.ground_object_units.get(name, None)
+    def ground_object(self, name: str) -> Optional[GroundObjectMapping]:
+        return self.ground_objects.get(name, None)
 
     def add_convoy_units(self, group: VehicleGroup, convoy: Convoy) -> None:
         for unit, unit_type in zip(group.units, convoy.iter_units()):
@@ -195,40 +170,13 @@ class UnitMap:
     def airlift_unit(self, name: str) -> Optional[AirliftUnits]:
         return self.airlifts.get(name, None)
 
-    def add_building(
-        self, ground_object: BuildingGroundObject, group: StaticGroup
+    def add_scenery(
+        self, scenery_unit: SceneryGroundUnit, trigger_zone: TriggerZone
     ) -> None:
-        # The actual name is a String (the pydcs translatable string), which
-        # doesn't define __eq__.
-        # The name of the initiator in the DCS dead event will have " object"
-        # appended for statics.
-        name = f"{group.name} object"
-        if name in self.buildings:
-            raise RuntimeError(f"Duplicate TGO unit: {name}")
-        self.buildings[name] = Building(ground_object)
+        name = str(trigger_zone.name)
+        if name in self.scenery_objects:
+            raise RuntimeError(f"Duplicate scenery object {name} (TriggerZone)")
+        self.scenery_objects[name] = SceneryObjectMapping(scenery_unit, trigger_zone)
 
-    def add_fortification(
-        self, ground_object: BuildingGroundObject, group: VehicleGroup
-    ) -> None:
-        if len(group.units) != 1:
-            raise ValueError("Fortification groups must have exactly one unit.")
-        unit = group.units[0]
-        # The actual name is a String (the pydcs translatable string), which
-        # doesn't define __eq__.
-        name = str(unit.name)
-        if name in self.buildings:
-            raise RuntimeError(f"Duplicate TGO unit: {name}")
-        self.buildings[name] = Building(ground_object)
-
-    def add_scenery(self, ground_object: SceneryGroundObject) -> None:
-        name = str(ground_object.zone.name)
-        if name in self.buildings:
-            raise RuntimeError(
-                f"Duplicate TGO unit: {name}. TriggerZone name: "
-                f"{ground_object.dcs_identifier}"
-            )
-
-        self.buildings[name] = Building(ground_object)
-
-    def building_or_fortification(self, name: str) -> Optional[Building]:
-        return self.buildings.get(name, None)
+    def scenery_object(self, name: str) -> Optional[SceneryObjectMapping]:
+        return self.scenery_objects.get(name, None)

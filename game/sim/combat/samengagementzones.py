@@ -17,7 +17,7 @@ class SamEngagementZones:
     def __init__(
         self,
         threat_zones: ThreatPoly,
-        individual_zones: list[tuple[TheaterGroundObject[Any], ThreatPoly]],
+        individual_zones: list[tuple[TheaterGroundObject, ThreatPoly]],
     ) -> None:
         self.threat_zones = threat_zones
         self.individual_zones = individual_zones
@@ -25,9 +25,7 @@ class SamEngagementZones:
     def covers(self, position: Point) -> bool:
         return self.threat_zones.intersects(dcs_to_shapely_point(position))
 
-    def iter_threatening_sams(
-        self, position: Point
-    ) -> Iterator[TheaterGroundObject[Any]]:
+    def iter_threatening_sams(self, position: Point) -> Iterator[TheaterGroundObject]:
         for tgo, zone in self.individual_zones:
             if zone.intersects(dcs_to_shapely_point(position)):
                 yield tgo
@@ -44,7 +42,7 @@ class SamEngagementZones:
         return SamEngagementZones(unary_union(commit_regions), individual_zones)
 
     @classmethod
-    def threat_region(cls, tgo: TheaterGroundObject[Any]) -> Optional[ThreatPoly]:
+    def threat_region(cls, tgo: TheaterGroundObject) -> Optional[ThreatPoly]:
         threat_range = tgo.max_threat_range()
         if threat_range <= meters(0):
             return None

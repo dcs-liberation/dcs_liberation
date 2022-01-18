@@ -2,6 +2,7 @@ import os
 
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QVBoxLayout
+from game.theater import GroundUnit
 
 from game.config import REWARDS
 
@@ -9,16 +10,16 @@ from game.config import REWARDS
 class QBuildingInfo(QGroupBox):
     def __init__(self, building, ground_object):
         super(QBuildingInfo, self).__init__()
-        self.building = building
+        self.building: GroundUnit = building
         self.ground_object = ground_object
         self.init_ui()
 
     def init_ui(self):
         self.header = QLabel()
         path = os.path.join(
-            "./resources/ui/units/buildings/" + self.building.dcs_identifier + ".png"
+            "./resources/ui/units/buildings/" + self.building.type + ".png"
         )
-        if self.building.is_dead:
+        if not self.building.alive:
             pixmap = QPixmap("./resources/ui/units/buildings/dead.png")
         elif os.path.isfile(path):
             pixmap = QPixmap(path)
@@ -26,8 +27,8 @@ class QBuildingInfo(QGroupBox):
             pixmap = QPixmap("./resources/ui/units/buildings/missing.png")
         self.header.setPixmap(pixmap)
         name = "<b>{}</b> {}".format(
-            self.building.dcs_identifier[0:18],
-            "[DEAD]" if self.building.is_dead else "",
+            self.building.type[0:18],
+            "[DEAD]" if not self.building.alive else "",
         )
         self.name = QLabel(name)
         self.name.setProperty("style", "small")
@@ -35,9 +36,11 @@ class QBuildingInfo(QGroupBox):
         layout.addWidget(self.header)
         layout.addWidget(self.name)
 
-        if self.building.category in REWARDS.keys():
-            income_label_text = "Value: " + str(REWARDS[self.building.category]) + "M"
-            if self.building.is_dead:
+        if self.ground_object.category in REWARDS.keys():
+            income_label_text = (
+                "Value: " + str(REWARDS[self.ground_object.category]) + "M"
+            )
+            if not self.building.alive:
                 income_label_text = "<s>" + income_label_text + "</s>"
             self.reward = QLabel(income_label_text)
             layout.addWidget(self.reward)
