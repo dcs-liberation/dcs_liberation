@@ -42,6 +42,10 @@ from .theatergroundobject import (
     BuildingGroundObject,
     GenericCarrierGroundObject,
     TheaterGroundObject,
+    BuildingGroundObject,
+    CarrierGroundObject,
+    LhaGroundObject,
+    GroundUnit,
 )
 from ..ato.starttype import StartType
 from ..dcs.aircrafttype import AircraftType
@@ -306,7 +310,7 @@ class ControlPoint(MissionTarget, ABC):
         self.full_name = name
         self.at = at
         self.starts_blue = starts_blue
-        self.connected_objectives: List[TheaterGroundObject[Any]] = []
+        self.connected_objectives: List[TheaterGroundObject] = []
         self.preset_locations = PresetLocations()
         self.helipads: List[PointWithHeading] = []
 
@@ -345,7 +349,7 @@ class ControlPoint(MissionTarget, ABC):
         return self.coalition.player
 
     @property
-    def ground_objects(self) -> List[TheaterGroundObject[Any]]:
+    def ground_objects(self) -> List[TheaterGroundObject]:
         return list(self.connected_objectives)
 
     @property
@@ -517,7 +521,7 @@ class ControlPoint(MissionTarget, ABC):
             ControlPointType.LHA_GROUP,
         ]:
             for g in self.ground_objects:
-                if g.dcs_identifier == "CARRIER":
+                if isinstance(g, CarrierGroundObject):
                     for group in g.groups:
                         for u in group.units:
                             if unit_type_from_name(u.type) in [
@@ -526,7 +530,7 @@ class ControlPoint(MissionTarget, ABC):
                                 KUZNECOW,
                             ]:
                                 return group.name
-                elif g.dcs_identifier == "LHA":
+                elif isinstance(g, LhaGroundObject):
                     for group in g.groups:
                         for u in group.units:
                             if unit_type_from_name(u.type) in [LHA_Tarawa]:
@@ -539,7 +543,7 @@ class ControlPoint(MissionTarget, ABC):
 
     def find_ground_objects_by_obj_name(
         self, obj_name: str
-    ) -> list[TheaterGroundObject[Any]]:
+    ) -> list[TheaterGroundObject]:
         found = []
         for g in self.ground_objects:
             if g.obj_name == obj_name:
@@ -857,7 +861,7 @@ class ControlPoint(MissionTarget, ABC):
         return len([obj for obj in self.connected_objectives if obj.category == "fuel"])
 
     @property
-    def strike_targets(self) -> Sequence[Union[MissionTarget, Unit]]:
+    def strike_targets(self) -> list[GroundUnit]:
         return []
 
     @property
@@ -1000,10 +1004,7 @@ class NavalControlPoint(ControlPoint, ABC):
 
     def find_main_tgo(self) -> GenericCarrierGroundObject:
         for g in self.ground_objects:
-            if isinstance(g, GenericCarrierGroundObject) and g.dcs_identifier in [
-                "CARRIER",
-                "LHA",
-            ]:
+            if isinstance(g, GenericCarrierGroundObject):
                 return g
         raise RuntimeError(f"Found no carrier/LHA group for {self.name}")
 

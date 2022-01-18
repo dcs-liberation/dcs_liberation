@@ -12,7 +12,7 @@ from dcs.unitgroup import FlyingGroup
 from game.ato import Flight, FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.missiongenerator.airsupport import AirSupport
-from game.theater import MissionTarget
+from game.theater import MissionTarget, GroundUnit
 
 TARGET_WAYPOINTS = (
     FlightWaypointType.TARGET_GROUP_LOC,
@@ -82,7 +82,7 @@ class PydcsWaypointBuilder:
             return False
 
     def register_special_waypoints(
-        self, targets: Iterable[Union[MissionTarget, Unit]]
+        self, targets: Iterable[Union[MissionTarget, GroundUnit]]
     ) -> None:
         """Create special target waypoints for various aircraft"""
         for i, t in enumerate(targets):

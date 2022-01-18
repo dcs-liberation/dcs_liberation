@@ -45,6 +45,7 @@ if TYPE_CHECKING:
     from .navmesh import NavMesh
     from .squadrons import AirWing
     from .threatzones import ThreatZones
+    from .factions.faction import Faction
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5

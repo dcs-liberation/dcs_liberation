@@ -46,9 +46,9 @@ from game.theater import (
     TheaterGroundObject,
 )
 from game.theater.theatergroundobject import (
-    BuildingGroundObject,
     EwrGroundObject,
     NavalGroundObject,
+    GroundUnit,
 )
 from game.typeguard import self_type_guard
 from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
@@ -1086,7 +1086,7 @@ class FlightPlanBuilder:
         self,
         flight: Flight,
         # TODO: Custom targets should be an attribute of the flight.
-        custom_targets: Optional[List[Unit]] = None,
+        custom_targets: Optional[List[GroundUnit]] = None,
     ) -> None:
         """Creates a default flight plan for the given mission."""
         if flight not in self.package.flights:
@@ -1106,7 +1106,7 @@ class FlightPlanBuilder:
             ) from ex
 
     def generate_flight_plan(
-        self, flight: Flight, custom_targets: Optional[List[Unit]]
+        self, flight: Flight, custom_targets: Optional[List[GroundUnit]]
     ) -> FlightPlan:
         # TODO: Flesh out mission types.
         task = flight.flight_type
@@ -1207,16 +1207,9 @@ class FlightPlanBuilder:
             raise InvalidObjectiveLocation(flight.flight_type, location)
 
         targets: List[StrikeTarget] = []
-        if isinstance(location, BuildingGroundObject):
-            # A building "group" is implemented as multiple TGOs with the same name.
-            for building in location.strike_targets:
-                targets.append(StrikeTarget(building.category, building))
-        else:
-            # TODO: Replace with DEAD?
-            # Strike missions on SEAD targets target units.
-            for g in location.groups:
-                for j, u in enumerate(g.units):
-                    targets.append(StrikeTarget(f"{u.type} #{j}", u))
+
+        for j, u in enumerate(location.strike_targets):
+            targets.append(StrikeTarget(f"{u.type} #{j}", u))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_STRIKE, targets
@@ -1675,7 +1668,7 @@ class FlightPlanBuilder:
         )
 
     def generate_dead(
-        self, flight: Flight, custom_targets: Optional[List[Unit]]
+        self, flight: Flight, custom_targets: Optional[List[GroundUnit]]
     ) -> StrikeFlightPlan:
         """Generate a DEAD flight at a given location.
 
@@ -1745,7 +1738,7 @@ class FlightPlanBuilder:
         )
 
     def generate_sead(
-        self, flight: Flight, custom_targets: Optional[List[Unit]]
+        self, flight: Flight, custom_targets: Optional[List[GroundUnit]]
     ) -> StrikeFlightPlan:
         """Generate a SEAD flight at a given location.
 
