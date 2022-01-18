@@ -25,6 +25,7 @@ from .landmap import Landmap, load_landmap, poly_contains
 from .latlon import LatLon
 from .projections import TransverseMercator
 from .seasonalconditions import SeasonalConditions
+from ..utils import Heading
 
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint, MissionTarget
@@ -85,7 +86,7 @@ class ConflictTheater:
 
     def find_ground_objects_by_obj_name(
         self, obj_name: str
-    ) -> list[TheaterGroundObject[Any]]:
+    ) -> list[TheaterGroundObject]:
         found = []
         for cp in self.controlpoints:
             for g in cp.ground_objects:
@@ -264,6 +265,29 @@ class ConflictTheater:
     def ll_to_point(self, ll: LatLon) -> Point:
         x, y = self.ll_to_point_transformer.transform(ll.latitude, ll.longitude)
         return Point(x, y)
+
+    def heading_to_conflict_from(self, position: Point) -> Optional[Heading]:
+        # Heading for a Group to the enemy.
+        # Should be the point between the nearest and the most distant conflict
+        conflicts: dict[MissionTarget, float] = {}
+
+        for conflict in self.conflicts():
+            conflicts[conflict] = conflict.position.distance_to_point(position)
+
+        if len(conflicts) == 0:
+            return None
+
+        sorted_conflicts = [
+            k for k, v in sorted(conflicts.items(), key=lambda item: item[1])
+        ]
+        last = len(sorted_conflicts) - 1
+
+        conflict_center = Point(
+            (sorted_conflicts[0].position.x + sorted_conflicts[last].position.x) / 2,
+            (sorted_conflicts[0].position.y + sorted_conflicts[last].position.y) / 2,
+        )
+
+        return Heading.from_degrees(position.heading_between_point(conflict_center))
 
 
 class CaucasusTheater(ConflictTheater):

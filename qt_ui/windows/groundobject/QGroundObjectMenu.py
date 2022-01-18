@@ -108,58 +108,21 @@ class QGroundObjectMenu(QDialog):
         self.intelLayout = QGridLayout()
         i = 0
         for g in self.ground_object.groups:
-            if not hasattr(g, "units_losts"):
-                g.units_losts = []
             for unit in g.units:
-                unit_display_name = unit.type
-                dcs_unit_type = vehicles.vehicle_map.get(unit.type)
-                if dcs_unit_type is not None:
-                    # Hack: Don't know which variant is used.
-                    try:
-                        unit_display_name = next(
-                            GroundUnitType.for_dcs_type(dcs_unit_type)
-                        ).name
-                    except StopIteration:
-                        pass
                 self.intelLayout.addWidget(
-                    QLabel(
-                        "<b>Unit #"
-                        + str(unit.id)
-                        + " - "
-                        + str(unit_display_name)
-                        + "</b>"
-                    ),
-                    i,
-                    0,
+                    QLabel(f"<b>Unit {str(unit.display_name)}</b>"), i, 0
                 )
-                i = i + 1
 
-            for unit in g.units_losts:
-                dcs_unit_type = vehicles.vehicle_map.get(unit.type)
-                if dcs_unit_type is None:
-                    continue
-
-                # Hack: Don't know which variant is used.
-
-                try:
-                    unit_type = next(GroundUnitType.for_dcs_type(dcs_unit_type))
-                    name = unit_type.name
-                    price = unit_type.price
-                except StopIteration:
-                    name = dcs_unit_type.name
-                    price = 0
-
-                self.intelLayout.addWidget(
-                    QLabel(f"<b>Unit #{unit.id} - {name}</b> [DEAD]"), i, 0
-                )
-                if self.cp.captured:
+                if not unit.alive and self.cp.captured:
+                    price = unit.unit_type.price if unit.unit_type else 0
                     repair = QPushButton(f"Repair [{price}M]")
                     repair.setProperty("style", "btn-success")
                     repair.clicked.connect(
-                        lambda u=unit, g=g, p=unit_type.price: self.repair_unit(g, u, p)
+                        lambda u=unit, p=price: self.repair_unit(u, p)
                     )
                     self.intelLayout.addWidget(repair, i, 1)
-                i = i + 1
+                i += 1
+
         stretch = QVBoxLayout()
         stretch.addStretch()
         self.intelLayout.addLayout(stretch, i, 0)
@@ -170,19 +133,19 @@ class QGroundObjectMenu(QDialog):
         j = 0
         total_income = 0
         received_income = 0
-        for i, building in enumerate(self.buildings):
-            if building.dcs_identifier not in FORTIFICATION_BUILDINGS:
+        for static in self.ground_object.statics:
+            if static not in FORTIFICATION_BUILDINGS:
                 self.buildingsLayout.addWidget(
-                    QBuildingInfo(building, self.ground_object), j / 3, j % 3
+                    QBuildingInfo(static, self.ground_object), j / 3, j % 3
                 )
                 j = j + 1
 
-            if building.category in REWARDS.keys():
-                total_income = total_income + REWARDS[building.category]
-                if not building.is_dead:
-                    received_income = received_income + REWARDS[building.category]
+            if self.ground_object.category in REWARDS.keys():
+                total_income += REWARDS[self.ground_object.category]
+                if static.alive:
+                    received_income += REWARDS[self.ground_object.category]
             else:
-                logging.warning(building.category + " not in REWARDS")
+                logging.warning(self.ground_object.category + " not in REWARDS")
 
         self.financesBox = QGroupBox("Finances: ")
         self.financesBoxLayout = QGridLayout()
@@ -236,11 +199,10 @@ class QGroundObjectMenu(QDialog):
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
         self.total_value = total_value
 
-    def repair_unit(self, group, unit, price):
+    def repair_unit(self, unit, price):
         if self.game.blue.budget > price:
             self.game.blue.budget -= price
-            group.units_losts = [u for u in group.units_losts if u.id != unit.id]
-            group.units.append(unit)
+            unit.alive = True
             GameUpdateSignal.get_instance().updateGame(self.game)
 
             # Remove destroyed units in the vicinity

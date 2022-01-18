@@ -10,7 +10,7 @@ from game.ato.flighttype import FlightType
 
 
 @dataclass
-class PlanStrike(PackagePlanningTask[TheaterGroundObject[Any]]):
+class PlanStrike(PackagePlanningTask[TheaterGroundObject]):
     def preconditions_met(self, state: TheaterState) -> bool:
         if self.target not in state.strike_targets:
             return False

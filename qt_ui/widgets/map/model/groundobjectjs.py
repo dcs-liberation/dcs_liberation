@@ -3,11 +3,8 @@ from __future__ import annotations
 from typing import List, Optional
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
-from dcs.unit import Unit
-from dcs.vehicles import vehicle_map
 
 from game import Game
-from game.dcs.groundunittype import GroundUnitType
 from game.theater import TheaterGroundObject
 from qt_ui.dialogs import Dialog
 from qt_ui.widgets.map.model.leaflet import LeafletLatLon
@@ -30,7 +27,6 @@ class GroundObjectJs(QObject):
         self.tgo = tgo
         self.game = game
         self.theater = game.theater
-        self.buildings = self.theater.find_ground_objects_by_obj_name(self.tgo.obj_name)
         self.dialog: Optional[QGroundObjectMenu] = None
 
     @Slot()
@@ -39,7 +35,6 @@ class GroundObjectJs(QObject):
             self.dialog = QGroundObjectMenu(
                 None,
                 self.tgo,
-                self.buildings,
                 self.tgo.control_point,
                 self.game,
             )
@@ -61,38 +56,9 @@ class GroundObjectJs(QObject):
     def category(self) -> str:
         return self.tgo.category
 
-    @staticmethod
-    def make_unit_name(unit: Unit, dead: bool) -> str:
-        dead_label = " [DEAD]" if dead else ""
-        unit_display_name = unit.type
-        dcs_unit_type = vehicle_map.get(unit.type)
-        if dcs_unit_type is not None:
-            # TODO: Make the TGO contain GroundUnitType instead of the pydcs Group.
-            # This is a hack because we can't know which variant was used.
-            try:
-                unit_display_name = next(
-                    GroundUnitType.for_dcs_type(dcs_unit_type)
-                ).name
-            except StopIteration:
-                pass
-        return f"Unit #{unit.id} - {unit_display_name}{dead_label}"
-
     @Property(list, notify=unitsChanged)
     def units(self) -> List[str]:
-        units = []
-        # TGOs with a non-empty group set are non-building TGOs. Building TGOs have no
-        # groups set, but instead are one TGO per building "group" (DCS doesn't support
-        # groups of statics) all with the same name.
-        if self.tgo.groups:
-            for unit in self.tgo.units:
-                units.append(self.make_unit_name(unit, dead=False))
-            for unit in self.tgo.dead_units:
-                units.append(self.make_unit_name(unit, dead=True))
-        else:
-            for building in self.buildings:
-                dead = " [DEAD]" if building.is_dead else ""
-                units.append(f"{building.dcs_identifier}{dead}")
-        return units
+        return [unit.display_name for unit in self.tgo.units]
 
     @Property(bool, notify=blueChanged)
     def blue(self) -> bool:
@@ -105,9 +71,7 @@ class GroundObjectJs(QObject):
 
     @Property(bool, notify=deadChanged)
     def dead(self) -> bool:
-        if not self.tgo.groups:
-            return all(b.is_dead for b in self.buildings)
-        return not any(g.units for g in self.tgo.groups)
+        return not any(g.alive_units > 0 for g in self.tgo.groups)
 
     @Property(list, notify=samThreatRangesChanged)
     def samThreatRanges(self) -> List[float]:
