@@ -41,7 +41,9 @@ class QGroundObjectGroupTemplate(QGroupBox):
     # If the group is not randomizable: Just view labels instead of edit fields
 
     def __init__(self, group_id: int, group_template: GroupTemplate) -> None:
-        super(QGroundObjectGroupTemplate, self).__init__(str(group_id + 1))
+        super(QGroundObjectGroupTemplate, self).__init__(
+            f"{group_id + 1}: {group_template.name}"
+        )
         self.group_template = group_template
 
         self.group_layout = QGridLayout()
@@ -51,7 +53,7 @@ class QGroundObjectGroupTemplate(QGroupBox):
         self.unit_selector = QComboBox()
         self.group_selector = QCheckBox()
 
-        self.group_selector.setChecked(True)
+        self.group_selector.setChecked(self.group_template.should_be_generated)
         self.group_selector.setEnabled(self.group_template.optional)
 
         if self.group_template.randomizer:
@@ -86,10 +88,12 @@ class QGroundObjectGroupTemplate(QGroupBox):
         self.group_selector.stateChanged.connect(self.on_group_changed)
 
     def on_group_changed(self) -> None:
-        unit_type = self.unit_selector.itemData(self.unit_selector.currentIndex())
-        count = self.amount_selector.value() if self.group_selector.isChecked() else 0
-        self.group_template.randomizer.count = count
-        self.group_template.randomizer.force_type(unit_type.dcs_id)
+        self.group_template.set_enabled(self.group_selector.isChecked())
+        if self.group_template.randomizer:
+            unit_type = self.unit_selector.itemData(self.unit_selector.currentIndex())
+            count = self.amount_selector.value()
+            self.group_template.randomizer.count = count
+            self.group_template.randomizer.force_type(unit_type.dcs_id)
         self.group_template_changed.emit(self.group_template)
 
 

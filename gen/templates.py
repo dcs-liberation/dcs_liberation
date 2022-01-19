@@ -98,6 +98,15 @@ class GroupTemplate:
     # Defines if this groupTemplate is required or not
     optional: bool = False
 
+    # Used to determine if the group should be generated or not
+    _enabled: bool = True
+
+    def to_json(self) -> dict[str, Any]:
+        d = self.__dict__
+        # Do not serialize the runtime attributes
+        d.pop("_enabled", None)
+        return d
+
     @staticmethod
     def from_dict(d_group: dict[str, Any]) -> GroupTemplate:
         units = [UnitTemplate.from_dict(unit) for unit in d_group["units"]]
@@ -119,6 +128,21 @@ class GroupTemplate:
             else:
                 units[unit.type] = 1
         return units
+
+    @property
+    def should_be_generated(self) -> bool:
+        if self.optional:
+            return self._enabled
+        return True
+
+    def enable(self) -> None:
+        self._enabled = True
+
+    def disable(self) -> None:
+        self._enabled = False
+
+    def set_enabled(self, enabled: bool) -> None:
+        self._enabled = enabled
 
 
 @dataclass
@@ -317,6 +341,9 @@ class GroundObjectTemplate(ABC):
 
         # Generate all groups using the randomization if it defined
         for g_id, group in enumerate(self.groups):
+            if not group.should_be_generated:
+                continue
+
             tgo_group = GroundGroup.from_template(
                 game.next_group_id(),
                 group,

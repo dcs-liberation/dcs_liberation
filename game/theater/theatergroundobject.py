@@ -568,6 +568,8 @@ class SamGroundObject(IadsGroundObject):
         max_telar_range = meters(0)
         launchers = set()
         for unit in group.units:
+            if unit.type not in vehicle_map:
+                continue
             unit_type = db.vehicle_type_from_name(unit.type)
             if unit_type in TRACK_RADARS:
                 live_trs.add(unit_type)
