@@ -1,17 +1,12 @@
 import logging
-from typing import List, Optional
 
-from PySide2.QtGui import Qt
 from PySide2.QtWidgets import (
-    QComboBox,
     QDialog,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QPushButton,
-    QSpinBox,
     QVBoxLayout,
 )
 from dcs import Point
@@ -23,14 +18,8 @@ from game.db import REWARDS
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
-    VehicleGroupGroundObject,
-    SamGroundObject,
-    EwrGroundObject,
     BuildingGroundObject,
 )
-from gen.defenses.armor_group_generator import generate_armor_group_of_type_and_size
-from gen.sam.ewr_group_generator import get_faction_possible_ewrs_generator
-from gen.sam.sam_group_generator import get_faction_possible_sams_generator
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -42,17 +31,12 @@ class QGroundObjectMenu(QDialog):
         self,
         parent,
         ground_object: TheaterGroundObject,
-        buildings: Optional[List[TheaterGroundObject]],
         cp: ControlPoint,
         game: Game,
     ):
         super().__init__(parent)
         self.setMinimumWidth(350)
         self.ground_object = ground_object
-        if buildings is None:
-            self.buildings = []
-        else:
-            self.buildings = buildings
         self.cp = cp
         self.game = game
         self.setWindowTitle(
@@ -264,6 +248,7 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.buyArmorLayout = QGridLayout()
         self.amount = QSpinBox()
         self.buyArmorCombo = QComboBox()
+        self.armorTemplateCombo = QComboBox()
         self.samCombo = QComboBox()
         self.buySamBox = QGroupBox("Buy SAM site :")
         self.buyArmorBox = QGroupBox("Buy defensive position :")
@@ -271,14 +256,10 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         faction = self.game.blue.faction
 
         # Sams
-
-        possible_sams = get_faction_possible_sams_generator(faction)
-        for sam in possible_sams:
-            # Pre Generate SAM to get the real price
-            generator = sam(self.game, self.ground_object)
-            generator.generate()
+        for sam_template in faction.templates.for_category(TemplateCategory.SAM):
             self.samCombo.addItem(
-                generator.name + " [$" + str(generator.price) + "M]", userData=generator
+                sam_template.name + " [$" + str(sam_template.price) + "M]",
+                userData=sam_template,
             )
         self.samCombo.currentIndexChanged.connect(self.samComboChanged)
 
@@ -301,14 +282,11 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
         self.ewr_selector = QComboBox()
         buy_ewr_layout.addWidget(self.ewr_selector, 0, 1, alignment=Qt.AlignRight)
-        ewr_types = get_faction_possible_ewrs_generator(faction)
-        for ewr_type in ewr_types:
-            # Pre Generate to get the real price
-            generator = ewr_type(self.game, self.ground_object)
-            generator.generate()
+
+        for ewr_template in faction.templates.for_category(TemplateCategory.EWR):
             self.ewr_selector.addItem(
-                generator.name() + " [$" + str(generator.price) + "M]",
-                userData=generator,
+                ewr_template.name + " [$" + str(ewr_template.price) + "M]",
+                userData=ewr_template,
             )
         self.ewr_selector.currentIndexChanged.connect(self.on_ewr_selection_changed)
 
@@ -320,6 +298,12 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         buy_ewr_layout.addLayout(stretch, 2, 0)
 
         # Armored units
+
+        for armor_template in faction.templates.for_category(TemplateCategory.Armor):
+            self.armorTemplateCombo.addItem(
+                armor_template.name, userData=armor_template
+            )
+
         for unit in set(faction.ground_units):
             self.buyArmorCombo.addItem(f"{unit} [${unit.price}M]", userData=unit)
         self.buyArmorCombo.currentIndexChanged.connect(self.armorComboChanged)
@@ -329,18 +313,22 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         self.amount.setValue(2)
         self.amount.valueChanged.connect(self.amountComboChanged)
 
-        self.buyArmorLayout.addWidget(QLabel("Unit type :"), 0, 0, Qt.AlignLeft)
-        self.buyArmorLayout.addWidget(self.buyArmorCombo, 0, 1, alignment=Qt.AlignRight)
+        self.buyArmorLayout.addWidget(QLabel("Template :"), 0, 0, Qt.AlignLeft)
         self.buyArmorLayout.addWidget(
-            QLabel("Group size :"), 1, 0, alignment=Qt.AlignLeft
+            self.armorTemplateCombo, 0, 1, alignment=Qt.AlignRight
         )
-        self.buyArmorLayout.addWidget(self.amount, 1, 1, alignment=Qt.AlignRight)
+        self.buyArmorLayout.addWidget(QLabel("Unit type :"), 1, 0, Qt.AlignLeft)
+        self.buyArmorLayout.addWidget(self.buyArmorCombo, 1, 1, alignment=Qt.AlignRight)
         self.buyArmorLayout.addWidget(
-            self.buyArmorButton, 2, 1, alignment=Qt.AlignRight
+            QLabel("Group size :"), 2, 0, alignment=Qt.AlignLeft
+        )
+        self.buyArmorLayout.addWidget(self.amount, 2, 1, alignment=Qt.AlignRight)
+        self.buyArmorLayout.addWidget(
+            self.buyArmorButton, 3, 1, alignment=Qt.AlignRight
         )
         stretch2 = QVBoxLayout()
         stretch2.addStretch()
-        self.buyArmorLayout.addLayout(stretch2, 3, 0)
+        self.buyArmorLayout.addLayout(stretch2, 4, 0)
 
         self.buyArmorButton.clicked.connect(self.buyArmor)
 
@@ -393,6 +381,9 @@ class QBuyGroupForGroundObjectDialog(QDialog):
 
     def buyArmor(self):
         logging.info("Buying Armor ")
+        armor_template: GroundObjectTemplate = self.armorTemplateCombo.itemData(
+            self.armorTemplateCombo.currentIndex()
+        )
         utype = self.buyArmorCombo.itemData(self.buyArmorCombo.currentIndex())
         price = utype.price * self.amount.value() - self.current_group_value
         if price > self.game.blue.budget:
@@ -402,11 +393,11 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         else:
             self.game.blue.budget -= price
 
-        # Generate Armor
-        group = generate_armor_group_of_type_and_size(
-            self.game, self.ground_object, utype, int(self.amount.value())
-        )
-        self.ground_object.groups = [group]
+        armor_template.randomize = [
+            TemplateRandomizer(count=self.amount.value(), unit_types=[utype.dcs_id])
+        ]
+
+        self.ground_object.groups = self.groups_from_template(armor_template)
 
         # Replan redfor missions
         self.game.initialize_turn(for_red=True, for_blue=False)
@@ -414,15 +405,15 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buySam(self):
-        sam_generator = self.samCombo.itemData(self.samCombo.currentIndex())
-        price = sam_generator.price - self.current_group_value
+        sam_template = self.samCombo.itemData(self.samCombo.currentIndex())
+        price = sam_template.price - self.current_group_value
         if price > self.game.blue.budget:
             self.error_money()
             return
         else:
             self.game.blue.budget -= price
 
-        self.ground_object.groups = list(sam_generator.groups)
+        self.ground_object.groups = self.groups_from_template(sam_template)
 
         # Replan redfor missions
         self.game.initialize_turn(for_red=True, for_blue=False)
@@ -430,15 +421,15 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         GameUpdateSignal.get_instance().updateGame(self.game)
 
     def buy_ewr(self):
-        ewr_generator = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
-        price = ewr_generator.price - self.current_group_value
+        ewr_template = self.ewr_selector.itemData(self.ewr_selector.currentIndex())
+        price = ewr_template.price - self.current_group_value
         if price > self.game.blue.budget:
             self.error_money()
             return
         else:
             self.game.blue.budget -= price
 
-        self.ground_object.groups = [ewr_generator.vg]
+        self.ground_object.groups = self.groups_from_template(ewr_template)
 
         # Replan redfor missions
         self.game.initialize_turn(for_red=True, for_blue=False)
@@ -454,3 +445,15 @@ class QBuyGroupForGroundObjectDialog(QDialog):
         msg.setWindowFlags(Qt.WindowStaysOnTopHint)
         msg.exec_()
         self.close()
+
+    def groups_from_template(self, template: GroundObjectTemplate) -> list[GroundGroup]:
+        go = template.generate(
+            self.ground_object.name,
+            PointWithHeading.from_point(
+                self.ground_object.position, self.ground_object.heading
+            ),
+            self.cp,
+            self.game,
+            self.game.blue.faction,
+        )
+        return go.groups

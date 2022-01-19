@@ -6,21 +6,23 @@ from abc import ABC
 from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterator, List, TYPE_CHECKING, Union, Optional
+from typing import Iterator, List, TYPE_CHECKING, Union, Optional, Any
+
+from dcs.vehicles import vehicle_map
+from dcs.ships import ship_map
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
-from dcs.unit import Unit
-from dcs.vehicles import vehicle_map
 
 from .. import db
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..dcs.groundunittype import GroundUnitType
+from ..dcs.unittype import UnitType
 from ..point_with_heading import PointWithHeading
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
-    from gen.templates import UnitTemplate, GroupTemplate, TemplateRandomizer
+    from gen.templates import UnitTemplate, GroupTemplate
     from .controlpoint import ControlPoint
     from ..ato.flighttype import FlightType
 
@@ -85,7 +87,7 @@ class GroundUnit:
     position: PointWithHeading
     ground_object: TheaterGroundObject
     alive: bool = True
-    _dcs_type: Optional[GroundUnitType] = None
+    _unit_type: Optional[UnitType[Any]] = None
 
     @staticmethod
     def from_template(id: int, t: UnitTemplate, go: TheaterGroundObject) -> GroundUnit:
@@ -98,17 +100,24 @@ class GroundUnit:
         )
 
     @property
-    def unit_type(self) -> Optional[GroundUnitType]:
-        if not self._dcs_type:
+    def unit_type(self) -> Optional[UnitType[Any]]:
+        if not self._unit_type:
             try:
                 if self.type in vehicle_map:
-                    dcs_unit_type = vehicle_map[self.type]
+                    vehicle_type = db.vehicle_type_from_name(self.type)
+                    self._unit_type = next(GroundUnitType.for_dcs_type(vehicle_type))
+                elif self.type in ship_map:
+                    ship_type = db.ship_type_from_name(self.type)
+                    # TODO Allow handling of Ships. This requires extension of UnitType
+                    return None
+                elif (static_type := db.static_type_from_name(self.type)) is not None:
+                    # TODO Allow handling of Statics
+                    return None
                 else:
                     return None
-                self._dcs_type = next(GroundUnitType.for_dcs_type(dcs_unit_type))
             except StopIteration:
                 return None
-        return self._dcs_type
+        return self._unit_type
 
     def kill(self) -> None:
         self.alive = False
