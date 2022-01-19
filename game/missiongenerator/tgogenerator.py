@@ -115,7 +115,7 @@ class GroundObjectGenerator:
                     if not u.alive:
                         continue
 
-                    unit_type = static_type_from_name(u.type)
+                    unit_type = unit_type_from_name(u.type)
                     if not unit_type:
                         raise RuntimeError(
                             f"Unit type {u.type} is not a valid dcs unit type"
