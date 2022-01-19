@@ -271,7 +271,6 @@ SEAD_CAPABLE = [
     Su_34,
     Su_30,
     MiG_27K,
-    Tornado_GR4,
 ]
 
 
@@ -286,6 +285,7 @@ DEAD_CAPABLE = [
     Tu_160,
     Tu_95MS,
     H_6J,
+    Tornado_GR4,
     A_20G,
     Ju_88A4,
     VSN_F104S_AG,

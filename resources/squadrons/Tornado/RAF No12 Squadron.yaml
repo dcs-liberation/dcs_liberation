@@ -10,6 +10,4 @@ mission_types:
   - CAS
   - DEAD
   - OCA/Runway
-  - SEAD
-  - SEAD Escort
   - Strike
