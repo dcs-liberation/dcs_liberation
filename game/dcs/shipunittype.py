@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import logging
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Type, Optional, Iterator
+from typing import Type, Optional, ClassVar, Iterator
 
 import yaml
-from dcs.unittype import VehicleType
+from dcs.ships import ship_map
+from dcs.unittype import VehicleType, ShipType
 from dcs.vehicles import vehicle_map
 
 from game.data.unitclass import UnitClass
@@ -14,34 +16,32 @@ from game.dcs.unittype import UnitType
 
 
 @dataclass(frozen=True)
-class GroundUnitType(UnitType[Type[VehicleType]]):
-    spawn_weight: int
-
+class ShipUnitType(UnitType[Type[ShipType]]):
     @classmethod
-    def named(cls, name: str) -> GroundUnitType:
+    def named(cls, name: str) -> ShipUnitType:
         if not cls._loaded:
             cls._load_all()
         unit = cls._by_name[name]
-        assert isinstance(unit, GroundUnitType)
+        assert isinstance(unit, ShipUnitType)
         return unit
 
     @classmethod
-    def for_dcs_type(cls, dcs_unit_type: Type[VehicleType]) -> Iterator[GroundUnitType]:
+    def for_dcs_type(cls, dcs_unit_type: Type[ShipType]) -> Iterator[ShipUnitType]:
         if not cls._loaded:
             cls._load_all()
         for unit in cls._by_unit_type[dcs_unit_type]:
-            assert isinstance(unit, GroundUnitType)
+            assert isinstance(unit, ShipUnitType)
             yield unit
 
     @staticmethod
-    def _each_unit_type() -> Iterator[Type[VehicleType]]:
-        yield from vehicle_map.values()
+    def _each_unit_type() -> Iterator[Type[ShipType]]:
+        yield from ship_map.values()
 
     @classmethod
-    def _each_variant_of(cls, vehicle: Type[VehicleType]) -> Iterator[GroundUnitType]:
-        data_path = Path("resources/units/ground_units") / f"{vehicle.id}.yaml"
+    def _each_variant_of(cls, ship: Type[ShipType]) -> Iterator[ShipUnitType]:
+        data_path = Path("resources/units/ships") / f"{ship.id}.yaml"
         if not data_path.exists():
-            logging.warning(f"No data for {vehicle.id}; it will not be available")
+            logging.warning(f"No data for {ship.id}; it will not be available")
             return
 
         with data_path.open(encoding="utf-8") as data_file:
@@ -59,11 +59,10 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
         if class_name is not None:
             unit_class = UnitClass(class_name)
 
-        for variant in data.get("variants", [vehicle.id]):
-            yield GroundUnitType(
-                dcs_unit_type=vehicle,
+        for variant in data.get("variants", [ship.id]):
+            yield ShipUnitType(
+                dcs_unit_type=ship,
                 unit_class=unit_class,
-                spawn_weight=data.get("spawn_weight", 0),
                 name=variant,
                 description=data.get(
                     "description",

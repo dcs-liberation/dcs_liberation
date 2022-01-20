@@ -70,8 +70,10 @@
   ],
   "air_defenses": [
     "Avenger Group",
-    "Hawk Site",
     "Patriot Battery"
+  ],
+  "unit_sets": [
+    "Hawk Site"
   ],
   "ewrs": [
     "SAM Patriot STR"

@@ -8,7 +8,7 @@ from typing import Optional, Dict, Type, List, Any, Iterator, TYPE_CHECKING
 
 import dcs
 from dcs.countries import country_dict
-from dcs.unittype import ShipType, UnitType
+from dcs.unittype import ShipType
 
 from game.data.building_data import (
     WW2_ALLIES_BUILDINGS,
@@ -22,10 +22,19 @@ from game.data.doctrine import (
     COLDWAR_DOCTRINE,
     WWII_DOCTRINE,
 )
-from game.data.groundunitclass import GroundUnitClass
+from game.data.unitclass import UnitClass
+from game import db
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
-from gen.templates import GroundObjectTemplates, TemplateCategory
+from game.dcs.shipunittype import ShipUnitType
+from game.dcs.unitset import UnitSet
+from game.dcs.unittype import UnitType
+from gen.templates import (
+    GroundObjectTemplates,
+    TemplateCategory,
+    GroupTemplate,
+    GroundObjectTemplate,
+)
 
 if TYPE_CHECKING:
     from game.theater.start_generator import ModSettings
@@ -70,11 +79,15 @@ class Faction:
     # Logistics units used
     logistics_units: List[GroundUnitType] = field(default_factory=list)
 
+    # Possible Air Defence units, Like EWRs
+    air_defense_units: List[GroundUnitType] = field(default_factory=list)
+
+    # A list of all supported sets of units
+    unit_sets: list[UnitSet] = field(default_factory=list)
+
+    # TODO Legacy generators
     # Possible SAMS site generators for this faction
     air_defenses: List[str] = field(default_factory=list)
-
-    # Possible EWR generators for this faction.
-    ewrs: List[GroundUnitType] = field(default_factory=list)
 
     # Possible Missile site generators for this faction
     missiles: List[str] = field(default_factory=list)
@@ -86,10 +99,10 @@ class Faction:
     requirements: Dict[str, str] = field(default_factory=dict)
 
     # possible aircraft carrier units
-    aircraft_carrier: List[Type[ShipType]] = field(default_factory=list)
+    aircraft_carrier: List[ShipUnitType] = field(default_factory=list)
 
     # possible helicopter carrier units
-    helicopter_carrier: List[Type[ShipType]] = field(default_factory=list)
+    helicopter_carrier: List[ShipUnitType] = field(default_factory=list)
 
     # Possible carrier names
     carrier_names: List[str] = field(default_factory=list)
@@ -101,10 +114,10 @@ class Faction:
     navy_generators: List[str] = field(default_factory=list)
 
     # Available destroyers
-    destroyers: List[Type[ShipType]] = field(default_factory=list)
+    destroyers: List[ShipUnitType] = field(default_factory=list)
 
     # Available cruisers
-    cruisers: List[Type[ShipType]] = field(default_factory=list)
+    cruisers: List[ShipUnitType] = field(default_factory=list)
 
     # How many navy group should we try to generate per CP on startup for this faction
     navy_group_count: int = field(default=1)
@@ -124,7 +137,7 @@ class Faction:
     # doctrine
     doctrine: Doctrine = field(default=MODERN_DOCTRINE)
 
-    # List of available buildings for this faction
+    # List of available building templates for this faction
     building_set: List[str] = field(default_factory=list)
 
     # List of default livery overrides
@@ -145,17 +158,78 @@ class Faction:
     def __getitem__(self, item: str) -> Any:
         return getattr(self, item)
 
-    def has_access_to_unit_type(self, unit_type: str) -> bool:
-        # Supports all GroundUnit lists and AirDefenses
-        for unit in self.ground_units:
-            if unit_type == unit.dcs_id:
-                return True
-        return unit_type in self.air_defenses
+    @property
+    def accessible_units(self) -> Iterator[UnitType[Any]]:
+        yield from self.accessible_ground_units
+        yield from self.accessible_ships
 
-    def has_access_to_unit_class(self, unit_class: GroundUnitClass) -> bool:
+    @property
+    def accessible_ground_units(self) -> Iterator[GroundUnitType]:
+        yield from self.ground_units
+        yield from self.infantry_units
+        yield from self.air_defense_units
+        for unit_set in self.unit_sets:
+            yield from unit_set.ground_units
+
+    @property
+    def accessible_ships(self) -> Iterator[ShipUnitType]:
+        yield from self.destroyers
+        yield from self.cruisers
+        yield from self.helicopter_carrier
+        yield from self.aircraft_carrier
+        for unit_set in self.unit_sets:
+            yield from unit_set.ship_units
+
+    def has_access_to_unit_type(self, unit_type: str) -> bool:
+        # GroundUnits
+        if any(unit_type == u.dcs_id for u in self.accessible_units):
+            return True
+
+        # Statics
+        if unit_type in self.building_set or db.static_type_from_name(unit_type):
+            # TODO Improve the statics checking
+            # dcs type ids as string
+            return True
+        return False
+
+    def has_access_to_unit_class(self, unit_class: UnitClass) -> bool:
         for vehicle in itertools.chain(self.frontline_units, self.artillery_units):
             if vehicle.unit_class is unit_class:
                 return True
+        return False
+
+    def has_access_to_template(
+        self, template: GroundObjectTemplate, template_category: TemplateCategory
+    ) -> bool:
+        # New checking for unit_sets and units
+        for unit_set in self.unit_sets:
+            if template.name in unit_set.templates:
+                return True
+        # TODO How to check "variants"? Where to define the additional units
+        # How should this be working in the future?... Best example is the S-300 stuff.
+
+        # Legacy Checking
+        if (
+            (
+                template_category == TemplateCategory.AirDefence
+                and template.template_type == "EWR"
+            )
+            or (
+                # Legacy handling for air defense generators
+                template_category == TemplateCategory.AirDefence
+                and template.name in self.air_defenses
+            )
+            or template.name in self.navy_generators
+            or template.name in self.missiles
+            or template.name in self.coastal_defenses
+            or (
+                template.template_type in self.building_set + ["fob", "ammo", "factory"]
+            )
+            or (template.template_type == "carrier" and self.aircraft_carrier)
+            or (template.template_type == "lha" and self.helicopter_carrier)
+            or template_category == TemplateCategory.Armor
+        ):
+            return True
         return False
 
     def load_templates(self, all_templates: GroundObjectTemplates) -> None:
@@ -165,41 +239,47 @@ class Faction:
         # For example it can be possible to define the unit_types and check if all
         # requirements for the template are fulfilled.
         for category, template in all_templates.templates:
-            if (
-                (
-                    category == TemplateCategory.AirDefence
-                    and (
-                        # Check if faction has the template name or ALL required
-                        # unit_types in the list air_defenses. For legacy reasons this
-                        # allows both and also the EWR template
-                        template.name in self.air_defenses
-                        or all(
-                            self.has_access_to_unit_type(required_unit)
-                            for required_unit in template.required_units
-                        )
-                        or template.template_type == "EWR"
-                    )
-                )
-                or template.name in self.navy_generators
-                or template.name in self.missiles
-                or template.name in self.coastal_defenses
-                or (
-                    template.template_type
-                    in self.building_set + ["fob", "ammo", "factory"]
-                )
-                or (template.template_type == "carrier" and self.aircraft_carrier)
-                or (template.template_type == "lha" and self.helicopter_carrier)
-                or category == TemplateCategory.Armor
-            ):
+            if self.has_access_to_template(template, category):
                 # Make a deep copy of a template and add it to the template_list.
                 # This is required to have faction independent templates. Otherwise
                 # the reference would be the same and changes would affect all.
                 faction_template = copy.deepcopy(template)
-                # Initialize all randomizers
-                for group_template in faction_template.groups:
-                    if group_template.randomizer:
-                        group_template.randomizer.init_randomization_for_faction(self)
-                self.templates.add_template(category, faction_template)
+                # Initialize the template and the randomizers. This also removes all
+                # units which are not accessible by this faction.
+                # Empty groups will be removed.
+                if template.name not in self.legacy_support:
+                    # Only validate already migrated templates
+                    faction_template.groups[:] = [
+                        group_template
+                        for group_template in faction_template.groups
+                        if self.initialize_group_template(group_template)
+                    ]
+                if faction_template.groups:
+                    self.templates.add_template(category, faction_template)
+
+    def initialize_group_template(self, group_template: GroupTemplate) -> bool:
+
+        # If template has a randomizer check only the randomization
+        if group_template.randomizer:
+            return group_template.randomizer.init_randomization_for_faction(self)
+
+        # check for supported units
+        supported_units = [
+            unit
+            for unit in group_template.units
+            if self.has_access_to_unit_type(unit.type)
+        ]
+
+        if (
+            len(supported_units) != len(group_template.units)
+            and not group_template.optional
+        ):
+            logging.warning(
+                f"Faction does not support unit from template group {group_template.name}"
+            )
+            # TODO if optional just skip the units
+            return False
+        return True
 
     @classmethod
     def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
@@ -240,25 +320,32 @@ class Faction:
         faction.logistics_units = [
             GroundUnitType.named(n) for n in json.get("logistics_units", [])
         ]
-        faction.ewrs = [GroundUnitType.named(n) for n in json.get("ewrs", [])]
+        faction.air_defense_units = [
+            GroundUnitType.named(n) for n in json.get("air_defense_units", [])
+        ]
 
+        faction.unit_sets = [UnitSet.named(n) for n in json.get("unit_sets", [])]
+
+        # Compatibility for legacy generators
         faction.air_defenses = json.get("air_defenses", [])
-        # Compatibility for older factions. All air defenses now belong to a
-        # single group and the generator decides what belongs where.
-        faction.air_defenses.extend(json.get("sams", []))
-        faction.air_defenses.extend(json.get("shorads", []))
-
         faction.missiles = json.get("missiles", [])
         faction.coastal_defenses = json.get("coastal_defenses", [])
+        faction.navy_generators = json.get("navy_generators", [])
+
         faction.requirements = json.get("requirements", {})
 
         faction.carrier_names = json.get("carrier_names", [])
         faction.helicopter_carrier_names = json.get("helicopter_carrier_names", [])
-        faction.navy_generators = json.get("navy_generators", [])
-        faction.aircraft_carrier = load_all_ships(json.get("aircraft_carrier", []))
-        faction.helicopter_carrier = load_all_ships(json.get("helicopter_carrier", []))
-        faction.destroyers = load_all_ships(json.get("destroyers", []))
-        faction.cruisers = load_all_ships(json.get("cruisers", []))
+
+        faction.aircraft_carrier = [
+            ShipUnitType.named(n) for n in json.get("aircraft_carrier", [])
+        ]
+        faction.helicopter_carrier = [
+            ShipUnitType.named(n) for n in json.get("helicopter_carrier", [])
+        ]
+        faction.destroyers = [ShipUnitType.named(n) for n in json.get("destroyers", [])]
+        faction.cruisers = [ShipUnitType.named(n) for n in json.get("cruisers", [])]
+
         faction.has_jtac = json.get("has_jtac", False)
         jtac_name = json.get("jtac_unit", None)
         if jtac_name is not None:
@@ -304,7 +391,17 @@ class Faction:
 
         # Templates
         faction.templates = GroundObjectTemplates()
+
         return faction
+
+    @property
+    def legacy_support(self) -> list[str]:
+        return (
+            self.air_defenses
+            + self.navy_generators
+            + self.missiles
+            + self.coastal_defenses
+        )
 
     @property
     def ground_units(self) -> Iterator[GroundUnitType]:
@@ -312,9 +409,13 @@ class Faction:
         yield from self.frontline_units
         yield from self.logistics_units
 
-    def infantry_with_class(
-        self, unit_class: GroundUnitClass
-    ) -> Iterator[GroundUnitType]:
+    @property
+    def ships(self) -> Iterator[GroundUnitType]:
+        yield from self.artillery_units
+        yield from self.frontline_units
+        yield from self.logistics_units
+
+    def infantry_with_class(self, unit_class: UnitClass) -> Iterator[GroundUnitType]:
         for unit in self.infantry_units:
             if unit.unit_class is unit_class:
                 yield unit

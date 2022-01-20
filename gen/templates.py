@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import itertools
 import json
 import logging
 import random
@@ -147,22 +148,18 @@ class GroupTemplate:
 
 @dataclass
 class TemplateRandomizer:
-    # Selection of units to apply the randomization.
-    # If left empty the randomizer will be applied to all unit of the group
-    units: list[int] = field(default_factory=list)
+    """TemplateRandomizer allows to randomize the unit_type and count of units within
+    the template group. One randomizer can only randomize all units of the given
+    group. Different randomizations can be achieved by using multiple groups."""
 
     # Define the amount of random units to be created by the randomizer.
     # This can be a fixed int or a random value from a range of two ints as tuple
     count: Union[int, list[int]] = field(default=1)
 
-    # The randomizer can pick a random unit type from a faction list like
-    # frontline_units or air_defenses to allow faction sensitive randomization
-    faction_types: list[str] = field(default_factory=list)
-
     # Only works for vehicle units. Allows to specify the type class of the unit.
     # For example this allows to select frontline_units as faction_type and also define
     # Shorads as class to only pick AntiAir from the list
-    type_classes: list[str] = field(default_factory=list)
+    unit_classes: list[str] = field(default_factory=list)
 
     # Allows to define the exact UnitTypes the randomizer picks from. these have to be
     # the dcs_unit_types found in the pydcs arrays
@@ -188,10 +185,8 @@ class TemplateRandomizer:
     @staticmethod
     def from_dict(d: dict[str, Any]) -> TemplateRandomizer:
         return TemplateRandomizer(
-            d["units"],
             d["count"],
-            d["faction_types"],
-            d["type_classes"],
+            d["unit_classes"],
             d["unit_types"],
         )
 
@@ -219,60 +214,27 @@ class TemplateRandomizer:
             count = self.count
         self._unit_counter = count
 
-    def init_randomization_for_faction(self, faction: Faction) -> None:
+    def init_randomization_for_faction(self, faction: Faction) -> bool:
         # Initializes the randomization
         # This sets the random_unit_type and the random_unit_count
         if self._initialized:
-            return
+            raise RuntimeError("Template already initialized")
 
-        type_list = []
-        for faction_type in self.faction_types:
-            for unit_type in faction[faction_type]:
-                if isinstance(unit_type, GroundUnitType):
-                    # GroundUnitType
-                    type_list.append(unit_type.dcs_id)
-                elif issubclass(unit_type, UnitType):
-                    # DCS Unit Type object
-                    type_list.append(unit_type.id)
-                elif db.unit_type_from_name(unit_type):
-                    # DCS Unit Type as string
-                    type_list.append(unit_type)
-                else:
-                    raise KeyError
+        self._possible_types = []
 
-        if self.unit_types and self.faction_types:
-            # If Faction types were defined use unit_types as filter
-            filtered_type_list = [
-                unit_type for unit_type in type_list if unit_type in self.unit_types
-            ]
-            type_list = filtered_type_list
-        else:
-            # If faction_types is not defined append the unit_types
-            for unit_type in self.unit_types:
-                type_list.append(unit_type)
+        for unit_type in self.unit_types:
+            self._possible_types.append(unit_type)
 
-        if self.type_classes:
-            filtered_type_list = []
-            for unit_type in type_list:
-                if unit_type in vehicle_map:
-                    dcs_type = vehicle_map[unit_type]
-                else:
-                    continue
-                try:
-                    ground_unit_type = next(GroundUnitType.for_dcs_type(dcs_type))
-                except (KeyError, StopIteration):
-                    logging.error(f"Unit {unit_type} has no GroundUnitType")
-                    continue
-                if (
-                    ground_unit_type.unit_class
-                    and ground_unit_type.unit_class.value in self.type_classes
-                ):
-                    filtered_type_list.append(unit_type)
-            type_list = filtered_type_list
-        self._possible_types = type_list
+        if self.unit_classes:
+            for unit in faction.accessible_units:
+                if unit.unit_class and unit.unit_class.value in self.unit_classes:
+                    self._possible_types.append(unit.dcs_id)
+
         if self.randomize_unit_type():
             self.reset_unit_counter()
             self._initialized = True
+            return True
+        return False
 
     @property
     def unit_type(self) -> Optional[str]:
@@ -301,12 +263,6 @@ class TemplateRandomizer:
             self._unit_counter -= 1
         else:
             raise IndexError
-
-    @property
-    def unit_range(self) -> list[int]:
-        if len(self.units) > 1:
-            return list(range(self.units[0], self.units[1] + 1))
-        return self.units
 
 
 class GroundObjectTemplate(ABC):
@@ -413,40 +369,6 @@ class GroundObjectTemplate(ABC):
     @property
     def size(self) -> int:
         return sum([len(group.units) for group in self.groups])
-
-    @property
-    def min_size(self) -> int:
-        return self._size_for_randomized(True)
-
-    @property
-    def max_size(self) -> int:
-        return self._size_for_randomized(False)
-
-    def _size_for_randomized(self, min_size: bool) -> int:
-        size = 0
-        for group in self.groups:
-            for unit_id, unit in enumerate(group.units):
-                if group.randomizer and unit_id in group.randomizer.units:
-                    if isinstance(group.randomizer.count, int):
-                        size = size + group.randomizer.count
-                    else:
-                        size = size + group.randomizer.count[0 if min_size else 1]
-                else:
-                    size = size + 1
-        return size
-
-    @property
-    def required_units(self) -> list[str]:
-        """returns all required unit types by theyre dcs type id"""
-        # todo take care for randomizer
-        unit_types = []
-        for group in self.groups:
-            # this completly excludes randomized groups
-            if not group.optional and not group.randomizer:
-                for unit in group.units:
-                    if unit.type not in unit_types:
-                        unit_types.append(unit.type)
-        return unit_types
 
 
 class AirDefenceTemplate(GroundObjectTemplate):

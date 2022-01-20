@@ -14,7 +14,7 @@ from dcs import vehicles
 
 from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.data.groundunitclass import GroundUnitClass
+from game.data.unitclass import UnitClass
 from game.db import REWARDS
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, TheaterGroundObject

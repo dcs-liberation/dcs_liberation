@@ -8,20 +8,25 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, Any, Iterator
 
+from dcs.ships import ship_map
+from dcs.vehicles import vehicle_map
 from tabulate import tabulate
 
 import dcs
 from dcs import Point
 
-from game import Game
+from game import db
 from game.campaignloader import CampaignAirWingConfig
 from game.db import FACTIONS
+from game.dcs.groundunittype import GroundUnitType
+from game.dcs.shipunittype import ShipUnitType
 from game.missiongenerator.tgogenerator import (
     GroundObjectGenerator,
 )
 from game.point_with_heading import PointWithHeading
 from game.settings import Settings
 from game.theater import CaucasusTheater, OffMapSpawn
+from game.theater.start_generator import GameGenerator, ModSettings, GeneratorSettings
 from game.unitmap import UnitMap
 from game.utils import Heading
 
@@ -277,16 +282,25 @@ def export_templates(
     theater.add_controlpoint(control_point_ground)
     theater.add_controlpoint(control_point_water)
 
-    game = Game(
+    generator = GameGenerator(
         FACTIONS["Bluefor Modern"],
         FACTIONS["Russia 2010"],
         theater,
         CampaignAirWingConfig({control_point_ground: [], control_point_water: []}),
-        datetime.today(),
         Settings(),
-        10000,
-        10000,
+        GeneratorSettings(
+            start_date=datetime.today(),
+            player_budget=1000,
+            enemy_budget=1000,
+            inverted=False,
+            no_carrier=False,
+            no_lha=False,
+            no_player_navy=False,
+            no_enemy_navy=False,
+        ),
+        ModSettings(),
     )
+    game = generator.generate()
 
     m = dcs.Mission(game.theater.terrain)
     country = m.country("USA")
@@ -776,6 +790,66 @@ def main():
     #     migrate_generators_to_templates(
     #         migrate_file, target_file, miz_file, template_map, table_file
     #     )
+
+
+def print_unit_maps() -> None:
+    # Extrac UnitMaps from all templates: Units with the GroundUnitType name!
+    templates = GroundObjectTemplates.from_json(TEMPLATES_BLOB)
+
+    template_maps = []
+    missing_units = []
+    for category, template in templates.templates:
+        ground_units: list[str] = []
+        ship_units: list[str] = []
+        statics: list[str] = []
+        for group in template.groups:
+            if group.randomizer:
+                ground_units = ["-Randomized-"]
+            else:
+                for unit in group.units:
+                    if unit.type in vehicle_map:
+                        try:
+                            ground_units.append(
+                                next(
+                                    GroundUnitType.for_dcs_type(vehicle_map[unit.type])
+                                ).name
+                            )
+                        except StopIteration:
+                            missing_units.append(unit.type)
+                    elif unit.type in ship_map:
+                        try:
+                            ship_units.append(
+                                next(
+                                    ShipUnitType.for_dcs_type(ship_map[unit.type])
+                                ).name
+                            )
+                        except StopIteration:
+                            missing_units.append(unit.type)
+                    elif db.static_type_from_name(unit.type):
+                        statics.append(unit.type)
+                    else:
+                        missing_units.append(unit.type)
+
+        if template.name in template_maps:
+            raise RuntimeError(f"Duplicate template name {template.name}")
+        template_maps.append(
+            [
+                template.name,
+                ", ".join(set(ground_units)),
+                ", ".join(set(ship_units)),
+                ", ".join(set(statics)),
+            ]
+        )
+
+    template_maps.append(["Missing Units", ", ".join(set(missing_units))])
+
+    print(
+        tabulate(
+            template_maps,
+            headers=["Template", "ground_units", "ship_units", "statics"],
+            tablefmt="github",
+        )
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,13 @@
+name: SA-5/S-200 Site
+class: LORAD
+ground-units:
+  - SAM SA-5 S-200 ST-68U "Tin Shield" SR
+  - SAM SA-5 S-200 "Square Pair" TR"
+  - SAM SA-5 S-200 "Gammon" LN"
+templates:
+  - SA-5/S-200 Site
+variants:
+  - SA-5/S-200 Site Tin Shield:
+    - SAM SA-5 S-200 ST-68U "Tin Shield" SR
+  - SA-5/S-200 Site Flat Face:
+    - SAM P19 "Flat Face" SR (SA-2/3)

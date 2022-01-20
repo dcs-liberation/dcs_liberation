@@ -5,7 +5,7 @@ import random
 from enum import Enum
 from typing import Dict, List, TYPE_CHECKING
 
-from game.data.groundunitclass import GroundUnitClass
+from game.data.unitclass import UnitClass
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint
 from gen.ground_forces.combat_stance import CombatStance
@@ -100,28 +100,28 @@ class GroundPlanner:
         # Create combat groups and assign them randomly to each enemy CP
         for unit_type in self.cp.base.armor:
             unit_class = unit_type.unit_class
-            if unit_class is GroundUnitClass.Tank:
+            if unit_class is UnitClass.Tank:
                 collection = self.tank_groups
                 role = CombatGroupRole.TANK
-            elif unit_class is GroundUnitClass.Apc:
+            elif unit_class is UnitClass.Apc:
                 collection = self.apc_group
                 role = CombatGroupRole.APC
-            elif unit_class is GroundUnitClass.Artillery:
+            elif unit_class is UnitClass.Artillery:
                 collection = self.art_group
                 role = CombatGroupRole.ARTILLERY
-            elif unit_class is GroundUnitClass.Ifv:
+            elif unit_class is UnitClass.Ifv:
                 collection = self.ifv_group
                 role = CombatGroupRole.IFV
-            elif unit_class is GroundUnitClass.Logistics:
+            elif unit_class is UnitClass.Logistics:
                 collection = self.logi_groups
                 role = CombatGroupRole.LOGI
-            elif unit_class is GroundUnitClass.Atgm:
+            elif unit_class is UnitClass.Atgm:
                 collection = self.atgm_group
                 role = CombatGroupRole.ATGM
-            elif unit_class is GroundUnitClass.Shorads:
+            elif unit_class is UnitClass.Shorads:
                 collection = self.shorad_groups
                 role = CombatGroupRole.SHORAD
-            elif unit_class is GroundUnitClass.Recon:
+            elif unit_class is UnitClass.Recon:
                 collection = self.recon_groups
                 role = CombatGroupRole.RECON
             else:

@@ -28,7 +28,7 @@ from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Vehicle, Skill
 from dcs.unitgroup import VehicleGroup
 
-from game.data.groundunitclass import GroundUnitClass
+from game.data.unitclass import UnitClass
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.theater.controlpoint import ControlPoint
@@ -221,7 +221,7 @@ class FlotGenerator:
             if self.game.settings.manpads:
                 # 50% of armored units protected by manpad
                 if random.choice([True, False]):
-                    manpads = list(faction.infantry_with_class(GroundUnitClass.Manpads))
+                    manpads = list(faction.infantry_with_class(UnitClass.Manpads))
                     if manpads:
                         u = random.choices(
                             manpads, weights=[m.spawn_weight for m in manpads]
@@ -237,12 +237,10 @@ class FlotGenerator:
                         )
             return
 
-        possible_infantry_units = set(
-            faction.infantry_with_class(GroundUnitClass.Infantry)
-        )
+        possible_infantry_units = set(faction.infantry_with_class(UnitClass.Infantry))
         if self.game.settings.manpads:
             possible_infantry_units |= set(
-                faction.infantry_with_class(GroundUnitClass.Manpads)
+                faction.infantry_with_class(UnitClass.Manpads)
             )
         if not possible_infantry_units:
             return

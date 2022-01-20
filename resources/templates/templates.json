@@ -5554,12 +5554,10 @@
 					],
 					"static": false,
 					"randomizer": {
-						"units": [],
 						"count": 1,
-						"faction_types": [
-							"ewrs"
+						"unit_classes": [
+							"EarlyWarningRadar"
 						],
-						"type_classes": [],
 						"unit_types": []
 					},
 					"optional": false
@@ -5580,8 +5578,8 @@
 							"name": "Armor Group with Anti-Air 0-0",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": 0.6218655299744569,
-								"y": -0.7126605900120921
+								"x": 0.3781344700255431,
+								"y": -0.28733940998790786
 							},
 							"heading": 0
 						},
@@ -5589,8 +5587,8 @@
 							"name": "Armor Group with Anti-Air 0-1",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -23.378134470025543,
-								"y": -47.71266059001209
+								"x": -23.621865529974457,
+								"y": -47.28733940998791
 							},
 							"heading": 0
 						},
@@ -5598,8 +5596,8 @@
 							"name": "Armor Group with Anti-Air 0-2",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -24.378134470025543,
-								"y": 38.28733940998791
+								"x": -24.621865529974457,
+								"y": 38.71266059001209
 							},
 							"heading": 0
 						},
@@ -5607,8 +5605,8 @@
 							"name": "Armor Group with Anti-Air 0-3",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -45.37813447002554,
-								"y": -87.71266059001209
+								"x": -45.62186552997446,
+								"y": -87.28733940998791
 							},
 							"heading": 0
 						},
@@ -5616,8 +5614,8 @@
 							"name": "Armor Group with Anti-Air 0-4",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -45.37813447002554,
-								"y": 79.28733940998791
+								"x": -45.62186552997446,
+								"y": 79.71266059001209
 							},
 							"heading": 0
 						},
@@ -5625,8 +5623,8 @@
 							"name": "Armor Group with Anti-Air 0-5",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -71.37813447002554,
-								"y": -55.71266059001209
+								"x": -71.62186552997446,
+								"y": -55.28733940998791
 							},
 							"heading": 0
 						},
@@ -5634,8 +5632,8 @@
 							"name": "Armor Group with Anti-Air 0-6",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -68.37813447002554,
-								"y": 58.28733940998791
+								"x": -68.62186552997446,
+								"y": 58.71266059001209
 							},
 							"heading": 0
 						},
@@ -5643,23 +5641,19 @@
 							"name": "Armor Group with Anti-Air 0-7",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -83.37813447002554,
-								"y": -12.712660590012092
+								"x": -83.62186552997446,
+								"y": -12.287339409987908
 							},
 							"heading": 0
 						}
 					],
 					"static": false,
 					"randomizer": {
-						"units": [],
 						"count": [
 							2,
 							6
 						],
-						"faction_types": [
-							"frontline_units"
-						],
-						"type_classes": [
+						"unit_classes": [
 							"APC",
 							"ATGM",
 							"IFV",
@@ -5676,8 +5670,8 @@
 							"name": "Armor Group with Anti-Air 1-0",
 							"type": "M6 Linebacker",
 							"position": {
-								"x": -46.37813447002554,
-								"y": -24.712660590012092
+								"x": -46.62186552997446,
+								"y": -24.287339409987908
 							},
 							"heading": 321
 						},
@@ -5685,24 +5679,19 @@
 							"name": "Armor Group with Anti-Air 1-1",
 							"type": "M6 Linebacker",
 							"position": {
-								"x": -46.37813447002554,
-								"y": 21.287339409987908
+								"x": -46.62186552997446,
+								"y": 21.712660590012092
 							},
 							"heading": 20
 						}
 					],
 					"static": false,
 					"randomizer": {
-						"units": [],
 						"count": [
 							1,
 							2
 						],
-						"faction_types": [
-							"frontline_units",
-							"infantry_units"
-						],
-						"type_classes": [
+						"unit_classes": [
 							"SHORADS",
 							"MANPADS"
 						],
@@ -5724,8 +5713,8 @@
 							"name": "Armor Group 0-0",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": 0.25841279997257516,
-								"y": -0.7776761800050735
+								"x": 0.7415872000274248,
+								"y": -0.22232381999492645
 							},
 							"heading": 0
 						},
@@ -5733,8 +5722,8 @@
 							"name": "Armor Group 0-1",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -23.741587200027425,
-								"y": -47.77767618000507
+								"x": -23.258412799972575,
+								"y": -47.22232381999493
 							},
 							"heading": 0
 						},
@@ -5742,8 +5731,8 @@
 							"name": "Armor Group 0-2",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -25.741587200027425,
-								"y": 38.22232381999493
+								"x": -25.258412799972575,
+								"y": 38.77767618000507
 							},
 							"heading": 0
 						},
@@ -5751,8 +5740,8 @@
 							"name": "Armor Group 0-3",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -45.741587200027425,
-								"y": -87.77767618000507
+								"x": -45.258412799972575,
+								"y": -87.22232381999493
 							},
 							"heading": 0
 						},
@@ -5760,8 +5749,8 @@
 							"name": "Armor Group 0-4",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -45.741587200027425,
-								"y": 79.22232381999493
+								"x": -45.258412799972575,
+								"y": 79.77767618000507
 							},
 							"heading": 0
 						},
@@ -5769,8 +5758,8 @@
 							"name": "Armor Group 0-5",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -72.74158720002742,
-								"y": -55.77767618000507
+								"x": -72.25841279997258,
+								"y": -55.22232381999493
 							},
 							"heading": 0
 						},
@@ -5778,8 +5767,8 @@
 							"name": "Armor Group 0-6",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -72.74158720002742,
-								"y": 21.222323819994926
+								"x": -72.25841279997258,
+								"y": 21.777676180005074
 							},
 							"heading": 0
 						},
@@ -5787,23 +5776,19 @@
 							"name": "Armor Group 0-7",
 							"type": "M-1 Abrams",
 							"position": {
-								"x": -45.741587200027425,
-								"y": -20.777676180005074
+								"x": -45.258412799972575,
+								"y": -20.222323819994926
 							},
 							"heading": 0
 						}
 					],
 					"static": false,
 					"randomizer": {
-						"units": [],
 						"count": [
 							2,
 							6
 						],
-						"faction_types": [
-							"frontline_units"
-						],
-						"type_classes": [
+						"unit_classes": [
 							"APC",
 							"ATGM",
 							"IFV",
@@ -6440,39 +6425,6 @@
 			]
 		},
 		{
-			"name": "TangoSubGroupGenerator",
-			"template_type": "ship",
-			"description": "",
-			"groups": [
-				{
-					"name": "TangoSubGroupGenerator 0",
-					"units": [
-						{
-							"name": "TangoSubGroupGenerator 0-0",
-							"type": "SOM",
-							"position": {
-								"x": 0,
-								"y": 0
-							},
-							"heading": 219
-						},
-						{
-							"name": "TangoSubGroupGenerator 0-1",
-							"type": "SOM",
-							"position": {
-								"x": 0,
-								"y": -1800
-							},
-							"heading": 219
-						}
-					],
-					"static": false,
-					"randomizer": null,
-					"optional": false
-				}
-			]
-		},
-		{
 			"name": "Type54GroupGenerator",
 			"template_type": "ship",
 			"description": "",
@@ -6558,14 +6510,10 @@
 					],
 					"static": false,
 					"randomizer": {
-						"units": [
-							0
-						],
 						"count": 1,
-						"faction_types": [
-							"aircraft_carrier"
+						"unit_classes": [
+							"AircraftCarrier"
 						],
-						"type_classes": [],
 						"unit_types": []
 					},
 					"optional": false
@@ -6612,12 +6560,10 @@
 					],
 					"static": false,
 					"randomizer": {
-						"units": [],
 						"count": 4,
-						"faction_types": [
-							"destroyers"
+						"unit_classes": [
+							"Destroyer"
 						],
-						"type_classes": [],
 						"unit_types": []
 					},
 					"optional": false
@@ -6644,14 +6590,10 @@
 					],
 					"static": false,
 					"randomizer": {
-						"units": [
-							0
-						],
 						"count": 1,
-						"faction_types": [
-							"aircraft_carrier"
+						"unit_classes": [
+							"AircraftCarrier"
 						],
-						"type_classes": [],
 						"unit_types": []
 					},
 					"optional": false
@@ -6707,12 +6649,10 @@
 					],
 					"static": false,
 					"randomizer": {
-						"units": [],
 						"count": 5,
-						"faction_types": [
-							"destroyers"
+						"unit_classes": [
+							"Destroyer"
 						],
-						"type_classes": [],
 						"unit_types": []
 					},
 					"optional": false
@@ -6739,14 +6679,10 @@
 					],
 					"static": false,
 					"randomizer": {
-						"units": [
-							0
-						],
 						"count": 1,
-						"faction_types": [
-							"helicopter_carrier"
+						"unit_classes": [
+							"HelicopterCarrier"
 						],
-						"type_classes": [],
 						"unit_types": []
 					},
 					"optional": false
@@ -6775,12 +6711,10 @@
 					],
 					"static": false,
 					"randomizer": {
-						"units": [],
 						"count": 2,
-						"faction_types": [
-							"destroyers"
+						"unit_classes": [
+							"Destroyer"
 						],
-						"type_classes": [],
 						"unit_types": []
 					},
 					"optional": false

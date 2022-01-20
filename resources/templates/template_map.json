@@ -567,12 +567,10 @@
 					"name": "Early-Warning Radar 0",
 					"randomizer": {
 						"count": 1,
-						"faction_types": [
-							"ewrs"
+						"unit_classes": [
+							"EarlyWarningRadar"
 						],
-						"type_classes": [],
-						"unit_types": [],
-						"units": []
+						"unit_types": []
 					}
 				}
 			],
@@ -592,17 +590,13 @@
 							2,
 							6
 						],
-						"faction_types": [
-							"frontline_units"
-						],
-						"type_classes": [
+						"unit_classes": [
 							"APC",
 							"ATGM",
 							"IFV",
 							"Tank"
 						],
-						"unit_types": [],
-						"units": []
+						"unit_types": []
 					}
 				},
 				{
@@ -613,16 +607,11 @@
 							1,
 							2
 						],
-						"faction_types": [
-							"frontline_units",
-							"infantry_units"
-						],
-						"type_classes": [
+						"unit_classes": [
 							"SHORADS",
 							"MANPADS"
 						],
-						"unit_types": [],
-						"units": []
+						"unit_types": []
 					}
 				}
 			],
@@ -640,17 +629,13 @@
 							2,
 							6
 						],
-						"faction_types": [
-							"frontline_units"
-						],
-						"type_classes": [
+						"unit_classes": [
 							"APC",
 							"ATGM",
 							"IFV",
 							"Tank"
 						],
-						"unit_types": [],
-						"units": []
+						"unit_types": []
 					}
 				}
 			],
@@ -1114,17 +1099,6 @@
 			"description": "",
 			"groups": [
 				{
-					"name": "TangoSubGroupGenerator 0"
-				}
-			],
-			"name": "TangoSubGroupGenerator",
-			"statics": [],
-			"template_type": "ship"
-		},
-		{
-			"description": "",
-			"groups": [
-				{
 					"name": "Type54GroupGenerator 0"
 				}
 			],
@@ -1150,26 +1124,20 @@
 					"name": "Carrier Group 0",
 					"randomizer": {
 						"count": 1,
-						"faction_types": [
-							"aircraft_carrier"
+						"unit_classes": [
+							"AircraftCarrier"
 						],
-						"type_classes": [],
-						"unit_types": [],
-						"units": [
-							0
-						]
+						"unit_types": []
 					}
 				},
 				{
 					"name": "Carrier Group 1",
 					"randomizer": {
 						"count": 4,
-						"faction_types": [
-							"destroyers"
+						"unit_classes": [
+							"Destroyer"
 						],
-						"type_classes": [],
-						"unit_types": [],
-						"units": []
+						"unit_types": []
 					}
 				}
 			],
@@ -1184,26 +1152,20 @@
 					"name": "Carrier Strike Group 8 0",
 					"randomizer": {
 						"count": 1,
-						"faction_types": [
-							"aircraft_carrier"
+						"unit_classes": [
+							"AircraftCarrier"
 						],
-						"type_classes": [],
-						"unit_types": [],
-						"units": [
-							0
-						]
+						"unit_types": []
 					}
 				},
 				{
 					"name": "Carrier Strike Group 8 1",
 					"randomizer": {
 						"count": 5,
-						"faction_types": [
-							"destroyers"
+						"unit_classes": [
+							"Destroyer"
 						],
-						"type_classes": [],
-						"unit_types": [],
-						"units": []
+						"unit_types": []
 					}
 				}
 			],
@@ -1218,26 +1180,20 @@
 					"name": "LHA Group 0",
 					"randomizer": {
 						"count": 1,
-						"faction_types": [
-							"helicopter_carrier"
+						"unit_classes": [
+							"HelicopterCarrier"
 						],
-						"type_classes": [],
-						"unit_types": [],
-						"units": [
-							0
-						]
+						"unit_types": []
 					}
 				},
 				{
 					"name": "LHA Group 1",
 					"randomizer": {
 						"count": 2,
-						"faction_types": [
-							"destroyers"
+						"unit_classes": [
+							"Destroyer"
 						],
-						"type_classes": [],
-						"unit_types": [],
-						"units": []
+						"unit_types": []
 					}
 				}
 			],
