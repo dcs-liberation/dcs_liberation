@@ -107,6 +107,7 @@ class NewGameWizard(QtWidgets.QWizard):
             f22_raptor=self.field("f22_raptor"),
             f104_starfighter=self.field("f104_starfighter"),
             hercules=self.field("hercules"),
+            uh_60l=self.field("uh_60l"),
             jas39_gripen=self.field("jas39_gripen"),
             su57_felon=self.field("su57_felon"),
             frenchpack=self.field("frenchpack"),
@@ -563,6 +564,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("a4_skyhawk", a4_skyhawk)
         hercules = QtWidgets.QCheckBox()
         self.registerField("hercules", hercules)
+        uh_60l = QtWidgets.QCheckBox()
+        self.registerField("uh_60l", uh_60l)
         f22_raptor = QtWidgets.QCheckBox()
         self.registerField("f22_raptor", f22_raptor)
         f104_starfighter = QtWidgets.QCheckBox()
@@ -582,22 +585,38 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modHelpText.setAlignment(Qt.AlignCenter)
 
         modLayout = QtWidgets.QGridLayout()
-        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), 1, 0)
-        modLayout.addWidget(a4_skyhawk, 1, 1)
-        modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), 2, 0)
-        modLayout.addWidget(f22_raptor, 2, 1)
-        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter"), 3, 0)
-        modLayout.addWidget(f104_starfighter, 3, 1)
-        modLayout.addWidget(QtWidgets.QLabel("C-130J-30 Super Hercules"), 4, 0)
-        modLayout.addWidget(hercules, 4, 1)
-        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), 5, 0)
-        modLayout.addWidget(jas39_gripen, 5, 1)
-        modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), 6, 0)
-        modLayout.addWidget(su57_felon, 6, 1)
-        modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), 7, 0)
-        modLayout.addWidget(frenchpack, 7, 1)
-        modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 8, 0)
-        modLayout.addWidget(high_digit_sams, 8, 1)
+        modLayout_row = 1
+        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), modLayout_row, 0)
+        modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), modLayout_row, 0)
+        modLayout.addWidget(f22_raptor, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter"), modLayout_row, 0)
+        modLayout.addWidget(f104_starfighter, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(
+            QtWidgets.QLabel("C-130J-30 Super Hercules"), modLayout_row, 0
+        )
+        modLayout.addWidget(hercules, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("UH-60L Black Hawk"), modLayout_row, 0)
+        modLayout.addWidget(uh_60l, modLayout_row, 1)
+        modLayout_row += 1
+        # Section break here for readability
+        modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), modLayout_row, 0)
+        modLayout.addWidget(jas39_gripen, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), modLayout_row, 0)
+        modLayout.addWidget(su57_felon, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), modLayout_row, 0)
+        modLayout.addWidget(frenchpack, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), modLayout_row, 0)
+        modLayout.addWidget(high_digit_sams, modLayout_row, 1)
         modSettingsGroup.setLayout(modLayout)
 
         mlayout = QVBoxLayout()

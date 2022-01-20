@@ -72,6 +72,7 @@ class ModSettings:
     f22_raptor: bool = False
     f104_starfighter: bool = False
     hercules: bool = False
+    uh_60l: bool = False
     jas39_gripen: bool = False
     su57_felon: bool = False
     frenchpack: bool = False

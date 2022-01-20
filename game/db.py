@@ -48,11 +48,13 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
+from pydcs_extensions.uh60l.uh60l import UH_60L
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["F-22A"] = F_22A
 plane_map["Su-57"] = Su_57
 plane_map["Hercules"] = Hercules
+plane_map["UH-60L"] = UH_60L
 plane_map["JAS39Gripen"] = JAS39Gripen
 plane_map["JAS39Gripen_AG"] = JAS39Gripen_AG
 plane_map["VSN_F104G"] = VSN_F104G

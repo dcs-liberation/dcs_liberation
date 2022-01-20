@@ -1,0 +1,13 @@
+description:
+  The Sikorsky UH-60 Black Hawk is a four-blade, twin-engine, medium-lift utility helicopter manufactured by Sikorsky Aircraft.
+  The UH-60A entered service with the U.S. Army in 1979, to replace the Bell UH-1 Iroquois as the Army's tactical transport helicopter.
+  The UH-60L is an improved utility variant.
+introduced: 1989
+carrier_capable: true
+lha_capable: true
+manufacturer: Sikorsky
+origin: USA
+price: 4
+role: Transport
+variants:
+  UH-60L: {}
