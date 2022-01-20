@@ -3,6 +3,7 @@ from typing import Dict, Any
 
 from dcs import task
 from dcs.helicopters import HelicopterType
+from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
 from pydcs_extensions.weapon_injector import inject_weapons
@@ -1268,3 +1269,25 @@ class UH_60L(HelicopterType):
 
     tasks = [task.Transport, task.Reconnaissance]
     task_default = task.Transport
+
+
+class KC130J(PlaneType):
+    id = "KC130J"
+    group_size_max = 1
+    height = 11.66
+    width = 40.4
+    length = 29.79
+    fuel_max = 30000
+    max_speed = 222.23988
+    chaff = 120
+    flare = 60
+    charge_total = 240
+    chaff_charge_size = 1
+    flare_charge_size = 2
+    tacan = True
+    category = "Tankers"  # {8A302789-A55D-4897-B647-66493FA6826F}
+
+    pylons: {}
+
+    tasks = [task.Refueling]
+    task_default = task.Refueling
