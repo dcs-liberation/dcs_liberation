@@ -34,14 +34,16 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Avenger Group",
     "Gepard Group",
-    "Hawk Site",
     "Patriot Battery",
     "Rapier AA Site"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM Patriot STR"
   ],
   "aircraft_carrier": [],

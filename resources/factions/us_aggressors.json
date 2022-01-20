@@ -58,12 +58,14 @@
     "Infantry M249",
     "Infantry M4"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Avenger Group",
-    "Hawk Site",
     "Patriot Battery"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM Patriot STR"
   ],
   "requirements": {},

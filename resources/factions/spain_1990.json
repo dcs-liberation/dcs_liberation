@@ -35,13 +35,15 @@
     "Infantry M249",
     "Infantry M4"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Avenger Group",
-    "Hawk Site",
     "Patriot Battery",
     "Roland Site"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM Patriot STR"
   ],
   "aircraft_carrier": [

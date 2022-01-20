@@ -44,8 +44,10 @@
     "Insurgent AK-74",
     "MANPADS SA-18 Igla \"Grouse\" Ins"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
-    "Hawk Site",
     "Rapier AA Site",
     "SA-2/S-75 Site",
     "ZSU-23 Group",
@@ -54,7 +56,7 @@
     "ZSU-57-2 Group",
     "ColdWarFlak Site"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM P19 \"Flat Face\" SR (SA-2/3)",
     "SAM Hawk SR (AN/MPQ-50)"
   ],

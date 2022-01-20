@@ -27,8 +27,10 @@
     "Infantry M4"
   ],
   "air_defenses": [
-    "EarlyColdWarFlak Site",
-    "Vulcan Group"
+    "EarlyColdWarFlak Site"
+  ],
+  "air_defense_units": [
+    "M163 Vulcan Air Defense System"
   ],
   "requirements": {},
   "doctrine": "coldwar"

@@ -38,11 +38,13 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "Avenger Group",
+  "unit_sets": [
     "Hawk Site"
   ],
-  "ewrs": [
+  "air_defenses": [
+    "Avenger Group"
+  ],
+  "air_defense_units": [
     "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],

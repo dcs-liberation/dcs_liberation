@@ -33,11 +33,13 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
-    "Hawk Site",
     "Rapier AA Site"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],

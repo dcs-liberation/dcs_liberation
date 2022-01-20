@@ -42,10 +42,14 @@
     "MANPADS Stinger",
     "Mortar 2B11 120mm"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
-    "Chaparral Group",
-    "Hawk Site",
-    "Vulcan Group"
+    "Chaparral Group"
+  ],
+  "air_defense_units": [
+    "M163 Vulcan Air Defense System"
   ],
   "aircraft_carrier": [
     "Stennis"

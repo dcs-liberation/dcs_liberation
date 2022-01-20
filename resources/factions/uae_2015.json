@@ -35,12 +35,14 @@
     "Infantry M4",
     "MANPADS SA-18 Igla-S \"Grouse\""
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
-    "Hawk Site",
     "Patriot Battery",
     "Rapier AA Site"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM Patriot STR"
   ],
   "requirements": {},

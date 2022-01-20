@@ -42,14 +42,16 @@
     "Infantry M249",
     "Infantry M4"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Chaparral Group",
-    "EarlyColdWarFlak Site",
-    "Hawk Site",
-    "Vulcan Group"
+    "EarlyColdWarFlak Site"
   ],
-  "ewrs": [
-    "SAM Hawk SR (AN/MPQ-50)"
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M163 Vulcan Air Defense System"
   ],
   "aircraft_carrier": [
     "Stennis"

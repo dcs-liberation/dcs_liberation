@@ -33,14 +33,16 @@
     "Infantry M249",
     "Infantry M4"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Bofors AAA",
-    "Chaparral Group",
-    "Hawk Site",
-    "Vulcan Group"
+    "Chaparral Group"
   ],
-  "ewrs": [
-    "SAM Hawk SR (AN/MPQ-50)"
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M163 Vulcan Air Defense System"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [],

@@ -46,14 +46,16 @@
     "Infantry M249",
     "MANPADS Stinger"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Chaparral Group",
-    "Hawk Site",
-    "Vulcan Group",
     "Patriot Battery"
   ],
-  "ewrs": [
-    "SAM Hawk SR (AN/MPQ-50)"
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M163 Vulcan Air Defense System"
   ],
   "aircraft_carrier": [
     "Stennis"

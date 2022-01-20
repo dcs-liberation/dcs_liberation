@@ -49,11 +49,13 @@
     "MANPADS Stinger",
     "Mortar 2B11 120mm"
   ],
-  "air_defenses": [
-    "Roland Site",
+  "unit_sets": [
     "Hawk Site"
   ],
-  "ewrs": [
+  "air_defenses": [
+    "Roland Site"
+  ],
+  "air_defense_units": [
     "SAM Hawk SR (AN/MPQ-50)"
   ],
   "aircraft_carrier": [],

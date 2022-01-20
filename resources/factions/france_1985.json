@@ -49,9 +49,11 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "Roland Site",
+  "unit_sets": [
     "Hawk Site"
+  ],
+  "air_defenses": [
+    "Roland Site"
   ],
   "aircraft_carrier": [],
   "helicopter_carrier": [

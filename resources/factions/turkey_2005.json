@@ -45,14 +45,16 @@
     "MANPADS SA-18 Igla-S \"Grouse\"",
     "Paratrooper AKS"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Avenger Group",
-    "Hawk Site",
     "Rapier AA Site",
     "SA-3/S-125 Site",
     "ZSU-23 Group"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM Hawk SR (AN/MPQ-50)"
   ],
   "navy_generators": [

@@ -66,7 +66,7 @@
     "ZU-23 Ural Group",
     "ZSU-57-2 Group"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "EWR 1L13",
     "EWR 55G6"
   ],
@@ -82,10 +82,11 @@
   "helicopter_carrier": [],
   "helicopter_carrier_names": [],
   "destroyers": [
-    "REZKY",
+    "REZKY"
+  ],
+  "cruisers": [
     "MOLNIYA"
   ],
-  "cruisers": [],
   "requirements": {},
   "carrier_names": [],
   "navy_generators": [

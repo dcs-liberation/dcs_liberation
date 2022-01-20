@@ -61,13 +61,15 @@
     "MANPADS Stinger",
     "Mortar 2B11 120mm"
   ],
+  "unit_sets": [
+    "Hawk Site"
+  ],
   "air_defenses": [
     "Avenger Group",
     "Chaparral Group",
-    "Hawk Site",
     "Patriot Battery"
   ],
-  "ewrs": [
+  "air_defense_units": [
     "SAM Patriot STR"
   ],
   "aircraft_carrier": [
