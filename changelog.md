@@ -28,6 +28,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Mission Generation]** Fixed the SA-5 Generator to use the P-19 FlatFace SR as a Fallback radar if the faction does not have access to the TinShield SR.
 * **[Mission Generation]** Fixed incorrect SA-5 threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
 * **[UI]** Enable / Disable the settings, save and stats actions if no game is loaded to prevent an error as these functions can only be used on a valid game.
+* **[UI]** Added missing icons for Tornado GR4, and Tornado IDS.
 
 # 5.0.0
 
