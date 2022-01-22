@@ -4,7 +4,6 @@ from typing import Dict, Any
 from dcs import task
 from dcs.helicopters import HelicopterType
 from dcs.planes import PlaneType
-from dcs.weapons_data import Weapons
 
 from pydcs_extensions.weapon_injector import inject_weapons
 
@@ -1246,22 +1245,22 @@ class UH_60L(HelicopterType):
             X51 = "X51"
 
     class Pylon1:
-        CEFS_Fuel_Tank_200_gallons = (1, Weapons.CEFS_Fuel_Tank_200_gallons)
+        CEFS_Fuel_Tank_200_gallons = (1, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
 
     # ERRR <CLEAN>
 
     class Pylon2:
-        CEFS_Fuel_Tank_200_gallons = (2, Weapons.CEFS_Fuel_Tank_200_gallons)
+        CEFS_Fuel_Tank_200_gallons = (2, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
 
     # ERRR <CLEAN>
 
     class Pylon3:
-        CEFS_Fuel_Tank_200_gallons = (3, Weapons.CEFS_Fuel_Tank_200_gallons)
+        CEFS_Fuel_Tank_200_gallons = (3, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
 
     # ERRR <CLEAN>
 
     class Pylon4:
-        CEFS_Fuel_Tank_200_gallons = (4, Weapons.CEFS_Fuel_Tank_200_gallons)
+        CEFS_Fuel_Tank_200_gallons = (4, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
 
     # ERRR <CLEAN>
 
