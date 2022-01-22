@@ -28,6 +28,7 @@ Saves from 5.0.0 are compatible with 5.1.0
 * **[Mission Generation]** Corrected Viggen FR22 & FR24 preset channels for the DCS 2.7.9 update
 * **[Mission Generation]** Fixed the SA-5 Generator to use the P-19 FlatFace SR as a Fallback radar if the faction does not have access to the TinShield SR.
 * **[UI]** Enable / Disable the settings, save and stats actions if no game is loaded to prevent an error as these functions can only be used on a valid game.
+* **[UI]** Added missing icons for Tornado GR4, and Tornado IDS.
 
 # 5.0.0
 
