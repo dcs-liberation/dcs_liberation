@@ -75,7 +75,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[6] = {
-					["CLSID"] = "{DB769D48-67D7-42ED-A2BE-108D566C8B1E}",
+					["CLSID"] = "{A111396E-D3E8-4b9c-8AC9-2432489304D5}",
 					["num"] = 5,
 				},
 				[7] = {
