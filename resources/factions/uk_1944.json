@@ -16,6 +16,7 @@
     "Thunderbolt Mk.II (Early)",
     "Thunderbolt Mk.II (Late)",
     "Thunderbolt Mk.II (Mid)",
+    "AJS-37 Viggen",
     "MosquitoFBMkVI"
   ],
   "frontline_units": [
@@ -56,5 +57,14 @@
   "navy_group_count": 1,
   "has_jtac": false,
   "doctrine": "ww2",
-  "building_set": "ww2ally"
+  "building_set": "ww2ally",
+  "liveries_overrides": {
+    "AJS-37 Viggen": [
+      "06 Sqn RAF Camo 2",
+      "41 Sqn RAF Camo 2",
+      "43 Sqn RAF Camo 3",
+      "54 Sqn AN RAF Camo 3",
+      "54 Sqn RAF Camo 2"
+    ]
+  }
 }
