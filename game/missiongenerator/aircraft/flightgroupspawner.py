@@ -5,7 +5,7 @@ from typing import Any, Union
 from dcs import Mission, Point
 from dcs.country import Country
 from dcs.mission import StartType as DcsStartType
-from dcs.planes import Su_33, F_14A
+from dcs.planes import F_14A, Su_33
 from dcs.point import PointAction
 from dcs.ships import KUZNECOW
 from dcs.terrain import Airport, NoParkingSlotError
@@ -14,7 +14,7 @@ from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from game.ato import Flight
 from game.ato.flightstate import InFlight
 from game.ato.starttype import StartType
-from game.theater import Airfield, ControlPoint, NavalControlPoint, OffMapSpawn
+from game.theater import Airfield, ControlPoint, Fob, NavalControlPoint, OffMapSpawn
 from game.utils import meters
 from gen.flights.traveltime import GroundSpeed
 from gen.naming import namegen
@@ -101,17 +101,18 @@ class FlightGroupSpawner:
                         f"{carrier_group.__class__.__name__}, expected a ShipGroup"
                     )
                 return self._generate_at_group(name, carrier_group)
-            else:
-                # If the flight is an helicopter flight, then prioritize dedicated
-                # helipads
-                if self.flight.unit_type.helicopter:
-                    return self._generate_at_cp_helipad(name, cp)
-
-                if not isinstance(cp, Airfield):
+            elif isinstance(cp, Fob):
+                if not self.flight.unit_type.helicopter:
                     raise RuntimeError(
-                        f"Attempted to spawn at airfield for non-airfield {cp}"
+                        f"Cannot spawn fixed-wing aircraft at {cp} because it is a FOB"
                     )
+                return self._generate_at_cp_helipad(name, cp)
+            elif isinstance(cp, Airfield):
                 return self._generate_at_airport(name, cp.airport)
+            else:
+                raise NotImplementedError(
+                    f"Aircraft spawn behavior not implemented for {cp} ({cp.__class__})"
+                )
         except NoParkingSlotError:
             # Generated when there is no place on Runway or on Parking Slots
             logging.warning(
