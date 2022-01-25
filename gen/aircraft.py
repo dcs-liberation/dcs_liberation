@@ -76,6 +76,7 @@ from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
     ControlPointType,
+    Fob,
     NavalControlPoint,
     OffMapSpawn,
 )
@@ -778,22 +779,20 @@ class AircraftConflictGenerator:
                     start_type=flight.start_type,
                     at=carrier_group,
                 )
-            else:
-                # If the flight is an helicopter flight, then prioritize dedicated helipads
-                if flight.unit_type.helicopter:
-                    return self._generate_at_cp_helipad(
-                        name=name,
-                        side=country,
-                        unit_type=flight.unit_type.dcs_unit_type,
-                        count=flight.count,
-                        start_type=flight.start_type,
-                        cp=cp,
-                    )
-
-                if not isinstance(cp, Airfield):
+            elif isinstance(cp, Fob):
+                if not flight.unit_type.helicopter:
                     raise RuntimeError(
-                        f"Attempted to spawn at airfield for non-airfield {cp}"
+                        f"Cannot spawn fixed-wing aircraft at {cp} because it is a FOB"
                     )
+                return self._generate_at_cp_helipad(
+                    name=name,
+                    side=country,
+                    unit_type=flight.unit_type.dcs_unit_type,
+                    count=flight.count,
+                    start_type=flight.start_type,
+                    cp=cp,
+                )
+            elif isinstance(cp, Airfield):
                 return self._generate_at_airport(
                     name=name,
                     side=country,
@@ -801,6 +800,10 @@ class AircraftConflictGenerator:
                     count=flight.count,
                     start_type=flight.start_type,
                     airport=cp.airport,
+                )
+            else:
+                raise NotImplementedError(
+                    f"Aircraft spawn behavior not implemented for {cp} ({cp.__class__})"
                 )
         except Exception as e:
             # Generated when there is no place on Runway or on Parking Slots
