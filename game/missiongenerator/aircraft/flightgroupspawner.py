@@ -15,12 +15,21 @@ from game.ato import Flight
 from game.ato.flightstate import InFlight
 from game.ato.starttype import StartType
 from game.theater import Airfield, ControlPoint, Fob, NavalControlPoint, OffMapSpawn
-from game.utils import meters
+from game.utils import feet, meters
 from gen.flights.traveltime import GroundSpeed
 from gen.naming import namegen
 
 WARM_START_HELI_ALT = meters(500)
 WARM_START_ALTITUDE = meters(3000)
+
+# In-flight spawns are MSL for the first waypoint (this can maybe be changed to AGL, but
+# AGL waypoints have different piloting behavior, so we need to check whether that's
+# safe to do first), so spawn them high enough that they're unlikely to be near (or
+# under) the ground, or any nearby obstacles. The highest airfield in DCS is Kerman in
+# PG at 5700ft. This could still be too low if there are tall obstacles near the
+# airfield, but the lowest we can push this the better to avoid spawning helicopters
+# well above the altitude for WP1.
+MINIMUM_MID_MISSION_SPAWN_ALTITUDE = feet(6000)
 
 RTB_ALTITUDE = meters(800)
 RTB_DISTANCE = 5000
@@ -131,6 +140,13 @@ class FlightGroupSpawner:
         pos = self.flight.state.estimate_position()
         pos += Point(random.randint(100, 1000), random.randint(100, 1000))
         alt, alt_type = self.flight.state.estimate_altitude()
+
+        # We don't know where the ground is, so just make sure that any aircraft
+        # spawning at an MSL altitude is spawned at some minimum altitude.
+        # https://github.com/dcs-liberation/dcs_liberation/issues/1941
+        if alt_type == "BARO" and alt < MINIMUM_MID_MISSION_SPAWN_ALTITUDE:
+            alt = MINIMUM_MID_MISSION_SPAWN_ALTITUDE
+
         group = self.mission.flight_group(
             country=self.country,
             name=name,
