@@ -173,7 +173,9 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
         return self._max_range_of_type(group, "detection_range")
 
     def max_threat_range(self) -> Distance:
-        return max(self.threat_range(g) for g in self.groups)
+        return (
+            max(self.threat_range(g) for g in self.groups) if self.groups else meters(0)
+        )
 
     def threat_range(self, group: GroupT, radar_only: bool = False) -> Distance:
         return self._max_range_of_type(group, "threat_range")
