@@ -14,7 +14,7 @@ from dcs import vehicles
 
 from game import Game
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.data.groundunitclass import GroundUnitClass
+from game.data.units import UnitClass
 from game.db import REWARDS
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, TheaterGroundObject
@@ -179,8 +179,11 @@ class QGroundObjectMenu(QDialog):
             return
         for u in self.ground_object.units:
             # Hack: Unknown variant.
-            unit_type = next(GroundUnitType.for_dcs_type(vehicles.vehicle_map[u.type]))
-            total_value += unit_type.price
+            if u.type in vehicles.vehicle_map:
+                unit_type = next(
+                    GroundUnitType.for_dcs_type(vehicles.vehicle_map[u.type])
+                )
+                total_value += unit_type.price
         if self.sell_all_button is not None:
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
         self.total_value = total_value

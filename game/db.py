@@ -346,8 +346,6 @@ def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
             return CVN_73
         elif name == "CVN-75 Harry S. Truman":
             return CVN_75
-        elif name == "Carrier Strike Group 8":
-            return CVN_75
         else:
             return CVN_71
     elif unit == KUZNECOW:

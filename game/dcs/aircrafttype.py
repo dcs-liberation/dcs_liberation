@@ -12,6 +12,7 @@ from dcs.helicopters import helicopter_map
 from dcs.planes import plane_map
 from dcs.unittype import FlyingType
 
+from game.data.units import UnitClass
 from game.dcs.unitproperty import UnitProperty
 from game.dcs.unittype import UnitType
 from game.radio.channels import (
@@ -178,19 +179,6 @@ class AircraftType(UnitType[Type[FlyingType]]):
     channel_allocator: Optional[RadioChannelAllocator]
     channel_namer: Type[ChannelNamer]
 
-    _by_name: ClassVar[dict[str, AircraftType]] = {}
-    _by_unit_type: ClassVar[dict[Type[FlyingType], list[AircraftType]]] = defaultdict(
-        list
-    )
-    _loaded: ClassVar[bool] = False
-
-    def __str__(self) -> str:
-        return self.name
-
-    @property
-    def dcs_id(self) -> str:
-        return self.dcs_unit_type.id
-
     @property
     def flyable(self) -> bool:
         return self.dcs_unit_type.flyable
@@ -308,33 +296,25 @@ class AircraftType(UnitType[Type[FlyingType]]):
         self.__dict__.update(state)
 
     @classmethod
-    def register(cls, aircraft_type: AircraftType) -> None:
-        cls._by_name[aircraft_type.name] = aircraft_type
-        cls._by_unit_type[aircraft_type.dcs_unit_type].append(aircraft_type)
-
-    @classmethod
     def named(cls, name: str) -> AircraftType:
         if not cls._loaded:
             cls._load_all()
-        return cls._by_name[name]
+        unit = cls._by_name[name]
+        assert isinstance(unit, AircraftType)
+        return unit
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: Type[FlyingType]) -> Iterator[AircraftType]:
         if not cls._loaded:
             cls._load_all()
-        yield from cls._by_unit_type[dcs_unit_type]
+        for unit in cls._by_unit_type[dcs_unit_type]:
+            assert isinstance(unit, AircraftType)
+            yield unit
 
     @staticmethod
     def _each_unit_type() -> Iterator[Type[FlyingType]]:
         yield from helicopter_map.values()
         yield from plane_map.values()
-
-    @classmethod
-    def _load_all(cls) -> None:
-        for unit_type in cls._each_unit_type():
-            for data in cls._each_variant_of(unit_type):
-                cls.register(data)
-        cls._loaded = True
 
     @classmethod
     def _each_variant_of(cls, aircraft: Type[FlyingType]) -> Iterator[AircraftType]:
@@ -414,4 +394,5 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 channel_namer=radio_config.channel_namer,
                 kneeboard_units=units,
                 utc_kneeboard=data.get("utc_kneeboard", False),
+                unit_class=UnitClass.Plane,
             )

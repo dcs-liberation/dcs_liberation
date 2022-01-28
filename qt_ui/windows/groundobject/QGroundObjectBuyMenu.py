@@ -17,6 +17,7 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
+from game.data.groups import GroupRole, ROLE_TASKINGS, GroupTask
 from game.point_with_heading import PointWithHeading
 from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import (
@@ -26,7 +27,6 @@ from game.theater.theatergroundobject import (
     GroundGroup,
 )
 from gen.templates import (
-    TemplateCategory,
     GroundObjectTemplate,
     GroupTemplate,
 )
@@ -41,7 +41,9 @@ class QGroundObjectGroupTemplate(QGroupBox):
     # If the group is not randomizable: Just view labels instead of edit fields
 
     def __init__(self, group_id: int, group_template: GroupTemplate) -> None:
-        super(QGroundObjectGroupTemplate, self).__init__(str(group_id + 1))
+        super(QGroundObjectGroupTemplate, self).__init__(
+            f"{group_id + 1}: {group_template.name}"
+        )
         self.group_template = group_template
 
         self.group_layout = QGridLayout()
@@ -51,12 +53,12 @@ class QGroundObjectGroupTemplate(QGroupBox):
         self.unit_selector = QComboBox()
         self.group_selector = QCheckBox()
 
-        self.group_selector.setChecked(True)
+        self.group_selector.setChecked(self.group_template.should_be_generated)
         self.group_selector.setEnabled(self.group_template.optional)
 
-        if self.group_template.randomizer:
-            # Group can be randomized
-            for unit in self.group_template.randomizer.possible_ground_units:
+        if self.group_template.can_be_modified:
+            # Group can be modified (more than 1 possible unit_type for the group)
+            for unit in self.group_template.possible_units:
                 self.unit_selector.addItem(f"{unit} [${unit.price}M]", userData=unit)
             self.group_layout.addWidget(
                 self.unit_selector, 0, 0, alignment=Qt.AlignRight
@@ -66,17 +68,21 @@ class QGroundObjectGroupTemplate(QGroupBox):
             )
 
             self.amount_selector.setMinimum(1)
-            self.amount_selector.setMaximum(len(self.group_template.units))
-            self.amount_selector.setValue(self.group_template.randomizer.unit_count)
+            self.amount_selector.setMaximum(self.group_template.max_size)
+            self.amount_selector.setValue(self.group_template.size)
 
             self.on_group_changed()
         else:
             # Group can not be randomized so just show the group info
             group_info = QVBoxLayout()
-            for unit_type, count in self.group_template.unit_types_count.items():
-                group_info.addWidget(
-                    QLabel(f"{count}x {unit_type}"), alignment=Qt.AlignLeft
-                )
+            try:
+                unit_name = next(self.group_template.possible_units)
+            except StopIteration:
+                unit_name = self.group_template.unit_type
+            group_info.addWidget(
+                QLabel(f"{self.group_template.size}x {unit_name}"),
+                alignment=Qt.AlignLeft,
+            )
             self.group_layout.addLayout(group_info, 0, 0, 1, 2)
 
         self.group_layout.addWidget(self.group_selector, 0, 2, alignment=Qt.AlignRight)
@@ -86,10 +92,11 @@ class QGroundObjectGroupTemplate(QGroupBox):
         self.group_selector.stateChanged.connect(self.on_group_changed)
 
     def on_group_changed(self) -> None:
-        unit_type = self.unit_selector.itemData(self.unit_selector.currentIndex())
-        count = self.amount_selector.value() if self.group_selector.isChecked() else 0
-        self.group_template.randomizer.count = count
-        self.group_template.randomizer.force_type(unit_type.dcs_id)
+        self.group_template.set_enabled(self.group_selector.isChecked())
+        if self.group_template.can_be_modified:
+            unit_type = self.unit_selector.itemData(self.unit_selector.currentIndex())
+            self.group_template.unit_count = [self.amount_selector.value()]
+            self.group_template.set_unit_type(unit_type.dcs_id)
         self.group_template_changed.emit(self.group_template)
 
 
@@ -143,8 +150,6 @@ class QGroundObjectTemplateLayout(QGroupBox):
 
     def update_price(self) -> None:
         price = "$" + str(self.template.estimated_price_for(self.ground_object))
-        if self.template.randomizable:
-            price = "~" + price
         self.buy_button.setText(f"Buy [{price}M][-${self.current_group_value}M]")
 
     def buy_group(self):
@@ -216,30 +221,40 @@ class QGroundObjectBuyMenu(QDialog):
         self.mainLayout = QGridLayout()
         self.setLayout(self.mainLayout)
 
+        self.unit_group_selector = QComboBox()
         self.template_selector = QComboBox()
-        self.template_selector.currentIndexChanged.connect(self.template_changed)
+        self.template_selector.setEnabled(False)
 
         # Get the templates and fill the combobox
         template_sub_category = None
+        tasks = []
         if isinstance(ground_object, SamGroundObject):
-            template_category = TemplateCategory.AirDefence
+            role = GroupRole.AntiAir
         elif isinstance(ground_object, VehicleGroupGroundObject):
-            template_category = TemplateCategory.Armor
+            role = GroupRole.GroundForce
         elif isinstance(ground_object, EwrGroundObject):
-            template_category = TemplateCategory.AirDefence
-            template_sub_category = "EWR"
+            role = GroupRole.AntiAir
+            tasks.append(GroupTask.EWR)
         else:
             raise RuntimeError
 
-        for template in game.blue.faction.templates.for_category(
-            template_category, template_sub_category
-        ):
-            self.template_selector.addItem(template.name, userData=template)
+        if not tasks:
+            tasks = ROLE_TASKINGS[role]
+
+        for unit_group in game.blue.faction.groups_for_role_and_tasks(role, tasks):
+            self.unit_group_selector.addItem(unit_group.name, userData=unit_group)
+
+        self.template_selector.currentIndexChanged.connect(self.template_changed)
+        self.unit_group_selector.currentIndexChanged.connect(self.unit_group_changed)
 
         template_selector_layout = QGridLayout()
-        template_selector_layout.addWidget(QLabel("Template :"), 0, 0, Qt.AlignLeft)
+        template_selector_layout.addWidget(QLabel("UnitGroup :"), 0, 0, Qt.AlignLeft)
         template_selector_layout.addWidget(
-            self.template_selector, 0, 1, alignment=Qt.AlignRight
+            self.unit_group_selector, 0, 1, alignment=Qt.AlignRight
+        )
+        template_selector_layout.addWidget(QLabel("Template :"), 1, 0, Qt.AlignLeft)
+        template_selector_layout.addWidget(
+            self.template_selector, 1, 1, alignment=Qt.AlignRight
         )
         self.mainLayout.addLayout(template_selector_layout, 0, 0)
 
@@ -250,10 +265,22 @@ class QGroundObjectBuyMenu(QDialog):
         self.setLayout(self.mainLayout)
 
         # Update UI
-        self.template_changed()
+        self.unit_group_changed()
+
+    def unit_group_changed(self) -> None:
+        unit_group = self.unit_group_selector.itemData(
+            self.unit_group_selector.currentIndex()
+        )
+        self.template_selector.clear()
+        if unit_group.templates:
+            for template in unit_group.templates:
+                self.template_selector.addItem(template.name, userData=template)
+        # Enable if more than one template is available
+        self.template_selector.setEnabled(len(unit_group.templates) > 1)
 
     def template_changed(self):
         template = self.template_selector.itemData(
             self.template_selector.currentIndex()
         )
-        self.template_changed_signal.emit(template)
+        if template is not None:
+            self.template_changed_signal.emit(template)

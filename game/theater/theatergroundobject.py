@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Iterator, List, TYPE_CHECKING, Union, Optional, Any
 
+from dcs.unittype import VehicleType, ShipType
 from dcs.vehicles import vehicle_map
 from dcs.ships import ship_map
 
@@ -17,6 +18,7 @@ from dcs.triggers import TriggerZone
 from .. import db
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..dcs.groundunittype import GroundUnitType
+from ..dcs.shipunittype import ShipUnitType
 from ..dcs.unittype import UnitType
 from ..point_with_heading import PointWithHeading
 from ..utils import Distance, Heading, meters
@@ -90,11 +92,13 @@ class GroundUnit:
     _unit_type: Optional[UnitType[Any]] = None
 
     @staticmethod
-    def from_template(id: int, t: UnitTemplate, go: TheaterGroundObject) -> GroundUnit:
+    def from_template(
+        id: int, unit_type: str, t: UnitTemplate, go: TheaterGroundObject
+    ) -> GroundUnit:
         return GroundUnit(
             id,
             t.name,
-            t.type,
+            unit_type,
             PointWithHeading.from_point(t.position, Heading.from_degrees(t.heading)),
             go,
         )
@@ -103,20 +107,16 @@ class GroundUnit:
     def unit_type(self) -> Optional[UnitType[Any]]:
         if not self._unit_type:
             try:
-                if self.type in vehicle_map:
-                    vehicle_type = db.vehicle_type_from_name(self.type)
-                    self._unit_type = next(GroundUnitType.for_dcs_type(vehicle_type))
-                elif self.type in ship_map:
-                    ship_type = db.ship_type_from_name(self.type)
-                    # TODO Allow handling of Ships. This requires extension of UnitType
-                    return None
-                elif (static_type := db.static_type_from_name(self.type)) is not None:
-                    # TODO Allow handling of Statics
-                    return None
-                else:
-                    return None
+                unit_type: Optional[UnitType[Any]] = None
+                dcs_type = db.unit_type_from_name(self.type)
+                if dcs_type and issubclass(dcs_type, VehicleType):
+                    unit_type = next(GroundUnitType.for_dcs_type(dcs_type))
+                elif dcs_type and issubclass(dcs_type, ShipType):
+                    unit_type = next(ShipUnitType.for_dcs_type(dcs_type))
+                self._unit_type = unit_type
             except StopIteration:
-                return None
+                logging.error(f"No UnitType for {self.type}")
+                pass
         return self._unit_type
 
     def kill(self) -> None:
@@ -153,36 +153,15 @@ class GroundGroup:
         id: int,
         g: GroupTemplate,
         go: TheaterGroundObject,
-        randomization: bool = True,
     ) -> GroundGroup:
-
-        units = []
-        if g.randomizer:
-            g.randomizer.randomize()
-
-        for u_id, unit in enumerate(g.units):
-            tgo_unit = GroundUnit.from_template(u_id, unit, go)
-            if randomization and g.randomizer:
-                if g.randomizer.unit_type:
-                    tgo_unit.type = g.randomizer.unit_type
-                try:
-                    # Check if unit can be assigned
-                    g.randomizer.use_unit()
-                except IndexError:
-                    # Do not generate the unit as no more units are available
-                    continue
-            units.append(tgo_unit)
-
         tgo_group = GroundGroup(
             id,
             g.name,
             PointWithHeading.from_point(go.position, go.heading),
-            units,
+            g.generate_units(go),
             go,
         )
-
         tgo_group.static_group = g.static
-
         return tgo_group
 
     @property
@@ -570,6 +549,8 @@ class SamGroundObject(IadsGroundObject):
         max_telar_range = meters(0)
         launchers = set()
         for unit in group.units:
+            if unit.type not in vehicle_map:
+                continue
             unit_type = db.vehicle_type_from_name(unit.type)
             if unit_type in TRACK_RADARS:
                 live_trs.add(unit_type)

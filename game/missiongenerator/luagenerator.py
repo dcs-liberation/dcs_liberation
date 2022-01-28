@@ -118,7 +118,7 @@ class LuaGenerator:
 
                         faction = "BlueAA" if cp.captured else "RedAA"
 
-                        lua_data[faction][g.name] = {
+                        lua_data[faction][g.group_name] = {
                             "name": ground_object.name,
                             "range": threat_range.meters,
                             "position": {

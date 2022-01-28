@@ -15,7 +15,7 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
         target = self.package.target
         if isinstance(target, TheaterGroundObject):
             for group in target.groups:
-                group_names.append(group.name)
+                group_names.append(group.group_name)
         elif isinstance(target, MultiGroupTransport):
             group_names.append(target.name)
         elif isinstance(target, NavalControlPoint):
