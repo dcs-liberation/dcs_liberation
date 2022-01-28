@@ -1,0 +1,22 @@
+name: factory1
+role: Building
+tasks:
+  - Factory
+groups:
+  - name: factory1 0
+    statics:
+      - factory1 0-0
+    unit_count:
+      - 1
+    unit_types:
+      - Tech combine
+  - name: factory1 1
+    statics:
+      - factory1 1-0
+      - factory1 1-1
+      - factory1 1-2
+    unit_count:
+      - 3
+    unit_types:
+      - Tech hangar A
+template_file: resources/templates/buildings/buildings.miz

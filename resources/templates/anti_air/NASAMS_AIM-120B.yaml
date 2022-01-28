@@ -1,0 +1,21 @@
+name: NASAMS AIM-120B
+role: AntiAir
+tasks:
+  - MERAD
+groups:
+  - name: NASAMS AIM-120B 1
+    unit_count:
+      - 1
+    unit_types:
+      - NASAMS_Radar_MPQ64F1
+  - name: NASAMS AIM-120B 0
+    unit_count:
+      - 1
+    unit_types:
+      - NASAMS_Command_Post
+  - name: NASAMS AIM-120B 2
+    unit_count:
+      - 4
+    unit_types:
+      - NASAMS_LN_B
+template_file: resources/templates/anti_air/legacy_ground_templates.miz

@@ -1,0 +1,19 @@
+name: Chinese Navy
+role: Naval
+tasks:
+  - Navy
+groups:
+  - name: Chinese Navy 0
+    unit_count:
+      - 0
+      - 2
+    unit_types:
+      - Type_054A
+  - name: Chinese Navy 1
+    unit_count:
+      - 0
+      - 2
+    unit_types:
+      - Type_052C
+      - Type_052B
+template_file: resources/templates/naval/legacy_naval_templates.miz

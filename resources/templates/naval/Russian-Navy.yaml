@@ -1,0 +1,27 @@
+name: Russian Navy
+role: Naval
+tasks:
+  - Navy
+groups:
+  - name: Russian Navy 0
+    unit_count:
+      - 0
+      - 2
+    unit_types:
+      - ALBATROS
+      - MOLNIYA
+  - name: Russian Navy 1
+    unit_count:
+      - 0
+      - 2
+    unit_types:
+      - NEUSTRASH
+      - REZKY
+  - name: Russian Navy 2
+    optional: true
+    unit_count:
+      - 0
+      - 1
+    unit_types:
+      - MOSCOW
+template_file: resources/templates/naval/legacy_naval_templates.miz
