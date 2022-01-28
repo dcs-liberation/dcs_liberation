@@ -38,27 +38,24 @@
     "Infantry RPG",
     "Paratrooper AKS"
   ],
-  "air_defenses": [
-    "EarlyColdWarFlakGenerator",
-    "SA2Generator",
-    "SA3Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZSU57Generator",
-    "ZU23UralGenerator"
+  "missiles": [],
+  "preset_groups": [
+    "SA-2/S-75",
+    "SA-3/S-125",
+    "Cold-War-Flak"
   ],
-  "ewrs": [
-    "FlatFaceGenerator"
+  "naval_units": [
+    "Corvette 1124.4 Grish"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
+  "air_defense_units": [
+    "SAM P19 \"Flat Face\" SR (SA-2/3)",
+    "ZSU-57-2 'Sparka'",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
+  ],
   "helicopter_carrier_names": [],
-  "destroyers": [],
-  "cruisers": [],
   "carrier_names": [],
-  "navy_generators": [
-    "GrishaGroupGenerator"
-  ],
   "requirements": {
     "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
   },

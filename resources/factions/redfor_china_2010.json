@@ -24,7 +24,7 @@
     "Su-30MKK Flanker-G",
     "Su-34 Fullback",
     "Tu-22M3 Backfire-C",
-	"H-6J Badger"
+    "H-6J Badger"
   ],
   "awacs": [
     "KJ-2000"
@@ -64,42 +64,45 @@
     "Paratrooper AKS",
     "Paratrooper RPG-16"
   ],
-  "air_defenses": [
-    "HQ7Generator",
-    "SA2Generator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA10Generator",
-    "SA11Generator",
-    "SA13Generator",
-    "SA15Generator",
-    "SA17Generator",
-    "SA19Generator",
-    "Tier2SA10Generator",
-    "Tier3SA10Generator",
-    "SA10BGenerator",
-    "SA12Generator",
-    "SA20Generator",
-    "SA20BGenerator",
-    "SA23Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+  "missiles": [],
+  "preset_groups": [
+    "SA-2/S-75",
+    "SA-6",
+    "SA-11",
+    "HQ-7",
+    "SA-10/S-300PS",
+    "SA-10B/S-300PS",
+    "SA-17",
+    "SA-12/S-300V",
+    "SA-20/S-300PMU-1",
+    "SA-20B/S-300PMU-2",
+    "SA-23/S-300VM",
+    "Chinese Navy"
   ],
-  "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator"
+  "naval_units": [
+    "Frigate 1135M Rezky",
+    "Type 052B Destroyer",
+    "Type 052C Destroyer",
+    "Corvette 1241.1 Molniya",
+    "Type 054A Frigate",
+    "CV 1143.5 Admiral Kuznetsov",
+    "Type 071 Amphibious Transport Dock"
   ],
-  "aircraft_carrier": [
-    "KUZNECOW"
+  "air_defense_units": [
+    "EWR 1L13",
+    "EWR 55G6",
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "SA-9 Strela",
+    "SA-13 Gopher (9K35 Strela-10M3)",
+    "SA-15 Tor",
+    "SA-19 Grison (2K22 Tunguska)",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
   ],
   "carrier_names": [
     "001 Liaoning",
     "002 Shandong"
-  ],
-  "helicopter_carrier": [
-    "Type_071"
   ],
   "helicopter_carrier_names": [
     "Kunlun Shan",
@@ -110,19 +113,7 @@
     "Wuzhi Shan",
     "Wudang Shan"
   ],
-  "destroyers": [
-    "REZKY",
-    "Type_052B",
-    "Type_052C"
-  ],
-  "cruiser": [
-    "MOLNIYA",
-    "Type_054A"
-  ],
   "requirements": {},
-  "navy_generators": [
-    "ChineseNavyGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "WingLoong-I"
 }

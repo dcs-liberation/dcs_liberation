@@ -63,27 +63,22 @@
     "MANPADS Stinger",
     "Mortar 2B11 120mm"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "PatriotGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Patriot"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "DDG Arleigh Burke IIa",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
-  "aircraft_carrier": [
-    "Stennis"
-  ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "PERRY",
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR",
+    "M1097 Heavy HMMWV Avenger",
+    "M48 Chaparral"
   ],
   "requirements": {},
   "carrier_names": [
@@ -99,10 +94,6 @@
     "LHA-3 Belleau Wood",
     "LHA-4 Nassau",
     "LHA-5 Peleliu"
-  ],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator",
-    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",

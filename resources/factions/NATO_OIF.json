@@ -67,29 +67,25 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "ChaparralGenerator",
-    "VulcanGenerator",
-    "RolandGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Rapier",
+    "Roland",
+    "Patriot"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "DDG Arleigh Burke IIa",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
-  "aircraft_carrier": [
-    "Stennis"
-  ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR",
+    "M163 Vulcan Air Defense System",
+    "M1097 Heavy HMMWV Avenger",
+    "M48 Chaparral"
   ],
   "requirements": {},
   "carrier_names": [
@@ -98,10 +94,6 @@
   "helicopter_carrier_names": [
     "LHA-1 Tarawa",
     "LHA-4 Nassau"
-  ],
-  "navy_generators": [
-    "ArleighBurkeGroupGenerator",
-    "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"

@@ -34,13 +34,15 @@
     "MANPADS SA-18 Igla \"Grouse\"",
     "Mortar 2B11 120mm"
   ],
-  "air_defenses": [
-    "SA9Generator",
-    "ZSU57Generator",
-    "ZU23Generator",
-    "ZU23UralInsurgentGenerator"
+  "air_defense_units": [
+    "SA-9 Strela",
+    "ZSU-57-2 'Sparka'",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375"
   ],
+  "preset_groups": [],
+  "naval_units": [],
   "missiles": [
-    "ScudGenerator"
+    "SSM SS-1C Scud-B"
   ]
 }

@@ -40,41 +40,33 @@
     "MANPADS SA-18 Igla \"Grouse\"",
     "Paratrooper RPG-16"
   ],
-  "air_defenses": [
-    "HQ7Generator",
-    "RapierGenerator",
-    "SA2Generator",
-    "SA3Generator",
-    "SA5FlatFaceGenerator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA13Generator",
-    "ZSU23Generator"
+  "preset_groups": [
+    "SA-5/S-200",
+    "SA-2/S-75",
+    "SA-3/S-125",
+    "SA-6",
+    "Rapier",
+    "HQ-7"
   ],
-  "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator",
-    "TinShieldGenerator"
+  "naval_units": [
+    "Corvette 1124.4 Grish",
+    "Corvette 1241.1 Molniya",
+    "FAC La Combattante IIa",
+    "Frigate 1135M Rezky"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
+  "air_defense_units": [
+    "EWR 1L13",
+    "EWR 55G6",
+    "SAM SA-5 S-200 ST-68U \"Tin Shield\" SR",
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "SA-9 Strela",
+    "SA-13 Gopher (9K35 Strela-10M3)",
+    "ZSU-23-4 Shilka"
+  ],
   "helicopter_carrier_names": [],
   "missiles": [
-    "ScudGenerator"
-  ],
-  "missiles_group_count": 1,
-  "destroyers": [
-    "REZKY"
-  ],
-  "cruisers": [
-    "MOLNIYA"
+    "SSM SS-1C Scud-B"
   ],
   "requirements": {},
-  "carrier_names": [],
-  "navy_generators": [
-    "GrishaGroupGenerator",
-    "MolniyaGroupGenerator",
-    "LaCombattanteIIGroupGenerator"
-  ]
+  "carrier_names": []
 }

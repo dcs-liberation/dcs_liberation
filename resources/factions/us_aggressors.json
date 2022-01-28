@@ -58,18 +58,19 @@
     "Infantry M249",
     "Infantry M4"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "PatriotGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Patriot"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry"
+  ],
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR",
+    "M1097 Heavy HMMWV Avenger"
   ],
   "requirements": {},
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {

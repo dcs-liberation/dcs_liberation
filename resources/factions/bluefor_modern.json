@@ -68,26 +68,21 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "NasamCGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Patriot",
+    "NASAMS AIM-120C"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "DDG Arleigh Burke IIa",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
-  "aircraft_carrier": [
-    "Stennis"
-  ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR",
+    "M1097 Heavy HMMWV Avenger"
   ],
   "requirements": {},
   "carrier_names": [
@@ -102,9 +97,6 @@
     "LHA-3 Belleau Wood",
     "LHA-4 Nassau",
     "LHA-5 Peleliu"
-  ],
-  "navy_generators": [
-    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",

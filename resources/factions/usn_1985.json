@@ -42,23 +42,20 @@
     "MANPADS Stinger",
     "Mortar 2B11 120mm"
   ],
-  "air_defenses": [
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+  "air_defense_units": [
+    "M163 Vulcan Air Defense System",
+    "M48 Chaparral"
   ],
-  "aircraft_carrier": [
-    "Stennis"
+  "preset_groups": [
+    "Hawk"
   ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
-  "destroyers": [
-    "PERRY"
-  ],
-  "cruisers": [
-    "TICONDEROG"
-  ],
+  "missiles": [],
   "carrier_names": [
     "CVN-71 Theodore Roosevelt",
     "CVN-72 Abraham Lincoln",
@@ -72,9 +69,6 @@
     "LHA-3 Belleau Wood",
     "LHA-4 Nassau",
     "LHA-5 Peleliu"
-  ],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
   ],
   "requirements": {},
   "doctrine": "coldwar",

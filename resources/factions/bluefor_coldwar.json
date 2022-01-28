@@ -42,26 +42,21 @@
     "Infantry M249",
     "Infantry M4"
   ],
-  "air_defenses": [
-    "ChaparralGenerator",
-    "EarlyColdWarFlakGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+  "missiles": [],
+  "preset_groups": [
+    "Hawk",
+    "Cold-War-Flak"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [
+    "DDG Arleigh Burke IIa",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
-  "aircraft_carrier": [
-    "Stennis"
-  ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M163 Vulcan Air Defense System",
+    "M48 Chaparral"
   ],
   "requirements": {
     "Community A-4E": "https://heclak.github.io/community-a4e-c/"
@@ -78,9 +73,6 @@
     "LHA-3 Belleau Wood",
     "LHA-4 Nassau",
     "LHA-5 Peleliu"
-  ],
-  "navy_generators": [
-    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",

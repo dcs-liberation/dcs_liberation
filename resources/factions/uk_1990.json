@@ -43,25 +43,21 @@
     "MANPADS Stinger",
     "Mortar 2B11 120mm"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "RapierGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Rapier"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "DDG Arleigh Burke IIa",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
-  "aircraft_carrier": [
-    "Stennis"
-  ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "PERRY"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M1097 Heavy HMMWV Avenger"
   ],
   "requirements": {},
   "carrier_names": [],
@@ -69,10 +65,6 @@
     "HMS Invincible",
     "HMS Illustrious",
     "HMS Ark Royal"
-  ],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator",
-    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"

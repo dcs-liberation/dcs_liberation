@@ -19,7 +19,7 @@
     "Su-24M Fencer-D",
     "Su-25 Frogfoot",
     "Tu-22M3 Backfire-C",
-	"H-6J Badger"
+    "H-6J Badger"
   ],
   "awacs": [
     "A-50"
@@ -53,35 +53,30 @@
     "Paratrooper AKS",
     "Paratrooper RPG-16"
   ],
-  "air_defenses": [
-    "ColdWarFlakGenerator",
-    "EarlyColdWarFlakGenerator",
-    "SA2Generator",
-    "SA3Generator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA13Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+  "preset_groups": [
+    "SA-2/S-75",
+    "SA-3/S-125",
+    "SA-6",
+    "Cold-War-Flak"
   ],
-  "ewrs": [
-    "BoxSpringGenerator"
+  "naval_units": [
+    "Corvette 1124.4 Grish"
+  ],
+  "air_defense_units": [
+    "SAM P19 \"Flat Face\" SR (SA-2/3)",
+    "EWR 1L13",
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "SA-9 Strela",
+    "SA-13 Gopher (9K35 Strela-10M3)",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
   ],
   "missiles": [
-    "ScudGenerator"
+    "SSM SS-1C Scud-B"
   ],
-  "missiles_group_count": 1,
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
   "helicopter_carrier_names": [],
-  "destroyers": [],
-  "cruisers": [],
   "requirements": {},
   "carrier_names": [],
-  "navy_generators": [
-    "GrishaGroupGenerator"
-  ],
   "doctrine": "coldwar"
 }

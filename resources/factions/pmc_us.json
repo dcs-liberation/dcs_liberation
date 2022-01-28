@@ -25,9 +25,12 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "AvengerGenerator"
+  "air_defense_units": [
+    "M1097 Heavy HMMWV Avenger"
   ],
+  "preset_groups": [],
+  "naval_units": [],
+  "missiles": [],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"
 }
