@@ -95,24 +95,14 @@ class TestFactionLoader(unittest.TestCase):
             self.assertIn(Infantry.Soldier_M4, faction.infantry_units)
             self.assertIn(Infantry.Soldier_M249, faction.infantry_units)
 
-            self.assertIn("AvengerGenerator", faction.air_defenses)
-
-            self.assertIn("HawkGenerator", faction.air_defenses)
-
-            self.assertIn(Stennis, faction.aircraft_carrier)
-            self.assertIn(LHA_Tarawa, faction.helicopter_carrier)
-            self.assertIn(PERRY, faction.destroyers)
-            self.assertIn(USS_Arleigh_Burke_IIa, faction.destroyers)
-            self.assertIn(TICONDEROG, faction.cruisers)
+            self.assertIn(Stennis.name, faction.naval_units)
+            self.assertIn(LHA_Tarawa.name, faction.naval_units)
 
             self.assertIn("mod", faction.requirements.keys())
             self.assertIn("Some mod is required", faction.requirements.values())
 
             self.assertEqual(4, len(faction.carrier_names))
             self.assertEqual(5, len(faction.helicopter_carrier_names))
-
-            self.assertIn("OliverHazardPerryGroupGenerator", faction.navy_generators)
-            self.assertIn("ArleighBurkeGroupGenerator", faction.navy_generators)
 
     @pytest.mark.skip(reason="Faction unit names in the json files are outdated")
     def test_load_valid_faction_with_invalid_country(self) -> None:

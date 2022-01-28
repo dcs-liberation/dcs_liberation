@@ -1305,7 +1305,7 @@ class FlightPlanBuilder:
             for group in location.groups:
                 if group.units:
                     targets.append(
-                        StrikeTarget(f"{group.name} at {location.name}", group)
+                        StrikeTarget(f"{group.group_name} at {location.name}", group)
                     )
         elif isinstance(location, Convoy):
             targets.append(StrikeTarget(location.name, location))
@@ -1318,7 +1318,7 @@ class FlightPlanBuilder:
 
     @staticmethod
     def anti_ship_targets_for_tgo(tgo: NavalGroundObject) -> List[StrikeTarget]:
-        return [StrikeTarget(f"{g.name} at {tgo.name}", g) for g in tgo.groups]
+        return [StrikeTarget(f"{g.group_name} at {tgo.name}", g) for g in tgo.groups]
 
     def generate_anti_ship(self, flight: Flight) -> StrikeFlightPlan:
         """Generates an anti-ship flight plan.
