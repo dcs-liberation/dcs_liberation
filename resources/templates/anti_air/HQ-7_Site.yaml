@@ -1,0 +1,24 @@
+name: HQ-7 Site
+role: AntiAir
+tasks:
+  - SHORAD
+groups:
+  - name: HQ-7 Site 0
+    group: 1
+    unit_count:
+      - 1
+    unit_types:
+      - HQ-7_STR_SP
+  - name: HQ-7 Site 1
+    group: 1
+    unit_count:
+      - 2
+    unit_types:
+      - HQ-7_LN_SP
+  - name: HQ-7 Site 2
+    group: 2
+    unit_count:
+      - 2
+    unit_types:
+      - Ural-375 ZU-23
+template_file: resources/templates/anti_air/legacy_ground_templates.miz

@@ -1,0 +1,16 @@
+name: WW2 Flak Site
+role: AntiAir
+tasks:
+  - AAA
+groups:
+  - name: WW2 Flak Site 0
+    unit_count:
+      - 6
+    unit_types:
+      - flak18
+  - name: WW2 Flak Site 1
+    unit_count:
+      - 1
+    unit_types:
+      - Blitz_36-6700A
+template_file: resources/templates/anti_air/legacy_ground_templates.miz
