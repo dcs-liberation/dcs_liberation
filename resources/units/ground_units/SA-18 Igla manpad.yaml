@@ -1,4 +1,4 @@
-class: MANPADS
+class: Manpad
 spawn_weight: 1
 price: 0
 variants:

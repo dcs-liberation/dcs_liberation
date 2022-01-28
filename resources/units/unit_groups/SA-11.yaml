@@ -1,0 +1,10 @@
+name: SA-11
+role: AntiAir
+tasks:
+  - MERAD
+ground_units:
+  - SAM SA-11 Buk "Gadfly" Snow Drift SR
+  - SAM SA-11 Buk "Gadfly" C2
+  - SAM SA-11 Buk "Gadfly" Fire Dome TEL
+templates:
+  - SA-11 Buk Battery

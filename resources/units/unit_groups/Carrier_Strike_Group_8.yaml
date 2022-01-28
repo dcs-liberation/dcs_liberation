@@ -1,0 +1,10 @@
+name: Carrier Strike Group 8
+role: Naval
+tasks:
+  - Navy
+ship_units:
+  - CVN-74 John C. Stennis
+  - DDG Arleigh Burke IIa
+  - CG Ticonderoga
+templates:
+  - Carrier Strike Group 8
