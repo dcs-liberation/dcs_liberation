@@ -1,3 +1,4 @@
+class: CommandPost
 price: 18
 variants:
   SAM Patriot C2 ICC: null

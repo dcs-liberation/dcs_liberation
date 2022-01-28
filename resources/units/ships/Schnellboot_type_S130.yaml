@@ -1,0 +1,4 @@
+class: Boat
+price: 0
+variants:
+  Boat Schnellboot type S130: null

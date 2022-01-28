@@ -1,0 +1,11 @@
+name: Hawk
+role: AntiAir
+tasks:
+  - MERAD
+ground_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - SAM Hawk Platoon Command Post (PCP)
+  - SAM Hawk TR (AN/MPQ-46)
+  - SAM Hawk LN M192
+templates:
+  - Hawk Site

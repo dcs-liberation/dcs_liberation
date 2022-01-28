@@ -1,0 +1,4 @@
+class: Missile
+price: 0
+variants:
+  AShM SS-N-2 Silkworm: null
