@@ -27,11 +27,15 @@
   "infantry_units": [
     "Infantry M4"
   ],
-  "air_defenses": [
-    "AllyWW2FlakGenerator",
-    "BoforsGenerator",
-    "EarlyColdWarFlakGenerator"
+  "missiles": [],
+  "air_defense_units": [
+    "Bofors 40 mm Gun"
   ],
+  "preset_groups": [
+    "Cold-War-Flak",
+    "Ally Flak"
+  ],
+  "naval_units": [],
   "has_jtac": false,
   "doctrine": "ww2",
   "building_set": "ww2ally",

@@ -15,7 +15,7 @@
     "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
     "Su-30MKK Flanker-G",
-	"H-6J Badger"
+    "H-6J Badger"
   ],
   "awacs": [
     "KJ-2000"
@@ -45,38 +45,37 @@
     "Paratrooper AKS",
     "Paratrooper RPG-16"
   ],
-  "air_defenses": [
-    "HQ7Generator",
-    "SA2Generator",
-    "SA6Generator",
-    "SA9Generator",
-    "SA10Generator",
-    "SA11Generator",
-    "SA13Generator",
-    "SA20BGenerator",
-    "Tier2SA10Generator",
-    "ZSU23Generator",
-    "ZSU57Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+  "missiles": [],
+  "preset_groups": [
+    "SA-2/S-75",
+    "SA-6",
+    "SA-11",
+    "HQ-7",
+    "SA-10/S-300PS",
+    "SA-20B/S-300PMU-2",
+    "Silkworm",
+    "Chinese Navy"
   ],
-  "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator"
+  "naval_units": [
+    "Type 052B Destroyer",
+    "Type 052C Destroyer",
+    "Type 054A Frigate",
+    "CV 1143.5 Admiral Kuznetsov",
+    "Type 071 Amphibious Transport Dock"
   ],
-  "coastal_defenses": [
-    "SilkwormGenerator"
-  ],
-  "coastal_group_count": 2,
-  "aircraft_carrier": [
-    "KUZNECOW"
+  "air_defense_units": [
+    "EWR 1L13",
+    "EWR 55G6",
+    "SA-9 Strela",
+    "SA-13 Gopher (9K35 Strela-10M3)",
+    "ZSU-57-2 'Sparka'",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
   ],
   "carrier_names": [
     "001 Liaoning",
     "002 Shandong"
-  ],
-  "helicopter_carrier": [
-    "Type_071"
   ],
   "helicopter_carrier_names": [
     "Kunlun Shan",
@@ -87,17 +86,7 @@
     "Wuzhi Shan",
     "Wudang Shan"
   ],
-  "destroyers": [
-    "Type_052B",
-    "Type_052C"
-  ],
-  "cruiser": [
-    "Type_054A"
-  ],
   "requirements": {},
-  "navy_generators": [
-    "ChineseNavyGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "WingLoong-I"
 }

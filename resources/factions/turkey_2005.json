@@ -46,18 +46,19 @@
     "MANPADS SA-18 Igla-S \"Grouse\"",
     "Paratrooper AKS"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator",
-    "RapierGenerator",
-    "SA3Generator",
-    "ZSU23Generator"
+  "missiles": [],
+  "preset_groups": [
+    "Hawk",
+    "SA-3/S-125",
+    "Rapier"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry"
   ],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M1097 Heavy HMMWV Avenger",
+    "ZSU-23-4 Shilka"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",

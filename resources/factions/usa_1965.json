@@ -36,14 +36,16 @@
     "Infantry M249",
     "Infantry M4"
   ],
-  "air_defenses": [
-    "ChaparralGenerator",
-    "EarlyColdWarFlakGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+  "missiles": [],
+  "preset_groups": [
+    "Hawk",
+    "Cold-War-Flak"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [],
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M163 Vulcan Air Defense System",
+    "M48 Chaparral"
   ],
   "requirements": {},
   "doctrine": "coldwar"

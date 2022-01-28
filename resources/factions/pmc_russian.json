@@ -31,8 +31,11 @@
     "Paratrooper AKS",
     "Paratrooper RPG-16"
   ],
-  "air_defenses": [
-    "SA9Generator",
-    "SA13Generator"
-  ]
+  "air_defense_units": [
+    "SA-9 Strela",
+    "SA-13 Gopher (9K35 Strela-10M3)"
+  ],
+  "preset_groups": [],
+  "naval_units": [],
+  "missiles": []
 }

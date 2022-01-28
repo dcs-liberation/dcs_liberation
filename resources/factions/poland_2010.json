@@ -43,22 +43,23 @@
     "MANPADS SA-18 Igla-S \"Grouse\"",
     "Paratrooper AKS"
   ],
-  "air_defenses": [
-    "SA5FlatFaceGenerator",
-    "SA6Generator",
-    "SA8Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+  "missiles": [],
+  "preset_groups": [
+    "SA-5/S-200",
+    "SA-6"
   ],
-  "ewrs": [
-    "BigBirdGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "Corvette 1241.1 Molniya"
+  ],
+  "air_defense_units": [
+    "SAM SA-10 S-300 \"Grumble\" Big Bird SR",
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
   ],
   "requirements": {},
   "carrier_names": [],
-  "navy_generators": [
-    "MolniyaGroupGenerator",
-    "OliverHazardPerryGroupGenerator"
-  ],
   "unrestricted_satnav": true
 }
