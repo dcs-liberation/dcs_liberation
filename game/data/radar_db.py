@@ -41,6 +41,7 @@ TRACK_RADARS = {
     AirDefence.RPC_5N62V,
     AirDefence.Rapier_fsa_blindfire_radar,
     AirDefence.HQ_7_STR_SP,
+    AirDefence.NASAMS_Radar_MPQ64F1,
 }
 
 LAUNCHER_TRACKER_PAIRS = {
@@ -54,6 +55,8 @@ LAUNCHER_TRACKER_PAIRS = {
     AirDefence.Rapier_fsa_launcher: AirDefence.Rapier_fsa_blindfire_radar,
     AirDefence.HQ_7_LN_SP: AirDefence.HQ_7_STR_SP,
     AirDefence.S_200_Launcher: AirDefence.RPC_5N62V,
+    AirDefence.NASAMS_LN_B: AirDefence.NASAMS_Radar_MPQ64F1,
+    AirDefence.NASAMS_LN_C: AirDefence.NASAMS_Radar_MPQ64F1,
 }
 
 UNITS_WITH_RADAR = {
