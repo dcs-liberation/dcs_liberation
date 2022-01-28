@@ -1,0 +1,17 @@
+name: Armor Group
+role: GroundForce
+generic: true
+tasks:
+  - BaseDefense
+  - FrontLine
+groups:
+  - name: Armor Group 0
+    unit_count:
+      - 2
+      - 6
+    unit_classes:
+      - APC
+      - ATGM
+      - IFV
+      - Tank
+template_file: resources/templates/ground_forces/ground_forces.miz

@@ -1,0 +1,19 @@
+name: Carrier Group
+role: Naval
+generic: true
+tasks:
+  - AircraftCarrier
+groups:
+  - name: Carrier Group 0
+    group: 1
+    unit_count:
+      - 1
+    unit_classes:
+      - AircraftCarrier
+  - name: Carrier Group 1
+    group: 2
+    unit_count:
+      - 4
+    unit_classes:
+      - Destroyer
+template_file: resources/templates/naval/legacy_naval_templates.miz

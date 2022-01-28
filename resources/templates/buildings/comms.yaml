@@ -1,0 +1,15 @@
+name: comms
+role: Building
+tasks:
+  - StrikeTarget
+  - Comms
+groups:
+  - name: comms1 0
+    statics:
+      - comms1 0-0
+    unit_count:
+      - 1
+    unit_types:
+      - TV tower
+      - Comms tower M
+template_file: resources/templates/buildings/buildings.miz
