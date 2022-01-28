@@ -1,3 +1,4 @@
+class: CommandPost
 price: 25
 variants:
-  'SAM SA-11 Buk "Gadfly" C2 ': null
+  SAM SA-11 Buk "Gadfly" C2: null

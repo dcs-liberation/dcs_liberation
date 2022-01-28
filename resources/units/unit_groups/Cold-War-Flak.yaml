@@ -1,0 +1,9 @@
+name: Cold-War-Flak
+role: AntiAir
+tasks:
+  - AAA
+ground_units:
+  - 8.8 cm Flak 18
+  - S-60 57mm
+templates:
+  - Cold War Flak Site

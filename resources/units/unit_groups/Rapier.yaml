@@ -1,0 +1,10 @@
+name: Rapier
+role: AntiAir
+tasks:
+  - SHORAD
+ground_units:
+  - SAM Rapier Blindfire TR
+  - SAM Rapier Tracker
+  - SAM Rapier LN
+templates:
+  - Rapier AA Site
