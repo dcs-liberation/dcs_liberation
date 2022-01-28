@@ -52,18 +52,9 @@
   "sams": [
     "HawkGenerator"
   ],
-  "aircraft_carrier": [
-    "Stennis"
-  ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "PERRY",
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "naval_units": [
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
   "requirements": {"mod": "Some mod is required"},
   "carrier_names": [
@@ -78,10 +69,6 @@
     "LHA-3 Belleau Wood",
     "LHA-4 Nassau",
     "LHA-5 Peleliu"
-  ],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator",
-    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ_9_Reaper"

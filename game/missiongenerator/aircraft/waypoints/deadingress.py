@@ -20,9 +20,11 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
             return
 
         for group in target.groups:
-            miz_group = self.mission.find_group(group.name)
+            miz_group = self.mission.find_group(group.group_name)
             if miz_group is None:
-                logging.error(f"Could not find group for DEAD mission {group.name}")
+                logging.error(
+                    f"Could not find group for DEAD mission {group.group_name}"
+                )
                 continue
 
             task = AttackGroup(miz_group.id, weapon_type=WeaponType.Auto)

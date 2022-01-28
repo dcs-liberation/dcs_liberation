@@ -48,6 +48,7 @@ from .theatergroundobject import (
     GroundUnit,
 )
 from ..ato.starttype import StartType
+from ..data.units import UnitClass
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
@@ -521,20 +522,13 @@ class ControlPoint(MissionTarget, ABC):
             ControlPointType.LHA_GROUP,
         ]:
             for g in self.ground_objects:
-                if isinstance(g, CarrierGroundObject):
-                    for group in g.groups:
-                        for u in group.units:
-                            if unit_type_from_name(u.type) in [
-                                Forrestal,
-                                Stennis,
-                                KUZNECOW,
-                            ]:
-                                return group.name
-                elif isinstance(g, LhaGroundObject):
-                    for group in g.groups:
-                        for u in group.units:
-                            if unit_type_from_name(u.type) in [LHA_Tarawa]:
-                                return group.name
+                for group in g.groups:
+                    for u in group.units:
+                        if u.unit_type and u.unit_type.unit_class in [
+                            UnitClass.AircraftCarrier,
+                            UnitClass.HelicopterCarrier,
+                        ]:
+                            return group.group_name
         return None
 
     # TODO: Should be Airbase specific.
@@ -668,6 +662,7 @@ class ControlPoint(MissionTarget, ABC):
             self._retreat_squadron(game, squadron)
 
     def depopulate_uncapturable_tgos(self) -> None:
+        # TODO Rework this.
         for tgo in self.connected_objectives:
             if not tgo.capturable:
                 tgo.clear()

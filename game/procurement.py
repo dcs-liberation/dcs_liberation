@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from game.config import RUNWAY_REPAIR_COST
-from game.data.groundunitclass import GroundUnitClass
+from game.data.units import UnitClass
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, MissionTarget
 
@@ -116,7 +116,7 @@ class ProcurementAi:
         return budget
 
     def affordable_ground_unit_of_class(
-        self, budget: float, unit_class: GroundUnitClass
+        self, budget: float, unit_class: UnitClass
     ) -> Optional[GroundUnitType]:
         faction_units = set(self.faction.frontline_units) | set(
             self.faction.artillery_units
@@ -154,10 +154,10 @@ class ProcurementAi:
 
         return budget
 
-    def most_needed_unit_class(self, cp: ControlPoint) -> GroundUnitClass:
-        worst_balanced: Optional[GroundUnitClass] = None
+    def most_needed_unit_class(self, cp: ControlPoint) -> UnitClass:
+        worst_balanced: Optional[UnitClass] = None
         worst_fulfillment = math.inf
-        for unit_class in GroundUnitClass:
+        for unit_class in UnitClass:
             if not self.faction.has_access_to_unit_class(unit_class):
                 continue
 
@@ -176,7 +176,7 @@ class ProcurementAi:
                 worst_fulfillment = fulfillment
                 worst_balanced = unit_class
         if worst_balanced is None:
-            return GroundUnitClass.Tank
+            return UnitClass.Tank
         return worst_balanced
 
     @staticmethod
@@ -300,7 +300,7 @@ class ProcurementAi:
         return understaffed
 
     def cost_ratio_of_ground_unit(
-        self, control_point: ControlPoint, unit_class: GroundUnitClass
+        self, control_point: ControlPoint, unit_class: UnitClass
     ) -> float:
         allocations = control_point.allocated_ground_units(
             self.game.coalition_for(self.is_player).transfers

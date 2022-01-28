@@ -22,7 +22,6 @@ from typing import (
     TypeVar,
     List,
     Any,
-    Union,
 )
 
 from dcs import Mission, Point, unitgroup
@@ -110,108 +109,93 @@ class GroundObjectGenerator:
                 logging.warning(f"Found empty group in {self.ground_object}")
                 continue
             group_name = group.group_name if unique_name else group.name
-            if group.static_group:
-                # Static Group
-                for i, u in enumerate(group.units):
-                    if isinstance(u, SceneryGroundUnit):
-                        # Special handling for scenery objects:
-                        # Only create a trigger zone and no "real" dcs unit
-                        self.add_trigger_zone_for_scenery(u)
-                        continue
+            moving_group: Optional[MovingGroup[Any]] = None
+            for i, unit in enumerate(group.units):
+                if isinstance(unit, SceneryGroundUnit):
+                    # Special handling for scenery objects:
+                    # Only create a trigger zone and no "real" dcs unit
+                    self.add_trigger_zone_for_scenery(unit)
+                    continue
 
-                    # Only skip dead units after trigger zone for scenery created!
-                    if not u.alive:
-                        continue
+                # Only skip dead units after trigger zone for scenery created!
+                if not unit.alive:
+                    continue
 
-                    unit_type = unit_type_from_name(u.type)
-                    if not unit_type:
-                        raise RuntimeError(
-                            f"Unit type {u.type} is not a valid dcs unit type"
-                        )
-
-                    sg = self.m.static_group(
-                        country=self.country,
-                        name=u.unit_name if unique_name else u.name,
-                        _type=unit_type,
-                        position=u.position,
-                        heading=u.position.heading.degrees,
-                        dead=not u.alive,
+                unit_type = unit_type_from_name(unit.type)
+                if not unit_type:
+                    raise RuntimeError(
+                        f"Unit type {unit.type} is not a valid dcs unit type"
                     )
-                    self._register_ground_unit(u, sg.units[0])
-            else:
-                # Moving Group
-                moving_group: Optional[MovingGroup[Any]] = None
-                for i, unit in enumerate(group.units):
-                    if not unit.alive:
-                        continue
-                    if unit.type in vehicle_map:
-                        # Vehicle Group
-                        unit_type = vehicle_map[unit.type]
-                    elif unit.type in ship_map:
-                        # Ship Group
-                        unit_type = ship_map[group.units[0].type]
-                    else:
-                        raise RuntimeError(
-                            f"Unit type {unit.type} is not a valid dcs unit type"
-                        )
 
-                    unit_name = unit.unit_name if unique_name else unit.name
-                    if moving_group is None:
-                        # First unit of the group will create the dcs group
-                        if issubclass(unit_type, VehicleType):
-                            moving_group = self.m.vehicle_group(
-                                self.country,
-                                group_name,
-                                unit_type,
-                                position=unit.position,
-                                heading=unit.position.heading.degrees,
-                            )
-                            moving_group.units[0].player_can_drive = True
-                            self.enable_eplrs(moving_group, unit_type)
-                        if issubclass(unit_type, ShipType):
-                            moving_group = self.m.ship_group(
-                                self.country,
-                                group_name,
-                                unit_type,
-                                position=unit.position,
-                                heading=unit.position.heading.degrees,
-                            )
-                        if moving_group:
-                            moving_group.units[0].name = unit_name
-                            self.set_alarm_state(moving_group)
-                            self._register_ground_unit(unit, moving_group.units[0])
-                        else:
-                            raise RuntimeError("DCS Group creation failed")
+                unit_name = unit.unit_name if unique_name else unit.name
+                if moving_group is None or group.static_group:
+                    # First unit of the group will create the dcs group
+                    if issubclass(unit_type, VehicleType):
+                        moving_group = self.m.vehicle_group(
+                            self.country,
+                            group_name,
+                            unit_type,
+                            position=unit.position,
+                            heading=unit.position.heading.degrees,
+                        )
+                        moving_group.units[0].player_can_drive = True
+                        self.enable_eplrs(moving_group, unit_type)
+                    elif issubclass(unit_type, ShipType):
+                        moving_group = self.m.ship_group(
+                            self.country,
+                            group_name,
+                            unit_type,
+                            position=unit.position,
+                            heading=unit.position.heading.degrees,
+                        )
+                    elif issubclass(unit_type, StaticType):
+                        static_group = self.m.static_group(
+                            country=self.country,
+                            name=unit_name,
+                            _type=unit_type,
+                            position=unit.position,
+                            heading=unit.position.heading.degrees,
+                            dead=not unit.alive,
+                        )
+                        self._register_ground_unit(unit, static_group.units[0])
+                        continue
+
+                    if moving_group:
+                        moving_group.units[0].name = unit_name
+                        self.set_alarm_state(moving_group)
+                        self._register_ground_unit(unit, moving_group.units[0])
                     else:
-                        # Additional Units in the group
-                        dcs_unit: Optional[Unit] = None
-                        if issubclass(unit_type, VehicleType):
-                            dcs_unit = Vehicle(
-                                self.m.next_unit_id(),
-                                unit_name,
-                                unit.type,
-                            )
-                            dcs_unit.player_can_drive = True
-                        elif issubclass(unit_type, ShipType):
-                            dcs_unit = Ship(
-                                self.m.next_unit_id(),
-                                unit_name,
-                                unit_type,
-                            )
-                        if dcs_unit:
-                            dcs_unit.position = unit.position
-                            dcs_unit.heading = unit.position.heading.degrees
-                            moving_group.add_unit(dcs_unit)
-                            self._register_ground_unit(unit, dcs_unit)
-                        else:
-                            raise RuntimeError("DCS Unit creation failed")
+                        raise RuntimeError("DCS Group creation failed")
+                else:
+                    # Additional Units in the group
+                    dcs_unit: Optional[Unit] = None
+                    if issubclass(unit_type, VehicleType):
+                        dcs_unit = Vehicle(
+                            self.m.next_unit_id(),
+                            unit_name,
+                            unit.type,
+                        )
+                        dcs_unit.player_can_drive = True
+                    elif issubclass(unit_type, ShipType):
+                        dcs_unit = Ship(
+                            self.m.next_unit_id(),
+                            unit_name,
+                            unit_type,
+                        )
+                    if dcs_unit:
+                        dcs_unit.position = unit.position
+                        dcs_unit.heading = unit.position.heading.degrees
+                        moving_group.add_unit(dcs_unit)
+                        self._register_ground_unit(unit, dcs_unit)
+                    else:
+                        raise RuntimeError("DCS Unit creation failed")
 
     @staticmethod
     def enable_eplrs(group: VehicleGroup, unit_type: Type[VehicleType]) -> None:
         if unit_type.eplrs:
             group.points[0].tasks.append(EPLRS(group.id))
 
-    def set_alarm_state(self, group: Union[ShipGroup, VehicleGroup]) -> None:
+    def set_alarm_state(self, group: MovingGroup[Any]) -> None:
         if self.game.settings.perf_red_alert_state:
             group.points[0].tasks.append(OptAlarmState(2))
         else:
@@ -287,7 +271,7 @@ class MissileSiteGenerator(GroundObjectGenerator):
         # TODO : Should be pre-planned ?
         # TODO : Add delay to task to spread fire task over mission duration ?
         for group in self.ground_object.groups:
-            vg = self.m.find_group(group.name)
+            vg = self.m.find_group(group.group_name)
             if vg is not None:
                 targets = self.possible_missile_targets()
                 if targets:
@@ -327,7 +311,7 @@ class MissileSiteGenerator(GroundObjectGenerator):
         """
         site_range = 0
         for group in self.ground_object.groups:
-            vg = self.m.find_group(group.name)
+            vg = self.m.find_group(group.group_name)
             if vg is not None:
                 for u in vg.units:
                     if u.type in vehicle_map:
@@ -383,7 +367,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
             ship_group = self.m.ship_group(
                 self.country,
-                group.name,
+                group.group_name if unique_name else group.name,
                 unit_type,
                 position=group.units[0].position,
                 heading=group.units[0].position.heading.degrees,
@@ -523,23 +507,20 @@ class CarrierGenerator(GenericCarrierGenerator):
 
     def tacan_callsign(self) -> str:
         # TODO: Assign these properly.
-        if self.control_point.name == "Carrier Strike Group 8":
-            return "TRU"
-        else:
-            return random.choice(
-                [
-                    "STE",
-                    "CVN",
-                    "CVH",
-                    "CCV",
-                    "ACC",
-                    "ARC",
-                    "GER",
-                    "ABR",
-                    "LIN",
-                    "TRU",
-                ]
-            )
+        return random.choice(
+            [
+                "STE",
+                "CVN",
+                "CVH",
+                "CCV",
+                "ACC",
+                "ARC",
+                "GER",
+                "ABR",
+                "LIN",
+                "TRU",
+            ]
+        )
 
 
 class LhaGenerator(GenericCarrierGenerator):
