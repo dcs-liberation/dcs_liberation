@@ -35,19 +35,22 @@
     "Paratrooper AKS",
     "Paratrooper RPG-16"
   ],
-  "air_defenses": [
-    "SA3Generator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA11Generator",
-    "SA13Generator",
-    "SA15Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "SA-13 Gopher (9K35 Strela-10M3)",
+    "SA-15 Tor",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
   ],
-  "navy_generators": [
-    "LaCombattanteIIGroupGenerator"
+  "preset_groups": [
+    "SA-3/S-125",
+    "SA-6",
+    "SA-11"
+  ],
+  "naval_units": [
+    "FAC La Combattante IIa"
   ],
   "requirements": {},
   "has_jtac": true,

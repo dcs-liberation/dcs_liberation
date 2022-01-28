@@ -9,8 +9,8 @@
   "aircrafts": [
     "AH-1W SuperCobra",
     "AV-8B Harrier II Night Attack",
-	"F-104S Starfighter",
-	"F-104S Starfighter A/G",
+    "F-104S Starfighter",
+    "F-104S Starfighter A/G",
     "C-130",
     "Tornado IDS",
     "UH-1H Iroquois"
@@ -38,31 +38,24 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator"
+  "preset_groups": [
+    "Hawk"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "PERRY"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M1097 Heavy HMMWV Avenger"
   ],
   "requirements": {},
   "carrier_names": [],
   "helicopter_carrier_names": [
     "Giuseppe Garibaldi",
     "Cavour"
-  ],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"

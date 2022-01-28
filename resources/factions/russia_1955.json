@@ -37,17 +37,16 @@
     "Infantry AK-74 Rus",
     "Infantry RPG"
   ],
-  "air_defenses": [
-    "EarlyColdWarFlakGenerator"
+  "missiles": [],
+  "air_defense_units": [],
+  "preset_groups": [
+    "KS-19",
+    "Cold-War-Flak"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
+  "naval_units": [],
   "helicopter_carrier_names": [],
-  "destroyers": [],
-  "cruisers": [],
   "requirements": {},
   "carrier_names": [],
-  "navy_generators": [],
   "has_jtac": false,
   "doctrine": "coldwar"
 }

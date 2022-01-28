@@ -18,7 +18,7 @@
     "F-15C Eagle",
     "F-15E Strike Eagle",
     "F-16CM Fighting Falcon (Block 50)",
-	"F-22A Raptor",
+    "F-22A Raptor",
     "F/A-18C Hornet (Lot 20)",
     "Mirage 2000C",
     "OH-58D Kiowa Warrior",
@@ -28,7 +28,7 @@
     "SA 342M Gazelle Mistral",
     "Tornado GR4",
     "UH-1H Iroquois",
-	"UH-60A"
+    "UH-60A"
   ],
   "awacs": [
     "E-2C Hawkeye",
@@ -49,7 +49,7 @@
     "M1134 Stryker ATGM (BGM-71 TOW)",
     "M1A2 Abrams",
     "M2A2 Bradley",
-	"M6 Linebacker",
+    "M6 Linebacker",
     "Marder 1A3",
     "VAB Mephisto"
   ],
@@ -65,29 +65,25 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "ChaparralGenerator",
-    "VulcanGenerator",
-    "RolandGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Rapier",
+    "Roland",
+    "Patriot"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "DDG Arleigh Burke IIa",
+    "CG Ticonderoga",
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
   ],
-  "aircraft_carrier": [
-    "Stennis"
-  ],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
-  ],
-  "destroyers": [
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR",
+    "M163 Vulcan Air Defense System",
+    "M1097 Heavy HMMWV Avenger",
+    "M48 Chaparral"
   ],
   "requirements": {},
   "carrier_names": [
@@ -96,10 +92,6 @@
   "helicopter_carrier_names": [
     "LHA-1 Tarawa",
     "LHA-4 Nassau"
-  ],
-  "navy_generators": [
-    "ArleighBurkeGroupGenerator",
-	"OliverHazardPerryGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"

@@ -26,18 +26,15 @@
   "infantry_units": [
     "Paratrooper AKS"
   ],
-  "air_defenses": [
-    "BoforsGenerator"
+  "air_defense_units": [
+    "Bofors 40 mm Gun"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [],
-  "cruisers": [],
+  "preset_groups": [],
+  "naval_units": [],
+  "missiles": [],
   "requirements": {},
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [],
-  "navy_group_count": 0,
   "has_jtac": false,
   "doctrine": "ww2",
   "building_set": "ww2free"

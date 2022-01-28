@@ -34,26 +34,23 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "GepardGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Rapier",
+    "Patriot"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [],
-  "cruisers": [],
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR",
+    "M1097 Heavy HMMWV Avenger",
+    "Flakpanzer Gepard"
+  ],
   "requirements": {},
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
   "unrestricted_satnav": true

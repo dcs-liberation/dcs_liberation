@@ -33,21 +33,18 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "HawkGenerator",
-    "RapierGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Rapier"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [
+    "DDG Arleigh Burke IIa",
+    "LHA-1 Tarawa"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [
-    "LHA_Tarawa"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)"
   ],
-  "destroyers": [
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [],
   "requirements": {
     "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
   },
@@ -55,9 +52,6 @@
   "helicopter_carrier_names": [
     "HMAS Canberra",
     "HMAS Adelaide"
-  ],
-  "navy_generators": [
-    "ArleighBurkeGroupGenerator"
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",

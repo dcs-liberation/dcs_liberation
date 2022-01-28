@@ -38,27 +38,22 @@
   "infantry_units": [
     "Infantry Mauser 98"
   ],
-  "air_defenses": [
-    "FlakGenerator",
-    "FreyaGenerator"
+  "air_defense_units": [],
+  "preset_groups": [
+    "Flak",
+    "Freya"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [],
-  "cruisers": [],
+  "naval_units": [
+    "Boat Schnellboot type S130"
+  ],
   "requirements": {
     "WW2 Asset Pack": "https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/"
   },
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [
-    "SchnellbootGroupGenerator"
-  ],
-  "navy_group_count": 2,
   "missiles": [
-    "V1GroupGenerator"
+    "V-1 Launch Ramp"
   ],
-  "missiles_group_count": 1,
   "has_jtac": false,
   "doctrine": "ww2",
   "building_set": "ww2germany"

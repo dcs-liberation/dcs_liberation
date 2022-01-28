@@ -39,30 +39,24 @@
     "MANPADS Stinger",
     "Mortar 2B11 120mm"
   ],
-  "air_defenses": [
-    "GepardGenerator",
-    "HawkGenerator",
-    "RolandGenerator",
-    "PatriotGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Roland",
+    "Patriot"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "FAC La Combattante IIa",
+    "CG Ticonderoga"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [
-    "PERRY"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR",
+    "Flakpanzer Gepard"
   ],
   "requirements": {},
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator",
-    "LaCombattanteIIGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper"
 }

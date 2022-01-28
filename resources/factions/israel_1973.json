@@ -33,25 +33,22 @@
     "Infantry M249",
     "Infantry M4"
   ],
-  "air_defenses": [
-    "BoforsGenerator",
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "VulcanGenerator"
+  "preset_groups": [
+    "Hawk"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [],
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M163 Vulcan Air Defense System",
+    "M48 Chaparral",
+    "Bofors 40 mm Gun"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [],
-  "cruisers": [],
   "requirements": {
     "Community A-4E": "https://heclak.github.io/community-a4e-c/"
   },
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [],
   "has_jtac": false,
   "doctrine": "coldwar"
 }

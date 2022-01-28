@@ -24,20 +24,15 @@
   "infantry_units": [
     "Infantry AK-74 Rus"
   ],
-  "air_defenses": [
-    "Flak18Generator"
+  "air_defense_units": [
+    "8.8 cm Flak 18"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [],
-  "cruisers": [],
+  "preset_groups": [],
+  "naval_units": [],
   "requirements": {},
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [],
-  "navy_group_count": 0,
   "missiles": [],
-  "missiles_group_count": 0,
   "has_jtac": false,
   "doctrine": "ww2",
   "building_set": "ww2free",
@@ -47,7 +42,7 @@
       "Fictional IJN Carrier Akagi AI-103",
       "Fictional IJN Carrier Akagi AI-151",
       "Fictional IJN Carrier Soryu BI-112",
-	  "Fictional IJN OTU Tsukuba Tsu-102"
+      "Fictional IJN OTU Tsukuba Tsu-102"
     ],
     "I-16 Ishak": [
       "Japan"

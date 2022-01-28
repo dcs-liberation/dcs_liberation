@@ -54,42 +54,37 @@
     "Paratrooper AKS",
     "Paratrooper RPG-16"
   ],
-  "air_defenses": [
-    "ColdWarFlakGenerator",
-    "SA2Generator",
-    "SA3Generator",
-    "SA5Generator",
-    "SA6Generator",
-    "SA8Generator",
-    "SA8Generator",
-    "SA9Generator",
-    "SA10Generator",
-    "SA11Generator",
-    "SA13Generator",
-    "SA17Generator",
-    "SA19Generator",
-    "ZSU23Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+  "preset_groups": [
+    "SA-5/S-200",
+    "SA-2/S-75",
+    "SA-3/S-125",
+    "SA-6",
+    "SA-11",
+    "SA-10/S-300PS",
+    "SA-17",
+    "Cold-War-Flak"
   ],
-  "ewrs": [
-    "BoxSpringGenerator",
-    "TallRackGenerator",
-    "TinShieldGenerator"
+  "naval_units": [
+    "Corvette 1124.4 Grish",
+    "Corvette 1241.1 Molniya"
+  ],
+  "air_defense_units": [
+    "SAM P19 \"Flat Face\" SR (SA-2/3)",
+    "EWR 1L13",
+    "EWR 55G6",
+    "SAM SA-5 S-200 ST-68U \"Tin Shield\" SR",
+    "SAM SA-8 Osa \"Gecko\" TEL",
+    "SA-9 Strela",
+    "SA-13 Gopher (9K35 Strela-10M3)",
+    "SA-19 Grison (2K22 Tunguska)",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
   ],
   "missiles": [
-    "ScudGenerator"
+    "SSM SS-1C Scud-B"
   ],
-  "missiles_group_count": 1,
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
   "helicopter_carrier_names": [],
-  "destroyers": [],
-  "cruisers": [],
   "requirements": {},
-  "carrier_names": [],
-  "navy_generators": [
-    "GrishaGroupGenerator",
-    "MolniyaGroupGenerator"
-  ]
+  "carrier_names": []
 }

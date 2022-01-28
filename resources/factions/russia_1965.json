@@ -42,26 +42,23 @@
     "Infantry AK-74 Rus",
     "Infantry RPG"
   ],
-  "air_defenses": [
-    "EarlyColdWarFlakGenerator",
-    "SA2Generator",
-    "SA3Generator",
-    "ZSU23Generator",
-    "ZSU57Generator",
-    "ZU23Generator",
-    "ZU23UralGenerator"
+  "missiles": [],
+  "preset_groups": [
+    "SA-2/S-75",
+    "SA-3/S-125",
+    "Cold-War-Flak"
   ],
-  "ewrs": [
-    "FlatFaceGenerator"
+  "naval_units": [],
+  "air_defense_units": [
+    "SAM P19 \"Flat Face\" SR (SA-2/3)",
+    "ZSU-57-2 'Sparka'",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
   "helicopter_carrier_names": [],
-  "destroyers": [],
-  "cruisers": [],
   "requirements": {},
   "carrier_names": [],
-  "navy_generators": [],
   "has_jtac": false,
   "doctrine": "coldwar"
 }

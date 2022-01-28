@@ -44,25 +44,22 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "ChaparralGenerator",
-    "HawkGenerator",
-    "PatriotGenerator",
-    "VulcanGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Patriot"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [
+    "DDG Arleigh Burke IIa"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [],
-  "cruisers": [],
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M163 Vulcan Air Defense System",
+    "M48 Chaparral"
+  ],
   "requirements": {},
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [
-    "ArleighBurkeGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {

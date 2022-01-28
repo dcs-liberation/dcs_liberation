@@ -35,19 +35,20 @@
     "Infantry M4",
     "MANPADS SA-18 Igla-S \"Grouse\""
   ],
-  "air_defenses": [
-    "HawkGenerator",
-    "PatriotGenerator",
-    "RapierGenerator"
+  "preset_groups": [
+    "Hawk",
+    "Rapier",
+    "Patriot"
   ],
-  "ewrs": [
-    "PatriotEwrGenerator"
+  "naval_units": [
+    "FFG Oliver Hazard Perry"
+  ],
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Patriot STR"
   ],
   "requirements": {},
   "carrier_names": [],
-  "navy_generators": [
-    "OliverHazardPerryGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "WingLoong-I",
   "unrestricted_satnav": true

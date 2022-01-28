@@ -38,29 +38,23 @@
     "Infantry M4",
     "MANPADS Stinger"
   ],
-  "air_defenses": [
-    "AvengerGenerator",
-    "HawkGenerator"
+  "preset_groups": [
+    "Hawk"
   ],
-  "ewrs": [
-    "HawkEwrGenerator"
+  "naval_units": [
+    "DDG Arleigh Burke IIa",
+    "CG Ticonderoga"
   ],
-  "aircraft_carrier": [],
-  "helicopter_carrier": [],
-  "destroyers": [
-    "USS_Arleigh_Burke_IIa"
-  ],
-  "cruisers": [
-    "TICONDEROG"
+  "missiles": [],
+  "air_defense_units": [
+    "SAM Hawk SR (AN/MPQ-50)",
+    "M1097 Heavy HMMWV Avenger"
   ],
   "requirements": {
     "C-130J-30 Super Hercules Mod by Anubis": "https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/"
   },
   "carrier_names": [],
   "helicopter_carrier_names": [],
-  "navy_generators": [
-    "ArleighBurkeGroupGenerator"
-  ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
   "liveries_overrides": {
