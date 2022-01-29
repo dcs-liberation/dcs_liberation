@@ -505,27 +505,17 @@ class Game:
                     max_detection_range = tgo.max_detection_range().meters
                     for z in self.__culling_zones:
                         seperation = z.distance_to_point(tgo.position)
-                        # EWR detection range is very far.  If left at 100% range no EWR would ever be culled.
-                        if seperation < 0.25 * max_detection_range:
+                        # Don't cull EWR if in detection range.
+                        if seperation < max_detection_range:
                             return False
                 if isinstance(tgo, SamGroundObject):
                     max_threat_range = tgo.max_threat_range().meters
                     for z in self.__culling_zones:
                         seperation = z.distance_to_point(tgo.position)
-                        # Need range so that SAM can be respected, but dont need huge respect if small SAM.
-                        respect_bubble = 1.15 * max_threat_range
-                        max_respect_range = (
-                            Distance.from_nautical_miles(16).meters + max_threat_range
+                        # Create a 12nm buffer around nearby SAMs.
+                        respect_bubble = (
+                            max_threat_range + Distance.from_nautical_miles(12).meters
                         )
-                        min_respect_range = (
-                            Distance.from_nautical_miles(4).meters + max_threat_range
-                        )
-
-                        if respect_bubble > max_respect_range:
-                            respect_bubble = max_respect_range
-                        elif respect_bubble < min_respect_range:
-                            respect_bubble = min_respect_range
-
                         if seperation < respect_bubble:
                             return False
             return self.position_culled(tgo.position)
