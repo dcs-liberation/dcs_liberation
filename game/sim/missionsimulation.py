@@ -10,6 +10,7 @@ from game.missiongenerator import MissionGenerator
 from game.unitmap import UnitMap
 from .aircraftsimulation import AircraftSimulation
 from .missionresultsprocessor import MissionResultsProcessor
+from ..profiling import logged_duration
 
 if TYPE_CHECKING:
     from game import Game
@@ -45,7 +46,8 @@ class MissionSimulation:
         return events
 
     def generate_miz(self, output: Path) -> None:
-        self.unit_map = MissionGenerator(self.game, self.time).generate_miz(output)
+        with logged_duration("Mission generation"):
+            self.unit_map = MissionGenerator(self.game, self.time).generate_miz(output)
 
     def debrief_current_state(
         self, state_path: Path, force_end: bool = False

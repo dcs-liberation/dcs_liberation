@@ -280,7 +280,8 @@ class QTopPanel(QFrame):
                 return
 
         if self.game.settings.fast_forward_to_first_contact:
-            self.sim_controller.run_to_first_contact()
+            with logged_duration("Simulating to first contact"):
+                self.sim_controller.run_to_first_contact()
         self.sim_controller.generate_miz(
             persistency.mission_path_for("liberation_nextturn.miz")
         )

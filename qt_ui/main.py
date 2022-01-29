@@ -9,7 +9,7 @@ from typing import Optional
 from PySide2 import QtWidgets
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QApplication, QSplashScreen
+from PySide2.QtWidgets import QApplication, QSplashScreen, QCheckBox
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
@@ -99,20 +99,29 @@ def run_ui(game: Optional[Game]) -> None:
 
     # Show warning if no DCS Installation directory was set
     if liberation_install.get_dcs_install_directory() == "":
-        QtWidgets.QMessageBox.warning(
-            splash,
-            "No DCS installation directory.",
-            "The DCS Installation directory is not set correctly. "
-            "This will prevent DCS Liberation to work properly as the MissionScripting "
-            "file will not be modified."
-            "<br/><br/>To solve this problem, you can set the Installation directory "
-            "within the preferences menu. You can also manually edit or replace the "
-            "following file:"
-            "<br/><br/><strong>&lt;dcs_installation_directory&gt;/Scripts/MissionScripting.lua</strong>"
-            "<br/><br/>The easiest way to do it is to replace the original file with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua)."
-            "<br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>",
-            QtWidgets.QMessageBox.StandardButton.Ok,
+        logging.warning(
+            "DCS Installation directory is empty. MissionScripting file will not be replaced!"
         )
+        if not liberation_install.ignore_empty_install_directory():
+            ignore_checkbox = QCheckBox("Do not show again")
+            ignore_checkbox.stateChanged.connect(set_ignore_empty_install_directory)
+            message_box = QtWidgets.QMessageBox(parent=splash)
+            message_box.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+            message_box.setWindowTitle("No DCS installation directory.")
+            message_box.setText(
+                "The DCS Installation directory is not set correctly. "
+                "This will prevent DCS Liberation to work properly as the MissionScripting "
+                "file will not be modified."
+                "<br/><br/>To solve this problem, you can set the Installation directory "
+                "within the preferences menu. You can also manually edit or replace the "
+                "following file:"
+                "<br/><br/><strong>&lt;dcs_installation_directory&gt;/Scripts/MissionScripting.lua</strong>"
+                "<br/><br/>The easiest way to do it is to replace the original file with the file in dcs-liberation distribution (&lt;dcs_liberation_installation&gt;/resources/scripts/MissionScripting.lua)."
+                "<br/><br/>You can find more information on how to manually change this file in the Liberation Wiki (Page: Dedicated Server Guide) on GitHub.</p>"
+            )
+            message_box.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Ok)
+            message_box.setCheckBox(ignore_checkbox)
+            message_box.exec_()
     # Replace DCS Mission scripting file to allow DCS Liberation to work
     try:
         liberation_install.replace_mission_scripting_file()
@@ -272,6 +281,11 @@ def create_game(
     game = generator.generate()
     game.begin_turn_0()
     return game
+
+
+def set_ignore_empty_install_directory(value: bool) -> None:
+    liberation_install.set_ignore_empty_install_directory(value)
+    liberation_install.save_config()
 
 
 def lint_all_weapon_data() -> None:
