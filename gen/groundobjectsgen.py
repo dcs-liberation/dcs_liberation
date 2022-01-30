@@ -608,42 +608,46 @@ class HelipadGenerator:
         self.helipads: list[StaticGroup] = []
 
     def generate(self) -> None:
+        # This gets called for every control point, so we don't want to add an empty group (causes DCS mission editor to crash)
+        if len(self.cp.helipads) == 0:
+            return
 
         # Note : Helipad are generated as neutral object in order not to interfer with capture triggers
         neutral_country = self.m.country(self.game.neutral_country.name)
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
+        name = self.cp.name + "_helipad"
+        sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
+        sp = StaticPoint()
+        sp.position = self.cp.position
+        sg.add_point(sp)
+
         for i, helipad in enumerate(self.cp.helipads):
-            name = self.cp.name + "_helipad_" + str(i)
-            logging.info("Generating helipad static : " + name)
-            pad = InvisibleFARP(unit_id=self.m.next_unit_id(), name=name)
+            # This is used as a trigger of the number of available pads when spawning flights
+            self.helipads.append(sg)
+            name_i = name + "_" + str(i)
+            logging.info("Generating helipad static : " + name_i)
+            pad = InvisibleFARP(unit_id=self.m.next_unit_id(), name=name_i)
             pad.position = Point(helipad.x, helipad.y)
             pad.heading = helipad.heading.degrees
-            sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
             sg.add_unit(pad)
-            sp = StaticPoint()
-            sp.position = pad.position
-            sg.add_point(sp)
-            neutral_country.add_static_group(sg)
-
-            self.helipads.append(sg)
-
             # Generate a FARP Ammo and Fuel stack for each pad
             self.m.static_group(
                 country=country,
-                name=(name + "_fuel"),
+                name=(name_i + "_fuel"),
                 _type=Fortification.FARP_Fuel_Depot,
                 position=pad.position.point_from_heading(helipad.heading.degrees, 35),
                 heading=pad.heading,
             )
             self.m.static_group(
                 country=country,
-                name=(name + "_ammo"),
+                name=(name_i + "_ammo"),
                 _type=Fortification.FARP_Ammo_Dump_Coating,
                 position=pad.position.point_from_heading(
                     helipad.heading.degrees, 35
                 ).point_from_heading(helipad.heading.degrees + 90, 10),
                 heading=pad.heading,
             )
+        neutral_country.add_static_group(sg)
 
 
 class GroundObjectsGenerator:

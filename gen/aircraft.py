@@ -590,12 +590,12 @@ class AircraftConflictGenerator:
         )
 
         # Note : A bit dirty, need better support in pydcs
-        group.points[0].action = PointAction.FromGroundArea
-        group.points[0].type = "TakeOffGround"
+        group.points[0].action = PointAction.FromParkingArea
+        group.points[0].type = "TakeOffParking"
         group.units[0].heading = helipad.units[0].heading
         if start_type != "Cold":
-            group.points[0].action = PointAction.FromGroundAreaHot
-            group.points[0].type = "TakeOffGroundHot"
+            group.points[0].action = PointAction.FromParkingArea
+            group.points[0].type = "TakeOffParkingHot"
 
         for i in range(count - 1):
             try:
