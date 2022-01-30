@@ -228,6 +228,7 @@ class FlightGroupSpawner:
 
     def _generate_at_cp_helipad(self, name: str, cp: ControlPoint) -> FlyingGroup[Any]:
         try:
+            # helipad = self.helipads[cp][0]
             helipad = self.helipads[cp].pop()
         except IndexError as ex:
             raise RuntimeError(f"Not enough helipads available at {cp}") from ex
@@ -235,18 +236,18 @@ class FlightGroupSpawner:
         group = self._generate_at_group(name, helipad)
 
         # Note : A bit dirty, need better support in pydcs
-        group.points[0].action = PointAction.FromGroundArea
-        group.points[0].type = "TakeOffGround"
+        group.points[0].action = PointAction.FromParkingArea
+        group.points[0].type = "TakeOffParking"
         group.units[0].heading = helipad.units[0].heading
         if self.start_type is not StartType.COLD:
-            group.points[0].action = PointAction.FromGroundAreaHot
-            group.points[0].type = "TakeOffGroundHot"
+            group.points[0].action = PointAction.FromParkingArea
+            group.points[0].type = "TakeOffParkingHot"
 
         for i in range(self.flight.count - 1):
+            group.units[1 + i].position = Point(helipad.x, helipad.y)
+            group.units[1 + i].heading = helipad.units[0].heading
             try:
-                helipad = self.helipads[cp].pop()
-                group.units[1 + i].position = Point(helipad.x, helipad.y)
-                group.units[1 + i].heading = helipad.units[0].heading
+                self.helipads[cp].pop()
             except IndexError as ex:
                 raise RuntimeError(f"Not enough helipads available at {cp}") from ex
         return group
