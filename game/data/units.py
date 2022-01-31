@@ -30,6 +30,7 @@ class UnitClass(Enum):
     AircraftCarrier = "AircraftCarrier"
     HelicopterCarrier = "HelicopterCarrier"
     Destroyer = "Destroyer"
+    Frigate = "Frigate"
     Cruiser = "Cruiser"
     Submarine = "Submarine"
     LandingShip = "LandingShip"
