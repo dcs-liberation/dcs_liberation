@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+import pickle
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -12,6 +13,8 @@ import yaml
 from dcs import Point
 from dcs.unitgroup import StaticGroup
 
+from game import persistency
+from game.version import VERSION
 from game.data.groups import GroupRole, GroupTask
 from game.data.units import UnitClass
 from game.groundforces.template import (
@@ -27,6 +30,7 @@ from game.groundforces.template import (
 from game.profiling import logged_duration
 
 TEMPLATE_DIR = "resources/templates/"
+TEMPLATE_DUMP = "Liberation/templates.p"
 
 
 @dataclass
@@ -209,6 +213,26 @@ class TemplateLoader:
         yield from self._templates.values()
 
     def load_templates(self) -> None:
+        """This will load all pre-loaded templates from a pickle file.
+        If pickle can not be loaded it will import and dump the templates"""
+        # We use a pickle for performance reasons. Importing takes many seconds
+        file = Path(persistency.base_path()) / TEMPLATE_DUMP
+        if file.is_file():
+            # Load from pickle if existing
+            with file.open("rb") as f:
+                try:
+                    version, self._templates = pickle.load(f)
+                    # Check if the game version of the dump is identical to the current
+                    if version == VERSION:
+                        return
+                except Exception as e:
+                    logging.error(f"Error {e} reading templates dump. Recreating.")
+        # If no dump is available or game version is different create a new dump
+        self.import_templates()
+
+    def import_templates(self) -> None:
+        """This will import all templates from the template folder
+        and dumps them to a pickle"""
         mappings: dict[str, list[TemplateMapping]] = {}
         with logged_duration("Parsing mapping yamls"):
             for file in Path(TEMPLATE_DIR).rglob("*.yaml"):
@@ -229,6 +253,14 @@ class TemplateLoader:
                 for miz, maps in mappings.items():
                     exe.submit(self._load_from_miz, miz, maps)
 
+        self._dump_templates()
+
+    def _dump_templates(self) -> None:
+        file = Path(persistency.base_path()) / TEMPLATE_DUMP
+        dump = (VERSION, self._templates)
+        with file.open("wb") as fdata:
+            pickle.dump(dump, fdata)
+
     @staticmethod
     def mapping_for_group(
         mappings: list[TemplateMapping], group_name: str
@@ -246,8 +278,10 @@ class TemplateLoader:
         template_position: dict[str, Point] = {}
         temp_mis = dcs.Mission()
         with logged_duration("dcs mission loading"):
-            # TODO This takes a lot of time... maybe this should be serialized to json
-            # Example the whole routine: 0:00:00.934417, the .load_file() method: 0:00:00.920409
+            # The load_file takes a lot of time to compute. That's why the templates
+            # are written to a pickle and can be reloaded from the ui
+            # Example the whole routine: 0:00:00.934417,
+            # the .load_file() method: 0:00:00.920409
             temp_mis.load_file(miz)
 
         for country in itertools.chain(
