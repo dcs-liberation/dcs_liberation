@@ -2,130 +2,81 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional, Union
+from typing import Any, Optional, Union
 
 from game.theater.theatergroundobject import (
-    IadsGroundObject,
-    IadsBuildingGroundObject,
-    SamGroundObject,
-    EwrGroundObject,
     TheaterGroundObject,
     IADSRole,
+    IadsGroundGroup,
 )
 
 
 def find_tgo_by_original_name(
-    name: str, ground_objects: List[TheaterGroundObject]
-) -> List[TheaterGroundObject]:
-    return [
-        go
-        for go in ground_objects
-        if (
-            isinstance(go, IadsGroundObject) or isinstance(go, IadsBuildingGroundObject)
-        )
-        and go.original_name == name
-    ]
+    name: str, ground_objects: list[TheaterGroundObject]
+) -> TheaterGroundObject:
+    for go in ground_objects:
+        if go.original_name == name:
+            return go
+    raise StopIteration
 
 
 class IADSConfigConnection:
     element_name: str
-    connected: Dict[str, Optional[TheaterGroundObject]]
-    iads_role: IADSRole
+    connected: dict[str, Optional[TheaterGroundObject]]
     tgo: Optional[TheaterGroundObject]
 
-    def __init__(self, name: str, iads_role: str) -> None:
+    def __init__(self, name: str) -> None:
         self.element_name = name
         self.connected = {}
-        self.iads_role = IADSRole(iads_role)
         self.tgo = None
 
-    def update_connection(self, ground_objects: List[TheaterGroundObject]) -> None:
-        # Search the tgo in the current theater
-        found_tgo = find_tgo_by_original_name(self.element_name, ground_objects)
-        if found_tgo:
-            # Link the TheaterGroundObject
-            self.tgo = found_tgo[0]
-        else:
-            logging.error(
-                f"IADS: No ground object found for {self.element_name} which was defined in campaign yaml"
-            )
-            return
+    def update_connection(self, ground_objects: list[TheaterGroundObject]) -> None:
+        # Search the tgo in the current theater. Raises StopIteration if none found
+        self.tgo = find_tgo_by_original_name(self.element_name, ground_objects)
 
         for connection_node in self.connected:
-            found_node_tgo = find_tgo_by_original_name(connection_node, ground_objects)
-            if found_node_tgo:
-                self.connected[connection_node] = found_node_tgo[0]
-            else:
-                logging.error(
-                    f"IADS: No ground object found for connection_node {connection_node} of {self.element_name}"
+            try:
+                connected_tgo = find_tgo_by_original_name(
+                    connection_node, ground_objects
                 )
+                self.connected[connection_node] = connected_tgo
+            except StopIteration:
+                logging.error(
+                    f"IADS: No ground object found for connection {connection_node}"
+                )
+                self.connected.pop(connection_node)
 
 
 @dataclass
 class IADSConfig:
-    connections: List[IADSConfigConnection]
+    connections: list[IADSConfigConnection]
     advanced_iads: bool = False  # True if campaign supports advanced iads
 
     @classmethod
-    def from_campaign_data(cls, data: dict[Union[str, int], Any]) -> IADSConfig:
-        connections: List[IADSConfigConnection] = []
-        for iads_role, iads_nodes in data.items():
-            for iads_node in iads_nodes:
-                try:
-                    connection = IADSConfigConnection(
-                        iads_node.get("name"), str(iads_role)
-                    )
-                    connections.append(connection)
-                except (ValueError, KeyError, TypeError):
-                    logging.error(
-                        f"IADS Node {iads_node} could not be loaded from campaign yaml"
-                    )
-                    continue
-                try:
-                    for connected_asset in iads_node.get("connected"):
-                        connection.connected[connected_asset] = None
-                except (ValueError, KeyError, TypeError):
-                    logging.warning(
-                        f"IADS Node {iads_node} has invalid or no connections"
-                    )
-                    continue
+    def from_campaign_data(cls, data: list[dict[str, list[str]]]) -> IADSConfig:
+        connections: list[IADSConfigConnection] = []
+        for element in data:
+            for iads_node, iads_connections in element.items():
+                config = IADSConfigConnection(iads_node)
+                for connection in iads_connections:
+                    config.connected[connection] = None
+                if len(config.connected) > 0:
+                    connections.append(config)
+                else:
+                    logging.warning(f"IADS Node {iads_node} has invalid connections")
         return IADSConfig(connections=connections, advanced_iads=True)
-
-    def update_connections(self, ground_objects: List[TheaterGroundObject]) -> None:
-        for connection in self.connections:
-            connection.update_connection(ground_objects)
 
 
 class IADSConnectionNode:
-    connected_nodes: List[IADSConnectionNode]
-    ground_object: TheaterGroundObject
+    connected_nodes: list[IADSConnectionNode]
+    group: IadsGroundGroup
 
-    def __init__(self, go: TheaterGroundObject) -> None:
-        self.ground_object = go
+    def __str__(self) -> str:
+        return self.group.group_name
+
+    def __init__(self, group: IadsGroundGroup) -> None:
+        self.group = group
         self.connected_nodes = []
-
-    @property
-    def participate(self) -> bool:
-        # exclude current non skynet_capable ground_units
-        # they could later participate when the player for example upgrades them
-        if self.iads_role in [
-            IADSRole.Ewr,
-            IADSRole.Sam,
-            IADSRole.SamAsEwr,
-            IADSRole.ConnectionNode,
-            IADSRole.CommandCenter,
-            IADSRole.PowerSource,
-        ]:
-            return True
-        return False
-
-    @property
-    def iads_role(self) -> IADSRole:
-        if isinstance(self.ground_object, IadsGroundObject) or isinstance(
-            self.ground_object, IadsBuildingGroundObject
-        ):
-            return self.ground_object.iads_role
-        return IADSRole.NoBehavior
 
 
 class IADSNetwork:
@@ -133,99 +84,119 @@ class IADSNetwork:
     # Each Connection Node is connected to a List of CN and PS
     # The final parsing, so that Skynet can handle it will happen in the luagenerator
     # This is because in the IADSNetwork we only work with the TGO instead of the Groups
-    connections: List[IADSConnectionNode]
+    connections: list[IADSConnectionNode]
     iads_config: IADSConfig
 
     def __init__(self, iads_config: IADSConfig) -> None:
         self.iads_config = iads_config
         self.connections = []
 
-    def connection_node_for(self, tgo: TheaterGroundObject) -> IADSConnectionNode:
+    def node_for_group(self, group: IadsGroundGroup) -> IADSConnectionNode:
         for cn in self.connections:
-            if cn.ground_object == tgo:
-                # use existing node
+            if cn.group == group:
                 return cn
 
-        # Create new connection_node if none exists
-        connection_node = IADSConnectionNode(tgo)
+        connection_node = IADSConnectionNode(group)
         self.connections.append(connection_node)
         return connection_node
 
-    def initialize_network(self, ground_objects: List[TheaterGroundObject]) -> None:
+    def node_for_tgo(self, tgo: TheaterGroundObject) -> IADSConnectionNode:
+        # Look for existing nodes for this tgo:
+        for cn in self.connections:
+            if cn.group.ground_object == tgo:
+                return cn
+
+        # Create new connection_node if none exists
+        primary_node: Optional[IADSConnectionNode] = None
+        for group in tgo.groups:
+            if isinstance(group, IadsGroundGroup):
+                # The first IadsGroundGroup is always the primary Group
+                if not primary_node and group.iads_role.participate:
+                    # Primary Node
+                    primary_node = self.node_for_group(group)
+                elif primary_node and group.iads_role == IADSRole.PointDefense:
+                    # Point Defense Node for this TGO
+                    primary_node.connected_nodes.append(IADSConnectionNode(group))
+
+        if not primary_node:
+            raise StopIteration
+        return primary_node
+
+    def initialize_network(self, ground_objects: list[TheaterGroundObject]) -> None:
         if self.iads_config.advanced_iads:
             if self.iads_config.connections:
-                self.iads_config.update_connections(ground_objects)
+                # Load from Configuration File
                 self.initialize_network_from_config(ground_objects)
             else:
+                # Load from Range
                 self.initialize_network_from_range(ground_objects)
 
         # basic mode if no advanced iads support or network init created no connections
         if not self.connections:
             self.initialize_basic_iads(ground_objects)
 
-    def initialize_basic_iads(self, ground_objects: List[TheaterGroundObject]) -> None:
+    def initialize_basic_iads(self, ground_objects: list[TheaterGroundObject]) -> None:
         # Basic IADS Initialization with SAM & EWRs only
         for go in ground_objects:
-            if isinstance(go, IadsGroundObject) and go.iads_role in [
-                IADSRole.Sam,
-                IADSRole.SamAsEwr,
-                IADSRole.Ewr,
-            ]:
-                self.connections.append(IADSConnectionNode(go))
-        return
+            for group in go.groups:
+                if isinstance(group, IadsGroundGroup) and group.iads_role in [
+                    IADSRole.Sam,
+                    IADSRole.SamAsEwr,
+                    IADSRole.Ewr,
+                ]:
+                    self.node_for_group(group)
 
     def initialize_network_from_config(
-        self, ground_objects: List[TheaterGroundObject]
+        self, ground_objects: list[TheaterGroundObject]
     ) -> None:
         for connection in self.iads_config.connections:
-            if not connection.tgo:
-                # Skip all invalid IADS Elements
-                continue
-            primary_connection_node = IADSConnectionNode(connection.tgo)
-            for node_name, node_tgo in connection.connected.items():
-                if not node_tgo:
-                    # Skip all invalid connections
-                    continue
-                primary_connection_node.connected_nodes.append(
-                    IADSConnectionNode(node_tgo)
+            # Update the connection with the correct ground_objects
+            try:
+                connection.update_connection(ground_objects)
+                assert connection.tgo is not None
+                primary_node = self.node_for_tgo(connection.tgo)
+            except StopIteration:
+                logging.error(
+                    f"IADS: No ground object found for {connection.element_name}"
                 )
-            self.connections.append(primary_connection_node)
+                continue
+
+            # Find all connected ground_objects
+            for node_name, node_tgo in connection.connected.items():
+                assert node_tgo is not None
+                primary_node.connected_nodes.append(self.node_for_tgo(node_tgo))
 
     def initialize_network_from_range(
-        self, ground_objects: List[TheaterGroundObject]
+        self, ground_objects: list[TheaterGroundObject]
     ) -> None:
         for go in ground_objects:
-            if (
-                # Only parse Connection_Nodes and Power_Sources
-                isinstance(go, IadsBuildingGroundObject)
-                and (
-                    go.iads_role == IADSRole.PowerSource
-                    or go.iads_role == IADSRole.ConnectionNode
-                )
-            ):
-                # Find nearby SAM, EWR and CommandCenters
-                connection_node = IADSConnectionNode(go)
-                nearby_ground_objects = [
-                    nearby_go
-                    for nearby_go in ground_objects
-                    if nearby_go != go
-                    and (
-                        # Filter for SAM, EWR and CommandCenters
-                        (
-                            isinstance(nearby_go, SamGroundObject)
-                            or isinstance(nearby_go, EwrGroundObject)
-                        )
-                        or (
-                            isinstance(nearby_go, IadsBuildingGroundObject)
-                            and nearby_go.iads_role == IADSRole.CommandCenter
-                        )
-                    )
-                    and nearby_go.position.distance_to_point(go.position)
-                    <= go.connection_range.meters
-                ]
-
-                for nearby_go in nearby_ground_objects:
-                    # Create the primary node or reuse existing to prevent duplicates
-                    primary_connection_node = self.connection_node_for(nearby_go)
-                    # attach the CN/PS to the primary Node
-                    primary_connection_node.connected_nodes.append(connection_node)
+            for group in go.groups:
+                if isinstance(group, IadsGroundGroup) and group.iads_role in [
+                    IADSRole.PowerSource,
+                    IADSRole.ConnectionNode,
+                ]:
+                    # Find nearby SAM, EWR and CommandCenters
+                    connection_node = IADSConnectionNode(group)
+                    for nearby_go in ground_objects:
+                        if nearby_go == go:
+                            continue
+                        for nearby_group in nearby_go.groups:
+                            if not isinstance(nearby_group, IadsGroundGroup):
+                                continue
+                            if (
+                                nearby_group.iads_role
+                                in [
+                                    IADSRole.Sam,
+                                    IADSRole.SamAsEwr,
+                                    IADSRole.Ewr,
+                                    IADSRole.CommandCenter,
+                                ]
+                                and nearby_go.position.distance_to_point(go.position)
+                                <= group.iads_role.connection_range.meters
+                            ):
+                                # Create the primary node or reuse existing to prevent duplicates
+                                primary_connection_node = self.node_for_tgo(nearby_go)
+                                # attach the CN/PS to the primary Node
+                                primary_connection_node.connected_nodes.append(
+                                    connection_node
+                                )

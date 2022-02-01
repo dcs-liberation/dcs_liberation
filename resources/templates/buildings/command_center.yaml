@@ -1,14 +1,13 @@
-name: comms
+name: command_center
 role: Building
 tasks:
-  - Comms
+  - CommandCenter
 groups:
-  - name: comms1 0
+  - name: CommandCenter 0
     statics:
-      - comms1 0-0
+      - CommandCenter 0-0
     unit_count:
       - 1
     unit_types:
-      - TV tower
-      - Comms tower M
+      - .Command Center
 template_file: resources/templates/buildings/buildings.miz

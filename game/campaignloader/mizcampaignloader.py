@@ -450,20 +450,20 @@ class MizCampaignLoader:
 
         for iads_command_center in self.iads_command_centers:
             closest, distance = self.objective_info(iads_command_center)
-            closest.preset_locations.iads_command_center.append(
-                PresetLocation.from_group(iads_command_center)
+            closest.preset_locations.buildings.append(
+                PresetLocation.from_group(iads_command_center, GroupTask.CommandCenter)
             )
 
         for iads_connection_node in self.iads_connection_nodes:
             closest, distance = self.objective_info(iads_connection_node)
-            closest.preset_locations.iads_connection_node.append(
-                PresetLocation.from_group(iads_connection_node)
+            closest.preset_locations.buildings.append(
+                PresetLocation.from_group(iads_connection_node, GroupTask.Comms)
             )
 
         for iads_power_source in self.iads_power_sources:
             closest, distance = self.objective_info(iads_power_source)
-            closest.preset_locations.iads_power_source.append(
-                PresetLocation.from_group(iads_power_source)
+            closest.preset_locations.buildings.append(
+                PresetLocation.from_group(iads_power_source, GroupTask.Power)
             )
 
         for preset_trigger in self.complex_presets:

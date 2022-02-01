@@ -18,6 +18,7 @@ class GroupTask(Enum):
     SHORAD = "SHORAD"
     MERAD = "MERAD"
     LORAD = "LORAD"
+    PointDefense = "PointDefense"  # Used as SubTask for PD
 
     # Naval
     AircraftCarrier = "AircraftCarrier"
@@ -41,14 +42,16 @@ class GroupTask(Enum):
     FOB = "FOB"
     StrikeTarget = "StrikeTarget"
     OffShoreStrikeTarget = "OffShoreStrikeTarget"
-    Comms = "Comms"
-    Power = "Power"
     Farp = "Farp"
     Derrick = "Derrick"
     AllyCamp = "AllyCamp"
     Village = "Village"
     Ware = "Ware"
     WW2Bunker = "WW2Bunker"
+
+    # IADS Buildings
+    Comms = "Comms"
+    Power = "Power"
     CommandCenter = "CommandCenter"
 
 
@@ -75,8 +78,6 @@ ROLE_TASKINGS: dict[GroupRole, list[GroupTask]] = {
         GroupTask.FOB,
         GroupTask.StrikeTarget,
         GroupTask.OffShoreStrikeTarget,
-        GroupTask.Comms,
-        GroupTask.Power,
         GroupTask.Farp,
         GroupTask.Derrick,
         GroupTask.AllyCamp,

@@ -348,26 +348,28 @@ class MapModel(QObject):
         # TODO Fallback if basic connection?
         self._iads_connections = []
         for connection in self.game.theater.iads_network.connections:
-            if not connection.participate:
+            if not connection.group.participate_to_iads:
                 continue  # Skip
             for connected_node in connection.connected_nodes:
-                if not connected_node.participate:
+                if not connected_node.group.participate_to_iads:
                     continue  # Skip
-                if connected_node.ground_object.is_friendly(
+                if connected_node.group.ground_object.is_friendly(
                     True
-                ) != connection.ground_object.is_friendly(True):
+                ) != connection.group.ground_object.is_friendly(True):
                     continue  # Skip connections which are not from same coalition
                 points = [
                     self.leaflet_coord_for(
-                        connection.ground_object.position, self.game.theater
+                        connection.group.ground_object.position, self.game.theater
                     ),
                     self.leaflet_coord_for(
-                        connected_node.ground_object.position, self.game.theater
+                        connected_node.group.ground_object.position, self.game.theater
                     ),
                 ]
                 self._iads_connections.append(
                     IadsConnectionJs(
-                        connection.ground_object, connected_node.ground_object, points
+                        connection.group.ground_object,
+                        connected_node.group.ground_object,
+                        points,
                     )
                 )
 

@@ -1,7 +1,6 @@
 name: power1
 role: Building
 tasks:
-  - StrikeTarget
   - Power
 groups:
   - name: power1 0

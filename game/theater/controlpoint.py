@@ -169,11 +169,6 @@ class PresetLocations:
     #: Locations of stationary armor groups.
     armor_groups: List[PresetLocation] = field(default_factory=list)
 
-    #: Locations of skynet specific groups
-    iads_connection_node: List[PresetLocation] = field(default_factory=list)
-    iads_power_source: List[PresetLocation] = field(default_factory=list)
-    iads_command_center: List[PresetLocation] = field(default_factory=list)
-
 
 @dataclass(frozen=True)
 class AircraftAllocations:

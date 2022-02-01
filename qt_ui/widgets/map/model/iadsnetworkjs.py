@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from PySide2.QtCore import Property, QObject, Signal
 from game.theater import TheaterGroundObject
-from game.theater.theatergroundobject import IadsBuildingGroundObject, IADSRole
 from qt_ui.widgets.map.model.leaflet import LeafletPoly
 
 
@@ -30,10 +29,4 @@ class IadsConnectionJs(QObject):
 
     @Property(bool)
     def is_power_connection(self) -> bool:
-        return (
-            isinstance(self.node_a, IadsBuildingGroundObject)
-            and self.node_a.iads_role == IADSRole.PowerSource
-        ) or (
-            isinstance(self.node_b, IadsBuildingGroundObject)
-            and self.node_b.iads_role == IADSRole.PowerSource
-        )
+        return self.node_a.category == "power" or self.node_b.category == "power"

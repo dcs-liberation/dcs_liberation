@@ -17,7 +17,7 @@ from game.theater import TheaterGroundObject
 
 from .aircraft.flightdata import FlightData
 from .airsupport import AirSupport
-from ..theater.theatergroundobject import IADSRole, SamGroundObject
+from ..theater.theatergroundobject import IADSRole, SamGroundObject, IadsGroundGroup
 
 if TYPE_CHECKING:
     from game import Game
@@ -136,55 +136,38 @@ class LuaGenerator:
 
         # Generate IADS Lua Item
         iads_object = lua_data.add_item("IADS")
-        for player in [True, False]:
-            coalition = "BLUE" if player else "RED"
-            coalition_iads = iads_object.add_item(coalition)
-            for iads_type in [
+        for connection in self.game.theater.iads_network.connections:
+            # Only go through EWR, SAM, CC and SamAsEWR
+            if connection.group.iads_role not in [
                 IADSRole.Ewr,
                 IADSRole.Sam,
                 IADSRole.CommandCenter,
                 IADSRole.SamAsEwr,
             ]:
-                iads_types = coalition_iads.add_item(iads_type.value)
-                for primary_node in self.game.theater.iads_network.connections:
-                    primary_go = primary_node.ground_object
-                    if (
-                        not primary_node.participate
-                        or primary_node.iads_role != iads_type
-                        or not primary_go.is_friendly(player)
-                    ):
-                        continue
-                    iads_element = iads_types.add_item()
-                    group_name = (
-                        primary_go.group_name
-                        if primary_node.iads_role != IADSRole.Ewr
-                        or not primary_go.units
-                        # Unit Name for EWR as required by skynet
-                        else next(primary_go.units).name
-                    )
-                    iads_element.add_key_value("dcsGroupName", group_name)
-                    for connection_type in [
-                        IADSRole.ConnectionNode,
-                        IADSRole.PowerSource,
-                        IADSRole.PointDefense,
-                    ]:
-                        connected_nodes = [
-                            connected_node.ground_object.group_name
-                            for connected_node in primary_node.connected_nodes
-                            if connected_node.participate
-                            and connected_node.iads_role == connection_type
-                            and connected_node.ground_object.is_friendly(player)
-                        ]
-
-                        # special handling for SAM Sites which have their own PD
-                        if connection_type == IADSRole.PointDefense:
-                            for group in primary_go.groups:
-                                if group.iads_role == IADSRole.PointDefense:
-                                    connected_nodes.append(group.name)
-
-                        iads_element.add_data_array(
-                            connection_type.value, connected_nodes
-                        )
+                continue
+            player = connection.group.ground_object.is_friendly(True)
+            coalition = iads_object.get_or_create_item("BLUE" if player else "RED")
+            iads_type = coalition.get_or_create_item(connection.group.iads_role.value)
+            iads_element = iads_type.add_item()
+            dcs_name = (
+                connection.group.group_name
+                if connection.group.iads_role != IADSRole.Ewr
+                # Unit Name for EWR as required by skynet
+                else connection.group.units[0].unit_name
+            )
+            iads_element.add_key_value("dcsGroupName", dcs_name)
+            for role in [
+                IADSRole.ConnectionNode,
+                IADSRole.PowerSource,
+                IADSRole.PointDefense,
+            ]:
+                connected_nodes = [
+                    connected_node.group.group_name
+                    for connected_node in connection.connected_nodes
+                    if connected_node.group.iads_role == role
+                    and connected_node.group.ground_object.is_friendly(player)
+                ]
+                iads_element.add_data_array(role.value, connected_nodes)
 
         trigger = TriggerStart(comment="Set DCS Liberation data")
         trigger.add_action(DoScript(String(lua_data.create_operations_lua())))
@@ -279,14 +262,17 @@ class LuaItem(ABC):
 
     @abstractmethod
     def add_item(self, item_name: Optional[str] = None) -> LuaItem:
+        """adds a new item to the LuaArray without checking the existence"""
         pass
 
     @abstractmethod
     def get_item(self, item_name: str) -> Optional[LuaItem]:
+        """gets item from LuaArray. Returns None if it does not exist"""
         pass
 
     @abstractmethod
     def get_or_create_item(self, item_name: Optional[str] = None) -> LuaItem:
+        """gets item from the LuaArray or creates one if it does not exist already"""
         pass
 
     @abstractmethod
@@ -310,20 +296,17 @@ class LuaData(LuaItem):
         super().__init__(name)
 
     def add_item(self, item_name: Optional[str] = None) -> LuaItem:
-        """adds a new item to the LuaArray without checking the existence"""
         item = LuaData(item_name, False)
         self.objects.append(item)
         return item
 
     def get_item(self, item_name: str) -> Optional[LuaItem]:
-        """gets item from LuaArray. Returns None if it does not exist"""
         for lua_object in self.objects:
             if lua_object.name == item_name:
                 return lua_object
         return None
 
     def get_or_create_item(self, item_name: Optional[str] = None) -> LuaItem:
-        """gets item from the LuaArray or creates one if it does not exist already"""
         if item_name:
             item = self.get_item(item_name)
             if item:

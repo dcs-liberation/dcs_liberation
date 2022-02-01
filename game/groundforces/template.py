@@ -28,6 +28,10 @@ from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
     IadsGroundObject,
     GroundUnit,
+    IadsBuildingGroundObject,
+    IADSRole,
+    IadsGroundGroup,
+    NavalGroundObject,
 )
 from game.point_with_heading import PointWithHeading
 
@@ -74,6 +78,9 @@ class GroupTemplate:
     unit_types: list[str] = field(default_factory=list)
     unit_classes: list[UnitClass] = field(default_factory=list)
     alternative_classes: list[UnitClass] = field(default_factory=list)
+
+    # Allows a group to have a special SubTask (PointDefence for example)
+    sub_task: Optional[GroupTask] = None
 
     # Defines if this groupTemplate is required or not
     optional: bool = False
@@ -258,6 +265,21 @@ class GroundObjectTemplate:
                     group,
                     ground_object,
                 )
+
+                # Special handling when part of the IADS (SAM, EWR, IADS Building, Navy)
+                if (
+                    isinstance(ground_object, IadsGroundObject)
+                    or isinstance(ground_object, IadsBuildingGroundObject)
+                    or isinstance(ground_object, NavalGroundObject)
+                ):
+                    ground_group = IadsGroundGroup.from_group(ground_group)
+                    if group.sub_task:
+                        # Use the special sub_task of the group
+                        ground_group.iads_role = IADSRole.for_task(group.sub_task)
+                    elif group_id == 0:
+                        # Use the primary Task of the Template for first group
+                        ground_group.iads_role = IADSRole.for_task(self.tasks[0])
+
                 # Set Group Name
                 ground_group.name = f"{name} {group_id}"
                 ground_object.groups.append(ground_group)
@@ -381,13 +403,29 @@ class BuildingTemplate(GroundObjectTemplate):
         location: PresetLocation,
         control_point: ControlPoint,
     ) -> BuildingGroundObject:
-        return BuildingGroundObject(
-            name,
-            self.category,
-            location,
-            control_point,
-            self.category == "fob",
-        )
+
+        if self.is_iads_building:
+            return IadsBuildingGroundObject(
+                name,
+                self.category,
+                location,
+                control_point,
+            )
+        else:
+            return BuildingGroundObject(
+                name,
+                self.category,
+                location,
+                control_point,
+                self.category == "fob",
+            )
+
+    @property
+    def is_iads_building(self) -> bool:
+        for task in self.tasks:
+            if task in [GroupTask.Comms, GroupTask.Power, GroupTask.CommandCenter]:
+                return True
+        return False
 
     @property
     def category(self) -> str:
@@ -407,9 +445,9 @@ class NavalTemplate(GroundObjectTemplate):
         if GroupTask.Navy in self.tasks:
             return ShipGroundObject(name, location, control_point)
         elif GroupTask.AircraftCarrier in self.tasks:
-            return CarrierGroundObject(name, control_point)
+            return CarrierGroundObject(name, location, control_point)
         elif GroupTask.HelicopterCarrier in self.tasks:
-            return LhaGroundObject(name, control_point)
+            return LhaGroundObject(name, location, control_point)
         raise NotImplementedError
 
 

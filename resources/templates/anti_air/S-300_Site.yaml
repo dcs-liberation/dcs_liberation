@@ -68,6 +68,7 @@ groups:
       - S-300PMU2 5P85SE2 ln # SA-20B
       - S-300VM 9A83ME ln # SA-23
   - name: S-300 Site AAA
+    optional: true
     group: 2
     unit_count:
       - 2
@@ -75,15 +76,18 @@ groups:
       - AAA
   - name: S-300 Site SHORAD1
     group: 3
+    sub_task: PointDefense
     unit_count:
       - 0
       - 2
     unit_classes:
-      - SHORAD
+      - SHORAD # Any SHORAD
   - name: S-300 Site SHORAD2
+    optional: true
     group: 3
+    sub_task: PointDefense
     unit_count:
       - 0
       - 2
-    unit_classes:
-      - SHORAD
+    unit_types:
+      - Tor 9A331 # Explicit TOR / SA-15 SHORAD PointDefense

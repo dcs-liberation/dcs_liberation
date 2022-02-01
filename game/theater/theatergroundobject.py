@@ -15,6 +15,7 @@ from dcs.statics import Fortification
 from dcs.triggers import TriggerZone
 
 from .. import db
+from ..data.groups import GroupTask
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..dcs.groundunittype import GroundUnitType
 from ..dcs.shipunittype import ShipUnitType
@@ -149,10 +150,6 @@ class GroundGroup:
     def alive_units(self) -> int:
         return sum([unit.alive for unit in self.units])
 
-    @property
-    def iads_role(self) -> IADSRole:
-        return IADSRole.NoBehavior
-
 
 class IADSRole(Enum):
     #: A radar SAM that should be controlled by Skynet.
@@ -168,22 +165,74 @@ class IADSRole(Enum):
     Ewr = "Ewr"
 
     #: IADS Elements which allow the advanced functions of Skynet.
-    ConnectionNode = "comms"
-    PowerSource = "power"
-    CommandCenter = "commandcenter"
+    ConnectionNode = "ConnectionNode"
+    PowerSource = "PowerSource"
+    CommandCenter = "CommandCenter"
 
     #: All other types of groups that might be present in a SAM TGO. This includes
     #: SHORADS, AAA, supply trucks, etc. Anything that shouldn't be controlled by Skynet
     #: should use this role.
     NoBehavior = "NoBehavior"
 
-
-class IADSGroundGroup(GroundGroup):
-    _iads_role: IADSRole = IADSRole.NoBehavior
+    @classmethod
+    def for_task(cls, task: GroupTask) -> IADSRole:
+        if task == GroupTask.Comms:
+            return cls.ConnectionNode
+        elif task == GroupTask.Power:
+            return cls.PowerSource
+        elif task == GroupTask.CommandCenter:
+            return cls.CommandCenter
+        elif task == GroupTask.PointDefense:
+            return cls.PointDefense
+        elif task == GroupTask.LORAD:
+            return cls.SamAsEwr
+        elif task == GroupTask.MERAD:
+            return cls.Sam
+        elif task in [
+            GroupTask.EWR,
+            GroupTask.Navy,
+            GroupTask.AircraftCarrier,
+            GroupTask.HelicopterCarrier,
+        ]:
+            return cls.Ewr
+        return cls.NoBehavior
 
     @property
-    def iads_role(self) -> IADSRole:
-        return self._iads_role
+    def connection_range(self) -> Distance:
+        if self == IADSRole.ConnectionNode:
+            return Distance(27780)  # 15nm
+        elif self == IADSRole.PowerSource:
+            return Distance(64820)  # 35nm
+        return Distance(0)
+
+    @property
+    def participate(self) -> bool:
+        # Returns true if the Role participates in the skynet
+        # This will exclude NoBehaviour and PD for the time beeing
+        return self not in [
+            IADSRole.NoBehavior,
+            IADSRole.PointDefense,
+        ]
+
+
+class IadsGroundGroup(GroundGroup):
+    # IADS GroundObject Groups have a specific Role for the system
+    iads_role: IADSRole = IADSRole.NoBehavior
+
+    @property
+    def participate_to_iads(self) -> bool:
+        return self.iads_role.participate and self.alive_units > 0
+
+    @staticmethod
+    def from_group(group: GroundGroup) -> IadsGroundGroup:
+        return IadsGroundGroup(
+            group.id,
+            group.name,
+            group.position,
+            group.units,
+            group.ground_object,
+            group.static_group,
+        )
 
 
 class TheaterGroundObject(MissionTarget):
@@ -428,25 +477,16 @@ class GenericCarrierGroundObject(NavalGroundObject):
 
 # TODO: Why is this both a CP and a TGO?
 class CarrierGroundObject(GenericCarrierGroundObject):
-    def __init__(self, name: str, control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, location: PresetLocation, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="CARRIER",
-            location=PresetLocation(
-                name,
-                PointWithHeading.from_point(
-                    control_point.position, Heading.from_degrees(0)
-                ),
-            ),
+            location=location,
             control_point=control_point,
             sea_object=True,
         )
-
-    @property
-    def group_name(self) -> str:
-        # Prefix the group names with the side color so Skynet can find them,
-        # add to EWR.
-        return f"{self.faction_color}|EWR|{super().group_name}"
 
     def __str__(self) -> str:
         return f"CV {self.name}"
@@ -454,25 +494,16 @@ class CarrierGroundObject(GenericCarrierGroundObject):
 
 # TODO: Why is this both a CP and a TGO?
 class LhaGroundObject(GenericCarrierGroundObject):
-    def __init__(self, name: str, control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, location: PresetLocation, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="LHA",
-            location=PresetLocation(
-                name,
-                PointWithHeading.from_point(
-                    control_point.position, Heading.from_degrees(0)
-                ),
-            ),
+            location=location,
             control_point=control_point,
             sea_object=True,
         )
-
-    @property
-    def group_name(self) -> str:
-        # Prefix the group names with the side color so Skynet can find them,
-        # add to EWR.
-        return f"{self.faction_color}|EWR|{super().group_name}"
 
     def __str__(self) -> str:
         return f"LHA {self.name}"
@@ -529,10 +560,11 @@ class IadsGroundObject(TheaterGroundObject, ABC):
         name: str,
         location: PresetLocation,
         control_point: ControlPoint,
+        category: str = "aa",
     ) -> None:
         super().__init__(
             name=name,
-            category="aa",
+            category=category,
             location=location,
             control_point=control_point,
             sea_object=False,
@@ -544,13 +576,6 @@ class IadsGroundObject(TheaterGroundObject, ABC):
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
         yield from super().mission_types(for_player)
-
-    @property
-    def iads_role(self) -> IADSRole:
-        for group in self.groups:
-            if isinstance(group, IADSGroundGroup):
-                return group.iads_role
-        return IADSRole.NoBehavior
 
 
 # The SamGroundObject represents all type of AA
@@ -633,6 +658,19 @@ class VehicleGroupGroundObject(TheaterGroundObject):
 
 
 class EwrGroundObject(IadsGroundObject):
+    def __init__(
+        self,
+        name: str,
+        location: PresetLocation,
+        control_point: ControlPoint,
+    ) -> None:
+        super().__init__(
+            name=name,
+            location=location,
+            control_point=control_point,
+            category="ewr",
+        )
+
     @property
     def might_have_aa(self) -> bool:
         return True
@@ -647,68 +685,21 @@ class EwrGroundObject(IadsGroundObject):
 
 
 class ShipGroundObject(NavalGroundObject):
-    def __init__(self, name: str, position: Point, control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, location: PresetLocation, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="ship",
-            location=PresetLocation(
-                name, PointWithHeading.from_point(position, Heading.from_degrees(0))
-            ),
+            location=location,
             control_point=control_point,
             sea_object=True,
         )
 
-    @property
-    def group_name(self) -> str:
-        # Prefix the group names with the side color so Skynet can find them,
-        # add to EWR.
-        return f"{self.faction_color}|EWR|{super().group_name}"
-
 
 class IadsBuildingGroundObject(BuildingGroundObject):
-    iads_role: IADSRole  # IadsBuilding GO has only one iads_role
-
-    def __init__(
-        self,
-        name: str,
-        location: PresetLocation,
-        control_point: ControlPoint,
-        iads_role: IADSRole,
-    ) -> None:
-        super().__init__(
-            name=name,
-            category=self.iads_category_for(iads_role),
-            location=location,
-            control_point=control_point,
-        )
-        self.iads_role = iads_role
-
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
 
         if not self.is_friendly(for_player):
             yield from [FlightType.STRIKE, FlightType.DEAD]
-
-    @property
-    def connection_range(self) -> Distance:
-        if self.iads_role == IADSRole.ConnectionNode:
-            return Distance(27780)  # 15nm
-        elif self.iads_role == IADSRole.PowerSource:
-            return Distance(64820)  # 35nm
-        return Distance(0)
-
-    def iads_identifier_for(self, iads_role: IADSRole) -> str:
-        if iads_role == IADSRole.ConnectionNode:
-            return Fortification.TV_tower.id
-        elif iads_role == IADSRole.PowerSource:
-            return Fortification.GeneratorF.id
-        else:
-            return Fortification._Command_Center.id
-
-    def iads_category_for(self, iads_role: IADSRole) -> str:
-        if iads_role == IADSRole.ConnectionNode:
-            return "comms"
-        elif iads_role == IADSRole.PowerSource:
-            return "power"
-        else:
-            return "commandcenter"

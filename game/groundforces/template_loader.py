@@ -58,6 +58,9 @@ class GroupTemplateMapping:
     unit_classes: list[UnitClass] = field(default_factory=list)
     alternative_classes: list[UnitClass] = field(default_factory=list)
 
+    # Allows a group to have a special SubTask (PointDefence for example)
+    sub_task: Optional[GroupTask] = None
+
     def to_dict(self) -> dict[str, Any]:
         d = self.__dict__
         if not self.optional:
@@ -68,6 +71,8 @@ class GroupTemplateMapping:
             d.pop("unit_types")
         if not self.unit_classes:
             d.pop("unit_classes")
+        if not self.sub_task:
+            d.pop("sub_task")
         else:
             d["unit_classes"] = [unit_class.value for unit_class in self.unit_classes]
         if not self.alternative_classes:
@@ -86,6 +91,7 @@ class GroupTemplateMapping:
         statics = d["statics"] if "statics" in d else []
         unit_count = d["unit_count"] if "unit_count" in d else []
         unit_types = d["unit_types"] if "unit_types" in d else []
+        sub_task = GroupTask(d["sub_task"]) if "sub_task" in d else None
         group = d["group"] if "group" in d else 1
         unit_classes = (
             [UnitClass(u) for u in d["unit_classes"]] if "unit_classes" in d else []
@@ -104,6 +110,7 @@ class GroupTemplateMapping:
             unit_types,
             unit_classes,
             alternative_classes,
+            sub_task,
         )
 
 
@@ -330,6 +337,7 @@ class TemplateLoader:
                             group_mapping.unit_types,
                             group_mapping.unit_classes,
                             group_mapping.alternative_classes,
+                            group_mapping.sub_task,
                         )
                         group_template.optional = group_mapping.optional
                         # Add the group at the correct position
