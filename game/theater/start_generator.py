@@ -4,21 +4,20 @@ import logging
 import random
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from game import Game
 from game.factions.faction import Faction
-from game.scenery_group import SceneryGroup
-from game.theater import PointWithHeading
+from game.preset_group import PresetTrigger
+from game.theater import PointWithHeading, PresetLocation
 from game.theater.theatergroundobject import (
-    AirDefenseRange,
     BuildingGroundObject,
     SceneryGroundUnit,
     GroundGroup,
 )
 from game.utils import Heading
 from game.version import VERSION
-from gen.templates import GroundObjectTemplates, GroundObjectTemplate
+from gen.templates import GroundObjectTemplates
 from gen.naming import namegen
 from . import (
     ConflictTheater,
@@ -28,7 +27,6 @@ from . import (
     OffMapSpawn,
 )
 from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
-from ..data.units import UnitClass
 from ..data.groups import GroupRole, GroupTask, ROLE_TASKINGS
 from ..dcs.unitgroup import UnitGroup
 from ..profiling import logged_duration
@@ -156,13 +154,35 @@ class ControlPointGroundObjectGenerator:
         self.generate_navy()
         return True
 
-    def generate_random_ground_object(
-        self, unit_groups: list[UnitGroup], position: PointWithHeading
+    def generate_ground_object_for_preset(
+        self, preset_location: PresetLocation
     ) -> None:
-        self.generate_ground_object_from_group(random.choice(unit_groups), position)
+        # Generate a ground object for a given Preset Trigger Zone
+        if preset_location.task is None:
+            logging.error(
+                f"PresetLocation {preset_location.original_name} has no task. Skipping"
+            )
+            return
+
+        possible_unit_groups = list(self.faction.groups_for_task(preset_location.task))
+        if preset_location.unit_group:
+            possible_unit_groups = list(
+                self.faction.groups_by_name(preset_location.unit_group)
+            )
+
+        if not possible_unit_groups:
+            logging.error(
+                f"No groups found for PresetLocation{preset_location.original_name}"
+            )
+            return
+
+        unit_group = random.choice(possible_unit_groups)
+        self.generate_ground_object_from_group(
+            unit_group, preset_location, preset_location.template
+        )
 
     def generate_ground_object_from_group(
-        self, unit_group: UnitGroup, position: PointWithHeading
+        self, unit_group: UnitGroup, position: PointWithHeading, template: str = ""
     ) -> None:
         try:
             with logged_duration(
@@ -174,6 +194,7 @@ class ControlPointGroundObjectGenerator:
                     position,
                     self.control_point,
                     self.game,
+                    template,
                 )
             self.control_point.connected_objectives.append(ground_object)
         except NotImplementedError:
@@ -281,12 +302,8 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         """Generate ground objects and AA sites for the control point."""
         self.generate_armor_groups()
         self.generate_aa()
-        self.generate_ewrs()
         self.generate_scenery_sites()
-        self.generate_strike_targets()
-        self.generate_offshore_strike_targets()
-        self.generate_factories()
-        self.generate_ammunition_depots()
+        self.generate_buildings()
         self.generate_missile_sites()
         self.generate_coastal_sites()
 
@@ -301,29 +318,23 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             self.generate_ground_object_from_group(unit_group, position)
 
     def generate_aa(self) -> None:
-        presets = self.control_point.preset_locations
-        aa_tasking = [GroupTask.AAA]
-        for position in presets.aaa:
-            self.generate_aa_at(position, aa_tasking)
-        aa_tasking.insert(0, GroupTask.SHORAD)
-        for position in presets.short_range_sams:
-            self.generate_aa_at(position, aa_tasking)
-        aa_tasking.insert(0, GroupTask.MERAD)
-        for position in presets.medium_range_sams:
-            self.generate_aa_at(position, aa_tasking)
-        aa_tasking.insert(0, GroupTask.LORAD)
-        for position in presets.long_range_sams:
-            self.generate_aa_at(position, aa_tasking)
+        presets = [
+            self.control_point.preset_locations.ewrs,
+            self.control_point.preset_locations.aaa,
+            self.control_point.preset_locations.short_range_sams,
+            self.control_point.preset_locations.medium_range_sams,
+            self.control_point.preset_locations.long_range_sams,
+        ]
+        tasks = ROLE_TASKINGS[GroupRole.AntiAir]
 
-    def generate_ewrs(self) -> None:
-        for position in self.control_point.preset_locations.ewrs:
-            unit_group = self.faction.random_group_for_role_and_task(
-                GroupRole.AntiAir, GroupTask.EWR
-            )
-            if not unit_group:
-                logging.error(f"{self.faction_name} has no UnitGroup for EWR")
-                return
-            self.generate_ground_object_from_group(unit_group, position)
+        for i, preset in enumerate(presets):
+            for location in preset:
+                if location.unit_group or location.template:
+                    # Specific group from preset trigger
+                    self.generate_ground_object_for_preset(location)
+                else:
+                    # Random Group for Task
+                    self.generate_random_aa_at(location, tasks[: i + 1])
 
     def generate_building_at(
         self,
@@ -340,18 +351,10 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             return
         self.generate_ground_object_from_group(unit_group, position)
 
-    def generate_ammunition_depots(self) -> None:
-        for position in self.control_point.preset_locations.ammunition_depots:
-            self.generate_building_at(GroupTask.Ammo, position)
-
-    def generate_factories(self) -> None:
-        for position in self.control_point.preset_locations.factories:
-            self.generate_building_at(GroupTask.Factory, position)
-
-    def generate_aa_at(
+    def generate_random_aa_at(
         self, position: PointWithHeading, tasks: list[GroupTask]
     ) -> None:
-        for task in tasks:
+        for task in reversed(tasks):
             unit_group = self.faction.random_group_for_role_and_task(
                 GroupRole.AntiAir, task
             )
@@ -362,7 +365,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 return
 
         logging.error(
-            f"{self.faction_name} has no access to SAM Templates ({', '.join([task.value for task in tasks])})"
+            f"{self.faction_name} has no access to Anti Air ({', '.join([task.value for task in tasks])})"
         )
 
     def generate_scenery_sites(self) -> None:
@@ -370,26 +373,26 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         for scenery_group in presets.scenery:
             self.generate_tgo_for_scenery(scenery_group)
 
-    def generate_tgo_for_scenery(self, scenery: SceneryGroup) -> None:
+    def generate_tgo_for_scenery(self, scenery: PresetTrigger) -> None:
         # Special Handling for scenery Objects based on trigger zones
         g = BuildingGroundObject(
             namegen.random_objective_name(),
-            scenery.category,
+            scenery.task.value.lower(),
             scenery.position,
-            Heading.from_degrees(0),
+            scenery.heading,
             self.control_point,
         )
         ground_group = GroundGroup(
             self.game.next_group_id(),
-            scenery.zone_def.name,
-            PointWithHeading.from_point(scenery.position, Heading.from_degrees(0)),
+            scenery.zone.name,
+            PointWithHeading.from_point(scenery.position, scenery.heading),
             [],
             g,
         )
         ground_group.static_group = True
         g.groups.append(ground_group)
         # Each nested trigger zone is a target/building/unit for an objective.
-        for zone in scenery.zones:
+        for zone in scenery.scenery_zones:
             scenery_unit = SceneryGroundUnit(
                 zone.id,
                 zone.name,
@@ -422,13 +425,14 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 return
             self.generate_ground_object_from_group(unit_group, position)
 
-    def generate_strike_targets(self) -> None:
-        for position in self.control_point.preset_locations.strike_locations:
-            self.generate_building_at(GroupTask.StrikeTarget, position)
-
-    def generate_offshore_strike_targets(self) -> None:
-        for position in self.control_point.preset_locations.offshore_strike_locations:
-            self.generate_building_at(GroupTask.Oil, position)
+    def generate_buildings(self) -> None:
+        for preset_location in self.control_point.preset_locations.buildings:
+            if preset_location.task is None:
+                logging.error(
+                    f"Building {preset_location.original_name} has no tasking"
+                )
+                continue
+            self.generate_building_at(preset_location.task, preset_location)
 
 
 class FobGroundObjectGenerator(AirbaseGroundObjectGenerator):

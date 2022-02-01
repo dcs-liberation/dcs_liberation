@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import copy
 import itertools
+import logging
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar, TYPE_CHECKING, Any, Iterator
+from typing import ClassVar, TYPE_CHECKING, Any, Iterator, Optional
 
 import yaml
 
@@ -116,9 +117,25 @@ class UnitGroup:
         position: PointWithHeading,
         control_point: ControlPoint,
         game: Game,
+        template_name: str = "",
     ) -> TheaterGroundObject:
-        template = random.choice(self.templates)
+        template: Optional[GroundObjectTemplate] = None
+        if template_name:
+            # Forced Template
+            template = self._template_by_name(template_name)
+
+        if template is None:
+            # Random Template
+            template = random.choice(self.templates)
+
         return template.generate(name, position, control_point, game)
+
+    def _template_by_name(self, template_name: str) -> Optional[GroundObjectTemplate]:
+        for available_template in self.templates:
+            if available_template.name == template_name:
+                return available_template
+        logging.error(f"Requested template {template_name} is not available")
+        return None
 
     @classmethod
     def _load_all(cls) -> None:

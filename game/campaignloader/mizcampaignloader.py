@@ -15,11 +15,11 @@ from dcs.terrain import Airport
 from dcs.unitgroup import PlaneGroup, ShipGroup, VehicleGroup, StaticGroup
 from dcs.vehicles import Armor, Unarmed, MissilesSS, AirDefence
 
-from game.point_with_heading import PointWithHeading
+from game.data.groups import ROLE_TASKINGS, GroupRole, GroupTask
 from game.positioned import Positioned
 from game.profiling import logged_duration
-from game.scenery_group import SceneryGroup
-from game.utils import Distance, meters, Heading
+from game.preset_group import PresetTrigger
+from game.utils import Distance, meters
 from game.theater.controlpoint import (
     Airfield,
     Carrier,
@@ -27,6 +27,7 @@ from game.theater.controlpoint import (
     Fob,
     Lha,
     OffMapSpawn,
+    PresetLocation,
 )
 
 if TYPE_CHECKING:
@@ -234,8 +235,8 @@ class MizCampaignLoader:
                 yield group
 
     @property
-    def scenery(self) -> List[SceneryGroup]:
-        return SceneryGroup.from_trigger_zones(self.mission.triggers._zones)
+    def complex_presets(self) -> List[PresetTrigger]:
+        return PresetTrigger.from_trigger_zones(self.mission.triggers._zones)
 
     @cached_property
     def control_points(self) -> Dict[int, ControlPoint]:
@@ -351,119 +352,101 @@ class MizCampaignLoader:
     def add_preset_locations(self) -> None:
         for static in self.offshore_strike_targets:
             closest, distance = self.objective_info(static)
-            closest.preset_locations.offshore_strike_locations.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
-            )
+            preset = PresetLocation.from_group(static)
+            preset.task = GroupTask.OffShoreStrikeTarget
+            closest.preset_locations.buildings.append(preset)
 
         for ship in self.ships:
             closest, distance = self.objective_info(ship, allow_naval=True)
-            closest.preset_locations.ships.append(
-                PointWithHeading.from_point(
-                    ship.position, Heading.from_degrees(ship.units[0].heading)
-                )
-            )
+            closest.preset_locations.ships.append(PresetLocation.from_group(ship))
 
         for group in self.missile_sites:
             closest, distance = self.objective_info(group)
             closest.preset_locations.missile_sites.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.coastal_defenses:
             closest, distance = self.objective_info(group)
             closest.preset_locations.coastal_defenses.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.long_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.long_range_sams.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.medium_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.medium_range_sams.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.short_range_sams:
             closest, distance = self.objective_info(group)
             closest.preset_locations.short_range_sams.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for group in self.aaa:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.aaa.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
-            )
+            closest.preset_locations.aaa.append(PresetLocation.from_group(group))
 
         for group in self.ewrs:
             closest, distance = self.objective_info(group)
-            closest.preset_locations.ewrs.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
-            )
+            closest.preset_locations.ewrs.append(PresetLocation.from_group(group))
 
         for group in self.armor_groups:
             closest, distance = self.objective_info(group)
             closest.preset_locations.armor_groups.append(
-                PointWithHeading.from_point(
-                    group.position, Heading.from_degrees(group.units[0].heading)
-                )
+                PresetLocation.from_group(group)
             )
 
         for static in self.helipads:
             closest, distance = self.objective_info(static)
-            closest.helipads.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
-            )
+            closest.helipads.append(PresetLocation.from_group(static))
 
         for static in self.factories:
             closest, distance = self.objective_info(static)
-            closest.preset_locations.factories.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
-            )
+            preset = PresetLocation.from_group(static)
+            preset.task = GroupTask.Factory
+            closest.preset_locations.buildings.append(preset)
 
         for static in self.ammunition_depots:
             closest, distance = self.objective_info(static)
-            closest.preset_locations.ammunition_depots.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
-            )
+            preset = PresetLocation.from_group(static)
+            preset.task = GroupTask.Ammo
+            closest.preset_locations.buildings.append(preset)
 
         for static in self.strike_targets:
             closest, distance = self.objective_info(static)
-            closest.preset_locations.strike_locations.append(
-                PointWithHeading.from_point(
-                    static.position, Heading.from_degrees(static.units[0].heading)
-                )
-            )
+            preset = PresetLocation.from_group(static)
+            preset.task = GroupTask.StrikeTarget
+            closest.preset_locations.buildings.append(preset)
 
-        for scenery_group in self.scenery:
-            closest, distance = self.objective_info(scenery_group)
-            closest.preset_locations.scenery.append(scenery_group)
+        for preset_trigger in self.complex_presets:
+            closest, distance = self.objective_info(preset_trigger)
+            preset = PresetLocation.from_preset_trigger(preset_trigger)
+            if preset_trigger.is_scenery_object:
+                closest.preset_locations.scenery.append(preset_trigger)
+            elif preset_trigger.task in ROLE_TASKINGS[GroupRole.Building]:
+                closest.preset_locations.buildings.append(preset)
+            elif preset_trigger.task == GroupTask.AAA:
+                closest.preset_locations.aaa.append(preset)
+            elif preset_trigger.task == GroupTask.SHORAD:
+                closest.preset_locations.short_range_sams.append(preset)
+            elif preset_trigger.task == GroupTask.MERAD:
+                closest.preset_locations.medium_range_sams.append(preset)
+            elif preset_trigger.task == GroupTask.LORAD:
+                closest.preset_locations.long_range_sams.append(preset)
+            elif preset_trigger.task == GroupTask.Coastal:
+                closest.preset_locations.coastal_defenses.append(preset)
+            elif preset_trigger.task == GroupTask.Missile:
+                closest.preset_locations.missile_sites.append(preset)
+            elif preset_trigger.task in ROLE_TASKINGS[GroupRole.GroundForce]:
+                closest.preset_locations.armor_groups.append(preset)
 
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():

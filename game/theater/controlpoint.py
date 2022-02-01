@@ -17,10 +17,10 @@ from typing import (
     Optional,
     Set,
     TYPE_CHECKING,
-    Union,
     Sequence,
     Iterable,
     Tuple,
+    TypeVar,
 )
 
 from dcs.mapping import Point
@@ -32,12 +32,11 @@ from dcs.ships import (
     Type_071,
 )
 from dcs.terrain.terrain import Airport, ParkingSlot
-from dcs.unit import Unit
-from dcs.unittype import FlyingType
+from dcs.unitgroup import StaticGroup, VehicleGroup, ShipGroup
 
 from game import db
 from game.point_with_heading import PointWithHeading
-from game.scenery_group import SceneryGroup
+from game.preset_group import PresetTrigger
 from game.utils import Heading
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.combat_stance import CombatStance
@@ -48,11 +47,10 @@ from .theatergroundobject import (
     GenericCarrierGroundObject,
     TheaterGroundObject,
     BuildingGroundObject,
-    CarrierGroundObject,
-    LhaGroundObject,
     GroundUnit,
 )
 from ..ato.starttype import StartType
+from ..data.groups import GroupTask
 from ..data.units import UnitClass
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
@@ -84,54 +82,85 @@ class ControlPointType(Enum):
     OFF_MAP = 6
 
 
+GroupT = TypeVar("GroupT", StaticGroup, ShipGroup, VehicleGroup)
+
+
+class PresetLocation(PointWithHeading):
+    original_name: str  # Store the original name from the campaign miz
+    task: Optional[GroupTask] = None
+    template: str = ""  # Forced Template
+    unit_group: str = ""  # Forced Unit_Group
+
+    @classmethod
+    def from_group(cls, group: GroupT) -> PresetLocation:
+        # Create a PresetLocation from one of the allowed unit_types
+        return PresetLocation(
+            group.name,
+            PointWithHeading.from_point(
+                group.position, Heading.from_degrees(group.units[0].heading)
+            ),
+        )
+
+    @classmethod
+    def from_preset_trigger(cls, preset_trigger: PresetTrigger) -> PresetLocation:
+        # Create a complex PresetLocation from a trigger zone
+        preset_location = PresetLocation(
+            preset_trigger.zone.name,
+            PointWithHeading.from_point(
+                preset_trigger.position, preset_trigger.heading
+            ),
+        )
+        preset_location.task = preset_trigger.task
+        preset_location.template = preset_trigger.template
+        preset_location.unit_group = preset_trigger.unit_group
+        return preset_location
+
+    def __init__(self, name: str, point: PointWithHeading) -> None:
+        super().__init__()
+        self.original_name = name
+        self.x = point.x
+        self.y = point.y
+        self.heading = point.heading
+
+
 @dataclass
 class PresetLocations:
     """Defines the preset locations loaded from the campaign mission file."""
 
     #: Locations used by non-carrier ships that will be spawned unless the faction has
     #: no navy or the player has disabled ship generation for the owning side.
-    ships: List[PointWithHeading] = field(default_factory=list)
+    ships: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by coastal defenses that are generated if the faction is capable.
-    coastal_defenses: List[PointWithHeading] = field(default_factory=list)
+    coastal_defenses: List[PresetLocation] = field(default_factory=list)
 
-    #: Locations used by ground based strike objectives.
-    strike_locations: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations used by offshore strike objectives.
-    offshore_strike_locations: List[PointWithHeading] = field(default_factory=list)
+    #: Building Ground objects (StrikeTargets, Factories, Ammo Depots and so on)
+    buildings: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by missile sites like scuds and V-2s that are generated if the
     #: faction is capable.
-    missile_sites: List[PointWithHeading] = field(default_factory=list)
+    missile_sites: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of long range SAMs.
-    long_range_sams: List[PointWithHeading] = field(default_factory=list)
+    long_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of medium range SAMs.
-    medium_range_sams: List[PointWithHeading] = field(default_factory=list)
+    medium_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of short range SAMs.
-    short_range_sams: List[PointWithHeading] = field(default_factory=list)
+    short_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of AAA groups.
-    aaa: List[PointWithHeading] = field(default_factory=list)
+    aaa: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of EWRs.
-    ewrs: List[PointWithHeading] = field(default_factory=list)
+    ewrs: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of map scenery to create zones for.
-    scenery: List[SceneryGroup] = field(default_factory=list)
-
-    #: Locations of factories for producing ground units.
-    factories: List[PointWithHeading] = field(default_factory=list)
-
-    #: Locations of ammo depots for controlling number of units on the front line at a
-    #: control point.
-    ammunition_depots: List[PointWithHeading] = field(default_factory=list)
+    scenery: List[PresetTrigger] = field(default_factory=list)
 
     #: Locations of stationary armor groups.
-    armor_groups: List[PointWithHeading] = field(default_factory=list)
+    armor_groups: List[PresetLocation] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

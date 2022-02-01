@@ -12,26 +12,43 @@ class GroupRole(Enum):
 
 
 class GroupTask(Enum):
+    # Anti Air
     EWR = "EarlyWarningRadar"
     AAA = "AAA"
     SHORAD = "SHORAD"
     MERAD = "MERAD"
     LORAD = "LORAD"
+
+    # Naval
     AircraftCarrier = "AircraftCarrier"
     HelicopterCarrier = "HelicopterCarrier"
     Navy = "Navy"
-    BaseDefense = "BaseDefense"  # Ground
+
+    # Armor
+    BaseDefense = "BaseDefense"
     FrontLine = "FrontLine"
+
+    # Additional things
     Air = "Air"
     Missile = "Missile"
     Coastal = "Coastal"
+
+    # Buildings
     Factory = "Factory"
     Ammo = "Ammo"
     Oil = "Oil"
+    Fuel = "Fuel"
     FOB = "FOB"
     StrikeTarget = "StrikeTarget"
+    OffShoreStrikeTarget = "OffShoreStrikeTarget"
     Comms = "Comms"
     Power = "Power"
+    Farp = "Farp"
+    Derrick = "Derrick"
+    AllyCamp = "AllyCamp"
+    Village = "Village"
+    Ware = "Ware"
+    WW2Bunker = "WW2Bunker"
 
 
 ROLE_TASKINGS: dict[GroupRole, list[GroupTask]] = {
@@ -53,10 +70,18 @@ ROLE_TASKINGS: dict[GroupRole, list[GroupTask]] = {
         GroupTask.Factory,
         GroupTask.Ammo,
         GroupTask.Oil,
+        GroupTask.Fuel,
         GroupTask.FOB,
         GroupTask.StrikeTarget,
+        GroupTask.OffShoreStrikeTarget,
         GroupTask.Comms,
         GroupTask.Power,
+        GroupTask.Farp,
+        GroupTask.Derrick,
+        GroupTask.AllyCamp,
+        GroupTask.Village,
+        GroupTask.Ware,
+        GroupTask.WW2Bunker,
     ],
     GroupRole.Defenses: [GroupTask.Missile, GroupTask.Coastal],
     GroupRole.Air: [GroupTask.Air],

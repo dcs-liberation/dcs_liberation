@@ -207,7 +207,6 @@ class GroundObjectTemplate:
         self.description = description
         self.tasks: list[GroupTask] = []  # The supported tasks
         self.groups: list[GroupTemplate] = []
-        self.category: str = ""  # Only used for building templates
 
         # If the template is generic it will be used the generate the general
         # UnitGroups during faction initialization. Generic Groups allow to be mixed
@@ -347,6 +346,13 @@ class BuildingTemplate(GroundObjectTemplate):
             control_point,
             self.category == "fob",
         )
+
+    @property
+    def category(self) -> str:
+        for task in self.tasks:
+            if task not in [GroupTask.StrikeTarget, GroupTask.OffShoreStrikeTarget]:
+                return task.value.lower()
+        raise RuntimeError(f"Building Template {self.name} has no building category")
 
 
 class NavalTemplate(GroundObjectTemplate):
@@ -641,7 +647,6 @@ class GroundObjectTemplates:
                     template = TEMPLATE_TYPES[mapping.role](
                         mapping.name, mapping.description
                     )
-                    template.category = mapping.category
                     template.generic = mapping.generic
                     template.tasks = mapping.tasks
                     templates.add_template(mapping.role, template)

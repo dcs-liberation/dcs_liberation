@@ -35,6 +35,7 @@ from gen.templates import (
     GroundObjectTemplates,
     GroundObjectTemplate,
     GroupTemplate,
+    BuildingTemplate,
 )
 
 if TYPE_CHECKING:
@@ -292,7 +293,7 @@ class Faction:
                     if self.initialize_group_template(group_template)
                 ]
                 if (
-                    role == GroupRole.Building
+                    isinstance(faction_template, BuildingTemplate)
                     and GroupTask.StrikeTarget in template.tasks
                     and faction_template.category not in self.building_set
                 ):
@@ -418,6 +419,18 @@ class Faction:
         for unit in self.infantry_units:
             if unit.unit_class is unit_class:
                 yield unit
+
+    def groups_by_name(self, group_name: str) -> Iterator[UnitGroup]:
+        for groups in self.unit_groups.values():
+            for unit_group in groups:
+                if unit_group.name == group_name:
+                    yield unit_group
+
+    def groups_for_task(self, group_task: GroupTask) -> Iterator[UnitGroup]:
+        for groups in self.unit_groups.values():
+            for unit_group in groups:
+                if group_task in unit_group.tasks:
+                    yield unit_group
 
     def groups_for_role_and_task(
         self, group_role: GroupRole, group_task: Optional[GroupTask] = None
