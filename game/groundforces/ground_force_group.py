@@ -10,12 +10,13 @@ from typing import ClassVar, TYPE_CHECKING, Any, Iterator, Optional
 
 import yaml
 
+from game import db
 from game.data.groups import GroupRole, GroupTask
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
 from game.point_with_heading import PointWithHeading
-from gen.templates import GroundObjectTemplate
+from game.groundforces.template import GroundObjectTemplate
 
 if TYPE_CHECKING:
     from game import Game
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class UnitGroup:
+class GroundForceGroup:
     name: str
     ground_units: list[GroundUnitType]
     ship_units: list[ShipUnitType]
@@ -33,15 +34,15 @@ class UnitGroup:
     tasks: list[GroupTask] = field(default_factory=list)
     template_names: list[str] = field(default_factory=list)
 
-    _by_name: ClassVar[dict[str, UnitGroup]] = {}
-    _by_role: ClassVar[dict[GroupRole, list[UnitGroup]]] = {}
+    _by_name: ClassVar[dict[str, GroundForceGroup]] = {}
+    _by_role: ClassVar[dict[GroupRole, list[GroundForceGroup]]] = {}
     _loaded: bool = False
     _templates: list[GroundObjectTemplate] = field(default_factory=list)
 
     def __str__(self) -> str:
         return self.name
 
-    def update_from_unit_group(self, unit_group: UnitGroup) -> None:
+    def update_from_unit_group(self, unit_group: GroundForceGroup) -> None:
         # Update tasking and templates
         self.tasks.extend([task for task in unit_group.tasks if task not in self.tasks])
         self._templates.extend(
@@ -56,39 +57,23 @@ class UnitGroup:
     def templates(self) -> list[GroundObjectTemplate]:
         return self._templates
 
-    def add_template(self, faction_template: GroundObjectTemplate) -> None:
-        template = copy.deepcopy(faction_template)
-        updated_groups = []
-        for group in template.groups:
-            unit_types = list(
-                itertools.chain(
-                    [u.dcs_id for u in self.ground_units if group.can_use_unit(u)],
-                    [s.dcs_id for s in self.ship_units if group.can_use_unit(s)],
-                    [s for s in self.statics if group.can_use_unit_type(s)],
-                )
-            )
-            if unit_types:
-                group.set_possible_types(unit_types)
-                updated_groups.append(group)
-        template.groups = updated_groups
-        self._templates.append(template)
+    def add_template(self, template: GroundObjectTemplate, faction: Faction) -> None:
+        try:
+            self._templates.append(template.for_faction(faction))
+        except StopIteration:
+            logging.warning(f"Template {template.name} not usable by {faction.name}")
 
     def load_templates(self, faction: Faction) -> None:
-        self._templates = []
-        if self.template_names:
-            # Preferred templates
-            for template_name in self.template_names:
-                template = faction.templates.by_name(template_name)
-                if template:
-                    self.add_template(template)
+        """Load all possible templates for this group"""
+        for template_name in self.template_names:
+            for template in db.TEMPLATES.by_name(template_name):
+                self.add_template(template, faction)
 
         if not self._templates:
             # Find all matching templates if no preferred set or available
-            for template in list(
-                faction.templates.for_role_and_tasks(self.role, self.tasks)
-            ):
+            for template in list(db.TEMPLATES.by_tasks(self.tasks)):
                 if any(self.has_unit_type(unit) for unit in template.units):
-                    self.add_template(template)
+                    self.add_template(template, faction)
 
     def set_templates(self, templates: list[GroundObjectTemplate]) -> None:
         self._templates = templates
@@ -106,7 +91,7 @@ class UnitGroup:
             yield static
 
     @classmethod
-    def named(cls, name: str) -> UnitGroup:
+    def named(cls, name: str) -> GroundForceGroup:
         if not cls._loaded:
             cls._load_all()
         return cls._by_name[name]
@@ -118,23 +103,27 @@ class UnitGroup:
         control_point: ControlPoint,
         game: Game,
         template_name: str = "",
-    ) -> TheaterGroundObject:
-        template: Optional[GroundObjectTemplate] = None
-        if template_name:
-            # Forced Template
-            template = self._template_by_name(template_name)
-
-        if template is None:
-            # Random Template
-            template = random.choice(self.templates)
-
-        return template.generate(name, position, control_point, game)
+    ) -> Optional[TheaterGroundObject]:
+        """Try to generate a TheaterGroundObject from the group"""
+        if self.templates:
+            # Choose forced template or random one if no available or defined
+            template = self._template_by_name(template_name) or random.choice(
+                self.templates
+            )
+            try:
+                return template.generate(name, position, control_point, game)
+            except NotImplementedError:
+                logging.error(f"Generator for {template.name} not implemented yet")
+        else:
+            logging.error(f"No templates to generate object from {self.name}")
+        return None
 
     def _template_by_name(self, template_name: str) -> Optional[GroundObjectTemplate]:
-        for available_template in self.templates:
-            if available_template.name == template_name:
-                return available_template
-        logging.error(f"Requested template {template_name} is not available")
+        if template_name:
+            for available_template in self.templates:
+                if available_template.name == template_name:
+                    return available_template
+            logging.error(f"Requested template {template_name} is not available")
         return None
 
     @classmethod
@@ -155,7 +144,7 @@ class UnitGroup:
             ]
             ship_units = [ShipUnitType.named(n) for n in data.get("ship_units", [])]
 
-            unit_group = UnitGroup(
+            unit_group = GroundForceGroup(
                 name=data.get("name"),
                 ground_units=ground_units,
                 ship_units=ship_units,

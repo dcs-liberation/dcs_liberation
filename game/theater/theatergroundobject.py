@@ -3,14 +3,12 @@ from __future__ import annotations
 import itertools
 import logging
 from abc import ABC
-from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterator, List, TYPE_CHECKING, Union, Optional, Any
+from typing import Iterator, List, TYPE_CHECKING, Optional, Any
 
 from dcs.unittype import VehicleType, ShipType
 from dcs.vehicles import vehicle_map
-from dcs.ships import ship_map
 
 from dcs.mapping import Point
 from dcs.triggers import TriggerZone
@@ -24,7 +22,7 @@ from ..point_with_heading import PointWithHeading
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
-    from gen.templates import UnitTemplate, GroupTemplate
+    from game.groundforces.template import UnitTemplate, GroupTemplate
     from .controlpoint import ControlPoint
     from ..ato.flighttype import FlightType
 
@@ -51,33 +49,6 @@ NAME_BY_CATEGORY = {
     "ware": "Warehouse",
     "ww2bunker": "Bunker",
 }
-
-
-class SkynetRole(Enum):
-    #: A radar SAM that should be controlled by Skynet.
-    Sam = "Sam"
-
-    #: A radar SAM that should be controlled and used as an EWR by Skynet.
-    SamAsEwr = "SamAsEwr"
-
-    #: An air defense unit that should be used as point defense by Skynet.
-    PointDefense = "PD"
-
-    #: All other types of groups that might be present in a SAM TGO. This includes
-    #: SHORADS, AAA, supply trucks, etc. Anything that shouldn't be controlled by Skynet
-    #: should use this role.
-    NoSkynetBehavior = "NoSkynetBehavior"
-
-
-class AirDefenseRange(Enum):
-    AAA = ("AAA", SkynetRole.NoSkynetBehavior)
-    Short = ("short", SkynetRole.NoSkynetBehavior)
-    Medium = ("medium", SkynetRole.Sam)
-    Long = ("long", SkynetRole.SamAsEwr)
-
-    def __init__(self, description: str, default_role: SkynetRole) -> None:
-        self.range_name = description
-        self.default_role = default_role
 
 
 @dataclass
@@ -549,7 +520,7 @@ class SamGroundObject(IadsGroundObject):
         max_telar_range = meters(0)
         launchers = set()
         for unit in group.units:
-            if unit.type not in vehicle_map:
+            if not unit.alive or unit.type not in vehicle_map:
                 continue
             unit_type = db.vehicle_type_from_name(unit.type)
             if unit_type in TRACK_RADARS:

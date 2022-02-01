@@ -352,9 +352,9 @@ class MizCampaignLoader:
     def add_preset_locations(self) -> None:
         for static in self.offshore_strike_targets:
             closest, distance = self.objective_info(static)
-            preset = PresetLocation.from_group(static)
-            preset.task = GroupTask.OffShoreStrikeTarget
-            closest.preset_locations.buildings.append(preset)
+            closest.preset_locations.buildings.append(
+                PresetLocation.from_group(static, GroupTask.OffShoreStrikeTarget)
+            )
 
         for ship in self.ships:
             closest, distance = self.objective_info(ship, allow_naval=True)
@@ -410,25 +410,25 @@ class MizCampaignLoader:
 
         for static in self.factories:
             closest, distance = self.objective_info(static)
-            preset = PresetLocation.from_group(static)
-            preset.task = GroupTask.Factory
-            closest.preset_locations.buildings.append(preset)
+            closest.preset_locations.buildings.append(
+                PresetLocation.from_group(static, GroupTask.Factory)
+            )
 
         for static in self.ammunition_depots:
             closest, distance = self.objective_info(static)
-            preset = PresetLocation.from_group(static)
-            preset.task = GroupTask.Ammo
-            closest.preset_locations.buildings.append(preset)
+            closest.preset_locations.buildings.append(
+                PresetLocation.from_group(static, GroupTask.Ammo)
+            )
 
         for static in self.strike_targets:
             closest, distance = self.objective_info(static)
-            preset = PresetLocation.from_group(static)
-            preset.task = GroupTask.StrikeTarget
-            closest.preset_locations.buildings.append(preset)
+            closest.preset_locations.buildings.append(
+                PresetLocation.from_group(static, GroupTask.StrikeTarget)
+            )
 
         for preset_trigger in self.complex_presets:
-            closest, distance = self.objective_info(preset_trigger)
             preset = PresetLocation.from_preset_trigger(preset_trigger)
+            closest, distance = self.objective_info(preset_trigger)
             if preset_trigger.is_scenery_object:
                 closest.preset_locations.scenery.append(preset_trigger)
             elif preset_trigger.task in ROLE_TASKINGS[GroupRole.Building]:

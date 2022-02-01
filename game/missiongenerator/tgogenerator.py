@@ -89,7 +89,7 @@ class GroundObjectGenerator:
     def culled(self) -> bool:
         return self.game.position_culled(self.ground_object.position)
 
-    def generate(self, unique_name: bool = True) -> None:
+    def generate(self) -> None:
         if self.culled:
             return
 
@@ -97,17 +97,16 @@ class GroundObjectGenerator:
             if not group.units:
                 logging.warning(f"Found empty group in {self.ground_object}")
                 continue
-            group_name = group.group_name if unique_name else group.name
             moving_group: Optional[MovingGroup[Any]] = None
             for i, unit in enumerate(group.units):
+                if not group.static_group and not unit.alive:
+                    # Skip non static Dead Units, Statics will be marked as dead
+                    continue
+
                 if isinstance(unit, SceneryGroundUnit):
                     # Special handling for scenery objects:
                     # Only create a trigger zone and no "real" dcs unit
                     self.add_trigger_zone_for_scenery(unit)
-                    continue
-
-                # Only skip dead units after trigger zone for scenery created!
-                if not unit.alive:
                     continue
 
                 unit_type = unit_type_from_name(unit.type)
@@ -116,13 +115,12 @@ class GroundObjectGenerator:
                         f"Unit type {unit.type} is not a valid dcs unit type"
                     )
 
-                unit_name = unit.unit_name if unique_name else unit.name
                 if moving_group is None or group.static_group:
                     # First unit of the group will create the dcs group
                     if issubclass(unit_type, VehicleType):
                         moving_group = self.m.vehicle_group(
                             self.country,
-                            group_name,
+                            group.group_name,
                             unit_type,
                             position=unit.position,
                             heading=unit.position.heading.degrees,
@@ -132,7 +130,7 @@ class GroundObjectGenerator:
                     elif issubclass(unit_type, ShipType):
                         moving_group = self.m.ship_group(
                             self.country,
-                            group_name,
+                            group.group_name,
                             unit_type,
                             position=unit.position,
                             heading=unit.position.heading.degrees,
@@ -140,17 +138,18 @@ class GroundObjectGenerator:
                     elif issubclass(unit_type, StaticType):
                         static_group = self.m.static_group(
                             country=self.country,
-                            name=unit_name,
+                            name=unit.unit_name,
                             _type=unit_type,
                             position=unit.position,
                             heading=unit.position.heading.degrees,
                             dead=not unit.alive,
                         )
                         self._register_ground_unit(unit, static_group.units[0])
+                        # Skip further processing as Statics only have 1 unit
                         continue
 
                     if moving_group:
-                        moving_group.units[0].name = unit_name
+                        moving_group.units[0].name = unit.unit_name
                         self.set_alarm_state(moving_group)
                         self._register_ground_unit(unit, moving_group.units[0])
                     else:
@@ -161,14 +160,14 @@ class GroundObjectGenerator:
                     if issubclass(unit_type, VehicleType):
                         dcs_unit = Vehicle(
                             self.m.next_unit_id(),
-                            unit_name,
+                            unit.unit_name,
                             unit.type,
                         )
                         dcs_unit.player_can_drive = True
                     elif issubclass(unit_type, ShipType):
                         dcs_unit = Ship(
                             self.m.next_unit_id(),
-                            unit_name,
+                            unit.unit_name,
                             unit_type,
                         )
                     if dcs_unit:
@@ -254,7 +253,7 @@ class MissileSiteGenerator(GroundObjectGenerator):
         # culled despite being a threat.
         return False
 
-    def generate(self, unique_name: bool = True) -> None:
+    def generate(self) -> None:
         super(MissileSiteGenerator, self).generate()
         # Note : Only the SCUD missiles group can fire (V1 site cannot fire in game right now)
         # TODO : Should be pre-planned ?
@@ -336,7 +335,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         self.icls_alloc = icls_alloc
         self.runways = runways
 
-    def generate(self, unique_name: bool = True) -> None:
+    def generate(self) -> None:
 
         # This can also be refactored as the general generation was updated
         atc = self.radio_registry.alloc_uhf()
@@ -356,22 +355,20 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
             ship_group = self.m.ship_group(
                 self.country,
-                group.group_name if unique_name else group.name,
+                group.group_name,
                 unit_type,
                 position=group.units[0].position,
                 heading=group.units[0].position.heading.degrees,
             )
 
             ship_group.set_frequency(atc.hertz)
-            ship_group.units[0].name = (
-                group.units[0].unit_name if unique_name else group.units[0].name
-            )
+            ship_group.units[0].name = group.units[0].unit_name
             self._register_ground_unit(group.units[0], ship_group.units[0])
 
             for unit in group.units[1:]:
                 ship = Ship(
                     self.m.next_unit_id(),
-                    unit.unit_name if unique_name else unit.name,
+                    unit.unit_name,
                     unit_type_from_name(unit.type),
                 )
                 ship.position.x = unit.position.x

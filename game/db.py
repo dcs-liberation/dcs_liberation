@@ -43,6 +43,7 @@ import pydcs_extensions.highdigitsams.highdigitsams as highdigitsams
 
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
+from game.groundforces.template_loader import TemplateLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
@@ -253,6 +254,12 @@ Units separated by country.
 country : DCS Country name
 """
 FACTIONS = FactionLoader()
+
+
+"""
+All available Templates
+"""
+TEMPLATES = TemplateLoader()
 
 """
 Aircraft livery overrides. Syntax as follows:

@@ -26,12 +26,15 @@ If a faction does not support a group from the template it will be removed if op
 During campaign initialization the start_generator will request unit_groups for the preset locations defined by the campaign designer. The faction will then offer possible groups and the matching template.
 The Liberation Group (TheaterGroundObject) is then being generated from this UnitGroup.
 
-- GroundWar currently does **not** use the template system
+- GroundWar (Frontline) currently does **not** use the template system
 - User can buy new SAM or ArmorGroup using this template system
-
+- Campaign Designers can also define precicsly (if needed) which template or UnitGroup should be placed at a specific location by using TriggerZones with custom properties
 
 Example for a customized Ground Object Buy Menu which makes use of Templates and UnitGroups:
 ![ground_object_buy_menu.png](ground_object_buy_menu.png)
+
+Example of how a campaign designer can define specific Details for which UnitGroup or template should be generated:
+![campaign_preset_trigger_zones.png](campaign_preset_trigger_zones.png)
 
 ### The template miz
 
@@ -102,9 +105,8 @@ template_file: resources/templates/anti_air/AAA.miz
 ```
 
 ### Roles, Tasks and Classes
-TODO Improve Naming? Same logic as with the Squadrons.. Also brainstorm if we should rename the UnitGroup which basicly is the equivalent of a "Package"
 
-Role and Tasking
+TODO Describe Role, Tasking and Classes
 
 [GroupRole and GroupTask](/game/data/groups.py)
 
@@ -112,12 +114,19 @@ Role and Tasking
 
 ## How to add / modify a template
 
-template.miz (positioning / alignment) and template.yaml (Mapping)
+A template consists of two special files:
 
-Best practice:
-- Copy existing Template and rename the files
-- Adjust the .miz and change the group names accordingly
-- Adjust the .yaml file to the needs and check for the correct group names
+- template.miz which defines the actual positioning and alignment of the groups / units
+- template.yaml which defines the necessary information like amount of units, possible types or classes.
+
+To add a new template a new yaml has to be created as every yaml can only define exact one template. Best practice is to copy paste an existing template which is similar to the one to be created as starting point. The next step is to create a new .miz file and align Units and statics to the wishes. Even if existing ones can be reused, best practice is to always create a fresh one to prevent side effects.
+The most important part is to use a new Group for every different Unit Type. It is not possible to mix Unit Types in one group within a template. For example it is not possible to have a logistic truck and a AAA in the same group. The miz file will only be used to get the exact position and orientation of the units, therefore it is irrelevant which type of unit will be used. The unit type will be later defined inside the yaml file.
+For the next step all Group names have to be added to the yaml file. Take care to that these names match exactly! Assign the unit_types or unit_classes properties to math the needs.
+
+TODO Improve this with images and more detailed description
+
+**IMPORTANT**: Due to performance increase the templates get serialized to a pickle file in the save dir as `templates.p`. When templates were modified a manual re-import of all templates has to be triggered.
+This can be done by either deleting this file or using the Liberation UI. There is a special option in the ToolBar under Tools: Import Templates.
 
 
 ## Migration from Generators
@@ -125,9 +134,11 @@ Best practice:
 - All generators removed and migrated to templates
 - These templates will in the next step be generalized
 
- TODO: Update the template_list.md with the changes in Role/Tasking
-
 [List of supported templates](template_list.md)
+
+The previous generators were migrated using a script which build a group using the generator. All of these groups were save into one .miz file [original_generator_layouts.miz](/resources/templates/original_generator_layouts.miz).
+This miz file can be used to verify the templates and to generalize similar templates to decouple the layout from the actual units. As this is a time-consuming and sphisticated task this will be done over time.
+With the first step the technical requirements will be fulfilled so that the generalization can happen afterwards the technical pr gets merged.
 
 
 ### Updates for Factions
@@ -145,40 +156,47 @@ What was changed:
 - added `naval_units` with the correct ship name found here [/resources/units/ships](/resources/units/ships)
 - `aircraft_carrier` and `helicopter_carrier` were moved to `naval_units` as well.
 
-Possible Preset Groups:
-
-TODO generate list with old generator name
-
-Possible EWRs:
-
-| Name in Faction file                                 |
-|------------------------------------------------------|
-| EWR 1L13                                             |
-| EWR 55G6                                             |
-| MCC-SR Sborka "Dog Ear" SR                           |
-| SAM Roland EWR                                       |
-| SAM P19 "Flat Face" SR (SA-2/3)                      |
-| SAM Patriot STR                                      |
-| SAM SA-10 S-300 "Grumble" Big Bird SR                |
-| SAM SA-11 Buk "Gadfly" Snow Drift SR                 |
-| SAM SA-6 Kub "Straight Flush" STR                    |
-| SAM Hawk SR (AN/MPQ-50)                              |
-| SAM SA-5 S-200 ST-68U "Tin Shield" SR                |
-
 ## Unit Groups
+
+TODO Explain more
 
 - Sum up groups of different units which are used together (like a sam site).
 - UnitGroup allows to define this logical group and add this to the faction file.
 - UnitGroups can have preferred templates
 
+Example:
+
+```
+name: SA-10/S-300PS  # The name which will be used in the faction file
+role: AntiAir  # The role of the Group
+tasks:
+  - LORAD  # The task the Group can fulfill
+ground_units:
+  - SAM SA-10 S-300 "Grumble" Clam Shell SR
+  - SAM SA-10 S-300 "Grumble" Big Bird SR
+  - SAM SA-10 S-300 "Grumble" C2
+  - SAM SA-10 S-300 "Grumble" Flap Lid TR
+  - SAM SA-10 S-300 "Grumble" TEL D
+  - SAM SA-10 S-300 "Grumble" TEL C
+ship_units:
+  - # Add some naval units here
+statics:
+  - # Add some statics here
+templates:
+  - S-300 Site  # The template names which should be used by this group
+  ```
+
+A list of all available units is accessible here: [/resources/units/unit_groups](/resources/units/unit_groups)
+
 # Open Points
 
 - [x] Rework SAM Systems to unit_groups: migrated all `air_defense`
-- [ ] Review Naming of all classes and so on
 - [X] Improve UI Display Name for the new ShipUniType
 - [ ] Verify if the campaign will be generated the same as before
 - [x] Fix the generation of buildings
 - [ ] Verify the handling of buildings (ammo and factory for example work different.)
+  - Ammo will only create 1 ammo counter for the control point instead of 3 which was previously
+  - Factory will create 4x the Input as it now used the correct template
 - [X] Correct Missiles and Coastal (Counts?)
 - [X] Faction Group Count (Navy, Missile, Coastal).. used for?? For nothing! removed.
 - [x] Navy Generators -> Destroyers, Cruisers und Preset_groups Migration
@@ -189,14 +207,29 @@ Possible EWRs:
 - [X] Special Handling for Carrier Strike Group 8 (was not even working before..) can now be added as preset group
 - [X] Validate that all Waypoints and taskings are correct and working (some use the group.name)
 - [ ] Verify that DEAD Flights are untouched from these changes.. They are missing a attack command
-- [ ] Finish Documentation
 - [ ] Naming of created groups -> It uses the template name currently which is not great
 - [x] Fix the Faction overview site not showing the newly added preset_groups and AA Units
-- [ ] Add missing classes to the units so that they can be used by the templates
+- [X] Fix incorrect threat range calculation (should check if unit is alive)
 - [x] Replace BuyUi implementation from Template to "Preset" by using the available UnitGroups
 - [x] Fix Buy menu for Armor Groups.
 - [x] Fix Buy menu not allowing to change the amount when only one unit_type is available.
 - [x] Fix Group order is not correct (group2 is 0, group1 is 1 if dcs_group id for group2 is smaller)
+- [X] Allow Templates to be requested by campaign preset locations
+- [X] Verify correct UnitGroup and template matching for preset_groups (template should be initialized correctly)
+- [X] Move all the UnitGroup and Template handling to the Coalition as "GroundForces"
+- [ ] Review Naming of all classes and so on
+- [ ] Finish Documentation
+
+### Optional Tasks which can be done later
 - [ ] Add generalized Templates for Lorad and Merad
 - [ ] Generalize all Templates
+- [ ] Reuse the templates for the frontline
+- [ ] Add UI Implementation to choose which templates should be used during new game wizard (like AirWing Config)
+- [ ] Rework "Names_By_Category" to just use the Tasking instead of a string.
+- [ ] Add missing classes to the units so that they can be used by the templates
+- [ ] Template .miz loading is extremely slow. Find a way to improve this or make the user aware of the loading time (spinner animation)
+  - The only true way to reduce loading time is to pre-serialize the unit positions and load only these later.
+  - Or live with the long loading times for the new game wizards but let the user know that its working in the background
+
+
 

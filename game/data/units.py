@@ -36,6 +36,7 @@ class UnitClass(Enum):
     LandingShip = "LandingShip"
     Boat = "Boat"
     Plane = "Plane"
+    Fortification = "Fortification"
 
     def to_dict(self) -> str:
         return self.value

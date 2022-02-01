@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 
 from PySide2.QtCore import Signal
@@ -26,7 +25,7 @@ from game.theater.theatergroundobject import (
     EwrGroundObject,
     GroundGroup,
 )
-from gen.templates import (
+from game.groundforces.template import (
     GroundObjectTemplate,
     GroupTemplate,
 )
@@ -226,7 +225,6 @@ class QGroundObjectBuyMenu(QDialog):
         self.template_selector.setEnabled(False)
 
         # Get the templates and fill the combobox
-        template_sub_category = None
         tasks = []
         if isinstance(ground_object, SamGroundObject):
             role = GroupRole.AntiAir
@@ -241,8 +239,8 @@ class QGroundObjectBuyMenu(QDialog):
         if not tasks:
             tasks = ROLE_TASKINGS[role]
 
-        for unit_group in game.blue.faction.groups_for_role_and_tasks(role, tasks):
-            self.unit_group_selector.addItem(unit_group.name, userData=unit_group)
+        for group in game.blue.ground_forces.groups_for_role_and_tasks(role, tasks):
+            self.unit_group_selector.addItem(group.name, userData=group)
 
         self.template_selector.currentIndexChanged.connect(self.template_changed)
         self.unit_group_selector.currentIndexChanged.connect(self.unit_group_changed)

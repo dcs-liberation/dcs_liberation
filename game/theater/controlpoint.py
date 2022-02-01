@@ -86,24 +86,31 @@ GroupT = TypeVar("GroupT", StaticGroup, ShipGroup, VehicleGroup)
 
 
 class PresetLocation(PointWithHeading):
+    """Store information about the Preset Location set by the campaign designer"""
+
+    # This allows to store original name and force a specific type or template
     original_name: str  # Store the original name from the campaign miz
     task: Optional[GroupTask] = None
     template: str = ""  # Forced Template
     unit_group: str = ""  # Forced Unit_Group
 
     @classmethod
-    def from_group(cls, group: GroupT) -> PresetLocation:
-        # Create a PresetLocation from one of the allowed unit_types
-        return PresetLocation(
+    def from_group(
+        cls, group: GroupT, task: Optional[GroupTask] = None
+    ) -> PresetLocation:
+        """Creates a PresetLocation from a predefined unit_type"""
+        preset = PresetLocation(
             group.name,
             PointWithHeading.from_point(
                 group.position, Heading.from_degrees(group.units[0].heading)
             ),
         )
+        preset.task = task
+        return preset
 
     @classmethod
     def from_preset_trigger(cls, preset_trigger: PresetTrigger) -> PresetLocation:
-        # Create a complex PresetLocation from a trigger zone
+        """Creates a PresetLocation from a Trigger Zone with more information"""
         preset_location = PresetLocation(
             preset_trigger.zone.name,
             PointWithHeading.from_point(
