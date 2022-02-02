@@ -4,7 +4,12 @@ Saves from 5.1.0 are compatible with 5.1.1.
 
 ## Fixes
 
-* **[Mission Generation]** Fixed incorrect SA-5 threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
+* **[Mission Generation]** Fixed incorrect SA-5 and NASAMS threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
+* **[Mission Generation]** Fixed "Max Threat Range" error
+* **[Mission Generation]** Fix unculled zones not updating when needed
+* **[Campaign]** Vegas Nerve campaign update
+* **[UI]** Typhoon GR4 and IDS images
+
 
 # 5.1.0
 
