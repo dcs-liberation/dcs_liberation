@@ -20,6 +20,7 @@ from typing import (
     Any,
 )
 
+import dcs.vehicles
 from dcs import Mission, Point, unitgroup
 from dcs.action import SceneryDestructionZone, DoScript
 from dcs.condition import MapObjectIsDead
@@ -54,6 +55,7 @@ from game.theater.theatergroundobject import (
     GroundGroup,
     GroundUnit,
     SceneryGroundUnit,
+    IadsGroundGroup,
 )
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
@@ -106,6 +108,12 @@ class GroundObjectGenerator:
                 if isinstance(unit, SceneryGroundUnit):
                     # Special handling for scenery objects:
                     # Only create a trigger zone and no "real" dcs unit
+                    if (
+                        isinstance(group, IadsGroundGroup)
+                        and group.iads_role.participate
+                    ):
+                        # Generate a unit which can be used by skynet
+                        self.generate_iads_command_unit(group, unit.alive)
                     self.add_trigger_zone_for_scenery(unit)
                     continue
 
@@ -244,6 +252,24 @@ class GroundObjectGenerator:
         )
         t.actions.append(DoScript(script_string))
         self.m.triggerrules.triggers.append(t)
+
+    def generate_iads_command_unit(self, group: IadsGroundGroup, alive: bool) -> None:
+        # TODO Required for skynet to work
+        # Reuse unit Name from SceneryGroundUnit as this is not used.
+        # Creates a unarmed Unit next to a scenery object which can be used by skynet
+        # TODO The position is exactly the center of the scenery... May this be an issue?
+        # Also can this Unit be destroyed correctly?
+        # Maybe it should be an easier static which does not interfere...
+        # Alternative could also be to place a unit with "Invisible" as waypoint action
+        # There is a SetInvisibleCommand . We can use this as invisible Solder.
+        self.m.static_group(
+            country=self.country,
+            name=group.group_name,
+            _type=dcs.vehicles.AirDefence.Hawk_pcp,
+            position=group.position,
+            heading=group.position.heading.degrees,
+            dead=not alive,  # Also spawn as dead!
+        )
 
 
 class MissileSiteGenerator(GroundObjectGenerator):

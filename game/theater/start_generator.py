@@ -15,6 +15,8 @@ from game.theater.theatergroundobject import (
     SceneryGroundUnit,
     GroundGroup,
     IadsBuildingGroundObject,
+    IadsGroundGroup,
+    IADSRole,
 )
 from game.utils import Heading
 from game.version import VERSION
@@ -390,7 +392,11 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
     def generate_tgo_for_scenery(self, scenery: PresetTrigger) -> None:
         # Special Handling for scenery Objects based on trigger zones
-        g = BuildingGroundObject(
+        iads_role = IADSRole.for_task(scenery.task)
+        tgo_type = (
+            IadsBuildingGroundObject if iads_role.participate else BuildingGroundObject
+        )
+        g = tgo_type(
             namegen.random_objective_name(),
             scenery.task.value.lower(),
             scenery.location,
@@ -403,6 +409,10 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
             [],
             g,
         )
+        if isinstance(g, IadsBuildingGroundObject):
+            ground_group = IadsGroundGroup.from_group(ground_group)
+            ground_group.iads_role = iads_role
+
         ground_group.static_group = True
         g.groups.append(ground_group)
         # Each nested trigger zone is a target/building/unit for an objective.
