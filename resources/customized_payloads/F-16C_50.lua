@@ -334,7 +334,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] =  "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
 					["num"] = 4,
 				},
 				[5] = {
@@ -342,7 +342,7 @@ local unitPayloads = {
 					["num"] = 5,
 				},
 				[6] = {
-					["CLSID"] =  "{40EF17B7-F508-45de-8566-6FFECC0C1AB8}",
+					["CLSID"] = "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}",
 					["num"] = 6,
 				},
 				[7] = {
