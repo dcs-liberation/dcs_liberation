@@ -140,6 +140,10 @@ class GroundGroup:
         return f"{str(self.id).zfill(4)} | {self.name}"
 
     @property
+    def unit_count(self) -> int:
+        return len(self.units)
+
+    @property
     def alive_units(self) -> int:
         return sum([unit.alive for unit in self.units])
 
@@ -223,6 +227,10 @@ class TheaterGroundObject(MissionTarget):
                 FlightType.REFUELING,
             ]
         yield from super().mission_types(for_player)
+
+    @property
+    def unit_count(self) -> int:
+        return sum([g.unit_count for g in self.groups])
 
     @property
     def alive_unit_count(self) -> int:
