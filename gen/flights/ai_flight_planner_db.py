@@ -112,11 +112,13 @@ from dcs.unittype import FlyingType
 from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.a29b.a29b import A_29B
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
+
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
 # preferred over those lower in the list.
@@ -158,6 +160,7 @@ CAP_CAPABLE = [
     VSN_F104G,
     MiG_19P,
     A_4E_C,
+    A_29B,
     F_86F_Sabre,
     MiG_15bis,
     C_101CC,
@@ -197,6 +200,7 @@ CAS_CAPABLE = [
     A_10A,
     B_1B,
     A_4E_C,
+    A_29B,
     F_14B,
     F_14A_135_GR,
     AJS37,
@@ -342,6 +346,7 @@ STRIKE_CAPABLE = [
     A_10C,
     S_3B,
     A_4E_C,
+    A_29B,
     M_2000C,
     MiG_27K,
     MiG_21Bis,
@@ -386,6 +391,7 @@ ANTISHIP_CAPABLE = [
     AV8BNA,
     S_3B,
     A_20G,
+    A_29B,
     Ju_88A4,
     MosquitoFBMkVI,
     C_101CC,
@@ -400,6 +406,7 @@ RUNWAY_ATTACK_CAPABLE = [
     JF_17,
     Su_34,
     Su_30,
+    A_29B,
     Tornado_IDS,
     M_2000C,
     H_6J,

@@ -1,3 +1,9 @@
+# 6.0.1
+* **[Modding]** Add A-29 Super Tucano
+
+
+
+
 # 6.0.0
 
 Saves from 5.x are not compatible with 6.0.
