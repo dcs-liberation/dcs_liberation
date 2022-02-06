@@ -104,7 +104,6 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         mod_settings = ModSettings(
             a4_skyhawk=self.field("a4_skyhawk"),
-            a29b=self.field("a29b"),
             f22_raptor=self.field("f22_raptor"),
             f104_starfighter=self.field("f104_starfighter"),
             hercules=self.field("hercules"),
@@ -112,6 +111,7 @@ class NewGameWizard(QtWidgets.QWizard):
             su57_felon=self.field("su57_felon"),
             frenchpack=self.field("frenchpack"),
             high_digit_sams=self.field("high_digit_sams"),
+            a29b=self.field("a29b"),
         )
 
         blue_faction = self.faction_selection_page.selected_blue_faction
@@ -562,8 +562,6 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")
         a4_skyhawk = QtWidgets.QCheckBox()
         self.registerField("a4_skyhawk", a4_skyhawk)
-        a29b = QtWidgets.QCheckBox()
-        self.registerField("a29b", a29b)
         hercules = QtWidgets.QCheckBox()
         self.registerField("hercules", hercules)
         f22_raptor = QtWidgets.QCheckBox()
@@ -578,6 +576,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("frenchpack", frenchpack)
         high_digit_sams = QtWidgets.QCheckBox()
         self.registerField("high_digit_sams", high_digit_sams)
+        a29b = QtWidgets.QCheckBox()
+        self.registerField("a29b", a29b)
 
         modHelpText = QtWidgets.QLabel(
             "<p>Select the mods you have installed. If your chosen factions support them, you'll be able to use these mods in your campaign.</p>"
