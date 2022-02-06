@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Dict, Union
 
 from game.squadrons import Squadron
 from game.squadrons.squadrondef import SquadronDef
@@ -72,7 +72,7 @@ class DefaultSquadronAssigner:
         # Override squadron def with squadron config parameters from campaign file, if defined
         if squadron_def is not None:
 
-            overrides = {}
+            overrides: Dict[str, Union[str, int]] = {}
             if config.name is not None:
                 overrides["name"] = config.name
             if config.nickname is not None:
