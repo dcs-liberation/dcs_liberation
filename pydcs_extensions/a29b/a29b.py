@@ -1228,16 +1228,6 @@ class A_29B(PlaneType):
 
     pylons = {1, 2, 3, 4, 5, 6}
 
-    tasks = [
-        task.CAP, 
-        task.Escort, 
-        task.FighterSweep, 
-        task.GroundAttack, 
-        task.PinpointStrike, 
-        task.CAS,
-        task.AFAC, 
-        task.RunwayAttack, 
-        task.AntishipStrike, 
-        task.Intercept,
-    ]
+    tasks = [task.CAP, task.Escort, task.FighterSweep, task.GroundAttack, task.PinpointStrike, task.CAS, task.AFAC, task.RunwayAttack, task.AntishipStrike, task.Intercept]
     task_default = task.CAS
+
