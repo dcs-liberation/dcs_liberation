@@ -8,7 +8,7 @@ from dcs.weapons_data import Weapons
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
-class Weaponsa29b:
+class a29bWeapons:
     White_Smoke_ = {
         "clsid": "{SMOKE-WHITE-A29B}",
         "name": "White Smoke",
@@ -47,7 +47,7 @@ class Weaponsa29b:
         "weight": 271.0,
     }
 
-inject_weapons(Weaponsa29b)
+inject_weapons(a29bWeapons)
 
 class A_29B(PlaneType):
     id = "A-29B"
