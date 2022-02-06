@@ -7,7 +7,7 @@ from typing import Optional, Dict, Type, List, Any, Iterator, TYPE_CHECKING
 
 import dcs
 from dcs.countries import country_dict
-from dcs.unittype import ShipType, UnitType
+from dcs.unittype import ShipType
 
 from game.data.building_data import (
     WW2_ALLIES_BUILDINGS,
@@ -278,8 +278,8 @@ class Faction:
         if not mod_settings.su57_felon:
             self.remove_aircraft("Su-57")
         if not mod_settings.a_29b:
-            self.remove_aircraft("A-29B")      
-        # frenchpack
+            self.remove_aircraft("A-29B")
+            # frenchpack
         if not mod_settings.frenchpack:
             self.remove_vehicle("AMX10RCR")
             self.remove_vehicle("SEPAR")
