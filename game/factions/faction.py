@@ -264,8 +264,6 @@ class Faction:
         # aircraft
         if not mod_settings.a4_skyhawk:
             self.remove_aircraft("A-4E-C")
-        if not mod_settings.a_29b:
-            self.remove_aircraft("A-29B")       
         if not mod_settings.hercules:
             self.remove_aircraft("Hercules")
         if not mod_settings.f22_raptor:
@@ -279,6 +277,8 @@ class Faction:
             self.remove_aircraft("JAS39Gripen_AG")
         if not mod_settings.su57_felon:
             self.remove_aircraft("Su-57")
+        if not mod_settings.a_29b:
+            self.remove_aircraft("A-29B")      
         # frenchpack
         if not mod_settings.frenchpack:
             self.remove_vehicle("AMX10RCR")
