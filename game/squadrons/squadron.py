@@ -339,7 +339,7 @@ class Squadron:
             )
             return
 
-        if self.expected_size_next_turn >= destination.unclaimed_parking():
+        if self.expected_size_next_turn > destination.unclaimed_parking():
             raise RuntimeError(f"Not enough parking for {self} at {destination}.")
         if not destination.can_operate(self.aircraft):
             raise RuntimeError(f"{self} cannot operate at {destination}.")
