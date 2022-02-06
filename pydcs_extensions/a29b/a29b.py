@@ -9,12 +9,41 @@ from pydcs_extensions.weapon_injector import inject_weapons
 
 
 class WeaponsA_29B:
+    White_Smoke = {
+        "clsid": "{SMOKE-WHITE-A29B}",
+        "name": "White Smoke",
+        "weight": 1,
+    }
+    Red_Smoke = {
+        "clsid": "{SMOKE-RED-A29B}",
+        "name": "Red Smoke",
+        "weight": 1,
+    }
+    Green_Smoke = {
+        "clsid": "{SMOKE-GREEN-A29B}",
+        "name": "Green Smoke",
+        "weight": 1,
+    }
+    Black_Smoke = {
+        "clsid": "{SMOKE-BLACK-A29B}",
+        "name": "Black Smoke",
+        "weight": 1,
+    }
+    Orange_Smoke = {
+        "clsid": "{SMOKE-ORANGE-A29B}",
+        "name": "Black Smoke",
+        "weight": 1,
+    }
+    Yellow_Smoke = {
+        "clsid": "{SMOKE-YELLOW-A29B}",
+        "name": "Yellow Smoke",
+        "weight": 1,
+    }    
     A_29B_TANK = {
-        "clsid": "{{A-29B TANK}}",
-        "name": "A-29B TANK)",
+        "clsid": "{A-29B TANK}",
+        "name": "A-29B TANK",
         "weight": 271.0,
     }
-
 
 inject_weapons(WeaponsA_29B)
 
