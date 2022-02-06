@@ -38,14 +38,16 @@ class a_29bWeapons:
         "clsid": "{SMOKE-YELLOW-A29B}",
         "name": "Yellow Smoke",
         "weight": 1,
-    }    
+    }
     A_29B_TANK = {
         "clsid": "{A-29B TANK}",
         "name": "A-29B TANK)",
         "weight": 271.0,
     }
 
+
 inject_weapons(a_29bWeapons)
+
 
 class A_29B(PlaneType):
     id = "A-29B"
@@ -60,7 +62,7 @@ class A_29B(PlaneType):
     charge_total = 60
     chaff_charge_size = 1
     flare_charge_size = 1
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 124
 
     panel_radio = {
@@ -85,7 +87,7 @@ class A_29B(PlaneType):
                 7: 262,
                 14: 266,
                 19: 268,
-                15: 265
+                15: 265,
             },
         },
         2: {
@@ -119,7 +121,7 @@ class A_29B(PlaneType):
                 28: 257,
                 23: 260,
                 29: 253,
-                15: 265
+                15: 265,
             },
         },
     }
@@ -134,7 +136,6 @@ class A_29B(PlaneType):
     }
 
     class Properties:
-
         class SoloFlight:
             id = "SoloFlight"
 
@@ -160,7 +161,6 @@ class A_29B(PlaneType):
             id = "LGB1"
 
     class Liveries:
-
         class USSR(Enum):
             ARGENTINA_3ra_Br = "ARGENTINA 3ra Br"
             ARGENTINA_EAM = "ARGENTINA EAM"
@@ -1152,78 +1152,136 @@ class A_29B(PlaneType):
     class Pylon1:
         AIM_9M_Sidewinder_IR_AAM = (1, Weapons.AIM_9M_Sidewinder_IR_AAM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
-            1, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets
-            )
+            1,
+            Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+        )
         Mk_81___250lb_GP_Bomb_LD = (1, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_82___500lb_GP_Bomb_LD = (1, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (1, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         M117___750lb_GP_Bomb_LD = (1, Weapons.M117___750lb_GP_Bomb_LD)
         GBU_12___500lb_Laser_Guided_Bomb = (1, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
         GBU_16___1000lb_Laser_Guided_Bomb = (
-            1, 
-            Weapons.GBU_16___1000lb_Laser_Guided_Bomb
+            1,
+            Weapons.GBU_16___1000lb_Laser_Guided_Bomb,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (1, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (
-            1, 
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos
+            1,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos,
         )
-        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (1, Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (1, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE)
+        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
+            1,
+            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        )
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
+            1,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        )
 
     class Pylon2:
         A_29B_TANK = (2, Weapons.A_29B_TANK)
-        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (2, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
+            2,
+            Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+        )
         Mk_81___250lb_GP_Bomb_LD = (2, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_82___500lb_GP_Bomb_LD = (2, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (2, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         M117___750lb_GP_Bomb_LD = (2, Weapons.M117___750lb_GP_Bomb_LD)
         GBU_12___500lb_Laser_Guided_Bomb = (2, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
-        GBU_16___1000lb_Laser_Guided_Bomb = (2, Weapons.GBU_16___1000lb_Laser_Guided_Bomb)
+        GBU_16___1000lb_Laser_Guided_Bomb = (
+            2,
+            Weapons.GBU_16___1000lb_Laser_Guided_Bomb,
+        )
         CBU_97___10_x_SFW_Cluster_Bomb = (2, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (2, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos)
-        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (2, Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (2, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE)
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = {
+            2,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos,
+        }
+        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = {
+            2,
+            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        }
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
+            2,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        )
 
     class Pylon3:
         A_29B_TANK = (3, Weapons.A_29B_TANK)
-        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (3, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
+            3,
+            Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+        )
         Mk_81___250lb_GP_Bomb_LD = (3, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_82___500lb_GP_Bomb_LD = (3, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (3, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         M117___750lb_GP_Bomb_LD = (3, Weapons.M117___750lb_GP_Bomb_LD)
         GBU_12___500lb_Laser_Guided_Bomb = (3, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
-        GBU_16___1000lb_Laser_Guided_Bomb = (3, Weapons.GBU_16___1000lb_Laser_Guided_Bomb)
+        GBU_16___1000lb_Laser_Guided_Bomb = (
+            3,
+            Weapons.GBU_16___1000lb_Laser_Guided_Bomb,
+        )
         CBU_97___10_x_SFW_Cluster_Bomb = (3, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
 
     class Pylon4:
         A_29B_TANK = (4, Weapons.A_29B_TANK)
-        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (4, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
+            4,
+            Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+        )
         Mk_81___250lb_GP_Bomb_LD = (4, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_82___500lb_GP_Bomb_LD = (4, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         M117___750lb_GP_Bomb_LD = (4, Weapons.M117___750lb_GP_Bomb_LD)
         GBU_12___500lb_Laser_Guided_Bomb = (4, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
-        GBU_16___1000lb_Laser_Guided_Bomb = (4, Weapons.GBU_16___1000lb_Laser_Guided_Bomb)
+        GBU_16___1000lb_Laser_Guided_Bomb = (
+            4,
+            Weapons.GBU_16___1000lb_Laser_Guided_Bomb,
+        )
         CBU_97___10_x_SFW_Cluster_Bomb = (4, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (4, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos)
-        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (4, Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (4, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE)
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (
+            4,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos,
+        )
+        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
+            4,
+            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        )
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
+            4,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        )
 
     class Pylon5:
         AIM_9M_Sidewinder_IR_AAM = (5, Weapons.AIM_9M_Sidewinder_IR_AAM)
-        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (5, Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets)
+        Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
+            5,
+            Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
+        )
         Mk_81___250lb_GP_Bomb_LD = (5, Weapons.Mk_81___250lb_GP_Bomb_LD)
         Mk_82___500lb_GP_Bomb_LD = (5, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (5, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         M117___750lb_GP_Bomb_LD = (5, Weapons.M117___750lb_GP_Bomb_LD)
         GBU_12___500lb_Laser_Guided_Bomb = (5, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
-        GBU_16___1000lb_Laser_Guided_Bomb = (5, Weapons.GBU_16___1000lb_Laser_Guided_Bomb)
+        GBU_16___1000lb_Laser_Guided_Bomb = (
+            5,
+            Weapons.GBU_16___1000lb_Laser_Guided_Bomb,
+        )
         CBU_97___10_x_SFW_Cluster_Bomb = (5, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (5, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos)
-        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (5, Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (5, Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE)
-    
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (
+            5,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos,
+        )
+        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
+            5,
+            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        )
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
+            5,
+            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+        )
+
     class Pylon6:
         White_Smoke_ = (6, Weapons.White_Smoke_)
         Red_Smoke_ = (6, Weapons.Red_Smoke_)
@@ -1232,10 +1290,18 @@ class A_29B(PlaneType):
         Orange_Smoke_ = (6, Weapons.Orange_Smoke_)
         Yellow_Smoke_ = (6, Weapons.Yellow_Smoke_)
 
-
-
     pylons = {1, 2, 3, 4, 5, 6}
 
-    tasks = [task.CAP, task.Escort, task.FighterSweep, task.GroundAttack, task.PinpointStrike, task.CAS, task.AFAC, task.RunwayAttack, task.AntishipStrike, task.Intercept]
+    tasks = [
+        task.CAP,
+        task.Escort,
+        task.FighterSweep,
+        task.GroundAttack,
+        task.PinpointStrike,
+        task.CAS,
+        task.AFAC,
+        task.RunwayAttack,
+        task.AntishipStrike,
+        task.Intercept,
+    ]
     task_default = task.CAS
-
