@@ -8,7 +8,7 @@ from dcs.weapons_data import Weapons
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
-class a29bWeapons:
+class a_29bWeapons:
     White_Smoke_ = {
         "clsid": "{SMOKE-WHITE-A29B}",
         "name": "White Smoke",
@@ -46,7 +46,7 @@ class a29bWeapons:
     }
 
 
-inject_weapons(a29bWeapons)
+inject_weapons(a_29bWeapons)
 
 
 class A_29B(PlaneType):
@@ -1160,10 +1160,10 @@ class A_29B(PlaneType):
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (1, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         M117___750lb_GP_Bomb_LD = (1, Weapons.M117___750lb_GP_Bomb_LD)
         GBU_12___500lb_Laser_Guided_Bomb = (1, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
-        GBU_16___1000lb_Laser_Guided_Bomb = {
+        GBU_16___1000lb_Laser_Guided_Bomb = (
             1,
             Weapons.GBU_16___1000lb_Laser_Guided_Bomb,
-        }
+        )
         CBU_97___10_x_SFW_Cluster_Bomb = (1, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (
             1,
@@ -1194,14 +1194,14 @@ class A_29B(PlaneType):
             Weapons.GBU_16___1000lb_Laser_Guided_Bomb,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (2, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = {
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos = (
             2,
             Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos,
-        }
-        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = {
+        )
+        LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             2,
             Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
-        }
+        )
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             2,
             Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
