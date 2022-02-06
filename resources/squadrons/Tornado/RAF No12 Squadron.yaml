@@ -1,6 +1,7 @@
 ---
 name: No. 12 Squadron
 nickname: Shiny Twelve
+female_pilot_ratio: 6
 country: UK
 role: Strike Fighter
 aircraft: Tornado GR4

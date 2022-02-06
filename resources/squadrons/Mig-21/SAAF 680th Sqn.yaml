@@ -1,6 +1,7 @@
 ---
 name: 680th Squadron
 nickname: 680th
+female_pilot_ratio: 0
 country: Syria
 role: Air Superiority Fighter
 aircraft: MiG-21bis Fishbed-N

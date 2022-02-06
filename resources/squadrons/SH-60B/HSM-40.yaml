@@ -1,6 +1,7 @@
 ---
 name: HSM-40
 nickname: Airwolves
+female_pilot_ratio: 0
 country: USA
 role: Transport/Anti-Ship
 aircraft: SH-60B Seahawk

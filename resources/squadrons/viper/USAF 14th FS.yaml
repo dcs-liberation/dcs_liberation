@@ -1,6 +1,7 @@
 ---
 name: 14th FS
 nickname: Samurais
+female_pilot_ratio: 6
 country: USA
 role: Strike Fighter
 aircraft: F-16CM Fighting Falcon (Block 50)

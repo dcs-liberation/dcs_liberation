@@ -1,6 +1,7 @@
 ---
 name: 976th Squadron
 nickname: 976th
+female_pilot_ratio: 6
 country: Syria
 role: Anti-Tank Helicopter
 aircraft: SA 342L Gazelle

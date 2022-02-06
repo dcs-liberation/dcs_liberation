@@ -1,6 +1,7 @@
 ---
 name: VF-142
 nickname: Ghostriders
+female_pilot_ratio: 7
 country: USA
 role: Strike Fighter
 aircraft: F-14B Tomcat

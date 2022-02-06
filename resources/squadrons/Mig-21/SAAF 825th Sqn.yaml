@@ -1,6 +1,7 @@
 ---
 name: 825th Squadron
 nickname: 825th
+female_pilot_ratio: 0
 country: Syria
 role: Air Superiority Fighter
 aircraft: MiG-21bis Fishbed-N
