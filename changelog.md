@@ -17,6 +17,7 @@ Saves from 5.1.0 are compatible with 5.2.0
 * **[Mission Generation]** Fixed incorrect SA-5 and NASAMS threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
 * **[Mission Generation]** Fixed "Max Threat Range" error
 * **[Mission Generation]** Fix unculled zones not updating when needed
+* **[Mission Planner]** Now allows squadron transfers to control points where the number of free slots matches exactly the expected size of the transferring squadron next turn.
 * **[Data]** Removed Fw 190 A-8 and D-9 from Germany 1940 and 1942 faction list for historical accuracy.
 * **[Data]** Updated Loadouts for Tornado GR4, F-15E and F-16C
 * **[Data]** Corrected some unit data
