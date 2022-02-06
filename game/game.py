@@ -6,7 +6,7 @@ import math
 from collections.abc import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List, TYPE_CHECKING, Type, Union, cast
+from typing import Any, List, TYPE_CHECKING, Type, TypeVar, Union, cast
 
 from dcs.countries import Switzerland, USAFAggressors, UnitedNationsPeacekeepers
 from dcs.country import Country
@@ -17,6 +17,7 @@ from faker import Faker
 
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
+from game.utils import Distance
 from gen import naming
 from gen.flights.closestairfields import ObjectiveDistanceCache
 from gen.ground_forces.ai_ground_planner import GroundPlanner
@@ -30,13 +31,15 @@ from .profiling import logged_duration
 from .settings import Settings
 from .theater import ConflictTheater
 from .theater.bullseye import Bullseye
+from .theater.theatergroundobject import (
+    EwrGroundObject,
+    SamGroundObject,
+    TheaterGroundObject,
+)
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .weather import Conditions, TimeOfDay
 
 if TYPE_CHECKING:
-    from game.missiongenerator.frontlineconflictdescription import (
-        FrontLineConflictDescription,
-    )
     from .ato.airtaaskingorder import AirTaskingOrder
     from .navmesh import NavMesh
     from .squadrons import AirWing
@@ -492,6 +495,30 @@ class Game:
             if z.distance_to_point(pos) < self.settings.perf_culling_distance * 1000:
                 return False
         return True
+
+    def iads_considerate_culling(self, tgo: TheaterGroundObject[Any]) -> bool:
+        if not self.settings.perf_do_not_cull_threatening_iads:
+            return self.position_culled(tgo.position)
+        else:
+            if self.settings.perf_culling:
+                if isinstance(tgo, EwrGroundObject):
+                    max_detection_range = tgo.max_detection_range().meters
+                    for z in self.__culling_zones:
+                        seperation = z.distance_to_point(tgo.position)
+                        # Don't cull EWR if in detection range.
+                        if seperation < max_detection_range:
+                            return False
+                if isinstance(tgo, SamGroundObject):
+                    max_threat_range = tgo.max_threat_range().meters
+                    for z in self.__culling_zones:
+                        seperation = z.distance_to_point(tgo.position)
+                        # Create a 12nm buffer around nearby SAMs.
+                        respect_bubble = (
+                            max_threat_range + Distance.from_nautical_miles(12).meters
+                        )
+                        if seperation < respect_bubble:
+                            return False
+            return self.position_culled(tgo.position)
 
     def get_culling_zones(self) -> list[Point]:
         """
