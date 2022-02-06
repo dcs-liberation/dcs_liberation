@@ -42,8 +42,6 @@ class a29bWeapons:
     A_29B_TANK = {
         "clsid": "{{A-29B TANK}}",
         "name": "A-29B TANK)",
-        "clsid": "{A-29B TANK}",
-        "name": "A-29B TANK",
         "weight": 271.0,
     }
 
