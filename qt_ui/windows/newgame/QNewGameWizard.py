@@ -584,41 +584,25 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         )
         modHelpText.setAlignment(Qt.AlignCenter)
 
-        modHelpText.setAlignment(Qt.AlignCenter)
-
         modLayout = QtWidgets.QGridLayout()
-        modLayout_row = 1
-        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), modLayout_row, 0)
-        modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
-        modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), modLayout_row, 0)
-        modLayout.addWidget(f22_raptor, modLayout_row, 1)
-        modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter"), modLayout_row, 0)
-        modLayout.addWidget(f104_starfighter, modLayout_row, 1)
-        modLayout_row += 1
-        modLayout.addWidget(
-            QtWidgets.QLabel("C-130J-30 Super Hercules"), modLayout_row, 0
-        )
-        modLayout.addWidget(hercules, modLayout_row, 1)
-        modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("A-29b Super Tucano"), modLayout_row, 0)
-        modLayout.addWidget(a29b, modLayout_row, 1)
-        modLayout_row += 1
-        # Section break here for readability
-        modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
-        modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), modLayout_row, 0)
-        modLayout.addWidget(jas39_gripen, modLayout_row, 1)
-        modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), modLayout_row, 0)
-        modLayout.addWidget(su57_felon, modLayout_row, 1)
-        modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), modLayout_row, 0)
-        modLayout.addWidget(frenchpack, modLayout_row, 1)
-        modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), modLayout_row, 0)
-        modLayout.addWidget(high_digit_sams, modLayout_row, 1)
+        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), 1, 0)
+        modLayout.addWidget(a4_skyhawk, 1, 1)
+        modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), 2, 0)
+        modLayout.addWidget(f22_raptor, 2, 1)
+        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter"), 3, 0)
+        modLayout.addWidget(f104_starfighter, 3, 1)
+        modLayout.addWidget(QtWidgets.QLabel("C-130J-30 Super Hercules"), 4, 0)
+        modLayout.addWidget(hercules, 4, 1)
+        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), 5, 0)
+        modLayout.addWidget(jas39_gripen, 5, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), 6, 0)
+        modLayout.addWidget(su57_felon, 6, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), 7, 0)
+        modLayout.addWidget(frenchpack, 7, 1)
+        modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 8, 0)
+        modLayout.addWidget(high_digit_sams, 8, 1)
+        modLayout.addWidget(QtWidgets.QLabel("a29b"), 9, 0)
+        modLayout.addWidget(a29b, 9, 1)
         modSettingsGroup.setLayout(modLayout)
 
         mlayout = QVBoxLayout()
