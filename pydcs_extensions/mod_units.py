@@ -1,4 +1,5 @@
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.a29b.a29b import A_29B
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
@@ -9,6 +10,7 @@ import pydcs_extensions.frenchpack.frenchpack as frenchpack
 
 MODDED_AIRPLANES = [
     A_4E_C,
+    A_29B,
     Su_57,
     F_22A,
     VSN_F104G,
