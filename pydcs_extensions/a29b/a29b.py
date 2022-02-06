@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, 
+from typing import Dict, Any
 
 from dcs import task
 from dcs.planes import PlaneType
