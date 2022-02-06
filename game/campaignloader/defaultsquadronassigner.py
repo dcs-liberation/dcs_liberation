@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import logging
 from typing import Optional, TYPE_CHECKING
 
@@ -48,24 +49,41 @@ class DefaultSquadronAssigner:
     def find_squadron_for(
         self, config: SquadronConfig, control_point: ControlPoint
     ) -> Optional[SquadronDef]:
+        squadron_def = None
         for preferred_aircraft in config.aircraft:
             squadron_def = self.find_preferred_squadron(
                 preferred_aircraft, config.primary, control_point
             )
             if squadron_def is not None:
-                return squadron_def
+                break
 
         # If we didn't find any of the preferred types we should use any squadron
         # compatible with the primary task.
-        squadron_def = self.find_squadron_for_task(config.primary, control_point)
-        if squadron_def is not None:
-            return squadron_def
+        if squadron_def is None:
+            squadron_def = self.find_squadron_for_task(config.primary, control_point)
 
         # If we can't find any squadron matching the requirement, we should
         # create one.
-        return self.air_wing.squadron_def_generator.generate_for_task(
-            config.primary, control_point
-        )
+        if squadron_def is None:
+            squadron_def = self.air_wing.squadron_def_generator.generate_for_task(
+                config.primary, control_point
+            )
+
+        # Override squadron def with squadron config parameters from campaign file, if defined
+        if squadron_def is not None:
+
+            overrides = {}
+            if config.name is not None:
+                overrides["name"] = config.name
+            if config.nickname is not None:
+                overrides["nickname"] = config.nickname
+            if config.female_pilot_ratio is not None:
+                overrides["female_pilot_ratio"] = config.female_pilot_ratio
+
+            squadron_copy = dataclasses.replace(squadron_def, **overrides)
+            return squadron_copy
+        else:
+            return None
 
     def find_preferred_squadron(
         self, preferred_aircraft: str, task: FlightType, control_point: ControlPoint
