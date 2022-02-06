@@ -1,9 +1,9 @@
 description: 
- The Embraer EMB 314 Super Tucano (English Super Toucan), 
+ The Embraer EMB 314 Super Tucano English Super Toucan
  also named ALX or A-29, is a Brazilian turboprop light attack aircraft designed 
  and built by Embraer as a development of the Embraer EMB 312 Tucano.
  The A-29 Super Tucano carries a wide variety of weapons, including precision-guided 
- munitions, and was designed to be a low-cost system operated in low-threat environments.[2]
+ munitions, and was designed to be a low-cost system operated in low-threat environments
  In addition to its manufacture in Brazil, Embraer has set up a production line in the United States 
  in conjunction with Sierra Nevada Corporation for the manufacture of A-29s to export customers. 
 introduced: 2003
@@ -12,4 +12,4 @@ origin: Brazilian
 price: 7
 role:  Attack/Light Fighter Interceptor
 variants:
-  a29b: {}
+  A-29B Super Tucano: {}
