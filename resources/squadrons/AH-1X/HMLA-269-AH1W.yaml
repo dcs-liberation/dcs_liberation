@@ -1,7 +1,7 @@
 ---
 name: HMLA-269 (AH-1W)
 nickname: Gunrunners
-female_pilot_ratio: 0
+female_pilot_percentage: 0
 country: USA
 role: Attack
 aircraft: AH-1W SuperCobra

@@ -1,7 +1,7 @@
 ---
 name: 201th Squadron
 nickname: The One
-female_pilot_ratio: 0
+female_pilot_percentage: 0
 country: Israel
 role: Air Superiority Fighter
 aircraft: F-4E Phantom II

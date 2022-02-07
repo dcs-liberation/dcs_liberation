@@ -1,7 +1,7 @@
 ---
 name: 110th Squadron
 nickname: Knights of the North
-female_pilot_ratio: 6
+female_pilot_percentage: 6
 country: Israel
 role: Strike Fighter
 aircraft: F-16CM Fighting Falcon (Block 50)

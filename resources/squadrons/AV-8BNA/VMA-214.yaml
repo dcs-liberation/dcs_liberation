@@ -1,7 +1,7 @@
 ---
 name: VMA-214
 nickname: Black Sheep
-female_pilot_ratio: 0
+female_pilot_percentage: 0
 country: USA
 role: V/STOL Attack
 aircraft: AV-8B Harrier II Night Attack

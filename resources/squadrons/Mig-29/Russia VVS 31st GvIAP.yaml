@@ -1,7 +1,7 @@
 ---
 name: 31st Guards Aviation Regiment
 nickname: 31st GvIAP
-female_pilot_ratio: 0
+female_pilot_percentage: 0
 country: Russia
 role: Air Superiority Fighter
 aircraft: MiG-29S Fulcrum-C

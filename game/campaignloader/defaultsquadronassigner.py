@@ -77,8 +77,8 @@ class DefaultSquadronAssigner:
                 overrides["name"] = config.name
             if config.nickname is not None:
                 overrides["nickname"] = config.nickname
-            if config.female_pilot_ratio is not None:
-                overrides["female_pilot_ratio"] = config.female_pilot_ratio
+            if config.female_pilot_percentage is not None:
+                overrides["female_pilot_percentage"] = config.female_pilot_percentage
 
             squadron_copy = dataclasses.replace(squadron_def, **overrides)
             return squadron_copy

@@ -1,7 +1,7 @@
 ---
 name: HMLA-169 (UH-1H)
 nickname: Vipers
-female_pilot_ratio: 0
+female_pilot_percentage: 0
 country: USA
 role: Transport/Light Attack
 aircraft: UH-1H Iroquois

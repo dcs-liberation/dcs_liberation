@@ -126,6 +126,6 @@ VERSION = _build_version_string()
 #:
 #: Version 9.2
 #: * Squadrons defined in campaign files can optionally setup squadrons' name,
-#:   nickname and/or generated female pilot name ratio
+#:   nickname and/or generated female pilot name percentage
 #:
 CAMPAIGN_FORMAT_VERSION = (9, 2)

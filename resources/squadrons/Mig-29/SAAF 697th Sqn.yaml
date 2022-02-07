@@ -1,7 +1,7 @@
 ---
 name: 697th Squadron
 nickname: 697th
-female_pilot_ratio: 0
+female_pilot_percentage: 0
 country: Syria
 role: Air Superiority Fighter
 aircraft: MiG-29S Fulcrum-C

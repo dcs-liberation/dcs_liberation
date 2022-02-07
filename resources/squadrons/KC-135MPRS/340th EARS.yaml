@@ -1,7 +1,7 @@
 ---
 name: 340th Expeditionary Air Refueling Squadron
 nickname: Pythons
-female_pilot_ratio: 6
+female_pilot_percentage: 6
 country: USA
 role: Air-to-Air Refueling
 aircraft: KC-135 Stratotanker MPRS

@@ -33,7 +33,7 @@ class Squadron:
     livery: Optional[str]
     mission_types: tuple[FlightType, ...]
     operating_bases: OperatingBases
-    female_pilot_ratio: int
+    female_pilot_percentage: int
 
     #: The pool of pilots that have not yet been assigned to the squadron. This only
     #: happens when a preset squadron defines more preset pilots than the squadron limit
@@ -162,7 +162,7 @@ class Squadron:
         self.pilot_pool = self.pilot_pool[count:]
         count -= len(new_pilots)
         for _ in range(count):
-            if random.randint(1, 100) > self.female_pilot_ratio:
+            if random.randint(1, 100) > self.female_pilot_percentage:
                 new_pilots.append(Pilot(self.faker.name_male()))
             else:
                 new_pilots.append(Pilot(self.faker.name_female()))
@@ -434,7 +434,7 @@ class Squadron:
             squadron_def.livery,
             squadron_def.mission_types,
             squadron_def.operating_bases,
-            squadron_def.female_pilot_ratio,
+            squadron_def.female_pilot_percentage,
             squadron_def.pilot_pool,
             coalition,
             game.settings,

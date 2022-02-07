@@ -20,7 +20,7 @@ class SquadronConfig:
 
     name: Optional[str]
     nickname: Optional[str]
-    female_pilot_ratio: Optional[int]
+    female_pilot_percentage: Optional[int]
 
     @property
     def auto_assignable(self) -> set[FlightType]:
@@ -42,7 +42,7 @@ class SquadronConfig:
             data.get("aircraft", []),
             data.get("name", None),
             data.get("nickname", None),
-            data.get("female_pilot_ratio", None),
+            data.get("female_pilot_percentage", None),
         )
 
     @staticmethod

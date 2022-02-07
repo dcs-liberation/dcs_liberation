@@ -50,7 +50,7 @@ class SquadronDefGenerator:
             livery=None,
             mission_types=tuple(tasks_for_aircraft(aircraft)),
             operating_bases=OperatingBases.default_for_aircraft(aircraft),
-            female_pilot_ratio=6,
+            female_pilot_percentage=6,
             pilot_pool=[],
         )
 
