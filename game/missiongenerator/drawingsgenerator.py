@@ -105,23 +105,7 @@ class DrawingsGenerator:
             )
             shape.name = front_line.name
 
-    def generate_liberation_version_informations(self) -> None:
-        """
-        Put Liberation version info on the map
-        """
-        text = (
-            "Generated on "
-            + datetime.now().strftime("%Y-%m-%d %H:%M")
-            + " by DCS Liberation ["
-            + VERSION
-            + "]"
-        )
-        self.player_layer.add_text_box(
-            Point(0, 0), text, color=Rgba(0, 0, 0, 255), fill=Rgba(0, 0, 0, 60)
-        )
-
     def generate(self) -> None:
-        self.generate_liberation_version_informations()
         self.generate_frontlines_drawing()
         self.generate_routes()
         self.generate_cps_markers()
