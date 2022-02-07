@@ -30,7 +30,12 @@ class DefaultSquadronAssigner:
             self.coalition.player
         ):
             for squadron_config in self.config.by_location[control_point]:
-                squadron_def = self.find_squadron_for(squadron_config, control_point)
+
+                squadron_def = self.override_squadron_defaults(
+                    self.find_squadron_for(squadron_config, control_point),
+                    squadron_config,
+                )
+
                 if squadron_def is None:
                     logging.info(
                         f"{self.coalition.faction.name} has no aircraft compatible "
@@ -49,41 +54,25 @@ class DefaultSquadronAssigner:
     def find_squadron_for(
         self, config: SquadronConfig, control_point: ControlPoint
     ) -> Optional[SquadronDef]:
-        squadron_def = None
+
         for preferred_aircraft in config.aircraft:
             squadron_def = self.find_preferred_squadron(
                 preferred_aircraft, config.primary, control_point
             )
             if squadron_def is not None:
-                break
+                return squadron_def
 
         # If we didn't find any of the preferred types we should use any squadron
         # compatible with the primary task.
-        if squadron_def is None:
-            squadron_def = self.find_squadron_for_task(config.primary, control_point)
+        squadron_def = self.find_squadron_for_task(config.primary, control_point)
+        if squadron_def is not None:
+            return squadron_def
 
         # If we can't find any squadron matching the requirement, we should
         # create one.
-        if squadron_def is None:
-            squadron_def = self.air_wing.squadron_def_generator.generate_for_task(
-                config.primary, control_point
-            )
-
-        # Override squadron def with squadron config parameters from campaign file, if defined
-        if squadron_def is not None:
-
-            overrides: Dict[str, Union[str, int]] = {}
-            if config.name is not None:
-                overrides["name"] = config.name
-            if config.nickname is not None:
-                overrides["nickname"] = config.nickname
-            if config.female_pilot_percentage is not None:
-                overrides["female_pilot_percentage"] = config.female_pilot_percentage
-
-            squadron_copy = dataclasses.replace(squadron_def, **overrides)
-            return squadron_copy
-        else:
-            return None
+        return self.air_wing.squadron_def_generator.generate_for_task(
+            config.primary, control_point
+        )
 
     def find_preferred_squadron(
         self, preferred_aircraft: str, task: FlightType, control_point: ControlPoint
@@ -160,3 +149,21 @@ class DefaultSquadronAssigner:
                 ):
                     return squadron
         return None
+
+    @staticmethod
+    def override_squadron_defaults(
+        squadron_def: Optional[SquadronDef], config: SquadronConfig
+    ) -> Optional[SquadronDef]:
+
+        if squadron_def is None:
+            return None
+
+        overrides: Dict[str, Union[str, int]] = {}
+        if config.name is not None:
+            overrides["name"] = config.name
+        if config.nickname is not None:
+            overrides["nickname"] = config.nickname
+        if config.female_pilot_percentage is not None:
+            overrides["female_pilot_percentage"] = config.female_pilot_percentage
+
+        return dataclasses.replace(squadron_def, **overrides)
