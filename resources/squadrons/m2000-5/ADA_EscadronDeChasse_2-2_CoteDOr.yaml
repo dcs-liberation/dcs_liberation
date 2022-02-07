@@ -1,6 +1,7 @@
 ---
 name: Escadron de chasse 2/2
 nickname: Côte d'Or
+female_pilot_percentage: 6
 country: France
 role: Fighter
 aircraft: Mirage 2000-5

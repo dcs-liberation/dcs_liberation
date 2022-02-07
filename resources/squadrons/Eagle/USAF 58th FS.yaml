@@ -1,6 +1,7 @@
 ---
 name: 58th FS
 nickname: Gorillas
+female_pilot_percentage: 6
 country: USA
 role: Air Superiority Fighter
 aircraft: F-15C Eagle

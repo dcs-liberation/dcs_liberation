@@ -1,6 +1,7 @@
 ---
 name: IRIAF 32nd TFW
 nickname: 32nd TFW
+female_pilot_percentage: 0
 country: Iran
 role: Air Superiority Fighter
 aircraft: F-4E Phantom II

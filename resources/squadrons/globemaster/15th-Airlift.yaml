@@ -1,6 +1,7 @@
 ---
 name: 15th Airlift Squadron
 nickname: Global Eagles
+female_pilot_percentage: 6
 country: USA
 role: Airlift
 aircraft: C-17A

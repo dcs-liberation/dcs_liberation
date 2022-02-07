@@ -1,6 +1,7 @@
 ---
 name: RAF, No. 21 Squadron
 nickname: No. 21
+female_pilot_percentage: 0
 country: UK
 role: Fighter Bomber
 aircraft: MosquitoFBMkVI

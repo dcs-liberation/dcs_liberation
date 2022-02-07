@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING, Union, Optional
 
 from game.ato.flighttype import FlightType
 from game.theater.controlpoint import ControlPoint
@@ -17,6 +17,10 @@ class SquadronConfig:
     primary: FlightType
     secondary: list[FlightType]
     aircraft: list[str]
+
+    name: Optional[str]
+    nickname: Optional[str]
+    female_pilot_percentage: Optional[int]
 
     @property
     def auto_assignable(self) -> set[FlightType]:
@@ -33,7 +37,12 @@ class SquadronConfig:
             secondary = [FlightType(s) for s in secondary_raw]
 
         return SquadronConfig(
-            FlightType(data["primary"]), secondary, data.get("aircraft", [])
+            FlightType(data["primary"]),
+            secondary,
+            data.get("aircraft", []),
+            data.get("name", None),
+            data.get("nickname", None),
+            data.get("female_pilot_percentage", None),
         )
 
     @staticmethod

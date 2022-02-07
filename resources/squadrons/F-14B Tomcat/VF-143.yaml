@@ -1,6 +1,7 @@
 ---
 name: VF-143
 nickname: Pukin' Dogs
+female_pilot_percentage: 7
 country: USA
 role: Strike Fighter
 aircraft: F-14B Tomcat

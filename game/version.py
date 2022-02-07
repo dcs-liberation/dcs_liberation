@@ -123,4 +123,9 @@ VERSION = _build_version_string()
 #: Version 9.1
 #: * Campaign files can optionally define a start date with
 #:   `recommended_start_date: YYYY-MM-DD`.
-CAMPAIGN_FORMAT_VERSION = (9, 1)
+#:
+#: Version 9.2
+#: * Squadrons defined in campaign files can optionally setup squadrons' name,
+#:   nickname and/or generated female pilot name percentage
+#:
+CAMPAIGN_FORMAT_VERSION = (9, 2)

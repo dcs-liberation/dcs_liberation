@@ -1,6 +1,7 @@
 ---
 name: 773rd Aviation Regiment
 nickname: 773rd IAP
+female_pilot_percentage: 0
 country: Russia
 role: Air Superiority Fighter
 aircraft: MiG-29S Fulcrum-C

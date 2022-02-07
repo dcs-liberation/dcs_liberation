@@ -1,6 +1,7 @@
 ---
 name: 390th FS
 nickname: Wild Boars
+female_pilot_percentage: 6
 country: USA
 role: Air Superiority Fighter
 aircraft: F-15C Eagle

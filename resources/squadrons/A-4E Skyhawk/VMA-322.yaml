@@ -1,6 +1,7 @@
 ---
 name: VMA-322
 nickname: Fighting Gamecocks
+female_pilot_percentage: 0
 country: USA
 role: Carrier-based Attack/Light Fighter
 aircraft: A-4E Skyhawk

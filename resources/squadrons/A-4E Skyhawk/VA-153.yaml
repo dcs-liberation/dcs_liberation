@@ -1,6 +1,7 @@
 ---
 name: VA-153
 nickname: Blue Tail Flies
+female_pilot_percentage: 0
 country: USA
 role: Carrier-based Attack/Light Fighter
 aircraft: A-4E Skyhawk

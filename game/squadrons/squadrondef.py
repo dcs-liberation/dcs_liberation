@@ -27,6 +27,7 @@ class SquadronDef:
     livery: Optional[str]
     mission_types: tuple[FlightType, ...]
     operating_bases: OperatingBases
+    female_pilot_percentage: int
     pilot_pool: list[Pilot]
     claimed: bool = False
 
@@ -75,6 +76,7 @@ class SquadronDef:
 
         pilots = [Pilot(n, player=False) for n in data.get("pilots", [])]
         pilots.extend([Pilot(n, player=True) for n in data.get("players", [])])
+        female_pilot_percentage = data.get("female_pilot_percentage", 6)
 
         mission_types = [FlightType.from_name(n) for n in data["mission_types"]]
         tasks = tasks_for_aircraft(unit_type)
@@ -95,5 +97,6 @@ class SquadronDef:
             livery=data.get("livery"),
             mission_types=tuple(mission_types),
             operating_bases=OperatingBases.from_yaml(unit_type, data.get("bases", {})),
+            female_pilot_percentage=female_pilot_percentage,
             pilot_pool=pilots,
         )

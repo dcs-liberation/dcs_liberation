@@ -1,6 +1,7 @@
 ---
 name: 493rd FS
 nickname: Grim Reapers
+female_pilot_percentage: 6
 country: USA
 role: Air Superiority Fighter
 aircraft: F-15C Eagle

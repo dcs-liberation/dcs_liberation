@@ -1,6 +1,7 @@
 ---
 name: 678th Squadron
 nickname: 678th
+female_pilot_percentage: 0
 country: Syria
 role: Air Superiority Fighter
 aircraft: MiG-23MLD Flogger-K

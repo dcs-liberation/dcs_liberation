@@ -1,6 +1,7 @@
 ---
 name: VFA-192
 nickname: Golden Dragons
+female_pilot_percentage: 7
 country: USA
 role: Strike Fighter
 aircraft: F/A-18C Hornet (Lot 20)

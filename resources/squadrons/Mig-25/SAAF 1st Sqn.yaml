@@ -1,6 +1,7 @@
 ---
 name: 1st Squadron
 nickname: 1st
+female_pilot_percentage: 0
 country: Syria
 role: Air Superiority Fighter
 aircraft: MiG-25PD Foxbat-E

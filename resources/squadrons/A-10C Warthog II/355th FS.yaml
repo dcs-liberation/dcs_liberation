@@ -1,6 +1,7 @@
 ---
 name: 355th FS
 nickname: Fightin' Falcons
+female_pilot_percentage: 6
 country: USA
 role: Close Air Support
 aircraft: A-10C Thunderbolt II (Suite 7)

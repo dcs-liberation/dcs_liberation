@@ -1,6 +1,7 @@
 ---
 name: 172nd FS
-nickname: 
+nickname:
+female_pilot_percentage: 0
 country: USA
 role: Close Air Support
 aircraft: A-10C Thunderbolt II (Suite 3)

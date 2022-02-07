@@ -1,6 +1,7 @@
 ---
 name: VMFA-122
 nickname: Werewolves
+female_pilot_percentage: 7
 country: USA
 role: Strike Fighter
 aircraft: F/A-18C Hornet (Lot 20)

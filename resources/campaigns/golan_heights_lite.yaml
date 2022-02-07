@@ -40,10 +40,14 @@ squadrons:
   Golan South:
     - primary: CAS
       secondary: air-to-ground
+      nickname: Golan Heights Heroes
+      female_pilot_percentage: 15
       aircraft:
         - AH-1W SuperCobra
     - primary: CAS
       secondary: air-to-ground
+      nickname: Defenders of Golan
+      female_pilot_percentage: 25
       aircraft:
         - AH-64D Apache Longbow
     - primary: Transport

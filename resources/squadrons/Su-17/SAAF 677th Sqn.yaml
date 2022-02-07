@@ -1,6 +1,7 @@
 ---
 name: 677th Squadron
 nickname: 677th
+female_pilot_percentage: 0
 country: Syria
 role: Bomber
 aircraft: Su-17M4 Fitter-K

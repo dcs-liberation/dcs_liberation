@@ -1,6 +1,7 @@
 ---
 name: 22nd FS
 nickname: Stingers
+female_pilot_percentage: 6
 country: USA
 role: Strike Fighter
 aircraft: F-16CM Fighting Falcon (Block 50)

@@ -1,6 +1,7 @@
 ---
 name: 152nd FS
 nickname: Las Vaqueros
+female_pilot_percentage: 6
 country: USA
 role: Strike Fighter
 aircraft: F-16CM Fighting Falcon (Block 50)

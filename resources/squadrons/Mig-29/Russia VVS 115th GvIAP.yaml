@@ -1,6 +1,7 @@
 ---
 name: 115th Guards Aviation Regiment
 nickname: 115th GvIAP
+female_pilot_percentage: 0
 country: Russia
 role: Air Superiority Fighter
 aircraft: MiG-29S Fulcrum-C

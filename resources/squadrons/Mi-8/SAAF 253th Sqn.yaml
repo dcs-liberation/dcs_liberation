@@ -1,6 +1,7 @@
 ---
 name: 253th Squadron
 nickname: 253th
+female_pilot_percentage: 0
 country: Syria
 role: Transport Helicopter
 aircraft: Mi-8MTV2 Hip

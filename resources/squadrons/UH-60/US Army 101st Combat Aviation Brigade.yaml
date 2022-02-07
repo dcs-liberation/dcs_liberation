@@ -1,6 +1,7 @@
 ---
 name: 101st Combat Aviation Brigade
 nickname: Bearcats
+female_pilot_percentage: 0
 country: USA
 role: Transport/Light Attack
 aircraft: UH-60A

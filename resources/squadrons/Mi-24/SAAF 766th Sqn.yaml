@@ -1,6 +1,7 @@
 ---
 name: 766th Squadron
 nickname: 766th
+female_pilot_percentage: 0
 country: Syria
 role: Attack Helicopter
 aircraft: Mi-24V Hind-E
