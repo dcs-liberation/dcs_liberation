@@ -1,0 +1,16 @@
+description: "The Eurofighter Typhoon is a multinational twin-engine, canard delta
+ wing, multirole fighter. The Eurofighter Typhoon is a highly agile aircraft, designed
+ to be a supremely effective dogfighter in combat. Later production aircraft have been
+ increasingly better equipped to undertake air-to-surface strike missions and to be
+ compatible with an increasing number of different armaments and equipment, including
+ Storm Shadow, Brimstone and Marte ER missiles. The type has also taken primary
+ responsibility for air-defence duties for the majority of customer nations."
+introduced: 2003
+manufacturer: Eurofighter Jagdflugzeug GmbH
+origin: Germany/UK/Italy/Spain
+price: 28
+role: Omni-Role
+variants:
+  Eurofighter Typhoon: {}
+  Eurofighter Typhoon FGR4: {}
+  C.16 Typhoon: {}

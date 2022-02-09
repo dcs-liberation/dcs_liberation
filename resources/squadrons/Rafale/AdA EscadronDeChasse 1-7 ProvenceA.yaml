@@ -1,0 +1,18 @@
+---
+name: Escadron de chasse 1/7 det. A
+nickname: Provence
+country: France
+role: Strike Fighter
+aircraft: Rafale B
+livery: "02 RAFALE B MT DE MARSAN"
+mission_types:
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

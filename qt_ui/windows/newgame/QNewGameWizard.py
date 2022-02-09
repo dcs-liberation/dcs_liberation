@@ -104,10 +104,12 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         mod_settings = ModSettings(
             a4_skyhawk=self.field("a4_skyhawk"),
+            eurofighter=self.field("eurofighter"),
             f22_raptor=self.field("f22_raptor"),
             f104_starfighter=self.field("f104_starfighter"),
             hercules=self.field("hercules"),
             jas39_gripen=self.field("jas39_gripen"),
+            rafale=self.field("rafale"),
             su57_felon=self.field("su57_felon"),
             frenchpack=self.field("frenchpack"),
             high_digit_sams=self.field("high_digit_sams"),
@@ -561,6 +563,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")
         a4_skyhawk = QtWidgets.QCheckBox()
         self.registerField("a4_skyhawk", a4_skyhawk)
+        eurofighter = QtWidgets.QCheckBox()
+        self.registerField("eurofighter", eurofighter)
         hercules = QtWidgets.QCheckBox()
         self.registerField("hercules", hercules)
         f22_raptor = QtWidgets.QCheckBox()
@@ -569,6 +573,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("f104_starfighter", f104_starfighter)
         jas39_gripen = QtWidgets.QCheckBox()
         self.registerField("jas39_gripen", jas39_gripen)
+        rafale = QtWidgets.QCheckBox()
+        self.registerField("rafale", rafale)
         su57_felon = QtWidgets.QCheckBox()
         self.registerField("su57_felon", su57_felon)
         frenchpack = QtWidgets.QCheckBox()
@@ -598,6 +604,10 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(frenchpack, 7, 1)
         modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), 8, 0)
         modLayout.addWidget(high_digit_sams, 8, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Eurofighter Typhoon"), 9, 0)
+        modLayout.addWidget(eurofighter, 9, 1)
+        modLayout.addWidget(QtWidgets.QLabel("Rafale"), 10, 0)
+        modLayout.addWidget(rafale, 10, 1)
         modSettingsGroup.setLayout(modLayout)
 
         mlayout = QVBoxLayout()

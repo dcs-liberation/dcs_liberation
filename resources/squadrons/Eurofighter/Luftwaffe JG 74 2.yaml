@@ -1,0 +1,21 @@
+---
+name: Jagdgeschwader 74 2 Squadron
+nickname: Viva Zapata
+country: Germany
+role: Strike Fighter
+aircraft: Eurofighter Typhoon
+livery: Bundeswehr JG 74
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

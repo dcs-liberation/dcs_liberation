@@ -112,10 +112,12 @@ from dcs.unittype import FlyingType
 from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.eurofighter.eurofighter import Eurofighter
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
+from pydcs_extensions.rafale.rafale import Rafale_B, Rafale_C
 from pydcs_extensions.su57.su57 import Su_57
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
@@ -133,11 +135,13 @@ CAP_CAPABLE = [
     F_14B,
     F_14A_135_GR,
     F_14A,
+    Rafale_C,
     Su_33,
     J_11A,
     Su_30,
     Su_27,
     MiG_29S,
+    Eurofighter,
     F_16C_50,
     FA_18C_hornet,
     JF_17,
@@ -187,8 +191,10 @@ CAS_CAPABLE = [
     Su_25T,
     Su_25,
     F_15E,
+    Rafale_B,
     F_16C_50,
     FA_18C_hornet,
+    Eurofighter,
     Tornado_GR4,
     Tornado_IDS,
     JAS39Gripen_AG,
@@ -258,6 +264,8 @@ SEAD_CAPABLE = [
     F_16C_50,
     FA_18C_hornet,
     Tornado_IDS,
+    Eurofighter,
+    Rafale_B,
     Su_25T,
     Su_25TM,
     F_4E,
@@ -272,6 +280,7 @@ SEAD_CAPABLE = [
     Su_30,
     MiG_27K,
     Tornado_GR4,
+    Rafale_B,
 ]
 
 
@@ -280,6 +289,9 @@ DEAD_CAPABLE = [
     AJS37,
     F_14B,
     F_14A_135_GR,
+    F_15E,
+    Rafale_C,
+    Rafale_B,
     JAS39Gripen_AG,
     B_1B,
     B_52H,
@@ -318,6 +330,9 @@ STRIKE_CAPABLE = [
     Tornado_GR4,
     F_16C_50,
     FA_18C_hornet,
+    Eurofighter,
+    Rafale_B,
+    Rafale_C,
     AV8BNA,
     JF_17,
     F_16A,
@@ -375,6 +390,7 @@ ANTISHIP_CAPABLE = [
     Tu_22M3,
     H_6J,
     FA_18C_hornet,
+    Rafale_B,
     JAS39Gripen_AG,
     Su_24M,
     Su_17M4,
@@ -409,8 +425,11 @@ RUNWAY_ATTACK_CAPABLE = [
     H_6J,
     F_15E,
     AJS37,
+    Eurofighter,
     F_16C_50,
     FA_18C_hornet,
+    Rafale_B,
+    Rafale_C,
     AV8BNA,
     JF_17,
     F_16A,

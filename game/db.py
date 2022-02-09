@@ -43,18 +43,23 @@ import pydcs_extensions.highdigitsams.highdigitsams as highdigitsams
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.eurofighter.eurofighter import Eurofighter
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
+from pydcs_extensions.rafale.rafale import Rafale_B, Rafale_C
 from pydcs_extensions.su57.su57 import Su_57
 
 plane_map["A-4E-C"] = A_4E_C
+plane_map["Eurofighter"] = Eurofighter
 plane_map["F-22A"] = F_22A
 plane_map["Su-57"] = Su_57
 plane_map["Hercules"] = Hercules
 plane_map["JAS39Gripen"] = JAS39Gripen
 plane_map["JAS39Gripen_AG"] = JAS39Gripen_AG
+plane_map["Rafale_B"] = Rafale_B
+plane_map["Rafale_C"] = Rafale_C
 plane_map["VSN_F104G"] = VSN_F104G
 plane_map["VSN_F104S"] = VSN_F104S
 plane_map["VSN_F104S_AG"] = VSN_F104S_AG

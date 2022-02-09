@@ -1,0 +1,21 @@
+---
+name: No. 2 Squadron RAF
+nickname: Shiny Two
+country: UK
+role: Strike Fighter
+aircraft: Eurofighter Typhoon FGR4
+livery: RAF II Sqn
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

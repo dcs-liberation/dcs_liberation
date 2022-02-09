@@ -1,0 +1,21 @@
+---
+name: 142 Escuadron
+nickname:
+country: Spain
+role: Strike Fighter
+aircraft: C.16 Typhoon
+livery: Ala 14-04
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

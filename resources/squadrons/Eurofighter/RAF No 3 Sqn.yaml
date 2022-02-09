@@ -1,0 +1,21 @@
+---
+name: No. 3 Squadron RAF
+nickname: "Tertius primus erit"
+country: UK
+role: Strike Fighter
+aircraft: Eurofighter Typhoon FGR4
+livery: RAF 1435 Flt Falklands
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

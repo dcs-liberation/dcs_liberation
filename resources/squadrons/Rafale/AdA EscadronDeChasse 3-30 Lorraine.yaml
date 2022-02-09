@@ -1,0 +1,18 @@
+---
+name: Escadron de chasse 3/30
+nickname: Lorraine
+country: France
+role: Strike Fighter
+aircraft: Rafale C
+livery: "02 RAFALE C MT DE MARSAN"
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

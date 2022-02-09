@@ -1,0 +1,15 @@
+description: "The Dassault Rafale (literally meaning 'gust of wind' and 'burst of 
+  fire' in a more military sense) is a French twin-engine, canard delta wing,
+  multirole fighter aircraft designed and built by Dassault Aviation. 
+  Equipped with a wide range of weapons, the Rafale is intended to 
+  perform air supremacy, interdiction, aerial reconnaissance, ground 
+  support, in-depth strike, anti-ship strike and nuclear deterrence 
+  missions. The Rafale is referred to as an 'omnirole' aircraft by 
+  Dassault."
+introduced: 2001
+manufacturer: Dassault
+origin: France
+price: 26
+role: Strike Fighter
+variants:
+  Rafale B: {}

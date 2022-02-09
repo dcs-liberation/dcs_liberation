@@ -1,0 +1,21 @@
+---
+name: Jagdgeschwader 71 2 Squadron
+nickname: Richthofen
+country: Germany
+role: Strike Fighter
+aircraft: Eurofighter Typhoon
+livery: Bundeswehr JG 71
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
