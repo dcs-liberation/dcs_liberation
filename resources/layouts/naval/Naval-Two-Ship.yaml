@@ -1,0 +1,17 @@
+name: Naval Two Ship
+role: Naval
+generic: true
+tasks:
+  - Navy
+groups:
+  - name: Naval Two Ship
+    unit_count:
+      - 2
+    unit_classes:
+      - Frigate
+      - Destroyer
+      - Cruiser
+      - Boat
+      - Submarine
+      - LandingShip
+layout_file: resources/layouts/naval/naval.miz

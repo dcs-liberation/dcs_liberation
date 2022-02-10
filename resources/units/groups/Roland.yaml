@@ -1,0 +1,9 @@
+name: Roland
+role: AntiAir
+tasks:
+  - SHORAD
+units:
+  - SAM Roland EWR
+  - Roland 2 (Marder Chassis)
+layouts:
+  - Roland Site

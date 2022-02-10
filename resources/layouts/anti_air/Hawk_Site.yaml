@@ -1,0 +1,36 @@
+name: Hawk Site
+role: AntiAir
+tasks:
+  - MERAD
+groups:
+  - name: Hawk Site 0
+    group: 1
+    unit_count:
+      - 1
+    unit_types:
+      - Hawk sr
+  - name: Hawk Site 1
+    group: 1
+    unit_count:
+      - 1
+    unit_types:
+      - Hawk pcp
+  - name: Hawk Site 2
+    group: 1
+    unit_count:
+      - 1
+    unit_types:
+      - Hawk tr
+  - name: Hawk Site 3
+    group: 1
+    unit_count:
+      - 6
+    unit_types:
+      - Hawk ln
+  - name: Hawk Site 4
+    group: 2
+    unit_count:
+      - 1
+    unit_types:
+      - Vulcan
+layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

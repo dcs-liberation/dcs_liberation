@@ -3,28 +3,20 @@ from __future__ import annotations
 import itertools
 import logging
 from abc import ABC
-from collections.abc import Sequence
-from dataclasses import dataclass
-from enum import Enum
-from typing import Iterator, List, TYPE_CHECKING, Union, Optional, Any
+from typing import Iterator, List, TYPE_CHECKING
 
-from dcs.unittype import VehicleType, ShipType
+from dcs.unittype import VehicleType
 from dcs.vehicles import vehicle_map
-from dcs.ships import ship_map
 
 from dcs.mapping import Point
-from dcs.triggers import TriggerZone
+
 
 from game.dcs.helpers import unit_type_from_name
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
-from ..dcs.groundunittype import GroundUnitType
-from ..dcs.shipunittype import ShipUnitType
-from ..dcs.unittype import UnitType
-from ..point_with_heading import PointWithHeading
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
-    from gen.templates import UnitTemplate, GroupTemplate
+    from .theatergroup import TheaterUnit, TheaterGroup
     from .controlpoint import ControlPoint
     from ..ato.flighttype import FlightType
 
@@ -53,126 +45,6 @@ NAME_BY_CATEGORY = {
 }
 
 
-class SkynetRole(Enum):
-    #: A radar SAM that should be controlled by Skynet.
-    Sam = "Sam"
-
-    #: A radar SAM that should be controlled and used as an EWR by Skynet.
-    SamAsEwr = "SamAsEwr"
-
-    #: An air defense unit that should be used as point defense by Skynet.
-    PointDefense = "PD"
-
-    #: All other types of groups that might be present in a SAM TGO. This includes
-    #: SHORADS, AAA, supply trucks, etc. Anything that shouldn't be controlled by Skynet
-    #: should use this role.
-    NoSkynetBehavior = "NoSkynetBehavior"
-
-
-class AirDefenseRange(Enum):
-    AAA = ("AAA", SkynetRole.NoSkynetBehavior)
-    Short = ("short", SkynetRole.NoSkynetBehavior)
-    Medium = ("medium", SkynetRole.Sam)
-    Long = ("long", SkynetRole.SamAsEwr)
-
-    def __init__(self, description: str, default_role: SkynetRole) -> None:
-        self.range_name = description
-        self.default_role = default_role
-
-
-@dataclass
-class GroundUnit:
-    # Units can be everything.. Static, Vehicle, Ship.
-    id: int
-    name: str
-    type: str  # dcs.UnitType as string
-    position: PointWithHeading
-    ground_object: TheaterGroundObject
-    alive: bool = True
-    _unit_type: Optional[UnitType[Any]] = None
-
-    @staticmethod
-    def from_template(
-        id: int, unit_type: str, t: UnitTemplate, go: TheaterGroundObject
-    ) -> GroundUnit:
-        return GroundUnit(
-            id,
-            t.name,
-            unit_type,
-            PointWithHeading.from_point(t.position, Heading.from_degrees(t.heading)),
-            go,
-        )
-
-    @property
-    def unit_type(self) -> Optional[UnitType[Any]]:
-        if not self._unit_type:
-            try:
-                unit_type: Optional[UnitType[Any]] = None
-                dcs_type = db.unit_type_from_name(self.type)
-                if dcs_type and issubclass(dcs_type, VehicleType):
-                    unit_type = next(GroundUnitType.for_dcs_type(dcs_type))
-                elif dcs_type and issubclass(dcs_type, ShipType):
-                    unit_type = next(ShipUnitType.for_dcs_type(dcs_type))
-                self._unit_type = unit_type
-            except StopIteration:
-                logging.error(f"No UnitType for {self.type}")
-                pass
-        return self._unit_type
-
-    def kill(self) -> None:
-        self.alive = False
-
-    @property
-    def unit_name(self) -> str:
-        return f"{str(self.id).zfill(4)} | {self.name}"
-
-    @property
-    def display_name(self) -> str:
-        dead_label = " [DEAD]" if not self.alive else ""
-        unit_label = self.unit_type or self.type or self.name
-        return f"{str(self.id).zfill(4)} | {unit_label}{dead_label}"
-
-
-class SceneryGroundUnit(GroundUnit):
-    """Special GroundUnit for handling scenery ground objects"""
-
-    zone: TriggerZone
-
-
-@dataclass
-class GroundGroup:
-    id: int
-    name: str
-    position: PointWithHeading
-    units: list[GroundUnit]
-    ground_object: TheaterGroundObject
-    static_group: bool = False
-
-    @staticmethod
-    def from_template(
-        id: int,
-        g: GroupTemplate,
-        go: TheaterGroundObject,
-    ) -> GroundGroup:
-        tgo_group = GroundGroup(
-            id,
-            g.name,
-            PointWithHeading.from_point(go.position, go.heading),
-            g.generate_units(go),
-            go,
-        )
-        tgo_group.static_group = g.static
-        return tgo_group
-
-    @property
-    def group_name(self) -> str:
-        return f"{str(self.id).zfill(4)} | {self.name}"
-
-    @property
-    def alive_units(self) -> int:
-        return sum([unit.alive for unit in self.units])
-
-
 class TheaterGroundObject(MissionTarget):
     def __init__(
         self,
@@ -188,27 +60,28 @@ class TheaterGroundObject(MissionTarget):
         self.heading = heading
         self.control_point = control_point
         self.sea_object = sea_object
-        self.groups: List[GroundGroup] = []
+        self.groups: List[TheaterGroup] = []
 
     @property
     def is_dead(self) -> bool:
         return self.alive_unit_count == 0
 
     @property
-    def units(self) -> Iterator[GroundUnit]:
+    def units(self) -> Iterator[TheaterUnit]:
         """
         :return: all the units at this location
         """
         yield from itertools.chain.from_iterable([g.units for g in self.groups])
 
     @property
-    def statics(self) -> Iterator[GroundUnit]:
+    def statics(self) -> Iterator[TheaterUnit]:
         for group in self.groups:
-            if group.static_group:
-                yield from group.units
+            for unit in group.units:
+                if unit.is_static:
+                    yield unit
 
     @property
-    def dead_units(self) -> list[GroundUnit]:
+    def dead_units(self) -> list[TheaterUnit]:
         """
         :return: all the dead units at this location
         """
@@ -254,6 +127,10 @@ class TheaterGroundObject(MissionTarget):
         yield from super().mission_types(for_player)
 
     @property
+    def unit_count(self) -> int:
+        return sum([g.unit_count for g in self.groups])
+
+    @property
     def alive_unit_count(self) -> int:
         return sum([g.alive_units for g in self.groups])
 
@@ -269,20 +146,15 @@ class TheaterGroundObject(MissionTarget):
                 return True
         return False
 
-    def _max_range_of_type(self, group: GroundGroup, range_type: str) -> Distance:
+    def _max_range_of_type(self, group: TheaterGroup, range_type: str) -> Distance:
         if not self.might_have_aa:
             return meters(0)
 
         max_range = meters(0)
         for u in group.units:
-            unit = unit_type_from_name(u.type)
-            if unit is None:
-                logging.error(f"Unknown unit type {u.type}")
-                continue
-
             # Some units in pydcs have detection_range/threat_range defined,
             # but explicitly set to None.
-            unit_range = getattr(unit, range_type, None)
+            unit_range = getattr(u.type, range_type, None)
             if unit_range is not None:
                 max_range = max(max_range, meters(unit_range))
         return max_range
@@ -290,7 +162,7 @@ class TheaterGroundObject(MissionTarget):
     def max_detection_range(self) -> Distance:
         return max(self.detection_range(g) for g in self.groups)
 
-    def detection_range(self, group: GroundGroup) -> Distance:
+    def detection_range(self, group: TheaterGroup) -> Distance:
         return self._max_range_of_type(group, "detection_range")
 
     def max_threat_range(self) -> Distance:
@@ -298,7 +170,7 @@ class TheaterGroundObject(MissionTarget):
             max(self.threat_range(g) for g in self.groups) if self.groups else meters(0)
         )
 
-    def threat_range(self, group: GroundGroup, radar_only: bool = False) -> Distance:
+    def threat_range(self, group: TheaterGroup, radar_only: bool = False) -> Distance:
         return self._max_range_of_type(group, "threat_range")
 
     @property
@@ -315,7 +187,7 @@ class TheaterGroundObject(MissionTarget):
         return False
 
     @property
-    def strike_targets(self) -> list[GroundUnit]:
+    def strike_targets(self) -> list[TheaterUnit]:
         return [unit for unit in self.units if unit.alive]
 
     @property
@@ -543,13 +415,15 @@ class SamGroundObject(IadsGroundObject):
     def might_have_aa(self) -> bool:
         return True
 
-    def threat_range(self, group: GroundGroup, radar_only: bool = False) -> Distance:
+    def threat_range(self, group: TheaterGroup, radar_only: bool = False) -> Distance:
         max_non_radar = meters(0)
         live_trs = set()
         max_telar_range = meters(0)
         launchers = set()
         for unit in group.units:
-            unit_type = vehicle_map[unit.type]
+            if not unit.alive or not issubclass(unit.type, VehicleType):
+                continue
+            unit_type = unit.type
             if unit_type in TRACK_RADARS:
                 live_trs.add(unit_type)
             elif unit_type in TELARS:

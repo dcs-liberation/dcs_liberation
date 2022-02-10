@@ -1,0 +1,10 @@
+name: NASAMS AIM-120C
+role: AntiAir
+tasks:
+  - MERAD
+units:
+  - SAM NASAMS C2
+  - SAM NASAMS SR MPQ64F1
+  - SAM NASAMS LN AIM-120C
+layouts:
+  - NASAMS AIM-120C

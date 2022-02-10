@@ -104,13 +104,13 @@ MODERN_DOCTRINE = Doctrine(
     sweep_distance=nautical_miles(60),
     ground_unit_procurement_ratios=GroundUnitProcurementRatios(
         {
-            UnitClass.Tank: 3,
-            UnitClass.Atgm: 2,
-            UnitClass.Apc: 2,
-            UnitClass.Ifv: 3,
-            UnitClass.Artillery: 1,
+            UnitClass.TANK: 3,
+            UnitClass.ATGM: 2,
+            UnitClass.APC: 2,
+            UnitClass.IFV: 3,
+            UnitClass.ARTILLERY: 1,
             UnitClass.SHORAD: 2,
-            UnitClass.Recon: 1,
+            UnitClass.RECON: 1,
         }
     ),
 )
@@ -141,13 +141,13 @@ COLDWAR_DOCTRINE = Doctrine(
     sweep_distance=nautical_miles(40),
     ground_unit_procurement_ratios=GroundUnitProcurementRatios(
         {
-            UnitClass.Tank: 4,
-            UnitClass.Atgm: 2,
-            UnitClass.Apc: 3,
-            UnitClass.Ifv: 2,
-            UnitClass.Artillery: 1,
+            UnitClass.TANK: 4,
+            UnitClass.ATGM: 2,
+            UnitClass.APC: 3,
+            UnitClass.IFV: 2,
+            UnitClass.ARTILLERY: 1,
             UnitClass.SHORAD: 2,
-            UnitClass.Recon: 1,
+            UnitClass.RECON: 1,
         }
     ),
 )
@@ -178,12 +178,12 @@ WWII_DOCTRINE = Doctrine(
     sweep_distance=nautical_miles(10),
     ground_unit_procurement_ratios=GroundUnitProcurementRatios(
         {
-            UnitClass.Tank: 3,
-            UnitClass.Atgm: 3,
-            UnitClass.Apc: 3,
-            UnitClass.Artillery: 1,
+            UnitClass.TANK: 3,
+            UnitClass.ATGM: 3,
+            UnitClass.APC: 3,
+            UnitClass.ARTILLERY: 1,
             UnitClass.SHORAD: 3,
-            UnitClass.Recon: 1,
+            UnitClass.RECON: 1,
         }
     ),
 )

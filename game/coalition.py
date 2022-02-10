@@ -9,6 +9,7 @@ from game.campaignloader import CampaignAirWingConfig
 from game.campaignloader.defaultsquadronassigner import DefaultSquadronAssigner
 from game.commander import TheaterCommander
 from game.commander.missionscheduler import MissionScheduler
+from game.armedforces.armedforces import ArmedForces
 from game.income import Income
 from game.navmesh import NavMesh
 from game.orderedset import OrderedSet
@@ -41,6 +42,7 @@ class Coalition:
         self.bullseye = Bullseye(Point(0, 0))
         self.faker = Faker(self.faction.locales)
         self.air_wing = AirWing(player, game, self.faction)
+        self.armed_forces = ArmedForces(self.faction)
         self.transfers = PendingTransfers(game, player)
 
         # Late initialized because the two coalitions in the game are mutually

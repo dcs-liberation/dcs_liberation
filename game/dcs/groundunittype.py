@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Type, Optional, Iterator
+from typing import Type, Iterator
 
 import yaml
 from dcs.unittype import VehicleType
@@ -55,8 +55,11 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
             introduction = "No data."
 
         class_name = data.get("class")
-        # TODO Exception handling for missing classes
-        unit_class = UnitClass(class_name) if class_name else UnitClass.Unknown
+        if class_name is None:
+            logging.warning(f"{vehicle.id} has no class")
+            unit_class = UnitClass.UNKNOWN
+        else:
+            unit_class = UnitClass(class_name)
 
         for variant in data.get("variants", [vehicle.id]):
             yield GroundUnitType(

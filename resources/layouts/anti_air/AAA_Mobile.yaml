@@ -1,0 +1,23 @@
+name: AAA Mobile
+description: A standard AAA template
+generic: true
+role: AntiAir
+tasks:
+  - AAA
+groups:
+  - name: AAA Mobile 0
+    group: 1
+    unit_count:
+      - 2
+      - 6
+    unit_classes:
+      - AAA
+  - name: AAA Mobile 1
+    optional: true
+    group: 1
+    unit_count:
+      - 1
+      - 2
+    unit_classes:
+      - Logistics
+layout_file: resources/layouts/anti_air/AAA.miz

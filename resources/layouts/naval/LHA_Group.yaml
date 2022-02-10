@@ -1,0 +1,19 @@
+name: LHA Group
+generic: true
+role: Naval
+tasks:
+  - HelicopterCarrier
+groups:
+  - name: LHA Group 0
+    group: 1
+    unit_count:
+      - 1
+    unit_classes:
+      - HelicopterCarrier
+  - name: LHA Group 1
+    group: 2
+    unit_count:
+      - 2
+    unit_classes:
+      - Destroyer
+layout_file: resources/layouts/naval/legacy_naval_templates.miz

@@ -1,0 +1,9 @@
+name: HQ-7
+role: AntiAir
+tasks:
+  - SHORAD
+units:
+  - HQ-7 Self-Propelled STR
+  - HQ-7 Launcher
+layouts:
+  - HQ-7 Site

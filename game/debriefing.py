@@ -26,7 +26,7 @@ if TYPE_CHECKING:
         ConvoyUnit,
         FlyingUnit,
         FrontLineUnit,
-        GroundObjectMapping,
+        TheaterUnitMapping,
         UnitMap,
         SceneryObjectMapping,
     )
@@ -72,8 +72,8 @@ class GroundLosses:
     player_airlifts: List[AirliftUnits] = field(default_factory=list)
     enemy_airlifts: List[AirliftUnits] = field(default_factory=list)
 
-    player_ground_objects: List[GroundObjectMapping] = field(default_factory=list)
-    enemy_ground_objects: List[GroundObjectMapping] = field(default_factory=list)
+    player_ground_objects: List[TheaterUnitMapping] = field(default_factory=list)
+    enemy_ground_objects: List[TheaterUnitMapping] = field(default_factory=list)
 
     player_scenery: List[SceneryObjectMapping] = field(default_factory=list)
     enemy_scenery: List[SceneryObjectMapping] = field(default_factory=list)
@@ -158,7 +158,7 @@ class Debriefing:
         yield from self.ground_losses.enemy_airlifts
 
     @property
-    def ground_object_losses(self) -> Iterator[GroundObjectMapping]:
+    def ground_object_losses(self) -> Iterator[TheaterUnitMapping]:
         yield from self.ground_losses.player_ground_objects
         yield from self.ground_losses.enemy_ground_objects
 
@@ -224,15 +224,7 @@ class Debriefing:
         else:
             losses = self.ground_losses.enemy_ground_objects
         for loss in losses:
-            # We do not have handling for ships and statics UniType yet so we have to
-            # take more care here. Fallback for ship and static is to use the type str
-            # which is the dcs_type.id
-            unit_type = (
-                loss.ground_unit.unit_type.name
-                if loss.ground_unit.unit_type
-                else loss.ground_unit.type
-            )
-            losses_by_type[unit_type] += 1
+            losses_by_type[loss.theater_unit.type.id] += 1
         return losses_by_type
 
     def scenery_losses_by_type(self, player: bool) -> Dict[str, int]:
@@ -286,9 +278,9 @@ class Debriefing:
                     losses.enemy_cargo_ships.append(cargo_ship)
                 continue
 
-            ground_object = self.unit_map.ground_object(unit_name)
+            ground_object = self.unit_map.theater_units(unit_name)
             if ground_object is not None:
-                if ground_object.ground_unit.ground_object.is_friendly(to_player=True):
+                if ground_object.theater_unit.ground_object.is_friendly(to_player=True):
                     losses.player_ground_objects.append(ground_object)
                 else:
                     losses.enemy_ground_objects.append(ground_object)

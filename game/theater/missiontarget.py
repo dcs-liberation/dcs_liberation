@@ -8,7 +8,7 @@ from dcs.unit import Unit
 
 if TYPE_CHECKING:
     from game.ato.flighttype import FlightType
-    from game.theater.theatergroundobject import GroundUnit
+    from game.theater import TheaterUnit
 
 
 class MissionTarget:
@@ -47,5 +47,5 @@ class MissionTarget:
             ]
 
     @property
-    def strike_targets(self) -> list[GroundUnit]:
+    def strike_targets(self) -> list[TheaterUnit]:
         return []

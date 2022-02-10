@@ -19,6 +19,7 @@ from game.theater import (
     MissionTarget,
     OffMapSpawn,
     TheaterGroundObject,
+    TheaterUnit,
 )
 from game.utils import Distance, meters, nautical_miles
 from game.ato.flightwaypointtype import FlightWaypointType
@@ -28,13 +29,13 @@ if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.coalition import Coalition
     from game.transfers import MultiGroupTransport
-    from game.theater.theatergroundobject import GroundUnit, GroundGroup
+    from game.theater.theatergroup import TheaterGroup
 
 
 @dataclass(frozen=True)
 class StrikeTarget:
     name: str
-    target: Union[TheaterGroundObject, GroundGroup, GroundUnit, MultiGroupTransport]
+    target: Union[TheaterGroundObject, TheaterGroup, TheaterUnit, MultiGroupTransport]
 
 
 class WaypointBuilder:

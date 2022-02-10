@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import logging
-from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Type, Optional, ClassVar, Iterator
+from typing import Type, Iterator
 
 import yaml
 from dcs.ships import ship_map
-from dcs.unittype import VehicleType, ShipType
-from dcs.vehicles import vehicle_map
+from dcs.unittype import ShipType
 
 from game.data.units import UnitClass
 from game.dcs.unittype import UnitType
@@ -70,5 +68,5 @@ class ShipUnitType(UnitType[Type[ShipType]]):
                 country_of_origin=data.get("origin", "No data."),
                 manufacturer=data.get("manufacturer", "No data."),
                 role=data.get("role", "No data."),
-                price=data.get("price", 1),
+                price=data.get("price"),
             )

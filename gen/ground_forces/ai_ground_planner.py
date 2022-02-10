@@ -100,28 +100,28 @@ class GroundPlanner:
         # Create combat groups and assign them randomly to each enemy CP
         for unit_type in self.cp.base.armor:
             unit_class = unit_type.unit_class
-            if unit_class is UnitClass.Tank:
+            if unit_class is UnitClass.TANK:
                 collection = self.tank_groups
                 role = CombatGroupRole.TANK
-            elif unit_class is UnitClass.Apc:
+            elif unit_class is UnitClass.APC:
                 collection = self.apc_group
                 role = CombatGroupRole.APC
-            elif unit_class is UnitClass.Artillery:
+            elif unit_class is UnitClass.ARTILLERY:
                 collection = self.art_group
                 role = CombatGroupRole.ARTILLERY
-            elif unit_class is UnitClass.Ifv:
+            elif unit_class is UnitClass.IFV:
                 collection = self.ifv_group
                 role = CombatGroupRole.IFV
-            elif unit_class is UnitClass.Logistics:
+            elif unit_class is UnitClass.LOGISTICS:
                 collection = self.logi_groups
                 role = CombatGroupRole.LOGI
-            elif unit_class is UnitClass.Atgm:
+            elif unit_class is UnitClass.ATGM:
                 collection = self.atgm_group
                 role = CombatGroupRole.ATGM
             elif unit_class is UnitClass.SHORAD:
                 collection = self.shorad_groups
                 role = CombatGroupRole.SHORAD
-            elif unit_class is UnitClass.Recon:
+            elif unit_class is UnitClass.RECON:
                 collection = self.recon_groups
                 role = CombatGroupRole.RECON
             else:

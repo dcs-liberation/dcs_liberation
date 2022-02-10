@@ -49,10 +49,10 @@ class QStrikeTargetInfoView(QGroupBox):
         if len(self.strike_target_infos.units) > 0:
             dic = {}
             for u in self.strike_target_infos.units:
-                if u.type in dic.keys():
-                    dic[u.type] = dic[u.type] + 1
+                if u.type.id in dic.keys():
+                    dic[u.type.id] = dic[u.type.id] + 1
                 else:
-                    dic[u.type] = 1
+                    dic[u.type.id] = 1
             for k, v in dic.items():
                 model.appendRow(QStandardItem(k + " x " + str(v)))
                 print(k + " x " + str(v))

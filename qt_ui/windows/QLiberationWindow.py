@@ -18,7 +18,7 @@ from PySide2.QtWidgets import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game, VERSION, persistency
+from game import Game, VERSION, persistency, db
 from game.debriefing import Debriefing
 from game.server import EventStream, GameContext
 from game.server.security import ApiKeyManager
@@ -178,6 +178,9 @@ class QLiberationWindow(QMainWindow):
         self.openNotesAction.setIcon(CONST.ICONS["Notes"])
         self.openNotesAction.triggered.connect(self.showNotesDialog)
 
+        self.importTemplatesAction = QAction("Import Layouts", self)
+        self.importTemplatesAction.triggered.connect(self.import_templates)
+
         self.enable_game_actions(False)
 
     def enable_game_actions(self, enabled: bool):
@@ -219,6 +222,9 @@ class QLiberationWindow(QMainWindow):
         file_menu.addAction(self.showLiberationPrefDialogAction)
         file_menu.addSeparator()
         file_menu.addAction("E&xit", self.close)
+
+        tools_menu = self.menu.addMenu("&Developer tools")
+        tools_menu.addAction(self.importTemplatesAction)
 
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction(self.openDiscordAction)
@@ -392,6 +398,9 @@ class QLiberationWindow(QMainWindow):
     def showNotesDialog(self):
         self.dialog = QNotesWindow(self.game)
         self.dialog.show()
+
+    def import_templates(self):
+        db.LAYOUTS.import_templates()
 
     def showLogsDialog(self):
         self.dialog = QLogsWindow()

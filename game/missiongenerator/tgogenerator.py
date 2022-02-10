@@ -58,16 +58,14 @@ from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
 from game.dcs.helpers import static_type_from_name, unit_type_from_name
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
-from game.theater import ControlPoint, TheaterGroundObject
+from game.theater import ControlPoint, TheaterGroundObject, TheaterUnit
 from game.theater.theatergroundobject import (
     CarrierGroundObject,
     GenericCarrierGroundObject,
     LhaGroundObject,
     MissileSiteGroundObject,
-    GroundGroup,
-    GroundUnit,
-    SceneryGroundUnit,
 )
+from game.theater.theatergroup import SceneryUnit, TheaterGroup
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
 from gen.runways import RunwayData
@@ -100,95 +98,114 @@ class GroundObjectGenerator:
     def culled(self) -> bool:
         return self.game.iads_considerate_culling(self.ground_object)
 
-    def generate(self, unique_name: bool = True) -> None:
+    def generate(self) -> None:
         if self.culled:
             return
-
         for group in self.ground_object.groups:
-            if not group.units:
-                logging.warning(f"Found empty group in {self.ground_object}")
-                continue
-            group_name = group.group_name if unique_name else group.name
-            moving_group: Optional[MovingGroup[Any]] = None
-            for i, unit in enumerate(group.units):
-                if isinstance(unit, SceneryGroundUnit):
-                    # Special handling for scenery objects:
-                    # Only create a trigger zone and no "real" dcs unit
-                    self.add_trigger_zone_for_scenery(unit)
-                    continue
+            vehicle_units = []
+            ship_units = []
+            # Split the different unit types to be compliant to dcs limitation
+            for unit in group.units:
+                if unit.is_static:
+                    # A Static unit has to be a single static group
+                    self.create_static_group(unit)
+                elif unit.is_vehicle and unit.alive:
+                    # All alive Vehicles
+                    vehicle_units.append(unit)
+                elif unit.is_ship and unit.alive:
+                    # All alive Ships
+                    ship_units.append(unit)
+            if vehicle_units:
+                self.create_vehicle_group(group.group_name, vehicle_units)
+            if ship_units:
+                self.create_ship_group(group.group_name, ship_units)
 
-                # Only skip dead units after trigger zone for scenery created!
-                if not unit.alive:
-                    continue
+    def create_vehicle_group(
+        self, group_name: str, units: list[TheaterUnit]
+    ) -> VehicleGroup:
+        vehicle_group: Optional[VehicleGroup] = None
+        for unit in units:
+            assert issubclass(unit.type, VehicleType)
+            if vehicle_group is None:
+                vehicle_group = self.m.vehicle_group(
+                    self.country,
+                    group_name,
+                    unit.type,
+                    position=unit.position,
+                    heading=unit.position.heading.degrees,
+                )
+                vehicle_group.units[0].player_can_drive = True
+                self.enable_eplrs(vehicle_group, unit.type)
+                vehicle_group.units[0].name = unit.unit_name
+                self.set_alarm_state(vehicle_group)
+            else:
+                vehicle_unit = Vehicle(
+                    self.m.next_unit_id(),
+                    unit.unit_name,
+                    unit.type.id,
+                )
+                vehicle_unit.player_can_drive = True
+                vehicle_unit.position = unit.position
+                vehicle_unit.heading = unit.position.heading.degrees
+                vehicle_group.add_unit(vehicle_unit)
+            self._register_theater_unit(unit, vehicle_group.units[-1])
+        if vehicle_group is None:
+            raise RuntimeError(f"Error creating VehicleGroup for {group_name}")
+        return vehicle_group
 
-                unit_type = unit_type_from_name(unit.type)
-                if not unit_type:
-                    raise RuntimeError(
-                        f"Unit type {unit.type} is not a valid dcs unit type"
-                    )
+    def create_ship_group(
+        self,
+        group_name: str,
+        units: list[TheaterUnit],
+        frequency: Optional[RadioFrequency] = None,
+    ) -> ShipGroup:
+        ship_group: Optional[ShipGroup] = None
+        for unit in units:
+            assert issubclass(unit.type, ShipType)
+            if ship_group is None:
+                ship_group = self.m.ship_group(
+                    self.country,
+                    group_name,
+                    unit.type,
+                    position=unit.position,
+                    heading=unit.position.heading.degrees,
+                )
+                if frequency:
+                    ship_group.set_frequency(frequency.hertz)
+                ship_group.units[0].name = unit.unit_name
+                self.set_alarm_state(ship_group)
+            else:
+                ship_unit = Ship(
+                    self.m.next_unit_id(),
+                    unit.unit_name,
+                    unit.type,
+                )
+                if frequency:
+                    ship_unit.set_frequency(frequency.hertz)
+                ship_unit.position = unit.position
+                ship_unit.heading = unit.position.heading.degrees
+                ship_group.add_unit(ship_unit)
+            self._register_theater_unit(unit, ship_group.units[-1])
+        if ship_group is None:
+            raise RuntimeError(f"Error creating ShipGroup for {group_name}")
+        return ship_group
 
-                unit_name = unit.unit_name if unique_name else unit.name
-                if moving_group is None or group.static_group:
-                    # First unit of the group will create the dcs group
-                    if issubclass(unit_type, VehicleType):
-                        moving_group = self.m.vehicle_group(
-                            self.country,
-                            group_name,
-                            unit_type,
-                            position=unit.position,
-                            heading=unit.position.heading.degrees,
-                        )
-                        moving_group.units[0].player_can_drive = True
-                        self.enable_eplrs(moving_group, unit_type)
-                    elif issubclass(unit_type, ShipType):
-                        moving_group = self.m.ship_group(
-                            self.country,
-                            group_name,
-                            unit_type,
-                            position=unit.position,
-                            heading=unit.position.heading.degrees,
-                        )
-                    elif issubclass(unit_type, StaticType):
-                        static_group = self.m.static_group(
-                            country=self.country,
-                            name=unit_name,
-                            _type=unit_type,
-                            position=unit.position,
-                            heading=unit.position.heading.degrees,
-                            dead=not unit.alive,
-                        )
-                        self._register_ground_unit(unit, static_group.units[0])
-                        continue
+    def create_static_group(self, unit: TheaterUnit) -> None:
+        if isinstance(unit, SceneryUnit):
+            # Special handling for scenery objects:
+            # Only create a trigger zone and no "real" dcs unit
+            self.add_trigger_zone_for_scenery(unit)
+            return
 
-                    if moving_group:
-                        moving_group.units[0].name = unit_name
-                        self.set_alarm_state(moving_group)
-                        self._register_ground_unit(unit, moving_group.units[0])
-                    else:
-                        raise RuntimeError("DCS Group creation failed")
-                else:
-                    # Additional Units in the group
-                    dcs_unit: Optional[Unit] = None
-                    if issubclass(unit_type, VehicleType):
-                        dcs_unit = Vehicle(
-                            self.m.next_unit_id(),
-                            unit_name,
-                            unit.type,
-                        )
-                        dcs_unit.player_can_drive = True
-                    elif issubclass(unit_type, ShipType):
-                        dcs_unit = Ship(
-                            self.m.next_unit_id(),
-                            unit_name,
-                            unit_type,
-                        )
-                    if dcs_unit:
-                        dcs_unit.position = unit.position
-                        dcs_unit.heading = unit.position.heading.degrees
-                        moving_group.add_unit(dcs_unit)
-                        self._register_ground_unit(unit, dcs_unit)
-                    else:
-                        raise RuntimeError("DCS Unit creation failed")
+        static_group = self.m.static_group(
+            country=self.country,
+            name=unit.unit_name,
+            _type=unit.type,
+            position=unit.position,
+            heading=unit.position.heading.degrees,
+            dead=not unit.alive,
+        )
+        self._register_theater_unit(unit, static_group.units[0])
 
     @staticmethod
     def enable_eplrs(group: VehicleGroup, unit_type: Type[VehicleType]) -> None:
@@ -201,14 +218,14 @@ class GroundObjectGenerator:
         else:
             group.points[0].tasks.append(OptAlarmState(1))
 
-    def _register_ground_unit(
+    def _register_theater_unit(
         self,
-        ground_unit: GroundUnit,
+        theater_unit: TheaterUnit,
         dcs_unit: Unit,
     ) -> None:
-        self.unit_map.add_ground_object_mapping(ground_unit, dcs_unit)
+        self.unit_map.add_theater_unit_mapping(theater_unit, dcs_unit)
 
-    def add_trigger_zone_for_scenery(self, scenery: SceneryGroundUnit) -> None:
+    def add_trigger_zone_for_scenery(self, scenery: SceneryUnit) -> None:
         # Align the trigger zones to the faction color on the DCS briefing/F10 map.
         color = (
             {1: 0.2, 2: 0.7, 3: 1, 4: 0.15}
@@ -265,7 +282,7 @@ class MissileSiteGenerator(GroundObjectGenerator):
         # culled despite being a threat.
         return False
 
-    def generate(self, unique_name: bool = True) -> None:
+    def generate(self) -> None:
         super(MissileSiteGenerator, self).generate()
         # Note : Only the SCUD missiles group can fire (V1 site cannot fire in game right now)
         # TODO : Should be pre-planned ?
@@ -347,7 +364,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         self.icls_alloc = icls_alloc
         self.runways = runways
 
-    def generate(self, unique_name: bool = True) -> None:
+    def generate(self) -> None:
 
         # This can also be refactored as the general generation was updated
         atc = self.radio_registry.alloc_uhf()
@@ -357,40 +374,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                 logging.warning(f"Found empty carrier group in {self.control_point}")
                 continue
 
-            # Correct unit type for the carrier.
-            # This is only used for the super carrier setting
-            unit_type = (
-                self.get_carrier_type(group)
-                if g_id == 0
-                else ship_map[group.units[0].type]
-            )
-
-            ship_group = self.m.ship_group(
-                self.country,
-                group.group_name if unique_name else group.name,
-                unit_type,
-                position=group.units[0].position,
-                heading=group.units[0].position.heading.degrees,
-            )
-
-            ship_group.set_frequency(atc.hertz)
-            ship_group.units[0].name = (
-                group.units[0].unit_name if unique_name else group.units[0].name
-            )
-            self._register_ground_unit(group.units[0], ship_group.units[0])
-
-            for unit in group.units[1:]:
-                ship = Ship(
-                    self.m.next_unit_id(),
-                    unit.unit_name if unique_name else unit.name,
-                    unit_type_from_name(unit.type),
-                )
-                ship.position.x = unit.position.x
-                ship.position.y = unit.position.y
-                ship.heading = unit.position.heading.degrees
-                ship.set_frequency(atc.hertz)
-                ship_group.add_unit(ship)
-                self._register_ground_unit(unit, ship)
+            ship_group = self.create_ship_group(group.group_name, group.units, atc)
 
             # Always steam into the wind, even if the carrier is being moved.
             # There are multiple unsimulated hours between turns, so we can
@@ -400,19 +384,24 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
             # Set Carrier Specific Options
             if g_id == 0:
+                # Correct unit type for the carrier.
+                # This is only used for the super carrier setting
+                ship_group.units[0].type = self.get_carrier_type(group).id
                 tacan = self.tacan_registry.alloc_for_band(
                     TacanBand.X, TacanUsage.TransmitReceive
                 )
                 tacan_callsign = self.tacan_callsign()
                 icls = next(self.icls_alloc)
-
                 self.activate_beacons(ship_group, tacan, tacan_callsign, icls)
                 self.add_runway_data(
                     brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
                 )
 
-    def get_carrier_type(self, group: GroundGroup) -> Type[ShipType]:
-        return ship_map[group.units[0].type]
+    def get_carrier_type(self, group: TheaterGroup) -> Type[ShipType]:
+        carrier_type = group.units[0].type
+        if issubclass(carrier_type, ShipType):
+            return carrier_type
+        raise RuntimeError(f"First unit of TGO {group.name} is no Ship")
 
     def steam_into_wind(self, group: ShipGroup) -> Optional[Heading]:
         wind = self.game.conditions.weather.wind.at_0m
@@ -479,7 +468,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 class CarrierGenerator(GenericCarrierGenerator):
     """Generator for CV(N) groups."""
 
-    def get_carrier_type(self, group: GroundGroup) -> Type[ShipType]:
+    def get_carrier_type(self, group: TheaterGroup) -> Type[ShipType]:
         unit_type = super().get_carrier_type(group)
         if self.game.settings.supercarrier:
             unit_type = self.upgrade_to_supercarrier(unit_type, self.control_point.name)
