@@ -4,10 +4,11 @@ generic: true
 tasks:
   - Navy
 groups:
-  - name: Naval Group 0
+  - name: Naval Two Ship
     unit_count:
       - 2
     unit_classes:
+      - Frigate
       - Destroyer
       - Cruiser
       - Boat
