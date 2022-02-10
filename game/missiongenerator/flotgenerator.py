@@ -221,7 +221,7 @@ class FlotGenerator:
             if self.game.settings.manpads:
                 # 50% of armored units protected by manpad
                 if random.choice([True, False]):
-                    manpads = list(faction.infantry_with_class(UnitClass.Manpad))
+                    manpads = list(faction.infantry_with_class(UnitClass.MANPAD))
                     if manpads:
                         u = random.choices(
                             manpads, weights=[m.spawn_weight for m in manpads]
@@ -237,10 +237,10 @@ class FlotGenerator:
                         )
             return
 
-        possible_infantry_units = set(faction.infantry_with_class(UnitClass.Infantry))
+        possible_infantry_units = set(faction.infantry_with_class(UnitClass.INFANTRY))
         if self.game.settings.manpads:
             possible_infantry_units |= set(
-                faction.infantry_with_class(UnitClass.Manpad)
+                faction.infantry_with_class(UnitClass.MANPAD)
             )
         if not possible_infantry_units:
             return

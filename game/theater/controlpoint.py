@@ -20,13 +20,11 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
-    Union,
 )
 
 from dcs.mapping import Point
 from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
 from dcs.terrain.terrain import Airport, ParkingSlot
-from dcs.unit import Unit
 from dcs.unitgroup import ShipGroup, StaticGroup
 
 from game.dcs.helpers import unit_type_from_name
@@ -39,14 +37,10 @@ from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
-    BuildingGroundObject,
     GenericCarrierGroundObject,
     TheaterGroundObject,
-    BuildingGroundObject,
-    CarrierGroundObject,
-    LhaGroundObject,
-    GroundUnit,
 )
+from .theatergroup import TheaterUnit
 from ..ato.starttype import StartType
 from ..data.units import UnitClass
 from ..dcs.aircrafttype import AircraftType
@@ -525,8 +519,8 @@ class ControlPoint(MissionTarget, ABC):
                 for group in g.groups:
                     for u in group.units:
                         if u.unit_type and u.unit_type.unit_class in [
-                            UnitClass.AircraftCarrier,
-                            UnitClass.HelicopterCarrier,
+                            UnitClass.AIRCRAFT_CARRIER,
+                            UnitClass.HELICOPTER_CARRIER,
                         ]:
                             return group.group_name
         return None
@@ -816,28 +810,26 @@ class ControlPoint(MissionTarget, ABC):
         return self.front_line_capacity_with(self.active_ammo_depots_count)
 
     @property
-    def all_ammo_depots(self) -> Iterator[BuildingGroundObject]:
+    def all_ammo_depots(self) -> Iterator[TheaterGroundObject]:
         for tgo in self.connected_objectives:
-            if not tgo.is_ammo_depot:
-                continue
-            assert isinstance(tgo, BuildingGroundObject)
-            yield tgo
-
-    @property
-    def active_ammo_depots(self) -> Iterator[BuildingGroundObject]:
-        for tgo in self.all_ammo_depots:
-            if not tgo.is_dead:
+            if tgo.is_ammo_depot:
                 yield tgo
+
+    def ammo_depot_count(self, alive_only: bool = False) -> int:
+        return sum(
+            ammo_depot.alive_unit_count if alive_only else ammo_depot.unit_count
+            for ammo_depot in self.all_ammo_depots
+        )
 
     @property
     def active_ammo_depots_count(self) -> int:
         """Return the number of available ammo depots"""
-        return len(list(self.active_ammo_depots))
+        return self.ammo_depot_count(True)
 
     @property
     def total_ammo_depots_count(self) -> int:
         """Return the number of ammo depots, including dead ones"""
-        return len(list(self.all_ammo_depots))
+        return self.ammo_depot_count()
 
     @property
     def active_fuel_depots_count(self) -> int:
@@ -856,7 +848,7 @@ class ControlPoint(MissionTarget, ABC):
         return len([obj for obj in self.connected_objectives if obj.category == "fuel"])
 
     @property
-    def strike_targets(self) -> list[GroundUnit]:
+    def strike_targets(self) -> list[TheaterUnit]:
         return []
 
     @property
@@ -1008,7 +1000,7 @@ class NavalControlPoint(ControlPoint, ABC):
         # while its escorts are still alive.
         for group in self.find_main_tgo().groups:
             for u in group.units:
-                if unit_type_from_name(u.type) in [
+                if u.type in [
                     Forrestal,
                     Stennis,
                     LHA_Tarawa,

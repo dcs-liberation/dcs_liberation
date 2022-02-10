@@ -1,0 +1,9 @@
+name: KS-19
+role: AntiAir
+tasks:
+  - AAA
+units:
+  - AAA SON-9 Fire Can
+  - AAA 100mm KS-19
+layouts:
+  - AAA Radar Site

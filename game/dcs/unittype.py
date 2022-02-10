@@ -4,7 +4,7 @@ from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
-from typing import TypeVar, Generic, Type, ClassVar, Any, Iterator, Optional
+from typing import TypeVar, Generic, Type, ClassVar, Any, Iterator
 
 from dcs.unittype import UnitType as DcsUnitType
 
@@ -26,7 +26,9 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
     unit_class: UnitClass
 
     _by_name: ClassVar[dict[str, UnitType[Any]]] = {}
-    _by_unit_type: ClassVar[dict[DcsUnitTypeT, list[UnitType[Any]]]] = defaultdict(list)
+    _by_unit_type: ClassVar[dict[Type[DcsUnitType], list[UnitType[Any]]]] = defaultdict(
+        list
+    )
     _loaded: ClassVar[bool] = False
 
     def __str__(self) -> str:
@@ -43,7 +45,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
 
     @classmethod
     def named(cls, name: str) -> UnitType[Any]:
-        raise NotImplementedError
+        return cls._by_name[name]
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: DcsUnitTypeT) -> Iterator[UnitType[Any]]:

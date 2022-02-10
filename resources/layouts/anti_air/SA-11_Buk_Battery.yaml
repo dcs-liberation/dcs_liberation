@@ -1,0 +1,21 @@
+name: SA-11 Buk Battery
+role: AntiAir
+tasks:
+  - MERAD
+groups:
+  - name: SA-11 Buk Battery 0
+    unit_count:
+      - 1
+    unit_types:
+      - SA-11 Buk SR 9S18M1
+  - name: SA-11 Buk Battery 1
+    unit_count:
+      - 1
+    unit_types:
+      - SA-11 Buk CC 9S470M1
+  - name: SA-11 Buk Battery 2
+    unit_count:
+      - 4
+    unit_types:
+      - SA-11 Buk LN 9A310M1
+layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

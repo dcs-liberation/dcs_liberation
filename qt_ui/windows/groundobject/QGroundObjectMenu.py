@@ -9,13 +9,11 @@ from PySide2.QtWidgets import (
     QPushButton,
     QVBoxLayout,
 )
-from dcs import Point, vehicles
+from dcs import Point
 
 from game import Game
 from game.config import REWARDS
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.data.units import UnitClass
-from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
@@ -101,7 +99,7 @@ class QGroundObjectMenu(QDialog):
                     QLabel(f"<b>Unit {str(unit.display_name)}</b>"), i, 0
                 )
 
-                if not unit.alive and self.cp.captured:
+                if not unit.alive and unit.repairable and self.cp.captured:
                     price = unit.unit_type.price if unit.unit_type else 0
                     repair = QPushButton(f"Repair [{price}M]")
                     repair.setProperty("style", "btn-success")
@@ -176,19 +174,13 @@ class QGroundObjectMenu(QDialog):
         self.update_total_value()
 
     def update_total_value(self):
-        total_value = 0
         if not self.ground_object.purchasable:
             return
-        for u in self.ground_object.units:
-            # Hack: Unknown variant.
-            if u.type in vehicles.vehicle_map:
-                unit_type = next(
-                    GroundUnitType.for_dcs_type(vehicles.vehicle_map[u.type])
-                )
-                total_value += unit_type.price
+        self.total_value = sum(
+            u.unit_type.price for u in self.ground_object.units if u.unit_type
+        )
         if self.sell_all_button is not None:
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
-        self.total_value = total_value
 
     def repair_unit(self, unit, price):
         if self.game.blue.budget > price:
@@ -203,7 +195,7 @@ class QGroundObjectMenu(QDialog):
                 if p.distance_to_point(unit.position) < 15:
                     destroyed_units.remove(d)
                     logging.info("Removed destroyed units " + str(d))
-            logging.info("Repaired unit : " + str(unit.id) + " " + str(unit.type))
+            logging.info(f"Repaired unit: {unit.unit_name}")
 
         self.do_refresh_layout()
 

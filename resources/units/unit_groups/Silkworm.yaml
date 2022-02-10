@@ -1,9 +1,0 @@
-name: Silkworm
-role: Defenses
-tasks:
-  - Coastal
-ground_units:
-  - AShM SS-N-2 Silkworm
-  - AShM Silkworm SR
-templates:
-  - Silkworm

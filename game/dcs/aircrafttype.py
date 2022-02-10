@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import logging
-from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, ClassVar, Iterator, Optional, TYPE_CHECKING, Type
+from typing import Any, Iterator, Optional, TYPE_CHECKING, Type
 
 import yaml
 from dcs.helicopters import helicopter_map
@@ -397,5 +396,5 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 channel_namer=radio_config.channel_namer,
                 kneeboard_units=units,
                 utc_kneeboard=data.get("utc_kneeboard", False),
-                unit_class=UnitClass.Plane,
+                unit_class=UnitClass.PLANE,
             )

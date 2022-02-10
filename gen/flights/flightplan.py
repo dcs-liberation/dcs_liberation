@@ -44,11 +44,11 @@ from game.theater import (
     NavalControlPoint,
     SamGroundObject,
     TheaterGroundObject,
+    TheaterUnit,
 )
 from game.theater.theatergroundobject import (
     EwrGroundObject,
     NavalGroundObject,
-    GroundUnit,
 )
 from game.typeguard import self_type_guard
 from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
@@ -1086,7 +1086,7 @@ class FlightPlanBuilder:
         self,
         flight: Flight,
         # TODO: Custom targets should be an attribute of the flight.
-        custom_targets: Optional[List[GroundUnit]] = None,
+        custom_targets: Optional[List[TheaterUnit]] = None,
     ) -> None:
         """Creates a default flight plan for the given mission."""
         if flight not in self.package.flights:
@@ -1106,7 +1106,7 @@ class FlightPlanBuilder:
             ) from ex
 
     def generate_flight_plan(
-        self, flight: Flight, custom_targets: Optional[List[GroundUnit]]
+        self, flight: Flight, custom_targets: Optional[List[TheaterUnit]]
     ) -> FlightPlan:
         # TODO: Flesh out mission types.
         task = flight.flight_type
@@ -1209,7 +1209,7 @@ class FlightPlanBuilder:
         targets: List[StrikeTarget] = []
 
         for j, u in enumerate(location.strike_targets):
-            targets.append(StrikeTarget(f"{u.type} #{j}", u))
+            targets.append(StrikeTarget(f"{u.type.id} #{j}", u))
 
         return self.strike_flightplan(
             flight, location, FlightWaypointType.INGRESS_STRIKE, targets
@@ -1668,7 +1668,7 @@ class FlightPlanBuilder:
         )
 
     def generate_dead(
-        self, flight: Flight, custom_targets: Optional[List[GroundUnit]]
+        self, flight: Flight, custom_targets: Optional[List[TheaterUnit]]
     ) -> StrikeFlightPlan:
         """Generate a DEAD flight at a given location.
 
@@ -1738,7 +1738,7 @@ class FlightPlanBuilder:
         )
 
     def generate_sead(
-        self, flight: Flight, custom_targets: Optional[List[GroundUnit]]
+        self, flight: Flight, custom_targets: Optional[List[TheaterUnit]]
     ) -> StrikeFlightPlan:
         """Generate a SEAD flight at a given location.
 

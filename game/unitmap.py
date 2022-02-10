@@ -12,9 +12,9 @@ from dcs.unitgroup import FlyingGroup, VehicleGroup, ShipGroup
 
 from game.dcs.groundunittype import GroundUnitType
 from game.squadrons import Pilot
-from game.theater import Airfield, ControlPoint, GroundUnit
+from game.theater import Airfield, ControlPoint, TheaterUnit
 from game.ato.flight import Flight
-from game.theater.theatergroundobject import SceneryGroundUnit
+from game.theater.theatergroup import SceneryUnit
 
 if TYPE_CHECKING:
     from game.transfers import CargoShip, Convoy, TransferOrder
@@ -33,14 +33,14 @@ class FrontLineUnit:
 
 
 @dataclass(frozen=True)
-class GroundObjectMapping:
-    ground_unit: GroundUnit
+class TheaterUnitMapping:
+    theater_unit: TheaterUnit
     dcs_unit: Unit
 
 
 @dataclass(frozen=True)
 class SceneryObjectMapping:
-    ground_unit: GroundUnit
+    ground_unit: TheaterUnit
     trigger_zone: TriggerZone
 
 
@@ -61,7 +61,7 @@ class UnitMap:
         self.aircraft: Dict[str, FlyingUnit] = {}
         self.airfields: Dict[str, Airfield] = {}
         self.front_line_units: Dict[str, FrontLineUnit] = {}
-        self.ground_objects: Dict[str, GroundObjectMapping] = {}
+        self.theater_objects: Dict[str, TheaterUnitMapping] = {}
         self.scenery_objects: Dict[str, SceneryObjectMapping] = {}
         self.convoys: Dict[str, ConvoyUnit] = {}
         self.cargo_ships: Dict[str, CargoShip] = {}
@@ -103,18 +103,18 @@ class UnitMap:
     def front_line_unit(self, name: str) -> Optional[FrontLineUnit]:
         return self.front_line_units.get(name, None)
 
-    def add_ground_object_mapping(
-        self, ground_unit: GroundUnit, dcs_unit: Unit
+    def add_theater_unit_mapping(
+        self, theater_unit: TheaterUnit, dcs_unit: Unit
     ) -> None:
         # Deaths for units at TGOs are recorded in the corresponding GroundUnit within
         # the GroundGroup, so we have to match the dcs unit with the liberation unit
         name = str(dcs_unit.name)
-        if name in self.ground_objects:
+        if name in self.theater_objects:
             raise RuntimeError(f"Duplicate TGO unit: {name}")
-        self.ground_objects[name] = GroundObjectMapping(ground_unit, dcs_unit)
+        self.theater_objects[name] = TheaterUnitMapping(theater_unit, dcs_unit)
 
-    def ground_object(self, name: str) -> Optional[GroundObjectMapping]:
-        return self.ground_objects.get(name, None)
+    def theater_units(self, name: str) -> Optional[TheaterUnitMapping]:
+        return self.theater_objects.get(name, None)
 
     def add_convoy_units(self, group: VehicleGroup, convoy: Convoy) -> None:
         for unit, unit_type in zip(group.units, convoy.iter_units()):
@@ -170,9 +170,7 @@ class UnitMap:
     def airlift_unit(self, name: str) -> Optional[AirliftUnits]:
         return self.airlifts.get(name, None)
 
-    def add_scenery(
-        self, scenery_unit: SceneryGroundUnit, trigger_zone: TriggerZone
-    ) -> None:
+    def add_scenery(self, scenery_unit: SceneryUnit, trigger_zone: TriggerZone) -> None:
         name = str(trigger_zone.name)
         if name in self.scenery_objects:
             raise RuntimeError(f"Duplicate scenery object {name} (TriggerZone)")

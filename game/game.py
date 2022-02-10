@@ -500,7 +500,7 @@ class Game:
                 return False
         return True
 
-    def iads_considerate_culling(self, tgo: TheaterGroundObject[Any]) -> bool:
+    def iads_considerate_culling(self, tgo: TheaterGroundObject) -> bool:
         if not self.settings.perf_do_not_cull_threatening_iads:
             return self.position_culled(tgo.position)
         else:

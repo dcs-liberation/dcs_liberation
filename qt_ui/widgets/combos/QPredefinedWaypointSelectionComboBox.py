@@ -1,8 +1,8 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
-from game.theater import ControlPointType, BuildingGroundObject
-from game.theater.theatergroundobject import IadsGroundObject
+from game.theater.controlpoint import ControlPointType
+from game.theater.theatergroundobject import IadsGroundObject, BuildingGroundObject
 from game.utils import Distance
 from game.missiongenerator.frontlineconflictdescription import (
     FrontLineConflictDescription,
@@ -131,7 +131,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                         "["
                                         + str(ground_object.obj_name)
                                         + "] : "
-                                        + u.type
+                                        + u.name
                                         + " #"
                                         + str(j)
                                     )
@@ -140,9 +140,9 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                     wpt.obj_name = ground_object.obj_name
                                     wpt.waypoint_type = FlightWaypointType.CUSTOM
                                     if cp.captured:
-                                        wpt.description = "Friendly unit : " + u.type
+                                        wpt.description = "Friendly unit: " + u.name
                                     else:
-                                        wpt.description = "Enemy unit : " + u.type
+                                        wpt.description = "Enemy unit: " + u.name
                                     i = add_model_item(i, model, wpt.pretty_name, wpt)
 
         if self.include_airbases:

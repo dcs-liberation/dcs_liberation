@@ -132,7 +132,7 @@ class MissionResultsProcessor:
     @staticmethod
     def commit_ground_losses(debriefing: Debriefing) -> None:
         for ground_object_loss in debriefing.ground_object_losses:
-            ground_object_loss.ground_unit.kill()
+            ground_object_loss.theater_unit.kill()
         for scenery_object_loss in debriefing.scenery_object_losses:
             scenery_object_loss.ground_unit.kill()
 

@@ -1,0 +1,25 @@
+name: Carrier Strike Group 8
+role: Naval
+generic: true
+tasks:
+  - AircraftCarrier
+groups:
+  - name: Carrier Strike Group 8 0
+    group: 1
+    unit_count:
+      - 1
+    unit_types:
+      - Stennis
+  - name: Carrier Strike Group 8 1
+    group: 2
+    unit_count:
+      - 5
+    unit_types:
+      - USS_Arleigh_Burke_IIa
+  - name: Carrier Strike Group 8 2
+    group: 2
+    unit_count:
+      - 2
+    unit_types:
+      - TICONDEROG
+layout_file: resources/layouts/naval/legacy_naval_templates.miz

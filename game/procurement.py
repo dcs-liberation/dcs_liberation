@@ -176,7 +176,7 @@ class ProcurementAi:
                 worst_fulfillment = fulfillment
                 worst_balanced = unit_class
         if worst_balanced is None:
-            return UnitClass.Tank
+            return UnitClass.TANK
         return worst_balanced
 
     @staticmethod
