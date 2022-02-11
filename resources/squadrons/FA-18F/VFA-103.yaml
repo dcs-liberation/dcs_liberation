@@ -1,0 +1,22 @@
+---
+name: VFA-103
+nickname: Jolly Rogers
+country: USA
+role: Strike Fighter
+aircraft: F/A-18F Super Hornet (Lot 24)
+livery: VFA-103 Jolly Rogers
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

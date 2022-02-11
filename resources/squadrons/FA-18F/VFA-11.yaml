@@ -1,0 +1,22 @@
+---
+name: VFA-11
+nickname: Red Rippers
+country: USA
+role: Strike Fighter
+aircraft: F/A-18F Super Hornet (Lot 24)
+livery: VFA-11 Red Rippers
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

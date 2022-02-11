@@ -1,0 +1,24 @@
+carrier_capable: true
+description:
+ 'The Boeing F/A-18E and F/A-18F Super Hornet are twin-engine,
+  carrier-capable, multirole fighter aircraft variants based
+   on the McDonnell Douglas F/A-18 Hornet. The F/A-18E single-seat
+    and F/A-18F tandem-seat variants are larger and more advanced 
+    derivatives of the F/A-18C and D Hornet.'
+introduced: 1999
+manufacturer: Boeing
+origin: USA
+price: 28
+role: Carrier-based Multirole Fighter
+fuel:
+  # Parking A1 to RWY 32 at Akrotiri.
+  taxi: 170
+  # AB takeoff to 350/0.85, reduce to MIL and maintain 350 to 25k ft.
+  climb_ppm: 44.25
+  # 0.85 mach for 100NM.
+  cruise_ppm: 22.1
+  # ~0.9 mach for 100NM. Occasional AB use.
+  combat_ppm: 27.5
+  min_safe: 2000
+variants:
+  F/A-18F Super Hornet (Lot 24): {}
