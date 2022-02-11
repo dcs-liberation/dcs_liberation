@@ -21,6 +21,7 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
+    Union,
 )
 from uuid import UUID
 
@@ -48,6 +49,7 @@ from .base import Base
 from .frontline import FrontLine
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
+    BuildingGroundObject,
     GenericCarrierGroundObject,
     TheaterGroundObject,
 )
