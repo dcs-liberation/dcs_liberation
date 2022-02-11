@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 from dcs import task
 from dcs.helicopters import HelicopterType
-from dcs.planes import PlaneType
+from dcs.weapons_data import Weapons
 
 from pydcs_extensions.weapon_injector import inject_weapons
 
@@ -32,7 +32,7 @@ class UH_60L(HelicopterType):
     charge_total = 30
     chaff_charge_size = 1
     flare_charge_size = 0
-    radio_frequency = 305
+    radio_frequency = 124
 
     panel_radio = {
         2: {
