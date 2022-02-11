@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 from dcs import task
 from dcs.helicopters import HelicopterType
-from dcs.weapons_data import Weapons
+from dcs.planes import PlaneType
 
 from pydcs_extensions.weapon_injector import inject_weapons
 
