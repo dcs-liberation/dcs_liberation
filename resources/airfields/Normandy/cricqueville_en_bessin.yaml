@@ -1,0 +1,11 @@
+---
+name: Cricqueville-en-Bessin
+id: 7
+icao: A-2
+elevation: 81
+runway_length: 3459
+atc:
+  hf: 4.625 MHz
+  vhf_low: 40.150 MHz
+  vhf_high: 119.750 MHz
+  uhf: 251.750 MHz

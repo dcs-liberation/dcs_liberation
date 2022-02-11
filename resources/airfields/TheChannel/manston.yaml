@@ -1,0 +1,10 @@
+---
+name: Manston
+id: 5
+elevation: 160
+runway_length: 8626
+atc:
+  hf: 3.975 MHz
+  vhf_low: 38.650 MHz
+  vhf_high: 118.250 MHz
+  uhf: 250.250 MHz

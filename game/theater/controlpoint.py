@@ -7,33 +7,26 @@ import math
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
-from enum import Enum, unique, auto, IntEnum
-from functools import total_ordering, cached_property
+from enum import Enum, IntEnum, auto, unique
+from functools import cached_property, total_ordering
 from typing import (
     Any,
     Dict,
+    Iterable,
     Iterator,
     List,
     Optional,
+    Sequence,
     Set,
     TYPE_CHECKING,
-    Union,
-    Sequence,
-    Iterable,
     Tuple,
+    Union,
 )
 
 from dcs.mapping import Point
-from dcs.ships import (
-    Forrestal,
-    Stennis,
-    KUZNECOW,
-    LHA_Tarawa,
-    Type_071,
-)
+from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
-from dcs.unittype import FlyingType
 
 from game import db
 from game.point_with_heading import PointWithHeading
@@ -45,9 +38,9 @@ from gen.runways import RunwayAssigner, RunwayData
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
+    BuildingGroundObject,
     GenericCarrierGroundObject,
     TheaterGroundObject,
-    BuildingGroundObject,
 )
 from ..ato.starttype import StartType
 from ..dcs.aircrafttype import AircraftType
@@ -61,6 +54,7 @@ if TYPE_CHECKING:
     from game.squadrons.squadron import Squadron
     from ..coalition import Coalition
     from ..transfers import PendingTransfers
+    from . import ConflictTheater
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
 AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION: int = 12
@@ -694,7 +688,10 @@ class ControlPoint(MissionTarget, ABC):
 
     @abstractmethod
     def active_runway(
-        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+        self,
+        theater: ConflictTheater,
+        conditions: Conditions,
+        dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
         ...
 
@@ -936,10 +933,13 @@ class Airfield(ControlPoint):
         self.runway_status.damage()
 
     def active_runway(
-        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+        self,
+        theater: ConflictTheater,
+        conditions: Conditions,
+        dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
         assigner = RunwayAssigner(conditions)
-        return assigner.get_preferred_runway(self.airport)
+        return assigner.get_preferred_runway(theater, self.airport)
 
     @property
     def airdrome_id_for_landing(self) -> Optional[int]:
@@ -1019,7 +1019,10 @@ class NavalControlPoint(ControlPoint, ABC):
         return False
 
     def active_runway(
-        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+        self,
+        theater: ConflictTheater,
+        conditions: Conditions,
+        dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
         # TODO: Assign TACAN and ICLS earlier so we don't need this.
         fallback = RunwayData(
@@ -1161,7 +1164,10 @@ class OffMapSpawn(ControlPoint):
         return Heading.from_degrees(0)
 
     def active_runway(
-        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+        self,
+        theater: ConflictTheater,
+        conditions: Conditions,
+        dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
         logging.warning("TODO: Off map spawns have no runways.")
         return RunwayData(
@@ -1202,7 +1208,10 @@ class Fob(ControlPoint):
         return self.has_helipads
 
     def active_runway(
-        self, conditions: Conditions, dynamic_runways: Dict[str, RunwayData]
+        self,
+        theater: ConflictTheater,
+        conditions: Conditions,
+        dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
         logging.warning("TODO: FOBs have no runways.")
         return RunwayData(

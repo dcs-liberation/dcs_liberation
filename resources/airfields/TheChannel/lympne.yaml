@@ -1,0 +1,10 @@
+---
+name: Lympne
+id: 7
+elevation: 351
+runway_length: 3054
+atc:
+  hf: 4.025 MHz
+  vhf_low: 38.950 MHz
+  vhf_high: 118.550 MHz
+  uhf: 250.550 MHz

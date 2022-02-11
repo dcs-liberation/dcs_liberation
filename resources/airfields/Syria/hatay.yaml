@@ -1,0 +1,23 @@
+---
+name: Hatay
+id: 15
+icao: LTDA
+elevation: 253
+runway_length: 9052
+vor:
+  callsign: HTY
+  frequency: 112.500 MHz
+atc:
+  hf: 3.875 MHz
+  vhf_low: 128.500 MHz
+  vhf_high: 38.650 MHz
+  uhf: 250.250 MHz
+runways:
+  "22":
+    ils:
+      callsign: IHTY
+      frequency: 108.150 MHz
+  "04":
+    ils:
+      callsign: IHAT
+      frequency: 108.900 MHz

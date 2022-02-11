@@ -1,0 +1,11 @@
+---
+name: Biniville
+id: 10
+icao: A-24
+elevation: 106
+runway_length: 3283
+atc:
+  hf: 3.750 MHz
+  vhf_low: 38.400 MHz
+  vhf_high: 118 MHz
+  uhf: 250 MHz

@@ -1,0 +1,14 @@
+---
+name: Ercan
+id: 49
+icao: LCEN
+elevation: 383
+runway_length: 7559
+vor:
+  callsign: ECN
+  frequency: 117 MHz
+atc:
+  hf: 4.750 MHz
+  vhf_low: 120.200 MHz
+  vhf_high: 40.400 MHz
+  uhf: 251.950 MHz

@@ -1,0 +1,14 @@
+---
+name: Sas Al Nakheel
+id: 20
+icao: OMNK
+elevation: 9
+runway_length: 5387
+vor:
+  callsign: SAS
+  frequency: 128.930 MHz
+atc:
+  hf: 4 MHz
+  vhf_low: 128.900 MHz
+  vhf_high: 38.900 MHz
+  uhf: 250.450 MHz

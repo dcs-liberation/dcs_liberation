@@ -71,7 +71,7 @@ class FlightGroupConfigurator:
         divert = None
         if self.flight.divert is not None:
             divert = self.flight.divert.active_runway(
-                self.game.conditions, self.dynamic_runways
+                self.game.theater, self.game.conditions, self.dynamic_runways
             )
 
         mission_start_time, waypoints = WaypointGenerator(
@@ -93,10 +93,10 @@ class FlightGroupConfigurator:
             friendly=self.flight.from_cp.captured,
             departure_delay=mission_start_time,
             departure=self.flight.departure.active_runway(
-                self.game.conditions, self.dynamic_runways
+                self.game.theater, self.game.conditions, self.dynamic_runways
             ),
             arrival=self.flight.arrival.active_runway(
-                self.game.conditions, self.dynamic_runways
+                self.game.theater, self.game.conditions, self.dynamic_runways
             ),
             divert=divert,
             waypoints=waypoints,

@@ -1,0 +1,10 @@
+---
+name: Marj as Sultan South
+id: 8
+elevation: 2007
+runway_length: 166
+atc:
+  hf: 4.725 MHz
+  vhf_low: 122.900 MHz
+  vhf_high: 40.350 MHz
+  uhf: 251.900 MHz

@@ -1,0 +1,11 @@
+---
+name: Laughlin
+id: 10
+icao: KIFP
+elevation: 656
+runway_length: 7139
+atc:
+  hf: 3.750 MHz
+  vhf_low: 38.400 MHz
+  vhf_high: 123.900 MHz
+  uhf: 250 MHz

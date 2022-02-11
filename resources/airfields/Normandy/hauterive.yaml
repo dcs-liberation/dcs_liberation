@@ -1,0 +1,10 @@
+---
+name: Hauterive
+id: 36
+elevation: 476
+runway_length: 3283
+atc:
+  hf: 4.450 MHz
+  vhf_low: 39.800 MHz
+  vhf_high: 119.400 MHz
+  uhf: 251.400 MHz

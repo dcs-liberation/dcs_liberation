@@ -1,0 +1,14 @@
+---
+name: Kish Intl
+id: 24
+icao: OIBK
+elevation: 114
+runway_length: 10617
+tacan:
+  callsign: KIH
+  channel: 112X
+atc:
+  hf: 4.100 MHz
+  vhf_low: 121.650 MHz
+  vhf_high: 39.100 MHz
+  uhf: 250.650 MHz

@@ -1,0 +1,10 @@
+---
+name: Saint Omer Longuenesse
+id: 3
+elevation: 219
+runway_length: 1929
+atc:
+  hf: 3.925 MHz
+  vhf_low: 38.750 MHz
+  vhf_high: 118.350 MHz
+  uhf: 250.350 MHz

@@ -1,0 +1,11 @@
+---
+name: An Nasiriyah
+id: 4
+icao: OS64
+elevation: 2746
+runway_length: 8172
+atc:
+  hf: 4.600 MHz
+  vhf_low: 122.300 MHz
+  vhf_high: 40.100 MHz
+  uhf: 251.650 MHz

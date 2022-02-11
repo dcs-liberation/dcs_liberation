@@ -1,0 +1,23 @@
+---
+name: Vaziani
+id: 31
+icao: UG27
+elevation: 1523
+runway_length: 7842
+tacan:
+  callsign: VAS
+  channel: 22X
+atc:
+  hf: 4.700 MHz
+  vhf_low: 42.200 MHz
+  vhf_high: 140 MHz
+  uhf: 269 MHz
+runways:
+  "31":
+    ils:
+      callsign: IVZ
+      frequency: 108.750 MHz
+  "13":
+    ils:
+      callsign: IVZ
+      frequency: 108.750 MHz

@@ -1,0 +1,11 @@
+---
+name: Eyn Shemer
+id: 10
+icao: LLES
+elevation: 93
+runway_length: 3562
+atc:
+  hf: 3.750 MHz
+  vhf_low: 123.400 MHz
+  vhf_high: 38.400 MHz
+  uhf: 250 MHz

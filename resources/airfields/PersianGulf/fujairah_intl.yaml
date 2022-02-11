@@ -1,0 +1,19 @@
+---
+name: Fujairah Intl
+id: 7
+icao: OMFJ
+elevation: 60
+runway_length: 9437
+vor:
+  callsign: FJV
+  frequency: 113.800 MHz
+atc:
+  hf: 4.375 MHz
+  vhf_low: 124.600 MHz
+  vhf_high: 39.650 MHz
+  uhf: 251.250 MHz
+runways:
+  "29":
+    ils:
+      callsign: IFJR
+      frequency: 111.500 MHz

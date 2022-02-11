@@ -1,0 +1,11 @@
+---
+name: Picauville
+id: 16
+icao: A-8
+elevation: 72
+runway_length: 3840
+atc:
+  hf: 3.900 MHz
+  vhf_low: 38.700 MHz
+  vhf_high: 118.300 MHz
+  uhf: 250.300 MHz

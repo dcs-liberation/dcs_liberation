@@ -1,0 +1,11 @@
+---
+name: Carpiquet
+id: 19
+icao: B-17
+elevation: 187
+runway_length: 3799
+atc:
+  hf: 3.975 MHz
+  vhf_low: 38.850 MHz
+  vhf_high: 118.450 MHz
+  uhf: 250.450 MHz

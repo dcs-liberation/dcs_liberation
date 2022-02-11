@@ -3,15 +3,18 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Iterator, Optional
+from typing import Iterator, Optional, TYPE_CHECKING
 
 from dcs.terrain.terrain import Airport
 
-from game.weather import Conditions
-from game.utils import Heading
-from .airfields import AIRFIELD_DATA
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel
+from game.utils import Heading
+from game.weather import Conditions
+from gen.airfields import AirfieldData
+
+if TYPE_CHECKING:
+    from game.theater import ConflictTheater
 
 
 @dataclass(frozen=True)
@@ -27,11 +30,16 @@ class RunwayData:
 
     @classmethod
     def for_airfield(
-        cls, airport: Airport, runway_heading: Heading, runway_name: str
+        cls,
+        theater: ConflictTheater,
+        airport: Airport,
+        runway_heading: Heading,
+        runway_name: str,
     ) -> RunwayData:
         """Creates RunwayData for the given runway of an airfield.
 
         Args:
+            theater: The theater the airport is in.
             airport: The airfield the runway belongs to.
             runway_heading: Heading of the runway.
             runway_name: Identifier of the runway to use. e.g. "03" or "20L".
@@ -41,7 +49,7 @@ class RunwayData:
         tacan_callsign: Optional[str] = None
         ils: Optional[RadioFrequency] = None
         try:
-            airfield = AIRFIELD_DATA[airport.name]
+            airfield = AirfieldData.for_airport(theater, airport)
             if airfield.atc is not None:
                 atc = airfield.atc.uhf
             else:
@@ -50,7 +58,7 @@ class RunwayData:
             tacan_callsign = airfield.tacan_callsign
             ils = airfield.ils_freq(runway_name)
         except KeyError:
-            logging.warning(f"No airfield data for {airport.name}")
+            logging.warning(f"No airfield data for {airport.name} ({airport.id}")
         return cls(
             airfield_name=airport.name,
             runway_heading=runway_heading,
@@ -62,13 +70,15 @@ class RunwayData:
         )
 
     @classmethod
-    def for_pydcs_airport(cls, airport: Airport) -> Iterator[RunwayData]:
+    def for_pydcs_airport(
+        cls, theater: ConflictTheater, airport: Airport
+    ) -> Iterator[RunwayData]:
         for runway in airport.runways:
             runway_number = runway.heading // 10
             runway_side = ["", "L", "R"][runway.leftright]
             runway_name = f"{runway_number:02}{runway_side}"
             yield cls.for_airfield(
-                airport, Heading.from_degrees(runway.heading), runway_name
+                theater, airport, Heading.from_degrees(runway.heading), runway_name
             )
 
             # pydcs only exposes one runway per physical runway, so to expose
@@ -77,7 +87,7 @@ class RunwayData:
             runway_number = heading.degrees // 10
             runway_side = ["", "R", "L"][runway.leftright]
             runway_name = f"{runway_number:02}{runway_side}"
-            yield cls.for_airfield(airport, heading, runway_name)
+            yield cls.for_airfield(theater, airport, heading, runway_name)
 
 
 class RunwayAssigner:
@@ -89,7 +99,9 @@ class RunwayAssigner:
         ideal_heading = wind.opposite
         return runway.runway_heading.angle_between(ideal_heading)
 
-    def get_preferred_runway(self, airport: Airport) -> RunwayData:
+    def get_preferred_runway(
+        self, theater: ConflictTheater, airport: Airport
+    ) -> RunwayData:
         """Returns the preferred runway for the given airport.
 
         Right now we're only selecting runways based on whether or not
@@ -97,7 +109,7 @@ class RunwayAssigner:
         ILS, but we could also choose based on wind conditions, or which
         direction flight plans should follow.
         """
-        runways = list(RunwayData.for_pydcs_airport(airport))
+        runways = list(RunwayData.for_pydcs_airport(theater, airport))
 
         # Find the runway with the best headwind first.
         best_runways = [runways[0]]

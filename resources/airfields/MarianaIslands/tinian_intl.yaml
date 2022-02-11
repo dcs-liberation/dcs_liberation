@@ -1,0 +1,11 @@
+---
+name: Tinian Intl
+id: 3
+icao: PGWT
+elevation: 240
+runway_length: 7777
+atc:
+  hf: 3.800 MHz
+  vhf_low: 38.500 MHz
+  vhf_high: 123.650 MHz
+  uhf: 250.050 MHz

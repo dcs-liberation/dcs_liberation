@@ -1,0 +1,10 @@
+---
+name: Qabr as Sitt
+id: 29
+elevation: 2134
+runway_length: 489
+atc:
+  hf: 4.250 MHz
+  vhf_low: 122.600 MHz
+  vhf_high: 39.400 MHz
+  uhf: 250.950 MHz

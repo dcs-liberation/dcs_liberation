@@ -1,0 +1,11 @@
+---
+name: Pinarbashi
+id: 51
+icao: CY-0003
+elevation: 770
+runway_length: 3364
+atc:
+  hf: 4.825 MHz
+  vhf_low: 121 MHz
+  vhf_high: 40.550 MHz
+  uhf: 252.100 MHz

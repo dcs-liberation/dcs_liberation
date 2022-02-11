@@ -1,0 +1,10 @@
+---
+name: Naqoura
+id: 52
+elevation: 378
+runway_length: 0
+atc:
+  hf: 4.625 MHz
+  vhf_low: 122 MHz
+  vhf_high: 40.150 MHz
+  uhf: 251.700 MHz

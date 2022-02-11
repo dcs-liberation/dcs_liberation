@@ -1,0 +1,11 @@
+---
+name: Brucheville
+id: 5
+icao: A-16
+elevation: 45
+runway_length: 3413
+atc:
+  hf: 4.575 MHz
+  vhf_low: 40.050 MHz
+  vhf_high: 119.650 MHz
+  uhf: 251.650 MHz

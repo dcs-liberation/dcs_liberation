@@ -1,0 +1,10 @@
+---
+name: Detling
+id: 8
+elevation: 623
+runway_length: 3482
+atc:
+  hf: 4.050 MHz
+  vhf_low: 39 MHz
+  vhf_high: 118.600 MHz
+  uhf: 250.600 MHz

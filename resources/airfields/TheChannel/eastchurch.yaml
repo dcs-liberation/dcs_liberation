@@ -1,0 +1,10 @@
+---
+name: Eastchurch
+id: 10
+elevation: 30
+runway_length: 2983
+atc:
+  hf: 3.775 MHz
+  vhf_low: 38.450 MHz
+  vhf_high: 118.050 MHz
+  uhf: 250.050 MHz

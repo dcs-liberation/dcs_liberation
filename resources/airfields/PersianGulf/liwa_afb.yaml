@@ -1,0 +1,17 @@
+---
+name: Liwa AFB
+id: 29
+icao: OMLW
+elevation: 400
+runway_length: 10768
+tacan:
+  callsign: OMLW
+  channel: 121X
+vor:
+  callsign: OMLW
+  frequency: 117.400 MHz
+atc:
+  hf: 4.225 MHz
+  vhf_low: 119.300 MHz
+  vhf_high: 39.350 MHz
+  uhf: 250.950 MHz

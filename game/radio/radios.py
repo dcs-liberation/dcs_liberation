@@ -1,6 +1,9 @@
 """Radio frequency types and allocators."""
+from __future__ import annotations
+
 import itertools
 import logging
+import re
 from dataclasses import dataclass
 from typing import Dict, FrozenSet, Iterator, List, Set, Tuple
 
@@ -35,13 +38,37 @@ class RadioFrequency:
         """
         return self.hertz / 1000000
 
+    @classmethod
+    def parse(cls, text: str) -> RadioFrequency:
+        match = re.match(r"""^(\d+)(?:\.(\d{1,3}))? (MHz|kHz)$""", text)
+        if match is None:
+            raise ValueError(f"Could not parse radio frequency from {text}")
+
+        whole = int(match.group(1))
+        partial_str = match.group(2)
+        units = match.group(3)
+
+        partial = 0
+        if partial_str is not None:
+            partial = int(partial_str)
+            if len(partial_str) == 1:
+                partial *= 100
+            elif len(partial_str) == 2:
+                partial *= 10
+
+        if units == "MHz":
+            return MHz(whole, partial)
+        if units == "kHz":
+            return kHz(whole, partial)
+        raise ValueError(f"Unexpected units in radio frequency: {units}")
+
 
 def MHz(num: int, khz: int = 0) -> RadioFrequency:
     return RadioFrequency(num * 1000000 + khz * 1000)
 
 
-def kHz(num: int) -> RadioFrequency:
-    return RadioFrequency(num * 1000)
+def kHz(num: int, hz: int = 0) -> RadioFrequency:
+    return RadioFrequency(num * 1000 + hz)
 
 
 @dataclass(frozen=True)

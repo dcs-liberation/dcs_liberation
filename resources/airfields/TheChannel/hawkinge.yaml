@@ -1,0 +1,10 @@
+---
+name: Hawkinge
+id: 6
+elevation: 524
+runway_length: 3013
+atc:
+  hf: 4 MHz
+  vhf_low: 38.900 MHz
+  vhf_high: 118.500 MHz
+  uhf: 250.500 MHz

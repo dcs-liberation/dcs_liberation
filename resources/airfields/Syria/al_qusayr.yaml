@@ -1,0 +1,11 @@
+---
+name: Al Qusayr
+id: 3
+icao: OS70
+elevation: 1729
+runway_length: 8585
+atc:
+  hf: 4.550 MHz
+  vhf_low: 119.200 MHz
+  vhf_high: 40 MHz
+  uhf: 251.550 MHz

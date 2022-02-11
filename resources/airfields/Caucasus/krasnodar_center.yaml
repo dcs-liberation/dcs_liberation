@@ -1,0 +1,32 @@
+---
+name: Krasnodar-Center
+id: 13
+icao: URKL
+elevation: 98
+runway_length: 7659
+rsbn:
+  callsign: MB
+  channel: 40
+atc:
+  hf: 3.800 MHz
+  vhf_low: 38.600 MHz
+  vhf_high: 122 MHz
+  uhf: 251 MHz
+runways:
+  "27":
+    outer_ndb:
+      callsign: OC
+      frequency: 625 MHz
+    inner_ndb:
+      callsign: C
+      frequency: 303 MHz
+  09:
+    prmg:
+      callsign: MB
+      channel: 38
+    outer_ndb:
+      callsign: MB
+      frequency: 625 MHz
+    inner_ndb:
+      callsign: M
+      frequency: 303 MHz

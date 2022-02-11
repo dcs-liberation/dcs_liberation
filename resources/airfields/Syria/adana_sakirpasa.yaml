@@ -1,0 +1,19 @@
+---
+name: Adana Sakirpasa
+id: 2
+icao: LTAF
+elevation: 55
+runway_length: 8115
+vor:
+  callsign: ADA
+  frequency: 112.700 MHz
+atc:
+  hf: 4.275 MHz
+  vhf_low: 121.100 MHz
+  vhf_high: 39.450 MHz
+  uhf: 251 MHz
+runways:
+  "05":
+    ils:
+      callsign: IADA
+      frequency: 108.700 MHz

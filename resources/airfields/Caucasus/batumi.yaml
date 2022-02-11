@@ -1,0 +1,19 @@
+---
+name: Batumi
+id: 22
+icao: UGSB
+elevation: 32
+runway_length: 6792
+tacan:
+  callsign: BTM
+  channel: 16X
+atc:
+  hf: 4.250 MHz
+  vhf_low: 40.400 MHz
+  vhf_high: 131 MHz
+  uhf: 260 MHz
+runways:
+  "13":
+    ils:
+      callsign: ILU
+      frequency: 110.300 MHz

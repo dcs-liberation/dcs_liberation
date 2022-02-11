@@ -1,0 +1,11 @@
+---
+name: Lantheuil
+id: 25
+icao: B-9
+elevation: 174
+runway_length: 3597
+atc:
+  hf: 4.150 MHz
+  vhf_low: 39.200 MHz
+  vhf_high: 118.800 MHz
+  uhf: 250.800 MHz

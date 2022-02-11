@@ -1,0 +1,10 @@
+---
+name: Chailey
+id: 27
+elevation: 134
+runway_length: 5080
+atc:
+  hf: 4.200 MHz
+  vhf_low: 39.300 MHz
+  vhf_high: 118.900 MHz
+  uhf: 250.900 MHz

@@ -1,0 +1,35 @@
+---
+name: Tbilisi-Lochini
+id: 29
+icao: UGTB
+elevation: 1573
+runway_length: 7692
+tacan:
+  callsign: GTB
+  channel: 25X
+atc:
+  hf: 4.600 MHz
+  vhf_low: 41.800 MHz
+  vhf_high: 138 MHz
+  uhf: 267 MHz
+runways:
+  "13":
+    ils:
+      callsign: INA
+      frequency: 110.300 MHz
+    outer_ndb:
+      callsign: BP
+      frequency: 342 MHz
+    inner_ndb:
+      callsign: B
+      frequency: 923 MHz
+  "30":
+    ils:
+      callsign: INA
+      frequency: 108.900 MHz
+    outer_ndb:
+      callsign: NA
+      frequency: 211 MHz
+    inner_ndb:
+      callsign: N
+      frequency: 435 MHz

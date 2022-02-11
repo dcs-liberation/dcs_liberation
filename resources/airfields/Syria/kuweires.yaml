@@ -1,0 +1,11 @@
+---
+name: Kuweires
+id: 31
+icao: OS66
+elevation: 1200
+runway_length: 6662
+atc:
+  hf: 4.325 MHz
+  vhf_low: 120.500 MHz
+  vhf_high: 39.550 MHz
+  uhf: 251.100 MHz

@@ -1,0 +1,11 @@
+---
+name: Jiroft
+id: 27
+icao: OIKJ
+elevation: 2664
+runway_length: 9160
+atc:
+  hf: 4.125 MHz
+  vhf_low: 136 MHz
+  vhf_high: 39.120 MHz
+  uhf: 250.750 MHz

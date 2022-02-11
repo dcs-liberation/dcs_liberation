@@ -1,0 +1,11 @@
+---
+name: Aleppo
+id: 27
+icao: OSAP
+elevation: 1253
+runway_length: 8332
+atc:
+  hf: 4.200 MHz
+  vhf_low: 119.100 MHz
+  vhf_high: 39.300 MHz
+  uhf: 250.850 MHz

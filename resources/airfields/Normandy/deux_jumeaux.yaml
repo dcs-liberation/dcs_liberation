@@ -1,0 +1,11 @@
+---
+name: Deux Jumeaux
+id: 12
+icao: A-4
+elevation: 123
+runway_length: 4628
+atc:
+  hf: 3.800 MHz
+  vhf_low: 38.500 MHz
+  vhf_high: 118.100 MHz
+  uhf: 250.100 MHz

@@ -1,0 +1,11 @@
+---
+name: Cardonville
+id: 11
+icao: A-3
+elevation: 101
+runway_length: 4541
+atc:
+  hf: 3.775 MHz
+  vhf_low: 38.450 MHz
+  vhf_high: 118.050 MHz
+  uhf: 250.050 MHz

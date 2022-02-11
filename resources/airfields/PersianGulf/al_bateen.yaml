@@ -1,0 +1,14 @@
+---
+name: Al-Bateen
+id: 23
+icao: OMAD
+elevation: 11
+runway_length: 6808
+vor:
+  callsign: ALB
+  frequency: 114 MHz
+atc:
+  hf: 4.075 MHz
+  vhf_low: 119.900 MHz
+  vhf_high: 39.050 MHz
+  uhf: 250.600 MHz

@@ -1,0 +1,14 @@
+---
+name: Rayak
+id: 32
+icao: OLRA
+elevation: 2934
+runway_length: 8699
+vor:
+  callsign: HTY
+  frequency: 124.400 MHz
+atc:
+  hf: 4.350 MHz
+  vhf_low: 124.400 MHz
+  vhf_high: 39.600 MHz
+  uhf: 251.150 MHz

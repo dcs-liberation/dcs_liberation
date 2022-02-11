@@ -1,0 +1,10 @@
+---
+name: Funtington
+id: 29
+elevation: 164
+runway_length: 5080
+atc:
+  hf: 4.250 MHz
+  vhf_low: 39.400 MHz
+  vhf_high: 119 MHz
+  uhf: 251 MHz

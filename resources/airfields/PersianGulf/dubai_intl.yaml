@@ -1,0 +1,20 @@
+---
+name: Dubai Intl
+id: 5
+icao: OMDB
+elevation: 16
+runway_length: 11018
+atc:
+  hf: 4.325 MHz
+  vhf_low: 118.750 MHz
+  vhf_high: 39.550 MHz
+  uhf: 251.150 MHz
+runways:
+  "12":
+    ils:
+      callsign: IDBR
+      frequency: 110.100 MHz
+  "30":
+    ils:
+      callsign: IDBL
+      frequency: 110.900 MHz

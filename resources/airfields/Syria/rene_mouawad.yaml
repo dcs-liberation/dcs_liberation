@@ -1,0 +1,11 @@
+---
+name: Rene Mouawad
+id: 33
+icao: OLKA
+elevation: 14
+runway_length: 8614
+atc:
+  hf: 4.375 MHz
+  vhf_low: 121 MHz
+  vhf_high: 39.650 MHz
+  uhf: 251.200 MHz

@@ -1,0 +1,19 @@
+---
+name: Larnaca
+id: 47
+icao: LCRE
+elevation: 16
+runway_length: 8009
+vor:
+  callsign: LCA
+  frequency: 112.080 MHz
+atc:
+  hf: 4.700 MHz
+  vhf_low: 121.200 MHz
+  vhf_high: 40.300 MHz
+  uhf: 251.850 MHz
+runways:
+  "22":
+    ils:
+      callsign: ILC
+      frequency: 110.300 MHz

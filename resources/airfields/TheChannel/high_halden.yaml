@@ -1,0 +1,10 @@
+---
+name: High Halden
+id: 12
+elevation: 104
+runway_length: 3296
+atc:
+  hf: 3.800 MHz
+  vhf_low: 38.500 MHz
+  vhf_high: 118.100 MHz
+  uhf: 250.100 MHz

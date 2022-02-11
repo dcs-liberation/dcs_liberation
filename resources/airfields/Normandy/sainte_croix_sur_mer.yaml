@@ -1,0 +1,11 @@
+---
+name: Sainte-Croix-sur-Mer
+id: 21
+icao: B-3
+elevation: 160
+runway_length: 3840
+atc:
+  hf: 4.050 MHz
+  vhf_low: 39 MHz
+  vhf_high: 118.600 MHz
+  uhf: 250.600 MHz

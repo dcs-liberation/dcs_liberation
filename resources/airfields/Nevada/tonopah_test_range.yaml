@@ -1,0 +1,23 @@
+---
+name: Tonopah Test Range
+id: 18
+icao: KTNX
+elevation: 5534
+runway_length: 11633
+tacan:
+  callsign: TQQ
+  channel: 77X
+atc:
+  hf: 3.800 MHz
+  vhf_low: 38.500 MHz
+  vhf_high: 124.750 MHz
+  uhf: 257.950 MHz
+runways:
+  "14":
+    ils:
+      callsign: I-RVP
+      frequency: 108.300 MHz
+  "32":
+    ils:
+      callsign: I-UVV
+      frequency: 111.700 MHz

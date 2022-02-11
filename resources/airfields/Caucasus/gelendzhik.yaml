@@ -1,0 +1,14 @@
+---
+name: Gelendzhik
+id: 17
+icao: URKG
+elevation: 72
+runway_length: 5452
+vor:
+  callsign: GN
+  frequency: 114.030 MHz
+atc:
+  hf: 4 MHz
+  vhf_low: 39.400 MHz
+  vhf_high: 126 MHz
+  uhf: 255 MHz

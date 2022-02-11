@@ -1,0 +1,11 @@
+---
+name: Abu al-Duhur
+id: 1
+icao: OS57
+elevation: 820
+runway_length: 8728
+atc:
+  hf: 4 MHz
+  vhf_low: 122.200 MHz
+  vhf_high: 38.900 MHz
+  uhf: 250.450 MHz

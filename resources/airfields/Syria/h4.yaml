@@ -1,0 +1,11 @@
+---
+name: H4
+id: 12
+icao: OJHR
+elevation: 2257
+runway_length: 7179
+atc:
+  hf: 3.800 MHz
+  vhf_low: 120.400 MHz
+  vhf_high: 38.500 MHz
+  uhf: 250.100 MHz

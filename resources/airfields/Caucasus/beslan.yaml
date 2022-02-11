@@ -1,0 +1,22 @@
+---
+name: Beslan
+id: 32
+icao: URMO
+elevation: 1719
+runway_length: 9327
+atc:
+  hf: 4.750 MHz
+  vhf_low: 42.400 MHz
+  vhf_high: 141 MHz
+  uhf: 270 MHz
+runways:
+  "10":
+    ils:
+      callsign: ICH
+      frequency: 110.500 MHz
+    outer_ndb:
+      callsign: CX
+      frequency: 1.005 MHz
+    inner_ndb:
+      callsign: C
+      frequency: 250 MHz

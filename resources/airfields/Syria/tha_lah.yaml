@@ -1,0 +1,11 @@
+---
+name: Tha'lah
+id: 5
+icao: OS60
+elevation: 2381
+runway_length: 8025
+atc:
+  hf: 4.650 MHz
+  vhf_low: 122.400 MHz
+  vhf_high: 40.200 MHz
+  uhf: 251.750 MHz

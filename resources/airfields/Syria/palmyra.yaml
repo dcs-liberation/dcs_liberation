@@ -1,0 +1,11 @@
+---
+name: Palmyra
+id: 28
+icao: OSPR
+elevation: 1267
+runway_length: 8704
+atc:
+  hf: 4.225 MHz
+  vhf_low: 121.900 MHz
+  vhf_high: 39.350 MHz
+  uhf: 250.900 MHz

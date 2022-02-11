@@ -1,0 +1,11 @@
+---
+name: Rota Intl
+id: 1
+icao: PGRO
+elevation: 568
+runway_length: 6105
+atc:
+  hf: 3.750 MHz
+  vhf_low: 38.400 MHz
+  vhf_high: 123.600 MHz
+  uhf: 250 MHz

@@ -1,0 +1,19 @@
+---
+name: Groom Lake
+id: 2
+icao: KXTA
+elevation: 4494
+runway_length: 11008
+tacan:
+  callsign: GRL
+  channel: 18X
+atc:
+  hf: 3.850 MHz
+  vhf_low: 38.600 MHz
+  vhf_high: 118 MHz
+  uhf: 250.050 MHz
+runways:
+  "32":
+    ils:
+      callsign: GLRI
+      frequency: 109.300 MHz

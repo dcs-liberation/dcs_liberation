@@ -1,0 +1,11 @@
+---
+name: Abu Musa Island
+id: 1
+icao: OIBA
+elevation: 16
+runway_length: 7616
+atc:
+  hf: 3.950 MHz
+  vhf_low: 122.900 MHz
+  vhf_high: 38.800 MHz
+  uhf: 250.400 MHz

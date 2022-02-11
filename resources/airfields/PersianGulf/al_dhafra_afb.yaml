@@ -1,0 +1,26 @@
+---
+name: Al Dhafra AFB
+id: 4
+icao: OMAM
+elevation: 52
+runway_length: 11530
+tacan:
+  callsign: MA
+  channel: 96X
+vor:
+  callsign: MA
+  frequency: 114.900 MHz
+atc:
+  hf: 4.300 MHz
+  vhf_low: 126.500 MHz
+  vhf_high: 39.500 MHz
+  uhf: 251.100 MHz
+runways:
+  "31":
+    ils:
+      callsign: IMA
+      frequency: 109.100 MHz
+  "13":
+    ils:
+      callsign: MMA
+      frequency: 111.100 MHz

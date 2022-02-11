@@ -1,0 +1,17 @@
+---
+name: Kerman
+id: 18
+icao: OIKK
+elevation: 5746
+runway_length: 11981
+tacan:
+  callsign: KER
+  channel: 97X
+vor:
+  callsign: KER
+  frequency: 112 MHz
+atc:
+  hf: 3.925 MHz
+  vhf_low: 118.250 MHz
+  vhf_high: 38.750 MHz
+  uhf: 250.300 MHz

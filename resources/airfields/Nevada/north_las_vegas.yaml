@@ -1,0 +1,11 @@
+---
+name: North Las Vegas
+id: 15
+icao: KVGT
+elevation: 2228
+runway_length: 4734
+atc:
+  hf: 3.775 MHz
+  vhf_low: 38.450 MHz
+  vhf_high: 125.700 MHz
+  uhf: 360.750 MHz

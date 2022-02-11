@@ -1,0 +1,19 @@
+---
+name: Nellis
+id: 4
+icao: KLSV
+elevation: 1841
+runway_length: 9454
+tacan:
+  callsign: LSV
+  channel: 12X
+atc:
+  hf: 3.900 MHz
+  vhf_low: 38.700 MHz
+  vhf_high: 132.550 MHz
+  uhf: 327 MHz
+runways:
+  "21":
+    ils:
+      callsign: IDIQ
+      frequency: 109.100 MHz

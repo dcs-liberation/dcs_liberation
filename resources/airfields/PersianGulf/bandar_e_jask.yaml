@@ -1,0 +1,14 @@
+---
+name: Bandar-e-Jask
+id: 21
+icao: OIZJ
+elevation: 26
+runway_length: 6842
+vor:
+  callsign: KHM
+  frequency: 116.300 MHz
+atc:
+  hf: 4.025 MHz
+  vhf_low: 118.150 MHz
+  vhf_high: 38.950 MHz
+  uhf: 250.500 MHz

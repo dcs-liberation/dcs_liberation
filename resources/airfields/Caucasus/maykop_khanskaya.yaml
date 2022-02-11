@@ -1,0 +1,33 @@
+---
+name: Maykop-Khanskaya
+id: 16
+icao: URKH
+elevation: 590
+runway_length: 10195
+rsbn:
+  callsign: DG
+  channel: 34
+atc:
+  hf: 3.950 MHz
+  vhf_low: 39.200 MHz
+  vhf_high: 125 MHz
+  uhf: 254 MHz
+runways:
+  "22":
+    outer_ndb:
+      callsign: RK
+      frequency: 289 MHz
+    inner_ndb:
+      callsign: R
+      frequency: 591 MHz
+  "4":
+    inner_ndb:
+      callsign: D
+      frequency: 591 MHz
+  "04":
+    prmg:
+      callsign: DG
+      channel: 36
+    outer_ndb:
+      callsign: DG
+      frequency: 289 MHz

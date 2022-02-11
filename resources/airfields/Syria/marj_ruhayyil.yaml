@@ -1,0 +1,11 @@
+---
+name: Marj Ruhayyil
+id: 23
+icao: OS63
+elevation: 2160
+runway_length: 7576
+atc:
+  hf: 4.100 MHz
+  vhf_low: 120.800 MHz
+  vhf_high: 39.100 MHz
+  uhf: 256.550 MHz

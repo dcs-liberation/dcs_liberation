@@ -1,0 +1,19 @@
+---
+name: Sukhumi-Babushara
+id: 20
+icao: UGSS
+elevation: 43
+runway_length: 11217
+atc:
+  hf: 4.150 MHz
+  vhf_low: 40 MHz
+  vhf_high: 129 MHz
+  uhf: 258 MHz
+runways:
+  "30":
+    outer_ndb:
+      callsign: AV
+      frequency: 489 MHz
+    inner_ndb:
+      callsign: A
+      frequency: 995 MHz

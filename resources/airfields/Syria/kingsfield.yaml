@@ -1,0 +1,11 @@
+---
+name: Kingsfield
+id: 45
+icao: CY-0004
+elevation: 270
+runway_length: 3069
+atc:
+  hf: 4.650 MHz
+  vhf_low: 121 MHz
+  vhf_high: 40.200 MHz
+  uhf: 251.750 MHz

@@ -1,0 +1,10 @@
+---
+name: Evreux
+id: 26
+elevation: 423
+runway_length: 4296
+atc:
+  hf: 4.175 MHz
+  vhf_low: 39.250 MHz
+  vhf_high: 118.850 MHz
+  uhf: 250.850 MHz

@@ -1,0 +1,11 @@
+---
+name: Al-Dumayr
+id: 9
+icao: OS61
+elevation: 2066
+runway_length: 8902
+atc:
+  hf: 4.750 MHz
+  vhf_low: 120.300 MHz
+  vhf_high: 40.400 MHz
+  uhf: 251.950 MHz

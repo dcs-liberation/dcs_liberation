@@ -1,0 +1,23 @@
+---
+name: Al Minhad AFB
+id: 12
+icao: OMDM
+elevation: 190
+runway_length: 11865
+tacan:
+  callsign: MIN
+  channel: 99X
+atc:
+  hf: 3.800 MHz
+  vhf_low: 118.550 MHz
+  vhf_high: 38.500 MHz
+  uhf: 250.100 MHz
+runways:
+  "27":
+    ils:
+      callsign: IMNR
+      frequency: 110.750 MHz
+  "9":
+    ils:
+      callsign: IMNW
+      frequency: 110.700 MHz

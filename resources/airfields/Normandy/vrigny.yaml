@@ -1,0 +1,10 @@
+---
+name: Vrigny
+id: 38
+elevation: 590
+runway_length: 3283
+atc:
+  hf: 4.475 MHz
+  vhf_low: 39.850 MHz
+  vhf_high: 119.450 MHz
+  uhf: 251.450 MHz

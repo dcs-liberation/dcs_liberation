@@ -1,0 +1,11 @@
+---
+name: Rucqueville
+id: 23
+icao: B-7
+elevation: 192
+runway_length: 4561
+atc:
+  hf: 4.100 MHz
+  vhf_low: 39.100 MHz
+  vhf_high: 118.700 MHz
+  uhf: 250.700 MHz

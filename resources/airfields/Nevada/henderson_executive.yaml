@@ -1,0 +1,11 @@
+---
+name: Henderson Executive
+id: 8
+icao: KHND
+elevation: 2491
+runway_length: 5999
+atc:
+  hf: 3.925 MHz
+  vhf_low: 38.750 MHz
+  vhf_high: 125.100 MHz
+  uhf: 250.100 MHz

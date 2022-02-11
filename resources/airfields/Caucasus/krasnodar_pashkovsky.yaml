@@ -1,0 +1,29 @@
+---
+name: Krasnodar-Pashkovsky
+id: 19
+icao: URKK
+elevation: 111
+runway_length: 9738
+vor:
+  callsign: KN
+  frequency: 115.080 MHz
+atc:
+  hf: 4.100 MHz
+  vhf_low: 39.800 MHz
+  vhf_high: 128 MHz
+  uhf: 257 MHz
+runways:
+  "23":
+    outer_ndb:
+      callsign: LD
+      frequency: 493 MHz
+    inner_ndb:
+      callsign: L
+      frequency: 240 MHz
+  "05":
+    outer_ndb:
+      callsign: KR
+      frequency: 493 MHz
+    inner_ndb:
+      callsign: K
+      frequency: 240 MHz

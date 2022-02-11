@@ -1,3 +1,5 @@
+import pytest
+
 from game.radio.tacan import (
     OutOfTacanChannelsError,
     TacanBand,
@@ -6,8 +8,6 @@ from game.radio.tacan import (
     TacanRegistry,
     TacanUsage,
 )
-import pytest
-
 
 ALL_VALID_X_TR = [1, *range(31, 46 + 1), *range(64, 126 + 1)]
 ALL_VALID_X_A2A = [*range(37, 63 + 1), *range(100, 126 + 1)]
@@ -75,3 +75,29 @@ def test_reserve_again() -> None:
     with pytest.raises(TacanChannelInUseError):
         registry.mark_unavailable(TacanChannel(1, TacanBand.X))
         registry.mark_unavailable(TacanChannel(1, TacanBand.X))
+
+
+def test_tacan_parsing() -> None:
+    assert TacanChannel.parse("1X") == TacanChannel(1, TacanBand.X)
+    assert TacanChannel.parse("1Y") == TacanChannel(1, TacanBand.Y)
+    assert TacanChannel.parse("10X") == TacanChannel(10, TacanBand.X)
+    assert TacanChannel.parse("100X") == TacanChannel(100, TacanBand.X)
+
+    with pytest.raises(ValueError):
+        TacanChannel.parse("1000X")
+    with pytest.raises(ValueError):
+        TacanChannel.parse("0X")
+    with pytest.raises(ValueError):
+        TacanChannel.parse("1Z")
+    with pytest.raises(ValueError):
+        TacanChannel.parse("X")
+    with pytest.raises(ValueError):
+        TacanChannel.parse("1")
+    with pytest.raises(ValueError):
+        TacanChannel.parse("1 X")
+    with pytest.raises(ValueError):
+        TacanChannel.parse(" 1X")
+    with pytest.raises(ValueError):
+        TacanChannel.parse("1X ")
+    with pytest.raises(ValueError):
+        TacanChannel.parse("1x")

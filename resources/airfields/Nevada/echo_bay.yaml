@@ -1,0 +1,14 @@
+---
+name: Echo Bay
+id: 7
+icao: OL9
+elevation: 3126
+runway_length: 6100
+tacan:
+  callsign: INS
+  channel: 87X
+atc:
+  hf: 3.825 MHz
+  vhf_low: 38.550 MHz
+  vhf_high: 118.300 MHz
+  uhf: 360.600 MHz

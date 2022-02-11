@@ -1,0 +1,10 @@
+---
+name: Essay
+id: 35
+elevation: 507
+runway_length: 3283
+atc:
+  hf: 4.425 MHz
+  vhf_low: 39.750 MHz
+  vhf_high: 119.350 MHz
+  uhf: 251.350 MHz

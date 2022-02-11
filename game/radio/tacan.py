@@ -1,4 +1,7 @@
 """TACAN channel handling."""
+from __future__ import annotations
+
+import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Iterator, Set
@@ -44,6 +47,16 @@ class TacanChannel:
 
     def __str__(self) -> str:
         return f"{self.number}{self.band.value}"
+
+    @classmethod
+    def parse(cls, text: str) -> TacanChannel:
+        match = re.match(r"""^(\d{1,3})([XY])$""", text)
+        if match is None:
+            raise ValueError(f"Could not parse TACAN from {text}")
+        number = int(match.group(1))
+        if not number:
+            raise ValueError("TACAN channel cannot be 0")
+        return TacanChannel(number, TacanBand(match.group(2)))
 
 
 class OutOfTacanChannelsError(RuntimeError):

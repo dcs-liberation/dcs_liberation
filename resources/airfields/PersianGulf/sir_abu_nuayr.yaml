@@ -1,0 +1,11 @@
+---
+name: Sir Abu Nuayr
+id: 17
+icao: OMSN
+elevation: 25
+runway_length: 2229
+atc:
+  hf: 3.900 MHz
+  vhf_low: 118 MHz
+  vhf_high: 38.700 MHz
+  uhf: 250.800 MHz

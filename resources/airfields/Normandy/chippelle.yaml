@@ -1,0 +1,11 @@
+---
+name: Chippelle
+id: 13
+icao: A-5
+elevation: 124
+runway_length: 4643
+atc:
+  hf: 3.825 MHz
+  vhf_low: 38.550 MHz
+  vhf_high: 118.150 MHz
+  uhf: 250.150 MHz

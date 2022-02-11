@@ -1,0 +1,11 @@
+---
+name: Rosh Pina
+id: 34
+icao: LLIB
+elevation: 865
+runway_length: 2711
+atc:
+  hf: 4.400 MHz
+  vhf_low: 118.450 MHz
+  vhf_high: 39.700 MHz
+  uhf: 251.250 MHz

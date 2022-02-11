@@ -1,0 +1,26 @@
+---
+name: Anapa-Vityazevo
+id: 12
+icao: URKA
+elevation: 141
+runway_length: 8623
+atc:
+  hf: 3.750 MHz
+  vhf_low: 38.400 MHz
+  vhf_high: 121 MHz
+  uhf: 250 MHz
+runways:
+  "22":
+    outer_ndb:
+      callsign: AP
+      frequency: 443 MHz
+    inner_ndb:
+      callsign: P
+      frequency: 215 MHz
+  "04":
+    outer_ndb:
+      callsign: AN
+      frequency: 443 MHz
+    inner_ndb:
+      callsign: N
+      frequency: 215 MHz

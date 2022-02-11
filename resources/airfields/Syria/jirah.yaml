@@ -1,0 +1,11 @@
+---
+name: Jirah
+id: 17
+icao: OS62
+elevation: 1170
+runway_length: 9090
+atc:
+  hf: 3.925 MHz
+  vhf_low: 118.100 MHz
+  vhf_high: 38.750 MHz
+  uhf: 250.300 MHz

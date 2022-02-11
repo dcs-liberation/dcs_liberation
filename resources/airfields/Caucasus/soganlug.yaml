@@ -1,0 +1,14 @@
+---
+name: Soganlug
+id: 30
+icao: UG24
+elevation: 1474
+runway_length: 7871
+tacan:
+  callsign: GTB
+  channel: 25X
+atc:
+  hf: 4.650 MHz
+  vhf_low: 42 MHz
+  vhf_high: 139 MHz
+  uhf: 268 MHz

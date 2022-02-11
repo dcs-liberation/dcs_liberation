@@ -1,0 +1,10 @@
+---
+name: Dunkirk Mardyck
+id: 4
+elevation: 16
+runway_length: 1737
+atc:
+  hf: 3.950 MHz
+  vhf_low: 38.850 MHz
+  vhf_high: 118.450 MHz
+  uhf: 250.450 MHz

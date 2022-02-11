@@ -1,0 +1,19 @@
+---
+name: Paphos
+id: 46
+icao: LCPH
+elevation: 40
+runway_length: 8425
+vor:
+  callsign: PHA
+  frequency: 117.900 MHz
+atc:
+  hf: 4.675 MHz
+  vhf_low: 119.900 MHz
+  vhf_high: 40.250 MHz
+  uhf: 251.800 MHz
+runways:
+  "29":
+    ils:
+      callsign: IPA
+      frequency: 108.900 MHz

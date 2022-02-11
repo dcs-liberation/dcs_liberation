@@ -1,0 +1,10 @@
+---
+name: Argentan
+id: 32
+elevation: 639
+runway_length: 3283
+atc:
+  hf: 4.350 MHz
+  vhf_low: 39.600 MHz
+  vhf_high: 119.200 MHz
+  uhf: 251.200 MHz

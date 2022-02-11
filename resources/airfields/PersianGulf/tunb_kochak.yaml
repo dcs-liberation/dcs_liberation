@@ -1,0 +1,9 @@
+---
+name: Tunb Kochak
+id: 16
+icao: OITK
+elevation: 15
+runway_length: 1481
+tacan:
+  callsign: KCK
+  channel: 89X

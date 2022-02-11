@@ -1,0 +1,16 @@
+---
+name: Khasab
+id: 10
+icao: OOKB
+elevation: 47
+runway_length: 7513
+atc:
+  hf: 3.750 MHz
+  vhf_low: 124.350 MHz
+  vhf_high: 38.400 MHz
+  uhf: 250 MHz
+runways:
+  "19":
+    ils:
+      callsign: IBKS
+      frequency: 110.300 MHz

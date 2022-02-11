@@ -1,0 +1,19 @@
+---
+name: McCarran International
+id: 3
+icao: KLAS
+elevation: 2169
+runway_length: 10377
+tacan:
+  callsign: LAS
+  channel: 116X
+atc:
+  hf: 3.875 MHz
+  vhf_low: 38.650 MHz
+  vhf_high: 119.900 MHz
+  uhf: 257.800 MHz
+runways:
+  "25":
+    ils:
+      callsign: I-LAS
+      frequency: 110.300 MHz

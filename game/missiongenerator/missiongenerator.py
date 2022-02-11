@@ -11,16 +11,16 @@ from dcs.coalition import Coalition
 from dcs.countries import country_dict
 
 from game import db
-from game.radio.radios import RadioFrequency, RadioRegistry
-from game.radio.tacan import TacanRegistry
-from game.theater.bullseye import Bullseye
-from game.theater import Airfield, FrontLine
-from game.unitmap import UnitMap
-from gen.airfields import AIRFIELD_DATA
-from gen.naming import namegen
 from game.missiongenerator.aircraft.aircraftgenerator import (
     AircraftGenerator,
 )
+from game.radio.radios import RadioFrequency, RadioRegistry
+from game.radio.tacan import TacanRegistry
+from game.theater import Airfield, FrontLine
+from game.theater.bullseye import Bullseye
+from game.unitmap import UnitMap
+from gen.airfields import AirfieldData
+from gen.naming import namegen
 from .aircraft.flightdata import FlightData
 from .airsupport import AirSupport
 from .airsupportgenerator import AirSupportGenerator
@@ -173,8 +173,8 @@ class MissionGenerator:
     def initialize_radio_registry(
         self, unique_map_frequencies: set[RadioFrequency]
     ) -> None:
-        for data in AIRFIELD_DATA.values():
-            if data.theater == self.game.theater.terrain.name and data.atc:
+        for data in AirfieldData.for_theater(self.game.theater):
+            if data.atc is not None:
                 unique_map_frequencies.add(data.atc.hf)
                 unique_map_frequencies.add(data.atc.vhf_fm)
                 unique_map_frequencies.add(data.atc.vhf_am)

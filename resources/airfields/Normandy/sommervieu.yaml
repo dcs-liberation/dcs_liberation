@@ -1,0 +1,11 @@
+---
+name: Sommervieu
+id: 24
+icao: B-8
+elevation: 186
+runway_length: 3840
+atc:
+  hf: 4.125 MHz
+  vhf_low: 39.150 MHz
+  vhf_high: 118.750 MHz
+  uhf: 250.750 MHz

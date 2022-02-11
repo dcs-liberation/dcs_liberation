@@ -1,0 +1,10 @@
+---
+name: Ford AB
+id: 31
+elevation: 29
+runway_length: 4296
+atc:
+  hf: 4.325 MHz
+  vhf_low: 39.550 MHz
+  vhf_high: 119.150 MHz
+  uhf: 251.150 MHz

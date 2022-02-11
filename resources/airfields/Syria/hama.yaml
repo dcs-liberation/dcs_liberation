@@ -1,0 +1,11 @@
+---
+name: Hama
+id: 14
+icao: OS58
+elevation: 983
+runway_length: 7957
+atc:
+  hf: 3.850 MHz
+  vhf_low: 118.050 MHz
+  vhf_high: 38.600 MHz
+  uhf: 250.200 MHz

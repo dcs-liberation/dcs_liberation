@@ -1,0 +1,16 @@
+---
+name: Sochi-Adler
+id: 18
+icao: URSS
+elevation: 98
+runway_length: 9686
+atc:
+  hf: 4.050 MHz
+  vhf_low: 39.600 MHz
+  vhf_high: 127 MHz
+  uhf: 256 MHz
+runways:
+  "06":
+    ils:
+      callsign: ISO
+      frequency: 111.100 MHz

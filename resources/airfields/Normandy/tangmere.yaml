@@ -1,0 +1,10 @@
+---
+name: Tangmere
+id: 30
+elevation: 47
+runway_length: 4296
+atc:
+  hf: 4.300 MHz
+  vhf_low: 39.500 MHz
+  vhf_high: 119.100 MHz
+  uhf: 251.100 MHz

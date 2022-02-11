@@ -1,0 +1,11 @@
+---
+name: Minakh
+id: 26
+icao: OS71
+elevation: 1614
+runway_length: 4648
+atc:
+  hf: 4.175 MHz
+  vhf_low: 120.600 MHz
+  vhf_high: 39.250 MHz
+  uhf: 250.800 MHz

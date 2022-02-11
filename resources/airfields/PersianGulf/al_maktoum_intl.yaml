@@ -1,0 +1,20 @@
+---
+name: Al Maktoum Intl
+id: 6
+icao: OMDW
+elevation: 123
+runway_length: 11500
+atc:
+  hf: 4.350 MHz
+  vhf_low: 118.600 MHz
+  vhf_high: 39.600 MHz
+  uhf: 251.200 MHz
+runways:
+  "12":
+    ils:
+      callsign: IMA
+      frequency: 111.750 MHz
+  "30":
+    ils:
+      callsign: IJWA
+      frequency: 109.750 MHz

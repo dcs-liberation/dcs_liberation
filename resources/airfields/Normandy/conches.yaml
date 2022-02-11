@@ -1,0 +1,10 @@
+---
+name: Conches
+id: 40
+elevation: 541
+runway_length: 4199
+atc:
+  hf: 4.525 MHz
+  vhf_low: 39.950 MHz
+  vhf_high: 119.550 MHz
+  uhf: 251.550 MHz

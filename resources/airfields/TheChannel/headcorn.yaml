@@ -1,0 +1,10 @@
+---
+name: Headcorn
+id: 13
+elevation: 114
+runway_length: 3680
+atc:
+  hf: 3.825 MHz
+  vhf_low: 38.550 MHz
+  vhf_high: 118.150 MHz
+  uhf: 250.150 MHz

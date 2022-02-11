@@ -1,0 +1,11 @@
+---
+name: Haifa
+id: 13
+icao: LLHA
+elevation: 19
+runway_length: 3253
+atc:
+  hf: 3.825 MHz
+  vhf_low: 127.800 MHz
+  vhf_high: 38.550 MHz
+  uhf: 250.150 MHz

@@ -1,0 +1,11 @@
+---
+name: Beuzeville
+id: 14
+icao: A-6
+elevation: 114
+runway_length: 3840
+atc:
+  hf: 3.850 MHz
+  vhf_low: 38.600 MHz
+  vhf_high: 118.200 MHz
+  uhf: 250.200 MHz

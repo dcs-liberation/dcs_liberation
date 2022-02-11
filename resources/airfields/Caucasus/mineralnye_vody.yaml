@@ -1,0 +1,35 @@
+---
+name: Mineralnye Vody
+id: 26
+icao: URMM
+elevation: 1049
+runway_length: 12316
+vor:
+  callsign: MN
+  frequency: 117.010 MHz
+atc:
+  hf: 4.450 MHz
+  vhf_low: 41.200 MHz
+  vhf_high: 135 MHz
+  uhf: 264 MHz
+runways:
+  "12":
+    ils:
+      callsign: IMD
+      frequency: 111.700 MHz
+    outer_ndb:
+      callsign: MD
+      frequency: 583 MHz
+    inner_ndb:
+      callsign: D
+      frequency: 283 MHz
+  "30":
+    ils:
+      callsign: IMW
+      frequency: 109.300 MHz
+    outer_ndb:
+      callsign: NR
+      frequency: 583 MHz
+    inner_ndb:
+      callsign: N
+      frequency: 283 MHz

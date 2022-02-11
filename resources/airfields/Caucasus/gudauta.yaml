@@ -1,0 +1,11 @@
+---
+name: Gudauta
+id: 21
+icao: UG23
+elevation: 68
+runway_length: 7839
+atc:
+  hf: 4.200 MHz
+  vhf_low: 40.200 MHz
+  vhf_high: 120 MHz
+  uhf: 259 MHz

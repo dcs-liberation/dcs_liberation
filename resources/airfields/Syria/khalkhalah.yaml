@@ -1,0 +1,11 @@
+---
+name: Khalkhalah
+id: 18
+icao: OS69
+elevation: 2337
+runway_length: 8248
+atc:
+  hf: 3.950 MHz
+  vhf_low: 122.500 MHz
+  vhf_high: 38.800 MHz
+  uhf: 250.350 MHz

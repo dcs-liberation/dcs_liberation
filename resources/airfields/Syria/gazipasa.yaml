@@ -1,0 +1,19 @@
+---
+name: Gazipasa
+id: 41
+icao: LTFG
+elevation: 36
+runway_length: 6885
+vor:
+  callsign: GZP
+  frequency: 114.200 MHz
+atc:
+  hf: 4.600 MHz
+  vhf_low: 119.250 MHz
+  vhf_high: 40.100 MHz
+  uhf: 251.650 MHz
+runways:
+  "8":
+    ils:
+      callsign: IGZP
+      frequency: 108.500 MHz

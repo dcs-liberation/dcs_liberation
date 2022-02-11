@@ -1,0 +1,11 @@
+---
+name: Beny-sur-Mer
+id: 22
+icao: B-4
+elevation: 199
+runway_length: 3155
+atc:
+  hf: 4.075 MHz
+  vhf_low: 39.050 MHz
+  vhf_high: 118.650 MHz
+  uhf: 250.650 MHz

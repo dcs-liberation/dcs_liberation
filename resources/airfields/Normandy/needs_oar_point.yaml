@@ -1,0 +1,10 @@
+---
+name: Needs Oar Point
+id: 28
+elevation: 30
+runway_length: 5259
+atc:
+  hf: 4.225 MHz
+  vhf_low: 39.350 MHz
+  vhf_high: 118.950 MHz
+  uhf: 250.950 MHz

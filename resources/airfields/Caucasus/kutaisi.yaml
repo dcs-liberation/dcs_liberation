@@ -1,0 +1,19 @@
+---
+name: Kutaisi
+id: 25
+icao: UGKO
+elevation: 147
+runway_length: 7937
+tacan:
+  callsign: KTS
+  channel: 44X
+atc:
+  hf: 4.400 MHz
+  vhf_low: 41 MHz
+  vhf_high: 134 MHz
+  uhf: 263 MHz
+runways:
+  08:
+    ils:
+      callsign: IKS
+      frequency: 109.750 MHz

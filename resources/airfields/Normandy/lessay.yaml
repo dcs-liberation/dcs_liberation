@@ -1,0 +1,11 @@
+---
+name: Lessay
+id: 8
+icao: A-20
+elevation: 65
+runway_length: 5080
+atc:
+  hf: 4.650 MHz
+  vhf_low: 40.200 MHz
+  vhf_high: 119.800 MHz
+  uhf: 251.800 MHz

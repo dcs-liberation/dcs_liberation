@@ -1,0 +1,11 @@
+---
+name: Kiryat Shmona
+id: 20
+icao: LLKS
+elevation: 328
+runway_length: 3258
+atc:
+  hf: 4.025 MHz
+  vhf_low: 118.400 MHz
+  vhf_high: 38.950 MHz
+  uhf: 250.500 MHz

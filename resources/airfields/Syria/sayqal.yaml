@@ -1,0 +1,11 @@
+---
+name: Sayqal
+id: 35
+icao: OS68
+elevation: 2273
+runway_length: 8536
+atc:
+  hf: 4.425 MHz
+  vhf_low: 120.400 MHz
+  vhf_high: 39.750 MHz
+  uhf: 251.300 MHz

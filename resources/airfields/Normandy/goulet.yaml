@@ -1,0 +1,10 @@
+---
+name: Goulet
+id: 33
+elevation: 616
+runway_length: 3283
+atc:
+  hf: 4.375 MHz
+  vhf_low: 39.650 MHz
+  vhf_high: 119.250 MHz
+  uhf: 251.250 MHz

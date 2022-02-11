@@ -1,0 +1,14 @@
+---
+name: Wujah Al Hajar
+id: 40
+icao: Z19O
+elevation: 619
+runway_length: 4717
+vor:
+  callsign: CAK
+  frequency: 116.200 MHz
+atc:
+  hf: 4.575 MHz
+  vhf_low: 121.500 MHz
+  vhf_high: 40.050 MHz
+  uhf: 251.600 MHz

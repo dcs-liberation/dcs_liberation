@@ -1,0 +1,11 @@
+---
+name: Megiddo
+id: 24
+icao: LLMG
+elevation: 180
+runway_length: 6098
+atc:
+  hf: 4.125 MHz
+  vhf_low: 119.900 MHz
+  vhf_high: 39.150 MHz
+  uhf: 250.700 MHz

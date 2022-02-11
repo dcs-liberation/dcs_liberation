@@ -1,0 +1,25 @@
+---
+name: Senaki-Kolkhi
+id: 23
+icao: UGKS
+elevation: 43
+runway_length: 7256
+tacan:
+  callsign: TSK
+  channel: 31X
+atc:
+  hf: 4.300 MHz
+  vhf_low: 40.600 MHz
+  vhf_high: 132 MHz
+  uhf: 261 MHz
+runways:
+  09:
+    ils:
+      callsign: ITS
+      frequency: 108.900 MHz
+    outer_ndb:
+      callsign: BI
+      frequency: 335 MHz
+    inner_ndb:
+      callsign: I
+      frequency: 688 MHz

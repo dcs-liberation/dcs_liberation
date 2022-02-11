@@ -1,0 +1,19 @@
+---
+name: Havadarya
+id: 9
+icao: OIKP
+elevation: 50
+runway_length: 7300
+tacan:
+  callsign: HDR
+  channel: 47X
+atc:
+  hf: 4.400 MHz
+  vhf_low: 123.150 MHz
+  vhf_high: 39.700 MHz
+  uhf: 251.300 MHz
+runways:
+  "8":
+    ils:
+      callsign: IBHD
+      frequency: 108.900 MHz

@@ -1,0 +1,11 @@
+---
+name: Lakatamia
+id: 48
+icao: CY-0001
+elevation: 757
+runway_length: 1230
+atc:
+  hf: 4.725 MHz
+  vhf_low: 120.200 MHz
+  vhf_high: 40.350 MHz
+  uhf: 251.900 MHz

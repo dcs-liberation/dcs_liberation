@@ -1,0 +1,11 @@
+---
+name: Ramat David
+id: 30
+icao: LLRD
+elevation: 105
+runway_length: 7037
+atc:
+  hf: 4.300 MHz
+  vhf_low: 118.600 MHz
+  vhf_high: 39.500 MHz
+  uhf: 251.050 MHz

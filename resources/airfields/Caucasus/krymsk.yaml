@@ -1,0 +1,35 @@
+---
+name: Krymsk
+id: 15
+icao: URKW
+elevation: 65
+runway_length: 6733
+rsbn:
+  callsign: KW
+  channel: 28
+atc:
+  hf: 3.900 MHz
+  vhf_low: 39 MHz
+  vhf_high: 124 MHz
+  uhf: 253 MHz
+runways:
+  "22":
+    prmg:
+      callsign: KW
+      channel: 26
+    outer_ndb:
+      callsign: KW
+      frequency: 408 MHz
+    inner_ndb:
+      callsign: K
+      frequency: 803 MHz
+  "04":
+    prmg:
+      callsign: OX
+      channel: 26
+    outer_ndb:
+      callsign: OX
+      frequency: 408 MHz
+    inner_ndb:
+      callsign: O
+      frequency: 803 MHz

@@ -1,0 +1,16 @@
+---
+name: Gaziantep
+id: 11
+icao: LTAJ
+elevation: 2287
+runway_length: 8871
+atc:
+  hf: 3.775 MHz
+  vhf_low: 120.100 MHz
+  vhf_high: 38.450 MHz
+  uhf: 250.050 MHz
+runways:
+  "28":
+    ils:
+      callsign: IGNP
+      frequency: 109.100 MHz

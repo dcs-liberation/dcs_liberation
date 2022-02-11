@@ -1,0 +1,10 @@
+---
+name: Marj as Sultan North
+id: 22
+elevation: 2007
+runway_length: 268
+atc:
+  hf: 4.075 MHz
+  vhf_low: 122.700 MHz
+  vhf_high: 38.050 MHz
+  uhf: 250.600 MHz

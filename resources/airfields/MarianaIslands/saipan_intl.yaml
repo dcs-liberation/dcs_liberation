@@ -1,0 +1,16 @@
+---
+name: Saipan Intl
+id: 2
+icao: PGSN
+elevation: 213
+runway_length: 7790
+atc:
+  hf: 3.775 MHz
+  vhf_low: 38.450 MHz
+  vhf_high: 125.700 MHz
+  uhf: 256.900 MHz
+runways:
+  "07":
+    ils:
+      callsign: IGSN
+      frequency: 109.090 MHz

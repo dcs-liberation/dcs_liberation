@@ -1,0 +1,11 @@
+---
+name: Shayrat
+id: 36
+icao: OS60
+elevation: 2637
+runway_length: 8553
+atc:
+  hf: 4.450 MHz
+  vhf_low: 122.200 MHz
+  vhf_high: 39.800 MHz
+  uhf: 251.350 MHz

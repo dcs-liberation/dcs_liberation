@@ -1,0 +1,11 @@
+---
+name: Lignerolles
+id: 2
+icao: A-12
+elevation: 404
+runway_length: 3436
+atc:
+  hf: 4.275 MHz
+  vhf_low: 39.450 MHz
+  vhf_high: 119.050 MHz
+  uhf: 251.050 MHz

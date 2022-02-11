@@ -1,0 +1,35 @@
+---
+name: Mozdok
+id: 28
+icao: XRMF
+elevation: 507
+runway_length: 7734
+rsbn:
+  callsign: MZ
+  channel: 20
+atc:
+  hf: 4.550 MHz
+  vhf_low: 41.600 MHz
+  vhf_high: 137 MHz
+  uhf: 266 MHz
+runways:
+  "26":
+    prmg:
+      callsign: MZ
+      channel: 22
+    outer_ndb:
+      callsign: RM
+      frequency: 525 MHz
+    inner_ndb:
+      callsign: R
+      frequency: 1.006 MHz
+  "8":
+    prmg:
+      callsign: MZ
+      channel: 22
+    outer_ndb:
+      callsign: DO
+      frequency: 525 MHz
+    inner_ndb:
+      callsign: D
+      frequency: 1.006 MHz

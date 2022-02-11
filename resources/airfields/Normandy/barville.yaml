@@ -1,0 +1,10 @@
+---
+name: Barville
+id: 34
+elevation: 462
+runway_length: 3493
+atc:
+  hf: 4.400 MHz
+  vhf_low: 39.700 MHz
+  vhf_high: 119.300 MHz
+  uhf: 251.300 MHz

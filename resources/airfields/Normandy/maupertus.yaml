@@ -1,0 +1,11 @@
+---
+name: Maupertus
+id: 4
+icao: A-15
+elevation: 441
+runway_length: 4666
+atc:
+  hf: 4.550 MHz
+  vhf_low: 40 MHz
+  vhf_high: 119.600 MHz
+  uhf: 251.600 MHz

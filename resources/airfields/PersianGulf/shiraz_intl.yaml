@@ -1,0 +1,17 @@
+---
+name: Shiraz Intl
+id: 19
+icao: OISS
+elevation: 4878
+runway_length: 13271
+tacan:
+  callsign: SYZ1
+  channel: 94X
+vor:
+  callsign: SYZ
+  frequency: 112 MHz
+atc:
+  hf: 3.950 MHz
+  vhf_low: 121.900 MHz
+  vhf_high: 38.800 MHz
+  uhf: 250.350 MHz

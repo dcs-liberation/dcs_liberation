@@ -1,0 +1,10 @@
+---
+name: Biggin Hill
+id: 14
+elevation: 552
+runway_length: 3953
+atc:
+  hf: 3.850 MHz
+  vhf_low: 38.600 MHz
+  vhf_high: 118.200 MHz
+  uhf: 250.200 MHz

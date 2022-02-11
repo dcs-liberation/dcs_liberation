@@ -1,0 +1,11 @@
+---
+name: Mezzeh
+id: 25
+icao: OS67
+elevation: 2355
+runway_length: 7522
+atc:
+  hf: 4.150 MHz
+  vhf_low: 120.700 MHz
+  vhf_high: 39.200 MHz
+  uhf: 250.750 MHz

@@ -1,0 +1,11 @@
+---
+name: King Hussein Air College
+id: 19
+icao: OJMF
+elevation: 2204
+runway_length: 8595
+atc:
+  hf: 3.975 MHz
+  vhf_low: 118.300 MHz
+  vhf_high: 38.850 MHz
+  uhf: 250.400 MHz
