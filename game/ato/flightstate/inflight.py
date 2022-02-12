@@ -12,7 +12,6 @@ from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
 from game.utils import Distance, LBS_TO_KG, Speed, pairwise
-from gen.flights.flightplan import LoiterFlightPlan
 
 if TYPE_CHECKING:
     from game.ato.flight import Flight
@@ -44,7 +43,7 @@ class InFlight(FlightState, ABC):
             # at a loiter point but still a regular InFlight (Loiter overrides this
             # method) that means we're traveling from the loiter point but no longer
             # loitering.
-            assert isinstance(self.flight.flight_plan, LoiterFlightPlan)
+            assert self.flight.flight_plan.is_loiter(self.flight.flight_plan)
             travel_time -= self.flight.flight_plan.hold_duration
         return travel_time
 

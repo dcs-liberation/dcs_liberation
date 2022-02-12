@@ -8,7 +8,6 @@ from dcs import Point
 from game.ato.flightstate import FlightState, InFlight
 from game.ato.flightstate.navigating import Navigating
 from game.utils import Distance, Speed
-from gen.flights.flightplan import LoiterFlightPlan
 
 if TYPE_CHECKING:
     from game.ato.flight import Flight
@@ -17,7 +16,7 @@ if TYPE_CHECKING:
 
 class Loiter(InFlight):
     def __init__(self, flight: Flight, settings: Settings, waypoint_index: int) -> None:
-        assert isinstance(flight.flight_plan, LoiterFlightPlan)
+        assert flight.flight_plan.is_loiter(flight.flight_plan)
         self.hold_duration = flight.flight_plan.hold_duration
         super().__init__(flight, settings, waypoint_index)
 

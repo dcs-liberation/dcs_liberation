@@ -13,7 +13,15 @@ import random
 from dataclasses import dataclass, field
 from datetime import timedelta
 from functools import cached_property
-from typing import Iterator, List, Optional, Set, TYPE_CHECKING, Tuple
+from typing import (
+    Iterator,
+    List,
+    Optional,
+    Set,
+    TYPE_CHECKING,
+    Tuple,
+    TypeGuard,
+)
 
 from dcs.mapping import Point
 from dcs.unit import Unit
@@ -42,6 +50,7 @@ from game.theater.theatergroundobject import (
     EwrGroundObject,
     NavalGroundObject,
 )
+from game.typeguard import self_type_guard
 from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
 from .traveltime import GroundSpeed, TravelTime
@@ -320,6 +329,18 @@ class FlightPlan:
         """The time that the mission is complete and the flight RTBs."""
         raise NotImplementedError
 
+    @self_type_guard
+    def is_loiter(self, flight_plan: FlightPlan) -> TypeGuard[LoiterFlightPlan]:
+        return False
+
+    @self_type_guard
+    def is_patrol(self, flight_plan: FlightPlan) -> TypeGuard[PatrollingFlightPlan]:
+        return False
+
+    @self_type_guard
+    def is_formation(self, flight_plan: FlightPlan) -> TypeGuard[FormationFlightPlan]:
+        return False
+
 
 @dataclass(frozen=True)
 class LoiterFlightPlan(FlightPlan):
@@ -356,6 +377,10 @@ class LoiterFlightPlan(FlightPlan):
     @property
     def mission_departure_time(self) -> timedelta:
         raise NotImplementedError
+
+    @self_type_guard
+    def is_loiter(self, flight_plan: FlightPlan) -> TypeGuard[LoiterFlightPlan]:
+        return True
 
 
 @dataclass(frozen=True)
@@ -442,6 +467,10 @@ class FormationFlightPlan(LoiterFlightPlan):
     def mission_departure_time(self) -> timedelta:
         return self.split_time
 
+    @self_type_guard
+    def is_formation(self, flight_plan: FlightPlan) -> TypeGuard[FormationFlightPlan]:
+        return True
+
 
 @dataclass(frozen=True)
 class PatrollingFlightPlan(FlightPlan):
@@ -497,6 +526,10 @@ class PatrollingFlightPlan(FlightPlan):
     @property
     def mission_departure_time(self) -> timedelta:
         return self.patrol_end_time
+
+    @self_type_guard
+    def is_patrol(self, flight_plan: FlightPlan) -> TypeGuard[PatrollingFlightPlan]:
+        return True
 
 
 @dataclass(frozen=True)

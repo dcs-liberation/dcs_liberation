@@ -10,7 +10,6 @@ from game.ato import FlightType
 from game.ato.flightstate import InFlight
 from game.threatzones import ThreatPoly
 from game.utils import Distance, Speed, dcs_to_shapely_point
-from gen.flights.flightplan import PatrollingFlightPlan
 
 if TYPE_CHECKING:
     from game.ato.flight import Flight
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
 
 class RaceTrack(InFlight):
     def __init__(self, flight: Flight, settings: Settings, waypoint_index: int) -> None:
-        assert isinstance(flight.flight_plan, PatrollingFlightPlan)
+        assert flight.flight_plan.is_patrol(flight.flight_plan)
         self.patrol_duration = flight.flight_plan.patrol_duration
         super().__init__(flight, settings, waypoint_index)
         self.commit_region = LineString(
