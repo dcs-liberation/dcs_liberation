@@ -125,6 +125,8 @@ from pydcs_extensions.su57.su57 import Su_57
 # factions that also have F-4s should not.
 
 # Used for CAP, Escort, and intercept if there is not a specialised aircraft available
+from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
+
 CAP_CAPABLE = [
     Su_57,
     F_22A,
@@ -470,6 +472,7 @@ TRANSPORT_CAPABLE = [
     Yak_40,
     CH_53E,
     CH_47D,
+    UH_60L,
     SH_60B,
     UH_60A,
     UH_1H,
@@ -492,6 +495,7 @@ REFUELING_CAPABALE = [
     KC_135,
     KC135MPRS,
     IL_78M,
+    KC130J,
     KC130,
     S_3B_Tanker,
 ]
