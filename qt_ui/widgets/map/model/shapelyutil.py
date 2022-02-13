@@ -34,6 +34,10 @@ class ShapelyUtil:
 
     @classmethod
     def lines_to_leaflet(
-        cls, lines: MultiLineString, theater: ConflictTheater
+        cls, line_string: MultiLineString | LineString, theater: ConflictTheater
     ) -> list[list[LeafletLatLon]]:
-        return [cls.line_to_leaflet(line, theater) for line in lines.geoms]
+        if isinstance(line_string, MultiLineString):
+            lines = line_string.geoms
+        else:
+            lines = [line_string]
+        return [cls.line_to_leaflet(line, theater) for line in lines]
