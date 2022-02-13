@@ -1,0 +1,10 @@
+---
+name: VAQ-137
+nickname: Rooks
+country: USA
+role: Carrier-based Attack
+aircraft: EA-6B Prowler ICAP III
+livery: america 621 ab 159485
+mission_types:
+  - SEAD
+  - DEAD

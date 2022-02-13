@@ -1,0 +1,10 @@
+---
+name: VMAQ-1
+nickname: Tairngreacht Bas
+country: USA
+role: Carrier-based Attack
+aircraft: EA-6B Prowler ICAP III
+livery: MARINES 06 CB 161352
+mission_types:
+  - SEAD
+  - DEAD

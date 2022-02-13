@@ -1,0 +1,22 @@
+---
+name: VFA-213
+nickname: Black Lions
+country: USA
+role: Strike Fighter
+aircraft: F/A-18F Super Hornet (Lot 24)
+livery: VFA-213 Black Lions
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
