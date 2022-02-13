@@ -237,7 +237,7 @@ const unculledZones = L.layerGroup();
 const noWaypointZones = L.layerGroup();
 const ipZones = L.layerGroup();
 const joinZones = L.layerGroup();
-const holdZones = L.layerGroup().addTo(map);
+const holdZones = L.layerGroup();
 
 const debugControlGroups = {
   "Blue Threat Zones": {
