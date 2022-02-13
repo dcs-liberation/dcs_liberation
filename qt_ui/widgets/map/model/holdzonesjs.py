@@ -6,7 +6,6 @@ from game import Game
 from game.ato import Flight
 from game.flightplan import HoldZoneGeometry
 from .config import ENABLE_EXPENSIVE_DEBUG_TOOLS
-from .joinzonesjs import JoinZonesJs
 from .leaflet import LeafletLatLon, LeafletPoly
 from .shapelyutil import ShapelyUtil
 
@@ -67,7 +66,7 @@ class HoldZonesJs(QObject):
     @classmethod
     def for_flight(cls, flight: Flight, game: Game) -> HoldZonesJs:
         if not ENABLE_EXPENSIVE_DEBUG_TOOLS:
-            return JoinZonesJs.empty()
+            return HoldZonesJs.empty()
         target = flight.package.target
         home = flight.departure
         if flight.package.waypoints is None:
