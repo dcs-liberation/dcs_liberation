@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, TYPE_CHECKING
 
@@ -36,6 +37,7 @@ class Flight:
         cargo: Optional[TransferOrder] = None,
         roster: Optional[FlightRoster] = None,
     ) -> None:
+        self.id = uuid.uuid4()
         self.package = package
         self.country = country
         self.squadron = squadron
@@ -91,6 +93,8 @@ class Flight:
         state["state"] = Uninitialized(self, state["squadron"].settings)
         if "props" not in state:
             state["props"] = {}
+        if "id" not in state:
+            state["id"] = uuid.uuid4()
         self.__dict__.update(state)
 
     @property

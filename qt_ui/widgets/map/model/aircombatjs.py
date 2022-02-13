@@ -1,9 +1,8 @@
 from PySide2.QtCore import Property, QObject, Signal
 
+from game.server.leaflet import LeafletPoly, ShapelyUtil
 from game.sim.combat.aircombat import AirCombat
 from game.theater import ConflictTheater
-from .leaflet import LeafletPoly
-from .shapelyutil import ShapelyUtil
 
 
 class AirCombatJs(QObject):

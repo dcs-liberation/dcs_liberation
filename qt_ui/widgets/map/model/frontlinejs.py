@@ -4,10 +4,10 @@ from typing import List
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
 
+from game.server.leaflet import LeafletLatLon
 from game.theater import ConflictTheater, FrontLine
 from game.utils import nautical_miles
 from qt_ui.dialogs import Dialog
-from .leaflet import LeafletLatLon
 
 
 class FrontLineJs(QObject):

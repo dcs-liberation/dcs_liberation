@@ -7,10 +7,10 @@ from PySide2.QtCore import Property, QObject, Signal, Slot
 
 from game.ato import Flight, FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
+from game.server.leaflet import LeafletLatLon
 from game.theater import ConflictTheater, LatLon
 from gen.flights.flightplan import FlightPlan
 from qt_ui.models import AtoModel
-from .leaflet import LeafletLatLon
 
 if TYPE_CHECKING:
     from .flightjs import FlightJs

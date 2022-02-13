@@ -4,8 +4,8 @@ from PySide2.QtCore import Property, QObject, Signal
 
 from game import Game
 from game.navmesh import NavMesh
+from game.server.leaflet import LeafletPoly
 from game.theater import ConflictTheater
-from .leaflet import LeafletPoly
 from .navmeshpolyjs import NavMeshPolyJs
 
 

@@ -8,12 +8,11 @@ from shapely.geometry import LineString, Point as ShapelyPoint
 from game.ato import Flight, FlightWaypoint
 from game.ato.flightstate import InFlight
 from game.ato.flightwaypointtype import FlightWaypointType
+from game.server.leaflet import LeafletLatLon, LeafletPoly, ShapelyUtil
 from game.theater import ConflictTheater
 from game.utils import meters
 from gen.flights.flightplan import CasFlightPlan, PatrollingFlightPlan
 from qt_ui.models import AtoModel
-from .leaflet import LeafletLatLon, LeafletPoly
-from .shapelyutil import ShapelyUtil
 from .waypointjs import WaypointJs
 
 

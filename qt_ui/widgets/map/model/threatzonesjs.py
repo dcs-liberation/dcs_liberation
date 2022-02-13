@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from PySide2.QtCore import Property, QObject, Signal
 
+from game.server.leaflet import LeafletPoly, ShapelyUtil
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
-from .leaflet import LeafletPoly
-from .shapelyutil import ShapelyUtil
 
 
 class ThreatZonesJs(QObject):

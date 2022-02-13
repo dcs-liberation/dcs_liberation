@@ -3,9 +3,8 @@ from __future__ import annotations
 from PySide2.QtCore import Property, QObject, Signal
 
 from game.navmesh import NavMeshPoly
+from game.server.leaflet import LeafletPoly, ShapelyUtil
 from game.theater import ConflictTheater
-from .leaflet import LeafletPoly
-from .shapelyutil import ShapelyUtil
 
 
 class NavMeshPolyJs(QObject):

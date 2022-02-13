@@ -5,7 +5,7 @@ from typing import Iterator
 from PySide2.QtCore import Property, QObject, Signal
 
 from game import Game
-from .leaflet import LeafletLatLon
+from game.server.leaflet import LeafletLatLon
 
 
 class UnculledZone(QObject):

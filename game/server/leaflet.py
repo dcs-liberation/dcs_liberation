@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 from typing import Union
 
 from dcs import Point
 from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 
 from game.theater import ConflictTheater
-from .leaflet import LeafletLatLon, LeafletPoly
+
+LeafletLatLon = list[float]
+LeafletPoly = list[LeafletLatLon]
 
 
 class ShapelyUtil:

@@ -10,6 +10,7 @@ from PySide2.QtCore import QUrl
 from PySide2.QtWebChannel import QWebChannel
 from PySide2.QtWebEngineWidgets import (
     QWebEnginePage,
+    QWebEngineSettings,
     QWebEngineView,
 )
 
@@ -48,6 +49,11 @@ class QLiberationMap(QWebEngineView):
         self.channel.registerObject("game", self.map_model)
 
         self.page = LoggingWebPage(self)
+        # Required to allow "cross-origin" access from file:// scoped canvas.html to the
+        # localhost HTTP backend.
+        self.page.settings().setAttribute(
+            QWebEngineSettings.LocalContentCanAccessRemoteUrls, True
+        )
         self.page.setWebChannel(self.channel)
         self.page.load(
             QUrl.fromLocalFile(str(Path("resources/ui/map/canvas.html").resolve()))

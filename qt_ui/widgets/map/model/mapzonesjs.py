@@ -3,8 +3,7 @@ from __future__ import annotations
 from PySide2.QtCore import Property, QObject, Signal
 
 from game import Game
-from .leaflet import LeafletPoly
-from .shapelyutil import ShapelyUtil
+from game.server.leaflet import LeafletPoly, ShapelyUtil
 
 
 class MapZonesJs(QObject):

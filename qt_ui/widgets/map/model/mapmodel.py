@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import logging
 from typing import List, Optional, Tuple
 
@@ -10,6 +9,7 @@ from dcs import Point
 from game import Game
 from game.ato.airtaaskingorder import AirTaskingOrder
 from game.profiling import logged_duration
+from game.server.leaflet import LeafletLatLon
 from game.sim.combat import FrozenCombat
 from game.sim.combat.aircombat import AirCombat
 from game.sim.combat.atip import AtIp
@@ -26,11 +26,7 @@ from .controlpointjs import ControlPointJs
 from .flightjs import FlightJs
 from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
-from .holdzonesjs import HoldZonesJs
 from .ipcombatjs import IpCombatJs
-from .ipzonesjs import IpZonesJs
-from .joinzonesjs import JoinZonesJs
-from .leaflet import LeafletLatLon
 from .mapzonesjs import MapZonesJs
 from .navmeshjs import NavMeshJs
 from .samcombatjs import SamCombatJs
@@ -69,12 +65,10 @@ class MapModel(QObject):
     navmeshesChanged = Signal()
     mapZonesChanged = Signal()
     unculledZonesChanged = Signal()
-    ipZonesChanged = Signal()
-    joinZonesChanged = Signal()
-    holdZonesChanged = Signal()
     airCombatsChanged = Signal()
     samCombatsChanged = Signal()
     ipCombatsChanged = Signal()
+    selectedFlightChanged = Signal(str)
 
     def __init__(self, game_model: GameModel, sim_controller: SimController) -> None:
         super().__init__()
@@ -91,9 +85,6 @@ class MapModel(QObject):
         self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
-        self._ip_zones = IpZonesJs.empty()
-        self._join_zones = JoinZonesJs.empty()
-        self._hold_zones = HoldZonesJs.empty()
         self._selected_flight_index: Optional[Tuple[int, int]] = None
         self._air_combats = []
         self._sam_combats = []
@@ -128,7 +119,6 @@ class MapModel(QObject):
         self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
-        self._ip_zones = IpZonesJs.empty()
         self._air_combats = []
         self._sam_combats = []
         self._ip_combats = []
@@ -155,7 +145,6 @@ class MapModel(QObject):
         else:
             self._selected_flight_index = index, 0
         self.select_current_flight()
-        self.reset_debug_zones()
 
     def set_flight_selection(self, index: int) -> None:
         self.deselect_current_flight()
@@ -174,7 +163,6 @@ class MapModel(QObject):
             self._selected_flight_index = self._selected_flight_index[0], None
         self._selected_flight_index = self._selected_flight_index[0], index
         self.select_current_flight()
-        self.reset_debug_zones()
 
     @property
     def _selected_flight(self) -> Optional[FlightJs]:
@@ -193,8 +181,10 @@ class MapModel(QObject):
     def select_current_flight(self):
         flight = self._selected_flight
         if flight is None:
+            self.selectedFlightChanged.emit(None)
             return None
         flight.set_selected(True)
+        self.selectedFlightChanged.emit(str(flight.flight.id))
 
     @staticmethod
     def leaflet_coord_for(point: Point, theater: ConflictTheater) -> LeafletLatLon:
@@ -249,23 +239,6 @@ class MapModel(QObject):
             self.game.blue.ato, blue=True
         ) | self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
-        self.reset_debug_zones()
-
-    def reset_debug_zones(self) -> None:
-        selected_flight = None
-        if self._selected_flight is not None:
-            selected_flight = self._selected_flight.flight
-        if selected_flight is None:
-            self._ip_zones = IpZonesJs.empty()
-            self._join_zones = JoinZonesJs.empty()
-            self._hold_zones = HoldZonesJs.empty()
-        else:
-            self._ip_zones = IpZonesJs.for_flight(selected_flight, self.game)
-            self._join_zones = JoinZonesJs.for_flight(selected_flight, self.game)
-            self._hold_zones = HoldZonesJs.for_flight(selected_flight, self.game)
-        self.ipZonesChanged.emit()
-        self.joinZonesChanged.emit()
-        self.holdZonesChanged.emit()
 
     @Property(list, notify=flightsChanged)
     def flights(self) -> list[FlightJs]:
@@ -396,20 +369,6 @@ class MapModel(QObject):
     @Property(list, notify=unculledZonesChanged)
     def unculledZones(self) -> list[UnculledZone]:
         return self._unculled_zones
-
-    @Property(str, notify=ipZonesChanged)
-    def ipZones(self) -> str:
-        return json.dumps(self._ip_zones.dict(by_alias=True))
-
-    @Property(str, notify=joinZonesChanged)
-    def joinZones(self) -> str:
-        # Must be dumped as a string and deserialized in js because QWebChannel can't
-        # handle a dict. Can be cleaned up by switching from QWebChannel to FastAPI.
-        return json.dumps(self._join_zones.dict(by_alias=True))
-
-    @Property(str, notify=holdZonesChanged)
-    def holdZones(self) -> str:
-        return json.dumps(self._hold_zones.dict(by_alias=True))
 
     def reset_combats(self) -> None:
         self._air_combats = []

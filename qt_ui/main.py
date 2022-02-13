@@ -9,7 +9,7 @@ from typing import Optional
 from PySide2 import QtWidgets
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QApplication, QSplashScreen, QCheckBox
+from PySide2.QtWidgets import QApplication, QCheckBox, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
@@ -18,6 +18,7 @@ from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.db import FACTIONS
 from game.dcs.aircrafttype import AircraftType
 from game.profiling import logged_duration
+from game.server import GameContext, Server
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from qt_ui import (
@@ -135,6 +136,7 @@ def run_ui(game: Optional[Game]) -> None:
 
     # Apply CSS (need works)
     GameUpdateSignal()
+    GameUpdateSignal.get_instance().game_loaded.connect(GameContext.set)
 
     # Start window
     window = QLiberationWindow(game)
@@ -333,7 +335,8 @@ def main():
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
         return
 
-    run_ui(game)
+    with Server().run_in_thread():
+        run_ui(game)
 
 
 if __name__ == "__main__":

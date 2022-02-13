@@ -8,9 +8,9 @@ from dcs.vehicles import vehicle_map
 
 from game import Game
 from game.dcs.groundunittype import GroundUnitType
+from game.server.leaflet import LeafletLatLon
 from game.theater import TheaterGroundObject
 from qt_ui.dialogs import Dialog
-from qt_ui.widgets.map.model.leaflet import LeafletLatLon
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 
 
