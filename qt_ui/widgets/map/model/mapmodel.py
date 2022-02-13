@@ -154,6 +154,7 @@ class MapModel(QObject):
         else:
             self._selected_flight_index = index, 0
         self.select_current_flight()
+        self.reset_debug_zones()
 
     def set_flight_selection(self, index: int) -> None:
         self.deselect_current_flight()
@@ -172,6 +173,7 @@ class MapModel(QObject):
             self._selected_flight_index = self._selected_flight_index[0], None
         self._selected_flight_index = self._selected_flight_index[0], index
         self.select_current_flight()
+        self.reset_debug_zones()
 
     @property
     def _selected_flight(self) -> Optional[FlightJs]:
@@ -246,6 +248,9 @@ class MapModel(QObject):
             self.game.blue.ato, blue=True
         ) | self._flights_in_ato(self.game.red.ato, blue=False)
         self.flightsChanged.emit()
+        self.reset_debug_zones()
+
+    def reset_debug_zones(self) -> None:
         selected_flight = None
         if self._selected_flight is not None:
             selected_flight = self._selected_flight.flight
