@@ -1,0 +1,17 @@
+description:
+  The Lockheed Martin (previously Lockheed) KC-130 is a family of the extended-range
+  tanker version of the C-130 Hercules transport aircraft modified for aerial refueling.
+  This version of the KC-130 tanker is designed for refueling at speeds of 120-130kts,
+  enabling refueling of helicopters such as the UH-60L.
+introduced: 2004
+manufacturer: Lockheed Martin
+origin: USA
+price: 25
+role: Tanker
+max_range: 1000
+patrol:
+  # ~125 knots IAS
+  speed: 180
+  altitude: 22000
+variants:
+  KC-130J: {}
