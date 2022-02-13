@@ -8,6 +8,7 @@ Saves from 5.1.0 are compatible with 5.1.1.
 * **[Mission Generation]** Fixed "Max Threat Range" error
 * **[Mission Generation]** Fix unculled zones not updating when needed
 * **[Campaign]** Vegas Nerve campaign update
+* **[Data]** Removed Fw 190 A-8 and D-9 from Germany 1940 and 1942 faction list for historical accuracy.
 * **[UI]** Typhoon GR4 and IDS images
 
 
