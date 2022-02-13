@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 from typing import List, Optional, Tuple
 
@@ -396,17 +397,19 @@ class MapModel(QObject):
     def unculledZones(self) -> list[UnculledZone]:
         return self._unculled_zones
 
-    @Property(IpZonesJs, notify=ipZonesChanged)
-    def ipZones(self) -> IpZonesJs:
-        return self._ip_zones
+    @Property(str, notify=ipZonesChanged)
+    def ipZones(self) -> str:
+        return json.dumps(self._ip_zones.dict(by_alias=True))
 
-    @Property(JoinZonesJs, notify=joinZonesChanged)
-    def joinZones(self) -> JoinZonesJs:
-        return self._join_zones
+    @Property(str, notify=joinZonesChanged)
+    def joinZones(self) -> str:
+        # Must be dumped as a string and deserialized in js because QWebChannel can't
+        # handle a dict. Can be cleaned up by switching from QWebChannel to FastAPI.
+        return json.dumps(self._join_zones.dict(by_alias=True))
 
-    @Property(HoldZonesJs, notify=holdZonesChanged)
-    def holdZones(self) -> HoldZonesJs:
-        return self._hold_zones
+    @Property(str, notify=holdZonesChanged)
+    def holdZones(self) -> str:
+        return json.dumps(self._hold_zones.dict(by_alias=True))
 
     def reset_combats(self) -> None:
         self._air_combats = []

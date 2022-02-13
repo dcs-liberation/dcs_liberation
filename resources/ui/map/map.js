@@ -1106,25 +1106,27 @@ function drawIpZones() {
     return;
   }
 
-  L.polygon(game.ipZones.homeBubble, {
+  const iz = JSON.parse(game.ipZones);
+
+  L.polygon(iz.homeBubble, {
     color: Colors.Highlight,
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(ipZones);
 
-  L.polygon(game.ipZones.ipBubble, {
+  L.polygon(iz.ipBubble, {
     color: "#bb89ff",
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(ipZones);
 
-  L.polygon(game.ipZones.permissibleZone, {
+  L.polygon(iz.permissibleZone, {
     color: "#ffffff",
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(ipZones);
 
-  for (const zone of game.ipZones.safeZones) {
+  for (const zone of iz.safeZones) {
     L.polygon(zone, {
       color: Colors.Green,
       fillOpacity: 0.1,
@@ -1140,25 +1142,27 @@ function drawJoinZones() {
     return;
   }
 
-  L.polygon(game.joinZones.homeBubble, {
+  const jz = JSON.parse(game.joinZones);
+
+  L.polygon(jz.homeBubble, {
     color: Colors.Highlight,
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(joinZones);
 
-  L.polygon(game.joinZones.targetBubble, {
+  L.polygon(jz.targetBubble, {
     color: "#bb89ff",
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(joinZones);
 
-  L.polygon(game.joinZones.ipBubble, {
+  L.polygon(jz.ipBubble, {
     color: "#ffffff",
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(joinZones);
 
-  for (const zone of game.joinZones.excludedZones) {
+  for (const zone of jz.excludedZones) {
     L.polygon(zone, {
       color: "#ffa500",
       fillOpacity: 0.2,
@@ -1167,14 +1171,14 @@ function drawJoinZones() {
     }).addTo(joinZones);
   }
 
-  for (const zone of game.joinZones.permissibleZones) {
+  for (const zone of jz.permissibleZones) {
     L.polygon(zone, {
       color: Colors.Green,
       interactive: false,
     }).addTo(joinZones);
   }
 
-  for (const line of game.joinZones.preferredLines) {
+  for (const line of jz.preferredLines) {
     L.polyline(line, {
       color: Colors.Green,
       interactive: false,
@@ -1189,25 +1193,27 @@ function drawHoldZones() {
     return;
   }
 
-  L.polygon(game.holdZones.homeBubble, {
+  const hz = JSON.parse(game.holdZones);
+
+  L.polygon(hz.homeBubble, {
     color: Colors.Highlight,
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(holdZones);
 
-  L.polygon(game.holdZones.targetBubble, {
+  L.polygon(hz.targetBubble, {
     color: Colors.Highlight,
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(holdZones);
 
-  L.polygon(game.holdZones.joinBubble, {
+  L.polygon(hz.joinBubble, {
     color: Colors.Highlight,
     fillOpacity: 0.1,
     interactive: false,
   }).addTo(holdZones);
 
-  for (const zone of game.holdZones.excludedZones) {
+  for (const zone of hz.excludedZones) {
     L.polygon(zone, {
       color: "#ffa500",
       fillOpacity: 0.2,
@@ -1216,14 +1222,14 @@ function drawHoldZones() {
     }).addTo(holdZones);
   }
 
-  for (const zone of game.holdZones.permissibleZones) {
+  for (const zone of hz.permissibleZones) {
     L.polygon(zone, {
       color: Colors.Green,
       interactive: false,
     }).addTo(holdZones);
   }
 
-  for (const line of game.holdZones.preferredLines) {
+  for (const line of hz.preferredLines) {
     L.polyline(line, {
       color: Colors.Green,
       interactive: false,
