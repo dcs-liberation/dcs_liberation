@@ -1,21 +1,21 @@
 name: Roland Site
-role: AntiAir
 tasks:
   - SHORAD
 groups:
-  - name: Roland Site 0
-    unit_count:
-      - 1
-    unit_types:
-      - Roland Radar
-  - name: Roland Site 1
-    unit_count:
-      - 2
-    unit_types:
-      - Roland ADS
-  - name: Roland Site 2
-    unit_count:
-      - 1
-    unit_types:
-      - M 818
+  - Roland:
+    - name: Roland Site 0
+      unit_count:
+        - 1
+      unit_types:
+        - Roland Radar
+    - name: Roland Site 1
+      unit_count:
+        - 2
+      unit_types:
+        - Roland ADS
+    - name: Roland Site 2
+      unit_count:
+        - 1
+      unit_types:
+        - M 818
 layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

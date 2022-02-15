@@ -1,5 +1,4 @@
 name: Roland
-role: AntiAir
 tasks:
   - SHORAD
 units:

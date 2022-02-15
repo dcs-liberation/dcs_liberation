@@ -1,5 +1,4 @@
 name: Cold-War-Flak
-role: AntiAir
 tasks:
   - AAA
 units:

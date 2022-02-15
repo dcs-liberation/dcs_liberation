@@ -3,14 +3,15 @@ role: Naval
 tasks:
   - Navy
 groups:
-  - name: WW2 LST Group 0
-    unit_count:
-      - 1
-    unit_types:
-      - USS_Samuel_Chase
-  - name: WW2 LST Group 1
-    unit_count:
-      - 3
-    unit_types:
-      - LST_Mk2
+  - LST:
+    - name: WW2 LST Group 0
+      unit_count:
+        - 1
+      unit_types:
+        - USS_Samuel_Chase
+    - name: WW2 LST Group 1
+      unit_count:
+        - 3
+      unit_types:
+        - LST_Mk2
 layout_file: resources/layouts/naval/legacy_naval_templates.miz

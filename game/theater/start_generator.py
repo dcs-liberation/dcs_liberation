@@ -153,11 +153,6 @@ class ControlPointGroundObjectGenerator:
         self.generate_navy()
         return True
 
-    def generate_random_ground_object(
-        self, unit_groups: list[ForceGroup], position: PointWithHeading
-    ) -> None:
-        self.generate_ground_object_from_group(random.choice(unit_groups), position)
-
     def generate_ground_object_from_group(
         self, unit_group: ForceGroup, position: PointWithHeading
     ) -> None:

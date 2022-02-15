@@ -1,13 +1,14 @@
 from __future__ import annotations
+from collections import defaultdict
 
 from dataclasses import dataclass, field
 from typing import Any, Type
 
 from dcs.unittype import UnitType as DcsUnitType
 
-from game import db
 from game.data.groups import GroupRole, GroupTask
 from game.data.units import UnitClass
+from game.dcs.helpers import unit_type_from_name
 
 
 @dataclass
@@ -21,10 +22,6 @@ class GroupLayoutMapping:
     # All static units for the group
     statics: list[str] = field(default_factory=list)
 
-    # Defines to which tgo group the groupTemplate will be added
-    # This allows to merge groups back together. Default: Merge all to group 1
-    group: int = field(default=1)
-
     # How many units should be generated from the grouplayout. If only one value is
     # added this will be an exact amount. If 2 values are used it will be a random
     # amount between these values.
@@ -36,31 +33,9 @@ class GroupLayoutMapping:
     # All unit classes the template supports.
     unit_classes: list[UnitClass] = field(default_factory=list)
 
-    # TODO Clarify if this is required. Only used for EWRs to also Use SR when no
+    # Fallback Classes which are used when the unit_classes and unit_types do not fit any accessible unit from the faction. Only used for EWRs to also Use SR when no
     #  dedicated EWRs are available to the faction
-    alternative_classes: list[UnitClass] = field(default_factory=list)
-
-    def to_dict(self) -> dict[str, Any]:
-        d = self.__dict__
-        if not self.optional:
-            d.pop("optional")
-        if not self.statics:
-            d.pop("statics")
-        if not self.unit_types:
-            d.pop("unit_types")
-        if not self.unit_classes:
-            d.pop("unit_classes")
-        else:
-            d["unit_classes"] = [unit_class.value for unit_class in self.unit_classes]
-        if not self.alternative_classes:
-            d.pop("alternative_classes")
-        else:
-            d["alternative_classes"] = [
-                unit_class.value for unit_class in self.alternative_classes
-            ]
-        if not self.unit_count:
-            d.pop("unit_count")
-        return d
+    fallback_classes: list[UnitClass] = field(default_factory=list)
 
     @staticmethod
     def from_dict(d: dict[str, Any]) -> GroupLayoutMapping:
@@ -70,27 +45,25 @@ class GroupLayoutMapping:
         unit_types = []
         if "unit_types" in d:
             for u in d["unit_types"]:
-                unit_type = db.unit_type_from_name(u)
+                unit_type = unit_type_from_name(u)
                 if unit_type:
                     unit_types.append(unit_type)
-        group = d["group"] if "group" in d else 1
         unit_classes = (
             [UnitClass(u) for u in d["unit_classes"]] if "unit_classes" in d else []
         )
-        alternative_classes = (
-            [UnitClass(u) for u in d["alternative_classes"]]
-            if "alternative_classes" in d
+        fallback_classes = (
+            [UnitClass(u) for u in d["fallback_classes"]]
+            if "fallback_classes" in d
             else []
         )
         return GroupLayoutMapping(
             d["name"],
             optional,
             statics,
-            group,
             unit_count,
             unit_types,
             unit_classes,
-            alternative_classes,
+            fallback_classes,
         )
 
 
@@ -105,40 +78,31 @@ class LayoutMapping:
     # Optional field to define if the template can be used to create generic groups
     generic: bool
 
-    # The role the template can be used for
-    role: GroupRole
-
     # All taskings the template can be used for
     tasks: list[GroupTask]
 
     # All Groups the template has
-    groups: list[GroupLayoutMapping]
+    groups: dict[str, list[GroupLayoutMapping]]
 
     # Define the miz file for the template. Optional. If empty use the mapping name
     layout_file: str
 
-    def to_dict(self) -> dict[str, Any]:
-        d = {
-            "name": self.name,
-            "description": self.description,
-            "generic": self.generic,
-            "role": self.role.value,
-            "tasks": [task.description for task in self.tasks],
-            "groups": [group.to_dict() for group in self.groups],
-            "layout_file": self.layout_file,
-        }
-        if not self.description:
-            d.pop("description")
-        if not self.generic:
-            # Only save if true
-            d.pop("generic")
-        if not self.layout_file:
-            d.pop("layout_file")
-        return d
+    @property
+    def primary_role(self) -> GroupRole:
+        return self.tasks[0].role
 
     @staticmethod
     def from_dict(d: dict[str, Any], file_name: str) -> LayoutMapping:
-        groups = [GroupLayoutMapping.from_dict(group) for group in d["groups"]]
+        groups: dict[str, list[GroupLayoutMapping]] = defaultdict(list)
+        for group in d["groups"]:
+            for group_name, group_layouts in group.items():
+                groups[group_name].extend(
+                    [
+                        GroupLayoutMapping.from_dict(group_layout)
+                        for group_layout in group_layouts
+                    ]
+                )
+
         description = d["description"] if "description" in d else ""
         generic = d["generic"] if "generic" in d else False
         layout_file = (
@@ -149,8 +113,14 @@ class LayoutMapping:
             d["name"],
             description,
             generic,
-            GroupRole(d["role"]),
             tasks,
             groups,
             layout_file,
         )
+
+    def group_for_name(self, name: str) -> tuple[str, GroupLayoutMapping]:
+        for group_name, group_mappings in self.groups.items():
+            for group_mapping in group_mappings:
+                if group_mapping.name == name or name in group_mapping.statics:
+                    return group_name, group_mapping
+        raise KeyError

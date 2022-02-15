@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import defaultdict
 
 import itertools
 import logging
@@ -13,10 +14,10 @@ from dcs import Point
 from dcs.unitgroup import StaticGroup
 
 from game import persistency
-from game.data.groups import GroupRole, GroupTask
+from game.data.groups import GroupRole
 from game.layout.layout import (
-    TheaterLayout,
-    GroupLayout,
+    TgoLayout,
+    TgoLayoutGroup,
     LayoutUnit,
     AntiAirLayout,
     BuildingLayout,
@@ -24,7 +25,7 @@ from game.layout.layout import (
     GroundForceLayout,
     DefensesLayout,
 )
-from game.layout.layoutmapping import GroupLayoutMapping, LayoutMapping
+from game.layout.layoutmapping import LayoutMapping
 from game.profiling import logged_duration
 from game.version import VERSION
 
@@ -41,21 +42,21 @@ TEMPLATE_TYPES = {
 
 
 class LayoutLoader:
-    # list of layouts per category. e.g. AA or similar
-    _templates: dict[str, TheaterLayout] = {}
+    # Map of all available layouts indexed by name
+    _layouts: dict[str, TgoLayout] = {}
 
     def __init__(self) -> None:
-        self._templates = {}
+        self._layouts = {}
 
     def initialize(self) -> None:
-        if not self._templates:
+        if not self._layouts:
             with logged_duration("Loading layouts"):
                 self.load_templates()
 
     @property
-    def layouts(self) -> Iterator[TheaterLayout]:
+    def layouts(self) -> Iterator[TgoLayout]:
         self.initialize()
-        yield from self._templates.values()
+        yield from self._layouts.values()
 
     def load_templates(self) -> None:
         """This will load all pre-loaded layouts from a pickle file.
@@ -66,59 +67,42 @@ class LayoutLoader:
             # Load from pickle if existing
             with file.open("rb") as f:
                 try:
-                    version, self._templates = pickle.load(f)
+                    version, self._layouts = pickle.load(f)
                     # Check if the game version of the dump is identical to the current
                     if version == VERSION:
                         return
                 except Exception as e:
-                    logging.error(f"Error {e} reading layouts dump. Recreating.")
+                    logging.exception(f"Error {e} reading layouts dump. Recreating.")
         # If no dump is available or game version is different create a new dump
         self.import_templates()
 
     def import_templates(self) -> None:
         """This will import all layouts from the template folder
         and dumps them to a pickle"""
-        mappings: dict[str, list[LayoutMapping]] = {}
+        self._layouts = {}
+        mappings: dict[str, list[LayoutMapping]] = defaultdict(list)
         with logged_duration("Parsing mapping yamls"):
             for file in Path(TEMPLATE_DIR).rglob("*.yaml"):
                 if not file.is_file():
-                    continue
+                    raise RuntimeError(f"{file.name} is not a file")
                 with file.open("r", encoding="utf-8") as f:
                     mapping_dict = yaml.safe_load(f)
 
                 template_map = LayoutMapping.from_dict(mapping_dict, f.name)
-
-                if template_map.layout_file in mappings:
-                    mappings[template_map.layout_file].append(template_map)
-                else:
-                    mappings[template_map.layout_file] = [template_map]
+                mappings[template_map.layout_file].append(template_map)
 
         with logged_duration(f"Parsing all layout miz multithreaded"):
             with ThreadPoolExecutor() as exe:
-                for miz, maps in mappings.items():
-                    exe.submit(self._load_from_miz, miz, maps)
+                exe.map(self._load_from_miz, mappings.keys(), mappings.values())
 
-        logging.info(f"Imported {len(self._templates)} layouts")
+        logging.info(f"Imported {len(self._layouts)} layouts")
         self._dump_templates()
 
     def _dump_templates(self) -> None:
         file = Path(persistency.base_path()) / TEMPLATE_DUMP
-        dump = (VERSION, self._templates)
+        dump = (VERSION, self._layouts)
         with file.open("wb") as fdata:
             pickle.dump(dump, fdata)
-
-    @staticmethod
-    def mapping_for_group(
-        mappings: list[LayoutMapping], group_name: str
-    ) -> tuple[LayoutMapping, int, GroupLayoutMapping]:
-        for mapping in mappings:
-            for g_id, group_mapping in enumerate(mapping.groups):
-                if (
-                    group_mapping.name == group_name
-                    or group_name in group_mapping.statics
-                ):
-                    return mapping, g_id, group_mapping
-        raise KeyError
 
     def _load_from_miz(self, miz: str, mappings: list[LayoutMapping]) -> None:
         template_position: dict[str, Point] = {}
@@ -130,74 +114,68 @@ class LayoutLoader:
             # the .load_file() method: 0:00:00.920409
             temp_mis.load_file(miz)
 
-        for country in itertools.chain(
-            temp_mis.coalition["red"].countries.values(),
-            temp_mis.coalition["blue"].countries.values(),
-        ):
-            for dcs_group in itertools.chain(
-                temp_mis.country(country.name).vehicle_group,
-                temp_mis.country(country.name).ship_group,
-                temp_mis.country(country.name).static_group,
+        for mapping in mappings:
+            # Find the group from the mapping in any coalition
+            for country in itertools.chain(
+                temp_mis.coalition["red"].countries.values(),
+                temp_mis.coalition["blue"].countries.values(),
             ):
-                try:
-                    mapping, group_id, group_mapping = self.mapping_for_group(
-                        mappings, dcs_group.name
-                    )
-                except KeyError:
-                    logging.warning(f"No mapping for dcs group {dcs_group.name}")
-                    continue
+                for dcs_group in itertools.chain(
+                    temp_mis.country(country.name).vehicle_group,
+                    temp_mis.country(country.name).ship_group,
+                    temp_mis.country(country.name).static_group,
+                ):
 
-                template = self._templates.get(mapping.name, None)
-                if template is None:
-                    # Create a new template
-                    template = TEMPLATE_TYPES[mapping.role](
-                        mapping.name, mapping.role, mapping.description
-                    )
-                    template.generic = mapping.generic
-                    template.tasks = mapping.tasks
-                    self._templates[template.name] = template
-
-                for i, unit in enumerate(dcs_group.units):
-                    group_template = None
-                    for group in template.groups:
-                        if group.name == group_mapping.name:
-                            # We already have a layoutgroup for this dcs_group
-                            group_template = group
-                    if not group_template:
-                        group_template = GroupLayout(
-                            group_mapping.name,
-                            [],
-                            group_mapping.group,
-                            group_mapping.unit_count,
-                            group_mapping.unit_types,
-                            group_mapping.unit_classes,
-                            group_mapping.alternative_classes,
+                    try:
+                        group_name, group_mapping = mapping.group_for_name(
+                            dcs_group.name
                         )
-                        group_template.optional = group_mapping.optional
-                        # Add the group at the correct position
-                        template.add_group(group_template, group_id)
-                    unit_template = LayoutUnit.from_unit(unit)
-                    if i == 0 and template.name not in template_position:
-                        template_position[template.name] = unit.position
-                    unit_template.position = (
-                        unit_template.position - template_position[template.name]
-                    )
-                    group_template.units.append(unit_template)
+                    except KeyError:
+                        continue
 
-    def by_name(self, template_name: str) -> Iterator[TheaterLayout]:
-        for template in self.layouts:
-            if template.name == template_name:
-                yield template
+                    if not isinstance(dcs_group, StaticGroup) and max(
+                        group_mapping.unit_count
+                    ) > len(dcs_group.units):
+                        logging.error(
+                            f"Incorrect unit_count found in Layout {mapping.name}-{group_mapping.name}"
+                        )
 
-    def by_task(self, group_task: GroupTask) -> Iterator[TheaterLayout]:
-        for template in self.layouts:
-            if not group_task or group_task in template.tasks:
-                yield template
+                    layout = self._layouts.get(mapping.name, None)
+                    if layout is None:
+                        # Create a new template
+                        layout = TEMPLATE_TYPES[mapping.primary_role](
+                            mapping.name, mapping.description
+                        )
+                        layout.generic = mapping.generic
+                        layout.tasks = mapping.tasks
+                        self._layouts[layout.name] = layout
 
-    def by_tasks(self, group_tasks: list[GroupTask]) -> Iterator[TheaterLayout]:
-        unique_templates = []
-        for group_task in group_tasks:
-            for template in self.by_task(group_task):
-                if template not in unique_templates:
-                    unique_templates.append(template)
-        yield from unique_templates
+                    for i, unit in enumerate(dcs_group.units):
+                        group_layout = None
+                        for group in layout.all_groups:
+                            if group.name == group_mapping.name:
+                                # We already have a layoutgroup for this dcs_group
+                                group_layout = group
+                        if not group_layout:
+                            group_layout = TgoLayoutGroup(
+                                group_mapping.name,
+                                [],
+                                group_mapping.unit_count,
+                                group_mapping.unit_types,
+                                group_mapping.unit_classes,
+                                group_mapping.fallback_classes,
+                            )
+                            group_layout.optional = group_mapping.optional
+                            # Add the group at the correct position
+                            layout.groups[group_name].append(group_layout)
+                        layout_unit = LayoutUnit.from_unit(unit)
+                        if i == 0 and layout.name not in template_position:
+                            template_position[layout.name] = unit.position
+                        layout_unit.position = (
+                            layout_unit.position - template_position[layout.name]
+                        )
+                        group_layout.layout_units.append(layout_unit)
+
+    def by_name(self, name: str) -> TgoLayout:
+        self.initialize()
+        return self._layouts[name]

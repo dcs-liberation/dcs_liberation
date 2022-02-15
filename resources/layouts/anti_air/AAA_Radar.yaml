@@ -1,29 +1,26 @@
 name: AAA Radar Site
 description: AAA Template with a Radar
 generic: false
-role: AntiAir
 tasks:
   - AAA
 groups:
-  - name: AAA Radar Site 0
-    group: 1
-    unit_count:
-      - 1
-    unit_classes:
-      - SearchRadar
-  - name: AAA Radar Site 1
-    group: 1
-    unit_count:
-      - 2
-      - 6
-    unit_classes:
-      - AAA
-  - name: AAA Radar Site 2
-    optional: true
-    group: 1
-    unit_count:
-      - 1
-      - 2
-    unit_classes:
-      - Logistics
+  - AAA:
+    - name: AAA Radar Site 0
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+    - name: AAA Radar Site 1
+      unit_count:
+        - 2
+        - 6
+      unit_classes:
+        - AAA
+    - name: AAA Radar Site 2
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - Logistics
 layout_file: resources/layouts/anti_air/AAA.miz

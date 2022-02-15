@@ -1,15 +1,15 @@
 name: Early-Warning Radar
 generic: true
-role: AntiAir
 tasks:
   - EarlyWarningRadar
 groups:
-  - name: Early-Warning Radar 0
-    unit_count:
-      - 1
-    unit_classes:
-      - EarlyWarningRadar
-    alternative_classes:
-      - SearchRadar
-      - SearchTrackRadar
+  - EWR:
+    - name: Early-Warning Radar 0
+      unit_count:
+        - 1
+      unit_classes:
+        - EarlyWarningRadar
+      alternative_classes:
+        - SearchRadar
+        - SearchTrackRadar
 layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

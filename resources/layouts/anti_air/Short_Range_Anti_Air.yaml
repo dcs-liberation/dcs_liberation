@@ -1,19 +1,19 @@
 name: Short Range Anti Air Group
-role: AntiAir
 generic: true
 tasks:
   - SHORAD
 groups:
-  - name: SHORAD Group 0
-    unit_count:
-      - 2
-    unit_classes:
-      - SHORAD
-  - name: SHORAD Group 1
-    optional: true
-    unit_count:
-      - 1
-      - 2
-    unit_classes:
-      - Logistics
+  - SHORAD:
+    - name: SHORAD Group 0
+      unit_count:
+        - 2
+      unit_classes:
+        - SHORAD
+    - name: SHORAD Group 1
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - Logistics
 layout_file: resources/layouts/anti_air/shorad.miz

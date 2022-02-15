@@ -16,7 +16,7 @@ from game.point_with_heading import PointWithHeading
 from game.utils import Heading
 
 if TYPE_CHECKING:
-    from game.layout.layout import LayoutUnit, GroupLayout
+    from game.layout.layout import LayoutUnit, TgoLayoutGroup
     from game.theater import TheaterGroundObject
 
 
@@ -141,16 +141,17 @@ class TheaterGroup:
     @staticmethod
     def from_template(
         id: int,
-        g: GroupLayout,
+        name: str,
+        units: list[TheaterUnit],
         go: TheaterGroundObject,
         unit_type: Type[DcsUnitType],
         unit_count: int,
     ) -> TheaterGroup:
         return TheaterGroup(
             id,
-            g.name,
+            name,
             PointWithHeading.from_point(go.position, go.heading),
-            g.generate_units(go, unit_type, unit_count),
+            units,
             go,
         )
 

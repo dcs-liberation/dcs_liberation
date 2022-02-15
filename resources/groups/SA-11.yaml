@@ -1,10 +1,9 @@
-name: SA-17
-role: AntiAir
+name: SA-11
 tasks:
   - MERAD
 units:
   - SAM SA-11 Buk "Gadfly" Snow Drift SR
   - SAM SA-11 Buk "Gadfly" C2
-  - SAM SA-17 Buk M1-2 LN 9A310M1-2
+  - SAM SA-11 Buk "Gadfly" Fire Dome TEL
 layouts:
-  - SA-17 Grizzly Battery
+  - SA-11 Buk Battery
