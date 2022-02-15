@@ -1,5 +1,4 @@
 name: HQ-7
-role: AntiAir
 tasks:
   - SHORAD
 units:

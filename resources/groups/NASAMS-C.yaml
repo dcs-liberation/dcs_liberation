@@ -1,5 +1,4 @@
 name: NASAMS AIM-120C
-role: AntiAir
 tasks:
   - MERAD
 units:

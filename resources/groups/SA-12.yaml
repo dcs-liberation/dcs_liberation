@@ -1,5 +1,4 @@
 name: SA-12/S-300V
-role: AntiAir
 tasks:
   - LORAD
 units:

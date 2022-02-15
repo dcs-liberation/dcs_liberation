@@ -9,17 +9,19 @@ from typing import ClassVar, TYPE_CHECKING, Type, Any, Iterator, Optional
 import yaml
 from dcs import Point
 
-from game import db
-from game.data.groups import GroupRole, GroupTask
+from game.data.groups import GroupTask
 from game.data.radar_db import UNITS_WITH_RADAR
 from game.dcs.groundunittype import GroundUnitType
+from game.dcs.helpers import static_type_from_name
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
 from game.point_with_heading import PointWithHeading
-from game.layout.layout import TheaterLayout, AntiAirLayout, GroupLayout
+from game.layout.layout import TgoLayout, AntiAirLayout, TgoLayoutGroup
 from dcs.unittype import UnitType as DcsUnitType, VehicleType, ShipType, StaticType
 
 from game.theater.theatergroup import TheaterGroup
+
+from game.layout import LAYOUTS
 
 if TYPE_CHECKING:
     from game import Game
@@ -29,25 +31,40 @@ if TYPE_CHECKING:
 
 @dataclass
 class ForceGroup:
-    """A logical group of multiple units and layouts which have a specific tasking"""
+    """A logical group of multiple units and layouts which have a specific tasking.
+
+    ForceGroups will be generated during game and coalition initialization based on
+    generic layouts and preset forcegroups.
+
+    Every ForceGroup must have at least one unit, one task and one layout.
+
+    A preset ForceGroup can for example be a S-300 SAM Battery which used many
+    different unit types which all together handle a specific tasking (AirDefense)
+    For this example the ForceGroup would consist of SR, TR, LN and so on next to
+    statics. This group also has the Tasking LORAD and can have multiple (at least one)
+    layouts which will be used to generate the actual DCS Group from it.
+    """
 
     name: str
     units: list[UnitType[Any]]
     statics: list[Type[DcsUnitType]]
-    role: GroupRole
     tasks: list[GroupTask] = field(default_factory=list)
-    layouts: list[TheaterLayout] = field(default_factory=list)
+    layouts: list[TgoLayout] = field(default_factory=list)
 
     _by_name: ClassVar[dict[str, ForceGroup]] = {}
-    _by_role: ClassVar[dict[GroupRole, list[ForceGroup]]] = {}
     _loaded: bool = False
 
     @staticmethod
-    def for_layout(layout: TheaterLayout, faction: Faction) -> ForceGroup:
-        """TODO Documentation"""
+    def for_layout(layout: TgoLayout, faction: Faction) -> ForceGroup:
+        """Create a ForceGroup from the given TgoLayout which is usable by the faction
+
+        This will iterate through all possible TgoLayoutGroups and check if the
+        unit_types are accessible by the faction. All accessible units will be added to
+        the force group
+        """
         units: set[UnitType[Any]] = set()
         statics: set[Type[DcsUnitType]] = set()
-        for group in layout.groups:
+        for group in layout.all_groups:
             for unit_type in group.possible_types_for_faction(faction):
                 if issubclass(unit_type, VehicleType):
                     units.add(next(GroundUnitType.for_dcs_type(unit_type)))
@@ -57,10 +74,9 @@ class ForceGroup:
                     statics.add(unit_type)
 
         return ForceGroup(
-            f"{layout.role.value}: {', '.join([t.description for t in layout.tasks])}",
+            ", ".join([t.description for t in layout.tasks]),
             list(units),
             list(statics),
-            layout.role,
             layout.tasks,
             [layout],
         )
@@ -80,33 +96,38 @@ class ForceGroup:
             or type in self.statics
         )
 
-    def dcs_unit_types_for_group(self, group: GroupLayout) -> list[Type[DcsUnitType]]:
-        """TODO Description"""
+    def dcs_unit_types_for_group(
+        self, group: TgoLayoutGroup
+    ) -> list[Type[DcsUnitType]]:
+        """Return all available DCS Unit Types which can be used in the given
+        TgoLayoutGroup"""
         unit_types = [t for t in group.unit_types if self.has_access_to_dcs_type(t)]
 
         alternative_types = []
         for accessible_unit in self.units:
             if accessible_unit.unit_class in group.unit_classes:
                 unit_types.append(accessible_unit.dcs_unit_type)
-            if accessible_unit.unit_class in group.alternative_classes:
+            if accessible_unit.unit_class in group.fallback_classes:
                 alternative_types.append(accessible_unit.dcs_unit_type)
 
         return unit_types or alternative_types
 
-    def unit_types_for_group(self, group: GroupLayout) -> Iterator[UnitType[Any]]:
+    def unit_types_for_group(self, group: TgoLayoutGroup) -> Iterator[UnitType[Any]]:
         for dcs_type in self.dcs_unit_types_for_group(group):
             if issubclass(dcs_type, VehicleType):
                 yield next(GroundUnitType.for_dcs_type(dcs_type))
             elif issubclass(dcs_type, ShipType):
                 yield next(ShipUnitType.for_dcs_type(dcs_type))
 
-    def statics_for_group(self, group: GroupLayout) -> Iterator[Type[DcsUnitType]]:
+    def statics_for_group(self, group: TgoLayoutGroup) -> Iterator[Type[DcsUnitType]]:
         for dcs_type in self.dcs_unit_types_for_group(group):
             if issubclass(dcs_type, StaticType):
                 yield dcs_type
 
-    def random_dcs_unit_type_for_group(self, group: GroupLayout) -> Type[DcsUnitType]:
-        """TODO Description"""
+    def random_dcs_unit_type_for_group(
+        self, group: TgoLayoutGroup
+    ) -> Type[DcsUnitType]:
+        """Return random DCS Unit Type which can be used in the given TgoLayoutGroup"""
         return random.choice(self.dcs_unit_types_for_group(group))
 
     def update_group(self, new_group: ForceGroup) -> None:
@@ -130,7 +151,7 @@ class ForceGroup:
 
     def create_ground_object_for_layout(
         self,
-        layout: TheaterLayout,
+        layout: TgoLayout,
         name: str,
         position: PointWithHeading,
         control_point: ControlPoint,
@@ -139,25 +160,31 @@ class ForceGroup:
         """Create a TheaterGroundObject for the given template"""
         go = layout.create_ground_object(name, position, control_point)
         # Generate all groups using the randomization if it defined
-        for group in layout.groups:
-            # Choose a random unit_type for the group
-            try:
-                unit_type = self.random_dcs_unit_type_for_group(group)
-            except IndexError:
-                if group.optional:
-                    # If group is optional it is ok when no unit_type is available
-                    continue
-                # if non-optional this is a error
-                raise RuntimeError(f"No accessible unit for {self.name} - {group.name}")
-            self.create_theater_group_for_tgo(go, group, name, game, unit_type)
+        for group_name, groups in layout.groups.items():
+            for group in groups:
+                # Choose a random unit_type for the group
+                try:
+                    unit_type = self.random_dcs_unit_type_for_group(group)
+                except IndexError:
+                    if group.optional:
+                        # If group is optional it is ok when no unit_type is available
+                        continue
+                    # if non-optional this is a error
+                    raise RuntimeError(
+                        f"No accessible unit for {self.name} - {group.name}"
+                    )
+                tgo_group_name = f"{name} ({group_name})"
+                self.create_theater_group_for_tgo(
+                    go, group, tgo_group_name, game, unit_type
+                )
 
         return go
 
     def create_theater_group_for_tgo(
         self,
         ground_object: TheaterGroundObject,
-        group: GroupLayout,
-        name: str,
+        group: TgoLayoutGroup,
+        group_name: str,
         game: Game,
         unit_type: Type[DcsUnitType],
         unit_count: Optional[int] = None,
@@ -165,25 +192,29 @@ class ForceGroup:
         """Create a TheaterGroup and add it to the given TGO"""
         # Random UnitCounter if not forced
         if unit_count is None:
-            unit_count = group.unit_counter
-        # Static and non Static groups have to be separated
-        group_id = group.group - 1
-        if len(ground_object.groups) <= group_id:
-            # Requested group was not yet created
-            ground_group = TheaterGroup.from_template(
-                game.next_group_id(), group, ground_object, unit_type, unit_count
-            )
-            # Set Group Name
-            ground_group.name = f"{name} {group_id}"
-            ground_object.groups.append(ground_group)
-            units = ground_group.units
-        else:
-            ground_group = ground_object.groups[group_id]
-            units = group.generate_units(ground_object, unit_type, unit_count)
+            unit_count = group.group_size
+        # Generate Units
+        units = group.generate_units(ground_object, unit_type, unit_count)
+        # Get or create the TheaterGroup
+        ground_group = ground_object.group_by_name(group_name)
+        if ground_group is not None:
+            # TheaterGroup with this name exists already. Extend it
             ground_group.units.extend(units)
+        else:
+            # TheaterGroup with the name was not created yet
+            ground_object.groups.append(
+                TheaterGroup.from_template(
+                    game.next_group_id(),
+                    group_name,
+                    units,
+                    ground_object,
+                    unit_type,
+                    unit_count,
+                )
+            )
 
         # Assign UniqueID, name and align relative to ground_object
-        for u_id, unit in enumerate(units):
+        for unit in units:
             unit.id = game.next_unit_id()
             unit.name = unit.unit_type.name if unit.unit_type else unit.type.name
             unit.position = PointWithHeading.from_point(
@@ -209,42 +240,46 @@ class ForceGroup:
 
     @classmethod
     def _load_all(cls) -> None:
-        for file in Path("resources/units/groups").glob("*.yaml"):
+        for file in Path("resources/groups").glob("*.yaml"):
             if not file.is_file():
                 raise RuntimeError(f"{file.name} is not a valid ForceGroup")
 
             with file.open(encoding="utf-8") as data_file:
                 data = yaml.safe_load(data_file)
 
-            group_role = GroupRole(data.get("role"))
+            name = data["name"]
 
-            group_tasks = [GroupTask.by_description(n) for n in data.get("tasks", [])]
+            group_tasks = [GroupTask.by_description(n) for n in data.get("tasks")]
+            if not group_tasks:
+                logging.error(f"ForceGroup {name} has no valid tasking")
+                continue
 
-            units = [UnitType.named(unit) for unit in data.get("units", [])]
+            units = [UnitType.named(unit) for unit in data.get("units")]
+            if not units:
+                logging.error(f"ForceGroup {name} has no valid units")
+                continue
 
             statics = []
             for static in data.get("statics", []):
-                static_type = db.static_type_from_name(static)
+                static_type = static_type_from_name(static)
                 if static_type is None:
                     logging.error(f"Static {static} for {file} is not valid")
                 else:
                     statics.append(static_type)
 
-            layouts = [next(db.LAYOUTS.by_name(n)) for n in data.get("layouts")]
+            layouts = [LAYOUTS.by_name(n) for n in data.get("layouts")]
+            if not layouts:
+                logging.error(f"ForceGroup {name} has no valid layouts")
+                continue
 
             force_group = ForceGroup(
-                name=data.get("name"),
+                name=name,
                 units=units,
                 statics=statics,
-                role=group_role,
                 tasks=group_tasks,
                 layouts=layouts,
             )
 
             cls._by_name[force_group.name] = force_group
-            if group_role in cls._by_role:
-                cls._by_role[group_role].append(force_group)
-            else:
-                cls._by_role[group_role] = [force_group]
 
         cls._loaded = True

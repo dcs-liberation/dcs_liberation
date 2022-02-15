@@ -11,6 +11,7 @@ from pydantic.dataclasses import dataclass
 
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.theater import LatLon
+from game.theater.theatergroup import TheaterUnit
 from game.utils import Distance, meters
 
 if TYPE_CHECKING:
@@ -94,7 +95,7 @@ class FlightWaypoint(BaseFlightWaypoint):
     # having three names. A short and long form is enough.
     description: str = ""
 
-    targets: Sequence[MissionTarget | Unit] = []
+    targets: Sequence[MissionTarget | TheaterUnit] = []
     obj_name: str = ""
     pretty_name: str = ""
     only_for_player: bool = False

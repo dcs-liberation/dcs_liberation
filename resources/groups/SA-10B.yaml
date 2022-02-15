@@ -1,5 +1,4 @@
 name: SA-10B/S-300PS
-role: AntiAir
 tasks:
   - LORAD
 units:

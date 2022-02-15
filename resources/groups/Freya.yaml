@@ -1,5 +1,4 @@
 name: Freya
-role: AntiAir
 tasks:
   - SHORAD
 units:

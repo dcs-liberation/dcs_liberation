@@ -1,5 +1,4 @@
 name: Patriot
-role: AntiAir
 tasks:
   - LORAD
 units:

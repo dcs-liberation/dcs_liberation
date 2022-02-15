@@ -18,10 +18,11 @@ from PySide2.QtWidgets import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game, VERSION, persistency, db
+from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
 from game.server import EventStream, GameContext
 from game.server.security import ApiKeyManager
+from game.layout import LAYOUTS
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -400,7 +401,7 @@ class QLiberationWindow(QMainWindow):
         self.dialog.show()
 
     def import_templates(self):
-        db.LAYOUTS.import_templates()
+        LAYOUTS.import_templates()
 
     def showLogsDialog(self):
         self.dialog = QLogsWindow()

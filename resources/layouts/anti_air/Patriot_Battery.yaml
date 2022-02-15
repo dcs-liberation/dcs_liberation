@@ -1,56 +1,50 @@
 name: Patriot Battery
-role: AntiAir
 tasks:
   - LORAD
 groups:
-  - name: Patriot Battery 0
-    group: 1
-    unit_count:
-      - 1
-    unit_types:
-      - Patriot str
-  - name: Patriot Battery 1
-    group: 1
-    unit_count:
-      - 1
-    unit_types:
-      - Patriot AMG
-  - name: Patriot Battery 2
-    group: 1
-    unit_count:
-      - 1
-    unit_types:
-      - Patriot ECS
-  - name: Patriot Battery 3
-    group: 1
-    unit_count:
-      - 1
-    unit_types:
-      - Patriot cp
-  - name: Patriot Battery 4
-    group: 1
-    unit_count:
-      - 1
-    unit_types:
-      - Patriot EPP
-  - name: Patriot Battery 5
-    group: 1
-    unit_count:
-      - 8
-    unit_types:
-      - Patriot ln
-  - name: Patriot Battery 6
-    optional: true
-    group: 2
-    unit_count:
-      - 2
-    unit_classes:
-      - AAA
-  - name: Patriot Battery 7
-    optional: true
-    group: 2
-    unit_count:
-      - 2
-    unit_classes:
-      - SHORAD
+  - Patriot:
+    - name: Patriot Battery 0
+      unit_count:
+        - 1
+      unit_types:
+        - Patriot str
+    - name: Patriot Battery 1
+      unit_count:
+        - 1
+      unit_types:
+        - Patriot AMG
+    - name: Patriot Battery 2
+      unit_count:
+        - 1
+      unit_types:
+        - Patriot ECS
+    - name: Patriot Battery 3
+      unit_count:
+        - 1
+      unit_types:
+        - Patriot cp
+    - name: Patriot Battery 4
+      unit_count:
+        - 1
+      unit_types:
+        - Patriot EPP
+    - name: Patriot Battery 5
+      unit_count:
+        - 8
+      unit_types:
+        - Patriot ln
+  - AAA:
+    - name: Patriot Battery 6
+      optional: true
+      unit_count:
+        - 2
+      unit_classes:
+        - AAA
+  - PD:
+    - name: Patriot Battery 7
+      optional: true
+      unit_count:
+        - 2
+      unit_classes:
+        - SHORAD
 layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

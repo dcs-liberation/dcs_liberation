@@ -1,4 +1,4 @@
 from .faction import Faction
-from .faction_loader import FactionLoader
+from .factionloader import FactionLoader
 
 FACTIONS = FactionLoader()

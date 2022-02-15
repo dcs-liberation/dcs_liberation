@@ -1,9 +1,10 @@
 from __future__ import annotations
+from collections import defaultdict
 
 import logging
 import random
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Iterator, Type
 
 from dcs import Point
 from dcs.unit import Unit
@@ -50,98 +51,121 @@ class LayoutUnit:
         """Creates a LayoutUnit from a DCS Unit"""
         return LayoutUnit(
             unit.name,
-            Point(int(unit.position.x), int(unit.position.y)),
+            unit.position,
             int(unit.heading),
         )
 
 
 @dataclass
-class GroupLayout:
-    """The Layout of a TheaterGroup"""
+class TgoLayoutGroup:
+    """The layout of a single type of unit within the TgoLayout
+
+    Each DCS group that is spawned in the mission is composed of one or more
+    TgoLayoutGroup. Each TgoLayoutGroup will generate only a single type of unit.
+
+    The merging of multiple TgoLayoutGroups to a single DCS group is defined in the
+    TgoLayout with a dict which uses the Dcs group name as key and the corresponding
+    TgoLayoutGroups as values.
+
+    Each TgoLayoutGroup will be filled with a single type of unit when generated. The
+    types compatible with the position can either be specified precisely (with
+    unit_types) or generically (with unit_classes). If neither list specifies units
+    that can be fulfilled by the faction, fallback_classes will be used. This allows
+    the early-warning radar template, which prefers units that are defined as early
+    warning radars like the 55G6, but to fall back to any radar usable by the faction
+    if EWRs are not available.
+
+    A TgoLayoutGroup may be optional. Factions or ForceGroups that are not able to
+    provide an actual unit for the TgoLayoutGroup will still be able to use the layout;
+    the optional TgoLayoutGroup will be omitted.
+    """
 
     name: str
-    units: list[LayoutUnit]
+    layout_units: list[LayoutUnit]
 
-    # The group this template will be merged into
-    group: int = 1
-
-    # Define the amount of random units to be created by the randomizer.
-    # This can be a fixed int or a random value from a range of two ints as tuple
+    # Define the amount of units to be created. This can be a fixed int or a random
+    # choice from a range of two ints. If the list is empty it will use the whole group
+    # size / all available LayoutUnits
     unit_count: list[int] = field(default_factory=list)
 
     # defintion which unit types are supported
     unit_types: list[Type[DcsUnitType]] = field(default_factory=list)
     unit_classes: list[UnitClass] = field(default_factory=list)
-    alternative_classes: list[UnitClass] = field(default_factory=list)
+    fallback_classes: list[UnitClass] = field(default_factory=list)
 
     # Defines if this groupTemplate is required or not
     optional: bool = False
 
-    # if enabled the specific group will be generated during generation
-    # Can only be set to False if Optional = True
-    enabled: bool = True
-
-    # TODO Caching for faction!
     def possible_types_for_faction(self, faction: Faction) -> list[Type[DcsUnitType]]:
-        """TODO Description"""
+        """Determine the possible dcs unit types for the TgoLayoutGroup and the given faction"""
         unit_types = [t for t in self.unit_types if faction.has_access_to_dcs_type(t)]
 
         alternative_types = []
         for accessible_unit in faction.accessible_units:
             if accessible_unit.unit_class in self.unit_classes:
                 unit_types.append(accessible_unit.dcs_unit_type)
-            if accessible_unit.unit_class in self.alternative_classes:
+            if accessible_unit.unit_class in self.fallback_classes:
                 alternative_types.append(accessible_unit.dcs_unit_type)
 
         if not unit_types and not alternative_types and not self.optional:
-            raise LayoutException
+            raise LayoutException(f"{self.name} not usable by faction {faction.name}")
 
         return unit_types or alternative_types
 
     @property
-    def unit_counter(self) -> int:
-        """TODO Documentation"""
-        default = len(self.units)
+    def group_size(self) -> int:
+        """The amount of units to be generated. If unit_count is defined in the layout this will be randomized accordingly. Otherwise this will be the maximum size."""
         if self.unit_count:
             if len(self.unit_count) == 1:
-                count = self.unit_count[0]
-            else:
-                count = random.choice(range(min(self.unit_count), max(self.unit_count)))
-            if count > default:
-                logging.error(
-                    f"UnitCount for Group Layout {self.name} "
-                    f"exceeds max available units for this group"
-                )
-                return default
-            return count
-        return default
+                return self.unit_count[0]
+            return random.choice(range(min(self.unit_count), max(self.unit_count)))
+        return self.max_size
 
     @property
     def max_size(self) -> int:
-        return len(self.units)
+        return len(self.layout_units)
 
     def generate_units(
         self, go: TheaterGroundObject, unit_type: Type[DcsUnitType], amount: int
     ) -> list[TheaterUnit]:
-        """TODO Documentation"""
+        """Generate units of the given unit type and amount for the TgoLayoutGroup"""
         return [
-            TheaterUnit.from_template(i, unit_type, self.units[i], go)
+            TheaterUnit.from_template(i, unit_type, self.layout_units[i], go)
             for i in range(amount)
         ]
 
 
-class TheaterLayout:
-    """TODO Documentation"""
+class TgoLayout:
+    """TgoLayout defines how a TheaterGroundObject will be generated from a ForceGroup. This defines the positioning, orientation, type and amount of the actual units
 
-    def __init__(self, name: str, role: GroupRole, description: str = "") -> None:
+    Each TgoLayout is defined in resources/layouts with a .yaml file which has all the
+    information about the Layout next to a .miz file which gives information about the
+    actual position (x, y) and orientation (heading) of the units. The layout file also
+    defines the structure of the DCS group (or groups) that will be spawned in the
+    mission. Complex groups like SAMs protected by point-defense require specific
+    grouping when used with plugins like Skynet. One group would define the main
+    battery (the search and track radars, launchers, C2 units, etc), another would
+    define PD units, and others could define SHORADs or resupply units.
+
+    Each group (representing a DCS group) is further divided into TgoLayoutGroups. As
+    a TgoLayoutGroup only represents a single dcs unit type the logical dcs group of multiple unit types will be created with the usage of a dict which has the DCS Group name as key and a list of TgoLayoutGroups which will be merged into this single dcs group.
+
+    As the TgoLayout will be used to create a TheaterGroundObject for a ForceGroup,
+    specialized classes inherit from this base class. For example there is a special
+    AiDefenseLayout which will be used to create the SamGroundObject from it.
+    """
+
+    def __init__(self, name: str, description: str = "") -> None:
         self.name = name
-        self.role = role
         self.description = description
-        self.tasks: list[GroupTask] = []  # The supported tasks
-        self.groups: list[GroupLayout] = []
+        self.tasks: list[GroupTask] = []  # The supported
 
-        # If the template is generic it will be used the generate the general
-        # UnitGroups during faction initialization. Generic Groups allow to be mixed
+        # Mapping of group name and LayoutGroups for a specific TgoGroup
+        # A Group can have multiple TgoLayoutGroups which get merged together
+        self.groups: dict[str, list[TgoLayoutGroup]] = defaultdict(list)
+
+        # A generic layout will be used to create generic ForceGroups during the
+        # campaign initialization. For each generic layout a new Group will be created.
         self.generic: bool = False
 
     def usable_by_faction(self, faction: Faction) -> bool:
@@ -156,7 +180,7 @@ class TheaterLayout:
         try:
             return all(
                 len(group.possible_types_for_faction(faction)) > 0
-                for group in self.groups
+                for group in self.all_groups
                 if not group.optional
             )
         except LayoutException:
@@ -168,22 +192,20 @@ class TheaterLayout:
         position: PointWithHeading,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
-        """TODO Documentation"""
+        """Create the TheaterGroundObject for the TgoLayout
+
+        This function has to be implemented by the inheriting class to create
+        a specific TGO like SamGroundObject or BuildingGroundObject
+        """
         raise NotImplementedError
 
-    def add_group(self, new_group: GroupLayout, index: int = 0) -> None:
-        """Adds a group in the correct order to the template"""
-        if len(self.groups) > index:
-            self.groups.insert(index, new_group)
-        else:
-            self.groups.append(new_group)
-
     @property
-    def size(self) -> int:
-        return sum([len(group.units) for group in self.groups])
+    def all_groups(self) -> Iterator[TgoLayoutGroup]:
+        for groups in self.groups.values():
+            yield from groups
 
 
-class AntiAirLayout(TheaterLayout):
+class AntiAirLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
@@ -200,7 +222,7 @@ class AntiAirLayout(TheaterLayout):
         )
 
 
-class BuildingLayout(TheaterLayout):
+class BuildingLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
@@ -224,7 +246,7 @@ class BuildingLayout(TheaterLayout):
         raise RuntimeError(f"Building Template {self.name} has no building category")
 
 
-class NavalLayout(TheaterLayout):
+class NavalLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
@@ -240,7 +262,7 @@ class NavalLayout(TheaterLayout):
         raise NotImplementedError
 
 
-class DefensesLayout(TheaterLayout):
+class DefensesLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
@@ -258,7 +280,7 @@ class DefensesLayout(TheaterLayout):
         raise NotImplementedError
 
 
-class GroundForceLayout(TheaterLayout):
+class GroundForceLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,

@@ -1,5 +1,4 @@
 name: SA-23/S-300VM
-role: AntiAir
 tasks:
   - LORAD
 units:

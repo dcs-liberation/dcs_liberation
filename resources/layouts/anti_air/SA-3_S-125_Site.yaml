@@ -1,21 +1,21 @@
 name: SA-3/S-125 Site
-role: AntiAir
 tasks:
   - MERAD
 groups:
-  - name: SA-3/S-125 Site 0
-    unit_count:
-      - 1
-    unit_types:
-      - p-19 s-125 sr
-  - name: SA-3/S-125 Site 1
-    unit_count:
-      - 1
-    unit_types:
-      - snr s-125 tr
-  - name: SA-3/S-125 Site 2
-    unit_count:
-      - 4
-    unit_types:
-      - 5p73 s-125 ln
+  - SA-3:
+    - name: SA-3/S-125 Site 0
+      unit_count:
+        - 1
+      unit_types:
+        - p-19 s-125 sr
+    - name: SA-3/S-125 Site 1
+      unit_count:
+        - 1
+      unit_types:
+        - snr s-125 tr
+    - name: SA-3/S-125 Site 2
+      unit_count:
+        - 4
+      unit_types:
+        - 5p73 s-125 ln
 layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

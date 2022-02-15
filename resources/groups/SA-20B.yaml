@@ -1,5 +1,4 @@
 name: SA-20B/S-300PMU-2
-role: AntiAir
 tasks:
   - LORAD
 units:

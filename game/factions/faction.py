@@ -150,7 +150,7 @@ class Faction:
                 for unit in preset_group.units
             ),
         )
-        return list(all_units)
+        return list(set(all_units))
 
     @property
     def air_defenses(self) -> list[str]:
@@ -158,7 +158,11 @@ class Faction:
         # This is used for the faction overview in NewGameWizard
         air_defenses = [a.name for a in self.air_defense_units]
         air_defenses.extend(
-            [pg.name for pg in self.preset_groups if pg.role == GroupRole.AIR_DEFENSE]
+            [
+                pg.name
+                for pg in self.preset_groups
+                if any(task.role == GroupRole.AIR_DEFENSE for task in pg.tasks)
+            ]
         )
         return sorted(air_defenses)
 

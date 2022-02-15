@@ -1,3 +1,4 @@
+from collections import defaultdict
 import logging
 from dataclasses import dataclass, field
 from typing import Type
@@ -14,6 +15,7 @@ from PySide2.QtWidgets import (
     QSpinBox,
     QVBoxLayout,
     QCheckBox,
+    QWidget,
 )
 from dcs.unittype import UnitType
 
@@ -29,16 +31,17 @@ from game.theater.theatergroundobject import (
 )
 from game.theater.theatergroup import TheaterGroup
 from game.layout.layout import (
-    TheaterLayout,
-    GroupLayout,
+    LayoutException,
+    TgoLayout,
+    TgoLayoutGroup,
 )
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
 @dataclass
-class QGroupLayout:
-    layout: GroupLayout
+class QTgoLayoutGroup:
+    layout: TgoLayoutGroup
     dcs_unit_type: Type[UnitType]
     amount: int
     unit_price: int
@@ -50,41 +53,45 @@ class QGroupLayout:
 
 
 @dataclass
-class QLayout:
-    layout: TheaterLayout
+class QTgoLayout:
+    layout: TgoLayout
     force_group: ForceGroup
-    group_layouts: list[QGroupLayout] = field(default_factory=list)
+    groups: dict[str, list[QTgoLayoutGroup]] = field(default_factory=dict)
 
     @property
     def price(self) -> int:
-        return sum(group.price for group in self.group_layouts)
+        return sum(group.price for groups in self.groups.values() for group in groups)
 
 
-class QGroundObjectGroupTemplate(QGroupBox):
+class QTgoLayoutGroupRow(QWidget):
     group_template_changed = Signal()
 
-    def __init__(
-        self, group_id: int, force_group: ForceGroup, group_layout: GroupLayout
-    ) -> None:
-        super().__init__(f"{group_id + 1}: {group_layout.name}")
+    def __init__(self, force_group: ForceGroup, group: TgoLayoutGroup) -> None:
+        super().__init__()
         self.grid_layout = QGridLayout()
         self.setLayout(self.grid_layout)
-
+        self.grid_layout.setColumnStretch(0, 100)
         self.amount_selector = QSpinBox()
         self.unit_selector = QComboBox()
+        self.unit_selector.setMinimumWidth(250)
         self.group_selector = QCheckBox()
 
         # Add all possible units with the price
-        for unit_type in force_group.unit_types_for_group(group_layout):
+        for unit_type in force_group.unit_types_for_group(group):
             self.unit_selector.addItem(
                 f"{unit_type.name} [${unit_type.price}M]",
                 userData=(unit_type.dcs_unit_type, unit_type.price),
             )
         # Add all possible statics with price = 0
-        for static_type in force_group.statics_for_group(group_layout):
+        for static_type in force_group.statics_for_group(group):
             self.unit_selector.addItem(
                 f"{static_type} (Static)", userData=(static_type, 0)
             )
+
+        if self.unit_selector.count() == 0:
+            raise LayoutException("No units available for the TgoLayoutGroup")
+
+        self.unit_selector.adjustSize()
         self.unit_selector.setEnabled(self.unit_selector.count() > 1)
         self.grid_layout.addWidget(self.unit_selector, 0, 0, alignment=Qt.AlignRight)
         self.grid_layout.addWidget(self.amount_selector, 0, 1, alignment=Qt.AlignRight)
@@ -93,9 +100,7 @@ class QGroundObjectGroupTemplate(QGroupBox):
             self.unit_selector.currentIndex()
         )
 
-        self.group_layout = QGroupLayout(
-            group_layout, unit_type, group_layout.unit_counter, price
-        )
+        self.group_layout = QTgoLayoutGroup(group, unit_type, group.group_size, price)
 
         self.group_selector.setChecked(self.group_layout.enabled)
         self.group_selector.setEnabled(self.group_layout.layout.optional)
@@ -127,11 +132,11 @@ class QGroundObjectTemplateLayout(QGroupBox):
         self,
         game: Game,
         ground_object: TheaterGroundObject,
-        layout: QLayout,
-        layout_changed_signal: Signal(QLayout),
+        layout: QTgoLayout,
+        layout_changed_signal: Signal(QTgoLayout),
         current_group_value: int,
     ):
-        super().__init__("Groups:")
+        super().__init__()
         # Connect to the signal to handle template updates
         self.game = game
         self.ground_object = ground_object
@@ -158,20 +163,31 @@ class QGroundObjectTemplateLayout(QGroupBox):
         # Load Layout
         self.load_for_layout(self.layout_model)
 
-    def load_for_layout(self, layout: QLayout) -> None:
+    def load_for_layout(self, layout: QTgoLayout) -> None:
         self.layout_model = layout
         # Clean the current grid
+        self.layout_model.groups = defaultdict(list)
         for id in range(self.template_grid.count()):
             self.template_grid.itemAt(id).widget().deleteLater()
-        for g_id, layout_group in enumerate(self.layout_model.layout.groups):
-            group_row = QGroundObjectGroupTemplate(
-                g_id, self.layout_model.force_group, layout_group
-            )
-            self.layout_model.group_layouts.append(group_row.group_layout)
-            group_row.group_template_changed.connect(self.group_template_changed)
-            self.template_grid.addWidget(group_row)
-
+        for group_name, groups in self.layout_model.layout.groups.items():
+            self.add_theater_group(group_name, self.layout_model.force_group, groups)
         self.group_template_changed()
+
+    def add_theater_group(
+        self, group_name: str, force_group: ForceGroup, groups: list[TgoLayoutGroup]
+    ) -> None:
+        group_box = QGroupBox(group_name)
+        vbox_layout = QVBoxLayout()
+        for group in groups:
+            try:
+                group_row = QTgoLayoutGroupRow(force_group, group)
+            except LayoutException:
+                continue
+            self.layout_model.groups[group_name].append(group_row.group_layout)
+            group_row.group_template_changed.connect(self.group_template_changed)
+            vbox_layout.addWidget(group_row)
+        group_box.setLayout(vbox_layout)
+        self.template_grid.addWidget(group_box)
 
     def group_template_changed(self) -> None:
         price = self.layout_model.price
@@ -182,54 +198,40 @@ class QGroundObjectTemplateLayout(QGroupBox):
         else:
             self.buy_button.setToolTip("Not enough money to buy this group")
 
-    def buy_group(self):
-        if not self.layout:
-            raise RuntimeError("No template selected. GroundObject can not be bought.")
-
+    def buy_group(self) -> None:
         price = self.layout_model.price
         if price > self.game.blue.budget:
-            # Somethin went wrong. Buy button should be disabled!
+            # Something went wrong. Buy button should be disabled!
             logging.error("Not enough money to buy the group")
             return
         self.game.blue.budget -= price - self.current_group_value
-        self.ground_object.groups = self.generate_groups()
+        self.ground_object.groups = []
+        for group_name, groups in self.layout_model.groups.items():
+            for group in groups:
+                self.layout_model.force_group.create_theater_group_for_tgo(
+                    self.ground_object,
+                    group.layout,
+                    f"{self.ground_object.name} ({group_name})",
+                    self.game,
+                    group.dcs_unit_type,  # Forced Type
+                    group.amount,  # Forced Amount
+                )
 
         # Replan redfor missions
         self.game.initialize_turn(for_red=True, for_blue=False)
         GameUpdateSignal.get_instance().updateGame(self.game)
 
-    def generate_groups(self) -> list[TheaterGroup]:
-        go = self.layout_model.layout.create_ground_object(
-            self.ground_object.name,
-            PointWithHeading.from_point(
-                self.ground_object.position, self.ground_object.heading
-            ),
-            self.ground_object.control_point,
-        )
-
-        for group in self.layout_model.group_layouts:
-            self.layout_model.force_group.create_theater_group_for_tgo(
-                go,
-                group.layout,
-                self.ground_object.name,
-                self.game,
-                group.dcs_unit_type,  # Forced Type
-                group.amount,  # Forced Amount
-            )
-
-        return go.groups
-
 
 class QGroundObjectBuyMenu(QDialog):
-    layout_changed_signal = Signal(QLayout)
+    layout_changed_signal = Signal(QTgoLayout)
 
     def __init__(
         self,
-        parent,
+        parent: QWidget,
         ground_object: TheaterGroundObject,
         game: Game,
         current_group_value: int,
-    ):
+    ) -> None:
         super().__init__(parent)
 
         self.setMinimumWidth(350)
@@ -241,7 +243,9 @@ class QGroundObjectBuyMenu(QDialog):
         self.setLayout(self.mainLayout)
 
         self.force_group_selector = QComboBox()
+        self.force_group_selector.setMinimumWidth(250)
         self.layout_selector = QComboBox()
+        self.layout_selector.setMinimumWidth(250)
         self.layout_selector.setEnabled(False)
 
         # Get the layouts and fill the combobox
@@ -262,19 +266,19 @@ class QGroundObjectBuyMenu(QDialog):
         for group in game.blue.armed_forces.groups_for_tasks(tasks):
             self.force_group_selector.addItem(group.name, userData=group)
         self.force_group_selector.setEnabled(self.force_group_selector.count() > 1)
-
+        self.force_group_selector.adjustSize()
         force_group = self.force_group_selector.itemData(
             self.force_group_selector.currentIndex()
         )
 
         for layout in force_group.layouts:
             self.layout_selector.addItem(layout.name, userData=layout)
-
+        self.layout_selector.adjustSize()
         selected_template = self.layout_selector.itemData(
             self.layout_selector.currentIndex()
         )
 
-        self.layout_model = QLayout(selected_template, force_group)
+        self.theater_layout = QTgoLayout(selected_template, force_group)
 
         self.layout_selector.currentIndexChanged.connect(self.layout_changed)
         self.force_group_selector.currentIndexChanged.connect(self.force_group_changed)
@@ -295,7 +299,7 @@ class QGroundObjectBuyMenu(QDialog):
         self.template_layout = QGroundObjectTemplateLayout(
             game,
             ground_object,
-            self.layout_model,
+            self.theater_layout,
             self.layout_changed_signal,
             current_group_value,
         )
@@ -311,19 +315,19 @@ class QGroundObjectBuyMenu(QDialog):
         self.layout_selector.clear()
         for layout in unit_group.layouts:
             self.layout_selector.addItem(layout.name, userData=layout)
+        self.layout_selector.adjustSize()
         # Enable if more than one template is available
         self.layout_selector.setEnabled(len(unit_group.layouts) > 1)
         # Enable Combobox Signals again
         self.layout_selector.blockSignals(False)
         self.layout_changed()
 
-    def layout_changed(self):
+    def layout_changed(self) -> None:
         self.layout()
-        self.layout_model.layout = self.layout_selector.itemData(
+        self.theater_layout.layout = self.layout_selector.itemData(
             self.layout_selector.currentIndex()
         )
-        self.layout_model.force_group = self.force_group_selector.itemData(
+        self.theater_layout.force_group = self.force_group_selector.itemData(
             self.force_group_selector.currentIndex()
         )
-        self.layout_model.group_layouts = []
-        self.layout_changed_signal.emit(self.layout_model)
+        self.layout_changed_signal.emit(self.theater_layout)

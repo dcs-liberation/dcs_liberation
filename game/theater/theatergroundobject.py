@@ -3,7 +3,7 @@ from __future__ import annotations
 import itertools
 import logging
 from abc import ABC
-from typing import Iterator, List, TYPE_CHECKING
+from typing import Iterator, List, TYPE_CHECKING, Optional
 
 from dcs.unittype import VehicleType
 from dcs.vehicles import vehicle_map
@@ -204,6 +204,12 @@ class TheaterGroundObject(MissionTarget):
     @property
     def purchasable(self) -> bool:
         raise NotImplementedError
+
+    def group_by_name(self, name: str) -> Optional[TheaterGroup]:
+        for group in self.groups:
+            if group.name == name:
+                return group
+        return None
 
 
 class BuildingGroundObject(TheaterGroundObject):
