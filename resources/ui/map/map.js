@@ -1,6 +1,7 @@
 const ENABLE_EXPENSIVE_DEBUG_TOOLS = false;
 // Must be kept in sync with game.server.settings.ServerSettings.
 const HTTP_BACKEND = "http://[::1]:5000";
+const WS_BACKEND = "ws://[::1]:5000/eventstream";
 
 function getJson(endpoint) {
   return fetch(`${HTTP_BACKEND}${endpoint}`).then((response) =>
@@ -343,6 +344,17 @@ L.control
 
 let game;
 new QWebChannel(qt.webChannelTransport, function (channel) {
+  const ws = new WebSocket(WS_BACKEND);
+  ws.addEventListener("message", (event) => {
+    handleStreamedEvents(JSON.parse(event.data));
+  });
+  ws.addEventListener("close", (event) => {
+    console.log(`Websocket closed: ${event}`);
+  });
+  ws.addEventListener("error", (error) => {
+    console.log(`Websocket error: ${error}`);
+  });
+
   game = channel.objects.game;
   drawInitialMap();
   game.cleared.connect(clearAllLayers);
@@ -361,6 +373,12 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.ipCombatsChanged.connect(drawCombat);
   game.selectedFlightChanged.connect(updateSelectedFlight);
 });
+
+function handleStreamedEvents(events) {
+  for (const [flightId, position] of Object.entries(events.updated_flights)) {
+    Flight.withId(flightId).drawAircraftLocation(position);
+  }
+}
 
 function recenterMap(center) {
   map.setView(center, 8, { animate: true, duration: 1 });
@@ -825,17 +843,32 @@ class Waypoint {
 }
 
 class Flight {
+  static registeredFlights = {};
+
   constructor(flight) {
     this.flight = flight;
+    this.id = flight.id;
     this.flightPlan = this.flight.flightPlan.map((p) => new Waypoint(p, this));
     this.aircraft = null;
     this.path = null;
     this.markers = [];
     this.commitBoundary = null;
     this.flight.selectedChanged.connect(() => this.draw());
-    this.flight.positionChanged.connect(() => this.drawAircraftLocation());
     this.flight.flightPlanChanged.connect(() => this.drawFlightPlan());
     this.flight.commitBoundaryChanged.connect(() => this.drawCommitBoundary());
+    Flight.registerFlight(this);
+  }
+
+  static clearRegisteredFlights() {
+    Flight.registeredFlights = {};
+  }
+
+  static registerFlight(flight) {
+    Flight.registeredFlights[flight.id] = flight;
+  }
+
+  static withId(id) {
+    return Flight.registeredFlights[id];
   }
 
   shouldMark(waypoint) {
@@ -876,12 +909,14 @@ class Flight {
     this.drawCommitBoundary();
   }
 
-  drawAircraftLocation() {
+  drawAircraftLocation(position = null) {
     if (this.aircraft != null) {
       this.aircraft.removeFrom(aircraftLayer);
       this.aircraft = null;
     }
-    const position = this.flight.position;
+    if (position == null) {
+      position = this.flight.position;
+    }
     if (position.length > 0) {
       this.aircraft = L.marker(position, {
         icon: Icons.AirIcons.icon(
@@ -966,6 +1001,7 @@ class Flight {
 }
 
 function drawAircraft() {
+  Flight.clearRegisteredFlights();
   aircraftLayer.clearLayers();
   blueFlightPlansLayer.clearLayers();
   redFlightPlansLayer.clearLayers();

@@ -17,6 +17,7 @@ from .waypointjs import WaypointJs
 
 
 class FlightJs(QObject):
+    idChanged = Signal()
     positionChanged = Signal()
     flightPlanChanged = Signal()
     blueChanged = Signal()
@@ -49,6 +50,10 @@ class FlightJs(QObject):
         self.theater = theater
         self.ato_model = ato_model
         self._waypoints = self.make_waypoints()
+
+    @Property(str, notify=idChanged)
+    def id(self) -> str:
+        return str(self.flight.id)
 
     def update_waypoints(self) -> None:
         for waypoint in self._waypoints:

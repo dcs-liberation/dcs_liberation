@@ -125,12 +125,6 @@ class MapModel(QObject):
         self.cleared.emit()
 
     def on_sim_update(self, events: GameUpdateEvents) -> None:
-        # TODO: Only update flights with changes.
-        # We have the signal of which flights have updates, but no fast lookup for
-        # Flight -> FlightJs since Flight isn't hashable. Faster to update every flight
-        # than do do the O(n^2) filtered update.
-        for flight in self._flights.values():
-            flight.positionChanged.emit()
         for combat in events.new_combats:
             self.on_add_combat(combat)
         for combat in events.updated_combats:

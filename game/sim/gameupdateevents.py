@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from dcs import Point
+
 if TYPE_CHECKING:
     from game.ato import Flight
     from game.sim.combat import FrozenCombat
@@ -12,7 +14,18 @@ class GameUpdateEvents:
         self.simulation_complete = False
         self.new_combats: list[FrozenCombat] = []
         self.updated_combats: list[FrozenCombat] = []
-        self.updated_flights: list[Flight] = []
+        self.updated_flights: list[tuple[Flight, Point]] = []
+
+    @property
+    def empty(self) -> bool:
+        return not any(
+            [
+                self.simulation_complete,
+                self.new_combats,
+                self.updated_combats,
+                self.updated_flights,
+            ]
+        )
 
     def complete_simulation(self) -> None:
         self.simulation_complete = True
@@ -23,5 +36,5 @@ class GameUpdateEvents:
     def update_combat(self, combat: FrozenCombat) -> None:
         self.updated_combats.append(combat)
 
-    def update_flight(self, flight: Flight) -> None:
-        self.updated_flights.append(flight)
+    def update_flight(self, flight: Flight, new_position: Point) -> None:
+        self.updated_flights.append((flight, new_position))

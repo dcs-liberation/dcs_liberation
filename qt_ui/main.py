@@ -18,7 +18,7 @@ from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.db import FACTIONS
 from game.dcs.aircrafttype import AircraftType
 from game.profiling import logged_duration
-from game.server import GameContext, Server
+from game.server import EventStream, GameContext, Server
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from qt_ui import (
@@ -137,6 +137,7 @@ def run_ui(game: Optional[Game]) -> None:
     # Apply CSS (need works)
     GameUpdateSignal()
     GameUpdateSignal.get_instance().game_loaded.connect(GameContext.set)
+    GameUpdateSignal.get_instance().game_loaded.connect(EventStream.drain)
 
     # Start window
     window = QLiberationWindow(game)
