@@ -6,7 +6,7 @@ from .eventstream import EventStream
 from .models import GameUpdateEventsJs
 from .. import GameContext
 
-router = APIRouter()
+router: APIRouter = APIRouter()
 
 
 @router.websocket("/eventstream")

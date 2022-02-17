@@ -7,7 +7,7 @@ from game.ato import Flight
 from game.server import GameContext
 from .models import HoldZonesJs, IpZonesJs, JoinZonesJs
 
-router = APIRouter(prefix="/debug/waypoint-geometries")
+router: APIRouter = APIRouter(prefix="/debug/waypoint-geometries")
 
 
 # TODO: Maintain map of UUID -> Flight in Game.
