@@ -6,6 +6,7 @@ from threading import Thread
 import uvicorn
 from uvicorn import Config
 
+from game.server.app import app
 from game.server.settings import ServerSettings
 
 
@@ -13,7 +14,7 @@ class Server(uvicorn.Server):
     def __init__(self) -> None:
         super().__init__(
             Config(
-                "game.server.app:app",
+                app=app,
                 host=ServerSettings.get().server_bind_address,
                 port=ServerSettings.get().server_port,
                 log_level="info",
