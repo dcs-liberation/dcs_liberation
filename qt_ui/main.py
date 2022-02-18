@@ -21,6 +21,7 @@ from game.profiling import logged_duration
 from game.server import EventStream, GameContext, Server
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
+from pydcs_extensions import load_mods
 from qt_ui import (
     liberation_install,
     liberation_theme,
@@ -318,6 +319,8 @@ def main():
     # TODO: Flesh out data and then make unconditional.
     if args.warn_missing_weapon_data:
         lint_all_weapon_data()
+
+    load_mods()
 
     if args.subcommand == "new-game":
         with logged_duration("New game creation"):

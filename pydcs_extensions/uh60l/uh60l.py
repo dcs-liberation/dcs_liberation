@@ -1,10 +1,11 @@
 from enum import Enum
-from typing import Dict, Any
+from typing import Any, Dict
 
 from dcs import task
 from dcs.helicopters import HelicopterType
 from dcs.planes import PlaneType
 
+from game.modsupport import helicoptermod, planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
@@ -19,6 +20,7 @@ class WeaponsUH60L:
 inject_weapons(WeaponsUH60L)
 
 
+@helicoptermod
 class UH_60L(HelicopterType):
     id = "UH-60L"
     flyable = True
@@ -1270,6 +1272,7 @@ class UH_60L(HelicopterType):
     task_default = task.Transport
 
 
+@planemod
 class KC130J(PlaneType):
     id = "KC130J"
     group_size_max = 1

@@ -4,6 +4,7 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
@@ -254,6 +255,7 @@ class JAS39GripenWeapons:
 inject_weapons(JAS39GripenWeapons)
 
 
+@planemod
 class JAS39Gripen(PlaneType):
     id = "JAS39Gripen"
     flyable = True
@@ -491,6 +493,7 @@ class JAS39Gripen(PlaneType):
     task_default = task.FighterSweep
 
 
+@planemod
 class JAS39Gripen_AG(PlaneType):
     id = "JAS39Gripen_AG"
     flyable = True

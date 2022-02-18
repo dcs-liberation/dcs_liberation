@@ -3,7 +3,10 @@
 #
 from dcs import unittype
 
+from game.modsupport import vehiclemod
 
+
+@vehiclemod
 class AMX_10RCR(unittype.VehicleType):
     id = "AMX10RCR"
     name = "AMX-10RCR"
@@ -12,6 +15,7 @@ class AMX_10RCR(unittype.VehicleType):
     air_weapon_dist = 4000
 
 
+@vehiclemod
 class AMX_10RCR_SEPAR(unittype.VehicleType):
     id = "SEPAR"
     name = "AMX-10RCR SEPAR"
@@ -20,6 +24,7 @@ class AMX_10RCR_SEPAR(unittype.VehicleType):
     air_weapon_dist = 4000
 
 
+@vehiclemod
 class ERC_90(unittype.VehicleType):
     id = "ERC"
     name = "ERC-90"
@@ -29,6 +34,7 @@ class ERC_90(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VAB__50(unittype.VehicleType):
     id = "VAB_50"
     name = "VAB .50"
@@ -38,6 +44,7 @@ class VAB__50(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VAB_T20_13(unittype.VehicleType):
     id = "VIB_VBR"
     name = "VAB T20/13"
@@ -47,6 +54,7 @@ class VAB_T20_13(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VAB_MEPHISTO(unittype.VehicleType):
     id = "VAB_HOT"
     name = "VAB MEPHISTO"
@@ -56,6 +64,7 @@ class VAB_MEPHISTO(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VBL__50(unittype.VehicleType):
     id = "VBL50"
     name = "VBL .50"
@@ -65,6 +74,7 @@ class VBL__50(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VBL_AANF1(unittype.VehicleType):
     id = "VBLANF1"
     name = "VBL AANF1"
@@ -74,6 +84,7 @@ class VBL_AANF1(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VBAE_CRAB(unittype.VehicleType):
     id = "VBAE"
     name = "VBAE CRAB"
@@ -83,6 +94,7 @@ class VBAE_CRAB(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VBAE_CRAB_MMP(unittype.VehicleType):
     id = "VBAE_MMP"
     name = "VBAE CRAB MMP"
@@ -92,6 +104,7 @@ class VBAE_CRAB_MMP(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class AMX_30B2(unittype.VehicleType):
     id = "AMX-30B2"
     name = "AMX-30B2"
@@ -100,6 +113,7 @@ class AMX_30B2(unittype.VehicleType):
     air_weapon_dist = 2500
 
 
+@vehiclemod
 class Char_M551_Sheridan(unittype.VehicleType):
     id = "SHERIDAN"
     name = "Char M551 Sheridan"
@@ -108,6 +122,7 @@ class Char_M551_Sheridan(unittype.VehicleType):
     air_weapon_dist = 5000
 
 
+@vehiclemod
 class Leclerc_Serie_XXI(unittype.VehicleType):
     id = "Leclerc_XXI"
     name = "Leclerc Série XXI"
@@ -116,6 +131,7 @@ class Leclerc_Serie_XXI(unittype.VehicleType):
     air_weapon_dist = 5000
 
 
+@vehiclemod
 class DIM__TOYOTA_BLUE(unittype.VehicleType):
     id = "Toyota_bleu"
     name = "DIM' TOYOTA BLUE"
@@ -125,6 +141,7 @@ class DIM__TOYOTA_BLUE(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class DIM__TOYOTA_GREEN(unittype.VehicleType):
     id = "Toyota_vert"
     name = "DIM' TOYOTA GREEN"
@@ -134,6 +151,7 @@ class DIM__TOYOTA_GREEN(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class DIM__TOYOTA_DESERT(unittype.VehicleType):
     id = "Toyota_desert"
     name = "DIM' TOYOTA DESERT"
@@ -143,6 +161,7 @@ class DIM__TOYOTA_DESERT(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class DIM__KAMIKAZE(unittype.VehicleType):
     id = "Kamikaze"
     name = "DIM' KAMIKAZE"
@@ -155,6 +174,7 @@ class DIM__KAMIKAZE(unittype.VehicleType):
 ## FORTIFICATION
 
 
+@vehiclemod
 class _FIELD_HIDE(unittype.VehicleType):
     id = "FieldHL"
     name = "*FIELD HIDE"
@@ -163,6 +183,7 @@ class _FIELD_HIDE(unittype.VehicleType):
     air_weapon_dist = 0
 
 
+@vehiclemod
 class _FIELD_HIDE_SMALL(unittype.VehicleType):
     id = "HARRIERH"
     name = "*FIELD HIDE SMALL"
@@ -171,6 +192,7 @@ class _FIELD_HIDE_SMALL(unittype.VehicleType):
     air_weapon_dist = 0
 
 
+@vehiclemod
 class SmokeD1(unittype.VehicleType):
     id = "SmokeD1"
     name = "SmokeD1"
@@ -179,6 +201,7 @@ class SmokeD1(unittype.VehicleType):
     air_weapon_dist = 0
 
 
+@vehiclemod
 class SmokeD3(unittype.VehicleType):
     id = "SmokeD3"
     name = "SmokeD3"
@@ -187,6 +210,7 @@ class SmokeD3(unittype.VehicleType):
     air_weapon_dist = 0
 
 
+@vehiclemod
 class TRM_2000(unittype.VehicleType):
     id = "TRM2000"
     name = "TRM-2000"
@@ -196,6 +220,7 @@ class TRM_2000(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class TRM_2000_Fuel(unittype.VehicleType):
     id = "TRM2000_Citerne"
     name = "TRM-2000 Fuel"
@@ -205,6 +230,7 @@ class TRM_2000_Fuel(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VAB_MEDICAL(unittype.VehicleType):
     id = "VABH"
     name = "VAB MEDICAL"
@@ -214,6 +240,7 @@ class VAB_MEDICAL(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VAB(unittype.VehicleType):
     id = "VAB_RADIO"
     name = "VAB"
@@ -223,6 +250,7 @@ class VAB(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class VBL(unittype.VehicleType):
     id = "VBL-Radio"
     name = "VBL"
@@ -232,6 +260,7 @@ class VBL(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class Tracma_TD_1500(unittype.VehicleType):
     id = "Tracma"
     name = "Tracma TD 1500"
@@ -243,6 +272,7 @@ class Tracma_TD_1500(unittype.VehicleType):
 ## AIRDEFENCE
 
 
+@vehiclemod
 class SMOKE_SAM_IR(unittype.VehicleType):
     id = "SMOKESAM"
     name = "SMOKE SAM IR"
@@ -252,6 +282,7 @@ class SMOKE_SAM_IR(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class _53T2(unittype.VehicleType):
     id = "AA20"
     name = "53T2"
@@ -260,6 +291,7 @@ class _53T2(unittype.VehicleType):
     air_weapon_dist = 4000
 
 
+@vehiclemod
 class TRM_2000_53T2(unittype.VehicleType):
     id = "TRM2000_AA20"
     name = "TRM-2000 53T2"
@@ -269,6 +301,7 @@ class TRM_2000_53T2(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class TRM_2000_PAMELA(unittype.VehicleType):
     id = "TRMMISTRAL"
     name = "TRM-2000 PAMELA"
@@ -278,6 +311,7 @@ class TRM_2000_PAMELA(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class Leclerc_Serie_XXI_Desert(unittype.VehicleType):
     id = "Leclerc_XXI_Desert"
     name = "Leclerc Série XXI Désert"
@@ -286,6 +320,7 @@ class Leclerc_Serie_XXI_Desert(unittype.VehicleType):
     air_weapon_dist = 4000
 
 
+@vehiclemod
 class AMX_13_75mm(unittype.VehicleType):
     id = "AMX1375"
     name = "AMX-13 75mm"
@@ -294,6 +329,7 @@ class AMX_13_75mm(unittype.VehicleType):
     air_weapon_dist = 3500
 
 
+@vehiclemod
 class AMX_13_90mm(unittype.VehicleType):
     id = "AMX1390"
     name = "AMX-13 90mm"
@@ -302,6 +338,7 @@ class AMX_13_90mm(unittype.VehicleType):
     air_weapon_dist = 3500
 
 
+@vehiclemod
 class VBCI(unittype.VehicleType):
     id = "VBCI"
     name = "VBCI"
@@ -311,6 +348,7 @@ class VBCI(unittype.VehicleType):
     eplrs = True
 
 
+@vehiclemod
 class Char_T_62(unittype.VehicleType):
     id = "T62"
     name = "Char T-62"
@@ -319,6 +357,7 @@ class Char_T_62(unittype.VehicleType):
     air_weapon_dist = 4000
 
 
+@vehiclemod
 class Char_T_64BV(unittype.VehicleType):
     id = "T64BV"
     name = "Char T-64BV"
@@ -327,6 +366,7 @@ class Char_T_64BV(unittype.VehicleType):
     air_weapon_dist = 4000
 
 
+@vehiclemod
 class Char_T_72A(unittype.VehicleType):
     id = "T72M"
     name = "Char T-72A"
@@ -335,6 +375,7 @@ class Char_T_72A(unittype.VehicleType):
     air_weapon_dist = 4000
 
 
+@vehiclemod
 class KORNET_ATGM(unittype.VehicleType):
     id = "KORNET"
     name = "KORNET ATGM"
@@ -346,6 +387,7 @@ class KORNET_ATGM(unittype.VehicleType):
 ## INFANTRY
 
 
+@vehiclemod
 class Infantry_Soldier_JTAC(unittype.VehicleType):
     id = "JTACFP"
     name = "Infantry Soldier JTAC"
@@ -357,6 +399,7 @@ class Infantry_Soldier_JTAC(unittype.VehicleType):
 ## ARTILERY
 
 
+@vehiclemod
 class MO_120_RT(unittype.VehicleType):
     id = "M120"
     name = "MO 120 RT"
@@ -365,6 +408,7 @@ class MO_120_RT(unittype.VehicleType):
     air_weapon_dist = 15000
 
 
+@vehiclemod
 class VAB_MORTIER(unittype.VehicleType):
     id = "VAB_MORTIER"
     name = "VAB MORTIER"

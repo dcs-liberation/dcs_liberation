@@ -4,6 +4,7 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
@@ -23,6 +24,7 @@ class Su57Weapons:
 inject_weapons(Su57Weapons)
 
 
+@planemod
 class Su_57(PlaneType):
     id = "Su-57"
     flyable = True

@@ -13,217 +13,31 @@ from dcs.mapping import Point
 from dcs.planes import (
     B_17G,
     FA_18C_hornet,
-    F_16C_50,
     F_14A,
+    F_16C_50,
     Ju_88A4,
     P_51D_30_NA,
     plane_map,
 )
 from dcs.ships import (
-    ship_map,
-    Stennis,
-    KUZNECOW,
     CVN_71,
-    CVN_75,
-    CVN_73,
     CVN_72,
+    CVN_73,
+    CVN_75,
     CV_1143_5,
+    KUZNECOW,
+    Stennis,
+    ship_map,
 )
 from dcs.terrain.terrain import Airport
-from dcs.unit import Ship
 from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import UnitType, FlyingType, ShipType, VehicleType
+from dcs.unittype import FlyingType, ShipType, UnitType, VehicleType
 from dcs.vehicles import (
     vehicle_map,
 )
 
-import pydcs_extensions.frenchpack.frenchpack as frenchpack
-import pydcs_extensions.highdigitsams.highdigitsams as highdigitsams
-
 # PATCH pydcs data with MODS
 from game.factions.faction_loader import FactionLoader
-from pydcs_extensions.a4ec.a4ec import A_4E_C
-from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
-from pydcs_extensions.f22a.f22a import F_22A
-from pydcs_extensions.hercules.hercules import Hercules
-from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.su57.su57 import Su_57
-from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
-
-plane_map["A-4E-C"] = A_4E_C
-plane_map["F-22A"] = F_22A
-plane_map["Su-57"] = Su_57
-plane_map["Hercules"] = Hercules
-plane_map["KC130J"] = KC130J
-plane_map["JAS39Gripen"] = JAS39Gripen
-plane_map["JAS39Gripen_AG"] = JAS39Gripen_AG
-plane_map["VSN_F104G"] = VSN_F104G
-plane_map["VSN_F104S"] = VSN_F104S
-plane_map["VSN_F104S_AG"] = VSN_F104S_AG
-
-helicopter_map["UH-60L"] = UH_60L
-
-vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
-vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
-vehicle_map["SMOKESAM"] = frenchpack.SMOKE_SAM_IR
-vehicle_map["SmokeD1"] = frenchpack.SmokeD1
-vehicle_map["SmokeD3"] = frenchpack.SmokeD3
-vehicle_map["AMX10RCR"] = frenchpack.AMX_10RCR
-vehicle_map["SEPAR"] = frenchpack.AMX_10RCR_SEPAR
-vehicle_map["ERC"] = frenchpack.ERC_90
-vehicle_map["M120"] = frenchpack.MO_120_RT
-vehicle_map["AA20"] = frenchpack._53T2
-vehicle_map["TRM2000"] = frenchpack.TRM_2000
-vehicle_map["TRM2000_Citerne"] = frenchpack.TRM_2000_Fuel
-vehicle_map["TRM2000_AA20"] = frenchpack.TRM_2000_53T2
-vehicle_map["TRMMISTRAL"] = frenchpack.TRM_2000_PAMELA
-vehicle_map["VABH"] = frenchpack.VAB_MEDICAL
-vehicle_map["VAB_RADIO"] = frenchpack.VAB
-vehicle_map["VAB_50"] = frenchpack.VAB__50
-vehicle_map["VIB_VBR"] = frenchpack.VAB_T20_13
-vehicle_map["VAB_HOT"] = frenchpack.VAB_MEPHISTO
-vehicle_map["VAB_MORTIER"] = frenchpack.VAB_MORTIER
-vehicle_map["VBL50"] = frenchpack.VBL__50
-vehicle_map["VBLANF1"] = frenchpack.VBL_AANF1
-vehicle_map["VBL-radio"] = frenchpack.VBL
-vehicle_map["VBAE"] = frenchpack.VBAE_CRAB
-vehicle_map["VBAE_MMP"] = frenchpack.VBAE_CRAB_MMP
-vehicle_map["AMX-30B2"] = frenchpack.AMX_30B2
-vehicle_map["Tracma"] = frenchpack.Tracma_TD_1500
-vehicle_map["JTACFP"] = frenchpack.Infantry_Soldier_JTAC
-vehicle_map["SHERIDAN"] = frenchpack.Char_M551_Sheridan
-vehicle_map["Leclerc_XXI"] = frenchpack.Leclerc_Serie_XXI
-vehicle_map["Toyota_bleu"] = frenchpack.DIM__TOYOTA_BLUE
-vehicle_map["Toyota_vert"] = frenchpack.DIM__TOYOTA_GREEN
-vehicle_map["Toyota_desert"] = frenchpack.DIM__TOYOTA_DESERT
-vehicle_map["Kamikaze"] = frenchpack.DIM__KAMIKAZE
-vehicle_map["AMX1375"] = frenchpack.AMX_13_75mm
-vehicle_map["AMX1390"] = frenchpack.AMX_13_90mm
-vehicle_map["VBCI"] = frenchpack.VBCI
-vehicle_map["T62"] = frenchpack.Char_T_62
-vehicle_map["T64BV"] = frenchpack.Char_T_64BV
-vehicle_map["T72M"] = frenchpack.Char_T_72A
-vehicle_map["KORNET"] = frenchpack.KORNET_ATGM
-
-
-vehicle_map[highdigitsams.AAA_SON_9_Fire_Can.id] = highdigitsams.AAA_SON_9_Fire_Can
-vehicle_map[highdigitsams.AAA_100mm_KS_19.id] = highdigitsams.AAA_100mm_KS_19
-vehicle_map[
-    highdigitsams.SAM_SA_10B_S_300PS_54K6_CP.id
-] = highdigitsams.SAM_SA_10B_S_300PS_54K6_CP
-vehicle_map[
-    highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN.id
-] = highdigitsams.SAM_SA_10B_S_300PS_5P85SE_LN
-vehicle_map[
-    highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN.id
-] = highdigitsams.SAM_SA_10B_S_300PS_5P85SU_LN
-vehicle_map[
-    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE.id
-] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85CE
-vehicle_map[
-    highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE.id
-] = highdigitsams.SAM_SA_10__5V55RUD__S_300PS_LN_5P85DE
-vehicle_map[
-    highdigitsams.SAM_SA_10B_S_300PS_30N6_TR.id
-] = highdigitsams.SAM_SA_10B_S_300PS_30N6_TR
-vehicle_map[
-    highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR.id
-] = highdigitsams.SAM_SA_10B_S_300PS_40B6M_TR
-vehicle_map[
-    highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR.id
-] = highdigitsams.SAM_SA_10B_S_300PS_40B6MD_SR
-vehicle_map[
-    highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR.id
-] = highdigitsams.SAM_SA_10B_S_300PS_64H6E_SR
-vehicle_map[
-    highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6.id
-] = highdigitsams.SAM_SA_20_S_300PMU1_CP_54K6
-vehicle_map[
-    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E.id
-] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E
-vehicle_map[
-    highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck.id
-] = highdigitsams.SAM_SA_20_S_300PMU1_TR_30N6E_truck
-vehicle_map[
-    highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E.id
-] = highdigitsams.SAM_SA_20_S_300PMU1_SR_5N66E
-vehicle_map[
-    highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E.id
-] = highdigitsams.SAM_SA_20_S_300PMU1_SR_64N6E
-vehicle_map[
-    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE.id
-] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85CE
-vehicle_map[
-    highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE.id
-] = highdigitsams.SAM_SA_20_S_300PMU1_LN_5P85DE
-vehicle_map[
-    highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2.id
-] = highdigitsams.SAM_SA_20B_S_300PMU2_CP_54K6E2
-vehicle_map[
-    highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck.id
-] = highdigitsams.SAM_SA_20B_S_300PMU2_TR_92H6E_truck
-vehicle_map[
-    highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2.id
-] = highdigitsams.SAM_SA_20B_S_300PMU2_SR_64N6E2
-vehicle_map[
-    highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2.id
-] = highdigitsams.SAM_SA_20B_S_300PMU2_LN_5P85SE2
-vehicle_map[
-    highdigitsams.SAM_SA_12_S_300V_9S457_CP.id
-] = highdigitsams.SAM_SA_12_S_300V_9S457_CP
-vehicle_map[
-    highdigitsams.SAM_SA_12_S_300V_9A82_LN.id
-] = highdigitsams.SAM_SA_12_S_300V_9A82_LN
-vehicle_map[
-    highdigitsams.SAM_SA_12_S_300V_9A83_LN.id
-] = highdigitsams.SAM_SA_12_S_300V_9A83_LN
-vehicle_map[
-    highdigitsams.SAM_SA_12_S_300V_9S15_SR.id
-] = highdigitsams.SAM_SA_12_S_300V_9S15_SR
-vehicle_map[
-    highdigitsams.SAM_SA_12_S_300V_9S19_SR.id
-] = highdigitsams.SAM_SA_12_S_300V_9S19_SR
-vehicle_map[
-    highdigitsams.SAM_SA_12_S_300V_9S32_TR.id
-] = highdigitsams.SAM_SA_12_S_300V_9S32_TR
-vehicle_map[
-    highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP.id
-] = highdigitsams.SAM_SA_23_S_300VM_9S457ME_CP
-vehicle_map[
-    highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR.id
-] = highdigitsams.SAM_SA_23_S_300VM_9S15M2_SR
-vehicle_map[
-    highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR.id
-] = highdigitsams.SAM_SA_23_S_300VM_9S19M2_SR
-vehicle_map[
-    highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR.id
-] = highdigitsams.SAM_SA_23_S_300VM_9S32ME_TR
-vehicle_map[
-    highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN.id
-] = highdigitsams.SAM_SA_23_S_300VM_9A83ME_LN
-vehicle_map[
-    highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN.id
-] = highdigitsams.SAM_SA_23_S_300VM_9A82ME_LN
-vehicle_map[
-    highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2.id
-] = highdigitsams.SAM_SA_17_Buk_M1_2_LN_9A310M1_2
-vehicle_map[
-    highdigitsams.SAM_SA_2__V759__LN_SM_90.id
-] = highdigitsams.SAM_SA_2__V759__LN_SM_90
-vehicle_map[highdigitsams.SAM_HQ_2_LN_SM_90.id] = highdigitsams.SAM_HQ_2_LN_SM_90
-vehicle_map[
-    highdigitsams.SAM_SA_3__V_601P__LN_5P73.id
-] = highdigitsams.SAM_SA_3__V_601P__LN_5P73
-vehicle_map[
-    highdigitsams.SAM_SA_24_Igla_S_manpad.id
-] = highdigitsams.SAM_SA_24_Igla_S_manpad
-vehicle_map[
-    highdigitsams.SAM_SA_14_Strela_3_manpad.id
-] = highdigitsams.SAM_SA_14_Strela_3_manpad
-vehicle_map[highdigitsams.Polyana_D4M1_C2_node.id] = highdigitsams.Polyana_D4M1_C2_node
-vehicle_map[
-    highdigitsams._34Ya6E_Gazetchik_E_decoy.id
-] = highdigitsams._34Ya6E_Gazetchik_E_decoy
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION

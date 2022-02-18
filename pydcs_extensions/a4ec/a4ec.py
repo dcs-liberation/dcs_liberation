@@ -4,6 +4,7 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
@@ -439,6 +440,7 @@ class WeaponsA4EC:
 inject_weapons(WeaponsA4EC)
 
 
+@planemod
 class A_4E_C(PlaneType):
     id = "A-4E-C"
     flyable = True

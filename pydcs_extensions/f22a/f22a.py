@@ -4,6 +4,7 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
@@ -15,6 +16,7 @@ class F22AWeapons:
 inject_weapons(F22AWeapons)
 
 
+@planemod
 class F_22A(PlaneType):
     id = "F-22A"
     flyable = True

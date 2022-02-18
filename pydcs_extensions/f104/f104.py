@@ -4,6 +4,7 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
@@ -38,6 +39,7 @@ class WeaponsF104:
 inject_weapons(WeaponsF104)
 
 
+@planemod
 class VSN_F104G(PlaneType):
     id = "VSN_F104G"
     flyable = True
@@ -1622,6 +1624,7 @@ class VSN_F104G(PlaneType):
     task_default = task.FighterSweep
 
 
+@planemod
 class VSN_F104S(PlaneType):
     id = "VSN_F104S"
     flyable = True
@@ -1974,6 +1977,7 @@ class VSN_F104S(PlaneType):
     task_default = task.FighterSweep
 
 
+@planemod
 class VSN_F104S_AG(PlaneType):
     id = "VSN_F104S_AG"
     flyable = True

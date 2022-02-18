@@ -4,6 +4,7 @@ from dcs import task
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
+from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
 
@@ -684,6 +685,7 @@ class HerculesWeapons:
 inject_weapons(HerculesWeapons)
 
 
+@planemod
 class Hercules(PlaneType):
     id = "Hercules"
     flyable = True
