@@ -27,6 +27,7 @@ from dcs.mapping import Point
 from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
+from dcs.unitgroup import ShipGroup, StaticGroup
 
 from game import db
 from game.point_with_heading import PointWithHeading
@@ -271,6 +272,9 @@ class ControlPointStatus(IntEnum):
     Destroyed = auto()
 
 
+StartingPosition = ShipGroup | StaticGroup | Airport | Point
+
+
 class ControlPoint(MissionTarget, ABC):
     # Not sure what distance DCS uses, but assuming it's about 2NM since that's roughly
     # the distance of the circle on the map.
@@ -291,7 +295,7 @@ class ControlPoint(MissionTarget, ABC):
         cp_id: int,
         name: str,
         position: Point,
-        at: db.StartingPosition,
+        at: StartingPosition,
         starts_blue: bool,
         has_frontline: bool = True,
         cptype: ControlPointType = ControlPointType.AIRBASE,

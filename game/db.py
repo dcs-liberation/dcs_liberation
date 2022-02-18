@@ -1,13 +1,12 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Type, Union
+from typing import Optional, Type
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
     OH_58D,
     helicopter_map,
 )
-from dcs.mapping import Point
 
 # mypy can't resolve these if they're wildcard imports for some reason.
 from dcs.planes import (
@@ -29,8 +28,6 @@ from dcs.ships import (
     Stennis,
     ship_map,
 )
-from dcs.terrain.terrain import Airport
-from dcs.unitgroup import ShipGroup, StaticGroup
 from dcs.unittype import FlyingType, ShipType, UnitType, VehicleType
 from dcs.vehicles import (
     vehicle_map,
@@ -149,8 +146,6 @@ REWARDS = {
 """
 ---------- END OF CONFIGURATION SECTION
 """
-
-StartingPosition = Union[ShipGroup, StaticGroup, Airport, Point]
 
 
 def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
