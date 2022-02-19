@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from typing import Type
 
 # mypy can't resolve these if they're wildcard imports for some reason.
@@ -127,8 +126,3 @@ def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
         return CV_1143_5
     else:
         return unit
-
-
-class DefaultLiveries:
-    class Default(Enum):
-        af_standard = ""
