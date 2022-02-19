@@ -4,10 +4,11 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import List, Optional, Dict, TYPE_CHECKING
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from game.ato import Flight, FlightType
 from game.ato.packagewaypoints import PackageWaypoints
+from game.db import Database
 from game.utils import Speed
 from gen.flights.flightplan import FormationFlightPlan
 from gen.flights.traveltime import TotEstimator
@@ -23,6 +24,8 @@ class Package:
     #: The mission target. Currently can be either a ControlPoint or a
     #: TheaterGroundObject (non-ControlPoint map objectives).
     target: MissionTarget
+
+    _db: Database[Flight]
 
     #: The set of flights in the package.
     flights: List[Flight] = field(default_factory=list)
@@ -119,10 +122,12 @@ class Package:
     def add_flight(self, flight: Flight) -> None:
         """Adds a flight to the package."""
         self.flights.append(flight)
+        self._db.add(flight.id, flight)
 
     def remove_flight(self, flight: Flight) -> None:
         """Removes a flight from the package."""
         self.flights.remove(flight)
+        self._db.remove(flight.id)
         if not self.flights:
             self.waypoints = None
 

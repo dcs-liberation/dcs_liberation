@@ -15,10 +15,10 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
+from game.ato.flight import Flight
+from game.ato.package import Package
 from game.game import Game
 from game.theater.missiontarget import MissionTarget
-from game.ato.package import Package
-from game.ato.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder, PlanningError
 from qt_ui.models import AtoModel, GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
@@ -215,7 +215,9 @@ class QNewPackageDialog(QPackageDialog):
     ) -> None:
         super().__init__(
             game_model,
-            PackageModel(Package(target, auto_asap=True), game_model),
+            PackageModel(
+                Package(target, game_model.game.db.flights, auto_asap=True), game_model
+            ),
             parent=parent,
         )
         self.ato_model = model

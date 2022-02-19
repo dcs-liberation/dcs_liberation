@@ -4,10 +4,12 @@ import itertools
 import operator
 from abc import abstractmethod
 from dataclasses import dataclass, field
-from enum import unique, IntEnum, auto
-from typing import TYPE_CHECKING, Optional, Generic, TypeVar, Iterator, Union
+from enum import IntEnum, auto, unique
+from typing import Generic, Iterator, Optional, TYPE_CHECKING, TypeVar, Union
 
-from game.commander.missionproposals import ProposedFlight, EscortType, ProposedMission
+from game.ato.flighttype import FlightType
+from game.ato.package import Package
+from game.commander.missionproposals import EscortType, ProposedFlight, ProposedMission
 from game.commander.packagefulfiller import PackageFulfiller
 from game.commander.tasks.theatercommandertask import TheaterCommanderTask
 from game.commander.theaterstate import TheaterState
@@ -15,8 +17,6 @@ from game.settings import AutoAtoBehavior
 from game.theater import MissionTarget
 from game.theater.theatergroundobject import IadsGroundObject, NavalGroundObject
 from game.utils import Distance, meters
-from game.ato.package import Package
-from game.ato.flighttype import FlightType
 
 if TYPE_CHECKING:
     from game.coalition import Coalition
@@ -40,7 +40,6 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
 
     def __post_init__(self) -> None:
         self.flights = []
-        self.package = Package(self.target)
 
     def preconditions_met(self, state: TheaterState) -> bool:
         if (
@@ -97,6 +96,7 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         fulfiller = PackageFulfiller(
             state.context.coalition,
             state.context.theater,
+            state.context.game_db.flights,
             state.context.settings,
         )
         self.package = fulfiller.plan_mission(

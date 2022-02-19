@@ -2,24 +2,26 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from typing import Set, Iterable, Dict, TYPE_CHECKING, Optional
+from typing import Dict, Iterable, Optional, Set, TYPE_CHECKING
 
-from game.commander.missionproposals import ProposedMission, ProposedFlight, EscortType
+from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.flighttype import FlightType
+from game.ato.package import Package
+from game.commander.missionproposals import EscortType, ProposedFlight, ProposedMission
 from game.commander.packagebuilder import PackageBuilder
 from game.data.doctrine import Doctrine
+from game.db import Database
 from game.procurement import AircraftProcurementRequest
 from game.profiling import MultiEventTracer
 from game.settings import Settings
 from game.squadrons import AirWing
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
-from game.ato.airtaaskingorder import AirTaskingOrder
-from game.ato.package import Package
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from game.ato.flighttype import FlightType
 from gen.flights.flightplan import FlightPlanBuilder
 
 if TYPE_CHECKING:
+    from game.ato import Flight
     from game.coalition import Coalition
 
 
@@ -27,10 +29,15 @@ class PackageFulfiller:
     """Responsible for package aircraft allocation and flight plan layout."""
 
     def __init__(
-        self, coalition: Coalition, theater: ConflictTheater, settings: Settings
+        self,
+        coalition: Coalition,
+        theater: ConflictTheater,
+        flight_db: Database[Flight],
+        settings: Settings,
     ) -> None:
         self.coalition = coalition
         self.theater = theater
+        self.flight_db = flight_db
         self.player_missions_asap = settings.auto_ato_player_missions_asap
         self.default_start_type = settings.default_start_type
 
@@ -133,6 +140,7 @@ class PackageFulfiller:
             mission.location,
             ObjectiveDistanceCache.get_closest_airfields(mission.location),
             self.air_wing,
+            self.flight_db,
             self.is_player,
             self.coalition.country_name,
             self.default_start_type,

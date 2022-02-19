@@ -6,7 +6,7 @@ import math
 from collections.abc import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
-from typing import Any, List, TYPE_CHECKING, Type, TypeVar, Union, cast
+from typing import Any, List, TYPE_CHECKING, Type, Union, cast
 
 from dcs.countries import Switzerland, USAFAggressors, UnitedNationsPeacekeepers
 from dcs.country import Country
@@ -25,6 +25,7 @@ from . import persistency
 from .ato.flighttype import FlightType
 from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition
+from .db.gamedb import GameDb
 from .factions.faction import Faction
 from .infos.information import Information
 from .profiling import logged_duration
@@ -114,6 +115,8 @@ class Game:
         self.current_unit_id = 0
         self.current_group_id = 0
         self.name_generator = naming.namegen
+
+        self.db = GameDb()
 
         self.conditions = self.generate_conditions()
 

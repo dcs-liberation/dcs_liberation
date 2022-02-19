@@ -12,6 +12,7 @@ from game.ato import Flight, FlightType, Package
 from game.settings import AutoAtoBehavior, Settings
 from gen.flights.flightplan import FlightPlanBuilder
 from .pilot import Pilot, PilotStatus
+from ..db.database import Database
 from ..utils import meters
 
 if TYPE_CHECKING:
@@ -50,6 +51,7 @@ class Squadron:
     )
 
     coalition: Coalition = field(hash=False, compare=False)
+    flight_db: Database[Flight] = field(hash=False, compare=False)
     settings: Settings = field(hash=False, compare=False)
 
     location: ControlPoint
@@ -388,7 +390,7 @@ class Squadron:
         if not remaining:
             return
 
-        package = Package(self.destination)
+        package = Package(self.destination, self.flight_db)
         builder = FlightPlanBuilder(package, self.coalition, theater)
         while remaining:
             size = min(remaining, self.aircraft.max_group_size)
@@ -437,6 +439,7 @@ class Squadron:
             squadron_def.female_pilot_percentage,
             squadron_def.pilot_pool,
             coalition,
+            game.db.flights,
             game.settings,
             base,
         )

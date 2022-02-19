@@ -140,7 +140,7 @@ class AircraftGenerator:
             # reuse the existing debriefing code.
             # TODO: Special flight type?
             flight = Flight(
-                Package(squadron.location),
+                Package(squadron.location, self.game.db.flights),
                 faction.country,
                 squadron,
                 1,

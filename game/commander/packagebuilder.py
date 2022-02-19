@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
 
+from game.theater import ControlPoint, MissionTarget, OffMapSpawn
 from game.utils import nautical_miles
-from ..ato.package import Package
-from game.theater import MissionTarget, OffMapSpawn, ControlPoint
 from ..ato.flight import Flight
+from ..ato.package import Package
 from ..ato.starttype import StartType
+from ..db.database import Database
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
@@ -23,6 +24,7 @@ class PackageBuilder:
         location: MissionTarget,
         closest_airfields: ClosestAirfields,
         air_wing: AirWing,
+        flight_db: Database[Flight],
         is_player: bool,
         package_country: str,
         start_type: StartType,
@@ -31,7 +33,7 @@ class PackageBuilder:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
         self.package_country = package_country
-        self.package = Package(location, auto_asap=asap)
+        self.package = Package(location, flight_db, auto_asap=asap)
         self.air_wing = air_wing
         self.start_type = start_type
 

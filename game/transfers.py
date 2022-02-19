@@ -36,18 +36,13 @@ import math
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import singledispatchmethod
-from typing import (
-    Generic,
-    Iterator,
-    List,
-    Optional,
-    TYPE_CHECKING,
-    TypeVar,
-    Sequence,
-)
+from typing import Generic, Iterator, List, Optional, Sequence, TYPE_CHECKING, TypeVar
 
 from dcs.mapping import Point
 
+from game.ato.flight import Flight
+from game.ato.flighttype import FlightType
+from game.ato.package import Package
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.procurement import AircraftProcurementRequest
@@ -57,11 +52,8 @@ from game.theater.transitnetwork import (
     TransitNetwork,
 )
 from game.utils import meters, nautical_miles
-from game.ato.package import Package
 from gen.flights.ai_flight_planner_db import aircraft_for_task
 from gen.flights.closestairfields import ObjectiveDistanceCache
-from game.ato.flighttype import FlightType
-from game.ato.flight import Flight
 from gen.flights.flightplan import FlightPlanBuilder
 from gen.naming import namegen
 
@@ -271,7 +263,7 @@ class AirliftPlanner:
         self.transfer = transfer
         self.next_stop = next_stop
         self.for_player = transfer.destination.captured
-        self.package = Package(target=next_stop, auto_asap=True)
+        self.package = Package(next_stop, game.db.flights, auto_asap=True)
 
     def compatible_with_mission(
         self, unit_type: AircraftType, airfield: ControlPoint

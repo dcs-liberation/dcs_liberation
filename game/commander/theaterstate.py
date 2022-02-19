@@ -9,6 +9,7 @@ from typing import Any, Optional, TYPE_CHECKING, Union
 
 from game.commander.garrisons import Garrisons
 from game.commander.objectivefinder import ObjectiveFinder
+from game.db import GameDb
 from game.htn import WorldState
 from game.profiling import MultiEventTracer
 from game.settings import Settings
@@ -31,6 +32,7 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class PersistentContext:
+    game_db: GameDb
     coalition: Coalition
     theater: ConflictTheater
     turn: int
@@ -140,7 +142,7 @@ class TheaterState(WorldState["TheaterState"]):
         ordered_capturable_points = finder.prioritized_unisolated_points()
 
         context = PersistentContext(
-            coalition, game.theater, game.turn, game.settings, tracer
+            game.db, coalition, game.theater, game.turn, game.settings, tracer
         )
 
         # Plan enough rounds of CAP that the target has coverage over the expected
