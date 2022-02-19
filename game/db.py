@@ -4,16 +4,11 @@ from typing import Optional, Type
 
 from dcs.countries import country_dict
 from dcs.helicopters import (
-    OH_58D,
     helicopter_map,
 )
 
 # mypy can't resolve these if they're wildcard imports for some reason.
 from dcs.planes import (
-    B_17G,
-    F_16C_50,
-    Ju_88A4,
-    P_51D_30_NA,
     plane_map,
 )
 from dcs.ships import (
@@ -184,10 +179,3 @@ def country_id_from_name(name: str) -> int:
 class DefaultLiveries:
     class Default(Enum):
         af_standard = ""
-
-
-OH_58D.Liveries = DefaultLiveries
-F_16C_50.Liveries = DefaultLiveries  # type: ignore
-P_51D_30_NA.Liveries = DefaultLiveries
-Ju_88A4.Liveries = DefaultLiveries
-B_17G.Liveries = DefaultLiveries
