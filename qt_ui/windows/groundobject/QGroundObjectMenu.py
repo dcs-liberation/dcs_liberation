@@ -14,19 +14,18 @@ from PySide2.QtWidgets import (
     QSpinBox,
     QVBoxLayout,
 )
-from dcs import Point
-from dcs import vehicles
+from dcs import Point, vehicles
 
 from game import Game
+from game.config import REWARDS
 from game.data.building_data import FORTIFICATION_BUILDINGS
-from game.db import REWARDS
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
-    VehicleGroupGroundObject,
-    SamGroundObject,
-    EwrGroundObject,
     BuildingGroundObject,
+    EwrGroundObject,
+    SamGroundObject,
+    VehicleGroupGroundObject,
 )
 from gen.defenses.armor_group_generator import generate_armor_group_of_type_and_size
 from gen.sam.ewr_group_generator import get_faction_possible_ewrs_generator

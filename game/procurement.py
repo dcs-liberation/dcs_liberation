@@ -5,7 +5,7 @@ import random
 from dataclasses import dataclass
 from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
-from game import db
+from game.config import RUNWAY_REPAIR_COST
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.groundunittype import GroundUnitType
 from game.theater import ControlPoint, MissionTarget
@@ -100,11 +100,11 @@ class ProcurementAi:
 
     def repair_runways(self, budget: float) -> float:
         for control_point in self.owned_points:
-            if budget < db.RUNWAY_REPAIR_COST:
+            if budget < RUNWAY_REPAIR_COST:
                 break
             if control_point.runway_can_be_repaired:
                 control_point.begin_runway_repair()
-                budget -= db.RUNWAY_REPAIR_COST
+                budget -= RUNWAY_REPAIR_COST
                 if self.is_player:
                     self.game.message(
                         "OPFOR has begun repairing the runway at " f"{control_point}"

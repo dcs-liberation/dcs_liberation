@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from game.db import REWARDS
+from game.config import REWARDS
 
 if TYPE_CHECKING:
     from game import Game

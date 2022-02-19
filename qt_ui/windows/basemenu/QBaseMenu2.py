@@ -10,14 +10,15 @@ from PySide2.QtWidgets import (
     QWidget,
 )
 
-from game import Game, db
+from game import Game
+from game.ato.flighttype import FlightType
+from game.config import RUNWAY_REPAIR_COST
 from game.theater import (
+    AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
     ControlPoint,
     ControlPointType,
     FREE_FRONTLINE_UNIT_SUPPLY,
-    AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
 )
-from game.ato.flighttype import FlightType
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS
@@ -139,14 +140,14 @@ class QBaseMenu2(QDialog):
 
     @property
     def can_afford_runway_repair(self) -> bool:
-        return self.game_model.game.blue.budget >= db.RUNWAY_REPAIR_COST
+        return self.game_model.game.blue.budget >= RUNWAY_REPAIR_COST
 
     def begin_runway_repair(self) -> None:
         if not self.can_afford_runway_repair:
             QMessageBox.critical(
                 self,
                 "Cannot repair runway",
-                f"Runway repair costs ${db.RUNWAY_REPAIR_COST}M but you have "
+                f"Runway repair costs ${RUNWAY_REPAIR_COST}M but you have "
                 f"only ${self.game_model.game.blue.budget}M available.",
                 QMessageBox.Ok,
             )
@@ -161,7 +162,7 @@ class QBaseMenu2(QDialog):
             return
 
         self.cp.begin_runway_repair()
-        self.game_model.game.blue.budget -= db.RUNWAY_REPAIR_COST
+        self.game_model.game.blue.budget -= RUNWAY_REPAIR_COST
         self.update_repair_button()
         self.update_intel_summary()
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
@@ -176,12 +177,12 @@ class QBaseMenu2(QDialog):
 
         if self.can_repair_runway:
             if self.can_afford_runway_repair:
-                self.repair_button.setText(f"Repair ${db.RUNWAY_REPAIR_COST}M")
+                self.repair_button.setText(f"Repair ${RUNWAY_REPAIR_COST}M")
                 self.repair_button.setDisabled(False)
                 return
             else:
                 self.repair_button.setText(
-                    f"Cannot afford repair ${db.RUNWAY_REPAIR_COST}M"
+                    f"Cannot afford repair ${RUNWAY_REPAIR_COST}M"
                 )
                 self.repair_button.setDisabled(True)
                 return

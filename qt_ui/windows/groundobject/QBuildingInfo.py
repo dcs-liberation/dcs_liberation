@@ -1,8 +1,9 @@
 import os
 
 from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QVBoxLayout, QLabel
-from game.db import REWARDS
+from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QVBoxLayout
+
+from game.config import REWARDS
 
 
 class QBuildingInfo(QGroupBox):
