@@ -1,17 +1,6 @@
 from datetime import datetime
-from typing import Type
 
 # mypy can't resolve these if they're wildcard imports for some reason.
-from dcs.ships import (
-    CVN_71,
-    CVN_72,
-    CVN_73,
-    CVN_75,
-    CV_1143_5,
-    KUZNECOW,
-    Stennis,
-)
-from dcs.unittype import ShipType
 
 # PATCH pydcs data with MODS
 
@@ -106,23 +95,3 @@ REWARDS = {
 """
 ---------- END OF CONFIGURATION SECTION
 """
-
-
-def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
-    if unit == Stennis:
-        if name == "CVN-71 Theodore Roosevelt":
-            return CVN_71
-        elif name == "CVN-72 Abraham Lincoln":
-            return CVN_72
-        elif name == "CVN-73 George Washington":
-            return CVN_73
-        elif name == "CVN-75 Harry S. Truman":
-            return CVN_75
-        elif name == "Carrier Strike Group 8":
-            return CVN_75
-        else:
-            return CVN_71
-    elif unit == KUZNECOW:
-        return CV_1143_5
-    else:
-        return unit

@@ -28,7 +28,16 @@ from dcs.action import DoScript, SceneryDestructionZone
 from dcs.condition import MapObjectIsDead
 from dcs.country import Country
 from dcs.point import StaticPoint
-from dcs.ships import ship_map
+from dcs.ships import (
+    CVN_71,
+    CVN_72,
+    CVN_73,
+    CVN_75,
+    CV_1143_5,
+    KUZNECOW,
+    Stennis,
+    ship_map,
+)
 from dcs.statics import Fortification, fortification_map, warehouse_map
 from dcs.task import (
     ActivateBeaconCommand,
@@ -44,7 +53,6 @@ from dcs.unitgroup import ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import ShipType, StaticType, VehicleType
 from dcs.vehicles import vehicle_map
 
-from game import db
 from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
 from game.dcs.helpers import unit_type_from_name
 from game.radio.radios import RadioFrequency, RadioRegistry
@@ -510,8 +518,28 @@ class CarrierGenerator(GenericCarrierGenerator):
     def get_carrier_type(self, group: ShipGroup) -> Type[ShipType]:
         unit_type = super().get_carrier_type(group)
         if self.game.settings.supercarrier:
-            unit_type = db.upgrade_to_supercarrier(unit_type, self.control_point.name)
+            unit_type = self.upgrade_to_supercarrier(unit_type, self.control_point.name)
         return unit_type
+
+    @staticmethod
+    def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
+        if unit == Stennis:
+            if name == "CVN-71 Theodore Roosevelt":
+                return CVN_71
+            elif name == "CVN-72 Abraham Lincoln":
+                return CVN_72
+            elif name == "CVN-73 George Washington":
+                return CVN_73
+            elif name == "CVN-75 Harry S. Truman":
+                return CVN_75
+            elif name == "Carrier Strike Group 8":
+                return CVN_75
+            else:
+                return CVN_71
+        elif unit == KUZNECOW:
+            return CV_1143_5
+        else:
+            return unit
 
     def tacan_callsign(self) -> str:
         # TODO: Assign these properly.
