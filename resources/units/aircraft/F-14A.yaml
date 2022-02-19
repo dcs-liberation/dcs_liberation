@@ -21,5 +21,7 @@ origin: USA
 price: 20
 role: Carrier-based Air-Superiority Fighter/Fighter Bomber
 max_range: 350
+# DCS default livery for the AI F-14A is the black demo scheme.
+default_livery: vf-142 `ghost riders`
 variants:
   F-14A Tomcat (AI): {}

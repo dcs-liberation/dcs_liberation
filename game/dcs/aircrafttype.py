@@ -32,10 +32,10 @@ from game.radio.channels import (
 )
 from game.utils import (
     Distance,
-    SPEED_OF_SOUND_AT_SEA_LEVEL,
     ImperialUnits,
     MetricUnits,
     NauticalUnits,
+    SPEED_OF_SOUND_AT_SEA_LEVEL,
     Speed,
     UnitSystem,
     feet,
@@ -173,6 +173,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
     max_mission_range: Distance
 
     fuel_consumption: Optional[FuelConsumption]
+
+    default_livery: Optional[str]
 
     intra_flight_radio: Optional[Radio]
     channel_allocator: Optional[RadioChannelAllocator]
@@ -409,6 +411,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 patrol_speed=patrol_config.speed,
                 max_mission_range=mission_range,
                 fuel_consumption=fuel_consumption,
+                default_livery=data.get("default_livery"),
                 intra_flight_radio=radio_config.intra_flight,
                 channel_allocator=radio_config.channel_allocator,
                 channel_namer=radio_config.channel_namer,

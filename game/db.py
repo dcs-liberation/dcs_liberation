@@ -11,8 +11,6 @@ from dcs.helicopters import (
 # mypy can't resolve these if they're wildcard imports for some reason.
 from dcs.planes import (
     B_17G,
-    FA_18C_hornet,
-    F_14A,
     F_16C_50,
     Ju_88A4,
     P_51D_30_NA,
@@ -28,7 +26,7 @@ from dcs.ships import (
     Stennis,
     ship_map,
 )
-from dcs.unittype import FlyingType, ShipType, UnitType, VehicleType
+from dcs.unittype import ShipType, UnitType, VehicleType
 from dcs.vehicles import (
     vehicle_map,
 )
@@ -67,19 +65,6 @@ Units separated by country.
 country : DCS Country name
 """
 FACTIONS = FactionLoader()
-
-"""
-Aircraft livery overrides. Syntax as follows:
-
-    `Identifier`: "LiveryName",
-
-`Identifier` is aircraft identifier (as used troughout the file) and "LiveryName" (with double quotes) 
-is livery name as found in mission editor.
-"""
-PLANE_LIVERY_OVERRIDES: dict[Type[FlyingType], str] = {
-    FA_18C_hornet: "VFA-34",  # default livery for the hornet is blue angels one
-    F_14A: "vf-142 `ghost riders`",  # default livery for the AI F-14A is the black demo scheme
-}
 
 """
 Possible time periods for new games

@@ -5,7 +5,6 @@ from typing import Any, Optional
 
 from dcs.unitgroup import FlyingGroup
 
-from game import db
 from game.ato import Flight
 
 
@@ -14,8 +13,8 @@ class AircraftPainter:
         self.flight = flight
         self.group = group
 
-    def livery_from_db(self) -> Optional[str]:
-        return db.PLANE_LIVERY_OVERRIDES.get(self.flight.unit_type.dcs_unit_type)
+    def livery_from_unit_type(self) -> Optional[str]:
+        return self.flight.unit_type.default_livery
 
     def livery_from_faction(self) -> Optional[str]:
         faction = self.flight.squadron.coalition.faction
@@ -33,7 +32,7 @@ class AircraftPainter:
             return livery
         if (livery := self.livery_from_faction()) is not None:
             return livery
-        if (livery := self.livery_from_db()) is not None:
+        if (livery := self.livery_from_unit_type()) is not None:
             return livery
         return None
 
