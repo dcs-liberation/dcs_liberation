@@ -46,7 +46,7 @@ from dcs.vehicles import vehicle_map
 
 from game import db
 from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
-from game.db import unit_type_from_name
+from game.dcs.helpers import unit_type_from_name
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
 from game.theater import ControlPoint, TheaterGroundObject

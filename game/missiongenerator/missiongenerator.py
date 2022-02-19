@@ -11,6 +11,7 @@ from dcs.coalition import Coalition
 from dcs.countries import country_dict
 
 from game import db
+from game.dcs.helpers import unit_type_from_name
 from game.missiongenerator.aircraft.aircraftgenerator import (
     AircraftGenerator,
 )
@@ -283,7 +284,7 @@ class MissionGenerator:
                     raise TypeError(
                         "Expected the type of the destroyed static to be a string"
                     )
-                utype = db.unit_type_from_name(type_name)
+                utype = unit_type_from_name(type_name)
             except KeyError:
                 logging.warning(f"Destroyed unit has no type: {d}")
                 continue

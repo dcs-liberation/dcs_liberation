@@ -29,7 +29,7 @@ from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unit import Unit
 from dcs.unitgroup import ShipGroup, StaticGroup
 
-from game import db
+from game.dcs.helpers import unit_type_from_name
 from game.point_with_heading import PointWithHeading
 from game.scenery_group import SceneryGroup
 from game.utils import Heading
@@ -520,7 +520,7 @@ class ControlPoint(MissionTarget, ABC):
                 if g.dcs_identifier == "CARRIER":
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [
+                            if unit_type_from_name(u.type) in [
                                 Forrestal,
                                 Stennis,
                                 KUZNECOW,
@@ -529,7 +529,7 @@ class ControlPoint(MissionTarget, ABC):
                 elif g.dcs_identifier == "LHA":
                     for group in g.groups:
                         for u in group.units:
-                            if db.unit_type_from_name(u.type) in [LHA_Tarawa]:
+                            if unit_type_from_name(u.type) in [LHA_Tarawa]:
                                 return group.name
         return None
 
@@ -1012,7 +1012,7 @@ class NavalControlPoint(ControlPoint, ABC):
         # while its escorts are still alive.
         for group in self.find_main_tgo().groups:
             for u in group.units:
-                if db.unit_type_from_name(u.type) in [
+                if unit_type_from_name(u.type) in [
                     Forrestal,
                     Stennis,
                     LHA_Tarawa,

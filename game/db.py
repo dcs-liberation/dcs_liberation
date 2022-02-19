@@ -1,16 +1,10 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Type
+from typing import Type
 
 from dcs.countries import country_dict
-from dcs.helicopters import (
-    helicopter_map,
-)
 
 # mypy can't resolve these if they're wildcard imports for some reason.
-from dcs.planes import (
-    plane_map,
-)
 from dcs.ships import (
     CVN_71,
     CVN_72,
@@ -19,12 +13,8 @@ from dcs.ships import (
     CV_1143_5,
     KUZNECOW,
     Stennis,
-    ship_map,
 )
-from dcs.unittype import ShipType, UnitType
-from dcs.vehicles import (
-    vehicle_map,
-)
+from dcs.unittype import ShipType
 
 # PATCH pydcs data with MODS
 
@@ -139,19 +129,6 @@ def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
         return CV_1143_5
     else:
         return unit
-
-
-def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
-    if name in vehicle_map:
-        return vehicle_map[name]
-    elif name in plane_map:
-        return plane_map[name]
-    elif name in ship_map:
-        return ship_map[name]
-    if name in helicopter_map:
-        return helicopter_map[name]
-    else:
-        return None
 
 
 def country_id_from_name(name: str) -> int:

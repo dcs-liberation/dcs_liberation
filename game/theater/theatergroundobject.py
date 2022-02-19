@@ -12,7 +12,7 @@ from dcs.unit import Unit
 from dcs.unitgroup import ShipGroup, VehicleGroup
 from dcs.vehicles import vehicle_map
 
-from .. import db
+from game.dcs.helpers import unit_type_from_name
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
 
@@ -155,7 +155,7 @@ class TheaterGroundObject(MissionTarget, Generic[GroupT]):
 
         max_range = meters(0)
         for u in group.units:
-            unit = db.unit_type_from_name(u.type)
+            unit = unit_type_from_name(u.type)
             if unit is None:
                 logging.error(f"Unknown unit type {u.type}")
                 continue
