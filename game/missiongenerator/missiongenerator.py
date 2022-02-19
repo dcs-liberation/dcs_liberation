@@ -10,7 +10,6 @@ from dcs import Mission, Point
 from dcs.coalition import Coalition
 from dcs.countries import country_dict
 
-from game import db
 from game.dcs.helpers import unit_type_from_name
 from game.missiongenerator.aircraft.aircraftgenerator import (
     AircraftGenerator,
@@ -46,6 +45,13 @@ if TYPE_CHECKING:
 
 
 COMBINED_ARMS_SLOTS = 1
+
+
+def country_id_from_name(name: str) -> int:
+    for k, v in country_dict.items():
+        if v.name == name:
+            return k
+    return -1
 
 
 class MissionGenerator:
@@ -129,15 +135,15 @@ class MissionGenerator:
         p_country = self.game.blue.country_name
         e_country = self.game.red.country_name
         self.mission.coalition["blue"].add_country(
-            country_dict[db.country_id_from_name(p_country)]()
+            country_dict[country_id_from_name(p_country)]()
         )
         self.mission.coalition["red"].add_country(
-            country_dict[db.country_id_from_name(e_country)]()
+            country_dict[country_id_from_name(e_country)]()
         )
 
         belligerents = [
-            db.country_id_from_name(p_country),
-            db.country_id_from_name(e_country),
+            country_id_from_name(p_country),
+            country_id_from_name(e_country),
         ]
         for country in country_dict.keys():
             if country not in belligerents:

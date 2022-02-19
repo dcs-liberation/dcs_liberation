@@ -2,8 +2,6 @@ from datetime import datetime
 from enum import Enum
 from typing import Type
 
-from dcs.countries import country_dict
-
 # mypy can't resolve these if they're wildcard imports for some reason.
 from dcs.ships import (
     CVN_71,
@@ -129,13 +127,6 @@ def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
         return CV_1143_5
     else:
         return unit
-
-
-def country_id_from_name(name: str) -> int:
-    for k, v in country_dict.items():
-        if v.name == name:
-            return k
-    return -1
 
 
 class DefaultLiveries:
