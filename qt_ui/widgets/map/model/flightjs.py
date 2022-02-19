@@ -68,8 +68,8 @@ class FlightJs(QObject):
         )
         departure.alt_type = "RADIO"
         waypoints = []
-        for idx, point in enumerate([departure] + self.flight.points):
-            waypoint = WaypointJs(point, idx, self, self.theater, self.ato_model)
+        for point in [departure] + self.flight.points:
+            waypoint = WaypointJs(point, self, self.theater, self.ato_model)
             waypoint.positionChanged.connect(self.update_waypoints)
             waypoints.append(waypoint)
         return waypoints

@@ -747,8 +747,9 @@ function drawFrontLines() {
 const SHOW_WAYPOINT_INFO_AT_ZOOM = 9;
 
 class Waypoint {
-  constructor(waypoint, flight) {
+  constructor(waypoint, number, flight) {
     this.waypoint = waypoint;
+    this.number = number;
     this.flight = flight;
     this.marker = this.makeMarker();
     this.waypoint.positionChanged.connect(() => this.relocate());
@@ -804,7 +805,7 @@ class Waypoint {
       ? "Waiting to recompute TOT..."
       : this.waypoint.timing;
     return (
-      `${this.waypoint.number} ${this.waypoint.name}<br />` +
+      `${this.number} ${this.waypoint.name}<br />` +
       `${this.waypoint.altitudeFt} ft ${this.waypoint.altitudeReference}<br />` +
       `${timing}`
     );
@@ -830,7 +831,7 @@ class Waypoint {
       .on("drag", (e) => {
         const marker = e.target;
         const destination = marker.getLatLng();
-        this.flight.updatePath(this.waypoint.number, destination);
+        this.flight.updatePath(this.number, destination);
       })
       .on("dragend", (e) => {
         const marker = e.target;
@@ -857,7 +858,9 @@ class Flight {
   constructor(flight) {
     this.flight = flight;
     this.id = flight.id;
-    this.flightPlan = this.flight.flightPlan.map((p) => new Waypoint(p, this));
+    this.flightPlan = this.flight.flightPlan.map(
+      (p, idx) => new Waypoint(p, idx, this)
+    );
     this.aircraft = null;
     this.path = null;
     this.markers = [];

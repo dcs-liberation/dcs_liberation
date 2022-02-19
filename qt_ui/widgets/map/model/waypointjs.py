@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 
 
 class WaypointJs(QObject):
-    numberChanged = Signal()
     positionChanged = Signal()
     altitudeFtChanged = Signal()
     altitudeReferenceChanged = Signal()
@@ -32,14 +31,12 @@ class WaypointJs(QObject):
     def __init__(
         self,
         waypoint: FlightWaypoint,
-        number: int,
         flight_model: FlightJs,
         theater: ConflictTheater,
         ato_model: AtoModel,
     ) -> None:
         super().__init__()
         self.waypoint = waypoint
-        self._number = number
         self.flight_model = flight_model
         self.theater = theater
         self.ato_model = ato_model
@@ -51,10 +48,6 @@ class WaypointJs(QObject):
     @property
     def flight_plan(self) -> FlightPlan:
         return self.flight.flight_plan
-
-    @Property(int, notify=numberChanged)
-    def number(self) -> int:
-        return self._number
 
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
