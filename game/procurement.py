@@ -185,6 +185,14 @@ class ProcurementAi:
     ) -> Tuple[float, bool]:
         for squadron in squadrons:
             price = squadron.aircraft.price * quantity
+            # Final check to make sure the number of aircraft won't exceed the number of available pilots
+            # after fulfilling this aircraft request.
+            if (
+                squadron.pilot_limits_enabled
+                and squadron.expected_size_next_turn + quantity
+                > squadron.expected_pilots_next_turn
+            ):
+                continue
             if price > budget:
                 continue
 
