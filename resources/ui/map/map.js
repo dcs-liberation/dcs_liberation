@@ -368,15 +368,18 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.navmeshesChanged.connect(drawNavmeshes);
   game.mapZonesChanged.connect(drawMapZones);
   game.unculledZonesChanged.connect(drawUnculledZones);
-  game.airCombatsChanged.connect(drawCombat);
-  game.samCombatsChanged.connect(drawCombat);
-  game.ipCombatsChanged.connect(drawCombat);
   game.selectedFlightChanged.connect(updateSelectedFlight);
 });
 
 function handleStreamedEvents(events) {
   for (const [flightId, position] of Object.entries(events.updated_flights)) {
     Flight.withId(flightId).drawAircraftLocation(position);
+  }
+  for (const combat of events.new_combats) {
+    redrawCombat(combat);
+  }
+  for (const combat of events.updated_combats) {
+    redrawCombat(combat);
   }
 }
 
@@ -1290,32 +1293,39 @@ function drawHoldZones(id) {
   });
 }
 
-function drawCombat() {
-  combatLayer.clearLayers();
+var COMBATS = {};
 
-  for (const airCombat of game.airCombats) {
-    L.polygon(airCombat.footprint, {
-      color: Colors.Red,
-      interactive: false,
-      fillOpacity: 0.2,
-    }).addTo(combatLayer);
-  }
-
-  for (const samCombat of game.samCombats) {
-    for (const airDefense of samCombat.airDefenses) {
-      L.polyline([samCombat.flight.position, airDefense.position], {
-        color: Colors.Red,
-        interactive: false,
-      }).addTo(combatLayer);
+function redrawCombat(combat) {
+  if (combat.id in COMBATS) {
+    for (layer in COMBATS[combat.id]) {
+      layer.removeFrom(combatLayer);
     }
   }
 
-  for (const ipCombat of game.ipCombats) {
-    L.polyline([ipCombat.flight.position, ipCombat.flight.target], {
-      color: Colors.Red,
-      interactive: false,
-    }).addTo(combatLayer);
+  const layers = [];
+
+  if (combat.footprint) {
+    layers.push(
+      L.polygon(airCombat.footprint, {
+        color: Colors.Red,
+        interactive: false,
+        fillOpacity: 0.2,
+      }).addTo(combatLayer)
+    );
   }
+
+  if (combat.flight_position) {
+    for (target_position of combat.target_positions) {
+      layers.push(
+        L.polyline([combat.flight_position, target_position], {
+          color: Colors.Red,
+          interactive: false,
+        }).addTo(combatLayer)
+      );
+    }
+  }
+
+  COMBATS[combat.id] = layers;
 }
 
 function drawInitialMap() {
@@ -1329,7 +1339,6 @@ function drawInitialMap() {
   drawNavmeshes();
   drawMapZones();
   drawUnculledZones();
-  drawCombat();
 }
 
 function clearAllLayers() {

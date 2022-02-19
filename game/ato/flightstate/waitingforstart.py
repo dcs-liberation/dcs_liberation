@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 from game.ato.starttype import StartType
+from .atdeparture import AtDeparture
 from .flightstate import FlightState
 from .navigating import Navigating
 from .startup import StartUp
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
     from game.sim.gameupdateevents import GameUpdateEvents
 
 
-class WaitingForStart(FlightState):
+class WaitingForStart(AtDeparture):
     def __init__(
         self,
         flight: Flight,

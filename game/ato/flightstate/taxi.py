@@ -4,7 +4,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
-from .flightstate import FlightState
+from .atdeparture import AtDeparture
 from .takeoff import Takeoff
 from ..starttype import StartType
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from game.sim.gameupdateevents import GameUpdateEvents
 
 
-class Taxi(FlightState):
+class Taxi(AtDeparture):
     def __init__(self, flight: Flight, settings: Settings, now: datetime) -> None:
         super().__init__(flight, settings)
         self.completion_time = now + flight.flight_plan.estimate_ground_ops()

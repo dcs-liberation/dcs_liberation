@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from typing import TYPE_CHECKING
@@ -11,6 +12,9 @@ if TYPE_CHECKING:
 
 
 class FrozenCombat(ABC):
+    def __init__(self) -> None:
+        self.id = uuid.uuid4()
+
     @abstractmethod
     def because(self) -> str:
         ...

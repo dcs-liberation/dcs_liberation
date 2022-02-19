@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from typing import Optional, TYPE_CHECKING
 
+from dcs import Point
+
 from game.ato.starttype import StartType
 
 if TYPE_CHECKING:
@@ -42,6 +44,10 @@ class FlightState(ABC):
     @property
     @abstractmethod
     def is_waiting_for_start(self) -> bool:
+        ...
+
+    @abstractmethod
+    def estimate_position(self) -> Point:
         ...
 
     @property

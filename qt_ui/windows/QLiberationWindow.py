@@ -56,7 +56,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model, self.sim_controller, self)
+        self.liberation_map = QLiberationMap(self.game_model, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.updateWindowTitle()

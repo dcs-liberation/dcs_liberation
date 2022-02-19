@@ -4,7 +4,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
-from .flightstate import FlightState
+from .atdeparture import AtDeparture
 from .navigating import Navigating
 from ..starttype import StartType
 from ...utils import LBS_TO_KG
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from game.sim.gameupdateevents import GameUpdateEvents
 
 
-class Takeoff(FlightState):
+class Takeoff(AtDeparture):
     def __init__(self, flight: Flight, settings: Settings, now: datetime) -> None:
         super().__init__(flight, settings)
         # TODO: Not accounted for in FlightPlan, can cause discrepancy without loiter.

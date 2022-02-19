@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
+from dcs import Point
+
 from .flightstate import FlightState
 from ..starttype import StartType
 
@@ -19,6 +21,9 @@ class Completed(FlightState):
     @property
     def is_waiting_for_start(self) -> bool:
         return False
+
+    def estimate_position(self) -> Point:
+        return self.flight.arrival.position
 
     @property
     def spawn_type(self) -> StartType:

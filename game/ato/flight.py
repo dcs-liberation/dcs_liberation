@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Any, List, Optional, TYPE_CHECKING
 
+from dcs import Point
 from dcs.planes import C_101CC, C_101EB, Su_33
 
 from gen.flights.loadouts import Loadout
@@ -124,6 +125,9 @@ class Flight:
     @property
     def points(self) -> List[FlightWaypoint]:
         return self.flight_plan.waypoints[1:]
+
+    def position(self) -> Point:
+        return self.state.estimate_position()
 
     def resize(self, new_size: int) -> None:
         self.squadron.claim_inventory(new_size - self.count)

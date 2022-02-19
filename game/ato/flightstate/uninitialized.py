@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
+from dcs import Point
+
 from gen.flights.traveltime import TotEstimator
 from .flightstate import FlightState
 from ..starttype import StartType
@@ -19,6 +21,9 @@ class Uninitialized(FlightState):
 
     @property
     def is_waiting_for_start(self) -> bool:
+        raise RuntimeError("Attempted to simulate flight that is not fully initialized")
+
+    def estimate_position(self) -> Point:
         raise RuntimeError("Attempted to simulate flight that is not fully initialized")
 
     @property

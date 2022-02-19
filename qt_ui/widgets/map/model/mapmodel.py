@@ -10,26 +10,17 @@ from game import Game
 from game.ato.airtaaskingorder import AirTaskingOrder
 from game.profiling import logged_duration
 from game.server.leaflet import LeafletLatLon
-from game.sim.combat import FrozenCombat
-from game.sim.combat.aircombat import AirCombat
-from game.sim.combat.atip import AtIp
-from game.sim.combat.defendingsam import DefendingSam
-from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import (
     ConflictTheater,
 )
 from qt_ui.models import GameModel
-from qt_ui.simcontroller import SimController
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from .aircombatjs import AirCombatJs
 from .controlpointjs import ControlPointJs
 from .flightjs import FlightJs
 from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
-from .ipcombatjs import IpCombatJs
 from .mapzonesjs import MapZonesJs
 from .navmeshjs import NavMeshJs
-from .samcombatjs import SamCombatJs
 from .supplyroutejs import SupplyRouteJs
 from .threatzonecontainerjs import ThreatZoneContainerJs
 from .threatzonesjs import ThreatZonesJs
@@ -70,7 +61,7 @@ class MapModel(QObject):
     ipCombatsChanged = Signal()
     selectedFlightChanged = Signal(str)
 
-    def __init__(self, game_model: GameModel, sim_controller: SimController) -> None:
+    def __init__(self, game_model: GameModel) -> None:
         super().__init__()
         self.game_model = game_model
         self._map_center = [0, 0]
@@ -86,9 +77,6 @@ class MapModel(QObject):
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
         self._selected_flight_index: Optional[Tuple[int, int]] = None
-        self._air_combats = []
-        self._sam_combats = []
-        self._ip_combats = []
 
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
@@ -104,7 +92,6 @@ class MapModel(QObject):
         self.game_model.ato_model_for(False).packages_changed.connect(
             self.on_package_change
         ),
-        sim_controller.sim_update.connect(self.on_sim_update)
         self.reset()
 
     def clear(self) -> None:
@@ -119,16 +106,7 @@ class MapModel(QObject):
         self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
-        self._air_combats = []
-        self._sam_combats = []
-        self._ip_combats = []
         self.cleared.emit()
-
-    def on_sim_update(self, events: GameUpdateEvents) -> None:
-        for combat in events.new_combats:
-            self.on_add_combat(combat)
-        for combat in events.updated_combats:
-            self.on_combat_changed(combat)
 
     def set_package_selection(self, index: int) -> None:
         self.deselect_current_flight()
@@ -199,7 +177,6 @@ class MapModel(QObject):
             self.reset_navmeshes()
             self.reset_map_zones()
             self.reset_unculled_zones()
-            self.reset_combats()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -363,79 +340,6 @@ class MapModel(QObject):
     @Property(list, notify=unculledZonesChanged)
     def unculledZones(self) -> list[UnculledZone]:
         return self._unculled_zones
-
-    def reset_combats(self) -> None:
-        self._air_combats = []
-        self._sam_combats = []
-        self._ip_combats = []
-        self.airCombatsChanged.emit()
-        self.samCombatsChanged.emit()
-        self.ipCombatsChanged.emit()
-
-    def on_add_combat(self, combat: FrozenCombat) -> None:
-        if isinstance(combat, AirCombat):
-            self.add_air_combat(combat)
-        elif isinstance(combat, DefendingSam):
-            self.add_sam_combat(combat)
-        elif isinstance(combat, AtIp):
-            self.add_ip_combat(combat)
-        else:
-            logging.error(f"Unhandled FrozenCombat type: {combat.__class__}")
-
-    def add_air_combat(self, combat: AirCombat) -> None:
-        self._air_combats.append(AirCombatJs(combat, self.game.theater))
-        self.airCombatsChanged.emit()
-
-    def add_sam_combat(self, combat: DefendingSam) -> None:
-        self._sam_combats.append(SamCombatJs(combat, self.game_model))
-        self.samCombatsChanged.emit()
-
-    def add_ip_combat(self, combat: AtIp) -> None:
-        self._ip_combats.append(IpCombatJs(combat, self.game_model))
-        self.ipCombatsChanged.emit()
-
-    def on_combat_changed(self, combat: FrozenCombat) -> None:
-        if isinstance(combat, AirCombat):
-            self.refresh_air_combat(combat)
-        elif isinstance(combat, DefendingSam):
-            self.refresh_sam_combat(combat)
-        elif isinstance(combat, AtIp):
-            self.refresh_ip_combat(combat)
-        else:
-            logging.error(f"Unhandled FrozenCombat type: {combat.__class__}")
-
-    def refresh_air_combat(self, combat: AirCombat) -> None:
-        for js in self._air_combats:
-            if js.combat == combat:
-                js.refresh()
-                return
-        logging.error(f"Could not find existing combat model to update for {combat}")
-
-    def refresh_sam_combat(self, combat: DefendingSam) -> None:
-        for js in self._sam_combats:
-            if js.combat == combat:
-                js.refresh()
-                return
-        logging.error(f"Could not find existing combat model to update for {combat}")
-
-    def refresh_ip_combat(self, combat: AtIp) -> None:
-        for js in self._ip_combats:
-            if js.combat == combat:
-                js.refresh()
-                return
-        logging.error(f"Could not find existing combat model to update for {combat}")
-
-    @Property(list, notify=airCombatsChanged)
-    def airCombats(self) -> list[AirCombatJs]:
-        return self._air_combats
-
-    @Property(list, notify=samCombatsChanged)
-    def samCombats(self) -> list[SamCombatJs]:
-        return self._sam_combats
-
-    @Property(list, notify=ipCombatsChanged)
-    def ipCombats(self) -> list[IpCombatJs]:
-        return self._ip_combats
 
     @property
     def game(self) -> Game:
