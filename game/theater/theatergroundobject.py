@@ -10,6 +10,7 @@ from dcs.mapping import Point
 from dcs.triggers import TriggerZone
 from dcs.unit import Unit
 from dcs.unitgroup import ShipGroup, VehicleGroup
+from dcs.vehicles import vehicle_map
 
 from .. import db
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
@@ -526,7 +527,7 @@ class SamGroundObject(IadsGroundObject):
         max_telar_range = meters(0)
         launchers = set()
         for unit in group.units:
-            unit_type = db.vehicle_type_from_name(unit.type)
+            unit_type = vehicle_map[unit.type]
             if unit_type in TRACK_RADARS:
                 live_trs.add(unit_type)
             elif unit_type in TELARS:

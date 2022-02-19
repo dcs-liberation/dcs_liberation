@@ -11,41 +11,44 @@ import logging
 import random
 from collections import defaultdict
 from typing import (
+    Any,
     Dict,
+    Generic,
     Iterator,
+    List,
     Optional,
     TYPE_CHECKING,
     Type,
-    List,
     TypeVar,
-    Any,
-    Generic,
     Union,
 )
 
 from dcs import Mission, Point, unitgroup
-from dcs.action import SceneryDestructionZone, DoScript
+from dcs.action import DoScript, SceneryDestructionZone
 from dcs.condition import MapObjectIsDead
 from dcs.country import Country
 from dcs.point import StaticPoint
+from dcs.ships import ship_map
 from dcs.statics import Fortification, fortification_map, warehouse_map
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
     EPLRS,
-    OptAlarmState,
     FireAtPoint,
+    OptAlarmState,
 )
 from dcs.translation import String
-from dcs.triggers import TriggerStart, TriggerZone, Event, TriggerOnce
-from dcs.unit import Ship, Unit, Vehicle, InvisibleFARP
+from dcs.triggers import Event, TriggerOnce, TriggerStart, TriggerZone
+from dcs.unit import InvisibleFARP, Ship, Unit, Vehicle
 from dcs.unitgroup import ShipGroup, StaticGroup, VehicleGroup
-from dcs.unittype import StaticType, ShipType, VehicleType
+from dcs.unittype import ShipType, StaticType, VehicleType
 from dcs.vehicles import vehicle_map
 
 from game import db
 from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
-from game.db import unit_type_from_name, ship_type_from_name, vehicle_type_from_name
+from game.db import unit_type_from_name
+from game.radio.radios import RadioFrequency, RadioRegistry
+from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
@@ -53,15 +56,13 @@ from game.theater.theatergroundobject import (
     FactoryGroundObject,
     GenericCarrierGroundObject,
     LhaGroundObject,
-    ShipGroundObject,
     MissileSiteGroundObject,
     SceneryGroundObject,
+    ShipGroundObject,
 )
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
-from game.radio.radios import RadioFrequency, RadioRegistry
 from gen.runways import RunwayData
-from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
 
 if TYPE_CHECKING:
     from game import Game
@@ -106,7 +107,7 @@ class GenericGroundObjectGenerator(Generic[TgoT]):
                 logging.warning(f"Found empty group in {self.ground_object}")
                 continue
 
-            unit_type = vehicle_type_from_name(group.units[0].type)
+            unit_type = vehicle_map[group.units[0].type]
             vg = self.m.vehicle_group(
                 self.country,
                 group.name,
@@ -410,7 +411,7 @@ class GenericCarrierGenerator(GenericGroundObjectGenerator[GenericCarrierGroundO
             self._register_unit_group(group, ship_group)
 
     def get_carrier_type(self, group: ShipGroup) -> Type[ShipType]:
-        return ship_type_from_name(group.units[0].type)
+        return ship_map[group.units[0].type]
 
     def configure_carrier(
         self, group: ShipGroup, atc_channel: RadioFrequency
@@ -561,7 +562,7 @@ class ShipObjectGenerator(GenericGroundObjectGenerator[ShipGroundObject]):
             if not group.units:
                 logging.warning(f"Found empty group in {self.ground_object}")
                 continue
-            self.generate_group(group, ship_type_from_name(group.units[0].type))
+            self.generate_group(group, ship_map[group.units[0].type])
 
     def generate_group(
         self, group_def: ShipGroup, first_unit_type: Type[ShipType]

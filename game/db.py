@@ -21,7 +21,7 @@ from dcs.ships import (
     Stennis,
     ship_map,
 )
-from dcs.unittype import ShipType, UnitType, VehicleType
+from dcs.unittype import ShipType, UnitType
 from dcs.vehicles import (
     vehicle_map,
 )
@@ -159,14 +159,6 @@ def unit_type_from_name(name: str) -> Optional[Type[UnitType]]:
         return helicopter_map[name]
     else:
         return None
-
-
-def vehicle_type_from_name(name: str) -> Type[VehicleType]:
-    return vehicle_map[name]
-
-
-def ship_type_from_name(name: str) -> Type[ShipType]:
-    return ship_map[name]
 
 
 def country_id_from_name(name: str) -> int:
