@@ -10,6 +10,7 @@ from game import Game
 from game.ato.airtaaskingorder import AirTaskingOrder
 from game.profiling import logged_duration
 from game.server.leaflet import LeafletLatLon
+from game.server.security import ApiKeyManager
 from game.theater import (
     ConflictTheater,
 )
@@ -46,6 +47,7 @@ from .unculledzonejs import UnculledZone
 class MapModel(QObject):
     cleared = Signal()
 
+    apiKeyChanged = Signal(str)
     mapCenterChanged = Signal(list)
     controlPointsChanged = Signal()
     groundObjectsChanged = Signal()
@@ -186,6 +188,10 @@ class MapModel(QObject):
         ll = theater.point_to_ll(theater.terrain.map_view_default.position)
         self._map_center = [ll.latitude, ll.longitude]
         self.mapCenterChanged.emit(self._map_center)
+
+    @Property(str, notify=apiKeyChanged)
+    def apiKey(self) -> str:
+        return ApiKeyManager.KEY
 
     @Property(list, notify=mapCenterChanged)
     def mapCenter(self) -> LeafletLatLon:

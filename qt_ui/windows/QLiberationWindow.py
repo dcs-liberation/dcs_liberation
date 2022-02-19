@@ -21,6 +21,7 @@ import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
 from game.server import EventStream
+from game.server.security import ApiKeyManager
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -87,6 +88,8 @@ class QLiberationWindow(QMainWindow):
                 logging.info("No existing save game")
         else:
             self.onGameGenerated(self.game)
+
+        logging.debug(f"API Key: {ApiKeyManager.KEY}")
 
     def initUi(self):
         hbox = QSplitter(Qt.Horizontal)

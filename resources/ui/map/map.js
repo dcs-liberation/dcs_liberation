@@ -3,10 +3,15 @@ const ENABLE_EXPENSIVE_DEBUG_TOOLS = false;
 const HTTP_BACKEND = "http://[::1]:5000";
 const WS_BACKEND = "ws://[::1]:5000/eventstream";
 
+// Uniquely generated at startup and passed to use by the QWebChannel.
+var API_KEY = null;
+
 function getJson(endpoint) {
-  return fetch(`${HTTP_BACKEND}${endpoint}`).then((response) =>
-    response.json()
-  );
+  return fetch(`${HTTP_BACKEND}${endpoint}`, {
+    headers: {
+      "X-API-Key": API_KEY,
+    },
+  }).then((response) => response.json());
 }
 
 const Colors = Object.freeze({
@@ -356,6 +361,7 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   });
 
   game = channel.objects.game;
+  API_KEY = game.apiKey;
   drawInitialMap();
   game.cleared.connect(clearAllLayers);
   game.mapCenterChanged.connect(recenterMap);
