@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import db
 from game.campaignloader.campaign import Campaign
-from game.factions.faction import Faction
+from game.factions import FACTIONS, Faction
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
@@ -179,7 +179,7 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         blueFaction = QtWidgets.QLabel("<b>Player Faction :</b>")
         self.blueFactionSelect = QtWidgets.QComboBox()
-        for f in db.FACTIONS:
+        for f in FACTIONS:
             self.blueFactionSelect.addItem(f)
         blueFaction.setBuddy(self.blueFactionSelect)
 
@@ -195,7 +195,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.redFactionDescription.setReadOnly(True)
 
         # Setup default selected factions
-        for i, r in enumerate(db.FACTIONS):
+        for i, r in enumerate(FACTIONS):
             self.redFactionSelect.addItem(r)
             if r == "Russia 1990":
                 self.redFactionSelect.setCurrentIndex(i)
@@ -241,10 +241,10 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.blueFactionSelect.clear()
         self.redFactionSelect.clear()
 
-        for f in db.FACTIONS:
+        for f in FACTIONS:
             self.blueFactionSelect.addItem(f)
 
-        for i, r in enumerate(db.FACTIONS):
+        for i, r in enumerate(FACTIONS):
             self.redFactionSelect.addItem(r)
             if r == campaign.recommended_enemy_faction:
                 self.redFactionSelect.setCurrentIndex(i)
@@ -255,8 +255,8 @@ class FactionSelection(QtWidgets.QWizardPage):
 
     def updateUnitRecap(self):
 
-        red_faction = db.FACTIONS[self.redFactionSelect.currentText()]
-        blue_faction = db.FACTIONS[self.blueFactionSelect.currentText()]
+        red_faction = FACTIONS[self.redFactionSelect.currentText()]
+        blue_faction = FACTIONS[self.blueFactionSelect.currentText()]
 
         template = jinja_env.get_template("factiontemplate_EN.j2")
 
@@ -268,11 +268,11 @@ class FactionSelection(QtWidgets.QWizardPage):
 
     @property
     def selected_blue_faction(self) -> Faction:
-        return db.FACTIONS[self.blueFactionSelect.currentText()]
+        return FACTIONS[self.blueFactionSelect.currentText()]
 
     @property
     def selected_red_faction(self) -> Faction:
-        return db.FACTIONS[self.redFactionSelect.currentText()]
+        return FACTIONS[self.redFactionSelect.currentText()]
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):

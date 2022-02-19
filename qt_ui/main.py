@@ -15,8 +15,8 @@ from dcs.payloads import PayloadDirectories
 from game import Game, VERSION, persistency
 from game.campaignloader.campaign import Campaign
 from game.data.weapons import Pylon, Weapon, WeaponGroup
-from game.db import FACTIONS
 from game.dcs.aircrafttype import AircraftType
+from game.factions import FACTIONS
 from game.profiling import logged_duration
 from game.server import EventStream, GameContext, Server
 from game.settings import Settings

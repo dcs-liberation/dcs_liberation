@@ -27,7 +27,6 @@ from dcs.vehicles import (
 )
 
 # PATCH pydcs data with MODS
-from game.factions.faction_loader import FactionLoader
 
 """
 ---------- BEGINNING OF CONFIGURATION SECTION
@@ -54,12 +53,6 @@ For example, player accessible Hornet is called `FA_18C_hornet`, and MANPAD Igla
 # and isn't smart enough to save to repair a critical runway anyway, so it has
 # to be cheap enough to repair with a single turn's income.
 RUNWAY_REPAIR_COST = 100
-
-"""
-Units separated by country. 
-country : DCS Country name
-"""
-FACTIONS = FactionLoader()
 
 """
 Possible time periods for new games

@@ -4,7 +4,8 @@ from typing import Optional
 
 from dcs.unitgroup import VehicleGroup
 
-from game import db, Game
+from game import Game
+from game.factions import FACTIONS
 from game.theater.theatergroundobject import MissileSiteGroundObject
 from gen.missiles.scud_site import ScudGenerator
 from gen.missiles.v1_group import V1GroupGenerator
@@ -19,7 +20,7 @@ def generate_missile_group(
     This generate a missiles group
     :return: Nothing, but put the group reference inside the ground object
     """
-    faction = db.FACTIONS[faction_name]
+    faction = FACTIONS[faction_name]
     if len(faction.missiles) > 0:
         generators = faction.missiles
         if len(generators) > 0:

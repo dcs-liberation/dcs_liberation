@@ -4,7 +4,8 @@ from typing import Optional
 
 from dcs.unitgroup import VehicleGroup
 
-from game import db, Game
+from game import Game
+from game.factions import FACTIONS
 from game.theater.theatergroundobject import CoastalSiteGroundObject
 from gen.coastal.silkworm import SilkwormGenerator
 
@@ -21,7 +22,7 @@ def generate_coastal_group(
     :return: The generated group, or None if this faction does not support coastal
     defenses.
     """
-    faction = db.FACTIONS[faction_name]
+    faction = FACTIONS[faction_name]
     if len(faction.coastal_defenses) > 0:
         generators = faction.coastal_defenses
         if len(generators) > 0:

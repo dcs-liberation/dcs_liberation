@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import logging
 import random
-from typing import TYPE_CHECKING, Optional
+from typing import Optional, TYPE_CHECKING
 
 from dcs.unitgroup import ShipGroup
 
-from game import db
+from game.factions import FACTIONS
 from game.theater.theatergroundobject import (
-    LhaGroundObject,
     CarrierGroundObject,
+    LhaGroundObject,
     ShipGroundObject,
 )
 from gen.fleet.carrier_group import CarrierGroupGenerator
@@ -21,10 +21,10 @@ from gen.fleet.dd_group import (
 from gen.fleet.lacombattanteII import LaCombattanteIIGroupGenerator
 from gen.fleet.lha_group import LHAGroupGenerator
 from gen.fleet.ru_dd_group import (
-    RussianNavyGroupGenerator,
     GrishaGroupGenerator,
-    MolniyaGroupGenerator,
     KiloSubGroupGenerator,
+    MolniyaGroupGenerator,
+    RussianNavyGroupGenerator,
     TangoSubGroupGenerator,
 )
 from gen.fleet.schnellboot import SchnellbootGroupGenerator
@@ -59,7 +59,7 @@ def generate_ship_group(
     This generate a ship group
     :return: The generated group, or None if this faction does not support ships.
     """
-    faction = db.FACTIONS[faction_name]
+    faction = FACTIONS[faction_name]
     if len(faction.navy_generators) > 0:
         gen = random.choice(faction.navy_generators)
         if gen in SHIP_MAP.keys():
@@ -86,7 +86,7 @@ def generate_carrier_group(
     :param ground_object: The ground object which will own the ship group
     :return: The generated group.
     """
-    generator = CarrierGroupGenerator(game, ground_object, db.FACTIONS[faction])
+    generator = CarrierGroupGenerator(game, ground_object, FACTIONS[faction])
     generator.generate()
     return generator.get_generated_group()
 
@@ -101,6 +101,6 @@ def generate_lha_group(
     :param ground_object: The ground object which will own the ship group
     :return: The generated group.
     """
-    generator = LHAGroupGenerator(game, ground_object, db.FACTIONS[faction])
+    generator = LHAGroupGenerator(game, ground_object, FACTIONS[faction])
     generator.generate()
     return generator.get_generated_group()

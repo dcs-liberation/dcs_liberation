@@ -3,9 +3,10 @@ from typing import Optional
 
 from dcs.unitgroup import VehicleGroup
 
-from game import db, Game
+from game import Game
 from game.data.groundunitclass import GroundUnitClass
 from game.dcs.groundunittype import GroundUnitType
+from game.factions import FACTIONS
 from game.theater.theatergroundobject import VehicleGroupGroundObject
 from gen.defenses.armored_group_generator import (
     ArmoredGroupGenerator,
@@ -27,7 +28,7 @@ def generate_armor_group(
         GroundUnitClass.Tank,
     )
     possible_unit = [
-        u for u in db.FACTIONS[faction].frontline_units if u.unit_class in armor_types
+        u for u in FACTIONS[faction].frontline_units if u.unit_class in armor_types
     ]
     if len(possible_unit) > 0:
         unit_type = random.choice(possible_unit)
