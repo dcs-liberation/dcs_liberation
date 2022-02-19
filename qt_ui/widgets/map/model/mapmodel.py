@@ -58,9 +58,6 @@ class MapModel(QObject):
     navmeshesChanged = Signal()
     mapZonesChanged = Signal()
     unculledZonesChanged = Signal()
-    airCombatsChanged = Signal()
-    samCombatsChanged = Signal()
-    ipCombatsChanged = Signal()
     selectedFlightChanged = Signal(str)
 
     def __init__(self, game_model: GameModel) -> None:
