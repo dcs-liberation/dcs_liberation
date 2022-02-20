@@ -20,13 +20,3 @@ fuel:
   min_safe: 1000
 variants:
   F-16I: {}
-radios:
-  intra_flight: AN/ARC-222
-  inter_flight: AN/ARC-164
-  channels:
-    type: common
-    namer: sufa
-    # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
-    # intra-flight communication to leave COM1 open for UHF inter-flight.
-    intra_flight_radio_index: 2
-    inter_flight_radio_index: 1
