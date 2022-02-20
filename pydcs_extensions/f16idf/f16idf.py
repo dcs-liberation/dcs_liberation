@@ -8,7 +8,7 @@ from dcs.weapons_data import Weapons
 from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
-Class WeaponsF16I
+Class WeaponsF16I:
     AIM_9M_ = {
         "clsid": "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
         "name": "AIM-9M ",
