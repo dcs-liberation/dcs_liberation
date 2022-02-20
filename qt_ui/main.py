@@ -280,6 +280,7 @@ def create_game(
             su57_felon=False,
             frenchpack=False,
             high_digit_sams=False,
+            f16idf=False,
         ),
     )
     game = generator.generate()

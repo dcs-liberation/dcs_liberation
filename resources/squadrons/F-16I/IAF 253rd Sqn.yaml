@@ -4,8 +4,8 @@ nickname: First Jet
 female_pilot_percentage: 30
 country: Israel
 role: Strike Fighter
-aircraft: F-16I
-livery: IAF F-16I 253 Sqn
+aircraft: F-16I SUFA
+livery: IAF F-16I 5061 Sqn - No CFT 
 mission_types:
   - BAI
   - BARCAP
