@@ -17,7 +17,8 @@ class Server(uvicorn.Server):
                 app=app,
                 host=ServerSettings.get().server_bind_address,
                 port=ServerSettings.get().server_port,
-                log_level="info",
+                # Configured explicitly with default_logging.yaml or logging.yaml.
+                log_config=None,
             )
         )
 

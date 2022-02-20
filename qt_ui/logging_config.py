@@ -1,9 +1,10 @@
 """Logging APIs."""
 import logging
+import logging.config
 import os
-from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
-from qt_ui.logging_handler import HookableInMemoryHandler
+import yaml
 
 
 def init_logging(version: str) -> None:
@@ -11,23 +12,11 @@ def init_logging(version: str) -> None:
     if not os.path.isdir("./logs"):
         os.mkdir("logs")
 
-    fmt = "%(asctime)s :: %(levelname)s :: %(message)s"
-    formatter = logging.Formatter(fmt)
+    resources = Path("resources")
+    log_config = resources / "default_logging.yaml"
+    if (custom_log_config := resources / "logging.yaml").exists():
+        log_config = custom_log_config
+    with log_config.open() as log_file:
+        logging.config.dictConfig(yaml.safe_load(log_file))
 
-    logging.basicConfig(level=logging.DEBUG, format=fmt)
-    logger = logging.getLogger()
-
-    rotating_file_handler = RotatingFileHandler(
-        "./logs/liberation.log", "a", 5000000, 1
-    )
-    rotating_file_handler.setLevel(logging.DEBUG)
-    rotating_file_handler.setFormatter(formatter)
-
-    hookable_in_memory_handler = HookableInMemoryHandler()
-    hookable_in_memory_handler.setLevel(logging.DEBUG)
-    hookable_in_memory_handler.setFormatter(formatter)
-
-    logger.addHandler(rotating_file_handler)
-    logger.addHandler(hookable_in_memory_handler)
-
-    logger.info(f"DCS Liberation {version}")
+    logging.info(f"DCS Liberation {version}")
