@@ -711,7 +711,7 @@ class F_16I(PlaneType):
     class Pylon11:
         AN_AAQ_28_LITENING___Targeting_Pod = (11, Weapons.AN_AAQ_28_LITENING___Targeting_Pod)
 
-    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 11}
+    pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 11}
 
     tasks = [task.CAP,
              task.Escort,
