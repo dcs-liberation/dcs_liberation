@@ -183,15 +183,8 @@ class Squadron:
         self.deliver_orders()
 
     def replenish_lost_pilots(self) -> None:
-        if not self.pilot_limits_enabled:
-            return
-
-        replenish_count = min(
-            self.settings.squadron_replenishment_rate,
-            self._number_of_unfilled_pilot_slots,
-        )
-        if replenish_count > 0:
-            self._recruit_pilots(replenish_count)
+        if self.pilot_limits_enabled and self.replenish_count > 0:
+            self._recruit_pilots(self.replenish_count)
 
     def return_all_pilots_and_aircraft(self) -> None:
         self.available_pilots = list(self.active_pilots)
@@ -224,10 +217,10 @@ class Squadron:
 
     @property
     def expected_pilots_next_turn(self) -> int:
-        return len(self.active_pilots) + self.replenish_rate
+        return len(self.active_pilots) + self.replenish_count
 
     @property
-    def replenish_rate(self) -> int:
+    def replenish_count(self) -> int:
         return min(
             self.settings.squadron_replenishment_rate,
             self._number_of_unfilled_pilot_slots,
