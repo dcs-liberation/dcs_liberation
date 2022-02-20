@@ -131,7 +131,7 @@ from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
 
 CAP_CAPABLE = [
     Su_57,
-    F_16I
+    F_16I,
     F_22A,
     F_15C,
     F_14B,
@@ -192,7 +192,7 @@ CAS_CAPABLE = [
     Su_25,
     F_15E,
     F_16C_50,
-    F_16I
+    F_16I,
     FA_18C_hornet,
     Tornado_GR4,
     Tornado_IDS,
@@ -261,7 +261,7 @@ CAS_CAPABLE = [
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
-    F_16I
+    F_16I,
     FA_18C_hornet,
     Tornado_IDS,
     Su_25T,
@@ -323,7 +323,7 @@ STRIKE_CAPABLE = [
     AJS37,
     Tornado_GR4,
     F_16C_50,
-    F_16I
+    F_16I,
     FA_18C_hornet,
     AV8BNA,
     JF_17,
@@ -417,7 +417,7 @@ RUNWAY_ATTACK_CAPABLE = [
     F_15E,
     AJS37,
     F_16C_50,
-    F_16I
+    F_16I,
     FA_18C_hornet,
     AV8BNA,
     JF_17,
