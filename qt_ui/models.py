@@ -529,3 +529,8 @@ class GameModel:
         self.game = game
         self.ato_model.replace_from_game(player=True)
         self.red_ato_model.replace_from_game(player=False)
+
+    def get(self) -> Game:
+        if self.game is None:
+            raise RuntimeError("GameModel has no Game set")
+        return self.game

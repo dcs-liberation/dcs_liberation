@@ -187,9 +187,9 @@ class KneeboardPage:
 
     @staticmethod
     def format_ll(ll: LatLon) -> str:
-        ns = "N" if ll.latitude >= 0 else "S"
-        ew = "E" if ll.longitude >= 0 else "W"
-        return f"{ll.latitude:.4}°{ns} {ll.longitude:.4}°{ew}"
+        ns = "N" if ll.lat >= 0 else "S"
+        ew = "E" if ll.lng >= 0 else "W"
+        return f"{ll.lat:.4}°{ns} {ll.lng:.4}°{ew}"
 
 
 @dataclass(frozen=True)

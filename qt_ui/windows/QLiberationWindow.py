@@ -20,7 +20,7 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
-from game.server import EventStream
+from game.server import EventStream, GameContext
 from game.server.security import ApiKeyManager
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
@@ -54,6 +54,7 @@ class QLiberationWindow(QMainWindow):
         self.sim_controller = SimController(self.game)
         self.sim_controller.sim_update.connect(EventStream.put_nowait)
         self.game_model = GameModel(game, self.sim_controller)
+        GameContext.set_model(self.game_model)
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)

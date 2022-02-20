@@ -3,6 +3,8 @@ const ENABLE_EXPENSIVE_DEBUG_TOOLS = false;
 const HTTP_BACKEND = "http://[::1]:5000";
 const WS_BACKEND = "ws://[::1]:5000/eventstream";
 
+METERS_TO_FEET = 3.28084;
+
 // Uniquely generated at startup and passed to use by the QWebChannel.
 var API_KEY = null;
 
@@ -11,6 +13,17 @@ function getJson(endpoint) {
     headers: {
       "X-API-Key": API_KEY,
     },
+  }).then((response) => response.json());
+}
+
+function postJson(endpoint, data) {
+  return fetch(`${HTTP_BACKEND}${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": API_KEY,
+    },
+    body: JSON.stringify(data),
   }).then((response) => response.json());
 }
 
@@ -752,79 +765,50 @@ class Waypoint {
     this.number = number;
     this.flight = flight;
     this.marker = this.makeMarker();
-    this.waypoint.positionChanged.connect(() => this.relocate());
-    this.waypoint.timingChanged.connect(() => this.updateDescription());
   }
 
   position() {
-    return this.waypoint.position;
+    return this.waypoint.latlng;
   }
 
   shouldMark() {
-    // We don't need a marker for the departure waypoint (and it's likely
-    // coincident with the landing waypoint, so hard to see). We do want to draw
-    // the path from it though.
-    //
-    // We also don't need the landing waypoint since we'll be drawing that path
-    // as well and it's clear what it is, and only obscured the CP icon.
-    //
-    // The divert waypoint also obscures the CP. We don't draw the path to it,
-    // but it can be seen in the flight settings page so it's not really a
-    // problem to exclude it.
-    //
-    // Bullseye ought to be (but currently isn't) drawn *once* rather than as a
-    // flight waypoint.
-    return !(
-      this.waypoint.isTakeoff ||
-      this.waypoint.isLanding ||
-      this.waypoint.isDivert ||
-      this.waypoint.isBullseye
-    );
+    return this.waypoint.should_mark;
   }
 
-  draggable() {
-    // Target *points* are the exact location of a unit, whereas the target area
-    // is only the center of the objective. Allow moving the latter since its
-    // exact location isn't very important.
-    //
-    // Landing, and divert should be changed in the flight settings UI, takeoff
-    // cannot be changed because that's where the plane is.
-    //
-    // Moving the bullseye reference only makes it wrong.
-    return !(
-      this.waypoint.isTargetPoint ||
-      this.waypoint.isTakeoff ||
-      this.waypoint.isLanding ||
-      this.waypoint.isDivert ||
-      this.waypoint.isBullseye
-    );
+  async timing(dragging) {
+    if (dragging) {
+      return "Waiting to recompute TOT...";
+    }
+    return await getJson(`/waypoints/${this.flight.id}/${this.number}/timing`);
   }
 
-  description(dragging) {
-    const timing = dragging
-      ? "Waiting to recompute TOT..."
-      : this.waypoint.timing;
+  async description(dragging) {
+    const alt = Math.floor(
+      this.waypoint.alt.distance_in_meters * METERS_TO_FEET
+    );
+    const altRef = this.waypoint.alt_type == "BARO" ? "MSL" : "AGL";
     return (
       `${this.number} ${this.waypoint.name}<br />` +
-      `${this.waypoint.altitudeFt} ft ${this.waypoint.altitudeReference}<br />` +
-      `${timing}`
+      `${alt} ft ${altRef}<br />` +
+      `${await this.timing(dragging)}`
     );
   }
 
   relocate() {
-    this.marker.setLatLng(this.waypoint.position);
+    this.marker.setLatLng(this.position());
   }
 
   updateDescription(dragging) {
-    this.marker.setTooltipContent(this.description(dragging));
+    this.description(dragging).then((description) => {
+      this.marker.setTooltipContent(description);
+    });
   }
 
   makeMarker() {
     const zoom = map.getZoom();
-    return L.marker(this.waypoint.position, { draggable: this.draggable() })
-      .bindTooltip(this.description(), {
-        permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
-      })
+    const marker = L.marker(this.position(), {
+      draggable: this.waypoint.is_movable,
+    })
       .on("dragstart", (e) => {
         this.updateDescription(true);
       })
@@ -836,19 +820,35 @@ class Waypoint {
       .on("dragend", (e) => {
         const marker = e.target;
         const destination = marker.getLatLng();
-        this.waypoint
-          .setPosition([destination.lat, destination.lng])
-          .then((err) => {
+        postJson(
+          `/waypoints/${this.flight.id}/${this.number}/position`,
+          destination
+        )
+          .then(() => {
+            this.waypoint.position = destination;
+            this.updateDescription(false);
+            this.flight.drawCommitBoundary();
+          })
+          .catch((err) => {
             if (err) {
+              this.relocate();
               console.log(err);
-              marker.bindPopup(err);
+              marker.bindPopup(`${err}`).openPopup();
             }
           });
       });
+
+    this.description(false).then((description) =>
+      marker.bindTooltip(description, {
+        permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
+      })
+    );
+
+    return marker;
   }
 
   includeInPath() {
-    return !this.waypoint.isDivert && !this.waypoint.isBullseye;
+    return this.waypoint.include_in_path;
   }
 }
 
@@ -858,16 +858,11 @@ class Flight {
   constructor(flight) {
     this.flight = flight;
     this.id = flight.id;
-    this.flightPlan = this.flight.flightPlan.map(
-      (p, idx) => new Waypoint(p, idx, this)
-    );
     this.aircraft = null;
     this.path = null;
     this.markers = [];
     this.commitBoundary = null;
     this.flight.selectedChanged.connect(() => this.draw());
-    this.flight.flightPlanChanged.connect(() => this.drawFlightPlan());
-    this.flight.commitBoundaryChanged.connect(() => this.drawCommitBoundary());
     Flight.registerFlight(this);
   }
 
@@ -948,16 +943,18 @@ class Flight {
         .removeFrom(allFlightPlansLayer);
     }
     if (this.flight.selected) {
-      if (this.flight.commitBoundary) {
-        this.commitBoundary = L.polyline(this.flight.commitBoundary, {
-          color: Colors.Highlight,
-          weight: 1,
-          interactive: false,
-        })
-          .addTo(selectedFlightPlansLayer)
-          .addTo(this.flightPlanLayer())
-          .addTo(allFlightPlansLayer);
-      }
+      getJson(`/flights/${this.flight.id}/commit-boundary`).then((boundary) => {
+        if (boundary) {
+          this.commitBoundary = L.polyline(boundary, {
+            color: Colors.Highlight,
+            weight: 1,
+            interactive: false,
+          })
+            .addTo(selectedFlightPlansLayer)
+            .addTo(this.flightPlanLayer())
+            .addTo(allFlightPlansLayer);
+        }
+      });
     }
   }
 
@@ -993,21 +990,24 @@ class Flight {
         // ATO before drawing.
         return;
       }
-      const path = [];
-      this.flightPlan.forEach((waypoint) => {
-        if (waypoint.includeInPath()) {
-          path.push(waypoint.position());
-        }
-        if (this.shouldMark(waypoint)) {
-          waypoint.marker
-            .addTo(selectedFlightPlansLayer)
-            .addTo(this.flightPlanLayer())
-            .addTo(allFlightPlansLayer);
-          this.markers.push(waypoint.marker);
-        }
-      });
 
-      this.drawPath(path);
+      getJson(`/waypoints/${this.flight.id}`).then((waypoints) => {
+        const path = [];
+        waypoints.map((raw, idx) => {
+          const waypoint = new Waypoint(raw, idx, this);
+          if (waypoint.includeInPath()) {
+            path.push(waypoint.position());
+          }
+          if (this.shouldMark(waypoint)) {
+            waypoint.marker
+              .addTo(selectedFlightPlansLayer)
+              .addTo(this.flightPlanLayer())
+              .addTo(allFlightPlansLayer);
+            this.markers.push(waypoint.marker);
+          }
+        });
+        this.drawPath(path);
+      });
     });
   }
 }

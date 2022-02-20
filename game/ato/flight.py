@@ -99,6 +99,10 @@ class Flight:
         self.__dict__.update(state)
 
     @property
+    def blue(self) -> bool:
+        return self.squadron.player
+
+    @property
     def departure(self) -> ControlPoint:
         return self.squadron.location
 

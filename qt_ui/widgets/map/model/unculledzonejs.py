@@ -30,5 +30,5 @@ class UnculledZone(QObject):
         for zone in game.get_culling_zones():
             ll = game.theater.point_to_ll(zone)
             yield UnculledZone(
-                [ll.latitude, ll.longitude], game.settings.perf_culling_distance * 1000
+                [ll.lat, ll.lng], game.settings.perf_culling_distance * 1000
             )

@@ -30,7 +30,7 @@ class FrontLineJs(QObject):
                 self.front_line.attack_heading.left.degrees, nautical_miles(2).meters
             )
         )
-        return [[a.latitude, a.longitude], [b.latitude, b.longitude]]
+        return [[a.lat, a.lng], [b.lat, b.lng]]
 
     @Slot()
     def showPackageDialog(self) -> None:

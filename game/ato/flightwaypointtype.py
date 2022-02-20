@@ -1,7 +1,8 @@
-from enum import Enum
+from enum import IntEnum, unique
 
 
-class FlightWaypointType(Enum):
+@unique
+class FlightWaypointType(IntEnum):
     """Enumeration of waypoint types.
 
     The value of the enum has no meaning but should remain stable to prevent breaking

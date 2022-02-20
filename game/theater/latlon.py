@@ -1,14 +1,16 @@
-from dataclasses import dataclass
 from typing import List, Tuple
+
+from pydantic.dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class LatLon:
-    latitude: float
-    longitude: float
+    # These names match Leaflet for easier interop.
+    lat: float
+    lng: float
 
     def as_list(self) -> List[float]:
-        return [self.latitude, self.longitude]
+        return [self.lat, self.lng]
 
     @staticmethod
     def _components(dimension: float) -> Tuple[int, int, float]:
@@ -28,7 +30,7 @@ class LatLon:
         precision = 2 if include_decimal_seconds else 0
         return " ".join(
             [
-                self._format_component(self.latitude, ("N", "S"), precision),
-                self._format_component(self.longitude, ("E", "W"), precision),
+                self._format_component(self.lat, ("N", "S"), precision),
+                self._format_component(self.lng, ("E", "W"), precision),
             ]
         )

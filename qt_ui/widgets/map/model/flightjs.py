@@ -1,41 +1,19 @@
 from __future__ import annotations
 
-from typing import List
-
 from PySide2.QtCore import Property, QObject, Signal, Slot
-from shapely.geometry import LineString, Point as ShapelyPoint
 
-from game.ato import Flight, FlightWaypoint
+from game.ato import Flight
 from game.ato.flightstate import InFlight
-from game.ato.flightwaypointtype import FlightWaypointType
-from game.server.leaflet import LeafletLatLon, LeafletPoly, ShapelyUtil
+from game.server.leaflet import LeafletLatLon
 from game.theater import ConflictTheater
-from game.utils import meters
-from gen.flights.flightplan import CasFlightPlan, PatrollingFlightPlan
 from qt_ui.models import AtoModel
-from .waypointjs import WaypointJs
 
 
 class FlightJs(QObject):
     idChanged = Signal()
     positionChanged = Signal()
-    flightPlanChanged = Signal()
     blueChanged = Signal()
     selectedChanged = Signal()
-    commitBoundaryChanged = Signal()
-
-    originChanged = Signal()
-
-    @Property(list, notify=originChanged)
-    def origin(self) -> LeafletLatLon:
-        return self._waypoints[0].position
-
-    targetChanged = Signal()
-
-    @Property(list, notify=targetChanged)
-    def target(self) -> LeafletLatLon:
-        ll = self.theater.point_to_ll(self.flight.package.target.position)
-        return [ll.latitude, ll.longitude]
 
     def __init__(
         self,
@@ -49,41 +27,17 @@ class FlightJs(QObject):
         self._selected = selected
         self.theater = theater
         self.ato_model = ato_model
-        self._waypoints = self.make_waypoints()
 
     @Property(str, notify=idChanged)
     def id(self) -> str:
         return str(self.flight.id)
 
-    def update_waypoints(self) -> None:
-        for waypoint in self._waypoints:
-            waypoint.timingChanged.emit()
-
-    def make_waypoints(self) -> List[WaypointJs]:
-        departure = FlightWaypoint(
-            FlightWaypointType.TAKEOFF,
-            self.flight.departure.position.x,
-            self.flight.departure.position.y,
-            meters(0),
-        )
-        departure.alt_type = "RADIO"
-        waypoints = []
-        for point in [departure] + self.flight.points:
-            waypoint = WaypointJs(point, self, self.theater, self.ato_model)
-            waypoint.positionChanged.connect(self.update_waypoints)
-            waypoints.append(waypoint)
-        return waypoints
-
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
         if isinstance(self.flight.state, InFlight):
             ll = self.theater.point_to_ll(self.flight.state.estimate_position())
-            return [ll.latitude, ll.longitude]
+            return [ll.lat, ll.lng]
         return []
-
-    @Property(list, notify=flightPlanChanged)
-    def flightPlan(self) -> List[WaypointJs]:
-        return self._waypoints
 
     @Property(bool, notify=blueChanged)
     def blue(self) -> bool:
@@ -104,24 +58,3 @@ class FlightJs(QObject):
     def set_selected(self, value: bool) -> None:
         self._selected = value
         self.selectedChanged.emit()
-
-    @Property(list, notify=commitBoundaryChanged)
-    def commitBoundary(self) -> LeafletPoly:
-        if not isinstance(self.flight.flight_plan, PatrollingFlightPlan):
-            return []
-        start = self.flight.flight_plan.patrol_start
-        end = self.flight.flight_plan.patrol_end
-        if isinstance(self.flight.flight_plan, CasFlightPlan):
-            center = self.flight.flight_plan.target.position
-            commit_center = ShapelyPoint(center.x, center.y)
-        else:
-            commit_center = LineString(
-                [
-                    ShapelyPoint(start.x, start.y),
-                    ShapelyPoint(end.x, end.y),
-                ]
-            )
-        bubble = commit_center.buffer(
-            self.flight.flight_plan.engagement_distance.meters
-        )
-        return ShapelyUtil.poly_to_leaflet(bubble, self.theater)

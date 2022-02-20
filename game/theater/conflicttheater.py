@@ -4,17 +4,17 @@ import datetime
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
 from dcs.terrain import (
     caucasus,
+    marianaislands,
     nevada,
     normandy,
     persiangulf,
     syria,
     thechannel,
-    marianaislands,
 )
 from dcs.terrain.terrain import Terrain
 from pyproj import CRS, Transformer
@@ -262,7 +262,7 @@ class ConflictTheater:
         return LatLon(lat, lon)
 
     def ll_to_point(self, ll: LatLon) -> Point:
-        x, y = self.ll_to_point_transformer.transform(ll.latitude, ll.longitude)
+        x, y = self.ll_to_point_transformer.transform(ll.lat, ll.lng)
         return Point(x, y)
 
 

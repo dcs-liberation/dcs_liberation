@@ -62,7 +62,7 @@ class ControlPointJs(QObject):
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
         ll = self.theater.point_to_ll(self.control_point.position)
-        return [ll.latitude, ll.longitude]
+        return [ll.lat, ll.lng]
 
     @Property(bool, notify=mobileChanged)
     def mobile(self) -> bool:

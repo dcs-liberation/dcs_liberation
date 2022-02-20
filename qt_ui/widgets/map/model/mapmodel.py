@@ -160,7 +160,7 @@ class MapModel(QObject):
     @staticmethod
     def leaflet_coord_for(point: Point, theater: ConflictTheater) -> LeafletLatLon:
         ll = theater.point_to_ll(point)
-        return [ll.latitude, ll.longitude]
+        return [ll.lat, ll.lng]
 
     def reset(self) -> None:
         if self.game_model.game is None:
@@ -183,7 +183,7 @@ class MapModel(QObject):
 
     def reset_map_center(self, theater: ConflictTheater) -> None:
         ll = theater.point_to_ll(theater.terrain.map_view_default.position)
-        self._map_center = [ll.latitude, ll.longitude]
+        self._map_center = [ll.lat, ll.lng]
         self.mapCenterChanged.emit(self._map_center)
 
     @Property(str, notify=apiKeyChanged)
