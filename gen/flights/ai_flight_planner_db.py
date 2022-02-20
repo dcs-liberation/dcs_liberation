@@ -131,7 +131,6 @@ from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
 
 CAP_CAPABLE = [
     Su_57,
-    F_16I,
     F_22A,
     F_15C,
     F_14B,
@@ -156,6 +155,7 @@ CAP_CAPABLE = [
     MiG_21Bis,
     Mirage_2000_5,
     F_15E,
+    F_16I,
     M_2000C,
     F_5E_3,
     VSN_F104S,
