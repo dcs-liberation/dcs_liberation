@@ -280,6 +280,8 @@ class Faction:
             self.remove_aircraft("JAS39Gripen_AG")
         if not mod_settings.su57_felon:
             self.remove_aircraft("Su-57")
+        if not mod_settings.f16idf:
+            self.remove_aircraft("F-16I")
         # frenchpack
         if not mod_settings.frenchpack:
             self.remove_vehicle("AMX10RCR")

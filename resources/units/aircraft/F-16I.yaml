@@ -1,0 +1,12 @@
+description: F-16I Soufa (Storm) is a modified variant of the F-16D block 50 and 52 fighter and ground attack aircraft,
+with the avionics and weapons systems capability modified to meet the requirements of the Israeli Air Force.Israel
+ordered 50 F-16I aircraft in 2001 and signed the agreement for an optional additional 52 aircraft in September 2001.
+The Israeli Air Force has selected the F16I in a two-seat configuration only.
+introduced: 2004
+manufacturer: Lockheed Martin
+origin: ISRAEL
+price: 12
+role: Multirole Fighter
+gunfighter: true
+variants:
+  F-16I: {}

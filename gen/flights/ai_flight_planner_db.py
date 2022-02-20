@@ -117,6 +117,7 @@ from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
+from pydcs_extensions.f16idf.f16idf import F_16I
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
 # preferred over those lower in the list.
@@ -130,6 +131,7 @@ from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
 
 CAP_CAPABLE = [
     Su_57,
+    F_16I
     F_22A,
     F_15C,
     F_14B,
@@ -190,6 +192,7 @@ CAS_CAPABLE = [
     Su_25,
     F_15E,
     F_16C_50,
+    F_16I
     FA_18C_hornet,
     Tornado_GR4,
     Tornado_IDS,
@@ -258,6 +261,7 @@ CAS_CAPABLE = [
 SEAD_CAPABLE = [
     JF_17,
     F_16C_50,
+    F_16I
     FA_18C_hornet,
     Tornado_IDS,
     Su_25T,
@@ -319,6 +323,7 @@ STRIKE_CAPABLE = [
     AJS37,
     Tornado_GR4,
     F_16C_50,
+    F_16I
     FA_18C_hornet,
     AV8BNA,
     JF_17,
@@ -412,6 +417,7 @@ RUNWAY_ATTACK_CAPABLE = [
     F_15E,
     AJS37,
     F_16C_50,
+    F_16I
     FA_18C_hornet,
     AV8BNA,
     JF_17,
