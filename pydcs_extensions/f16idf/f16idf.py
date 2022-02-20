@@ -8,6 +8,7 @@ from dcs.weapons_data import Weapons
 from game.modsupport import planemod
 from pydcs_extensions.weapon_injector import inject_weapons
 
+
 class WeaponsF16I:
     AIM_9M_ = {
         "clsid": "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}",
@@ -95,13 +96,13 @@ class WeaponsF16I:
     }
     IDF_Mods_Project_F_16I_CFT_Fuel_Right_1500lb = {
         "clsid": "{IDF Mods Project F-16I CFT Fuel Right}",
-         "name": "IDF Mods Project F-16I CFT Fuel Right 1500lb",
-         "weight": 680.0827540681
+        "name": "IDF Mods Project F-16I CFT Fuel Right 1500lb",
+        "weight": 680.0827540681
     }
     IDF_Mods_Project_F_16I_CFT_Fuel_Right_1500lb__370Gal = {
-         "clsid": "{IDF Mods Project F-16I CFT Fuel Right + Fuel Tank 370}",
-         "name": "IDF Mods Project F-16I CFT Fuel Right 1500lb + 370Gal",
-         "weight": 1789.8845750252
+        "clsid": "{IDF Mods Project F-16I CFT Fuel Right + Fuel Tank 370}",
+        "name": "IDF Mods Project F-16I CFT Fuel Right 1500lb + 370Gal",
+        "weight": 1789.8845750252
     }
     LAU_105_1_AIM_9L_L = {
         "clsid": "LAU-105_1*AIM-9L_L",
@@ -110,7 +111,7 @@ class WeaponsF16I:
     }
     LAU_105_1_AIM_9L_R = {
         "clsid": "LAU-105_1*AIM-9L_R",
-                 "name": "LAU-105 Python-5 ",
+        "name": "LAU-105 Python-5 ",
         "weight": 115.5
     }
     LAU_105_1_AIM_9M_L = {
@@ -325,7 +326,7 @@ class WeaponsF16I:
     }
     Remove_Before_Flight_without_TGP_And_Lantirn = {
         "clsid": "{Remove Before Flight without TGP And Lantirn}",
-       "name": "Remove Before Flight without TGP And Lantirn",
+        "name": "Remove Before Flight without TGP And Lantirn",
         "weight": 0
     }
     Spice_2000_Cover_Pylon_4 = {
@@ -363,7 +364,7 @@ class F_16I(PlaneType):
     chaff_charge_size = 1
     flare_charge_size = 1
     eplrs = True
-    category = "Interceptor"  #{78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 305
 
     panel_radio = {
@@ -426,7 +427,6 @@ class F_16I(PlaneType):
     }
 
     class Properties:
-
         class LAU3ROF:
             id = "LAU3ROF"
 
@@ -452,7 +452,6 @@ class F_16I(PlaneType):
                 NVG = 2
 
     class Liveries:
-
         class Israel(Enum):
             IAF_101st_squadron = "IAF_101st_squadron"
             IAF_110th_Squadron = "IAF_110th_Squadron"
@@ -493,7 +492,8 @@ class F_16I(PlaneType):
         AIM_120C_5_AMRAAM___Active_Rdr_AAM = (2, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         CATM_9M = (2, Weapons.CATM_9M)
         Python_5_Training = (2, Weapons.Python_5_Training)
-#ERRR <CLEAN>
+
+    # ERRR <CLEAN>
 
     class Pylon3:
         AIM_9M_ = (3, Weapons.AIM_9M_)
@@ -513,7 +513,8 @@ class F_16I(PlaneType):
         Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (3, Weapons.Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD = (3, Weapons.TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD)
         TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (3, Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (3, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
+        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (
+        3, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         Mk_84___2000lb_GP_Bomb_LD = (3, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         GBU_10___2000lb_Laser_Guided_Bomb = (3, Weapons.GBU_10___2000lb_Laser_Guided_Bomb)
         GBU_12___500lb_Laser_Guided_Bomb = (3, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
@@ -528,20 +529,25 @@ class F_16I(PlaneType):
         LAU_88_with_3_x_AGM_65D___Maverick_D__IIR_ASM_ = (3, Weapons.LAU_88_with_3_x_AGM_65D___Maverick_D__IIR_ASM_)
         LAU_88_AGM_65H = (3, Weapons.LAU_88_AGM_65H)
         LAU_88_AGM_65H_3 = (3, Weapons.LAU_88_AGM_65H_3)
-        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (3, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
+        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (
+        3, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
         GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb = (3, Weapons.GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb)
-        GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb = (3, Weapons.GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb)
+        GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb = (
+        3, Weapons.GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb)
         GBU_38___JDAM__500lb_GPS_Guided_Bomb = (3, Weapons.GBU_38___JDAM__500lb_GPS_Guided_Bomb)
-        BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb = (3, Weapons.BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb)
+        BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb = (
+        3, Weapons.BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb)
         AGM_154A___JSOW_CEB__CBU_type_ = (3, Weapons.AGM_154A___JSOW_CEB__CBU_type_)
         BRU_57_with_2_x_AGM_154A___JSOW_CEB__CBU_type_ = (3, Weapons.BRU_57_with_2_x_AGM_154A___JSOW_CEB__CBU_type_)
         CBU_105___10_x_SFW__CBU_with_WCMD = (3, Weapons.CBU_105___10_x_SFW__CBU_with_WCMD)
-        BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD = (3, Weapons.BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD)
+        BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD = (
+        3, Weapons.BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD)
         MXU_648_TP = (3, Weapons.MXU_648_TP)
-#ERRR <CLEAN>
+        # ERRR <CLEAN>
         TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD = (3, Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD)
         TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (3, Weapons.TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (3, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
+        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (
+        3, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         TER_9A_with_2_x_GBU_12___500lb_Laser_Guided_Bomb = (3, Weapons.TER_9A_with_2_x_GBU_12___500lb_Laser_Guided_Bomb)
         TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb = (3, Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb)
         TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb = (3, Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb)
@@ -559,7 +565,8 @@ class F_16I(PlaneType):
         Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD = (4, Weapons.TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD)
         TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (4, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
+        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (
+        4, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         Mk_84___2000lb_GP_Bomb_LD = (4, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         GBU_10___2000lb_Laser_Guided_Bomb = (4, Weapons.GBU_10___2000lb_Laser_Guided_Bomb)
         GBU_12___500lb_Laser_Guided_Bomb = (4, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
@@ -570,18 +577,21 @@ class F_16I(PlaneType):
         TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD = (4, Weapons.TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD)
         Fuel_tank_370_gal = (4, Weapons.Fuel_tank_370_gal)
         MXU_648_TP = (4, Weapons.MXU_648_TP)
-        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (4, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
-#ERRR <CLEAN>
+        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (
+        4, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
+        # ERRR <CLEAN>
         TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD = (4, Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD)
         TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (4, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
+        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (
+        4, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb = (4, Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb)
         TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb = (4, Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb)
 
     class Pylon5:
         Fuel_tank_300_gal = (5, Weapons.Fuel_tank_300_gal)
         MXU_648_TP = (5, Weapons.MXU_648_TP)
-#ERRR <CLEAN>
+
+    # ERRR <CLEAN>
 
     class Pylon6:
         LAU3_WP156 = (6, Weapons.LAU3_WP156)
@@ -594,7 +604,8 @@ class F_16I(PlaneType):
         Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (6, Weapons.Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD = (6, Weapons.TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD)
         TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (6, Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (6, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
+        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (
+        6, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         Mk_84___2000lb_GP_Bomb_LD = (6, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         GBU_10___2000lb_Laser_Guided_Bomb = (6, Weapons.GBU_10___2000lb_Laser_Guided_Bomb)
         GBU_12___500lb_Laser_Guided_Bomb = (6, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
@@ -605,11 +616,14 @@ class F_16I(PlaneType):
         TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD = (6, Weapons.TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD)
         Fuel_tank_370_gal = (6, Weapons.Fuel_tank_370_gal)
         MXU_648_TP = (6, Weapons.MXU_648_TP)
-        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (6, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
-#ERRR <CLEAN>
+        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (
+        6, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
+        # ERRR <CLEAN>
         TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD_ = (6, Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD_)
-        TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_ = (6, Weapons.TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_)
-        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_ = (6, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_)
+        TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_ = (
+        6, Weapons.TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_)
+        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_ = (
+        6, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_)
         TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb_ = (6, Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb_)
         TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb_ = (6, Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb_)
 
@@ -631,7 +645,8 @@ class F_16I(PlaneType):
         Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (7, Weapons.Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD = (7, Weapons.TER_9A_with_3_x_Mk_82___500lb_GP_Bomb_LD)
         TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (7, Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (7, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
+        TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD = (
+        7, Weapons.TER_9A_with_3_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD)
         Mk_84___2000lb_GP_Bomb_LD = (7, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         GBU_10___2000lb_Laser_Guided_Bomb = (7, Weapons.GBU_10___2000lb_Laser_Guided_Bomb)
         GBU_12___500lb_Laser_Guided_Bomb = (7, Weapons.GBU_12___500lb_Laser_Guided_Bomb)
@@ -646,21 +661,28 @@ class F_16I(PlaneType):
         LAU_88_with_3_x_AGM_65D___Maverick_D__IIR_ASM_ = (7, Weapons.LAU_88_with_3_x_AGM_65D___Maverick_D__IIR_ASM_)
         LAU_88_AGM_65H = (7, Weapons.LAU_88_AGM_65H)
         LAU_88_AGM_65H_3 = (7, Weapons.LAU_88_AGM_65H_3)
-        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (7, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
+        AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (
+        7, Weapons.AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_)
         GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb = (7, Weapons.GBU_31_V_1_B___JDAM__2000lb_GPS_Guided_Bomb)
-        GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb = (7, Weapons.GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb)
+        GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb = (
+        7, Weapons.GBU_31_V_3_B___JDAM__2000lb_GPS_Guided_Penetrator_Bomb)
         GBU_38___JDAM__500lb_GPS_Guided_Bomb = (7, Weapons.GBU_38___JDAM__500lb_GPS_Guided_Bomb)
-        BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb = (7, Weapons.BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb)
+        BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb = (
+        7, Weapons.BRU_57_with_2_x_GBU_38___JDAM__500lb_GPS_Guided_Bomb)
         AGM_154A___JSOW_CEB__CBU_type_ = (7, Weapons.AGM_154A___JSOW_CEB__CBU_type_)
         BRU_57_with_2_x_AGM_154A___JSOW_CEB__CBU_type_ = (7, Weapons.BRU_57_with_2_x_AGM_154A___JSOW_CEB__CBU_type_)
         CBU_105___10_x_SFW__CBU_with_WCMD = (7, Weapons.CBU_105___10_x_SFW__CBU_with_WCMD)
-        BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD = (7, Weapons.BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD)
+        BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD = (
+        7, Weapons.BRU_57_with_2_x_CBU_105___10_x_SFW__CBU_with_WCMD)
         MXU_648_TP = (7, Weapons.MXU_648_TP)
-#ERRR <CLEAN>
+        # ERRR <CLEAN>
         TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD_ = (7, Weapons.TER_9A_with_2_x_Mk_82___500lb_GP_Bomb_LD_)
-        TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_ = (7, Weapons.TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_)
-        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_ = (7, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_)
-        TER_9A_with_2_x_GBU_12___500lb_Laser_Guided_Bomb_ = (7, Weapons.TER_9A_with_2_x_GBU_12___500lb_Laser_Guided_Bomb_)
+        TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_ = (
+        7, Weapons.TER_9A_with_2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD_)
+        TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_ = (
+        7, Weapons.TER_9A_with_2_x_Mk_82_AIR_Ballute___500lb_GP_Bomb_HD_)
+        TER_9A_with_2_x_GBU_12___500lb_Laser_Guided_Bomb_ = (
+        7, Weapons.TER_9A_with_2_x_GBU_12___500lb_Laser_Guided_Bomb_)
         TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb_ = (7, Weapons.TER_9A_with_2_x_CBU_87___202_x_CEM_Cluster_Bomb_)
         TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb_ = (7, Weapons.TER_9A_with_2_x_CBU_97___10_x_SFW_Cluster_Bomb_)
         LAU_88_with_2_x_AGM_65D___Maverick_D__IIR_ASM__ = (7, Weapons.LAU_88_with_2_x_AGM_65D___Maverick_D__IIR_ASM__)
@@ -674,7 +696,8 @@ class F_16I(PlaneType):
         AIM_120C_5_AMRAAM___Active_Rdr_AAM = (8, Weapons.AIM_120C_5_AMRAAM___Active_Rdr_AAM)
         CATM_9M = (8, Weapons.CATM_9M)
         Python_5_Training = (8, Weapons.Python_5_Training)
-#ERRR <CLEAN>
+
+    # ERRR <CLEAN>
 
     class Pylon9:
         AIM_9M_ = (9, Weapons.AIM_9M_)
