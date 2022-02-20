@@ -7,6 +7,26 @@ manufacturer: Lockheed Martin
 origin: ISRAEL
 price: 12
 role: Multirole Fighter
-gunfighter: true
+max_range: 350
+fuel:
+  # Parking 44 to RWY 06L at Anderson AFB.
+  taxi: 200
+  # AB takeoff to 350/0.75, reduce to MIL and maintain 350/0.75 to 25k ft.
+  climb_ppm: 28.33
+  # 0.85 mach for 100NM.
+  cruise_ppm: 12
+  # MIL for 100NM. Occasional AB use.
+  combat_ppm: 26
+  min_safe: 1000
 variants:
   F-16I: {}
+radios:
+  intra_flight: AN/ARC-222
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    namer: sufa
+    # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
+    # intra-flight communication to leave COM1 open for UHF inter-flight.
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1

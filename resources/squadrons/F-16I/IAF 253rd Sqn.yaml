@@ -1,0 +1,22 @@
+---
+name: 253rd Squadron
+nickname: First Jet
+female_pilot_percentage: 30
+country: Israel
+role: Strike Fighter
+aircraft: F-16I
+livery: IAF F-16I 253 Sqn
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
