@@ -4,7 +4,10 @@ nickname: First Jet
 female_pilot_percentage: 30
 country: Israel
 role: Strike Fighter
-aircraft: F-16I SUFA
+aircraft: F-16I
+bases:
+  carrier: false
+  shore: true
 livery: IAF F-16I 5061 Sqn - No CFT 
 mission_types:
   - BAI
