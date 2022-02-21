@@ -14,10 +14,11 @@ groups:
       unit_types:
         - RPC_5N62V
     - name: SA-5/S-200 Site 2
+      optional: true
       unit_count:
         - 1
-      unit_types:
-        - Ural-375
+      unit_classes:
+        - Logistics
     - name: SA-5/S-200 Site 3
       unit_count:
         - 6
