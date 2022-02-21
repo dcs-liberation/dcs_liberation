@@ -1,5 +1,5 @@
 {
-    "nameInUI": "Skynet IADS",
+    "nameInUI": "Skynet IADS (NOT WORKING FOR BUILDS > #3478)",
     "defaultValue": false,
     "specificOptions": [
         {
