@@ -14,8 +14,9 @@ groups:
       unit_types:
         - Roland ADS
     - name: Roland Site 2
+      optional: true
       unit_count:
         - 1
-      unit_types:
-        - M 818
+      unit_classes:
+        - Logistics
 layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

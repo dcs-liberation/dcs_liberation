@@ -14,8 +14,9 @@ groups:
       unit_types:
         - HQ-7_LN_SP
     - name: HQ-7 Site 2
+      optional: true
       unit_count:
         - 2
-      unit_types:
-        - Ural-375 ZU-23
+      unit_classes:
+        - Logistics
 layout_file: resources/layouts/anti_air/legacy_ground_templates.miz
