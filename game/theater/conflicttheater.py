@@ -41,7 +41,6 @@ class ReferencePoint:
 class ConflictTheater:
     terrain: Terrain
 
-    reference_points: Tuple[ReferencePoint, ReferencePoint]
     overview_image: str
     landmap: Optional[Landmap]
     """
@@ -293,10 +292,6 @@ class ConflictTheater:
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
     overview_image = "caumap.gif"
-    reference_points = (
-        ReferencePoint(caucasus.Gelendzhik.position, Point(176, 298)),
-        ReferencePoint(caucasus.Batumi.position, Point(1307, 1205)),
-    )
 
     landmap = load_landmap(Path("resources/caulandmap.p"))
     daytime_map = {
@@ -326,10 +321,6 @@ class CaucasusTheater(ConflictTheater):
 class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
     overview_image = "persiangulf.gif"
-    reference_points = (
-        ReferencePoint(persiangulf.Jiroft.position, Point(1692, 1343)),
-        ReferencePoint(persiangulf.Liwa_AFB.position, Point(358, 3238)),
-    )
     landmap = load_landmap(Path("resources/gulflandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
@@ -358,10 +349,6 @@ class PersianGulfTheater(ConflictTheater):
 class NevadaTheater(ConflictTheater):
     terrain = nevada.Nevada()
     overview_image = "nevada.gif"
-    reference_points = (
-        ReferencePoint(nevada.Mina.position, Point(252, 295)),
-        ReferencePoint(nevada.Laughlin.position, Point(844, 909)),
-    )
     landmap = load_landmap(Path("resources/nevlandmap.p"))
     daytime_map = {
         "dawn": (4, 6),
@@ -390,10 +377,6 @@ class NevadaTheater(ConflictTheater):
 class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
     overview_image = "normandy.gif"
-    reference_points = (
-        ReferencePoint(normandy.Needs_Oar_Point.position, Point(515, 329)),
-        ReferencePoint(normandy.Evreux.position, Point(2029, 1709)),
-    )
     landmap = load_landmap(Path("resources/normandylandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
@@ -422,10 +405,6 @@ class NormandyTheater(ConflictTheater):
 class TheChannelTheater(ConflictTheater):
     terrain = thechannel.TheChannel()
     overview_image = "thechannel.gif"
-    reference_points = (
-        ReferencePoint(thechannel.Abbeville_Drucat.position, Point(2005, 2390)),
-        ReferencePoint(thechannel.Detling.position, Point(706, 382)),
-    )
     landmap = load_landmap(Path("resources/channellandmap.p"))
     daytime_map = {
         "dawn": (6, 8),
@@ -454,10 +433,6 @@ class TheChannelTheater(ConflictTheater):
 class SyriaTheater(ConflictTheater):
     terrain = syria.Syria()
     overview_image = "syria.gif"
-    reference_points = (
-        ReferencePoint(syria.Eyn_Shemer.position, Point(564, 1289)),
-        ReferencePoint(syria.Tabqa.position, Point(1329, 491)),
-    )
     landmap = load_landmap(Path("resources/syrialandmap.p"))
     daytime_map = {
         "dawn": (6, 8),

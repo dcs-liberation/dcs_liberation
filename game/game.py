@@ -26,7 +26,6 @@ from .ato.flighttype import FlightType
 from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition
 from .db.gamedb import GameDb
-from .factions.faction import Faction
 from .infos.information import Information
 from .profiling import logged_duration
 from .settings import Settings
@@ -471,11 +470,6 @@ class Game:
                 # there are they won't be culled because of the enemy's mission.
                 continue
             zones.append(package.target.position)
-
-        # Else 0,0, since we need a default value
-        # (in this case this means the whole map is owned by the same player, so it is not an issue)
-        if len(zones) == 0:
-            zones.append(Point(0, 0))
 
         self.__culling_zones = zones
 

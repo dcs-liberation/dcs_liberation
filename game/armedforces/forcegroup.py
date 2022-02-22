@@ -4,10 +4,10 @@ import logging
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ClassVar, TYPE_CHECKING, Type, Any, Iterator, Optional
+from typing import Any, ClassVar, Iterator, Optional, TYPE_CHECKING, Type
 
 import yaml
-from dcs import Point
+from dcs.unittype import ShipType, StaticType, UnitType as DcsUnitType, VehicleType
 
 from game.data.groups import GroupTask
 from game.data.radar_db import UNITS_WITH_RADAR
@@ -15,13 +15,10 @@ from game.dcs.groundunittype import GroundUnitType
 from game.dcs.helpers import static_type_from_name
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
-from game.point_with_heading import PointWithHeading
-from game.layout.layout import TgoLayout, AntiAirLayout, TgoLayoutGroup
-from dcs.unittype import UnitType as DcsUnitType, VehicleType, ShipType, StaticType
-
-from game.theater.theatergroup import TheaterGroup
-
 from game.layout import LAYOUTS
+from game.layout.layout import AntiAirLayout, TgoLayout, TgoLayoutGroup
+from game.point_with_heading import PointWithHeading
+from game.theater.theatergroup import TheaterGroup
 
 if TYPE_CHECKING:
     from game import Game
@@ -218,10 +215,7 @@ class ForceGroup:
             unit.id = game.next_unit_id()
             unit.name = unit.unit_type.name if unit.unit_type else unit.type.name
             unit.position = PointWithHeading.from_point(
-                Point(
-                    ground_object.position.x + unit.position.x,
-                    ground_object.position.y + unit.position.y,
-                ),
+                ground_object.position + unit.position,
                 # Align heading to GroundObject defined by the campaign designer
                 unit.position.heading + ground_object.heading,
             )

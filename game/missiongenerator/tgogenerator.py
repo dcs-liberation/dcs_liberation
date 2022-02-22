@@ -10,19 +10,7 @@ from __future__ import annotations
 import logging
 import random
 from collections import defaultdict
-from typing import (
-    Any,
-    Dict,
-    Generic,
-    Iterator,
-    List,
-    Optional,
-    TYPE_CHECKING,
-    Type,
-    TypeVar,
-    List,
-    Any,
-)
+from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs import Mission, Point, unitgroup
 from dcs.action import DoScript, SceneryDestructionZone
@@ -37,9 +25,8 @@ from dcs.ships import (
     CV_1143_5,
     KUZNECOW,
     Stennis,
-    ship_map,
 )
-from dcs.statics import Fortification, fortification_map, warehouse_map
+from dcs.statics import Fortification
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
@@ -49,13 +36,11 @@ from dcs.task import (
 )
 from dcs.translation import String
 from dcs.triggers import Event, TriggerOnce, TriggerStart, TriggerZone
-from dcs.unit import InvisibleFARP, Ship, Unit, Vehicle
-from dcs.unitgroup import ShipGroup, StaticGroup, VehicleGroup, MovingGroup
-from dcs.unittype import ShipType, StaticType, VehicleType
+from dcs.unit import Unit
+from dcs.unitgroup import MovingGroup, ShipGroup, StaticGroup, VehicleGroup
+from dcs.unittype import ShipType, VehicleType
 from dcs.vehicles import vehicle_map
 
-from game.data.building_data import FORTIFICATION_UNITS, FORTIFICATION_UNITS_ID
-from game.dcs.helpers import static_type_from_name, unit_type_from_name
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
 from game.theater import ControlPoint, TheaterGroundObject, TheaterUnit
@@ -139,11 +124,7 @@ class GroundObjectGenerator:
                 vehicle_group.units[0].name = unit.unit_name
                 self.set_alarm_state(vehicle_group)
             else:
-                vehicle_unit = Vehicle(
-                    self.m.next_unit_id(),
-                    unit.unit_name,
-                    unit.type.id,
-                )
+                vehicle_unit = self.m.vehicle(unit.unit_name, unit.type)
                 vehicle_unit.player_can_drive = True
                 vehicle_unit.position = unit.position
                 vehicle_unit.heading = unit.position.heading.degrees
@@ -175,11 +156,7 @@ class GroundObjectGenerator:
                 ship_group.units[0].name = unit.unit_name
                 self.set_alarm_state(ship_group)
             else:
-                ship_unit = Ship(
-                    self.m.next_unit_id(),
-                    unit.unit_name,
-                    unit.type,
-                )
+                ship_unit = self.m.ship(unit.unit_name, unit.type)
                 if frequency:
                     ship_unit.set_frequency(frequency.hertz)
                 ship_unit.position = unit.position
@@ -569,9 +546,13 @@ class HelipadGenerator:
             self.helipads.append(sg)
             name_i = name + "_" + str(i)
             logging.info("Generating helipad static : " + name_i)
-            pad = InvisibleFARP(unit_id=self.m.next_unit_id(), name=name_i)
-            pad.position = Point(helipad.x, helipad.y)
-            pad.heading = helipad.heading.degrees
+            pad = self.m.farp(
+                country,
+                name_i,
+                helipad,
+                heading=helipad.heading.degrees,
+                farp_type="InvisibleFARP",
+            )
             sg.add_unit(pad)
             # Generate a FARP Ammo and Fuel stack for each pad
             self.m.static_group(

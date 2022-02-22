@@ -15,10 +15,6 @@ if TYPE_CHECKING:
 class Bullseye:
     position: Point
 
-    @classmethod
-    def from_pydcs(cls, bulls: Dict[str, float]) -> Bullseye:
-        return cls(Point(bulls["x"], bulls["y"]))
-
     def to_pydcs(self) -> Dict[str, float]:
         return {"x": self.position.x, "y": self.position.y}
 

@@ -1,3 +1,4 @@
+import copy
 import logging
 import random
 from typing import Any, Union
@@ -244,7 +245,7 @@ class FlightGroupSpawner:
             group.points[0].type = "TakeOffParkingHot"
 
         for i in range(self.flight.count - 1):
-            group.units[1 + i].position = Point(helipad.x, helipad.y)
+            group.units[1 + i].position = copy.copy(helipad.position)
             group.units[1 + i].heading = helipad.units[0].heading
             try:
                 self.helipads[cp].pop()
