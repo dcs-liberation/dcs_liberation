@@ -116,10 +116,6 @@ class FlightGroupConfigurator:
             laser_codes.append(self.laser_code_registry.get_next_laser_code())
         else:
             laser_codes.append(None)
-        if unit.unit_type is F_14B:
-            unit.set_property(F_14B.Properties.INSAlignmentStored.id, True)
-        elif unit.unit_type is F_14A_135_GR:
-            unit.set_property(F_14A_135_GR.Properties.INSAlignmentStored.id, True)
 
     def setup_radios(self) -> RadioFrequency:
         if self.flight.flight_type in {FlightType.AEWC, FlightType.REFUELING}:
