@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Iterator, Optional, TYPE_CHECKING, Type
+from typing import Any, Iterator, Optional, TYPE_CHECKING, Type, Dict
 
 import yaml
 from dcs.helicopters import helicopter_map
@@ -317,6 +317,23 @@ class AircraftType(UnitType[Type[FlyingType]]):
         yield from helicopter_map.values()
         yield from plane_map.values()
 
+    @staticmethod
+    def _set_props_overrides(
+        config: Dict[str, any], aircraft: Type[FlyingType], data_path: Path
+    ) -> None:
+        if aircraft.property_defaults is None:
+            logging.warning(
+                f"'{data_path.name}' attempted to set default prop that does not exist."
+            )
+        else:
+            for k in config:
+                if k in aircraft.property_defaults:
+                    aircraft.property_defaults[k] = config[k]
+                else:
+                    logging.warning(
+                        f"'{data_path.name}' attempted to set default prop '{k}' that does not exist"
+                    )
+
     @classmethod
     def _each_variant_of(cls, aircraft: Type[FlyingType]) -> Iterator[AircraftType]:
         data_path = Path("resources/units/aircraft") / f"{aircraft.id}.yaml"
@@ -367,10 +384,11 @@ class AircraftType(UnitType[Type[FlyingType]]):
             units = ImperialUnits()
         if units_data == "metric":
             units = MetricUnits()
+
         prop_overrides = data.get("default_overrides")
-        if prop_overrides and aircraft.property_defaults is not None:
-            for k in prop_overrides:
-                aircraft.property_defaults[k] = prop_overrides[k]
+        if prop_overrides is not None:
+            cls._set_props_overrides(prop_overrides, aircraft, data_path)
+
         for variant in data.get("variants", [aircraft.id]):
             yield AircraftType(
                 dcs_unit_type=aircraft,
