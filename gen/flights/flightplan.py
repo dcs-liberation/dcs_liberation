@@ -24,7 +24,6 @@ from typing import (
 )
 
 from dcs.mapping import Point
-from dcs.unit import Unit
 from shapely.geometry import Point as ShapelyPoint
 
 from game.ato.flighttype import FlightType
@@ -700,10 +699,12 @@ class StrikeFlightPlan(FormationFlightPlan):
     @property
     def target_area_waypoint(self) -> FlightWaypoint:
         return FlightWaypoint(
+            "TARGET AREA",
             FlightWaypointType.TARGET_GROUP_LOC,
             self.package.target.position.x,
             self.package.target.position.y,
             meters(0),
+            "RADIO",
         )
 
     @property
@@ -903,10 +904,12 @@ class RefuelingFlightPlan(PatrollingFlightPlan):
 class PackageRefuelingFlightPlan(RefuelingFlightPlan):
     def target_area_waypoint(self) -> FlightWaypoint:
         return FlightWaypoint(
+            "TARGET AREA",
             FlightWaypointType.TARGET_GROUP_LOC,
             self.package.target.position.x,
             self.package.target.position.y,
             meters(0),
+            "RADIO",
         )
 
     @property
@@ -921,13 +924,13 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
         # Cheat in a FlightWaypoint for the split point.
         split: Point = self.package.waypoints.split
         split_waypoint: FlightWaypoint = FlightWaypoint(
-            FlightWaypointType.SPLIT, split.x, split.y, altitude
+            "SPLIT", FlightWaypointType.SPLIT, split.x, split.y, altitude
         )
 
         # Cheat in a FlightWaypoint for the refuel point.
         refuel: Point = self.package.waypoints.refuel
         refuel_waypoint: FlightWaypoint = FlightWaypoint(
-            FlightWaypointType.REFUEL, refuel.x, refuel.y, altitude
+            "REFUEL", FlightWaypointType.REFUEL, refuel.x, refuel.y, altitude
         )
 
         delay_target_to_split: timedelta = self.travel_time_between_waypoints(

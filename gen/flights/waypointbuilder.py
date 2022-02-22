@@ -14,6 +14,8 @@ from typing import (
 
 from dcs.mapping import Point
 
+from game.ato.flightwaypoint import AltitudeReference, FlightWaypoint
+from game.ato.flightwaypointtype import FlightWaypointType
 from game.theater import (
     ControlPoint,
     MissionTarget,
@@ -22,8 +24,6 @@ from game.theater import (
     TheaterUnit,
 )
 from game.utils import Distance, meters, nautical_miles
-from game.ato.flightwaypointtype import FlightWaypointType
-from game.ato.flightwaypoint import FlightWaypoint
 
 if TYPE_CHECKING:
     from game.ato.flight import Flight
@@ -68,25 +68,26 @@ class WaypointBuilder:
         """
         position = departure.position
         if isinstance(departure, OffMapSpawn):
-            waypoint = FlightWaypoint(
+            return FlightWaypoint(
+                "NAV",
                 FlightWaypointType.NAV,
                 position.x,
                 position.y,
                 meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+                description="Enter theater",
+                pretty_name="Enter theater",
             )
-            waypoint.name = "NAV"
-            waypoint.alt_type = "BARO"
-            waypoint.description = "Enter theater"
-            waypoint.pretty_name = "Enter theater"
-        else:
-            waypoint = FlightWaypoint(
-                FlightWaypointType.TAKEOFF, position.x, position.y, meters(0)
-            )
-            waypoint.name = "TAKEOFF"
-            waypoint.alt_type = "RADIO"
-            waypoint.description = "Takeoff"
-            waypoint.pretty_name = "Takeoff"
-        return waypoint
+
+        return FlightWaypoint(
+            "TAKEOFF",
+            FlightWaypointType.TAKEOFF,
+            position.x,
+            position.y,
+            meters(0),
+            alt_type="RADIO",
+            description="Takeoff",
+            pretty_name="Takeoff",
+        )
 
     def land(self, arrival: ControlPoint) -> FlightWaypoint:
         """Create descent waypoint for the given arrival airfield or carrier.
@@ -96,29 +97,27 @@ class WaypointBuilder:
         """
         position = arrival.position
         if isinstance(arrival, OffMapSpawn):
-            waypoint = FlightWaypoint(
+            return FlightWaypoint(
+                "NAV",
                 FlightWaypointType.NAV,
                 position.x,
                 position.y,
                 meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+                description="Exit theater",
+                pretty_name="Exit theater",
             )
-            waypoint.name = "NAV"
-            waypoint.alt_type = "BARO"
-            waypoint.description = "Exit theater"
-            waypoint.pretty_name = "Exit theater"
-        else:
-            waypoint = FlightWaypoint(
-                FlightWaypointType.LANDING_POINT,
-                position.x,
-                position.y,
-                meters(0),
-                control_point=arrival,
-            )
-            waypoint.name = "LANDING"
-            waypoint.alt_type = "RADIO"
-            waypoint.description = "Land"
-            waypoint.pretty_name = "Land"
-        return waypoint
+
+        return FlightWaypoint(
+            "LANDING",
+            FlightWaypointType.LANDING_POINT,
+            position.x,
+            position.y,
+            meters(0),
+            alt_type="RADIO",
+            description="Land",
+            pretty_name="Land",
+            control_point=arrival,
+        )
 
     def divert(self, divert: Optional[ControlPoint]) -> Optional[FlightWaypoint]:
         """Create divert waypoint for the given arrival airfield or carrier.
@@ -130,6 +129,7 @@ class WaypointBuilder:
             return None
 
         position = divert.position
+        altitude_type: AltitudeReference
         if isinstance(divert, OffMapSpawn):
             if self.is_helo:
                 altitude = meters(500)
@@ -140,88 +140,94 @@ class WaypointBuilder:
             altitude = meters(0)
             altitude_type = "RADIO"
 
-        waypoint = FlightWaypoint(
+        return FlightWaypoint(
+            "DIVERT",
             FlightWaypointType.DIVERT,
             position.x,
             position.y,
             altitude,
+            alt_type=altitude_type,
+            description="Divert",
+            pretty_name="Divert",
+            only_for_player=True,
             control_point=divert,
         )
-        waypoint.alt_type = altitude_type
-        waypoint.name = "DIVERT"
-        waypoint.description = "Divert"
-        waypoint.pretty_name = "Divert"
-        waypoint.only_for_player = True
-        return waypoint
 
     def bullseye(self) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        return FlightWaypoint(
+            "BULLSEYE",
             FlightWaypointType.BULLSEYE,
             self._bullseye.position.x,
             self._bullseye.position.y,
             meters(0),
+            description="Bullseye",
+            pretty_name="Bullseye",
+            only_for_player=True,
         )
-        waypoint.pretty_name = "Bullseye"
-        waypoint.description = "Bullseye"
-        waypoint.name = "BULLSEYE"
-        waypoint.only_for_player = True
-        return waypoint
 
     def hold(self, position: Point) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "HOLD",
             FlightWaypointType.LOITER,
             position.x,
             position.y,
             meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+            alt_type,
+            description="Wait until push time",
+            pretty_name="Hold",
         )
-        if self.is_helo:
-            waypoint.alt_type = "RADIO"
-        waypoint.pretty_name = "Hold"
-        waypoint.description = "Wait until push time"
-        waypoint.name = "HOLD"
-        return waypoint
 
     def join(self, position: Point) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "JOIN",
             FlightWaypointType.JOIN,
             position.x,
             position.y,
             meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            alt_type,
+            description="Rendezvous with package",
+            pretty_name="Join",
         )
-        if self.is_helo:
-            waypoint.alt_type = "RADIO"
-        waypoint.pretty_name = "Join"
-        waypoint.description = "Rendezvous with package"
-        waypoint.name = "JOIN"
-        return waypoint
 
     def refuel(self, position: Point) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "REFUEL",
             FlightWaypointType.REFUEL,
             position.x,
             position.y,
             meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            alt_type,
+            description="Refuel from tanker",
+            pretty_name="Refuel",
         )
-        if self.is_helo:
-            waypoint.alt_type = "RADIO"
-        waypoint.pretty_name = "Refuel"
-        waypoint.description = "Refuel from tanker"
-        waypoint.name = "REFUEL"
-        return waypoint
 
     def split(self, position: Point) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "SPLIT",
             FlightWaypointType.SPLIT,
             position.x,
             position.y,
             meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            alt_type,
+            description="Depart from package",
+            pretty_name="Split",
         )
-        if self.is_helo:
-            waypoint.alt_type = "RADIO"
-        waypoint.pretty_name = "Split"
-        waypoint.description = "Depart from package"
-        waypoint.name = "SPLIT"
-        return waypoint
 
     def ingress(
         self,
@@ -229,33 +235,37 @@ class WaypointBuilder:
         position: Point,
         objective: MissionTarget,
     ) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "INGRESS",
             ingress_type,
             position.x,
             position.y,
             meters(60) if self.is_helo else self.doctrine.ingress_altitude,
+            alt_type,
+            description=f"INGRESS on {objective.name}",
+            pretty_name=f"INGRESS on {objective.name}",
+            targets=objective.strike_targets,
         )
-        if self.is_helo:
-            waypoint.alt_type = "RADIO"
-        waypoint.pretty_name = "INGRESS on " + objective.name
-        waypoint.description = "INGRESS on " + objective.name
-        waypoint.name = "INGRESS"
-        waypoint.targets = objective.strike_targets
-        return waypoint
 
     def egress(self, position: Point, target: MissionTarget) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "EGRESS",
             FlightWaypointType.EGRESS,
             position.x,
             position.y,
             meters(60) if self.is_helo else self.doctrine.ingress_altitude,
+            alt_type,
+            description=f"EGRESS from {target.name}",
+            pretty_name=f"EGRESS from {target.name}",
         )
-        if self.is_helo:
-            waypoint.alt_type = "RADIO"
-        waypoint.pretty_name = "EGRESS from " + target.name
-        waypoint.description = "EGRESS from " + target.name
-        waypoint.name = "EGRESS"
-        return waypoint
 
     def bai_group(self, target: StrikeTarget) -> FlightWaypoint:
         return self._target_point(target, f"ATTACK {target.name}")
@@ -271,21 +281,20 @@ class WaypointBuilder:
 
     @staticmethod
     def _target_point(target: StrikeTarget, description: str) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        return FlightWaypoint(
+            target.name,
             FlightWaypointType.TARGET_POINT,
             target.target.position.x,
             target.target.position.y,
             meters(0),
+            "RADIO",
+            description=description,
+            pretty_name=description,
+            # The target waypoints are only for the player's benefit. AI tasks for
+            # the target are set on the ingress point so that they begin their attack
+            # *before* reaching the target.
+            only_for_player=True,
         )
-        waypoint.description = description
-        waypoint.pretty_name = description
-        waypoint.name = target.name
-        waypoint.alt_type = "RADIO"
-        # The target waypoints are only for the player's benefit. AI tasks for
-        # the target are set on the ingress point so they begin their attack
-        # *before* reaching the target.
-        waypoint.only_for_player = True
-        return waypoint
 
     def strike_area(self, target: MissionTarget) -> FlightWaypoint:
         return self._target_area(f"STRIKE {target.name}", target)
@@ -304,15 +313,15 @@ class WaypointBuilder:
         name: str, location: MissionTarget, flyover: bool = False
     ) -> FlightWaypoint:
         waypoint = FlightWaypoint(
+            name,
             FlightWaypointType.TARGET_GROUP_LOC,
             location.position.x,
             location.position.y,
             meters(0),
+            "RADIO",
+            description=name,
+            pretty_name=name,
         )
-        waypoint.description = name
-        waypoint.pretty_name = name
-        waypoint.name = name
-        waypoint.alt_type = "RADIO"
 
         # Most target waypoints are only for the player's benefit. AI tasks for
         # the target are set on the ingress point so they begin their attack
@@ -328,17 +337,16 @@ class WaypointBuilder:
         return waypoint
 
     def cas(self, position: Point) -> FlightWaypoint:
-        waypoint = FlightWaypoint(
+        return FlightWaypoint(
+            "CAS",
             FlightWaypointType.CAS,
             position.x,
             position.y,
             meters(60) if self.is_helo else meters(1000),
+            "RADIO",
+            description="Provide CAS",
+            pretty_name="CAS",
         )
-        waypoint.alt_type = "RADIO"
-        waypoint.description = "Provide CAS"
-        waypoint.name = "CAS"
-        waypoint.pretty_name = "CAS"
-        return waypoint
 
     @staticmethod
     def race_track_start(position: Point, altitude: Distance) -> FlightWaypoint:
@@ -348,13 +356,15 @@ class WaypointBuilder:
             position: Position of the waypoint.
             altitude: Altitude of the racetrack.
         """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.PATROL_TRACK, position.x, position.y, altitude
+        return FlightWaypoint(
+            "RACETRACK START",
+            FlightWaypointType.PATROL_TRACK,
+            position.x,
+            position.y,
+            altitude,
+            description="Orbit between this point and the next point",
+            pretty_name="Race-track start",
         )
-        waypoint.name = "RACETRACK START"
-        waypoint.description = "Orbit between this point and the next point"
-        waypoint.pretty_name = "Race-track start"
-        return waypoint
 
     @staticmethod
     def race_track_end(position: Point, altitude: Distance) -> FlightWaypoint:
@@ -364,13 +374,15 @@ class WaypointBuilder:
             position: Position of the waypoint.
             altitude: Altitude of the racetrack.
         """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.PATROL, position.x, position.y, altitude
+        return FlightWaypoint(
+            "RACETRACK END",
+            FlightWaypointType.PATROL,
+            position.x,
+            position.y,
+            altitude,
+            description="Orbit between this point and the previous point",
+            pretty_name="Race-track end",
         )
-        waypoint.name = "RACETRACK END"
-        waypoint.description = "Orbit between this point and the previous point"
-        waypoint.pretty_name = "Race-track end"
-        return waypoint
 
     def race_track(
         self, start: Point, end: Point, altitude: Distance
@@ -396,11 +408,15 @@ class WaypointBuilder:
             altitude: Altitude of the racetrack.
         """
 
-        waypoint = FlightWaypoint(FlightWaypointType.LOITER, start.x, start.y, altitude)
-        waypoint.name = "ORBIT"
-        waypoint.description = "Anchor and hold at this point"
-        waypoint.pretty_name = "Orbit"
-        return waypoint
+        return FlightWaypoint(
+            "ORBIT",
+            FlightWaypointType.LOITER,
+            start.x,
+            start.y,
+            altitude,
+            description="Anchor and hold at this point",
+            pretty_name="Orbit",
+        )
 
     @staticmethod
     def sweep_start(position: Point, altitude: Distance) -> FlightWaypoint:
@@ -410,13 +426,15 @@ class WaypointBuilder:
             position: Position of the waypoint.
             altitude: Altitude of the sweep in meters.
         """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.INGRESS_SWEEP, position.x, position.y, altitude
+        return FlightWaypoint(
+            "SWEEP START",
+            FlightWaypointType.INGRESS_SWEEP,
+            position.x,
+            position.y,
+            altitude,
+            description="Proceed to the target and engage enemy aircraft",
+            pretty_name="Sweep start",
         )
-        waypoint.name = "SWEEP START"
-        waypoint.description = "Proceed to the target and engage enemy aircraft"
-        waypoint.pretty_name = "Sweep start"
-        return waypoint
 
     @staticmethod
     def sweep_end(position: Point, altitude: Distance) -> FlightWaypoint:
@@ -426,13 +444,15 @@ class WaypointBuilder:
             position: Position of the waypoint.
             altitude: Altitude of the sweep in meters.
         """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.EGRESS, position.x, position.y, altitude
+        return FlightWaypoint(
+            "SWEEP END",
+            FlightWaypointType.EGRESS,
+            position.x,
+            position.y,
+            altitude,
+            description="End of sweep",
+            pretty_name="Sweep end",
         )
-        waypoint.name = "SWEEP END"
-        waypoint.description = "End of sweep"
-        waypoint.pretty_name = "Sweep end"
-        return waypoint
 
     def sweep(
         self, start: Point, end: Point, altitude: Distance
@@ -457,6 +477,10 @@ class WaypointBuilder:
             ingress: The package ingress point.
             target: The mission target.
         """
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
         # This would preferably be no points at all, and instead the Escort task
         # would begin on the join point and end on the split point, however the
         # escort task does not appear to work properly (see the longer
@@ -464,18 +488,16 @@ class WaypointBuilder:
         # the escort flights a flight plan including the ingress point and target area.
         ingress_wp = self.ingress(FlightWaypointType.INGRESS_ESCORT, ingress, target)
 
-        waypoint = FlightWaypoint(
+        return ingress_wp, FlightWaypoint(
+            "TARGET",
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position.x,
             target.position.y,
             meters(60) if self.is_helo else self.doctrine.ingress_altitude,
+            alt_type,
+            description="Escort the package",
+            pretty_name="Target area",
         )
-        if self.is_helo:
-            waypoint.alt_type = "RADIO"
-        waypoint.name = "TARGET"
-        waypoint.description = "Escort the package"
-        waypoint.pretty_name = "Target area"
-        return ingress_wp, waypoint
 
     @staticmethod
     def pickup(control_point: ControlPoint) -> FlightWaypoint:
@@ -484,17 +506,16 @@ class WaypointBuilder:
         Args:
             control_point: Pick up location.
         """
-        waypoint = FlightWaypoint(
+        return FlightWaypoint(
+            "PICKUP",
             FlightWaypointType.PICKUP,
             control_point.position.x,
             control_point.position.y,
             meters(0),
+            "RADIO",
+            description=f"Pick up cargo from {control_point}",
+            pretty_name="Pick up location",
         )
-        waypoint.alt_type = "RADIO"
-        waypoint.name = "PICKUP"
-        waypoint.description = f"Pick up cargo from {control_point}"
-        waypoint.pretty_name = "Pick up location"
-        return waypoint
 
     @staticmethod
     def drop_off(control_point: ControlPoint) -> FlightWaypoint:
@@ -503,18 +524,17 @@ class WaypointBuilder:
         Args:
             control_point: Drop-off location.
         """
-        waypoint = FlightWaypoint(
+        return FlightWaypoint(
+            "DROP OFF",
             FlightWaypointType.PICKUP,
             control_point.position.x,
             control_point.position.y,
             meters(0),
+            "RADIO",
+            description=f"Drop off cargo at {control_point}",
+            pretty_name="Drop off location",
             control_point=control_point,
         )
-        waypoint.alt_type = "RADIO"
-        waypoint.name = "DROP OFF"
-        waypoint.description = f"Drop off cargo at {control_point}"
-        waypoint.pretty_name = "Drop off location"
-        return waypoint
 
     @staticmethod
     def nav(
@@ -527,15 +547,20 @@ class WaypointBuilder:
             altitude: Altitude of the waypoint.
             altitude_is_agl: True for altitude is AGL. False if altitude is MSL.
         """
-        waypoint = FlightWaypoint(
-            FlightWaypointType.NAV, position.x, position.y, altitude
-        )
+        alt_type: AltitudeReference = "BARO"
         if altitude_is_agl:
-            waypoint.alt_type = "RADIO"
-        waypoint.name = "NAV"
-        waypoint.description = "NAV"
-        waypoint.pretty_name = "Nav"
-        return waypoint
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "NAV",
+            FlightWaypointType.NAV,
+            position.x,
+            position.y,
+            altitude,
+            alt_type,
+            description="NAV",
+            pretty_name="Nav",
+        )
 
     def nav_path(
         self, a: Point, b: Point, altitude: Distance, altitude_is_agl: bool = False

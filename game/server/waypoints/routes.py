@@ -4,31 +4,36 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from game import Game
-from game.ato.flightwaypoint import BaseFlightWaypoint, FlightWaypoint
+from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.server import GameContext
+from game.server.waypoints.models import FlightWaypointJs
 from game.theater import LatLon
 from game.utils import meters
 
 router: APIRouter = APIRouter(prefix="/waypoints")
 
 
-@router.get("/{flight_id}", response_model=list[BaseFlightWaypoint])
+@router.get("/{flight_id}", response_model=list[FlightWaypointJs])
 def all_waypoints_for_flight(
     flight_id: UUID, game: Game = Depends(GameContext.get)
-) -> list[FlightWaypoint]:
+) -> list[FlightWaypointJs]:
     flight = game.db.flights.get(flight_id)
-    departure = FlightWaypoint(
-        FlightWaypointType.TAKEOFF,
-        flight.departure.position.x,
-        flight.departure.position.y,
-        meters(0),
+    departure = FlightWaypointJs.for_waypoint(
+        FlightWaypoint(
+            "TAKEOFF",
+            FlightWaypointType.TAKEOFF,
+            flight.departure.position.x,
+            flight.departure.position.y,
+            meters(0),
+            "RADIO",
+        ),
+        game.theater,
     )
-    departure.alt_type = "RADIO"
-    points = [departure] + flight.flight_plan.waypoints
-    for point in points:
-        point.update_latlng(game.theater)
-    return points
+    return [departure] + [
+        FlightWaypointJs.for_waypoint(w, game.theater)
+        for w in flight.flight_plan.waypoints
+    ]
 
 
 @router.post("/{flight_id}/{waypoint_idx}/position")
@@ -43,9 +48,6 @@ def set_position(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     waypoint = flight.flight_plan.waypoints[waypoint_idx - 1]
-    if not waypoint.is_movable:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-
     point = game.theater.ll_to_point(position)
     waypoint.x = point.x
     waypoint.y = point.y

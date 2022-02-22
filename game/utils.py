@@ -5,10 +5,10 @@ import math
 import random
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
+from dataclasses import dataclass
 from typing import TypeVar, Union
 
 from dcs import Point
-from pydantic.dataclasses import dataclass
 from shapely.geometry import Point as ShapelyPoint
 
 METERS_TO_FEET = 3.28084

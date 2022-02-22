@@ -768,7 +768,7 @@ class Waypoint {
   }
 
   position() {
-    return this.waypoint.latlng;
+    return this.waypoint.position;
   }
 
   shouldMark() {
@@ -783,10 +783,8 @@ class Waypoint {
   }
 
   async description(dragging) {
-    const alt = Math.floor(
-      this.waypoint.alt.distance_in_meters * METERS_TO_FEET
-    );
-    const altRef = this.waypoint.alt_type == "BARO" ? "MSL" : "AGL";
+    const alt = this.waypoint.altitude_ft;
+    const altRef = this.waypoint.altitude_reference;
     return (
       `${this.number} ${this.waypoint.name}<br />` +
       `${alt} ft ${altRef}<br />` +
