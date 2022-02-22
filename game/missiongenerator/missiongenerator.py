@@ -129,7 +129,7 @@ class MissionGenerator:
             "red", bullseye=self.game.red.bullseye.to_pydcs()
         )
         self.mission.coalition["neutrals"] = Coalition(
-            "neutrals", bullseye=Bullseye(Point(0, 0)).to_pydcs()
+            "neutrals", bullseye=Bullseye(Point(0, 0, self.mission.terrain)).to_pydcs()
         )
 
         p_country = self.game.blue.country_name
@@ -295,7 +295,7 @@ class MissionGenerator:
                 logging.warning(f"Destroyed unit has no type: {d}")
                 continue
 
-            pos = Point(cast(float, d["x"]), cast(float, d["z"]))
+            pos = Point(cast(float, d["x"]), cast(float, d["z"]), self.mission.terrain)
             if utype is not None and not self.game.position_culled(pos):
                 self.mission.static_group(
                     country=self.mission.country(self.game.blue.country_name),

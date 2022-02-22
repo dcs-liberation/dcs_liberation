@@ -1,4 +1,5 @@
-from dcs import Point
+import copy
+
 from dcs.planes import B_17G, B_52H, Tu_22M3
 from dcs.point import MovingPoint
 from dcs.task import Bombing, OptFormation, WeaponType
@@ -20,12 +21,10 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
         if not targets:
             return
 
-        center = Point(0, 0)
-        for target in targets:
-            center.x += target.position.x
-            center.y += target.position.y
-        center.x /= len(targets)
-        center.y /= len(targets)
+        center = copy.copy(targets[0].position)
+        for target in targets[1:]:
+            center += target.position
+        center /= len(targets)
         bombing = Bombing(center, weapon_type=WeaponType.Bombs)
         bombing.params["expend"] = "All"
         bombing.params["attackQtyLimit"] = False

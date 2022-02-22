@@ -22,8 +22,7 @@ AltitudeReference = Literal["BARO", "RADIO"]
 class FlightWaypoint:
     name: str
     waypoint_type: FlightWaypointType
-    x: float
-    y: float
+    position: Point
     alt: Distance = meters(0)
     alt_type: AltitudeReference = "BARO"
     control_point: ControlPoint | None = None
@@ -50,8 +49,12 @@ class FlightWaypoint:
     departure_time: timedelta | None = None
 
     @property
-    def position(self) -> Point:
-        return Point(self.x, self.y)
+    def x(self) -> float:
+        return self.position.x
+
+    @property
+    def y(self) -> float:
+        return self.position.y
 
     def __hash__(self) -> int:
         return hash(id(self))

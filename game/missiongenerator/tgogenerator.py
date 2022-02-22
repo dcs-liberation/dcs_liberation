@@ -537,8 +537,7 @@ class HelipadGenerator:
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
         name = self.cp.name + "_helipad"
         sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
-        sp = StaticPoint()
-        sp.position = self.cp.position
+        sp = StaticPoint(self.cp.position)
         sg.add_point(sp)
 
         for i, helipad in enumerate(self.cp.helipads):

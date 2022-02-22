@@ -3,10 +3,9 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import Any, Iterable, Union
 
-from dcs import Mission, Point
+from dcs import Mission
 from dcs.planes import AJS37, F_14B, JF_17
 from dcs.point import MovingPoint, PointAction
-from dcs.unit import Unit
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightWaypoint
@@ -41,7 +40,7 @@ class PydcsWaypointBuilder:
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
-            Point(self.waypoint.x, self.waypoint.y),
+            self.waypoint.position,
             self.waypoint.alt.meters,
             name=self.waypoint.name,
         )

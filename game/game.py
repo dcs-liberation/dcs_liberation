@@ -143,6 +143,9 @@ class Game:
         yield self.blue
         yield self.red
 
+    def point_in_world(self, x: float, y: float) -> Point:
+        return Point(x, y, self.theater.terrain)
+
     def ato_for(self, player: bool) -> AirTaskingOrder:
         return self.coalition_for(player).ato
 
@@ -179,9 +182,6 @@ class Game:
 
     def country_for(self, player: bool) -> str:
         return self.coalition_for(player).country_name
-
-    def bullseye_for(self, player: bool) -> Bullseye:
-        return self.coalition_for(player).bullseye
 
     @property
     def neutral_country(self) -> Type[Country]:
@@ -447,10 +447,7 @@ class Game:
                     d = cp.position.distance_to_point(cp2.position)
                     if d < min_distance:
                         min_distance = d
-                        cpoint = Point(
-                            (cp.position.x + cp2.position.x) / 2,
-                            (cp.position.y + cp2.position.y) / 2,
-                        )
+                        cpoint = cp.position.midpoint(cp2.position)
                         zones.append(cp.position)
                         zones.append(cp2.position)
                         break
@@ -473,7 +470,9 @@ class Game:
         self.__culling_zones = zones
 
     def add_destroyed_units(self, data: dict[str, Union[float, str]]) -> None:
-        pos = Point(cast(float, data["x"]), cast(float, data["z"]))
+        pos = Point(
+            cast(float, data["x"]), cast(float, data["z"]), self.theater.terrain
+        )
         if self.theater.is_on_land(pos):
             self.__destroyed_units.append(data)
 

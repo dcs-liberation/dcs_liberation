@@ -46,9 +46,8 @@ class NavPoint:
     point: ShapelyPoint
     poly: NavMeshPoly
 
-    @property
-    def world_point(self) -> Point:
-        return Point(self.point.x, self.point.y)
+    def world_point(self, theater: ConflictTheater) -> Point:
+        return Point(self.point.x, self.point.y, theater.terrain)
 
     def __hash__(self) -> int:
         return hash(self.poly.ident)
@@ -90,8 +89,9 @@ class NavFrontier:
 
 
 class NavMesh:
-    def __init__(self, polys: List[NavMeshPoly]) -> None:
+    def __init__(self, polys: List[NavMeshPoly], theater: ConflictTheater) -> None:
         self.polys = polys
+        self.theater = theater
 
     def localize(self, point: Point) -> Optional[NavMeshPoly]:
         # This is a naive implementation but it's O(n). Runs at about 10k
@@ -117,8 +117,8 @@ class NavMesh:
     def travel_heuristic(self, a: NavPoint, b: NavPoint) -> float:
         return self.travel_cost(a, b)
 
-    @staticmethod
     def reconstruct_path(
+        self,
         came_from: Dict[NavPoint, Optional[NavPoint]],
         origin: NavPoint,
         destination: NavPoint,
@@ -126,14 +126,14 @@ class NavMesh:
         current = destination
         path: List[Point] = []
         while current != origin:
-            path.append(current.world_point)
+            path.append(current.world_point(self.theater))
             previous = came_from[current]
             if previous is None:
                 raise NavMeshError(
                     f"Could not reconstruct path to {destination} from {origin}"
                 )
             current = previous
-        path.append(origin.world_point)
+        path.append(origin.world_point(self.theater))
         path.reverse()
         return path
 
@@ -270,4 +270,4 @@ class NavMesh:
         # Triangulate the safe-region to build the navmesh.
         navpolys = cls.create_navpolys(triangulate(bounds), threat_zones)
         cls.associate_neighbors(navpolys)
-        return cls(navpolys)
+        return NavMesh(navpolys, theater)

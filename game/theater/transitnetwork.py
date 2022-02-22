@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Dict, Iterator, List, Optional, Set, Tuple
 
-from game.theater import ConflictTheater
-from game.theater.controlpoint import ControlPoint
+from .conflicttheater import ConflictTheater
+from .controlpoint import ControlPoint
 
 
 class NoPathError(RuntimeError):

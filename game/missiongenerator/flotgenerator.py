@@ -9,7 +9,7 @@ from dcs import Mission
 from dcs.action import AITaskPush
 from dcs.condition import GroupLifeLess, Or, TimeAfter, UnitDamaged
 from dcs.country import Country
-from dcs.mapping import Point
+from dcs.mapping import Point, Vector2
 from dcs.point import PointAction
 from dcs.task import (
     AFAC,
@@ -372,7 +372,7 @@ class FlotGenerator:
             # Then move forward OR Attack enemy base if it is not too far away
             target = self.find_nearest_enemy_group(dcs_group, enemy_groups)
             if target is not None:
-                rand_offset = Point(
+                rand_offset = Vector2(
                     random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK),
                     random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK),
                 )
@@ -419,7 +419,7 @@ class FlotGenerator:
             # In elimination mode, the units focus on destroying as much enemy groups as possible
             targets = self.find_n_nearest_enemy_groups(dcs_group, enemy_groups, 3)
             for i, target in enumerate(targets, start=1):
-                rand_offset = Point(
+                rand_offset = Vector2(
                     random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK),
                     random.randint(-RANDOM_OFFSET_ATTACK, RANDOM_OFFSET_ATTACK),
                 )

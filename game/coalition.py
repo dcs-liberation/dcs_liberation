@@ -1,31 +1,30 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
-from dcs import Point
 from faker import Faker
 
-from game.campaignloader import CampaignAirWingConfig
+from game.armedforces.armedforces import ArmedForces
+from game.ato.airtaaskingorder import AirTaskingOrder
 from game.campaignloader.defaultsquadronassigner import DefaultSquadronAssigner
 from game.commander import TheaterCommander
 from game.commander.missionscheduler import MissionScheduler
-from game.armedforces.armedforces import ArmedForces
 from game.income import Income
 from game.navmesh import NavMesh
 from game.orderedset import OrderedSet
-from game.profiling import logged_duration, MultiEventTracer
+from game.procurement import AircraftProcurementRequest, ProcurementAi
+from game.profiling import MultiEventTracer, logged_duration
 from game.squadrons import AirWing
+from game.theater.bullseye import Bullseye
+from game.theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from game.threatzones import ThreatZones
 from game.transfers import PendingTransfers
 
 if TYPE_CHECKING:
     from game import Game
-from game.data.doctrine import Doctrine
-from game.factions.faction import Faction
-from game.procurement import AircraftProcurementRequest, ProcurementAi
-from game.theater.bullseye import Bullseye
-from game.theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
-from game.ato.airtaaskingorder import AirTaskingOrder
+    from game.campaignloader import CampaignAirWingConfig
+    from game.data.doctrine import Doctrine
+    from game.factions.faction import Faction
 
 
 class Coalition:
@@ -39,7 +38,7 @@ class Coalition:
         self.ato = AirTaskingOrder()
         self.transit_network = TransitNetwork()
         self.procurement_requests: OrderedSet[AircraftProcurementRequest] = OrderedSet()
-        self.bullseye = Bullseye(Point(0, 0))
+        self.bullseye = Bullseye(self.game.point_in_world(0, 0))
         self.faker = Faker(self.faction.locales)
         self.air_wing = AirWing(player, game, self.faction)
         self.armed_forces = ArmedForces(self.faction)

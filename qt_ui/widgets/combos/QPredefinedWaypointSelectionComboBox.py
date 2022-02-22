@@ -1,14 +1,14 @@
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
-from game.theater.controlpoint import ControlPointType
-from game.theater.theatergroundobject import IadsGroundObject, BuildingGroundObject
-from game.utils import Distance
+from game.ato.flightwaypoint import FlightWaypoint
+from game.ato.flightwaypointtype import FlightWaypointType
 from game.missiongenerator.frontlineconflictdescription import (
     FrontLineConflictDescription,
 )
-from game.ato.flightwaypointtype import FlightWaypointType
-from game.ato.flightwaypoint import FlightWaypoint
+from game.theater.controlpoint import ControlPointType
+from game.theater.theatergroundobject import BuildingGroundObject, IadsGroundObject
+from game.utils import Distance
 from qt_ui.widgets.combos.QFilteredComboBox import QFilteredComboBox
 
 
@@ -72,10 +72,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                     front_line, self.game.theater
                 )[0]
                 wpt = FlightWaypoint(
-                    FlightWaypointType.CUSTOM,
-                    pos.x,
-                    pos.y,
-                    Distance.from_meters(800),
+                    FlightWaypointType.CUSTOM, pos, Distance.from_meters(800)
                 )
                 wpt.name = f"Frontline {front_line.name} [CAS]"
                 wpt.alt_type = "RADIO"
@@ -94,8 +91,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                         ):
                             wpt = FlightWaypoint(
                                 FlightWaypointType.CUSTOM,
-                                ground_object.position.x,
-                                ground_object.position.y,
+                                ground_object.position,
                                 Distance.from_meters(0),
                             )
                             wpt.alt_type = "RADIO"
@@ -122,8 +118,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                 for j, u in enumerate(g.units):
                                     wpt = FlightWaypoint(
                                         FlightWaypointType.CUSTOM,
-                                        u.position.x,
-                                        u.position.y,
+                                        u.position,
                                         Distance.from_meters(0),
                                     )
                                     wpt.alt_type = "RADIO"
@@ -151,10 +146,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                     self.include_friendly and cp.captured
                 ):
                     wpt = FlightWaypoint(
-                        FlightWaypointType.CUSTOM,
-                        cp.position.x,
-                        cp.position.y,
-                        Distance.from_meters(0),
+                        FlightWaypointType.CUSTOM, cp.position, Distance.from_meters(0)
                     )
                     wpt.alt_type = "RADIO"
                     wpt.name = cp.name

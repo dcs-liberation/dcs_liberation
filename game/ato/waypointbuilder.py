@@ -12,7 +12,7 @@ from typing import (
     Union,
 )
 
-from dcs.mapping import Point
+from dcs.mapping import Point, Vector2
 
 from game.theater import (
     ControlPoint,
@@ -71,8 +71,7 @@ class WaypointBuilder:
             return FlightWaypoint(
                 "NAV",
                 FlightWaypointType.NAV,
-                position.x,
-                position.y,
+                position,
                 meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
                 description="Enter theater",
                 pretty_name="Enter theater",
@@ -81,8 +80,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "TAKEOFF",
             FlightWaypointType.TAKEOFF,
-            position.x,
-            position.y,
+            position,
             meters(0),
             alt_type="RADIO",
             description="Takeoff",
@@ -100,8 +98,7 @@ class WaypointBuilder:
             return FlightWaypoint(
                 "NAV",
                 FlightWaypointType.NAV,
-                position.x,
-                position.y,
+                position,
                 meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
                 description="Exit theater",
                 pretty_name="Exit theater",
@@ -110,8 +107,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "LANDING",
             FlightWaypointType.LANDING_POINT,
-            position.x,
-            position.y,
+            position,
             meters(0),
             alt_type="RADIO",
             description="Land",
@@ -143,8 +139,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "DIVERT",
             FlightWaypointType.DIVERT,
-            position.x,
-            position.y,
+            position,
             altitude,
             alt_type=altitude_type,
             description="Divert",
@@ -157,8 +152,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "BULLSEYE",
             FlightWaypointType.BULLSEYE,
-            self._bullseye.position.x,
-            self._bullseye.position.y,
+            self._bullseye.position,
             meters(0),
             description="Bullseye",
             pretty_name="Bullseye",
@@ -173,8 +167,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "HOLD",
             FlightWaypointType.LOITER,
-            position.x,
-            position.y,
+            position,
             meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
             alt_type,
             description="Wait until push time",
@@ -189,8 +182,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "JOIN",
             FlightWaypointType.JOIN,
-            position.x,
-            position.y,
+            position,
             meters(80) if self.is_helo else self.doctrine.ingress_altitude,
             alt_type,
             description="Rendezvous with package",
@@ -205,8 +197,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "REFUEL",
             FlightWaypointType.REFUEL,
-            position.x,
-            position.y,
+            position,
             meters(80) if self.is_helo else self.doctrine.ingress_altitude,
             alt_type,
             description="Refuel from tanker",
@@ -221,8 +212,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "SPLIT",
             FlightWaypointType.SPLIT,
-            position.x,
-            position.y,
+            position,
             meters(80) if self.is_helo else self.doctrine.ingress_altitude,
             alt_type,
             description="Depart from package",
@@ -242,8 +232,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "INGRESS",
             ingress_type,
-            position.x,
-            position.y,
+            position,
             meters(60) if self.is_helo else self.doctrine.ingress_altitude,
             alt_type,
             description=f"INGRESS on {objective.name}",
@@ -259,8 +248,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "EGRESS",
             FlightWaypointType.EGRESS,
-            position.x,
-            position.y,
+            position,
             meters(60) if self.is_helo else self.doctrine.ingress_altitude,
             alt_type,
             description=f"EGRESS from {target.name}",
@@ -284,8 +272,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             target.name,
             FlightWaypointType.TARGET_POINT,
-            target.target.position.x,
-            target.target.position.y,
+            target.target.position,
             meters(0),
             "RADIO",
             description=description,
@@ -315,8 +302,7 @@ class WaypointBuilder:
         waypoint = FlightWaypoint(
             name,
             FlightWaypointType.TARGET_GROUP_LOC,
-            location.position.x,
-            location.position.y,
+            location.position,
             meters(0),
             "RADIO",
             description=name,
@@ -340,8 +326,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "CAS",
             FlightWaypointType.CAS,
-            position.x,
-            position.y,
+            position,
             meters(60) if self.is_helo else meters(1000),
             "RADIO",
             description="Provide CAS",
@@ -359,8 +344,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "RACETRACK START",
             FlightWaypointType.PATROL_TRACK,
-            position.x,
-            position.y,
+            position,
             altitude,
             description="Orbit between this point and the next point",
             pretty_name="Race-track start",
@@ -377,8 +361,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "RACETRACK END",
             FlightWaypointType.PATROL,
-            position.x,
-            position.y,
+            position,
             altitude,
             description="Orbit between this point and the previous point",
             pretty_name="Race-track end",
@@ -411,8 +394,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "ORBIT",
             FlightWaypointType.LOITER,
-            start.x,
-            start.y,
+            start,
             altitude,
             description="Anchor and hold at this point",
             pretty_name="Orbit",
@@ -429,8 +411,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "SWEEP START",
             FlightWaypointType.INGRESS_SWEEP,
-            position.x,
-            position.y,
+            position,
             altitude,
             description="Proceed to the target and engage enemy aircraft",
             pretty_name="Sweep start",
@@ -447,8 +428,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "SWEEP END",
             FlightWaypointType.EGRESS,
-            position.x,
-            position.y,
+            position,
             altitude,
             description="End of sweep",
             pretty_name="Sweep end",
@@ -491,8 +471,7 @@ class WaypointBuilder:
         return ingress_wp, FlightWaypoint(
             "TARGET",
             FlightWaypointType.TARGET_GROUP_LOC,
-            target.position.x,
-            target.position.y,
+            target.position,
             meters(60) if self.is_helo else self.doctrine.ingress_altitude,
             alt_type,
             description="Escort the package",
@@ -509,8 +488,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "PICKUP",
             FlightWaypointType.PICKUP,
-            control_point.position.x,
-            control_point.position.y,
+            control_point.position,
             meters(0),
             "RADIO",
             description=f"Pick up cargo from {control_point}",
@@ -527,8 +505,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "DROP OFF",
             FlightWaypointType.PICKUP,
-            control_point.position.x,
-            control_point.position.y,
+            control_point.position,
             meters(0),
             "RADIO",
             description=f"Drop off cargo at {control_point}",
@@ -554,8 +531,7 @@ class WaypointBuilder:
         return FlightWaypoint(
             "NAV",
             FlightWaypointType.NAV,
-            position.x,
-            position.y,
+            position,
             altitude,
             alt_type,
             description="NAV",
@@ -617,4 +593,4 @@ class WaypointBuilder:
         deviation = nautical_miles(1)
         x_adj = random.randint(int(-deviation.meters), int(deviation.meters))
         y_adj = random.randint(int(-deviation.meters), int(deviation.meters))
-        return Point(point.x + x_adj, point.y + y_adj)
+        return point + Vector2(x_adj, y_adj)

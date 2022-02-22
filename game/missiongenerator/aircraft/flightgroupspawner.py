@@ -3,8 +3,9 @@ import logging
 import random
 from typing import Any, Union
 
-from dcs import Mission, Point
+from dcs import Mission
 from dcs.country import Country
+from dcs.mapping import Vector2
 from dcs.mission import StartType as DcsStartType
 from dcs.planes import F_14A, Su_33
 from dcs.point import PointAction
@@ -139,7 +140,7 @@ class FlightGroupSpawner:
         )
         speed = self.flight.state.estimate_speed()
         pos = self.flight.state.estimate_position()
-        pos += Point(random.randint(100, 1000), random.randint(100, 1000))
+        pos += Vector2(random.randint(100, 1000), random.randint(100, 1000))
         alt, alt_type = self.flight.state.estimate_altitude()
 
         # We don't know where the ground is, so just make sure that any aircraft
@@ -197,7 +198,7 @@ class FlightGroupSpawner:
             alt = WARM_START_ALTITUDE
 
         speed = GroundSpeed.for_flight(self.flight, alt)
-        pos = Point(at.x + random.randint(100, 1000), at.y + random.randint(100, 1000))
+        pos = at + Vector2(random.randint(100, 1000), random.randint(100, 1000))
 
         group = self.mission.flight_group(
             country=self.country,

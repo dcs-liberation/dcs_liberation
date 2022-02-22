@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 import shapely.ops
 from dcs import Point
 from shapely.geometry import (
+    MultiLineString,
+    MultiPolygon,
     Point as ShapelyPoint,
     Polygon,
-    MultiPolygon,
-    MultiLineString,
 )
 
 from game.utils import nautical_miles
@@ -27,6 +27,7 @@ class JoinZoneGeometry:
     def __init__(
         self, target: Point, home: Point, ip: Point, coalition: Coalition
     ) -> None:
+        self._target = target
         # Normal join placement is based on the path from home to the IP. If no path is
         # found it means that the target is on a direct path. In that case we instead
         # want to enforce that the join point is:
@@ -100,4 +101,4 @@ class JoinZoneGeometry:
             join, _ = shapely.ops.nearest_points(self.permissible_zones, self.ip)
         else:
             join, _ = shapely.ops.nearest_points(self.preferred_lines, self.home)
-        return Point(join.x, join.y)
+        return self._target.new_in_same_map(join.x, join.y)

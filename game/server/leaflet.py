@@ -17,7 +17,8 @@ class ShapelyUtil:
         if poly.is_empty:
             return []
         return [
-            theater.point_to_ll(Point(x, y)).as_list() for x, y in poly.exterior.coords
+            Point(x, y, theater.terrain).latlng().as_list()
+            for x, y in poly.exterior.coords
         ]
 
     @classmethod
@@ -34,7 +35,7 @@ class ShapelyUtil:
     def line_to_leaflet(
         line: LineString, theater: ConflictTheater
     ) -> list[LeafletLatLon]:
-        return [theater.point_to_ll(Point(x, y)).as_list() for x, y in line.coords]
+        return [Point(x, y, theater.terrain).latlng().as_list() for x, y in line.coords]
 
     @classmethod
     def lines_to_leaflet(

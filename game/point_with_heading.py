@@ -3,21 +3,19 @@ from __future__ import annotations
 import math
 
 from dcs import Point
+from dcs.terrain import Terrain
+
 from game.utils import Heading
 
 
 class PointWithHeading(Point):
-    def __init__(self) -> None:
-        super(PointWithHeading, self).__init__(0, 0)
-        self.heading: Heading = Heading.from_degrees(0)
+    def __init__(self, x: float, y: float, heading: Heading, terrain: Terrain) -> None:
+        super().__init__(x, y, terrain)
+        self.heading: Heading = heading
 
     @staticmethod
     def from_point(point: Point, heading: Heading) -> PointWithHeading:
-        p = PointWithHeading()
-        p.x = point.x
-        p.y = point.y
-        p.heading = heading
-        return p
+        return PointWithHeading(point.x, point.y, heading, point._terrain)
 
     def rotate(self, origin: Point, heading: Heading) -> None:
         """Rotates the Point by a given angle clockwise around the origin"""
