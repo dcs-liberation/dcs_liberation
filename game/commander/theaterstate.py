@@ -64,6 +64,7 @@ class TheaterState(WorldState["TheaterState"]):
     def _rebuild_threat_zones(self) -> None:
         """Recreates the theater's threat zones based on the current planned state."""
         self.threat_zones = ThreatZones.for_threats(
+            self.context.theater,
             self.context.coalition.opponent.doctrine,
             barcap_locations=self.enemy_barcaps,
             air_defenses=itertools.chain(self.enemy_air_defenses, self.enemy_ships),

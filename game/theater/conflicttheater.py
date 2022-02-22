@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
-from dcs.mapping import Point
+from dcs.mapping import LatLng, Point
 from dcs.terrain import (
     caucasus,
     marianaislands,
@@ -147,8 +147,8 @@ class ConflictTheater:
                 min_distance = distance
                 nearest_point = pt
         assert isinstance(nearest_point, geometry.Point)
-        point = Point(point.x, point.y)
-        nearest_point = Point(nearest_point.x, nearest_point.y)
+        point = Point(point.x, point.y, self.terrain)
+        nearest_point = Point(nearest_point.x, nearest_point.y, self.terrain)
         new_point = point.point_from_heading(
             point.heading_between_point(nearest_point),
             point.distance_to_point(nearest_point) + extend_dist,
@@ -261,9 +261,8 @@ class ConflictTheater:
         lat, lon = self.point_to_ll_transformer.transform(point.x, point.y)
         return LatLon(lat, lon)
 
-    def ll_to_point(self, ll: LatLon) -> Point:
-        x, y = self.ll_to_point_transformer.transform(ll.lat, ll.lng)
-        return Point(x, y)
+    def ll_to_point(self, ll: LatLng) -> Point:
+        return Point.from_latlng(ll, self.terrain)
 
     def heading_to_conflict_from(self, position: Point) -> Optional[Heading]:
         # Heading for a Group to the enemy.
@@ -281,9 +280,8 @@ class ConflictTheater:
         ]
         last = len(sorted_conflicts) - 1
 
-        conflict_center = Point(
-            (sorted_conflicts[0].position.x + sorted_conflicts[last].position.x) / 2,
-            (sorted_conflicts[0].position.y + sorted_conflicts[last].position.y) / 2,
+        conflict_center = sorted_conflicts[0].position.midpoint(
+            sorted_conflicts[last].position
         )
 
         return Heading.from_degrees(position.heading_between_point(conflict_center))

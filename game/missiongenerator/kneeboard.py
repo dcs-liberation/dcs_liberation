@@ -766,7 +766,7 @@ class KneeboardGenerator(MissionInfoGenerator):
         pages: List[KneeboardPage] = [
             BriefingPage(
                 flight,
-                self.game.bullseye_for(flight.friendly),
+                self.game.coalition_for(flight.friendly).bullseye,
                 self.game.theater,
                 self.game.conditions.weather,
                 zoned_time,

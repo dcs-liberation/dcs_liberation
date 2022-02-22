@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 
 import shapely.ops
 from dcs import Point
-from shapely.geometry import Point as ShapelyPoint, MultiPolygon
+from shapely.geometry import MultiPolygon, Point as ShapelyPoint
 
-from game.utils import nautical_miles, meters
+from game.utils import meters, nautical_miles
 
 if TYPE_CHECKING:
     from game.coalition import Coalition
@@ -25,6 +25,7 @@ class IpZoneGeometry:
         home: Point,
         coalition: Coalition,
     ) -> None:
+        self._target = target
         self.threat_zone = coalition.opponent.threat_zone.all
         self.home = ShapelyPoint(home.x, home.y)
 
@@ -115,4 +116,4 @@ class IpZoneGeometry:
             ip = self._unsafe_ip()
         else:
             ip = self._safe_ip()
-        return Point(ip.x, ip.y)
+        return self._target.new_in_same_map(ip.x, ip.y)

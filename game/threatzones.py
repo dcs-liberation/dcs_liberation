@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import singledispatchmethod
-from typing import Optional, TYPE_CHECKING, Union, Iterable
+from typing import Iterable, Optional, TYPE_CHECKING, Union
 
 from dcs.mapping import Point as DcsPoint
 from shapely.geometry import (
@@ -13,11 +13,16 @@ from shapely.geometry import (
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import nearest_points, unary_union
 
-from game.data.doctrine import Doctrine
-from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
-from game.utils import Distance, meters, nautical_miles
-from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ato import Flight, FlightWaypoint
+from game.ato.closestairfields import ObjectiveDistanceCache
+from game.data.doctrine import Doctrine
+from game.theater import (
+    ConflictTheater,
+    ControlPoint,
+    MissionTarget,
+    TheaterGroundObject,
+)
+from game.utils import Distance, meters, nautical_miles
 
 if TYPE_CHECKING:
     from game import Game
@@ -29,10 +34,12 @@ ThreatPoly = Union[MultiPolygon, Polygon]
 class ThreatZones:
     def __init__(
         self,
+        theater: ConflictTheater,
         airbases: ThreatPoly,
         air_defenses: ThreatPoly,
         radar_sam_threats: ThreatPoly,
     ) -> None:
+        self.theater = theater
         self.airbases = airbases
         self.air_defenses = air_defenses
         self.radar_sam_threats = radar_sam_threats
@@ -42,7 +49,7 @@ class ThreatZones:
         boundary, _ = nearest_points(
             self.all.boundary, self.dcs_to_shapely_point(point)
         )
-        return DcsPoint(boundary.x, boundary.y)
+        return DcsPoint(boundary.x, boundary.y, self.theater.terrain)
 
     def distance_to_threat(self, point: DcsPoint) -> Distance:
         boundary = self.closest_boundary(point)
@@ -200,12 +207,13 @@ class ThreatZones:
             air_defenses.extend(control_point.ground_objects)
 
         return cls.for_threats(
-            game.faction_for(player).doctrine, air_threats, air_defenses
+            game.theater, game.faction_for(player).doctrine, air_threats, air_defenses
         )
 
     @classmethod
     def for_threats(
         cls,
+        theater: ConflictTheater,
         doctrine: Doctrine,
         barcap_locations: Iterable[ControlPoint],
         air_defenses: Iterable[TheaterGroundObject],
@@ -213,6 +221,7 @@ class ThreatZones:
         """Generates the threat zones projected by the given locations.
 
         Args:
+            theater: The theater the threat zones are in.
             doctrine: The doctrine of the owning coalition.
             barcap_locations: The locations that will be considered for BARCAP planning.
             air_defenses: TGOs that may have air defenses.
@@ -245,7 +254,8 @@ class ThreatZones:
                     threat_zone = point.buffer(threat_range.meters)
                     radar_sam_threats.append(threat_zone)
 
-        return cls(
+        return ThreatZones(
+            theater,
             airbases=unary_union(air_threats),
             air_defenses=unary_union(air_defense_threats),
             radar_sam_threats=unary_union(radar_sam_threats),

@@ -5,10 +5,10 @@ from typing import Dict, TYPE_CHECKING
 
 from dcs import Point
 
-from game.theater import LatLon
+from .latlon import LatLon
 
 if TYPE_CHECKING:
-    from game.theater import ConflictTheater
+    from .conflicttheater import ConflictTheater
 
 
 @dataclass

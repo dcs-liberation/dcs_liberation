@@ -31,12 +31,9 @@ class Navigating(InFlight):
         )
 
     def estimate_position(self) -> Point:
-        x0 = self.current_waypoint.position.x
-        y0 = self.current_waypoint.position.y
-        x1 = self.next_waypoint.position.x
-        y1 = self.next_waypoint.position.y
-        progress = self.progress()
-        return Point(lerp(x0, x1, progress), lerp(y0, y1, progress))
+        return self.current_waypoint.position.lerp(
+            self.next_waypoint.position, self.progress()
+        )
 
     def estimate_altitude(self) -> tuple[Distance, str]:
         return (

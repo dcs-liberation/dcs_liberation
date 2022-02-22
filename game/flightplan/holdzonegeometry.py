@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import shapely.ops
 from dcs import Point
-from shapely.geometry import Point as ShapelyPoint, Polygon, MultiPolygon
+from shapely.geometry import MultiPolygon, Point as ShapelyPoint, Polygon
 
 from game.utils import nautical_miles
 
@@ -29,6 +29,7 @@ class HoldZoneGeometry:
         coalition: Coalition,
         theater: ConflictTheater,
     ) -> None:
+        self._target = target
         # Hold points are placed one of two ways. Either approach guarantees:
         #
         # * Safe hold point.
@@ -105,4 +106,4 @@ class HoldZoneGeometry:
             hold, _ = shapely.ops.nearest_points(self.permissible_zones, self.home)
         else:
             hold, _ = shapely.ops.nearest_points(self.preferred_lines, self.join)
-        return Point(hold.x, hold.y)
+        return self._target.new_in_same_map(hold.x, hold.y)

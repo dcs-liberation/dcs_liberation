@@ -4,9 +4,10 @@ from typing import Optional
 
 from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
+from dcs.mapping import LatLng
 
 from game.server.leaflet import LeafletLatLon
-from game.theater import ConflictTheater, ControlPoint, ControlPointStatus, LatLon
+from game.theater import ConflictTheater, ControlPoint, ControlPointStatus
 from game.utils import meters, nautical_miles
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -83,7 +84,7 @@ class ControlPointJs(QObject):
 
     @Slot(list, result=bool)
     def destinationInRange(self, destination: LeafletLatLon) -> bool:
-        return self.destination_in_range(self.theater.ll_to_point(LatLon(*destination)))
+        return self.destination_in_range(self.theater.ll_to_point(LatLng(*destination)))
 
     @Slot(list, result=str)
     def setDestination(self, destination: LeafletLatLon) -> str:
@@ -92,7 +93,7 @@ class ControlPointJs(QObject):
         if not self.control_point.captured:
             return f"{self.control_point} is not owned by player"
 
-        point = self.theater.ll_to_point(LatLon(*destination))
+        point = self.theater.ll_to_point(LatLng(*destination))
         if not self.destination_in_range(point):
             return (
                 f"Cannot move {self.control_point} more than "

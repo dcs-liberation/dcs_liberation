@@ -1,11 +1,9 @@
-from datetime import datetime
-
 from dcs import Point
 from dcs.drawing import LineStyle, Rgba
 from dcs.drawing.drawings import StandardLayer
 from dcs.mission import Mission
 
-from game import Game, VERSION
+from game import Game
 from game.missiongenerator.frontlineconflictdescription import (
     FrontLineConflictDescription,
 )
@@ -73,7 +71,7 @@ class DrawingsGenerator:
                     # Add shape to layer
                     shape = self.player_layer.add_line_segments(
                         cp.position,
-                        [Point(0, 0)]
+                        [Point(0, 0, self.game.theater.terrain)]
                         + [p - cp.position for p in convoy_route]
                         + [destination.position - cp.position],
                         line_thickness=6,

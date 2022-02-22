@@ -701,8 +701,7 @@ class StrikeFlightPlan(FormationFlightPlan):
         return FlightWaypoint(
             "TARGET AREA",
             FlightWaypointType.TARGET_GROUP_LOC,
-            self.package.target.position.x,
-            self.package.target.position.y,
+            self.package.target.position,
             meters(0),
             "RADIO",
         )
@@ -906,8 +905,7 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
         return FlightWaypoint(
             "TARGET AREA",
             FlightWaypointType.TARGET_GROUP_LOC,
-            self.package.target.position.x,
-            self.package.target.position.y,
+            self.package.target.position,
             meters(0),
             "RADIO",
         )
@@ -924,13 +922,13 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
         # Cheat in a FlightWaypoint for the split point.
         split: Point = self.package.waypoints.split
         split_waypoint: FlightWaypoint = FlightWaypoint(
-            "SPLIT", FlightWaypointType.SPLIT, split.x, split.y, altitude
+            "SPLIT", FlightWaypointType.SPLIT, split, altitude
         )
 
         # Cheat in a FlightWaypoint for the refuel point.
         refuel: Point = self.package.waypoints.refuel
         refuel_waypoint: FlightWaypoint = FlightWaypoint(
-            "REFUEL", FlightWaypointType.REFUEL, refuel.x, refuel.y, altitude
+            "REFUEL", FlightWaypointType.REFUEL, refuel, altitude
         )
 
         delay_target_to_split: timedelta = self.travel_time_between_waypoints(
