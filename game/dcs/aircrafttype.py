@@ -368,7 +368,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
         if units_data == "metric":
             units = MetricUnits()
         prop_overrides = data.get("default_overrides")
-        if prop_overrides and aircraft.property_defaults:
+        if prop_overrides and aircraft.property_defaults is not None:
             for k in prop_overrides:
                 aircraft.property_defaults[k] = prop_overrides[k]
         for variant in data.get("variants", [aircraft.id]):

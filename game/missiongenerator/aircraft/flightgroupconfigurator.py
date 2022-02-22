@@ -6,7 +6,6 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from dcs import Mission
 from dcs.flyingunit import FlyingUnit
-from dcs.planes import F_14A_135_GR, F_14B
 from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
 
