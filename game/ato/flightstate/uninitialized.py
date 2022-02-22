@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from dcs import Point
 
-from gen.flights.traveltime import TotEstimator
+from game.ato.traveltime import TotEstimator
 from .flightstate import FlightState
 from ..starttype import StartType
 

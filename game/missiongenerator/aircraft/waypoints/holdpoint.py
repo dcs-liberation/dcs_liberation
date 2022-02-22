@@ -3,7 +3,7 @@ import logging
 from dcs.point import MovingPoint
 from dcs.task import ControlledTask, OptFormation, OrbitAction
 
-from gen.flights.flightplan import LoiterFlightPlan
+from game.ato.flightplan import LoiterFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 

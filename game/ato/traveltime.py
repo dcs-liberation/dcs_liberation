@@ -16,8 +16,8 @@ from game.utils import (
 )
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
-    from game.ato.package import Package
+    from .flight import Flight
+    from .package import Package
 
 
 class GroundSpeed:

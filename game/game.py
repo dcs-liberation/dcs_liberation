@@ -15,13 +15,12 @@ from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 from faker import Faker
 
+from game.ground_forces.ai_ground_planner import GroundPlanner
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from game.utils import Distance
-from gen import naming
-from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.ground_forces.ai_ground_planner import GroundPlanner
-from . import persistency
+from game.ato.closestairfields import ObjectiveDistanceCache
+from . import naming, persistency
 from .ato.flighttype import FlightType
 from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition

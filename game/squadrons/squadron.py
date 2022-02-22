@@ -10,7 +10,7 @@ from faker import Faker
 
 from game.ato import Flight, FlightType, Package
 from game.settings import AutoAtoBehavior, Settings
-from gen.flights.flightplan import FlightPlanBuilder
+from game.ato.flightplan import FlightPlanBuilder
 from .pilot import Pilot, PilotStatus
 from ..db.database import Database
 from ..utils import meters

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import itertools
 import random
-from typing import TYPE_CHECKING, Optional
+from typing import Optional, TYPE_CHECKING
 
+from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons.operatingbases import OperatingBases
 from game.squadrons.squadrondef import SquadronDef
 from game.theater import ControlPoint
-from gen.flights.ai_flight_planner_db import aircraft_for_task, tasks_for_aircraft
-from game.ato.flighttype import FlightType
+from game.ato.ai_flight_planner_db import aircraft_for_task, tasks_for_aircraft
 
 if TYPE_CHECKING:
     from game.factions.faction import Faction
@@ -56,7 +56,7 @@ class SquadronDefGenerator:
 
     @staticmethod
     def _make_random_nickname() -> str:
-        from gen.naming import ANIMALS
+        from game.naming import ANIMALS
 
         animal = random.choice(ANIMALS)
         adjective = random.choice(

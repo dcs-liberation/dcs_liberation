@@ -11,15 +11,15 @@ from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
+from game.callsigns import callsign_for_support_unit
 from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.missiongenerator.airsupport import AirSupport, AwacsInfo, TankerInfo
 from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
+from game.runways import RunwayData
 from game.squadrons import Pilot
-from gen.callsigns import callsign_for_support_unit
-from gen.flights.flightplan import AwacsFlightPlan, RefuelingFlightPlan
-from gen.runways import RunwayData
+from game.ato.flightplan import AwacsFlightPlan, RefuelingFlightPlan
 from .aircraftbehavior import AircraftBehavior
 from .aircraftpainter import AircraftPainter
 from .flightdata import FlightData

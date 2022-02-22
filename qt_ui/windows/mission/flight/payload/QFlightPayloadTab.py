@@ -8,7 +8,7 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from game.ato.flight import Flight
-from gen.flights.loadouts import Loadout
+from game.ato.loadouts import Loadout
 from .QLoadoutEditor import QLoadoutEditor
 from .propertyeditor import PropertyEditor
 

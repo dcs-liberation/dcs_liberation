@@ -31,11 +31,6 @@ jobs:
           ./venv/scripts/activate
           mypy game
 
-      - name: mypy gen
-        run: |
-          ./venv/scripts/activate
-          mypy gen
-
       - name: mypy tests
         run: |
           ./venv/scripts/activate

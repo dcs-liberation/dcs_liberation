@@ -43,6 +43,7 @@ from dcs.vehicles import vehicle_map
 
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
+from game.runways import RunwayData
 from game.theater import ControlPoint, TheaterGroundObject, TheaterUnit
 from game.theater.theatergroundobject import (
     CarrierGroundObject,
@@ -53,7 +54,6 @@ from game.theater.theatergroundobject import (
 from game.theater.theatergroup import SceneryUnit, TheaterGroup
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
-from gen.runways import RunwayData
 
 if TYPE_CHECKING:
     from game import Game

@@ -11,16 +11,14 @@ from typing import Dict, List, TYPE_CHECKING
 from dcs.mission import Mission
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from game.theater import ControlPoint, FrontLine
 from game.ato.flightwaypoint import FlightWaypoint
-from gen.ground_forces.combat_stance import CombatStance
+from game.ground_forces.combat_stance import CombatStance
 from game.radio.radios import RadioFrequency
-from gen.runways import RunwayData
-
+from game.runways import RunwayData
+from game.theater import ControlPoint, FrontLine
 from .aircraft.flightdata import FlightData
 from .airsupportgenerator import AwacsInfo, TankerInfo
 from .flotgenerator import JtacInfo
-
 
 if TYPE_CHECKING:
     from game import Game

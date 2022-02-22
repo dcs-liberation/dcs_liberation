@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import math
 import random
-from typing import TYPE_CHECKING, List, Optional, Tuple
+from typing import List, Optional, TYPE_CHECKING, Tuple
 
 from dcs import Mission
 from dcs.action import AITaskPush
@@ -13,9 +13,9 @@ from dcs.mapping import Point
 from dcs.point import PointAction
 from dcs.task import (
     AFAC,
-    EPLRS,
     AttackGroup,
     ControlledTask,
+    EPLRS,
     FAC,
     FireAtPoint,
     GoToWaypoint,
@@ -25,25 +25,24 @@ from dcs.task import (
     SetInvisibleCommand,
 )
 from dcs.triggers import Event, TriggerOnce
-from dcs.unit import Vehicle, Skill
+from dcs.unit import Skill, Vehicle
 from dcs.unitgroup import VehicleGroup
 
+from game.callsigns import callsign_for_support_unit
 from game.data.units import UnitClass
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
+from game.ground_forces.ai_ground_planner import (
+    CombatGroup,
+    CombatGroupRole,
+    DISTANCE_FROM_FRONTLINE,
+)
+from game.ground_forces.combat_stance import CombatStance
+from game.naming import namegen
+from game.radio.radios import RadioRegistry
 from game.theater.controlpoint import ControlPoint
 from game.unitmap import UnitMap
 from game.utils import Heading
-from gen.ground_forces.ai_ground_planner import (
-    DISTANCE_FROM_FRONTLINE,
-    CombatGroup,
-    CombatGroupRole,
-)
-from gen.callsigns import callsign_for_support_unit
-from gen.ground_forces.combat_stance import CombatStance
-from gen.naming import namegen
-from game.radio.radios import RadioRegistry
-
 from .airsupport import AirSupport, JtacInfo
 from .frontlineconflictdescription import FrontLineConflictDescription
 from .lasercoderegistry import LaserCodeRegistry

@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 
 from game.commander.tasks.theatercommandertask import TheaterCommanderTask
 from game.commander.theaterstate import TheaterState
+from game.ground_forces.combat_stance import CombatStance
 from game.theater import FrontLine
-from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
     from game.coalition import Coalition

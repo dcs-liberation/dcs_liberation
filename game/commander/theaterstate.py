@@ -5,11 +5,12 @@ import itertools
 import math
 from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Any, Optional, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING, Union
 
 from game.commander.garrisons import Garrisons
 from game.commander.objectivefinder import ObjectiveFinder
 from game.db import GameDb
+from game.ground_forces.combat_stance import CombatStance
 from game.htn import WorldState
 from game.profiling import MultiEventTracer
 from game.settings import Settings
@@ -22,7 +23,6 @@ from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
 )
 from game.threatzones import ThreatZones
-from gen.ground_forces.combat_stance import CombatStance
 
 if TYPE_CHECKING:
     from game import Game

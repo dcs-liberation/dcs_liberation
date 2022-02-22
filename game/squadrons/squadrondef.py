@@ -62,7 +62,7 @@ class SquadronDef:
 
     @classmethod
     def from_yaml(cls, path: Path) -> SquadronDef:
-        from gen.flights.ai_flight_planner_db import tasks_for_aircraft
+        from game.ato.ai_flight_planner_db import tasks_for_aircraft
         from game.ato import FlightType
 
         with path.open(encoding="utf8") as squadron_file:

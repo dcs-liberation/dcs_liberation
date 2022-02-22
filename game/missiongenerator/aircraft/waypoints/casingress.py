@@ -4,7 +4,7 @@ from dcs.point import MovingPoint
 from dcs.task import EngageTargets, EngageTargetsInZone, Targets
 
 from game.utils import nautical_miles
-from gen.flights.flightplan import CasFlightPlan
+from game.ato.flightplan import CasFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 

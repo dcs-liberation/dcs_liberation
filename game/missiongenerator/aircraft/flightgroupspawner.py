@@ -15,10 +15,10 @@ from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from game.ato import Flight
 from game.ato.flightstate import InFlight
 from game.ato.starttype import StartType
+from game.naming import namegen
 from game.theater import Airfield, ControlPoint, Fob, NavalControlPoint, OffMapSpawn
 from game.utils import feet, meters
-from gen.flights.traveltime import GroundSpeed
-from gen.naming import namegen
+from game.ato.traveltime import GroundSpeed
 
 WARM_START_HELI_ALT = meters(500)
 WARM_START_ALTITUDE = meters(3000)

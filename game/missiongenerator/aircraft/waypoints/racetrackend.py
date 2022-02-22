@@ -2,7 +2,7 @@ import logging
 
 from dcs.point import MovingPoint
 
-from gen.flights.flightplan import PatrollingFlightPlan
+from game.ato.flightplan import PatrollingFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 

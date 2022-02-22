@@ -4,21 +4,20 @@ import logging
 import random
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 import dcs.statics
 
 from game import Game
 from game.factions.faction import Faction
+from game.naming import namegen
 from game.scenery_group import SceneryGroup
 from game.theater import PointWithHeading
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
 )
-from .theatergroup import SceneryUnit, TheaterGroup
 from game.utils import Heading
 from game.version import VERSION
-from gen.naming import namegen
 from . import (
     ConflictTheater,
     ControlPoint,
@@ -26,10 +25,11 @@ from . import (
     Fob,
     OffMapSpawn,
 )
-from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
-from ..data.groups import GroupRole, GroupTask
-from ..armedforces.forcegroup import ForceGroup
+from .theatergroup import SceneryUnit, TheaterGroup
 from ..armedforces.armedforces import ArmedForces
+from ..armedforces.forcegroup import ForceGroup
+from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
+from ..data.groups import GroupTask
 from ..profiling import logged_duration
 from ..settings import Settings
 

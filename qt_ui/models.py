@@ -21,7 +21,7 @@ from game.sim.gameupdateevents import GameUpdateEvents
 from game.squadrons.squadron import Pilot, Squadron
 from game.theater.missiontarget import MissionTarget
 from game.transfers import PendingTransfers, TransferOrder
-from gen.flights.traveltime import TotEstimator
+from game.ato.traveltime import TotEstimator
 from qt_ui.simcontroller import SimController
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 

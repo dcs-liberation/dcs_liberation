@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from game.commander.tasks.frontlinestancetask import FrontLineStanceTask
-from gen.ground_forces.combat_stance import CombatStance
+from game.ground_forces.combat_stance import CombatStance
 
 
 class RetreatStance(FrontLineStanceTask):

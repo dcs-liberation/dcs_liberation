@@ -19,7 +19,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
 )
 from game.utils import meters, nautical_miles
-from gen.flights.closestairfields import ClosestAirfields, ObjectiveDistanceCache
+from game.ato.closestairfields import ClosestAirfields, ObjectiveDistanceCache
 
 if TYPE_CHECKING:
     from game import Game

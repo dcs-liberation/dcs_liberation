@@ -14,8 +14,6 @@ from typing import (
 
 from dcs.mapping import Point
 
-from game.ato.flightwaypoint import AltitudeReference, FlightWaypoint
-from game.ato.flightwaypointtype import FlightWaypointType
 from game.theater import (
     ControlPoint,
     MissionTarget,
@@ -24,12 +22,14 @@ from game.theater import (
     TheaterUnit,
 )
 from game.utils import Distance, meters, nautical_miles
+from .flightwaypoint import AltitudeReference, FlightWaypoint
+from .flightwaypointtype import FlightWaypointType
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
     from game.coalition import Coalition
     from game.transfers import MultiGroupTransport
     from game.theater.theatergroup import TheaterGroup
+    from .flight import Flight
 
 
 @dataclass(frozen=True)

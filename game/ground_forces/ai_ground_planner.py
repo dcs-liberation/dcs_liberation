@@ -7,11 +7,11 @@ from typing import Dict, List, TYPE_CHECKING
 
 from game.data.units import UnitClass
 from game.dcs.groundunittype import GroundUnitType
-from game.theater import ControlPoint
-from gen.ground_forces.combat_stance import CombatStance
+from .combat_stance import CombatStance
 
 if TYPE_CHECKING:
     from game import Game
+    from game.theater import ControlPoint
 
 MAX_COMBAT_GROUP_PER_CP = 10
 

@@ -4,8 +4,8 @@ from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 
 from game import Game
 from game.ato.flight import Flight
-from gen.flights.flightplan import FlightPlanBuilder, PlanningError
-from gen.flights.traveltime import TotEstimator
+from game.ato.flightplan import FlightPlanBuilder, PlanningError
+from game.ato.traveltime import TotEstimator
 from qt_ui.models import PackageModel
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QArrivalAirfieldSelector import QArrivalAirfieldSelector

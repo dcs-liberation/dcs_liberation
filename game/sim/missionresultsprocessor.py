@@ -4,8 +4,8 @@ import logging
 from typing import TYPE_CHECKING
 
 from game.debriefing import Debriefing
+from game.ground_forces.combat_stance import CombatStance
 from game.theater import ControlPoint
-from gen.ground_forces.combat_stance import CombatStance
 from ..ato.airtaaskingorder import AirTaskingOrder
 
 if TYPE_CHECKING:

@@ -5,9 +5,8 @@ from collections import defaultdict
 from typing import Sequence, Iterator, TYPE_CHECKING, Optional
 
 from game.dcs.aircrafttype import AircraftType
-from gen.flights.ai_flight_planner_db import aircraft_for_task
-from gen.flights.closestairfields import ObjectiveDistanceCache
-from .squadrondef import SquadronDef
+from game.ato.ai_flight_planner_db import aircraft_for_task
+from game.ato.closestairfields import ObjectiveDistanceCache
 from .squadrondefloader import SquadronDefLoader
 from ..campaignloader.squadrondefgenerator import SquadronDefGenerator
 from ..factions.faction import Faction

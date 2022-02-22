@@ -40,15 +40,14 @@ from game.ato.flightwaypointtype import FlightWaypointType
 from game.data.alic import AlicCodes
 from game.dcs.aircrafttype import AircraftType
 from game.radio.radios import RadioFrequency
+from game.runways import RunwayData
 from game.theater import ConflictTheater, LatLon, TheaterGroundObject, TheaterUnit
 from game.theater.bullseye import Bullseye
 from game.utils import Distance, UnitSystem, meters, mps, pounds
 from game.weather import Weather
-from gen.runways import RunwayData
 from .aircraft.flightdata import FlightData
 from .airsupportgenerator import AwacsInfo, TankerInfo
 from .briefinggenerator import CommInfo, JtacInfo, MissionInfoGenerator
-from ..dcs.helpers import unit_type_from_name
 
 if TYPE_CHECKING:
     from game import Game

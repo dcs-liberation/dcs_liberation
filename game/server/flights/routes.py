@@ -6,7 +6,7 @@ from shapely.geometry import LineString, Point as ShapelyPoint
 from game import Game
 from game.server import GameContext
 from game.server.leaflet import LeafletPoly, ShapelyUtil
-from gen.flights.flightplan import CasFlightPlan, PatrollingFlightPlan
+from game.ato.flightplan import CasFlightPlan, PatrollingFlightPlan
 
 router: APIRouter = APIRouter(prefix="/flights")
 

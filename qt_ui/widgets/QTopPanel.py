@@ -14,7 +14,7 @@ from game import Game, persistency
 from game.ato.package import Package
 from game.profiling import logged_duration
 from game.utils import meters
-from gen.flights.traveltime import TotEstimator
+from game.ato.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.simcontroller import SimController
 from qt_ui.widgets.QBudgetBox import QBudgetBox

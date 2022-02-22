@@ -10,17 +10,17 @@ from dcs import Mission, Point
 from dcs.coalition import Coalition
 from dcs.countries import country_dict
 
+from game.airfields import AirfieldData
 from game.dcs.helpers import unit_type_from_name
 from game.missiongenerator.aircraft.aircraftgenerator import (
     AircraftGenerator,
 )
+from game.naming import namegen
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanRegistry
 from game.theater import Airfield, FrontLine
 from game.theater.bullseye import Bullseye
 from game.unitmap import UnitMap
-from gen.airfields import AirfieldData
-from gen.naming import namegen
 from .aircraft.flightdata import FlightData
 from .airsupport import AirSupport
 from .airsupportgenerator import AirSupportGenerator

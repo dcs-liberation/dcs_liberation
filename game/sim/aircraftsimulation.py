@@ -16,7 +16,7 @@ from game.ato.flightstate import (
     WaitingForStart,
 )
 from game.ato.starttype import StartType
-from gen.flights.traveltime import TotEstimator
+from game.ato.traveltime import TotEstimator
 from .combat import CombatInitiator, FrozenCombat
 
 if TYPE_CHECKING:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import singledispatchmethod
-from typing import Optional, TYPE_CHECKING, Union, Iterable, Any
+from typing import Optional, TYPE_CHECKING, Union, Iterable
 
 from dcs.mapping import Point as DcsPoint
 from shapely.geometry import (
@@ -16,7 +16,7 @@ from shapely.ops import nearest_points, unary_union
 from game.data.doctrine import Doctrine
 from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
 from game.utils import Distance, meters, nautical_miles
-from gen.flights.closestairfields import ObjectiveDistanceCache
+from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ato import Flight, FlightWaypoint
 
 if TYPE_CHECKING:

@@ -7,10 +7,10 @@ from typing import Any, List, Optional, TYPE_CHECKING
 from dcs import Point
 from dcs.planes import C_101CC, C_101EB, Su_33
 
-from gen.flights.loadouts import Loadout
+from game.savecompat import has_save_compat_for
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Uninitialized
-from ..savecompat import has_save_compat_for
+from .loadouts import Loadout
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
@@ -74,7 +74,7 @@ class Flight:
         # Will be replaced with a more appropriate FlightPlan by
         # FlightPlanBuilder, but an empty flight plan the flight begins with an
         # empty flight plan.
-        from gen.flights.flightplan import FlightPlan, CustomFlightPlan
+        from game.ato.flightplan import FlightPlan, CustomFlightPlan
 
         self.flight_plan: FlightPlan = CustomFlightPlan(
             package=package, flight=self, custom_waypoints=[]

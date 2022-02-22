@@ -7,11 +7,11 @@ from typing import Iterator, Optional, TYPE_CHECKING
 
 from dcs.terrain.terrain import Airport
 
+from game.airfields import AirfieldData
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel
 from game.utils import Heading
 from game.weather import Conditions
-from gen.airfields import AirfieldData
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater

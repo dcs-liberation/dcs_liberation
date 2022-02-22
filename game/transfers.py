@@ -45,6 +45,7 @@ from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
+from game.naming import namegen
 from game.procurement import AircraftProcurementRequest
 from game.theater import ControlPoint, MissionTarget
 from game.theater.transitnetwork import (
@@ -52,10 +53,9 @@ from game.theater.transitnetwork import (
     TransitNetwork,
 )
 from game.utils import meters, nautical_miles
-from gen.flights.ai_flight_planner_db import aircraft_for_task
-from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.flights.flightplan import FlightPlanBuilder
-from gen.naming import namegen
+from game.ato.ai_flight_planner_db import aircraft_for_task
+from game.ato.closestairfields import ObjectiveDistanceCache
+from game.ato.flightplan import FlightPlanBuilder
 
 if TYPE_CHECKING:
     from game import Game

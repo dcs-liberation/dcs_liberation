@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import List, Type, Tuple, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Tuple, Type
 
 from dcs.mission import Mission, StartType
 from dcs.planes import IL_78M, KC130, KC135MPRS, KC_135, PlaneType
@@ -15,14 +15,13 @@ from dcs.task import (
 )
 from dcs.unittype import UnitType
 
-from game.utils import Heading
-from gen.callsigns import callsign_for_support_unit
-from gen.flights.ai_flight_planner_db import AEWC_CAPABLE
-from gen.naming import namegen
+from game.callsigns import callsign_for_support_unit
+from game.naming import namegen
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
-
-from .airsupport import AirSupport, TankerInfo, AwacsInfo
+from game.utils import Heading
+from game.ato.ai_flight_planner_db import AEWC_CAPABLE
+from .airsupport import AirSupport, AwacsInfo, TankerInfo
 from .frontlineconflictdescription import FrontLineConflictDescription
 
 if TYPE_CHECKING:

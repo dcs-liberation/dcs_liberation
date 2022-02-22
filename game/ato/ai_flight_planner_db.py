@@ -109,25 +109,23 @@ from dcs.planes import (
 )
 from dcs.unittype import FlyingType
 
-from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
-from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
+from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
+from pydcs_extensions.uh60l.uh60l import KC130J, UH_60L
+from .flighttype import FlightType
 
 # All aircraft lists are in priority order. Aircraft higher in the list will be
 # preferred over those lower in the list.
-
 # TODO: These lists really ought to be era (faction) dependent.
 # Factions which have F-5s, F-86s, and A-4s will should prefer F-5s for CAP, but
 # factions that also have F-4s should not.
 
 # Used for CAP, Escort, and intercept if there is not a specialised aircraft available
-from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
-
 CAP_CAPABLE = [
     Su_57,
     F_22A,

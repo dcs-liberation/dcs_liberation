@@ -6,12 +6,13 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from game.ato import Flight, FlightType
-from game.ato.packagewaypoints import PackageWaypoints
 from game.db import Database
 from game.utils import Speed
-from gen.flights.flightplan import FormationFlightPlan
-from gen.flights.traveltime import TotEstimator
+from .flight import Flight
+from .flightplan import FormationFlightPlan
+from .flighttype import FlightType
+from .packagewaypoints import PackageWaypoints
+from .traveltime import TotEstimator
 
 if TYPE_CHECKING:
     from game.theater import MissionTarget

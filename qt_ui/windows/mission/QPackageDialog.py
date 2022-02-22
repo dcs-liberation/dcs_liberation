@@ -19,7 +19,7 @@ from game.ato.flight import Flight
 from game.ato.package import Package
 from game.game import Game
 from game.theater.missiontarget import MissionTarget
-from gen.flights.flightplan import FlightPlanBuilder, PlanningError
+from game.ato.flightplan import FlightPlanBuilder, PlanningError
 from qt_ui.models import AtoModel, GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.ato import QFlightList

@@ -16,13 +16,13 @@ from game.ato.package import Package
 from game.ato.flighttype import FlightType
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flight import Flight
-from gen.flights.flightplan import (
+from game.ato.flightplan import (
     CustomFlightPlan,
     FlightPlanBuilder,
     PlanningError,
     StrikeFlightPlan,
 )
-from gen.flights.loadouts import Loadout
+from game.ato.loadouts import Loadout
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import (
     QFlightWaypointList,
 )

@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from typing import Any, Optional
 
 from dcs.task import (
@@ -24,7 +23,7 @@ from dcs.task import (
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
-from gen.flights.flightplan import AwacsFlightPlan, RefuelingFlightPlan
+from game.ato.flightplan import AwacsFlightPlan, RefuelingFlightPlan
 
 
 class AircraftBehavior:

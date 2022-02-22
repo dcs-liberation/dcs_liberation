@@ -6,13 +6,13 @@ from typing import Optional, TYPE_CHECKING
 
 from dcs.flyingunit import FlyingUnit
 
-from gen.callsigns import create_group_callsign_from_unit
+from game.callsigns import create_group_callsign_from_unit
 
 if TYPE_CHECKING:
     from game.ato import FlightType, FlightWaypoint, Package
     from game.dcs.aircrafttype import AircraftType
     from game.radio.radios import RadioFrequency
-    from gen.runways import RunwayData
+    from game.runways import RunwayData
 
 
 @dataclass(frozen=True)

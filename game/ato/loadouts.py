@@ -8,7 +8,7 @@ from game.data.weapons import Pylon, Weapon, WeaponType
 from game.dcs.aircrafttype import AircraftType
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from .flight import Flight
 
 
 class Loadout:

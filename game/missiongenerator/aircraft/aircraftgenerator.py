@@ -21,13 +21,13 @@ from game.missiongenerator.airsupport import AirSupport
 from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanRegistry
+from game.runways import RunwayData
 from game.settings import Settings
 from game.theater.controlpoint import (
     Airfield,
     ControlPoint,
 )
 from game.unitmap import UnitMap
-from gen.runways import RunwayData
 from .aircraftpainter import AircraftPainter
 from .flightdata import FlightData
 from .flightgroupconfigurator import FlightGroupConfigurator

@@ -12,7 +12,7 @@ from ..db.database import Database
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
     from game.squadrons.airwing import AirWing
-    from gen.flights.closestairfields import ClosestAirfields
+    from game.ato.closestairfields import ClosestAirfields
     from .missionproposals import ProposedFlight
 
 

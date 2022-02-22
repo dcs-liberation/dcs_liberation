@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QAbstractItemView, QListView
 from qt_ui.models import GameModel
 from qt_ui.windows.mission.QFlightItem import QFlightItem
 from game.theater.controlpoint import ControlPoint
-from gen.flights.traveltime import TotEstimator
+from game.ato.traveltime import TotEstimator
 
 
 class QPlannedFlightsView(QListView):

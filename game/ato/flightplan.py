@@ -26,10 +26,6 @@ from typing import (
 from dcs.mapping import Point
 from shapely.geometry import Point as ShapelyPoint
 
-from game.ato.flighttype import FlightType
-from game.ato.flightwaypoint import FlightWaypoint
-from game.ato.flightwaypointtype import FlightWaypointType
-from game.ato.starttype import StartType
 from game.data.doctrine import Doctrine
 from game.dcs.aircrafttype import FuelConsumption
 from game.flightplan import HoldZoneGeometry, IpZoneGeometry, JoinZoneGeometry
@@ -52,12 +48,16 @@ from game.theater.theatergroundobject import (
 from game.typeguard import self_type_guard
 from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
 from .closestairfields import ObjectiveDistanceCache
+from .flighttype import FlightType
+from .flightwaypoint import FlightWaypoint
+from .flightwaypointtype import FlightWaypointType
+from .starttype import StartType
 from .traveltime import GroundSpeed, TravelTime
 from .waypointbuilder import StrikeTarget, WaypointBuilder
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
-    from game.ato.package import Package
+    from .flight import Flight
+    from .package import Package
     from game.coalition import Coalition
     from game.threatzones import ThreatZones
 

@@ -4,7 +4,7 @@ from dcs.point import MovingPoint
 from dcs.task import EngageTargets, OptFormation, Targets
 
 from game.utils import nautical_miles
-from gen.flights.flightplan import SweepFlightPlan
+from game.ato.flightplan import SweepFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 

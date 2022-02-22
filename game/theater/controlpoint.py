@@ -27,13 +27,12 @@ from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unitgroup import ShipGroup, StaticGroup
 
-from game.dcs.helpers import unit_type_from_name
+from game.ground_forces.combat_stance import CombatStance
 from game.point_with_heading import PointWithHeading
+from game.runways import RunwayAssigner, RunwayData
 from game.scenery_group import SceneryGroup
 from game.utils import Heading
-from gen.flights.closestairfields import ObjectiveDistanceCache
-from gen.ground_forces.combat_stance import CombatStance
-from gen.runways import RunwayAssigner, RunwayData
+from game.ato.closestairfields import ObjectiveDistanceCache
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (

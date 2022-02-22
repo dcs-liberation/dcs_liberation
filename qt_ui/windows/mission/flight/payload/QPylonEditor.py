@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QComboBox
 from game import Game
 from game.data.weapons import Pylon, Weapon
 from game.ato.flight import Flight
-from gen.flights.loadouts import Loadout
+from game.ato.loadouts import Loadout
 
 
 class QPylonEditor(QComboBox):

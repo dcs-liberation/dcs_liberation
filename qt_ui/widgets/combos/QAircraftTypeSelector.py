@@ -4,7 +4,7 @@ from typing import Iterable, Type
 from PySide2.QtWidgets import QComboBox
 from dcs.unittype import FlyingType
 
-from gen.flights.ai_flight_planner_db import aircraft_for_task
+from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.flighttype import FlightType
 
 
