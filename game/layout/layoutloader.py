@@ -127,7 +127,7 @@ class LayoutLoader:
                 ):
 
                     try:
-                        group_name, group_mapping = mapping.group_for_name(
+                        g_id, group_name, group_mapping = mapping.group_for_name(
                             dcs_group.name
                         )
                     except KeyError:
@@ -166,8 +166,8 @@ class LayoutLoader:
                                 group_mapping.fallback_classes,
                             )
                             group_layout.optional = group_mapping.optional
-                            # Add the group at the correct position
-                            layout.groups[group_name].append(group_layout)
+                            # Add the group at the correct index
+                            layout.add_layout_group(group_name, group_layout, g_id)
                         layout_unit = LayoutUnit.from_unit(unit)
                         if i == 0 and layout.name not in template_position:
                             template_position[layout.name] = unit.position

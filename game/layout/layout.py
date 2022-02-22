@@ -168,6 +168,13 @@ class TgoLayout:
         # campaign initialization. For each generic layout a new Group will be created.
         self.generic: bool = False
 
+    def add_layout_group(
+        self, name: str, group: TgoLayoutGroup, index: int = 0
+    ) -> None:
+        """Adds the layout group to the group dict at the given index"""
+        # If the index is greater than the actual len it will add it after the last item
+        self.groups[name].insert(min(len(self.groups[name]), index), group)
+
     def usable_by_faction(self, faction: Faction) -> bool:
         # Special handling for Buildings
         if (
