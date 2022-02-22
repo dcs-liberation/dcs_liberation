@@ -38,3 +38,6 @@ loggers:
     # UI's log window.
     handlers: [file]
     propagate: false
+  uvicorn.error:
+    level: INFO
+    propagate: true
