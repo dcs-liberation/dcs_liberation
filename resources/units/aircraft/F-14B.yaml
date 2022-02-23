@@ -32,3 +32,6 @@ radios:
     namer: tomcat
     intra_flight_radio_index: 2
     inter_flight_radio_index: 1
+default_overrides:
+  INSAlignmentStored: true
+ 
