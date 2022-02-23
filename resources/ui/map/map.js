@@ -1124,32 +1124,34 @@ function drawMapZones() {
   inclusionZones.clearLayers();
   exclusionZones.clearLayers();
 
-  for (const zone of game.mapZones.seaZones) {
-    L.polygon(zone, {
-      color: "#344455",
-      fillColor: "#344455",
-      fillOpacity: 1,
-      interactive: false,
-    }).addTo(seaZones);
-  }
+  getJson("/map-zones").then((zones) => {
+    for (const zone of zones.sea) {
+      L.polygon(zone, {
+        color: "#344455",
+        fillColor: "#344455",
+        fillOpacity: 1,
+        interactive: false,
+      }).addTo(seaZones);
+    }
 
-  for (const zone of game.mapZones.inclusionZones) {
-    L.polygon(zone, {
-      color: "#969696",
-      fillColor: "#4b4b4b",
-      fillOpacity: 1,
-      interactive: false,
-    }).addTo(inclusionZones);
-  }
+    for (const zone of zones.inclusion) {
+      L.polygon(zone, {
+        color: "#969696",
+        fillColor: "#4b4b4b",
+        fillOpacity: 1,
+        interactive: false,
+      }).addTo(inclusionZones);
+    }
 
-  for (const zone of game.mapZones.exclusionZones) {
-    L.polygon(zone, {
-      color: "#969696",
-      fillColor: "#303030",
-      fillOpacity: 1,
-      interactive: false,
-    }).addTo(exclusionZones);
-  }
+    for (const zone of zones.exclusion) {
+      L.polygon(zone, {
+        color: "#969696",
+        fillColor: "#303030",
+        fillOpacity: 1,
+        interactive: false,
+      }).addTo(exclusionZones);
+    }
+  });
 }
 
 function drawUnculledZones() {

@@ -20,7 +20,6 @@ from .controlpointjs import ControlPointJs
 from .flightjs import FlightJs
 from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
-from .mapzonesjs import MapZonesJs
 from .supplyroutejs import SupplyRouteJs
 from .threatzonecontainerjs import ThreatZoneContainerJs
 from .threatzonesjs import ThreatZonesJs
@@ -54,7 +53,6 @@ class MapModel(QObject):
     flightsChanged = Signal()
     frontLinesChanged = Signal()
     threatZonesChanged = Signal()
-    mapZonesChanged = Signal()
     unculledZonesChanged = Signal()
     selectedFlightChanged = Signal(str)
 
@@ -70,7 +68,6 @@ class MapModel(QObject):
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
-        self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
         self._selected_flight_index: Optional[Tuple[int, int]] = None
 
@@ -99,7 +96,6 @@ class MapModel(QObject):
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
-        self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
         self.cleared.emit()
 
@@ -164,7 +160,6 @@ class MapModel(QObject):
             self.reset_atos()
             self.reset_front_lines()
             self.reset_threat_zones()
-            self.reset_map_zones()
             self.reset_unculled_zones()
 
     def on_game_load(self, game: Optional[Game]) -> None:
@@ -296,14 +291,6 @@ class MapModel(QObject):
     @Property(ThreatZoneContainerJs, notify=threatZonesChanged)
     def threatZones(self) -> ThreatZoneContainerJs:
         return self._threat_zones
-
-    def reset_map_zones(self) -> None:
-        self._map_zones = MapZonesJs.from_game(self.game)
-        self.mapZonesChanged.emit()
-
-    @Property(MapZonesJs, notify=mapZonesChanged)
-    def mapZones(self) -> MapZonesJs:
-        return self._map_zones
 
     def on_package_change(self) -> None:
         self.reset_unculled_zones()
