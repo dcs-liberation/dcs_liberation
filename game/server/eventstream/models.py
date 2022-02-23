@@ -19,6 +19,7 @@ class GameUpdateEventsJs(BaseModel):
     updated_combats: list[FrozenCombatJs] = []
     navmesh_updates: set[bool] = set()
     unculled_zones_updated: bool = False
+    threat_zones_updated: bool = False
 
     @classmethod
     def from_events(cls, events: GameUpdateEvents, game: Game) -> GameUpdateEventsJs:
@@ -35,4 +36,5 @@ class GameUpdateEventsJs(BaseModel):
             ],
             navmesh_updates=events.navmesh_updates,
             unculled_zones_updated=events.unculled_zones_updated,
+            threat_zones_updated=events.threat_zones_updated,
         )

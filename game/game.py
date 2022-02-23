@@ -421,8 +421,8 @@ class Game:
         return TransitNetworkBuilder(self.theater, player).build()
 
     def compute_threat_zones(self, events: GameUpdateEvents) -> None:
-        self.blue.compute_threat_zones()
-        self.red.compute_threat_zones()
+        self.blue.compute_threat_zones(events)
+        self.red.compute_threat_zones(events)
         self.blue.compute_nav_meshes(events)
         self.red.compute_nav_meshes(events)
 

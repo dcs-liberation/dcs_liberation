@@ -21,8 +21,6 @@ from .flightjs import FlightJs
 from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
 from .supplyroutejs import SupplyRouteJs
-from .threatzonecontainerjs import ThreatZoneContainerJs
-from .threatzonesjs import ThreatZonesJs
 
 
 # **EVERY PROPERTY NEEDS A NOTIFY SIGNAL**
@@ -51,7 +49,6 @@ class MapModel(QObject):
     supplyRoutesChanged = Signal()
     flightsChanged = Signal()
     frontLinesChanged = Signal()
-    threatZonesChanged = Signal()
     selectedFlightChanged = Signal(str)
 
     def __init__(self, game_model: GameModel) -> None:
@@ -63,9 +60,7 @@ class MapModel(QObject):
         self._supply_routes = []
         self._flights: dict[tuple[bool, int, int], FlightJs] = {}
         self._front_lines = []
-        self._threat_zones = ThreatZoneContainerJs(
-            ThreatZonesJs.empty(), ThreatZonesJs.empty()
-        )
+
         self._selected_flight_index: Optional[Tuple[int, int]] = None
 
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
@@ -84,9 +79,6 @@ class MapModel(QObject):
         self._ground_objects = []
         self._flights = {}
         self._front_lines = []
-        self._threat_zones = ThreatZoneContainerJs(
-            ThreatZonesJs.empty(), ThreatZonesJs.empty()
-        )
         self.cleared.emit()
 
     def set_package_selection(self, index: int) -> None:
@@ -149,7 +141,6 @@ class MapModel(QObject):
             self.reset_routes()
             self.reset_atos()
             self.reset_front_lines()
-            self.reset_threat_zones()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -265,21 +256,6 @@ class MapModel(QObject):
     @Property(list, notify=frontLinesChanged)
     def frontLines(self) -> List[FrontLineJs]:
         return self._front_lines
-
-    def reset_threat_zones(self) -> None:
-        self._threat_zones = ThreatZoneContainerJs(
-            ThreatZonesJs.from_zones(
-                self.game.threat_zone_for(player=True), self.game.theater
-            ),
-            ThreatZonesJs.from_zones(
-                self.game.threat_zone_for(player=False), self.game.theater
-            ),
-        )
-        self.threatZonesChanged.emit()
-
-    @Property(ThreatZoneContainerJs, notify=threatZonesChanged)
-    def threatZones(self) -> ThreatZoneContainerJs:
-        return self._threat_zones
 
     @property
     def game(self) -> Game:

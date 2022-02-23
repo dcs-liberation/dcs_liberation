@@ -119,8 +119,9 @@ class Coalition:
     def adjust_budget(self, amount: float) -> None:
         self.budget += amount
 
-    def compute_threat_zones(self) -> None:
+    def compute_threat_zones(self, events: GameUpdateEvents) -> None:
         self._threat_zone = ThreatZones.for_faction(self.game, self.player)
+        events.update_threat_zones()
 
     def compute_nav_meshes(self, events: GameUpdateEvents) -> None:
         self._navmesh = NavMesh.from_threat_zones(

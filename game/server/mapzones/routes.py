@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from game import Game
 from game.server import GameContext
-from .models import MapZonesJs, UnculledZoneJs
+from .models import MapZonesJs, ThreatZoneContainerJs, ThreatZonesJs, UnculledZoneJs
 from ..leaflet import ShapelyUtil
 
 router: APIRouter = APIRouter(prefix="/map-zones")
@@ -29,3 +29,11 @@ def get_unculled_zones(game: Game = Depends(GameContext.get)) -> list[UnculledZo
         )
         for zone in game.get_culling_zones()
     ]
+
+
+@router.get("/threats")
+def get_threat_zones(game: Game = Depends(GameContext.get)) -> ThreatZoneContainerJs:
+    return ThreatZoneContainerJs(
+        blue=ThreatZonesJs.from_zones(game.threat_zone_for(player=True), game.theater),
+        red=ThreatZonesJs.from_zones(game.threat_zone_for(player=False), game.theater),
+    )

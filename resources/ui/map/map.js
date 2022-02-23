@@ -383,7 +383,6 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.frontLinesChanged.connect(drawFrontLines);
   game.flightsChanged.connect(drawAircraft);
-  game.threatZonesChanged.connect(drawThreatZones);
   game.mapZonesChanged.connect(drawMapZones);
   game.selectedFlightChanged.connect(updateSelectedFlight);
 });
@@ -403,6 +402,9 @@ function handleStreamedEvents(events) {
   }
   if (events.unculled_zones_updated) {
     drawUnculledZones();
+  }
+  if (events.threat_zones_updated) {
+    drawThreatZones();
   }
 }
 
@@ -1063,39 +1065,21 @@ function drawThreatZones() {
   redAirDefenseThreatZones.clearLayers();
   redRadarSamThreatZones.clearLayers();
 
-  _drawThreatZones(game.threatZones.blue.full, blueFullThreatZones, true);
-  _drawThreatZones(
-    game.threatZones.blue.aircraft,
-    blueAircraftThreatZones,
-    true
-  );
-  _drawThreatZones(
-    game.threatZones.blue.airDefenses,
-    blueAirDefenseThreatZones,
-    true
-  );
-  _drawThreatZones(
-    game.threatZones.blue.radarSams,
-    blueRadarSamThreatZones,
-    true
-  );
+  getJson("/map-zones/threats").then((threats) => {
+    _drawThreatZones(threats.blue.full, blueFullThreatZones, true);
+    _drawThreatZones(threats.blue.aircraft, blueAircraftThreatZones, true);
+    _drawThreatZones(
+      threats.blue.air_defenses,
+      blueAirDefenseThreatZones,
+      true
+    );
+    _drawThreatZones(threats.blue.radar_sams, blueRadarSamThreatZones, true);
 
-  _drawThreatZones(game.threatZones.red.full, redFullThreatZones, false);
-  _drawThreatZones(
-    game.threatZones.red.aircraft,
-    redAircraftThreatZones,
-    false
-  );
-  _drawThreatZones(
-    game.threatZones.red.airDefenses,
-    redAirDefenseThreatZones,
-    false
-  );
-  _drawThreatZones(
-    game.threatZones.red.radarSams,
-    redRadarSamThreatZones,
-    false
-  );
+    _drawThreatZones(threats.red.full, redFullThreatZones, false);
+    _drawThreatZones(threats.red.aircraft, redAircraftThreatZones, false);
+    _drawThreatZones(threats.red.air_defenses, redAirDefenseThreatZones, false);
+    _drawThreatZones(threats.red.radar_sams, redRadarSamThreatZones, false);
+  });
 }
 
 function drawNavmesh(player) {

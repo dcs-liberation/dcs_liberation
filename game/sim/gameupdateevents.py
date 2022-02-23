@@ -17,6 +17,7 @@ class GameUpdateEvents:
         self.updated_flights: list[tuple[Flight, Point]] = []
         self.navmesh_updates: set[bool] = set()
         self.unculled_zones_updated: bool = False
+        self.threat_zones_updated: bool = False
 
     @property
     def empty(self) -> bool:
@@ -28,6 +29,7 @@ class GameUpdateEvents:
                 self.updated_flights,
                 self.navmesh_updates,
                 self.unculled_zones_updated,
+                self.threat_zones_updated,
             ]
         )
 
@@ -48,3 +50,6 @@ class GameUpdateEvents:
 
     def update_unculled_zones(self) -> None:
         self.unculled_zones_updated = True
+
+    def update_threat_zones(self) -> None:
+        self.threat_zones_updated = True
