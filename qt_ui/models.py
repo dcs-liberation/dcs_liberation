@@ -169,9 +169,6 @@ class PackageModel(QAbstractListModel):
         """Removes the given flight from the package."""
         index = self.package.flights.index(flight)
         self.beginRemoveRows(QModelIndex(), index, index)
-        if flight.cargo is not None:
-            flight.cargo.transport = None
-        flight.return_pilots_and_aircraft()
         self.package.remove_flight(flight)
         self.endRemoveRows()
         self.update_tot()
@@ -253,6 +250,8 @@ class AtoModel(QAbstractListModel):
         """Adds a package to the ATO."""
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self.ato.add_package(package)
+        # We do not need to send events for new flights in the package here. Events were
+        # already sent when the flights were added to the in-progress package.
         self.endInsertRows()
         # noinspection PyUnresolvedReferences
         self.client_slots_changed.emit()
@@ -264,14 +263,11 @@ class AtoModel(QAbstractListModel):
 
     def delete_package(self, package: Package) -> None:
         """Removes the given package from the ATO."""
+        EventStream.put_nowait(GameUpdateEvents().delete_flights_in_package(package))
         self.package_models.release(package)
         index = self.ato.packages.index(package)
         self.beginRemoveRows(QModelIndex(), index, index)
         self.ato.remove_package(package)
-        for flight in package.flights:
-            flight.return_pilots_and_aircraft()
-            if flight.cargo is not None:
-                flight.cargo.transport = None
         self.endRemoveRows()
         # noinspection PyUnresolvedReferences
         self.client_slots_changed.emit()
@@ -280,9 +276,7 @@ class AtoModel(QAbstractListModel):
     def on_packages_changed(self) -> None:
         if self.game is not None:
             self.game.compute_unculled_zones()
-            events = GameUpdateEvents()
-            events.update_unculled_zones()
-            EventStream.put_nowait(events)
+            EventStream.put_nowait(GameUpdateEvents().update_unculled_zones())
 
     def package_at_index(self, index: QModelIndex) -> Package:
         """Returns the package at the given index."""

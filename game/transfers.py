@@ -40,7 +40,10 @@ from typing import Generic, Iterator, List, Optional, Sequence, TYPE_CHECKING, T
 
 from dcs.mapping import Point
 
+from game.ato.ai_flight_planner_db import aircraft_for_task
+from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ato.flight import Flight
+from game.ato.flightplan import FlightPlanBuilder
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.dcs.aircrafttype import AircraftType
@@ -53,9 +56,6 @@ from game.theater.transitnetwork import (
     TransitNetwork,
 )
 from game.utils import meters, nautical_miles
-from game.ato.ai_flight_planner_db import aircraft_for_task
-from game.ato.closestairfields import ObjectiveDistanceCache
-from game.ato.flightplan import FlightPlanBuilder
 
 if TYPE_CHECKING:
     from game import Game
@@ -635,7 +635,6 @@ class PendingTransfers:
         flight.package.remove_flight(flight)
         if not flight.package.flights:
             self.game.ato_for(self.player).remove_package(flight.package)
-        flight.return_pilots_and_aircraft()
 
     @cancel_transport.register
     def _cancel_transport_convoy(

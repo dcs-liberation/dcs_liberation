@@ -22,7 +22,7 @@ class Navigating(InFlight):
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
         super().on_game_tick(events, time, duration)
-        events.update_flight(self.flight, self.estimate_position())
+        events.update_flight_position(self.flight, self.estimate_position())
 
     def progress(self) -> float:
         return (

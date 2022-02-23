@@ -27,7 +27,8 @@ from PySide2.QtWidgets import (
 
 from game.ato.flight import Flight
 from game.ato.package import Package
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from game.server import EventStream
+from game.sim import GameUpdateEvents
 from ..delegates import TwoColumnRowDelegate
 from ..models import AtoModel, GameModel, NullListModel, PackageModel
 
@@ -128,8 +129,10 @@ class QFlightList(QListView):
         )
 
     def delete_flight(self, index: QModelIndex) -> None:
+        EventStream.put_nowait(
+            GameUpdateEvents().delete_flight(self.package_model.flight_at_index(index))
+        )
         self.package_model.delete_flight_at_index(index)
-        GameUpdateSignal.get_instance().redraw_flight_paths()
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         index = self.indexAt(event.pos())
@@ -209,13 +212,13 @@ class QFlightPanel(QGroupBox):
         self.delete_button.setEnabled(enabled)
         self.change_map_flight_selection(index)
 
-    @staticmethod
-    def change_map_flight_selection(index: QModelIndex) -> None:
+    def change_map_flight_selection(self, index: QModelIndex) -> None:
+        events = GameUpdateEvents()
         if not index.isValid():
-            GameUpdateSignal.get_instance().select_flight(None)
-            return
-
-        GameUpdateSignal.get_instance().select_flight(index.row())
+            events.deselect_flight()
+        else:
+            events.select_flight(self.package_model.flight_at_index(index))
+        EventStream.put_nowait(events)
 
     def on_edit(self) -> None:
         """Opens the flight edit dialog."""
@@ -303,7 +306,6 @@ class QPackageList(QListView):
 
     def delete_package(self, index: QModelIndex) -> None:
         self.ato_model.delete_package_at_index(index)
-        GameUpdateSignal.get_instance().redraw_flight_paths()
 
     def on_new_packages(self, _parent: QModelIndex, first: int, _last: int) -> None:
         # Select the newly created pacakges. This should only ever happen due to
@@ -390,14 +392,18 @@ class QPackagePanel(QGroupBox):
 
     def change_map_package_selection(self, index: QModelIndex) -> None:
         if not index.isValid():
-            GameUpdateSignal.get_instance().select_package(None)
+            EventStream.put_nowait(GameUpdateEvents().deselect_flight())
             return
 
         package = self.ato_model.get_package_model(index)
         if package.rowCount() == 0:
-            GameUpdateSignal.get_instance().select_package(None)
+            EventStream.put_nowait(GameUpdateEvents().deselect_flight())
         else:
-            GameUpdateSignal.get_instance().select_package(index.row())
+            EventStream.put_nowait(
+                GameUpdateEvents().select_flight(
+                    package.flight_at_index(package.index(0))
+                )
+            )
 
     def on_edit(self) -> None:
         """Opens the package edit dialog."""

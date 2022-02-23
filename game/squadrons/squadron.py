@@ -9,8 +9,8 @@ from typing import Optional, Sequence, TYPE_CHECKING
 from faker import Faker
 
 from game.ato import Flight, FlightType, Package
-from game.settings import AutoAtoBehavior, Settings
 from game.ato.flightplan import FlightPlanBuilder
+from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
 from ..db.database import Database
 from ..utils import meters
@@ -381,7 +381,6 @@ class Squadron:
             for flight in list(package.flights):
                 if flight.squadron == self and flight.flight_type is FlightType.FERRY:
                     package.remove_flight(flight)
-                    flight.return_pilots_and_aircraft()
             if not package.flights:
                 self.coalition.ato.remove_package(package)
 

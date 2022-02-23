@@ -5,9 +5,10 @@ from PySide2.QtWidgets import (
 )
 
 from game.ato.flight import Flight
+from game.server import EventStream
+from game.sim import GameUpdateEvents
 from qt_ui.models import GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.mission.flight.QFlightPlanner import QFlightPlanner
 
 
@@ -24,6 +25,7 @@ class QEditFlightDialog(QDialog):
         super().__init__(parent=parent)
 
         self.game_model = game_model
+        self.flight = flight
 
         self.setWindowTitle("Edit flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
@@ -37,5 +39,5 @@ class QEditFlightDialog(QDialog):
         self.finished.connect(self.on_close)
 
     def on_close(self, _result) -> None:
-        GameUpdateSignal.get_instance().redraw_flight_paths()
+        EventStream.put_nowait(GameUpdateEvents().update_flight(self.flight))
         self.game_model.ato_model.client_slots_changed.emit()

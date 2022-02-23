@@ -382,46 +382,59 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.groundObjectsChanged.connect(drawGroundObjects);
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.frontLinesChanged.connect(drawFrontLines);
-  game.flightsChanged.connect(drawAircraft);
-  game.selectedFlightChanged.connect(updateSelectedFlight);
+  game.mapReset.connect(drawAircraft);
 });
 
 function handleStreamedEvents(events) {
-  for (const [flightId, position] of Object.entries(events.updated_flights)) {
-    Flight.withId(flightId).drawAircraftLocation(position);
+  for (const [flightId, position] of Object.entries(
+    events.updated_flight_positions
+  )) {
+    Flight.withId(flightId).updatePosition(position);
   }
+
   for (const combat of events.new_combats) {
     redrawCombat(combat);
   }
+
   for (const combat of events.updated_combats) {
     redrawCombat(combat);
   }
+
   for (const player of events.navmesh_updates) {
     drawNavmesh(player);
   }
+
   if (events.unculled_zones_updated) {
     drawUnculledZones();
   }
+
   if (events.threat_zones_updated) {
     drawThreatZones();
+  }
+
+  if (events.deselected_flight && Flight.selected != null) {
+    Flight.deselectCurrent();
+  }
+
+  if (events.selected_flight != null) {
+    Flight.select(events.selected_flight);
+  }
+
+  for (const flight of events.new_flights) {
+    new Flight(flight).draw();
+  }
+
+  for (const flightId of events.updated_flights) {
+    Flight.withId(flightId).draw();
+  }
+
+  for (const flightId of events.deleted_flights) {
+    Flight.popId(flightId).clear();
   }
 }
 
 function recenterMap(center) {
   map.setView(center, 8, { animate: true, duration: 1 });
-}
-
-function updateSelectedFlight(id) {
-  if (id == null) {
-    holdZones.clearLayers();
-    ipZones.clearLayers();
-    joinZones.clearLayers();
-    return;
-  }
-
-  drawHoldZones(id);
-  drawIpZones(id);
-  drawJoinZones(id);
 }
 
 class ControlPoint {
@@ -857,15 +870,17 @@ class Waypoint {
 
 class Flight {
   static registeredFlights = {};
+  static selected = null;
 
   constructor(flight) {
     this.flight = flight;
     this.id = flight.id;
+    this.selected = false;
+    self.position = flight.position;
     this.aircraft = null;
     this.path = null;
     this.markers = [];
     this.commitBoundary = null;
-    this.flight.selectedChanged.connect(() => this.draw());
     Flight.registerFlight(this);
   }
 
@@ -877,16 +892,65 @@ class Flight {
     Flight.registeredFlights[flight.id] = flight;
   }
 
+  static unregisterFlight(id) {
+    if (Flight.selected != null && Flight.selected.id == id) {
+      Flight.clearSelected();
+    }
+    delete Flight.registeredFlights[id];
+  }
+
   static withId(id) {
     return Flight.registeredFlights[id];
   }
 
+  static popId(id) {
+    const flight = Flight.withId(id);
+    Flight.unregisterFlight(id);
+    return flight;
+  }
+
+  static clearSelected() {
+    holdZones.clearLayers();
+    ipZones.clearLayers();
+    joinZones.clearLayers();
+    Flight.selected = null;
+  }
+
+  static deselectCurrent() {
+    const flight = Flight.selected;
+    Flight.clearSelected();
+    if (flight != null) {
+      flight.selected = false;
+      flight.draw();
+    }
+  }
+
+  static select(id) {
+    if (Flight.selected != null && Flight.selected.id == id) {
+      return;
+    }
+
+    Flight.deselectCurrent();
+    const flight = Flight.withId(id);
+    Flight.selected = flight;
+    flight.selected = true;
+    flight.draw();
+    drawHoldZones(id);
+    drawIpZones(id);
+    drawJoinZones(id);
+  }
+
   shouldMark(waypoint) {
-    return this.flight.selected && waypoint.shouldMark();
+    return this.selected && waypoint.shouldMark();
   }
 
   flightPlanLayer() {
     return this.flight.blue ? blueFlightPlansLayer : redFlightPlansLayer;
+  }
+
+  updatePosition(position) {
+    this.position = position;
+    this.drawAircraftLocation();
   }
 
   updatePath(idx, position) {
@@ -898,7 +962,7 @@ class Flight {
   drawPath(path) {
     const color = this.flight.blue ? Colors.Blue : Colors.Red;
     const layer = this.flightPlanLayer();
-    if (this.flight.selected) {
+    if (this.selected) {
       this.path = L.polyline(path, {
         color: Colors.Highlight,
         interactive: false,
@@ -919,46 +983,69 @@ class Flight {
     this.drawCommitBoundary();
   }
 
-  drawAircraftLocation(position = null) {
+  clear() {
+    this.clearAircraftLocation();
+    this.clearFlightPlan();
+    this.clearCommitBoundary();
+  }
+
+  clearAircraftLocation() {
     if (this.aircraft != null) {
       this.aircraft.removeFrom(aircraftLayer);
       this.aircraft = null;
     }
-    if (position == null) {
-      position = this.flight.position;
-    }
-    if (position.length > 0) {
-      this.aircraft = L.marker(position, {
-        icon: Icons.AirIcons.icon(
-          "fighter",
-          this.flight.blue,
-          this.flight.selected
-        ),
+  }
+
+  drawAircraftLocation() {
+    this.clearAircraftLocation();
+    if (this.position != null) {
+      this.aircraft = L.marker(this.position, {
+        icon: Icons.AirIcons.icon("fighter", this.flight.blue, this.selected),
       }).addTo(aircraftLayer);
     }
   }
 
-  drawCommitBoundary() {
+  clearCommitBoundary() {
     if (this.commitBoundary != null) {
       this.commitBoundary
         .removeFrom(selectedFlightPlansLayer)
         .removeFrom(this.flightPlanLayer())
         .removeFrom(allFlightPlansLayer);
     }
-    if (this.flight.selected) {
-      getJson(`/flights/${this.flight.id}/commit-boundary`).then((boundary) => {
-        if (boundary) {
-          this.commitBoundary = L.polyline(boundary, {
-            color: Colors.Highlight,
-            weight: 1,
-            interactive: false,
-          })
-            .addTo(selectedFlightPlansLayer)
-            .addTo(this.flightPlanLayer())
-            .addTo(allFlightPlansLayer);
-        }
-      });
+  }
+
+  drawCommitBoundary() {
+    if (!this.selected) {
+      this.clearCommitBoundary();
+      return;
     }
+
+    getJson(`/flights/${this.flight.id}/commit-boundary`).then((boundary) => {
+      // For a selected flight we wait to clear the commit boundary until after
+      // the backend responds. Otherwise if the package is reselected while
+      // waiting we may have the following execution order, with selections A
+      // and B:
+      //
+      // 1. A: clear
+      // 2. A: wait for backend
+      // 3. B: wait for backend
+      // 4. A: Add boundary to map
+      // 5. B: Add boundary to map
+      //
+      // Similarly, we need to recheck that we're still selected before
+      // continuing.
+      this.clearCommitBoundary();
+      if (boundary && this.selected) {
+        this.commitBoundary = L.polyline(boundary, {
+          color: Colors.Highlight,
+          weight: 1,
+          interactive: false,
+        })
+          .addTo(selectedFlightPlansLayer)
+          .addTo(this.flightPlanLayer())
+          .addTo(allFlightPlansLayer);
+      }
+    });
   }
 
   clearFlightPlan() {
@@ -978,39 +1065,23 @@ class Flight {
   }
 
   drawFlightPlan() {
-    this.clearFlightPlan();
-    this.flight.flightIsInAto().then((inAto) => {
-      if (!inAto) {
-        // HACK: The signal to redraw the ATO following package/flight deletion
-        // and the signal to change flight/package selection due to UI selection
-        // change come in an arbitrary order. If redraw signal comes first the
-        // UI will clear the map and redraw, but then when the UI updates
-        // selection away from the (now deleted) flight/package it calls
-        // deselect, which redraws the deleted flight plan in its deselected
-        // state.
-        //
-        // Avoid this by checking that the flight is still in the coalition's
-        // ATO before drawing.
-        return;
-      }
-
-      getJson(`/waypoints/${this.flight.id}`).then((waypoints) => {
-        const path = [];
-        waypoints.map((raw, idx) => {
-          const waypoint = new Waypoint(raw, idx, this);
-          if (waypoint.includeInPath()) {
-            path.push(waypoint.position());
-          }
-          if (this.shouldMark(waypoint)) {
-            waypoint.marker
-              .addTo(selectedFlightPlansLayer)
-              .addTo(this.flightPlanLayer())
-              .addTo(allFlightPlansLayer);
-            this.markers.push(waypoint.marker);
-          }
-        });
-        this.drawPath(path);
+    getJson(`/waypoints/${this.flight.id}`).then((waypoints) => {
+      this.clearFlightPlan();
+      const path = [];
+      waypoints.map((raw, idx) => {
+        const waypoint = new Waypoint(raw, idx, this);
+        if (waypoint.includeInPath()) {
+          path.push(waypoint.position());
+        }
+        if (this.shouldMark(waypoint)) {
+          waypoint.marker
+            .addTo(selectedFlightPlansLayer)
+            .addTo(this.flightPlanLayer())
+            .addTo(allFlightPlansLayer);
+          this.markers.push(waypoint.marker);
+        }
       });
+      this.drawPath(path);
     });
   }
 }
@@ -1022,22 +1093,12 @@ function drawAircraft() {
   redFlightPlansLayer.clearLayers();
   selectedFlightPlansLayer.clearLayers();
   allFlightPlansLayer.clearLayers();
-  let selected = null;
-  game.flights.forEach((flight) => {
-    // Draw the selected waypoint last so it's on top. bringToFront only brings
-    // it to the front of the *extant* elements, so any flights drawn later will
-    // be drawn on top. We could fight with manual Z-indexes but leaflet does a
-    // lot of that automatically so it'd be error prone.
-    if (flight.selected) {
-      selected = flight;
-    } else {
+
+  getJson("/flights").then((flights) => {
+    for (const flight of flights) {
       new Flight(flight).draw();
     }
   });
-
-  if (selected != null) {
-    new Flight(selected).draw();
-  }
 }
 
 function _drawThreatZones(zones, layer, player) {

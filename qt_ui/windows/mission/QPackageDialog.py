@@ -16,14 +16,15 @@ from PySide2.QtWidgets import (
 )
 
 from game.ato.flight import Flight
+from game.ato.flightplan import FlightPlanBuilder, PlanningError
 from game.ato.package import Package
 from game.game import Game
+from game.server import EventStream
+from game.sim import GameUpdateEvents
 from game.theater.missiontarget import MissionTarget
-from game.ato.flightplan import FlightPlanBuilder, PlanningError
 from qt_ui.models import AtoModel, GameModel, PackageModel
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.ato import QFlightList
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.mission.flight.QFlightCreator import QFlightCreator
 
 
@@ -141,9 +142,10 @@ class QPackageDialog(QDialog):
     def on_cancel(self) -> None:
         pass
 
-    @staticmethod
-    def on_close(_result) -> None:
-        GameUpdateSignal.get_instance().redraw_flight_paths()
+    def on_close(self, _result) -> None:
+        EventStream.put_nowait(
+            GameUpdateEvents().update_flights_in_package(self.package_model.package)
+        )
 
     def on_save(self) -> None:
         self.save_tot()
@@ -183,13 +185,14 @@ class QPackageDialog(QDialog):
         )
         try:
             planner.populate_flight_plan(flight)
+            self.package_model.update_tot()
+            EventStream.put_nowait(GameUpdateEvents().new_flight(flight))
         except PlanningError as ex:
             self.package_model.delete_flight(flight)
             logging.exception("Could not create flight")
             QMessageBox.critical(
                 self, "Could not create flight", str(ex), QMessageBox.Ok
             )
-        self.package_model.update_tot()
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
 
@@ -252,7 +255,7 @@ class QNewPackageDialog(QPackageDialog):
     def on_cancel(self) -> None:
         super().on_cancel()
         for flight in self.package_model.package.flights:
-            flight.return_pilots_and_aircraft()
+            self.package_model.delete_flight(flight)
 
 
 class QEditPackageDialog(QPackageDialog):

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import logging
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from PySide2.QtCore import Property, QObject, Signal
 from dcs.mapping import LatLng
 
 from game import Game
-from game.ato.airtaaskingorder import AirTaskingOrder
 from game.profiling import logged_duration
 from game.server.leaflet import LeafletLatLon
 from game.server.security import ApiKeyManager
@@ -17,7 +15,6 @@ from game.theater import (
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from .controlpointjs import ControlPointJs
-from .flightjs import FlightJs
 from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
 from .supplyroutejs import SupplyRouteJs
@@ -47,9 +44,8 @@ class MapModel(QObject):
     controlPointsChanged = Signal()
     groundObjectsChanged = Signal()
     supplyRoutesChanged = Signal()
-    flightsChanged = Signal()
     frontLinesChanged = Signal()
-    selectedFlightChanged = Signal(str)
+    mapReset = Signal()
 
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
@@ -58,78 +54,17 @@ class MapModel(QObject):
         self._control_points = []
         self._ground_objects = []
         self._supply_routes = []
-        self._flights: dict[tuple[bool, int, int], FlightJs] = {}
         self._front_lines = []
 
-        self._selected_flight_index: Optional[Tuple[int, int]] = None
-
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
-        GameUpdateSignal.get_instance().flight_paths_changed.connect(self.reset_atos)
-        GameUpdateSignal.get_instance().package_selection_changed.connect(
-            self.set_package_selection
-        )
-        GameUpdateSignal.get_instance().flight_selection_changed.connect(
-            self.set_flight_selection
-        )
         self.reset()
 
     def clear(self) -> None:
         self._control_points = []
         self._supply_routes = []
         self._ground_objects = []
-        self._flights = {}
         self._front_lines = []
         self.cleared.emit()
-
-    def set_package_selection(self, index: int) -> None:
-        self.deselect_current_flight()
-        # Optional[int] isn't a valid type for a Qt signal. None will be converted to
-        # zero automatically. We use -1 to indicate no selection.
-        if index == -1:
-            self._selected_flight_index = None
-        else:
-            self._selected_flight_index = index, 0
-        self.select_current_flight()
-
-    def set_flight_selection(self, index: int) -> None:
-        self.deselect_current_flight()
-        if self._selected_flight_index is None:
-            if index != -1:
-                # We don't know what order update_package_selection and
-                # update_flight_selection will be called in when the last
-                # package is removed. If no flight is selected, it's not a
-                # problem to also have no package selected.
-                logging.error("Flight was selected with no package selected")
-            return
-
-        # Optional[int] isn't a valid type for a Qt signal. None will be converted to
-        # zero automatically. We use -1 to indicate no selection.
-        if index == -1:
-            self._selected_flight_index = self._selected_flight_index[0], None
-        self._selected_flight_index = self._selected_flight_index[0], index
-        self.select_current_flight()
-
-    @property
-    def _selected_flight(self) -> Optional[FlightJs]:
-        if self._selected_flight_index is None:
-            return None
-        package_index, flight_index = self._selected_flight_index
-        blue = True
-        return self._flights.get((blue, package_index, flight_index))
-
-    def deselect_current_flight(self) -> None:
-        flight = self._selected_flight
-        if flight is None:
-            return None
-        flight.set_selected(False)
-
-    def select_current_flight(self):
-        flight = self._selected_flight
-        if flight is None:
-            self.selectedFlightChanged.emit(None)
-            return None
-        flight.set_selected(True)
-        self.selectedFlightChanged.emit(str(flight.flight.id))
 
     def reset(self) -> None:
         if self.game_model.game is None:
@@ -139,8 +74,8 @@ class MapModel(QObject):
             self.reset_control_points()
             self.reset_ground_objects()
             self.reset_routes()
-            self.reset_atos()
             self.reset_front_lines()
+            self.mapReset.emit()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -157,29 +92,6 @@ class MapModel(QObject):
     @Property(list, notify=mapCenterChanged)
     def mapCenter(self) -> LeafletLatLon:
         return self._map_center.as_list()
-
-    def _flights_in_ato(
-        self, ato: AirTaskingOrder, blue: bool
-    ) -> dict[tuple[bool, int, int], FlightJs]:
-        flights = {}
-        for p_idx, package in enumerate(ato.packages):
-            for f_idx, flight in enumerate(package.flights):
-                flights[blue, p_idx, f_idx] = FlightJs(
-                    flight,
-                    selected=blue and (p_idx, f_idx) == self._selected_flight_index,
-                    ato_model=self.game_model.ato_model_for(blue),
-                )
-        return flights
-
-    def reset_atos(self) -> None:
-        self._flights = self._flights_in_ato(
-            self.game.blue.ato, blue=True
-        ) | self._flights_in_ato(self.game.red.ato, blue=False)
-        self.flightsChanged.emit()
-
-    @Property(list, notify=flightsChanged)
-    def flights(self) -> list[FlightJs]:
-        return list(self._flights.values())
 
     def reset_control_points(self) -> None:
         self._control_points = [

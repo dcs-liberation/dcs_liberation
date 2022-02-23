@@ -92,5 +92,4 @@ class PackageBuilder:
         """Returns any planned flights to the inventory."""
         flights = list(self.package.flights)
         for flight in flights:
-            flight.return_pilots_and_aircraft()
             self.package.remove_flight(flight)

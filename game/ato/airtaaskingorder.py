@@ -17,8 +17,13 @@ class AirTaskingOrder:
 
     def remove_package(self, package: Package) -> None:
         """Removes a package from the ATO."""
+        # Remove all the flights individually so the database gets updated.
+        for flight in list(package.flights):
+            package.remove_flight(flight)
         self.packages.remove(package)
 
     def clear(self) -> None:
         """Removes all packages from the ATO."""
-        self.packages.clear()
+        # Remove all packages individually so the database gets updated.
+        for package in self.packages:
+            self.remove_package(package)

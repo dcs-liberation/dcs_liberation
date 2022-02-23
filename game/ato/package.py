@@ -129,6 +129,9 @@ class Package:
         """Removes a flight from the package."""
         self.flights.remove(flight)
         self._db.remove(flight.id)
+        flight.return_pilots_and_aircraft()
+        if flight.cargo is not None:
+            flight.cargo.transport = None
         if not self.flights:
             self.waypoints = None
 
