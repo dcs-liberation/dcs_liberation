@@ -319,7 +319,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     @staticmethod
     def _set_props_overrides(
-        config: Dict[str, any], aircraft: Type[FlyingType], data_path: Path
+        config: Dict[str, Any], aircraft: Type[FlyingType], data_path: Path
     ) -> None:
         if aircraft.property_defaults is None:
             logging.warning(
