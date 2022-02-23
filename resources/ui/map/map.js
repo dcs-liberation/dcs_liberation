@@ -383,7 +383,6 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.frontLinesChanged.connect(drawFrontLines);
   game.flightsChanged.connect(drawAircraft);
-  game.mapZonesChanged.connect(drawMapZones);
   game.selectedFlightChanged.connect(updateSelectedFlight);
 });
 
