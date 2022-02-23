@@ -16,12 +16,13 @@ from game.ato.airtaaskingorder import AirTaskingOrder
 from game.ato.flight import Flight
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
+from game.ato.traveltime import TotEstimator
 from game.game import Game
+from game.server import EventStream
 from game.sim.gameupdateevents import GameUpdateEvents
 from game.squadrons.squadron import Pilot, Squadron
 from game.theater.missiontarget import MissionTarget
 from game.transfers import PendingTransfers, TransferOrder
-from game.ato.traveltime import TotEstimator
 from qt_ui.simcontroller import SimController
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 
@@ -279,7 +280,9 @@ class AtoModel(QAbstractListModel):
     def on_packages_changed(self) -> None:
         if self.game is not None:
             self.game.compute_unculled_zones()
-            self.packages_changed.emit()
+            events = GameUpdateEvents()
+            events.update_unculled_zones()
+            EventStream.put_nowait(events)
 
     def package_at_index(self, index: QModelIndex) -> Package:
         """Returns the package at the given index."""

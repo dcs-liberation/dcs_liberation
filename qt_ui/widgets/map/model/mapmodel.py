@@ -23,7 +23,6 @@ from .groundobjectjs import GroundObjectJs
 from .supplyroutejs import SupplyRouteJs
 from .threatzonecontainerjs import ThreatZoneContainerJs
 from .threatzonesjs import ThreatZonesJs
-from .unculledzonejs import UnculledZone
 
 
 # **EVERY PROPERTY NEEDS A NOTIFY SIGNAL**
@@ -53,7 +52,6 @@ class MapModel(QObject):
     flightsChanged = Signal()
     frontLinesChanged = Signal()
     threatZonesChanged = Signal()
-    unculledZonesChanged = Signal()
     selectedFlightChanged = Signal(str)
 
     def __init__(self, game_model: GameModel) -> None:
@@ -68,7 +66,6 @@ class MapModel(QObject):
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
-        self._unculled_zones = []
         self._selected_flight_index: Optional[Tuple[int, int]] = None
 
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
@@ -79,12 +76,6 @@ class MapModel(QObject):
         GameUpdateSignal.get_instance().flight_selection_changed.connect(
             self.set_flight_selection
         )
-        self.game_model.ato_model_for(True).packages_changed.connect(
-            self.on_package_change
-        ),
-        self.game_model.ato_model_for(False).packages_changed.connect(
-            self.on_package_change
-        ),
         self.reset()
 
     def clear(self) -> None:
@@ -96,7 +87,6 @@ class MapModel(QObject):
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
-        self._unculled_zones = []
         self.cleared.emit()
 
     def set_package_selection(self, index: int) -> None:
@@ -160,7 +150,6 @@ class MapModel(QObject):
             self.reset_atos()
             self.reset_front_lines()
             self.reset_threat_zones()
-            self.reset_unculled_zones()
 
     def on_game_load(self, game: Optional[Game]) -> None:
         if game is not None:
@@ -291,17 +280,6 @@ class MapModel(QObject):
     @Property(ThreatZoneContainerJs, notify=threatZonesChanged)
     def threatZones(self) -> ThreatZoneContainerJs:
         return self._threat_zones
-
-    def on_package_change(self) -> None:
-        self.reset_unculled_zones()
-
-    def reset_unculled_zones(self) -> None:
-        self._unculled_zones = list(UnculledZone.each_from_game(self.game))
-        self.unculledZonesChanged.emit()
-
-    @Property(list, notify=unculledZonesChanged)
-    def unculledZones(self) -> list[UnculledZone]:
-        return self._unculled_zones
 
     @property
     def game(self) -> Game:

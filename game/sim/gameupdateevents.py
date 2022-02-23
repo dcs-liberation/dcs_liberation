@@ -16,6 +16,7 @@ class GameUpdateEvents:
         self.updated_combats: list[FrozenCombat] = []
         self.updated_flights: list[tuple[Flight, Point]] = []
         self.navmesh_updates: set[bool] = set()
+        self.unculled_zones_updated: bool = False
 
     @property
     def empty(self) -> bool:
@@ -26,6 +27,7 @@ class GameUpdateEvents:
                 self.updated_combats,
                 self.updated_flights,
                 self.navmesh_updates,
+                self.unculled_zones_updated,
             ]
         )
 
@@ -43,3 +45,6 @@ class GameUpdateEvents:
 
     def update_navmesh(self, player: bool) -> None:
         self.navmesh_updates.add(player)
+
+    def update_unculled_zones(self) -> None:
+        self.unculled_zones_updated = True

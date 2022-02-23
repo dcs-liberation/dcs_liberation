@@ -385,7 +385,6 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.flightsChanged.connect(drawAircraft);
   game.threatZonesChanged.connect(drawThreatZones);
   game.mapZonesChanged.connect(drawMapZones);
-  game.unculledZonesChanged.connect(drawUnculledZones);
   game.selectedFlightChanged.connect(updateSelectedFlight);
 });
 
@@ -401,6 +400,9 @@ function handleStreamedEvents(events) {
   }
   for (const player of events.navmesh_updates) {
     drawNavmesh(player);
+  }
+  if (events.unculled_zones_updated) {
+    drawUnculledZones();
   }
 }
 
@@ -1124,7 +1126,7 @@ function drawMapZones() {
   inclusionZones.clearLayers();
   exclusionZones.clearLayers();
 
-  getJson("/map-zones").then((zones) => {
+  getJson("/map-zones/terrain").then((zones) => {
     for (const zone of zones.sea) {
       L.polygon(zone, {
         color: "#344455",
@@ -1157,14 +1159,16 @@ function drawMapZones() {
 function drawUnculledZones() {
   unculledZones.clearLayers();
 
-  for (const zone of game.unculledZones) {
-    L.circle(zone.position, {
-      radius: zone.radius,
-      color: "#b4ff8c",
-      fill: false,
-      interactive: false,
-    }).addTo(unculledZones);
-  }
+  getJson("/map-zones/unculled").then((zones) => {
+    for (const zone of zones) {
+      L.circle(zone.position, {
+        radius: zone.radius,
+        color: "#b4ff8c",
+        fill: false,
+        interactive: false,
+      }).addTo(unculledZones);
+    }
+  });
 }
 
 function drawIpZones(id) {
