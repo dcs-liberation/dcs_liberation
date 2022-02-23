@@ -28,7 +28,6 @@ class UnculledZone(QObject):
     @classmethod
     def each_from_game(cls, game: Game) -> Iterator[UnculledZone]:
         for zone in game.get_culling_zones():
-            ll = game.theater.point_to_ll(zone)
             yield UnculledZone(
-                [ll.lat, ll.lng], game.settings.perf_culling_distance * 1000
+                zone.latlng().as_list(), game.settings.perf_culling_distance * 1000
             )

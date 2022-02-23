@@ -14,11 +14,9 @@ class SamCombatJs(QObject):
         super().__init__()
         assert game_model.game is not None
         self.combat = combat
-        self.theater = game_model.game.theater
         self._flight = FlightJs(
             combat.flight,
             selected=False,
-            theater=game_model.game.theater,
             ato_model=game_model.ato_model_for(combat.flight.squadron.player),
         )
         self._air_defenses = [

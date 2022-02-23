@@ -5,7 +5,6 @@ from PySide2.QtCore import Property, QObject, Signal, Slot
 from game.ato import Flight
 from game.ato.flightstate import InFlight
 from game.server.leaflet import LeafletLatLon
-from game.theater import ConflictTheater
 from qt_ui.models import AtoModel
 
 
@@ -15,17 +14,10 @@ class FlightJs(QObject):
     blueChanged = Signal()
     selectedChanged = Signal()
 
-    def __init__(
-        self,
-        flight: Flight,
-        selected: bool,
-        theater: ConflictTheater,
-        ato_model: AtoModel,
-    ) -> None:
+    def __init__(self, flight: Flight, selected: bool, ato_model: AtoModel) -> None:
         super().__init__()
         self.flight = flight
         self._selected = selected
-        self.theater = theater
         self.ato_model = ato_model
 
     @Property(str, notify=idChanged)
@@ -35,8 +27,7 @@ class FlightJs(QObject):
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
         if isinstance(self.flight.state, InFlight):
-            ll = self.theater.point_to_ll(self.flight.state.estimate_position())
-            return [ll.lat, ll.lng]
+            return self.flight.state.estimate_position().latlng().as_list()
         return []
 
     @Property(bool, notify=blueChanged)

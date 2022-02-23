@@ -1,16 +1,16 @@
 from __future__ import annotations
 
+from dcs.mapping import LatLng
 from pydantic.dataclasses import dataclass
 
 from game.ato import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
-from game.theater import ConflictTheater, LatLon
 
 
 @dataclass
 class FlightWaypointJs:
     name: str
-    position: LatLon
+    position: LatLng
     altitude_ft: float
     altitude_reference: str
     is_movable: bool
@@ -18,9 +18,7 @@ class FlightWaypointJs:
     include_in_path: bool
 
     @staticmethod
-    def for_waypoint(
-        waypoint: FlightWaypoint, theater: ConflictTheater
-    ) -> FlightWaypointJs:
+    def for_waypoint(waypoint: FlightWaypoint) -> FlightWaypointJs:
         # Target *points* are the exact location of a unit, whereas the target area is
         # only the center of the objective. Allow moving the latter since its exact
         # location isn't very important.
@@ -64,7 +62,7 @@ class FlightWaypointJs:
 
         return FlightWaypointJs(
             name=waypoint.name,
-            position=theater.point_to_ll(waypoint.position),
+            position=waypoint.position.latlng(),
             altitude_ft=waypoint.alt.feet,
             altitude_reference=waypoint.alt_type,
             is_movable=is_movable,

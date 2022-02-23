@@ -4,7 +4,7 @@ import logging
 from typing import List, Optional, Tuple
 
 from PySide2.QtCore import Property, QObject, Signal
-from dcs import Point
+from dcs.mapping import LatLng
 
 from game import Game
 from game.ato.airtaaskingorder import AirTaskingOrder
@@ -63,7 +63,7 @@ class MapModel(QObject):
     def __init__(self, game_model: GameModel) -> None:
         super().__init__()
         self.game_model = game_model
-        self._map_center = [0, 0]
+        self._map_center = LatLng(0, 0)
         self._control_points = []
         self._ground_objects = []
         self._supply_routes = []
@@ -157,11 +157,6 @@ class MapModel(QObject):
         flight.set_selected(True)
         self.selectedFlightChanged.emit(str(flight.flight.id))
 
-    @staticmethod
-    def leaflet_coord_for(point: Point, theater: ConflictTheater) -> LeafletLatLon:
-        ll = theater.point_to_ll(point)
-        return [ll.lat, ll.lng]
-
     def reset(self) -> None:
         if self.game_model.game is None:
             self.clear()
@@ -182,9 +177,8 @@ class MapModel(QObject):
             self.reset_map_center(game.theater)
 
     def reset_map_center(self, theater: ConflictTheater) -> None:
-        ll = theater.point_to_ll(theater.terrain.map_view_default.position)
-        self._map_center = [ll.lat, ll.lng]
-        self.mapCenterChanged.emit(self._map_center)
+        self._map_center = theater.terrain.map_view_default.position.latlng()
+        self.mapCenterChanged.emit(self._map_center.as_list())
 
     @Property(str, notify=apiKeyChanged)
     def apiKey(self) -> str:
@@ -192,7 +186,7 @@ class MapModel(QObject):
 
     @Property(list, notify=mapCenterChanged)
     def mapCenter(self) -> LeafletLatLon:
-        return self._map_center
+        return self._map_center.as_list()
 
     def _flights_in_ato(
         self, ato: AirTaskingOrder, blue: bool
@@ -203,7 +197,6 @@ class MapModel(QObject):
                 flights[blue, p_idx, f_idx] = FlightJs(
                     flight,
                     selected=blue and (p_idx, f_idx) == self._selected_flight_index,
-                    theater=self.game.theater,
                     ato_model=self.game_model.ato_model_for(blue),
                 )
         return flights
@@ -262,10 +255,7 @@ class MapModel(QObject):
                     SupplyRouteJs(
                         control_point,
                         destination,
-                        [
-                            self.leaflet_coord_for(p, self.game.theater)
-                            for p in convoy_route
-                        ],
+                        [p.latlng().as_list() for p in convoy_route],
                         sea_route=False,
                         game=self.game,
                     )
@@ -278,10 +268,7 @@ class MapModel(QObject):
                         SupplyRouteJs(
                             control_point,
                             destination,
-                            [
-                                self.leaflet_coord_for(p, self.game.theater)
-                                for p in shipping_lane
-                            ],
+                            [p.latlng().as_list() for p in shipping_lane],
                             sea_route=True,
                             game=self.game,
                         )
@@ -293,9 +280,7 @@ class MapModel(QObject):
         return self._supply_routes
 
     def reset_front_lines(self) -> None:
-        self._front_lines = [
-            FrontLineJs(f, self.game.theater) for f in self.game.theater.conflicts()
-        ]
+        self._front_lines = [FrontLineJs(f) for f in self.game.theater.conflicts()]
         self.frontLinesChanged.emit()
 
     @Property(list, notify=frontLinesChanged)

@@ -1,7 +1,7 @@
 from datetime import timedelta
 from uuid import UUID
 
-from dcs.mapping import LatLng
+from dcs.mapping import LatLng, Point
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from game import Game
@@ -26,12 +26,10 @@ def all_waypoints_for_flight(
             flight.departure.position,
             meters(0),
             "RADIO",
-        ),
-        game.theater,
+        )
     )
     return [departure] + [
-        FlightWaypointJs.for_waypoint(w, game.theater)
-        for w in flight.flight_plan.waypoints
+        FlightWaypointJs.for_waypoint(w) for w in flight.flight_plan.waypoints
     ]
 
 
@@ -47,7 +45,7 @@ def set_position(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     waypoint = flight.flight_plan.waypoints[waypoint_idx - 1]
-    waypoint.position = game.theater.ll_to_point(position)
+    waypoint.position = Point.from_latlng(position, game.theater.terrain)
     package_model = (
         GameContext.get_model()
         .ato_model_for(flight.blue)

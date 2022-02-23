@@ -62,8 +62,7 @@ class ControlPointJs(QObject):
 
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
-        ll = self.theater.point_to_ll(self.control_point.position)
-        return [ll.lat, ll.lng]
+        return self.control_point.position.latlng().as_list()
 
     @Property(bool, notify=mobileChanged)
     def mobile(self) -> bool:
@@ -74,7 +73,7 @@ class ControlPointJs(QObject):
         if self.control_point.target_position is None:
             # Qt seems to convert None to [] for list Properties :(
             return []
-        return self.theater.point_to_ll(self.control_point.target_position).as_list()
+        return self.control_point.target_position.latlng().as_list()
 
     def destination_in_range(self, destination: Point) -> bool:
         move_distance = meters(
@@ -84,7 +83,9 @@ class ControlPointJs(QObject):
 
     @Slot(list, result=bool)
     def destinationInRange(self, destination: LeafletLatLon) -> bool:
-        return self.destination_in_range(self.theater.ll_to_point(LatLng(*destination)))
+        return self.destination_in_range(
+            Point.from_latlng(LatLng(*destination), self.theater.terrain)
+        )
 
     @Slot(list, result=str)
     def setDestination(self, destination: LeafletLatLon) -> str:
@@ -93,7 +94,7 @@ class ControlPointJs(QObject):
         if not self.control_point.captured:
             return f"{self.control_point} is not owned by player"
 
-        point = self.theater.ll_to_point(LatLng(*destination))
+        point = Point.from_latlng(LatLng(*destination), self.theater.terrain)
         if not self.destination_in_range(point):
             return (
                 f"Cannot move {self.control_point} more than "

@@ -5,7 +5,7 @@ from typing import List
 from PySide2.QtCore import Property, QObject, Signal, Slot
 
 from game.server.leaflet import LeafletLatLon
-from game.theater import ConflictTheater, FrontLine
+from game.theater import FrontLine
 from game.utils import nautical_miles
 from qt_ui.dialogs import Dialog
 
@@ -13,24 +13,19 @@ from qt_ui.dialogs import Dialog
 class FrontLineJs(QObject):
     extentsChanged = Signal()
 
-    def __init__(self, front_line: FrontLine, theater: ConflictTheater) -> None:
+    def __init__(self, front_line: FrontLine) -> None:
         super().__init__()
         self.front_line = front_line
-        self.theater = theater
 
     @Property(list, notify=extentsChanged)
     def extents(self) -> List[LeafletLatLon]:
-        a = self.theater.point_to_ll(
-            self.front_line.position.point_from_heading(
-                self.front_line.attack_heading.right.degrees, nautical_miles(2).meters
-            )
-        )
-        b = self.theater.point_to_ll(
-            self.front_line.position.point_from_heading(
-                self.front_line.attack_heading.left.degrees, nautical_miles(2).meters
-            )
-        )
-        return [[a.lat, a.lng], [b.lat, b.lng]]
+        a = self.front_line.position.point_from_heading(
+            self.front_line.attack_heading.right.degrees, nautical_miles(2).meters
+        ).latlng()
+        b = self.front_line.position.point_from_heading(
+            self.front_line.attack_heading.left.degrees, nautical_miles(2).meters
+        ).latlng()
+        return [a.as_list(), b.as_list()]
 
     @Slot()
     def showPackageDialog(self) -> None:

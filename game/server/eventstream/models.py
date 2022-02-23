@@ -22,8 +22,7 @@ class GameUpdateEventsJs(BaseModel):
     def from_events(cls, events: GameUpdateEvents, game: Game) -> GameUpdateEventsJs:
         return GameUpdateEventsJs(
             updated_flights={
-                f[0].id: game.theater.point_to_ll(f[1]).as_list()
-                for f in events.updated_flights
+                f[0].id: f[1].latlng().as_list() for f in events.updated_flights
             },
             new_combats=[
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats

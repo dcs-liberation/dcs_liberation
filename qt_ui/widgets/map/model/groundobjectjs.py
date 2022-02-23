@@ -66,8 +66,7 @@ class GroundObjectJs(QObject):
 
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:
-        ll = self.theater.point_to_ll(self.tgo.position)
-        return [ll.lat, ll.lng]
+        return self.tgo.position.latlng().as_list()
 
     @Property(bool, notify=deadChanged)
     def dead(self) -> bool:

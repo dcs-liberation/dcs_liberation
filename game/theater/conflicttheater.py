@@ -4,9 +4,9 @@ import datetime
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
+from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
-from dcs.mapping import LatLng, Point
+from dcs.mapping import Point
 from dcs.terrain import (
     caucasus,
     marianaislands,
@@ -17,13 +17,10 @@ from dcs.terrain import (
     thechannel,
 )
 from dcs.terrain.terrain import Terrain
-from pyproj import CRS, Transformer
 from shapely import geometry, ops
 
 from .frontline import FrontLine
 from .landmap import Landmap, load_landmap, poly_contains
-from .latlon import LatLon
-from .projections import TransverseMercator
 from .seasonalconditions import SeasonalConditions
 from ..utils import Heading
 
@@ -50,35 +47,11 @@ class ConflictTheater:
 
     def __init__(self) -> None:
         self.controlpoints: List[ControlPoint] = []
-        self.point_to_ll_transformer = Transformer.from_crs(
-            self.projection_parameters.to_crs(), CRS("WGS84")
-        )
-        self.ll_to_point_transformer = Transformer.from_crs(
-            CRS("WGS84"), self.projection_parameters.to_crs()
-        )
         """
         self.land_poly = geometry.Polygon(self.landmap[0][0])
         for x in self.landmap[1]:
             self.land_poly = self.land_poly.difference(geometry.Polygon(x))
         """
-
-    def __getstate__(self) -> Dict[str, Any]:
-        state = self.__dict__.copy()
-        # Avoid persisting any volatile types that can be deterministically
-        # recomputed on load for the sake of save compatibility.
-        del state["point_to_ll_transformer"]
-        del state["ll_to_point_transformer"]
-        return state
-
-    def __setstate__(self, state: Dict[str, Any]) -> None:
-        self.__dict__.update(state)
-        # Regenerate any state that was not persisted.
-        self.point_to_ll_transformer = Transformer.from_crs(
-            self.projection_parameters.to_crs(), CRS("WGS84")
-        )
-        self.ll_to_point_transformer = Transformer.from_crs(
-            CRS("WGS84"), self.projection_parameters.to_crs()
-        )
 
     def add_controlpoint(self, point: ControlPoint) -> None:
         self.controlpoints.append(point)
@@ -253,17 +226,6 @@ class ConflictTheater:
     def seasonal_conditions(self) -> SeasonalConditions:
         raise NotImplementedError
 
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        raise NotImplementedError
-
-    def point_to_ll(self, point: Point) -> LatLon:
-        lat, lon = self.point_to_ll_transformer.transform(point.x, point.y)
-        return LatLon(lat, lon)
-
-    def ll_to_point(self, ll: LatLng) -> Point:
-        return Point.from_latlng(ll, self.terrain)
-
     def heading_to_conflict_from(self, position: Point) -> Optional[Heading]:
         # Heading for a Group to the enemy.
         # Should be the point between the nearest and the most distant conflict
@@ -309,12 +271,6 @@ class CaucasusTheater(ConflictTheater):
 
         return CONDITIONS
 
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        from .caucasus import PARAMETERS
-
-        return PARAMETERS
-
 
 class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
@@ -336,12 +292,6 @@ class PersianGulfTheater(ConflictTheater):
         from .seasonalconditions.persiangulf import CONDITIONS
 
         return CONDITIONS
-
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        from .persiangulf import PARAMETERS
-
-        return PARAMETERS
 
 
 class NevadaTheater(ConflictTheater):
@@ -365,12 +315,6 @@ class NevadaTheater(ConflictTheater):
 
         return CONDITIONS
 
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        from .nevada import PARAMETERS
-
-        return PARAMETERS
-
 
 class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
@@ -392,12 +336,6 @@ class NormandyTheater(ConflictTheater):
         from .seasonalconditions.normandy import CONDITIONS
 
         return CONDITIONS
-
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        from .normandy import PARAMETERS
-
-        return PARAMETERS
 
 
 class TheChannelTheater(ConflictTheater):
@@ -421,12 +359,6 @@ class TheChannelTheater(ConflictTheater):
 
         return CONDITIONS
 
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        from .thechannel import PARAMETERS
-
-        return PARAMETERS
-
 
 class SyriaTheater(ConflictTheater):
     terrain = syria.Syria()
@@ -448,12 +380,6 @@ class SyriaTheater(ConflictTheater):
         from .seasonalconditions.syria import CONDITIONS
 
         return CONDITIONS
-
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        from .syria import PARAMETERS
-
-        return PARAMETERS
 
 
 class MarianaIslandsTheater(ConflictTheater):
@@ -477,9 +403,3 @@ class MarianaIslandsTheater(ConflictTheater):
         from .seasonalconditions.marianaislands import CONDITIONS
 
         return CONDITIONS
-
-    @property
-    def projection_parameters(self) -> TransverseMercator:
-        from .marianaislands import PARAMETERS
-
-        return PARAMETERS

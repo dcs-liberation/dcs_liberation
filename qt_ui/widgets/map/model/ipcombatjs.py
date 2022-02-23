@@ -16,7 +16,6 @@ class IpCombatJs(QObject):
         self._flight = FlightJs(
             combat.flight,
             selected=False,
-            theater=game_model.game.theater,
             ato_model=game_model.ato_model_for(combat.flight.squadron.player),
         )
 
