@@ -15,6 +15,7 @@ class GameUpdateEvents:
         self.new_combats: list[FrozenCombat] = []
         self.updated_combats: list[FrozenCombat] = []
         self.updated_flights: list[tuple[Flight, Point]] = []
+        self.navmesh_updates: set[bool] = set()
 
     @property
     def empty(self) -> bool:
@@ -24,6 +25,7 @@ class GameUpdateEvents:
                 self.new_combats,
                 self.updated_combats,
                 self.updated_flights,
+                self.navmesh_updates,
             ]
         )
 
@@ -38,3 +40,6 @@ class GameUpdateEvents:
 
     def update_flight(self, flight: Flight, new_position: Point) -> None:
         self.updated_flights.append((flight, new_position))
+
+    def update_navmesh(self, player: bool) -> None:
+        self.navmesh_updates.add(player)

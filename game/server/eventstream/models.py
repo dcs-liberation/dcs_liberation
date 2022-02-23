@@ -10,13 +10,14 @@ from game.server.leaflet import LeafletLatLon
 
 if TYPE_CHECKING:
     from game import Game
-    from game.sim.gameupdateevents import GameUpdateEvents
+    from game.sim import GameUpdateEvents
 
 
 class GameUpdateEventsJs(BaseModel):
     updated_flights: dict[UUID, LeafletLatLon]
     new_combats: list[FrozenCombatJs] = []
     updated_combats: list[FrozenCombatJs] = []
+    navmesh_updates: set[bool] = set()
 
     @classmethod
     def from_events(cls, events: GameUpdateEvents, game: Game) -> GameUpdateEventsJs:
@@ -31,4 +32,5 @@ class GameUpdateEventsJs(BaseModel):
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
             ],
+            navmesh_updates=events.navmesh_updates,
         )

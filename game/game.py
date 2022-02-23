@@ -15,11 +15,11 @@ from dcs.task import CAP, CAS, PinpointStrike
 from dcs.vehicles import AirDefence
 from faker import Faker
 
+from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ground_forces.ai_ground_planner import GroundPlanner
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from game.utils import Distance
-from game.ato.closestairfields import ObjectiveDistanceCache
 from . import naming, persistency
 from .ato.flighttype import FlightType
 from .campaignloader import CampaignAirWingConfig
@@ -40,10 +40,11 @@ from .weather import Conditions, TimeOfDay
 
 if TYPE_CHECKING:
     from .ato.airtaaskingorder import AirTaskingOrder
+    from .factions.faction import Faction
     from .navmesh import NavMesh
+    from .sim import GameUpdateEvents
     from .squadrons import AirWing
     from .threatzones import ThreatZones
-    from .factions.faction import Faction
 
 COMMISION_UNIT_VARIETY = 4
 COMMISION_LIMITS_SCALE = 1.5
@@ -203,6 +204,8 @@ class Game:
         self.coalition_for(player).adjust_budget(amount)
 
     def on_load(self, game_still_initializing: bool = False) -> None:
+        from .sim import GameUpdateEvents
+
         if not hasattr(self, "name_generator"):
             self.name_generator = naming.namegen
         # Hack: Replace the global name generator state with the state from the save
@@ -215,7 +218,9 @@ class Game:
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_unculled_zones()
         if not game_still_initializing:
-            self.compute_threat_zones()
+            # We don't need to push events that happen during load. The UI will fully
+            # reset when we're done.
+            self.compute_threat_zones(GameUpdateEvents())
 
     def finish_turn(self, skipped: bool = False) -> None:
         """Finalizes the current turn and advances to the next turn.
@@ -266,9 +271,13 @@ class Game:
 
     def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""
+        from .sim import GameUpdateEvents
+
         self.blue.preinit_turn_0()
         self.red.preinit_turn_0()
-        self.initialize_turn()
+        # We don't need to actually stream events for turn zero because we haven't given
+        # *any* state to the UI yet, so it will need to do a full draw once we do.
+        self.initialize_turn(GameUpdateEvents())
 
     def pass_turn(self, no_action: bool = False) -> None:
         """Ends the current turn and initializes the new turn.
@@ -278,11 +287,18 @@ class Game:
         Args:
             no_action: True if the turn was skipped.
         """
+        from .server import EventStream
+        from .sim import GameUpdateEvents
+
         logging.info("Pass turn")
         with logged_duration("Turn finalization"):
             self.finish_turn(no_action)
+
+        events = GameUpdateEvents()
         with logged_duration("Turn initialization"):
-            self.initialize_turn()
+            self.initialize_turn(events)
+
+        EventStream.put_nowait(events)
 
         # Autosave progress
         persistency.autosave(self)
@@ -307,7 +323,9 @@ class Game:
         self.blue.bullseye = Bullseye(enemy_cp.position)
         self.red.bullseye = Bullseye(player_cp.position)
 
-    def initialize_turn(self, for_red: bool = True, for_blue: bool = True) -> None:
+    def initialize_turn(
+        self, events: GameUpdateEvents, for_red: bool = True, for_blue: bool = True
+    ) -> None:
         """Performs turn initialization for the specified players.
 
         Turn initialization performs all of the beginning-of-turn actions. *End-of-turn*
@@ -338,6 +356,7 @@ class Game:
         impactful but also likely to be early, so they also cause a blue replan.
 
         Args:
+            events: Game update event container for turn initialization.
             for_red: True if opfor should be re-initialized.
             for_blue: True if the player coalition should be re-initialized.
         """
@@ -353,7 +372,7 @@ class Game:
 
         # Plan flights & combat for next turn
         with logged_duration("Threat zone computation"):
-            self.compute_threat_zones()
+            self.compute_threat_zones(events)
 
         # Plan Coalition specific turn
         if for_blue:
@@ -401,11 +420,11 @@ class Game:
     def compute_transit_network_for(self, player: bool) -> TransitNetwork:
         return TransitNetworkBuilder(self.theater, player).build()
 
-    def compute_threat_zones(self) -> None:
+    def compute_threat_zones(self, events: GameUpdateEvents) -> None:
         self.blue.compute_threat_zones()
         self.red.compute_threat_zones()
-        self.blue.compute_nav_meshes()
-        self.red.compute_nav_meshes()
+        self.blue.compute_nav_meshes(events)
+        self.red.compute_nav_meshes(events)
 
     def threat_zone_for(self, player: bool) -> ThreatZones:
         return self.coalition_for(player).threat_zone

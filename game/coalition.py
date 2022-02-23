@@ -21,10 +21,11 @@ from game.threatzones import ThreatZones
 from game.transfers import PendingTransfers
 
 if TYPE_CHECKING:
-    from game import Game
-    from game.campaignloader import CampaignAirWingConfig
-    from game.data.doctrine import Doctrine
-    from game.factions.faction import Faction
+    from .campaignloader import CampaignAirWingConfig
+    from .data.doctrine import Doctrine
+    from .factions.faction import Faction
+    from .game import Game
+    from .sim import GameUpdateEvents
 
 
 class Coalition:
@@ -121,10 +122,11 @@ class Coalition:
     def compute_threat_zones(self) -> None:
         self._threat_zone = ThreatZones.for_faction(self.game, self.player)
 
-    def compute_nav_meshes(self) -> None:
+    def compute_nav_meshes(self, events: GameUpdateEvents) -> None:
         self._navmesh = NavMesh.from_threat_zones(
             self.opponent.threat_zone, self.game.theater
         )
+        events.update_navmesh(self.player)
 
     def update_transit_network(self) -> None:
         self.transit_network = TransitNetworkBuilder(

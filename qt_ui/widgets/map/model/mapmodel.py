@@ -21,7 +21,6 @@ from .flightjs import FlightJs
 from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
 from .mapzonesjs import MapZonesJs
-from .navmeshjs import NavMeshJs
 from .supplyroutejs import SupplyRouteJs
 from .threatzonecontainerjs import ThreatZoneContainerJs
 from .threatzonesjs import ThreatZonesJs
@@ -55,7 +54,6 @@ class MapModel(QObject):
     flightsChanged = Signal()
     frontLinesChanged = Signal()
     threatZonesChanged = Signal()
-    navmeshesChanged = Signal()
     mapZonesChanged = Signal()
     unculledZonesChanged = Signal()
     selectedFlightChanged = Signal(str)
@@ -72,7 +70,6 @@ class MapModel(QObject):
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
-        self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
         self._selected_flight_index: Optional[Tuple[int, int]] = None
@@ -102,7 +99,6 @@ class MapModel(QObject):
         self._threat_zones = ThreatZoneContainerJs(
             ThreatZonesJs.empty(), ThreatZonesJs.empty()
         )
-        self._navmeshes = NavMeshJs([], [])
         self._map_zones = MapZonesJs([], [], [])
         self._unculled_zones = []
         self.cleared.emit()
@@ -168,7 +164,6 @@ class MapModel(QObject):
             self.reset_atos()
             self.reset_front_lines()
             self.reset_threat_zones()
-            self.reset_navmeshes()
             self.reset_map_zones()
             self.reset_unculled_zones()
 
@@ -302,20 +297,12 @@ class MapModel(QObject):
     def threatZones(self) -> ThreatZoneContainerJs:
         return self._threat_zones
 
-    def reset_navmeshes(self) -> None:
-        self._navmeshes = NavMeshJs.from_game(self.game)
-        self.navmeshesChanged.emit()
-
-    @Property(NavMeshJs, notify=navmeshesChanged)
-    def navmeshes(self) -> NavMeshJs:
-        return self._navmeshes
-
     def reset_map_zones(self) -> None:
         self._map_zones = MapZonesJs.from_game(self.game)
         self.mapZonesChanged.emit()
 
     @Property(MapZonesJs, notify=mapZonesChanged)
-    def mapZones(self) -> NavMeshJs:
+    def mapZones(self) -> MapZonesJs:
         return self._map_zones
 
     def on_package_change(self) -> None:

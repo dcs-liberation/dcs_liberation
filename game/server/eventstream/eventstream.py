@@ -1,6 +1,6 @@
 from asyncio import Queue
 
-from game.sim.gameupdateevents import GameUpdateEvents
+from game.sim import GameUpdateEvents
 
 
 class EventStream:

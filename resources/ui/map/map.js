@@ -384,7 +384,6 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.frontLinesChanged.connect(drawFrontLines);
   game.flightsChanged.connect(drawAircraft);
   game.threatZonesChanged.connect(drawThreatZones);
-  game.navmeshesChanged.connect(drawNavmeshes);
   game.mapZonesChanged.connect(drawMapZones);
   game.unculledZonesChanged.connect(drawUnculledZones);
   game.selectedFlightChanged.connect(updateSelectedFlight);
@@ -399,6 +398,9 @@ function handleStreamedEvents(events) {
   }
   for (const combat of events.updated_combats) {
     redrawCombat(combat);
+  }
+  for (const player of events.navmesh_updates) {
+    drawNavmesh(player);
   }
 }
 
@@ -1094,26 +1096,27 @@ function drawThreatZones() {
   );
 }
 
-function drawNavmesh(zones, layer) {
-  for (const zone of zones) {
-    L.polyline(zone.poly, {
-      color: "#000000",
-      weight: 1,
-      fillColor: zone.threatened ? "#ff0000" : "#00ff00",
-      fill: true,
-      fillOpacity: 0.1,
-      noClip: true,
-      interactive: false,
-    }).addTo(layer);
-  }
+function drawNavmesh(player) {
+  const layer = player ? blueNavmesh : redNavmesh;
+  layer.clearLayers();
+  getJson(`/navmesh?for_player=${player}`).then((zones) => {
+    for (const zone of zones) {
+      L.polyline(zone.poly, {
+        color: "#000000",
+        weight: 1,
+        fillColor: zone.threatened ? "#ff0000" : "#00ff00",
+        fill: true,
+        fillOpacity: 0.1,
+        noClip: true,
+        interactive: false,
+      }).addTo(layer);
+    }
+  });
 }
 
 function drawNavmeshes() {
-  blueNavmesh.clearLayers();
-  redNavmesh.clearLayers();
-
-  drawNavmesh(game.navmeshes.blue, blueNavmesh);
-  drawNavmesh(game.navmeshes.red, redNavmesh);
+  drawNavmesh(true);
+  drawNavmesh(false);
 }
 
 function drawMapZones() {
