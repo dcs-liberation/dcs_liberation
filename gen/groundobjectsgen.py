@@ -605,49 +605,49 @@ class HelipadGenerator:
         self.game = game
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
-        self.helipads: list[StaticGroup] = []
+        self.helipads: Optional[StaticGroup] = None
 
     def generate(self) -> None:
         # This gets called for every control point, so we don't want to add an empty group (causes DCS mission editor to crash)
         if len(self.cp.helipads) == 0:
             return
-
-        # Note : Helipad are generated as neutral object in order not to interfer with capture triggers
-        neutral_country = self.m.country(self.game.neutral_country.name)
+        # Note: Helipad are generated as neutral object in order not to interfer with
+        # capture triggers
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
-        name = self.cp.name + "_helipad"
-        sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
-        sp = StaticPoint()
-        sp.position = self.cp.position
-        sg.add_point(sp)
 
         for i, helipad in enumerate(self.cp.helipads):
-            # This is used as a trigger of the number of available pads when spawning flights
-            self.helipads.append(sg)
-            name_i = name + "_" + str(i)
-            logging.info("Generating helipad static : " + name_i)
-            pad = InvisibleFARP(unit_id=self.m.next_unit_id(), name=name_i)
-            pad.position = Point(helipad.x, helipad.y)
-            pad.heading = helipad.heading.degrees
-            sg.add_unit(pad)
+            heading = helipad.heading.degrees
+            name_i = self.cp.name + "_helipad" + "_" + str(i)
+            if self.helipads is None:
+                self.helipads = self.m.farp(
+                    self.m.country(self.game.neutral_country.name),
+                    name_i,
+                    helipad,
+                    farp_type="InvisibleFARP",
+                )
+            else:
+                # Create a new Helipad Unit
+                self.helipads.add_unit(InvisibleFARP(self.m.next_unit_id(), name_i))
+            pad = self.helipads.units[-1]
+            pad.position = helipad
+            pad.heading = heading
             # Generate a FARP Ammo and Fuel stack for each pad
             self.m.static_group(
                 country=country,
                 name=(name_i + "_fuel"),
                 _type=Fortification.FARP_Fuel_Depot,
-                position=pad.position.point_from_heading(helipad.heading.degrees, 35),
-                heading=pad.heading,
+                position=helipad.point_from_heading(heading, 35),
+                heading=heading,
             )
             self.m.static_group(
                 country=country,
                 name=(name_i + "_ammo"),
                 _type=Fortification.FARP_Ammo_Dump_Coating,
-                position=pad.position.point_from_heading(
-                    helipad.heading.degrees, 35
-                ).point_from_heading(helipad.heading.degrees + 90, 10),
-                heading=pad.heading,
+                position=helipad.point_from_heading(heading, 35).point_from_heading(
+                    heading + 90, 10
+                ),
+                heading=heading,
             )
-        neutral_country.add_static_group(sg)
 
 
 class GroundObjectsGenerator:
@@ -674,7 +674,7 @@ class GroundObjectsGenerator:
         self.unit_map = unit_map
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
-        self.helipads: dict[ControlPoint, list[StaticGroup]] = defaultdict(list)
+        self.helipads: dict[ControlPoint, StaticGroup] = {}
 
     def generate(self) -> None:
         for cp in self.game.theater.controlpoints:
@@ -685,7 +685,8 @@ class GroundObjectsGenerator:
                 self.m, cp, self.game, self.radio_registry, self.tacan_registry
             )
             helipad_gen.generate()
-            self.helipads[cp] = helipad_gen.helipads
+            if helipad_gen.helipads is not None:
+                self.helipads[cp] = helipad_gen.helipads
 
             for ground_object in cp.ground_objects:
                 generator: GenericGroundObjectGenerator[Any]

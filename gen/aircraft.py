@@ -231,7 +231,7 @@ class AircraftConflictGenerator:
         laser_code_registry: LaserCodeRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
-        helipads: dict[ControlPoint, list[StaticGroup]],
+        helipads: dict[ControlPoint, StaticGroup],
     ) -> None:
         self.m = mission
         self.game = game
@@ -576,9 +576,9 @@ class AircraftConflictGenerator:
         )
 
         try:
-            helipad = self.helipads[cp].pop()
-        except IndexError as ex:
-            raise RuntimeError(f"Not enough helipads available at {cp}") from ex
+            helipad = self.helipads[cp]
+        except IndexError:
+            raise NoParkingSlotError
 
         group = self._generate_at_group(
             name=name,
@@ -589,21 +589,12 @@ class AircraftConflictGenerator:
             at=helipad,
         )
 
-        # Note : A bit dirty, need better support in pydcs
-        group.points[0].action = PointAction.FromParkingArea
-        group.points[0].type = "TakeOffParking"
-        group.units[0].heading = helipad.units[0].heading
         if start_type != "Cold":
-            group.points[0].action = PointAction.FromParkingArea
             group.points[0].type = "TakeOffParkingHot"
-
         for i in range(count - 1):
-            try:
-                helipad = self.helipads[cp].pop()
-                group.units[1 + i].position = Point(helipad.x, helipad.y)
-                group.units[1 + i].heading = helipad.units[0].heading
-            except IndexError as ex:
-                raise RuntimeError(f"Not enough helipads available at {cp}") from ex
+            group.units[i].position = helipad.units[i].position
+            group.units[i].heading = helipad.units[i].heading
+
         return group
 
     def _add_radio_waypoint(
