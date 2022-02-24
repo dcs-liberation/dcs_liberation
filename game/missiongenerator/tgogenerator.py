@@ -530,56 +530,45 @@ class HelipadGenerator:
         # This gets called for every control point, so we don't want to add an empty group (causes DCS mission editor to crash)
         if len(self.cp.helipads) == 0:
             return
-
         # Note: Helipad are generated as neutral object in order not to interfer with
         # capture triggers
         neutral_country = self.m.country(self.game.neutral_country.name)
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
-        name = self.cp.name + "_helipad"
-        sg = unitgroup.StaticGroup(self.m.next_group_id(), name)
-        sp = StaticPoint(self.cp.position)
-        sg.add_point(sp)
-
         for i, helipad in enumerate(self.cp.helipads):
-            # This is used as a trigger of the number of available pads when spawning flights
-            self.helipads.append(sg)
-            name_i = name + "_" + str(i)
-            logging.info("Generating helipad static : " + name_i)
+            heading = helipad.heading.degrees
+            name_i = self.cp.name + "_helipad" + "_" + str(i)
             pad = self.m.farp(
-                country,
+                neutral_country,
                 name_i,
                 helipad,
-                heading=helipad.heading.degrees,
+                heading=heading,
                 farp_type="InvisibleFARP",
             )
-            sg.add_unit(pad)
+            self.helipads.append(pad)
             # Generate a FARP Ammo and Fuel stack for each pad
             self.m.static_group(
                 country=country,
                 name=(name_i + "_fuel"),
                 _type=Fortification.FARP_Fuel_Depot,
-                position=pad.position.point_from_heading(helipad.heading.degrees, 35),
-                heading=pad.heading,
+                position=helipad.point_from_heading(heading, 35),
+                heading=heading,
             )
             self.m.static_group(
                 country=country,
                 name=(name_i + "_ammo"),
                 _type=Fortification.FARP_Ammo_Dump_Coating,
-                position=pad.position.point_from_heading(
-                    helipad.heading.degrees, 35
-                ).point_from_heading(helipad.heading.degrees + 90, 10),
-                heading=pad.heading,
+                position=helipad.point_from_heading(heading, 35).point_from_heading(
+                    heading + 90, 10
+                ),
+                heading=heading,
             )
             self.m.static_group(
                 country=country,
                 name=(name_i + "_ws"),
                 _type=Fortification.Windsock,
-                position=pad.position.point_from_heading(
-                    helipad.heading.degrees + 45, 35
-                ),
-                heading=pad.heading,
+                position=helipad.point_from_heading(heading + 45, 35),
+                heading=heading,
             )
-        neutral_country.add_static_group(sg)
 
 
 class TgoGenerator:
