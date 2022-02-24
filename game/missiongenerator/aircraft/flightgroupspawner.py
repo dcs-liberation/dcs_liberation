@@ -233,7 +233,7 @@ class FlightGroupSpawner:
             # helipad = self.helipads[cp][0]
             helipad = self.helipads[cp].pop()
         except IndexError as ex:
-            raise RuntimeError(f"Not enough helipads available at {cp}") from ex
+            raise NoParkingSlotError(f"Not enough helipads available at {cp}") from ex
 
         group = self._generate_at_group(name, helipad)
 
@@ -246,12 +246,14 @@ class FlightGroupSpawner:
             group.points[0].type = "TakeOffParkingHot"
 
         for i in range(self.flight.count - 1):
+            try:
+                helipad = self.helipads[cp].pop()
+            except IndexError as ex:
+                raise NoParkingSlotError(
+                    f"Not enough helipads available at {cp}"
+                ) from ex
             group.units[1 + i].position = copy.copy(helipad.position)
             group.units[1 + i].heading = helipad.units[0].heading
-            try:
-                self.helipads[cp].pop()
-            except IndexError as ex:
-                raise RuntimeError(f"Not enough helipads available at {cp}") from ex
         return group
 
     def dcs_start_type(self) -> DcsStartType:
