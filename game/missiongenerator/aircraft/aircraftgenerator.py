@@ -50,7 +50,7 @@ class AircraftGenerator:
         laser_code_registry: LaserCodeRegistry,
         unit_map: UnitMap,
         air_support: AirSupport,
-        helipads: dict[ControlPoint, list[StaticGroup]],
+        helipads: dict[ControlPoint, StaticGroup],
     ) -> None:
         self.mission = mission
         self.settings = settings

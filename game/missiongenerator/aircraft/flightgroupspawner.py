@@ -44,7 +44,7 @@ class FlightGroupSpawner:
         flight: Flight,
         country: Country,
         mission: Mission,
-        helipads: dict[ControlPoint, list[StaticGroup]],
+        helipads: dict[ControlPoint, StaticGroup],
     ) -> None:
         self.flight = flight
         self.country = country
@@ -230,30 +230,17 @@ class FlightGroupSpawner:
 
     def _generate_at_cp_helipad(self, name: str, cp: ControlPoint) -> FlyingGroup[Any]:
         try:
-            # helipad = self.helipads[cp][0]
-            helipad = self.helipads[cp].pop()
+            helipad = self.helipads[cp]
         except IndexError as ex:
-            raise NoParkingSlotError(f"Not enough helipads available at {cp}") from ex
+            raise NoParkingSlotError()
 
         group = self._generate_at_group(name, helipad)
 
-        # Note : A bit dirty, need better support in pydcs
-        group.points[0].action = PointAction.FromParkingArea
-        group.points[0].type = "TakeOffParking"
-        group.units[0].heading = helipad.units[0].heading
         if self.start_type is not StartType.COLD:
-            group.points[0].action = PointAction.FromParkingArea
             group.points[0].type = "TakeOffParkingHot"
-
-        for i in range(self.flight.count - 1):
-            try:
-                helipad = self.helipads[cp].pop()
-            except IndexError as ex:
-                raise NoParkingSlotError(
-                    f"Not enough helipads available at {cp}"
-                ) from ex
-            group.units[1 + i].position = copy.copy(helipad.position)
-            group.units[1 + i].heading = helipad.units[0].heading
+        for i in range(self.flight.count):
+            group.units[i].position = helipad.units[i].position
+            group.units[i].heading = helipad.units[i].heading
         return group
 
     def dcs_start_type(self) -> DcsStartType:

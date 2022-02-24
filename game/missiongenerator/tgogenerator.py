@@ -36,7 +36,7 @@ from dcs.task import (
 )
 from dcs.translation import String
 from dcs.triggers import Event, TriggerOnce, TriggerStart, TriggerZone
-from dcs.unit import Unit
+from dcs.unit import Unit, InvisibleFARP
 from dcs.unitgroup import MovingGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import ShipType, VehicleType
 from dcs.vehicles import vehicle_map
@@ -524,7 +524,12 @@ class HelipadGenerator:
         self.game = game
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
-        self.helipads: list[StaticGroup] = []
+        self.helipads = self.m.farp(
+            self.m.country(self.game.neutral_country.name),
+            self.cp.name + "_helipad",
+            self.cp.position,
+            farp_type="InvisibleFARP",
+        )
 
     def generate(self) -> None:
         # This gets called for every control point, so we don't want to add an empty group (causes DCS mission editor to crash)
@@ -532,19 +537,20 @@ class HelipadGenerator:
             return
         # Note: Helipad are generated as neutral object in order not to interfer with
         # capture triggers
-        neutral_country = self.m.country(self.game.neutral_country.name)
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
+
         for i, helipad in enumerate(self.cp.helipads):
             heading = helipad.heading.degrees
             name_i = self.cp.name + "_helipad" + "_" + str(i)
-            pad = self.m.farp(
-                neutral_country,
-                name_i,
-                helipad,
-                heading=heading,
-                farp_type="InvisibleFARP",
-            )
-            self.helipads.append(pad)
+            if i == 0:
+                pad = self.helipads.units[0]
+            else:
+                # Create a new Helipad Unit
+                pad = InvisibleFARP(self.m.terrain, unit_id=self.m.next_unit_id())
+                self.helipads.add_unit(pad)
+            pad.name = name_i
+            pad.position = helipad
+            pad.heading = heading
             # Generate a FARP Ammo and Fuel stack for each pad
             self.m.static_group(
                 country=country,
@@ -595,7 +601,7 @@ class TgoGenerator:
         self.unit_map = unit_map
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
-        self.helipads: dict[ControlPoint, list[StaticGroup]] = defaultdict(list)
+        self.helipads: dict[ControlPoint, StaticGroup] = {}
 
     def generate(self) -> None:
         for cp in self.game.theater.controlpoints:
