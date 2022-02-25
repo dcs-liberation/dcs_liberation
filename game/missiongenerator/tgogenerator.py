@@ -524,12 +524,7 @@ class HelipadGenerator:
         self.game = game
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
-        self.helipads = self.m.farp(
-            self.m.country(self.game.neutral_country.name),
-            self.cp.name + "_helipad",
-            self.cp.position,
-            farp_type="InvisibleFARP",
-        )
+        self.helipads: Optional[StaticGroup] = None
 
     def generate(self) -> None:
         # This gets called for every control point, so we don't want to add an empty group (causes DCS mission editor to crash)
@@ -542,13 +537,19 @@ class HelipadGenerator:
         for i, helipad in enumerate(self.cp.helipads):
             heading = helipad.heading.degrees
             name_i = self.cp.name + "_helipad" + "_" + str(i)
-            if i == 0:
-                pad = self.helipads.units[0]
+            if self.helipads is None:
+                self.helipads = self.m.farp(
+                    self.m.country(self.game.neutral_country.name),
+                    name_i,
+                    helipad,
+                    farp_type="InvisibleFARP",
+                )
             else:
                 # Create a new Helipad Unit
-                pad = InvisibleFARP(self.m.terrain, unit_id=self.m.next_unit_id())
-                self.helipads.add_unit(pad)
-            pad.name = name_i
+                self.helipads.add_unit(
+                    InvisibleFARP(self.m.terrain, self.m.next_unit_id(), name_i)
+                )
+            pad = self.helipads.units[-1]
             pad.position = helipad
             pad.heading = heading
             # Generate a FARP Ammo and Fuel stack for each pad
@@ -612,7 +613,8 @@ class TgoGenerator:
                 self.m, cp, self.game, self.radio_registry, self.tacan_registry
             )
             helipad_gen.generate()
-            self.helipads[cp] = helipad_gen.helipads
+            if helipad_gen.helipads is not None:
+                self.helipads[cp] = helipad_gen.helipads
 
             for ground_object in cp.ground_objects:
                 generator: GroundObjectGenerator
