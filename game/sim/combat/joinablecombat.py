@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 class JoinableCombat(FrozenCombat, ABC):
     def __init__(self, flights: list[Flight]) -> None:
+        super().__init__()
         self.flights = flights
 
     @abstractmethod
