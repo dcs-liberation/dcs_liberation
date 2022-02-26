@@ -36,7 +36,7 @@ class LoggingWebPage(QWebEnginePage):
 
 
 class QLiberationMap(QWebEngineView):
-    def __init__(self, game_model: GameModel, parent) -> None:
+    def __init__(self, game_model: GameModel, new_map: bool, parent) -> None:
         super().__init__(parent)
         self.game_model = game_model
         self.setMinimumSize(800, 600)
@@ -52,9 +52,14 @@ class QLiberationMap(QWebEngineView):
             QWebEngineSettings.LocalContentCanAccessRemoteUrls, True
         )
         self.page.setWebChannel(self.channel)
-        self.page.load(
-            QUrl.fromLocalFile(str(Path("resources/ui/map/canvas.html").resolve()))
-        )
+
+        if new_map:
+            url = QUrl("http://localhost:3000")
+        else:
+            url = QUrl.fromLocalFile(
+                str(Path("resources/ui/map/canvas.html").resolve())
+            )
+        self.page.load(url)
         self.setPage(self.page)
 
     def set_game(self, game: Optional[Game]) -> None:

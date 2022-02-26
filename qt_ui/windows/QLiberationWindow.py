@@ -20,9 +20,9 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
+from game.layout import LAYOUTS
 from game.server import EventStream, GameContext
 from game.server.security import ApiKeyManager
-from game.layout import LAYOUTS
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -46,7 +46,7 @@ from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 
 class QLiberationWindow(QMainWindow):
-    def __init__(self, game: Optional[Game]) -> None:
+    def __init__(self, game: Optional[Game], new_map: bool) -> None:
         super().__init__()
 
         self._uncaught_exception_handler = UncaughtExceptionHandler(self)
@@ -59,7 +59,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model, self)
+        self.liberation_map = QLiberationMap(self.game_model, new_map, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.updateWindowTitle()

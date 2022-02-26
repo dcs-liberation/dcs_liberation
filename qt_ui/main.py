@@ -57,7 +57,7 @@ def inject_custom_payloads(user_path: Path) -> None:
     PayloadDirectories.set_preferred(user_path / "MissionEditor" / "UnitPayloads")
 
 
-def run_ui(game: Optional[Game]) -> None:
+def run_ui(game: Optional[Game], new_map: bool) -> None:
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
     app = QApplication(sys.argv)
 
@@ -140,7 +140,7 @@ def run_ui(game: Optional[Game]) -> None:
     GameUpdateSignal.get_instance().game_loaded.connect(EventStream.drain)
 
     # Start window
-    window = QLiberationWindow(game)
+    window = QLiberationWindow(game, new_map)
     window.showMaximized()
     splash.finish(window)
     qt_execution_code = app.exec_()
@@ -168,8 +168,17 @@ def parse_args() -> argparse.Namespace:
         help="Emits a warning for weapons without date or fallback information.",
     )
 
-    parser.add_argument("--new-map", help="Deprecated. Does nothing.")
-    parser.add_argument("--old-map", help="Deprecated. Does nothing.")
+    parser.add_argument(
+        "--new-map",
+        action="store_true",
+        help="Use the Vue based map. Not yet fully functional.",
+    )
+    parser.add_argument(
+        "--old-map",
+        dest="new_map",
+        action="store_false",
+        help="Deprecated. Does nothing.",
+    )
 
     new_game = subparsers.add_parser("new-game")
 
@@ -339,7 +348,7 @@ def main():
         return
 
     with Server().run_in_thread():
-        run_ui(game)
+        run_ui(game, args.new_map)
 
 
 if __name__ == "__main__":
