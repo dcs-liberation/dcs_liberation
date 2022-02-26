@@ -23,6 +23,7 @@ from game import Game
 from game.armedforces.forcegroup import ForceGroup
 from game.data.groups import GroupRole, GroupTask
 from game.point_with_heading import PointWithHeading
+from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
@@ -218,7 +219,7 @@ class QGroundObjectTemplateLayout(QGroupBox):
                 )
 
         # Replan redfor missions
-        self.game.initialize_turn(for_red=True, for_blue=False)
+        self.game.initialize_turn(GameUpdateEvents(), for_red=True, for_blue=False)
         GameUpdateSignal.get_instance().updateGame(self.game)
 
 

@@ -14,6 +14,7 @@ from dcs import Point
 from game import Game
 from game.config import REWARDS
 from game.data.building_data import FORTIFICATION_BUILDINGS
+from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
@@ -209,7 +210,7 @@ class QGroundObjectMenu(QDialog):
             package.target == self.ground_object
             for package in self.game.ato_for(player=False).packages
         ):
-            self.game.initialize_turn(for_red=True, for_blue=False)
+            self.game.initialize_turn(GameUpdateEvents(), for_red=True, for_blue=False)
 
         self.do_refresh_layout()
         GameUpdateSignal.get_instance().updateGame(self.game)
