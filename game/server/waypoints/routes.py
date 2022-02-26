@@ -8,6 +8,7 @@ from game import Game
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.server import GameContext
+from game.server.leaflet import LeafletPoint
 from game.server.waypoints.models import FlightWaypointJs
 from game.utils import meters
 
@@ -37,7 +38,7 @@ def all_waypoints_for_flight(
 def set_position(
     flight_id: UUID,
     waypoint_idx: int,
-    position: LatLng,
+    position: LeafletPoint,
     game: Game = Depends(GameContext.get),
 ) -> None:
     flight = game.db.flights.get(flight_id)
@@ -45,7 +46,9 @@ def set_position(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     waypoint = flight.flight_plan.waypoints[waypoint_idx - 1]
-    waypoint.position = Point.from_latlng(position, game.theater.terrain)
+    waypoint.position = Point.from_latlng(
+        LatLng(position.lat, position.lng), game.theater.terrain
+    )
     package_model = (
         GameContext.get_model()
         .ato_model_for(flight.blue)

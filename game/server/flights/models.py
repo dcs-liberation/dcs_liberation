@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from dcs.mapping import LatLng
 from pydantic import BaseModel
 
 from game.ato import Flight
 from game.ato.flightstate import InFlight
+from game.server.leaflet import LeafletPoint
 
 
 class FlightJs(BaseModel):
     id: UUID
     blue: bool
-    position: LatLng | None
+    position: LeafletPoint | None
 
     @staticmethod
     def for_flight(flight: Flight) -> FlightJs:

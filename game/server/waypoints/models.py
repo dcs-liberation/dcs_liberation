@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from dcs.mapping import LatLng
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 from game.ato import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
+from game.server.leaflet import LeafletPoint
 
 
-@dataclass
-class FlightWaypointJs:
+class FlightWaypointJs(BaseModel):
     name: str
-    position: LatLng
+    position: LeafletPoint
     altitude_ft: float
     altitude_reference: str
     is_movable: bool

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from dcs.mapping import LatLng
 from pydantic import BaseModel
 
-from game.server.leaflet import LeafletPoly, ShapelyUtil
+from game.server.leaflet import LeafletPoint, LeafletPoly, ShapelyUtil
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
 
@@ -15,7 +14,7 @@ class MapZonesJs(BaseModel):
 
 
 class UnculledZoneJs(BaseModel):
-    position: LatLng
+    position: LeafletPoint
     radius: float
 
 

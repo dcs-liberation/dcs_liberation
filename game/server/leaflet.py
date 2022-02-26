@@ -3,12 +3,21 @@ from __future__ import annotations
 from typing import Union
 
 from dcs import Point
+from pydantic import BaseModel
 from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 
 from game.theater import ConflictTheater
 
 LeafletLatLon = list[float]
 LeafletPoly = list[LeafletLatLon]
+
+
+class LeafletPoint(BaseModel):
+    lat: float
+    lng: float
+
+    class Config:
+        orm_mode = True
 
 
 class ShapelyUtil:

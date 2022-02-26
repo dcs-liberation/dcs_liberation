@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from dcs.mapping import LatLng
 from pydantic import BaseModel
 
-from game.server.leaflet import LeafletPoly, ShapelyUtil
+from game.server.leaflet import LeafletPoint, LeafletPoly, ShapelyUtil
 from game.sim.combat import FrozenCombat
 from game.sim.combat.aircombat import AirCombat
 from game.sim.combat.atip import AtIp
@@ -15,8 +14,8 @@ from game.theater import ConflictTheater
 
 class FrozenCombatJs(BaseModel):
     id: UUID
-    flight_position: LatLng | None
-    target_positions: list[LatLng] | None
+    flight_position: LeafletPoint | None
+    target_positions: list[LeafletPoint] | None
     footprint: list[LeafletPoly] | None
 
     @staticmethod
