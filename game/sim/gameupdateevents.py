@@ -25,6 +25,7 @@ class GameUpdateEvents:
     deleted_flights: set[UUID] = field(default_factory=set)
     selected_flight: UUID | None = None
     deselected_flight: bool = False
+    shutting_down: bool = False
 
     @property
     def empty(self) -> bool:
@@ -88,4 +89,8 @@ class GameUpdateEvents:
     def deselect_flight(self) -> GameUpdateEvents:
         self.deselected_flight = True
         self.selected_flight = None
+        return self
+
+    def shut_down(self) -> GameUpdateEvents:
+        self.shutting_down = True
         return self

@@ -6,8 +6,10 @@ from threading import Thread
 import uvicorn
 from uvicorn import Config
 
+from game.server import EventStream
 from game.server.app import app
 from game.server.settings import ServerSettings
+from game.sim import GameUpdateEvents
 
 
 class Server(uvicorn.Server):
@@ -34,4 +36,5 @@ class Server(uvicorn.Server):
             yield
         finally:
             self.should_exit = True
+            EventStream.put_nowait(GameUpdateEvents().shut_down())
             thread.join()

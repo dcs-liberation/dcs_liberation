@@ -14,6 +14,10 @@ async def event_stream(websocket: WebSocket) -> None:
     await websocket.accept()
     while True:
         if not (events := await EventStream.get()).empty:
+            if events.shutting_down:
+                await websocket.close()
+                return
+
             await websocket.send_json(
                 jsonable_encoder(
                     GameUpdateEventsJs.from_events(events, GameContext.get())
