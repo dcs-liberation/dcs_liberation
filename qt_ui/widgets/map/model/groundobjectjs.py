@@ -76,22 +76,10 @@ class GroundObjectJs(QObject):
     def samThreatRanges(self) -> List[float]:
         if not self.tgo.might_have_aa:
             return []
-
-        ranges = []
-        for group in self.tgo.groups:
-            threat_range = self.tgo.threat_range(group)
-            if threat_range:
-                ranges.append(threat_range.meters)
-        return ranges
+        return [self.tgo.threat_range(group).meters for group in self.tgo.groups]
 
     @Property(list, notify=samDetectionRangesChanged)
     def samDetectionRanges(self) -> List[float]:
         if not self.tgo.might_have_aa:
             return []
-
-        ranges = []
-        for group in self.tgo.groups:
-            detection_range = self.tgo.detection_range(group)
-            if detection_range:
-                ranges.append(detection_range.meters)
-        return ranges
+        return [self.tgo.detection_range(group).meters for group in self.tgo.groups]
