@@ -14,13 +14,11 @@ from dcs import Point
 from game import Game
 from game.config import REWARDS
 from game.data.building_data import FORTIFICATION_BUILDINGS
+from game.server import EventStream
 from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
-    EwrGroundObject,
-    SamGroundObject,
-    VehicleGroupGroundObject,
 )
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
@@ -210,7 +208,9 @@ class QGroundObjectMenu(QDialog):
             package.target == self.ground_object
             for package in self.game.ato_for(player=False).packages
         ):
-            self.game.initialize_turn(GameUpdateEvents(), for_red=True, for_blue=False)
+            events = GameUpdateEvents()
+            self.game.initialize_turn(events, for_red=True, for_blue=False)
+            EventStream.put_nowait(events)
 
         self.do_refresh_layout()
         GameUpdateSignal.get_instance().updateGame(self.game)

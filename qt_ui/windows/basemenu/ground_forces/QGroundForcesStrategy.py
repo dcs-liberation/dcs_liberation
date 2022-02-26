@@ -3,6 +3,7 @@ from collections.abc import Callable
 from PySide2.QtWidgets import QGroupBox, QLabel, QPushButton, QVBoxLayout
 
 from game import Game
+from game.server import EventStream
 from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import ControlPoint
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -57,5 +58,7 @@ class QGroundForcesStrategy(QGroupBox):
         self.cp.base.affect_strength(amount)
         enemy_point.base.affect_strength(-amount)
         # Clear the ATO to replan missions affected by the front line.
-        self.game.initialize_turn(GameUpdateEvents())
+        events = GameUpdateEvents()
+        self.game.initialize_turn(events)
+        EventStream.put_nowait(events)
         GameUpdateSignal.get_instance().updateGame(self.game)

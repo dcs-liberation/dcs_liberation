@@ -1,11 +1,12 @@
-from collections import defaultdict
 import logging
+from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Type
 
 from PySide2.QtCore import Signal
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDialog,
     QGridLayout,
@@ -14,7 +15,6 @@ from PySide2.QtWidgets import (
     QPushButton,
     QSpinBox,
     QVBoxLayout,
-    QCheckBox,
     QWidget,
 )
 from dcs.unittype import UnitType
@@ -22,19 +22,18 @@ from dcs.unittype import UnitType
 from game import Game
 from game.armedforces.forcegroup import ForceGroup
 from game.data.groups import GroupRole, GroupTask
-from game.point_with_heading import PointWithHeading
-from game.sim.gameupdateevents import GameUpdateEvents
-from game.theater import TheaterGroundObject
-from game.theater.theatergroundobject import (
-    VehicleGroupGroundObject,
-    SamGroundObject,
-    EwrGroundObject,
-)
-from game.theater.theatergroup import TheaterGroup
 from game.layout.layout import (
     LayoutException,
     TgoLayout,
     TgoLayoutGroup,
+)
+from game.server import EventStream
+from game.sim.gameupdateevents import GameUpdateEvents
+from game.theater import TheaterGroundObject
+from game.theater.theatergroundobject import (
+    EwrGroundObject,
+    SamGroundObject,
+    VehicleGroupGroundObject,
 )
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -219,7 +218,9 @@ class QGroundObjectTemplateLayout(QGroupBox):
                 )
 
         # Replan redfor missions
-        self.game.initialize_turn(GameUpdateEvents(), for_red=True, for_blue=False)
+        events = GameUpdateEvents()
+        self.game.initialize_turn(events, for_red=True, for_blue=False)
+        EventStream.put_nowait(events)
         GameUpdateSignal.get_instance().updateGame(self.game)
 
 
