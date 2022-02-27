@@ -248,19 +248,7 @@ class QBaseMenu2(QDialog):
             or self.cp.cptype == ControlPointType.LHA_GROUP
         ):
             carrier_type = self.cp.get_carrier_group_type()
-            if (
-                db.ship_type_from_name(carrier_type)
-                in [
-                    Stennis,
-                    KUZNECOW,
-                ]
-                and game.settings.supercarrier
-            ):
-                supercarrier_type = db.upgrade_to_supercarrier(
-                    db.ship_type_from_name(carrier_type), self.cp.name
-                ).id
-                return f"./resources/ui/units/ships/{supercarrier_type}.png"
-            return f"./resources/ui/units/ships/{carrier_type}.png"
+            return f"./resources/ui/units/ships/{carrier_type.id}.png"
         elif self.cp.cptype == ControlPointType.FOB and self.cp.has_helipads:
             return "./resources/ui/heliport.png"
         elif self.cp.cptype == ControlPointType.FOB:
