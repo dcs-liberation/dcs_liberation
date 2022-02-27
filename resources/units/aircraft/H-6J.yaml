@@ -14,3 +14,5 @@ variants:
     introduced: 1954
     manufacturer: Tupolev
     origin: USSR/Russia
+# default_overrides:
+#   Belly_Bay_Door: false

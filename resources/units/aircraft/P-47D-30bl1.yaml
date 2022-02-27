@@ -30,3 +30,6 @@ radios:
     type: SCR-522
     namer: SCR-522
 kneeboard_units: "imperial"
+# default_overrides:
+#   WaterTankContents: 1
+ 

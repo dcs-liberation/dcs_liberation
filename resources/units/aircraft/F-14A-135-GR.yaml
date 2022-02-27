@@ -34,3 +34,14 @@ radios:
     inter_flight_radio_index: 1
 default_overrides:
   INSAlignmentStored: true
+#   ALE39Loadout: 0
+#   IlsChannel: 1
+#   KY28Key: 1
+#   LGB1: 8
+#   LGB10: 8
+#   LGB100: 6
+#   LGB1000: 1
+#   M61BURST: 0
+#   TacanBand: 0
+#   TacanChannel: 0
+#   UseLAU138: true

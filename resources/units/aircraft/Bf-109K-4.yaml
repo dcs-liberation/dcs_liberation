@@ -18,3 +18,7 @@ gunfighter: true
 variants:
   "Bf 109 K-4 Kurf\xFCrst": {}
 kneeboard_units: "metric"
+# default_overrides:
+#   Flare_Gun: 1
+#   MW50TankContents: 1
+ 

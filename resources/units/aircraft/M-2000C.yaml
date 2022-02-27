@@ -23,3 +23,17 @@ radios:
     namer: mirage
     intra_flight_radio_index: 2
     inter_flight_radio_index: 1
+# default_overrides:
+#   DisableVTBExport: false
+#   EnableTAF: true
+#   ForceINSRules: false
+#   GunBurst: 1
+#   InitHotDrift: 0
+#   LaserCode1: 8
+#   LaserCode10: 8
+#   LaserCode100: 6
+#   LoadNVGCase: false
+#   NoDDMSensor: true
+#   ReadyALCM: true
+#   RocketBurst: 6
+#   WpBullseye: 0

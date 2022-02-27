@@ -51,3 +51,9 @@ radios:
     # intra-flight communication to leave COM1 open for UHF inter-flight.
     intra_flight_radio_index: 2
     inter_flight_radio_index: 1
+# default_overrides:
+#   HelmetMountedDevice: 1
+#   LAU3ROF: 0
+#   LaserCode1: 8
+#   LaserCode10: 8
+#   LaserCode100: 6

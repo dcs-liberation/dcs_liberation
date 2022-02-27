@@ -18,3 +18,5 @@ gunfighter: true
 variants:
   Fw 190 D-9 Dora: {}
 kneeboard_units: "metric"
+# default_overrides:
+#   FW_MW50TankContents: 1

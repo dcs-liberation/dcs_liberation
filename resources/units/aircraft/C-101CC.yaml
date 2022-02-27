@@ -10,3 +10,10 @@ role: Light Attack
 gunfighter: true
 variants:
   C-101CC Aviojet: {}
+# default_overrides:
+#   CameraRecorder: false
+#   MountIFRHood: false
+#   NS430allow: 1
+#   NetCrewControlPriority: 1
+#   SightSunFilter: false
+#   SoloFlight: false

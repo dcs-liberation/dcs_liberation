@@ -13,3 +13,8 @@ gunfighter: true
 variants:
   L-39ZA Albatros: {}
 kneeboard_units: "metric"
+# default_overrides:
+#   DismountIFRHood: false
+#   NS430allow: true
+#   NetCrewControlPriority: 1
+#   SoloFlight: false

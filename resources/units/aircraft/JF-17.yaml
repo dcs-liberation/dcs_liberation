@@ -33,3 +33,8 @@ radios:
     namer: viper
     intra_flight_radio_index: 1
     inter_flight_radio_index: 1
+# default_overrides:
+#   AARProbe: false
+#   LaserCode1: 8
+#   LaserCode10: 8
+#   LaserCode100: 6

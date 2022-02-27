@@ -16,3 +16,5 @@ role: Fighter
 gunfighter: true
 variants:
   I-16 Ishak: {}
+# default_overrides:
+#   landingTorch: false

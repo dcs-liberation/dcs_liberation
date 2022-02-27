@@ -28,3 +28,10 @@ radios:
     type: farmer
     namer: single
 kneeboard_units: "metric"
+# default_overrides:
+#   ADF_FAR_Frequency: 625
+#   ADF_NEAR_Frequency: 303
+#   ADF_Selected_Frequency: 1
+#   MissileToneVolume: 5
+#   MountSIRENA: false
+#   NAV_Initial_Hdg: 0

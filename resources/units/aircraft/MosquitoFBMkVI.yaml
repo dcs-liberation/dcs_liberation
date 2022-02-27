@@ -7,3 +7,8 @@ role: Light Bomber, Fighter Bomber, Night Fighter, Maritime Strike Aircraft, Pho
 variants:
   MosquitoFBMkVI: {}
 kneeboard_units: "imperial"
+# default_overrides:
+#   Flare_Gun: 1
+#   ResinLights: 0.15
+#   SoloFlight: false
+ 

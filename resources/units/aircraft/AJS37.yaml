@@ -30,3 +30,9 @@ radios:
     type: viggen
     namer: viggen
 kneeboard_units: "metric"
+# default_overrides:
+#   MissionGeneratorSetting: 0
+#   Rb04GroupTarget: 3
+#   Rb04VinkelHopp: 0
+#   WeapSafeHeight: 1
+ 

@@ -37,3 +37,19 @@ radios:
     type: common
     intra_flight_radio_index: 1
     inter_flight_radio_index: 2
+# default_overrides:
+#   AAR_Zone1: 0
+#   AAR_Zone2: 0
+#   AAR_Zone3: 0
+#   ClockTime: 1
+#   EWDispenserBL: 2
+#   EWDispenserBR: 2
+#   EWDispenserTBL: 2
+#   EWDispenserTBR: 2
+#   EWDispenserTFL: 1
+#   EWDispenserTFR: 1
+#   LaserCode1: 8
+#   LaserCode10: 8
+#   LaserCode100: 6
+#   MountNVG: false
+#   RocketBurst: 1

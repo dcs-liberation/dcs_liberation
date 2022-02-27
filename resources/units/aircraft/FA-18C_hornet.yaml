@@ -49,3 +49,7 @@ radios:
     intra_flight_radio_index: 1
     inter_flight_radio_index: 2
 utc_kneeboard: true
+# default_overrides:
+#   HelmetMountedDevice: 1
+#   InnerBoard: 0
+#   OuterBoard: 0

@@ -25,3 +25,15 @@ max_range: 100
 gunfighter: true
 variants:
   F-5E Tiger II: {}
+# default_overrides:
+#   ChaffBurst: 0
+#   ChaffBurstInt: 0
+#   ChaffSalvo: 0
+#   ChaffSalvoInt: 0
+#   FlareBurst: 0
+#   FlareBurstInt: 0
+#   LAU3ROF: 0
+#   LAU68ROF: 0
+#   LaserCode1: 8
+#   LaserCode10: 8
+#   LaserCode100: 6
