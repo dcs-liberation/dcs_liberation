@@ -352,10 +352,11 @@ class GenericCarrierGenerator(GroundObjectGenerator):
             brc = self.steam_into_wind(ship_group)
 
             # Set Carrier Specific Options
-            if g_id == 0 and self.get_carrier_type(group) is not None:
+            carrier_type = self.get_carrier_type()
+            if g_id == 0 and carrier_type is not None:
                 # Correct unit type for the carrier.
                 # This is only used for the super carrier setting
-                ship_group.units[0].type = self.get_carrier_type().id
+                ship_group.units[0].type = carrier_type.id
                 tacan = self.tacan_registry.alloc_for_band(
                     TacanBand.X, TacanUsage.TransmitReceive
                 )
@@ -366,7 +367,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                     brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
                 )
 
-    def get_carrier_type(self) -> Optional[ShipType]:
+    def get_carrier_type(self) -> Optional[Type[ShipType]]:
         return self.control_point.get_carrier_group_type()
 
     def steam_into_wind(self, group: ShipGroup) -> Optional[Heading]:

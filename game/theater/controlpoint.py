@@ -627,7 +627,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                             return group.group_name
         return None
 
-    def get_carrier_group_type(self) -> Optional[ShipType]:
+    def get_carrier_group_type(self) -> Optional[Type[ShipType]]:
         """
         Get the carrier group type if the airbase is a carrier
         :return: Carrier group type
@@ -643,11 +643,13 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                             UnitClass.AIRCRAFT_CARRIER,
                             UnitClass.HELICOPTER_CARRIER,
                         ]:
-                            if self.coalition.game.settings.supercarrier:
-                                return self.upgrade_to_supercarrier(
-                                    g.get_carrier_type(), self.name
-                                )
-                            return g.get_carrier_type()
+                            carrier_type = g.get_carrier_type()
+                            if carrier_type is not None:
+                                if self.coalition.game.settings.supercarrier:
+                                    return self.upgrade_to_supercarrier(
+                                        carrier_type, self.name
+                                    )
+                                return carrier_type
         return None
 
     @staticmethod
