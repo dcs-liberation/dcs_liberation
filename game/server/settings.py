@@ -22,6 +22,12 @@ class ServerSettings(BaseSettings):
     # If you for some reason change the port, you'll need to also update map.js.
     server_port: int = 5000
 
+    # Disable to allow requests to be made to the backend without an API key.
+    require_api_key: bool = True
+
+    # Enable to allow cross-origin requests from http://localhost:3000.
+    cors_allow_debug_server: bool = False
+
     @classmethod
     @lru_cache
     def get(cls) -> ServerSettings:
