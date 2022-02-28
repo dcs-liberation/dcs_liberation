@@ -11,6 +11,14 @@ from game.savecompat import has_save_compat_for
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Uninitialized
 from .loadouts import Loadout
+from ..sidc import (
+    AirEntity,
+    Entity,
+    SidcDescribable,
+    StandardIdentity,
+    Status,
+    SymbolSet,
+)
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
@@ -25,7 +33,7 @@ if TYPE_CHECKING:
     from .starttype import StartType
 
 
-class Flight:
+class Flight(SidcDescribable):
     def __init__(
         self,
         package: Package,
@@ -102,6 +110,18 @@ class Flight:
     @property
     def blue(self) -> bool:
         return self.squadron.player
+
+    @property
+    def standard_identity(self) -> StandardIdentity:
+        return StandardIdentity.FRIEND if self.blue else StandardIdentity.HOSTILE_FAKER
+
+    @property
+    def sidc_status(self) -> Status:
+        return Status.PRESENT
+
+    @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.AIR, AirEntity.UNSPECIFIED
 
     @property
     def departure(self) -> ControlPoint:

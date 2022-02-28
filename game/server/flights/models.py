@@ -13,6 +13,7 @@ class FlightJs(BaseModel):
     id: UUID
     blue: bool
     position: LeafletPoint | None
+    sidc: str
 
     @staticmethod
     def for_flight(flight: Flight) -> FlightJs:
@@ -23,4 +24,6 @@ class FlightJs(BaseModel):
         position = None
         if isinstance(flight.state, InFlight):
             position = flight.position().latlng()
-        return FlightJs(id=flight.id, blue=flight.blue, position=position)
+        return FlightJs(
+            id=flight.id, blue=flight.blue, position=position, sidc=str(flight.sidc())
+        )

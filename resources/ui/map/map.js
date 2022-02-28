@@ -34,66 +34,6 @@ const Colors = Object.freeze({
   Highlight: "#ffff00",
 });
 
-const Categories = Object.freeze([
-  "aa",
-  "allycamp",
-  "ammo",
-  "armor",
-  "coastal",
-  "comms",
-  "derrick",
-  "ewr",
-  "factory",
-  "farp",
-  "fuel",
-  "missile",
-  "oil",
-  "power",
-  "ship",
-  "village",
-  "ware",
-  "ww2bunker",
-]);
-
-const UnitState = Object.freeze({
-  Alive: "alive",
-  Damaged: "damaged",
-  Destroyed: "destroyed",
-});
-
-class AirIcons {
-  constructor() {
-    this.icons = {};
-    for (const player of [true, false]) {
-      this.icons[player] = {};
-      for (const selected of [true, false]) {
-        this.icons[player][selected] = this.loadIcon(
-          "unspecified",
-          player,
-          selected
-        );
-      }
-    }
-  }
-
-  icon(_category, player, selected) {
-    return this.icons[player][selected];
-  }
-
-  loadIcon(category, player, selected) {
-    var color;
-    if (selected) {
-      color = "selected";
-    } else {
-      color = player ? "blue" : "red";
-    }
-    return new L.Icon({
-      iconUrl: `../air_assets/${category}_${color}.svg`,
-      iconSize: [24, 24],
-    });
-  }
-}
-
 function milSymbolIcon(sidc, options = {}) {
   const symbol = new ms.Symbol(sidc, options);
   return L.icon({
@@ -101,10 +41,6 @@ function milSymbolIcon(sidc, options = {}) {
     iconAnchor: L.point(symbol.getAnchor().x, symbol.getAnchor().y),
   });
 }
-
-const Icons = Object.freeze({
-  AirIcons: new AirIcons(),
-});
 
 function metersToNauticalMiles(meters) {
   return meters * 0.000539957;
@@ -923,7 +859,7 @@ class Flight {
     this.clearAircraftLocation();
     if (this.position != null) {
       this.aircraft = L.marker(this.position, {
-        icon: Icons.AirIcons.icon("fighter", this.flight.blue, this.selected),
+        icon: milSymbolIcon(this.flight.sidc, { size: 16 }),
       }).addTo(aircraftLayer);
     }
   }
