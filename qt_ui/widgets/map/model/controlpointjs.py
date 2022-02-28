@@ -7,7 +7,7 @@ from dcs import Point
 from dcs.mapping import LatLng
 
 from game.server.leaflet import LeafletLatLon
-from game.theater import ConflictTheater, ControlPoint, ControlPointStatus
+from game.theater import ConflictTheater, ControlPoint
 from game.utils import meters, nautical_miles
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -22,8 +22,7 @@ class ControlPointJs(QObject):
     positionChanged = Signal()
     mobileChanged = Signal()
     destinationChanged = Signal(list)
-    categoryChanged = Signal()
-    statusChanged = Signal()
+    sidcChanged = Signal()
 
     def __init__(
         self,
@@ -45,20 +44,9 @@ class ControlPointJs(QObject):
     def blue(self) -> bool:
         return self.control_point.captured
 
-    @Property(str, notify=categoryChanged)
-    def category(self) -> str:
-        return self.control_point.category
-
-    @Property(str, notify=statusChanged)
-    def status(self) -> str:
-        status = self.control_point.status
-        if status is ControlPointStatus.Functional:
-            return "alive"
-        elif status is ControlPointStatus.Damaged:
-            return "damaged"
-        elif status is ControlPointStatus.Destroyed:
-            return "destroyed"
-        raise ValueError(f"Unhandled ControlPointStatus: {status.name}")
+    @Property(str, notify=sidcChanged)
+    def sidc(self) -> str:
+        return str(self.control_point.sidc())
 
     @Property(list, notify=positionChanged)
     def position(self) -> LeafletLatLon:

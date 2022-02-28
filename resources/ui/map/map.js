@@ -61,36 +61,6 @@ const UnitState = Object.freeze({
   Destroyed: "destroyed",
 });
 
-class CpIcons {
-  constructor() {
-    this.icons = {};
-    for (const player of [true, false]) {
-      this.icons[player] = {};
-      for (const state of Object.values(UnitState)) {
-        this.icons[player][state] = {
-          airfield: this.loadIcon("airfield", player, state),
-          cv: this.loadIcon("cv", player, state),
-          fob: this.loadIcon("fob", player, state),
-          lha: this.loadIcon("lha", player, state),
-          offmap: this.loadIcon("airfield", player, state),
-        };
-      }
-    }
-  }
-
-  icon(category, player, state) {
-    return this.icons[player][state][category];
-  }
-
-  loadIcon(category, player, state) {
-    const color = player ? "blue" : "red";
-    return new L.Icon({
-      iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
-      iconSize: [32, 32],
-    });
-  }
-}
-
 class TgoIcons {
   constructor() {
     this.icons = {};
@@ -163,7 +133,6 @@ class AirIcons {
 }
 
 const Icons = Object.freeze({
-  ControlPoints: new CpIcons(),
   Objectives: new TgoIcons(),
   AirIcons: new AirIcons(),
 });
@@ -458,11 +427,14 @@ class ControlPoint {
   }
 
   icon() {
-    return Icons.ControlPoints.icon(
-      this.cp.category,
-      this.cp.blue,
-      this.cp.status
-    );
+    const symbol = new ms.Symbol(this.cp.sidc, {
+      size: 24,
+      colorMode: "Dark",
+    });
+    return L.icon({
+      iconUrl: symbol.toDataURL(),
+      iconAnchor: L.point(symbol.getAnchor().x, symbol.getAnchor().y),
+    });
   }
 
   hasDestination() {

@@ -27,12 +27,21 @@ from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unitgroup import ShipGroup, StaticGroup
 
+from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ground_forces.combat_stance import CombatStance
 from game.point_with_heading import PointWithHeading
 from game.runways import RunwayAssigner, RunwayData
 from game.scenery_group import SceneryGroup
+from game.sidc import (
+    Entity,
+    LandInstallationEntity,
+    SeaSurfaceEntity,
+    StandardIdentity,
+    Status,
+    SymbolIdentificationCode,
+    SymbolSet,
+)
 from game.utils import Heading
-from game.ato.closestairfields import ObjectiveDistanceCache
 from .base import Base
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
@@ -341,6 +350,29 @@ class ControlPoint(MissionTarget, ABC):
     @property
     def captured(self) -> bool:
         return self.coalition.player
+
+    def sidc(self) -> SymbolIdentificationCode:
+        iff = (
+            StandardIdentity.FRIEND if self.captured else StandardIdentity.HOSTILE_FAKER
+        )
+
+        if self.status is ControlPointStatus.Functional:
+            status = Status.PRESENT
+        elif self.status is ControlPointStatus.Damaged:
+            status = Status.PRESENT_DAMAGED
+        elif self.status is ControlPointStatus.Destroyed:
+            status = Status.PRESENT_DESTROYED
+        else:
+            raise ValueError(f"Unexpected ControlPointStatus: {self.status}")
+
+        symbol_set, entity = self.symbol_set_and_entity()
+        return SymbolIdentificationCode(
+            standard_identity=iff, symbol_set=symbol_set, status=status, entity=entity
+        )
+
+    @abstractmethod
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        ...
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:
@@ -875,6 +907,9 @@ class Airfield(ControlPoint):
         self.airport = airport
         self._runway_status = RunwayStatus()
 
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.AIPORT_AIR_BASE
+
     def can_operate(self, aircraft: AircraftType) -> bool:
         # TODO: Allow helicopters.
         # Need to implement ground spawns so the helos don't use the runway.
@@ -1058,6 +1093,9 @@ class Carrier(NavalControlPoint):
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
 
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.CARRIER
+
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
 
@@ -1099,6 +1137,9 @@ class Lha(NavalControlPoint):
             cptype=ControlPointType.LHA_GROUP,
         )
 
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.AMPHIBIOUS_ASSAULT_SHIP_GENERAL
+
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("LHAs cannot be captured")
 
@@ -1132,6 +1173,9 @@ class OffMapSpawn(ControlPoint):
             has_frontline=False,
             cptype=ControlPointType.OFF_MAP,
         )
+
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.AIPORT_AIR_BASE
 
     def capture(self, game: Game, for_player: bool) -> None:
         raise RuntimeError("Off map control points cannot be captured")
@@ -1194,6 +1238,9 @@ class Fob(ControlPoint):
             cptype=ControlPointType.FOB,
         )
         self.name = name
+
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.MILITARY_BASE
 
     def runway_is_operational(self) -> bool:
         return self.has_helipads
