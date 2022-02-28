@@ -36,9 +36,9 @@ from game.sidc import (
     Entity,
     LandInstallationEntity,
     SeaSurfaceEntity,
+    SidcDescribable,
     StandardIdentity,
     Status,
-    SymbolIdentificationCode,
     SymbolSet,
 )
 from game.utils import Heading
@@ -282,7 +282,7 @@ class ControlPointStatus(IntEnum):
 StartingPosition = ShipGroup | StaticGroup | Airport | Point
 
 
-class ControlPoint(MissionTarget, ABC):
+class ControlPoint(MissionTarget, SidcDescribable, ABC):
     # Not sure what distance DCS uses, but assuming it's about 2NM since that's roughly
     # the distance of the circle on the map.
     CAPTURE_DISTANCE = nautical_miles(2)
@@ -351,28 +351,21 @@ class ControlPoint(MissionTarget, ABC):
     def captured(self) -> bool:
         return self.coalition.player
 
-    def sidc(self) -> SymbolIdentificationCode:
-        iff = (
+    @property
+    def standard_identity(self) -> StandardIdentity:
+        return (
             StandardIdentity.FRIEND if self.captured else StandardIdentity.HOSTILE_FAKER
         )
 
+    @property
+    def sidc_status(self) -> Status:
         if self.status is ControlPointStatus.Functional:
-            status = Status.PRESENT
-        elif self.status is ControlPointStatus.Damaged:
-            status = Status.PRESENT_DAMAGED
-        elif self.status is ControlPointStatus.Destroyed:
-            status = Status.PRESENT_DESTROYED
-        else:
-            raise ValueError(f"Unexpected ControlPointStatus: {self.status}")
-
-        symbol_set, entity = self.symbol_set_and_entity()
-        return SymbolIdentificationCode(
-            standard_identity=iff, symbol_set=symbol_set, status=status, entity=entity
-        )
-
-    @abstractmethod
-    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
-        ...
+            return Status.PRESENT
+        if self.status is ControlPointStatus.Damaged:
+            return Status.PRESENT_DAMAGED
+        if self.status is ControlPointStatus.Destroyed:
+            return Status.PRESENT_DESTROYED
+        raise ValueError(f"Unexpected ControlPointStatus: {self.status}")
 
     @property
     def ground_objects(self) -> List[TheaterGroundObject]:
@@ -907,6 +900,7 @@ class Airfield(ControlPoint):
         self.airport = airport
         self._runway_status = RunwayStatus()
 
+    @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.AIPORT_AIR_BASE
 
@@ -1093,6 +1087,7 @@ class Carrier(NavalControlPoint):
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
 
+    @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.CARRIER
 
@@ -1137,6 +1132,7 @@ class Lha(NavalControlPoint):
             cptype=ControlPointType.LHA_GROUP,
         )
 
+    @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.AMPHIBIOUS_ASSAULT_SHIP_GENERAL
 
@@ -1174,6 +1170,7 @@ class OffMapSpawn(ControlPoint):
             cptype=ControlPointType.OFF_MAP,
         )
 
+    @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.AIPORT_AIR_BASE
 
@@ -1239,6 +1236,7 @@ class Fob(ControlPoint):
         )
         self.name = name
 
+    @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.MILITARY_BASE
 

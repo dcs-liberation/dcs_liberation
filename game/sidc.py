@@ -8,10 +8,11 @@ APP-6) are not implemented. The third set of ten digits are optional and will be
 from the output.
 
 https://nso.nato.int/nso/nsdd/main/standards/ap-details/1912/EN
-https://www.spatialillusions.com/milsymbol/docs/milsymbol-2525d.html
+https://www.spatialillusions.com/milsymbol/docs/milsymbol-APP6d.html
 """
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import IntEnum, unique
 
@@ -209,13 +210,42 @@ class AirEntity(Entity):
 
 
 @unique
+class LandUnitEntity(Entity):
+    """Land Unit Entity/Entity Type/Entity Subtype defined by table A-19."""
+
+    UNSPECIFIED = 0
+
+    ARMOR_ARMORED_MECHANIZED_SELF_PROPELLED_TRACKED = 120500
+    AIR_DEFENSE = 130100
+    MISSILE = 130700
+
+
+@unique
+class LandEquipmentEntity(Entity):
+    """Land Equipment Entity/Entity Type/Entity Subtype defined by table A-25."""
+
+    UNSPECIFIED = 0
+
+    RADAR = 220300
+
+
+@unique
 class LandInstallationEntity(Entity):
     """Land Installation Entity/Entity Type/Entity Subtype defined by table A-27."""
 
     UNSPECIFIED = 0
 
+    AMMUNITION_CACHE = 110300
+    WAREHOUSE_STORAGE_FACILITY = 112000
+    TENTED_CAMP = 111900
+    GENERATION_STATION = 120502
+    PETROLEUM_FACILITY = 120504
     MILITARY_BASE = 120802
+    PUBLIC_VENUES_INFRASTRUCTURE = 121000
+    TELECOMMUNICATIONS_TOWER = 121203
     AIPORT_AIR_BASE = 121301
+    HELICOPTER_LANDING_SITE = 121305
+    MAINTENANCE_FACILITY = 121306
 
 
 @unique
@@ -225,6 +255,7 @@ class SeaSurfaceEntity(Entity):
     UNSPECIFIED = 0
 
     CARRIER = 120100
+    SURFACE_COMBATANT_LINE = 120200
     AMPHIBIOUS_ASSAULT_SHIP_GENERAL = 120303
 
 
@@ -273,4 +304,30 @@ class SymbolIdentificationCode:
                 str(self.sector_one_modifier),
                 str(self.sector_two_modifier),
             ]
+        )
+
+
+class SidcDescribable(ABC):
+    @property
+    @abstractmethod
+    def standard_identity(self) -> StandardIdentity:
+        ...
+
+    @property
+    @abstractmethod
+    def sidc_status(self) -> Status:
+        ...
+
+    @property
+    @abstractmethod
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        ...
+
+    def sidc(self) -> SymbolIdentificationCode:
+        symbol_set, entity = self.symbol_set_and_entity
+        return SymbolIdentificationCode(
+            standard_identity=self.standard_identity,
+            symbol_set=symbol_set,
+            status=self.sidc_status,
+            entity=entity,
         )

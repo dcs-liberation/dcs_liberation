@@ -61,44 +61,6 @@ const UnitState = Object.freeze({
   Destroyed: "destroyed",
 });
 
-class TgoIcons {
-  constructor() {
-    this.icons = {};
-    for (const category of Categories) {
-      this.icons[category] = {};
-      for (const player of [true, false]) {
-        this.icons[category][player] = {};
-        for (const state of Object.values(UnitState)) {
-          this.icons[category][player][state] = this.loadIcon(
-            category,
-            player,
-            state
-          );
-        }
-      }
-    }
-  }
-
-  icon(category, player, state) {
-    return this.icons[category][player][state];
-  }
-
-  loadIcon(category, player, state) {
-    const color = player ? "blue" : "red";
-    return new L.Icon({
-      iconUrl: `../ground_assets/${category}_${color}_${state}.svg`,
-      iconSize: [32, 32],
-    });
-  }
-
-  loadLegacyIcon(category, player) {
-    const playerSuffix = player ? "_blue" : "";
-    return new L.Icon({
-      iconUrl: `../ground_assets/${category}${playerSuffix}.png`,
-    });
-  }
-}
-
 class AirIcons {
   constructor() {
     this.icons = {};
@@ -132,8 +94,15 @@ class AirIcons {
   }
 }
 
+function milSymbolIcon(sidc, options = {}) {
+  const symbol = new ms.Symbol(sidc, options);
+  return L.icon({
+    iconUrl: symbol.toDataURL(),
+    iconAnchor: L.point(symbol.getAnchor().x, symbol.getAnchor().y),
+  });
+}
+
 const Icons = Object.freeze({
-  Objectives: new TgoIcons(),
   AirIcons: new AirIcons(),
 });
 
@@ -427,13 +396,9 @@ class ControlPoint {
   }
 
   icon() {
-    const symbol = new ms.Symbol(this.cp.sidc, {
+    return milSymbolIcon(this.cp.sidc, {
       size: 24,
       colorMode: "Dark",
-    });
-    return L.icon({
-      iconUrl: symbol.toDataURL(),
-      iconAnchor: L.point(symbol.getAnchor().x, symbol.getAnchor().y),
     });
   }
 
@@ -613,26 +578,8 @@ class TheaterGroundObject {
     this.tgo = tgo;
   }
 
-  samIsThreat() {
-    for (const range of this.tgo.samThreatRanges) {
-      if (range > 0) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   icon() {
-    let state;
-    if (this.tgo.dead) {
-      state = UnitState.Destroyed;
-    } else if (this.tgo.category == "aa" && !this.samIsThreat()) {
-      state = UnitState.Damaged;
-    } else {
-      state = UnitState.Alive;
-    }
-    return Icons.Objectives.icon(this.tgo.category, this.tgo.blue, state);
+    return milSymbolIcon(this.tgo.sidc, { size: 24 });
   }
 
   layer() {

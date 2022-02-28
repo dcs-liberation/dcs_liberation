@@ -14,6 +14,7 @@ from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 class GroundObjectJs(QObject):
     nameChanged = Signal()
     controlPointNameChanged = Signal()
+    sidcChanged = Signal()
     unitsChanged = Signal()
     blueChanged = Signal()
     positionChanged = Signal()
@@ -51,6 +52,10 @@ class GroundObjectJs(QObject):
     @Property(str, notify=controlPointNameChanged)
     def controlPointName(self) -> str:
         return self.tgo.control_point.name
+
+    @Property(str, notify=sidcChanged)
+    def sidc(self) -> str:
+        return str(self.tgo.sidc())
 
     @Property(str, notify=categoryChanged)
     def category(self) -> str:

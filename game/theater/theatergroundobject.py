@@ -1,17 +1,23 @@
 from __future__ import annotations
 
 import itertools
-import logging
 from abc import ABC
-from typing import Iterator, List, TYPE_CHECKING, Optional
-
-from dcs.unittype import VehicleType
-from dcs.vehicles import vehicle_map
+from typing import Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
+from dcs.unittype import VehicleType
 
-
-from game.dcs.helpers import unit_type_from_name
+from game.sidc import (
+    Entity,
+    LandEquipmentEntity,
+    LandInstallationEntity,
+    LandUnitEntity,
+    SeaSurfaceEntity,
+    SidcDescribable,
+    StandardIdentity,
+    Status,
+    SymbolSet,
+)
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
 
@@ -45,7 +51,7 @@ NAME_BY_CATEGORY = {
 }
 
 
-class TheaterGroundObject(MissionTarget):
+class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
     def __init__(
         self,
         name: str,
@@ -61,6 +67,18 @@ class TheaterGroundObject(MissionTarget):
         self.control_point = control_point
         self.sea_object = sea_object
         self.groups: List[TheaterGroup] = []
+
+    @property
+    def sidc_status(self) -> Status:
+        return Status.PRESENT_DESTROYED if self.is_dead else Status.PRESENT
+
+    @property
+    def standard_identity(self) -> StandardIdentity:
+        return (
+            StandardIdentity.FRIEND
+            if self.control_point.captured
+            else StandardIdentity.HOSTILE_FAKER
+        )
 
     @property
     def is_dead(self) -> bool:
@@ -233,6 +251,36 @@ class BuildingGroundObject(TheaterGroundObject):
         self.is_fob_structure = is_fob_structure
 
     @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        if self.category == "allycamp":
+            entity = LandInstallationEntity.TENTED_CAMP
+        elif self.category == "ammo":
+            entity = LandInstallationEntity.AMMUNITION_CACHE
+        elif self.category == "comms":
+            entity = LandInstallationEntity.TELECOMMUNICATIONS_TOWER
+        elif self.category == "derrick":
+            entity = LandInstallationEntity.PETROLEUM_FACILITY
+        elif self.category == "factory":
+            entity = LandInstallationEntity.MAINTENANCE_FACILITY
+        elif self.category == "farp":
+            entity = LandInstallationEntity.HELICOPTER_LANDING_SITE
+        elif self.category == "fuel":
+            entity = LandInstallationEntity.WAREHOUSE_STORAGE_FACILITY
+        elif self.category == "oil":
+            entity = LandInstallationEntity.PETROLEUM_FACILITY
+        elif self.category == "power":
+            entity = LandInstallationEntity.GENERATION_STATION
+        elif self.category == "village":
+            entity = LandInstallationEntity.PUBLIC_VENUES_INFRASTRUCTURE
+        elif self.category == "ware":
+            entity = LandInstallationEntity.WAREHOUSE_STORAGE_FACILITY
+        elif self.category == "ww2bunker":
+            entity = LandInstallationEntity.MILITARY_BASE
+        else:
+            raise ValueError(f"Unhandled building category: {self.category}")
+        return SymbolSet.LAND_INSTALLATIONS, entity
+
+    @property
     def mark_locations(self) -> Iterator[Point]:
         # Special handling to mark all buildings of the TGO
         for unit in self.strike_targets:
@@ -257,7 +305,7 @@ class BuildingGroundObject(TheaterGroundObject):
         return meters(0)
 
 
-class NavalGroundObject(TheaterGroundObject):
+class NavalGroundObject(TheaterGroundObject, ABC):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
 
@@ -278,7 +326,7 @@ class NavalGroundObject(TheaterGroundObject):
         return False
 
 
-class GenericCarrierGroundObject(NavalGroundObject):
+class GenericCarrierGroundObject(NavalGroundObject, ABC):
     @property
     def is_control_point(self) -> bool:
         return True
@@ -295,6 +343,10 @@ class CarrierGroundObject(GenericCarrierGroundObject):
             control_point=control_point,
             sea_object=True,
         )
+
+    @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.CARRIER
 
     @property
     def group_name(self) -> str:
@@ -319,6 +371,10 @@ class LhaGroundObject(GenericCarrierGroundObject):
         )
 
     @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.AMPHIBIOUS_ASSAULT_SHIP_GENERAL
+
+    @property
     def group_name(self) -> str:
         # Prefix the group names with the side color so Skynet can find them,
         # add to EWR.
@@ -340,6 +396,10 @@ class MissileSiteGroundObject(TheaterGroundObject):
             control_point=control_point,
             sea_object=False,
         )
+
+    @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.LAND_UNIT, LandUnitEntity.MISSILE
 
     @property
     def capturable(self) -> bool:
@@ -366,6 +426,10 @@ class CoastalSiteGroundObject(TheaterGroundObject):
             control_point=control_point,
             sea_object=False,
         )
+
+    @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.LAND_UNIT, LandUnitEntity.MISSILE
 
     @property
     def capturable(self) -> bool:
@@ -404,6 +468,18 @@ class SamGroundObject(IadsGroundObject):
             control_point=control_point,
             sea_object=False,
         )
+
+    @property
+    def sidc_status(self) -> Status:
+        if self.is_dead:
+            return Status.PRESENT_DESTROYED
+        if self.max_threat_range() > meters(0):
+            return Status.PRESENT
+        return Status.PRESENT_DAMAGED
+
+    @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.LAND_UNIT, LandUnitEntity.AIR_DEFENSE
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
@@ -474,6 +550,13 @@ class VehicleGroupGroundObject(TheaterGroundObject):
         )
 
     @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return (
+            SymbolSet.LAND_UNIT,
+            LandUnitEntity.ARMOR_ARMORED_MECHANIZED_SELF_PROPELLED_TRACKED,
+        )
+
+    @property
     def capturable(self) -> bool:
         return False
 
@@ -498,6 +581,10 @@ class EwrGroundObject(IadsGroundObject):
             control_point=control_point,
             sea_object=False,
         )
+
+    @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.LAND_EQUIPMENT, LandEquipmentEntity.RADAR
 
     @property
     def group_name(self) -> str:
@@ -528,6 +615,10 @@ class ShipGroundObject(NavalGroundObject):
             control_point=control_point,
             sea_object=True,
         )
+
+    @property
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
+        return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.SURFACE_COMBATANT_LINE
 
     @property
     def group_name(self) -> str:
