@@ -5,7 +5,6 @@ import { ControlPoint } from "../controlpoint/ControlPoint";
 
 export function ControlPointsLayer() {
   const controlPoints = useAppSelector(selectControlPoints);
-  console.log(`controlPoints is ${controlPoints}`);
   return (
     <LayerGroup>
       {controlPoints.map((controlPoint) => {
