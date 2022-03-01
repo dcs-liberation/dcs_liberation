@@ -1,6 +1,7 @@
 import { Icon, Point } from "leaflet";
 import { Marker, Popup } from "react-leaflet";
-import { ControlPoint as ControlPointModel } from "../../game/controlpoint";
+
+import { ControlPoint as ControlPointModel } from "../../api/controlpoint";
 import { Symbol as MilSymbol } from "milsymbol";
 
 function iconForControlPoint(cp: ControlPointModel) {
@@ -19,7 +20,7 @@ interface ControlPointProps {
   controlPoint: ControlPointModel;
 }
 
-export function ControlPoint(props: ControlPointProps) {
+export default function ControlPoint(props: ControlPointProps) {
   return (
     <Marker
       position={props.controlPoint.position}

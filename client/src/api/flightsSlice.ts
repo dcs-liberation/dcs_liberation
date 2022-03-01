@@ -1,20 +1,20 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { Flight } from "../flight";
-import { RootState } from "../../app/store";
+import { Flight } from "./flight";
+import { RootState } from "../app/store";
 
-interface AtoState {
+interface FlightsState {
   blue: { [id: string]: Flight };
   red: { [id: string]: Flight };
 }
 
-const initialState: AtoState = {
+const initialState: FlightsState = {
   blue: {},
   red: {},
 };
 
-export const atoSlice = createSlice({
-  name: "ato",
+export const flightsSlice = createSlice({
+  name: "flights",
   initialState,
   reducers: {
     clearFlights: (state) => {
@@ -23,11 +23,11 @@ export const atoSlice = createSlice({
     },
     registerFlight: (state, action: PayloadAction<Flight>) => {
       const flight = action.payload;
-      const ato = flight.blue ? state.blue : state.red;
-      if (flight.id in ato) {
+      const coalitionFlights = flight.blue ? state.blue : state.red;
+      if (flight.id in coalitionFlights) {
         console.log(`Overriding flight with ID: ${flight.id}`);
       }
-      ato[flight.id] = flight;
+      coalitionFlights[flight.id] = flight;
     },
     unregisterFlight: (state, action: PayloadAction<string>) => {
       const id = action.payload;
@@ -46,8 +46,8 @@ export const atoSlice = createSlice({
 });
 
 export const { clearFlights, registerFlight, unregisterFlight } =
-  atoSlice.actions;
+  flightsSlice.actions;
 
-export const selectAtos = (state: RootState) => state.atos;
+export const selectFlights = (state: RootState) => state.flights;
 
-export default atoSlice.reducer;
+export default flightsSlice.reducer;

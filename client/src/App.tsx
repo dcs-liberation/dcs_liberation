@@ -1,12 +1,12 @@
 import "./App.css";
 
-import { ControlPoint } from "./game/controlpoint";
-import { Flight } from "./game/flight";
+import { ControlPoint } from "./api/controlpoint";
+import { Flight } from "./api/flight";
 import { LatLng } from "leaflet";
-import { LiberationMap } from "./map/liberationmap/LiberationMap";
+import LiberationMap from "./components/liberationmap";
 import axios from "axios";
-import { registerFlight } from "./game/ato/atoSlice";
-import { setControlPoints } from "./game/theater/theaterSlice";
+import { registerFlight } from "./api/flightsSlice";
+import { setControlPoints } from "./api/controlPointsSlice";
 import { useAppDispatch } from "./app/hooks";
 import { useEffect } from "react";
 

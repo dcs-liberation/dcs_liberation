@@ -1,14 +1,14 @@
-import { FlightPlan } from "../flightplan/FlightPlan";
+import FlightPlan from "../flightplan";
 import { LayerGroup } from "react-leaflet";
-import { selectAtos } from "../../game/ato/atoSlice";
+import { selectFlights } from "../../api/flightsSlice";
 import { useAppSelector } from "../../app/hooks";
 
 interface FlightPlansLayerProps {
   blue: boolean;
 }
 
-export function FlightPlansLayer(props: FlightPlansLayerProps) {
-  const atos = useAppSelector(selectAtos);
+export default function FlightPlansLayer(props: FlightPlansLayerProps) {
+  const atos = useAppSelector(selectFlights);
   const flights = props.blue ? atos.blue : atos.red;
   return (
     <LayerGroup>

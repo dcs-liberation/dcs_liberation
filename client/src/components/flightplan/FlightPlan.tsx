@@ -1,4 +1,4 @@
-import { Flight } from "../../game/flight";
+import { Flight } from "../../api/flight";
 import { Polyline } from "react-leaflet";
 
 const BLUE_PATH = "#0084ff";
@@ -9,7 +9,7 @@ interface FlightPlanProps {
   selected: boolean;
 }
 
-export function FlightPlanPath(props: FlightPlanProps) {
+function FlightPlanPath(props: FlightPlanProps) {
   const color = props.flight.blue ? BLUE_PATH : RED_PATH;
   const waypoints = props.flight.waypoints;
   if (waypoints == null) {
@@ -24,7 +24,7 @@ export function FlightPlanPath(props: FlightPlanProps) {
   );
 }
 
-export function FlightPlan(props: FlightPlanProps) {
+export default function FlightPlan(props: FlightPlanProps) {
   return (
     <>
       <FlightPlanPath {...props} />
