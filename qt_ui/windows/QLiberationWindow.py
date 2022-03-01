@@ -3,7 +3,7 @@ import traceback
 import webbrowser
 from typing import Optional
 
-from PySide2.QtCore import Qt
+from PySide2.QtCore import QSettings, Qt
 from PySide2.QtGui import QCloseEvent, QIcon
 from PySide2.QtWidgets import (
     QAction,
@@ -72,9 +72,14 @@ class QLiberationWindow(QMainWindow):
         self.initMenuBar()
         self.connectSignals()
 
+        # Default to maximized on the main display if we don't have any persistent
+        # configuration.
         screen = QDesktopWidget().screenGeometry()
         self.setGeometry(0, 0, screen.width(), screen.height())
         self.setWindowState(Qt.WindowMaximized)
+
+        # But override it with the saved configuration if it exists.
+        self._restore_window_geometry()
 
         if self.game is None:
             last_save_file = liberation_install.get_last_save_file()
@@ -412,6 +417,19 @@ class QLiberationWindow(QMainWindow):
         self.debriefing = QDebriefingWindow(debrief)
         self.debriefing.show()
 
+    def _qsettings(self) -> QSettings:
+        return QSettings("DCS Liberation", "Qt UI")
+
+    def _restore_window_geometry(self) -> None:
+        settings = self._qsettings()
+        self.restoreGeometry(settings.value("geometry"))
+        self.restoreState(settings.value("windowState"))
+
+    def _save_window_geometry(self) -> None:
+        settings = self._qsettings()
+        settings.setValue("geometry", self.saveGeometry())
+        settings.setValue("windowState", self.saveState())
+
     def closeEvent(self, event: QCloseEvent) -> None:
         result = QMessageBox.question(
             self,
@@ -420,6 +438,7 @@ class QLiberationWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if result == QMessageBox.Yes:
+            self._save_window_geometry()
             super().closeEvent(event)
             self.dialog = None
         else:
