@@ -13,19 +13,23 @@ router: APIRouter = APIRouter(prefix="/flights")
 
 
 @router.get("/")
-def list_flights(game: Game = Depends(GameContext.get)) -> list[FlightJs]:
+def list_flights(
+    with_waypoints: bool = False, game: Game = Depends(GameContext.get)
+) -> list[FlightJs]:
     flights = []
     for coalition in game.coalitions:
         for package in coalition.ato.packages:
             for flight in package.flights:
-                flights.append(FlightJs.for_flight(flight))
+                flights.append(FlightJs.for_flight(flight, with_waypoints))
     return flights
 
 
 @router.get("/{flight_id}")
-def get_flight(flight_id: UUID, game: Game = Depends(GameContext.get)) -> FlightJs:
+def get_flight(
+    flight_id: UUID, with_waypoints: bool = False, game: Game = Depends(GameContext.get)
+) -> FlightJs:
     flight = game.db.flights.get(flight_id)
-    return FlightJs.for_flight(flight)
+    return FlightJs.for_flight(flight, with_waypoints)
 
 
 @router.get("/{flight_id}/commit-boundary")

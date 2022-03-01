@@ -46,7 +46,9 @@ class GameUpdateEventsJs(BaseModel):
             navmesh_updates=events.navmesh_updates,
             unculled_zones_updated=events.unculled_zones_updated,
             threat_zones_updated=events.threat_zones_updated,
-            new_flights=[FlightJs.for_flight(f) for f in events.new_flights],
+            new_flights=[
+                FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights
+            ],
             updated_flights=events.updated_flights,
             deleted_flights=events.deleted_flights,
             selected_flight=events.selected_flight,

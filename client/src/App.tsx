@@ -1,12 +1,14 @@
-import { LatLng } from "leaflet";
 import "./App.css";
 
-import { LiberationMap } from "./map/liberationmap/LiberationMap";
 import { ControlPoint } from "./game/controlpoint";
-import { useEffect } from "react";
-import { useAppDispatch } from "./app/hooks";
-import { setControlPoints } from "./game/theater/theaterSlice";
+import { Flight } from "./game/flight";
+import { LatLng } from "leaflet";
+import { LiberationMap } from "./map/liberationmap/LiberationMap";
 import axios from "axios";
+import { registerFlight } from "./game/ato/atoSlice";
+import { setControlPoints } from "./game/theater/theaterSlice";
+import { useAppDispatch } from "./app/hooks";
+import { useEffect } from "react";
 
 function App() {
   const mapCenter: LatLng = new LatLng(25.58, 54.9);
@@ -20,6 +22,16 @@ function App() {
       .then((response) => {
         if (response != null) {
           dispatch(setControlPoints(response.data as ControlPoint[]));
+        }
+      });
+    axios
+      .get("http://[::1]:5000/flights?with_waypoints=true")
+      .catch((error) => console.log(`Error fetching flights: ${error}`))
+      .then((response) => {
+        if (response != null) {
+          for (const flight of response.data) {
+            dispatch(registerFlight(flight as Flight));
+          }
         }
       });
   });

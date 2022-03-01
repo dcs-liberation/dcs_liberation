@@ -1,8 +1,11 @@
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
+
+import atoReducer from "../game/ato/atoSlice";
 import theaterReducer from "../game/theater/theaterSlice";
 
 export const store = configureStore({
   reducer: {
+    atos: atoReducer,
     theater: theaterReducer,
   },
 });
