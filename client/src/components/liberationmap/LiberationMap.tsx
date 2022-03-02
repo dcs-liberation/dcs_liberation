@@ -6,6 +6,8 @@ import { BasemapLayer } from "react-esri-leaflet";
 import ControlPointsLayer from "../controlpointslayer";
 import FlightPlansLayer from "../flightplanslayer";
 import { LatLng } from "leaflet";
+import { TgoType } from "../../api/tgo";
+import TgosLayer from "../tgoslayer/TgosLayer";
 
 interface GameProps {
   mapCenter: LatLng;
@@ -28,6 +30,13 @@ export default function LiberationMap(props: GameProps) {
         <LayersControl.Overlay name="Control points" checked>
           <ControlPointsLayer />
         </LayersControl.Overlay>
+        {Object.values(TgoType).map((type) => {
+          return (
+            <LayersControl.Overlay name={type} checked>
+              <TgosLayer type={type as TgoType} />
+            </LayersControl.Overlay>
+          );
+        })}
         <LayersControl.Overlay name="All blue flight plans" checked>
           <FlightPlansLayer blue={true} />
         </LayersControl.Overlay>
