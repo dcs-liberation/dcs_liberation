@@ -1,5 +1,6 @@
 import { Flight } from "../../api/flight";
 import { Polyline } from "react-leaflet";
+import WaypointMarker from "../waypointmarker";
 
 const BLUE_PATH = "#0084ff";
 const RED_PATH = "#c85050";
@@ -35,10 +36,33 @@ function FlightPlanPath(props: FlightPlanProps) {
   );
 }
 
+const WaypointMarkers = (props: FlightPlanProps) => {
+  if (!props.selected || props.flight.waypoints == null) {
+    return <></>;
+  }
+
+  return (
+    <>
+      {props.flight.waypoints
+        .filter((p) => p.should_mark)
+        .map((p, idx) => {
+          return (
+            <WaypointMarker
+              key={idx}
+              number={idx}
+              waypoint={p}
+            ></WaypointMarker>
+          );
+        })}
+    </>
+  );
+};
+
 export default function FlightPlan(props: FlightPlanProps) {
   return (
     <>
       <FlightPlanPath {...props} />
+      <WaypointMarkers {...props} />
     </>
   );
 }
