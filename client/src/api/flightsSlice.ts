@@ -6,11 +6,13 @@ import { RootState } from "../app/store";
 interface FlightsState {
   blue: { [id: string]: Flight };
   red: { [id: string]: Flight };
+  selected: Flight | null;
 }
 
 const initialState: FlightsState = {
   blue: {},
   red: {},
+  selected: null,
 };
 
 export const flightsSlice = createSlice({
@@ -42,11 +44,23 @@ export const flightsSlice = createSlice({
         );
       }
     },
+    deselectFlight: (state) => {
+      state.selected = null;
+    },
+    selectFlight: (state, action: PayloadAction<string>) => {
+      const id = action.payload;
+      state.selected = state.blue[id];
+    },
   },
 });
 
-export const { clearFlights, registerFlight, unregisterFlight } =
-  flightsSlice.actions;
+export const {
+  clearFlights,
+  registerFlight,
+  unregisterFlight,
+  deselectFlight,
+  selectFlight,
+} = flightsSlice.actions;
 
 export const selectFlights = (state: RootState) => state.flights;
 

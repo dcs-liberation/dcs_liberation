@@ -1,8 +1,8 @@
-import { ControlPoint } from "./controlpoint";
-import { Flight } from "./flight";
-import backend from "./backend";
-import { registerFlight } from "./flightsSlice";
-import { setControlPoints } from "./controlPointsSlice";
+import { ControlPoint } from "../api/controlpoint";
+import { Flight } from "../api/flight";
+import backend from "../api/backend";
+import { registerFlight } from "../api/flightsSlice";
+import { setControlPoints } from "../api/controlPointsSlice";
 import { useAppDispatch } from "../app/hooks";
 import { useEffect } from "react";
 
