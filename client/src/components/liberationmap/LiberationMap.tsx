@@ -28,8 +28,12 @@ export default function LiberationMap(props: GameProps) {
         <LayersControl.Overlay name="Control points" checked>
           <ControlPointsLayer />
         </LayersControl.Overlay>
-        <FlightPlansLayer blue={true} />
-        <FlightPlansLayer blue={false} />
+        <LayersControl.Overlay name="All blue flight plans" checked>
+          <FlightPlansLayer blue={true} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="All red flight plans">
+          <FlightPlansLayer blue={false} />
+        </LayersControl.Overlay>
       </LayersControl>
     </MapContainer>
   );
