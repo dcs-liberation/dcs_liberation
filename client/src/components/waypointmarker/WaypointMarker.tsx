@@ -1,5 +1,5 @@
 import { Marker, Tooltip, useMap, useMapEvent } from "react-leaflet";
-import { MutableRefObject, useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useRef } from "react";
 
 import { Icon } from "leaflet";
 import { Marker as LMarker } from "leaflet";
