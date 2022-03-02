@@ -3,14 +3,20 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ControlPoint } from "./controlpoint";
 import { RootState } from "../app/store";
 
-const initialState: ControlPoint[] = [];
+interface ControlPointsState {
+  controlPoints: ControlPoint[];
+}
+
+const initialState: ControlPointsState = {
+  controlPoints: [],
+};
 
 export const controlPointsSlice = createSlice({
   name: "controlPoints",
   initialState,
   reducers: {
     setControlPoints: (state, action: PayloadAction<ControlPoint[]>) => {
-      state = action.payload;
+      state.controlPoints = action.payload;
     },
   },
 });
