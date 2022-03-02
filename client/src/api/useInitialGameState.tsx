@@ -10,30 +10,28 @@ import { useEffect } from "react";
 // are smart enough to only initialize once which get called in the components
 // that use them rather than forcibly loading the whole game in the root
 // component.
-export function useInitialGameState() {
+export const useInitialGameState = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    return () => {
-      backend
-        .get("/control-points")
-        .catch((error) =>
-          console.log(`Error fetching control points: ${error}`)
-        )
-        .then((response) => {
-          if (response != null) {
-            dispatch(setControlPoints(response.data as ControlPoint[]));
+    backend
+      .get("/control-points")
+      .catch((error) => console.log(`Error fetching control points: ${error}`))
+      .then((response) => {
+        if (response != null) {
+          dispatch(setControlPoints(response.data as ControlPoint[]));
+        }
+      });
+    backend
+      .get("/flights?with_waypoints=true")
+      .catch((error) => console.log(`Error fetching flights: ${error}`))
+      .then((response) => {
+        if (response != null) {
+          for (const flight of response.data) {
+            dispatch(registerFlight(flight as Flight));
           }
-        });
-      backend
-        .get("/flights?with_waypoints=true")
-        .catch((error) => console.log(`Error fetching flights: ${error}`))
-        .then((response) => {
-          if (response != null) {
-            for (const flight of response.data) {
-              dispatch(registerFlight(flight as Flight));
-            }
-          }
-        });
-    };
+        }
+      });
   });
-}
+};
+
+export default useInitialGameState;

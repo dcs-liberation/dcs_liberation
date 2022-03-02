@@ -2,7 +2,7 @@ import "./App.css";
 
 import { LatLng } from "leaflet";
 import LiberationMap from "./components/liberationmap";
-import { useInitialGameState } from "./api/useInitialGameState";
+import useInitialGameState from "./api/useInitialGameState";
 
 function App() {
   const mapCenter: LatLng = new LatLng(25.58, 54.9);
