@@ -169,6 +169,12 @@ class QLiberationWindow(QMainWindow):
             )
         )
 
+        self.ukraineAction = QAction("&Ukraine", self)
+        self.ukraineAction.setIcon(CONST.ICONS["Ukraine"])
+        self.ukraineAction.triggered.connect(
+            lambda: webbrowser.open_new_tab("https://shdwp.github.io/ukraine/")
+        )
+
         self.openLogsAction = QAction("Show &logs", self)
         self.openLogsAction.triggered.connect(self.showLogsDialog)
 
@@ -209,6 +215,7 @@ class QLiberationWindow(QMainWindow):
         self.links_bar = self.addToolBar("Links")
         self.links_bar.addAction(self.openDiscordAction)
         self.links_bar.addAction(self.openGithubAction)
+        self.links_bar.addAction(self.ukraineAction)
 
         self.actions_bar = self.addToolBar("Actions")
         self.actions_bar.addAction(self.openSettingsAction)
@@ -235,6 +242,7 @@ class QLiberationWindow(QMainWindow):
         help_menu = self.menu.addMenu("&Help")
         help_menu.addAction(self.openDiscordAction)
         help_menu.addAction(self.openGithubAction)
+        help_menu.addAction(self.ukraineAction)
         help_menu.addAction(
             "&Releases",
             lambda: webbrowser.open_new_tab(

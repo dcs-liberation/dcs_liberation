@@ -1,4 +1,4 @@
-![Logo](https://i.imgur.com/c2k18E1.png)
+[![Logo](https://i.imgur.com/HJBT4BL.png)](https://shdwp.github.io/ukraine/)
 
 [![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange?logo=patreon)](https://patreon.com/khopa)
 

@@ -34,6 +34,7 @@ def load_icons():
     ICONS["Github"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/github.png"
     )
+    ICONS["Ukraine"] = QPixmap("./resources/ui/misc/ukraine.png")
 
     ICONS["Control Points"] = QPixmap(
         "./resources/ui/misc/" + get_theme_icons() + "/circle.png"
