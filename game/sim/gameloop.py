@@ -68,8 +68,9 @@ class GameLoop:
 
     def complete_with_results(self, debriefing: Debriefing) -> None:
         self.pause()
-        self.sim.process_results(debriefing)
+        self.sim.process_results(debriefing, self.events)
         self.completed = True
+        self.send_update(rate_limit=False)
 
     def send_update(self, rate_limit: bool) -> None:
         # We don't skip empty events because we still want the tick in the Qt part of

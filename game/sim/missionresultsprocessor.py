@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from game.debriefing import Debriefing
 from game.ground_forces.combat_stance import CombatStance
 from game.theater import ControlPoint
+from .gameupdateevents import GameUpdateEvents
 from ..ato.airtaaskingorder import AirTaskingOrder
 
 if TYPE_CHECKING:
@@ -21,7 +22,7 @@ class MissionResultsProcessor:
     def __init__(self, game: Game) -> None:
         self.game = game
 
-    def commit(self, debriefing: Debriefing) -> None:
+    def commit(self, debriefing: Debriefing, events: GameUpdateEvents) -> None:
         logging.info("Committing mission results")
         self.commit_air_losses(debriefing)
         self.commit_pilot_experience()
@@ -31,8 +32,8 @@ class MissionResultsProcessor:
         self.commit_airlift_losses(debriefing)
         self.commit_ground_losses(debriefing)
         self.commit_damaged_runways(debriefing)
-        self.commit_captures(debriefing)
-        self.commit_front_line_battle_impact(debriefing)
+        self.commit_captures(debriefing, events)
+        self.commit_front_line_battle_impact(debriefing, events)
         self.record_carcasses(debriefing)
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
@@ -141,7 +142,7 @@ class MissionResultsProcessor:
         for damaged_runway in debriefing.damaged_runways:
             damaged_runway.damage_runway()
 
-    def commit_captures(self, debriefing: Debriefing) -> None:
+    def commit_captures(self, debriefing: Debriefing, events: GameUpdateEvents) -> None:
         for captured in debriefing.base_captures:
             try:
                 if captured.captured_by_player:
@@ -155,7 +156,9 @@ class MissionResultsProcessor:
                         f"The enemy took control of {captured.control_point}.",
                     )
 
-                captured.control_point.capture(self.game, captured.captured_by_player)
+                captured.control_point.capture(
+                    self.game, events, captured.captured_by_player
+                )
                 logging.info(f"Will run redeploy for {captured.control_point}")
                 self.redeploy_units(captured.control_point)
             except Exception:
@@ -165,10 +168,16 @@ class MissionResultsProcessor:
         for destroyed_unit in debriefing.state_data.destroyed_statics:
             self.game.add_destroyed_units(destroyed_unit)
 
-    def commit_front_line_battle_impact(self, debriefing: Debriefing) -> None:
+    def commit_front_line_battle_impact(
+        self, debriefing: Debriefing, events: GameUpdateEvents
+    ) -> None:
         for cp in self.game.theater.player_points():
             enemy_cps = [e for e in cp.connected_points if not e.captured]
             for enemy_cp in enemy_cps:
+                front_line = cp.front_line_with(enemy_cp)
+                front_line.update_position()
+                events.update_front_line(front_line)
+
                 print(
                     "Compute frontline progression for : "
                     + cp.name

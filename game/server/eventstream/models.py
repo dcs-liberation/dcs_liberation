@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from game.server.combat.models import FrozenCombatJs
 from game.server.flights.models import FlightJs
+from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletLatLon
 
 if TYPE_CHECKING:
@@ -27,6 +28,9 @@ class GameUpdateEventsJs(BaseModel):
     deleted_flights: set[UUID]
     selected_flight: UUID | None
     deselected_flight: bool
+    new_front_lines: list[FrontLineJs]
+    updated_front_lines: set[UUID]
+    deleted_front_lines: set[UUID]
 
     @classmethod
     def from_events(cls, events: GameUpdateEvents, game: Game) -> GameUpdateEventsJs:
@@ -53,4 +57,9 @@ class GameUpdateEventsJs(BaseModel):
             deleted_flights=events.deleted_flights,
             selected_flight=events.selected_flight,
             deselected_flight=events.deselected_flight,
+            new_front_lines=[
+                FrontLineJs.for_front_line(f) for f in events.new_front_lines
+            ],
+            updated_front_lines=events.updated_front_lines,
+            deleted_front_lines=events.deleted_front_lines,
         )

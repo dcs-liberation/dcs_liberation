@@ -66,14 +66,14 @@ class MissionSimulation:
         debriefing.merge_simulation_results(self.aircraft_simulation.results)
         return debriefing
 
-    def process_results(self, debriefing: Debriefing) -> None:
+    def process_results(self, debriefing: Debriefing, events: GameUpdateEvents) -> None:
         if self.unit_map is None:
             raise RuntimeError(
                 "Simulation has no unit map. Results processing began before a mission "
                 "was generated."
             )
 
-        MissionResultsProcessor(self.game).commit(debriefing)
+        MissionResultsProcessor(self.game).commit(debriefing, events)
 
     def finish(self) -> None:
         self.unit_map = None

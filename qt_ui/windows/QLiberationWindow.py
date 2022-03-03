@@ -3,7 +3,7 @@ import traceback
 import webbrowser
 from typing import Optional
 
-from PySide2.QtCore import QSettings, Qt
+from PySide2.QtCore import QSettings, Qt, Signal
 from PySide2.QtGui import QCloseEvent, QIcon
 from PySide2.QtWidgets import (
     QAction,
@@ -22,7 +22,9 @@ from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
 from game.layout import LAYOUTS
 from game.server import EventStream, GameContext
+from game.server.dependencies import QtCallbacks, QtContext
 from game.server.security import ApiKeyManager
+from game.theater import MissionTarget
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -46,6 +48,8 @@ from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 
 class QLiberationWindow(QMainWindow):
+    new_package_signal = Signal(MissionTarget)
+
     def __init__(self, game: Optional[Game], new_map: bool) -> None:
         super().__init__()
 
@@ -56,6 +60,12 @@ class QLiberationWindow(QMainWindow):
         self.sim_controller.sim_update.connect(EventStream.put_nowait)
         self.game_model = GameModel(game, self.sim_controller)
         GameContext.set_model(self.game_model)
+        self.new_package_signal.connect(
+            lambda target: Dialog.open_new_package_dialog(target, self)
+        )
+        QtContext.set_callbacks(
+            QtCallbacks(lambda target: self.new_package_signal.emit(target))
+        )
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)

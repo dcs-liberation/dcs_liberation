@@ -222,7 +222,7 @@ class Game:
             # reset when we're done.
             self.compute_threat_zones(GameUpdateEvents())
 
-    def finish_turn(self, skipped: bool = False) -> None:
+    def finish_turn(self, events: GameUpdateEvents, skipped: bool = False) -> None:
         """Finalizes the current turn and advances to the next turn.
 
         This handles the turn-end portion of passing a turn. Initialization of the next
@@ -265,6 +265,9 @@ class Game:
 
         if not skipped:
             for cp in self.theater.player_points():
+                for front_line in cp.front_lines.values():
+                    front_line.update_position()
+                    events.update_front_line(front_line)
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
 
         self.conditions = self.generate_conditions()
@@ -293,11 +296,12 @@ class Game:
         from .server import EventStream
         from .sim import GameUpdateEvents
 
+        events = GameUpdateEvents()
+
         logging.info("Pass turn")
         with logged_duration("Turn finalization"):
-            self.finish_turn(no_action)
+            self.finish_turn(events, no_action)
 
-        events = GameUpdateEvents()
         with logged_duration("Turn initialization"):
             self.initialize_turn(events)
 

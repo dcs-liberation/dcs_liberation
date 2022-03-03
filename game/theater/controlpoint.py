@@ -52,6 +52,7 @@ from .theatergroundobject import (
 from .theatergroup import TheaterUnit
 from ..ato.starttype import StartType
 from ..data.units import UnitClass
+from ..db import Database
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
@@ -59,10 +60,11 @@ from ..weather import Conditions
 
 if TYPE_CHECKING:
     from game import Game
-    from ..ato.flighttype import FlightType
+    from game.ato.flighttype import FlightType
+    from game.coalition import Coalition
+    from game.sim import GameUpdateEvents
     from game.squadrons.squadron import Squadron
-    from ..coalition import Coalition
-    from ..transfers import PendingTransfers
+    from game.transfers import PendingTransfers
     from .conflicttheater import ConflictTheater
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
@@ -326,6 +328,9 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
         self.target_position: Optional[Point] = None
 
+        # Initialized late because ControlPoints are constructed before the game is.
+        self._front_line_db: Database[FrontLine] | None = None
+
     def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"
 
@@ -338,31 +343,50 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     def finish_init(self, game: Game) -> None:
         assert self._coalition is None
         self._coalition = game.coalition_for(self.starts_blue)
+        assert self._front_line_db is None
+        self._front_line_db = game.db.front_lines
 
     def initialize_turn_0(self) -> None:
-        self._recreate_front_lines()
+        # We don't need to send events for turn 0. The UI isn't up yet, and it'll fetch
+        # the entire game state when it comes up.
+        from game.sim import GameUpdateEvents
 
-    def _recreate_front_lines(self) -> None:
-        self._clear_front_lines()
+        self._create_missing_front_lines(GameUpdateEvents())
+
+    @property
+    def front_line_db(self) -> Database[FrontLine]:
+        assert self._front_line_db is not None
+        return self._front_line_db
+
+    def _create_missing_front_lines(self, events: GameUpdateEvents) -> None:
         for connection in self.convoy_routes.keys():
             if not connection.front_line_active_with(
                 self
             ) and not connection.is_friendly_to(self):
-                self._create_front_line_with(connection)
+                self._create_front_line_with(connection, events)
 
-    def _create_front_line_with(self, connection: ControlPoint) -> None:
+    def _create_front_line_with(
+        self, connection: ControlPoint, events: GameUpdateEvents
+    ) -> None:
         blue, red = FrontLine.sort_control_points(self, connection)
         front = FrontLine(blue, red)
         self.front_lines[connection] = front
         connection.front_lines[self] = front
+        self.front_line_db.add(front.id, front)
+        events.new_front_line(front)
 
-    def _remove_front_line_with(self, connection: ControlPoint) -> None:
+    def _remove_front_line_with(
+        self, connection: ControlPoint, events: GameUpdateEvents
+    ) -> None:
+        front = self.front_lines[connection]
         del self.front_lines[connection]
         del connection.front_lines[self]
+        self.front_line_db.remove(front.id)
+        events.delete_front_line(front)
 
-    def _clear_front_lines(self) -> None:
+    def _clear_front_lines(self, events: GameUpdateEvents) -> None:
         for opponent in list(self.front_lines.keys()):
-            self._remove_front_line_with(opponent)
+            self._remove_front_line_with(opponent, events)
 
     @property
     def has_frontline(self) -> bool:
@@ -713,7 +737,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                 tgo.clear()
 
     # TODO: Should be Airbase specific.
-    def capture(self, game: Game, for_player: bool) -> None:
+    def capture(self, game: Game, events: GameUpdateEvents, for_player: bool) -> None:
         new_coalition = game.coalition_for(for_player)
         self.ground_unit_orders.refund_all(self.coalition)
         self.retreat_ground_units(game)
@@ -722,7 +746,8 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
         self._coalition = new_coalition
         self.base.set_strength_to_minimum()
-        self._recreate_front_lines()
+        self._clear_front_lines(events)
+        self._create_missing_front_lines(events)
 
     @property
     def required_aircraft_start_type(self) -> Optional[StartType]:
@@ -1127,7 +1152,7 @@ class Carrier(NavalControlPoint):
                 FlightType.REFUELING,
             ]
 
-    def capture(self, game: Game, for_player: bool) -> None:
+    def capture(self, game: Game, events: GameUpdateEvents, for_player: bool) -> None:
         raise RuntimeError("Carriers cannot be captured")
 
     @property
@@ -1161,7 +1186,7 @@ class Lha(NavalControlPoint):
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.AMPHIBIOUS_ASSAULT_SHIP_GENERAL
 
-    def capture(self, game: Game, for_player: bool) -> None:
+    def capture(self, game: Game, events: GameUpdateEvents, for_player: bool) -> None:
         raise RuntimeError("LHAs cannot be captured")
 
     @property
@@ -1198,7 +1223,7 @@ class OffMapSpawn(ControlPoint):
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.AIPORT_AIR_BASE
 
-    def capture(self, game: Game, for_player: bool) -> None:
+    def capture(self, game: Game, events: GameUpdateEvents, for_player: bool) -> None:
         raise RuntimeError("Off map control points cannot be captured")
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:

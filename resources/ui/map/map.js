@@ -308,6 +308,18 @@ function handleStreamedEvents(events) {
   for (const flightId of events.deleted_flights) {
     Flight.popId(flightId).clear();
   }
+
+  for (const frontLine of events.new_front_lines) {
+    new FrontLine(frontLine).draw();
+  }
+
+  for (const id of events.updated_front_lines) {
+    FrontLine.withId(id).update();
+  }
+
+  for (const id of events.deleted_front_lines) {
+    FrontLine.popId(id).clear();
+  }
 }
 
 function recenterMap(center) {
@@ -622,15 +634,64 @@ function drawSupplyRoutes() {
   });
 }
 
+class FrontLine {
+  static registered = {};
+
+  constructor(frontLine) {
+    this.id = frontLine.id;
+    this.extents = frontLine.extents;
+    this.line = null;
+    FrontLine.register(this);
+  }
+
+  static register(frontLine) {
+    FrontLine.registered[frontLine.id] = frontLine;
+  }
+
+  static unregister(id) {
+    delete FrontLine.registered[id];
+  }
+
+  static withId(id) {
+    return FrontLine.registered[id];
+  }
+
+  static popId(id) {
+    const front = FrontLine.withId(id);
+    FrontLine.unregister(id);
+    return front;
+  }
+
+  update() {
+    getJson(`/front-lines/${this.id}`).then((frontLine) => {
+      this.extents = frontLine.extents;
+      this.draw();
+    });
+  }
+
+  clear() {
+    if (this.line != null) {
+      this.line.removeFrom(frontLinesLayer);
+    }
+  }
+
+  draw() {
+    this.clear();
+    this.line = L.polyline(this.extents, { weight: 8, color: "#fe7d0a" })
+      .on("contextmenu", () => this.openNewPackageDialog())
+      .addTo(frontLinesLayer);
+  }
+
+  openNewPackageDialog() {
+    postJson(`/package-dialog/front-line/${this.id}`);
+  }
+}
+
 function drawFrontLines() {
   frontLinesLayer.clearLayers();
   getJson("/front-lines").then((frontLines) => {
     for (const front of frontLines) {
-      L.polyline(front.extents, { weight: 8, color: "#fe7d0a" })
-        .on("contextmenu", function () {
-          front.showPackageDialog();
-        })
-        .addTo(frontLinesLayer);
+      new FrontLine(front).draw();
     }
   });
 }

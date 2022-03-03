@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import uuid
 from dataclasses import dataclass
 from typing import Any, Iterator, List, TYPE_CHECKING, Tuple
 
@@ -49,6 +50,7 @@ class FrontLine(MissionTarget):
         blue_point: ControlPoint,
         red_point: ControlPoint,
     ) -> None:
+        self.id = uuid.uuid4()
         self.blue_cp = blue_point
         self.red_cp = red_point
         try:
@@ -67,8 +69,7 @@ class FrontLine(MissionTarget):
             FrontLineSegment(a, b) for a, b in pairwise(route)
         ]
         super().__init__(
-            f"Front line {blue_point}/{red_point}",
-            self.point_from_a(self._position_distance),
+            f"Front line {blue_point}/{red_point}", self._compute_position()
         )
 
     def __eq__(self, other: Any) -> bool:
@@ -79,10 +80,11 @@ class FrontLine(MissionTarget):
     def __hash__(self) -> int:
         return hash((self.blue_cp, self.red_cp))
 
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        self.__dict__.update(state)
-        if not hasattr(self, "position"):
-            self.position = self.point_from_a(self._position_distance)
+    def _compute_position(self) -> Point:
+        return self.point_from_a(self._position_distance)
+
+    def update_position(self) -> None:
+        self.position = self._compute_position()
 
     def control_point_friendly_to(self, player: bool) -> ControlPoint:
         if player:

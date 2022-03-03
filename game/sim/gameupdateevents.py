@@ -9,6 +9,7 @@ from dcs import Point
 if TYPE_CHECKING:
     from game.ato import Flight, Package
     from game.sim.combat import FrozenCombat
+    from game.theater import FrontLine
 
 
 @dataclass
@@ -26,6 +27,9 @@ class GameUpdateEvents:
     deleted_flights: set[UUID] = field(default_factory=set)
     selected_flight: UUID | None = None
     deselected_flight: bool = False
+    new_front_lines: set[FrontLine] = field(default_factory=set)
+    updated_front_lines: set[UUID] = field(default_factory=set)
+    deleted_front_lines: set[UUID] = field(default_factory=set)
     shutting_down: bool = False
 
     @property
@@ -93,6 +97,18 @@ class GameUpdateEvents:
     def deselect_flight(self) -> GameUpdateEvents:
         self.deselected_flight = True
         self.selected_flight = None
+        return self
+
+    def new_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
+        self.new_front_lines.add(front_line)
+        return self
+
+    def update_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
+        self.updated_front_lines.add(front_line.id)
+        return self
+
+    def delete_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
+        self.deleted_front_lines.add(front_line.id)
         return self
 
     def shut_down(self) -> GameUpdateEvents:

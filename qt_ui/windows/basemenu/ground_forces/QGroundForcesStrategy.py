@@ -57,8 +57,10 @@ class QGroundForcesStrategy(QGroupBox):
             amount *= -1
         self.cp.base.affect_strength(amount)
         enemy_point.base.affect_strength(-amount)
+        front_line = self.cp.front_line_with(enemy_point)
+        front_line.update_position()
+        events = GameUpdateEvents().update_front_line(front_line)
         # Clear the ATO to replan missions affected by the front line.
-        events = GameUpdateEvents()
         self.game.initialize_turn(events)
         EventStream.put_nowait(events)
         GameUpdateSignal.get_instance().updateGame(self.game)

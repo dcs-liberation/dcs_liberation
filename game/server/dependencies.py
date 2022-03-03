@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
+
+from game.theater import MissionTarget
 
 if TYPE_CHECKING:
     from game import Game
@@ -23,3 +25,22 @@ class GameContext:
     @classmethod
     def get_model(cls) -> GameModel:
         return cls._game_model
+
+
+class QtCallbacks:
+    def __init__(self, create_new_package: Callable[[MissionTarget], None]) -> None:
+        self.create_new_package = create_new_package
+
+
+class QtContext:
+    _callbacks: QtCallbacks
+
+    @classmethod
+    def set_callbacks(cls, callbacks: QtCallbacks) -> None:
+        cls._callbacks = callbacks
+
+    @classmethod
+    def get(cls) -> QtCallbacks:
+        if cls._callbacks is None:
+            raise RuntimeError("QtContext has no callbacks set")
+        return cls._callbacks
