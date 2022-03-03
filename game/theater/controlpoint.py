@@ -43,6 +43,7 @@ from game.sidc import (
 )
 from game.utils import Heading
 from .base import Base
+from .frontline import FrontLine
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
@@ -62,7 +63,7 @@ if TYPE_CHECKING:
     from game.squadrons.squadron import Squadron
     from ..coalition import Coalition
     from ..transfers import PendingTransfers
-    from . import ConflictTheater
+    from .conflicttheater import ConflictTheater
 
 FREE_FRONTLINE_UNIT_SUPPLY: int = 15
 AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION: int = 12
@@ -287,15 +288,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     # the distance of the circle on the map.
     CAPTURE_DISTANCE = nautical_miles(2)
 
-    position = None  # type: Point
-    name = None  # type: str
-
-    has_frontline = True
-
-    alt = 0
-
     # TODO: Only airbases have IDs.
-    # TODO: has_frontline is only reasonable for airbases.
     # TODO: cptype is obsolete.
     def __init__(
         self,
@@ -304,7 +297,6 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         position: Point,
         at: StartingPosition,
         starts_blue: bool,
-        has_frontline: bool = True,
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
         super().__init__(name, position)
@@ -319,8 +311,8 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
         self._coalition: Optional[Coalition] = None
         self.captured_invert = False
+        self.front_lines: dict[ControlPoint, FrontLine] = {}
         # TODO: Should be Airbase specific.
-        self.has_frontline = has_frontline
         self.connected_points: List[ControlPoint] = []
         self.convoy_routes: Dict[ControlPoint, Tuple[Point, ...]] = {}
         self.shipping_lanes: Dict[ControlPoint, Tuple[Point, ...]] = {}
@@ -346,6 +338,41 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     def finish_init(self, game: Game) -> None:
         assert self._coalition is None
         self._coalition = game.coalition_for(self.starts_blue)
+
+    def initialize_turn_0(self) -> None:
+        self._recreate_front_lines()
+
+    def _recreate_front_lines(self) -> None:
+        self._clear_front_lines()
+        for connection in self.convoy_routes.keys():
+            if not connection.front_line_active_with(
+                self
+            ) and not connection.is_friendly_to(self):
+                self._create_front_line_with(connection)
+
+    def _create_front_line_with(self, connection: ControlPoint) -> None:
+        blue, red = FrontLine.sort_control_points(self, connection)
+        front = FrontLine(blue, red)
+        self.front_lines[connection] = front
+        connection.front_lines[self] = front
+
+    def _remove_front_line_with(self, connection: ControlPoint) -> None:
+        del self.front_lines[connection]
+        del connection.front_lines[self]
+
+    def _clear_front_lines(self) -> None:
+        for opponent in list(self.front_lines.keys()):
+            self._remove_front_line_with(opponent)
+
+    @property
+    def has_frontline(self) -> bool:
+        return bool(self.front_lines)
+
+    def front_line_active_with(self, other: ControlPoint) -> bool:
+        return other in self.front_lines
+
+    def front_line_with(self, other: ControlPoint) -> FrontLine:
+        return self.front_lines[other]
 
     @property
     def captured(self) -> bool:
@@ -695,6 +722,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
         self._coalition = new_coalition
         self.base.set_strength_to_minimum()
+        self._recreate_front_lines()
 
     @property
     def required_aircraft_start_type(self) -> Optional[StartType]:
@@ -894,7 +922,6 @@ class Airfield(ControlPoint):
             airport.position,
             airport,
             starts_blue,
-            has_frontline=True,
             cptype=ControlPointType.AIRBASE,
         )
         self.airport = airport
@@ -1083,7 +1110,6 @@ class Carrier(NavalControlPoint):
             at,
             at,
             starts_blue,
-            has_frontline=False,
             cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
 
@@ -1128,7 +1154,6 @@ class Lha(NavalControlPoint):
             at,
             at,
             starts_blue,
-            has_frontline=False,
             cptype=ControlPointType.LHA_GROUP,
         )
 
@@ -1166,7 +1191,6 @@ class OffMapSpawn(ControlPoint):
             position,
             position,
             starts_blue,
-            has_frontline=False,
             cptype=ControlPointType.OFF_MAP,
         )
 
@@ -1231,7 +1255,6 @@ class Fob(ControlPoint):
             at,
             at,
             starts_blue,
-            has_frontline=True,
             cptype=ControlPointType.FOB,
         )
         self.name = name

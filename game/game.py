@@ -273,6 +273,9 @@ class Game:
         """Initialization for the first turn of the game."""
         from .sim import GameUpdateEvents
 
+        for control_point in self.theater.controlpoints:
+            control_point.initialize_turn_0()
+
         self.blue.preinit_turn_0()
         self.red.preinit_turn_0()
         # We don't need to actually stream events for turn zero because we haven't given

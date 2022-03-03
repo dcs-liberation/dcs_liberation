@@ -13,6 +13,8 @@ from PySide2.QtWidgets import (
 from game import Game
 from game.ato.flighttype import FlightType
 from game.config import RUNWAY_REPAIR_COST
+from game.server import EventStream
+from game.sim import GameUpdateEvents
 from game.theater import (
     AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
     ControlPoint,
@@ -125,7 +127,9 @@ class QBaseMenu2(QDialog):
         self.cp.capture(self.game_model.game, for_player=not self.cp.captured)
         # Reinitialized ground planners and the like. The ATO needs to be reset because
         # missions planned against the flipped base are no longer valid.
-        self.game_model.game.initialize_turn()
+        events = GameUpdateEvents()
+        self.game_model.game.initialize_turn(events)
+        EventStream.put_nowait(events)
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     @property

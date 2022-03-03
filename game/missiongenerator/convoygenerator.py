@@ -10,7 +10,6 @@ from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
 
 from game.dcs.groundunittype import GroundUnitType
-from game.theater import FrontLine
 from game.transfers import Convoy
 from game.unitmap import UnitMap
 from game.utils import kph
@@ -46,7 +45,7 @@ class ConvoyGenerator:
             # convoys_travel_full_distance is disabled, so have the convoy only move the first segment on the route.
             # This option aims to remove long routes for ground vehicles between control points,
             # since the CPU load for pathfinding long routes on DCS can be pretty heavy.
-            frontline = FrontLine(convoy.origin, convoy.destination)
+            frontline = convoy.origin.front_line_with(convoy.destination)
 
             # Select the first route segment from the origin towards the destination
             # so the convoy spawns at the origin CP. This allows the convoy to be

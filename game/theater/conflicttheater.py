@@ -137,11 +137,8 @@ class ConflictTheater:
         return list(self.control_points_for(player=True))
 
     def conflicts(self) -> Iterator[FrontLine]:
-        for player_cp in [x for x in self.controlpoints if x.captured]:
-            for enemy_cp in [
-                x for x in player_cp.connected_points if not x.is_friendly_to(player_cp)
-            ]:
-                yield FrontLine(player_cp, enemy_cp)
+        for cp in self.player_points():
+            yield from cp.front_lines.values()
 
     def enemy_points(self) -> List[ControlPoint]:
         return list(self.control_points_for(player=False))

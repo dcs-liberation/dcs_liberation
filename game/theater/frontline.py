@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Iterator, List, Tuple, Any, TYPE_CHECKING
+from typing import Any, Iterator, List, TYPE_CHECKING, Tuple
 
 from dcs.mapping import Point
 
-from .controlpoint import ControlPoint, MissionTarget
+from .missiontarget import MissionTarget
 from ..utils import Heading, pairwise
 
 if TYPE_CHECKING:
     from game.ato import FlightType
+    from .controlpoint import ControlPoint
 
 
 FRONTLINE_MIN_CP_DISTANCE = 5000
@@ -193,3 +194,15 @@ class FrontLine(MissionTarget):
         ):
             distance = FRONTLINE_MIN_CP_DISTANCE
         return distance
+
+    @staticmethod
+    def sort_control_points(
+        a: ControlPoint, b: ControlPoint
+    ) -> tuple[ControlPoint, ControlPoint]:
+        if a.is_friendly_to(b):
+            raise ValueError(
+                "Cannot sort control points that are friendly to each other"
+            )
+        if a.captured:
+            return a, b
+        return b, a
