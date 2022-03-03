@@ -6,6 +6,7 @@ import AirDefenseRangeLayer from "../airdefenserangelayer";
 import { BasemapLayer } from "react-esri-leaflet";
 import ControlPointsLayer from "../controlpointslayer";
 import FlightPlansLayer from "../flightplanslayer";
+import FrontLinesLayer from "../frontlineslayer";
 import { LatLng } from "leaflet";
 import SupplyRoutesLayer from "../supplyrouteslayer";
 import { TgoType } from "../../api/tgo";
@@ -41,6 +42,9 @@ export default function LiberationMap(props: GameProps) {
         })}
         <LayersControl.Overlay name="Supply routes" checked>
           <SupplyRoutesLayer />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Front lines" checked>
+          <FrontLinesLayer />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Enemy SAM threat range" checked>
           <AirDefenseRangeLayer blue={false} />
