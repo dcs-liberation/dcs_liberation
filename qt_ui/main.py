@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -90,6 +91,9 @@ def run_ui(game: Optional[Game], new_map: bool) -> None:
     pixmap = QPixmap("./resources/ui/splash_screen.png")
     splash = QSplashScreen(pixmap)
     splash.show()
+
+    # Give enough time to read splash screen
+    time.sleep(3)
 
     # Once splash screen is up : load resources & setup stuff
     uiconstants.load_icons()
