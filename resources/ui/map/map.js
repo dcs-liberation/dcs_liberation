@@ -714,11 +714,13 @@ class Waypoint {
           });
       });
 
-    this.description(false).then((description) =>
-      marker.bindTooltip(description, {
-        permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
-      })
-    );
+    if (this.flight.selected) {
+      this.description(false).then((description) =>
+        marker.bindTooltip(description, {
+          permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
+        })
+      );
+    }
 
     return marker;
   }
