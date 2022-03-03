@@ -2,6 +2,7 @@ import "./LiberationMap.css";
 
 import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
 
+import AirDefenseRangeLayer from "../airdefenserangelayer";
 import { BasemapLayer } from "react-esri-leaflet";
 import ControlPointsLayer from "../controlpointslayer";
 import FlightPlansLayer from "../flightplanslayer";
@@ -37,6 +38,18 @@ export default function LiberationMap(props: GameProps) {
             </LayersControl.Overlay>
           );
         })}
+        <LayersControl.Overlay name="Enemy SAM threat range" checked>
+          <AirDefenseRangeLayer blue={false} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Enemy SAM detection range">
+          <AirDefenseRangeLayer blue={false} detection />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Allied SAM threat range">
+          <AirDefenseRangeLayer blue={true} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Allied SAM detection range">
+          <AirDefenseRangeLayer blue={true} detection />
+        </LayersControl.Overlay>
         <LayersControl.Overlay name="All blue flight plans" checked>
           <FlightPlansLayer blue={true} />
         </LayersControl.Overlay>
