@@ -1,5 +1,7 @@
 [![Logo](https://i.imgur.com/HJBT4BL.png)](https://shdwp.github.io/ukraine/)
 
+(Github Readme Banner and Splash screen Artwork by Andriy Dankovych, CC BY-SA 4.0)
+
 [![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange?logo=patreon)](https://patreon.com/khopa)
 
 [![Download](https://img.shields.io/github/downloads/dcs-liberation/dcs_liberation/total?label=Download)](https://github.com/dcs-liberation/dcs_liberation/releases)
@@ -25,7 +27,7 @@ To download preview builds of the next version of DCS Liberation, see https://gi
 ## DCS bugs
 
 These DCS bugs prevent us from improving AI behavior. Please upvote them! (But please
-_don't_ spam them with comments):
+_don't_ spam them with comments):a
 
 * [A2A and SEAD escorts don't escort](https://forums.eagle.ru/topic/251798-options-for-alternate-ai-escort-behavior/?tab=comments#comment-4668033)
 * [DEAD can't use mixed loadouts effectively](https://forums.eagle.ru/topic/271941-ai-rtbs-after-firing-decoys-despite-full-load-of-bombs/)
