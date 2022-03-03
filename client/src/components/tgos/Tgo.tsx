@@ -1,5 +1,5 @@
 import { Icon, Point } from "leaflet";
-import { Marker, Popup } from "react-leaflet";
+import { Marker, Tooltip } from "react-leaflet";
 
 import { Symbol as MilSymbol } from "milsymbol";
 import { Tgo as TgoModel } from "../../api/tgo";
@@ -22,7 +22,7 @@ interface TgoProps {
 export default function Tgo(props: TgoProps) {
   return (
     <Marker position={props.tgo.position} icon={iconForTgo(props.tgo)}>
-      <Popup>
+      <Tooltip>
         {`${props.tgo.name} (${props.tgo.control_point_name})`}
         <br />
         {props.tgo.units.map((unit) => (
@@ -31,7 +31,7 @@ export default function Tgo(props: TgoProps) {
             <br />
           </>
         ))}
-      </Popup>
+      </Tooltip>
     </Marker>
   );
 }
