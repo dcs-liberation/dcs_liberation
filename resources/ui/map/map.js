@@ -924,24 +924,22 @@ class Flight {
   }
 
   drawFlightPlan() {
-    getJson(`/waypoints/${this.flight.id}`).then((waypoints) => {
-      this.clearFlightPlan();
-      const path = [];
-      waypoints.map((raw, idx) => {
-        const waypoint = new Waypoint(raw, idx, this);
-        if (waypoint.includeInPath()) {
-          path.push(waypoint.position());
-        }
-        if (this.shouldMark(waypoint)) {
-          waypoint.marker
-            .addTo(selectedFlightPlansLayer)
-            .addTo(this.flightPlanLayer())
-            .addTo(allFlightPlansLayer);
-          this.markers.push(waypoint.marker);
-        }
-      });
-      this.drawPath(path);
+    this.clearFlightPlan();
+    const path = [];
+    this.flight.waypoints.map((raw, idx) => {
+      const waypoint = new Waypoint(raw, idx, this);
+      if (waypoint.includeInPath()) {
+        path.push(waypoint.position());
+      }
+      if (this.shouldMark(waypoint)) {
+        waypoint.marker
+          .addTo(selectedFlightPlansLayer)
+          .addTo(this.flightPlanLayer())
+          .addTo(allFlightPlansLayer);
+        this.markers.push(waypoint.marker);
+      }
     });
+    this.drawPath(path);
   }
 }
 
@@ -953,7 +951,7 @@ function drawAircraft() {
   selectedFlightPlansLayer.clearLayers();
   allFlightPlansLayer.clearLayers();
 
-  getJson("/flights").then((flights) => {
+  getJson("/flights?with_waypoints=true").then((flights) => {
     for (const flight of flights) {
       new Flight(flight).draw();
     }
