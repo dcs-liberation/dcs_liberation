@@ -1,9 +1,11 @@
 import { ControlPoint } from "../api/controlpoint";
 import { Flight } from "../api/flight";
+import SupplyRoute from "../api/supplyroute";
 import Tgo from "../api/tgo";
 import backend from "../api/backend";
 import { registerFlight } from "../api/flightsSlice";
 import { setControlPoints } from "../api/controlPointsSlice";
+import { setSupplyRoutes } from "../api/supplyRoutesSlice";
 import { setTgos } from "../api/tgosSlice";
 import { useAppDispatch } from "../app/hooks";
 import { useEffect } from "react";
@@ -29,6 +31,14 @@ export const useInitialGameState = () => {
       .then((response) => {
         if (response != null) {
           dispatch(setTgos(response.data as Tgo[]));
+        }
+      });
+    backend
+      .get("/supply-routes")
+      .catch((error) => console.log(`Error fetching supply routes: ${error}`))
+      .then((response) => {
+        if (response != null) {
+          dispatch(setSupplyRoutes(response.data as SupplyRoute[]));
         }
       });
     backend

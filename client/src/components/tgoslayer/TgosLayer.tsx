@@ -11,7 +11,6 @@ interface TgosLayerProps {
 export default function TgosLayer(props: TgosLayerProps) {
   const allTgos = useAppSelector(selectTgos);
   const tgos = allTgos.tgosByType[props.type];
-  console.dir(Object.entries(TgoType));
   return (
     <LayerGroup>
       {tgos.map((tgo) => {

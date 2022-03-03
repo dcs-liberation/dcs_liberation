@@ -8,6 +8,7 @@ from . import (
     flights,
     mapzones,
     navmesh,
+    supplyroutes,
     tgos,
     waypoints,
 )
@@ -25,6 +26,7 @@ app.include_router(eventstream.router)
 app.include_router(flights.router)
 app.include_router(mapzones.router)
 app.include_router(navmesh.router)
+app.include_router(supplyroutes.router)
 app.include_router(tgos.router)
 app.include_router(waypoints.router)
 
