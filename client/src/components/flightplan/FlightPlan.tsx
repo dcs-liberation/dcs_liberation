@@ -27,7 +27,9 @@ function FlightPlanPath(props: FlightPlanProps) {
   if (waypoints == null) {
     return <></>;
   }
-  const points = waypoints.map((waypoint) => waypoint.position);
+  const points = waypoints
+    .filter((waypoint) => waypoint.include_in_path)
+    .map((waypoint) => waypoint.position);
   return (
     <Polyline
       positions={points}
