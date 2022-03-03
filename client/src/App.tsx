@@ -1,5 +1,3 @@
-import "./App.css";
-
 import { LatLng } from "leaflet";
 import LiberationMap from "./components/liberationmap";
 import useEventStream from "./hooks/useEventSteam";
