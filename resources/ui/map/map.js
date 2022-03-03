@@ -255,7 +255,6 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.controlPointsChanged.connect(drawControlPoints);
   game.groundObjectsChanged.connect(drawGroundObjects);
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
-  game.frontLinesChanged.connect(drawFrontLines);
   game.mapReset.connect(drawAircraft);
 });
 
@@ -625,12 +624,14 @@ function drawSupplyRoutes() {
 
 function drawFrontLines() {
   frontLinesLayer.clearLayers();
-  game.frontLines.forEach((front) => {
-    L.polyline(front.extents, { weight: 8, color: "#fe7d0a" })
-      .on("contextmenu", function () {
-        front.showPackageDialog();
-      })
-      .addTo(frontLinesLayer);
+  getJson("/front-lines").then((frontLines) => {
+    for (const front of frontLines) {
+      L.polyline(front.extents, { weight: 8, color: "#fe7d0a" })
+        .on("contextmenu", function () {
+          front.showPackageDialog();
+        })
+        .addTo(frontLinesLayer);
+    }
   });
 }
 

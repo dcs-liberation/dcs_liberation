@@ -15,7 +15,6 @@ from game.theater import (
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from .controlpointjs import ControlPointJs
-from .frontlinejs import FrontLineJs
 from .groundobjectjs import GroundObjectJs
 from .supplyroutejs import SupplyRouteJs
 
@@ -44,7 +43,6 @@ class MapModel(QObject):
     controlPointsChanged = Signal()
     groundObjectsChanged = Signal()
     supplyRoutesChanged = Signal()
-    frontLinesChanged = Signal()
     mapReset = Signal()
 
     def __init__(self, game_model: GameModel) -> None:
@@ -54,7 +52,6 @@ class MapModel(QObject):
         self._control_points = []
         self._ground_objects = []
         self._supply_routes = []
-        self._front_lines = []
 
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
         self.reset()
@@ -63,7 +60,6 @@ class MapModel(QObject):
         self._control_points = []
         self._supply_routes = []
         self._ground_objects = []
-        self._front_lines = []
         self.cleared.emit()
 
     def reset(self) -> None:
@@ -74,7 +70,6 @@ class MapModel(QObject):
             self.reset_control_points()
             self.reset_ground_objects()
             self.reset_routes()
-            self.reset_front_lines()
             self.mapReset.emit()
 
     def on_game_load(self, game: Optional[Game]) -> None:
@@ -160,14 +155,6 @@ class MapModel(QObject):
     @Property(list, notify=supplyRoutesChanged)
     def supplyRoutes(self) -> List[SupplyRouteJs]:
         return self._supply_routes
-
-    def reset_front_lines(self) -> None:
-        self._front_lines = [FrontLineJs(f) for f in self.game.theater.conflicts()]
-        self.frontLinesChanged.emit()
-
-    @Property(list, notify=frontLinesChanged)
-    def frontLines(self) -> List[FrontLineJs]:
-        return self._front_lines
 
     @property
     def game(self) -> Game:
