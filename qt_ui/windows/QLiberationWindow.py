@@ -368,6 +368,8 @@ class QLiberationWindow(QMainWindow):
             "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"
             "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"
             "<b>Anubis Yinepu </b> <i>for the Hercules Cargo script</i><br/>"
+            + "<h4>Splash Screen  :</h4>"
+            + "Artwork by Andriy Dankovych (CC BY-SA) [https://www.facebook.com/AndriyDankovych]"
         )
         about = QMessageBox()
         about.setWindowTitle("About DCS Liberation")
