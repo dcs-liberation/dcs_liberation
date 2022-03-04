@@ -7,7 +7,7 @@ export default function SupplyRoutesLayer() {
   const fronts = useAppSelector(selectFrontLines).fronts;
   return (
     <LayerGroup>
-      {fronts.map((front, idx) => {
+      {Object.values(fronts).map((front, idx) => {
         return <FrontLine key={idx} front={front} />;
       })}
     </LayerGroup>

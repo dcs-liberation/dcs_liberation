@@ -4,6 +4,11 @@ import { updateControlPoint } from "./controlPointsSlice";
 import { ControlPoint } from "./controlpoint";
 import { Flight } from "./flight";
 import { deselectFlight, selectFlight } from "./flightsSlice";
+import {
+  addFrontLine,
+  deleteFrontLine,
+  updateFrontLine,
+} from "./frontLinesSlice";
 import FrontLine from "./frontline";
 import Tgo from "./tgo";
 import { updateTgo } from "./tgosSlice";
@@ -40,15 +45,33 @@ export const handleStreamedEvents = (
   if (events.deselected_flight) {
     dispatch(deselectFlight());
   }
+
   if (events.selected_flight != null) {
     dispatch(selectFlight(events.selected_flight));
   }
+
+  for (const front of events.new_front_lines) {
+    dispatch(addFrontLine(front));
+  }
+
+  for (const id of events.updated_front_lines) {
+    backend.get(`/front-lines/${id}`).then((response) => {
+      const front = response.data as FrontLine;
+      dispatch(updateFrontLine(front));
+    });
+  }
+
+  for (const id of events.deleted_front_lines) {
+    dispatch(deleteFrontLine(id));
+  }
+
   for (const id of events.updated_tgos) {
     backend.get(`/tgos/${id}`).then((response) => {
       const tgo = response.data as Tgo;
       dispatch(updateTgo(tgo));
     });
   }
+
   for (const id of events.updated_control_points) {
     backend.get(`/control-points/${id}`).then((response) => {
       const cp = response.data as ControlPoint;
