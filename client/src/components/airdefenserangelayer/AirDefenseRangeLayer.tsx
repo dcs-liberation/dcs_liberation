@@ -26,9 +26,10 @@ const TgoRangeCircles = (props: TgoRangeCirclesProps) => {
 
   return (
     <>
-      {radii.map((radius) => {
+      {radii.map((radius, idx) => {
         return (
           <Circle
+            key={idx}
             center={props.tgo.position}
             radius={radius}
             color={color}
@@ -61,7 +62,9 @@ export const AirDefenseRangeLayer = (props: AirDefenseRangeLayerProps) => {
   return (
     <LayerGroup>
       {allTgos.map((tgo) => {
-        return <TgoRangeCircles tgo={tgo} {...props}></TgoRangeCircles>;
+        return (
+          <TgoRangeCircles key={tgo.id} tgo={tgo} {...props}></TgoRangeCircles>
+        );
       })}
     </LayerGroup>
   );

@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 interface SplitLinesProps {
   items: string[];
 }
@@ -5,12 +7,12 @@ interface SplitLinesProps {
 const SplitLines = (props: SplitLinesProps) => {
   return (
     <>
-      {props.items.map((text) => {
+      {props.items.map((text, idx) => {
         return (
-          <>
+          <Fragment key={idx}>
             {text}
             <br />
-          </>
+          </Fragment>
         );
       })}
     </>

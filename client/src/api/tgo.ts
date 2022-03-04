@@ -8,6 +8,7 @@ export enum TgoType {
 }
 
 export interface Tgo {
+  id: string;
   name: string;
   control_point_name: string;
   category: string;

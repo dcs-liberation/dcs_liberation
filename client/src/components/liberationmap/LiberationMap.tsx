@@ -33,9 +33,9 @@ export default function LiberationMap(props: GameProps) {
         <LayersControl.Overlay name="Control points" checked>
           <ControlPointsLayer />
         </LayersControl.Overlay>
-        {Object.values(TgoType).map((type) => {
+        {Object.values(TgoType).map((type, idx) => {
           return (
-            <LayersControl.Overlay name={type} checked>
+            <LayersControl.Overlay key={idx} name={type} checked>
               <TgosLayer type={type as TgoType} />
             </LayersControl.Overlay>
           );
