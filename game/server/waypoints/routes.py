@@ -1,4 +1,3 @@
-from datetime import timedelta
 from uuid import UUID
 
 from dcs.mapping import LatLng, Point
@@ -11,6 +10,7 @@ from game.ato.flightwaypointtype import FlightWaypointType
 from game.server import GameContext
 from game.server.leaflet import LeafletPoint
 from game.server.waypoints.models import FlightWaypointJs
+from game.sim import GameUpdateEvents
 from game.utils import meters
 
 router: APIRouter = APIRouter(prefix="/waypoints")
@@ -24,10 +24,13 @@ def waypoints_for_flight(flight: Flight) -> list[FlightWaypointJs]:
             flight.departure.position,
             meters(0),
             "RADIO",
-        )
+        ),
+        flight,
+        0,
     )
     return [departure] + [
-        FlightWaypointJs.for_waypoint(w) for w in flight.flight_plan.waypoints
+        FlightWaypointJs.for_waypoint(w, flight, i)
+        for i, w in enumerate(flight.flight_plan.waypoints, 1)
     ]
 
 
@@ -45,6 +48,8 @@ def set_position(
     position: LeafletPoint,
     game: Game = Depends(GameContext.get),
 ) -> None:
+    from game.server import EventStream
+
     flight = game.db.flights.get(flight_id)
     if waypoint_idx == 0:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
@@ -64,22 +69,4 @@ def set_position(
             detail=f"Could not find PackageModel owning {flight}",
         )
     package_model.update_tot()
-
-
-@router.get("/{flight_id}/{waypoint_idx}/timing")
-def waypoint_timing(
-    flight_id: UUID, waypoint_idx: int, game: Game = Depends(GameContext.get)
-) -> str | None:
-    flight = game.db.flights.get(flight_id)
-    if waypoint_idx == 0:
-        return f"Depart T+{flight.flight_plan.takeoff_time()}"
-
-    waypoint = flight.flight_plan.waypoints[waypoint_idx - 1]
-    prefix = "TOT"
-    time = flight.flight_plan.tot_for_waypoint(waypoint)
-    if time is None:
-        prefix = "Depart"
-        time = flight.flight_plan.depart_time_for_waypoint(waypoint)
-    if time is None:
-        return ""
-    return f"{prefix} T+{timedelta(seconds=int(time.total_seconds()))}"
+    EventStream.put_nowait(GameUpdateEvents().update_flight(flight))

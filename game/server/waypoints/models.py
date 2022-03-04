@@ -1,10 +1,27 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from pydantic import BaseModel
 
-from game.ato import FlightWaypoint
+from game.ato import Flight, FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.server.leaflet import LeafletPoint
+
+
+def timing_info(flight: Flight, waypoint_idx: int) -> str:
+    if waypoint_idx == 0:
+        return f"Depart T+{flight.flight_plan.takeoff_time()}"
+
+    waypoint = flight.flight_plan.waypoints[waypoint_idx - 1]
+    prefix = "TOT"
+    time = flight.flight_plan.tot_for_waypoint(waypoint)
+    if time is None:
+        prefix = "Depart"
+        time = flight.flight_plan.depart_time_for_waypoint(waypoint)
+    if time is None:
+        return ""
+    return f"{prefix} T+{timedelta(seconds=int(time.total_seconds()))}"
 
 
 class FlightWaypointJs(BaseModel):
@@ -15,9 +32,12 @@ class FlightWaypointJs(BaseModel):
     is_movable: bool
     should_mark: bool
     include_in_path: bool
+    timing: str
 
     @staticmethod
-    def for_waypoint(waypoint: FlightWaypoint) -> FlightWaypointJs:
+    def for_waypoint(
+        waypoint: FlightWaypoint, flight: Flight, waypoint_idx: int
+    ) -> FlightWaypointJs:
         # Target *points* are the exact location of a unit, whereas the target area is
         # only the center of the objective. Allow moving the latter since its exact
         # location isn't very important.
@@ -67,4 +87,5 @@ class FlightWaypointJs(BaseModel):
             is_movable=is_movable,
             should_mark=should_mark,
             include_in_path=include_in_path,
+            timing=timing_info(flight, waypoint_idx),
         )

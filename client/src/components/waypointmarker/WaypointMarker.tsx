@@ -1,9 +1,11 @@
+import backend from "../../api/backend";
+import { Flight } from "../../api/flight";
 import { Waypoint } from "../../api/waypoint";
 import { Icon } from "leaflet";
 import { Marker as LMarker } from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import { MutableRefObject, useCallback, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { Marker, Tooltip, useMap, useMapEvent } from "react-leaflet";
 
 const WAYPOINT_ICON = new Icon({
@@ -15,6 +17,7 @@ const WAYPOINT_ICON = new Icon({
 interface WaypointMarkerProps {
   number: number;
   waypoint: Waypoint;
+  flight: Flight;
 }
 
 const WaypointMarker = (props: WaypointMarkerProps) => {
@@ -50,24 +53,42 @@ const WaypointMarker = (props: WaypointMarkerProps) => {
   }, [map]);
   useMapEvent("zoomend", rebindTooltip);
 
+  useEffect(() => {
+    const waypoint = props.waypoint;
+    marker.current?.setTooltipContent(
+      `${props.number} ${waypoint.name}<br />` +
+        `${waypoint.altitude_ft} ft ${waypoint.altitude_reference}<br />` +
+        waypoint.timing
+    );
+  });
+
   const waypoint = props.waypoint;
   return (
     <Marker
       position={waypoint.position}
       icon={WAYPOINT_ICON}
+      draggable
+      eventHandlers={{
+        dragstart: (e) => {
+          const m: LMarker = e.target;
+          m.setTooltipContent("Waiting to recompute TOT...");
+        },
+        dragend: (e) => {
+          const m: LMarker = e.target;
+          const destination = m.getLatLng();
+          backend.post(
+            `/waypoints/${props.flight.id}/${props.number}/position`,
+            destination
+          );
+        },
+      }}
       ref={(ref) => {
         if (ref != null) {
           marker.current = ref;
         }
       }}
     >
-      <Tooltip position={waypoint.position}>
-        {`${props.number} ${waypoint.name}`}
-        <br />
-        {`${waypoint.altitude_ft} ft ${waypoint.altitude_reference}`}
-        <br />
-        TODO: Timing info
-      </Tooltip>
+      <Tooltip position={waypoint.position} />
     </Marker>
   );
 };

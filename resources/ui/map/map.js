@@ -301,7 +301,7 @@ function handleStreamedEvents(events) {
   }
 
   for (const flightId of events.updated_flights) {
-    Flight.withId(flightId).draw();
+    Flight.withId(flightId).update();
   }
 
   for (const flightId of events.deleted_flights) {
@@ -775,31 +775,18 @@ class Waypoint {
     return this.waypoint.should_mark;
   }
 
-  async timing(dragging) {
-    if (dragging) {
-      return "Waiting to recompute TOT...";
-    }
-    return await getJson(`/waypoints/${this.flight.id}/${this.number}/timing`);
-  }
-
-  async description(dragging) {
+  description() {
     const alt = this.waypoint.altitude_ft;
     const altRef = this.waypoint.altitude_reference;
     return (
       `${this.number} ${this.waypoint.name}<br />` +
       `${alt} ft ${altRef}<br />` +
-      `${await this.timing(dragging)}`
+      `${this.waypoint.timing}`
     );
   }
 
   relocate() {
     this.marker.setLatLng(this.position());
-  }
-
-  updateDescription(dragging) {
-    this.description(dragging).then((description) => {
-      this.marker.setTooltipContent(description);
-    });
   }
 
   makeMarker() {
@@ -808,7 +795,7 @@ class Waypoint {
       draggable: this.waypoint.is_movable,
     })
       .on("dragstart", (e) => {
-        this.updateDescription(true);
+        this.marker.setTooltipContent("Waiting to recompute TOT...");
       })
       .on("drag", (e) => {
         const marker = e.target;
@@ -824,7 +811,6 @@ class Waypoint {
         )
           .then(() => {
             this.waypoint.position = destination;
-            this.updateDescription(false);
             this.flight.drawCommitBoundary();
           })
           .catch((err) => {
@@ -837,11 +823,9 @@ class Waypoint {
       });
 
     if (this.flight.selected) {
-      this.description(false).then((description) =>
-        marker.bindTooltip(description, {
-          permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
-        })
-      );
+      marker.bindTooltip(this.description(), {
+        permanent: zoom >= SHOW_WAYPOINT_INFO_AT_ZOOM,
+      });
     }
 
     return marker;
@@ -959,6 +943,13 @@ class Flight {
         .addTo(layer)
         .addTo(allFlightPlansLayer);
     }
+  }
+
+  update() {
+    getJson(`/flights/${this.id}?with_waypoints=true`).then((flight) => {
+      this.flight = flight;
+      this.draw();
+    });
   }
 
   draw() {

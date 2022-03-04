@@ -8,4 +8,5 @@ export interface Waypoint {
   is_movable: boolean;
   should_mark: boolean;
   include_in_path: boolean;
+  timing: string;
 }
