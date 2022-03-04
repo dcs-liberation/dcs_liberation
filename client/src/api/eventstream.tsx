@@ -3,7 +3,13 @@ import backend from "./backend";
 import { updateControlPoint } from "./controlPointsSlice";
 import { ControlPoint } from "./controlpoint";
 import { Flight } from "./flight";
-import { deselectFlight, selectFlight } from "./flightsSlice";
+import {
+  deselectFlight,
+  registerFlight,
+  selectFlight,
+  unregisterFlight,
+  updateFlight,
+} from "./flightsSlice";
 import {
   addFrontLine,
   deleteFrontLine,
@@ -42,6 +48,21 @@ export const handleStreamedEvents = (
   dispatch: AppDispatch,
   events: GameUpdateEvents
 ) => {
+  for (const flight of events.new_flights) {
+    dispatch(registerFlight(flight));
+  }
+
+  for (const id of events.updated_flights) {
+    backend.get(`/flights/${id}?with_waypoints=true`).then((response) => {
+      const flight = response.data as Flight;
+      dispatch(updateFlight(flight));
+    });
+  }
+
+  for (const id of events.deleted_flights) {
+    dispatch(unregisterFlight(id));
+  }
+
   if (events.deselected_flight) {
     dispatch(deselectFlight());
   }

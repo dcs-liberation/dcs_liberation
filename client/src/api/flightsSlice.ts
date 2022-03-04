@@ -43,6 +43,11 @@ export const flightsSlice = createSlice({
         );
       }
     },
+    updateFlight: (state, action: PayloadAction<Flight>) => {
+      const flight = action.payload;
+      const ato = flight.blue ? state.blue : state.red;
+      ato[flight.id] = flight;
+    },
     deselectFlight: (state) => {
       state.selected = null;
     },
@@ -57,6 +62,7 @@ export const {
   clearFlights,
   registerFlight,
   unregisterFlight,
+  updateFlight,
   deselectFlight,
   selectFlight,
 } = flightsSlice.actions;
