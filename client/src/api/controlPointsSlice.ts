@@ -1,7 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-import { ControlPoint } from "./controlpoint";
 import { RootState } from "../app/store";
+import { ControlPoint } from "./controlpoint";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface ControlPointsState {
   controlPoints: { [key: number]: ControlPoint };

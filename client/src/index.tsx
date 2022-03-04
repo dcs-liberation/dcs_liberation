@@ -1,13 +1,11 @@
-import "./index.css";
-
-import * as serviceWorker from "./serviceWorker";
-
 import App from "./App";
-import { Provider } from "react-redux";
+import { store } from "./app/store";
+import { SocketProvider } from "./components/socketprovider/socketprovider";
+import "./index.css";
+import * as serviceWorker from "./serviceWorker";
 import React from "react";
 import ReactDOM from "react-dom";
-import { SocketProvider } from "./components/socketprovider/socketprovider";
-import { store } from "./app/store";
+import { Provider } from "react-redux";
 
 ReactDOM.render(
   <React.StrictMode>

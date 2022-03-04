@@ -1,7 +1,7 @@
-import { LayerGroup } from "react-leaflet";
-import Tgo from "../tgos/Tgo";
 import { selectTgos } from "../../api/tgosSlice";
 import { useAppSelector } from "../../app/hooks";
+import Tgo from "../tgos/Tgo";
+import { LayerGroup } from "react-leaflet";
 
 interface TgosLayerProps {
   categories?: string[];

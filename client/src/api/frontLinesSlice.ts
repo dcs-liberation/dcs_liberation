@@ -1,7 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-import FrontLine from "./frontline";
 import { RootState } from "../app/store";
+import FrontLine from "./frontline";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface FrontLinesState {
   fronts: FrontLine[];

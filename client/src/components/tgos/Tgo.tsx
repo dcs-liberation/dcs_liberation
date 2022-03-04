@@ -1,9 +1,8 @@
-import { Icon, Point } from "leaflet";
-import { Marker, Tooltip } from "react-leaflet";
-
-import { Symbol as MilSymbol } from "milsymbol";
-import SplitLines from "../splitlines/SplitLines";
 import { Tgo as TgoModel } from "../../api/tgo";
+import SplitLines from "../splitlines/SplitLines";
+import { Icon, Point } from "leaflet";
+import { Symbol as MilSymbol } from "milsymbol";
+import { Marker, Tooltip } from "react-leaflet";
 
 function iconForTgo(cp: TgoModel) {
   const symbol = new MilSymbol(cp.sidc, {

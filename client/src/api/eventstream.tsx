@@ -1,14 +1,13 @@
-import { deselectFlight, selectFlight } from "./flightsSlice";
-
 import { AppDispatch } from "../app/store";
-import { ControlPoint } from "./controlpoint";
-import { Flight } from "./flight";
-import FrontLine from "./frontline";
-import { LatLng } from "leaflet";
-import Tgo from "./tgo";
 import backend from "./backend";
 import { updateControlPoint } from "./controlPointsSlice";
+import { ControlPoint } from "./controlpoint";
+import { Flight } from "./flight";
+import { deselectFlight, selectFlight } from "./flightsSlice";
+import FrontLine from "./frontline";
+import Tgo from "./tgo";
 import { updateTgo } from "./tgosSlice";
+import { LatLng } from "leaflet";
 
 // Placeholder. We don't use this yet. This is just here so we can flesh out the
 // update events model.

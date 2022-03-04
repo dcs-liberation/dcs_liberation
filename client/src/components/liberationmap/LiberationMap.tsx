@@ -1,15 +1,13 @@
-import "./LiberationMap.css";
-
-import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
-
 import AirDefenseRangeLayer from "../airdefenserangelayer";
-import { BasemapLayer } from "react-esri-leaflet";
 import ControlPointsLayer from "../controlpointslayer";
 import FlightPlansLayer from "../flightplanslayer";
 import FrontLinesLayer from "../frontlineslayer";
-import { LatLng } from "leaflet";
 import SupplyRoutesLayer from "../supplyrouteslayer";
 import TgosLayer from "../tgoslayer/TgosLayer";
+import "./LiberationMap.css";
+import { LatLng } from "leaflet";
+import { BasemapLayer } from "react-esri-leaflet";
+import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
 
 interface GameProps {
   mapCenter: LatLng;

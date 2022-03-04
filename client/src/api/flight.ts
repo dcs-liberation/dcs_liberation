@@ -1,5 +1,5 @@
-import { LatLng } from "leaflet";
 import { Waypoint } from "./waypoint";
+import { LatLng } from "leaflet";
 
 export interface Flight {
   id: string;

@@ -1,10 +1,9 @@
-import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
-
 import controlPointsReducer from "../api/controlPointsSlice";
 import flightsReducer from "../api/flightsSlice";
 import frontLinesReducer from "../api/frontLinesSlice";
 import supplyRoutesReducer from "../api/supplyRoutesSlice";
 import tgosReducer from "../api/tgosSlice";
+import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
   reducer: {

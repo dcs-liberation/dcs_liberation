@@ -1,7 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-import { Flight } from "./flight";
 import { RootState } from "../app/store";
+import { Flight } from "./flight";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface FlightsState {
   blue: { [id: string]: Flight };

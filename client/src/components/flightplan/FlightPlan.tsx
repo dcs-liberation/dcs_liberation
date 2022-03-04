@@ -1,6 +1,6 @@
 import { Flight } from "../../api/flight";
-import { Polyline } from "react-leaflet";
 import WaypointMarker from "../waypointmarker";
+import { Polyline } from "react-leaflet";
 
 const BLUE_PATH = "#0084ff";
 const RED_PATH = "#c85050";

@@ -1,9 +1,8 @@
-import { Polyline, Tooltip } from "react-leaflet";
-import { useEffect, useRef } from "react";
-
-import { Polyline as LPolyline } from "leaflet";
-import SplitLines from "../splitlines/SplitLines";
 import { SupplyRoute as SupplyRouteModel } from "../../api/supplyroute";
+import SplitLines from "../splitlines/SplitLines";
+import { Polyline as LPolyline } from "leaflet";
+import { useEffect, useRef } from "react";
+import { Polyline, Tooltip } from "react-leaflet";
 
 interface SupplyRouteProps {
   route: SupplyRouteModel;

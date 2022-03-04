@@ -1,8 +1,7 @@
-import { useCallback, useEffect } from "react";
-
 import { handleStreamedEvents } from "../api/eventstream";
 import { useAppDispatch } from "../app/hooks";
 import { useSocket } from "./useSocket";
+import { useCallback, useEffect } from "react";
 
 export const useEventStream = () => {
   const ws = useSocket();

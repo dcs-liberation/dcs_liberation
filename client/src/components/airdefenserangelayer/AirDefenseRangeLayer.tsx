@@ -1,8 +1,7 @@
-import { Circle, LayerGroup } from "react-leaflet";
-
 import Tgo from "../../api/tgo";
 import { selectTgos } from "../../api/tgosSlice";
 import { useAppSelector } from "../../app/hooks";
+import { Circle, LayerGroup } from "react-leaflet";
 
 interface TgoRangeCirclesProps {
   tgo: Tgo;

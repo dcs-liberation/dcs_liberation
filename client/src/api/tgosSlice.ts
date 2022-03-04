@@ -1,7 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
 import { RootState } from "../app/store";
 import { Tgo } from "./tgo";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface TgosState {
   tgos: { [key: string]: Tgo };

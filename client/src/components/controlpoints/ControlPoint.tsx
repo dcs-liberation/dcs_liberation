@@ -1,9 +1,8 @@
-import { Icon, Point } from "leaflet";
-import { Marker, Tooltip } from "react-leaflet";
-
-import { ControlPoint as ControlPointModel } from "../../api/controlpoint";
-import { Symbol as MilSymbol } from "milsymbol";
 import backend from "../../api/backend";
+import { ControlPoint as ControlPointModel } from "../../api/controlpoint";
+import { Icon, Point } from "leaflet";
+import { Symbol as MilSymbol } from "milsymbol";
+import { Marker, Tooltip } from "react-leaflet";
 
 function iconForControlPoint(cp: ControlPointModel) {
   const symbol = new MilSymbol(cp.sidc, {

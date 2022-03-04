@@ -1,8 +1,6 @@
 // Based on https://thenable.io/building-a-use-socket-hook-in-react.
-
-import { ReactChild, createContext, useEffect, useState } from "react";
-
 import { WEBSOCKET_URL } from "../../api/backend";
+import { ReactChild, createContext, useEffect, useState } from "react";
 
 const socket = new WebSocket(WEBSOCKET_URL);
 

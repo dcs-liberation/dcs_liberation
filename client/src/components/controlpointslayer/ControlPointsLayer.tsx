@@ -1,7 +1,7 @@
-import ControlPoint from "../controlpoints";
-import { LayerGroup } from "react-leaflet";
 import { selectControlPoints } from "../../api/controlPointsSlice";
 import { useAppSelector } from "../../app/hooks";
+import ControlPoint from "../controlpoints";
+import { LayerGroup } from "react-leaflet";
 
 export default function ControlPointsLayer() {
   const controlPoints = useAppSelector(selectControlPoints);

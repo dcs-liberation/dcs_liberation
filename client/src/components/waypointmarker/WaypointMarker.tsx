@@ -1,11 +1,10 @@
-import { Marker, Tooltip, useMap, useMapEvent } from "react-leaflet";
-import { MutableRefObject, useCallback, useRef } from "react";
-
+import { Waypoint } from "../../api/waypoint";
 import { Icon } from "leaflet";
 import { Marker as LMarker } from "leaflet";
-import { Waypoint } from "../../api/waypoint";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import { MutableRefObject, useCallback, useRef } from "react";
+import { Marker, Tooltip, useMap, useMapEvent } from "react-leaflet";
 
 const WAYPOINT_ICON = new Icon({
   iconUrl: icon,

@@ -1,7 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
 import { RootState } from "../app/store";
 import SupplyRoute from "./supplyroute";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface SupplyRoutesState {
   routes: SupplyRoute[];

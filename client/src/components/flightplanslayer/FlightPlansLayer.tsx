@@ -1,8 +1,8 @@
 import { Flight } from "../../api/flight";
-import FlightPlan from "../flightplan";
-import { LayerGroup } from "react-leaflet";
 import { selectFlights } from "../../api/flightsSlice";
 import { useAppSelector } from "../../app/hooks";
+import FlightPlan from "../flightplan";
+import { LayerGroup } from "react-leaflet";
 
 interface FlightPlansLayerProps {
   blue: boolean;
