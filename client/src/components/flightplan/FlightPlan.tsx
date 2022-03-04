@@ -40,7 +40,7 @@ function FlightPlanPath(props: FlightPlanProps) {
 }
 
 const WaypointMarkers = (props: FlightPlanProps) => {
-  if (props.selected && props.flight.waypoints == null) {
+  if (!props.selected || props.flight.waypoints == null) {
     return <></>;
   }
 
