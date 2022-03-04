@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import uuid
 from abc import ABC
 from typing import Iterator, List, Optional, TYPE_CHECKING
 
@@ -22,6 +23,7 @@ from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
+    from game.sim import GameUpdateEvents
     from .theatergroup import TheaterUnit, TheaterGroup
     from .controlpoint import ControlPoint
     from ..ato.flighttype import FlightType
@@ -62,6 +64,7 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
         sea_object: bool,
     ) -> None:
         super().__init__(name, position)
+        self.id = uuid.uuid4()
         self.category = category
         self.heading = heading
         self.control_point = control_point
@@ -212,8 +215,9 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
     def mark_locations(self) -> Iterator[Point]:
         yield self.position
 
-    def clear(self) -> None:
+    def clear(self, events: GameUpdateEvents) -> None:
         self.groups = []
+        events.update_tgo(self)
 
     @property
     def capturable(self) -> bool:

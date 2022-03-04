@@ -30,7 +30,7 @@ class MissionResultsProcessor:
         self.commit_convoy_losses(debriefing)
         self.commit_cargo_ship_losses(debriefing)
         self.commit_airlift_losses(debriefing)
-        self.commit_ground_losses(debriefing)
+        self.commit_ground_losses(debriefing, events)
         self.commit_damaged_runways(debriefing)
         self.commit_captures(debriefing, events)
         self.commit_front_line_battle_impact(debriefing, events)
@@ -131,11 +131,11 @@ class MissionResultsProcessor:
                     )
 
     @staticmethod
-    def commit_ground_losses(debriefing: Debriefing) -> None:
+    def commit_ground_losses(debriefing: Debriefing, events: GameUpdateEvents) -> None:
         for ground_object_loss in debriefing.ground_object_losses:
-            ground_object_loss.theater_unit.kill()
+            ground_object_loss.theater_unit.kill(events)
         for scenery_object_loss in debriefing.scenery_object_losses:
-            scenery_object_loss.ground_unit.kill()
+            scenery_object_loss.ground_unit.kill(events)
 
     @staticmethod
     def commit_damaged_runways(debriefing: Debriefing) -> None:

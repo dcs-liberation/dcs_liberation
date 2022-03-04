@@ -24,7 +24,7 @@ from game.layout import LAYOUTS
 from game.server import EventStream, GameContext
 from game.server.dependencies import QtCallbacks, QtContext
 from game.server.security import ApiKeyManager
-from game.theater import MissionTarget
+from game.theater import MissionTarget, TheaterGroundObject
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -36,6 +36,7 @@ from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
+from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.logs.QLogsWindow import QLogsWindow
 from qt_ui.windows.newgame.QNewGameWizard import NewGameWizard
@@ -49,6 +50,7 @@ from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 
 class QLiberationWindow(QMainWindow):
     new_package_signal = Signal(MissionTarget)
+    tgo_info_signal = Signal(TheaterGroundObject)
 
     def __init__(self, game: Optional[Game], new_map: bool) -> None:
         super().__init__()
@@ -63,8 +65,12 @@ class QLiberationWindow(QMainWindow):
         self.new_package_signal.connect(
             lambda target: Dialog.open_new_package_dialog(target, self)
         )
+        self.tgo_info_signal.connect(self.open_tgo_info_dialog)
         QtContext.set_callbacks(
-            QtCallbacks(lambda target: self.new_package_signal.emit(target))
+            QtCallbacks(
+                lambda target: self.new_package_signal.emit(target),
+                lambda tgo: self.tgo_info_signal.emit(tgo),
+            )
         )
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
@@ -436,6 +442,9 @@ class QLiberationWindow(QMainWindow):
         logging.info("On Debriefing")
         self.debriefing = QDebriefingWindow(debrief)
         self.debriefing.show()
+
+    def open_tgo_info_dialog(self, tgo: TheaterGroundObject) -> None:
+        QGroundObjectMenu(self, tgo, tgo.control_point, self.game).show()
 
     def _qsettings(self) -> QSettings:
         return QSettings("DCS Liberation", "Qt UI")

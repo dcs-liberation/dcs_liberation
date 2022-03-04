@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from uuid import UUID
+
 from pydantic import BaseModel
 
 from game.server.leaflet import LeafletPoint
@@ -7,16 +9,17 @@ from game.theater import TheaterGroundObject
 
 
 class TgoJs(BaseModel):
+    id: UUID
     name: str
     control_point_name: str
     category: str
     blue: bool
     position: LeafletPoint
-    units: list[str]
-    threat_ranges: list[float]
-    detection_ranges: list[float]
-    dead: bool
-    sidc: str
+    units: list[str]  # TODO: Event stream
+    threat_ranges: list[float]  # TODO: Event stream
+    detection_ranges: list[float]  # TODO: Event stream
+    dead: bool  # TODO: Event stream
+    sidc: str  # TODO: Event stream
 
     @staticmethod
     def for_tgo(tgo: TheaterGroundObject) -> TgoJs:
@@ -29,6 +32,7 @@ class TgoJs(BaseModel):
                 tgo.detection_range(group).meters for group in tgo.groups
             ]
         return TgoJs(
+            id=tgo.id,
             name=tgo.name,
             control_point_name=tgo.control_point.name,
             category=tgo.category,

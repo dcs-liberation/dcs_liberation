@@ -278,6 +278,8 @@ class Game:
 
         for control_point in self.theater.controlpoints:
             control_point.initialize_turn_0()
+            for tgo in control_point.connected_objectives:
+                self.db.tgos.add(tgo.id, tgo)
 
         self.blue.preinit_turn_0()
         self.red.preinit_turn_0()

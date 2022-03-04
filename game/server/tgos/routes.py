@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends
 
 from game import Game
@@ -15,3 +17,8 @@ def list_tgos(game: Game = Depends(GameContext.get)) -> list[TgoJs]:
             if not tgo.is_control_point:
                 tgos.append(TgoJs.for_tgo(tgo))
     return tgos
+
+
+@router.get("/{tgo_id}")
+def get_tgo(tgo_id: UUID, game: Game = Depends(GameContext.get)) -> TgoJs:
+    return TgoJs.for_tgo(game.db.tgos.get(tgo_id))

@@ -15,7 +15,6 @@ from game.theater import (
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from .controlpointjs import ControlPointJs
-from .groundobjectjs import GroundObjectJs
 from .supplyroutejs import SupplyRouteJs
 
 
@@ -41,7 +40,6 @@ class MapModel(QObject):
     apiKeyChanged = Signal(str)
     mapCenterChanged = Signal(list)
     controlPointsChanged = Signal()
-    groundObjectsChanged = Signal()
     supplyRoutesChanged = Signal()
     mapReset = Signal()
 
@@ -50,7 +48,6 @@ class MapModel(QObject):
         self.game_model = game_model
         self._map_center = LatLng(0, 0)
         self._control_points = []
-        self._ground_objects = []
         self._supply_routes = []
 
         GameUpdateSignal.get_instance().game_loaded.connect(self.on_game_load)
@@ -59,7 +56,6 @@ class MapModel(QObject):
     def clear(self) -> None:
         self._control_points = []
         self._supply_routes = []
-        self._ground_objects = []
         self.cleared.emit()
 
     def reset(self) -> None:
@@ -68,7 +64,6 @@ class MapModel(QObject):
             return
         with logged_duration("Map reset"):
             self.reset_control_points()
-            self.reset_ground_objects()
             self.reset_routes()
             self.mapReset.emit()
 
@@ -98,27 +93,6 @@ class MapModel(QObject):
     @Property(list, notify=controlPointsChanged)
     def controlPoints(self) -> List[ControlPointJs]:
         return self._control_points
-
-    def reset_ground_objects(self) -> None:
-        seen = set()
-        self._ground_objects = []
-        for cp in self.game.theater.controlpoints:
-            for tgo in cp.ground_objects:
-                if tgo.name in seen:
-                    continue
-                seen.add(tgo.name)
-
-                if tgo.is_control_point:
-                    # TGOs that are the CP (CV groups) are an implementation quirk that
-                    # we don't need to expose to the UI.
-                    continue
-
-                self._ground_objects.append(GroundObjectJs(tgo, self.game))
-        self.groundObjectsChanged.emit()
-
-    @Property(list, notify=groundObjectsChanged)
-    def groundObjects(self) -> List[GroundObjectJs]:
-        return self._ground_objects
 
     def reset_routes(self) -> None:
         seen = set()

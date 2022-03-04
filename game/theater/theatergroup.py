@@ -1,22 +1,20 @@
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
-from typing import Optional, Any, TYPE_CHECKING, Type
+from typing import Any, Optional, TYPE_CHECKING, Type
 
 from dcs.triggers import TriggerZone
-from dcs.unittype import VehicleType, ShipType, StaticType
+from dcs.unittype import ShipType, StaticType, UnitType as DcsUnitType, VehicleType
 
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
-from dcs.unittype import UnitType as DcsUnitType
-
 from game.point_with_heading import PointWithHeading
 from game.utils import Heading
 
 if TYPE_CHECKING:
-    from game.layout.layout import LayoutUnit, TgoLayoutGroup
+    from game.layout.layout import LayoutUnit
+    from game.sim import GameUpdateEvents
     from game.theater import TheaterGroundObject
 
 
@@ -58,8 +56,9 @@ class TheaterUnit:
         # None for not available StaticTypes
         return None
 
-    def kill(self) -> None:
+    def kill(self, events: GameUpdateEvents) -> None:
         self.alive = False
+        events.update_tgo(self.ground_object)
 
     @property
     def unit_name(self) -> str:

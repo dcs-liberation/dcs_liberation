@@ -253,7 +253,6 @@ new QWebChannel(qt.webChannelTransport, function (channel) {
   game.cleared.connect(clearAllLayers);
   game.mapCenterChanged.connect(recenterMap);
   game.controlPointsChanged.connect(drawControlPoints);
-  game.groundObjectsChanged.connect(drawGroundObjects);
   game.supplyRoutesChanged.connect(drawSupplyRoutes);
   game.mapReset.connect(drawAircraft);
 });
@@ -319,6 +318,10 @@ function handleStreamedEvents(events) {
 
   for (const id of events.deleted_front_lines) {
     FrontLine.popId(id).clear();
+  }
+
+  for (const id of events.updated_tgos) {
+    TheaterGroundObject.withId(id).update();
   }
 }
 
@@ -523,6 +526,39 @@ function drawControlPoints() {
 class TheaterGroundObject {
   constructor(tgo) {
     this.tgo = tgo;
+    this.marker = null;
+    this.threatCircles = [];
+    this.detectionCircles = [];
+    TheaterGroundObject.register(this);
+  }
+
+  static registered = [];
+
+  static register(tgo) {
+    TheaterGroundObject.registered[tgo.tgo.id] = tgo;
+  }
+
+  static withId(id) {
+    return TheaterGroundObject.registered[id];
+  }
+
+  showInfoDialog() {
+    postJson(`/qt/info/tgo/${this.tgo.id}`);
+  }
+
+  showPackageDialog() {
+    postJson(`/qt/create-package/tgo/${this.tgo.id}`);
+  }
+
+  update() {
+    getJson(`/tgos/${this.tgo.id}`).then((tgo) => {
+      // Clear explicitly before replacing the TGO in case (though this
+      // shouldn't happen) the replacement data changes the layer this TGO is
+      // drawn on.
+      this.clear();
+      this.tgo = tgo;
+      this.draw();
+    });
   }
 
   icon() {
@@ -550,25 +586,48 @@ class TheaterGroundObject {
     const threatColor = this.tgo.blue ? Colors.Blue : Colors.Red;
     const detectionColor = this.tgo.blue ? "#bb89ff" : "#eee17b";
 
-    this.tgo.samDetectionRanges.forEach((range) => {
-      L.circle(this.tgo.position, {
-        radius: range,
-        color: detectionColor,
-        fill: false,
-        weight: 1,
-        interactive: false,
-      }).addTo(detectionLayer);
+    this.tgo.detection_ranges.forEach((range) => {
+      this.detectionCircles.push(
+        L.circle(this.tgo.position, {
+          radius: range,
+          color: detectionColor,
+          fill: false,
+          weight: 1,
+          interactive: false,
+        }).addTo(detectionLayer)
+      );
     });
 
-    this.tgo.samThreatRanges.forEach((range) => {
-      L.circle(this.tgo.position, {
-        radius: range,
-        color: threatColor,
-        fill: false,
-        weight: 2,
-        interactive: false,
-      }).addTo(threatLayer);
+    this.tgo.threat_ranges.forEach((range) => {
+      this.threatCircles.push(
+        L.circle(this.tgo.position, {
+          radius: range,
+          color: threatColor,
+          fill: false,
+          weight: 2,
+          interactive: false,
+        }).addTo(threatLayer)
+      );
     });
+  }
+
+  clear() {
+    const detectionLayer = this.tgo.blue
+      ? blueSamDetectionLayer
+      : redSamDetectionLayer;
+    const threatLayer = this.tgo.blue ? blueSamThreatLayer : redSamThreatLayer;
+
+    if (this.marker) {
+      this.marker.removeFrom(this.layer());
+    }
+
+    for (const circle of this.threatCircles) {
+      circle.removeFrom(threatLayer);
+    }
+
+    for (const circle of this.detectionCircles) {
+      circle.removeFrom(detectionLayer);
+    }
   }
 
   draw() {
@@ -579,14 +638,14 @@ class TheaterGroundObject {
       return;
     }
 
-    L.marker(this.tgo.position, { icon: this.icon() })
+    this.marker = L.marker(this.tgo.position, { icon: this.icon() })
       .bindTooltip(
         `${this.tgo.name} (${
-          this.tgo.controlPointName
+          this.tgo.control_point_name
         })<br />${this.tgo.units.join("<br />")}`
       )
-      .on("click", () => this.tgo.showInfoDialog())
-      .on("contextmenu", () => this.tgo.showPackageDialog())
+      .on("click", () => this.showInfoDialog())
+      .on("contextmenu", () => this.showPackageDialog())
       .addTo(this.layer());
     this.drawSamThreats();
   }
@@ -601,8 +660,10 @@ function drawGroundObjects() {
   redSamDetectionLayer.clearLayers();
   blueSamThreatLayer.clearLayers();
   redSamThreatLayer.clearLayers();
-  game.groundObjects.forEach((tgo) => {
-    new TheaterGroundObject(tgo).draw();
+  getJson("/tgos").then((tgos) => {
+    for (const tgo of tgos) {
+      new TheaterGroundObject(tgo).draw();
+    }
   });
 }
 
@@ -683,7 +744,7 @@ class FrontLine {
   }
 
   openNewPackageDialog() {
-    postJson(`/package-dialog/front-line/${this.id}`);
+    postJson(`/qt/create-package/front-line/${this.id}`);
   }
 }
 

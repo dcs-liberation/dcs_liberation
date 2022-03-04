@@ -9,7 +9,7 @@ from . import (
     frontlines,
     mapzones,
     navmesh,
-    packagedialog,
+    qt,
     supplyroutes,
     tgos,
     waypoints,
@@ -29,7 +29,7 @@ app.include_router(flights.router)
 app.include_router(frontlines.router)
 app.include_router(mapzones.router)
 app.include_router(navmesh.router)
-app.include_router(packagedialog.router)
+app.include_router(qt.router)
 app.include_router(supplyroutes.router)
 app.include_router(tgos.router)
 app.include_router(waypoints.router)
