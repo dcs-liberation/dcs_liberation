@@ -1,16 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Tgo, TgoType } from "./tgo";
 
 import { RootState } from "../app/store";
+import { Tgo } from "./tgo";
 
 interface TgosState {
-  tgosByType: { [key: string]: Tgo[] };
+  tgos: { [key: string]: Tgo };
 }
 
 const initialState: TgosState = {
-  tgosByType: Object.fromEntries(
-    Object.values(TgoType).map((key) => [key, []])
-  ),
+  tgos: {},
 };
 
 export const tgosSlice = createSlice({
@@ -18,33 +16,19 @@ export const tgosSlice = createSlice({
   initialState,
   reducers: {
     setTgos: (state, action: PayloadAction<Tgo[]>) => {
-      state.tgosByType = initialState.tgosByType;
-      for (const key of Object.values(TgoType)) {
-        state.tgosByType[key] = [];
-      }
+      state.tgos = {};
       for (const tgo of action.payload) {
-        var type;
-        switch (tgo.category) {
-          case "aa":
-            type = TgoType.AIR_DEFENSE;
-            break;
-          case "factory":
-            type = TgoType.FACTORY;
-            break;
-          case "ship":
-            type = TgoType.SHIP;
-            break;
-          default:
-            type = TgoType.OTHER;
-            break;
-        }
-        state.tgosByType[type].push(tgo);
+        state.tgos[tgo.id] = tgo;
       }
+    },
+    updateTgo: (state, action: PayloadAction<Tgo>) => {
+      const tgo = action.payload;
+      state.tgos[tgo.id] = tgo;
     },
   },
 });
 
-export const { setTgos } = tgosSlice.actions;
+export const { setTgos, updateTgo } = tgosSlice.actions;
 
 export const selectTgos = (state: RootState) => state.tgos;
 

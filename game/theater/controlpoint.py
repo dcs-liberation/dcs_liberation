@@ -748,6 +748,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.base.set_strength_to_minimum()
         self._clear_front_lines(events)
         self._create_missing_front_lines(events)
+        events.update_control_point(self)
 
     @property
     def required_aircraft_start_type(self) -> Optional[StartType]:

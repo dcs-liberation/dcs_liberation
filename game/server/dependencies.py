@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, TYPE_CHECKING
 
-from game.theater import MissionTarget, TheaterGroundObject
+from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
 
 if TYPE_CHECKING:
     from game import Game
@@ -32,9 +32,11 @@ class QtCallbacks:
         self,
         create_new_package: Callable[[MissionTarget], None],
         show_tgo_info: Callable[[TheaterGroundObject], None],
+        show_control_point_info: Callable[[ControlPoint], None],
     ) -> None:
         self.create_new_package = create_new_package
         self.show_tgo_info = show_tgo_info
+        self.show_control_point_info = show_control_point_info
 
 
 class QtContext:

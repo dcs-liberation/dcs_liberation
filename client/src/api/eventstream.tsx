@@ -1,8 +1,14 @@
 import { deselectFlight, selectFlight } from "./flightsSlice";
 
 import { AppDispatch } from "../app/store";
+import { ControlPoint } from "./controlpoint";
 import { Flight } from "./flight";
+import FrontLine from "./frontline";
 import { LatLng } from "leaflet";
+import Tgo from "./tgo";
+import backend from "./backend";
+import { updateControlPoint } from "./controlPointsSlice";
+import { updateTgo } from "./tgosSlice";
 
 // Placeholder. We don't use this yet. This is just here so we can flesh out the
 // update events model.
@@ -21,6 +27,11 @@ interface GameUpdateEvents {
   deleted_flights: string[];
   selected_flight: string | null;
   deselected_flight: boolean;
+  new_front_lines: FrontLine[];
+  updated_front_lines: string[];
+  deleted_front_lines: string[];
+  updated_tgos: string[];
+  updated_control_points: number[];
 }
 
 export const handleStreamedEvents = (
@@ -32,5 +43,17 @@ export const handleStreamedEvents = (
   }
   if (events.selected_flight != null) {
     dispatch(selectFlight(events.selected_flight));
+  }
+  for (const id of events.updated_tgos) {
+    backend.get(`/tgos/${id}`).then((response) => {
+      const tgo = response.data as Tgo;
+      dispatch(updateTgo(tgo));
+    });
+  }
+  for (const id of events.updated_control_points) {
+    backend.get(`/control-points/${id}`).then((response) => {
+      const cp = response.data as ControlPoint;
+      dispatch(updateControlPoint(cp));
+    });
   }
 };

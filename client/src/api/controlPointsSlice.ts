@@ -4,11 +4,11 @@ import { ControlPoint } from "./controlpoint";
 import { RootState } from "../app/store";
 
 interface ControlPointsState {
-  controlPoints: ControlPoint[];
+  controlPoints: { [key: number]: ControlPoint };
 }
 
 const initialState: ControlPointsState = {
-  controlPoints: [],
+  controlPoints: {},
 };
 
 export const controlPointsSlice = createSlice({
@@ -16,12 +16,20 @@ export const controlPointsSlice = createSlice({
   initialState,
   reducers: {
     setControlPoints: (state, action: PayloadAction<ControlPoint[]>) => {
-      state.controlPoints = action.payload;
+      state.controlPoints = {};
+      for (const cp of action.payload) {
+        state.controlPoints[cp.id] = cp;
+      }
+    },
+    updateControlPoint: (state, action: PayloadAction<ControlPoint>) => {
+      const cp = action.payload;
+      state.controlPoints[cp.id] = cp;
     },
   },
 });
 
-export const { setControlPoints } = controlPointsSlice.actions;
+export const { setControlPoints, updateControlPoint } =
+  controlPointsSlice.actions;
 
 export const selectControlPoints = (state: RootState) => state.controlPoints;
 

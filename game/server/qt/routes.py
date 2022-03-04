@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from game import Game
 from ..dependencies import GameContext, QtCallbacks, QtContext
@@ -33,3 +33,33 @@ def show_tgo_info(
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:
     qt.show_tgo_info(game.db.tgos.get(tgo_id))
+
+
+@router.post("/create-package/control-point/{cp_id}")
+def new_cp_package(
+    cp_id: int,
+    game: Game = Depends(GameContext.get),
+    qt: QtCallbacks = Depends(QtContext.get),
+) -> None:
+    cp = game.theater.find_control_point_by_id(cp_id)
+    if cp is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail=f"Game has no control point with ID {cp_id}",
+        )
+    qt.create_new_package(cp)
+
+
+@router.post("/info/control-point/{cp_id}")
+def show_control_point_info(
+    cp_id: int,
+    game: Game = Depends(GameContext.get),
+    qt: QtCallbacks = Depends(QtContext.get),
+) -> None:
+    cp = game.theater.find_control_point_by_id(cp_id)
+    if cp is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail=f"Game has no control point with ID {cp_id}",
+        )
+    qt.show_control_point_info(cp)

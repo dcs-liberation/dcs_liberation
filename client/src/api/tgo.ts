@@ -1,12 +1,5 @@
 import { LatLng } from "leaflet";
 
-export enum TgoType {
-  AIR_DEFENSE = "Air defenses",
-  FACTORY = "Factories",
-  SHIP = "Ships",
-  OTHER = "Other ground objects",
-}
-
 export interface Tgo {
   id: string;
   name: string;

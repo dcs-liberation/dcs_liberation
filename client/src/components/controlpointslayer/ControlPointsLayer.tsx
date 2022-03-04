@@ -7,7 +7,7 @@ export default function ControlPointsLayer() {
   const controlPoints = useAppSelector(selectControlPoints);
   return (
     <LayerGroup>
-      {controlPoints.controlPoints.map((controlPoint) => {
+      {Object.values(controlPoints.controlPoints).map((controlPoint) => {
         return (
           <ControlPoint key={controlPoint.name} controlPoint={controlPoint} />
         );

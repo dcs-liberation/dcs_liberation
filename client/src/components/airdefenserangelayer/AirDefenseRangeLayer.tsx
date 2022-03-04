@@ -49,19 +49,12 @@ interface AirDefenseRangeLayerProps {
 }
 
 export const AirDefenseRangeLayer = (props: AirDefenseRangeLayerProps) => {
-  const tgos = useAppSelector(selectTgos);
-  var allTgos: Tgo[] = [];
-  for (const tgoType of Object.values(tgos.tgosByType)) {
-    for (const tgo of tgoType) {
-      if (tgo.blue === props.blue) {
-        allTgos.push(tgo);
-      }
-    }
-  }
+  const tgos = Object.values(useAppSelector(selectTgos).tgos);
+  var tgosForSide = tgos.filter((tgo) => tgo.blue === props.blue);
 
   return (
     <LayerGroup>
-      {allTgos.map((tgo) => {
+      {tgosForSide.map((tgo) => {
         return (
           <TgoRangeCircles key={tgo.id} tgo={tgo} {...props}></TgoRangeCircles>
         );

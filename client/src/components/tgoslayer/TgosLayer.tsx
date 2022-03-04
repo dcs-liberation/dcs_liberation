@@ -1,16 +1,19 @@
 import { LayerGroup } from "react-leaflet";
 import Tgo from "../tgos/Tgo";
-import { TgoType } from "../../api/tgo";
 import { selectTgos } from "../../api/tgosSlice";
 import { useAppSelector } from "../../app/hooks";
 
 interface TgosLayerProps {
-  type: TgoType;
+  categories?: string[];
+  exclude?: true;
 }
 
 export default function TgosLayer(props: TgosLayerProps) {
-  const allTgos = useAppSelector(selectTgos);
-  const tgos = allTgos.tgosByType[props.type];
+  const allTgos = Object.values(useAppSelector(selectTgos).tgos);
+  const categoryFilter = props.categories ?? [];
+  const tgos = allTgos.filter(
+    (tgo) => categoryFilter.includes(tgo.category) === (props.exclude ?? false)
+  );
   return (
     <LayerGroup>
       {tgos.map((tgo) => {

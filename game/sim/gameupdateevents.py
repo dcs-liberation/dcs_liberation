@@ -9,7 +9,7 @@ from dcs import Point
 if TYPE_CHECKING:
     from game.ato import Flight, Package
     from game.sim.combat import FrozenCombat
-    from game.theater import FrontLine, TheaterGroundObject
+    from game.theater import ControlPoint, FrontLine, TheaterGroundObject
 
 
 @dataclass
@@ -31,6 +31,7 @@ class GameUpdateEvents:
     updated_front_lines: set[UUID] = field(default_factory=set)
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
+    updated_control_points: set[int] = field(default_factory=set)
     shutting_down: bool = False
 
     @property
@@ -114,6 +115,10 @@ class GameUpdateEvents:
 
     def update_tgo(self, tgo: TheaterGroundObject) -> GameUpdateEvents:
         self.updated_tgos.add(tgo.id)
+        return self
+
+    def update_control_point(self, control_point: ControlPoint) -> GameUpdateEvents:
+        self.updated_control_points.add(control_point.id)
         return self
 
     def shut_down(self) -> GameUpdateEvents:

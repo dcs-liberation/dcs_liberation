@@ -9,7 +9,6 @@ import FlightPlansLayer from "../flightplanslayer";
 import FrontLinesLayer from "../frontlineslayer";
 import { LatLng } from "leaflet";
 import SupplyRoutesLayer from "../supplyrouteslayer";
-import { TgoType } from "../../api/tgo";
 import TgosLayer from "../tgoslayer/TgosLayer";
 
 interface GameProps {
@@ -33,13 +32,18 @@ export default function LiberationMap(props: GameProps) {
         <LayersControl.Overlay name="Control points" checked>
           <ControlPointsLayer />
         </LayersControl.Overlay>
-        {Object.values(TgoType).map((type, idx) => {
-          return (
-            <LayersControl.Overlay key={idx} name={type} checked>
-              <TgosLayer type={type as TgoType} />
-            </LayersControl.Overlay>
-          );
-        })}
+        <LayersControl.Overlay name="Air defenses" checked>
+          <TgosLayer categories={["aa"]} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Factories" checked>
+          <TgosLayer categories={["factory"]} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Ships" checked>
+          <TgosLayer categories={["ship"]} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Other ground objects" checked>
+          <TgosLayer categories={["aa", "factories", "ships"]} exclude />
+        </LayersControl.Overlay>
         <LayersControl.Overlay name="Supply routes" checked>
           <SupplyRoutesLayer />
         </LayersControl.Overlay>

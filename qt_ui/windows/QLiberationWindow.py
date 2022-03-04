@@ -24,7 +24,7 @@ from game.layout import LAYOUTS
 from game.server import EventStream, GameContext
 from game.server.dependencies import QtCallbacks, QtContext
 from game.server.security import ApiKeyManager
-from game.theater import MissionTarget, TheaterGroundObject
+from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -36,6 +36,7 @@ from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
+from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.logs.QLogsWindow import QLogsWindow
@@ -51,6 +52,7 @@ from qt_ui.windows.stats.QStatsWindow import QStatsWindow
 class QLiberationWindow(QMainWindow):
     new_package_signal = Signal(MissionTarget)
     tgo_info_signal = Signal(TheaterGroundObject)
+    control_point_info_signal = Signal(ControlPoint)
 
     def __init__(self, game: Optional[Game], new_map: bool) -> None:
         super().__init__()
@@ -66,10 +68,12 @@ class QLiberationWindow(QMainWindow):
             lambda target: Dialog.open_new_package_dialog(target, self)
         )
         self.tgo_info_signal.connect(self.open_tgo_info_dialog)
+        self.control_point_info_signal.connect(self.open_control_point_info_dialog)
         QtContext.set_callbacks(
             QtCallbacks(
                 lambda target: self.new_package_signal.emit(target),
                 lambda tgo: self.tgo_info_signal.emit(tgo),
+                lambda cp: self.control_point_info_signal.emit(cp),
             )
         )
         Dialog.set_game(self.game_model)
@@ -445,6 +449,10 @@ class QLiberationWindow(QMainWindow):
 
     def open_tgo_info_dialog(self, tgo: TheaterGroundObject) -> None:
         QGroundObjectMenu(self, tgo, tgo.control_point, self.game).show()
+
+    def open_control_point_info_dialog(self, cp: ControlPoint) -> None:
+        self._cp_dialog = QBaseMenu2(None, cp, self.game_model)
+        self._cp_dialog.show()
 
     def _qsettings(self) -> QSettings:
         return QSettings("DCS Liberation", "Qt UI")

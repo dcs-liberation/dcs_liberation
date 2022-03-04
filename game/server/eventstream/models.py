@@ -32,6 +32,7 @@ class GameUpdateEventsJs(BaseModel):
     updated_front_lines: set[UUID]
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
+    updated_control_points: set[int]
 
     @classmethod
     def from_events(cls, events: GameUpdateEvents, game: Game) -> GameUpdateEventsJs:
@@ -64,4 +65,5 @@ class GameUpdateEventsJs(BaseModel):
             updated_front_lines=events.updated_front_lines,
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
+            updated_control_points=events.updated_control_points,
         )
