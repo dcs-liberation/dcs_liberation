@@ -23,7 +23,6 @@ from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
-    from game.sim import GameUpdateEvents
     from .theatergroup import TheaterUnit, TheaterGroup
     from .controlpoint import ControlPoint
     from ..ato.flighttype import FlightType
@@ -215,9 +214,8 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
     def mark_locations(self) -> Iterator[Point]:
         yield self.position
 
-    def clear(self, events: GameUpdateEvents) -> None:
+    def clear(self) -> None:
         self.groups = []
-        events.update_tgo(self)
 
     @property
     def capturable(self) -> bool:

@@ -730,11 +730,11 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         for squadron in self.squadrons:
             self._retreat_squadron(game, squadron)
 
-    def depopulate_uncapturable_tgos(self, events: GameUpdateEvents) -> None:
+    def depopulate_uncapturable_tgos(self) -> None:
         # TODO Rework this.
         for tgo in self.connected_objectives:
             if not tgo.capturable:
-                tgo.clear(events)
+                tgo.clear()
 
     # TODO: Should be Airbase specific.
     def capture(self, game: Game, events: GameUpdateEvents, for_player: bool) -> None:
@@ -742,7 +742,12 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.ground_unit_orders.refund_all(self.coalition)
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
-        self.depopulate_uncapturable_tgos(events)
+        self.depopulate_uncapturable_tgos()
+
+        # All the attached TGOs have either been depopulated or captured. Tell the UI to
+        # update their state.
+        for tgo in self.connected_objectives:
+            events.update_tgo(tgo)
 
         self._coalition = new_coalition
         self.base.set_strength_to_minimum()
