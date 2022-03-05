@@ -1,5 +1,7 @@
 import { AppDispatch } from "../app/store";
 import backend from "./backend";
+import Combat from "./combat";
+import { endCombat, newCombat, updateCombat } from "./combatSlice";
 import { updateControlPoint } from "./controlPointsSlice";
 import { ControlPoint } from "./controlpoint";
 import { Flight } from "./flight";
@@ -21,14 +23,10 @@ import Tgo from "./tgo";
 import { updateTgo } from "./tgosSlice";
 import { LatLng } from "leaflet";
 
-// Placeholder. We don't use this yet. This is just here so we can flesh out the
-// update events model.
-interface FrozenCombat {}
-
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
-  new_combats: FrozenCombat[];
-  updated_combats: FrozenCombat[];
+  new_combats: Combat[];
+  updated_combats: Combat[];
   ended_combats: string[];
   navmesh_updates: boolean[];
   unculled_zones_updated: boolean;
@@ -53,6 +51,18 @@ export const handleStreamedEvents = (
     events.updated_flight_positions
   )) {
     dispatch(updateFlightPosition([id, position]));
+  }
+
+  for (const combat of events.new_combats) {
+    dispatch(newCombat(combat));
+  }
+
+  for (const combat of events.updated_combats) {
+    dispatch(updateCombat(combat));
+  }
+
+  for (const id of events.ended_combats) {
+    dispatch(endCombat(id));
   }
 
   for (const flight of events.new_flights) {

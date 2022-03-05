@@ -1,3 +1,4 @@
+import combatReducer from "../api/combatSlice";
 import controlPointsReducer from "../api/controlPointsSlice";
 import flightsReducer from "../api/flightsSlice";
 import frontLinesReducer from "../api/frontLinesSlice";
@@ -8,14 +9,15 @@ import logger from "redux-logger";
 
 export const store = configureStore({
   reducer: {
+    combat: combatReducer,
+    controlPoints: controlPointsReducer,
     flights: flightsReducer,
     frontLines: frontLinesReducer,
-    controlPoints: controlPointsReducer,
     supplyRoutes: supplyRoutesReducer,
     tgos: tgosReducer,
   },
   // The logger middleware must be last or it won't log actions.
-  //middleware: [logger],
+  middleware: [logger],
 });
 
 export type AppDispatch = typeof store.dispatch;

@@ -1,5 +1,6 @@
 import AircraftLayer from "../aircraftlayer";
 import AirDefenseRangeLayer from "../airdefenserangelayer";
+import CombatLayer from "../combatlayer";
 import ControlPointsLayer from "../controlpointslayer";
 import FlightPlansLayer from "../flightplanslayer";
 import FrontLinesLayer from "../frontlineslayer";
@@ -33,6 +34,9 @@ export default function LiberationMap(props: GameProps) {
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Aircraft" checked>
           <AircraftLayer />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Active combat" checked>
+          <CombatLayer />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Air defenses" checked>
           <TgosLayer categories={["aa"]} />
