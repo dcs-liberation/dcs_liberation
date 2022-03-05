@@ -42,9 +42,13 @@ export const flightsSlice = createSlice({
       const id = action.payload;
       state.selected = state.flights[id];
     },
-    updateFlightPosition: (state, action: PayloadAction<[string, LatLng]>) => {
-      const [id, position] = action.payload;
-      state.flights[id].position = position;
+    updateFlightPositions: (
+      state,
+      action: PayloadAction<[string, LatLng][]>
+    ) => {
+      for (const [id, position] of action.payload) {
+        state.flights[id].position = position;
+      }
     },
   },
 });
@@ -56,7 +60,7 @@ export const {
   updateFlight,
   deselectFlight,
   selectFlight,
-  updateFlightPosition,
+  updateFlightPositions,
 } = flightsSlice.actions;
 
 export const selectFlights = (state: RootState) => state.flights;

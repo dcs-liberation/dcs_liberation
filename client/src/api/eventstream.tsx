@@ -11,7 +11,7 @@ import {
   selectFlight,
   unregisterFlight,
   updateFlight,
-  updateFlightPosition,
+  updateFlightPositions,
 } from "./flightsSlice";
 import {
   addFrontLine,
@@ -47,11 +47,9 @@ export const handleStreamedEvents = (
   dispatch: AppDispatch,
   events: GameUpdateEvents
 ) => {
-  for (const [id, position] of Object.entries(
-    events.updated_flight_positions
-  )) {
-    dispatch(updateFlightPosition([id, position]));
-  }
+  dispatch(
+    updateFlightPositions(Object.entries(events.updated_flight_positions))
+  );
 
   for (const combat of events.new_combats) {
     dispatch(newCombat(combat));
