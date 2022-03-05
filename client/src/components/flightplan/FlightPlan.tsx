@@ -1,3 +1,4 @@
+import { useGetCommitBoundaryForFlightQuery } from "../../api/api";
 import { Flight } from "../../api/flight";
 import WaypointMarker from "../waypointmarker";
 import { ReactElement } from "react";
@@ -59,11 +60,39 @@ const WaypointMarkers = (props: FlightPlanProps) => {
   return <>{markers}</>;
 };
 
+interface CommitBoundaryProps {
+  flightId: string;
+  selected: boolean;
+}
+
+function CommitBoundary(props: CommitBoundaryProps) {
+  const { data, error, isLoading } = useGetCommitBoundaryForFlightQuery(
+    props.flightId
+  );
+  if (isLoading || error || !data) {
+    return <></>;
+  }
+  return (
+    <Polyline positions={data} color="#ffff00" weight={1} interactive={false} />
+  );
+}
+
+function CommitBoundaryIfSelected(props: CommitBoundaryProps) {
+  if (!props.selected) {
+    return <></>;
+  }
+  return <CommitBoundary {...props} />;
+}
+
 export default function FlightPlan(props: FlightPlanProps) {
   return (
     <>
       <FlightPlanPath {...props} />
       <WaypointMarkers {...props} />
+      <CommitBoundaryIfSelected
+        flightId={props.flight.id}
+        selected={props.selected}
+      />
     </>
   );
 }
