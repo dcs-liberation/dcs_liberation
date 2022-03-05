@@ -1,6 +1,7 @@
 import { RootState } from "../app/store";
 import { Flight } from "./flight";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { LatLng } from "leaflet";
 
 interface FlightsState {
   blue: { [id: string]: Flight };
@@ -55,6 +56,11 @@ export const flightsSlice = createSlice({
       const id = action.payload;
       state.selected = state.blue[id];
     },
+    updateFlightPosition: (state, action: PayloadAction<[string, LatLng]>) => {
+      const [id, position] = action.payload;
+      const ato = id in state.blue ? state.blue : state.red;
+      ato[id].position = position;
+    },
   },
 });
 
@@ -65,6 +71,7 @@ export const {
   updateFlight,
   deselectFlight,
   selectFlight,
+  updateFlightPosition,
 } = flightsSlice.actions;
 
 export const selectFlights = (state: RootState) => state.flights;

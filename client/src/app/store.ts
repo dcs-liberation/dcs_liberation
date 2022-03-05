@@ -15,7 +15,7 @@ export const store = configureStore({
     tgos: tgosReducer,
   },
   // The logger middleware must be last or it won't log actions.
-  middleware: [logger],
+  //middleware: [logger],
 });
 
 export type AppDispatch = typeof store.dispatch;
