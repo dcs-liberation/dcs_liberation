@@ -6,11 +6,35 @@ import { LatLng } from "leaflet";
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: HTTP_URL }),
+  tagTypes: ["ControlPoint"],
   endpoints: (builder) => ({
     getCommitBoundaryForFlight: builder.query<LatLng[], string>({
       query: (flightId) => `flights/${flightId}/commit-boundary`,
+      providesTags: ["ControlPoint"],
+    }),
+    setControlPointDestination: builder.mutation<
+      void,
+      { id: number; destination: LatLng }
+    >({
+      query: ({ id, destination }) => ({
+        url: `control-points/${id}/destination`,
+        method: "PUT",
+        body: { lat: destination.lat, lng: destination.lng },
+        invalidatesTags: ["ControlPoint"],
+      }),
+    }),
+    controlPointCancelTravel: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `control-points/${id}/cancel-travel`,
+        method: "PUT",
+        invalidatesTags: ["ControlPoint"],
+      }),
     }),
   }),
 });
 
-export const { useGetCommitBoundaryForFlightQuery } = apiSlice;
+export const {
+  useGetCommitBoundaryForFlightQuery,
+  useSetControlPointDestinationMutation,
+  useControlPointCancelTravelMutation,
+} = apiSlice;

@@ -41,7 +41,7 @@ from game.sidc import (
     Status,
     SymbolSet,
 )
-from game.utils import Heading
+from game.utils import Distance, Heading, meters
 from .base import Base
 from .frontline import FrontLine
 from .missiontarget import MissionTarget
@@ -540,7 +540,15 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         """
         :return: Whether this control point can be moved around
         """
-        return False
+        return self.max_move_distance > meters(0)
+
+    @property
+    def max_move_distance(self) -> Distance:
+        return meters(0)
+
+    def destination_in_range(self, destination: Point) -> bool:
+        distance = meters(destination.distance_to_point(self.position))
+        return distance <= self.max_move_distance
 
     @property
     @abstractmethod
@@ -1117,8 +1125,8 @@ class NavalControlPoint(ControlPoint, ABC):
         return False
 
     @property
-    def moveable(self) -> bool:
-        return True
+    def max_move_distance(self) -> Distance:
+        return nautical_miles(80)
 
     @property
     def can_deploy_ground_units(self) -> bool:
