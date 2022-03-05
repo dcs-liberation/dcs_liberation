@@ -9,25 +9,30 @@ interface FlightPlansLayerProps {
 }
 
 export default function FlightPlansLayer(props: FlightPlansLayerProps) {
-  const atos = useAppSelector(selectFlights);
-  const flights = props.blue ? atos.blue : atos.red;
+  const flightData = useAppSelector(selectFlights);
   const isNotSelected = (flight: Flight) => {
-    if (atos.selected == null) {
+    if (flightData.selected == null) {
       return true;
     }
-    return atos.selected.id !== flight.id;
+    return flightData.selected.id !== flight.id;
   };
 
-  const selectedFlight = atos.selected ? (
-    <FlightPlan key={atos.selected.id} flight={atos.selected} selected={true} />
-  ) : (
-    <></>
-  );
+  const selectedFlight =
+    flightData.selected && flightData.selected.blue === props.blue ? (
+      <FlightPlan
+        key={flightData.selected.id}
+        flight={flightData.selected}
+        selected={true}
+      />
+    ) : (
+      <></>
+    );
 
   return (
     <LayerGroup>
-      {Object.values(flights)
+      {Object.values(flightData.flights)
         .filter(isNotSelected)
+        .filter((flight) => props.blue === flight.blue)
         .map((flight) => {
           return (
             <FlightPlan key={flight.id} flight={flight} selected={false} />

@@ -4,13 +4,10 @@ import Aircraft from "../aircraft";
 import { LayerGroup } from "react-leaflet";
 
 export default function AircraftLayer() {
-  const atos = useAppSelector(selectFlights);
+  const flights = useAppSelector(selectFlights).flights;
   return (
     <LayerGroup>
-      {Object.values(atos.blue).map((flight) => {
-        return <Aircraft key={flight.id} flight={flight} />;
-      })}
-      {Object.values(atos.red).map((flight) => {
+      {Object.values(flights).map((flight) => {
         return <Aircraft key={flight.id} flight={flight} />;
       })}
     </LayerGroup>
