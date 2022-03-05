@@ -5,7 +5,6 @@ import frontLinesReducer from "../api/frontLinesSlice";
 import supplyRoutesReducer from "../api/supplyRoutesSlice";
 import tgosReducer from "../api/tgosSlice";
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
-import logger from "redux-logger";
 
 export const store = configureStore({
   reducer: {
@@ -16,8 +15,6 @@ export const store = configureStore({
     supplyRoutes: supplyRoutesReducer,
     tgos: tgosReducer,
   },
-  // The logger middleware must be last or it won't log actions.
-  middleware: [logger],
 });
 
 export type AppDispatch = typeof store.dispatch;
