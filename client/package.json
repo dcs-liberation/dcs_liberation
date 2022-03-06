@@ -4,6 +4,7 @@
   "private": true,
   "main": "main.js",
   "license": "LGPL-3.0-or-later",
+  "homepage": ".",
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.2",
     "@testing-library/jest-dom": "^5.16.2",

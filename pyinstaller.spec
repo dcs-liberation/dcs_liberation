@@ -11,6 +11,7 @@ analysis = Analysis(
         ('resources', 'resources'),
         ('resources/caucasus.p', 'dcs/terrain/'),
         ('resources/nevada.p', 'dcs/terrain/'),
+        ('client/build', 'client/build'),
     ],
     hookspath=[],
     runtime_hooks=[],
