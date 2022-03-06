@@ -54,7 +54,7 @@ class QLiberationWindow(QMainWindow):
     tgo_info_signal = Signal(TheaterGroundObject)
     control_point_info_signal = Signal(ControlPoint)
 
-    def __init__(self, game: Optional[Game], new_map: bool) -> None:
+    def __init__(self, game: Optional[Game], new_map: bool, dev: bool) -> None:
         super().__init__()
 
         self._uncaught_exception_handler = UncaughtExceptionHandler(self)
@@ -79,7 +79,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model, new_map, self)
+        self.liberation_map = QLiberationMap(self.game_model, new_map, dev, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.updateWindowTitle()

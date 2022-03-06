@@ -152,7 +152,7 @@ def run_ui(game: Optional[Game], new_map: bool, dev: bool) -> None:
     GameUpdateSignal.get_instance().game_loaded.connect(on_game_load)
 
     # Start window
-    window = QLiberationWindow(game, new_map)
+    window = QLiberationWindow(game, new_map, dev)
     window.showMaximized()
     splash.finish(window)
     qt_execution_code = app.exec_()

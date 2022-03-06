@@ -50,6 +50,11 @@ jobs:
           cd client
           npm ci
 
+      - name: Build client
+        run: |
+          cd client
+          npm run build
+
       - name: Build binaries
         run: |
           ./venv/scripts/activate
