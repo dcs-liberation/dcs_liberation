@@ -185,13 +185,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--new-map",
         action="store_true",
-        help="Use the React based map. Not yet fully functional.",
+        default=True,
+        help="Use the React based map. This is the default.",
     )
     parser.add_argument(
         "--old-map",
         dest="new_map",
         action="store_false",
-        help="Use the legacy map. This is the default.",
+        help="Use the legacy map. This will be removed before 6.0.0 is released.",
     )
 
     new_game = subparsers.add_parser("new-game")
