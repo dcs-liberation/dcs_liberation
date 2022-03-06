@@ -37,10 +37,14 @@ app.include_router(tgos.router)
 app.include_router(waypoints.router)
 
 
+origins = []
 if ServerSettings.get().cors_allow_debug_server:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    origins.append("http://localhost:3000")
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
