@@ -35,6 +35,7 @@ class GameUpdateEventsJs(BaseModel):
     updated_control_points: set[int]
     reset_on_map_center: LeafletLatLon | None
     game_unloaded: bool
+    new_turn: bool
 
     @classmethod
     def from_events(
@@ -85,4 +86,5 @@ class GameUpdateEventsJs(BaseModel):
             updated_control_points=events.updated_control_points,
             reset_on_map_center=recenter_map,
             game_unloaded=events.game_unloaded,
+            new_turn=events.new_turn,
         )

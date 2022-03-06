@@ -11,5 +11,5 @@ export default interface Game {
   supply_routes: SupplyRoute[];
   front_lines: FrontLine[];
   flights: Flight[];
-  map_center: LatLngLiteral;
+  map_center: LatLngLiteral | null;
 }

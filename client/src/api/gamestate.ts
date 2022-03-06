@@ -3,7 +3,10 @@ import { gameLoaded, gameUnloaded } from "./actions";
 import backend from "./backend";
 import Game from "./game";
 
-export default function reloadGameState(dispatch: AppDispatch) {
+export default function reloadGameState(
+  dispatch: AppDispatch,
+  ignoreRecenter: boolean = false
+) {
   backend
     .get("/game")
     .catch((error) => console.log(`Error fetching game state: ${error}`))
@@ -12,6 +15,10 @@ export default function reloadGameState(dispatch: AppDispatch) {
         dispatch(gameUnloaded());
         return;
       }
-      dispatch(gameLoaded(response.data as Game));
+      const game = response.data as Game;
+      if (ignoreRecenter) {
+        game.map_center = null;
+      }
+      dispatch(gameLoaded(game));
     });
 }

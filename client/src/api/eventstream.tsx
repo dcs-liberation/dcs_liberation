@@ -45,6 +45,7 @@ interface GameUpdateEvents {
   updated_control_points: number[];
   reset_on_map_center: LatLng | null;
   game_unloaded: boolean;
+  new_turn: boolean;
 }
 
 export const handleStreamedEvents = (
@@ -125,5 +126,9 @@ export const handleStreamedEvents = (
 
   if (events.game_unloaded) {
     dispatch(gameUnloaded());
+  }
+
+  if (events.new_turn) {
+    reloadGameState(dispatch, true);
   }
 };

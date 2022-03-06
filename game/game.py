@@ -307,6 +307,7 @@ class Game:
         with logged_duration("Turn initialization"):
             self.initialize_turn(events)
 
+        events.begin_new_turn()
         EventStream.put_nowait(events)
 
         # Autosave progress

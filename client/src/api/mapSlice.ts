@@ -17,7 +17,9 @@ const mapSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(gameLoaded, (state, action) => {
-      state.center = action.payload.map_center;
+      if (action.payload.map_center != null) {
+        state.center = action.payload.map_center;
+      }
     });
     builder.addCase(gameUnloaded, (state) => {
       state.center = { lat: 0, lng: 0 };
