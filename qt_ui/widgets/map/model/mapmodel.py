@@ -8,7 +8,6 @@ from dcs.mapping import LatLng
 from game import Game
 from game.profiling import logged_duration
 from game.server.leaflet import LeafletLatLon
-from game.server.security import ApiKeyManager
 from game.theater import (
     ConflictTheater,
 )
@@ -74,10 +73,6 @@ class MapModel(QObject):
     def reset_map_center(self, theater: ConflictTheater) -> None:
         self._map_center = theater.terrain.map_view_default.position.latlng()
         self.mapCenterChanged.emit(self._map_center.as_list())
-
-    @Property(str, notify=apiKeyChanged)
-    def apiKey(self) -> str:
-        return ApiKeyManager.KEY
 
     @Property(list, notify=mapCenterChanged)
     def mapCenter(self) -> LeafletLatLon:

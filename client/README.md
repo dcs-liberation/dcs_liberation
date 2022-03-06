@@ -7,20 +7,14 @@ yet.
 For development, set the following environment variables when launching DCS
 Liberation (the Qt UI):
 
-- `REQUIRE_API_KEY=false`
-
-  This will disable API key authentication. The API key is randomly generated at
-  server startup and we don't currently have a mechanism for communicating that
-  key to the front-end.
-
 - `CORS_ALLOW_DEBUG_SERVER=true`
 
   This will allow the front-end to make requests to the server, as long as the
   front-end is running on http://localhost:3000.
 
 Then, run `npm start` to start the development server. Launch the Qt UI with
-`--new-map` to connect the webview to the development server, or navigate to
-http://localhost:3000 in your browser.
+`--new-map --dev` to connect the webview to the development server, or navigate
+to http://localhost:3000 in your browser.
 
 ## Available Scripts
 

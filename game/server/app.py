@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from . import (
@@ -15,14 +15,9 @@ from . import (
     tgos,
     waypoints,
 )
-from .security import ApiKeyManager
 from .settings import ServerSettings
 
-dependencies = []
-if ServerSettings.get().require_api_key:
-    dependencies.append(Depends(ApiKeyManager.verify))
-
-app = FastAPI(dependencies=dependencies)
+app = FastAPI()
 app.include_router(controlpoints.router)
 app.include_router(debuggeometries.router)
 app.include_router(eventstream.router)
