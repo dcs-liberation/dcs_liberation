@@ -1,4 +1,5 @@
 import { RootState } from "../app/store";
+import { gameLoaded, gameUnloaded } from "./actions";
 import FrontLine from "./frontline";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
@@ -14,12 +15,6 @@ export const frontLinesSlice = createSlice({
   name: "frontLines",
   initialState,
   reducers: {
-    setFrontLines: (state, action: PayloadAction<FrontLine[]>) => {
-      state.fronts = {};
-      for (const front of action.payload) {
-        state.fronts[front.id] = front;
-      }
-    },
     addFrontLine: (state, action: PayloadAction<FrontLine>) => {
       const front = action.payload;
       state.fronts[front.id] = front;
@@ -32,9 +27,23 @@ export const frontLinesSlice = createSlice({
       delete state.fronts[action.payload];
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(gameLoaded, (state, action) => {
+      state.fronts = action.payload.front_lines.reduce(
+        (acc: { [key: string]: FrontLine }, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {}
+      );
+    });
+    builder.addCase(gameUnloaded, (state) => {
+      state.fronts = {};
+    });
+  },
 });
 
-export const { setFrontLines, addFrontLine, updateFrontLine, deleteFrontLine } =
+export const { addFrontLine, updateFrontLine, deleteFrontLine } =
   frontLinesSlice.actions;
 
 export const selectFrontLines = (state: RootState) => state.frontLines;

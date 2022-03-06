@@ -1,3 +1,5 @@
+import { selectMapCenter } from "../../api/mapSlice";
+import { useAppSelector } from "../../app/hooks";
 import AircraftLayer from "../aircraftlayer";
 import AirDefenseRangeLayer from "../airdefenserangelayer";
 import CombatLayer from "../combatlayer";
@@ -7,17 +9,23 @@ import FrontLinesLayer from "../frontlineslayer";
 import SupplyRoutesLayer from "../supplyrouteslayer";
 import TgosLayer from "../tgoslayer/TgosLayer";
 import "./LiberationMap.css";
-import { LatLng } from "leaflet";
+import { Map } from "leaflet";
+import { useEffect, useRef } from "react";
 import { BasemapLayer } from "react-esri-leaflet";
 import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
 
-interface GameProps {
-  mapCenter: LatLng;
-}
-
-export default function LiberationMap(props: GameProps) {
+export default function LiberationMap() {
+  const map = useRef<Map>();
+  const mapCenter = useAppSelector(selectMapCenter);
+  useEffect(() => {
+    map.current?.setView(mapCenter, 8, { animate: true, duration: 1 });
+  });
   return (
-    <MapContainer zoom={8} center={props.mapCenter} zoomControl={false}>
+    <MapContainer
+      zoom={8}
+      zoomControl={false}
+      whenCreated={(mapInstance) => (map.current = mapInstance)}
+    >
       <ScaleControl />
       <LayersControl collapsed={false}>
         <LayersControl.BaseLayer name="Imagery Clarity" checked>

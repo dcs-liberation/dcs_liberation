@@ -13,16 +13,15 @@ router: APIRouter = APIRouter(prefix="/control-points")
 
 
 @router.get("/")
-def list_control_points(game: Game = Depends(GameContext.get)) -> list[ControlPointJs]:
-    control_points = []
-    for control_point in game.theater.controlpoints:
-        control_points.append(ControlPointJs.for_control_point(control_point))
-    return control_points
+def list_control_points(
+    game: Game = Depends(GameContext.require),
+) -> list[ControlPointJs]:
+    return ControlPointJs.all_in_game(game)
 
 
 @router.get("/{cp_id}")
 def get_control_point(
-    cp_id: int, game: Game = Depends(GameContext.get)
+    cp_id: int, game: Game = Depends(GameContext.require)
 ) -> ControlPointJs:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
@@ -35,7 +34,7 @@ def get_control_point(
 
 @router.get("/{cp_id}/destination-in-range")
 def destination_in_range(
-    cp_id: int, lat: float, lng: float, game: Game = Depends(GameContext.get)
+    cp_id: int, lat: float, lng: float, game: Game = Depends(GameContext.require)
 ) -> bool:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
@@ -50,7 +49,7 @@ def destination_in_range(
 
 @router.put("/{cp_id}/destination")
 def set_destination(
-    cp_id: int, destination: LeafletPoint, game: Game = Depends(GameContext.get)
+    cp_id: int, destination: LeafletPoint, game: Game = Depends(GameContext.require)
 ) -> None:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
@@ -79,7 +78,7 @@ def set_destination(
 
 
 @router.put("/{cp_id}/cancel-travel")
-def cancel_travel(cp_id: int, game: Game = Depends(GameContext.get)) -> None:
+def cancel_travel(cp_id: int, game: Game = Depends(GameContext.require)) -> None:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
         raise HTTPException(

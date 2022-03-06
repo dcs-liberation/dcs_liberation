@@ -36,7 +36,7 @@ def waypoints_for_flight(flight: Flight) -> list[FlightWaypointJs]:
 
 @router.get("/{flight_id}", response_model=list[FlightWaypointJs])
 def all_waypoints_for_flight(
-    flight_id: UUID, game: Game = Depends(GameContext.get)
+    flight_id: UUID, game: Game = Depends(GameContext.require)
 ) -> list[FlightWaypointJs]:
     return waypoints_for_flight(game.db.flights.get(flight_id))
 
@@ -46,7 +46,7 @@ def set_position(
     flight_id: UUID,
     waypoint_idx: int,
     position: LeafletPoint,
-    game: Game = Depends(GameContext.get),
+    game: Game = Depends(GameContext.require),
 ) -> None:
     from game.server import EventStream
 

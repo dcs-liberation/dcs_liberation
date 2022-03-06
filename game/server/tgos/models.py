@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from pydantic import BaseModel
 
 from game.server.leaflet import LeafletPoint
-from game.theater import TheaterGroundObject
+
+if TYPE_CHECKING:
+    from game import Game
+    from game.theater import TheaterGroundObject
 
 
 class TgoJs(BaseModel):
@@ -44,3 +48,12 @@ class TgoJs(BaseModel):
             dead=tgo.is_dead,
             sidc=str(tgo.sidc()),
         )
+
+    @staticmethod
+    def all_in_game(game: Game) -> list[TgoJs]:
+        tgos = []
+        for control_point in game.theater.controlpoints:
+            for tgo in control_point.connected_objectives:
+                if not tgo.is_control_point:
+                    tgos.append(TgoJs.for_tgo(tgo))
+        return tgos

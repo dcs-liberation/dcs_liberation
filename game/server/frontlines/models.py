@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from pydantic import BaseModel
 
 from game.server.leaflet import LeafletPoint
-from game.theater import FrontLine
 from game.utils import nautical_miles
+
+if TYPE_CHECKING:
+    from game import Game
+    from game.theater import FrontLine
 
 
 class FrontLineJs(BaseModel):
@@ -22,3 +26,7 @@ class FrontLineJs(BaseModel):
             front_line.attack_heading.left.degrees, nautical_miles(2).meters
         )
         return FrontLineJs(id=front_line.id, extents=[a.latlng(), b.latlng()])
+
+    @staticmethod
+    def all_in_game(game: Game) -> list[FrontLineJs]:
+        return [FrontLineJs.for_front_line(f) for f in game.theater.conflicts()]

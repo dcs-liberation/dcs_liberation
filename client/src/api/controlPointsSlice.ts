@@ -1,4 +1,5 @@
 import { RootState } from "../app/store";
+import { gameLoaded, gameUnloaded } from "./actions";
 import { ControlPoint } from "./controlpoint";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
@@ -14,21 +15,28 @@ export const controlPointsSlice = createSlice({
   name: "controlPoints",
   initialState,
   reducers: {
-    setControlPoints: (state, action: PayloadAction<ControlPoint[]>) => {
-      state.controlPoints = {};
-      for (const cp of action.payload) {
-        state.controlPoints[cp.id] = cp;
-      }
-    },
     updateControlPoint: (state, action: PayloadAction<ControlPoint>) => {
       const cp = action.payload;
       state.controlPoints[cp.id] = cp;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(gameLoaded, (state, action) => {
+      state.controlPoints = action.payload.control_points.reduce(
+        (acc: { [key: number]: ControlPoint }, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {}
+      );
+    });
+    builder.addCase(gameUnloaded, (state) => {
+      state.controlPoints = {};
+    });
+  },
 });
 
-export const { setControlPoints, updateControlPoint } =
-  controlPointsSlice.actions;
+export const { updateControlPoint } = controlPointsSlice.actions;
 
 export const selectControlPoints = (state: RootState) => state.controlPoints;
 

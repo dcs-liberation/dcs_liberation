@@ -9,7 +9,9 @@ router: APIRouter = APIRouter(prefix="/navmesh")
 
 
 @router.get("/", response_model=list[NavMeshPolyJs])
-def get(for_player: bool, game: Game = Depends(GameContext.get)) -> list[NavMeshPolyJs]:
+def get(
+    for_player: bool, game: Game = Depends(GameContext.require)
+) -> list[NavMeshPolyJs]:
     mesh = game.coalition_for(for_player).nav_mesh
     return [
         NavMeshPolyJs(

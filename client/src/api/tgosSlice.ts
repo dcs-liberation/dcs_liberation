@@ -1,4 +1,5 @@
 import { RootState } from "../app/store";
+import { gameLoaded, gameUnloaded } from "./actions";
 import { Tgo } from "./tgo";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
@@ -14,20 +15,28 @@ export const tgosSlice = createSlice({
   name: "tgos",
   initialState,
   reducers: {
-    setTgos: (state, action: PayloadAction<Tgo[]>) => {
-      state.tgos = {};
-      for (const tgo of action.payload) {
-        state.tgos[tgo.id] = tgo;
-      }
-    },
     updateTgo: (state, action: PayloadAction<Tgo>) => {
       const tgo = action.payload;
       state.tgos[tgo.id] = tgo;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(gameLoaded, (state, action) => {
+      state.tgos = action.payload.tgos.reduce(
+        (acc: { [key: string]: Tgo }, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {}
+      );
+    });
+    builder.addCase(gameUnloaded, (state) => {
+      state.tgos = {};
+    });
+  },
 });
 
-export const { setTgos, updateTgo } = tgosSlice.actions;
+export const { updateTgo } = tgosSlice.actions;
 
 export const selectTgos = (state: RootState) => state.tgos;
 

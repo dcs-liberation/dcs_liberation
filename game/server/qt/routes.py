@@ -11,7 +11,7 @@ router: APIRouter = APIRouter(prefix="/qt")
 @router.post("/create-package/front-line/{front_line_id}")
 def new_front_line_package(
     front_line_id: UUID,
-    game: Game = Depends(GameContext.get),
+    game: Game = Depends(GameContext.require),
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:
     qt.create_new_package(game.db.front_lines.get(front_line_id))
@@ -20,7 +20,7 @@ def new_front_line_package(
 @router.post("/create-package/tgo/{tgo_id}")
 def new_tgo_package(
     tgo_id: UUID,
-    game: Game = Depends(GameContext.get),
+    game: Game = Depends(GameContext.require),
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:
     qt.create_new_package(game.db.tgos.get(tgo_id))
@@ -29,7 +29,7 @@ def new_tgo_package(
 @router.post("/info/tgo/{tgo_id}")
 def show_tgo_info(
     tgo_id: UUID,
-    game: Game = Depends(GameContext.get),
+    game: Game = Depends(GameContext.require),
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:
     qt.show_tgo_info(game.db.tgos.get(tgo_id))
@@ -38,7 +38,7 @@ def show_tgo_info(
 @router.post("/create-package/control-point/{cp_id}")
 def new_cp_package(
     cp_id: int,
-    game: Game = Depends(GameContext.get),
+    game: Game = Depends(GameContext.require),
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:
     cp = game.theater.find_control_point_by_id(cp_id)
@@ -53,7 +53,7 @@ def new_cp_package(
 @router.post("/info/control-point/{cp_id}")
 def show_control_point_info(
     cp_id: int,
-    game: Game = Depends(GameContext.get),
+    game: Game = Depends(GameContext.require),
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:
     cp = game.theater.find_control_point_by_id(cp_id)

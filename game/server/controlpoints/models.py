@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel
 
 from game.server.leaflet import LeafletPoint
-from game.theater import ControlPoint
+
+if TYPE_CHECKING:
+    from game import Game
+    from game.theater import ControlPoint
 
 
 class ControlPointJs(BaseModel):
@@ -29,3 +34,9 @@ class ControlPointJs(BaseModel):
             destination=destination,
             sidc=str(control_point.sidc()),
         )
+
+    @staticmethod
+    def all_in_game(game: Game) -> list[ControlPointJs]:
+        return [
+            ControlPointJs.for_control_point(cp) for cp in game.theater.controlpoints
+        ]

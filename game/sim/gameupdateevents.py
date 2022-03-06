@@ -5,8 +5,10 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 from dcs import Point
+from dcs.mapping import LatLng
 
 if TYPE_CHECKING:
+    from game import Game
     from game.ato import Flight, Package
     from game.sim.combat import FrozenCombat
     from game.theater import ControlPoint, FrontLine, TheaterGroundObject
@@ -32,6 +34,8 @@ class GameUpdateEvents:
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
     updated_control_points: set[int] = field(default_factory=set)
+    reset_on_map_center: LatLng | None = None
+    game_unloaded: bool = False
     shutting_down: bool = False
 
     @property
@@ -119,6 +123,17 @@ class GameUpdateEvents:
 
     def update_control_point(self, control_point: ControlPoint) -> GameUpdateEvents:
         self.updated_control_points.add(control_point.id)
+        return self
+
+    def game_loaded(self, game: Game | None) -> GameUpdateEvents:
+        if game is None:
+            self.game_unloaded = True
+            self.reset_on_map_center = None
+        else:
+            self.reset_on_map_center = (
+                game.theater.terrain.map_view_default.position.latlng()
+            )
+            self.game_unloaded = False
         return self
 
     def shut_down(self) -> GameUpdateEvents:

@@ -1,4 +1,5 @@
 import { AppDispatch } from "../app/store";
+import { gameUnloaded } from "./actions";
 import backend from "./backend";
 import Combat from "./combat";
 import { endCombat, newCombat, updateCombat } from "./combatSlice";
@@ -19,6 +20,7 @@ import {
   updateFrontLine,
 } from "./frontLinesSlice";
 import FrontLine from "./frontline";
+import reloadGameState from "./gamestate";
 import Tgo from "./tgo";
 import { updateTgo } from "./tgosSlice";
 import { LatLng } from "leaflet";
@@ -41,6 +43,8 @@ interface GameUpdateEvents {
   deleted_front_lines: string[];
   updated_tgos: string[];
   updated_control_points: number[];
+  reset_on_map_center: LatLng | null;
+  game_unloaded: boolean;
 }
 
 export const handleStreamedEvents = (
@@ -113,5 +117,13 @@ export const handleStreamedEvents = (
       const cp = response.data as ControlPoint;
       dispatch(updateControlPoint(cp));
     });
+  }
+
+  if (events.reset_on_map_center != null) {
+    reloadGameState(dispatch);
+  }
+
+  if (events.game_unloaded) {
+    dispatch(gameUnloaded());
   }
 };

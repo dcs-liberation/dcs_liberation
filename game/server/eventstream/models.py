@@ -33,21 +33,38 @@ class GameUpdateEventsJs(BaseModel):
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: set[int]
+    reset_on_map_center: LeafletLatLon | None
+    game_unloaded: bool
 
     @classmethod
-    def from_events(cls, events: GameUpdateEvents, game: Game) -> GameUpdateEventsJs:
+    def from_events(
+        cls, events: GameUpdateEvents, game: Game | None
+    ) -> GameUpdateEventsJs:
+
+        # We still need to be able to send update events when there is no game loaded
+        # because we need to send the unload event.
+        new_combats = []
+        updated_combats = []
+        if game is not None:
+            new_combats = [
+                FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
+            ]
+            updated_combats = [
+                FrozenCombatJs.for_combat(c, game.theater)
+                for c in events.updated_combats
+            ]
+
+        recenter_map = None
+        if events.reset_on_map_center is not None:
+            recenter_map = events.reset_on_map_center.as_list()
+
         return GameUpdateEventsJs(
             updated_flight_positions={
                 f[0].id: f[1].latlng().as_list()
                 for f in events.updated_flight_positions
             },
-            new_combats=[
-                FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
-            ],
-            updated_combats=[
-                FrozenCombatJs.for_combat(c, game.theater)
-                for c in events.updated_combats
-            ],
+            new_combats=new_combats,
+            updated_combats=updated_combats,
             ended_combats=[c.id for c in events.ended_combats],
             navmesh_updates=events.navmesh_updates,
             unculled_zones_updated=events.unculled_zones_updated,
@@ -66,4 +83,6 @@ class GameUpdateEventsJs(BaseModel):
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
             updated_control_points=events.updated_control_points,
+            reset_on_map_center=recenter_map,
+            game_unloaded=events.game_unloaded,
         )

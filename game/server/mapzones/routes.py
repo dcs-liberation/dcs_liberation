@@ -9,7 +9,7 @@ router: APIRouter = APIRouter(prefix="/map-zones")
 
 
 @router.get("/terrain")
-def get_terrain(game: Game = Depends(GameContext.get)) -> MapZonesJs:
+def get_terrain(game: Game = Depends(GameContext.require)) -> MapZonesJs:
     zones = game.theater.landmap
     if zones is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
@@ -22,7 +22,9 @@ def get_terrain(game: Game = Depends(GameContext.get)) -> MapZonesJs:
 
 
 @router.get("/unculled")
-def get_unculled_zones(game: Game = Depends(GameContext.get)) -> list[UnculledZoneJs]:
+def get_unculled_zones(
+    game: Game = Depends(GameContext.require),
+) -> list[UnculledZoneJs]:
     return [
         UnculledZoneJs(
             position=zone.latlng(), radius=game.settings.perf_culling_distance * 1000
@@ -32,7 +34,9 @@ def get_unculled_zones(game: Game = Depends(GameContext.get)) -> list[UnculledZo
 
 
 @router.get("/threats")
-def get_threat_zones(game: Game = Depends(GameContext.get)) -> ThreatZoneContainerJs:
+def get_threat_zones(
+    game: Game = Depends(GameContext.require),
+) -> ThreatZoneContainerJs:
     return ThreatZoneContainerJs(
         blue=ThreatZonesJs.from_zones(game.threat_zone_for(player=True), game.theater),
         red=ThreatZonesJs.from_zones(game.threat_zone_for(player=False), game.theater),

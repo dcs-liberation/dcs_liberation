@@ -21,6 +21,7 @@ from game.factions import FACTIONS
 from game.profiling import logged_duration
 from game.server import EventStream, Server
 from game.settings import Settings
+from game.sim import GameUpdateEvents
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from pydcs_extensions import load_mods
 from qt_ui import (
@@ -56,6 +57,11 @@ def inject_custom_payloads(user_path: Path) -> None:
     # We configure these as fallbacks so that the user's payloads override ours.
     PayloadDirectories.set_fallback(payloads)
     PayloadDirectories.set_preferred(user_path / "MissionEditor" / "UnitPayloads")
+
+
+def on_game_load(game: Game | None) -> None:
+    EventStream.drain()
+    EventStream.put_nowait(GameUpdateEvents().game_loaded(game))
 
 
 def run_ui(game: Optional[Game], new_map: bool, dev: bool) -> None:
@@ -143,7 +149,7 @@ def run_ui(game: Optional[Game], new_map: bool, dev: bool) -> None:
 
     # Apply CSS (need works)
     GameUpdateSignal()
-    GameUpdateSignal.get_instance().game_loaded.connect(EventStream.drain)
+    GameUpdateSignal.get_instance().game_loaded.connect(on_game_load)
 
     # Start window
     window = QLiberationWindow(game, new_map)

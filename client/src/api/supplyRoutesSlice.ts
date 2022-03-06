@@ -1,6 +1,7 @@
 import { RootState } from "../app/store";
+import { gameLoaded, gameUnloaded } from "./actions";
 import SupplyRoute from "./supplyroute";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 interface SupplyRoutesState {
   routes: SupplyRoute[];
@@ -13,14 +14,16 @@ const initialState: SupplyRoutesState = {
 export const supplyRoutesSlice = createSlice({
   name: "supplyRoutes",
   initialState,
-  reducers: {
-    setSupplyRoutes: (state, action: PayloadAction<SupplyRoute[]>) => {
-      state.routes = action.payload;
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(gameLoaded, (state, action) => {
+      state.routes = action.payload.supply_routes;
+    });
+    builder.addCase(gameUnloaded, (state) => {
+      state.routes = [];
+    });
   },
 });
-
-export const { setSupplyRoutes } = supplyRoutesSlice.actions;
 
 export const selectSupplyRoutes = (state: RootState) => state.supplyRoutes;
 

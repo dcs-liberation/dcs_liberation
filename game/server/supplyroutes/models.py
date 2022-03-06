@@ -81,3 +81,29 @@ class SupplyRouteJs(BaseModel):
                 sea
             ),
         )
+
+    @staticmethod
+    def all_in_game(game: Game) -> list[SupplyRouteJs]:
+        seen = set()
+        routes = []
+        for control_point in game.theater.controlpoints:
+            seen.add(control_point)
+            for destination, route in control_point.convoy_routes.items():
+                if destination in seen:
+                    continue
+                routes.append(
+                    SupplyRouteJs.for_link(
+                        game, control_point, destination, list(route), sea=False
+                    )
+                )
+            for destination, route in control_point.shipping_lanes.items():
+                if destination in seen:
+                    continue
+                if not destination.is_friendly_to(control_point):
+                    continue
+                routes.append(
+                    SupplyRouteJs.for_link(
+                        game, control_point, destination, list(route), sea=True
+                    )
+                )
+        return routes

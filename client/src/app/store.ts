@@ -3,6 +3,7 @@ import combatReducer from "../api/combatSlice";
 import controlPointsReducer from "../api/controlPointsSlice";
 import flightsReducer from "../api/flightsSlice";
 import frontLinesReducer from "../api/frontLinesSlice";
+import mapReducer from "../api/mapSlice";
 import supplyRoutesReducer from "../api/supplyRoutesSlice";
 import tgosReducer from "../api/tgosSlice";
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
@@ -13,6 +14,7 @@ export const store = configureStore({
     controlPoints: controlPointsReducer,
     flights: flightsReducer,
     frontLines: frontLinesReducer,
+    map: mapReducer,
     supplyRoutes: supplyRoutesReducer,
     tgos: tgosReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,

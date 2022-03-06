@@ -1,4 +1,5 @@
 import { RootState } from "../app/store";
+import { gameLoaded, gameUnloaded } from "./actions";
 import { Flight } from "./flight";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { LatLng } from "leaflet";
@@ -17,9 +18,6 @@ export const flightsSlice = createSlice({
   name: "flights",
   initialState,
   reducers: {
-    clearFlights: (state) => {
-      state.flights = {};
-    },
     registerFlight: (state, action: PayloadAction<Flight>) => {
       const flight = action.payload;
       if (flight.id in state.flights) {
@@ -51,10 +49,25 @@ export const flightsSlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(gameLoaded, (state, action) => {
+      state.selected = null;
+      state.flights = action.payload.flights.reduce(
+        (acc: { [key: string]: Flight }, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {}
+      );
+    });
+    builder.addCase(gameUnloaded, (state) => {
+      state.selected = null;
+      state.flights = {};
+    });
+  },
 });
 
 export const {
-  clearFlights,
   registerFlight,
   unregisterFlight,
   updateFlight,

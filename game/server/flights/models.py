@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from pydantic import BaseModel
 
-from game.ato import Flight
 from game.ato.flightstate import InFlight
 from game.server.leaflet import LeafletPoint
 from game.server.waypoints.models import FlightWaypointJs
 from game.server.waypoints.routes import waypoints_for_flight
+
+if TYPE_CHECKING:
+    from game import Game
+    from game.ato import Flight
 
 
 class FlightJs(BaseModel):
@@ -37,3 +41,12 @@ class FlightJs(BaseModel):
             sidc=str(flight.sidc()),
             waypoints=waypoints,
         )
+
+    @staticmethod
+    def all_in_game(game: Game, with_waypoints: bool) -> list[FlightJs]:
+        flights = []
+        for coalition in game.coalitions:
+            for package in coalition.ato.packages:
+                for flight in package.flights:
+                    flights.append(FlightJs.for_flight(flight, with_waypoints))
+        return flights

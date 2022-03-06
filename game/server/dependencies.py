@@ -17,7 +17,11 @@ class GameContext:
         cls._game_model = game_model
 
     @classmethod
-    def get(cls) -> Game:
+    def get(cls) -> Game | None:
+        return cls._game_model.game
+
+    @classmethod
+    def require(cls) -> Game:
         if cls._game_model.game is None:
             raise RuntimeError("GameContext has no Game set")
         return cls._game_model.game
