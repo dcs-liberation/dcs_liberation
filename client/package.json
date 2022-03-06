@@ -1,8 +1,9 @@
 {
-  "name": "client",
+  "name": "liberation-client",
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
+  "license": "LGPL-3.0-or-later",
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.2",
     "@testing-library/jest-dom": "^5.16.2",
@@ -29,7 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "prepare": "eslint src",
+    "prepare": "eslint src && license-checker --onlyAllow \"MIT;Apache-2.0;CC0-1.0;BSD-3-Clause;ISC;Custom: https://github.com/tmcw/jsonlint;BSD-2-Clause;Hippocratic-2.1;BSD*;WTFPL\" --excludePrivatePackages --production",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "wait-on tcp:3000 && electron ."
@@ -59,6 +60,7 @@
     "@types/websocket": "^1.0.5",
     "electron": "^17.1.0",
     "electron-is-dev": "^2.0.0",
+    "license-checker": "^25.0.1",
     "react-scripts": "5.0.0",
     "wait-on": "^6.0.1"
   }
