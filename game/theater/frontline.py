@@ -78,7 +78,7 @@ class FrontLine(MissionTarget):
         return (self.blue_cp, self.red_cp) == (other.blue_cp, other.red_cp)
 
     def __hash__(self) -> int:
-        return hash((self.blue_cp, self.red_cp))
+        return hash(id(self))
 
     def _compute_position(self) -> Point:
         return self.point_from_a(self._position_distance)
