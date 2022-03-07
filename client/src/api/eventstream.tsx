@@ -54,9 +54,11 @@ export const handleStreamedEvents = (
   dispatch: AppDispatch,
   events: GameUpdateEvents
 ) => {
-  dispatch(
-    updateFlightPositions(Object.entries(events.updated_flight_positions))
-  );
+  if (Object.keys(events.updated_flight_positions).length) {
+    dispatch(
+      updateFlightPositions(Object.entries(events.updated_flight_positions))
+    );
+  }
 
   for (const combat of events.new_combats) {
     dispatch(newCombat(combat));
