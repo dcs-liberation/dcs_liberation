@@ -6,7 +6,7 @@ import { LatLng } from "leaflet";
 
 interface FlightsState {
   flights: { [id: string]: Flight };
-  selected: Flight | null;
+  selected: string | null;
 }
 
 const initialState: FlightsState = {
@@ -37,8 +37,7 @@ export const flightsSlice = createSlice({
       state.selected = null;
     },
     selectFlight: (state, action: PayloadAction<string>) => {
-      const id = action.payload;
-      state.selected = state.flights[id];
+      state.selected = action.payload;
     },
     updateFlightPositions: (
       state,
@@ -77,5 +76,9 @@ export const {
 } = flightsSlice.actions;
 
 export const selectFlights = (state: RootState) => state.flights;
+export const selectSelectedFlight = (state: RootState) => {
+  const id = state.flights.selected;
+  return id ? state.flights.flights[id] : null;
+};
 
 export default flightsSlice.reducer;
