@@ -1,7 +1,7 @@
 const ENABLE_EXPENSIVE_DEBUG_TOOLS = false;
 // Must be kept in sync with game.server.settings.ServerSettings.
-const HTTP_BACKEND = "http://[::1]:5000";
-const WS_BACKEND = "ws://[::1]:5000/eventstream";
+const HTTP_BACKEND = "http://[::1]:1688";
+const WS_BACKEND = "ws://[::1]:1688/eventstream";
 
 METERS_TO_FEET = 3.28084;
 

@@ -19,8 +19,9 @@ class ServerSettings(BaseSettings):
     # no client/server workflow yet, security has not been a focus.
     server_bind_address: str = "::1"
 
-    # If you for some reason change the port, you'll need to also update map.js.
-    server_port: int = 5000
+    # If you for some reason change the port, you'll need to also update map.js and
+    # client/src/api/backend.ts.
+    server_port: int = 1688
 
     # Disable to allow requests to be made to the backend without an API key.
     require_api_key: bool = True
