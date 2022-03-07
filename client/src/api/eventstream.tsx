@@ -22,6 +22,7 @@ import {
 import FrontLine from "./frontline";
 import reloadGameState from "./gamestate";
 import { liberationApi } from "./liberationApi";
+import { navMeshUpdated } from "./navMeshSlice";
 import Tgo from "./tgo";
 import { updateTgo } from "./tgosSlice";
 import { threatZonesUpdated } from "./threatZonesSlice";
@@ -70,6 +71,16 @@ export const handleStreamedEvents = (
 
   for (const id of events.ended_combats) {
     dispatch(endCombat(id));
+  }
+
+  for (const blue of events.navmesh_updates) {
+    dispatch(
+      liberationApi.endpoints.getNavmesh.initiate({ forPlayer: blue })
+    ).then((result) => {
+      if (result.data) {
+        dispatch(navMeshUpdated({ blue: blue, mesh: result.data }));
+      }
+    });
   }
 
   if (events.threat_zones_updated) {

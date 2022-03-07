@@ -280,7 +280,7 @@ export type GetThreatZonesApiResponse =
   /** status 200 Successful Response */ ThreatZoneContainer;
 export type GetThreatZonesApiArg = void;
 export type GetNavmeshApiResponse =
-  /** status 200 Successful Response */ NavMeshPoly[];
+  /** status 200 Successful Response */ NavMesh;
 export type GetNavmeshApiArg = {
   forPlayer: boolean;
 };
@@ -414,23 +414,6 @@ export type SupplyRoute = {
   blue: boolean;
   active_transports: string[];
 };
-export type Game = {
-  control_points: ControlPoint[];
-  tgos: Tgo[];
-  supply_routes: SupplyRoute[];
-  front_lines: FrontLine[];
-  flights: Flight[];
-  map_center: LatLng;
-};
-export type MapZones = {
-  inclusion: number[][][];
-  exclusion: number[][][];
-  sea: number[][][];
-};
-export type UnculledZone = {
-  position: LatLng;
-  radius: number;
-};
 export type ThreatZones = {
   full: number[][][];
   aircraft: number[][][];
@@ -444,6 +427,32 @@ export type ThreatZoneContainer = {
 export type NavMeshPoly = {
   poly: number[][];
   threatened: boolean;
+};
+export type NavMesh = {
+  polys: NavMeshPoly[];
+};
+export type NavMeshes = {
+  blue: NavMesh;
+  red: NavMesh;
+};
+export type Game = {
+  control_points: ControlPoint[];
+  tgos: Tgo[];
+  supply_routes: SupplyRoute[];
+  front_lines: FrontLine[];
+  flights: Flight[];
+  threat_zones: ThreatZoneContainer;
+  navmeshes: NavMeshes;
+  map_center: LatLng;
+};
+export type MapZones = {
+  inclusion: number[][][];
+  exclusion: number[][][];
+  sea: number[][][];
+};
+export type UnculledZone = {
+  position: LatLng;
+  radius: number;
 };
 export const {
   useListControlPointsQuery,

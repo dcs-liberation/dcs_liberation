@@ -4,6 +4,7 @@ import controlPointsReducer from "../api/controlPointsSlice";
 import flightsReducer from "../api/flightsSlice";
 import frontLinesReducer from "../api/frontLinesSlice";
 import mapReducer from "../api/mapSlice";
+import navMeshReducer from "../api/navMeshSlice";
 import supplyRoutesReducer from "../api/supplyRoutesSlice";
 import tgosReducer from "../api/tgosSlice";
 import threatZonesReducer from "../api/threatZonesSlice";
@@ -16,6 +17,7 @@ export const store = configureStore({
     flights: flightsReducer,
     frontLines: frontLinesReducer,
     map: mapReducer,
+    navmeshes: navMeshReducer,
     supplyRoutes: supplyRoutesReducer,
     tgos: tgosReducer,
     threatZones: threatZonesReducer,

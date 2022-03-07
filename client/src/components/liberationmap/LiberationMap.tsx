@@ -6,6 +6,7 @@ import CombatLayer from "../combatlayer";
 import ControlPointsLayer from "../controlpointslayer";
 import FlightPlansLayer from "../flightplanslayer";
 import FrontLinesLayer from "../frontlineslayer";
+import NavMeshLayer from "../navmesh/NavMeshLayer";
 import SupplyRoutesLayer from "../supplyrouteslayer";
 import TgosLayer from "../tgoslayer/TgosLayer";
 import { CoalitionThreatZones } from "../threatzones";
@@ -87,6 +88,12 @@ export default function LiberationMap() {
       <LayersControl position="topleft">
         <CoalitionThreatZones blue={true} />
         <CoalitionThreatZones blue={false} />
+        <LayersControl.Overlay name="Blue navmesh">
+          <NavMeshLayer blue={true} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Red navmesh">
+          <NavMeshLayer blue={false} />
+        </LayersControl.Overlay>
       </LayersControl>
     </MapContainer>
   );
