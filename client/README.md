@@ -16,6 +16,22 @@ Then, run `npm start` to start the development server. Launch the Qt UI with
 `--new-map --dev` to connect the webview to the development server, or navigate
 to http://localhost:3000 in your browser.
 
+## Regenerating the API stubs
+
+The backend uses FastAPI which exposes `/openapi.json`. This is consumed by
+`@rtk-query/codegen-openapi` to automatically generate the API stubs in
+`src/api/liberationApi.ts`.
+
+If you make a change to the API surface the typescript API will need to be
+regenerated. To do this, first launch Liberation (to start the backend) and run
+
+```powershell
+npm run regenerate-api
+```
+
+See https://redux-toolkit.js.org/rtk-query/usage/code-generation for more
+information.
+
 ## Available Scripts
 
 In the project directory, you can run:
