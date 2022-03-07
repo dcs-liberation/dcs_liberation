@@ -8,6 +8,7 @@ from game.server.controlpoints.models import ControlPointJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
+from game.server.mapzones.models import ThreatZoneContainerJs
 from game.server.supplyroutes.models import SupplyRouteJs
 from game.server.tgos.models import TgoJs
 
@@ -21,6 +22,7 @@ class GameJs(BaseModel):
     supply_routes: list[SupplyRouteJs]
     front_lines: list[FrontLineJs]
     flights: list[FlightJs]
+    threat_zones: ThreatZoneContainerJs
     map_center: LeafletPoint
 
     class Config:
@@ -34,5 +36,6 @@ class GameJs(BaseModel):
             supply_routes=SupplyRouteJs.all_in_game(game),
             front_lines=FrontLineJs.all_in_game(game),
             flights=FlightJs.all_in_game(game, with_waypoints=True),
+            threat_zones=ThreatZoneContainerJs.for_game(game),
             map_center=game.theater.terrain.map_view_default.position.latlng(),
         )

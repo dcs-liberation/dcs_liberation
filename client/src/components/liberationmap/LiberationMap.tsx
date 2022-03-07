@@ -8,6 +8,11 @@ import FlightPlansLayer from "../flightplanslayer";
 import FrontLinesLayer from "../frontlineslayer";
 import SupplyRoutesLayer from "../supplyrouteslayer";
 import TgosLayer from "../tgoslayer/TgosLayer";
+import { CoalitionThreatZones } from "../threatzones";
+import {
+  ThreatZonesLayer,
+  ThreatZoneFilter,
+} from "../threatzones/ThreatZonesLayer";
 import "./LiberationMap.css";
 import { Map } from "leaflet";
 import { useEffect, useRef } from "react";
@@ -82,6 +87,10 @@ export default function LiberationMap() {
         <LayersControl.Overlay name="All red flight plans">
           <FlightPlansLayer blue={false} />
         </LayersControl.Overlay>
+      </LayersControl>
+      <LayersControl position="topleft">
+        <CoalitionThreatZones blue={true} />
+        <CoalitionThreatZones blue={false} />
       </LayersControl>
     </MapContainer>
   );

@@ -6,6 +6,7 @@ import frontLinesReducer from "../api/frontLinesSlice";
 import mapReducer from "../api/mapSlice";
 import supplyRoutesReducer from "../api/supplyRoutesSlice";
 import tgosReducer from "../api/tgosSlice";
+import threatZonesReducer from "../api/threatZonesSlice";
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     map: mapReducer,
     supplyRoutes: supplyRoutesReducer,
     tgos: tgosReducer,
+    threatZones: threatZonesReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

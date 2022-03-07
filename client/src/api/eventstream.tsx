@@ -21,8 +21,10 @@ import {
 } from "./frontLinesSlice";
 import FrontLine from "./frontline";
 import reloadGameState from "./gamestate";
+import { liberationApi } from "./liberationApi";
 import Tgo from "./tgo";
 import { updateTgo } from "./tgosSlice";
+import { threatZonesUpdated } from "./threatZonesSlice";
 import { LatLng } from "leaflet";
 
 interface GameUpdateEvents {
@@ -66,6 +68,16 @@ export const handleStreamedEvents = (
 
   for (const id of events.ended_combats) {
     dispatch(endCombat(id));
+  }
+
+  if (events.threat_zones_updated) {
+    dispatch(liberationApi.endpoints.getThreatZones.initiate()).then(
+      (result) => {
+        if (result.data) {
+          dispatch(threatZonesUpdated(result.data));
+        }
+      }
+    );
   }
 
   for (const flight of events.new_flights) {

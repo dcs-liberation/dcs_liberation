@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel
 
 from game.server.leaflet import LeafletPoint, LeafletPoly, ShapelyUtil
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
+
+if TYPE_CHECKING:
+    from game import Game
 
 
 class MapZonesJs(BaseModel):
@@ -49,3 +54,14 @@ class ThreatZoneContainerJs(BaseModel):
 
     class Config:
         title = "ThreatZoneContainer"
+
+    @staticmethod
+    def for_game(game: Game) -> ThreatZoneContainerJs:
+        return ThreatZoneContainerJs(
+            blue=ThreatZonesJs.from_zones(
+                game.threat_zone_for(player=True), game.theater
+            ),
+            red=ThreatZonesJs.from_zones(
+                game.threat_zone_for(player=False), game.theater
+            ),
+        )
