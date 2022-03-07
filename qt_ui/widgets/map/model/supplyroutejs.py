@@ -5,9 +5,9 @@ from typing import List
 from PySide2.QtCore import Property, QObject, Signal
 
 from game import Game
-from game.server.leaflet import LeafletLatLon
 from game.theater import ControlPoint
 from game.transfers import MultiGroupTransport, TransportMap
+from .leaflet import LeafletLatLon
 
 
 class SupplyRouteJs(QObject):

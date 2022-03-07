@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from game.server.combat.models import FrozenCombatJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
-from game.server.leaflet import LeafletLatLon
+from game.server.leaflet import LeafletPoint
 
 if TYPE_CHECKING:
     from game import Game
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 class GameUpdateEventsJs(BaseModel):
-    updated_flight_positions: dict[UUID, LeafletLatLon]
+    updated_flight_positions: dict[UUID, LeafletPoint]
     new_combats: list[FrozenCombatJs]
     updated_combats: list[FrozenCombatJs]
     ended_combats: list[UUID]
@@ -33,7 +33,7 @@ class GameUpdateEventsJs(BaseModel):
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: set[int]
-    reset_on_map_center: LeafletLatLon | None
+    reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
     new_turn: bool
 
@@ -55,14 +55,9 @@ class GameUpdateEventsJs(BaseModel):
                 for c in events.updated_combats
             ]
 
-        recenter_map = None
-        if events.reset_on_map_center is not None:
-            recenter_map = events.reset_on_map_center.as_list()
-
         return GameUpdateEventsJs(
             updated_flight_positions={
-                f[0].id: f[1].latlng().as_list()
-                for f in events.updated_flight_positions
+                f[0].id: f[1].latlng() for f in events.updated_flight_positions
             },
             new_combats=new_combats,
             updated_combats=updated_combats,
@@ -84,7 +79,7 @@ class GameUpdateEventsJs(BaseModel):
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
             updated_control_points=events.updated_control_points,
-            reset_on_map_center=recenter_map,
+            reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
             new_turn=events.new_turn,
         )

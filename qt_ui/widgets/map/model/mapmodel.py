@@ -7,13 +7,13 @@ from dcs.mapping import LatLng
 
 from game import Game
 from game.profiling import logged_duration
-from game.server.leaflet import LeafletLatLon
 from game.theater import (
     ConflictTheater,
 )
 from qt_ui.models import GameModel
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from .controlpointjs import ControlPointJs
+from .leaflet import LeafletLatLon
 from .supplyroutejs import SupplyRouteJs
 
 

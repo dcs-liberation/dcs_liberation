@@ -6,12 +6,12 @@ from PySide2.QtCore import Property, QObject, Signal, Slot
 from dcs import Point
 from dcs.mapping import LatLng
 
-from game.server.leaflet import LeafletLatLon
 from game.theater import ConflictTheater, ControlPoint
 from game.utils import meters, nautical_miles
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
+from .leaflet import LeafletLatLon
 
 MAX_SHIP_DISTANCE = nautical_miles(80)
 

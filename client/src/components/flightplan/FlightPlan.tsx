@@ -1,7 +1,6 @@
 import { Flight } from "../../api/flight";
 import { useGetCommitBoundaryForFlightQuery } from "../../api/liberationApi";
 import WaypointMarker from "../waypointmarker";
-import { LatLng } from "leaflet";
 import { ReactElement } from "react";
 import { Polyline } from "react-leaflet";
 
@@ -83,15 +82,8 @@ function CommitBoundary(props: CommitBoundaryProps) {
     );
     return <></>;
   }
-  // TODO: Fix the response model and clean up.
-  const positions = data.map(([lat, lng]) => new LatLng(lat, lng));
   return (
-    <Polyline
-      positions={positions}
-      color="#ffff00"
-      weight={1}
-      interactive={false}
-    />
+    <Polyline positions={data} color="#ffff00" weight={1} interactive={false} />
   );
 }
 

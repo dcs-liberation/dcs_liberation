@@ -255,7 +255,7 @@ export type GetFlightByIdApiArg = {
   withWaypoints?: boolean;
 };
 export type GetCommitBoundaryForFlightApiResponse =
-  /** status 200 Successful Response */ number[][];
+  /** status 200 Successful Response */ LatLng[];
 export type GetCommitBoundaryForFlightApiArg = {
   flightId: string;
 };
@@ -352,26 +352,26 @@ export type HttpValidationError = {
   detail?: ValidationError[];
 };
 export type HoldZones = {
-  homeBubble: number[][];
-  targetBubble: number[][];
-  joinBubble: number[][];
-  excludedZones: number[][][];
-  permissibleZones: number[][][];
-  preferredLines: number[][][];
+  homeBubble: LatLng[];
+  targetBubble: LatLng[];
+  joinBubble: LatLng[];
+  excludedZones: LatLng[][];
+  permissibleZones: LatLng[][];
+  preferredLines: LatLng[][];
 };
 export type IpZones = {
-  homeBubble: number[][];
-  ipBubble: number[][];
-  permissibleZone: number[][];
-  safeZones: number[][][];
+  homeBubble: LatLng[];
+  ipBubble: LatLng[];
+  permissibleZone: LatLng[];
+  safeZones: LatLng[][];
 };
 export type JoinZones = {
-  homeBubble: number[][];
-  targetBubble: number[][];
-  ipBubble: number[][];
-  excludedZones: number[][][];
-  permissibleZones: number[][][];
-  preferredLines: number[][][];
+  homeBubble: LatLng[];
+  targetBubble: LatLng[];
+  ipBubble: LatLng[];
+  excludedZones: LatLng[][];
+  permissibleZones: LatLng[][];
+  preferredLines: LatLng[][];
 };
 export type Waypoint = {
   name: string;
@@ -415,17 +415,17 @@ export type SupplyRoute = {
   active_transports: string[];
 };
 export type ThreatZones = {
-  full: number[][][];
-  aircraft: number[][][];
-  air_defenses: number[][][];
-  radar_sams: number[][][];
+  full: LatLng[][];
+  aircraft: LatLng[][];
+  air_defenses: LatLng[][];
+  radar_sams: LatLng[][];
 };
 export type ThreatZoneContainer = {
   blue: ThreatZones;
   red: ThreatZones;
 };
 export type NavMeshPoly = {
-  poly: number[][];
+  poly: LatLng[];
   threatened: boolean;
 };
 export type NavMesh = {
@@ -446,9 +446,9 @@ export type Game = {
   map_center: LatLng;
 };
 export type MapZones = {
-  inclusion: number[][][];
-  exclusion: number[][][];
-  sea: number[][][];
+  inclusion: LatLng[][];
+  exclusion: LatLng[][];
+  sea: LatLng[][];
 };
 export type UnculledZone = {
   position: LatLng;

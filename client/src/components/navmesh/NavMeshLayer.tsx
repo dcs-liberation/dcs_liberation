@@ -1,6 +1,5 @@
 import { selectNavMeshes } from "../../api/navMeshSlice";
 import { useAppSelector } from "../../app/hooks";
-import { LatLng } from "leaflet";
 import { LayerGroup, Polygon } from "react-leaflet";
 
 interface NavMeshLayerProps {
@@ -13,11 +12,10 @@ export default function NavMeshLayer(props: NavMeshLayerProps) {
   return (
     <LayerGroup>
       {mesh.map((zone, idx) => {
-        const positions = zone.poly.map(([lat, lng]) => new LatLng(lat, lng));
         return (
           <Polygon
             key={idx}
-            positions={positions}
+            positions={zone.poly}
             color="#000000"
             weight={1}
             fill
