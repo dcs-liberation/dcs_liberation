@@ -1,3 +1,7 @@
+import {
+  useOpenNewTgoPackageDialogMutation,
+  useOpenTgoInfoDialogMutation,
+} from "../../api/liberationApi";
 import { Tgo as TgoModel } from "../../api/tgo";
 import SplitLines from "../splitlines/SplitLines";
 import { Icon, Point } from "leaflet";
@@ -20,8 +24,21 @@ interface TgoProps {
 }
 
 export default function Tgo(props: TgoProps) {
+  const [openNewPackageDialog] = useOpenNewTgoPackageDialogMutation();
+  const [openInfoDialog] = useOpenTgoInfoDialogMutation();
   return (
-    <Marker position={props.tgo.position} icon={iconForTgo(props.tgo)}>
+    <Marker
+      position={props.tgo.position}
+      icon={iconForTgo(props.tgo)}
+      eventHandlers={{
+        click: () => {
+          openInfoDialog({ tgoId: props.tgo.id });
+        },
+        contextmenu: () => {
+          openNewPackageDialog({ tgoId: props.tgo.id });
+        },
+      }}
+    >
       <Tooltip>
         {`${props.tgo.name} (${props.tgo.control_point_name})`}
         <br />
