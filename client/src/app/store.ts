@@ -1,4 +1,4 @@
-import { apiSlice } from "../api/api";
+import { baseApi } from "../api/baseApi";
 import combatReducer from "../api/combatSlice";
 import controlPointsReducer from "../api/controlPointsSlice";
 import flightsReducer from "../api/flightsSlice";
@@ -17,10 +17,10 @@ export const store = configureStore({
     map: mapReducer,
     supplyRoutes: supplyRoutesReducer,
     tgos: tgosReducer,
-    [apiSlice.reducerPath]: apiSlice.reducer,
+    [baseApi.reducerPath]: baseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
+    getDefaultMiddleware().concat(baseApi.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;

@@ -1,9 +1,9 @@
-import {
-  useControlPointCancelTravelMutation,
-  useSetControlPointDestinationMutation,
-} from "../../api/api";
 import backend from "../../api/backend";
 import { ControlPoint as ControlPointModel } from "../../api/controlpoint";
+import {
+  useClearControlPointDestinationMutation,
+  useSetControlPointDestinationMutation,
+} from "../../api/liberationApi";
 import {
   Icon,
   LatLng,
@@ -118,7 +118,7 @@ function PrimaryMarker(props: ControlPointProps) {
 
   const [putDestination, { isLoading }] =
     useSetControlPointDestinationMutation();
-  const [cancelTravel] = useControlPointCancelTravelMutation();
+  const [cancelTravel] = useClearControlPointDestinationMutation();
 
   useEffect(() => {
     marker.current?.setTooltipContent(
@@ -159,7 +159,7 @@ function PrimaryMarker(props: ControlPointProps) {
           },
           contextmenu: () => {
             if (props.controlPoint.destination) {
-              cancelTravel(props.controlPoint.id).then(() => {
+              cancelTravel({ cpId: props.controlPoint.id }).then(() => {
                 resetDestination();
               });
             } else {
@@ -196,8 +196,8 @@ function PrimaryMarker(props: ControlPointProps) {
             setDestination(destination);
             try {
               await putDestination({
-                id: props.controlPoint.id,
-                destination: destination,
+                cpId: props.controlPoint.id,
+                body: { lat: destination.lat, lng: destination.lng },
               }).unwrap();
             } catch (error) {
               console.error("setDestination failed", error);
