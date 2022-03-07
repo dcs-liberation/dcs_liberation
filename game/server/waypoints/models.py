@@ -34,6 +34,9 @@ class FlightWaypointJs(BaseModel):
     include_in_path: bool
     timing: str
 
+    class Config:
+        title = "Waypoint"
+
     @staticmethod
     def for_waypoint(
         waypoint: FlightWaypoint, flight: Flight, waypoint_idx: int

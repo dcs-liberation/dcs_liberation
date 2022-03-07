@@ -7,7 +7,7 @@ from ..dependencies import GameContext
 router: APIRouter = APIRouter(prefix="/supply-routes")
 
 
-@router.get("/")
+@router.get("/", operation_id="list_supply_routes", response_model=list[SupplyRouteJs])
 def list_supply_routes(
     game: Game = Depends(GameContext.require),
 ) -> list[SupplyRouteJs]:

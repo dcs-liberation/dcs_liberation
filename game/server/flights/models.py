@@ -22,6 +22,9 @@ class FlightJs(BaseModel):
     sidc: str
     waypoints: list[FlightWaypointJs] | None
 
+    class Config:
+        title = "Flight"
+
     @staticmethod
     def for_flight(flight: Flight, with_waypoints: bool) -> FlightJs:
         # Don't provide a location for aircraft that aren't in the air. Later we can

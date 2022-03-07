@@ -7,7 +7,7 @@ from .models import GameJs
 router: APIRouter = APIRouter(prefix="/game")
 
 
-@router.get("/")
+@router.get("/", operation_id="get_game_state", response_model=GameJs)
 def game_state(game: Game | None = Depends(GameContext.get)) -> GameJs | None:
     if game is None:
         return None

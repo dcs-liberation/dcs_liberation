@@ -20,6 +20,9 @@ class ControlPointJs(BaseModel):
     destination: LeafletPoint | None
     sidc: str
 
+    class Config:
+        title = "ControlPoint"
+
     @staticmethod
     def for_control_point(control_point: ControlPoint) -> ControlPointJs:
         destination = None

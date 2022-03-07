@@ -16,6 +16,9 @@ class HoldZonesJs(BaseModel):
     permissible_zones: list[LeafletPoly] = Field(alias="permissibleZones")
     preferred_lines: list[LeafletPoly] = Field(alias="preferredLines")
 
+    class Config:
+        title = "HoldZones"
+
     @classmethod
     def empty(cls) -> HoldZonesJs:
         return HoldZonesJs(
@@ -62,6 +65,9 @@ class IpZonesJs(BaseModel):
     permissibleZone: LeafletPoly = Field(alias="permissibleZone")
     safeZones: list[LeafletPoly] = Field(alias="safeZones")
 
+    class Config:
+        title = "IpZones"
+
     @classmethod
     def empty(cls) -> IpZonesJs:
         return IpZonesJs(homeBubble=[], ipBubble=[], permissibleZone=[], safeZones=[])
@@ -88,6 +94,9 @@ class JoinZonesJs(BaseModel):
     excluded_zones: list[LeafletPoly] = Field(alias="excludedZones")
     permissible_zones: list[LeafletPoly] = Field(alias="permissibleZones")
     preferred_lines: list[LeafletPoly] = Field(alias="preferredLines")
+
+    class Config:
+        title = "JoinZones"
 
     @classmethod
     def empty(cls) -> JoinZonesJs:

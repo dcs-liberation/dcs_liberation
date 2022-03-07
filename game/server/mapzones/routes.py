@@ -8,7 +8,7 @@ from ..leaflet import ShapelyUtil
 router: APIRouter = APIRouter(prefix="/map-zones")
 
 
-@router.get("/terrain")
+@router.get("/terrain", operation_id="get_terrain_zones", response_model=MapZonesJs)
 def get_terrain(game: Game = Depends(GameContext.require)) -> MapZonesJs:
     zones = game.theater.landmap
     if zones is None:
@@ -21,7 +21,9 @@ def get_terrain(game: Game = Depends(GameContext.require)) -> MapZonesJs:
     )
 
 
-@router.get("/unculled")
+@router.get(
+    "/unculled", operation_id="list_unculled_zones", response_model=list[UnculledZoneJs]
+)
 def get_unculled_zones(
     game: Game = Depends(GameContext.require),
 ) -> list[UnculledZoneJs]:
@@ -33,7 +35,9 @@ def get_unculled_zones(
     ]
 
 
-@router.get("/threats")
+@router.get(
+    "/threats", operation_id="get_threat_zones", response_model=ThreatZoneContainerJs
+)
 def get_threat_zones(
     game: Game = Depends(GameContext.require),
 ) -> ThreatZoneContainerJs:

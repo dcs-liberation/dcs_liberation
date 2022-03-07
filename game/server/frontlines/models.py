@@ -17,6 +17,9 @@ class FrontLineJs(BaseModel):
     id: UUID
     extents: list[LeafletPoint]
 
+    class Config:
+        title = "FrontLine"
+
     @staticmethod
     def for_front_line(front_line: FrontLine) -> FrontLineJs:
         a = front_line.position.point_from_heading(

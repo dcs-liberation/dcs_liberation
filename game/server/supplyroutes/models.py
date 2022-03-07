@@ -68,6 +68,9 @@ class SupplyRouteJs(BaseModel):
     blue: bool
     active_transports: list[str]
 
+    class Config:
+        title = "SupplyRoute"
+
     @staticmethod
     def for_link(
         game: Game, a: ControlPoint, b: ControlPoint, points: list[Point], sea: bool

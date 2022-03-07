@@ -34,14 +34,22 @@ def waypoints_for_flight(flight: Flight) -> list[FlightWaypointJs]:
     ]
 
 
-@router.get("/{flight_id}", response_model=list[FlightWaypointJs])
+@router.get(
+    "/{flight_id}",
+    operation_id="list_all_waypoints_for_flight",
+    response_model=list[FlightWaypointJs],
+)
 def all_waypoints_for_flight(
     flight_id: UUID, game: Game = Depends(GameContext.require)
 ) -> list[FlightWaypointJs]:
     return waypoints_for_flight(game.db.flights.get(flight_id))
 
 
-@router.post("/{flight_id}/{waypoint_idx}/position")
+@router.post(
+    "/{flight_id}/{waypoint_idx}/position",
+    operation_id="set_waypoint_position",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 def set_position(
     flight_id: UUID,
     waypoint_idx: int,

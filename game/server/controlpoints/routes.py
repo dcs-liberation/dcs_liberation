@@ -1,6 +1,6 @@
 from dcs import Point
 from dcs.mapping import LatLng
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 
 from game import Game
 from .models import ControlPointJs
@@ -12,14 +12,18 @@ from ...sim import GameUpdateEvents
 router: APIRouter = APIRouter(prefix="/control-points")
 
 
-@router.get("/")
+@router.get(
+    "/", operation_id="list_control_points", response_model=list[ControlPointJs]
+)
 def list_control_points(
     game: Game = Depends(GameContext.require),
 ) -> list[ControlPointJs]:
     return ControlPointJs.all_in_game(game)
 
 
-@router.get("/{cp_id}")
+@router.get(
+    "/{cp_id}", operation_id="get_control_point_by_id", response_model=ControlPointJs
+)
 def get_control_point(
     cp_id: int, game: Game = Depends(GameContext.require)
 ) -> ControlPointJs:
@@ -32,7 +36,11 @@ def get_control_point(
     return ControlPointJs.for_control_point(cp)
 
 
-@router.get("/{cp_id}/destination-in-range")
+@router.get(
+    "/{cp_id}/destination-in-range",
+    operation_id="control_point_destination_in_range",
+    response_model=bool,
+)
 def destination_in_range(
     cp_id: int, lat: float, lng: float, game: Game = Depends(GameContext.require)
 ) -> bool:
@@ -47,9 +55,15 @@ def destination_in_range(
     return cp.destination_in_range(point)
 
 
-@router.put("/{cp_id}/destination")
+@router.put(
+    "/{cp_id}/destination",
+    operation_id="set_control_point_destination",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 def set_destination(
-    cp_id: int, destination: LeafletPoint, game: Game = Depends(GameContext.require)
+    cp_id: int,
+    destination: LeafletPoint = Body(..., title="destination"),
+    game: Game = Depends(GameContext.require),
 ) -> None:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
@@ -77,7 +91,11 @@ def set_destination(
     EventStream.put_nowait(GameUpdateEvents().update_control_point(cp))
 
 
-@router.put("/{cp_id}/cancel-travel")
+@router.put(
+    "/{cp_id}/cancel-travel",
+    operation_id="clear_control_point_destination",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 def cancel_travel(cp_id: int, game: Game = Depends(GameContext.require)) -> None:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:

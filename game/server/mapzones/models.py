@@ -12,10 +12,16 @@ class MapZonesJs(BaseModel):
     exclusion: list[LeafletPoly]
     sea: list[LeafletPoly]
 
+    class Config:
+        title = "MapZones"
+
 
 class UnculledZoneJs(BaseModel):
     position: LeafletPoint
     radius: float
+
+    class Config:
+        title = "UnculledZone"
 
 
 class ThreatZonesJs(BaseModel):
@@ -23,6 +29,9 @@ class ThreatZonesJs(BaseModel):
     aircraft: list[LeafletPoly]
     air_defenses: list[LeafletPoly]
     radar_sams: list[LeafletPoly]
+
+    class Config:
+        title = "ThreatZones"
 
     @classmethod
     def from_zones(cls, zones: ThreatZones, theater: ConflictTheater) -> ThreatZonesJs:
@@ -37,3 +46,6 @@ class ThreatZonesJs(BaseModel):
 class ThreatZoneContainerJs(BaseModel):
     blue: ThreatZonesJs
     red: ThreatZonesJs
+
+    class Config:
+        title = "ThreatZoneContainer"

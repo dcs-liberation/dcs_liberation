@@ -8,3 +8,6 @@ from game.server.leaflet import LeafletPoly
 class NavMeshPolyJs(BaseModel):
     poly: LeafletPoly
     threatened: bool
+
+    class Config:
+        title = "NavMeshPoly"

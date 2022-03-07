@@ -19,6 +19,8 @@ class LeafletPoint(BaseModel):
     class Config:
         orm_mode = True
 
+        title = "LatLng"
+
 
 class ShapelyUtil:
     @staticmethod

@@ -8,7 +8,7 @@ from ..leaflet import ShapelyUtil
 router: APIRouter = APIRouter(prefix="/navmesh")
 
 
-@router.get("/", response_model=list[NavMeshPolyJs])
+@router.get("/", operation_id="get_navmesh", response_model=list[NavMeshPolyJs])
 def get(
     for_player: bool, game: Game = Depends(GameContext.require)
 ) -> list[NavMeshPolyJs]:

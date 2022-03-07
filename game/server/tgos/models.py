@@ -25,6 +25,9 @@ class TgoJs(BaseModel):
     dead: bool  # TODO: Event stream
     sidc: str  # TODO: Event stream
 
+    class Config:
+        title = "Tgo"
+
     @staticmethod
     def for_tgo(tgo: TheaterGroundObject) -> TgoJs:
         if not tgo.might_have_aa:

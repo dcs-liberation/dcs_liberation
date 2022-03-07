@@ -23,6 +23,9 @@ class GameJs(BaseModel):
     flights: list[FlightJs]
     map_center: LeafletPoint
 
+    class Config:
+        title = "Game"
+
     @staticmethod
     def from_game(game: Game) -> GameJs:
         return GameJs(

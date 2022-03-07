@@ -18,6 +18,9 @@ class FrozenCombatJs(BaseModel):
     target_positions: list[LeafletPoint] | None
     footprint: list[LeafletPoly] | None
 
+    class Config:
+        title = "FrozenCombat"
+
     @staticmethod
     def for_combat(combat: FrozenCombat, theater: ConflictTheater) -> FrozenCombatJs:
         if isinstance(combat, AirCombat):
