@@ -1,7 +1,7 @@
 import { AppDispatch } from "../app/store";
 import { gameLoaded, gameUnloaded } from "./actions";
 import backend from "./backend";
-import Game from "./game";
+import { Game } from "./liberationApi";
 
 export default function reloadGameState(
   dispatch: AppDispatch,
@@ -17,7 +17,7 @@ export default function reloadGameState(
       }
       const game = response.data as Game;
       if (ignoreRecenter) {
-        game.map_center = null;
+        game.map_center = undefined;
       }
       dispatch(gameLoaded(game));
     });

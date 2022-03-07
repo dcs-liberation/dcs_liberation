@@ -25,7 +25,7 @@ class GameJs(BaseModel):
     flights: list[FlightJs]
     threat_zones: ThreatZoneContainerJs
     navmeshes: NavMeshesJs
-    map_center: LeafletPoint
+    map_center: LeafletPoint | None
 
     class Config:
         title = "Game"

@@ -443,7 +443,7 @@ export type Game = {
   flights: Flight[];
   threat_zones: ThreatZoneContainer;
   navmeshes: NavMeshes;
-  map_center: LatLng;
+  map_center?: LatLng;
 };
 export type MapZones = {
   inclusion: LatLng[][];

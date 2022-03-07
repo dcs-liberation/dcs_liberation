@@ -1,4 +1,4 @@
-import Game from "./game";
+import { Game } from "./liberationApi";
 import { createAction } from "@reduxjs/toolkit";
 
 export const gameLoaded = createAction<Game>("game/loaded");
