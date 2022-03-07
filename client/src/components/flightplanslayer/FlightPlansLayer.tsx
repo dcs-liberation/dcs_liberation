@@ -1,5 +1,5 @@
-import { Flight } from "../../api/flight";
 import { selectFlights, selectSelectedFlight } from "../../api/flightsSlice";
+import { Flight } from "../../api/liberationApi";
 import { useAppSelector } from "../../app/hooks";
 import FlightPlan from "../flightplan";
 import { LayerGroup } from "react-leaflet";

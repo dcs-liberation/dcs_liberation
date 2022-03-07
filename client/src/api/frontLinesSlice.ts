@@ -1,6 +1,6 @@
 import { RootState } from "../app/store";
 import { gameLoaded, gameUnloaded } from "./actions";
-import FrontLine from "./frontline";
+import { FrontLine } from "./liberationApi";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface FrontLinesState {

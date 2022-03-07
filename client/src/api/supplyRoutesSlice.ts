@@ -1,6 +1,6 @@
 import { RootState } from "../app/store";
 import { gameLoaded, gameUnloaded } from "./actions";
-import SupplyRoute from "./supplyroute";
+import { SupplyRoute } from "./liberationApi";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface SupplyRoutesState {

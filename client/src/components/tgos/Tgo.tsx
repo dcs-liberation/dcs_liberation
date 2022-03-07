@@ -2,7 +2,7 @@ import {
   useOpenNewTgoPackageDialogMutation,
   useOpenTgoInfoDialogMutation,
 } from "../../api/liberationApi";
-import { Tgo as TgoModel } from "../../api/tgo";
+import { Tgo as TgoModel } from "../../api/liberationApi";
 import SplitLines from "../splitlines/SplitLines";
 import { Icon, Point } from "leaflet";
 import { Symbol as MilSymbol } from "milsymbol";

@@ -1,4 +1,4 @@
-import { FrontLine as FrontLineModel } from "../../api/frontline";
+import { FrontLine as FrontLineModel } from "../../api/liberationApi";
 import { Polyline } from "react-leaflet";
 
 interface FrontLineProps {

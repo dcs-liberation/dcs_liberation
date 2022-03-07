@@ -1,6 +1,6 @@
 import backend from "../../api/backend";
-import { Flight } from "../../api/flight";
-import { Waypoint } from "../../api/waypoint";
+import { Flight } from "../../api/liberationApi";
+import { Waypoint } from "../../api/liberationApi";
 import { Icon } from "leaflet";
 import { Marker as LMarker } from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";

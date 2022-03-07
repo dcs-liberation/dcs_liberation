@@ -1,4 +1,4 @@
-import { Flight } from "../../api/flight";
+import { Flight } from "../../api/liberationApi";
 import { useGetCommitBoundaryForFlightQuery } from "../../api/liberationApi";
 import WaypointMarker from "../waypointmarker";
 import { ReactElement } from "react";

@@ -1,4 +1,4 @@
-import { SupplyRoute as SupplyRouteModel } from "../../api/supplyroute";
+import { SupplyRoute as SupplyRouteModel } from "../../api/liberationApi";
 import SplitLines from "../splitlines/SplitLines";
 import { Polyline as LPolyline } from "leaflet";
 import { useEffect, useRef } from "react";

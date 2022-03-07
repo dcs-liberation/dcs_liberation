@@ -1,4 +1,4 @@
-import Tgo from "../../api/tgo";
+import { Tgo } from "../../api/liberationApi";
 import { selectTgos } from "../../api/tgosSlice";
 import { useAppSelector } from "../../app/hooks";
 import { Circle, LayerGroup } from "react-leaflet";

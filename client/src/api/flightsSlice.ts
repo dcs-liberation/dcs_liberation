@@ -1,6 +1,6 @@
 import { RootState } from "../app/store";
 import { gameLoaded, gameUnloaded } from "./actions";
-import { Flight } from "./flight";
+import { Flight } from "./liberationApi";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { LatLng } from "leaflet";
 

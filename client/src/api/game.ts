@@ -1,9 +1,12 @@
-import { ControlPoint } from "./controlpoint";
-import { Flight } from "./flight";
-import FrontLine from "./frontline";
-import { NavMeshes, ThreatZoneContainer } from "./liberationApi";
-import SupplyRoute from "./supplyroute";
-import Tgo from "./tgo";
+import {
+  ControlPoint,
+  Flight,
+  FrontLine,
+  NavMeshes,
+  SupplyRoute,
+  Tgo,
+  ThreatZoneContainer,
+} from "./liberationApi";
 import { LatLngLiteral } from "leaflet";
 
 export default interface Game {

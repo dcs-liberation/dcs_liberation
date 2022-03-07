@@ -1,6 +1,6 @@
 import { RootState } from "../app/store";
 import { gameLoaded, gameUnloaded } from "./actions";
-import { ControlPoint } from "./controlpoint";
+import { ControlPoint } from "./liberationApi";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface ControlPointsState {

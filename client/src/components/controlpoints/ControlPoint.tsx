@@ -1,5 +1,5 @@
 import backend from "../../api/backend";
-import { ControlPoint as ControlPointModel } from "../../api/controlpoint";
+import { ControlPoint as ControlPointModel } from "../../api/liberationApi";
 import {
   useClearControlPointDestinationMutation,
   useSetControlPointDestinationMutation,
@@ -10,6 +10,7 @@ import {
   Point,
   Marker as LMarker,
   Polyline as LPolyline,
+  LatLngLiteral,
 } from "leaflet";
 import { Symbol as MilSymbol } from "milsymbol";
 import {
@@ -64,7 +65,7 @@ function formatLatLng(latLng: LatLng) {
 
 function destinationTooltipText(
   cp: ControlPointModel,
-  destinationish: LatLng,
+  destinationish: LatLngLiteral,
   inRange: boolean
 ) {
   const destination = new LatLng(destinationish.lat, destinationish.lng);
@@ -93,12 +94,12 @@ function PrimaryMarker(props: ControlPointProps) {
   const [hasDestination, setHasDestination] = useState<boolean>(
     props.controlPoint.destination != null
   );
-  const [pathDestination, setPathDestination] = useState<LatLng>(
+  const [pathDestination, setPathDestination] = useState<LatLngLiteral>(
     props.controlPoint.destination
       ? props.controlPoint.destination
       : props.controlPoint.position
   );
-  const [position, setPosition] = useState<LatLng>(
+  const [position, setPosition] = useState<LatLngLiteral>(
     props.controlPoint.destination
       ? props.controlPoint.destination
       : props.controlPoint.position
@@ -189,8 +190,7 @@ function PrimaryMarker(props: ControlPointProps) {
           dragend: async (event) => {
             const currentPosition = new LatLng(
               pathDestination.lat,
-              pathDestination.lng,
-              pathDestination.alt
+              pathDestination.lng
             );
             const destination = event.target.getLatLng();
             setDestination(destination);
@@ -225,7 +225,7 @@ function PrimaryMarker(props: ControlPointProps) {
 
 interface SecondaryMarkerProps {
   controlPoint: ControlPointModel;
-  destination: LatLng | null;
+  destination: LatLngLiteral | undefined;
 }
 
 function SecondaryMarker(props: SecondaryMarkerProps) {

@@ -1,6 +1,6 @@
 import { RootState } from "../app/store";
 import { gameLoaded, gameUnloaded } from "./actions";
-import { Tgo } from "./tgo";
+import { Tgo } from "./liberationApi";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface TgosState {

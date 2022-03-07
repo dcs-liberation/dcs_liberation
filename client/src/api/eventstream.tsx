@@ -4,8 +4,6 @@ import backend from "./backend";
 import Combat from "./combat";
 import { endCombat, newCombat, updateCombat } from "./combatSlice";
 import { updateControlPoint } from "./controlPointsSlice";
-import { ControlPoint } from "./controlpoint";
-import { Flight } from "./flight";
 import {
   deselectFlight,
   registerFlight,
@@ -19,11 +17,15 @@ import {
   deleteFrontLine,
   updateFrontLine,
 } from "./frontLinesSlice";
-import FrontLine from "./frontline";
 import reloadGameState from "./gamestate";
-import { liberationApi } from "./liberationApi";
+import {
+  liberationApi,
+  ControlPoint,
+  Flight,
+  FrontLine,
+  Tgo,
+} from "./liberationApi";
 import { navMeshUpdated } from "./navMeshSlice";
-import Tgo from "./tgo";
 import { updateTgo } from "./tgosSlice";
 import { threatZonesUpdated } from "./threatZonesSlice";
 import { LatLng } from "leaflet";

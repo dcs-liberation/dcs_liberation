@@ -1,4 +1,4 @@
-import { Flight } from "../../api/flight";
+import { Flight } from "../../api/liberationApi";
 import { Icon, Point } from "leaflet";
 import { Symbol } from "milsymbol";
 import { Marker } from "react-leaflet";
