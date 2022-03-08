@@ -161,9 +161,17 @@ class PackageModel(QAbstractListModel):
         # flight plan yet. Will be called manually by the caller.
         self.endInsertRows()
 
-    def delete_flight_at_index(self, index: QModelIndex) -> None:
+    def cancel_or_abort_flight_at_index(self, index: QModelIndex) -> None:
         """Removes the flight at the given index from the package."""
-        self.delete_flight(self.flight_at_index(index))
+        self.cancel_or_abort_flight(self.flight_at_index(index))
+
+    def cancel_or_abort_flight(self, flight: Flight) -> None:
+        if flight.state.cancelable:
+            self.delete_flight(flight)
+            EventStream.put_nowait(GameUpdateEvents().delete_flight(flight))
+        else:
+            flight.abort()
+            EventStream.put_nowait(GameUpdateEvents().update_flight(flight))
 
     def delete_flight(self, flight: Flight) -> None:
         """Removes the given flight from the package."""
@@ -257,13 +265,28 @@ class AtoModel(QAbstractListModel):
         self.client_slots_changed.emit()
         self.on_packages_changed()
 
-    def delete_package_at_index(self, index: QModelIndex) -> None:
+    def cancel_or_abort_package_at_index(self, index: QModelIndex) -> None:
         """Removes the package at the given index from the ATO."""
-        self.delete_package(self.package_at_index(index))
+        self.cancel_or_abort_package(self.package_at_index(index))
 
-    def delete_package(self, package: Package) -> None:
+    def cancel_or_abort_package(self, package: Package) -> None:
+        with EventStream.event_context() as events:
+            if all(f.state.cancelable for f in package.flights):
+                self._delete_package(package)
+                events.delete_flights_in_package(package)
+                return
+
+            package_model = self.find_matching_package_model(package)
+            for flight in package.flights:
+                if flight.state.cancelable:
+                    package_model.delete_flight(flight)
+                    events.delete_flight(flight)
+                else:
+                    flight.abort()
+                    events.update_flight(flight)
+
+    def _delete_package(self, package: Package) -> None:
         """Removes the given package from the ATO."""
-        EventStream.put_nowait(GameUpdateEvents().delete_flights_in_package(package))
         self.package_models.release(package)
         index = self.ato.packages.index(package)
         self.beginRemoveRows(QModelIndex(), index, index)

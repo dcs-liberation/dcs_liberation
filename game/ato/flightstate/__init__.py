@@ -2,6 +2,7 @@ from .completed import Completed
 from .flightstate import FlightState
 from .incombat import InCombat
 from .inflight import InFlight
+from .killed import Killed
 from .navigating import Navigating
 from .startup import StartUp
 from .takeoff import Takeoff

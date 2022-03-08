@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 
 
 class Uninitialized(FlightState):
+    @property
+    def cancelable(self) -> bool:
+        return True
+
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:

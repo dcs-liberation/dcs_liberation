@@ -22,6 +22,10 @@ class Killed(FlightState):
         self.last_position = last_position
 
     @property
+    def cancelable(self) -> bool:
+        return False
+
+    @property
     def alive(self) -> bool:
         return False
 

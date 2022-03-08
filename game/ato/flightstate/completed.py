@@ -13,6 +13,10 @@ if TYPE_CHECKING:
 
 
 class Completed(FlightState):
+    @property
+    def cancelable(self) -> bool:
+        return False
+
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:

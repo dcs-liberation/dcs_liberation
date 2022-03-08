@@ -69,9 +69,18 @@ interface CommitBoundaryProps {
 }
 
 function CommitBoundary(props: CommitBoundaryProps) {
-  const { data, error, isLoading } = useGetCommitBoundaryForFlightQuery({
-    flightId: props.flightId,
-  });
+  const { data, error, isLoading } = useGetCommitBoundaryForFlightQuery(
+    {
+      flightId: props.flightId,
+    },
+    // RTK Query doesn't seem to allow us to invalidate the cache from anything
+    // but a mutation, but this data can be invalidated by events from the
+    // websocket. Just disable the cache for this.
+    //
+    // This isn't perfect. It won't redraw until the component remounts. There
+    // doesn't appear to be a better way.
+    { refetchOnMountOrArgChange: true }
+  );
   if (isLoading) {
     return <></>;
   }

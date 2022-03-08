@@ -128,11 +128,8 @@ class QFlightList(QListView):
             parent=self.window(),
         )
 
-    def delete_flight(self, index: QModelIndex) -> None:
-        EventStream.put_nowait(
-            GameUpdateEvents().delete_flight(self.package_model.flight_at_index(index))
-        )
-        self.package_model.delete_flight_at_index(index)
+    def cancel_or_abort_flight(self, index: QModelIndex) -> None:
+        self.package_model.cancel_or_abort_flight_at_index(index)
 
     def contextMenuEvent(self, event: QContextMenuEvent) -> None:
         index = self.indexAt(event.pos())
@@ -144,7 +141,7 @@ class QFlightList(QListView):
         menu.addAction(edit_action)
 
         delete_action = QAction(f"Delete")
-        delete_action.triggered.connect(lambda: self.delete_flight(index))
+        delete_action.triggered.connect(lambda: self.cancel_or_abort_flight(index))
         menu.addAction(delete_action)
 
         menu.exec_(event.globalPos())
@@ -183,10 +180,10 @@ class QFlightPanel(QGroupBox):
         self.edit_button.clicked.connect(self.on_edit)
         self.button_row.addWidget(self.edit_button)
 
-        self.delete_button = QPushButton("Delete")
+        self.delete_button = QPushButton("Cancel")
         # noinspection PyTypeChecker
         self.delete_button.setProperty("style", "btn-danger")
-        self.delete_button.clicked.connect(self.on_delete)
+        self.delete_button.clicked.connect(self.on_cancel_flight)
         self.button_row.addWidget(self.delete_button)
 
         self.selection_changed.connect(self.on_selection_changed)
@@ -211,6 +208,11 @@ class QFlightPanel(QGroupBox):
         self.edit_button.setEnabled(enabled)
         self.delete_button.setEnabled(enabled)
         self.change_map_flight_selection(index)
+        delete_text = "Cancel"
+        if (flight := self.flight_list.selected_item) is not None:
+            if not flight.state.cancelable:
+                delete_text = "Abort"
+        self.delete_button.setText(delete_text)
 
     def change_map_flight_selection(self, index: QModelIndex) -> None:
         events = GameUpdateEvents()
@@ -228,13 +230,13 @@ class QFlightPanel(QGroupBox):
             return
         self.flight_list.edit_flight(index)
 
-    def on_delete(self) -> None:
+    def on_cancel_flight(self) -> None:
         """Removes the selected flight from the package."""
         index = self.flight_list.currentIndex()
         if not index.isValid():
             logging.error(f"Cannot delete flight when no flight is selected.")
             return
-        self.flight_list.delete_flight(index)
+        self.flight_list.cancel_or_abort_flight(index)
 
 
 class PackageDelegate(TwoColumnRowDelegate):
@@ -305,7 +307,7 @@ class QPackageList(QListView):
         Dialog.open_edit_package_dialog(self.ato_model.get_package_model(index))
 
     def delete_package(self, index: QModelIndex) -> None:
-        self.ato_model.delete_package_at_index(index)
+        self.ato_model.cancel_or_abort_package_at_index(index)
 
     def on_new_packages(self, _parent: QModelIndex, first: int, _last: int) -> None:
         # Select the newly created pacakges. This should only ever happen due to
@@ -368,7 +370,7 @@ class QPackagePanel(QGroupBox):
         self.edit_button.clicked.connect(self.on_edit)
         self.button_row.addWidget(self.edit_button)
 
-        self.delete_button = QPushButton("Delete")
+        self.delete_button = QPushButton("Cancel/abort")
         # noinspection PyTypeChecker
         self.delete_button.setProperty("style", "btn-danger")
         self.delete_button.clicked.connect(self.on_delete)

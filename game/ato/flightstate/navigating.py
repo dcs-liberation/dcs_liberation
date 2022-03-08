@@ -75,7 +75,3 @@ class Navigating(InFlight):
     @property
     def spawn_type(self) -> StartType:
         return StartType.IN_FLIGHT
-
-    @property
-    def description(self) -> str:
-        return f"Flying to {self.next_waypoint.name}"

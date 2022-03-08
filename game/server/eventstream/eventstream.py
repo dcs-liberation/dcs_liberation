@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 from asyncio import Queue
+from collections.abc import Iterator
+from contextlib import contextmanager
 
 from game.sim import GameUpdateEvents
 
@@ -27,3 +31,10 @@ class EventStream:
         events = await cls._queue.get()
         cls._queue.task_done()
         return events
+
+    @staticmethod
+    @contextmanager
+    def event_context() -> Iterator[GameUpdateEvents]:
+        events = GameUpdateEvents()
+        yield events
+        EventStream.put_nowait(events)

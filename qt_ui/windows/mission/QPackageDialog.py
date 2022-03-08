@@ -202,7 +202,7 @@ class QPackageDialog(QDialog):
         if flight is None:
             logging.error(f"Cannot delete flight when no flight is selected.")
             return
-        self.package_model.delete_flight(flight)
+        self.package_model.cancel_or_abort_flight(flight)
         # noinspection PyUnresolvedReferences
         self.package_changed.emit()
 
@@ -255,7 +255,7 @@ class QNewPackageDialog(QPackageDialog):
     def on_cancel(self) -> None:
         super().on_cancel()
         for flight in self.package_model.package.flights:
-            self.package_model.delete_flight(flight)
+            self.package_model.cancel_or_abort_flight(flight)
 
 
 class QEditPackageDialog(QPackageDialog):
@@ -283,5 +283,5 @@ class QEditPackageDialog(QPackageDialog):
     def on_delete(self) -> None:
         """Removes the viewed package from the ATO."""
         # The ATO model returns inventory for us when deleting a package.
-        self.ato_model.delete_package(self.package_model.package)
+        self.ato_model.cancel_or_abort_package(self.package_model.package)
         self.close()

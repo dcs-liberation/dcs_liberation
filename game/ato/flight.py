@@ -9,7 +9,7 @@ from dcs.planes import C_101CC, C_101EB, Su_33
 
 from game.savecompat import has_save_compat_for
 from .flightroster import FlightRoster
-from .flightstate import FlightState, Uninitialized
+from .flightstate import FlightState, InFlight, Navigating, Uninitialized
 from .flightstate.killed import Killed
 from .loadouts import Loadout
 from ..sidc import (
@@ -50,6 +50,7 @@ class Flight(SidcDescribable):
         self.id = uuid.uuid4()
         self.package = package
         self.country = country
+        self.coalition = squadron.coalition
         self.squadron = squadron
         self.squadron.claim_inventory(count)
         if roster is None:
@@ -105,6 +106,8 @@ class Flight(SidcDescribable):
             state["props"] = {}
         if "id" not in state:
             state["id"] = uuid.uuid4()
+        if "coalition" not in state:
+            state["coalition"] = state["squadron"].coalition
         self.__dict__.update(state)
 
     @property
@@ -190,6 +193,27 @@ class Flight(SidcDescribable):
         if self.custom_name:
             return f"{self.custom_name} {self.count} x {self.unit_type}"
         return f"[{self.flight_type}] {self.count} x {self.unit_type}"
+
+    def abort(self) -> None:
+        from game.ato.flightplan import RtbFlightPlan
+
+        if not isinstance(self.state, InFlight):
+            raise RuntimeError(f"Cannot abort {self} because it is not in flight")
+
+        altitude, altitude_reference = self.state.estimate_altitude()
+
+        self.flight_plan = RtbFlightPlan.create_for_abort(
+            self, self.state.estimate_position(), altitude, altitude_reference
+        )
+
+        self.set_state(
+            Navigating(
+                self,
+                self.squadron.settings,
+                self.flight_plan.abort_index,
+                has_aborted=True,
+            )
+        )
 
     def set_state(self, state: FlightState) -> None:
         self.state = state

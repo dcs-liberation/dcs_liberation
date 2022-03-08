@@ -20,16 +20,27 @@ if TYPE_CHECKING:
 
 
 class InFlight(FlightState, ABC):
-    def __init__(self, flight: Flight, settings: Settings, waypoint_index: int) -> None:
+    def __init__(
+        self,
+        flight: Flight,
+        settings: Settings,
+        waypoint_index: int,
+        has_aborted: bool = False,
+    ) -> None:
         super().__init__(flight, settings)
         waypoints = self.flight.flight_plan.waypoints
         self.waypoint_index = waypoint_index
+        self.has_aborted = has_aborted
         self.current_waypoint = waypoints[self.waypoint_index]
         # TODO: Error checking for flight plans without landing waypoints.
         self.next_waypoint = waypoints[self.waypoint_index + 1]
         self.total_time_to_next_waypoint = self.travel_time_between_waypoints()
         self.elapsed_time = timedelta()
         self.current_waypoint_elapsed = False
+
+    @property
+    def cancelable(self) -> bool:
+        return False
 
     @property
     def in_flight(self) -> bool:
@@ -151,4 +162,8 @@ class InFlight(FlightState, ABC):
 
     @property
     def description(self) -> str:
-        return f"Flying to {self.next_waypoint.name}"
+        if self.has_aborted:
+            abort = "(Aborted) "
+        else:
+            abort = ""
+        return f"{abort}Flying to {self.next_waypoint.name}"

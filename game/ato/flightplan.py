@@ -1022,6 +1022,76 @@ class FerryFlightPlan(FlightPlan):
 
 
 @dataclass(frozen=True)
+class RtbFlightPlan(FlightPlan):
+    takeoff: FlightWaypoint
+    abort_location: FlightWaypoint
+    nav_to_destination: list[FlightWaypoint]
+    land: FlightWaypoint
+    divert: Optional[FlightWaypoint]
+    bullseye: FlightWaypoint
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.takeoff
+        yield self.abort_location
+        yield from self.nav_to_destination
+        yield self.land
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+    @property
+    def abort_index(self) -> int:
+        return 1
+
+    @property
+    def tot_waypoint(self) -> Optional[FlightWaypoint]:
+        return None
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> Optional[timedelta]:
+        return None
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return timedelta()
+
+    @staticmethod
+    def create_for_abort(
+        flight: Flight,
+        current_position: Point,
+        current_altitude: Distance,
+        altitude_reference: str,
+    ) -> RtbFlightPlan:
+        altitude_is_agl = flight.unit_type.dcs_unit_type.helicopter
+        altitude = (
+            feet(1500)
+            if altitude_is_agl
+            else flight.unit_type.preferred_patrol_altitude
+        )
+        builder = WaypointBuilder(flight, flight.coalition)
+        abort_point = builder.nav(
+            current_position, current_altitude, altitude_reference == "RADIO"
+        )
+        abort_point.name = "ABORT AND RTB"
+        abort_point.pretty_name = "Abort and RTB"
+        abort_point.description = "Abort mission and return to base"
+        return RtbFlightPlan(
+            package=flight.package,
+            flight=flight,
+            takeoff=builder.takeoff(flight.departure),
+            abort_location=abort_point,
+            nav_to_destination=builder.nav_path(
+                current_position, flight.arrival.position, altitude, altitude_is_agl
+            ),
+            land=builder.land(flight.arrival),
+            divert=builder.divert(flight.divert),
+            bullseye=builder.bullseye(),
+        )
+
+
+@dataclass(frozen=True)
 class CustomFlightPlan(FlightPlan):
     custom_waypoints: List[FlightWaypoint]
 
