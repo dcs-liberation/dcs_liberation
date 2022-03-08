@@ -29,6 +29,7 @@ class InFlight(FlightState, ABC):
         self.next_waypoint = waypoints[self.waypoint_index + 1]
         self.total_time_to_next_waypoint = self.travel_time_between_waypoints()
         self.elapsed_time = timedelta()
+        self.current_waypoint_elapsed = False
 
     @property
     def in_flight(self) -> bool:
@@ -91,6 +92,7 @@ class InFlight(FlightState, ABC):
 
     def advance_to_next_waypoint(self) -> None:
         self.flight.set_state(self.next_waypoint_state())
+        self.current_waypoint_elapsed = True
 
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta

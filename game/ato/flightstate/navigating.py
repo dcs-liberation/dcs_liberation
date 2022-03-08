@@ -22,7 +22,11 @@ class Navigating(InFlight):
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
         super().on_game_tick(events, time, duration)
-        events.update_flight_position(self.flight, self.estimate_position())
+
+        # If the parent tick caused this waypoint to become inactive don't update the
+        # position based on our now invalid state.
+        if not self.current_waypoint_elapsed:
+            events.update_flight_position(self.flight, self.estimate_position())
 
     def progress(self) -> float:
         return (
