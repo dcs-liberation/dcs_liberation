@@ -19,6 +19,7 @@ class FlightState(ABC):
     def __init__(self, flight: Flight, settings: Settings) -> None:
         self.flight = flight
         self.settings = settings
+        self.avoid_further_combat = False
 
     @property
     def alive(self) -> bool:

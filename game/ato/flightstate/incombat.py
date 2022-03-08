@@ -24,9 +24,16 @@ class InCombat(InFlight):
         self.previous_state = previous_state
         self.combat = combat
 
-    def exit_combat(self) -> None:
-        # TODO: Account for time passed while frozen.
+    def exit_combat(
+        self,
+        events: GameUpdateEvents,
+        time: datetime,
+        elapsed_time: timedelta,
+        avoid_further_combat: bool = False,
+    ) -> None:
         self.flight.set_state(self.previous_state)
+        self.previous_state.avoid_further_combat = avoid_further_combat
+        self.previous_state.on_game_tick(events, time, elapsed_time)
 
     @property
     def in_combat(self) -> bool:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import random
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 from shapely.ops import unary_union
@@ -61,7 +61,13 @@ class AirCombat(JoinableCombat):
     def describe(self) -> str:
         return f"in air-to-air combat"
 
-    def resolve(self, results: SimulationResults, events: GameUpdateEvents) -> None:
+    def resolve(
+        self,
+        results: SimulationResults,
+        events: GameUpdateEvents,
+        time: datetime,
+        elapsed_time: timedelta,
+    ) -> None:
         blue = []
         red = []
         for flight in self.flights:
@@ -95,4 +101,4 @@ class AirCombat(JoinableCombat):
             if random.random() >= 0.5:
                 flight.kill(results, events)
             else:
-                flight.state.exit_combat()
+                flight.state.exit_combat(events, time, elapsed_time)

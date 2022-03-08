@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import random
 from collections.abc import Iterator
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 from game.ato.flightstate import InCombat
@@ -37,7 +37,13 @@ class DefendingSam(FrozenCombat):
     def iter_flights(self) -> Iterator[Flight]:
         yield self.flight
 
-    def resolve(self, results: SimulationResults, events: GameUpdateEvents) -> None:
+    def resolve(
+        self,
+        results: SimulationResults,
+        events: GameUpdateEvents,
+        time: datetime,
+        elapsed_time: timedelta,
+    ) -> None:
         assert isinstance(self.flight.state, InCombat)
         if random.random() >= 0.5:
             logging.debug(f"Air defense combat auto-resolved with {self.flight} lost")
@@ -46,4 +52,4 @@ class DefendingSam(FrozenCombat):
             logging.debug(
                 f"Air defense combat auto-resolved with {self.flight} surviving"
             )
-            self.flight.state.exit_combat()
+            self.flight.state.exit_combat(events, time, elapsed_time)
