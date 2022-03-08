@@ -90,16 +90,31 @@ class InFlight(FlightState, ABC):
             return Loiter(self.flight, self.settings, new_index)
         return Navigating(self.flight, self.settings, new_index)
 
-    def advance_to_next_waypoint(self) -> None:
-        self.flight.set_state(self.next_waypoint_state())
+    def advance_to_next_waypoint(self) -> FlightState:
+        new_state = self.next_waypoint_state()
+        self.flight.set_state(new_state)
         self.current_waypoint_elapsed = True
+        return new_state
 
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
         self.elapsed_time += duration
         if self.elapsed_time > self.total_time_to_next_waypoint:
-            self.advance_to_next_waypoint()
+            new_state = self.advance_to_next_waypoint()
+
+            # Roll over any extra time to the next state. We don't need to loop here
+            # even if we've passed more than one waypoint because the new state will do
+            # the same. There is a small gap here where we only do that for other *in
+            # flight* states. We don't need to tick combat states (combat is ticked
+            # separately) or completed states at all, so the only states that might be
+            # under-ticked are the pre-takeoff states, where it's not really that
+            # critical if we under-simulate them by the tick period or less. The tick
+            # period at time of writing is one second. Not enough to throw off ground
+            # ops, but at 600 knots we'd be getting the position wrong by up to 1000
+            # feet.
+            rollover = self.elapsed_time - self.total_time_to_next_waypoint
+            new_state.on_game_tick(events, time, rollover)
 
     @property
     def is_at_ip(self) -> bool:
