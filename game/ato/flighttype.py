@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from enum import Enum
 
+from game.sidc import AirEntity
+
 
 class FlightType(Enum):
     """Enumeration of mission types.
@@ -88,3 +90,26 @@ class FlightType(Enum):
             FlightType.OCA_AIRCRAFT,
             FlightType.SEAD_ESCORT,
         }
+
+    @property
+    def entity_type(self) -> AirEntity:
+        return {
+            FlightType.AEWC: AirEntity.AIRBORNE_EARLY_WARNING,
+            FlightType.ANTISHIP: AirEntity.ANTISURFACE_WARFARE,
+            FlightType.BAI: AirEntity.ATTACK_STRIKE,
+            FlightType.BARCAP: AirEntity.FIGHTER,
+            FlightType.CAS: AirEntity.ATTACK_STRIKE,
+            FlightType.DEAD: AirEntity.ATTACK_STRIKE,
+            FlightType.ESCORT: AirEntity.ESCORT,
+            FlightType.FERRY: AirEntity.UNSPECIFIED,
+            FlightType.INTERCEPTION: AirEntity.FIGHTER,
+            FlightType.OCA_AIRCRAFT: AirEntity.ATTACK_STRIKE,
+            FlightType.OCA_RUNWAY: AirEntity.ATTACK_STRIKE,
+            FlightType.REFUELING: AirEntity.TANKER,
+            FlightType.SEAD: AirEntity.SUPPRESSION_OF_ENEMY_AIR_DEFENCE,
+            FlightType.SEAD_ESCORT: AirEntity.SUPPRESSION_OF_ENEMY_AIR_DEFENCE,
+            FlightType.STRIKE: AirEntity.ATTACK_STRIKE,
+            FlightType.SWEEP: AirEntity.FIGHTER,
+            FlightType.TARCAP: AirEntity.FIGHTER,
+            FlightType.TRANSPORT: AirEntity.UTILITY,
+        }.get(self, AirEntity.UNSPECIFIED)

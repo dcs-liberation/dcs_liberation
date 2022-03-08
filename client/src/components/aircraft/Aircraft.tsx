@@ -5,7 +5,7 @@ import { Marker } from "react-leaflet";
 
 function iconForFlight(flight: Flight) {
   const symbol = new Symbol(flight.sidc, {
-    size: 16,
+    size: 20,
   });
 
   return new Icon({

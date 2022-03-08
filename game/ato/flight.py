@@ -13,7 +13,6 @@ from .flightstate import FlightState, Uninitialized
 from .flightstate.killed import Killed
 from .loadouts import Loadout
 from ..sidc import (
-    AirEntity,
     Entity,
     SidcDescribable,
     StandardIdentity,
@@ -122,7 +121,7 @@ class Flight(SidcDescribable):
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
-        return SymbolSet.AIR, AirEntity.UNSPECIFIED
+        return SymbolSet.AIR, self.flight_type.entity_type
 
     @property
     def departure(self) -> ControlPoint:
