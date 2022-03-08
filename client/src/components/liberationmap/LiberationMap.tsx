@@ -80,6 +80,9 @@ export default function LiberationMap() {
         <LayersControl.Overlay name="Allied SAM detection range">
           <AirDefenseRangeLayer blue={true} detection />
         </LayersControl.Overlay>
+        <LayersControl.Overlay name="Selected blue flight plan">
+          <FlightPlansLayer blue={true} selectedOnly />
+        </LayersControl.Overlay>
         <LayersControl.Overlay name="All blue flight plans" checked>
           <FlightPlansLayer blue={true} />
         </LayersControl.Overlay>

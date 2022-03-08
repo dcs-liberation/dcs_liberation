@@ -6,6 +6,7 @@ import { LayerGroup } from "react-leaflet";
 
 interface FlightPlansLayerProps {
   blue: boolean;
+  selectedOnly?: true;
 }
 
 function SelectedFlightPlan(props: FlightPlansLayerProps) {
@@ -19,10 +20,17 @@ function SelectedFlightPlan(props: FlightPlansLayerProps) {
     return <></>;
   }
 
-  return <FlightPlan key={flight.id} flight={flight} selected={true} />;
+  return (
+    <FlightPlan
+      key={flight.id}
+      flight={flight}
+      selected={true}
+      highlight={!props.selectedOnly}
+    />
+  );
 }
 
-export default function FlightPlansLayer(props: FlightPlansLayerProps) {
+function UnselectedFlightPlans(props: FlightPlansLayerProps) {
   const flightData = useAppSelector(selectFlights);
   const isNotSelected = (flight: Flight) => {
     if (flightData.selected == null) {
@@ -31,8 +39,12 @@ export default function FlightPlansLayer(props: FlightPlansLayerProps) {
     return flightData.selected !== flight.id;
   };
 
+  if (props.selectedOnly) {
+    return <></>;
+  }
+
   return (
-    <LayerGroup>
+    <>
       {Object.values(flightData.flights)
         .filter(isNotSelected)
         .filter((flight) => props.blue === flight.blue)
@@ -41,6 +53,14 @@ export default function FlightPlansLayer(props: FlightPlansLayerProps) {
             <FlightPlan key={flight.id} flight={flight} selected={false} />
           );
         })}
+    </>
+  );
+}
+
+export default function FlightPlansLayer(props: FlightPlansLayerProps) {
+  return (
+    <LayerGroup>
+      <UnselectedFlightPlans {...props} />
       <SelectedFlightPlan {...props} />
     </LayerGroup>
   );

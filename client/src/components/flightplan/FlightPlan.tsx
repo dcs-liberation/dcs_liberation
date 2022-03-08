@@ -11,10 +11,11 @@ const SELECTED_PATH = "#ffff00";
 interface FlightPlanProps {
   flight: Flight;
   selected: boolean;
+  highlight?: boolean;
 }
 
 const pathColor = (props: FlightPlanProps) => {
-  if (props.selected) {
+  if (props.selected && props.highlight) {
     return SELECTED_PATH;
   } else if (props.flight.blue) {
     return BLUE_PATH;
