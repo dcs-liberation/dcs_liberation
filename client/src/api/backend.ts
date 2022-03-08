@@ -1,11 +1,15 @@
 import axios from "axios";
 
-export const HTTP_URL = "http://[::1]:1688/";
+const backendAddr =
+  new URL(window.location.toString()).searchParams.get("server") ??
+  "[::1]:1688";
+
+export const HTTP_URL = `http://${backendAddr}/`;
 
 export const backend = axios.create({
   baseURL: HTTP_URL,
 });
 
-export const WEBSOCKET_URL = "ws://[::1]:1688/eventstream";
+export const WEBSOCKET_URL = `ws://${backendAddr}/eventstream`;
 
 export default backend;

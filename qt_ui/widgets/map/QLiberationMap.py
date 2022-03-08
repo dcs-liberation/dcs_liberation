@@ -15,6 +15,7 @@ from PySide2.QtWebEngineWidgets import (
 )
 
 from game import Game
+from game.server.settings import ServerSettings
 from qt_ui.models import GameModel
 from .model import MapModel
 
@@ -61,6 +62,12 @@ class QLiberationMap(QWebEngineView):
             url = QUrl.fromLocalFile(
                 str(Path("resources/ui/map/canvas.html").resolve())
             )
+        server_settings = ServerSettings.get()
+        host = server_settings.server_bind_address
+        if host.startswith("::"):
+            host = f"[{host}]"
+        port = server_settings.server_port
+        url.setQuery(f"server={host}:{port}")
         self.page.load(url)
         self.setPage(self.page)
 

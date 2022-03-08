@@ -14,6 +14,7 @@ env/
 /kneeboards
 /liberation_preferences.json
 /state.json
+/serverconfig.env
 
 /logs/
 /resources/logging.yaml

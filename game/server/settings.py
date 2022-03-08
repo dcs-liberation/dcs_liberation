@@ -19,15 +19,14 @@ class ServerSettings(BaseSettings):
     # no client/server workflow yet, security has not been a focus.
     server_bind_address: str = "::1"
 
-    # If you for some reason change the port, you'll need to also update map.js and
-    # client/src/api/backend.ts.
+    # This (and the address) will be passed the the front end as a query parameter.
     server_port: int = 1688
-
-    # Disable to allow requests to be made to the backend without an API key.
-    require_api_key: bool = True
 
     # Enable to allow cross-origin requests from http://localhost:3000.
     cors_allow_debug_server: bool = False
+
+    class Config:
+        env_file = "serverconfig.env"
 
     @classmethod
     @lru_cache
