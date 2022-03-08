@@ -29,9 +29,10 @@ function CombatLines(props: CombatProps) {
   const flightPosition: LatLng = props.combat.flight_position;
   return (
     <>
-      {props.combat.target_positions.map((position) => {
+      {props.combat.target_positions.map((position, idx) => {
         return (
           <Polyline
+            key={idx}
             positions={[flightPosition, position]}
             color="#c85050"
             interactive={false}
