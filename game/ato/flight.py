@@ -10,6 +10,7 @@ from dcs.planes import C_101CC, C_101EB, Su_33
 from game.savecompat import has_save_compat_for
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Uninitialized
+from .flightstate.killed import Killed
 from .loadouts import Loadout
 from ..sidc import (
     AirEntity,
@@ -117,7 +118,7 @@ class Flight(SidcDescribable):
 
     @property
     def sidc_status(self) -> Status:
-        return Status.PRESENT
+        return Status.PRESENT if self.alive else Status.PRESENT_DESTROYED
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
@@ -202,7 +203,11 @@ class Flight(SidcDescribable):
     def should_halt_sim(self) -> bool:
         return self.state.should_halt_sim()
 
-    def kill(self, results: SimulationResults) -> None:
+    @property
+    def alive(self) -> bool:
+        return self.state.alive
+
+    def kill(self, results: SimulationResults, events: GameUpdateEvents) -> None:
         # This is a bit messy while we're in transition from turn-based to turnless
         # because we want the simulation to have minimal impact on the save game while
         # turns exist so that loading a game is essentially a way to reset the
@@ -211,17 +216,17 @@ class Flight(SidcDescribable):
         # the UI to reflect that aircraft were lost and avoid generating those flights
         # when the mission is generated.
         #
-        # For now we do this by removing the flight from the ATO and logging the kill in
-        # the SimulationResults, which is similar to the Debriefing. If a flight is
-        # killed and the player saves and reloads, those pilots/aircraft will be
-        # unusable until the next turn, but otherwise will survive.
-        #
-        # This is going to be extremely temporary since the solution for other killable
-        # game objects (killed SAMs, sinking carriers, bombed out runways) will not be
-        # so easily worked around.
+        # For now we do this by logging the kill in the SimulationResults, which is
+        # similar to the Debriefing. We also set the flight's state to Killed, which
+        # will prevent it from being spawned in the mission and updates the SIDC.
+        # This does leave an opportunity for players to cheat since the UI won't stop
+        # them from cancelling a dead flight, returning the aircraft to the pool. Not a
+        # big deal for now.
         # TODO: Support partial kills.
-        # TODO: Remove empty packages from the ATO?
-        self.package.remove_flight(self)
+        self.set_state(
+            Killed(self.state.estimate_position(), self, self.squadron.settings)
+        )
+        events.update_flight(self)
         for pilot in self.roster.pilots:
             if pilot is not None:
                 results.kill_pilot(self, pilot)

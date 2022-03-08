@@ -10,6 +10,7 @@ from shapely.ops import unary_union
 from game.ato.flightstate import InCombat, InFlight
 from game.utils import dcs_to_shapely_point
 from .joinablecombat import JoinableCombat
+from .. import GameUpdateEvents
 
 if TYPE_CHECKING:
     from game.ato import Flight
@@ -60,7 +61,7 @@ class AirCombat(JoinableCombat):
     def describe(self) -> str:
         return f"in air-to-air combat"
 
-    def resolve(self, results: SimulationResults) -> None:
+    def resolve(self, results: SimulationResults, events: GameUpdateEvents) -> None:
         blue = []
         red = []
         for flight in self.flights:
@@ -87,11 +88,11 @@ class AirCombat(JoinableCombat):
             logging.debug(f"{self} auto-resolved as red victory")
 
         for flight in loser:
-            flight.kill(results)
+            flight.kill(results, events)
 
         for flight in winner:
             assert isinstance(flight.state, InCombat)
             if random.random() / flight.count >= 0.5:
-                flight.kill(results)
+                flight.kill(results, events)
             else:
                 flight.state.exit_combat()

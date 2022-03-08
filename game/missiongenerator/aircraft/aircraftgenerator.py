@@ -105,11 +105,12 @@ class AircraftGenerator:
             if not package.flights:
                 continue
             for flight in package.flights:
-                logging.info(f"Generating flight: {flight.unit_type}")
-                group = self.create_and_configure_flight(
-                    flight, country, dynamic_runways
-                )
-                self.unit_map.add_aircraft(group, flight)
+                if flight.alive:
+                    logging.info(f"Generating flight: {flight.unit_type}")
+                    group = self.create_and_configure_flight(
+                        flight, country, dynamic_runways
+                    )
+                    self.unit_map.add_aircraft(group, flight)
 
     def spawn_unused_aircraft(
         self, player_country: Country, enemy_country: Country

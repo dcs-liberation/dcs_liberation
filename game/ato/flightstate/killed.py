@@ -5,14 +5,26 @@ from typing import TYPE_CHECKING
 
 from dcs import Point
 
+from game.settings import Settings
 from .flightstate import FlightState
 from ..starttype import StartType
 
 if TYPE_CHECKING:
+    from .. import Flight
     from game.sim.gameupdateevents import GameUpdateEvents
 
 
-class Completed(FlightState):
+class Killed(FlightState):
+    def __init__(
+        self, last_position: Point, flight: Flight, settings: Settings
+    ) -> None:
+        super().__init__(flight, settings)
+        self.last_position = last_position
+
+    @property
+    def alive(self) -> bool:
+        return False
+
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
@@ -23,12 +35,11 @@ class Completed(FlightState):
         return False
 
     def estimate_position(self) -> Point:
-        return self.flight.arrival.position
+        return self.last_position
 
     @property
     def spawn_type(self) -> StartType:
-        # TODO: May want to do something different to make these uncontrolled?
-        return StartType.COLD
+        raise RuntimeError("Attempted to spawn a dead flight")
 
     @property
     def description(self) -> str:

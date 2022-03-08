@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from game.ato.flightstate import InCombat
 from .frozencombat import FrozenCombat
+from .. import GameUpdateEvents
 
 if TYPE_CHECKING:
     from game.ato import Flight
@@ -36,11 +37,11 @@ class DefendingSam(FrozenCombat):
     def iter_flights(self) -> Iterator[Flight]:
         yield self.flight
 
-    def resolve(self, results: SimulationResults) -> None:
+    def resolve(self, results: SimulationResults, events: GameUpdateEvents) -> None:
         assert isinstance(self.flight.state, InCombat)
         if random.random() / self.flight.count >= 0.5:
             logging.debug(f"Air defense combat auto-resolved with {self.flight} lost")
-            self.flight.kill(results)
+            self.flight.kill(results, events)
         else:
             logging.debug(
                 f"Air defense combat auto-resolved with {self.flight} surviving"

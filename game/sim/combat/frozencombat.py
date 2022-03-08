@@ -7,6 +7,7 @@ from datetime import timedelta
 from typing import TYPE_CHECKING
 
 from game.ato.flightstate import InCombat, InFlight
+from .. import GameUpdateEvents
 
 if TYPE_CHECKING:
     from game.ato import Flight
@@ -19,15 +20,17 @@ class FrozenCombat(ABC):
         self.freeze_duration = freeze_duration
         self.elapsed_time = timedelta()
 
-    def on_game_tick(self, duration: timedelta, results: SimulationResults) -> bool:
+    def on_game_tick(
+        self, duration: timedelta, results: SimulationResults, events: GameUpdateEvents
+    ) -> bool:
         self.elapsed_time += duration
         if self.elapsed_time >= self.freeze_duration:
-            self.resolve(results)
+            self.resolve(results, events)
             return True
         return False
 
     @abstractmethod
-    def resolve(self, results: SimulationResults) -> None:
+    def resolve(self, results: SimulationResults, events: GameUpdateEvents) -> None:
         ...
 
     @abstractmethod

@@ -20,6 +20,10 @@ class FlightState(ABC):
         self.flight = flight
         self.settings = settings
 
+    @property
+    def alive(self) -> bool:
+        return True
+
     @abstractmethod
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta

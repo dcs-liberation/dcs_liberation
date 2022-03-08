@@ -49,7 +49,7 @@ class AircraftSimulation:
 
         still_active = []
         for combat in self.combats:
-            if combat.on_game_tick(duration, self.results):
+            if combat.on_game_tick(duration, self.results, events):
                 events.end_combat(combat)
             else:
                 still_active.append(combat)
