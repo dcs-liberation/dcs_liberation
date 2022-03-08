@@ -92,7 +92,7 @@ class AirCombat(JoinableCombat):
 
         for flight in winner:
             assert isinstance(flight.state, InCombat)
-            if random.random() / flight.count >= 0.5:
+            if random.random() >= 0.5:
                 flight.kill(results, events)
             else:
                 flight.state.exit_combat()

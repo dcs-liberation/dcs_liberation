@@ -39,7 +39,7 @@ class DefendingSam(FrozenCombat):
 
     def resolve(self, results: SimulationResults, events: GameUpdateEvents) -> None:
         assert isinstance(self.flight.state, InCombat)
-        if random.random() / self.flight.count >= 0.5:
+        if random.random() >= 0.5:
             logging.debug(f"Air defense combat auto-resolved with {self.flight} lost")
             self.flight.kill(results, events)
         else:
