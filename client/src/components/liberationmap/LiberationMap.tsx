@@ -11,6 +11,7 @@ import SupplyRoutesLayer from "../supplyrouteslayer";
 import TerrainZonesLayers from "../terrainzones/TerrainZonesLayers";
 import TgosLayer from "../tgoslayer/TgosLayer";
 import { CoalitionThreatZones } from "../threatzones";
+import { WaypointDebugZonesControls } from "../waypointdebugzones/WaypointDebugZonesControls";
 import "./LiberationMap.css";
 import { Map } from "leaflet";
 import { useEffect, useRef } from "react";
@@ -96,6 +97,7 @@ export default function LiberationMap() {
           <NavMeshLayer blue={false} />
         </LayersControl.Overlay>
         <TerrainZonesLayers />
+        <WaypointDebugZonesControls />
       </LayersControl>
     </MapContainer>
   );

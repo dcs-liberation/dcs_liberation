@@ -76,6 +76,8 @@ export const {
 } = flightsSlice.actions;
 
 export const selectFlights = (state: RootState) => state.flights;
+export const selectSelectedFlightId = (state: RootState) =>
+  state.flights.selected;
 export const selectSelectedFlight = (state: RootState) => {
   const id = state.flights.selected;
   return id ? state.flights.flights[id] : null;
