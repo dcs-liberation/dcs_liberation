@@ -20,7 +20,7 @@ class ServerSettings(BaseSettings):
     server_bind_address: str = "::1"
 
     # This (and the address) will be passed the the front end as a query parameter.
-    server_port: int = 1688
+    server_port: int = 16880
 
     # Enable to allow cross-origin requests from http://localhost:3000.
     cors_allow_debug_server: bool = False

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const backendAddr =
   new URL(window.location.toString()).searchParams.get("server") ??
-  "[::1]:1688";
+  "[::1]:16880";
 
 export const HTTP_URL = `http://${backendAddr}/`;
 
