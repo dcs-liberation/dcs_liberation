@@ -3,10 +3,11 @@ from __future__ import annotations
 import itertools
 import uuid
 from abc import ABC
-from typing import Iterator, List, Optional, TYPE_CHECKING
+from typing import Any, Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 from dcs.unittype import VehicleType
+from shapely.geometry import Point as ShapelyPoint
 
 from game.sidc import (
     Entity,
@@ -19,15 +20,16 @@ from game.sidc import (
     Status,
     SymbolSet,
 )
+from .missiontarget import MissionTarget
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
+    from game.ato.flighttype import FlightType
+    from game.threatzones import ThreatPoly
     from .theatergroup import TheaterUnit, TheaterGroup
     from .controlpoint import ControlPoint
-    from ..ato.flighttype import FlightType
 
-from .missiontarget import MissionTarget
 
 NAME_BY_CATEGORY = {
     "ewr": "Early Warning Radar",
@@ -69,6 +71,16 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
         self.control_point = control_point
         self.sea_object = sea_object
         self.groups: List[TheaterGroup] = []
+        self._threat_poly: ThreatPoly | None = None
+
+    def __getstate__(self) -> dict[str, Any]:
+        state = self.__dict__.copy()
+        del state["_threat_poly"]
+        return state
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        state["_threat_poly"] = None
+        self.__dict__.update(state)
 
     @property
     def sidc_status(self) -> Status:
@@ -193,6 +205,22 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
     def threat_range(self, group: TheaterGroup, radar_only: bool = False) -> Distance:
         return self._max_range_of_type(group, "threat_range")
 
+    def threat_poly(self) -> ThreatPoly | None:
+        if self._threat_poly is None:
+            self._threat_poly = self._make_threat_poly()
+        return self._threat_poly
+
+    def invalidate_threat_poly(self) -> None:
+        self._threat_poly = None
+
+    def _make_threat_poly(self) -> ThreatPoly | None:
+        threat_range = self.max_threat_range()
+        if not threat_range:
+            return None
+
+        point = ShapelyPoint(self.position.x, self.position.y)
+        return point.buffer(threat_range.meters)
+
     @property
     def is_ammo_depot(self) -> bool:
         return self.category == "ammo"
@@ -215,6 +243,7 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
         yield self.position
 
     def clear(self) -> None:
+        self.invalidate_threat_poly()
         self.groups = []
 
     @property

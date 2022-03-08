@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from dcs import Point
 from shapely.ops import unary_union
 
-from game.utils import dcs_to_shapely_point, meters
+from game.utils import dcs_to_shapely_point
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater, TheaterGroundObject
@@ -36,14 +36,7 @@ class SamEngagementZones:
         individual_zones = []
         for cp in theater.control_points_for(player):
             for tgo in cp.connected_objectives:
-                if (region := cls.threat_region(tgo)) is not None:
+                if (region := tgo.threat_poly()) is not None:
                     commit_regions.append(region)
                     individual_zones.append((tgo, region))
         return SamEngagementZones(unary_union(commit_regions), individual_zones)
-
-    @classmethod
-    def threat_region(cls, tgo: TheaterGroundObject) -> Optional[ThreatPoly]:
-        threat_range = tgo.max_threat_range()
-        if threat_range <= meters(0):
-            return None
-        return dcs_to_shapely_point(tgo.position).buffer(threat_range.meters)

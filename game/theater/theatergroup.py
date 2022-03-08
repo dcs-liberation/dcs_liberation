@@ -58,6 +58,7 @@ class TheaterUnit:
 
     def kill(self, events: GameUpdateEvents) -> None:
         self.alive = False
+        self.ground_object.invalidate_threat_poly()
         events.update_tgo(self.ground_object)
 
     @property
