@@ -43,4 +43,4 @@ class Killed(FlightState):
 
     @property
     def description(self) -> str:
-        return "Completed"
+        return "KIA"
