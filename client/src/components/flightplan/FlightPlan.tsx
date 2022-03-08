@@ -48,14 +48,16 @@ const WaypointMarkers = (props: FlightPlanProps) => {
 
   var markers: ReactElement[] = [];
   props.flight.waypoints?.forEach((p, idx) => {
-    markers.push(
-      <WaypointMarker
-        key={idx}
-        number={idx}
-        waypoint={p}
-        flight={props.flight}
-      />
-    );
+    if (p.should_mark) {
+      markers.push(
+        <WaypointMarker
+          key={idx}
+          number={idx}
+          waypoint={p}
+          flight={props.flight}
+        />
+      );
+    }
   });
 
   return <>{markers}</>;
