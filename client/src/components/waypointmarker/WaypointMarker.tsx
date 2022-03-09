@@ -1,6 +1,8 @@
-import backend from "../../api/backend";
-import { Flight } from "../../api/liberationApi";
-import { Waypoint } from "../../api/liberationApi";
+import {
+  Flight,
+  Waypoint,
+  useSetWaypointPositionMutation,
+} from "../../api/liberationApi";
 import { Icon } from "leaflet";
 import { Marker as LMarker } from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
@@ -35,6 +37,8 @@ const WaypointMarker = (props: WaypointMarkerProps) => {
   // changes.
   const map = useMap();
   const marker: MutableRefObject<LMarker | undefined> = useRef();
+
+  const [putDestination] = useSetWaypointPositionMutation();
 
   const rebindTooltip = useCallback(() => {
     if (marker.current === undefined) {
@@ -73,13 +77,18 @@ const WaypointMarker = (props: WaypointMarkerProps) => {
           const m: LMarker = e.target;
           m.setTooltipContent("Waiting to recompute TOT...");
         },
-        dragend: (e) => {
+        dragend: async (e) => {
           const m: LMarker = e.target;
           const destination = m.getLatLng();
-          backend.post(
-            `/waypoints/${props.flight.id}/${props.number}/position`,
-            destination
-          );
+          try {
+            await putDestination({
+              flightId: props.flight.id,
+              waypointIdx: props.number,
+              leafletPoint: { lat: destination.lat, lng: destination.lng },
+            });
+          } catch (e) {
+            console.error("Failed to set waypoint position", e);
+          }
         },
       }}
       ref={(ref) => {

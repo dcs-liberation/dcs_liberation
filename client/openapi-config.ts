@@ -4,8 +4,8 @@ const config: ConfigFile = {
   schemaFile: "http://[::1]:16880/openapi.json",
   apiFile: "./src/api/baseApi.ts",
   apiImport: "baseApi",
-  outputFile: "./src/api/liberationApi.ts",
-  exportName: "liberationApi",
+  outputFile: "./src/api/_liberationApi.ts",
+  exportName: "_liberationApi",
   hooks: true,
 };
 
