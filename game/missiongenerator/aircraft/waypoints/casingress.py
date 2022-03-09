@@ -3,8 +3,8 @@ import logging
 from dcs.point import MovingPoint
 from dcs.task import EngageTargets, EngageTargetsInZone, Targets
 
+from game.ato.flightplans.cas import CasFlightPlan
 from game.utils import nautical_miles
-from game.ato.flightplan import CasFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 

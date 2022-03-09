@@ -11,7 +11,7 @@ from dcs.task import (
 )
 
 from game.ato import FlightType
-from game.ato.flightplan import PatrollingFlightPlan
+from game.ato.flightplans.patrolling import PatrollingFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 

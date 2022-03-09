@@ -16,7 +16,8 @@ from PySide2.QtWidgets import (
 )
 
 from game.ato.flight import Flight
-from game.ato.flightplan import FlightPlanBuilder, PlanningError
+from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
+from game.ato.flightplans.planningerror import PlanningError
 from game.ato.package import Package
 from game.game import Game
 from game.server import EventStream

@@ -18,11 +18,12 @@ from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.runways import RunwayData
 from game.squadrons import Pilot
-from game.ato.flightplan import AwacsFlightPlan, RefuelingFlightPlan
 from .aircraftbehavior import AircraftBehavior
 from .aircraftpainter import AircraftPainter
 from .flightdata import FlightData
 from .waypoints import WaypointGenerator
+from ...ato.flightplans.aewc import AewcFlightPlan
+from ...ato.flightplans.theaterrefueling import TheaterRefuelingFlightPlan
 
 if TYPE_CHECKING:
     from game import Game
@@ -128,7 +129,7 @@ class FlightGroupConfigurator:
 
     def register_air_support(self, channel: RadioFrequency) -> None:
         callsign = callsign_for_support_unit(self.group)
-        if isinstance(self.flight.flight_plan, AwacsFlightPlan):
+        if isinstance(self.flight.flight_plan, AewcFlightPlan):
             self.air_support.awacs.append(
                 AwacsInfo(
                     group_name=str(self.group.name),
@@ -136,11 +137,11 @@ class FlightGroupConfigurator:
                     freq=channel,
                     depature_location=self.flight.departure.name,
                     end_time=self.flight.flight_plan.mission_departure_time,
-                    start_time=self.flight.flight_plan.mission_start_time,
+                    start_time=self.flight.flight_plan.takeoff_time(),
                     blue=self.flight.departure.captured,
                 )
             )
-        elif isinstance(self.flight.flight_plan, RefuelingFlightPlan):
+        elif isinstance(self.flight.flight_plan, TheaterRefuelingFlightPlan):
             tacan = self.tacan_registry.alloc_for_band(TacanBand.Y, TacanUsage.AirToAir)
             self.air_support.tankers.append(
                 TankerInfo(

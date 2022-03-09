@@ -9,7 +9,7 @@ from dcs.planes import C_101CC, C_101EB, Su_33
 
 from game.savecompat import has_save_compat_for
 from .flightroster import FlightRoster
-from .flightstate import FlightState, InFlight, Navigating, Uninitialized
+from .flightstate import FlightState, Navigating, Uninitialized
 from .flightstate.killed import Killed
 from .loadouts import Loadout
 from ..sidc import (
@@ -84,11 +84,10 @@ class Flight(SidcDescribable):
         # Will be replaced with a more appropriate FlightPlan by
         # FlightPlanBuilder, but an empty flight plan the flight begins with an
         # empty flight plan.
-        from game.ato.flightplan import FlightPlan, CustomFlightPlan
+        from game.ato.flightplans.flightplan import FlightPlan
+        from .flightplans.custom import CustomFlightPlan
 
-        self.flight_plan: FlightPlan = CustomFlightPlan(
-            package=package, flight=self, custom_waypoints=[]
-        )
+        self.flight_plan: FlightPlan = CustomFlightPlan(self, [])
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
@@ -195,16 +194,11 @@ class Flight(SidcDescribable):
         return f"[{self.flight_type}] {self.count} x {self.unit_type}"
 
     def abort(self) -> None:
-        from game.ato.flightplan import RtbFlightPlan
+        from .flightplans.rtb import RtbFlightPlan
 
-        if not isinstance(self.state, InFlight):
-            raise RuntimeError(f"Cannot abort {self} because it is not in flight")
-
-        altitude, altitude_reference = self.state.estimate_altitude()
-
-        self.flight_plan = RtbFlightPlan.create_for_abort(
-            self, self.state.estimate_position(), altitude, altitude_reference
-        )
+        self.flight_plan = RtbFlightPlan.builder_type()(
+            self, self.coalition.game.theater
+        ).build()
 
         self.set_state(
             Navigating(

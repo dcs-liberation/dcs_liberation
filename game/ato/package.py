@@ -6,10 +6,10 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Dict, List, Optional, TYPE_CHECKING
 
+from .flightplans.formation import FormationFlightPlan
 from game.db import Database
 from game.utils import Speed
 from .flight import Flight
-from .flightplan import FormationFlightPlan
 from .flighttype import FlightType
 from .packagewaypoints import PackageWaypoints
 from .traveltime import TotEstimator

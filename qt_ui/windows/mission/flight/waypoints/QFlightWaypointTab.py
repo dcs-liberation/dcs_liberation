@@ -12,17 +12,15 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
-from game.ato.package import Package
+from game.ato.flight import Flight
+from game.ato.flightplans.custom import CustomFlightPlan
+from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
+from game.ato.flightplans.formationattack import FormationAttackFlightPlan
+from game.ato.flightplans.planningerror import PlanningError
 from game.ato.flighttype import FlightType
 from game.ato.flightwaypoint import FlightWaypoint
-from game.ato.flight import Flight
-from game.ato.flightplan import (
-    CustomFlightPlan,
-    FlightPlanBuilder,
-    PlanningError,
-    StrikeFlightPlan,
-)
 from game.ato.loadouts import Loadout
+from game.ato.package import Package
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import (
     QFlightWaypointList,
 )
@@ -107,7 +105,7 @@ class QFlightWaypointTab(QFrame):
         # Need to degrade to a custom flight plan and remove the waypoint.
         # If the waypoint is a target waypoint and is not the last target
         # waypoint, we don't need to degrade.
-        if isinstance(self.flight.flight_plan, StrikeFlightPlan):
+        if isinstance(self.flight.flight_plan, FormationAttackFlightPlan):
             is_target = waypoint in self.flight.flight_plan.targets
             if is_target and len(self.flight.flight_plan.targets) > 1:
                 self.flight.flight_plan.targets.remove(waypoint)
@@ -144,9 +142,8 @@ class QFlightWaypointTab(QFrame):
     def degrade_to_custom_flight_plan(self) -> None:
         if not isinstance(self.flight.flight_plan, CustomFlightPlan):
             self.flight.flight_plan = CustomFlightPlan(
-                package=self.flight.package,
                 flight=self.flight,
-                custom_waypoints=self.flight.flight_plan.waypoints,
+                waypoints=self.flight.flight_plan.waypoints,
             )
 
     def confirm_recreate(self, task: FlightType) -> None:

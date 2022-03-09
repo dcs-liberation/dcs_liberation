@@ -5,6 +5,8 @@ from collections import defaultdict
 from typing import Dict, Iterable, Optional, Set, TYPE_CHECKING
 
 from game.ato.airtaaskingorder import AirTaskingOrder
+from game.ato.closestairfields import ObjectiveDistanceCache
+from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.commander.missionproposals import EscortType, ProposedFlight, ProposedMission
@@ -17,8 +19,6 @@ from game.settings import Settings
 from game.squadrons import AirWing
 from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
-from game.ato.closestairfields import ObjectiveDistanceCache
-from game.ato.flightplan import FlightPlanBuilder
 
 if TYPE_CHECKING:
     from game.ato import Flight

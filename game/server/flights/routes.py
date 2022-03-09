@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends
 from shapely.geometry import LineString, Point as ShapelyPoint
 
 from game import Game
-from game.ato.flightplan import CasFlightPlan, PatrollingFlightPlan
+from game.ato.flightplans.patrolling import PatrollingFlightPlan
+from game.ato.flightplans.cas import CasFlightPlan
 from game.server import GameContext
 from game.server.flights.models import FlightJs
 from game.server.leaflet import LeafletPoly, ShapelyUtil

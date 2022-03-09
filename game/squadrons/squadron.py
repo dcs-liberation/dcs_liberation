@@ -9,9 +9,9 @@ from typing import Optional, Sequence, TYPE_CHECKING
 from faker import Faker
 
 from game.ato import Flight, FlightType, Package
-from game.ato.flightplan import FlightPlanBuilder
 from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
+from ..ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from ..db.database import Database
 from ..utils import meters
 

@@ -23,7 +23,8 @@ from dcs.task import (
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
-from game.ato.flightplan import AwacsFlightPlan, RefuelingFlightPlan
+from game.ato.flightplans.aewc import AewcFlightPlan
+from game.ato.flightplans.theaterrefueling import TheaterRefuelingFlightPlan
 
 
 class AircraftBehavior:
@@ -221,7 +222,7 @@ class AircraftBehavior:
     def configure_awacs(self, group: FlyingGroup[Any], flight: Flight) -> None:
         group.task = AWACS.name
 
-        if not isinstance(flight.flight_plan, AwacsFlightPlan):
+        if not isinstance(flight.flight_plan, AewcFlightPlan):
             logging.error(
                 f"Cannot configure AEW&C tasks for {flight} because it does not have "
                 "an AEW&C flight plan."
@@ -242,7 +243,7 @@ class AircraftBehavior:
     def configure_refueling(self, group: FlyingGroup[Any], flight: Flight) -> None:
         group.task = Refueling.name
 
-        if not isinstance(flight.flight_plan, RefuelingFlightPlan):
+        if not isinstance(flight.flight_plan, TheaterRefuelingFlightPlan):
             logging.error(
                 f"Cannot configure racetrack refueling tasks for {flight} because it "
                 "does not have an racetrack refueling flight plan."
