@@ -3,10 +3,10 @@ from __future__ import annotations
 import itertools
 import uuid
 from abc import ABC
-from typing import Any, Iterator, List, Optional, TYPE_CHECKING
+from typing import Any, Iterator, List, Optional, TYPE_CHECKING, Type
 
 from dcs.mapping import Point
-from dcs.unittype import VehicleType
+from dcs.unittype import VehicleType, ShipType
 from shapely.geometry import Point as ShapelyPoint
 
 from game.sidc import (
@@ -268,6 +268,12 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
             if group.name == name:
                 return group
         return None
+
+    def get_carrier_type(self) -> Type[ShipType]:
+        carrier_type = self.groups[0].units[0].type
+        if issubclass(carrier_type, ShipType):
+            return carrier_type
+        raise RuntimeError(f"First unit of TGO {self.name} is no Ship")
 
 
 class BuildingGroundObject(TheaterGroundObject):
