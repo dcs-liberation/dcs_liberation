@@ -289,6 +289,8 @@ class Faction:
         if not mod_settings.uh_60l:
             self.remove_aircraft("UH-60L")
             self.remove_aircraft("KC130J")
+        if not mod_settings.f16i_sufa:
+            self.remove_aircraft("F-16I")
         if not mod_settings.f22_raptor:
             self.remove_aircraft("F-22A")
         if not mod_settings.f104_starfighter:

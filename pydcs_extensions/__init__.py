@@ -1,5 +1,6 @@
 from .a4ec import *
 from .f104 import *
+from .f16i import *
 from .f22a import *
 from .frenchpack import *
 from .hercules import *

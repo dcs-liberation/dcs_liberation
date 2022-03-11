@@ -112,6 +112,7 @@ from dcs.unittype import FlyingType
 from game.dcs.aircrafttype import AircraftType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
+from pydcs_extensions.f16i.f16i import F_16I
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
@@ -139,6 +140,7 @@ CAP_CAPABLE = [
     Su_27,
     MiG_29S,
     F_16C_50,
+    F_16I,
     FA_18C_hornet,
     JF_17,
     JAS39Gripen,
@@ -187,6 +189,7 @@ CAS_CAPABLE = [
     Su_25T,
     Su_25,
     F_15E,
+    F_16I,
     F_16C_50,
     FA_18C_hornet,
     Tornado_GR4,
@@ -255,6 +258,7 @@ CAS_CAPABLE = [
 # Aircraft used for SEAD and SEAD Escort tasks. Must be capable of the CAS DCS task.
 SEAD_CAPABLE = [
     JF_17,
+    F_16I,
     F_16C_50,
     FA_18C_hornet,
     Tornado_IDS,
@@ -316,6 +320,7 @@ STRIKE_CAPABLE = [
     F_15E,
     AJS37,
     Tornado_GR4,
+    F_16I,
     F_16C_50,
     FA_18C_hornet,
     AV8BNA,
@@ -409,6 +414,7 @@ RUNWAY_ATTACK_CAPABLE = [
     H_6J,
     F_15E,
     AJS37,
+    F_16I,
     F_16C_50,
     FA_18C_hornet,
     AV8BNA,

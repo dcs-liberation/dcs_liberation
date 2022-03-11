@@ -297,6 +297,7 @@ def create_game(
         ModSettings(
             a4_skyhawk=False,
             f22_raptor=False,
+            f16i_sufa=False,
             f104_starfighter=False,
             hercules=False,
             jas39_gripen=False,

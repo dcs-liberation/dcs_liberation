@@ -1,0 +1,43 @@
+description:
+  "The F-16I is a two-seat variant of the Block 52 developed for the Israeli
+  Defense Force – Air Force (IDF/AF). Israel issued a requirement in
+  September 1997 and selected the F-16 in preference to the F-15I in July 1999.
+  An initial "Peace Marble V" contract was signed on 14 January 2000 with a
+  follow-on contract signed on 19 December 2001, for a total procurement of
+  102 aircraft. The F-16I, which is called Sufa (Storm) by the IDF/AF, first
+  flew on 23 December 2003, and deliveries to the IDF/AF began on 19
+  February 2004."
+introduced: 2003
+manufacturer: General Dynamics
+origin: USA
+price: 24
+role: Multirole Fighter
+max_range: 350
+fuel:
+  # Parking 44 to RWY 06L at Anderson AFB.
+  taxi: 200
+  # AB takeoff to 350/0.75, reduce to MIL and maintain 350/0.75 to 25k ft.
+  climb_ppm: 28.33
+  # 0.85 mach for 100NM.
+  cruise_ppm: 12
+  # MIL for 100NM. Occasional AB use.
+  combat_ppm: 26
+  min_safe: 1000
+variants:
+  F-16I Sufa: {}
+radios:
+  intra_flight: AN/ARC-222
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    namer: viper
+    # COM2 is the AN/ARC-222, which is the VHF radio we want to use for
+    # intra-flight communication to leave COM1 open for UHF inter-flight.
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1
+# default_overrides:
+#   HelmetMountedDevice: 1
+#   LAU3ROF: 0
+#   LaserCode1: 8
+#   LaserCode10: 8
+#   LaserCode100: 6
