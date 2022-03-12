@@ -55,10 +55,10 @@ class FinancesLayout(QGridLayout):
     def add_total(self, game, income, player):
         self.add_row(
             middle=f"Income multiplier: {income.multiplier:.1f}",
-            right=f"<b>{income.total}M</b>",
+            right=f"<b>{income.total:.1f}M</b>",
         )
         budget = game.coalition_for(player).budget
-        self.add_row(middle="Balance", right=f"<b>{budget}M</b>")
+        self.add_row(middle="Balance", right=f"<b>{budget:.1f}M</b>")
         self.setRowStretch(next(self.row), 1)
 
     def add_row(
