@@ -61,6 +61,8 @@ def run_ui(game: Optional[Game]) -> None:
     app = QApplication(sys.argv)
 
     app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
+    app.setAttribute(Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
+    app.setAttribute(Qt.AA_UseHighDpiPixmaps, True)  # use highdpi icons
 
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()
