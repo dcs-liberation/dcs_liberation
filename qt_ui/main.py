@@ -335,6 +335,11 @@ def main():
 
     logging.debug("Python version %s", sys.version)
 
+    if not str(Path(__file__)).isascii():
+        logging.warning(
+            "Installation path contains non-ASCII characters. This is known to cause problems."
+        )
+
     game: Optional[Game] = None
 
     args = parse_args()
