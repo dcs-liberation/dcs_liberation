@@ -1,34 +1,35 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from dataclasses import dataclass
 from datetime import timedelta
 from typing import TYPE_CHECKING, Type
 
-from .flightplan import FlightPlan
+from .flightplan import FlightPlan, Layout
 from .ibuilder import IBuilder
 from ..flightwaypointtype import FlightWaypointType
 
 if TYPE_CHECKING:
-    from ..flight import Flight
     from ..flightwaypoint import FlightWaypoint
 
 
 class Builder(IBuilder):
-    def build(self) -> CustomFlightPlan:
-        return CustomFlightPlan(self.flight, [])
+    def build(self) -> CustomLayout:
+        return CustomLayout([])
 
 
-class CustomFlightPlan(FlightPlan):
-    def __init__(self, flight: Flight, waypoints: list[FlightWaypoint]) -> None:
-        super().__init__(flight)
-        self.custom_waypoints = waypoints
-
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
+@dataclass(frozen=True)
+class CustomLayout(Layout):
+    custom_waypoints: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield from self.custom_waypoints
+
+
+class CustomFlightPlan(FlightPlan[CustomLayout]):
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
 
     @property
     def tot_waypoint(self) -> FlightWaypoint | None:

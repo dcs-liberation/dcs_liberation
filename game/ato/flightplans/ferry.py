@@ -1,22 +1,22 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from dataclasses import dataclass
 from datetime import timedelta
 from typing import TYPE_CHECKING, Type
 
 from game.utils import feet
 from .ibuilder import IBuilder
 from .planningerror import PlanningError
-from .standard import StandardFlightPlan
+from .standard import StandardFlightPlan, StandardLayout
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
-    from ..flight import Flight
     from ..flightwaypoint import FlightWaypoint
 
 
 class Builder(IBuilder):
-    def build(self) -> FerryFlightPlan:
+    def build(self) -> FerryLayout:
         if self.flight.departure == self.flight.arrival:
             raise PlanningError(
                 f"Cannot plan ferry self.flight: departure and arrival are both "
@@ -31,8 +31,7 @@ class Builder(IBuilder):
         )
 
         builder = WaypointBuilder(self.flight, self.coalition)
-        return FerryFlightPlan(
-            flight=self.flight,
+        return FerryLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to_destination=builder.nav_path(
                 self.flight.departure.position,
@@ -46,22 +45,9 @@ class Builder(IBuilder):
         )
 
 
-class FerryFlightPlan(StandardFlightPlan):
-    def __init__(
-        self,
-        flight: Flight,
-        departure: FlightWaypoint,
-        arrival: FlightWaypoint,
-        divert: FlightWaypoint | None,
-        bullseye: FlightWaypoint,
-        nav_to_destination: list[FlightWaypoint],
-    ) -> None:
-        super().__init__(flight, departure, arrival, divert, bullseye)
-        self.nav_to_destination = nav_to_destination
-
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
+@dataclass(frozen=True)
+class FerryLayout(StandardLayout):
+    nav_to_destination: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.departure
@@ -71,9 +57,15 @@ class FerryFlightPlan(StandardFlightPlan):
             yield self.divert
         yield self.bullseye
 
+
+class FerryFlightPlan(StandardFlightPlan[FerryLayout]):
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
     @property
     def tot_waypoint(self) -> FlightWaypoint | None:
-        return self.arrival
+        return self.layout.arrival
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         # TOT planning isn't really useful for ferries. They're behind the front

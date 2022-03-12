@@ -4,7 +4,11 @@ import logging
 from typing import Type
 
 from game.theater import Airfield
-from .formationattack import FormationAttackBuilder, FormationAttackFlightPlan
+from .formationattack import (
+    FormationAttackBuilder,
+    FormationAttackFlightPlan,
+    FormationAttackLayout,
+)
 from .invalidobjectivelocation import InvalidObjectiveLocation
 from ..flightwaypointtype import FlightWaypointType
 
@@ -15,8 +19,8 @@ class OcaRunwayFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder[OcaRunwayFlightPlan]):
-    def build(self) -> FormationAttackFlightPlan:
+class Builder(FormationAttackBuilder):
+    def build(self) -> FormationAttackLayout:
         location = self.package.target
 
         if not isinstance(location, Airfield):
@@ -26,4 +30,4 @@ class Builder(FormationAttackBuilder[OcaRunwayFlightPlan]):
             )
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(OcaRunwayFlightPlan, FlightWaypointType.INGRESS_OCA_RUNWAY)
+        return self._build(FlightWaypointType.INGRESS_OCA_RUNWAY)

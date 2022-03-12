@@ -4,7 +4,11 @@ from typing import Type
 
 from game.theater import NavalControlPoint
 from game.theater.theatergroundobject import NavalGroundObject
-from .formationattack import FormationAttackBuilder, FormationAttackFlightPlan
+from .formationattack import (
+    FormationAttackBuilder,
+    FormationAttackFlightPlan,
+    FormationAttackLayout,
+)
 from .invalidobjectivelocation import InvalidObjectiveLocation
 from .waypointbuilder import StrikeTarget
 from ..flightwaypointtype import FlightWaypointType
@@ -16,8 +20,8 @@ class AntiShipFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder[AntiShipFlightPlan]):
-    def build(self) -> FormationAttackFlightPlan:
+class Builder(FormationAttackBuilder):
+    def build(self) -> FormationAttackLayout:
         location = self.package.target
 
         from game.transfers import CargoShip
@@ -31,7 +35,7 @@ class Builder(FormationAttackBuilder[AntiShipFlightPlan]):
         else:
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(AntiShipFlightPlan, FlightWaypointType.INGRESS_BAI, targets)
+        return self._build(FlightWaypointType.INGRESS_BAI, targets)
 
     @staticmethod
     def anti_ship_targets_for_tgo(tgo: NavalGroundObject) -> list[StrikeTarget]:

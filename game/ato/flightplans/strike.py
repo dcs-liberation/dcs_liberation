@@ -3,7 +3,11 @@ from __future__ import annotations
 from typing import Type
 
 from game.theater import TheaterGroundObject
-from .formationattack import FormationAttackBuilder, FormationAttackFlightPlan
+from .formationattack import (
+    FormationAttackBuilder,
+    FormationAttackFlightPlan,
+    FormationAttackLayout,
+)
 from .invalidobjectivelocation import InvalidObjectiveLocation
 from .waypointbuilder import StrikeTarget
 from ..flightwaypointtype import FlightWaypointType
@@ -15,8 +19,8 @@ class StrikeFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder[StrikeFlightPlan]):
-    def build(self) -> FormationAttackFlightPlan:
+class Builder(FormationAttackBuilder):
+    def build(self) -> FormationAttackLayout:
         location = self.package.target
 
         if not isinstance(location, TheaterGroundObject):
@@ -26,4 +30,4 @@ class Builder(FormationAttackBuilder[StrikeFlightPlan]):
         for idx, unit in enumerate(location.strike_targets):
             targets.append(StrikeTarget(f"{unit.type.id} #{idx}", unit))
 
-        return self._build(StrikeFlightPlan, FlightWaypointType.INGRESS_STRIKE, targets)
+        return self._build(FlightWaypointType.INGRESS_STRIKE, targets)

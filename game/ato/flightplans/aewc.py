@@ -4,16 +4,14 @@ from datetime import timedelta
 from typing import Type
 
 from game.ato.flightplans.ibuilder import IBuilder
-from game.ato.flightplans.patrolling import PatrollingFlightPlan
+from game.ato.flightplans.patrolling import PatrollingFlightPlan, PatrollingLayout
 from game.ato.flightplans.waypointbuilder import WaypointBuilder
-from game.utils import Heading, feet, knots, meters, nautical_miles
+from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
 
 
 class Builder(IBuilder):
-    def build(self) -> AewcFlightPlan:
+    def build(self) -> PatrollingLayout:
         racetrack_half_distance = nautical_miles(30).meters
-
-        patrol_duration = timedelta(hours=4)
 
         location = self.package.target
 
@@ -52,15 +50,9 @@ class Builder(IBuilder):
         else:
             altitude = feet(25000)
 
-        if self.flight.unit_type.preferred_patrol_speed(altitude) is not None:
-            speed = self.flight.unit_type.preferred_patrol_speed(altitude)
-        else:
-            speed = knots(390)
-
         racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
 
-        return AewcFlightPlan(
-            flight=self.flight,
+        return PatrollingLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to=builder.nav_path(
                 self.flight.departure.position, racetrack_start, altitude
@@ -73,15 +65,27 @@ class Builder(IBuilder):
             arrival=builder.land(self.flight.arrival),
             divert=builder.divert(self.flight.divert),
             bullseye=builder.bullseye(),
-            patrol_duration=patrol_duration,
-            patrol_speed=speed,
-            # TODO: Factor out a common base of the combat and non-combat race-tracks.
-            # No harm in setting this, but we ought to clean up a bit.
-            engagement_distance=meters(0),
         )
 
 
-class AewcFlightPlan(PatrollingFlightPlan):
+class AewcFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
+    @property
+    def patrol_duration(self) -> timedelta:
+        return timedelta(hours=4)
+
+    @property
+    def patrol_speed(self) -> Speed:
+        altitude = self.layout.patrol_start.alt
+        if self.flight.unit_type.preferred_patrol_speed(altitude) is not None:
+            return self.flight.unit_type.preferred_patrol_speed(altitude)
+        return knots(390)
+
+    @property
+    def engagement_distance(self) -> Distance:
+        # TODO: Factor out a common base of the combat and non-combat race-tracks.
+        # No harm in setting this, but we ought to clean up a bit.
+        return meters(0)
+
     @staticmethod
     def builder_type() -> Type[IBuilder]:
         return Builder

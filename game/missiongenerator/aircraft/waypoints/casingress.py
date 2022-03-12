@@ -13,7 +13,7 @@ class CasIngressBuilder(PydcsWaypointBuilder):
         if isinstance(self.flight.flight_plan, CasFlightPlan):
             waypoint.add_task(
                 EngageTargetsInZone(
-                    position=self.flight.flight_plan.target.position,
+                    position=self.flight.flight_plan.layout.target.position,
                     radius=int(self.flight.flight_plan.engagement_distance.meters),
                     targets=[
                         Targets.All.GroundUnits.GroundVehicles,

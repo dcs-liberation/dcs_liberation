@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends
 from shapely.geometry import LineString, Point as ShapelyPoint
 
 from game import Game
-from game.ato.flightplans.patrolling import PatrollingFlightPlan
 from game.ato.flightplans.cas import CasFlightPlan
+from game.ato.flightplans.patrolling import PatrollingFlightPlan
 from game.server import GameContext
 from game.server.flights.models import FlightJs
 from game.server.leaflet import LeafletPoly, ShapelyUtil
@@ -41,10 +41,10 @@ def commit_boundary(
     flight = game.db.flights.get(flight_id)
     if not isinstance(flight.flight_plan, PatrollingFlightPlan):
         return []
-    start = flight.flight_plan.patrol_start
-    end = flight.flight_plan.patrol_end
+    start = flight.flight_plan.layout.patrol_start
+    end = flight.flight_plan.layout.patrol_end
     if isinstance(flight.flight_plan, CasFlightPlan):
-        center = flight.flight_plan.target.position
+        center = flight.flight_plan.layout.target.position
         commit_center = ShapelyPoint(center.x, center.y)
     else:
         commit_center = LineString(

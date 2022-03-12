@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from game.threatzones import ThreatZones
     from ..flight import Flight
     from ..package import Package
-    from .flightplan import FlightPlan
+    from .flightplan import Layout
 
 
 class IBuilder(ABC):
@@ -19,7 +19,7 @@ class IBuilder(ABC):
         self.theater = theater
 
     @abstractmethod
-    def build(self) -> FlightPlan:
+    def build(self) -> Layout:
         ...
 
     @property

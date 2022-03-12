@@ -5,7 +5,8 @@ from typing import Type
 
 from dcs import Point
 
-from game.utils import Distance, Heading, feet, knots, meters
+from game.utils import Distance, Heading, feet, meters
+from .patrolling import PatrollingLayout
 from .theaterrefueling import (
     Builder as TheaterRefuelingBuilder,
     TheaterRefuelingFlightPlan,
@@ -16,18 +17,11 @@ from ..flightwaypointtype import FlightWaypointType
 
 
 class Builder(TheaterRefuelingBuilder):
-    def build(self) -> PackageRefuelingFlightPlan:
+    def build(self) -> PatrollingLayout:
         package_waypoints = self.package.waypoints
         assert package_waypoints is not None
 
         racetrack_half_distance = Distance.from_nautical_miles(20).meters
-        # TODO: Only consider aircraft that can refuel with this tanker type.
-        refuel_time_minutes = 5
-        for self.flight in self.package.flights:
-            flight_size = self.flight.roster.max_size
-            refuel_time_minutes = refuel_time_minutes + 4 * flight_size + 1
-
-        patrol_duration = timedelta(minutes=refuel_time_minutes)
 
         racetrack_center = package_waypoints.refuel
 
@@ -52,17 +46,9 @@ class Builder(TheaterRefuelingBuilder):
         else:
             altitude = feet(21000)
 
-        # TODO: Could use self.flight.unit_type.preferred_patrol_speed(altitude).
-        if tanker_type.patrol_speed is not None:
-            speed = tanker_type.patrol_speed
-        else:
-            # ~280 knots IAS at 21000.
-            speed = knots(400)
-
         racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
 
-        return PackageRefuelingFlightPlan(
-            flight=self.flight,
+        return PatrollingLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to=builder.nav_path(
                 self.flight.departure.position, racetrack_start, altitude
@@ -75,11 +61,6 @@ class Builder(TheaterRefuelingBuilder):
             arrival=builder.land(self.flight.arrival),
             divert=builder.divert(self.flight.divert),
             bullseye=builder.bullseye(),
-            patrol_duration=patrol_duration,
-            patrol_speed=speed,
-            # TODO: Factor out a common base of the combat and non-combat race-tracks.
-            # No harm in setting this, but we ought to clean up a bit.
-            engagement_distance=meters(0),
         )
 
 
@@ -87,6 +68,16 @@ class PackageRefuelingFlightPlan(TheaterRefuelingFlightPlan):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @property
+    def patrol_duration(self) -> timedelta:
+        # TODO: Only consider aircraft that can refuel with this tanker type.
+        refuel_time_minutes = 5
+        for self.flight in self.package.flights:
+            flight_size = self.flight.roster.max_size
+            refuel_time_minutes = refuel_time_minutes + 4 * flight_size + 1
+
+        return timedelta(minutes=refuel_time_minutes)
 
     def target_area_waypoint(self) -> FlightWaypoint:
         return FlightWaypoint(

@@ -3,20 +3,28 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import Type
 
-from .formationattack import FormationAttackBuilder, FormationAttackFlightPlan
+from .formationattack import (
+    FormationAttackBuilder,
+    FormationAttackFlightPlan,
+    FormationAttackLayout,
+)
+from .. import Flight
 from ..flightwaypointtype import FlightWaypointType
 
 
 class SeadFlightPlan(FormationAttackFlightPlan):
+    def __init__(self, flight: Flight, layout: FormationAttackLayout) -> None:
+        super().__init__(flight, layout)
+
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
 
+    @property
+    def lead_time(self) -> timedelta:
+        return timedelta(minutes=1)
 
-class Builder(FormationAttackBuilder[SeadFlightPlan]):
-    def build(self) -> FormationAttackFlightPlan:
-        return self._build(
-            SeadFlightPlan,
-            FlightWaypointType.INGRESS_SEAD,
-            lead_time=timedelta(minutes=1),
-        )
+
+class Builder(FormationAttackBuilder):
+    def build(self) -> FormationAttackLayout:
+        return self._build(FlightWaypointType.INGRESS_SEAD)

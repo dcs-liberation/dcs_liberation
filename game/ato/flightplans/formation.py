@@ -1,52 +1,31 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from datetime import timedelta
 from functools import cached_property
-from typing import TYPE_CHECKING, TypeGuard
+from typing import Any, TYPE_CHECKING, TypeGuard
 
 from game.typeguard import self_type_guard
 from game.utils import Speed
 from .flightplan import FlightPlan
-from .loiter import LoiterFlightPlan
+from .loiter import LoiterFlightPlan, LoiterLayout
 from ..traveltime import GroundSpeed, TravelTime
 
 if TYPE_CHECKING:
-    from ..flight import Flight
     from ..flightwaypoint import FlightWaypoint
 
 
-class FormationFlightPlan(LoiterFlightPlan, ABC):
-    def __init__(
-        self,
-        flight: Flight,
-        departure: FlightWaypoint,
-        arrival: FlightWaypoint,
-        divert: FlightWaypoint | None,
-        bullseye: FlightWaypoint,
-        nav_to: list[FlightWaypoint],
-        nav_from: list[FlightWaypoint],
-        hold: FlightWaypoint,
-        hold_duration: timedelta,
-        join: FlightWaypoint,
-        split: FlightWaypoint,
-        refuel: FlightWaypoint,
-    ) -> None:
-        super().__init__(
-            flight,
-            departure,
-            arrival,
-            divert,
-            bullseye,
-            nav_to,
-            nav_from,
-            hold,
-            hold_duration,
-        )
-        self.join = join
-        self.split = split
-        self.refuel = refuel
+@dataclass(frozen=True)
+class FormationLayout(LoiterLayout, ABC):
+    nav_to: list[FlightWaypoint]
+    join: FlightWaypoint
+    split: FlightWaypoint
+    refuel: FlightWaypoint
+    nav_from: list[FlightWaypoint]
 
+
+class FormationFlightPlan(LoiterFlightPlan, ABC):
     @property
     @abstractmethod
     def package_speed_waypoints(self) -> set[FlightWaypoint]:
@@ -57,10 +36,10 @@ class FormationFlightPlan(LoiterFlightPlan, ABC):
         return self.package_speed_waypoints
 
     def request_escort_at(self) -> FlightWaypoint | None:
-        return self.join
+        return self.layout.join
 
     def dismiss_escort_at(self) -> FlightWaypoint | None:
-        return self.split
+        return self.layout.split
 
     @cached_property
     def best_flight_formation_speed(self) -> Speed:
@@ -90,7 +69,7 @@ class FormationFlightPlan(LoiterFlightPlan, ABC):
     @property
     def travel_time_to_rendezvous(self) -> timedelta:
         """The estimated time between the first waypoint and the join point."""
-        return self._travel_time_to_waypoint(self.join)
+        return self._travel_time_to_waypoint(self.layout.join)
 
     @property
     @abstractmethod
@@ -103,18 +82,18 @@ class FormationFlightPlan(LoiterFlightPlan, ABC):
         ...
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
-        if waypoint == self.join:
+        if waypoint == self.layout.join:
             return self.join_time
-        elif waypoint == self.split:
+        elif waypoint == self.layout.split:
             return self.split_time
         return None
 
     @property
     def push_time(self) -> timedelta:
         return self.join_time - TravelTime.between_points(
-            self.hold.position,
-            self.join.position,
-            GroundSpeed.for_flight(self.flight, self.hold.alt),
+            self.layout.hold.position,
+            self.layout.join.position,
+            GroundSpeed.for_flight(self.flight, self.layout.hold.alt),
         )
 
     @property
@@ -122,5 +101,7 @@ class FormationFlightPlan(LoiterFlightPlan, ABC):
         return self.split_time
 
     @self_type_guard
-    def is_formation(self, flight_plan: FlightPlan) -> TypeGuard[FormationFlightPlan]:
+    def is_formation(
+        self, flight_plan: FlightPlan[Any]
+    ) -> TypeGuard[FormationFlightPlan]:
         return True

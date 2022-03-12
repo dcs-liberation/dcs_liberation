@@ -2,21 +2,21 @@ from __future__ import annotations
 
 import random
 from collections.abc import Iterator
+from dataclasses import dataclass
 from datetime import timedelta
 from typing import TYPE_CHECKING, Type
 
 from game.utils import Distance, Speed, feet
 from .capbuilder import CapBuilder
-from .patrolling import PatrollingFlightPlan
+from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
-    from ..flight import Flight
     from ..flightwaypoint import FlightWaypoint
 
 
 class Builder(CapBuilder):
-    def build(self) -> TarCapFlightPlan:
+    def build(self) -> TarCapLayout:
         location = self.package.target
 
         preferred_alt = self.flight.unit_type.preferred_patrol_altitude
@@ -25,7 +25,6 @@ class Builder(CapBuilder):
             self.doctrine.min_patrol_altitude,
             min(self.doctrine.max_patrol_altitude, randomized_alt),
         )
-        patrol_speed = self.flight.unit_type.preferred_patrol_speed(patrol_alt)
 
         builder = WaypointBuilder(self.flight, self.coalition)
         orbit0p, orbit1p = self.cap_racetrack_for_objective(location, barcap=False)
@@ -37,16 +36,7 @@ class Builder(CapBuilder):
         if self.package.waypoints is not None:
             refuel = builder.refuel(self.package.waypoints.refuel)
 
-        return TarCapFlightPlan(
-            flight=self.flight,
-            lead_time=timedelta(minutes=2),
-            # Note that this duration only has an effect if there are no
-            # flights in the package that have requested escort. If the package
-            # requests an escort the CAP self.flight will remain on station for the
-            # duration of the escorted mission, or until it is winchester/bingo.
-            patrol_duration=self.doctrine.cap_duration,
-            patrol_speed=patrol_speed,
-            engagement_distance=self.doctrine.cap_engagement_range,
+        return TarCapLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to=builder.nav_path(
                 self.flight.departure.position, orbit0p, patrol_alt
@@ -63,44 +53,9 @@ class Builder(CapBuilder):
         )
 
 
-class TarCapFlightPlan(PatrollingFlightPlan):
-    def __init__(
-        self,
-        flight: Flight,
-        departure: FlightWaypoint,
-        arrival: FlightWaypoint,
-        divert: FlightWaypoint | None,
-        bullseye: FlightWaypoint,
-        nav_to: list[FlightWaypoint],
-        nav_from: list[FlightWaypoint],
-        patrol_start: FlightWaypoint,
-        patrol_end: FlightWaypoint,
-        patrol_duration: timedelta,
-        patrol_speed: Speed,
-        engagement_distance: Distance,
-        refuel: FlightWaypoint | None,
-        lead_time: timedelta,
-    ) -> None:
-        super().__init__(
-            flight,
-            departure,
-            arrival,
-            divert,
-            bullseye,
-            nav_to,
-            nav_from,
-            patrol_start,
-            patrol_end,
-            patrol_duration,
-            patrol_speed,
-            engagement_distance,
-        )
-        self.refuel = refuel
-        self.lead_time = lead_time
-
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
+@dataclass(frozen=True)
+class TarCapLayout(PatrollingLayout):
+    refuel: FlightWaypoint | None
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.departure
@@ -115,16 +70,44 @@ class TarCapFlightPlan(PatrollingFlightPlan):
             yield self.divert
         yield self.bullseye
 
+
+class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
+    @property
+    def lead_time(self) -> timedelta:
+        return timedelta(minutes=2)
+
+    @property
+    def patrol_duration(self) -> timedelta:
+        # Note that this duration only has an effect if there are no
+        # flights in the package that have requested escort. If the package
+        # requests an escort the CAP self.flight will remain on station for the
+        # duration of the escorted mission, or until it is winchester/bingo.
+        return self.flight.coalition.doctrine.cap_duration
+
+    @property
+    def patrol_speed(self) -> Speed:
+        return self.flight.unit_type.preferred_patrol_speed(
+            self.layout.patrol_start.alt
+        )
+
+    @property
+    def engagement_distance(self) -> Distance:
+        return self.flight.coalition.doctrine.cap_engagement_range
+
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
     @property
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
-        return {self.patrol_start, self.patrol_end}
+        return {self.layout.patrol_start, self.layout.patrol_end}
 
     @property
     def tot_offset(self) -> timedelta:
         return -self.lead_time
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
-        if waypoint == self.patrol_end:
+        if waypoint == self.layout.patrol_end:
             return self.patrol_end_time
         return super().depart_time_for_waypoint(waypoint)
 

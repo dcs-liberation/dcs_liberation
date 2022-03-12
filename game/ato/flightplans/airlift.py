@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from dataclasses import dataclass
 from datetime import timedelta
 from typing import TYPE_CHECKING, Type
 
 from game.utils import feet
 from .ibuilder import IBuilder
 from .planningerror import PlanningError
-from .standard import StandardFlightPlan
+from .standard import StandardFlightPlan, StandardLayout
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class Builder(IBuilder):
-    def build(self) -> AirliftFlightPlan:
+    def build(self) -> AirliftLayout:
         cargo = self.flight.cargo
         if cargo is None:
             raise PlanningError(
@@ -39,8 +40,7 @@ class Builder(IBuilder):
                 altitude_is_agl,
             )
 
-        return AirliftFlightPlan(
-            flight=self.flight,
+        return AirliftLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to_pickup=nav_to_pickup,
             pickup=pickup,
@@ -63,30 +63,13 @@ class Builder(IBuilder):
         )
 
 
-class AirliftFlightPlan(StandardFlightPlan):
-    def __init__(
-        self,
-        flight: Flight,
-        departure: FlightWaypoint,
-        nav_to_pickup: list[FlightWaypoint],
-        pickup: FlightWaypoint | None,
-        nav_to_drop_off: list[FlightWaypoint],
-        drop_off: FlightWaypoint,
-        nav_to_home: list[FlightWaypoint],
-        arrival: FlightWaypoint,
-        divert: FlightWaypoint | None,
-        bullseye: FlightWaypoint,
-    ) -> None:
-        super().__init__(flight, departure, arrival, divert, bullseye)
-        self.nav_to_pickup = nav_to_pickup
-        self.pickup = pickup
-        self.nav_to_drop_off = nav_to_drop_off
-        self.drop_off = drop_off
-        self.nav_to_home = nav_to_home
-
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
+@dataclass(frozen=True)
+class AirliftLayout(StandardLayout):
+    nav_to_pickup: list[FlightWaypoint]
+    pickup: FlightWaypoint | None
+    nav_to_drop_off: list[FlightWaypoint]
+    drop_off: FlightWaypoint
+    nav_to_home: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.departure
@@ -101,9 +84,18 @@ class AirliftFlightPlan(StandardFlightPlan):
             yield self.divert
         yield self.bullseye
 
+
+class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
+    def __init__(self, flight: Flight, layout: AirliftLayout) -> None:
+        super().__init__(flight, layout)
+
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
     @property
     def tot_waypoint(self) -> FlightWaypoint | None:
-        return self.drop_off
+        return self.layout.drop_off
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         # TOT planning isn't really useful for transports. They're behind the front

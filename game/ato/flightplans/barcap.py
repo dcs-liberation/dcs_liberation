@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import random
+from datetime import timedelta
 from typing import Type
 
 from game.theater import FrontLine
-from game.utils import feet
+from game.utils import Distance, Speed, feet
 from .capbuilder import CapBuilder
 from .invalidobjectivelocation import InvalidObjectiveLocation
-from .patrolling import PatrollingFlightPlan
+from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .waypointbuilder import WaypointBuilder
 
 
 class Builder(CapBuilder):
-    def build(self) -> BarCapFlightPlan:
+    def build(self) -> PatrollingLayout:
         location = self.package.target
 
         if isinstance(location, FrontLine):
@@ -27,16 +28,10 @@ class Builder(CapBuilder):
             min(self.doctrine.max_patrol_altitude, randomized_alt),
         )
 
-        patrol_speed = self.flight.unit_type.preferred_patrol_speed(patrol_alt)
-
         builder = WaypointBuilder(self.flight, self.coalition)
         start, end = builder.race_track(start_pos, end_pos, patrol_alt)
 
-        return BarCapFlightPlan(
-            flight=self.flight,
-            patrol_duration=self.doctrine.cap_duration,
-            patrol_speed=patrol_speed,
-            engagement_distance=self.doctrine.cap_engagement_range,
+        return PatrollingLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to=builder.nav_path(
                 self.flight.departure.position, start.position, patrol_alt
@@ -52,7 +47,21 @@ class Builder(CapBuilder):
         )
 
 
-class BarCapFlightPlan(PatrollingFlightPlan):
+class BarCapFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @property
+    def patrol_duration(self) -> timedelta:
+        return self.flight.coalition.doctrine.cap_duration
+
+    @property
+    def patrol_speed(self) -> Speed:
+        return self.flight.unit_type.preferred_patrol_speed(
+            self.layout.patrol_start.alt
+        )
+
+    @property
+    def engagement_distance(self) -> Distance:
+        return self.flight.coalition.doctrine.cap_engagement_range

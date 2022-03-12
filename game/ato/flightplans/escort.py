@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from datetime import timedelta
 from typing import Type
 
-from .formationattack import FormationAttackBuilder, FormationAttackFlightPlan
+from .formationattack import (
+    FormationAttackBuilder,
+    FormationAttackFlightPlan,
+    FormationAttackLayout,
+)
 from .waypointbuilder import WaypointBuilder
 
 
@@ -13,8 +16,8 @@ class EscortFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder[EscortFlightPlan]):
-    def build(self) -> FormationAttackFlightPlan:
+class Builder(FormationAttackBuilder):
+    def build(self) -> FormationAttackLayout:
         assert self.package.waypoints is not None
 
         builder = WaypointBuilder(self.flight, self.coalition)
@@ -28,11 +31,9 @@ class Builder(FormationAttackBuilder[EscortFlightPlan]):
         if self.package.waypoints.refuel is not None:
             refuel = builder.refuel(self.package.waypoints.refuel)
 
-        return EscortFlightPlan(
-            flight=self.flight,
+        return FormationAttackLayout(
             departure=builder.takeoff(self.flight.departure),
             hold=hold,
-            hold_duration=timedelta(minutes=5),
             nav_to=builder.nav_path(
                 hold.position, join.position, self.doctrine.ingress_altitude
             ),

@@ -3,7 +3,11 @@ from __future__ import annotations
 from typing import Type
 
 from game.theater.theatergroundobject import TheaterGroundObject
-from .formationattack import FormationAttackBuilder, FormationAttackFlightPlan
+from .formationattack import (
+    FormationAttackBuilder,
+    FormationAttackFlightPlan,
+    FormationAttackLayout,
+)
 from .invalidobjectivelocation import InvalidObjectiveLocation
 from .waypointbuilder import StrikeTarget
 from ..flightwaypointtype import FlightWaypointType
@@ -15,8 +19,8 @@ class BaiFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder[BaiFlightPlan]):
-    def build(self) -> FormationAttackFlightPlan:
+class Builder(FormationAttackBuilder):
+    def build(self) -> FormationAttackLayout:
         location = self.package.target
 
         from game.transfers import Convoy
@@ -33,4 +37,4 @@ class Builder(FormationAttackBuilder[BaiFlightPlan]):
         else:
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(BaiFlightPlan, FlightWaypointType.INGRESS_BAI, targets)
+        return self._build(FlightWaypointType.INGRESS_BAI, targets)

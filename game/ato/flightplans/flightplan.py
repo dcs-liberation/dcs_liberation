@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from datetime import timedelta
 from functools import cached_property
-from typing import TYPE_CHECKING, Type, TypeGuard
+from typing import Any, Generic, TYPE_CHECKING, Type, TypeGuard, TypeVar
 
 from game.typeguard import self_type_guard
 from game.utils import Distance, Speed, meters
@@ -41,9 +41,24 @@ INGRESS_TYPES = {
 }
 
 
-class FlightPlan(ABC):
-    def __init__(self, flight: Flight) -> None:
+class Layout(ABC):
+    @property
+    def waypoints(self) -> list[FlightWaypoint]:
+        """A list of all waypoints in the flight plan, in order."""
+        return list(self.iter_waypoints())
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        """Iterates over all waypoints in the flight plan, in order."""
+        raise NotImplementedError
+
+
+LayoutT = TypeVar("LayoutT", bound=Layout)
+
+
+class FlightPlan(ABC, Generic[LayoutT]):
+    def __init__(self, flight: Flight, layout: LayoutT) -> None:
         self.flight = flight
+        self.layout = layout
 
     @property
     def package(self) -> Package:
@@ -61,7 +76,7 @@ class FlightPlan(ABC):
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         """Iterates over all waypoints in the flight plan, in order."""
-        raise NotImplementedError
+        yield from self.layout.iter_waypoints()
 
     def edges(
         self, until: FlightWaypoint | None = None
@@ -296,13 +311,17 @@ class FlightPlan(ABC):
         raise NotImplementedError
 
     @self_type_guard
-    def is_loiter(self, flight_plan: FlightPlan) -> TypeGuard[LoiterFlightPlan]:
+    def is_loiter(self, flight_plan: FlightPlan[Any]) -> TypeGuard[LoiterFlightPlan]:
         return False
 
     @self_type_guard
-    def is_patrol(self, flight_plan: FlightPlan) -> TypeGuard[PatrollingFlightPlan]:
+    def is_patrol(
+        self, flight_plan: FlightPlan[Any]
+    ) -> TypeGuard[PatrollingFlightPlan[Any]]:
         return False
 
     @self_type_guard
-    def is_formation(self, flight_plan: FlightPlan) -> TypeGuard[FormationFlightPlan]:
+    def is_formation(
+        self, flight_plan: FlightPlan[Any]
+    ) -> TypeGuard[FormationFlightPlan]:
         return False

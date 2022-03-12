@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from game.squadrons import Squadron, Pilot
     from game.theater import ControlPoint, MissionTarget
     from game.transfers import TransferOrder
+    from .flightplans.flightplan import FlightPlan
     from .flighttype import FlightType
     from .flightwaypoint import FlightWaypoint
     from .package import Package
@@ -84,10 +85,11 @@ class Flight(SidcDescribable):
         # Will be replaced with a more appropriate FlightPlan by
         # FlightPlanBuilder, but an empty flight plan the flight begins with an
         # empty flight plan.
-        from game.ato.flightplans.flightplan import FlightPlan
-        from .flightplans.custom import CustomFlightPlan
+        from .flightplans.custom import CustomFlightPlan, CustomLayout
 
-        self.flight_plan: FlightPlan = CustomFlightPlan(self, [])
+        self.flight_plan: FlightPlan[Any] = CustomFlightPlan(
+            self, CustomLayout(custom_waypoints=[])
+        )
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
@@ -196,9 +198,8 @@ class Flight(SidcDescribable):
     def abort(self) -> None:
         from .flightplans.rtb import RtbFlightPlan
 
-        self.flight_plan = RtbFlightPlan.builder_type()(
-            self, self.coalition.game.theater
-        ).build()
+        layout = RtbFlightPlan.builder_type()(self, self.coalition.game.theater).build()
+        self.flight_plan = RtbFlightPlan(self, layout)
 
         self.set_state(
             Navigating(

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
+from typing import Any, TYPE_CHECKING, Type
 
 from game.ato import FlightType
 from game.ato.closestairfields import ObjectiveDistanceCache
@@ -82,8 +82,8 @@ class FlightPlanBuilder:
                 f"{flight.departure} to {flight.package.target}"
             ) from ex
 
-    def plan_type(self, task: FlightType) -> Type[FlightPlan] | None:
-        plan_type: Type[FlightPlan]
+    def plan_type(self, task: FlightType) -> Type[FlightPlan[Any]] | None:
+        plan_type: Type[FlightPlan[Any]]
         if task == FlightType.REFUELING:
             if self.package.target.is_friendly(self.is_player) or isinstance(
                 self.package.target, FrontLine
@@ -91,7 +91,7 @@ class FlightPlanBuilder:
                 return TheaterRefuelingFlightPlan
             return PackageRefuelingFlightPlan
 
-        plan_dict: dict[FlightType, Type[FlightPlan]] = {
+        plan_dict: dict[FlightType, Type[FlightPlan[Any]]] = {
             FlightType.ANTISHIP: AntiShipFlightPlan,
             FlightType.BAI: BaiFlightPlan,
             FlightType.BARCAP: BarCapFlightPlan,
@@ -111,13 +111,14 @@ class FlightPlanBuilder:
         }
         return plan_dict.get(task)
 
-    def generate_flight_plan(self, flight: Flight) -> FlightPlan:
+    def generate_flight_plan(self, flight: Flight) -> FlightPlan[Any]:
         plan_type = self.plan_type(flight.flight_type)
         if plan_type is None:
             raise PlanningError(
                 f"{flight.flight_type} flight plan generation not implemented"
             )
-        return plan_type.builder_type()(flight, self.theater).build()
+        layout = plan_type.builder_type()(flight, self.theater).build()
+        return plan_type(flight, layout)
 
     def regenerate_flight_plans(self) -> None:
         new_flights: list[Flight] = []

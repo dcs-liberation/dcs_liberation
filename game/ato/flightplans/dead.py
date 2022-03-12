@@ -7,7 +7,11 @@ from game.theater.theatergroundobject import (
     EwrGroundObject,
     SamGroundObject,
 )
-from .formationattack import FormationAttackBuilder, FormationAttackFlightPlan
+from .formationattack import (
+    FormationAttackBuilder,
+    FormationAttackFlightPlan,
+    FormationAttackLayout,
+)
 from .invalidobjectivelocation import InvalidObjectiveLocation
 from ..flightwaypointtype import FlightWaypointType
 
@@ -18,8 +22,8 @@ class DeadFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder[DeadFlightPlan]):
-    def build(self) -> FormationAttackFlightPlan:
+class Builder(FormationAttackBuilder):
+    def build(self) -> FormationAttackLayout:
         location = self.package.target
 
         is_ewr = isinstance(location, EwrGroundObject)
@@ -31,4 +35,4 @@ class Builder(FormationAttackBuilder[DeadFlightPlan]):
             )
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(DeadFlightPlan, FlightWaypointType.INGRESS_DEAD)
+        return self._build(FlightWaypointType.INGRESS_DEAD)
