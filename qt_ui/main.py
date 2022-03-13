@@ -65,7 +65,11 @@ def on_game_load(game: Game | None) -> None:
 
 
 def run_ui(game: Optional[Game], new_map: bool, dev: bool) -> None:
-    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"  # Potential fix for 4K screens
+    os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"  # Potential fix for 4K screens
+    QApplication.setHighDpiScaleFactorRoundingPolicy(
+        Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
+    )
+
     app = QApplication(sys.argv)
 
     app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
