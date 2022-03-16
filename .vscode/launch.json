@@ -16,6 +16,19 @@
       "preLaunchTask": "Prepare Environment"
     },
     {
+      "name": "Python: Debug",
+      "type": "python",
+      "request": "launch",
+      "program": "qt_ui\\main.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs",
+        "CORS_ALLOW_DEBUG_SERVER": "true"
+      },
+      "args": ["--new-map", "--dev"],
+      "preLaunchTask": "Prepare Environment"
+    },
+    {
       "name": "Python: Make Release",
       "type": "python",
       "request": "launch",
