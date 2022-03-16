@@ -129,6 +129,10 @@ class TgoLayoutGroup:
         self, go: TheaterGroundObject, unit_type: Type[DcsUnitType], amount: int
     ) -> list[TheaterUnit]:
         """Generate units of the given unit type and amount for the TgoLayoutGroup"""
+        if amount > len(self.layout_units):
+            raise LayoutException(
+                f"{self.name} has incorrect unit_count for {unit_type.id}"
+            )
         return [
             TheaterUnit.from_template(i, unit_type, self.layout_units[i], go)
             for i in range(amount)
