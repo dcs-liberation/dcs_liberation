@@ -26,4 +26,3 @@ groups:
         - 1
       unit_classes:
         - SHORAD
-layout_file: resources/layouts/defenses/defenses.miz

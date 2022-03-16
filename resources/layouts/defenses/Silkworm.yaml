@@ -17,12 +17,14 @@ groups:
       optional: true
       unit_count:
         - 1
+        - 2
       unit_classes:
         - Logistics
     - name: SilkwormGenerator 3
       optional: true
       unit_count:
         - 1
+        - 2
       unit_classes:
         - AAA
     - name: SilkwormGenerator 4
@@ -31,4 +33,3 @@ groups:
         - 1
       unit_classes:
         - SHORAD
-layout_file: resources/layouts/defenses/defenses.miz
