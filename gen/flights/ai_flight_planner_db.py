@@ -126,6 +126,7 @@ from pydcs_extensions.su57.su57 import Su_57
 
 # Used for CAP, Escort, and intercept if there is not a specialised aircraft available
 from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
+from pydcs_extensions.ah64d.ah64d import AH_64D_BLK_II
 
 CAP_CAPABLE = [
     Su_57,
@@ -210,6 +211,7 @@ CAS_CAPABLE = [
     MiG_27K,
     MiG_29A,
     MiG_21Bis,
+    AH_64D_BLK_II,
     AH_64D,
     AH_64A,
     AH_1W,

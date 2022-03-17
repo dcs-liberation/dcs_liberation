@@ -1,4 +1,5 @@
 from pydcs_extensions.a4ec.a4ec import A_4E_C
+from pydcs_extensions.ah64d.ah64d import AH_64D_BLK_II
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
@@ -22,6 +23,7 @@ MODDED_AIRPLANES = [
 ]
 MODDED_HELICOPTERS = [
     UH_60L,
+    AH_64D_BLK_II,
 ]
 MODDED_VEHICLES = [
     frenchpack._FIELD_HIDE,
