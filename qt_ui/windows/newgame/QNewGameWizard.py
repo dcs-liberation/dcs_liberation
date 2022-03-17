@@ -70,6 +70,8 @@ class NewGameWizard(QtWidgets.QWizard):
         if campaign is None:
             campaign = self.campaigns[0]
 
+        logging.info("New campaign selected: %s", campaign.name)
+
         if self.field("usePreset"):
             start_date = db.TIME_PERIODS[
                 list(db.TIME_PERIODS.keys())[self.field("timePeriod")]
@@ -77,6 +79,7 @@ class NewGameWizard(QtWidgets.QWizard):
         else:
             start_date = self.theater_page.calendar.selectedDate().toPython()
 
+        logging.info("New campaign start date: %s", start_date.strftime("%m/%d/%Y"))
         settings = Settings(
             player_income_multiplier=self.field("player_income_multiplier") / 10,
             enemy_income_multiplier=self.field("enemy_income_multiplier") / 10,
@@ -116,7 +119,14 @@ class NewGameWizard(QtWidgets.QWizard):
 
         blue_faction = self.faction_selection_page.selected_blue_faction
         red_faction = self.faction_selection_page.selected_red_faction
+
+        logging.info("New campaign blue faction: %s", blue_faction.name)
+        logging.info("New campaign red faction: %s", red_faction.name)
+
         theater = campaign.load_theater()
+
+        logging.info("New campaign theater: %s", theater.terrain.name)
+
         generator = GameGenerator(
             blue_faction,
             red_faction,
