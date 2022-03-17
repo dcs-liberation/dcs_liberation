@@ -61,7 +61,7 @@ const WaypointMarker = (props: WaypointMarkerProps) => {
     const waypoint = props.waypoint;
     marker.current?.setTooltipContent(
       `${props.number} ${waypoint.name}<br />` +
-        `${waypoint.altitude_ft} ft ${waypoint.altitude_reference}<br />` +
+        `${waypoint.altitude_ft.toFixed()} ft ${waypoint.altitude_reference}<br />` +
         waypoint.timing
     );
   });
