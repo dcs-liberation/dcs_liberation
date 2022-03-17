@@ -190,7 +190,7 @@ class QGroundObjectMenu(QDialog):
             # Remove destroyed units in the vicinity
             destroyed_units = self.game.get_destroyed_units()
             for d in destroyed_units:
-                p = Point(d["x"], d["z"])
+                p = Point(d["x"], d["z"], self.game.theater.terrain)
                 if p.distance_to_point(unit.position) < 15:
                     destroyed_units.remove(d)
                     logging.info("Removed destroyed units " + str(d))
