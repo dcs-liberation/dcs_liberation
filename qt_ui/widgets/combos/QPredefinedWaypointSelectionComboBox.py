@@ -71,10 +71,11 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                 pos = FrontLineConflictDescription.frontline_position(
                     front_line, self.game.theater
                 )[0]
+                wptname = f"Frontline {front_line.name} [CAS]"
                 wpt = FlightWaypoint(
-                    FlightWaypointType.CUSTOM, pos, Distance.from_meters(800)
+                    wptname, FlightWaypointType.CUSTOM, pos, Distance.from_meters(800)
                 )
-                wpt.name = f"Frontline {front_line.name} [CAS]"
+
                 wpt.alt_type = "RADIO"
                 wpt.pretty_name = wpt.name
                 wpt.description = "Frontline"
@@ -90,12 +91,12 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                             ground_object, BuildingGroundObject
                         ):
                             wpt = FlightWaypoint(
+                                ground_object.waypoint_name,
                                 FlightWaypointType.CUSTOM,
                                 ground_object.position,
                                 Distance.from_meters(0),
                             )
                             wpt.alt_type = "RADIO"
-                            wpt.name = ground_object.waypoint_name
                             wpt.pretty_name = wpt.name
                             wpt.obj_name = ground_object.obj_name
                             wpt.targets.append(ground_object)
@@ -116,13 +117,7 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                         ):
                             for g in ground_object.groups:
                                 for j, u in enumerate(g.units):
-                                    wpt = FlightWaypoint(
-                                        FlightWaypointType.CUSTOM,
-                                        u.position,
-                                        Distance.from_meters(0),
-                                    )
-                                    wpt.alt_type = "RADIO"
-                                    wpt.name = wpt.name = (
+                                    wptname = (
                                         "["
                                         + str(ground_object.obj_name)
                                         + "] : "
@@ -130,7 +125,14 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                                         + " #"
                                         + str(j)
                                     )
-                                    wpt.pretty_name = wpt.name
+                                    wpt = FlightWaypoint(
+                                        wptname,
+                                        FlightWaypointType.CUSTOM,
+                                        u.position,
+                                        Distance.from_meters(0),
+                                    )
+                                    wpt.alt_type = "RADIO"
+                                    wpt.pretty_name = wptname
                                     wpt.targets.append(u)
                                     wpt.obj_name = ground_object.obj_name
                                     wpt.waypoint_type = FlightWaypointType.CUSTOM
@@ -146,10 +148,12 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
                     self.include_friendly and cp.captured
                 ):
                     wpt = FlightWaypoint(
-                        FlightWaypointType.CUSTOM, cp.position, Distance.from_meters(0)
+                        cp.name,
+                        FlightWaypointType.CUSTOM,
+                        cp.position,
+                        Distance.from_meters(0),
                     )
                     wpt.alt_type = "RADIO"
-                    wpt.name = cp.name
                     if cp.captured:
                         wpt.description = (
                             "Position of " + cp.name + " [Friendly Airbase]"
