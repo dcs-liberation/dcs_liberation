@@ -29,6 +29,19 @@
       "preLaunchTask": "Prepare Environment"
     },
     {
+      "name": "Node: Development Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}\\client",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+          "run", "start"
+      ],
+      "env": {
+        "BROWSER": "none"
+      },
+    },
+    {
       "name": "Python: Make Release",
       "type": "python",
       "request": "launch",
