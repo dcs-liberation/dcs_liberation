@@ -42,6 +42,9 @@ class QFlightCreator(QDialog):
         self.custom_name_text = None
         self.country = self.game.blue.country_name
 
+        # Make dialog modal to prevent background windows to close unexpectedly.
+        self.setModal(True)
+
         self.setWindowTitle("Create flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
 
