@@ -9,7 +9,7 @@ Saves from 5.1.0 are compatible with 5.1.1.
 * **[Mission Generation]** Fix unculled zones not updating when needed
 * **[Campaign]** Vegas Nerve campaign update
 * **[Data]** Removed Fw 190 A-8 and D-9 from Germany 1940 and 1942 faction list for historical accuracy.
-* **[Data]** Updated Loadouts for Tornado GR4
+* **[Data]** Updated Loadouts for Tornado GR4, F-15E and F-16C
 * **[UI]** Typhoon GR4 and IDS images
 
 
