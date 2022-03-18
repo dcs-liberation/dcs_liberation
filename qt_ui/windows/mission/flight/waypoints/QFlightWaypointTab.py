@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Optional, Any
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
@@ -13,7 +13,8 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from game.ato.flight import Flight
-from game.ato.flightplans.custom import CustomFlightPlan
+from game.ato.flightplans.custom import CustomFlightPlan, CustomLayout
+from game.ato.flightplans.flightplan import FlightPlan
 from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.formationattack import FormationAttackFlightPlan
 from game.ato.flightplans.planningerror import PlanningError
@@ -113,7 +114,7 @@ class QFlightWaypointTab(QFrame):
 
         self.degrade_to_custom_flight_plan()
         assert isinstance(self.flight.flight_plan, CustomFlightPlan)
-        self.flight.flight_plan.custom_waypoints.remove(waypoint)
+        self.flight.flight_plan.layout.custom_waypoints.remove(waypoint)
 
     def on_fast_waypoint(self):
         self.subwindow = QPredefinedWaypointSelectionWindow(
@@ -127,7 +128,7 @@ class QFlightWaypointTab(QFrame):
             return
         self.degrade_to_custom_flight_plan()
         assert isinstance(self.flight.flight_plan, CustomFlightPlan)
-        self.flight.flight_plan.custom_waypoints.extend(waypoints)
+        self.flight.flight_plan.layout.custom_waypoints.extend(waypoints)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
@@ -135,15 +136,14 @@ class QFlightWaypointTab(QFrame):
         rtb = self.planner.generate_rtb_waypoint(self.flight, self.flight.from_cp)
         self.degrade_to_custom_flight_plan()
         assert isinstance(self.flight.flight_plan, CustomFlightPlan)
-        self.flight.flight_plan.custom_waypoints.append(rtb)
+        self.flight.flight_plan.layout.custom_waypoints.append(rtb)
         self.flight_waypoint_list.update_list()
         self.on_change()
 
     def degrade_to_custom_flight_plan(self) -> None:
         if not isinstance(self.flight.flight_plan, CustomFlightPlan):
-            self.flight.flight_plan = CustomFlightPlan(
-                flight=self.flight,
-                waypoints=self.flight.flight_plan.waypoints,
+            self.flight.flight_plan: FlightPlan[Any] = CustomFlightPlan(
+                self, CustomLayout(custom_waypoints=self.flight.flight_plan.waypoints)
             )
 
     def confirm_recreate(self, task: FlightType) -> None:
