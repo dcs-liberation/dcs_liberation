@@ -1502,10 +1502,6 @@ class VSN_F104G(PlaneType):
             4,
             Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
         )
-        BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP = (
-            4,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP,
-        )
         AIM_9M_Sidewinder_IR_AAM = (4, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM = (4, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (4, Weapons.AIM_9B_Sidewinder_IR_AAM)
@@ -1577,10 +1573,6 @@ class VSN_F104G(PlaneType):
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
             Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
-        )
-        BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP = (
-            8,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP,
         )
         AIM_9M_Sidewinder_IR_AAM = (8, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM = (8, Weapons.AIM_9L_Sidewinder_IR_AAM)
@@ -2352,10 +2344,6 @@ class VSN_F104S_AG(PlaneType):
             4,
             Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
         )
-        BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP = (
-            4,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP,
-        )
         AIM_9M_Sidewinder_IR_AAM = (4, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM = (4, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (4, Weapons.AIM_9B_Sidewinder_IR_AAM)
@@ -2432,10 +2420,6 @@ class VSN_F104S_AG(PlaneType):
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
             Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
-        )
-        BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP = (
-            8,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M282__HEDP,
         )
         AIM_9M_Sidewinder_IR_AAM = (8, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (8, Weapons.AIM_9B_Sidewinder_IR_AAM)
