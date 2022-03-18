@@ -6,6 +6,7 @@ Saves from 5.1.0 are compatible with 5.2.0
 
 * **[Modding]** Add UH-60L mod support
 * **[Campaign]** Vegas Nerve campaign update
+* **[Campaign]** Add 3 new campaigns from Sith1144
 ## Fixes
 
 * **[Mission Generation]** Fixed incorrect SA-5 and NASAMS threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
@@ -13,6 +14,8 @@ Saves from 5.1.0 are compatible with 5.2.0
 * **[Mission Generation]** Fix unculled zones not updating when needed
 * **[Data]** Removed Fw 190 A-8 and D-9 from Germany 1940 and 1942 faction list for historical accuracy.
 * **[Data]** Updated Loadouts for Tornado GR4, F-15E and F-16C
+* **[Data]** Corrected some unit data
+* **[UI]** Fixed various UI issues (for example Scaling and HighDPI)
 * **[UI]** Typhoon GR4 and IDS images
 
 
