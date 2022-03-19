@@ -43,7 +43,7 @@ python-dateutil==2.8.2
 python-dotenv==0.19.2
 pywin32-ctypes==0.2.0
 PyYAML==6.0
-./wheels/Shapely-1.8.0-cp310-cp310-win_amd64.whl
+Shapely==1.8.1
 shiboken2==5.15.2.1
 six==1.16.0
 sniffio==1.2.0
