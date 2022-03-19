@@ -48,7 +48,7 @@ class GameLoop:
         self.timer.stop()
         if simulation_speed != self.timer.simulation_speed:
             logging.info(f"Speed changed to {simulation_speed}")
-        if not self.started:
+        if not self.started and simulation_speed is not SimSpeedSetting.PAUSED:
             self.start()
         self.timer.set_speed(simulation_speed)
 
