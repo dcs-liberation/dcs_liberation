@@ -4,7 +4,7 @@ import { ControlPoint } from "./liberationApi";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface ControlPointsState {
-  controlPoints: { [key: number]: ControlPoint };
+  controlPoints: { [key: string]: ControlPoint };
 }
 
 const initialState: ControlPointsState = {
@@ -23,7 +23,7 @@ export const controlPointsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(gameLoaded, (state, action) => {
       state.controlPoints = action.payload.control_points.reduce(
-        (acc: { [key: number]: ControlPoint }, curr) => {
+        (acc: { [key: string]: ControlPoint }, curr) => {
           acc[curr.id] = curr;
           return acc;
         },

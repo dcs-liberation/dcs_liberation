@@ -53,7 +53,7 @@ def show_tgo_info(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def new_cp_package(
-    cp_id: int,
+    cp_id: UUID,
     game: Game = Depends(GameContext.require),
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:
@@ -72,7 +72,7 @@ def new_cp_package(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def show_control_point_info(
-    cp_id: int,
+    cp_id: UUID,
     game: Game = Depends(GameContext.require),
     qt: QtCallbacks = Depends(QtContext.get),
 ) -> None:

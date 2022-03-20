@@ -4,6 +4,7 @@ import heapq
 import itertools
 import logging
 import math
+import uuid
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -21,6 +22,7 @@ from typing import (
     TYPE_CHECKING,
     Tuple,
 )
+from uuid import UUID
 
 from dcs.mapping import Point
 from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
@@ -294,7 +296,6 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     # TODO: cptype is obsolete.
     def __init__(
         self,
-        cp_id: int,
         name: str,
         position: Point,
         at: StartingPosition,
@@ -302,8 +303,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
         super().__init__(name, position)
-        # TODO: Should be Airbase specific.
-        self.id = cp_id
+        self.id = uuid.uuid4()
         self.full_name = name
         self.at = at
         self.starts_blue = starts_blue
@@ -321,7 +321,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.base: Base = Base()
         self.cptype = cptype
         # TODO: Should be Airbase specific.
-        self.stances: Dict[int, CombatStance] = {}
+        self.stances: dict[UUID, CombatStance] = {}
         from ..groundunitorders import GroundUnitOrders
 
         self.ground_unit_orders = GroundUnitOrders(self)
@@ -333,6 +333,10 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
     def __repr__(self) -> str:
         return f"<{self.__class__}: {self.name}>"
+
+    @property
+    def dcs_airport(self) -> Airport | None:
+        return None
 
     @property
     def coalition(self) -> Coalition:
@@ -956,7 +960,6 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 class Airfield(ControlPoint):
     def __init__(self, airport: Airport, starts_blue: bool) -> None:
         super().__init__(
-            airport.id,
             airport.name,
             airport.position,
             airport,
@@ -965,6 +968,10 @@ class Airfield(ControlPoint):
         )
         self.airport = airport
         self._runway_status = RunwayStatus()
+
+    @property
+    def dcs_airport(self) -> Airport:
+        return self.airport
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
@@ -1142,14 +1149,9 @@ class NavalControlPoint(ControlPoint, ABC):
 
 
 class Carrier(NavalControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
+    def __init__(self, name: str, at: Point, starts_blue: bool):
         super().__init__(
-            cp_id,
-            name,
-            at,
-            at,
-            starts_blue,
-            cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
+            name, at, at, starts_blue, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP
         )
 
     @property
@@ -1186,15 +1188,8 @@ class Carrier(NavalControlPoint):
 
 
 class Lha(NavalControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
-        super().__init__(
-            cp_id,
-            name,
-            at,
-            at,
-            starts_blue,
-            cptype=ControlPointType.LHA_GROUP,
-        )
+    def __init__(self, name: str, at: Point, starts_blue: bool):
+        super().__init__(name, at, at, starts_blue, cptype=ControlPointType.LHA_GROUP)
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
@@ -1223,14 +1218,9 @@ class OffMapSpawn(ControlPoint):
     def runway_is_operational(self) -> bool:
         return True
 
-    def __init__(self, cp_id: int, name: str, position: Point, starts_blue: bool):
+    def __init__(self, name: str, position: Point, starts_blue: bool):
         super().__init__(
-            cp_id,
-            name,
-            position,
-            position,
-            starts_blue,
-            cptype=ControlPointType.OFF_MAP,
+            name, position, position, starts_blue, cptype=ControlPointType.OFF_MAP
         )
 
     @property
@@ -1287,15 +1277,8 @@ class OffMapSpawn(ControlPoint):
 
 
 class Fob(ControlPoint):
-    def __init__(self, name: str, at: Point, cp_id: int, starts_blue: bool):
-        super().__init__(
-            cp_id,
-            name,
-            at,
-            at,
-            starts_blue,
-            cptype=ControlPointType.FOB,
-        )
+    def __init__(self, name: str, at: Point, starts_blue: bool):
+        super().__init__(name, at, at, starts_blue, cptype=ControlPointType.FOB)
         self.name = name
 
     @property

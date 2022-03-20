@@ -39,12 +39,6 @@ class QBaseMenu2(QDialog):
         self.game_model = game_model
         self.objectName = "menuDialogue"
 
-        try:
-            game = self.game_model.game
-            self.airport = game.theater.terrain.airport_by_id(self.cp.id)
-        except:
-            self.airport = None
-
         if self.cp.captured:
             self.deliveryEvent = None
 

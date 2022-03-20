@@ -9,7 +9,7 @@ export default function ControlPointsLayer() {
     <LayerGroup>
       {Object.values(controlPoints.controlPoints).map((controlPoint) => {
         return (
-          <ControlPoint key={controlPoint.name} controlPoint={controlPoint} />
+          <ControlPoint key={controlPoint.id} controlPoint={controlPoint} />
         );
       })}
     </LayerGroup>

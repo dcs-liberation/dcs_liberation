@@ -3,23 +3,23 @@ from __future__ import annotations
 import itertools
 from functools import cached_property
 from pathlib import Path
-from typing import Iterator, List, Dict, Tuple, TYPE_CHECKING
+from typing import Iterator, List, TYPE_CHECKING, Tuple
+from uuid import UUID
 
 from dcs import Mission
 from dcs.countries import CombinedJointTaskForcesBlue, CombinedJointTaskForcesRed
 from dcs.country import Country
 from dcs.planes import F_15C
-from dcs.ships import Stennis, LHA_Tarawa, HandyWind, USS_Arleigh_Burke_IIa
+from dcs.ships import HandyWind, LHA_Tarawa, Stennis, USS_Arleigh_Burke_IIa
 from dcs.statics import Fortification, Warehouse
 from dcs.terrain import Airport
-from dcs.unitgroup import PlaneGroup, ShipGroup, VehicleGroup, StaticGroup
-from dcs.vehicles import Armor, Unarmed, MissilesSS, AirDefence
+from dcs.unitgroup import PlaneGroup, ShipGroup, StaticGroup, VehicleGroup
+from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
 from game.point_with_heading import PointWithHeading
 from game.positioned import Positioned
 from game.profiling import logged_duration
 from game.scenery_group import SceneryGroup
-from game.utils import Distance, meters, Heading
 from game.theater.controlpoint import (
     Airfield,
     Carrier,
@@ -28,6 +28,7 @@ from game.theater.controlpoint import (
     Lha,
     OffMapSpawn,
 )
+from game.utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
     from game.theater.conflicttheater import ConflictTheater
@@ -94,7 +95,6 @@ class MizCampaignLoader:
         self.mission = Mission()
         with logged_duration("Loading miz"):
             self.mission.load_file(str(miz))
-        self.control_point_id = itertools.count(1000)
 
         # If there are no red carriers there usually aren't red units. Make sure
         # both countries are initialized so we don't have to deal with None.
@@ -238,7 +238,7 @@ class MizCampaignLoader:
         return SceneryGroup.from_trigger_zones(self.mission.triggers._zones)
 
     @cached_property
-    def control_points(self) -> Dict[int, ControlPoint]:
+    def control_points(self) -> dict[UUID, ControlPoint]:
         control_points = {}
         for airport in self.mission.terrain.airport_list():
             if airport.is_blue() or airport.is_red():
@@ -248,38 +248,20 @@ class MizCampaignLoader:
         for blue in (False, True):
             for group in self.off_map_spawns(blue):
                 control_point = OffMapSpawn(
-                    next(self.control_point_id),
-                    str(group.name),
-                    group.position,
-                    starts_blue=blue,
+                    str(group.name), group.position, starts_blue=blue
                 )
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.carriers(blue):
-                control_point = Carrier(
-                    ship.name,
-                    ship.position,
-                    next(self.control_point_id),
-                    starts_blue=blue,
-                )
+                control_point = Carrier(ship.name, ship.position, starts_blue=blue)
                 control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.lhas(blue):
-                control_point = Lha(
-                    ship.name,
-                    ship.position,
-                    next(self.control_point_id),
-                    starts_blue=blue,
-                )
+                control_point = Lha(ship.name, ship.position, starts_blue=blue)
                 control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
             for fob in self.fobs(blue):
-                control_point = Fob(
-                    str(fob.name),
-                    fob.position,
-                    next(self.control_point_id),
-                    starts_blue=blue,
-                )
+                control_point = Fob(str(fob.name), fob.position, starts_blue=blue)
                 control_point.captured_invert = fob.late_activation
                 control_points[control_point.id] = control_point
 

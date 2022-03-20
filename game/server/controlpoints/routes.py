@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from dcs import Point
 from dcs.mapping import LatLng
 from fastapi import APIRouter, Body, Depends, HTTPException, status
@@ -25,7 +27,7 @@ def list_control_points(
     "/{cp_id}", operation_id="get_control_point_by_id", response_model=ControlPointJs
 )
 def get_control_point(
-    cp_id: int, game: Game = Depends(GameContext.require)
+    cp_id: UUID, game: Game = Depends(GameContext.require)
 ) -> ControlPointJs:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
@@ -42,7 +44,7 @@ def get_control_point(
     response_model=bool,
 )
 def destination_in_range(
-    cp_id: int, lat: float, lng: float, game: Game = Depends(GameContext.require)
+    cp_id: UUID, lat: float, lng: float, game: Game = Depends(GameContext.require)
 ) -> bool:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
@@ -61,7 +63,7 @@ def destination_in_range(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def set_destination(
-    cp_id: int,
+    cp_id: UUID,
     destination: LeafletPoint = Body(..., title="destination"),
     game: Game = Depends(GameContext.require),
 ) -> None:
@@ -96,7 +98,7 @@ def set_destination(
     operation_id="clear_control_point_destination",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def cancel_travel(cp_id: int, game: Game = Depends(GameContext.require)) -> None:
+def cancel_travel(cp_id: UUID, game: Game = Depends(GameContext.require)) -> None:
     cp = game.theater.find_control_point_by_id(cp_id)
     if cp is None:
         raise HTTPException(

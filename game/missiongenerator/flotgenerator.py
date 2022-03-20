@@ -227,7 +227,7 @@ class FlotGenerator:
                         )[0]
                         self.mission.vehicle_group(
                             side,
-                            namegen.next_infantry_name(side, cp.id, u),
+                            namegen.next_infantry_name(side, u),
                             u.dcs_unit_type,
                             position=infantry_position,
                             group_size=1,
@@ -252,7 +252,7 @@ class FlotGenerator:
         )
         self.mission.vehicle_group(
             side,
-            namegen.next_infantry_name(side, cp.id, units[0]),
+            namegen.next_infantry_name(side, units[0]),
             units[0].dcs_unit_type,
             position=infantry_position,
             group_size=1,
@@ -264,7 +264,7 @@ class FlotGenerator:
             position = infantry_position.random_point_within(55, 5)
             self.mission.vehicle_group(
                 side,
-                namegen.next_infantry_name(side, cp.id, unit),
+                namegen.next_infantry_name(side, unit),
                 unit.dcs_unit_type,
                 position=position,
                 group_size=1,
@@ -782,7 +782,7 @@ class FlotGenerator:
 
         group = self.mission.vehicle_group(
             side,
-            namegen.next_unit_name(side, cp.id, unit_type),
+            namegen.next_unit_name(side, unit_type),
             unit_type.dcs_unit_type,
             position=at,
             group_size=count,

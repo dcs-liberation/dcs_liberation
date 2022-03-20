@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 import random
 from enum import Enum
-from typing import Dict, List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
+from uuid import UUID
 
 from game.data.units import UnitClass
 from game.dcs.groundunittype import GroundUnitType
@@ -82,7 +83,7 @@ class GroundPlanner:
         self.shorad_groups: List[CombatGroup] = []
         self.recon_groups: List[CombatGroup] = []
 
-        self.units_per_cp: Dict[int, List[CombatGroup]] = {}
+        self.units_per_cp: dict[UUID, List[CombatGroup]] = {}
         for cp in self.connected_enemy_cp:
             self.units_per_cp[cp.id] = []
         self.reserve: List[CombatGroup] = []

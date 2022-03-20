@@ -7,6 +7,7 @@ from collections.abc import Iterator
 from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import Any, List, TYPE_CHECKING, Type, Union, cast
+from uuid import UUID
 
 from dcs.countries import Switzerland, USAFAggressors, UnitedNationsPeacekeepers
 from dcs.country import Country
@@ -105,7 +106,7 @@ class Game:
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.notes = ""
-        self.ground_planners: dict[int, GroundPlanner] = {}
+        self.ground_planners: dict[UUID, GroundPlanner] = {}
         self.informations: list[Information] = []
         self.message("Game Start", "-" * 40)
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.

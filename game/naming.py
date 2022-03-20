@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import random
 import time
-from typing import List, Any, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING
 
 from dcs.country import Country
 
@@ -474,45 +474,27 @@ class NameGenerator:
         cls.cargo_ship_number = 0
 
     @classmethod
-    def next_aircraft_name(
-        cls, country: Country, parent_base_id: int, flight: Flight
-    ) -> str:
+    def next_aircraft_name(cls, country: Country, flight: Flight) -> str:
         cls.aircraft_number += 1
-        try:
-            if flight.custom_name:
-                name_str = flight.custom_name
-            else:
-                name_str = "{} {}".format(
-                    flight.package.target.name, flight.flight_type
-                )
-        except AttributeError:  # Here to maintain save compatibility with 2.3
+        if flight.custom_name:
+            name_str = flight.custom_name
+        else:
             name_str = "{} {}".format(flight.package.target.name, flight.flight_type)
-        return "{}|{}|{}|{}|{}|".format(
-            name_str,
-            country.id,
-            cls.aircraft_number,
-            parent_base_id,
-            flight.unit_type.name,
+        return "{}|{}|{}|{}|".format(
+            name_str, country.id, cls.aircraft_number, flight.unit_type.name
         )
 
     @classmethod
-    def next_unit_name(
-        cls, country: Country, parent_base_id: int, unit_type: UnitType[Any]
-    ) -> str:
+    def next_unit_name(cls, country: Country, unit_type: UnitType[Any]) -> str:
         cls.number += 1
-        return "unit|{}|{}|{}|{}|".format(
-            country.id, cls.number, parent_base_id, unit_type.name
-        )
+        return "unit|{}|{}|{}|".format(country.id, cls.number, unit_type.name)
 
     @classmethod
-    def next_infantry_name(
-        cls, country: Country, parent_base_id: int, unit_type: UnitType[Any]
-    ) -> str:
+    def next_infantry_name(cls, country: Country, unit_type: UnitType[Any]) -> str:
         cls.infantry_number += 1
-        return "infantry|{}|{}|{}|{}|".format(
+        return "infantry|{}|{}|{}|".format(
             country.id,
             cls.infantry_number,
-            parent_base_id,
             unit_type.name,
         )
 

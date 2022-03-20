@@ -12,6 +12,7 @@ from typing import (
     TYPE_CHECKING,
     Union,
 )
+from uuid import UUID
 
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
@@ -337,8 +338,10 @@ class Debriefing:
         seen = set()
         captures = []
         for capture in reversed(self.state_data.base_capture_events):
-            cp_id_str, new_owner_id_str, _name = capture.split("||")
-            cp_id = int(cp_id_str)
+            # The ID string in the JSON file will be an airport ID for airport captures
+            # but will be a UUID for all other types, since DCS doesn't know the UUIDs
+            # for the captured FOBs.
+            cp_id, new_owner_id_str, _name = capture.split("||")
 
             # Only the most recent capture event matters.
             if cp_id in seen:
@@ -346,7 +349,12 @@ class Debriefing:
             seen.add(cp_id)
 
             try:
-                control_point = self.game.theater.find_control_point_by_id(cp_id)
+                control_point = self.game.theater.find_control_point_by_airport_id(
+                    int(cp_id)
+                )
+            except ValueError:
+                # The CP ID could not be converted to an int, so it's a UUID.
+                control_point = self.game.theater.find_control_point_by_id(UUID(cp_id))
             except KeyError:
                 # Captured base is not a part of the campaign. This happens when neutral
                 # bases are near the conflict. Nothing to do.

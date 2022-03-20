@@ -1,4 +1,3 @@
-import copy
 import logging
 import random
 from typing import Any, Union
@@ -8,7 +7,6 @@ from dcs.country import Country
 from dcs.mapping import Vector2
 from dcs.mission import StartType as DcsStartType
 from dcs.planes import F_14A, Su_33
-from dcs.point import PointAction
 from dcs.ships import KUZNECOW
 from dcs.terrain import Airport, NoParkingSlotError
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
@@ -16,10 +14,10 @@ from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 from game.ato import Flight
 from game.ato.flightstate import InFlight
 from game.ato.starttype import StartType
+from game.ato.traveltime import GroundSpeed
 from game.naming import namegen
 from game.theater import Airfield, ControlPoint, Fob, NavalControlPoint, OffMapSpawn
 from game.utils import feet, meters
-from game.ato.traveltime import GroundSpeed
 
 WARM_START_HELI_ALT = meters(500)
 WARM_START_ALTITUDE = meters(3000)
@@ -79,12 +77,11 @@ class FlightGroupSpawner:
         return self.generate_mid_mission()
 
     def create_idle_aircraft(self) -> FlyingGroup[Any]:
-        assert isinstance(self.flight.squadron.location, Airfield)
+        airport = self.flight.squadron.location.dcs_airport
+        assert airport is not None
         group = self._generate_at_airport(
-            name=namegen.next_aircraft_name(
-                self.country, self.flight.departure.id, self.flight
-            ),
-            airport=self.flight.squadron.location.airport,
+            name=namegen.next_aircraft_name(self.country, self.flight),
+            airport=airport,
         )
 
         group.uncontrolled = True
@@ -95,9 +92,7 @@ class FlightGroupSpawner:
         return self.flight.state.spawn_type
 
     def generate_flight_at_departure(self) -> FlyingGroup[Any]:
-        name = namegen.next_aircraft_name(
-            self.country, self.flight.departure.id, self.flight
-        )
+        name = namegen.next_aircraft_name(self.country, self.flight)
         cp = self.flight.departure
         try:
             if self.start_type is StartType.IN_FLIGHT:
@@ -135,9 +130,7 @@ class FlightGroupSpawner:
 
     def generate_mid_mission(self) -> FlyingGroup[Any]:
         assert isinstance(self.flight.state, InFlight)
-        name = namegen.next_aircraft_name(
-            self.country, self.flight.departure.id, self.flight
-        )
+        name = namegen.next_aircraft_name(self.country, self.flight)
         speed = self.flight.state.estimate_speed()
         pos = self.flight.state.estimate_position()
         pos += Vector2(random.randint(100, 1000), random.randint(100, 1000))

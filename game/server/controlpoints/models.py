@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class ControlPointJs(BaseModel):
-    id: int
+    id: UUID
     name: str
     blue: bool
     position: LeafletPoint

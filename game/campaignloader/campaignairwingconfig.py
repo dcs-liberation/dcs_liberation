@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, TYPE_CHECKING, Union, Optional
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from game.ato.flighttype import FlightType
 from game.theater.controlpoint import ControlPoint
@@ -67,7 +66,7 @@ class CampaignAirWingConfig:
         by_location: dict[ControlPoint, list[SquadronConfig]] = defaultdict(list)
         for base_id, squadron_configs in data.items():
             if isinstance(base_id, int):
-                base = theater.find_control_point_by_id(base_id)
+                base = theater.find_control_point_by_airport_id(base_id)
             else:
                 base = theater.control_point_named(base_id)
 

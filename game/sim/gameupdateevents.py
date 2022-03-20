@@ -33,7 +33,7 @@ class GameUpdateEvents:
     updated_front_lines: set[UUID] = field(default_factory=set)
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
-    updated_control_points: set[int] = field(default_factory=set)
+    updated_control_points: set[UUID] = field(default_factory=set)
     reset_on_map_center: LatLng | None = None
     game_unloaded: bool = False
     new_turn: bool = False

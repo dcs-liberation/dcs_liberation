@@ -2,22 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dcs.action import MarkToAll, SetFlag, DoScript, ClearFlag
+from dcs.action import ClearFlag, DoScript, MarkToAll, SetFlag
 from dcs.condition import (
-    TimeAfter,
     AllOfCoalitionOutsideZone,
-    PartOfCoalitionInZone,
     FlagIsFalse,
     FlagIsTrue,
+    PartOfCoalitionInZone,
+    TimeAfter,
 )
 from dcs.mission import Mission
 from dcs.task import Option
 from dcs.translation import String
-from dcs.triggers import (
-    Event,
-    TriggerOnce,
-    TriggerCondition,
-)
+from dcs.triggers import Event, TriggerCondition, TriggerOnce
 from dcs.unit import Skill
 
 from game.theater import Airfield
@@ -61,9 +57,12 @@ class TriggerGenerator:
         """
 
         # Empty neutrals airports
-        cp_ids = [cp.id for cp in self.game.theater.controlpoints]
+        airfields = [
+            cp for cp in self.game.theater.controlpoints if isinstance(cp, Airfield)
+        ]
+        airport_ids = {cp.airport.id for cp in airfields}
         for airport in self.mission.terrain.airport_list():
-            if airport.id not in cp_ids:
+            if airport.id not in airport_ids:
                 airport.unlimited_fuel = False
                 airport.unlimited_munitions = False
                 airport.unlimited_aircrafts = False
@@ -76,21 +75,20 @@ class TriggerGenerator:
                 airport.operating_level_fuel = 0
 
         for airport in self.mission.terrain.airport_list():
-            if airport.id not in cp_ids:
+            if airport.id not in airport_ids:
                 airport.unlimited_fuel = True
                 airport.unlimited_munitions = True
                 airport.unlimited_aircrafts = True
 
-        for cp in self.game.theater.controlpoints:
-            if isinstance(cp, Airfield):
-                cp_airport = self.mission.terrain.airport_by_id(cp.airport.id)
-                if cp_airport is None:
-                    raise RuntimeError(
-                        f"Could not find {cp.airport.name} in the mission"
-                    )
-                cp_airport.set_coalition(
-                    cp.captured and player_coalition or enemy_coalition
+        for airfield in airfields:
+            cp_airport = self.mission.terrain.airport_by_id(airfield.airport.id)
+            if cp_airport is None:
+                raise RuntimeError(
+                    f"Could not find {airfield.airport.name} in the mission"
                 )
+            cp_airport.set_coalition(
+                airfield.captured and player_coalition or enemy_coalition
+            )
 
     def _set_skill(self, player_coalition: str, enemy_coalition: str) -> None:
         """

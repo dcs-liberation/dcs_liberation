@@ -18,7 +18,6 @@ from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
 from game.missiongenerator.airsupport import AirSupport
 from game.settings import Settings
-from game.theater import ControlPointType
 from game.utils import pairwise
 from .baiingress import BaiIngressBuilder
 from .cargostop import CargoStopBuilder
@@ -27,7 +26,6 @@ from .deadingress import DeadIngressBuilder
 from .default import DefaultWaypointBuilder
 from .holdpoint import HoldPointBuilder
 from .joinpoint import JoinPointBuilder
-from .splitpoint import SplitPointBuilder
 from .landingpoint import LandingPointBuilder
 from .ocaaircraftingress import OcaAircraftIngressBuilder
 from .ocarunwayingress import OcaRunwayIngressBuilder
@@ -36,6 +34,7 @@ from .racetrack import RaceTrackBuilder
 from .racetrackend import RaceTrackEndBuilder
 from .refuel import RefuelPointBuilder
 from .seadingress import SeadIngressBuilder
+from .splitpoint import SplitPointBuilder
 from .strikeingress import StrikeIngressBuilder
 from .sweepingress import SweepIngressBuilder
 
@@ -213,14 +212,12 @@ class WaypointGenerator:
     def prevent_spawn_at_hostile_airbase(self, trigger: TriggerRule) -> None:
         # Prevent delayed flights from spawning at airbases if they were
         # captured before they've spawned.
-        if self.flight.from_cp.cptype != ControlPointType.AIRBASE:
-            return
-
-        trigger.add_condition(
-            CoalitionHasAirdrome(
-                self.flight.squadron.coalition.coalition_id, self.flight.from_cp.id
+        if (airport := self.flight.departure.dcs_airport) is not None:
+            trigger.add_condition(
+                CoalitionHasAirdrome(
+                    self.flight.squadron.coalition.coalition_id, airport.id
+                )
             )
-        )
 
     def set_startup_time(self, delay: timedelta) -> None:
         # Uncontrolled causes the AI unit to spawn, but not begin startup.

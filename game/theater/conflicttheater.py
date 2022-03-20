@@ -5,6 +5,7 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
+from uuid import UUID
 
 from dcs.mapping import Point
 from dcs.terrain import (
@@ -203,11 +204,17 @@ class ConflictTheater:
         assert closest_red is not None
         return closest_blue, closest_red
 
-    def find_control_point_by_id(self, id: int) -> ControlPoint:
+    def find_control_point_by_id(self, cp_id: UUID) -> ControlPoint:
         for i in self.controlpoints:
-            if i.id == id:
+            if i.id == cp_id:
                 return i
-        raise KeyError(f"Cannot find ControlPoint with ID {id}")
+        raise KeyError(f"Cannot find ControlPoint with ID {cp_id}")
+
+    def find_control_point_by_airport_id(self, airport_id: int) -> ControlPoint:
+        for cp in self.controlpoints:
+            if cp.dcs_airport is not None and cp.dcs_airport.id == airport_id:
+                return cp
+        raise KeyError(f"Cannot find ControlPoint with airport ID {airport_id}")
 
     def control_point_named(self, name: str) -> ControlPoint:
         for cp in self.controlpoints:

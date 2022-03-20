@@ -208,25 +208,25 @@ export type ListControlPointsApiArg = void;
 export type GetControlPointByIdApiResponse =
   /** status 200 Successful Response */ ControlPoint;
 export type GetControlPointByIdApiArg = {
-  cpId: number;
+  cpId: string;
 };
 export type ControlPointDestinationInRangeApiResponse =
   /** status 200 Successful Response */ boolean;
 export type ControlPointDestinationInRangeApiArg = {
-  cpId: number;
+  cpId: string;
   lat: number;
   lng: number;
 };
 export type SetControlPointDestinationApiResponse =
   /** status 204 Successful Response */ undefined;
 export type SetControlPointDestinationApiArg = {
-  cpId: number;
+  cpId: string;
   body: LatLng;
 };
 export type ClearControlPointDestinationApiResponse =
   /** status 204 Successful Response */ undefined;
 export type ClearControlPointDestinationApiArg = {
-  cpId: number;
+  cpId: string;
 };
 export type GetDebugHoldZonesApiResponse =
   /** status 200 Successful Response */ HoldZones;
@@ -302,12 +302,12 @@ export type OpenTgoInfoDialogApiArg = {
 export type OpenNewControlPointPackageDialogApiResponse =
   /** status 204 Successful Response */ undefined;
 export type OpenNewControlPointPackageDialogApiArg = {
-  cpId: number;
+  cpId: string;
 };
 export type OpenControlPointInfoDialogApiResponse =
   /** status 204 Successful Response */ undefined;
 export type OpenControlPointInfoDialogApiArg = {
-  cpId: number;
+  cpId: string;
 };
 export type ListSupplyRoutesApiResponse =
   /** status 200 Successful Response */ SupplyRoute[];
@@ -335,7 +335,7 @@ export type LatLng = {
   lng: number;
 };
 export type ControlPoint = {
-  id: number;
+  id: string;
   name: string;
   blue: boolean;
   position: LatLng;
