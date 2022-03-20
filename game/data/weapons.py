@@ -52,8 +52,13 @@ class Weapon:
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         # Update any existing models with new data on load.
-        updated = Weapon.with_clsid(state["clsid"])
-        state.update(updated.__dict__)
+        try:
+            updated = Weapon.with_clsid(state["clsid"])
+            state.update(updated.__dict__)
+        except KeyError:
+            logging.exception(
+                f'CLSID {state["clsid"]} is not available anymore. This could potentially lead to some unexpected results when generating the next turn miz. To solve this issue it is recommended to update the loadout of all affected flights.'
+            )
         self.__dict__.update(state)
 
     @classmethod
