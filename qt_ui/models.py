@@ -272,8 +272,8 @@ class AtoModel(QAbstractListModel):
     def cancel_or_abort_package(self, package: Package) -> None:
         with EventStream.event_context() as events:
             if all(f.state.cancelable for f in package.flights):
-                self._delete_package(package)
                 events.delete_flights_in_package(package)
+                self._delete_package(package)
                 return
 
             package_model = self.find_matching_package_model(package)
