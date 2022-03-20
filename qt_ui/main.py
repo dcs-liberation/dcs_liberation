@@ -64,7 +64,7 @@ def on_game_load(game: Game | None) -> None:
     EventStream.put_nowait(GameUpdateEvents().game_loaded(game))
 
 
-def run_ui(game: Optional[Game], new_map: bool, dev: bool) -> None:
+def run_ui(game: Game | None, dev: bool) -> None:
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"  # Potential fix for 4K screens
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
@@ -158,7 +158,7 @@ def run_ui(game: Optional[Game], new_map: bool, dev: bool) -> None:
     GameUpdateSignal.get_instance().game_loaded.connect(on_game_load)
 
     # Start window
-    window = QLiberationWindow(game, new_map, dev)
+    window = QLiberationWindow(game, dev)
     window.showMaximized()
     splash.finish(window)
     qt_execution_code = app.exec_()
@@ -188,18 +188,8 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--dev", action="store_true", help="Enable development mode.")
 
-    parser.add_argument(
-        "--new-map",
-        action="store_true",
-        default=True,
-        help="Use the React based map. This is the default.",
-    )
-    parser.add_argument(
-        "--old-map",
-        dest="new_map",
-        action="store_false",
-        help="Use the legacy map. This will be removed before 6.0.0 is released.",
-    )
+    parser.add_argument("--new-map", help="Deprecated. Does nothing.")
+    parser.add_argument("--old-map", help="Deprecated. Does nothing.")
 
     new_game = subparsers.add_parser("new-game")
 
@@ -374,7 +364,7 @@ def main():
         return
 
     with Server().run_in_thread():
-        run_ui(game, args.new_map, args.dev)
+        run_ui(game, args.dev)
 
 
 if __name__ == "__main__":

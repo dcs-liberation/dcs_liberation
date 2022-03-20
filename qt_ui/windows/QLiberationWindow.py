@@ -53,7 +53,7 @@ class QLiberationWindow(QMainWindow):
     tgo_info_signal = Signal(TheaterGroundObject)
     control_point_info_signal = Signal(ControlPoint)
 
-    def __init__(self, game: Optional[Game], new_map: bool, dev: bool) -> None:
+    def __init__(self, game: Game | None, dev: bool) -> None:
         super().__init__()
 
         self._uncaught_exception_handler = UncaughtExceptionHandler(self)
@@ -78,7 +78,7 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model, new_map, dev, self)
+        self.liberation_map = QLiberationMap(self.game_model, dev, self)
 
         self.setGeometry(300, 100, 270, 100)
         self.updateWindowTitle()
@@ -374,7 +374,6 @@ class QLiberationWindow(QMainWindow):
                 self.info_panel.setGame(game)
             self.sim_controller.set_game(game)
             self.game_model.set(self.game)
-            self.liberation_map.set_game(game)
         except AttributeError:
             logging.exception("Incompatible save game")
             QMessageBox.critical(
