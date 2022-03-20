@@ -4,8 +4,11 @@ Saves from 5.1.0 are compatible with 5.2.0
 
 ## Features/Improvements
 
+* **[Engine]** Support for the flyable AH-64D Apache
+* **[Mission Generation]** Improved FARP Helipad handling and creation (now includes windsocks)
 * **[Modding]** Add UH-60L mod support
 * **[Modding]** Updated Community A-4E-C mod version support to 2.0.0 release. Version 1.4.2 is no longer compatible, unless the mod default loadouts are deleted/modified.
+* **[Modding]** Updated JAS-39-C mod support for v1.8.0-beta
 * **[Campaign]** Vegas Nerve campaign update
 * **[Campaign]** Add 3 new campaigns from Sith1144
 ## Fixes
