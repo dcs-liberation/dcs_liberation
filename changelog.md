@@ -4,7 +4,6 @@ Saves from 5.1.0 are compatible with 5.2.0
 
 ## Features/Improvements
 
-* **[Engine]** Add support for the flyable AH-64D Apache
 * **[Modding]** Add UH-60L mod support
 * **[Campaign]** Vegas Nerve campaign update
 * **[Campaign]** Add 3 new campaigns from Sith1144

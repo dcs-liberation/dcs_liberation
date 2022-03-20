@@ -48,7 +48,6 @@ from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
 from pydcs_extensions.uh60l.uh60l import UH_60L, KC130J
-from pydcs_extensions.ah64d.ah64d import AH_64D_BLK_II
 
 plane_map["A-4E-C"] = A_4E_C
 plane_map["F-22A"] = F_22A
@@ -62,7 +61,6 @@ plane_map["VSN_F104S"] = VSN_F104S
 plane_map["VSN_F104S_AG"] = VSN_F104S_AG
 
 helicopter_map["UH-60L"] = UH_60L
-helicopter_map["AH-64D_BLK_II"] = AH_64D_BLK_II
 
 vehicle_map["FieldHL"] = frenchpack._FIELD_HIDE
 vehicle_map["HARRIERH"] = frenchpack._FIELD_HIDE_SMALL
