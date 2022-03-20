@@ -7,7 +7,6 @@ from typing import Any, List, Optional, TYPE_CHECKING
 from dcs import Point
 from dcs.planes import C_101CC, C_101EB, Su_33
 
-from game.savecompat import has_save_compat_for
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Navigating, Uninitialized
 from .flightstate.killed import Killed
@@ -100,15 +99,8 @@ class Flight(SidcDescribable):
         del state["state"]
         return state
 
-    @has_save_compat_for(6)
     def __setstate__(self, state: dict[str, Any]) -> None:
         state["state"] = Uninitialized(self, state["squadron"].settings)
-        if "props" not in state:
-            state["props"] = {}
-        if "id" not in state:
-            state["id"] = uuid.uuid4()
-        if "coalition" not in state:
-            state["coalition"] = state["squadron"].coalition
         self.__dict__.update(state)
 
     @property
