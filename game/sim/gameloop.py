@@ -54,12 +54,16 @@ class GameLoop:
 
     def run_to_first_contact(self) -> None:
         self.pause()
+        if not self.started:
+            self.start()
         logging.info("Running sim to first contact")
         while not self.completed:
             self.tick(suppress_events=True)
 
     def pause_and_generate_miz(self, output: Path) -> None:
         self.pause()
+        if not self.started:
+            self.start()
         self.sim.generate_miz(output)
 
     def pause_and_debrief(self, state_path: Path, force_end: bool) -> Debriefing:
