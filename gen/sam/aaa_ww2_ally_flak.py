@@ -64,13 +64,6 @@ class AllyWW2FlakGenerator(AirDefenseGroupGenerator):
             Heading.random(),
         )
         self.add_unit(
-            Unarmed.M4_Tractor,
-            "LOG#2",
-            self.position.x + 20,
-            self.position.y,
-            Heading.random(),
-        )
-        self.add_unit(
             Unarmed.Bedford_MWD,
             "LOG#3",
             self.position.x - 20,

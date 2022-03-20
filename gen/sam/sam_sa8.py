@@ -27,13 +27,6 @@ class SA8Generator(AirDefenseGroupGenerator):
                 position[1],
                 position[2],
             )
-        self.add_unit(
-            AirDefence.SA_8_Osa_LD_9T217,
-            "LD",
-            self.position.x + 20,
-            self.position.y,
-            self.heading,
-        )
 
     @classmethod
     def range(cls) -> AirDefenseRange:
