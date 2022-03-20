@@ -1,0 +1,12 @@
+---
+name: Wolfpack, 1-82 ARB
+nickname: Wolfpack
+female_pilot_percentage: 10
+country: USA
+role: Attack Helicopter
+aircraft: AH-64D Apache Longbow
+livery: Wolfpack 1-82 ARB
+mission_types:
+  - CAS
+  - BAI
+  - OCA/Aircraft

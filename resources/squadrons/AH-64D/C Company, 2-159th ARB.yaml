@@ -1,0 +1,12 @@
+---
+name: C Company, 2-159th ARB
+nickname: Gunslingers
+female_pilot_percentage: 10
+country: USA
+role: Attack Helicopter
+aircraft: AH-64D Apache Longbow
+livery: Gunslingers 2-159th ARB
+mission_types:
+  - CAS
+  - BAI
+  - OCA/Aircraft
