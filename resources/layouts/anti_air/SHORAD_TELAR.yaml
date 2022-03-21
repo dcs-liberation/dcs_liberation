@@ -1,19 +1,19 @@
-name: Short Range Anti Air Group
+name: SHORAD TELAR
 generic: true
 tasks:
   - SHORAD
 groups:
   - SHORAD:
-    - name: SHORAD Group 0
+    - name: SHORAD LN
       unit_count:
         - 2
       unit_classes:
         - SHORAD
-    - name: SHORAD Group 1
+    - name: SHORAD Logistics
       optional: true
       unit_count:
         - 1
         - 2
       unit_classes:
         - Logistics
-layout_file: resources/layouts/anti_air/shorad.miz
+layout_file: resources/layouts/anti_air/SHORAD.miz
