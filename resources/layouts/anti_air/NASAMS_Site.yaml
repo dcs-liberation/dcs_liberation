@@ -1,21 +1,21 @@
-name: NASAMS AIM-120B
+name: NASAMS Site
 tasks:
   - MERAD
 groups:
   - NASAMS:
-    - name: NASAMS AIM-120B 1
+    - name: SR
       unit_count:
         - 1
       unit_types:
         - NASAMS_Radar_MPQ64F1
-    - name: NASAMS AIM-120B 0
+    - name: CC
       unit_count:
         - 1
       unit_types:
         - NASAMS_Command_Post
-    - name: NASAMS AIM-120B 2
+    - name: LN
       unit_count:
         - 4
       unit_types:
         - NASAMS_LN_B
-layout_file: resources/layouts/anti_air/legacy_ground_templates.miz
+        - NASAMS_LN_C
