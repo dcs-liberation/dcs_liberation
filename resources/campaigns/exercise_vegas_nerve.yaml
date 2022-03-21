@@ -4,7 +4,7 @@ theater: Nevada
 authors: Starfire
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Redfor (China) 2010
-description: <p>Welcome to Vegas Nerve, an asymmetrical Red Flag Exercise scenario. You start off in control of the two Tonopah airports, and will push south from there. For the duration of this exercise, Creech AFB has been cleared of all fixed wing aircraft and will function as a FARP. OPFOR has a substantial resource advantage and reducing that advantage will be key to your success. Good luck, Commander.</p>
+description: <p>Welcome to Vegas Nerve, an asymmetrical Red Flag Exercise scenario. You are starting off in control of the two Tonopah airports, and will push south from there. For the duration of this exercise, Creech AFB has been cleared of all fixed wing aircraft and will function as a FARP for rotor ops. OPFOR has a substantial resource advantage and an extensive IADS. Reducing that resource advantage while degrading their IADS will be vital to a successful completion of this exercise. Good luck, Commander.</p>
 miz: exercise_vegas_nerve.miz
 performance: 1
 recommended_start_date: 2011-04-24
@@ -46,11 +46,11 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - AH-64D Apache Longbow
-    - primary: SEAD
+    - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - F/A-18C Hornet (Lot 20)
-    - primary: DEAD
+    - primary: SEAD
       secondary: air-to-ground
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
