@@ -25,7 +25,7 @@
         "PYTHONPATH": ".;./pydcs",
         "CORS_ALLOW_DEBUG_SERVER": "true"
       },
-      "args": ["--new-map", "--dev"],
+      "args": ["--dev"],
       "preLaunchTask": "Prepare Environment"
     },
     {
