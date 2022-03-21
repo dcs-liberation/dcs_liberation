@@ -10,22 +10,12 @@ performance: 1
 recommended_start_date: 2008-08-08
 version: "9.1"
 squadrons:
-  Blue CV:
+  Blue CV-1:
     - primary: BARCAP
       secondary: any
       aircraft:
         - F-14B Tomcat
-        - F-14A Tomcat (Block 135-GR Late)
-    - primary: TARCAP
-      secondary: any
-      aircraft:
-        - F-14B Tomcat
-        - F-14A Tomcat (Block 135-GR Late)
     - primary: SEAD
-      secondary: any
-      aircraft:
-        - F/A-18C Hornet (Lot 20)
-    - primary: DEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
@@ -40,9 +30,6 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
-    - primary: Transport
-      aircraft:
-        - SH-60B Seahawk
   From Incirlik:
     - primary: BARCAP
       secondary: air-to-air
@@ -52,6 +39,10 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
     - primary: DEAD
       secondary: any
       aircraft:
@@ -66,9 +57,6 @@ squadrons:
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
-    - primary: Transport
-      aircraft:
-        - C-130
 #FARPs
   UNOMIG Sector HQ:
     - primary: CAS
@@ -81,13 +69,13 @@ squadrons:
       aircraft:
         - Mi-24P Hind-F
 #Sukhumi-Babushara
-   #20:
-#Sochi-Adler
-  18:
+  20:
     - primary: BARCAP
       secondary: any
       aircraft:
-       - MiG-29S Fulcrum-C
+        - MiG-29S Fulcrum-C
+#Sochi-Adler
+  18:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
@@ -104,9 +92,6 @@ squadrons:
     - primary: Refueling
       aircraft:
         - IL-78M
-    - primary: Transport
-      aircraft:
-        - IL-76MD
   Red CV:
     - primary: BARCAP
       secondary: any
@@ -115,6 +100,5 @@ squadrons:
  # I am aware there is no Russian LHA. This is just for campaign inversion.
   Red LHA:
     - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - AV-8B Harrier II Night Attack
+      secondary: air-to-ground    
+        
