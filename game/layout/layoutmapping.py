@@ -19,6 +19,9 @@ class GroupLayoutMapping:
     # Defines if the group is required for the template or can be skipped
     optional: bool = False
 
+    # Should this be filled by accessible units if optional or not
+    fill: bool = True
+
     # All static units for the group
     statics: list[str] = field(default_factory=list)
 
@@ -40,6 +43,7 @@ class GroupLayoutMapping:
     @staticmethod
     def from_dict(d: dict[str, Any]) -> GroupLayoutMapping:
         optional = d["optional"] if "optional" in d else False
+        fill = d["fill"] if "fill" in d else True
         statics = d["statics"] if "statics" in d else []
         unit_count = d["unit_count"] if "unit_count" in d else []
         unit_types = []
@@ -59,6 +63,7 @@ class GroupLayoutMapping:
         return GroupLayoutMapping(
             d["name"],
             optional,
+            fill,
             statics,
             unit_count,
             unit_types,

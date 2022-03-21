@@ -62,6 +62,8 @@ class ForceGroup:
         units: set[UnitType[Any]] = set()
         statics: set[Type[DcsUnitType]] = set()
         for group in layout.all_groups:
+            if group.optional and not group.fill:
+                continue
             for unit_type in group.possible_types_for_faction(faction):
                 if issubclass(unit_type, VehicleType):
                     units.add(next(GroundUnitType.for_dcs_type(unit_type)))
@@ -80,6 +82,36 @@ class ForceGroup:
 
     def __str__(self) -> str:
         return self.name
+
+    def has_unit_for_layout_group(self, group: TgoLayoutGroup) -> bool:
+        for unit in self.units:
+            if (
+                unit.dcs_unit_type in group.unit_types
+                or unit.unit_class in group.unit_classes
+            ):
+                return True
+        return False
+
+    @classmethod
+    def for_faction_by_name(cls, name: str, faction: Faction) -> ForceGroup:
+        """Load a PresetGroup as ForceGroup with faction sensitive handling"""
+        force_group = cls.named(name)
+        for layout in force_group.layouts:
+            for groups in layout.groups.values():
+                for group in groups:
+                    if group.fill and not force_group.has_unit_for_layout_group(group):
+                        for unit_type in group.possible_types_for_faction(faction):
+                            if issubclass(unit_type, VehicleType):
+                                force_group.units.append(
+                                    next(GroundUnitType.for_dcs_type(unit_type))
+                                )
+                            elif issubclass(unit_type, ShipType):
+                                force_group.units.append(
+                                    next(ShipUnitType.for_dcs_type(unit_type))
+                                )
+                            elif issubclass(unit_type, StaticType):
+                                force_group.statics.append(unit_type)
+        return force_group
 
     @classmethod
     def named(cls, name: str) -> ForceGroup:

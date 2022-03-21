@@ -96,6 +96,9 @@ class TgoLayoutGroup:
     # Defines if this groupTemplate is required or not
     optional: bool = False
 
+    # Should this be filled by accessible units if optional or not
+    fill: bool = True
+
     def possible_types_for_faction(self, faction: Faction) -> list[Type[DcsUnitType]]:
         """Determine the possible dcs unit types for the TgoLayoutGroup and the given faction"""
         unit_types = [t for t in self.unit_types if faction.has_access_to_dcs_type(t)]

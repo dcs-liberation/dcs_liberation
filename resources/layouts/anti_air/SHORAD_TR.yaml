@@ -5,6 +5,7 @@ groups:
   - SHORAD:
     - name: SHORAD STR
       optional: true
+      fill: false # Do not fill with faction possible units
       unit_count:
         - 1
       unit_classes:
@@ -13,6 +14,7 @@ groups:
         - TrackRadar
     - name: SHORAD OTR
       optional: true
+      fill: false # Do not fill with faction possible units
       unit_count:
         - 1
       unit_classes:

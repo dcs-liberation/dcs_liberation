@@ -3,8 +3,9 @@ tasks:
   - AAA
 groups:
   - AAA:
-    - name: Cold War Flak Site Radar
+    - name: Cold War Flak Site Radar 
       optional: true # Only available to Late Cold War
+      fill: false # Do not fill with faction possible units
       unit_count:
         - 1
       unit_classes:
