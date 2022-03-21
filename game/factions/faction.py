@@ -216,7 +216,8 @@ class Faction:
 
         # This has to be loaded AFTER GroundUnitType and ShipUnitType to work properly
         faction.preset_groups = [
-            ForceGroup.named(n) for n in json.get("preset_groups", [])
+            ForceGroup.for_faction_by_name(n, faction)
+            for n in json.get("preset_groups", [])
         ]
 
         faction.requirements = json.get("requirements", {})
