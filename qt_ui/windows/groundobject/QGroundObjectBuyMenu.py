@@ -27,8 +27,6 @@ from game.layout.layout import (
     TgoLayout,
     TgoLayoutGroup,
 )
-from game.server import EventStream
-from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import (
     EwrGroundObject,
@@ -36,7 +34,6 @@ from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
 )
 from qt_ui.uiconstants import EVENT_ICONS
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
 @dataclass
@@ -208,6 +205,12 @@ class QGroundObjectTemplateLayout(QGroupBox):
             # Something went wrong. Buy button should be disabled!
             logging.error("Not enough money to buy the group")
             return
+
+        # Change the heading of the new group to head to the conflict
+        self.ground_object.heading = (
+            self.game.theater.heading_to_conflict_from(self.ground_object.position)
+            or self.ground_object.heading
+        )
         self.game.blue.budget -= price - self.current_group_value
         self.ground_object.groups = []
         for group_name, groups in self.layout_model.groups.items():

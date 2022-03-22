@@ -166,6 +166,8 @@ def load_icons():
         "./resources/ui/conditions/weather/night-totally-cloud.png"
     )
 
+    ICONS["heading"] = QPixmap("./resources/ui/misc/heading.png")
+
 
 EVENT_ICONS: Dict[str, QPixmap] = {}
 

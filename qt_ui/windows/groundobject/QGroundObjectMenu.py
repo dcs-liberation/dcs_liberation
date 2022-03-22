@@ -1,5 +1,6 @@
 import logging
 
+from PySide2.QtGui import QTransform
 from PySide2.QtWidgets import (
     QDialog,
     QGridLayout,
@@ -8,6 +9,7 @@ from PySide2.QtWidgets import (
     QLabel,
     QPushButton,
     QVBoxLayout,
+    QSpinBox,
 )
 from dcs import Point
 
@@ -20,7 +22,8 @@ from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
 )
-from qt_ui.uiconstants import EVENT_ICONS
+from game.utils import Heading
+from qt_ui.uiconstants import EVENT_ICONS, ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
@@ -46,6 +49,7 @@ class QGroundObjectMenu(QDialog):
         self.setWindowIcon(EVENT_ICONS["capture"])
         self.intelBox = QGroupBox("Units :")
         self.buildingBox = QGroupBox("Buildings :")
+        self.orientationBox = QGroupBox("Orientation :")
         self.intelLayout = QGridLayout()
         self.buildingsLayout = QGridLayout()
         self.sell_all_button = None
@@ -66,6 +70,7 @@ class QGroundObjectMenu(QDialog):
                 self.mainLayout.addWidget(self.financesBox)
         else:
             self.mainLayout.addWidget(self.intelBox)
+            self.mainLayout.addWidget(self.orientationBox)
 
         self.actionLayout = QHBoxLayout()
 
@@ -141,13 +146,49 @@ class QGroundObjectMenu(QDialog):
             QLabel("Receiving: " + str(received_income) + "M"), 2, 2
         )
 
+        # Orientation Box
+        self.orientationBox = QGroupBox("Orientation :")
+        self.orientationBoxLayout = QHBoxLayout()
+
+        heading_image = QLabel()
+        heading_image.setPixmap(
+            ICONS["heading"].transformed(
+                QTransform().rotate(self.ground_object.heading.degrees)
+            )
+        )
+        self.orientationBoxLayout.addWidget(heading_image)
+        self.headingLabel = QLabel("Heading:")
+        self.orientationBoxLayout.addWidget(self.headingLabel)
+        self.headingSelector = QSpinBox()
+        self.headingSelector.setEnabled(False)  # Disable for now
+        self.headingSelector.setMinimum(0)
+        self.headingSelector.setMaximum(360)
+        self.headingSelector.setValue(self.ground_object.heading.degrees)
+        self.orientationBoxLayout.addWidget(self.headingSelector)
+        if self.cp.captured:
+            # TODO Let the user choose the heading with the SpinBox
+            self.headingSelector.setEnabled(False)
+            self.head_to_conflict_button = QPushButton("Head to conflict")
+            heading = (
+                self.game.theater.heading_to_conflict_from(self.ground_object.position)
+                or self.ground_object.heading
+            )
+            self.head_to_conflict_button.clicked.connect(
+                lambda: self.rotate_tgo(heading)
+            )
+            self.orientationBoxLayout.addWidget(self.head_to_conflict_button)
+        else:
+            self.headingSelector.setEnabled(False)
+
+        # Set the layouts
         self.financesBox.setLayout(self.financesBoxLayout)
         self.buildingBox.setLayout(self.buildingsLayout)
         self.intelBox.setLayout(self.intelLayout)
+        self.orientationBox.setLayout(self.orientationBoxLayout)
 
     def do_refresh_layout(self):
         try:
-            for i in range(self.mainLayout.count()):
+            for i in reversed(range(self.mainLayout.count())):
                 item = self.mainLayout.itemAt(i)
                 if item is not None and item.widget() is not None:
                     item.widget().setParent(None)
@@ -160,6 +201,7 @@ class QGroundObjectMenu(QDialog):
                 self.mainLayout.addWidget(self.buildingBox)
             else:
                 self.mainLayout.addWidget(self.intelBox)
+                self.mainLayout.addWidget(self.orientationBox)
 
             self.actionLayout = QHBoxLayout()
             if self.total_value > 0:
@@ -196,6 +238,10 @@ class QGroundObjectMenu(QDialog):
                     logging.info("Removed destroyed units " + str(d))
             logging.info(f"Repaired unit: {unit.unit_name}")
 
+        self.do_refresh_layout()
+
+    def rotate_tgo(self, heading: Heading) -> None:
+        self.ground_object.rotate(heading)
         self.do_refresh_layout()
 
     def sell_all(self):
