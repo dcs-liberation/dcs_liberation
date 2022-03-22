@@ -24,7 +24,7 @@ Pillow==8.3.2
 pluggy==0.13.1
 pre-commit==2.10.1
 py==1.10.0
--e git+https://github.com/dcs-liberation/dcs@develop-5.2#egg=pydcs
+-e git+https://github.com/dcs-liberation/dcs@ef8cd82910ad86814da4cbfb5ca47f47d13e0e0a#egg=pydcs
 pyinstaller==4.3
 pyinstaller-hooks-contrib==2021.1
 pyparsing==2.4.7
