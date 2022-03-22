@@ -9,7 +9,7 @@ groups:
         - 1
       unit_classes:
         - EarlyWarningRadar
-      alternative_classes:
+      fallback_classes:
         - SearchRadar
         - SearchTrackRadar
 layout_file: resources/layouts/anti_air/legacy_ground_templates.miz
