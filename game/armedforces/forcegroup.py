@@ -92,26 +92,24 @@ class ForceGroup:
                 return True
         return False
 
-    @classmethod
-    def for_faction_by_name(cls, name: str, faction: Faction) -> ForceGroup:
-        """Load a PresetGroup as ForceGroup with faction sensitive handling"""
-        force_group = cls.named(name)
-        for layout in force_group.layouts:
-            for groups in layout.groups.values():
-                for group in groups:
-                    if group.fill and not force_group.has_unit_for_layout_group(group):
-                        for unit_type in group.possible_types_for_faction(faction):
-                            if issubclass(unit_type, VehicleType):
-                                force_group.units.append(
-                                    next(GroundUnitType.for_dcs_type(unit_type))
-                                )
-                            elif issubclass(unit_type, ShipType):
-                                force_group.units.append(
-                                    next(ShipUnitType.for_dcs_type(unit_type))
-                                )
-                            elif issubclass(unit_type, StaticType):
-                                force_group.statics.append(unit_type)
-        return force_group
+    def initialize_for_faction(self, faction: Faction) -> ForceGroup:
+        """Initialize a ForceGroup for the given Faction.
+        This adds accessible units to LayoutGroups with the fill property"""
+        for layout in self.layouts:
+            for group in layout.all_groups:
+                if group.fill and not self.has_unit_for_layout_group(group):
+                    for unit_type in group.possible_types_for_faction(faction):
+                        if issubclass(unit_type, VehicleType):
+                            self.units.append(
+                                next(GroundUnitType.for_dcs_type(unit_type))
+                            )
+                        elif issubclass(unit_type, ShipType):
+                            self.units.append(
+                                next(ShipUnitType.for_dcs_type(unit_type))
+                            )
+                        elif issubclass(unit_type, StaticType):
+                            self.statics.append(unit_type)
+        return self
 
     @classmethod
     def named(cls, name: str) -> ForceGroup:
@@ -159,9 +157,11 @@ class ForceGroup:
         """Return random DCS Unit Type which can be used in the given TgoLayoutGroup"""
         return random.choice(self.dcs_unit_types_for_group(group))
 
-    def update_group(self, new_group: ForceGroup) -> None:
-        """Update the group from another group.
-        This will merge units, statics and layouts."""
+    def merge_group(self, new_group: ForceGroup) -> None:
+        """Merge the group with another similar group."""
+        # Unified name for the resulting group
+        self.name = ", ".join([t.description for t in self.tasks])
+        # merge units, statics and layouts
         self.units = list(set(self.units + new_group.units))
         self.statics = list(set(self.statics + new_group.statics))
         self.layouts = list(set(self.layouts + new_group.layouts))
