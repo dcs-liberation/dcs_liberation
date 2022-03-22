@@ -28,7 +28,7 @@ class ArmedForces:
         for force_group in self.forces:
             if force_group.tasks == new_group.tasks:
                 # Update existing group if tasks are equal
-                force_group.update_group(new_group)
+                force_group.merge_group(new_group)
                 return
         # Add a new force group
         self.forces.append(new_group)
@@ -38,7 +38,10 @@ class ArmedForces:
         This will create a ForceGroup for each generic Layout and PresetGroup"""
 
         # Initialize with preset_groups from the faction
-        self.forces = [preset_group for preset_group in faction.preset_groups]
+        self.forces = [
+            preset_group.initialize_for_faction(faction)
+            for preset_group in faction.preset_groups
+        ]
 
         # Generate ForceGroup for all generic layouts by iterating over
         # all layouts which are usable by the given faction.
