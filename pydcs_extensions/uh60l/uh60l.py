@@ -1268,9 +1268,16 @@ class UH_60L(HelicopterType):
 
     pylons = {1, 2, 3, 4}
 
-    tasks = [task.Transport, task.Reconnaissance]
-    task_default = task.Transport
-
+    
+tasks = [
+        task.CAS,
+        task.Escort,
+        task.FighterSweep,
+        task.Intercept,
+        task.Reconnaissance,
+        task.Strike
+    ]
+    task_default = task.CAP
 
 @planemod
 class KC130J(PlaneType):
