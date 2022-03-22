@@ -128,4 +128,11 @@ VERSION = _build_version_string()
 #: * Squadrons defined in campaign files can optionally setup squadrons' name,
 #:   nickname and/or generated female pilot name percentage
 #:
-CAMPAIGN_FORMAT_VERSION = (9, 2)
+#: Version 10.0
+#: * The new introduced layout system extends the mission generation so that a
+#:   campaign designer can now define the heading of the ground objects which will be
+#:   also used later in mission generation to orient the group accordingly.
+#:   This removes the randomization of the orientation from the generation.
+#:   Most campaigns will not need any updates and will work out of the box.
+#:
+CAMPAIGN_FORMAT_VERSION = (10, 0)
