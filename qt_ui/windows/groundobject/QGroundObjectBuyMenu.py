@@ -96,11 +96,13 @@ class QTgoLayoutGroupRow(QWidget):
         self.grid_layout.addWidget(self.unit_selector, 0, 0, alignment=Qt.AlignRight)
         self.grid_layout.addWidget(self.amount_selector, 0, 1, alignment=Qt.AlignRight)
 
-        unit_type, price = self.unit_selector.itemData(
+        dcs_unit_type, price = self.unit_selector.itemData(
             self.unit_selector.currentIndex()
         )
 
-        self.group_layout = QTgoLayoutGroup(group, unit_type, group.group_size, price)
+        self.group_layout = QTgoLayoutGroup(
+            group, dcs_unit_type, group.group_size, price
+        )
 
         self.group_selector.setChecked(self.group_layout.enabled)
         self.group_selector.setEnabled(self.group_layout.layout.optional)
@@ -128,6 +130,8 @@ class QTgoLayoutGroupRow(QWidget):
 
 
 class QGroundObjectTemplateLayout(QGroupBox):
+    close_dialog_signal = Signal()
+
     def __init__(
         self,
         game: Game,
@@ -216,12 +220,7 @@ class QGroundObjectTemplateLayout(QGroupBox):
                     group.dcs_unit_type,  # Forced Type
                     group.amount,  # Forced Amount
                 )
-
-        # Replan redfor missions
-        events = GameUpdateEvents()
-        self.game.initialize_turn(events, for_red=True, for_blue=False)
-        EventStream.put_nowait(events)
-        GameUpdateSignal.get_instance().updateGame(self.game)
+        self.close_dialog_signal.emit()
 
 
 class QGroundObjectBuyMenu(QDialog):
@@ -305,6 +304,7 @@ class QGroundObjectBuyMenu(QDialog):
             self.layout_changed_signal,
             current_group_value,
         )
+        self.template_layout.close_dialog_signal.connect(self.close_dialog)
         self.mainLayout.addWidget(self.template_layout, 1, 0)
         self.setLayout(self.mainLayout)
 
@@ -333,3 +333,6 @@ class QGroundObjectBuyMenu(QDialog):
             self.force_group_selector.currentIndex()
         )
         self.layout_changed_signal.emit(self.theater_layout)
+
+    def close_dialog(self) -> None:
+        self.accept()

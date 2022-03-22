@@ -202,21 +202,25 @@ class QGroundObjectMenu(QDialog):
         self.update_total_value()
         self.game.blue.budget = self.game.blue.budget + self.total_value
         self.ground_object.groups = []
+        self.update_game()
 
-        # Replan if the tgo was a target of the redfor
+    def buy_group(self) -> None:
+        self.subwindow = QGroundObjectBuyMenu(
+            self, self.ground_object, self.game, self.total_value
+        )
+        if self.subwindow.exec_():
+            self.update_game()
+
+    def update_game(self) -> None:
+        events = GameUpdateEvents()
+        events.update_tgo(self.ground_object)
         if any(
             package.target == self.ground_object
             for package in self.game.ato_for(player=False).packages
         ):
-            events = GameUpdateEvents()
+            # Replan if the tgo was a target of the redfor
             self.game.initialize_turn(events, for_red=True, for_blue=False)
-            EventStream.put_nowait(events)
-
-        self.do_refresh_layout()
+        EventStream.put_nowait(events)
         GameUpdateSignal.get_instance().updateGame(self.game)
-
-    def buy_group(self):
-        self.subwindow = QGroundObjectBuyMenu(
-            self, self.ground_object, self.game, self.total_value
-        )
-        self.subwindow.show()
+        # Refresh the dialog
+        self.do_refresh_layout()
