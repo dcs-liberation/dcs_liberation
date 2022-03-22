@@ -16,7 +16,7 @@ from game.dcs.helpers import static_type_from_name
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
 from game.layout import LAYOUTS
-from game.layout.layout import AntiAirLayout, TgoLayout, TgoLayoutGroup
+from game.layout.layout import TgoLayout, TgoLayoutGroup
 from game.point_with_heading import PointWithHeading
 from game.theater.theatergroup import TheaterGroup
 
@@ -243,6 +243,11 @@ class ForceGroup:
                 )
             )
 
+        # A layout has to be created with an orientation of 0 deg.
+        # Therefore the the clockwise rotation angle is always the heading of the
+        # groundobject without any calculation needed
+        rotation = ground_object.heading
+
         # Assign UniqueID, name and align relative to ground_object
         for unit in units:
             unit.id = game.next_unit_id()
@@ -250,20 +255,16 @@ class ForceGroup:
             unit.position = PointWithHeading.from_point(
                 ground_object.position + unit.position,
                 # Align heading to GroundObject defined by the campaign designer
-                unit.position.heading + ground_object.heading,
+                unit.position.heading + rotation,
             )
-            if (
-                isinstance(self, AntiAirLayout)
-                and unit.unit_type
-                and unit.unit_type.dcs_unit_type in UNITS_WITH_RADAR
-            ):
+            if unit.unit_type and unit.unit_type.dcs_unit_type in UNITS_WITH_RADAR:
                 # Head Radars towards the center of the conflict
                 unit.position.heading = (
                     game.theater.heading_to_conflict_from(unit.position)
                     or unit.position.heading
                 )
             # Rotate unit around the center to align the orientation of the group
-            unit.position.rotate(ground_object.position, ground_object.heading)
+            unit.position.rotate(ground_object.position, rotation)
 
     @classmethod
     def _load_all(cls) -> None:
