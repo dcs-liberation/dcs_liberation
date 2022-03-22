@@ -15,6 +15,26 @@ class WeaponsUH60L:
         "name": "CEFS Fuel Tank 200 gallons",
         "weight": 730.09478,
     }
+    Cargo_Seats__Rear_Row_ = {
+        "clsid": "{UH60_SEAT_CARGO_REAR}",
+        "name": "Cargo Seats (Rear Row)",
+        "weight": 300,
+    }
+    Cargo_Seats__Three_Rows_ = {
+        "clsid": "{UH60_SEAT_CARGO_ALL}",
+        "name": "Cargo Seats (Three Rows)",
+        "weight": 900,
+    }
+    Left_Gunner_Seat = {
+        "clsid": "{UH60_SEAT_GUNNER_L}",
+        "name": "Left Gunner Seat",
+        "weight": 100,
+    }
+    Right_Gunner_Seat = {
+        "clsid": "{UH60_SEAT_GUNNER_R}",
+        "name": "Right Gunner Seat",
+        "weight": 100,
+    }
 
 
 inject_weapons(WeaponsUH60L)
@@ -30,10 +50,10 @@ class UH_60L(HelicopterType):
     fuel_max = 1362
     max_speed = 355.584
     chaff = 30
-    flare = 0
-    charge_total = 30
+    flare = 60
+    charge_total = 90
     chaff_charge_size = 1
-    flare_charge_size = 0
+    flare_charge_size = 1
     radio_frequency = 124
 
     panel_radio = {
@@ -77,16 +97,12 @@ class UH_60L(HelicopterType):
 
     property_defaults: Dict[str, Any] = {
         "FuelProbeEnabled": False,
-        "SoloFlight": False,
         "NetCrewControlPriority": 1,
     }
 
     class Properties:
         class FuelProbeEnabled:
             id = "FuelProbeEnabled"
-
-        class SoloFlight:
-            id = "SoloFlight"
 
         class NetCrewControlPriority:
             id = "NetCrewControlPriority"
@@ -1257,16 +1273,26 @@ class UH_60L(HelicopterType):
     # ERRR <CLEAN>
 
     class Pylon3:
-        CEFS_Fuel_Tank_200_gallons = (3, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
-
-    # ERRR <CLEAN>
+        Left_Gunner_Seat = (3, WeaponsUH60L.Left_Gunner_Seat)
 
     class Pylon4:
-        CEFS_Fuel_Tank_200_gallons = (4, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
+        Cargo_Seats__Rear_Row_ = (4, WeaponsUH60L.Cargo_Seats__Rear_Row_)
+        Cargo_Seats__Three_Rows_ = (4, WeaponsUH60L.Cargo_Seats__Three_Rows_)
+
+    class Pylon5:
+        Right_Gunner_Seat = (5, WeaponsUH60L.Right_Gunner_Seat)
+
+    class Pylon6:
+        CEFS_Fuel_Tank_200_gallons = (6, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
 
     # ERRR <CLEAN>
 
-    pylons = {1, 2, 3, 4}
+    class Pylon7:
+        CEFS_Fuel_Tank_200_gallons = (7, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
+
+    # ERRR <CLEAN>
+
+    pylons = {1, 2, 3, 4, 5, 6, 7}
 
     tasks = [task.Transport, task.Reconnaissance]
     task_default = task.Transport
