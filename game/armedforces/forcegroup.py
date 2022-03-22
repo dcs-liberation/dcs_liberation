@@ -160,8 +160,9 @@ class ForceGroup:
         return random.choice(self.dcs_unit_types_for_group(group))
 
     def update_group(self, new_group: ForceGroup) -> None:
-        """Update the group from another group. This will merge statics and layouts."""
-        # Merge layouts and statics
+        """Update the group from another group.
+        This will merge units, statics and layouts."""
+        self.units = list(set(self.units + new_group.units))
         self.statics = list(set(self.statics + new_group.statics))
         self.layouts = list(set(self.layouts + new_group.layouts))
 

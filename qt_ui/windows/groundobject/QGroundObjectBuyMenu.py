@@ -248,7 +248,6 @@ class QGroundObjectBuyMenu(QDialog):
         self.force_group_selector.setMinimumWidth(250)
         self.layout_selector = QComboBox()
         self.layout_selector.setMinimumWidth(250)
-        self.layout_selector.setEnabled(False)
 
         # Get the layouts and fill the combobox
         tasks = []
@@ -276,6 +275,7 @@ class QGroundObjectBuyMenu(QDialog):
         for layout in force_group.layouts:
             self.layout_selector.addItem(layout.name, userData=layout)
         self.layout_selector.adjustSize()
+        self.layout_selector.setEnabled(len(force_group.layouts) > 1)
         selected_template = self.layout_selector.itemData(
             self.layout_selector.currentIndex()
         )

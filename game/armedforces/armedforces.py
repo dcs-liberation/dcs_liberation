@@ -22,14 +22,12 @@ class ArmedForces:
             self._load_forces(faction)
 
     def add_or_update_force_group(self, new_group: ForceGroup) -> None:
-        """TODO Description"""
-        # Check if a force group with the same units exists
+        """Adds or update a forcegroup depending if a forcegroup with the exact same
+        tasking already exists"""
+        # Check if a force group with the same tasking already exists
         for force_group in self.forces:
-            if (
-                force_group.units == new_group.units
-                and force_group.tasks == new_group.tasks
-            ):
-                # Update existing group if units and tasks are equal
+            if force_group.tasks == new_group.tasks:
+                # Update existing group if tasks are equal
                 force_group.update_group(new_group)
                 return
         # Add a new force group
