@@ -281,8 +281,15 @@ class ForceGroup:
                 logging.error(f"ForceGroup {name} has no valid tasking")
                 continue
 
-            units = [UnitType.named(unit) for unit in data.get("units")]
-            if not units:
+            units: list[UnitType[Any]] = []
+            for unit in data.get("units"):
+                if GroundUnitType.exists(unit):
+                    units.append(GroundUnitType.named(unit))
+                elif ShipUnitType.exists(unit):
+                    units.append(ShipUnitType.named(unit))
+                else:
+                    logging.error(f"Unit {unit} of ForceGroup {name} is invalid")
+            if len(units) == 0:
                 logging.error(f"ForceGroup {name} has no valid units")
                 continue
 

@@ -45,7 +45,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
 
     @classmethod
     def named(cls, name: str) -> UnitType[Any]:
-        return cls._by_name[name]
+        raise NotImplementedError
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: DcsUnitTypeT) -> Iterator[UnitType[Any]]:
@@ -69,3 +69,13 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
     @cached_property
     def eplrs_capable(self) -> bool:
         return getattr(self.dcs_unit_type, "eplrs", False)
+
+    @classmethod
+    def exists(cls, name: str) -> bool:
+        if not cls._loaded:
+            cls._load_all()
+        try:
+            cls.named(name)
+            return True
+        except (KeyError, AssertionError):
+            return False
