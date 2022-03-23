@@ -16,3 +16,13 @@ price: 20
 role: Attack
 variants:
   AH-64D Apache Longbow: {}
+radios:
+  # DCS uses the 2nd Radio AN/ARC-164 (UHF) as the main intra flight for the Apache
+  # so we use this Radio for Intra and Inter Flight for now
+  intra_flight: AN/ARC-164
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    namer: apache
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 2
