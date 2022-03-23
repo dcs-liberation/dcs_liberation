@@ -258,6 +258,27 @@ class MirageChannelNamer(ChannelNamer):
         return "mirage"
 
 
+class ApacheChannelNamer(ChannelNamer):
+    """Channel namer for the AH-64D Apache"""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        # From the manual: Radio identifier (“VHF” for ARC-186, “UHF” for ARC-164,
+        # “FM1” for first ARC-201D, “FM2” for second ARC-201D, or “HF” for ARC-220).
+        radio_name = [
+            "VHF",  # ARC-186
+            "UHF",  # ARC-164
+            "FM1",  # first ARC-201D
+            "FM2",  # second ARC-201D
+            "HF",  # ARC-220
+        ][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "apache"
+
+
 class TomcatChannelNamer(ChannelNamer):
     """Channel namer for the F-14."""
 

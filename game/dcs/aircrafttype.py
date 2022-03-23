@@ -14,6 +14,7 @@ from dcs.unittype import FlyingType
 
 from game.dcs.unittype import UnitType
 from game.radio.channels import (
+    ApacheChannelNamer,
     ChannelNamer,
     RadioChannelAllocator,
     CommonRadioChannelAllocator,
@@ -95,6 +96,7 @@ class RadioConfig:
             "tomcat": TomcatChannelNamer,
             "viggen": ViggenChannelNamer,
             "viper": ViperChannelNamer,
+            "apache": ApacheChannelNamer,
         }[config.get("namer", "default")]
 
 
