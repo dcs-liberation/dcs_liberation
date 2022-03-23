@@ -4,6 +4,7 @@ Saves from 5.x are not compatible with 6.0.
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS DCS 2.7.11.21408, including the new Apache AH-64D
 * **[Mission Generation]** Added an option to fast-forward mission generation until the point of first contact (WIP).
 * **[Mission Generation]** Added performance option to not cull IADS when culling would effect how mission is played at target area.
 * **[Mission Generation]** Reworked the ground object generation which now uses a new layout system
