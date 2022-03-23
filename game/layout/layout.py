@@ -247,7 +247,7 @@ class BuildingLayout(TgoLayout):
             name,
             self.category,
             position,
-            Heading.from_degrees(0),
+            position.heading,
             control_point,
             self.category == "fob",
         )
