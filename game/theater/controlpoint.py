@@ -983,7 +983,12 @@ class Airfield(ControlPoint):
         # TODO: Allow harrier.
         # Needs ground spawns just like helos do, but also need to be able to
         # limit takeoff weight to ~20500 lbs or it won't be able to take off.
-        return self.runway_is_operational()
+
+        # return false if aircraft is fixed wing and airport has no runways
+        if not aircraft.helicopter and not self.airport.runways:
+            return False
+        else:
+            return self.runway_is_operational()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
