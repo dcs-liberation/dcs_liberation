@@ -241,8 +241,6 @@ class QBaseMenu2(QDialog):
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     def get_base_image(self):
-        game = self.game_model.game
-
         if (
             self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP
             or self.cp.cptype == ControlPointType.LHA_GROUP

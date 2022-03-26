@@ -62,7 +62,6 @@ from .base import Base
 from .frontline import FrontLine
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
-    BuildingGroundObject,
     GenericCarrierGroundObject,
     TheaterGroundObject,
 )
@@ -638,18 +637,20 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         ]:
             for g in self.ground_objects:
                 for group in g.groups:
-                    for u in group.units:
-                        if u.unit_type and u.unit_type.unit_class in [
+                    u = group.units[0]
+                    carrier_type = u.type
+                    if (
+                        u.unit_type
+                        and u.unit_type.unit_class
+                        in [
                             UnitClass.AIRCRAFT_CARRIER,
                             UnitClass.HELICOPTER_CARRIER,
-                        ]:
-                            carrier_type = g.get_carrier_type()
-                            if carrier_type is not None:
-                                if self.coalition.game.settings.supercarrier:
-                                    return self.upgrade_to_supercarrier(
-                                        carrier_type, self.name
-                                    )
-                                return carrier_type
+                        ]
+                        and issubclass(carrier_type, ShipType)
+                    ):
+                        if self.coalition.game.settings.supercarrier:
+                            return self.upgrade_to_supercarrier(carrier_type, self.name)
+                        return carrier_type
         return None
 
     @staticmethod
