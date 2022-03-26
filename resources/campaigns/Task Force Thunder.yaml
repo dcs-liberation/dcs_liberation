@@ -10,153 +10,153 @@ miz: Task Force Thunder.miz
 performance: 3
 version: "9.1"
 squadrons:
-  # Airspawn from Iraq
-  Al Asad Airbase:
+ # Airspawn from Iraq
+    Al Asad Airbase:
     - primary: AEW&C
       aircraft:
-        - E-3A
+      - E-3A
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
-        - F-15C Eagle
+      - F-15C Eagle
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - B-1B Lancer
-        - B-52H Stratofortress
-        - F-117A Nighthawk
-    - primary: CAS
-      secondary: air-to-ground
+      - B-1B Lancer
+      - B-52H Stratofortress
+      - F-117A Nighthawk
+    - primary: Refueling
       aircraft:
-        - A-10C Thunderbolt II (Suite 7)
+      - KC-135 Stratotanker MPRS
+ #H3 airbase
+    53:
     - primary: SEAD
       secondary: any
-      aircraft:
-        - F-16CM Fighting Falcon (Block 50)
+      aircraft: 
+      - F-16CM Fighting Falcon (Block 50)
     - primary: DEAD
       secondary: any
       aircraft:
-        - F-16CM Fighting Falcon (Block 50)
+      - F-16CM Fighting Falcon (Block 50)
     - primary: BAI
       secondary: air-to-ground
-      aircraft: F-15E Strike Eagle
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker MPRS
-  #H4 airbase
-  12:
-    - primary: BARCAP
-      secondary: any
-      aircraft:
-        - F-16CM Fighting Falcon (Block 50)
+      aircraft: 
+      - F-15E Strike Eagle
+ #H4 airbase
+    12:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft: 
+      - A-10C Thunderbolt II (Suite 3)
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - A-10C Thunderbolt II (Suite 3)
-  #Northern FOB
-  Staging Point Alpha:
+      - A-10C Thunderbolt II (Suite 7)
+ #Northern FOB
+    Staging Point Alpha:
     - primary: CAS
-      aircraft:
-        - AH-64D Apache Longbow
-  #Carrier is called Naval-1
-  Naval-1:
+      aircraft: 
+      - AH-64D Apache Longbow
+ #Carrier is called Naval-1
+    Naval-1:
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
-        - F-14B Tomcat
+      - F-14B Tomcat
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
-        - F-14B Tomcat
+      - F-14B Tomcat
     - primary: Strike
       secondary: any
       aircraft:
-        - F/A-18C Hornet (Lot 20)
+      - F/A-18C Hornet (Lot 20)
     - primary: SEAD
       secondary: any
       aircraft:
-        - F/A-18C Hornet (Lot 20)
+      - F/A-18C Hornet (Lot 20)
     - primary: Refueling
       aircraft:
-        - S-3B Tanker
+      - S-3B Tanker
     - primary: AEW&C
       aircraft:
-        - E-2C Hawkeye
-  #LHA is called Naval-2
-  Naval-2:
+      - E-2C Hawkeye
+ #LHA is called Naval-2
+    Naval-2:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - AV-8B Harrier II Night Attack
+      - AV-8B Harrier II Night Attack
     - primary: CAS
       aircraft:
-        - AH-1W SuperCobra
-  # Al Qusayr - opposing the beach landing with old fighters (mig-23), CAS (su-17), helicopters (mi-24)
-  3:
+      - AH-1W SuperCobra
+      - UH-1H Iroquois
+# Al Qusayr - opposing the beach landing with old fighters (mig-23), CAS (su-17), helicopters (mi-24)
+    3: 
     - primary: BARCAP
       secondary: any
       aircraft:
-        - MiG-23MLD Flogger-K
+      - MiG-23MLD Flogger-K
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Mi-24V Hind-E
+      - Mi-24V Hind-E
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Su-17M4 Fitter-K
-  # Tiyas - secondary base for good fighters (mig-25) and trainers (L-39)
-  39:
+      - Su-17M4 Fitter-K
+# Tiyas - secondary base for good fighters (mig-25) and trainers (L-39)
+    39:
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
-        - MiG-25PD Foxbat-E
+      - MiG-25PD Foxbat-E
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - L-39ZA Albatros
+      - L-39ZA Albatros
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
-        - MiG-29S Fulcrum-C
-  # Palmyra - forward base, helicopters (mi-24, mi-8), old fighters (mig-21) and cas (su-17)
-  28:
+      - MiG-29S Fulcrum-C
+# Palmyra - forward base, helicopters (mi-24, mi-8), old fighters (mig-21) and cas (su-17)
+    28:
     - primary: BARCAP
       secondary: any
       aircraft:
-        - MiG-21bis Fishbed-N
+      - MiG-21bis Fishbed-N
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Mi-24P Hind-F
-        - Su-17M4 Fitter-K
+      - Mi-24P Hind-F
+      - Su-17M4 Fitter-K
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Su-17M4 Fitter-K
+      - Su-17M4 Fitter-K
     - primary: Transport
       secondary: air-to-ground
       aircraft:
-        - Mi-8MTV2 Hip
-  # Shayrat - main base for support planes (A-50, transport, tanker), strike craft (su-24) and modern fighters (mig-29)
-  36:
+      - Mi-8MTV2 Hip
+# Shayrat - main base for support planes (A-50, transport, tanker), strike craft (su-24) and modern fighters (mig-29)
+    36:
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
-        - MiG-29S Fulcrum-C
+      - MiG-29S Fulcrum-C
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - Su-24M Fencer-D
+      - Su-24M Fencer-D
     - primary: Refueling
       aircraft:
-        - IL-78M
+      - IL-78M
     - primary: Transport
       aircraft:
-        - IL-76MD
-
-  # Defensive Line FARP for gazelles
-  Defensive Line:
+      - IL-76MD
+      
+# Defensive Line FARP for gazelles
+    Defensive Line:
     - primary: CAS
       aircraft:
-        - SA 342M Gazelle
+      - SA 342M Gazelle
