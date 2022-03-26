@@ -22,7 +22,7 @@ from game.theater import (
     SyriaTheater,
     MarianaIslandsTheater,
 )
-from game.version import CAMPAIGN_FORMAT_VERSION
+from game.version import CAMPAIGN_FORMAT_VERSION, SUPPORTED_CAMPAIGN_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
 from .mizcampaignloader import MizCampaignLoader
 from .. import persistency
@@ -147,7 +147,7 @@ class Campaign:
     @property
     def is_from_future(self) -> bool:
         """Returns True if this campaign is newer than the supported format."""
-        return self.version > CAMPAIGN_FORMAT_VERSION
+        return self.version > SUPPORTED_CAMPAIGN_VERSION
 
     @property
     def is_compatible(self) -> bool:
