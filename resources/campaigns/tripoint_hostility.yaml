@@ -57,7 +57,7 @@ squadrons:
         - C Company, 2-159th ARB
         #US Army AH-64D
   # FOB Qalea, first OPFOR FOB south
-  FOB Stalwart:
+  FOB Qalea:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
@@ -130,8 +130,8 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
-  # H3 Southwest, 3rd OPFOR airfield south
-  55:
+  # H3 Northwest, 2nd OPFOR airfield north
+  54:
     - primary: BARCAP
       secondary: any
       aircraft:
