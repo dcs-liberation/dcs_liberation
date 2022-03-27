@@ -238,7 +238,7 @@ class QGroundObjectMenu(QDialog):
                     logging.info("Removed destroyed units " + str(d))
             logging.info(f"Repaired unit: {unit.unit_name}")
 
-        self.do_refresh_layout()
+        self.update_game()
 
     def rotate_tgo(self, heading: Heading) -> None:
         self.ground_object.rotate(heading)

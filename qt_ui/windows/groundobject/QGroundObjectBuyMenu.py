@@ -174,6 +174,14 @@ class QGroundObjectTemplateLayout(QGroupBox):
             self.add_theater_group(group_name, self.layout_model.force_group, groups)
         self.group_template_changed()
 
+    @property
+    def cost(self) -> int:
+        return self.layout_model.price - self.current_group_value
+
+    @property
+    def affordable(self) -> bool:
+        return self.cost <= self.game.blue.budget
+
     def add_theater_group(
         self, group_name: str, force_group: ForceGroup, groups: list[TgoLayoutGroup]
     ) -> None:
@@ -193,15 +201,14 @@ class QGroundObjectTemplateLayout(QGroupBox):
     def group_template_changed(self) -> None:
         price = self.layout_model.price
         self.buy_button.setText(f"Buy [${price}M][-${self.current_group_value}M]")
-        self.buy_button.setEnabled(price <= self.game.blue.budget)
+        self.buy_button.setEnabled(self.affordable)
         if self.buy_button.isEnabled():
-            self.buy_button.setToolTip("Buy the group")
+            self.buy_button.setToolTip(f"Buy the group for ${self.cost}M")
         else:
             self.buy_button.setToolTip("Not enough money to buy this group")
 
     def buy_group(self) -> None:
-        price = self.layout_model.price
-        if price > self.game.blue.budget:
+        if not self.affordable:
             # Something went wrong. Buy button should be disabled!
             logging.error("Not enough money to buy the group")
             return
@@ -211,7 +218,7 @@ class QGroundObjectTemplateLayout(QGroupBox):
             self.game.theater.heading_to_conflict_from(self.ground_object.position)
             or self.ground_object.heading
         )
-        self.game.blue.budget -= price - self.current_group_value
+        self.game.blue.budget -= self.cost
         self.ground_object.groups = []
         for group_name, groups in self.layout_model.groups.items():
             for group in groups:
