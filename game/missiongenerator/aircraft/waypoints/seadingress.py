@@ -1,7 +1,7 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import AttackGroup, OptECMUsing, WeaponType
+from dcs.task import EngageGroup, OptECMUsing, WeaponType
 
 from game.theater import TheaterGroundObject
 from .pydcswaypointbuilder import PydcsWaypointBuilder
@@ -27,12 +27,8 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 )
                 continue
 
-            task = AttackGroup(miz_group.id, weapon_type=WeaponType.Guided)
-            task.params["expend"] = "All"
-            task.params["attackQtyLimit"] = False
-            task.params["directionEnabled"] = False
-            task.params["altitudeEnabled"] = False
-            task.params["groupAttack"] = True
+            task = EngageGroup(miz_group.id)
+            task.params["weaponType"] = WeaponType.Guided.value
             waypoint.tasks.append(task)
 
         # Preemptively use ECM to better avoid getting swatted.

@@ -19,7 +19,9 @@ from dcs.task import (
     Refueling,
     RunwayAttack,
     Transport,
+    SEAD,
 )
+from dcs.planes import F_14A, F_14A_135_GR, F_14B
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
@@ -163,7 +165,10 @@ class AircraftBehavior:
         # CAS is able to perform all the same tasks as SEAD using a superset of the
         # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
         # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
-        group.task = CAS.name
+        if flight.unit_type in [F_14A, F_14B, F_14A_135_GR]:
+            group.task = CAS.name
+        else:
+            group.task = SEAD.name
         self.configure_behavior(
             flight,
             group,
@@ -271,7 +276,10 @@ class AircraftBehavior:
         # CAS is able to perform all the same tasks as SEAD using a superset of the
         # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
         # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
-        group.task = CAS.name
+        if flight.unit_type in [F_14A, F_14B, F_14A_135_GR]:
+            group.task = CAS.name
+        else:
+            group.task = SEAD.name
         self.configure_behavior(
             flight,
             group,
