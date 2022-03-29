@@ -104,6 +104,11 @@ class QWaitingForMissionResultWindow(QDialog):
         self.instructions_text.setOpenExternalLinks(True)
         self.gridLayout.addWidget(self.instructions_text, 1, 0)
 
+        self.briefing_text = QTextBrowser()
+        with open("./mission_description_text.txt", "r") as briefing_file:
+            self.briefing_text.setText(briefing_file.read())
+        self.gridLayout.addWidget(self.briefing_text, 1, 1)
+
         progress = QLabel("")
         progress.setAlignment(QtCore.Qt.AlignCenter)
         progress_bar = QMovie("./resources/ui/loader.gif")
@@ -119,7 +124,7 @@ class QWaitingForMissionResultWindow(QDialog):
         self.cancel = QPushButton("Abort mission")
         self.cancel.clicked.connect(self.close)
         self.actions_layout.addWidget(self.cancel)
-        self.gridLayout.addWidget(self.actions, 2, 0)
+        self.gridLayout.addWidget(self.actions, 2, 0, 1, 3)
 
         self.actions2 = QGroupBox("Actions :")
         self.actions2_layout = QHBoxLayout()

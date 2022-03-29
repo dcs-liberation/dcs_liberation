@@ -169,6 +169,8 @@ class BriefingGenerator(MissionInfoGenerator):
         self._generate_frontline_info()
         self.generate_allied_flights_by_departure()
         self.mission.set_description_text(self.template.render(vars(self)))
+        with open("./mission_description_text.txt", "w") as f:
+            f.write(self.mission.description_text())
         self.mission.add_picture_blue(
             os.path.abspath("./resources/ui/splash_screen.png")
         )
