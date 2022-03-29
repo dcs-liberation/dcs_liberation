@@ -1,0 +1,4 @@
+name: ALARM
+type: ARM
+clsids:
+  - "{E6747967-B1F0-4C77-977B-AB2E6EB0C102}"
