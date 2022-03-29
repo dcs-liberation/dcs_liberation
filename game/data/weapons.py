@@ -94,6 +94,7 @@ class Weapon:
 
 @unique
 class WeaponType(Enum):
+    ARM = "ARM"
     LGB = "LGB"
     TGP = "TGP"
     UNKNOWN = "unknown"
