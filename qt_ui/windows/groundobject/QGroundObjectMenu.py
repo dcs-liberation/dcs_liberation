@@ -218,7 +218,9 @@ class QGroundObjectMenu(QDialog):
         if not self.ground_object.purchasable:
             return
         self.total_value = sum(
-            u.unit_type.price for u in self.ground_object.units if u.unit_type
+            u.unit_type.price
+            for u in self.ground_object.units
+            if u.unit_type and u.alive
         )
         if self.sell_all_button is not None:
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
