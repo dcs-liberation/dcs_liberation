@@ -254,6 +254,11 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
     def purchasable(self) -> bool:
         raise NotImplementedError
 
+    @property
+    def value(self) -> int:
+        """The value of all units of the Ground Objects"""
+        return sum(u.unit_type.price for u in self.units if u.unit_type and u.alive)
+
     def group_by_name(self, name: str) -> Optional[TheaterGroup]:
         for group in self.groups:
             if group.name == name:
