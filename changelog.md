@@ -18,6 +18,7 @@ Saves from 5.x are not compatible with 6.0.
 
 * **[Mission Generation]** Fixed SA-13 incorrectly created as SA-8 Loading Unit which will not be spawned in the generated mission.
 * **[Mission Generation]** Fixed an issue which generated the helipads at FARPs incorrectly and placed the helicopters within each other.
+* **[Mission Generation]** Fixed an issue with SEAD missions flown by the AI when using the Skynet Plugin and anti-radiation missiles (ARM). The AI now correctly engages the SAM when it comes alive instead of diving into it.
 
 # 5.2.0
 
