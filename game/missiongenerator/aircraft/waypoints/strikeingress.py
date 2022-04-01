@@ -39,6 +39,7 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
         # logic to try and spread out the targets within a strike target
         # for example, if there is one strike ahead of this flights strike, then shift it's bombing targets by two (arbitrary number, ideally it'd be based on number of planes/bombs per flight and knowing how many bombs per target the user wants)
         strike_flights_ahead = 0
+        total_stike_flights = 0
         waypoint_index = [
             i
             for i, w in enumerate(self.flight.points)
@@ -52,19 +53,19 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
                 flight.points[waypoint_index].x == self.waypoint.x
                 and flight.points[waypoint_index].y == self.waypoint.y
             ):
-                strike_flights_ahead += 1
+                total_stike_flights += 1
 
             # found self's flight
             if self.flight == flight:
-                strike_flights_ahead -= 1
-                break
+                strike_flights_ahead = total_stike_flights - 1
 
         logging.debug(f"strike_flights_ahead: {strike_flights_ahead}")
         logging.debug(f"targets: {len(self.waypoint.targets)}")
 
+        shift_amount = int(len(self.waypoint.targets) / total_stike_flights)
         if strike_flights_ahead > 0:
             # ex. shifts [0, 1, 2] to [2, 0, 1]
-            start_index = strike_flights_ahead * 2
+            start_index = strike_flights_ahead * shift_amount
             targets = [self.waypoint.targets[start_index]]
             targets += self.waypoint.targets[start_index + 1 :]
             targets += self.waypoint.targets[:start_index]
