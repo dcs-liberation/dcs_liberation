@@ -192,7 +192,11 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
         return max_range
 
     def max_detection_range(self) -> Distance:
-        return max(self.detection_range(g) for g in self.groups)
+        return (
+            max(self.detection_range(g) for g in self.groups)
+            if self.groups
+            else meters(0)
+        )
 
     def detection_range(self, group: TheaterGroup) -> Distance:
         return self._max_range_of_type(group, "detection_range")
