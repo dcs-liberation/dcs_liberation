@@ -1,0 +1,43 @@
+{
+    "nameInUI": "CTLD",
+    "defaultValue": true,
+    "specificOptions": [
+        {
+            "nameInUI": "CTLD Use smoke in zones",
+            "mnemonic": "smoke",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "JTAC Autolase",
+            "mnemonic": "autolase",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "JTAC Use smoke",
+            "mnemonic": "jtacsmoke",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Use FC3 laser code (1113)",
+            "mnemonic": "fc3LaserCode",
+            "defaultValue": false
+        },
+        {
+            "nameInUI": "CTLD Debug",
+            "mnemonic": "ctld-debug",
+            "defaultValue": false
+        }
+    ],
+    "scriptsWorkOrders": [
+        {
+            "file": "CTLD.lua",
+            "mnemonic": "ctld-script"
+        }
+    ],
+    "configurationWorkOrders": [
+        {
+            "file": "ctld-config.lua",
+            "mnemonic": "ctld-config"
+        }
+    ]
+}
