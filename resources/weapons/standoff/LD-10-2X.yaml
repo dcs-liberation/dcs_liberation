@@ -1,0 +1,5 @@
+name: LD-10 x 2
+type: ARM
+clsids:
+  - "DIS_LD-10_DUAL_L"
+  - "DIS_LD-10_DUAL_R"

@@ -217,9 +217,7 @@ class QGroundObjectMenu(QDialog):
     def update_total_value(self):
         if not self.ground_object.purchasable:
             return
-        self.total_value = sum(
-            u.unit_type.price for u in self.ground_object.units if u.unit_type
-        )
+        self.total_value = self.ground_object.value
         if self.sell_all_button is not None:
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
 
@@ -246,7 +244,7 @@ class QGroundObjectMenu(QDialog):
 
     def sell_all(self):
         self.update_total_value()
-        self.game.blue.budget = self.game.blue.budget + self.total_value
+        self.game.blue.budget += self.total_value
         self.ground_object.groups = []
         self.update_game()
 
