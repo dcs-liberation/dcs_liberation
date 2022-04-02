@@ -77,6 +77,17 @@ class LuaGenerator:
             jtac_item.add_key_value("zone", jtac.region)
             jtac_item.add_key_value("dcsUnit", jtac.unit_name)
             jtac_item.add_key_value("laserCode", jtac.code)
+            jtac_item.add_key_value("radio", str(jtac.freq.mhz))
+            jtac_item.add_key_value("modulation", jtac.freq.modulation.name)
+
+        logistics_object = lua_data.add_item("Logistics")
+        for logistic_info in self.air_support.logistics.values():
+            logistics_item = logistics_object.add_item()
+            logistics_item.add_data_array("pilot_names", logistic_info.pilot_names)
+            logistics_item.add_key_value("pickup_zone", logistic_info.pickup_zone)
+            logistics_item.add_key_value("drop_off_zone", logistic_info.drop_off_zone)
+            logistics_item.add_key_value("target_zone", logistic_info.target_zone)
+            logistics_item.add_key_value("side", str(2 if logistic_info.blue else 1))
 
         target_points = lua_data.add_item("TargetPoints")
         for flight in self.flights:
