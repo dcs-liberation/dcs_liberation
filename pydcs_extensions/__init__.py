@@ -4,9 +4,11 @@ from .f22a import *
 from .frenchpack import *
 from .hercules import *
 from .highdigitsams import *
+from .llhmodpack import *
 from .jas39 import *
 from .su57 import *
 from .uh60l import *
+
 
 
 def load_mods() -> None:

@@ -346,6 +346,14 @@ class Faction:
             self.remove_preset("SA-23/S-300VM")
             self.remove_preset("SA-17")
             self.remove_preset("KS-19")
+        # llh mod pack
+        if not mod_settings.llhmodpack:
+            self.remove_preset("HPG_Ural_Isis_Troops")
+            self.remove_preset("HPG_Ural_Isis_Covered")
+            self.remove_preset("HPGUralIsisFlak")
+            self.remove_preset("HPGUralIsisZU23")
+            self.remove_preset("HPG_Toyota_ISIS")
+            self.remove_preset("HPGToyotaISISDShK")
 
     def remove_aircraft(self, name: str) -> None:
         for i in self.aircrafts:

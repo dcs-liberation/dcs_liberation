@@ -57,6 +57,7 @@ class ModSettings:
     su57_felon: bool = False
     frenchpack: bool = False
     high_digit_sams: bool = False
+    llhmodpack: bool = False
 
 
 class GameGenerator:

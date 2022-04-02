@@ -1,0 +1,41 @@
+{
+  "country": "Insurgents",
+  "name": "Levantine Insurgents",
+  "authors": "SchmokedPancake",
+  "description": "<p>Insurgents from the Levant Region.</p>",
+  "aircrafts": [],
+  "frontline_units": [
+    "ISIS Toyota DShK",
+    "ISIS Toyota",
+    "ISIS Ural ZU23",
+    "ISIS Ural 88 Flak",
+    "BRDM-2",
+    "Cobra",
+    "MT-LB",
+    "PT-76",
+    "ZU-23 on Ural-375"
+  ],
+  "artillery_units": [
+    "2S19 Msta-S",
+    "BM-21 Grad"
+  ],
+  "logistics_units": [
+    "ISIS Covered",
+    "ISIS Ural Troops"
+  ],
+  "infantry_units": [
+    "Infantry RPG",
+    "Insurgent AK-74",
+    "MANPADS SA-18 Igla \"Grouse\"",
+    "Mortar 2B11 120mm"
+  ],
+  "missiles": [],
+  "air_defense_units": [
+    "SA-9 Strela",
+    "AAA ZU-23 Closed Emplacement",
+    "ZU-23 on Ural-375",
+    "ZSU-23-4 Shilka"
+  ],
+  "preset_groups": [],
+  "naval_units": []
+}
