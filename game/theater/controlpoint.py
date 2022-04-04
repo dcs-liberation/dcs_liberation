@@ -653,6 +653,34 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                         return carrier_type
         return None
 
+    def get_carrier_group_type_by_name(self) -> Optional[Type[ShipType]]:
+        """
+        Get the carrier group type if the airbase is a carrier.
+        This method doesn't check for the supercarrier option,
+        but rather assumes it's enabled. The supercarrier type
+        is returned based on the name of the carrier group.
+        :return: Carrier group type
+        """
+        if self.cptype in [
+            ControlPointType.AIRCRAFT_CARRIER_GROUP,
+            ControlPointType.LHA_GROUP,
+        ]:
+            for g in self.ground_objects:
+                for group in g.groups:
+                    u = group.units[0]
+                    carrier_type = u.type
+                    if (
+                        u.unit_type
+                        and u.unit_type.unit_class
+                        in [
+                            UnitClass.AIRCRAFT_CARRIER,
+                            UnitClass.HELICOPTER_CARRIER,
+                        ]
+                        and issubclass(carrier_type, ShipType)
+                    ):
+                        return self.upgrade_to_supercarrier(carrier_type, self.name)
+        return None
+
     @staticmethod
     def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
         if unit == Stennis:
