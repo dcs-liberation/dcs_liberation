@@ -278,6 +278,18 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
             return carrier_type
         raise RuntimeError(f"First unit of TGO {self.name} is no Ship")
 
+    def rotate(self, heading: Heading) -> None:
+        """Rotate the whole TGO clockwise to the new heading"""
+        rotation = heading - self.heading
+        if rotation.degrees < 0:
+            rotation = Heading.from_degrees(rotation.degrees + 360)
+
+        self.heading = heading
+        # Rotate the whole TGO to match the new heading
+        for unit in self.units:
+            unit.position.heading += rotation
+            unit.position.rotate(self.position, rotation)
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
