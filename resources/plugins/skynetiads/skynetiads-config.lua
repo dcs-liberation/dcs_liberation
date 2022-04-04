@@ -58,8 +58,10 @@ if dcsLiberation and SkynetIADS then
             for i,pd in pairs(element.PD) do
                 env.info(string.format("DCSLiberation|Skynet-IADS plugin - adding IADS Point Defence %s", pd))
                 local point_defence = iads:addSAMSite(pd)
-                iads_unit:addPointDefence(point_defence)
-                iads_unit:setIgnoreHARMSWhilePointDefencesHaveAmmo(true)
+                if point_defence ~= nil then
+                    -- only add as point defence if skynet can handle the PD unit
+                    iads_unit:addPointDefence(point_defence)
+                end
             end
         end
     end
@@ -87,6 +89,7 @@ if dcsLiberation and SkynetIADS then
             iadsDebug.harmDefence = true
             iadsDebug.samSiteStatusEnvOutput = true
             iadsDebug.earlyWarningRadarStatusEnvOutput = true
+            iadsDebug.commandCenterStatusEnvOutput = true
         end
 
         -- add the AWACS
@@ -149,7 +152,7 @@ if dcsLiberation and SkynetIADS then
         end
 
         --activate the IADS
-        iads:setupSAMSitesAndThenActivate()
+        iads:activate()
     end
 
     ------------------------------------------------------------------------------------------------------------------------------------------------------------
