@@ -21,7 +21,6 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
-    Union,
     Type,
 )
 from uuid import UUID
