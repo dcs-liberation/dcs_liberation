@@ -42,7 +42,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 attack_task = AttackGroup(
                     miz_group.id, weapon_type=DcsWeaponType.Guided
                 )
-                attack_task.params["expend"] = "All"
+                attack_task.params["expend"] = "Auto"
                 attack_task.params["attackQtyLimit"] = False
                 attack_task.params["directionEnabled"] = False
                 attack_task.params["altitudeEnabled"] = False

@@ -28,7 +28,7 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
                 continue
 
             task = AttackGroup(miz_group.id, weapon_type=WeaponType.Auto)
-            task.params["expend"] = "All"
+            task.params["expend"] = "Auto"
             task.params["attackQtyLimit"] = False
             task.params["directionEnabled"] = False
             task.params["altitudeEnabled"] = False
