@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Iterator, Optional
 from uuid import UUID
 import uuid
 from game.theater.iadsnetwork.iadsrole import IadsRole
-
+from game.dcs.groundunittype import GroundUnitType
 from game.theater.theatergroundobject import (
     IadsBuildingGroundObject,
     IadsGroundObject,
@@ -31,6 +31,7 @@ class SkynetNode:
     dcs_name: str
     player: bool
     iads_role: IadsRole
+    properties: dict[str, str] = field(default_factory=dict)
     connections: dict[str, list[str]] = field(default_factory=lambda: defaultdict(list))
 
     @staticmethod
@@ -42,18 +43,30 @@ class SkynetNode:
             IadsRole.POWER_SOURCE,
         ]:
             # Use UnitName for EWR, CommandCenter, Comms, Power
-            return group.units[0].unit_name
+            for unit in group.units:
+                # Check for alive units in the group
+                if unit.alive:
+                    return unit.unit_name
+            if group.units[0].is_static:
+                # Statics will be placed as dead unit
+                return group.units[0].unit_name
+            # If no alive unit is available and not static raise error
+            raise IadsNetworkException("Group has no skynet usable units")
         else:
             # Use the GroupName for SAMs, SAMAsEWR and PDs
             return group.group_name
 
     @classmethod
     def from_group(cls, group: IadsGroundGroup) -> SkynetNode:
-        return cls(
+        node = cls(
             cls.dcs_name_for_group(group),
             group.ground_object.is_friendly(True),
             group.iads_role,
         )
+        unit_type = group.units[0].unit_type
+        if unit_type is not None and isinstance(unit_type, GroundUnitType):
+            node.properties = unit_type.skynet_properties.to_dict()
+        return node
 
 
 class IadsNetworkNode:
@@ -102,24 +115,22 @@ class IadsNetwork:
         """Get all skynet nodes from the IADS Network"""
         skynet_nodes: list[SkynetNode] = []
         for node in self.nodes:
-            if game.iads_considerate_culling(node.group.ground_object) or (
-                node.group.units[0].is_vehicle and not node.group.units[0].alive
-            ):
-                # Skip
+            if game.iads_considerate_culling(node.group.ground_object):
+                # Skip culled ground objects
                 continue
-            skynet_node = SkynetNode.from_group(node.group)
-            for connection in node.connections.values():
-                if (
-                    connection.ground_object.is_friendly(skynet_node.player)
-                    and not game.iads_considerate_culling(connection.ground_object)
-                    and not (
-                        connection.units[0].is_vehicle and not connection.units[0].alive
-                    )
-                ):
-                    skynet_node.connections[connection.iads_role.value].append(
-                        SkynetNode.dcs_name_for_group(connection)
-                    )
-            skynet_nodes.append(skynet_node)
+            try:
+                skynet_node = SkynetNode.from_group(node.group)
+                for connection in node.connections.values():
+                    if connection.ground_object.is_friendly(
+                        skynet_node.player
+                    ) and not game.iads_considerate_culling(connection.ground_object):
+                        skynet_node.connections[connection.iads_role.value].append(
+                            SkynetNode.dcs_name_for_group(connection)
+                        )
+                skynet_nodes.append(skynet_node)
+            except IadsNetworkException:
+                # Node not skynet compatible
+                continue
         return skynet_nodes
 
     def update_tgo(self, tgo: TheaterGroundObject) -> None:
