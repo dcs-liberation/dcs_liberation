@@ -46,8 +46,8 @@ class IadsConnectionJs(BaseModel):
                     node=tgo.id,
                     connected=connection.ground_object.id,
                     active=(
-                        tgo.alive_unit_count > 0
-                        and connection.ground_object.alive_unit_count > 0
+                        network_node.group.alive_units > 0
+                        and connection.alive_units > 0
                     ),
                     blue=tgo.is_friendly(True),
                     is_power="power"

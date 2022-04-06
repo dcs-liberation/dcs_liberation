@@ -1,5 +1,4 @@
 from __future__ import annotations
-from collections import defaultdict
 
 import logging
 import os
@@ -15,6 +14,7 @@ from dcs.triggers import TriggerStart
 from game.ato import FlightType
 from game.plugins import LuaPluginManager
 from game.theater import TheaterGroundObject
+from game.theater.iadsnetwork.iadsrole import IadsRole
 from game.utils import escape_string_for_lua
 
 from .aircraft.flightdata import FlightData
@@ -142,6 +142,10 @@ class LuaGenerator:
             iads_type = coalition.get_or_create_item(node.iads_role.value)
             iads_element = iads_type.add_item()
             iads_element.add_key_value("dcsGroupName", node.dcs_name)
+            if node.iads_role in [IadsRole.SAM, IadsRole.SAM_AS_EWR]:
+                # add additional SkynetProperties to SAM Sites
+                for property, value in node.properties.items():
+                    iads_element.add_key_value(property, value)
             for role, connections in node.connections.items():
                 iads_element.add_data_array(role, connections)
 

@@ -40,6 +40,28 @@ if dcsLiberation and SkynetIADS then
 
     -- actual configuration code
     local function initializeIADSElement(iads, iads_unit, element)
+        if iads_unit == nil then
+            -- skip processing of units which can not be handled by skynet
+            return
+        end
+        if element.engagement_zone then
+            iads_unit:setEngagementZone(element.engagement_zone)
+        end
+        if element.can_engage_harm then
+            iads_unit:setCanEngageHARM(element.can_engage_harm)
+        end
+        if element.harm_detection_chance then
+            iads_unit:setHARMDetectionChance(tonumber(element.harm_detection_chance))
+        end
+        if element.can_engage_air_weapon then
+            iads_unit:setCanEngageAirWeapons(element.can_engage_air_weapon)
+        end
+        if element.go_live_range_in_percent then
+            iads_unit:setGoLiveRangeInPercent(tonumber(element.go_live_range_in_percent))
+        end
+        if element.autonomous_behaviour then
+            iads_unit:setAutonomousBehaviour(element.autonomous_behaviour)
+        end
         if element.ConnectionNode then
             for i,cn in pairs(element.ConnectionNode) do
                 env.info(string.format("DCSLiberation|Skynet-IADS plugin - adding IADS ConnectionNode %s", cn))
