@@ -31,6 +31,7 @@ PERF_FRIENDLY = 0
 PERF_MEDIUM = 1
 PERF_HARD = 2
 PERF_NASA = 3
+DEFAULT_BUDGET = 2000
 
 
 @dataclass(frozen=True)
@@ -48,6 +49,12 @@ class Campaign:
     recommended_player_faction: str
     recommended_enemy_faction: str
     recommended_start_date: Optional[datetime.date]
+
+    recommended_player_money: int
+    recommended_enemy_money: int
+    recommended_player_income_multiplier: float
+    recommended_enemy_income_multiplier: float
+
     performance: int
     data: Dict[str, Any]
     path: Path
@@ -95,6 +102,10 @@ class Campaign:
             data.get("recommended_player_faction", "USA 2005"),
             data.get("recommended_enemy_faction", "Russia 1990"),
             start_date,
+            data.get("recommended_player_money", DEFAULT_BUDGET),
+            data.get("recommended_enemy_money", DEFAULT_BUDGET),
+            data.get("recommended_player_income_multiplier", 1.0),
+            data.get("recommended_enemy_income_multiplier", 1.0),
             data.get("performance", 0),
             data,
             path,

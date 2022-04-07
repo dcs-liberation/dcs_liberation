@@ -135,4 +135,11 @@ VERSION = _build_version_string()
 #:   This removes the randomization of the orientation from the generation.
 #:   Most campaigns will not need any updates and will work out of the box.
 #:
-CAMPAIGN_FORMAT_VERSION = (10, 0)
+#: Version 10.1
+#: * Campaign designers can now define the recommended economy settings:
+#:   `recommended_player_money: 2000`.
+#:   `recommended_enemy_money: 2000`.
+#:   `recommended_player_income_multiplier: 1.0`.
+#:   `recommended_enemy_income_multiplier: 1.0`.
+#:
+CAMPAIGN_FORMAT_VERSION = (10, 1)

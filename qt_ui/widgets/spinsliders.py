@@ -17,7 +17,7 @@ class FloatSpinSlider(QHBoxLayout):
         slider = QSlider(Qt.Horizontal)
         slider.setMinimum(int(minimum * divisor))
         slider.setMaximum(int(maximum * divisor))
-        slider.setValue(initial)
+        slider.setValue(int(initial * divisor))
         self.spinner = FloatSpinner(divisor, minimum, maximum, initial)
         slider.valueChanged.connect(lambda x: self.spinner.setValue(x))
         self.spinner.valueChanged.connect(lambda x: slider.setValue(x))
