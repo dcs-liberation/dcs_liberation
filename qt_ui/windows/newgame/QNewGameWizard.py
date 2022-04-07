@@ -5,11 +5,11 @@ from datetime import datetime, timedelta
 from typing import List
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QDate, QItemSelectionModel, QPoint, Qt
+from PySide2.QtCore import QDate, QItemSelectionModel, QPoint, Qt, Signal
 from PySide2.QtWidgets import QCheckBox, QLabel, QTextEdit, QVBoxLayout
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from game.campaignloader.campaign import Campaign
+from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.factions import FACTIONS, Faction
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
@@ -29,7 +29,6 @@ jinja_env = Environment(
     lstrip_blocks=True,
 )
 
-DEFAULT_BUDGET = 2000
 DEFAULT_MISSION_LENGTH: timedelta = timedelta(minutes=60)
 
 
@@ -93,7 +92,13 @@ class NewGameWizard(QtWidgets.QWizard):
         self.addPage(self.theater_page)
         self.addPage(self.faction_selection_page)
         self.addPage(GeneratorOptions())
-        self.addPage(DifficultyAndAutomationOptions())
+        self.difficulty_page = DifficultyAndAutomationOptions()
+
+        # Update difficulty page on campaign select
+        self.theater_page.campaign_selected.connect(
+            lambda c: self.difficulty_page.set_campaign_values(c)
+        )
+        self.addPage(self.difficulty_page)
         self.addPage(ConclusionPage())
 
         self.setPixmap(
@@ -331,6 +336,8 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
+    campaign_selected = Signal(Campaign)
+
     def __init__(
         self,
         campaigns: List[Campaign],
@@ -445,6 +452,8 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
             else:
                 timePeriodPreset.setChecked(True)
 
+            self.campaign_selected.emit(campaign)
+
         self.campaignList.selectionModel().setCurrentIndex(
             self.campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
         )
@@ -489,19 +498,18 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
 
 class BudgetInputs(QtWidgets.QGridLayout):
-    def __init__(self, label: str) -> None:
+    def __init__(self, label: str, value: int) -> None:
         super().__init__()
         self.addWidget(QtWidgets.QLabel(label), 0, 0)
 
         minimum = 0
         maximum = 5000
-        initial = DEFAULT_BUDGET
 
         slider = QtWidgets.QSlider(Qt.Horizontal)
         slider.setMinimum(minimum)
         slider.setMaximum(maximum)
-        slider.setValue(initial)
-        self.starting_money = CurrencySpinner(minimum, maximum, initial)
+        slider.setValue(value)
+        self.starting_money = CurrencySpinner(minimum, maximum, value)
         slider.valueChanged.connect(lambda x: self.starting_money.setValue(x))
         self.starting_money.valueChanged.connect(lambda x: slider.setValue(x))
 
@@ -530,22 +538,22 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         economy_group.setLayout(economy_layout)
 
         economy_layout.addWidget(QLabel("Player income multiplier"))
-        player_income = FloatSpinSlider(0, 5, 1, divisor=10)
-        self.registerField("player_income_multiplier", player_income.spinner)
-        economy_layout.addLayout(player_income)
+        self.player_income = FloatSpinSlider(0, 5, 1, divisor=10)
+        self.registerField("player_income_multiplier", self.player_income.spinner)
+        economy_layout.addLayout(self.player_income)
 
         economy_layout.addWidget(QLabel("Enemy income multiplier"))
-        enemy_income = FloatSpinSlider(0, 5, 1, divisor=10)
-        self.registerField("enemy_income_multiplier", enemy_income.spinner)
-        economy_layout.addLayout(enemy_income)
+        self.enemy_income = FloatSpinSlider(0, 5, 1, divisor=10)
+        self.registerField("enemy_income_multiplier", self.enemy_income.spinner)
+        economy_layout.addLayout(self.enemy_income)
 
-        player_budget = BudgetInputs("Player starting budget")
-        self.registerField("starting_money", player_budget.starting_money)
-        economy_layout.addLayout(player_budget)
+        self.player_budget = BudgetInputs("Player starting budget", DEFAULT_BUDGET)
+        self.registerField("starting_money", self.player_budget.starting_money)
+        economy_layout.addLayout(self.player_budget)
 
-        enemy_budget = BudgetInputs("Enemy starting budget")
-        self.registerField("enemy_starting_money", enemy_budget.starting_money)
-        economy_layout.addLayout(enemy_budget)
+        self.enemy_budget = BudgetInputs("Enemy starting budget", DEFAULT_BUDGET)
+        self.registerField("enemy_starting_money", self.enemy_budget.starting_money)
+        economy_layout.addLayout(self.enemy_budget)
 
         assist_group = QtWidgets.QGroupBox("Player assists")
         layout.addWidget(assist_group)
@@ -568,6 +576,16 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         assist_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
 
         self.setLayout(layout)
+
+    def set_campaign_values(self, campaign: Campaign) -> None:
+        self.player_budget.starting_money.setValue(campaign.recommended_player_money)
+        self.enemy_budget.starting_money.setValue(campaign.recommended_enemy_money)
+        self.player_income.spinner.setValue(
+            int(campaign.recommended_player_income_multiplier * 10)
+        )
+        self.enemy_income.spinner.setValue(
+            int(campaign.recommended_enemy_income_multiplier * 10)
+        )
 
 
 class GeneratorOptions(QtWidgets.QWizardPage):
