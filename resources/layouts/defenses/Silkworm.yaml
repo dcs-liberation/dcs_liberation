@@ -12,7 +12,7 @@ groups:
       unit_count:
         - 5
       unit_classes:
-        - Missile
+        - AntiShipMissile
     - name: SilkwormGenerator 2
       optional: true
       unit_count:
