@@ -625,9 +625,13 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                             return group.group_name
         return None
 
-    def get_carrier_group_type(self) -> Optional[Type[ShipType]]:
+    def get_carrier_group_type(
+        self, always_supercarrier: bool = False
+    ) -> Optional[Type[ShipType]]:
         """
-        Get the carrier group type if the airbase is a carrier
+        Get the carrier group type if the airbase is a carrier. Arguments:
+            always_supercarrier: True if should always return the supercarrier type, False if should only
+                return the supercarrier type when the supercarrier option is enabled in settings.
         :return: Carrier group type
         """
         if self.cptype in [
@@ -647,7 +651,10 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                         ]
                         and issubclass(carrier_type, ShipType)
                     ):
-                        if self.coalition.game.settings.supercarrier:
+                        if (
+                            self.coalition.game.settings.supercarrier
+                            or always_supercarrier
+                        ):
                             return self.upgrade_to_supercarrier(carrier_type, self.name)
                         return carrier_type
         return None
@@ -660,25 +667,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         is returned based on the name of the carrier group.
         :return: Carrier group type
         """
-        if self.cptype in [
-            ControlPointType.AIRCRAFT_CARRIER_GROUP,
-            ControlPointType.LHA_GROUP,
-        ]:
-            for g in self.ground_objects:
-                for group in g.groups:
-                    u = group.units[0]
-                    carrier_type = u.type
-                    if (
-                        u.unit_type
-                        and u.unit_type.unit_class
-                        in [
-                            UnitClass.AIRCRAFT_CARRIER,
-                            UnitClass.HELICOPTER_CARRIER,
-                        ]
-                        and issubclass(carrier_type, ShipType)
-                    ):
-                        return self.upgrade_to_supercarrier(carrier_type, self.name)
-        return None
+        return self.get_carrier_group_type(True)
 
     @staticmethod
     def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
