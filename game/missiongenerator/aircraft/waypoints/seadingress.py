@@ -40,13 +40,8 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
             else:
                 # All non ARM types like Decoys will use the normal AttackGroup Task
                 attack_task = AttackGroup(
-                    miz_group.id, weapon_type=DcsWeaponType.Guided
+                    miz_group.id, weapon_type=DcsWeaponType.Guided, group_attack=True
                 )
-                attack_task.params["expend"] = "All"
-                attack_task.params["attackQtyLimit"] = False
-                attack_task.params["directionEnabled"] = False
-                attack_task.params["altitudeEnabled"] = False
-                attack_task.params["groupAttack"] = True
                 waypoint.tasks.append(attack_task)
 
         # Preemptively use ECM to better avoid getting swatted.
