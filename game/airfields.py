@@ -12,6 +12,7 @@ from typing import Any, ClassVar, Dict, Optional, TYPE_CHECKING, Tuple
 
 import yaml
 from dcs.terrain import Airport
+from dcs.task import Modulation
 
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel
@@ -33,10 +34,10 @@ class AtcData:
         if atc_data is None:
             return None
         return AtcData(
-            RadioFrequency.parse(atc_data["hf"]),
-            RadioFrequency.parse(atc_data["vhf_low"]),
-            RadioFrequency.parse(atc_data["vhf_high"]),
-            RadioFrequency.parse(atc_data["uhf"]),
+            RadioFrequency.parse(atc_data["hf"], Modulation.FM),
+            RadioFrequency.parse(atc_data["vhf_low"], Modulation.FM),
+            RadioFrequency.parse(atc_data["vhf_high"], Modulation.AM),
+            RadioFrequency.parse(atc_data["uhf"], Modulation.AM),
         )
 
 
@@ -108,7 +109,10 @@ class AirfieldData:
 
         vor = None
         if (vor_data := data.get("vor")) is not None:
-            vor = (vor_data["callsign"], RadioFrequency.parse(vor_data["frequency"]))
+            vor = (
+                vor_data["callsign"],
+                RadioFrequency.parse(vor_data["frequency"], Modulation.FM),
+            )
 
         rsbn = None
         if (rsbn_data := data.get("rsbn")) is not None:
@@ -122,7 +126,7 @@ class AirfieldData:
             if (ils_data := runway_data.get("ils")) is not None:
                 ils[name] = (
                     ils_data["callsign"],
-                    RadioFrequency.parse(ils_data["frequency"]),
+                    RadioFrequency.parse(ils_data["frequency"], Modulation.FM),
                 )
 
             if (prmg_data := runway_data.get("prmg")) is not None:
@@ -131,13 +135,13 @@ class AirfieldData:
             if (outer_ndb_data := runway_data.get("outer_ndb")) is not None:
                 outer_ndb[name] = (
                     outer_ndb_data["callsign"],
-                    RadioFrequency.parse(outer_ndb_data["frequency"]),
+                    RadioFrequency.parse(outer_ndb_data["frequency"], Modulation.AM),
                 )
 
             if (inner_ndb_data := runway_data.get("inner_ndb")) is not None:
                 inner_ndb[name] = (
                     inner_ndb_data["callsign"],
-                    RadioFrequency.parse(inner_ndb_data["frequency"]),
+                    RadioFrequency.parse(inner_ndb_data["frequency"], Modulation.AM),
                 )
 
         return AirfieldData(
