@@ -1078,6 +1078,7 @@ class Airfield(ControlPoint):
             yield from [
                 FlightType.OCA_AIRCRAFT,
                 FlightType.OCA_RUNWAY,
+                FlightType.AIR_ASSAULT,
             ]
 
         yield from super().mission_types(for_player)
@@ -1394,6 +1395,7 @@ class Fob(ControlPoint):
 
         if not self.is_friendly(for_player):
             yield FlightType.STRIKE
+            yield FlightType.AIR_ASSAULT
 
         yield from super().mission_types(for_player)
 

@@ -56,6 +56,7 @@ class FlightType(Enum):
     SEAD_ESCORT = "SEAD Escort"
     REFUELING = "Refueling"
     FERRY = "Ferry"
+    AIR_ASSAULT = "Air Assault"
 
     def __str__(self) -> str:
         return self.value
@@ -89,6 +90,7 @@ class FlightType(Enum):
             FlightType.OCA_RUNWAY,
             FlightType.OCA_AIRCRAFT,
             FlightType.SEAD_ESCORT,
+            FlightType.AIR_ASSAULT,
         }
 
     @property
@@ -112,4 +114,5 @@ class FlightType(Enum):
             FlightType.SWEEP: AirEntity.FIGHTER,
             FlightType.TARCAP: AirEntity.FIGHTER,
             FlightType.TRANSPORT: AirEntity.UTILITY,
+            FlightType.AIR_ASSAULT: AirEntity.ROTARY_WING,
         }.get(self, AirEntity.UNSPECIFIED)

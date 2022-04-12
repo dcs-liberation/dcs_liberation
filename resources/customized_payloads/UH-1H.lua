@@ -136,6 +136,26 @@ local unitPayloads = {
 				[4] = 16,
 			},
 		},
+		[6] = {
+			["displayName"] = "Liberation Air Assault",
+			["name"] = "Liberation Air Assault",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "M60_SIDE_R",
+					["num"] = 4,
+				},
+				[2] = {
+					["CLSID"] = "M60_SIDE_L",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+				[2] = 31,
+				[3] = 35,
+				[4] = 16,
+			},
+		},
 	},
 	["unitType"] = "UH-1H",
 }

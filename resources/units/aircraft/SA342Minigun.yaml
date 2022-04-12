@@ -1,4 +1,7 @@
+class: Helicopter
 price: 4
+cabin_size: 2
+can_carry_crates: false
 variants:
   SA342Minigun: null
 kneeboard_units: "metric"
