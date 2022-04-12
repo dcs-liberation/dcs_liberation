@@ -50,7 +50,9 @@ class QFlightCreator(QDialog):
 
         layout = QVBoxLayout()
 
-        self.task_selector = QFlightTypeComboBox(self.game.theater, package.target)
+        self.task_selector = QFlightTypeComboBox(
+            self.game.theater, package.target, self.game.settings
+        )
         self.task_selector.setCurrentIndex(0)
         self.task_selector.currentIndexChanged.connect(self.on_task_changed)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))

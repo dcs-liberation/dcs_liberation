@@ -139,6 +139,14 @@ class ObjectiveFinder:
         """Iterates over all active front lines in the theater."""
         yield from self.game.theater.conflicts()
 
+    def air_assault_targets(self) -> Iterator[ControlPoint]:
+        """Iterates over all capturable controlpoints for all active front lines"""
+        if not self.game.settings.plugin_option("ctld"):
+            # Air Assault should only be tasked with CTLD enabled
+            return
+        for front_line in self.front_lines():
+            yield front_line.control_point_hostile_to(self.is_player)
+
     def vulnerable_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over friendly CPs that are vulnerable to enemy CPs.
 
