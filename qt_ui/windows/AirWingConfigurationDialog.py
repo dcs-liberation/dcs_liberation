@@ -403,10 +403,19 @@ class AirWingConfigurationTab(QWidget):
                 self.type_list.selectionModel().currentIndex().row()
             ).text()
 
+        bases = list(self.game.theater.control_points_for(self.coalition.player))
+
+        # List of all Aircrafts possible to operate with the given bases
+        possible_aircrafts = [
+            aircraft
+            for aircraft in self.coalition.faction.aircrafts
+            if any(base.can_operate(aircraft) for base in bases)
+        ]
+
         popup = SquadronConfigPopup(
             selected_aircraft,
-            self.coalition.faction.aircrafts,
-            list(self.game.theater.control_points_for(self.coalition.player)),
+            possible_aircrafts,
+            bases,
             self.coalition.air_wing.squadron_defs,
         )
         if popup.exec_() != QDialog.Accepted:
@@ -561,11 +570,19 @@ class SquadronConfigPopup(QDialog):
 
         self.accept_button = QPushButton("Accept")
         self.accept_button.clicked.connect(lambda state: self.accept())
+        self.update_accept_button()
         self.button_layout.addWidget(self.accept_button)
 
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(lambda state: self.reject())
         self.button_layout.addWidget(self.cancel_button)
+
+    def update_accept_button(self) -> None:
+        enabled = (
+            self.aircraft_type_selector.currentData() is not None
+            and self.squadron_base_selector.currentData() is not None
+        )
+        self.accept_button.setEnabled(enabled)
 
     def on_aircraft_selection(self) -> None:
         self.squadron_base_selector.set_aircraft_type(
@@ -574,4 +591,5 @@ class SquadronConfigPopup(QDialog):
         self.squadron_def_selector.set_aircraft_type(
             self.aircraft_type_selector.currentData()
         )
+        self.update_accept_button()
         self.update()
