@@ -1,9 +1,8 @@
-from typing import Callable, Iterable, Optional
+from typing import Iterable, Optional, Iterator
 
 from PySide2.QtCore import (
     QItemSelection,
     QItemSelectionModel,
-    QModelIndex,
     QSize,
     Qt,
     Signal,
@@ -28,7 +27,6 @@ from PySide2.QtWidgets import (
     QGridLayout,
     QToolButton,
 )
-
 from game import Game
 from game.ato.flighttype import FlightType
 from game.coalition import Coalition
@@ -39,39 +37,66 @@ from game.theater import ConflictTheater, ControlPoint
 from qt_ui.uiconstants import AIRCRAFT_ICONS, ICONS
 
 
-class AllowedMissionTypeControls(QVBoxLayout):
+class QMissionType:
+    def __init__(
+        self, mission_type: FlightType, allowed: bool, auto_assignable: bool
+    ) -> None:
+        self.flight_type = mission_type
+        self.allowed_checkbox = QCheckBox()
+        self.allowed_checkbox.setChecked(allowed)
+        self.allowed_checkbox.toggled.connect(self.update_auto_assignable)
+        self.auto_assignable_checkbox = QCheckBox()
+        self.auto_assignable_checkbox.setEnabled(allowed)
+        self.auto_assignable_checkbox.setChecked(auto_assignable)
+
+    def update_auto_assignable(self, checked: bool) -> None:
+        self.auto_assignable_checkbox.setEnabled(checked)
+        if not checked:
+            self.auto_assignable_checkbox.setChecked(False)
+
+    @property
+    def allowed(self) -> bool:
+        return self.allowed_checkbox.isChecked()
+
+    @property
+    def auto_assignable(self) -> bool:
+        return self.auto_assignable_checkbox.isChecked()
+
+
+class MissionTypeControls(QGridLayout):
     def __init__(self, squadron: Squadron) -> None:
         super().__init__()
         self.squadron = squadron
-        self.allowed_mission_types = set()
+        self.mission_types: list[QMissionType] = []
 
-        self.addWidget(QLabel("Allowed mission types"))
+        self.addWidget(QLabel("Mission Type"), 0, 0)
+        self.addWidget(QLabel("Allow"), 0, 1)
+        self.addWidget(QLabel("Auto-Assign"), 0, 2)
 
-        def make_callback(toggled_task: FlightType) -> Callable[[bool], None]:
-            def callback(checked: bool) -> None:
-                self.on_toggled(toggled_task, checked)
-
-            return callback
-
-        for task in FlightType:
+        for i, task in enumerate(FlightType):
             if task is FlightType.FERRY:
                 # Not plannable so just skip it.
                 continue
-            enabled = task in squadron.mission_types
-            if enabled:
-                self.allowed_mission_types.add(task)
-            checkbox = QCheckBox(text=task.value)
-            checkbox.setChecked(enabled)
-            checkbox.toggled.connect(make_callback(task))
-            self.addWidget(checkbox)
+            allowed = task in squadron.mission_types
+            auto_assignable = task in squadron.auto_assignable_mission_types
+            mission_type = QMissionType(task, allowed, auto_assignable)
+            self.mission_types.append(mission_type)
 
-        self.addStretch()
+            self.addWidget(QLabel(task.value), i + 1, 0)
+            self.addWidget(mission_type.allowed_checkbox, i + 1, 1)
+            self.addWidget(mission_type.auto_assignable_checkbox, i + 1, 2)
 
-    def on_toggled(self, task: FlightType, checked: bool) -> None:
-        if checked:
-            self.allowed_mission_types.add(task)
-        else:
-            self.allowed_mission_types.remove(task)
+    @property
+    def allowed_mission_types(self) -> Iterator[FlightType]:
+        for mission_type in self.mission_types:
+            if mission_type.allowed:
+                yield mission_type.flight_type
+
+    @property
+    def auto_assignable_mission_types(self) -> Iterator[FlightType]:
+        for mission_type in self.mission_types:
+            if mission_type.auto_assignable:
+                yield mission_type.flight_type
 
 
 class SquadronBaseSelector(QComboBox):
@@ -175,8 +200,11 @@ class SquadronConfigurationBox(QGroupBox):
         left_column.addWidget(delete_button)
         left_column.addStretch()
 
-        self.allowed_missions = AllowedMissionTypeControls(squadron)
-        columns.addLayout(self.allowed_missions)
+        right_column = QVBoxLayout()
+        self.mission_types = MissionTypeControls(squadron)
+        right_column.addLayout(self.mission_types)
+        right_column.addStretch()
+        columns.addLayout(right_column)
 
     def remove_from_squadron_config(self) -> None:
         self.remove_squadron_signal.emit(self.squadron)
@@ -208,8 +236,13 @@ class SquadronConfigurationBox(QGroupBox):
         self.squadron.pilot_pool = [
             Pilot(n, player=True) for n in player_names
         ] + self.squadron.pilot_pool
+        # Set the allowed mission types
         self.squadron.set_allowed_mission_types(
-            self.allowed_missions.allowed_mission_types
+            set(self.mission_types.allowed_mission_types)
+        )
+        # Also update the auto assignable mission types
+        self.squadron.set_auto_assignable_mission_types(
+            set(self.mission_types.auto_assignable_mission_types)
         )
         return self.squadron
 
@@ -453,7 +486,7 @@ class AirWingConfigurationDialog(QDialog):
 
     def __init__(self, game: Game, parent) -> None:
         super().__init__(parent)
-        self.setMinimumSize(500, 800)
+        self.setMinimumSize(1024, 768)
         self.setWindowTitle(f"Air Wing Configuration")
         # TODO: self.setWindowIcon()
 
