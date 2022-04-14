@@ -1,0 +1,10 @@
+---
+name: VFA-87 (Tanker)
+nickname: Golden Warriors
+female_pilot_percentage: 12
+country: USA
+role: Tanker
+aircraft: F/A-18E Tanker
+livery: AJ302
+mission_types:
+  - Refueling

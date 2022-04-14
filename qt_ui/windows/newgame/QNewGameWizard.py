@@ -157,6 +157,7 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         mod_settings = ModSettings(
             a4_skyhawk=self.field("a4_skyhawk"),
+            fa18ef_tanker=self.field("fa18ef_tanker"),
             f22_raptor=self.field("f22_raptor"),
             f104_starfighter=self.field("f104_starfighter"),
             hercules=self.field("hercules"),
@@ -639,6 +640,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("hercules", hercules)
         uh_60l = QtWidgets.QCheckBox()
         self.registerField("uh_60l", uh_60l)
+        fa18ef_tanker = QtWidgets.QCheckBox()
+        self.registerField("fa18ef_tanker", fa18ef_tanker)
         f22_raptor = QtWidgets.QCheckBox()
         self.registerField("f22_raptor", f22_raptor)
         f104_starfighter = QtWidgets.QCheckBox()
@@ -659,8 +662,15 @@ class GeneratorOptions(QtWidgets.QWizardPage):
 
         modLayout = QtWidgets.QGridLayout()
         modLayout_row = 1
-        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("A-4E Skyhawk (version 2.0.0)"), modLayout_row, 0
+        )
         modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(
+            QtWidgets.QLabel("F/A-18F Tanker (version 1.1)"), modLayout_row, 0
+        )
+        modLayout.addWidget(fa18ef_tanker, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), modLayout_row, 0)
         modLayout.addWidget(f22_raptor, modLayout_row, 1)
@@ -673,13 +683,17 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         )
         modLayout.addWidget(hercules, modLayout_row, 1)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("UH-60L Black Hawk"), modLayout_row, 0)
-        modLayout.addWidget(uh_60l, modLayout_row, 1)
-        modLayout_row += 1
         # Section break here for readability
         modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("UH-60L Black Hawk (version 1.1)"), modLayout_row, 0
+        )
+        modLayout.addWidget(uh_60l, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(
+            QtWidgets.QLabel("JAS 39 Gripen (version v1.8.0-beta)"), modLayout_row, 0
+        )
         modLayout.addWidget(jas39_gripen, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), modLayout_row, 0)

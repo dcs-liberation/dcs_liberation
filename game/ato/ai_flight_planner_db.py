@@ -114,6 +114,7 @@ from game.dcs.aircrafttype import AircraftType
 from pydcs_extensions.a4ec.a4ec import A_4E_C
 from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
+from pydcs_extensions.fa18ef_tanker.fa18ef_tanker import Superbug_AITanker
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
@@ -499,6 +500,7 @@ REFUELING_CAPABALE = [
     IL_78M,
     KC130J,
     KC130,
+    Superbug_AITanker,
     S_3B_Tanker,
 ]
 

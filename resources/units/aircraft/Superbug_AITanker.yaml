@@ -1,0 +1,19 @@
+carrier_capable: true
+description:
+  The Boeing F/A-18E and F/A-18F Super Hornet are twin-engine, carrier-capable,
+  multirole fighter aircraft variants based on the McDonnell Douglas F/A-18 Hornet.
+  This version is an AI-only tanker aircraft, capable of in-flight refueling.
+introduced: 2001
+manufacturer: Boeing
+origin: USA
+price: 20
+max_group_size: 1
+role: Carrier-based Tanker
+max_range: 1000
+patrol:
+  # ~265 knots IAS.
+  speed: 320
+  altitude: 12000
+variants:
+  F/A-18E Tanker: {}
+  F/A-18F Tanker: {}

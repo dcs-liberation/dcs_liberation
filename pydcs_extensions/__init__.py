@@ -1,5 +1,6 @@
 from .a4ec import *
 from .f104 import *
+from .fa18ef_tanker import *
 from .f22a import *
 from .frenchpack import *
 from .hercules import *

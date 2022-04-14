@@ -1,0 +1,10 @@
+---
+name: VFA-105 (Tanker)
+nickname: Gunslingers
+female_pilot_percentage: 12
+country: USA
+role: Tanker
+aircraft: F/A-18E Tanker
+livery: AC405
+mission_types:
+  - Refueling
