@@ -245,7 +245,7 @@ class QBaseMenu2(QDialog):
             self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP
             or self.cp.cptype == ControlPointType.LHA_GROUP
         ):
-            carrier_type = self.cp.get_carrier_group_type_by_name()
+            carrier_type = self.cp.get_carrier_group_type(always_supercarrier=True)
             return f"./resources/ui/units/ships/{carrier_type.id}.png"
         elif self.cp.cptype == ControlPointType.FOB and self.cp.has_helipads:
             return "./resources/ui/heliport.png"

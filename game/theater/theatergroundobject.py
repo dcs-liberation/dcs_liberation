@@ -272,12 +272,6 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
                 return group
         return None
 
-    def get_carrier_type(self) -> Type[ShipType]:
-        carrier_type = self.groups[0].units[0].type
-        if issubclass(carrier_type, ShipType):
-            return carrier_type
-        raise RuntimeError(f"First unit of TGO {self.name} is no Ship")
-
     def rotate(self, heading: Heading) -> None:
         """Rotate the whole TGO clockwise to the new heading"""
         rotation = heading - self.heading

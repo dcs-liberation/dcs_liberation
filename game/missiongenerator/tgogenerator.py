@@ -352,14 +352,14 @@ class GenericCarrierGenerator(GroundObjectGenerator):
             brc = self.steam_into_wind(ship_group)
 
             # Set Carrier Specific Options
-            carrier_type = self.carrier_type
-            if carrier_type is None:
-                raise RuntimeError(
-                    f"Error generating carrier group for {self.control_point.name}"
-                )
             if g_id == 0:
-                # Correct unit type for the carrier.
-                # This is only used for the super carrier setting
+                # Get Correct unit type for the carrier.
+                # This will upgrade to super carrier if option is enabled
+                carrier_type = self.carrier_type
+                if carrier_type is None:
+                    raise RuntimeError(
+                        f"Error generating carrier group for {self.control_point.name}"
+                    )
                 ship_group.units[0].type = carrier_type.id
                 tacan = self.tacan_registry.alloc_for_band(
                     TacanBand.X, TacanUsage.TransmitReceive
