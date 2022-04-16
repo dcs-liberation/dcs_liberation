@@ -14,6 +14,8 @@ from game.utils import Heading
 
 
 class FrontLineConflictDescription:
+    max_frontline_length: int
+
     def __init__(
         self,
         theater: ConflictTheater,
