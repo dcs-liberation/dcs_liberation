@@ -1,4 +1,4 @@
-# Requires French Pack mod :
+# Requires HollowPointGames LLH Counter Insurgency Pack :
 # https://www.reddit.com/r/DCSExposed/comments/m5uje8/insurgent_pack_work_in_progress_impressions/
 #
 from dcs import unittype
