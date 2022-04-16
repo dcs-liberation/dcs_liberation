@@ -7,12 +7,10 @@ from dcs.country import Country
 from dcs.mapping import Point
 from shapely.geometry import LineString, Point as ShapelyPoint
 
+from game.settings import Settings
 from game.theater.conflicttheater import ConflictTheater, FrontLine
 from game.theater.controlpoint import ControlPoint
 from game.utils import Heading
-
-
-FRONTLINE_LENGTH = 80000
 
 
 class FrontLineConflictDescription:
@@ -54,34 +52,41 @@ class FrontLineConflictDescription:
 
     @classmethod
     def frontline_position(
-        cls, frontline: FrontLine, theater: ConflictTheater
+        cls, frontline: FrontLine, theater: ConflictTheater, settings: Settings
     ) -> Tuple[Point, Heading]:
         attack_heading = frontline.attack_heading
         position = cls.find_ground_position(
             frontline.position,
-            FRONTLINE_LENGTH,
+            settings.max_frontline_length * 1000,
             attack_heading.right,
             theater,
         )
+        cls.max_frontline_length = settings.max_frontline_length
         if position is None:
             raise RuntimeError("Could not find front line position")
         return position, attack_heading.opposite
 
     @classmethod
     def frontline_vector(
-        cls, front_line: FrontLine, theater: ConflictTheater
+        cls, front_line: FrontLine, theater: ConflictTheater, settings: Settings
     ) -> Tuple[Point, Heading, int]:
         """
         Returns a vector for a valid frontline location avoiding exclusion zones.
         """
-        center_position, heading = cls.frontline_position(front_line, theater)
+        center_position, heading = cls.frontline_position(front_line, theater, settings)
         left_heading = heading.left
         right_heading = heading.right
         left_position = cls.extend_ground_position(
-            center_position, int(FRONTLINE_LENGTH / 2), left_heading, theater
+            center_position,
+            int(settings.max_frontline_length * 1000 / 2),
+            left_heading,
+            theater,
         )
         right_position = cls.extend_ground_position(
-            center_position, int(FRONTLINE_LENGTH / 2), right_heading, theater
+            center_position,
+            int(settings.max_frontline_length * 1000 / 2),
+            right_heading,
+            theater,
         )
         distance = int(left_position.distance_to_point(right_position))
         return left_position, right_heading, distance
@@ -95,9 +100,12 @@ class FrontLineConflictDescription:
         defender: Country,
         front_line: FrontLine,
         theater: ConflictTheater,
+        settings: Settings,
     ) -> FrontLineConflictDescription:
         assert cls.has_frontline_between(front_line.blue_cp, front_line.red_cp)
-        position, heading, distance = cls.frontline_vector(front_line, theater)
+        position, heading, distance = cls.frontline_vector(
+            front_line, theater, settings
+        )
         conflict = cls(
             position=position,
             heading=heading,

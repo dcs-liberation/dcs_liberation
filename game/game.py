@@ -456,7 +456,7 @@ class Game:
         # By default, use the existing frontline conflict position
         for front_line in self.theater.conflicts():
             position = FrontLineConflictDescription.frontline_position(
-                front_line, self.theater
+                front_line, self.theater, self.settings
             )
             zones.append(position[0])
             zones.append(front_line.blue_cp.position)

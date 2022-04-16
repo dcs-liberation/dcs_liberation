@@ -90,7 +90,7 @@ class DrawingsGenerator:
                 heading,
                 distance,
             ) = FrontLineConflictDescription.frontline_vector(
-                front_line, self.game.theater
+                front_line, self.game.theater, self.game.settings
             )
 
             end_point = plane_start.point_from_heading(heading.degrees, distance)

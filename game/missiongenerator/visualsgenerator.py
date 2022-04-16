@@ -84,7 +84,7 @@ class VisualsGenerator:
                 heading,
                 distance,
             ) = FrontLineConflictDescription.frontline_vector(
-                front_line, self.game.theater
+                front_line, self.game.theater, self.game.settings
             )
             if not plane_start:
                 continue

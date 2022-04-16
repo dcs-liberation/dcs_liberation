@@ -97,11 +97,11 @@ class FlotGenerator:
 
     def generate(self) -> None:
         position = FrontLineConflictDescription.frontline_position(
-            self.conflict.front_line, self.game.theater
+            self.conflict.front_line, self.game.theater, self.game.settings
         )
 
         frontline_vector = FrontLineConflictDescription.frontline_vector(
-            self.conflict.front_line, self.game.theater
+            self.conflict.front_line, self.game.theater, self.game.settings
         )
 
         # Create player groups at random position
