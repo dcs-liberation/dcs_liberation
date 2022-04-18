@@ -31,6 +31,7 @@ from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
 from game.armedforces.forcegroup import ForceGroup
 from game.dcs.unittype import UnitType
+from pydcs_extensions.f16i_idf.f16i_idf import inject_F16I
 
 if TYPE_CHECKING:
     from game.theater.start_generator import ModSettings
@@ -346,6 +347,8 @@ class Faction:
             self.remove_preset("SA-23/S-300VM")
             self.remove_preset("SA-17")
             self.remove_preset("KS-19")
+        if mod_settings.f_16_idf:
+            inject_F16I()
 
     def remove_aircraft(self, name: str) -> None:
         for i in self.aircrafts:
