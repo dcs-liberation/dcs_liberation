@@ -17,7 +17,8 @@
     "F-16CM Fighting Falcon (Block 50)",
     "F/A-18C Hornet (Lot 20)",
     "Mirage 2000C",
-    "UH-1H Iroquois"
+    "UH-1H Iroquois",
+    "UH-60L"
   ],
   "awacs": [
     "E-2C Hawkeye"
@@ -90,6 +91,11 @@
     ],
     "Mirage 2000C": [
       "UAE Air Force"
+    ]
+  },
+  "liveries_overrides": {
+    "UH-60L": [
+      "Israeli Air Force"
     ]
   },
   "unrestricted_satnav": true

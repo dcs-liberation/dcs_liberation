@@ -19,7 +19,8 @@
     "AH-64D Apache Longbow (AI)",
     "S-3B Viking",
     "SH-60B Seahawk",
-    "UH-1H Iroquois"
+    "UH-1H Iroquois",
+    "UH-60L"
   ],
   "awacs": [
     "E-2C Hawkeye"
@@ -97,6 +98,11 @@
     ],
     "UH-1H Iroquois": [
       "US NAVY"
+    ]
+  },
+  "liveries_overrides": {
+    "UH-60L": [
+      "Israeli Air Force"
     ]
   },
   "unrestricted_satnav": true
