@@ -5,6 +5,6 @@ female_pilot_percentage: 12
 country: USA
 role: Tanker
 aircraft: F/A-18E Tanker
-livery: AC405
+livery: Stock Tanker E
 mission_types:
   - Refueling

@@ -2,7 +2,6 @@ from enum import Enum
 
 from dcs import task
 from dcs.planes import PlaneType
-from dcs.weapons_data import Weapons
 
 from game.modsupport import planemod
 
@@ -26,16 +25,16 @@ class Superbug_AITanker(PlaneType):
 
     class Liveries:
         class Combined_Joint_Task_Forces_Blue(Enum):
-            AC405 = "AC405"
-            AJ302 = "AJ302"
+            Stock_Tanker_E = "Stock Tanker E"
+            Stock_Tanker_F = "Stock Tanker F"
 
         class Combined_Joint_Task_Forces_Red(Enum):
-            AC405 = "AC405"
-            AJ302 = "AJ302"
+            Stock_Tanker_E = "Stock Tanker E"
+            Stock_Tanker_F = "Stock Tanker F"
 
         class USA(Enum):
-            AC405 = "AC405"
-            AJ302 = "AJ302"
+            Stock_Tanker_E = "Stock Tanker E"
+            Stock_Tanker_F = "Stock Tanker F"
 
     pylons = set()
 

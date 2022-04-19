@@ -1,0 +1,10 @@
+---
+name: VFA-41 (Tanker)
+nickname: Black Aces
+female_pilot_percentage: 12
+country: USA
+role: Tanker
+aircraft: F/A-18F Tanker
+livery: Stock Tanker F
+mission_types:
+  - Refueling
