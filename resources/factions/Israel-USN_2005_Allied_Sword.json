@@ -98,12 +98,10 @@
     ],
     "UH-1H Iroquois": [
       "US NAVY"
-    ]
-  },
-  "liveries_overrides": {
+    ],
     "UH-60L": [
       "Israeli Air Force"
-    ]
+    ]	
   },
   "unrestricted_satnav": true
 }

@@ -91,12 +91,10 @@
     ],
     "Mirage 2000C": [
       "UAE Air Force"
-    ]
-  },
-  "liveries_overrides": {
+    ],
     "UH-60L": [
       "Israeli Air Force"
-    ]
+    ]	
   },
   "unrestricted_satnav": true
 }
