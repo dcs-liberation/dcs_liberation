@@ -1,0 +1,146 @@
+---
+name: Syria - Tripoint Hostility
+theater: Syria
+authors: Fuzzle
+description: <p>A joint US Army/Air Force force must push Iraqi aggressors back through Jordan and Syria to the border, then pacify Iraq's nearby airbases. This campaign showcases the southeastern expansion to the Syria terrain, and incentivizes heavy usage of rotary from FARPs.</p><p><strong>Backstory:</strong> In an alternate 2006, Iraq has seen a coup place a hardline national fundamentalist movement in power, who have ejected US forces from the country under threat from newfound Iranian allies. With their confidence unchecked, Iraq has invaded their Jordanian and Syrian neighbours to the west, pushing nearly to the Israeli border. To keep the region from falling to chaos, the US has redeployed a task force from Europe to defend Jordan and bring down Iraq's west-facing air power.</p>
+recommended_player_faction: USA 2005
+recommended_enemy_faction: Iraq 1991
+miz: tripoint_hostility.miz
+performance: 2
+version: "10.1"
+recommended_start_date: 2006-08-03
+recommended_player_money: 900
+recommended_enemy_money: 1200
+recommended_player_income_multiplier: 1.0
+recommended_enemy_income_multiplier: 0.6
+squadrons:
+  # Off-theatre forces
+  From Turkey:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+    - primary: AEW&C
+      aircraft:
+        - 960th AAC Squadron
+        #USAF E-3A
+  # King Hussein Air College, BLUFOR start
+  19:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - 493rd FS
+        #USAF F-15C
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - 23rd FS
+        #USAF F-16C
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - 81st FS
+        #USAF A-10CII
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - 101st Combat Aviation Brigade
+        #US Army UH-60
+  # FOB Tha'lah, BLUFOR 1st FOB north
+  FOB Tha'lah:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A Company, 1-227th ARB
+        #US Army AH-64D
+  # FOB Stalwart, first BLUFOR FOB south
+  FOB Stalwart:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - C Company, 2-159th ARB
+        #US Army AH-64D
+  # FOB Qalea, first OPFOR FOB south
+  FOB Qalea:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - SA 342M Gazelle
+  # H4 Airbase, 1st OPFOR airfield south
+  12:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+  # FOB Eadla, 2nd OPFOR FOB south
+  FOB Eadla:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # Ruwayshid, 2nd OPFOR airfield south
+  57:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Su-22M4 Fitter-K
+  # H3 Southwest, 3rd OPFOR airfield south
+  55:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-25 Frogfoot
+  # H3 Airbase, 4th-last OPFOR airfield south
+  53:
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-25PD Foxbat-E
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24M Fencer-D
+  # Khalkhalah, 1st OPFOR airfield north
+  18:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-19P Farmer-B
+  # FOB Dhirae, 1st OPFOR FOB north
+  FOB Dhirae:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - SA 342M Gazelle
+  # FOB Kataf, 2nd OPFOR FOB north
+  FOB Kataf:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # At Tanf, 3rd OPFOR heliport north
+  63:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - SA 342M Gazelle
+  # FOB Qalb, 4th OPFOR FOB north
+  FOB Qalb:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # H3 Northwest, 2nd OPFOR airfield north
+  54:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-22M4 Fitter-K

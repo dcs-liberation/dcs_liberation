@@ -128,4 +128,22 @@ VERSION = _build_version_string()
 #: * Squadrons defined in campaign files can optionally setup squadrons' name,
 #:   nickname and/or generated female pilot name percentage
 #:
-CAMPAIGN_FORMAT_VERSION = (9, 2)
+#: Version 10.0
+#: * The new introduced layout system extends the mission generation so that a
+#:   campaign designer can now define the heading of the ground objects which will be
+#:   also used later in mission generation to orient the group accordingly.
+#:   This removes the randomization of the orientation from the generation.
+#:   Most campaigns will not need any updates and will work out of the box.
+#:
+#: Version 10.1
+#: * Campaign designers can now define the recommended economy settings:
+#:   `recommended_player_money: 2000`.
+#:   `recommended_enemy_money: 2000`.
+#:   `recommended_player_income_multiplier: 1.0`.
+#:   `recommended_enemy_income_multiplier: 1.0`.
+#:
+#: Version 10.2
+#: * Campaign files can optionally define the iads configuration
+#:   It is possible to define if the campaign supports advanced iads
+#:
+CAMPAIGN_FORMAT_VERSION = (10, 2)

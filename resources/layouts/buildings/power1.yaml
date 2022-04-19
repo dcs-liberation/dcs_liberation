@@ -1,7 +1,6 @@
 name: power1
 generic: true
 tasks:
-  - StrikeTarget
   - Power
 groups:
   - Power:

@@ -1,4 +1,5 @@
 always_keeps_gun: true
+lha_capable: true
 description: The legendary 'Apache' is an US twin-turboshaft attack helicopter for
   a crew of two. It features a nose-mounted sensor suite for target acquisition and
   night vision systems. It is armed with a 30 mm (1.18 in) M230 chain gun carried
@@ -16,3 +17,16 @@ price: 20
 role: Attack
 variants:
   AH-64D Apache Longbow: {}
+radios:
+  # DCS uses the 2nd Radio AN/ARC-164 (UHF) as the main intra flight for the Apache
+  # so we use this Radio for Intra and Inter Flight for now
+  # The radio frequencies set in the mission editor are in the current state of Early
+  # access not used for radio presets. Only the flight frequency is used. Any other
+  # frequency has to be entered manually atm.
+  intra_flight: AN/ARC-164
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    namer: apache
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 2

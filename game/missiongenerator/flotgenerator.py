@@ -141,10 +141,8 @@ class FlotGenerator:
 
         # Add JTAC
         if self.game.blue.faction.has_jtac:
-            n = "JTAC" + str(self.conflict.blue_cp.id) + str(self.conflict.red_cp.id)
             code: int
             freq = self.radio_registry.alloc_uhf()
-
             # If the option fc3LaserCode is enabled, force all JTAC
             # laser codes to 1113 to allow lasing for Su-25 Frogfoots and A-10A Warthogs.
             # Otherwise use 1688 for the first JTAC, 1687 for the second etc.
@@ -159,7 +157,7 @@ class FlotGenerator:
 
             jtac = self.mission.flight_group(
                 country=self.mission.country(self.game.blue.country_name),
-                name=n,
+                name=namegen.next_jtac_name(),
                 aircraft_type=utype.dcs_unit_type,
                 position=position[0],
                 airport=None,
@@ -167,7 +165,11 @@ class FlotGenerator:
                 maintask=AFAC,
             )
             jtac.points[0].tasks.append(
-                FAC(callsign=len(self.air_support.jtacs) + 1, frequency=int(freq.mhz))
+                FAC(
+                    callsign=len(self.air_support.jtacs) + 1,
+                    frequency=int(freq.mhz),
+                    modulation=freq.modulation,
+                )
             )
             jtac.points[0].tasks.append(SetInvisibleCommand(True))
             jtac.points[0].tasks.append(SetImmortalCommand(True))
@@ -181,8 +183,8 @@ class FlotGenerator:
             callsign = callsign_for_support_unit(jtac)
             self.air_support.jtacs.append(
                 JtacInfo(
-                    str(jtac.name),
-                    n,
+                    jtac.name,
+                    jtac.name,
                     callsign,
                     frontline,
                     str(code),

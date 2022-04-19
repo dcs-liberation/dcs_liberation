@@ -206,9 +206,11 @@ class QWaitingForMissionResultWindow(QDialog):
             DebriefingFileWrittenSignal.get_instance().sendDebriefing(debriefing)
         except Exception:
             logging.exception("Got an error while sending debriefing")
-        self.wait_thread = self.sim_controller.wait_for_debriefing(
-            lambda d: self.on_debriefing_update(d)
-        )
+        if not debriefing.state_data.mission_ended:
+            # Wait for more changes
+            self.wait_thread = self.sim_controller.wait_for_debriefing(
+                lambda d: self.on_debriefing_update(d)
+            )
 
     def process_debriefing(self):
         with logged_duration("Turn processing"):
@@ -231,7 +233,10 @@ class QWaitingForMissionResultWindow(QDialog):
         file = QFileDialog.getOpenFileName(
             self, "Select game file to open", filter="json(*.json)", dir="."
         )
-        logging.debug("Processing manually submitted %s", file[0])
-        self.on_debriefing_update(
-            self.sim_controller.debrief_current_state(Path(file[0], force_end=True))
-        )
+        if file[0] != "":
+            logging.debug("Processing manually submitted %s", file[0])
+            # Stop the current waiting thread as we manually submit the results
+            self.wait_thread.stop()
+            self.on_debriefing_update(
+                self.sim_controller.debrief_current_state(Path(file[0], force_end=True))
+            )

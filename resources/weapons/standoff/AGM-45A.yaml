@@ -1,0 +1,4 @@
+name: AGM-45A Shrike ARM
+type: ARM
+clsids:
+  - "{AGM_45A}"

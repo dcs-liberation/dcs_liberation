@@ -1,6 +1,6 @@
 {
-    "nameInUI": "Skynet IADS (NOT WORKING FOR BUILDS > #3478)",
-    "defaultValue": false,
+    "nameInUI": "Skynet IADS",
+    "defaultValue": true,
     "specificOptions": [
         {
             "nameInUI": "create IADS for RED coalition",

@@ -4,7 +4,7 @@ from collections import defaultdict
 import logging
 import random
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Iterator, Type
+from typing import TYPE_CHECKING, Iterator, Type, Optional
 
 from dcs import Point
 from dcs.unit import Unit
@@ -12,8 +12,10 @@ from dcs.unittype import UnitType as DcsUnitType
 
 from game.data.groups import GroupRole, GroupTask
 from game.data.units import UnitClass
-from game.point_with_heading import PointWithHeading
+from game.theater.iadsnetwork.iadsrole import IadsRole
+from game.theater.presetlocation import PresetLocation
 from game.theater.theatergroundobject import (
+    IadsBuildingGroundObject,
     SamGroundObject,
     EwrGroundObject,
     BuildingGroundObject,
@@ -93,8 +95,14 @@ class TgoLayoutGroup:
     unit_classes: list[UnitClass] = field(default_factory=list)
     fallback_classes: list[UnitClass] = field(default_factory=list)
 
+    # Allows a group to have a special SubTask (PointDefence for example)
+    sub_task: Optional[GroupTask] = None
+
     # Defines if this groupTemplate is required or not
     optional: bool = False
+
+    # Should this be filled by accessible units if optional or not
+    fill: bool = True
 
     def possible_types_for_faction(self, faction: Faction) -> list[Type[DcsUnitType]]:
         """Determine the possible dcs unit types for the TgoLayoutGroup and the given faction"""
@@ -200,7 +208,7 @@ class TgoLayout:
     def create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
         """Create the TheaterGroundObject for the TgoLayout
@@ -220,14 +228,14 @@ class AntiAirLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> IadsGroundObject:
 
         if GroupTask.EARLY_WARNING_RADAR in self.tasks:
-            return EwrGroundObject(name, position, position.heading, control_point)
+            return EwrGroundObject(name, location, control_point)
         elif any(tasking in self.tasks for tasking in GroupRole.AIR_DEFENSE.tasks):
-            return SamGroundObject(name, position, position.heading, control_point)
+            return SamGroundObject(name, location, control_point)
         raise RuntimeError(
             f" No Template for AntiAir tasking ({', '.join(task.description for task in self.tasks)})"
         )
@@ -237,14 +245,17 @@ class BuildingLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> BuildingGroundObject:
-        return BuildingGroundObject(
+        iads_role = IadsRole.for_category(self.category)
+        tgo_type = (
+            IadsBuildingGroundObject if iads_role.participate else BuildingGroundObject
+        )
+        return tgo_type(
             name,
             self.category,
-            position,
-            Heading.from_degrees(0),
+            location,
             control_point,
             self.category == "fob",
         )
@@ -261,15 +272,15 @@ class NavalLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
         if GroupTask.NAVY in self.tasks:
-            return ShipGroundObject(name, position, control_point)
+            return ShipGroundObject(name, location, control_point)
         elif GroupTask.AIRCRAFT_CARRIER in self.tasks:
-            return CarrierGroundObject(name, control_point)
+            return CarrierGroundObject(name, location, control_point)
         elif GroupTask.HELICOPTER_CARRIER in self.tasks:
-            return LhaGroundObject(name, control_point)
+            return LhaGroundObject(name, location, control_point)
         raise NotImplementedError
 
 
@@ -277,17 +288,13 @@ class DefensesLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
         if GroupTask.MISSILE in self.tasks:
-            return MissileSiteGroundObject(
-                name, position, position.heading, control_point
-            )
+            return MissileSiteGroundObject(name, location, control_point)
         elif GroupTask.COASTAL in self.tasks:
-            return CoastalSiteGroundObject(
-                name, position, control_point, position.heading
-            )
+            return CoastalSiteGroundObject(name, location, control_point)
         raise NotImplementedError
 
 
@@ -295,7 +302,7 @@ class GroundForceLayout(TgoLayout):
     def create_ground_object(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> TheaterGroundObject:
-        return VehicleGroupGroundObject(name, position, position.heading, control_point)
+        return VehicleGroupGroundObject(name, location, control_point)

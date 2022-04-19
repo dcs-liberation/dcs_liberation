@@ -22,15 +22,13 @@ class ArmedForces:
             self._load_forces(faction)
 
     def add_or_update_force_group(self, new_group: ForceGroup) -> None:
-        """TODO Description"""
-        # Check if a force group with the same units exists
+        """Adds or update a forcegroup depending if a forcegroup with the exact same
+        tasking already exists"""
+        # Check if a force group with the same tasking already exists
         for force_group in self.forces:
-            if (
-                force_group.units == new_group.units
-                and force_group.tasks == new_group.tasks
-            ):
-                # Update existing group if units and tasks are equal
-                force_group.update_group(new_group)
+            if force_group.tasks == new_group.tasks:
+                # Update existing group if tasks are equal
+                force_group.merge_group(new_group)
                 return
         # Add a new force group
         self.forces.append(new_group)
@@ -40,7 +38,10 @@ class ArmedForces:
         This will create a ForceGroup for each generic Layout and PresetGroup"""
 
         # Initialize with preset_groups from the faction
-        self.forces = [preset_group for preset_group in faction.preset_groups]
+        self.forces = [
+            preset_group.initialize_for_faction(faction)
+            for preset_group in faction.preset_groups
+        ]
 
         # Generate ForceGroup for all generic layouts by iterating over
         # all layouts which are usable by the given faction.

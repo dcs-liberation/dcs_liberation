@@ -29,6 +29,8 @@ import { navMeshUpdated } from "./navMeshSlice";
 import { updateTgo } from "./tgosSlice";
 import { threatZonesUpdated } from "./threatZonesSlice";
 import { LatLng } from "leaflet";
+import { updateIadsConnection } from "./iadsNetworkSlice";
+import { IadsConnection } from "./_liberationApi";
 
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
@@ -137,6 +139,11 @@ export const handleStreamedEvents = (
     backend.get(`/tgos/${id}`).then((response) => {
       const tgo = response.data as Tgo;
       dispatch(updateTgo(tgo));
+    });
+    backend.get(`/iads-network/for-tgo/${id}`).then((response) => {
+      for (const connection of response.data) {
+        dispatch(updateIadsConnection(connection as IadsConnection));
+      }
     });
   }
 

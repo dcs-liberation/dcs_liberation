@@ -168,6 +168,7 @@ class Package:
             FlightType.FERRY,
             FlightType.REFUELING,
             FlightType.SWEEP,
+            FlightType.SEAD_ESCORT,
             FlightType.ESCORT,
         ]
         for task in tasks_by_priority:

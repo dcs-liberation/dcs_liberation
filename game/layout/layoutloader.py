@@ -166,6 +166,8 @@ class LayoutLoader:
                                 group_mapping.fallback_classes,
                             )
                             group_layout.optional = group_mapping.optional
+                            group_layout.fill = group_mapping.fill
+                            group_layout.sub_task = group_mapping.sub_task
                             # Add the group at the correct index
                             layout.add_layout_group(group_name, group_layout, g_id)
                         layout_unit = LayoutUnit.from_unit(unit)

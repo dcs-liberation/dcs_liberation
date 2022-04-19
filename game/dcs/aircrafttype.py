@@ -15,6 +15,7 @@ from game.data.units import UnitClass
 from game.dcs.unitproperty import UnitProperty
 from game.dcs.unittype import UnitType
 from game.radio.channels import (
+    ApacheChannelNamer,
     ChannelNamer,
     CommonRadioChannelAllocator,
     FarmerRadioChannelAllocator,
@@ -100,6 +101,7 @@ class RadioConfig:
             "tomcat": TomcatChannelNamer,
             "viggen": ViggenChannelNamer,
             "viper": ViperChannelNamer,
+            "apache": ApacheChannelNamer,
         }[config.get("namer", "default")]
 
 

@@ -2,15 +2,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Optional, TYPE_CHECKING, Type
+from enum import Enum
 
 from dcs.triggers import TriggerZone
 from dcs.unittype import ShipType, StaticType, UnitType as DcsUnitType, VehicleType
 
+from game.data.groups import GroupTask
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
 from game.point_with_heading import PointWithHeading
-from game.utils import Heading
+from game.theater.iadsnetwork.iadsrole import IadsRole
+from game.utils import Heading, Distance
 
 if TYPE_CHECKING:
     from game.layout.layout import LayoutUnit
@@ -144,8 +147,6 @@ class TheaterGroup:
         name: str,
         units: list[TheaterUnit],
         go: TheaterGroundObject,
-        unit_type: Type[DcsUnitType],
-        unit_count: int,
     ) -> TheaterGroup:
         return TheaterGroup(
             id,
@@ -166,3 +167,18 @@ class TheaterGroup:
     @property
     def alive_units(self) -> int:
         return sum([unit.alive for unit in self.units])
+
+
+class IadsGroundGroup(TheaterGroup):
+    # IADS GroundObject Groups have a specific Role for the system
+    iads_role: IadsRole = IadsRole.NO_BEHAVIOR
+
+    @staticmethod
+    def from_group(group: TheaterGroup) -> IadsGroundGroup:
+        return IadsGroundGroup(
+            group.id,
+            group.name,
+            group.position,
+            group.units,
+            group.ground_object,
+        )

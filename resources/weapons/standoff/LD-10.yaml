@@ -1,0 +1,4 @@
+name: LD-10
+type: ARM
+clsids:
+  - "DIS_LD-10"

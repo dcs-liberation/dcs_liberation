@@ -26,6 +26,7 @@ class UnitClass(Enum):
     LOGISTICS = "Logistics"
     MANPAD = "Manpad"
     MISSILE = "Missile"
+    ANTISHIP_MISSILE = "AntiShipMissile"
     OPTICAL_TRACKER = "OpticalTracker"
     PLANE = "Plane"
     POWER = "Power"

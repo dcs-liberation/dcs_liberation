@@ -15,15 +15,21 @@ from game.dcs.groundunittype import GroundUnitType
 from game.dcs.helpers import static_type_from_name
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
+from game.theater.theatergroundobject import (
+    IadsGroundObject,
+    IadsBuildingGroundObject,
+    NavalGroundObject,
+)
 from game.layout import LAYOUTS
-from game.layout.layout import AntiAirLayout, TgoLayout, TgoLayoutGroup
+from game.layout.layout import TgoLayout, TgoLayoutGroup
 from game.point_with_heading import PointWithHeading
-from game.theater.theatergroup import TheaterGroup
+from game.theater.theatergroup import IadsGroundGroup, IadsRole, TheaterGroup
+from game.utils import escape_string_for_lua
 
 if TYPE_CHECKING:
     from game import Game
     from game.factions.faction import Faction
-    from game.theater import TheaterGroundObject, ControlPoint
+    from game.theater import TheaterGroundObject, ControlPoint, PresetLocation
 
 
 @dataclass
@@ -62,6 +68,8 @@ class ForceGroup:
         units: set[UnitType[Any]] = set()
         statics: set[Type[DcsUnitType]] = set()
         for group in layout.all_groups:
+            if group.optional and not group.fill:
+                continue
             for unit_type in group.possible_types_for_faction(faction):
                 if issubclass(unit_type, VehicleType):
                     units.add(next(GroundUnitType.for_dcs_type(unit_type)))
@@ -80,6 +88,34 @@ class ForceGroup:
 
     def __str__(self) -> str:
         return self.name
+
+    def has_unit_for_layout_group(self, group: TgoLayoutGroup) -> bool:
+        for unit in self.units:
+            if (
+                unit.dcs_unit_type in group.unit_types
+                or unit.unit_class in group.unit_classes
+            ):
+                return True
+        return False
+
+    def initialize_for_faction(self, faction: Faction) -> ForceGroup:
+        """Initialize a ForceGroup for the given Faction.
+        This adds accessible units to LayoutGroups with the fill property"""
+        for layout in self.layouts:
+            for group in layout.all_groups:
+                if group.fill and not self.has_unit_for_layout_group(group):
+                    for unit_type in group.possible_types_for_faction(faction):
+                        if issubclass(unit_type, VehicleType):
+                            self.units.append(
+                                next(GroundUnitType.for_dcs_type(unit_type))
+                            )
+                        elif issubclass(unit_type, ShipType):
+                            self.units.append(
+                                next(ShipUnitType.for_dcs_type(unit_type))
+                            )
+                        elif issubclass(unit_type, StaticType):
+                            self.statics.append(unit_type)
+        return self
 
     @classmethod
     def named(cls, name: str) -> ForceGroup:
@@ -127,35 +163,38 @@ class ForceGroup:
         """Return random DCS Unit Type which can be used in the given TgoLayoutGroup"""
         return random.choice(self.dcs_unit_types_for_group(group))
 
-    def update_group(self, new_group: ForceGroup) -> None:
-        """Update the group from another group. This will merge statics and layouts."""
-        # Merge layouts and statics
+    def merge_group(self, new_group: ForceGroup) -> None:
+        """Merge the group with another similar group."""
+        # Unified name for the resulting group
+        self.name = ", ".join([t.description for t in self.tasks])
+        # merge units, statics and layouts
+        self.units = list(set(self.units + new_group.units))
         self.statics = list(set(self.statics + new_group.statics))
         self.layouts = list(set(self.layouts + new_group.layouts))
 
     def generate(
         self,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
         game: Game,
     ) -> TheaterGroundObject:
         """Create a random TheaterGroundObject from the available templates"""
         layout = random.choice(self.layouts)
         return self.create_ground_object_for_layout(
-            layout, name, position, control_point, game
+            layout, name, location, control_point, game
         )
 
     def create_ground_object_for_layout(
         self,
         layout: TgoLayout,
         name: str,
-        position: PointWithHeading,
+        location: PresetLocation,
         control_point: ControlPoint,
         game: Game,
     ) -> TheaterGroundObject:
         """Create a TheaterGroundObject for the given template"""
-        go = layout.create_ground_object(name, position, control_point)
+        go = layout.create_ground_object(name, location, control_point)
         # Generate all groups using the randomization if it defined
         for group_name, groups in layout.groups.items():
             for group in groups:
@@ -189,7 +228,11 @@ class ForceGroup:
         """Create a TheaterGroup and add it to the given TGO"""
         # Random UnitCounter if not forced
         if unit_count is None:
+            # Choose a random group_size based on the layouts unit_count
             unit_count = group.group_size
+        if unit_count == 0:
+            # No units to be created so dont create a theater group for them
+            return
         # Generate Units
         units = group.generate_units(ground_object, unit_type, unit_count)
         # Get or create the TheaterGroup
@@ -199,38 +242,53 @@ class ForceGroup:
             ground_group.units.extend(units)
         else:
             # TheaterGroup with the name was not created yet
-            ground_object.groups.append(
-                TheaterGroup.from_template(
-                    game.next_group_id(),
-                    group_name,
-                    units,
-                    ground_object,
-                    unit_type,
-                    unit_count,
-                )
+            ground_group = TheaterGroup.from_template(
+                game.next_group_id(), group_name, units, ground_object
             )
+            # Special handling when part of the IADS (SAM, EWR, IADS Building, Navy)
+            if (
+                isinstance(ground_object, IadsGroundObject)
+                or isinstance(ground_object, IadsBuildingGroundObject)
+                or isinstance(ground_object, NavalGroundObject)
+            ):
+                # Recreate the TheaterGroup as IadsGroundGroup
+                ground_group = IadsGroundGroup.from_group(ground_group)
+                if group.sub_task is not None:
+                    # Use the special sub_task of the TheaterGroup
+                    iads_task = group.sub_task
+                else:
+                    # Use the primary task of the ForceGroup
+                    iads_task = self.tasks[0]
+                # Set the iads_role according the the task for the group
+                ground_group.iads_role = IadsRole.for_task(iads_task)
+
+            ground_object.groups.append(ground_group)
+
+        # A layout has to be created with an orientation of 0 deg.
+        # Therefore the the clockwise rotation angle is always the heading of the
+        # groundobject without any calculation needed
+        rotation = ground_object.heading
 
         # Assign UniqueID, name and align relative to ground_object
         for unit in units:
             unit.id = game.next_unit_id()
-            unit.name = unit.unit_type.name if unit.unit_type else unit.type.name
+            # Add unit name escaped so that we do not have scripting issues later
+            unit.name = escape_string_for_lua(
+                unit.unit_type.name if unit.unit_type else unit.type.name
+            )
             unit.position = PointWithHeading.from_point(
                 ground_object.position + unit.position,
                 # Align heading to GroundObject defined by the campaign designer
-                unit.position.heading + ground_object.heading,
+                unit.position.heading + rotation,
             )
-            if (
-                isinstance(self, AntiAirLayout)
-                and unit.unit_type
-                and unit.unit_type.dcs_unit_type in UNITS_WITH_RADAR
-            ):
+            if unit.unit_type and unit.unit_type.dcs_unit_type in UNITS_WITH_RADAR:
                 # Head Radars towards the center of the conflict
                 unit.position.heading = (
                     game.theater.heading_to_conflict_from(unit.position)
                     or unit.position.heading
                 )
             # Rotate unit around the center to align the orientation of the group
-            unit.position.rotate(ground_object.position, ground_object.heading)
+            unit.position.rotate(ground_object.position, rotation)
 
     @classmethod
     def _load_all(cls) -> None:
@@ -248,8 +306,15 @@ class ForceGroup:
                 logging.error(f"ForceGroup {name} has no valid tasking")
                 continue
 
-            units = [UnitType.named(unit) for unit in data.get("units")]
-            if not units:
+            units: list[UnitType[Any]] = []
+            for unit in data.get("units"):
+                if GroundUnitType.exists(unit):
+                    units.append(GroundUnitType.named(unit))
+                elif ShipUnitType.exists(unit):
+                    units.append(ShipUnitType.named(unit))
+                else:
+                    logging.error(f"Unit {unit} of ForceGroup {name} is invalid")
+            if len(units) == 0:
                 logging.error(f"ForceGroup {name} has no valid units")
                 continue
 

@@ -7,6 +7,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Mission Generation]** Added an option to fast-forward mission generation until the point of first contact (WIP).
 * **[Mission Generation]** Added performance option to not cull IADS when culling would effect how mission is played at target area.
 * **[Mission Generation]** Reworked the ground object generation which now uses a new layout system
+* **[Mission Generation]** Added information about the modulation (AM/FM) of the assigned frequencies to the kneeboard and assign AM modulation instead of FM for JTAC.
 * **[Factions]** Updated the Faction file structure. Older custom faction files will not work correctly and have to be updated to the new structure.
 * **[Flight Planning]**  Added preset formations for different flight types at hold, join, ingress, and split waypoints.  Air to Air flights will tend toward line-abreast and spread-four formations.  Air to ground flights will tend towards trail formation.
 * **[Flight Planning]** Added the ability to plan tankers for recovery on package flights.  AI does not plan.
@@ -15,15 +16,44 @@ Saves from 5.x are not compatible with 6.0.
 * **[Modding]** Updated UH-60L mod version support to 1.3.1
 * **[Modding]** Updated Community A-4E-C mod version support to 2.0.0 release. Version 1.4.2 is no longer compatible, unless the mod default loadouts are deleted/modified.
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
+* **[UI]** Added separate images for the different carrier types.
+* **[Campaign]** Allow campaign designers to define default values for the economy settings (starting budget and multiplier).
+* **[Plugins]** Allow full support of the SkynetIADS plugin with all advanced features (connection nodes, power sources, command centers) if campaign supports it.
 
 ## Fixes
 
-* **[Data]** Removed Fw 190 A-8 and D-9 from Germany 1940 and 1942 faction list for historical accuracy.
-* **[Mission Generation]** Fixed incorrect SA-5 threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
 * **[Mission Generation]** Fixed SA-13 incorrectly created as SA-8 Loading Unit which will not be spawned in the generated mission.
 * **[Mission Generation]** Fixed an issue which generated the helipads at FARPs incorrectly and placed the helicopters within each other.
-* **[Mission Planner]** Now allows squadron transfers to control points where the number of free slots matches exactly the expected size of the transferring squadron next turn.
+* **[Mission Generation]** Fixed an issue with SEAD missions flown by the AI when using the Skynet Plugin and anti-radiation missiles (ARM). The AI now correctly engages the SAM when it comes alive instead of diving into it.
+* **[Mission Generation]** Fixed an issue where SEAD/DEAD/BAI flights fired all missiles / bombs against a single unit in a group instead of targeting the whole group.
+* **[UI]** Fixed and issue where the liberation main exe was still running after application close.
 
+# 5.2.0
+
+Saves from 5.1.0 are compatible with 5.2.0
+
+## Features/Improvements
+
+* **[Engine]** Support for DCS 2.7.11.21408, including the new Apache AH-64D and the Syria map extension
+* **[Mission Generation]** Improved FARP Helipad handling and creation (now includes windsocks)
+* **[Modding]** Add UH-60L mod support
+* **[Modding]** Updated Community A-4E-C mod version support to 2.0.0 release. Version 1.4.2 is no longer compatible, unless the mod default loadouts are deleted/modified.
+* **[Modding]** Updated JAS-39-C mod support for v1.8.0-beta
+* **[Campaign]** Peace Spring, Vectron's Claw, Vegas Nerve, Scenic Route 2 campaign update
+* **[Campaign]** Added Tripoint Hostility campaign by Fuzzle
+* **[Campaign]** Add 3 new campaigns from Sith1144
+
+## Fixes
+
+* **[Mission Generation]** Fixed incorrect SA-5 and NASAMS threat range when TR destroyed. It will not count as threat anymore when the TR is dead.
+* **[Mission Generation]** Fixed "Max Threat Range" error
+* **[Mission Generation]** Fix unculled zones not updating when needed
+* **[Mission Planner]** Now allows squadron transfers to control points where the number of free slots matches exactly the expected size of the transferring squadron next turn.
+* **[Data]** Removed Fw 190 A-8 and D-9 from Germany 1940 and 1942 faction list for historical accuracy.
+* **[Data]** Updated Loadouts for Tornado GR4, F-15E and F-16C
+* **[Data]** Corrected some unit data
+* **[UI]** Fixed various UI issues (for example Scaling and HighDPI)
+* **[UI]** Typhoon GR4 and IDS images
 
 # 5.1.0
 

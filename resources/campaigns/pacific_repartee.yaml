@@ -3,12 +3,16 @@ name: Marianas - Pacific Repartee
 theater: MarianaIslands
 authors: Fuzzle
 description: <p>A naval campaign where a US carrier group must retake Guam, Saipan and the Marianas Islands from the Chinese. <strong>This is a purely offensive air campaign, with no frontline gameplay. Upon securing the area around a FOB, you may either ignore it, bomb it to dust or use the cheats to capture it.</strong></p><p><strong>Backstory:</strong> After an escalation in the South China Sea, the PLAN has taken the US by surprise and invaded Guam, setting up supporting positions throughout the Marianas island chain. With the rest of the US Navy engaged near Japan, a carrier task group must push through China's forces, assist a small Marine contingent holding out on Farallon de Pajaros and liberate Guam.</p>
-version: "9.1"
+version: "10.1"
 recommended_player_faction: US Navy 2005
 recommended_enemy_faction: China 2010
 miz: pacific_repartee.miz
 performance: 1
 recommended_start_date: 2006-02-17
+recommended_player_money: 1000
+recommended_enemy_money: 1500
+recommended_player_income_multiplier: 1.3
+recommended_enemy_income_multiplier: 0.6
 squadrons:
   #BLUFOR CVN
   Naval-1:
@@ -17,13 +21,9 @@ squadrons:
       aircraft:
         - VF-143
     - primary: SEAD
-      secondary: any
+      secondary: air-to-ground
       aircraft:
         - VMFA-251
-    - primary: Strike
-      secondary: any
-      aircraft:
-        - VMFA-122
     - primary: AEW&C
       aircraft:
         - VAW-125

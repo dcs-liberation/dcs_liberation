@@ -21,13 +21,26 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
+    Type,
 )
 from uuid import UUID
 
 from dcs.mapping import Point
-from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unitgroup import ShipGroup, StaticGroup
+from dcs.unittype import ShipType
+from dcs.ships import (
+    CVN_71,
+    CVN_72,
+    CVN_73,
+    CVN_75,
+    CV_1143_5,
+    KUZNECOW,
+    Stennis,
+    Forrestal,
+    LHA_Tarawa,
+    Type_071,
+)
 
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ground_forces.combat_stance import CombatStance
@@ -44,6 +57,7 @@ from game.sidc import (
     SymbolSet,
 )
 from game.utils import Distance, Heading, meters
+from game.theater.presetlocation import PresetLocation
 from .base import Base
 from .frontline import FrontLine
 from .missiontarget import MissionTarget
@@ -93,48 +107,53 @@ class PresetLocations:
 
     #: Locations used by non-carrier ships that will be spawned unless the faction has
     #: no navy or the player has disabled ship generation for the owning side.
-    ships: List[PointWithHeading] = field(default_factory=list)
+    ships: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by coastal defenses that are generated if the faction is capable.
-    coastal_defenses: List[PointWithHeading] = field(default_factory=list)
+    coastal_defenses: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by ground based strike objectives.
-    strike_locations: List[PointWithHeading] = field(default_factory=list)
+    strike_locations: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by offshore strike objectives.
-    offshore_strike_locations: List[PointWithHeading] = field(default_factory=list)
+    offshore_strike_locations: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by missile sites like scuds and V-2s that are generated if the
     #: faction is capable.
-    missile_sites: List[PointWithHeading] = field(default_factory=list)
+    missile_sites: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of long range SAMs.
-    long_range_sams: List[PointWithHeading] = field(default_factory=list)
+    long_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of medium range SAMs.
-    medium_range_sams: List[PointWithHeading] = field(default_factory=list)
+    medium_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of short range SAMs.
-    short_range_sams: List[PointWithHeading] = field(default_factory=list)
+    short_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of AAA groups.
-    aaa: List[PointWithHeading] = field(default_factory=list)
+    aaa: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of EWRs.
-    ewrs: List[PointWithHeading] = field(default_factory=list)
+    ewrs: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of map scenery to create zones for.
     scenery: List[SceneryGroup] = field(default_factory=list)
 
     #: Locations of factories for producing ground units.
-    factories: List[PointWithHeading] = field(default_factory=list)
+    factories: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of ammo depots for controlling number of units on the front line at a
     #: control point.
-    ammunition_depots: List[PointWithHeading] = field(default_factory=list)
+    ammunition_depots: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of stationary armor groups.
-    armor_groups: List[PointWithHeading] = field(default_factory=list)
+    armor_groups: List[PresetLocation] = field(default_factory=list)
+
+    #: Locations of skynet specific groups
+    iads_connection_node: List[PresetLocation] = field(default_factory=list)
+    iads_power_source: List[PresetLocation] = field(default_factory=list)
+    iads_command_center: List[PresetLocation] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -612,6 +631,60 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                             return group.group_name
         return None
 
+    def get_carrier_group_type(
+        self, always_supercarrier: bool = False
+    ) -> Optional[Type[ShipType]]:
+        """
+        Get the carrier group type if the airbase is a carrier. Arguments:
+            always_supercarrier: True if should always return the supercarrier type, False if should only
+                return the supercarrier type when the supercarrier option is enabled in settings.
+        :return: Carrier group type
+        """
+        if self.cptype in [
+            ControlPointType.AIRCRAFT_CARRIER_GROUP,
+            ControlPointType.LHA_GROUP,
+        ]:
+            for g in self.ground_objects:
+                for group in g.groups:
+                    u = group.units[0]
+                    carrier_type = u.type
+                    if (
+                        u.unit_type
+                        and u.unit_type.unit_class
+                        in [
+                            UnitClass.AIRCRAFT_CARRIER,
+                            UnitClass.HELICOPTER_CARRIER,
+                        ]
+                        and issubclass(carrier_type, ShipType)
+                    ):
+                        if (
+                            self.coalition.game.settings.supercarrier
+                            or always_supercarrier
+                        ):
+                            return self.upgrade_to_supercarrier(carrier_type, self.name)
+                        return carrier_type
+        return None
+
+    @staticmethod
+    def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
+        if unit == Stennis:
+            if name == "CVN-71 Theodore Roosevelt":
+                return CVN_71
+            elif name == "CVN-72 Abraham Lincoln":
+                return CVN_72
+            elif name == "CVN-73 George Washington":
+                return CVN_73
+            elif name == "CVN-75 Harry S. Truman":
+                return CVN_75
+            elif name == "Carrier Strike Group 8":
+                return CVN_75
+            else:
+                return CVN_71
+        elif unit == KUZNECOW:
+            return CV_1143_5
+        else:
+            return unit
+
     # TODO: Should be Airbase specific.
     def is_connected(self, to: ControlPoint) -> bool:
         return to in self.connected_points
@@ -983,7 +1056,12 @@ class Airfield(ControlPoint):
         # TODO: Allow harrier.
         # Needs ground spawns just like helos do, but also need to be able to
         # limit takeoff weight to ~20500 lbs or it won't be able to take off.
-        return self.runway_is_operational()
+
+        # return false if aircraft is fixed wing and airport has no runways
+        if not aircraft.helicopter and not self.airport.runways:
+            return False
+        else:
+            return self.runway_is_operational()
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
