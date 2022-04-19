@@ -36,10 +36,6 @@ class BaiIngressBuilder(PydcsWaypointBuilder):
                 continue
 
             task = AttackGroup(miz_group.id, weapon_type=WeaponType.Auto)
-            task.params["attackQtyLimit"] = False
-            task.params["directionEnabled"] = False
-            task.params["altitudeEnabled"] = False
-            task.params["groupAttack"] = True
             waypoint.tasks.append(task)
 
         waypoint.tasks.append(OptFormation.trail_open())
