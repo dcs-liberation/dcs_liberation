@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 import math
+import os
 import random
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
@@ -466,3 +467,11 @@ def interpolate(value1: float, value2: float, factor: float, clamp: bool) -> flo
 
 def dcs_to_shapely_point(point: Point) -> ShapelyPoint:
     return ShapelyPoint(point.x, point.y)
+
+
+def escape_string_for_lua(value: str) -> str:
+    """Escapes special characters from a string.
+    This prevents scripting errors in lua scripts"""
+    value = value.replace('"', "'")  # Replace Double Quote as this is the delimiter
+    value = value.replace(os.sep, "/")  # Replace Backslash as path separator
+    return "{0}".format(value)

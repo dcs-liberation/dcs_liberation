@@ -3,10 +3,13 @@ from __future__ import annotations
 import itertools
 import uuid
 from abc import ABC
+from typing import Type
 from typing import Any, Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
+
 from dcs.unittype import VehicleType
+from dcs.unittype import ShipType
 from shapely.geometry import Point as ShapelyPoint
 
 from game.sidc import (
@@ -20,6 +23,7 @@ from game.sidc import (
     Status,
     SymbolSet,
 )
+from game.theater.presetlocation import PresetLocation
 from .missiontarget import MissionTarget
 from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
@@ -38,6 +42,7 @@ NAME_BY_CATEGORY = {
     "ammo": "Ammo depot",
     "armor": "Armor group",
     "coastal": "Coastal defense",
+    "commandcenter": "Command Center",
     "comms": "Communications tower",
     "derrick": "Derrick",
     "factory": "Factory",
@@ -59,18 +64,18 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
         self,
         name: str,
         category: str,
-        position: Point,
-        heading: Heading,
+        location: PresetLocation,
         control_point: ControlPoint,
         sea_object: bool,
     ) -> None:
-        super().__init__(name, position)
+        super().__init__(name, location)
         self.id = uuid.uuid4()
         self.category = category
-        self.heading = heading
+        self.heading = location.heading
         self.control_point = control_point
         self.sea_object = sea_object
         self.groups: List[TheaterGroup] = []
+        self.original_name = location.original_name
         self._threat_poly: ThreatPoly | None = None
 
     def __getstate__(self) -> dict[str, Any]:
@@ -123,6 +128,11 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
     def group_name(self) -> str:
         """The name of the unit group."""
         return f"{self.category}|{self.name}"
+
+    @property
+    def display_name(self) -> str:
+        """The display name of the tgo which will be shown on the map."""
+        return self.group_name
 
     @property
     def waypoint_name(self) -> str:
@@ -287,16 +297,14 @@ class BuildingGroundObject(TheaterGroundObject):
         self,
         name: str,
         category: str,
-        position: Point,
-        heading: Heading,
+        location: PresetLocation,
         control_point: ControlPoint,
         is_fob_structure: bool = False,
     ) -> None:
         super().__init__(
             name=name,
             category=category,
-            position=position,
-            heading=heading,
+            location=location,
             control_point=control_point,
             sea_object=False,
         )
@@ -308,6 +316,8 @@ class BuildingGroundObject(TheaterGroundObject):
             entity = LandInstallationEntity.TENTED_CAMP
         elif self.category == "ammo":
             entity = LandInstallationEntity.AMMUNITION_CACHE
+        elif self.category == "commandcenter":
+            entity = LandInstallationEntity.MILITARY_INFRASTRUCTURE
         elif self.category == "comms":
             entity = LandInstallationEntity.TELECOMMUNICATIONS_TOWER
         elif self.category == "derrick":
@@ -386,12 +396,13 @@ class GenericCarrierGroundObject(NavalGroundObject, ABC):
 
 # TODO: Why is this both a CP and a TGO?
 class CarrierGroundObject(GenericCarrierGroundObject):
-    def __init__(self, name: str, control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, location: PresetLocation, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="CARRIER",
-            position=control_point.position,
-            heading=Heading.from_degrees(0),
+            location=location,
             control_point=control_point,
             sea_object=True,
         )
@@ -400,24 +411,19 @@ class CarrierGroundObject(GenericCarrierGroundObject):
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.CARRIER
 
-    @property
-    def group_name(self) -> str:
-        # Prefix the group names with the side color so Skynet can find them,
-        # add to EWR.
-        return f"{self.faction_color}|EWR|{super().group_name}"
-
     def __str__(self) -> str:
         return f"CV {self.name}"
 
 
 # TODO: Why is this both a CP and a TGO?
 class LhaGroundObject(GenericCarrierGroundObject):
-    def __init__(self, name: str, control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, location: PresetLocation, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="LHA",
-            position=control_point.position,
-            heading=Heading.from_degrees(0),
+            location=location,
             control_point=control_point,
             sea_object=True,
         )
@@ -426,25 +432,18 @@ class LhaGroundObject(GenericCarrierGroundObject):
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.AMPHIBIOUS_ASSAULT_SHIP_GENERAL
 
-    @property
-    def group_name(self) -> str:
-        # Prefix the group names with the side color so Skynet can find them,
-        # add to EWR.
-        return f"{self.faction_color}|EWR|{super().group_name}"
-
     def __str__(self) -> str:
         return f"LHA {self.name}"
 
 
 class MissileSiteGroundObject(TheaterGroundObject):
     def __init__(
-        self, name: str, position: Point, heading: Heading, control_point: ControlPoint
+        self, name: str, location: PresetLocation, control_point: ControlPoint
     ) -> None:
         super().__init__(
             name=name,
             category="missile",
-            position=position,
-            heading=heading,
+            location=location,
             control_point=control_point,
             sea_object=False,
         )
@@ -466,15 +465,13 @@ class CoastalSiteGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
-        position: Point,
+        location: PresetLocation,
         control_point: ControlPoint,
-        heading: Heading,
     ) -> None:
         super().__init__(
             name=name,
             category="coastal",
-            position=position,
-            heading=heading,
+            location=location,
             control_point=control_point,
             sea_object=False,
         )
@@ -493,6 +490,21 @@ class CoastalSiteGroundObject(TheaterGroundObject):
 
 
 class IadsGroundObject(TheaterGroundObject, ABC):
+    def __init__(
+        self,
+        name: str,
+        location: PresetLocation,
+        control_point: ControlPoint,
+        category: str = "aa",
+    ) -> None:
+        super().__init__(
+            name=name,
+            category=category,
+            location=location,
+            control_point=control_point,
+            sea_object=False,
+        )
+
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
 
@@ -508,17 +520,14 @@ class SamGroundObject(IadsGroundObject):
     def __init__(
         self,
         name: str,
-        position: Point,
-        heading: Heading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> None:
         super().__init__(
             name=name,
             category="aa",
-            position=position,
-            heading=heading,
+            location=location,
             control_point=control_point,
-            sea_object=False,
         )
 
     @property
@@ -588,15 +597,13 @@ class VehicleGroupGroundObject(TheaterGroundObject):
     def __init__(
         self,
         name: str,
-        position: Point,
-        heading: Heading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> None:
         super().__init__(
             name=name,
             category="armor",
-            position=position,
-            heading=heading,
+            location=location,
             control_point=control_point,
             sea_object=False,
         )
@@ -621,28 +628,19 @@ class EwrGroundObject(IadsGroundObject):
     def __init__(
         self,
         name: str,
-        position: Point,
-        heading: Heading,
+        location: PresetLocation,
         control_point: ControlPoint,
     ) -> None:
         super().__init__(
             name=name,
-            category="ewr",
-            position=position,
-            heading=heading,
+            location=location,
             control_point=control_point,
-            sea_object=False,
+            category="ewr",
         )
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.LAND_EQUIPMENT, LandEquipmentEntity.RADAR
-
-    @property
-    def group_name(self) -> str:
-        # Prefix the group names with the side color so Skynet can find them.
-        # Use Group Id and uppercase EWR
-        return f"{self.faction_color}|EWR|{self.name}"
 
     @property
     def might_have_aa(self) -> bool:
@@ -658,12 +656,13 @@ class EwrGroundObject(IadsGroundObject):
 
 
 class ShipGroundObject(NavalGroundObject):
-    def __init__(self, name: str, position: Point, control_point: ControlPoint) -> None:
+    def __init__(
+        self, name: str, location: PresetLocation, control_point: ControlPoint
+    ) -> None:
         super().__init__(
             name=name,
             category="ship",
-            position=position,
-            heading=Heading.from_degrees(0),
+            location=location,
             control_point=control_point,
             sea_object=True,
         )
@@ -672,8 +671,10 @@ class ShipGroundObject(NavalGroundObject):
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.SURFACE_COMBATANT_LINE
 
-    @property
-    def group_name(self) -> str:
-        # Prefix the group names with the side color so Skynet can find them,
-        # add to EWR.
-        return f"{self.faction_color}|EWR|{super().group_name}"
+
+class IadsBuildingGroundObject(BuildingGroundObject):
+    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
+        from game.ato import FlightType
+
+        if not self.is_friendly(for_player):
+            yield from [FlightType.STRIKE, FlightType.DEAD]

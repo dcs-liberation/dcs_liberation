@@ -35,6 +35,7 @@ groups:
         - Patriot ln
   - AAA:
     - name: Patriot Battery 6
+      sub_task: AAA
       optional: true
       unit_count:
         - 2
@@ -43,6 +44,7 @@ groups:
   - PD:
     - name: Patriot Battery 7
       optional: true
+      sub_task: PointDefense
       unit_count:
         - 2
       unit_classes:

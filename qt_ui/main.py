@@ -284,6 +284,7 @@ def create_game(
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
             inverted=inverted,
+            advanced_iads=theater.iads_network.advanced_iads,
             no_carrier=False,
             no_lha=False,
             no_player_navy=False,
