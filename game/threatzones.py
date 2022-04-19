@@ -202,9 +202,9 @@ class ThreatZones:
         """
         air_threats = []
         air_defenses = []
-        for control_point in game.theater.control_points_for(player):
-            air_threats.append(control_point)
-            air_defenses.extend(control_point.ground_objects)
+        for cp in game.theater.control_points_for(player):
+            air_threats.append(cp)
+            air_defenses.extend([go for go in cp.ground_objects if go.has_aa])
 
         return cls.for_threats(
             game.theater, game.faction_for(player).doctrine, air_threats, air_defenses
@@ -241,17 +241,17 @@ class ThreatZones:
 
         for tgo in air_defenses:
             for group in tgo.groups:
-                threat_range = tgo.threat_range(group)
+                threat_range = group.max_threat_range()
                 # Any system with a shorter range than this is not worth
                 # even avoiding.
                 if threat_range > nautical_miles(3):
                     point = ShapelyPoint(tgo.position.x, tgo.position.y)
                     threat_zone = point.buffer(threat_range.meters)
                     air_defense_threats.append(threat_zone)
-                radar_threat_range = tgo.threat_range(group, radar_only=True)
+                radar_threat_range = group.max_threat_range(radar_only=True)
                 if radar_threat_range > nautical_miles(3):
                     point = ShapelyPoint(tgo.position.x, tgo.position.y)
-                    threat_zone = point.buffer(threat_range.meters)
+                    threat_zone = point.buffer(radar_threat_range.meters)
                     radar_sam_threats.append(threat_zone)
 
         return ThreatZones(

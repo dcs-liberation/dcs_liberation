@@ -3,13 +3,10 @@ from __future__ import annotations
 import itertools
 import uuid
 from abc import ABC
-from typing import Type
 from typing import Any, Iterator, List, Optional, TYPE_CHECKING
 
 from dcs.mapping import Point
 
-from dcs.unittype import VehicleType
-from dcs.unittype import ShipType
 from shapely.geometry import Point as ShapelyPoint
 
 from game.sidc import (
@@ -25,7 +22,6 @@ from game.sidc import (
 )
 from game.theater.presetlocation import PresetLocation
 from .missiontarget import MissionTarget
-from ..data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
 from ..utils import Distance, Heading, meters
 
 if TYPE_CHECKING:
@@ -170,54 +166,29 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
 
     @property
     def unit_count(self) -> int:
-        return sum([g.unit_count for g in self.groups])
+        return sum(g.unit_count for g in self.groups)
 
     @property
     def alive_unit_count(self) -> int:
-        return sum([g.alive_units for g in self.groups])
+        return sum(g.alive_units for g in self.groups)
 
     @property
-    def might_have_aa(self) -> bool:
-        return False
+    def has_aa(self) -> bool:
+        """Returns True if the ground object contains a working anti air unit"""
+        return any(u.alive and u.is_anti_air for u in self.units)
 
     @property
     def has_live_radar_sam(self) -> bool:
         """Returns True if the ground object contains a unit with working radar SAM."""
-        for group in self.groups:
-            if self.threat_range(group, radar_only=True):
-                return True
-        return False
-
-    def _max_range_of_type(self, group: TheaterGroup, range_type: str) -> Distance:
-        if not self.might_have_aa:
-            return meters(0)
-
-        max_range = meters(0)
-        for u in group.units:
-            # Some units in pydcs have detection_range/threat_range defined,
-            # but explicitly set to None.
-            unit_range = getattr(u.type, range_type, None)
-            if unit_range is not None:
-                max_range = max(max_range, meters(unit_range))
-        return max_range
+        return any(g.max_threat_range(radar_only=True) for g in self.groups)
 
     def max_detection_range(self) -> Distance:
-        return (
-            max(self.detection_range(g) for g in self.groups)
-            if self.groups
-            else meters(0)
-        )
-
-    def detection_range(self, group: TheaterGroup) -> Distance:
-        return self._max_range_of_type(group, "detection_range")
+        """Calculate the maximum detection range of the ground object"""
+        return max((g.max_detection_range() for g in self.groups), default=meters(0))
 
     def max_threat_range(self) -> Distance:
-        return (
-            max(self.threat_range(g) for g in self.groups) if self.groups else meters(0)
-        )
-
-    def threat_range(self, group: TheaterGroup, radar_only: bool = False) -> Distance:
-        return self._max_range_of_type(group, "threat_range")
+        """Calculate the maximum threat range of the ground object"""
+        return max((g.max_threat_range() for g in self.groups), default=meters(0))
 
     def threat_poly(self) -> ThreatPoly | None:
         if self._threat_poly is None:
@@ -360,12 +331,6 @@ class BuildingGroundObject(TheaterGroundObject):
     def purchasable(self) -> bool:
         return False
 
-    def max_threat_range(self) -> Distance:
-        return meters(0)
-
-    def max_detection_range(self) -> Distance:
-        return meters(0)
-
 
 class NavalGroundObject(TheaterGroundObject, ABC):
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
@@ -374,10 +339,6 @@ class NavalGroundObject(TheaterGroundObject, ABC):
         if not self.is_friendly(for_player):
             yield FlightType.ANTISHIP
         yield from super().mission_types(for_player)
-
-    @property
-    def might_have_aa(self) -> bool:
-        return True
 
     @property
     def capturable(self) -> bool:
@@ -555,36 +516,6 @@ class SamGroundObject(IadsGroundObject):
                 yield mission_type
 
     @property
-    def might_have_aa(self) -> bool:
-        return True
-
-    def threat_range(self, group: TheaterGroup, radar_only: bool = False) -> Distance:
-        max_non_radar = meters(0)
-        live_trs = set()
-        max_telar_range = meters(0)
-        launchers = set()
-        for unit in group.units:
-            if not unit.alive or not issubclass(unit.type, VehicleType):
-                continue
-            unit_type = unit.type
-            if unit_type in TRACK_RADARS:
-                live_trs.add(unit_type)
-            elif unit_type in TELARS:
-                max_telar_range = max(max_telar_range, meters(unit_type.threat_range))
-            elif unit_type in LAUNCHER_TRACKER_PAIRS:
-                launchers.add(unit_type)
-            else:
-                max_non_radar = max(max_non_radar, meters(unit_type.threat_range))
-        max_tel_range = meters(0)
-        for launcher in launchers:
-            if LAUNCHER_TRACKER_PAIRS[launcher] in live_trs:
-                max_tel_range = max(max_tel_range, meters(launcher.threat_range))
-        if radar_only:
-            return max(max_tel_range, max_telar_range)
-        else:
-            return max(max_tel_range, max_telar_range, max_non_radar)
-
-    @property
     def capturable(self) -> bool:
         return False
 
@@ -641,10 +572,6 @@ class EwrGroundObject(IadsGroundObject):
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.LAND_EQUIPMENT, LandEquipmentEntity.RADAR
-
-    @property
-    def might_have_aa(self) -> bool:
-        return True
 
     @property
     def capturable(self) -> bool:

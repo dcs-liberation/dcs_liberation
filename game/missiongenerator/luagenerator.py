@@ -118,22 +118,17 @@ class LuaGenerator:
                 else lua_data.get_or_create_item("RedAA")
             )
             for ground_object in cp.ground_objects:
-                if ground_object.might_have_aa and not ground_object.is_dead:
-                    for g in ground_object.groups:
-                        threat_range = ground_object.threat_range(g)
+                for g in ground_object.groups:
+                    threat_range = g.max_threat_range()
 
-                        if not threat_range:
-                            continue
+                    if not threat_range:
+                        continue
 
-                        aa_item = coalition_object.add_item()
-                        aa_item.add_key_value("name", ground_object.name)
-                        aa_item.add_key_value("range", str(threat_range.meters))
-                        aa_item.add_key_value(
-                            "positionX", str(ground_object.position.x)
-                        )
-                        aa_item.add_key_value(
-                            "positionY", str(ground_object.position.y)
-                        )
+                    aa_item = coalition_object.add_item()
+                    aa_item.add_key_value("name", ground_object.name)
+                    aa_item.add_key_value("range", str(threat_range.meters))
+                    aa_item.add_key_value("positionX", str(ground_object.position.x))
+                    aa_item.add_key_value("positionY", str(ground_object.position.y))
 
         # Generate IADS Lua Item
         iads_object = lua_data.add_item("IADS")
