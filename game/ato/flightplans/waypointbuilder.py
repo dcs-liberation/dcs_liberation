@@ -287,7 +287,15 @@ class WaypointBuilder:
         return self._target_area(f"STRIKE {target.name}", target)
 
     def sead_area(self, target: MissionTarget) -> FlightWaypoint:
-        return self._target_area(f"SEAD on {target.name}", target, flyover=True)
+        # Set flyover with ingress altitude to allow the flight to search and engage
+        # the target group at the ingress alt without suicide dive
+        return self._target_area(
+            f"SEAD on {target.name}",
+            target,
+            flyover=True,
+            altitude=self.doctrine.ingress_altitude,
+            alt_type="BARO",
+        )
 
     def dead_area(self, target: MissionTarget) -> FlightWaypoint:
         return self._target_area(f"DEAD on {target.name}", target)
@@ -297,14 +305,18 @@ class WaypointBuilder:
 
     @staticmethod
     def _target_area(
-        name: str, location: MissionTarget, flyover: bool = False
+        name: str,
+        location: MissionTarget,
+        flyover: bool = False,
+        altitude: Distance = meters(0),
+        alt_type: AltitudeReference = "RADIO",
     ) -> FlightWaypoint:
         waypoint = FlightWaypoint(
             name,
             FlightWaypointType.TARGET_GROUP_LOC,
             location.position,
-            meters(0),
-            "RADIO",
+            altitude,
+            alt_type,
             description=name,
             pretty_name=name,
         )
