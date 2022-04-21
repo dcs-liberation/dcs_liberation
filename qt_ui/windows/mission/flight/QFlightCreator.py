@@ -56,8 +56,9 @@ class QFlightCreator(QDialog):
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
         self.aircraft_selector = QAircraftTypeSelector(
-            self.game.blue.air_wing.available_aircraft_types,
-            self.task_selector.currentData(),
+            self.game.blue.air_wing.available_aircraft_for_task(
+                self.task_selector.currentData()
+            )
         )
         self.aircraft_selector.setCurrentIndex(0)
         self.aircraft_selector.currentIndexChanged.connect(self.on_aircraft_changed)
@@ -216,7 +217,7 @@ class QFlightCreator(QDialog):
     def on_task_changed(self, index: int) -> None:
         task = self.task_selector.itemData(index)
         self.aircraft_selector.update_items(
-            task, self.game.blue.air_wing.available_aircraft_types
+            self.game.blue.air_wing.available_aircraft_for_task(task)
         )
         self.squadron_selector.update_items(task, self.aircraft_selector.currentData())
 
