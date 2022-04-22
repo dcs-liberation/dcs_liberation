@@ -1,5 +1,4 @@
 """Combo box for selecting aircraft types."""
-from typing import Iterable
 from PySide2.QtWidgets import QComboBox
 from game.dcs.aircrafttype import AircraftType
 
@@ -7,14 +6,14 @@ from game.dcs.aircrafttype import AircraftType
 class QAircraftTypeSelector(QComboBox):
     """Combo box for selecting among the given aircraft types."""
 
-    def __init__(self, aircraft_types: Iterable[AircraftType]) -> None:
+    def __init__(self, aircraft_types: list[AircraftType]) -> None:
         super().__init__()
 
         self.model().sort(0)
         self.setSizeAdjustPolicy(self.AdjustToContents)
         self.update_items(aircraft_types)
 
-    def update_items(self, aircraft_types: Iterable[AircraftType]):
+    def update_items(self, aircraft_types: list[AircraftType]):
         current_aircraft = self.currentData()
         self.clear()
         for aircraft in aircraft_types:

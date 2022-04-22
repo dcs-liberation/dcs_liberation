@@ -76,12 +76,22 @@ class AirWing:
             return squadron
         return None
 
-    def available_aircraft_for_task(self, task: FlightType) -> Iterator[AircraftType]:
+    def best_available_aircrafts_for(self, task: FlightType) -> list[AircraftType]:
+        """Returns an ordered list of available aircrafts for the given task"""
+        aircrafts = []
+        best_aircraft_for_task = aircraft_for_task(task)
         for aircraft, squadrons in self.squadrons.items():
             for squadron in squadrons:
                 if squadron.untasked_aircraft and task in squadron.mission_types:
-                    yield aircraft
+                    aircrafts.append(aircraft)
+                    if aircraft not in best_aircraft_for_task:
+                        best_aircraft_for_task.append(aircraft)
                     break
+        # Sort the list ordered by the best capability
+        return sorted(
+            aircrafts,
+            key=lambda ac: best_aircraft_for_task.index(ac),
+        )
 
     def auto_assignable_for_task(self, task: FlightType) -> Iterator[Squadron]:
         for squadron in self.iter_squadrons():
