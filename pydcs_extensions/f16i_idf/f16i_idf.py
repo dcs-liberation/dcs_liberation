@@ -58,6 +58,11 @@ class WeaponsF16I:
         "name": "IDF Mods Project Fuel Tank 370 EMPTY",
         "weight": 250,
     }
+    IDF_Mods_Project_F_16I_CFT = {
+        "clsid": "{IDF Mods Project F-16I CFT}",
+        "name": "IDF Mods Project F-16I CFT",
+        "weight": 408,
+    }
     IDF_Mods_Project_F_16I_CFT_Fuel_Left_1500lb = {
         "clsid": "{IDF Mods Project F-16I CFT Fuel Left}",
         "name": "IDF Mods Project F-16I CFT Fuel Left 1500lb",
@@ -149,6 +154,13 @@ class WeaponsF16I:
     Spice_1000 = {"clsid": "{AGM-154A}", "name": "Spice-1000", "weight": 450}
 
 
+class F16IPylon3:
+    GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_ = (
+        3,
+        Weapons.GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_,
+    )
+
+
 class F16IPylon4:
     Fuel_tank_600_gal = (4, WeaponsF16I.Fuel_tank_600_gal)
     Fuel_tank_600_gal__EMPTY_ = (4, WeaponsF16I.Fuel_tank_600_gal__EMPTY_)
@@ -168,14 +180,15 @@ class F16IPylon4:
         4,
         WeaponsF16I.IDF_Mods_Project_F_16I_CFT_Fuel_Left_1500lb__370Gal,
     )
+    GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_ = (
+        4,
+        Weapons.GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_,
+    )
 
 
 class F16IPylon5:
     Fuel_tank_300_gal_ = (5, Weapons.Fuel_tank_300_gal_)
     ANAXQ_14 = (5, WeaponsF16I.ANAXQ_14)
-
-
-# ERRR <CLEAN>
 
 
 class F16IPylon6:
@@ -197,17 +210,32 @@ class F16IPylon6:
         6,
         WeaponsF16I.IDF_Mods_Project_F_16I_CFT_Fuel_Right_1500lb__600Gal,
     )
+    GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_ = (
+        6,
+        Weapons.GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_,
+    )
+
+
+class F16IPylon7:
+    GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_ = (
+        7,
+        Weapons.GBU_24_Paveway_III___2000lb_Laser_Guided_Bomb_,
+    )
 
 
 class F16IPylon10:
     AN_AAQ_13 = (10, WeaponsF16I.AN_AAQ_13)
 
 
-class F16IPylon13:
+class Pylon12:
+    ALQ_184 = (12, Weapons.ALQ_184)
+
+
+class Pylon13:
     Crew_Ladder = (13, WeaponsF16I.Crew_Ladder)
 
 
-class F16IPylon14:
+class Pylon14:
     Remove_Before_Flight = (14, WeaponsF16I.Remove_Before_Flight)
     Remove_Before_Flight_without_Lantirn = (
         14,
@@ -223,16 +251,17 @@ class F16IPylon14:
     )
 
 
-class F16IPylon15:
+class Pylon15:
     Python_5_Cover_Pylon_2 = (15, WeaponsF16I.Python_5_Cover_Pylon_2)
     Python_5_Cover_Pylon_8 = (15, WeaponsF16I.Python_5_Cover_Pylon_8)
     Python_5_Cover_Pylon_2_8 = (15, WeaponsF16I.Python_5_Cover_Pylon_2_8)
 
 
-class F16IPylon16:
+class Pylon16:
     Spice_2000_Cover_Pylon_3 = (16, WeaponsF16I.Spice_2000_Cover_Pylon_3)
     Spice_2000_Cover_Pylon_7 = (16, WeaponsF16I.Spice_2000_Cover_Pylon_7)
     Spice_2000_Cover_Pylon_3_7 = (16, WeaponsF16I.Spice_2000_Cover_Pylon_3_7)
+    IDF_Mods_Project_F_16I_CFT = (16, WeaponsF16I.IDF_Mods_Project_F_16I_CFT)
 
 
 inject_weapons(WeaponsF16I)
@@ -243,14 +272,19 @@ def inject_F16I() -> None:
     # into pydcs databases via introspection.
     AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16I"]
     AIRCRAFT_BANNERS["F-16C_50"] = AIRCRAFT_BANNERS["F-16I"]
+    setattr(F_16C_50, "fuel_max", 2585.48)
+    F_16C_50.pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+    inject_pylons(F_16C_50.Pylon3, F16IPylon3)
     inject_pylons(F_16C_50.Pylon4, F16IPylon4)
     inject_pylons(F_16C_50.Pylon5, F16IPylon5)
     inject_pylons(F_16C_50.Pylon6, F16IPylon6)
+    inject_pylons(F_16C_50.Pylon7, F16IPylon7)
     inject_pylons(F_16C_50.Pylon10, F16IPylon10)
-    # inject_pylons(F_16C_50.Pylon13, F16IPylon13)
-    # inject_pylons(F_16C_50.Pylon14, F16IPylon14)
-    # inject_pylons(F_16C_50.Pylon15, F16IPylon15)
-    # inject_pylons(F_16C_50.Pylon16, F16IPylon16)
+    F_16C_50.Pylon12 = Pylon12
+    F_16C_50.Pylon13 = Pylon13
+    F_16C_50.Pylon14 = Pylon14
+    F_16C_50.Pylon15 = Pylon15
+    F_16C_50.Pylon16 = Pylon16
 
 
 class F_16I(PlaneType):
