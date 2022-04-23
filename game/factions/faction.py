@@ -123,7 +123,7 @@ class Faction:
 
     # Store mod settings so mod properties can be injected again on game load,
     # in case mods like CJS F/A-18E/F/G or IDF F-16I are selected by the player
-    mod_settings: ModSettings = field(default=None)
+    mod_settings: Optional[ModSettings] = field(default=None)
 
     def has_access_to_dcs_type(self, unit_type: Type[DcsUnitType]) -> bool:
         # Vehicle and Ship Units
@@ -284,13 +284,27 @@ class Faction:
             if unit.unit_class is unit_class:
                 yield unit
 
-    def apply_mod_settings(self) -> None:
-        self.apply_mod_settings(self.mod_settings)
+    def apply_mod_settings(self, mod_settings: Optional[ModSettings] = None) -> None:
+        from game.theater.start_generator import ModSettings
 
-    def apply_mod_settings(self, mod_settings: ModSettings) -> None:
         # Update the mod settings of this faction
         # so the settings can be applied again on load, if needed
-        self.mod_settings = mod_settings
+        if mod_settings is None:
+            mod_settings = ModSettings(
+                a4_skyhawk=False,
+                f_16_idf=False,
+                f22_raptor=False,
+                f104_starfighter=False,
+                hercules=False,
+                uh_60l=False,
+                jas39_gripen=False,
+                su57_felon=False,
+                frenchpack=False,
+                high_digit_sams=False,
+            )
+            self.mod_settings = mod_settings
+        else:
+            self.mod_settings = mod_settings
 
         # aircraft
         if not mod_settings.a4_skyhawk:
