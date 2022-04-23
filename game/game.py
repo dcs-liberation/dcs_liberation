@@ -218,6 +218,10 @@ class Game:
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_unculled_zones()
+        # Apply mod settings again so mod properties get injected again,
+        # in case mods like CJS F/A-18E/F/G or IDF F-16I are selected by the player
+        self.blue.faction.apply_mod_settings()
+        self.red.faction.apply_mod_settings()
         if not game_still_initializing:
             # We don't need to push events that happen during load. The UI will fully
             # reset when we're done.

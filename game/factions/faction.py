@@ -121,6 +121,10 @@ class Faction:
     #: both will use it.
     unrestricted_satnav: bool = False
 
+    # Store mod settings so mod properties can be injected again on game load,
+    # in case mods like CJS F/A-18E/F/G or IDF F-16I are selected by the player
+    mod_settings: ModSettings = field(default=None)
+
     def has_access_to_dcs_type(self, unit_type: Type[DcsUnitType]) -> bool:
         # Vehicle and Ship Units
         if any(unit_type == u.dcs_unit_type for u in self.accessible_units):
@@ -280,7 +284,14 @@ class Faction:
             if unit.unit_class is unit_class:
                 yield unit
 
+    def apply_mod_settings(self) -> None:
+        self.apply_mod_settings(self.mod_settings)
+
     def apply_mod_settings(self, mod_settings: ModSettings) -> None:
+        # Update the mod settings of this faction
+        # so the settings can be applied again on load, if needed
+        self.mod_settings = mod_settings
+
         # aircraft
         if not mod_settings.a4_skyhawk:
             self.remove_aircraft("A-4E-C")

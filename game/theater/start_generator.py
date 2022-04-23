@@ -77,6 +77,7 @@ class GameGenerator:
         self.air_wing_config = air_wing_config
         self.settings = settings
         self.generator_settings = generator_settings
+        self.mod_settings = mod_settings
         self.player.apply_mod_settings(mod_settings)
         self.enemy.apply_mod_settings(mod_settings)
 
@@ -98,6 +99,7 @@ class GameGenerator:
 
             GroundObjectGenerator(game, self.generator_settings).generate()
         game.settings.version = VERSION
+        game.mod_settings = self.mod_settings
         return game
 
     def should_remove_carrier(self, player: bool) -> bool:
