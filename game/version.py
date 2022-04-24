@@ -142,4 +142,8 @@ VERSION = _build_version_string()
 #:   `recommended_player_income_multiplier: 1.0`.
 #:   `recommended_enemy_income_multiplier: 1.0`.
 #:
-CAMPAIGN_FORMAT_VERSION = (10, 1)
+#: Version 10.2
+#: * Campaign files can optionally define the iads configuration
+#:   It is possible to define if the campaign supports advanced iads
+#:
+CAMPAIGN_FORMAT_VERSION = (10, 2)
