@@ -698,13 +698,13 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         )
         modLayout.addWidget(hercules, modLayout_row, 1)
         modLayout_row += 1
+        # Section break here for readability
+        modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
+        modLayout_row += 1
         modLayout.addWidget(
             QtWidgets.QLabel("UH-60L Black Hawk (version 1.3.1)"), modLayout_row, 0
         )
         modLayout.addWidget(uh_60l, modLayout_row, 1)
-        modLayout_row += 1
-        # Section break here for readability
-        modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
         modLayout_row += 1
         modLayout.addWidget(
             QtWidgets.QLabel("JAS 39 Gripen (version v1.8.0-beta)"), modLayout_row, 0
