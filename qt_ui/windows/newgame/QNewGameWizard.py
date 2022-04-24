@@ -666,7 +666,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("F-16I Sufa (version 1.4 by IDF Mods Project)"),
+            QtWidgets.QLabel("F-16I Sufa (version 1.4.7 by IDF Mods Project)"),
             modLayout_row,
             0,
         )

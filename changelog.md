@@ -13,6 +13,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Flight Planning]** Air to Ground flights now have ECM enabled on lock at the join point, and SEAD/DEAD also have ECM enabled on detection and lock at ingress.
 * **[Flight Planning]** AWACS flightplan changed from orbit to a racetrack to reduce data link disconnects which were caused by blind spots as a result of the bank angle. 
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
+* **[Modding]** Add IDF Mod Project F-16I Sufa v1.4.7 mod support
 
 ## Fixes
 
