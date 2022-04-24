@@ -14,6 +14,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Flight Planning]** Air to Ground flights now have ECM enabled on lock at the join point, and SEAD/DEAD also have ECM enabled on detection and lock at ingress.
 * **[Flight Planning]** AWACS flightplan changed from orbit to a racetrack to reduce data link disconnects which were caused by blind spots as a result of the bank angle. 
 * **[Modding]** Updated UH-60L mod version support to 1.3.1
+* **[Modding]** Updated F-104 mod version support to 2.7.11.222.01
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
 * **[UI]** Added separate images for the different carrier types.
 * **[Campaign]** Allow campaign designers to define default values for the economy settings (starting budget and multiplier).
