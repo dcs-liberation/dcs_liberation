@@ -1,7 +1,9 @@
+import os
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Any
 
+from PySide2.QtGui import QPixmap
 from dcs import task
 from dcs.planes import F_16C_50, PlaneType
 from dcs.weapons_data import Weapons
@@ -278,23 +280,38 @@ inject_weapons(WeaponsF16I)
 def inject_F16I() -> None:
     from qt_ui.main import inject_custom_payloads, THIS_DIR
 
+    AIRCRAFT_ICONS["F-16C_50"] = QPixmap(
+        os.path.join("./resources/ui/units/aircrafts/icons/", "F-16I_24.jpg")
+    )
+    AIRCRAFT_BANNERS["F-16C_50"] = QPixmap(
+        os.path.join("./resources/ui/units/aircrafts/banners/", "F-16I_24.jpg")
+    )
+    AIRCRAFT_ICONS["F-16I"] = QPixmap(
+        os.path.join("./resources/ui/units/aircrafts/icons/", "F-16C_24.jpg")
+    )
+    AIRCRAFT_BANNERS["F-16I"] = QPixmap(
+        os.path.join("./resources/ui/units/aircrafts/banners/", "F-16C_50_24.jpg")
+    )
+
+    setattr(F_16C_50, "fuel_max", 2585.48)
+
+    F_16C_50.pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
+
     # Injects modified weapons from the IDF Mods Project F-16I Sufa
     # into pydcs databases via introspection.
-    AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16I"]
-    AIRCRAFT_BANNERS["F-16C_50"] = AIRCRAFT_BANNERS["F-16I"]
-    setattr(F_16C_50, "fuel_max", 2585.48)
-    F_16C_50.pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
     inject_pylon(F_16C_50.Pylon3, F16IPylon3)
     inject_pylon(F_16C_50.Pylon4, F16IPylon4)
     inject_pylon(F_16C_50.Pylon5, F16IPylon5)
     inject_pylon(F_16C_50.Pylon6, F16IPylon6)
     inject_pylon(F_16C_50.Pylon7, F16IPylon7)
     inject_pylon(F_16C_50.Pylon10, F16IPylon10)
+
     F_16C_50.Pylon12 = Pylon12
     F_16C_50.Pylon13 = Pylon13
     F_16C_50.Pylon14 = Pylon14
     F_16C_50.Pylon15 = Pylon15
     F_16C_50.Pylon16 = Pylon16
+
     inject_custom_payloads(Path(THIS_DIR.parent / "resources/mod_payloads/f16i_idf"))
 
 
