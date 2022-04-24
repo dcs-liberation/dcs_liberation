@@ -6,7 +6,7 @@ from dcs import task
 from dcs.planes import F_16C_50, PlaneType
 from dcs.weapons_data import Weapons
 
-from pydcs_extensions.pylon_injector import inject_pylons
+from pydcs_extensions.pylon_injector import inject_pylon
 from pydcs_extensions.weapon_injector import inject_weapons
 from qt_ui.uiconstants import AIRCRAFT_ICONS, AIRCRAFT_BANNERS
 
@@ -283,12 +283,12 @@ def inject_F16I() -> None:
     AIRCRAFT_BANNERS["F-16C_50"] = AIRCRAFT_BANNERS["F-16I"]
     setattr(F_16C_50, "fuel_max", 2585.48)
     F_16C_50.pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
-    inject_pylons(F_16C_50.Pylon3, F16IPylon3)
-    inject_pylons(F_16C_50.Pylon4, F16IPylon4)
-    inject_pylons(F_16C_50.Pylon5, F16IPylon5)
-    inject_pylons(F_16C_50.Pylon6, F16IPylon6)
-    inject_pylons(F_16C_50.Pylon7, F16IPylon7)
-    inject_pylons(F_16C_50.Pylon10, F16IPylon10)
+    inject_pylon(F_16C_50.Pylon3, F16IPylon3)
+    inject_pylon(F_16C_50.Pylon4, F16IPylon4)
+    inject_pylon(F_16C_50.Pylon5, F16IPylon5)
+    inject_pylon(F_16C_50.Pylon6, F16IPylon6)
+    inject_pylon(F_16C_50.Pylon7, F16IPylon7)
+    inject_pylon(F_16C_50.Pylon10, F16IPylon10)
     F_16C_50.Pylon12 = Pylon12
     F_16C_50.Pylon13 = Pylon13
     F_16C_50.Pylon14 = Pylon14

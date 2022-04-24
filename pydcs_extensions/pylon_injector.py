@@ -1,7 +1,7 @@
 from typing import Tuple, Any
 
 
-def inject_pylons(to_pylon: Any, from_pylon: Any) -> None:
+def inject_pylon(to_pylon: Any, from_pylon: Any) -> None:
     """
     Inject weapons/ordnance added by mods into the pylons of existing aircraft.
     This is done to support mods such as the CJS Super Hornet, which modify aircraft
