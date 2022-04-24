@@ -285,25 +285,17 @@ class Faction:
                 yield unit
 
     def apply_mod_settings(self, mod_settings: Optional[ModSettings] = None) -> None:
-        from game.theater.start_generator import ModSettings
-
-        # Update the mod settings of this faction
-        # so the settings can be applied again on load, if needed
-        if mod_settings is None:
-            mod_settings = ModSettings(
-                a4_skyhawk=False,
-                f_16_idf=False,
-                f22_raptor=False,
-                f104_starfighter=False,
-                hercules=False,
-                uh_60l=False,
-                jas39_gripen=False,
-                su57_felon=False,
-                frenchpack=False,
-                high_digit_sams=False,
-            )
-            self.mod_settings = mod_settings
+        if mod_settings is None and self.mod_settings is None:
+            # No mod settings were provided and none were saved for this faction
+            # so stop here
+            return
+        elif self.mod_settings is not None:
+            # Saved mod settings were found for this faction,
+            # so load them for use
+            mod_settings = self.mod_settings
         else:
+            # Update the mod settings of this faction
+            # so the settings can be applied again on load, if needed
             self.mod_settings = mod_settings
 
         # aircraft
