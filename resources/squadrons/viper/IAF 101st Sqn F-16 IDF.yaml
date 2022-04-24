@@ -1,0 +1,22 @@
+---
+name: 101st Squadron (IDF)
+nickname: First Fighter
+female_pilot_percentage: 6
+country: Israel
+role: Strike Fighter
+aircraft: F-16C Fighting Falcon (IDF mod)
+livery: IAF 101st squadron
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

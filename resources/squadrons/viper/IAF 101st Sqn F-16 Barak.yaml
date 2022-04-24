@@ -1,0 +1,22 @@
+---
+name: 101st Squadron (Barak)
+nickname: First Fighter
+female_pilot_percentage: 6
+country: Israel
+role: Strike Fighter
+aircraft: F-16C Barak
+livery: IAF 101st squadron barak 2020
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

@@ -1,0 +1,22 @@
+---
+name: 110th Squadron (IDF)
+nickname: Knights of the North
+female_pilot_percentage: 6
+country: Israel
+role: Strike Fighter
+aircraft: F-16C Fighting Falcon (IDF mod)
+livery: IAF 110th squadron
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
