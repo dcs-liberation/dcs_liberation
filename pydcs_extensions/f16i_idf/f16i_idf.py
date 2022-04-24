@@ -301,6 +301,7 @@ def inject_F16I() -> None:
 @planemod
 class F_16I(PlaneType):
     id = "F-16I"
+    flyable = True
     height = 5.02
     width = 9.45
     length = 14.52
@@ -4180,6 +4181,7 @@ class F_16I(PlaneType):
 @planemod
 class F_16C_BARAK_2020(PlaneType):
     id = "F-16C-BARAK 2020"
+    flyable = True
     height = 5.02
     width = 9.45
     length = 14.52
