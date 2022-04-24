@@ -1,4 +1,5 @@
 from enum import Enum
+from pathlib import Path
 from typing import Dict, List, Any
 
 from dcs import task
@@ -268,6 +269,8 @@ inject_weapons(WeaponsF16I)
 
 
 def inject_F16I() -> None:
+    from qt_ui.main import inject_custom_payloads, THIS_DIR
+
     # Injects modified weapons from the IDF Mods Project F-16I Sufa
     # into pydcs databases via introspection.
     AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16I"]
@@ -285,6 +288,7 @@ def inject_F16I() -> None:
     F_16C_50.Pylon14 = Pylon14
     F_16C_50.Pylon15 = Pylon15
     F_16C_50.Pylon16 = Pylon16
+    inject_custom_payloads(Path(THIS_DIR.parent / "resources/mod_payloads/f16i_idf"))
 
 
 class F_16I(PlaneType):
