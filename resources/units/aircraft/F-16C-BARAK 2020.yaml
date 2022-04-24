@@ -1,7 +1,8 @@
 description:
-  "The F-16I is a two-seat variant of the Block 52 developed for the Israeli
-  Defense Force – Air Force (IDF/AF). Israel issued a requirement in September
-  1997 and selected the F-16 in preference to the F-15I in July 1999."
+  "The F-16C Barak is a variant of the Block 52 F-16C developed for the
+  Israeli Defense Force – Air Force (IDF/AF). The Barak 2020 upgrade package
+  will give almost the same level of avionics equipment as that of the latest
+  F-16I block 52+ Sufa in service."
 introduced: 2003
 manufacturer: General Dynamics
 origin: USA
@@ -19,7 +20,7 @@ fuel:
   combat_ppm: 26
   min_safe: 1000
 variants:
-  F-16I Sufa: {}
+  F-16C Barak: {}
 radios:
   intra_flight: AN/ARC-222
   inter_flight: AN/ARC-164

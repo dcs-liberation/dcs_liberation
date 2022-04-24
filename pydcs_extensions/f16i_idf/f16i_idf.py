@@ -38,7 +38,11 @@ class WeaponsF16I:
         "name": "Delilah cover Pylon 7",
         "weight": 0,
     }
-    # Fuel_tank_300_gal_ = {"clsid": "{IDF Mods Project 300gal}", "name": "Fuel tank 300 gal", "weight": 1197.4895155}
+    Fuel_tank_300_gal_ = {
+        "clsid": "{IDF Mods Project 300gal}",
+        "name": "Fuel tank 300 gal",
+        "weight": 1197.4895155,
+    }
     Fuel_tank_300_gal__ = {
         "clsid": "{F14-300gal}",
         "name": "Fuel tank 300 gal",
@@ -152,7 +156,7 @@ class WeaponsF16I:
         "weight": 105,
     }
     Delilah = {"clsid": "{AGM-154A}", "name": "Delilah", "weight": 250}
-    Spice_1000 = {"clsid": "{AGM-154A}", "name": "Spice-1000", "weight": 450}
+    # Spice_1000 = {"clsid": "{AGM-154A}", "name": "Spice-1000", "weight": 450}
 
 
 class F16IPylon3:
@@ -189,6 +193,8 @@ class F16IPylon4:
 
 class F16IPylon5:
     Fuel_tank_300_gal_ = (5, Weapons.Fuel_tank_300_gal_)
+    Fuel_tank_300_gal__ = (5, WeaponsF16I.Fuel_tank_300_gal_)
+    Fuel_tank_300_gal___ = (5, WeaponsF16I.Fuel_tank_300_gal__)
     ANAXQ_14 = (5, WeaponsF16I.ANAXQ_14)
 
 

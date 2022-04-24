@@ -283,7 +283,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[8] = {
-					["CLSID"] = "{600gal+CFT Fuel Right 1500lb}",
+					["CLSID"] = "{600gal+CFT Fuel Left 1500lb}",
 					["num"] = 4,
 				},
 				[9] = {
@@ -362,19 +362,19 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "{GBU-24}",
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 4,
 				},
 				[7] = {
-					["CLSID"] = "{GBU-24}",
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 6,
 				},
 				[8] = {
-					["CLSID"] = "{GBU-24}",
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 3,
 				},
 				[9] = {
-					["CLSID"] = "{GBU-24}",
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 7,
 				},
 				[10] = {
