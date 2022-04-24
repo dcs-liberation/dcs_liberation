@@ -27,12 +27,9 @@ class DeadIngressBuilder(PydcsWaypointBuilder):
                 )
                 continue
 
-            task = AttackGroup(miz_group.id, weapon_type=WeaponType.Auto)
-            task.params["expend"] = "All"
-            task.params["attackQtyLimit"] = False
-            task.params["directionEnabled"] = False
-            task.params["altitudeEnabled"] = False
-            task.params["groupAttack"] = True
+            task = AttackGroup(
+                miz_group.id, weapon_type=WeaponType.Auto, group_attack=True
+            )
             waypoint.tasks.append(task)
 
         # Preemptively use ECM to better avoid getting swatted.

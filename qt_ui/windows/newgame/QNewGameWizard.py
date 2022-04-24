@@ -150,6 +150,7 @@ class NewGameWizard(QtWidgets.QWizard):
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
             # give 0.1 to 5.0.
             inverted=self.field("invertMap"),
+            advanced_iads=self.field("advanced_iads"),
             no_carrier=self.field("no_carrier"),
             no_lha=self.field("no_lha"),
             no_player_navy=self.field("no_player_navy"),
@@ -174,7 +175,7 @@ class NewGameWizard(QtWidgets.QWizard):
         logging.info("New campaign blue faction: %s", blue_faction.name)
         logging.info("New campaign red faction: %s", red_faction.name)
 
-        theater = campaign.load_theater()
+        theater = campaign.load_theater(generator_settings.advanced_iads)
 
         logging.info("New campaign theater: %s", theater.terrain.name)
 
@@ -385,11 +386,15 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Campaign settings
         mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")
+        mapSettingsLayout = QtWidgets.QGridLayout()
         invertMap = QtWidgets.QCheckBox()
         self.registerField("invertMap", invertMap)
-        mapSettingsLayout = QtWidgets.QGridLayout()
         mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
         mapSettingsLayout.addWidget(invertMap, 0, 1)
+        self.advanced_iads = QtWidgets.QCheckBox()
+        self.registerField("advanced_iads", self.advanced_iads)
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Advanced IADS"), 1, 0)
+        mapSettingsLayout.addWidget(self.advanced_iads, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
@@ -452,6 +457,14 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
                 timePeriodPreset.setChecked(False)
             else:
                 timePeriodPreset.setChecked(True)
+            self.advanced_iads.setEnabled(campaign.advanced_iads)
+            self.advanced_iads.setChecked(campaign.advanced_iads)
+            if not campaign.advanced_iads:
+                self.advanced_iads.setToolTip(
+                    "Advanced IADS is not supported by this campaign"
+                )
+            else:
+                self.advanced_iads.setToolTip("Enable Advanced IADS")
 
             self.campaign_selected.emit(campaign)
 
@@ -662,7 +675,9 @@ class GeneratorOptions(QtWidgets.QWizardPage):
 
         modLayout = QtWidgets.QGridLayout()
         modLayout_row = 1
-        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("A-4E Skyhawk (version 2.0.0)"), modLayout_row, 0
+        )
         modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(
@@ -683,13 +698,17 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         )
         modLayout.addWidget(hercules, modLayout_row, 1)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("UH-60L Black Hawk"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("UH-60L Black Hawk (version 1.3.1)"), modLayout_row, 0
+        )
         modLayout.addWidget(uh_60l, modLayout_row, 1)
         modLayout_row += 1
         # Section break here for readability
         modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("JAS 39 Gripen (version v1.8.0-beta)"), modLayout_row, 0
+        )
         modLayout.addWidget(jas39_gripen, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), modLayout_row, 0)

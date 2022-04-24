@@ -18,7 +18,8 @@
     "F-16C Fighting Falcon (IDF mod)",
     "F-16I Sufa",
     "F-4E Phantom II",
-    "UH-1H Iroquois"
+    "UH-1H Iroquois",
+    "UH-60L"
   ],
   "awacs": [
     "E-2C Hawkeye"
@@ -64,5 +65,10 @@
   "helicopter_carrier_names": [],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
+  "liveries_overrides": {
+    "UH-60L": [
+      "Israeli Air Force"
+    ]
+  },
   "unrestricted_satnav": true
 }

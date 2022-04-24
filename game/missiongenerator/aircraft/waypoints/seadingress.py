@@ -1,7 +1,13 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import AttackGroup, EngageGroup, OptECMUsing, WeaponType as DcsWeaponType
+from dcs.task import (
+    AttackGroup,
+    EngageGroup,
+    Expend,
+    OptECMUsing,
+    WeaponType as DcsWeaponType,
+)
 from game.data.weapons import WeaponType
 
 from game.theater import TheaterGroundObject
@@ -36,17 +42,17 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 # into the SAM instead of waiting for it to come alive
                 engage_task = EngageGroup(miz_group.id)
                 engage_task.params["weaponType"] = DcsWeaponType.Guided.value
+                engage_task.params["groupAttack"] = True
+                engage_task.params["expend"] = Expend.All.value
                 waypoint.tasks.append(engage_task)
             else:
                 # All non ARM types like Decoys will use the normal AttackGroup Task
                 attack_task = AttackGroup(
-                    miz_group.id, weapon_type=DcsWeaponType.Guided
+                    miz_group.id,
+                    weapon_type=DcsWeaponType.Guided,
+                    group_attack=True,
+                    expend=Expend.All,
                 )
-                attack_task.params["expend"] = "All"
-                attack_task.params["attackQtyLimit"] = False
-                attack_task.params["directionEnabled"] = False
-                attack_task.params["altitudeEnabled"] = False
-                attack_task.params["groupAttack"] = True
                 waypoint.tasks.append(attack_task)
 
         # Preemptively use ECM to better avoid getting swatted.
