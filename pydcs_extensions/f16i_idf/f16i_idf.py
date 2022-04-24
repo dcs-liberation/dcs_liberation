@@ -6,6 +6,7 @@ from dcs import task
 from dcs.planes import F_16C_50, PlaneType
 from dcs.weapons_data import Weapons
 
+from game.modsupport import planemod
 from pydcs_extensions.pylon_injector import inject_pylon
 from pydcs_extensions.weapon_injector import inject_weapons
 from qt_ui.uiconstants import AIRCRAFT_ICONS, AIRCRAFT_BANNERS
@@ -297,6 +298,7 @@ def inject_F16I() -> None:
     inject_custom_payloads(Path(THIS_DIR.parent / "resources/mod_payloads/f16i_idf"))
 
 
+@planemod
 class F_16I(PlaneType):
     id = "F-16I"
     height = 5.02
@@ -4156,7 +4158,7 @@ class F_16I(PlaneType):
     class Pylon12:
         ALQ_184 = (12, Weapons.ALQ_184)
 
-    pylons: {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+    pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
     tasks = [
         task.CAP,
@@ -4175,6 +4177,7 @@ class F_16I(PlaneType):
     task_default = task.CAP
 
 
+@planemod
 class F_16C_BARAK_2020(PlaneType):
     id = "F-16C-BARAK 2020"
     height = 5.02
@@ -5185,7 +5188,7 @@ class F_16C_BARAK_2020(PlaneType):
     class Pylon14:
         ALQ_184 = (14, Weapons.ALQ_184)
 
-    pylons: {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
+    pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
 
     tasks = [
         task.CAP,

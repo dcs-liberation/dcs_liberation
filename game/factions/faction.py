@@ -307,6 +307,11 @@ class Faction:
         if not mod_settings.uh_60l:
             self.remove_aircraft("UH-60L")
             self.remove_aircraft("KC130J")
+        if not mod_settings.f_16_idf:
+            self.remove_aircraft("F-16I")
+            self.remove_aircraft("F-16C-BARAK 2020")
+        else:
+            inject_F16I()
         if not mod_settings.f22_raptor:
             self.remove_aircraft("F-22A")
         if not mod_settings.f104_starfighter:
@@ -365,8 +370,6 @@ class Faction:
             self.remove_preset("SA-23/S-300VM")
             self.remove_preset("SA-17")
             self.remove_preset("KS-19")
-        if mod_settings.f_16_idf:
-            inject_F16I()
 
     def remove_aircraft(self, name: str) -> None:
         for i in self.aircrafts:
