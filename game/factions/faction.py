@@ -285,14 +285,15 @@ class Faction:
                 yield unit
 
     def apply_mod_settings(self, mod_settings: Optional[ModSettings] = None) -> None:
-        if mod_settings is None and self.mod_settings is None:
-            # No mod settings were provided and none were saved for this faction
-            # so stop here
-            return
-        elif self.mod_settings is not None:
-            # Saved mod settings were found for this faction,
-            # so load them for use
-            mod_settings = self.mod_settings
+        if mod_settings is None:
+            if self.mod_settings is None:
+                # No mod settings were provided and none were saved for this faction
+                # so stop here
+                return
+            elif self.mod_settings is not None:
+                # Saved mod settings were found for this faction,
+                # so load them for use
+                mod_settings = self.mod_settings
         else:
             # Update the mod settings of this faction
             # so the settings can be applied again on load, if needed
