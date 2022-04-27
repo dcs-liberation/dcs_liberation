@@ -14,8 +14,6 @@ from game.utils import Heading
 
 
 class FrontLineConflictDescription:
-    max_frontline_length: int
-
     def __init__(
         self,
         theater: ConflictTheater,
@@ -63,7 +61,6 @@ class FrontLineConflictDescription:
             attack_heading.right,
             theater,
         )
-        cls.max_frontline_length = settings.max_frontline_length
         if position is None:
             raise RuntimeError("Could not find front line position")
         return position, attack_heading.opposite
