@@ -23,6 +23,8 @@ from dcs.statics import Fortification
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
+    ActivateLink4Command,
+    ActivateACLSCommand,
     EPLRS,
     FireAtPoint,
     OptAlarmState,
@@ -428,6 +430,8 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         group.points[0].tasks.append(
             ActivateICLSCommand(icls, unit_id=group.units[0].id)
         )
+        group.points[0].tasks.append(ActivateLink4Command(unit_id=group.units[0].id))
+        group.points[0].tasks.append(ActivateACLSCommand(unit_id=group.units[0].id))
 
     def add_runway_data(
         self,
