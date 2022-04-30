@@ -58,6 +58,18 @@ def inject_custom_payloads(user_path: Path) -> None:
     PayloadDirectories.set_preferred(user_path / "MissionEditor" / "UnitPayloads")
 
 
+def inject_mod_payloads(mod_path: Path) -> None:
+    if mod_path.exists():
+        payloads = mod_path
+    else:
+        raise RuntimeError(
+            f"Could not find mod payloads at {mod_path}."
+            f"Aircraft will have no payloads."
+        )
+    # We configure these as preferred so the mod's loadouts override the stock ones.
+    PayloadDirectories.set_preferred(payloads)
+
+
 def on_game_load(game: Game | None) -> None:
     EventStream.drain()
     EventStream.put_nowait(GameUpdateEvents().game_loaded(game))

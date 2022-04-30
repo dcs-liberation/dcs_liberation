@@ -278,7 +278,7 @@ inject_weapons(WeaponsF16I)
 
 
 def inject_F16I() -> None:
-    from qt_ui.main import inject_custom_payloads, THIS_DIR
+    from qt_ui.main import inject_mod_payloads, THIS_DIR
 
     AIRCRAFT_ICONS["F-16C_50"] = QPixmap(
         os.path.join("./resources/ui/units/aircrafts/icons/", "F-16I_24.jpg")
@@ -312,7 +312,7 @@ def inject_F16I() -> None:
     F_16C_50.Pylon15 = Pylon15
     F_16C_50.Pylon16 = Pylon16
 
-    inject_custom_payloads(Path(THIS_DIR.parent / "resources/mod_payloads/f16i_idf"))
+    inject_mod_payloads(Path(THIS_DIR.parent / "resources/mod_payloads/f16i_idf"))
 
 
 @planemod
