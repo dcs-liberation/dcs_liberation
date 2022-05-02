@@ -18,11 +18,19 @@ from dcs.action import DoScript, SceneryDestructionZone
 from dcs.condition import MapObjectIsDead
 from dcs.country import Country
 from dcs.point import StaticPoint
-
+from dcs.ships import (
+    CVN_71,
+    CVN_72,
+    CVN_73,
+    CVN_75,
+    Stennis,
+)
 from dcs.statics import Fortification
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
+    ActivateLink4Command,
+    ActivateACLSCommand,
     EPLRS,
     FireAtPoint,
     OptAlarmState,
@@ -385,7 +393,10 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                 )
                 tacan_callsign = self.tacan_callsign()
                 icls = next(self.icls_alloc)
-                self.activate_beacons(ship_group, tacan, tacan_callsign, icls)
+                link4 = None
+                if carrier_type in [Stennis, CVN_71, CVN_72, CVN_73, CVN_75]:
+                    link4 = self.radio_registry.alloc_uhf()
+                self.activate_beacons(ship_group, tacan, tacan_callsign, icls, link4)
                 self.add_runway_data(
                     brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
                 )
@@ -414,7 +425,11 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
     @staticmethod
     def activate_beacons(
-        group: ShipGroup, tacan: TacanChannel, callsign: str, icls: int
+        group: ShipGroup,
+        tacan: TacanChannel,
+        callsign: str,
+        icls: int,
+        link4: Optional[RadioFrequency] = None,
     ) -> None:
         group.points[0].tasks.append(
             ActivateBeaconCommand(
@@ -428,6 +443,11 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         group.points[0].tasks.append(
             ActivateICLSCommand(icls, unit_id=group.units[0].id)
         )
+        if link4 is not None:
+            group.points[0].tasks.append(
+                ActivateLink4Command(int(link4.mhz), group.units[0].id)
+            )
+            group.points[0].tasks.append(ActivateACLSCommand(unit_id=group.units[0].id))
 
     def add_runway_data(
         self,
