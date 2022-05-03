@@ -1,0 +1,5 @@
+class: Artillery
+price: 10
+role: Multiple-Launch Rocket System
+variants:
+  MLRS LC with B8M1 80mm: {}

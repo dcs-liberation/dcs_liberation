@@ -6,17 +6,23 @@ import logging
 import re
 from dataclasses import dataclass
 from typing import Dict, FrozenSet, Iterator, List, Set, Tuple
+from dcs.task import Modulation
 
 
 @dataclass(frozen=True)
 class RadioFrequency:
-    """A radio frequency.
-
-    Not currently concerned with tracking modulation, just the frequency.
-    """
+    """A radio frequency and the modulation used"""
 
     #: The frequency in kilohertz.
     hertz: int
+
+    #: The frequency modulation (AM or FM)
+    # Pydcs defaults currently to modultion=0 which is equal to AM
+    # Modulation is currently only used to tell the User the Modulation via the
+    # kneeboard. We do not force any modulation from pydcs. We just set the
+    # frequency with the set_frequency function which does not allow to set the
+    # modulation yet. It defaults to modulation=0 which is equal to forcing AM
+    modulation: Modulation = Modulation.AM
 
     def __str__(self) -> str:
         if self.hertz >= 1000000:
@@ -26,8 +32,8 @@ class RadioFrequency:
     def format(self, units: str, divisor: int) -> str:
         converted = self.hertz / divisor
         if converted.is_integer():
-            return f"{int(converted)} {units}"
-        return f"{converted:0.3f} {units}"
+            return f"{int(converted)} {units} {self.modulation.name}"
+        return f"{converted:0.3f} {units} {self.modulation.name}"
 
     @property
     def mhz(self) -> float:
@@ -39,7 +45,7 @@ class RadioFrequency:
         return self.hertz / 1000000
 
     @classmethod
-    def parse(cls, text: str) -> RadioFrequency:
+    def parse(cls, text: str, modulation: Modulation = Modulation.AM) -> RadioFrequency:
         match = re.match(r"""^(\d+)(?:\.(\d{1,3}))? (MHz|kHz)$""", text)
         if match is None:
             raise ValueError(f"Could not parse radio frequency from {text}")
@@ -57,18 +63,22 @@ class RadioFrequency:
                 partial *= 10
 
         if units == "MHz":
-            return MHz(whole, partial)
+            return MHz(whole, partial, modulation)
         if units == "kHz":
-            return kHz(whole, partial)
+            return kHz(whole, partial, modulation)
         raise ValueError(f"Unexpected units in radio frequency: {units}")
 
 
-def MHz(num: int, khz: int = 0) -> RadioFrequency:
-    return RadioFrequency(num * 1000000 + khz * 1000)
+def MHz(
+    num: int, khz: int = 0, modulation: Modulation = Modulation.AM
+) -> RadioFrequency:
+    return RadioFrequency(num * 1000000 + khz * 1000, modulation)
 
 
-def kHz(num: int, hz: int = 0) -> RadioFrequency:
-    return RadioFrequency(num * 1000 + hz)
+def kHz(
+    num: int, hz: int = 0, modulation: Modulation = Modulation.AM
+) -> RadioFrequency:
+    return RadioFrequency(num * 1000 + hz, modulation)
 
 
 @dataclass(frozen=True)
@@ -84,25 +94,29 @@ class RadioRange:
     #: The spacing between adjacent frequencies.
     step: RadioFrequency
 
+    #: Modulation, AM or FM. Defaulting to AM as it is more used for comms
+    # Overrides the modulation setting of the min and max frequency for the whole range
+    modulation: Modulation = Modulation.AM
+
     #: Specific frequencies to exclude. (e.g. Guard channels)
     excludes: FrozenSet[RadioFrequency] = frozenset()
 
     def range(self) -> Iterator[RadioFrequency]:
         """Returns an iterator over the usable frequencies of this radio."""
         return (
-            RadioFrequency(x)
+            RadioFrequency(x, self.modulation)
             for x in range(self.minimum.hertz, self.maximum.hertz, self.step.hertz)
-            if RadioFrequency(x) not in self.excludes
+            if RadioFrequency(x, self.modulation) not in self.excludes
         )
 
     @property
     def last_channel(self) -> RadioFrequency:
         return next(
-            RadioFrequency(x)
+            RadioFrequency(x, self.modulation)
             for x in reversed(
                 range(self.minimum.hertz, self.maximum.hertz, self.step.hertz)
             )
-            if RadioFrequency(x) not in self.excludes
+            if RadioFrequency(x, self.modulation) not in self.excludes
         )
 
 
@@ -141,58 +155,88 @@ class ChannelInUseError(RuntimeError):
 # TODO: Figure out appropriate steps for each radio. These are just guesses.
 #: List of all known radios used by aircraft in the game.
 RADIOS: List[Radio] = [
-    Radio("AN/ARC-164", (RadioRange(MHz(225), MHz(400), step=MHz(1)),)),
-    Radio("AN/ARC-186(V) AM", (RadioRange(MHz(116), MHz(152), step=MHz(1)),)),
-    Radio("AN/ARC-186(V) FM", (RadioRange(MHz(30), MHz(76), step=MHz(1)),)),
+    Radio("AN/ARC-164", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)),
+    Radio("AN/ARC-186(V) AM", (RadioRange(MHz(116), MHz(152), MHz(1), Modulation.AM),)),
+    Radio("AN/ARC-186(V) FM", (RadioRange(MHz(30), MHz(76), MHz(1), Modulation.FM),)),
     Radio(
         "AN/ARC-210",
         (
-            RadioRange(MHz(225), MHz(400), MHz(1), frozenset((MHz(243),))),
-            RadioRange(MHz(136), MHz(155), MHz(1)),
-            RadioRange(MHz(156), MHz(174), MHz(1)),
-            RadioRange(MHz(118), MHz(136), MHz(1)),
-            RadioRange(MHz(30), MHz(88), MHz(1)),
+            RadioRange(
+                MHz(225),
+                MHz(400),
+                MHz(1),
+                Modulation.AM,
+                frozenset((MHz(243),)),
+            ),
+            RadioRange(MHz(136), MHz(155), MHz(1), Modulation.AM),
+            RadioRange(MHz(156), MHz(174), MHz(1), Modulation.FM),
+            RadioRange(MHz(118), MHz(136), MHz(1), Modulation.AM),
+            RadioRange(MHz(30), MHz(88), MHz(1), Modulation.FM),
+            # The AN/ARC-210 can also use 225-400 and 136-155 with FM Modulation
+            RadioRange(
+                MHz(225),
+                MHz(400),
+                MHz(1),
+                Modulation.FM,
+                frozenset((MHz(243),)),
+            ),
+            RadioRange(MHz(136), MHz(155), MHz(1), Modulation.FM),
         ),
     ),
-    Radio("AN/ARC-222", (RadioRange(MHz(116), MHz(152), step=MHz(1)),)),
-    Radio("SCR-522", (RadioRange(MHz(100), MHz(156), step=MHz(1)),)),
-    Radio("A.R.I. 1063", (RadioRange(MHz(100), MHz(156), step=MHz(1)),)),
-    Radio("BC-1206", (RadioRange(kHz(200), kHz(400), step=kHz(10)),)),
-    # Note: The M2000C V/UHF can operate in both ranges, but has a gap between
-    # 150 MHz and 225 MHz. We can't allocate in that gap, and the current
-    # system doesn't model gaps, so just pretend it ends at 150 MHz for now. We
-    # can model gaps later if needed.
-    Radio("TRT ERA 7000 V/UHF", (RadioRange(MHz(118), MHz(150), step=MHz(1)),)),
-    Radio("TRT ERA 7200 UHF", (RadioRange(MHz(225), MHz(400), step=MHz(1)),)),
+    Radio("AN/ARC-222", (RadioRange(MHz(116), MHz(152), MHz(1), Modulation.AM),)),
+    Radio("SCR-522", (RadioRange(MHz(100), MHz(156), MHz(1), Modulation.AM),)),
+    Radio("A.R.I. 1063", (RadioRange(MHz(100), MHz(156), MHz(1), Modulation.AM),)),
+    Radio("BC-1206", (RadioRange(kHz(200), kHz(400), kHz(10), Modulation.AM),)),
+    Radio(
+        "TRT ERA 7000 V/UHF",
+        (
+            RadioRange(MHz(118), MHz(150), MHz(1), Modulation.AM),
+            RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),
+        ),
+    ),
+    Radio("TRT ERA 7200 UHF", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)),
     # Tomcat radios
     # # https://www.heatblur.se/F-14Manual/general.html#an-arc-159-uhf-1-radio
-    Radio("AN/ARC-159", (RadioRange(MHz(225), MHz(400), step=MHz(1)),)),
-    # AN/ARC-182 can also operate from 30 MHz to 88 MHz, as well as from 225 MHz
-    # to 400 MHz range, but we can't model gaps with the current implementation.
+    Radio("AN/ARC-159", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)),
     # https://www.heatblur.se/F-14Manual/general.html#an-arc-182-v-uhf-2-radio
-    Radio("AN/ARC-182", (RadioRange(MHz(108), MHz(174), step=MHz(1)),)),
-    # Also capable of [103, 156) at 25 kHz intervals, but we can't do gaps.
-    Radio("FR 22", (RadioRange(MHz(225), MHz(400), step=kHz(50)),)),
+    Radio(
+        "AN/ARC-182",
+        (
+            RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),
+            RadioRange(MHz(108), MHz(174), MHz(1), Modulation.AM),
+            # The Range from 30-88MHz should be FM but its modeled as AM in dcs
+            RadioRange(MHz(30), MHz(88), MHz(1), Modulation.AM),
+        ),
+    ),
+    Radio(
+        "FR 22",
+        (
+            RadioRange(MHz(225), MHz(400), kHz(50), Modulation.AM),
+            RadioRange(MHz(103), MHz(156), kHz(25), Modulation.AM),
+        ),
+    ),
     # P-51 / P-47 Radio
     # 4 preset channels (A/B/C/D)
-    Radio("SCR522", (RadioRange(MHz(100), MHz(156), step=kHz(25)),)),
-    Radio("R&S M3AR VHF", (RadioRange(MHz(120), MHz(174), step=MHz(1)),)),
-    Radio("R&S M3AR UHF", (RadioRange(MHz(225), MHz(400), step=MHz(1)),)),
+    Radio("SCR522", (RadioRange(MHz(100), MHz(156), kHz(25), Modulation.AM),)),
+    # JF-17 Radios should use AM
+    Radio("R&S M3AR VHF", (RadioRange(MHz(120), MHz(174), MHz(1), Modulation.AM),)),
+    Radio("R&S M3AR UHF", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)),
     # MiG-15bis
-    Radio("RSI-6K HF", (RadioRange(MHz(3, 750), MHz(5), step=kHz(25)),)),
+    Radio("RSI-6K HF", (RadioRange(MHz(3, 750), MHz(5), kHz(25), Modulation.AM),)),
     # MiG-19P
-    Radio("RSIU-4V", (RadioRange(MHz(100), MHz(150), step=MHz(1)),)),
+    Radio("RSIU-4V", (RadioRange(MHz(100), MHz(150), MHz(1), Modulation.AM),)),
     # MiG-21bis
-    Radio("RSIU-5V", (RadioRange(MHz(118), MHz(140), step=MHz(1)),)),
+    Radio("RSIU-5V", (RadioRange(MHz(118), MHz(140), MHz(1), Modulation.AM),)),
     # Ka-50
     # Note: Also capable of 100MHz-150MHz, but we can't model gaps.
-    Radio("R-800L1", (RadioRange(MHz(220), MHz(400), step=kHz(25)),)),
-    Radio("R-828", (RadioRange(MHz(20), MHz(60), step=kHz(25)),)),
+    Radio("R-800L1", (RadioRange(MHz(220), MHz(400), kHz(25), Modulation.AM),)),
+    Radio("R-828", (RadioRange(MHz(20), MHz(60), kHz(25), Modulation.FM),)),
     # UH-1H
-    Radio("AN/ARC-51BX", (RadioRange(MHz(225), MHz(400), step=kHz(50)),)),
-    Radio("AN/ARC-131", (RadioRange(MHz(30), MHz(76), step=kHz(50)),)),
-    Radio("AN/ARC-134", (RadioRange(MHz(116), MHz(150), step=kHz(25)),)),
-    Radio("R&S Series 6000", (RadioRange(MHz(100), MHz(156), step=kHz(25)),)),
+    Radio("AN/ARC-51BX", (RadioRange(MHz(225), MHz(400), kHz(50), Modulation.AM),)),
+    Radio("AN/ARC-131", (RadioRange(MHz(30), MHz(76), kHz(50), Modulation.FM),)),
+    Radio("AN/ARC-134", (RadioRange(MHz(116), MHz(150), kHz(25), Modulation.AM),)),
+    # JAS39
+    Radio("R&S Series 6000", (RadioRange(MHz(100), MHz(156), kHz(25), Modulation.AM),)),
 ]
 
 
@@ -233,7 +277,10 @@ class RadioRegistry:
 
     # Not a real radio, but useful for allocating a channel usable for
     # inter-flight communications.
-    BLUFOR_UHF = Radio("BLUFOR UHF", (RadioRange(MHz(225), MHz(400), step=MHz(1)),))
+    # Uses AM as default Modulation
+    BLUFOR_UHF = Radio(
+        "BLUFOR UHF", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)
+    )
 
     def __init__(self) -> None:
         self.allocated_channels: Set[RadioFrequency] = set()

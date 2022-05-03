@@ -39,6 +39,7 @@ groups:
         - Logistics
   - PD: # Point Defense as separate group
     - name: PD
+      sub_task: PointDefense
       optional: true
       unit_count:
         - 0
@@ -46,6 +47,7 @@ groups:
       unit_classes:
         - SHORAD
     - name: AAA
+      sub_task: AAA
       optional: true
       unit_count:
         - 0

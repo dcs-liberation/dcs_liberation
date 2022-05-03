@@ -277,6 +277,10 @@ class Game:
         """Initialization for the first turn of the game."""
         from .sim import GameUpdateEvents
 
+        # Build the IADS Network
+        with logged_duration("Generate IADS Network"):
+            self.theater.iads_network.initialize_network(self.theater.ground_objects)
+
         for control_point in self.theater.controlpoints:
             control_point.initialize_turn_0()
             for tgo in control_point.connected_objectives:

@@ -278,7 +278,7 @@ SEAD_CAPABLE = [
 
 
 # Aircraft used for DEAD tasks. Must be capable of the CAS DCS task.
-DEAD_CAPABLE = [
+DEAD_CAPABLE = SEAD_CAPABLE + [
     AJS37,
     F_14B,
     F_14A_135_GR,
@@ -303,7 +303,7 @@ DEAD_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
-] + SEAD_CAPABLE
+]
 
 
 # Aircraft used for Strike mission

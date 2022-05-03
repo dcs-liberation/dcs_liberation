@@ -12,16 +12,25 @@ import random
 from collections import defaultdict
 from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
+import dcs.vehicles
 from dcs import Mission, Point, unitgroup
 from dcs.action import DoScript, SceneryDestructionZone
 from dcs.condition import MapObjectIsDead
 from dcs.country import Country
 from dcs.point import StaticPoint
-
+from dcs.ships import (
+    CVN_71,
+    CVN_72,
+    CVN_73,
+    CVN_75,
+    Stennis,
+)
 from dcs.statics import Fortification
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
+    ActivateLink4Command,
+    ActivateACLSCommand,
     EPLRS,
     FireAtPoint,
     OptAlarmState,
@@ -43,7 +52,7 @@ from game.theater.theatergroundobject import (
     LhaGroundObject,
     MissileSiteGroundObject,
 )
-from game.theater.theatergroup import SceneryUnit, TheaterGroup
+from game.theater.theatergroup import SceneryUnit, TheaterGroup, IadsGroundGroup
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
 
@@ -84,8 +93,19 @@ class GroundObjectGenerator:
             # Split the different unit types to be compliant to dcs limitation
             for unit in group.units:
                 if unit.is_static:
-                    # A Static unit has to be a single static group
-                    self.create_static_group(unit)
+                    if isinstance(unit, SceneryUnit):
+                        # Special handling for scenery objects
+                        self.add_trigger_zone_for_scenery(unit)
+                        if (
+                            self.game.settings.plugin_option("skynetiads")
+                            and isinstance(group, IadsGroundGroup)
+                            and group.iads_role.participate
+                        ):
+                            # Generate a unit which can be controlled by skynet
+                            self.generate_iads_command_unit(unit)
+                    else:
+                        # Create a static group for each static unit
+                        self.create_static_group(unit)
                 elif unit.is_vehicle and unit.alive:
                     # All alive Vehicles
                     vehicle_units.append(unit)
@@ -160,12 +180,6 @@ class GroundObjectGenerator:
         return ship_group
 
     def create_static_group(self, unit: TheaterUnit) -> None:
-        if isinstance(unit, SceneryUnit):
-            # Special handling for scenery objects:
-            # Only create a trigger zone and no "real" dcs unit
-            self.add_trigger_zone_for_scenery(unit)
-            return
-
         static_group = self.m.static_group(
             country=self.country,
             name=unit.unit_name,
@@ -242,6 +256,19 @@ class GroundObjectGenerator:
         )
         t.actions.append(DoScript(script_string))
         self.m.triggerrules.triggers.append(t)
+
+    def generate_iads_command_unit(self, unit: SceneryUnit) -> None:
+        # Creates a static Infantry Unit next to a scenery object. This is needed
+        # because skynet can not use map objects as Comms, Power or Command and needs a
+        # "real" unit to function correctly
+        self.m.static_group(
+            country=self.country,
+            name=unit.unit_name,
+            _type=dcs.vehicles.Infantry.Soldier_M4,
+            position=unit.position,
+            heading=unit.position.heading.degrees,
+            dead=not unit.alive,  # Also spawn as dead!
+        )
 
 
 class MissileSiteGenerator(GroundObjectGenerator):
@@ -366,7 +393,10 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                 )
                 tacan_callsign = self.tacan_callsign()
                 icls = next(self.icls_alloc)
-                self.activate_beacons(ship_group, tacan, tacan_callsign, icls)
+                link4 = None
+                if carrier_type in [Stennis, CVN_71, CVN_72, CVN_73, CVN_75]:
+                    link4 = self.radio_registry.alloc_uhf()
+                self.activate_beacons(ship_group, tacan, tacan_callsign, icls, link4)
                 self.add_runway_data(
                     brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
                 )
@@ -395,7 +425,11 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
     @staticmethod
     def activate_beacons(
-        group: ShipGroup, tacan: TacanChannel, callsign: str, icls: int
+        group: ShipGroup,
+        tacan: TacanChannel,
+        callsign: str,
+        icls: int,
+        link4: Optional[RadioFrequency] = None,
     ) -> None:
         group.points[0].tasks.append(
             ActivateBeaconCommand(
@@ -409,6 +443,11 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         group.points[0].tasks.append(
             ActivateICLSCommand(icls, unit_id=group.units[0].id)
         )
+        if link4 is not None:
+            group.points[0].tasks.append(
+                ActivateLink4Command(int(link4.mhz), group.units[0].id)
+            )
+            group.points[0].tasks.append(ActivateACLSCommand(unit_id=group.units[0].id))
 
     def add_runway_data(
         self,

@@ -165,7 +165,11 @@ class FlotGenerator:
                 maintask=AFAC,
             )
             jtac.points[0].tasks.append(
-                FAC(callsign=len(self.air_support.jtacs) + 1, frequency=int(freq.mhz))
+                FAC(
+                    callsign=len(self.air_support.jtacs) + 1,
+                    frequency=int(freq.mhz),
+                    modulation=freq.modulation,
+                )
             )
             jtac.points[0].tasks.append(SetInvisibleCommand(True))
             jtac.points[0].tasks.append(SetImmortalCommand(True))

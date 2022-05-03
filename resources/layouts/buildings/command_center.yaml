@@ -1,0 +1,14 @@
+name: command_center
+generic: true
+tasks:
+  - CommandCenter
+groups:
+  - Command Center:
+    - name: CommandCenter 0
+      statics:
+        - CommandCenter 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - .Command Center
+layout_file: resources/layouts/buildings/buildings.miz
