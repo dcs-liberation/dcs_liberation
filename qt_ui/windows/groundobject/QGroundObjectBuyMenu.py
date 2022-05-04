@@ -222,14 +222,15 @@ class QGroundObjectTemplateLayout(QGroupBox):
         self.ground_object.groups = []
         for group_name, groups in self.layout_model.groups.items():
             for group in groups:
-                self.layout_model.force_group.create_theater_group_for_tgo(
-                    self.ground_object,
-                    group.layout,
-                    f"{self.ground_object.name} ({group_name})",
-                    self.game,
-                    group.dcs_unit_type,  # Forced Type
-                    group.amount,  # Forced Amount
-                )
+                if group.enabled:
+                    self.layout_model.force_group.create_theater_group_for_tgo(
+                        self.ground_object,
+                        group.layout,
+                        f"{self.ground_object.name} ({group_name})",
+                        self.game,
+                        group.dcs_unit_type,  # Forced Type
+                        group.amount,  # Forced Amount
+                    )
         self.close_dialog_signal.emit()
 
 
