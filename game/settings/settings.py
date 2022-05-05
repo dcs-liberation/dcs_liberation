@@ -341,6 +341,12 @@ class Settings:
         GAMEPLAY_SECTION,
         default=False,
     )
+    hide_opfor_units: bool = boolean_option(
+        "Hide enemy units in Mission Editor",
+        MISSION_GENERATOR_PAGE,
+        GAMEPLAY_SECTION,
+        default=True,
+    )
     generate_marks: bool = boolean_option(
         "Put objective markers on the map",
         MISSION_GENERATOR_PAGE,

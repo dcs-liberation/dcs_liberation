@@ -87,6 +87,11 @@ class GroundObjectGenerator:
     def generate(self) -> None:
         if self.culled:
             return
+        hide_group = (
+            self.game.settings.hide_opfor_units
+            if self.ground_object.is_friendly(to_player=False)
+            else False
+        )
         for group in self.ground_object.groups:
             vehicle_units = []
             ship_units = []
@@ -95,7 +100,7 @@ class GroundObjectGenerator:
                 if unit.is_static:
                     if isinstance(unit, SceneryUnit):
                         # Special handling for scenery objects
-                        self.add_trigger_zone_for_scenery(unit)
+                        self.add_trigger_zone_for_scenery(unit, hide_group)
                         if (
                             self.game.settings.plugin_option("skynetiads")
                             and isinstance(group, IadsGroundGroup)
@@ -105,7 +110,7 @@ class GroundObjectGenerator:
                             self.generate_iads_command_unit(unit)
                     else:
                         # Create a static group for each static unit
-                        self.create_static_group(unit)
+                        self.create_static_group(unit, hide_group)
                 elif unit.is_vehicle and unit.alive:
                     # All alive Vehicles
                     vehicle_units.append(unit)
@@ -113,12 +118,12 @@ class GroundObjectGenerator:
                     # All alive Ships
                     ship_units.append(unit)
             if vehicle_units:
-                self.create_vehicle_group(group.group_name, vehicle_units)
+                self.create_vehicle_group(group.group_name, vehicle_units, hide_group)
             if ship_units:
-                self.create_ship_group(group.group_name, ship_units)
+                self.create_ship_group(group.group_name, ship_units, hidden=hide_group)
 
     def create_vehicle_group(
-        self, group_name: str, units: list[TheaterUnit]
+        self, group_name: str, units: list[TheaterUnit], hidden: bool
     ) -> VehicleGroup:
         vehicle_group: Optional[VehicleGroup] = None
         for unit in units:
@@ -144,6 +149,7 @@ class GroundObjectGenerator:
             self._register_theater_unit(unit, vehicle_group.units[-1])
         if vehicle_group is None:
             raise RuntimeError(f"Error creating VehicleGroup for {group_name}")
+        vehicle_group.hidden = hidden
         return vehicle_group
 
     def create_ship_group(
@@ -151,6 +157,7 @@ class GroundObjectGenerator:
         group_name: str,
         units: list[TheaterUnit],
         frequency: Optional[RadioFrequency] = None,
+        hidden: bool = False,
     ) -> ShipGroup:
         ship_group: Optional[ShipGroup] = None
         for unit in units:
@@ -177,9 +184,10 @@ class GroundObjectGenerator:
             self._register_theater_unit(unit, ship_group.units[-1])
         if ship_group is None:
             raise RuntimeError(f"Error creating ShipGroup for {group_name}")
+        ship_group.hidden = hidden
         return ship_group
 
-    def create_static_group(self, unit: TheaterUnit) -> None:
+    def create_static_group(self, unit: TheaterUnit, hidden: bool) -> None:
         static_group = self.m.static_group(
             country=self.country,
             name=unit.unit_name,
@@ -187,6 +195,7 @@ class GroundObjectGenerator:
             position=unit.position,
             heading=unit.position.heading.degrees,
             dead=not unit.alive,
+            hidden=hidden,
         )
         self._register_theater_unit(unit, static_group.units[0])
 
@@ -208,7 +217,7 @@ class GroundObjectGenerator:
     ) -> None:
         self.unit_map.add_theater_unit_mapping(theater_unit, dcs_unit)
 
-    def add_trigger_zone_for_scenery(self, scenery: SceneryUnit) -> None:
+    def add_trigger_zone_for_scenery(self, scenery: SceneryUnit, hidden: bool) -> None:
         # Align the trigger zones to the faction color on the DCS briefing/F10 map.
         color = (
             {1: 0.2, 2: 0.7, 3: 1, 4: 0.15}
@@ -228,6 +237,7 @@ class GroundObjectGenerator:
             color,
             scenery.zone.properties,
         )
+        trigger_zone.hidden = hidden
         # DCS only visually shows a scenery object is dead when
         # this trigger rule is applied.  Otherwise you can kill a
         # structure twice.
@@ -268,6 +278,7 @@ class GroundObjectGenerator:
             position=unit.position,
             heading=unit.position.heading.degrees,
             dead=not unit.alive,  # Also spawn as dead!
+            hidden=True,
         )
 
 

@@ -258,11 +258,13 @@ class MissionGenerator:
             self.mission.country(self.game.blue.country_name),
             self.game.blue.ato,
             tgo_generator.runways,
+            hidden=False,
         )
         aircraft_generator.generate_flights(
             self.mission.country(self.game.red.country_name),
             self.game.red.ato,
             tgo_generator.runways,
+            self.game.settings.hide_opfor_units,
         )
         aircraft_generator.spawn_unused_aircraft(
             self.mission.country(self.game.blue.country_name),

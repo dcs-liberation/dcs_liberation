@@ -72,7 +72,11 @@ class AirSupportGenerator:
             if self.conflict.blue_cp.captured
             else self.conflict.red_cp
         )
-
+        hidden = (
+            False
+            if self.conflict.blue_cp.captured
+            else self.game.settings.hide_opfor_units
+        )
         country = self.mission.country(self.game.blue.country_name)
 
         if not self.game.settings.disable_legacy_tanker:
@@ -114,6 +118,7 @@ class AirSupportGenerator:
                     speed=airspeed,
                     tacanchannel=str(tacan),
                 )
+                tanker_group.hidden = hidden
                 tanker_group.set_frequency(freq.mhz)
 
                 callsign = callsign_for_support_unit(tanker_group)
@@ -192,6 +197,7 @@ class AirSupportGenerator:
                 frequency=freq.mhz,
                 start_type=StartType.Warm,
             )
+            awacs_flight.hidden = hidden
             awacs_flight.set_frequency(freq.mhz)
 
             awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))

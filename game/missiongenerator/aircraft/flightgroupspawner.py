@@ -43,11 +43,13 @@ class FlightGroupSpawner:
         country: Country,
         mission: Mission,
         helipads: dict[ControlPoint, StaticGroup],
+        hidden: bool,
     ) -> None:
         self.flight = flight
         self.country = country
         self.mission = mission
         self.helipads = helipads
+        self.hidden = hidden
 
     def create_flight_group(self) -> FlyingGroup[Any]:
         """Creates the group for the flight and adds it to the mission.
@@ -153,6 +155,7 @@ class FlightGroupSpawner:
             maintask=None,
             group_size=self.flight.count,
         )
+        group.hidden = self.hidden
 
         group.points[0].alt_type = alt_type
         return group
@@ -165,7 +168,7 @@ class FlightGroupSpawner:
         # starts or (less likely) downgrade to warm starts to avoid the issue when the
         # player is generating the mission for multiplayer (which would need a new
         # option).
-        return self.mission.flight_group_from_airport(
+        group = self.mission.flight_group_from_airport(
             country=self.country,
             name=name,
             aircraft_type=self.flight.unit_type.dcs_unit_type,
@@ -175,6 +178,8 @@ class FlightGroupSpawner:
             group_size=self.flight.count,
             parking_slots=None,
         )
+        group.hidden = self.hidden
+        return group
 
     def _generate_over_departure(
         self, name: str, origin: ControlPoint
@@ -204,6 +209,7 @@ class FlightGroupSpawner:
             maintask=None,
             group_size=self.flight.count,
         )
+        group.hidden = self.hidden
 
         group.points[0].alt_type = alt_type
         return group
@@ -211,7 +217,7 @@ class FlightGroupSpawner:
     def _generate_at_group(
         self, name: str, at: Union[ShipGroup, StaticGroup]
     ) -> FlyingGroup[Any]:
-        return self.mission.flight_group_from_unit(
+        group = self.mission.flight_group_from_unit(
             country=self.country,
             name=name,
             aircraft_type=self.flight.unit_type.dcs_unit_type,
@@ -220,6 +226,8 @@ class FlightGroupSpawner:
             start_type=self._start_type_at_group(at),
             group_size=self.flight.count,
         )
+        group.hidden = self.hidden
+        return group
 
     def _generate_at_cp_helipad(self, name: str, cp: ControlPoint) -> FlyingGroup[Any]:
         try:

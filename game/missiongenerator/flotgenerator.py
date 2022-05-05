@@ -201,6 +201,7 @@ class FlotGenerator:
         forward_heading: Heading,
     ) -> None:
 
+        hide_unit = False if is_player else self.game.settings.hide_opfor_units
         infantry_position = self.conflict.find_ground_position(
             group.points[0].position.random_point_within(250, 50),
             500,
@@ -227,7 +228,7 @@ class FlotGenerator:
                         u = random.choices(
                             manpads, weights=[m.spawn_weight for m in manpads]
                         )[0]
-                        self.mission.vehicle_group(
+                        vg = self.mission.vehicle_group(
                             side,
                             namegen.next_infantry_name(side, u),
                             u.dcs_unit_type,
@@ -236,6 +237,7 @@ class FlotGenerator:
                             heading=forward_heading.degrees,
                             move_formation=PointAction.OffRoad,
                         )
+                        vg.hidden = hide_unit
             return
 
         possible_infantry_units = set(faction.infantry_with_class(UnitClass.INFANTRY))
@@ -252,7 +254,7 @@ class FlotGenerator:
             weights=[u.spawn_weight for u in infantry_choices],
             k=INFANTRY_GROUP_SIZE,
         )
-        self.mission.vehicle_group(
+        vg = self.mission.vehicle_group(
             side,
             namegen.next_infantry_name(side, units[0]),
             units[0].dcs_unit_type,
@@ -261,10 +263,11 @@ class FlotGenerator:
             heading=forward_heading.degrees,
             move_formation=PointAction.OffRoad,
         )
+        vg.hidden = hide_unit
 
         for unit in units[1:]:
             position = infantry_position.random_point_within(55, 5)
-            self.mission.vehicle_group(
+            infantry_group = self.mission.vehicle_group(
                 side,
                 namegen.next_infantry_name(side, unit),
                 unit.dcs_unit_type,
@@ -273,6 +276,7 @@ class FlotGenerator:
                 heading=forward_heading.degrees,
                 move_formation=PointAction.OffRoad,
             )
+            infantry_group.hidden = hide_unit
 
     def _set_reform_waypoint(
         self, dcs_group: VehicleGroup, forward_heading: Heading
@@ -726,6 +730,7 @@ class FlotGenerator:
         position, heading, combat_width = frontline_vector
         spawn_heading = heading.left if is_player else heading.right
         country = self.game.coalition_for(is_player).country_name
+        hide_unit = False if is_player else self.game.settings.hide_opfor_units
         for group in groups:
             if group.role == CombatGroupRole.ARTILLERY:
                 distance_from_frontline = (
@@ -748,6 +753,7 @@ class FlotGenerator:
                     group.size,
                     final_position,
                     heading=spawn_heading.opposite,
+                    hidden=hide_unit,
                 )
                 if is_player:
                     g.set_skill(Skill(self.game.settings.player_skill))
@@ -775,6 +781,7 @@ class FlotGenerator:
         at: Point,
         move_formation: PointAction = PointAction.OffRoad,
         heading: Heading = Heading.from_degrees(0),
+        hidden: bool = False,
     ) -> VehicleGroup:
 
         if side == self.conflict.attackers_country:
@@ -791,7 +798,7 @@ class FlotGenerator:
             heading=heading.degrees,
             move_formation=move_formation,
         )
-
+        group.hidden = hidden
         self.unit_map.add_front_line_units(group, cp, unit_type)
 
         for c in range(count):

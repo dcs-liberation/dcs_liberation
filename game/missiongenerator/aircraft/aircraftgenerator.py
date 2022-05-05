@@ -89,6 +89,7 @@ class AircraftGenerator:
         country: Country,
         ato: AirTaskingOrder,
         dynamic_runways: Dict[str, RunwayData],
+        hidden: bool,
     ) -> None:
         """Adds aircraft to the mission for every flight in the ATO.
 
@@ -108,7 +109,7 @@ class AircraftGenerator:
                 if flight.alive:
                     logging.info(f"Generating flight: {flight.unit_type}")
                     group = self.create_and_configure_flight(
-                        flight, country, dynamic_runways
+                        flight, country, dynamic_runways, hidden
                     )
                     self.unit_map.add_aircraft(group, flight)
 
@@ -122,18 +123,20 @@ class AircraftGenerator:
             faction = self.game.coalition_for(control_point.captured).faction
             if control_point.captured:
                 country = player_country
+                hidden = False
             else:
                 country = enemy_country
+                hidden = self.game.settings.hide_opfor_units
 
             for squadron in control_point.squadrons:
                 try:
-                    self._spawn_unused_for(squadron, country, faction)
+                    self._spawn_unused_for(squadron, country, faction, hidden)
                 except NoParkingSlotError:
                     # If we run out of parking, stop spawning aircraft at this base.
                     break
 
     def _spawn_unused_for(
-        self, squadron: Squadron, country: Country, faction: Faction
+        self, squadron: Squadron, country: Country, faction: Faction, hidden: bool
     ) -> None:
         assert isinstance(squadron.location, Airfield)
         for _ in range(squadron.untasked_aircraft):
@@ -152,17 +155,21 @@ class AircraftGenerator:
             flight.state = Completed(flight, self.game.settings)
 
             group = FlightGroupSpawner(
-                flight, country, self.mission, self.helipads
+                flight, country, self.mission, self.helipads, hidden
             ).create_idle_aircraft()
             AircraftPainter(flight, group).apply_livery()
             self.unit_map.add_aircraft(group, flight)
 
     def create_and_configure_flight(
-        self, flight: Flight, country: Country, dynamic_runways: Dict[str, RunwayData]
+        self,
+        flight: Flight,
+        country: Country,
+        dynamic_runways: Dict[str, RunwayData],
+        hidden: bool,
     ) -> FlyingGroup[Any]:
         """Creates and configures the flight group in the mission."""
         group = FlightGroupSpawner(
-            flight, country, self.mission, self.helipads
+            flight, country, self.mission, self.helipads, hidden
         ).create_flight_group()
         self.flights.append(
             FlightGroupConfigurator(
