@@ -88,8 +88,9 @@ class GroundObjectGenerator:
         if self.culled:
             return
         hide_group = (
-            self.game.settings.hide_opfor_units
+            True
             if self.ground_object.is_friendly(to_player=False)
+            and self.game.settings.hide_opfor_units == True
             else False
         )
         for group in self.ground_object.groups:

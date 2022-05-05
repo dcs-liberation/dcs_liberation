@@ -126,7 +126,7 @@ class AircraftGenerator:
                 hidden = False
             else:
                 country = enemy_country
-                hidden = self.game.settings.hide_opfor_units
+                hidden = self.game.settings.hide_opfor_units is not None
 
             for squadron in control_point.squadrons:
                 try:

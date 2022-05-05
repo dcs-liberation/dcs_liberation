@@ -341,11 +341,16 @@ class Settings:
         GAMEPLAY_SECTION,
         default=False,
     )
-    hide_opfor_units: bool = boolean_option(
-        "Hide enemy units in Mission Editor",
+    hide_opfor_units: Optional[bool] = choices_option(
+        "Show enemy units in Mission Editor",
         MISSION_GENERATOR_PAGE,
         GAMEPLAY_SECTION,
-        default=True,
+        choices={
+            "Show all": None,
+            "Hide all enemy units": True,
+            "Hide flights and front line": False,
+        },
+        default=False,
     )
     generate_marks: bool = boolean_option(
         "Put objective markers on the map",

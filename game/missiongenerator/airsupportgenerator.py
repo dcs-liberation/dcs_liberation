@@ -75,7 +75,7 @@ class AirSupportGenerator:
         hidden = (
             False
             if self.conflict.blue_cp.captured
-            else self.game.settings.hide_opfor_units
+            else self.game.settings.hide_opfor_units is not None
         )
         country = self.mission.country(self.game.blue.country_name)
 

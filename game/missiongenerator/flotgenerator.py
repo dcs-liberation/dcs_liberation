@@ -201,7 +201,9 @@ class FlotGenerator:
         forward_heading: Heading,
     ) -> None:
 
-        hide_unit = False if is_player else self.game.settings.hide_opfor_units
+        hide_group = (
+            False if is_player else self.game.settings.hide_opfor_units is not None
+        )
         infantry_position = self.conflict.find_ground_position(
             group.points[0].position.random_point_within(250, 50),
             500,
@@ -237,7 +239,7 @@ class FlotGenerator:
                             heading=forward_heading.degrees,
                             move_formation=PointAction.OffRoad,
                         )
-                        vg.hidden = hide_unit
+                        vg.hidden = hide_group
             return
 
         possible_infantry_units = set(faction.infantry_with_class(UnitClass.INFANTRY))
@@ -263,7 +265,7 @@ class FlotGenerator:
             heading=forward_heading.degrees,
             move_formation=PointAction.OffRoad,
         )
-        vg.hidden = hide_unit
+        vg.hidden = hide_group
 
         for unit in units[1:]:
             position = infantry_position.random_point_within(55, 5)
@@ -276,7 +278,7 @@ class FlotGenerator:
                 heading=forward_heading.degrees,
                 move_formation=PointAction.OffRoad,
             )
-            infantry_group.hidden = hide_unit
+            infantry_group.hidden = hide_group
 
     def _set_reform_waypoint(
         self, dcs_group: VehicleGroup, forward_heading: Heading
@@ -730,7 +732,9 @@ class FlotGenerator:
         position, heading, combat_width = frontline_vector
         spawn_heading = heading.left if is_player else heading.right
         country = self.game.coalition_for(is_player).country_name
-        hide_unit = False if is_player else self.game.settings.hide_opfor_units
+        hide_group = (
+            False if is_player else self.game.settings.hide_opfor_units is not None
+        )
         for group in groups:
             if group.role == CombatGroupRole.ARTILLERY:
                 distance_from_frontline = (
@@ -753,7 +757,7 @@ class FlotGenerator:
                     group.size,
                     final_position,
                     heading=spawn_heading.opposite,
-                    hidden=hide_unit,
+                    hidden=hide_group,
                 )
                 if is_player:
                     g.set_skill(Skill(self.game.settings.player_skill))
