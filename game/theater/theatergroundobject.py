@@ -262,6 +262,11 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
             unit.position.heading += rotation
             unit.position.rotate(self.position, rotation)
 
+    @property
+    def should_head_to_conflict(self) -> bool:
+        """Should this TGO head towards the closest conflict to work properly?"""
+        return False
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
@@ -421,6 +426,10 @@ class MissileSiteGroundObject(TheaterGroundObject):
     def purchasable(self) -> bool:
         return False
 
+    @property
+    def should_head_to_conflict(self) -> bool:
+        return True
+
 
 class CoastalSiteGroundObject(TheaterGroundObject):
     def __init__(
@@ -449,6 +458,10 @@ class CoastalSiteGroundObject(TheaterGroundObject):
     def purchasable(self) -> bool:
         return False
 
+    @property
+    def should_head_to_conflict(self) -> bool:
+        return True
+
 
 class IadsGroundObject(TheaterGroundObject, ABC):
     def __init__(
@@ -472,6 +485,10 @@ class IadsGroundObject(TheaterGroundObject, ABC):
         if not self.is_friendly(for_player):
             yield FlightType.DEAD
         yield from super().mission_types(for_player)
+
+    @property
+    def should_head_to_conflict(self) -> bool:
+        return True
 
 
 # The SamGroundObject represents all type of AA
@@ -552,6 +569,10 @@ class VehicleGroupGroundObject(TheaterGroundObject):
 
     @property
     def purchasable(self) -> bool:
+        return True
+
+    @property
+    def should_head_to_conflict(self) -> bool:
         return True
 
 
