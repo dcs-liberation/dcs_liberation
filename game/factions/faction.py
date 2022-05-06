@@ -216,7 +216,7 @@ class Faction:
         ]
 
         faction.preset_groups = [
-            ForceGroup.named(n) for n in json.get("preset_groups", [])
+            ForceGroup.from_preset_group(g) for g in json.get("preset_groups", [])
         ]
 
         faction.requirements = json.get("requirements", {})

@@ -12,12 +12,10 @@ if TYPE_CHECKING:
 
 
 class ArmedForces:
-    """TODO Description"""
-
-    # All available force groups for a specific Role
-    forces: list[ForceGroup]
+    """Represents all ForceGroups which are available to the faction"""
 
     def __init__(self, faction: Faction):
+        self.forces: list[ForceGroup] = []
         with logged_duration(f"Loading armed forces for {faction.name}"):
             self._load_forces(faction)
 

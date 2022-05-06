@@ -118,10 +118,18 @@ class ForceGroup:
         return self
 
     @classmethod
-    def named(cls, name: str) -> ForceGroup:
+    def from_preset_group(cls, name: str) -> ForceGroup:
         if not cls._loaded:
             cls._load_all()
-        return cls._by_name[name]
+        preset_group = cls._by_name[name]
+        # Return a copy of the PresetGroup as new ForceGroup
+        return ForceGroup(
+            name=str(preset_group.name),
+            units=list(preset_group.units),
+            statics=list(preset_group.statics),
+            tasks=list(preset_group.tasks),
+            layouts=list(preset_group.layouts),
+        )
 
     def has_access_to_dcs_type(self, type: Type[DcsUnitType]) -> bool:
         return (
