@@ -41,7 +41,7 @@ class Income:
                     BuildingIncome(
                         tgo.obj_name,
                         tgo.category,
-                        len(list(tgo.statics)),
+                        sum(1 for b in tgo.statics if b.alive),
                         REWARDS[tgo.category],
                     )
                 )
