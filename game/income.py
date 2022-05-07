@@ -30,25 +30,21 @@ class Income:
         self.control_points = []
         self.buildings = []
 
-        names = set()
         for cp in game.theater.control_points_for(player):
             if cp.income_per_turn:
                 self.control_points.append(cp)
-            for tgo in cp.ground_objects:
-                names.add(tgo.obj_name)
 
-        for name in names:
-            count = 0
-            tgos = game.theater.find_ground_objects_by_obj_name(name)
-            category = tgos[0].category
-            if category not in REWARDS:
-                continue
-            for tgo in tgos:
-                if not tgo.is_dead:
-                    count += 1
-            self.buildings.append(
-                BuildingIncome(name, category, count, REWARDS[category])
-            )
+            for tgo in cp.ground_objects:
+                if tgo.category not in REWARDS:
+                    continue
+                self.buildings.append(
+                    BuildingIncome(
+                        tgo.obj_name,
+                        tgo.category,
+                        len(list(tgo.statics)),
+                        REWARDS[tgo.category],
+                    )
+                )
 
         self.from_bases = sum(cp.income_per_turn for cp in self.control_points)
         self.total_buildings = sum(b.income for b in self.buildings)
