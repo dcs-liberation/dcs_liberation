@@ -174,7 +174,7 @@ class ObjectiveFinder:
             yield from self.game.coalition_for(
                 self.is_player
             ).transfers.convoys.travelling_to(
-                front_line.control_point_hostile_to(self.is_player)
+                front_line.control_point_hostile_to(not self.is_player)
             )
 
     def cargo_ships(self) -> Iterator[CargoShip]:
@@ -182,7 +182,7 @@ class ObjectiveFinder:
             yield from self.game.coalition_for(
                 self.is_player
             ).transfers.cargo_ships.travelling_to(
-                front_line.control_point_hostile_to(self.is_player)
+                front_line.control_point_hostile_to(not self.is_player)
             )
 
     def friendly_control_points(self) -> Iterator[ControlPoint]:
