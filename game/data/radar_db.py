@@ -22,6 +22,7 @@ from dcs.ships import (
     USS_Arleigh_Burke_IIa,
 )
 from dcs.vehicles import AirDefence
+from pydcs_extensions import highdigitsams as hds
 
 TELARS = {
     AirDefence._2S6_Tunguska,
@@ -29,6 +30,7 @@ TELARS = {
     AirDefence.Osa_9A33_ln,
     AirDefence.Tor_9A331,
     AirDefence.Roland_ADS,
+    hds.SAM_SA_17_Buk_M1_2_LN_9A310M1_2,
 }
 
 TRACK_RADARS = {
@@ -42,6 +44,11 @@ TRACK_RADARS = {
     AirDefence.Rapier_fsa_blindfire_radar,
     AirDefence.HQ_7_STR_SP,
     AirDefence.NASAMS_Radar_MPQ64F1,
+    hds.SAM_SA_10B_S_300PS_30N6_TR,
+    hds.SAM_SA_12_S_300V_9S32_TR,
+    hds.SAM_SA_20_S_300PMU1_TR_30N6E,
+    hds.SAM_SA_20B_S_300PMU2_TR_92H6E_truck,
+    hds.SAM_SA_23_S_300VM_9S32ME_TR,
 }
 
 LAUNCHER_TRACKER_PAIRS = {
@@ -57,6 +64,18 @@ LAUNCHER_TRACKER_PAIRS = {
     AirDefence.S_200_Launcher: AirDefence.RPC_5N62V,
     AirDefence.NASAMS_LN_B: AirDefence.NASAMS_Radar_MPQ64F1,
     AirDefence.NASAMS_LN_C: AirDefence.NASAMS_Radar_MPQ64F1,
+    hds.SAM_SA_2__V759__LN_SM_90: AirDefence.SNR_75V,
+    hds.SAM_HQ_2_LN_SM_90: AirDefence.SNR_75V,
+    hds.SAM_SA_3__V_601P__LN_5P73: AirDefence.Snr_s_125_tr,
+    hds.SAM_SA_10B_S_300PS_5P85SE_LN: hds.SAM_SA_10B_S_300PS_30N6_TR,
+    hds.SAM_SA_10B_S_300PS_5P85SU_LN: hds.SAM_SA_10B_S_300PS_30N6_TR,
+    hds.SAM_SA_12_S_300V_9A82_LN: hds.SAM_SA_12_S_300V_9S32_TR,
+    hds.SAM_SA_12_S_300V_9A83_LN: hds.SAM_SA_12_S_300V_9S32_TR,
+    hds.SAM_SA_20_S_300PMU1_LN_5P85CE: hds.SAM_SA_20_S_300PMU1_TR_30N6E,
+    hds.SAM_SA_20_S_300PMU1_LN_5P85DE: hds.SAM_SA_20_S_300PMU1_TR_30N6E,
+    hds.SAM_SA_20B_S_300PMU2_LN_5P85SE2: hds.SAM_SA_20B_S_300PMU2_TR_92H6E_truck,
+    hds.SAM_SA_23_S_300VM_9A82ME_LN: hds.SAM_SA_23_S_300VM_9S32ME_TR,
+    hds.SAM_SA_23_S_300VM_9A83ME_LN: hds.SAM_SA_23_S_300VM_9S32ME_TR,
 }
 
 UNITS_WITH_RADAR = {
