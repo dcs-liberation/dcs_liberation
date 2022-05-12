@@ -289,12 +289,19 @@ class ForceGroup:
                 # Align heading to GroundObject defined by the campaign designer
                 unit.position.heading + rotation,
             )
-            if unit.unit_type and unit.unit_type.dcs_unit_type in UNITS_WITH_RADAR:
-                # Head Radars towards the center of the conflict
-                unit.position.heading = (
-                    game.theater.heading_to_conflict_from(unit.position)
-                    or unit.position.heading
-                )
+            if unit.unit_type is not None:
+                if unit.unit_type.dcs_unit_type in UNITS_WITH_RADAR:
+                    # Head Radars towards the center of the conflict
+                    unit.position.heading = (
+                        game.theater.heading_to_conflict_from(unit.position)
+                        or unit.position.heading
+                    )
+                if (
+                    isinstance(unit.unit_type, GroundUnitType)
+                    and unit.unit_type.reversed_heading
+                ):
+                    # Reverse the heading of the unit
+                    unit.position.heading = unit.position.heading.opposite
             # Rotate unit around the center to align the orientation of the group
             unit.position.rotate(ground_object.position, rotation)
 

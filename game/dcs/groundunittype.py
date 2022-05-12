@@ -55,6 +55,10 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
     spawn_weight: int
     skynet_properties: SkynetProperties
 
+    # Defines if we should place the ground unit with an inverted heading.
+    # Some units like few Launchers have to be placed backwards to be able to fire.
+    reversed_heading: bool
+
     @classmethod
     def named(cls, name: str) -> GroundUnitType:
         if not cls._loaded:
@@ -117,4 +121,5 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
                 skynet_properties=SkynetProperties.from_data(
                     data.get("skynet_properties", {})
                 ),
+                reversed_heading=data.get("reversed_heading", False),
             )
