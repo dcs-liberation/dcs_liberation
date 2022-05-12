@@ -419,6 +419,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                 group.add_waypoint(point, carrier_speed.kph)
                 # Rotate the whole ground object to the new course
                 self.ground_object.rotate(brc)
+                return brc
         return None
 
     def tacan_callsign(self) -> str:
