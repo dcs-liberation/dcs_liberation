@@ -5,17 +5,16 @@ tasks:
   - AAA
 groups:
   - AAA:
-    - name: AAA Site 0
+    - name: AAA Site
       unit_count:
         - 2
         - 6
       unit_classes:
         - AAA
-    - name: AAA Site 1
+    - name: AAA Site Logistics
       optional: true
       unit_count:
         - 1
         - 2
       unit_classes:
         - Logistics
-layout_file: resources/layouts/anti_air/AAA.miz

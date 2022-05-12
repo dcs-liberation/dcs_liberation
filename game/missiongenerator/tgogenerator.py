@@ -417,7 +417,8 @@ class GenericCarrierGenerator(GroundObjectGenerator):
             if self.game.theater.is_in_sea(point):
                 group.points[0].speed = carrier_speed.meters_per_second
                 group.add_waypoint(point, carrier_speed.kph)
-                return brc
+                # Rotate the whole ground object to the new course
+                self.ground_object.rotate(brc)
         return None
 
     def tacan_callsign(self) -> str:

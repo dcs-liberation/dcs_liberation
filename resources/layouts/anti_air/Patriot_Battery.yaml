@@ -49,4 +49,3 @@ groups:
         - 2
       unit_classes:
         - SHORAD
-layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

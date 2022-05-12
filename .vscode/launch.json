@@ -51,6 +51,17 @@
         "PYTHONPATH": ".;./pydcs"
       },
       "preLaunchTask": "Prepare Environment"
-    }
+    },
+    {
+      "name": "Fix Layout orientation",
+      "type": "python",
+      "request": "launch",
+      "program": "resources\\tools\\fix_layout_orientation.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs"
+      },
+      "args": ["resources/layouts/anti_air/S-300_Site.miz"]
+    },
   ]
 }

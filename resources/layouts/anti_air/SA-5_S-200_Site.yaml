@@ -24,4 +24,3 @@ groups:
         - 6
       unit_types:
         - S-200_Launcher
-layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

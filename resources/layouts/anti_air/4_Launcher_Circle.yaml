@@ -1,0 +1,32 @@
+name: 4 Launcher Circle
+tasks:
+  - SHORAD
+  - MERAD
+groups:
+  - SAM:
+    - name: Search Radar
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+        - SearchTrackRadar
+    - name: Command Post
+      optional: true
+      fill: false # Do not fill with faction possible units
+      unit_count:
+        - 1
+      unit_classes:
+        - CommandPost
+    - name: Launcher
+      unit_count:
+        - 4
+      unit_classes:
+        - Launcher
+        - TELAR
+    - name: Logistics
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - Logistics

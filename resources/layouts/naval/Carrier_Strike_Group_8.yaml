@@ -20,4 +20,3 @@ groups:
         - 1
       unit_types:
         - TICONDEROG
-layout_file: resources/layouts/naval/legacy_naval_templates.miz
