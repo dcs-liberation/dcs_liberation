@@ -6,4 +6,5 @@ units:
   - SAM SA-2 S-75 "Fan Song" TR
   - SAM HQ-2 LN SM-90
 layouts:
-  - 4 Launcher Site
+  - 4 Launcher Site (Semicircle)
+  - 4 Launcher Site (Circle)

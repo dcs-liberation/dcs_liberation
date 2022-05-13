@@ -5,6 +5,14 @@ tasks:
   - AAA
 groups:
   - AAA:
+    - name: AAA Site Radar
+      optional: true # Optional if the AAA Site has a Radar
+      fill: false # Do not fill if no Radar is required!
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+        - SearchTrackRadar
     - name: AAA Site
       unit_count:
         - 2

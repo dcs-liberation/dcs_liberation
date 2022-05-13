@@ -1,9 +1,9 @@
-name: 4 Launcher Site (Circle)
+name: 4 Launcher Site (Semicircle)
 tasks:
   - MERAD
   - LORAD
 groups:
-  - SAM:
+  - SAM: # Main Battery as one group
     - name: Search Radar
       unit_count:
         - 1
@@ -54,4 +54,4 @@ groups:
         - 2
       unit_classes:
         - AAA
-layout_file: resources/layouts/anti_air/8_Launcher_Circle.miz
+layout_file: resources/layouts/anti_air/6_Launcher_Semicircle.miz
