@@ -25,7 +25,7 @@ from game.data.groups import GroupRole, GroupTask
 from game.layout.layout import (
     LayoutException,
     TgoLayout,
-    TgoLayoutGroup,
+    TgoLayoutUnitGroup,
 )
 from game.theater import TheaterGroundObject
 from game.theater.theatergroundobject import (
@@ -38,7 +38,7 @@ from qt_ui.uiconstants import EVENT_ICONS
 
 @dataclass
 class QTgoLayoutGroup:
-    layout: TgoLayoutGroup
+    layout: TgoLayoutUnitGroup
     dcs_unit_type: Type[UnitType]
     amount: int
     unit_price: int
@@ -63,7 +63,7 @@ class QTgoLayout:
 class QTgoLayoutGroupRow(QWidget):
     group_template_changed = Signal()
 
-    def __init__(self, force_group: ForceGroup, group: TgoLayoutGroup) -> None:
+    def __init__(self, force_group: ForceGroup, group: TgoLayoutUnitGroup) -> None:
         super().__init__()
         self.grid_layout = QGridLayout()
         self.setLayout(self.grid_layout)
@@ -170,8 +170,10 @@ class QGroundObjectTemplateLayout(QGroupBox):
         self.layout_model.groups = defaultdict(list)
         for id in range(self.template_grid.count()):
             self.template_grid.itemAt(id).widget().deleteLater()
-        for group_name, groups in self.layout_model.layout.groups.items():
-            self.add_theater_group(group_name, self.layout_model.force_group, groups)
+        for group in self.layout_model.layout.groups:
+            self.add_theater_group(
+                group.group_name, self.layout_model.force_group, group.unit_groups
+            )
         self.group_template_changed()
 
     @property
@@ -183,7 +185,7 @@ class QGroundObjectTemplateLayout(QGroupBox):
         return self.cost <= self.game.blue.budget
 
     def add_theater_group(
-        self, group_name: str, force_group: ForceGroup, groups: list[TgoLayoutGroup]
+        self, group_name: str, force_group: ForceGroup, groups: list[TgoLayoutUnitGroup]
     ) -> None:
         group_box = QGroupBox(group_name)
         vbox_layout = QVBoxLayout()

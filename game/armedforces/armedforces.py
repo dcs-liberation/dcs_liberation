@@ -35,18 +35,16 @@ class ArmedForces:
         """Initialize the ArmedForces for the given faction.
         This will create a ForceGroup for each generic Layout and PresetGroup"""
 
-        # Initialize with preset_groups from the faction
-        self.forces = [
-            preset_group.initialize_for_faction(faction)
-            for preset_group in faction.preset_groups
-        ]
-
         # Generate ForceGroup for all generic layouts by iterating over
         # all layouts which are usable by the given faction.
         for layout in LAYOUTS.layouts:
             if layout.generic and layout.usable_by_faction(faction):
                 # Creates a faction compatible GorceGroup
                 self.add_or_update_force_group(ForceGroup.for_layout(layout, faction))
+
+        # Add all preset groups afterwards to prevent them being merged with generics
+        for preset_group in faction.preset_groups:
+            self.forces.append(preset_group.initialize_for_faction(faction))
 
     def groups_for_task(self, group_task: GroupTask) -> Iterator[ForceGroup]:
         for force_group in self.forces:
@@ -59,7 +57,7 @@ class ArmedForces:
             for group in self.groups_for_task(task):
                 if group not in groups:
                     groups.append(group)
-        return groups
+        return sorted(groups, key=lambda g: g.name)
 
     def random_group_for_task(self, group_task: GroupTask) -> Optional[ForceGroup]:
         unit_groups = list(self.groups_for_task(group_task))

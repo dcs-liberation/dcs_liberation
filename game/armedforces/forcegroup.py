@@ -21,7 +21,7 @@ from game.theater.theatergroundobject import (
     NavalGroundObject,
 )
 from game.layout import LAYOUTS
-from game.layout.layout import TgoLayout, TgoLayoutGroup
+from game.layout.layout import TgoLayout, TgoLayoutUnitGroup
 from game.point_with_heading import PointWithHeading
 from game.theater.theatergroup import IadsGroundGroup, IadsRole, TheaterGroup
 from game.utils import escape_string_for_lua
@@ -67,10 +67,10 @@ class ForceGroup:
         """
         units: set[UnitType[Any]] = set()
         statics: set[Type[DcsUnitType]] = set()
-        for group in layout.all_groups:
-            if group.optional and not group.fill:
+        for unit_group in layout.all_unit_groups:
+            if unit_group.optional and not unit_group.fill:
                 continue
-            for unit_type in group.possible_types_for_faction(faction):
+            for unit_type in unit_group.possible_types_for_faction(faction):
                 if issubclass(unit_type, VehicleType):
                     units.add(next(GroundUnitType.for_dcs_type(unit_type)))
                 elif issubclass(unit_type, ShipType):
@@ -89,11 +89,11 @@ class ForceGroup:
     def __str__(self) -> str:
         return self.name
 
-    def has_unit_for_layout_group(self, group: TgoLayoutGroup) -> bool:
+    def has_unit_for_layout_group(self, unit_group: TgoLayoutUnitGroup) -> bool:
         for unit in self.units:
             if (
-                unit.dcs_unit_type in group.unit_types
-                or unit.unit_class in group.unit_classes
+                unit.dcs_unit_type in unit_group.unit_types
+                or unit.unit_class in unit_group.unit_classes
             ):
                 return True
         return False
@@ -102,9 +102,9 @@ class ForceGroup:
         """Initialize a ForceGroup for the given Faction.
         This adds accessible units to LayoutGroups with the fill property"""
         for layout in self.layouts:
-            for group in layout.all_groups:
-                if group.fill and not self.has_unit_for_layout_group(group):
-                    for unit_type in group.possible_types_for_faction(faction):
+            for unit_group in layout.all_unit_groups:
+                if unit_group.fill and not self.has_unit_for_layout_group(unit_group):
+                    for unit_type in unit_group.possible_types_for_faction(faction):
                         if issubclass(unit_type, VehicleType):
                             self.units.append(
                                 next(GroundUnitType.for_dcs_type(unit_type))
@@ -138,38 +138,44 @@ class ForceGroup:
         )
 
     def dcs_unit_types_for_group(
-        self, group: TgoLayoutGroup
+        self, unit_group: TgoLayoutUnitGroup
     ) -> list[Type[DcsUnitType]]:
         """Return all available DCS Unit Types which can be used in the given
         TgoLayoutGroup"""
-        unit_types = [t for t in group.unit_types if self.has_access_to_dcs_type(t)]
+        unit_types = [
+            t for t in unit_group.unit_types if self.has_access_to_dcs_type(t)
+        ]
 
         alternative_types = []
         for accessible_unit in self.units:
-            if accessible_unit.unit_class in group.unit_classes:
+            if accessible_unit.unit_class in unit_group.unit_classes:
                 unit_types.append(accessible_unit.dcs_unit_type)
-            if accessible_unit.unit_class in group.fallback_classes:
+            if accessible_unit.unit_class in unit_group.fallback_classes:
                 alternative_types.append(accessible_unit.dcs_unit_type)
 
         return unit_types or alternative_types
 
-    def unit_types_for_group(self, group: TgoLayoutGroup) -> Iterator[UnitType[Any]]:
-        for dcs_type in self.dcs_unit_types_for_group(group):
+    def unit_types_for_group(
+        self, unit_group: TgoLayoutUnitGroup
+    ) -> Iterator[UnitType[Any]]:
+        for dcs_type in self.dcs_unit_types_for_group(unit_group):
             if issubclass(dcs_type, VehicleType):
                 yield next(GroundUnitType.for_dcs_type(dcs_type))
             elif issubclass(dcs_type, ShipType):
                 yield next(ShipUnitType.for_dcs_type(dcs_type))
 
-    def statics_for_group(self, group: TgoLayoutGroup) -> Iterator[Type[DcsUnitType]]:
-        for dcs_type in self.dcs_unit_types_for_group(group):
+    def statics_for_group(
+        self, unit_group: TgoLayoutUnitGroup
+    ) -> Iterator[Type[DcsUnitType]]:
+        for dcs_type in self.dcs_unit_types_for_group(unit_group):
             if issubclass(dcs_type, StaticType):
                 yield dcs_type
 
     def random_dcs_unit_type_for_group(
-        self, group: TgoLayoutGroup
+        self, unit_group: TgoLayoutUnitGroup
     ) -> Type[DcsUnitType]:
         """Return random DCS Unit Type which can be used in the given TgoLayoutGroup"""
-        return random.choice(self.dcs_unit_types_for_group(group))
+        return random.choice(self.dcs_unit_types_for_group(unit_group))
 
     def merge_group(self, new_group: ForceGroup) -> None:
         """Merge the group with another similar group."""
@@ -204,22 +210,22 @@ class ForceGroup:
         """Create a TheaterGroundObject for the given template"""
         go = layout.create_ground_object(name, location, control_point)
         # Generate all groups using the randomization if it defined
-        for group_name, groups in layout.groups.items():
-            for group in groups:
+        for tgo_group in layout.groups:
+            for unit_group in tgo_group.unit_groups:
                 # Choose a random unit_type for the group
                 try:
-                    unit_type = self.random_dcs_unit_type_for_group(group)
+                    unit_type = self.random_dcs_unit_type_for_group(unit_group)
                 except IndexError:
-                    if group.optional:
+                    if unit_group.optional:
                         # If group is optional it is ok when no unit_type is available
                         continue
                     # if non-optional this is a error
                     raise RuntimeError(
-                        f"No accessible unit for {self.name} - {group.name}"
+                        f"No accessible unit for {self.name} - {unit_group.name}"
                     )
-                tgo_group_name = f"{name} ({group_name})"
+                tgo_group_name = f"{name} ({tgo_group.group_name})"
                 self.create_theater_group_for_tgo(
-                    go, group, tgo_group_name, game, unit_type
+                    go, unit_group, tgo_group_name, game, unit_type
                 )
 
         return go
@@ -227,7 +233,7 @@ class ForceGroup:
     def create_theater_group_for_tgo(
         self,
         ground_object: TheaterGroundObject,
-        group: TgoLayoutGroup,
+        unit_group: TgoLayoutUnitGroup,
         group_name: str,
         game: Game,
         unit_type: Type[DcsUnitType],
@@ -237,12 +243,12 @@ class ForceGroup:
         # Random UnitCounter if not forced
         if unit_count is None:
             # Choose a random group_size based on the layouts unit_count
-            unit_count = group.group_size
+            unit_count = unit_group.group_size
         if unit_count == 0:
             # No units to be created so dont create a theater group for them
             return
         # Generate Units
-        units = group.generate_units(ground_object, unit_type, unit_count)
+        units = unit_group.generate_units(ground_object, unit_type, unit_count)
         # Get or create the TheaterGroup
         ground_group = ground_object.group_by_name(group_name)
         if ground_group is not None:
@@ -261,9 +267,9 @@ class ForceGroup:
             ):
                 # Recreate the TheaterGroup as IadsGroundGroup
                 ground_group = IadsGroundGroup.from_group(ground_group)
-                if group.sub_task is not None:
+                if unit_group.sub_task is not None:
                     # Use the special sub_task of the TheaterGroup
-                    iads_task = group.sub_task
+                    iads_task = unit_group.sub_task
                 else:
                     # Use the primary task of the ForceGroup
                     iads_task = self.tasks[0]
