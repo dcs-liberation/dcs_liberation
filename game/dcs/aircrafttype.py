@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Iterator, Optional, TYPE_CHECKING, Type, Dict
+from typing import Any, Dict, Iterator, Optional, TYPE_CHECKING, Type
 
 import yaml
 from dcs.helicopters import helicopter_map
@@ -315,7 +315,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
             yield unit
 
     @staticmethod
-    def _each_unit_type() -> Iterator[Type[FlyingType]]:
+    def each_dcs_type() -> Iterator[Type[FlyingType]]:
         yield from helicopter_map.values()
         yield from plane_map.values()
 

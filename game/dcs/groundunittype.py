@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, Type, Iterator
+from typing import Any, Iterator, Optional, Type
 
 import yaml
 from dcs.unittype import VehicleType
@@ -76,7 +76,7 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
             yield unit
 
     @staticmethod
-    def _each_unit_type() -> Iterator[Type[VehicleType]]:
+    def each_dcs_type() -> Iterator[Type[VehicleType]]:
         yield from vehicle_map.values()
 
     @classmethod
