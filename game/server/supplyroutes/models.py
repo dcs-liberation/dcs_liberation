@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import uuid
 from typing import Any, TYPE_CHECKING
+from uuid import UUID
 
 from dcs import Point
 from pydantic import BaseModel
@@ -62,6 +64,7 @@ class TransportFinder:
 
 
 class SupplyRouteJs(BaseModel):
+    id: UUID
     points: list[LeafletPoint]
     front_active: bool
     is_sea: bool
@@ -76,6 +79,19 @@ class SupplyRouteJs(BaseModel):
         game: Game, a: ControlPoint, b: ControlPoint, points: list[Point], sea: bool
     ) -> SupplyRouteJs:
         return SupplyRouteJs(
+            # Although these are not persistent objects in the backend, the frontend
+            # needs unique IDs for anything that it will use in a list. That means that
+            # any data that we expose as a list most likely needs a unique ID. List
+            # indexes are **not** sufficient as IDs across game loads, as any indexes
+            # that persist between games will not be updated in the UI.
+            #
+            # Generating a UUID for these ephemeral objects is awkward, but does not
+            # cause any issues since the only thing the ID is used for is to
+            # disambiguate objects across save games.
+            #
+            # https://reactjs.org/docs/lists-and-keys.html#keys
+            # https://github.com/dcs-liberation/dcs_liberation/issues/2167
+            id=uuid.uuid4(),
             points=[p.latlng() for p in points],
             front_active=not sea and a.front_is_active(b),
             is_sea=sea,

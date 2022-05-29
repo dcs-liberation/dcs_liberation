@@ -428,6 +428,7 @@ export type Tgo = {
   sidc: string;
 };
 export type SupplyRoute = {
+  id: string;
   points: LatLng[];
   front_active: boolean;
   is_sea: boolean;
