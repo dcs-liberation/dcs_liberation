@@ -20,6 +20,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[UI]** Added separate images for the different carrier types.
 * **[Campaign]** Allow campaign designers to define default values for the economy settings (starting budget and multiplier).
 * **[Plugins]** Allow full support of the SkynetIADS plugin with all advanced features (connection nodes, power sources, command centers) if campaign supports it.
+* **[Plugins]** Updated (and renamed) Wheelyjoe's Weapon Damage Updates script with optional cluster weapons effects.
 
 ## Fixes
 
