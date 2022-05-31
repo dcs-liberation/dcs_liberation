@@ -9,6 +9,10 @@ FrozenDroid:
 FrozenDroid: 
 - Uncommented error logging, actually made it an error log which shows a message box on error.
 - Fixed the too restrictive weapon filter (took out the HE warhead requirement)
+29 May 2022
+Ghosti:
+- Implemented generating extra explosions near BLU-97/B hits to simulate the missing submunitions which are omitted by ED
+  due to performance reasons. This is an attempt at making the A-model JSOW more useful against groups of soft targets.
 --]]
 
 explTable = {
@@ -58,6 +62,7 @@ explTable = {
 	["AGM_123"]	=	274,
 	["AGM_130"]	=	582,
 	["AGM_119"]	=	176,
+    ["AGM_154A"]  = 100,                           -- AGM-154A - JSOW CEB (CBU-type) - 145 BLU-97/B Combined Effects Bomb (CEB) submunitions
 	["AGM_154C"]	=	305,
 	["S-24A"]	=	24,
 	--["S-24B"]	=	123,
@@ -83,11 +88,23 @@ explTable = {
 	["AN-M64"]	=	180,
 	["AN-M65"]	=	295,
 	["AN-M66A2"]	=	536,
+    ["CBU_87"] = 100,                              --CBU-87 - 202 x CEM Cluster Bomb
+    ["CBU_103"] = 100,                             --CBU-103 - 202 x CEM, CBU with WCMD
 }
 
-local weaponDamageEnable = 1
+clusterWeaps = {
+  ["AGM_154A"]  = 145,                           -- AGM-154A - JSOW CEB (CBU-type) - 145 BLU-97/B Combined Effects Bomb (CEB) submunitions
+  ["CBU_87"] = 202,                              -- CBU-87 - 202 x CEM Cluster Bomb
+  ["CBU_103"] = 202,                             -- CBU-103 - 202 x CEM, CBU with WCMD
+}
+
+local clusterEffectsEnable = 1
 WpnHandler = {}
 tracked_weapons = {}
+tracked_clusters = {}
+shell_max_flight_time = 30
+cluster_max_flight_time = 30
+cluster_munition_distribution_radius = 75
 refreshRate = 0.1
 
 local function getDistance(point1, point2)
@@ -144,6 +161,15 @@ local function track_wpns()
 			wpnData.speed = wpnData.wpn:getVelocity()
       --wpnData.lastIP = land.getIP(wpnData.pos, wpnData.dir, 50)
 		else -- wpn no longer exists, must be dead.
+          if clusterWeaps[wpnData.name] then
+            if wpnData.init then
+              if explTable[wpnData.name] then
+                --env.info(wpnData.init.." opened a cluster "..wpnData.name)
+                tracked_clusters[wpnData.init] = { wpn = wpnData.name, init = wpnData.init, time = timer.getAbsTime() }
+              end
+            end
+          else
+
 --      trigger.action.outText("Weapon impacted, mass of weapon warhead is " .. wpnData.exMass, 2)
 			local ip = land.getIP(wpnData.pos, wpnData.dir, lookahead(wpnData.speed))  -- terrain intersection point with weapon's nose.  Only search out 20 meters though.
 			local impactPoint
@@ -161,7 +187,8 @@ local function track_wpns()
 					trigger.action.explosion(impactPoint, explTable[wpnData.name])
 					--trigger.action.smoke(impactPoint, 0)
 			end
-			tracked_weapons[wpn_id_] = nil -- remove from tracked weapons first.         
+	      end
+		  tracked_weapons[wpn_id_] = nil -- remove from tracked weapons first.         
 		end
 	end
 --  env.info("Weapon Track End")
@@ -182,6 +209,44 @@ function onWpnEvent(event)
 		end
       end
     end
+  elseif event.id == world.event.S_EVENT_HIT then
+    if event.target and event.initiator and tracked_clusters[event.initiator:getName()] ~= nil then
+      local weapon = tracked_clusters[event.initiator:getName()].wpn
+      local shoot_time = tracked_clusters[event.initiator:getName()].time
+      local flight_time = shell_max_flight_time
+      if clusterWeaps[weapon] then
+        flight_time = cluster_max_flight_time
+      end
+      if event.time > shoot_time + flight_time then
+        -- Max shell flight time exceeded, remove from shooter array if exists
+        --env.info("Removing "..event.initiator:getName().." from tracked submunitions")
+        tracked_clusters[event.initiator:getName()] = nil -- remove from tracked submunitions
+      end
+      --env.info(weapon.." hit a target")
+      if event.target then
+        local impactPoint = event.target:getPosition().p
+        if clusterEffectsEnable and explTable[weapon] then
+          --env.info(weapon.." hit "..event.target:getTypeName())
+          --env.info('Impact point was at: X: ' .. impactPoint.x .. ' Y: ' .. impactPoint.y .. ' Z: ' .. impactPoint.z)
+          if clusterWeaps[weapon] then
+            for i=1,clusterWeaps[weapon]
+            do
+              cluster_radius = math.random(0,cluster_munition_distribution_radius)
+              cluster_angle = 2 * math.pi * (math.random())
+              blastPoint = {
+                x = impactPoint.x + cluster_radius * math.cos(cluster_angle),
+                y = impactPoint.y,
+                z = impactPoint.z + cluster_radius * math.sin(cluster_angle)
+              }
+              --env.info('Generating cluster bomb explosion at: X: ' .. blastPoint.x .. ' Y: ' .. blastPoint.y .. ' Z: ' .. blastPoint.z)
+			  trigger.action.explosion(blastPoint, explTable[weapon])
+            end
+          else
+			trigger.action.explosion(impactPoint, explTable[weapon])
+          end
+        end
+      end
+    end
   end
 end
 
@@ -197,8 +262,11 @@ function WpnHandler:onEvent(event)
   protectedCall(onWpnEvent, event)
 end
 
-if (weaponDamageEnable == 1) then
-  timer.scheduleFunction(function() 
+function weaponDamage(clusterEffects)
+  env.info(string.format("Weapons Damage Mod running. Cluster munition damage updates enabled: %s",tostring(clusterEffects)))
+  clusterEffectsEnable = clusterEffects
+
+  timer.scheduleFunction(function()
       protectedCall(track_wpns)
       return timer.getTime() + refreshRate
     end, 

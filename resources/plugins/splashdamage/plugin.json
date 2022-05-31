@@ -1,12 +1,23 @@
 {
-    "nameInUI": "Splash Damage",
+    "nameInUI": "Weapon Damage Updates",
     "defaultValue": false,
-    "specificOptions": [],
+    "specificOptions": [
+        {
+            "nameInUI": "Cluster munition damage updates",
+            "mnemonic": "clusterEffects",
+            "defaultValue": false
+        }
+    ],
     "scriptsWorkOrders": [
         {
             "file": "Weapons_Damage_Updated.lua",
             "mnemonic": "Splash Damage"
         }
     ],
-    "configurationWorkOrders": []
+    "configurationWorkOrders": [
+        {
+            "file": "splashdamage-config.lua",
+            "mnemonic": "splashdamage-config"
+        }
+    ]
 }
