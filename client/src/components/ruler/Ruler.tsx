@@ -27,8 +27,11 @@ export default function LeafletRuler() {
             label: "Distance",
           }
         };
-    // @ts-ignore
-    L.control.ruler(options).addTo(map); // ignore typechecking, says "ruler" is not a property even though it gets extended...
+    if( L.control.hasOwnProperty('ruler') )
+    {
+      // @ts-ignore
+      L.control.ruler(options).addTo(map);
+    }
   }, [map]);
 
   return null;
