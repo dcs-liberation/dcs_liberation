@@ -19,6 +19,7 @@ import { BasemapLayer } from "react-esri-leaflet";
 import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
 import Iadsnetworklayer from "../iadsnetworklayer";
 import LeafletRuler from "../ruler/Ruler";
+import CullingExclusionZones from "../cullingexclusionzones/CullingExclusionZones"
 
 export default function LiberationMap() {
   const map = useRef<Map>();
@@ -109,6 +110,7 @@ export default function LiberationMap() {
           <NavMeshLayer blue={false} />
         </LayersControl.Overlay>
         <TerrainZonesLayers />
+        <CullingExclusionZones />
         <WaypointDebugZonesControls />
       </LayersControl>
     </MapContainer>
