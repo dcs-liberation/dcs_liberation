@@ -1,3 +1,4 @@
+class: Helicopter
 carrier_capable: true
 description:
   The UH-1 Iroquois, better known as the Huey, is one of the most iconic
@@ -5,6 +6,8 @@ description:
   serve in both military and civilian roles around the globe today.
 introduced: 1967
 lha_capable: true
+cabin_size: 6
+can_carry_crates: true
 manufacturer: Bell
 origin: USA
 price: 4

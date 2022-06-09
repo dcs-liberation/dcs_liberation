@@ -18,6 +18,7 @@ class UnitClass(Enum):
     EARLY_WARNING_RADAR = "EarlyWarningRadar"
     FORTIFICATION = "Fortification"
     FRIGATE = "Frigate"
+    HELICOPTER = "Helicopter"
     HELICOPTER_CARRIER = "HelicopterCarrier"
     IFV = "IFV"
     INFANTRY = "Infantry"

@@ -140,6 +140,10 @@ class Flight(SidcDescribable):
         return self.squadron.aircraft
 
     @property
+    def is_helo(self) -> bool:
+        return self.unit_type.dcs_unit_type.helicopter
+
+    @property
     def from_cp(self) -> ControlPoint:
         return self.departure
 

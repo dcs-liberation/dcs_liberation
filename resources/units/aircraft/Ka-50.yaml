@@ -1,3 +1,4 @@
+class: Helicopter
 always_keeps_gun: true
 carrier_capable: true
 description:
@@ -8,6 +9,8 @@ description:
   that it has an ejection seat."
 introduced: 1995
 lha_capable: true
+cabin_size: 0 # Can not transport troops
+can_carry_crates: true
 manufacturer: Kamov
 origin: USSR/Russia
 price: 20
