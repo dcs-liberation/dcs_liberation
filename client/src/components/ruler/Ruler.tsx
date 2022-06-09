@@ -1,3 +1,4 @@
+/// <reference path="./leaflet-ruler.d.ts" />
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
@@ -29,7 +30,6 @@ export default function LeafletRuler() {
         };
     if( L.control.hasOwnProperty('ruler') )
     {
-      // @ts-ignore
       L.control.ruler(options).addTo(map);
     }
   }, [map]);
