@@ -387,15 +387,16 @@ class Game:
             for_red: True if opfor should be re-initialized.
             for_blue: True if the player coalition should be re-initialized.
         """
+        # Check for win or loss condition FIRST!
+        turn_state = self.check_win_loss()
+        if turn_state in (TurnState.LOSS, TurnState.WIN):
+            return self.process_win_loss(turn_state)
+
+        # Update bullseye positions for blue & red
         self.set_bullseye()
 
         # Update statistics
         self.game_stats.update(self)
-
-        # Check for win or loss condition
-        turn_state = self.check_win_loss()
-        if turn_state in (TurnState.LOSS, TurnState.WIN):
-            return self.process_win_loss(turn_state)
 
         # Plan flights & combat for next turn
         with logged_duration("Threat zone computation"):
