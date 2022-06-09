@@ -14,6 +14,7 @@ from dcs.ships import Stennis, KUZNECOW
 from game import Game
 from game.ato.flighttype import FlightType
 from game.config import RUNWAY_REPAIR_COST
+from game.game import TurnState
 from game.server import EventStream
 from game.sim import GameUpdateEvents
 from game.theater import (
@@ -126,6 +127,9 @@ class QBaseMenu2(QDialog):
         self.game_model.game.initialize_turn(events)
         EventStream.put_nowait(events)
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+        state = self.game_model.game.check_win_loss()
+        if state == TurnState.WIN or state == TurnState.LOSS:
+            GameUpdateSignal.get_instance().endGame(state)
 
     @property
     def has_transfer_destinations(self) -> bool:

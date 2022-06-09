@@ -11,6 +11,7 @@ from PySide2.QtWidgets import (
 
 import qt_ui.uiconstants as CONST
 from game import Game, persistency
+from game.game import TurnState
 from game.ato.package import Package
 from game.profiling import logged_duration
 from game.utils import meters
@@ -127,15 +128,19 @@ class QTopPanel(QFrame):
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
 
-        self.passTurnButton.setEnabled(True)
-        if game and game.turn > 0:
-            self.passTurnButton.setText("Pass Turn")
+        state = game.check_win_loss()
+        enabled = state == TurnState.CONTINUE
+        self.passTurnButton.setEnabled(enabled)
+        self.proceedButton.setEnabled(enabled)
 
-        if game and game.turn == 0:
+        if game.turn > 0:
+            self.passTurnButton.setText("Pass Turn")
+            # self.passTurnButton.setVisible(False)
+        elif game.turn == 0:
             self.passTurnButton.setText("Begin Campaign")
             self.proceedButton.setEnabled(False)
         else:
-            self.proceedButton.setEnabled(True)
+            raise ValueError(f"FUBAR: game.turn out of bounds!\n  value = {game.turn}")
 
     def open_air_wing(self):
         self.dialog = AirWingDialog(self.game_model, self.window())

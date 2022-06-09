@@ -8,6 +8,7 @@ from PySide2.QtGui import QCloseEvent, QIcon
 from PySide2.QtWidgets import (
     QAction,
     QActionGroup,
+    QApplication,
     QDesktopWidget,
     QFileDialog,
     QMainWindow,
@@ -20,6 +21,7 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, VERSION, persistency
 from game.debriefing import Debriefing
+from game.game import TurnState
 from game.layout import LAYOUTS
 from game.server import EventStream, GameContext
 from game.server.dependencies import QtCallbacks, QtContext
@@ -140,6 +142,7 @@ class QLiberationWindow(QMainWindow):
     def connectSignals(self):
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
         GameUpdateSignal.get_instance().debriefingReceived.connect(self.onDebriefing)
+        GameUpdateSignal.get_instance().gameover.connect(self.onEndGame)
 
     def initActions(self):
         self.newGameAction = QAction("&New Game", self)
@@ -366,6 +369,22 @@ class QLiberationWindow(QMainWindow):
         logging.info("On Game generated")
         self.game = game
         GameUpdateSignal.get_instance().game_loaded.emit(self.game)
+
+    def onEndGame(self,  state: TurnState):
+        result = None
+        if state == TurnState.WIN:
+            result = QMessageBox.information(QApplication.focusWidget(), "Victory!",
+                                             "You have won the campaign, do you wish to start a new one?",
+                                             QMessageBox.Yes, QMessageBox.No)
+        elif state == TurnState.LOSS:
+            result = QMessageBox.information(QApplication.focusWidget(), "Defeat!",
+                                             "You have lost the campaign, do you wish to start a new one?",
+                                             QMessageBox.Yes, QMessageBox.No)
+        if result is not None and result == QMessageBox.Yes:
+            for window in QApplication.topLevelWidgets():
+                if window is not self:
+                    window.close()
+            self.newGame()
 
     def setGame(self, game: Optional[Game]):
         try:

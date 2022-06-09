@@ -5,6 +5,7 @@ from typing import Optional
 from PySide2.QtCore import QObject, Signal
 
 from game import Game
+from game.game import TurnState
 from game.debriefing import Debriefing
 
 
@@ -13,6 +14,7 @@ class GameUpdateSignal(QObject):
     instance = None
     gameupdated = Signal(Game)
     budgetupdated = Signal(Game)
+    gameover = Signal(TurnState)
     debriefingReceived = Signal(Debriefing)
 
     game_loaded = Signal(Game)
@@ -34,6 +36,10 @@ class GameUpdateSignal(QObject):
     def sendDebriefing(self, debriefing: Debriefing) -> None:
         # noinspection PyUnresolvedReferences
         self.debriefingReceived.emit(debriefing)
+
+    def endGame(self,  state: TurnState):
+        # noinspection PyUnresolvedReferences
+        self.gameover.emit(state)
 
     @staticmethod
     def get_instance() -> GameUpdateSignal:
