@@ -37,7 +37,7 @@ class GameUpdateSignal(QObject):
         # noinspection PyUnresolvedReferences
         self.debriefingReceived.emit(debriefing)
 
-    def endGame(self,  state: TurnState):
+    def endGame(self, state: TurnState):
         # noinspection PyUnresolvedReferences
         self.gameover.emit(state)
 

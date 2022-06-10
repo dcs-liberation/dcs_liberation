@@ -370,16 +370,24 @@ class QLiberationWindow(QMainWindow):
         self.game = game
         GameUpdateSignal.get_instance().game_loaded.emit(self.game)
 
-    def onEndGame(self,  state: TurnState):
+    def onEndGame(self, state: TurnState):
         result = None
         if state == TurnState.WIN:
-            result = QMessageBox.information(QApplication.focusWidget(), "Victory!",
-                                             "You have won the campaign, do you wish to start a new one?",
-                                             QMessageBox.Yes, QMessageBox.No)
+            result = QMessageBox.information(
+                QApplication.focusWidget(),
+                "Victory!",
+                "You have won the campaign, do you wish to start a new one?",
+                QMessageBox.Yes,
+                QMessageBox.No
+            )
         elif state == TurnState.LOSS:
-            result = QMessageBox.information(QApplication.focusWidget(), "Defeat!",
-                                             "You have lost the campaign, do you wish to start a new one?",
-                                             QMessageBox.Yes, QMessageBox.No)
+            result = QMessageBox.information(
+                QApplication.focusWidget(),
+                "Defeat!",
+                "You have lost the campaign, do you wish to start a new one?",
+                QMessageBox.Yes,
+                QMessageBox.No
+            )
         if result is not None and result == QMessageBox.Yes:
             for window in QApplication.topLevelWidgets():
                 if window is not self:
