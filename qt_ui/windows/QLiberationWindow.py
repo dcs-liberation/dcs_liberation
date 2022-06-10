@@ -474,5 +474,7 @@ class QLiberationWindow(QMainWindow):
             self._save_window_geometry()
             super().closeEvent(event)
             self.dialog = None
+            for window in QApplication.topLevelWidgets():
+                window.close()
         else:
             event.ignore()
