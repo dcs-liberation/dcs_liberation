@@ -378,7 +378,7 @@ class QLiberationWindow(QMainWindow):
                 "Victory!",
                 "You have won the campaign, do you wish to start a new one?",
                 QMessageBox.Yes,
-                QMessageBox.No
+                QMessageBox.No,
             )
         elif state == TurnState.LOSS:
             result = QMessageBox.information(
@@ -386,7 +386,7 @@ class QLiberationWindow(QMainWindow):
                 "Defeat!",
                 "You have lost the campaign, do you wish to start a new one?",
                 QMessageBox.Yes,
-                QMessageBox.No
+                QMessageBox.No,
             )
         if result is not None and result == QMessageBox.Yes:
             for window in QApplication.topLevelWidgets():
