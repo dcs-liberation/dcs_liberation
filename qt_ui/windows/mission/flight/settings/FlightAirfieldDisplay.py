@@ -37,7 +37,8 @@ class FlightAirfieldDisplay(QGroupBox):
             )
         )
 
-        layout.addLayout(QLabeledWidget("Arrival:", QLabel(f"<b>{flight.arrival.name}</b>")))
+        arrival_label = QLabel(f"<b>{flight.arrival.name}</b>")
+        layout.addLayout(QLabeledWidget("Arrival:", arrival_label))
 
         self.divert = QArrivalAirfieldSelector(
             [cp for cp in game.theater.controlpoints if cp.captured],
