@@ -37,15 +37,8 @@ class FlightAirfieldDisplay(QGroupBox):
             )
         )
 
-        self.arrival = QArrivalAirfieldSelector(
-            [cp for cp in game.theater.controlpoints if cp.captured],
-            flight.unit_type,
-            "Same as departure",
-        )
-        self.arrival.currentIndexChanged.connect(self.set_arrival)
-        if flight.arrival != flight.departure:
-            self.arrival.setCurrentText(flight.arrival.name)
-        layout.addLayout(QLabeledWidget("Arrival:", self.arrival))
+        arrival_label = QLabel(f"<b>{flight.arrival.name}</b>")
+        layout.addLayout(QLabeledWidget("Arrival:", arrival_label))
 
         self.divert = QArrivalAirfieldSelector(
             [cp for cp in game.theater.controlpoints if cp.captured],
@@ -63,25 +56,6 @@ class FlightAirfieldDisplay(QGroupBox):
         estimator = TotEstimator(self.package_model.package)
         delay = estimator.mission_start_time(self.flight)
         self.departure_time.setText(f"At T+{delay}")
-
-    def set_arrival(self, index: int) -> None:
-        old_arrival = self.flight.arrival
-        arrival = self.arrival.itemData(index)
-        if arrival == old_arrival:
-            return
-
-        if arrival is None:
-            arrival = self.flight.departure
-
-        self.flight.arrival = arrival
-        try:
-            self.update_flight_plan()
-        except PlanningError as ex:
-            self.flight.arrival = old_arrival
-            logging.exception("Could not change arrival airfield")
-            QMessageBox.critical(
-                self, "Could not update flight plan", str(ex), QMessageBox.Ok
-            )
 
     def set_divert(self, index: int) -> None:
         old_divert = self.flight.divert
