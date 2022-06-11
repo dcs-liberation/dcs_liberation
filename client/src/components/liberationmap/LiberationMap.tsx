@@ -18,7 +18,6 @@ import { useEffect, useRef } from "react";
 import { BasemapLayer } from "react-esri-leaflet";
 import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
 import Iadsnetworklayer from "../iadsnetworklayer";
-import LeafletRuler from "../ruler/Ruler";
 import CullingExclusionZones from "../cullingexclusionzones/CullingExclusionZones"
 
 export default function LiberationMap() {
@@ -34,7 +33,6 @@ export default function LiberationMap() {
       whenCreated={(mapInstance) => (map.current = mapInstance)}
     >
       <ScaleControl />
-      <LeafletRuler />
       <LayersControl collapsed={false}>
         <LayersControl.BaseLayer name="Imagery Clarity" checked>
           <BasemapLayer name="ImageryClarity" />

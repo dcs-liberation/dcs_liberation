@@ -19,7 +19,6 @@
     "electron-window-state": "^5.0.3",
     "esri-leaflet": "^3.0.7",
     "leaflet": "^1.7.1",
-    "leaflet-ruler": "^1.0.0",
     "milsymbol": "^2.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
