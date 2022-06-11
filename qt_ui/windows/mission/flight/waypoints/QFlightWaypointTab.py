@@ -114,7 +114,10 @@ class QFlightWaypointTab(QFrame):
         # waypoint, we don't need to degrade.
         if isinstance(self.flight.flight_plan, FormationAttackFlightPlan):
             is_target = waypoint in self.flight.flight_plan.target_area_waypoint.targets
-            if is_target and len(self.flight.flight_plan.target_area_waypoint.targets) > 1:
+            if (
+                is_target
+                and len(self.flight.flight_plan.target_area_waypoint.targets) > 1
+            ):
                 self.flight.flight_plan.target_area_waypoint.targets.remove(waypoint)
                 return
 
