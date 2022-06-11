@@ -8,6 +8,7 @@ from PySide2.QtGui import QCloseEvent, QIcon
 from PySide2.QtWidgets import (
     QAction,
     QActionGroup,
+    QApplication,
     QDesktopWidget,
     QFileDialog,
     QMainWindow,
