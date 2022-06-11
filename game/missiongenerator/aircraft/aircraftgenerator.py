@@ -17,7 +17,7 @@ from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.ato.starttype import StartType
 from game.factions.faction import Faction
-from game.missiongenerator.airsupport import AirSupport
+from game.missiongenerator.missiondata import MissionData
 from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanRegistry
@@ -49,7 +49,7 @@ class AircraftGenerator:
         tacan_registry: TacanRegistry,
         laser_code_registry: LaserCodeRegistry,
         unit_map: UnitMap,
-        air_support: AirSupport,
+        mission_data: MissionData,
         helipads: dict[ControlPoint, StaticGroup],
     ) -> None:
         self.mission = mission
@@ -61,7 +61,7 @@ class AircraftGenerator:
         self.laser_code_registry = laser_code_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
-        self.air_support = air_support
+        self.mission_data = mission_data
         self.helipads = helipads
 
     @cached_property
@@ -174,7 +174,7 @@ class AircraftGenerator:
                 self.radio_registry,
                 self.tacan_registy,
                 self.laser_code_registry,
-                self.air_support,
+                self.mission_data,
                 dynamic_runways,
                 self.use_client,
             ).configure()
