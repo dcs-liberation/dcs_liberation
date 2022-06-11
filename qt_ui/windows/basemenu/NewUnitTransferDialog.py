@@ -86,7 +86,11 @@ class TransferOptionsPanel(QVBoxLayout):
         super().__init__()
 
         self.source_combo_box = TransferDestinationComboBox(game, origin)
+        self.transport_type = QComboBox()
+        self.transport_type.addItem("Auto", "auto")
+        self.transport_type.addItem("Airlift", "airlift")
         self.addLayout(QLabeledWidget("Destination:", self.source_combo_box))
+        self.addLayout(QLabeledWidget("Requested transport type:", self.transport_type))
 
     @property
     def changed(self):
@@ -95,6 +99,10 @@ class TransferOptionsPanel(QVBoxLayout):
     @property
     def current(self) -> ControlPoint:
         return self.source_combo_box.currentData()
+
+    @property
+    def request_airlift(self) -> bool:
+        return self.transport_type.currentData() == "airlift"
 
 
 class TransferControls(QGroupBox):
@@ -293,6 +301,7 @@ class NewUnitTransferDialog(QDialog):
             origin=self.origin,
             destination=destination,
             units=transfers,
+            request_airflift=self.dest_panel.request_airlift,
         )
         self.game_model.transfer_model.new_transfer(transfer)
         self.close()

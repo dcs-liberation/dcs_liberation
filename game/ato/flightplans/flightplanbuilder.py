@@ -8,6 +8,7 @@ from game.data.doctrine import Doctrine
 from game.flightplan import IpZoneGeometry, JoinZoneGeometry
 from game.flightplan.refuelzonegeometry import RefuelZoneGeometry
 from .aewc import AewcFlightPlan
+from .airassault import AirAssaultFlightPlan
 from .airlift import AirliftFlightPlan
 from .antiship import AntiShipFlightPlan
 from .bai import BaiFlightPlan
@@ -108,6 +109,7 @@ class FlightPlanBuilder:
             FlightType.AEWC: AewcFlightPlan,
             FlightType.TRANSPORT: AirliftFlightPlan,
             FlightType.FERRY: FerryFlightPlan,
+            FlightType.AIR_ASSAULT: AirAssaultFlightPlan,
         }
         return plan_dict.get(task)
 

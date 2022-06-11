@@ -45,6 +45,7 @@ class TheaterState(WorldState["TheaterState"]):
     context: PersistentContext
     barcaps_needed: dict[ControlPoint, int]
     active_front_lines: list[FrontLine]
+    air_assault_targets: list[ControlPoint]
     front_line_stances: dict[FrontLine, Optional[CombatStance]]
     vulnerable_front_lines: list[FrontLine]
     aewc_targets: list[MissionTarget]
@@ -109,6 +110,7 @@ class TheaterState(WorldState["TheaterState"]):
             context=self.context,
             barcaps_needed=dict(self.barcaps_needed),
             active_front_lines=list(self.active_front_lines),
+            air_assault_targets=list(self.air_assault_targets),
             front_line_stances=dict(self.front_line_stances),
             vulnerable_front_lines=list(self.vulnerable_front_lines),
             aewc_targets=list(self.aewc_targets),
@@ -158,6 +160,7 @@ class TheaterState(WorldState["TheaterState"]):
                 cp: barcap_rounds for cp in finder.vulnerable_control_points()
             },
             active_front_lines=list(finder.front_lines()),
+            air_assault_targets=list(finder.air_assault_targets()),
             front_line_stances={f: None for f in finder.front_lines()},
             vulnerable_front_lines=list(finder.front_lines()),
             aewc_targets=[finder.farthest_friendly_control_point()],

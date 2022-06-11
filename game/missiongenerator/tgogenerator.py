@@ -41,6 +41,7 @@ from dcs.unit import Unit, InvisibleFARP
 from dcs.unitgroup import MovingGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import ShipType, VehicleType
 from dcs.vehicles import vehicle_map
+from game.missiongenerator.missiondata import CarrierInfo, MissionData
 
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
@@ -351,6 +352,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         icls_alloc: Iterator[int],
         runways: Dict[str, RunwayData],
         unit_map: UnitMap,
+        mission_data: MissionData,
     ) -> None:
         super().__init__(ground_object, country, game, mission, unit_map)
         self.ground_object = ground_object
@@ -359,6 +361,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         self.tacan_registry = tacan_registry
         self.icls_alloc = icls_alloc
         self.runways = runways
+        self.mission_data = mission_data
 
     def generate(self) -> None:
 
@@ -399,6 +402,16 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                 self.activate_beacons(ship_group, tacan, tacan_callsign, icls, link4)
                 self.add_runway_data(
                     brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
+                )
+                self.mission_data.carriers.append(
+                    CarrierInfo(
+                        group_name=ship_group.name,
+                        unit_name=ship_group.units[0].name,
+                        callsign=tacan_callsign,
+                        freq=atc,
+                        tacan=tacan,
+                        blue=self.control_point.captured,
+                    )
                 )
 
     @property
@@ -604,6 +617,7 @@ class TgoGenerator:
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
         unit_map: UnitMap,
+        mission_data: MissionData,
     ) -> None:
         self.m = mission
         self.game = game
@@ -613,6 +627,7 @@ class TgoGenerator:
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
         self.helipads: dict[ControlPoint, StaticGroup] = {}
+        self.mission_data = mission_data
 
     def generate(self) -> None:
         for cp in self.game.theater.controlpoints:
@@ -640,6 +655,7 @@ class TgoGenerator:
                         self.icls_alloc,
                         self.runways,
                         self.unit_map,
+                        self.mission_data,
                     )
                 elif isinstance(ground_object, LhaGroundObject):
                     generator = LhaGenerator(
@@ -653,6 +669,7 @@ class TgoGenerator:
                         self.icls_alloc,
                         self.runways,
                         self.unit_map,
+                        self.mission_data,
                     )
                 elif isinstance(ground_object, MissileSiteGroundObject):
                     generator = MissileSiteGenerator(
@@ -663,3 +680,4 @@ class TgoGenerator:
                         ground_object, country, self.game, self.m, self.unit_map
                     )
                 generator.generate()
+        self.mission_data.runways = list(self.runways.values())
