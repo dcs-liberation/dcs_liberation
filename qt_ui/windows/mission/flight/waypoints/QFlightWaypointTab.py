@@ -113,15 +113,14 @@ class QFlightWaypointTab(QFrame):
         # If the waypoint is a target waypoint and is not the last target
         # waypoint, we don't need to degrade.
         if isinstance(self.flight.flight_plan, FormationAttackFlightPlan):
-            is_target = waypoint in self.flight.flight_plan.target_area_waypoint.targets
-            if is_target and len(self.flight.flight_plan.target_area_waypoint.targets) > 1:
-                self.flight.flight_plan.target_area_waypoint.targets.remove(waypoint)
+            is_target = waypoint in self.flight.flight_plan.targets
+            if is_target and len(self.flight.flight_plan.targets) > 1:
+                self.flight.flight_plan.targets.remove(waypoint)
                 return
 
         self.degrade_to_custom_flight_plan()
         assert isinstance(self.flight.flight_plan, CustomFlightPlan)
-        if waypoint in self.flight.flight_plan.layout.custom_waypoints:
-            self.flight.flight_plan.layout.custom_waypoints.remove(waypoint)
+        self.flight.flight_plan.layout.custom_waypoints.remove(waypoint)
 
     def on_fast_waypoint(self):
         self.subwindow = QPredefinedWaypointSelectionWindow(
