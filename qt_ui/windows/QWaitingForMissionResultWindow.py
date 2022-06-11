@@ -23,7 +23,6 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game import Game
 from game.debriefing import Debriefing
-from game.game import TurnState
 from game.persistency import base_path
 from game.profiling import logged_duration
 from qt_ui.simcontroller import SimController
@@ -220,9 +219,6 @@ class QWaitingForMissionResultWindow(QDialog):
 
             GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
             GameUpdateSignal.get_instance().updateGame(self.game)
-            state = self.game.check_win_loss()
-            if state == TurnState.WIN or state == TurnState.LOSS:
-                GameUpdateSignal.get_instance().endGame(state)
         self.close()
 
     def debriefing_directory_location(self) -> str:

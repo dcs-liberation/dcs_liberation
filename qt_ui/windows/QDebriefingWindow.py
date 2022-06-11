@@ -1,7 +1,7 @@
 import logging
 from typing import Callable, Dict, TypeVar
 
-from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtGui import QIcon, QPixmap, QCloseEvent
 from PySide2.QtWidgets import (
     QDialog,
     QGridLayout,
@@ -12,6 +12,8 @@ from PySide2.QtWidgets import (
 )
 
 from game.debriefing import Debriefing
+from game.game import TurnState
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
 T = TypeVar("T")
@@ -86,3 +88,10 @@ class QDebriefingWindow(QDialog):
         okay = QPushButton("Okay")
         okay.clicked.connect(self.close)
         layout.addWidget(okay)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        super().closeEvent(event)
+        state = self.debriefing.game.check_win_loss()
+        if state == TurnState.WIN or state == TurnState.LOSS:
+            GameUpdateSignal.get_instance().endGame(state)
+
