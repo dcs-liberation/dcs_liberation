@@ -1,3 +1,6 @@
+class: Helicopter
+cabin_size: 0
+can_carry_crates: false
 always_keeps_gun: true
 description: The Mil Mi-28 (NATO reporting name 'Havoc') is a Russian all-weather,
   day-night, military tandem, two-seat anti-armor attack helicopter. It is an attack

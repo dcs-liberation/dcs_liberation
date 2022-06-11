@@ -1,3 +1,6 @@
-price: 4
+class: Helicopter
+cabin_size: 24 # It should have 60+ but we do not want so much for CTLD to be possible
+can_carry_crates: true
+price: 6
 variants:
   Mi-26: null

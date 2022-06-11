@@ -54,7 +54,7 @@ class WaypointBuilder:
 
     @property
     def is_helo(self) -> bool:
-        return self.flight.unit_type.dcs_unit_type.helicopter
+        return self.flight.is_helo
 
     def takeoff(self, departure: ControlPoint) -> FlightWaypoint:
         """Create takeoff waypoint for the given arrival airfield or carrier.
@@ -303,6 +303,9 @@ class WaypointBuilder:
     def oca_strike_area(self, target: MissionTarget) -> FlightWaypoint:
         return self._target_area(f"ATTACK {target.name}", target, flyover=True)
 
+    def assault_area(self, target: MissionTarget) -> FlightWaypoint:
+        return self._target_area(f"ASSAULT {target.name}", target)
+
     @staticmethod
     def _target_area(
         name: str,
@@ -491,36 +494,57 @@ class WaypointBuilder:
         )
 
     @staticmethod
-    def pickup(control_point: ControlPoint) -> FlightWaypoint:
-        """Creates a cargo pickup waypoint.
+    def stopover(stopover: ControlPoint, name: str = "STOPOVER") -> FlightWaypoint:
+        """Creates a stopover waypoint.
 
         Args:
             control_point: Pick up location.
         """
         return FlightWaypoint(
-            "PICKUP",
-            FlightWaypointType.PICKUP,
-            control_point.position,
+            name,
+            FlightWaypointType.STOPOVER,
+            stopover.position,
             meters(0),
             "RADIO",
-            description=f"Pick up cargo from {control_point}",
-            pretty_name="Pick up location",
+            description=f"Stopover at {stopover}",
+            pretty_name="Stopover location",
+            control_point=stopover,
         )
 
     @staticmethod
-    def drop_off(control_point: ControlPoint) -> FlightWaypoint:
+    def pickup(pick_up: MissionTarget) -> FlightWaypoint:
+        """Creates a cargo pickup waypoint.
+
+        Args:
+            control_point: Pick up location.
+        """
+        control_point = pick_up if isinstance(pick_up, ControlPoint) else None
+        return FlightWaypoint(
+            "PICKUP",
+            FlightWaypointType.PICKUP,
+            pick_up.position,
+            meters(0),
+            "RADIO",
+            description=f"Pick up cargo from {pick_up.name}",
+            pretty_name="Pick up location",
+            control_point=control_point,
+        )
+
+    @staticmethod
+    def drop_off(drop_off: MissionTarget) -> FlightWaypoint:
         """Creates a cargo drop-off waypoint.
 
         Args:
             control_point: Drop-off location.
         """
+        control_point = drop_off if isinstance(drop_off, ControlPoint) else None
         return FlightWaypoint(
             "DROP OFF",
-            FlightWaypointType.PICKUP,
-            control_point.position,
+            FlightWaypointType.DROP_OFF,
+            drop_off.position,
             meters(0),
             "RADIO",
-            description=f"Drop off cargo at {control_point}",
+            description=f"Drop off cargo at {drop_off.name}",
             pretty_name="Drop off location",
             control_point=control_point,
         )

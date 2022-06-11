@@ -483,6 +483,20 @@ TRANSPORT_CAPABLE = [
     Mi_26,
 ]
 
+AIR_ASSAULT_CAPABLE = [
+    CH_53E,
+    CH_47D,
+    UH_60L,
+    SH_60B,
+    UH_60A,
+    UH_1H,
+    Mi_8MT,
+    Mi_26,
+    Mi_24P,
+    Mi_24V,
+    Hercules,
+]
+
 DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
 
 AEWC_CAPABLE = [
@@ -538,6 +552,8 @@ def dcs_types_for_task(task: FlightType) -> Sequence[Type[FlyingType]]:
         return REFUELING_CAPABALE
     elif task == FlightType.TRANSPORT:
         return TRANSPORT_CAPABLE
+    elif task == FlightType.AIR_ASSAULT:
+        return AIR_ASSAULT_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []
