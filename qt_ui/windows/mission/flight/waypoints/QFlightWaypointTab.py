@@ -98,9 +98,8 @@ class QFlightWaypointTab(QFrame):
 
     def on_delete_waypoint(self):
         waypoints = []
-        for (
-            selected_row
-        ) in self.flight_waypoint_list.selectionModel().selectedIndexes():
+        selection = self.flight_waypoint_list.selectionModel()
+        for selected_row in selection.selectedIndexes():
             if selected_row.row() > 0:
                 waypoints.append(self.flight.flight_plan.waypoints[selected_row.row()])
         for waypoint in waypoints:
@@ -114,10 +113,8 @@ class QFlightWaypointTab(QFrame):
         # waypoint, we don't need to degrade.
         if isinstance(self.flight.flight_plan, FormationAttackFlightPlan):
             is_target = waypoint in self.flight.flight_plan.target_area_waypoint.targets
-            if (
-                is_target
-                and len(self.flight.flight_plan.target_area_waypoint.targets) > 1
-            ):
+            count = len(self.flight.flight_plan.target_area_waypoint.targets)
+            if is_target and count > 1:
                 self.flight.flight_plan.target_area_waypoint.targets.remove(waypoint)
                 return
 
