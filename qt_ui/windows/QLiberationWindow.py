@@ -1,6 +1,7 @@
 import logging
 import traceback
 import webbrowser
+from time import sleep
 from typing import Optional
 
 from PySide2.QtCore import QSettings, Qt, Signal
@@ -388,10 +389,12 @@ class QLiberationWindow(QMainWindow):
                 QMessageBox.Yes,
                 QMessageBox.No,
             )
+        for window in QApplication.topLevelWidgets():
+            if window is not self:
+                window.close()
+        sleep(0.5)
+        GameUpdateSignal.get_instance().updateGame(None)
         if result is not None and result == QMessageBox.Yes:
-            for window in QApplication.topLevelWidgets():
-                if window is not self:
-                    window.close()
             self.newGame()
 
     def setGame(self, game: Optional[Game]):

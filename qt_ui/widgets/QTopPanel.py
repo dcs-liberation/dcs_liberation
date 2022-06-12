@@ -135,6 +135,8 @@ class QTopPanel(QFrame):
         self.passTurnButton.setEnabled(enabled)
         self.proceedButton.setEnabled(enabled)
         self.simSpeedControls.setEnabled(enabled)
+        self.air_wing.setEnabled(enabled)
+        self.transfers.setEnabled(enabled)
 
         if game.turn > 0:
             self.passTurnButton.setText("Pass Turn")
