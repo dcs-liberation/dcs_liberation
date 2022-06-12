@@ -79,9 +79,11 @@ class QTopPanel(QFrame):
         self.buttonBoxLayout.addWidget(self.transfers)
         self.buttonBox.setLayout(self.buttonBoxLayout)
 
+        self.simSpeedControls = SimSpeedControls(sim_controller)
+
         self.proceedBox = QGroupBox("Proceed")
         self.proceedBoxLayout = QHBoxLayout()
-        self.proceedBoxLayout.addLayout(SimSpeedControls(sim_controller))
+        self.proceedBoxLayout.addLayout(self.simSpeedControls)
         self.proceedBoxLayout.addLayout(MaxPlayerCount(self.game_model.ato_model))
         self.proceedBoxLayout.addWidget(self.passTurnButton)
         self.proceedBoxLayout.addWidget(self.proceedButton)
@@ -132,12 +134,14 @@ class QTopPanel(QFrame):
         enabled = state == TurnState.CONTINUE
         self.passTurnButton.setEnabled(enabled)
         self.proceedButton.setEnabled(enabled)
+        self.simSpeedControls.setEnabled(enabled)
 
         if game.turn > 0:
             self.passTurnButton.setText("Pass Turn")
         elif game.turn == 0:
             self.passTurnButton.setText("Begin Campaign")
             self.proceedButton.setEnabled(False)
+            self.simSpeedControls.setEnabled(False)
         else:
             raise ValueError(f"FUBAR: game.turn out of bounds!\n  value = {game.turn}")
 
