@@ -89,6 +89,14 @@ class QTopPanel(QFrame):
         self.proceedBoxLayout.addWidget(self.proceedButton)
         self.proceedBox.setLayout(self.proceedBoxLayout)
 
+        self.controls = [
+            self.air_wing,
+            self.transfers,
+            self.simSpeedControls,
+            self.passTurnButton,
+            self.proceedButton,
+        ]
+
         self.layout = QHBoxLayout()
 
         self.layout.addWidget(self.factionsInfos)
@@ -132,11 +140,8 @@ class QTopPanel(QFrame):
 
         state = game.check_win_loss()
         enabled = state == TurnState.CONTINUE
-        self.passTurnButton.setEnabled(enabled)
-        self.proceedButton.setEnabled(enabled)
-        self.simSpeedControls.setEnabled(enabled)
-        self.air_wing.setEnabled(enabled)
-        self.transfers.setEnabled(enabled)
+        for controller in self.controls:
+            controller.setEnabled(enabled)
 
         if game.turn > 0:
             self.passTurnButton.setText("Pass Turn")
@@ -145,7 +150,9 @@ class QTopPanel(QFrame):
             self.proceedButton.setEnabled(False)
             self.simSpeedControls.setEnabled(False)
         else:
-            raise ValueError(f"FUBAR: game.turn out of bounds!\n  value = {game.turn}")
+            assert (
+                game.turn >= 0
+            ), f"FUBAR: game.turn out of bounds!\n  value = {game.turn}"
 
     def open_air_wing(self):
         self.dialog = AirWingDialog(self.game_model, self.window())
