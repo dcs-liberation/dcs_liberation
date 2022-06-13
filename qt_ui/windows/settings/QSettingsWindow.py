@@ -22,6 +22,7 @@ from PySide2.QtWidgets import (
 
 import qt_ui.uiconstants as CONST
 from game.game import Game
+from game.server import EventStream
 from game.settings import (
     BooleanOption,
     BoundedFloatOption,
@@ -31,6 +32,7 @@ from game.settings import (
     OptionDescription,
     Settings,
 )
+from game.sim import GameUpdateEvents
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.spinsliders import FloatSpinSlider, TimeInputs
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
@@ -356,8 +358,9 @@ class QSettingsWindow(QDialog):
             self.cheat_options.show_base_capture_cheat
         )
 
-        self.game.compute_unculled_zones()
+        self.game.compute_unculled_zones(GameUpdateEvents())
         GameUpdateSignal.get_instance().updateGame(self.game)
+        EventStream.put_nowait(GameUpdateEvents().update_unculled_zones())
 
     def onSelectionChanged(self):
         index = self.categoryList.selectionModel().currentIndex().row()
