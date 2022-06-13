@@ -1,4 +1,6 @@
-import { useListUnculledZonesQuery, UnculledZone } from "../../api/liberationApi";
+import { UnculledZone } from "../../api/liberationApi";
+import { selectUnculledZones } from "../../api/unculledZonesSlice";
+import { useAppSelector } from "../../app/hooks";
 import { LayerGroup, LayersControl, Circle } from "react-leaflet";
 
 interface CullingExclusionCirclesProps {
@@ -27,14 +29,11 @@ const CullingExclusionCircles = (props: CullingExclusionCirclesProps) => {
 };
 
 export default function CullingExclusionZones() {
-  const { data, error, isLoading } = useListUnculledZonesQuery();
+  const data = useAppSelector(selectUnculledZones).zones;
   var cez = <></>;
 
-  if (error) {
-    console.error("Error while loading terrain zones", error);
-  } else if (isLoading) {
-  } else if (!data) {
-    console.log("Empty response when loading terrain zones");
+  if (!data) {
+    console.log("Empty response when loading culling exclusion zones");
   } else {
     cez = (
       <CullingExclusionCircles zones={data}></CullingExclusionCircles>
