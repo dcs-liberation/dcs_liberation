@@ -34,7 +34,8 @@ class UnculledZoneJs(BaseModel):
             UnculledZoneJs(
                 position=zone.latlng(),
                 radius=game.settings.perf_culling_distance * 1000,
-            ) for zone in game.get_culling_zones()
+            )
+            for zone in game.get_culling_zones()
         ]
 
 
