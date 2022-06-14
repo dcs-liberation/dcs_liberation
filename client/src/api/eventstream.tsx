@@ -89,7 +89,6 @@ export const handleStreamedEvents = (
   }
 
   if (events.unculled_zones_updated) {
-    console.log("Unculled zones updating!!!");
     backend.get(`/map-zones/unculled`).then(
       (result) => {
         if (result.data) {
