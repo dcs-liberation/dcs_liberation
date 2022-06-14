@@ -194,11 +194,12 @@ class PackageModel(QAbstractListModel):
         self.update_tot()
 
     def update_tot(self) -> None:
-        if self.package.auto_asap:
-            self.package.set_tot_asap()
-        self.tot_changed.emit()
-        # For some reason this is needed to make the UI update quickly.
-        self.layoutChanged.emit()
+        if len(self.package.flights) > 0:
+            if self.package.auto_asap:
+                self.package.set_tot_asap()
+            self.tot_changed.emit()
+            # For some reason this is needed to make the UI update quickly.
+            self.layoutChanged.emit()
 
     @property
     def mission_target(self) -> MissionTarget:
