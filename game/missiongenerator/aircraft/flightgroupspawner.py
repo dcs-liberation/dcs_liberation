@@ -95,7 +95,7 @@ class FlightGroupSpawner:
         name = namegen.next_aircraft_name(self.country, self.flight)
         cp = self.flight.departure
         try:
-            if self.start_type is StartType.IN_FLIGHT:
+            if self.start_type is StartType.IN_FLIGHT or isinstance(cp, OffMapSpawn):
                 group = self._generate_over_departure(name, cp)
                 return group
             elif isinstance(cp, NavalControlPoint):

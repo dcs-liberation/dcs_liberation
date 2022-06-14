@@ -213,7 +213,7 @@ class QFlightCreator(QDialog):
         else:
             self.start_type.setEnabled(True)
             if self.restore_start_type is not None:
-                self.start_type.setCurrentText(self.restore_start_type)
+                self.start_type.setCurrentText(self.restore_start_type.value)
                 self.restore_start_type = None
 
     def on_task_changed(self, index: int) -> None:
