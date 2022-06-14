@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta
 
 from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 
@@ -53,8 +54,11 @@ class FlightAirfieldDisplay(QGroupBox):
         self.setLayout(layout)
 
     def update_departure_time(self) -> None:
-        estimator = TotEstimator(self.package_model.package)
-        delay = estimator.mission_start_time(self.flight)
+        if len(self.package_model.package.flights) > 0:
+            estimator = TotEstimator(self.package_model.package)
+            delay = estimator.mission_start_time(self.flight)
+        else:
+            delay = timedelta()
         self.departure_time.setText(f"At T+{delay}")
 
     def set_divert(self, index: int) -> None:
