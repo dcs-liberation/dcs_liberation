@@ -79,9 +79,7 @@ export const handleStreamedEvents = (
   }
 
   for (const blue of events.navmesh_updates) {
-    dispatch(
-      liberationApi.endpoints.getNavmesh.initiate({ forPlayer: blue })
-    ).then((result) => {
+    backend.get(`/navmesh?for_player=${blue}`).then((result) => {
       if (result.data) {
         dispatch(navMeshUpdated({ blue: blue, mesh: result.data }));
       }
@@ -99,13 +97,11 @@ export const handleStreamedEvents = (
   }
 
   if (events.threat_zones_updated) {
-    dispatch(liberationApi.endpoints.getThreatZones.initiate()).then(
-      (result) => {
-        if (result.data) {
-          dispatch(threatZonesUpdated(result.data));
-        }
+    backend.get(`/map-zones/threats`).then( (result) => {
+      if (result.data) {
+        dispatch(threatZonesUpdated(result.data));
       }
-    );
+    });
   }
 
   for (const flight of events.new_flights) {
