@@ -57,9 +57,7 @@ class FlightAirfieldDisplay(QGroupBox):
         if len(self.package_model.package.flights) > 0:
             estimator = TotEstimator(self.package_model.package)
             delay = estimator.mission_start_time(self.flight)
-        else:
-            delay = timedelta()
-        self.departure_time.setText(f"At T+{delay}")
+            self.departure_time.setText(f"At T+{delay}")
 
     def set_divert(self, index: int) -> None:
         old_divert = self.flight.divert
