@@ -29,6 +29,7 @@ import {
 import { navMeshUpdated } from "./navMeshSlice";
 import { updateTgo } from "./tgosSlice";
 import { threatZonesUpdated } from "./threatZonesSlice";
+import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
 import { updateIadsConnection } from "./iadsNetworkSlice";
 import { IadsConnection } from "./_liberationApi";
@@ -85,6 +86,16 @@ export const handleStreamedEvents = (
         dispatch(navMeshUpdated({ blue: blue, mesh: result.data }));
       }
     });
+  }
+
+  if (events.unculled_zones_updated) {
+    backend.get(`/map-zones/unculled`).then(
+      (result) => {
+        if (result.data) {
+          dispatch(unculledZonesUpdated(result.data));
+        }
+      }
+    );
   }
 
   if (events.threat_zones_updated) {
