@@ -23,6 +23,7 @@ import {
   ControlPoint,
   Flight,
   FrontLine,
+  SupplyRoute,
   Tgo,
 } from "./liberationApi";
 import { navMeshUpdated } from "./navMeshSlice";
@@ -31,6 +32,7 @@ import { threatZonesUpdated } from "./threatZonesSlice";
 import { LatLng } from "leaflet";
 import { updateIadsConnection } from "./iadsNetworkSlice";
 import { IadsConnection } from "./_liberationApi";
+import { supplyRoutesUpdated } from "./supplyRoutesSlice";
 
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
@@ -78,9 +80,7 @@ export const handleStreamedEvents = (
   }
 
   for (const blue of events.navmesh_updates) {
-    dispatch(
-      liberationApi.endpoints.getNavmesh.initiate({ forPlayer: blue })
-    ).then((result) => {
+    backend.get(`/navmesh?for_player=${blue}`).then((result) => {
       if (result.data) {
         dispatch(navMeshUpdated({ blue: blue, mesh: result.data }));
       }
@@ -88,13 +88,11 @@ export const handleStreamedEvents = (
   }
 
   if (events.threat_zones_updated) {
-    dispatch(liberationApi.endpoints.getThreatZones.initiate()).then(
-      (result) => {
-        if (result.data) {
-          dispatch(threatZonesUpdated(result.data));
-        }
+    backend.get(`/map-zones/threats`).then( (result) => {
+      if (result.data) {
+        dispatch(threatZonesUpdated(result.data));
       }
-    );
+    });
   }
 
   for (const flight of events.new_flights) {
@@ -151,6 +149,13 @@ export const handleStreamedEvents = (
     backend.get(`/control-points/${id}`).then((response) => {
       const cp = response.data as ControlPoint;
       dispatch(updateControlPoint(cp));
+    });
+  }
+
+  if (events.updated_control_points.length > 0) {
+    backend.get(`/supply-routes`).then((response) => {
+      const routes = response.data as SupplyRoute[];
+      dispatch(supplyRoutesUpdated(routes));
     });
   }
 
