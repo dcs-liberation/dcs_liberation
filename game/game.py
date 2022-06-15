@@ -217,7 +217,7 @@ class Game:
         naming.namegen = self.name_generator
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
-        self.compute_unculled_zones()
+        self.compute_unculled_zones(GameUpdateEvents())
         if not game_still_initializing:
             # We don't need to push events that happen during load. The UI will fully
             # reset when we're done.
@@ -418,7 +418,7 @@ class Game:
 
         # Update cull zones
         with logged_duration("Computing culling positions"):
-            self.compute_unculled_zones()
+            self.compute_unculled_zones(events)
 
     def message(self, title: str, text: str = "") -> None:
         self.informations.append(Information(title, text, turn=self.turn))
@@ -460,7 +460,7 @@ class Game:
     def navmesh_for(self, player: bool) -> NavMesh:
         return self.coalition_for(player).nav_mesh
 
-    def compute_unculled_zones(self) -> None:
+    def compute_unculled_zones(self, events: GameUpdateEvents) -> None:
         """
         Compute the current conflict position(s) used for culling calculation
         """
@@ -515,6 +515,7 @@ class Game:
             zones.append(package.target.position)
 
         self.__culling_zones = zones
+        events.update_unculled_zones()
 
     def add_destroyed_units(self, data: dict[str, Union[float, str]]) -> None:
         pos = Point(
