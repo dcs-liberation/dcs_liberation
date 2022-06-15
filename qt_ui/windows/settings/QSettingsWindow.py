@@ -358,9 +358,10 @@ class QSettingsWindow(QDialog):
             self.cheat_options.show_base_capture_cheat
         )
 
-        self.game.compute_unculled_zones(GameUpdateEvents())
+        events = GameUpdateEvents()
+        self.game.compute_unculled_zones(events)
+        EventStream.put_nowait(events)
         GameUpdateSignal.get_instance().updateGame(self.game)
-        EventStream.put_nowait(GameUpdateEvents().update_unculled_zones())
 
     def onSelectionChanged(self):
         index = self.categoryList.selectionModel().currentIndex().row()
