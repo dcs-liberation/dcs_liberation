@@ -27,12 +27,7 @@ def get_terrain(game: Game = Depends(GameContext.require)) -> MapZonesJs:
 def get_unculled_zones(
     game: Game = Depends(GameContext.require),
 ) -> list[UnculledZoneJs]:
-    return [
-        UnculledZoneJs(
-            position=zone.latlng(), radius=game.settings.perf_culling_distance * 1000
-        )
-        for zone in game.get_culling_zones()
-    ]
+    return UnculledZoneJs.from_game(game)
 
 
 @router.get(

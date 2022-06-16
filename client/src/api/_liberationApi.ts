@@ -479,6 +479,7 @@ export type Game = {
   threat_zones: ThreatZoneContainer;
   navmeshes: NavMeshes;
   map_center?: LatLng;
+  unculled_zones: UnculledZone[];
 };
 export type MapZones = {
   inclusion: LatLng[][];
