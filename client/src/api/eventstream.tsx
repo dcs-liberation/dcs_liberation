@@ -53,6 +53,7 @@ interface GameUpdateEvents {
   deleted_front_lines: string[];
   updated_tgos: string[];
   updated_control_points: number[];
+  updated_supply_routes: boolean;
   reset_on_map_center: LatLng | null;
   game_unloaded: boolean;
   new_turn: boolean;
@@ -167,7 +168,7 @@ export const handleStreamedEvents = (
     });
   }
 
-  if (events.updated_control_points.length > 0) {
+  if (events.updated_supply_routes) {
     backend.get(`/supply-routes`).then((response) => {
       const routes = response.data as SupplyRoute[];
       dispatch(supplyRoutesUpdated(routes));

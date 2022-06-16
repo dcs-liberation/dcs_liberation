@@ -33,6 +33,7 @@ class GameUpdateEventsJs(BaseModel):
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: set[UUID]
+    updated_supply_routes: bool
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
     new_turn: bool
@@ -79,6 +80,7 @@ class GameUpdateEventsJs(BaseModel):
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
             updated_control_points=events.updated_control_points,
+            updated_supply_routes=events.updated_supply_routes,
             reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
             new_turn=events.new_turn,
