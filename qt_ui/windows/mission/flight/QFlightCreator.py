@@ -108,17 +108,18 @@ class QFlightCreator(QDialog):
         for start_type in StartType:
             self.start_type.addItem(start_type.value, start_type)
         self.start_type.setCurrentText(self.restore_start_type.value)
-        start_type = QLabeledWidget(
-            "Start type:",
-            self.start_type,
-            tooltip="Selects the start type for this flight.",
+        layout.addWidget(
+            QLabeledWidget(
+                "Start type:",
+                self.start_type,
+                tooltip="Selects the start type for this flight.",
+            )
         )
         squadron: Squadron = self.squadron_selector.currentData()
         home_base: ControlPoint = squadron.location
         if isinstance(home_base, OffMapSpawn):
             self.start_type.setCurrentText(StartType.IN_FLIGHT.value)
             self.start_type.setEnabled(False)
-        layout.addLayout(start_type)
         layout.addWidget(
             QLabel(
                 "Any option other than Cold will make this flight "
