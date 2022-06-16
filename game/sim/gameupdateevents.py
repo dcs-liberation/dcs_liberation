@@ -127,7 +127,7 @@ class GameUpdateEvents:
         self.updated_control_points.add(control_point.id)
         return self.update_supply_routes()
 
-    def update_supply_routes(self):
+    def update_supply_routes(self) -> GameUpdateEvents:
         self.updated_supply_routes = True
         return self
 

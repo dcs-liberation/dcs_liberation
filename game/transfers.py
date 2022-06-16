@@ -571,7 +571,7 @@ class PendingTransfers:
     def __iter__(self) -> Iterator[TransferOrder]:
         yield from self.pending_transfers
 
-    def __update_eventstream__(self):
+    def __update_eventstream__(self) -> None:
         from game.server import EventStream
         from game.sim import GameUpdateEvents
 
