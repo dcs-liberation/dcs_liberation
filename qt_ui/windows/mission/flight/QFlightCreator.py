@@ -108,7 +108,7 @@ class QFlightCreator(QDialog):
         for start_type in StartType:
             self.start_type.addItem(start_type.value, start_type)
         self.start_type.setCurrentText(self.restore_start_type.value)
-        layout.addWidget(
+        layout.layout(
             QLabeledWidget(
                 "Start type:",
                 self.start_type,
