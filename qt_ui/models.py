@@ -298,9 +298,8 @@ class AtoModel(QAbstractListModel):
 
     def on_packages_changed(self) -> None:
         if self.game is not None:
-            events = GameUpdateEvents()
-            self.game.compute_unculled_zones(events)
-            EventStream.put_nowait(events)
+            with EventStream.event_context() as events:
+                self.game.compute_unculled_zones(events)
 
     def package_at_index(self, index: QModelIndex) -> Package:
         """Returns the package at the given index."""
