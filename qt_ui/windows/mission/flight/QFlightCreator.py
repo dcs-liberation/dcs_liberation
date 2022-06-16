@@ -107,7 +107,7 @@ class QFlightCreator(QDialog):
         self.start_type = QComboBox()
         for start_type in StartType:
             self.start_type.addItem(start_type.value, start_type)
-        self.start_type.setCurrentText(self.restore_start_type.value)
+        self.start_type.setCurrentText(self.game.settings.default_start_type)
         layout.addLayout(
             QLabeledWidget(
                 "Start type:",
