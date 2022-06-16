@@ -42,6 +42,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "eslintIgnore": ["leaflet-ruler.d.ts"],
   "prettier": {
     "endOfLine": "auto"
   },

@@ -1,3 +1,5 @@
+// Ignoring eslint here because we know L.control.ruler is used in Ruler.tsx
+
 interface CircleMarker {
   color: string;
   radius: number;
