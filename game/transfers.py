@@ -612,7 +612,7 @@ class PendingTransfers:
         transfer.origin.base.commit_losses(transfer.units)
         self.pending_transfers.append(transfer)
         self.arrange_transport(transfer)
-        self.__update_eventstream__()
+        self._update_eventstream()
 
     def split_transfer(self, transfer: TransferOrder, size: int) -> TransferOrder:
         """Creates a smaller transfer that is a subset of the original."""
@@ -667,7 +667,7 @@ class PendingTransfers:
             self.cancel_transport(transfer.transport, transfer)
         self.pending_transfers.remove(transfer)
         transfer.origin.base.commission_units(transfer.units)
-        self.__update_eventstream__()
+        self._update_eventstream()
 
     def perform_transfers(self) -> None:
         """
@@ -684,7 +684,7 @@ class PendingTransfers:
         self.pending_transfers = incomplete
         self.convoys.disband_all()
         self.cargo_ships.disband_all()
-        self.__update_eventstream__()
+        self._update_eventstream()
 
     def plan_transports(self) -> None:
         """
