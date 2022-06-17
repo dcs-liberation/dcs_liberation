@@ -846,7 +846,8 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                     game.theater.iads_network.update_tgo(tgo)
                 conflict_heading = game.theater.heading_to_conflict_from(tgo.position)
                 tgo.rotate(conflict_heading or tgo.heading)
-            events.update_tgo(tgo)
+            if not tgo.is_control_point:
+                events.update_tgo(tgo)
 
     @property
     def required_aircraft_start_type(self) -> Optional[StartType]:
