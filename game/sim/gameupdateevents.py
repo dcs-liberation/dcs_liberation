@@ -55,8 +55,9 @@ class GameUpdateEvents:
         self.updated_combats.append(combat)
         return self
 
-    def end_combat(self, combat: FrozenCombat) -> None:
+    def end_combat(self, combat: FrozenCombat) -> GameUpdateEvents:
         self.ended_combats.append(combat)
+        return self
 
     def update_flight_position(
         self, flight: Flight, new_position: Point
