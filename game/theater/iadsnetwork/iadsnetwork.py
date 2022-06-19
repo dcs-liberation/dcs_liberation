@@ -127,8 +127,6 @@ class IadsNetwork:
                 continue
 
             skynet_node = SkynetNode.from_group(node.group)
-            if skynet_node is None:
-                continue
             for connection in node.connections.values():
                 is_friendly = connection.ground_object.is_friendly(skynet_node.player)
                 is_culled = game.iads_considerate_culling(connection.ground_object)
@@ -239,7 +237,9 @@ class IadsNetwork:
                 node = self.node_for_tgo(self.ground_objects[element_name])
             except KeyError:
                 node = None
-                warning_msg = f"IADS: No ground object found for connection {node_name}"
+                warning_msg = (
+                    f"IADS: No ground object found for connection {element_name}"
+                )
 
             if node is None:
                 # Log a warning as this can be normal. Possible case is for example
