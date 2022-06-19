@@ -88,6 +88,13 @@ class IadsNetworkNode:
     def add_connection_for_group(self, group: IadsGroundGroup) -> None:
         """Add connection for the given GroundGroup with unique ID"""
         self.connections[uuid.uuid4()] = group
+        self._push_updated_node()
+
+    def _push_updated_node(self) -> None:
+        from game.server import EventStream
+
+        with EventStream.event_context() as events:
+            events.update_iads_node(self)
 
 
 class IadsNetwork:
@@ -142,12 +149,9 @@ class IadsNetwork:
         for node in self.nodes:
             for cID, group in node.connections.items():
                 if group.ground_object is tgo:
-                    print(group.name, node.group.name)
-                    with EventStream.event_context() as events:
-                        events.delete_iads_connection(cID)
+                    self._push_deleted_connection(cID)
         # if tgo.alive_unit_count > 0:
         self._update_network(tgo)
-
 
     def update_tgo(self, tgo: TheaterGroundObject) -> None:
         """Update the IADS Network for the given TGO"""
@@ -157,9 +161,8 @@ class IadsNetwork:
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
                 self.nodes.remove(cn)
-                with EventStream.event_context() as events:
-                    for cID in cn.connections:
-                        events.delete_iads_connection(cID)
+                for cID in cn.connections:
+                    self._push_deleted_connection(cID)
         # Create a new node for the tgo
         # TODO Add the connections or calculate them..
         node = self.node_for_tgo(tgo)
@@ -168,8 +171,6 @@ class IadsNetwork:
             return
         self.nodes.append(node)
         self._connect_to_network(node, tgo)
-        with EventStream.event_context() as events:
-            events.update_iads_node(node)
 
     def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
         """Get existing node from the iads network or create a new node"""
@@ -181,10 +182,10 @@ class IadsNetwork:
         self.nodes.append(node)
         return node
 
-    def node_for_tgo(self, tgo: TheaterGroundObject) -> IadsNetworkNode:
+    def node_for_tgo(self, tgo: TheaterGroundObject) -> Optional[IadsNetworkNode]:
         """Get existing node from the iads network or create a new node"""
         for cn in self.nodes:
-            if cn.group.ground_object == tgo:
+            if cn.group.ground_object is tgo:
                 return cn
 
         # Create new connection_node if none exists
@@ -262,20 +263,22 @@ class IadsNetwork:
     def initialize_network_from_range(self) -> None:
         """Initialize the IADS Network by range"""
         for go in self.ground_objects.values():
-            if (
-                isinstance(go, IadsGroundObject)
-                or isinstance(go, NavalGroundObject)
-                or (
-                    isinstance(go, IadsBuildingGroundObject)
-                    and IadsRole.for_category(go.category) == IadsRole.COMMAND_CENTER
-                )
-            ):
+            is_iads_go = isinstance(go, IadsGroundObject)
+            is_iads_sea = isinstance(go, NavalGroundObject)
+            is_iads_cc = isinstance(go, IadsBuildingGroundObject)
+            is_iads_cc &= IadsRole.for_category(go.category) == IadsRole.COMMAND_CENTER
+            if is_iads_go or is_iads_sea or is_iads_cc:
                 # Set as primary node
                 node = self.node_for_tgo(go)
                 if node is None:
                     # TGO does not participate to iads network
                     continue
                 self._connect_to_network(node, go)
+
+    def _is_friendly(self, node: IadsNetworkNode, tgo: TheaterGroundObject) -> bool:
+        node_friendly = node.group.ground_object.is_friendly(True)
+        tgo_friendly = tgo.is_friendly(True)
+        return node_friendly == tgo_friendly
 
     def _connect_to_network(self, node: IadsNetworkNode, go: TheaterGroundObject) -> None:
         # Find nearby Power or Connection
@@ -286,10 +289,7 @@ class IadsNetwork:
             connecting_node = iads_role in [IadsRole.POWER_SOURCE, IadsRole.CONNECTION_NODE]
             dist = nearby_go.position.distance_to_point(go.position)
             in_range = dist < iads_role.connection_range.meters
-            node_friendly = node.group.ground_object.is_friendly(True)
-            nearby_friendly = nearby_go.is_friendly(True)
-            is_friendly = node_friendly == nearby_friendly
-            if connecting_node and in_range and is_friendly:
+            if connecting_node and in_range and self._is_friendly(node, nearby_go):
                 node.add_connection_for_tgo(nearby_go)
 
     def _update_network(self, tgo: TheaterGroundObject) -> None:
@@ -298,14 +298,11 @@ class IadsNetwork:
         for node in self.nodes:
             dist = node.group.ground_object.position.distance_to_point(tgo.position)
             in_range = dist < iads_role.connection_range.meters
-            node_friendly = node.group.ground_object.is_friendly(True)
-            tgo_friendly = tgo.is_friendly(True)
-            is_friendly = node_friendly == tgo_friendly
-            if in_range and is_friendly:
+            if in_range and self._is_friendly(node, tgo):
                 node.add_connection_for_tgo(tgo)
-                from game.server import EventStream
 
-                with EventStream.event_context() as events:
-                    events.update_iads_node(node)
+    def _push_deleted_connection(self, c_id: str) -> None:
+        from game.server import EventStream
 
-
+        with EventStream.event_context() as events:
+            events.delete_iads_connection(c_id)
