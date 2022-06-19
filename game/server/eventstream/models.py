@@ -34,7 +34,7 @@ class GameUpdateEventsJs(BaseModel):
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: set[UUID]
-    updated_iads: set[IadsConnectionJs]
+    updated_iads: list[IadsConnectionJs]
     deleted_iads: set[UUID]
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
@@ -59,7 +59,7 @@ class GameUpdateEventsJs(BaseModel):
                 for c in events.updated_combats
             ]
             for node in events.updated_iads:
-                updated_iads = updated_iads + IadsConnectionJs.connections_for_node(node)
+                updated_iads.extend(IadsConnectionJs.connections_for_node(node))
 
         return GameUpdateEventsJs(
             updated_flight_positions={
