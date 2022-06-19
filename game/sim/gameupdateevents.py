@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from game.ato import Flight, Package
     from game.sim.combat import FrozenCombat
     from game.theater import ControlPoint, FrontLine, TheaterGroundObject
+    from game.theater.iadsnetwork.iadsnetwork import IadsNetworkNode
 
 
 @dataclass
@@ -34,6 +35,8 @@ class GameUpdateEvents:
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
     updated_control_points: set[UUID] = field(default_factory=set)
+    updated_iads: set(IadsNetworkNode) = field(default_factory=set)
+    deleted_iads_connections: set[UUID] = field(default_factory=set)
     reset_on_map_center: LatLng | None = None
     game_unloaded: bool = False
     new_turn: bool = False
@@ -124,6 +127,14 @@ class GameUpdateEvents:
 
     def update_control_point(self, control_point: ControlPoint) -> GameUpdateEvents:
         self.updated_control_points.add(control_point.id)
+        return self
+
+    def update_iads_node(self, iads_node: IadsNetworkNode):
+        self.updated_iads.add(iads_node)
+        return self
+
+    def delete_iads_connection(self, connection_id: str):
+        self.deleted_iads_connections.add(connection_id)
         return self
 
     def game_loaded(self, game: Game | None) -> GameUpdateEvents:

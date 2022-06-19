@@ -30,7 +30,7 @@ import { updateTgo } from "./tgosSlice";
 import { threatZonesUpdated } from "./threatZonesSlice";
 import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
-import { updateIadsConnection } from "./iadsNetworkSlice";
+import { updateIadsConnection, removeIadsConnection } from "./iadsNetworkSlice";
 import { IadsConnection } from "./_liberationApi";
 
 interface GameUpdateEvents {
@@ -51,6 +51,8 @@ interface GameUpdateEvents {
   deleted_front_lines: string[];
   updated_tgos: string[];
   updated_control_points: number[];
+  updated_iads: IadsConnection[];
+  deleted_iads: string[];
   reset_on_map_center: LatLng | null;
   game_unloaded: boolean;
   new_turn: boolean;
@@ -151,11 +153,6 @@ export const handleStreamedEvents = (
       const tgo = response.data as Tgo;
       dispatch(updateTgo(tgo));
     });
-    backend.get(`/iads-network/for-tgo/${id}`).then((response) => {
-      for (const connection of response.data) {
-        dispatch(updateIadsConnection(connection as IadsConnection));
-      }
-    });
   }
 
   for (const id of events.updated_control_points) {
@@ -163,6 +160,14 @@ export const handleStreamedEvents = (
       const cp = response.data as ControlPoint;
       dispatch(updateControlPoint(cp));
     });
+  }
+
+  for (const connection of events.updated_iads) {
+    dispatch(updateIadsConnection(connection as IadsConnection));
+  }
+
+  for (const id of events.deleted_iads) {
+    dispatch(removeIadsConnection(id as string));
   }
 
   if (events.reset_on_map_center != null) {

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from game.server.combat.models import FrozenCombatJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
+from game.server.iadsnetwork.models import IadsConnectionJs
 from game.server.leaflet import LeafletPoint
 
 if TYPE_CHECKING:
@@ -33,6 +34,8 @@ class GameUpdateEventsJs(BaseModel):
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: set[UUID]
+    updated_iads: set[IadsConnectionJs]
+    deleted_iads: set[UUID]
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
     new_turn: bool
@@ -46,6 +49,7 @@ class GameUpdateEventsJs(BaseModel):
         # because we need to send the unload event.
         new_combats = []
         updated_combats = []
+        updated_iads = []
         if game is not None:
             new_combats = [
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
@@ -54,6 +58,8 @@ class GameUpdateEventsJs(BaseModel):
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
             ]
+            for node in events.updated_iads:
+                updated_iads = updated_iads + IadsConnectionJs.connections_for_node(node)
 
         return GameUpdateEventsJs(
             updated_flight_positions={
@@ -79,6 +85,8 @@ class GameUpdateEventsJs(BaseModel):
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
             updated_control_points=events.updated_control_points,
+            updated_iads=updated_iads,
+            deleted_iads=events.deleted_iads_connections,
             reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
             new_turn=events.new_turn,
