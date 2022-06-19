@@ -231,8 +231,10 @@ class IadsNetwork:
     def initialize_network_from_config(self) -> None:
         """Initialize the IADS Network from a configuration"""
         for element_name, connections in self.iads_config.items():
-            warning_msg = f"IADS: No ground object found for {element_name}." \
-                          f" This can be normal behaviour."
+            warning_msg = (
+                f"IADS: No ground object found for {element_name}."
+                f" This can be normal behaviour."
+            )
             try:
                 node = self.node_for_tgo(self.ground_objects[element_name])
             except KeyError:
@@ -252,10 +254,14 @@ class IadsNetwork:
                 try:
                     tgo = self.ground_objects[node_name]
                     if tgo is None:
-                        exception_msg = f"IADS: ground_objects contains None values:\n{tgo}"
+                        exception_msg = (
+                            f"IADS: ground_objects contains None values:\n{tgo}"
+                        )
                         raise IadsNetworkException(exception_msg)
                 except KeyError:
-                    warning_msg = f"IADS: No ground object found for connection {node_name}"
+                    warning_msg = (
+                        f"IADS: No ground object found for connection {node_name}"
+                    )
                     logging.error(warning_msg)
                     continue
                 node.add_connection_for_tgo(tgo)
@@ -280,17 +286,19 @@ class IadsNetwork:
         tgo_friendly = tgo.is_friendly(True)
         return node_friendly == tgo_friendly
 
-    def _connect_to_network(self, node: IadsNetworkNode, go: TheaterGroundObject) -> None:
+    def _connect_to_network(
+        self, node: IadsNetworkNode, go: TheaterGroundObject
+    ) -> None:
         # Find nearby Power or Connection
         for nearby_go in self.ground_objects.values():
             if nearby_go == go:
                 continue
             iads_role = IadsRole.for_category(nearby_go.category)
-            connecting_node = iads_role in [IadsRole.POWER_SOURCE, IadsRole.CONNECTION_NODE]
-            dist = nearby_go.position.distance_to_point(go.position)
-            in_range = dist < iads_role.connection_range.meters
-            if connecting_node and in_range and self._is_friendly(node, nearby_go):
-                node.add_connection_for_tgo(nearby_go)
+            if iads_role.is_comms_or_power:
+                dist = nearby_go.position.distance_to_point(go.position)
+                in_range = dist < iads_role.connection_range.meters
+                if in_range and self._is_friendly(node, nearby_go):
+                    node.add_connection_for_tgo(nearby_go)
 
     def _update_network(self, tgo: TheaterGroundObject) -> None:
         # Reversing the idea of _connect_to_network...
@@ -301,8 +309,8 @@ class IadsNetwork:
             if in_range and self._is_friendly(node, tgo):
                 node.add_connection_for_tgo(tgo)
 
-    def _push_deleted_connection(self, c_id: str) -> None:
+    def _push_deleted_connection(self, uid: UUID) -> None:
         from game.server import EventStream
 
         with EventStream.event_context() as events:
-            events.delete_iads_connection(c_id)
+            events.delete_iads_connection(uid)
