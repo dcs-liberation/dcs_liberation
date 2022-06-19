@@ -19,6 +19,10 @@ export const IadsNetworkSlice = createSlice({
       const connection = action.payload;
       state.connections[connection.id] = connection
     },
+    removeIadsConnection: (state, action: PayloadAction<string>) => {
+      const cID = action.payload;
+      delete state.connections[cID];
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(gameLoaded, (state, action) => {
@@ -36,7 +40,7 @@ export const IadsNetworkSlice = createSlice({
   },
 });
 
-export const { updateIadsConnection } = IadsNetworkSlice.actions;
+export const { updateIadsConnection, removeIadsConnection } = IadsNetworkSlice.actions;
 
 export const selectIadsNetwork = (state: RootState) => state.iadsNetwork;
 
