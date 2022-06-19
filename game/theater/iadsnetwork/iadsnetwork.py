@@ -254,15 +254,13 @@ class IadsNetwork:
                 try:
                     tgo = self.ground_objects[node_name]
                     if tgo is None:
-                        exception_msg = (
+                        raise IadsNetworkException(
                             f"IADS: ground_objects contains None values:\n{tgo}"
                         )
-                        raise IadsNetworkException(exception_msg)
                 except KeyError:
-                    warning_msg = (
+                    logging.error(
                         f"IADS: No ground object found for connection {node_name}"
                     )
-                    logging.error(warning_msg)
                     continue
                 node.add_connection_for_tgo(tgo)
 
