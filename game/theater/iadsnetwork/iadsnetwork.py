@@ -252,7 +252,7 @@ class IadsNetwork:
             for node_name in connections:
                 try:
                     node.add_connection_for_tgo(self.ground_objects[node_name])
-                except (KeyError):
+                except KeyError:
                     logging.error(
                         f"IADS: No ground object found for connection {node_name}"
                     )

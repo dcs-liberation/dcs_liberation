@@ -34,7 +34,7 @@ class GameUpdateEvents:
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
     updated_control_points: set[ControlPoint] = field(default_factory=set)
-    updated_iads: set(IadsNetworkNode) = field(default_factory=set)
+    updated_iads: set[IadsNetworkNode] = field(default_factory=set)
     deleted_iads_connections: set[UUID] = field(default_factory=set)
     reset_on_map_center: LatLng | None = None
     game_unloaded: bool = False
@@ -124,11 +124,11 @@ class GameUpdateEvents:
         self.updated_control_points.add(control_point)
         return self
 
-    def update_iads_node(self, iads_node: IadsNetworkNode):
+    def update_iads_node(self, iads_node: IadsNetworkNode) -> GameUpdateEvents:
         self.updated_iads.add(iads_node)
         return self
 
-    def delete_iads_connection(self, connection_id: str):
+    def delete_iads_connection(self, connection_id: UUID) -> GameUpdateEvents:
         self.deleted_iads_connections.add(connection_id)
         return self
 
