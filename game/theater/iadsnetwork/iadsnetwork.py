@@ -153,8 +153,6 @@ class IadsNetwork:
 
     def update_tgo(self, tgo: TheaterGroundObject) -> None:
         """Update the IADS Network for the given TGO"""
-        from game.server import EventStream
-
         # Remove existing nodes for the given tgo
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
