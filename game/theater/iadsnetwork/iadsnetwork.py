@@ -254,9 +254,6 @@ class IadsNetwork:
                         f"IADS: No ground object found for connection {node_name}"
                     )
                     continue
-                if tgo is None:
-                    emsg = f"IADS: ground_objects contains None values:\n{tgo}"
-                    raise IadsNetworkException(emsg)
                 node.add_connection_for_tgo(tgo)
 
     def initialize_network_from_range(self) -> None:
