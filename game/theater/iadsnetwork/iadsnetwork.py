@@ -142,8 +142,6 @@ class IadsNetwork:
         if not isinstance(tgo, IadsBuildingGroundObject):
             return
 
-        from game.server import EventStream
-
         for node in self.nodes:
             for cID, group in node.connections.items():
                 if group.ground_object is tgo:
