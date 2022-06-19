@@ -133,16 +133,42 @@ class IadsNetwork:
                 continue
         return skynet_nodes
 
+    def update_iads_building(self, tgo: TheaterGroundObject) -> None:
+        if not isinstance(tgo, IadsBuildingGroundObject):
+            return
+
+        from game.server import EventStream
+
+        for node in self.nodes:
+            for cID, group in node.connections.items():
+                if group.ground_object is tgo:
+                    print(group.name, node.group.name)
+                    with EventStream.event_context() as events:
+                        events.delete_iads_connection(cID)
+        # if tgo.alive_unit_count > 0:
+        self._update_network(tgo)
+
     def update_tgo(self, tgo: TheaterGroundObject) -> None:
         """Update the IADS Network for the given TGO"""
+        from game.server import EventStream
+
         # Remove existing nodes for the given tgo
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
                 self.nodes.remove(cn)
+                with EventStream.event_context() as events:
+                    for cID in cn.connections:
+                        events.delete_iads_connection(cID)
         try:
+
             # Create a new node for the tgo
-            self.node_for_tgo(tgo)
             # TODO Add the connections or calculate them..
+            node = self.node_for_tgo(tgo)
+            if node is not None:
+                self.nodes.append(node)
+                self._connect_to_network(node, tgo)
+                with EventStream.event_context() as events:
+                    events.update_iads_node(node)
         except IadsNetworkException:
             # Not participating
             pass
@@ -249,17 +275,37 @@ class IadsNetwork:
                 except IadsNetworkException:
                     # TGO does not participate to iads network
                     continue
-                # Find nearby Power or Connection
-                for nearby_go in self.ground_objects.values():
-                    if nearby_go == go:
-                        continue
-                    if (
-                        IadsRole.for_category(go.category)
-                        in [
-                            IadsRole.POWER_SOURCE,
-                            IadsRole.CONNECTION_NODE,
-                        ]
-                        and nearby_go.position.distance_to_point(go.position)
-                        <= node.group.iads_role.connection_range.meters
-                    ):
-                        node.add_connection_for_tgo(nearby_go)
+                self._connect_to_network(node, go)
+
+    def _connect_to_network(self, node: IadsNetworkNode, go: TheaterGroundObject) -> None:
+        # Find nearby Power or Connection
+        for nearby_go in self.ground_objects.values():
+            if nearby_go == go:
+                continue
+            iads_role = IadsRole.for_category(nearby_go.category)
+            connecting_node = iads_role in [IadsRole.POWER_SOURCE, IadsRole.CONNECTION_NODE]
+            dist = nearby_go.position.distance_to_point(go.position)
+            in_range = dist < iads_role.connection_range.meters
+            node_friendly = node.group.ground_object.is_friendly(True)
+            nearby_friendly = nearby_go.is_friendly(True)
+            is_friendly = node_friendly == nearby_friendly
+            if connecting_node and in_range and is_friendly:
+                node.add_connection_for_tgo(nearby_go)
+
+    def _update_network(self, tgo: TheaterGroundObject) -> None:
+        # Reversing the idea of _connect_to_network...
+        iads_role = IadsRole.for_category(tgo.category)
+        for node in self.nodes:
+            dist = node.group.ground_object.position.distance_to_point(tgo.position)
+            in_range = dist < iads_role.connection_range.meters
+            node_friendly = node.group.ground_object.is_friendly(True)
+            tgo_friendly = tgo.is_friendly(True)
+            is_friendly = node_friendly == tgo_friendly
+            if in_range and is_friendly:
+                node.add_connection_for_tgo(tgo)
+                from game.server import EventStream
+
+                with EventStream.event_context() as events:
+                    events.update_iads_node(node)
+
+

@@ -35,7 +35,7 @@ class GameUpdateEventsJs(BaseModel):
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: list[ControlPointJs]
-    updated_iads: set[IadsConnectionJs]
+    updated_iads: list[IadsConnectionJs]
     deleted_iads: set[UUID]
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool

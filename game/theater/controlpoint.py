@@ -63,6 +63,7 @@ from .frontline import FrontLine
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
+    IadsBuildingGroundObject,
     IadsGroundObject,
     TheaterGroundObject,
     VehicleGroupGroundObject,
@@ -839,13 +840,15 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         # All the attached TGOs have either been depopulated or captured. Tell the UI to
         # update their state. Also update orientation and IADS state for specific tgos
         for tgo in self.connected_objectives:
-            if isinstance(tgo, IadsGroundObject) or isinstance(
-                tgo, VehicleGroupGroundObject
-            ):
-                if isinstance(tgo, IadsGroundObject):
+            is_iads_go = isinstance(tgo, IadsGroundObject)
+            is_vehicle_go = isinstance(tgo, VehicleGroupGroundObject)
+            if is_iads_go or is_vehicle_go:
+                if is_iads_go:
                     game.theater.iads_network.update_tgo(tgo)
                 conflict_heading = game.theater.heading_to_conflict_from(tgo.position)
                 tgo.rotate(conflict_heading or tgo.heading)
+            elif isinstance(tgo, IadsBuildingGroundObject):
+                game.theater.iads_network.update_iads_building(tgo)
             if not tgo.is_control_point:
                 events.update_tgo(tgo)
 
