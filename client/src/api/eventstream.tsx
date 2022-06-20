@@ -53,7 +53,7 @@ interface GameUpdateEvents {
   deleted_front_lines: string[];
   updated_tgos: string[];
   updated_control_points: number[];
-  updated_supply_routes: boolean;
+  updated_supply_routes: SupplyRoute[];
   reset_on_map_center: LatLng | null;
   game_unloaded: boolean;
   new_turn: boolean;
@@ -168,12 +168,10 @@ export const handleStreamedEvents = (
     });
   }
 
-  if (events.updated_supply_routes) {
-    backend.get(`/supply-routes`).then((response) => {
-      const routes = response.data as SupplyRoute[];
-      dispatch(supplyRoutesUpdated(routes));
-    });
-  }
+  dispatch(supplyRoutesUpdated(events.updated_supply_routes));
+  /* for (const route of events.updated_supply_routes) {
+    dispatch(supplyRoutesUpdated(route));
+  } */
 
   if (events.reset_on_map_center != null) {
     reloadGameState(dispatch);

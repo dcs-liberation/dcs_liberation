@@ -9,6 +9,7 @@ from game.server.combat.models import FrozenCombatJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
+from game.server.supplyroutes.models import SupplyRouteJs
 
 if TYPE_CHECKING:
     from game import Game
@@ -33,7 +34,7 @@ class GameUpdateEventsJs(BaseModel):
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: set[UUID]
-    updated_supply_routes: bool
+    updated_supply_routes: list[SupplyRouteJs]
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
     new_turn: bool
@@ -55,6 +56,8 @@ class GameUpdateEventsJs(BaseModel):
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
             ]
+            if events.updated_supply_routes:
+                updated_supply_routes = SupplyRouteJs.all_in_game(game)
 
         return GameUpdateEventsJs(
             updated_flight_positions={
@@ -80,7 +83,7 @@ class GameUpdateEventsJs(BaseModel):
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
             updated_control_points=events.updated_control_points,
-            updated_supply_routes=events.updated_supply_routes,
+            updated_supply_routes=updated_supply_routes,
             reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
             new_turn=events.new_turn,
