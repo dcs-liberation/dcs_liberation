@@ -48,6 +48,7 @@ class GameUpdateEventsJs(BaseModel):
         # because we need to send the unload event.
         new_combats = []
         updated_combats = []
+        updated_supply_routes = []
         if game is not None:
             new_combats = [
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
