@@ -13,7 +13,7 @@ const initialState: NavMeshState = {
   red: [],
 };
 
-interface INavMeshUpdate {
+export interface INavMeshUpdate {
   blue: boolean;
   mesh: NavMesh;
 }

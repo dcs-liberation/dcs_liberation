@@ -9,6 +9,8 @@ from game.server.combat.models import FrozenCombatJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
+from game.server.mapzones.models import ThreatZonesJs
+from game.server.navmesh.models import NavMeshJs
 
 if TYPE_CHECKING:
     from game import Game
@@ -20,9 +22,9 @@ class GameUpdateEventsJs(BaseModel):
     new_combats: list[FrozenCombatJs]
     updated_combats: list[FrozenCombatJs]
     ended_combats: list[UUID]
-    navmesh_updates: set[bool]
+    navmesh_updates: dict[bool, NavMeshJs]
     unculled_zones_updated: bool
-    threat_zones_updated: bool
+    threat_zones_updated: dict[bool, ThreatZonesJs]
     new_flights: list[FlightJs]
     updated_flights: set[UUID]
     deleted_flights: set[UUID]
@@ -46,6 +48,8 @@ class GameUpdateEventsJs(BaseModel):
         # because we need to send the unload event.
         new_combats = []
         updated_combats = []
+        updated_navmeshes = {}
+        updated_threat_zones = {}
         if game is not None:
             new_combats = [
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
@@ -54,6 +58,14 @@ class GameUpdateEventsJs(BaseModel):
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
             ]
+            updated_navmeshes = {
+                player: NavMeshJs.from_navmesh(mesh, game)
+                for player, mesh in events.navmesh_updates.items()
+            }
+            updated_threat_zones = {
+                player: ThreatZonesJs.from_zones(zones, game.theater)
+                for player, zones in events.threat_zones_updated.items()
+            }
 
         return GameUpdateEventsJs(
             updated_flight_positions={
@@ -62,9 +74,9 @@ class GameUpdateEventsJs(BaseModel):
             new_combats=new_combats,
             updated_combats=updated_combats,
             ended_combats=[c.id for c in events.ended_combats],
-            navmesh_updates=events.navmesh_updates,
+            navmesh_updates=updated_navmeshes,
             unculled_zones_updated=events.unculled_zones_updated,
-            threat_zones_updated=events.threat_zones_updated,
+            threat_zones_updated=updated_threat_zones,
             new_flights=[
                 FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights
             ],

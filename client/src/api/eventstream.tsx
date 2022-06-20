@@ -24,22 +24,22 @@ import {
   FrontLine,
   Tgo,
 } from "./liberationApi";
-import { navMeshUpdated } from "./navMeshSlice";
+import { navMeshUpdated, INavMeshUpdate } from "./navMeshSlice";
 import { updateTgo } from "./tgosSlice";
-import { threatZonesUpdated } from "./threatZonesSlice";
+import { threatZonesUpdated, IThreatZoneUpdate } from "./threatZonesSlice";
 import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
 import { updateIadsConnection } from "./iadsNetworkSlice";
-import { IadsConnection } from "./_liberationApi";
+import { IadsConnection, NavMesh, ThreatZones } from "./_liberationApi";
 
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
   new_combats: Combat[];
   updated_combats: Combat[];
   ended_combats: string[];
-  navmesh_updates: boolean[];
+  navmesh_updates: {blue: boolean, mesh: NavMesh}[];
   unculled_zones_updated: boolean;
-  threat_zones_updated: boolean;
+  threat_zones_updated: {blue: boolean, zones: ThreatZones}[];
   new_flights: Flight[];
   updated_flights: string[];
   deleted_flights: string[];
@@ -77,12 +77,9 @@ export const handleStreamedEvents = (
     dispatch(endCombat(id));
   }
 
-  for (const blue of events.navmesh_updates) {
-    backend.get(`/navmesh?for_player=${blue}`).then((result) => {
-      if (result.data) {
-        dispatch(navMeshUpdated({ blue: blue, mesh: result.data }));
-      }
-    });
+  for (const [blue, navmesh] of Object.entries(events.navmesh_updates)) {
+    const data = {blue: (blue === "true"), mesh: navmesh}
+    dispatch(navMeshUpdated( data as unknown as INavMeshUpdate ));
   }
 
   if (events.unculled_zones_updated) {
@@ -95,12 +92,10 @@ export const handleStreamedEvents = (
     );
   }
 
-  if (events.threat_zones_updated) {
-    backend.get(`/map-zones/threats`).then( (result) => {
-      if (result.data) {
-        dispatch(threatZonesUpdated(result.data));
-      }
-    });
+  for (const [blue, zones] of Object.entries(events.threat_zones_updated)) {
+    const data = {blue: (blue === "true"), zones: zones}
+    dispatch(threatZonesUpdated( data as unknown as IThreatZoneUpdate ));
+
   }
 
   for (const flight of events.new_flights) {
