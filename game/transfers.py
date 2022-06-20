@@ -573,10 +573,9 @@ class PendingTransfers:
 
     def _update_eventstream(self) -> None:
         from game.server import EventStream
-        from game.sim import GameUpdateEvents
 
-        events = GameUpdateEvents().update_supply_routes()
-        EventStream.put_nowait(events)
+        with EventStream.event_context() as events:
+            events.update_supply_routes()
 
     @property
     def pending_transfer_count(self) -> int:
