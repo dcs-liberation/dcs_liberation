@@ -9,6 +9,7 @@ from game.server.combat.models import FrozenCombatJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
+from game.server.mapzones.models import UnculledZoneJs
 
 if TYPE_CHECKING:
     from game import Game
@@ -21,7 +22,7 @@ class GameUpdateEventsJs(BaseModel):
     updated_combats: list[FrozenCombatJs]
     ended_combats: list[UUID]
     navmesh_updates: set[bool]
-    unculled_zones_updated: bool
+    updated_unculled_zones: list[UnculledZoneJs]
     threat_zones_updated: bool
     new_flights: list[FlightJs]
     updated_flights: set[UUID]
@@ -46,6 +47,7 @@ class GameUpdateEventsJs(BaseModel):
         # because we need to send the unload event.
         new_combats = []
         updated_combats = []
+        updated_unculled_zones = []
         if game is not None:
             new_combats = [
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
@@ -54,6 +56,7 @@ class GameUpdateEventsJs(BaseModel):
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
             ]
+            updated_unculled_zones = UnculledZoneJs.from_game(game)
 
         return GameUpdateEventsJs(
             updated_flight_positions={
@@ -63,7 +66,7 @@ class GameUpdateEventsJs(BaseModel):
             updated_combats=updated_combats,
             ended_combats=[c.id for c in events.ended_combats],
             navmesh_updates=events.navmesh_updates,
-            unculled_zones_updated=events.unculled_zones_updated,
+            updated_unculled_zones=updated_unculled_zones,
             threat_zones_updated=events.threat_zones_updated,
             new_flights=[
                 FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights

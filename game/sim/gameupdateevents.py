@@ -22,7 +22,7 @@ class GameUpdateEvents:
     ended_combats: list[FrozenCombat] = field(default_factory=list)
     updated_flight_positions: list[tuple[Flight, Point]] = field(default_factory=list)
     navmesh_updates: set[bool] = field(default_factory=set)
-    unculled_zones_updated: bool = False
+    unculled_zones_updated: list[Point] = field(default_factory=list)
     threat_zones_updated: bool = False
     new_flights: set[Flight] = field(default_factory=set)
     updated_flights: set[UUID] = field(default_factory=set)
@@ -68,8 +68,8 @@ class GameUpdateEvents:
         self.navmesh_updates.add(player)
         return self
 
-    def update_unculled_zones(self) -> GameUpdateEvents:
-        self.unculled_zones_updated = True
+    def update_unculled_zones(self, zones: list[Point]) -> GameUpdateEvents:
+        self.unculled_zones_updated = zones
         return self
 
     def update_threat_zones(self) -> GameUpdateEvents:
