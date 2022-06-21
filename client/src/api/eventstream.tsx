@@ -33,7 +33,7 @@ import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
 import { updateIadsConnection } from "./iadsNetworkSlice";
 import { IadsConnection } from "./_liberationApi";
-import { supplyRoutesUpdated } from "./supplyRoutesSlice";
+import { supplyRoutesUpdated, supplyRoutesDeleted } from "./supplyRoutesSlice";
 
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
@@ -168,9 +168,11 @@ export const handleStreamedEvents = (
     });
   }
 
+  dispatch(supplyRoutesDeleted(events.updated_supply_routes.map(route => route.id)));
   dispatch(supplyRoutesUpdated(events.updated_supply_routes));
   /* for (const route of events.updated_supply_routes) {
-    dispatch(supplyRoutesUpdated(route));
+    dispatch(supplyRoutesDeleted(route.id));
+    dispatch(supplyRoutesUpdated(route as SupplyRoute));
   } */
 
   if (events.reset_on_map_center != null) {
