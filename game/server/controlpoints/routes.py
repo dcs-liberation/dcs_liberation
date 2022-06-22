@@ -89,6 +89,7 @@ def set_destination(
         )
     cp.target_position = point
     from .. import EventStream
+
     with EventStream.event_context() as events:
         events.update_control_point(cp)
 
@@ -114,5 +115,6 @@ def cancel_travel(cp_id: UUID, game: Game = Depends(GameContext.require)) -> Non
 
     cp.target_position = None
     from .. import EventStream
+
     with EventStream.event_context() as events:
         events.update_control_point(cp)
