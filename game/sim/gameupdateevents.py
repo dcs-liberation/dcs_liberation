@@ -29,8 +29,7 @@ class GameUpdateEvents:
     deleted_flights: set[UUID] = field(default_factory=set)
     selected_flight: UUID | None = None
     deselected_flight: bool = False
-    new_front_lines: set[FrontLine] = field(default_factory=set)
-    updated_front_lines: set[UUID] = field(default_factory=set)
+    updated_front_lines: set[FrontLine] = field(default_factory=set)
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
     updated_control_points: set[UUID] = field(default_factory=set)
@@ -106,12 +105,8 @@ class GameUpdateEvents:
         self.selected_flight = None
         return self
 
-    def new_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
-        self.new_front_lines.add(front_line)
-        return self
-
     def update_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
-        self.updated_front_lines.add(front_line.id)
+        self.updated_front_lines.add(front_line)
         return self
 
     def delete_front_line(self, front_line: FrontLine) -> GameUpdateEvents:

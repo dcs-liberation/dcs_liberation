@@ -13,7 +13,6 @@ import {
   updateFlightPositions,
 } from "./flightsSlice";
 import {
-  addFrontLine,
   deleteFrontLine,
   updateFrontLine,
 } from "./frontLinesSlice";
@@ -46,8 +45,7 @@ interface GameUpdateEvents {
   deleted_flights: string[];
   selected_flight: string | null;
   deselected_flight: boolean;
-  new_front_lines: FrontLine[];
-  updated_front_lines: string[];
+  updated_front_lines: FrontLine[];
   deleted_front_lines: string[];
   updated_tgos: string[];
   updated_control_points: number[];
@@ -131,19 +129,12 @@ export const handleStreamedEvents = (
     dispatch(selectFlight(events.selected_flight));
   }
 
-  for (const front of events.new_front_lines) {
-    dispatch(addFrontLine(front));
+  if (events.updated_front_lines.length > 0) {
+    dispatch(updateFrontLine(events.updated_front_lines));
   }
 
-  for (const id of events.updated_front_lines) {
-    backend.get(`/front-lines/${id}`).then((response) => {
-      const front = response.data as FrontLine;
-      dispatch(updateFrontLine(front));
-    });
-  }
-
-  for (const id of events.deleted_front_lines) {
-    dispatch(deleteFrontLine(id));
+  if (events.deleted_front_lines.length > 0) {
+    dispatch(deleteFrontLine(events.deleted_front_lines));
   }
 
   for (const id of events.updated_tgos) {
