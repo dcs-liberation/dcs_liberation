@@ -108,11 +108,17 @@ export const handleStreamedEvents = (
     );
   }
 
-  dispatch(registerFlights(events.new_flights));
+  if (events.new_flights.length > 0) {
+    dispatch(registerFlights(events.new_flights));
+  }
 
-  dispatch(updateFlights(events.updated_flights));
+  if (events.updated_flights.length > 0) {
+    dispatch(updateFlights(events.updated_flights));
+  }
 
-  dispatch(unregisterFlights(events.deleted_flights));
+  if (events.deleted_flights.length > 0) {
+    dispatch(unregisterFlights(events.deleted_flights));
+  }
 
   if (events.deselected_flight) {
     dispatch(deselectFlight());
