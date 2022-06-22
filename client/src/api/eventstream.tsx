@@ -142,12 +142,12 @@ export const handleStreamedEvents = (
       dispatch(updateControlPoint(events.updated_control_points));
   }
 
-  for (const connection of events.updated_iads) {
-    dispatch(updateIadsConnection(connection as IadsConnection));
+  if (events.deleted_iads.length > 0) {
+    dispatch(removeIadsConnection(events.deleted_iads));
   }
 
-  for (const id of events.deleted_iads) {
-    dispatch(removeIadsConnection(id as string));
+  if (events.updated_iads.length > 0) {
+    dispatch(updateIadsConnection(events.updated_iads));
   }
 
   if (events.reset_on_map_center != null) {
