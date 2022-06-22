@@ -24,7 +24,7 @@ class GameUpdateEventsJs(BaseModel):
     unculled_zones_updated: bool
     threat_zones_updated: bool
     new_flights: list[FlightJs]
-    updated_flights: set[UUID]
+    updated_flights: list[FlightJs]
     deleted_flights: set[UUID]
     selected_flight: UUID | None
     deselected_flight: bool
@@ -68,7 +68,9 @@ class GameUpdateEventsJs(BaseModel):
             new_flights=[
                 FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights
             ],
-            updated_flights=events.updated_flights,
+            updated_flights=[
+              FlightJs.for_flight(f, with_waypoints=True) for f in events.updated_flights
+            ],
             deleted_flights=events.deleted_flights,
             selected_flight=events.selected_flight,
             deselected_flight=events.deselected_flight,

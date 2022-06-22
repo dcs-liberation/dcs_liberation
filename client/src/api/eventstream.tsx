@@ -6,10 +6,10 @@ import { endCombat, newCombat, updateCombat } from "./combatSlice";
 import { updateControlPoint } from "./controlPointsSlice";
 import {
   deselectFlight,
-  registerFlight,
+  registerFlights,
   selectFlight,
-  unregisterFlight,
-  updateFlight,
+  unregisterFlights,
+  updateFlights,
   updateFlightPositions,
 } from "./flightsSlice";
 import {
@@ -42,7 +42,7 @@ interface GameUpdateEvents {
   unculled_zones_updated: boolean;
   threat_zones_updated: boolean;
   new_flights: Flight[];
-  updated_flights: string[];
+  updated_flights: Flight[];
   deleted_flights: string[];
   selected_flight: string | null;
   deselected_flight: boolean;
@@ -108,20 +108,11 @@ export const handleStreamedEvents = (
     );
   }
 
-  for (const flight of events.new_flights) {
-    dispatch(registerFlight(flight));
-  }
+  dispatch(registerFlights(events.new_flights));
 
-  for (const id of events.updated_flights) {
-    backend.get(`/flights/${id}?with_waypoints=true`).then((response) => {
-      const flight = response.data as Flight;
-      dispatch(updateFlight(flight));
-    });
-  }
+  dispatch(updateFlights(events.updated_flights));
 
-  for (const id of events.deleted_flights) {
-    dispatch(unregisterFlight(id));
-  }
+  dispatch(unregisterFlights(events.deleted_flights));
 
   if (events.deselected_flight) {
     dispatch(deselectFlight());
