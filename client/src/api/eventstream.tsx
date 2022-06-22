@@ -49,7 +49,7 @@ interface GameUpdateEvents {
   new_front_lines: FrontLine[];
   updated_front_lines: string[];
   deleted_front_lines: string[];
-  updated_tgos: string[];
+  updated_tgos: Tgo[];
   updated_control_points: number[];
   reset_on_map_center: LatLng | null;
   game_unloaded: boolean;
@@ -146,16 +146,8 @@ export const handleStreamedEvents = (
     dispatch(deleteFrontLine(id));
   }
 
-  for (const id of events.updated_tgos) {
-    backend.get(`/tgos/${id}`).then((response) => {
-      const tgo = response.data as Tgo;
-      dispatch(updateTgo(tgo));
-    });
-    backend.get(`/iads-network/for-tgo/${id}`).then((response) => {
-      for (const connection of response.data) {
-        dispatch(updateIadsConnection(connection as IadsConnection));
-      }
-    });
+  if (events.updated_tgos.length > 0) {
+    dispatch(updateTgo(events.updated_tgos));
   }
 
   for (const id of events.updated_control_points) {

@@ -9,6 +9,7 @@ from game.server.combat.models import FrozenCombatJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
+from game.server.tgos.models import TgoJs
 
 if TYPE_CHECKING:
     from game import Game
@@ -31,7 +32,7 @@ class GameUpdateEventsJs(BaseModel):
     new_front_lines: list[FrontLineJs]
     updated_front_lines: set[UUID]
     deleted_front_lines: set[UUID]
-    updated_tgos: set[UUID]
+    updated_tgos: list[TgoJs]
     updated_control_points: set[UUID]
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
@@ -77,7 +78,10 @@ class GameUpdateEventsJs(BaseModel):
             ],
             updated_front_lines=events.updated_front_lines,
             deleted_front_lines=events.deleted_front_lines,
-            updated_tgos=events.updated_tgos,
+            updated_tgos=[
+                TgoJs.for_tgo(tgo)
+                for tgo in events.updated_tgos
+            ],
             updated_control_points=events.updated_control_points,
             reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
