@@ -15,13 +15,15 @@ export const IadsNetworkSlice = createSlice({
   name: "iadsNetwork",
   initialState,
   reducers: {
-    updateIadsConnection: (state, action: PayloadAction<IadsConnection>) => {
-      const connection = action.payload;
-      state.connections[connection.id] = connection
+    updateIadsConnection: (state, action: PayloadAction<IadsConnection[]>) => {
+      for (const connection of action.payload) {
+        state.connections[connection.id] = connection
+      }
     },
-    removeIadsConnection: (state, action: PayloadAction<string>) => {
-      const cID = action.payload;
-      delete state.connections[cID];
+    removeIadsConnection: (state, action: PayloadAction<string[]>) => {
+      for (const cID of action.payload) {
+        delete state.connections[cID];
+      }
     }
   },
   extraReducers: (builder) => {
