@@ -168,8 +168,10 @@ export const handleStreamedEvents = (
     });
   }
 
-  dispatch(supplyRoutesDeleted(events.updated_supply_routes.map(route => route.id)));
-  dispatch(supplyRoutesUpdated(events.updated_supply_routes));
+  if (events.updated_supply_routes.length > 0) {
+    dispatch(supplyRoutesDeleted(events.updated_supply_routes.map(route => route.id)));
+    dispatch(supplyRoutesUpdated(events.updated_supply_routes));
+  }
   /* for (const route of events.updated_supply_routes) {
     dispatch(supplyRoutesDeleted(route.id));
     dispatch(supplyRoutesUpdated(route as SupplyRoute));
