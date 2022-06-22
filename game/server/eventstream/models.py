@@ -69,7 +69,8 @@ class GameUpdateEventsJs(BaseModel):
                 FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights
             ],
             updated_flights=[
-              FlightJs.for_flight(f, with_waypoints=True) for f in events.updated_flights
+                FlightJs.for_flight(f, with_waypoints=True)
+                for f in events.updated_flights
             ],
             deleted_flights=events.deleted_flights,
             selected_flight=events.selected_flight,
