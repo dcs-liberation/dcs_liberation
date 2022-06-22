@@ -6,6 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from game.server.combat.models import FrozenCombatJs
+from game.server.controlpoints.models import ControlPointJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
@@ -32,7 +33,7 @@ class GameUpdateEventsJs(BaseModel):
     updated_front_lines: set[UUID]
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
-    updated_control_points: set[UUID]
+    updated_control_points: list[ControlPointJs]
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
     new_turn: bool
@@ -78,7 +79,10 @@ class GameUpdateEventsJs(BaseModel):
             updated_front_lines=events.updated_front_lines,
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
-            updated_control_points=events.updated_control_points,
+            updated_control_points=[
+                ControlPointJs.for_control_point(cp)
+                for cp in events.updated_control_points
+            ],
             reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
             new_turn=events.new_turn,

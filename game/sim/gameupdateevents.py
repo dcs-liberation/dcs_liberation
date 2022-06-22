@@ -33,7 +33,7 @@ class GameUpdateEvents:
     updated_front_lines: set[UUID] = field(default_factory=set)
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
-    updated_control_points: set[UUID] = field(default_factory=set)
+    updated_control_points: set[ControlPoint] = field(default_factory=set)
     reset_on_map_center: LatLng | None = None
     game_unloaded: bool = False
     new_turn: bool = False
@@ -123,7 +123,7 @@ class GameUpdateEvents:
         return self
 
     def update_control_point(self, control_point: ControlPoint) -> GameUpdateEvents:
-        self.updated_control_points.add(control_point.id)
+        self.updated_control_points.add(control_point)
         return self
 
     def game_loaded(self, game: Game | None) -> GameUpdateEvents:
