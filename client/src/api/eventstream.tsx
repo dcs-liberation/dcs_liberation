@@ -30,8 +30,8 @@ import { updateTgo } from "./tgosSlice";
 import { threatZonesUpdated } from "./threatZonesSlice";
 import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
-import { updateIadsConnection } from "./iadsNetworkSlice";
-import { IadsConnection } from "./_liberationApi";
+//import { updateIadsConnection } from "./iadsNetworkSlice";
+//import { IadsConnection } from "./_liberationApi";
 
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
