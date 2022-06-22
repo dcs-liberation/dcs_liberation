@@ -78,10 +78,7 @@ class GameUpdateEventsJs(BaseModel):
             ],
             updated_front_lines=events.updated_front_lines,
             deleted_front_lines=events.deleted_front_lines,
-            updated_tgos=[
-                TgoJs.for_tgo(tgo)
-                for tgo in events.updated_tgos
-            ],
+            updated_tgos=[TgoJs.for_tgo(tgo) for tgo in events.updated_tgos],
             updated_control_points=events.updated_control_points,
             reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
