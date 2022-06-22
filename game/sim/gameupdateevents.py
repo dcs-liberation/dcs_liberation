@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 @dataclass
 class GameUpdateEvents:
     simulation_complete = False
-    new_combats: list[FrozenCombat] = field(default_factory=list)
     updated_combats: list[FrozenCombat] = field(default_factory=list)
     ended_combats: list[FrozenCombat] = field(default_factory=list)
     updated_flight_positions: list[tuple[Flight, Point]] = field(default_factory=list)
@@ -45,10 +44,6 @@ class GameUpdateEvents:
 
     def complete_simulation(self) -> GameUpdateEvents:
         self.simulation_complete = True
-        return self
-
-    def new_combat(self, combat: FrozenCombat) -> GameUpdateEvents:
-        self.new_combats.append(combat)
         return self
 
     def update_combat(self, combat: FrozenCombat) -> GameUpdateEvents:

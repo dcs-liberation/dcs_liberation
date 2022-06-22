@@ -78,7 +78,7 @@ class CombatInitiator:
             a2a.update_for_combat(combat)
             own_a2a.update_for_combat(combat)
             self.combats.append(combat)
-            self.events.new_combat(combat)
+            self.events.update_combat(combat)
 
     def check_flight_for_joined_combat(
         self, flight: Flight

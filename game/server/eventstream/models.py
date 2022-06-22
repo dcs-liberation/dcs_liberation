@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 
 class GameUpdateEventsJs(BaseModel):
     updated_flight_positions: dict[UUID, LeafletPoint]
-    new_combats: list[FrozenCombatJs]
     updated_combats: list[FrozenCombatJs]
     ended_combats: list[UUID]
     navmesh_updates: set[bool]
@@ -47,9 +46,6 @@ class GameUpdateEventsJs(BaseModel):
         new_combats = []
         updated_combats = []
         if game is not None:
-            new_combats = [
-                FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
-            ]
             updated_combats = [
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
@@ -59,7 +55,6 @@ class GameUpdateEventsJs(BaseModel):
             updated_flight_positions={
                 f[0].id: f[1].latlng() for f in events.updated_flight_positions
             },
-            new_combats=new_combats,
             updated_combats=updated_combats,
             ended_combats=[c.id for c in events.ended_combats],
             navmesh_updates=events.navmesh_updates,

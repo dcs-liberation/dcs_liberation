@@ -1,3 +1,4 @@
+import { gameLoaded, gameUnloaded } from "./actions";
 import { RootState } from "../app/store";
 import Combat from "./combat";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
@@ -14,28 +15,36 @@ export const combatSlice = createSlice({
   name: "combat",
   initialState,
   reducers: {
-    setCombat: (state, action: PayloadAction<Combat[]>) => {
-      state.combat = {};
+    updateCombats: (state, action: PayloadAction<Combat[]>) => {
       for (const combat of action.payload) {
         state.combat[combat.id] = combat;
       }
     },
-    newCombat: (state, action: PayloadAction<Combat>) => {
-      const combat = action.payload;
-      state.combat[combat.id] = combat;
+    endCombats: (state, action: PayloadAction<string[]>) => {
+      for (const cID of action.payload) {
+        delete state.combat[cID];
+      }
     },
-    updateCombat: (state, action: PayloadAction<Combat>) => {
-      const combat = action.payload;
-      state.combat[combat.id] = combat;
-    },
-    endCombat: (state, action: PayloadAction<string>) => {
-      delete state.combat[action.payload];
-    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(gameLoaded, (state, action) => {
+      // still need to pass this from back-end, initialize empty...
+      state.combat = {};
+      /* state.combat = action.payload.combat.reduce(
+        (acc: { [key: string]: Tgo }, curr) => {
+          acc[curr.id] = curr;
+          return acc;
+        },
+        {}
+      ); */
+    });
+    builder.addCase(gameUnloaded, (state) => {
+      state.combat = {};
+    });
   },
 });
 
-export const { setCombat, newCombat, updateCombat, endCombat } =
-  combatSlice.actions;
+export const { updateCombats, endCombats } = combatSlice.actions;
 
 export const selectCombat = (state: RootState) => state.combat;
 
