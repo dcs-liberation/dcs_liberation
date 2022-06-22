@@ -33,12 +33,14 @@ export const threatZonesSlice = createSlice({
   name: "threatZonesState",
   initialState,
   reducers: {
-    updated: (state, action: PayloadAction<IThreatZoneUpdate>) => {
-      const zones = action.payload.zones;
-      if (action.payload.blue) {
-        state.zones.blue = zones;
-      } else {
-        state.zones.red = zones;
+    updated: (state, action: PayloadAction<IThreatZoneUpdate[]>) => {
+      for (const [blue, zones] of Object.entries(action.payload)) {
+        const data = {blue: (blue === "true"), zones: zones} as unknown as IThreatZoneUpdate
+        if (data.blue) {
+          state.zones.blue = data.zones;
+        } else {
+          state.zones.red = data.zones;
+        }
       }
     },
   },

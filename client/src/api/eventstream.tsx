@@ -24,9 +24,9 @@ import {
   FrontLine,
   Tgo,
 } from "./liberationApi";
-import { navMeshUpdated, INavMeshUpdate } from "./navMeshSlice";
+import { navMeshUpdated } from "./navMeshSlice";
 import { updateTgo } from "./tgosSlice";
-import { threatZonesUpdated, IThreatZoneUpdate } from "./threatZonesSlice";
+import { threatZonesUpdated } from "./threatZonesSlice";
 import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
 import { updateIadsConnection } from "./iadsNetworkSlice";
@@ -77,9 +77,8 @@ export const handleStreamedEvents = (
     dispatch(endCombat(id));
   }
 
-  for (const [blue, navmesh] of Object.entries(events.navmesh_updates)) {
-    const data = {blue: (blue === "true"), mesh: navmesh}
-    dispatch(navMeshUpdated( data as unknown as INavMeshUpdate ));
+  if (Object.keys(events.navmesh_updates).length > 0) {
+    dispatch(navMeshUpdated(events.navmesh_updates));
   }
 
   if (events.unculled_zones_updated) {
@@ -92,10 +91,8 @@ export const handleStreamedEvents = (
     );
   }
 
-  for (const [blue, zones] of Object.entries(events.threat_zones_updated)) {
-    const data = {blue: (blue === "true"), zones: zones}
-    dispatch(threatZonesUpdated( data as unknown as IThreatZoneUpdate ));
-
+  if (Object.keys(events.threat_zones_updated).length > 0) {
+    dispatch(threatZonesUpdated(events.threat_zones_updated));
   }
 
   for (const flight of events.new_flights) {

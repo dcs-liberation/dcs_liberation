@@ -22,12 +22,15 @@ const navMeshSlice = createSlice({
   name: "navmesh",
   initialState: initialState,
   reducers: {
-    updated: (state, action: PayloadAction<INavMeshUpdate>) => {
-      const polys = action.payload.mesh.polys;
-      if (action.payload.blue) {
-        state.blue = polys;
-      } else {
-        state.red = polys;
+    updated: (state, action: PayloadAction<INavMeshUpdate[]>) => {
+      for (const [blue, navmesh] of Object.entries(action.payload)) {
+        const data = {blue: (blue === "true"), mesh: navmesh} as unknown as INavMeshUpdate
+        const polys = data.mesh.polys;
+        if (data.blue) {
+          state.blue = polys;
+        } else {
+          state.red = polys;
+        }
       }
     },
   },
