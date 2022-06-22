@@ -43,7 +43,6 @@ class GameUpdateEventsJs(BaseModel):
 
         # We still need to be able to send update events when there is no game loaded
         # because we need to send the unload event.
-        new_combats = []
         updated_combats = []
         if game is not None:
             updated_combats = [
