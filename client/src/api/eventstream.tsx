@@ -89,7 +89,9 @@ export const handleStreamedEvents = (
     });
   }
 
-  dispatch(unculledZonesUpdated(events.updated_unculled_zones));
+  if (events.updated_unculled_zones.length > 0) {
+    dispatch(unculledZonesUpdated(events.updated_unculled_zones));
+  }
 
   if (events.threat_zones_updated) {
     dispatch(liberationApi.endpoints.getThreatZones.initiate()).then(
