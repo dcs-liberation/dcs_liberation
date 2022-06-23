@@ -20,7 +20,7 @@ export const supplyRoutesSlice = createSlice({
       for (const route of action.payload) {
         const id = route.id;
         let points = route.points;
-        if (points) {
+        if (points.length > 0) {
           state.routes[id] = route;
         } else if (id in state.routes) {
           points = state.routes[id].points;
