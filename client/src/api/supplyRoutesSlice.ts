@@ -34,7 +34,6 @@ export const supplyRoutesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(gameLoaded, (state, action) => {
-      //state.routes = action.payload.supply_routes;
       state.routes = {}
       for (const route of action.payload.supply_routes)
       {
