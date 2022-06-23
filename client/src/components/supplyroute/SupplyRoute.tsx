@@ -56,8 +56,7 @@ export default function SupplyRoute(props: SupplyRouteProps) {
   return (
     <Polyline
       positions={props.route.points}
-      color={color}
-      weight={weight}
+      pathOptions={{ color: color, weight: weight}}
       ref={(ref) => (path.current = ref)}
     >
       <SupplyRouteTooltip {...props} />

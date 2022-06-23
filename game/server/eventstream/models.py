@@ -59,6 +59,8 @@ class GameUpdateEventsJs(BaseModel):
             ]
             if events.updated_supply_routes:
                 updated_supply_routes = SupplyRouteJs.all_in_game(game)
+            for route in updated_supply_routes:
+                route.points = None
 
         return GameUpdateEventsJs(
             updated_flight_positions={

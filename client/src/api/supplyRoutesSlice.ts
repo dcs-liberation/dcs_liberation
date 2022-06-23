@@ -17,37 +17,19 @@ export const supplyRoutesSlice = createSlice({
   initialState,
   reducers: {
     updated: (state, action: PayloadAction<SupplyRoute[]>) => {
-      //console.log(action.payload);
-      //state.routes = action.payload;
       for (const route of action.payload) {
-        state.routes[route.id] = route;
-        //console.log(`Updated ${route.id}`);
-        //console.log(route);
+        const id = route.id;
+        let points = route.points;
+        if (points) {
+          state.routes[id] = route;
+        } else if (id in state.routes) {
+          points = state.routes[id].points;
+          state.routes[id] = route;
+          state.routes[id].points = points;
+        } else {
+          console.log("Trying to update a route that doesn't exist without points...");
+        }
       }
-      /* console.log(action.payload);
-      const points = action.payload.points;
-      if (points) {
-        delete state.routes[id];
-        state.routes[id] = action.payload;
-        console.log("Updating route with points");
-      } else if (id in state.routes) {
-        // update all things except points?
-        state.routes[id].blue = action.payload.blue;
-        state.routes[id].is_sea = action.payload.is_sea;
-        state.routes[id].front_active = action.payload.front_active;
-        state.routes[id].active_transports = action.payload.active_transports;
-        console.log("Updating (existing) route without points");
-      } else {
-        console.log("Trying to update a route that doesn't exist without points...");
-      } */
-    },
-    deleted: (state, action: PayloadAction<string[]>) => {
-      for (const id of action.payload) {
-        delete state.routes[id];
-        //console.log(`Deleting ${id}`);
-      }
-      //const id = action.payload;
-      //delete state.routes[id];
     },
   },
   extraReducers: (builder) => {
@@ -69,4 +51,4 @@ export const selectSupplyRoutes = (state: RootState) => state.supplyRoutes;
 
 export default supplyRoutesSlice.reducer;
 
-export const { updated: supplyRoutesUpdated, deleted: supplyRoutesDeleted } = supplyRoutesSlice.actions;
+export const { updated: supplyRoutesUpdated } = supplyRoutesSlice.actions;
