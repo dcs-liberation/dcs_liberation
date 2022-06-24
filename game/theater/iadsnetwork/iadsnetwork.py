@@ -140,7 +140,9 @@ class IadsNetwork:
 
         return skynet_nodes
 
-    def _update_iads_building(self, tgo: TheaterGroundObject, events: GameUpdateEvents) -> None:
+    def _update_iads_building(
+        self, tgo: TheaterGroundObject, events: GameUpdateEvents
+    ) -> None:
         if not isinstance(tgo, IadsBuildingGroundObject):
             return
 
@@ -262,7 +264,7 @@ class IadsNetwork:
     def initialize_network_from_range(self) -> None:
         """Initialize the IADS Network by range"""
         for go in self.ground_objects.values():
-            is_iads = go.is_iads()
+            is_iads = go.is_iads
             is_iads_cc = IadsRole.for_category(go.category) == IadsRole.COMMAND_CENTER
             if is_iads or is_iads_cc:
                 # Set as primary node
@@ -270,7 +272,7 @@ class IadsNetwork:
                 if node is None:
                     # TGO does not participate to iads network
                     continue
-                self._connect_to_network(node, go)
+                self._connect_to_network(node, go, None)
 
     def _is_friendly(self, node: IadsNetworkNode, tgo: TheaterGroundObject) -> bool:
         node_friendly = node.group.ground_object.is_friendly(True)
@@ -278,7 +280,10 @@ class IadsNetwork:
         return node_friendly == tgo_friendly
 
     def _connect_to_network(
-        self, node: IadsNetworkNode, go: TheaterGroundObject, events: GameUpdateEvents
+        self,
+        node: IadsNetworkNode,
+        go: TheaterGroundObject,
+        events: Optional[GameUpdateEvents],
     ) -> None:
         if go.is_dead:
             return
@@ -292,9 +297,12 @@ class IadsNetwork:
                 in_range = dist < iads_role.connection_range.meters
                 if in_range and self._is_friendly(node, nearby_go):
                     node.add_connection_for_tgo(nearby_go)
-                    events.update_iads_node(node)
+                    if events is not None:
+                        events.update_iads_node(node)
 
-    def _update_network(self, tgo: TheaterGroundObject, events: GameUpdateEvents) -> None:
+    def _update_network(
+        self, tgo: TheaterGroundObject, events: GameUpdateEvents
+    ) -> None:
         if tgo.is_dead:
             return
         # Reversing the idea of _connect_to_network...
