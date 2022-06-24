@@ -12,7 +12,7 @@ export default function TgosLayer(props: TgosLayerProps) {
   const allTgos = Object.values(useAppSelector(selectTgos).tgos);
   const categoryFilter = props.categories ?? [];
   const tgos = allTgos.filter(
-    (tgo) => categoryFilter.includes(tgo.category) === (props.exclude ?? false)
+    (tgo) => categoryFilter.includes(tgo.category) === !(props.exclude ?? false)
   );
   return (
     <LayerGroup>
