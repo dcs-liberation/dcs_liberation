@@ -64,7 +64,7 @@ export default function LiberationMap() {
           <TgosLayer categories={["ship"]} />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Other ground objects" checked>
-          <TgosLayer categories={["aa", "factories", "ships"]} exclude />
+          <TgosLayer categories={["aa", "factory", "ship"]} exclude />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Supply routes" checked>
           <SupplyRoutesLayer />
