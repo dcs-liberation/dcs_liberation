@@ -633,12 +633,6 @@ class ShipGroundObject(NavalGroundObject):
 
 
 class IadsBuildingGroundObject(BuildingGroundObject):
-    def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from game.ato import FlightType
-
-        if not self.is_friendly(for_player):
-            yield from [FlightType.STRIKE, FlightType.DEAD]
-
     @property
     def is_iads(self) -> bool:
         return True
