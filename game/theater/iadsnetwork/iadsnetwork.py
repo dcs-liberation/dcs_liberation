@@ -6,7 +6,6 @@ import logging
 from typing import TYPE_CHECKING, Iterator, Optional
 from uuid import UUID
 import uuid
-
 from game.theater.iadsnetwork.iadsrole import IadsRole
 from game.dcs.groundunittype import GroundUnitType
 from game.theater.theatergroundobject import (
@@ -90,13 +89,6 @@ class IadsNetworkNode:
     def add_connection_for_group(self, group: IadsGroundGroup) -> None:
         """Add connection for the given GroundGroup with unique ID"""
         self.connections[uuid.uuid4()] = group
-        self._push_updated_node()
-
-    def _push_updated_node(self) -> None:
-        from game.server import EventStream
-
-        with EventStream.event_context() as events:
-            events.update_iads_node(self)
 
 
 class IadsNetwork:

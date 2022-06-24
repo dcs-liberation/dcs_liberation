@@ -63,6 +63,9 @@ class TheaterUnit:
         self.alive = False
         self.ground_object.invalidate_threat_poly()
         events.update_tgo(self.ground_object)
+        if self.ground_object.is_iads:
+            game = self.ground_object.control_point.coalition.game
+            game.theater.iads_network.update_tgo(self.ground_object, events)
 
     @property
     def unit_name(self) -> str:
