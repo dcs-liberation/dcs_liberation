@@ -132,10 +132,17 @@ class MissionResultsProcessor:
 
     @staticmethod
     def commit_ground_losses(debriefing: Debriefing, events: GameUpdateEvents) -> None:
+        iads = []
         for ground_object_loss in debriefing.ground_object_losses:
             ground_object_loss.theater_unit.kill(events)
+            if ground_object_loss.theater_unit.ground_object.is_iads:
+                iads.append(ground_object_loss.theater_unit.ground_object)
         for scenery_object_loss in debriefing.scenery_object_losses:
             scenery_object_loss.ground_unit.kill(events)
+            if scenery_object_loss.ground_unit.ground_object.is_iads:
+                iads.append(scenery_object_loss.ground_unit.ground_object)
+        for tgo in iads:
+            debriefing.game.theater.iads_network.update_tgo(tgo, events)
 
     @staticmethod
     def commit_damaged_runways(debriefing: Debriefing) -> None:

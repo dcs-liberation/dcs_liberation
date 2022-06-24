@@ -267,6 +267,10 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
         """Should this TGO head towards the closest conflict to work properly?"""
         return False
 
+    @property
+    def is_iads(self) -> bool:
+        return False
+
 
 class BuildingGroundObject(TheaterGroundObject):
     def __init__(
@@ -352,6 +356,10 @@ class NavalGroundObject(TheaterGroundObject, ABC):
     @property
     def purchasable(self) -> bool:
         return False
+
+    @property
+    def is_iads(self) -> bool:
+        return True
 
 
 class GenericCarrierGroundObject(NavalGroundObject, ABC):
@@ -490,6 +498,10 @@ class IadsGroundObject(TheaterGroundObject, ABC):
     def should_head_to_conflict(self) -> bool:
         return True
 
+    @property
+    def is_iads(self) -> bool:
+        return True
+
 
 # The SamGroundObject represents all type of AA
 # The TGO can have multiple types of units (AAA,SAM,Support...)
@@ -626,3 +638,7 @@ class IadsBuildingGroundObject(BuildingGroundObject):
 
         if not self.is_friendly(for_player):
             yield from [FlightType.STRIKE, FlightType.DEAD]
+
+    @property
+    def is_iads(self) -> bool:
+        return True
