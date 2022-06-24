@@ -1,5 +1,4 @@
 import logging
-from datetime import timedelta
 
 from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 
