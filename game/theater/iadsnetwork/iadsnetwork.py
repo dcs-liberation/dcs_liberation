@@ -257,8 +257,9 @@ class IadsNetwork:
         """Initialize the IADS Network by range"""
         for go in self.ground_objects.values():
             is_iads = go.is_iads
-            is_iads_cc = IadsRole.for_category(go.category) == IadsRole.COMMAND_CENTER
-            if is_iads or is_iads_cc:
+            iads_role = IadsRole.for_category(go.category)
+            is_iads_cc = iads_role == IadsRole.COMMAND_CENTER
+            if not iads_role.is_comms_or_power and (is_iads or is_iads_cc):
                 # Set as primary node
                 node = self.node_for_tgo(go)
                 if node is None:
