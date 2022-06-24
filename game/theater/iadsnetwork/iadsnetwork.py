@@ -155,7 +155,6 @@ class IadsNetwork:
                 for cID in cn.connections:
                     events.delete_iads_connection(cID)
         # Create a new node for the tgo
-        # TODO Add the connections or calculate them..
         node = self.node_for_tgo(tgo)
         if node is None:
             # Not participating
