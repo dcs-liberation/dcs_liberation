@@ -49,7 +49,7 @@ interface GameUpdateEvents {
   updated_front_lines: FrontLine[];
   deleted_front_lines: string[];
   updated_tgos: string[];
-  updated_control_points: number[];
+  updated_control_points: ControlPoint[];
   reset_on_map_center: LatLng | null;
   game_unloaded: boolean;
   new_turn: boolean;
@@ -141,11 +141,8 @@ export const handleStreamedEvents = (
     });
   }
 
-  for (const id of events.updated_control_points) {
-    backend.get(`/control-points/${id}`).then((response) => {
-      const cp = response.data as ControlPoint;
-      dispatch(updateControlPoint(cp));
-    });
+  if (events.updated_control_points.length > 0) {
+      dispatch(updateControlPoint(events.updated_control_points));
   }
 
   if (events.reset_on_map_center != null) {
