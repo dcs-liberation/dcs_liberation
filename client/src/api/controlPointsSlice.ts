@@ -15,9 +15,10 @@ export const controlPointsSlice = createSlice({
   name: "controlPoints",
   initialState,
   reducers: {
-    updateControlPoint: (state, action: PayloadAction<ControlPoint>) => {
-      const cp = action.payload;
-      state.controlPoints[cp.id] = cp;
+    updateControlPoint: (state, action: PayloadAction<ControlPoint[]>) => {
+      for (const cp of action.payload) {
+        state.controlPoints[cp.id] = cp;
+      }
     },
   },
   extraReducers: (builder) => {

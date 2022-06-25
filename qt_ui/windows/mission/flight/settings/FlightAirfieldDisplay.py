@@ -53,6 +53,12 @@ class FlightAirfieldDisplay(QGroupBox):
         self.setLayout(layout)
 
     def update_departure_time(self) -> None:
+        if not self.flight.package.flights:
+            # This is theoretically impossible, but for some reason the dialog that owns
+            # this object QEditFlightDialog does not dispose properly on close, so this
+            # handler may be called for a flight whose package has been canceled, which
+            # is an invalid state for calling anything in TotEstimator.
+            return
         estimator = TotEstimator(self.package_model.package)
         delay = estimator.mission_start_time(self.flight)
         self.departure_time.setText(f"At T+{delay}")
