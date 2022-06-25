@@ -29,8 +29,7 @@ class GameUpdateEventsJs(BaseModel):
     deleted_flights: set[UUID]
     selected_flight: UUID | None
     deselected_flight: bool
-    new_front_lines: list[FrontLineJs]
-    updated_front_lines: set[UUID]
+    updated_front_lines: list[FrontLineJs]
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
     updated_control_points: set[UUID]
@@ -78,10 +77,9 @@ class GameUpdateEventsJs(BaseModel):
             deleted_flights=events.deleted_flights,
             selected_flight=events.selected_flight,
             deselected_flight=events.deselected_flight,
-            new_front_lines=[
-                FrontLineJs.for_front_line(f) for f in events.new_front_lines
+            updated_front_lines=[
+                FrontLineJs.for_front_line(f) for f in events.updated_front_lines
             ],
-            updated_front_lines=events.updated_front_lines,
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
             updated_control_points=events.updated_control_points,
