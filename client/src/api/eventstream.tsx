@@ -23,7 +23,9 @@ import {
   ControlPoint,
   Flight,
   FrontLine,
+  IadsConnection,
   Tgo,
+  UnculledZone,
 } from "./liberationApi";
 import { navMeshUpdated } from "./navMeshSlice";
 import { updateTgo } from "./tgosSlice";
@@ -31,7 +33,6 @@ import { threatZonesUpdated } from "./threatZonesSlice";
 import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
 import { updateIadsConnection } from "./iadsNetworkSlice";
-import { IadsConnection } from "./_liberationApi";
 
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
@@ -39,7 +40,7 @@ interface GameUpdateEvents {
   updated_combats: Combat[];
   ended_combats: string[];
   navmesh_updates: boolean[];
-  unculled_zones_updated: boolean;
+  updated_unculled_zones: UnculledZone[];
   threat_zones_updated: boolean;
   new_flights: Flight[];
   updated_flights: string[];
@@ -88,14 +89,8 @@ export const handleStreamedEvents = (
     });
   }
 
-  if (events.unculled_zones_updated) {
-    backend.get(`/map-zones/unculled`).then(
-      (result) => {
-        if (result.data) {
-          dispatch(unculledZonesUpdated(result.data));
-        }
-      }
-    );
+  if (events.updated_unculled_zones.length > 0) {
+    dispatch(unculledZonesUpdated(events.updated_unculled_zones));
   }
 
   if (events.threat_zones_updated) {
