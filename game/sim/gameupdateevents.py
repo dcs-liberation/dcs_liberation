@@ -25,7 +25,7 @@ class GameUpdateEvents:
     unculled_zones_updated: list[Point] = field(default_factory=list)
     threat_zones_updated: bool = False
     new_flights: set[Flight] = field(default_factory=set)
-    updated_flights: set[UUID] = field(default_factory=set)
+    updated_flights: set[Flight] = field(default_factory=set)
     deleted_flights: set[UUID] = field(default_factory=set)
     selected_flight: UUID | None = None
     deselected_flight: bool = False
@@ -81,11 +81,11 @@ class GameUpdateEvents:
         return self
 
     def update_flight(self, flight: Flight) -> GameUpdateEvents:
-        self.updated_flights.add(flight.id)
+        self.updated_flights.add(flight)
         return self
 
     def update_flights_in_package(self, package: Package) -> GameUpdateEvents:
-        self.updated_flights.update({f.id for f in package.flights})
+        self.updated_flights.update({f for f in package.flights})
         return self
 
     def delete_flight(self, flight: Flight) -> GameUpdateEvents:
