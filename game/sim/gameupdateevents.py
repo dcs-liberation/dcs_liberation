@@ -23,15 +23,9 @@ class GameUpdateEvents:
     updated_combats: list[FrozenCombat] = field(default_factory=list)
     ended_combats: list[FrozenCombat] = field(default_factory=list)
     updated_flight_positions: list[tuple[Flight, Point]] = field(default_factory=list)
-<<<<<<< develop-FixMap-Mesh&Threats
     navmesh_updates: dict[bool, NavMesh] = field(default_factory=dict)
-    unculled_zones_updated: bool = False
-    threat_zones_updated: dict[bool, ThreatZones] = field(default_factory=dict)
-=======
-    navmesh_updates: set[bool] = field(default_factory=set)
     unculled_zones_updated: list[Point] = field(default_factory=list)
-    threat_zones_updated: bool = False
->>>>>>> develop
+    threat_zones_updated: dict[bool, ThreatZones] = field(default_factory=dict)
     new_flights: set[Flight] = field(default_factory=set)
     updated_flights: set[Flight] = field(default_factory=set)
     deleted_flights: set[UUID] = field(default_factory=set)

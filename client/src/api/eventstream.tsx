@@ -22,7 +22,9 @@ import {
   Flight,
   FrontLine,
   IadsConnection,
+  NavMesh,
   Tgo,
+  ThreatZones,
   UnculledZone,
 } from "./liberationApi";
 import { navMeshUpdated } from "./navMeshSlice";
@@ -31,25 +33,15 @@ import { threatZonesUpdated } from "./threatZonesSlice";
 import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
 import { updateIadsConnection } from "./iadsNetworkSlice";
-<<<<<<< develop-FixMap-Mesh&Threats
-import { IadsConnection, NavMesh, ThreatZones } from "./_liberationApi";
-=======
->>>>>>> develop
 
 interface GameUpdateEvents {
   updated_flight_positions: { [id: string]: LatLng };
   new_combats: Combat[];
   updated_combats: Combat[];
   ended_combats: string[];
-<<<<<<< develop-FixMap-Mesh&Threats
   navmesh_updates: {blue: boolean, mesh: NavMesh}[];
-  unculled_zones_updated: boolean;
-  threat_zones_updated: {blue: boolean, zones: ThreatZones}[];
-=======
-  navmesh_updates: boolean[];
   updated_unculled_zones: UnculledZone[];
-  threat_zones_updated: boolean;
->>>>>>> develop
+  threat_zones_updated: {blue: boolean, zones: ThreatZones}[];
   new_flights: Flight[];
   updated_flights: Flight[];
   deleted_flights: string[];

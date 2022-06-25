@@ -10,12 +10,9 @@ from game.server.controlpoints.models import ControlPointJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
-<<<<<<< develop-FixMap-Mesh&Threats
 from game.server.mapzones.models import ThreatZonesJs
 from game.server.navmesh.models import NavMeshJs
-=======
 from game.server.mapzones.models import UnculledZoneJs
->>>>>>> develop
 
 if TYPE_CHECKING:
     from game import Game
@@ -27,15 +24,9 @@ class GameUpdateEventsJs(BaseModel):
     new_combats: list[FrozenCombatJs]
     updated_combats: list[FrozenCombatJs]
     ended_combats: list[UUID]
-<<<<<<< develop-FixMap-Mesh&Threats
     navmesh_updates: dict[bool, NavMeshJs]
-    unculled_zones_updated: bool
-    threat_zones_updated: dict[bool, ThreatZonesJs]
-=======
-    navmesh_updates: set[bool]
     updated_unculled_zones: list[UnculledZoneJs]
-    threat_zones_updated: bool
->>>>>>> develop
+    threat_zones_updated: dict[bool, ThreatZonesJs]
     new_flights: list[FlightJs]
     updated_flights: list[FlightJs]
     deleted_flights: set[UUID]
@@ -58,12 +49,9 @@ class GameUpdateEventsJs(BaseModel):
         # because we need to send the unload event.
         new_combats = []
         updated_combats = []
-<<<<<<< develop-FixMap-Mesh&Threats
         updated_navmeshes = {}
         updated_threat_zones = {}
-=======
         updated_unculled_zones = []
->>>>>>> develop
         if game is not None:
             new_combats = [
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
@@ -72,7 +60,6 @@ class GameUpdateEventsJs(BaseModel):
                 FrozenCombatJs.for_combat(c, game.theater)
                 for c in events.updated_combats
             ]
-<<<<<<< develop-FixMap-Mesh&Threats
             updated_navmeshes = {
                 player: NavMeshJs.from_navmesh(mesh, game)
                 for player, mesh in events.navmesh_updates.items()
@@ -81,9 +68,7 @@ class GameUpdateEventsJs(BaseModel):
                 player: ThreatZonesJs.from_zones(zones, game.theater)
                 for player, zones in events.threat_zones_updated.items()
             }
-=======
             updated_unculled_zones = UnculledZoneJs.from_game(game)
->>>>>>> develop
 
         return GameUpdateEventsJs(
             updated_flight_positions={
@@ -92,15 +77,9 @@ class GameUpdateEventsJs(BaseModel):
             new_combats=new_combats,
             updated_combats=updated_combats,
             ended_combats=[c.id for c in events.ended_combats],
-<<<<<<< develop-FixMap-Mesh&Threats
             navmesh_updates=updated_navmeshes,
-            unculled_zones_updated=events.unculled_zones_updated,
-            threat_zones_updated=updated_threat_zones,
-=======
-            navmesh_updates=events.navmesh_updates,
             updated_unculled_zones=updated_unculled_zones,
-            threat_zones_updated=events.threat_zones_updated,
->>>>>>> develop
+            threat_zones_updated=updated_threat_zones,
             new_flights=[
                 FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights
             ],
