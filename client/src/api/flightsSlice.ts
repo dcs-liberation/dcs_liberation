@@ -18,20 +18,23 @@ export const flightsSlice = createSlice({
   name: "flights",
   initialState,
   reducers: {
-    registerFlight: (state, action: PayloadAction<Flight>) => {
-      const flight = action.payload;
-      if (flight.id in state.flights) {
-        console.log(`Overriding flight with ID: ${flight.id}`);
+    registerFlights: (state, action: PayloadAction<Flight[]>) => {
+      for (const flight of action.payload) {
+        if (flight.id in state.flights) {
+          console.log(`Overriding flight with ID: ${flight.id}`);
+        }
+        state.flights[flight.id] = flight;
       }
-      state.flights[flight.id] = flight;
     },
-    unregisterFlight: (state, action: PayloadAction<string>) => {
-      const id = action.payload;
-      delete state.flights[id];
+    unregisterFlights: (state, action: PayloadAction<string[]>) => {
+      for (const id of action.payload) {
+        delete state.flights[id];
+      }
     },
-    updateFlight: (state, action: PayloadAction<Flight>) => {
-      const flight = action.payload;
-      state.flights[flight.id] = flight;
+    updateFlights: (state, action: PayloadAction<Flight[]>) => {
+      for (const flight of action.payload) {
+        state.flights[flight.id] = flight;
+      }
     },
     deselectFlight: (state) => {
       state.selected = null;
@@ -67,9 +70,9 @@ export const flightsSlice = createSlice({
 });
 
 export const {
-  registerFlight,
-  unregisterFlight,
-  updateFlight,
+  registerFlights,
+  unregisterFlights,
+  updateFlights,
   deselectFlight,
   selectFlight,
   updateFlightPositions,
