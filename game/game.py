@@ -514,7 +514,7 @@ class Game:
             zones.append(package.target.position)
 
         self.__culling_zones = zones
-        events.update_unculled_zones()
+        events.update_unculled_zones(zones)
 
     def add_destroyed_units(self, data: dict[str, Union[float, str]]) -> None:
         pos = Point(

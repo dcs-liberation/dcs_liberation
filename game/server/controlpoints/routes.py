@@ -6,10 +6,8 @@ from fastapi import APIRouter, Body, Depends, HTTPException, status
 
 from game import Game
 from .models import ControlPointJs
-from .. import EventStream
 from ..dependencies import GameContext
 from ..leaflet import LeafletPoint
-from ...sim import GameUpdateEvents
 
 router: APIRouter = APIRouter(prefix="/control-points")
 
@@ -90,7 +88,10 @@ def set_destination(
             f"{cp.max_move_distance.nautical_miles}nm.",
         )
     cp.target_position = point
-    EventStream.put_nowait(GameUpdateEvents().update_control_point(cp))
+    from .. import EventStream
+
+    with EventStream.event_context() as events:
+        events.update_control_point(cp)
 
 
 @router.put(
@@ -113,4 +114,7 @@ def cancel_travel(cp_id: UUID, game: Game = Depends(GameContext.require)) -> Non
         )
 
     cp.target_position = None
-    EventStream.put_nowait(GameUpdateEvents().update_control_point(cp))
+    from .. import EventStream
+
+    with EventStream.event_context() as events:
+        events.update_control_point(cp)
