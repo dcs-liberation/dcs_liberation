@@ -1,6 +1,5 @@
 import { AppDispatch } from "../app/store";
 import { gameUnloaded } from "./actions";
-import backend from "./backend";
 import Combat from "./combat";
 import { endCombat, newCombat, updateCombat } from "./combatSlice";
 import { updateControlPoint } from "./controlPointsSlice";
@@ -22,7 +21,7 @@ import {
   ControlPoint,
   Flight,
   FrontLine,
-  IadsConnection,
+//  IadsConnection,
   Tgo,
   UnculledZone,
 } from "./liberationApi";
