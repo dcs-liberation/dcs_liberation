@@ -5,7 +5,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface SupplyRoutesState {
   routes: { [id: string]: SupplyRoute };
-  //routes: SupplyRoute[];
 }
 
 const initialState: SupplyRoutesState = {
