@@ -6,10 +6,12 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from game.server.combat.models import FrozenCombatJs
+from game.server.controlpoints.models import ControlPointJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.leaflet import LeafletPoint
 from game.server.supplyroutes.models import SupplyRouteJs
+from game.server.mapzones.models import UnculledZoneJs
 
 if TYPE_CHECKING:
     from game import Game
@@ -22,18 +24,17 @@ class GameUpdateEventsJs(BaseModel):
     updated_combats: list[FrozenCombatJs]
     ended_combats: list[UUID]
     navmesh_updates: set[bool]
-    unculled_zones_updated: bool
+    updated_unculled_zones: list[UnculledZoneJs]
     threat_zones_updated: bool
     new_flights: list[FlightJs]
-    updated_flights: set[UUID]
+    updated_flights: list[FlightJs]
     deleted_flights: set[UUID]
     selected_flight: UUID | None
     deselected_flight: bool
-    new_front_lines: list[FrontLineJs]
-    updated_front_lines: set[UUID]
+    updated_front_lines: list[FrontLineJs]
     deleted_front_lines: set[UUID]
     updated_tgos: set[UUID]
-    updated_control_points: set[UUID]
+    updated_control_points: list[ControlPointJs]
     updated_supply_routes: list[SupplyRouteJs]
     reset_on_map_center: LeafletPoint | None
     game_unloaded: bool
@@ -49,6 +50,7 @@ class GameUpdateEventsJs(BaseModel):
         new_combats = []
         updated_combats = []
         updated_supply_routes = []
+        updated_unculled_zones = []
         if game is not None:
             new_combats = [
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
@@ -61,6 +63,7 @@ class GameUpdateEventsJs(BaseModel):
                 updated_supply_routes = SupplyRouteJs.all_in_game(game)
             for route in updated_supply_routes:
                 route.points = []
+            updated_unculled_zones = UnculledZoneJs.from_game(game)
 
         return GameUpdateEventsJs(
             updated_flight_positions={
@@ -70,22 +73,27 @@ class GameUpdateEventsJs(BaseModel):
             updated_combats=updated_combats,
             ended_combats=[c.id for c in events.ended_combats],
             navmesh_updates=events.navmesh_updates,
-            unculled_zones_updated=events.unculled_zones_updated,
+            updated_unculled_zones=updated_unculled_zones,
             threat_zones_updated=events.threat_zones_updated,
             new_flights=[
                 FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights
             ],
-            updated_flights=events.updated_flights,
+            updated_flights=[
+                FlightJs.for_flight(f, with_waypoints=True)
+                for f in events.updated_flights
+            ],
             deleted_flights=events.deleted_flights,
             selected_flight=events.selected_flight,
             deselected_flight=events.deselected_flight,
-            new_front_lines=[
-                FrontLineJs.for_front_line(f) for f in events.new_front_lines
+            updated_front_lines=[
+                FrontLineJs.for_front_line(f) for f in events.updated_front_lines
             ],
-            updated_front_lines=events.updated_front_lines,
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=events.updated_tgos,
-            updated_control_points=events.updated_control_points,
+            updated_control_points=[
+                ControlPointJs.for_control_point(cp)
+                for cp in events.updated_control_points
+            ],
             updated_supply_routes=updated_supply_routes,
             reset_on_map_center=events.reset_on_map_center,
             game_unloaded=events.game_unloaded,
