@@ -18,27 +18,17 @@ jobs:
       - name: Set up JS environment
         uses: ./.github/actions/setup-liberation-js
 
-      - name: Finalize version
-        run: |
-          New-Item -ItemType file resources\final
-
       - name: mypy
         uses: ./.github/actions/mypy
 
-      - name: Build front-end
-        uses: ./.github/actions/build-front-end
-
-      - name: Build binaries
+      - name: Finalize build
         run: |
-          ./venv/scripts/activate
-          $env:PYTHONPATH=".;./pydcs"
-          pyinstaller pyinstaller.spec
+          New-Item -ItemType file resources\final
 
-      - name: Create Installer
-        env:
-          TAG_NAME: ${{ github.ref }}
-        run: |
-          Copy-Item .\changelog.md .\dist
+      - name: Build app
+        uses: ./.github/actions/build-app
+        with:
+          release: true
 
       - uses: actions/upload-artifact@v2
         with:
