@@ -64,7 +64,7 @@ class TransportFinder:
 
 
 class SupplyRouteJs(BaseModel):
-    id: UUID
+    id: str
     points: list[LeafletPoint]
     front_active: bool
     is_sea: bool
@@ -91,7 +91,7 @@ class SupplyRouteJs(BaseModel):
             #
             # https://reactjs.org/docs/lists-and-keys.html#keys
             # https://github.com/dcs-liberation/dcs_liberation/issues/2167
-            id=UUID(int=a.id.int ^ b.id.int, version=4),
+            id=f"{a}:{b}",
             points=[p.latlng() for p in points],
             front_active=not sea and a.front_is_active(b),
             is_sea=sea,

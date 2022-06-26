@@ -571,7 +571,7 @@ class PendingTransfers:
     def __iter__(self) -> Iterator[TransferOrder]:
         yield from self.pending_transfers
 
-    def _update_eventstream(self) -> None:
+    def _send_supply_route_event_stream_update(self) -> None:
         from game.server import EventStream
 
         with EventStream.event_context() as events:
@@ -611,7 +611,7 @@ class PendingTransfers:
         transfer.origin.base.commit_losses(transfer.units)
         self.pending_transfers.append(transfer)
         self.arrange_transport(transfer)
-        self._update_eventstream()
+        self._send_supply_route_event_stream_update()
 
     def split_transfer(self, transfer: TransferOrder, size: int) -> TransferOrder:
         """Creates a smaller transfer that is a subset of the original."""
@@ -666,7 +666,7 @@ class PendingTransfers:
             self.cancel_transport(transfer.transport, transfer)
         self.pending_transfers.remove(transfer)
         transfer.origin.base.commission_units(transfer.units)
-        self._update_eventstream()
+        self._send_supply_route_event_stream_update()
 
     def perform_transfers(self) -> None:
         """
@@ -683,7 +683,7 @@ class PendingTransfers:
         self.pending_transfers = incomplete
         self.convoys.disband_all()
         self.cargo_ships.disband_all()
-        self._update_eventstream()
+        self._send_supply_route_event_stream_update()
 
     def plan_transports(self) -> None:
         """
