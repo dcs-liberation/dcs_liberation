@@ -62,7 +62,7 @@ class GameUpdateEventsJs(BaseModel):
             ]
             updated_unculled_zones = UnculledZoneJs.from_game(game)
             for node in events.updated_iads:
-                updated_iads = updated_iads + IadsConnectionJs.connections_for_node(node)
+                updated_iads.extend(IadsConnectionJs.connections_for_node(node))
 
         return GameUpdateEventsJs(
             updated_flight_positions={
