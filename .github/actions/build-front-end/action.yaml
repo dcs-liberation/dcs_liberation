@@ -1,0 +1,10 @@
+name: Front-end build
+description: Builds the Liberation front-end.
+runs:
+  using: composite
+  steps:
+    - name: Build client
+      shell: powershell
+      run: |
+        cd client
+        npm run build
