@@ -22,18 +22,17 @@ class GameUpdateEvents:
     ended_combats: list[FrozenCombat] = field(default_factory=list)
     updated_flight_positions: list[tuple[Flight, Point]] = field(default_factory=list)
     navmesh_updates: set[bool] = field(default_factory=set)
-    unculled_zones_updated: bool = False
+    unculled_zones_updated: list[Point] = field(default_factory=list)
     threat_zones_updated: bool = False
     new_flights: set[Flight] = field(default_factory=set)
-    updated_flights: set[UUID] = field(default_factory=set)
+    updated_flights: set[Flight] = field(default_factory=set)
     deleted_flights: set[UUID] = field(default_factory=set)
     selected_flight: UUID | None = None
     deselected_flight: bool = False
-    new_front_lines: set[FrontLine] = field(default_factory=set)
-    updated_front_lines: set[UUID] = field(default_factory=set)
+    updated_front_lines: set[FrontLine] = field(default_factory=set)
     deleted_front_lines: set[UUID] = field(default_factory=set)
     updated_tgos: set[UUID] = field(default_factory=set)
-    updated_control_points: set[UUID] = field(default_factory=set)
+    updated_control_points: set[ControlPoint] = field(default_factory=set)
     reset_on_map_center: LatLng | None = None
     game_unloaded: bool = False
     new_turn: bool = False
@@ -68,8 +67,8 @@ class GameUpdateEvents:
         self.navmesh_updates.add(player)
         return self
 
-    def update_unculled_zones(self) -> GameUpdateEvents:
-        self.unculled_zones_updated = True
+    def update_unculled_zones(self, zones: list[Point]) -> GameUpdateEvents:
+        self.unculled_zones_updated = zones
         return self
 
     def update_threat_zones(self) -> GameUpdateEvents:
@@ -81,11 +80,11 @@ class GameUpdateEvents:
         return self
 
     def update_flight(self, flight: Flight) -> GameUpdateEvents:
-        self.updated_flights.add(flight.id)
+        self.updated_flights.add(flight)
         return self
 
     def update_flights_in_package(self, package: Package) -> GameUpdateEvents:
-        self.updated_flights.update({f.id for f in package.flights})
+        self.updated_flights.update({f for f in package.flights})
         return self
 
     def delete_flight(self, flight: Flight) -> GameUpdateEvents:
@@ -106,12 +105,8 @@ class GameUpdateEvents:
         self.selected_flight = None
         return self
 
-    def new_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
-        self.new_front_lines.add(front_line)
-        return self
-
     def update_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
-        self.updated_front_lines.add(front_line.id)
+        self.updated_front_lines.add(front_line)
         return self
 
     def delete_front_line(self, front_line: FrontLine) -> GameUpdateEvents:
@@ -123,7 +118,7 @@ class GameUpdateEvents:
         return self
 
     def update_control_point(self, control_point: ControlPoint) -> GameUpdateEvents:
-        self.updated_control_points.add(control_point.id)
+        self.updated_control_points.add(control_point)
         return self
 
     def game_loaded(self, game: Game | None) -> GameUpdateEvents:

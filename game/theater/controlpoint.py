@@ -398,7 +398,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.front_lines[connection] = front
         connection.front_lines[self] = front
         self.front_line_db.add(front.id, front)
-        events.new_front_line(front)
+        events.update_front_line(front)
 
     def _remove_front_line_with(
         self, connection: ControlPoint, events: GameUpdateEvents
