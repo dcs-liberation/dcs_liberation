@@ -258,7 +258,7 @@ class QGroundObjectMenu(QDialog):
     def update_game(self) -> None:
         events = GameUpdateEvents()
         events.update_tgo(self.ground_object)
-        self.game.theater.iads_network.update_tgo(self.ground_object)
+        self.game.theater.iads_network.update_tgo(self.ground_object, events)
         if any(
             package.target == self.ground_object
             for package in self.game.ato_for(player=False).packages
