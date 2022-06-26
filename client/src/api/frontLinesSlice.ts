@@ -15,16 +15,15 @@ export const frontLinesSlice = createSlice({
   name: "frontLines",
   initialState,
   reducers: {
-    addFrontLine: (state, action: PayloadAction<FrontLine>) => {
-      const front = action.payload;
-      state.fronts[front.id] = front;
+    updateFrontLine: (state, action: PayloadAction<FrontLine[]>) => {
+      for (const front of action.payload) {
+        state.fronts[front.id] = front;
+      }
     },
-    updateFrontLine: (state, action: PayloadAction<FrontLine>) => {
-      const front = action.payload;
-      state.fronts[front.id] = front;
-    },
-    deleteFrontLine: (state, action: PayloadAction<string>) => {
-      delete state.fronts[action.payload];
+    deleteFrontLine: (state, action: PayloadAction<string[]>) => {
+      for (const uid of action.payload) {
+        delete state.fronts[uid];
+      }
     },
   },
   extraReducers: (builder) => {
@@ -43,7 +42,7 @@ export const frontLinesSlice = createSlice({
   },
 });
 
-export const { addFrontLine, updateFrontLine, deleteFrontLine } =
+export const { updateFrontLine, deleteFrontLine } =
   frontLinesSlice.actions;
 
 export const selectFrontLines = (state: RootState) => state.frontLines;
