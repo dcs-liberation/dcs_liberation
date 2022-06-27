@@ -257,7 +257,7 @@ class IadsNetwork:
         tgo_friendly = tgo.is_friendly(True)
         return node_friendly == tgo_friendly
 
-    def _make_advanced_connections(self, node: IadsNetworkNode):
+    def _make_advanced_connections(self, node: IadsNetworkNode) -> None:
         tgo = node.group.ground_object
         # Find nearby Power or Connection
         for nearby_go in self.ground_objects.values():
