@@ -28,15 +28,7 @@ export const combatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(gameLoaded, (state, action) => {
-      // still need to pass this from back-end, initialize empty...
       state.combat = {};
-      /* state.combat = action.payload.combat.reduce(
-        (acc: { [key: string]: Tgo }, curr) => {
-          acc[curr.id] = curr;
-          return acc;
-        },
-        {}
-      ); */
     });
     builder.addCase(gameUnloaded, (state) => {
       state.combat = {};
