@@ -1,0 +1,16 @@
+name: mypy
+description: Type checks Python code.
+runs:
+  using: composite
+  steps:
+    - name: mypy game
+      shell: powershell
+      run: |
+        ./venv/scripts/activate
+        mypy game
+
+    - name: mypy tests
+      shell: powershell
+      run: |
+        ./venv/scripts/activate
+        mypy tests

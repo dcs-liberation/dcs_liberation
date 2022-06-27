@@ -392,7 +392,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         mapSettingsLayout.addWidget(invertMap, 0, 1)
         self.advanced_iads = QtWidgets.QCheckBox()
         self.registerField("advanced_iads", self.advanced_iads)
-        mapSettingsLayout.addWidget(QtWidgets.QLabel("Advanced IADS"), 1, 0)
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Advanced IADS (WIP)"), 1, 0)
         mapSettingsLayout.addWidget(self.advanced_iads, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
