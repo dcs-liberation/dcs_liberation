@@ -261,10 +261,10 @@ class IadsNetwork:
         tgo = node.group.ground_object
         # Find nearby Power or Connection
         for nearby_go in self.ground_objects.values():
-            if nearby_go == tgo or not self._is_friendly(node, nearby_go):
-                continue
             iads_role = IadsRole.for_category(nearby_go.category)
+            if not iads_role.is_comms_or_power or nearby_go == tgo:
+                continue
             dist = nearby_go.position.distance_to_point(tgo.position)
             in_range = dist <= iads_role.connection_range.meters
-            if iads_role.is_comms_or_power and in_range:
+            if in_range and self._is_friendly(node, nearby_go):
                 node.add_connection_for_tgo(nearby_go)
