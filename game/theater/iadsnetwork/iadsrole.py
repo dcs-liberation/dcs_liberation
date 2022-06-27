@@ -79,3 +79,10 @@ class IadsRole(Enum):
             IadsRole.NO_BEHAVIOR,
             IadsRole.POINT_DEFENSE,
         ]
+
+    @property
+    def is_comms_or_power(self) -> bool:
+        return self in [
+            IadsRole.POWER_SOURCE,
+            IadsRole.CONNECTION_NODE,
+        ]

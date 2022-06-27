@@ -141,8 +141,9 @@ class IadsNetwork:
                 self.nodes.remove(cn)
         try:
             # Create a new node for the tgo
-            self.node_for_tgo(tgo)
-            # TODO Add the connections or calculate them..
+            node = self.node_for_tgo(tgo)
+            if self.advanced_iads:
+                self._make_advanced_connections(node)
         except IadsNetworkException:
             # Not participating
             pass
@@ -249,17 +250,21 @@ class IadsNetwork:
                 except IadsNetworkException:
                     # TGO does not participate to iads network
                     continue
-                # Find nearby Power or Connection
-                for nearby_go in self.ground_objects.values():
-                    if nearby_go == go:
-                        continue
-                    if (
-                        IadsRole.for_category(go.category)
-                        in [
-                            IadsRole.POWER_SOURCE,
-                            IadsRole.CONNECTION_NODE,
-                        ]
-                        and nearby_go.position.distance_to_point(go.position)
-                        <= node.group.iads_role.connection_range.meters
-                    ):
-                        node.add_connection_for_tgo(nearby_go)
+                self._make_advanced_connections(node)
+
+    def _is_friendly(self, node: IadsNetworkNode, tgo: TheaterGroundObject) -> bool:
+        node_friendly = node.group.ground_object.is_friendly(True)
+        tgo_friendly = tgo.is_friendly(True)
+        return node_friendly == tgo_friendly
+
+    def _make_advanced_connections(self, node: IadsNetworkNode):
+        tgo = node.group.ground_object
+        # Find nearby Power or Connection
+        for nearby_go in self.ground_objects.values():
+            if nearby_go == tgo or not self._is_friendly(node, nearby_go):
+                continue
+            iads_role = IadsRole.for_category(nearby_go.category)
+            dist = nearby_go.position.distance_to_point(tgo.position)
+            in_range = dist <= iads_role.connection_range.meters
+            if iads_role.is_comms_or_power and in_range:
+                node.add_connection_for_tgo(nearby_go)
