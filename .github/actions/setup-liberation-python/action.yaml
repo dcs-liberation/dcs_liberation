@@ -1,0 +1,23 @@
+name: Liberation Python set-up
+description: Sets up the Liberation Python environment.
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+        cache: pip
+
+    - name: Install environment
+      shell: powershell
+      run: |
+        python -m venv ./venv
+
+    - name: Install dependencies
+      shell: powershell
+      run: |
+        ./venv/scripts/activate
+        python -m pip install -r requirements.txt
+        # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
+        Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
