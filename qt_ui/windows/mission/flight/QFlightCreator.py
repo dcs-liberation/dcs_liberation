@@ -103,7 +103,7 @@ class QFlightCreator(QDialog):
         # When an off-map spawn overrides the start type to in-flight, we save
         # the selected type into this value. If a non-off-map spawn is selected
         # we restore the previous choice.
-        self.restore_start_type = self.game.settings.default_start_type
+        self.restore_start_type: Optional[str] = None
         self.start_type = QComboBox()
         for start_type in StartType:
             self.start_type.addItem(start_type.value, start_type)
