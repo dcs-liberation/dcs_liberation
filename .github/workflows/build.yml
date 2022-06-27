@@ -10,59 +10,26 @@ jobs:
         with:
           submodules: true
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10"
+      - name: Set up Python environment
+        uses: ./.github/actions/setup-liberation-python
 
-      - name: Set up Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "16"
+      - name: Set up JS environment
+        uses: ./.github/actions/setup-liberation-js
 
-      - name: Install environment
-        run: |
-          python -m venv ./venv
+      - name: mypy
+        uses: ./.github/actions/mypy
 
-      - name: Install dependencies
-        run: |
-          ./venv/scripts/activate
-          python -m pip install -r requirements.txt
-          # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
-          Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force
-
-      - name: mypy game
-        run: |
-          ./venv/scripts/activate
-          mypy game
-
-      - name: mypy tests
-        run: |
-          ./venv/scripts/activate
-          mypy tests
-
-      - name: update build number
+      - name: Set build number
         run: |
           [IO.File]::WriteAllLines($pwd.path + "\resources\buildnumber", $env:GITHUB_RUN_NUMBER)
 
-      - name: npm ci
-        run: |
-          cd client
-          npm ci
-
-      - name: Build client
-        run: |
-          cd client
-          npm run build
-
-      - name: Build binaries
-        run: |
-          ./venv/scripts/activate
-          $env:PYTHONPATH=".;./pydcs"
-          pyinstaller pyinstaller.spec
+      - name: Build app
+        uses: ./.github/actions/build-app
 
       - name: Create archive
-        run: Compress-Archive -Path .\dist\dcs_liberation\ -DestinationPath dist\dcs_liberation.zip
+        run:
+          Compress-Archive -Path .\dist\dcs_liberation\ -DestinationPath
+          dist\dcs_liberation.zip
 
       - uses: actions/upload-artifact@v2
         with:
