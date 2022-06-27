@@ -157,7 +157,7 @@ class IadsNetwork:
         self.nodes.append(node)
         return node
 
-    def node_for_tgo(self, tgo: TheaterGroundObject) -> IadsNetworkNode:
+    def node_for_tgo(self, tgo: TheaterGroundObject) -> Optional[IadsNetworkNode]:
         """Get existing node from the iads network or create a new node"""
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
