@@ -145,8 +145,8 @@ class IadsNetwork:
         if node is None:
             # Not participating
             return
-        if self.advanced_iads:
-            self._make_advanced_connections(node)
+        if self.advanced_iads and not self.iads_config:
+            self._make_advanced_connections_by_range(node)
 
     def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
         """Get existing node from the iads network or create a new node"""
@@ -239,27 +239,24 @@ class IadsNetwork:
     def initialize_network_from_range(self) -> None:
         """Initialize the IADS Network by range"""
         for go in self.ground_objects.values():
-            if (
-                isinstance(go, IadsGroundObject)
-                or isinstance(go, NavalGroundObject)
-                or (
-                    isinstance(go, IadsBuildingGroundObject)
-                    and IadsRole.for_category(go.category) == IadsRole.COMMAND_CENTER
-                )
-            ):
+            is_iads_go = isinstance(go, IadsGroundObject)
+            is_iads_sea = isinstance(go, NavalGroundObject)
+            is_iads_cc = isinstance(go, IadsBuildingGroundObject)
+            is_iads_cc &= IadsRole.for_category(go.category) == IadsRole.COMMAND_CENTER
+            if is_iads_go or is_iads_sea or is_iads_cc:
                 # Set as primary node
                 node = self.node_for_tgo(go)
                 if node is None:
                     # TGO does not participate to iads network
                     continue
-                self._make_advanced_connections(node)
+                self._make_advanced_connections_by_range(node)
 
     def _is_friendly(self, node: IadsNetworkNode, tgo: TheaterGroundObject) -> bool:
         node_friendly = node.group.ground_object.is_friendly(True)
         tgo_friendly = tgo.is_friendly(True)
         return node_friendly == tgo_friendly
 
-    def _make_advanced_connections(self, node: IadsNetworkNode) -> None:
+    def _make_advanced_connections_by_range(self, node: IadsNetworkNode) -> None:
         tgo = node.group.ground_object
         # Find nearby Power or Connection
         for nearby_go in self.ground_objects.values():
