@@ -134,8 +134,53 @@ class IadsNetwork:
             skynet_nodes.append(skynet_node)
         return skynet_nodes
 
+    def _update_iads_comms_and_power(
+        self, tgo: TheaterGroundObject, events: GameUpdateEvents
+    ) -> None:
+        assert self.advanced_iads, "_update_iads_comms_and_power requires advanced IADS"
+        is_comm_or_power = IadsRole.for_category(tgo.category).is_comms_or_power
+        assert is_comm_or_power, "Invalid TGO was given for _update_iads_building"
+
+        """ 
+        Delete/Update connections to the comm tower/power station
+        If this function is called, it should imply only 2 possibilities (unless I missed one):
+            1) A capture event occurred, thus the building now belongs to the capturing team
+                => All connections to this building are to the enemy, thus delete them
+                 (mind that no new connections could have been formed since all TGOs were depopulated)
+            2) The building was destroyed during a mission
+                => In this case we don't need to delete the connections
+                    instead we just update the nodes that connect to this building
+                    because those connections are still coming from friendly TGOs
+        Given the above, we should be able to use the following implications:
+            If the building is friendly compared to the node that we're checking
+                => Building was destroyed during mission
+                => Update nodes that connect to this building
+            Otherwise if the building is not friendly compared to the node we're checking
+                => Capture event occurred
+                => Delete all connections to this building
+
+        TODO: clean up the code below by wrapping comm towers and power stations
+                preferably in a class like IadsNetworkNode, keeping a reference to connected nodes
+        """
+        for node in self.nodes:
+            to_delete = []
+            for cID in node.connections:
+                group = node.connections[cID]
+                if group.ground_object is tgo:
+                    if self._is_friendly(node, tgo):
+                        events.update_iads_node(node)
+                    else:
+                        to_delete.append(cID)
+                        events.delete_iads_connection(cID)
+            for cID in to_delete:
+                del node.connections[cID]
+        if not self.iads_config:
+            self._update_network(tgo, events)
+
     def update_tgo(self, tgo: TheaterGroundObject, events: GameUpdateEvents) -> None:
         """Update the IADS Network for the given TGO"""
+        if IadsRole.for_category(tgo.category).is_comms_or_power:
+            return self._update_iads_comms_and_power(tgo, events)
         # Remove existing nodes for the given tgo
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
@@ -268,3 +313,24 @@ class IadsNetwork:
                         <= node.group.iads_role.connection_range.meters
                     ):
                         node.add_connection_for_tgo(nearby_go)
+
+    def _is_friendly(self, node: IadsNetworkNode, tgo: TheaterGroundObject) -> bool:
+        node_friendly = node.group.ground_object.is_friendly(True)
+        tgo_friendly = tgo.is_friendly(True)
+        return node_friendly == tgo_friendly
+
+    def _update_network(
+        self, tgo: TheaterGroundObject, events: GameUpdateEvents
+    ) -> None:
+        if tgo.is_dead:
+            return
+        # Reversing the idea of _connect_to_network...
+        iads_role = IadsRole.for_category(tgo.category)
+        if not iads_role.is_comms_or_power:
+            return
+        for node in self.nodes:
+            dist = node.group.ground_object.position.distance_to_point(tgo.position)
+            in_range = dist < iads_role.connection_range.meters
+            if in_range and self._is_friendly(node, tgo):
+                node.add_connection_for_tgo(tgo)
+                events.update_iads_node(node)
