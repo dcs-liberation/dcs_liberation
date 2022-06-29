@@ -626,3 +626,4 @@ class IadsBuildingGroundObject(BuildingGroundObject):
 
         if not self.is_friendly(for_player):
             yield from [FlightType.STRIKE, FlightType.DEAD]
+
