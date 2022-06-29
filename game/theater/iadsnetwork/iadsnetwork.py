@@ -142,12 +142,12 @@ class IadsNetwork:
                 self.nodes.remove(cn)
                 for cID in cn.connections:
                     events.delete_iads_connection(cID)
-        
+
         node = self.node_for_tgo(tgo)
-        # TODO Add the connections or calculate them..
         if node is None:
             # Not participating
             return
+        # TODO Add the connections or calculate them..
         events.update_iads_node(node)
 
     def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
