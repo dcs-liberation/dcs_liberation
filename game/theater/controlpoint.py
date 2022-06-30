@@ -843,7 +843,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                 tgo, VehicleGroupGroundObject
             ):
                 if isinstance(tgo, IadsGroundObject):
-                    game.theater.iads_network.update_tgo(tgo)
+                    game.theater.iads_network.update_tgo(tgo, events)
                 conflict_heading = game.theater.heading_to_conflict_from(tgo.position)
                 tgo.rotate(conflict_heading or tgo.heading)
             if not tgo.is_control_point:
