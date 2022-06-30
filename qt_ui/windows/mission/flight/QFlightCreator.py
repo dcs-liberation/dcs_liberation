@@ -115,6 +115,11 @@ class QFlightCreator(QDialog):
                 tooltip="Selects the start type for this flight.",
             )
         )
+        squadron: Squadron = self.squadron_selector.currentData()
+        home_base: ControlPoint = squadron.location
+        if isinstance(home_base, OffMapSpawn):
+            self.start_type.setCurrentText(StartType.IN_FLIGHT.value)
+            self.start_type.setEnabled(False)
         layout.addWidget(
             QLabel(
                 "Any option other than Cold will make this flight "
@@ -213,7 +218,7 @@ class QFlightCreator(QDialog):
         else:
             self.start_type.setEnabled(True)
             if self.restore_start_type is not None:
-                self.start_type.setCurrentText(self.restore_start_type)
+                self.start_type.setCurrentText(self.restore_start_type.value)
                 self.restore_start_type = None
 
     def on_task_changed(self, index: int) -> None:

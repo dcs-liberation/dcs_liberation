@@ -18,6 +18,7 @@ from game.theater.theatergroup import IadsGroundGroup
 
 if TYPE_CHECKING:
     from game.game import Game
+    from game.sim import GameUpdateEvents
 
 
 class IadsNetworkException(Exception):
@@ -133,19 +134,21 @@ class IadsNetwork:
             skynet_nodes.append(skynet_node)
         return skynet_nodes
 
-    def update_tgo(self, tgo: TheaterGroundObject) -> None:
+    def update_tgo(self, tgo: TheaterGroundObject, events: GameUpdateEvents) -> None:
         """Update the IADS Network for the given TGO"""
         # Remove existing nodes for the given tgo
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
                 self.nodes.remove(cn)
+                for cID in cn.connections:
+                    events.delete_iads_connection(cID)
 
-        # Create a new node for the tgo
         node = self.node_for_tgo(tgo)
         if node is None:
             # Not participating
             return
         # TODO Add the connections or calculate them..
+        events.update_iads_node(node)
 
     def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
         """Get existing node from the iads network or create a new node"""
