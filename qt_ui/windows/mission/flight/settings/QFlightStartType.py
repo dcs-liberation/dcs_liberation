@@ -8,6 +8,7 @@ from PySide2.QtWidgets import (
 
 from game.ato.flight import Flight
 from game.ato.starttype import StartType
+from game.theater import OffMapSpawn
 from qt_ui.models import PackageModel
 
 
@@ -25,6 +26,9 @@ class QFlightStartType(QGroupBox):
         for start_type in StartType:
             self.start_type.addItem(start_type.value, start_type)
         self.start_type.setCurrentText(flight.start_type.value)
+
+        if isinstance(self.flight.departure, OffMapSpawn):
+            self.start_type.setEnabled(False)
 
         self.start_type.currentTextChanged.connect(self._on_start_type_selected)
         self.main_row.addWidget(self.start_type_label)
