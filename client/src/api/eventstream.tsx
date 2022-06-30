@@ -29,7 +29,6 @@ import { updateTgo } from "./tgosSlice";
 import { threatZonesUpdated } from "./threatZonesSlice";
 import { unculledZonesUpdated } from "./unculledZonesSlice";
 import { LatLng } from "leaflet";
-//import { updateIadsConnection } from "./iadsNetworkSlice";
 
 
 interface GameUpdateEvents {
