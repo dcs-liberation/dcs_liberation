@@ -57,6 +57,9 @@ class AirWing:
             for squadron in control_point.squadrons:
                 if squadron.can_auto_assign_mission(location, task, size, this_turn):
                     capable_at_base.append(squadron)
+                    if squadron.aircraft not in best_aircraft:
+                        # If it is not already in the list it should be the last one
+                        best_aircraft.append(squadron.aircraft)
 
             ordered.extend(
                 sorted(
@@ -73,13 +76,22 @@ class AirWing:
             return squadron
         return None
 
-    @property
-    def available_aircraft_types(self) -> Iterator[AircraftType]:
+    def best_available_aircrafts_for(self, task: FlightType) -> list[AircraftType]:
+        """Returns an ordered list of available aircrafts for the given task"""
+        aircrafts = []
+        best_aircraft_for_task = aircraft_for_task(task)
         for aircraft, squadrons in self.squadrons.items():
             for squadron in squadrons:
-                if squadron.untasked_aircraft:
-                    yield aircraft
+                if squadron.untasked_aircraft and task in squadron.mission_types:
+                    aircrafts.append(aircraft)
+                    if aircraft not in best_aircraft_for_task:
+                        best_aircraft_for_task.append(aircraft)
                     break
+        # Sort the list ordered by the best capability
+        return sorted(
+            aircrafts,
+            key=lambda ac: best_aircraft_for_task.index(ac),
+        )
 
     def auto_assignable_for_task(self, task: FlightType) -> Iterator[Squadron]:
         for squadron in self.iter_squadrons():

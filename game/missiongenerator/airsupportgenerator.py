@@ -21,7 +21,7 @@ from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.utils import Heading
 from game.ato.ai_flight_planner_db import AEWC_CAPABLE
-from .airsupport import AirSupport, AwacsInfo, TankerInfo
+from .missiondata import MissionData, AwacsInfo, TankerInfo
 from .frontlineconflictdescription import FrontLineConflictDescription
 
 if TYPE_CHECKING:
@@ -43,14 +43,14 @@ class AirSupportGenerator:
         game: Game,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
-        air_support: AirSupport,
+        mission_data: MissionData,
     ) -> None:
         self.mission = mission
         self.conflict = conflict
         self.game = game
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
-        self.air_support = air_support
+        self.mission_data = mission_data
 
     @classmethod
     def support_tasks(cls) -> List[Type[MainTask]]:
@@ -148,13 +148,13 @@ class AirSupportGenerator:
                 tanker_group.points[0].tasks.append(SetInvisibleCommand(True))
                 tanker_group.points[0].tasks.append(SetImmortalCommand(True))
 
-                self.air_support.tankers.append(
+                self.mission_data.tankers.append(
                     TankerInfo(
-                        str(tanker_group.name),
-                        callsign,
-                        tanker_unit_type.name,
-                        freq,
-                        tacan,
+                        group_name=str(tanker_group.name),
+                        callsign=callsign,
+                        variant=tanker_unit_type.name,
+                        freq=freq,
+                        tacan=tacan,
                         start_time=None,
                         end_time=None,
                         blue=True,
@@ -197,7 +197,7 @@ class AirSupportGenerator:
             awacs_flight.points[0].tasks.append(SetInvisibleCommand(True))
             awacs_flight.points[0].tasks.append(SetImmortalCommand(True))
 
-            self.air_support.awacs.append(
+            self.mission_data.awacs.append(
                 AwacsInfo(
                     group_name=str(awacs_flight.name),
                     callsign=callsign_for_support_unit(awacs_flight),

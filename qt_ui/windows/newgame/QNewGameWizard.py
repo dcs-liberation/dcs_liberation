@@ -393,7 +393,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         mapSettingsLayout.addWidget(invertMap, 0, 1)
         self.advanced_iads = QtWidgets.QCheckBox()
         self.registerField("advanced_iads", self.advanced_iads)
-        mapSettingsLayout.addWidget(QtWidgets.QLabel("Advanced IADS"), 1, 0)
+        mapSettingsLayout.addWidget(QtWidgets.QLabel("Advanced IADS (WIP)"), 1, 0)
         mapSettingsLayout.addWidget(self.advanced_iads, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
@@ -681,7 +681,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("F/A-18F Tanker (version 1.1)"), modLayout_row, 0
+            QtWidgets.QLabel("F/A-18F Tanker (version 1.2)"), modLayout_row, 0
         )
         modLayout.addWidget(fa18ef_tanker, modLayout_row, 1)
         modLayout_row += 1
@@ -696,11 +696,12 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         )
         modLayout.addWidget(hercules, modLayout_row, 1)
         modLayout_row += 1
+        modLayout.addWidget(
         # Section break here for readability
         modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("UH-60L Black Hawk (version 1.1)"), modLayout_row, 0
+            QtWidgets.QLabel("UH-60L Black Hawk (version 1.3.1)"), modLayout_row, 0
         )
         modLayout.addWidget(uh_60l, modLayout_row, 1)
         modLayout_row += 1

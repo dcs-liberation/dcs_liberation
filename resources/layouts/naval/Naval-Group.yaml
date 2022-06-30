@@ -20,4 +20,3 @@ groups:
         - 1
       unit_classes:
         - Cruiser
-layout_file: resources/layouts/naval/naval.miz

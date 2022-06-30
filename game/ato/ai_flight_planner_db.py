@@ -279,7 +279,7 @@ SEAD_CAPABLE = [
 
 
 # Aircraft used for DEAD tasks. Must be capable of the CAS DCS task.
-DEAD_CAPABLE = [
+DEAD_CAPABLE = SEAD_CAPABLE + [
     AJS37,
     F_14B,
     F_14A_135_GR,
@@ -304,7 +304,7 @@ DEAD_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
-] + SEAD_CAPABLE
+]
 
 
 # Aircraft used for Strike mission
@@ -484,6 +484,20 @@ TRANSPORT_CAPABLE = [
     Mi_26,
 ]
 
+AIR_ASSAULT_CAPABLE = [
+    CH_53E,
+    CH_47D,
+    UH_60L,
+    SH_60B,
+    UH_60A,
+    UH_1H,
+    Mi_8MT,
+    Mi_26,
+    Mi_24P,
+    Mi_24V,
+    Hercules,
+]
+
 DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
 
 AEWC_CAPABLE = [
@@ -540,6 +554,8 @@ def dcs_types_for_task(task: FlightType) -> Sequence[Type[FlyingType]]:
         return REFUELING_CAPABALE
     elif task == FlightType.TRANSPORT:
         return TRANSPORT_CAPABLE
+    elif task == FlightType.AIR_ASSAULT:
+        return AIR_ASSAULT_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Type, Iterator
+from typing import Iterator, Type
 
 import yaml
 from dcs.ships import ship_map
@@ -32,7 +32,7 @@ class ShipUnitType(UnitType[Type[ShipType]]):
             yield unit
 
     @staticmethod
-    def _each_unit_type() -> Iterator[Type[ShipType]]:
+    def each_dcs_type() -> Iterator[Type[ShipType]]:
         yield from ship_map.values()
 
     @classmethod

@@ -1,3 +1,4 @@
+class: Helicopter
 always_keeps_gun: true
 description: "The Mil Mi-24 (Russian: \u041C\u0438\u043B\u044C \u041C\u0438-24; NATO\
   \ reporting name: Hind) is a large helicopter gunship, attack helicopter and low-capacity\
@@ -14,6 +15,8 @@ description: "The Mil Mi-24 (Russian: \u041C\u0438\u043B\u044C \u041C\u0438-24; 
   \ cockpits. It served to a great success in the Afghanistan war, until the Taliban\
   \ where equiped with Stinger Misseles from the CIA."
 lha_capable: true
+cabin_size: 6
+can_carry_crates: true
 introduced: 1976
 manufacturer: Mil
 origin: USSR/Russia

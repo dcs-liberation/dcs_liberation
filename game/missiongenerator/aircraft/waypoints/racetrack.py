@@ -64,7 +64,7 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         waypoint.add_task(Tanker())
 
         if self.flight.unit_type.dcs_unit_type.tacan:
-            tanker_info = self.air_support.tankers[-1]
+            tanker_info = self.mission_data.tankers[-1]
             tacan = tanker_info.tacan
             tacan_callsign = {
                 "Texaco": "TEX",

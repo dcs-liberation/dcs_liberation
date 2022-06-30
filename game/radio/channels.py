@@ -5,14 +5,14 @@ from typing import Optional, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from game.missiongenerator.aircraft.flightdata import FlightData
-    from game.missiongenerator.airsupport import AirSupport
+    from game.missiongenerator.missiondata import MissionData
 
 
 class RadioChannelAllocator:
     """Base class for radio channel allocators."""
 
     def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
+        self, flight: FlightData, mission_data: MissionData
     ) -> None:
         """Assigns mission frequencies to preset channels for the flight."""
         raise NotImplementedError
@@ -44,7 +44,7 @@ class CommonRadioChannelAllocator(RadioChannelAllocator):
     intra_flight_radio_index: Optional[int]
 
     def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
+        self, flight: FlightData, mission_data: MissionData
     ) -> None:
         if self.intra_flight_radio_index is not None:
             flight.assign_channel(
@@ -70,10 +70,10 @@ class CommonRadioChannelAllocator(RadioChannelAllocator):
             flight.assign_channel(radio_id, next(channel_alloc), flight.departure.atc)
 
         # TODO: If there ever are multiple AWACS, limit to mission relevant.
-        for awacs in air_support.awacs:
+        for awacs in mission_data.awacs:
             flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
 
-        for jtac in air_support.jtacs:
+        for jtac in mission_data.jtacs:
             flight.assign_channel(radio_id, next(channel_alloc), jtac.freq)
 
         if flight.arrival != flight.departure and flight.arrival.atc is not None:
@@ -81,7 +81,7 @@ class CommonRadioChannelAllocator(RadioChannelAllocator):
 
         try:
             # TODO: Skip incompatible tankers.
-            for tanker in air_support.tankers:
+            for tanker in mission_data.tankers:
                 flight.assign_channel(radio_id, next(channel_alloc), tanker.freq)
 
             if flight.divert is not None and flight.divert.atc is not None:
@@ -108,7 +108,7 @@ class NoOpChannelAllocator(RadioChannelAllocator):
     """Channel allocator for aircraft that don't support preset channels."""
 
     def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
+        self, flight: FlightData, mission_data: MissionData
     ) -> None:
         pass
 
@@ -122,7 +122,7 @@ class FarmerRadioChannelAllocator(RadioChannelAllocator):
     """Preset channel allocator for the MiG-19P."""
 
     def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
+        self, flight: FlightData, mission_data: MissionData
     ) -> None:
         # The Farmer only has 6 preset channels. It also only has a VHF radio,
         # and currently our ATC data and AWACS are only in the UHF band.
@@ -141,7 +141,7 @@ class ViggenRadioChannelAllocator(RadioChannelAllocator):
     """Preset channel allocator for the AJS37."""
 
     def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
+        self, flight: FlightData, mission_data: MissionData
     ) -> None:
         # The Viggen's preset channels are handled differently from other
         # aircraft. Since 2.7.9 the group channels will not be generated automatically
@@ -161,10 +161,10 @@ class ViggenRadioChannelAllocator(RadioChannelAllocator):
             radio_id, next(channel_alloc), flight.intra_flight_channel
         )
 
-        for awacs in air_support.awacs:
+        for awacs in mission_data.awacs:
             flight.assign_channel(radio_id, next(channel_alloc), awacs.freq)
 
-        for jtac in air_support.jtacs:
+        for jtac in mission_data.jtacs:
             flight.assign_channel(radio_id, next(channel_alloc), jtac.freq)
 
         if flight.departure.atc is not None:
@@ -184,7 +184,7 @@ class SCR522RadioChannelAllocator(RadioChannelAllocator):
     """Preset channel allocator for the SCR522 WW2 radios. (4 channels)"""
 
     def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
+        self, flight: FlightData, mission_data: MissionData
     ) -> None:
         radio_id = 1
         flight.assign_channel(radio_id, 1, flight.intra_flight_channel)

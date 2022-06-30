@@ -42,7 +42,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 # into the SAM instead of waiting for it to come alive
                 engage_task = EngageGroup(miz_group.id)
                 engage_task.params["weaponType"] = DcsWeaponType.Guided.value
-                # Ensure that they fire all ammunition in one attack pass
+                engage_task.params["groupAttack"] = True
                 engage_task.params["expend"] = Expend.All.value
                 waypoint.tasks.append(engage_task)
             else:

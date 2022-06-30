@@ -216,7 +216,7 @@ class Faction:
         ]
 
         faction.preset_groups = [
-            ForceGroup.named(n) for n in json.get("preset_groups", [])
+            ForceGroup.from_preset_group(g) for g in json.get("preset_groups", [])
         ]
 
         faction.requirements = json.get("requirements", {})
@@ -351,6 +351,12 @@ class Faction:
             self.remove_preset("SA-23/S-300VM")
             self.remove_preset("SA-17")
             self.remove_preset("KS-19")
+            self.remove_preset("HQ-2")
+            self.remove_preset("SA-2/S-75 V-759/5V23")
+            self.remove_preset("SA-3/S-125 V-601P/5V27")
+            self.remove_vehicle("SAM SA-14 Strela-3 manpad")
+            self.remove_vehicle("SAM SA-24 Igla-S manpad")
+            self.remove_vehicle("Polyana-D4M1 C2 node")
 
     def remove_aircraft(self, name: str) -> None:
         for i in self.aircrafts:

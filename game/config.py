@@ -11,7 +11,7 @@ REWARDS = {
     "farp": 1,
     # TODO: Should generate no cash once they generate units.
     # https://github.com/dcs-liberation/dcs_liberation/issues/1036
-    "factory": 10,
+    "factory": 2.5,
     "oil": 10,
     "derrick": 8,
     "village": 0.25,

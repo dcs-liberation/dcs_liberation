@@ -48,4 +48,3 @@ groups:
         - 4
       unit_types:
         - Blitz_36-6700A
-layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

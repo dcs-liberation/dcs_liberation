@@ -161,6 +161,7 @@ class Package:
             FlightType.BAI,
             FlightType.DEAD,
             FlightType.TRANSPORT,
+            FlightType.AIR_ASSAULT,
             FlightType.SEAD,
             FlightType.TARCAP,
             FlightType.BARCAP,
