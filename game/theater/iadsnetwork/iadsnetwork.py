@@ -18,6 +18,7 @@ from game.theater.theatergroup import IadsGroundGroup
 
 if TYPE_CHECKING:
     from game.game import Game
+    from game.sim import GameUpdateEvents
 
 
 class IadsNetworkException(Exception):
@@ -118,34 +119,36 @@ class IadsNetwork:
             if game.iads_considerate_culling(node.group.ground_object):
                 # Skip culled ground objects
                 continue
-            try:
-                skynet_node = SkynetNode.from_group(node.group)
-                for connection in node.connections.values():
-                    if connection.ground_object.is_friendly(
-                        skynet_node.player
-                    ) and not game.iads_considerate_culling(connection.ground_object):
-                        skynet_node.connections[connection.iads_role.value].append(
-                            SkynetNode.dcs_name_for_group(connection)
-                        )
-                skynet_nodes.append(skynet_node)
-            except IadsNetworkException:
-                # Node not skynet compatible
-                continue
+
+            # SkynetNode.from_group(node.group) may raise an exception
+            #  (originating from SkynetNode.dcs_name_for_group)
+            # but if it does, we want to know because it's supposed to be impossible afaict
+            skynet_node = SkynetNode.from_group(node.group)
+            for connection in node.connections.values():
+                if connection.ground_object.is_friendly(
+                    skynet_node.player
+                ) and not game.iads_considerate_culling(connection.ground_object):
+                    skynet_node.connections[connection.iads_role.value].append(
+                        SkynetNode.dcs_name_for_group(connection)
+                    )
+            skynet_nodes.append(skynet_node)
         return skynet_nodes
 
-    def update_tgo(self, tgo: TheaterGroundObject) -> None:
+    def update_tgo(self, tgo: TheaterGroundObject, events: GameUpdateEvents) -> None:
         """Update the IADS Network for the given TGO"""
         # Remove existing nodes for the given tgo
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
                 self.nodes.remove(cn)
-        try:
-            # Create a new node for the tgo
-            self.node_for_tgo(tgo)
-            # TODO Add the connections or calculate them..
-        except IadsNetworkException:
+                for cID in cn.connections:
+                    events.delete_iads_connection(cID)
+
+        node = self.node_for_tgo(tgo)
+        if node is None:
             # Not participating
-            pass
+            return
+        # TODO Add the connections or calculate them..
+        events.update_iads_node(node)
 
     def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
         """Get existing node from the iads network or create a new node"""
@@ -157,7 +160,7 @@ class IadsNetwork:
         self.nodes.append(node)
         return node
 
-    def node_for_tgo(self, tgo: TheaterGroundObject) -> IadsNetworkNode:
+    def node_for_tgo(self, tgo: TheaterGroundObject) -> Optional[IadsNetworkNode]:
         """Get existing node from the iads network or create a new node"""
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
@@ -177,8 +180,7 @@ class IadsNetwork:
                     node.add_connection_for_group(group)
 
         if node is None:
-            # Raise exception as TGO does not participate to the IADS
-            raise IadsNetworkException(f"TGO {tgo.name} not participating to IADS")
+            logging.debug(f"TGO {tgo.name} not participating to IADS")
         return node
 
     def initialize_network(self, ground_objects: Iterator[TheaterGroundObject]) -> None:
@@ -202,31 +204,35 @@ class IadsNetwork:
         """Initialize the IADS Network in basic mode (SAM & EWR only)"""
         for go in self.ground_objects.values():
             if isinstance(go, IadsGroundObject):
-                try:
-                    self.node_for_tgo(go)
-                except IadsNetworkException:
-                    # TGO does not participate to the IADS -> Skip
-                    pass
+                self.node_for_tgo(go)
 
     def initialize_network_from_config(self) -> None:
         """Initialize the IADS Network from a configuration"""
         for element_name, connections in self.iads_config.items():
+            warning_msg = (
+                f"IADS: No ground object found for {element_name}."
+                f" This can be normal behaviour."
+            )
             try:
                 node = self.node_for_tgo(self.ground_objects[element_name])
-            except (KeyError, IadsNetworkException):
+            except KeyError:
+                node = None
+                warning_msg = (
+                    f"IADS: No ground object found for connection {element_name}"
+                )
+
+            if node is None:
                 # Log a warning as this can be normal. Possible case is for example
                 # when the campaign request a Long Range SAM but the faction has none
                 # available. Therefore the TGO will not get populated at all
-                logging.warning(
-                    f"IADS: No ground object found for {element_name}. This can be normal behaviour."
-                )
+                logging.warning(warning_msg)
                 continue
 
             # Find all connected ground_objects
             for node_name in connections:
                 try:
                     node.add_connection_for_tgo(self.ground_objects[node_name])
-                except (KeyError):
+                except KeyError:
                     logging.error(
                         f"IADS: No ground object found for connection {node_name}"
                     )
@@ -243,10 +249,9 @@ class IadsNetwork:
                     and IadsRole.for_category(go.category) == IadsRole.COMMAND_CENTER
                 )
             ):
-                try:
-                    # Set as primary node
-                    node = self.node_for_tgo(go)
-                except IadsNetworkException:
+                # Set as primary node
+                node = self.node_for_tgo(go)
+                if node is None:
                     # TGO does not participate to iads network
                     continue
                 # Find nearby Power or Connection
