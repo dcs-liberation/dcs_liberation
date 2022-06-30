@@ -626,3 +626,7 @@ class IadsBuildingGroundObject(BuildingGroundObject):
 
         if not self.is_friendly(for_player):
             yield from [FlightType.STRIKE, FlightType.DEAD]
+        skippers = [FlightType.STRIKE]  # prevent yielding twice
+        for mission_type in super().mission_types(for_player):
+            if mission_type not in skippers:
+                yield mission_type
