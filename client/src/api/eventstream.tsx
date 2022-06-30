@@ -21,7 +21,6 @@ import {
   ControlPoint,
   Flight,
   FrontLine,
-//  IadsConnection,
   Tgo,
   UnculledZone,
 } from "./liberationApi";
