@@ -120,6 +120,11 @@ class IadsNetwork:
                 # Skip culled ground objects
                 continue
 
+            if node.group.alive_units == 0:
+                # HOTFIX! Skip nodes with no alive units left
+                # Delete this as soon as PRs #2285, #2286 & #2287 are merged
+                continue
+
             # SkynetNode.from_group(node.group) may raise an exception
             #  (originating from SkynetNode.dcs_name_for_group)
             # but if it does, we want to know because it's supposed to be impossible afaict
