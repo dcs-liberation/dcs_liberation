@@ -324,7 +324,6 @@ class IadsNetwork:
     ) -> None:
         if tgo.is_dead:
             return
-        # Reversing the idea of _connect_to_network...
         iads_role = IadsRole.for_category(tgo.category)
         if not iads_role.is_comms_or_power:
             return
