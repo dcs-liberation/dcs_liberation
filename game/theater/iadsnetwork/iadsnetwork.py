@@ -220,9 +220,9 @@ class IadsNetwork:
                 f"IADS: No ground object found for {element_name}."
                 f" This can be normal behaviour."
             )
-            try:
+            if element_name in self.ground_objects:
                 node = self.node_for_tgo(self.ground_objects[element_name])
-            except KeyError:
+            else:
                 node = None
                 warning_msg = (
                     f"IADS: No ground object found for connection {element_name}"
