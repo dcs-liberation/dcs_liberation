@@ -120,9 +120,11 @@ class IadsNetwork:
                 # Skip culled ground objects
                 continue
 
-            if node.group.alive_units == 0:
-                # HOTFIX! Skip nodes with no alive units left
-                # Delete this as soon as PRs #2285, #2286 & #2287 are merged
+            # HOTFIX! Skip non-static nodes with no alive units left
+            # Delete this as soon as PRs #2285, #2286 & #2287 are merged
+            unit_count = len(node.group.units)
+            is_static = node.group.units[0].is_static if unit_count > 0 else False
+            if node.group.alive_units == 0 and not is_static:
                 continue
 
             # SkynetNode.from_group(node.group) may raise an exception
@@ -131,7 +133,7 @@ class IadsNetwork:
             skynet_node = SkynetNode.from_group(node.group)
             for connection in node.connections.values():
                 if connection.ground_object.is_friendly(
-                    skynet_node.player
+                        skynet_node.player
                 ) and not game.iads_considerate_culling(connection.ground_object):
                     skynet_node.connections[connection.iads_role.value].append(
                         SkynetNode.dcs_name_for_group(connection)
