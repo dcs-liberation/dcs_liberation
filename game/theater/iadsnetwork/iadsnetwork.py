@@ -133,7 +133,7 @@ class IadsNetwork:
             skynet_node = SkynetNode.from_group(node.group)
             for connection in node.connections.values():
                 if connection.ground_object.is_friendly(
-                        skynet_node.player
+                    skynet_node.player
                 ) and not game.iads_considerate_culling(connection.ground_object):
                     skynet_node.connections[connection.iads_role.value].append(
                         SkynetNode.dcs_name_for_group(connection)
