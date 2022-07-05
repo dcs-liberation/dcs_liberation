@@ -142,6 +142,11 @@ class FlightGroupSpawner:
         if alt_type == "BARO" and alt < MINIMUM_MID_MISSION_SPAWN_ALTITUDE:
             alt = MINIMUM_MID_MISSION_SPAWN_ALTITUDE
 
+        # If 'alt' is less than 500ft AGL, use random value between 500-1000ft
+        # Otherwise planes might crash in trees and stuff...
+        if alt_type == "RADIO" and alt < feet(500):
+            alt = feet(500 + 500*random.random())
+
         group = self.mission.flight_group(
             country=self.country,
             name=name,
