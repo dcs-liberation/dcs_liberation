@@ -143,16 +143,19 @@ class SquadronLiverySelector(QComboBox):
     """
     def __init__(
         self,
-        aircraft_type: AircraftType,
-        selected_livery: Optional[str] = None,
+        squadron: Squadron
     ) -> None:
         super().__init__()
+        aircraft_type = squadron.aircraft
+        selected_livery = squadron.livery
         self.setSizeAdjustPolicy(self.AdjustToContents)
         self.aircraft_type = aircraft_type
         # Make a list of all liveries, including custom ones
-        # Dig in DCS installation folder (default)
-        #  as well as Saved Games folder (custom)
-        liveries = ["Test1", "Test2", "Test3"]
+        # Use pydcs and mine Saved Games folder for custom liveries
+        liveries = []
+        country = squadron.coalition.country_name
+        for e in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
+            liveries.append(e.value)
         self.addItems(liveries)
         if selected_livery is not None:
             if self.findText(selected_livery) == -1:
@@ -193,8 +196,8 @@ class SquadronConfigurationBox(QGroupBox):
         nickname_edit_layout.addWidget(reroll_nickname_button, 1, 1, Qt.AlignTop)
 
         left_column.addWidget(QLabel("Livery:"))
-        self.livery_selector = SquadronLiverySelector(squadron.aircraft, squadron.livery)
-        self.livery_selector.currentIndexChanged.connect(self.on_livery_changed)
+        self.livery_selector = SquadronLiverySelector(squadron)
+        self.livery_selector.currentTextChanged.connect(self.on_livery_changed)
         left_column.addWidget(self.livery_selector)
 
         left_column.addWidget(QLabel("Base:"))
