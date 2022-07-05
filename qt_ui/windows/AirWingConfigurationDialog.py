@@ -136,6 +136,30 @@ class SquadronBaseSelector(QComboBox):
         self.update()
 
 
+class SquadronLiverySelector(QComboBox):
+    """
+    A combo box for selecting a squadron's livery.
+    The combo box will automatically be populated with all available liveries.
+    """
+    def __init__(
+        self,
+        aircraft_type: AircraftType,
+        selected_livery: Optional[str] = None,
+    ) -> None:
+        super().__init__()
+        self.setSizeAdjustPolicy(self.AdjustToContents)
+        self.aircraft_type = aircraft_type
+        # Make a list of all liveries, including custom ones
+        # Dig in DCS installation folder (default)
+        #  as well as Saved Games folder (custom)
+        liveries = ["Test1", "Test2", "Test3"]
+        self.addItems(liveries)
+        if selected_livery is not None:
+            if self.findText(selected_livery) == -1:
+                self.addItem(selected_livery)
+            self.setCurrentText(selected_livery)
+
+
 class SquadronConfigurationBox(QGroupBox):
     remove_squadron_signal = Signal(Squadron)
 
@@ -167,6 +191,11 @@ class SquadronConfigurationBox(QGroupBox):
         reroll_nickname_button.setToolTip("Re-roll nickname")
         reroll_nickname_button.clicked.connect(self.reroll_nickname)
         nickname_edit_layout.addWidget(reroll_nickname_button, 1, 1, Qt.AlignTop)
+
+        left_column.addWidget(QLabel("Livery:"))
+        self.livery_selector = SquadronLiverySelector(squadron.aircraft, squadron.livery)
+        self.livery_selector.currentIndexChanged.connect(self.on_livery_changed)
+        left_column.addWidget(self.livery_selector)
 
         left_column.addWidget(QLabel("Base:"))
         self.base_selector = SquadronBaseSelector(
@@ -215,6 +244,9 @@ class SquadronConfigurationBox(QGroupBox):
 
     def on_nickname_changed(self, text: str) -> None:
         self.squadron.nickname = text
+
+    def on_livery_changed(self, text: str) -> None:
+        self.squadron.livery = text
 
     def on_base_changed(self, index: int) -> None:
         base = self.base_selector.itemData(index)
