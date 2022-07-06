@@ -120,6 +120,13 @@ class IadsNetwork:
                 # Skip culled ground objects
                 continue
 
+            # HOTFIX! Skip non-static nodes with no alive units left
+            # Delete this as soon as PRs #2285, #2286 & #2287 are merged
+            unit_count = len(node.group.units)
+            is_static = node.group.units[0].is_static if unit_count > 0 else False
+            if node.group.alive_units == 0 and not is_static:
+                continue
+
             # SkynetNode.from_group(node.group) may raise an exception
             #  (originating from SkynetNode.dcs_name_for_group)
             # but if it does, we want to know because it's supposed to be impossible afaict
@@ -213,9 +220,9 @@ class IadsNetwork:
                 f"IADS: No ground object found for {element_name}."
                 f" This can be normal behaviour."
             )
-            try:
+            if element_name in self.ground_objects:
                 node = self.node_for_tgo(self.ground_objects[element_name])
-            except KeyError:
+            else:
                 node = None
                 warning_msg = (
                     f"IADS: No ground object found for connection {element_name}"
