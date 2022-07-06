@@ -152,13 +152,13 @@ class SquadronLiverySelector(QComboBox):
         self.aircraft_type = aircraft_type
         # Make a list of all liveries, including custom ones
         # Use pydcs and mine Saved Games folder for custom liveries
-        liveries = []
+        liveries = set()
         country = squadron.coalition.country_name
         for e in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
-            liveries.append(e.value)
-        self.addItems(liveries)
+            liveries.add(e.value)
+        self.addItems(sorted(list(liveries)))
         if selected_livery is not None:
-            if self.findText(selected_livery) == -1:
+            if selected_livery not in liveries:
                 self.addItem(selected_livery)
             self.setCurrentText(selected_livery)
 
