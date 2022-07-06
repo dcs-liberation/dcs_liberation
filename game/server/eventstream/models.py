@@ -11,6 +11,7 @@ from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.iadsnetwork.models import IadsConnectionJs
 from game.server.leaflet import LeafletPoint
+from game.server.tgos.models import TgoJs
 from game.server.mapzones.models import UnculledZoneJs
 
 if TYPE_CHECKING:
@@ -33,7 +34,7 @@ class GameUpdateEventsJs(BaseModel):
     deselected_flight: bool
     updated_front_lines: list[FrontLineJs]
     deleted_front_lines: set[UUID]
-    updated_tgos: set[UUID]
+    updated_tgos: list[TgoJs]
     updated_control_points: list[ControlPointJs]
     updated_iads: list[IadsConnectionJs]
     deleted_iads: set[UUID]
@@ -88,7 +89,7 @@ class GameUpdateEventsJs(BaseModel):
                 FrontLineJs.for_front_line(f) for f in events.updated_front_lines
             ],
             deleted_front_lines=events.deleted_front_lines,
-            updated_tgos=events.updated_tgos,
+            updated_tgos=[TgoJs.for_tgo(tgo) for tgo in events.updated_tgos],
             updated_control_points=[
                 ControlPointJs.for_control_point(cp)
                 for cp in events.updated_control_points
