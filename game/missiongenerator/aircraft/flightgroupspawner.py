@@ -29,7 +29,8 @@ WARM_START_ALTITUDE = meters(3000)
 # PG at 5700ft. This could still be too low if there are tall obstacles near the
 # airfield, but the lowest we can push this the better to avoid spawning helicopters
 # well above the altitude for WP1.
-MINIMUM_MID_MISSION_SPAWN_ALTITUDE = feet(6000)
+MINIMUM_MID_MISSION_SPAWN_ALTITUDE_MSL = feet(6000)
+MINIMUM_MID_MISSION_SPAWN_ALTITUDE_AGL = feet(500)
 
 RTB_ALTITUDE = meters(800)
 RTB_DISTANCE = 5000
@@ -139,13 +140,13 @@ class FlightGroupSpawner:
         # We don't know where the ground is, so just make sure that any aircraft
         # spawning at an MSL altitude is spawned at some minimum altitude.
         # https://github.com/dcs-liberation/dcs_liberation/issues/1941
-        if alt_type == "BARO" and alt < MINIMUM_MID_MISSION_SPAWN_ALTITUDE:
-            alt = MINIMUM_MID_MISSION_SPAWN_ALTITUDE
+        if alt_type == "BARO" and alt < MINIMUM_MID_MISSION_SPAWN_ALTITUDE_MSL:
+            alt = MINIMUM_MID_MISSION_SPAWN_ALTITUDE_MSL
 
         # If 'alt' is less than 500ft AGL, use random value between 500-1000ft
         # Otherwise planes might crash in trees and stuff...
-        if alt_type == "RADIO" and alt < feet(500):
-            alt = feet(500 + 500 * random.random())
+        if alt_type == "RADIO" and alt < MINIMUM_MID_MISSION_SPAWN_ALTITUDE_AGL:
+            alt = MINIMUM_MID_MISSION_SPAWN_ALTITUDE_AGL
 
         group = self.mission.flight_group(
             country=self.country,
