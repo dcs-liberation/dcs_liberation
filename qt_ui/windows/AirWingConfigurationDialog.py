@@ -1,3 +1,5 @@
+import os
+import re
 from typing import Iterable, Optional, Iterator
 
 from PySide2.QtCore import (
@@ -34,6 +36,7 @@ from game.dcs.aircrafttype import AircraftType
 from game.squadrons import AirWing, Pilot, Squadron
 from game.squadrons.squadrondef import SquadronDef
 from game.theater import ConflictTheater, ControlPoint
+from qt_ui.liberation_install import get_saved_game_dir
 from qt_ui.uiconstants import AIRCRAFT_ICONS, ICONS
 
 
@@ -152,13 +155,40 @@ class SquadronLiverySelector(QComboBox):
         # Use pydcs and scan Saved Games folder for custom liveries
         liveries = set()
         country = squadron.coalition.country_name
-        for e in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
-            liveries.add(e.value)
+        for livery in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
+            liveries.add(livery.value)
+        custom_liveries = self.scan_custom_liveries(aircraft_type.dcs_id)
+        liveries = liveries.union(custom_liveries)
         self.addItems(sorted(list(liveries)))
         if selected_livery is not None:
             if selected_livery not in liveries:
                 self.addItem(selected_livery)
             self.setCurrentText(selected_livery)
+
+    @staticmethod
+    def scan_custom_liveries(aircraft: str) -> set[str]:
+        liveries_path = os.path.join(get_saved_game_dir(), "Liveries")
+        if os.path.exists(liveries_path):
+            for folder in os.listdir(liveries_path):
+                if folder.upper() == aircraft.upper():
+                    liveries_path = os.path.join(liveries_path, folder)
+                    return SquadronLiverySelector.scan_aircraft_liveries(liveries_path)
+        return set()
+
+    @staticmethod
+    def scan_aircraft_liveries(path: str) -> set[str]:
+        liveries = set()
+        for folder in os.listdir(path):
+            livery_path = os.path.join(path, folder)
+            description_path = os.path.join(livery_path, "description.lua")
+            if os.path.exists(description_path):
+                with open(description_path, "r") as file:
+                    content = file.read()
+                    match = re.search('name = "(.*)"', content)
+                    if match is not None:
+                        liveries.add(match.group(1))
+                    # TODO: country restrictions...
+        return liveries
 
 
 class SquadronConfigurationBox(QGroupBox):
