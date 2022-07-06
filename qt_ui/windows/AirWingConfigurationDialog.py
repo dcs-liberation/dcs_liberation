@@ -141,17 +141,15 @@ class SquadronLiverySelector(QComboBox):
     A combo box for selecting a squadron's livery.
     The combo box will automatically be populated with all available liveries.
     """
-    def __init__(
-        self,
-        squadron: Squadron
-    ) -> None:
+
+    def __init__(self, squadron: Squadron) -> None:
         super().__init__()
         aircraft_type = squadron.aircraft
         selected_livery = squadron.livery
         self.setSizeAdjustPolicy(self.AdjustToContents)
         self.aircraft_type = aircraft_type
         # Make a list of all liveries, including custom ones
-        # Use pydcs and mine Saved Games folder for custom liveries
+        # Use pydcs and scan Saved Games folder for custom liveries
         liveries = set()
         country = squadron.coalition.country_name
         for e in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
