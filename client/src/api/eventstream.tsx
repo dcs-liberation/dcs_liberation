@@ -1,6 +1,5 @@
 import { AppDispatch } from "../app/store";
 import { gameUnloaded } from "./actions";
-import backend from "./backend";
 import Combat from "./combat";
 import { endCombat, newCombat, updateCombat } from "./combatSlice";
 import { updateControlPoint } from "./controlPointsSlice";
@@ -50,7 +49,7 @@ interface GameUpdateEvents {
   deselected_flight: boolean;
   updated_front_lines: FrontLine[];
   deleted_front_lines: string[];
-  updated_tgos: string[];
+  updated_tgos: Tgo[];
   updated_control_points: ControlPoint[];
   updated_supply_routes: SupplyRoute[];
   updated_iads: IadsConnection[];
@@ -134,11 +133,8 @@ export const handleStreamedEvents = (
     dispatch(deleteFrontLine(events.deleted_front_lines));
   }
 
-  for (const id of events.updated_tgos) {
-    backend.get(`/tgos/${id}`).then((response) => {
-      const tgo = response.data as Tgo;
-      dispatch(updateTgo(tgo));
-    });
+  if (events.updated_tgos.length > 0) {
+    dispatch(updateTgo(events.updated_tgos));
   }
 
   if (events.updated_control_points.length > 0) {

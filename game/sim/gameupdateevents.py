@@ -32,7 +32,7 @@ class GameUpdateEvents:
     deselected_flight: bool = False
     updated_front_lines: set[FrontLine] = field(default_factory=set)
     deleted_front_lines: set[UUID] = field(default_factory=set)
-    updated_tgos: set[UUID] = field(default_factory=set)
+    updated_tgos: set[TheaterGroundObject] = field(default_factory=set)
     updated_control_points: set[ControlPoint] = field(default_factory=set)
     updated_supply_routes: bool = False
     updated_iads: set[IadsNetworkNode] = field(default_factory=set)
@@ -119,7 +119,7 @@ class GameUpdateEvents:
         return self
 
     def update_tgo(self, tgo: TheaterGroundObject) -> GameUpdateEvents:
-        self.updated_tgos.add(tgo.id)
+        self.updated_tgos.add(tgo)
         return self
 
     def update_control_point(self, control_point: ControlPoint) -> GameUpdateEvents:
