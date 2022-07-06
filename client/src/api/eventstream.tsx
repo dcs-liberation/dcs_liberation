@@ -1,7 +1,7 @@
 import { AppDispatch } from "../app/store";
 import { gameUnloaded } from "./actions";
 import Combat from "./combat";
-import { endCombat, newCombat, updateCombat } from "./combatSlice";
+import { endCombats, newCombats, updateCombats } from "./combatSlice";
 import { updateControlPoint } from "./controlPointsSlice";
 import {
   deselectFlight,
@@ -67,16 +67,16 @@ export const handleStreamedEvents = (
     );
   }
 
-  for (const combat of events.new_combats) {
-    dispatch(newCombat(combat));
+  if (events.new_combats.length > 0) {
+    dispatch(newCombats(events.new_combats));
   }
 
-  for (const combat of events.updated_combats) {
-    dispatch(updateCombat(combat));
+  if (events.updated_combats.length > 0) {
+    dispatch(updateCombats(events.updated_combats));
   }
 
-  for (const id of events.ended_combats) {
-    dispatch(endCombat(id));
+  if (events.ended_combats.length > 0) {
+    dispatch(endCombats(events.ended_combats));
   }
 
   if (Object.keys(events.navmesh_updates).length > 0) {
