@@ -154,10 +154,10 @@ class SquadronLiverySelector(QComboBox):
         # Make a list of all liveries, including custom ones
         # Use pydcs and scan Saved Games folder for custom liveries
         liveries = set()
-        country = squadron.coalition.country_name
+        country = squadron.coalition.country_name.replace(" ", "_")
         for livery in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
             liveries.add(livery.value)
-        custom_liveries = self.scan_custom_liveries(aircraft_type.dcs_id)
+        custom_liveries = self.scan_custom_liveries(aircraft_type.dcs_id, country)
         liveries = liveries.union(custom_liveries)
         self.addItems(sorted(list(liveries)))
         if selected_livery is not None:
@@ -166,28 +166,32 @@ class SquadronLiverySelector(QComboBox):
             self.setCurrentText(selected_livery)
 
     @staticmethod
-    def scan_custom_liveries(aircraft: str) -> set[str]:
-        liveries_path = os.path.join(get_saved_game_dir(), "Liveries")
-        if os.path.exists(liveries_path):
-            for folder in os.listdir(liveries_path):
+    def scan_custom_liveries(aircraft: str, country: str) -> set[str]:
+        path = os.path.join(get_saved_game_dir(), "Liveries")
+        if os.path.exists(path):
+            for folder in os.listdir(path):
                 if folder.upper() == aircraft.upper():
-                    liveries_path = os.path.join(liveries_path, folder)
-                    return SquadronLiverySelector.scan_aircraft_liveries(liveries_path)
+                    path = os.path.join(path, folder)
+                    return SquadronLiverySelector.scan_aircraft_liveries(path, country)
         return set()
 
     @staticmethod
-    def scan_aircraft_liveries(path: str) -> set[str]:
+    def scan_aircraft_liveries(path: str, country: str) -> set[str]:
         liveries = set()
+        ctjf = "Combined_Joint_Task_Forces"
         for folder in os.listdir(path):
             livery_path = os.path.join(path, folder)
             description_path = os.path.join(livery_path, "description.lua")
             if os.path.exists(description_path):
                 with open(description_path, "r") as file:
                     content = file.read()
-                    match = re.search('name = "(.*)"', content)
-                    if match is not None:
-                        liveries.add(match.group(1))
-                    # TODO: country restrictions...
+                    livery_name = re.search('name = "(.*)"', content)
+                    if livery_name is not None:
+                        if ctjf not in country:
+                            countries = re.search("countries = (\{.*\})", content)
+                            if countries and country not in countries.group(1):
+                                continue
+                        liveries.add(livery_name.group(1))
         return liveries
 
 
