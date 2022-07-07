@@ -155,8 +155,9 @@ class SquadronLiverySelector(QComboBox):
         # Use pydcs and scan Saved Games folder for custom liveries
         liveries = set()
         country = squadron.coalition.country_name.replace(" ", "_")
-        for livery in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
-            liveries.add(livery.value)
+        if country in aircraft_type.dcs_unit_type.Liveries.__dict__:
+            for livery in aircraft_type.dcs_unit_type.Liveries.__dict__[country]:
+                liveries.add(livery.value)
         custom_liveries = self.scan_custom_liveries(aircraft_type.dcs_id, country)
         liveries = liveries.union(custom_liveries)
         self.addItems(sorted(list(liveries)))
