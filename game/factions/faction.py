@@ -7,7 +7,7 @@ from functools import cached_property
 from typing import Optional, Dict, Type, List, Any, Iterator, TYPE_CHECKING
 
 import dcs
-from dcs.countries import country_dict
+from dcs.countries import country_shortname_dict
 from dcs.unittype import ShipType, StaticType
 from dcs.unittype import UnitType as DcsUnitType
 
@@ -45,6 +45,9 @@ class Faction:
 
     # Country used by this faction
     country: str = field(default="")
+
+    # Country's short name used by this faction
+    country_code: str = field(default="")
 
     # Nice name of the faction
     name: str = field(default="")
@@ -172,12 +175,13 @@ class Faction:
         faction = Faction(locales=json.get("locales"))
 
         faction.country = json.get("country", "/")
-        if faction.country not in [c.name for c in country_dict.values()]:
+        if faction.country not in [c for c in country_shortname_dict]:
             raise AssertionError(
                 'Faction\'s country ("{}") is not a valid DCS country ID'.format(
                     faction.country
                 )
             )
+        faction.country_code = country_shortname_dict[faction.country]
 
         faction.name = json.get("name", "")
         if not faction.name:
