@@ -1,6 +1,6 @@
 import { RootState } from "../app/store";
 import { gameLoaded, gameUnloaded } from "./actions";
-import { ThreatZoneContainer } from "./liberationApi";
+import { ThreatZoneContainer, ThreatZones } from "./liberationApi";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface ThreatZonesState {
@@ -24,12 +24,24 @@ const initialState: ThreatZonesState = {
   },
 };
 
+export interface IThreatZoneUpdate {
+  blue: boolean;
+  zones: ThreatZones;
+}
+
 export const threatZonesSlice = createSlice({
   name: "threatZonesState",
   initialState,
   reducers: {
-    updated: (state, action: PayloadAction<ThreatZoneContainer>) => {
-      state.zones = action.payload;
+    updated: (state, action: PayloadAction<IThreatZoneUpdate[]>) => {
+      for (const [blue, zones] of Object.entries(action.payload)) {
+        const data = {blue: (blue === "true"), zones: zones} as unknown as IThreatZoneUpdate
+        if (data.blue) {
+          state.zones.blue = data.zones;
+        } else {
+          state.zones.red = data.zones;
+        }
+      }
     },
   },
   extraReducers: (builder) => {

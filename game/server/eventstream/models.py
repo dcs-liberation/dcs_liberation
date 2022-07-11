@@ -12,6 +12,8 @@ from game.server.frontlines.models import FrontLineJs
 from game.server.iadsnetwork.models import IadsConnectionJs
 from game.server.leaflet import LeafletPoint
 from game.server.supplyroutes.models import SupplyRouteJs
+from game.server.mapzones.models import ThreatZonesJs
+from game.server.navmesh.models import NavMeshJs
 from game.server.tgos.models import TgoJs
 from game.server.mapzones.models import UnculledZoneJs
 
@@ -25,9 +27,9 @@ class GameUpdateEventsJs(BaseModel):
     new_combats: list[FrozenCombatJs]
     updated_combats: list[FrozenCombatJs]
     ended_combats: list[UUID]
-    navmesh_updates: set[bool]
+    navmesh_updates: dict[bool, NavMeshJs]
     updated_unculled_zones: list[UnculledZoneJs]
-    threat_zones_updated: bool
+    threat_zones_updated: dict[bool, ThreatZonesJs]
     new_flights: list[FlightJs]
     updated_flights: list[FlightJs]
     deleted_flights: set[UUID]
@@ -54,6 +56,8 @@ class GameUpdateEventsJs(BaseModel):
         new_combats = []
         updated_combats = []
         updated_supply_routes = []
+        updated_navmeshes = {}
+        updated_threat_zones = {}
         updated_unculled_zones = []
         updated_iads = []
         if game is not None:
@@ -68,6 +72,14 @@ class GameUpdateEventsJs(BaseModel):
                 updated_supply_routes = SupplyRouteJs.all_in_game(game)
             for route in updated_supply_routes:
                 route.points = []
+            updated_navmeshes = {
+                player: NavMeshJs.from_navmesh(mesh, game)
+                for player, mesh in events.navmesh_updates.items()
+            }
+            updated_threat_zones = {
+                player: ThreatZonesJs.from_zones(zones, game.theater)
+                for player, zones in events.threat_zones_updated.items()
+            }
             updated_unculled_zones = UnculledZoneJs.from_game(game)
             for node in events.updated_iads:
                 updated_iads.extend(IadsConnectionJs.connections_for_node(node))
@@ -79,9 +91,9 @@ class GameUpdateEventsJs(BaseModel):
             new_combats=new_combats,
             updated_combats=updated_combats,
             ended_combats=[c.id for c in events.ended_combats],
-            navmesh_updates=events.navmesh_updates,
+            navmesh_updates=updated_navmeshes,
             updated_unculled_zones=updated_unculled_zones,
-            threat_zones_updated=events.threat_zones_updated,
+            threat_zones_updated=updated_threat_zones,
             new_flights=[
                 FlightJs.for_flight(f, with_waypoints=True) for f in events.new_flights
             ],
