@@ -512,6 +512,10 @@ class AirWingConfigurationDialog(QDialog):
             tab_widget.addTab(coalition_tab, name)
             self.tabs.append(coalition_tab)
 
+        apply_button = QPushButton("Accept")
+        apply_button.clicked.connect(lambda state: self.accept())
+        layout.addWidget(apply_button)
+
     def reject(self) -> None:
         for tab in self.tabs:
             tab.apply()

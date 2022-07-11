@@ -20,6 +20,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Modding]** Updated the High Digit SAMs implementation and added the HQ-2 as well as the upgraded SA-2 and SA-3 Launchers from the mod. Threat range circles will now also be displayed correctly.
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
 * **[UI]** Added separate images for the different carrier types.
+* **[UI]** Add Accept button to Air Wing Configurator screen.
 * **[Campaign]** Allow campaign designers to define default values for the economy settings (starting budget and multiplier).
 * **[Plugins]** Allow full support of the SkynetIADS plugin with all advanced features (connection nodes, power sources, command centers) if campaign supports it.
 * **[Plugins]** Added support for the CTLD script by ciribob with many possible customization options and updated the JTAC Autolase to the CTLD included script.
