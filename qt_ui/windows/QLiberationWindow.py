@@ -130,9 +130,10 @@ class QLiberationWindow(QMainWindow):
         hbox.setSizes([1, 10000000])
         vbox.setSizes([600, 100])
 
+        self.top_panel = QTopPanel(self.game_model, self.sim_controller)
         vbox = QVBoxLayout()
         vbox.setMargin(0)
-        vbox.addWidget(QTopPanel(self.game_model, self.sim_controller))
+        vbox.addWidget(self.top_panel)
         vbox.addWidget(hbox)
 
         central_widget = QWidget()
@@ -379,6 +380,8 @@ class QLiberationWindow(QMainWindow):
                 window.close()
 
         GameUpdateSignal.get_instance().updateGame(None)
+
+        self.top_panel.setControls(False)
 
         title = "Victory!" if TurnState.WIN else "Defeat!"
         msgvar = "won" if TurnState.WIN else "lost"

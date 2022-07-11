@@ -92,5 +92,4 @@ class QDebriefingWindow(QDialog):
     def closeEvent(self, event: QCloseEvent) -> None:
         super().closeEvent(event)
         state = self.debriefing.game.check_win_loss()
-        if state == TurnState.WIN or state == TurnState.LOSS:
-            GameUpdateSignal.get_instance().gameStateChanged(state)
+        GameUpdateSignal.get_instance().gameStateChanged(state)

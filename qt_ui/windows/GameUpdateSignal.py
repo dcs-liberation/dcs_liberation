@@ -38,8 +38,9 @@ class GameUpdateSignal(QObject):
         self.debriefingReceived.emit(debriefing)
 
     def gameStateChanged(self, state: TurnState):
-        # noinspection PyUnresolvedReferences
-        self.game_state_changed.emit(state)
+        if state in (TurnState.WIN, TurnState.LOSS):
+            # noinspection PyUnresolvedReferences
+            self.game_state_changed.emit(state)
 
     @staticmethod
     def get_instance() -> GameUpdateSignal:

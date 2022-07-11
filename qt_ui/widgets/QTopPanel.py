@@ -138,10 +138,7 @@ class QTopPanel(QFrame):
         self.budgetBox.setGame(game)
         self.factionsInfos.setGame(game)
 
-        state = game.check_win_loss()
-        enabled = state == TurnState.CONTINUE
-        for controller in self.controls:
-            controller.setEnabled(enabled)
+        self.setControls(True)
 
         if game.turn > 0:
             self.passTurnButton.setText("Pass Turn")
@@ -306,3 +303,7 @@ class QTopPanel(QFrame):
 
     def budget_update(self, game: Game):
         self.budgetBox.setGame(game)
+
+    def setControls(self, enabled: bool):
+        for controller in self.controls:
+            controller.setEnabled(enabled)
