@@ -231,6 +231,10 @@ def parse_args() -> argparse.Namespace:
 
     new_game.add_argument("--cheats", action="store_true", help="Enable cheats.")
 
+    new_game.add_argument(
+        "--advanced-iads", action="store_true", help="Enable advanced IADS."
+    )
+
     lint_weapons = subparsers.add_parser("lint-weapons")
     lint_weapons.add_argument("aircraft", help="Name of the aircraft variant to lint.")
 
@@ -247,6 +251,7 @@ def create_game(
     cheats: bool,
     start_date: datetime,
     restrict_weapons_by_date: bool,
+    advanced_iads: bool,
 ) -> Game:
     first_start = liberation_install.init()
     if first_start:
@@ -264,7 +269,7 @@ def create_game(
     # way.
     inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_file(campaign_path)
-    theater = campaign.load_theater()
+    theater = campaign.load_theater(advanced_iads)
     generator = GameGenerator(
         FACTIONS[blue],
         FACTIONS[red],
@@ -358,6 +363,7 @@ def main():
                 args.cheats,
                 args.date,
                 args.restrict_weapons_by_date,
+                args.advanced_iads,
             )
     if args.subcommand == "lint-weapons":
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
