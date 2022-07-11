@@ -1,13 +1,13 @@
 import logging
 from typing import Callable, Iterator, Optional
 
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     QItemSelectionModel,
     QModelIndex,
     Qt,
     QItemSelection,
 )
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QAbstractItemView,
     QDialog,
     QListView,

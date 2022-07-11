@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Callable, Optional, TYPE_CHECKING
 
-from PySide2.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal
 
 from game.polldebriefingfilethread import PollDebriefingFileThread
 from game.sim.gameloop import GameLoop

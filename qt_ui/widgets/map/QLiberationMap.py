@@ -3,12 +3,9 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide2.QtCore import QUrl
-from PySide2.QtWebEngineWidgets import (
-    QWebEnginePage,
-    QWebEngineSettings,
-    QWebEngineView,
-)
+from PySide6.QtCore import QUrl
+from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineSettings
+from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from game.server.settings import ServerSettings
 from qt_ui.models import GameModel
@@ -22,6 +19,7 @@ class LoggingWebPage(QWebEnginePage):
         line_number: int,
         source: str,
     ) -> None:
+        super().javaScriptConsoleMessage(level, message, line_number, source)
         if level == QWebEnginePage.JavaScriptConsoleMessageLevel.ErrorMessageLevel:
             logging.error(message)
         elif level == QWebEnginePage.JavaScriptConsoleMessageLevel.WarningMessageLevel:
@@ -53,5 +51,5 @@ class QLiberationMap(QWebEngineView):
             host = f"[{host}]"
         port = server_settings.server_port
         url.setQuery(f"server={host}:{port}")
-        self.page.load(url)
         self.setPage(self.page)
+        self.page.load(url)

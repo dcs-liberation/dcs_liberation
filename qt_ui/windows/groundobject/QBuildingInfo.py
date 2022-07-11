@@ -1,7 +1,7 @@
 import os
 
-from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QVBoxLayout
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QVBoxLayout
 from game.theater import TheaterUnit
 
 from game.config import REWARDS

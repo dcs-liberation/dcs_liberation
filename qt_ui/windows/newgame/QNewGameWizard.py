@@ -4,9 +4,9 @@ import logging
 from datetime import datetime, timedelta
 from typing import List
 
-from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QDate, QItemSelectionModel, QPoint, Qt, Signal
-from PySide2.QtWidgets import QCheckBox, QLabel, QTextEdit, QVBoxLayout
+from PySide6 import QtGui, QtWidgets
+from PySide6.QtCore import QDate, QItemSelectionModel, QPoint, Qt, Signal
+from PySide6.QtWidgets import QCheckBox, QLabel, QTextEdit, QVBoxLayout
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET

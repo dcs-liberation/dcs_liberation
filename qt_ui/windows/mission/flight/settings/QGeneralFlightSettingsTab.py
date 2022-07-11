@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QFrame, QGridLayout, QVBoxLayout
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QFrame, QGridLayout, QVBoxLayout
 
 from game import Game
 from game.ato.flight import Flight

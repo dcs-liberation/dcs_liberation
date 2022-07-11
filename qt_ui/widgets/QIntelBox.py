@@ -1,6 +1,6 @@
 from typing import Optional
 
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QHBoxLayout,

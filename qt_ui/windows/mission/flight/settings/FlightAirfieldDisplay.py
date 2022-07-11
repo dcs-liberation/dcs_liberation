@@ -1,6 +1,6 @@
 import logging
 
-from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
+from PySide6.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 
 from game import Game
 from game.ato.flight import Flight

@@ -1,8 +1,8 @@
 """A layout containing a widget with an associated label."""
 from typing import Optional
 
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QWidget
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 
 
 class QLabeledWidget(QHBoxLayout):

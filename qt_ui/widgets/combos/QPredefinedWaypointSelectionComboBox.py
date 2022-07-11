@@ -1,4 +1,4 @@
-from PySide2.QtGui import QStandardItem, QStandardItemModel
+from PySide6.QtGui import QStandardItem, QStandardItemModel
 
 from game import Game
 from game.ato.flightwaypoint import FlightWaypoint

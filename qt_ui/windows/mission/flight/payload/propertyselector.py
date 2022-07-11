@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 
 from game.ato import Flight
 from game.dcs.unitproperty import UnitProperty

@@ -7,10 +7,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from PySide2 import QtWidgets
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QApplication, QCheckBox, QSplashScreen
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
@@ -71,7 +71,9 @@ def run_ui(game: Game | None, dev: bool) -> None:
 
     app = QApplication(sys.argv)
 
-    app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
+    # In Qt 6, WindowContextHelpButtonHint will not be set by default.
+    # https://doc.qt.io/qtforpython-5/PySide2/QtCore/Qt.html
+    # (search for Qt.AA_DisableWindowContextHelpButton)
     app.setAttribute(Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
     app.setAttribute(Qt.AA_UseHighDpiPixmaps, True)  # use highdpi icons
 
@@ -150,7 +152,7 @@ def run_ui(game: Game | None, dev: bool) -> None:
         error_dialog.showMessage(
             "Unable to modify Mission Scripting file. Possible issues with rights. Try running as admin, or please perform the modification of the MissionScripting file manually."
         )
-        error_dialog.exec_()
+        error_dialog.exec()
 
     # Apply CSS (need works)
     GameUpdateSignal()
@@ -160,7 +162,7 @@ def run_ui(game: Game | None, dev: bool) -> None:
     window = QLiberationWindow(game, dev)
     window.showMaximized()
     splash.finish(window)
-    qt_execution_code = app.exec_()
+    qt_execution_code = app.exec()
 
     # Restore Mission Scripting file
     logging.info("QT App terminated with status code : " + str(qt_execution_code))
