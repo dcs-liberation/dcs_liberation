@@ -42,6 +42,7 @@ from dcs.mapping import Point
 
 from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.closestairfields import ObjectiveDistanceCache
+from game.ato.flight import Flight
 from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
@@ -349,15 +350,17 @@ class AirliftPlanner:
         if start_type is None:
             start_type = self.game.settings.default_start_type
 
-        flight = ScheduledFlight(
-            self.package,
-            self.game.country_for(squadron.player),
-            squadron,
-            flight_size,
-            FlightType.TRANSPORT,
-            start_type,
-            divert=None,
-            cargo=transfer,
+        flight = ScheduledFlight.schedule(
+            Flight(
+                self.package,
+                self.game.country_for(squadron.player),
+                squadron,
+                flight_size,
+                FlightType.TRANSPORT,
+                start_type,
+                divert=None,
+                cargo=transfer,
+            )
         )
 
         transport = Airlift(transfer, flight, self.next_stop)

@@ -11,6 +11,7 @@ from faker import Faker
 from game.ato import FlightType, Package, ScheduledFlight
 from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
+from ..ato.flight import Flight
 from ..ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from ..db.database import Database
 from ..utils import meters
@@ -409,14 +410,16 @@ class Squadron:
         if start_type is None:
             start_type = self.settings.default_start_type
 
-        flight = ScheduledFlight(
-            package,
-            self.coalition.country_name,
-            self,
-            size,
-            FlightType.FERRY,
-            start_type,
-            divert=None,
+        flight = ScheduledFlight.schedule(
+            Flight(
+                package,
+                self.coalition.country_name,
+                self,
+                size,
+                FlightType.FERRY,
+                start_type,
+                divert=None,
+            )
         )
         package.add_flight(flight)
         builder.populate_flight_plan(flight)

@@ -14,6 +14,7 @@ from PySide2.QtWidgets import (
 from dcs.unittype import FlyingType
 
 from game import Game
+from game.ato.flight import Flight
 from game.ato.flightroster import FlightRoster
 from game.ato.package import Package
 from game.ato.scheduledflight import ScheduledFlight
@@ -181,18 +182,20 @@ class QFlightCreator(QDialog):
         divert = self.divert.currentData()
         roster = self.roster_editor.roster
 
-        flight = ScheduledFlight(
-            self.package,
-            self.country,
-            squadron,
-            # A bit of a hack to work around the old API. Not actually relevant because
-            # the roster is passed explicitly. Needs a refactor.
-            roster.max_size,
-            task,
-            self.start_type.currentData(),
-            divert,
-            custom_name=self.custom_name_text,
-            roster=roster,
+        flight = ScheduledFlight.schedule(
+            Flight(
+                self.package,
+                self.country,
+                squadron,
+                # A bit of a hack to work around the old API. Not actually relevant
+                # because the roster is passed explicitly. Needs a refactor.
+                roster.max_size,
+                task,
+                self.start_type.currentData(),
+                divert,
+                custom_name=self.custom_name_text,
+                roster=roster,
+            )
         )
 
         # noinspection PyUnresolvedReferences

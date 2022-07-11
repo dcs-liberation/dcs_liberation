@@ -4,6 +4,7 @@ from typing import Optional, TYPE_CHECKING
 
 from game.theater import ControlPoint, MissionTarget, OffMapSpawn
 from game.utils import nautical_miles
+from ..ato.flight import Flight
 from ..ato.package import Package
 from ..ato.scheduledflight import ScheduledFlight
 from ..ato.starttype import StartType
@@ -54,14 +55,16 @@ class PackageBuilder:
         if start_type is None:
             start_type = self.start_type
 
-        flight = ScheduledFlight(
-            self.package,
-            self.package_country,
-            squadron,
-            plan.num_aircraft,
-            plan.task,
-            start_type,
-            divert=self.find_divert_field(squadron.aircraft, squadron.location),
+        flight = ScheduledFlight.schedule(
+            Flight(
+                self.package,
+                self.package_country,
+                squadron,
+                plan.num_aircraft,
+                plan.task,
+                start_type,
+                divert=self.find_divert_field(squadron.aircraft, squadron.location),
+            )
         )
         self.package.add_flight(flight)
         return True

@@ -64,7 +64,18 @@ class ScheduledFlight(Flight, SidcDescribable):
 
     @staticmethod
     def schedule(flight: Flight) -> ScheduledFlight:
-        pass
+        return ScheduledFlight(
+            flight.package,
+            flight.country,
+            flight.squadron,
+            flight.count,
+            flight.flight_type,
+            flight.start_type,
+            flight.divert,
+            flight.custom_name,
+            flight.cargo,
+            flight.roster,
+        )
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()

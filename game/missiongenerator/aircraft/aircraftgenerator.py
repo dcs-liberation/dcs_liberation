@@ -32,6 +32,7 @@ from .aircraftpainter import AircraftPainter
 from .flightdata import FlightData
 from .flightgroupconfigurator import FlightGroupConfigurator
 from .flightgroupspawner import FlightGroupSpawner
+from ...ato.flight import Flight
 
 if TYPE_CHECKING:
     from game import Game
@@ -140,14 +141,16 @@ class AircraftGenerator:
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
-            flight = ScheduledFlight(
-                Package(squadron.location, self.game.db.flights),
-                faction.country,
-                squadron,
-                1,
-                FlightType.BARCAP,
-                StartType.COLD,
-                divert=None,
+            flight = ScheduledFlight.schedule(
+                Flight(
+                    Package(squadron.location, self.game.db.flights),
+                    faction.country,
+                    squadron,
+                    1,
+                    FlightType.BARCAP,
+                    StartType.COLD,
+                    divert=None,
+                )
             )
             flight.state = Completed(flight, self.game.settings)
 
