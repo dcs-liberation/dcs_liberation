@@ -129,7 +129,7 @@ class QBaseMenu2(QDialog):
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
         state = self.game_model.game.check_win_loss()
         if state == TurnState.WIN or state == TurnState.LOSS:
-            GameUpdateSignal.get_instance().endGame(state)
+            GameUpdateSignal.get_instance().gameStateChanged(state)
 
     @property
     def has_transfer_destinations(self) -> bool:

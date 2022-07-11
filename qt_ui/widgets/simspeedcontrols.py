@@ -35,5 +35,6 @@ class SimSpeedControls(QHBoxLayout):
         self.buttons[speed_setting].setChecked(True)
 
     def setEnabled(self, enabled: bool) -> None:
+        super().setEnabled(enabled)
         for button in self.button_group.buttons():
             button.setEnabled(enabled)

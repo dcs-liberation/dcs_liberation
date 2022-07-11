@@ -14,7 +14,7 @@ class GameUpdateSignal(QObject):
     instance = None
     gameupdated = Signal(Game)
     budgetupdated = Signal(Game)
-    gameover = Signal(TurnState)
+    game_state_changed = Signal(TurnState)
     debriefingReceived = Signal(Debriefing)
 
     game_loaded = Signal(Game)
@@ -37,9 +37,9 @@ class GameUpdateSignal(QObject):
         # noinspection PyUnresolvedReferences
         self.debriefingReceived.emit(debriefing)
 
-    def endGame(self, state: TurnState):
+    def gameStateChanged(self, state: TurnState):
         # noinspection PyUnresolvedReferences
-        self.gameover.emit(state)
+        self.game_state_changed.emit(state)
 
     @staticmethod
     def get_instance() -> GameUpdateSignal:

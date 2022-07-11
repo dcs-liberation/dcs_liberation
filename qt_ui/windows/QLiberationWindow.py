@@ -1,7 +1,6 @@
 import logging
 import traceback
 import webbrowser
-from time import sleep
 from typing import Optional
 
 from PySide2.QtCore import QSettings, Qt, Signal
@@ -143,7 +142,7 @@ class QLiberationWindow(QMainWindow):
     def connectSignals(self):
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
         GameUpdateSignal.get_instance().debriefingReceived.connect(self.onDebriefing)
-        GameUpdateSignal.get_instance().gameover.connect(self.onEndGame)
+        GameUpdateSignal.get_instance().game_state_changed.connect(self.onEndGame)
 
     def initActions(self):
         self.newGameAction = QAction("&New Game", self)
@@ -372,28 +371,26 @@ class QLiberationWindow(QMainWindow):
         GameUpdateSignal.get_instance().game_loaded.emit(self.game)
 
     def onEndGame(self, state: TurnState):
-        result = None
-        if state == TurnState.WIN:
-            result = QMessageBox.information(
-                QApplication.focusWidget(),
-                "Victory!",
-                "You have won the campaign, do you wish to start a new one?",
-                QMessageBox.Yes,
-                QMessageBox.No,
-            )
-        elif state == TurnState.LOSS:
-            result = QMessageBox.information(
-                QApplication.focusWidget(),
-                "Defeat!",
-                "You have lost the campaign, do you wish to start a new one?",
-                QMessageBox.Yes,
-                QMessageBox.No,
-            )
+        if state == TurnState.CONTINUE:
+            return
+
         for window in QApplication.topLevelWidgets():
             if window is not self:
                 window.close()
-        sleep(0.5)
+
         GameUpdateSignal.get_instance().updateGame(None)
+
+        title = "Victory!" if TurnState.WIN else "Defeat!"
+        msgvar = "won" if TurnState.WIN else "lost"
+        msg = f"You have {msgvar} the campaign, do you wish to start a new one?"
+        result = QMessageBox.information(
+            QApplication.focusWidget(),
+            title,
+            msg,
+            QMessageBox.Yes,
+            QMessageBox.No,
+        )
+
         if result is not None and result == QMessageBox.Yes:
             self.newGame()
 

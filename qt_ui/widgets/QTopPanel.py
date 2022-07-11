@@ -150,9 +150,7 @@ class QTopPanel(QFrame):
             self.proceedButton.setEnabled(False)
             self.simSpeedControls.setEnabled(False)
         else:
-            assert (
-                game.turn >= 0
-            ), f"FUBAR: game.turn out of bounds!\n  value = {game.turn}"
+            raise RuntimeError(f"game.turn out of bounds!\n  value = {game.turn}")
 
     def open_air_wing(self):
         self.dialog = AirWingDialog(self.game_model, self.window())
