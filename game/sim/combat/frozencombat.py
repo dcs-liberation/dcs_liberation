@@ -10,7 +10,7 @@ from game.ato.flightstate import InCombat, InFlight
 from .. import GameUpdateEvents
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from ..simulationresults import SimulationResults
 
 
@@ -52,7 +52,7 @@ class FrozenCombat(ABC):
         ...
 
     @abstractmethod
-    def iter_flights(self) -> Iterator[Flight]:
+    def iter_flights(self) -> Iterator[ScheduledFlight]:
         ...
 
     def update_flight_states(self) -> None:

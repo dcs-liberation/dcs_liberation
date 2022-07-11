@@ -4,7 +4,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
 from game.server import EventStream
 from game.sim import GameUpdateEvents
 from qt_ui.models import GameModel, PackageModel
@@ -19,7 +19,7 @@ class QEditFlightDialog(QDialog):
         self,
         game_model: GameModel,
         package_model: PackageModel,
-        flight: Flight,
+        flight: ScheduledFlight,
         parent=None,
     ) -> None:
         super().__init__(parent=parent)

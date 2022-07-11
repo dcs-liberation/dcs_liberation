@@ -7,14 +7,14 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
-from game.ato.flight import Flight
 from game.ato.loadouts import Loadout
+from game.ato.scheduledflight import ScheduledFlight
 from .QLoadoutEditor import QLoadoutEditor
 from .propertyeditor import PropertyEditor
 
 
 class DcsLoadoutSelector(QComboBox):
-    def __init__(self, flight: Flight) -> None:
+    def __init__(self, flight: ScheduledFlight) -> None:
         super().__init__()
         for loadout in Loadout.iter_for(flight):
             self.addItem(loadout.name, loadout)
@@ -27,7 +27,7 @@ class DcsLoadoutSelector(QComboBox):
 
 
 class QFlightPayloadTab(QFrame):
-    def __init__(self, flight: Flight, game: Game):
+    def __init__(self, flight: ScheduledFlight, game: Game):
         super(QFlightPayloadTab, self).__init__()
         self.flight = flight
         self.payload_editor = QLoadoutEditor(flight, game)

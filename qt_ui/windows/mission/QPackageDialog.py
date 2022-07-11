@@ -15,10 +15,10 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from game.ato.flight import Flight
 from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.planningerror import PlanningError
 from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from game.game import Game
 from game.server import EventStream
 from game.sim import GameUpdateEvents
@@ -178,7 +178,7 @@ class QPackageDialog(QDialog):
         self.add_flight_dialog.created.connect(self.add_flight)
         self.add_flight_dialog.show()
 
-    def add_flight(self, flight: Flight) -> None:
+    def add_flight(self, flight: ScheduledFlight) -> None:
         """Adds the new flight to the package."""
         self.package_model.add_flight(flight)
         planner = FlightPlanBuilder(

@@ -12,7 +12,7 @@ from dcs.task import StartCommand
 from dcs.triggers import Event, TriggerOnce, TriggerRule
 from dcs.unitgroup import FlyingGroup
 
-from game.ato import Flight, FlightWaypoint
+from game.ato import FlightWaypoint, ScheduledFlight
 from game.ato.flightstate import InFlight, WaitingForStart
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
@@ -43,7 +43,7 @@ from .sweepingress import SweepIngressBuilder
 class WaypointGenerator:
     def __init__(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         group: FlyingGroup[Any],
         mission: Mission,
         turn_start_time: datetime,

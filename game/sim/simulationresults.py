@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from game.unitmap import FlyingUnit
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from game.squadrons import Pilot
 
 
@@ -19,5 +19,5 @@ if TYPE_CHECKING:
 class SimulationResults:
     air_losses: list[FlyingUnit] = field(default_factory=list)
 
-    def kill_pilot(self, flight: Flight, pilot: Pilot) -> None:
+    def kill_pilot(self, flight: ScheduledFlight, pilot: Pilot) -> None:
         self.air_losses.append(FlyingUnit(flight, pilot))

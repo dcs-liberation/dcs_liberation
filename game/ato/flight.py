@@ -1,39 +1,26 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta
-from typing import Any, List, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from dcs import Point
 from dcs.planes import C_101CC, C_101EB, Su_33
 
-from .flightroster import FlightRoster
-from .flightstate import FlightState, Navigating, Uninitialized
-from .flightstate.killed import Killed
-from .loadouts import Loadout
-from ..sidc import (
-    Entity,
-    SidcDescribable,
-    StandardIdentity,
-    Status,
-    SymbolSet,
-)
+from game.ato.loadouts import Loadout
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import AircraftType
-    from game.sim.gameupdateevents import GameUpdateEvents
-    from game.sim.simulationresults import SimulationResults
-    from game.squadrons import Squadron, Pilot
-    from game.theater import ControlPoint, MissionTarget
+    from game.squadrons.pilot import Pilot
+    from game.squadrons.squadron import Squadron
+    from game.theater.controlpoint import ControlPoint
+    from game.theater.missiontarget import MissionTarget
     from game.transfers import TransferOrder
-    from .flightplans.flightplan import FlightPlan
+    from .flightroster import FlightRoster
     from .flighttype import FlightType
-    from .flightwaypoint import FlightWaypoint
     from .package import Package
     from .starttype import StartType
 
 
-class Flight(SidcDescribable):
+class Flight:
     def __init__(
         self,
         package: Package,
@@ -42,10 +29,10 @@ class Flight(SidcDescribable):
         count: int,
         flight_type: FlightType,
         start_type: StartType,
-        divert: Optional[ControlPoint],
-        custom_name: Optional[str] = None,
-        cargo: Optional[TransferOrder] = None,
-        roster: Optional[FlightRoster] = None,
+        divert: ControlPoint | None,
+        custom_name: str | None = None,
+        cargo: TransferOrder | None = None,
+        roster: FlightRoster | None = None,
     ) -> None:
         self.id = uuid.uuid4()
         self.package = package
@@ -60,7 +47,7 @@ class Flight(SidcDescribable):
         self.divert = divert
         self.flight_type = flight_type
         # TODO: Replace with FlightPlan.
-        self.targets: List[MissionTarget] = []
+        self.targets: list[MissionTarget] = []
         self.loadout = Loadout.default_for(self)
         self.start_type = start_type
         self.use_custom_loadout = False
@@ -78,98 +65,18 @@ class Flight(SidcDescribable):
         # options when players switch loadouts.
         self.props: dict[str, Any] = {}
 
-        # Used for simulating the travel to first contact.
-        self.state: FlightState = Uninitialized(self, squadron.settings)
-
-        # Will be replaced with a more appropriate FlightPlan by
-        # FlightPlanBuilder, but an empty flight plan the flight begins with an
-        # empty flight plan.
-        from .flightplans.custom import CustomFlightPlan, CustomLayout
-
-        self.flight_plan: FlightPlan[Any] = CustomFlightPlan(
-            self, CustomLayout(custom_waypoints=[])
-        )
-
-    def __getstate__(self) -> dict[str, Any]:
-        state = self.__dict__.copy()
-        # Avoid persisting the flight state since that's not (currently) used outside
-        # mission generation. This is a bit of a hack for the moment and in the future
-        # we will need to persist the flight state, but for now keep it out of save
-        # compat (it also contains a generator that cannot be pickled).
-        del state["state"]
-        return state
-
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        state["state"] = Uninitialized(self, state["squadron"].settings)
-        self.__dict__.update(state)
-
-    @property
-    def blue(self) -> bool:
-        return self.squadron.player
-
-    @property
-    def standard_identity(self) -> StandardIdentity:
-        return StandardIdentity.FRIEND if self.blue else StandardIdentity.HOSTILE_FAKER
-
-    @property
-    def sidc_status(self) -> Status:
-        return Status.PRESENT if self.alive else Status.PRESENT_DESTROYED
-
-    @property
-    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
-        return SymbolSet.AIR, self.flight_type.entity_type
-
-    @property
-    def departure(self) -> ControlPoint:
-        return self.squadron.location
-
-    @property
-    def arrival(self) -> ControlPoint:
-        return self.squadron.arrival
-
-    @property
-    def count(self) -> int:
-        return self.roster.max_size
-
-    @property
-    def client_count(self) -> int:
-        return self.roster.player_count
-
-    @property
-    def unit_type(self) -> AircraftType:
-        return self.squadron.aircraft
-
-    @property
-    def is_helo(self) -> bool:
-        return self.unit_type.dcs_unit_type.helicopter
-
-    @property
-    def from_cp(self) -> ControlPoint:
-        return self.departure
-
-    @property
-    def points(self) -> List[FlightWaypoint]:
-        return self.flight_plan.waypoints[1:]
-
-    def position(self) -> Point:
-        return self.state.estimate_position()
-
     def resize(self, new_size: int) -> None:
         self.squadron.claim_inventory(new_size - self.count)
         self.roster.resize(new_size)
 
-    def set_pilot(self, index: int, pilot: Optional[Pilot]) -> None:
+    def set_pilot(self, index: int, pilot: Pilot | None) -> None:
         self.roster.set_pilot(index, pilot)
-
-    @property
-    def missing_pilots(self) -> int:
-        return self.roster.missing_pilots
 
     def return_pilots_and_aircraft(self) -> None:
         self.roster.clear()
         self.squadron.claim_inventory(-self.count)
 
-    def max_takeoff_fuel(self) -> Optional[float]:
+    def max_takeoff_fuel(self) -> float | None:
         # Special case so Su 33 and C101 can take off
         unit_type = self.unit_type.dcs_unit_type
         if unit_type == Su_33:
@@ -191,56 +98,38 @@ class Flight(SidcDescribable):
             return f"{self.custom_name} {self.count} x {self.unit_type}"
         return f"[{self.flight_type}] {self.count} x {self.unit_type}"
 
-    def abort(self) -> None:
-        from .flightplans.rtb import RtbFlightPlan
-
-        layout = RtbFlightPlan.builder_type()(self, self.coalition.game.theater).build()
-        self.flight_plan = RtbFlightPlan(self, layout)
-
-        self.set_state(
-            Navigating(
-                self,
-                self.squadron.settings,
-                self.flight_plan.abort_index,
-                has_aborted=True,
-            )
-        )
-
-    def set_state(self, state: FlightState) -> None:
-        self.state = state
-
-    def on_game_tick(
-        self, events: GameUpdateEvents, time: datetime, duration: timedelta
-    ) -> None:
-        self.state.on_game_tick(events, time, duration)
-
-    def should_halt_sim(self) -> bool:
-        return self.state.should_halt_sim()
+    @property
+    def is_helo(self) -> bool:
+        return self.unit_type.dcs_unit_type.helicopter
 
     @property
-    def alive(self) -> bool:
-        return self.state.alive
+    def arrival(self) -> ControlPoint:
+        return self.squadron.arrival
 
-    def kill(self, results: SimulationResults, events: GameUpdateEvents) -> None:
-        # This is a bit messy while we're in transition from turn-based to turnless
-        # because we want the simulation to have minimal impact on the save game while
-        # turns exist so that loading a game is essentially a way to reset the
-        # simulation to the start of the turn. As such, we don't actually want to mark
-        # pilots killed or reduce squadron aircraft availability, but we do still need
-        # the UI to reflect that aircraft were lost and avoid generating those flights
-        # when the mission is generated.
-        #
-        # For now we do this by logging the kill in the SimulationResults, which is
-        # similar to the Debriefing. We also set the flight's state to Killed, which
-        # will prevent it from being spawned in the mission and updates the SIDC.
-        # This does leave an opportunity for players to cheat since the UI won't stop
-        # them from cancelling a dead flight, returning the aircraft to the pool. Not a
-        # big deal for now.
-        # TODO: Support partial kills.
-        self.set_state(
-            Killed(self.state.estimate_position(), self, self.squadron.settings)
-        )
-        events.update_flight(self)
-        for pilot in self.roster.pilots:
-            if pilot is not None:
-                results.kill_pilot(self, pilot)
+    @property
+    def count(self) -> int:
+        return self.roster.max_size
+
+    @property
+    def missing_pilots(self) -> int:
+        return self.roster.missing_pilots
+
+    @property
+    def unit_type(self) -> AircraftType:
+        return self.squadron.aircraft
+
+    @property
+    def from_cp(self) -> ControlPoint:
+        return self.departure
+
+    @property
+    def blue(self) -> bool:
+        return self.squadron.player
+
+    @property
+    def departure(self) -> ControlPoint:
+        return self.squadron.location
+
+    @property
+    def client_count(self) -> int:
+        return self.roster.player_count

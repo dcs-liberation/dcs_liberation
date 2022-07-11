@@ -9,13 +9,15 @@ from .taxi import Taxi
 from ..starttype import StartType
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.settings import Settings
     from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class StartUp(AtDeparture):
-    def __init__(self, flight: Flight, settings: Settings, now: datetime) -> None:
+    def __init__(
+        self, flight: ScheduledFlight, settings: Settings, now: datetime
+    ) -> None:
         super().__init__(flight, settings)
         self.completion_time = now + flight.flight_plan.estimate_startup()
 

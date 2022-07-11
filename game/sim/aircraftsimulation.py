@@ -22,7 +22,7 @@ from .simulationresults import SimulationResults
 
 if TYPE_CHECKING:
     from game import Game
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from .gameupdateevents import GameUpdateEvents
 
 
@@ -83,7 +83,7 @@ class AircraftSimulation:
                     WaitingForStart(flight, self.game.settings, now + start_time)
                 )
 
-    def set_active_flight_state(self, flight: Flight, now: datetime) -> None:
+    def set_active_flight_state(self, flight: ScheduledFlight, now: datetime) -> None:
         if flight.start_type is StartType.COLD:
             flight.set_state(StartUp(flight, self.game.settings, now))
         elif flight.start_type is StartType.WARM:
@@ -99,7 +99,7 @@ class AircraftSimulation:
         for flight in self.iter_flights():
             flight.set_state(Uninitialized(flight, self.game.settings))
 
-    def iter_flights(self) -> Iterator[Flight]:
+    def iter_flights(self) -> Iterator[ScheduledFlight]:
         packages = itertools.chain(
             self.game.blue.ato.packages, self.game.red.ato.packages
         )

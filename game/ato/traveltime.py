@@ -16,13 +16,13 @@ from game.utils import (
 )
 
 if TYPE_CHECKING:
-    from .flight import Flight
+    from .scheduledflight import ScheduledFlight
     from .package import Package
 
 
 class GroundSpeed:
     @classmethod
-    def for_flight(cls, flight: Flight, altitude: Distance) -> Speed:
+    def for_flight(cls, flight: ScheduledFlight, altitude: Distance) -> Speed:
         # TODO: Expose both a cruise speed and target speed.
         # The cruise speed can be used for ascent, hold, join, and RTB to save
         # on fuel, but mission speed will be fast enough to keep the flight
@@ -58,7 +58,7 @@ class TotEstimator:
         self.package = package
 
     @staticmethod
-    def mission_start_time(flight: Flight) -> timedelta:
+    def mission_start_time(flight: ScheduledFlight) -> timedelta:
         startup_time = flight.flight_plan.startup_time()
         if startup_time is None:
             # Could not determine takeoff time, probably due to a custom flight
@@ -82,7 +82,7 @@ class TotEstimator:
         return timedelta(seconds=math.ceil(earliest_tot.total_seconds()))
 
     @staticmethod
-    def earliest_tot_for_flight(flight: Flight) -> timedelta:
+    def earliest_tot_for_flight(flight: ScheduledFlight) -> timedelta:
         """Estimate fastest time from mission start to the target position.
 
         For BARCAP flights, this is time to race track start. This ensures that

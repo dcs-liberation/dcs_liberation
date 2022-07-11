@@ -1,7 +1,7 @@
 """Application-wide dialog management."""
 from typing import Optional
 
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
 from game.theater.missiontarget import MissionTarget
 from .models import GameModel, PackageModel
 from .windows.mission.QEditFlightDialog import QEditFlightDialog
@@ -51,7 +51,7 @@ class Dialog:
 
     @classmethod
     def open_edit_flight_dialog(
-        cls, package_model: PackageModel, flight: Flight, parent=None
+        cls, package_model: PackageModel, flight: ScheduledFlight, parent=None
     ) -> None:
         """Opens the dialog to edit the given flight."""
         cls.edit_flight_dialog = QEditFlightDialog(

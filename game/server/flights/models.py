@@ -13,7 +13,7 @@ from game.server.waypoints.routes import waypoints_for_flight
 
 if TYPE_CHECKING:
     from game import Game
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
 
 
 class FlightJs(BaseModel):
@@ -27,7 +27,7 @@ class FlightJs(BaseModel):
         title = "Flight"
 
     @staticmethod
-    def for_flight(flight: Flight, with_waypoints: bool) -> FlightJs:
+    def for_flight(flight: ScheduledFlight, with_waypoints: bool) -> FlightJs:
         # Don't provide a location for aircraft that aren't in the air. Later we can
         # expand the model to include the state data for the UI so that it can make its
         # own decisions about whether to draw the aircraft, but for now we'll filter

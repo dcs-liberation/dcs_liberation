@@ -12,7 +12,7 @@ from .takeoff import Takeoff
 from .taxi import Taxi
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.settings import Settings
     from game.sim.gameupdateevents import GameUpdateEvents
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class WaitingForStart(AtDeparture):
     def __init__(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         settings: Settings,
         start_time: datetime,
     ) -> None:

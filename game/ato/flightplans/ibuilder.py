@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from game.data.doctrine import Doctrine
     from game.theater import ConflictTheater
     from game.threatzones import ThreatZones
-    from ..flight import Flight
+    from ..scheduledflight import ScheduledFlight
     from ..package import Package
 
 
@@ -18,7 +18,7 @@ LayoutT = TypeVar("LayoutT", bound=Layout)
 
 
 class IBuilder(ABC, Generic[LayoutT]):
-    def __init__(self, flight: Flight, theater: ConflictTheater) -> None:
+    def __init__(self, flight: ScheduledFlight, theater: ConflictTheater) -> None:
         self.flight = flight
         self.theater = theater
 

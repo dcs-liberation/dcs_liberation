@@ -5,11 +5,11 @@ from typing import Any, Optional
 
 from dcs.unitgroup import FlyingGroup
 
-from game.ato import Flight
+from game.ato import ScheduledFlight
 
 
 class AircraftPainter:
-    def __init__(self, flight: Flight, group: FlyingGroup[Any]) -> None:
+    def __init__(self, flight: ScheduledFlight, group: FlyingGroup[Any]) -> None:
         self.flight = flight
         self.group = group
 

@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from game.coalition import Coalition
     from game.transfers import MultiGroupTransport
     from game.theater.theatergroup import TheaterGroup
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
 
 
 @dataclass(frozen=True)
@@ -41,7 +41,7 @@ class StrikeTarget:
 class WaypointBuilder:
     def __init__(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         coalition: Coalition,
         targets: Optional[List[StrikeTarget]] = None,
     ) -> None:

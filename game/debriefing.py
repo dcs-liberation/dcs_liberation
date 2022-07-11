@@ -20,7 +20,7 @@ from game.theater import Airfield, ControlPoint
 
 if TYPE_CHECKING:
     from game import Game
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.sim.simulationresults import SimulationResults
     from game.transfers import CargoShip
     from game.unitmap import (
@@ -52,7 +52,7 @@ class AirLosses:
             losses_by_type[loss.flight.unit_type] += 1
         return losses_by_type
 
-    def surviving_flight_members(self, flight: Flight) -> int:
+    def surviving_flight_members(self, flight: ScheduledFlight) -> int:
         losses = 0
         for loss in self.losses:
             if loss.flight == flight:

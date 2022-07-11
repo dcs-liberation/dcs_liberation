@@ -4,22 +4,22 @@ from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import (
     QComboBox,
     QDialog,
+    QHBoxLayout,
     QLabel,
+    QLineEdit,
     QMessageBox,
     QPushButton,
     QVBoxLayout,
-    QLineEdit,
-    QHBoxLayout,
 )
 from dcs.unittype import FlyingType
 
 from game import Game
+from game.ato.flightroster import FlightRoster
+from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from game.ato.starttype import StartType
 from game.squadrons.squadron import Squadron
 from game.theater import ControlPoint, OffMapSpawn
-from game.ato.package import Package
-from game.ato.flightroster import FlightRoster
-from game.ato.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
@@ -31,7 +31,7 @@ from qt_ui.windows.mission.flight.settings.QFlightSlotEditor import FlightRoster
 
 
 class QFlightCreator(QDialog):
-    created = Signal(Flight)
+    created = Signal(ScheduledFlight)
 
     def __init__(self, game: Game, package: Package, parent=None) -> None:
         super().__init__(parent=parent)
@@ -181,7 +181,7 @@ class QFlightCreator(QDialog):
         divert = self.divert.currentData()
         roster = self.roster_editor.roster
 
-        flight = Flight(
+        flight = ScheduledFlight(
             self.package,
             self.country,
             squadron,

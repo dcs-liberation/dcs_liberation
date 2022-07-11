@@ -10,12 +10,12 @@ from .. import GameUpdateEvents
 from ...ato.flightstate import InCombat
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from ..simulationresults import SimulationResults
 
 
 class AtIp(FrozenCombat):
-    def __init__(self, freeze_duration: timedelta, flight: Flight) -> None:
+    def __init__(self, freeze_duration: timedelta, flight: ScheduledFlight) -> None:
         super().__init__(freeze_duration)
         self.flight = flight
 
@@ -25,7 +25,7 @@ class AtIp(FrozenCombat):
     def describe(self) -> str:
         return f"at IP"
 
-    def iter_flights(self) -> Iterator[Flight]:
+    def iter_flights(self) -> Iterator[ScheduledFlight]:
         yield self.flight
 
     def resolve(

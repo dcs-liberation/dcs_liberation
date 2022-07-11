@@ -4,8 +4,8 @@ from typing import Optional, TYPE_CHECKING
 
 from game.theater import ControlPoint, MissionTarget, OffMapSpawn
 from game.utils import nautical_miles
-from ..ato.flight import Flight
 from ..ato.package import Package
+from ..ato.scheduledflight import ScheduledFlight
 from ..ato.starttype import StartType
 from ..db.database import Database
 
@@ -24,7 +24,7 @@ class PackageBuilder:
         location: MissionTarget,
         closest_airfields: ClosestAirfields,
         air_wing: AirWing,
-        flight_db: Database[Flight],
+        flight_db: Database[ScheduledFlight],
         is_player: bool,
         package_country: str,
         start_type: StartType,
@@ -54,7 +54,7 @@ class PackageBuilder:
         if start_type is None:
             start_type = self.start_type
 
-        flight = Flight(
+        flight = ScheduledFlight(
             self.package,
             self.package_country,
             squadron,

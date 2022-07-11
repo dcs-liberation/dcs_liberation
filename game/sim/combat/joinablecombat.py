@@ -9,23 +9,25 @@ from game.ato.flightstate import InCombat, InFlight
 from .frozencombat import FrozenCombat
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
 
 
 class JoinableCombat(FrozenCombat, ABC):
-    def __init__(self, freeze_duration: timedelta, flights: list[Flight]) -> None:
+    def __init__(
+        self, freeze_duration: timedelta, flights: list[ScheduledFlight]
+    ) -> None:
         super().__init__(freeze_duration)
         self.flights = flights
 
     @abstractmethod
-    def joinable_by(self, flight: Flight) -> bool:
+    def joinable_by(self, flight: ScheduledFlight) -> bool:
         ...
 
-    def join(self, flight: Flight) -> None:
+    def join(self, flight: ScheduledFlight) -> None:
         assert isinstance(flight.state, InFlight)
         assert not isinstance(flight.state, InCombat)
         self.flights.append(flight)
         flight.set_state(InCombat(flight.state, self))
 
-    def iter_flights(self) -> Iterator[Flight]:
+    def iter_flights(self) -> Iterator[ScheduledFlight]:
         yield from self.flights

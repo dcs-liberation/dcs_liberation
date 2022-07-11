@@ -14,7 +14,7 @@ from .standard import StandardFlightPlan, StandardLayout
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
-    from ..flight import Flight
+    from ..scheduledflight import ScheduledFlight
     from ..flightwaypoint import FlightWaypoint
 
 
@@ -130,7 +130,7 @@ class Scheduler(IScheduler[AirliftLayout]):
 
 
 class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
-    def __init__(self, flight: Flight, layout: AirliftLayout) -> None:
+    def __init__(self, flight: ScheduledFlight, layout: AirliftLayout) -> None:
         super().__init__(flight, layout)
 
     @staticmethod

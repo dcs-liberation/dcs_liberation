@@ -3,7 +3,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from game import Game
-from game.ato import Flight
+from game.ato import ScheduledFlight
 from game.flightplan import HoldZoneGeometry, IpZoneGeometry, JoinZoneGeometry
 from ..leaflet import LeafletPoly, ShapelyUtil
 
@@ -31,7 +31,7 @@ class HoldZonesJs(BaseModel):
         )
 
     @classmethod
-    def for_flight(cls, flight: Flight, game: Game) -> HoldZonesJs:
+    def for_flight(cls, flight: ScheduledFlight, game: Game) -> HoldZonesJs:
         target = flight.package.target
         home = flight.departure
         if flight.package.waypoints is None:
@@ -73,7 +73,7 @@ class IpZonesJs(BaseModel):
         return IpZonesJs(homeBubble=[], ipBubble=[], permissibleZone=[], safeZones=[])
 
     @classmethod
-    def for_flight(cls, flight: Flight, game: Game) -> IpZonesJs:
+    def for_flight(cls, flight: ScheduledFlight, game: Game) -> IpZonesJs:
         target = flight.package.target
         home = flight.departure
         geometry = IpZoneGeometry(target.position, home.position, game.blue)
@@ -110,7 +110,7 @@ class JoinZonesJs(BaseModel):
         )
 
     @classmethod
-    def for_flight(cls, flight: Flight, game: Game) -> JoinZonesJs:
+    def for_flight(cls, flight: ScheduledFlight, game: Game) -> JoinZonesJs:
         target = flight.package.target
         home = flight.departure
         if flight.package.waypoints is None:

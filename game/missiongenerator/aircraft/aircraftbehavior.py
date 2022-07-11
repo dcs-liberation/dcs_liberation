@@ -22,7 +22,7 @@ from dcs.task import (
 )
 from dcs.unitgroup import FlyingGroup
 
-from game.ato import Flight, FlightType
+from game.ato import FlightType, ScheduledFlight
 from game.ato.flightplans.aewc import AewcFlightPlan
 from game.ato.flightplans.theaterrefueling import TheaterRefuelingFlightPlan
 
@@ -31,7 +31,7 @@ class AircraftBehavior:
     def __init__(self, task: FlightType) -> None:
         self.task = task
 
-    def apply_to(self, flight: Flight, group: FlyingGroup[Any]) -> None:
+    def apply_to(self, flight: ScheduledFlight, group: FlyingGroup[Any]) -> None:
         if self.task in [
             FlightType.BARCAP,
             FlightType.TARCAP,
@@ -76,7 +76,7 @@ class AircraftBehavior:
 
     def configure_behavior(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         group: FlyingGroup[Any],
         react_on_threat: OptReactOnThreat.Values = OptReactOnThreat.Values.EvadeFire,
         roe: Optional[int] = None,
@@ -109,11 +109,11 @@ class AircraftBehavior:
         # https://forums.eagle.ru/forum/english/digital-combat-simulator/dcs-world-2-5/bugs-and-problems-ai/ai-ad/7121294-ai-stuck-at-high-aoa-after-making-sharp-turn-if-afterburner-is-restricted
 
     @staticmethod
-    def configure_eplrs(group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_eplrs(group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         if flight.unit_type.eplrs_capable:
             group.points[0].tasks.append(EPLRS(group.id))
 
-    def configure_cap(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_cap(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         group.task = CAP.name
 
         if not flight.unit_type.gunfighter:
@@ -123,7 +123,7 @@ class AircraftBehavior:
 
         self.configure_behavior(flight, group, rtb_winchester=ammo_type)
 
-    def configure_sweep(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_sweep(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         group.task = FighterSweep.name
 
         if not flight.unit_type.gunfighter:
@@ -133,7 +133,7 @@ class AircraftBehavior:
 
         self.configure_behavior(flight, group, rtb_winchester=ammo_type)
 
-    def configure_cas(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_cas(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         group.task = CAS.name
         self.configure_behavior(
             flight,
@@ -144,7 +144,7 @@ class AircraftBehavior:
             restrict_jettison=True,
         )
 
-    def configure_dead(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_dead(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         # Only CAS and SEAD are capable of the Attack Group task. SEAD is arguably more
         # appropriate but it has an extremely limited list of capable aircraft, whereas
         # CAS has a much wider selection of units.
@@ -162,7 +162,7 @@ class AircraftBehavior:
             mission_uses_gun=False,
         )
 
-    def configure_sead(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_sead(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         # CAS is able to perform all the same tasks as SEAD using a superset of the
         # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
         # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
@@ -179,7 +179,9 @@ class AircraftBehavior:
             mission_uses_gun=False,
         )
 
-    def configure_strike(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_strike(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         group.task = GroundAttack.name
         self.configure_behavior(
             flight,
@@ -190,7 +192,9 @@ class AircraftBehavior:
             mission_uses_gun=False,
         )
 
-    def configure_anti_ship(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_anti_ship(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         group.task = AntishipStrike.name
         self.configure_behavior(
             flight,
@@ -201,7 +205,9 @@ class AircraftBehavior:
             mission_uses_gun=False,
         )
 
-    def configure_runway_attack(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_runway_attack(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         group.task = RunwayAttack.name
         self.configure_behavior(
             flight,
@@ -212,7 +218,9 @@ class AircraftBehavior:
             mission_uses_gun=False,
         )
 
-    def configure_oca_strike(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_oca_strike(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         group.task = CAS.name
         self.configure_behavior(
             flight,
@@ -222,7 +230,7 @@ class AircraftBehavior:
             restrict_jettison=True,
         )
 
-    def configure_awacs(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_awacs(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         group.task = AWACS.name
 
         if not isinstance(flight.flight_plan, AewcFlightPlan):
@@ -243,7 +251,9 @@ class AircraftBehavior:
 
         group.points[0].tasks.append(AWACSTaskAction())
 
-    def configure_refueling(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_refueling(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         group.task = Refueling.name
 
         if not isinstance(flight.flight_plan, TheaterRefuelingFlightPlan):
@@ -261,7 +271,9 @@ class AircraftBehavior:
             restrict_jettison=True,
         )
 
-    def configure_escort(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_escort(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         # Escort groups are actually given the CAP task so they can perform the
         # Search Then Engage task, which we have to use instead of the Escort
         # task for the reasons explained in JoinPointBuilder.
@@ -270,7 +282,9 @@ class AircraftBehavior:
             flight, group, roe=OptROE.Values.OpenFire, restrict_jettison=True
         )
 
-    def configure_sead_escort(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_sead_escort(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         # CAS is able to perform all the same tasks as SEAD using a superset of the
         # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
         # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
@@ -286,7 +300,9 @@ class AircraftBehavior:
             mission_uses_gun=False,
         )
 
-    def configure_transport(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_transport(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         group.task = Transport.name
         self.configure_behavior(
             flight,
@@ -296,7 +312,7 @@ class AircraftBehavior:
             restrict_jettison=True,
         )
 
-    def configure_ferry(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_ferry(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         group.task = Nothing.name
         self.configure_behavior(
             flight,
@@ -306,12 +322,14 @@ class AircraftBehavior:
             restrict_jettison=True,
         )
 
-    def configure_unknown_task(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def configure_unknown_task(
+        self, group: FlyingGroup[Any], flight: ScheduledFlight
+    ) -> None:
         logging.error(f"Unhandled flight type: {flight.flight_type}")
         self.configure_behavior(flight, group)
 
     @staticmethod
-    def flight_always_keeps_gun(flight: Flight) -> bool:
+    def flight_always_keeps_gun(flight: ScheduledFlight) -> bool:
         # Never take bullets from players. They're smart enough to know when to use it
         # and when to RTB.
         if flight.client_count > 0:

@@ -6,14 +6,14 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
 from game.ato.starttype import StartType
 from game.theater import OffMapSpawn
 from qt_ui.models import PackageModel
 
 
 class QFlightStartType(QGroupBox):
-    def __init__(self, package_model: PackageModel, flight: Flight):
+    def __init__(self, package_model: PackageModel, flight: ScheduledFlight):
         super().__init__()
         self.package_model = package_model
         self.flight = flight

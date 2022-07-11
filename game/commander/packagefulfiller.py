@@ -21,7 +21,7 @@ from game.theater import ConflictTheater
 from game.threatzones import ThreatZones
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from game.coalition import Coalition
 
 
@@ -32,7 +32,7 @@ class PackageFulfiller:
         self,
         coalition: Coalition,
         theater: ConflictTheater,
-        flight_db: Database[Flight],
+        flight_db: Database[ScheduledFlight],
         settings: Settings,
     ) -> None:
         self.coalition = coalition

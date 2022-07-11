@@ -20,7 +20,7 @@ from ..flightwaypoint import FlightWaypoint
 from ..flightwaypointtype import FlightWaypointType
 
 if TYPE_CHECKING:
-    from ..flight import Flight
+    from ..scheduledflight import ScheduledFlight
 
 
 class FormationAttackFlightPlan(FormationFlightPlan, ABC):
@@ -208,7 +208,7 @@ class FormationAttackBuilder(IBuilder[LayoutT], ABC):
 
     @staticmethod
     def target_waypoint(
-        flight: Flight, builder: WaypointBuilder, target: StrikeTarget
+        flight: ScheduledFlight, builder: WaypointBuilder, target: StrikeTarget
     ) -> FlightWaypoint:
         if flight.flight_type in {FlightType.ANTISHIP, FlightType.BAI}:
             return builder.bai_group(target)
@@ -221,7 +221,7 @@ class FormationAttackBuilder(IBuilder[LayoutT], ABC):
 
     @staticmethod
     def target_area_waypoint(
-        flight: Flight, location: MissionTarget, builder: WaypointBuilder
+        flight: ScheduledFlight, location: MissionTarget, builder: WaypointBuilder
     ) -> FlightWaypoint:
         if flight.flight_type == FlightType.DEAD:
             return builder.dead_area(location)

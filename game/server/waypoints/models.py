@@ -4,12 +4,12 @@ from datetime import timedelta
 
 from pydantic import BaseModel
 
-from game.ato import Flight, FlightWaypoint
+from game.ato import FlightWaypoint, ScheduledFlight
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.server.leaflet import LeafletPoint
 
 
-def timing_info(flight: Flight, waypoint_idx: int) -> str:
+def timing_info(flight: ScheduledFlight, waypoint_idx: int) -> str:
     if waypoint_idx == 0:
         return f"Depart T+{flight.flight_plan.takeoff_time()}"
 
@@ -39,7 +39,7 @@ class FlightWaypointJs(BaseModel):
 
     @staticmethod
     def for_waypoint(
-        waypoint: FlightWaypoint, flight: Flight, waypoint_idx: int
+        waypoint: FlightWaypoint, flight: ScheduledFlight, waypoint_idx: int
     ) -> FlightWaypointJs:
         # Target *points* are the exact location of a unit, whereas the target area is
         # only the center of the objective. Allow moving the latter since its exact

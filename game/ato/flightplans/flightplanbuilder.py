@@ -30,7 +30,7 @@ from .theaterrefueling import TheaterRefuelingFlightPlan
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
-    from game.ato import Flight, FlightWaypoint, Package
+    from game.ato import ScheduledFlight, FlightWaypoint, Package
     from game.coalition import Coalition
     from game.theater import ConflictTheater, ControlPoint, FrontLine
     from game.threatzones import ThreatZones
@@ -65,7 +65,7 @@ class FlightPlanBuilder:
     def threat_zones(self) -> ThreatZones:
         return self.coalition.opponent.threat_zone
 
-    def populate_flight_plan(self, flight: Flight) -> None:
+    def populate_flight_plan(self, flight: ScheduledFlight) -> None:
         """Creates a default flight plan for the given mission."""
         if flight not in self.package.flights:
             raise RuntimeError("Flight must be a part of the package")
@@ -113,7 +113,7 @@ class FlightPlanBuilder:
         }
         return plan_dict.get(task)
 
-    def generate_flight_plan(self, flight: Flight) -> FlightPlan[Any]:
+    def generate_flight_plan(self, flight: ScheduledFlight) -> FlightPlan[Any]:
         plan_type = self.plan_type(flight.flight_type)
         if plan_type is None:
             raise PlanningError(
@@ -123,7 +123,7 @@ class FlightPlanBuilder:
         return plan_type.scheduler_type()(flight, layout).schedule()
 
     def regenerate_flight_plans(self) -> None:
-        new_flights: list[Flight] = []
+        new_flights: list[ScheduledFlight] = []
         for old_flight in self.package.flights:
             old_flight.flight_plan = self.generate_flight_plan(old_flight)
             new_flights.append(old_flight)
@@ -166,7 +166,7 @@ class FlightPlanBuilder:
 
     # TODO: Make a model for the waypoint builder and use that in the UI.
     def generate_rtb_waypoint(
-        self, flight: Flight, arrival: ControlPoint
+        self, flight: ScheduledFlight, arrival: ControlPoint
     ) -> FlightWaypoint:
         """Generate RTB landing point.
 

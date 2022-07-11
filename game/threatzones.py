@@ -13,7 +13,7 @@ from shapely.geometry import (
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import nearest_points, unary_union
 
-from game.ato import Flight, FlightWaypoint
+from game.ato import FlightWaypoint, ScheduledFlight
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.data.doctrine import Doctrine
 from game.theater import (
@@ -85,7 +85,7 @@ class ThreatZones:
         return self.airbases.intersects(position)
 
     @threatened_by_aircraft.register
-    def _threatened_by_aircraft_flight(self, flight: Flight) -> bool:
+    def _threatened_by_aircraft_flight(self, flight: ScheduledFlight) -> bool:
         return self.threatened_by_aircraft(
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
         )
@@ -116,7 +116,7 @@ class ThreatZones:
         return self.threatened_by_air_defense(self.dcs_to_shapely_point(position))
 
     @threatened_by_air_defense.register
-    def _threatened_by_air_defense_flight(self, flight: Flight) -> bool:
+    def _threatened_by_air_defense_flight(self, flight: ScheduledFlight) -> bool:
         return self.threatened_by_air_defense(
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
         )
@@ -138,7 +138,7 @@ class ThreatZones:
         return self.radar_sam_threats.intersects(position)
 
     @threatened_by_radar_sam.register
-    def _threatened_by_radar_sam_flight(self, flight: Flight) -> bool:
+    def _threatened_by_radar_sam_flight(self, flight: ScheduledFlight) -> bool:
         return self.threatened_by_radar_sam(
             LineString((self.dcs_to_shapely_point(p.position) for p in flight.points))
         )

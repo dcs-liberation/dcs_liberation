@@ -12,12 +12,14 @@ from game.threatzones import ThreatPoly
 from game.utils import Distance, Speed, dcs_to_shapely_point
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.settings import Settings
 
 
 class RaceTrack(InFlight):
-    def __init__(self, flight: Flight, settings: Settings, waypoint_index: int) -> None:
+    def __init__(
+        self, flight: ScheduledFlight, settings: Settings, waypoint_index: int
+    ) -> None:
         assert flight.flight_plan.is_patrol(flight.flight_plan)
         self.patrol_duration = flight.flight_plan.patrol_duration
         super().__init__(flight, settings, waypoint_index)

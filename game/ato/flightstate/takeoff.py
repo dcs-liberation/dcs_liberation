@@ -10,13 +10,15 @@ from ..starttype import StartType
 from ...utils import LBS_TO_KG
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.settings import Settings
     from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class Takeoff(AtDeparture):
-    def __init__(self, flight: Flight, settings: Settings, now: datetime) -> None:
+    def __init__(
+        self, flight: ScheduledFlight, settings: Settings, now: datetime
+    ) -> None:
         super().__init__(flight, settings)
         # TODO: Not accounted for in FlightPlan, can cause discrepancy without loiter.
         self.completion_time = now + timedelta(seconds=30)

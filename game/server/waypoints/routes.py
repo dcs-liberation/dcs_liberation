@@ -4,7 +4,7 @@ from dcs.mapping import LatLng, Point
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from game import Game
-from game.ato import Flight
+from game.ato import ScheduledFlight
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.server import GameContext
@@ -16,7 +16,7 @@ from game.utils import meters
 router: APIRouter = APIRouter(prefix="/waypoints")
 
 
-def waypoints_for_flight(flight: Flight) -> list[FlightWaypointJs]:
+def waypoints_for_flight(flight: ScheduledFlight) -> list[FlightWaypointJs]:
     departure = FlightWaypointJs.for_waypoint(
         FlightWaypoint(
             "TAKEOFF",

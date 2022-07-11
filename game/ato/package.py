@@ -6,12 +6,12 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from .flightplans.formation import FormationFlightPlan
 from game.db import Database
 from game.utils import Speed
-from .flight import Flight
+from .flightplans.formation import FormationFlightPlan
 from .flighttype import FlightType
 from .packagewaypoints import PackageWaypoints
+from .scheduledflight import ScheduledFlight
 from .traveltime import TotEstimator
 
 if TYPE_CHECKING:
@@ -26,10 +26,10 @@ class Package:
     #: TheaterGroundObject (non-ControlPoint map objectives).
     target: MissionTarget
 
-    _db: Database[Flight]
+    _db: Database[ScheduledFlight]
 
     #: The set of flights in the package.
-    flights: List[Flight] = field(default_factory=list)
+    flights: List[ScheduledFlight] = field(default_factory=list)
 
     delay: int = field(default=0)
 
@@ -120,12 +120,12 @@ class Package:
     def set_tot_asap(self) -> None:
         self.time_over_target = TotEstimator(self).earliest_tot()
 
-    def add_flight(self, flight: Flight) -> None:
+    def add_flight(self, flight: ScheduledFlight) -> None:
         """Adds a flight to the package."""
         self.flights.append(flight)
         self._db.add(flight.id, flight)
 
-    def remove_flight(self, flight: Flight) -> None:
+    def remove_flight(self, flight: ScheduledFlight) -> None:
         """Removes a flight from the package."""
         self.flights.remove(flight)
         self._db.remove(flight.id)

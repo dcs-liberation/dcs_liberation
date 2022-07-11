@@ -16,7 +16,7 @@ from ..gameupdateevents import GameUpdateEvents
 
 if TYPE_CHECKING:
     from game import Game
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from .frozencombat import FrozenCombat
 
 
@@ -58,7 +58,7 @@ class CombatInitiator:
 
     def check_flight_for_combat(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         a2a: AircraftEngagementZones,
         own_a2a: AircraftEngagementZones,
         sam: SamEngagementZones,
@@ -81,7 +81,7 @@ class CombatInitiator:
             self.events.new_combat(combat)
 
     def check_flight_for_joined_combat(
-        self, flight: Flight
+        self, flight: ScheduledFlight
     ) -> Optional[JoinableCombat]:
         for combat in self.combats:
             if isinstance(combat, JoinableCombat) and combat.joinable_by(flight):
@@ -90,7 +90,7 @@ class CombatInitiator:
 
     @staticmethod
     def check_flight_for_new_combat(
-        flight: Flight, a2a: AircraftEngagementZones, sam: SamEngagementZones
+        flight: ScheduledFlight, a2a: AircraftEngagementZones, sam: SamEngagementZones
     ) -> Optional[FrozenCombat]:
         if not flight.state.in_flight:
             return None
@@ -112,7 +112,7 @@ class CombatInitiator:
 
         return None
 
-    def iter_flights(self) -> Iterator[Flight]:
+    def iter_flights(self) -> Iterator[ScheduledFlight]:
         packages = itertools.chain(
             self.game.blue.ato.packages, self.game.red.ato.packages
         )

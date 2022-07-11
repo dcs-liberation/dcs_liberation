@@ -24,7 +24,7 @@ from ..traveltime import GroundSpeed, TravelTime
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import FuelConsumption
     from game.theater import ControlPoint
-    from ..flight import Flight
+    from ..scheduledflight import ScheduledFlight
     from ..flightwaypoint import FlightWaypoint
     from ..package import Package
     from .formation import FormationFlightPlan
@@ -57,7 +57,7 @@ LayoutT = TypeVar("LayoutT", bound=Layout)
 
 
 class FlightPlan(ABC, Generic[LayoutT]):
-    def __init__(self, flight: Flight, layout: LayoutT) -> None:
+    def __init__(self, flight: ScheduledFlight, layout: LayoutT) -> None:
         self.flight = flight
         self.layout = layout
 

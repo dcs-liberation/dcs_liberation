@@ -10,7 +10,7 @@ from game.dcs.aircrafttype import AircraftType
 from game.dcs.unittype import UnitType
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
 
 ALPHA_MILITARY = [
     "Alpha",
@@ -477,7 +477,7 @@ class NameGenerator:
         cls.jtac_number = 0
 
     @classmethod
-    def next_aircraft_name(cls, country: Country, flight: Flight) -> str:
+    def next_aircraft_name(cls, country: Country, flight: ScheduledFlight) -> str:
         cls.aircraft_number += 1
         if flight.custom_name:
             name_str = flight.custom_name

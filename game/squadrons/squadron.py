@@ -8,7 +8,7 @@ from typing import Optional, Sequence, TYPE_CHECKING
 
 from faker import Faker
 
-from game.ato import Flight, FlightType, Package
+from game.ato import FlightType, Package, ScheduledFlight
 from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
 from ..ato.flightplans.flightplanbuilder import FlightPlanBuilder
@@ -51,7 +51,7 @@ class Squadron:
     )
 
     coalition: Coalition = field(hash=False, compare=False)
-    flight_db: Database[Flight] = field(hash=False, compare=False)
+    flight_db: Database[ScheduledFlight] = field(hash=False, compare=False)
     settings: Settings = field(hash=False, compare=False)
 
     location: ControlPoint
@@ -409,7 +409,7 @@ class Squadron:
         if start_type is None:
             start_type = self.settings.default_start_type
 
-        flight = Flight(
+        flight = ScheduledFlight(
             package,
             self.coalition.country_name,
             self,

@@ -1,14 +1,15 @@
 from typing import Any, Optional
+
 from dcs import Mission
-from dcs.unitgroup import FlyingGroup
 from dcs.statics import Fortification
-from game.ato import Flight
+from dcs.unitgroup import FlyingGroup
+
+from game.ato import ScheduledFlight
 from game.ato.flightplans.airassault import AirAssaultFlightPlan
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.missiongenerator.missiondata import CargoInfo, LogisticsInfo
 from game.settings.settings import Settings
 from game.transfers import TransferOrder
-
 
 ZONE_RADIUS = 300
 CRATE_ZONE_RADIUS = 50
@@ -17,7 +18,7 @@ CRATE_ZONE_RADIUS = 50
 class LogisticsGenerator:
     def __init__(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         group: FlyingGroup[Any],
         mission: Mission,
         settings: Settings,

@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable, List, Optional, Any
+from typing import Iterable, List, Optional
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
@@ -12,9 +12,7 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
-from game.ato.flight import Flight
 from game.ato.flightplans.custom import CustomFlightPlan, CustomLayout
-from game.ato.flightplans.flightplan import FlightPlan
 from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.formationattack import FormationAttackFlightPlan
 from game.ato.flightplans.planningerror import PlanningError
@@ -22,6 +20,7 @@ from game.ato.flighttype import FlightType
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.loadouts import Loadout
 from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointList import (
     QFlightWaypointList,
 )
@@ -33,7 +32,7 @@ from qt_ui.windows.mission.flight.waypoints.QPredefinedWaypointSelectionWindow i
 class QFlightWaypointTab(QFrame):
     loadout_changed = Signal()
 
-    def __init__(self, game: Game, package: Package, flight: Flight):
+    def __init__(self, game: Game, package: Package, flight: ScheduledFlight):
         super(QFlightWaypointTab, self).__init__()
         self.game = game
         self.package = package

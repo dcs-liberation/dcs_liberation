@@ -13,12 +13,14 @@ from .joinablecombat import JoinableCombat
 from .. import GameUpdateEvents
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from ..simulationresults import SimulationResults
 
 
 class AirCombat(JoinableCombat):
-    def __init__(self, freeze_duration: timedelta, flights: list[Flight]) -> None:
+    def __init__(
+        self, freeze_duration: timedelta, flights: list[ScheduledFlight]
+    ) -> None:
         super().__init__(freeze_duration, flights)
         footprints = []
         for flight in self.flights:
@@ -26,7 +28,7 @@ class AirCombat(JoinableCombat):
                 footprints.append(region)
         self.footprint = unary_union(footprints)
 
-    def joinable_by(self, flight: Flight) -> bool:
+    def joinable_by(self, flight: ScheduledFlight) -> bool:
         if not flight.state.will_join_air_combat:
             return False
 

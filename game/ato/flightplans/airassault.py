@@ -14,7 +14,7 @@ from .ischeduler import IScheduler
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
-    from ..flight import Flight
+    from ..scheduledflight import ScheduledFlight
     from ..flightwaypoint import FlightWaypoint
 
 
@@ -106,7 +106,7 @@ class Scheduler(IScheduler[AirAssaultLayout]):
 
 
 class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
-    def __init__(self, flight: Flight, layout: AirAssaultLayout) -> None:
+    def __init__(self, flight: ScheduledFlight, layout: AirAssaultLayout) -> None:
         super().__init__(flight, layout)
 
     @staticmethod

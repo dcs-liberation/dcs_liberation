@@ -9,7 +9,7 @@ from dcs.mapping import LatLng
 
 if TYPE_CHECKING:
     from game import Game
-    from game.ato import Flight, Package
+    from game.ato import ScheduledFlight, Package
     from game.navmesh import NavMesh
     from game.sim.combat import FrozenCombat
     from game.theater import ControlPoint, FrontLine, TheaterGroundObject
@@ -23,12 +23,14 @@ class GameUpdateEvents:
     new_combats: list[FrozenCombat] = field(default_factory=list)
     updated_combats: list[FrozenCombat] = field(default_factory=list)
     ended_combats: list[FrozenCombat] = field(default_factory=list)
-    updated_flight_positions: list[tuple[Flight, Point]] = field(default_factory=list)
+    updated_flight_positions: list[tuple[ScheduledFlight, Point]] = field(
+        default_factory=list
+    )
     navmesh_updates: dict[bool, NavMesh] = field(default_factory=dict)
     unculled_zones_updated: list[Point] = field(default_factory=list)
     threat_zones_updated: dict[bool, ThreatZones] = field(default_factory=dict)
-    new_flights: set[Flight] = field(default_factory=set)
-    updated_flights: set[Flight] = field(default_factory=set)
+    new_flights: set[ScheduledFlight] = field(default_factory=set)
+    updated_flights: set[ScheduledFlight] = field(default_factory=set)
     deleted_flights: set[UUID] = field(default_factory=set)
     selected_flight: UUID | None = None
     deselected_flight: bool = False
@@ -64,7 +66,7 @@ class GameUpdateEvents:
         return self
 
     def update_flight_position(
-        self, flight: Flight, new_position: Point
+        self, flight: ScheduledFlight, new_position: Point
     ) -> GameUpdateEvents:
         self.updated_flight_positions.append((flight, new_position))
         return self
@@ -81,11 +83,11 @@ class GameUpdateEvents:
         self.threat_zones_updated[player] = zones
         return self
 
-    def new_flight(self, flight: Flight) -> GameUpdateEvents:
+    def new_flight(self, flight: ScheduledFlight) -> GameUpdateEvents:
         self.new_flights.add(flight)
         return self
 
-    def update_flight(self, flight: Flight) -> GameUpdateEvents:
+    def update_flight(self, flight: ScheduledFlight) -> GameUpdateEvents:
         self.updated_flights.add(flight)
         return self
 
@@ -93,7 +95,7 @@ class GameUpdateEvents:
         self.updated_flights.update({f for f in package.flights})
         return self
 
-    def delete_flight(self, flight: Flight) -> GameUpdateEvents:
+    def delete_flight(self, flight: ScheduledFlight) -> GameUpdateEvents:
         self.deleted_flights.add(flight.id)
         return self
 
@@ -101,7 +103,7 @@ class GameUpdateEvents:
         self.deleted_flights.update({f.id for f in package.flights})
         return self
 
-    def select_flight(self, flight: Flight) -> GameUpdateEvents:
+    def select_flight(self, flight: ScheduledFlight) -> GameUpdateEvents:
         self.selected_flight = flight.id
         self.deselected_flight = False
         return self

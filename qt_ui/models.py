@@ -13,9 +13,9 @@ from PySide2.QtCore import (
 from PySide2.QtGui import QIcon
 
 from game.ato.airtaaskingorder import AirTaskingOrder
-from game.ato.flight import Flight
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from game.ato.traveltime import TotEstimator
 from game.game import Game
 from game.server import EventStream
@@ -136,7 +136,7 @@ class PackageModel(QAbstractListModel):
             return flight
         return None
 
-    def text_for_flight(self, flight: Flight) -> str:
+    def text_for_flight(self, flight: ScheduledFlight) -> str:
         """Returns the text that should be displayed for the flight."""
         estimator = TotEstimator(self.package)
         delay = datetime.timedelta(
@@ -146,14 +146,14 @@ class PackageModel(QAbstractListModel):
         return f"{flight} from {origin} in {delay}"
 
     @staticmethod
-    def icon_for_flight(flight: Flight) -> Optional[QIcon]:
+    def icon_for_flight(flight: ScheduledFlight) -> Optional[QIcon]:
         """Returns the icon that should be displayed for the flight."""
         name = flight.unit_type.dcs_id
         if name in AIRCRAFT_ICONS:
             return QIcon(AIRCRAFT_ICONS[name])
         return None
 
-    def add_flight(self, flight: Flight) -> None:
+    def add_flight(self, flight: ScheduledFlight) -> None:
         """Adds the given flight to the package."""
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self.package.add_flight(flight)
@@ -165,7 +165,7 @@ class PackageModel(QAbstractListModel):
         """Removes the flight at the given index from the package."""
         self.cancel_or_abort_flight(self.flight_at_index(index))
 
-    def cancel_or_abort_flight(self, flight: Flight) -> None:
+    def cancel_or_abort_flight(self, flight: ScheduledFlight) -> None:
         if flight.state.cancelable:
             self.delete_flight(flight)
             EventStream.put_nowait(GameUpdateEvents().delete_flight(flight))
@@ -173,7 +173,7 @@ class PackageModel(QAbstractListModel):
             flight.abort()
             EventStream.put_nowait(GameUpdateEvents().update_flight(flight))
 
-    def delete_flight(self, flight: Flight) -> None:
+    def delete_flight(self, flight: ScheduledFlight) -> None:
         """Removes the given flight from the package."""
         index = self.package.flights.index(flight)
         self.beginRemoveRows(QModelIndex(), index, index)
@@ -181,7 +181,7 @@ class PackageModel(QAbstractListModel):
         self.endRemoveRows()
         self.update_tot()
 
-    def flight_at_index(self, index: QModelIndex) -> Flight:
+    def flight_at_index(self, index: QModelIndex) -> ScheduledFlight:
         """Returns the flight located at the given index."""
         return self.package.flights[index.row()]
 
@@ -213,7 +213,7 @@ class PackageModel(QAbstractListModel):
         return self.package.package_description
 
     @property
-    def flights(self) -> Iterator[Flight]:
+    def flights(self) -> Iterator[ScheduledFlight]:
         """Iterates over the flights in the package."""
         for flight in self.package.flights:
             yield flight

@@ -9,7 +9,7 @@ from .formationattack import (
     FormationAttackLayout,
 )
 from .ischeduler import IScheduler
-from .. import Flight
+from .. import ScheduledFlight
 from ..flightwaypointtype import FlightWaypointType
 
 
@@ -19,7 +19,7 @@ class Scheduler(IScheduler[FormationAttackLayout]):
 
 
 class SeadFlightPlan(FormationAttackFlightPlan):
-    def __init__(self, flight: Flight, layout: FormationAttackLayout) -> None:
+    def __init__(self, flight: ScheduledFlight, layout: FormationAttackLayout) -> None:
         super().__init__(flight, layout)
 
     @staticmethod

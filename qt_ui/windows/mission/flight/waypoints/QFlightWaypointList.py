@@ -4,15 +4,15 @@ from PySide2.QtCore import QItemSelectionModel, QPoint
 from PySide2.QtGui import QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QHeaderView, QTableView
 
-from game.ato.package import Package
-from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.flightwaypoint import FlightWaypoint
-from game.ato.flight import Flight
+from game.ato.flightwaypointtype import FlightWaypointType
+from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import QWaypointItem
 
 
 class QFlightWaypointList(QTableView):
-    def __init__(self, package: Package, flight: Flight):
+    def __init__(self, package: Package, flight: ScheduledFlight):
         super().__init__()
         self.package = package
         self.flight = flight
@@ -50,7 +50,7 @@ class QFlightWaypointList(QTableView):
         self.setFixedWidth(total_column_width)
 
     def add_waypoint_row(
-        self, row: int, flight: Flight, waypoint: FlightWaypoint
+        self, row: int, flight: ScheduledFlight, waypoint: FlightWaypoint
     ) -> None:
         self.model.insertRow(self.model.rowCount())
 
@@ -67,7 +67,7 @@ class QFlightWaypointList(QTableView):
         tot_item.setEditable(False)
         self.model.setItem(row, 2, tot_item)
 
-    def tot_text(self, flight: Flight, waypoint: FlightWaypoint) -> str:
+    def tot_text(self, flight: ScheduledFlight, waypoint: FlightWaypoint) -> str:
         if waypoint.waypoint_type == FlightWaypointType.TAKEOFF:
             return self.takeoff_text(flight)
         prefix = ""
@@ -81,7 +81,7 @@ class QFlightWaypointList(QTableView):
         return f"{prefix}T+{time}"
 
     @staticmethod
-    def takeoff_text(flight: Flight) -> str:
+    def takeoff_text(flight: ScheduledFlight) -> str:
         takeoff_time = flight.flight_plan.takeoff_time()
         # Handle custom flight plans where we can't estimate the takeoff time.
         if takeoff_time is None:

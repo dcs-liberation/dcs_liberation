@@ -25,8 +25,8 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
 )
 
-from game.ato.flight import Flight
 from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from game.server import EventStream
 from game.sim import GameUpdateEvents
 from ..delegates import TwoColumnRowDelegate
@@ -39,7 +39,7 @@ class FlightDelegate(TwoColumnRowDelegate):
         self.package = package
 
     @staticmethod
-    def flight(index: QModelIndex) -> Flight:
+    def flight(index: QModelIndex) -> ScheduledFlight:
         return index.data(PackageModel.FlightRole)
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
@@ -107,7 +107,7 @@ class QFlightList(QListView):
         self.setModel(NullListModel())
 
     @property
-    def selected_item(self) -> Optional[Flight]:
+    def selected_item(self) -> Optional[ScheduledFlight]:
         """Returns the selected flight, if any."""
         index = self.currentIndex()
         if not index.isValid():

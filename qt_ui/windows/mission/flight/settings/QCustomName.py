@@ -1,10 +1,10 @@
 from PySide2.QtWidgets import QGroupBox, QHBoxLayout, QLabel
 
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
 
 
 class QFlightCustomName(QGroupBox):
-    def __init__(self, flight: Flight):
+    def __init__(self, flight: ScheduledFlight):
         super(QFlightCustomName, self).__init__()
 
         self.flight = flight

@@ -8,7 +8,7 @@ from dcs.planes import AJS37, F_14B, JF_17
 from dcs.point import MovingPoint, PointAction
 from dcs.unitgroup import FlyingGroup
 
-from game.ato import Flight, FlightWaypoint
+from game.ato import FlightWaypoint, ScheduledFlight
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.missiongenerator.missiondata import MissionData
 from game.theater import MissionTarget, TheaterUnit
@@ -25,7 +25,7 @@ class PydcsWaypointBuilder:
         self,
         waypoint: FlightWaypoint,
         group: FlyingGroup[Any],
-        flight: Flight,
+        flight: ScheduledFlight,
         mission: Mission,
         elapsed_mission_time: timedelta,
         mission_data: MissionData,

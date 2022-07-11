@@ -1,11 +1,11 @@
 from PySide2.QtWidgets import QComboBox
 
-from game.ato import Flight
+from game.ato import ScheduledFlight
 from game.dcs.unitproperty import UnitProperty
 
 
 class PropertySelector(QComboBox):
-    def __init__(self, flight: Flight, prop: UnitProperty) -> None:
+    def __init__(self, flight: ScheduledFlight, prop: UnitProperty) -> None:
         super().__init__()
         self.flight = flight
         self.prop = prop

@@ -11,14 +11,14 @@ from dcs.terrain.terrain import NoParkingSlotError
 from dcs.unitgroup import FlyingGroup, StaticGroup
 
 from game.ato.airtaaskingorder import AirTaskingOrder
-from game.ato.flight import Flight
 from game.ato.flightstate import Completed
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from game.ato.starttype import StartType
 from game.factions.faction import Faction
-from game.missiongenerator.missiondata import MissionData
 from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
+from game.missiongenerator.missiondata import MissionData
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanRegistry
 from game.runways import RunwayData
@@ -140,7 +140,7 @@ class AircraftGenerator:
             # Creating a flight even those this isn't a fragged mission lets us
             # reuse the existing debriefing code.
             # TODO: Special flight type?
-            flight = Flight(
+            flight = ScheduledFlight(
                 Package(squadron.location, self.game.db.flights),
                 faction.country,
                 squadron,
@@ -158,7 +158,10 @@ class AircraftGenerator:
             self.unit_map.add_aircraft(group, flight)
 
     def create_and_configure_flight(
-        self, flight: Flight, country: Country, dynamic_runways: Dict[str, RunwayData]
+        self,
+        flight: ScheduledFlight,
+        country: Country,
+        dynamic_runways: Dict[str, RunwayData],
     ) -> FlyingGroup[Any]:
         """Creates and configures the flight group in the mission."""
         group = FlightGroupSpawner(

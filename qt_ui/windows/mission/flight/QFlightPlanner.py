@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QTabWidget
 
 from game import Game
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
 from qt_ui.models import PackageModel
 from qt_ui.windows.mission.flight.payload.QFlightPayloadTab import QFlightPayloadTab
 from qt_ui.windows.mission.flight.settings.QGeneralFlightSettingsTab import (
@@ -11,7 +11,9 @@ from qt_ui.windows.mission.flight.waypoints.QFlightWaypointTab import QFlightWay
 
 
 class QFlightPlanner(QTabWidget):
-    def __init__(self, package_model: PackageModel, flight: Flight, game: Game):
+    def __init__(
+        self, package_model: PackageModel, flight: ScheduledFlight, game: Game
+    ):
         super().__init__()
 
         self.general_settings_tab = QGeneralFlightSettingsTab(

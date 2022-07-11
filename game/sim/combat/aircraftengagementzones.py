@@ -9,14 +9,14 @@ from shapely.ops import unary_union
 from game.utils import dcs_to_shapely_point
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from game.ato.airtaaskingorder import AirTaskingOrder
     from game.threatzones import ThreatPoly
     from game.sim.combat import FrozenCombat
 
 
 class AircraftEngagementZones:
-    def __init__(self, individual_zones: dict[Flight, ThreatPoly]) -> None:
+    def __init__(self, individual_zones: dict[ScheduledFlight, ThreatPoly]) -> None:
         self.individual_zones = individual_zones
         self.threat_zones = self._make_combined_zone()
 
@@ -28,7 +28,7 @@ class AircraftEngagementZones:
                 pass
         self.threat_zones = self._make_combined_zone()
 
-    def remove_flight(self, flight: Flight) -> None:
+    def remove_flight(self, flight: ScheduledFlight) -> None:
         try:
             del self.individual_zones[flight]
         except KeyError:
@@ -41,7 +41,7 @@ class AircraftEngagementZones:
     def covers(self, position: Point) -> bool:
         return self.threat_zones.intersects(dcs_to_shapely_point(position))
 
-    def iter_intercepting_flights(self, position: Point) -> Iterator[Flight]:
+    def iter_intercepting_flights(self, position: Point) -> Iterator[ScheduledFlight]:
         for flight, zone in self.individual_zones.items():
             if zone.intersects(dcs_to_shapely_point(position)):
                 yield flight
@@ -56,5 +56,5 @@ class AircraftEngagementZones:
         return AircraftEngagementZones(zones)
 
     @classmethod
-    def commit_region(cls, flight: Flight) -> Optional[ThreatPoly]:
+    def commit_region(cls, flight: ScheduledFlight) -> Optional[ThreatPoly]:
         return flight.state.a2a_commit_region()

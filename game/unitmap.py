@@ -4,16 +4,16 @@ from __future__ import annotations
 import itertools
 import math
 from dataclasses import dataclass
-from typing import Dict, Optional, Any, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 from dcs.triggers import TriggerZone
 from dcs.unit import Unit
-from dcs.unitgroup import FlyingGroup, VehicleGroup, ShipGroup
+from dcs.unitgroup import FlyingGroup, ShipGroup, VehicleGroup
 
+from game.ato.scheduledflight import ScheduledFlight
 from game.dcs.groundunittype import GroundUnitType
 from game.squadrons import Pilot
 from game.theater import Airfield, ControlPoint, TheaterUnit
-from game.ato.flight import Flight
 from game.theater.theatergroup import SceneryUnit
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class FlyingUnit:
-    flight: Flight
+    flight: ScheduledFlight
     pilot: Optional[Pilot]
 
 
@@ -67,7 +67,7 @@ class UnitMap:
         self.cargo_ships: Dict[str, CargoShip] = {}
         self.airlifts: Dict[str, AirliftUnits] = {}
 
-    def add_aircraft(self, group: FlyingGroup[Any], flight: Flight) -> None:
+    def add_aircraft(self, group: FlyingGroup[Any], flight: ScheduledFlight) -> None:
         for pilot, unit in zip(flight.roster.pilots, group.units):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.

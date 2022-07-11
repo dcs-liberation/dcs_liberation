@@ -2,23 +2,25 @@ from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QFrame, QGridLayout, QVBoxLayout
 
 from game import Game
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
 from qt_ui.models import PackageModel
 from qt_ui.windows.mission.flight.settings.FlightAirfieldDisplay import (
     FlightAirfieldDisplay,
 )
+from qt_ui.windows.mission.flight.settings.QCustomName import QFlightCustomName
 from qt_ui.windows.mission.flight.settings.QFlightSlotEditor import QFlightSlotEditor
 from qt_ui.windows.mission.flight.settings.QFlightStartType import QFlightStartType
 from qt_ui.windows.mission.flight.settings.QFlightTypeTaskInfo import (
     QFlightTypeTaskInfo,
 )
-from qt_ui.windows.mission.flight.settings.QCustomName import QFlightCustomName
 
 
 class QGeneralFlightSettingsTab(QFrame):
     on_flight_settings_changed = Signal()
 
-    def __init__(self, game: Game, package_model: PackageModel, flight: Flight):
+    def __init__(
+        self, game: Game, package_model: PackageModel, flight: ScheduledFlight
+    ):
         super().__init__()
 
         layout = QGridLayout()

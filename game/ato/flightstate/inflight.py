@@ -14,7 +14,7 @@ from game.ato.starttype import StartType
 from game.utils import Distance, LBS_TO_KG, Speed, pairwise
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.settings import Settings
     from game.sim.gameupdateevents import GameUpdateEvents
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 class InFlight(FlightState, ABC):
     def __init__(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         settings: Settings,
         waypoint_index: int,
         has_aborted: bool = False,

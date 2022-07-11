@@ -10,13 +10,13 @@ from .flightstate import FlightState
 from ..starttype import StartType
 
 if TYPE_CHECKING:
-    from .. import Flight
+    from .. import ScheduledFlight
     from game.sim.gameupdateevents import GameUpdateEvents
 
 
 class Killed(FlightState):
     def __init__(
-        self, last_position: Point, flight: Flight, settings: Settings
+        self, last_position: Point, flight: ScheduledFlight, settings: Settings
     ) -> None:
         super().__init__(flight, settings)
         self.last_position = last_position

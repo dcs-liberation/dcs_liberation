@@ -1,27 +1,27 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Iterator
+from typing import Iterator, Optional
 
 from PySide2.QtCore import QItemSelectionModel, QModelIndex, QSize
 from PySide2.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
     QDialog,
+    QHBoxLayout,
     QListView,
-    QVBoxLayout,
     QTabWidget,
     QTableWidget,
     QTableWidgetItem,
+    QVBoxLayout,
     QWidget,
-    QHBoxLayout,
 )
 
+from game.ato.scheduledflight import ScheduledFlight
 from game.squadrons import Squadron
 from game.theater import ConflictTheater
-from game.ato.flight import Flight
 from qt_ui.delegates import TwoColumnRowDelegate
-from qt_ui.models import GameModel, AirWingModel, SquadronModel, AtoModel
+from qt_ui.models import AirWingModel, AtoModel, GameModel, SquadronModel
 from qt_ui.windows.SquadronDialog import SquadronDialog
 
 
@@ -116,7 +116,7 @@ class AircraftInventoryData:
         yield self.player
 
     @classmethod
-    def from_flight(cls, flight: Flight) -> Iterator[AircraftInventoryData]:
+    def from_flight(cls, flight: ScheduledFlight) -> Iterator[AircraftInventoryData]:
         num_units = flight.count
         flight_type = flight.flight_type.value
         target = flight.package.target.name

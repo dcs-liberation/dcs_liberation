@@ -10,12 +10,14 @@ from game.ato.flightstate.navigating import Navigating
 from game.utils import Distance, Speed
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.settings import Settings
 
 
 class Loiter(InFlight):
-    def __init__(self, flight: Flight, settings: Settings, waypoint_index: int) -> None:
+    def __init__(
+        self, flight: ScheduledFlight, settings: Settings, waypoint_index: int
+    ) -> None:
         assert flight.flight_plan.is_loiter(flight.flight_plan)
         self.hold_duration = flight.flight_plan.hold_duration
         super().__init__(flight, settings, waypoint_index)

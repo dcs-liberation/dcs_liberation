@@ -42,10 +42,10 @@ from dcs.mapping import Point
 
 from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.closestairfields import ObjectiveDistanceCache
-from game.ato.flight import Flight
 from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
+from game.ato.scheduledflight import ScheduledFlight
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.naming import namegen
@@ -226,7 +226,7 @@ class Airlift(Transport):
     """A transfer order that moves units by cargo planes and helicopters."""
 
     def __init__(
-        self, transfer: TransferOrder, flight: Flight, next_stop: ControlPoint
+        self, transfer: TransferOrder, flight: ScheduledFlight, next_stop: ControlPoint
     ) -> None:
         super().__init__(next_stop)
         self.transfer = transfer
@@ -349,7 +349,7 @@ class AirliftPlanner:
         if start_type is None:
             start_type = self.game.settings.default_start_type
 
-        flight = Flight(
+        flight = ScheduledFlight(
             self.package,
             self.game.country_for(squadron.player),
             squadron,
@@ -781,7 +781,7 @@ class PendingTransfers:
             AircraftProcurementRequest(control_point, FlightType.TRANSPORT, gap)
         )
 
-    def transfer_for_flight(self, flight: Flight) -> Optional[TransferOrder]:
+    def transfer_for_flight(self, flight: ScheduledFlight) -> Optional[TransferOrder]:
         for transfer in self.pending_transfers:
             if transfer.transport is None or not isinstance(
                 transfer.transport, Airlift

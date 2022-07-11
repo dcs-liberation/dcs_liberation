@@ -11,7 +11,7 @@ from .frozencombat import FrozenCombat
 from .. import GameUpdateEvents
 
 if TYPE_CHECKING:
-    from game.ato import Flight
+    from game.ato import ScheduledFlight
     from game.theater import TheaterGroundObject
     from ..simulationresults import SimulationResults
 
@@ -20,7 +20,7 @@ class DefendingSam(FrozenCombat):
     def __init__(
         self,
         freeze_duration: timedelta,
-        flight: Flight,
+        flight: ScheduledFlight,
         air_defenses: list[TheaterGroundObject],
     ) -> None:
         super().__init__(freeze_duration)
@@ -34,7 +34,7 @@ class DefendingSam(FrozenCombat):
     def describe(self) -> str:
         return f"engaged by enemy air defenses"
 
-    def iter_flights(self) -> Iterator[Flight]:
+    def iter_flights(self) -> Iterator[ScheduledFlight]:
         yield self.flight
 
     def resolve(

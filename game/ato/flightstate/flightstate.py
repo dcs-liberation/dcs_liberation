@@ -9,14 +9,14 @@ from dcs import Point
 from game.ato.starttype import StartType
 
 if TYPE_CHECKING:
-    from game.ato.flight import Flight
+    from game.ato.scheduledflight import ScheduledFlight
     from game.settings import Settings
     from game.sim.gameupdateevents import GameUpdateEvents
     from game.threatzones import ThreatPoly
 
 
 class FlightState(ABC):
-    def __init__(self, flight: Flight, settings: Settings) -> None:
+    def __init__(self, flight: ScheduledFlight, settings: Settings) -> None:
         self.flight = flight
         self.settings = settings
         self.avoid_further_combat = False

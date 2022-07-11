@@ -9,7 +9,7 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.combos.QPredefinedWaypointSelectionComboBox import (
     QPredefinedWaypointSelectionComboBox,
@@ -31,7 +31,7 @@ class QPredefinedWaypointSelectionWindow(QDialog):
     # List of FlightWaypoint
     waypoints_added = Signal(list)
 
-    def __init__(self, game: Game, flight: Flight, flight_waypoint_list):
+    def __init__(self, game: Game, flight: ScheduledFlight, flight_waypoint_list):
         super(QPredefinedWaypointSelectionWindow, self).__init__()
         self.game = game
         self.flight = flight

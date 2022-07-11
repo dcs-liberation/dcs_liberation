@@ -5,13 +5,13 @@ from typing import Optional
 from PySide2.QtWidgets import QComboBox
 
 from game import Game
-from game.data.weapons import Pylon, Weapon
-from game.ato.flight import Flight
 from game.ato.loadouts import Loadout
+from game.ato.scheduledflight import ScheduledFlight
+from game.data.weapons import Pylon, Weapon
 
 
 class QPylonEditor(QComboBox):
-    def __init__(self, game: Game, flight: Flight, pylon: Pylon) -> None:
+    def __init__(self, game: Game, flight: ScheduledFlight, pylon: Pylon) -> None:
         super().__init__()
         self.flight = flight
         self.pylon = pylon

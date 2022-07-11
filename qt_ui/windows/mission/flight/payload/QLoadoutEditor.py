@@ -7,13 +7,13 @@ from PySide2.QtWidgets import (
 )
 
 from game import Game
+from game.ato.scheduledflight import ScheduledFlight
 from game.data.weapons import Pylon
-from game.ato.flight import Flight
 from qt_ui.windows.mission.flight.payload.QPylonEditor import QPylonEditor
 
 
 class QLoadoutEditor(QGroupBox):
-    def __init__(self, flight: Flight, game: Game) -> None:
+    def __init__(self, flight: ScheduledFlight, game: Game) -> None:
         super().__init__("Use custom loadout")
         self.flight = flight
         self.game = game

@@ -9,12 +9,12 @@ from dcs.flyingunit import FlyingUnit
 from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
 
-from game.ato import Flight, FlightType
+from game.ato import FlightType, ScheduledFlight
 from game.callsigns import callsign_for_support_unit
 from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
-from game.missiongenerator.missiondata import MissionData, AwacsInfo, TankerInfo
 from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
 from game.missiongenerator.logisticsgenerator import LogisticsGenerator
+from game.missiongenerator.missiondata import AwacsInfo, MissionData, TankerInfo
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.runways import RunwayData
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 class FlightGroupConfigurator:
     def __init__(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         group: FlyingGroup[Any],
         game: Game,
         mission: Mission,

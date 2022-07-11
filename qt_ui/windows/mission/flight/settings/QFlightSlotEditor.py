@@ -1,22 +1,22 @@
 import logging
-from typing import Optional, Callable
+from typing import Callable, Optional
 
-from PySide2.QtCore import Signal, QModelIndex
+from PySide2.QtCore import QModelIndex, Signal
 from PySide2.QtWidgets import (
-    QLabel,
-    QGroupBox,
-    QSpinBox,
-    QGridLayout,
-    QComboBox,
-    QHBoxLayout,
     QCheckBox,
+    QComboBox,
+    QGridLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QSpinBox,
     QVBoxLayout,
 )
 
 from game import Game
-from game.squadrons.pilot import Pilot
 from game.ato.flightroster import FlightRoster
-from game.ato.flight import Flight
+from game.ato.scheduledflight import ScheduledFlight
+from game.squadrons.pilot import Pilot
 from qt_ui.models import PackageModel
 
 
@@ -193,7 +193,9 @@ class FlightRosterEditor(QVBoxLayout):
 
 
 class QFlightSlotEditor(QGroupBox):
-    def __init__(self, package_model: PackageModel, flight: Flight, game: Game):
+    def __init__(
+        self, package_model: PackageModel, flight: ScheduledFlight, game: Game
+    ):
         super().__init__("Slots")
         self.package_model = package_model
         self.flight = flight

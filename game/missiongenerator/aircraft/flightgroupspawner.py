@@ -11,7 +11,7 @@ from dcs.ships import KUZNECOW
 from dcs.terrain import Airport, NoParkingSlotError
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
 
-from game.ato import Flight
+from game.ato import ScheduledFlight
 from game.ato.flightstate import InFlight
 from game.ato.starttype import StartType
 from game.ato.traveltime import GroundSpeed
@@ -40,7 +40,7 @@ HELI_ALT = 500
 class FlightGroupSpawner:
     def __init__(
         self,
-        flight: Flight,
+        flight: ScheduledFlight,
         country: Country,
         mission: Mission,
         helipads: dict[ControlPoint, StaticGroup],
