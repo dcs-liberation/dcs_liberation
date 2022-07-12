@@ -11,7 +11,7 @@ router: APIRouter = APIRouter(prefix="/qt")
 @router.post(
     "/create-package/front-line/{front_line_id}",
     operation_id="open_new_front_line_package_dialog",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
 )
 def new_front_line_package(
     front_line_id: UUID,
@@ -24,7 +24,7 @@ def new_front_line_package(
 @router.post(
     "/create-package/tgo/{tgo_id}",
     operation_id="open_new_tgo_package_dialog",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
 )
 def new_tgo_package(
     tgo_id: UUID,
@@ -37,7 +37,7 @@ def new_tgo_package(
 @router.post(
     "/info/tgo/{tgo_id}",
     operation_id="open_tgo_info_dialog",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
 )
 def show_tgo_info(
     tgo_id: UUID,
@@ -50,7 +50,7 @@ def show_tgo_info(
 @router.post(
     "/create-package/control-point/{cp_id}",
     operation_id="open_new_control_point_package_dialog",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
 )
 def new_cp_package(
     cp_id: UUID,
@@ -69,7 +69,7 @@ def new_cp_package(
 @router.post(
     "/info/control-point/{cp_id}",
     operation_id="open_control_point_info_dialog",
-    status_code=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_200_OK,
 )
 def show_control_point_info(
     cp_id: UUID,
