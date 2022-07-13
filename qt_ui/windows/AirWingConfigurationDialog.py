@@ -536,7 +536,7 @@ class AirWingConfigurationDialog(QDialog):
             "Discard changes?",
             "Are you sure you want to discard your changes?",
             QMessageBox.Yes,
-            QMessageBox.No
+            QMessageBox.No,
         )
         if result == QMessageBox.No:
             return
