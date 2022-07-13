@@ -26,6 +26,7 @@ from PySide2.QtWidgets import (
     QPushButton,
     QGridLayout,
     QToolButton,
+    QMessageBox,
 )
 from game import Game
 from game.ato.flighttype import FlightType
@@ -512,13 +513,33 @@ class AirWingConfigurationDialog(QDialog):
             tab_widget.addTab(coalition_tab, name)
             self.tabs.append(coalition_tab)
 
-        apply_button = QPushButton("Accept")
+        buttons_layout = QHBoxLayout()
+        apply_button = QPushButton("Accept Changes && Start Campaign")
+        apply_button.setProperty("style", "btn-accept")
         apply_button.clicked.connect(lambda state: self.accept())
-        layout.addWidget(apply_button)
+        discard_button = QPushButton("Discard Changes && Start Campaign")
+        discard_button.setProperty("style", "btn-danger")
+        super_reject = super(AirWingConfigurationDialog, self).reject
+        discard_button.clicked.connect(lambda state: super_reject())
+        buttons_layout.addWidget(apply_button)
+        buttons_layout.addWidget(discard_button)
+        layout.addLayout(buttons_layout)
 
-    def reject(self) -> None:
+    def accept(self) -> None:
         for tab in self.tabs:
             tab.apply()
+        super().accept()
+
+    def reject(self) -> None:
+        result = QMessageBox.information(
+            None,
+            "Discard changes?",
+            "Are you sure you want to discard your changes?",
+            QMessageBox.Yes,
+            QMessageBox.No
+        )
+        if result == QMessageBox.No:
+            return
         super().reject()
 
 
