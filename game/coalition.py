@@ -75,8 +75,8 @@ class Coalition:
         return self.faction.country
 
     @property
-    def country_code(self) -> str:
-        return self.faction.country_code
+    def country_shortname(self) -> str:
+        return self.faction.country_shortname
 
     @property
     def opponent(self) -> Coalition:

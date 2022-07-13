@@ -154,18 +154,17 @@ class SquadronLiverySelector(QComboBox):
         # Make a list of all liveries, including custom ones
         # Use pydcs and scan Saved Games folder for custom liveries
         liveries = set()
-        cc = squadron.coalition.country_code
+        cc = squadron.coalition.faction.country_shortname
         aircraft_liveries = aircraft_type.dcs_unit_type.Liveries
         for livery in aircraft_liveries:
-            all_countries = aircraft_liveries[livery] is None
-            valid_country = cc in aircraft_liveries[livery]
-            if all_countries or valid_country or cc in ["BLUE", "RED"]:
+            valid_livery = livery.countries is None or cc in livery.countries
+            if valid_livery or cc in ["BLUE", "RED"]:
                 liveries.add(livery)
-        self.addItems(sorted(list(liveries)))
-        if selected_livery is not None:
-            if selected_livery not in liveries:
-                self.addItem(selected_livery)
-            self.setCurrentText(selected_livery)
+        for livery in sorted(liveries):
+            self.addItem(livery.name, userData=livery.id)
+            if selected_livery is not None:
+                if selected_livery == livery.id:
+                    self.setCurrentText(livery.name)
 
 
 class SquadronConfigurationBox(QGroupBox):
@@ -254,7 +253,7 @@ class SquadronConfigurationBox(QGroupBox):
         self.squadron.nickname = text
 
     def on_livery_changed(self, text: str) -> None:
-        self.squadron.livery = text
+        self.squadron.livery = self.livery_selector.currentData()
 
     def on_base_changed(self, index: int) -> None:
         base = self.base_selector.itemData(index)
