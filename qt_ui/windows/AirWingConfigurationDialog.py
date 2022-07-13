@@ -1,5 +1,3 @@
-import os
-import re
 from typing import Iterable, Optional, Iterator
 
 from PySide2.QtCore import (
@@ -147,15 +145,14 @@ class SquadronLiverySelector(QComboBox):
 
     def __init__(self, squadron: Squadron) -> None:
         super().__init__()
-        aircraft_type = squadron.aircraft
-        selected_livery = squadron.livery
         self.setSizeAdjustPolicy(self.AdjustToContents)
-        self.aircraft_type = aircraft_type
-        # Make a list of all liveries, including custom ones
-        # Use pydcs and scan Saved Games folder for custom liveries
+
+        self.aircraft_type = squadron.aircraft
+        selected_livery = squadron.livery
+
         liveries = set()
         cc = squadron.coalition.faction.country_shortname
-        aircraft_liveries = aircraft_type.dcs_unit_type.Liveries
+        aircraft_liveries = self.aircraft_type.dcs_unit_type.Liveries
         for livery in aircraft_liveries:
             valid_livery = livery.countries is None or cc in livery.countries
             if valid_livery or cc in ["BLUE", "RED"]:
