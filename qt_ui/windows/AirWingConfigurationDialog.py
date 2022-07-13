@@ -521,8 +521,8 @@ class AirWingConfigurationDialog(QDialog):
         discard_button.setProperty("style", "btn-danger")
         super_reject = super(AirWingConfigurationDialog, self).reject
         discard_button.clicked.connect(lambda state: super_reject())
-        buttons_layout.addWidget(apply_button)
         buttons_layout.addWidget(discard_button)
+        buttons_layout.addWidget(apply_button)
         layout.addLayout(buttons_layout)
 
     def accept(self) -> None:
