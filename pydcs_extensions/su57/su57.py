@@ -1,3 +1,5 @@
+from typing import Set
+
 from dcs import task
 from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
@@ -544,7 +546,7 @@ class Su_57(PlaneType):
         Smoke_Generator___yellow = (12, Weapons.Smoke_Generator___yellow)
         Smoke_Generator___orange = (12, Weapons.Smoke_Generator___orange)
 
-    pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
     tasks = [
         task.CAP,

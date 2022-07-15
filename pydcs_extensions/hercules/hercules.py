@@ -1,3 +1,5 @@
+from typing import Set
+
 from dcs import task
 from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType

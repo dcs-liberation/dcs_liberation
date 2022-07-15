@@ -1,6 +1,7 @@
-from enum import Enum
+from typing import Any, Dict, Set
 
 from dcs import task
+from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
