@@ -26,6 +26,7 @@ from PySide2.QtWidgets import (
     QPushButton,
     QGridLayout,
     QToolButton,
+    QMessageBox,
 )
 from game import Game
 from game.ato.flighttype import FlightType
@@ -153,6 +154,15 @@ class SquadronLiverySelector(QComboBox):
         liveries = set()
         cc = squadron.coalition.faction.country_shortname
         aircraft_liveries = self.aircraft_type.dcs_unit_type.Liveries
+        if aircraft_liveries is None:
+            QMessageBox.information(
+                None,
+                "Liveries is None!",
+                f"Liveries for {self.aircraft_type.dcs_id} (DCS-ID) is None:\n"
+                f"Country: {cc}, Squadron: {squadron.name}",
+                QMessageBox.StandardButton.Ok,
+            )
+            return
         for livery in aircraft_liveries:
             valid_livery = livery.countries is None or cc in livery.countries
             if valid_livery or cc in ["BLUE", "RED"]:
