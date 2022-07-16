@@ -199,6 +199,15 @@ class SquadronConfigurationBox(QGroupBox):
         reroll_nickname_button.clicked.connect(self.reroll_nickname)
         nickname_edit_layout.addWidget(reroll_nickname_button, 1, 1, Qt.AlignTop)
 
+        from dcs.installation import (
+            get_dcs_install_directory,
+            get_dcs_saved_games_directory
+        )
+        install = get_dcs_install_directory()
+        savedgames = get_dcs_saved_games_directory()
+        logging.info(f"PyDCS detected installation folder at: {install}")
+        logging.info(f"PyDCS detected saved games folder at: {savedgames}")
+
         left_column.addWidget(QLabel("Livery:"))
         self.livery_selector = SquadronLiverySelector(squadron)
         self.livery_selector.currentTextChanged.connect(self.on_livery_changed)
