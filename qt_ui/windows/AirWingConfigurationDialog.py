@@ -1,3 +1,4 @@
+import logging
 from typing import Iterable, Optional, Iterator
 
 from PySide2.QtCore import (
@@ -26,7 +27,6 @@ from PySide2.QtWidgets import (
     QPushButton,
     QGridLayout,
     QToolButton,
-    QMessageBox,
 )
 from game import Game
 from game.ato.flighttype import FlightType
@@ -35,7 +35,6 @@ from game.dcs.aircrafttype import AircraftType
 from game.squadrons import AirWing, Pilot, Squadron
 from game.squadrons.squadrondef import SquadronDef
 from game.theater import ConflictTheater, ControlPoint
-from qt_ui.liberation_install import get_saved_game_dir
 from qt_ui.uiconstants import AIRCRAFT_ICONS, ICONS
 
 
@@ -155,13 +154,7 @@ class SquadronLiverySelector(QComboBox):
         cc = squadron.coalition.faction.country_shortname
         aircraft_liveries = self.aircraft_type.dcs_unit_type.Liveries
         if aircraft_liveries is None:
-            QMessageBox.information(
-                None,
-                "Liveries is None!",
-                f"Liveries for {self.aircraft_type.dcs_id} (DCS-ID) is None:\n"
-                f"Country: {cc}, Squadron: {squadron.name}",
-                QMessageBox.StandardButton.Ok,
-            )
+            logging.error(f"Liveries for {self.aircraft_type} is None!")
             return
         for livery in aircraft_liveries:
             valid_livery = livery.countries is None or cc in livery.countries
