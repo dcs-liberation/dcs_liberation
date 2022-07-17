@@ -11,7 +11,6 @@ from PySide2 import QtWidgets
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QCheckBox, QSplashScreen
-from dcs.liveries_scanner import Liveries
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
@@ -98,20 +97,6 @@ def run_ui(game: Game | None, dev: bool) -> None:
     )
 
     inject_custom_payloads(Path(persistency.base_path()))
-
-    # Initialize the 'Liveries map' with Liberation's "install-paths",
-    #   this is to prevent possible issues with PyDCS not detecting the correct paths
-    # Initialization of the livery scanner needs to happen ASAP (this a good spot),
-    #   this is to ensure a correct initialization of units that make use of the 'Liveries map'
-    install = liberation_install.get_dcs_install_directory()
-    saved_games = liberation_install.get_saved_game_dir()
-    Liveries.initialize(install, saved_games)
-
-    skins = Liveries()
-    for u in skins:
-        logging.info(u)
-        for liv in sorted(skins[u]):
-            logging.info(f"\t{liv, liv.countries}")
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
