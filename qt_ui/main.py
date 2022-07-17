@@ -107,6 +107,12 @@ def run_ui(game: Game | None, dev: bool) -> None:
     saved_games = liberation_install.get_saved_game_dir()
     Liveries.initialize(install, saved_games)
 
+    skins = Liveries()
+    for u in skins:
+        logging.info(u)
+        for liv in sorted(skins[u]):
+            logging.info(f"\t{liv, liv.countries}")
+
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
     splash = QSplashScreen(pixmap)
