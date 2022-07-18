@@ -534,7 +534,7 @@ class AirWingConfigurationDialog(QDialog):
         result = QMessageBox.information(
             None,
             "Discard changes?",
-            "Are you sure you want to discard your changes?",
+            "Are you sure you want to discard your changes and start the campaign?",
             QMessageBox.Yes,
             QMessageBox.No,
         )
