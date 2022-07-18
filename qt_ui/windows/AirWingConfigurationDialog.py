@@ -154,8 +154,7 @@ class SquadronLiverySelector(QComboBox):
         cc = squadron.coalition.faction.country_shortname
         aircraft_liveries = self.aircraft_type.dcs_unit_type.Liveries
         if len(aircraft_liveries) == 0:
-            logging.info(f"Liveries for {self.aircraft_type} is empty or None!")
-            return
+            logging.info(f"Liveries for {self.aircraft_type} is empty!")
         for livery in aircraft_liveries:
             valid_livery = livery.countries is None or cc in livery.countries
             if valid_livery or cc in ["BLUE", "RED"]:
@@ -165,6 +164,9 @@ class SquadronLiverySelector(QComboBox):
             if selected_livery is not None:
                 if selected_livery == livery.id:
                     self.setCurrentText(livery.name)
+        if len(liveries) == 0:
+            self.addItem("No available liveries...")
+            self.setEnabled(False)
 
 
 class SquadronConfigurationBox(QGroupBox):
