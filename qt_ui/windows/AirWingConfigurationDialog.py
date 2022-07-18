@@ -27,6 +27,7 @@ from PySide2.QtWidgets import (
     QPushButton,
     QGridLayout,
     QToolButton,
+    QMessageBox,
 )
 from game import Game
 from game.ato.flighttype import FlightType
@@ -356,6 +357,7 @@ class AircraftSquadronsPage(QWidget):
 
 class AircraftSquadronsPanel(QStackedLayout):
     page_removed = Signal(AircraftType)
+    squadrons_changed = Signal()
 
     def __init__(self, air_wing: AirWing, theater: ConflictTheater) -> None:
         super().__init__()
@@ -372,6 +374,7 @@ class AircraftSquadronsPanel(QStackedLayout):
         self.squadrons_pages.pop(aircraft_type)
         self.page_removed.emit(aircraft_type)
         self.update()
+        self.squadrons_changed.emit()
 
     def new_page_for_type(
         self, aircraft_type: AircraftType, squadrons: list[Squadron]
@@ -390,11 +393,20 @@ class AircraftSquadronsPanel(QStackedLayout):
             self.new_page_for_type(squadron.aircraft, [squadron])
 
         self.update()
+        self.squadrons_changed.emit()
 
     def apply(self) -> None:
         self.air_wing.squadrons = {}
         for aircraft, page in self.squadrons_pages.items():
             self.air_wing.squadrons[aircraft] = page.apply()
+
+    def revert(self) -> None:
+        for _, page in self.squadrons_pages.items():
+            self.removeWidget(page)
+        self.squadrons_pages: dict[AircraftType, AircraftSquadronsPage] = {}
+        for aircraft, squadrons in self.air_wing.squadrons.items():
+            self.new_page_for_type(aircraft, squadrons)
+        self.update()
 
 
 class AircraftTypeList(QListView):
@@ -402,6 +414,7 @@ class AircraftTypeList(QListView):
 
     def __init__(self, air_wing: AirWing) -> None:
         super().__init__()
+        self.air_wing = air_wing
         self.setIconSize(QSize(91, 24))
         self.setMinimumWidth(300)
 
@@ -445,6 +458,12 @@ class AircraftTypeList(QListView):
         if name in AIRCRAFT_ICONS:
             return QIcon(AIRCRAFT_ICONS[name])
         return None
+
+    def revert(self) -> None:
+        self.item_model.clear()
+        for aircraft in self.air_wing.squadrons:
+            self.add_aircraft_type(aircraft)
+        self.update()
 
 
 class AirWingConfigurationTab(QWidget):
@@ -521,6 +540,11 @@ class AirWingConfigurationTab(QWidget):
     def apply(self) -> None:
         self.squadrons_panel.apply()
 
+    def revert(self) -> None:
+        self.type_list.revert()
+        self.squadrons_panel.revert()
+        self.update()
+
 
 class AirWingConfigurationDialog(QDialog):
     """Dialog window for air wing configuration."""
@@ -543,23 +567,54 @@ class AirWingConfigurationDialog(QDialog):
 
         layout.addWidget(doc_label)
 
-        tab_widget = QTabWidget()
-        layout.addWidget(tab_widget)
+        self.tab_widget = QTabWidget()
+        layout.addWidget(self.tab_widget)
 
         self.tabs = []
         for coalition in game.coalitions:
             coalition_tab = AirWingConfigurationTab(coalition, game)
             name = "Blue" if coalition.player else "Red"
-            tab_widget.addTab(coalition_tab, name)
+            self.tab_widget.addTab(coalition_tab, name)
             self.tabs.append(coalition_tab)
+            coalition_tab.squadrons_panel.squadrons_changed.connect(self.changed)
 
-        apply_button = QPushButton("Accept")
+        buttons_layout = QHBoxLayout()
+        apply_button = QPushButton("Accept Changes && Start Campaign")
+        apply_button.setProperty("style", "btn-accept")
         apply_button.clicked.connect(lambda state: self.accept())
-        layout.addWidget(apply_button)
+        discard_button = QPushButton("Reset Changes")
+        discard_button.setProperty("style", "btn-danger")
+        discard_button.clicked.connect(lambda state: self.revert())
+        buttons_layout.addWidget(discard_button)
+        buttons_layout.addWidget(apply_button)
+        layout.addLayout(buttons_layout)
 
-    def reject(self) -> None:
+        self.has_changed = False
+
+    def changed(self) -> None:
+        self.has_changed = True
+
+    def revert(self) -> None:
+        for tab in self.tabs:
+            tab.revert()
+        self.has_changed = False
+
+    def accept(self) -> None:
         for tab in self.tabs:
             tab.apply()
+        super().accept()
+
+    def reject(self) -> None:
+        if self.has_changed:
+            result = QMessageBox.information(
+                None,
+                "Discard changes?",
+                "Are you sure you want to discard your changes and start the campaign?",
+                QMessageBox.Yes,
+                QMessageBox.No,
+            )
+            if result == QMessageBox.No:
+                return
         super().reject()
 
 
