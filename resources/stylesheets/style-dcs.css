@@ -208,6 +208,19 @@ QPushButton[style="btn-danger"]:hover{
     background-color:#D84545;
 }
 
+
+QPushButton[style="btn-accept"] {
+    background-color:#82A466;
+    color: white;
+    padding: 6px;
+    border-radius:2px;
+    border: 1px solid #82A466;
+}
+
+QPushButton[style="btn-accept"]:hover {
+    background-color:#5C863F;
+}
+
 QPushButton:disabled{
 
     background:#d6d6d6;

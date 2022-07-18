@@ -115,9 +115,7 @@ class QFlightCreator(QDialog):
                 tooltip="Selects the start type for this flight.",
             )
         )
-        squadron: Squadron = self.squadron_selector.currentData()
-        home_base: ControlPoint = squadron.location
-        if isinstance(home_base, OffMapSpawn):
+        if squadron is not None and isinstance(squadron.location, OffMapSpawn):
             self.start_type.setCurrentText(StartType.IN_FLIGHT.value)
             self.start_type.setEnabled(False)
         layout.addWidget(
