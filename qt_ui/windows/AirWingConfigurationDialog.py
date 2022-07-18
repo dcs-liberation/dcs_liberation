@@ -554,15 +554,8 @@ class AirWingConfigurationDialog(QDialog):
         self.has_changed = True
 
     def revert(self) -> None:
-        # self.tab_widget.clear()
         for tab in self.tabs:
             tab.revert()
-            # game = tab.game
-            # coalition = tab.coalition
-            # new_tab = AirWingConfigurationTab(coalition, game)
-            # new_tab.squadrons_panel.squadrons_changed.connect(self.changed)
-            # name = "Blue" if coalition.player else "Red"
-            # self.tab_widget.addTab(new_tab, name)
         self.has_changed = False
 
     def accept(self) -> None:
