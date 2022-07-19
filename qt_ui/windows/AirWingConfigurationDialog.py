@@ -143,7 +143,6 @@ class SquadronConfigurationBox(QGroupBox):
     def __init__(self, squadron: Squadron, theater: ConflictTheater) -> None:
         super().__init__()
         self.squadron = squadron
-        self.reset_title()
 
         columns = QHBoxLayout()
         self.setLayout(columns)
@@ -153,15 +152,16 @@ class SquadronConfigurationBox(QGroupBox):
 
         left_column.addWidget(QLabel("Name:"))
         self.name_edit = QLineEdit(squadron.name)
-        self.name_edit.textChanged.connect(self.on_name_changed)
+        self.name_edit.textChanged.connect(lambda x: self.reset_title())
         left_column.addWidget(self.name_edit)
+
+        self.reset_title()
 
         nickname_edit_layout = QGridLayout()
         left_column.addLayout(nickname_edit_layout)
 
         nickname_edit_layout.addWidget(QLabel("Nickname:"), 0, 0, 1, 2)
         self.nickname_edit = QLineEdit(squadron.nickname)
-        self.nickname_edit.textChanged.connect(self.on_nickname_changed)
         nickname_edit_layout.addWidget(self.nickname_edit, 1, 0, Qt.AlignTop)
         reroll_nickname_button = QToolButton()
         reroll_nickname_button.setIcon(QIcon(ICONS["Reload"]))
@@ -175,7 +175,6 @@ class SquadronConfigurationBox(QGroupBox):
             squadron.location,
             squadron.aircraft,
         )
-        self.base_selector.currentIndexChanged.connect(self.on_base_changed)
         left_column.addWidget(self.base_selector)
 
         if squadron.player:
@@ -210,21 +209,8 @@ class SquadronConfigurationBox(QGroupBox):
     def remove_from_squadron_config(self) -> None:
         self.remove_squadron_signal.emit(self.squadron)
 
-    def on_name_changed(self, text: str) -> None:
-        self.squadron.name = text
-        self.reset_title()
-
-    def on_nickname_changed(self, text: str) -> None:
-        self.squadron.nickname = text
-
-    def on_base_changed(self, index: int) -> None:
-        base = self.base_selector.itemData(index)
-        if base is None:
-            raise RuntimeError("Base cannot be none")
-        self.squadron.assign_to_base(base)
-
     def reset_title(self) -> None:
-        self.setTitle(f"{self.squadron.name} - {self.squadron.aircraft}")
+        self.setTitle(f"{self.name_edit.text()} - {self.squadron.aircraft}")
 
     def reroll_nickname(self) -> None:
         self.nickname_edit.setText(
@@ -232,6 +218,13 @@ class SquadronConfigurationBox(QGroupBox):
         )
 
     def apply(self) -> Squadron:
+        self.squadron.name = self.name_edit.text()
+        self.squadron.nickname = self.nickname_edit.text()
+        base = self.base_selector.currentData()
+        if base is None:
+            raise RuntimeError("Base cannot be none")
+        self.squadron.assign_to_base(base)
+
         player_names = self.player_list.toPlainText().splitlines()
         # Prepend player pilots so they get set active first.
         self.squadron.pilot_pool = [
