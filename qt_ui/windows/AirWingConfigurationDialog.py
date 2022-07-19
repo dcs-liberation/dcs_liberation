@@ -204,7 +204,6 @@ class SquadronConfigurationBox(QGroupBox):
 
         left_column.addWidget(QLabel("Livery:"))
         self.livery_selector = SquadronLiverySelector(squadron)
-        self.livery_selector.currentTextChanged.connect(self.on_livery_changed)
         left_column.addWidget(self.livery_selector)
 
         left_column.addWidget(QLabel("Base:"))
@@ -255,9 +254,6 @@ class SquadronConfigurationBox(QGroupBox):
     def on_nickname_changed(self, text: str) -> None:
         self.squadron.nickname = text
 
-    def on_livery_changed(self, text: str) -> None:
-        self.squadron.livery = self.livery_selector.currentData()
-
     def on_base_changed(self, index: int) -> None:
         base = self.base_selector.itemData(index)
         if base is None:
@@ -273,6 +269,8 @@ class SquadronConfigurationBox(QGroupBox):
         )
 
     def apply(self) -> Squadron:
+        self.squadron.livery = self.livery_selector.currentData()
+
         player_names = self.player_list.toPlainText().splitlines()
         # Prepend player pilots so they get set active first.
         self.squadron.pilot_pool = [
