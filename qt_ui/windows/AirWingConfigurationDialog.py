@@ -309,7 +309,6 @@ class AircraftSquadronsPage(QWidget):
 
 class AircraftSquadronsPanel(QStackedLayout):
     page_removed = Signal(AircraftType)
-    squadrons_changed = Signal()
 
     def __init__(self, air_wing: AirWing, theater: ConflictTheater) -> None:
         super().__init__()
@@ -326,7 +325,6 @@ class AircraftSquadronsPanel(QStackedLayout):
         self.squadrons_pages.pop(aircraft_type)
         self.page_removed.emit(aircraft_type)
         self.update()
-        self.squadrons_changed.emit()
 
     def new_page_for_type(
         self, aircraft_type: AircraftType, squadrons: list[Squadron]
@@ -345,7 +343,6 @@ class AircraftSquadronsPanel(QStackedLayout):
             self.new_page_for_type(squadron.aircraft, [squadron])
 
         self.update()
-        self.squadrons_changed.emit()
 
     def apply(self) -> None:
         self.air_wing.squadrons = {}
@@ -528,7 +525,6 @@ class AirWingConfigurationDialog(QDialog):
             name = "Blue" if coalition.player else "Red"
             self.tab_widget.addTab(coalition_tab, name)
             self.tabs.append(coalition_tab)
-            coalition_tab.squadrons_panel.squadrons_changed.connect(self.changed)
 
         buttons_layout = QHBoxLayout()
         apply_button = QPushButton("Accept Changes && Start Campaign")
@@ -541,15 +537,9 @@ class AirWingConfigurationDialog(QDialog):
         buttons_layout.addWidget(apply_button)
         layout.addLayout(buttons_layout)
 
-        self.has_changed = False
-
-    def changed(self) -> None:
-        self.has_changed = True
-
     def revert(self) -> None:
         for tab in self.tabs:
             tab.revert()
-        self.has_changed = False
 
     def accept(self) -> None:
         for tab in self.tabs:
@@ -557,16 +547,15 @@ class AirWingConfigurationDialog(QDialog):
         super().accept()
 
     def reject(self) -> None:
-        if self.has_changed:
-            result = QMessageBox.information(
-                None,
-                "Discard changes?",
-                "Are you sure you want to discard your changes and start the campaign?",
-                QMessageBox.Yes,
-                QMessageBox.No,
-            )
-            if result == QMessageBox.No:
-                return
+        result = QMessageBox.information(
+            None,
+            "Discard changes?",
+            "Are you sure you want to discard your changes and start the campaign?",
+            QMessageBox.Yes,
+            QMessageBox.No,
+        )
+        if result == QMessageBox.No:
+            return
         super().reject()
 
 
