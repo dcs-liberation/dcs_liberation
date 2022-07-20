@@ -54,4 +54,4 @@ groups:
         - 7
       unit_types:
         - Czech hedgehogs 1
-layout_file: resources/layouts/buildings/buildings.miz
+layout_file: resources/layouts/buildings/buildingsww2.miz
