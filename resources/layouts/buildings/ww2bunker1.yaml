@@ -31,4 +31,4 @@ groups:
         - 4
       unit_types:
         - SK_C_28_naval_gun
-layout_file: resources/layouts/buildings/buildings.miz
+layout_file: resources/layouts/buildings/buildingsww2.miz
