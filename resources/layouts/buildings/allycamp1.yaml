@@ -81,4 +81,4 @@ groups:
         - 4
       unit_types:
         - house2arm
-layout_file: resources/layouts/buildings/buildings.miz
+layout_file: resources/layouts/buildings/buildingsww2.miz

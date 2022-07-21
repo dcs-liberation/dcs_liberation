@@ -1,0 +1,12 @@
+---
+name: RNLAF Redskins 301 Sqn
+nickname: Redskins
+female_pilot_percentage: 2
+country: Netherlands
+role: Attack Helicopter
+aircraft: AH-64D Apache Longbow
+livery: 301 Squadron Redskins Netherlands
+mission_types:
+  - CAS
+  - BAI
+  - OCA/Aircraft
