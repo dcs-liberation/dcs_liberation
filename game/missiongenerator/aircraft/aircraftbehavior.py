@@ -62,7 +62,10 @@ class AircraftBehavior:
             self.configure_runway_attack(group, flight)
         elif self.task == FlightType.OCA_AIRCRAFT:
             self.configure_oca_strike(group, flight)
-        elif self.task == FlightType.TRANSPORT:
+        elif self.task in [
+            FlightType.TRANSPORT,
+            FlightType.AIR_ASSAULT,
+        ]:
             self.configure_transport(group, flight)
         elif self.task == FlightType.FERRY:
             self.configure_ferry(group, flight)

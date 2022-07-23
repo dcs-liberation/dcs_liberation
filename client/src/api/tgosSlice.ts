@@ -15,9 +15,10 @@ export const tgosSlice = createSlice({
   name: "tgos",
   initialState,
   reducers: {
-    updateTgo: (state, action: PayloadAction<Tgo>) => {
-      const tgo = action.payload;
-      state.tgos[tgo.id] = tgo;
+    updateTgo: (state, action: PayloadAction<Tgo[]>) => {
+      for (const tgo of action.payload) {
+        state.tgos[tgo.id] = tgo;
+      }
     },
   },
   extraReducers: (builder) => {

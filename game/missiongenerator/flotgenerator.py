@@ -43,7 +43,7 @@ from game.radio.radios import RadioRegistry
 from game.theater.controlpoint import ControlPoint
 from game.unitmap import UnitMap
 from game.utils import Heading
-from .airsupport import AirSupport, JtacInfo
+from .missiondata import MissionData, JtacInfo
 from .frontlineconflictdescription import FrontLineConflictDescription
 from .lasercoderegistry import LaserCodeRegistry
 
@@ -80,7 +80,7 @@ class FlotGenerator:
         enemy_stance: CombatStance,
         unit_map: UnitMap,
         radio_registry: RadioRegistry,
-        air_support: AirSupport,
+        mission_data: MissionData,
         laser_code_registry: LaserCodeRegistry,
     ) -> None:
         self.mission = mission
@@ -92,7 +92,7 @@ class FlotGenerator:
         self.game = game
         self.unit_map = unit_map
         self.radio_registry = radio_registry
-        self.air_support = air_support
+        self.mission_data = mission_data
         self.laser_code_registry = laser_code_registry
 
     def generate(self) -> None:
@@ -146,7 +146,7 @@ class FlotGenerator:
             # If the option fc3LaserCode is enabled, force all JTAC
             # laser codes to 1113 to allow lasing for Su-25 Frogfoots and A-10A Warthogs.
             # Otherwise use 1688 for the first JTAC, 1687 for the second etc.
-            if self.game.settings.plugins["plugins.jtacautolase.fc3LaserCode"]:
+            if self.game.settings.plugins["plugins.ctld.fc3LaserCode"]:
                 code = 1113
             else:
                 code = self.laser_code_registry.get_next_laser_code()
@@ -166,7 +166,7 @@ class FlotGenerator:
             )
             jtac.points[0].tasks.append(
                 FAC(
-                    callsign=len(self.air_support.jtacs) + 1,
+                    callsign=len(self.mission_data.jtacs) + 1,
                     frequency=int(freq.mhz),
                     modulation=freq.modulation,
                 )
@@ -181,13 +181,13 @@ class FlotGenerator:
             )
             # Note: Will need to change if we ever add ground based JTAC.
             callsign = callsign_for_support_unit(jtac)
-            self.air_support.jtacs.append(
+            self.mission_data.jtacs.append(
                 JtacInfo(
-                    jtac.name,
-                    jtac.name,
-                    callsign,
-                    frontline,
-                    str(code),
+                    group_name=jtac.name,
+                    unit_name=jtac.units[0].name,
+                    callsign=callsign,
+                    region=frontline,
+                    code=str(code),
                     blue=True,
                     freq=freq,
                 )

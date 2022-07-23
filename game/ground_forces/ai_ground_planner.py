@@ -119,7 +119,7 @@ class GroundPlanner:
             elif unit_class is UnitClass.ATGM:
                 collection = self.atgm_group
                 role = CombatGroupRole.ATGM
-            elif unit_class is UnitClass.SHORAD:
+            elif unit_class in [UnitClass.SHORAD, UnitClass.AAA]:
                 collection = self.shorad_groups
                 role = CombatGroupRole.SHORAD
             elif unit_class is UnitClass.RECON:

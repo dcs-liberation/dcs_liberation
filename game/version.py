@@ -134,6 +134,10 @@ VERSION = _build_version_string()
 #:   also used later in mission generation to orient the group accordingly.
 #:   This removes the randomization of the orientation from the generation.
 #:   Most campaigns will not need any updates and will work out of the box.
+#:   If the campaign designer sets the heading to 0 then we will automatically change
+#:   the orientation of the generated TGO to head towards the conflict if it is
+#:   required by the TGO to work properly. Values other than 0 will prevent the
+#:   automatic orientation.
 #:
 #: Version 10.1
 #: * Campaign designers can now define the recommended economy settings:

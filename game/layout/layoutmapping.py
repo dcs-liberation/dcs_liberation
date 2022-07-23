@@ -128,9 +128,11 @@ class LayoutMapping:
             layout_file,
         )
 
-    def group_for_name(self, name: str) -> tuple[int, str, GroupLayoutMapping]:
+    def group_for_name(self, name: str) -> tuple[int, int, str, GroupLayoutMapping]:
+        g_id = 0
         for group_name, group_mappings in self.groups.items():
-            for g_id, group_mapping in enumerate(group_mappings):
+            for u_id, group_mapping in enumerate(group_mappings):
                 if group_mapping.name == name or name in group_mapping.statics:
-                    return g_id, group_name, group_mapping
+                    return g_id, u_id, group_name, group_mapping
+            g_id += 1
         raise KeyError

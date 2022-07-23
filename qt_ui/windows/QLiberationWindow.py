@@ -8,6 +8,7 @@ from PySide2.QtGui import QCloseEvent, QIcon
 from PySide2.QtWidgets import (
     QAction,
     QActionGroup,
+    QApplication,
     QDesktopWidget,
     QFileDialog,
     QMainWindow,
@@ -390,6 +391,53 @@ class QLiberationWindow(QMainWindow):
             self.enable_game_actions(self.game is not None)
 
     def showAboutDialog(self):
+        contributors = [
+            "shdwp",
+            "Khopa",
+            "ColonelPanic",
+            "RndName",
+            "Roach",
+            "Malakhit",
+            "Wrycu",
+            "calvinmorrow",
+            "JohanAberg",
+            "Deus",
+            "SiKruger",
+            "Mustang-25",
+            "bgreman",
+            "magwo",
+            "SnappyComebacks",
+            "kavinsky",
+            "Schneefl0cke",
+            "pbzweihander",
+            "Raskil",
+            "nosv1",
+            "jake-lewis",
+            "teamMOYA",
+            "benedikt-wegmann",
+            "movq",
+            "bbirchnz",
+            "eddiwood",
+            "root0fall",
+            "calvinmorrow",
+            "UKayeF",
+            "Captain Cody",
+            "steveveepee",
+            "pedromagueija",
+            "parithon",
+            "TheCandianVendingMachine",
+            "bwRavencl",
+            "davidp57",
+            "Plob",
+            "Hawkmoon",
+            "alrik11es",
+            "Starfire13",
+            "Hornet2041/Lion",
+            "SgtFuzzle17",
+            "Doc_of_Mur",
+            "NickJZX",
+            "Sith1144",
+        ]
         text = (
             "<h3>DCS Liberation "
             + VERSION
@@ -398,7 +446,7 @@ class QLiberationWindow(QMainWindow):
             + "<h4>Authors</h4>"
             + "<p>DCS Liberation was originally developed by <b>shdwp</b>, DCS Liberation 2.0 is a partial rewrite based on this work by <b>Khopa</b>."
             "<h4>Contributors</h4>"
-            + "shdwp, Khopa, ColonelPanic, Roach, Malakhit, Wrycu, calvinmorrow, JohanAberg, Deus, SiKruger, Mustang-25, root0fall, Captain Cody, steveveepee, pedromagueija, parithon, bwRavencl, davidp57, Plob, Hawkmoon"
+            + ", ".join(contributors)
             + "<h4>Special Thanks  :</h4>"
             "<b>rp-</b> <i>for the pydcs framework</i><br/>"
             "<b>Grimes (mrSkortch)</b> & <b>Speed</b> <i>for the MIST framework</i><br/>"
@@ -474,5 +522,7 @@ class QLiberationWindow(QMainWindow):
             self._save_window_geometry()
             super().closeEvent(event)
             self.dialog = None
+            for window in QApplication.topLevelWidgets():
+                window.close()
         else:
             event.ignore()

@@ -428,6 +428,7 @@ export type Tgo = {
   sidc: string;
 };
 export type SupplyRoute = {
+  id: string;
   points: LatLng[];
   front_active: boolean;
   is_sea: boolean;
@@ -478,6 +479,7 @@ export type Game = {
   threat_zones: ThreatZoneContainer;
   navmeshes: NavMeshes;
   map_center?: LatLng;
+  unculled_zones: UnculledZone[];
 };
 export type MapZones = {
   inclusion: LatLng[][];

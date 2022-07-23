@@ -1,0 +1,57 @@
+name: 4 Launcher Site (Semicircle)
+tasks:
+  - MERAD
+  - LORAD
+groups:
+  - SAM: # Main Battery as one group
+    - name: Search Radar
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+        - SearchTrackRadar
+    - name: Track Radar
+      optional: true # Allow groups without TR
+      fill: false # Do not fill with faction possible units
+      unit_count:
+        - 1
+      unit_classes:
+        - TrackRadar
+    - name: Command Post
+      optional: true
+      fill: false # Do not fill with faction possible units
+      unit_count:
+        - 1
+      unit_classes:
+        - CommandPost
+    - name: Launcher
+      unit_count:
+        - 4
+      unit_classes:
+        - Launcher
+        - TELAR
+    - name: Logistics
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - Logistics
+  - PD: # Point Defense as separate group
+    - name: PD
+      sub_task: PointDefense
+      optional: true
+      unit_count:
+        - 0
+        - 2
+      unit_classes:
+        - SHORAD
+    - name: AAA
+      sub_task: AAA
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - AAA
+layout_file: resources/layouts/anti_air/6_Launcher_Semicircle.miz
