@@ -5,7 +5,7 @@ female_pilot_percentage: 0
 country: Syria
 role: Air Superiority Fighter
 aircraft: MiG-29S Fulcrum-C
-livery: "ERAF"
+livery: Algerian AF FC-16
 mission_types:
   - BARCAP
   - TARCAP

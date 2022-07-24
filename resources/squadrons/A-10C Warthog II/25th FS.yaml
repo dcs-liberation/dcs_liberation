@@ -5,7 +5,7 @@ female_pilot_percentage: 6
 country: USA
 role: Close Air Support
 aircraft: A-10C Thunderbolt II (Suite 7)
-livery: 25th FS Osab AB, Korea (OS)
+livery: 25th FS Osan AB, Korea (OS)
 mission_types:
   - BAI
   - CAS

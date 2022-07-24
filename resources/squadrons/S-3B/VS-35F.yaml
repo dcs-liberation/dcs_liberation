@@ -5,6 +5,6 @@ female_pilot_percentage: 0
 country: USA
 role: Tanker
 aircraft: S-3B Tanker
-livery: NAVY Standard
+livery: usaf standard
 mission_types:
   - Refueling
