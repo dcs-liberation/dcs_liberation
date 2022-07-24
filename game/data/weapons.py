@@ -53,8 +53,9 @@ class Weapon:
     def __setstate__(self, state: dict[str, Any]) -> None:
         # Update any existing models with new data on load.
         updated = Weapon.with_clsid(state["clsid"])
-        state.update(updated.__dict__)
-        self.__dict__.update(state)
+        if updated is not None:
+            state.update(updated.__dict__)
+            self.__dict__.update(state)
 
     @classmethod
     def register(cls, weapon: Weapon) -> None:
@@ -67,10 +68,10 @@ class Weapon:
         cls._by_clsid[weapon.clsid] = weapon
 
     @classmethod
-    def with_clsid(cls, clsid: str) -> Weapon:
+    def with_clsid(cls, clsid: str) -> Optional[Weapon]:
         if not cls._loaded:
             cls._load_all()
-        return cls._by_clsid[clsid]
+        return cls._by_clsid.get(clsid)
 
     @classmethod
     def _load_all(cls) -> None:
@@ -267,7 +268,9 @@ class Pylon:
                 pylon_number, weapon = value
                 if pylon_number != number:
                     continue
-                allowed.add(Weapon.with_clsid(weapon["clsid"]))
+                allowed_weapon = Weapon.with_clsid(weapon["clsid"])
+                if allowed_weapon is not None:
+                    allowed.add(allowed_weapon)
 
         return cls(number, allowed)
 

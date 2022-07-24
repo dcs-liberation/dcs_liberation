@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import datetime
+import logging
 from collections.abc import Iterable
-from typing import Iterator, Mapping, Optional, TYPE_CHECKING, Type
+from typing import Iterator, Mapping, Optional, TYPE_CHECKING, Type, Dict, Any
 
 from dcs.unittype import FlyingType
 
@@ -120,6 +121,10 @@ class Loadout:
         # }
         payloads = aircraft.dcs_unit_type.load_payloads()
         for payload in payloads.values():
+            if not cls.valid_payload(payload["pylons"]):
+                msg = f'Incompatible loadout for {aircraft} skipped: {payload["name"]}'
+                logging.warning(msg)
+                continue
             name = payload["name"]
             pylons = payload["pylons"]
             yield Loadout(
@@ -127,6 +132,13 @@ class Loadout:
                 {p["num"]: Weapon.with_clsid(p["CLSID"]) for p in pylons.values()},
                 date=None,
             )
+
+    @staticmethod
+    def valid_payload(pylons: Dict[int, Dict[str, str]]) -> bool:
+        for p in pylons.values():
+            if Weapon.with_clsid(p["CLSID"]) is None:
+                return False
+        return True
 
     @classmethod
     def default_loadout_names_for(cls, task: FlightType) -> Iterator[str]:
@@ -189,6 +201,12 @@ class Loadout:
             dcs_unit_type.load_payloads()
             payload = dcs_unit_type.loadout_by_name(name)
             if payload is not None:
+                pylons = {i: {"CLSID": d["clsid"]} for i, d in payload}
+                if not cls.valid_payload(pylons):
+                    aircraft = dcs_unit_type.id
+                    msg = f"Incompatible loadout for {aircraft} skipped: {name}"
+                    logging.warning(msg)
+                    continue
                 return Loadout(
                     name,
                     {i: Weapon.with_clsid(d["clsid"]) for i, d in payload},
