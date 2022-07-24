@@ -4,7 +4,7 @@ Saves from 5.x are not compatible with 6.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.7.12.23362 with the new units (technicals & EWR) and the ACLS & Link4
+* **[Engine]** Support for DCS 2.7.16.27869 with the new units (technicals & EWR) and the ACLS & Link4
 * **[Mission Generation]** Added an option to fast-forward mission generation until the point of first contact (WIP).
 * **[Mission Generation]** Added performance option to not cull IADS when culling would effect how mission is played at target area.
 * **[Mission Generation]** Reworked the ground object generation which now uses a new layout system
