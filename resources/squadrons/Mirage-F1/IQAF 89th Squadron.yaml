@@ -1,0 +1,19 @@
+---
+name: No. 89 Squadron
+nickname: Saddam's Guards
+female_pilot_percentage: 0
+country: Iraq
+role: Multirole Fighter
+aircraft: Mirage-F1EQ
+livery: Iraq Air Force
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

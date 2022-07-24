@@ -1,0 +1,13 @@
+description:  # From wikipedia
+  The Dassault Mirage F1 is a French fighter and attack aircraft designed and manufactured
+  by Dassault Aviation. It was developed as a successor to the popular Mirage III family.
+
+  Export version of the Mirage F1E for Iraq. Single-seat all-weather multi-role fighter and ground-attack aircraft.
+introduced: 1980
+manufacturer: Dassault
+origin: France
+price: 14
+role: Multirole Fighter
+max_range: 200
+variants:
+  Mirage-F1EQ: {}

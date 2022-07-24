@@ -1,0 +1,22 @@
+description:  # From wikipedia
+  The Dassault Mirage F1 is a French fighter and attack aircraft designed and manufactured
+  by Dassault Aviation. It was developed as a successor to the popular Mirage III family.
+
+  Export version of the Mirage F1C for Spain, with local designation C.14A. 45 purchased in three batches,
+  delivered between 1975 and 1981.
+introduced: 1975
+manufacturer: Dassault
+origin: France
+price: 14
+role: Fighter
+max_range: 200
+variants:
+  Mirage-F1CE: {}
+radios:
+  intra_flight: UHF TRAP 137B
+  inter_flight: V/UHF TRAP 136
+  channels:
+    type: common
+    namer: mirage-f1ce
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1

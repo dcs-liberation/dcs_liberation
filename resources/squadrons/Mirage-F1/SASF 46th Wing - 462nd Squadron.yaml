@@ -1,0 +1,19 @@
+---
+name: 46th Wing, 462nd Squadron
+nickname: Ángeles
+female_pilot_percentage: 7
+country: Spain
+role: Fighter
+aircraft: Mirage-F1BE
+livery: ALA 46 Camu Lagarto 1975-1990 Gando SQ 462
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

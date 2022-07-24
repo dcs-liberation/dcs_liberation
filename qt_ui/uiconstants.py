@@ -189,6 +189,10 @@ def load_aircraft_icons():
     AIRCRAFT_ICONS["F-16C_50"] = AIRCRAFT_ICONS["F-16C"]
     AIRCRAFT_ICONS["FA-18C_hornet"] = AIRCRAFT_ICONS["FA-18C"]
     AIRCRAFT_ICONS["A-10C_2"] = AIRCRAFT_ICONS["A-10C"]
+    f1_refuel = ["Mirage-F1CT", "Mirage-F1EE", "Mirage-F1M-EE", "Mirage-F1EQ"]
+    for f1 in f1_refuel:
+        AIRCRAFT_ICONS[f1] = AIRCRAFT_ICONS["Mirage-F1C-200"]
+    AIRCRAFT_ICONS["Mirage-F1M-CE"] = AIRCRAFT_ICONS["Mirage-F1CE"]
 
 
 def load_vehicle_icons():
@@ -205,6 +209,12 @@ def load_aircraft_banners():
             AIRCRAFT_BANNERS[aircraft[:-7]] = QPixmap(
                 os.path.join("./resources/ui/units/aircrafts/banners/", aircraft)
             )
+    variants = ["Mirage-F1CT", "Mirage-F1EE", "Mirage-F1M-EE", "Mirage-F1EQ"]
+    for f1 in variants:
+        AIRCRAFT_BANNERS[f1] = AIRCRAFT_BANNERS["Mirage-F1C-200"]
+    variants = ["Mirage-F1CE", "Mirage-F1M-CE"]
+    for f1 in variants:
+        AIRCRAFT_BANNERS[f1] = AIRCRAFT_BANNERS["Mirage-F1C"]
 
 
 def load_vehicle_banners():

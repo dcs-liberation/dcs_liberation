@@ -1,0 +1,19 @@
+---
+name: 14th Wing, 141st Squadron
+nickname: Ángeles
+female_pilot_percentage: 8
+country: Spain
+role: Fighter
+aircraft: Mirage-F1CE
+livery: ALA 14 Camu Lagarto 1975-1990 SQ 141
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

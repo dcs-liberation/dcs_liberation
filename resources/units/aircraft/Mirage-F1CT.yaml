@@ -1,0 +1,23 @@
+description:  # From wikipedia
+  The Dassault Mirage F1 is a French fighter and attack aircraft designed and manufactured
+  by Dassault Aviation. It was developed as a successor to the popular Mirage III family.
+
+  The Mirage F1CT is a ground attack version of the Mirage F1C-200.
+  Following their replacement in the air defence role by the Mirage 2000,
+  the French Air Force had a number of surplus Mirage F1C-200s, and in 1988 it launched a conversion
+  programme to turn these aircraft into interim ground attack aircraft to replace elderly Mirage IIIEs
+  and Mirage 5s. The Mirage F1CT program brought the avionics of the F1C up to the standard of the F1CR,
+  with the radar upgraded with the additional air-to-ground modes of the Cyrano IVM-R,
+  an improved navigation/attack system fitted, with a laser rangefinder fitted under the nose.
+  It was fitted with new Mk 10 ejection seats, while improved radar detection and warning devices,
+  chaff/flare dispensers, and secure radios were also added. It gained the ability to carry a variety
+  of air-to-ground weapons, including rockets, cluster bombs and laser-guided bombs,
+  while retaining the F1C's air-to-air armament.
+introduced: 1988
+manufacturer: Dassault
+origin: France
+price: 15
+role: Multirole Fighter
+max_range: 200
+variants:
+  Mirage-F1CT: {}
