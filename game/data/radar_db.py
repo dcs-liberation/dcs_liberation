@@ -25,7 +25,7 @@ from dcs.vehicles import AirDefence
 from pydcs_extensions import highdigitsams as hds
 
 TELARS = {
-    AirDefence._2S6_Tunguska,
+    AirDefence.X_2S6_Tunguska,
     AirDefence.SA_11_Buk_LN_9A310M1,
     AirDefence.Osa_9A33_ln,
     AirDefence.Tor_9A331,
@@ -53,7 +53,7 @@ TRACK_RADARS = {
 
 LAUNCHER_TRACKER_PAIRS = {
     AirDefence.Kub_2P25_ln: AirDefence.Kub_1S91_str,
-    AirDefence._5p73_s_125_ln: AirDefence.Snr_s_125_tr,
+    AirDefence.X_5p73_s_125_ln: AirDefence.Snr_s_125_tr,
     AirDefence.S_300PS_5P85C_ln: AirDefence.S_300PS_40B6M_tr,
     AirDefence.S_300PS_5P85D_ln: AirDefence.S_300PS_40B6M_tr,
     AirDefence.Hawk_ln: AirDefence.Hawk_tr,
@@ -80,7 +80,7 @@ LAUNCHER_TRACKER_PAIRS = {
 
 UNITS_WITH_RADAR = {
     # Radars
-    AirDefence._2S6_Tunguska,
+    AirDefence.X_2S6_Tunguska,
     AirDefence.SA_11_Buk_LN_9A310M1,
     AirDefence.Osa_9A33_ln,
     AirDefence.Tor_9A331,
@@ -88,11 +88,11 @@ UNITS_WITH_RADAR = {
     AirDefence.Vulcan,
     AirDefence.Roland_ADS,
     AirDefence.ZSU_23_4_Shilka,
-    AirDefence._1L13_EWR,
+    AirDefence.X_1L13_EWR,
     AirDefence.Kub_1S91_str,
     AirDefence.S_300PS_40B6M_tr,
     AirDefence.S_300PS_40B6MD_sr,
-    AirDefence._55G6_EWR,
+    AirDefence.X_55G6_EWR,
     AirDefence.S_300PS_64H6E_sr,
     AirDefence.SA_11_Buk_SR_9S18M1,
     AirDefence.Dog_Ear_radar,

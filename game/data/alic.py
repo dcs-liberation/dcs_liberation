@@ -5,8 +5,8 @@ from game.theater.theatergroup import TheaterUnit
 
 class AlicCodes:
     CODES = {
-        AirDefence._1L13_EWR.id: 101,
-        AirDefence._55G6_EWR.id: 102,
+        AirDefence.X_1L13_EWR.id: 101,
+        AirDefence.X_55G6_EWR.id: 102,
         AirDefence.S_300PS_40B6MD_sr.id: 103,
         AirDefence.S_300PS_64H6E_sr.id: 104,
         AirDefence.SA_11_Buk_SR_9S18M1.id: 107,
@@ -17,7 +17,7 @@ class AlicCodes:
         AirDefence.Osa_9A33_ln.id: 117,
         AirDefence.Strela_10M3.id: 118,
         AirDefence.Tor_9A331.id: 119,
-        AirDefence._2S6_Tunguska.id: 120,
+        AirDefence.X_2S6_Tunguska.id: 120,
         AirDefence.ZSU_23_4_Shilka.id: 121,
         AirDefence.P_19_s_125_sr.id: 122,
         AirDefence.Snr_s_125_tr.id: 123,

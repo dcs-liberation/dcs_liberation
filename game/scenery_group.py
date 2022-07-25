@@ -1,6 +1,6 @@
 from __future__ import annotations
 from game.theater.theatergroundobject import NAME_BY_CATEGORY
-from dcs.triggers import TriggerZone
+from dcs.triggers import TriggerZone, TriggerZoneCircular
 
 from typing import Iterable, List
 
@@ -40,8 +40,10 @@ class SceneryGroup:
 
         # For each objective definition.
         for zone_def in zone_definitions:
-
-            zone_def_radius = zone_def.radius
+            if isinstance(zone_def, TriggerZoneCircular):
+                zone_def_radius = zone_def.radius
+            else:
+                zone_def_radius = 1500  # use default radius for TriggerZoneCircular
             zone_def_position = zone_def.position
             zone_def_name = zone_def.name
 
