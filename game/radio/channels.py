@@ -258,6 +258,19 @@ class MirageChannelNamer(ChannelNamer):
         return "mirage"
 
 
+class MirageF1CEChannelNamer(ChannelNamer):
+    """Channel namer for the Mirage-F1CE."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = ["V/UHF", "UHF"][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "mirage-f1CE"
+
+
 class ApacheChannelNamer(ChannelNamer):
     """Channel namer for the AH-64D Apache"""
 

@@ -237,6 +237,15 @@ RADIOS: List[Radio] = [
     Radio("AN/ARC-134", (RadioRange(MHz(116), MHz(150), kHz(25), Modulation.AM),)),
     # JAS39
     Radio("R&S Series 6000", (RadioRange(MHz(100), MHz(156), kHz(25), Modulation.AM),)),
+    # Mirage F1
+    Radio(
+        "V/UHF TRAP 136",
+        (
+            RadioRange(MHz(118), MHz(144), kHz(25), Modulation.AM),
+            RadioRange(MHz(225), MHz(400), kHz(25), Modulation.AM),
+        ),
+    ),
+    Radio("UHF TRAP 137B", (RadioRange(MHz(225), MHz(400), kHz(25), Modulation.AM),)),
 ]
 
 
