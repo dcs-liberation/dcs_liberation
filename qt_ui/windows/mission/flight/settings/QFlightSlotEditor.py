@@ -94,6 +94,10 @@ class PilotControls(QHBoxLayout):
         self.player_checkbox = QCheckBox(text="Player")
         self.player_checkbox.setToolTip("Checked if this pilot is a player.")
         self.on_pilot_changed(self.selector.currentIndex())
+        enabled = False
+        if self.roster is not None and self.roster.squadron is not None:
+            enabled = self.roster.squadron.aircraft.flyable
+        self.player_checkbox.setEnabled(enabled)
         self.addWidget(self.player_checkbox)
 
         self.player_checkbox.toggled.connect(self.on_player_toggled)

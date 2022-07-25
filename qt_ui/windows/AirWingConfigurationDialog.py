@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Iterator
+from typing import Iterable, Iterator, Optional
 
 from PySide2.QtCore import (
     QItemSelection,
@@ -9,25 +9,26 @@ from PySide2.QtCore import (
 )
 from PySide2.QtGui import QIcon, QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDialog,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QListView,
+    QMessageBox,
+    QPushButton,
     QScrollArea,
     QStackedLayout,
     QTabWidget,
     QTextEdit,
+    QToolButton,
     QVBoxLayout,
     QWidget,
-    QCheckBox,
-    QPushButton,
-    QGridLayout,
-    QToolButton,
-    QMessageBox,
 )
+
 from game import Game
 from game.ato.flighttype import FlightType
 from game.coalition import Coalition
@@ -177,12 +178,14 @@ class SquadronConfigurationBox(QGroupBox):
         )
         left_column.addWidget(self.base_selector)
 
-        if squadron.player:
+        if not squadron.player and squadron.aircraft.flyable:
+            player_label = QLabel("Player slots not available for opfor")
+        elif not squadron.aircraft.flyable:
+            player_label = QLabel("Player slots not available for non-flyable aircraft")
+        else:
             player_label = QLabel(
                 "Players (one per line, leave empty for an AI-only squadron):"
             )
-        else:
-            player_label = QLabel("Player slots not available for opfor")
         left_column.addWidget(player_label)
 
         players = [p for p in squadron.pilot_pool if p.player]
@@ -192,7 +195,7 @@ class SquadronConfigurationBox(QGroupBox):
             players = []
         self.player_list = QTextEdit("<br />".join(p.name for p in players))
         self.player_list.setAcceptRichText(False)
-        self.player_list.setEnabled(squadron.player)
+        self.player_list.setEnabled(squadron.player and squadron.aircraft.flyable)
         left_column.addWidget(self.player_list)
         delete_button = QPushButton("Remove Squadron")
         delete_button.setMaximumWidth(140)
