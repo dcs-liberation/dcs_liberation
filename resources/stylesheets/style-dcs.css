@@ -231,6 +231,10 @@ QLabel{
     border: none;
 }
 
+QLabel:disabled {
+    color: #888888;
+}
+
 QLabel[style="base-title"]{
     font-size: 24px;
 }
@@ -381,6 +385,13 @@ QGroupBox::indicator:unchecked , QCheckBox::indicator:unchecked {
 
 QGroupBox::indicator:checked , QCheckBox::indicator:checked {
 image: url(resources/stylesheets/check.png);
+}
+
+QCheckBox:disabled {
+    color: #888888;
+}
+QCheckBox::indicator:disabled {
+    background-color: rgba(255, 255, 255, 5%);
 }
 
 
