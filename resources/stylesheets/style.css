@@ -192,3 +192,14 @@ QWidget[style="baseMenuHeader"]{
 QLabel[style="small"]{
     font-size: 8px;
 }
+
+QCheckBox:disabled {
+    color: #888888;
+}
+QCheckBox::indicator:disabled {
+    background-color: rgba(255, 255, 255, 5%);
+}
+
+QLabel:disabled {
+    color: #888888;
+}
