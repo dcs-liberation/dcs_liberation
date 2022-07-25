@@ -177,12 +177,15 @@ class SquadronConfigurationBox(QGroupBox):
         )
         left_column.addWidget(self.base_selector)
 
-        if squadron.player:
+        if squadron.player and squadron.aircraft.flyable:
             player_label = QLabel(
                 "Players (one per line, leave empty for an AI-only squadron):"
             )
         else:
-            player_label = QLabel("Player slots not available for opfor")
+            msg1 = "Player slots not available for opfor"
+            msg2 = "Player slots not available for non-flyable aircraft"
+            text = msg2 if squadron.player else msg1
+            player_label = QLabel(text)
         left_column.addWidget(player_label)
 
         players = [p for p in squadron.pilot_pool if p.player]
@@ -192,7 +195,7 @@ class SquadronConfigurationBox(QGroupBox):
             players = []
         self.player_list = QTextEdit("<br />".join(p.name for p in players))
         self.player_list.setAcceptRichText(False)
-        self.player_list.setEnabled(squadron.player)
+        self.player_list.setEnabled(squadron.player and squadron.aircraft.flyable)
         left_column.addWidget(self.player_list)
         delete_button = QPushButton("Remove Squadron")
         delete_button.setMaximumWidth(140)

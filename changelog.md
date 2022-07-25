@@ -34,6 +34,8 @@ Saves from 5.x are not compatible with 6.0.
 * **[Mission Generation]** Fixed adding additional mission types for a squadron causing error messages when the mission type is not supported by the aircraft type by default
 * **[Mission Generation]** AAA ground units now spawn correctly at the frontline
 * **[UI]** Fixed and issue where the liberation main exe was still running after application close.
+* **[UI]** Disable player slots for non-flyable aircraft.
+
 
 # 5.2.0
 
