@@ -241,7 +241,7 @@ RADIOS: List[Radio] = [
     Radio(
         "V/UHF TRAP 136",
         (
-            RadioRange(MHz(118), MHz(143), kHz(25), Modulation.AM),
+            RadioRange(MHz(118), MHz(144), kHz(25), Modulation.AM),
             RadioRange(MHz(225), MHz(399), kHz(25), Modulation.AM),
         ),
     ),
