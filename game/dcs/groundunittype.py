@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, Type, Iterator
+from typing import Any, Iterator, Optional, Type
 
 import yaml
 from dcs.unittype import VehicleType
@@ -55,6 +55,10 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
     spawn_weight: int
     skynet_properties: SkynetProperties
 
+    # Defines if we should place the ground unit with an inverted heading.
+    # Some units like few Launchers have to be placed backwards to be able to fire.
+    reversed_heading: bool = False
+
     @classmethod
     def named(cls, name: str) -> GroundUnitType:
         if not cls._loaded:
@@ -72,7 +76,7 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
             yield unit
 
     @staticmethod
-    def _each_unit_type() -> Iterator[Type[VehicleType]]:
+    def each_dcs_type() -> Iterator[Type[VehicleType]]:
         yield from vehicle_map.values()
 
     @classmethod
@@ -117,4 +121,5 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
                 skynet_properties=SkynetProperties.from_data(
                     data.get("skynet_properties", {})
                 ),
+                reversed_heading=data.get("reversed_heading", False),
             )

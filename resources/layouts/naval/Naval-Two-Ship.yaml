@@ -14,4 +14,3 @@ groups:
         - Boat
         - Submarine
         - LandingShip
-layout_file: resources/layouts/naval/naval.miz

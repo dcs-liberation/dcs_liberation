@@ -1,3 +1,4 @@
+class: Helicopter
 carrier_capable: true
 description: "The SA342 Gazelle is a light scout/attack and transport helicopter.\
   \ It was introduced in 1968 as a result of cooperation between A\xE9rospatiale and\
@@ -9,6 +10,8 @@ description: "The SA342 Gazelle is a light scout/attack and transport helicopter
   \ which features the famous Fenestron tail rotor."
 introduced: 1977
 lha_capable: true
+cabin_size: 2
+can_carry_crates: false
 manufacturer: "A\xE9rospatiale"
 origin: France
 price: 8

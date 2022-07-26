@@ -121,13 +121,13 @@ class Coalition:
 
     def compute_threat_zones(self, events: GameUpdateEvents) -> None:
         self._threat_zone = ThreatZones.for_faction(self.game, self.player)
-        events.update_threat_zones()
+        events.update_threat_zones(self.player, self._threat_zone)
 
     def compute_nav_meshes(self, events: GameUpdateEvents) -> None:
         self._navmesh = NavMesh.from_threat_zones(
             self.opponent.threat_zone, self.game.theater
         )
-        events.update_navmesh(self.player)
+        events.update_navmesh(self.player, self._navmesh)
 
     def update_transit_network(self) -> None:
         self.transit_network = TransitNetworkBuilder(

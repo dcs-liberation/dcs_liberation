@@ -4,7 +4,7 @@ from abc import ABC
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
-from typing import TypeVar, Generic, Type, ClassVar, Any, Iterator
+from typing import Any, ClassVar, Generic, Iterator, Type, TypeVar
 
 from dcs.unittype import UnitType as DcsUnitType
 
@@ -52,7 +52,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
         raise NotImplementedError
 
     @staticmethod
-    def _each_unit_type() -> Iterator[DcsUnitTypeT]:
+    def each_dcs_type() -> Iterator[DcsUnitTypeT]:
         raise NotImplementedError
 
     @classmethod
@@ -61,7 +61,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
 
     @classmethod
     def _load_all(cls) -> None:
-        for unit_type in cls._each_unit_type():
+        for unit_type in cls.each_dcs_type():
             for data in cls._each_variant_of(unit_type):
                 cls.register(data)
         cls._loaded = True

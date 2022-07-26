@@ -63,7 +63,9 @@ from .frontline import FrontLine
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
+    IadsGroundObject,
     TheaterGroundObject,
+    VehicleGroupGroundObject,
 )
 from .theatergroup import TheaterUnit
 from ..ato.starttype import StartType
@@ -396,7 +398,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.front_lines[connection] = front
         connection.front_lines[self] = front
         self.front_line_db.add(front.id, front)
-        events.new_front_line(front)
+        events.update_front_line(front)
 
     def _remove_front_line_with(
         self, connection: ControlPoint, events: GameUpdateEvents
@@ -828,17 +830,24 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
-
-        # All the attached TGOs have either been depopulated or captured. Tell the UI to
-        # update their state.
-        for tgo in self.connected_objectives:
-            events.update_tgo(tgo)
-
         self._coalition = new_coalition
         self.base.set_strength_to_minimum()
         self._clear_front_lines(events)
         self._create_missing_front_lines(events)
         events.update_control_point(self)
+
+        # All the attached TGOs have either been depopulated or captured. Tell the UI to
+        # update their state. Also update orientation and IADS state for specific tgos
+        for tgo in self.connected_objectives:
+            if isinstance(tgo, IadsGroundObject) or isinstance(
+                tgo, VehicleGroupGroundObject
+            ):
+                if isinstance(tgo, IadsGroundObject):
+                    game.theater.iads_network.update_tgo(tgo, events)
+                conflict_heading = game.theater.heading_to_conflict_from(tgo.position)
+                tgo.rotate(conflict_heading or tgo.heading)
+            if not tgo.is_control_point:
+                events.update_tgo(tgo)
 
     @property
     def required_aircraft_start_type(self) -> Optional[StartType]:
@@ -1070,6 +1079,7 @@ class Airfield(ControlPoint):
             yield from [
                 FlightType.OCA_AIRCRAFT,
                 FlightType.OCA_RUNWAY,
+                FlightType.AIR_ASSAULT,
             ]
 
         yield from super().mission_types(for_player)
@@ -1386,6 +1396,7 @@ class Fob(ControlPoint):
 
         if not self.is_friendly(for_player):
             yield FlightType.STRIKE
+            yield FlightType.AIR_ASSAULT
 
         yield from super().mission_types(for_player)
 

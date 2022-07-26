@@ -391,8 +391,12 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
         mapSettingsLayout.addWidget(invertMap, 0, 1)
         self.advanced_iads = QtWidgets.QCheckBox()
+        disabled_grey_out = "QCheckBox::indicator:disabled{ background-color: rgba(255, 255, 255, 5%); }"
+        self.advanced_iads.setStyleSheet(disabled_grey_out)
         self.registerField("advanced_iads", self.advanced_iads)
-        mapSettingsLayout.addWidget(QtWidgets.QLabel("Advanced IADS"), 1, 0)
+        self.iads_label = QtWidgets.QLabel("Advanced IADS (WIP)")
+        self.iads_label.setStyleSheet("QLabel:disabled{color: #888888}")
+        mapSettingsLayout.addWidget(self.iads_label, 1, 0)
         mapSettingsLayout.addWidget(self.advanced_iads, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
@@ -457,6 +461,7 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
             else:
                 timePeriodPreset.setChecked(True)
             self.advanced_iads.setEnabled(campaign.advanced_iads)
+            self.iads_label.setEnabled(campaign.advanced_iads)
             self.advanced_iads.setChecked(campaign.advanced_iads)
             if not campaign.advanced_iads:
                 self.advanced_iads.setToolTip(

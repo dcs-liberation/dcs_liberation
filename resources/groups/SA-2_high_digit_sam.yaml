@@ -1,0 +1,10 @@
+name: SA-2/S-75 V-759/5V23
+tasks:
+  - MERAD
+units:
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - SAM SA-2 S-75 "Fan Song" TR
+  - SAM SA-2 (V759) LN SM-90
+layouts:
+  - 6 Launcher Site (Semicircle)
+  - 6 Launcher Site (Circle)

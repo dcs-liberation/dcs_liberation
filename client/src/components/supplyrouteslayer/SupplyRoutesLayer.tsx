@@ -7,8 +7,8 @@ export default function SupplyRoutesLayer() {
   const routes = useAppSelector(selectSupplyRoutes).routes;
   return (
     <LayerGroup>
-      {routes.map((route, idx) => {
-        return <SupplyRoute key={idx} route={route} />;
+      {routes.map((route) => {
+        return <SupplyRoute key={route.id} route={route} />;
       })}
     </LayerGroup>
   );

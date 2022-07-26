@@ -18,6 +18,7 @@ from game.data.groups import GroupRole
 from game.layout.layout import (
     TgoLayout,
     TgoLayoutGroup,
+    TgoLayoutUnitGroup,
     LayoutUnit,
     AntiAirLayout,
     BuildingLayout,
@@ -29,10 +30,10 @@ from game.layout.layoutmapping import LayoutMapping
 from game.profiling import logged_duration
 from game.version import VERSION
 
-TEMPLATE_DIR = "resources/layouts/"
-TEMPLATE_DUMP = "Liberation/layouts.p"
+LAYOUT_DIR = "resources/layouts/"
+LAYOUT_DUMP = "Liberation/layouts.p"
 
-TEMPLATE_TYPES = {
+LAYOUT_TYPES = {
     GroupRole.AIR_DEFENSE: AntiAirLayout,
     GroupRole.BUILDING: BuildingLayout,
     GroupRole.NAVAL: NavalLayout,
@@ -62,7 +63,7 @@ class LayoutLoader:
         """This will load all pre-loaded layouts from a pickle file.
         If pickle can not be loaded it will import and dump the layouts"""
         # We use a pickle for performance reasons. Importing takes many seconds
-        file = Path(persistency.base_path()) / TEMPLATE_DUMP
+        file = Path(persistency.base_path()) / LAYOUT_DUMP
         if file.is_file():
             # Load from pickle if existing
             with file.open("rb") as f:
@@ -82,7 +83,7 @@ class LayoutLoader:
         self._layouts = {}
         mappings: dict[str, list[LayoutMapping]] = defaultdict(list)
         with logged_duration("Parsing mapping yamls"):
-            for file in Path(TEMPLATE_DIR).rglob("*.yaml"):
+            for file in Path(LAYOUT_DIR).rglob("*.yaml"):
                 if not file.is_file():
                     raise RuntimeError(f"{file.name} is not a file")
                 with file.open("r", encoding="utf-8") as f:
@@ -95,11 +96,17 @@ class LayoutLoader:
             with ThreadPoolExecutor() as exe:
                 exe.map(self._load_from_miz, mappings.keys(), mappings.values())
 
+        # Sort al the LayoutGroups with the correct index
+        for layout in self._layouts.values():
+            layout.groups.sort(key=lambda g: g.group_index)
+            for group in layout.groups:
+                group.unit_groups.sort(key=lambda ug: ug.unit_index)
+
         logging.info(f"Imported {len(self._layouts)} layouts")
         self._dump_templates()
 
     def _dump_templates(self) -> None:
-        file = Path(persistency.base_path()) / TEMPLATE_DUMP
+        file = Path(persistency.base_path()) / LAYOUT_DUMP
         dump = (VERSION, self._layouts)
         with file.open("wb") as fdata:
             pickle.dump(dump, fdata)
@@ -127,7 +134,7 @@ class LayoutLoader:
                 ):
 
                     try:
-                        g_id, group_name, group_mapping = mapping.group_for_name(
+                        g_id, u_id, group_name, group_mapping = mapping.group_for_name(
                             dcs_group.name
                         )
                     except KeyError:
@@ -143,40 +150,46 @@ class LayoutLoader:
                     layout = self._layouts.get(mapping.name, None)
                     if layout is None:
                         # Create a new template
-                        layout = TEMPLATE_TYPES[mapping.primary_role](
+                        layout = LAYOUT_TYPES[mapping.primary_role](
                             mapping.name, mapping.description
                         )
                         layout.generic = mapping.generic
                         layout.tasks = mapping.tasks
                         self._layouts[layout.name] = layout
-
                     for i, unit in enumerate(dcs_group.units):
-                        group_layout = None
-                        for group in layout.all_groups:
-                            if group.name == group_mapping.name:
+                        unit_group = None
+                        for _unit_group in layout.all_unit_groups:
+                            if _unit_group.name == group_mapping.name:
                                 # We already have a layoutgroup for this dcs_group
-                                group_layout = group
-                        if not group_layout:
-                            group_layout = TgoLayoutGroup(
+                                unit_group = _unit_group
+                        if not unit_group:
+                            unit_group = TgoLayoutUnitGroup(
                                 group_mapping.name,
                                 [],
                                 group_mapping.unit_count,
                                 group_mapping.unit_types,
                                 group_mapping.unit_classes,
                                 group_mapping.fallback_classes,
+                                u_id,
                             )
-                            group_layout.optional = group_mapping.optional
-                            group_layout.fill = group_mapping.fill
-                            group_layout.sub_task = group_mapping.sub_task
-                            # Add the group at the correct index
-                            layout.add_layout_group(group_name, group_layout, g_id)
+                            unit_group.optional = group_mapping.optional
+                            unit_group.fill = group_mapping.fill
+                            unit_group.sub_task = group_mapping.sub_task
+                            tgo_group = None
+                            for _tgo_group in layout.groups:
+                                if _tgo_group.group_name == group_name:
+                                    tgo_group = _tgo_group
+                            if tgo_group is None:
+                                tgo_group = TgoLayoutGroup(group_name, g_id)
+                                layout.groups.append(tgo_group)
+                            tgo_group.unit_groups.append(unit_group)
                         layout_unit = LayoutUnit.from_unit(unit)
                         if i == 0 and layout.name not in template_position:
                             template_position[layout.name] = unit.position
                         layout_unit.position = (
                             layout_unit.position - template_position[layout.name]
                         )
-                        group_layout.layout_units.append(layout_unit)
+                        unit_group.layout_units.append(layout_unit)
 
     def by_name(self, name: str) -> TgoLayout:
         self.initialize()

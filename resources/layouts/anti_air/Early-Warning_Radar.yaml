@@ -12,4 +12,3 @@ groups:
       fallback_classes:
         - SearchRadar
         - SearchTrackRadar
-layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

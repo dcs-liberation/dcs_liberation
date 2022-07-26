@@ -60,6 +60,21 @@ class LayoutUnit:
 
 @dataclass
 class TgoLayoutGroup:
+    """The layout of a group which will generate a DCS group later. The TgoLayoutGroup has one or many TgoLayoutUnitGroup which represents a set of unit of the same type. Therefore the TgoLayoutGroup is a logical grouping of different unit_types. A TgoLayout can have one or many TgoLayoutGroup"""
+
+    # The group name which will be used later as the DCS group name
+    group_name: str
+
+    # The index of the group within the TgoLayout. Used to preserve that the order of
+    # the groups generated match the order defined in the layout yaml.
+    group_index: int
+
+    # List of all connected TgoLayoutUnitGroup
+    unit_groups: list[TgoLayoutUnitGroup] = field(default_factory=list)
+
+
+@dataclass
+class TgoLayoutUnitGroup:
     """The layout of a single type of unit within the TgoLayout
 
     Each DCS group that is spawned in the mission is composed of one or more
@@ -94,6 +109,9 @@ class TgoLayoutGroup:
     unit_types: list[Type[DcsUnitType]] = field(default_factory=list)
     unit_classes: list[UnitClass] = field(default_factory=list)
     fallback_classes: list[UnitClass] = field(default_factory=list)
+
+    # The index of the TgoLayoutGroup within the Layout
+    unit_index: int = field(default_factory=int)
 
     # Allows a group to have a special SubTask (PointDefence for example)
     sub_task: Optional[GroupTask] = None
@@ -172,20 +190,12 @@ class TgoLayout:
         self.description = description
         self.tasks: list[GroupTask] = []  # The supported
 
-        # Mapping of group name and LayoutGroups for a specific TgoGroup
-        # A Group can have multiple TgoLayoutGroups which get merged together
-        self.groups: dict[str, list[TgoLayoutGroup]] = defaultdict(list)
+        # All TgoGroups this layout has.
+        self.groups: list[TgoLayoutGroup] = []
 
         # A generic layout will be used to create generic ForceGroups during the
         # campaign initialization. For each generic layout a new Group will be created.
         self.generic: bool = False
-
-    def add_layout_group(
-        self, name: str, group: TgoLayoutGroup, index: int = 0
-    ) -> None:
-        """Adds the layout group to the group dict at the given index"""
-        # If the index is greater than the actual len it will add it after the last item
-        self.groups[name].insert(min(len(self.groups[name]), index), group)
 
     def usable_by_faction(self, faction: Faction) -> bool:
         # Special handling for Buildings
@@ -199,7 +209,7 @@ class TgoLayout:
         try:
             return all(
                 len(group.possible_types_for_faction(faction)) > 0
-                for group in self.all_groups
+                for group in self.all_unit_groups
                 if not group.optional
             )
         except LayoutException:
@@ -219,9 +229,9 @@ class TgoLayout:
         raise NotImplementedError
 
     @property
-    def all_groups(self) -> Iterator[TgoLayoutGroup]:
-        for groups in self.groups.values():
-            yield from groups
+    def all_unit_groups(self) -> Iterator[TgoLayoutUnitGroup]:
+        for group in self.groups:
+            yield from group.unit_groups
 
 
 class AntiAirLayout(TgoLayout):

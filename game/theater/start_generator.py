@@ -190,7 +190,17 @@ class NoOpGroundObjectGenerator(ControlPointGroundObjectGenerator):
         return True
 
 
-class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
+class GenericCarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
+    def update_carrier_name(self, carrier_name: str) -> None:
+        # Set Control Point name
+        self.control_point.name = carrier_name
+
+        # Set UnitName. First unit of the TGO is always the carrier
+        carrier = next(self.control_point.ground_objects[-1].units)
+        carrier.name = carrier_name
+
+
+class CarrierGroundObjectGenerator(GenericCarrierGroundObjectGenerator):
     def generate(self) -> bool:
         if not super().generate():
             return False
@@ -215,11 +225,11 @@ class CarrierGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 self.control_point.heading,
             ),
         )
-        self.control_point.name = random.choice(carrier_names)
+        self.update_carrier_name(random.choice(carrier_names))
         return True
 
 
-class LhaGroundObjectGenerator(ControlPointGroundObjectGenerator):
+class LhaGroundObjectGenerator(GenericCarrierGroundObjectGenerator):
     def generate(self) -> bool:
         if not super().generate():
             return False
@@ -246,7 +256,7 @@ class LhaGroundObjectGenerator(ControlPointGroundObjectGenerator):
                 self.control_point.heading,
             ),
         )
-        self.control_point.name = random.choice(lha_names)
+        self.update_carrier_name(random.choice(lha_names))
         return True
 
 
