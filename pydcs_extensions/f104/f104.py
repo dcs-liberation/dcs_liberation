@@ -14,16 +14,6 @@ class WeaponsF104:
         "name": "custom Smoke for rocket engine",
         "weight": 0.01,
     }
-    LAU_105_2_AIM_9L_ = {
-        "clsid": "{VSN_F104_LAU105_AIM9L}",
-        "name": "LAU-105 2*AIM-9L",
-        "weight": 332,
-    }
-    LAU_105_2_AIM_9P = {
-        "clsid": "{VSN_F104_LAU105_AIM9P}",
-        "name": "LAU-105 2*AIM-9P",
-        "weight": 332,
-    }
     LAU_115C_2_AIM_9L = {
         "clsid": "{VSN_F104_LAU115C_AIM9L}",
         "name": "LAU-115C 2*AIM-9L",
@@ -504,8 +494,8 @@ class VSN_F104C(PlaneType):
             Weapons.TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD,
         )
         LAU_105_2_AIM_9P5 = (6, Weapons.LAU_105_2_AIM_9P5)
-        LAU_115C_2_AIM_9L = (6, Weapons.LAU_115C_2_AIM_9L)
-        LAU_115C_2_AIM_9P = (6, Weapons.LAU_115C_2_AIM_9P)
+        LAU_115C_2_AIM_9L = (6, WeaponsF104.LAU_115C_2_AIM_9L)
+        LAU_115C_2_AIM_9P = (6, WeaponsF104.LAU_115C_2_AIM_9P)
 
     class Pylon8:
         Mk_82___500lb_GP_Bomb_LD = (8, Weapons.Mk_82___500lb_GP_Bomb_LD)

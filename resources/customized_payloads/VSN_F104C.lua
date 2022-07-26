@@ -1,5 +1,5 @@
 local unitPayloads = {
-	["name"] = "VSN_F104G",
+	["name"] = "VSN_F104C",
 	["payloads"] = {
 		[1] = {
 			["displayName"] = "CAP",
@@ -149,6 +149,6 @@ local unitPayloads = {
 	},
 	["tasks"] = {
 	},
-	["unitType"] = "VSN_F104G",
+	["unitType"] = "VSN_F104C",
 }
 return unitPayloads
