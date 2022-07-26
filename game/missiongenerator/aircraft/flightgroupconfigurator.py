@@ -201,9 +201,12 @@ class FlightGroupConfigurator:
         missions_for_skill_increase = 4
         increase = pilot.record.missions_flown // missions_for_skill_increase
         capped_increase = min(current_level + increase, len(levels) - 1)
-        new_level = (current_level, capped_increase)[
-            self.game.settings.ai_pilot_levelling
-        ]
+
+        if self.game.settings.ai_pilot_levelling:
+            new_level = capped_increase
+        else:
+            new_level = current_level
+
         return levels[new_level]
 
     def setup_props(self) -> None:
