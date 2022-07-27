@@ -5,8 +5,8 @@ from game.commander.theaterstate import TheaterState
 from game.htn import CompoundTask, Method
 
 
-class AttackGarrisons(CompoundTask[TheaterState]):
+class AttackBattlePositions(CompoundTask[TheaterState]):
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
-        for garrisons in state.enemy_garrisons.values():
-            for garrison in garrisons.in_priority_order:
-                yield [PlanBai(garrison)]
+        for battle_positions in state.enemy_battle_positions.values():
+            for battle_position in battle_positions.in_priority_order:
+                yield [PlanBai(battle_position)]

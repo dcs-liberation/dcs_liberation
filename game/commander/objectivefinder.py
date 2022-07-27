@@ -105,7 +105,7 @@ class ObjectiveFinder:
                 # better control over planning profiles and target dependent
                 # loadouts we can clean this up.
                 if not isinstance(ground_object, BuildingGroundObject):
-                    # Other group types (like ships, SAMs, garrisons, etc) have better
+                    # Other group types (like ships, SAMs, battle positions, etc) have better
                     # suited mission types like anti-ship, DEAD, and BAI.
                     continue
 
