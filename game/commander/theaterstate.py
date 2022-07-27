@@ -7,7 +7,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from typing import Optional, TYPE_CHECKING, Union
 
-from game.commander.garrisons import Garrisons
+from game.commander.battlepositions import BattlePositions
 from game.commander.objectivefinder import ObjectiveFinder
 from game.db import GameDb
 from game.ground_forces.combat_stance import CombatStance
@@ -56,7 +56,7 @@ class TheaterState(WorldState["TheaterState"]):
     enemy_convoys: list[Convoy]
     enemy_shipping: list[CargoShip]
     enemy_ships: list[NavalGroundObject]
-    enemy_garrisons: dict[ControlPoint, Garrisons]
+    enemy_battle_positions: dict[ControlPoint, BattlePositions]
     oca_targets: list[ControlPoint]
     strike_targets: list[TheaterGroundObject]
     enemy_barcaps: list[ControlPoint]
@@ -87,11 +87,11 @@ class TheaterState(WorldState["TheaterState"]):
         self.enemy_ships.remove(target)
         self._rebuild_threat_zones()
 
-    def has_garrison(self, target: VehicleGroupGroundObject) -> bool:
-        return target in self.enemy_garrisons[target.control_point]
+    def has_battle_position(self, target: VehicleGroupGroundObject) -> bool:
+        return target in self.enemy_battle_positions[target.control_point]
 
-    def eliminate_garrison(self, target: VehicleGroupGroundObject) -> None:
-        self.enemy_garrisons[target.control_point].eliminate(target)
+    def eliminate_battle_position(self, target: VehicleGroupGroundObject) -> None:
+        self.enemy_battle_positions[target.control_point].eliminate(target)
 
     def ammo_dumps_at(
         self, control_point: ControlPoint
@@ -119,8 +119,9 @@ class TheaterState(WorldState["TheaterState"]):
             enemy_convoys=list(self.enemy_convoys),
             enemy_shipping=list(self.enemy_shipping),
             enemy_ships=list(self.enemy_ships),
-            enemy_garrisons={
-                cp: dataclasses.replace(g) for cp, g in self.enemy_garrisons.items()
+            enemy_battle_positions={
+                cp: dataclasses.replace(g)
+                for cp, g in self.enemy_battle_positions.items()
             },
             oca_targets=list(self.oca_targets),
             strike_targets=list(self.strike_targets),
@@ -128,7 +129,7 @@ class TheaterState(WorldState["TheaterState"]):
             threat_zones=self.threat_zones,
             # Persistent properties are not copied. These are a way for failed subtasks
             # to communicate requirements to other tasks. For example, the task to
-            # attack enemy garrisons might fail because the target area has IADS
+            # attack enemy battle_positions might fail because the target area has IADS
             # protection. In that case, the preconditions of PlanBai would fail, but
             # would add the IADS that prevented it from being planned to the list of
             # IADS threats so that DegradeIads will consider it a threat later.
@@ -171,8 +172,9 @@ class TheaterState(WorldState["TheaterState"]):
             enemy_convoys=list(finder.convoys()),
             enemy_shipping=list(finder.cargo_ships()),
             enemy_ships=list(finder.enemy_ships()),
-            enemy_garrisons={
-                cp: Garrisons.for_control_point(cp) for cp in ordered_capturable_points
+            enemy_battle_positions={
+                cp: BattlePositions.for_control_point(cp)
+                for cp in ordered_capturable_points
             },
             oca_targets=list(finder.oca_targets(min_aircraft=20)),
             strike_targets=list(finder.strike_targets()),
