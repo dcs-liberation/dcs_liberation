@@ -6,6 +6,9 @@ jobs:
   lint:
     uses: ./.github/workflows/lint.yml
 
+  test:
+    uses: ./.github/workflows/test.yml
+
   build:
     runs-on: windows-latest
     steps:
