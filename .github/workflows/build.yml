@@ -3,6 +3,9 @@ name: Build
 on: [push, pull_request]
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+
   build:
     runs-on: windows-latest
     steps:
@@ -15,9 +18,6 @@ jobs:
 
       - name: Set up JS environment
         uses: ./.github/actions/setup-liberation-js
-
-      - name: mypy
-        uses: ./.github/actions/mypy
 
       - name: Set build number
         run: |
