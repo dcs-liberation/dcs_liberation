@@ -2,8 +2,7 @@ local unitPayloads = {
 	["name"] = "Mirage-F1M-CE",
 	["payloads"] = {
 		[1] = {
-			["displayName"] = "Liberation Strike",
-			["name"] = "Liberation Strike",
+			["name"] = "Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -39,7 +38,7 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "Liberation BAI",
+			["name"] = "BAI",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -75,8 +74,7 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["displayName"] = "Liberation DEAD",
-			["name"] = "Liberation DEAD",
+			["name"] = "DEAD",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -112,8 +110,7 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["displayName"] = "Liberation Fighter Sweep",
-			["name"] = "Liberation Fighter Sweep",
+			["name"] = "Fighter Sweep",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -141,8 +138,7 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["displayName"] = "Liberation CAS",
-			["name"] = "Liberation CAS",
+			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -178,8 +174,7 @@ local unitPayloads = {
 			},
 		},
 		[6] = {
-			["displayName"] = "Liberation TARCAP",
-			["name"] = "Liberation TARCAP",
+			["name"] = "TARCAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -207,8 +202,7 @@ local unitPayloads = {
 			},
 		},
 		[7] = {
-			["displayName"] = "Liberation OCA/Runway",
-			["name"] = "Liberation OCA/Runway",
+			["name"] = "OCA/Runway",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -244,8 +238,7 @@ local unitPayloads = {
 			},
 		},
 		[8] = {
-			["displayName"] = "Liberation OCA/Aircraft",
-			["name"] = "Liberation OCA/Aircraft",
+			["name"] = "OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -281,7 +274,7 @@ local unitPayloads = {
 			},
 		},
 		[9] = {
-			["name"] = "Liberation BARCAP",
+			["name"] = "BARCAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",
@@ -309,8 +302,7 @@ local unitPayloads = {
 			},
 		},
 		[10] = {
-			["displayName"] = "Liberation Escort",
-			["name"] = "Liberation Escort",
+			["name"] = "Escort",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{9BFD8C90-F7AE-4e90-833B-BFD0CED0E536}",

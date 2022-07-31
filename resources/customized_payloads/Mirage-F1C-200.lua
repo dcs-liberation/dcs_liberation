@@ -2,7 +2,7 @@ local unitPayloads = {
 	["name"] = "Mirage-F1C-200",
 	["payloads"] = {
 		[1] = {
-			["name"] = "Liberation BAI",
+			["name"] = "BAI",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -38,8 +38,7 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["displayName"] = "Liberation DEAD",
-			["name"] = "Liberation DEAD",
+			["name"] = "DEAD",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -75,7 +74,7 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "Liberation BARCAP",
+			["name"] = "BARCAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -103,8 +102,7 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["displayName"] = "Liberation Fighter Sweep",
-			["name"] = "Liberation Fighter Sweep",
+			["name"] = "Fighter Sweep",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -132,8 +130,7 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["displayName"] = "Liberation OCA/Runway",
-			["name"] = "Liberation OCA/Runway",
+			["name"] = "OCA/Runway",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -169,8 +166,7 @@ local unitPayloads = {
 			},
 		},
 		[6] = {
-			["displayName"] = "Liberation Escort",
-			["name"] = "Liberation Escort",
+			["name"] = "Escort",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -198,8 +194,7 @@ local unitPayloads = {
 			},
 		},
 		[7] = {
-			["displayName"] = "Liberation Strike",
-			["name"] = "Liberation Strike",
+			["name"] = "Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -235,8 +230,7 @@ local unitPayloads = {
 			},
 		},
 		[8] = {
-			["displayName"] = "Liberation CAS",
-			["name"] = "Liberation CAS",
+			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -272,8 +266,7 @@ local unitPayloads = {
 			},
 		},
 		[9] = {
-			["displayName"] = "Liberation TARCAP",
-			["name"] = "Liberation TARCAP",
+			["name"] = "TARCAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
@@ -301,8 +294,7 @@ local unitPayloads = {
 			},
 		},
 		[10] = {
-			["displayName"] = "Liberation OCA/Aircraft",
-			["name"] = "Liberation OCA/Aircraft",
+			["name"] = "OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{R550_Magic_1}",
