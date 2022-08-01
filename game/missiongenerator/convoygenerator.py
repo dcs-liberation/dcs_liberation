@@ -10,6 +10,7 @@ from dcs.unit import Vehicle
 from dcs.unitgroup import VehicleGroup
 
 from game.dcs.groundunittype import GroundUnitType
+from game.missiongenerator.groundforcepainter import GroundForcePainter
 from game.transfers import Convoy
 from game.unitmap import UnitMap
 from game.utils import kph
@@ -71,6 +72,7 @@ class ConvoyGenerator:
         for_player: bool,
     ) -> VehicleGroup:
         country = self.mission.country(self.game.coalition_for(for_player).country_name)
+        faction = self.game.coalition_for(for_player).faction
 
         unit_types = list(units.items())
         main_unit_type, main_unit_count = unit_types[0]
@@ -96,6 +98,7 @@ class ConvoyGenerator:
                 v.position.x = position.x
                 v.position.y = next(y)
                 v.heading = 0
+                GroundForcePainter(faction, v).apply_livery()
                 group.add_unit(v)
 
         return group

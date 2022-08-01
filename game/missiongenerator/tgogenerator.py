@@ -41,6 +41,8 @@ from dcs.unit import Unit, InvisibleFARP
 from dcs.unitgroup import MovingGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import ShipType, VehicleType
 from dcs.vehicles import vehicle_map
+
+from game.missiongenerator.groundforcepainter import GroundForcePainter
 from game.missiongenerator.missiondata import CarrierInfo, MissionData
 
 from game.radio.radios import RadioFrequency, RadioRegistry
@@ -124,6 +126,7 @@ class GroundObjectGenerator:
         vehicle_group: Optional[VehicleGroup] = None
         for unit in units:
             assert issubclass(unit.type, VehicleType)
+            faction = self.game.coalition_for_country(self.country.name).faction
             if vehicle_group is None:
                 vehicle_group = self.m.vehicle_group(
                     self.country,
@@ -136,11 +139,13 @@ class GroundObjectGenerator:
                 self.enable_eplrs(vehicle_group, unit.type)
                 vehicle_group.units[0].name = unit.unit_name
                 self.set_alarm_state(vehicle_group)
+                GroundForcePainter(faction, vehicle_group.units[0]).apply_livery()
             else:
                 vehicle_unit = self.m.vehicle(unit.unit_name, unit.type)
                 vehicle_unit.player_can_drive = True
                 vehicle_unit.position = unit.position
                 vehicle_unit.heading = unit.position.heading.degrees
+                GroundForcePainter(faction, vehicle_unit).apply_livery()
                 vehicle_group.add_unit(vehicle_unit)
             self._register_theater_unit(unit, vehicle_group.units[-1])
         if vehicle_group is None:

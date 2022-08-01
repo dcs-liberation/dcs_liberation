@@ -41,10 +41,12 @@ from game.ground_forces.combat_stance import CombatStance
 from game.naming import namegen
 from game.radio.radios import RadioRegistry
 from game.theater.controlpoint import ControlPoint
+from .aircraft.aircraftpainter import AircraftPainterJtac
 from game.unitmap import UnitMap
 from game.utils import Heading
 from .missiondata import MissionData, JtacInfo
 from .frontlineconflictdescription import FrontLineConflictDescription
+from .groundforcepainter import GroundForcePainter
 from .lasercoderegistry import LaserCodeRegistry
 
 if TYPE_CHECKING:
@@ -164,6 +166,7 @@ class FlotGenerator:
                 altitude=5000,
                 maintask=AFAC,
             )
+            AircraftPainterJtac(self.game.blue.faction, utype, jtac).apply_livery()
             jtac.points[0].tasks.append(
                 FAC(
                     callsign=len(self.mission_data.jtacs) + 1,
@@ -227,7 +230,7 @@ class FlotGenerator:
                         u = random.choices(
                             manpads, weights=[m.spawn_weight for m in manpads]
                         )[0]
-                        self.mission.vehicle_group(
+                        vg = self.mission.vehicle_group(
                             side,
                             namegen.next_infantry_name(side, u),
                             u.dcs_unit_type,
@@ -236,6 +239,8 @@ class FlotGenerator:
                             heading=forward_heading.degrees,
                             move_formation=PointAction.OffRoad,
                         )
+                        vehicle: Vehicle = vg.units[0]
+                        GroundForcePainter(faction, vehicle).apply_livery()
             return
 
         possible_infantry_units = set(faction.infantry_with_class(UnitClass.INFANTRY))
@@ -252,7 +257,7 @@ class FlotGenerator:
             weights=[u.spawn_weight for u in infantry_choices],
             k=INFANTRY_GROUP_SIZE,
         )
-        self.mission.vehicle_group(
+        vg = self.mission.vehicle_group(
             side,
             namegen.next_infantry_name(side, units[0]),
             units[0].dcs_unit_type,
@@ -261,10 +266,12 @@ class FlotGenerator:
             heading=forward_heading.degrees,
             move_formation=PointAction.OffRoad,
         )
+        vehicle = vg.units[0]
+        GroundForcePainter(faction, vehicle).apply_livery()
 
         for unit in units[1:]:
             position = infantry_position.random_point_within(55, 5)
-            self.mission.vehicle_group(
+            vg = self.mission.vehicle_group(
                 side,
                 namegen.next_infantry_name(side, unit),
                 unit.dcs_unit_type,
@@ -273,6 +280,8 @@ class FlotGenerator:
                 heading=forward_heading.degrees,
                 move_formation=PointAction.OffRoad,
             )
+            vehicle = vg.units[0]
+            GroundForcePainter(faction, vehicle).apply_livery()
 
     def _set_reform_waypoint(
         self, dcs_group: VehicleGroup, forward_heading: Heading
@@ -779,8 +788,10 @@ class FlotGenerator:
 
         if side == self.conflict.attackers_country:
             cp = self.conflict.blue_cp
+            faction = self.game.coalition_for(True).faction
         else:
             cp = self.conflict.red_cp
+            faction = self.game.coalition_for(False).faction
 
         group = self.mission.vehicle_group(
             side,
@@ -797,5 +808,6 @@ class FlotGenerator:
         for c in range(count):
             vehicle: Vehicle = group.units[c]
             vehicle.player_can_drive = True
+            GroundForcePainter(faction, vehicle).apply_livery()
 
         return group
