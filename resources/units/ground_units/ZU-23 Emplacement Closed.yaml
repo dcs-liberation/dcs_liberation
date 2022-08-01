@@ -1,4 +1,8 @@
 class: AAA
+description:
+  The ZU-23-2 is a Soviet towed 23×152mm anti-aircraft twin-barreled
+  autocannon. ZU stands for Zenitnaya Ustanovka – anti-aircraft mount.
+  This variant is mounted on a closed emplacement.
 price: 6
 variants:
   AAA ZU-23 Closed Emplacement: null
