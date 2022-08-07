@@ -129,7 +129,7 @@ def run_ui(game: Game | None, dev: bool) -> None:
             message_box.setWindowTitle("No DCS installation directory.")
             message_box.setText(
                 "The DCS Installation directory is not set correctly. "
-                "This will prevent DCS Liberation to work properly as the MissionScripting "
+                "This will prevent DCS Liberation from working properly, as the MissionScripting "
                 "file will not be modified."
                 "<br/><br/>To solve this problem, you can set the Installation directory "
                 "within the preferences menu. You can also manually edit or replace the "
