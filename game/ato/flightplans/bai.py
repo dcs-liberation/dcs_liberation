@@ -19,8 +19,8 @@ class BaiFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder):
-    def build(self) -> FormationAttackLayout:
+class Builder(FormationAttackBuilder[BaiFlightPlan, FormationAttackLayout]):
+    def layout(self) -> FormationAttackLayout:
         location = self.package.target
 
         from game.transfers import Convoy
@@ -38,3 +38,6 @@ class Builder(FormationAttackBuilder):
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
         return self._build(FlightWaypointType.INGRESS_BAI, targets)
+
+    def build(self) -> BaiFlightPlan:
+        return BaiFlightPlan(self.flight, self.layout())

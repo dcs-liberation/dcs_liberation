@@ -14,6 +14,7 @@ from .dead import DeadFlightPlan
 from .escort import EscortFlightPlan
 from .ferry import FerryFlightPlan
 from .flightplan import FlightPlan
+from .ibuilder import IBuilder
 from .ocaaircraft import OcaAircraftFlightPlan
 from .ocarunway import OcaRunwayFlightPlan
 from .packagerefueling import PackageRefuelingFlightPlan
@@ -72,42 +73,39 @@ class FlightPlanBuilder:
                 f"{flight.departure} to {flight.package.target}"
             ) from ex
 
-    def plan_type(self, flight: Flight) -> Type[FlightPlan[Any]]:
-        plan_type: Type[FlightPlan[Any]]
+    def builder_type(self, flight: Flight) -> Type[IBuilder[Any, Any]]:
         if flight.flight_type is FlightType.REFUELING:
             if self.package.target.is_friendly(self.is_player) or isinstance(
                 self.package.target, FrontLine
             ):
-                return TheaterRefuelingFlightPlan
-            return PackageRefuelingFlightPlan
+                return TheaterRefuelingFlightPlan.builder_type()
+            return PackageRefuelingFlightPlan.builder_type()
 
-        plan_dict: dict[FlightType, Type[FlightPlan[Any]]] = {
-            FlightType.ANTISHIP: AntiShipFlightPlan,
-            FlightType.BAI: BaiFlightPlan,
-            FlightType.BARCAP: BarCapFlightPlan,
-            FlightType.CAS: CasFlightPlan,
-            FlightType.DEAD: DeadFlightPlan,
-            FlightType.ESCORT: EscortFlightPlan,
-            FlightType.OCA_AIRCRAFT: OcaAircraftFlightPlan,
-            FlightType.OCA_RUNWAY: OcaRunwayFlightPlan,
-            FlightType.SEAD: SeadFlightPlan,
-            FlightType.SEAD_ESCORT: EscortFlightPlan,
-            FlightType.STRIKE: StrikeFlightPlan,
-            FlightType.SWEEP: SweepFlightPlan,
-            FlightType.TARCAP: TarCapFlightPlan,
-            FlightType.AEWC: AewcFlightPlan,
-            FlightType.TRANSPORT: AirliftFlightPlan,
-            FlightType.FERRY: FerryFlightPlan,
-            FlightType.AIR_ASSAULT: AirAssaultFlightPlan,
+        builder_dict: dict[FlightType, Type[IBuilder[Any, Any]]] = {
+            FlightType.ANTISHIP: AntiShipFlightPlan.builder_type(),
+            FlightType.BAI: BaiFlightPlan.builder_type(),
+            FlightType.BARCAP: BarCapFlightPlan.builder_type(),
+            FlightType.CAS: CasFlightPlan.builder_type(),
+            FlightType.DEAD: DeadFlightPlan.builder_type(),
+            FlightType.ESCORT: EscortFlightPlan.builder_type(),
+            FlightType.OCA_AIRCRAFT: OcaAircraftFlightPlan.builder_type(),
+            FlightType.OCA_RUNWAY: OcaRunwayFlightPlan.builder_type(),
+            FlightType.SEAD: SeadFlightPlan.builder_type(),
+            FlightType.SEAD_ESCORT: EscortFlightPlan.builder_type(),
+            FlightType.STRIKE: StrikeFlightPlan.builder_type(),
+            FlightType.SWEEP: SweepFlightPlan.builder_type(),
+            FlightType.TARCAP: TarCapFlightPlan.builder_type(),
+            FlightType.AEWC: AewcFlightPlan.builder_type(),
+            FlightType.TRANSPORT: AirliftFlightPlan.builder_type(),
+            FlightType.FERRY: FerryFlightPlan.builder_type(),
+            FlightType.AIR_ASSAULT: AirAssaultFlightPlan.builder_type(),
         }
         try:
-            return plan_dict[flight.flight_type]
+            return builder_dict[flight.flight_type]
         except KeyError as ex:
             raise PlanningError(
                 f"{flight.flight_type} flight plan generation not implemented"
             ) from ex
 
     def generate_flight_plan(self, flight: Flight) -> FlightPlan[Any]:
-        plan_type = self.plan_type(flight)
-        layout = plan_type.builder_type()(flight, self.theater).build()
-        return plan_type(flight, layout)
+        return self.builder_type(flight)(flight, self.theater).build()

@@ -8,15 +8,14 @@ generating the waypoints for the mission.
 from __future__ import annotations
 
 import math
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections.abc import Iterator
 from datetime import timedelta
 from functools import cached_property
-from typing import Any, Generic, TYPE_CHECKING, Type, TypeGuard, TypeVar
+from typing import Any, Generic, TYPE_CHECKING, TypeGuard, TypeVar
 
 from game.typeguard import self_type_guard
 from game.utils import Distance, Speed, meters
-from .ibuilder import IBuilder
 from .planningerror import PlanningError
 from ..flightwaypointtype import FlightWaypointType
 from ..starttype import StartType
@@ -63,11 +62,6 @@ class FlightPlan(ABC, Generic[LayoutT]):
     @property
     def package(self) -> Package:
         return self.flight.package
-
-    @staticmethod
-    @abstractmethod
-    def builder_type() -> Type[IBuilder]:
-        ...
 
     @property
     def waypoints(self) -> list[FlightWaypoint]:

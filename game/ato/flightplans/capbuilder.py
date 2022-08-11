@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import random
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, TypeVar
 
 from dcs import Point
 from shapely.geometry import Point as ShapelyPoint
 
 from game.utils import Heading, meters, nautical_miles
+from .flightplan import FlightPlan
+from .patrolling import PatrollingLayout
 from ..closestairfields import ObjectiveDistanceCache
 from ..flightplans.ibuilder import IBuilder
 from ..flightplans.planningerror import PlanningError
@@ -15,8 +17,11 @@ from ..flightplans.planningerror import PlanningError
 if TYPE_CHECKING:
     from game.theater import MissionTarget
 
+FlightPlanT = TypeVar("FlightPlanT", bound=FlightPlan[Any])
+LayoutT = TypeVar("LayoutT", bound=PatrollingLayout)
 
-class CapBuilder(IBuilder, ABC):
+
+class CapBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
     def cap_racetrack_for_objective(
         self, location: MissionTarget, barcap: bool
     ) -> tuple[Point, Point]:
