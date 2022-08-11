@@ -16,7 +16,6 @@ from typing import Any, Generic, TYPE_CHECKING, Type, TypeGuard, TypeVar
 
 from game.typeguard import self_type_guard
 from game.utils import Distance, Speed, meters
-from .ibuilder import IBuilder
 from .planningerror import PlanningError
 from ..flightwaypointtype import FlightWaypointType
 from ..starttype import StartType
@@ -29,6 +28,8 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
     from ..package import Package
     from .formation import FormationFlightPlan
+    from .ibuilder import IBuilder
+    from .ischeduler import IScheduler
     from .loiter import LoiterFlightPlan
     from .patrolling import PatrollingFlightPlan
 
@@ -66,7 +67,12 @@ class FlightPlan(ABC, Generic[LayoutT]):
 
     @staticmethod
     @abstractmethod
-    def builder_type() -> Type[IBuilder]:
+    def builder_type() -> Type[IBuilder[LayoutT]]:
+        ...
+
+    @staticmethod
+    @abstractmethod
+    def scheduler_type() -> Type[IScheduler[LayoutT]]:
         ...
 
     @property

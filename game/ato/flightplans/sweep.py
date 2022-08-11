@@ -8,6 +8,7 @@ from dcs import Point
 
 from game.utils import Heading
 from .ibuilder import IBuilder
+from .ischeduler import IScheduler
 from .loiter import LoiterFlightPlan, LoiterLayout
 from .waypointbuilder import WaypointBuilder
 from ..traveltime import GroundSpeed, TravelTime
@@ -17,7 +18,30 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
+@dataclass(frozen=True)
+class SweepLayout(LoiterLayout):
+    nav_to: list[FlightWaypoint]
+    sweep_start: FlightWaypoint
+    sweep_end: FlightWaypoint
+    refuel: FlightWaypoint | None
+    nav_from: list[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield self.hold
+        yield from self.nav_to
+        yield self.sweep_start
+        yield self.sweep_end
+        if self.refuel is not None:
+            yield self.refuel
+        yield from self.nav_from
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class Builder(IBuilder[SweepLayout]):
     def build(self) -> SweepLayout:
         assert self.package.waypoints is not None
         target = self.package.target.position
@@ -68,27 +92,9 @@ class Builder(IBuilder):
         ).find_best_hold_point()
 
 
-@dataclass(frozen=True)
-class SweepLayout(LoiterLayout):
-    nav_to: list[FlightWaypoint]
-    sweep_start: FlightWaypoint
-    sweep_end: FlightWaypoint
-    refuel: FlightWaypoint | None
-    nav_from: list[FlightWaypoint]
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield self.hold
-        yield from self.nav_to
-        yield self.sweep_start
-        yield self.sweep_end
-        if self.refuel is not None:
-            yield self.refuel
-        yield from self.nav_from
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+class Scheduler(IScheduler[SweepLayout]):
+    def schedule(self) -> SweepFlightPlan:
+        return SweepFlightPlan(self.flight, self.layout)
 
 
 class SweepFlightPlan(LoiterFlightPlan):
@@ -99,6 +105,10 @@ class SweepFlightPlan(LoiterFlightPlan):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:

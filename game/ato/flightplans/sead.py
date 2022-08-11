@@ -8,8 +8,14 @@ from .formationattack import (
     FormationAttackFlightPlan,
     FormationAttackLayout,
 )
+from .ischeduler import IScheduler
 from .. import Flight
 from ..flightwaypointtype import FlightWaypointType
+
+
+class Scheduler(IScheduler[FormationAttackLayout]):
+    def schedule(self) -> SeadFlightPlan:
+        return SeadFlightPlan(self.flight, self.layout)
 
 
 class SeadFlightPlan(FormationAttackFlightPlan):
@@ -20,11 +26,15 @@ class SeadFlightPlan(FormationAttackFlightPlan):
     def builder_type() -> Type[Builder]:
         return Builder
 
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
+
     @property
     def lead_time(self) -> timedelta:
         return timedelta(minutes=1)
 
 
-class Builder(FormationAttackBuilder):
+class Builder(FormationAttackBuilder[FormationAttackLayout]):
     def build(self) -> FormationAttackLayout:
         return self._build(FlightWaypointType.INGRESS_SEAD)

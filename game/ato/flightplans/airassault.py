@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import TYPE_CHECKING, Iterator, Type
+from typing import Iterator, TYPE_CHECKING, Type
+
 from game.ato.flightplans.airlift import AirliftLayout
 from game.ato.flightplans.standard import StandardFlightPlan
 from game.theater.controlpoint import ControlPointType
 from game.theater.missiontarget import MissionTarget
 from game.utils import Distance, feet, meters
 from .ibuilder import IBuilder
+from .ischeduler import IScheduler
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
@@ -16,7 +18,26 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
+@dataclass(frozen=True)
+class AirAssaultLayout(AirliftLayout):
+    target: FlightWaypoint
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield from self.nav_to_pickup
+        if self.pickup:
+            yield self.pickup
+        yield from self.nav_to_drop_off
+        yield self.drop_off
+        yield self.target
+        yield from self.nav_to_home
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class Builder(IBuilder[AirAssaultLayout]):
     def build(self) -> AirAssaultLayout:
 
         altitude = feet(1500) if self.flight.is_helo else self.doctrine.ingress_altitude
@@ -79,23 +100,9 @@ class Builder(IBuilder):
         )
 
 
-@dataclass(frozen=True)
-class AirAssaultLayout(AirliftLayout):
-    target: FlightWaypoint
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield from self.nav_to_pickup
-        if self.pickup:
-            yield self.pickup
-        yield from self.nav_to_drop_off
-        yield self.drop_off
-        yield self.target
-        yield from self.nav_to_home
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+class Scheduler(IScheduler[AirAssaultLayout]):
+    def schedule(self) -> AirAssaultFlightPlan:
+        return AirAssaultFlightPlan(self.flight, self.layout)
 
 
 class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
@@ -105,6 +112,10 @@ class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def tot_waypoint(self) -> FlightWaypoint | None:

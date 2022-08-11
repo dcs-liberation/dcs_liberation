@@ -4,12 +4,13 @@ from datetime import timedelta
 from typing import Type
 
 from game.ato.flightplans.ibuilder import IBuilder
+from game.ato.flightplans.ischeduler import IScheduler
 from game.ato.flightplans.patrolling import PatrollingFlightPlan, PatrollingLayout
 from game.ato.flightplans.waypointbuilder import WaypointBuilder
 from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
 
 
-class Builder(IBuilder):
+class Builder(IBuilder[PatrollingLayout]):
     def build(self) -> PatrollingLayout:
         racetrack_half_distance = nautical_miles(30).meters
 
@@ -68,6 +69,11 @@ class Builder(IBuilder):
         )
 
 
+class Scheduler(IScheduler[PatrollingLayout]):
+    def schedule(self) -> AewcFlightPlan:
+        return AewcFlightPlan(self.flight, self.layout)
+
+
 class AewcFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
     @property
     def patrol_duration(self) -> timedelta:
@@ -87,5 +93,9 @@ class AewcFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
         return meters(0)
 
     @staticmethod
-    def builder_type() -> Type[IBuilder]:
+    def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler

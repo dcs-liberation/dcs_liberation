@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Type
 
 from game.utils import feet
 from .ibuilder import IBuilder
+from .ischeduler import IScheduler
 from .planningerror import PlanningError
 from .standard import StandardFlightPlan, StandardLayout
 from .waypointbuilder import WaypointBuilder
@@ -15,7 +16,20 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
+@dataclass(frozen=True)
+class FerryLayout(StandardLayout):
+    nav_to_destination: list[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield from self.nav_to_destination
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class Builder(IBuilder[FerryLayout]):
     def build(self) -> FerryLayout:
         if self.flight.departure == self.flight.arrival:
             raise PlanningError(
@@ -45,23 +59,19 @@ class Builder(IBuilder):
         )
 
 
-@dataclass(frozen=True)
-class FerryLayout(StandardLayout):
-    nav_to_destination: list[FlightWaypoint]
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield from self.nav_to_destination
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+class Scheduler(IScheduler[FerryLayout]):
+    def schedule(self) -> FerryFlightPlan:
+        return FerryFlightPlan(self.flight, self.layout)
 
 
 class FerryFlightPlan(StandardFlightPlan[FerryLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def tot_waypoint(self) -> FlightWaypoint | None:

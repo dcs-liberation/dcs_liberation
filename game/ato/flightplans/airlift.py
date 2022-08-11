@@ -4,10 +4,11 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import TYPE_CHECKING, Type
-from game.theater.missiontarget import MissionTarget
 
+from game.theater.missiontarget import MissionTarget
 from game.utils import feet
 from .ibuilder import IBuilder
+from .ischeduler import IScheduler
 from .planningerror import PlanningError
 from .standard import StandardFlightPlan, StandardLayout
 from .waypointbuilder import WaypointBuilder
@@ -17,7 +18,32 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
+@dataclass(frozen=True)
+class AirliftLayout(StandardLayout):
+    nav_to_pickup: list[FlightWaypoint]
+    pickup: FlightWaypoint | None
+    nav_to_drop_off: list[FlightWaypoint]
+    drop_off: FlightWaypoint
+    stopover: FlightWaypoint | None
+    nav_to_home: list[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield from self.nav_to_pickup
+        if self.pickup is not None:
+            yield self.pickup
+        yield from self.nav_to_drop_off
+        yield self.drop_off
+        if self.stopover is not None:
+            yield self.stopover
+        yield from self.nav_to_home
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class Builder(IBuilder[AirliftLayout]):
     def build(self) -> AirliftLayout:
         cargo = self.flight.cargo
         if cargo is None:
@@ -98,29 +124,9 @@ class Builder(IBuilder):
         )
 
 
-@dataclass(frozen=True)
-class AirliftLayout(StandardLayout):
-    nav_to_pickup: list[FlightWaypoint]
-    pickup: FlightWaypoint | None
-    nav_to_drop_off: list[FlightWaypoint]
-    drop_off: FlightWaypoint
-    stopover: FlightWaypoint | None
-    nav_to_home: list[FlightWaypoint]
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield from self.nav_to_pickup
-        if self.pickup is not None:
-            yield self.pickup
-        yield from self.nav_to_drop_off
-        yield self.drop_off
-        if self.stopover is not None:
-            yield self.stopover
-        yield from self.nav_to_home
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+class Scheduler(IScheduler[AirliftLayout]):
+    def schedule(self) -> AirliftFlightPlan:
+        return AirliftFlightPlan(self.flight, self.layout)
 
 
 class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
@@ -130,6 +136,10 @@ class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def tot_waypoint(self) -> FlightWaypoint | None:

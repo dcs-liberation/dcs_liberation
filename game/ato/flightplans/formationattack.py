@@ -154,7 +154,7 @@ class FormationAttackLayout(FormationLayout):
 LayoutT = TypeVar("LayoutT", bound=FormationAttackLayout)
 
 
-class FormationAttackBuilder(IBuilder, ABC):
+class FormationAttackBuilder(IBuilder[LayoutT], ABC):
     def _build(
         self,
         ingress_type: FlightWaypointType,

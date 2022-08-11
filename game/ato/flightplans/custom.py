@@ -7,15 +7,11 @@ from typing import TYPE_CHECKING, Type
 
 from .flightplan import FlightPlan, Layout
 from .ibuilder import IBuilder
+from .ischeduler import IScheduler
 from ..flightwaypointtype import FlightWaypointType
 
 if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
-
-
-class Builder(IBuilder):
-    def build(self) -> CustomLayout:
-        return CustomLayout([])
 
 
 @dataclass(frozen=True)
@@ -26,10 +22,24 @@ class CustomLayout(Layout):
         yield from self.custom_waypoints
 
 
+class Builder(IBuilder[CustomLayout]):
+    def build(self) -> CustomLayout:
+        return CustomLayout([])
+
+
+class Scheduler(IScheduler[CustomLayout]):
+    def schedule(self) -> CustomFlightPlan:
+        return CustomFlightPlan(self.flight, self.layout)
+
+
 class CustomFlightPlan(FlightPlan[CustomLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def tot_waypoint(self) -> FlightWaypoint | None:

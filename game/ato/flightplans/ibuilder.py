@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import Generic, TYPE_CHECKING, TypeVar
+
+from .flightplan import Layout
 
 if TYPE_CHECKING:
     from game.coalition import Coalition
@@ -10,16 +12,18 @@ if TYPE_CHECKING:
     from game.threatzones import ThreatZones
     from ..flight import Flight
     from ..package import Package
-    from .flightplan import Layout
 
 
-class IBuilder(ABC):
+LayoutT = TypeVar("LayoutT", bound=Layout)
+
+
+class IBuilder(ABC, Generic[LayoutT]):
     def __init__(self, flight: Flight, theater: ConflictTheater) -> None:
         self.flight = flight
         self.theater = theater
 
     @abstractmethod
-    def build(self) -> Layout:
+    def build(self) -> LayoutT:
         ...
 
     @property

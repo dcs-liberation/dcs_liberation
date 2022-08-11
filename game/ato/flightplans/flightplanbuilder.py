@@ -120,7 +120,7 @@ class FlightPlanBuilder:
                 f"{flight.flight_type} flight plan generation not implemented"
             )
         layout = plan_type.builder_type()(flight, self.theater).build()
-        return plan_type(flight, layout)
+        return plan_type.scheduler_type()(flight, layout).schedule()
 
     def regenerate_flight_plans(self) -> None:
         new_flights: list[Flight] = []

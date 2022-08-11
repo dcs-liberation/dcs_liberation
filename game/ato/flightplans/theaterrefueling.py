@@ -5,11 +5,12 @@ from typing import Type
 
 from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
 from .ibuilder import IBuilder
+from .ischeduler import IScheduler
 from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .waypointbuilder import WaypointBuilder
 
 
-class Builder(IBuilder):
+class Builder(IBuilder[PatrollingLayout]):
     def build(self) -> PatrollingLayout:
         racetrack_half_distance = nautical_miles(20).meters
 
@@ -69,10 +70,19 @@ class Builder(IBuilder):
         )
 
 
+class Scheduler(IScheduler[PatrollingLayout]):
+    def schedule(self) -> TheaterRefuelingFlightPlan:
+        return TheaterRefuelingFlightPlan(self.flight, self.layout)
+
+
 class TheaterRefuelingFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def patrol_duration(self) -> timedelta:

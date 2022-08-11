@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Type
 
 from game.utils import feet
 from .ibuilder import IBuilder
+from .ischeduler import IScheduler
 from .standard import StandardFlightPlan, StandardLayout
 from .waypointbuilder import WaypointBuilder
 from ..flightstate import InFlight
@@ -15,7 +16,22 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
+@dataclass(frozen=True)
+class RtbLayout(StandardLayout):
+    abort_location: FlightWaypoint
+    nav_to_destination: list[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield self.abort_location
+        yield from self.nav_to_destination
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class Builder(IBuilder[RtbLayout]):
     def build(self) -> RtbLayout:
         if not isinstance(self.flight.state, InFlight):
             raise RuntimeError(f"Cannot abort {self} because it is not in flight")
@@ -51,25 +67,19 @@ class Builder(IBuilder):
         )
 
 
-@dataclass(frozen=True)
-class RtbLayout(StandardLayout):
-    abort_location: FlightWaypoint
-    nav_to_destination: list[FlightWaypoint]
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield self.abort_location
-        yield from self.nav_to_destination
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+class Scheduler(IScheduler[RtbLayout]):
+    def schedule(self) -> RtbFlightPlan:
+        return RtbFlightPlan(self.flight, self.layout)
 
 
 class RtbFlightPlan(StandardFlightPlan[RtbLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def abort_index(self) -> int:

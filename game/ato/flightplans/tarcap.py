@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Type
 
 from game.utils import Distance, Speed, feet
 from .capbuilder import CapBuilder
+from .ischeduler import IScheduler
 from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .waypointbuilder import WaypointBuilder
 
@@ -15,7 +16,25 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(CapBuilder):
+@dataclass(frozen=True)
+class TarCapLayout(PatrollingLayout):
+    refuel: FlightWaypoint | None
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield from self.nav_to
+        yield self.patrol_start
+        yield self.patrol_end
+        if self.refuel is not None:
+            yield self.refuel
+        yield from self.nav_from
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class Builder(CapBuilder[TarCapLayout]):
     def build(self) -> TarCapLayout:
         location = self.package.target
 
@@ -53,22 +72,9 @@ class Builder(CapBuilder):
         )
 
 
-@dataclass(frozen=True)
-class TarCapLayout(PatrollingLayout):
-    refuel: FlightWaypoint | None
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield from self.nav_to
-        yield self.patrol_start
-        yield self.patrol_end
-        if self.refuel is not None:
-            yield self.refuel
-        yield from self.nav_from
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+class Scheduler(IScheduler[TarCapLayout]):
+    def schedule(self) -> TarCapFlightPlan:
+        return TarCapFlightPlan(self.flight, self.layout)
 
 
 class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
@@ -97,6 +103,10 @@ class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:

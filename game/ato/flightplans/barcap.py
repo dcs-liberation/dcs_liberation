@@ -8,11 +8,12 @@ from game.theater import FrontLine
 from game.utils import Distance, Speed, feet
 from .capbuilder import CapBuilder
 from .invalidobjectivelocation import InvalidObjectiveLocation
+from .ischeduler import IScheduler
 from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .waypointbuilder import WaypointBuilder
 
 
-class Builder(CapBuilder):
+class Builder(CapBuilder[PatrollingLayout]):
     def build(self) -> PatrollingLayout:
         location = self.package.target
 
@@ -47,10 +48,19 @@ class Builder(CapBuilder):
         )
 
 
+class Scheduler(IScheduler[PatrollingLayout]):
+    def schedule(self) -> BarCapFlightPlan:
+        return BarCapFlightPlan(self.flight, self.layout)
+
+
 class BarCapFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def patrol_duration(self) -> timedelta:

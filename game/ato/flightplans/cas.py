@@ -9,6 +9,7 @@ from game.theater import FrontLine
 from game.utils import Distance, Speed, kph, meters
 from .ibuilder import IBuilder
 from .invalidobjectivelocation import InvalidObjectiveLocation
+from .ischeduler import IScheduler
 from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .waypointbuilder import WaypointBuilder
 from ..flightwaypointtype import FlightWaypointType
@@ -17,7 +18,24 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
+@dataclass(frozen=True)
+class CasLayout(PatrollingLayout):
+    target: FlightWaypoint
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield from self.nav_to
+        yield self.patrol_start
+        yield self.target
+        yield self.patrol_end
+        yield from self.nav_from
+        yield self.departure
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class Builder(IBuilder[CasLayout]):
     def build(self) -> CasLayout:
         location = self.package.target
 
@@ -72,27 +90,19 @@ class Builder(IBuilder):
         )
 
 
-@dataclass(frozen=True)
-class CasLayout(PatrollingLayout):
-    target: FlightWaypoint
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield from self.nav_to
-        yield self.patrol_start
-        yield self.target
-        yield self.patrol_end
-        yield from self.nav_from
-        yield self.departure
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
+class Scheduler(IScheduler[CasLayout]):
+    def schedule(self) -> CasFlightPlan:
+        return CasFlightPlan(self.flight, self.layout)
 
 
 class CasFlightPlan(PatrollingFlightPlan[CasLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
     @property
     def patrol_duration(self) -> timedelta:

@@ -7,7 +7,13 @@ from .formationattack import (
     FormationAttackFlightPlan,
     FormationAttackLayout,
 )
+from .ischeduler import IScheduler
 from .waypointbuilder import WaypointBuilder
+
+
+class Scheduler(IScheduler[FormationAttackLayout]):
+    def schedule(self) -> EscortFlightPlan:
+        return EscortFlightPlan(self.flight, self.layout)
 
 
 class EscortFlightPlan(FormationAttackFlightPlan):
@@ -15,8 +21,12 @@ class EscortFlightPlan(FormationAttackFlightPlan):
     def builder_type() -> Type[Builder]:
         return Builder
 
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
-class Builder(FormationAttackBuilder):
+
+class Builder(FormationAttackBuilder[FormationAttackLayout]):
     def build(self) -> FormationAttackLayout:
         assert self.package.waypoints is not None
 

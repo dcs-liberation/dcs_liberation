@@ -9,8 +9,14 @@ from .formationattack import (
     FormationAttackLayout,
 )
 from .invalidobjectivelocation import InvalidObjectiveLocation
+from .ischeduler import IScheduler
 from .waypointbuilder import StrikeTarget
 from ..flightwaypointtype import FlightWaypointType
+
+
+class Scheduler(IScheduler[FormationAttackLayout]):
+    def schedule(self) -> StrikeFlightPlan:
+        return StrikeFlightPlan(self.flight, self.layout)
 
 
 class StrikeFlightPlan(FormationAttackFlightPlan):
@@ -18,8 +24,12 @@ class StrikeFlightPlan(FormationAttackFlightPlan):
     def builder_type() -> Type[Builder]:
         return Builder
 
+    @staticmethod
+    def scheduler_type() -> Type[Scheduler]:
+        return Scheduler
 
-class Builder(FormationAttackBuilder):
+
+class Builder(FormationAttackBuilder[FormationAttackLayout]):
     def build(self) -> FormationAttackLayout:
         location = self.package.target
 
