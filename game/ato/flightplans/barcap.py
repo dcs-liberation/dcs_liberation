@@ -12,8 +12,28 @@ from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .waypointbuilder import WaypointBuilder
 
 
-class Builder(CapBuilder):
-    def build(self) -> PatrollingLayout:
+class BarCapFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
+    @property
+    def patrol_duration(self) -> timedelta:
+        return self.flight.coalition.doctrine.cap_duration
+
+    @property
+    def patrol_speed(self) -> Speed:
+        return self.flight.unit_type.preferred_patrol_speed(
+            self.layout.patrol_start.alt
+        )
+
+    @property
+    def engagement_distance(self) -> Distance:
+        return self.flight.coalition.doctrine.cap_engagement_range
+
+
+class Builder(CapBuilder[BarCapFlightPlan, PatrollingLayout]):
+    def layout(self) -> PatrollingLayout:
         location = self.package.target
 
         if isinstance(location, FrontLine):
@@ -46,22 +66,5 @@ class Builder(CapBuilder):
             bullseye=builder.bullseye(),
         )
 
-
-class BarCapFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
-
-    @property
-    def patrol_duration(self) -> timedelta:
-        return self.flight.coalition.doctrine.cap_duration
-
-    @property
-    def patrol_speed(self) -> Speed:
-        return self.flight.unit_type.preferred_patrol_speed(
-            self.layout.patrol_start.alt
-        )
-
-    @property
-    def engagement_distance(self) -> Distance:
-        return self.flight.coalition.doctrine.cap_engagement_range
+    def build(self) -> BarCapFlightPlan:
+        return BarCapFlightPlan(self.flight, self.layout())

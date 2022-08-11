@@ -15,36 +15,6 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
-    def build(self) -> FerryLayout:
-        if self.flight.departure == self.flight.arrival:
-            raise PlanningError(
-                f"Cannot plan ferry self.flight: departure and arrival are both "
-                f"{self.flight.departure}"
-            )
-
-        altitude_is_agl = self.flight.unit_type.dcs_unit_type.helicopter
-        altitude = (
-            feet(1500)
-            if altitude_is_agl
-            else self.flight.unit_type.preferred_patrol_altitude
-        )
-
-        builder = WaypointBuilder(self.flight, self.coalition)
-        return FerryLayout(
-            departure=builder.takeoff(self.flight.departure),
-            nav_to_destination=builder.nav_path(
-                self.flight.departure.position,
-                self.flight.arrival.position,
-                altitude,
-                altitude_is_agl,
-            ),
-            arrival=builder.land(self.flight.arrival),
-            divert=builder.divert(self.flight.divert),
-            bullseye=builder.bullseye(),
-        )
-
-
 @dataclass(frozen=True)
 class FerryLayout(StandardLayout):
     nav_to_destination: list[FlightWaypoint]
@@ -78,3 +48,36 @@ class FerryFlightPlan(StandardFlightPlan[FerryLayout]):
     @property
     def mission_departure_time(self) -> timedelta:
         return self.package.time_over_target
+
+
+class Builder(IBuilder[FerryFlightPlan, FerryLayout]):
+    def layout(self) -> FerryLayout:
+        if self.flight.departure == self.flight.arrival:
+            raise PlanningError(
+                f"Cannot plan ferry self.flight: departure and arrival are both "
+                f"{self.flight.departure}"
+            )
+
+        altitude_is_agl = self.flight.unit_type.dcs_unit_type.helicopter
+        altitude = (
+            feet(1500)
+            if altitude_is_agl
+            else self.flight.unit_type.preferred_patrol_altitude
+        )
+
+        builder = WaypointBuilder(self.flight, self.coalition)
+        return FerryLayout(
+            departure=builder.takeoff(self.flight.departure),
+            nav_to_destination=builder.nav_path(
+                self.flight.departure.position,
+                self.flight.arrival.position,
+                altitude,
+                altitude_is_agl,
+            ),
+            arrival=builder.land(self.flight.arrival),
+            divert=builder.divert(self.flight.divert),
+            bullseye=builder.bullseye(),
+        )
+
+    def build(self) -> FerryFlightPlan:
+        return FerryFlightPlan(self.flight, self.layout())

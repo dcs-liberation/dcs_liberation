@@ -3,14 +3,25 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import Type
 
-from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
+from game.utils import Heading, feet, meters, nautical_miles
 from .ibuilder import IBuilder
-from .patrolling import PatrollingFlightPlan, PatrollingLayout
+from .patrolling import PatrollingLayout
+from .refuelingflightplan import RefuelingFlightPlan
 from .waypointbuilder import WaypointBuilder
 
 
-class Builder(IBuilder):
-    def build(self) -> PatrollingLayout:
+class TheaterRefuelingFlightPlan(RefuelingFlightPlan):
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
+    @property
+    def patrol_duration(self) -> timedelta:
+        return timedelta(hours=1)
+
+
+class Builder(IBuilder[TheaterRefuelingFlightPlan, PatrollingLayout]):
+    def layout(self) -> PatrollingLayout:
         racetrack_half_distance = nautical_miles(20).meters
 
         location = self.package.target
@@ -68,26 +79,5 @@ class Builder(IBuilder):
             bullseye=builder.bullseye(),
         )
 
-
-class TheaterRefuelingFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
-
-    @property
-    def patrol_duration(self) -> timedelta:
-        return timedelta(hours=1)
-
-    @property
-    def patrol_speed(self) -> Speed:
-        # TODO: Could use self.flight.unit_type.preferred_patrol_speed(altitude).
-        if self.flight.unit_type.patrol_speed is not None:
-            return self.flight.unit_type.patrol_speed
-        # ~280 knots IAS at 21000.
-        return knots(400)
-
-    @property
-    def engagement_distance(self) -> Distance:
-        # TODO: Factor out a common base of the combat and non-combat race-tracks.
-        # No harm in setting this, but we ought to clean up a bit.
-        return meters(0)
+    def build(self) -> TheaterRefuelingFlightPlan:
+        return TheaterRefuelingFlightPlan(self.flight, self.layout())

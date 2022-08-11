@@ -16,8 +16,8 @@ class EscortFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder):
-    def build(self) -> FormationAttackLayout:
+class Builder(FormationAttackBuilder[EscortFlightPlan, FormationAttackLayout]):
+    def layout(self) -> FormationAttackLayout:
         assert self.package.waypoints is not None
 
         builder = WaypointBuilder(self.flight, self.coalition)
@@ -51,3 +51,6 @@ class Builder(FormationAttackBuilder):
             divert=builder.divert(self.flight.divert),
             bullseye=builder.bullseye(),
         )
+
+    def build(self) -> EscortFlightPlan:
+        return EscortFlightPlan(self.flight, self.layout())

@@ -25,6 +25,9 @@ class SeadFlightPlan(FormationAttackFlightPlan):
         return timedelta(minutes=1)
 
 
-class Builder(FormationAttackBuilder):
-    def build(self) -> FormationAttackLayout:
+class Builder(FormationAttackBuilder[SeadFlightPlan, FormationAttackLayout]):
+    def layout(self) -> FormationAttackLayout:
         return self._build(FlightWaypointType.INGRESS_SEAD)
+
+    def build(self) -> SeadFlightPlan:
+        return SeadFlightPlan(self.flight, self.layout())

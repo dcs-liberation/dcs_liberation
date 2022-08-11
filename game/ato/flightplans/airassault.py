@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import TYPE_CHECKING, Iterator, Type
+from typing import Iterator, TYPE_CHECKING, Type
+
 from game.ato.flightplans.airlift import AirliftLayout
 from game.ato.flightplans.standard import StandardFlightPlan
 from game.theater.controlpoint import ControlPointType
@@ -16,8 +17,57 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
-    def build(self) -> AirAssaultLayout:
+@dataclass(frozen=True)
+class AirAssaultLayout(AirliftLayout):
+    target: FlightWaypoint
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield from self.nav_to_pickup
+        if self.pickup:
+            yield self.pickup
+        yield from self.nav_to_drop_off
+        yield self.drop_off
+        yield self.target
+        yield from self.nav_to_home
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
+    def __init__(self, flight: Flight, layout: AirAssaultLayout) -> None:
+        super().__init__(flight, layout)
+
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
+    @property
+    def tot_waypoint(self) -> FlightWaypoint | None:
+        return self.layout.drop_off
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+        if waypoint == self.tot_waypoint:
+            return self.tot
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+        return None
+
+    @property
+    def engagement_distance(self) -> Distance:
+        # The radius of the WaypointZone created at the target location
+        return meters(2500)
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return self.package.time_over_target
+
+
+class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
+    def layout(self) -> AirAssaultLayout:
 
         altitude = feet(1500) if self.flight.is_helo else self.doctrine.ingress_altitude
         altitude_is_agl = self.flight.is_helo
@@ -78,51 +128,5 @@ class Builder(IBuilder):
             bullseye=builder.bullseye(),
         )
 
-
-@dataclass(frozen=True)
-class AirAssaultLayout(AirliftLayout):
-    target: FlightWaypoint
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield from self.nav_to_pickup
-        if self.pickup:
-            yield self.pickup
-        yield from self.nav_to_drop_off
-        yield self.drop_off
-        yield self.target
-        yield from self.nav_to_home
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
-
-
-class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
-    def __init__(self, flight: Flight, layout: AirAssaultLayout) -> None:
-        super().__init__(flight, layout)
-
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
-
-    @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
-        return self.layout.drop_off
-
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
-        if waypoint == self.tot_waypoint:
-            return self.tot
-        return None
-
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
-        return None
-
-    @property
-    def engagement_distance(self) -> Distance:
-        # The radius of the WaypointZone created at the target location
-        return meters(2500)
-
-    @property
-    def mission_departure_time(self) -> timedelta:
-        return self.package.time_over_target
+    def build(self) -> AirAssaultFlightPlan:
+        return AirAssaultFlightPlan(self.flight, self.layout())

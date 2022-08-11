@@ -15,44 +15,6 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(CapBuilder):
-    def build(self) -> TarCapLayout:
-        location = self.package.target
-
-        preferred_alt = self.flight.unit_type.preferred_patrol_altitude
-        randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
-        patrol_alt = max(
-            self.doctrine.min_patrol_altitude,
-            min(self.doctrine.max_patrol_altitude, randomized_alt),
-        )
-
-        builder = WaypointBuilder(self.flight, self.coalition)
-        orbit0p, orbit1p = self.cap_racetrack_for_objective(location, barcap=False)
-
-        start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
-
-        refuel = None
-
-        if self.package.waypoints is not None:
-            refuel = builder.refuel(self.package.waypoints.refuel)
-
-        return TarCapLayout(
-            departure=builder.takeoff(self.flight.departure),
-            nav_to=builder.nav_path(
-                self.flight.departure.position, orbit0p, patrol_alt
-            ),
-            nav_from=builder.nav_path(
-                orbit1p, self.flight.arrival.position, patrol_alt
-            ),
-            patrol_start=start,
-            patrol_end=end,
-            refuel=refuel,
-            arrival=builder.land(self.flight.arrival),
-            divert=builder.divert(self.flight.divert),
-            bullseye=builder.bullseye(),
-        )
-
-
 @dataclass(frozen=True)
 class TarCapLayout(PatrollingLayout):
     refuel: FlightWaypoint | None
@@ -124,3 +86,44 @@ class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
         if end is not None:
             return end
         return super().patrol_end_time
+
+
+class Builder(CapBuilder[TarCapFlightPlan, TarCapLayout]):
+    def layout(self) -> TarCapLayout:
+        location = self.package.target
+
+        preferred_alt = self.flight.unit_type.preferred_patrol_altitude
+        randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
+        patrol_alt = max(
+            self.doctrine.min_patrol_altitude,
+            min(self.doctrine.max_patrol_altitude, randomized_alt),
+        )
+
+        builder = WaypointBuilder(self.flight, self.coalition)
+        orbit0p, orbit1p = self.cap_racetrack_for_objective(location, barcap=False)
+
+        start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
+
+        refuel = None
+
+        if self.package.waypoints is not None:
+            refuel = builder.refuel(self.package.waypoints.refuel)
+
+        return TarCapLayout(
+            departure=builder.takeoff(self.flight.departure),
+            nav_to=builder.nav_path(
+                self.flight.departure.position, orbit0p, patrol_alt
+            ),
+            nav_from=builder.nav_path(
+                orbit1p, self.flight.arrival.position, patrol_alt
+            ),
+            patrol_start=start,
+            patrol_end=end,
+            refuel=refuel,
+            arrival=builder.land(self.flight.arrival),
+            divert=builder.divert(self.flight.divert),
+            bullseye=builder.bullseye(),
+        )
+
+    def build(self) -> TarCapFlightPlan:
+        return TarCapFlightPlan(self.flight, self.layout())
