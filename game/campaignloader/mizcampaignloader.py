@@ -13,14 +13,13 @@ from dcs.planes import F_15C
 from dcs.ships import HandyWind, LHA_Tarawa, Stennis, USS_Arleigh_Burke_IIa
 from dcs.statics import Fortification, Warehouse
 from dcs.terrain import Airport
+from dcs.triggers import TriggerZoneCircular
 from dcs.unitgroup import PlaneGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
 from game.positioned import Positioned
 from game.profiling import logged_duration
 from game.scenery_group import SceneryGroup
-from game.theater.presetlocation import PresetLocation
-from game.utils import Distance, meters
 from game.theater.controlpoint import (
     Airfield,
     Carrier,
@@ -29,7 +28,8 @@ from game.theater.controlpoint import (
     Lha,
     OffMapSpawn,
 )
-from game.utils import Distance, Heading, meters
+from game.theater.presetlocation import PresetLocation
+from game.utils import Distance, meters
 
 if TYPE_CHECKING:
     from game.theater.conflicttheater import ConflictTheater
@@ -69,13 +69,13 @@ class MizCampaignLoader:
     MEDIUM_RANGE_SAM_UNIT_TYPES = {
         AirDefence.Hawk_ln.id,
         AirDefence.S_75M_Volhov.id,
-        AirDefence._5p73_s_125_ln.id,
+        AirDefence.X_5p73_s_125_ln.id,
     }
 
     SHORT_RANGE_SAM_UNIT_TYPES = {
         AirDefence.M1097_Avenger.id,
         AirDefence.Rapier_fsa_launcher.id,
-        AirDefence._2S6_Tunguska.id,
+        AirDefence.X_2S6_Tunguska.id,
         AirDefence.Strela_1_9P31.id,
     }
 
@@ -85,7 +85,7 @@ class MizCampaignLoader:
         AirDefence.ZSU_23_4_Shilka.id,
     }
 
-    EWR_UNIT_TYPE = AirDefence._1L13_EWR.id
+    EWR_UNIT_TYPE = AirDefence.X_1L13_EWR.id
 
     ARMOR_GROUP_UNIT_TYPE = Armor.M_1_Abrams.id
 
@@ -240,7 +240,11 @@ class MizCampaignLoader:
 
     @property
     def scenery(self) -> List[SceneryGroup]:
-        return SceneryGroup.from_trigger_zones(self.mission.triggers._zones)
+        return SceneryGroup.from_trigger_zones(
+            z
+            for z in self.mission.triggers._zones
+            if isinstance(z, TriggerZoneCircular)
+        )
 
     @cached_property
     def control_points(self) -> dict[UUID, ControlPoint]:

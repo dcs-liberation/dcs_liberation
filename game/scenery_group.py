@@ -1,8 +1,10 @@
 from __future__ import annotations
-from game.theater.theatergroundobject import NAME_BY_CATEGORY
-from dcs.triggers import TriggerZone
 
 from typing import Iterable, List
+
+from dcs.triggers import TriggerZoneCircular
+
+from game.theater.theatergroundobject import NAME_BY_CATEGORY
 
 
 class SceneryGroupError(RuntimeError):
@@ -15,7 +17,10 @@ class SceneryGroup:
     """Store information about a scenery objective."""
 
     def __init__(
-        self, zone_def: TriggerZone, zones: Iterable[TriggerZone], category: str
+        self,
+        zone_def: TriggerZoneCircular,
+        zones: Iterable[TriggerZoneCircular],
+        category: str,
     ) -> None:
 
         self.zone_def = zone_def
@@ -24,7 +29,9 @@ class SceneryGroup:
         self.category = category
 
     @staticmethod
-    def from_trigger_zones(trigger_zones: Iterable[TriggerZone]) -> List[SceneryGroup]:
+    def from_trigger_zones(
+        trigger_zones: Iterable[TriggerZoneCircular],
+    ) -> List[SceneryGroup]:
         """Define scenery objectives based on their encompassing blue/red circle."""
         zone_definitions = []
         white_zones = []
@@ -79,11 +86,11 @@ class SceneryGroup:
         return scenery_groups
 
     @staticmethod
-    def is_blue(zone: TriggerZone) -> bool:
+    def is_blue(zone: TriggerZoneCircular) -> bool:
         # Blue in RGB is [0 Red], [0 Green], [1 Blue]. Ignore the fourth position: Transparency.
         return zone.color[1] == 0 and zone.color[2] == 0 and zone.color[3] == 1
 
     @staticmethod
-    def is_white(zone: TriggerZone) -> bool:
+    def is_white(zone: TriggerZoneCircular) -> bool:
         # White in RGB is [1 Red], [1 Green], [1 Blue]. Ignore the fourth position: Transparency.
         return zone.color[1] == 1 and zone.color[2] == 1 and zone.color[3] == 1
