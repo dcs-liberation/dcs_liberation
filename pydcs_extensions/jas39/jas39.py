@@ -1,6 +1,7 @@
 from typing import Set
 
 from dcs import task
+from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
@@ -273,6 +274,9 @@ class JAS39Gripen(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 127.5
 
+    livery_name = "JAS39GRIPEN"  # from type
+    Liveries = Liveries()[livery_name]
+
     class Pylon1:
         IRIS_T_IR_AAM = (1, JAS39GripenWeapons.IRIS_T_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM_ = (1, JAS39GripenWeapons.AIM_9L_Sidewinder_IR_AAM_)
@@ -510,6 +514,9 @@ class JAS39Gripen_AG(PlaneType):
     eplrs = True
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
     radio_frequency = 127.5
+
+    livery_name = "JAS39GRIPEN_AG"  # from type
+    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         IRIS_T_IR_AAM = (1, JAS39GripenWeapons.IRIS_T_IR_AAM)
