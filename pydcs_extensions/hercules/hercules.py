@@ -1,6 +1,7 @@
-from enum import Enum
+from typing import Set
 
 from dcs import task
+from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
@@ -699,369 +700,43 @@ class Hercules(PlaneType):
     charge_total = 1680
     chaff_charge_size = 1
     flare_charge_size = 1
-    radio_frequency = 254
+    radio_frequency = 305
 
     panel_radio = {
         1: {
             "channels": {
-                1: 264,
-                2: 265,
-                4: 254,
-                8: 258,
-                16: 267,
-                17: 251,
-                9: 262,
-                18: 253,
-                5: 250,
-                10: 259,
-                20: 252,
-                11: 268,
-                3: 256,
-                6: 270,
-                12: 269,
-                13: 260,
-                7: 257,
-                14: 263,
-                19: 266,
-                15: 261,
+                1: 305,
+                2: 264,
+                4: 256,
+                8: 257,
+                16: 261,
+                17: 267,
+                9: 255,
+                18: 251,
+                5: 254,
+                10: 262,
+                20: 266,
+                11: 259,
+                3: 265,
+                6: 250,
+                12: 252,
+                13: 269,
+                7: 270,
+                14: 260,
+                19: 253,
+                15: 263,
             },
         },
     }
 
-    class Liveries:
-        class USSR(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Georgia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Venezuela(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Australia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Israel(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Combined_Joint_Task_Forces_Blue(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Sudan(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Norway(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Romania(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Iran(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Ukraine(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Libya(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Belgium(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Slovakia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Greece(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class UK(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Third_Reich(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Hungary(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Abkhazia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Morocco(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class United_Nations_Peacekeepers(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Switzerland(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class SouthOssetia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Vietnam(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class China(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Yemen(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Kuwait(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Serbia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Oman(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class India(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Egypt(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class TheNetherlands(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Poland(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Syria(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Finland(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Kazakhstan(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Denmark(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Sweden(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Croatia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class CzechRepublic(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class GDR(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Yugoslavia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Bulgaria(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class SouthKorea(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Tunisia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Combined_Joint_Task_Forces_Red(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Lebanon(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Portugal(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Cuba(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Insurgents(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class SaudiArabia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class France(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class USA(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Honduras(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Qatar(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Russia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class United_Arab_Emirates(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Italian_Social_Republi(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Austria(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Bahrain(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Italy(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Chile(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Turkey(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Philippines(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Algeria(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Pakistan(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Malaysia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Indonesia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Iraq(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Germany(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class South_Africa(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Jordan(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Mexico(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class USAFAggressors(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Brazil(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Spain(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Belarus(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Canada(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class NorthKorea(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Ethiopia(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Japan(Enum):
-            default = "default"
-            bare_metal = "bare metal"
-
-        class Thailand(Enum):
-            default = "default"
-            bare_metal = "bare metal"
+    livery_name = "HERCULES"  # from type
+    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Herc_JATO = (1, HerculesWeapons.Herc_JATO)
 
     class Pylon2:
-        LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             2,
             Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
@@ -1071,11 +746,14 @@ class Hercules(PlaneType):
         Smokewinder___white = (2, Weapons.Smokewinder___white)
         Smokewinder___yellow = (2, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (2, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (2, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
+        MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD = (
+            2,
+            Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD,
+        )
         Herc_Ext_Fuel_Tank = (2, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon3:
-        LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             3,
             Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
@@ -1085,11 +763,14 @@ class Hercules(PlaneType):
         Smokewinder___white = (3, Weapons.Smokewinder___white)
         Smokewinder___yellow = (3, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (3, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (3, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
+        MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD = (
+            3,
+            Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD,
+        )
         Herc_Ext_Fuel_Tank = (3, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon4:
-        LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             4,
             Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
@@ -1099,11 +780,14 @@ class Hercules(PlaneType):
         Smokewinder___white = (4, Weapons.Smokewinder___white)
         Smokewinder___yellow = (4, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (4, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (4, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
+        MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD = (
+            4,
+            Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD,
+        )
         Herc_Ext_Fuel_Tank = (4, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon5:
-        LAU_68___7_2_75__rockets_M257__Parachute_illumination_ = (
+        LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             5,
             Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
         )
@@ -1113,7 +797,10 @@ class Hercules(PlaneType):
         Smokewinder___white = (5, Weapons.Smokewinder___white)
         Smokewinder___yellow = (5, Weapons.Smokewinder___yellow)
         Smokewinder___orange = (5, Weapons.Smokewinder___orange)
-        MER_6_Mk_82 = (5, Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD)
+        MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD = (
+            5,
+            Weapons.MER6_with_6_x_Mk_82___500lb_GP_Bombs_LD,
+        )
         Herc_Ext_Fuel_Tank = (5, HerculesWeapons.Herc_Ext_Fuel_Tank)
 
     class Pylon6:
@@ -1530,7 +1217,7 @@ class Hercules(PlaneType):
         Herc_APC_BTR_82A_Air = (12, HerculesWeapons.Herc_APC_BTR_82A_Air)
         Herc_APC_BTR_82A_Skid = (12, HerculesWeapons.Herc_APC_BTR_82A_Skid)
 
-    pylons = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
     tasks = [task.Transport, task.CAS, task.GroundAttack]
     task_default = task.Transport
