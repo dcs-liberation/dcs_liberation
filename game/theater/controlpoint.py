@@ -26,21 +26,21 @@ from typing import (
 from uuid import UUID
 
 from dcs.mapping import Point
-from dcs.terrain.terrain import Airport, ParkingSlot
-from dcs.unitgroup import ShipGroup, StaticGroup
-from dcs.unittype import ShipType
 from dcs.ships import (
     CVN_71,
     CVN_72,
     CVN_73,
     CVN_75,
     CV_1143_5,
-    KUZNECOW,
-    Stennis,
     Forrestal,
+    KUZNECOW,
     LHA_Tarawa,
+    Stennis,
     Type_071,
 )
+from dcs.terrain.terrain import Airport, ParkingSlot
+from dcs.unitgroup import ShipGroup, StaticGroup
+from dcs.unittype import ShipType
 
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ground_forces.combat_stance import CombatStance
@@ -56,8 +56,8 @@ from game.sidc import (
     Status,
     SymbolSet,
 )
-from game.utils import Distance, Heading, meters
 from game.theater.presetlocation import PresetLocation
+from game.utils import Distance, Heading, meters
 from .base import Base
 from .frontline import FrontLine
 from .missiontarget import MissionTarget
@@ -320,6 +320,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         name: str,
         position: Point,
         at: StartingPosition,
+        theater: ConflictTheater,
         starts_blue: bool,
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
@@ -327,6 +328,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.id = uuid.uuid4()
         self.full_name = name
         self.at = at
+        self.theater = theater
         self.starts_blue = starts_blue
         self.connected_objectives: List[TheaterGroundObject] = []
         self.preset_locations = PresetLocations()
@@ -1040,11 +1042,14 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
 
 class Airfield(ControlPoint):
-    def __init__(self, airport: Airport, starts_blue: bool) -> None:
+    def __init__(
+        self, airport: Airport, theater: ConflictTheater, starts_blue: bool
+    ) -> None:
         super().__init__(
             airport.name,
             airport.position,
             airport,
+            theater,
             starts_blue,
             cptype=ControlPointType.AIRBASE,
         )
@@ -1237,9 +1242,16 @@ class NavalControlPoint(ControlPoint, ABC):
 
 
 class Carrier(NavalControlPoint):
-    def __init__(self, name: str, at: Point, starts_blue: bool):
+    def __init__(
+        self, name: str, at: Point, theater: ConflictTheater, starts_blue: bool
+    ):
         super().__init__(
-            name, at, at, starts_blue, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP
+            name,
+            at,
+            at,
+            theater,
+            starts_blue,
+            cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
 
     @property
@@ -1276,8 +1288,12 @@ class Carrier(NavalControlPoint):
 
 
 class Lha(NavalControlPoint):
-    def __init__(self, name: str, at: Point, starts_blue: bool):
-        super().__init__(name, at, at, starts_blue, cptype=ControlPointType.LHA_GROUP)
+    def __init__(
+        self, name: str, at: Point, theater: ConflictTheater, starts_blue: bool
+    ):
+        super().__init__(
+            name, at, at, theater, starts_blue, cptype=ControlPointType.LHA_GROUP
+        )
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
@@ -1306,9 +1322,16 @@ class OffMapSpawn(ControlPoint):
     def runway_is_operational(self) -> bool:
         return True
 
-    def __init__(self, name: str, position: Point, starts_blue: bool):
+    def __init__(
+        self, name: str, position: Point, theater: ConflictTheater, starts_blue: bool
+    ):
         super().__init__(
-            name, position, position, starts_blue, cptype=ControlPointType.OFF_MAP
+            name,
+            position,
+            position,
+            theater,
+            starts_blue,
+            cptype=ControlPointType.OFF_MAP,
         )
 
     @property
@@ -1365,8 +1388,12 @@ class OffMapSpawn(ControlPoint):
 
 
 class Fob(ControlPoint):
-    def __init__(self, name: str, at: Point, starts_blue: bool):
-        super().__init__(name, at, at, starts_blue, cptype=ControlPointType.FOB)
+    def __init__(
+        self, name: str, at: Point, theater: ConflictTheater, starts_blue: bool
+    ):
+        super().__init__(
+            name, at, at, theater, starts_blue, cptype=ControlPointType.FOB
+        )
         self.name = name
 
     @property

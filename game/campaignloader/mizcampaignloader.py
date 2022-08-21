@@ -108,9 +108,8 @@ class MizCampaignLoader:
         if self.mission.country(self.RED_COUNTRY.name) is None:
             self.mission.coalition["red"].add_country(self.RED_COUNTRY)
 
-    @staticmethod
-    def control_point_from_airport(airport: Airport) -> ControlPoint:
-        cp = Airfield(airport, starts_blue=airport.is_blue())
+    def control_point_from_airport(self, airport: Airport) -> ControlPoint:
+        cp = Airfield(airport, self.theater, starts_blue=airport.is_blue())
 
         # Use the unlimited aircraft option to determine if an airfield should
         # be owned by the player when the campaign is "inverted".
@@ -257,20 +256,26 @@ class MizCampaignLoader:
         for blue in (False, True):
             for group in self.off_map_spawns(blue):
                 control_point = OffMapSpawn(
-                    str(group.name), group.position, starts_blue=blue
+                    str(group.name), group.position, self.theater, starts_blue=blue
                 )
                 control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.carriers(blue):
-                control_point = Carrier(ship.name, ship.position, starts_blue=blue)
+                control_point = Carrier(
+                    ship.name, ship.position, self.theater, starts_blue=blue
+                )
                 control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.lhas(blue):
-                control_point = Lha(ship.name, ship.position, starts_blue=blue)
+                control_point = Lha(
+                    ship.name, ship.position, self.theater, starts_blue=blue
+                )
                 control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
             for fob in self.fobs(blue):
-                control_point = Fob(str(fob.name), fob.position, starts_blue=blue)
+                control_point = Fob(
+                    str(fob.name), fob.position, self.theater, starts_blue=blue
+                )
                 control_point.captured_invert = fob.late_activation
                 control_points[control_point.id] = control_point
 
