@@ -108,4 +108,4 @@ class FlightPlanBuilder:
             ) from ex
 
     def generate_flight_plan(self, flight: Flight) -> FlightPlan[Any]:
-        return self.builder_type(flight)(flight, self.theater).build()
+        return self.builder_type(flight)(flight).build()

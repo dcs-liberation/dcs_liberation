@@ -194,9 +194,7 @@ class Flight(SidcDescribable):
     def abort(self) -> None:
         from .flightplans.rtb import RtbFlightPlan
 
-        self.flight_plan = RtbFlightPlan.builder_type()(
-            self, self.coalition.game.theater
-        ).build()
+        self.flight_plan = RtbFlightPlan.builder_type()(self).build()
 
         self.set_state(
             Navigating(
