@@ -7,10 +7,12 @@ from typing import Any, List, Optional, TYPE_CHECKING
 from dcs import Point
 from dcs.planes import C_101CC, C_101EB, Su_33
 
+from .flightplans.planningerror import PlanningError
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Navigating, Uninitialized
 from .flightstate.killed import Killed
 from .loadouts import Loadout
+from .packagewaypoints import PackageWaypoints
 from ..sidc import (
     Entity,
     SidcDescribable,
@@ -81,9 +83,9 @@ class Flight(SidcDescribable):
         # Used for simulating the travel to first contact.
         self.state: FlightState = Uninitialized(self, squadron.settings)
 
-        # Will be replaced with a more appropriate FlightPlan by
-        # FlightPlanBuilder, but an empty flight plan the flight begins with an
-        # empty flight plan.
+        # Will be replaced with a more appropriate FlightPlan later, but start with a
+        # cheaply constructed one since adding more flights to the package may affect
+        # the optimal layout.
         from .flightplans.custom import CustomFlightPlan, CustomLayout
 
         self.flight_plan: FlightPlan[Any] = CustomFlightPlan(
@@ -243,3 +245,24 @@ class Flight(SidcDescribable):
         for pilot in self.roster.pilots:
             if pilot is not None:
                 results.kill_pilot(self, pilot)
+
+    def recreate_flight_plan(self) -> None:
+        self.flight_plan = self._make_flight_plan()
+
+    def _make_flight_plan(self) -> FlightPlan[Any]:
+        from game.navmesh import NavMeshError
+        from .flightplans.flightplanbuildertypes import FlightPlanBuilderTypes
+
+        try:
+            if self.package.waypoints is None:
+                self.package.waypoints = PackageWaypoints.create(
+                    self.package, self.coalition
+                )
+            builder = FlightPlanBuilderTypes.for_flight(self)(self)
+            return builder.build()
+        except NavMeshError as ex:
+            color = "blue" if self.squadron.player else "red"
+            raise PlanningError(
+                f"Could not plan {color} {self.flight_type.value} from "
+                f"{self.departure} to {self.package.target}"
+            ) from ex

@@ -11,7 +11,6 @@ from faker import Faker
 from game.ato import Flight, FlightType, Package
 from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
-from ..ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from ..db.database import Database
 from ..utils import meters
 
@@ -19,7 +18,7 @@ if TYPE_CHECKING:
     from game import Game
     from game.coalition import Coalition
     from game.dcs.aircrafttype import AircraftType
-    from game.theater import ControlPoint, ConflictTheater, MissionTarget
+    from game.theater import ControlPoint, MissionTarget
     from .operatingbases import OperatingBases
     from .squadrondef import SquadronDef
 
@@ -335,9 +334,7 @@ class Squadron:
     def arrival(self) -> ControlPoint:
         return self.location if self.destination is None else self.destination
 
-    def plan_relocation(
-        self, destination: ControlPoint, theater: ConflictTheater
-    ) -> None:
+    def plan_relocation(self, destination: ControlPoint) -> None:
         if destination == self.location:
             logging.warning(
                 f"Attempted to plan relocation of {self} to current location "
@@ -356,7 +353,7 @@ class Squadron:
         if not destination.can_operate(self.aircraft):
             raise RuntimeError(f"{self} cannot operate at {destination}.")
         self.destination = destination
-        self.replan_ferry_flights(theater)
+        self.replan_ferry_flights()
 
     def cancel_relocation(self) -> None:
         if self.destination is None:
@@ -371,9 +368,9 @@ class Squadron:
         self.destination = None
         self.cancel_ferry_flights()
 
-    def replan_ferry_flights(self, theater: ConflictTheater) -> None:
+    def replan_ferry_flights(self) -> None:
         self.cancel_ferry_flights()
-        self.plan_ferry_flights(theater)
+        self.plan_ferry_flights()
 
     def cancel_ferry_flights(self) -> None:
         for package in self.coalition.ato.packages:
@@ -384,7 +381,7 @@ class Squadron:
             if not package.flights:
                 self.coalition.ato.remove_package(package)
 
-    def plan_ferry_flights(self, theater: ConflictTheater) -> None:
+    def plan_ferry_flights(self) -> None:
         if self.destination is None:
             raise RuntimeError(
                 f"Cannot plan ferry flights for {self} because there is no destination."
@@ -394,17 +391,14 @@ class Squadron:
             return
 
         package = Package(self.destination, self.flight_db)
-        builder = FlightPlanBuilder(package, self.coalition, theater)
         while remaining:
             size = min(remaining, self.aircraft.max_group_size)
-            self.plan_ferry_flight(builder, package, size)
+            self.plan_ferry_flight(package, size)
             remaining -= size
         package.set_tot_asap()
         self.coalition.ato.add_package(package)
 
-    def plan_ferry_flight(
-        self, builder: FlightPlanBuilder, package: Package, size: int
-    ) -> None:
+    def plan_ferry_flight(self, package: Package, size: int) -> None:
         start_type = self.location.required_aircraft_start_type
         if start_type is None:
             start_type = self.settings.default_start_type
@@ -419,7 +413,7 @@ class Squadron:
             divert=None,
         )
         package.add_flight(flight)
-        builder.populate_flight_plan(flight)
+        flight.recreate_flight_plan()
 
     @classmethod
     def create_from(

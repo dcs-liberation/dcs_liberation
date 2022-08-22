@@ -4,7 +4,6 @@ from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 
 from game import Game
 from game.ato.flight import Flight
-from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.planningerror import PlanningError
 from game.ato.traveltime import TotEstimator
 from qt_ui.models import PackageModel
@@ -71,16 +70,10 @@ class FlightAirfieldDisplay(QGroupBox):
 
         self.flight.divert = divert
         try:
-            self.update_flight_plan()
+            self.flight.recreate_flight_plan()
         except PlanningError as ex:
             self.flight.divert = old_divert
             logging.exception("Could not change divert airfield")
             QMessageBox.critical(
                 self, "Could not update flight plan", str(ex), QMessageBox.Ok
             )
-
-    def update_flight_plan(self) -> None:
-        planner = FlightPlanBuilder(
-            self.package_model.package, self.game.blue, self.game.theater
-        )
-        planner.populate_flight_plan(self.flight)
