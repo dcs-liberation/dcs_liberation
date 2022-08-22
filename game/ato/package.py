@@ -32,8 +32,6 @@ class Package:
     #: The set of flights in the package.
     flights: List[Flight] = field(default_factory=list)
 
-    delay: int = field(default=0)
-
     #: True if the package ToT should be reset to ASAP whenever the player makes
     #: a change. This is really a UI property rather than a game property, but
     #: we want it to persist in the save.
