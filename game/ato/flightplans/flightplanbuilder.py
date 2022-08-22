@@ -72,9 +72,9 @@ class FlightPlanBuilder:
                 f"{flight.departure} to {flight.package.target}"
             ) from ex
 
-    def plan_type(self, task: FlightType) -> Type[FlightPlan[Any]] | None:
+    def plan_type(self, flight: Flight) -> Type[FlightPlan[Any]]:
         plan_type: Type[FlightPlan[Any]]
-        if task == FlightType.REFUELING:
+        if flight.flight_type is FlightType.REFUELING:
             if self.package.target.is_friendly(self.is_player) or isinstance(
                 self.package.target, FrontLine
             ):
@@ -100,13 +100,14 @@ class FlightPlanBuilder:
             FlightType.FERRY: FerryFlightPlan,
             FlightType.AIR_ASSAULT: AirAssaultFlightPlan,
         }
-        return plan_dict.get(task)
-
-    def generate_flight_plan(self, flight: Flight) -> FlightPlan[Any]:
-        plan_type = self.plan_type(flight.flight_type)
-        if plan_type is None:
+        try:
+            return plan_dict[flight.flight_type]
+        except KeyError as ex:
             raise PlanningError(
                 f"{flight.flight_type} flight plan generation not implemented"
-            )
+            ) from ex
+
+    def generate_flight_plan(self, flight: Flight) -> FlightPlan[Any]:
+        plan_type = self.plan_type(flight)
         layout = plan_type.builder_type()(flight, self.theater).build()
         return plan_type(flight, layout)
