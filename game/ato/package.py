@@ -6,16 +6,17 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from .flightplans.formation import FormationFlightPlan
 from game.db import Database
 from game.utils import Speed
+from .closestairfields import ObjectiveDistanceCache
 from .flight import Flight
+from .flightplans.formation import FormationFlightPlan
 from .flighttype import FlightType
 from .packagewaypoints import PackageWaypoints
 from .traveltime import TotEstimator
 
 if TYPE_CHECKING:
-    from game.theater import MissionTarget
+    from game.theater import ControlPoint, MissionTarget
 
 
 @dataclass
@@ -192,6 +193,24 @@ class Package:
         if task in oca_strike_types:
             return "OCA Strike"
         return str(task)
+
+    def departure_closest_to_target(self) -> ControlPoint:
+        # We'll always have a package, but if this is being planned via the UI
+        # it could be the first flight in the package.
+        if not self.flights:
+            raise RuntimeError(
+                "Cannot determine source airfield for package with no flights"
+            )
+
+        # The package airfield is either the flight's airfield (when there is no
+        # package) or the closest airfield to the objective that is the
+        # departure airfield for some flight in the package.
+        cache = ObjectiveDistanceCache.get_closest_airfields(self.target)
+        for airfield in cache.operational_airfields:
+            for flight in self.flights:
+                if flight.departure == airfield:
+                    return airfield
+        raise RuntimeError("Could not find any airfield assigned to this package")
 
     def __hash__(self) -> int:
         # TODO: Far from perfect. Number packages?
