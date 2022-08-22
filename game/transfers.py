@@ -43,7 +43,6 @@ from dcs.mapping import Point
 from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ato.flight import Flight
-from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.dcs.aircrafttype import AircraftType
@@ -364,10 +363,7 @@ class AirliftPlanner:
         transfer.transport = transport
 
         self.package.add_flight(flight)
-        planner = FlightPlanBuilder(
-            self.package, self.game.coalition_for(self.for_player), self.game.theater
-        )
-        planner.populate_flight_plan(flight)
+        flight.recreate_flight_plan()
         return flight_size
 
 

@@ -14,7 +14,6 @@ from PySide2.QtWidgets import (
 from game import Game
 from game.ato.flight import Flight
 from game.ato.flightplans.custom import CustomFlightPlan, CustomLayout
-from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.formationattack import FormationAttackFlightPlan
 from game.ato.flightplans.planningerror import PlanningError
 from game.ato.flightplans.waypointbuilder import WaypointBuilder
@@ -38,7 +37,6 @@ class QFlightWaypointTab(QFrame):
         self.game = game
         self.package = package
         self.flight = flight
-        self.planner = FlightPlanBuilder(package, game.blue, game.theater)
 
         self.flight_waypoint_list: Optional[QFlightWaypointList] = None
         self.rtb_waypoint: Optional[QPushButton] = None
@@ -168,7 +166,7 @@ class QFlightWaypointTab(QFrame):
         if result == QMessageBox.Yes:
             self.flight.flight_type = task
             try:
-                self.planner.populate_flight_plan(self.flight)
+                self.flight.recreate_flight_plan()
             except PlanningError as ex:
                 self.flight.flight_type = original_task
                 logging.exception("Could not recreate flight")
