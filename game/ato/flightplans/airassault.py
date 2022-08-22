@@ -13,7 +13,6 @@ from .ibuilder import IBuilder
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
-    from ..flight import Flight
     from ..flightwaypoint import FlightWaypoint
 
 
@@ -37,9 +36,6 @@ class AirAssaultLayout(AirliftLayout):
 
 
 class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
-    def __init__(self, flight: Flight, layout: AirAssaultLayout) -> None:
-        super().__init__(flight, layout)
-
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder

@@ -13,7 +13,6 @@ from .standard import StandardFlightPlan, StandardLayout
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
-    from ..flight import Flight
     from ..flightwaypoint import FlightWaypoint
 
 
@@ -43,9 +42,6 @@ class AirliftLayout(StandardLayout):
 
 
 class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
-    def __init__(self, flight: Flight, layout: AirliftLayout) -> None:
-        super().__init__(flight, layout)
-
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
