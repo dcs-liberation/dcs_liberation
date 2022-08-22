@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable, List, Optional, Any
+from typing import Iterable, List, Optional
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
@@ -14,10 +14,10 @@ from PySide2.QtWidgets import (
 from game import Game
 from game.ato.flight import Flight
 from game.ato.flightplans.custom import CustomFlightPlan, CustomLayout
-from game.ato.flightplans.flightplan import FlightPlan
 from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.formationattack import FormationAttackFlightPlan
 from game.ato.flightplans.planningerror import PlanningError
+from game.ato.flightplans.waypointbuilder import WaypointBuilder
 from game.ato.flighttype import FlightType
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.loadouts import Loadout
@@ -139,7 +139,7 @@ class QFlightWaypointTab(QFrame):
         self.on_change()
 
     def on_rtb_waypoint(self):
-        rtb = self.planner.generate_rtb_waypoint(self.flight, self.flight.from_cp)
+        rtb = WaypointBuilder(self.flight, self.coalition).land(self.flight.arrival)
         self.degrade_to_custom_flight_plan()
         assert isinstance(self.flight.flight_plan, CustomFlightPlan)
         self.flight.flight_plan.layout.custom_waypoints.append(rtb)
