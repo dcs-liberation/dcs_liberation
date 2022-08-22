@@ -19,9 +19,12 @@ LayoutT = TypeVar("LayoutT", bound=Layout)
 
 
 class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
-    def __init__(self, flight: Flight, theater: ConflictTheater) -> None:
+    def __init__(self, flight: Flight) -> None:
         self.flight = flight
-        self.theater = theater
+
+    @property
+    def theater(self) -> ConflictTheater:
+        return self.flight.departure.theater
 
     @abstractmethod
     def layout(self) -> LayoutT:
