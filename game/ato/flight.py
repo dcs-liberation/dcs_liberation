@@ -7,13 +7,10 @@ from typing import Any, List, Optional, TYPE_CHECKING
 from dcs import Point
 from dcs.planes import C_101CC, C_101EB, Su_33
 
-from .flightplans.planningerror import PlanningError
-from .flightplans.waypointbuilder import WaypointBuilder
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Navigating, Uninitialized
 from .flightstate.killed import Killed
 from .loadouts import Loadout
-from .packagewaypoints import PackageWaypoints
 from ..sidc import (
     Entity,
     SidcDescribable,
@@ -85,15 +82,13 @@ class Flight(SidcDescribable):
         # Will be replaced with a more appropriate FlightPlan later, but start with a
         # cheaply constructed one since adding more flights to the package may affect
         # the optimal layout.
-        from .flightplans.custom import CustomFlightPlan, CustomLayout
+        from .flightplans.flightplanbuildertypes import FlightPlanBuilderTypes
 
-        self.flight_plan: FlightPlan[Any] = CustomFlightPlan(
-            self,
-            CustomLayout(
-                departure=WaypointBuilder(self, self.coalition).takeoff(self.departure),
-                custom_waypoints=[],
-            ),
-        )
+        self._flight_plan_builder = FlightPlanBuilderTypes.for_flight(self)(self)
+
+    @property
+    def flight_plan(self) -> FlightPlan[Any]:
+        return self._flight_plan_builder.get_or_build()
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
@@ -199,13 +194,14 @@ class Flight(SidcDescribable):
     def abort(self) -> None:
         from .flightplans.rtb import RtbFlightPlan
 
-        self.flight_plan = RtbFlightPlan.builder_type()(self).build()
+        self._flight_plan_builder = RtbFlightPlan.builder_type()(self)
+        plan = self._flight_plan_builder.get_or_build()
 
         self.set_state(
             Navigating(
                 self,
                 self.squadron.settings,
-                self.flight_plan.abort_index,
+                plan.abort_index,
                 has_aborted=True,
             )
         )
@@ -250,22 +246,4 @@ class Flight(SidcDescribable):
                 results.kill_pilot(self, pilot)
 
     def recreate_flight_plan(self) -> None:
-        self.flight_plan = self._make_flight_plan()
-
-    def _make_flight_plan(self) -> FlightPlan[Any]:
-        from game.navmesh import NavMeshError
-        from .flightplans.flightplanbuildertypes import FlightPlanBuilderTypes
-
-        try:
-            if self.package.waypoints is None:
-                self.package.waypoints = PackageWaypoints.create(
-                    self.package, self.coalition
-                )
-            builder = FlightPlanBuilderTypes.for_flight(self)(self)
-            return builder.build()
-        except NavMeshError as ex:
-            color = "blue" if self.squadron.player else "red"
-            raise PlanningError(
-                f"Could not plan {color} {self.flight_type.value} from "
-                f"{self.departure} to {self.package.target}"
-            ) from ex
+        self._flight_plan_builder.regenerate()
