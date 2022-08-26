@@ -1,7 +1,6 @@
 name: comms
 generic: true
 tasks:
-  - StrikeTarget
   - Comms
 groups:
   - Comms:

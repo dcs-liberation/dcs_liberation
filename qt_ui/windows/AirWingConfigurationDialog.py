@@ -1,32 +1,32 @@
-from typing import Callable, Iterable, Optional
+from typing import Iterable, Iterator, Optional
 
 from PySide2.QtCore import (
     QItemSelection,
     QItemSelectionModel,
-    QModelIndex,
     QSize,
     Qt,
     Signal,
 )
 from PySide2.QtGui import QIcon, QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QDialog,
+    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
     QListView,
+    QMessageBox,
+    QPushButton,
     QScrollArea,
     QStackedLayout,
     QTabWidget,
     QTextEdit,
+    QToolButton,
     QVBoxLayout,
     QWidget,
-    QCheckBox,
-    QPushButton,
-    QGridLayout,
-    QToolButton,
 )
 
 from game import Game
@@ -39,39 +39,66 @@ from game.theater import ConflictTheater, ControlPoint
 from qt_ui.uiconstants import AIRCRAFT_ICONS, ICONS
 
 
-class AllowedMissionTypeControls(QVBoxLayout):
+class QMissionType:
+    def __init__(
+        self, mission_type: FlightType, allowed: bool, auto_assignable: bool
+    ) -> None:
+        self.flight_type = mission_type
+        self.allowed_checkbox = QCheckBox()
+        self.allowed_checkbox.setChecked(allowed)
+        self.allowed_checkbox.toggled.connect(self.update_auto_assignable)
+        self.auto_assignable_checkbox = QCheckBox()
+        self.auto_assignable_checkbox.setEnabled(allowed)
+        self.auto_assignable_checkbox.setChecked(auto_assignable)
+
+    def update_auto_assignable(self, checked: bool) -> None:
+        self.auto_assignable_checkbox.setEnabled(checked)
+        if not checked:
+            self.auto_assignable_checkbox.setChecked(False)
+
+    @property
+    def allowed(self) -> bool:
+        return self.allowed_checkbox.isChecked()
+
+    @property
+    def auto_assignable(self) -> bool:
+        return self.auto_assignable_checkbox.isChecked()
+
+
+class MissionTypeControls(QGridLayout):
     def __init__(self, squadron: Squadron) -> None:
         super().__init__()
         self.squadron = squadron
-        self.allowed_mission_types = set()
+        self.mission_types: list[QMissionType] = []
 
-        self.addWidget(QLabel("Allowed mission types"))
+        self.addWidget(QLabel("Mission Type"), 0, 0)
+        self.addWidget(QLabel("Allow"), 0, 1)
+        self.addWidget(QLabel("Auto-Assign"), 0, 2)
 
-        def make_callback(toggled_task: FlightType) -> Callable[[bool], None]:
-            def callback(checked: bool) -> None:
-                self.on_toggled(toggled_task, checked)
-
-            return callback
-
-        for task in FlightType:
+        for i, task in enumerate(FlightType):
             if task is FlightType.FERRY:
                 # Not plannable so just skip it.
                 continue
-            enabled = task in squadron.mission_types
-            if enabled:
-                self.allowed_mission_types.add(task)
-            checkbox = QCheckBox(text=task.value)
-            checkbox.setChecked(enabled)
-            checkbox.toggled.connect(make_callback(task))
-            self.addWidget(checkbox)
+            allowed = task in squadron.mission_types
+            auto_assignable = task in squadron.auto_assignable_mission_types
+            mission_type = QMissionType(task, allowed, auto_assignable)
+            self.mission_types.append(mission_type)
 
-        self.addStretch()
+            self.addWidget(QLabel(task.value), i + 1, 0)
+            self.addWidget(mission_type.allowed_checkbox, i + 1, 1)
+            self.addWidget(mission_type.auto_assignable_checkbox, i + 1, 2)
 
-    def on_toggled(self, task: FlightType, checked: bool) -> None:
-        if checked:
-            self.allowed_mission_types.add(task)
-        else:
-            self.allowed_mission_types.remove(task)
+    @property
+    def allowed_mission_types(self) -> Iterator[FlightType]:
+        for mission_type in self.mission_types:
+            if mission_type.allowed:
+                yield mission_type.flight_type
+
+    @property
+    def auto_assignable_mission_types(self) -> Iterator[FlightType]:
+        for mission_type in self.mission_types:
+            if mission_type.auto_assignable:
+                yield mission_type.flight_type
 
 
 class SquadronBaseSelector(QComboBox):
@@ -117,7 +144,6 @@ class SquadronConfigurationBox(QGroupBox):
     def __init__(self, squadron: Squadron, theater: ConflictTheater) -> None:
         super().__init__()
         self.squadron = squadron
-        self.reset_title()
 
         columns = QHBoxLayout()
         self.setLayout(columns)
@@ -127,15 +153,16 @@ class SquadronConfigurationBox(QGroupBox):
 
         left_column.addWidget(QLabel("Name:"))
         self.name_edit = QLineEdit(squadron.name)
-        self.name_edit.textChanged.connect(self.on_name_changed)
+        self.name_edit.textChanged.connect(lambda x: self.reset_title())
         left_column.addWidget(self.name_edit)
+
+        self.reset_title()
 
         nickname_edit_layout = QGridLayout()
         left_column.addLayout(nickname_edit_layout)
 
         nickname_edit_layout.addWidget(QLabel("Nickname:"), 0, 0, 1, 2)
         self.nickname_edit = QLineEdit(squadron.nickname)
-        self.nickname_edit.textChanged.connect(self.on_nickname_changed)
         nickname_edit_layout.addWidget(self.nickname_edit, 1, 0, Qt.AlignTop)
         reroll_nickname_button = QToolButton()
         reroll_nickname_button.setIcon(QIcon(ICONS["Reload"]))
@@ -149,15 +176,16 @@ class SquadronConfigurationBox(QGroupBox):
             squadron.location,
             squadron.aircraft,
         )
-        self.base_selector.currentIndexChanged.connect(self.on_base_changed)
         left_column.addWidget(self.base_selector)
 
-        if squadron.player:
+        if not squadron.player and squadron.aircraft.flyable:
+            player_label = QLabel("Player slots not available for opfor")
+        elif not squadron.aircraft.flyable:
+            player_label = QLabel("Player slots not available for non-flyable aircraft")
+        else:
             player_label = QLabel(
                 "Players (one per line, leave empty for an AI-only squadron):"
             )
-        else:
-            player_label = QLabel("Player slots not available for opfor")
         left_column.addWidget(player_label)
 
         players = [p for p in squadron.pilot_pool if p.player]
@@ -167,7 +195,7 @@ class SquadronConfigurationBox(QGroupBox):
             players = []
         self.player_list = QTextEdit("<br />".join(p.name for p in players))
         self.player_list.setAcceptRichText(False)
-        self.player_list.setEnabled(squadron.player)
+        self.player_list.setEnabled(squadron.player and squadron.aircraft.flyable)
         left_column.addWidget(self.player_list)
         delete_button = QPushButton("Remove Squadron")
         delete_button.setMaximumWidth(140)
@@ -175,27 +203,17 @@ class SquadronConfigurationBox(QGroupBox):
         left_column.addWidget(delete_button)
         left_column.addStretch()
 
-        self.allowed_missions = AllowedMissionTypeControls(squadron)
-        columns.addLayout(self.allowed_missions)
+        right_column = QVBoxLayout()
+        self.mission_types = MissionTypeControls(squadron)
+        right_column.addLayout(self.mission_types)
+        right_column.addStretch()
+        columns.addLayout(right_column)
 
     def remove_from_squadron_config(self) -> None:
         self.remove_squadron_signal.emit(self.squadron)
 
-    def on_name_changed(self, text: str) -> None:
-        self.squadron.name = text
-        self.reset_title()
-
-    def on_nickname_changed(self, text: str) -> None:
-        self.squadron.nickname = text
-
-    def on_base_changed(self, index: int) -> None:
-        base = self.base_selector.itemData(index)
-        if base is None:
-            raise RuntimeError("Base cannot be none")
-        self.squadron.assign_to_base(base)
-
     def reset_title(self) -> None:
-        self.setTitle(f"{self.squadron.name} - {self.squadron.aircraft}")
+        self.setTitle(f"{self.name_edit.text()} - {self.squadron.aircraft}")
 
     def reroll_nickname(self) -> None:
         self.nickname_edit.setText(
@@ -203,13 +221,25 @@ class SquadronConfigurationBox(QGroupBox):
         )
 
     def apply(self) -> Squadron:
+        self.squadron.name = self.name_edit.text()
+        self.squadron.nickname = self.nickname_edit.text()
+        base = self.base_selector.currentData()
+        if base is None:
+            raise RuntimeError("Base cannot be none")
+        self.squadron.assign_to_base(base)
+
         player_names = self.player_list.toPlainText().splitlines()
         # Prepend player pilots so they get set active first.
         self.squadron.pilot_pool = [
             Pilot(n, player=True) for n in player_names
         ] + self.squadron.pilot_pool
+        # Set the allowed mission types
         self.squadron.set_allowed_mission_types(
-            self.allowed_missions.allowed_mission_types
+            set(self.mission_types.allowed_mission_types)
+        )
+        # Also update the auto assignable mission types
+        self.squadron.set_auto_assignable_mission_types(
+            set(self.mission_types.auto_assignable_mission_types)
         )
         return self.squadron
 
@@ -322,12 +352,21 @@ class AircraftSquadronsPanel(QStackedLayout):
         for aircraft, page in self.squadrons_pages.items():
             self.air_wing.squadrons[aircraft] = page.apply()
 
+    def revert(self) -> None:
+        for _, page in self.squadrons_pages.items():
+            self.removeWidget(page)
+        self.squadrons_pages: dict[AircraftType, AircraftSquadronsPage] = {}
+        for aircraft, squadrons in self.air_wing.squadrons.items():
+            self.new_page_for_type(aircraft, squadrons)
+        self.update()
+
 
 class AircraftTypeList(QListView):
     page_index_changed = Signal(int)
 
     def __init__(self, air_wing: AirWing) -> None:
         super().__init__()
+        self.air_wing = air_wing
         self.setIconSize(QSize(91, 24))
         self.setMinimumWidth(300)
 
@@ -372,6 +411,12 @@ class AircraftTypeList(QListView):
             return QIcon(AIRCRAFT_ICONS[name])
         return None
 
+    def revert(self) -> None:
+        self.item_model.clear()
+        for aircraft in self.air_wing.squadrons:
+            self.add_aircraft_type(aircraft)
+        self.update()
+
 
 class AirWingConfigurationTab(QWidget):
     def __init__(self, coalition: Coalition, game: Game) -> None:
@@ -403,10 +448,19 @@ class AirWingConfigurationTab(QWidget):
                 self.type_list.selectionModel().currentIndex().row()
             ).text()
 
+        bases = list(self.game.theater.control_points_for(self.coalition.player))
+
+        # List of all Aircrafts possible to operate with the given bases
+        possible_aircrafts = [
+            aircraft
+            for aircraft in self.coalition.faction.aircrafts
+            if any(base.can_operate(aircraft) for base in bases)
+        ]
+
         popup = SquadronConfigPopup(
             selected_aircraft,
-            self.coalition.faction.aircrafts,
-            list(self.game.theater.control_points_for(self.coalition.player)),
+            possible_aircrafts,
+            bases,
             self.coalition.air_wing.squadron_defs,
         )
         if popup.exec_() != QDialog.Accepted:
@@ -438,13 +492,18 @@ class AirWingConfigurationTab(QWidget):
     def apply(self) -> None:
         self.squadrons_panel.apply()
 
+    def revert(self) -> None:
+        self.type_list.revert()
+        self.squadrons_panel.revert()
+        self.update()
+
 
 class AirWingConfigurationDialog(QDialog):
     """Dialog window for air wing configuration."""
 
     def __init__(self, game: Game, parent) -> None:
         super().__init__(parent)
-        self.setMinimumSize(500, 800)
+        self.setMinimumSize(1024, 768)
         self.setWindowTitle(f"Air Wing Configuration")
         # TODO: self.setWindowIcon()
 
@@ -460,19 +519,46 @@ class AirWingConfigurationDialog(QDialog):
 
         layout.addWidget(doc_label)
 
-        tab_widget = QTabWidget()
-        layout.addWidget(tab_widget)
+        self.tab_widget = QTabWidget()
+        layout.addWidget(self.tab_widget)
 
         self.tabs = []
         for coalition in game.coalitions:
             coalition_tab = AirWingConfigurationTab(coalition, game)
             name = "Blue" if coalition.player else "Red"
-            tab_widget.addTab(coalition_tab, name)
+            self.tab_widget.addTab(coalition_tab, name)
             self.tabs.append(coalition_tab)
 
-    def reject(self) -> None:
+        buttons_layout = QHBoxLayout()
+        apply_button = QPushButton("Accept Changes && Start Campaign")
+        apply_button.setProperty("style", "btn-accept")
+        apply_button.clicked.connect(lambda state: self.accept())
+        discard_button = QPushButton("Reset Changes")
+        discard_button.setProperty("style", "btn-danger")
+        discard_button.clicked.connect(lambda state: self.revert())
+        buttons_layout.addWidget(discard_button)
+        buttons_layout.addWidget(apply_button)
+        layout.addLayout(buttons_layout)
+
+    def revert(self) -> None:
+        for tab in self.tabs:
+            tab.revert()
+
+    def accept(self) -> None:
         for tab in self.tabs:
             tab.apply()
+        super().accept()
+
+    def reject(self) -> None:
+        result = QMessageBox.information(
+            None,
+            "Discard changes?",
+            "Are you sure you want to discard your changes and start the campaign?",
+            QMessageBox.Yes,
+            QMessageBox.No,
+        )
+        if result == QMessageBox.No:
+            return
         super().reject()
 
 
@@ -561,11 +647,19 @@ class SquadronConfigPopup(QDialog):
 
         self.accept_button = QPushButton("Accept")
         self.accept_button.clicked.connect(lambda state: self.accept())
+        self.update_accept_button()
         self.button_layout.addWidget(self.accept_button)
 
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(lambda state: self.reject())
         self.button_layout.addWidget(self.cancel_button)
+
+    def update_accept_button(self) -> None:
+        enabled = (
+            self.aircraft_type_selector.currentData() is not None
+            and self.squadron_base_selector.currentData() is not None
+        )
+        self.accept_button.setEnabled(enabled)
 
     def on_aircraft_selection(self) -> None:
         self.squadron_base_selector.set_aircraft_type(
@@ -574,4 +668,5 @@ class SquadronConfigPopup(QDialog):
         self.squadron_def_selector.set_aircraft_type(
             self.aircraft_type_selector.currentData()
         )
+        self.update_accept_button()
         self.update()

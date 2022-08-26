@@ -10,7 +10,7 @@ from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
-from game.missiongenerator.airsupport import AirSupport
+from game.missiongenerator.missiondata import MissionData
 from game.theater import MissionTarget, TheaterUnit
 
 TARGET_WAYPOINTS = (
@@ -28,7 +28,7 @@ class PydcsWaypointBuilder:
         flight: Flight,
         mission: Mission,
         elapsed_mission_time: timedelta,
-        air_support: AirSupport,
+        mission_data: MissionData,
     ) -> None:
         self.waypoint = waypoint
         self.group = group
@@ -36,7 +36,7 @@ class PydcsWaypointBuilder:
         self.flight = flight
         self.mission = mission
         self.elapsed_mission_time = elapsed_mission_time
-        self.air_support = air_support
+        self.mission_data = mission_data
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
@@ -50,6 +50,10 @@ class PydcsWaypointBuilder:
             # It seems we need to leave waypoint.type exactly as it is even
             # though it's set to "Turning Point". If I set this to "Fly Over
             # Point" and then save the mission in the ME DCS resets it.
+            if self.flight.client_count > 0:
+                # Set Altitute to 0 AGL for player flights so that they can slave target pods or weapons to the waypoint
+                waypoint.alt = 0
+                waypoint.alt_type = "RADIO"
 
         waypoint.alt_type = self.waypoint.alt_type
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)

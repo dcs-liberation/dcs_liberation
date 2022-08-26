@@ -1,3 +1,6 @@
+class: Helicopter
 price: 4
+cabin_size: 10
+can_carry_crates: true
 variants:
   UH-60A: null

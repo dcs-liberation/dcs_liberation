@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Type, Iterator
+from typing import Any, Iterator, Optional, Type
 
 import yaml
 from dcs.unittype import VehicleType
@@ -13,9 +13,51 @@ from game.data.units import UnitClass
 from game.dcs.unittype import UnitType
 
 
+@dataclass
+class SkynetProperties:
+    can_engage_harm: Optional[str] = None
+    can_engage_air_weapon: Optional[str] = None
+    go_live_range_in_percent: Optional[str] = None
+    engagement_zone: Optional[str] = None
+    autonomous_behaviour: Optional[str] = None
+    harm_detection_chance: Optional[str] = None
+
+    @classmethod
+    def from_data(cls, data: dict[str, Any]) -> SkynetProperties:
+        props = SkynetProperties()
+        if "can_engage_harm" in data:
+            props.can_engage_harm = str(data["can_engage_harm"]).lower()
+        if "can_engage_air_weapon" in data:
+            props.can_engage_air_weapon = str(data["can_engage_air_weapon"]).lower()
+        if "go_live_range_in_percent" in data:
+            props.go_live_range_in_percent = str(data["go_live_range_in_percent"])
+        if "engagement_zone" in data:
+            props.engagement_zone = str(data["engagement_zone"])
+        if "autonomous_behaviour" in data:
+            props.autonomous_behaviour = str(data["autonomous_behaviour"])
+        if "harm_detection_chance" in data:
+            props.harm_detection_chance = str(data["harm_detection_chance"])
+        return props
+
+    def to_dict(self) -> dict[str, str]:
+        properties: dict[str, str] = {}
+        for key, value in self.__dict__.items():
+            if value is not None:
+                properties[key] = value
+        return properties
+
+    def __hash__(self) -> int:
+        return hash(id(self))
+
+
 @dataclass(frozen=True)
 class GroundUnitType(UnitType[Type[VehicleType]]):
     spawn_weight: int
+    skynet_properties: SkynetProperties
+
+    # Defines if we should place the ground unit with an inverted heading.
+    # Some units like few Launchers have to be placed backwards to be able to fire.
+    reversed_heading: bool = False
 
     @classmethod
     def named(cls, name: str) -> GroundUnitType:
@@ -34,7 +76,7 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
             yield unit
 
     @staticmethod
-    def _each_unit_type() -> Iterator[Type[VehicleType]]:
+    def each_dcs_type() -> Iterator[Type[VehicleType]]:
         yield from vehicle_map.values()
 
     @classmethod
@@ -76,4 +118,8 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
                 manufacturer=data.get("manufacturer", "No data."),
                 role=data.get("role", "No data."),
                 price=data.get("price", 1),
+                skynet_properties=SkynetProperties.from_data(
+                    data.get("skynet_properties", {})
+                ),
+                reversed_heading=data.get("reversed_heading", False),
             )

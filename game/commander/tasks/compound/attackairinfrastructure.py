@@ -11,5 +11,5 @@ class AttackAirInfrastructure(CompoundTask[TheaterState]):
     aircraft_cold_start: bool
 
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
-        for garrison in state.oca_targets:
-            yield [PlanOcaStrike(garrison, self.aircraft_cold_start)]
+        for battle_position in state.oca_targets:
+            yield [PlanOcaStrike(battle_position, self.aircraft_cold_start)]

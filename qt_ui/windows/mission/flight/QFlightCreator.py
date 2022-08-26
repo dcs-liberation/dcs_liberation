@@ -50,14 +50,17 @@ class QFlightCreator(QDialog):
 
         layout = QVBoxLayout()
 
-        self.task_selector = QFlightTypeComboBox(self.game.theater, package.target)
+        self.task_selector = QFlightTypeComboBox(
+            self.game.theater, package.target, self.game.settings
+        )
         self.task_selector.setCurrentIndex(0)
         self.task_selector.currentIndexChanged.connect(self.on_task_changed)
         layout.addLayout(QLabeledWidget("Task:", self.task_selector))
 
         self.aircraft_selector = QAircraftTypeSelector(
-            self.game.blue.air_wing.available_aircraft_types,
-            self.task_selector.currentData(),
+            self.game.blue.air_wing.best_available_aircrafts_for(
+                self.task_selector.currentData()
+            )
         )
         self.aircraft_selector.setCurrentIndex(0)
         self.aircraft_selector.currentIndexChanged.connect(self.on_aircraft_changed)
@@ -100,7 +103,7 @@ class QFlightCreator(QDialog):
         # When an off-map spawn overrides the start type to in-flight, we save
         # the selected type into this value. If a non-off-map spawn is selected
         # we restore the previous choice.
-        self.restore_start_type: Optional[str] = None
+        self.restore_start_type = self.game.settings.default_start_type
         self.start_type = QComboBox()
         for start_type in StartType:
             self.start_type.addItem(start_type.value, start_type)
@@ -112,6 +115,9 @@ class QFlightCreator(QDialog):
                 tooltip="Selects the start type for this flight.",
             )
         )
+        if squadron is not None and isinstance(squadron.location, OffMapSpawn):
+            self.start_type.setCurrentText(StartType.IN_FLIGHT.value)
+            self.start_type.setEnabled(False)
         layout.addWidget(
             QLabel(
                 "Any option other than Cold will make this flight "
@@ -210,13 +216,13 @@ class QFlightCreator(QDialog):
         else:
             self.start_type.setEnabled(True)
             if self.restore_start_type is not None:
-                self.start_type.setCurrentText(self.restore_start_type)
+                self.start_type.setCurrentText(self.restore_start_type.value)
                 self.restore_start_type = None
 
     def on_task_changed(self, index: int) -> None:
         task = self.task_selector.itemData(index)
         self.aircraft_selector.update_items(
-            task, self.game.blue.air_wing.available_aircraft_types
+            self.game.blue.air_wing.best_available_aircrafts_for(task)
         )
         self.squadron_selector.update_items(task, self.aircraft_selector.currentData())
 

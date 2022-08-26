@@ -2,7 +2,7 @@ import copy
 
 from dcs.planes import B_17G, B_52H, Tu_22M3
 from dcs.point import MovingPoint
-from dcs.task import Bombing, OptFormation, WeaponType
+from dcs.task import Bombing, OptFormation, WeaponType, Expend
 
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
@@ -25,21 +25,19 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
         for target in targets[1:]:
             center += target.position
         center /= len(targets)
-        bombing = Bombing(center, weapon_type=WeaponType.Bombs)
-        bombing.params["expend"] = "All"
-        bombing.params["attackQtyLimit"] = False
-        bombing.params["directionEnabled"] = False
-        bombing.params["altitudeEnabled"] = False
-        bombing.params["groupAttack"] = True
+        bombing = Bombing(
+            center, weapon_type=WeaponType.Bombs, expend=Expend.All, group_attack=True
+        )
         waypoint.tasks.append(bombing)
 
     def add_strike_tasks(self, waypoint: MovingPoint) -> None:
         for target in self.waypoint.targets:
-            bombing = Bombing(target.position, weapon_type=WeaponType.Auto)
+            bombing = Bombing(
+                target.position, weapon_type=WeaponType.Auto, group_attack=True
+            )
             # If there is only one target, drop all ordnance in one pass.
             if len(self.waypoint.targets) == 1:
-                bombing.params["expend"] = "All"
-            bombing.params["groupAttack"] = True
+                bombing.params["expend"] = Expend.All.value
             waypoint.tasks.append(bombing)
 
             # Register special waypoints

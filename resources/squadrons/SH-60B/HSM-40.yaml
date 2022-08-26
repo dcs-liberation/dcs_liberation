@@ -9,3 +9,4 @@ livery: standard
 mission_types:
   - Transport
   - Anti-ship
+  - Air Assault

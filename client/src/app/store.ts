@@ -7,7 +7,9 @@ import mapReducer from "../api/mapSlice";
 import navMeshReducer from "../api/navMeshSlice";
 import supplyRoutesReducer from "../api/supplyRoutesSlice";
 import tgosReducer from "../api/tgosSlice";
+import iadsNetworkReducer from "../api/iadsNetworkSlice";
 import threatZonesReducer from "../api/threatZonesSlice";
+import unculledZonesReducer  from "../api/unculledZonesSlice";
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
@@ -19,9 +21,11 @@ export const store = configureStore({
     map: mapReducer,
     navmeshes: navMeshReducer,
     supplyRoutes: supplyRoutesReducer,
+    iadsNetwork: iadsNetworkReducer,
     tgos: tgosReducer,
     threatZones: threatZonesReducer,
     [baseApi.reducerPath]: baseApi.reducer,
+    unculledZones: unculledZonesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware),

@@ -23,6 +23,7 @@ groups:
     - name: ScudGenerator 3
       optional: true
       unit_count:
+        - 0
         - 1
       unit_classes:
         - SHORAD

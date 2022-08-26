@@ -17,6 +17,9 @@ import { Map } from "leaflet";
 import { useEffect, useRef } from "react";
 import { BasemapLayer } from "react-esri-leaflet";
 import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
+import Iadsnetworklayer from "../iadsnetworklayer";
+import CullingExclusionZones from "../cullingexclusionzones/CullingExclusionZones"
+import LeafletRuler from "../ruler/Ruler";
 
 export default function LiberationMap() {
   const map = useRef<Map>();
@@ -31,6 +34,7 @@ export default function LiberationMap() {
       whenCreated={(mapInstance) => (map.current = mapInstance)}
     >
       <ScaleControl />
+      <LeafletRuler />
       <LayersControl collapsed={false}>
         <LayersControl.BaseLayer name="Imagery Clarity" checked>
           <BasemapLayer name="ImageryClarity" />
@@ -60,7 +64,7 @@ export default function LiberationMap() {
           <TgosLayer categories={["ship"]} />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Other ground objects" checked>
-          <TgosLayer categories={["aa", "factories", "ships"]} exclude />
+          <TgosLayer categories={["aa", "factory", "ship"]} exclude />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Supply routes" checked>
           <SupplyRoutesLayer />
@@ -74,11 +78,17 @@ export default function LiberationMap() {
         <LayersControl.Overlay name="Enemy SAM detection range">
           <AirDefenseRangeLayer blue={false} detection />
         </LayersControl.Overlay>
+        <LayersControl.Overlay name="Enemy IADS Network">
+          <Iadsnetworklayer blue={false} />
+        </LayersControl.Overlay>
         <LayersControl.Overlay name="Allied SAM threat range">
           <AirDefenseRangeLayer blue={true} />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Allied SAM detection range">
           <AirDefenseRangeLayer blue={true} detection />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Allied IADS Network">
+          <Iadsnetworklayer blue={true} />
         </LayersControl.Overlay>
         <LayersControl.Overlay name="Selected blue flight plan">
           <FlightPlansLayer blue={true} selectedOnly />
@@ -100,6 +110,7 @@ export default function LiberationMap() {
           <NavMeshLayer blue={false} />
         </LayersControl.Overlay>
         <TerrainZonesLayers />
+        <CullingExclusionZones />
         <WaypointDebugZonesControls />
       </LayersControl>
     </MapContainer>

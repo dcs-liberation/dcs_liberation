@@ -158,12 +158,11 @@ class DefaultSquadronAssigner:
         if squadron_def is None:
             return None
 
-        overrides: Dict[str, Union[str, int]] = {}
         if config.name is not None:
-            overrides["name"] = config.name
+            squadron_def.name = config.name
         if config.nickname is not None:
-            overrides["nickname"] = config.nickname
+            squadron_def.nickname = config.nickname
         if config.female_pilot_percentage is not None:
-            overrides["female_pilot_percentage"] = config.female_pilot_percentage
+            squadron_def.female_pilot_percentage = config.female_pilot_percentage
 
-        return dataclasses.replace(squadron_def, **overrides)
+        return squadron_def

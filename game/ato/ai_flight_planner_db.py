@@ -79,6 +79,15 @@ from dcs.planes import (
     MiG_29S,
     MiG_31,
     Mirage_2000_5,
+    Mirage_F1B,
+    Mirage_F1BE,
+    Mirage_F1CE,
+    Mirage_F1EE,
+    Mirage_F1EQ,
+    Mirage_F1M_CE,
+    Mirage_F1M_EE,
+    Mirage_F1C_200,
+    Mirage_F1CT,
     MosquitoFBMkVI,
     P_47D_30,
     P_47D_30bl1,
@@ -152,6 +161,15 @@ CAP_CAPABLE = [
     MiG_23MLD,
     MiG_21Bis,
     Mirage_2000_5,
+    Mirage_F1B,
+    Mirage_F1BE,
+    Mirage_F1CE,
+    Mirage_F1EE,
+    Mirage_F1EQ,
+    Mirage_F1M_CE,
+    Mirage_F1M_EE,
+    Mirage_F1C_200,
+    Mirage_F1CT,
     F_15E,
     M_2000C,
     F_5E_3,
@@ -227,6 +245,14 @@ CAS_CAPABLE = [
     MiG_19P,
     MiG_15bis,
     M_2000C,
+    Mirage_F1B,
+    Mirage_F1BE,
+    Mirage_F1CE,
+    Mirage_F1EE,
+    Mirage_F1EQ,
+    Mirage_F1M_CE,
+    Mirage_F1M_EE,
+    Mirage_F1CT,
     F_5E_3,
     F_86F_Sabre,
     C_101CC,
@@ -278,7 +304,7 @@ SEAD_CAPABLE = [
 
 
 # Aircraft used for DEAD tasks. Must be capable of the CAS DCS task.
-DEAD_CAPABLE = [
+DEAD_CAPABLE = SEAD_CAPABLE + [
     AJS37,
     F_14B,
     F_14A_135_GR,
@@ -303,7 +329,7 @@ DEAD_CAPABLE = [
     Bf_109K_4,
     FW_190D9,
     FW_190A8,
-] + SEAD_CAPABLE
+]
 
 
 # Aircraft used for Strike mission
@@ -345,6 +371,14 @@ STRIKE_CAPABLE = [
     S_3B,
     A_4E_C,
     M_2000C,
+    Mirage_F1B,
+    Mirage_F1BE,
+    Mirage_F1CE,
+    Mirage_F1EE,
+    Mirage_F1EQ,
+    Mirage_F1M_CE,
+    Mirage_F1M_EE,
+    Mirage_F1CT,
     MiG_27K,
     MiG_21Bis,
     MiG_15bis,
@@ -438,6 +472,14 @@ RUNWAY_ATTACK_CAPABLE = [
     S_3B,
     A_4E_C,
     M_2000C,
+    Mirage_F1B,
+    Mirage_F1BE,
+    Mirage_F1CE,
+    Mirage_F1EE,
+    Mirage_F1EQ,
+    Mirage_F1M_CE,
+    Mirage_F1M_EE,
+    Mirage_F1CT,
     MiG_27K,
     MiG_21Bis,
     MiG_15bis,
@@ -481,6 +523,20 @@ TRANSPORT_CAPABLE = [
     Mi_8MT,
     Mi_8MT,
     Mi_26,
+]
+
+AIR_ASSAULT_CAPABLE = [
+    CH_53E,
+    CH_47D,
+    UH_60L,
+    SH_60B,
+    UH_60A,
+    UH_1H,
+    Mi_8MT,
+    Mi_26,
+    Mi_24P,
+    Mi_24V,
+    Hercules,
 ]
 
 DRONES = [MQ_9_Reaper, RQ_1A_Predator, WingLoong_I]
@@ -538,6 +594,8 @@ def dcs_types_for_task(task: FlightType) -> Sequence[Type[FlyingType]]:
         return REFUELING_CAPABALE
     elif task == FlightType.TRANSPORT:
         return TRANSPORT_CAPABLE
+    elif task == FlightType.AIR_ASSAULT:
+        return AIR_ASSAULT_CAPABLE
     else:
         logging.error(f"Unplannable flight type: {task}")
         return []

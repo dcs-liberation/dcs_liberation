@@ -6,16 +6,19 @@ from typing import Any, Optional, TYPE_CHECKING, Type
 from dcs.triggers import TriggerZone
 from dcs.unittype import ShipType, StaticType, UnitType as DcsUnitType, VehicleType
 
+from game.data.radar_db import LAUNCHER_TRACKER_PAIRS, TELARS, TRACK_RADARS
+from game.data.units import ANTI_AIR_UNIT_CLASSES
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
 from game.point_with_heading import PointWithHeading
-from game.utils import Heading
+from game.theater.iadsnetwork.iadsrole import IadsRole
+from game.utils import Heading, Distance, meters
 
 if TYPE_CHECKING:
     from game.layout.layout import LayoutUnit
     from game.sim import GameUpdateEvents
-    from game.theater import TheaterGroundObject
+    from game.theater.theatergroundobject import TheaterGroundObject
 
 
 @dataclass
@@ -89,6 +92,13 @@ class TheaterUnit:
         return issubclass(self.type, ShipType)
 
     @property
+    def is_anti_air(self) -> bool:
+        return (
+            self.unit_type is not None
+            and self.unit_type.unit_class in ANTI_AIR_UNIT_CLASSES
+        )
+
+    @property
     def icon(self) -> str:
         return self.type.id
 
@@ -96,6 +106,16 @@ class TheaterUnit:
     def repairable(self) -> bool:
         # Only let units with UnitType be repairable as we just have prices for them
         return self.unit_type is not None
+
+    @property
+    def detection_range(self) -> Distance:
+        unit_range = getattr(self.type, "detection_range", None)
+        return meters(unit_range if unit_range is not None and self.alive else 0)
+
+    @property
+    def threat_range(self) -> Distance:
+        unit_range = getattr(self.type, "threat_range", None)
+        return meters(unit_range if unit_range is not None and self.alive else 0)
 
 
 class SceneryUnit(TheaterUnit):
@@ -144,8 +164,6 @@ class TheaterGroup:
         name: str,
         units: list[TheaterUnit],
         go: TheaterGroundObject,
-        unit_type: Type[DcsUnitType],
-        unit_count: int,
     ) -> TheaterGroup:
         return TheaterGroup(
             id,
@@ -165,4 +183,53 @@ class TheaterGroup:
 
     @property
     def alive_units(self) -> int:
-        return sum([unit.alive for unit in self.units])
+        return sum(unit.alive for unit in self.units)
+
+    def max_detection_range(self) -> Distance:
+        """Calculate the maximum detection range of the TheaterGroup"""
+        ranges = (u.detection_range for u in self.units if u.is_anti_air)
+        return max(ranges, default=meters(0))
+
+    def max_threat_range(self, radar_only: bool = False) -> Distance:
+        """Calculate the maximum threat range of the TheaterGroup.
+        This also checks for Launcher and Tracker Pairs and if they are functioning or not. Allows to also use only radar emitting units for the calculation with the parameter."""
+        max_non_radar = meters(0)
+        max_telar_range = meters(0)
+        max_tel_range = meters(0)
+        live_trs = set()
+        launchers: dict[Type[VehicleType], Distance] = {}
+        for unit in self.units:
+            if not unit.alive or not unit.is_anti_air:
+                continue
+            if unit.type in TRACK_RADARS:
+                live_trs.add(unit.type)
+            elif unit.type in TELARS:
+                max_telar_range = max(max_telar_range, unit.threat_range)
+            elif (
+                issubclass(unit.type, VehicleType)
+                and unit.type in LAUNCHER_TRACKER_PAIRS
+            ):
+                launchers[unit.type] = unit.threat_range
+            else:
+                max_non_radar = max(max_non_radar, unit.threat_range)
+        for launcher, threat_range in launchers.items():
+            if LAUNCHER_TRACKER_PAIRS[launcher] in live_trs:
+                max_tel_range = max(max_tel_range, threat_range)
+        if radar_only:
+            return max(max_tel_range, max_telar_range)
+        return max(max_tel_range, max_telar_range, max_non_radar)
+
+
+class IadsGroundGroup(TheaterGroup):
+    # IADS GroundObject Groups have a specific Role for the system
+    iads_role: IadsRole = IadsRole.NO_BEHAVIOR
+
+    @staticmethod
+    def from_group(group: TheaterGroup) -> IadsGroundGroup:
+        return IadsGroundGroup(
+            group.id,
+            group.name,
+            group.position,
+            group.units,
+            group.ground_object,
+        )

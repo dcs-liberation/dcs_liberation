@@ -8,14 +8,10 @@ from .formationattack import (
     FormationAttackFlightPlan,
     FormationAttackLayout,
 )
-from .. import Flight
 from ..flightwaypointtype import FlightWaypointType
 
 
 class SeadFlightPlan(FormationAttackFlightPlan):
-    def __init__(self, flight: Flight, layout: FormationAttackLayout) -> None:
-        super().__init__(flight, layout)
-
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
@@ -25,6 +21,9 @@ class SeadFlightPlan(FormationAttackFlightPlan):
         return timedelta(minutes=1)
 
 
-class Builder(FormationAttackBuilder):
-    def build(self) -> FormationAttackLayout:
+class Builder(FormationAttackBuilder[SeadFlightPlan, FormationAttackLayout]):
+    def layout(self) -> FormationAttackLayout:
         return self._build(FlightWaypointType.INGRESS_SEAD)
+
+    def build(self) -> SeadFlightPlan:
+        return SeadFlightPlan(self.flight, self.layout())

@@ -34,4 +34,3 @@ groups:
         - 2
       unit_classes:
         - Logistics
-layout_file: resources/layouts/anti_air/flak.miz

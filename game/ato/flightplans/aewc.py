@@ -9,8 +9,31 @@ from game.ato.flightplans.waypointbuilder import WaypointBuilder
 from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_miles
 
 
-class Builder(IBuilder):
-    def build(self) -> PatrollingLayout:
+class AewcFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
+    @property
+    def patrol_duration(self) -> timedelta:
+        return timedelta(hours=4)
+
+    @property
+    def patrol_speed(self) -> Speed:
+        altitude = self.layout.patrol_start.alt
+        if self.flight.unit_type.preferred_patrol_speed(altitude) is not None:
+            return self.flight.unit_type.preferred_patrol_speed(altitude)
+        return knots(390)
+
+    @property
+    def engagement_distance(self) -> Distance:
+        # TODO: Factor out a common base of the combat and non-combat race-tracks.
+        # No harm in setting this, but we ought to clean up a bit.
+        return meters(0)
+
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
+
+class Builder(IBuilder[AewcFlightPlan, PatrollingLayout]):
+    def layout(self) -> PatrollingLayout:
         racetrack_half_distance = nautical_miles(30).meters
 
         location = self.package.target
@@ -67,25 +90,5 @@ class Builder(IBuilder):
             bullseye=builder.bullseye(),
         )
 
-
-class AewcFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
-    @property
-    def patrol_duration(self) -> timedelta:
-        return timedelta(hours=4)
-
-    @property
-    def patrol_speed(self) -> Speed:
-        altitude = self.layout.patrol_start.alt
-        if self.flight.unit_type.preferred_patrol_speed(altitude) is not None:
-            return self.flight.unit_type.preferred_patrol_speed(altitude)
-        return knots(390)
-
-    @property
-    def engagement_distance(self) -> Distance:
-        # TODO: Factor out a common base of the combat and non-combat race-tracks.
-        # No harm in setting this, but we ought to clean up a bit.
-        return meters(0)
-
-    @staticmethod
-    def builder_type() -> Type[IBuilder]:
-        return Builder
+    def build(self) -> AewcFlightPlan:
+        return AewcFlightPlan(self.flight, self.layout())

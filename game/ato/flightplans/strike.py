@@ -19,8 +19,8 @@ class StrikeFlightPlan(FormationAttackFlightPlan):
         return Builder
 
 
-class Builder(FormationAttackBuilder):
-    def build(self) -> FormationAttackLayout:
+class Builder(FormationAttackBuilder[StrikeFlightPlan, FormationAttackLayout]):
+    def layout(self) -> FormationAttackLayout:
         location = self.package.target
 
         if not isinstance(location, TheaterGroundObject):
@@ -31,3 +31,6 @@ class Builder(FormationAttackBuilder):
             targets.append(StrikeTarget(f"{unit.type.id} #{idx}", unit))
 
         return self._build(FlightWaypointType.INGRESS_STRIKE, targets)
+
+    def build(self) -> StrikeFlightPlan:
+        return StrikeFlightPlan(self.flight, self.layout())

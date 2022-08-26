@@ -198,6 +198,18 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.leafletPoint,
       }),
     }),
+    getIadsNetwork: build.query<
+      GetIadsNetworkApiResponse,
+      GetIadsNetworkApiArg
+    >({
+      query: () => ({ url: `/iads-network/` }),
+    }),
+    getIadsConnectionsForTgo: build.query<
+      GetIadsConnectionsForTgoApiResponse,
+      GetIadsConnectionsForTgoApiArg
+    >({
+      query: (queryArg) => ({ url: `/iads-network/for-tgo/${queryArg.tgoId}` }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -330,6 +342,14 @@ export type SetWaypointPositionApiArg = {
   waypointIdx: number;
   leafletPoint: LatLng;
 };
+export type GetIadsNetworkApiResponse =
+  /** status 200 Successful Response */ IadsNetwork;
+export type GetIadsNetworkApiArg = void;
+export type GetIadsConnectionsForTgoApiResponse =
+  /** status 200 Successful Response */ IadsConnection[];
+export type GetIadsConnectionsForTgoApiArg = {
+  tgoId: string;
+};
 export type LatLng = {
   lat: number;
   lng: number;
@@ -408,11 +428,25 @@ export type Tgo = {
   sidc: string;
 };
 export type SupplyRoute = {
+  id: string;
   points: LatLng[];
   front_active: boolean;
   is_sea: boolean;
   blue: boolean;
   active_transports: string[];
+};
+export type IadsConnection = {
+  id: string;
+  points: LatLng[];
+  node: string;
+  connected: string;
+  active: boolean;
+  blue: boolean;
+  is_power: boolean;
+};
+export type IadsNetwork = {
+  advanced: boolean;
+  connections: IadsConnection[];
 };
 export type ThreatZones = {
   full: LatLng[][];
@@ -441,9 +475,11 @@ export type Game = {
   supply_routes: SupplyRoute[];
   front_lines: FrontLine[];
   flights: Flight[];
+  iads_network: IadsNetwork;
   threat_zones: ThreatZoneContainer;
   navmeshes: NavMeshes;
   map_center?: LatLng;
+  unculled_zones: UnculledZone[];
 };
 export type MapZones = {
   inclusion: LatLng[][];
@@ -483,4 +519,6 @@ export const {
   useGetTgoByIdQuery,
   useListAllWaypointsForFlightQuery,
   useSetWaypointPositionMutation,
+  useGetIadsNetworkQuery,
+  useGetIadsConnectionsForTgoQuery,
 } = injectedRtkApi;

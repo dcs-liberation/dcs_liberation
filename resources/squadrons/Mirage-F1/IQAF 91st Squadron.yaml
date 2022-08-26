@@ -1,0 +1,19 @@
+---
+name: No. 91 Squadron
+nickname: Iraq's Angles
+female_pilot_percentage: 0
+country: Iraq
+role: Multirole Fighter
+aircraft: Mirage-F1EQ
+livery: Iraq Air Force Blue Scheme
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

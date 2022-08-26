@@ -1,30 +1,25 @@
 import logging
 from typing import Callable, Iterator, Optional
 
-from PySide2.QtCore import (
-    QItemSelectionModel,
-    QModelIndex,
-    Qt,
-    QItemSelection,
-)
+from PySide2.QtCore import QItemSelection, QItemSelectionModel, QModelIndex, Qt
 from PySide2.QtWidgets import (
     QAbstractItemView,
-    QDialog,
-    QListView,
-    QVBoxLayout,
-    QPushButton,
-    QHBoxLayout,
-    QLabel,
     QCheckBox,
     QComboBox,
+    QDialog,
+    QHBoxLayout,
+    QLabel,
+    QListView,
+    QPushButton,
+    QVBoxLayout,
 )
 
-from game.squadrons import Pilot, Squadron
-from game.theater import ControlPoint, ConflictTheater
 from game.ato.flighttype import FlightType
+from game.squadrons import Pilot, Squadron
+from game.theater import ConflictTheater, ControlPoint
 from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.errorreporter import report_errors
-from qt_ui.models import SquadronModel, AtoModel
+from qt_ui.models import AtoModel, SquadronModel
 
 
 class PilotDelegate(TwoColumnRowDelegate):
@@ -144,7 +139,6 @@ class SquadronDialog(QDialog):
         super().__init__(parent)
         self.ato_model = ato_model
         self.squadron_model = squadron_model
-        self.theater = theater
 
         self.setMinimumSize(1000, 440)
         self.setWindowTitle(str(squadron_model.squadron))
@@ -200,7 +194,7 @@ class SquadronDialog(QDialog):
             if destination is None:
                 self.squadron.cancel_relocation()
             else:
-                self.squadron.plan_relocation(destination, self.theater)
+                self.squadron.plan_relocation(destination)
             self.ato_model.replace_from_game(player=True)
 
     def check_disabled_button_states(

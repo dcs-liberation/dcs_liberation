@@ -6,65 +6,15 @@ from typing import Type
 from dcs import Point
 
 from game.utils import Distance, Heading, feet, meters
+from .ibuilder import IBuilder
 from .patrolling import PatrollingLayout
-from .theaterrefueling import (
-    Builder as TheaterRefuelingBuilder,
-    TheaterRefuelingFlightPlan,
-)
+from .refuelingflightplan import RefuelingFlightPlan
 from .waypointbuilder import WaypointBuilder
 from ..flightwaypoint import FlightWaypoint
 from ..flightwaypointtype import FlightWaypointType
 
 
-class Builder(TheaterRefuelingBuilder):
-    def build(self) -> PatrollingLayout:
-        package_waypoints = self.package.waypoints
-        assert package_waypoints is not None
-
-        racetrack_half_distance = Distance.from_nautical_miles(20).meters
-
-        racetrack_center = package_waypoints.refuel
-
-        split_heading = Heading.from_degrees(
-            racetrack_center.heading_between_point(package_waypoints.split)
-        )
-        home_heading = split_heading.opposite
-
-        racetrack_start = racetrack_center.point_from_heading(
-            split_heading.degrees, racetrack_half_distance
-        )
-
-        racetrack_end = racetrack_center.point_from_heading(
-            home_heading.degrees, racetrack_half_distance
-        )
-
-        builder = WaypointBuilder(self.flight, self.coalition)
-
-        tanker_type = self.flight.unit_type
-        if tanker_type.patrol_altitude is not None:
-            altitude = tanker_type.patrol_altitude
-        else:
-            altitude = feet(21000)
-
-        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
-
-        return PatrollingLayout(
-            departure=builder.takeoff(self.flight.departure),
-            nav_to=builder.nav_path(
-                self.flight.departure.position, racetrack_start, altitude
-            ),
-            nav_from=builder.nav_path(
-                racetrack_end, self.flight.arrival.position, altitude
-            ),
-            patrol_start=racetrack[0],
-            patrol_end=racetrack[1],
-            arrival=builder.land(self.flight.arrival),
-            divert=builder.divert(self.flight.divert),
-            bullseye=builder.bullseye(),
-        )
-
-
-class PackageRefuelingFlightPlan(TheaterRefuelingFlightPlan):
+class PackageRefuelingFlightPlan(RefuelingFlightPlan):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
@@ -122,3 +72,54 @@ class PackageRefuelingFlightPlan(TheaterRefuelingFlightPlan):
             + delay_split_to_refuel
             - timedelta(minutes=1.5)
         )
+
+
+class Builder(IBuilder[PackageRefuelingFlightPlan, PatrollingLayout]):
+    def layout(self) -> PatrollingLayout:
+        package_waypoints = self.package.waypoints
+        assert package_waypoints is not None
+
+        racetrack_half_distance = Distance.from_nautical_miles(20).meters
+
+        racetrack_center = package_waypoints.refuel
+
+        split_heading = Heading.from_degrees(
+            racetrack_center.heading_between_point(package_waypoints.split)
+        )
+        home_heading = split_heading.opposite
+
+        racetrack_start = racetrack_center.point_from_heading(
+            split_heading.degrees, racetrack_half_distance
+        )
+
+        racetrack_end = racetrack_center.point_from_heading(
+            home_heading.degrees, racetrack_half_distance
+        )
+
+        builder = WaypointBuilder(self.flight, self.coalition)
+
+        tanker_type = self.flight.unit_type
+        if tanker_type.patrol_altitude is not None:
+            altitude = tanker_type.patrol_altitude
+        else:
+            altitude = feet(21000)
+
+        racetrack = builder.race_track(racetrack_start, racetrack_end, altitude)
+
+        return PatrollingLayout(
+            departure=builder.takeoff(self.flight.departure),
+            nav_to=builder.nav_path(
+                self.flight.departure.position, racetrack_start, altitude
+            ),
+            nav_from=builder.nav_path(
+                racetrack_end, self.flight.arrival.position, altitude
+            ),
+            patrol_start=racetrack[0],
+            patrol_end=racetrack[1],
+            arrival=builder.land(self.flight.arrival),
+            divert=builder.divert(self.flight.divert),
+            bullseye=builder.bullseye(),
+        )
+
+    def build(self) -> PackageRefuelingFlightPlan:
+        return PackageRefuelingFlightPlan(self.flight, self.layout())

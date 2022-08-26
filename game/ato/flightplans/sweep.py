@@ -17,57 +17,6 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
-    def build(self) -> SweepLayout:
-        assert self.package.waypoints is not None
-        target = self.package.target.position
-        heading = Heading.from_degrees(
-            self.package.waypoints.join.heading_between_point(target)
-        )
-        start_pos = target.point_from_heading(
-            heading.degrees, -self.doctrine.sweep_distance.meters
-        )
-
-        builder = WaypointBuilder(self.flight, self.coalition)
-        start, end = builder.sweep(start_pos, target, self.doctrine.ingress_altitude)
-
-        hold = builder.hold(self._hold_point())
-
-        refuel = None
-
-        if self.package.waypoints is not None:
-            refuel = builder.refuel(self.package.waypoints.refuel)
-
-        return SweepLayout(
-            departure=builder.takeoff(self.flight.departure),
-            hold=hold,
-            nav_to=builder.nav_path(
-                hold.position, start.position, self.doctrine.ingress_altitude
-            ),
-            nav_from=builder.nav_path(
-                end.position,
-                self.flight.arrival.position,
-                self.doctrine.ingress_altitude,
-            ),
-            sweep_start=start,
-            sweep_end=end,
-            refuel=refuel,
-            arrival=builder.land(self.flight.arrival),
-            divert=builder.divert(self.flight.divert),
-            bullseye=builder.bullseye(),
-        )
-
-    def _hold_point(self) -> Point:
-        assert self.package.waypoints is not None
-        origin = self.flight.departure.position
-        target = self.package.target.position
-        join = self.package.waypoints.join
-        ip = self.package.waypoints.ingress
-        return HoldZoneGeometry(
-            target, origin, ip, join, self.coalition, self.theater
-        ).find_best_hold_point()
-
-
 @dataclass(frozen=True)
 class SweepLayout(LoiterLayout):
     nav_to: list[FlightWaypoint]
@@ -145,3 +94,57 @@ class SweepFlightPlan(LoiterFlightPlan):
 
     def mission_departure_time(self) -> timedelta:
         return self.sweep_end_time
+
+
+class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
+    def layout(self) -> SweepLayout:
+        assert self.package.waypoints is not None
+        target = self.package.target.position
+        heading = Heading.from_degrees(
+            self.package.waypoints.join.heading_between_point(target)
+        )
+        start_pos = target.point_from_heading(
+            heading.degrees, -self.doctrine.sweep_distance.meters
+        )
+
+        builder = WaypointBuilder(self.flight, self.coalition)
+        start, end = builder.sweep(start_pos, target, self.doctrine.ingress_altitude)
+
+        hold = builder.hold(self._hold_point())
+
+        refuel = None
+
+        if self.package.waypoints is not None:
+            refuel = builder.refuel(self.package.waypoints.refuel)
+
+        return SweepLayout(
+            departure=builder.takeoff(self.flight.departure),
+            hold=hold,
+            nav_to=builder.nav_path(
+                hold.position, start.position, self.doctrine.ingress_altitude
+            ),
+            nav_from=builder.nav_path(
+                end.position,
+                self.flight.arrival.position,
+                self.doctrine.ingress_altitude,
+            ),
+            sweep_start=start,
+            sweep_end=end,
+            refuel=refuel,
+            arrival=builder.land(self.flight.arrival),
+            divert=builder.divert(self.flight.divert),
+            bullseye=builder.bullseye(),
+        )
+
+    def _hold_point(self) -> Point:
+        assert self.package.waypoints is not None
+        origin = self.flight.departure.position
+        target = self.package.target.position
+        join = self.package.waypoints.join
+        ip = self.package.waypoints.ingress
+        return HoldZoneGeometry(
+            target, origin, ip, join, self.coalition, self.theater
+        ).find_best_hold_point()
+
+    def build(self) -> SweepFlightPlan:
+        return SweepFlightPlan(self.flight, self.layout())

@@ -6,7 +6,6 @@ from typing import Dict, Iterable, Optional, Set, TYPE_CHECKING
 
 from game.ato.airtaaskingorder import AirTaskingOrder
 from game.ato.closestairfields import ObjectiveDistanceCache
-from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.commander.missionproposals import EscortType, ProposedFlight, ProposedMission
@@ -190,12 +189,9 @@ class PackageFulfiller:
         # flights that will rendezvous with their package will be affected by
         # the other flights in the package. Escorts will not be able to
         # contribute to this.
-        flight_plan_builder = FlightPlanBuilder(
-            builder.package, self.coalition, self.theater
-        )
         for flight in builder.package.flights:
             with tracer.trace("Flight plan population"):
-                flight_plan_builder.populate_flight_plan(flight)
+                flight.recreate_flight_plan()
 
         needed_escorts = self.check_needed_escorts(builder)
         for escort in escorts:
@@ -221,7 +217,7 @@ class PackageFulfiller:
         for flight in package.flights:
             if not flight.flight_plan.waypoints:
                 with tracer.trace("Flight plan population"):
-                    flight_plan_builder.populate_flight_plan(flight)
+                    flight.recreate_flight_plan()
 
         if package.has_players and self.player_missions_asap:
             package.auto_asap = True

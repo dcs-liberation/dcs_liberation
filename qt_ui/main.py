@@ -14,7 +14,7 @@ from PySide2.QtWidgets import QApplication, QCheckBox, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, persistency
-from game.campaignloader.campaign import Campaign
+from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.dcs.aircrafttype import AircraftType
 from game.factions import FACTIONS
@@ -32,7 +32,6 @@ from qt_ui import (
 )
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
-from qt_ui.windows.newgame.QNewGameWizard import DEFAULT_BUDGET
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
     QLiberationFirstStartWindow,
 )
@@ -130,7 +129,7 @@ def run_ui(game: Game | None, dev: bool) -> None:
             message_box.setWindowTitle("No DCS installation directory.")
             message_box.setText(
                 "The DCS Installation directory is not set correctly. "
-                "This will prevent DCS Liberation to work properly as the MissionScripting "
+                "This will prevent DCS Liberation from working properly, as the MissionScripting "
                 "file will not be modified."
                 "<br/><br/>To solve this problem, you can set the Installation directory "
                 "within the preferences menu. You can also manually edit or replace the "
@@ -232,6 +231,10 @@ def parse_args() -> argparse.Namespace:
 
     new_game.add_argument("--cheats", action="store_true", help="Enable cheats.")
 
+    new_game.add_argument(
+        "--advanced-iads", action="store_true", help="Enable advanced IADS."
+    )
+
     lint_weapons = subparsers.add_parser("lint-weapons")
     lint_weapons.add_argument("aircraft", help="Name of the aircraft variant to lint.")
 
@@ -248,6 +251,7 @@ def create_game(
     cheats: bool,
     start_date: datetime,
     restrict_weapons_by_date: bool,
+    advanced_iads: bool,
 ) -> Game:
     first_start = liberation_install.init()
     if first_start:
@@ -265,7 +269,7 @@ def create_game(
     # way.
     inject_custom_payloads(Path(persistency.base_path()))
     campaign = Campaign.from_file(campaign_path)
-    theater = campaign.load_theater()
+    theater = campaign.load_theater(advanced_iads)
     generator = GameGenerator(
         FACTIONS[blue],
         FACTIONS[red],
@@ -285,6 +289,7 @@ def create_game(
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
             inverted=inverted,
+            advanced_iads=theater.iads_network.advanced_iads,
             no_carrier=False,
             no_lha=False,
             no_player_navy=False,
@@ -358,6 +363,7 @@ def main():
                 args.cheats,
                 args.date,
                 args.restrict_weapons_by_date,
+                args.advanced_iads,
             )
     if args.subcommand == "lint-weapons":
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))

@@ -1,0 +1,19 @@
+---
+name: Escadron de Chasse 1/5 Vendee
+nickname: Vendee
+female_pilot_percentage: 5
+country: France
+role: Fighter
+aircraft: Mirage-F1C-200
+livery: EC 1 5 Vendee BA Orange-Cariat
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

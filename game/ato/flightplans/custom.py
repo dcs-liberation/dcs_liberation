@@ -13,11 +13,6 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
-    def build(self) -> CustomLayout:
-        return CustomLayout([])
-
-
 @dataclass(frozen=True)
 class CustomLayout(Layout):
     custom_waypoints: list[FlightWaypoint]
@@ -55,3 +50,11 @@ class CustomFlightPlan(FlightPlan[CustomLayout]):
     @property
     def mission_departure_time(self) -> timedelta:
         return self.package.time_over_target
+
+
+class Builder(IBuilder[CustomFlightPlan, CustomLayout]):
+    def layout(self) -> CustomLayout:
+        return CustomLayout([])
+
+    def build(self) -> CustomFlightPlan:
+        return CustomFlightPlan(self.flight, self.layout())

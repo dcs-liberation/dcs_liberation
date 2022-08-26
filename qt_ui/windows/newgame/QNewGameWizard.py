@@ -5,11 +5,11 @@ from datetime import datetime, timedelta
 from typing import List
 
 from PySide2 import QtGui, QtWidgets
-from PySide2.QtCore import QDate, QItemSelectionModel, QPoint, Qt
+from PySide2.QtCore import QDate, QItemSelectionModel, QPoint, Qt, Signal
 from PySide2.QtWidgets import QCheckBox, QLabel, QTextEdit, QVBoxLayout
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from game.campaignloader.campaign import Campaign
+from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.factions import FACTIONS, Faction
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
@@ -29,7 +29,6 @@ jinja_env = Environment(
     lstrip_blocks=True,
 )
 
-DEFAULT_BUDGET = 2000
 DEFAULT_MISSION_LENGTH: timedelta = timedelta(minutes=60)
 
 
@@ -93,7 +92,13 @@ class NewGameWizard(QtWidgets.QWizard):
         self.addPage(self.theater_page)
         self.addPage(self.faction_selection_page)
         self.addPage(GeneratorOptions())
-        self.addPage(DifficultyAndAutomationOptions())
+        self.difficulty_page = DifficultyAndAutomationOptions()
+
+        # Update difficulty page on campaign select
+        self.theater_page.campaign_selected.connect(
+            lambda c: self.difficulty_page.set_campaign_values(c)
+        )
+        self.addPage(self.difficulty_page)
         self.addPage(ConclusionPage())
 
         self.setPixmap(
@@ -145,6 +150,7 @@ class NewGameWizard(QtWidgets.QWizard):
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to
             # give 0.1 to 5.0.
             inverted=self.field("invertMap"),
+            advanced_iads=self.field("advanced_iads"),
             no_carrier=self.field("no_carrier"),
             no_lha=self.field("no_lha"),
             no_player_navy=self.field("no_player_navy"),
@@ -168,7 +174,7 @@ class NewGameWizard(QtWidgets.QWizard):
         logging.info("New campaign blue faction: %s", blue_faction.name)
         logging.info("New campaign red faction: %s", red_faction.name)
 
-        theater = campaign.load_theater()
+        theater = campaign.load_theater(generator_settings.advanced_iads)
 
         logging.info("New campaign theater: %s", theater.terrain.name)
 
@@ -331,6 +337,8 @@ class FactionSelection(QtWidgets.QWizardPage):
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
+    campaign_selected = Signal(Campaign)
+
     def __init__(
         self,
         campaigns: List[Campaign],
@@ -377,11 +385,16 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
         # Campaign settings
         mapSettingsGroup = QtWidgets.QGroupBox("Map Settings")
+        mapSettingsLayout = QtWidgets.QGridLayout()
         invertMap = QtWidgets.QCheckBox()
         self.registerField("invertMap", invertMap)
-        mapSettingsLayout = QtWidgets.QGridLayout()
         mapSettingsLayout.addWidget(QtWidgets.QLabel("Invert Map"), 0, 0)
         mapSettingsLayout.addWidget(invertMap, 0, 1)
+        self.advanced_iads = QtWidgets.QCheckBox()
+        self.registerField("advanced_iads", self.advanced_iads)
+        self.iads_label = QtWidgets.QLabel("Advanced IADS (WIP)")
+        mapSettingsLayout.addWidget(self.iads_label, 1, 0)
+        mapSettingsLayout.addWidget(self.advanced_iads, 1, 1)
         mapSettingsGroup.setLayout(mapSettingsLayout)
 
         # Time Period
@@ -444,6 +457,17 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
                 timePeriodPreset.setChecked(False)
             else:
                 timePeriodPreset.setChecked(True)
+            self.advanced_iads.setEnabled(campaign.advanced_iads)
+            self.iads_label.setEnabled(campaign.advanced_iads)
+            self.advanced_iads.setChecked(campaign.advanced_iads)
+            if not campaign.advanced_iads:
+                self.advanced_iads.setToolTip(
+                    "Advanced IADS is not supported by this campaign"
+                )
+            else:
+                self.advanced_iads.setToolTip("Enable Advanced IADS")
+
+            self.campaign_selected.emit(campaign)
 
         self.campaignList.selectionModel().setCurrentIndex(
             self.campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
@@ -489,19 +513,18 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
 
 
 class BudgetInputs(QtWidgets.QGridLayout):
-    def __init__(self, label: str) -> None:
+    def __init__(self, label: str, value: int) -> None:
         super().__init__()
         self.addWidget(QtWidgets.QLabel(label), 0, 0)
 
         minimum = 0
         maximum = 5000
-        initial = DEFAULT_BUDGET
 
         slider = QtWidgets.QSlider(Qt.Horizontal)
         slider.setMinimum(minimum)
         slider.setMaximum(maximum)
-        slider.setValue(initial)
-        self.starting_money = CurrencySpinner(minimum, maximum, initial)
+        slider.setValue(value)
+        self.starting_money = CurrencySpinner(minimum, maximum, value)
         slider.valueChanged.connect(lambda x: self.starting_money.setValue(x))
         self.starting_money.valueChanged.connect(lambda x: slider.setValue(x))
 
@@ -530,22 +553,22 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         economy_group.setLayout(economy_layout)
 
         economy_layout.addWidget(QLabel("Player income multiplier"))
-        player_income = FloatSpinSlider(0, 5, 1, divisor=10)
-        self.registerField("player_income_multiplier", player_income.spinner)
-        economy_layout.addLayout(player_income)
+        self.player_income = FloatSpinSlider(0, 5, 1, divisor=10)
+        self.registerField("player_income_multiplier", self.player_income.spinner)
+        economy_layout.addLayout(self.player_income)
 
         economy_layout.addWidget(QLabel("Enemy income multiplier"))
-        enemy_income = FloatSpinSlider(0, 5, 1, divisor=10)
-        self.registerField("enemy_income_multiplier", enemy_income.spinner)
-        economy_layout.addLayout(enemy_income)
+        self.enemy_income = FloatSpinSlider(0, 5, 1, divisor=10)
+        self.registerField("enemy_income_multiplier", self.enemy_income.spinner)
+        economy_layout.addLayout(self.enemy_income)
 
-        player_budget = BudgetInputs("Player starting budget")
-        self.registerField("starting_money", player_budget.starting_money)
-        economy_layout.addLayout(player_budget)
+        self.player_budget = BudgetInputs("Player starting budget", DEFAULT_BUDGET)
+        self.registerField("starting_money", self.player_budget.starting_money)
+        economy_layout.addLayout(self.player_budget)
 
-        enemy_budget = BudgetInputs("Enemy starting budget")
-        self.registerField("enemy_starting_money", enemy_budget.starting_money)
-        economy_layout.addLayout(enemy_budget)
+        self.enemy_budget = BudgetInputs("Enemy starting budget", DEFAULT_BUDGET)
+        self.registerField("enemy_starting_money", self.enemy_budget.starting_money)
+        economy_layout.addLayout(self.enemy_budget)
 
         assist_group = QtWidgets.QGroupBox("Player assists")
         layout.addWidget(assist_group)
@@ -568,6 +591,16 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         assist_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
 
         self.setLayout(layout)
+
+    def set_campaign_values(self, campaign: Campaign) -> None:
+        self.player_budget.starting_money.setValue(campaign.recommended_player_money)
+        self.enemy_budget.starting_money.setValue(campaign.recommended_enemy_money)
+        self.player_income.spinner.setValue(
+            int(campaign.recommended_player_income_multiplier * 10)
+        )
+        self.enemy_income.spinner.setValue(
+            int(campaign.recommended_enemy_income_multiplier * 10)
+        )
 
 
 class GeneratorOptions(QtWidgets.QWizardPage):
@@ -641,7 +674,9 @@ class GeneratorOptions(QtWidgets.QWizardPage):
 
         modLayout = QtWidgets.QGridLayout()
         modLayout_row = 1
-        modLayout.addWidget(QtWidgets.QLabel("A-4E Skyhawk"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("A-4E Skyhawk (version 2.0.0)"), modLayout_row, 0
+        )
         modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), modLayout_row, 0)
@@ -655,13 +690,17 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         )
         modLayout.addWidget(hercules, modLayout_row, 1)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("UH-60L Black Hawk"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("UH-60L Black Hawk (version 1.3.1)"), modLayout_row, 0
+        )
         modLayout.addWidget(uh_60l, modLayout_row, 1)
         modLayout_row += 1
         # Section break here for readability
         modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("JAS 39 Gripen"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("JAS 39 Gripen (version v1.8.0-beta)"), modLayout_row, 0
+        )
         modLayout.addWidget(jas39_gripen, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), modLayout_row, 0)

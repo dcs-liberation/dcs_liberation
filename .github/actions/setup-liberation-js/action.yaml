@@ -1,0 +1,17 @@
+name: Liberation JS set-up
+description: Sets up the Liberation Javascript environment.
+runs:
+  using: composite
+  steps:
+    - name: Set up Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: "16"
+        cache: npm
+        cache-dependency-path: client/package-lock.json
+
+    - name: npm ci
+      shell: powershell
+      run: |
+        cd client
+        npm ci

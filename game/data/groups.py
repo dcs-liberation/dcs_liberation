@@ -37,6 +37,7 @@ class GroupTask(Enum):
     LORAD = ("LORAD", GroupRole.AIR_DEFENSE)
     MERAD = ("MERAD", GroupRole.AIR_DEFENSE)
     SHORAD = ("SHORAD", GroupRole.AIR_DEFENSE)
+    POINT_DEFENSE = ("PointDefense", GroupRole.AIR_DEFENSE)
 
     # NAVAL
     AIRCRAFT_CARRIER = ("AircraftCarrier", GroupRole.NAVAL)
@@ -54,7 +55,6 @@ class GroupTask(Enum):
     # BUILDINGS
     ALLY_CAMP = ("AllyCamp", GroupRole.BUILDING)
     AMMO = ("Ammo", GroupRole.BUILDING)
-    COMMS = ("Comms", GroupRole.BUILDING)
     DERRICK = ("Derrick", GroupRole.BUILDING)
     FACTORY = ("Factory", GroupRole.BUILDING)
     FARP = ("Farp", GroupRole.BUILDING)
@@ -62,8 +62,13 @@ class GroupTask(Enum):
     FUEL = ("Fuel", GroupRole.BUILDING)
     OFFSHORE_STRIKE_TARGET = ("OffShoreStrikeTarget", GroupRole.BUILDING)
     OIL = ("Oil", GroupRole.BUILDING)
-    POWER = ("Power", GroupRole.BUILDING)
+
     STRIKE_TARGET = ("StrikeTarget", GroupRole.BUILDING)
     VILLAGE = ("Village", GroupRole.BUILDING)
     WARE = ("Ware", GroupRole.BUILDING)
     WW2_BUNKER = ("WW2Bunker", GroupRole.BUILDING)
+
+    # IADS
+    COMMS = ("Comms", GroupRole.BUILDING)
+    COMMAND_CENTER = ("CommandCenter", GroupRole.BUILDING)
+    POWER = ("Power", GroupRole.BUILDING)

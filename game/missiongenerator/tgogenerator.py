@@ -12,6 +12,7 @@ import random
 from collections import defaultdict
 from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
+import dcs.vehicles
 from dcs import Mission, Point, unitgroup
 from dcs.action import DoScript, SceneryDestructionZone
 from dcs.condition import MapObjectIsDead
@@ -22,14 +23,14 @@ from dcs.ships import (
     CVN_72,
     CVN_73,
     CVN_75,
-    CV_1143_5,
-    KUZNECOW,
     Stennis,
 )
 from dcs.statics import Fortification
 from dcs.task import (
     ActivateBeaconCommand,
     ActivateICLSCommand,
+    ActivateLink4Command,
+    ActivateACLSCommand,
     EPLRS,
     FireAtPoint,
     OptAlarmState,
@@ -40,6 +41,7 @@ from dcs.unit import Unit, InvisibleFARP
 from dcs.unitgroup import MovingGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import ShipType, VehicleType
 from dcs.vehicles import vehicle_map
+from game.missiongenerator.missiondata import CarrierInfo, MissionData
 
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
@@ -51,7 +53,7 @@ from game.theater.theatergroundobject import (
     LhaGroundObject,
     MissileSiteGroundObject,
 )
-from game.theater.theatergroup import SceneryUnit, TheaterGroup
+from game.theater.theatergroup import SceneryUnit, TheaterGroup, IadsGroundGroup
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
 
@@ -92,8 +94,19 @@ class GroundObjectGenerator:
             # Split the different unit types to be compliant to dcs limitation
             for unit in group.units:
                 if unit.is_static:
-                    # A Static unit has to be a single static group
-                    self.create_static_group(unit)
+                    if isinstance(unit, SceneryUnit):
+                        # Special handling for scenery objects
+                        self.add_trigger_zone_for_scenery(unit)
+                        if (
+                            self.game.settings.plugin_option("skynetiads")
+                            and isinstance(group, IadsGroundGroup)
+                            and group.iads_role.participate
+                        ):
+                            # Generate a unit which can be controlled by skynet
+                            self.generate_iads_command_unit(unit)
+                    else:
+                        # Create a static group for each static unit
+                        self.create_static_group(unit)
                 elif unit.is_vehicle and unit.alive:
                     # All alive Vehicles
                     vehicle_units.append(unit)
@@ -168,12 +181,6 @@ class GroundObjectGenerator:
         return ship_group
 
     def create_static_group(self, unit: TheaterUnit) -> None:
-        if isinstance(unit, SceneryUnit):
-            # Special handling for scenery objects:
-            # Only create a trigger zone and no "real" dcs unit
-            self.add_trigger_zone_for_scenery(unit)
-            return
-
         static_group = self.m.static_group(
             country=self.country,
             name=unit.unit_name,
@@ -250,6 +257,19 @@ class GroundObjectGenerator:
         )
         t.actions.append(DoScript(script_string))
         self.m.triggerrules.triggers.append(t)
+
+    def generate_iads_command_unit(self, unit: SceneryUnit) -> None:
+        # Creates a static Infantry Unit next to a scenery object. This is needed
+        # because skynet can not use map objects as Comms, Power or Command and needs a
+        # "real" unit to function correctly
+        self.m.static_group(
+            country=self.country,
+            name=unit.unit_name,
+            _type=dcs.vehicles.Infantry.Soldier_M4,
+            position=unit.position,
+            heading=unit.position.heading.degrees,
+            dead=not unit.alive,  # Also spawn as dead!
+        )
 
 
 class MissileSiteGenerator(GroundObjectGenerator):
@@ -332,6 +352,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         icls_alloc: Iterator[int],
         runways: Dict[str, RunwayData],
         unit_map: UnitMap,
+        mission_data: MissionData,
     ) -> None:
         super().__init__(ground_object, country, game, mission, unit_map)
         self.ground_object = ground_object
@@ -340,6 +361,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         self.tacan_registry = tacan_registry
         self.icls_alloc = icls_alloc
         self.runways = runways
+        self.mission_data = mission_data
 
     def generate(self) -> None:
 
@@ -361,24 +383,40 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
             # Set Carrier Specific Options
             if g_id == 0:
-                # Correct unit type for the carrier.
-                # This is only used for the super carrier setting
-                ship_group.units[0].type = self.get_carrier_type(group).id
+                # Get Correct unit type for the carrier.
+                # This will upgrade to super carrier if option is enabled
+                carrier_type = self.carrier_type
+                if carrier_type is None:
+                    raise RuntimeError(
+                        f"Error generating carrier group for {self.control_point.name}"
+                    )
+                ship_group.units[0].type = carrier_type.id
                 tacan = self.tacan_registry.alloc_for_band(
                     TacanBand.X, TacanUsage.TransmitReceive
                 )
                 tacan_callsign = self.tacan_callsign()
                 icls = next(self.icls_alloc)
-                self.activate_beacons(ship_group, tacan, tacan_callsign, icls)
+                link4 = None
+                if carrier_type in [Stennis, CVN_71, CVN_72, CVN_73, CVN_75]:
+                    link4 = self.radio_registry.alloc_uhf()
+                self.activate_beacons(ship_group, tacan, tacan_callsign, icls, link4)
                 self.add_runway_data(
                     brc or Heading.from_degrees(0), atc, tacan, tacan_callsign, icls
                 )
+                self.mission_data.carriers.append(
+                    CarrierInfo(
+                        group_name=ship_group.name,
+                        unit_name=ship_group.units[0].name,
+                        callsign=tacan_callsign,
+                        freq=atc,
+                        tacan=tacan,
+                        blue=self.control_point.captured,
+                    )
+                )
 
-    def get_carrier_type(self, group: TheaterGroup) -> Type[ShipType]:
-        carrier_type = group.units[0].type
-        if issubclass(carrier_type, ShipType):
-            return carrier_type
-        raise RuntimeError(f"First unit of TGO {group.name} is no Ship")
+    @property
+    def carrier_type(self) -> Optional[Type[ShipType]]:
+        return self.control_point.get_carrier_group_type()
 
     def steam_into_wind(self, group: ShipGroup) -> Optional[Heading]:
         wind = self.game.conditions.weather.wind.at_0m
@@ -392,6 +430,8 @@ class GenericCarrierGenerator(GroundObjectGenerator):
             if self.game.theater.is_in_sea(point):
                 group.points[0].speed = carrier_speed.meters_per_second
                 group.add_waypoint(point, carrier_speed.kph)
+                # Rotate the whole ground object to the new course
+                self.ground_object.rotate(brc)
                 return brc
         return None
 
@@ -400,7 +440,11 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
     @staticmethod
     def activate_beacons(
-        group: ShipGroup, tacan: TacanChannel, callsign: str, icls: int
+        group: ShipGroup,
+        tacan: TacanChannel,
+        callsign: str,
+        icls: int,
+        link4: Optional[RadioFrequency] = None,
     ) -> None:
         group.points[0].tasks.append(
             ActivateBeaconCommand(
@@ -414,6 +458,11 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         group.points[0].tasks.append(
             ActivateICLSCommand(icls, unit_id=group.units[0].id)
         )
+        if link4 is not None:
+            group.points[0].tasks.append(
+                ActivateLink4Command(int(link4.mhz), group.units[0].id)
+            )
+            group.points[0].tasks.append(ActivateACLSCommand(unit_id=group.units[0].id))
 
     def add_runway_data(
         self,
@@ -444,32 +493,6 @@ class GenericCarrierGenerator(GroundObjectGenerator):
 
 class CarrierGenerator(GenericCarrierGenerator):
     """Generator for CV(N) groups."""
-
-    def get_carrier_type(self, group: TheaterGroup) -> Type[ShipType]:
-        unit_type = super().get_carrier_type(group)
-        if self.game.settings.supercarrier:
-            unit_type = self.upgrade_to_supercarrier(unit_type, self.control_point.name)
-        return unit_type
-
-    @staticmethod
-    def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
-        if unit == Stennis:
-            if name == "CVN-71 Theodore Roosevelt":
-                return CVN_71
-            elif name == "CVN-72 Abraham Lincoln":
-                return CVN_72
-            elif name == "CVN-73 George Washington":
-                return CVN_73
-            elif name == "CVN-75 Harry S. Truman":
-                return CVN_75
-            elif name == "Carrier Strike Group 8":
-                return CVN_75
-            else:
-                return CVN_71
-        elif unit == KUZNECOW:
-            return CV_1143_5
-        else:
-            return unit
 
     def tacan_callsign(self) -> str:
         # TODO: Assign these properly.
@@ -594,6 +617,7 @@ class TgoGenerator:
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
         unit_map: UnitMap,
+        mission_data: MissionData,
     ) -> None:
         self.m = mission
         self.game = game
@@ -603,6 +627,7 @@ class TgoGenerator:
         self.icls_alloc = iter(range(1, 21))
         self.runways: Dict[str, RunwayData] = {}
         self.helipads: dict[ControlPoint, StaticGroup] = {}
+        self.mission_data = mission_data
 
     def generate(self) -> None:
         for cp in self.game.theater.controlpoints:
@@ -630,6 +655,7 @@ class TgoGenerator:
                         self.icls_alloc,
                         self.runways,
                         self.unit_map,
+                        self.mission_data,
                     )
                 elif isinstance(ground_object, LhaGroundObject):
                     generator = LhaGenerator(
@@ -643,6 +669,7 @@ class TgoGenerator:
                         self.icls_alloc,
                         self.runways,
                         self.unit_map,
+                        self.mission_data,
                     )
                 elif isinstance(ground_object, MissileSiteGroundObject):
                     generator = MissileSiteGenerator(
@@ -653,3 +680,4 @@ class TgoGenerator:
                         ground_object, country, self.game, self.m, self.unit_map
                     )
                 generator.generate()
+        self.mission_data.runways = list(self.runways.values())

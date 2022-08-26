@@ -42,15 +42,16 @@ class ConvoyGenerator:
         if self.game.settings.convoys_travel_full_distance:
             end_point = convoy.route_end
         else:
-            # convoys_travel_full_distance is disabled, so have the convoy only move the first segment on the route.
-            # This option aims to remove long routes for ground vehicles between control points,
-            # since the CPU load for pathfinding long routes on DCS can be pretty heavy.
-            frontline = convoy.origin.front_line_with(convoy.destination)
+            # convoys_travel_full_distance is disabled, so have the convoy only move the
+            # first segment on the route. This option aims to remove long routes for
+            # ground vehicles between control points, since the CPU load for pathfinding
+            # long routes on DCS can be pretty heavy.
+            route = convoy.origin.convoy_route_to(convoy.destination)
 
-            # Select the first route segment from the origin towards the destination
-            # so the convoy spawns at the origin CP. This allows the convoy to be
-            # targeted by BAI flights and starts it within the protection umbrella of the CP.
-            end_point = frontline.segments[0].point_b
+            # Select the first route segment from the origin towards the destination so
+            # the convoy spawns at the origin CP. This allows the convoy to be targeted
+            # by BAI flights and starts it within the protection umbrella of the CP.
+            end_point = route[1]
 
         group.add_waypoint(
             end_point,

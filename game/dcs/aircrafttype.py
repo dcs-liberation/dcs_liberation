@@ -4,7 +4,7 @@ import logging
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Iterator, Optional, TYPE_CHECKING, Type, Dict
+from typing import Any, Dict, Iterator, Optional, TYPE_CHECKING, Type
 
 import yaml
 from dcs.helicopters import helicopter_map
@@ -21,6 +21,7 @@ from game.radio.channels import (
     FarmerRadioChannelAllocator,
     HueyChannelNamer,
     MirageChannelNamer,
+    MirageF1CEChannelNamer,
     NoOpChannelAllocator,
     RadioChannelAllocator,
     SCR522ChannelNamer,
@@ -47,7 +48,7 @@ from game.utils import (
 
 if TYPE_CHECKING:
     from game.missiongenerator.aircraft.flightdata import FlightData
-    from game.missiongenerator.airsupport import AirSupport
+    from game.missiongenerator.missiondata import MissionData
     from game.radio.radios import Radio, RadioFrequency, RadioRegistry
 
 
@@ -97,6 +98,7 @@ class RadioConfig:
             "default": ChannelNamer,
             "huey": HueyChannelNamer,
             "mirage": MirageChannelNamer,
+            "mirage-f1ce": MirageF1CEChannelNamer,
             "single": SingleRadioChannelNamer,
             "tomcat": TomcatChannelNamer,
             "viggen": ViggenChannelNamer,
@@ -181,6 +183,14 @@ class AircraftType(UnitType[Type[FlyingType]]):
     intra_flight_radio: Optional[Radio]
     channel_allocator: Optional[RadioChannelAllocator]
     channel_namer: Type[ChannelNamer]
+
+    # Logisitcs info
+    # cabin_size defines how many troops can be loaded. 0 means the aircraft can not
+    # transport any troops. Default for helos is 10, non helos will have 0.
+    cabin_size: int
+    # If the aircraft can carry crates can_carry_crates should be set to true which
+    # will be set to true for helos by default
+    can_carry_crates: bool
 
     @property
     def flyable(self) -> bool:
@@ -281,10 +291,10 @@ class AircraftType(UnitType[Type[FlyingType]]):
         return freq
 
     def assign_channels_for_flight(
-        self, flight: FlightData, air_support: AirSupport
+        self, flight: FlightData, mission_data: MissionData
     ) -> None:
         if self.channel_allocator is not None:
-            self.channel_allocator.assign_channels_for_flight(flight, air_support)
+            self.channel_allocator.assign_channels_for_flight(flight, mission_data)
 
     def channel_name(self, radio_id: int, channel_id: int) -> str:
         return self.channel_namer.channel_name(radio_id, channel_id)
@@ -315,7 +325,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
             yield unit
 
     @staticmethod
-    def _each_unit_type() -> Iterator[Type[FlyingType]]:
+    def each_dcs_type() -> Iterator[Type[FlyingType]]:
         yield from helicopter_map.values()
         yield from plane_map.values()
 
@@ -387,6 +397,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
         if units_data == "metric":
             units = MetricUnits()
 
+        class_name = data.get("class")
+        unit_class = UnitClass.PLANE if class_name is None else UnitClass(class_name)
+
         prop_overrides = data.get("default_overrides")
         if prop_overrides is not None:
             cls._set_props_overrides(prop_overrides, aircraft, data_path)
@@ -419,5 +432,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 channel_namer=radio_config.channel_namer,
                 kneeboard_units=units,
                 utc_kneeboard=data.get("utc_kneeboard", False),
-                unit_class=UnitClass.PLANE,
+                unit_class=unit_class,
+                cabin_size=data.get("cabin_size", 10 if aircraft.helicopter else 0),
+                can_carry_crates=data.get("can_carry_crates", aircraft.helicopter),
             )

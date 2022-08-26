@@ -2,7 +2,7 @@ from __future__ import annotations
 from collections import defaultdict
 
 from dataclasses import dataclass, field
-from typing import Any, Type
+from typing import Any, Optional, Type
 
 from dcs.unittype import UnitType as DcsUnitType
 
@@ -21,6 +21,9 @@ class GroupLayoutMapping:
 
     # Should this be filled by accessible units if optional or not
     fill: bool = True
+
+    # Allows a group to have a special SubTask (PointDefence for example)
+    sub_task: Optional[GroupTask] = None
 
     # All static units for the group
     statics: list[str] = field(default_factory=list)
@@ -44,6 +47,7 @@ class GroupLayoutMapping:
     def from_dict(d: dict[str, Any]) -> GroupLayoutMapping:
         optional = d["optional"] if "optional" in d else False
         fill = d["fill"] if "fill" in d else True
+        sub_task = GroupTask.by_description(d["sub_task"]) if "sub_task" in d else None
         statics = d["statics"] if "statics" in d else []
         unit_count = d["unit_count"] if "unit_count" in d else []
         unit_types = []
@@ -64,6 +68,7 @@ class GroupLayoutMapping:
             d["name"],
             optional,
             fill,
+            sub_task,
             statics,
             unit_count,
             unit_types,
@@ -123,9 +128,11 @@ class LayoutMapping:
             layout_file,
         )
 
-    def group_for_name(self, name: str) -> tuple[int, str, GroupLayoutMapping]:
+    def group_for_name(self, name: str) -> tuple[int, int, str, GroupLayoutMapping]:
+        g_id = 0
         for group_name, group_mappings in self.groups.items():
-            for g_id, group_mapping in enumerate(group_mappings):
+            for u_id, group_mapping in enumerate(group_mappings):
                 if group_mapping.name == name or name in group_mapping.statics:
-                    return g_id, group_name, group_mapping
+                    return g_id, u_id, group_name, group_mapping
+            g_id += 1
         raise KeyError

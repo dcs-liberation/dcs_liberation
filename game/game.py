@@ -217,7 +217,7 @@ class Game:
         naming.namegen = self.name_generator
         LuaPluginManager.load_settings(self.settings)
         ObjectiveDistanceCache.set_theater(self.theater)
-        self.compute_unculled_zones()
+        self.compute_unculled_zones(GameUpdateEvents())
         if not game_still_initializing:
             # We don't need to push events that happen during load. The UI will fully
             # reset when we're done.
@@ -277,10 +277,26 @@ class Game:
         """Initialization for the first turn of the game."""
         from .sim import GameUpdateEvents
 
+        # Build the IADS Network
+        with logged_duration("Generate IADS Network"):
+            self.theater.iads_network.initialize_network(self.theater.ground_objects)
+
         for control_point in self.theater.controlpoints:
             control_point.initialize_turn_0()
             for tgo in control_point.connected_objectives:
                 self.db.tgos.add(tgo.id, tgo)
+
+        # Correct the heading of specifc TGOs, can only be done after init turn 0
+        for tgo in self.theater.ground_objects:
+            # If heading is 0 then we change the orientation to head towards the
+            # closest conflict. Heading of 0 means that the campaign designer wants
+            # to determine the heading automatically by liberation. Values other
+            # than 0 mean it is custom defined.
+            if tgo.should_head_to_conflict and tgo.heading.degrees == 0:
+                # Calculate the heading to conflict
+                heading = self.theater.heading_to_conflict_from(tgo.position)
+                # Rotate the whole TGO with the new heading
+                tgo.rotate(heading or tgo.heading)
 
         self.blue.preinit_turn_0()
         self.red.preinit_turn_0()
@@ -401,7 +417,7 @@ class Game:
 
         # Update cull zones
         with logged_duration("Computing culling positions"):
-            self.compute_unculled_zones()
+            self.compute_unculled_zones(events)
 
     def message(self, title: str, text: str = "") -> None:
         self.informations.append(Information(title, text, turn=self.turn))
@@ -443,7 +459,7 @@ class Game:
     def navmesh_for(self, player: bool) -> NavMesh:
         return self.coalition_for(player).nav_mesh
 
-    def compute_unculled_zones(self) -> None:
+    def compute_unculled_zones(self, events: GameUpdateEvents) -> None:
         """
         Compute the current conflict position(s) used for culling calculation
         """
@@ -498,6 +514,7 @@ class Game:
             zones.append(package.target.position)
 
         self.__culling_zones = zones
+        events.update_unculled_zones(zones)
 
     def add_destroyed_units(self, data: dict[str, Union[float, str]]) -> None:
         pos = Point(

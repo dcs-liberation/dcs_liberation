@@ -43,7 +43,6 @@ from dcs.mapping import Point
 from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ato.flight import Flight
-from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.dcs.aircrafttype import AircraftType
@@ -97,6 +96,8 @@ class TransferOrder:
     units: dict[GroundUnitType, int]
 
     transport: Optional[Transport] = field(default=None)
+
+    request_airflift: bool = field(default=False)
 
     def __str__(self) -> str:
         """Returns the text that should be displayed for the transfer."""
@@ -317,6 +318,7 @@ class AirliftPlanner:
                     ):
                         self.create_airlift_flight(squadron)
         if self.package.flights:
+            self.package.set_tot_asap()
             self.game.ato_for(self.for_player).add_package(self.package)
 
     def create_airlift_flight(self, squadron: Squadron) -> int:
@@ -361,10 +363,7 @@ class AirliftPlanner:
         transfer.transport = transport
 
         self.package.add_flight(flight)
-        planner = FlightPlanBuilder(
-            self.package, self.game.coalition_for(self.for_player), self.game.theater
-        )
-        planner.populate_flight_plan(flight)
+        flight.recreate_flight_plan()
         return flight_size
 
 
@@ -585,15 +584,18 @@ class PendingTransfers:
         network = self.network_for(transfer.position)
         path = network.shortest_path_between(transfer.position, transfer.destination)
         next_stop = path[0]
-        if network.link_type(transfer.position, next_stop) == TransitConnection.Road:
-            self.convoys.add(transfer, next_stop)
-        elif (
-            network.link_type(transfer.position, next_stop)
-            == TransitConnection.Shipping
-        ):
-            self.cargo_ships.add(transfer, next_stop)
-        else:
-            AirliftPlanner(self.game, transfer, next_stop).create_package_for_airlift()
+        if not transfer.request_airflift:
+            if (
+                network.link_type(transfer.position, next_stop)
+                == TransitConnection.Road
+            ):
+                return self.convoys.add(transfer, next_stop)
+            elif (
+                network.link_type(transfer.position, next_stop)
+                == TransitConnection.Shipping
+            ):
+                return self.cargo_ships.add(transfer, next_stop)
+        AirliftPlanner(self.game, transfer, next_stop).create_package_for_airlift()
 
     def new_transfer(self, transfer: TransferOrder) -> None:
         transfer.origin.base.commit_losses(transfer.units)
@@ -774,3 +776,13 @@ class PendingTransfers:
         self.game.coalition_for(self.player).add_procurement_request(
             AircraftProcurementRequest(control_point, FlightType.TRANSPORT, gap)
         )
+
+    def transfer_for_flight(self, flight: Flight) -> Optional[TransferOrder]:
+        for transfer in self.pending_transfers:
+            if transfer.transport is None or not isinstance(
+                transfer.transport, Airlift
+            ):
+                continue
+            if transfer.transport.flight == flight:
+                return transfer
+        return None

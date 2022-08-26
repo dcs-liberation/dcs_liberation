@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable, List, Optional, Any
+from typing import Iterable, List, Optional
 
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import (
@@ -14,10 +14,9 @@ from PySide2.QtWidgets import (
 from game import Game
 from game.ato.flight import Flight
 from game.ato.flightplans.custom import CustomFlightPlan, CustomLayout
-from game.ato.flightplans.flightplan import FlightPlan
-from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.formationattack import FormationAttackFlightPlan
 from game.ato.flightplans.planningerror import PlanningError
+from game.ato.flightplans.waypointbuilder import WaypointBuilder
 from game.ato.flighttype import FlightType
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.loadouts import Loadout
@@ -38,7 +37,6 @@ class QFlightWaypointTab(QFrame):
         self.game = game
         self.package = package
         self.flight = flight
-        self.planner = FlightPlanBuilder(package, game.blue, game.theater)
 
         self.flight_waypoint_list: Optional[QFlightWaypointList] = None
         self.rtb_waypoint: Optional[QPushButton] = None
@@ -61,6 +59,12 @@ class QFlightWaypointTab(QFrame):
 
         self.recreate_buttons.clear()
         for task in self.package.target.mission_types(for_player=True):
+
+            if task == FlightType.AIR_ASSAULT and not self.game.settings.plugin_option(
+                "ctld"
+            ):
+                # Only add Air Assault if ctld plugin is enabled
+                continue
 
             def make_closure(arg):
                 def closure():
@@ -92,9 +96,8 @@ class QFlightWaypointTab(QFrame):
 
     def on_delete_waypoint(self):
         waypoints = []
-        for (
-            selected_row
-        ) in self.flight_waypoint_list.selectionModel().selectedIndexes():
+        selection = self.flight_waypoint_list.selectionModel()
+        for selected_row in selection.selectedIndexes():
             if selected_row.row() > 0:
                 waypoints.append(self.flight.flight_plan.waypoints[selected_row.row()])
         for waypoint in waypoints:
@@ -107,9 +110,10 @@ class QFlightWaypointTab(QFrame):
         # If the waypoint is a target waypoint and is not the last target
         # waypoint, we don't need to degrade.
         if isinstance(self.flight.flight_plan, FormationAttackFlightPlan):
-            is_target = waypoint in self.flight.flight_plan.targets
-            if is_target and len(self.flight.flight_plan.targets) > 1:
-                self.flight.flight_plan.targets.remove(waypoint)
+            is_target = waypoint in self.flight.flight_plan.target_area_waypoint.targets
+            count = len(self.flight.flight_plan.target_area_waypoint.targets)
+            if is_target and count > 1:
+                self.flight.flight_plan.target_area_waypoint.targets.remove(waypoint)
                 return
 
         self.degrade_to_custom_flight_plan()
@@ -133,7 +137,7 @@ class QFlightWaypointTab(QFrame):
         self.on_change()
 
     def on_rtb_waypoint(self):
-        rtb = self.planner.generate_rtb_waypoint(self.flight, self.flight.from_cp)
+        rtb = WaypointBuilder(self.flight, self.coalition).land(self.flight.arrival)
         self.degrade_to_custom_flight_plan()
         assert isinstance(self.flight.flight_plan, CustomFlightPlan)
         self.flight.flight_plan.layout.custom_waypoints.append(rtb)
@@ -142,8 +146,9 @@ class QFlightWaypointTab(QFrame):
 
     def degrade_to_custom_flight_plan(self) -> None:
         if not isinstance(self.flight.flight_plan, CustomFlightPlan):
-            self.flight.flight_plan: FlightPlan[Any] = CustomFlightPlan(
-                self, CustomLayout(custom_waypoints=self.flight.flight_plan.waypoints)
+            self.flight.flight_plan = CustomFlightPlan(
+                self.flight,
+                CustomLayout(custom_waypoints=self.flight.flight_plan.waypoints),
             )
 
     def confirm_recreate(self, task: FlightType) -> None:
@@ -161,7 +166,7 @@ class QFlightWaypointTab(QFrame):
         if result == QMessageBox.Yes:
             self.flight.flight_type = task
             try:
-                self.planner.populate_flight_plan(self.flight)
+                self.flight.recreate_flight_plan()
             except PlanningError as ex:
                 self.flight.flight_type = original_task
                 logging.exception("Could not recreate flight")

@@ -17,6 +17,7 @@ from game.theater.theatergroundobject import (
     BuildingGroundObject,
     IadsGroundObject,
     NavalGroundObject,
+    IadsBuildingGroundObject,
 )
 from game.utils import meters, nautical_miles
 from game.ato.closestairfields import ClosestAirfields, ObjectiveDistanceCache
@@ -104,7 +105,7 @@ class ObjectiveFinder:
                 # better control over planning profiles and target dependent
                 # loadouts we can clean this up.
                 if not isinstance(ground_object, BuildingGroundObject):
-                    # Other group types (like ships, SAMs, garrisons, etc) have better
+                    # Other group types (like ships, SAMs, battle positions, etc) have better
                     # suited mission types like anti-ship, DEAD, and BAI.
                     continue
 
@@ -112,6 +113,13 @@ class ObjectiveFinder:
                     # This is the FOB structure itself. Can't be repaired or
                     # targeted by the player, so shouldn't be targetable by the
                     # AI.
+                    continue
+
+                if isinstance(
+                    ground_object, IadsBuildingGroundObject
+                ) and not self.game.settings.plugin_option("skynetiads"):
+                    # Prevent strike targets on IADS Buildings when skynet features
+                    # are disabled as they do not serve any purpose
                     continue
 
                 if ground_object.is_dead:
@@ -130,6 +138,14 @@ class ObjectiveFinder:
     def front_lines(self) -> Iterator[FrontLine]:
         """Iterates over all active front lines in the theater."""
         yield from self.game.theater.conflicts()
+
+    def air_assault_targets(self) -> Iterator[ControlPoint]:
+        """Iterates over all capturable controlpoints for all active front lines"""
+        if not self.game.settings.plugin_option("ctld"):
+            # Air Assault should only be tasked with CTLD enabled
+            return
+        for front_line in self.front_lines():
+            yield front_line.control_point_hostile_to(self.is_player)
 
     def vulnerable_control_points(self) -> Iterator[ControlPoint]:
         """Iterates over friendly CPs that are vulnerable to enemy CPs.

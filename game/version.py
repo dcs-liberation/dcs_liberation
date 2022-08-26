@@ -134,5 +134,20 @@ VERSION = _build_version_string()
 #:   also used later in mission generation to orient the group accordingly.
 #:   This removes the randomization of the orientation from the generation.
 #:   Most campaigns will not need any updates and will work out of the box.
+#:   If the campaign designer sets the heading to 0 then we will automatically change
+#:   the orientation of the generated TGO to head towards the conflict if it is
+#:   required by the TGO to work properly. Values other than 0 will prevent the
+#:   automatic orientation.
 #:
-CAMPAIGN_FORMAT_VERSION = (10, 0)
+#: Version 10.1
+#: * Campaign designers can now define the recommended economy settings:
+#:   `recommended_player_money: 2000`.
+#:   `recommended_enemy_money: 2000`.
+#:   `recommended_player_income_multiplier: 1.0`.
+#:   `recommended_enemy_income_multiplier: 1.0`.
+#:
+#: Version 10.2
+#: * Campaign files can optionally define the iads configuration
+#:   It is possible to define if the campaign supports advanced iads
+#:
+CAMPAIGN_FORMAT_VERSION = (10, 2)

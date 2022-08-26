@@ -38,4 +38,3 @@ groups:
         - 1
       unit_types:
         - Bedford_MWD
-layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

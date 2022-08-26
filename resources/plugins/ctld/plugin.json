@@ -1,0 +1,63 @@
+{
+    "nameInUI": "CTLD",
+    "defaultValue": true,
+    "specificOptions": [
+        {
+            "nameInUI": "Tailor CTLD for the Liberation specific missions",
+            "mnemonic": "tailorctld",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Create logistic unit in each pickup zone",
+            "mnemonic": "logisticunit",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "CTLD Use smoke in zones",
+            "mnemonic": "smoke",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Automatically spawn crates for airlift",
+            "mnemonic": "airliftcrates",
+            "defaultValue": false
+        },
+        {
+            "nameInUI": "Use real sling loading",
+            "mnemonic": "slingload",
+            "defaultValue": false
+        },
+        {
+            "nameInUI": "JTAC Autolase",
+            "mnemonic": "autolase",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "JTAC Use smoke",
+            "mnemonic": "jtacsmoke",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "JTAC Use FC3 laser code (1113)",
+            "mnemonic": "fc3LaserCode",
+            "defaultValue": false
+        },
+        {
+            "nameInUI": "CTLD Debug",
+            "mnemonic": "debug",
+            "defaultValue": false
+        }
+    ],
+    "scriptsWorkOrders": [
+        {
+            "file": "CTLD.lua",
+            "mnemonic": "ctld-script"
+        }
+    ],
+    "configurationWorkOrders": [
+        {
+            "file": "ctld-config.lua",
+            "mnemonic": "ctld-config"
+        }
+    ]
+}

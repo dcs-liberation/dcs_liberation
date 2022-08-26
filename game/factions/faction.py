@@ -17,6 +17,7 @@ from game.data.building_data import (
     WW2_GERMANY_BUILDINGS,
     WW2_FREE,
     REQUIRED_BUILDINGS,
+    IADS_BUILDINGS,
 )
 from game.data.doctrine import (
     Doctrine,
@@ -215,7 +216,7 @@ class Faction:
         ]
 
         faction.preset_groups = [
-            ForceGroup.named(n) for n in json.get("preset_groups", [])
+            ForceGroup.from_preset_group(g) for g in json.get("preset_groups", [])
         ]
 
         faction.requirements = json.get("requirements", {})
@@ -242,20 +243,22 @@ class Faction:
             faction.doctrine = MODERN_DOCTRINE
 
         # Load the building set
+        faction.building_set = []
         building_set = json.get("building_set", "default")
         if building_set == "default":
-            faction.building_set = DEFAULT_AVAILABLE_BUILDINGS
+            faction.building_set.extend(DEFAULT_AVAILABLE_BUILDINGS)
         elif building_set == "ww2free":
-            faction.building_set = WW2_FREE
+            faction.building_set.extend(WW2_FREE)
         elif building_set == "ww2ally":
-            faction.building_set = WW2_ALLIES_BUILDINGS
+            faction.building_set.extend(WW2_ALLIES_BUILDINGS)
         elif building_set == "ww2germany":
-            faction.building_set = WW2_GERMANY_BUILDINGS
+            faction.building_set.extend(WW2_GERMANY_BUILDINGS)
         else:
-            faction.building_set = DEFAULT_AVAILABLE_BUILDINGS
+            faction.building_set.extend(DEFAULT_AVAILABLE_BUILDINGS)
 
         # Add required buildings for the game logic (e.g. ammo, factory..)
         faction.building_set.extend(REQUIRED_BUILDINGS)
+        faction.building_set.extend(IADS_BUILDINGS)
 
         # Load liveries override
         faction.liveries_overrides = {}
@@ -346,6 +349,12 @@ class Faction:
             self.remove_preset("SA-23/S-300VM")
             self.remove_preset("SA-17")
             self.remove_preset("KS-19")
+            self.remove_preset("HQ-2")
+            self.remove_preset("SA-2/S-75 V-759/5V23")
+            self.remove_preset("SA-3/S-125 V-601P/5V27")
+            self.remove_vehicle("SAM SA-14 Strela-3 manpad")
+            self.remove_vehicle("SAM SA-24 Igla-S manpad")
+            self.remove_vehicle("Polyana-D4M1 C2 node")
 
     def remove_aircraft(self, name: str) -> None:
         for i in self.aircrafts:

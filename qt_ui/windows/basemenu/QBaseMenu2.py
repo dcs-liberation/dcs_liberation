@@ -9,6 +9,7 @@ from PySide2.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from dcs.ships import Stennis, KUZNECOW
 
 from game import Game
 from game.ato.flighttype import FlightType
@@ -240,10 +241,12 @@ class QBaseMenu2(QDialog):
         GameUpdateSignal.get_instance().updateGame(self.game_model.game)
 
     def get_base_image(self):
-        if self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP:
-            return "./resources/ui/carrier.png"
-        elif self.cp.cptype == ControlPointType.LHA_GROUP:
-            return "./resources/ui/lha.png"
+        if (
+            self.cp.cptype == ControlPointType.AIRCRAFT_CARRIER_GROUP
+            or self.cp.cptype == ControlPointType.LHA_GROUP
+        ):
+            carrier_type = self.cp.get_carrier_group_type(always_supercarrier=True)
+            return f"./resources/ui/units/ships/{carrier_type.id}.png"
         elif self.cp.cptype == ControlPointType.FOB and self.cp.has_helipads:
             return "./resources/ui/heliport.png"
         elif self.cp.cptype == ControlPointType.FOB:

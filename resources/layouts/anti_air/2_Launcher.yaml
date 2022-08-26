@@ -1,0 +1,41 @@
+name: 2 Launcher Site
+tasks:
+  - SHORAD
+  - MERAD
+groups:
+  - SAM:
+    - name: Search Radar
+      optional: true
+      fill: false # Do not fill with faction possible units
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+        - SearchTrackRadar
+    - name: Track Radar
+      optional: true
+      fill: false # Do not fill with faction possible units
+      unit_count:
+        - 1
+      unit_classes:
+        - TrackRadar
+    - name: Optical Tracker
+      optional: true
+      fill: false # Do not fill with faction possible units
+      unit_count:
+        - 1
+      unit_classes:
+        - OpticalTracker
+    - name: Launcher
+      unit_count:
+        - 2
+      unit_classes:
+        - SHORAD
+        - Launcher
+    - name: Logistics
+      optional: true
+      unit_count:
+        - 0
+        - 2
+      unit_classes:
+        - Logistics

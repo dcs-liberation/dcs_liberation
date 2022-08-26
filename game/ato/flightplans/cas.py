@@ -17,8 +17,58 @@ if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
 
 
-class Builder(IBuilder):
-    def build(self) -> CasLayout:
+@dataclass(frozen=True)
+class CasLayout(PatrollingLayout):
+    target: FlightWaypoint
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield from self.nav_to
+        yield self.patrol_start
+        yield self.target
+        yield self.patrol_end
+        yield from self.nav_from
+        yield self.departure
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class CasFlightPlan(PatrollingFlightPlan[CasLayout]):
+    @staticmethod
+    def builder_type() -> Type[Builder]:
+        return Builder
+
+    @property
+    def patrol_duration(self) -> timedelta:
+        return self.flight.coalition.doctrine.cas_duration
+
+    @property
+    def patrol_speed(self) -> Speed:
+        # 2021-08-02: patrol_speed will currently have no effect because
+        # CAS doesn't use OrbitAction. But all PatrollingFlightPlan are expected
+        # to have patrol_speed
+        return kph(0)
+
+    @property
+    def engagement_distance(self) -> Distance:
+        from game.missiongenerator.frontlineconflictdescription import FRONTLINE_LENGTH
+
+        return meters(FRONTLINE_LENGTH) / 2
+
+    @property
+    def combat_speed_waypoints(self) -> set[FlightWaypoint]:
+        return {self.layout.patrol_start, self.layout.target, self.layout.patrol_end}
+
+    def request_escort_at(self) -> FlightWaypoint | None:
+        return self.layout.patrol_start
+
+    def dismiss_escort_at(self) -> FlightWaypoint | None:
+        return self.layout.patrol_end
+
+
+class Builder(IBuilder[CasFlightPlan, CasLayout]):
+    def layout(self) -> CasLayout:
         location = self.package.target
 
         if not isinstance(location, FrontLine):
@@ -71,52 +121,5 @@ class Builder(IBuilder):
             bullseye=builder.bullseye(),
         )
 
-
-@dataclass(frozen=True)
-class CasLayout(PatrollingLayout):
-    target: FlightWaypoint
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield from self.nav_to
-        yield self.patrol_start
-        yield self.target
-        yield self.patrol_end
-        yield from self.nav_from
-        yield self.departure
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
-
-
-class CasFlightPlan(PatrollingFlightPlan[CasLayout]):
-    @staticmethod
-    def builder_type() -> Type[Builder]:
-        return Builder
-
-    @property
-    def patrol_duration(self) -> timedelta:
-        return self.flight.coalition.doctrine.cas_duration
-
-    @property
-    def patrol_speed(self) -> Speed:
-        # 2021-08-02: patrol_speed will currently have no effect because
-        # CAS doesn't use OrbitAction. But all PatrollingFlightPlan are expected
-        # to have patrol_speed
-        return kph(0)
-
-    @property
-    def engagement_distance(self) -> Distance:
-        from game.missiongenerator.frontlineconflictdescription import FRONTLINE_LENGTH
-
-        return meters(FRONTLINE_LENGTH) / 2
-
-    @property
-    def combat_speed_waypoints(self) -> set[FlightWaypoint]:
-        return {self.layout.patrol_start, self.layout.target, self.layout.patrol_end}
-
-    def request_escort_at(self) -> FlightWaypoint | None:
-        return self.layout.patrol_start
-
-    def dismiss_escort_at(self) -> FlightWaypoint | None:
-        return self.layout.patrol_end
+    def build(self) -> CasFlightPlan:
+        return CasFlightPlan(self.flight, self.layout())

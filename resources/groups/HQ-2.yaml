@@ -1,0 +1,10 @@
+name: HQ-2
+tasks:
+  - MERAD
+units:
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - SAM SA-2 S-75 "Fan Song" TR
+  - SAM HQ-2 LN SM-90
+layouts:
+  - 4 Launcher Site (Semicircle)
+  - 4 Launcher Site (Circle)

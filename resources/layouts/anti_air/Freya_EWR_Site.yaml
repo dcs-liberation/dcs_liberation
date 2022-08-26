@@ -48,4 +48,3 @@ groups:
         - 3
       unit_types:
         - soldier_mauser98
-layout_file: resources/layouts/anti_air/legacy_ground_templates.miz

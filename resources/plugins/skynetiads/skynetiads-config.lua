@@ -31,14 +31,66 @@ if dcsLiberation and SkynetIADS then
         end
     end
 
-    env.info(string.format("DCSLiberation|Skynet-IADS plugin - createRedIADS=%s",tostring(createRedIADS)))
-    env.info(string.format("DCSLiberation|Skynet-IADS plugin - createBlueIADS=%s",tostring(createBlueIADS)))
-    env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeRedInRadio=%s",tostring(includeRedInRadio)))
-    env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeBlueInRadio=%s",tostring(includeBlueInRadio)))
-    env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugRED=%s",tostring(debugRED)))
-    env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugBLUE=%s",tostring(debugBLUE)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - createRedIADS=%s", tostring(createRedIADS)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - createBlueIADS=%s", tostring(createBlueIADS)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeRedInRadio=%s", tostring(includeRedInRadio)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - includeBlueInRadio=%s", tostring(includeBlueInRadio)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugRED=%s", tostring(debugRED)))
+    env.info(string.format("DCSLiberation|Skynet-IADS plugin - debugBLUE=%s", tostring(debugBLUE)))
 
     -- actual configuration code
+    local function initializeIADSElement(iads, iads_unit, element)
+        if iads_unit == nil then
+            -- skip processing of units which can not be handled by skynet
+            return
+        end
+        if element.engagement_zone then
+            iads_unit:setEngagementZone(element.engagement_zone)
+        end
+        if element.can_engage_harm then
+            iads_unit:setCanEngageHARM(element.can_engage_harm)
+        end
+        if element.harm_detection_chance then
+            iads_unit:setHARMDetectionChance(tonumber(element.harm_detection_chance))
+        end
+        if element.can_engage_air_weapon then
+            iads_unit:setCanEngageAirWeapons(element.can_engage_air_weapon)
+        end
+        if element.go_live_range_in_percent then
+            iads_unit:setGoLiveRangeInPercent(tonumber(element.go_live_range_in_percent))
+        end
+        if element.autonomous_behaviour then
+            iads_unit:setAutonomousBehaviour(element.autonomous_behaviour)
+        end
+        if element.ConnectionNode then
+            for i, cn in pairs(element.ConnectionNode) do
+                env.info(string.format("DCSLiberation|Skynet-IADS plugin - adding IADS ConnectionNode %s", cn))
+                local connection_node = StaticObject.getByName(cn .. " object") -- pydcs adds ' object' to the unit name for static elements
+                if connection_node then
+                    iads_unit:addConnectionNode(connection_node)
+                end
+            end
+        end
+        if element.PowerSource then
+            for i, ps in pairs(element.PowerSource) do
+                env.info(string.format("DCSLiberation|Skynet-IADS plugin - adding IADS PowerSource %s", ps))
+                local power_source = StaticObject.getByName(ps .. " object") -- pydcs adds ' object' to the unit name for static elements
+                if power_source then
+                    iads_unit:addPowerSource(power_source)
+                end
+            end
+        end
+        if element.PD then
+            for i, pd in pairs(element.PD) do
+                env.info(string.format("DCSLiberation|Skynet-IADS plugin - adding IADS Point Defence %s", pd))
+                local point_defence = iads:addSAMSite(pd)
+                if point_defence ~= nil then
+                    -- only add as point defence if skynet can handle the PD unit
+                    iads_unit:addPointDefence(point_defence)
+                end
+            end
+        end
+    end
 
     local function initializeIADS(iads, coalition, inRadio, debug)
 
@@ -63,13 +115,8 @@ if dcsLiberation and SkynetIADS then
             iadsDebug.harmDefence = true
             iadsDebug.samSiteStatusEnvOutput = true
             iadsDebug.earlyWarningRadarStatusEnvOutput = true
+            iadsDebug.commandCenterStatusEnvOutput = true
         end
-
-        --add EW units to the IADS:
-        iads:addEarlyWarningRadarsByPrefix(coalitionPrefix .. "|EWR|")
-
-        --add SAM groups to the IADS:
-        iads:addSAMSitesByPrefix(coalitionPrefix .. "|SAM|")
 
         -- add the AWACS
         if dcsLiberation.AWACs then
@@ -89,37 +136,42 @@ if dcsLiberation and SkynetIADS then
             end
         end
 
-        local sites = iads:getSAMSites()
-        for i = 1, #sites do
-            local site = sites[i]
-            local name = site:getDCSName()
-
-            if string.match(name, "|SamAsEwr|") then
-                env.info(string.format("DCSLiberation|Skynet-IADS plugin - %s now acting as EWR", name))
-                site:setActAsEW(true)
-            end
-
-            if not string.match(name, "|PD") then
-                -- Name is prefixed with `$color|SAM|$tgoid`. For pre-4.1 generated
-                -- campaigns that's the full name of the primary SAM and any PD are just
-                -- that name suffixed with |PD.
-                --
-                -- For 4.1+ generated campaigns the name will be
-                -- `$color|SAM|$tgoid|$role|$gid`, so we need to replace the content
-                -- beginning with the third pipe with `|PD` to find our PDs.
-                local first_pipe = string.find(name, "|")
-                local second_pipe = string.find(name, "|", first_pipe + 1)
-                local third_pipe = string.find(name, "|", second_pipe + 1)
-                local pd_prefix = name .. "|PD"
-                if third_pipe ~= nil then
-                    pd_prefix = string.sub(name, 1, third_pipe) .. "PD"
+        -- add the IADS Elements: SAM, EWR, and Command Centers
+        if dcsLiberation.IADS then
+            local coalition_iads = dcsLiberation.IADS[coalitionPrefix]
+            if coalition_iads.Ewr then
+                for _, unit in pairs(coalition_iads.Ewr) do
+                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - processing IADS EWR %s", unit.dcsGroupName))
+                    local iads_unit = iads:addEarlyWarningRadar(unit.dcsGroupName)
+                    initializeIADSElement(iads, iads_unit, unit)
                 end
-                local pds = iads:getSAMSitesByPrefix(pd_prefix)
-                for j = 1, #pds do
-                    pd = pds[j]
-                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - Adding %s as PD for %s", pd:getDCSName(), name))
-                    site:addPointDefence(pd)
-                    site:setIgnoreHARMSWhilePointDefencesHaveAmmo(true)
+            end
+            if coalition_iads.Sam then
+                for _, unit in pairs(coalition_iads.Sam) do
+                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - processing IADS SAM %s", unit.dcsGroupName))
+                    local iads_unit = iads:addSAMSite(unit.dcsGroupName)
+                    initializeIADSElement(iads, iads_unit, unit)
+                end
+            end
+            if coalition_iads.SamAsEwr then
+                for _, unit in pairs(coalition_iads.SamAsEwr) do
+                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - processing IADS SAM as EWR %s", unit.dcsGroupName))
+                    local iads_unit = iads:addSAMSite(unit.dcsGroupName)
+                    if iads_unit ~= nil then
+                        -- only process if its a valid skynet group
+                        iads_unit:setActAsEW(true)
+                        initializeIADSElement(iads, iads_unit, unit)
+                    end
+                end
+            end
+            if coalition_iads.CommandCenter then
+                for _, unit in pairs(coalition_iads.CommandCenter) do
+                    env.info(string.format("DCSLiberation|Skynet-IADS plugin - processing IADS Command Center %s", unit.dcsGroupName))
+                    local commandCenter = StaticObject.getByName(unit.dcsGroupName .. " object") -- pydcs adds ' object' to the unit name for static elements
+                    if commandCenter then
+                        local iads_unit = iads:addCommandCenter(commandCenter)
+                        initializeIADSElement(iads, iads_unit, unit)
+                    end
                 end
             end
         end
@@ -131,7 +183,7 @@ if dcsLiberation and SkynetIADS then
         end
 
         --activate the IADS
-        iads:setupSAMSitesAndThenActivate()
+        iads:activate()
     end
 
     ------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -139,13 +191,13 @@ if dcsLiberation and SkynetIADS then
     -------------------------------------------------------------------------------------------------------------------------------------------------------------
     if createRedIADS then
         env.info("DCSLiberation|Skynet-IADS plugin - creating red IADS")
-        redIADS = SkynetIADS:create("IADS")
+        local redIADS = SkynetIADS:create("IADS")
         initializeIADS(redIADS, 1, includeRedInRadio, debugRED) -- RED
     end
 
     if createBlueIADS then
         env.info("DCSLiberation|Skynet-IADS plugin - creating blue IADS")
-        blueIADS = SkynetIADS:create("IADS")
+        local blueIADS = SkynetIADS:create("IADS")
         initializeIADS(blueIADS, 2, includeBlueInRadio, debugBLUE) -- BLUE
     end
 

@@ -21,13 +21,26 @@ from typing import (
     Set,
     TYPE_CHECKING,
     Tuple,
+    Type,
 )
 from uuid import UUID
 
 from dcs.mapping import Point
-from dcs.ships import Forrestal, KUZNECOW, LHA_Tarawa, Stennis, Type_071
+from dcs.ships import (
+    CVN_71,
+    CVN_72,
+    CVN_73,
+    CVN_75,
+    CV_1143_5,
+    Forrestal,
+    KUZNECOW,
+    LHA_Tarawa,
+    Stennis,
+    Type_071,
+)
 from dcs.terrain.terrain import Airport, ParkingSlot
 from dcs.unitgroup import ShipGroup, StaticGroup
+from dcs.unittype import ShipType
 
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ground_forces.combat_stance import CombatStance
@@ -43,13 +56,16 @@ from game.sidc import (
     Status,
     SymbolSet,
 )
+from game.theater.presetlocation import PresetLocation
 from game.utils import Distance, Heading, meters
 from .base import Base
 from .frontline import FrontLine
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
+    IadsGroundObject,
     TheaterGroundObject,
+    VehicleGroupGroundObject,
 )
 from .theatergroup import TheaterUnit
 from ..ato.starttype import StartType
@@ -93,48 +109,53 @@ class PresetLocations:
 
     #: Locations used by non-carrier ships that will be spawned unless the faction has
     #: no navy or the player has disabled ship generation for the owning side.
-    ships: List[PointWithHeading] = field(default_factory=list)
+    ships: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by coastal defenses that are generated if the faction is capable.
-    coastal_defenses: List[PointWithHeading] = field(default_factory=list)
+    coastal_defenses: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by ground based strike objectives.
-    strike_locations: List[PointWithHeading] = field(default_factory=list)
+    strike_locations: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by offshore strike objectives.
-    offshore_strike_locations: List[PointWithHeading] = field(default_factory=list)
+    offshore_strike_locations: List[PresetLocation] = field(default_factory=list)
 
     #: Locations used by missile sites like scuds and V-2s that are generated if the
     #: faction is capable.
-    missile_sites: List[PointWithHeading] = field(default_factory=list)
+    missile_sites: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of long range SAMs.
-    long_range_sams: List[PointWithHeading] = field(default_factory=list)
+    long_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of medium range SAMs.
-    medium_range_sams: List[PointWithHeading] = field(default_factory=list)
+    medium_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of short range SAMs.
-    short_range_sams: List[PointWithHeading] = field(default_factory=list)
+    short_range_sams: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of AAA groups.
-    aaa: List[PointWithHeading] = field(default_factory=list)
+    aaa: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of EWRs.
-    ewrs: List[PointWithHeading] = field(default_factory=list)
+    ewrs: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of map scenery to create zones for.
     scenery: List[SceneryGroup] = field(default_factory=list)
 
     #: Locations of factories for producing ground units.
-    factories: List[PointWithHeading] = field(default_factory=list)
+    factories: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of ammo depots for controlling number of units on the front line at a
     #: control point.
-    ammunition_depots: List[PointWithHeading] = field(default_factory=list)
+    ammunition_depots: List[PresetLocation] = field(default_factory=list)
 
     #: Locations of stationary armor groups.
-    armor_groups: List[PointWithHeading] = field(default_factory=list)
+    armor_groups: List[PresetLocation] = field(default_factory=list)
+
+    #: Locations of skynet specific groups
+    iads_connection_node: List[PresetLocation] = field(default_factory=list)
+    iads_power_source: List[PresetLocation] = field(default_factory=list)
+    iads_command_center: List[PresetLocation] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -299,6 +320,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         name: str,
         position: Point,
         at: StartingPosition,
+        theater: ConflictTheater,
         starts_blue: bool,
         cptype: ControlPointType = ControlPointType.AIRBASE,
     ) -> None:
@@ -306,6 +328,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.id = uuid.uuid4()
         self.full_name = name
         self.at = at
+        self.theater = theater
         self.starts_blue = starts_blue
         self.connected_objectives: List[TheaterGroundObject] = []
         self.preset_locations = PresetLocations()
@@ -377,7 +400,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.front_lines[connection] = front
         connection.front_lines[self] = front
         self.front_line_db.add(front.id, front)
-        events.new_front_line(front)
+        events.update_front_line(front)
 
     def _remove_front_line_with(
         self, connection: ControlPoint, events: GameUpdateEvents
@@ -612,6 +635,60 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                             return group.group_name
         return None
 
+    def get_carrier_group_type(
+        self, always_supercarrier: bool = False
+    ) -> Optional[Type[ShipType]]:
+        """
+        Get the carrier group type if the airbase is a carrier. Arguments:
+            always_supercarrier: True if should always return the supercarrier type, False if should only
+                return the supercarrier type when the supercarrier option is enabled in settings.
+        :return: Carrier group type
+        """
+        if self.cptype in [
+            ControlPointType.AIRCRAFT_CARRIER_GROUP,
+            ControlPointType.LHA_GROUP,
+        ]:
+            for g in self.ground_objects:
+                for group in g.groups:
+                    u = group.units[0]
+                    carrier_type = u.type
+                    if (
+                        u.unit_type
+                        and u.unit_type.unit_class
+                        in [
+                            UnitClass.AIRCRAFT_CARRIER,
+                            UnitClass.HELICOPTER_CARRIER,
+                        ]
+                        and issubclass(carrier_type, ShipType)
+                    ):
+                        if (
+                            self.coalition.game.settings.supercarrier
+                            or always_supercarrier
+                        ):
+                            return self.upgrade_to_supercarrier(carrier_type, self.name)
+                        return carrier_type
+        return None
+
+    @staticmethod
+    def upgrade_to_supercarrier(unit: Type[ShipType], name: str) -> Type[ShipType]:
+        if unit == Stennis:
+            if name == "CVN-71 Theodore Roosevelt":
+                return CVN_71
+            elif name == "CVN-72 Abraham Lincoln":
+                return CVN_72
+            elif name == "CVN-73 George Washington":
+                return CVN_73
+            elif name == "CVN-75 Harry S. Truman":
+                return CVN_75
+            elif name == "Carrier Strike Group 8":
+                return CVN_75
+            else:
+                return CVN_71
+        elif unit == KUZNECOW:
+            return CV_1143_5
+        else:
+            return unit
+
     # TODO: Should be Airbase specific.
     def is_connected(self, to: ControlPoint) -> bool:
         return to in self.connected_points
@@ -755,17 +832,24 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.retreat_ground_units(game)
         self.retreat_air_units(game)
         self.depopulate_uncapturable_tgos()
-
-        # All the attached TGOs have either been depopulated or captured. Tell the UI to
-        # update their state.
-        for tgo in self.connected_objectives:
-            events.update_tgo(tgo)
-
         self._coalition = new_coalition
         self.base.set_strength_to_minimum()
         self._clear_front_lines(events)
         self._create_missing_front_lines(events)
         events.update_control_point(self)
+
+        # All the attached TGOs have either been depopulated or captured. Tell the UI to
+        # update their state. Also update orientation and IADS state for specific tgos
+        for tgo in self.connected_objectives:
+            if isinstance(tgo, IadsGroundObject) or isinstance(
+                tgo, VehicleGroupGroundObject
+            ):
+                if isinstance(tgo, IadsGroundObject):
+                    game.theater.iads_network.update_tgo(tgo, events)
+                conflict_heading = game.theater.heading_to_conflict_from(tgo.position)
+                tgo.rotate(conflict_heading or tgo.heading)
+            if not tgo.is_control_point:
+                events.update_tgo(tgo)
 
     @property
     def required_aircraft_start_type(self) -> Optional[StartType]:
@@ -958,11 +1042,14 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
 
 class Airfield(ControlPoint):
-    def __init__(self, airport: Airport, starts_blue: bool) -> None:
+    def __init__(
+        self, airport: Airport, theater: ConflictTheater, starts_blue: bool
+    ) -> None:
         super().__init__(
             airport.name,
             airport.position,
             airport,
+            theater,
             starts_blue,
             cptype=ControlPointType.AIRBASE,
         )
@@ -997,6 +1084,7 @@ class Airfield(ControlPoint):
             yield from [
                 FlightType.OCA_AIRCRAFT,
                 FlightType.OCA_RUNWAY,
+                FlightType.AIR_ASSAULT,
             ]
 
         yield from super().mission_types(for_player)
@@ -1154,9 +1242,16 @@ class NavalControlPoint(ControlPoint, ABC):
 
 
 class Carrier(NavalControlPoint):
-    def __init__(self, name: str, at: Point, starts_blue: bool):
+    def __init__(
+        self, name: str, at: Point, theater: ConflictTheater, starts_blue: bool
+    ):
         super().__init__(
-            name, at, at, starts_blue, cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP
+            name,
+            at,
+            at,
+            theater,
+            starts_blue,
+            cptype=ControlPointType.AIRCRAFT_CARRIER_GROUP,
         )
 
     @property
@@ -1193,8 +1288,12 @@ class Carrier(NavalControlPoint):
 
 
 class Lha(NavalControlPoint):
-    def __init__(self, name: str, at: Point, starts_blue: bool):
-        super().__init__(name, at, at, starts_blue, cptype=ControlPointType.LHA_GROUP)
+    def __init__(
+        self, name: str, at: Point, theater: ConflictTheater, starts_blue: bool
+    ):
+        super().__init__(
+            name, at, at, theater, starts_blue, cptype=ControlPointType.LHA_GROUP
+        )
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
@@ -1223,9 +1322,16 @@ class OffMapSpawn(ControlPoint):
     def runway_is_operational(self) -> bool:
         return True
 
-    def __init__(self, name: str, position: Point, starts_blue: bool):
+    def __init__(
+        self, name: str, position: Point, theater: ConflictTheater, starts_blue: bool
+    ):
         super().__init__(
-            name, position, position, starts_blue, cptype=ControlPointType.OFF_MAP
+            name,
+            position,
+            position,
+            theater,
+            starts_blue,
+            cptype=ControlPointType.OFF_MAP,
         )
 
     @property
@@ -1282,8 +1388,12 @@ class OffMapSpawn(ControlPoint):
 
 
 class Fob(ControlPoint):
-    def __init__(self, name: str, at: Point, starts_blue: bool):
-        super().__init__(name, at, at, starts_blue, cptype=ControlPointType.FOB)
+    def __init__(
+        self, name: str, at: Point, theater: ConflictTheater, starts_blue: bool
+    ):
+        super().__init__(
+            name, at, at, theater, starts_blue, cptype=ControlPointType.FOB
+        )
         self.name = name
 
     @property
@@ -1313,6 +1423,7 @@ class Fob(ControlPoint):
 
         if not self.is_friendly(for_player):
             yield FlightType.STRIKE
+            yield FlightType.AIR_ASSAULT
 
         yield from super().mission_types(for_player)
 

@@ -16,7 +16,6 @@ from PySide2.QtWidgets import (
 )
 
 from game.ato.flight import Flight
-from game.ato.flightplans.flightplanbuilder import FlightPlanBuilder
 from game.ato.flightplans.planningerror import PlanningError
 from game.ato.package import Package
 from game.game import Game
@@ -181,11 +180,8 @@ class QPackageDialog(QDialog):
     def add_flight(self, flight: Flight) -> None:
         """Adds the new flight to the package."""
         self.package_model.add_flight(flight)
-        planner = FlightPlanBuilder(
-            self.package_model.package, self.game.blue, self.game.theater
-        )
         try:
-            planner.populate_flight_plan(flight)
+            flight.recreate_flight_plan()
             self.package_model.update_tot()
             EventStream.put_nowait(GameUpdateEvents().new_flight(flight))
         except PlanningError as ex:
