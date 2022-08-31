@@ -4,7 +4,7 @@ import datetime
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterator, List, Optional, TYPE_CHECKING, Tuple
+from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 from uuid import UUID
 
 from dcs.mapping import Point
@@ -20,6 +20,7 @@ from dcs.terrain import (
 from dcs.terrain.terrain import Terrain
 from shapely import geometry, ops
 
+from .daytimemap import DaytimeMap
 from .frontline import FrontLine
 from .iadsnetwork.iadsnetwork import IadsNetwork
 from .landmap import Landmap, load_landmap, poly_contains
@@ -42,19 +43,11 @@ class ConflictTheater:
 
     overview_image: str
     landmap: Optional[Landmap]
-    """
-    land_poly = None  # type: Polygon
-    """
-    daytime_map: Dict[str, Tuple[int, int]]
+    daytime_map: DaytimeMap
     iads_network: IadsNetwork
 
     def __init__(self) -> None:
         self.controlpoints: List[ControlPoint] = []
-        """
-        self.land_poly = geometry.Polygon(self.landmap[0][0])
-        for x in self.landmap[1]:
-            self.land_poly = self.land_poly.difference(geometry.Polygon(x))
-        """
 
     def add_controlpoint(self, point: ControlPoint) -> None:
         self.controlpoints.append(point)
@@ -266,12 +259,12 @@ class CaucasusTheater(ConflictTheater):
     overview_image = "caumap.gif"
 
     landmap = load_landmap(Path("resources/caulandmap.p"))
-    daytime_map = {
-        "dawn": (6, 9),
-        "day": (9, 18),
-        "dusk": (18, 20),
-        "night": (0, 5),
-    }
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=6), datetime.time(hour=9)),
+        day=(datetime.time(hour=9), datetime.time(hour=18)),
+        dusk=(datetime.time(hour=18), datetime.time(hour=20)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
 
     @property
     def timezone(self) -> datetime.timezone:
@@ -288,12 +281,12 @@ class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
     overview_image = "persiangulf.gif"
     landmap = load_landmap(Path("resources/gulflandmap.p"))
-    daytime_map = {
-        "dawn": (6, 8),
-        "day": (8, 16),
-        "dusk": (16, 18),
-        "night": (0, 5),
-    }
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
+        day=(datetime.time(hour=8), datetime.time(hour=16)),
+        dusk=(datetime.time(hour=16), datetime.time(hour=18)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
 
     @property
     def timezone(self) -> datetime.timezone:
@@ -310,12 +303,12 @@ class NevadaTheater(ConflictTheater):
     terrain = nevada.Nevada()
     overview_image = "nevada.gif"
     landmap = load_landmap(Path("resources/nevlandmap.p"))
-    daytime_map = {
-        "dawn": (4, 6),
-        "day": (6, 17),
-        "dusk": (17, 18),
-        "night": (0, 5),
-    }
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=4), datetime.time(hour=6)),
+        day=(datetime.time(hour=6), datetime.time(hour=17)),
+        dusk=(datetime.time(hour=17), datetime.time(hour=18)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
 
     @property
     def timezone(self) -> datetime.timezone:
@@ -332,12 +325,12 @@ class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
     overview_image = "normandy.gif"
     landmap = load_landmap(Path("resources/normandylandmap.p"))
-    daytime_map = {
-        "dawn": (6, 8),
-        "day": (10, 17),
-        "dusk": (17, 18),
-        "night": (0, 5),
-    }
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
+        day=(datetime.time(hour=10), datetime.time(hour=17)),
+        dusk=(datetime.time(hour=17), datetime.time(hour=18)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
 
     @property
     def timezone(self) -> datetime.timezone:
@@ -354,12 +347,12 @@ class TheChannelTheater(ConflictTheater):
     terrain = thechannel.TheChannel()
     overview_image = "thechannel.gif"
     landmap = load_landmap(Path("resources/channellandmap.p"))
-    daytime_map = {
-        "dawn": (6, 8),
-        "day": (10, 17),
-        "dusk": (17, 18),
-        "night": (0, 5),
-    }
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
+        day=(datetime.time(hour=10), datetime.time(hour=17)),
+        dusk=(datetime.time(hour=17), datetime.time(hour=18)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
 
     @property
     def timezone(self) -> datetime.timezone:
@@ -376,12 +369,12 @@ class SyriaTheater(ConflictTheater):
     terrain = syria.Syria()
     overview_image = "syria.gif"
     landmap = load_landmap(Path("resources/syrialandmap.p"))
-    daytime_map = {
-        "dawn": (6, 8),
-        "day": (8, 16),
-        "dusk": (16, 18),
-        "night": (0, 5),
-    }
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
+        day=(datetime.time(hour=8), datetime.time(hour=16)),
+        dusk=(datetime.time(hour=16), datetime.time(hour=18)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
 
     @property
     def timezone(self) -> datetime.timezone:
@@ -399,12 +392,12 @@ class MarianaIslandsTheater(ConflictTheater):
     overview_image = "marianaislands.gif"
 
     landmap = load_landmap(Path("resources/marianaislandslandmap.p"))
-    daytime_map = {
-        "dawn": (6, 8),
-        "day": (8, 16),
-        "dusk": (16, 18),
-        "night": (0, 5),
-    }
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
+        day=(datetime.time(hour=8), datetime.time(hour=16)),
+        dusk=(datetime.time(hour=16), datetime.time(hour=18)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
 
     @property
     def timezone(self) -> datetime.timezone:
