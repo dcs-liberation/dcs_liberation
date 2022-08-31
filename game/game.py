@@ -4,7 +4,7 @@ import itertools
 import logging
 import math
 from collections.abc import Iterator
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from enum import Enum
 from typing import Any, List, TYPE_CHECKING, Type, Union, cast
 from uuid import UUID
@@ -95,6 +95,7 @@ class Game:
         theater: ConflictTheater,
         air_wing_config: CampaignAirWingConfig,
         start_date: datetime,
+        start_time: time | None,
         settings: Settings,
         player_budget: float,
         enemy_budget: float,
@@ -119,7 +120,15 @@ class Game:
 
         self.db = GameDb()
 
-        self.conditions = self.generate_conditions()
+        if start_time is None:
+            self.time_of_day_offset_for_start_time = list(TimeOfDay).index(
+                TimeOfDay.Day
+            )
+        else:
+            self.time_of_day_offset_for_start_time = list(TimeOfDay).index(
+                self.theater.daytime_map.best_guess_time_of_day_at(start_time)
+            )
+        self.conditions = self.generate_conditions(forced_time=start_time)
 
         self.sanitize_sides(player_faction, enemy_faction)
         self.blue = Coalition(self, player_faction, player_budget, player=True)
@@ -154,9 +163,13 @@ class Game:
     def transit_network_for(self, player: bool) -> TransitNetwork:
         return self.coalition_for(player).transit_network
 
-    def generate_conditions(self) -> Conditions:
+    def generate_conditions(self, forced_time: time | None = None) -> Conditions:
         return Conditions.generate(
-            self.theater, self.current_day, self.current_turn_time_of_day, self.settings
+            self.theater,
+            self.current_day,
+            self.current_turn_time_of_day,
+            self.settings,
+            forced_time=forced_time,
         )
 
     @staticmethod
@@ -427,11 +440,7 @@ class Game:
 
     @property
     def current_turn_time_of_day(self) -> TimeOfDay:
-        # We don't actually advance time between turn 0 and turn 1. Clamp the turn value
-        # to 1 so we get the same answer for 0 and 1. We clamp to 1 rather than 0
-        # because historically we've started campaigns in day rather than in dawn. We
-        # can either start at 1, or we could re-order the enum.
-        tod_turn = max(1, self.turn)
+        tod_turn = max(0, self.turn - 1) + self.time_of_day_offset_for_start_time
         return list(TimeOfDay)[tod_turn % 4]
 
     @property

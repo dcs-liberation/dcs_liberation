@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import random
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, time
 from typing import List
 
 import dcs.statics
@@ -17,7 +17,6 @@ from game.theater.theatergroundobject import (
     BuildingGroundObject,
     IadsBuildingGroundObject,
 )
-from .theatergroup import SceneryUnit, TheaterGroup, IadsGroundGroup, IadsRole
 from game.utils import Heading, escape_string_for_lua
 from game.version import VERSION
 from . import (
@@ -27,10 +26,7 @@ from . import (
     Fob,
     OffMapSpawn,
 )
-from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
-from ..data.building_data import IADS_BUILDINGS
-from ..data.groups import GroupTask
-from ..armedforces.forcegroup import ForceGroup
+from .theatergroup import IadsGroundGroup, IadsRole, SceneryUnit, TheaterGroup
 from ..armedforces.armedforces import ArmedForces
 from ..armedforces.forcegroup import ForceGroup
 from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
@@ -42,6 +38,7 @@ from ..settings import Settings
 @dataclass(frozen=True)
 class GeneratorSettings:
     start_date: datetime
+    start_time: time | None
     player_budget: int
     enemy_budget: int
     inverted: bool
@@ -96,6 +93,7 @@ class GameGenerator:
                 theater=self.theater,
                 air_wing_config=self.air_wing_config,
                 start_date=self.generator_settings.start_date,
+                start_time=self.generator_settings.start_time,
                 settings=self.settings,
                 player_budget=self.generator_settings.player_budget,
                 enemy_budget=self.generator_settings.enemy_budget,

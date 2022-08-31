@@ -286,6 +286,7 @@ def create_game(
         ),
         GeneratorSettings(
             start_date=start_date,
+            start_time=campaign.recommended_start_time,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
             inverted=inverted,
