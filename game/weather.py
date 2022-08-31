@@ -9,13 +9,13 @@ from typing import Optional, TYPE_CHECKING
 
 from dcs.cloud_presets import Clouds as PydcsClouds
 from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
-from game.utils import Distance, Heading, meters, interpolate, Pressure, inches_hg
 
 from game.theater.seasonalconditions import determine_season
+from game.utils import Distance, Heading, Pressure, inches_hg, interpolate, meters
 
 if TYPE_CHECKING:
     from game.settings import Settings
-    from game.theater import ConflictTheater
+    from game.theater import ConflictTheater, DaytimeMap
     from game.theater.seasonalconditions import SeasonalConditions
 
 
@@ -318,16 +318,22 @@ class Conditions:
     ) -> datetime.datetime:
         if night_disabled:
             logging.info("Skip Night mission due to user settings")
-            time_range = {
-                TimeOfDay.Dawn: (8, 9),
-                TimeOfDay.Day: (10, 12),
-                TimeOfDay.Dusk: (12, 14),
-                TimeOfDay.Night: (14, 17),
-            }[time_of_day]
+            time_range = DaytimeMap(
+                dawn=(datetime.time(hour=8), datetime.time(hour=9)),
+                day=(datetime.time(hour=10), datetime.time(hour=12)),
+                dusk=(datetime.time(hour=12), datetime.time(hour=14)),
+                night=(datetime.time(hour=14), datetime.time(hour=17)),
+            ).range_of(time_of_day)
         else:
-            time_range = theater.daytime_map[time_of_day.value]
+            time_range = theater.daytime_map.range_of(time_of_day)
 
-        time = datetime.time(hour=random.randint(*time_range))
+        # Starting missions on the hour is a nice gameplay property, so keep the random
+        # time constrained to that. DaytimeMap enforces that we have only whole hour
+        # ranges for now, so we don't need to worry about accidentally changing the time
+        # of day by truncating sub-hours.
+        time = datetime.time(
+            hour=random.randint(time_range[0].hour, time_range[1].hour)
+        )
         return datetime.datetime.combine(day, time)
 
     @classmethod
