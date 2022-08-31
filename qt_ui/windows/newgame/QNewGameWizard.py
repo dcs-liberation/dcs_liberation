@@ -145,6 +145,7 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         generator_settings = GeneratorSettings(
             start_date=start_date,
+            start_time=campaign.recommended_start_time,
             player_budget=int(self.field("starting_money")),
             enemy_budget=int(self.field("enemy_starting_money")),
             # QSlider forces integers, so we use 1 to 50 and divide by 10 to

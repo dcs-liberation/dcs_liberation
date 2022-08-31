@@ -150,4 +150,9 @@ VERSION = _build_version_string()
 #: * Campaign files can optionally define the iads configuration
 #:   It is possible to define if the campaign supports advanced iads
 #:
-CAMPAIGN_FORMAT_VERSION = (10, 2)
+#: Version 10.3
+#: * Campaign files can optionally include a start time in their recommended_start_date
+#:   field. For example, `recommended_start_data: 2022-08-31 13:30:00` will have the
+#:   first turn start at 13:30. If omitted, or if only a date is given, the mission will
+#:   start at a random hour in the middle of the day as before.
+CAMPAIGN_FORMAT_VERSION = (10, 3)

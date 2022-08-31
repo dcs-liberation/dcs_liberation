@@ -298,10 +298,16 @@ class Conditions:
         day: datetime.date,
         time_of_day: TimeOfDay,
         settings: Settings,
+        forced_time: datetime.time | None = None,
     ) -> Conditions:
-        _start_time = cls.generate_start_time(
-            theater, day, time_of_day, settings.night_disabled
-        )
+        # The time might be forced by the campaign for the first turn.
+        if forced_time is not None:
+            _start_time = datetime.datetime.combine(day, forced_time)
+        else:
+            _start_time = cls.generate_start_time(
+                theater, day, time_of_day, settings.night_disabled
+            )
+
         return cls(
             time_of_day=time_of_day,
             start_time=_start_time,
