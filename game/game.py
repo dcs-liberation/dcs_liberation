@@ -271,7 +271,10 @@ class Game:
                     events.update_front_line(front_line)
                 cp.base.affect_strength(+PLAYER_BASE_STRENGTH_RECOVERY)
 
-        self.conditions = self.generate_conditions()
+        # We don't actually advance time or change the conditions between turn 0 and
+        # turn 1.
+        if self.turn > 1:
+            self.conditions = self.generate_conditions()
 
     def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""
@@ -424,7 +427,12 @@ class Game:
 
     @property
     def current_turn_time_of_day(self) -> TimeOfDay:
-        return list(TimeOfDay)[self.turn % 4]
+        # We don't actually advance time between turn 0 and turn 1. Clamp the turn value
+        # to 1 so we get the same answer for 0 and 1. We clamp to 1 rather than 0
+        # because historically we've started campaigns in day rather than in dawn. We
+        # can either start at 1, or we could re-order the enum.
+        tod_turn = max(1, self.turn)
+        return list(TimeOfDay)[tod_turn % 4]
 
     @property
     def current_day(self) -> date:
