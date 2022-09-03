@@ -60,10 +60,10 @@ export default function TerrainZonesLayers() {
   return (
     <>
       <LayersControl.Overlay name="Inclusion zones">
-        {exclusion}
+        {inclusion}
       </LayersControl.Overlay>
       <LayersControl.Overlay name="Exclusion zones">
-        {inclusion}
+        {exclusion}
       </LayersControl.Overlay>
       <LayersControl.Overlay name="Sea zones">{sea}</LayersControl.Overlay>
     </>
