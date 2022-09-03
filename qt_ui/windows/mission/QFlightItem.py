@@ -16,4 +16,4 @@ class QFlightItem(QStandardItem):
             icon = QIcon((AIRCRAFT_ICONS[self.flight.unit_type.dcs_id]))
             self.setIcon(icon)
         self.setEditable(False)
-        self.setText(f"{flight} in {flight.flight_plan.startup_time()}")
+        self.setText(f"{flight} at {flight.flight_plan.startup_time()}")

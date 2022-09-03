@@ -11,7 +11,7 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 from functools import cached_property
 from typing import Any, Generic, TYPE_CHECKING, TypeGuard, TypeVar
 
@@ -149,7 +149,7 @@ class FlightPlan(ABC, Generic[LayoutT]):
         raise NotImplementedError
 
     @property
-    def tot(self) -> timedelta:
+    def tot(self) -> datetime:
         return self.package.time_over_target + self.tot_offset
 
     @cached_property
@@ -215,7 +215,13 @@ class FlightPlan(ABC, Generic[LayoutT]):
 
         for previous_waypoint, waypoint in self.edges(until=destination):
             total += self.travel_time_between_waypoints(previous_waypoint, waypoint)
-        return total
+
+        # Trim microseconds. Our simulation tick rate is 1 second, so anything that
+        # takes 100.1 or 100.9 seconds will take 100 seconds. DCS doesn't handle
+        # sub-second resolution for tasks anyway, nor are they interesting from a
+        # mission planning perspective, so there's little value to keeping them in the
+        # model.
+        return timedelta(seconds=math.floor(total.total_seconds()))
 
     def travel_time_between_waypoints(
         self, a: FlightWaypoint, b: FlightWaypoint
@@ -224,10 +230,10 @@ class FlightPlan(ABC, Generic[LayoutT]):
             a.position, b.position, self.speed_between_waypoints(a, b)
         )
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         raise NotImplementedError
 
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         raise NotImplementedError
 
     def request_escort_at(self) -> FlightWaypoint | None:
@@ -250,34 +256,20 @@ class FlightPlan(ABC, Generic[LayoutT]):
             if waypoint == end:
                 return
 
-    def takeoff_time(self) -> timedelta:
+    def takeoff_time(self) -> datetime:
         return self.tot - self._travel_time_to_waypoint(self.tot_waypoint)
 
-    def startup_time(self) -> timedelta:
-        start_time = (
-            self.takeoff_time() - self.estimate_startup() - self.estimate_ground_ops()
+    def minimum_duration_from_start_to_tot(self) -> timedelta:
+        return (
+            self._travel_time_to_waypoint(self.tot_waypoint)
+            + self.estimate_startup()
+            + self.estimate_ground_ops()
         )
 
-        # In case FP math has given us some barely below zero time, round to
-        # zero.
-        if math.isclose(start_time.total_seconds(), 0):
-            start_time = timedelta()
-
-        # Trim microseconds. DCS doesn't handle sub-second resolution for tasks,
-        # and they're not interesting from a mission planning perspective so we
-        # don't want them in the UI.
-        #
-        # Round down so *barely* above zero start times are just zero.
-        start_time = timedelta(seconds=math.floor(start_time.total_seconds()))
-
-        # Feature request #1309: Carrier planes should start at +1s
-        # This is a workaround to a DCS problem: some AI planes spawn on
-        # the 'sixpack' when start_time is zero and cause a deadlock.
-        # Workaround: force the start_time to 1 second for these planes.
-        if self.flight.from_cp.is_fleet and start_time.total_seconds() == 0:
-            start_time = timedelta(seconds=1)
-
-        return start_time
+    def startup_time(self) -> datetime:
+        return (
+            self.takeoff_time() - self.estimate_startup() - self.estimate_ground_ops()
+        )
 
     def estimate_startup(self) -> timedelta:
         if self.flight.start_type is StartType.COLD:
@@ -298,7 +290,7 @@ class FlightPlan(ABC, Generic[LayoutT]):
 
     @property
     @abstractmethod
-    def mission_begin_on_station_time(self) -> timedelta | None:
+    def mission_begin_on_station_time(self) -> datetime | None:
         """The time that the mission is first on-station.
 
         Not all mission types will have a time when they can be considered on-station.
@@ -307,7 +299,7 @@ class FlightPlan(ABC, Generic[LayoutT]):
         """
 
     @property
-    def mission_departure_time(self) -> timedelta:
+    def mission_departure_time(self) -> datetime:
         """The time that the mission is complete and the flight RTBs."""
         raise NotImplementedError
 

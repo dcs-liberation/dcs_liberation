@@ -104,6 +104,7 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
             self.package = fulfiller.plan_mission(
                 ProposedMission(self.target, self.flights),
                 self.purchase_multiplier,
+                state.context.now,
                 state.context.tracer,
             )
         return self.package is not None

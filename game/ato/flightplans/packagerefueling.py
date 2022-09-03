@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Type
 
 from dcs import Point
@@ -39,7 +39,7 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
         )
 
     @property
-    def patrol_start_time(self) -> timedelta:
+    def patrol_start_time(self) -> datetime:
         altitude = self.flight.unit_type.patrol_altitude
 
         if altitude is None:

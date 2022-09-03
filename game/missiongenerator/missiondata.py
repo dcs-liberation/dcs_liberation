@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import timedelta
+from datetime import datetime
 from typing import Optional, TYPE_CHECKING
+
 from game.dcs.aircrafttype import AircraftType
 from game.missiongenerator.aircraft.flightdata import FlightData
-
 from game.runways import RunwayData
 
 if TYPE_CHECKING:
@@ -31,8 +31,8 @@ class AwacsInfo(GroupInfo):
     """AWACS information for the kneeboard."""
 
     depature_location: Optional[str]
-    start_time: Optional[timedelta]
-    end_time: Optional[timedelta]
+    start_time: datetime | None
+    end_time: datetime | None
 
 
 @dataclass
@@ -41,8 +41,8 @@ class TankerInfo(GroupInfo):
 
     variant: str
     tacan: TacanChannel
-    start_time: Optional[timedelta]
-    end_time: Optional[timedelta]
+    start_time: datetime | None
+    end_time: datetime | None
 
 
 @dataclass

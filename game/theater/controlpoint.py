@@ -902,7 +902,11 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.runway_status.begin_repair()
 
     def process_turn(self, game: Game) -> None:
-        self.ground_unit_orders.process(game)
+        # We're running at the end of the turn, so the time right now is irrelevant, and
+        # we don't know what time the next turn will start yet. It doesn't actually
+        # matter though, because the first thing the start of turn action will do is
+        # clear the ATO and replan the airlifts with the correct time.
+        self.ground_unit_orders.process(game, game.conditions.start_time)
 
         runway_status = self.runway_status
         if runway_status is not None:

@@ -303,7 +303,9 @@ class NewUnitTransferDialog(QDialog):
             units=transfers,
             request_airflift=self.dest_panel.request_airlift,
         )
-        self.game_model.transfer_model.new_transfer(transfer)
+        self.game_model.transfer_model.new_transfer(
+            transfer, self.game_model.sim_controller.current_time_in_sim
+        )
         self.close()
 
     def on_transfer_quantity_changed(self) -> None:

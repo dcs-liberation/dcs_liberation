@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime
 from typing import TYPE_CHECKING, Type
 
 from game.utils import feet
@@ -37,20 +37,20 @@ class FerryFlightPlan(StandardFlightPlan[FerryLayout]):
     def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.arrival
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         # TOT planning isn't really useful for ferries. They're behind the front
         # lines so no need to wait for escorts or for other missions to complete.
         return None
 
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         return None
 
     @property
-    def mission_begin_on_station_time(self) -> timedelta | None:
+    def mission_begin_on_station_time(self) -> datetime | None:
         return None
 
     @property
-    def mission_departure_time(self) -> timedelta:
+    def mission_departure_time(self) -> datetime:
         return self.package.time_over_target
 
 
