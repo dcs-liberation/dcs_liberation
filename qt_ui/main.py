@@ -103,11 +103,6 @@ def run_ui(game: Game | None, dev: bool) -> None:
     splash = QSplashScreen(pixmap)
     splash.show()
 
-    # Developers are launching the game in a loop hundreds of times. We've read it.
-    if not dev:
-        # Give enough time to read splash screen
-        time.sleep(3)
-
     # Once splash screen is up : load resources & setup stuff
     uiconstants.load_icons()
     uiconstants.load_event_icons()
