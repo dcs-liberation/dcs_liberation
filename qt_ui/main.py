@@ -2,7 +2,6 @@ import argparse
 import logging
 import os
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -13,7 +12,7 @@ from PySide2.QtGui import QPixmap
 from PySide2.QtWidgets import QApplication, QCheckBox, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
-from game import Game, VERSION, persistency
+from game import Game, VERSION, logging_config, persistency
 from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.dcs.aircrafttype import AircraftType
@@ -27,7 +26,6 @@ from pydcs_extensions import load_mods
 from qt_ui import (
     liberation_install,
     liberation_theme,
-    logging_config,
     uiconstants,
 )
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
