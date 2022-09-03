@@ -8,6 +8,7 @@ from dcs import Point
 from dcs.planes import C_101CC, C_101EB, Su_33
 
 from .flightplans.planningerror import PlanningError
+from .flightplans.waypointbuilder import WaypointBuilder
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Navigating, Uninitialized
 from .flightstate.killed import Killed
@@ -89,7 +90,11 @@ class Flight(SidcDescribable):
         from .flightplans.custom import CustomFlightPlan, CustomLayout
 
         self.flight_plan: FlightPlan[Any] = CustomFlightPlan(
-            self, CustomLayout(custom_waypoints=[])
+            self,
+            CustomLayout(
+                departure=WaypointBuilder(self, self.coalition).takeoff(self.departure),
+                custom_waypoints=[],
+            ),
         )
 
     def __getstate__(self) -> dict[str, Any]:

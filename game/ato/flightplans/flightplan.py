@@ -10,6 +10,7 @@ from __future__ import annotations
 import math
 from abc import ABC
 from collections.abc import Iterator
+from dataclasses import dataclass
 from datetime import timedelta
 from functools import cached_property
 from typing import Any, Generic, TYPE_CHECKING, TypeGuard, TypeVar
@@ -40,7 +41,10 @@ INGRESS_TYPES = {
 }
 
 
+@dataclass(frozen=True)
 class Layout(ABC):
+    departure: FlightWaypoint
+
     @property
     def waypoints(self) -> list[FlightWaypoint]:
         """A list of all waypoints in the flight plan, in order."""
@@ -135,7 +139,7 @@ class FlightPlan(ABC, Generic[LayoutT]):
         return self.flight.unit_type.fuel_consumption.cruise
 
     @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
+    def tot_waypoint(self) -> FlightWaypoint:
         """The waypoint that is associated with the package TOT, or None.
 
         Note that the only flight plans that should have no target waypoints are
@@ -246,19 +250,12 @@ class FlightPlan(ABC, Generic[LayoutT]):
             if waypoint == end:
                 return
 
-    def takeoff_time(self) -> timedelta | None:
-        tot_waypoint = self.tot_waypoint
-        if tot_waypoint is None:
-            return None
-        return self.tot - self._travel_time_to_waypoint(tot_waypoint)
+    def takeoff_time(self) -> timedelta:
+        return self.tot - self._travel_time_to_waypoint(self.tot_waypoint)
 
     def startup_time(self) -> timedelta | None:
-        takeoff_time = self.takeoff_time()
-        if takeoff_time is None:
-            return None
-
         start_time: timedelta = (
-            takeoff_time - self.estimate_startup() - self.estimate_ground_ops()
+            self.takeoff_time() - self.estimate_startup() - self.estimate_ground_ops()
         )
 
         # In case FP math has given us some barely below zero time, round to
