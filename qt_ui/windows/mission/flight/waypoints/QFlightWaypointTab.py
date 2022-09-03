@@ -35,6 +35,7 @@ class QFlightWaypointTab(QFrame):
     def __init__(self, game: Game, package: Package, flight: Flight):
         super(QFlightWaypointTab, self).__init__()
         self.game = game
+        self.coalition = game.coalition_for(player=True)
         self.package = package
         self.flight = flight
 
