@@ -1,0 +1,5 @@
+name: R-3R - AAM, radar guided
+year: 1966
+fallback: R-3S - AAM, IR guided
+clsids:
+  - "{R-3R}"

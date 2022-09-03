@@ -1,0 +1,6 @@
+name: 4 x BGM-71D TOW ATGM
+year: 1985
+# BGM-71A IOC in  1970 can be used as a stand-in until earlier variants are added to DCS. BGM-71D true IOC is 1985
+fallback: LAU-61 pod - 19 x 2.75\" Hydra, UnGd Rkts M151, HE
+clsids:
+  - "{3EA17AB0-A805-4D9E-8732-4CE00CB00F17}"

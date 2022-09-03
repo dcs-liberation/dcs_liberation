@@ -1,0 +1,6 @@
+name: AGM-114K * 4
+year: 1993
+# AGM-114A IOC in 1983 can be used as a stand in until earlier variants are added to DCS. AGM-114K true IOC is 1993
+fallback: 4 x BGM-71D TOW ATGM
+clsids:
+  - "{88D18A5E-99C8-4B04-B40B-1C02F2018B6E}"
