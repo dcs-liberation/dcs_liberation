@@ -4,10 +4,9 @@ from PySide2.QtCore import QItemSelectionModel, QSize
 from PySide2.QtGui import QStandardItemModel
 from PySide2.QtWidgets import QAbstractItemView, QListView
 
+from game.theater.controlpoint import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.mission.QFlightItem import QFlightItem
-from game.theater.controlpoint import ControlPoint
-from game.ato.traveltime import TotEstimator
 
 
 class QPlannedFlightsView(QListView):
@@ -52,4 +51,4 @@ class QPlannedFlightsView(QListView):
 
     @staticmethod
     def mission_start_for_flight(flight_item: QFlightItem) -> timedelta:
-        return TotEstimator(flight_item.package).mission_start_time(flight_item.flight)
+        return flight_item.flight.flight_plan.startup_time()

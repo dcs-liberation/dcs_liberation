@@ -16,7 +16,6 @@ from game.ato.airtaaskingorder import AirTaskingOrder
 from game.ato.flight import Flight
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
-from game.ato.traveltime import TotEstimator
 from game.game import Game
 from game.server import EventStream
 from game.sim.gameupdateevents import GameUpdateEvents
@@ -136,11 +135,11 @@ class PackageModel(QAbstractListModel):
             return flight
         return None
 
-    def text_for_flight(self, flight: Flight) -> str:
+    @staticmethod
+    def text_for_flight(flight: Flight) -> str:
         """Returns the text that should be displayed for the flight."""
-        estimator = TotEstimator(self.package)
         delay = datetime.timedelta(
-            seconds=int(estimator.mission_start_time(flight).total_seconds())
+            seconds=int(flight.flight_plan.startup_time().total_seconds())
         )
         origin = flight.from_cp.name
         return f"{flight} from {origin} in {delay}"

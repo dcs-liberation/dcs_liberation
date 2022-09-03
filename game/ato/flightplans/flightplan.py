@@ -253,8 +253,8 @@ class FlightPlan(ABC, Generic[LayoutT]):
     def takeoff_time(self) -> timedelta:
         return self.tot - self._travel_time_to_waypoint(self.tot_waypoint)
 
-    def startup_time(self) -> timedelta | None:
-        start_time: timedelta = (
+    def startup_time(self) -> timedelta:
+        start_time = (
             self.takeoff_time() - self.estimate_startup() - self.estimate_ground_ops()
         )
 

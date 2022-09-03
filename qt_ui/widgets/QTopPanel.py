@@ -12,9 +12,9 @@ from PySide2.QtWidgets import (
 import qt_ui.uiconstants as CONST
 from game import Game, persistency
 from game.ato.package import Package
+from game.ato.traveltime import TotEstimator
 from game.profiling import logged_duration
 from game.utils import meters
-from game.ato.traveltime import TotEstimator
 from qt_ui.models import GameModel
 from qt_ui.simcontroller import SimController
 from qt_ui.widgets.QBudgetBox import QBudgetBox
@@ -156,9 +156,8 @@ class QTopPanel(QFrame):
         for package in self.game_model.ato_model.ato.packages:
             if not package.flights:
                 continue
-            estimator = TotEstimator(package)
             for flight in package.flights:
-                if estimator.mission_start_time(flight).total_seconds() < 0:
+                if flight.flight_plan.startup_time().total_seconds() < 0:
                     packages.append(package)
                     break
         return packages

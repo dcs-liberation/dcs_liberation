@@ -5,7 +5,6 @@ from PySide2.QtWidgets import QGroupBox, QLabel, QMessageBox, QVBoxLayout
 from game import Game
 from game.ato.flight import Flight
 from game.ato.flightplans.planningerror import PlanningError
-from game.ato.traveltime import TotEstimator
 from qt_ui.models import PackageModel
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from qt_ui.widgets.combos.QArrivalAirfieldSelector import QArrivalAirfieldSelector
@@ -58,9 +57,7 @@ class FlightAirfieldDisplay(QGroupBox):
             # handler may be called for a flight whose package has been canceled, which
             # is an invalid state for calling anything in TotEstimator.
             return
-        estimator = TotEstimator(self.package_model.package)
-        delay = estimator.mission_start_time(self.flight)
-        self.departure_time.setText(f"At T+{delay}")
+        self.departure_time.setText(f"At T+{self.flight.flight_plan.startup_time()}")
 
     def set_divert(self, index: int) -> None:
         old_divert = self.flight.divert
