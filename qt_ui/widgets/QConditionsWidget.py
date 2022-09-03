@@ -58,7 +58,7 @@ class QTimeTurnWidget(QGroupBox):
         sim_controller.sim_update.connect(self.on_sim_update)
 
     def on_sim_update(self, _events: GameUpdateEvents) -> None:
-        time = self.sim_controller.current_time_in_sim
+        time = self.sim_controller.current_time_in_sim_if_game_loaded
         if time is None:
             self.date_display.setText("")
             self.time_display.setText("")

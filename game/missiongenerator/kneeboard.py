@@ -254,11 +254,11 @@ class FlightPlanBuilder:
             ]
         )
 
-    def _format_time(self, time: Optional[datetime.timedelta]) -> str:
+    @staticmethod
+    def _format_time(time: datetime.datetime | None) -> str:
         if time is None:
             return ""
-        local_time = self.start_time + time
-        return f"{local_time.strftime('%H:%M:%S')}{'Z' if local_time.tzinfo is not None else ''}"
+        return f"{time.strftime('%H:%M:%S')}{'Z' if time.tzinfo is not None else ''}"
 
     def _format_alt(self, alt: Distance) -> str:
         return f"{self.units.distance_short(alt):.0f}"
@@ -583,11 +583,11 @@ class SupportPage(KneeboardPage):
         )
         return f"{channel_name}\n{frequency}"
 
-    def _format_time(self, time: Optional[datetime.timedelta]) -> str:
+    @staticmethod
+    def _format_time(time: datetime.datetime | None) -> str:
         if time is None:
             return ""
-        local_time = self.start_time + time
-        return f"{local_time.strftime('%H:%M:%S')}{'Z' if local_time.tzinfo is not None else ''}"
+        return f"{time.strftime('%H:%M:%S')}{'Z' if time.tzinfo is not None else ''}"
 
 
 class SeadTaskPage(KneeboardPage):

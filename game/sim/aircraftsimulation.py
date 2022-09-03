@@ -74,11 +74,11 @@ class AircraftSimulation:
         now = self.game.conditions.start_time
         for flight in self.iter_flights():
             start_time = flight.flight_plan.startup_time()
-            if start_time <= timedelta():
+            if start_time <= now:
                 self.set_active_flight_state(flight, now)
             else:
                 flight.set_state(
-                    WaitingForStart(flight, self.game.settings, now + start_time)
+                    WaitingForStart(flight, self.game.settings, start_time)
                 )
 
     def set_active_flight_state(self, flight: Flight, now: datetime) -> None:

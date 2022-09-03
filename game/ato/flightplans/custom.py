@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime
 from typing import TYPE_CHECKING, Type
 
 from .flightplan import FlightPlan, Layout
@@ -42,20 +42,20 @@ class CustomFlightPlan(FlightPlan[CustomLayout]):
                 return waypoint
         return self.layout.departure
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         if waypoint == self.tot_waypoint:
             return self.package.time_over_target
         return None
 
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         return None
 
     @property
-    def mission_begin_on_station_time(self) -> timedelta | None:
+    def mission_begin_on_station_time(self) -> datetime | None:
         return None
 
     @property
-    def mission_departure_time(self) -> timedelta:
+    def mission_departure_time(self) -> datetime:
         return self.package.time_over_target
 
 

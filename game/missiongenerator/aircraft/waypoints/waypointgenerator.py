@@ -25,13 +25,13 @@ from game.settings import Settings
 from game.unitmap import UnitMap
 from game.utils import pairwise
 from .baiingress import BaiIngressBuilder
-from .landingzone import LandingZoneBuilder
 from .casingress import CasIngressBuilder
 from .deadingress import DeadIngressBuilder
 from .default import DefaultWaypointBuilder
 from .holdpoint import HoldPointBuilder
 from .joinpoint import JoinPointBuilder
 from .landingpoint import LandingPointBuilder
+from .landingzone import LandingZoneBuilder
 from .ocaaircraftingress import OcaAircraftIngressBuilder
 from .ocarunwayingress import OcaRunwayIngressBuilder
 from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
@@ -50,7 +50,6 @@ class WaypointGenerator:
         flight: Flight,
         group: FlyingGroup[Any],
         mission: Mission,
-        turn_start_time: datetime,
         time: datetime,
         settings: Settings,
         mission_data: MissionData,
@@ -59,7 +58,6 @@ class WaypointGenerator:
         self.flight = flight
         self.group = group
         self.mission = mission
-        self.elapsed_mission_time = time - turn_start_time
         self.time = time
         self.settings = settings
         self.mission_data = mission_data
@@ -150,7 +148,7 @@ class WaypointGenerator:
             self.group,
             self.flight,
             self.mission,
-            self.elapsed_mission_time,
+            self.time,
             self.mission_data,
             self.unit_map,
         )
@@ -182,12 +180,29 @@ class WaypointGenerator:
             a.min_fuel = min_fuel
 
     def set_takeoff_time(self, waypoint: FlightWaypoint) -> timedelta:
+        force_delay = False
         if isinstance(self.flight.state, WaitingForStart):
             delay = self.flight.state.time_remaining(self.time)
+        elif (
+            # The first two clauses capture the flight states that we want to adjust. We
+            # don't want to delay any flights that are already in flight or on the
+            # runway.
+            not self.flight.state.in_flight
+            and self.flight.state.spawn_type is not StartType.RUNWAY
+            and self.flight.departure.is_fleet
+            and not self.flight.client_count
+        ):
+            # https://github.com/dcs-liberation/dcs_liberation/issues/1309
+            # Without a delay, AI aircraft will be spawned on the sixpack, which other
+            # AI planes of course want to taxi through, deadlocking the carrier deck.
+            # Delaying AI carrier deck spawns by one second for some reason causes DCS
+            # to spawn those aircraft elsewhere, avoiding the traffic jam.
+            delay = timedelta(seconds=1)
+            force_delay = True
         else:
             delay = timedelta()
 
-        if self.should_delay_flight():
+        if force_delay or self.should_delay_flight():
             if self.should_activate_late():
                 # Late activation causes the aircraft to not be spawned
                 # until triggered.

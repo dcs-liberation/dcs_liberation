@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any, TYPE_CHECKING, TypeGuard
 
 from game.typeguard import self_type_guard
@@ -25,10 +25,10 @@ class LoiterFlightPlan(StandardFlightPlan[Any], ABC):
 
     @property
     @abstractmethod
-    def push_time(self) -> timedelta:
+    def push_time(self) -> datetime:
         ...
 
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         if waypoint == self.layout.hold:
             return self.push_time
         return None

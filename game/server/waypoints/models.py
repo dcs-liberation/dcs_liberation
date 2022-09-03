@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import timedelta
-
 from pydantic import BaseModel
 
 from game.ato import Flight, FlightWaypoint
@@ -21,7 +19,7 @@ def timing_info(flight: Flight, waypoint_idx: int) -> str:
         time = flight.flight_plan.depart_time_for_waypoint(waypoint)
     if time is None:
         return ""
-    return f"{prefix} T+{timedelta(seconds=int(time.total_seconds()))}"
+    return f"{prefix} {time}"
 
 
 class FlightWaypointJs(BaseModel):

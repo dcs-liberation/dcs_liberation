@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import timedelta
+from datetime import datetime
 from typing import Literal, TYPE_CHECKING
 
 from dcs import Point
@@ -43,8 +43,8 @@ class FlightWaypoint:
     # generation). We do it late so that we don't need to propagate changes
     # to waypoint times whenever the player alters the package TOT or the
     # flight's offset in the UI.
-    tot: timedelta | None = None
-    departure_time: timedelta | None = None
+    tot: datetime | None = None
+    departure_time: datetime | None = None
 
     @property
     def x(self) -> float:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime
 from typing import TYPE_CHECKING, Type
 
 from game.utils import feet
@@ -43,19 +43,19 @@ class RtbFlightPlan(StandardFlightPlan[RtbLayout]):
     def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.abort_location
 
-    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         return None
 
-    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
-        return None
-
-    @property
-    def mission_begin_on_station_time(self) -> timedelta | None:
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         return None
 
     @property
-    def mission_departure_time(self) -> timedelta:
-        return timedelta()
+    def mission_begin_on_station_time(self) -> datetime | None:
+        return None
+
+    @property
+    def mission_departure_time(self) -> datetime:
+        return self.tot
 
 
 class Builder(IBuilder[RtbFlightPlan, RtbLayout]):

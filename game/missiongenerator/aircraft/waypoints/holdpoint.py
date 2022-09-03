@@ -22,8 +22,6 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             return
         push_time = self.flight.flight_plan.push_time
         self.waypoint.departure_time = push_time
-        loiter.stop_after_time(
-            int((push_time - self.elapsed_mission_time).total_seconds())
-        )
+        loiter.stop_after_time(int((push_time - self.now).total_seconds()))
         waypoint.add_task(loiter)
         waypoint.add_task(OptFormation.finger_four_close())

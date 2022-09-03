@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime
 
 from PySide6.QtCore import QItemSelectionModel, QSize
 from PySide6.QtGui import QStandardItemModel
@@ -50,5 +50,5 @@ class QPlannedFlightsView(QListView):
         self.setup_content()
 
     @staticmethod
-    def mission_start_for_flight(flight_item: QFlightItem) -> timedelta:
+    def mission_start_for_flight(flight_item: QFlightItem) -> datetime:
         return flight_item.flight.flight_plan.startup_time()
