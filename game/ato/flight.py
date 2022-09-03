@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from game.sim.gameupdateevents import GameUpdateEvents
     from game.sim.simulationresults import SimulationResults
     from game.squadrons import Squadron, Pilot
-    from game.theater import ControlPoint, MissionTarget
+    from game.theater import ControlPoint
     from game.transfers import TransferOrder
     from .flightplans.flightplan import FlightPlan
     from .flighttype import FlightType
@@ -62,8 +62,6 @@ class Flight(SidcDescribable):
             self.roster = roster
         self.divert = divert
         self.flight_type = flight_type
-        # TODO: Replace with FlightPlan.
-        self.targets: List[MissionTarget] = []
         self.loadout = Loadout.default_for(self)
         self.start_type = start_type
         self.use_custom_loadout = False
