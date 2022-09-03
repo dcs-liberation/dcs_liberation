@@ -16,7 +16,6 @@ from game.ato.flightstate import (
     WaitingForStart,
 )
 from game.ato.starttype import StartType
-from game.ato.traveltime import TotEstimator
 from .combat import CombatInitiator, FrozenCombat
 from .simulationresults import SimulationResults
 
@@ -74,8 +73,7 @@ class AircraftSimulation:
     def set_initial_flight_states(self) -> None:
         now = self.game.conditions.start_time
         for flight in self.iter_flights():
-            estimator = TotEstimator(flight.package)
-            start_time = estimator.mission_start_time(flight)
+            start_time = flight.flight_plan.startup_time()
             if start_time <= timedelta():
                 self.set_active_flight_state(flight, now)
             else:

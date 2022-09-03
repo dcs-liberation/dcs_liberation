@@ -1,8 +1,7 @@
-from PySide2.QtGui import QStandardItem, QIcon
+from PySide2.QtGui import QIcon, QStandardItem
 
-from game.ato.package import Package
 from game.ato.flight import Flight
-from game.ato.traveltime import TotEstimator
+from game.ato.package import Package
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 
 
@@ -17,6 +16,4 @@ class QFlightItem(QStandardItem):
             icon = QIcon((AIRCRAFT_ICONS[self.flight.unit_type.dcs_id]))
             self.setIcon(icon)
         self.setEditable(False)
-        estimator = TotEstimator(self.package)
-        delay = estimator.mission_start_time(flight)
-        self.setText(f"{flight} in {delay}")
+        self.setText(f"{flight} in {flight.flight_plan.startup_time()}")

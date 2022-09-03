@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import math
 from datetime import timedelta
 from typing import TYPE_CHECKING
@@ -57,15 +56,6 @@ class TotEstimator:
     def __init__(self, package: Package) -> None:
         self.package = package
 
-    @staticmethod
-    def mission_start_time(flight: Flight) -> timedelta:
-        startup_time = flight.flight_plan.startup_time()
-        if startup_time is None:
-            # Could not determine takeoff time, probably due to a custom flight
-            # plan. Start immediately.
-            return timedelta()
-        return startup_time
-
     def earliest_tot(self) -> timedelta:
         if not self.package.flights:
             return timedelta(0)
@@ -83,9 +73,9 @@ class TotEstimator:
 
     @staticmethod
     def earliest_tot_for_flight(flight: Flight) -> timedelta:
-        """Estimate fastest time from mission start to the target position.
+        """Estimate the fastest time from mission start to the target position.
 
-        For BARCAP flights, this is time to race track start. This ensures that
+        For BARCAP flights, this is time to the racetrack start. This ensures that
         they are on station at the same time any other package members reach
         their ingress point.
 
@@ -106,10 +96,4 @@ class TotEstimator:
             time = flight.flight_plan.startup_time()
         finally:
             flight.package.time_over_target = orig_tot
-
-        if time is None:
-            logging.warning(f"Cannot estimate TOT for {flight}")
-            # Return 0 so this flight's travel time does not affect the rest
-            # of the package.
-            return timedelta()
         return -time

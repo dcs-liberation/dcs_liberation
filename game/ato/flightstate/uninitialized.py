@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 from dcs import Point
 
-from game.ato.traveltime import TotEstimator
 from .flightstate import FlightState
 from ..starttype import StartType
 
@@ -36,8 +35,7 @@ class Uninitialized(FlightState):
 
     @property
     def description(self) -> str:
-        estimator = TotEstimator(self.flight.package)
-        delay = estimator.mission_start_time(self.flight)
+        delay = self.flight.flight_plan.startup_time()
         if self.flight.start_type is StartType.COLD:
             action = "Starting up"
         elif self.flight.start_type is StartType.WARM:
