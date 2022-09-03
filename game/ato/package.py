@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, Optional, TYPE_CHECKING
 
 from game.db import Database
 from game.utils import Speed
@@ -19,28 +18,24 @@ if TYPE_CHECKING:
     from game.theater import ControlPoint, MissionTarget
 
 
-@dataclass
 class Package:
     """A mission package."""
 
-    #: The mission target. Currently can be either a ControlPoint or a
-    #: TheaterGroundObject (non-ControlPoint map objectives).
-    target: MissionTarget
+    def __init__(
+        self, target: MissionTarget, db: Database[Flight], auto_asap: bool = False
+    ) -> None:
+        self.target = target
+        self._db = db
 
-    _db: Database[Flight]
+        # True if the package ToT should be reset to ASAP whenever the player makes a
+        # change. This is really a UI property rather than a game property, but we want
+        # it to persist in the save.
+        self.auto_asap = auto_asap
+        self.flights: list[Flight] = []
 
-    #: The set of flights in the package.
-    flights: List[Flight] = field(default_factory=list)
-
-    #: True if the package ToT should be reset to ASAP whenever the player makes
-    #: a change. This is really a UI property rather than a game property, but
-    #: we want it to persist in the save.
-    auto_asap: bool = field(default=False)
-
-    #: Desired TOT as an offset from mission start.
-    time_over_target: timedelta = field(default=timedelta())
-
-    waypoints: Optional[PackageWaypoints] = field(default=None)
+        # Desired TOT as an offset from mission start.
+        self.time_over_target: timedelta = timedelta()
+        self.waypoints: PackageWaypoints | None = None
 
     @property
     def has_players(self) -> bool:
@@ -209,7 +204,3 @@ class Package:
                 if flight.departure == airfield:
                     return airfield
         raise RuntimeError("Could not find any airfield assigned to this package")
-
-    def __hash__(self) -> int:
-        # TODO: Far from perfect. Number packages?
-        return hash(self.target.name)
