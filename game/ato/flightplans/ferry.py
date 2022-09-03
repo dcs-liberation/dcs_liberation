@@ -34,7 +34,7 @@ class FerryFlightPlan(StandardFlightPlan[FerryLayout]):
         return Builder
 
     @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
+    def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.arrival
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:

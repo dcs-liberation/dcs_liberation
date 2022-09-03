@@ -85,7 +85,7 @@ class PatrollingFlightPlan(StandardFlightPlan[LayoutT], ABC):
         return {self.layout.patrol_start, self.layout.patrol_end}
 
     @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
+    def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.patrol_start
 
     @property

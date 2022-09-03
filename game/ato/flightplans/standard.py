@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class StandardLayout(Layout, ABC):
-    departure: FlightWaypoint
     arrival: FlightWaypoint
     divert: FlightWaypoint | None
     bullseye: FlightWaypoint

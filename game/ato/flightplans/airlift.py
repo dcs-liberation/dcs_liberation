@@ -47,7 +47,7 @@ class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
         return Builder
 
     @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
+    def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.drop_off
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:

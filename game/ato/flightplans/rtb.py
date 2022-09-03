@@ -40,8 +40,8 @@ class RtbFlightPlan(StandardFlightPlan[RtbLayout]):
         return 1
 
     @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
-        return None
+    def tot_waypoint(self) -> FlightWaypoint:
+        return self.layout.abort_location
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         return None

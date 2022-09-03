@@ -148,7 +148,12 @@ class QFlightWaypointTab(QFrame):
         if not isinstance(self.flight.flight_plan, CustomFlightPlan):
             self.flight.flight_plan = CustomFlightPlan(
                 self.flight,
-                CustomLayout(custom_waypoints=self.flight.flight_plan.waypoints),
+                CustomLayout(
+                    departure=WaypointBuilder(self.flight, self.coalition).takeoff(
+                        self.flight.departure
+                    ),
+                    custom_waypoints=self.flight.flight_plan.waypoints[1:],
+                ),
             )
 
     def confirm_recreate(self, task: FlightType) -> None:

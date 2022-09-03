@@ -54,7 +54,7 @@ class SweepFlightPlan(LoiterFlightPlan):
         return {self.layout.sweep_end}
 
     @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
+    def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.sweep_end
 
     @property

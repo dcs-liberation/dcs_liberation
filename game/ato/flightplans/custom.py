@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Type
 
 from .flightplan import FlightPlan, Layout
 from .ibuilder import IBuilder
+from .waypointbuilder import WaypointBuilder
 from ..flightwaypointtype import FlightWaypointType
 
 if TYPE_CHECKING:
@@ -18,6 +19,7 @@ class CustomLayout(Layout):
     custom_waypoints: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
         yield from self.custom_waypoints
 
 
@@ -27,7 +29,7 @@ class CustomFlightPlan(FlightPlan[CustomLayout]):
         return Builder
 
     @property
-    def tot_waypoint(self) -> FlightWaypoint | None:
+    def tot_waypoint(self) -> FlightWaypoint:
         target_types = (
             FlightWaypointType.PATROL_TRACK,
             FlightWaypointType.TARGET_GROUP_LOC,
@@ -37,7 +39,7 @@ class CustomFlightPlan(FlightPlan[CustomLayout]):
         for waypoint in self.waypoints:
             if waypoint in target_types:
                 return waypoint
-        return None
+        return self.layout.departure
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         if waypoint == self.tot_waypoint:
@@ -54,7 +56,8 @@ class CustomFlightPlan(FlightPlan[CustomLayout]):
 
 class Builder(IBuilder[CustomFlightPlan, CustomLayout]):
     def layout(self) -> CustomLayout:
-        return CustomLayout([])
+        builder = WaypointBuilder(self.flight, self.coalition)
+        return CustomLayout(builder.takeoff(self.flight.departure), [])
 
     def build(self) -> CustomFlightPlan:
         return CustomFlightPlan(self.flight, self.layout())
