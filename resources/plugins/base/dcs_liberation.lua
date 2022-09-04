@@ -112,7 +112,7 @@ local function discoverDebriefingFilePath()
 
     -- nothing worked, let's try the last resort folder : current directory.
     if lfs then
-        return testDebriefingFilePath(lfs.writedir(), "the working directory", useCurrentStamping)
+        return testDebriefingFilePath(lfs.writedir().."Missions\\", "the working directory", useCurrentStamping)
     end
     
     return nil
