@@ -32,7 +32,7 @@ pluggy==1.0.0
 pre-commit==2.19.0
 py==1.11.0
 pydantic==1.9.1
--e git+https://github.com/pydcs/dcs@2a7230db48dd21495d05d52c905b88cb2b34b883#egg=pydcs
+-e git+https://github.com/pydcs/dcs@6e5b295a6c4c821d074ddc51bbc5991050a07d29#egg=pydcs
 pyinstaller==5.2
 pyinstaller-hooks-contrib==2022.8
 pyparsing==3.0.9
