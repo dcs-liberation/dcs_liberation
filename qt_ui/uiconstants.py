@@ -3,7 +3,6 @@ from typing import Dict
 
 from PySide2.QtGui import QPixmap
 
-from game.theater.theatergroundobject import NAME_BY_CATEGORY
 from .liberation_theme import get_theme_icons
 
 URLS: Dict[str, str] = {
@@ -70,6 +69,8 @@ def load_icons():
     ICONS["Terrain_TheChannel"] = QPixmap("./resources/ui/terrain_channel.gif")
     ICONS["Terrain_Syria"] = QPixmap("./resources/ui/terrain_syria.gif")
     ICONS["Terrain_MarianaIslands"] = QPixmap("./resources/ui/terrain_marianas.gif")
+    # TODO
+    ICONS["Terrain_Falklands"] = QPixmap("./resources/ui/terrain_marianas.gif")
 
     ICONS["Dawn"] = QPixmap("./resources/ui/conditions/timeofday/dawn.png")
     ICONS["Day"] = QPixmap("./resources/ui/conditions/timeofday/day.png")

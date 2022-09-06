@@ -10,6 +10,7 @@ from uuid import UUID
 from dcs.mapping import Point
 from dcs.terrain import (
     caucasus,
+    falklands,
     marianaislands,
     nevada,
     normandy,
@@ -41,7 +42,6 @@ class ReferencePoint:
 class ConflictTheater:
     terrain: Terrain
 
-    overview_image: str
     landmap: Optional[Landmap]
     daytime_map: DaytimeMap
     iads_network: IadsNetwork
@@ -256,7 +256,6 @@ class ConflictTheater:
 
 class CaucasusTheater(ConflictTheater):
     terrain = caucasus.Caucasus()
-    overview_image = "caumap.gif"
 
     landmap = load_landmap(Path("resources/caulandmap.p"))
     daytime_map = DaytimeMap(
@@ -279,7 +278,6 @@ class CaucasusTheater(ConflictTheater):
 
 class PersianGulfTheater(ConflictTheater):
     terrain = persiangulf.PersianGulf()
-    overview_image = "persiangulf.gif"
     landmap = load_landmap(Path("resources/gulflandmap.p"))
     daytime_map = DaytimeMap(
         dawn=(datetime.time(hour=6), datetime.time(hour=8)),
@@ -301,7 +299,6 @@ class PersianGulfTheater(ConflictTheater):
 
 class NevadaTheater(ConflictTheater):
     terrain = nevada.Nevada()
-    overview_image = "nevada.gif"
     landmap = load_landmap(Path("resources/nevlandmap.p"))
     daytime_map = DaytimeMap(
         dawn=(datetime.time(hour=4), datetime.time(hour=6)),
@@ -323,7 +320,6 @@ class NevadaTheater(ConflictTheater):
 
 class NormandyTheater(ConflictTheater):
     terrain = normandy.Normandy()
-    overview_image = "normandy.gif"
     landmap = load_landmap(Path("resources/normandylandmap.p"))
     daytime_map = DaytimeMap(
         dawn=(datetime.time(hour=6), datetime.time(hour=8)),
@@ -345,7 +341,6 @@ class NormandyTheater(ConflictTheater):
 
 class TheChannelTheater(ConflictTheater):
     terrain = thechannel.TheChannel()
-    overview_image = "thechannel.gif"
     landmap = load_landmap(Path("resources/channellandmap.p"))
     daytime_map = DaytimeMap(
         dawn=(datetime.time(hour=6), datetime.time(hour=8)),
@@ -367,7 +362,6 @@ class TheChannelTheater(ConflictTheater):
 
 class SyriaTheater(ConflictTheater):
     terrain = syria.Syria()
-    overview_image = "syria.gif"
     landmap = load_landmap(Path("resources/syrialandmap.p"))
     daytime_map = DaytimeMap(
         dawn=(datetime.time(hour=6), datetime.time(hour=8)),
@@ -389,7 +383,6 @@ class SyriaTheater(ConflictTheater):
 
 class MarianaIslandsTheater(ConflictTheater):
     terrain = marianaislands.MarianaIslands()
-    overview_image = "marianaislands.gif"
 
     landmap = load_landmap(Path("resources/marianaislandslandmap.p"))
     daytime_map = DaytimeMap(
@@ -406,5 +399,32 @@ class MarianaIslandsTheater(ConflictTheater):
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .seasonalconditions.marianaislands import CONDITIONS
+
+        return CONDITIONS
+
+
+class FalklandsTheater(ConflictTheater):
+    terrain = falklands.Falklands()
+
+    # TODO: https://github.com/dcs-liberation/dcs_liberation/issues/2242
+    landmap = None
+
+    # TODO: https://github.com/dcs-liberation/dcs_liberation/issues/2242
+    daytime_map = DaytimeMap(
+        dawn=(datetime.time(hour=6), datetime.time(hour=9)),
+        day=(datetime.time(hour=9), datetime.time(hour=18)),
+        dusk=(datetime.time(hour=18), datetime.time(hour=20)),
+        night=(datetime.time(hour=0), datetime.time(hour=5)),
+    )
+
+    # TODO: https://github.com/dcs-liberation/dcs_liberation/issues/2242
+    @property
+    def timezone(self) -> datetime.timezone:
+        return datetime.timezone(datetime.timedelta(hours=4))
+
+    # TODO: https://github.com/dcs-liberation/dcs_liberation/issues/2242
+    @property
+    def seasonal_conditions(self) -> SeasonalConditions:
+        from .seasonalconditions.caucasus import CONDITIONS
 
         return CONDITIONS

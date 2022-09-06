@@ -14,6 +14,7 @@ from game.profiling import logged_duration
 from game.theater import (
     CaucasusTheater,
     ConflictTheater,
+    FalklandsTheater,
     MarianaIslandsTheater,
     NevadaTheater,
     NormandyTheater,
@@ -122,6 +123,7 @@ class Campaign:
             "The Channel": TheChannelTheater,
             "Syria": SyriaTheater,
             "MarianaIslands": MarianaIslandsTheater,
+            "Falklands": FalklandsTheater,
         }
         theater = theaters[self.data["theater"]]
         t = theater()
