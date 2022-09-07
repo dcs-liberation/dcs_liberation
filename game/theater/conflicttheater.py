@@ -12,7 +12,6 @@ from dcs.terrain import (
     marianaislands,
     nevada,
     normandy,
-    persiangulf,
     syria,
     thechannel,
 )
@@ -244,27 +243,6 @@ class ConflictTheater:
         )
 
         return Heading.from_degrees(position.heading_between_point(conflict_center))
-
-
-class PersianGulfTheater(ConflictTheater):
-    terrain = persiangulf.PersianGulf()
-    landmap = load_landmap(Path("resources/gulflandmap.p"))
-    daytime_map = DaytimeMap(
-        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
-        day=(datetime.time(hour=8), datetime.time(hour=16)),
-        dusk=(datetime.time(hour=16), datetime.time(hour=18)),
-        night=(datetime.time(hour=0), datetime.time(hour=5)),
-    )
-
-    @property
-    def timezone(self) -> datetime.timezone:
-        return datetime.timezone(datetime.timedelta(hours=4))
-
-    @property
-    def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.persiangulf import CONDITIONS
-
-        return CONDITIONS
 
 
 class NevadaTheater(ConflictTheater):
