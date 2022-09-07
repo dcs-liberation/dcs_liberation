@@ -5,7 +5,7 @@ import logging
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Tuple, Type
+from typing import Any, Dict, Tuple
 
 import yaml
 from packaging.version import Version
@@ -14,7 +14,6 @@ from game import persistency
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
-    FalklandsTheater,
 )
 from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
 from game.theater.theaterloader import TheaterLoader
@@ -109,14 +108,7 @@ class Campaign:
         )
 
     def load_theater(self, advanced_iads: bool) -> ConflictTheater:
-        theaters: dict[str, Type[ConflictTheater]] = {
-            "Falklands": FalklandsTheater,
-        }
-        try:
-            theater = theaters[self.data["theater"]]
-            t = theater()
-        except KeyError:
-            t = TheaterLoader(self.data["theater"].lower()).load()
+        t = TheaterLoader(self.data["theater"].lower()).load()
 
         try:
             miz = self.data["miz"]
