@@ -9,7 +9,6 @@ from uuid import UUID
 from dcs.mapping import Point
 from dcs.terrain import (
     falklands,
-    nevada,
     normandy,
     thechannel,
 )
@@ -241,27 +240,6 @@ class ConflictTheater:
         )
 
         return Heading.from_degrees(position.heading_between_point(conflict_center))
-
-
-class NevadaTheater(ConflictTheater):
-    terrain = nevada.Nevada()
-    landmap = load_landmap(Path("resources/nevlandmap.p"))
-    daytime_map = DaytimeMap(
-        dawn=(datetime.time(hour=4), datetime.time(hour=6)),
-        day=(datetime.time(hour=6), datetime.time(hour=17)),
-        dusk=(datetime.time(hour=17), datetime.time(hour=18)),
-        night=(datetime.time(hour=0), datetime.time(hour=5)),
-    )
-
-    @property
-    def timezone(self) -> datetime.timezone:
-        return datetime.timezone(datetime.timedelta(hours=-8))
-
-    @property
-    def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.nevada import CONDITIONS
-
-        return CONDITIONS
 
 
 class NormandyTheater(ConflictTheater):
