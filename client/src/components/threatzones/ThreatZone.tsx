@@ -2,7 +2,7 @@ import { LatLng } from "../../api/liberationApi";
 import { Polygon } from "react-leaflet";
 
 interface ThreatZoneProps {
-  poly: LatLng[];
+  poly: LatLng[][];
   blue: boolean;
 }
 

@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from game import Game
 from game.ato import Flight
 from game.flightplan import HoldZoneGeometry, IpZoneGeometry, JoinZoneGeometry
-from ..leaflet import LeafletPoly, ShapelyUtil
+from ..leaflet import LeafletLine, LeafletPoly, ShapelyUtil
 
 
 class HoldZonesJs(BaseModel):
@@ -14,7 +14,7 @@ class HoldZonesJs(BaseModel):
     join_bubble: LeafletPoly = Field(alias="joinBubble")
     excluded_zones: list[LeafletPoly] = Field(alias="excludedZones")
     permissible_zones: list[LeafletPoly] = Field(alias="permissibleZones")
-    preferred_lines: list[LeafletPoly] = Field(alias="preferredLines")
+    preferred_lines: list[LeafletLine] = Field(alias="preferredLines")
 
     class Config:
         title = "HoldZones"
@@ -93,7 +93,7 @@ class JoinZonesJs(BaseModel):
     ip_bubble: LeafletPoly = Field(alias="ipBubble")
     excluded_zones: list[LeafletPoly] = Field(alias="excludedZones")
     permissible_zones: list[LeafletPoly] = Field(alias="permissibleZones")
-    preferred_lines: list[LeafletPoly] = Field(alias="preferredLines")
+    preferred_lines: list[LeafletLine] = Field(alias="preferredLines")
 
     class Config:
         title = "JoinZones"

@@ -267,7 +267,7 @@ export type GetFlightByIdApiArg = {
   withWaypoints?: boolean;
 };
 export type GetCommitBoundaryForFlightApiResponse =
-  /** status 200 Successful Response */ LatLng[];
+  /** status 200 Successful Response */ LatLng[][];
 export type GetCommitBoundaryForFlightApiArg = {
   flightId: string;
 };
@@ -297,27 +297,27 @@ export type GetNavmeshApiArg = {
   forPlayer: boolean;
 };
 export type OpenNewFrontLinePackageDialogApiResponse =
-  /** status 204 Successful Response */ undefined;
+  /** status 200 Successful Response */ any;
 export type OpenNewFrontLinePackageDialogApiArg = {
   frontLineId: string;
 };
 export type OpenNewTgoPackageDialogApiResponse =
-  /** status 204 Successful Response */ undefined;
+  /** status 200 Successful Response */ any;
 export type OpenNewTgoPackageDialogApiArg = {
   tgoId: string;
 };
 export type OpenTgoInfoDialogApiResponse =
-  /** status 204 Successful Response */ undefined;
+  /** status 200 Successful Response */ any;
 export type OpenTgoInfoDialogApiArg = {
   tgoId: string;
 };
 export type OpenNewControlPointPackageDialogApiResponse =
-  /** status 204 Successful Response */ undefined;
+  /** status 200 Successful Response */ any;
 export type OpenNewControlPointPackageDialogApiArg = {
   cpId: string;
 };
 export type OpenControlPointInfoDialogApiResponse =
-  /** status 204 Successful Response */ undefined;
+  /** status 200 Successful Response */ any;
 export type OpenControlPointInfoDialogApiArg = {
   cpId: string;
 };
@@ -364,7 +364,7 @@ export type ControlPoint = {
   sidc: string;
 };
 export type ValidationError = {
-  loc: string[];
+  loc: (string | number)[];
   msg: string;
   type: string;
 };
@@ -372,25 +372,25 @@ export type HttpValidationError = {
   detail?: ValidationError[];
 };
 export type HoldZones = {
-  homeBubble: LatLng[];
-  targetBubble: LatLng[];
-  joinBubble: LatLng[];
-  excludedZones: LatLng[][];
-  permissibleZones: LatLng[][];
+  homeBubble: LatLng[][];
+  targetBubble: LatLng[][];
+  joinBubble: LatLng[][];
+  excludedZones: LatLng[][][];
+  permissibleZones: LatLng[][][];
   preferredLines: LatLng[][];
 };
 export type IpZones = {
-  homeBubble: LatLng[];
-  ipBubble: LatLng[];
-  permissibleZone: LatLng[];
-  safeZones: LatLng[][];
+  homeBubble: LatLng[][];
+  ipBubble: LatLng[][];
+  permissibleZone: LatLng[][];
+  safeZones: LatLng[][][];
 };
 export type JoinZones = {
-  homeBubble: LatLng[];
-  targetBubble: LatLng[];
-  ipBubble: LatLng[];
-  excludedZones: LatLng[][];
-  permissibleZones: LatLng[][];
+  homeBubble: LatLng[][];
+  targetBubble: LatLng[][];
+  ipBubble: LatLng[][];
+  excludedZones: LatLng[][][];
+  permissibleZones: LatLng[][][];
   preferredLines: LatLng[][];
 };
 export type Waypoint = {
@@ -449,17 +449,17 @@ export type IadsNetwork = {
   connections: IadsConnection[];
 };
 export type ThreatZones = {
-  full: LatLng[][];
-  aircraft: LatLng[][];
-  air_defenses: LatLng[][];
-  radar_sams: LatLng[][];
+  full: LatLng[][][];
+  aircraft: LatLng[][][];
+  air_defenses: LatLng[][][];
+  radar_sams: LatLng[][][];
 };
 export type ThreatZoneContainer = {
   blue: ThreatZones;
   red: ThreatZones;
 };
 export type NavMeshPoly = {
-  poly: LatLng[];
+  poly: LatLng[][];
   threatened: boolean;
 };
 export type NavMesh = {
@@ -468,6 +468,10 @@ export type NavMesh = {
 export type NavMeshes = {
   blue: NavMesh;
   red: NavMesh;
+};
+export type UnculledZone = {
+  position: LatLng;
+  radius: number;
 };
 export type Game = {
   control_points: ControlPoint[];
@@ -482,13 +486,9 @@ export type Game = {
   unculled_zones: UnculledZone[];
 };
 export type MapZones = {
-  inclusion: LatLng[][];
-  exclusion: LatLng[][];
-  sea: LatLng[][];
-};
-export type UnculledZone = {
-  position: LatLng;
-  radius: number;
+  inclusion: LatLng[][][];
+  exclusion: LatLng[][][];
+  sea: LatLng[][][];
 };
 export const {
   useListControlPointsQuery,
