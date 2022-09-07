@@ -15,7 +15,6 @@ from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
     FalklandsTheater,
-    MarianaIslandsTheater,
     NevadaTheater,
     NormandyTheater,
     TheChannelTheater,
@@ -117,7 +116,6 @@ class Campaign:
             "Nevada": NevadaTheater,
             "Normandy": NormandyTheater,
             "The Channel": TheChannelTheater,
-            "MarianaIslands": MarianaIslandsTheater,
             "Falklands": FalklandsTheater,
         }
         try:
