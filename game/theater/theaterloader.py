@@ -66,7 +66,7 @@ class TheaterLoader:
         with self.descriptor_path.open() as descriptor_file:
             data = yaml.safe_load(descriptor_file)
         return YamlTheater(
-            TERRAINS_BY_NAME[data["name"]],
+            TERRAINS_BY_NAME[data.get("pydcs_name", data["name"])],
             load_landmap(self.descriptor_path.with_name("landmap.p")),
             datetime.timezone(datetime.timedelta(hours=data["timezone"])),
             self._load_seasonal_conditions(data["climate"]),

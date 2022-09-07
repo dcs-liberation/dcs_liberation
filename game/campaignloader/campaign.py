@@ -18,7 +18,6 @@ from game.theater import (
     MarianaIslandsTheater,
     NevadaTheater,
     NormandyTheater,
-    PersianGulfTheater,
     SyriaTheater,
     TheChannelTheater,
 )
@@ -117,7 +116,6 @@ class Campaign:
     def load_theater(self, advanced_iads: bool) -> ConflictTheater:
         theaters = {
             "Nevada": NevadaTheater,
-            "Persian Gulf": PersianGulfTheater,
             "Normandy": NormandyTheater,
             "The Channel": TheChannelTheater,
             "Syria": SyriaTheater,
