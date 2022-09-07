@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import datetime
 import math
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 from uuid import UUID
 
 from dcs.mapping import Point
 from dcs.terrain import (
-    caucasus,
     falklands,
     marianaislands,
     nevada,
@@ -31,12 +29,6 @@ from ..utils import Heading
 if TYPE_CHECKING:
     from .controlpoint import ControlPoint, MissionTarget
     from .theatergroundobject import TheaterGroundObject
-
-
-@dataclass
-class ReferencePoint:
-    world_coordinates: Point
-    image_coordinates: Point
 
 
 class ConflictTheater:
@@ -252,28 +244,6 @@ class ConflictTheater:
         )
 
         return Heading.from_degrees(position.heading_between_point(conflict_center))
-
-
-class CaucasusTheater(ConflictTheater):
-    terrain = caucasus.Caucasus()
-
-    landmap = load_landmap(Path("resources/caulandmap.p"))
-    daytime_map = DaytimeMap(
-        dawn=(datetime.time(hour=6), datetime.time(hour=9)),
-        day=(datetime.time(hour=9), datetime.time(hour=18)),
-        dusk=(datetime.time(hour=18), datetime.time(hour=20)),
-        night=(datetime.time(hour=0), datetime.time(hour=5)),
-    )
-
-    @property
-    def timezone(self) -> datetime.timezone:
-        return datetime.timezone(datetime.timedelta(hours=4))
-
-    @property
-    def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.caucasus import CONDITIONS
-
-        return CONDITIONS
 
 
 class PersianGulfTheater(ConflictTheater):
