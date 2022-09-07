@@ -1,0 +1,107 @@
+---
+name: Falklands - Operation Grabthar's Hammer
+theater: Falklands
+authors: Starfire
+recommended_player_faction: USA 2005
+recommended_enemy_faction: Russia 1990
+description:
+  <p>An Argentinean extremist group has contract the Sons of Warvan (SoW), an
+  unusually well-equipped PMC with close ties to the Russian Goverment, to
+  construct a beryllium bomb at Ushaia for use in its ongoing conflict with
+  Chile. United States military forces have established a foothold at San
+  Julian. However, the limited facilities means most land-based aircraft have to
+  remain at Mount Pleasant in the Falklands until more airfields are in friendly
+  hands. While the SoW are distracted up north, it is up to the Marines on an
+  LHA to launch an assault upon Ushaia from the sea in order to disable the bomb
+  production facility.</p>
+miz: grabthars_hammer.miz
+performance: 1
+recommended_start_date: 2000-07-13
+version: "10.4"
+squadrons:
+  #Mount Pleasant
+  2:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-15C Eagle
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-15E Strike Eagle
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+  #San Julian
+  11:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+  #El Calafate
+  14:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-25T Frogfoot
+  #Rio Gallegros
+  5:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Su-27 Flanker-B
+  #Punta Arenas
+  9:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Su-24M Fencer-D
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Tu-22M3 Backfire-C
+  #Ushuaia
+  7:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-29S Fulcrum-C
+  #Ushuaia Helo Port
+  8:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Ka-50 Hokum
+  #Blue CV
+  Blue-CV:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14B Tomcat
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+  # Blue LHA
+  Blue-LHA:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
