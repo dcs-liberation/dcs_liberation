@@ -18,6 +18,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Flight Planning]**  Improved the Airlift mission type so that it now can be enforced within the unit transfer dialog and implemented CTLD support. This allows user to spawn sling loadable crates at the pickup location and fly transport flights.
 * **[Modding]** Updated UH-60L mod version support to 1.3.1
 * **[Modding]** Updated the High Digit SAMs implementation and added the HQ-2 as well as the upgraded SA-2 and SA-3 Launchers from the mod. Threat range circles will now also be displayed correctly.
+* **[Modding]** Theater information such as climate properties is now moddable.
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
 * **[UI]** Added separate images for the different carrier types.
 * **[UI]** Add Accept/Reset buttons to Air Wing Configurator screen.
