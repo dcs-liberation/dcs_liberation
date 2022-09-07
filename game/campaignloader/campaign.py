@@ -120,6 +120,8 @@ class Campaign:
         with logged_duration("Importing miz data"):
             MizCampaignLoader(self.path.parent / miz, t).populate_theater()
 
+        # TODO: Move into MizCampaignLoader so this doesn't have unknown initialization
+        # in ConflictTheater.
         # Load IADS Config from campaign yaml
         iads_data = self.data.get("iads_config", [])
         t.iads_network = IadsNetwork(advanced_iads, iads_data)
