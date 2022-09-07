@@ -15,7 +15,6 @@ from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
     FalklandsTheater,
-    NormandyTheater,
     TheChannelTheater,
 )
 from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
@@ -112,7 +111,6 @@ class Campaign:
 
     def load_theater(self, advanced_iads: bool) -> ConflictTheater:
         theaters = {
-            "Normandy": NormandyTheater,
             "The Channel": TheChannelTheater,
             "Falklands": FalklandsTheater,
         }
