@@ -5,7 +5,7 @@ import logging
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Type
 
 import yaml
 from packaging.version import Version
@@ -15,7 +15,6 @@ from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
     FalklandsTheater,
-    TheChannelTheater,
 )
 from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
 from game.theater.theaterloader import TheaterLoader
@@ -110,8 +109,7 @@ class Campaign:
         )
 
     def load_theater(self, advanced_iads: bool) -> ConflictTheater:
-        theaters = {
-            "The Channel": TheChannelTheater,
+        theaters: dict[str, Type[ConflictTheater]] = {
             "Falklands": FalklandsTheater,
         }
         try:
