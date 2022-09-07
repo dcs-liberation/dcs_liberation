@@ -10,9 +10,9 @@ from typing import Any, Dict, Tuple
 import yaml
 from packaging.version import Version
 
+from game import persistency
 from game.profiling import logged_duration
 from game.theater import (
-    CaucasusTheater,
     ConflictTheater,
     FalklandsTheater,
     MarianaIslandsTheater,
@@ -23,10 +23,10 @@ from game.theater import (
     TheChannelTheater,
 )
 from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
+from game.theater.theaterloader import TheaterLoader
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
 from .mizcampaignloader import MizCampaignLoader
-from .. import persistency
 
 PERF_FRIENDLY = 0
 PERF_MEDIUM = 1
@@ -116,7 +116,6 @@ class Campaign:
 
     def load_theater(self, advanced_iads: bool) -> ConflictTheater:
         theaters = {
-            "Caucasus": CaucasusTheater,
             "Nevada": NevadaTheater,
             "Persian Gulf": PersianGulfTheater,
             "Normandy": NormandyTheater,
@@ -125,8 +124,11 @@ class Campaign:
             "MarianaIslands": MarianaIslandsTheater,
             "Falklands": FalklandsTheater,
         }
-        theater = theaters[self.data["theater"]]
-        t = theater()
+        try:
+            theater = theaters[self.data["theater"]]
+            t = theater()
+        except KeyError:
+            t = TheaterLoader(self.data["theater"].lower()).load()
 
         try:
             miz = self.data["miz"]
