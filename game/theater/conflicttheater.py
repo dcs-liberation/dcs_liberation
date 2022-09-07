@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import datetime
 import math
-from pathlib import Path
 from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 from uuid import UUID
 
 from dcs.mapping import Point
 from dcs.terrain import (
     falklands,
-    thechannel,
 )
 from dcs.terrain.terrain import Terrain
 from shapely import geometry, ops
@@ -17,7 +15,7 @@ from shapely import geometry, ops
 from .daytimemap import DaytimeMap
 from .frontline import FrontLine
 from .iadsnetwork.iadsnetwork import IadsNetwork
-from .landmap import Landmap, load_landmap, poly_contains
+from .landmap import Landmap, poly_contains
 from .seasonalconditions import SeasonalConditions
 from ..utils import Heading
 
@@ -239,27 +237,6 @@ class ConflictTheater:
         )
 
         return Heading.from_degrees(position.heading_between_point(conflict_center))
-
-
-class TheChannelTheater(ConflictTheater):
-    terrain = thechannel.TheChannel()
-    landmap = load_landmap(Path("resources/channellandmap.p"))
-    daytime_map = DaytimeMap(
-        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
-        day=(datetime.time(hour=10), datetime.time(hour=17)),
-        dusk=(datetime.time(hour=17), datetime.time(hour=18)),
-        night=(datetime.time(hour=0), datetime.time(hour=5)),
-    )
-
-    @property
-    def timezone(self) -> datetime.timezone:
-        return datetime.timezone(datetime.timedelta(hours=2))
-
-    @property
-    def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.thechannel import CONDITIONS
-
-        return CONDITIONS
 
 
 class FalklandsTheater(ConflictTheater):
