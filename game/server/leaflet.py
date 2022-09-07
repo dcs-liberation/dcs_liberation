@@ -20,7 +20,15 @@ class LeafletPoint(BaseModel):
         title = "LatLng"
 
 
-LeafletPoly = list[LeafletPoint]
+LeafletLine = list[LeafletPoint]
+
+
+# Leaflet allows either a single array of latlng to define the boundary, or an array of
+# arrays of latlngs, with the first array being the boundary and the rest defining
+# holes. To avoid the UI needing to test for which type of polygon we send, we always
+# use the array of arrays type, even for geometries without holes.
+# https://leafletjs.com/reference.html#polygon
+LeafletPoly = list[LeafletLine]
 
 
 class ShapelyUtil:
@@ -32,10 +40,11 @@ class ShapelyUtil:
     def poly_to_leaflet(cls, poly: Polygon, theater: ConflictTheater) -> LeafletPoly:
         if poly.is_empty:
             return []
-        return [
-            cls.latlng_to_leaflet(Point(x, y, theater.terrain).latlng())
-            for x, y in poly.exterior.coords
-        ]
+        try:
+            lines = poly.boundary.geoms
+        except AttributeError:
+            lines = [poly.boundary]
+        return cls.lines_to_leaflet(MultiLineString(lines), theater)
 
     @classmethod
     def polys_to_leaflet(
@@ -47,14 +56,17 @@ class ShapelyUtil:
             polys = [poly]
         return [cls.poly_to_leaflet(poly, theater) for poly in polys]
 
-    @staticmethod
-    def line_to_leaflet(line: LineString, theater: ConflictTheater) -> list[LatLng]:
-        return [Point(x, y, theater.terrain).latlng() for x, y in line.coords]
+    @classmethod
+    def line_to_leaflet(cls, line: LineString, theater: ConflictTheater) -> LeafletLine:
+        return [
+            cls.latlng_to_leaflet(Point(x, y, theater.terrain).latlng())
+            for x, y in line.coords
+        ]
 
     @classmethod
     def lines_to_leaflet(
         cls, line_string: MultiLineString | LineString, theater: ConflictTheater
-    ) -> list[list[LatLng]]:
+    ) -> list[LeafletLine]:
         if isinstance(line_string, MultiLineString):
             lines = line_string.geoms
         else:

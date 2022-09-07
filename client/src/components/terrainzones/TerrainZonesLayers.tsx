@@ -3,7 +3,7 @@ import { LatLngLiteral } from "leaflet";
 import { LayerGroup, LayersControl, Polygon } from "react-leaflet";
 
 interface TerrainZoneLayerProps {
-  zones: LatLngLiteral[][];
+  zones: LatLngLiteral[][][];
   color: string;
   fillColor: string;
 }
