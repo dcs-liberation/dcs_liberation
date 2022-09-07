@@ -12,7 +12,6 @@ from dcs.terrain import (
     marianaislands,
     nevada,
     normandy,
-    syria,
     thechannel,
 )
 from dcs.terrain.terrain import Terrain
@@ -304,27 +303,6 @@ class TheChannelTheater(ConflictTheater):
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .seasonalconditions.thechannel import CONDITIONS
-
-        return CONDITIONS
-
-
-class SyriaTheater(ConflictTheater):
-    terrain = syria.Syria()
-    landmap = load_landmap(Path("resources/syrialandmap.p"))
-    daytime_map = DaytimeMap(
-        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
-        day=(datetime.time(hour=8), datetime.time(hour=16)),
-        dusk=(datetime.time(hour=16), datetime.time(hour=18)),
-        night=(datetime.time(hour=0), datetime.time(hour=5)),
-    )
-
-    @property
-    def timezone(self) -> datetime.timezone:
-        return datetime.timezone(datetime.timedelta(hours=3))
-
-    @property
-    def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.syria import CONDITIONS
 
         return CONDITIONS
 
