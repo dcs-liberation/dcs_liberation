@@ -9,7 +9,6 @@ from uuid import UUID
 from dcs.mapping import Point
 from dcs.terrain import (
     falklands,
-    marianaislands,
     nevada,
     normandy,
     thechannel,
@@ -303,28 +302,6 @@ class TheChannelTheater(ConflictTheater):
     @property
     def seasonal_conditions(self) -> SeasonalConditions:
         from .seasonalconditions.thechannel import CONDITIONS
-
-        return CONDITIONS
-
-
-class MarianaIslandsTheater(ConflictTheater):
-    terrain = marianaislands.MarianaIslands()
-
-    landmap = load_landmap(Path("resources/marianaislandslandmap.p"))
-    daytime_map = DaytimeMap(
-        dawn=(datetime.time(hour=6), datetime.time(hour=8)),
-        day=(datetime.time(hour=8), datetime.time(hour=16)),
-        dusk=(datetime.time(hour=16), datetime.time(hour=18)),
-        night=(datetime.time(hour=0), datetime.time(hour=5)),
-    )
-
-    @property
-    def timezone(self) -> datetime.timezone:
-        return datetime.timezone(datetime.timedelta(hours=10))
-
-    @property
-    def seasonal_conditions(self) -> SeasonalConditions:
-        from .seasonalconditions.marianaislands import CONDITIONS
 
         return CONDITIONS
 
