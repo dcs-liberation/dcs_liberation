@@ -21,7 +21,6 @@ from .conflicttheater import ConflictTheater
 from .daytimemap import DaytimeMap
 from .landmap import load_landmap
 from .seasonalconditions import Season, SeasonalConditions, WeatherTypeChances
-from .yamltheater import YamlTheater
 
 ALL_TERRAINS = [
     Caucasus(),
@@ -65,7 +64,7 @@ class TheaterLoader:
     def load(self) -> ConflictTheater:
         with self.descriptor_path.open() as descriptor_file:
             data = yaml.safe_load(descriptor_file)
-        return YamlTheater(
+        return ConflictTheater(
             TERRAINS_BY_NAME[data.get("pydcs_name", data["name"])],
             load_landmap(self.descriptor_path.with_name("landmap.p")),
             datetime.timezone(datetime.timedelta(hours=data["timezone"])),

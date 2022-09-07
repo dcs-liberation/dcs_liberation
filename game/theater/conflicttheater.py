@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import datetime
 import math
+from datetime import timezone
 from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 from uuid import UUID
 
@@ -22,14 +22,22 @@ if TYPE_CHECKING:
 
 
 class ConflictTheater:
-    terrain: Terrain
-
-    landmap: Optional[Landmap]
-    daytime_map: DaytimeMap
     iads_network: IadsNetwork
 
-    def __init__(self) -> None:
-        self.controlpoints: List[ControlPoint] = []
+    def __init__(
+        self,
+        terrain: Terrain,
+        landmap: Landmap | None,
+        time_zone: timezone,
+        seasonal_conditions: SeasonalConditions,
+        daytime_map: DaytimeMap,
+    ) -> None:
+        self.terrain = terrain
+        self.landmap = landmap
+        self.timezone = time_zone
+        self.seasonal_conditions = seasonal_conditions
+        self.daytime_map = daytime_map
+        self.controlpoints: list[ControlPoint] = []
 
     def add_controlpoint(self, point: ControlPoint) -> None:
         self.controlpoints.append(point)
@@ -204,14 +212,6 @@ class ConflictTheater:
             if cp.name == name:
                 return cp
         raise KeyError(f"Cannot find ControlPoint named {name}")
-
-    @property
-    def timezone(self) -> datetime.timezone:
-        raise NotImplementedError
-
-    @property
-    def seasonal_conditions(self) -> SeasonalConditions:
-        raise NotImplementedError
 
     def heading_to_conflict_from(self, position: Point) -> Optional[Heading]:
         # Heading for a Group to the enemy.
