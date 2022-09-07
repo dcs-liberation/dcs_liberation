@@ -18,7 +18,6 @@ from game.theater import (
     MarianaIslandsTheater,
     NevadaTheater,
     NormandyTheater,
-    SyriaTheater,
     TheChannelTheater,
 )
 from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
@@ -118,7 +117,6 @@ class Campaign:
             "Nevada": NevadaTheater,
             "Normandy": NormandyTheater,
             "The Channel": TheChannelTheater,
-            "Syria": SyriaTheater,
             "MarianaIslands": MarianaIslandsTheater,
             "Falklands": FalklandsTheater,
         }
