@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -57,9 +58,16 @@ class SeasonData:
 
 
 class TheaterLoader:
+    THEATER_RESOURCE_DIR = Path("resources/theaters")
+
     def __init__(self, name: str) -> None:
         self.name = name
-        self.descriptor_path = Path("resources/theaters") / self.name / "info.yaml"
+        self.descriptor_path = self.THEATER_RESOURCE_DIR / self.name / "info.yaml"
+
+    @classmethod
+    def each(cls) -> Iterator[ConflictTheater]:
+        for theater_dir in cls.THEATER_RESOURCE_DIR.iterdir():
+            yield TheaterLoader(theater_dir.name).load()
 
     def load(self) -> ConflictTheater:
         with self.descriptor_path.open() as descriptor_file:
