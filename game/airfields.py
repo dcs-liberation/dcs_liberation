@@ -179,6 +179,7 @@ class AirfieldData:
 
     @classmethod
     def for_airport(cls, theater: ConflictTheater, airport: Airport) -> AirfieldData:
+        cls._load_for_theater_if_needed(theater)
         return cls._airfields[theater.terrain.name][airport.id]
 
     @classmethod
