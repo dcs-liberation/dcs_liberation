@@ -5,14 +5,15 @@ data added to pydcs. Until then, missing data can be manually filled in here.
 """
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Optional, TYPE_CHECKING, Tuple
 
 import yaml
-from dcs.terrain import Airport
 from dcs.task import Modulation
+from dcs.terrain import Airport
 
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel
@@ -168,9 +169,12 @@ class AirfieldData:
 
         airfields = {}
         base_path = Path("resources/airfields") / theater.terrain.name
-        for airfield_yaml in base_path.iterdir():
-            data = cls.from_file(airfield_yaml)
-            airfields[data.id] = data
+        if base_path.is_dir():
+            for airfield_yaml in base_path.iterdir():
+                data = cls.from_file(airfield_yaml)
+                airfields[data.id] = data
+        else:
+            logging.warning("No airfield data available for %s", theater.terrain.name)
         cls._airfields[theater.terrain.name] = airfields
 
     @classmethod
