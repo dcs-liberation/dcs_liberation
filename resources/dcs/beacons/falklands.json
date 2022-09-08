@@ -1,0 +1,198 @@
+[
+ {
+  "name": "ELCALACAFE",
+  "callsign": "EC",
+  "beacon_type": 15,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "ELCALAFATE",
+  "callsign": "ec",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ {
+  "name": "ECA",
+  "callsign": "ECA",
+  "beacon_type": 4,
+  "hertz": 114700000,
+  "channel": 94
+ },
+ {
+  "name": "MTPLEASANT",
+  "callsign": "imp",
+  "beacon_type": 14,
+  "hertz": 111900000,
+  "channel": null
+ },
+ {
+  "name": "MP",
+  "callsign": "MP",
+  "beacon_type": 10,
+  "hertz": 380000,
+  "channel": null
+ },
+ {
+  "name": "MPA",
+  "callsign": "MPA",
+  "beacon_type": 5,
+  "hertz": 112200000,
+  "channel": 59
+ },
+ {
+  "name": "MTP",
+  "callsign": "MTP",
+  "beacon_type": 2,
+  "hertz": 114700000,
+  "channel": 94
+ },
+ {
+  "name": "MTPLEASANT",
+  "callsign": "IMP",
+  "beacon_type": 15,
+  "hertz": 111900000,
+  "channel": null
+ },
+ {
+  "name": "stanleyairport",
+  "callsign": "SA",
+  "beacon_type": 10,
+  "hertz": 305000,
+  "channel": null
+ },
+ {
+  "name": "DFO",
+  "callsign": "DFO",
+  "beacon_type": 2,
+  "hertz": 113300000,
+  "channel": null
+ },
+ {
+  "name": "PUERTO NATALES",
+  "callsign": "PNT",
+  "beacon_type": 4,
+  "hertz": 115900000,
+  "channel": 106
+ },
+ {
+  "name": "Puerto Williams",
+  "callsign": "PWL",
+  "beacon_type": 4,
+  "hertz": 114900000,
+  "channel": 96
+ },
+ {
+  "name": "ptarenas",
+  "callsign": "inas",
+  "beacon_type": 15,
+  "hertz": 109900000,
+  "channel": null
+ },
+ {
+  "name": "",
+  "callsign": "INAS",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ {
+  "name": "NAS",
+  "callsign": "NAS",
+  "beacon_type": 4,
+  "hertz": 114100000,
+  "channel": null
+ },
+ {
+  "name": "NAS",
+  "callsign": "NAS",
+  "beacon_type": 9,
+  "hertz": 270000,
+  "channel": null
+ },
+ {
+  "name": "GAL",
+  "callsign": "GAL",
+  "beacon_type": 4,
+  "hertz": 116700000,
+  "channel": 114
+ },
+ {
+  "name": "RIOGALLEGOS",
+  "callsign": "gl",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "RIOGALLEGOS",
+  "callsign": "gl",
+  "beacon_type": 15,
+  "hertz": 110300000,
+  "channel": null
+ },
+ {
+  "name": "RIOGRANDE",
+  "callsign": "gr",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ {
+  "name": "GRA",
+  "callsign": "GRA",
+  "beacon_type": 4,
+  "hertz": 117300000,
+  "channel": 120
+ },
+ {
+  "name": "RIOGRANDE",
+  "callsign": "gr",
+  "beacon_type": 15,
+  "hertz": 109500000,
+  "channel": null
+ },
+ {
+  "name": "riograndendb",
+  "callsign": "P",
+  "beacon_type": 10,
+  "hertz": 265000,
+  "channel": null
+ },
+ {
+  "name": "riogrande",
+  "callsign": "gra",
+  "beacon_type": 5,
+  "hertz": 1000000,
+  "channel": 31
+ },
+ {
+  "name": "San Julian",
+  "callsign": "",
+  "beacon_type": 4,
+  "hertz": 117700000,
+  "channel": null
+ },
+ {
+  "name": "RIOGRANDE",
+  "callsign": "us",
+  "beacon_type": 14,
+  "hertz": 111300000,
+  "channel": null
+ },
+ {
+  "name": "Ushuaia",
+  "callsign": "us",
+  "beacon_type": 15,
+  "hertz": 111300000,
+  "channel": null
+ },
+ {
+  "name": "USU",
+  "callsign": "USU",
+  "beacon_type": 2,
+  "hertz": 113700000,
+  "channel": 84
+ }
+]
