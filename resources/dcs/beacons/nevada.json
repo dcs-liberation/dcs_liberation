@@ -1,97 +1,97 @@
 [
  {
-  "name": "",
+  "name": "Creech",
   "callsign": "ICRR",
   "beacon_type": 15,
   "hertz": 108700000,
   "channel": 24
  },
  {
-  "name": "",
+  "name": "Creech",
   "callsign": "ICRR",
   "beacon_type": 14,
   "hertz": 108700000,
   "channel": 24
  },
  {
-  "name": "",
+  "name": "Creech",
   "callsign": "ICRS",
   "beacon_type": 14,
   "hertz": 108500000,
   "channel": 22
  },
  {
-  "name": "",
+  "name": "Creech",
   "callsign": "ICRS",
   "beacon_type": 15,
   "hertz": 108500000,
   "channel": 22
  },
  {
-  "name": "Indian Springs",
+  "name": "Creech",
   "callsign": "INS",
   "beacon_type": 5,
   "hertz": null,
   "channel": 87
  },
  {
-  "name": "",
+  "name": "Groom-Lake",
   "callsign": "GLRI",
   "beacon_type": 14,
   "hertz": 109300000,
   "channel": 30
  },
  {
-  "name": "",
+  "name": "Groom-Lake",
   "callsign": "GLRI",
   "beacon_type": 15,
   "hertz": 109300000,
   "channel": 30
  },
  {
-  "name": "Groom Lake",
+  "name": "Groom-Lake",
   "callsign": "GRL",
   "beacon_type": 5,
   "hertz": null,
   "channel": 18
  },
  {
-  "name": "",
+  "name": "McCarran-International",
   "callsign": "I-RLE",
   "beacon_type": 15,
   "hertz": 111750000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "McCarran-International",
   "callsign": "I-LAS",
   "beacon_type": 15,
   "hertz": 110300000,
   "channel": 40
  },
  {
-  "name": "",
+  "name": "McCarran-International",
   "callsign": "I-RLE",
   "beacon_type": 14,
   "hertz": 111750000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "McCarran-International",
   "callsign": "I-LAS",
   "beacon_type": 14,
   "hertz": 110300000,
   "channel": 40
  },
  {
-  "name": "Las Vegas",
+  "name": "McCarran-International",
   "callsign": "LAS",
   "beacon_type": 6,
   "hertz": 116900000,
   "channel": 116
  },
  {
-  "name": "",
+  "name": "Nellis",
   "callsign": "IDIQ",
   "beacon_type": 15,
   "hertz": 109100000,
@@ -105,49 +105,49 @@
   "channel": 12
  },
  {
-  "name": "",
+  "name": "Nellis",
   "callsign": "IDIQ",
   "beacon_type": 14,
   "hertz": 109100000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "North-Las-Vegas",
   "callsign": "I-HWG",
   "beacon_type": 14,
   "hertz": 110700000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "North-Las-Vegas",
   "callsign": "I-HWG",
   "beacon_type": 15,
   "hertz": 110700000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tonopah-Test-Range",
   "callsign": "I-RVP",
   "beacon_type": 14,
   "hertz": 108300000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tonopah-Test-Range",
   "callsign": "I-UVV",
   "beacon_type": 14,
   "hertz": 111700000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tonopah-Test-Range",
   "callsign": "I-UVV",
   "beacon_type": 15,
   "hertz": 111700000,
   "channel": null
  },
  {
-  "name": "",
+  "name": "Tonopah-Test-Range",
   "callsign": "I-RVP",
   "beacon_type": 15,
   "hertz": 108300000,
