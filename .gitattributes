@@ -1,5 +1,4 @@
 * text=auto
-
 *.pxd    text diff=python
 *.py     text diff=python
 *.py3    text diff=python
@@ -7,7 +6,6 @@
 *.pyx    text diff=python
 *.pyz    text diff=python
 *.pyi    text diff=python
-
 *.db     binary
 *.p      binary
 *.pkl    binary
@@ -15,3 +13,4 @@
 *.pyc    binary export-ignore
 *.pyo    binary export-ignore
 *.pyd    binary
+unshipped_data/arcgis_maps/ filter=lfs diff=lfs merge=lfs -text
