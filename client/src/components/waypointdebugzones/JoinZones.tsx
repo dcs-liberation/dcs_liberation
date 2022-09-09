@@ -65,6 +65,7 @@ function JoinZones(props: JoinZonesProps) {
             positions={zone}
             color="#80BA80"
             interactive={false}
+            stroke={false}
           />
         );
       })}
