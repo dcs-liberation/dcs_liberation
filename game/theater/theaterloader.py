@@ -69,12 +69,16 @@ class TheaterLoader:
         for theater_dir in cls.THEATER_RESOURCE_DIR.iterdir():
             yield TheaterLoader(theater_dir.name).load()
 
+    @property
+    def landmap_path(self) -> Path:
+        return self.descriptor_path.with_name("landmap.p")
+
     def load(self) -> ConflictTheater:
         with self.descriptor_path.open() as descriptor_file:
             data = yaml.safe_load(descriptor_file)
         return ConflictTheater(
             TERRAINS_BY_NAME[data.get("pydcs_name", data["name"])],
-            load_landmap(self.descriptor_path.with_name("landmap.p")),
+            load_landmap(self.landmap_path),
             datetime.timezone(datetime.timedelta(hours=data["timezone"])),
             self._load_seasonal_conditions(data["climate"]),
             self._load_daytime_map(data["daytime"]),
