@@ -7,8 +7,3 @@ runway_length: 12817
 vor:
   callsign: ADV
   frequency: 114.250 MHz
-atc:
-  hf: 4.050 MHz
-  vhf_low: 119.200 MHz
-  vhf_high: 39 MHz
-  uhf: 250.550 MHz

@@ -7,11 +7,6 @@ runway_length: 12316
 vor:
   callsign: MN
   frequency: 117.010 MHz
-atc:
-  hf: 4.450 MHz
-  vhf_low: 41.200 MHz
-  vhf_high: 135 MHz
-  uhf: 264 MHz
 runways:
   "12":
     ils:

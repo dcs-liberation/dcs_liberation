@@ -7,11 +7,6 @@ runway_length: 7256
 tacan:
   callsign: TSK
   channel: 31X
-atc:
-  hf: 4.300 MHz
-  vhf_low: 40.600 MHz
-  vhf_high: 132 MHz
-  uhf: 261 MHz
 runways:
   09:
     ils:

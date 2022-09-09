@@ -7,11 +7,6 @@ runway_length: 7692
 tacan:
   callsign: GTB
   channel: 25X
-atc:
-  hf: 4.600 MHz
-  vhf_low: 41.800 MHz
-  vhf_high: 138 MHz
-  uhf: 267 MHz
 runways:
   "13":
     ils:

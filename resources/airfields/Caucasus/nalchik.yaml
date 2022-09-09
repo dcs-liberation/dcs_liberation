@@ -4,11 +4,6 @@ id: 27
 icao: URMN
 elevation: 1410
 runway_length: 7082
-atc:
-  hf: 4.500 MHz
-  vhf_low: 41.400 MHz
-  vhf_high: 136 MHz
-  uhf: 265 MHz
 runways:
   "24":
     ils:

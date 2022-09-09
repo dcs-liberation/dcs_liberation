@@ -10,8 +10,3 @@ tacan:
 vor:
   callsign: OMLW
   frequency: 117.400 MHz
-atc:
-  hf: 4.225 MHz
-  vhf_low: 119.300 MHz
-  vhf_high: 39.350 MHz
-  uhf: 250.950 MHz

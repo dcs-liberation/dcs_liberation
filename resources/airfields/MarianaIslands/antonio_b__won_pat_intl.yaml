@@ -4,11 +4,6 @@ id: 4
 icao: PGUM
 elevation: 255
 runway_length: 9359
-atc:
-  hf: 3.825 MHz
-  vhf_low: 38.550 MHz
-  vhf_high: 118.100 MHz
-  uhf: 340.200 MHz
 runways:
   "06":
     ils:

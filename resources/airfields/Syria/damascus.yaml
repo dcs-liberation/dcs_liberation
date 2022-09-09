@@ -7,11 +7,6 @@ runway_length: 11423
 vor:
   callsign: DAM
   frequency: 116 MHz
-atc:
-  hf: 4.700 MHz
-  vhf_low: 118.500 MHz
-  vhf_high: 40.300 MHz
-  uhf: 251.850 MHz
 runways:
   "24":
     ils:

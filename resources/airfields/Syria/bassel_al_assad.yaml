@@ -7,11 +7,6 @@ runway_length: 7305
 vor:
   callsign: LTK
   frequency: 114.800 MHz
-atc:
-  hf: 4.050 MHz
-  vhf_low: 118.100 MHz
-  vhf_high: 39 MHz
-  uhf: 250.550 MHz
 runways:
   "17":
     ils:

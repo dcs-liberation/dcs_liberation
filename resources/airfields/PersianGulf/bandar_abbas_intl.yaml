@@ -10,11 +10,6 @@ tacan:
 vor:
   callsign: BND
   frequency: 117.200 MHz
-atc:
-  hf: 4.250 MHz
-  vhf_low: 118.100 MHz
-  vhf_high: 39.400 MHz
-  uhf: 251 MHz
 runways:
   "21":
     ils:
