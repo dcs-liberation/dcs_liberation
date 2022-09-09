@@ -1,8 +1,6 @@
 ---
 name: Falklands
-# TODO: https://github.com/dcs-liberation/dcs_liberation/issues/2242
-timezone: +4
-# TODO: https://github.com/dcs-liberation/dcs_liberation/issues/2242
+timezone: -3
 daytime:
   dawn: [6, 9]
   day: [9, 18]
