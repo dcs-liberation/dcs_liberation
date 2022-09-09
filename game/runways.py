@@ -7,7 +7,7 @@ from typing import Iterator, Optional, TYPE_CHECKING
 
 from dcs.terrain.terrain import Airport
 
-from game.airfields import AirfieldData
+from game.airfields import AirfieldData, AtcData
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel
 from game.utils import Heading
@@ -48,12 +48,12 @@ class RunwayData:
         tacan: Optional[TacanChannel] = None
         tacan_callsign: Optional[str] = None
         ils: Optional[RadioFrequency] = None
+        atc_radio = AtcData.from_pydcs(airport)
+        if atc_radio is not None:
+            atc = atc_radio.uhf
+
         try:
             airfield = AirfieldData.for_airport(theater, airport)
-            if airfield.atc is not None:
-                atc = airfield.atc.uhf
-            else:
-                atc = None
             tacan = airfield.tacan
             tacan_callsign = airfield.tacan_callsign
             ils = airfield.ils_freq(runway_name)

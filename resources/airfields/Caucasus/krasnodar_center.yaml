@@ -7,11 +7,6 @@ runway_length: 7659
 rsbn:
   callsign: MB
   channel: 40
-atc:
-  hf: 3.800 MHz
-  vhf_low: 38.600 MHz
-  vhf_high: 122 MHz
-  uhf: 251 MHz
 runways:
   "27":
     outer_ndb:

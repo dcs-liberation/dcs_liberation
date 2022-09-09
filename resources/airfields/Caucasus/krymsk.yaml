@@ -7,11 +7,6 @@ runway_length: 6733
 rsbn:
   callsign: KW
   channel: 28
-atc:
-  hf: 3.900 MHz
-  vhf_low: 39 MHz
-  vhf_high: 124 MHz
-  uhf: 253 MHz
 runways:
   "22":
     prmg:

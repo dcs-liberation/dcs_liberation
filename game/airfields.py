@@ -9,7 +9,7 @@ import logging
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, ClassVar, Dict, Optional, TYPE_CHECKING, Tuple
+from typing import ClassVar, Dict, Optional, TYPE_CHECKING, Tuple
 
 import yaml
 from dcs.task import Modulation
@@ -30,15 +30,14 @@ class AtcData:
     uhf: RadioFrequency
 
     @classmethod
-    def from_yaml(cls, data: dict[str, Any]) -> Optional[AtcData]:
-        atc_data = data.get("atc")
-        if atc_data is None:
+    def from_pydcs(cls, airport: Airport) -> Optional[AtcData]:
+        if airport.atc_radio is None:
             return None
         return AtcData(
-            RadioFrequency.parse(atc_data["hf"], Modulation.FM),
-            RadioFrequency.parse(atc_data["vhf_low"], Modulation.FM),
-            RadioFrequency.parse(atc_data["vhf_high"], Modulation.AM),
-            RadioFrequency.parse(atc_data["uhf"], Modulation.AM),
+            RadioFrequency(airport.atc_radio.hf_hz, Modulation.FM),
+            RadioFrequency(airport.atc_radio.vhf_low_hz, Modulation.FM),
+            RadioFrequency(airport.atc_radio.vhf_high_hz, Modulation.AM),
+            RadioFrequency(airport.atc_radio.uhf_hz, Modulation.AM),
         )
 
 
@@ -72,10 +71,6 @@ class AirfieldData:
 
     #: RSBN channel as a tuple of (callsign, channel).
     rsbn: Optional[Tuple[str, int]] = None
-
-    #: Radio channels used by the airfield's ATC. Note that not all airfields
-    #: have ATCs.
-    atc: Optional[AtcData] = None
 
     #: Dict of runway heading -> ILS tuple of (callsign, frequency).
     ils: Dict[str, Tuple[str, RadioFrequency]] = field(default_factory=dict)
@@ -155,7 +150,6 @@ class AirfieldData:
             tacan_callsign,
             vor,
             rsbn,
-            AtcData.from_yaml(data),
             ils,
             prmg,
             outer_ndb,

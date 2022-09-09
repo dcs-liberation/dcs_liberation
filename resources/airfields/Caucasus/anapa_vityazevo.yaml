@@ -4,11 +4,6 @@ id: 12
 icao: URKA
 elevation: 141
 runway_length: 8623
-atc:
-  hf: 3.750 MHz
-  vhf_low: 38.400 MHz
-  vhf_high: 121 MHz
-  uhf: 250 MHz
 runways:
   "22":
     outer_ndb:

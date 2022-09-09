@@ -7,11 +7,6 @@ runway_length: 9463
 vor:
   callsign: KAD
   frequency: 112.600 MHz
-atc:
-  hf: 4.675 MHz
-  vhf_low: 118.900 MHz
-  vhf_high: 40.250 MHz
-  uhf: 251.800 MHz
 runways:
   "17":
     ils:

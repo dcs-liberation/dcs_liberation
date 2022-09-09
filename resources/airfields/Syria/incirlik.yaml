@@ -10,11 +10,6 @@ tacan:
 vor:
   callsign: DAN
   frequency: 108.400 MHz
-atc:
-  hf: 3.900 MHz
-  vhf_low: 122.100 MHz
-  vhf_high: 38.700 MHz
-  uhf: 360.100 MHz
 runways:
   "23":
     ils:

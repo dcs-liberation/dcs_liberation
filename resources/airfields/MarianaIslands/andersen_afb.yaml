@@ -7,8 +7,3 @@ runway_length: 10490
 tacan:
   callsign: UAM
   channel: 54X
-atc:
-  hf: 3.850 MHz
-  vhf_low: 38.600 MHz
-  vhf_high: 126.200 MHz
-  uhf: 250.100 MHz

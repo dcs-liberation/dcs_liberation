@@ -10,11 +10,6 @@ tacan:
 vor:
   callsign: MA
   frequency: 114.900 MHz
-atc:
-  hf: 4.300 MHz
-  vhf_low: 126.500 MHz
-  vhf_high: 39.500 MHz
-  uhf: 251.100 MHz
 runways:
   "31":
     ils:

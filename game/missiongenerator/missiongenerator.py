@@ -10,7 +10,7 @@ from dcs import Mission, Point
 from dcs.coalition import Coalition
 from dcs.countries import country_dict
 
-from game.airfields import AirfieldData
+from game.airfields import AtcData
 from game.dcs.helpers import unit_type_from_name
 from game.missiongenerator.aircraft.aircraftgenerator import (
     AircraftGenerator,
@@ -21,8 +21,6 @@ from game.radio.tacan import TacanRegistry
 from game.theater import Airfield, FrontLine
 from game.theater.bullseye import Bullseye
 from game.unitmap import UnitMap
-from .aircraft.flightdata import FlightData
-from .missiondata import MissionData
 from .airsupportgenerator import AirSupportGenerator
 from .beacons import load_beacons_for_terrain
 from .briefinggenerator import BriefingGenerator, MissionInfoGenerator
@@ -36,6 +34,7 @@ from .frontlineconflictdescription import FrontLineConflictDescription
 from .kneeboard import KneeboardGenerator
 from .lasercoderegistry import LaserCodeRegistry
 from .luagenerator import LuaGenerator
+from .missiondata import MissionData
 from .tgogenerator import TgoGenerator
 from .triggergenerator import TriggerGenerator
 from .visualsgenerator import VisualsGenerator
@@ -181,12 +180,12 @@ class MissionGenerator:
     def initialize_radio_registry(
         self, unique_map_frequencies: set[RadioFrequency]
     ) -> None:
-        for data in AirfieldData.for_theater(self.game.theater):
-            if data.atc is not None:
-                unique_map_frequencies.add(data.atc.hf)
-                unique_map_frequencies.add(data.atc.vhf_fm)
-                unique_map_frequencies.add(data.atc.vhf_am)
-                unique_map_frequencies.add(data.atc.uhf)
+        for airport in self.game.theater.terrain.airport_list():
+            if (atc := AtcData.from_pydcs(airport)) is not None:
+                unique_map_frequencies.add(atc.hf)
+                unique_map_frequencies.add(atc.vhf_fm)
+                unique_map_frequencies.add(atc.vhf_am)
+                unique_map_frequencies.add(atc.uhf)
                 # No need to reserve ILS or TACAN because those are in the
                 # beacon list.
 

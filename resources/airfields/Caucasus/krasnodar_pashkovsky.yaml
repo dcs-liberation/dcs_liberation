@@ -7,11 +7,6 @@ runway_length: 9738
 vor:
   callsign: KN
   frequency: 115.080 MHz
-atc:
-  hf: 4.100 MHz
-  vhf_low: 39.800 MHz
-  vhf_high: 128 MHz
-  uhf: 257 MHz
 runways:
   "23":
     outer_ndb:
