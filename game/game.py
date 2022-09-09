@@ -37,7 +37,8 @@ from .theater.theatergroundobject import (
     TheaterGroundObject,
 )
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
-from .weather import Conditions, TimeOfDay
+from .timeofday import TimeOfDay
+from .weather import Conditions
 
 if TYPE_CHECKING:
     from .ato.airtaaskingorder import AirTaskingOrder
