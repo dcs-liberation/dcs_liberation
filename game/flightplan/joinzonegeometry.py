@@ -100,5 +100,5 @@ class JoinZoneGeometry:
         if self.preferred_lines.is_empty:
             join, _ = shapely.ops.nearest_points(self.permissible_zones, self.ip)
         else:
-            join, _ = shapely.ops.nearest_points(self.preferred_lines, self.home)
+            join, _ = shapely.ops.nearest_points(self.preferred_lines, self.ip)
         return self._target.new_in_same_map(join.x, join.y)
