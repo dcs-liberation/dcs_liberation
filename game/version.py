@@ -155,4 +155,7 @@ VERSION = _build_version_string()
 #:   field. For example, `recommended_start_data: 2022-08-31 13:30:00` will have the
 #:   first turn start at 13:30. If omitted, or if only a date is given, the mission will
 #:   start at a random hour in the middle of the day as before.
-CAMPAIGN_FORMAT_VERSION = (10, 3)
+#:
+#: Version 10.4
+#: * Support for the Falklands.
+CAMPAIGN_FORMAT_VERSION = (10, 4)
