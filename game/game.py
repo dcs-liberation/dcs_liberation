@@ -214,6 +214,11 @@ class Game:
             return self.blue
         return self.red
 
+    def coalition_for_country(self, country: str) -> Coalition:
+        if country == self.blue.country_name:
+            return self.blue
+        return self.red
+
     def adjust_budget(self, amount: float, player: bool) -> None:
         self.coalition_for(player).adjust_budget(amount)
 
