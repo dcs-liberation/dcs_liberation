@@ -13,8 +13,9 @@ from dcs.weather import CloudPreset, Weather as PydcsWeather
 
 import qt_ui.uiconstants as CONST
 from game.sim.gameupdateevents import GameUpdateEvents
+from game.timeofday import TimeOfDay
 from game.utils import mps
-from game.weather import Conditions, TimeOfDay
+from game.weather import Conditions
 from qt_ui.simcontroller import SimController
 
 

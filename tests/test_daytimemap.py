@@ -3,7 +3,7 @@ from datetime import time
 import pytest
 
 from game.theater.daytimemap import DaytimeMap
-from game.weather import TimeOfDay
+from game.timeofday import TimeOfDay
 
 
 def test_range_of() -> None:

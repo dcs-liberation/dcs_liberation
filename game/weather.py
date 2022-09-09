@@ -4,26 +4,20 @@ import datetime
 import logging
 import random
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Optional, TYPE_CHECKING
 
 from dcs.cloud_presets import Clouds as PydcsClouds
 from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
 
+from game.theater.daytimemap import DaytimeMap
 from game.theater.seasonalconditions import determine_season
+from game.timeofday import TimeOfDay
 from game.utils import Distance, Heading, Pressure, inches_hg, interpolate, meters
 
 if TYPE_CHECKING:
     from game.settings import Settings
-    from game.theater import ConflictTheater, DaytimeMap
+    from game.theater import ConflictTheater
     from game.theater.seasonalconditions import SeasonalConditions
-
-
-class TimeOfDay(Enum):
-    Dawn = "dawn"
-    Day = "day"
-    Dusk = "dusk"
-    Night = "night"
 
 
 @dataclass(frozen=True)

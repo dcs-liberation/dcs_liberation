@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import time
 from typing import TypeAlias
 
-from game.weather import TimeOfDay
+from game.timeofday import TimeOfDay
 
 TimeRange: TypeAlias = tuple[time, time]
 
