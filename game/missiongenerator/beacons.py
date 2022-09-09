@@ -1,12 +1,13 @@
-from dataclasses import dataclass
-from enum import auto, IntEnum
 import json
+from collections.abc import Iterator
+from dataclasses import dataclass
+from enum import IntEnum, auto
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Optional
 
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanBand, TacanChannel
-
+from game.theater import ConflictTheater
 
 BEACONS_RESOURCE_PATH = Path("resources/dcs/beacons")
 
@@ -65,10 +66,32 @@ class Beacon:
         return TacanChannel(self.channel, TacanBand.X)
 
 
-def load_beacons_for_terrain(name: str) -> Iterable[Beacon]:
-    beacons_file = BEACONS_RESOURCE_PATH / f"{name.lower()}.json"
-    if not beacons_file.exists():
-        raise RuntimeError(f"Beacon file {beacons_file.resolve()} is missing")
+class Beacons:
+    _by_terrain: dict[str, dict[str, Beacon]] = {}
 
-    for beacon in json.loads(beacons_file.read_text()):
-        yield Beacon(**beacon)
+    @classmethod
+    def _load_for_theater_if_needed(cls, theater: ConflictTheater) -> None:
+        if theater.terrain.name in cls._by_terrain:
+            return
+
+        beacons_file = BEACONS_RESOURCE_PATH / f"{theater.terrain.name.lower()}.json"
+        if not beacons_file.exists():
+            raise RuntimeError(f"Beacon file {beacons_file.resolve()} is missing")
+
+        beacons = {}
+        for bid, beacon in json.loads(beacons_file.read_text()).items():
+            beacons[bid] = Beacon(**beacon)
+        cls._by_terrain[theater.terrain.name] = beacons
+
+    @classmethod
+    def _dict_for_theater(cls, theater: ConflictTheater) -> dict[str, Beacon]:
+        cls._load_for_theater_if_needed(theater)
+        return cls._by_terrain[theater.terrain.name]
+
+    @classmethod
+    def iter_theater(cls, theater: ConflictTheater) -> Iterator[Beacon]:
+        yield from cls._dict_for_theater(theater).values()
+
+    @classmethod
+    def with_id(cls, beacon_id: str, theater: ConflictTheater) -> Beacon:
+        return cls._dict_for_theater(theater)[beacon_id]

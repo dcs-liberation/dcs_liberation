@@ -23,7 +23,7 @@ from game.theater.bullseye import Bullseye
 from game.unitmap import UnitMap
 from .airconflictdescription import AirConflictDescription
 from .airsupportgenerator import AirSupportGenerator
-from .beacons import load_beacons_for_terrain
+from .beacons import Beacons
 from .briefinggenerator import BriefingGenerator, MissionInfoGenerator
 from .cargoshipgenerator import CargoShipGenerator
 from .convoygenerator import ConvoyGenerator
@@ -169,8 +169,7 @@ class MissionGenerator:
         Dedup beacon/radio frequencies, since some maps have some frequencies
         used multiple times.
         """
-        beacons = load_beacons_for_terrain(self.game.theater.terrain.name)
-        for beacon in beacons:
+        for beacon in Beacons.iter_theater(self.game.theater):
             unique_map_frequencies.add(beacon.frequency)
             if beacon.is_tacan:
                 if beacon.channel is None:

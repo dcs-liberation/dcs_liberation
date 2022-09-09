@@ -21,18 +21,19 @@ beacons = {
 
 """
 import argparse
-from contextlib import contextmanager
 import dataclasses
 import gettext
+import json
 import logging
 import os
-from pathlib import Path
 import textwrap
+from contextlib import contextmanager
+from pathlib import Path
 from typing import Dict, Iterable, Union
 
 import lupa
 
-from game.missiongenerator.beacons import Beacon, BeaconType, BEACONS_RESOURCE_PATH
+from game.missiongenerator.beacons import BEACONS_RESOURCE_PATH, Beacon, BeaconType
 
 THIS_DIR = Path(__file__).parent.resolve()
 SRC_DIR = THIS_DIR.parents[1]
@@ -59,7 +60,7 @@ def convert_lua_frequency(raw: Union[float, int]) -> int:
         return raw
 
 
-def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
+def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[tuple[str, Beacon]]:
     logging.info(f"Loading terrain data from {path}")
     # TODO: Fix case-sensitive issues.
     # The beacons.lua file differs by case in some terrains. Will need to be
@@ -133,7 +134,7 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
                 )
             beacon_type = beacon_types_map[beacon_type_lua]
 
-            yield Beacon(
+            yield beacon["beaconId"], Beacon(
                 beacon["display_name"],
                 beacon["callsign"],
                 beacon_type,
@@ -161,12 +162,13 @@ class Importer:
             beacons = beacons_from_terrain(self.dcs_path, terrain)
             self.export_beacons(terrain.name, beacons)
 
-    def export_beacons(self, terrain: str, beacons: Iterable[Beacon]) -> None:
+    def export_beacons(
+        self, terrain: str, beacons: Iterable[tuple[str, Beacon]]
+    ) -> None:
         terrain_py_path = self.export_dir / f"{terrain.lower()}.json"
-        import json
 
         terrain_py_path.write_text(
-            json.dumps([dataclasses.asdict(b) for b in beacons], indent=True)
+            json.dumps({bid: dataclasses.asdict(b) for bid, b in beacons}, indent=True)
         )
 
 
