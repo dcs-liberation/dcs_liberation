@@ -92,6 +92,7 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         return 1
 
     def fulfill_mission(self, state: TheaterState) -> bool:
+        color = "blue" if state.context.coalition.player else "red"
         self.propose_flights()
         fulfiller = PackageFulfiller(
             state.context.coalition,
@@ -99,11 +100,12 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
             state.context.game_db.flights,
             state.context.settings,
         )
-        self.package = fulfiller.plan_mission(
-            ProposedMission(self.target, self.flights),
-            self.purchase_multiplier,
-            state.context.tracer,
-        )
+        with state.context.tracer.trace(f"{color} {self.flights[0].task} planning"):
+            self.package = fulfiller.plan_mission(
+                ProposedMission(self.target, self.flights),
+                self.purchase_multiplier,
+                state.context.tracer,
+            )
         return self.package is not None
 
     def propose_common_escorts(self) -> None:
