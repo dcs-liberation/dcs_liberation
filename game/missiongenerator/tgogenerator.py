@@ -373,7 +373,17 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                 logging.warning(f"Found empty carrier group in {self.control_point}")
                 continue
 
-            ship_group = self.create_ship_group(group.group_name, group.units, atc)
+            ship_units = []
+            for unit in group.units:
+                if unit.alive:
+                    # All alive Ships
+                    ship_units.append(unit)
+
+            if not ship_units:
+                # Empty array (no alive units), stop here
+                return
+
+            ship_group = self.create_ship_group(group.group_name, ship_units, atc)
 
             # Always steam into the wind, even if the carrier is being moved.
             # There are multiple unsimulated hours between turns, so we can
@@ -382,7 +392,7 @@ class GenericCarrierGenerator(GroundObjectGenerator):
             brc = self.steam_into_wind(ship_group)
 
             # Set Carrier Specific Options
-            if g_id == 0:
+            if g_id == 0 and self.control_point.runway_is_operational():
                 # Get Correct unit type for the carrier.
                 # This will upgrade to super carrier if option is enabled
                 carrier_type = self.carrier_type

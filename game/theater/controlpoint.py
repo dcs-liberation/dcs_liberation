@@ -1194,7 +1194,7 @@ class NavalControlPoint(ControlPoint, ABC):
         # while its escorts are still alive.
         for group in self.find_main_tgo().groups:
             for u in group.units:
-                if u.type in [
+                if u.alive and u.type in [
                     Forrestal,
                     Stennis,
                     LHA_Tarawa,
