@@ -20,6 +20,10 @@ class MapZonesJs(BaseModel):
     class Config:
         title = "MapZones"
 
+    @classmethod
+    def empty(cls) -> MapZonesJs:
+        return MapZonesJs(inclusion=[], exclusion=[], sea=[])
+
 
 class UnculledZoneJs(BaseModel):
     position: LeafletPoint
