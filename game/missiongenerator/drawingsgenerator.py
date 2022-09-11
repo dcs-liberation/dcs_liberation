@@ -85,18 +85,16 @@ class DrawingsGenerator:
         Generate a frontline "line" for each active frontline
         """
         for front_line in self.game.theater.conflicts():
-            (
-                plane_start,
-                heading,
-                distance,
-            ) = FrontLineConflictDescription.frontline_vector(
+            bounds = FrontLineConflictDescription.frontline_bounds(
                 front_line, self.game.theater
             )
 
-            end_point = plane_start.point_from_heading(heading.degrees, distance)
+            end_point = bounds.left_position.point_from_heading(
+                bounds.heading_from_left_to_right.degrees, bounds.length
+            )
             shape = self.player_layer.add_line_segment(
-                plane_start,
-                end_point - plane_start,
+                bounds.left_position,
+                end_point - bounds.left_position,
                 line_thickness=16,
                 color=FRONTLINE_COLORS,
                 line_style=LineStyle.Triangle,

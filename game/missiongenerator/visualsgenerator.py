@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING, Any
+from typing import Any, TYPE_CHECKING
 
 from dcs.mission import Mission
 from dcs.unit import Static
@@ -79,18 +79,16 @@ class VisualsGenerator:
             if from_cp.is_global or to_cp.is_global:
                 continue
 
-            (
-                plane_start,
-                heading,
-                distance,
-            ) = FrontLineConflictDescription.frontline_vector(
+            bounds = FrontLineConflictDescription.frontline_bounds(
                 front_line, self.game.theater
             )
-            if not plane_start:
-                continue
 
-            for offset in range(0, distance, self.game.settings.perf_smoke_spacing):
-                position = plane_start.point_from_heading(heading.degrees, offset)
+            for offset in range(
+                0, bounds.length, self.game.settings.perf_smoke_spacing
+            ):
+                position = bounds.left_position.point_from_heading(
+                    bounds.heading_from_left_to_right.degrees, offset
+                )
 
                 for k, v in FRONT_SMOKE_TYPE_CHANCES.items():
                     if random.randint(0, 100) <= k:
