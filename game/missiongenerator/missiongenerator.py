@@ -18,9 +18,10 @@ from game.missiongenerator.aircraft.aircraftgenerator import (
 from game.naming import namegen
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanRegistry
-from game.theater import Airfield, FrontLine
+from game.theater import Airfield
 from game.theater.bullseye import Bullseye
 from game.unitmap import UnitMap
+from .airconflictdescription import AirConflictDescription
 from .airsupportgenerator import AirSupportGenerator
 from .beacons import load_beacons_for_terrain
 from .briefinggenerator import BriefingGenerator, MissionInfoGenerator
@@ -228,7 +229,7 @@ class MissionGenerator:
         # Air Support (Tanker & Awacs)
         air_support_generator = AirSupportGenerator(
             self.mission,
-            self.describe_air_conflict(),
+            AirConflictDescription.for_theater(self.game.theater),
             self.game,
             self.radio_registry,
             self.tacan_registry,
@@ -304,22 +305,6 @@ class MissionGenerator:
                     heading=d["orientation"],
                     dead=True,
                 )
-
-    def describe_air_conflict(self) -> FrontLineConflictDescription:
-        player_cp, enemy_cp = self.game.theater.closest_opposing_control_points()
-        mid_point = player_cp.position.point_from_heading(
-            player_cp.position.heading_between_point(enemy_cp.position),
-            player_cp.position.distance_to_point(enemy_cp.position) / 2,
-        )
-        return FrontLineConflictDescription(
-            self.game.theater,
-            FrontLine(player_cp, enemy_cp),
-            self.game.blue.faction.name,
-            self.game.red.faction.name,
-            self.mission.country(self.game.blue.country_name),
-            self.mission.country(self.game.red.country_name),
-            mid_point,
-        )
 
     def notify_info_generators(
         self,

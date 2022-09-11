@@ -21,7 +21,7 @@ from game.naming import namegen
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.utils import Heading
-from .frontlineconflictdescription import FrontLineConflictDescription
+from .airconflictdescription import AirConflictDescription
 from .missiondata import AwacsInfo, MissionData, TankerInfo
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ class AirSupportGenerator:
     def __init__(
         self,
         mission: Mission,
-        conflict: FrontLineConflictDescription,
+        conflict: AirConflictDescription,
         game: Game,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
@@ -186,7 +186,7 @@ class AirSupportGenerator:
                 plane_type=unit_type,
                 altitude=AWACS_ALT,
                 airport=None,
-                position=self.conflict.position.random_point_within(
+                position=self.conflict.center.random_point_within(
                     AWACS_DISTANCE, AWACS_DISTANCE
                 ),
                 frequency=freq.mhz,
