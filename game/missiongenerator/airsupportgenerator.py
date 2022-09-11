@@ -15,14 +15,14 @@ from dcs.task import (
 )
 from dcs.unittype import UnitType
 
+from game.ato.ai_flight_planner_db import AEWC_CAPABLE
 from game.callsigns import callsign_for_support_unit
 from game.naming import namegen
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.utils import Heading
-from game.ato.ai_flight_planner_db import AEWC_CAPABLE
-from .missiondata import MissionData, AwacsInfo, TankerInfo
 from .frontlineconflictdescription import FrontLineConflictDescription
+from .missiondata import AwacsInfo, MissionData, TankerInfo
 
 if TYPE_CHECKING:
     from game import Game

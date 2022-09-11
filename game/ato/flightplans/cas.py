@@ -78,11 +78,14 @@ class Builder(IBuilder[CasFlightPlan, CasLayout]):
             FrontLineConflictDescription,
         )
 
-        ingress, heading, distance = FrontLineConflictDescription.frontline_vector(
-            location, self.theater
+        bounds = FrontLineConflictDescription.frontline_bounds(location, self.theater)
+        ingress = bounds.left_position
+        center = ingress.point_from_heading(
+            bounds.heading_from_left_to_right.degrees, bounds.length / 2
         )
-        center = ingress.point_from_heading(heading.degrees, distance / 2)
-        egress = ingress.point_from_heading(heading.degrees, distance)
+        egress = ingress.point_from_heading(
+            bounds.heading_from_left_to_right.degrees, bounds.length
+        )
 
         ingress_distance = ingress.distance_to_point(self.flight.departure.position)
         egress_distance = egress.distance_to_point(self.flight.departure.position)

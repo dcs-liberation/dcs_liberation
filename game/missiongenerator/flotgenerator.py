@@ -43,9 +43,9 @@ from game.radio.radios import RadioRegistry
 from game.theater.controlpoint import ControlPoint
 from game.unitmap import UnitMap
 from game.utils import Heading
-from .missiondata import MissionData, JtacInfo
 from .frontlineconflictdescription import FrontLineConflictDescription
 from .lasercoderegistry import LaserCodeRegistry
+from .missiondata import JtacInfo, MissionData
 
 if TYPE_CHECKING:
     from game import Game
@@ -100,18 +100,14 @@ class FlotGenerator:
             self.conflict.front_line, self.game.theater
         )
 
-        frontline_vector = FrontLineConflictDescription.frontline_vector(
-            self.conflict.front_line, self.game.theater
-        )
-
         # Create player groups at random position
         player_groups = self._generate_groups(
-            self.player_planned_combat_groups, frontline_vector, True
+            self.player_planned_combat_groups, is_player=True
         )
 
         # Create enemy groups at random position
         enemy_groups = self._generate_groups(
-            self.enemy_planned_combat_groups, frontline_vector, False
+            self.enemy_planned_combat_groups, is_player=False
         )
 
         # TODO: Differentiate AirConflict and GroundConflict classes.
@@ -698,33 +694,33 @@ class FlotGenerator:
         return rg
 
     def get_valid_position_for_group(
-        self,
-        conflict_position: Point,
-        combat_width: int,
-        distance_from_frontline: int,
-        heading: Heading,
-        spawn_heading: Heading,
-    ) -> Optional[Point]:
-        shifted = conflict_position.point_from_heading(
-            heading.degrees, random.randint(0, combat_width)
+        self, distance_from_frontline: int, spawn_heading: Heading
+    ) -> Point | None:
+        assert self.conflict.heading is not None
+        assert self.conflict.size is not None
+        shifted = self.conflict.position.point_from_heading(
+            self.conflict.heading.degrees,
+            random.randint(0, self.conflict.size),
         )
         desired_point = shifted.point_from_heading(
             spawn_heading.degrees, distance_from_frontline
         )
         return FrontLineConflictDescription.find_ground_position(
-            desired_point, combat_width, heading, self.conflict.theater
+            desired_point,
+            self.conflict.size,
+            self.conflict.heading,
+            self.conflict.theater,
         )
 
     def _generate_groups(
-        self,
-        groups: list[CombatGroup],
-        frontline_vector: Tuple[Point, Heading, int],
-        is_player: bool,
+        self, groups: list[CombatGroup], is_player: bool
     ) -> List[Tuple[VehicleGroup, CombatGroup]]:
         """Finds valid positions for planned groups and generates a pydcs group for them"""
         positioned_groups = []
-        position, heading, combat_width = frontline_vector
-        spawn_heading = heading.left if is_player else heading.right
+        assert self.conflict.heading is not None
+        spawn_heading = (
+            self.conflict.heading.left if is_player else self.conflict.heading.right
+        )
         country = self.game.coalition_for(is_player).country_name
         for group in groups:
             if group.role == CombatGroupRole.ARTILLERY:
@@ -738,7 +734,7 @@ class FlotGenerator:
                 )
 
             final_position = self.get_valid_position_for_group(
-                position, combat_width, distance_from_frontline, heading, spawn_heading
+                distance_from_frontline, spawn_heading
             )
 
             if final_position is not None:
