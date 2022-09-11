@@ -23,10 +23,12 @@ class FrontLineJs(BaseModel):
     @staticmethod
     def for_front_line(front_line: FrontLine) -> FrontLineJs:
         a = front_line.position.point_from_heading(
-            front_line.attack_heading.right.degrees, nautical_miles(2).meters
+            front_line.blue_forward_heading.right.degrees,
+            nautical_miles(2).meters,
         )
         b = front_line.position.point_from_heading(
-            front_line.attack_heading.left.degrees, nautical_miles(2).meters
+            front_line.blue_forward_heading.left.degrees,
+            nautical_miles(2).meters,
         )
         return FrontLineJs(id=front_line.id, extents=[a.latlng(), b.latlng()])
 
