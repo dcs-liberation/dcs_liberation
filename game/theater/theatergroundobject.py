@@ -85,7 +85,12 @@ class TheaterGroundObject(MissionTarget, SidcDescribable, ABC):
 
     @property
     def sidc_status(self) -> Status:
-        return Status.PRESENT_DESTROYED if self.is_dead else Status.PRESENT
+        if self.is_dead:
+            return Status.PRESENT_DESTROYED
+        elif self.dead_units:
+            return Status.PRESENT_DAMAGED
+        else:
+            return Status.PRESENT
 
     @property
     def standard_identity(self) -> StandardIdentity:
@@ -512,9 +517,13 @@ class SamGroundObject(IadsGroundObject):
     def sidc_status(self) -> Status:
         if self.is_dead:
             return Status.PRESENT_DESTROYED
-        if self.max_threat_range() > meters(0):
-            return Status.PRESENT
-        return Status.PRESENT_DAMAGED
+        elif self.dead_units:
+            if self.max_threat_range() > meters(0):
+                return Status.PRESENT
+            else:
+                return Status.PRESENT_DAMAGED
+        else:
+            return Status.PRESENT_FULLY_CAPABLE
 
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
