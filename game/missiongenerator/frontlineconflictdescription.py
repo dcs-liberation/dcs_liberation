@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from functools import cached_property
 from typing import Optional, Tuple
@@ -143,12 +142,11 @@ class FrontLineConflictDescription:
         max_distance: int,
         heading: Heading,
         theater: ConflictTheater,
-        coerce: bool = True,
     ) -> Optional[Point]:
-        """
-        Finds the nearest valid ground position along a provided heading and it's inverse up to max_distance.
-        `coerce=True` will return the closest land position to `initial` regardless of heading or distance
-        `coerce=False` will return None if a point isn't found
+        """Finds a valid ground position for the front line center.
+
+        Checks for positions along the front line first. If none succeed, the nearest
+        land position to the initial point is used.
         """
         pos = initial
         if theater.is_on_land(pos):
@@ -160,8 +158,6 @@ class FrontLineConflictDescription:
             pos = initial.point_from_heading(heading.opposite.degrees, distance)
             if theater.is_on_land(pos):
                 return pos
-        if coerce:
-            pos = theater.nearest_land_pos(initial)
-            return pos
-        logging.error("Didn't find ground position ({})!".format(initial))
-        return None
+
+        pos = theater.nearest_land_pos(initial)
+        return pos
