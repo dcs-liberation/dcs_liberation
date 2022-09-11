@@ -206,10 +206,6 @@ class FlotGenerator:
         if not infantry_position:
             logging.warning("Could not find infantry position")
             return
-        if side == self.conflict.attackers_country:
-            cp = self.conflict.blue_cp
-        else:
-            cp = self.conflict.red_cp
 
         faction = self.game.faction_for(is_player)
 
@@ -739,6 +735,7 @@ class FlotGenerator:
 
             if final_position is not None:
                 g = self._generate_group(
+                    is_player,
                     self.mission.country(country),
                     group.unit_type,
                     group.size,
@@ -765,19 +762,14 @@ class FlotGenerator:
 
     def _generate_group(
         self,
+        player: bool,
         side: Country,
         unit_type: GroundUnitType,
         count: int,
         at: Point,
-        move_formation: PointAction = PointAction.OffRoad,
-        heading: Heading = Heading.from_degrees(0),
+        heading: Heading,
     ) -> VehicleGroup:
-
-        if side == self.conflict.attackers_country:
-            cp = self.conflict.blue_cp
-        else:
-            cp = self.conflict.red_cp
-
+        cp = self.conflict.front_line.control_point_friendly_to(player)
         group = self.mission.vehicle_group(
             side,
             namegen.next_unit_name(side, unit_type),
@@ -785,7 +777,6 @@ class FlotGenerator:
             position=at,
             group_size=count,
             heading=heading.degrees,
-            move_formation=move_formation,
         )
 
         self.unit_map.add_front_line_units(group, cp, unit_type)
