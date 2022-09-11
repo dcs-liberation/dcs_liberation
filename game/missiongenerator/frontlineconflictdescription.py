@@ -20,6 +20,16 @@ class FrontLineBounds:
     heading_from_left_to_right: Heading
     length: int
 
+    @property
+    def center(self) -> Point:
+        return (self.left_position + self.right_position) / 2
+
+    @property
+    def right_position(self) -> Point:
+        return self.left_position.point_from_heading(
+            self.heading_from_left_to_right.degrees, self.length
+        )
+
 
 class FrontLineConflictDescription:
     def __init__(
