@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import math
 import random
 from typing import List, Optional, TYPE_CHECKING, Tuple
@@ -203,9 +202,6 @@ class FlotGenerator:
             forward_heading,
             self.conflict.theater,
         )
-        if not infantry_position:
-            logging.warning("Could not find infantry position")
-            return
 
         faction = self.game.faction_for(is_player)
 
@@ -691,7 +687,7 @@ class FlotGenerator:
 
     def get_valid_position_for_group(
         self, distance_from_frontline: int, spawn_heading: Heading
-    ) -> Point | None:
+    ) -> Point:
         assert self.conflict.heading is not None
         assert self.conflict.size is not None
         shifted = self.conflict.position.point_from_heading(
@@ -733,30 +729,27 @@ class FlotGenerator:
                 distance_from_frontline, spawn_heading
             )
 
-            if final_position is not None:
-                g = self._generate_group(
+            g = self._generate_group(
+                is_player,
+                self.mission.country(country),
+                group.unit_type,
+                group.size,
+                final_position,
+                heading=spawn_heading.opposite,
+            )
+            if is_player:
+                g.set_skill(Skill(self.game.settings.player_skill))
+            else:
+                g.set_skill(Skill(self.game.settings.enemy_vehicle_skill))
+            positioned_groups.append((g, group))
+
+            if group.role in [CombatGroupRole.APC, CombatGroupRole.IFV]:
+                self.gen_infantry_group_for_group(
+                    g,
                     is_player,
                     self.mission.country(country),
-                    group.unit_type,
-                    group.size,
-                    final_position,
-                    heading=spawn_heading.opposite,
+                    spawn_heading.opposite,
                 )
-                if is_player:
-                    g.set_skill(Skill(self.game.settings.player_skill))
-                else:
-                    g.set_skill(Skill(self.game.settings.enemy_vehicle_skill))
-                positioned_groups.append((g, group))
-
-                if group.role in [CombatGroupRole.APC, CombatGroupRole.IFV]:
-                    self.gen_infantry_group_for_group(
-                        g,
-                        is_player,
-                        self.mission.country(country),
-                        spawn_heading.opposite,
-                    )
-            else:
-                logging.warning(f"Unable to get valid position for {group}")
 
         return positioned_groups
 
