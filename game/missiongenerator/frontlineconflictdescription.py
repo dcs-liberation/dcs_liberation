@@ -6,10 +6,11 @@ from typing import Optional, Tuple
 
 from dcs.mapping import Point
 from shapely.geometry import LineString, Point as ShapelyPoint
+from shapely.ops import nearest_points
 
 from game.theater.conflicttheater import ConflictTheater, FrontLine
 from game.theater.controlpoint import ControlPoint
-from game.utils import Heading
+from game.utils import Heading, dcs_to_shapely_point
 
 FRONTLINE_LENGTH = 80000
 
@@ -146,16 +147,23 @@ class FrontLineConflictDescription:
         Checks for positions along the front line first. If none succeed, the nearest
         land position to the initial point is used.
         """
-        pos = initial
-        if theater.is_on_land(pos):
-            return pos
-        for distance in range(0, int(max_distance), 100):
-            pos = initial.point_from_heading(heading.degrees, distance)
-            if theater.is_on_land(pos):
-                return pos
-            pos = initial.point_from_heading(heading.opposite.degrees, distance)
-            if theater.is_on_land(pos):
-                return pos
+        if theater.landmap is None:
+            return initial
 
-        pos = theater.nearest_land_pos(initial)
-        return pos
+        line = LineString(
+            [
+                dcs_to_shapely_point(
+                    initial.point_from_heading(heading.degrees, max_distance)
+                ),
+                dcs_to_shapely_point(
+                    initial.point_from_heading(heading.opposite.degrees, max_distance)
+                ),
+            ]
+        )
+        masked_front_line = theater.landmap.inclusion_zone_only.intersection(line)
+        if masked_front_line.is_empty:
+            return theater.nearest_land_pos(initial)
+        nearest_good, _ = nearest_points(
+            masked_front_line, dcs_to_shapely_point(initial)
+        )
+        return initial.new_in_same_map(nearest_good.x, nearest_good.y)
