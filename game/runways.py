@@ -5,7 +5,7 @@ import logging
 from dataclasses import dataclass
 from typing import Iterator, Optional, TYPE_CHECKING
 
-from dcs.terrain.terrain import Airport
+from dcs.terrain.terrain import Airport, RunwayApproach
 
 from game.airfields import AirfieldData, AtcData
 from game.radio.radios import RadioFrequency
@@ -29,20 +29,18 @@ class RunwayData:
     icls: Optional[int] = None
 
     @classmethod
-    def for_airfield(
+    def for_pydcs_runway_runway(
         cls,
         theater: ConflictTheater,
         airport: Airport,
-        runway_heading: Heading,
-        runway_name: str,
+        runway: RunwayApproach,
     ) -> RunwayData:
         """Creates RunwayData for the given runway of an airfield.
 
         Args:
             theater: The theater the airport is in.
             airport: The airfield the runway belongs to.
-            runway_heading: Heading of the runway.
-            runway_name: Identifier of the runway to use. e.g. "03" or "20L".
+            runway: The pydcs runway.
         """
         atc: Optional[RadioFrequency] = None
         tacan: Optional[TacanChannel] = None
@@ -56,13 +54,13 @@ class RunwayData:
             airfield = AirfieldData.for_airport(theater, airport)
             tacan = airfield.tacan
             tacan_callsign = airfield.tacan_callsign
-            ils = airfield.ils_freq(runway_name)
+            ils = airfield.ils_freq(runway.name)
         except KeyError:
             logging.warning(f"No airfield data for {airport.name} ({airport.id}")
         return cls(
             airfield_name=airport.name,
-            runway_heading=runway_heading,
-            runway_name=runway_name,
+            runway_heading=Heading(runway.heading),
+            runway_name=runway.name,
             atc=atc,
             tacan=tacan,
             tacan_callsign=tacan_callsign,
@@ -74,20 +72,16 @@ class RunwayData:
         cls, theater: ConflictTheater, airport: Airport
     ) -> Iterator[RunwayData]:
         for runway in airport.runways:
-            runway_number = runway.heading // 10
-            runway_side = ["", "L", "R"][runway.leftright]
-            runway_name = f"{runway_number:02}{runway_side}"
-            yield cls.for_airfield(
-                theater, airport, Heading.from_degrees(runway.heading), runway_name
+            yield cls.for_pydcs_runway_runway(
+                theater,
+                airport,
+                runway.main,
             )
-
-            # pydcs only exposes one runway per physical runway, so to expose
-            # both sides of the runway we need to generate the other.
-            heading = Heading.from_degrees(runway.heading).opposite
-            runway_number = heading.degrees // 10
-            runway_side = ["", "R", "L"][runway.leftright]
-            runway_name = f"{runway_number:02}{runway_side}"
-            yield cls.for_airfield(theater, airport, heading, runway_name)
+            yield cls.for_pydcs_runway_runway(
+                theater,
+                airport,
+                runway.opposite,
+            )
 
 
 class RunwayAssigner:
