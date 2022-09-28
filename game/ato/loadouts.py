@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import logging
 from collections.abc import Iterable
 from typing import Iterator, Mapping, Optional, TYPE_CHECKING, Type
 
@@ -122,9 +123,19 @@ class Loadout:
         for payload in payloads.values():
             name = payload["name"]
             pylons = payload["pylons"]
+            try:
+                pylon_assignments = {
+                    p["num"]: Weapon.with_clsid(p["CLSID"]) for p in pylons.values()
+                }
+            except KeyError:
+                logging.exception(
+                    "Ignoring %s loadout with invalid weapons: %s", aircraft.name, name
+                )
+                continue
+
             yield Loadout(
                 name,
-                {p["num"]: Weapon.with_clsid(p["CLSID"]) for p in pylons.values()},
+                pylon_assignments,
                 date=None,
             )
 
@@ -189,11 +200,16 @@ class Loadout:
             dcs_unit_type.load_payloads()
             payload = dcs_unit_type.loadout_by_name(name)
             if payload is not None:
-                return Loadout(
-                    name,
-                    {i: Weapon.with_clsid(d["clsid"]) for i, d in payload},
-                    date=None,
-                )
+                try:
+                    pylons = {i: Weapon.with_clsid(d["clsid"]) for i, d in payload}
+                except KeyError:
+                    logging.exception(
+                        "Ignoring %s loadout with invalid weapons: %s",
+                        dcs_unit_type.id,
+                        name,
+                    )
+                    continue
+                return Loadout(name, pylons, date=None)
 
         # TODO: Try group.load_task_default_loadout(loadout_for_task)
         return cls.empty_loadout()
