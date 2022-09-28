@@ -6,7 +6,7 @@ from dcs import Mission
 from dcs.country import Country
 from dcs.mapping import Vector2
 from dcs.mission import StartType as DcsStartType
-from dcs.planes import F_14A, Su_33
+from dcs.planes import Su_33
 from dcs.ships import KUZNECOW
 from dcs.terrain import Airport, NoParkingSlotError
 from dcs.unitgroup import FlyingGroup, ShipGroup, StaticGroup
@@ -259,9 +259,7 @@ class FlightGroupSpawner:
         # Setting Su-33s starting from the non-supercarrier Kuznetsov to take off from
         # runway to work around a DCS AI issue preventing Su-33s from taking off when
         # set to "Takeoff from ramp" (#1352)
-        # Also setting the F-14A AI variant to start from cats since they are reported
-        # to have severe pathfinding problems when doing ramp starts (#1927)
-        if self.flight.unit_type.dcs_unit_type == F_14A or (
+        if (
             self.flight.unit_type.dcs_unit_type == Su_33
             and group_units[0] is not None
             and group_units[0].type == KUZNECOW.id
