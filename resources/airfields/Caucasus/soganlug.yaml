@@ -1,9 +1,0 @@
----
-name: Soganlug
-id: 30
-icao: UG24
-elevation: 1474
-runway_length: 7871
-tacan:
-  callsign: GTB
-  channel: 25X

@@ -13,9 +13,6 @@ from pathlib import Path
 from typing import TextIO, TypeAlias
 
 from game import VERSION
-from game.airfields import AirfieldData
-from game.theater import ConflictTheater
-from game.theater.theaterloader import TheaterLoader
 
 
 class ReportElement(ABC):
@@ -82,47 +79,6 @@ class LinterBase(ABC):
         ...
 
 
-class AirfieldLinter(LinterBase):
-    def stream_reports(self) -> ReportStream:
-        yield H2("Airfield data")
-        yield Paragraph(
-            "This section lists airfields with missing data. Not all data is able to "
-            "be exported from DCS directly, and the data reported in this section must "
-            "be maintained by hand. For any airfield listed in this section, "
-            "Liberation will not be able to (not necessarily a complete list):"
-        )
-        yield UnorderedList(
-            [
-                "Include ATC, TACAN, or ILS information in the kneeboard",
-                "Configure preset radio channels for capable aircraft",
-            ]
-        )
-        for theater in TheaterLoader.each():
-            yield from self.document_airfields_with_missing_data(theater)
-            self.iter_airfields_with_no_data(theater)
-
-    def document_airfields_with_missing_data(
-        self, theater: ConflictTheater
-    ) -> ReportStream:
-        airfields = list(self.iter_airfields_with_no_data(theater))
-
-        yield H3(theater.terrain.name)
-        if not airfields:
-            yield Paragraph("No missing data.")
-            return
-
-        yield Paragraph("The following airfields are missing data:")
-        yield UnorderedList(airfields)
-
-    @staticmethod
-    def iter_airfields_with_no_data(theater: ConflictTheater) -> Iterator[str]:
-        for airfield in theater.terrain.airport_list():
-            try:
-                AirfieldData.for_airport(theater, airfield)
-            except KeyError:
-                yield airfield.name
-
-
 class UncheckedDataLinter(LinterBase):
     def stream_reports(self) -> ReportStream:
         yield H2("Unchecked data")
@@ -149,7 +105,6 @@ class Linter(LinterBase):
             "**Accuracy of data cannot be verified by this report.** If data not "
             "mentioned in this report is present but **wrong**, file a bug."
         )
-        yield from AirfieldLinter().stream_reports()
         yield from UncheckedDataLinter().stream_reports()
 
     def describe_version(self) -> ReportElement:

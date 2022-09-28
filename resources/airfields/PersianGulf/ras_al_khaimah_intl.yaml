@@ -1,9 +1,0 @@
----
-name: Ras Al Khaimah Intl
-id: 28
-icao: OMRK
-elevation: 70
-runway_length: 8406
-vor:
-  callsign: OMRK
-  frequency: 113.600 MHz

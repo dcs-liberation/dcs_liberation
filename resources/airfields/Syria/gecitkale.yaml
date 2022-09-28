@@ -1,9 +1,0 @@
----
-name: Gecitkale
-id: 50
-icao: LCGK
-elevation: 147
-runway_length: 8156
-vor:
-  callsign: GKE
-  frequency: 114.300 MHz

@@ -1,9 +1,0 @@
----
-name: Ercan
-id: 49
-icao: LCEN
-elevation: 383
-runway_length: 7559
-vor:
-  callsign: ECN
-  frequency: 117 MHz

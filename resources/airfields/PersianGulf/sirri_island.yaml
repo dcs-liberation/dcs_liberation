@@ -1,9 +1,0 @@
----
-name: Sirri Island
-id: 15
-icao: OIBS
-elevation: 17
-runway_length: 7443
-vor:
-  callsign: SIR
-  frequency: 113.750 MHz

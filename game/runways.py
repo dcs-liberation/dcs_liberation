@@ -6,7 +6,7 @@ from typing import Iterator, Optional, TYPE_CHECKING
 
 from dcs.terrain.terrain import Airport, RunwayApproach
 
-from game.airfields import AtcData
+from game.atcdata import AtcData
 from game.dcs.beacons import BeaconType, Beacons
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel

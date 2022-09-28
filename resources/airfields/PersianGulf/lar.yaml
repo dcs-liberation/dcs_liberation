@@ -1,9 +1,0 @@
----
-name: Lar
-id: 11
-icao: OISL
-elevation: 2635
-runway_length: 9600
-vor:
-  callsign: LAR
-  frequency: 117.900 MHz
