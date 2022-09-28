@@ -16,7 +16,6 @@ from dcs.task import Modulation
 from dcs.terrain import Airport
 
 from game.radio.radios import RadioFrequency
-from game.radio.tacan import TacanChannel
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
@@ -60,20 +59,11 @@ class AirfieldData:
     #: Runway length (in ft).
     runway_length: int = 0
 
-    #: TACAN channel for the airfield.
-    tacan: Optional[TacanChannel] = None
-
-    #: TACAN callsign
-    tacan_callsign: Optional[str] = None
-
     #: VOR as a tuple of (callsign, frequency).
     vor: Optional[Tuple[str, RadioFrequency]] = None
 
     #: RSBN channel as a tuple of (callsign, channel).
     rsbn: Optional[Tuple[str, int]] = None
-
-    #: Dict of runway heading -> ILS tuple of (callsign, frequency).
-    ils: Dict[str, Tuple[str, RadioFrequency]] = field(default_factory=dict)
 
     #: Dict of runway heading -> PRMG tuple of (callsign, channel).
     prmg: Dict[str, Tuple[str, int]] = field(default_factory=dict)
@@ -86,22 +76,10 @@ class AirfieldData:
 
     _airfields: ClassVar[dict[str, dict[int, AirfieldData]]] = {}
 
-    def ils_freq(self, runway: str) -> Optional[RadioFrequency]:
-        ils = self.ils.get(runway)
-        if ils is not None:
-            return ils[1]
-        return None
-
     @classmethod
     def from_file(cls, airfield_yaml: Path) -> AirfieldData:
         with airfield_yaml.open() as yaml_file:
             data = yaml.safe_load(yaml_file)
-
-        tacan_channel = None
-        tacan_callsign = None
-        if (tacan := data.get("tacan")) is not None:
-            tacan_channel = TacanChannel.parse(tacan["channel"])
-            tacan_callsign = tacan["callsign"]
 
         vor = None
         if (vor_data := data.get("vor")) is not None:
@@ -114,17 +92,10 @@ class AirfieldData:
         if (rsbn_data := data.get("rsbn")) is not None:
             rsbn = (rsbn_data["callsign"], rsbn_data["channel"])
 
-        ils = {}
         prmg = {}
         outer_ndb = {}
         inner_ndb = {}
         for name, runway_data in data.get("runways", {}).items():
-            if (ils_data := runway_data.get("ils")) is not None:
-                ils[name] = (
-                    ils_data["callsign"],
-                    RadioFrequency.parse(ils_data["frequency"], Modulation.FM),
-                )
-
             if (prmg_data := runway_data.get("prmg")) is not None:
                 prmg[name] = (prmg_data["callsign"], prmg_data["channel"])
 
@@ -146,11 +117,8 @@ class AirfieldData:
             data.get("icao"),
             data["elevation"],
             data["runway_length"],
-            tacan_channel,
-            tacan_callsign,
             vor,
             rsbn,
-            ils,
             prmg,
             outer_ndb,
             inner_ndb,
