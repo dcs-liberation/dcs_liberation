@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Iterator
 from dataclasses import dataclass
-from enum import IntEnum, auto
+from enum import IntEnum
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
 
@@ -17,31 +17,31 @@ BEACONS_RESOURCE_PATH = Path("resources/dcs/beacons")
 
 
 class BeaconType(IntEnum):
-    BEACON_TYPE_NULL = auto()
-    BEACON_TYPE_VOR = auto()
-    BEACON_TYPE_DME = auto()
-    BEACON_TYPE_VOR_DME = auto()
-    BEACON_TYPE_TACAN = auto()
-    BEACON_TYPE_VORTAC = auto()
-    BEACON_TYPE_RSBN = auto()
-    BEACON_TYPE_BROADCAST_STATION = auto()
+    BEACON_TYPE_NULL = 0
+    BEACON_TYPE_VOR = 1
+    BEACON_TYPE_DME = 2
+    BEACON_TYPE_VOR_DME = 3
+    BEACON_TYPE_TACAN = 4
+    BEACON_TYPE_VORTAC = 5
+    BEACON_TYPE_RSBN = 6
+    BEACON_TYPE_BROADCAST_STATION = 7
 
-    BEACON_TYPE_HOMER = auto()
-    BEACON_TYPE_AIRPORT_HOMER = auto()
-    BEACON_TYPE_AIRPORT_HOMER_WITH_MARKER = auto()
-    BEACON_TYPE_ILS_FAR_HOMER = auto()
-    BEACON_TYPE_ILS_NEAR_HOMER = auto()
+    BEACON_TYPE_HOMER = 8
+    BEACON_TYPE_AIRPORT_HOMER = 9
+    BEACON_TYPE_AIRPORT_HOMER_WITH_MARKER = 10
+    BEACON_TYPE_ILS_FAR_HOMER = 11
+    BEACON_TYPE_ILS_NEAR_HOMER = 12
 
-    BEACON_TYPE_ILS_LOCALIZER = auto()
-    BEACON_TYPE_ILS_GLIDESLOPE = auto()
+    BEACON_TYPE_ILS_LOCALIZER = 13
+    BEACON_TYPE_ILS_GLIDESLOPE = 14
 
-    BEACON_TYPE_PRMG_LOCALIZER = auto()
-    BEACON_TYPE_PRMG_GLIDESLOPE = auto()
+    BEACON_TYPE_PRMG_LOCALIZER = 15
+    BEACON_TYPE_PRMG_GLIDESLOPE = 16
 
-    BEACON_TYPE_ICLS_LOCALIZER = auto()
-    BEACON_TYPE_ICLS_GLIDESLOPE = auto()
+    BEACON_TYPE_ICLS_LOCALIZER = 17
+    BEACON_TYPE_ICLS_GLIDESLOPE = 18
 
-    BEACON_TYPE_NAUTICAL_HOMER = auto()
+    BEACON_TYPE_NAUTICAL_HOMER = 19
 
 
 @dataclass(frozen=True)
