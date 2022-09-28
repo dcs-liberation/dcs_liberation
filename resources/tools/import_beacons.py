@@ -123,6 +123,9 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[Beacon]:
         for beacon in beacons.values():
             beacon_type_lua = beacon["type"]
             if beacon_type_lua not in beacon_types_map:
+                beacon_types_path = (
+                    dcs_path / "MissionEditor/modules/me_beaconsInfo.lua"
+                )
                 raise KeyError(
                     f"Unknown beacon type {beacon_type_lua}. Check that all "
                     f"beacon types in {beacon_types_path} are present in "
