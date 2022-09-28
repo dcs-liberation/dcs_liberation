@@ -13,7 +13,7 @@ function FrontLine(props: FrontLineProps) {
   return (
     <Polyline
       positions={props.front.extents}
-      weight={8}
+      weight={16}
       color={"#fe7d0a"}
       eventHandlers={{
         contextmenu: () => {
