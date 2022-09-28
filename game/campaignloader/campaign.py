@@ -31,7 +31,7 @@ DEFAULT_BUDGET = 2000
 @dataclass(frozen=True)
 class Campaign:
     name: str
-    icon_name: str
+    menu_thumbnail_dcs_relative_path: Path
     authors: str
     description: str
 
@@ -89,7 +89,7 @@ class Campaign:
 
         return cls(
             data["name"],
-            f"Terrain_{sanitized_theater}",
+            TheaterLoader(data["theater"].lower()).menu_thumbnail_dcs_relative_path,
             data.get("authors", "???"),
             data.get("description", ""),
             (version.major, version.minor),

@@ -4,18 +4,20 @@ from typing import Optional
 
 from PySide2 import QtGui
 from PySide2.QtCore import QItemSelectionModel, QModelIndex, Qt
-from PySide2.QtGui import QStandardItem, QStandardItemModel
+from PySide2.QtGui import QPixmap, QStandardItem, QStandardItemModel
 from PySide2.QtWidgets import QAbstractItemView, QListView
 
-import qt_ui.uiconstants as CONST
 from game.campaignloader.campaign import Campaign
+from qt_ui.liberation_install import get_dcs_install_directory
 
 
 class QCampaignItem(QStandardItem):
     def __init__(self, campaign: Campaign) -> None:
         super(QCampaignItem, self).__init__()
         self.setData(campaign, QCampaignList.CampaignRole)
-        self.setIcon(QtGui.QIcon(CONST.ICONS[campaign.icon_name]))
+        dcs_path = get_dcs_install_directory()
+        icon_path = dcs_path / campaign.menu_thumbnail_dcs_relative_path
+        self.setIcon(QtGui.QIcon(QPixmap(str(icon_path))))
         self.setEditable(False)
         if campaign.is_compatible:
             name = campaign.name
