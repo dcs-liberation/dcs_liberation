@@ -8,7 +8,7 @@ export const useEventStream = () => {
   const dispatch = useAppDispatch();
 
   const onMessage = useCallback(
-    (message) => {
+    (message: MessageEvent) => {
       handleStreamedEvents(dispatch, JSON.parse(message.data));
     },
     [dispatch]
