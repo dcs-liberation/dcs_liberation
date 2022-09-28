@@ -84,7 +84,13 @@ class Beacons:
 
         beacons = {}
         for bid, beacon in json.loads(beacons_file.read_text()).items():
-            beacons[bid] = Beacon(**beacon)
+            beacons[bid] = Beacon(
+                name=beacon["name"],
+                callsign=beacon["callsign"],
+                beacon_type=BeaconType(beacon["beacon_type"]),
+                hertz=beacon["hertz"],
+                channel=beacon["channel"],
+            )
         cls._by_terrain[theater.terrain.name] = beacons
 
     @classmethod

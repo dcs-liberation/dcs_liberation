@@ -66,13 +66,6 @@ class OutOfTacanChannelsError(RuntimeError):
         super().__init__(f"No available channels in TACAN {band.value} band")
 
 
-class TacanChannelInUseError(RuntimeError):
-    """Raised when attempting to reserve an in-use channel."""
-
-    def __init__(self, channel: TacanChannel) -> None:
-        super().__init__(f"{channel} is already in use")
-
-
 class TacanRegistry:
     """Manages allocation of TACAN channels."""
 
@@ -116,10 +109,5 @@ class TacanRegistry:
 
         Args:
             channel: The channel to reserve.
-
-        Raises:
-            TacanChannelInUseError: The given channel is already in use.
         """
-        if channel in self.allocated_channels:
-            raise TacanChannelInUseError(channel)
         self.allocated_channels.add(channel)

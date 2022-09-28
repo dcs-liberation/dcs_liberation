@@ -4,7 +4,6 @@ from game.radio.tacan import (
     OutOfTacanChannelsError,
     TacanBand,
     TacanChannel,
-    TacanChannelInUseError,
     TacanRegistry,
     TacanUsage,
 )
@@ -72,9 +71,8 @@ def test_reserve_all_valid_a2a() -> None:
 
 def test_reserve_again() -> None:
     registry = TacanRegistry()
-    with pytest.raises(TacanChannelInUseError):
-        registry.mark_unavailable(TacanChannel(1, TacanBand.X))
-        registry.mark_unavailable(TacanChannel(1, TacanBand.X))
+    registry.mark_unavailable(TacanChannel(1, TacanBand.X))
+    registry.mark_unavailable(TacanChannel(1, TacanBand.X))
 
 
 def test_tacan_parsing() -> None:
