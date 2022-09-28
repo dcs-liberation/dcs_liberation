@@ -4,9 +4,12 @@ import AircraftLayer from "../aircraftlayer";
 import AirDefenseRangeLayer from "../airdefenserangelayer";
 import CombatLayer from "../combatlayer";
 import ControlPointsLayer from "../controlpointslayer";
+import CullingExclusionZones from "../cullingexclusionzones/CullingExclusionZones";
 import FlightPlansLayer from "../flightplanslayer";
 import FrontLinesLayer from "../frontlineslayer";
+import Iadsnetworklayer from "../iadsnetworklayer";
 import NavMeshLayer from "../navmesh/NavMeshLayer";
+import LeafletRuler from "../ruler/Ruler";
 import SupplyRoutesLayer from "../supplyrouteslayer";
 import TerrainZonesLayers from "../terrainzones/TerrainZonesLayers";
 import TgosLayer from "../tgoslayer/TgosLayer";
@@ -17,22 +20,15 @@ import { Map } from "leaflet";
 import { useEffect, useRef } from "react";
 import { BasemapLayer } from "react-esri-leaflet";
 import { LayersControl, MapContainer, ScaleControl } from "react-leaflet";
-import Iadsnetworklayer from "../iadsnetworklayer";
-import CullingExclusionZones from "../cullingexclusionzones/CullingExclusionZones"
-import LeafletRuler from "../ruler/Ruler";
 
 export default function LiberationMap() {
-  const map = useRef<Map>();
+  const map = useRef<Map>(null);
   const mapCenter = useAppSelector(selectMapCenter);
   useEffect(() => {
     map.current?.setView(mapCenter, 8, { animate: true, duration: 1 });
   });
   return (
-    <MapContainer
-      zoom={8}
-      zoomControl={false}
-      whenCreated={(mapInstance) => (map.current = mapInstance)}
-    >
+    <MapContainer zoom={8} zoomControl={false} ref={map}>
       <ScaleControl />
       <LeafletRuler />
       <LayersControl collapsed={false}>
