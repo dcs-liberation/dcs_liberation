@@ -6,35 +6,43 @@ daytime:
   day: [9, 18]
   dusk: [18, 20]
   night: [0, 5]
-# TODO: https://github.com/dcs-liberation/dcs_liberation/issues/2242
+# Sourced from
+# https://www.worlddata.info/america/argentina/climate-santa-cruz.php
+# This map is huge and probably has wide climate variations across the region,
+# but that's not something we (or DCS) can model, so Santa Cruz was picked
+# arbitrarily.
+# Pressure data sourced from
+# https://www.weather-atlas.com/en/argentina/puerto-santa-cruz-climate#pressure
 climate:
-  day_night_temperature_difference: 6.0
+  day_night_temperature_difference: 11.0
   seasons:
+    # "winter" and "summer" are actually interpreted as northern hemisphere
+    # seasons in liberation, so these seasons are all inverted.
     winter:
-      average_pressure: 29.72 # TODO: Find real-world data
-      average_temperature: 3.0
-      weather:
-        thunderstorm: 1
-        raining: 20
-        cloudy: 60
-        clear: 20
-    spring:
-      weather:
-        thunderstorm: 1
-        raining: 20
-        cloudy: 40
-        clear: 40
-    summer:
-      average_pressure: 30.02 # TODO: Find real-world data
-      average_temperature: 22.5
+      average_pressure: 29.63
+      average_temperature: 21.0
       weather:
         thunderstorm: 1
         raining: 10
-        cloudy: 35
-        clear: 55
+        cloudy: 55
+        clear: 35
+    spring:
+      weather:
+        thunderstorm: 1
+        raining: 10
+        cloudy: 65
+        clear: 25
+    summer:
+      average_pressure: 29.77
+      average_temperature: -2.0
+      weather:
+        thunderstorm: 1
+        raining: 5
+        cloudy: 75
+        clear: 20
     fall:
       weather:
         thunderstorm: 1
         raining: 30
-        cloudy: 50
-        clear: 20
+        cloudy: 45
+        clear: 25
