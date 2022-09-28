@@ -1,9 +1,0 @@
----
-name: Andersen AFB
-id: 6
-icao: PGUA
-elevation: 545
-runway_length: 10490
-tacan:
-  callsign: UAM
-  channel: 54X

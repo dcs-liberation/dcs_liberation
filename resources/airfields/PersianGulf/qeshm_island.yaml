@@ -1,9 +1,0 @@
----
-name: Qeshm Island
-id: 13
-icao: OIKQ
-elevation: 26
-runway_length: 13287
-vor:
-  callsign: KHM
-  frequency: 117.100 MHz

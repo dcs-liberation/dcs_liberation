@@ -1,9 +1,0 @@
----
-name: Bandar Lengeh
-id: 3
-icao: OIBL
-elevation: 80
-runway_length: 7625
-vor:
-  callsign: LEN
-  frequency: 114.800 MHz

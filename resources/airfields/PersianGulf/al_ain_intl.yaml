@@ -1,9 +1,0 @@
----
-name: Al Ain Intl
-id: 25
-icao: OMAL
-elevation: 813
-runway_length: 11267
-vor:
-  callsign: ALN
-  frequency: 112.600 MHz

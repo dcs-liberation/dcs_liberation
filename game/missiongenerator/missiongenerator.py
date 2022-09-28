@@ -10,7 +10,7 @@ from dcs import Mission, Point
 from dcs.coalition import Coalition
 from dcs.countries import country_dict
 
-from game.airfields import AtcData
+from game.atcdata import AtcData
 from game.dcs.beacons import Beacons
 from game.dcs.helpers import unit_type_from_name
 from game.missiongenerator.aircraft.aircraftgenerator import (

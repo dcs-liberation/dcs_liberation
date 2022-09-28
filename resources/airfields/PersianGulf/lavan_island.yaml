@@ -1,9 +1,0 @@
----
-name: Lavan Island
-id: 26
-icao: OIBV
-elevation: 75
-runway_length: 8234
-vor:
-  callsign: LVA
-  frequency: 116.850 MHz

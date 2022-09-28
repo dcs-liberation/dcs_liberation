@@ -1,9 +1,0 @@
----
-name: Kish Intl
-id: 24
-icao: OIBK
-elevation: 114
-runway_length: 10617
-tacan:
-  callsign: KIH
-  channel: 112X
