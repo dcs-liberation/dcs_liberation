@@ -11,6 +11,7 @@ from dcs.coalition import Coalition
 from dcs.countries import country_dict
 
 from game.airfields import AtcData
+from game.dcs.beacons import Beacons
 from game.dcs.helpers import unit_type_from_name
 from game.missiongenerator.aircraft.aircraftgenerator import (
     AircraftGenerator,
@@ -23,7 +24,6 @@ from game.theater.bullseye import Bullseye
 from game.unitmap import UnitMap
 from .airconflictdescription import AirConflictDescription
 from .airsupportgenerator import AirSupportGenerator
-from .beacons import Beacons
 from .briefinggenerator import BriefingGenerator, MissionInfoGenerator
 from .cargoshipgenerator import CargoShipGenerator
 from .convoygenerator import ConvoyGenerator

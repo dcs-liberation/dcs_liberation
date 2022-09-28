@@ -33,7 +33,7 @@ from typing import Dict, Iterable, Union
 
 import lupa
 
-from game.missiongenerator.beacons import BEACONS_RESOURCE_PATH, Beacon, BeaconType
+from game.dcs.beacons import BEACONS_RESOURCE_PATH, Beacon, BeaconType
 
 THIS_DIR = Path(__file__).parent.resolve()
 SRC_DIR = THIS_DIR.parents[1]

@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 import json
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum, auto
 from pathlib import Path
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanBand, TacanChannel
-from game.theater import ConflictTheater
+
+if TYPE_CHECKING:
+    from game.theater import ConflictTheater
 
 BEACONS_RESOURCE_PATH = Path("resources/dcs/beacons")
 
