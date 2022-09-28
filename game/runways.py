@@ -1,13 +1,13 @@
 """Runway information and selection."""
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from typing import Iterator, Optional, TYPE_CHECKING
 
 from dcs.terrain.terrain import Airport, RunwayApproach
 
-from game.airfields import AirfieldData, AtcData
+from game.airfields import AtcData
+from game.dcs.beacons import BeaconType, Beacons
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel
 from game.utils import Heading
@@ -50,13 +50,17 @@ class RunwayData:
         if atc_radio is not None:
             atc = atc_radio.uhf
 
-        try:
-            airfield = AirfieldData.for_airport(theater, airport)
-            tacan = airfield.tacan
-            tacan_callsign = airfield.tacan_callsign
-            ils = airfield.ils_freq(runway.name)
-        except KeyError:
-            logging.warning(f"No airfield data for {airport.name} ({airport.id}")
+        for beacon_data in airport.beacons:
+            beacon = Beacons.with_id(beacon_data.id, theater)
+            if beacon.is_tacan:
+                tacan = beacon.tacan_channel
+                tacan_callsign = beacon.callsign
+
+        for beacon_data in runway.beacons:
+            beacon = Beacons.with_id(beacon_data.id, theater)
+            if beacon.beacon_type is BeaconType.BEACON_TYPE_ILS_GLIDESLOPE:
+                ils = beacon.frequency
+
         return cls(
             airfield_name=airport.name,
             runway_heading=Heading(runway.heading),
