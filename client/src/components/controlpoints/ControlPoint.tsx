@@ -79,6 +79,18 @@ function destinationTooltipText(
   return `${cp.name} moving ${distance}nm to ${dest} next turn`;
 }
 
+/**
+ * The primary control point marker. For non-mobile control points, this has
+ * fairly simple behavior: it's a marker in a fixed location that can manage
+ * units and can have missions planned against it.
+ *
+ * For mobile control points, this is a draggable marker. If the control point
+ * has a destination (either because it was dragged after render, or because it
+ * had a destination in the game that was loaded), the unit management and
+ * mission planning behaviors are delegated to SecondaryMarker, and the primary
+ * marker becomes only a destination marker. It can be dragged to change the
+ * destination, and can be right clicked to cancel movement.
+ */
 function PrimaryMarker(props: ControlPointProps) {
   // We can't use normal state to update the marker tooltip or the line points
   // because if we set any state in the drag event it will re-render the
@@ -228,6 +240,14 @@ interface SecondaryMarkerProps {
   destination: LatLngLiteral | undefined;
 }
 
+/**
+ * The secondary marker for a control point. The secondary marker will only be
+ * shown when the control point has a destination set. For mobile control
+ * points, the primary marker is draggable, and the secondary marker will be
+ * shown at the current location iff the control point has been dragged. The
+ * secondary marker is also the marker that has the normal control point
+ * interaction options (mission planning and unit management).
+ */
 function SecondaryMarker(props: SecondaryMarkerProps) {
   if (!props.destination) {
     return <></>;
