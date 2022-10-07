@@ -33,7 +33,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build && generate-license-file --input package.json --output build/NOTICE",
     "regenerate-api": "rtk-query-codegen-openapi ./openapi-config.ts",
-    "lint" : "eslint src",
+    "lint": "eslint src",
     "prepare": "eslint src && license-checker --onlyAllow \"MIT;Apache-2.0;CC0-1.0;BSD-3-Clause;ISC;Custom: https://github.com/tmcw/jsonlint;BSD-2-Clause;Hippocratic-2.1;BSD*;WTFPL\" --excludePrivatePackages --production",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -42,7 +42,9 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "eslintIgnore": ["leaflet-ruler.d.ts"],
+  "eslintIgnore": [
+    "leaflet-ruler.d.ts"
+  ],
   "prettier": {
     "endOfLine": "auto"
   },
