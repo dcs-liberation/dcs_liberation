@@ -2,6 +2,7 @@ from uuid import UUID
 
 from dcs.mapping import LatLng, Point
 from fastapi import APIRouter, Depends, HTTPException, status
+from starlette.responses import Response
 
 from game import Game
 from game.ato import Flight
@@ -49,6 +50,7 @@ def all_waypoints_for_flight(
     "/{flight_id}/{waypoint_idx}/position",
     operation_id="set_waypoint_position",
     status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
 )
 def set_position(
     flight_id: UUID,
