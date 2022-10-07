@@ -4,6 +4,7 @@ import {
   useClearControlPointDestinationMutation,
   useSetControlPointDestinationMutation,
 } from "../../api/liberationApi";
+import { makeLocationMarkerEventHandlers } from "./EventHandlers";
 import {
   Icon,
   LatLng,
@@ -33,14 +34,6 @@ function iconForControlPoint(cp: ControlPointModel) {
     iconUrl: symbol.toDataURL(),
     iconAnchor: new Point(symbol.getAnchor().x, symbol.getAnchor().y),
   });
-}
-
-function openInfoDialog(controlPoint: ControlPointModel) {
-  backend.post(`/qt/info/control-point/${controlPoint.id}`);
-}
-
-function openNewPackageDialog(controlPoint: ControlPointModel) {
-  backend.post(`/qt/create-package/control-point/${controlPoint.id}`);
 }
 
 interface ControlPointProps {
@@ -147,6 +140,10 @@ function PrimaryMarker(props: ControlPointProps) {
     );
   });
 
+  const locationClickHandlers = makeLocationMarkerEventHandlers(
+    props.controlPoint
+  );
+
   return (
     <>
       <Marker
@@ -167,7 +164,7 @@ function PrimaryMarker(props: ControlPointProps) {
         eventHandlers={{
           click: () => {
             if (!hasDestination) {
-              openInfoDialog(props.controlPoint);
+              locationClickHandlers.click();
             }
           },
           contextmenu: () => {
@@ -176,7 +173,7 @@ function PrimaryMarker(props: ControlPointProps) {
                 resetDestination();
               });
             } else {
-              openNewPackageDialog(props.controlPoint);
+              locationClickHandlers.contextmenu();
             }
           },
           drag: (event) => {
@@ -261,14 +258,7 @@ function SecondaryMarker(props: SecondaryMarkerProps) {
       // other markers are helpful so we want to keep them, but make sure the CP
       // is always the clickable thing.
       zIndexOffset={1000}
-      eventHandlers={{
-        click: () => {
-          openInfoDialog(props.controlPoint);
-        },
-        contextmenu: () => {
-          openNewPackageDialog(props.controlPoint);
-        },
-      }}
+      eventHandlers={makeLocationMarkerEventHandlers(props.controlPoint)}
     >
       <Tooltip>
         <LocationTooltipText {...props} />
