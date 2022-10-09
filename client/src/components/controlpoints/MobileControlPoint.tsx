@@ -215,7 +215,10 @@ interface MobileControlPointProps {
 export const MobileControlPoint = (props: MobileControlPointProps) => {
   return (
     <>
-      <PrimaryMarker controlPoint={props.controlPoint} />
+      <PrimaryMarker
+        controlPoint={props.controlPoint}
+        key={props.controlPoint.destination ? 0 : 1}
+      />
       <SecondaryMarker
         controlPoint={props.controlPoint}
         destination={props.controlPoint.destination}
