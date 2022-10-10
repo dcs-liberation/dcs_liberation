@@ -1,0 +1,5 @@
+name: R-40R
+year: 1971
+fallback: R-3R - AAM, radar guided
+clsids:
+  - "{4EDBA993-2E34-444C-95FB-549300BF7CAF}"
