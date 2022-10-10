@@ -28,14 +28,21 @@ Saves from 5.x are not compatible with 6.0.
 
 ## Fixes
 
+* **[Engine]** Fixed issue that prevented some weapon types like torpedoes from being recognized.
+* **[Flight Planning]** Fixed a miscalculation of waypoint TOTs that would require time travel.
+* **[Loadouts]** Improved the range of the F-16 CAS loadout by adding bags.
 * **[Mission Generation]** Fixed SA-13 incorrectly created as SA-8 Loading Unit which will not be spawned in the generated mission.
 * **[Mission Generation]** Fixed an issue which generated the helipads at FARPs incorrectly and placed the helicopters within each other.
 * **[Mission Generation]** Fixed an issue with SEAD missions flown by the AI when using the Skynet Plugin and anti-radiation missiles (ARM). The AI now correctly engages the SAM when it comes alive instead of diving into it.
 * **[Mission Generation]** Fixed an issue where SEAD/DEAD/BAI flights fired all missiles / bombs against a single unit in a group instead of targeting the whole group.
 * **[Mission Generation]** Fixed adding additional mission types for a squadron causing error messages when the mission type is not supported by the aircraft type by default
 * **[Mission Generation]** AAA ground units now spawn correctly at the frontline
+* **[Mission Generation]** Fixed mission scripting error caused by control points with apostrophes in their names, such as Tha'lah.
+* **[Mission Generation]** Fixed generation issue that would cause AI helicopters to get stuck after taking off from a FARP.
 * **[Modding]** Loadouts with invalid weapons (typically new DCS weapons not yet available in Liberation) will be ignored rather than causing an error.
+* **[Modding]** Campaigns that used quad zones for scenery targets will no longer load. Only circular zones were ever supported, but an implementation quirk allowed them to load in a way that would misbehave. A "No white triggerzones found" message during campaign generation is the sign of a broken campaign.
 * **[Squadrons]** Helicopter squadrons can no longer be assigned to FOBs that are not FARPs.
+* **[Squadrons]** Fixed issue in air wing configuration that would allow squadrons to be created with no home base if no base was available.
 * **[UI]** Fixed and issue where the liberation main exe was still running after application close.
 * **[UI]** Disable player slots for non-flyable aircraft.
 
