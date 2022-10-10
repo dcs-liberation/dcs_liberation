@@ -1,10 +1,12 @@
 import inspect
+
 import dcs
 
 REQUIRED_BUILDINGS = [
     "ammo",
     "factory",
     "fob",
+    "oil",
 ]
 
 IADS_BUILDINGS = [
@@ -15,7 +17,6 @@ IADS_BUILDINGS = [
 
 DEFAULT_AVAILABLE_BUILDINGS = [
     "fuel",
-    "oil",
     "ware",
     "farp",
     "derrick",
