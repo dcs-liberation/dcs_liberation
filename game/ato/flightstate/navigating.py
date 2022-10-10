@@ -40,6 +40,11 @@ class Navigating(InFlight):
         )
 
     def estimate_altitude(self) -> tuple[Distance, str]:
+        # This does not behave well when one of the waypoints is AGL and the other is
+        # MSL. We can't really avoid that problem though. We don't know where the ground
+        # is, so conversions between them are impossible, and we do need to use AGL
+        # altitudes for takeoff and landing waypoints (even if we had the runway
+        # elevation, we don't have elevation for FARPs).
         return (
             meters(
                 lerp(
