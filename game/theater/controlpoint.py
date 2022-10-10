@@ -1432,7 +1432,10 @@ class Fob(ControlPoint):
         return len(self.helipads)
 
     def can_operate(self, aircraft: AircraftType) -> bool:
-        return aircraft.helicopter
+        # FOBs and FARPs are the same class, distinguished only by non-FARP FOBs having
+        # zero parking.
+        # https://github.com/dcs-liberation/dcs_liberation/issues/2378
+        return aircraft.helicopter and self.total_aircraft_parking > 0
 
     @property
     def heading(self) -> Heading:

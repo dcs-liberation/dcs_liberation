@@ -35,6 +35,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Mission Generation]** Fixed adding additional mission types for a squadron causing error messages when the mission type is not supported by the aircraft type by default
 * **[Mission Generation]** AAA ground units now spawn correctly at the frontline
 * **[Modding]** Loadouts with invalid weapons (typically new DCS weapons not yet available in Liberation) will be ignored rather than causing an error.
+* **[Squadrons]** Helicopter squadrons can no longer be assigned to FOBs that are not FARPs.
 * **[UI]** Fixed and issue where the liberation main exe was still running after application close.
 * **[UI]** Disable player slots for non-flyable aircraft.
 
