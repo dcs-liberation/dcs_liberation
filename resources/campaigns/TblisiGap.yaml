@@ -5,10 +5,10 @@ authors: Sith1144
 description: <p>A 1980 Cold-war-gone-hot campaign set in the hilly terrain between Tblisi and Kutaisi. Made for the Hind and Hip with a narrow front with lots of targets. Can also be played as Blufor Cold War vs GDR 1985 or as Blufor Modern vs a modern opfor faction. Recommended way to play is focusing on helicopters, with aggressive culling (50-60km is workable, maybe even lower)</p>
 recommended_player_faction: Russia 1975 (Mi-24P)
 recommended_enemy_faction: Germany 1990
-recommended_start_date: 1980-09-21
+recommended_start_date: 1980-09-21 6:40:00
 miz: TblisiGap.miz
 performance: 2
-version: "9.1"
+version: "10.4"
 squadrons:
   #Vaziani, blufor jet base
   31:
