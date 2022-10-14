@@ -2,13 +2,15 @@
 name: Persian Gulf - Valley of Rotary
 theater: Persian Gulf
 authors: Sith1144
-description: <p>Helicopter counterinsurgency campaign set in Southern Iran</p>
+description: <p>Helicopter-focused counterinsurgency campaign set in Southern Iran. The starting airfield is big and easily supports fixed wing aircraft too.</p>
 recommended_player_faction: Iran 2015
 recommended_enemy_faction: Insurgents (Hard)
 recommended_start_date: 2022-06-13
+recommended_player_money: 800
+recommended_enemy_money: 1000
 miz: TheValleyOfRotary.miz
 performance: 2
-version: "9.1"
+version: "10.4"
 squadrons:
   # Shiraz International, BLUFOR start
   19:
