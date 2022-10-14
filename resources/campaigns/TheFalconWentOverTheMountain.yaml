@@ -1,0 +1,336 @@
+---
+name: Syria - The Falcon went over the mountain
+theater: Syria
+authors: Sith1144
+description: <p>Campaign about a task force attacking northern Syria from Incirlik. Culling recommended. Do you love SEAD? Know no greater joy in than showing SAMs who truly rules the skies? this is the campaign for you!</p>
+recommended_player_faction: USA 2005
+recommended_enemy_faction: Syria 2012'ish
+recommended_start_date: 2012-06-01
+miz: TheFalconWentOverTheMountain.miz
+performance: 2
+version: "10.4"
+advanced_iads: true # Campaign has connection_nodes / power_sources / command_centers
+#IADS: EWR and C2 get power generators. batteries have their own generators.
+iads_config:
+# NATO IADS
+#EWRs
+    - NATO EWR-1:
+        - NATO IADS Command
+    - NATO EWR:
+        - NATO IADS Command
+# SAMs
+    - NATO SAM:
+        - NATO IADS Command
+    - NATO SAM-1:
+        - NATO IADS Command
+    - NATO SAM-2:
+        - NATO IADS Command
+    - NATO SAM-3:
+        - NATO IADS Command
+    - NATO SAM-4:
+        - NATO IADS Command
+    - NATO SAM-5:
+        - NATO IADS Command
+    - NATO SAM-6:
+        - NATO IADS Command
+    - NATO SAM-7:
+        - NATO IADS Command
+# Yellow defense zone (Gaziantep-Minakh)
+#EWRs
+    - YellowEWRN: #mountainrange (north)
+        - YellowPPW
+        - YellowControlN
+    - YellowEWRS: #mountainrange (center)
+        - YellowPPW
+        - YellowControlW
+    - YellowEWRC: # internal
+        - HamidiyeControl
+        - GaziantepControl
+        - GaziantepPP
+    - GaziantepAirControl:
+        - GaziantepControl
+        - GaziantepPP
+# The air defense barrier behind the mountains
+    - YellowBarrierN:
+        - YellowControlN
+    - YellowBarrierC1:
+        - YellowControlW
+    - YellowBarrierC2:
+        - YellowControlW
+    - YellowBarrierS:
+        - YellowControlW
+    - YellowBarrierAAA:
+        - YellowControlW
+# the central long range SAM and its point defenses
+    - YellowLongRangeSAMPointDefense:
+        - HamidiyeControl
+    - YellowLongRangeSAM:
+        - HamidiyeControl
+    - YellowLongRangeSAMAAA:
+        - HamidiyeControl
+# the defenses around Gaziantep airfield
+    - GAZSAMN:
+        - GaziantepControl
+    - GAZAAAW:
+        - GaziantepControl
+    - GAZSAME:
+        - GaziantepControl
+    - GAZAAAE:
+        - GaziantepControl
+    - GAZSAMW:
+        - GaziantepControl
+    - GaziantepAAA:
+        - GaziantepControl
+# the defenses around Minakh airfield
+    - MinakhSAM1:
+        - MinakhControl
+    - MinakhSAM2:
+        - MinakhControl
+    - MinakhAAA:
+        - MinakhControl
+#C2 links
+    - YellowControlN:
+        - HamidiyeControl
+    - YellowControlW:
+        - HamidiyeControl
+        - YellowControlN
+    - YellowZoneCommand:
+        - GaziantepControl
+        - MinakhControl
+        - HamidiyeControl
+        - GaziantepPP
+        - GaziantepAirControl
+# Green Defense Zone (HATAY)
+# EWRs
+    - CoastalEWRN:
+        - HatayControl
+        - AntakyaPower
+    - CoastalEWRS:
+        - SamandagControl
+        - AntakyaPower
+# The air defense barrier behind the mountains
+    - GreenBarrierSAM:
+        - SamandagControl
+    - GreenBarrierSAM-1:
+        - SamandagControl
+    - GreenBarrierSAM-2:
+        - HatayControl
+    - GreenBarrierSAM-3:
+        - HatayControl
+    - GreenBarrierSAM-4:
+        - HatayControl
+# Coastal Defenses
+    - GreenSAM-2:
+        - SamandagControl
+    - GreenSAM-3:
+        - SamandagControl
+    - GreenSAM-4:
+        - SamandagControl
+# Hatay Airfield
+    - HataySAM:
+        - HatayControl
+    - HataySAM-1:
+        - HatayControl
+    - HatayAAA:
+        - HatayControl
+# Industrial/Command zone
+    - GreenSAM:
+        - IdlibControl
+        - GreenZoneCommand
+    - GreenSAM-2:
+        - IdlibControl
+        - GreenZoneCommand
+# long range battery and defenses
+    - GreenZoneSAM:
+        - ReyhanliControl
+    - GreenZoneSAMDefense:
+        - ReyhanliControl
+# C2 links
+    - GreenZoneCommand:
+        - IdlibControl
+        - IdlibPower
+        - SamandagControl
+    - HatayControl:
+        - ReyhanliControl
+        - SamandagControl
+        - AntakyaPower
+    - SamandagControl:
+        - AntakyaPower
+    - IdlibControl:
+        - ReyhanliControl
+        - SamandagControl
+        - IdlibPower
+    - ReyhanliControl:
+        - IdlibPower
+# Pink zone (Aleppo)
+# EWR
+    - Abu al-Duhur Air Control:
+        - Al Safira Power
+    - Aleppo Air Control:
+        - Aleppo Power
+    - Kuweires Air Control:
+        - Al Safira Power
+        - Aleppo Power
+    - Jirah Air Control:
+        - Al Safira Power
+# Aleppo city defenses
+    - AleppoSAM:
+        - AleppoCommand
+        - Aleppo Control
+    - AleppoSAM-1:
+        - AleppoCommand
+        - Aleppo Control
+    - AleppoSAM-2:
+        - AleppoCommand
+        - Aleppo Control
+    - AleppoSAM-3:
+        - AleppoCommand
+        - Aleppo Control
+    - AleppoSAM-4:
+        - AleppoCommand
+        - Aleppo Control
+    - AleppoSAM-5:
+        - AleppoCommand
+        - Aleppo Control
+    - AleppoSAM-6:
+        - AleppoCommand
+        - Aleppo Control
+    - AleppoSAM-7:
+        - AleppoCommand
+        - Aleppo Control
+# Long Range SAM
+    - Pink SAM:
+        - Al Safira Power
+        - Aleppo Control
+        - AlSafiraCommand
+    - AlSafiraPD:
+        - Aleppo Control
+        - AlSafiraCommand
+# Abu al-Duhur
+    - AbuSAM:
+        - Abu al-Duhur control
+    - AbuSAM-1:
+        - Abu al-Duhur control
+# Kuweires
+    - KuweiresSAM:
+        - KuweiresControl
+# Jirah
+    - JirahSAM:
+        - JirahControl
+    - JirahSAM-1:
+        - JirahControl
+    - JirahSAM-2:
+        - JirahControl
+    - JirahAAA:
+        - JirahControl
+# C2 links
+    - AleppoCommand:
+        - Aleppo Power
+        - Al Safira Power
+        - Aleppo Control
+    - AlSafiraCommand:
+        - Al Safira Power
+        - Aleppo Power
+        - Aleppo Control
+    - KuweiresControl:
+        - Al Safira Power
+        - Aleppo Control
+    - JirahControl:
+        - Al Safira Power
+        - KuweiresControl
+    - Abu al-Duhur control:
+        - Aleppo Power
+        - Aleppo Control
+    - Aleppo Control:
+        - Aleppo Power
+squadrons:
+    #Incirlik
+    16:
+        - primary: BARCAP
+          aircraft:
+            - F-15C Eagle
+        - primary: SEAD
+          aircraft:
+            - F-16CM Fighting Falcon (Block 50)
+        - primary: DEAD
+          aircraft: 
+            - F-15E Strike Eagle
+        - primary: BARCAP
+          aircraft:
+            - F-16CM Fighting Falcon (Block 50)
+        - primary: CAS
+          aircraft:
+            - A-10C Thunderbolt II (Suite 3)
+        - primary: CAS
+          aircraft:
+            - A-10C Thunderbolt II (Suite 7)
+        - primary: CAS
+          aircraft:
+            - AH-64D Apache Longbow
+        - primary: Strike
+          aircraft:
+            - F-117A Nighthawk
+        - primary: Strike
+          aircraft:
+            - B-1B Lancer
+        - primary: AEW&C
+        - primary: Refueling
+          aircraft: 
+            - KC-135 Stratotanker MPRS
+    #carrier
+    Blue Carrier:
+        - primary: BARCAP
+          aircraft:
+            - F-14B Tomcat
+        - primary: BARCAP
+          aircraft:
+            - F-14B Tomcat
+        - primary: Strike
+          secondary: any
+          aircraft:
+          - F/A-18C Hornet (Lot 20)
+        - primary: Strike
+          secondary: any
+          aircraft:
+          - F/A-18C Hornet (Lot 20)
+        - primary: Refueling
+    #LHA
+    Blue LHA:
+        - primary: CAS
+          aircraft:
+          - AV-8B Harrier II Night Attack
+    #Abu Al-Duhur
+    1:
+        - primary: BARCAP
+          aircraft:
+          - MiG-29S Fulcrum-C
+        - primary: BAI
+          aircraft:
+          - Su-24M Fencer-D
+        - primary: BARCAP
+          aircraft:
+          - Su-30 Flanker-C
+    #Hatay
+    15:
+        - primary: BARCAP
+          aircraft: 
+          - MiG-23MLD Flogger-K
+    #Aleppo
+    27:
+        - primary: AEW&C
+        - primary: Refueling
+        - primary: CAS
+          aircraft:
+          - Mi-24P Hind-F
+        - primary: Transport
+    #Jirah
+    17:
+        - primary: SEAD
+          aircraft:
+          - Su-34 Fullback
+        - primary: Strike
+    #Gaziantep
+    11:
+        - primary: CAS
+          aircraft:
+          - Su-25 Frogfoot
