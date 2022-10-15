@@ -341,7 +341,6 @@ class Game:
         with logged_duration("Turn initialization"):
             self.initialize_turn(events)
 
-        events.begin_new_turn()
         EventStream.put_nowait(events)
 
         # Autosave progress
@@ -435,6 +434,8 @@ class Game:
         # Update cull zones
         with logged_duration("Computing culling positions"):
             self.compute_unculled_zones(events)
+
+        events.begin_new_turn()
 
     def message(self, title: str, text: str = "") -> None:
         self.informations.append(Information(title, text, turn=self.turn))
