@@ -6,15 +6,24 @@ MINOR_VERSION = 0
 MICRO_VERSION = 0
 
 
+def _optional_build_id_component(path: Path) -> str | None:
+    if path.exists():
+        return path.read_text().strip()
+    return None
+
+
+BUILD_NUMBER = _optional_build_id_component(Path("resources/buildnumber"))
+GIT_SHA = _optional_build_id_component(Path("resources/gitsha"))
+
+
 def _build_version_string() -> str:
     components = [
         ".".join(str(v) for v in (MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION))
     ]
-    build_number_path = Path("resources/buildnumber")
-    if build_number_path.exists():
-        with build_number_path.open("r", encoding="utf-8") as build_number_file:
-            components.append(build_number_file.readline())
-
+    if BUILD_NUMBER is not None:
+        components.append(BUILD_NUMBER)
+    if GIT_SHA is not None:
+        components.append(GIT_SHA)
     if not Path("resources/final").exists():
         components.append("preview")
 

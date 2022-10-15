@@ -25,6 +25,7 @@ jobs:
       - name: Set build number
         run: |
           [IO.File]::WriteAllLines($pwd.path + "\resources\buildnumber", $env:GITHUB_RUN_NUMBER)
+          [IO.File]::WriteAllLines($pwd.path + "\resources\gitsha", $env:GITHUB_SHA)
 
       - name: Build app
         uses: ./.github/actions/build-app
