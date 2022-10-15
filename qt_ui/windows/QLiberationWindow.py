@@ -194,6 +194,7 @@ class QLiberationWindow(QMainWindow):
         )
 
         self.bug_report_action = QAction("Report an &issue", self)
+        self.bug_report_action.setIcon(CONST.ICONS["Bug"])
         self.bug_report_action.triggered.connect(self.show_bug_report_dialog)
 
         self.openLogsAction = QAction("Show &logs", self)
@@ -236,6 +237,7 @@ class QLiberationWindow(QMainWindow):
         self.links_bar = self.addToolBar("Links")
         self.links_bar.addAction(self.openDiscordAction)
         self.links_bar.addAction(self.openGithubAction)
+        self.links_bar.addAction(self.bug_report_action)
         self.links_bar.addAction(self.ukraineAction)
 
         self.actions_bar = self.addToolBar("Actions")
@@ -461,6 +463,7 @@ class QLiberationWindow(QMainWindow):
             "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"
             "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"
             "<b>Anubis Yinepu </b> <i>for the Hercules Cargo script</i><br/>"
+            '<a href="https://www.flaticon.com/free-icons/bug" title="bug icons" style="color: #ffffff">Bug icons created by Freepik - Flaticon</a>'
             + "<h4>Splash Screen  :</h4>"
             + "Artwork by Andriy Dankovych (CC BY-SA) [https://www.facebook.com/AndriyDankovych]"
         )
