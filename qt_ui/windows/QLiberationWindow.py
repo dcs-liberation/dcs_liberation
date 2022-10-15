@@ -29,11 +29,11 @@ from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.simcontroller import SimController
-from qt_ui.uiconstants import URLS
 from qt_ui.uncaughtexceptionhandler import UncaughtExceptionHandler
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
+from qt_ui.windows.BugReportDialog import BugReportDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
@@ -193,6 +193,9 @@ class QLiberationWindow(QMainWindow):
             lambda: webbrowser.open_new_tab("https://shdwp.github.io/ukraine/")
         )
 
+        self.bug_report_action = QAction("Report an &issue", self)
+        self.bug_report_action.triggered.connect(self.show_bug_report_dialog)
+
         self.openLogsAction = QAction("Show &logs", self)
         self.openLogsAction.triggered.connect(self.showLogsDialog)
 
@@ -268,14 +271,18 @@ class QLiberationWindow(QMainWindow):
             ),
         )
         help_menu.addAction(
-            "&Online Manual", lambda: webbrowser.open_new_tab(URLS["Manual"])
+            "&Online Manual",
+            lambda: webbrowser.open_new_tab(
+                "https://github.com/dcs-liberation/dcs_liberation/wiki"
+            ),
         )
         help_menu.addAction(
-            "&ED Forum Thread", lambda: webbrowser.open_new_tab(URLS["ForumThread"])
+            "&ED Forum Thread",
+            lambda: webbrowser.open_new_tab(
+                "https://forums.eagle.ru/showthread.php?t=214834"
+            ),
         )
-        help_menu.addAction(
-            "Report an &issue", lambda: webbrowser.open_new_tab(URLS["Issues"])
-        )
+        help_menu.addAction(self.bug_report_action)
         help_menu.addAction(self.openLogsAction)
 
         help_menu.addSeparator()
@@ -482,6 +489,10 @@ class QLiberationWindow(QMainWindow):
 
     def import_templates(self):
         LAYOUTS.import_templates()
+
+    def show_bug_report_dialog(self) -> None:
+        self.dialog = BugReportDialog(self)
+        self.dialog.show()
 
     def showLogsDialog(self):
         self.dialog = QLogsWindow()

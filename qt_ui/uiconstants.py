@@ -5,13 +5,6 @@ from PySide2.QtGui import QPixmap
 
 from .liberation_theme import get_theme_icons
 
-URLS: Dict[str, str] = {
-    "Manual": "https://github.com/dcs-liberation/dcs_liberation/wiki",
-    "Repository": "https://github.com/dcs-liberation/dcs_liberation",
-    "ForumThread": "https://forums.eagle.ru/showthread.php?t=214834",
-    "Issues": "https://github.com/dcs-liberation/dcs_liberation/issues",
-}
-
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Neutral Dot", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
