@@ -41,10 +41,10 @@ body:
       options:
         - 5.2.0
         - Development build
-  - type: input
+  - type: textarea
     attributes:
-      label: Development build
-      description: A link to the development build, if applicable.
+      label: Build information
+      description: The build information from the Help -> Report an issue window.
   - type: input
     attributes:
       label: Campaign name

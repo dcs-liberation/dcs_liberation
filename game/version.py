@@ -4,6 +4,7 @@ from pathlib import Path
 MAJOR_VERSION = 6
 MINOR_VERSION = 0
 MICRO_VERSION = 0
+VERSION_NUMBER = ".".join(str(v) for v in (MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION))
 
 
 def _optional_build_id_component(path: Path) -> str | None:
@@ -17,9 +18,7 @@ GIT_SHA = _optional_build_id_component(Path("resources/gitsha"))
 
 
 def _build_version_string() -> str:
-    components = [
-        ".".join(str(v) for v in (MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION))
-    ]
+    components = [VERSION_NUMBER]
     if BUILD_NUMBER is not None:
         components.append(BUILD_NUMBER)
     if GIT_SHA is not None:
