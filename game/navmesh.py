@@ -59,7 +59,9 @@ class NavPoint:
         if not isinstance(other, NavPoint):
             return False
 
-        if not self.point.almost_equals(other.point):
+        # The tolerance value used here is the same that was used by the now deprecated
+        # almost_equals.
+        if not self.point.equals_exact(other.point, 0.5 * 10 ** (-6)):
             return False
 
         return self.poly == other.poly
