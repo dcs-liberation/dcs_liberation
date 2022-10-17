@@ -618,6 +618,8 @@ QGroupBox[style="IntelSummary"] QLabel {
     margin: 0px;
     font-size: 9px;
     line-height: 9px;
+    color: #fff;
+    background: transparent;
 }
 
 QCalendarWidget
