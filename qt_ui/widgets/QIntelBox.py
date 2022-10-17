@@ -41,15 +41,6 @@ class QIntelBox(QGroupBox):
         self.economic_strength = QLabel()
         summary.addWidget(self.economic_strength, 2, 1)
 
-        # some dirty styling to make the labels show up well on the button
-        button_text_style = "background-color: rgba(0,0,0,0%); color: white;"
-        air_superiority.setStyleSheet(button_text_style)
-        front_line.setStyleSheet(button_text_style)
-        economy.setStyleSheet(button_text_style)
-        self.air_strength.setStyleSheet(button_text_style)
-        self.ground_strength.setStyleSheet(button_text_style)
-        self.economic_strength.setStyleSheet(button_text_style)
-
         self.details = QPushButton()
         self.details.setMinimumHeight(50)
         self.details.setMinimumWidth(210)
