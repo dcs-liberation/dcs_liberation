@@ -45,6 +45,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Squadrons]** Fixed issue in air wing configuration that would allow squadrons to be created with no home base if no base was available.
 * **[UI]** Fixed and issue where the liberation main exe was still running after application close.
 * **[UI]** Disable player slots for non-flyable aircraft.
+* **[UI]** Add vanilla theme weather and time of day icons
 
 
 # 5.2.0
