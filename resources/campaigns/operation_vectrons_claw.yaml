@@ -8,7 +8,7 @@ description: <p>United Nations Observer Mission in Georgia (UNOMIG) observers st
 miz: operation_vectrons_claw.miz
 performance: 1
 recommended_start_date: 2008-08-08
-version: "10.0"
+version: "10.5"
 squadrons:
   Blue CV-1:
     - primary: BARCAP
