@@ -380,12 +380,12 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g = tgo_type(
             namegen.random_objective_name(),
             scenery.category,
-            PresetLocation(scenery.group_zone.name, scenery.centroid),
+            PresetLocation(scenery.name, scenery.centroid),
             self.control_point,
         )
         ground_group = TheaterGroup(
             self.game.next_group_id(),
-            scenery.group_zone.name,
+            scenery.name,
             PointWithHeading.from_point(scenery.centroid, Heading.from_degrees(0)),
             [],
             g,
