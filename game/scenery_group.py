@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Iterable, List
 
-from dcs import Point
 from dcs.triggers import TriggerZoneCircular
 
 from game.theater.theatergroundobject import NAME_BY_CATEGORY
@@ -28,11 +27,6 @@ class SceneryGroup:
         self.target_zones = target_zones
         self.centroid = group_zone.position
         self.category = category
-
-    @property
-    def position(self) -> Point:
-        # TODO: Remove this property. It cannot have a useful answer for quad zones.
-        return self.centroid
 
     @staticmethod
     def from_trigger_zones(

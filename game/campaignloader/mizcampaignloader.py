@@ -3,7 +3,7 @@ from __future__ import annotations
 import itertools
 from functools import cached_property
 from pathlib import Path
-from typing import Iterator, List, TYPE_CHECKING, Tuple
+from typing import Iterator, List, TYPE_CHECKING
 from uuid import UUID
 
 from dcs import Mission
@@ -17,7 +17,6 @@ from dcs.triggers import TriggerZoneCircular
 from dcs.unitgroup import PlaneGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
-from game.positioned import Positioned
 from game.profiling import logged_duration
 from game.scenery_group import SceneryGroup
 from game.theater.controlpoint import (
@@ -29,7 +28,6 @@ from game.theater.controlpoint import (
     OffMapSpawn,
 )
 from game.theater.presetlocation import PresetLocation
-from game.utils import Distance, meters
 
 if TYPE_CHECKING:
     from game.theater.conflicttheater import ConflictTheater
@@ -355,108 +353,103 @@ class MizCampaignLoader:
                 origin, list(reversed(waypoints))
             )
 
-    def objective_info(
-        self, near: Positioned, allow_naval: bool = False
-    ) -> Tuple[ControlPoint, Distance]:
-        closest = self.theater.closest_control_point(near.position, allow_naval)
-        distance = meters(closest.position.distance_to_point(near.position))
-        return closest, distance
-
     def add_preset_locations(self) -> None:
         for static in self.offshore_strike_targets:
-            closest, distance = self.objective_info(static)
+            closest = self.theater.closest_control_point(static.position)
             closest.preset_locations.offshore_strike_locations.append(
                 PresetLocation.from_group(static)
             )
 
         for ship in self.ships:
-            closest, distance = self.objective_info(ship, allow_naval=True)
+            closest = self.theater.closest_control_point(
+                ship.position, allow_naval=True
+            )
             closest.preset_locations.ships.append(PresetLocation.from_group(ship))
 
         for group in self.missile_sites:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.missile_sites.append(
                 PresetLocation.from_group(group)
             )
 
         for group in self.coastal_defenses:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.coastal_defenses.append(
                 PresetLocation.from_group(group)
             )
 
         for group in self.long_range_sams:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.long_range_sams.append(
                 PresetLocation.from_group(group)
             )
 
         for group in self.medium_range_sams:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.medium_range_sams.append(
                 PresetLocation.from_group(group)
             )
 
         for group in self.short_range_sams:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.short_range_sams.append(
                 PresetLocation.from_group(group)
             )
 
         for group in self.aaa:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.aaa.append(PresetLocation.from_group(group))
 
         for group in self.ewrs:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.ewrs.append(PresetLocation.from_group(group))
 
         for group in self.armor_groups:
-            closest, distance = self.objective_info(group)
+            closest = self.theater.closest_control_point(group.position)
             closest.preset_locations.armor_groups.append(
                 PresetLocation.from_group(group)
             )
 
         for static in self.helipads:
-            closest, distance = self.objective_info(static)
+            closest = self.theater.closest_control_point(static.position)
             closest.helipads.append(PresetLocation.from_group(static))
 
         for static in self.factories:
-            closest, distance = self.objective_info(static)
+            closest = self.theater.closest_control_point(static.position)
             closest.preset_locations.factories.append(PresetLocation.from_group(static))
 
         for static in self.ammunition_depots:
-            closest, distance = self.objective_info(static)
+            closest = self.theater.closest_control_point(static.position)
             closest.preset_locations.ammunition_depots.append(
                 PresetLocation.from_group(static)
             )
 
         for static in self.strike_targets:
-            closest, distance = self.objective_info(static)
+            closest = self.theater.closest_control_point(static.position)
             closest.preset_locations.strike_locations.append(
                 PresetLocation.from_group(static)
             )
 
         for iads_command_center in self.iads_command_centers:
-            closest, distance = self.objective_info(iads_command_center)
+            closest = self.theater.closest_control_point(iads_command_center.position)
             closest.preset_locations.iads_command_center.append(
                 PresetLocation.from_group(iads_command_center)
             )
 
         for iads_connection_node in self.iads_connection_nodes:
-            closest, distance = self.objective_info(iads_connection_node)
+            closest = self.theater.closest_control_point(iads_connection_node.position)
             closest.preset_locations.iads_connection_node.append(
                 PresetLocation.from_group(iads_connection_node)
             )
 
         for iads_power_source in self.iads_power_sources:
-            closest, distance = self.objective_info(iads_power_source)
+            closest = self.theater.closest_control_point(iads_power_source.position)
             closest.preset_locations.iads_power_source.append(
                 PresetLocation.from_group(iads_power_source)
             )
 
         for scenery_group in self.scenery:
-            closest, distance = self.objective_info(scenery_group)
+            closest = self.theater.closest_control_point(scenery_group.centroid)
             closest.preset_locations.scenery.append(scenery_group)
 
     def populate_theater(self) -> None:
