@@ -9,15 +9,13 @@ from __future__ import annotations
 
 import logging
 import random
-from collections import defaultdict
 from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 import dcs.vehicles
-from dcs import Mission, Point, unitgroup
+from dcs import Mission, Point
 from dcs.action import DoScript, SceneryDestructionZone
 from dcs.condition import MapObjectIsDead
 from dcs.country import Country
-from dcs.point import StaticPoint
 from dcs.ships import (
     CVN_71,
     CVN_72,
@@ -27,22 +25,29 @@ from dcs.ships import (
 )
 from dcs.statics import Fortification
 from dcs.task import (
+    ActivateACLSCommand,
     ActivateBeaconCommand,
     ActivateICLSCommand,
     ActivateLink4Command,
-    ActivateACLSCommand,
     EPLRS,
     FireAtPoint,
     OptAlarmState,
 )
 from dcs.translation import String
-from dcs.triggers import Event, TriggerOnce, TriggerStart, TriggerZone
-from dcs.unit import Unit, InvisibleFARP
+from dcs.triggers import (
+    Event,
+    TriggerOnce,
+    TriggerStart,
+    TriggerZone,
+    TriggerZoneCircular,
+    TriggerZoneQuadPoint,
+)
+from dcs.unit import InvisibleFARP, Unit
 from dcs.unitgroup import MovingGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.unittype import ShipType, VehicleType
 from dcs.vehicles import vehicle_map
-from game.missiongenerator.missiondata import CarrierInfo, MissionData
 
+from game.missiongenerator.missiondata import CarrierInfo, MissionData
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanChannel, TacanRegistry, TacanUsage
 from game.runways import RunwayData
@@ -53,7 +58,7 @@ from game.theater.theatergroundobject import (
     LhaGroundObject,
     MissileSiteGroundObject,
 )
-from game.theater.theatergroup import SceneryUnit, TheaterGroup, IadsGroundGroup
+from game.theater.theatergroup import IadsGroundGroup, SceneryUnit
 from game.unitmap import UnitMap
 from game.utils import Heading, feet, knots, mps
 
@@ -217,18 +222,17 @@ class GroundObjectGenerator:
             else {1: 1, 2: 0.2, 3: 0.2, 4: 0.15}
         )
 
-        # Create the smallest valid size trigger zone (16 feet) so that risk of overlap
-        # is minimized. As long as the triggerzone is over the scenery object, we're ok.
-        smallest_valid_radius = feet(16).meters
+        trigger_zone: TriggerZone
+        if isinstance(scenery.zone, TriggerZoneCircular):
+            trigger_zone = self.create_circular_scenery_trigger(scenery.zone, color)
+        elif isinstance(scenery.zone, TriggerZoneQuadPoint):
+            trigger_zone = self.create_quad_scenery_trigger(scenery.zone, color)
+        else:
+            raise ValueError(
+                f"Invalid trigger zone type found for {scenery.name} in "
+                f"{self.ground_object.name}: {scenery.zone.__class__.__name__}"
+            )
 
-        trigger_zone = self.m.triggers.add_triggerzone(
-            scenery.zone.position,
-            smallest_valid_radius,
-            scenery.zone.hidden,
-            scenery.zone.name,
-            color,
-            scenery.zone.properties,
-        )
         # DCS only visually shows a scenery object is dead when
         # this trigger rule is applied.  Otherwise you can kill a
         # structure twice.
@@ -238,6 +242,34 @@ class GroundObjectGenerator:
             self.generate_on_dead_trigger_rule(trigger_zone)
 
         self.unit_map.add_scenery(scenery, trigger_zone)
+
+    def create_circular_scenery_trigger(
+        self, zone: TriggerZoneCircular, color: dict[int, float]
+    ) -> TriggerZoneCircular:
+        # Create the smallest valid size trigger zone (16 feet) so that risk of overlap
+        # is minimized. As long as the triggerzone is over the scenery object, we're ok.
+        smallest_valid_radius = feet(16).meters
+
+        return self.m.triggers.add_triggerzone(
+            zone.position,
+            smallest_valid_radius,
+            zone.hidden,
+            zone.name,
+            color,
+            zone.properties,
+        )
+
+    def create_quad_scenery_trigger(
+        self, zone: TriggerZoneQuadPoint, color: dict[int, float]
+    ) -> TriggerZoneQuadPoint:
+        return self.m.triggers.add_triggerzone_quad(
+            zone.position,
+            zone.verticies,
+            zone.hidden,
+            zone.name,
+            color,
+            zone.properties,
+        )
 
     def generate_destruction_trigger_rule(self, trigger_zone: TriggerZone) -> None:
         # Add destruction zone trigger
