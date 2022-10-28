@@ -13,7 +13,6 @@ from dcs.planes import F_15C
 from dcs.ships import HandyWind, LHA_Tarawa, Stennis, USS_Arleigh_Burke_IIa
 from dcs.statics import Fortification, Warehouse
 from dcs.terrain import Airport
-from dcs.triggers import TriggerZoneCircular
 from dcs.unitgroup import PlaneGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
@@ -237,11 +236,7 @@ class MizCampaignLoader:
 
     @property
     def scenery(self) -> List[SceneryGroup]:
-        return SceneryGroup.from_trigger_zones(
-            z
-            for z in self.mission.triggers._zones
-            if isinstance(z, TriggerZoneCircular)
-        )
+        return SceneryGroup.from_trigger_zones(z for z in self.mission.triggers.zones())
 
     @cached_property
     def control_points(self) -> dict[UUID, ControlPoint]:
