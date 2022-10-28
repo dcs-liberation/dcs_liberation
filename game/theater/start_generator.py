@@ -380,13 +380,13 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
         g = tgo_type(
             namegen.random_objective_name(),
             scenery.category,
-            PresetLocation(scenery.zone_def.name, scenery.position),
+            PresetLocation(scenery.group_zone.name, scenery.centroid),
             self.control_point,
         )
         ground_group = TheaterGroup(
             self.game.next_group_id(),
-            scenery.zone_def.name,
-            PointWithHeading.from_point(scenery.position, Heading.from_degrees(0)),
+            scenery.group_zone.name,
+            PointWithHeading.from_point(scenery.centroid, Heading.from_degrees(0)),
             [],
             g,
         )
@@ -396,7 +396,7 @@ class AirbaseGroundObjectGenerator(ControlPointGroundObjectGenerator):
 
         g.groups.append(ground_group)
         # Each nested trigger zone is a target/building/unit for an objective.
-        for zone in scenery.zones:
+        for zone in scenery.target_zones:
             zone.name = escape_string_for_lua(zone.name)
             scenery_unit = SceneryUnit(
                 zone.id,
