@@ -8,7 +8,7 @@ description: <p>This is a semi-fictional what-if scenario for Operation Peace Sp
 miz: operation_peace_spring.miz
 performance: 1
 recommended_start_date: 2019-12-23
-version: "10.0"
+version: "10.5"
 squadrons:
 # Ramat David
   30:
