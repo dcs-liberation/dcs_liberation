@@ -9,7 +9,7 @@ from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Type, Union
 
 from dcs import helicopters
-from dcs.action import AITaskPush, ActivateGroup
+from dcs.action import AITaskPush, ActivateGroup, SetFlag
 from dcs.condition import CoalitionHasAirdrome, TimeAfter
 from dcs.country import Country
 from dcs.flyingunit import FlyingUnit
@@ -1490,6 +1490,24 @@ class DefaultWaypointBuilder(PydcsWaypointBuilder):
     pass
 
 
+def create_stop_orbit_trigger(
+    orbit: ControlledTask, package: Package, mission: Mission, stop_after: int
+) -> None:
+    orbit.stop_if_user_flag(id(package), True)
+    orbits = [
+        x
+        for x in mission.triggerrules.triggers
+        if x.comment == f"StopOrbit{id(package)}"
+    ]
+    if not any(orbits):
+        stop_trigger = TriggerOnce(Event.NoEvent, f"StopOrbit{id(package)}")
+        stop_condition = TimeAfter(stop_after)
+        stop_action = SetFlag(id(package))
+        stop_trigger.add_condition(stop_condition)
+        stop_trigger.add_action(stop_action)
+        mission.triggerrules.triggers.append(stop_trigger)
+
+
 class HoldPointBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
@@ -1506,7 +1524,11 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             return waypoint
         push_time = self.flight.flight_plan.push_time
         self.waypoint.departure_time = push_time
-        loiter.stop_after_time(int(push_time.total_seconds()))
+        stop_after = int(push_time.total_seconds())
+        loiter.stop_after_time(stop_after)
+        # What follows is some code to cope with the broken 'stop after time' condition
+        create_stop_orbit_trigger(loiter, self.package, self.mission, stop_after)
+        # end of hotfix
         waypoint.add_task(loiter)
         return waypoint
 
@@ -1875,7 +1897,11 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
 
         racetrack = ControlledTask(orbit)
         self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
-        racetrack.stop_after_time(int(flight_plan.patrol_end_time.total_seconds()))
+        stop_after = int(flight_plan.patrol_end_time.total_seconds())
+        racetrack.stop_after_time(stop_after)
+        # What follows is some code to cope with the broken 'stop after time' condition
+        create_stop_orbit_trigger(racetrack, self.package, self.mission, stop_after)
+        # end of hotfix
         waypoint.add_task(racetrack)
 
         return waypoint
