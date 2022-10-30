@@ -8,7 +8,7 @@ description: <p>Welcome to Vegas Nerve, an asymmetrical Red Flag Exercise scenar
 miz: exercise_vegas_nerve.miz
 performance: 1
 recommended_start_date: 2011-02-24
-version: "10.0"
+version: "10.5"
 squadrons:
 # Tonopah Airport
   17:
@@ -58,6 +58,10 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
+    - primary: Air Assault
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
 # Groom Lake
   2:
     - primary: BARCAP

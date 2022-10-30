@@ -59,7 +59,7 @@ squadrons:
         - KC-135 Stratotanker
 #FARPs
   UNOMIG Sector HQ:
-    - primary: CAS
+    - primary: Air Assault
       secondary: air-to-ground
       aircraft:
         - UH-1H Iroquois
@@ -97,7 +97,7 @@ squadrons:
       secondary: any
       aircraft:
         - SU-33 Flanker-D
- # I am aware there is no Russian LHA. This is just for campaign inversion.
+ #I am aware there is no Russian LHA. This is just for campaign inversion.
   Red LHA:
     - primary: BAI
       secondary: air-to-ground    
