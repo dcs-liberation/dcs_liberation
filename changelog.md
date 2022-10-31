@@ -48,6 +48,12 @@ Saves from 5.x are not compatible with 6.0.
 * **[UI]** Add vanilla theme weather and time of day icons
 
 
+# 5.2.1
+
+## Fixes
+
+* **[Mission Generation]** Work around DCS 2.8 bug preventing the AI from leaving their hold point.
+
 # 5.2.0
 
 Saves from 5.1.0 are compatible with 5.2.0
