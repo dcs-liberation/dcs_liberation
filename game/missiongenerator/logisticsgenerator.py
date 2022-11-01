@@ -56,8 +56,8 @@ class LogisticsGenerator:
             if (
                 waypoint.waypoint_type
                 not in [
-                    FlightWaypointType.PICKUP,
-                    FlightWaypointType.DROP_OFF,
+                    FlightWaypointType.PICKUP_ZONE,
+                    FlightWaypointType.DROPOFF_ZONE,
                 ]
                 or waypoint.only_for_player
                 and not self.flight.client_count
@@ -68,7 +68,7 @@ class LogisticsGenerator:
             self.mission.triggers.add_triggerzone(
                 waypoint.position, ZONE_RADIUS, False, zone_name
             )
-            if waypoint.waypoint_type == FlightWaypointType.PICKUP:
+            if waypoint.waypoint_type == FlightWaypointType.PICKUP_ZONE:
                 pickup_point = waypoint.position
                 logistics_info.pickup_zone = zone_name
             else:
