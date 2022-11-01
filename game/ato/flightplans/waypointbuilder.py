@@ -304,6 +304,13 @@ class WaypointBuilder:
         return self._target_area(f"ATTACK {target.name}", target, flyover=True)
 
     def assault_area(self, target: MissionTarget) -> FlightWaypoint:
+        """A destination waypoint used by air-assault ground troops.
+
+        This waypoint is an implementation detail for CTLD and should not be followed by
+        aircraft.
+        """
+        # TODO: Add a property that can hide this waypoint from the player's flight
+        # plan.
         return self._target_area(f"ASSAULT {target.name}", target)
 
     @staticmethod
