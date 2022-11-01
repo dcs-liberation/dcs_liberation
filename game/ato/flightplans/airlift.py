@@ -19,8 +19,15 @@ if TYPE_CHECKING:
 @dataclass(frozen=True)
 class AirliftLayout(StandardLayout):
     nav_to_pickup: list[FlightWaypoint]
+    # There will not be a pickup waypoint when the pickup airfield is the departure
+    # airfield for cargo planes, as the cargo is pre-loaded. Helicopters will still pick
+    # up the cargo near the airfield.
     pickup: FlightWaypoint | None
     nav_to_drop_off: list[FlightWaypoint]
+    # There will not be a drop-off waypoint when the drop-off airfield and the arrival
+    # airfield is the same for a cargo plane, as planes will land to unload and we don't
+    # want a double landing. Helicopters will still drop their cargo near the airfield
+    # before landing.
     drop_off: FlightWaypoint | None
     refuel: FlightWaypoint | None
     nav_to_home: list[FlightWaypoint]
@@ -49,6 +56,10 @@ class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
 
     @property
     def tot_waypoint(self) -> FlightWaypoint:
+        # The TOT is the time that the cargo will be dropped off. If the drop-off
+        # location is the arrival airfield and this is not a helicopter flight, there
+        # will not be a separate drop-off waypoint; the arrival landing waypoint is the
+        # drop-off waypoint.
         return self.layout.drop_off or self.layout.arrival
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
