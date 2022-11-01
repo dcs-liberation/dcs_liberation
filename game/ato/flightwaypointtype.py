@@ -43,8 +43,8 @@ class FlightWaypointType(IntEnum):
     DIVERT = 23
     INGRESS_OCA_RUNWAY = 24
     INGRESS_OCA_AIRCRAFT = 25
-    PICKUP = 26
-    DROP_OFF = 27
+    PICKUP_ZONE = 26  # Pickup Zone for cargo or troops
+    DROPOFF_ZONE = 27  # Dropoff Zone for cargo or troops
     BULLSEYE = 28
     REFUEL = 29  # Should look for nearby tanker to refuel from.
     CARGO_STOP = 30  # Stopover landing point using the LandingReFuAr waypoint type

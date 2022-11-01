@@ -21,7 +21,7 @@ class AirliftLayout(StandardLayout):
     nav_to_pickup: list[FlightWaypoint]
     pickup: FlightWaypoint | None
     nav_to_drop_off: list[FlightWaypoint]
-    drop_off: FlightWaypoint
+    drop_off: FlightWaypoint | None
     refuel: FlightWaypoint | None
     nav_to_home: list[FlightWaypoint]
 
@@ -31,7 +31,8 @@ class AirliftLayout(StandardLayout):
         if self.pickup is not None:
             yield self.pickup
         yield from self.nav_to_drop_off
-        yield self.drop_off
+        if self.drop_off is not None:
+            yield self.drop_off
         if self.refuel is not None:
             yield self.refuel
         yield from self.nav_to_home
@@ -48,7 +49,7 @@ class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
 
     @property
     def tot_waypoint(self) -> FlightWaypoint:
-        return self.layout.drop_off
+        return self.layout.drop_off or self.layout.arrival
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         # TOT planning isn't really useful for transports. They're behind the front
@@ -78,12 +79,13 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
 
         pickup = None
         refuel = None
+        drop_off = None
         if self.flight.is_helo:
             # Create a pickupzone where the cargo will be spawned
             pickup_zone = MissionTarget(
                 "Pickup Zone", cargo.origin.position.random_point_within(1000, 200)
             )
-            pickup = builder.pickup(pickup_zone)
+            pickup = builder.cargo_pickup(pickup_zone, True)
             # If The cargo is at the departure controlpoint, the pickup waypoint should
             # only be created for client flights
             pickup.only_for_player = cargo.origin == self.flight.departure
@@ -93,15 +95,16 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
                 "Dropoff zone",
                 cargo.next_stop.position.random_point_within(1000, 200),
             )
-            drop_off = builder.drop_off(drop_off_zone)
+            drop_off = builder.cargo_dropoff(drop_off_zone, True)
 
-            # Add an additional stopover point so that the flight can refuel
+            # Add an additional refuel waypoint
             refuel = builder.land_refuel(cargo.next_stop)
         else:
-            # Fixed Wing will get stopover points for pickup and dropoff
+            # Fixed Wing will get landing&refuel waypoints for pickup and dropoff
             if cargo.origin != self.flight.departure:
-                pickup = builder.land_refuel(cargo.origin)
-            drop_off = builder.land_refuel(cargo.next_stop)
+                pickup = builder.cargo_pickup(cargo.origin, False)
+            if cargo.next_stop != self.flight.arrival:
+                drop_off = builder.cargo_dropoff(cargo.next_stop, False)
 
         nav_to_pickup = builder.nav_path(
             self.flight.departure.position,
@@ -114,7 +117,7 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
             # Normal Landing Waypoint
             arrival = builder.land(self.flight.arrival)
         else:
-            # The AI Needs another Stopover point to actually fly back to the original
+            # The AI Needs another landing&refuel point to actually fly back to the original
             # base. Otherwise the Cargo drop will be the new Landing Waypoint and the
             # AI will end its mission there instead of flying back.
             # https://forum.dcs.world/topic/211775-landing-to-refuel-and-rearm-the-landingrefuar-waypoint/

@@ -21,7 +21,7 @@ from game.missiongenerator.missiondata import MissionData
 from game.settings import Settings
 from game.utils import pairwise
 from .baiingress import BaiIngressBuilder
-from .cargostop import CargoStopBuilder
+from .landingzone import LandingZoneBuilder
 from .casingress import CasIngressBuilder
 from .deadingress import DeadIngressBuilder
 from .default import DefaultWaypointBuilder
@@ -118,7 +118,6 @@ class WaypointGenerator:
 
     def builder_for_waypoint(self, waypoint: FlightWaypoint) -> PydcsWaypointBuilder:
         builders = {
-            FlightWaypointType.DROP_OFF: CargoStopBuilder,
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
@@ -133,7 +132,8 @@ class WaypointGenerator:
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
-            FlightWaypointType.PICKUP: CargoStopBuilder,
+            FlightWaypointType.PICKUP_ZONE: LandingZoneBuilder,
+            FlightWaypointType.DROPOFF_ZONE: LandingZoneBuilder,
             FlightWaypointType.REFUEL: RefuelPointBuilder,
             FlightWaypointType.CARGO_STOP: CargoStopBuilder,
         }

@@ -526,40 +526,65 @@ class WaypointBuilder:
         )
 
     @staticmethod
-    def pickup(pick_up: MissionTarget) -> FlightWaypoint:
+    def cargo_pickup(pick_up: MissionTarget, is_helo: bool) -> FlightWaypoint:
         """Creates a cargo pickup waypoint.
 
         Args:
             control_point: Pick up location.
         """
         control_point = pick_up if isinstance(pick_up, ControlPoint) else None
+        if is_helo:
+            return FlightWaypoint(
+                "PICKUP",
+                FlightWaypointType.PICKUP_ZONE,
+                pick_up.position,
+                meters(0),
+                "RADIO",
+                description=f"Pick up cargo from {pick_up.name}",
+                pretty_name="Pick-up zone",
+                control_point=control_point,
+            )
         return FlightWaypoint(
             "PICKUP",
-            FlightWaypointType.PICKUP,
+            FlightWaypointType.LAND_REFUEL,
             pick_up.position,
             meters(0),
             "RADIO",
             description=f"Pick up cargo from {pick_up.name}",
-            pretty_name="Pick up location",
+            pretty_name="Cargo pick-up",
             control_point=control_point,
         )
 
     @staticmethod
-    def drop_off(drop_off: MissionTarget) -> FlightWaypoint:
+    def cargo_dropoff(drop_off: MissionTarget, is_helo: bool) -> FlightWaypoint:
         """Creates a cargo drop-off waypoint.
+        This waypoint is used by AirLift and AirAssault to drop cargo or troops
+        at the given location
 
         Args:
             control_point: Drop-off location.
+            is_helo: Differentiate behaviour between plane and helo
         """
         control_point = drop_off if isinstance(drop_off, ControlPoint) else None
+        if is_helo:
+            return FlightWaypoint(
+                "DROPOFF",
+                FlightWaypointType.DROPOFF_ZONE,
+                drop_off.position,
+                meters(0),
+                "RADIO",
+                description=f"Drop off cargo at {drop_off.name}",
+                pretty_name="Drop-off zone",
+                control_point=control_point,
+            )
         return FlightWaypoint(
-            "DROP OFF",
-            FlightWaypointType.DROP_OFF,
+            "DROPOFF",
+            FlightWaypointType.LAND_REFUEL,
             drop_off.position,
             meters(0),
             "RADIO",
             description=f"Drop off cargo at {drop_off.name}",
-            pretty_name="Drop off location",
+            pretty_name="Cargo drop-off",
             control_point=control_point,
         )
 
