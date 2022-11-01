@@ -9,6 +9,7 @@ from game.theater.controlpoint import ControlPointType
 from game.theater.missiontarget import MissionTarget
 from game.utils import Distance, feet, meters
 from .ibuilder import IBuilder
+from .planningerror import PlanningError
 from .waypointbuilder import WaypointBuilder
 
 if TYPE_CHECKING:
@@ -68,6 +69,8 @@ class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
 
 class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
     def layout(self) -> AirAssaultLayout:
+        if not self.flight.is_helo:
+            raise PlanningError("Air assault is only usable by helicopters")
 
         altitude = feet(1500) if self.flight.is_helo else self.doctrine.ingress_altitude
         altitude_is_agl = self.flight.is_helo
