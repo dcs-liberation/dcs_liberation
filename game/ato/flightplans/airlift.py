@@ -22,7 +22,7 @@ class AirliftLayout(StandardLayout):
     pickup: FlightWaypoint | None
     nav_to_drop_off: list[FlightWaypoint]
     drop_off: FlightWaypoint
-    stopover: FlightWaypoint | None
+    refuel: FlightWaypoint | None
     nav_to_home: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -32,8 +32,8 @@ class AirliftLayout(StandardLayout):
             yield self.pickup
         yield from self.nav_to_drop_off
         yield self.drop_off
-        if self.stopover is not None:
-            yield self.stopover
+        if self.refuel is not None:
+            yield self.refuel
         yield from self.nav_to_home
         yield self.arrival
         if self.divert is not None:
@@ -77,7 +77,7 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
         builder = WaypointBuilder(self.flight, self.coalition)
 
         pickup = None
-        stopover = None
+        refuel = None
         if self.flight.is_helo:
             # Create a pickupzone where the cargo will be spawned
             pickup_zone = MissionTarget(
@@ -96,12 +96,12 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
             drop_off = builder.drop_off(drop_off_zone)
 
             # Add an additional stopover point so that the flight can refuel
-            stopover = builder.stopover(cargo.next_stop)
+            refuel = builder.land_refuel(cargo.next_stop)
         else:
             # Fixed Wing will get stopover points for pickup and dropoff
             if cargo.origin != self.flight.departure:
-                pickup = builder.stopover(cargo.origin, "PICKUP")
-            drop_off = builder.stopover(cargo.next_stop, "DROP OFF")
+                pickup = builder.land_refuel(cargo.origin)
+            drop_off = builder.land_refuel(cargo.next_stop)
 
         nav_to_pickup = builder.nav_path(
             self.flight.departure.position,
@@ -118,7 +118,7 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
             # base. Otherwise the Cargo drop will be the new Landing Waypoint and the
             # AI will end its mission there instead of flying back.
             # https://forum.dcs.world/topic/211775-landing-to-refuel-and-rearm-the-landingrefuar-waypoint/
-            arrival = builder.stopover(self.flight.arrival, "LANDING")
+            arrival = builder.land_refuel(self.flight.arrival, True)
 
         return AirliftLayout(
             departure=builder.takeoff(self.flight.departure),
@@ -131,7 +131,7 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
                 altitude_is_agl,
             ),
             drop_off=drop_off,
-            stopover=stopover,
+            refuel=refuel,
             nav_to_home=builder.nav_path(
                 cargo.origin.position,
                 self.flight.arrival.position,

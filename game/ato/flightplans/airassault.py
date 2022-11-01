@@ -111,7 +111,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
                 altitude_is_agl,
             ),
             drop_off=builder.drop_off(drop_off_zone),
-            stopover=None,
+            refuel=None,
             target=assault_area,
             nav_to_home=builder.nav_path(
                 drop_off_zone.position,
