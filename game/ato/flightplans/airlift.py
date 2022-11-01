@@ -29,7 +29,6 @@ class AirliftLayout(StandardLayout):
     # want a double landing. Helicopters will still drop their cargo near the airfield
     # before landing.
     drop_off: FlightWaypoint | None
-    refuel: FlightWaypoint | None
     nav_to_home: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -40,8 +39,6 @@ class AirliftLayout(StandardLayout):
         yield from self.nav_to_drop_off
         if self.drop_off is not None:
             yield self.drop_off
-        if self.refuel is not None:
-            yield self.refuel
         yield from self.nav_to_home
         yield self.arrival
         if self.divert is not None:
@@ -145,7 +142,6 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
                 altitude_is_agl,
             ),
             drop_off=drop_off,
-            refuel=refuel,
             nav_to_home=builder.nav_path(
                 cargo.origin.position,
                 self.flight.arrival.position,
