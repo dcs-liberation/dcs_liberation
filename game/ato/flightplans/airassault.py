@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from typing import Iterator, TYPE_CHECKING, Type
 
-from game.ato.flightplans.airlift import AirliftLayout
-from game.ato.flightplans.standard import StandardFlightPlan
+from game.ato.flightplans.standard import StandardFlightPlan, StandardLayout
 from game.theater.controlpoint import ControlPointType
 from game.theater.missiontarget import MissionTarget
 from game.utils import Distance, feet, meters
@@ -17,17 +16,21 @@ if TYPE_CHECKING:
 
 
 @dataclass(frozen=True)
-class AirAssaultLayout(AirliftLayout):
+class AirAssaultLayout(StandardLayout):
+    nav_to_pickup: list[FlightWaypoint]
+    pickup: FlightWaypoint | None
+    nav_to_drop_off: list[FlightWaypoint]
+    drop_off: FlightWaypoint
     target: FlightWaypoint
+    nav_to_home: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.departure
         yield from self.nav_to_pickup
-        if self.pickup:
+        if self.pickup is not None:
             yield self.pickup
         yield from self.nav_to_drop_off
-        if self.drop_off is not None:
-            yield self.drop_off
+        yield self.drop_off
         yield self.target
         yield from self.nav_to_home
         yield self.arrival
@@ -43,7 +46,7 @@ class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
 
     @property
     def tot_waypoint(self) -> FlightWaypoint:
-        return self.layout.drop_off or self.layout.arrival
+        return self.layout.drop_off
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         if waypoint == self.tot_waypoint:
@@ -92,10 +95,17 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
             pickup_position = pickup.position
         assault_area = builder.assault_area(self.package.target)
         heading = self.package.target.position.heading_between_point(pickup_position)
+
+        # Once there is a plane which is capable of AirDrop Paratrooper
+        # we can make use of the AIRDROP Wayppoint type.
+        # This would also need a special Waypointbuilder.
+        # Currently AirAssault can only be used by Helos so we just create
+        # the drop_off Landing Zone
         drop_off_zone = MissionTarget(
             "Dropoff zone",
             self.package.target.position.point_from_heading(heading, 1200),
         )
+        drop_off = builder.cargo_dropoff(drop_off_zone, self.flight.is_helo)
 
         return AirAssaultLayout(
             departure=builder.takeoff(self.flight.departure),
@@ -112,8 +122,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
                 altitude,
                 altitude_is_agl,
             ),
-            drop_off=builder.cargo_dropoff(drop_off_zone, self.flight.is_helo),
-            refuel=None,
+            drop_off=drop_off,
             target=assault_area,
             nav_to_home=builder.nav_path(
                 drop_off_zone.position,
