@@ -16,7 +16,7 @@ from game.ato import Flight, FlightWaypoint
 from game.ato.flightstate import InFlight, WaitingForStart
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
-from game.missiongenerator.aircraft.waypoints.stopover import StopoverBuilder
+from game.missiongenerator.aircraft.waypoints.cargostop import CargoStopBuilder
 from game.missiongenerator.missiondata import MissionData
 from game.settings import Settings
 from game.utils import pairwise
@@ -135,7 +135,7 @@ class WaypointGenerator:
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP: CargoStopBuilder,
             FlightWaypointType.REFUEL: RefuelPointBuilder,
-            FlightWaypointType.STOPOVER: StopoverBuilder,
+            FlightWaypointType.CARGO_STOP: CargoStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(
