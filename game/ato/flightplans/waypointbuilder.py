@@ -572,8 +572,11 @@ class WaypointBuilder:
             control_point: Drop-off location.
             is_helo: Differentiate behaviour between plane and helo
         """
-        control_point = drop_off if isinstance(drop_off, ControlPoint) else None
         if is_helo:
+            if isinstance(drop_off, ControlPoint):
+                raise ValueError(
+                    "Helicopter airlift drop-off targets should not be control points"
+                )
             return FlightWaypoint(
                 "DROPOFF",
                 FlightWaypointType.DROPOFF_ZONE,
@@ -582,7 +585,12 @@ class WaypointBuilder:
                 "RADIO",
                 description=f"Drop off cargo at {drop_off.name}",
                 pretty_name="Drop-off zone",
-                control_point=control_point,
+            )
+
+        if not isinstance(drop_off, ControlPoint):
+            raise ValueError(
+                f"Plane airlift drop-off targets must be control points, but was given "
+                f"{drop_off.__class__.__name__}"
             )
         return FlightWaypoint(
             "DROPOFF",
@@ -592,7 +600,7 @@ class WaypointBuilder:
             "RADIO",
             description=f"Drop off cargo at {drop_off.name}",
             pretty_name="Cargo drop-off",
-            control_point=control_point,
+            control_point=drop_off,
         )
 
     @staticmethod
