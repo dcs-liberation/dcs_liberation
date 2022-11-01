@@ -26,7 +26,8 @@ class AirAssaultLayout(AirliftLayout):
         if self.pickup:
             yield self.pickup
         yield from self.nav_to_drop_off
-        yield self.drop_off
+        if self.drop_off is not None:
+            yield self.drop_off
         yield self.target
         yield from self.nav_to_home
         yield self.arrival
@@ -42,7 +43,7 @@ class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
 
     @property
     def tot_waypoint(self) -> FlightWaypoint:
-        return self.layout.drop_off
+        return self.layout.drop_off or self.layout.arrival
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         if waypoint == self.tot_waypoint:
@@ -81,11 +82,12 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
             pickup_position = self.flight.departure.position
         else:
             # Create a special pickup zone for Helos from Airbase / FOB
-            pickup = builder.pickup(
+            pickup = builder.cargo_pickup(
                 MissionTarget(
                     "Pickup Zone",
                     self.flight.departure.position.random_point_within(1200, 600),
-                )
+                ),
+                self.flight.is_helo,
             )
             pickup_position = pickup.position
         assault_area = builder.assault_area(self.package.target)
@@ -110,7 +112,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
                 altitude,
                 altitude_is_agl,
             ),
-            drop_off=builder.drop_off(drop_off_zone),
+            drop_off=builder.cargo_dropoff(drop_off_zone, self.flight.is_helo),
             refuel=None,
             target=assault_area,
             nav_to_home=builder.nav_path(
