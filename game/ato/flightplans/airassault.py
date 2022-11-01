@@ -120,7 +120,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
                 altitude,
                 altitude_is_agl,
             ),
-            drop_off=builder.cargo_dropoff(drop_off_zone, is_helo=True),
+            drop_off=builder.air_assault_dropoff(drop_off_zone),
             target=assault_area,
             nav_to_home=builder.nav_path(
                 drop_off_zone.position,
