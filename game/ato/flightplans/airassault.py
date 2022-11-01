@@ -18,16 +18,18 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class AirAssaultLayout(StandardLayout):
-    nav_to_pickup: list[FlightWaypoint]
+    # The pickup point is optional because we don't always need to load the cargo. When
+    # departing from a carrier, LHA, or off-map spawn, the cargo is pre-loaded.
     pickup: FlightWaypoint | None
     nav_to_drop_off: list[FlightWaypoint]
     drop_off: FlightWaypoint
+    # This is an implementation detail used by CTLD. The aircraft will not go to this
+    # waypoint. It is used by CTLD as the destination for unloaded troops.
     target: FlightWaypoint
     nav_to_home: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.departure
-        yield from self.nav_to_pickup
         if self.pickup is not None:
             yield self.pickup
         yield from self.nav_to_drop_off
@@ -108,16 +110,9 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
             "Dropoff zone",
             self.package.target.position.point_from_heading(heading, 1200),
         )
-        drop_off = builder.cargo_dropoff(drop_off_zone, self.flight.is_helo)
 
         return AirAssaultLayout(
             departure=builder.takeoff(self.flight.departure),
-            nav_to_pickup=builder.nav_path(
-                self.flight.departure.position,
-                pickup_position,
-                altitude,
-                altitude_is_agl,
-            ),
             pickup=pickup,
             nav_to_drop_off=builder.nav_path(
                 pickup_position,
@@ -125,7 +120,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
                 altitude,
                 altitude_is_agl,
             ),
-            drop_off=drop_off,
+            drop_off=builder.cargo_dropoff(drop_off_zone, is_helo=True),
             target=assault_area,
             nav_to_home=builder.nav_path(
                 drop_off_zone.position,
