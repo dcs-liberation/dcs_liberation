@@ -29,7 +29,7 @@ class Builder(FormationAttackBuilder[EscortFlightPlan, FormationAttackLayout]):
         split = builder.split(self.package.waypoints.split)
         refuel = None
         if self.package.waypoints.refuel is not None:
-            refuel = builder.refuel(self.package.waypoints.refuel)
+            refuel = builder.air_refuel(self.package.waypoints.refuel)
 
         return FormationAttackLayout(
             departure=builder.takeoff(self.flight.departure),

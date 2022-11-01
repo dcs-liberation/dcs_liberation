@@ -107,7 +107,7 @@ class Builder(CapBuilder[TarCapFlightPlan, TarCapLayout]):
         refuel = None
 
         if self.package.waypoints is not None:
-            refuel = builder.refuel(self.package.waypoints.refuel)
+            refuel = builder.air_refuel(self.package.waypoints.refuel)
 
         return TarCapLayout(
             departure=builder.takeoff(self.flight.departure),

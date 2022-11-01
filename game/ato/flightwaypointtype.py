@@ -46,5 +46,5 @@ class FlightWaypointType(IntEnum):
     PICKUP = 26
     DROP_OFF = 27
     BULLSEYE = 28
-    REFUEL = 29  # Should look for nearby tanker to refuel from.
-    STOPOVER = 30  # Stopover landing point using the LandingReFuAr waypoint type
+    AIR_REFUEL = 29  # Should look for nearby tanker to refuel from.
+    LAND_REFUEL = 30  # Stopover landing point using the LandingReFuAr waypoint type

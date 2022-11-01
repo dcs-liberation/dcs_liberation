@@ -56,7 +56,7 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
         # Cheat in a FlightWaypoint for the refuel point.
         refuel: Point = self.package.waypoints.refuel
         refuel_waypoint: FlightWaypoint = FlightWaypoint(
-            "REFUEL", FlightWaypointType.REFUEL, refuel, altitude
+            "REFUEL", FlightWaypointType.AIR_REFUEL, refuel, altitude
         )
 
         delay_target_to_split: timedelta = self.travel_time_between_waypoints(

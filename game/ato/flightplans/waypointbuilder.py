@@ -189,14 +189,14 @@ class WaypointBuilder:
             pretty_name="Join",
         )
 
-    def refuel(self, position: Point) -> FlightWaypoint:
+    def air_refuel(self, position: Point) -> FlightWaypoint:
         alt_type: AltitudeReference = "BARO"
         if self.is_helo:
             alt_type = "RADIO"
 
         return FlightWaypoint(
-            "REFUEL",
-            FlightWaypointType.REFUEL,
+            "AIRREFUEL",
+            FlightWaypointType.AIR_REFUEL,
             position,
             meters(80) if self.is_helo else self.doctrine.ingress_altitude,
             alt_type,
@@ -494,21 +494,35 @@ class WaypointBuilder:
         )
 
     @staticmethod
-    def stopover(stopover: ControlPoint, name: str = "STOPOVER") -> FlightWaypoint:
-        """Creates a stopover waypoint.
+    def land_refuel(
+        control_point: ControlPoint, is_destination: bool = False
+    ) -> FlightWaypoint:
+        """Creates a land refuel waypoint.
 
         Args:
-            control_point: Pick up location.
+            control_point: The airbase to refuel.
+            is_destination: Due to an DCS Bug we need to set the last landing waypoint also as LandingReFuAr
         """
+        if is_destination:
+            return FlightWaypoint(
+                "LANDING",
+                FlightWaypointType.LAND_REFUEL,
+                control_point.position,
+                meters(0),
+                "RADIO",
+                description=f"Land at {control_point}",
+                pretty_name="Landing",
+                control_point=control_point,
+            )
         return FlightWaypoint(
-            name,
-            FlightWaypointType.STOPOVER,
-            stopover.position,
+            "REFUEL",
+            FlightWaypointType.LAND_REFUEL,
+            control_point.position,
             meters(0),
             "RADIO",
-            description=f"Stopover at {stopover}",
-            pretty_name="Stopover location",
-            control_point=stopover,
+            description=f"Refuel at {control_point}",
+            pretty_name="Refuel",
+            control_point=control_point,
         )
 
     @staticmethod

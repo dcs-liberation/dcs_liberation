@@ -115,7 +115,7 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
         refuel = None
 
         if self.package.waypoints is not None:
-            refuel = builder.refuel(self.package.waypoints.refuel)
+            refuel = builder.air_refuel(self.package.waypoints.refuel)
 
         return SweepLayout(
             departure=builder.takeoff(self.flight.departure),

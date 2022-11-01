@@ -3,7 +3,7 @@ from dcs.task import RefuelingTaskAction
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
-class RefuelPointBuilder(PydcsWaypointBuilder):
+class AirRefuelBuilder(PydcsWaypointBuilder):
     def add_tasks(self, waypoint: MovingPoint) -> None:
         waypoint.add_task(RefuelingTaskAction())
         return super().add_tasks(waypoint)

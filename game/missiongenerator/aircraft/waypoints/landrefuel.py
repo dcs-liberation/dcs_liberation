@@ -4,7 +4,7 @@ from dcs.task import Land
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
-class StopoverBuilder(PydcsWaypointBuilder):
+class LandRefuelBuilder(PydcsWaypointBuilder):
     def build(self) -> MovingPoint:
         waypoint = super().build()
         waypoint.type = "LandingReFuAr"

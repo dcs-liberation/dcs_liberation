@@ -16,7 +16,7 @@ from game.ato import Flight, FlightWaypoint
 from game.ato.flightstate import InFlight, WaitingForStart
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
-from game.missiongenerator.aircraft.waypoints.stopover import StopoverBuilder
+from game.missiongenerator.aircraft.waypoints.landrefuel import LandRefuelBuilder
 from game.missiongenerator.missiondata import MissionData
 from game.settings import Settings
 from game.utils import pairwise
@@ -33,7 +33,7 @@ from .ocarunwayingress import OcaRunwayIngressBuilder
 from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
 from .racetrack import RaceTrackBuilder
 from .racetrackend import RaceTrackEndBuilder
-from .refuel import RefuelPointBuilder
+from .airrefuel import AirRefuelBuilder
 from .seadingress import SeadIngressBuilder
 from .splitpoint import SplitPointBuilder
 from .strikeingress import StrikeIngressBuilder
@@ -134,8 +134,8 @@ class WaypointGenerator:
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP: CargoStopBuilder,
-            FlightWaypointType.REFUEL: RefuelPointBuilder,
-            FlightWaypointType.STOPOVER: StopoverBuilder,
+            FlightWaypointType.AIR_REFUEL: AirRefuelBuilder,
+            FlightWaypointType.LAND_REFUEL: LandRefuelBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(
