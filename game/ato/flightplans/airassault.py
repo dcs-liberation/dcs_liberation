@@ -11,6 +11,7 @@ from game.utils import Distance, feet, meters
 from .ibuilder import IBuilder
 from .planningerror import PlanningError
 from .waypointbuilder import WaypointBuilder
+from ..flightwaypoint import FlightWaypointType
 
 if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
@@ -21,7 +22,8 @@ class AirAssaultLayout(StandardLayout):
     # The pickup point is optional because we don't always need to load the cargo. When
     # departing from a carrier, LHA, or off-map spawn, the cargo is pre-loaded.
     pickup: FlightWaypoint | None
-    nav_to_drop_off: list[FlightWaypoint]
+    nav_to_ingress: list[FlightWaypoint]
+    ingress: FlightWaypoint
     drop_off: FlightWaypoint
     # This is an implementation detail used by CTLD. The aircraft will not go to this
     # waypoint. It is used by CTLD as the destination for unloaded troops.
@@ -32,7 +34,8 @@ class AirAssaultLayout(StandardLayout):
         yield self.departure
         if self.pickup is not None:
             yield self.pickup
-        yield from self.nav_to_drop_off
+        yield from self.nav_to_ingress
+        yield self.ingress
         yield self.drop_off
         yield self.target
         yield from self.nav_to_home
@@ -73,6 +76,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
     def layout(self) -> AirAssaultLayout:
         if not self.flight.is_helo:
             raise PlanningError("Air assault is only usable by helicopters")
+        assert self.package.waypoints is not None
 
         altitude = feet(1500) if self.flight.is_helo else self.doctrine.ingress_altitude
         altitude_is_agl = self.flight.is_helo
@@ -114,11 +118,16 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
         return AirAssaultLayout(
             departure=builder.takeoff(self.flight.departure),
             pickup=pickup,
-            nav_to_drop_off=builder.nav_path(
+            nav_to_ingress=builder.nav_path(
                 pickup_position,
-                drop_off_zone.position,
+                self.package.waypoints.ingress,
                 altitude,
                 altitude_is_agl,
+            ),
+            ingress=builder.ingress(
+                FlightWaypointType.INGRESS_AIR_ASSAULT,
+                self.package.waypoints.ingress,
+                self.package.target,
             ),
             drop_off=builder.cargo_dropoff(drop_off_zone, is_helo=True),
             target=assault_area,
