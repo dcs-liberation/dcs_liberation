@@ -542,7 +542,7 @@ class WaypointBuilder:
         control_point = pick_up if isinstance(pick_up, ControlPoint) else None
         if is_helo:
             return FlightWaypoint(
-                "PICKUP",
+                "PICKUPZONE",
                 FlightWaypointType.PICKUP_ZONE,
                 pick_up.position,
                 meters(0),
@@ -575,7 +575,7 @@ class WaypointBuilder:
                     "Helicopter airlift drop-off targets should not be control points"
                 )
             return FlightWaypoint(
-                "DROPOFF",
+                "DROPOFFZONE",
                 FlightWaypointType.DROPOFF_ZONE,
                 drop_off.position,
                 meters(0),
