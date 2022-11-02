@@ -565,9 +565,11 @@ class WaypointBuilder:
     @staticmethod
     def cargo_dropoff(drop_off: MissionTarget, is_helo: bool) -> FlightWaypoint:
         """Creates a cargo drop-off waypoint.
+        This waypoint is used by AirLift and AirAssault to drop cargo or troops
+        at the given location
 
-        This is not used for air assault drop-off locations. See the note in
-        air_assault_dropoff or an explanation.
+        Args:
+            is_helo: Differentiate behaviour between plane and helo
         """
         if is_helo:
             if isinstance(drop_off, ControlPoint):
