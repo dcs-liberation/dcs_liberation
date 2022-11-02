@@ -137,7 +137,7 @@ class InFlight(FlightState, ABC):
             FlightWaypointType.INGRESS_OCA_RUNWAY,
             FlightWaypointType.INGRESS_SEAD,
             FlightWaypointType.INGRESS_STRIKE,
-            FlightWaypointType.AIR_ASSAULT_DROPOFF,
+            FlightWaypointType.INGRESS_AIR_ASSAULT,
         }
         return self.current_waypoint.waypoint_type in contact_types
 
