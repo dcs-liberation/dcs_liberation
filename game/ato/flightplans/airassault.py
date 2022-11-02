@@ -129,7 +129,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
                 self.package.waypoints.ingress,
                 self.package.target,
             ),
-            drop_off=builder.air_assault_dropoff(drop_off_zone),
+            drop_off=builder.cargo_dropoff(drop_off_zone, is_helo=True),
             target=assault_area,
             nav_to_home=builder.nav_path(
                 drop_off_zone.position,

@@ -601,25 +601,6 @@ class WaypointBuilder:
         )
 
     @staticmethod
-    def air_assault_dropoff(location: MissionTarget) -> FlightWaypoint:
-        """Creates an air assault drop-off waypoint.
-
-        This is distinct from a cargo drop-off waypoint because they have distinct
-        behavior: only an air-assault drop-off waypoint is treated as combat initiation
-        by the simulation. Regular cargo drop-offs do not need to halt the sim or
-        simulate an outcome.
-        """
-        return FlightWaypoint(
-            "DROPOFF",
-            FlightWaypointType.AIR_ASSAULT_DROPOFF,
-            location.position,
-            meters(0),
-            "RADIO",
-            description=f"Drop off cargo at {location.name}",
-            pretty_name="Drop-off zone",
-        )
-
-    @staticmethod
     def nav(
         position: Point, altitude: Distance, altitude_is_agl: bool = False
     ) -> FlightWaypoint:

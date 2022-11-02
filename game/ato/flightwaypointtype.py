@@ -49,5 +49,4 @@ class FlightWaypointType(IntEnum):
     AIR_REFUEL = 29  # Should look for nearby tanker to refuel from.
     LAND_REFUEL = 30  # Stopover landing point using the LandingReFuAr waypoint type
     AIR_DROP = 31  # Waypoint to drop paylod from the air
-    AIR_ASSAULT_DROPOFF = 32
     INGRESS_AIR_ASSAULT = 32
