@@ -10,9 +10,23 @@ from game.ato.flighttype import FlightType
 
 @dataclass
 class PlanAirAssault(PackagePlanningTask[ControlPoint]):
+    """Task for AirAssault
+
+    TODO: This Task is currently removed from the AutoPlanner
+    (removed from Compound Task CaptureBase and removed from TheaterState.
+    air_assault_targets) as we can not guarantee that the Flightplan will have
+    save landing zones which are free of obstacles (trees, buildings and so on).
+    Therefore the AI could potentially crash when Missions are autoplanned and not
+    validated manually from the user
+    """
+
     def preconditions_met(self, state: TheaterState) -> bool:
         if self.target not in state.air_assault_targets:
             return False
+        # TODO add check if there is a safe Landingzone available next to the CP which
+        # we can use to AutoPlan the Mission. Possible implementation for this
+        # functionality could be to let the campaign designer define possible zones
+        # which the planner can use.
         if self.capture_blocked(state):
             # Do not task if there are enemy battle_positions blocking the capture
             return False

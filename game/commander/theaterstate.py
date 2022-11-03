@@ -161,7 +161,12 @@ class TheaterState(WorldState["TheaterState"]):
                 cp: barcap_rounds for cp in finder.vulnerable_control_points()
             },
             active_front_lines=list(finder.front_lines()),
-            air_assault_targets=list(finder.air_assault_targets()),
+            # TODO air_assault_targets is currently disabled
+            # as AirAssault can not be autoplanned yet.
+            # See comment in PlanAirAssault (airassault.py)
+            # Re-Enable air_assault_targets=list(finder.air_assault_targets())
+            # when AutoPlanning is possible again
+            air_assault_targets=[],
             front_line_stances={f: None for f in finder.front_lines()},
             vulnerable_front_lines=list(finder.front_lines()),
             aewc_targets=[finder.farthest_friendly_control_point()],
