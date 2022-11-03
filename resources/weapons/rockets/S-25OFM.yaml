@@ -1,0 +1,6 @@
+name: S-25OFM
+year: 1978
+# May have been IOC in late 70's per WeaponSystems.net. Deagal says base S-25 didn't IOC 88 so not sure
+fallback: S-25O
+clsids:
+  - "{A0648264-4BC0-4EE8-A543-D119F6BA4257}"

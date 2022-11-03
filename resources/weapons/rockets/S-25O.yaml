@@ -1,0 +1,6 @@
+name: S-25O
+year: 1975
+# May have been IOC in 1975 per Weapon systems.net, but not widely used till the 80s or 90s per Deagal. Deagal says IOC 88
+fallback: S-24B
+clsids:
+  - "{S_25_O}"
