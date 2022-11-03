@@ -93,6 +93,11 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
             pickup = None
             pickup_position = self.flight.departure.position
         else:
+            # TODO The calculation of the Pickup LZ is currently randomized. This
+            # leads to the problem that we can not gurantee that the LZ is clear of
+            # obstacles. This has to be improved in the future so that the Mission can
+            # be autoplanned. In the current state the User has to check the created
+            # Waypoints for the Pickup and Dropoff LZs are free of obstacles.
             # Create a special pickup zone for Helos from Airbase / FOB
             pickup = builder.cargo_pickup(
                 MissionTarget(
@@ -105,11 +110,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
         assault_area = builder.assault_area(self.package.target)
         heading = self.package.target.position.heading_between_point(pickup_position)
 
-        # Once there is a plane which is capable of AirDrop Paratrooper
-        # we can make use of the AIRDROP Wayppoint type.
-        # This would also need a special Waypointbuilder.
-        # Currently AirAssault can only be used by Helos so we just create
-        # the drop_off Landing Zone
+        # TODO we can not gurantee a safe LZ for DropOff. See comment above.
         drop_off_zone = MissionTarget(
             "Dropoff zone",
             self.package.target.position.point_from_heading(heading, 1200),
