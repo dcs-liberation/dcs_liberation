@@ -1,6 +1,6 @@
 name: 2xAIM-9M
 year: 1982
-fallback: 2xAIM-9P5
+fallback: 2xAIM-9L
 clsids:
   - "{DB434044-F5D0-4F1F-9BA9-B73027E18DD3}"
   - "LAU-115_2*LAU-127_AIM-9M"
