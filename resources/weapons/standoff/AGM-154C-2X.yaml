@@ -1,5 +1,5 @@
 name: 2xAGM-154C JSOW
 year: 2005
-fallback: AGM-62 Walleye II
+fallback: 2xAGM-154A JSOW
 clsids:
   - "{BRU55_2*AGM-154C}"
