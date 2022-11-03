@@ -1,6 +1,6 @@
 name: AIM-9M
 year: 1982
-fallback: AIM-9P5
+fallback: AIM-9L
 clsids:
   - "{6CEB49FC-DED8-4DED-B053-E1F033FF72D3}"
   - "LAU-105_1*AIM-9M_L"
