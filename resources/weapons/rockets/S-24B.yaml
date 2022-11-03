@@ -1,0 +1,7 @@
+name: S-24B
+year: 1975
+fallback: S-24A
+clsids:
+  - "{3858707D-F5D5-4bbb-BDD8-ABB0530EBC7C}"
+  - "{1FA14DEA-8CDB-45AD-88A8-EC068DF1E65A}"
+  - "{S-24B}"
