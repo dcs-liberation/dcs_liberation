@@ -1,0 +1,5 @@
+name: 6xAGM-86C
+year: 1988
+fallback: AGM-86D
+clsids:
+  - "{6_x_AGM_86C_MER}"

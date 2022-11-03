@@ -1,5 +1,5 @@
 name: AGM-154A JSOW
 year: 1998
-fallback: AGM-62 Walleye II
+fallback: AGM-84E SLAM
 clsids:
   - "{AGM-154A}"

@@ -1,0 +1,7 @@
+name: KH-29L
+year: 1980
+fallback: KH-25ML
+clsids:
+  - "{X-29L}"
+  - "{3468C652-E830-4E73-AFA9-B5F260AB7C3D}"
+  - "{D4A8D9B9-5C45-42e7-BBD2-0E54F8308432}"

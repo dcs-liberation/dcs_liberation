@@ -1,0 +1,8 @@
+name: KH-25ML
+year: 1981
+# The base KH-25L IOCed in 1974, but does not appear to be in the game
+fallback: S-25L
+clsids:
+  - "{X-25ML}"
+  - "{6DADF342-D4BA-4D8A-B081-BA928C4AF86D}"
+  - "{79D73885-0801-45a9-917F-C90FE1CE3DFC}"
