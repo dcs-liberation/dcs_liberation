@@ -1,0 +1,5 @@
+name: KAB-1500L
+year: 1995
+fallback: KAB-1500KR
+clsids:
+  - "{39821727-F6E2-45B3-B1F0-490CC8921D1E}"

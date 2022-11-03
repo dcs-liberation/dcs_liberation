@@ -1,0 +1,5 @@
+name: FAB-1500 M54
+year: 1954
+fallback: FAB-500 M62
+clsids:
+  - "{40AA4ABE-D6EB-4CD6-AEFE-A1A0477B24AB}"

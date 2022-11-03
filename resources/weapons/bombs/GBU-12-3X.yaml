@@ -1,0 +1,6 @@
+name: 3xGBU-12
+type: LGB
+year: 1976
+fallback: 3xMk 82
+clsids:
+  - "BRU-42_3*GBU-12"

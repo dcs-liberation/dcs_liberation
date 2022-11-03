@@ -1,0 +1,5 @@
+name: KAB-500S
+year: 2007
+fallback: KAB-500LG
+clsids:
+  - "{KAB_500S_LOADOUT}"

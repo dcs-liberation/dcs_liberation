@@ -1,0 +1,5 @@
+name: FAB-500 M62
+year: 1962
+fallback: FAB-250 M62
+clsids:
+  - "{37DCC01E-9E02-432F-B61D-10C166CA2798}"

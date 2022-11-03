@@ -1,0 +1,5 @@
+name: GBU-54B
+year: 2012
+fallback: GBU-38
+clsids:
+  - "{GBU_54_V_1B}"
