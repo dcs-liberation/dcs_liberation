@@ -1,5 +1,4 @@
 name: KH-25MPU
-type: ARM
 year: 1985
 fallback: KH-25MP
 clsids:
