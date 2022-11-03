@@ -1,0 +1,7 @@
+name: AGM-65E2/L
+type: LGB
+year: 2002
+# USMC Designation is the E2, USAF is the L
+fallback: 3xAGM-65E
+clsids:
+  - "LAU_117_AGM_65L"

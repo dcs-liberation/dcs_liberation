@@ -1,0 +1,5 @@
+name: S-25L
+year: 1979
+fallback: S-25O
+clsids:
+  - "{0180F983-C14A-11d8-9897-000476191836}"

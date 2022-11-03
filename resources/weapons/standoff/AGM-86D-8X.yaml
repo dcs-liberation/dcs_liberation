@@ -1,0 +1,5 @@
+name: 8xAGM-86D
+year: 2001
+fallback: 8xAGM-86C
+clsids:
+  - "{8DCAF3A3-7FCF-41B8-BB88-58DEDA878EDE}"

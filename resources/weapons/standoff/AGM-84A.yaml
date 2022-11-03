@@ -1,0 +1,5 @@
+name: AGM-84A
+year: 1979
+fallback: GBU-24
+clsids:
+  - "{8B7CADF9-4954-46B3-8CFB-93F2F5B90B03}"
