@@ -1,0 +1,5 @@
+name: 10xCBU-97
+year: 1992
+fallback: 10xCBU-87
+clsids:
+  - "CBU97*10"

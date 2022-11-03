@@ -1,0 +1,5 @@
+name: CBU-105
+year: 2001
+fallback: CBU-97
+clsids:
+  - "{CBU_105}"
