@@ -165,6 +165,7 @@ class NewGameWizard(QtWidgets.QWizard):
             uh_60l=self.field("uh_60l"),
             jas39_gripen=self.field("jas39_gripen"),
             su57_felon=self.field("su57_felon"),
+            ov10a_bronco=self.field("ov10a_bronco"),
             frenchpack=self.field("frenchpack"),
             high_digit_sams=self.field("high_digit_sams"),
         )
@@ -663,6 +664,8 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         self.registerField("jas39_gripen", jas39_gripen)
         su57_felon = QtWidgets.QCheckBox()
         self.registerField("su57_felon", su57_felon)
+        ov10a_bronco = QtWidgets.QCheckBox()
+        self.registerField("ov10a_bronco", ov10a_bronco)
         frenchpack = QtWidgets.QCheckBox()
         self.registerField("frenchpack", frenchpack)
         high_digit_sams = QtWidgets.QCheckBox()
@@ -706,6 +709,9 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("Su-57 Felon"), modLayout_row, 0)
         modLayout.addWidget(su57_felon, modLayout_row, 1)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("OV-10A Bronco"), modLayout_row, 0)
+        modLayout.addWidget(ov10a_bronco, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("Frenchpack"), modLayout_row, 0)
         modLayout.addWidget(frenchpack, modLayout_row, 1)

@@ -125,6 +125,7 @@ from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
 from pydcs_extensions.su57.su57 import Su_57
+from pydcs_extensions.ov10a.ov10a import Bronco_OV_10A
 from pydcs_extensions.uh60l.uh60l import KC130J, UH_60L
 from .flighttype import FlightType
 
@@ -175,6 +176,7 @@ CAP_CAPABLE = [
     VSN_F104G,
     MiG_19P,
     A_4E_C,
+    Bronco_OV_10A,
     F_86F_Sabre,
     MiG_15bis,
     C_101CC,
@@ -214,6 +216,7 @@ CAS_CAPABLE = [
     A_10A,
     B_1B,
     A_4E_C,
+    Bronco_OV_10A,
     F_14B,
     F_14A_135_GR,
     AJS37,
@@ -368,6 +371,7 @@ STRIKE_CAPABLE = [
     A_10C,
     S_3B,
     A_4E_C,
+    Bronco_OV_10A,
     M_2000C,
     Mirage_F1B,
     Mirage_F1BE,
@@ -469,6 +473,7 @@ RUNWAY_ATTACK_CAPABLE = [
     A_10C,
     S_3B,
     A_4E_C,
+    Bronco_OV_10A,
     M_2000C,
     Mirage_F1B,
     Mirage_F1BE,
