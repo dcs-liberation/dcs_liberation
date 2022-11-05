@@ -24,22 +24,26 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - AH-64D Apache Longbow
-    - primary: DEAD
-      secondary: any
-      aircraft:
-        - F/A-18C Hornet (Lot 20)
     - primary: SEAD
       secondary: any
       aircraft:
-        - F-16CM Fighting Falcon (Block 50)
-    - primary: Strike
-      secondary: air-to-ground
+        - F/A-18C Hornet (Lot 20)
+    - primary: DEAD
+      secondary: any
       aircraft:
-        - AV-8B Harrier II Night Attack
+        - F-16CM Fighting Falcon (Block 50)
     - primary: BAI
       secondary: air-to-ground
       aircraft:
+        - AV-8B Harrier II Night Attack
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
         - F-15E Strike Eagle
+    - primary: Air Assault
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
     - primary: AEW&C
       aircraft:
         - E-3A

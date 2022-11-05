@@ -5,46 +5,46 @@ authors: Starfire
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Russia 1990
 description:
-  <p>An Argentinean extremist group has contract the Sons of Warvan (SoW), an
-  unusually well-equipped PMC with close ties to the Russian Goverment, to
-  construct a beryllium bomb at Ushaia for use in its ongoing conflict with
-  Chile. United States military forces have established a foothold at San
-  Julian. However, the limited facilities means most land-based aircraft have to
-  remain at Mount Pleasant in the Falklands until more airfields are in friendly
-  hands. While the SoW are distracted up north, it is up to the Marines on an
-  LHA to launch an assault upon Ushaia from the sea in order to disable the bomb
-  production facility.</p>
+  <p>An Argentinean extremist group has contracted the Sons of Warvan (SoW), an
+  unusually well-equipped PMC with close ties to the Russian government, to
+  construct a beryllium bomb at the secret Omega 13 production facility in Ushaia
+  for use in its ongoing conflict with Chile. United States military forces have
+  established a foothold at San Julian. While the SoW are distracted up north, it
+  is up to the Marines to launch an assault upon Ushaia from an LHA in order to
+  disable the bomb production facility. Fortunately, Ushaia is lightly defended as
+  the SoW are trying to avoid unwanted attention.</p>
 miz: grabthars_hammer.miz
-performance: 1
+performance: 2
 recommended_start_date: 2000-07-13
-version: "10.4"
+version: "10.5"
 squadrons:
   #Mount Pleasant
   2:
-    - primary: BARCAP
+    - primary: TARCAP
       secondary: air-to-air
       aircraft:
         - F-15C Eagle
-    - primary: DEAD
-      secondary: any
-      aircraft:
-        - F-16CM Fighting Falcon (Block 50)
-    - primary: Strike
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle
-    - primary: AEW&C
+    - primary: CAS
+      secondary: air-to-ground
       aircraft:
-        - E-3A
+        - A-10C Thunderbolt II (Suite 7)
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
   #San Julian
   11:
-    - primary: CAS
-      secondary: air-to-ground
+    - primary: DEAD
+      secondary: any
       aircraft:
-        - A-10C Thunderbolt II (Suite 7)
+        - F-16CM Fighting Falcon (Block 50)
   #El Calafate
   14:
     - primary: CAS
@@ -69,16 +69,15 @@ squadrons:
         - Tu-22M3 Backfire-C
   #Ushuaia
   7:
-    - primary: BARCAP
-      secondary: any
+    - primary: Transport
       aircraft:
-        - MiG-29S Fulcrum-C
+        - IL-76MD
   #Ushuaia Helo Port
   8:
     - primary: BAI
       secondary: air-to-ground
       aircraft:
-        - Ka-50 Hokum
+        - Mi-24P Hind-F
   #Blue CV
   Blue-CV:
     - primary: BARCAP
@@ -97,11 +96,15 @@ squadrons:
         - S-3B Tanker
   # Blue LHA
   Blue-LHA:
-    - primary: BAI
+    - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
-    - primary: CAS
+    - primary: Air Assault
       secondary: air-to-ground
       aircraft:
         - UH-1H Iroquois
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
