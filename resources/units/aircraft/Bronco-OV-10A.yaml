@@ -1,0 +1,14 @@
+carrier_capable: false
+description: The North American Rockwell OV-10 Bronco is an American twin-turboprop
+ light attack and observation aircraft. It was developed in the 1960s as a special aircraft
+ for counter-insurgency (COIN) combat, and one of its primary missions was as a forward air control (FAC) aircraft.
+ It can carry up to 3,200 lb (1,450 kg) of external munitions and internal loads such as paratroopers or stretchers,
+ and can loiter for three or more hours.
+introduced: 1969
+manufacturer: North American Rockwell
+origin: USA
+price: 4
+role: COIN / FAC /Light Attack
+gunfighter: true
+variants:
+  OV-10A Bronco: {}
