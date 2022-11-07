@@ -99,24 +99,22 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
         drop_off_zone = None
 
         if cargo.origin != self.flight.departure:
-            pickup = builder.cargo_pickup(cargo.origin, False)
+            pickup = builder.cargo_stop(cargo.origin)
         if cargo.next_stop != self.flight.arrival:
-            drop_off = builder.cargo_dropoff(cargo.next_stop, False)
+            drop_off = builder.cargo_stop(cargo.next_stop)
 
         if self.flight.is_helo:
             # Create CTLD Zones for Helo flights
-            pickup_zone = builder.cargo_pickup(
+            pickup_zone = builder.pickup_zone(
                 MissionTarget(
                     "Pickup Zone", cargo.origin.position.random_point_within(1000, 200)
-                ),
-                True,
+                )
             )
-            drop_off_zone = builder.cargo_dropoff(
+            drop_off_zone = builder.dropoff_zone(
                 MissionTarget(
                     "Dropoff zone",
                     cargo.next_stop.position.random_point_within(1000, 200),
-                ),
-                True,
+                )
             )
             # Show the zone waypoints only to the player
             pickup_zone.only_for_player = True
