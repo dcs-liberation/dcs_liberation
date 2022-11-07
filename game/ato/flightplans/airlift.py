@@ -129,16 +129,6 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
             altitude_is_agl,
         )
 
-        if self.flight.client_count > 0:
-            # Normal Landing Waypoint
-            arrival = builder.land(self.flight.arrival)
-        else:
-            # The AI Needs another landing&refuel point to actually fly back to the original
-            # base. Otherwise the Cargo drop will be the new Landing Waypoint and the
-            # AI will end its mission there instead of flying back.
-            # https://forum.dcs.world/topic/211775-landing-to-refuel-and-rearm-the-landingrefuar-waypoint/
-            arrival = builder.land_refuel(self.flight.arrival, True)
-
         return AirliftLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to_pickup=nav_to_pickup,
@@ -158,7 +148,7 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
                 altitude,
                 altitude_is_agl,
             ),
-            arrival=arrival,
+            arrival=builder.land(self.flight.arrival),
             divert=builder.divert(self.flight.divert),
             bullseye=builder.bullseye(),
         )

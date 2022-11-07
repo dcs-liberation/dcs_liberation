@@ -501,38 +501,6 @@ class WaypointBuilder:
         )
 
     @staticmethod
-    def land_refuel(
-        control_point: ControlPoint, is_destination: bool = False
-    ) -> FlightWaypoint:
-        """Creates a land refuel waypoint.
-
-        Args:
-            control_point: The airbase to refuel.
-            is_destination: Due to an DCS Bug we need to set the last landing waypoint also as LandingReFuAr
-        """
-        if is_destination:
-            return FlightWaypoint(
-                "LANDING",
-                FlightWaypointType.LAND_REFUEL,
-                control_point.position,
-                meters(0),
-                "RADIO",
-                description=f"Land at {control_point}",
-                pretty_name="Landing",
-                control_point=control_point,
-            )
-        return FlightWaypoint(
-            "REFUEL",
-            FlightWaypointType.LAND_REFUEL,
-            control_point.position,
-            meters(0),
-            "RADIO",
-            description=f"Refuel at {control_point}",
-            pretty_name="Refuel",
-            control_point=control_point,
-        )
-
-    @staticmethod
     def cargo_pickup(pick_up: MissionTarget, is_helo: bool) -> FlightWaypoint:
         """Creates a cargo pickup waypoint.
 
