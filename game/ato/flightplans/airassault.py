@@ -83,12 +83,12 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
 
         builder = WaypointBuilder(self.flight, self.coalition)
 
-        if not self.flight.is_helo or self.flight.departure.cptype in [
+        if self.flight.departure.cptype in [
             ControlPointType.AIRCRAFT_CARRIER_GROUP,
             ControlPointType.LHA_GROUP,
             ControlPointType.OFF_MAP,
         ]:
-            # Non-Helo flights or Off_Map will be preloaded
+            # Off_Map spawns will be preloaded
             # Carrier operations load the logistics directly from the carrier
             pickup = None
             pickup_position = self.flight.departure.position
@@ -99,12 +99,11 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
             # be autoplanned. In the current state the User has to check the created
             # Waypoints for the Pickup and Dropoff LZs are free of obstacles.
             # Create a special pickup zone for Helos from Airbase / FOB
-            pickup = builder.cargo_pickup(
+            pickup = builder.pickup_zone(
                 MissionTarget(
                     "Pickup Zone",
                     self.flight.departure.position.random_point_within(1200, 600),
-                ),
-                self.flight.is_helo,
+                )
             )
             pickup_position = pickup.position
         assault_area = builder.assault_area(self.package.target)
@@ -130,7 +129,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
                 self.package.waypoints.ingress,
                 self.package.target,
             ),
-            drop_off=builder.cargo_dropoff(drop_off_zone, is_helo=True),
+            drop_off=builder.dropoff_zone(drop_off_zone),
             target=assault_area,
             nav_to_home=builder.nav_path(
                 drop_off_zone.position,

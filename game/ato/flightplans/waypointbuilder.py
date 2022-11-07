@@ -501,74 +501,51 @@ class WaypointBuilder:
         )
 
     @staticmethod
-    def cargo_pickup(pick_up: MissionTarget, is_helo: bool) -> FlightWaypoint:
-        """Creates a cargo pickup waypoint.
-
-        Args:
-            control_point: Pick up location.
+    def pickup_zone(pick_up: MissionTarget) -> FlightWaypoint:
+        """Creates a pickup landing zone waypoint
+        This waypoint is used to generate the Trigger Zone used for AirAssault and
+        AirLift using the CTLD plugin (see LogisticsGenerator)
         """
-        control_point = pick_up if isinstance(pick_up, ControlPoint) else None
-        if is_helo:
-            return FlightWaypoint(
-                "PICKUPZONE",
-                FlightWaypointType.PICKUP_ZONE,
-                pick_up.position,
-                meters(0),
-                "RADIO",
-                description=f"Pick up cargo from {pick_up.name}",
-                pretty_name="Pick-up zone",
-                control_point=control_point,
-            )
         return FlightWaypoint(
-            "PICKUP",
-            FlightWaypointType.LAND_REFUEL,
+            "PICKUPZONE",
+            FlightWaypointType.PICKUP_ZONE,
             pick_up.position,
             meters(0),
             "RADIO",
             description=f"Pick up cargo from {pick_up.name}",
-            pretty_name="Cargo pick-up",
-            control_point=control_point,
+            pretty_name="Pick-up zone",
         )
 
     @staticmethod
-    def cargo_dropoff(drop_off: MissionTarget, is_helo: bool) -> FlightWaypoint:
-        """Creates a cargo drop-off waypoint.
-        This waypoint is used by AirLift and AirAssault to drop cargo or troops
-        at the given location
-
-        Args:
-            control_point: Drop-off location.
-            is_helo: Differentiate behaviour between plane and helo
+    def dropoff_zone(drop_off: MissionTarget) -> FlightWaypoint:
+        """Creates a dropoff landing zone waypoint
+        This waypoint is used to generate the Trigger Zone used for AirAssault and
+        AirLift using the CTLD plugin (see LogisticsGenerator)
         """
-        if is_helo:
-            if isinstance(drop_off, ControlPoint):
-                raise ValueError(
-                    "Helicopter airlift drop-off targets should not be control points"
-                )
-            return FlightWaypoint(
-                "DROPOFFZONE",
-                FlightWaypointType.DROPOFF_ZONE,
-                drop_off.position,
-                meters(0),
-                "RADIO",
-                description=f"Drop off cargo at {drop_off.name}",
-                pretty_name="Drop-off zone",
-            )
-
-        if not isinstance(drop_off, ControlPoint):
-            raise ValueError(
-                f"Plane airlift drop-off targets must be control points, but was given "
-                f"{drop_off.__class__.__name__}"
-            )
         return FlightWaypoint(
-            "DROPOFF",
-            FlightWaypointType.LAND_REFUEL,
+            "DROPOFFZONE",
+            FlightWaypointType.DROPOFF_ZONE,
             drop_off.position,
             meters(0),
             "RADIO",
             description=f"Drop off cargo at {drop_off.name}",
-            pretty_name="Cargo drop-off",
-            control_point=drop_off,
+            pretty_name="Drop-off zone",
+        )
+
+    @staticmethod
+    def cargo_stop(control_point: ControlPoint) -> FlightWaypoint:
+        """Creates a cargo stop waypoint.
+        This waypoint is used by AirLift as a landing and stopover waypoint
+        """
+        return FlightWaypoint(
+            "CARGOSTOP",
+            FlightWaypointType.CARGO_STOP,
+            control_point.position,
+            meters(0),
+            "RADIO",
+            description=f"Stop for cargo at {control_point.name}",
+            pretty_name="Cargo stop",
+            control_point=control_point,
         )
 
     @staticmethod
