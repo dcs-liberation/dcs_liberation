@@ -1,4 +1,4 @@
-env.info("--- SKYNET VERSION: 3.0.0 | BUILD TIME: 23.07.2022 1512Z ---")
+env.info("--- SKYNET VERSION: 3.0.1 | BUILD TIME: 06.11.2022 1728Z ---")
 do
 --this file contains the required units per sam type
 samTypesDB = {
@@ -3450,7 +3450,7 @@ function SkynetIADSSAMSearchRadar:setupRangeData()
 				local sensorInformation = subEntries[j]
 				-- some sam sites have  IR and passive EWR detection, we are just interested in the radar data
 				-- investigate if upperHemisphere and headOn is ok, I guess it will work for most detection cases
-				if sensorInformation.type == Unit.SensorType.RADAR then
+				if sensorInformation.type == Unit.SensorType.RADAR and sensorInformation['detectionDistanceAir'] then
 					local upperHemisphere = sensorInformation['detectionDistanceAir']['upperHemisphere']['headOn']
 					local lowerHemisphere = sensorInformation['detectionDistanceAir']['lowerHemisphere']['headOn']
 					self.maximumRange = upperHemisphere
@@ -3509,7 +3509,21 @@ function SkynetIADSSamSite:create(samGroup, iads)
 	setmetatable(sam, self)
 	self.__index = self
 	sam.targetsInRange = false
+	sam.goLiveConstraints = {}
 	return sam
+end
+
+function SkynetIADSSamSite:addGoLiveConstraint(constraintName, constraint)
+	self.goLiveConstraints[constraintName] = constraint
+end
+
+function SkynetIADSAbstractRadarElement:areGoLiveConstraintsSatisfied(contact)
+	for constraintName, constraint in pairs(self.goLiveConstraints) do
+		if ( constraint(contact) ~= true ) then
+			return false
+		end
+	end
+	return true
 end
 
 function SkynetIADSSamSite:isDestroyed()
@@ -3542,7 +3556,7 @@ end
 
 function SkynetIADSSamSite:informOfContact(contact)
 	-- we make sure isTargetInRange (expensive call) is only triggered if no previous calls to this method resulted in targets in range
-	if ( self.targetsInRange == false and self:isTargetInRange(contact) and ( contact:isIdentifiedAsHARM() == false or ( contact:isIdentifiedAsHARM() == true and self:getCanEngageHARM() == true ) ) ) then
+	if ( self.targetsInRange == false and self:areGoLiveConstraintsSatisfied(contact) == true and self:isTargetInRange(contact) and ( contact:isIdentifiedAsHARM() == false or ( contact:isIdentifiedAsHARM() == true and self:getCanEngageHARM() == true ) ) ) then
 		self:goLive()
 		self.targetsInRange = true
 	end
