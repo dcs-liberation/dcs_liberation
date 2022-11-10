@@ -112,6 +112,17 @@ class IadsNetwork:
             else:
                 raise RuntimeError("Invalid iads_config in campaign")
 
+    @property
+    def participating(self) -> Iterator[TheaterGroundObject]:
+        """All unique participating TGOs. First primary then secondary"""
+        secondary_nodes = []
+        for node in self.nodes:
+            yield node.group.ground_object
+            for connection in node.connections.values():
+                if connection.ground_object not in secondary_nodes:
+                    secondary_nodes.append(connection.ground_object)
+        yield from secondary_nodes
+
     def skynet_nodes(self, game: Game) -> list[SkynetNode]:
         """Get all skynet nodes from the IADS Network"""
         skynet_nodes: list[SkynetNode] = []
@@ -143,29 +154,38 @@ class IadsNetwork:
 
     def update_tgo(self, tgo: TheaterGroundObject, events: GameUpdateEvents) -> None:
         """Update the IADS Network for the given TGO"""
-        # Remove existing nodes for the given tgo
+        # Remove existing nodes for the given tgo if there are any
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
                 self.nodes.remove(cn)
+                # Also delete all connections for the given node
                 for cID in cn.connections:
                     events.delete_iads_connection(cID)
 
-        node = self.node_for_tgo(tgo)
+        # Try to create a new primary node for the TGO
+        node = self._new_node_for_tgo(tgo)
         if node is None:
-            # Not participating
+            # the ground object is not participating to the IADS Network
             return
 
-        # Add connections to the new node
-        primary_node = node.group.ground_object.original_name
-        if self.iads_config and primary_node in self.iads_config:
+        # Create the connections to the secondary nodes
+        if self.iads_config:
             # If iads_config was defined and campaign designer added a config for the
-            # given primary node generate the connections from the config
+            # given primary node generate the connections from the config.
+            # If the primary node was not defined in the iads_config it will be added
+            # without any connections
             self._add_connections_from_config(node)
         else:
             # Otherwise calculate the connections by range
-            self._add_connections_by_range(node)
+            self._calculate_connections_by_range(node)
 
         events.update_iads_node(node)
+
+    def update_network(self, events: GameUpdateEvents) -> None:
+        """Update all primary nodes of the IADS and recalculate connections"""
+        primary_nodes = [node.group.ground_object for node in self.nodes]
+        for primary_node in primary_nodes:
+            self.update_tgo(primary_node, events)
 
     def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
         """Get existing node from the iads network or create a new node"""
@@ -182,7 +202,9 @@ class IadsNetwork:
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
                 return cn
+        return self._new_node_for_tgo(tgo)
 
+    def _new_node_for_tgo(self, tgo: TheaterGroundObject) -> Optional[IadsNetworkNode]:
         # Create new connection_node if none exists
         node: Optional[IadsNetworkNode] = None
         for group in tgo.groups:
@@ -249,6 +271,8 @@ class IadsNetwork:
     def _add_connections_from_config(self, node: IadsNetworkNode) -> None:
         """Add all connections for the given primary node based on the iads_config"""
         primary_node = node.group.ground_object.original_name
+        # iads_config uses defaultdict, therefore when the connections of a primary
+        # node where not defined in the iads_config they will just be empty
         connections = self.iads_config[primary_node]
         for secondary_node in connections:
             try:
@@ -259,8 +283,8 @@ class IadsNetwork:
                 )
                 continue
 
-    def _add_connections_by_range(self, node: IadsNetworkNode) -> None:
-        """Add all connections for the given primary node based range calculation"""
+    def _calculate_connections_by_range(self, node: IadsNetworkNode) -> None:
+        """Add all connections for the primary node by calculating them by range"""
         primary_tgo = node.group.ground_object
         for nearby_go in self.ground_objects.values():
             # Find nearby Power or Connection
@@ -294,4 +318,4 @@ class IadsNetwork:
                 if node is None:
                     # TGO does not participate to iads network
                     continue
-                self._add_connections_by_range(node)
+                self._calculate_connections_by_range(node)
