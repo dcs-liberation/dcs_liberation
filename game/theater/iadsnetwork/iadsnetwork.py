@@ -154,7 +154,17 @@ class IadsNetwork:
         if node is None:
             # Not participating
             return
-        # TODO Add the connections or calculate them..
+
+        # Add connections to the new node
+        primary_node = node.group.ground_object.original_name
+        if self.iads_config and primary_node in self.iads_config:
+            # If iads_config was defined and campaign designer added a config for the
+            # given primary node generate the connections from the config
+            self._add_connections_from_config(node)
+        else:
+            # Otherwise calculate the connections by range
+            self._add_connections_by_range(node)
+
         events.update_iads_node(node)
 
     def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
@@ -215,17 +225,17 @@ class IadsNetwork:
 
     def initialize_network_from_config(self) -> None:
         """Initialize the IADS Network from a configuration"""
-        for element_name, connections in self.iads_config.items():
+        for primary_node in self.iads_config.keys():
             warning_msg = (
-                f"IADS: No ground object found for {element_name}."
+                f"IADS: No ground object found for {primary_node}."
                 f" This can be normal behaviour."
             )
-            if element_name in self.ground_objects:
-                node = self.node_for_tgo(self.ground_objects[element_name])
+            if primary_node in self.ground_objects:
+                node = self.node_for_tgo(self.ground_objects[primary_node])
             else:
                 node = None
                 warning_msg = (
-                    f"IADS: No ground object found for connection {element_name}"
+                    f"IADS: No ground object found for connection {primary_node}"
                 )
 
             if node is None:
@@ -234,16 +244,38 @@ class IadsNetwork:
                 # available. Therefore the TGO will not get populated at all
                 logging.warning(warning_msg)
                 continue
+            self._add_connections_from_config(node)
 
-            # Find all connected ground_objects
-            for node_name in connections:
-                try:
-                    node.add_connection_for_tgo(self.ground_objects[node_name])
-                except KeyError:
-                    logging.error(
-                        f"IADS: No ground object found for connection {node_name}"
-                    )
-                    continue
+    def _add_connections_from_config(self, node: IadsNetworkNode) -> None:
+        """Add all connections for the given primary node based on the iads_config"""
+        primary_node = node.group.ground_object.original_name
+        connections = self.iads_config[primary_node]
+        for secondary_node in connections:
+            try:
+                node.add_connection_for_tgo(self.ground_objects[secondary_node])
+            except KeyError:
+                logging.error(
+                    f"IADS: No ground object found for connection {secondary_node}"
+                )
+                continue
+
+    def _add_connections_by_range(self, node: IadsNetworkNode) -> None:
+        """Add all connections for the given primary node based range calculation"""
+        go = node.group.ground_object
+        for nearby_go in self.ground_objects.values():
+            # Find nearby Power or Connection
+            if nearby_go == go:
+                continue
+            if (
+                IadsRole.for_category(go.category)
+                in [
+                    IadsRole.POWER_SOURCE,
+                    IadsRole.CONNECTION_NODE,
+                ]
+                and nearby_go.position.distance_to_point(go.position)
+                <= node.group.iads_role.connection_range.meters
+            ):
+                node.add_connection_for_tgo(nearby_go)
 
     def initialize_network_from_range(self) -> None:
         """Initialize the IADS Network by range"""
@@ -261,17 +293,4 @@ class IadsNetwork:
                 if node is None:
                     # TGO does not participate to iads network
                     continue
-                # Find nearby Power or Connection
-                for nearby_go in self.ground_objects.values():
-                    if nearby_go == go:
-                        continue
-                    if (
-                        IadsRole.for_category(go.category)
-                        in [
-                            IadsRole.POWER_SOURCE,
-                            IadsRole.CONNECTION_NODE,
-                        ]
-                        and nearby_go.position.distance_to_point(go.position)
-                        <= node.group.iads_role.connection_range.meters
-                    ):
-                        node.add_connection_for_tgo(nearby_go)
+                self._add_connections_by_range(node)
