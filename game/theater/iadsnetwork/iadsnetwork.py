@@ -261,19 +261,20 @@ class IadsNetwork:
 
     def _add_connections_by_range(self, node: IadsNetworkNode) -> None:
         """Add all connections for the given primary node based range calculation"""
-        go = node.group.ground_object
+        primary_tgo = node.group.ground_object
         for nearby_go in self.ground_objects.values():
             # Find nearby Power or Connection
-            if nearby_go == go:
+            if nearby_go == primary_tgo:
                 continue
+            nearby_iads_role = IadsRole.for_category(nearby_go.category)
             if (
-                IadsRole.for_category(go.category)
+                nearby_iads_role
                 in [
                     IadsRole.POWER_SOURCE,
                     IadsRole.CONNECTION_NODE,
                 ]
-                and nearby_go.position.distance_to_point(go.position)
-                <= node.group.iads_role.connection_range.meters
+                and nearby_go.position.distance_to_point(primary_tgo.position)
+                <= nearby_iads_role.connection_range.meters
             ):
                 node.add_connection_for_tgo(nearby_go)
 
