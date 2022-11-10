@@ -839,17 +839,23 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         events.update_control_point(self)
 
         # All the attached TGOs have either been depopulated or captured. Tell the UI to
-        # update their state. Also update orientation and IADS state for specific tgos
+        # update their state. Also update the orientation of all TGOs
+        iads_update_required = False
+        iads_network = game.theater.iads_network
         for tgo in self.connected_objectives:
             if isinstance(tgo, IadsGroundObject) or isinstance(
                 tgo, VehicleGroupGroundObject
             ):
-                if isinstance(tgo, IadsGroundObject):
-                    game.theater.iads_network.update_tgo(tgo, events)
+                if not iads_update_required and tgo in iads_network.participating:
+                    iads_update_required = True
                 conflict_heading = game.theater.heading_to_conflict_from(tgo.position)
                 tgo.rotate(conflict_heading or tgo.heading)
             if not tgo.is_control_point:
                 events.update_tgo(tgo)
+
+        # Update the IADS Network
+        if iads_update_required:
+            iads_network.update_network(events)
 
     @property
     def required_aircraft_start_type(self) -> Optional[StartType]:
