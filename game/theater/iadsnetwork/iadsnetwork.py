@@ -119,6 +119,9 @@ class IadsNetwork:
         for node in self.nodes:
             yield node.group.ground_object
             for connection in node.connections.values():
+                # Check for duplicate secondary node as a secondary node can be
+                # connected to 1..N primary nodes but we do not want to yiel them
+                # multiple times so we prevent dups
                 if connection.ground_object not in secondary_nodes:
                     secondary_nodes.append(connection.ground_object)
         yield from secondary_nodes
@@ -278,7 +281,7 @@ class IadsNetwork:
             try:
                 node.add_connection_for_tgo(self.ground_objects[secondary_node])
             except KeyError:
-                logging.error(
+                logging.exception(
                     f"IADS: No ground object found for connection {secondary_node}"
                 )
                 continue
