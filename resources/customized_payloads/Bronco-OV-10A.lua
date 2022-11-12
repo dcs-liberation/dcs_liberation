@@ -1,5 +1,5 @@
 local unitPayloads = {
-	["name"] = "A-4E-C",
+	["name"] = "Bronco-OV-10A",
 	["payloads"] = {
 		[1] = {
 			["name"] = "CAP",
