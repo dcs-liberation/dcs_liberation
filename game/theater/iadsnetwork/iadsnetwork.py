@@ -171,16 +171,17 @@ class IadsNetwork:
             # the ground object is not participating to the IADS Network
             return
 
-        # Create the connections to the secondary nodes
-        if self.iads_config:
-            # If iads_config was defined and campaign designer added a config for the
-            # given primary node generate the connections from the config.
-            # If the primary node was not defined in the iads_config it will be added
-            # without any connections
-            self._add_connections_from_config(node)
-        else:
-            # Otherwise calculate the connections by range
-            self._calculate_connections_by_range(node)
+        if self.advanced_iads:
+            # Create the connections to the secondary nodes
+            if self.iads_config:
+                # If iads_config was defined and campaign designer added a config for
+                # the given primary node generate the connections from the config. If
+                # the primary node was not defined in the iads_config it will be added
+                # without any connections
+                self._add_connections_from_config(node)
+            else:
+                # Otherwise calculate the connections by range
+                self._calculate_connections_by_range(node)
 
         events.update_iads_node(node)
 
