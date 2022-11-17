@@ -44,15 +44,14 @@ class SkynetNode:
             IadsRole.POWER_SOURCE,
         ]:
             # Use UnitName for EWR, CommandCenter, Comms, Power
+            is_dead = group.alive_units == 0
             for unit in group.units:
-                # Check for alive units in the group
-                if unit.alive:
+                if unit.alive or (is_dead and unit.is_static):
+                    # Return first alive unit within the group or otherwise return the
+                    # first static object as these will still be added to the mission
                     return unit.unit_name
-            if group.units[0].is_static:
-                # Statics will be placed as dead unit
-                return group.units[0].unit_name
-            # If no alive unit is available and not static raise error
-            raise IadsNetworkException("Group has no skynet usable units")
+            # Raise error if there is no skynet capable unit in this group
+            raise IadsNetworkException(f"Group {group.name} has no skynet usable units")
         else:
             # Use the GroupName for SAMs, SAMAsEWR and PDs
             return group.group_name
@@ -134,11 +133,11 @@ class IadsNetwork:
                 # Skip culled ground objects
                 continue
 
-            # HOTFIX! Skip non-static nodes with no alive units left
-            # Delete this as soon as PRs #2285, #2286 & #2287 are merged
-            unit_count = len(node.group.units)
-            is_static = node.group.units[0].is_static if unit_count > 0 else False
-            if node.group.alive_units == 0 and not is_static:
+            if node.group.alive_units == 0 and not node.group.has_statics:
+                # Skip non-static nodes with no alive units left
+                # Dead static nodes can be added to skynet as these are added to the
+                # mission as dead unit. Non static will not be added to the mission and
+                # are therefore not accessible by skynet
                 continue
 
             # SkynetNode.from_group(node.group) may raise an exception
@@ -146,6 +145,9 @@ class IadsNetwork:
             # but if it does, we want to know because it's supposed to be impossible afaict
             skynet_node = SkynetNode.from_group(node.group)
             for connection in node.connections.values():
+                if connection.alive_units == 0 and not connection.has_statics:
+                    # Skip non static and dead connection nodes. See comment above
+                    continue
                 if connection.ground_object.is_friendly(
                     skynet_node.player
                 ) and not game.iads_considerate_culling(connection.ground_object):
