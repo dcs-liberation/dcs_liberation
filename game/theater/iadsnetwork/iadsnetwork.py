@@ -79,10 +79,10 @@ class IadsNetworkNode:
     def __str__(self) -> str:
         return self.group.group_name
 
-    def add_connection_for_tgo(self, tgo: TheaterGroundObject) -> None:
-        """Add all possible connections for the given TGO to the node"""
+    def add_secondary_node(self, tgo: TheaterGroundObject) -> None:
+        """Add all possible connections for the given secondary node to this node"""
         for group in tgo.groups:
-            if isinstance(group, IadsGroundGroup) and group.iads_role.participate:
+            if isinstance(group, IadsGroundGroup) and group.iads_role.is_secondary_node:
                 self.add_connection_for_group(group)
 
     def add_connection_for_group(self, group: IadsGroundGroup) -> None:
@@ -193,34 +193,27 @@ class IadsNetwork:
         for primary_node in primary_nodes:
             self.update_tgo(primary_node, events)
 
-    def node_for_group(self, group: IadsGroundGroup) -> IadsNetworkNode:
-        """Get existing node from the iads network or create a new node"""
-        for cn in self.nodes:
-            if cn.group == group:
-                return cn
-
-        node = IadsNetworkNode(group)
-        self.nodes.append(node)
-        return node
-
     def node_for_tgo(self, tgo: TheaterGroundObject) -> Optional[IadsNetworkNode]:
-        """Get existing node from the iads network or create a new node"""
+        """Create Primary node for the TGO or return existing one"""
         for cn in self.nodes:
             if cn.group.ground_object == tgo:
                 return cn
         return self._new_node_for_tgo(tgo)
 
     def _new_node_for_tgo(self, tgo: TheaterGroundObject) -> Optional[IadsNetworkNode]:
-        # Create new connection_node if none exists
+        """Create a new primary node for the given TGO.
+
+        Will return None if the given TGO is not capable of being a primary node.
+        This will also add any PointDefense of this TGO to the primary node"""
         node: Optional[IadsNetworkNode] = None
         for group in tgo.groups:
-            # TODO Cleanup
             if isinstance(group, IadsGroundGroup):
                 # The first IadsGroundGroup is always the primary Group
-                if not node and group.iads_role.participate:
-                    # Primary Node
-                    node = self.node_for_group(group)
-                elif node and group.iads_role == IadsRole.POINT_DEFENSE:
+                if node is None and group.iads_role.is_primary_node:
+                    # Create Primary Node
+                    node = IadsNetworkNode(group)
+                    self.nodes.append(node)
+                elif node is not None and group.iads_role == IadsRole.POINT_DEFENSE:
                     # Point Defense Node for this TGO
                     node.add_connection_for_group(group)
 
@@ -282,7 +275,13 @@ class IadsNetwork:
         connections = self.iads_config[primary_node]
         for secondary_node in connections:
             try:
-                node.add_connection_for_tgo(self.ground_objects[secondary_node])
+                nearby_go = self.ground_objects[secondary_node]
+                if IadsRole.for_category(nearby_go.category).is_secondary_node:
+                    node.add_secondary_node(nearby_go)
+                else:
+                    logging.error(
+                        f"IADS: {secondary_node} is not a valid secondary node"
+                    )
             except KeyError:
                 logging.exception(
                     f"IADS: No ground object found for connection {secondary_node}"
@@ -298,15 +297,11 @@ class IadsNetwork:
                 continue
             nearby_iads_role = IadsRole.for_category(nearby_go.category)
             if (
-                nearby_iads_role
-                in [
-                    IadsRole.POWER_SOURCE,
-                    IadsRole.CONNECTION_NODE,
-                ]
+                nearby_iads_role.is_secondary_node
                 and nearby_go.position.distance_to_point(primary_tgo.position)
                 <= nearby_iads_role.connection_range.meters
             ):
-                node.add_connection_for_tgo(nearby_go)
+                node.add_secondary_node(nearby_go)
 
     def initialize_network_from_range(self) -> None:
         """Initialize the IADS Network by range"""
