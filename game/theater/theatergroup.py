@@ -185,6 +185,10 @@ class TheaterGroup:
     def alive_units(self) -> int:
         return sum(unit.alive for unit in self.units)
 
+    @property
+    def has_statics(self) -> bool:
+        return any(unit.is_static for unit in self.units)
+
     def max_detection_range(self) -> Distance:
         """Calculate the maximum detection range of the TheaterGroup"""
         ranges = (u.detection_range for u in self.units if u.is_anti_air)
