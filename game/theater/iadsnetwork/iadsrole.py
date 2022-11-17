@@ -79,3 +79,16 @@ class IadsRole(Enum):
             IadsRole.NO_BEHAVIOR,
             IadsRole.POINT_DEFENSE,
         ]
+
+    @property
+    def is_primary_node(self) -> bool:
+        return self in [
+            IadsRole.SAM,
+            IadsRole.SAM_AS_EWR,
+            IadsRole.EWR,
+            IadsRole.COMMAND_CENTER,
+        ]
+
+    @property
+    def is_secondary_node(self) -> bool:
+        return self in [IadsRole.CONNECTION_NODE, IadsRole.POWER_SOURCE]
