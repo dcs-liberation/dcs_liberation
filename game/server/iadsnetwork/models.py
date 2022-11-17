@@ -34,8 +34,13 @@ class IadsConnectionJs(BaseModel):
         iads_connections = []
         tgo = network_node.group.ground_object
         for id, connection in network_node.connections.items():
-            if connection.ground_object.is_friendly(True) != tgo.is_friendly(True):
-                continue  # Skip connections which are not from same coalition
+            if (
+                not connection.iads_role.is_secondary_node
+                or connection.ground_object.is_friendly(True) != tgo.is_friendly(True)
+            ):
+                # Skip connections to non secondary nodes (for example PD)
+                # and connections which are not from same coalition
+                continue
             iads_connections.append(
                 IadsConnectionJs(
                     id=id,
@@ -67,10 +72,8 @@ class IadsNetworkJs(BaseModel):
     @staticmethod
     def from_network(network: IadsNetwork) -> IadsNetworkJs:
         iads_connections = []
-        for connection in network.nodes:
-            if not connection.group.iads_role.participate:
-                continue  # Skip
-            iads_connections.extend(IadsConnectionJs.connections_for_node(connection))
+        for primary_node in network.nodes:
+            iads_connections.extend(IadsConnectionJs.connections_for_node(primary_node))
         return IadsNetworkJs(
             advanced=network.advanced_iads, connections=iads_connections
         )
