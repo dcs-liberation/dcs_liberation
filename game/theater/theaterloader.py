@@ -58,19 +58,19 @@ class SeasonData:
 
 
 @dataclass(frozen=True)
-class TurbulanceData:
-    high_avg_yearly_turbulance_per_10cm: float | None
-    low_avg_yearly_turbulance_per_10cm: float | None
-    solar_noon_turbulance_per_10cm: float | None
-    midnight_turbulance_per_10cm: float | None
+class TurbulenceData:
+    high_avg_yearly_turbulence_per_10cm: float | None
+    low_avg_yearly_turbulence_per_10cm: float | None
+    solar_noon_turbulence_per_10cm: float | None
+    midnight_turbulence_per_10cm: float | None
 
     @staticmethod
-    def from_yaml(data: dict[str, Any]) -> TurbulanceData:
-        return TurbulanceData(
-            data.get("high_avg_yearly_turbulance_per_10cm"),
-            data.get("low_avg_yearly_turbulance_per_10cm"),
-            data.get("solar_noon_turbulance_per_10cm"),
-            data.get("midnight_turbulance_per_10cm"),
+    def from_yaml(data: dict[str, Any]) -> TurbulenceData:
+        return TurbulenceData(
+            data.get("high_avg_yearly_turbulence_per_10cm"),
+            data.get("low_avg_yearly_turbulence_per_10cm"),
+            data.get("solar_noon_turbulence_per_10cm"),
+            data.get("midnight_turbulence_per_10cm"),
         )
 
 
@@ -130,7 +130,7 @@ class TheaterLoader:
         spring = SeasonData.from_yaml(climate_data["seasons"]["spring"])
         summer = SeasonData.from_yaml(climate_data["seasons"]["summer"])
         fall = SeasonData.from_yaml(climate_data["seasons"]["fall"])
-        turbulance = TurbulanceData.from_yaml(climate_data["turbulance"])
+        turbulence = TurbulenceData.from_yaml(climate_data["turbulence"])
         if summer.average_pressure is None:
             raise RuntimeError(
                 f"{self.descriptor_path} does not define a summer average pressure"
@@ -147,21 +147,21 @@ class TheaterLoader:
             raise RuntimeError(
                 f"{self.descriptor_path} does not define a winter average temperature"
             )
-        if turbulance.high_avg_yearly_turbulance_per_10cm is None:
+        if turbulence.high_avg_yearly_turbulence_per_10cm is None:
             raise RuntimeError(
-                f"{self.descriptor_path} does not define a yearly average high turbulance"
+                f"{self.descriptor_path} does not define a yearly average high turbulence"
             )
-        if turbulance.low_avg_yearly_turbulance_per_10cm is None:
+        if turbulence.low_avg_yearly_turbulence_per_10cm is None:
             raise RuntimeError(
-                f"{self.descriptor_path} does not define a yearly average low turbulance"
+                f"{self.descriptor_path} does not define a yearly average low turbulence"
             )
-        if turbulance.solar_noon_turbulance_per_10cm is None:
+        if turbulence.solar_noon_turbulence_per_10cm is None:
             raise RuntimeError(
-                f"{self.descriptor_path} does not define a solar noon turbulance"
+                f"{self.descriptor_path} does not define a solar noon turbulence"
             )
-        if turbulance.midnight_turbulance_per_10cm is None:
+        if turbulence.midnight_turbulence_per_10cm is None:
             raise RuntimeError(
-                f"{self.descriptor_path} does not define a midnight turbulance"
+                f"{self.descriptor_path} does not define a midnight turbulence"
             )
         return SeasonalConditions(
             summer.average_pressure,
@@ -169,10 +169,10 @@ class TheaterLoader:
             summer.average_temperature,
             winter.average_temperature,
             climate_data["day_night_temperature_difference"],
-            turbulance.high_avg_yearly_turbulance_per_10cm,
-            turbulance.low_avg_yearly_turbulance_per_10cm,
-            turbulance.solar_noon_turbulance_per_10cm,
-            turbulance.midnight_turbulance_per_10cm,
+            turbulence.high_avg_yearly_turbulence_per_10cm,
+            turbulence.low_avg_yearly_turbulence_per_10cm,
+            turbulence.solar_noon_turbulence_per_10cm,
+            turbulence.midnight_turbulence_per_10cm,
             {
                 Season.Winter: winter.weather,
                 Season.Spring: spring.weather,
