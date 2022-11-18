@@ -12,7 +12,15 @@ from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
 from game.theater.daytimemap import DaytimeMap
 from game.theater.seasonalconditions import determine_season
 from game.timeofday import TimeOfDay
-from game.utils import Distance, Heading, Pressure, inches_hg, interpolate, meters
+from game.utils import (
+    Distance,
+    Heading,
+    Pressure,
+    inches_hg,
+    interpolate,
+    knots,
+    meters,
+)
 
 if TYPE_CHECKING:
     from game.settings import Settings
@@ -176,15 +184,24 @@ class Weather:
                 3,
             ]
         )
-        at_8000m_factor = 8 + high_alt_variation
+        at_8000m_factor = at_2000m_factor + 5 + high_alt_variation
 
         base_wind = random.randint(minimum, maximum)
+
+        # DCS is limited to 97 knots wind speed.
+        max_supported_wind_speed = knots(97).meters_per_second
 
         return WindConditions(
             # Always some wind to make the smoke move a bit.
             at_0m=Wind(wind_direction.degrees, max(1, base_wind * at_0m_factor)),
-            at_2000m=Wind(wind_direction_2000m.degrees, base_wind * at_2000m_factor),
-            at_8000m=Wind(wind_direction_8000m.degrees, base_wind * at_8000m_factor),
+            at_2000m=Wind(
+                wind_direction_2000m.degrees,
+                min(max_supported_wind_speed, base_wind * at_2000m_factor),
+            ),
+            at_8000m=Wind(
+                wind_direction_8000m.degrees,
+                min(max_supported_wind_speed, base_wind * at_8000m_factor),
+            ),
         )
 
     @staticmethod
