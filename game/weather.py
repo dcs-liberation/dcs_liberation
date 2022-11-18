@@ -148,8 +148,36 @@ class Weather:
         wind_direction_2000m = wind_direction + Heading.random(-90, 90)
         wind_direction_8000m = wind_direction + Heading.random(-90, 90)
         at_0m_factor = 1
-        at_2000m_factor = 2
-        at_8000m_factor = 3
+        at_2000m_factor = 3 + random.choice([0, 0, 0, 0, 0, 1, 1])
+
+        high_alt_variation = random.choice(
+            [
+                -3,
+                -3,
+                -2,
+                -2,
+                -2,
+                -2,
+                -2,
+                -2,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                -1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                2,
+                3,
+            ]
+        )
+        at_8000m_factor = 8 + high_alt_variation
+
         base_wind = random.randint(minimum, maximum)
 
         return WindConditions(
@@ -235,7 +263,7 @@ class Cloudy(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(1, 4)
+        return self.random_wind(2, 4)
 
 
 class Raining(Weather):
@@ -255,7 +283,7 @@ class Raining(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(1, 6)
+        return self.random_wind(2, 6)
 
 
 class Thunderstorm(Weather):
@@ -276,7 +304,7 @@ class Thunderstorm(Weather):
         )
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(1, 8)
+        return self.random_wind(2, 8)
 
 
 @dataclass
