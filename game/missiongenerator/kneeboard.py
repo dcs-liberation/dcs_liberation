@@ -400,6 +400,9 @@ class BriefingPage(KneeboardPage):
             f"Temperature: {round(self.weather.atmospheric.temperature_celsius)} °C at sea level"
         )
         writer.text(f"QNH: {qnh_in_hg} inHg / {qnh_mm_hg} mmHg / {qnh_hpa} hPa")
+        writer.text(
+            f"Turbulance: {round(self.weather.atmospheric.turbulance_per_10cm)} per 10cm at ground level."
+        )
 
         fl = self.flight
 

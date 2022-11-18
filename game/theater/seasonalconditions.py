@@ -45,4 +45,9 @@ class SeasonalConditions:
     winter_avg_temperature: float
     temperature_day_night_difference: float
 
+    high_avg_yearly_turbulance_per_10cm: float
+    low_avg_yearly_turbulance_per_10cm: float
+    solar_noon_turbulance_per_10cm: float
+    midnight_turbulance_per_10cm: float
+
     weather_type_chances: dict[Season, WeatherTypeChances]

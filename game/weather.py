@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import math
 import random
 from dataclasses import dataclass, field
 from typing import Optional, TYPE_CHECKING
@@ -35,6 +36,9 @@ class AtmosphericConditions:
 
     #: Temperature at sea level in Celcius.
     temperature_celsius: float
+
+    #: Turbulance per 10 cm.
+    turbulance_per_10cm: float
 
 
 @dataclass(frozen=True)
@@ -108,18 +112,38 @@ class Weather:
             day,
         )
 
+        seasonal_turbulance = self.interpolate_seasonal_turbulance(
+            seasonal_conditions.high_avg_yearly_turbulance_per_10cm,
+            seasonal_conditions.low_avg_yearly_turbulance_per_10cm,
+            day,
+        )
+
+        day_turbulance = seasonal_conditions.solar_noon_turbulance_per_10cm
+        night_turbulance = seasonal_conditions.midnight_turbulance_per_10cm
+        time_of_day_turbulance = self.interpolate_solar_activity(
+            time_of_day, day_turbulance, night_turbulance
+        )
+
+        random_turbulance = random.normalvariate(mu=0, sigma=0.5)
+
+        turbulance = abs(
+            seasonal_turbulance + time_of_day_turbulance + random_turbulance
+        )
+
         if time_of_day == TimeOfDay.Day:
             temperature += seasonal_conditions.temperature_day_night_difference / 2
         if time_of_day == TimeOfDay.Night:
             temperature -= seasonal_conditions.temperature_day_night_difference / 2
         pressure += self.pressure_adjustment
         temperature += self.temperature_adjustment
+        turbulance += self.turbulance_adjustment
         logging.debug(
             "Weather: Before random: temp {} press {}".format(temperature, pressure)
         )
         conditions = AtmosphericConditions(
             qnh=self.random_pressure(pressure),
             temperature_celsius=self.random_temperature(temperature),
+            turbulance_per_10cm=turbulance,
         )
         logging.debug(
             "Weather: After random: temp {} press {}".format(
@@ -134,6 +158,10 @@ class Weather:
 
     @property
     def temperature_adjustment(self) -> float:
+        raise NotImplementedError
+
+    @property
+    def turbulance_adjustment(self) -> float:
         raise NotImplementedError
 
     def generate_clouds(self) -> Optional[Clouds]:
@@ -243,6 +271,42 @@ class Weather:
         winter_factor = distance_from_peak_summer / day_of_year_peak_summer
         return interpolate(summer_value, winter_value, winter_factor, clamp=True)
 
+    @staticmethod
+    def interpolate_seasonal_turbulance(
+        high_value: float, low_value: float, day: datetime.date
+    ) -> float:
+        day_of_year = day.timetuple().tm_yday
+        day_of_year_peak_summer = 183
+        distance_from_peak_summer = -day_of_year_peak_summer + day_of_year
+
+        amplitude = 0.5 * (high_value - low_value)
+        offset = amplitude + low_value
+
+        # A high peak in summer and winter, between high_value and low_value.
+        return (
+            amplitude * math.cos(4 * math.pi * distance_from_peak_summer / 365.25)
+            + offset
+        )
+
+    @staticmethod
+    def interpolate_solar_activity(
+        time_of_day: TimeOfDay, high: float, low: float
+    ) -> float:
+
+        scale: float = 0
+
+        match time_of_day:
+            case TimeOfDay.Dawn:
+                scale = 0.4
+            case TimeOfDay.Day:
+                scale = 1
+            case TimeOfDay.Dusk:
+                scale = 0.6
+            case TimeOfDay.Night:
+                scale = 0
+
+        return interpolate(value1=low, value2=high, factor=scale, clamp=True)
+
 
 class ClearSkies(Weather):
     @property
@@ -252,6 +316,10 @@ class ClearSkies(Weather):
     @property
     def temperature_adjustment(self) -> float:
         return 3.0
+
+    @property
+    def turbulance_adjustment(self) -> float:
+        return 0.3
 
     def generate_clouds(self) -> Optional[Clouds]:
         return None
@@ -271,6 +339,10 @@ class Cloudy(Weather):
     @property
     def temperature_adjustment(self) -> float:
         return 0.0
+
+    @property
+    def turbulance_adjustment(self) -> float:
+        return 0.6
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=False)
@@ -292,6 +364,10 @@ class Raining(Weather):
     def temperature_adjustment(self) -> float:
         return -3.0
 
+    @property
+    def turbulance_adjustment(self) -> float:
+        return 0.9
+
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=True)
 
@@ -311,6 +387,10 @@ class Thunderstorm(Weather):
     @property
     def temperature_adjustment(self) -> float:
         return -3.0
+
+    @property
+    def turbulance_adjustment(self) -> float:
+        return 1.2
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds(

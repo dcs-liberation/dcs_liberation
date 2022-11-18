@@ -17,6 +17,7 @@ class EnvironmentGenerator:
     def set_atmospheric(self, atmospheric: AtmosphericConditions) -> None:
         self.mission.weather.qnh = atmospheric.qnh.mm_hg
         self.mission.weather.season_temperature = atmospheric.temperature_celsius
+        self.mission.weather.turbulence_at_ground = int(atmospheric.turbulance_per_10cm)
 
     def set_clouds(self, clouds: Optional[Clouds]) -> None:
         if clouds is None:
