@@ -38,3 +38,8 @@ climate:
         raining: 45
         cloudy: 30
         clear: 20
+  turbulance:
+    high_avg_yearly_turbulance_per_10cm: 3
+    low_avg_yearly_turbulance_per_10cm: 1
+    solar_noon_turbulance_per_10cm: 2
+    midnight_turbulance_per_10cm: 1

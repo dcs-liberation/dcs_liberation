@@ -57,6 +57,23 @@ class SeasonData:
         )
 
 
+@dataclass(frozen=True)
+class TurbulanceData:
+    high_avg_yearly_turbulance_per_10cm: float | None
+    low_avg_yearly_turbulance_per_10cm: float | None
+    solar_noon_turbulance_per_10cm: float | None
+    midnight_turbulance_per_10cm: float | None
+
+    @staticmethod
+    def from_yaml(data: dict[str, Any]) -> TurbulanceData:
+        return TurbulanceData(
+            data.get("high_avg_yearly_turbulance_per_10cm"),
+            data.get("low_avg_yearly_turbulance_per_10cm"),
+            data.get("solar_noon_turbulance_per_10cm"),
+            data.get("midnight_turbulance_per_10cm"),
+        )
+
+
 class TheaterLoader:
     THEATER_RESOURCE_DIR = Path("resources/theaters")
 
@@ -113,6 +130,7 @@ class TheaterLoader:
         spring = SeasonData.from_yaml(climate_data["seasons"]["spring"])
         summer = SeasonData.from_yaml(climate_data["seasons"]["summer"])
         fall = SeasonData.from_yaml(climate_data["seasons"]["fall"])
+        turbulance = TurbulanceData.from_yaml(climate_data["turbulance"])
         if summer.average_pressure is None:
             raise RuntimeError(
                 f"{self.descriptor_path} does not define a summer average pressure"
@@ -129,12 +147,32 @@ class TheaterLoader:
             raise RuntimeError(
                 f"{self.descriptor_path} does not define a winter average temperature"
             )
+        if turbulance.high_avg_yearly_turbulance_per_10cm is None:
+            raise RuntimeError(
+                f"{self.descriptor_path} does not define a yearly average high turbulance"
+            )
+        if turbulance.low_avg_yearly_turbulance_per_10cm is None:
+            raise RuntimeError(
+                f"{self.descriptor_path} does not define a yearly average low turbulance"
+            )
+        if turbulance.solar_noon_turbulance_per_10cm is None:
+            raise RuntimeError(
+                f"{self.descriptor_path} does not define a solar noon turbulance"
+            )
+        if turbulance.midnight_turbulance_per_10cm is None:
+            raise RuntimeError(
+                f"{self.descriptor_path} does not define a midnight turbulance"
+            )
         return SeasonalConditions(
             summer.average_pressure,
             winter.average_pressure,
             summer.average_temperature,
             winter.average_temperature,
             climate_data["day_night_temperature_difference"],
+            turbulance.high_avg_yearly_turbulance_per_10cm,
+            turbulance.low_avg_yearly_turbulance_per_10cm,
+            turbulance.solar_noon_turbulance_per_10cm,
+            turbulance.midnight_turbulance_per_10cm,
             {
                 Season.Winter: winter.weather,
                 Season.Spring: spring.weather,
