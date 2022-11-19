@@ -29,6 +29,7 @@ from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.simcontroller import SimController
+from qt_ui.uiflags import UiFlags
 from qt_ui.uncaughtexceptionhandler import UncaughtExceptionHandler
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
@@ -54,7 +55,7 @@ class QLiberationWindow(QMainWindow):
     tgo_info_signal = Signal(TheaterGroundObject)
     control_point_info_signal = Signal(ControlPoint)
 
-    def __init__(self, game: Game | None, dev: bool) -> None:
+    def __init__(self, game: Game | None, ui_flags: UiFlags) -> None:
         super().__init__()
 
         self._uncaught_exception_handler = UncaughtExceptionHandler(self)
@@ -79,14 +80,16 @@ class QLiberationWindow(QMainWindow):
         Dialog.set_game(self.game_model)
         self.ato_panel = QAirTaskingOrderPanel(self.game_model)
         self.info_panel = QInfoPanel(self.game)
-        self.liberation_map = QLiberationMap(self.game_model, dev, self)
+        self.liberation_map = QLiberationMap(
+            self.game_model, ui_flags.dev_ui_webserver, self
+        )
 
         self.setGeometry(300, 100, 270, 100)
         self.updateWindowTitle()
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.statusBar().showMessage("Ready")
 
-        self.initUi()
+        self.initUi(ui_flags)
         self.initActions()
         self.initToolbar()
         self.initMenuBar()
@@ -116,7 +119,7 @@ class QLiberationWindow(QMainWindow):
         else:
             self.onGameGenerated(self.game)
 
-    def initUi(self):
+    def initUi(self, ui_flags: UiFlags) -> None:
         hbox = QSplitter(Qt.Horizontal)
         vbox = QSplitter(Qt.Vertical)
         hbox.addWidget(self.ato_panel)
@@ -131,7 +134,7 @@ class QLiberationWindow(QMainWindow):
 
         vbox = QVBoxLayout()
         vbox.setMargin(0)
-        vbox.addWidget(QTopPanel(self.game_model, self.sim_controller))
+        vbox.addWidget(QTopPanel(self.game_model, self.sim_controller, ui_flags))
         vbox.addWidget(hbox)
 
         central_widget = QWidget()
