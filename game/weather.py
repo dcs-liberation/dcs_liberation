@@ -319,7 +319,7 @@ class ClearSkies(Weather):
 
     @property
     def turbulence_adjustment(self) -> float:
-        return 0.3
+        return 0.0
 
     def generate_clouds(self) -> Optional[Clouds]:
         return None
@@ -342,7 +342,7 @@ class Cloudy(Weather):
 
     @property
     def turbulence_adjustment(self) -> float:
-        return 0.6
+        return 0.75
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=False)
@@ -366,7 +366,7 @@ class Raining(Weather):
 
     @property
     def turbulence_adjustment(self) -> float:
-        return 0.9
+        return 1.5
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds.random_preset(rain=True)
@@ -390,7 +390,7 @@ class Thunderstorm(Weather):
 
     @property
     def turbulence_adjustment(self) -> float:
-        return 1.2
+        return 3.0
 
     def generate_clouds(self) -> Optional[Clouds]:
         return Clouds(

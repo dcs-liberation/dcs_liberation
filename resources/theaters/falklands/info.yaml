@@ -47,7 +47,7 @@ climate:
         cloudy: 45
         clear: 25
   turbulence:
-    high_avg_yearly_turbulence_per_10cm: 9
-    low_avg_yearly_turbulence_per_10cm: 3
-    solar_noon_turbulence_per_10cm: 2
-    midnight_turbulence_per_10cm: 0
+    high_avg_yearly_turbulence_per_10cm: 8
+    low_avg_yearly_turbulence_per_10cm: 4.5
+    solar_noon_turbulence_per_10cm: 3
+    midnight_turbulence_per_10cm: -2
