@@ -17,6 +17,7 @@ from game.profiling import logged_duration
 from game.utils import meters
 from qt_ui.models import GameModel
 from qt_ui.simcontroller import SimController
+from qt_ui.uiflags import UiFlags
 from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.widgets.QConditionsWidget import QConditionsWidget
 from qt_ui.widgets.QFactionsInfos import QFactionsInfos
@@ -30,7 +31,9 @@ from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResul
 
 
 class QTopPanel(QFrame):
-    def __init__(self, game_model: GameModel, sim_controller: SimController) -> None:
+    def __init__(
+        self, game_model: GameModel, sim_controller: SimController, ui_flags: UiFlags
+    ) -> None:
         super(QTopPanel, self).__init__()
         self.game_model = game_model
         self.sim_controller = sim_controller
@@ -80,7 +83,8 @@ class QTopPanel(QFrame):
 
         self.proceedBox = QGroupBox("Proceed")
         self.proceedBoxLayout = QHBoxLayout()
-        self.proceedBoxLayout.addLayout(SimSpeedControls(sim_controller))
+        if ui_flags.show_sim_speed_controls:
+            self.proceedBoxLayout.addLayout(SimSpeedControls(sim_controller))
         self.proceedBoxLayout.addLayout(MaxPlayerCount(self.game_model.ato_model))
         self.proceedBoxLayout.addWidget(self.passTurnButton)
         self.proceedBoxLayout.addWidget(self.proceedButton)
