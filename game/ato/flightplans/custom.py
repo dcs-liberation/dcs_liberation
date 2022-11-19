@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Type
 from .flightplan import FlightPlan, Layout
 from .ibuilder import IBuilder
 from .waypointbuilder import WaypointBuilder
+from .. import Flight
 from ..flightwaypointtype import FlightWaypointType
 
 if TYPE_CHECKING:
@@ -55,9 +56,17 @@ class CustomFlightPlan(FlightPlan[CustomLayout]):
 
 
 class Builder(IBuilder[CustomFlightPlan, CustomLayout]):
+    def __init__(
+        self, flight: Flight, waypoints: list[FlightWaypoint] | None = None
+    ) -> None:
+        super().__init__(flight)
+        if waypoints is None:
+            waypoints = []
+        self.waypoints = waypoints
+
     def layout(self) -> CustomLayout:
         builder = WaypointBuilder(self.flight, self.coalition)
-        return CustomLayout(builder.takeoff(self.flight.departure), [])
+        return CustomLayout(builder.takeoff(self.flight.departure), self.waypoints)
 
     def build(self) -> CustomFlightPlan:
         return CustomFlightPlan(self.flight, self.layout())

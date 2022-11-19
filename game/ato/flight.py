@@ -90,6 +90,12 @@ class Flight(SidcDescribable):
     def flight_plan(self) -> FlightPlan[Any]:
         return self._flight_plan_builder.get_or_build()
 
+    def degrade_to_custom_flight_plan(self) -> None:
+        from .flightplans.custom import Builder as CustomBuilder
+
+        self._flight_plan_builder = CustomBuilder(self, self.flight_plan.waypoints[1:])
+        self.recreate_flight_plan()
+
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         # Avoid persisting the flight state since that's not (currently) used outside
