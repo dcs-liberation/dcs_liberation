@@ -13,7 +13,7 @@ from PySide2.QtWidgets import (
 
 from game import Game
 from game.ato.flight import Flight
-from game.ato.flightplans.custom import CustomFlightPlan, CustomLayout
+from game.ato.flightplans.custom import CustomFlightPlan
 from game.ato.flightplans.formationattack import FormationAttackFlightPlan
 from game.ato.flightplans.planningerror import PlanningError
 from game.ato.flightplans.waypointbuilder import WaypointBuilder
@@ -147,15 +147,7 @@ class QFlightWaypointTab(QFrame):
 
     def degrade_to_custom_flight_plan(self) -> None:
         if not isinstance(self.flight.flight_plan, CustomFlightPlan):
-            self.flight.flight_plan = CustomFlightPlan(
-                self.flight,
-                CustomLayout(
-                    departure=WaypointBuilder(self.flight, self.coalition).takeoff(
-                        self.flight.departure
-                    ),
-                    custom_waypoints=self.flight.flight_plan.waypoints[1:],
-                ),
-            )
+            self.flight.degrade_to_custom_flight_plan()
 
     def confirm_recreate(self, task: FlightType) -> None:
         result = QMessageBox.question(
