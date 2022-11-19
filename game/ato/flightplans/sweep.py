@@ -22,7 +22,6 @@ class SweepLayout(LoiterLayout):
     nav_to: list[FlightWaypoint]
     sweep_start: FlightWaypoint
     sweep_end: FlightWaypoint
-    refuel: FlightWaypoint | None
     nav_from: list[FlightWaypoint]
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
@@ -31,8 +30,6 @@ class SweepLayout(LoiterLayout):
         yield from self.nav_to
         yield self.sweep_start
         yield self.sweep_end
-        if self.refuel is not None:
-            yield self.refuel
         yield from self.nav_from
         yield self.arrival
         if self.divert is not None:
@@ -112,11 +109,6 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
 
         hold = builder.hold(self._hold_point())
 
-        refuel = None
-
-        if self.package.waypoints is not None:
-            refuel = builder.refuel(self.package.waypoints.refuel)
-
         return SweepLayout(
             departure=builder.takeoff(self.flight.departure),
             hold=hold,
@@ -130,7 +122,6 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
             ),
             sweep_start=start,
             sweep_end=end,
-            refuel=refuel,
             arrival=builder.land(self.flight.arrival),
             divert=builder.divert(self.flight.divert),
             bullseye=builder.bullseye(),
