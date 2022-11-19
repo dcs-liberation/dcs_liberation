@@ -63,8 +63,7 @@ class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
         return None
 
     @property
-    def engagement_distance(self) -> Distance:
-        # The radius of the WaypointZone created at the target location
+    def ctld_target_zone_radius(self) -> Distance:
         return meters(2500)
 
     @property

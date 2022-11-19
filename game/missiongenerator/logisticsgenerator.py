@@ -1,14 +1,15 @@
 from typing import Any, Optional
+
 from dcs import Mission
-from dcs.unitgroup import FlyingGroup
 from dcs.statics import Fortification
+from dcs.unitgroup import FlyingGroup
+
 from game.ato import Flight
 from game.ato.flightplans.airassault import AirAssaultFlightPlan
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.missiongenerator.missiondata import CargoInfo, LogisticsInfo
 from game.settings.settings import Settings
 from game.transfers import TransferOrder
-
 
 ZONE_RADIUS = 300
 CRATE_ZONE_RADIUS = 50
@@ -45,7 +46,7 @@ class LogisticsGenerator:
             target_zone = f"{self.group.name}TARGET_ZONE"
             self.mission.triggers.add_triggerzone(
                 self.flight.flight_plan.layout.target.position,
-                self.flight.flight_plan.engagement_distance.meters,
+                self.flight.flight_plan.ctld_target_zone_radius.meters,
                 False,
                 target_zone,
             )
