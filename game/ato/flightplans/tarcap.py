@@ -105,9 +105,11 @@ class Builder(CapBuilder[TarCapFlightPlan, TarCapLayout]):
         start, end = builder.race_track(orbit0p, orbit1p, patrol_alt)
 
         refuel = None
+        nav_from_origin = orbit1p
 
         if self.package.waypoints is not None:
             refuel = builder.refuel(self.package.waypoints.refuel)
+            nav_from_origin = refuel.position
 
         return TarCapLayout(
             departure=builder.takeoff(self.flight.departure),
@@ -115,7 +117,7 @@ class Builder(CapBuilder[TarCapFlightPlan, TarCapLayout]):
                 self.flight.departure.position, orbit0p, patrol_alt
             ),
             nav_from=builder.nav_path(
-                orbit1p, self.flight.arrival.position, patrol_alt
+                nav_from_origin, self.flight.arrival.position, patrol_alt
             ),
             patrol_start=start,
             patrol_end=end,
