@@ -65,6 +65,7 @@ from dcs.planes import (
     KC_135,
     KJ_2000,
     L_39ZA,
+    MB_339A,
     MQ_9_Reaper,
     M_2000C,
     MiG_15bis,
@@ -81,12 +82,12 @@ from dcs.planes import (
     Mirage_F1B,
     Mirage_F1BE,
     Mirage_F1CE,
+    Mirage_F1CT,
+    Mirage_F1C_200,
     Mirage_F1EE,
     Mirage_F1EQ,
     Mirage_F1M_CE,
     Mirage_F1M_EE,
-    Mirage_F1C_200,
-    Mirage_F1CT,
     MosquitoFBMkVI,
     P_47D_30,
     P_47D_30bl1,
@@ -124,8 +125,8 @@ from pydcs_extensions.f104.f104 import VSN_F104G, VSN_F104S, VSN_F104S_AG
 from pydcs_extensions.f22a.f22a import F_22A
 from pydcs_extensions.hercules.hercules import Hercules
 from pydcs_extensions.jas39.jas39 import JAS39Gripen, JAS39Gripen_AG
-from pydcs_extensions.su57.su57 import Su_57
 from pydcs_extensions.ov10a.ov10a import Bronco_OV_10A
+from pydcs_extensions.su57.su57 import Su_57
 from pydcs_extensions.uh60l.uh60l import KC130J, UH_60L
 from .flighttype import FlightType
 
@@ -255,6 +256,7 @@ CAS_CAPABLE = [
     Mirage_F1CT,
     F_5E_3,
     F_86F_Sabre,
+    MB_339A,
     C_101CC,
     L_39ZA,
     UH_1H,
@@ -386,6 +388,7 @@ STRIKE_CAPABLE = [
     MiG_15bis,
     F_5E_3,
     F_86F_Sabre,
+    MB_339A,
     C_101CC,
     L_39ZA,
     B_17G,
@@ -486,6 +489,7 @@ RUNWAY_ATTACK_CAPABLE = [
     MiG_27K,
     MiG_21Bis,
     MiG_15bis,
+    MB_339A,
     F_5E_3,
     F_86F_Sabre,
     C_101CC,
