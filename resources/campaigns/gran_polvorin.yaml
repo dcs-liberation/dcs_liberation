@@ -1,0 +1,121 @@
+---
+name: Falklands - Gran Polvorin
+theater: Falklands
+authors: Fuzzle
+description:
+  <p>A naval campaign where a US carrier group must fight through Argentina and
+  Chile to repel Chinese invaders. <strong>This is a purely naval campaign,
+  meaning you will need to use the Air Assault mission type with transports to
+  take the first FOB. Ensure you soften it up enough
+  first!</strong></p><p><strong>Backstory:</strong> As war explodes around the
+  Pacific Rim, a Chinese battle group breaks through the blockade and makes for
+  South America, looking to establish bases within striking distance of the US'
+  southern allies. To avoid follow-on PLAN forces should they break through the
+  fighting to the west, a USN battle group is dispatched from the east coast of
+  the US to clear the Chinese forces from the continent and crush their carrier
+  group.</p>
+version: "10.4"
+recommended_player_faction: US Navy 2005
+recommended_enemy_faction: China 2010
+miz: gran_polvorin.miz
+performance: 2
+recommended_start_date: 2006-05-12
+recommended_player_money: 1000
+recommended_enemy_money: 1500
+recommended_player_income_multiplier: 1.3
+recommended_enemy_income_multiplier: 0.6
+squadrons:
+  #BLUFOR CVN
+  Naval-2:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - VF-143
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - VMFA-251
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+    - primary: Refueling
+      aircraft:
+        - VS-35 (Tanker)
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - VS-35
+    - primary: Transport
+      aircraft:
+        - HSM-40
+  # BLUFOR LHA
+  Naval-3:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (AH-1W)
+  # OPFOR CVN
+  Naval-1:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - J-15 Flanker X-2
+  # OPFOR First FOB
+  FOB Dinero:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # Rio Gallegos
+  5:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - FC-1 Fierce Dragon
+  # OPFOR Second FOB
+  FOB Vista:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # OPFOR Third FOB
+  FOB Galy:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+  # Punta Arenas
+  9:
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - J-11A Flanker-L
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - H-6J Badger
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+  # Rio Gallegos
+  7:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - J-7B
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - H-6J Badger
