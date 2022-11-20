@@ -22,6 +22,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Modding]** Updated the High Digit SAMs implementation and added the HQ-2 as well as the upgraded SA-2 and SA-3 Launchers from the mod. Threat range circles will now also be displayed correctly.
 * **[Modding]** Theater information such as climate properties is now moddable.
 * **[Modding]** Allow campaign designers to define default values for the economy settings (starting budget and multiplier).
+* **[Modding]** Campaigns can now optionally define their start time by including a time in the `recommended_start_date` field. There is not currently a way to override the start time in the UI.
 * **[Plugins]** Allow full support of the SkynetIADS plugin with all advanced features (connection nodes, power sources, command centers) if campaign supports it.
 * **[Plugins]** Added support for the CTLD script by ciribob with many possible customization options and updated the JTAC Autolase to the CTLD included script.
 * **[UI]** Added options to the loadout editor for setting properties such as HMD choice.
