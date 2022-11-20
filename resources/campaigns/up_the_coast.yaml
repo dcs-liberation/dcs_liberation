@@ -1,0 +1,185 @@
+---
+name: Caucasus - Up The Coast
+theater: Caucasus
+authors: HolyOrangeJuice, We Run Liberation
+recommended_player_faction: Bluefor Modern
+recommended_enemy_faction: Russia 1975 (Mi-24P)
+description:
+  <p>In this mission, it is just as important to kill the economy generating
+  buildings, as it is to kill the enemy ground units. The enemy will be able to
+  spend a lot of money replacing units if you do not target the
+  buildings.</p><p>Each airbase has one or more factories. Each airbase has only
+  three ammo targets.</p>
+miz: up_the_coast.miz
+performance: 1
+version: "10.2"
+recommended_start_date: 2005-12-12
+recommended_player_money: 2000
+recommended_enemy_money: 2000
+recommended_player_income_multiplier: 1.0
+recommended_enemy_income_multiplier: 1.0
+squadrons:
+  Blue CV-1:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - VF-142
+        #F14B
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - VFA-192
+        #Hornet Navy
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+        #E2C
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+  Blue LHA:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+        #AV8B
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+  #FARPs
+  ZUGDIDI:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Ka-50 Hokum
+    - primary: Strike
+      secondary: air-to-ground
+  #Sukhumi-Babushara
+  20:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-E
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Ka-50 Hokum
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-25 Frogfoot
+  # Gudauta
+  21:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-17M4 Fitter-K
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24M Fencer-D
+  #Anapa-Vityazevo
+  12:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: AEW&C
+      aircraft:
+        - A-50
+  # Senaki-Kholki
+  23:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - 58th FS
+        #F15c
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - VF-143
+        #F14B
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - F-5E Tiger II
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - Mirage 2000C
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - JF-17 Thunder
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - 23rd FS
+        #Viper USAF
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - VMA-214
+        #AV8B
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - AJS-37 Viggen
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - 335th FS
+        #F15e
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - VMFA-251
+        #Hornet - Marines
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-25T Frogfoot
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - 74th TFS
+        #A10c s3
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10A Thunderbolt II
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker MPRS
