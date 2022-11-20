@@ -10,6 +10,7 @@ from game.theater.missiontarget import MissionTarget
 from game.utils import Distance, feet, meters
 from .ibuilder import IBuilder
 from .planningerror import PlanningError
+from .uizonedisplay import UiZone, UiZoneDisplay
 from .waypointbuilder import WaypointBuilder
 from ..flightwaypoint import FlightWaypointType
 
@@ -45,7 +46,7 @@ class AirAssaultLayout(StandardLayout):
         yield self.bullseye
 
 
-class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
+class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout], UiZoneDisplay):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
@@ -69,6 +70,12 @@ class AirAssaultFlightPlan(StandardFlightPlan[AirAssaultLayout]):
     @property
     def mission_departure_time(self) -> timedelta:
         return self.package.time_over_target
+
+    def ui_zone(self) -> UiZone:
+        return UiZone(
+            [self.layout.target.position],
+            self.ctld_target_zone_radius,
+        )
 
 
 class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
