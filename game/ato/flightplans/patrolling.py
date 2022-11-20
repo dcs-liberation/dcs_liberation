@@ -9,6 +9,7 @@ from typing import Any, TYPE_CHECKING, TypeGuard, TypeVar
 from game.ato.flightplans.standard import StandardFlightPlan, StandardLayout
 from game.typeguard import self_type_guard
 from game.utils import Distance, Speed
+from .uizonedisplay import UiZone, UiZoneDisplay
 
 if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
@@ -37,7 +38,7 @@ class PatrollingLayout(StandardLayout):
 LayoutT = TypeVar("LayoutT", bound=PatrollingLayout)
 
 
-class PatrollingFlightPlan(StandardFlightPlan[LayoutT], ABC):
+class PatrollingFlightPlan(StandardFlightPlan[LayoutT], UiZoneDisplay, ABC):
     @property
     @abstractmethod
     def patrol_duration(self) -> timedelta:
@@ -97,3 +98,9 @@ class PatrollingFlightPlan(StandardFlightPlan[LayoutT], ABC):
         self, flight_plan: FlightPlan[Any]
     ) -> TypeGuard[PatrollingFlightPlan[Any]]:
         return True
+
+    def ui_zone(self) -> UiZone:
+        return UiZone(
+            [self.layout.patrol_start.position, self.layout.patrol_end.position],
+            self.engagement_distance,
+        )
