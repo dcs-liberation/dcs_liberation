@@ -466,7 +466,10 @@ class QLiberationWindow(QMainWindow):
             "<b>Ciribob </b> <i>for the JTACAutoLase.lua script</i><br/>"
             "<b>Walder </b> <i>for the Skynet-IADS script</i><br/>"
             "<b>Anubis Yinepu </b> <i>for the Hercules Cargo script</i><br/>"
-            '<a href="https://www.flaticon.com/free-icons/bug" title="bug icons" style="color: #ffffff">Bug icons created by Freepik - Flaticon</a>'
+            '<a href="https://www.flaticon.com/free-icons/bug" title="bug icons" style="color: #ffffff">Bug icons created by Freepik - Flaticon</a><br />'
+            'Contains information from <a href="https://osmdata.openstreetmap.de/" style="color: #ffffff">OpenStreetMap © OpenStreetMap contributors</a>, which is made available here under the <a href="https://opendatacommons.org/licenses/odbl/1-0/" style="color: #ffffff">Open Database License (ODbL)</a>.<br />'
+            '<a href="https://download.geofabrik.de/index.html/" style="color: #ffffff">OpenStreetMap Data Extracts from Geofabrik</a><br />'
+            '<a href="https://www.earthdata.nasa.gov/" style="color: #ffffff">NASA EarthData</a><br />'
             + "<h4>Splash Screen  :</h4>"
             + "Artwork by Andriy Dankovych (CC BY-SA) [https://www.facebook.com/AndriyDankovych]"
         )
