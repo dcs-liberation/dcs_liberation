@@ -1,0 +1,8 @@
+introduced: 1979
+manufacturer: Aermacchi
+origin: Italy
+price: 10
+role: Light Attack
+max_range: 200
+variants:
+  MB-339A: {}
