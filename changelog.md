@@ -24,6 +24,7 @@ Saves from 5.x are not compatible with 6.0.
 * **[Mission Generation]** Added performance option to not cull IADS when culling would affect how mission is played at target area.
 * **[Mission Generation]** Reworked the ground object generation which now uses a new layout system
 * **[Mission Generation]** Added information about the modulation (AM/FM) of the assigned frequencies to the kneeboard and assign AM modulation instead of FM for JTAC.
+* **[Mission Generation]** Added ice halos.
 * **[Mission Generation]** Adjusted wind speeds. Wind speeds at high altitude are generally higher now.
 * **[Mission Generation]** Added turbulence. Higher in Summer and Winter, also higher at day time than at nighttime.
 * **[Modding]** Updated UH-60L mod version support to 1.3.1
