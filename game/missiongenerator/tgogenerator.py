@@ -412,8 +412,8 @@ class GenericCarrierGenerator(GroundObjectGenerator):
                     ship_units.append(unit)
 
             if not ship_units:
-                # Empty array (no alive units), stop here
-                return
+                # No alive units in this group, continue with next group
+                continue
 
             ship_group = self.create_ship_group(group.group_name, ship_units, atc)
 
