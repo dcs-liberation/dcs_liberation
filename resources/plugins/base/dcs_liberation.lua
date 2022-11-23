@@ -160,11 +160,6 @@ local function onEvent(event)
         write_state()
     end
 
-    if event.id == world.event.S_EVENT_BASE_CAPTURED and event.place then
-        base_capture_events[#base_capture_events + 1] = event.place.getID(event.place) .. "||" .. event.place.getCoalition(event.place) .. "||" .. event.place.getName(event.place)
-        write_state()
-    end
-
     if event.id == world.event.S_EVENT_MISSION_END then
         mission_ended = true
         write_state()
