@@ -6,3 +6,17 @@ role: Light Attack
 max_range: 200
 variants:
   MB-339A: {}
+radios:
+  intra_flight: SRT-651/N
+  inter_flight: AN/ARC-150(V) 2
+  channels:
+    # The common allocator is sufficient for Liberation's purposes. There are
+    # more than 20 channels available on COMM2 (manual says 100, ME says 30,
+    # presumably only 30 can be truly *pre* set, and the other 70 can be set in
+    # the cockpit). We never need that many though, so no sense customizing
+    # further.
+    type: common
+    # COMM1 us UHF only. COMM2 is V/UHF. We prefer allocating intra-flight on
+    # VHF because it's less contested, so intra-flight goes to COMM2.
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1
