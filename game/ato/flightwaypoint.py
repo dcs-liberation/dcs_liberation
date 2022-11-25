@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Literal, TYPE_CHECKING
@@ -12,8 +11,7 @@ from game.theater.theatergroup import TheaterUnit
 from game.utils import Distance, meters
 
 if TYPE_CHECKING:
-    from game.theater import ControlPoint, MissionTarget
-
+    from game.theater import ControlPoint
 
 AltitudeReference = Literal["BARO", "RADIO"]
 
@@ -32,7 +30,7 @@ class FlightWaypoint:
     # having three names. A short and long form is enough.
     description: str = ""
 
-    targets: Sequence[MissionTarget | TheaterUnit] = field(default_factory=list)
+    targets: list[TheaterUnit] = field(default_factory=list)
     obj_name: str = ""
     pretty_name: str = ""
     only_for_player: bool = False

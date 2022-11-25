@@ -1,8 +1,9 @@
 import copy
 
+from dcs import Point
 from dcs.planes import B_17G, B_52H, Tu_22M3
 from dcs.point import MovingPoint
-from dcs.task import Bombing, OptFormation, WeaponType, Expend
+from dcs.task import Bombing, Expend, OptFormation, WeaponType
 
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
@@ -21,7 +22,7 @@ class StrikeIngressBuilder(PydcsWaypointBuilder):
         if not targets:
             return
 
-        center = copy.copy(targets[0].position)
+        center: Point = copy.copy(targets[0].position)
         for target in targets[1:]:
             center += target.position
         center /= len(targets)
