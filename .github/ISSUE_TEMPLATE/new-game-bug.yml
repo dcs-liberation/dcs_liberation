@@ -39,12 +39,13 @@ body:
         If the bug was found in a development build, select "Development build"
         and provide a link to the build in the field below.
       options:
-        - 5.2.0
+        - 6.0.0
         - Development build
   - type: textarea
     attributes:
       label: Build information
-      description: The build information from the Help -> Report an issue window.
+      description:
+        The build information from the Help -> Report an issue window.
   - type: input
     attributes:
       label: Campaign name
@@ -59,8 +60,8 @@ body:
       label: Blue faction
       description: >
         The name of the blue faction you selected. If the bug only occurs with a
-        custom faction (or modifications to a stock faction), upload the
-        faction file as an attachment to the bug description field.
+        custom faction (or modifications to a stock faction), upload the faction
+        file as an attachment to the bug description field.
     validations:
       required: true
   - type: input
@@ -68,8 +69,8 @@ body:
       label: Red faction
       description: >
         The name of the red faction you selected. If the bug only occurs with a
-        custom faction (or modifications to a stock faction), upload the
-        faction file as an attachment to the bug description field.
+        custom faction (or modifications to a stock faction), upload the faction
+        file as an attachment to the bug description field.
     validations:
       required: true
   - type: textarea
@@ -102,11 +103,11 @@ body:
     attributes:
       label: Log file
       description: >
-        Attach the Liberation log file. The log file is located at
-        `<Liberation install directory>/logs/liberation.log`.
+        Attach the Liberation log file. The log file is located at `<Liberation
+        install directory>/logs/liberation.log`.
 
 
-        You can attach files to the bug by dragging and dropping the file
-        into this text box.
+        You can attach files to the bug by dragging and dropping the file into
+        this text box.
     validations:
       required: true
