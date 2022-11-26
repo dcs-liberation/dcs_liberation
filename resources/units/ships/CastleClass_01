@@ -1,0 +1,4 @@
+class: Boat
+price: 0
+variants:
+  Castle Class: null
