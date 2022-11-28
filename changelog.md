@@ -6,6 +6,14 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Fixes
 
+# 6.1.0
+
+Saves from 6.0.0 are compatible with 6.1.0
+
+## Features/Improvements
+
+## Fixes
+
 # 6.0.0
 
 Saves from 5.x are not compatible with 6.0.
