@@ -238,5 +238,5 @@ class QWaitingForMissionResultWindow(QDialog):
             # Stop the current waiting thread as we manually submit the results
             self.wait_thread.stop()
             self.on_debriefing_update(
-                self.sim_controller.debrief_current_state(Path(file[0], force_end=True))
+                self.sim_controller.debrief_current_state(Path(file[0]), force_end=True)
             )
