@@ -14,6 +14,8 @@ Saves from 6.0.0 are compatible with 6.1.0
 
 ## Fixes
 
+* **[UI]** Fixed an issue where manual submit of mission results did not end the mission correctly.
+
 # 6.0.0
 
 Saves from 5.x are not compatible with 6.0.
