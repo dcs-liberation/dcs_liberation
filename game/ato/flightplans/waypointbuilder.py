@@ -23,7 +23,7 @@ from game.theater import (
     TheaterGroundObject,
     TheaterUnit,
 )
-from game.utils import Distance, meters, nautical_miles
+from game.utils import Distance, feet, meters, nautical_miles
 
 if TYPE_CHECKING:
     from game.coalition import Coalition
@@ -202,6 +202,21 @@ class WaypointBuilder:
             alt_type,
             description="Refuel from tanker",
             pretty_name="Refuel",
+        )
+
+    def recovery_tanker(self, position: Point) -> FlightWaypoint:
+        alt_type: AltitudeReference = "BARO"
+        if self.is_helo:
+            alt_type = "RADIO"
+
+        return FlightWaypoint(
+            "REFUEL",
+            FlightWaypointType.REFUEL,
+            position,
+            meters(80) if self.is_helo else feet(6000).meters,
+            alt_type,
+            description="Recovery tanker for aircraft carriers",
+            pretty_name="Recovery",
         )
 
     def split(self, position: Point) -> FlightWaypoint:
