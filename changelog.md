@@ -14,6 +14,7 @@ Saves from 6.0.0 are compatible with 6.1.0
 
 ## Fixes
 
+* **[Flight Planning]** Fixes CAS flights not having landing waypoints.
 * **[UI]** Fixed an issue where manual submit of mission results did not end the mission correctly.
 
 # 6.0.0
