@@ -29,7 +29,7 @@ class CasLayout(PatrollingLayout):
         yield self.target
         yield self.patrol_end
         yield from self.nav_from
-        yield self.departure
+        yield self.arrival
         if self.divert is not None:
             yield self.divert
         yield self.bullseye
