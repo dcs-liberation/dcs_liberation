@@ -206,14 +206,12 @@ class WaypointBuilder:
 
     def recovery_tanker(self, position: Point) -> FlightWaypoint:
         alt_type: AltitudeReference = "BARO"
-        if self.is_helo:
-            alt_type = "RADIO"
 
         return FlightWaypoint(
             "REFUEL",
             FlightWaypointType.REFUEL,
             position,
-            meters(80) if self.is_helo else feet(6000).meters,
+            feet(6000).meters,
             alt_type,
             description="Recovery tanker for aircraft carriers",
             pretty_name="Recovery",

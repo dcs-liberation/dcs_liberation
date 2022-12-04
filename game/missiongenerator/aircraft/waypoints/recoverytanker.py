@@ -12,10 +12,8 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
             group_id = 1
             speed = 280
             altitude = feet(6000).meters
-            target_types = ["huh?"]
-            last_waypoint = 2
-            recovery_tanker = RecoveryTanker(
-                group_id, speed, altitude, target_types, last_waypoint
-            )
+            # Should this be an enum?
+            target_types = ["Ships"]
+            recovery_tanker = RecoveryTanker(group_id, speed, altitude, target_types)
 
             waypoint.add_task(recovery_tanker)

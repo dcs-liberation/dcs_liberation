@@ -39,6 +39,7 @@ class RecoveryTankerFlightPlan(RefuelingFlightPlan):
 class Builder(IBuilder[RecoveryTankerFlightPlan, RecoveryTankerLayout]):
     def layout(self) -> RecoveryTankerLayout:
 
+        # TODO: If this can be the propagated postition of the ship, that would be great.
         ship = self.package.target.position
 
         builder = WaypointBuilder(self.flight, self.coalition)
