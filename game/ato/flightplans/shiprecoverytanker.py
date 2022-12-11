@@ -42,7 +42,7 @@ class Builder(IBuilder[RecoveryTankerFlightPlan, RecoveryTankerLayout]):
         recovery = builder.recovery_tanker(ship)
 
         tanker_type = self.flight.unit_type
-        altitude = tanker_type.preferred_patrol_altitude()
+        altitude = tanker_type.preferred_patrol_altitude
 
         return RecoveryTankerLayout(
             departure=builder.takeoff(self.flight.departure),
