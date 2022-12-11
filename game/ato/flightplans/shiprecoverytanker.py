@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Iterator, Type
 from game.ato.flightplans.standard import StandardFlightPlan, StandardLayout
 from game.ato.flightplans.ibuilder import IBuilder
@@ -29,6 +32,22 @@ class RecoveryTankerFlightPlan(StandardFlightPlan[RecoveryTankerLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
+
+    @property
+    def tot_waypoint(self) -> FlightWaypoint:
+        return self.layout.recovery_ship
+
+    @property
+    def mission_departure_time(self) -> timedelta:
+        return timedelta(hours=2)
+
+    def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+        # TOT planning isn't really useful. They're behind the front
+        # lines so no need to wait for escorts or for other missions to complete.
+        return None
+
+    def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+        return None
 
 
 class Builder(IBuilder[RecoveryTankerFlightPlan, RecoveryTankerLayout]):

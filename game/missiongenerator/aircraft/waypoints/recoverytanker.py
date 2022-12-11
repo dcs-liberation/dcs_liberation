@@ -12,17 +12,19 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
             group_id = self._get_carrier_group_id()
             speed = 280
             altitude = feet(6000).meters
-            # Should this be an enum?
-            target_types = ["Ships"]
-            last_waypoint = None
-            recovery_tanker = RecoveryTanker(
-                group_id, speed, altitude, target_types, last_waypoint
-            )
+            last_waypoint = 1
+            recovery_tanker = RecoveryTanker(group_id, speed, altitude, last_waypoint)
 
             waypoint.add_task(recovery_tanker)
 
     def _get_carrier_group_id(self) -> int:
         name = self.package.target.name
-        theater_mapping = self.unit_map.theater_objects.get(name)
+        carrier_position = self.package.target.position
+        theater_objects = self.unit_map.theater_objects
+        for key, value in theater_objects.items():
+            # Check name and position in case there are multiple of same carrier.
+            if name in key and value.theater_unit.position == carrier_position:
+                theater_mapping = value
+                break
         assert theater_mapping is not None
         return theater_mapping.dcs_unit.id

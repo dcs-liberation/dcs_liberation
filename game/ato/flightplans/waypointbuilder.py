@@ -208,8 +208,8 @@ class WaypointBuilder:
         alt_type: AltitudeReference = "BARO"
 
         return FlightWaypoint(
-            "REFUEL",
-            FlightWaypointType.REFUEL,
+            "RECOVERY",
+            FlightWaypointType.RECOVERY_TANKER,
             position,
             feet(6000),
             alt_type,

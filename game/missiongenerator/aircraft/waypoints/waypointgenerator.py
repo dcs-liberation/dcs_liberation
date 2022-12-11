@@ -17,6 +17,9 @@ from game.ato.flightstate import InFlight, WaitingForStart
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
 from game.missiongenerator.aircraft.waypoints.cargostop import CargoStopBuilder
+from game.missiongenerator.aircraft.waypoints.recoverytanker import (
+    RecoveryTankerBuilder,
+)
 from game.missiongenerator.missiondata import MissionData
 from game.settings import Settings
 from game.unitmap import UnitMap
@@ -138,6 +141,7 @@ class WaypointGenerator:
             FlightWaypointType.PICKUP_ZONE: LandingZoneBuilder,
             FlightWaypointType.DROPOFF_ZONE: LandingZoneBuilder,
             FlightWaypointType.REFUEL: RefuelPointBuilder,
+            FlightWaypointType.RECOVERY_TANKER: RecoveryTankerBuilder,
             FlightWaypointType.CARGO_STOP: CargoStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
