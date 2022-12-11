@@ -19,6 +19,7 @@ from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.runways import RunwayData
 from game.squadrons import Pilot
+from game.unitmap import UnitMap
 from .aircraftbehavior import AircraftBehavior
 from .aircraftpainter import AircraftPainter
 from .flightdata import FlightData
@@ -44,6 +45,7 @@ class FlightGroupConfigurator:
         mission_data: MissionData,
         dynamic_runways: dict[str, RunwayData],
         use_client: bool,
+        unit_map: UnitMap,
     ) -> None:
         self.flight = flight
         self.group = group
@@ -56,6 +58,7 @@ class FlightGroupConfigurator:
         self.mission_data = mission_data
         self.dynamic_runways = dynamic_runways
         self.use_client = use_client
+        self.unit_map = unit_map
 
     def configure(self) -> FlightData:
         AircraftBehavior(self.flight.flight_type).apply_to(self.flight, self.group)
@@ -97,6 +100,7 @@ class FlightGroupConfigurator:
             self.time,
             self.game.settings,
             self.mission_data,
+            self.unit_map,
         ).create_waypoints()
 
         return FlightData(

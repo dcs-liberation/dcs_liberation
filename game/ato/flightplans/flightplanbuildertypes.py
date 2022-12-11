@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING, Type
 
 from game.ato import FlightType
+from game.ato.flightplans.shiprecoverytanker import RecoveryTankerFlightPlan
 from game.theater.controlpoint import Carrier
 from .aewc import AewcFlightPlan
 from .airassault import AirAssaultFlightPlan
@@ -38,7 +39,7 @@ class FlightPlanBuilderTypes:
             if target.is_friendly(flight.squadron.player) and isinstance(
                 target, Carrier
             ):
-                return TheaterRefuelingFlightPlan.builder_type()
+                return RecoveryTankerFlightPlan.builder_type()
             if target.is_friendly(flight.squadron.player) or isinstance(
                 target, FrontLine
             ):

@@ -211,7 +211,7 @@ class WaypointBuilder:
             "REFUEL",
             FlightWaypointType.REFUEL,
             position,
-            feet(6000).meters,
+            feet(6000),
             alt_type,
             description="Recovery tanker for aircraft carriers",
             pretty_name="Recovery",
