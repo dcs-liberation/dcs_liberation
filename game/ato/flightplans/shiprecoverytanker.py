@@ -42,10 +42,7 @@ class Builder(IBuilder[RecoveryTankerFlightPlan, RecoveryTankerLayout]):
         recovery = builder.recovery_tanker(ship)
 
         tanker_type = self.flight.unit_type
-        if tanker_type.ingress_altitude is not None:
-            altitude = self.doctrine.ingress_altitude
-        else:
-            altitude = feet(21000)
+        altitude = tanker_type.preferred_patrol_altitude()
 
         return RecoveryTankerLayout(
             departure=builder.takeoff(self.flight.departure),
