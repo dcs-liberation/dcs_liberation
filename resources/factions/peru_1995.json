@@ -1,0 +1,62 @@
+{
+  "country": "Peru",
+  "name": "Peru 1995",
+  "authors": "Dillie",
+  "description": "<p>Peru during the 1995 Cenepa War.</p>",
+  "locales": [
+	"es_ES"
+  ],
+  "aircrafts": [
+    "Mirage 2000C",
+	"Mi-24V Hind-E",
+	"Mi-8MTV2 Hip",
+	"MB-339A",
+	"Su-22M4 Fitter-K"
+  ],
+  "frontline_units": [
+    "T-55A",
+    "M113",
+    "BRDM-2",
+    "BTR-80",
+    "M1043 HMMWV (M2 HMG)",
+    "ZSU-23-4 Shilka"
+  ],
+  "artillery_units": [
+    "BM-21 Grad",
+    "M109A6 Paladin"
+  ],
+  "logistics_units": [
+    "Truck Ural-4320T"
+  ],
+  "infantry_units": [
+    "Infantry AK-74",
+    "Infantry RPG",
+	"Infantry M249",
+	"MANPADS SA-18 Igla \"Grouse\""
+  ],
+  "missiles": [],
+  "preset_groups": [
+    "SA-3/S-125"
+  ],
+  "naval_units": [],
+  "air_defense_units": [
+    "AAA ZU-23 Emplacement",
+    "Bofors 40 mm Gun",
+	"SAM P19 \"Flat Face\" SR (SA-2/3)",
+	"ZSU-23-4 Shilka"
+  ],
+  "carrier_names": [],
+  "helicopter_carrier_names": [],
+  "cruiser": [],
+  "requirements": {},
+  "has_jtac": false,
+  "doctrine": "modern",
+  "liveries_overrides": {
+    "Mirage 2000C": [
+      "Peru052"
+    ],
+	"MB-339A": [
+	  "MB339AP 'PERU'"
+	]
+  }
+}
