@@ -12,6 +12,7 @@ Saves from 6.0.0 are compatible with 6.1.0
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS 2.8.1.34437.
 * **[Factions]** Defaulted bluefor modern to use Georgian and Ukrainian liveries for Russian aircraft.
 * **[Factions]** Added Peru.
 * **[Flight Planning]** Refueling flights planned on aircraft carriers will act as a recovery tanker for the carrier.
