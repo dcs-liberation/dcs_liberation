@@ -43,6 +43,7 @@ class RecoveryTankerFlightPlan(StandardFlightPlan[RecoveryTankerLayout]):
 
     @property
     def patrol_start_time(self) -> timedelta:
+        assert self.tot_waypoint.tot is not None
         return self.tot_waypoint.tot
 
     @property
