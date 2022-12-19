@@ -22,14 +22,12 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class FlyingUnit:
-    dcs_group_id: int
     flight: Flight
     pilot: Optional[Pilot]
 
 
 @dataclass(frozen=True)
 class FrontLineUnit:
-    dcs_group_id: int
     unit_type: GroundUnitType
     origin: ControlPoint
 
@@ -49,14 +47,12 @@ class SceneryObjectMapping:
 
 @dataclass(frozen=True)
 class ConvoyUnit:
-    dcs_group_id: int
     unit_type: GroundUnitType
     convoy: Convoy
 
 
 @dataclass(frozen=True)
 class AirliftUnits:
-    dcs_group_id: int
     cargo: tuple[GroundUnitType, ...]
     transfer: TransferOrder
 
@@ -79,7 +75,7 @@ class UnitMap:
             name = str(unit.name)
             if name in self.aircraft:
                 raise RuntimeError(f"Duplicate unit name: {name}")
-            self.aircraft[name] = FlyingUnit(group.id, flight, pilot)
+            self.aircraft[name] = FlyingUnit(flight, pilot)
         if flight.cargo is not None:
             self.add_airlift_units(group, flight.cargo)
 
@@ -103,7 +99,7 @@ class UnitMap:
             name = str(unit.name)
             if name in self.front_line_units:
                 raise RuntimeError(f"Duplicate front line unit: {name}")
-            self.front_line_units[name] = FrontLineUnit(group.id, unit_type, origin)
+            self.front_line_units[name] = FrontLineUnit(unit_type, origin)
 
     def front_line_unit(self, name: str) -> Optional[FrontLineUnit]:
         return self.front_line_units.get(name, None)
@@ -130,7 +126,7 @@ class UnitMap:
             name = str(unit.name)
             if name in self.convoys:
                 raise RuntimeError(f"Duplicate convoy unit: {name}")
-            self.convoys[name] = ConvoyUnit(group.id, unit_type, convoy)
+            self.convoys[name] = ConvoyUnit(unit_type, convoy)
 
     def convoy_unit(self, name: str) -> Optional[ConvoyUnit]:
         return self.convoys.get(name, None)
@@ -172,7 +168,7 @@ class UnitMap:
             name = str(transport.name)
             if name in self.airlifts:
                 raise RuntimeError(f"Duplicate airlift unit: {name}")
-            self.airlifts[name] = AirliftUnits(group.id, cargo, transfer)
+            self.airlifts[name] = AirliftUnits(cargo, transfer)
 
     def airlift_unit(self, name: str) -> Optional[AirliftUnits]:
         return self.airlifts.get(name, None)
