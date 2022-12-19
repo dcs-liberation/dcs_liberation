@@ -35,6 +35,7 @@
     "Mirage-F1M-EE",
     "Mi-24P Hind-F",
     "Mi-8MTV2 Hip",
+    "MiG-29S Fulcrum-C",
     "SA 342L Gazelle",
     "SA 342M Gazelle",
     "Su-25T Frogfoot",
@@ -109,5 +110,13 @@
   ],
   "has_jtac": true,
   "jtac_unit": "MQ-9 Reaper",
-  "unrestricted_satnav": true
+  "unrestricted_satnav": true,
+  "liveries_overrides": {
+    "Ka-50 Hokum": ["georgia camo"],  
+    "Mi-8MTV2 Hip": ["Ukraine"],
+    "Mi-24P Hind-F": ["Ukrainian Army Aviation"],
+    "MiG-29S Fulcrum-C": ["Air Force Ukraine Standard"],
+    "Su-25T Frogfoot": ["af standard 101"],
+    "Su-27 Flanker-B": ["Air Force Ukraine Standard"]
+  }
 }

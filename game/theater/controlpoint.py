@@ -33,6 +33,7 @@ from dcs.ships import (
     CVN_75,
     CV_1143_5,
     Forrestal,
+    Hms_invincible,
     KUZNECOW,
     LHA_Tarawa,
     Stennis,
@@ -1202,9 +1203,10 @@ class NavalControlPoint(ControlPoint, ABC):
             for u in group.units:
                 if u.alive and u.type in [
                     Forrestal,
-                    Stennis,
-                    LHA_Tarawa,
+                    Hms_invincible,
                     KUZNECOW,
+                    LHA_Tarawa,
+                    Stennis,
                     Type_071,
                 ]:
                     return True

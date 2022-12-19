@@ -48,11 +48,15 @@
     "Rapier"
   ],
   "naval_units": [
-    "FFG Oliver Hazard Perry",
-    "DDG Arleigh Burke IIa",
     "CG Ticonderoga",
-    "LHA-1 Tarawa",
-    "CVN-74 John C. Stennis"
+    "CVN-74 John C. Stennis",
+    "Castle Class",
+    "DDG Arleigh Burke IIa",
+    "FFG Oliver Hazard Perry",
+    "HMS Achilles (F12)",
+    "HMS Andromeda (F57)",
+    "HMS Ariadne (F72)",
+    "HMS Invincible (R05)"
   ],
   "missiles": [],
   "air_defense_units": [

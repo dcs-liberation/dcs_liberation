@@ -12,8 +12,16 @@ Saves from 6.0.0 are compatible with 6.1.0
 
 ## Features/Improvements
 
+* **[Factions]** Defaulted bluefor modern to use Georgian and Ukrainian liveries for Russian aircraft.
+* **[Factions]** Added Peru.
+* **[Loadouts]** Adjusted F-15E loadouts.
+* **[Modding]** Added support for the HMS Ariadne, Achilles, and Castle class.
+* **[Modding]** Added HMS Invincible to the game data as a helicopter carrier.
+
 ## Fixes
 
+* **[Flight Planning]** Fixes CAS flights not having landing waypoints.
+* **[Squadrons]** Fixed the livery for the VF-33 F-14A squadron.
 * **[UI]** Fixed an issue where manual submit of mission results did not end the mission correctly.
 
 # 6.0.0
