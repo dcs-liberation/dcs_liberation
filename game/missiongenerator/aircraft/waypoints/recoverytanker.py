@@ -1,7 +1,8 @@
 from dcs.point import MovingPoint
-from dcs.task import RecoveryTanker
+from dcs.task import ActivateBeaconCommand, RecoveryTanker
 
 from game.ato import FlightType
+from game.missiongenerator.missiondata import TankerInfo
 from game.utils import feet, knots
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
@@ -18,6 +19,8 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
 
             waypoint.add_task(recovery_tanker)
 
+            self.configure_tanker_tacan(waypoint)
+
     def _get_carrier_group_id(self) -> int:
         name = self.package.target.name
         carrier_position = self.package.target.position
@@ -29,3 +32,25 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
                 break
         assert theater_mapping is not None
         return theater_mapping.dcs_group_id
+
+    def configure_tanker_tacan(self, waypoint: MovingPoint) -> None:
+
+        if self.flight.unit_type.dcs_unit_type.tacan:
+            tanker_info = self.mission_data.tankers[-1]
+            tacan = tanker_info.tacan
+            tacan_callsign = {
+                "Texaco": "TEX",
+                "Arco": "ARC",
+                "Shell": "SHL",
+            }.get(tanker_info.callsign)
+
+            waypoint.add_task(
+                ActivateBeaconCommand(
+                    tacan.number,
+                    tacan.band.value,
+                    tacan_callsign,
+                    bearing=True,
+                    unit_id=self.group.units[0].id,
+                    aa=True,
+                )
+            )

@@ -41,12 +41,22 @@ class RecoveryTankerFlightPlan(StandardFlightPlan[RecoveryTankerLayout]):
     def mission_departure_time(self) -> timedelta:
         return timedelta(hours=2)
 
+    @property
+    def patrol_start_time(self) -> timedelta:
+        return self.tot_waypoint.tot
+
+    @property
+    def patrol_end_time(self) -> timedelta:
+        return self.tot + self.mission_departure_time
+
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
-        # TOT planning isn't really useful. They're behind the front
-        # lines so no need to wait for escorts or for other missions to complete.
+        if waypoint == self.tot_waypoint:
+            return self.tot
         return None
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
+        if waypoint == self.tot_waypoint:
+            return self.tot + self.mission_departure_time
         return None
 
 
