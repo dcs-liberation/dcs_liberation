@@ -10,6 +10,7 @@ from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
+from game.ato.flightplans.shiprecoverytanker import RecoveryTankerFlightPlan
 from game.callsigns import callsign_for_support_unit
 from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
 from game.missiongenerator.missiondata import MissionData, AwacsInfo, TankerInfo
@@ -19,6 +20,7 @@ from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.runways import RunwayData
 from game.squadrons import Pilot
+from game.unitmap import UnitMap
 from .aircraftbehavior import AircraftBehavior
 from .aircraftpainter import AircraftPainter
 from .flightdata import FlightData
@@ -44,6 +46,7 @@ class FlightGroupConfigurator:
         mission_data: MissionData,
         dynamic_runways: dict[str, RunwayData],
         use_client: bool,
+        unit_map: UnitMap,
     ) -> None:
         self.flight = flight
         self.group = group
@@ -56,6 +59,7 @@ class FlightGroupConfigurator:
         self.mission_data = mission_data
         self.dynamic_runways = dynamic_runways
         self.use_client = use_client
+        self.unit_map = unit_map
 
     def configure(self) -> FlightData:
         AircraftBehavior(self.flight.flight_type).apply_to(self.flight, self.group)
@@ -97,6 +101,7 @@ class FlightGroupConfigurator:
             self.time,
             self.game.settings,
             self.mission_data,
+            self.unit_map,
         ).create_waypoints()
 
         return FlightData(
@@ -156,7 +161,9 @@ class FlightGroupConfigurator:
                     blue=self.flight.departure.captured,
                 )
             )
-        elif isinstance(self.flight.flight_plan, TheaterRefuelingFlightPlan):
+        elif isinstance(
+            self.flight.flight_plan, TheaterRefuelingFlightPlan
+        ) or isinstance(self.flight.flight_plan, RecoveryTankerFlightPlan):
             tacan = self.tacan_registry.alloc_for_band(TacanBand.Y, TacanUsage.AirToAir)
             self.mission_data.tankers.append(
                 TankerInfo(

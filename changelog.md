@@ -14,6 +14,7 @@ Saves from 6.0.0 are compatible with 6.1.0
 
 * **[Factions]** Defaulted bluefor modern to use Georgian and Ukrainian liveries for Russian aircraft.
 * **[Factions]** Added Peru.
+* **[Flight Planning]** Refueling flights planned on aircraft carriers will act as a recovery tanker for the carrier.
 * **[Loadouts]** Adjusted F-15E loadouts.
 * **[Modding]** Added support for the HMS Ariadne, Achilles, and Castle class.
 * **[Modding]** Added HMS Invincible to the game data as a helicopter carrier.
