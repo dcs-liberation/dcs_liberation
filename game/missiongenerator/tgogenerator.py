@@ -104,6 +104,7 @@ class GroundObjectGenerator:
                         self.add_trigger_zone_for_scenery(unit)
                         if (
                             self.game.settings.plugin_option("skynetiads")
+                            and self.game.theater.iads_network.advanced_iads
                             and isinstance(group, IadsGroundGroup)
                             and group.iads_role.participate
                         ):
