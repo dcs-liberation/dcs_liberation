@@ -332,6 +332,8 @@ class Game:
         from .server import EventStream
         from .sim import GameUpdateEvents
 
+        persistency.save_last_turn_state(self)
+
         events = GameUpdateEvents()
 
         logging.info("Pass turn")
