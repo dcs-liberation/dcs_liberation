@@ -24,6 +24,7 @@ from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
 from game.ato.flightplans.aewc import AewcFlightPlan
+from game.ato.flightplans.shiprecoverytanker import RecoveryTankerFlightPlan
 from game.ato.flightplans.theaterrefueling import TheaterRefuelingFlightPlan
 
 
@@ -246,7 +247,10 @@ class AircraftBehavior:
     def configure_refueling(self, group: FlyingGroup[Any], flight: Flight) -> None:
         group.task = Refueling.name
 
-        if not isinstance(flight.flight_plan, TheaterRefuelingFlightPlan):
+        if not (
+            isinstance(flight.flight_plan, TheaterRefuelingFlightPlan)
+            or isinstance(flight.flight_plan, RecoveryTankerFlightPlan)
+        ):
             logging.error(
                 f"Cannot configure racetrack refueling tasks for {flight} because it "
                 "does not have an racetrack refueling flight plan."

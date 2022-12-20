@@ -34,6 +34,7 @@ class FrontLineUnit:
 
 @dataclass(frozen=True)
 class TheaterUnitMapping:
+    dcs_group_id: int
     theater_unit: TheaterUnit
     dcs_unit: Unit
 
@@ -104,14 +105,16 @@ class UnitMap:
         return self.front_line_units.get(name, None)
 
     def add_theater_unit_mapping(
-        self, theater_unit: TheaterUnit, dcs_unit: Unit
+        self, dcs_group_id: int, theater_unit: TheaterUnit, dcs_unit: Unit
     ) -> None:
         # Deaths for units at TGOs are recorded in the corresponding GroundUnit within
         # the GroundGroup, so we have to match the dcs unit with the liberation unit
         name = str(dcs_unit.name)
         if name in self.theater_objects:
             raise RuntimeError(f"Duplicate TGO unit: {name}")
-        self.theater_objects[name] = TheaterUnitMapping(theater_unit, dcs_unit)
+        self.theater_objects[name] = TheaterUnitMapping(
+            dcs_group_id, theater_unit, dcs_unit
+        )
 
     def theater_units(self, name: str) -> Optional[TheaterUnitMapping]:
         return self.theater_objects.get(name, None)

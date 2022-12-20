@@ -17,8 +17,12 @@ from game.ato.flightstate import InFlight, WaitingForStart
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.starttype import StartType
 from game.missiongenerator.aircraft.waypoints.cargostop import CargoStopBuilder
+from game.missiongenerator.aircraft.waypoints.recoverytanker import (
+    RecoveryTankerBuilder,
+)
 from game.missiongenerator.missiondata import MissionData
 from game.settings import Settings
+from game.unitmap import UnitMap
 from game.utils import pairwise
 from .baiingress import BaiIngressBuilder
 from .landingzone import LandingZoneBuilder
@@ -50,6 +54,7 @@ class WaypointGenerator:
         time: datetime,
         settings: Settings,
         mission_data: MissionData,
+        unit_map: UnitMap,
     ) -> None:
         self.flight = flight
         self.group = group
@@ -58,6 +63,7 @@ class WaypointGenerator:
         self.time = time
         self.settings = settings
         self.mission_data = mission_data
+        self.unit_map = unit_map
 
     def create_waypoints(self) -> tuple[timedelta, list[FlightWaypoint]]:
         for waypoint in self.flight.points:
@@ -135,6 +141,7 @@ class WaypointGenerator:
             FlightWaypointType.PICKUP_ZONE: LandingZoneBuilder,
             FlightWaypointType.DROPOFF_ZONE: LandingZoneBuilder,
             FlightWaypointType.REFUEL: RefuelPointBuilder,
+            FlightWaypointType.RECOVERY_TANKER: RecoveryTankerBuilder,
             FlightWaypointType.CARGO_STOP: CargoStopBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
@@ -145,6 +152,7 @@ class WaypointGenerator:
             self.mission,
             self.elapsed_mission_time,
             self.mission_data,
+            self.unit_map,
         )
 
     def _estimate_min_fuel_for(self, waypoints: list[FlightWaypoint]) -> None:
