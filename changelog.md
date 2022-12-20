@@ -17,6 +17,7 @@ Saves from 6.0.0 are compatible with 6.1.0
 * **[Factions]** Added Peru.
 * **[Flight Planning]** Refueling flights planned on aircraft carriers will act as a recovery tanker for the carrier.
 * **[Loadouts]** Adjusted F-15E loadouts.
+* **[Mission Generation]** The previous turn will now be saved as last_turn.liberation when submitting mission results. This is often essential for debugging bug reports. **Include this file in the bug report whenever it is available.**
 * **[Modding]** Added support for the HMS Ariadne, Achilles, and Castle class.
 * **[Modding]** Added HMS Invincible to the game data as a helicopter carrier.
 
