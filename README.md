@@ -29,7 +29,6 @@ To download preview builds of the next version of DCS Liberation, see https://gi
 These DCS bugs prevent us from improving AI behavior. Please upvote them! (But please
 _don't_ spam them with comments):
 
-* [Hold points do not work in DCS 2.8](https://forum.dcs.world/topic/311458-humvee-ground-unit-holdstop-conditiontime-more-bug-28-mission-editor/)
 * [A2A and SEAD escorts don't escort](https://forums.eagle.ru/topic/251798-options-for-alternate-ai-escort-behavior/?tab=comments#comment-4668033)
 * [DEAD can't use mixed loadouts effectively](https://forums.eagle.ru/topic/271941-ai-rtbs-after-firing-decoys-despite-full-load-of-bombs/)
 
