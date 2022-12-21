@@ -8,7 +8,6 @@ from game.ato.flightplans.ibuilder import IBuilder
 from game.ato.flightplans.standard import StandardLayout
 from game.ato.flightplans.waypointbuilder import WaypointBuilder
 from game.ato.flightwaypoint import FlightWaypoint
-from game.utils import feet
 
 
 @dataclass(frozen=True)
@@ -39,7 +38,7 @@ class RecoveryTankerFlightPlan(StandardFlightPlan[RecoveryTankerLayout]):
 
     @property
     def mission_departure_time(self) -> timedelta:
-        return timedelta(hours=2)
+        return self.patrol_end_time
 
     @property
     def patrol_start_time(self) -> timedelta:
@@ -47,7 +46,7 @@ class RecoveryTankerFlightPlan(StandardFlightPlan[RecoveryTankerLayout]):
 
     @property
     def patrol_end_time(self) -> timedelta:
-        return self.tot + self.mission_departure_time
+        return self.tot + timedelta(hours=2)
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         if waypoint == self.tot_waypoint:
@@ -56,28 +55,33 @@ class RecoveryTankerFlightPlan(StandardFlightPlan[RecoveryTankerLayout]):
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> timedelta | None:
         if waypoint == self.tot_waypoint:
-            return self.tot + self.mission_departure_time
+            return self.mission_departure_time
         return None
 
 
 class Builder(IBuilder[RecoveryTankerFlightPlan, RecoveryTankerLayout]):
     def layout(self) -> RecoveryTankerLayout:
 
-        # TODO: Propagate the ship position.
-        ship = self.package.target.position
-
         builder = WaypointBuilder(self.flight, self.coalition)
 
-        recovery = builder.recovery_tanker(ship)
+        # TODO: Propagate the ship position to the Tanker's TOT,
+        # so that we minimize the tanker's need to catch up to the carrier.
+        recovery_ship = self.package.target.position
+        recovery_tanker = builder.recovery_tanker(recovery_ship)
 
+        # We don't have per aircraft cruise altitudes, so just reuse patrol altitude?
         tanker_type = self.flight.unit_type
-        altitude = tanker_type.preferred_patrol_altitude
+        nav_cruise_altitude = tanker_type.preferred_patrol_altitude
 
         return RecoveryTankerLayout(
             departure=builder.takeoff(self.flight.departure),
-            nav_to=builder.nav_path(self.flight.departure.position, ship, altitude),
-            nav_from=builder.nav_path(ship, self.flight.arrival.position, altitude),
-            recovery_ship=recovery,
+            nav_to=builder.nav_path(
+                self.flight.departure.position, recovery_ship, nav_cruise_altitude
+            ),
+            nav_from=builder.nav_path(
+                recovery_ship, self.flight.arrival.position, nav_cruise_altitude
+            ),
+            recovery_ship=recovery_tanker,
             arrival=builder.land(self.flight.arrival),
             divert=builder.divert(self.flight.divert),
             bullseye=builder.bullseye(),
