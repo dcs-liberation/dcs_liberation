@@ -293,13 +293,13 @@ class GroundObjectGenerator:
         self.m.triggerrules.triggers.append(t)
 
     def generate_iads_command_unit(self, unit: SceneryUnit) -> None:
-        # Creates a static Infantry Unit next to a scenery object. This is needed
-        # because skynet can not use map objects as Comms, Power or Command and needs a
-        # "real" unit to function correctly
+        # Creates a static Unit (tyre with red flag) next to a scenery object. This is
+        # needed because skynet can not use map objects as Comms, Power or Command and
+        # needs a "real" unit to function correctly
         self.m.static_group(
             country=self.country,
             name=unit.unit_name,
-            _type=dcs.vehicles.Infantry.Soldier_M4,
+            _type=dcs.statics.Fortification.Black_Tyre_RF,
             position=unit.position,
             heading=unit.position.heading.degrees,
             dead=not unit.alive,  # Also spawn as dead!
