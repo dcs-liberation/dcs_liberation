@@ -147,7 +147,7 @@ class GroundObjectGenerator:
                 vehicle_unit.position = unit.position
                 vehicle_unit.heading = unit.position.heading.degrees
                 vehicle_group.add_unit(vehicle_unit)
-            self._register_theater_unit(unit, vehicle_group.units[-1])
+            self._register_theater_unit(vehicle_group.id, unit, vehicle_group.units[-1])
         if vehicle_group is None:
             raise RuntimeError(f"Error creating VehicleGroup for {group_name}")
         return vehicle_group
@@ -180,7 +180,7 @@ class GroundObjectGenerator:
                 ship_unit.position = unit.position
                 ship_unit.heading = unit.position.heading.degrees
                 ship_group.add_unit(ship_unit)
-            self._register_theater_unit(unit, ship_group.units[-1])
+            self._register_theater_unit(ship_group.id, unit, ship_group.units[-1])
         if ship_group is None:
             raise RuntimeError(f"Error creating ShipGroup for {group_name}")
         return ship_group
@@ -194,7 +194,7 @@ class GroundObjectGenerator:
             heading=unit.position.heading.degrees,
             dead=not unit.alive,
         )
-        self._register_theater_unit(unit, static_group.units[0])
+        self._register_theater_unit(static_group.id, unit, static_group.units[0])
 
     @staticmethod
     def enable_eplrs(group: VehicleGroup, unit_type: Type[VehicleType]) -> None:
@@ -209,10 +209,11 @@ class GroundObjectGenerator:
 
     def _register_theater_unit(
         self,
+        dcs_group_id: int,
         theater_unit: TheaterUnit,
         dcs_unit: Unit,
     ) -> None:
-        self.unit_map.add_theater_unit_mapping(theater_unit, dcs_unit)
+        self.unit_map.add_theater_unit_mapping(dcs_group_id, theater_unit, dcs_unit)
 
     def add_trigger_zone_for_scenery(self, scenery: SceneryUnit) -> None:
         # Align the trigger zones to the faction color on the DCS briefing/F10 map.
