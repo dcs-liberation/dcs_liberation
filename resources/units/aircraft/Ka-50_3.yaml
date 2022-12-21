@@ -1,0 +1,26 @@
+class: Helicopter
+always_keeps_gun: true
+carrier_capable: true
+description:
+  "The Ka-50 Black Shark (NATO reporting name: Hokum) is a unique and deadly
+  single-seat, Russian attack helicopter that has seen combat in the Northern
+  Caucasus. It combines a high performance dual rotor system with a deadly
+  weapons payload of guided missiles, rockets, bombs, and a 30mm cannon. The
+  Ka-50 is also unique in that it has an ejection seat."
+introduced: 1995
+lha_capable: true
+cabin_size: 0 # Can not transport troops
+can_carry_crates: true
+manufacturer: Kamov
+origin: USSR/Russia
+price: 20
+role: Attack
+variants:
+  Ka-50 Hokum (Blackshark 3): {}
+radios:
+  intra_flight: R-800L1
+  inter_flight: R-800L1
+  # The R-800L1 doesn't have preset channels, and the other radio is for
+  # communications with FAC and ground units, which don't currently have
+  # radios assigned, so no channels to configure.
+kneeboard_units: "metric"
