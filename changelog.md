@@ -12,7 +12,7 @@ Saves from 6.0.0 are compatible with 6.1.0
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.8.1.34437.
+* **[Engine]** Support for DCS 2.8.1.34437, including Blackshark 3.
 * **[Factions]** Defaulted bluefor modern to use Georgian and Ukrainian liveries for Russian aircraft.
 * **[Factions]** Added Peru.
 * **[Flight Planning]** AEW&C and Refueling flights are now plannable on LHA carriers.
