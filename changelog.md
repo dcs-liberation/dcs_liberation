@@ -15,6 +15,7 @@ Saves from 6.0.0 are compatible with 6.1.0
 * **[Engine]** Support for DCS 2.8.1.34437.
 * **[Factions]** Defaulted bluefor modern to use Georgian and Ukrainian liveries for Russian aircraft.
 * **[Factions]** Added Peru.
+* **[Flight Planning]** AEW&C and Refueling flights are now plannable on LHA carriers.
 * **[Flight Planning]** Refueling flights planned on aircraft carriers will act as a recovery tanker for the carrier.
 * **[Loadouts]** Adjusted F-15E loadouts.
 * **[Mission Generation]** The previous turn will now be saved as last_turn.liberation when submitting mission results. This is often essential for debugging bug reports. **Include this file in the bug report whenever it is available.**
