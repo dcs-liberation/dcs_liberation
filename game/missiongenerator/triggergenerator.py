@@ -159,7 +159,9 @@ class TriggerGenerator:
                 flag = self.get_capture_zone_flag()
                 capture_trigger = TriggerCondition(Event.NoEvent, "Capture Trigger")
                 capture_trigger.add_condition(
-                    AllOfCoalitionOutsideZone(defending_coalition, trigger_zone.id)
+                    AllOfCoalitionOutsideZone(
+                        defending_coalition, trigger_zone.id, unit_type="GROUND"
+                    )
                 )
                 capture_trigger.add_condition(
                     PartOfCoalitionInZone(
@@ -176,7 +178,9 @@ class TriggerGenerator:
 
                 recapture_trigger = TriggerCondition(Event.NoEvent, "Capture Trigger")
                 recapture_trigger.add_condition(
-                    AllOfCoalitionOutsideZone(attacking_coalition, trigger_zone.id)
+                    AllOfCoalitionOutsideZone(
+                        attacking_coalition, trigger_zone.id, unit_type="GROUND"
+                    )
                 )
                 recapture_trigger.add_condition(
                     PartOfCoalitionInZone(
