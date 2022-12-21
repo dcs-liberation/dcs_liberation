@@ -25,6 +25,7 @@ Saves from 6.0.0 are compatible with 6.1.0
 ## Fixes
 
 * **[Flight Planning]** Fixes CAS flights not having landing waypoints.
+* **[Mission Generation]** Airbase and FOB capture is no longer blocked by grounded aircraft / helicopters.
 * **[Squadrons]** Fixed the livery for the VF-33 F-14A squadron.
 * **[Theaters]** Fixed Channel campaigns not having data for land/sea/obstacle boundaries, causing front lines to extend into forests and water. Requires a new campaign to get the fix.
 * **[UI]** Fixed an issue where manual submit of mission results did not end the mission correctly.
