@@ -1177,6 +1177,8 @@ class NavalControlPoint(ControlPoint, ABC):
 
         if self.is_friendly(for_player):
             yield from [
+                FlightType.AEWC,
+                FlightType.REFUELING,
                 # TODO: FlightType.INTERCEPTION
                 # TODO: Buddy tanking for the A-4?
                 # TODO: Rescue chopper?
@@ -1272,8 +1274,7 @@ class Carrier(NavalControlPoint):
         yield from super().mission_types(for_player)
         if self.is_friendly(for_player):
             yield from [
-                FlightType.AEWC,
-                FlightType.REFUELING,
+                # Nothing yet.
             ]
 
     def capture(self, game: Game, events: GameUpdateEvents, for_player: bool) -> None:

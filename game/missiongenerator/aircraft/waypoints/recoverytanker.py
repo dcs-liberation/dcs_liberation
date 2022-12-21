@@ -2,24 +2,27 @@ from dcs.point import MovingPoint
 from dcs.task import ActivateBeaconCommand, RecoveryTanker
 
 from game.ato import FlightType
-from game.missiongenerator.missiondata import TankerInfo
 from game.utils import feet, knots
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
 class RecoveryTankerBuilder(PydcsWaypointBuilder):
     def add_tasks(self, waypoint: MovingPoint) -> None:
-        if self.flight.flight_type == FlightType.REFUELING:
-            group_id = self._get_carrier_group_id()
-            speed = knots(250).meters_per_second
-            altitude = feet(6000).meters
-            # Last waypoint has index of 1.
-            last_waypoint = 2
-            recovery_tanker = RecoveryTanker(group_id, speed, altitude, last_waypoint)
 
-            waypoint.add_task(recovery_tanker)
+        assert self.flight.flight_type == FlightType.REFUELING
+        group_id = self._get_carrier_group_id()
+        speed = knots(250).meters_per_second
+        altitude = feet(6000).meters
 
-            self.configure_tanker_tacan(waypoint)
+        # Last waypoint has index of 1.
+        # Give the tanker a end condition of the last carrier waypoint.
+        # If the carrier ever gets more than one waypoint this approach needs to change.
+        last_waypoint = 2
+        recovery_tanker = RecoveryTanker(group_id, speed, altitude, last_waypoint)
+
+        waypoint.add_task(recovery_tanker)
+
+        self.configure_tanker_tacan(waypoint)
 
     def _get_carrier_group_id(self) -> int:
         name = self.package.target.name
