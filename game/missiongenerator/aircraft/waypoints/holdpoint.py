@@ -4,7 +4,6 @@ from dcs.point import MovingPoint
 from dcs.task import ControlledTask, OptFormation, OrbitAction
 
 from game.ato.flightplans.loiter import LoiterFlightPlan
-from ._helper import create_stop_orbit_trigger
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 
@@ -23,10 +22,8 @@ class HoldPointBuilder(PydcsWaypointBuilder):
             return
         push_time = self.flight.flight_plan.push_time
         self.waypoint.departure_time = push_time
-        elapsed = int((push_time - self.elapsed_mission_time).total_seconds())
-        loiter.stop_after_time(elapsed)
-        # What follows is some code to cope with the broken 'stop after time' condition
-        create_stop_orbit_trigger(loiter, self.package, self.mission, elapsed)
-        # end of hotfix
+        loiter.stop_after_time(
+            int((push_time - self.elapsed_mission_time).total_seconds())
+        )
         waypoint.add_task(loiter)
         waypoint.add_task(OptFormation.finger_four_close())
