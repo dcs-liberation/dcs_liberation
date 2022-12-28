@@ -89,6 +89,10 @@ class SweepFlightPlan(LoiterFlightPlan):
             GroundSpeed.for_flight(self.flight, self.layout.hold.alt),
         )
 
+    @property
+    def mission_begin_on_station_time(self) -> timedelta | None:
+        return None
+
     def mission_departure_time(self) -> timedelta:
         return self.sweep_end_time
 

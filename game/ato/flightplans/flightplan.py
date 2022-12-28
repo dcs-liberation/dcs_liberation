@@ -8,7 +8,7 @@ generating the waypoints for the mission.
 from __future__ import annotations
 
 import math
-from abc import ABC
+from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import timedelta
@@ -295,6 +295,16 @@ class FlightPlan(ABC, Generic[LayoutT]):
             return timedelta(minutes=2)
         else:
             return timedelta(minutes=8)
+
+    @property
+    @abstractmethod
+    def mission_begin_on_station_time(self) -> timedelta | None:
+        """The time that the mission is first on-station.
+
+        Not all mission types will have a time when they can be considered on-station.
+        Missions that patrol or loiter (CAPs, CAS, refueling, AEW&C, etc) will have this
+        defined, but strike-like missions will not.
+        """
 
     @property
     def mission_departure_time(self) -> timedelta:

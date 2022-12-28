@@ -76,6 +76,10 @@ class AirliftFlightPlan(StandardFlightPlan[AirliftLayout]):
         return None
 
     @property
+    def mission_begin_on_station_time(self) -> timedelta | None:
+        return None
+
+    @property
     def mission_departure_time(self) -> timedelta:
         return self.package.time_over_target
 
