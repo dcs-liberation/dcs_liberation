@@ -1,5 +1,6 @@
 import argparse
 import logging
+import ntpath
 import os
 import sys
 from datetime import datetime
@@ -339,10 +340,26 @@ def lint_weapon_data_for_aircraft(aircraft: AircraftType) -> None:
             logging.warning(f'{weapon.clsid} "{weapon.name}" has no weapon data')
 
 
+def fix_pycharm_debugger_if_needed() -> None:
+    """Applies workaround for a pycharm debugger bug.
+
+    https://youtrack.jetbrains.com/issue/PY-53232/Debugger-doesnt-work-when-pyproj-is-imported
+    """
+    # sys.gettrace() will return something whenever *some* debugger is being used. The
+    # pdb module will be loaded if that debugger is the built-in python debugger.
+    if sys.gettrace() is not None and "pdb" not in sys.modules:
+        logging.debug(
+            "Applying workaround for https://youtrack.jetbrains.com/issue/PY-53232/Debugger-doesnt-work-when-pyproj-is-imported"
+        )
+        ntpath.sep = "\\"
+
+
 def main():
     logging_config.init_logging(VERSION)
 
     logging.debug("Python version %s", sys.version)
+
+    fix_pycharm_debugger_if_needed()
 
     if not str(Path(__file__)).isascii():
         logging.warning(
