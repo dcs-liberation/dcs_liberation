@@ -4,6 +4,8 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Features/Improvements
 
+* **[Mission Generation]** Units on the front line are now hidden on MFDs.
+
 ## Fixes
 
 # 6.1.0
