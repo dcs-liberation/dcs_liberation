@@ -97,6 +97,10 @@ class FormationFlightPlan(LoiterFlightPlan, ABC):
         )
 
     @property
+    def mission_begin_on_station_time(self) -> timedelta | None:
+        return None
+
+    @property
     def mission_departure_time(self) -> timedelta:
         return self.split_time
 

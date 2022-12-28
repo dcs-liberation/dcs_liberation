@@ -90,6 +90,10 @@ class PatrollingFlightPlan(StandardFlightPlan[LayoutT], UiZoneDisplay, ABC):
         return self.layout.patrol_start
 
     @property
+    def mission_begin_on_station_time(self) -> timedelta:
+        return self.patrol_start_time
+
+    @property
     def mission_departure_time(self) -> timedelta:
         return self.patrol_end_time
 

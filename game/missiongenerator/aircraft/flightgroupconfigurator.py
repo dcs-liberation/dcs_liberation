@@ -10,12 +10,11 @@ from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
-from game.ato.flightplans.shiprecoverytanker import RecoveryTankerFlightPlan
 from game.callsigns import callsign_for_support_unit
 from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
-from game.missiongenerator.missiondata import MissionData, AwacsInfo, TankerInfo
 from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
 from game.missiongenerator.logisticsgenerator import LogisticsGenerator
+from game.missiongenerator.missiondata import AwacsInfo, MissionData, TankerInfo
 from game.radio.radios import RadioFrequency, RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage
 from game.runways import RunwayData
@@ -25,8 +24,6 @@ from .aircraftbehavior import AircraftBehavior
 from .aircraftpainter import AircraftPainter
 from .flightdata import FlightData
 from .waypoints import WaypointGenerator
-from ...ato.flightplans.aewc import AewcFlightPlan
-from ...ato.flightplans.theaterrefueling import TheaterRefuelingFlightPlan
 
 if TYPE_CHECKING:
     from game import Game
@@ -149,7 +146,7 @@ class FlightGroupConfigurator:
 
     def register_air_support(self, channel: RadioFrequency) -> None:
         callsign = callsign_for_support_unit(self.group)
-        if isinstance(self.flight.flight_plan, AewcFlightPlan):
+        if self.flight.flight_type is FlightType.AEWC:
             self.mission_data.awacs.append(
                 AwacsInfo(
                     group_name=str(self.group.name),
@@ -161,9 +158,7 @@ class FlightGroupConfigurator:
                     blue=self.flight.departure.captured,
                 )
             )
-        elif isinstance(
-            self.flight.flight_plan, TheaterRefuelingFlightPlan
-        ) or isinstance(self.flight.flight_plan, RecoveryTankerFlightPlan):
+        elif self.flight.flight_type is FlightType.REFUELING:
             tacan = self.tacan_registry.alloc_for_band(TacanBand.Y, TacanUsage.AirToAir)
             self.mission_data.tankers.append(
                 TankerInfo(
@@ -172,8 +167,8 @@ class FlightGroupConfigurator:
                     variant=self.flight.unit_type.name,
                     freq=channel,
                     tacan=tacan,
-                    start_time=self.flight.flight_plan.patrol_start_time,
-                    end_time=self.flight.flight_plan.patrol_end_time,
+                    start_time=self.flight.flight_plan.mission_begin_on_station_time,
+                    end_time=self.flight.flight_plan.mission_departure_time,
                     blue=self.flight.departure.captured,
                 )
             )
