@@ -33,7 +33,7 @@ pre-commit==2.19.0
 py==1.11.0
 pydantic==1.9.1
 -e git+https://github.com/pydcs/dcs@9c7b47b6c2b4870bf563bf880315dac019f6df1f#egg=pydcs
-pyinstaller==5.2
+pyinstaller==5.7.0
 pyinstaller-hooks-contrib==2022.8
 pyparsing==3.0.9
 pyproj==3.3.1
