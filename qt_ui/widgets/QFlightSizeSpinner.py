@@ -1,5 +1,5 @@
 """Spin box for selecting the number of aircraft in a flight."""
-from PySide2.QtWidgets import QSpinBox
+from PySide6.QtWidgets import QSpinBox
 
 
 class QFlightSizeSpinner(QSpinBox):

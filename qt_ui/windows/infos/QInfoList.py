@@ -1,6 +1,6 @@
-from PySide2.QtCore import QItemSelectionModel, QPoint
-from PySide2.QtGui import QStandardItemModel
-from PySide2.QtWidgets import QListView
+from PySide6.QtCore import QItemSelectionModel, QPoint
+from PySide6.QtGui import QStandardItemModel
+from PySide6.QtWidgets import QListView
 
 from game import Game, game
 from qt_ui.windows.infos.QInfoItem import QInfoItem

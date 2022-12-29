@@ -3,12 +3,9 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from PySide2.QtCore import QUrl
-from PySide2.QtWebEngineWidgets import (
-    QWebEnginePage,
-    QWebEngineSettings,
-    QWebEngineView,
-)
+from PySide6.QtCore import QUrl
+from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineSettings
+from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from game.server.settings import ServerSettings
 from qt_ui.models import GameModel
@@ -40,7 +37,7 @@ class QLiberationMap(QWebEngineView):
         # Required to allow "cross-origin" access from file:// scoped canvas.html to the
         # localhost HTTP backend.
         self.page.settings().setAttribute(
-            QWebEngineSettings.LocalContentCanAccessRemoteUrls, True
+            QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
 
         if dev:

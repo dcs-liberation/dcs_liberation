@@ -7,10 +7,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from PySide2 import QtWidgets
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
-from PySide2.QtWidgets import QApplication, QCheckBox, QSplashScreen
+from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, logging_config, persistency
@@ -70,10 +70,6 @@ def run_ui(game: Game | None, ui_flags: UiFlags) -> None:
     )
 
     app = QApplication(sys.argv)
-
-    app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
-    app.setAttribute(Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
-    app.setAttribute(Qt.AA_UseHighDpiPixmaps, True)  # use highdpi icons
 
     # init the theme and load the stylesheet based on the theme index
     liberation_theme.init()

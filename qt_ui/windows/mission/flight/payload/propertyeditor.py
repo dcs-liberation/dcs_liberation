@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QGridLayout, QLabel
+from PySide6.QtWidgets import QGridLayout, QLabel
 
 from game.ato import Flight
 from .propertyselector import PropertySelector

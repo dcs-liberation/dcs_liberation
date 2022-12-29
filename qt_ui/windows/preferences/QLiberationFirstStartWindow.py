@@ -1,5 +1,5 @@
-from PySide2.QtGui import QIcon, Qt
-from PySide2.QtWidgets import (
+from PySide6.QtGui import QIcon, Qt
+from PySide6.QtWidgets import (
     QDialog,
     QVBoxLayout,
     QPushButton,

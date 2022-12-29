@@ -1,7 +1,7 @@
 """Combo box for selecting a departure airfield."""
 from typing import Iterable, Optional
 
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 from dcs.unittype import FlyingType
 
 from game.dcs.aircrafttype import AircraftType

@@ -2,7 +2,7 @@ import logging
 import operator
 from typing import Optional
 
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 
 from game import Game
 from game.data.weapons import Pylon, Weapon

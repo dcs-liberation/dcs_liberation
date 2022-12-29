@@ -3,8 +3,8 @@ import logging
 import sys
 import traceback
 
-from PySide2.QtCore import Signal, QObject
-from PySide2.QtWidgets import QMessageBox, QApplication
+from PySide6.QtCore import Signal, QObject
+from PySide6.QtWidgets import QMessageBox, QApplication
 
 
 class UncaughtExceptionHandler(QObject):

@@ -2,9 +2,9 @@ import logging
 import textwrap
 from typing import Callable
 
-from PySide2.QtCore import QItemSelectionModel, QPoint, QSize, Qt
-from PySide2.QtGui import QStandardItem, QStandardItemModel
-from PySide2.QtWidgets import (
+from PySide6.QtCore import QItemSelectionModel, QPoint, QSize, Qt
+from PySide6.QtGui import QStandardItem, QStandardItemModel
+from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
     QComboBox,

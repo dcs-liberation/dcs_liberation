@@ -1,4 +1,4 @@
-altgraph==0.17.2
+﻿altgraph==0.17.2
 anyio==3.6.1
 asgiref==3.5.2
 atomicwrites==1.4.1
@@ -38,14 +38,16 @@ pyinstaller-hooks-contrib==2022.8
 pyparsing==3.0.9
 pyproj==3.3.1
 pyshp==2.3.1
-PySide2==5.15.2.1
+PySide6==6.4.1
+PySide6-Addons==6.4.1
+PySide6-Essentials==6.4.1
 pytest==7.1.2
 python-dateutil==2.8.2
 python-dotenv==0.20.0
 pywin32-ctypes==0.2.0
 PyYAML==6.0
 Shapely==1.8.2
-shiboken2==5.15.2.1
+shiboken6==6.4.1
 six==1.16.0
 sniffio==1.2.0
 starlette==0.19.1

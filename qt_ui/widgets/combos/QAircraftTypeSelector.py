@@ -1,5 +1,5 @@
 """Combo box for selecting aircraft types."""
-from PySide2.QtWidgets import QComboBox
+from PySide6.QtWidgets import QComboBox
 from game.dcs.aircrafttype import AircraftType
 
 

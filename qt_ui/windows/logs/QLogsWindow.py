@@ -1,14 +1,14 @@
 import logging
 import typing
 
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import (
     QDialog,
     QPlainTextEdit,
     QVBoxLayout,
     QPushButton,
 )
-from PySide2.QtGui import QTextCursor, QIcon
+from PySide6.QtGui import QTextCursor, QIcon
 
 from qt_ui.logging_handler import HookableInMemoryHandler
 

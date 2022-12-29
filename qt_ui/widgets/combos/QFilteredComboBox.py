@@ -1,5 +1,5 @@
-from PySide2.QtCore import QSortFilterProxyModel, Qt
-from PySide2.QtWidgets import QComboBox, QCompleter
+from PySide6.QtCore import QSortFilterProxyModel, Qt
+from PySide6.QtWidgets import QComboBox, QCompleter
 
 
 class QFilteredComboBox(QComboBox):
