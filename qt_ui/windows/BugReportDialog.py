@@ -1,8 +1,8 @@
 import webbrowser
 
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QGuiApplication
-from PySide2.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout, QWidget
 
 from game.version import BUILD_NUMBER, GIT_SHA, VERSION_NUMBER
 

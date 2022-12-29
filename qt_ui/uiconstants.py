@@ -1,7 +1,7 @@
 import os
 from typing import Dict
 
-from PySide2.QtGui import QPixmap
+from PySide6.QtGui import QPixmap
 
 from .liberation_theme import get_theme_icons
 

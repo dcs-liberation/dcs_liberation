@@ -1,8 +1,8 @@
 from datetime import timedelta
 
-from PySide2.QtCore import QItemSelectionModel, QSize
-from PySide2.QtGui import QStandardItemModel
-from PySide2.QtWidgets import QAbstractItemView, QListView
+from PySide6.QtCore import QItemSelectionModel, QSize
+from PySide6.QtGui import QStandardItemModel
+from PySide6.QtWidgets import QAbstractItemView, QListView
 
 from game.theater.controlpoint import ControlPoint
 from qt_ui.models import GameModel

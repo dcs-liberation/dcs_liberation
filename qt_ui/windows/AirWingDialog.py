@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Iterator
 
-from PySide2.QtCore import QItemSelectionModel, QModelIndex, QSize
-from PySide2.QtWidgets import (
+from PySide6.QtCore import QItemSelectionModel, QModelIndex, QSize
+from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
     QDialog,

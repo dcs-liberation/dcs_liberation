@@ -19,5 +19,3 @@ runs:
       run: |
         ./venv/scripts/activate
         python -m pip install -r requirements.txt
-        # For some reason the shiboken2.abi3.dll is not found properly, so I copy it instead
-        Copy-Item .\venv\Lib\site-packages\shiboken2\shiboken2.abi3.dll .\venv\Lib\site-packages\PySide2\ -Force

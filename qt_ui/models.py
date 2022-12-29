@@ -4,13 +4,13 @@ from __future__ import annotations
 import datetime
 from typing import Any, Callable, Iterator, Optional, TypeVar
 
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     QAbstractListModel,
     QModelIndex,
     Qt,
     Signal,
 )
-from PySide2.QtGui import QIcon
+from PySide6.QtGui import QIcon
 
 from game.ato.airtaaskingorder import AirTaskingOrder
 from game.ato.flight import Flight

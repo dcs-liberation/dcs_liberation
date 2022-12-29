@@ -1,7 +1,7 @@
 import logging
 
-from PySide2.QtGui import QTransform
-from PySide2.QtWidgets import (
+from PySide6.QtGui import QTransform
+from PySide6.QtWidgets import (
     QDialog,
     QGridLayout,
     QGroupBox,

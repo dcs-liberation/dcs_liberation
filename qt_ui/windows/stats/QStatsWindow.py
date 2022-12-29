@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QDialog, QGridLayout, QTabWidget
+from PySide6.QtWidgets import QDialog, QGridLayout, QTabWidget
 
 import qt_ui.uiconstants as CONST
 from game.game import Game

@@ -1,14 +1,14 @@
 from typing import Iterable, Iterator, Optional
 
-from PySide2.QtCore import (
+from PySide6.QtCore import (
     QItemSelection,
     QItemSelectionModel,
     QSize,
     Qt,
     Signal,
 )
-from PySide2.QtGui import QIcon, QStandardItem, QStandardItemModel
-from PySide2.QtWidgets import (
+from PySide6.QtGui import QIcon, QStandardItem, QStandardItemModel
+from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QDialog,

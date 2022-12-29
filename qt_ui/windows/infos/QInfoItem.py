@@ -1,4 +1,4 @@
-from PySide2.QtGui import QStandardItem
+from PySide6.QtGui import QStandardItem
 
 from game.infos.information import Information
 

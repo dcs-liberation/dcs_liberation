@@ -4,8 +4,8 @@ import logging
 from collections import defaultdict
 from typing import Callable, Dict, Type
 
-from PySide2.QtCore import Qt, Signal
-from PySide2.QtWidgets import (
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
     QFrame,
