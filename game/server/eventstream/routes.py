@@ -1,3 +1,4 @@
+import asyncio
 from asyncio import wait
 
 from fastapi import APIRouter, WebSocket
@@ -30,7 +31,9 @@ class ConnectionManager:
     async def broadcast(self, events: GameUpdateEventsJs) -> None:
         futures = []
         for connection in self.active_connections:
-            futures.append(connection.send_json(jsonable_encoder(events)))
+            futures.append(
+                asyncio.create_task(connection.send_json(jsonable_encoder(events)))
+            )
         await wait(futures)
 
 
