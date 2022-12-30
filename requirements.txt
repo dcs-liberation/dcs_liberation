@@ -46,7 +46,7 @@ python-dateutil==2.8.2
 python-dotenv==0.20.0
 pywin32-ctypes==0.2.0
 PyYAML==6.0
-Shapely==1.8.2
+Shapely==1.8.5
 shiboken6==6.4.1
 six==1.16.0
 sniffio==1.2.0
