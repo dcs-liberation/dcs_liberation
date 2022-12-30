@@ -36,7 +36,7 @@ pydantic==1.10.3
 pyinstaller==5.7.0
 pyinstaller-hooks-contrib==2022.8
 pyparsing==3.0.9
-pyproj==3.3.1
+pyproj==3.4.1
 pyshp==2.3.1
 PySide6==6.4.1
 PySide6-Addons==6.4.1
