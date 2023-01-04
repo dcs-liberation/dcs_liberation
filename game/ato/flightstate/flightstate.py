@@ -21,6 +21,39 @@ class FlightState(ABC):
         self.settings = settings
         self.avoid_further_combat = False
 
+    def reinitialize(self, now: datetime) -> None:
+        from game.ato.flightstate import WaitingForStart
+
+        start_time = self.flight.flight_plan.startup_time()
+        if start_time <= now:
+            self._set_active_flight_state(now)
+        else:
+            self.flight.set_state(
+                WaitingForStart(self.flight, self.settings, start_time)
+            )
+
+    def _set_active_flight_state(self, now: datetime) -> None:
+        from game.ato.flightstate import StartUp
+        from game.ato.flightstate import Taxi
+        from game.ato.flightstate import Takeoff
+        from game.ato.flightstate import Navigating
+
+        match self.flight.start_type:
+            case StartType.COLD:
+                self.flight.set_state(StartUp(self.flight, self.settings, now))
+            case StartType.WARM:
+                self.flight.set_state(Taxi(self.flight, self.settings, now))
+            case StartType.RUNWAY:
+                self.flight.set_state(Takeoff(self.flight, self.settings, now))
+            case StartType.IN_FLIGHT:
+                self.flight.set_state(
+                    Navigating(self.flight, self.settings, waypoint_index=0)
+                )
+            case _:
+                raise ValueError(
+                    f"Unknown start type {self.flight.start_type} for {self.flight}"
+                )
+
     @property
     def alive(self) -> bool:
         return True

@@ -8,14 +8,8 @@ from datetime import datetime, timedelta
 from typing_extensions import TYPE_CHECKING
 
 from game.ato.flightstate import (
-    Navigating,
-    StartUp,
-    Takeoff,
-    Taxi,
     Uninitialized,
-    WaitingForStart,
 )
-from game.ato.starttype import StartType
 from .combat import CombatInitiator, FrozenCombat
 from .simulationresults import SimulationResults
 
@@ -73,25 +67,7 @@ class AircraftSimulation:
     def set_initial_flight_states(self) -> None:
         now = self.game.conditions.start_time
         for flight in self.iter_flights():
-            start_time = flight.flight_plan.startup_time()
-            if start_time <= now:
-                self.set_active_flight_state(flight, now)
-            else:
-                flight.set_state(
-                    WaitingForStart(flight, self.game.settings, start_time)
-                )
-
-    def set_active_flight_state(self, flight: Flight, now: datetime) -> None:
-        if flight.start_type is StartType.COLD:
-            flight.set_state(StartUp(flight, self.game.settings, now))
-        elif flight.start_type is StartType.WARM:
-            flight.set_state(Taxi(flight, self.game.settings, now))
-        elif flight.start_type is StartType.RUNWAY:
-            flight.set_state(Takeoff(flight, self.game.settings, now))
-        elif flight.start_type is StartType.IN_FLIGHT:
-            flight.set_state(Navigating(flight, self.game.settings, waypoint_index=0))
-        else:
-            raise ValueError(f"Unknown start type {flight.start_type} for {flight}")
+            flight.state.reinitialize(now)
 
     def reset(self) -> None:
         for flight in self.iter_flights():

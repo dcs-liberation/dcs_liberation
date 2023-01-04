@@ -20,7 +20,8 @@ class Uninitialized(FlightState):
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
-        raise RuntimeError("Attempted to simulate flight that is not fully initialized")
+        self.reinitialize(time)
+        self.flight.state.on_game_tick(events, time, duration)
 
     @property
     def is_waiting_for_start(self) -> bool:
