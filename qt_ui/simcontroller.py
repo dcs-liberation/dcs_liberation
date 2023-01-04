@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Callable, Optional, TYPE_CHECKING
@@ -75,6 +77,11 @@ class SimController(QObject):
             self.game_loop.start()
             self.started = True
         self.game_loop.set_simulation_speed(simulation_speed)
+
+    @contextmanager
+    def paused_sim(self) -> Iterator[None]:
+        with self.game_loop.paused_sim():
+            yield
 
     def run_to_first_contact(self) -> None:
         self.game_loop.run_to_first_contact()

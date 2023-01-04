@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Iterator, TYPE_CHECKING
 
 from .gamelooptimer import GameLoopTimer
 from .gameupdatecallbacks import GameUpdateCallbacks
@@ -51,6 +52,11 @@ class GameLoop:
         if not self.started and simulation_speed is not SimSpeedSetting.PAUSED:
             self.start()
         self.timer.set_speed(simulation_speed)
+
+    @contextmanager
+    def paused_sim(self) -> Iterator[None]:
+        with self.timer.locked_pause():
+            yield
 
     def run_to_first_contact(self) -> None:
         self.pause()

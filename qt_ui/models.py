@@ -152,52 +152,58 @@ class PackageModel(QAbstractListModel):
 
     def add_flight(self, flight: Flight) -> None:
         """Adds the given flight to the package."""
-        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
-        self.package.add_flight(flight)
-        # update_tot is not called here because the new flight does not have a
-        # flight plan yet. Will be called manually by the caller.
-        self.endInsertRows()
+        with self.game_model.sim_controller.paused_sim():
+            self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+            self.package.add_flight(flight)
+            # update_tot is not called here because the new flight does not have a
+            # flight plan yet. Will be called manually by the caller.
+            self.endInsertRows()
 
     def cancel_or_abort_flight_at_index(self, index: QModelIndex) -> None:
         """Removes the flight at the given index from the package."""
         self.cancel_or_abort_flight(self.flight_at_index(index))
 
     def cancel_or_abort_flight(self, flight: Flight) -> None:
-        if flight.state.cancelable:
-            self.delete_flight(flight)
-            EventStream.put_nowait(GameUpdateEvents().delete_flight(flight))
-        else:
-            flight.abort()
-            EventStream.put_nowait(GameUpdateEvents().update_flight(flight))
+        with self.game_model.sim_controller.paused_sim():
+            if flight.state.cancelable:
+                self.delete_flight(flight)
+                EventStream.put_nowait(GameUpdateEvents().delete_flight(flight))
+            else:
+                flight.abort()
+                EventStream.put_nowait(GameUpdateEvents().update_flight(flight))
 
     def delete_flight(self, flight: Flight) -> None:
         """Removes the given flight from the package."""
-        index = self.package.flights.index(flight)
-        self.beginRemoveRows(QModelIndex(), index, index)
-        self.package.remove_flight(flight)
-        self.endRemoveRows()
-        self.update_tot()
+        with self.game_model.sim_controller.paused_sim():
+            index = self.package.flights.index(flight)
+            self.beginRemoveRows(QModelIndex(), index, index)
+            self.package.remove_flight(flight)
+            self.endRemoveRows()
+            self.update_tot()
 
     def flight_at_index(self, index: QModelIndex) -> Flight:
         """Returns the flight located at the given index."""
         return self.package.flights[index.row()]
 
     def set_tot(self, tot: datetime.datetime) -> None:
-        self.package.time_over_target = tot
-        self.update_tot()
+        with self.game_model.sim_controller.paused_sim():
+            self.package.time_over_target = tot
+            self.update_tot()
 
     def set_asap(self, asap: bool) -> None:
-        self.package.auto_asap = asap
-        self.update_tot()
+        with self.game_model.sim_controller.paused_sim():
+            self.package.auto_asap = asap
+            self.update_tot()
 
     def update_tot(self) -> None:
-        if self.package.auto_asap:
-            self.package.set_tot_asap(
-                self.game_model.sim_controller.current_time_in_sim
-            )
-        self.tot_changed.emit()
-        # For some reason this is needed to make the UI update quickly.
-        self.layoutChanged.emit()
+        with self.game_model.sim_controller.paused_sim():
+            if self.package.auto_asap:
+                self.package.set_tot_asap(
+                    self.game_model.sim_controller.current_time_in_sim
+                )
+            self.tot_changed.emit()
+            # For some reason this is needed to make the UI update quickly.
+            self.layoutChanged.emit()
 
     @property
     def mission_target(self) -> MissionTarget:
@@ -255,34 +261,36 @@ class AtoModel(QAbstractListModel):
 
     def add_package(self, package: Package) -> None:
         """Adds a package to the ATO."""
-        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
-        self.ato.add_package(package)
-        # We do not need to send events for new flights in the package here. Events were
-        # already sent when the flights were added to the in-progress package.
-        self.endInsertRows()
-        # noinspection PyUnresolvedReferences
-        self.client_slots_changed.emit()
-        self.on_packages_changed()
+        with self.game_model.sim_controller.paused_sim():
+            self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+            self.ato.add_package(package)
+            # We do not need to send events for new flights in the package here. Events
+            # were already sent when the flights were added to the in-progress package.
+            self.endInsertRows()
+            # noinspection PyUnresolvedReferences
+            self.client_slots_changed.emit()
+            self.on_packages_changed()
 
     def cancel_or_abort_package_at_index(self, index: QModelIndex) -> None:
         """Removes the package at the given index from the ATO."""
         self.cancel_or_abort_package(self.package_at_index(index))
 
     def cancel_or_abort_package(self, package: Package) -> None:
-        with EventStream.event_context() as events:
-            if all(f.state.cancelable for f in package.flights):
-                events.delete_flights_in_package(package)
-                self._delete_package(package)
-                return
+        with self.game_model.sim_controller.paused_sim():
+            with EventStream.event_context() as events:
+                if all(f.state.cancelable for f in package.flights):
+                    events.delete_flights_in_package(package)
+                    self._delete_package(package)
+                    return
 
-            package_model = self.find_matching_package_model(package)
-            for flight in package.flights:
-                if flight.state.cancelable:
-                    package_model.delete_flight(flight)
-                    events.delete_flight(flight)
-                else:
-                    flight.abort()
-                    events.update_flight(flight)
+                package_model = self.find_matching_package_model(package)
+                for flight in package.flights:
+                    if flight.state.cancelable:
+                        package_model.delete_flight(flight)
+                        events.delete_flight(flight)
+                    else:
+                        flight.abort()
+                        events.update_flight(flight)
 
     def _delete_package(self, package: Package) -> None:
         """Removes the given package from the ATO."""
