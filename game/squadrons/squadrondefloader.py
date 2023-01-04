@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 from pathlib import Path
-from typing import Iterator, Tuple, TYPE_CHECKING
+from typing import Iterator, TYPE_CHECKING, Tuple
 
 from game.dcs.aircrafttype import AircraftType
 from .squadrondef import SquadronDef
@@ -20,9 +20,9 @@ class SquadronDefLoader:
 
     @staticmethod
     def squadron_directories() -> Iterator[Path]:
-        from game import persistency
+        from game import persistence
 
-        yield Path(persistency.base_path()) / "Liberation/Squadrons"
+        yield Path(persistence.base_path()) / "Liberation/Squadrons"
         yield Path("resources/squadrons")
 
     def load(self) -> dict[AircraftType, list[SquadronDef]]:

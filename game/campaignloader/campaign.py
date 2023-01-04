@@ -10,7 +10,7 @@ from typing import Any, Dict, Tuple
 import yaml
 from packaging.version import Version
 
-from game import persistency
+from game import persistence
 from game.profiling import logged_duration
 from game.theater import (
     ConflictTheater,
@@ -171,7 +171,7 @@ class Campaign:
     @classmethod
     def iter_campaign_defs(cls) -> Iterator[Path]:
         yield from cls.iter_campaigns_in_dir(
-            Path(persistency.base_path()) / "Liberation/Campaigns"
+            Path(persistence.base_path()) / "Liberation/Campaigns"
         )
         yield from cls.iter_campaigns_in_dir(Path("resources/campaigns"))
 

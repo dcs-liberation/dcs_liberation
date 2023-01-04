@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 import json
 import logging
 from pathlib import Path
 from typing import Dict, Iterator, List, Optional, Type
 
-from game import persistency
+from game import persistence
 from game.factions.faction import Faction
 
 FACTION_DIRECTORY = Path("./resources/factions/")
@@ -30,7 +31,7 @@ class FactionLoader:
 
     @classmethod
     def load_factions(cls: Type[FactionLoader]) -> Dict[str, Faction]:
-        user_faction_path = Path(persistency.base_path()) / "Liberation/Factions"
+        user_faction_path = Path(persistence.base_path()) / "Liberation/Factions"
         files = cls.find_faction_files_in(
             FACTION_DIRECTORY
         ) + cls.find_faction_files_in(user_faction_path)

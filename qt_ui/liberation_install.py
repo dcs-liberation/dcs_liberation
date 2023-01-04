@@ -6,7 +6,7 @@ from shutil import copyfile
 
 import dcs
 
-from game import persistency
+from game import persistence
 
 global __dcs_saved_game_directory
 global __dcs_installation_directory
@@ -61,7 +61,7 @@ def init():
             __dcs_installation_directory = ""
 
         is_first_start = True
-    persistency.setup(__dcs_saved_game_directory)
+    persistence.set_dcs_save_game_directory(Path(__dcs_saved_game_directory))
     return is_first_start
 
 
@@ -70,10 +70,10 @@ def setup(saved_game_dir, install_dir):
     global __dcs_installation_directory
     __dcs_saved_game_directory = saved_game_dir
     __dcs_installation_directory = install_dir
-    persistency.setup(__dcs_saved_game_directory)
+    persistence.set_dcs_save_game_directory(Path(__dcs_saved_game_directory))
 
 
-def setup_last_save_file(last_save_file):
+def setup_last_save_file(last_save_file: str) -> None:
     global __last_save_file
     __last_save_file = last_save_file
 
@@ -114,11 +114,10 @@ def set_ignore_empty_install_directory(value: bool):
     __ignore_empty_install_directory = value
 
 
-def get_last_save_file():
+def get_last_save_file() -> Path | None:
     global __last_save_file
-    print(__last_save_file)
     if os.path.exists(__last_save_file):
-        return __last_save_file
+        return Path(__last_save_file)
     else:
         return None
 
