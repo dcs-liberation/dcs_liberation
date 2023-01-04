@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game, persistency
+from game import Game, persistence
 from game.ato.package import Package
 from game.ato.traveltime import TotEstimator
 from game.profiling import logged_duration
@@ -290,7 +290,7 @@ class QTopPanel(QFrame):
             with logged_duration("Simulating to first contact"):
                 self.sim_controller.run_to_first_contact()
         self.sim_controller.generate_miz(
-            persistency.mission_path_for("liberation_nextturn.miz")
+            persistence.mission_path_for("liberation_nextturn.miz")
         )
 
         waiting = QWaitingForMissionResultWindow(self.game, self.sim_controller, self)

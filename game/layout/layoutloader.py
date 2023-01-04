@@ -1,9 +1,9 @@
 from __future__ import annotations
-from collections import defaultdict
 
 import itertools
 import logging
 import pickle
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Iterator
@@ -13,18 +13,18 @@ import yaml
 from dcs import Point
 from dcs.unitgroup import StaticGroup
 
-from game import persistency
+from game import persistence
 from game.data.groups import GroupRole
 from game.layout.layout import (
+    AntiAirLayout,
+    BuildingLayout,
+    DefensesLayout,
+    GroundForceLayout,
+    LayoutUnit,
+    NavalLayout,
     TgoLayout,
     TgoLayoutGroup,
     TgoLayoutUnitGroup,
-    LayoutUnit,
-    AntiAirLayout,
-    BuildingLayout,
-    NavalLayout,
-    GroundForceLayout,
-    DefensesLayout,
 )
 from game.layout.layoutmapping import LayoutMapping
 from game.profiling import logged_duration
@@ -63,7 +63,7 @@ class LayoutLoader:
         """This will load all pre-loaded layouts from a pickle file.
         If pickle can not be loaded it will import and dump the layouts"""
         # We use a pickle for performance reasons. Importing takes many seconds
-        file = Path(persistency.base_path()) / LAYOUT_DUMP
+        file = Path(persistence.base_path()) / LAYOUT_DUMP
         if file.is_file():
             # Load from pickle if existing
             with file.open("rb") as f:
@@ -106,7 +106,7 @@ class LayoutLoader:
         self._dump_templates()
 
     def _dump_templates(self) -> None:
-        file = Path(persistency.base_path()) / LAYOUT_DUMP
+        file = Path(persistence.base_path()) / LAYOUT_DUMP
         dump = (VERSION, self._layouts)
         with file.open("wb") as fdata:
             pickle.dump(dump, fdata)
