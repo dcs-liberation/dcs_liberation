@@ -3,9 +3,9 @@ from typing import Optional
 
 from PySide6.QtWidgets import QComboBox
 
+from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons.airwing import AirWing
-from game.ato.flighttype import FlightType
 
 
 class SquadronSelector(QComboBox):
@@ -21,7 +21,7 @@ class SquadronSelector(QComboBox):
         self.air_wing = air_wing
 
         self.model().sort(0)
-        self.setSizeAdjustPolicy(self.AdjustToContents)
+        self.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
         self.update_items(task, aircraft)
 
     @property
