@@ -679,7 +679,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout = QtWidgets.QGridLayout()
         modLayout_row = 1
         modLayout.addWidget(
-            QtWidgets.QLabel("A-4E Skyhawk (version 2.0.0)"), modLayout_row, 0
+            QtWidgets.QLabel("A-4E Skyhawk (version 2.1.0)"), modLayout_row, 0
         )
         modLayout.addWidget(a4_skyhawk, modLayout_row, 1)
         modLayout_row += 1
