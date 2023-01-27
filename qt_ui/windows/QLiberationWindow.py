@@ -1,6 +1,7 @@
 import logging
 import traceback
 import webbrowser
+from pathlib import Path
 from typing import Optional
 
 from PySide6.QtCore import QSettings, Qt, Signal
@@ -16,9 +17,10 @@ from PySide6.QtWidgets import (
 )
 
 import qt_ui.uiconstants as CONST
-from game import Game, VERSION, persistency
+from game import Game, VERSION
 from game.debriefing import Debriefing
 from game.layout import LAYOUTS
+from game.persistence import SaveManager
 from game.server import EventStream, GameContext
 from game.server.dependencies import QtCallbacks, QtContext
 from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
@@ -106,11 +108,11 @@ class QLiberationWindow(QMainWindow):
             if last_save_file:
                 try:
                     logging.info("Loading last saved game : " + str(last_save_file))
-                    game = persistency.load_game(last_save_file)
+                    game = SaveManager.load_player_save(last_save_file)
                     self.onGameGenerated(game)
                     self.updateWindowTitle(last_save_file if game else None)
                 except:
-                    logging.info("Error loading latest save game")
+                    logging.exception("Error loading latest save game")
             else:
                 logging.info("No existing save game")
         else:
@@ -316,58 +318,61 @@ class QLiberationWindow(QMainWindow):
         wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def openFile(self):
-        if self.game is not None and self.game.savepath:
-            save_dir = self.game.savepath
+        if (
+            self.game is not None
+            and self.game.save_manager.player_save_location is not None
+        ):
+            save_dir = str(self.game.save_manager.player_save_location)
         else:
-            save_dir = str(persistency.save_dir())
+            save_dir = str(SaveManager.default_save_directory())
         file = QFileDialog.getOpenFileName(
             self,
             "Select game file to open",
             dir=save_dir,
-            filter="*.liberation",
+            filter="*.liberation.zip",
         )
         if file is not None and file[0] != "":
-            game = persistency.load_game(file[0])
-            GameUpdateSignal.get_instance().game_loaded.emit(game)
+            try:
+                game = SaveManager.load_player_save(Path(file[0]))
+                GameUpdateSignal.get_instance().game_loaded.emit(game)
 
-            self.updateWindowTitle(file[0])
+                self.updateWindowTitle(Path(file[0]))
+            except Exception:
+                logging.exception("Error loading save game %s", file[0])
 
     def saveGame(self):
         logging.info("Saving game")
 
-        if self.game.savepath:
-            persistency.save_game(self.game)
-            liberation_install.setup_last_save_file(self.game.savepath)
-            liberation_install.save_config()
+        if self.game.save_manager.player_save_location is not None:
+            self.game.save_manager.save_player()
         else:
             self.saveGameAs()
 
     def saveGameAs(self):
-        if self.game is not None and self.game.savepath:
-            save_dir = self.game.savepath
+        if (
+            self.game is not None
+            and self.game.save_manager.player_save_location is not None
+        ):
+            save_dir = str(self.game.save_manager.player_save_location)
         else:
-            save_dir = str(persistency.save_dir())
+            save_dir = str(SaveManager.default_save_directory())
         file = QFileDialog.getSaveFileName(
             self,
             "Save As",
             dir=save_dir,
-            filter="*.liberation",
+            filter="*.liberation.zip",
         )
-        if file is not None:
-            self.game.savepath = file[0]
-            persistency.save_game(self.game)
-            liberation_install.setup_last_save_file(self.game.savepath)
-            liberation_install.save_config()
+        if file is not None and file[0]:
+            self.game.save_manager.save_player(override_destination=Path(file[0]))
+            self.updateWindowTitle(Path(file[0]))
 
-            self.updateWindowTitle(file[0])
-
-    def updateWindowTitle(self, save_path: Optional[str] = None) -> None:
+    def updateWindowTitle(self, save_path: Path | None = None) -> None:
         """
         to DCS Liberation - vX.X.X - file_name
         """
         window_title = f"DCS Liberation - v{VERSION}"
         if save_path:  # appending the file name to title as it is updated
-            file_name = save_path.split("/")[-1].split(".liberation")[0]
+            file_name = save_path.name.split(".liberation.zip")[0]
             window_title = f"{window_title} - {file_name}"
         self.setWindowTitle(window_title)
 

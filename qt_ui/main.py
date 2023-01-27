@@ -13,7 +13,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
-from game import Game, VERSION, logging_config, persistency
+from game import Game, VERSION, logging_config, persistence
 from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.dcs.aircrafttype import AircraftType
@@ -85,14 +85,14 @@ def run_ui(game: Game | None, ui_flags: UiFlags) -> None:
         window = QLiberationFirstStartWindow()
         window.exec_()
 
-    logging.info("Using {} as 'Saved Game Folder'".format(persistency.base_path()))
+    logging.info("Using {} as 'Saved Game Folder'".format(persistence.base_path()))
     logging.info(
         "Using {} as 'DCS installation folder'".format(
             liberation_install.get_dcs_install_directory()
         )
     )
 
-    inject_custom_payloads(Path(persistency.base_path()))
+    inject_custom_payloads(Path(persistence.base_path()))
 
     # Splash screen setup
     pixmap = QPixmap("./resources/ui/splash_screen.png")
@@ -271,7 +271,7 @@ def create_game(
     # Without this, it is not possible to use next turn (or anything that needs to check
     # for loadouts) without saving the generated campaign and reloading it the normal
     # way.
-    inject_custom_payloads(Path(persistency.base_path()))
+    inject_custom_payloads(Path(persistence.base_path()))
     campaign = Campaign.from_file(campaign_path)
     theater = campaign.load_theater(advanced_iads)
     generator = GameGenerator(

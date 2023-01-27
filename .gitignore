@@ -6,6 +6,7 @@ venv
 .DS_Store
 .vscode/settings.json
 dist/**
+/.coverage
 # User-specific stuff
 .idea/
 .env

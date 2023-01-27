@@ -21,12 +21,13 @@ from game.ground_forces.ai_ground_planner import GroundPlanner
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from game.utils import Distance
-from . import naming, persistency
+from . import naming
 from .ato.flighttype import FlightType
 from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition
 from .db.gamedb import GameDb
 from .infos.information import Information
+from .persistence import SaveManager
 from .profiling import logged_duration
 from .settings import Settings
 from .theater import ConflictTheater
@@ -114,7 +115,7 @@ class Game:
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
         self.__culling_zones: List[Point] = []
         self.__destroyed_units: list[dict[str, Union[float, str]]] = []
-        self.savepath = ""
+        self.save_manager = SaveManager(self)
         self.current_unit_id = 0
         self.current_group_id = 0
         self.name_generator = naming.namegen
@@ -321,6 +322,9 @@ class Game:
         # *any* state to the UI yet, so it will need to do a full draw once we do.
         self.initialize_turn(GameUpdateEvents())
 
+    def save_last_turn_state(self) -> None:
+        self.save_manager.save_last_turn()
+
     def pass_turn(self, no_action: bool = False) -> None:
         """Ends the current turn and initializes the new turn.
 
@@ -336,7 +340,7 @@ class Game:
             # Only save the last turn state if the turn was skipped. Otherwise, we'll
             # end up saving the game after we've already applied the results, making
             # this useless...
-            persistency.save_last_turn_state(self)
+            self.save_manager.save_last_turn()
 
         events = GameUpdateEvents()
 
@@ -349,8 +353,7 @@ class Game:
 
         EventStream.put_nowait(events)
 
-        # Autosave progress
-        persistency.autosave(self)
+        self.save_manager.save_start_of_turn()
 
     def check_win_loss(self) -> TurnState:
         player_airbases = {

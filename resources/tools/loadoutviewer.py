@@ -9,7 +9,7 @@ from dcs.helicopters import helicopter_map
 from dcs.planes import plane_map
 from dcs.unittype import FlyingType
 
-from game import persistency
+from game import persistence
 from game.ato import FlightType
 from game.ato.loadouts import Loadout
 from game.dcs.aircrafttype import AircraftType
@@ -122,7 +122,7 @@ def main() -> None:
             "the first run configuration."
         )
 
-    inject_custom_payloads(Path(persistency.base_path()))
+    inject_custom_payloads(Path(persistence.base_path()))
 
     if args.aircraft_id is None:
         show_all_aircraft(args.task)
