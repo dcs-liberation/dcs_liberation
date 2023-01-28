@@ -1,3 +1,9 @@
+# 6.1.1
+
+## Fixes
+
+* **[Data]** Fixed unit ID for the KS-19 AAA. KS-19 would not previously generate correctly in missions. A new game is required for this fix to take effect.
+
 # 6.1.0
 
 Saves from 6.0.0 are compatible with 6.1.0
