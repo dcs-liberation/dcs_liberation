@@ -153,6 +153,11 @@ class TheaterState(WorldState["TheaterState"]):
         barcap_duration = coalition.doctrine.cap_duration.total_seconds()
         barcap_rounds = math.ceil(mission_duration / barcap_duration)
 
+        refueling_targets: list[MissionTarget] = []
+        theater_refuling_point = finder.preferred_theater_refueling_control_point()
+        if theater_refuling_point is not None:
+            refueling_targets.append(theater_refuling_point)
+
         return TheaterState(
             context=context,
             barcaps_needed={
@@ -162,7 +167,7 @@ class TheaterState(WorldState["TheaterState"]):
             front_line_stances={f: None for f in finder.front_lines()},
             vulnerable_front_lines=list(finder.front_lines()),
             aewc_targets=[finder.farthest_friendly_control_point()],
-            refueling_targets=[finder.closest_friendly_control_point()],
+            refueling_targets=refueling_targets,
             enemy_air_defenses=list(finder.enemy_air_defenses()),
             threatening_air_defenses=[],
             detecting_air_defenses=[],
