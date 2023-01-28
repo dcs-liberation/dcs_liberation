@@ -5,6 +5,7 @@ import operator
 from collections.abc import Iterable, Iterator
 from typing import TYPE_CHECKING, TypeVar
 
+from game.ato.closestairfields import ClosestAirfields, ObjectiveDistanceCache
 from game.theater import (
     Airfield,
     ControlPoint,
@@ -15,12 +16,11 @@ from game.theater import (
 )
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
+    IadsBuildingGroundObject,
     IadsGroundObject,
     NavalGroundObject,
-    IadsBuildingGroundObject,
 )
 from game.utils import meters, nautical_miles
-from game.ato.closestairfields import ClosestAirfields, ObjectiveDistanceCache
 
 if TYPE_CHECKING:
     from game import Game
@@ -209,22 +209,20 @@ class ObjectiveFinder:
             raise RuntimeError("Found no friendly control points. You probably lost.")
         return farthest
 
-    def closest_friendly_control_point(self) -> ControlPoint:
+    def preferred_theater_refueling_control_point(self) -> ControlPoint | None:
         """Finds the friendly control point that is closest to any threats."""
         threat_zones = self.game.threat_zone_for(not self.is_player)
 
         closest = None
         min_distance = meters(math.inf)
         for cp in self.friendly_control_points():
-            if isinstance(cp, OffMapSpawn):
+            if isinstance(cp, OffMapSpawn) or cp.is_fleet:
                 continue
             distance = threat_zones.distance_to_threat(cp.position)
             if distance < min_distance:
                 closest = cp
                 min_distance = distance
 
-        if closest is None:
-            raise RuntimeError("Found no friendly control points. You probably lost.")
         return closest
 
     def enemy_control_points(self) -> Iterator[ControlPoint]:
