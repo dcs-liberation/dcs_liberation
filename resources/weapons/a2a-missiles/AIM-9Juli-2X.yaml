@@ -1,6 +1,0 @@
-name: 2xAIM-9Juli
-year: 1977
-#Assuming same IOC as L since it is a J upgrade with L seeker
-fallback: 2xAIM-9J
-clsids:
-  - "{VSN_F4B_LAU105_AIM9JULI}"

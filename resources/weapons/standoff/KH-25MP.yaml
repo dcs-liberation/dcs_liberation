@@ -1,5 +1,5 @@
 name: KH-25MP
 year: 1981
-fallback: KH-29L
+fallback: KH-28
 clsids:
   - "{Kh-25MP}"
