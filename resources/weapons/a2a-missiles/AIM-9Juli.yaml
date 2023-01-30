@@ -1,0 +1,7 @@
+name: AIM-9Juli
+year: 1977
+#Assuming same IOC as L since it is a J upgrade with L seeker
+fallback: AIM-9J
+clsids:
+  - "{AIM-9Juli}"
+
