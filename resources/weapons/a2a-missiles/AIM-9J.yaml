@@ -1,0 +1,7 @@
+name: AIM-9J
+year: 1972
+#IOC is in 1977, but was fielded in 1972 - using field date since the 9B is terrible and there are no versions in between in DCS
+fallback: AIM-9B
+clsids:
+  - "{AIM-9J}"
+  - "{AIM-9J-ON-ADAPTER}"

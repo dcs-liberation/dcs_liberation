@@ -10,8 +10,12 @@
     "B-52H Stratofortress",
     "C-130",
     "CH-47D",
+    "A-4E Skyhawk",
+    "F-4B Phantom II",
+    "F-4C Phantom II",
     "F-4E Phantom II",
     "F-5E Tiger II",
+    "OV-10A Bronco",
     "UH-1H Iroquois"
   ],
   "awacs": [
@@ -41,11 +45,17 @@
     "Hawk",
     "Cold-War-Flak"
   ],
-  "naval_units": [],
+  "naval_units": [
+    "FFG Oliver Hazard Perry",
+    "CV-59 Forrestal"
+  ],
   "air_defense_units": [
     "SAM Hawk SR (AN/MPQ-50)",
     "M163 Vulcan Air Defense System",
     "M48 Chaparral"
+  ],
+  "carrier_names": [
+    "CVN-59 Forrestal"
   ],
   "requirements": {},
   "doctrine": "coldwar"
