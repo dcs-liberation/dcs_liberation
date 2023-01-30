@@ -31,10 +31,11 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
         for key, value in theater_objects.items():
             # Check name and position in case there are multiple of same carrier.
             if name in key and value.theater_unit.position == carrier_position:
-                theater_mapping = value
-                break
-        assert theater_mapping is not None
-        return theater_mapping.dcs_group_id
+                return value.dcs_group_id
+        raise RuntimeError(
+            f"Could not find a carrier in the mission matching {name} at "
+            f"({carrier_position.x}, {carrier_position.y})"
+        )
 
     def configure_tanker_tacan(self, waypoint: MovingPoint) -> None:
 

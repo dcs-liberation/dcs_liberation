@@ -4,11 +4,19 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS 2.8.2.35632.
 * **[Engine]** Saved games are now a zip file of save assets for easier bug reporting. The new extension is .liberation.zip. Drag and drop that file into bug reports.
 * **[Mission Generation]** Units on the front line are now hidden on MFDs.
 * **[Modding]** Updated Community A-4E-C mod version support to 2.1.0 release.
 
 ## Fixes
+
+# 6.1.1
+
+## Fixes
+
+* **[Data]** Fixed unit ID for the KS-19 AAA. KS-19 would not previously generate correctly in missions. A new game is required for this fix to take effect.
+* **[Flight Planning]** Automatic flight planning will no longer accidentally plan a recovery tanker instead of a theater refueling package. This fixes a potential crash during mission generation when opfor plans a refueling task at a sunk carrier. You'll need to skip the current turn to force opfor to replan their flights to get the fix.
 
 # 6.1.0
 
