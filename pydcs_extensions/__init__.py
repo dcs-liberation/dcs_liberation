@@ -1,6 +1,7 @@
 from .a4ec import *
 from .f104 import *
 from .f22a import *
+from .f4 import *
 from .frenchpack import *
 from .hercules import *
 from .highdigitsams import *
