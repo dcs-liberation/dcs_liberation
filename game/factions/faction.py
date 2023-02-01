@@ -297,6 +297,9 @@ class Faction:
             self.remove_aircraft("VSN_F104G")
             self.remove_aircraft("VSN_F104S")
             self.remove_aircraft("VSN_F104S_AG")
+        if not mod_settings.f4_phantom:
+            self.remove_aircraft("VSN_F4B")
+            self.remove_aircraft("VSN_F4C")
         if not mod_settings.jas39_gripen:
             self.remove_aircraft("JAS39Gripen")
             self.remove_aircraft("JAS39Gripen_AG")
