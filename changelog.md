@@ -18,6 +18,7 @@ Saves from 6.x are not compatible with 7.0.
 
 * **[Data]** Fixed unit ID for the KS-19 AAA. KS-19 would not previously generate correctly in missions. A new game is required for this fix to take effect.
 * **[Flight Planning]** Automatic flight planning will no longer accidentally plan a recovery tanker instead of a theater refueling package. This fixes a potential crash during mission generation when opfor plans a refueling task at a sunk carrier. You'll need to skip the current turn to force opfor to replan their flights to get the fix.
+* **[Mission Generation]** Using heliports (airports without any runways) will no longer cause mission generation to fail.
 
 # 6.1.0
 
