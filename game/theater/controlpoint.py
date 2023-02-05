@@ -878,6 +878,11 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     ) -> RunwayData:
         ...
 
+    def stub_runway_data(self) -> RunwayData:
+        return RunwayData(
+            self.full_name, runway_heading=Heading.from_degrees(0), runway_name=""
+        )
+
     @property
     def airdrome_id_for_landing(self) -> Optional[int]:
         return None
@@ -1134,6 +1139,14 @@ class Airfield(ControlPoint):
         conditions: Conditions,
         dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
+        if not self.airport.runways:
+            # Some airfields are heliports and don't have any runways. This isn't really
+            # the best fix, since we should still try to generate partial data for TACAN
+            # beacons, but it'll do for a bug fix, and the proper fix probably involves
+            # making heliports their own CP type.
+            # https://github.com/dcs-liberation/dcs_liberation/issues/2710
+            return self.stub_runway_data()
+
         assigner = RunwayAssigner(conditions)
         return assigner.get_preferred_runway(theater, self.airport)
 
@@ -1269,8 +1282,6 @@ class Carrier(NavalControlPoint):
         return SymbolSet.SEA_SURFACE, SeaSurfaceEntity.CARRIER
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
-        from game.ato import FlightType
-
         yield from super().mission_types(for_player)
         if self.is_friendly(for_player):
             yield from [
@@ -1375,9 +1386,7 @@ class OffMapSpawn(ControlPoint):
         dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
         logging.warning("TODO: Off map spawns have no runways.")
-        return RunwayData(
-            self.full_name, runway_heading=Heading.from_degrees(0), runway_name=""
-        )
+        return self.stub_runway_data()
 
     @property
     def runway_status(self) -> RunwayStatus:
@@ -1419,9 +1428,7 @@ class Fob(ControlPoint):
         dynamic_runways: Dict[str, RunwayData],
     ) -> RunwayData:
         logging.warning("TODO: FOBs have no runways.")
-        return RunwayData(
-            self.full_name, runway_heading=Heading.from_degrees(0), runway_name=""
-        )
+        return self.stub_runway_data()
 
     @property
     def runway_status(self) -> RunwayStatus:
