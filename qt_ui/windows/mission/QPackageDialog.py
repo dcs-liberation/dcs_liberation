@@ -115,6 +115,9 @@ class QPackageDialog(QDialog):
 
         self.add_flight_button = QPushButton("Add Flight")
         self.add_flight_button.clicked.connect(self.on_add_flight)
+        self.add_flight_button.setEnabled(
+            self.package_model.package.all_flights_waiting_for_start()
+        )
         self.button_layout.addWidget(self.add_flight_button)
 
         self.delete_flight_button = QPushButton("Delete Selected")
