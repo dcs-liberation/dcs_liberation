@@ -25,7 +25,7 @@ class Uninitialized(FlightState):
 
     @property
     def is_waiting_for_start(self) -> bool:
-        raise RuntimeError("Attempted to simulate flight that is not fully initialized")
+        return True
 
     def estimate_position(self) -> Point:
         raise RuntimeError("Attempted to simulate flight that is not fully initialized")

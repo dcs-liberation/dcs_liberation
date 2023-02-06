@@ -117,6 +117,17 @@ class Package:
     def set_tot_asap(self, now: datetime) -> None:
         self.time_over_target = TotEstimator(self).earliest_tot(now)
 
+    def clamp_tot_for_current_time(self, now: datetime) -> None:
+        if not self.all_flights_waiting_for_start():
+            return
+
+        if not self.flights:
+            return
+
+        earliest_startup_time = min(f.flight_plan.startup_time() for f in self.flights)
+        if earliest_startup_time < now:
+            self.time_over_target += now - earliest_startup_time
+
     def add_flight(self, flight: Flight) -> None:
         """Adds a flight to the package."""
         self.flights.append(flight)
