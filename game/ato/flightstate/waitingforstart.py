@@ -18,18 +18,16 @@ if TYPE_CHECKING:
 
 
 class WaitingForStart(AtDeparture):
-    def __init__(
-        self,
-        flight: Flight,
-        settings: Settings,
-        start_time: datetime,
-    ) -> None:
+    def __init__(self, flight: Flight, settings: Settings) -> None:
         super().__init__(flight, settings)
-        self.start_time = start_time
 
     @property
     def start_type(self) -> StartType:
         return self.flight.start_type
+
+    @property
+    def start_time(self) -> datetime:
+        return self.flight.flight_plan.startup_time()
 
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
