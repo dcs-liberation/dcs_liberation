@@ -1,5 +1,5 @@
 name: R-24R
 year: 1981
-fallback: R-3R
+fallback: R-3R - AAM, radar guided
 clsids:
   - "{CCF898C9-5BC7-49A4-9D1E-C3ED3D5166A1}"
