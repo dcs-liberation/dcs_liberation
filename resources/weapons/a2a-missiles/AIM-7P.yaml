@@ -1,0 +1,9 @@
+name: AIM-7P
+year: 1992
+#Entered Production in 1987 but doesn't appear to have actually achieved IOC until 1992
+fallback: AIM-7MH
+clsids:
+  - "{SHOULDER AIM-7P}"
+  - "{BELLY AIM-7P}"
+  - "{AIM-7P}"
+  - "{LAU-115 - AIM-7P}"

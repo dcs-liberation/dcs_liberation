@@ -1,6 +1,6 @@
 name: AIM-9L
 year: 1977
-fallback: AIM-9P5
+fallback: AIM-9Juli
 clsids:
   - "{AIM-9L}"
   - "LAU-105_1*AIM-9L_L"

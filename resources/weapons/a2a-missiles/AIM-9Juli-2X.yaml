@@ -1,0 +1,6 @@
+name: 2xAIM-9Juli
+year: 1990
+#BGT (German Company) upgrade to Spains existing 9J with L seeker, production started in 1990; overall performance somewhere between 9P4 and 9P5 in real life but between 9P5 and 9L in DCS
+fallback: 2xAIM-9P5
+clsids:
+  - "{VSN_F4B_LAU105_AIM9JULI}"

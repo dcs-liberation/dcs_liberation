@@ -1,7 +1,7 @@
 name: AIM-120B
 year: 1994
 # B model IOC in 1994, HOWEVER A model IOC in 1991 with USAF and 1993 with USN on Hornet
-fallback: AIM-7MH
+fallback: AIM-7P
 clsids:
   - "{C8E06185-7CD6-4C90-959F-044679E90751}"
   - "{LAU-115 - AIM-120B}"
