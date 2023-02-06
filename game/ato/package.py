@@ -207,3 +207,10 @@ class Package:
                 if flight.departure == airfield:
                     return airfield
         raise RuntimeError("Could not find any airfield assigned to this package")
+
+    def all_flights_waiting_for_start(self) -> bool:
+        """Returns True if all flights in the package are waiting for start."""
+        for flight in self.flights:
+            if not flight.state.is_waiting_for_start:
+                return False
+        return True
