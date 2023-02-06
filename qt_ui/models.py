@@ -187,14 +187,7 @@ class PackageModel(QAbstractListModel):
 
     def set_tot(self, tot: datetime.datetime) -> datetime:
         with self.game_model.sim_controller.paused_sim():
-            previous_tot = self.package.time_over_target
             self.package.time_over_target = tot
-            for flight in self.package.flights:
-                if (
-                    flight.flight_plan.startup_time()
-                    < self.game_model.sim_controller.current_time_in_sim
-                ):
-                    self.package.time_over_target = previous_tot
             self.update_tot()
             return self.package.time_over_target
 
@@ -209,6 +202,9 @@ class PackageModel(QAbstractListModel):
                 self.package.set_tot_asap(
                     self.game_model.sim_controller.current_time_in_sim
                 )
+            self.package.clamp_tot_for_current_time(
+                self.game_model.sim_controller.current_time_in_sim
+            )
             self.tot_changed.emit()
             # For some reason this is needed to make the UI update quickly.
             self.layoutChanged.emit()
