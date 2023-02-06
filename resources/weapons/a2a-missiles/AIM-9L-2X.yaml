@@ -1,6 +1,6 @@
 name: 2xAIM-9L
 year: 1977
-fallback: 2xAIM-9P5
+fallback: 2xAIM-9Juli
 clsids:
   - "LAU-105_2*AIM-9L"
   - "LAU-115_2*LAU-127_AIM-9L"

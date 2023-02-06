@@ -1,7 +1,7 @@
 name: 2xAIM-9P
 year: 1978
 #IOC is in 1978, but is an upgrade to the J so can be used as a stand in for earlier aim-9 models missing from DCS or certain mods.
-fallback: 2xAIM-9B
+fallback: 2xAIM-9J
 clsids:
   - "{3C0745ED-8B0B-42eb-B907-5BD5C1717447}"
   - "{773675AB-7C29-422f-AFD8-32844A7B7F17}"
