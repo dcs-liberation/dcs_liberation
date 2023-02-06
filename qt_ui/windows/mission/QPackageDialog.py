@@ -79,7 +79,10 @@ class QPackageDialog(QDialog):
         self.tot_spinner.setDisplayFormat("hh:mm:ss")
         self.tot_spinner.timeChanged.connect(self.save_tot)
         self.tot_spinner.setToolTip("Package TOT relative to mission TOT")
-        self.tot_spinner.setEnabled(not self.package_model.package.auto_asap)
+        self.tot_spinner.setEnabled(
+            not self.package_model.package.auto_asap
+            and self.package_model.package.all_flights_waiting_for_start()
+        )
         self.tot_column.addWidget(self.tot_spinner)
 
         self.auto_asap = QCheckBox("ASAP")
@@ -88,6 +91,9 @@ class QPackageDialog(QDialog):
             "arrive at the target."
         )
         self.auto_asap.setChecked(self.package_model.package.auto_asap)
+        self.auto_asap.setEnabled(
+            self.package_model.package.all_flights_waiting_for_start()
+        )
         self.auto_asap.toggled.connect(self.set_asap)
         self.tot_column.addWidget(self.auto_asap)
 
