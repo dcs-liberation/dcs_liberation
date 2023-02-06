@@ -24,13 +24,10 @@ class FlightState(ABC):
     def reinitialize(self, now: datetime) -> None:
         from game.ato.flightstate import WaitingForStart
 
-        start_time = self.flight.flight_plan.startup_time()
-        if start_time <= now:
+        if self.flight.flight_plan.startup_time() <= now:
             self._set_active_flight_state(now)
         else:
-            self.flight.set_state(
-                WaitingForStart(self.flight, self.settings, start_time)
-            )
+            self.flight.set_state(WaitingForStart(self.flight, self.settings))
 
     def _set_active_flight_state(self, now: datetime) -> None:
         from game.ato.flightstate import StartUp

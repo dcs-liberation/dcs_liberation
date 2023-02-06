@@ -149,11 +149,12 @@ class QPackageDialog(QDialog):
     def save_tot(self) -> None:
         # TODO: This is going to break horribly around midnight.
         time = self.tot_spinner.time()
-        self.package_model.set_tot(
+        tot = self.package_model.set_tot(
             self.package_model.package.time_over_target.replace(
                 hour=time.hour(), minute=time.minute(), second=time.second()
             )
         )
+        self.tot_spinner.setTime(self.tot_qtime())
 
     def set_asap(self, checked: bool) -> None:
         self.package_model.set_asap(checked)
