@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 class SimController(QObject):
     sim_update = Signal(GameUpdateEvents)
-    sim_speed_reset = Signal(SimSpeedSetting)
+    sim_speed_changed = Signal(SimSpeedSetting)
     simulation_complete = Signal()
 
     def __init__(self, game: Optional[Game]) -> None:
@@ -55,8 +55,8 @@ class SimController(QObject):
         return self.game_loop.elapsed_time
 
     def set_game(self, game: Optional[Game]) -> None:
+        self.sim_speed_changed.emit(SimSpeedSetting.PAUSED)
         self.recreate_game_loop(game)
-        self.sim_speed_reset.emit(SimSpeedSetting.PAUSED)
 
     def recreate_game_loop(self, game: Optional[Game]) -> None:
         if self.game_loop is not None:
@@ -76,6 +76,7 @@ class SimController(QObject):
         if not self.started and simulation_speed is not SimSpeedSetting.PAUSED:
             self.game_loop.start()
             self.started = True
+        self.sim_speed_changed.emit(simulation_speed)
         self.game_loop.set_simulation_speed(simulation_speed)
 
     @contextmanager
@@ -106,4 +107,5 @@ class SimController(QObject):
 
     def on_simulation_complete(self) -> None:
         logging.debug("Simulation complete")
+        self.sim_speed_changed.emit(SimSpeedSetting.PAUSED)
         self.simulation_complete.emit()
