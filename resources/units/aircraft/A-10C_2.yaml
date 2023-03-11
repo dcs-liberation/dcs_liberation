@@ -1,11 +1,12 @@
 always_keeps_gun: true
 description:
-  The A-10C Thunderbolt II, also known as the Warthog, is a 'flying gun'.
-  The A-10C is a high-survivability and versatile aircraft, popular with pilots for
-  the 'get home' effectiveness.The mission of the aircraft is ground attack against
-  tanks, armored vehicles and installations, and close air support of ground forces.
-  The Warthog is famous for its massive 30mm cannon, but it can also be armed with
-  Maverick guided missiles and several types of bombs and rockets.
+  The A-10C Thunderbolt II, also known as the Warthog, is a 'flying gun'. The
+  A-10C is a high-survivability and versatile aircraft, popular with pilots for
+  the 'get home' effectiveness.The mission of the aircraft is ground attack
+  against tanks, armored vehicles and installations, and close air support of
+  ground forces. The Warthog is famous for its massive 30mm cannon, but it can
+  also be armed with Maverick guided missiles and several types of bombs and
+  rockets.
 introduced: 2012
 manufacturer: Fairchild Republic
 origin: USA
@@ -14,7 +15,10 @@ role: Close Air Support/Attack
 variants:
   A-10C Thunderbolt II (Suite 7): {}
 radios:
-  # VHF for intraflight is not accepted anymore by DCS
-  # (see https://forums.eagle.ru/showthread.php?p=4499738).
-  intra_flight: AN/ARC-164
-  inter_flight: AN/ARC-164
+  type: common
+  # DCS will clobber channel 1 of the first radio compatible with the flight's
+  # assigned frequency. Since the A-10C's first two radios are both AN/ARC-210s,
+  # radio 1 will be compatible regardless of which frequency is assigned, so
+  # we must use radio 1 for the intra-flight radio.
+  intra_flight_radio_index: 1
+  inter_flight_radio_index: 2
