@@ -4,7 +4,7 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.8.2.35632.
+* **[Engine]** Support for DCS 2.8.3.37556.
 * **[Engine]** Saved games are now a zip file of save assets for easier bug reporting. The new extension is .liberation.zip. Drag and drop that file into bug reports.
 * **[Flight Planning]** Package TOT and composition can be modified after advancing time in Liberation.
 * **[Mission Generation]** Units on the front line are now hidden on MFDs.
