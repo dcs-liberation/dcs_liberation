@@ -17,8 +17,13 @@ class SaveManager:
     def __init__(self, game: Game) -> None:
         self.game = game
         self.player_save_location: Path | None = None
-        self.autosave_path = self.default_save_directory() / "autosave.liberation.zip"
         self.last_saved_bundle: SaveGameBundle | None = None
+
+    @property
+    def autosave_path(self) -> Path:
+        # This is a property rather than a member because it's one less thing we need to
+        # update when loading a save that may have been copied from another machine.
+        return self.default_save_directory() / "autosave.liberation.zip"
 
     @property
     def default_save_location(self) -> Path:
@@ -45,6 +50,19 @@ class SaveManager:
     def save_start_of_turn(self) -> None:
         with self._save_bundle_context() as bundle:
             bundle.save_start_of_turn(self.game)
+
+    def set_loaded_from(self, bundle: SaveGameBundle) -> None:
+        """Reconfigures this save manager based on the loaded game.
+
+        The SaveManager is persisted to Game, including details like the last saved path
+        and bundle details. This data is no longer valid if the save was moved manually
+        (such as from one machine to another), so it needs to be replaced with the load
+        location.
+
+        This should only be called by SaveGameBundle after a game load.
+        """
+        self.player_save_location = bundle.bundle_path
+        self.last_saved_bundle = bundle
 
     @contextmanager
     def _save_bundle_context(

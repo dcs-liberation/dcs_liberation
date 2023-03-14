@@ -26,7 +26,7 @@ def setup_persistence_paths(tmp_path: Path) -> None:
 
 @pytest.fixture
 def save_manager(game: Game) -> SaveManager:
-    return SaveManager(game)
+    return game.save_manager
 
 
 def test_new_savemanager_saves_to_autosave(save_manager: SaveManager) -> None:
@@ -150,3 +150,30 @@ def test_load_reads_correct_data(save_manager: SaveManager) -> None:
     assert SaveManager.load_last_turn(bundle_path).date == last_turn_date
     assert SaveManager.load_start_of_turn(bundle_path).date == start_of_turn_date
     assert SaveManager.load_player_save(bundle_path).date == player_date
+
+
+def test_save_after_loading_foreign_save(
+    save_manager: SaveManager, tmp_path: Path
+) -> None:
+    """Tests that we can save games that were copied from another machine.
+
+    Regression test for https://github.com/dcs-liberation/dcs_liberation/issues/2756.
+    """
+    # To simulate the situation from the bug, we save a game to a directory, move it out
+    # of that directory, delete the directory, then attempt to load and save the game.
+    # It should save to the new location. If it tries to save to the old location, it
+    # will fail because the directory does not exist.
+
+    # Create the save on "the other machine"...
+    bad_directory = tmp_path / "other-machine"
+    bad_directory.mkdir()
+    bad_save_path = bad_directory / "foo.liberation.zip"
+    save_manager.save_player(override_destination=bad_save_path)
+
+    good_save_path = tmp_path / "foo.liberation.zip"
+    bad_save_path.rename(good_save_path)
+    bad_directory.rmdir()
+
+    game = SaveManager.load_player_save(good_save_path)
+    assert game.save_manager.player_save_location == good_save_path
+    game.save_manager.save_player()
