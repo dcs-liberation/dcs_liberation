@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from game.missiongenerator.aircraft.flightdata import FlightData
@@ -355,3 +355,37 @@ class SCR522ChannelNamer(ChannelNamer):
     @classmethod
     def name(cls) -> str:
         return "SCR-522"
+
+
+class LegacyWarthogChannelNamer(ChannelNamer):
+    """Channel namer for the legacy A-10C."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = {
+            1: "VHF AM",
+            2: "UHF",
+            3: "VHF FM",
+        }[radio_id]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "a10c-legacy"
+
+
+class WarthogChannelNamer(ChannelNamer):
+    """Channel namer for the legacy A-10C II"""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = {
+            1: "COM 1",
+            2: "UHF",
+            3: "VHF FM",
+        }[radio_id]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "a10c-ii"

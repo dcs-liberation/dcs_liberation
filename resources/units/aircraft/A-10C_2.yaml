@@ -25,5 +25,6 @@ radios:
   inter_flight: AN/ARC-210
   channels:
     type: common
+    namer: a10c-ii
     intra_flight_radio_index: 2
     inter_flight_radio_index: 1
