@@ -73,7 +73,7 @@ class SaveGameBundle:
         with ZipFile(self.bundle_path) as zip_bundle:
             with zip_bundle.open(name, "r") as save:
                 game = pickle.load(save)
-                game.save_bundle = self
+                game.save_manager.set_loaded_from(self)
                 return game
 
     def _update_bundle_member(
