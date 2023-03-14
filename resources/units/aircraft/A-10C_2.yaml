@@ -15,10 +15,15 @@ role: Close Air Support/Attack
 variants:
   A-10C Thunderbolt II (Suite 7): {}
 radios:
-  type: common
-  # DCS will clobber channel 1 of the first radio compatible with the flight's
-  # assigned frequency. Since the A-10C's first two radios are both AN/ARC-210s,
-  # radio 1 will be compatible regardless of which frequency is assigned, so
-  # we must use radio 1 for the intra-flight radio.
-  intra_flight_radio_index: 1
-  inter_flight_radio_index: 2
+  # DCS will clobber channel 1 of the AN/ARC-164 with the flight's assigned
+  # frequency, so we may as well use that one for intra-flight.
+  #
+  # This ends up working out nicely anyway, because it's much easier on the
+  # pilot to have the AN/ARC-210 be the inter-flight radio since that's the one
+  # with HUD support and the control panel that makes switching channels easier.
+  intra_flight: AN/ARC-164
+  inter_flight: AN/ARC-210
+  channels:
+    type: common
+    intra_flight_radio_index: 2
+    inter_flight_radio_index: 1
