@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import pickle
 import shutil
 from pathlib import Path
@@ -100,4 +101,18 @@ class SaveGameBundle:
             with zip_bundle.open(name, "w") as entry:
                 pickle.dump(game, entry)
 
-        temp_file_path.replace(self.bundle_path)
+        try:
+            temp_file_path.replace(self.bundle_path)
+        except OSError:
+            # The file might be copyable but not movable if the temp and saved game
+            # directories are on different file systems.
+            # https://github.com/dcs-liberation/dcs_liberation/issues/2748
+            shutil.copy(temp_file_path, self.bundle_path)
+            temp_file_path.unlink()
+            logging.warning(
+                "Save game %s was copyable from temporary location %s but not "
+                "moveable. The temp directory and save game directory might be on "
+                "different file systems. This makes saving the game slower.",
+                self.bundle_path,
+                temp_file_path,
+            )
