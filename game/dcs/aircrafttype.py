@@ -20,6 +20,7 @@ from game.radio.channels import (
     CommonRadioChannelAllocator,
     FarmerRadioChannelAllocator,
     HueyChannelNamer,
+    LegacyWarthogChannelNamer,
     MirageChannelNamer,
     MirageF1CEChannelNamer,
     NoOpChannelAllocator,
@@ -31,6 +32,7 @@ from game.radio.channels import (
     ViggenChannelNamer,
     ViggenRadioChannelAllocator,
     ViperChannelNamer,
+    WarthogChannelNamer,
 )
 from game.utils import (
     Distance,
@@ -104,6 +106,8 @@ class RadioConfig:
             "viggen": ViggenChannelNamer,
             "viper": ViperChannelNamer,
             "apache": ApacheChannelNamer,
+            "a10c-legacy": LegacyWarthogChannelNamer,
+            "a10c-ii": WarthogChannelNamer,
         }[config.get("namer", "default")]
 
 

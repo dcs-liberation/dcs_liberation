@@ -21,5 +21,6 @@ radios:
   inter_flight: AN/ARC-164
   channels:
     type: common
+    namer: a10c-legacy
     intra_flight_radio_index: 2
     inter_flight_radio_index: 2
