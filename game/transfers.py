@@ -122,12 +122,19 @@ class TransferOrder:
         self.units.clear()
 
     def kill_unit(self, unit_type: GroundUnitType) -> None:
-        if unit_type not in self.units or not self.units[unit_type]:
-            raise KeyError(f"{self} has no {unit_type} remaining")
-        if self.units[unit_type] == 1:
+        self.take_units(unit_type, 1)
+
+    def take_units(self, unit_type: GroundUnitType, count: int) -> None:
+        """Removes units from the transfer without returning them to inventory.
+
+        The caller takes ownership of the units.
+        """
+        if unit_type not in self.units or self.units[unit_type] < count:
+            raise KeyError(f"{self} has fewer than {count} {unit_type} remaining")
+
+        self.units[unit_type] -= count
+        if not self.units[unit_type]:
             del self.units[unit_type]
-        else:
-            self.units[unit_type] -= 1
 
     @property
     def size(self) -> int:
@@ -612,7 +619,7 @@ class PendingTransfers:
         for unit_type, remaining in transfer.units.items():
             take = min(remaining, size)
             size -= take
-            transfer.units[unit_type] -= take
+            transfer.take_units(unit_type, take)
             units[unit_type] = take
             if not size:
                 break
