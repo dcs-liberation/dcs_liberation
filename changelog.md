@@ -15,6 +15,8 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Fixes
 
+* **[Campaign]** Fixed a longstanding bug where oversized airlifts could corrupt a save with empty convoys. 
+
 # 6.1.1
 
 ## Fixes
