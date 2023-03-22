@@ -237,7 +237,7 @@ class VSN_F4B(PlaneType):
     tasks = [task.CAP, task.Escort, task.FighterSweep, task.Intercept, task.Reconnaissance, task.GroundAttack, task.CAS, task.AFAC, task.RunwayAttack]
     task_default = task.CAP
 
-
+@planemod
 class VSN_F4C(PlaneType):
     id = "VSN_F4C"
     flyable = True
