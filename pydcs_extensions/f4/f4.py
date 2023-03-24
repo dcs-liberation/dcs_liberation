@@ -756,30 +756,8 @@ class VSN_F4C(PlaneType):
         VSN_F4ER_PTB = (10, Weapons.VSN_F4ER_PTB)
 
     class Pylon11:
-        # all added manually - did not pull using database export
-        BRU42A_M117_3_LAU105_AIM9J_2 = (11, Weapons.BRU_42A_M117_3_LAU105_AIM9J_2)
-        BRU42A_MK82_3_LAU105_AIM9J_2 = (11, Weapons.BRU_42A_MK82_3_LAU105_AIM9J_2)
-        TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (
-            11,
-            Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD,
-        )
-        BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets = (
-            11,
-            Weapons.BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets,
-        )
 
     class Pylon12:
-        # all added manually - did not pull using database export
-        BRU42A_M117_3_LAU105_AIM9J_2 = (12, Weapons.BRU_42A_M117_3_LAU105_AIM9J_2)
-        BRU42A_MK82_3_LAU105_AIM9J_2 = (12, Weapons.BRU_42A_MK82_3_LAU105_AIM9J_2)
-        TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (
-            12,
-            Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD,
-        )
-        BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets = (
-            12,
-            Weapons.BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets,
-        )
 
     pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
