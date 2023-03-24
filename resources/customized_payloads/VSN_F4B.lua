@@ -1,5 +1,5 @@
 local unitPayloads = {
-	["name"] = "VSN_F4C",
+	["name"] = "VSN_F4B",
 	["payloads"] = {
 		[1] = {
 			["name"] = "CAP",
@@ -35,6 +35,14 @@ local unitPayloads = {
 				[8] = {
 					["CLSID"] = "VSN_F4ER_PTB",
 					["num"] = 10,
+				},
+				[9] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 11,
+				},
+                [10] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 12,
 				},
 			},
 			["tasks"] = {
@@ -82,6 +90,14 @@ local unitPayloads = {
 					["CLSID"] = "VSN_F4EC_PTB",
 					["num"] = 6,
 				},
+				[10] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 11,
+				},
+                [11] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 12,
+				},
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -125,6 +141,14 @@ local unitPayloads = {
 				[9] = {
 					["CLSID"] = "VSN_F4EC_PTB",
 					["num"] = 6,
+				},
+				[10] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 11,
+				},
+                [11] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 12,
 				},
 			},
 			["tasks"] = {
@@ -170,6 +194,14 @@ local unitPayloads = {
 					["CLSID"] = "VSN_F4EC_PTB",
 					["num"] = 6,
 				},
+				[10] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 11,
+				},
+                [11] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 12,
+				},
 			},
 			["tasks"] = {
 				[1] = 11,
@@ -214,11 +246,19 @@ local unitPayloads = {
 					["CLSID"] = "VSN_F4EC_PTB",
 					["num"] = 6,
 				},
+				[10] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 11,
+				},
+                [11] ={
+                    ["CLSID"] = "<CLEAN>",
+					["num"] = 12,
+				},
 			},			["tasks"] = {
 				[1] = 11,
 			},
 		},
 	},
-	["unitType"] = "VSN_F4C",
+	["unitType"] = "VSN_F4B",
 }
 return unitPayloads
