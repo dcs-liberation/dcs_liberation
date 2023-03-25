@@ -50,6 +50,36 @@ class WeaponsF4:
         "name": "Fuel tank Wing R 370 Gal",
         "weight": 1240,
     }
+    F4B_LAU105_AIM9J_2_BRU42A_M117_3 = {
+        "clsid": "{F4B_LAU105_AIM9J_2_BRU42A_M117_3}",
+        "name": "F4B_LAU105_AIM9J_2_BRU42A_M117_3",
+        "weight": 332,
+    }
+    F4B_LAU105_AIM9J_2_BRU42A_MK82_3 = {
+        "clsid": "{F4B_LAU105_AIM9J_2_BRU42A_MK82_3}",
+        "name": "F4B_LAU105_AIM9J_2_BRU42A_MK82_3",
+        "weight": 332,
+    }
+    F4B_LAU105_AIM9J_2_MER_MK20_3 = {
+        "clsid": "{F4B_LAU105_AIM9J_2_MER_MK20_3}",
+        "name": "F4B_LAU105_AIM9J_2_MER_MK20_3",
+        "weight": 332,
+    }
+    F4B_LAU105_AIM9J_2_TER9A_MK82SE_3 = {
+        "clsid": "{F4B_LAU105_AIM9J_2_TER9A_MK82SE_3}",
+        "name": "F4B_LAU105_AIM9J_2_TER9A_MK82SE_3",
+        "weight": 332,
+    }
+    BRU_42A_M117_3_LAU105_AIM9J_2 = {
+        "clsid": "{F4B_BRU42A_M117_3_LAU105_AIM9J_2}",
+        "name": "BRU 42A M117*3 LAU105 AIM9J*2",
+        "weight": 1500,
+    }
+    BRU_42A_MK82_3_LAU105_AIM9J_2 = {
+        "clsid": "{F4B_BRU42A_MK82_3_LAU105_AIM9J_2}",
+        "name": "BRU 42A MK82*3 LAU105 AIM9J*2",
+        "weight": 1500,
+    }
 
 
 inject_weapons(WeaponsF4)
@@ -178,6 +208,10 @@ class VSN_F4B(PlaneType):
         LAU_105_2_AIM_9J = (3, Weapons.LAU_105_2_AIM_9J)
         LAU_105_2_AIM_9JULI = (3, Weapons.LAU_105_2_AIM_9JULI)
         AIM_7F_Sparrow_Semi_Active_Radar = (3, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            3,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             3,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -192,12 +226,27 @@ class VSN_F4B(PlaneType):
             Weapons.BRU_33_with_2_x_Mk_83___1000lb_GP_Bomb_LD,
         )
         BIN_200 = (3, Weapons.BIN_200)
+        F4B_LAU105_AIM9J_2_BRU42A_M117_3 = (3, Weapons.F4B_LAU105_AIM9J_2_BRU42A_M117_3)
+        F4B_LAU105_AIM9J_2_BRU42A_MK82_3 = (3, Weapons.F4B_LAU105_AIM9J_2_BRU42A_MK82_3)
+        F4B_LAU105_AIM9J_2_TER9A_MK82SE_3 = (
+            3,
+            Weapons.F4B_LAU105_AIM9J_2_TER9A_MK82SE_3,
+        )
+        F4B_LAU105_AIM9J_2_MER_MK20_3 = (3, Weapons.F4B_LAU105_AIM9J_2_MER_MK20_3)
 
     class Pylon4:
         AIM_7F_Sparrow_Semi_Active_Radar = (4, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            4,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon5:
         AIM_7F_Sparrow_Semi_Active_Radar = (5, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            5,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon6:
         Smokewinder___red = (6, Weapons.Smokewinder___red)
@@ -220,13 +269,21 @@ class VSN_F4B(PlaneType):
         ALQ_131___ECM_Pod = (6, Weapons.ALQ_131___ECM_Pod)
         F4B_Gunpod_w_SAPHEI_T = (6, Weapons.F4B_Gunpod_w_SAPHEI_T)
         VSN_F4EC_PTB = (6, Weapons.VSN_F4EC_PTB)
-        VSN_F4ER_PTB = (6, Weapons.VSN_F4ER_PTB)
+        VSN_F4B_C2_PTB = (6, Weapons.VSN_F4B_C2_PTB)
 
     class Pylon7:
         AIM_7F_Sparrow_Semi_Active_Radar = (7, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            7,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon8:
         AIM_7F_Sparrow_Semi_Active_Radar = (8, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            8,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon9:
         GBU_10___2000lb_Laser_Guided_Bomb = (
@@ -272,6 +329,10 @@ class VSN_F4B(PlaneType):
         LAU_105_2_AIM_9J = (9, Weapons.LAU_105_2_AIM_9J)
         LAU_105_2_AIM_9JULI = (9, Weapons.LAU_105_2_AIM_9JULI)
         AIM_7F_Sparrow_Semi_Active_Radar = (9, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            9,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             9,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -286,6 +347,13 @@ class VSN_F4B(PlaneType):
             Weapons.BRU_33_with_2_x_Mk_83___1000lb_GP_Bomb_LD,
         )
         BIN_200 = (9, Weapons.BIN_200)
+        F4B_LAU105_AIM9J_2_BRU42A_M117_3 = (9, Weapons.F4B_LAU105_AIM9J_2_BRU42A_M117_3)
+        F4B_LAU105_AIM9J_2_BRU42A_MK82_3 = (9, Weapons.F4B_LAU105_AIM9J_2_BRU42A_MK82_3)
+        F4B_LAU105_AIM9J_2_TER9A_MK82SE_3 = (
+            9,
+            Weapons.F4B_LAU105_AIM9J_2_TER9A_MK82SE_3,
+        )
+        F4B_LAU105_AIM9J_2_MER_MK20_3 = (9, Weapons.F4B_LAU105_AIM9J_2_MER_MK20_3)
 
     class Pylon10:
         GBU_10___2000lb_Laser_Guided_Bomb = (
@@ -341,7 +409,33 @@ class VSN_F4B(PlaneType):
         BIN_200 = (10, Weapons.BIN_200)
         VSN_F4ER_PTB = (10, Weapons.VSN_F4ER_PTB)
 
-    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    class Pylon11:
+        # all added manually - did not pull using database export
+        BRU42A_M117_3_LAU105_AIM9J_2 = (11, Weapons.BRU_42A_M117_3_LAU105_AIM9J_2)
+        BRU42A_MK82_3_LAU105_AIM9J_2 = (11, Weapons.BRU_42A_MK82_3_LAU105_AIM9J_2)
+        TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (
+            11,
+            Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD,
+        )
+        BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets = (
+            11,
+            Weapons.BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets,
+        )
+
+    class Pylon12:
+        # all added manually - did not pull using database export
+        BRU42A_M117_3_LAU105_AIM9J_2 = (12, Weapons.BRU_42A_M117_3_LAU105_AIM9J_2)
+        BRU42A_MK82_3_LAU105_AIM9J_2 = (12, Weapons.BRU_42A_MK82_3_LAU105_AIM9J_2)
+        TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD = (
+            12,
+            Weapons.TER_9A_with_3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD,
+        )
+        BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets = (
+            12,
+            Weapons.BRU_42_with_3_x_Mk_20_Rockeye___490lbs_CBUs__247_x_HEAT_Bomblets,
+        )
+
+    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
     tasks = [
         task.CAP,
@@ -451,6 +545,8 @@ class VSN_F4C(PlaneType):
             Weapons.BRU_42_with_3_x_Mk_82___500lb_GP_Bombs_LD,
         )
         Mk_84___2000lb_GP_Bomb_LD = (3, Weapons.Mk_84___2000lb_GP_Bomb_LD)
+        AGM_45B_Shrike_ARM__Imp_ = (3, Weapons.AGM_45B_Shrike_ARM__Imp_)
+        AGM_45A_Shrike_ARM = (3, Weapons.AGM_45A_Shrike_ARM)
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             3,
             Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
@@ -479,7 +575,6 @@ class VSN_F4C(PlaneType):
         )
         LAU_105_2_AIM_9J = (3, Weapons.LAU_105_2_AIM_9J)
         LAU_105_2_AIM_9JULI = (3, Weapons.LAU_105_2_AIM_9JULI)
-        AIM_7F_Sparrow_Semi_Active_Radar = (3, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             3,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -497,9 +592,17 @@ class VSN_F4C(PlaneType):
 
     class Pylon4:
         AIM_7F_Sparrow_Semi_Active_Radar = (4, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            4,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon5:
         AIM_7F_Sparrow_Semi_Active_Radar = (5, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            5,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon6:
         Smokewinder___red = (6, Weapons.Smokewinder___red)
@@ -522,13 +625,21 @@ class VSN_F4C(PlaneType):
         ALQ_131___ECM_Pod = (6, Weapons.ALQ_131___ECM_Pod)
         F4B_Gunpod_w_SAPHEI_T = (6, Weapons.F4B_Gunpod_w_SAPHEI_T)
         VSN_F4EC_PTB = (6, Weapons.VSN_F4EC_PTB)
-        VSN_F4ER_PTB = (6, Weapons.VSN_F4ER_PTB)
+        VSN_F4B_C2_PTB = (6, Weapons.VSN_F4B_C2_PTB)
 
     class Pylon7:
         AIM_7F_Sparrow_Semi_Active_Radar = (7, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            7,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon8:
         AIM_7F_Sparrow_Semi_Active_Radar = (8, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            8,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
 
     class Pylon9:
         GBU_10___2000lb_Laser_Guided_Bomb = (
@@ -545,6 +656,8 @@ class VSN_F4C(PlaneType):
             Weapons.BRU_42_with_3_x_Mk_82___500lb_GP_Bombs_LD,
         )
         Mk_84___2000lb_GP_Bomb_LD = (9, Weapons.Mk_84___2000lb_GP_Bomb_LD)
+        AGM_45B_Shrike_ARM__Imp_ = (9, Weapons.AGM_45B_Shrike_ARM__Imp_)
+        AGM_45A_Shrike_ARM = (9, Weapons.AGM_45A_Shrike_ARM)
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             9,
             Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
@@ -573,7 +686,6 @@ class VSN_F4C(PlaneType):
         )
         LAU_105_2_AIM_9J = (9, Weapons.LAU_105_2_AIM_9J)
         LAU_105_2_AIM_9JULI = (9, Weapons.LAU_105_2_AIM_9JULI)
-        AIM_7F_Sparrow_Semi_Active_Radar = (9, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             9,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -643,7 +755,7 @@ class VSN_F4C(PlaneType):
         BIN_200 = (10, Weapons.BIN_200)
         VSN_F4ER_PTB = (10, Weapons.VSN_F4ER_PTB)
 
-    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
     tasks = [
         task.CAP,

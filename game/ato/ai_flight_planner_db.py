@@ -303,6 +303,7 @@ SEAD_CAPABLE = [
     F_14A_135_GR,
     JAS39Gripen_AG,
     AV8BNA,
+    VSN_F4C,
     Su_24M,
     Su_17M4,
     Su_34,
