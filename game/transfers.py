@@ -616,7 +616,10 @@ class PendingTransfers:
             raise ValueError
 
         units = {}
-        for unit_type, remaining in transfer.units.items():
+        # If one type of unit is zeroed but there are still other units to check in the
+        # dict, the dict will have changed size during iteration. Iterate on a copy of
+        # the dict instead.
+        for unit_type, remaining in dict(transfer.units).items():
             take = min(remaining, size)
             size -= take
             transfer.take_units(unit_type, take)
