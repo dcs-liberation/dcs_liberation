@@ -15,7 +15,8 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Fixes
 
-* **[Campaign]** Fixed a longstanding bug where oversized airlifts could corrupt a save with empty convoys. 
+* **[Campaign]** Fixed a longstanding bug where oversized airlifts could corrupt a save with empty convoys.
+* **[Modding]** Fixed an issue where Falklands campaigns created or edited with new versions of DCS could not be loaded.
 
 # 6.1.1
 
