@@ -5,9 +5,6 @@ female_pilot_percentage: 7
 country: USA
 role: Strike Fighter
 aircraft: F-14B Tomcat
-bases:
-    carrier: true
-    shore: true
 livery: VF-143 Pukin Dogs CAG
 mission_types:
   - BAI
@@ -18,6 +15,7 @@ mission_types:
   - Intercept
   - OCA/Aircraft
   - OCA/Runway
+  - SEAD
   - Strike
   - Fighter sweep
   - TARCAP
