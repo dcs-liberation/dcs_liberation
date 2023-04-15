@@ -2,7 +2,11 @@
 name: Normandy - From Caen to Evreux
 theater: Normandy
 authors: Khopa
-description: <p>This is a light scenario on the Normandy map.</p><p>August 1944, allied forces are pushing from Caen/Carpiquet to the cities of Lisieux and Evreux.<p>Lisieux is an important logistic hub for the Werhmacht, and Evreux airbase is hosting most of the Luftwaffe forces in the region.</p>
+description:
+  <p>This is a light scenario on the Normandy map.</p><p>August 1944, allied
+  forces are pushing from Caen/Carpiquet to the cities of Lisieux and
+  Evreux.<p>Lisieux is an important logistic hub for the Werhmacht, and Evreux
+  airbase is hosting most of the Luftwaffe forces in the region.</p>
 recommended_player_faction: Allies 1944
 recommended_enemy_faction: Germany 1944
 recommended_start_date: 1944-07-04
@@ -14,7 +18,7 @@ squadrons:
   26:
     - primary: BARCAP
       aircraft:
-        - Bf 109 K-4 Kurf\u00fcrst
+        - Bf 109 K-4 Kurfürst
     - primary: BARCAP
       aircraft:
         - Fw 190 A-8 Anton
@@ -32,7 +36,7 @@ squadrons:
   40:
     - primary: BARCAP
       aircraft:
-        - Bf 109 K-4 Kurf\u00fcrst
+        - Bf 109 K-4 Kurfürst
     - primary: BARCAP
       aircraft:
         - Fw 190 A-8 Anton
@@ -67,7 +71,7 @@ squadrons:
       secondary: any
     - primary: DEAD
       secondary: any
-  # Ford_AF 
+  # Ford_AF
   31:
     - primary: BARCAP
       aircraft:
