@@ -17,6 +17,7 @@ Saves from 6.x are not compatible with 7.0.
 
 * **[Campaign]** Fixed a longstanding bug where oversized airlifts could corrupt a save with empty convoys.
 * **[Modding]** Fixed an issue where Falklands campaigns created or edited with new versions of DCS could not be loaded.
+* **[Modding]** Fixed decoding of campaign yaml files to use UTF-8 rather than the system locale's default. It's now possible to use "Bf 109 K-4 Kurfürst" as a preferred aircraft type.
 
 # 6.1.1
 

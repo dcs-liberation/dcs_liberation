@@ -92,13 +92,13 @@ class TheaterLoader:
 
     @property
     def menu_thumbnail_dcs_relative_path(self) -> Path:
-        with self.descriptor_path.open() as descriptor_file:
+        with self.descriptor_path.open(encoding="utf-8") as descriptor_file:
             data = yaml.safe_load(descriptor_file)
         name = data.get("pydcs_name", data["name"])
         return Path("Mods/terrains") / name / "Theme/icon.png"
 
     def load(self) -> ConflictTheater:
-        with self.descriptor_path.open() as descriptor_file:
+        with self.descriptor_path.open(encoding="utf-8") as descriptor_file:
             data = yaml.safe_load(descriptor_file)
         return ConflictTheater(
             TERRAINS_BY_NAME[data.get("pydcs_name", data["name"])],
