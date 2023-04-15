@@ -16,7 +16,7 @@ def init_logging(version: str) -> None:
     log_config = resources / "default_logging.yaml"
     if (custom_log_config := resources / "logging.yaml").exists():
         log_config = custom_log_config
-    with log_config.open() as log_file:
+    with log_config.open(encoding="utf-8") as log_file:
         logging.config.dictConfig(yaml.safe_load(log_file))
 
     logging.info(f"DCS Liberation {version}")
