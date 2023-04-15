@@ -7,7 +7,6 @@ from collections.abc import Iterator
 from datetime import date, datetime, time, timedelta
 from enum import Enum
 from typing import Any, List, TYPE_CHECKING, Type, Union, cast
-from uuid import UUID
 
 from dcs.countries import Switzerland, USAFAggressors, UnitedNationsPeacekeepers
 from dcs.country import Country
@@ -17,7 +16,6 @@ from dcs.vehicles import AirDefence
 from faker import Faker
 
 from game.ato.closestairfields import ObjectiveDistanceCache
-from game.ground_forces.ai_ground_planner import GroundPlanner
 from game.models.game_stats import GameStats
 from game.plugins import LuaPluginManager
 from game.utils import Distance
@@ -109,7 +107,6 @@ class Game:
         self.date = date(start_date.year, start_date.month, start_date.day)
         self.game_stats = GameStats()
         self.notes = ""
-        self.ground_planners: dict[UUID, GroundPlanner] = {}
         self.informations: list[Information] = []
         self.message("Game Start", "-" * 40)
         # Culling Zones are for areas around points of interest that contain things we may not wish to cull.
@@ -431,14 +428,6 @@ class Game:
             self.blue.initialize_turn()
         if for_red:
             self.red.initialize_turn()
-
-        # Plan GroundWar
-        self.ground_planners = {}
-        for cp in self.theater.controlpoints:
-            if cp.has_frontline:
-                gplanner = GroundPlanner(cp, self)
-                gplanner.plan_groundwar()
-                self.ground_planners[cp.id] = gplanner
 
         # Update cull zones
         with logged_duration("Computing culling positions"):
