@@ -88,7 +88,11 @@ class DefaultSquadronAssigner:
         try:
             aircraft = AircraftType.named(preferred_aircraft)
         except KeyError:
-            # No aircraft with this name.
+            logging.warning(
+                "%s is neither a compatible squadron or a known aircraft type, "
+                "ignoring",
+                preferred_aircraft,
+            )
             return None
 
         if aircraft not in self.coalition.faction.aircrafts:
