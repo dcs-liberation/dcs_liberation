@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import dataclasses
 import logging
-from typing import Optional, TYPE_CHECKING, Dict, Union
+from typing import Optional, TYPE_CHECKING
 
 from game.squadrons import Squadron
 from game.squadrons.squadrondef import SquadronDef
-from ..ato.flighttype import FlightType
 from .campaignairwingconfig import CampaignAirWingConfig, SquadronConfig
+from ..ato.flighttype import FlightType
 from ..dcs.aircrafttype import AircraftType
 from ..theater import ControlPoint
 
