@@ -53,7 +53,6 @@ class DefaultSquadronAssigner:
     def find_squadron_for(
         self, config: SquadronConfig, control_point: ControlPoint
     ) -> Optional[SquadronDef]:
-
         for preferred_aircraft in config.aircraft:
             squadron_def = self.find_preferred_squadron(
                 preferred_aircraft, config.primary, control_point
@@ -61,13 +60,14 @@ class DefaultSquadronAssigner:
             if squadron_def is not None:
                 return squadron_def
 
-        # If we didn't find any of the preferred types we should use any squadron
+        # If we didn't find any of the preferred types (if the list contains only
+        # squadrons or aircraft unavailable to the coalition) we should use any squadron
         # compatible with the primary task.
         squadron_def = self.find_squadron_for_task(config.primary, control_point)
         if squadron_def is not None:
             return squadron_def
 
-        # If we can't find any squadron matching the requirement, we should
+        # If we can't find any pre-made squadron matching the requirement, we should
         # create one.
         return self.air_wing.squadron_def_generator.generate_for_task(
             config.primary, control_point
