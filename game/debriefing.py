@@ -111,7 +111,7 @@ class StateData:
     @classmethod
     def from_json(cls, data: Dict[str, Any], unit_map: UnitMap) -> StateData:
     
-        def clean_unit_list(unit_list):
+        def clean_unit_list(unit_list: List[Any]) -> List[str]:
             # Cleans list of units in state.json by
             # - Removing duplicates. Airfields emit a new "dead" event every time a bomb 
             #   is dropped on them when they've already dead.
