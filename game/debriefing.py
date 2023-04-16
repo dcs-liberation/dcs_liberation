@@ -109,16 +109,44 @@ class StateData:
     base_capture_events: List[str]
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> StateData:
+    def from_json(cls, data: Dict[str, Any], unit_map: UnitMap) -> StateData:
+    
+        def clean_unit_list(unit_list):
+            # Cleans list of units in state.json by
+            # - Removing duplicates. Airfields emit a new "dead" event every time a bomb 
+            #   is dropped on them when they've already dead.
+            # - Normalise dead map objects (which are ints) to strings. The unit map
+            #   only stores strings
+            units = set()
+            for unit in unit_list:
+                units.add(str(unit))
+            return list(units)
+
+        killed_aircraft=[]
+        killed_ground_units=[]
+        
+        # process killed units from S_EVENT_UNIT_LOST & S_EVENT_KILL
+        killed_units=clean_unit_list(data["unit_lost_events"] + data["kill_events"])
+        for unit in killed_units:  # organize killed units into aircraft vs ground
+            if unit_map.flight(unit) is not None:  
+                killed_aircraft.append(unit)
+            else:
+                killed_ground_units.append(unit)
+        
+        # process killed units from S_EVENT_CRASH
+        for unit in data["crash_events"]:  # no need to clean crash events
+            if unit not in killed_aircraft:
+                killed_aircraft.append(unit)
+                
+        # process killed units from S_EVENT_DEAD
+        for unit in clean_unit_list(data["dead_events"]):
+            if unit not in killed_ground_units:
+                killed_ground_units.append(unit)
+                
         return cls(
             mission_ended=data["mission_ended"],
-            killed_aircraft=data["killed_aircrafts"],
-            # Airfields emit a new "dead" event every time a bomb is dropped on
-            # them when they've already dead. Dedup.
-            #
-            # Also normalize dead map objects (which are ints) to strings. The unit map
-            # only stores strings.
-            killed_ground_units=list({str(u) for u in data["killed_ground_units"]}),
+            killed_aircraft=killed_aircraft,
+            killed_ground_units=killed_ground_units,
             destroyed_statics=data["destroyed_objects_positions"],
             base_capture_events=data["base_capture_events"],
         )
@@ -128,7 +156,7 @@ class Debriefing:
     def __init__(
         self, state_data: Dict[str, Any], game: Game, unit_map: UnitMap
     ) -> None:
-        self.state_data = StateData.from_json(state_data)
+        self.state_data = StateData.from_json(state_data, unit_map)
         self.game = game
         self.unit_map = unit_map
 
