@@ -110,10 +110,9 @@ class StateData:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any], unit_map: UnitMap) -> StateData:
-    
         def clean_unit_list(unit_list: List[Any]) -> List[str]:
             # Cleans list of units in state.json by
-            # - Removing duplicates. Airfields emit a new "dead" event every time a bomb 
+            # - Removing duplicates. Airfields emit a new "dead" event every time a bomb
             #   is dropped on them when they've already dead.
             # - Normalise dead map objects (which are ints) to strings. The unit map
             #   only stores strings
@@ -122,27 +121,27 @@ class StateData:
                 units.add(str(unit))
             return list(units)
 
-        killed_aircraft=[]
-        killed_ground_units=[]
-        
+        killed_aircraft = []
+        killed_ground_units = []
+
         # process killed units from S_EVENT_UNIT_LOST & S_EVENT_KILL
-        killed_units=clean_unit_list(data["unit_lost_events"] + data["kill_events"])
+        killed_units = clean_unit_list(data["unit_lost_events"] + data["kill_events"])
         for unit in killed_units:  # organize killed units into aircraft vs ground
-            if unit_map.flight(unit) is not None:  
+            if unit_map.flight(unit) is not None:
                 killed_aircraft.append(unit)
             else:
                 killed_ground_units.append(unit)
-        
+
         # process killed units from S_EVENT_CRASH
         for unit in data["crash_events"]:  # no need to clean crash events
             if unit not in killed_aircraft:
                 killed_aircraft.append(unit)
-                
+
         # process killed units from S_EVENT_DEAD
         for unit in clean_unit_list(data["dead_events"]):
             if unit not in killed_ground_units:
                 killed_ground_units.append(unit)
-                
+
         return cls(
             mission_ended=data["mission_ended"],
             killed_aircraft=killed_aircraft,
