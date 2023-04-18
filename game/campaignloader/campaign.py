@@ -5,21 +5,23 @@ import logging
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, TYPE_CHECKING, Tuple
 
 import yaml
 from packaging.version import Version
 
 from game import persistence
 from game.profiling import logged_duration
-from game.theater import (
-    ConflictTheater,
-)
+from game.theater import ConflictTheater
 from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
 from game.theater.theaterloader import TheaterLoader
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
+from .factionrecommendation import FactionRecommendation
 from .mizcampaignloader import MizCampaignLoader
+
+if TYPE_CHECKING:
+    from game.factions.factions import Factions
 
 PERF_FRIENDLY = 0
 PERF_MEDIUM = 1
@@ -40,8 +42,8 @@ class Campaign:
     #: selecting a campaign that is not up to date.
     version: Tuple[int, int]
 
-    recommended_player_faction: str
-    recommended_enemy_faction: str
+    recommended_player_faction: FactionRecommendation
+    recommended_enemy_faction: FactionRecommendation
     recommended_start_date: datetime.date | None
     recommended_start_time: datetime.time | None
 
@@ -60,7 +62,6 @@ class Campaign:
         with path.open(encoding="utf-8") as campaign_file:
             data = yaml.safe_load(campaign_file)
 
-        sanitized_theater = data["theater"].replace(" ", "")
         version_field = data.get("version", "0")
         try:
             version = Version(version_field)
@@ -93,8 +94,12 @@ class Campaign:
             data.get("authors", "???"),
             data.get("description", ""),
             (version.major, version.minor),
-            data.get("recommended_player_faction", "USA 2005"),
-            data.get("recommended_enemy_faction", "Russia 1990"),
+            FactionRecommendation.from_field(
+                data.get("recommended_player_faction"), player=True
+            ),
+            FactionRecommendation.from_field(
+                data.get("recommended_enemy_faction"), player=False
+            ),
             start_date,
             start_time,
             data.get("recommended_player_money", DEFAULT_BUDGET),
@@ -162,6 +167,10 @@ class Campaign:
         if self.is_from_future:
             return False
         return True
+
+    def register_campaign_specific_factions(self, factions: Factions) -> None:
+        self.recommended_player_faction.register_campaign_specific_faction(factions)
+        self.recommended_enemy_faction.register_campaign_specific_faction(factions)
 
     @staticmethod
     def iter_campaigns_in_dir(path: Path) -> Iterator[Path]:

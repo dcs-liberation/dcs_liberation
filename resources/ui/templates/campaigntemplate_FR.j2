@@ -1,7 +1,7 @@
 <strong>Auteur(s) : {{ campaign.authors }}</strong>
 
 <strong>Factions par défaut :</strong>
-<span style="color:#82A466">&nbsp;{{campaign.recommended_player_faction}}</span> VS <span style="color:orange">&nbsp;{{campaign.recommended_enemy_faction}}</span>
+<span style="color:#82A466">&nbsp;{{campaign.recommended_player_faction.name}}</span> VS <span style="color:orange">&nbsp;{{campaign.recommended_enemy_faction.name}}</span>
 <br/>
 
 {{ campaign.description|safe }}
