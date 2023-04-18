@@ -32,7 +32,7 @@ class ForcedOptionsGenerator:
 
     def _set_labels(self) -> None:
         # TODO: Fix settings to use the real type.
-        # TODO: Allow forcing "full" and have default do nothing.
+        # Allow forcing "full" and have default do nothing.
         if self.game.settings.labels == "Abbreviated":
             self.mission.forced_options.labels = ForcedOptions.Labels.Abbreviate
         elif self.game.settings.labels == "Dot Only":
@@ -41,6 +41,10 @@ class ForcedOptionsGenerator:
             self.mission.forced_options.labels = ForcedOptions.Labels.NeutralDot
         elif self.game.settings.labels == "Off":
             self.mission.forced_options.labels = ForcedOptions.Labels.None_
+        elif self.game.settings.labels == "Full":
+            self.mission.forced_options.labels = ForcedOptions.Labels.Full
+        else:
+            self.mission.forced_options.labels = ForcedOptions.Labels.Default
 
     def _set_unrestricted_satnav(self) -> None:
         blue = self.game.blue.faction
