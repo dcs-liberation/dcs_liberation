@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import itertools
 from collections import defaultdict
-from typing import Sequence, Iterator, TYPE_CHECKING, Optional
+from typing import Iterator, Optional, Sequence, TYPE_CHECKING
 
-from game.dcs.aircrafttype import AircraftType
 from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.closestairfields import ObjectiveDistanceCache
+from game.dcs.aircrafttype import AircraftType
 from .squadrondefloader import SquadronDefLoader
 from ..campaignloader.squadrondefgenerator import SquadronDefGenerator
 from ..factions.faction import Faction
@@ -82,7 +82,7 @@ class AirWing:
         best_aircraft_for_task = aircraft_for_task(task)
         for aircraft, squadrons in self.squadrons.items():
             for squadron in squadrons:
-                if squadron.untasked_aircraft and task in squadron.mission_types:
+                if squadron.untasked_aircraft and squadron.capable_of(task):
                     aircrafts.append(aircraft)
                     if aircraft not in best_aircraft_for_task:
                         best_aircraft_for_task.append(aircraft)
