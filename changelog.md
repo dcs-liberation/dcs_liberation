@@ -12,6 +12,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[Mission Generation]** The A-10C II now uses separate radios for inter- and intra-flight comms (similar to other modern aircraft).
 * **[Modding]** Updated Community A-4E-C mod version support to 2.1.0 release.
 * **[Modding]** Add support for VSN F-4B and F-4C mod.
+* **[Modding]** Custom factions can now be defined in YAML as well as JSON. JSON support may be removed in the future if having both formats causes confusion.
 
 ## Fixes
 

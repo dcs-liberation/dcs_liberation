@@ -5,6 +5,8 @@ import logging
 from collections.abc import Iterator
 from pathlib import Path
 
+import yaml
+
 from game import persistence
 from .faction import Faction
 
@@ -22,6 +24,7 @@ class Factions:
     @staticmethod
     def iter_faction_files_in(path: Path) -> Iterator[Path]:
         yield from path.glob("*.json")
+        yield from path.glob("*.yaml")
 
     @classmethod
     def iter_faction_files(cls) -> Iterator[Path]:
@@ -36,8 +39,11 @@ class Factions:
         for path in cls.iter_faction_files():
             try:
                 with path.open("r", encoding="utf-8") as fdata:
-                    data = json.load(fdata)
-                    faction = Faction.from_json(data)
+                    if path.suffix == ".yaml":
+                        data = yaml.safe_load(fdata)
+                    else:
+                        data = json.load(fdata)
+                    faction = Faction.from_dict(data)
                     factions[faction.name] = faction
                     logging.info("Loaded faction from %s", path)
             except Exception:
