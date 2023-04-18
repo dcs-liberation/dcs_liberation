@@ -7,7 +7,7 @@
     "de_DE"
   ],
   "aircrafts": [
-    "Bf 109 K-4 Kurf\u00fcrst",
+    "Bf 109 K-4 Kurfürst",
     "Fw 190 A-8 Anton",
     "Fw 190 D-9 Dora",
     "Ju 88 A-4"
@@ -24,9 +24,9 @@
     "Sd.Kfz.184 Elefant",
     "Sd.Kfz.234/2 Puma",
     "Sd.Kfz.251 \"Hanomag\"",
-    "Sturmgesch\u00fctz III Ausf. G",
-    "Sturmgesch\u00fctz IV",
-    "Sturmpanzer IV Brummb\u00e4r"
+    "Sturmgeschütz III Ausf. G",
+    "Sturmgeschüctz IV",
+    "Sturmpanzer IV Brummbär"
   ],
   "artillery_units": [],
   "logistics_units": [

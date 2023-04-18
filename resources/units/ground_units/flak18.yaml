@@ -1,13 +1,15 @@
 class: AAA
-description: "The 8.8 cm Flak 18/36/37/41 is a German 88 mm anti-aircraft and anti-tank\
-  \ artillery gun, developed in the 1930s. It was widely used by Germany throughout\
-  \ World War II and is one of the most recognized German weapons of that conflict.\
-  \ Development of the original model led to a wide variety of guns. Air defense units\
-  \ were usually deployed with either a Kommandoger\xE4t (\"command device\") fire\
-  \ control computer or a portable W\xFCrzburg radar, which were responsible for its\
-  \ high level of accuracy against aircraft. The versatile carriage allowed the 8.8\
-  \ cm Flak to be fired in a limited anti-tank mode when still on its wheels; it could\
-  \ be completely emplaced in only two and a half minutes."
+description:
+  The 8.8 cm Flak 18/36/37/41 is a German 88 mm anti-aircraft and anti-tank
+  artillery gun, developed in the 1930s. It was widely used by Germany
+  throughout World War II and is one of the most recognized German weapons of
+  that conflict. Development of the original model led to a wide variety of
+  guns. Air defense units were usually deployed with either a Kommandogerät
+  ("command device") fire control computer or a portable Würzburg radar, which
+  were responsible for its high level of accuracy against aircraft. The
+  versatile carriage allowed the 8.8 cm Flak to be fired in a limited anti-tank
+  mode when still on its wheels; it could be completely emplaced in only two and
+  a half minutes.
 introduced: 1936
 manufacturer: Krupp/Rheinmetall
 origin: Germany

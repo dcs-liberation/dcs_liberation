@@ -1,24 +1,24 @@
 always_keeps_gun: true
-description: "The BF 109 series was, along with the Focke-Wulf Fw 190, the backbone\
-  \ of the Luftwaffe's fighter force. The Bf 109 first saw operational service in\
-  \ 1937 during the Spanish Civil War and was still in service at the dawn of the\
-  \ jet age at the end of World War II in 1945. The final production version of the\
-  \ Bf 109 was the K series or Kurf\xFCrst, introduced in late 1944, powered by the\
-  \ DB 605D engine with up to 2,000 PS (1,973 HP). Though externally akin to the late\
-  \ production Bf 109G series, a large number of internal changes and aerodynamic\
-  \ improvements were incorporated that improved its effectiveness and remedied flaws,\
-  \ keeping it competitive with the latest Allied and Soviet fighters. The Bf 109's\
-  \ outstanding rate of climb was superior to many Allied adversaries including the\
-  \ P-51D Mustang, Spitfire Mk. XIV and Hawker Tempest Mk. V."
+description:
+  The BF 109 series was, along with the Focke-Wulf Fw 190, the backbone of the
+  Luftwaffe's fighter force. The Bf 109 first saw operational service in 1937
+  during the Spanish Civil War and was still in service at the dawn of the jet
+  age at the end of World War II in 1945. The final production version of the Bf
+  109 was the K series or Kurfürst, introduced in late 1944, powered by the DB
+  605D engine with up to 2,000 PS (1,973 HP). Though externally akin to the late
+  production Bf 109G series, a large number of internal changes and aerodynamic
+  improvements were incorporated that improved its effectiveness and remedied
+  flaws, keeping it competitive with the latest Allied and Soviet fighters. The
+  Bf 109's outstanding rate of climb was superior to many Allied adversaries
+  including the P-51D Mustang, Spitfire Mk. XIV and Hawker Tempest Mk. V.
 introduced: 1944
 manufacturer: Messerschmitt
 price: 4
 role: Fighter
 gunfighter: true
 variants:
-  "Bf 109 K-4 Kurf\xFCrst": {}
+  "Bf 109 K-4 Kurfürst": {}
 kneeboard_units: "metric"
 # default_overrides:
 #   Flare_Gun: 1
 #   MW50TankContents: 1
- 
