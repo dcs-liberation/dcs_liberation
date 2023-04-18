@@ -17,7 +17,7 @@ from game import Game, VERSION, logging_config, persistence
 from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.dcs.aircrafttype import AircraftType
-from game.factions import FACTIONS
+from game.factions.factions import Factions
 from game.profiling import logged_duration
 from game.server import EventStream, Server
 from game.settings import Settings
@@ -275,9 +275,10 @@ def create_game(
     inject_custom_payloads(Path(persistence.base_path()))
     campaign = Campaign.from_file(campaign_path)
     theater = campaign.load_theater(advanced_iads)
+    faction_loader = Factions.load()
     generator = GameGenerator(
-        FACTIONS[blue],
-        FACTIONS[red],
+        faction_loader.get_by_name(blue),
+        faction_loader.get_by_name(red),
         theater,
         campaign.load_air_wing_config(theater),
         Settings(
