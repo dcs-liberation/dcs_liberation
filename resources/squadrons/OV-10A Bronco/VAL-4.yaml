@@ -1,0 +1,14 @@
+---
+name: VAL-4
+nickname: Black Ponies
+female_pilot_percentage: 0
+country: USA
+role: Light Attack
+aircraft: OV-10A Bronco
+livery: VAL-4 104
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - Strike

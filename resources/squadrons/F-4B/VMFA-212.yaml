@@ -1,0 +1,19 @@
+---
+name: VMFA-212
+nickname: Lancers
+female_pilot_percentage: 0
+country: USA
+role: Fighter-Bomber
+aircraft: F-4B Phantom II
+livery: "VMFA-212 AC01"
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+  - Fighter sweep
+  - TARCAP

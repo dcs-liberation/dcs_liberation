@@ -1,0 +1,21 @@
+---
+name: 433rd TFS
+nickname: Satan's Angels
+female_pilot_percentage: 0
+country: USA
+role: Fighter-Bomber
+aircraft: F-4C Phantom II
+livery: "433 TFS 63-7680"
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
