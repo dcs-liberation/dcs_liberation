@@ -4,12 +4,12 @@ import itertools
 import random
 from typing import Optional, TYPE_CHECKING
 
+from game.ato.ai_flight_planner_db import aircraft_for_task, tasks_for_aircraft
 from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons.operatingbases import OperatingBases
 from game.squadrons.squadrondef import SquadronDef
 from game.theater import ControlPoint
-from game.ato.ai_flight_planner_db import aircraft_for_task, tasks_for_aircraft
 
 if TYPE_CHECKING:
     from game.factions.faction import Faction
@@ -48,7 +48,7 @@ class SquadronDefGenerator:
             role="Flying Squadron",
             aircraft=aircraft,
             livery=None,
-            mission_types=tuple(tasks_for_aircraft(aircraft)),
+            auto_assignable_mission_types=set(tasks_for_aircraft(aircraft)),
             operating_bases=OperatingBases.default_for_aircraft(aircraft),
             female_pilot_percentage=6,
             pilot_pool=[],

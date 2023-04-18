@@ -48,7 +48,7 @@ class SquadronSelector(QComboBox):
             return
 
         for squadron in self.air_wing.squadrons_for(aircraft):
-            if task in squadron.mission_types and squadron.untasked_aircraft:
+            if squadron.capable_of(task) and squadron.untasked_aircraft:
                 self.addItem(f"{squadron.location}: {squadron}", squadron)
 
         if self.count() == 0:

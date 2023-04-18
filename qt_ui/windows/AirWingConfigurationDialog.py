@@ -44,9 +44,6 @@ class QMissionType:
         self, mission_type: FlightType, allowed: bool, auto_assignable: bool
     ) -> None:
         self.flight_type = mission_type
-        self.allowed_checkbox = QCheckBox()
-        self.allowed_checkbox.setChecked(allowed)
-        self.allowed_checkbox.toggled.connect(self.update_auto_assignable)
         self.auto_assignable_checkbox = QCheckBox()
         self.auto_assignable_checkbox.setEnabled(allowed)
         self.auto_assignable_checkbox.setChecked(auto_assignable)
@@ -55,10 +52,6 @@ class QMissionType:
         self.auto_assignable_checkbox.setEnabled(checked)
         if not checked:
             self.auto_assignable_checkbox.setChecked(False)
-
-    @property
-    def allowed(self) -> bool:
-        return self.allowed_checkbox.isChecked()
 
     @property
     def auto_assignable(self) -> bool:
@@ -72,27 +65,20 @@ class MissionTypeControls(QGridLayout):
         self.mission_types: list[QMissionType] = []
 
         self.addWidget(QLabel("Mission Type"), 0, 0)
-        self.addWidget(QLabel("Allow"), 0, 1)
-        self.addWidget(QLabel("Auto-Assign"), 0, 2)
+        self.addWidget(QLabel("Auto-Assign"), 0, 1)
 
         for i, task in enumerate(FlightType):
             if task is FlightType.FERRY:
                 # Not plannable so just skip it.
                 continue
-            allowed = task in squadron.mission_types
             auto_assignable = task in squadron.auto_assignable_mission_types
-            mission_type = QMissionType(task, allowed, auto_assignable)
+            mission_type = QMissionType(
+                task, squadron.capable_of(task), auto_assignable
+            )
             self.mission_types.append(mission_type)
 
             self.addWidget(QLabel(task.value), i + 1, 0)
-            self.addWidget(mission_type.allowed_checkbox, i + 1, 1)
-            self.addWidget(mission_type.auto_assignable_checkbox, i + 1, 2)
-
-    @property
-    def allowed_mission_types(self) -> Iterator[FlightType]:
-        for mission_type in self.mission_types:
-            if mission_type.allowed:
-                yield mission_type.flight_type
+            self.addWidget(mission_type.auto_assignable_checkbox, i + 1, 1)
 
     @property
     def auto_assignable_mission_types(self) -> Iterator[FlightType]:
@@ -233,10 +219,6 @@ class SquadronConfigurationBox(QGroupBox):
         self.squadron.pilot_pool = [
             Pilot(n, player=True) for n in player_names
         ] + self.squadron.pilot_pool
-        # Set the allowed mission types
-        self.squadron.set_allowed_mission_types(
-            set(self.mission_types.allowed_mission_types)
-        )
         # Also update the auto assignable mission types
         self.squadron.set_auto_assignable_mission_types(
             set(self.mission_types.auto_assignable_mission_types)
