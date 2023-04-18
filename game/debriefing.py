@@ -124,22 +124,20 @@ class StateData:
         killed_aircraft = []
         killed_ground_units = []
 
-        # process killed units from S_EVENT_UNIT_LOST & S_EVENT_KILL
-        killed_units = clean_unit_list(data["unit_lost_events"] + data["kill_events"])
+        # Process killed units from S_EVENT_UNIT_LOST, S_EVENT_CRASH, S_EVENT_DEAD & S_EVENT_KILL
+        # Try to process every event that could indicate a unit was killed, even if it is
+        # inefficient and results in duplication as the logic DCS uses to trigger the various
+        # event types is not clear and may change over time.
+        killed_units = clean_unit_list(
+            data["unit_lost_events"]
+            + data["kill_events"]
+            + data["crash_events"]
+            + data["dead_events"]
+        )
         for unit in killed_units:  # organize killed units into aircraft vs ground
             if unit_map.flight(unit) is not None:
                 killed_aircraft.append(unit)
             else:
-                killed_ground_units.append(unit)
-
-        # process killed units from S_EVENT_CRASH
-        for unit in data["crash_events"]:  # no need to clean crash events
-            if unit not in killed_aircraft:
-                killed_aircraft.append(unit)
-
-        # process killed units from S_EVENT_DEAD
-        for unit in clean_unit_list(data["dead_events"]):
-            if unit not in killed_ground_units:
                 killed_ground_units.append(unit)
 
         return cls(
