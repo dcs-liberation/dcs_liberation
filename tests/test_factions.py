@@ -1,39 +1,32 @@
 import json
-from pathlib import Path
 import unittest
-import pytest
+from pathlib import Path
 
-from dcs.helicopters import UH_1H, AH_64A
+import pytest
+from dcs.helicopters import AH_64A, UH_1H
 from dcs.planes import (
-    F_15C,
-    F_15E,
-    F_14B,
-    FA_18C_hornet,
-    F_16C_50,
-    A_10A,
     AV8BNA,
-    B_52H,
-    B_1B,
-    F_117A,
-    MQ_9_Reaper,
-    E_3A,
-    E_2C,
-    KC130,
-    KC_135,
+    A_10A,
     A_10C,
     A_10C_2,
+    B_1B,
+    B_52H,
+    E_2C,
+    E_3A,
+    FA_18C_hornet,
+    F_117A,
+    F_14B,
+    F_15C,
+    F_15E,
+    F_16C_50,
+    KC130,
+    KC_135,
+    MQ_9_Reaper,
 )
-from dcs.ships import (
-    Stennis,
-    LHA_Tarawa,
-    PERRY,
-    USS_Arleigh_Burke_IIa,
-    TICONDEROG,
-)
-from dcs.vehicles import Armor, Unarmed, Infantry, Artillery
+from dcs.ships import LHA_Tarawa, Stennis
+from dcs.vehicles import Armor, Artillery, Infantry, Unarmed
 
 from game.factions.faction import Faction
-
 
 THIS_DIR = Path(__file__).parent
 RESOURCES_DIR = THIS_DIR / "resources"
@@ -46,7 +39,7 @@ class TestFactionLoader(unittest.TestCase):
     @pytest.mark.skip(reason="Faction unit names in the json files are outdated")
     def test_load_valid_faction(self) -> None:
         with (RESOURCES_DIR / "valid_faction.json").open("r") as data:
-            faction = Faction.from_json(json.load(data))
+            faction = Faction.from_dict(json.load(data))
 
             self.assertEqual(faction.country, "USA")
             self.assertEqual(faction.name, "USA 2005")
@@ -109,7 +102,7 @@ class TestFactionLoader(unittest.TestCase):
 
         with (RESOURCES_DIR / "invalid_faction_country.json").open("r") as data:
             try:
-                Faction.from_json(json.load(data))
+                Faction.from_dict(json.load(data))
                 self.fail("Should have thrown assertion error")
             except AssertionError as e:
                 pass

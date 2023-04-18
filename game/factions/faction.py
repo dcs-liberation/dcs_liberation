@@ -4,33 +4,32 @@ import itertools
 import logging
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import Optional, Dict, Type, List, Any, Iterator, TYPE_CHECKING
+from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 import dcs
 from dcs.countries import country_dict
-from dcs.unittype import ShipType, StaticType
-from dcs.unittype import UnitType as DcsUnitType
+from dcs.unittype import ShipType, StaticType, UnitType as DcsUnitType
 
+from game.armedforces.forcegroup import ForceGroup
 from game.data.building_data import (
-    WW2_ALLIES_BUILDINGS,
     DEFAULT_AVAILABLE_BUILDINGS,
-    WW2_GERMANY_BUILDINGS,
-    WW2_FREE,
-    REQUIRED_BUILDINGS,
     IADS_BUILDINGS,
+    REQUIRED_BUILDINGS,
+    WW2_ALLIES_BUILDINGS,
+    WW2_FREE,
+    WW2_GERMANY_BUILDINGS,
 )
 from game.data.doctrine import (
+    COLDWAR_DOCTRINE,
     Doctrine,
     MODERN_DOCTRINE,
-    COLDWAR_DOCTRINE,
     WWII_DOCTRINE,
 )
-from game.data.units import UnitClass
 from game.data.groups import GroupRole
+from game.data.units import UnitClass
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
-from game.armedforces.forcegroup import ForceGroup
 from game.dcs.unittype import UnitType
 
 if TYPE_CHECKING:
@@ -168,7 +167,7 @@ class Faction:
         return sorted(air_defenses)
 
     @classmethod
-    def from_json(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
+    def from_dict(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
         faction = Faction(locales=json.get("locales"))
 
         faction.country = json.get("country", "/")
