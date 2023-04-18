@@ -1,0 +1,42 @@
+---
+country: United Arab Emirates
+name: United Arab Emirates 2005
+authors: Khopa
+description: <p>UAR army in the 2000s.</p>
+aircrafts:
+  - AH-64D Apache Longbow (AI)
+  - AH-64D Apache Longbow
+  - C-130
+  - F-16CM Fighting Falcon (Block 50)
+  - MB-339A
+  - Mirage 2000-5
+  - Mirage 2000C
+awacs:
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - BMP-3
+  - "Leclerc S\xE9ries 2"
+  - TPz Fuchs
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS SA-18 Igla-S "Grouse"
+preset_groups:
+  - Hawk
+  - Rapier
+naval_units:
+  - FFG Oliver Hazard Perry
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+requirements: {}
+carrier_names: []
+has_jtac: true
+jtac_unit: WingLoong-I
+unrestricted_satnav: true

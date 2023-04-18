@@ -1,0 +1,37 @@
+---
+country: Israel
+name: Israel 1948
+authors: Khopa
+description: <p>Israel during the 1948 Arab-Israeli war.</p>
+locales:
+  - he_IL
+aircrafts:
+  - B-17G Flying Fortress
+  - "Bf 109 K-4 Kurf\xFCrst"
+  - P-51D-25-NA Mustang
+  - P-51D-30-NA Mustang
+  - Spitfire LF Mk IX
+  - Spitfire LF Mk IX (Clipped Wings)
+frontline_units:
+  - Bofors 40 mm Gun
+  - M2A1 Half-Track
+  - M4A2(75) Sherman
+  - M4A4 Sherman Firefly
+  - M8 Greyhound Light Armored Car
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry SMLE No.4 Mk-1
+missiles: []
+air_defense_units:
+  - Bofors 40 mm Gun
+preset_groups:
+  - Cold-War-Flak
+naval_units: []
+requirements:
+  WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/
+carrier_names: []
+helicopter_carrier_names: []
+has_jtac: false
+doctrine: ww2

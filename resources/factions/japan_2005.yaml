@@ -1,0 +1,59 @@
+---
+country: Japan
+name: Japan 2005
+authors: Khopa
+description:
+  <p>Japanese self defense force, F-15C standing as F-15J, and F-16 as
+  Mitsubishi F-2.</p><p>Ground units were also chosen to fit the existing vehicles
+  of the japanese forces</p>
+locales:
+  - ja_JP
+aircrafts:
+  - AH-1W SuperCobra
+  - AH-64D Apache Longbow
+  - AH-64D Apache Longbow (AI)
+  - C-130
+  - C-130J-30 Super Hercules
+  - F-15J Eagle
+  - F-2A
+  - F-4EJ Kai Phantom II
+awacs:
+  - E-2C Hawkeye
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - Flakpanzer Gepard
+  - LAV-25
+  - M1043 HMMWV (M2 HMG)
+  - M1A2 Abrams
+  - Marder 1A3
+  - Merkava Mk IV
+  - TPz Fuchs
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+  - MANPADS Stinger
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+preset_groups:
+  - Hawk
+  - Patriot
+naval_units:
+  - DDG Arleigh Burke IIa
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+missiles: []
+air_defense_units:
+  - SAM Patriot STR
+  - Flakpanzer Gepard
+requirements: {}
+carrier_names: []
+helicopter_carrier_names:
+  - Hyuga
+  - Ise
+has_jtac: true
+jtac_unit: MQ-9 Reaper

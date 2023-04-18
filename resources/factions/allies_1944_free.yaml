@@ -1,0 +1,37 @@
+---
+country: USA
+name: Allies 1944 (Free)
+authors: Khopa
+description:
+  <p>A generic WW2 ally faction that does not requires the paid WW2 asset
+  pack.</p>
+aircrafts:
+  - A-20G Havoc
+  - P-47D-30 Thunderbolt (Early)
+  - P-47D-30 Thunderbolt (Late)
+  - P-47D-40 Thunderbolt
+  - P-51D-25-NA Mustang
+  - P-51D-30-NA Mustang
+  - Spitfire LF Mk IX
+  - Spitfire LF Mk IX (Clipped Wings)
+  - MosquitoFBMkVI
+frontline_units:
+  - Bofors 40 mm Gun
+  - M2A1 Half-Track
+  - M4A2(75) Sherman
+artillery_units: []
+logistics_units:
+  - Truck Bedford
+infantry_units:
+  - Paratrooper AKS
+air_defense_units:
+  - Bofors 40 mm Gun
+preset_groups: []
+naval_units: []
+missiles: []
+requirements: {}
+carrier_names: []
+helicopter_carrier_names: []
+has_jtac: false
+doctrine: ww2
+building_set: ww2free

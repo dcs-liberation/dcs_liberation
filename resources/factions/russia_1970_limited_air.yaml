@@ -1,0 +1,54 @@
+---
+country: Russia
+name: Russia 1970 Limited Air
+authors: Starfire
+description: <p>1970 Soviet Russia, with limited air units intended for a Viggen campaign.</p>
+locales:
+  - ru_RU
+aircrafts:
+  - Mi-24V Hind-E
+  - Mi-8MTV2 Hip
+  - MiG-19P Farmer-B
+  - MiG-21bis Fishbed-N
+frontline_units:
+  - BMD-1
+  - BMP-1
+  - BRDM-2
+  - BTR-80
+  - PT-76
+  - T-55A
+  - ZSU-57-2 'Sparka'
+artillery_units:
+  - 2S1 Gvozdika
+  - 2S9 Nona-S
+  - BM-21 Grad
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry AK-74 Rus
+  - Infantry RPG
+preset_groups:
+  - SA-2/S-75
+  - SA-3/S-125
+  - SA-6
+  - SA-11
+  - Cold-War-Flak
+  - Russian Navy
+naval_units: []
+air_defense_units:
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - SAM SA-5 S-200 ST-68U "Tin Shield" SR
+  - SAM SA-8 Osa "Gecko" TEL
+  - SA-9 Strela
+  - ZSU-57-2 'Sparka'
+  - AAA ZU-23 Closed Emplacement
+  - ZU-23 on Ural-375
+  - ZSU-23-4 Shilka
+helicopter_carrier_names: []
+missiles:
+  - SSM SS-1C Scud-B
+requirements: {}
+carrier_names: []
+has_jtac: false
+doctrine: coldwar

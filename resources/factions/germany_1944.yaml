@@ -1,0 +1,52 @@
+---
+country: Third Reich
+name: Germany 1944
+authors: Khopa
+description:
+  <p>Late war Germany with access to all the late-war ground units such
+  as the Tiger and Tiger II tanks.</p>
+locales:
+  - de_DE
+aircrafts:
+  - "Bf 109 K-4 Kurf\xFCrst"
+  - Fw 190 A-8 Anton
+  - Fw 190 D-9 Dora
+  - Ju 88 A-4
+frontline_units:
+  - 8.8 cm Flak 18
+  - 8.8 cm Flak 41
+  - Jagdpanther G1
+  - Jagdpanzer IV
+  - Panzerkampfwagen IV Ausf. H
+  - Panzerkampfwagen Tiger Ausf. B Tiger II
+  - Panzerkampfwagen V Panther Ausf. G
+  - Panzerkampfwagen VI Tiger Ausf. E
+  - Sd.Kfz.184 Elefant
+  - Sd.Kfz.234/2 Puma
+  - Sd.Kfz.251 "Hanomag"
+  - "Sturmgesch\xFCtz III Ausf. G"
+  - "Sturmgesch\xFCtz IV"
+  - "Sturmpanzer IV Brummb\xE4r"
+artillery_units: []
+logistics_units:
+  - LUV Kettenrad
+  - LUV Kubelwagen 82
+  - Sd.Kfz.7 Tractor
+  - Truck Opel Blitz
+infantry_units:
+  - Infantry Mauser 98
+air_defense_units: []
+preset_groups:
+  - Flak
+  - Freya
+naval_units:
+  - Boat Schnellboot type S130
+requirements:
+  WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/
+carrier_names: []
+helicopter_carrier_names: []
+missiles:
+  - V-1 Launch Ramp
+has_jtac: false
+doctrine: ww2
+building_set: ww2germany

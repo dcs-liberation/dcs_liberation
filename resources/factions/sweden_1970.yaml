@@ -1,0 +1,42 @@
+---
+country: Sweden
+name: Sweden 1970s Alternate Universe
+authors: Starfire
+description:
+  <p>Sweden 1970</p><p>Since we do not yet have Heatblur's AI Draken, this
+  faction includes the Mirage 2000C in order to provide Sweden with some form of A2A
+  capability.</p>
+locales:
+  - sv_SE
+aircrafts:
+  - AJS-37 Viggen
+  - Mirage 2000C
+  - UH-1H Iroquois
+awacs:
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - FV510 Warrior
+  - Leopard 2A4
+  - M1126 Stryker ICV (M2 HMG)
+  - M48 Chaparral
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+missiles: []
+preset_groups:
+  - Hawk
+  - Cold-War-Flak
+naval_units:
+  - FFG Oliver Hazard Perry
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+has_jtac: false
+doctrine: coldwar

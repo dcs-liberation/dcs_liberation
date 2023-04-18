@@ -1,0 +1,50 @@
+---
+country: Italy
+name: Italy 1990
+authors: Khopa
+description: <p>Italy in the 90s.</p>
+locales:
+  - it_IT
+aircrafts:
+  - AH-1W SuperCobra
+  - AV-8B Harrier II Night Attack
+  - C-130
+  - F-104S Starfighter A/G
+  - F-104S Starfighter
+  - MB-339A
+  - Tornado IDS
+  - UH-1H Iroquois
+awacs:
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - Leopard 1A3
+  - M1097 Heavy HMMWV Avenger
+  - M113
+artillery_units:
+  - M109A6 Paladin
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+preset_groups:
+  - Hawk
+naval_units:
+  - FFG Oliver Hazard Perry
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M1097 Heavy HMMWV Avenger
+requirements: {}
+carrier_names: []
+helicopter_carrier_names:
+  - Giuseppe Garibaldi
+  - Cavour
+has_jtac: true
+jtac_unit: MQ-9 Reaper

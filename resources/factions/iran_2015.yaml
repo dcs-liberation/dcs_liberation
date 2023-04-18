@@ -1,0 +1,76 @@
+---
+country: Iran
+name: Iran 2015
+authors: Khopa
+description: <p>Iranian 2010s faction</p>
+locales:
+  - fa_IR
+aircrafts:
+  - F-14A Tomcat (Block 135-GR Late)
+  - F-4E Phantom II
+  - F-5E Tiger II
+  - IL-76MD
+  - Mi-24V Hind-E
+  - Mi-24P Hind-F
+  - Mi-28N Havoc
+  - MiG-21bis Fishbed-N
+  - MiG-29A Fulcrum-A
+  - Su-22M4 Fitter-K
+  - Su-24MK Fencer-D
+  - Su-25 Frogfoot
+  - Su-25T Frogfoot
+awacs:
+  - A-50
+tankers:
+  - IL-78M
+frontline_units:
+  - Chieftain Mk.3
+  - BMP-1
+  - BMP-2
+  - BTR-80
+  - M113
+  - M60A3 "Patton"
+  - T-72B with Kontakt-1 ERA
+  - ZSU-23-4 Shilka
+  - ZSU-57-2 'Sparka'
+artillery_units:
+  - 2S1 Gvozdika
+  - M109A6 Paladin
+  - BM-21 Grad
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry RPG
+  - Insurgent AK-74
+  - MANPADS SA-18 Igla "Grouse" Ins
+preset_groups:
+  - Hawk
+  - SA-5/S-200
+  - SA-2/S-75
+  - HQ-2
+  - SA-6
+  - SA-11
+  - Rapier
+  - SA-17
+  - Silkworm
+naval_units:
+  - Corvette 1124.4 Grish
+  - Corvette 1241.1 Molniya
+  - FAC La Combattante IIa
+  - Frigate 1135M Rezky
+air_defense_units:
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - SAM Hawk SR (AN/MPQ-50)
+  - SA-15 Tor
+  - ZSU-57-2 'Sparka'
+  - ZU-23 on Ural-375
+  - AAA ZU-23 Insurgent Closed Emplacement
+  - ZSU-23-4 Shilka
+helicopter_carrier_names: []
+requirements: {}
+carrier_names: []
+missiles:
+  - SSM SS-1C Scud-B
+has_jtac: true
+jtac_unit: MQ-9 Reaper

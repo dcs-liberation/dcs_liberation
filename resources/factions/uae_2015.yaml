@@ -1,0 +1,47 @@
+---
+country: United Arab Emirates
+name: United Arab Emirates 2015
+authors: Khopa
+description: <p>UAE army in the 2010s.</p>
+aircrafts:
+  - AH-64D Apache Longbow
+  - AH-64D Apache Longbow (AI)
+  - C-130
+  - C-130J-30 Super Hercules
+  - C-17A
+  - CH-47D
+  - F-16CM Fighting Falcon (Block 50)
+  - Mirage 2000-5
+  - Mirage 2000C
+  - UH-60A
+  - UH-60L
+awacs:
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - BMP-3
+  - "Leclerc S\xE9ries 2"
+  - TPz Fuchs
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS SA-18 Igla-S "Grouse"
+preset_groups:
+  - Hawk
+  - Rapier
+  - Patriot
+naval_units:
+  - FFG Oliver Hazard Perry
+missiles: []
+air_defense_units:
+  - SAM Patriot STR
+requirements: {}
+carrier_names: []
+has_jtac: true
+jtac_unit: WingLoong-I
+unrestricted_satnav: true
