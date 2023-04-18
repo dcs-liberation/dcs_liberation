@@ -10,7 +10,8 @@ from PySide6.QtWidgets import QCheckBox, QLabel, QTextEdit, QVBoxLayout
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
-from game.factions import FACTIONS, Faction
+from game.factions import Faction
+from game.factions.factions import Factions
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
@@ -224,6 +225,8 @@ class FactionSelection(QtWidgets.QWizardPage):
     def __init__(self, parent=None):
         super(FactionSelection, self).__init__(parent)
 
+        self.factions = Factions.load()
+
         self.setTitle("Faction selection")
         self.setSubTitle(
             "\nChoose the two opposing factions and select the player side."
@@ -243,7 +246,7 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         blueFaction = QtWidgets.QLabel("<b>Player Faction :</b>")
         self.blueFactionSelect = QtWidgets.QComboBox()
-        for f in FACTIONS:
+        for f in self.factions.iter_faction_names():
             self.blueFactionSelect.addItem(f)
         blueFaction.setBuddy(self.blueFactionSelect)
 
@@ -259,7 +262,7 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.redFactionDescription.setReadOnly(True)
 
         # Setup default selected factions
-        for i, r in enumerate(FACTIONS):
+        for i, r in enumerate(self.factions.iter_faction_names()):
             self.redFactionSelect.addItem(r)
             if r == "Russia 1990":
                 self.redFactionSelect.setCurrentIndex(i)
@@ -305,10 +308,10 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.blueFactionSelect.clear()
         self.redFactionSelect.clear()
 
-        for f in FACTIONS:
+        for f in self.factions.iter_faction_names():
             self.blueFactionSelect.addItem(f)
 
-        for i, r in enumerate(FACTIONS):
+        for i, r in enumerate(self.factions.iter_faction_names()):
             self.redFactionSelect.addItem(r)
             if r == campaign.recommended_enemy_faction:
                 self.redFactionSelect.setCurrentIndex(i)
@@ -318,9 +321,8 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.updateUnitRecap()
 
     def updateUnitRecap(self):
-
-        red_faction = FACTIONS[self.redFactionSelect.currentText()]
-        blue_faction = FACTIONS[self.blueFactionSelect.currentText()]
+        red_faction = self.factions.get_by_name(self.redFactionSelect.currentText())
+        blue_faction = self.factions.get_by_name(self.blueFactionSelect.currentText())
 
         template = jinja_env.get_template("factiontemplate_EN.j2")
 
@@ -332,11 +334,11 @@ class FactionSelection(QtWidgets.QWizardPage):
 
     @property
     def selected_blue_faction(self) -> Faction:
-        return FACTIONS[self.blueFactionSelect.currentText()]
+        return self.factions.get_by_name(self.blueFactionSelect.currentText())
 
     @property
     def selected_red_faction(self) -> Faction:
-        return FACTIONS[self.redFactionSelect.currentText()]
+        return self.factions.get_by_name(self.redFactionSelect.currentText())
 
 
 class TheaterConfiguration(QtWidgets.QWizardPage):
