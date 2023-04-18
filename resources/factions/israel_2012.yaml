@@ -1,0 +1,78 @@
+---
+country: Israel
+name: Israel 2012'ish
+authors: Headiii
+description: <p>A more modern Israeli faction with fictional Imports.</p>
+locales:
+  - he_IL
+aircrafts:
+  - A-10C Thunderbolt II (Suite 3)
+  - AH-64D Apache Longbow
+  - AH-64D Apache Longbow (AI)
+  - C-130
+  - C-130J-30 Super Hercules
+  - F-15C Eagle
+  - F-15E Strike Eagle
+  - F-16CM Fighting Falcon (Block 50)
+  - F/A-18C Hornet (Lot 20)
+  - Mirage 2000C
+  - UH-1H Iroquois
+  - UH-60L
+awacs:
+  - E-2C Hawkeye
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - M1043 HMMWV (M2 HMG)
+  - M1045 HMMWV (BGM-71 TOW)
+  - M113
+  - M163 Vulcan Air Defense System
+  - Merkava Mk IV
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+preset_groups:
+  - Hawk
+  - Patriot
+naval_units:
+  - DDG Arleigh Burke IIa
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+requirements: {}
+carrier_names: []
+helicopter_carrier_names: []
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+liveries_overrides:
+  A-10C Thunderbolt II (Suite 3):
+    - Fictional Israel 115 Sqn Flying Dragon
+  F-15C Eagle:
+    - 390th Fighter SQN
+  F-15E Strike Eagle:
+    - IDF No 69 Hammers Squadron
+  F-16CM Fighting Falcon (Block 50):
+    - IAF_101st_squadron
+    - IAF_110th_Squadron
+    - IAF_115th_Aggressors_Squadron
+    - IAF_117th_Squadron
+  UH-1H Iroquois:
+    - Israel Army
+  AH-64D Apache Longbow:
+    - ah-64_d_isr
+  F/A-18C Hornet (Lot 20):
+    - Fictional Israel Air Force
+  Mirage 2000C:
+    - UAE Air Force
+  UH-60L:
+    - Israeli Air Force
+unrestricted_satnav: true

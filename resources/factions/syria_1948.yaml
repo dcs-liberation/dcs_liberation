@@ -1,0 +1,31 @@
+---
+country: Syria
+name: Syria 1948
+authors: Khopa
+description: <p>Syria and Arab armies in the 1948 war against Israel.</p>
+aircrafts:
+  - Spitfire LF Mk IX
+  - Spitfire LF Mk IX (Clipped Wings)
+frontline_units:
+  - Bofors 40 mm Gun
+  - M4A2(75) Sherman
+  - Panzerkampfwagen IV Ausf. H
+  - Sd.Kfz.234/2 Puma
+  - Sd.Kfz.251 "Hanomag"
+artillery_units: []
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry SMLE No.4 Mk-1
+missiles: []
+air_defense_units: []
+preset_groups:
+  - Flak
+naval_units:
+  - Boat Schnellboot type S130
+helicopter_carrier_names: []
+carrier_names: []
+requirements:
+  WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/
+doctrine: ww2

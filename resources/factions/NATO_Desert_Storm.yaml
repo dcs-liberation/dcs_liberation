@@ -1,0 +1,87 @@
+---
+country: Combined Joint Task Forces Blue
+name: NATO Desert Storm
+authors: Hawkmoon
+description:
+  <p>A faction to recreate the actual unit lineup during Desert Storm as
+  closely as possible</p>
+aircrafts:
+  - A-10A Thunderbolt II
+  - AH-64A Apache
+  - AV-8B Harrier II Night Attack
+  - B-1B Lancer
+  - B-52H Stratofortress
+  - C-130
+  - C-130J-30 Super Hercules
+  - F-117A Nighthawk
+  - F-14A Tomcat (Block 135-GR Late)
+  - F-14B Tomcat
+  - F-15C Eagle
+  - F-15E Strike Eagle
+  - F-16CM Fighting Falcon (Block 50)
+  - F-4E Phantom II
+  - F/A-18C Hornet (Lot 20)
+  - Mirage 2000C
+  - OH-58D Kiowa Warrior
+  - S-3B Viking
+  - SA 342L Gazelle
+  - SA 342M Gazelle
+  - SA 342M Gazelle Mistral
+  - Tornado IDS
+  - UH-1H Iroquois
+awacs:
+  - E-2C Hawkeye
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+  - S-3B Tanker
+frontline_units:
+  - FV4034 Challenger 2
+  - FV510 Warrior
+  - LAV-25
+  - M1043 HMMWV (M2 HMG)
+  - M1045 HMMWV (BGM-71 TOW)
+  - M1097 Heavy HMMWV Avenger
+  - M1126 Stryker ICV (M2 HMG)
+  - M1128 Stryker Mobile Gun System
+  - M1134 Stryker ATGM (BGM-71 TOW)
+  - M1A2 Abrams
+  - M2A2 Bradley
+  - M60A3 "Patton"
+  - TPz Fuchs
+  - VAB Mephisto
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+preset_groups:
+  - Hawk
+  - Rapier
+  - Roland
+  - Patriot
+naval_units:
+  - FFG Oliver Hazard Perry
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+  - CVN-74 John C. Stennis
+missiles: []
+air_defense_units:
+  - SAM Patriot STR
+  - M163 Vulcan Air Defense System
+  - M1097 Heavy HMMWV Avenger
+  - M48 Chaparral
+requirements: {}
+carrier_names:
+  - CVN-71 Theodore Roosevelt
+helicopter_carrier_names:
+  - LHA-1 Tarawa
+  - LHA-4 Nassau
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+unrestricted_satnav: true

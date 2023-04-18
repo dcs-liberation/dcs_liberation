@@ -1,0 +1,82 @@
+---
+country: USAF Aggressors
+name: USAF Aggressors
+authors: Khopa
+description: <p>USAF aggresors.</p>
+locales:
+  - en_US
+aircrafts:
+  - A-10A Thunderbolt II
+  - A-10C Thunderbolt II (Suite 3)
+  - A-4E Skyhawk
+  - AH-64D Apache Longbow (AI)
+  - AH-64D Apache Longbow
+  - AV-8B Harrier II Night Attack
+  - B-1B Lancer
+  - B-52H Stratofortress
+  - C-130
+  - C-130J-30 Super Hercules
+  - F-117A Nighthawk
+  - F-14B Tomcat
+  - F-15C Eagle
+  - F-15E Strike Eagle
+  - F-16CM Fighting Falcon (Block 50)
+  - F/A-18C Hornet (Lot 20)
+  - Ka-50 Hokum
+  - Ka-50 Hokum (Blackshark 3)
+  - MB-339A
+  - Mi-24P Hind-F
+  - SH-60B Seahawk
+  - Su-27 Flanker-B
+  - UH-1H Iroquois
+awacs:
+  - E-2C Hawkeye
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+  - KC-135 Stratotanker MPRS
+  - S-3B Tanker
+frontline_units:
+  - LAV-25
+  - Leopard 2A4
+  - M1043 HMMWV (M2 HMG)
+  - M1097 Heavy HMMWV Avenger
+  - M1134 Stryker ATGM (BGM-71 TOW)
+  - M1A2 Abrams
+  - M2A2 Bradley
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+preset_groups:
+  - Hawk
+  - Patriot
+naval_units:
+  - FFG Oliver Hazard Perry
+missiles: []
+air_defense_units:
+  - SAM Patriot STR
+  - M1097 Heavy HMMWV Avenger
+requirements: {}
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+liveries_overrides:
+  F/A-18C Hornet (Lot 20):
+    - NAWDC black
+    - NSAWC brown splinter
+    - VFC-12
+  F-15C Eagle:
+    - 65th Aggressor SQN (WA) MiG
+    - 65th Aggressor SQN (WA) MiG
+    - 65th Aggressor SQN (WA) SUPER_Flanker
+  F-16CM Fighting Falcon (Block 50):
+    - 64th_aggressor_squadron_ghost
+    - usaf 64th aggressor sqn - shark
+    - usaf 64th aggressor sqn-splinter
+  F-14B Tomcat:
+    - vf-74 adversary

@@ -1,0 +1,39 @@
+---
+country: USSR
+name: Soviet Union 1943
+authors: Khopa
+description:
+  <p>Soviet Union in 1943. Featuring the I16, and using some allies units
+  to represent either lend leased vehicles or soviet equivalent vehicles. BM-21 is
+  used to represent BM-13</p>
+locales:
+  - ru_RU
+aircrafts:
+  - I-16 Ishak
+  - Spitfire LF Mk IX
+frontline_units:
+  - A17 Light Tank Mk VII Tetrarch
+  - Bofors 40 mm Gun
+  - Daimler Armoured Car Mk I
+  - M2A1 Half-Track
+  - M4A2(75) Sherman
+artillery_units:
+  - BM-21 Grad
+logistics_units:
+  - Truck Bedford
+  - Truck GMC "Jimmy" 6x6 Truck
+infantry_units:
+  - Infantry SMLE No.4 Mk-1
+missiles: []
+air_defense_units:
+  - Bofors 40 mm Gun
+preset_groups:
+  - Ally Flak
+naval_units: []
+requirements:
+  WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/
+carrier_names: []
+helicopter_carrier_names: []
+has_jtac: false
+doctrine: ww2
+building_set: ww2ally

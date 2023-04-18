@@ -1,0 +1,103 @@
+---
+country: USA
+name: USA 1990
+authors: Khopa
+description: <p>US army in the 90s, Gulf War/Desert Storm.</p>
+locales:
+  - en_US
+aircrafts:
+  - A-10A Thunderbolt II
+  - AH-64A Apache
+  - AV-8B Harrier II Night Attack
+  - B-1B Lancer
+  - B-52H Stratofortress
+  - C-130
+  - C-130J-30 Super Hercules
+  - CH-47D
+  - CH-53E
+  - F-117A Nighthawk
+  - F-14A Tomcat (Block 135-GR Late)
+  - F-14B Tomcat
+  - F-15C Eagle
+  - F-15E Strike Eagle
+  - F-16CM Fighting Falcon (Block 50)
+  - F/A-18C Hornet (Lot 20)
+  - S-3B Viking
+  - SH-60B Seahawk
+  - UH-1H Iroquois
+  - UH-60A
+  - UH-60L
+awacs:
+  - E-2C Hawkeye
+  - E-3A
+tankers:
+  - KC-130
+  - KC-130J
+  - KC-135 Stratotanker
+  - S-3B Tanker
+frontline_units:
+  - LAV-25
+  - M1043 HMMWV (M2 HMG)
+  - M1045 HMMWV (BGM-71 TOW)
+  - M1097 Heavy HMMWV Avenger
+  - M1126 Stryker ICV (M2 HMG)
+  - M1134 Stryker ATGM (BGM-71 TOW)
+  - M1A2 Abrams
+  - M2A2 Bradley
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+  - Mortar 2B11 120mm
+preset_groups:
+  - Hawk
+  - Patriot
+naval_units:
+  - FFG Oliver Hazard Perry
+  - DDG Arleigh Burke IIa
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+  - CVN-74 John C. Stennis
+missiles: []
+air_defense_units:
+  - SAM Patriot STR
+  - M1097 Heavy HMMWV Avenger
+  - M48 Chaparral
+requirements: {}
+carrier_names:
+  - CVN-71 Theodore Roosevelt
+  - CVN-72 Abraham Lincoln
+  - CVN-73 George Washington
+  - CVN-74 John C. Stennis
+  - CVN-75 Harry S. Truman
+helicopter_carrier_names:
+  - LHA-1 Tarawa
+  - LHA-2 Saipan
+  - LHA-3 Belleau Wood
+  - LHA-4 Nassau
+  - LHA-5 Peleliu
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+liveries_overrides:
+  F/A-18C Hornet (Lot 20):
+    - VFA-106
+    - VFA-113
+    - VFA-122
+    - VFA-131
+    - VFA-192
+    - VFA-34
+    - VFA-37
+    - VFA-83
+    - VFA-87
+    - VFA-97
+    - VMFA-122
+    - VMFA-132
+    - VMFA-251
+    - VMFA-312
+    - VMFA-314
+    - VMFA-323

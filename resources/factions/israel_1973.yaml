@@ -1,0 +1,43 @@
+---
+country: Israel
+name: Israel 1973
+authors: Khopa
+description: <p>Israel during the 1973 Yom Kippur War.</p>
+locales:
+  - he_IL
+aircrafts:
+  - A-4E Skyhawk
+  - F-4E Phantom II
+  - UH-1H Iroquois
+awacs:
+  - E-2C Hawkeye
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - M113
+  - M2A1 Half-Track
+  - M48 Chaparral
+  - M4A2(75) Sherman
+  - M60A3 "Patton"
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+preset_groups:
+  - Hawk
+naval_units: []
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+  - Bofors 40 mm Gun
+requirements:
+  Community A-4E: https://heclak.github.io/community-a4e-c/
+carrier_names: []
+helicopter_carrier_names: []
+has_jtac: false
+doctrine: coldwar

@@ -1,0 +1,75 @@
+---
+country: USA
+name: US Navy 2005
+authors: Fuzzle
+description: <p>A modern representation of the US Navy/Marine Corps.</p>
+locales:
+  - en_US
+aircrafts:
+  - F-14B Tomcat
+  - F/A-18C Hornet (Lot 20)
+  - AV-8B Harrier II Night Attack
+  - AH-1W SuperCobra
+  - S-3B Viking
+  - SH-60B Seahawk
+  - UH-1H Iroquois
+awacs:
+  - E-2C Hawkeye
+tankers:
+  - S-3B Tanker
+frontline_units:
+  - M113
+  - M1043 HMMWV (M2 HMG)
+  - M1045 HMMWV (BGM-71 TOW)
+  - M1A2 Abrams
+  - LAV-25
+  - M163 Vulcan Air Defense System
+artillery_units:
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M4
+  - Infantry M249
+  - MANPADS Stinger
+preset_groups:
+  - Hawk
+  - Patriot
+naval_units:
+  - FFG Oliver Hazard Perry
+  - DDG Arleigh Burke IIa
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+  - CVN-74 John C. Stennis
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+requirements: {}
+carrier_names:
+  - CVN-71 Theodore Roosevelt
+  - CVN-72 Abraham Lincoln
+  - CVN-73 George Washington
+  - CVN-74 John C. Stennis
+  - CVN-75 Harry S. Truman
+helicopter_carrier_names:
+  - LHA-1 Tarawa
+  - LHA-2 Saipan
+  - LHA-3 Belleau Wood
+  - LHA-4 Nassau
+  - LHA-5 Peleliu
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+doctrine: modern
+liveries_overrides:
+  F-14B Tomcat:
+    - VF-142 Ghostriders
+  F/A-18C Hornet (Lot 20):
+    - VMFA-251 high visibility
+  AV-8B Harrier II Night Attack:
+    - VMAT-542
+  AH-1W SuperCobra:
+    - Marines
+  UH-1H Iroquois:
+    - US NAVY

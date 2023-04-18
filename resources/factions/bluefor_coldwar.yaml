@@ -1,0 +1,70 @@
+---
+country: Combined Joint Task Forces Blue
+name: Bluefor Coldwar
+authors: Khopa
+description: <p>A generic bluefor coldwar faction. (With the A-4E-C mod)</p>
+aircrafts:
+  - A-10A Thunderbolt II
+  - A-4E Skyhawk
+  - AJS-37 Viggen
+  - B-52H Stratofortress
+  - C-130
+  - C-130J-30 Super Hercules
+  - F-14A Tomcat (Block 135-GR Late)
+  - F-14B Tomcat
+  - F-4E Phantom II
+  - F-5E Tiger II
+  - Mirage-F1B
+  - Mirage-F1BE
+  - Mirage-F1CE
+  - Mirage-F1C-200
+  - Mirage-F1EE
+  - SA 342L Gazelle
+  - SA 342M Gazelle
+  - UH-1H Iroquois
+awacs:
+  - E-2C Hawkeye
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - M113
+  - M48 Chaparral
+  - M60A3 "Patton"
+artillery_units:
+  - M109A6 Paladin
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+missiles: []
+preset_groups:
+  - Hawk
+  - Cold-War-Flak
+naval_units:
+  - DDG Arleigh Burke IIa
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+  - CVN-74 John C. Stennis
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+requirements:
+  Community A-4E: https://heclak.github.io/community-a4e-c/
+carrier_names:
+  - CVN-71 Theodore Roosevelt
+  - CVN-72 Abraham Lincoln
+  - CVN-73 George Washington
+  - CVN-74 John C. Stennis
+helicopter_carrier_names:
+  - LHA-1 Tarawa
+  - LHA-2 Saipan
+  - LHA-3 Belleau Wood
+  - LHA-4 Nassau
+  - LHA-5 Peleliu
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+doctrine: coldwar
