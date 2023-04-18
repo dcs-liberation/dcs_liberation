@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import json
 import logging
 from collections.abc import Iterator
@@ -14,12 +15,29 @@ from .faction import Faction
 class Factions:
     def __init__(self, factions: dict[str, Faction]) -> None:
         self.factions = factions
+        self.campaign_defined_factions: dict[str, Faction] = {}
 
     def get_by_name(self, name: str) -> Faction:
-        return self.factions[name]
+        try:
+            return self.factions[name]
+        except KeyError:
+            return self.campaign_defined_factions[name]
 
     def iter_faction_names(self) -> Iterator[str]:
-        return iter(self.factions.keys())
+        # Campaign defined factions first so they show up at the top of the list in the
+        # UI.
+        return itertools.chain(self.campaign_defined_factions, self.factions)
+
+    def add_campaign_defined(self, faction: Faction) -> None:
+        if (
+            faction.name in self.factions
+            or faction.name in self.campaign_defined_factions
+        ):
+            raise KeyError(f"Duplicate faction {faction.name}")
+        self.campaign_defined_factions[faction.name] = faction
+
+    def reset_campaign_defined(self) -> None:
+        self.campaign_defined_factions = {}
 
     @staticmethod
     def iter_faction_files_in(path: Path) -> Iterator[Path]:

@@ -83,9 +83,11 @@ class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
 
+        factions = Factions.load()
+
         self.campaigns = list(sorted(Campaign.load_each(), key=lambda x: x.name))
 
-        self.faction_selection_page = FactionSelection()
+        self.faction_selection_page = FactionSelection(factions)
         self.addPage(IntroPage())
         self.theater_page = TheaterConfiguration(
             self.campaigns, self.faction_selection_page
@@ -222,10 +224,10 @@ class IntroPage(QtWidgets.QWizardPage):
 
 
 class FactionSelection(QtWidgets.QWizardPage):
-    def __init__(self, parent=None):
-        super(FactionSelection, self).__init__(parent)
+    def __init__(self, factions: Factions, parent=None) -> None:
+        super().__init__(parent)
 
-        self.factions = Factions.load()
+        self.factions = factions
 
         self.setTitle("Faction selection")
         self.setSubTitle(
@@ -308,15 +310,15 @@ class FactionSelection(QtWidgets.QWizardPage):
         self.blueFactionSelect.clear()
         self.redFactionSelect.clear()
 
-        for f in self.factions.iter_faction_names():
-            self.blueFactionSelect.addItem(f)
+        self.factions.reset_campaign_defined()
+        campaign.register_campaign_specific_factions(self.factions)
 
-        for i, r in enumerate(self.factions.iter_faction_names()):
-            self.redFactionSelect.addItem(r)
-            if r == campaign.recommended_enemy_faction:
-                self.redFactionSelect.setCurrentIndex(i)
-            if r == campaign.recommended_player_faction:
-                self.blueFactionSelect.setCurrentIndex(i)
+        for name in self.factions.iter_faction_names():
+            self.blueFactionSelect.addItem(name)
+            self.redFactionSelect.addItem(name)
+
+        self.blueFactionSelect.setCurrentText(campaign.recommended_player_faction.name)
+        self.redFactionSelect.setCurrentText(campaign.recommended_enemy_faction.name)
 
         self.updateUnitRecap()
 
