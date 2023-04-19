@@ -18,6 +18,7 @@ from dcs.task import (
     OptRestrictJettison,
     Refueling,
     RunwayAttack,
+    SEAD,
     Transport,
 )
 from dcs.unitgroup import FlyingGroup
@@ -167,7 +168,7 @@ class AircraftBehavior:
         # CAS is able to perform all the same tasks as SEAD using a superset of the
         # available aircraft, and F-14s are not able to be SEAD despite having TALDs.
         # https://forums.eagle.ru/topic/272112-cannot-assign-f-14-to-sead/
-        group.task = CAS.name
+        group.task = SEAD.name
         self.configure_behavior(
             flight,
             group,
