@@ -1,0 +1,14 @@
+---
+name: VMO-2
+nickname: The Angry Two
+female_pilot_percentage: 0
+country: USA
+role: COIN / FAC /Light Attack
+aircraft: OV-10A Bronco
+livery: VMO-2
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - Strike

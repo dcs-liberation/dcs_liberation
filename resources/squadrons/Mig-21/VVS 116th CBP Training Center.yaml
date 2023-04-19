@@ -1,0 +1,16 @@
+---
+name: 116th CBP
+nickname: 116th
+female_pilot_percentage: 0
+country: Russia
+role: Air Superiority Fighter
+aircraft: MiG-21bis Fishbed-N
+livery: "VVS - 116 CBP"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - CAS
+  - Strike  
+  - Escort
+  - Intercept
+  - Fighter sweep

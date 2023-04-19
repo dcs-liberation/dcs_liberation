@@ -1,0 +1,14 @@
+---
+name: VMO-5
+nickname: Black Aces
+female_pilot_percentage: 0
+country: USA
+role: COIN / FAC /Light Attack
+aircraft: OV-10A Bronco
+livery: VMO-5 UV
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - Strike

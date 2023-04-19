@@ -77,11 +77,12 @@ class AutoAssignedTaskControls(QVBoxLayout):
 
             return callback
 
-        for task in squadron_model.squadron.mission_types:
-            checkbox = QCheckBox(text=task.value)
-            checkbox.setChecked(squadron_model.is_auto_assignable(task))
-            checkbox.toggled.connect(make_callback(task))
-            self.addWidget(checkbox)
+        for task in FlightType:
+            if self.squadron_model.squadron.capable_of(task):
+                checkbox = QCheckBox(text=task.value)
+                checkbox.setChecked(squadron_model.is_auto_assignable(task))
+                checkbox.toggled.connect(make_callback(task))
+                self.addWidget(checkbox)
 
         self.addStretch()
 

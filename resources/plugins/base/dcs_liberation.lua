@@ -4,8 +4,10 @@ local WRITESTATE_SCHEDULE_IN_SECONDS = 60
 logger = mist.Logger:new("DCSLiberation", "info")
 logger:info("Check that json.lua is loaded : json = "..tostring(json))
 
-killed_aircrafts = {} -- killed aircraft will be added via S_EVENT_CRASH event
-killed_ground_units = {} -- killed units will be added via S_EVENT_DEAD event
+crash_events = {} -- killed aircraft will be added via S_EVENT_CRASH event
+dead_events = {} -- killed units will be added via S_EVENT_DEAD event
+unit_lost_events = {} -- killed units will be added via S_EVENT_UNIT_LOST
+kill_events = {} -- killed units will be added via S_EVENT_KILL 
 base_capture_events = {}
 destroyed_objects_positions = {} -- will be added via S_EVENT_DEAD event
 mission_ended = false
@@ -30,9 +32,11 @@ function write_state()
 
     local fp = io.open(_debriefing_file_location, 'w')
     local game_state = {
-        ["killed_aircrafts"] = killed_aircrafts,
-        ["killed_ground_units"] = killed_ground_units,
+        ["crash_events"] = crash_events,
+        ["dead_events"] = dead_events,
         ["base_capture_events"] = base_capture_events,
+		["unit_lost_events"] = unit_lost_events,
+		["kill_events"] = kill_events,
         ["mission_ended"] = mission_ended,
         ["destroyed_objects_positions"] = destroyed_objects_positions,
     }
@@ -142,13 +146,23 @@ end
 
 activeWeapons = {}
 local function onEvent(event)
-   if event.id == world.event.S_EVENT_CRASH and event.initiator then
-       killed_aircrafts[#killed_aircrafts + 1] = event.initiator.getName(event.initiator)
-       write_state()
-   end
+    if event.id == world.event.S_EVENT_CRASH and event.initiator then
+        crash_events[#crash_events + 1] = event.initiator.getName(event.initiator)
+        write_state()
+    end
+   
+    if event.id == world.event.S_EVENT_UNIT_LOST and event.initiator then
+        unit_lost_events[#unit_lost_events + 1] = event.initiator.getName(event.initiator)
+        write_state()
+    end
+	
+	if event.id == world.event.S_EVENT_KILL and event.target then
+        kill_events[#kill_events + 1] = event.target.getName(event.target)
+        write_state()
+    end
 
     if event.id == world.event.S_EVENT_DEAD and event.initiator then
-        killed_ground_units[#killed_ground_units + 1] = event.initiator.getName(event.initiator)
+        dead_events[#dead_events + 1] = event.initiator.getName(event.initiator)
         local position = event.initiator.getPosition(event.initiator)
         local destruction = {}
         destruction.x = position.p.x
