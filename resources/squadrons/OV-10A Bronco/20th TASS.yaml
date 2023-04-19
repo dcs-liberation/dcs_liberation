@@ -1,0 +1,14 @@
+---
+name: 20th TASS
+nickname: 20th TACTICAL AIR SUPPORT SQUADRON
+female_pilot_percentage: 0
+country: USA
+role: COIN / FAC /Light Attack
+aircraft: OV-10A Bronco
+livery: 20TH TACTICAL AIR SUPPORT SQUADRON
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - Strike

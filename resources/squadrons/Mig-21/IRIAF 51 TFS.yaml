@@ -1,0 +1,15 @@
+---
+name: IRIAF 51 TFS
+nickname: 51 TFS
+country: Iran
+role: Air Superiority Fighter
+aircraft: MiG-21bis Fishbed-N
+livery: "iran - standard"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - CAS
+  - Strike  
+  - Escort
+  - Intercept
+  - Fighter sweep
