@@ -1,5 +1,5 @@
 from dcs.point import MovingPoint
-from dcs.task import ActivateBeaconCommand, RecoveryTanker
+from dcs.task import ActivateBeaconCommand, RecoveryTanker, Tanker
 
 from game.ato import FlightType
 from game.utils import feet, knots
@@ -10,6 +10,11 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
     def add_tasks(self, waypoint: MovingPoint) -> None:
 
         assert self.flight.flight_type == FlightType.REFUELING
+
+        waypoint.add_task(
+            Tanker()
+        )  # Tanker task required in conjunction with RecoveryTanker task
+
         group_id = self._get_carrier_group_id()
         speed = knots(250).meters_per_second
         altitude = feet(6000).meters
