@@ -1,6 +1,7 @@
-description: The C-47 is a military transport aircraft developed from the civilian Douglas DC-3 airliner.
- It was used extensively by the Allies during World War II and remained in front-line service with
- various military operators for many years.
+description:
+  The C-47 is a military transport aircraft developed from the civilian Douglas DC-3 airliner.
+  It was used extensively by the Allies during World War II and remained in front-line service with
+  various military operators for many years.
 introduced: 1942
 manufacturer: Douglas
 origin: USA

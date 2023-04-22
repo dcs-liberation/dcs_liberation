@@ -1,5 +1,6 @@
 always_keeps_gun: true
-description: The A-10A Thunderbolt II, also known as the Warthog, is a 'flying gun'.
+description:
+  The A-10A Thunderbolt II, also known as the Warthog, is a 'flying gun'.
   The aircraft was used extensively during Operation Desert Storm, in support of NATO
   operations in response to the Kosovo crisis, in Operation Enduring Freedom in Afghanistan
   and in Operation Iraqi Freedom. The A-10A is a high-survivability and versatile
