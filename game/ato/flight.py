@@ -171,6 +171,15 @@ class Flight(SidcDescribable):
     def missing_pilots(self) -> int:
         return self.roster.missing_pilots
 
+    def set_flight_type(self, var: FlightType) -> None:
+        self.flight_type = var
+
+        # Update _flight_plan_builder so that the builder class remains relevant
+        # to the flight type
+        from .flightplans.flightplanbuildertypes import FlightPlanBuilderTypes
+
+        self._flight_plan_builder = FlightPlanBuilderTypes.for_flight(self)(self)
+
     def return_pilots_and_aircraft(self) -> None:
         self.roster.clear()
         self.squadron.claim_inventory(-self.count)
