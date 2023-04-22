@@ -162,11 +162,11 @@ class QFlightWaypointTab(QFrame):
         )
         original_task = self.flight.flight_type
         if result == QMessageBox.Yes:
-            self.flight.flight_type = task
+            self.flight.set_flight_type(task)
             try:
                 self.flight.recreate_flight_plan()
             except PlanningError as ex:
-                self.flight.flight_type = original_task
+                self.flight.set_flight_type(original_task)
                 logging.exception("Could not recreate flight")
                 QMessageBox.critical(
                     self, "Could not recreate flight", str(ex), QMessageBox.Ok
