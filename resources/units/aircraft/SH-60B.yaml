@@ -2,7 +2,8 @@ class: Helicopter
 cabin_size: 6
 can_carry_crates: true
 carrier_capable: true
-description: The Sikorsky SH-60/MH-60 Seahawk (or Sea Hawk) is a twin turboshaft engine,
+description:
+  The Sikorsky SH-60/MH-60 Seahawk (or Sea Hawk) is a twin turboshaft engine,
   multi-mission United States Navy helicopter based on the United States Army UH-60
   Black Hawk and a member of the Sikorsky S-70 family. The most significant modifications
   are the folding main rotor and a hinged tail to reduce its footprint aboard ships.

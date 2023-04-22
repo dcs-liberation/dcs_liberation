@@ -1,5 +1,6 @@
 always_keeps_gun: true
-description: 'Designed for the German Luftwaffe by famed aircraft designer Kurt Tank
+description:
+  "Designed for the German Luftwaffe by famed aircraft designer Kurt Tank
   in the late-1930s, the Fw 190 was the backbone of the Luftwaffe in both fighter
   and attack bomber roles. Powered by a large radial engine, the A version of the
   Focke-Wulf 190 was superior in many ways to the Bf 109s and Spitfires at the time
@@ -7,7 +8,7 @@ description: 'Designed for the German Luftwaffe by famed aircraft designer Kurt 
   the Spitfire.
 
 
-  Many of the Luftwaffe''s aces racked up their impressive kill counts in the Fw 190
+  Many of the Luftwaffe's aces racked up their impressive kill counts in the Fw 190
   A due to its impressive fire power, excellent low to medium altitude performance,
   durability, and ease of flying. It saw action on both the eastern and western fronts
   where it was both respected and feared by allied pilots. Armament included two fuselage-mounted
@@ -19,7 +20,7 @@ description: 'Designed for the German Luftwaffe by famed aircraft designer Kurt 
   by a BMW 801 D-2 radial engine. In addition to excellent low- and medium-altitude
   performance, the engine was also very rugged. Along with the F-8 version, it also
   had thicker armor around the engine. The engine also received the C3 injection system
-  that provided an emergency boost of 1,980 PS in short durations.'
+  that provided an emergency boost of 1,980 PS in short durations."
 introduced: 1944
 manufacturer: Focke-Wulf
 origin: Germany

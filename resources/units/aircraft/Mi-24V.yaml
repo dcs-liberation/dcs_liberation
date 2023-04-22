@@ -1,6 +1,7 @@
 class: Helicopter
 always_keeps_gun: true
-description: "The Mil Mi-24 (Russian: \u041C\u0438\u043B\u044C \u041C\u0438-24; NATO\
+description:
+  "The Mil Mi-24 (Russian: \u041C\u0438\u043B\u044C \u041C\u0438-24; NATO\
   \ reporting name: Hind) is a large helicopter gunship, attack helicopter and low-capacity\
   \ troop transport with room for eight passengers. It is produced by Mil Moscow Helicopter\
   \ Plant and has been operated since 1972 by the Soviet Air Force and its successors,\
