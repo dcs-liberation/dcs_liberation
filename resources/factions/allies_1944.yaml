@@ -5,6 +5,7 @@ authors: Khopa
 description: <p>A generic WW2 ally factions, with all their WW2 units.</p>
 aircrafts:
   - A-20G Havoc
+  - C-47 Skytrain
   - B-17G Flying Fortress
   - P-47D-30 Thunderbolt (Early)
   - P-47D-30 Thunderbolt (Late)
