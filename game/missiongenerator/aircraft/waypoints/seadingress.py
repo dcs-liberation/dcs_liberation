@@ -8,7 +8,6 @@ from dcs.task import (
     OptECMUsing,
     WeaponType as DcsWeaponType,
 )
-from game.ato.flightstate import InFlight
 from game.data.weapons import WeaponType
 from game.theater import TheaterGroundObject
 from .pydcswaypointbuilder import PydcsWaypointBuilder
