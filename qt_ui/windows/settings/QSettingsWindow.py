@@ -95,7 +95,7 @@ class AutoSettingsLayout(QGridLayout):
         self.settings = settings
         self.write_full_settings = write_full_settings
 
-        for row, (name, description) in enumerate(Settings.fields(page, section)):
+        for row, (name, description) in enumerate(Settings.fields_for(page, section)):
             self.add_label(row, description)
             if isinstance(description, BooleanOption):
                 self.add_checkbox_for(row, name, description)

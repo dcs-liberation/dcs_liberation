@@ -1,9 +1,12 @@
+import logging
 from collections.abc import Iterator
 from dataclasses import Field, dataclass, field, fields
 from datetime import timedelta
 from enum import Enum, unique
-from typing import Any, Dict, Optional
+from pathlib import Path
+from typing import Any, Dict, Optional, get_type_hints
 
+import yaml
 from dcs.forcedoptions import ForcedOptions
 
 from .booleanoption import boolean_option
@@ -14,6 +17,7 @@ from .minutesoption import minutes_option
 from .optiondescription import OptionDescription, SETTING_DESCRIPTION_KEY
 from .skilloption import skill_option
 from ..ato.starttype import StartType
+from ..persistence.paths import liberation_user_dir
 
 
 @unique
@@ -255,18 +259,21 @@ class Settings:
         CAMPAIGN_MANAGEMENT_PAGE,
         HQ_AUTOMATION_SECTION,
         default=False,
+        remember_player_choice=True,
     )
     automate_front_line_reinforcements: bool = boolean_option(
         "Automate front-line purchases",
         CAMPAIGN_MANAGEMENT_PAGE,
         HQ_AUTOMATION_SECTION,
         default=False,
+        remember_player_choice=True,
     )
     automate_aircraft_reinforcements: bool = boolean_option(
         "Automate aircraft purchases",
         CAMPAIGN_MANAGEMENT_PAGE,
         HQ_AUTOMATION_SECTION,
         default=False,
+        remember_player_choice=True,
     )
     auto_ato_behavior: AutoAtoBehavior = choices_option(
         "Automatic package planning behavior",
@@ -340,6 +347,7 @@ class Settings:
         MISSION_GENERATOR_PAGE,
         GAMEPLAY_SECTION,
         default=False,
+        remember_player_choice=True,
     )
     generate_marks: bool = boolean_option(
         "Put objective markers on the map",
@@ -487,6 +495,59 @@ class Settings:
 
     only_player_takeoff: bool = True  # Legacy parameter do not use
 
+    def save_player_settings(self) -> None:
+        """Saves the player's global settings to the user directory."""
+        settings: dict[str, Any] = {}
+        for name, description in self.all_fields():
+            if description.remember_player_choice:
+                settings[name] = self.__dict__[name]
+
+        # Plugin settings are currently not handled. It looks like the PluginManager
+        # probably needs some changes to do so safely. When injecting plugin options
+        # into Settings with LuaPluginManager.load_settings, it sets a reference to the
+        # passed Settings object. The lifetime is unclear, but it might be the case that
+        # canceling the NGW would leave LuaPluginManager in a bad state (yes, we could
+        # reset it on cancel, but that's just one bug I've thought of and without better
+        # understanding of how that works it's hard to say where more could be lurking).
+
+        with self._player_settings_file.open("w", encoding="utf-8") as settings_file:
+            yaml.dump(settings, settings_file, sort_keys=False, explicit_start=True)
+
+    def merge_player_settings(self) -> None:
+        """Updates with the player's global settings."""
+        settings_path = self._player_settings_file
+        if not settings_path.exists():
+            return
+        with settings_path.open(encoding="utf-8") as settings_file:
+            data = yaml.safe_load(settings_file)
+
+        expected_types = get_type_hints(Settings)
+        for key, value in data.items():
+            if key not in self.__dict__:
+                logging.warning(
+                    "Unexpected settings key found in %s: %s. Ignoring.",
+                    settings_path,
+                    key,
+                )
+                continue
+
+            expected_type = expected_types[key]
+            if not isinstance(value, expected_type):
+                logging.error(
+                    "%s in %s does not have the expected type %s (is %s). Ignoring.",
+                    key,
+                    settings_path,
+                    expected_type.__name__,
+                    value.__class__.__name__,
+                )
+                continue
+            self.__dict__[key] = value
+
+    @property
+    def _player_settings_file(self) -> Path:
+        """Returns the path to the player's global settings file."""
+        return liberation_user_dir() / "settings.yaml"
+
     @staticmethod
     def plugin_settings_key(identifier: str) -> str:
         return f"plugins.{identifier}"
@@ -536,11 +597,17 @@ class Settings:
                 seen.add(description.section)
 
     @classmethod
-    def fields(cls, page: str, section: str) -> Iterator[tuple[str, OptionDescription]]:
+    def all_fields(cls) -> Iterator[tuple[str, OptionDescription]]:
         for settings_field in cls._user_fields():
-            description = cls._field_description(settings_field)
+            yield settings_field.name, cls._field_description(settings_field)
+
+    @classmethod
+    def fields_for(
+        cls, page: str, section: str
+    ) -> Iterator[tuple[str, OptionDescription]]:
+        for name, description in cls.all_fields():
             if description.page == page and description.section == section:
-                yield settings_field.name, description
+                yield name, description
 
     @classmethod
     def _user_fields(cls) -> Iterator[Field[Any]]:
