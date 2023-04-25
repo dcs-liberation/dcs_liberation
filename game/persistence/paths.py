@@ -18,8 +18,13 @@ def base_path() -> str:
     return str(_dcs_saved_game_folder)
 
 
+def liberation_user_dir() -> Path:
+    """The path to the Liberation user directory."""
+    return Path(base_path()) / "Liberation"
+
+
 def save_dir() -> Path:
-    return Path(base_path()) / "Liberation" / "Saves"
+    return liberation_user_dir() / "Saves"
 
 
 def mission_path_for(name: str) -> Path:
