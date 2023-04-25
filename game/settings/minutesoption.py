@@ -31,6 +31,11 @@ def minutes_option(
                 detail,
                 tooltip,
                 causes_expensive_game_update=False,
+                # Can't preserve timedelta until we create some custom serialization for
+                # it. The default serialization is as a python object, which isn't
+                # allowed in yaml.safe_load because a malicious modification of the
+                # settings file would be able to execute arbitrary code.
+                remember_player_choice=False,
                 min=min,
                 max=max,
             )

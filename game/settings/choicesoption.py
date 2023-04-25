@@ -38,6 +38,9 @@ def choices_option(
                 detail,
                 tooltip,
                 causes_expensive_game_update=False,
+                # Same as minutes_option, this requires custom serialization before we
+                # can do this.
+                remember_player_choice=False,
                 choices=dict(choices),
             )
         },

@@ -30,8 +30,6 @@ jinja_env = Environment(
     lstrip_blocks=True,
 )
 
-DEFAULT_MISSION_LENGTH: timedelta = timedelta(minutes=60)
-
 
 """
 Possible time periods for new games
@@ -83,6 +81,12 @@ class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
 
+        # The wizard should probably be refactored to edit this directly, but for now we
+        # just create a Settings object so that we can load the player's preserved
+        # defaults. We'll recreate a new settings and merge in the wizard options later.
+        default_settings = Settings()
+        default_settings.merge_player_settings()
+
         factions = Factions.load()
 
         self.campaigns = list(sorted(Campaign.load_each(), key=lambda x: x.name))
@@ -94,8 +98,8 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         self.addPage(self.theater_page)
         self.addPage(self.faction_selection_page)
-        self.addPage(GeneratorOptions())
-        self.difficulty_page = DifficultyAndAutomationOptions()
+        self.addPage(GeneratorOptions(default_settings))
+        self.difficulty_page = DifficultyAndAutomationOptions(default_settings)
 
         # Update difficulty page on campaign select
         self.theater_page.campaign_selected.connect(
@@ -146,6 +150,7 @@ class NewGameWizard(QtWidgets.QWizard):
             automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
             supercarrier=self.field("supercarrier"),
         )
+        settings.save_player_settings()
         generator_settings = GeneratorSettings(
             start_date=start_date,
             start_time=campaign.recommended_start_time,
@@ -540,7 +545,7 @@ class BudgetInputs(QtWidgets.QGridLayout):
 
 
 class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, default_settings: Settings, parent=None) -> None:
         super().__init__(parent)
 
         self.setTitle("Difficulty and automation options")
@@ -584,16 +589,19 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
 
         assist_layout.addWidget(QtWidgets.QLabel("Automate runway repairs"), 0, 0)
         runway_repairs = QtWidgets.QCheckBox()
+        runway_repairs.setChecked(default_settings.automate_runway_repair)
         self.registerField("automate_runway_repairs", runway_repairs)
         assist_layout.addWidget(runway_repairs, 0, 1, Qt.AlignRight)
 
         assist_layout.addWidget(QtWidgets.QLabel("Automate front-line purchases"), 1, 0)
         front_line = QtWidgets.QCheckBox()
+        front_line.setChecked(default_settings.automate_front_line_reinforcements)
         self.registerField("automate_front_line_purchases", front_line)
         assist_layout.addWidget(front_line, 1, 1, Qt.AlignRight)
 
         assist_layout.addWidget(QtWidgets.QLabel("Automate aircraft purchases"), 2, 0)
         aircraft = QtWidgets.QCheckBox()
+        aircraft.setChecked(default_settings.automate_aircraft_reinforcements)
         self.registerField("automate_aircraft_purchases", aircraft)
         assist_layout.addWidget(aircraft, 2, 1, Qt.AlignRight)
 
@@ -611,7 +619,7 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
 
 
 class GeneratorOptions(QtWidgets.QWizardPage):
-    def __init__(self, parent=None):
+    def __init__(self, default_settings: Settings, parent=None):
         super().__init__(parent)
         self.setTitle("Generator settings")
         self.setSubTitle("\nOptions affecting the generation of the game.")
@@ -627,13 +635,14 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         no_lha = QtWidgets.QCheckBox()
         self.registerField("no_lha", no_lha)
         supercarrier = QtWidgets.QCheckBox()
+        supercarrier.setChecked(default_settings.supercarrier)
         self.registerField("supercarrier", supercarrier)
         no_player_navy = QtWidgets.QCheckBox()
         self.registerField("no_player_navy", no_player_navy)
         no_enemy_navy = QtWidgets.QCheckBox()
         self.registerField("no_enemy_navy", no_enemy_navy)
         desired_player_mission_duration = TimeInputs(
-            DEFAULT_MISSION_LENGTH, minimum=30, maximum=150
+            default_settings.desired_player_mission_duration, minimum=30, maximum=150
         )
         self.registerField(
             "desired_player_mission_duration", desired_player_mission_duration.spinner
