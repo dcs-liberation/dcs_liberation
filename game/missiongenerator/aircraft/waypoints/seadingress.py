@@ -3,11 +3,9 @@ import logging
 from dcs.point import MovingPoint
 from dcs.task import (
     AttackGroup,
-    ControlledTask,
     EngageGroup,
     Expend,
     OptECMUsing,
-    SwitchWaypoint,
     WeaponType as DcsWeaponType,
 )
 from game.ato.flightstate import InFlight
