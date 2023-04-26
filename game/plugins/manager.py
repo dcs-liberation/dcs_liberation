@@ -4,7 +4,11 @@ import json
 import logging
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
+import yaml
+
+from game.persistence.paths import liberation_user_dir
 from .luaplugin import LuaPlugin
 
 
@@ -74,3 +78,51 @@ class LuaPluginManager:
             return self.by_id(plugin_id).is_option_enabled(option_id)
         except KeyError:
             return False
+
+    def save_player_settings(self) -> None:
+        """Saves the player's global settings to the user directory."""
+        settings: dict[str, dict[str, Any]] = {}
+        for plugin in self.iter_plugins():
+            if not plugin.show_in_ui:
+                continue
+
+            plugin_settings: dict[str, Any] = {"enabled": plugin.enabled}
+            if plugin.options:
+                plugin_settings["options"] = {}
+            settings[plugin.identifier] = plugin_settings
+            for option in plugin.options:
+                plugin_settings["options"][option.identifier] = option.enabled
+
+        with self._player_settings_file.open("w", encoding="utf-8") as settings_file:
+            yaml.dump(settings, settings_file, sort_keys=False, explicit_start=True)
+
+    def merge_player_settings(self) -> None:
+        """Updates with the player's global settings."""
+        settings_path = self._player_settings_file
+        if not settings_path.exists():
+            return
+        with settings_path.open(encoding="utf-8") as settings_file:
+            data = yaml.safe_load(settings_file)
+
+        for plugin_id, plugin_data in data.items():
+            try:
+                plugin = self.by_id(plugin_id)
+            except KeyError:
+                logging.warning(
+                    "Unexpected plugin ID found in %s: %s. Ignoring.",
+                    settings_path,
+                    plugin_id,
+                )
+                continue
+
+            plugin.enabled = plugin_data["enabled"]
+            for option in plugin.options:
+                try:
+                    option.enabled = plugin_data["options"][option.identifier]
+                except KeyError:
+                    pass
+
+    @property
+    def _player_settings_file(self) -> Path:
+        """Returns the path to the player's global settings file."""
+        return liberation_user_dir() / "plugins.yaml"
