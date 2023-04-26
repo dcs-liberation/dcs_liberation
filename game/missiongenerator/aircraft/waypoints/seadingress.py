@@ -9,7 +9,6 @@ from dcs.task import (
     WeaponType as DcsWeaponType,
 )
 from game.data.weapons import WeaponType
-
 from game.theater import TheaterGroundObject
 from .pydcswaypointbuilder import PydcsWaypointBuilder
 
@@ -45,8 +44,20 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 engage_task.params["groupAttack"] = True
                 engage_task.params["expend"] = Expend.All.value
                 waypoint.tasks.append(engage_task)
+            elif self.flight.loadout.has_weapon_of_type(WeaponType.DECOY):
+                # Special handling for DECOY weapon types:
+                # - Specify that DECOY weapon type is used in AttackGroup task so that
+                #   the flight actually launches the decoy. See link below for details
+                #   https://github.com/dcs-liberation/dcs_liberation/issues/2780
+                attack_task = AttackGroup(
+                    miz_group.id,
+                    weapon_type=DcsWeaponType.Decoy,
+                    group_attack=True,
+                    expend=Expend.All,
+                )
+                waypoint.tasks.append(attack_task)
             else:
-                # All non ARM types like Decoys will use the normal AttackGroup Task
+                # All non ARM and non DECOY types will use the normal AttackGroup Task
                 attack_task = AttackGroup(
                     miz_group.id,
                     weapon_type=DcsWeaponType.Guided,
