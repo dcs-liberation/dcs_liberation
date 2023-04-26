@@ -31,6 +31,7 @@ from ..armedforces.armedforces import ArmedForces
 from ..armedforces.forcegroup import ForceGroup
 from ..campaignloader.campaignairwingconfig import CampaignAirWingConfig
 from ..data.groups import GroupTask
+from ..plugins import LuaPluginManager
 from ..profiling import logged_duration
 from ..settings import Settings
 
@@ -97,6 +98,8 @@ class GameGenerator:
                 start_date=self.generator_settings.start_date,
                 start_time=self.generator_settings.start_time,
                 settings=self.settings,
+                # TODO: Hoist into NGW so we can expose those options.
+                lua_plugin_manager=LuaPluginManager.load(),
                 player_budget=self.generator_settings.player_budget,
                 enemy_budget=self.generator_settings.enemy_budget,
             )

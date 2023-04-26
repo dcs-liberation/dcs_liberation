@@ -7,8 +7,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, TYPE_CHECKING
 
-from game.settings import Settings
-
 if TYPE_CHECKING:
     from game.missiongenerator.luagenerator import LuaGenerator
 
@@ -50,26 +48,10 @@ class PluginSettings:
 
     def __init__(self, identifier: str, enabled_by_default: bool) -> None:
         self.identifier = identifier
-        self.enabled_by_default = enabled_by_default
-        self.settings = Settings()
-        self.initialize_settings()
-
-    def set_settings(self, settings: Settings) -> None:
-        self.settings = settings
-        self.initialize_settings()
-
-    def initialize_settings(self) -> None:
-        # Plugin options are saved in the game's Settings, but it's possible for
-        # plugins to change across loads. If new plugins are added or new
-        # options added to those plugins, initialize the new settings.
-        self.settings.initialize_plugin_option(self.identifier, self.enabled_by_default)
-
-    @property
-    def enabled(self) -> bool:
-        return self.settings.plugin_option(self.identifier)
+        self.enabled = enabled_by_default
 
     def set_enabled(self, enabled: bool) -> None:
-        self.settings.set_plugin_option(self.identifier, enabled)
+        self.enabled = enabled
 
 
 class LuaPluginOption(PluginSettings):
@@ -173,6 +155,12 @@ class LuaPlugin(PluginSettings):
     def options(self) -> List[LuaPluginOption]:
         return self.definition.options
 
+    def is_option_enabled(self, identifier: str) -> bool:
+        for option in self.options:
+            if option.identifier == identifier:
+                return option.enabled
+        raise KeyError(f"Plugin {self.identifier} has no option {self.identifier}")
+
     @classmethod
     def from_json(cls, name: str, path: Path) -> Optional[LuaPlugin]:
         try:
@@ -182,12 +170,6 @@ class LuaPlugin(PluginSettings):
             return None
 
         return cls(definition)
-
-    def set_settings(self, settings: Settings) -> None:
-        """Attaches the plugin to a settings object."""
-        super().set_settings(settings)
-        for option in self.definition.options:
-            option.set_settings(self.settings)
 
     def inject_scripts(self, lua_generator: LuaGenerator) -> None:
         """Injects the plugin's scripts into the mission."""
@@ -231,3 +213,11 @@ class LuaPlugin(PluginSettings):
 
         for work_order in self.definition.config_work_orders:
             work_order.work(lua_generator)
+
+    def update_with(self, other: LuaPlugin) -> None:
+        self.enabled = other.enabled
+        for option in self.options:
+            try:
+                option.enabled = other.is_option_enabled(option.identifier)
+            except KeyError:
+                continue

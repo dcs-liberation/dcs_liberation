@@ -12,14 +12,14 @@ from game.plugins import LuaPlugin, LuaPluginManager
 
 
 class PluginsBox(QGroupBox):
-    def __init__(self) -> None:
+    def __init__(self, manager: LuaPluginManager) -> None:
         super().__init__("Plugins")
 
         layout = QGridLayout()
         layout.setAlignment(Qt.AlignTop)
         self.setLayout(layout)
 
-        for row, plugin in enumerate(LuaPluginManager.plugins()):
+        for row, plugin in enumerate(manager.iter_plugins()):
             if not plugin.show_in_ui:
                 continue
 
@@ -32,14 +32,14 @@ class PluginsBox(QGroupBox):
 
 
 class PluginsPage(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, manager: LuaPluginManager) -> None:
         super().__init__()
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignTop)
         self.setLayout(layout)
 
-        layout.addWidget(PluginsBox())
+        layout.addWidget(PluginsBox(manager))
 
 
 class PluginOptionsBox(QGroupBox):
@@ -60,13 +60,13 @@ class PluginOptionsBox(QGroupBox):
 
 
 class PluginOptionsPage(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, manager: LuaPluginManager) -> None:
         super().__init__()
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignTop)
         self.setLayout(layout)
 
-        for plugin in LuaPluginManager.plugins():
+        for plugin in manager.iter_plugins():
             if plugin.options:
                 layout.addWidget(PluginOptionsBox(plugin))

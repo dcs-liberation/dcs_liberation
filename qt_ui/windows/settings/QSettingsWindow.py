@@ -285,7 +285,7 @@ class QSettingsWindow(QDialog):
         self.categoryModel.appendRow(cheat)
         self.right_layout.addWidget(self.cheatPage)
 
-        self.pluginsPage = PluginsPage()
+        self.pluginsPage = PluginsPage(self.game.lua_plugin_manager)
         plugins = QStandardItem("LUA Plugins")
         plugins.setIcon(CONST.ICONS["Plugins"])
         plugins.setEditable(False)
@@ -293,7 +293,7 @@ class QSettingsWindow(QDialog):
         self.categoryModel.appendRow(plugins)
         self.right_layout.addWidget(self.pluginsPage)
 
-        self.pluginsOptionsPage = PluginOptionsPage()
+        self.pluginsOptionsPage = PluginOptionsPage(self.game.lua_plugin_manager)
         pluginsOptions = QStandardItem("LUA Plugins Options")
         pluginsOptions.setIcon(CONST.ICONS["PluginsOptions"])
         pluginsOptions.setEditable(False)
