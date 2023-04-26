@@ -96,6 +96,9 @@ class NewGameWizard(QtWidgets.QWizard):
         default_settings = Settings()
         default_settings.merge_player_settings()
 
+        mod_settings = ModSettings()
+        mod_settings.merge_player_settings()
+
         self.lua_plugin_manager = LuaPluginManager.load()
         self.lua_plugin_manager.merge_player_settings()
 
@@ -110,7 +113,7 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         self.addPage(self.theater_page)
         self.addPage(self.faction_selection_page)
-        self.addPage(GeneratorOptions(default_settings))
+        self.addPage(GeneratorOptions(default_settings, mod_settings))
         self.difficulty_page = DifficultyAndAutomationOptions(default_settings)
         self.plugins_page = PluginsPage(self.lua_plugin_manager)
 
@@ -194,6 +197,7 @@ class NewGameWizard(QtWidgets.QWizard):
             frenchpack=self.field("frenchpack"),
             high_digit_sams=self.field("high_digit_sams"),
         )
+        mod_settings.save_player_settings()
 
         blue_faction = self.faction_selection_page.selected_blue_faction
         red_faction = self.faction_selection_page.selected_red_faction
@@ -708,7 +712,9 @@ class PluginsPage(QtWidgets.QWizardPage):
 
 
 class GeneratorOptions(QtWidgets.QWizardPage):
-    def __init__(self, default_settings: Settings, parent=None):
+    def __init__(
+        self, default_settings: Settings, mod_settings: ModSettings, parent=None
+    ) -> None:
         super().__init__(parent)
         self.setTitle("Generator settings")
         self.setSubTitle("\nOptions affecting the generation of the game.")
@@ -753,27 +759,49 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         generatorSettingsGroup.setLayout(generatorLayout)
 
         modSettingsGroup = QtWidgets.QGroupBox("Mod Settings")
+
         a4_skyhawk = QtWidgets.QCheckBox()
+        a4_skyhawk.setChecked(mod_settings.a4_skyhawk)
         self.registerField("a4_skyhawk", a4_skyhawk)
+
         hercules = QtWidgets.QCheckBox()
+        hercules.setChecked(mod_settings.hercules)
         self.registerField("hercules", hercules)
+
         uh_60l = QtWidgets.QCheckBox()
+        uh_60l.setChecked(mod_settings.uh_60l)
         self.registerField("uh_60l", uh_60l)
+
         f22_raptor = QtWidgets.QCheckBox()
+        f22_raptor.setChecked(mod_settings.f22_raptor)
         self.registerField("f22_raptor", f22_raptor)
+
         f104_starfighter = QtWidgets.QCheckBox()
+        f104_starfighter.setChecked(mod_settings.f104_starfighter)
         self.registerField("f104_starfighter", f104_starfighter)
+
         f4_phantom = QtWidgets.QCheckBox()
+        f4_phantom.setChecked(mod_settings.f4_phantom)
         self.registerField("f4_phantom", f4_phantom)
+
         jas39_gripen = QtWidgets.QCheckBox()
+        jas39_gripen.setChecked(mod_settings.jas39_gripen)
         self.registerField("jas39_gripen", jas39_gripen)
+
         su57_felon = QtWidgets.QCheckBox()
+        su57_felon.setChecked(mod_settings.su57_felon)
         self.registerField("su57_felon", su57_felon)
+
         ov10a_bronco = QtWidgets.QCheckBox()
+        ov10a_bronco.setChecked(mod_settings.ov10a_bronco)
         self.registerField("ov10a_bronco", ov10a_bronco)
+
         frenchpack = QtWidgets.QCheckBox()
+        frenchpack.setChecked(mod_settings.frenchpack)
         self.registerField("frenchpack", frenchpack)
+
         high_digit_sams = QtWidgets.QCheckBox()
+        high_digit_sams.setChecked(mod_settings.high_digit_sams)
         self.registerField("high_digit_sams", high_digit_sams)
 
         modHelpText = QtWidgets.QLabel(
