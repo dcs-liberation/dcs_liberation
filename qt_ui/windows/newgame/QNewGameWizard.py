@@ -97,6 +97,7 @@ class NewGameWizard(QtWidgets.QWizard):
         default_settings.merge_player_settings()
 
         self.lua_plugin_manager = LuaPluginManager.load()
+        self.lua_plugin_manager.merge_player_settings()
 
         factions = Factions.load()
 
@@ -148,6 +149,8 @@ class NewGameWizard(QtWidgets.QWizard):
             ]
         else:
             start_date = self.theater_page.calendar.selectedDate().toPython()
+
+        self.lua_plugin_manager.save_player_settings()
 
         logging.info("New campaign start date: %s", start_date.strftime("%m/%d/%Y"))
         settings = Settings(

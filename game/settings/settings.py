@@ -499,14 +499,6 @@ class Settings:
             if description.remember_player_choice:
                 settings[name] = self.__dict__[name]
 
-        # Plugin settings are currently not handled. It looks like the PluginManager
-        # probably needs some changes to do so safely. When injecting plugin options
-        # into Settings with LuaPluginManager.load_settings, it sets a reference to the
-        # passed Settings object. The lifetime is unclear, but it might be the case that
-        # canceling the NGW would leave LuaPluginManager in a bad state (yes, we could
-        # reset it on cancel, but that's just one bug I've thought of and without better
-        # understanding of how that works it's hard to say where more could be lurking).
-
         with self._player_settings_file.open("w", encoding="utf-8") as settings_file:
             yaml.dump(settings, settings_file, sort_keys=False, explicit_start=True)
 
