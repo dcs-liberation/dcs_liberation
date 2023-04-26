@@ -52,7 +52,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 # - Specify that DECOY weapon type is used in AttackGroup task so that
                 #   the flight actually launches the decoy. See link below for details
                 #   https://github.com/dcs-liberation/dcs_liberation/issues/2780
-                # - Set a stop condition of 60 seconds so that the flight does not continue
+                # - Set a stop condition of 120 seconds so that the flight does not continue
                 #   press the engagement as a DCS limitation means the RTB on winchester
                 #   does not work well with decoys. See link below for details.
                 #   https://github.com/dcs-liberation/dcs_liberation/issues/2781
