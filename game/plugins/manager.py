@@ -4,11 +4,12 @@ from pathlib import Path
 from typing import Dict, List
 
 from game.settings import Settings
-
 from .luaplugin import LuaPlugin
 
 
 class LuaPluginManager:
+    """Manages available and loaded lua plugins."""
+
     _plugins_loaded = False
     _plugins: Dict[str, LuaPlugin] = {}
 
@@ -48,5 +49,12 @@ class LuaPluginManager:
 
     @classmethod
     def load_settings(cls, settings: Settings) -> None:
+        """Attaches all loaded plugins to the given settings object.
+
+        The LuaPluginManager singleton can only be attached to a single Settings object
+        at a time, and plugins will update the Settings object directly, so attaching
+        the plugin manager to a detached Settings object (say, during the new game
+        wizard, but then canceling the new game) will break the settings UI.
+        """
         for plugin in cls.plugins():
             plugin.set_settings(settings)

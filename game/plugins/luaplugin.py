@@ -14,6 +14,19 @@ if TYPE_CHECKING:
 
 
 class LuaPluginWorkOrder:
+    """A script to be loaded at mision start.
+
+    Typically, a work order is used for the main plugin script, and another for
+    configuration. The main script is added to scriptsWorkOrders and the configuration
+    to configurationWorkOrders. As far as I can tell, there's absolutely no difference
+    between those two lists and that could be merged.
+
+    Other scripts can also be run by being added to either of these lists.
+
+    A better name for this is probably just "LuaPluginScript", since that appears to be
+    all they are.
+    """
+
     def __init__(
         self, parent_mnemonic: str, filename: str, mnemonic: str, disable: bool
     ) -> None:
@@ -23,6 +36,7 @@ class LuaPluginWorkOrder:
         self.disable = disable
 
     def work(self, lua_generator: LuaGenerator) -> None:
+        """Inject the script for this work order into the mission, or ignores it."""
         if self.disable:
             lua_generator.bypass_plugin_script(self.mnemonic)
         else:
@@ -32,6 +46,8 @@ class LuaPluginWorkOrder:
 
 
 class PluginSettings:
+    """A common base for plugin configuration and per-plugin option configuration."""
+
     def __init__(self, identifier: str, enabled_by_default: bool) -> None:
         self.identifier = identifier
         self.enabled_by_default = enabled_by_default
@@ -57,6 +73,8 @@ class PluginSettings:
 
 
 class LuaPluginOption(PluginSettings):
+    """A boolean option for the plugin."""
+
     def __init__(self, identifier: str, name: str, enabled_by_default: bool) -> None:
         super().__init__(identifier, enabled_by_default)
         self.name = name
@@ -64,6 +82,8 @@ class LuaPluginOption(PluginSettings):
 
 @dataclass(frozen=True)
 class LuaPluginDefinition:
+    """Object mapping for plugin.json."""
+
     identifier: str
     name: str
     present_in_ui: bool
@@ -74,6 +94,7 @@ class LuaPluginDefinition:
 
     @classmethod
     def from_json(cls, name: str, path: Path) -> LuaPluginDefinition:
+        """Loads teh plugin definitions from the given plugin.json path."""
         data = json.loads(path.read_text())
 
         options = []
@@ -120,6 +141,22 @@ class LuaPluginDefinition:
 
 
 class LuaPlugin(PluginSettings):
+    """A Liberation lua plugin.
+
+    A plugin is a mod that is able to inject Lua code into the Liberation mission start
+    up. Some of these are bundled (Skynet, mist, EWRS, etc), but users can add their own
+    as well.
+
+    A plugin is defined by a plugin.json file in resources/plugins/<name>/plugin.json.
+    That file defines the name to be shown in the settings UI, whether it should be
+    enabled by default, the scripts to run, and (optionally) boolean options for
+    controlling plugin behavior.
+
+    The plugin identifier is defined by the name of the directory containing it.
+
+    Plugin options have their own set of default settings, UI names, and IDs.
+    """
+
     def __init__(self, definition: LuaPluginDefinition) -> None:
         self.definition = definition
         super().__init__(self.definition.identifier, self.definition.enabled_by_default)
@@ -147,15 +184,22 @@ class LuaPlugin(PluginSettings):
         return cls(definition)
 
     def set_settings(self, settings: Settings) -> None:
+        """Attaches the plugin to a settings object."""
         super().set_settings(settings)
         for option in self.definition.options:
             option.set_settings(self.settings)
 
     def inject_scripts(self, lua_generator: LuaGenerator) -> None:
+        """Injects the plugin's scripts into the mission."""
         for work_order in self.definition.work_orders:
             work_order.work(lua_generator)
 
     def inject_configuration(self, lua_generator: LuaGenerator) -> None:
+        """Injects the plugin's options and configuration scripts into the mission.
+
+        It's not clear why the script portion of this needs to exist, and could probably
+        instead be the same as inject_scripts.
+        """
         # inject the plugin options
         if self.options:
             option_decls = []
