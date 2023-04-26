@@ -8,7 +8,7 @@ from game.ato import Flight
 from game.ato.flightplans.airassault import AirAssaultFlightPlan
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.missiongenerator.missiondata import CargoInfo, LogisticsInfo
-from game.settings.settings import Settings
+from game.plugins import LuaPluginManager
 from game.transfers import TransferOrder
 
 ZONE_RADIUS = 300
@@ -21,14 +21,14 @@ class LogisticsGenerator:
         flight: Flight,
         group: FlyingGroup[Any],
         mission: Mission,
-        settings: Settings,
+        lua_plugin_manager: LuaPluginManager,
         transfer: Optional[TransferOrder] = None,
     ) -> None:
         self.flight = flight
         self.group = group
         self.transfer = transfer
         self.mission = mission
-        self.settings = settings
+        self.lua_plugin_manager = lua_plugin_manager
 
     def generate_logistics(self) -> LogisticsInfo:
         # Add Logisitcs info for the flight
@@ -89,8 +89,8 @@ class LogisticsGenerator:
                 for cargo_unit_type, amount in self.transfer.units.items()
             ]
 
-        if pickup_point is not None and self.settings.plugin_option(
-            "ctld.logisticunit"
+        if pickup_point is not None and self.lua_plugin_manager.is_option_enabled(
+            "ctld", "logisticunit"
         ):
             # Spawn logisticsunit at pickup zones
             country = self.mission.country(self.flight.country)

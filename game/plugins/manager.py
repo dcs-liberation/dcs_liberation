@@ -1,20 +1,21 @@
+from __future__ import annotations
+
 import json
 import logging
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Dict, List
 
-from game.settings import Settings
 from .luaplugin import LuaPlugin
 
 
 class LuaPluginManager:
     """Manages available and loaded lua plugins."""
 
-    _plugins_loaded = False
-    _plugins: Dict[str, LuaPlugin] = {}
+    def __init__(self, plugins: dict[str, LuaPlugin]) -> None:
+        self._plugins: dict[str, LuaPlugin] = plugins
 
-    @classmethod
-    def _load_plugins(cls) -> None:
+    @staticmethod
+    def load() -> LuaPluginManager:
         plugins_path = Path("resources/plugins")
 
         path = plugins_path / "plugins.json"
@@ -23,6 +24,7 @@ class LuaPluginManager:
 
         logging.info(f"Reading plugins list from {path}")
 
+        plugins = {}
         data = json.loads(path.read_text())
         for name in data:
             plugin_path = plugins_path / name / "plugin.json"
@@ -34,27 +36,41 @@ class LuaPluginManager:
             logging.info(f"Loading plugin {name} from {plugin_path}")
             plugin = LuaPlugin.from_json(name, plugin_path)
             if plugin is not None:
-                cls._plugins[name] = plugin
-        cls._plugins_loaded = True
+                plugins[name] = plugin
+        return LuaPluginManager(plugins)
 
-    @classmethod
-    def _get_plugins(cls) -> Dict[str, LuaPlugin]:
-        if not cls._plugins_loaded:
-            cls._load_plugins()
-        return cls._plugins
+    def update_with(self, other: LuaPluginManager) -> None:
+        """Updates all setting values with those in the given plugin manager.
 
-    @classmethod
-    def plugins(cls) -> List[LuaPlugin]:
-        return list(cls._get_plugins().values())
+        When a game is loaded, LuaPluginManager.load() is called to load the latest set
+        of plugins and settings. This is called with the plugin manager that was saved
+        to the Game object to preserve any options that were set, and then the Game is
+        updated with this manager.
 
-    @classmethod
-    def load_settings(cls, settings: Settings) -> None:
-        """Attaches all loaded plugins to the given settings object.
-
-        The LuaPluginManager singleton can only be attached to a single Settings object
-        at a time, and plugins will update the Settings object directly, so attaching
-        the plugin manager to a detached Settings object (say, during the new game
-        wizard, but then canceling the new game) will break the settings UI.
+        This needs to happen because the set of available plugins (or their options) can
+        change between runs.
         """
-        for plugin in cls.plugins():
-            plugin.set_settings(settings)
+        for plugin in self.iter_plugins():
+            try:
+                old_plugin = other.by_id(plugin.identifier)
+            except KeyError:
+                continue
+            plugin.update_with(old_plugin)
+
+    def iter_plugins(self) -> Iterator[LuaPlugin]:
+        yield from self._plugins.values()
+
+    def by_id(self, identifier: str) -> LuaPlugin:
+        return self._plugins[identifier]
+
+    def is_plugin_enabled(self, plugin_id: str) -> bool:
+        try:
+            return self.by_id(plugin_id).enabled
+        except KeyError:
+            return False
+
+    def is_option_enabled(self, plugin_id: str, option_id: str) -> bool:
+        try:
+            return self.by_id(plugin_id).is_option_enabled(option_id)
+        except KeyError:
+            return False

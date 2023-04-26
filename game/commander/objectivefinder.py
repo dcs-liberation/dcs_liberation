@@ -117,7 +117,7 @@ class ObjectiveFinder:
 
                 if isinstance(
                     ground_object, IadsBuildingGroundObject
-                ) and not self.game.settings.plugin_option("skynetiads"):
+                ) and not self.game.lua_plugin_manager.is_plugin_enabled("skynetiads"):
                     # Prevent strike targets on IADS Buildings when skynet features
                     # are disabled as they do not serve any purpose
                     continue

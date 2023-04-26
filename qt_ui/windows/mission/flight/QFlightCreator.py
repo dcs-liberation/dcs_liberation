@@ -4,22 +4,22 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
+    QHBoxLayout,
     QLabel,
+    QLineEdit,
     QMessageBox,
     QPushButton,
     QVBoxLayout,
-    QLineEdit,
-    QHBoxLayout,
 )
 from dcs.unittype import FlyingType
 
 from game import Game
+from game.ato.flight import Flight
+from game.ato.flightroster import FlightRoster
+from game.ato.package import Package
 from game.ato.starttype import StartType
 from game.squadrons.squadron import Squadron
 from game.theater import ControlPoint, OffMapSpawn
-from game.ato.package import Package
-from game.ato.flightroster import FlightRoster
-from game.ato.flight import Flight
 from qt_ui.uiconstants import EVENT_ICONS
 from qt_ui.widgets.QFlightSizeSpinner import QFlightSizeSpinner
 from qt_ui.widgets.QLabeledWidget import QLabeledWidget
@@ -51,7 +51,7 @@ class QFlightCreator(QDialog):
         layout = QVBoxLayout()
 
         self.task_selector = QFlightTypeComboBox(
-            self.game.theater, package.target, self.game.settings
+            self.game.theater, package.target, self.game.lua_plugin_manager
         )
         self.task_selector.setCurrentIndex(0)
         self.task_selector.currentIndexChanged.connect(self.on_task_changed)

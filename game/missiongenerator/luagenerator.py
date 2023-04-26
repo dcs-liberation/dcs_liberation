@@ -13,7 +13,6 @@ from dcs.triggers import TriggerStart
 
 from game.ato import FlightType
 from game.dcs.aircrafttype import AircraftType
-from game.plugins import LuaPluginManager
 from game.theater import TheaterGroundObject
 from game.theater.iadsnetwork.iadsrole import IadsRole
 from game.utils import escape_string_for_lua
@@ -246,7 +245,7 @@ class LuaGenerator:
         self.mission.triggerrules.triggers.append(trigger)
 
     def inject_plugins(self) -> None:
-        for plugin in LuaPluginManager.plugins():
+        for plugin in self.game.lua_plugin_manager.iter_plugins():
             if plugin.enabled:
                 plugin.inject_scripts(self)
                 plugin.inject_configuration(self)

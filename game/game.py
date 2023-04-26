@@ -97,10 +97,12 @@ class Game:
         start_date: datetime,
         start_time: time | None,
         settings: Settings,
+        lua_plugin_manager: LuaPluginManager,
         player_budget: float,
         enemy_budget: float,
     ) -> None:
         self.settings = settings
+        self.lua_plugin_manager = lua_plugin_manager
         self.theater = theater
         self.turn = 0
         # NB: This is the *start* date. It is never updated.
@@ -227,7 +229,13 @@ class Game:
         # We need to persist this state so that names generated after game load don't
         # conflict with those generated before exit.
         naming.namegen = self.name_generator
-        LuaPluginManager.load_settings(self.settings)
+
+        # The installed plugins may have changed between runs. We need to load the
+        # current configuration and patch in the options that were previously set.
+        new_plugin_manager = LuaPluginManager.load()
+        new_plugin_manager.update_with(self.lua_plugin_manager)
+        self.lua_plugin_manager = new_plugin_manager
+
         ObjectiveDistanceCache.set_theater(self.theater)
         self.compute_unculled_zones(GameUpdateEvents())
         if not game_still_initializing:

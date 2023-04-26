@@ -1,10 +1,10 @@
 import logging
 from collections.abc import Iterator
-from dataclasses import Field, dataclass, field, fields
+from dataclasses import Field, dataclass, fields
 from datetime import timedelta
 from enum import Enum, unique
 from pathlib import Path
-from typing import Any, Dict, Optional, get_type_hints
+from typing import Any, Optional, get_type_hints
 
 import yaml
 from dcs.forcedoptions import ForcedOptions
@@ -490,9 +490,6 @@ class Settings:
     enable_frontline_cheats: bool = False
     enable_base_capture_cheat: bool = False
 
-    # LUA Plugins system
-    plugins: Dict[str, bool] = field(default_factory=dict)
-
     only_player_takeoff: bool = True  # Legacy parameter do not use
 
     def save_player_settings(self) -> None:
@@ -547,22 +544,6 @@ class Settings:
     def _player_settings_file(self) -> Path:
         """Returns the path to the player's global settings file."""
         return liberation_user_dir() / "settings.yaml"
-
-    @staticmethod
-    def plugin_settings_key(identifier: str) -> str:
-        return f"plugins.{identifier}"
-
-    def initialize_plugin_option(self, identifier: str, default_value: bool) -> None:
-        try:
-            self.plugin_option(identifier)
-        except KeyError:
-            self.set_plugin_option(identifier, default_value)
-
-    def plugin_option(self, identifier: str) -> bool:
-        return self.plugins[self.plugin_settings_key(identifier)]
-
-    def set_plugin_option(self, identifier: str, enabled: bool) -> None:
-        self.plugins[self.plugin_settings_key(identifier)] = enabled
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         # __setstate__ is called with the dict of the object being unpickled. We

@@ -79,14 +79,18 @@ class FlightGroupConfigurator:
         if self.flight.flight_type in [
             FlightType.TRANSPORT,
             FlightType.AIR_ASSAULT,
-        ] and self.game.settings.plugin_option("ctld"):
+        ] and self.game.lua_plugin_manager.is_plugin_enabled("ctld"):
             transfer = None
             if self.flight.flight_type == FlightType.TRANSPORT:
                 coalition = self.game.coalition_for(player=self.flight.blue)
                 transfer = coalition.transfers.transfer_for_flight(self.flight)
             self.mission_data.logistics.append(
                 LogisticsGenerator(
-                    self.flight, self.group, self.mission, self.game.settings, transfer
+                    self.flight,
+                    self.group,
+                    self.mission,
+                    self.game.lua_plugin_manager,
+                    transfer,
                 ).generate_logistics()
             )
 
