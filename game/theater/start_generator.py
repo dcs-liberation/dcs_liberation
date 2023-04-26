@@ -75,6 +75,7 @@ class GameGenerator:
         settings: Settings,
         generator_settings: GeneratorSettings,
         mod_settings: ModSettings,
+        lua_plugin_manager: LuaPluginManager,
     ) -> None:
         self.player = player
         self.enemy = enemy
@@ -84,6 +85,7 @@ class GameGenerator:
         self.generator_settings = generator_settings
         self.player.apply_mod_settings(mod_settings)
         self.enemy.apply_mod_settings(mod_settings)
+        self.lua_plugin_manager = lua_plugin_manager
 
     def generate(self) -> Game:
         with logged_duration("TGO population"):
@@ -98,8 +100,7 @@ class GameGenerator:
                 start_date=self.generator_settings.start_date,
                 start_time=self.generator_settings.start_time,
                 settings=self.settings,
-                # TODO: Hoist into NGW so we can expose those options.
-                lua_plugin_manager=LuaPluginManager.load(),
+                lua_plugin_manager=self.lua_plugin_manager,
                 player_budget=self.generator_settings.player_budget,
                 enemy_budget=self.generator_settings.enemy_budget,
             )

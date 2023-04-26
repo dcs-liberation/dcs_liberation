@@ -6,12 +6,21 @@ from typing import List
 
 from PySide6 import QtGui, QtWidgets
 from PySide6.QtCore import QDate, QItemSelectionModel, QPoint, Qt, Signal
-from PySide6.QtWidgets import QCheckBox, QLabel, QTextEdit, QVBoxLayout
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QLabel,
+    QScrollArea,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.factions import Faction
 from game.factions.factions import Factions
+from game.plugins import LuaPlugin, LuaPluginManager
+from game.plugins.luaplugin import LuaPluginOption
 from game.settings import Settings
 from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSettings
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
@@ -87,6 +96,8 @@ class NewGameWizard(QtWidgets.QWizard):
         default_settings = Settings()
         default_settings.merge_player_settings()
 
+        self.lua_plugin_manager = LuaPluginManager.load()
+
         factions = Factions.load()
 
         self.campaigns = list(sorted(Campaign.load_each(), key=lambda x: x.name))
@@ -100,12 +111,14 @@ class NewGameWizard(QtWidgets.QWizard):
         self.addPage(self.faction_selection_page)
         self.addPage(GeneratorOptions(default_settings))
         self.difficulty_page = DifficultyAndAutomationOptions(default_settings)
+        self.plugins_page = PluginsPage(self.lua_plugin_manager)
 
         # Update difficulty page on campaign select
         self.theater_page.campaign_selected.connect(
             lambda c: self.difficulty_page.set_campaign_values(c)
         )
         self.addPage(self.difficulty_page)
+        self.addPage(self.plugins_page)
         self.addPage(ConclusionPage())
 
         self.setPixmap(
@@ -197,6 +210,7 @@ class NewGameWizard(QtWidgets.QWizard):
             settings,
             generator_settings,
             mod_settings,
+            self.lua_plugin_manager,
         )
         self.generatedGame = generator.generate()
 
@@ -616,6 +630,78 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         self.enemy_income.spinner.setValue(
             int(campaign.recommended_enemy_income_multiplier * 10)
         )
+
+
+class PluginOptionCheckbox(QCheckBox):
+    def __init__(self, option: LuaPluginOption) -> None:
+        super().__init__(option.name)
+        self.option = option
+        self.setChecked(self.option.enabled)
+        self.toggled.connect(self.on_toggle)
+
+    def on_toggle(self, enabled: bool) -> None:
+        self.option.enabled = enabled
+
+
+class PluginGroupBox(QtWidgets.QGroupBox):
+    def __init__(self, plugin: LuaPlugin) -> None:
+        super().__init__(plugin.name)
+        self.plugin = plugin
+
+        self.setCheckable(True)
+        self.setChecked(self.plugin.enabled)
+        self.toggled.connect(self.on_toggle)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.checkboxes = []
+        for option in self.plugin.options:
+            checkbox = PluginOptionCheckbox(option)
+            checkbox.setEnabled(self.plugin.enabled)
+            layout.addWidget(checkbox)
+            self.checkboxes.append(checkbox)
+
+        if not self.plugin.options:
+            layout.addWidget(QLabel("Plugin has no settings."))
+
+    def on_toggle(self, enabled: bool) -> None:
+        self.plugin.enabled = enabled
+        for checkbox in self.checkboxes:
+            checkbox.setEnabled(enabled)
+
+
+class PluginsPage(QtWidgets.QWizardPage):
+    def __init__(self, lua_plugins_manager: LuaPluginManager, parent=None) -> None:
+        super().__init__(parent)
+        self.lua_plugins_manager = lua_plugins_manager
+
+        self.setTitle("Plugins")
+        self.setSubTitle("Enable plugins with the checkbox next to their name")
+        self.setPixmap(
+            QtWidgets.QWizard.LogoPixmap,
+            QtGui.QPixmap("./resources/ui/wizard/logo1.png"),
+        )
+
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
+
+        scroll_content = QWidget()
+        layout = QVBoxLayout()
+        scroll_content.setLayout(layout)
+        scroll = QScrollArea()
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+        main_layout.addWidget(scroll)
+
+        self.group_boxes = []
+        for plugin in self.lua_plugins_manager.iter_plugins():
+            if plugin.show_in_ui:
+                group_box = PluginGroupBox(plugin)
+                layout.addWidget(group_box)
+                self.group_boxes.append(group_box)
 
 
 class GeneratorOptions(QtWidgets.QWizardPage):
