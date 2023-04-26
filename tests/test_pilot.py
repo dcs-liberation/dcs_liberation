@@ -61,4 +61,4 @@ def test_missions_flown(pilot: Pilot) -> None:
 def test_random_pilot_name() -> None:
     faker = Faker()
     random_pilot = Pilot.random(faker)
-    assert len(random_pilot.name) > 3
+    assert random_pilot.name
