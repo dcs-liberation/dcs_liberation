@@ -87,33 +87,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
         # overfly the target. See link below for the details of this issue
         # https://github.com/dcs-liberation/dcs_liberation/issues/2781
         if self.flight.loadout.has_weapon_of_type(WeaponType.DECOY):
-            ingress_index = None
-            split_index = None
-            if isinstance(self.flight.state, InFlight):
-                index = 2
-                # Handle special case where flight starts at the Ingress point
-                if self.flight.state.current_waypoint.name == "INGRESS":
-                    ingress_index = 1
-            else:
-                index = 1
-
-            for point in self.flight.flight_plan.waypoints:
-                # Skip waypoints that have already been passed for flights that are in flight already
-                if isinstance(
-                    self.flight.state, InFlight
-                ) and self.flight.state.has_passed_waypoint(point):
-                    continue
-                if point.name == "INGRESS":
-                    ingress_index = index
-                elif point.name == "SPLIT":
-                    split_index = index
-                index += 1
-            # If either the INGRESS or SPLIT waypoints cannot be found e.g. because they are
-            # modified by the user, do not try to add the SwitchWaypoint task.
-            if ingress_index is not None and split_index is not None:
-                switch_waypoint_task = SwitchWaypoint(ingress_index, split_index)
-                waypoint.tasks.append(switch_waypoint_task)
-            else:
-                logging.error(
-                    f"Could not find the Ingress or Split waypoint for SEAD mission {group.group_name}"
-                )
+            switch_waypoint_task = SwitchWaypoint(
+                self.generated_waypoint_idx, self.generated_waypoint_idx + 2
+            )
+            waypoint.tasks.append(switch_waypoint_task)
