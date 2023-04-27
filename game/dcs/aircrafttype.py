@@ -50,6 +50,7 @@ from game.utils import (
 )
 
 if TYPE_CHECKING:
+    from game.ato import FlightType
     from game.missiongenerator.aircraft.flightdata import FlightData
     from game.missiongenerator.missiondata import MissionData
     from game.radio.radios import Radio, RadioFrequency, RadioRegistry
@@ -197,6 +198,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
     # will be set to true for helos by default
     can_carry_crates: bool
 
+    task_priorities: dict[FlightType, int]
+
     _by_name: ClassVar[dict[str, AircraftType]] = {}
     _by_unit_type: ClassVar[dict[type[FlyingType], list[AircraftType]]] = defaultdict(
         list
@@ -317,6 +320,12 @@ class AircraftType(UnitType[Type[FlyingType]]):
     def iter_props(self) -> Iterator[UnitProperty[Any]]:
         return UnitProperty.for_aircraft(self.dcs_unit_type)
 
+    def capable_of(self, task: FlightType) -> bool:
+        return task in self.task_priorities
+
+    def task_priority(self, task: FlightType) -> int:
+        return self.task_priorities[task]
+
     def __setstate__(self, state: dict[str, Any]) -> None:
         # Update any existing models with new data on load.
         updated = AircraftType.named(state["name"])
@@ -334,6 +343,12 @@ class AircraftType(UnitType[Type[FlyingType]]):
         if not cls._loaded:
             cls._load_all()
         yield from cls._by_unit_type[dcs_unit_type]
+
+    @classmethod
+    def iter_all(cls) -> Iterator[AircraftType]:
+        if not cls._loaded:
+            cls._load_all()
+        yield from cls._by_name.values()
 
     @staticmethod
     def each_dcs_type() -> Iterator[Type[FlyingType]]:
@@ -359,6 +374,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     @classmethod
     def _each_variant_of(cls, aircraft: Type[FlyingType]) -> Iterator[AircraftType]:
+        from game.ato.flighttype import FlightType
+
         data_path = Path("resources/units/aircraft") / f"{aircraft.id}.yaml"
         if not data_path.exists():
             logging.warning(f"No data for {aircraft.id}; it will not be available")
@@ -415,6 +432,10 @@ class AircraftType(UnitType[Type[FlyingType]]):
         if prop_overrides is not None:
             cls._set_props_overrides(prop_overrides, aircraft, data_path)
 
+        task_priorities: dict[FlightType, int] = {}
+        for task_name, priority in data.get("tasks", {}).items():
+            task_priorities[FlightType(task_name)] = priority
+
         for variant in data.get("variants", [aircraft.id]):
             yield AircraftType(
                 dcs_unit_type=aircraft,
@@ -446,4 +467,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 unit_class=unit_class,
                 cabin_size=data.get("cabin_size", 10 if aircraft.helicopter else 0),
                 can_carry_crates=data.get("can_carry_crates", aircraft.helicopter),
+                task_priorities=task_priorities,
             )
+
+    def __hash__(self) -> int:
+        return hash(self.name)
