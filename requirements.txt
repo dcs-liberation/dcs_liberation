@@ -21,8 +21,8 @@ idna==3.4
 iniconfig==1.1.1
 Jinja2==3.1.2
 MarkupSafe==2.1.1
-mypy==0.961
-mypy-extensions==0.4.3
+mypy==1.2.0
+mypy-extensions==1.0.0
 nodeenv==1.7.0
 packaging==22.0
 pathspec==0.10.3
@@ -31,7 +31,7 @@ Pillow==9.3.0
 platformdirs==2.6.2
 pluggy==1.0.0
 pre-commit==2.21.0
-pydantic==1.10.3
+pydantic==1.10.7
 -e git+https://github.com/pydcs/dcs@832c8a361319553cb6f2b46f5b2542180b7f72b6#egg=pydcs
 pyinstaller==5.7.0
 pyinstaller-hooks-contrib==2022.14
