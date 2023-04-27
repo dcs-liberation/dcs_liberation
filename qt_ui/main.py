@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+import yaml
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
@@ -14,10 +15,12 @@ from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, logging_config, persistence
+from game.ato import FlightType
 from game.campaignloader.campaign import Campaign, DEFAULT_BUDGET
 from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.dcs.aircrafttype import AircraftType
 from game.factions.factions import Factions
+from game.persistence.paths import liberation_user_dir
 from game.profiling import logged_duration
 from game.server import EventStream, Server
 from game.settings import Settings
@@ -243,6 +246,8 @@ def parse_args() -> argparse.Namespace:
     lint_weapons = subparsers.add_parser("lint-weapons")
     lint_weapons.add_argument("aircraft", help="Name of the aircraft variant to lint.")
 
+    subparsers.add_parser("dump-task-priorities")
+
     return parser.parse_args()
 
 
@@ -352,6 +357,27 @@ def fix_pycharm_debugger_if_needed() -> None:
         ntpath.sep = "\\"
 
 
+def dump_task_priorities() -> None:
+    first_start = liberation_install.init()
+    if first_start:
+        sys.exit(
+            "Cannot dump task priorities without configuring DCS Liberation. Start the"
+            "UI for the first run configuration."
+        )
+
+    data: dict[str, dict[str, int]] = {}
+    for task in FlightType:
+        data[task.value] = {
+            a.name: a.task_priority(task)
+            for a in AircraftType.priority_list_for_task(task)
+        }
+
+    debug_path = liberation_user_dir() / "Debug" / "priorities.yaml"
+    debug_path.parent.mkdir(parents=True, exist_ok=True)
+    with debug_path.open("w", encoding="utf-8") as output:
+        yaml.dump(data, output, sort_keys=False, allow_unicode=True)
+
+
 def main():
     logging_config.init_logging(VERSION)
 
@@ -390,6 +416,9 @@ def main():
             )
     if args.subcommand == "lint-weapons":
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
+        return
+    if args.subcommand == "dump-task-priorities":
+        dump_task_priorities()
         return
 
     with Server().run_in_thread():
