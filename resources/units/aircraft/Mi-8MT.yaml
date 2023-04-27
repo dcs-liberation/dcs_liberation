@@ -15,3 +15,9 @@ role: Transport/Light Attack
 variants:
   Mi-8MTV2 Hip: {}
 kneeboard_units: "metric"
+tasks:
+  Air Assault: 40
+  BAI: 390
+  CAS: 390
+  OCA/Aircraft: 390
+  Transport: 10

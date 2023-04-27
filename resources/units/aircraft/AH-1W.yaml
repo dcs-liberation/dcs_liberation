@@ -19,3 +19,7 @@ role: Attack
 variants:
   AH-1J SeaCobra: {}
   AH-1W SuperCobra: {}
+tasks:
+  BAI: 480
+  CAS: 480
+  OCA/Aircraft: 480

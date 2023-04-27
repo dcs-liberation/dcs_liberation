@@ -13,3 +13,9 @@ price: 40
 role: Stealth Air-Superiority Fighter
 variants:
   Su-57 Felon: {}
+tasks:
+  BARCAP: 560
+  Escort: 560
+  Fighter sweep: 560
+  Intercept: 560
+  TARCAP: 560

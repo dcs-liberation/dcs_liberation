@@ -32,3 +32,15 @@ radios:
 kneeboard_units: "imperial"
 # default_overrides:
 #   WaterTankContents: 1
+tasks:
+  BAI: 130
+  BARCAP: 20
+  CAS: 130
+  DEAD: 100
+  Escort: 20
+  Fighter sweep: 20
+  Intercept: 20
+  OCA/Aircraft: 130
+  OCA/Runway: 90
+  Strike: 90
+  TARCAP: 20

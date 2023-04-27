@@ -19,3 +19,9 @@ variants:
   MiG-23ML Flogger-G:
     introduced: 1981
   MiG-23MLD Flogger-K: {}
+tasks:
+  BARCAP: 360
+  Escort: 360
+  Fighter sweep: 360
+  Intercept: 360
+  TARCAP: 360

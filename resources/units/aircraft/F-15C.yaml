@@ -12,3 +12,9 @@ max_range: 400
 variants:
   F-15C Eagle: {}
   F-15J Eagle: {}
+tasks:
+  BARCAP: 540
+  Escort: 540
+  Fighter sweep: 540
+  Intercept: 540
+  TARCAP: 540

@@ -17,3 +17,18 @@ variants:
     manufacturer: Sukhoi
     origin: USSR/Russia
     role: Multirole Fighter
+tasks:
+  Anti-ship: 90
+  BAI: 560
+  BARCAP: 490
+  CAS: 560
+  DEAD: 300
+  Escort: 490
+  Fighter sweep: 490
+  Intercept: 490
+  OCA/Aircraft: 560
+  OCA/Runway: 450
+  SEAD: 20
+  SEAD Escort: 20
+  Strike: 450
+  TARCAP: 490

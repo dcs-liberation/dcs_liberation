@@ -22,3 +22,14 @@ radios:
   intra_flight: RSI-6K HF
   inter_flight: RSI-6K HF
 kneeboard_units: "metric"
+tasks:
+  BAI: 360
+  BARCAP: 140
+  CAS: 360
+  Escort: 140
+  Fighter sweep: 140
+  Intercept: 140
+  OCA/Aircraft: 360
+  OCA/Runway: 210
+  Strike: 210
+  TARCAP: 140

@@ -15,3 +15,12 @@ max_range: 200
 variants:
   Su-25T Frogfoot: {}
 kneeboard_units: "metric"
+tasks:
+  BAI: 780
+  CAS: 780
+  DEAD: 420
+  OCA/Aircraft: 780
+  OCA/Runway: 490
+  SEAD: 140
+  SEAD Escort: 140
+  Strike: 490

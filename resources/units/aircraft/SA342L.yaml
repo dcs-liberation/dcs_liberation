@@ -20,3 +20,7 @@ role: Light Attack
 variants:
   SA 342L Gazelle: {}
 kneeboard_units: "metric"
+tasks:
+  BAI: 450
+  CAS: 450
+  OCA/Aircraft: 450

@@ -25,3 +25,8 @@ price: 14
 role: Attack/Transport
 variants:
   Mi-24V Hind-E: {}
+tasks:
+  Air Assault: 10
+  BAI: 400
+  CAS: 400
+  OCA/Aircraft: 400

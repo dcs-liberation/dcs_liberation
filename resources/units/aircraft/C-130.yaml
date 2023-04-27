@@ -3,3 +3,5 @@ price: 15
 max_range: 1000
 variants:
   C-130: null
+tasks:
+  Transport: 130

@@ -35,3 +35,12 @@ kneeboard_units: "metric"
 #   MissileToneVolume: 5
 #   MountSIRENA: false
 #   NAV_Initial_Hdg: 0
+tasks:
+  BAI: 370
+  BARCAP: 170
+  CAS: 370
+  Escort: 170
+  Fighter sweep: 170
+  Intercept: 170
+  OCA/Aircraft: 370
+  TARCAP: 170

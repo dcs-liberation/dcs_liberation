@@ -15,3 +15,14 @@ role: Fighter
 gunfighter: true
 variants:
   F-86F Sabre: {}
+tasks:
+  BAI: 250
+  BARCAP: 150
+  CAS: 250
+  Escort: 150
+  Fighter sweep: 150
+  Intercept: 150
+  OCA/Aircraft: 250
+  OCA/Runway: 180
+  Strike: 190
+  TARCAP: 150

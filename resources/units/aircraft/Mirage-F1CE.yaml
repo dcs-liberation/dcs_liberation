@@ -20,3 +20,14 @@ radios:
     namer: mirage-f1ce
     intra_flight_radio_index: 2
     inter_flight_radio_index: 1
+tasks:
+  BAI: 320
+  BARCAP: 310
+  CAS: 320
+  Escort: 310
+  Fighter sweep: 310
+  Intercept: 310
+  OCA/Aircraft: 320
+  OCA/Runway: 290
+  Strike: 290
+  TARCAP: 310

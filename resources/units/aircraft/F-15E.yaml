@@ -10,3 +10,15 @@ role: Multirole Strike Fighter
 max_range: 300
 variants:
   F-15E Strike Eagle: {}
+tasks:
+  BAI: 760
+  BARCAP: 240
+  CAS: 760
+  DEAD: 260
+  Escort: 240
+  Fighter sweep: 240
+  Intercept: 240
+  OCA/Aircraft: 760
+  OCA/Runway: 630
+  Strike: 640
+  TARCAP: 240

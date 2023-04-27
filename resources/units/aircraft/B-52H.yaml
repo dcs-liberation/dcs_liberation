@@ -12,3 +12,7 @@ role: Strategic Bomber
 max_range: 2000
 variants:
   B-52H Stratofortress: {}
+tasks:
+  DEAD: 210
+  OCA/Runway: 660
+  Strike: 690

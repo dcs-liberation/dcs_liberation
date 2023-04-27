@@ -53,3 +53,18 @@ utc_kneeboard: true
 #   HelmetMountedDevice: 1
 #   InnerBoard: 0
 #   OuterBoard: 0
+tasks:
+  Anti-ship: 150
+  BAI: 740
+  BARCAP: 450
+  CAS: 740
+  DEAD: 440
+  Escort: 450
+  Fighter sweep: 450
+  Intercept: 450
+  OCA/Aircraft: 740
+  OCA/Runway: 600
+  SEAD: 160
+  SEAD Escort: 160
+  Strike: 600
+  TARCAP: 450

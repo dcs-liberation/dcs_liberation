@@ -18,3 +18,11 @@ max_range: 300
 variants:
   Su-27 Flanker-B: {}
 kneeboard_units: "metric"
+tasks:
+  BARCAP: 480
+  Escort: 480
+  Fighter sweep: 480
+  Intercept: 480
+  OCA/Runway: 440
+  Strike: 440
+  TARCAP: 480

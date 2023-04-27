@@ -15,3 +15,17 @@ role: Carrier-based Attack/Light Fighter
 gunfighter: true
 variants:
   A-4E Skyhawk: {}
+tasks:
+  BAI: 660
+  BARCAP: 160
+  CAS: 660
+  DEAD: 390
+  Escort: 160
+  Fighter sweep: 160
+  Intercept: 160
+  OCA/Aircraft: 660
+  OCA/Runway: 360
+  SEAD: 110
+  SEAD Escort: 110
+  Strike: 360
+  TARCAP: 160

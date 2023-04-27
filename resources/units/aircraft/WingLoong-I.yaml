@@ -1,3 +1,7 @@
 price: 8
 variants:
   WingLoong-I: null
+tasks:
+  BAI: 20
+  CAS: 20
+  OCA/Aircraft: 20

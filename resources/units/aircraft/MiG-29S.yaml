@@ -29,3 +29,14 @@ max_range: 150
 variants:
   MiG-29S Fulcrum-C: {}
 kneeboard_units: "metric"
+tasks:
+  BAI: 550
+  BARCAP: 470
+  CAS: 550
+  Escort: 470
+  Fighter sweep: 470
+  Intercept: 470
+  OCA/Aircraft: 550
+  OCA/Runway: 430
+  Strike: 430
+  TARCAP: 470

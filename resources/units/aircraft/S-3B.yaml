@@ -18,3 +18,10 @@ price: 10
 role: Carrier-based Attack
 variants:
   S-3B Viking: {}
+tasks:
+  Anti-ship: 50
+  BAI: 570
+  CAS: 570
+  OCA/Aircraft: 570
+  OCA/Runway: 370
+  Strike: 370

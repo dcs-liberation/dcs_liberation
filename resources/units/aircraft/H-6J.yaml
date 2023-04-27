@@ -16,3 +16,11 @@ variants:
     origin: USSR/Russia
 # default_overrides:
 #   Belly_Bay_Door: false
+tasks:
+  Anti-ship: 160
+  BAI: 380
+  CAS: 380
+  DEAD: 180
+  OCA/Aircraft: 380
+  OCA/Runway: 640
+  Strike: 650

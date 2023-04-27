@@ -16,3 +16,17 @@ role: Fighter-Bomber
 max_range: 200
 variants:
   F-4C Phantom II: {}
+tasks:
+  BAI: 170
+  BARCAP: 210
+  CAS: 170
+  DEAD: 140
+  Escort: 210
+  Fighter sweep: 210
+  Intercept: 210
+  OCA/Aircraft: 170
+  OCA/Runway: 340
+  SEAD: 60
+  SEAD Escort: 60
+  Strike: 340
+  TARCAP: 210

@@ -53,3 +53,13 @@ radios:
 #   LaserCode100: 6
 #   MountNVG: false
 #   RocketBurst: 1
+tasks:
+  Anti-ship: 60
+  BAI: 690
+  CAS: 690
+  DEAD: 350
+  OCA/Aircraft: 690
+  OCA/Runway: 590
+  SEAD: 70
+  SEAD Escort: 70
+  Strike: 590

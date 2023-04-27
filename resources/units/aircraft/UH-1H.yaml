@@ -26,3 +26,9 @@ radios:
     namer: huey
     intra_flight_radio_index: 1
     inter_flight_radio_index: 1
+tasks:
+  Air Assault: 50
+  BAI: 210
+  CAS: 210
+  OCA/Aircraft: 210
+  Transport: 30

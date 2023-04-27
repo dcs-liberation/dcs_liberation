@@ -16,3 +16,14 @@ role: Multirole Fighter
 max_range: 200
 variants:
   Mirage-F1M-CE: {}
+tasks:
+  BAI: 290
+  BARCAP: 280
+  CAS: 290
+  Escort: 280
+  Fighter sweep: 280
+  Intercept: 280
+  OCA/Aircraft: 290
+  OCA/Runway: 260
+  Strike: 260
+  TARCAP: 280

@@ -16,3 +16,15 @@ max_range: 100
 gunfighter: true
 variants:
   F-104G Starfighter: {}
+tasks:
+  BAI: 190
+  BARCAP: 180
+  CAS: 190
+  DEAD: 120
+  Escort: 180
+  Fighter sweep: 180
+  Intercept: 180
+  OCA/Aircraft: 190
+  OCA/Runway: 110
+  Strike: 110
+  TARCAP: 180

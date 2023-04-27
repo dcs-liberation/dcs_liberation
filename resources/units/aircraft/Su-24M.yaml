@@ -16,3 +16,13 @@ variants:
   Su-24M Fencer-D: {}
   Su-24MK Fencer-D:
     introduced: 1988
+tasks:
+  Anti-ship: 130
+  BAI: 610
+  CAS: 610
+  DEAD: 330
+  OCA/Aircraft: 610
+  OCA/Runway: 510
+  SEAD: 50
+  SEAD Escort: 50
+  Strike: 510

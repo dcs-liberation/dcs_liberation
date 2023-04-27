@@ -14,3 +14,13 @@ variants:
 radios:
   intra_flight: R&S Series 6000
   inter_flight: R&S Series 6000
+tasks:
+  Anti-ship: 140
+  BAI: 710
+  CAS: 710
+  DEAD: 230
+  OCA/Aircraft: 710
+  OCA/Runway: 540
+  SEAD: 80
+  SEAD Escort: 80
+  Strike: 540

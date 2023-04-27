@@ -5,3 +5,4 @@ can_carry_crates: false
 variants:
   SA342Minigun: null
 kneeboard_units: "metric"
+tasks: {}

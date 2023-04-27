@@ -20,3 +20,9 @@ radios:
     # VHF because it's less contested, so intra-flight goes to COMM2.
     intra_flight_radio_index: 2
     inter_flight_radio_index: 1
+tasks:
+  BAI: 240
+  CAS: 240
+  OCA/Aircraft: 240
+  OCA/Runway: 200
+  Strike: 180

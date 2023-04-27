@@ -20,3 +20,6 @@ role: Heavy Bomber
 variants:
   B-17G Flying Fortress: {}
   Fortress Mk.III: {}
+tasks:
+  OCA/Runway: 150
+  Strike: 150

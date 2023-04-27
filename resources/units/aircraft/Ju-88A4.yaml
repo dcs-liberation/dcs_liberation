@@ -19,3 +19,11 @@ price: 14
 role: Tactical/Torpedo Bomber
 variants:
   Ju 88 A-4: {}
+tasks:
+  Anti-ship: 30
+  BAI: 150
+  CAS: 150
+  DEAD: 160
+  OCA/Aircraft: 150
+  OCA/Runway: 130
+  Strike: 130

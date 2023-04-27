@@ -24,3 +24,7 @@ radios:
   # communications with FAC and ground units, which don't currently have
   # radios assigned, so no channels to configure.
 kneeboard_units: "metric"
+tasks:
+  BAI: 430
+  CAS: 430
+  OCA/Aircraft: 430

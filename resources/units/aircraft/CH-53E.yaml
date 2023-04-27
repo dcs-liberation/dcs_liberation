@@ -5,3 +5,6 @@ description: The CH-53 is a military transport helicopter.
 price: 6
 variants:
   CH-53E: null
+tasks:
+  Air Assault: 100
+  Transport: 80

@@ -24,3 +24,5 @@ patrol:
   altitude: 12000
 variants:
   S-3B Tanker: {}
+tasks:
+  Refueling: 0

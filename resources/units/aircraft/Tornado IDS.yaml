@@ -12,3 +12,13 @@ price: 17
 role: Strike Fighter
 variants:
   Tornado IDS: {}
+tasks:
+  Anti-ship: 80
+  BAI: 720
+  CAS: 720
+  DEAD: 430
+  OCA/Aircraft: 720
+  OCA/Runway: 530
+  SEAD: 150
+  SEAD Escort: 150
+  Strike: 530
