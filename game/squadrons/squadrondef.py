@@ -6,7 +6,6 @@ from typing import Optional, TYPE_CHECKING
 
 import yaml
 
-from game.ato.ai_flight_planner_db import aircraft_for_task, tasks_for_aircraft
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons.operatingbases import OperatingBases
 from game.squadrons.pilot import Pilot
@@ -41,7 +40,7 @@ class SquadronDef:
         A squadron may be capable of performing a task even if it will not be
         automatically assigned to it.
         """
-        return self.aircraft in aircraft_for_task(task)
+        return self.aircraft.capable_of(task)
 
     def operates_from(self, control_point: ControlPoint) -> bool:
         if not control_point.can_operate(self.aircraft):
@@ -76,7 +75,7 @@ class SquadronDef:
             role=data["role"],
             aircraft=unit_type,
             livery=data.get("livery"),
-            auto_assignable_mission_types=set(tasks_for_aircraft(unit_type)),
+            auto_assignable_mission_types=set(unit_type.iter_task_capabilities()),
             operating_bases=OperatingBases.from_yaml(unit_type, data.get("bases", {})),
             female_pilot_percentage=female_pilot_percentage,
             pilot_pool=pilots,

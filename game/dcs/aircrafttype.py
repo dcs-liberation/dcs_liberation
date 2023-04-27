@@ -359,6 +359,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 capable.append(aircraft)
         return list(reversed(sorted(capable, key=lambda a: a.task_priority(task))))
 
+    def iter_task_capabilities(self) -> Iterator[FlightType]:
+        yield from self.task_priorities
+
     @staticmethod
     def each_dcs_type() -> Iterator[Type[FlyingType]]:
         yield from helicopter_map.values()

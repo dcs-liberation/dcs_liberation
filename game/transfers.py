@@ -41,7 +41,6 @@ from typing import Generic, Iterator, List, Optional, Sequence, TYPE_CHECKING, T
 
 from dcs.mapping import Point
 
-from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.ato.flight import Flight
 from game.ato.flighttype import FlightType
@@ -277,7 +276,7 @@ class AirliftPlanner:
     def compatible_with_mission(
         self, unit_type: AircraftType, airfield: ControlPoint
     ) -> bool:
-        if unit_type not in aircraft_for_task(FlightType.TRANSPORT):
+        if not unit_type.capable_of(FlightType.TRANSPORT):
             return False
         if not self.transfer.origin.can_operate(unit_type):
             return False

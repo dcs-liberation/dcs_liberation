@@ -4,7 +4,6 @@ import itertools
 from collections import defaultdict
 from typing import Iterator, Optional, Sequence, TYPE_CHECKING
 
-from game.ato.ai_flight_planner_db import aircraft_for_task
 from game.ato.closestairfields import ObjectiveDistanceCache
 from game.dcs.aircrafttype import AircraftType
 from .squadrondefloader import SquadronDefLoader
@@ -48,7 +47,7 @@ class AirWing:
         self, location: MissionTarget, task: FlightType, size: int, this_turn: bool
     ) -> list[Squadron]:
         airfield_cache = ObjectiveDistanceCache.get_closest_airfields(location)
-        best_aircraft = aircraft_for_task(task)
+        best_aircraft = AircraftType.priority_list_for_task(task)
         ordered: list[Squadron] = []
         for control_point in airfield_cache.operational_airfields:
             if control_point.captured != self.player:
@@ -79,7 +78,7 @@ class AirWing:
     def best_available_aircrafts_for(self, task: FlightType) -> list[AircraftType]:
         """Returns an ordered list of available aircrafts for the given task"""
         aircrafts = []
-        best_aircraft_for_task = aircraft_for_task(task)
+        best_aircraft_for_task = AircraftType.priority_list_for_task(task)
         for aircraft, squadrons in self.squadrons.items():
             for squadron in squadrons:
                 if squadron.untasked_aircraft and squadron.capable_of(task):
