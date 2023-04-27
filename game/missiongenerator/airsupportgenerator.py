@@ -15,7 +15,7 @@ from dcs.task import (
 )
 from dcs.unittype import UnitType
 
-from game.ato.ai_flight_planner_db import AEWC_CAPABLE
+from game.ato import FlightType
 from game.callsigns import callsign_for_support_unit
 from game.naming import namegen
 from game.radio.radios import RadioRegistry
@@ -165,7 +165,7 @@ class AirSupportGenerator:
             possible_awacs = [
                 a
                 for a in self.game.faction_for(player=True).aircrafts
-                if a in AEWC_CAPABLE
+                if a.capable_of(FlightType.AEWC)
             ]
 
             if not possible_awacs:

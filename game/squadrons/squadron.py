@@ -12,7 +12,6 @@ from faker import Faker
 from game.ato import Flight, FlightType, Package
 from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
-from ..ato.ai_flight_planner_db import aircraft_for_task
 from ..db.database import Database
 from ..utils import meters
 
@@ -253,7 +252,7 @@ class Squadron:
         A squadron may be capable of performing a task even if it will not be
         automatically assigned to it.
         """
-        return self.aircraft in aircraft_for_task(task)
+        return self.aircraft.capable_of(task)
 
     def can_auto_assign(self, task: FlightType) -> bool:
         """Returns True if the squadron may be automatically assigned the given task.

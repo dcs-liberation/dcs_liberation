@@ -24,8 +24,8 @@ class FlightType(Enum):
     * Implementations of MissionTarget.mission_types: A mission type can only be planned
       against compatible targets. The mission_types method of each target class defines
       which missions may target it.
-    * ai_flight_planner_db.py: Add the new mission type to aircraft_for_task that
-      returns the list of compatible aircraft in order of preference.
+    * resources/units/aircraft/*.yaml: Assign aircraft weight for the new task type in
+      the `tasks` dict for all capable aircraft.
 
     You may also need to update:
 

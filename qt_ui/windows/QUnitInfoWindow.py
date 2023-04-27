@@ -4,8 +4,6 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QDialog, QFrame, QGridLayout, QLabel, QTextBrowser
 
-import game.ato.ai_flight_planner_db
-from game.ato.flighttype import FlightType
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.unittype import UnitType
@@ -78,9 +76,8 @@ class QUnitInfoWindow(QDialog):
 
         # If it's an aircraft, include the task list.
         if isinstance(unit_type, AircraftType):
-            self.tasks_box = QLabel(
-                f"<b>In-Game Tasks:</b> {self.generateAircraftTasks()}"
-            )
+            tasks = ", ".join(str(t) for t in unit_type.iter_task_capabilities())
+            self.tasks_box = QLabel(f"<b>In-Game Tasks:</b> {tasks}")
             self.tasks_box.setProperty("style", "info-element")
             self.gridLayout.addWidget(self.tasks_box, 2, 0)
 
@@ -95,30 +92,3 @@ class QUnitInfoWindow(QDialog):
 
         self.layout.addLayout(self.gridLayout, 1, 0)
         self.setLayout(self.layout)
-
-    def generateAircraftTasks(self) -> str:
-        aircraft_tasks = ""
-        unit_type = self.unit_type.dcs_unit_type
-        if unit_type in game.ato.ai_flight_planner_db.CAP_CAPABLE:
-            aircraft_tasks = (
-                aircraft_tasks
-                + f"{FlightType.BARCAP}, {FlightType.ESCORT}, {FlightType.INTERCEPTION}, {FlightType.SWEEP}, {FlightType.TARCAP}, "
-            )
-        if unit_type in game.ato.ai_flight_planner_db.CAS_CAPABLE:
-            aircraft_tasks = (
-                aircraft_tasks
-                + f"{FlightType.CAS}, {FlightType.BAI}, {FlightType.OCA_AIRCRAFT}, "
-            )
-        if unit_type in game.ato.ai_flight_planner_db.SEAD_CAPABLE:
-            aircraft_tasks = aircraft_tasks + f"{FlightType.SEAD}, "
-        if unit_type in game.ato.ai_flight_planner_db.DEAD_CAPABLE:
-            aircraft_tasks = aircraft_tasks + f"{FlightType.DEAD}, "
-        if unit_type in game.ato.ai_flight_planner_db.ANTISHIP_CAPABLE:
-            aircraft_tasks = aircraft_tasks + f"{FlightType.ANTISHIP}, "
-        if unit_type in game.ato.ai_flight_planner_db.RUNWAY_ATTACK_CAPABLE:
-            aircraft_tasks = aircraft_tasks + f"{FlightType.OCA_RUNWAY}, "
-        if unit_type in game.ato.ai_flight_planner_db.STRIKE_CAPABLE:
-            aircraft_tasks = aircraft_tasks + f"{FlightType.STRIKE}, "
-        if unit_type in game.ato.ai_flight_planner_db.REFUELING_CAPABALE:
-            aircraft_tasks = aircraft_tasks + f"{FlightType.REFUELING}, "
-        return aircraft_tasks[:-2]
