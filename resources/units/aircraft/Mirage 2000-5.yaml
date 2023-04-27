@@ -15,3 +15,9 @@ role: Multirole Fighter
 max_range: 400
 variants:
   Mirage 2000-5: {}
+tasks:
+  BARCAP: 340
+  Escort: 340
+  Fighter sweep: 340
+  Intercept: 340
+  TARCAP: 340

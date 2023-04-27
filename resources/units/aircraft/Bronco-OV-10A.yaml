@@ -13,3 +13,10 @@ role: COIN / FAC /Light Attack
 gunfighter: true
 variants:
   OV-10A Bronco: {}
+tasks:
+  BAI: 650
+  CAS: 650
+  DEAD: 60
+  OCA/Aircraft: 650
+  OCA/Runway: 330
+  Strike: 330

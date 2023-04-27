@@ -20,3 +20,7 @@ price: 6
 role: Light Attack/Forward Air Control
 variants:
   OH-58D Kiowa Warrior: {}
+tasks:
+  BAI: 470
+  CAS: 470
+  OCA/Aircraft: 470

@@ -19,3 +19,12 @@ variants:
   I-16 Ishak: {}
 # default_overrides:
 #   landingTorch: false
+tasks:
+  BAI: 60
+  BARCAP: 0
+  CAS: 60
+  Escort: 0
+  Fighter sweep: 0
+  Intercept: 0
+  OCA/Aircraft: 60
+  TARCAP: 0

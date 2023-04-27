@@ -17,3 +17,13 @@ variants:
   Su-17M4 Fitter-K: {}
   Su-22M4 Fitter-K:
     introduced: 1983
+tasks:
+  Anti-ship: 120
+  BAI: 600
+  CAS: 600
+  DEAD: 320
+  OCA/Aircraft: 600
+  OCA/Runway: 520
+  SEAD: 40
+  SEAD Escort: 40
+  Strike: 520

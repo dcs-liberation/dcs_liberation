@@ -31,3 +31,15 @@ radios:
     type: SCR-522
     namer: SCR-522
 kneeboard_units: "imperial"
+tasks:
+  BAI: 110
+  BARCAP: 110
+  CAS: 110
+  DEAD: 80
+  Escort: 110
+  Fighter sweep: 110
+  Intercept: 110
+  OCA/Aircraft: 110
+  OCA/Runway: 70
+  Strike: 70
+  TARCAP: 110

@@ -21,3 +21,15 @@ variants:
 kneeboard_units: "metric"
 # default_overrides:
 #   FW_MW50TankContents: 1
+tasks:
+  BAI: 40
+  BARCAP: 50
+  CAS: 40
+  DEAD: 10
+  Escort: 50
+  Fighter sweep: 50
+  Intercept: 50
+  OCA/Aircraft: 40
+  OCA/Runway: 10
+  Strike: 10
+  TARCAP: 50

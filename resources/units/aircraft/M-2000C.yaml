@@ -37,3 +37,14 @@ radios:
 #   ReadyALCM: true
 #   RocketBurst: 6
 #   WpBullseye: 0
+tasks:
+  BAI: 350
+  BARCAP: 230
+  CAS: 350
+  Escort: 230
+  Fighter sweep: 230
+  Intercept: 230
+  OCA/Aircraft: 350
+  OCA/Runway: 320
+  Strike: 320
+  TARCAP: 230

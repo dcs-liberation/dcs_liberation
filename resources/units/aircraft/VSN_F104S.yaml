@@ -15,3 +15,9 @@ max_range: 100
 gunfighter: true
 variants:
   F-104S Starfighter: {}
+tasks:
+  BARCAP: 190
+  Escort: 190
+  Fighter sweep: 190
+  Intercept: 190
+  TARCAP: 190

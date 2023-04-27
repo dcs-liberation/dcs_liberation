@@ -3,3 +3,5 @@ price: 18
 max_range: 2000
 variants:
   C-17A: null
+tasks:
+  Transport: 150

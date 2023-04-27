@@ -11,3 +11,5 @@ max_range: 800
 variants:
   C-47 Skytrain: null
   C-47 Dakota: null
+tasks:
+  Transport: 90

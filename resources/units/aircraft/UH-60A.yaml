@@ -4,3 +4,6 @@ cabin_size: 10
 can_carry_crates: true
 variants:
   UH-60A: null
+tasks:
+  Air Assault: 60
+  Transport: 40

@@ -15,3 +15,7 @@ price: 40
 role: Strategic/Maritime Strike Bomber
 variants:
   Tu-22M3 Backfire-C: {}
+tasks:
+  Anti-ship: 170
+  OCA/Runway: 650
+  Strike: 660

@@ -4,3 +4,6 @@ can_carry_crates: true
 price: 6
 variants:
   Mi-26: null
+tasks:
+  Air Assault: 30
+  Transport: 0

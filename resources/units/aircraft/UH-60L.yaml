@@ -14,3 +14,6 @@ price: 4
 role: Transport
 variants:
   UH-60L: {}
+tasks:
+  Air Assault: 80
+  Transport: 60

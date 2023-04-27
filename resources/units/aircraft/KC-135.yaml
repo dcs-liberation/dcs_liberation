@@ -15,3 +15,5 @@ patrol:
   altitude: 24000
 variants:
   KC-135 Stratotanker: {}
+tasks:
+  Refueling: 50

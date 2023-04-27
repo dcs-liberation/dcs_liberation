@@ -16,3 +16,6 @@ role: Supersonic Strategic Bomber
 max_range: 2000
 variants:
   Tu-160 Blackjack: {}
+tasks:
+  DEAD: 200
+  Strike: 680

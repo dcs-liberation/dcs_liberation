@@ -11,3 +11,16 @@ kneeboard_units: "imperial"
 #   Flare_Gun: 1
 #   ResinLights: 0.15
 #   SoloFlight: false
+tasks:
+  Anti-ship: 20
+  BAI: 70
+  BARCAP: 70
+  CAS: 70
+  DEAD: 30
+  Escort: 70
+  Fighter sweep: 70
+  Intercept: 70
+  OCA/Aircraft: 70
+  OCA/Runway: 30
+  Strike: 30
+  TARCAP: 70

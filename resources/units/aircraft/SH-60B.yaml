@@ -22,3 +22,7 @@ price: 6
 role: Transport/Anti-Ship
 variants:
   SH-60B Seahawk: {}
+tasks:
+  Air Assault: 70
+  Anti-ship: 0
+  Transport: 50

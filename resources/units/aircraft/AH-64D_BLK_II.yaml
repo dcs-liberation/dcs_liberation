@@ -34,3 +34,7 @@ radios:
     namer: apache
     intra_flight_radio_index: 2
     inter_flight_radio_index: 2
+tasks:
+  BAI: 510
+  CAS: 510
+  OCA/Aircraft: 510

@@ -7,3 +7,5 @@ patrol:
   altitude: 21000
 variants:
   IL-78M: null
+tasks:
+  Refueling: 30

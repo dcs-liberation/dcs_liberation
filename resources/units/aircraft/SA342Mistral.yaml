@@ -20,3 +20,4 @@ role: Light Attack
 variants:
   SA 342M Gazelle Mistral: {}
 kneeboard_units: "metric"
+tasks: {}

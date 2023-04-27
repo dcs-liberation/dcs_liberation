@@ -3,3 +3,5 @@ price: 15
 max_range: 800
 variants:
   An-26B: null
+tasks:
+  Transport: 110

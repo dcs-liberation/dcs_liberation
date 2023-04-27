@@ -1,3 +1,7 @@
 price: 10
 variants:
   MQ-9 Reaper: null
+tasks:
+  BAI: 10
+  CAS: 10
+  OCA/Aircraft: 10

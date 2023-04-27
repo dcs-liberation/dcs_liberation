@@ -6,3 +6,5 @@ patrol:
   altitude: 33000
 variants:
   A-50: null
+tasks:
+  AEW&C: 10

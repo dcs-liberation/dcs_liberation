@@ -15,3 +15,10 @@ max_range: 100
 gunfighter: true
 variants:
   F-104S Starfighter A/G: {}
+tasks:
+  BAI: 200
+  CAS: 200
+  DEAD: 130
+  OCA/Aircraft: 200
+  OCA/Runway: 120
+  Strike: 120

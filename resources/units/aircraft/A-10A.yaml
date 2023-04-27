@@ -16,3 +16,7 @@ price: 12
 role: Close Air Support/Attack
 variants:
   A-10A Thunderbolt II: {}
+tasks:
+  BAI: 680
+  CAS: 680
+  OCA/Aircraft: 680

@@ -21,3 +21,7 @@ price: 20
 role: Attack
 variants:
   AH-64D Apache Longbow (AI): {}
+tasks:
+  BAI: 500
+  CAS: 500
+  OCA/Aircraft: 500

@@ -3,3 +3,11 @@ price: 15
 max_range: 350
 variants:
   F-16A: null
+tasks:
+  BARCAP: 420
+  Escort: 420
+  Fighter sweep: 420
+  Intercept: 420
+  OCA/Runway: 570
+  Strike: 570
+  TARCAP: 420

@@ -17,3 +17,5 @@ price: 35
 role: Stealth Attack
 variants:
   F-117A Nighthawk: {}
+tasks:
+  Strike: 710

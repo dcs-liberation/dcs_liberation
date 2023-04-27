@@ -15,3 +15,7 @@ price: 16
 role: Attack
 variants:
   Mi-28N Havoc: {}
+tasks:
+  BAI: 420
+  CAS: 420
+  OCA/Aircraft: 420

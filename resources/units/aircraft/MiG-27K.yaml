@@ -16,3 +16,12 @@ price: 15
 role: Attack
 variants:
   MiG-27K Flogger-J2: {}
+tasks:
+  BAI: 540
+  CAS: 540
+  DEAD: 290
+  OCA/Aircraft: 540
+  OCA/Runway: 230
+  SEAD: 10
+  SEAD Escort: 10
+  Strike: 230

@@ -28,3 +28,9 @@ role: Interceptor
 max_range: 500
 variants:
   MiG-25PD Foxbat-E: {}
+tasks:
+  BARCAP: 390
+  Escort: 390
+  Fighter sweep: 390
+  Intercept: 390
+  TARCAP: 390

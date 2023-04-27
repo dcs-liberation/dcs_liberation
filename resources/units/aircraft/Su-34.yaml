@@ -20,3 +20,13 @@ role: Fighter-Bomber/Strike Fighter
 max_range: 300
 variants:
   Su-34 Fullback: {}
+tasks:
+  Anti-ship: 100
+  BAI: 800
+  CAS: 800
+  DEAD: 310
+  OCA/Aircraft: 800
+  OCA/Runway: 470
+  SEAD: 30
+  SEAD Escort: 30
+  Strike: 470

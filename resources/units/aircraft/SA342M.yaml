@@ -23,3 +23,7 @@ variants:
     manufacturer: Westland
   SA 342M Gazelle: {}
 kneeboard_units: "metric"
+tasks:
+  BAI: 460
+  CAS: 460
+  OCA/Aircraft: 460

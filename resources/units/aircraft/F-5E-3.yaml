@@ -37,3 +37,14 @@ variants:
 #   LaserCode1: 8
 #   LaserCode10: 8
 #   LaserCode100: 6
+tasks:
+  BAI: 260
+  BARCAP: 200
+  CAS: 260
+  Escort: 200
+  Fighter sweep: 200
+  Intercept: 200
+  OCA/Aircraft: 260
+  OCA/Runway: 190
+  Strike: 200
+  TARCAP: 200

@@ -19,3 +19,17 @@ variants:
   F-4EJ Kai Phantom II: {}
   F-4F Phantom II: {}
   Phantom F.3: {}
+tasks:
+  BAI: 580
+  BARCAP: 410
+  CAS: 580
+  DEAD: 400
+  Escort: 410
+  Fighter sweep: 410
+  Intercept: 410
+  OCA/Aircraft: 580
+  OCA/Runway: 400
+  SEAD: 120
+  SEAD Escort: 120
+  Strike: 400
+  TARCAP: 410

@@ -29,3 +29,14 @@ max_range: 150
 variants:
   MiG-29A Fulcrum-A: {}
 kneeboard_units: "metric"
+tasks:
+  BAI: 530
+  BARCAP: 370
+  CAS: 530
+  Escort: 370
+  Fighter sweep: 370
+  Intercept: 370
+  OCA/Aircraft: 530
+  OCA/Runway: 410
+  Strike: 410
+  TARCAP: 370

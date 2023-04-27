@@ -12,3 +12,12 @@ price: 17
 role: Strike Fighter
 variants:
   Tornado GR4: {}
+tasks:
+  Anti-ship: 70
+  BAI: 730
+  CAS: 730
+  DEAD: 280
+  OCA/Aircraft: 730
+  SEAD: 0
+  SEAD Escort: 0
+  Strike: 620
