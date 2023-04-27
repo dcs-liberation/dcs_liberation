@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC
-from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, ClassVar, Generic, Iterator, Type, TypeVar
+from typing import ClassVar, Generic, Iterator, Self, Type, TypeVar
 
 from dcs.unittype import UnitType as DcsUnitType
 
@@ -25,10 +24,6 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
     price: int
     unit_class: UnitClass
 
-    _by_name: ClassVar[dict[str, UnitType[Any]]] = {}
-    _by_unit_type: ClassVar[dict[Type[DcsUnitType], list[UnitType[Any]]]] = defaultdict(
-        list
-    )
     _loaded: ClassVar[bool] = False
 
     def __str__(self) -> str:
@@ -39,16 +34,15 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
         return self.dcs_unit_type.id
 
     @classmethod
-    def register(cls, unit_type: UnitType[Any]) -> None:
-        cls._by_name[unit_type.name] = unit_type
-        cls._by_unit_type[unit_type.dcs_unit_type].append(unit_type)
-
-    @classmethod
-    def named(cls, name: str) -> UnitType[Any]:
+    def register(cls, unit_type: Self) -> None:
         raise NotImplementedError
 
     @classmethod
-    def for_dcs_type(cls, dcs_unit_type: DcsUnitTypeT) -> Iterator[UnitType[Any]]:
+    def named(cls, name: str) -> Self:
+        raise NotImplementedError
+
+    @classmethod
+    def for_dcs_type(cls, dcs_unit_type: DcsUnitTypeT) -> Iterator[Self]:
         raise NotImplementedError
 
     @staticmethod
@@ -56,7 +50,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
         raise NotImplementedError
 
     @classmethod
-    def _each_variant_of(cls, unit: DcsUnitTypeT) -> Iterator[UnitType[Any]]:
+    def _each_variant_of(cls, unit: DcsUnitTypeT) -> Iterator[Self]:
         raise NotImplementedError
 
     @classmethod

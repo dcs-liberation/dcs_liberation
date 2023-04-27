@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterator, Optional, Type
+from typing import Any, ClassVar, Iterator, Optional, Type
 
 import yaml
 from dcs.unittype import VehicleType
@@ -59,21 +60,27 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
     # Some units like few Launchers have to be placed backwards to be able to fire.
     reversed_heading: bool = False
 
+    _by_name: ClassVar[dict[str, GroundUnitType]] = {}
+    _by_unit_type: ClassVar[
+        dict[type[VehicleType], list[GroundUnitType]]
+    ] = defaultdict(list)
+
+    @classmethod
+    def register(cls, unit_type: GroundUnitType) -> None:
+        cls._by_name[unit_type.name] = unit_type
+        cls._by_unit_type[unit_type.dcs_unit_type].append(unit_type)
+
     @classmethod
     def named(cls, name: str) -> GroundUnitType:
         if not cls._loaded:
             cls._load_all()
-        unit = cls._by_name[name]
-        assert isinstance(unit, GroundUnitType)
-        return unit
+        return cls._by_name[name]
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: Type[VehicleType]) -> Iterator[GroundUnitType]:
         if not cls._loaded:
             cls._load_all()
-        for unit in cls._by_unit_type[dcs_unit_type]:
-            assert isinstance(unit, GroundUnitType)
-            yield unit
+        yield from cls._by_unit_type[dcs_unit_type]
 
     @staticmethod
     def each_dcs_type() -> Iterator[Type[VehicleType]]:
