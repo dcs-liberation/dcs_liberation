@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from dataclasses import dataclass
 from functools import cached_property
-from typing import ClassVar, Generic, Iterator, Self, Type, TypeVar
+from typing import Any, ClassVar, Generic, Iterator, Self, Type, TypeVar
 
 from dcs.unittype import UnitType as DcsUnitType
 
@@ -41,6 +41,20 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
     def named(cls, name: str) -> Self:
         raise NotImplementedError
 
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        # Update any existing models with new data on load.
+        updated = self.named(state["name"])
+        state.update(updated.__dict__)
+        self.__dict__.update(state)
+
+    def __getstate__(self) -> dict[str, Any]:
+        state = self.__dict__.copy()
+        # Does not need to be preserved because __setstate__ will merge the new data
+        # with this object on load, and we can't necessarily pickle the DCS type because
+        # it might be dynamically loaded from a mod.
+        del state["dcs_unit_type"]
+        return state
+
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: DcsUnitTypeT) -> Iterator[Self]:
         raise NotImplementedError
@@ -54,7 +68,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
         raise NotImplementedError
 
     @classmethod
-    def _load_all(cls) -> None:
+    def load_all(cls) -> None:
         for unit_type in cls.each_dcs_type():
             for data in cls._each_variant_of(unit_type):
                 cls.register(data)
@@ -67,7 +81,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
     @classmethod
     def exists(cls, name: str) -> bool:
         if not cls._loaded:
-            cls._load_all()
+            cls.load_all()
         try:
             cls.named(name)
             return True

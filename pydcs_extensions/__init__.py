@@ -1,4 +1,4 @@
-from .a4ec import *
+from game.modding.modloader import ModLoader
 from .f104 import *
 from .f22a import *
 from .f4 import *
@@ -18,3 +18,4 @@ def load_mods() -> None:
     from removing `import pydcs_extensions` when it is "unused", because mod imports
     have side effects (unit types are registered with pydcs).
     """
+    ModLoader().load_mods()

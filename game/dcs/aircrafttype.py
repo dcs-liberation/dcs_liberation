@@ -326,28 +326,22 @@ class AircraftType(UnitType[Type[FlyingType]]):
     def task_priority(self, task: FlightType) -> int:
         return self.task_priorities[task]
 
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        # Update any existing models with new data on load.
-        updated = AircraftType.named(state["name"])
-        state.update(updated.__dict__)
-        self.__dict__.update(state)
-
     @classmethod
     def named(cls, name: str) -> AircraftType:
         if not cls._loaded:
-            cls._load_all()
+            cls.load_all()
         return cls._by_name[name]
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: Type[FlyingType]) -> Iterator[AircraftType]:
         if not cls._loaded:
-            cls._load_all()
+            cls.load_all()
         yield from cls._by_unit_type[dcs_unit_type]
 
     @classmethod
     def iter_all(cls) -> Iterator[AircraftType]:
         if not cls._loaded:
-            cls._load_all()
+            cls.load_all()
         yield from cls._by_name.values()
 
     @classmethod
@@ -385,21 +379,36 @@ class AircraftType(UnitType[Type[FlyingType]]):
                     )
 
     @classmethod
-    def _each_variant_of(cls, aircraft: Type[FlyingType]) -> Iterator[AircraftType]:
-        from game.ato.flighttype import FlightType
+    def register_from_file(cls, path: Path) -> None:
+        try:
+            dcs_type = plane_map[path.stem]
+        except KeyError:
+            dcs_type = helicopter_map[path.stem]
 
+        for variant in cls._each_variant_in_file(dcs_type, path):
+            cls.register(variant)
+
+    @classmethod
+    def _each_variant_of(cls, aircraft: Type[FlyingType]) -> Iterator[AircraftType]:
         data_path = Path("resources/units/aircraft") / f"{aircraft.id}.yaml"
         if not data_path.exists():
             logging.warning(f"No data for {aircraft.id}; it will not be available")
             return
+        yield from cls._each_variant_in_file(aircraft, data_path)
 
-        with data_path.open(encoding="utf-8") as data_file:
+    @classmethod
+    def _each_variant_in_file(
+        cls, aircraft: type[FlyingType], path: Path
+    ) -> Iterator[AircraftType]:
+        from game.ato import FlightType
+
+        with path.open(encoding="utf-8") as data_file:
             data = yaml.safe_load(data_file)
 
         try:
             price = data["price"]
         except KeyError as ex:
-            raise KeyError(f"Missing required price field: {data_path}") from ex
+            raise KeyError(f"Missing required price field: {path}") from ex
 
         radio_config = RadioConfig.from_data(data.get("radios", {}))
         patrol_config = PatrolConfig.from_data(data.get("patrol", {}))
@@ -442,7 +451,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
         prop_overrides = data.get("default_overrides")
         if prop_overrides is not None:
-            cls._set_props_overrides(prop_overrides, aircraft, data_path)
+            cls._set_props_overrides(prop_overrides, aircraft, path)
 
         task_priorities: dict[FlightType, int] = {}
         for task_name, priority in data.get("tasks", {}).items():

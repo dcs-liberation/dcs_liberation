@@ -29,13 +29,13 @@ class ShipUnitType(UnitType[Type[ShipType]]):
     @classmethod
     def named(cls, name: str) -> ShipUnitType:
         if not cls._loaded:
-            cls._load_all()
+            cls.load_all()
         return cls._by_name[name]
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: Type[ShipType]) -> Iterator[ShipUnitType]:
         if not cls._loaded:
-            cls._load_all()
+            cls.load_all()
         yield from cls._by_unit_type[dcs_unit_type]
 
     @staticmethod
