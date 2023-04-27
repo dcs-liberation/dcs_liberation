@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from functools import cached_property
+from functools import cache, cached_property
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Iterator, Optional, TYPE_CHECKING, Type
 
@@ -349,6 +349,15 @@ class AircraftType(UnitType[Type[FlyingType]]):
         if not cls._loaded:
             cls._load_all()
         yield from cls._by_name.values()
+
+    @classmethod
+    @cache
+    def priority_list_for_task(cls, task: FlightType) -> list[AircraftType]:
+        capable = []
+        for aircraft in cls.iter_all():
+            if aircraft.capable_of(task):
+                capable.append(aircraft)
+        return list(reversed(sorted(capable, key=lambda a: a.task_priority(task))))
 
     @staticmethod
     def each_dcs_type() -> Iterator[Type[FlyingType]]:
