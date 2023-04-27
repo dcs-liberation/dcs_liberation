@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import logging
+from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional, TYPE_CHECKING, Type
+from typing import Any, ClassVar, Dict, Iterator, Optional, TYPE_CHECKING, Type
 
 import yaml
 from dcs.helicopters import helicopter_map
@@ -196,6 +197,16 @@ class AircraftType(UnitType[Type[FlyingType]]):
     # will be set to true for helos by default
     can_carry_crates: bool
 
+    _by_name: ClassVar[dict[str, AircraftType]] = {}
+    _by_unit_type: ClassVar[dict[type[FlyingType], list[AircraftType]]] = defaultdict(
+        list
+    )
+
+    @classmethod
+    def register(cls, unit_type: AircraftType) -> None:
+        cls._by_name[unit_type.name] = unit_type
+        cls._by_unit_type[unit_type.dcs_unit_type].append(unit_type)
+
     @property
     def flyable(self) -> bool:
         return self.dcs_unit_type.flyable
@@ -316,17 +327,13 @@ class AircraftType(UnitType[Type[FlyingType]]):
     def named(cls, name: str) -> AircraftType:
         if not cls._loaded:
             cls._load_all()
-        unit = cls._by_name[name]
-        assert isinstance(unit, AircraftType)
-        return unit
+        return cls._by_name[name]
 
     @classmethod
     def for_dcs_type(cls, dcs_unit_type: Type[FlyingType]) -> Iterator[AircraftType]:
         if not cls._loaded:
             cls._load_all()
-        for unit in cls._by_unit_type[dcs_unit_type]:
-            assert isinstance(unit, AircraftType)
-            yield unit
+        yield from cls._by_unit_type[dcs_unit_type]
 
     @staticmethod
     def each_dcs_type() -> Iterator[Type[FlyingType]]:
