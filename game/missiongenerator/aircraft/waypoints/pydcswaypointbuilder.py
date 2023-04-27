@@ -31,6 +31,7 @@ class PydcsWaypointBuilder:
         now: datetime,
         mission_data: MissionData,
         unit_map: UnitMap,
+        generated_waypoint_idx: int,
     ) -> None:
         self.waypoint = waypoint
         self.group = group
@@ -40,6 +41,7 @@ class PydcsWaypointBuilder:
         self.now = now
         self.mission_data = mission_data
         self.unit_map = unit_map
+        self.generated_waypoint_idx = generated_waypoint_idx
 
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(

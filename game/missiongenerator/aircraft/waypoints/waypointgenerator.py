@@ -80,7 +80,7 @@ class WaypointGenerator:
                     # us, but we do need to configure the tasks for it so that mid-
                     # mission aircraft starting at a waypoint with tasks behave
                     # correctly.
-                    self.builder_for_waypoint(point).add_tasks(self.group.points[0])
+                    self.builder_for_waypoint(point, 1).add_tasks(self.group.points[0])
                 if not self.flight.state.has_passed_waypoint(point):
                     filtered_points.append(point)
             else:
@@ -110,7 +110,10 @@ class WaypointGenerator:
                 ]
 
         for idx, point in enumerate(filtered_points):
-            self.builder_for_waypoint(point).build()
+            # We add 2 to idx to get the generated waypoint index as
+            # 1) pydcs seems to decrement the index by 1 and
+            # 2) DCS starts the first waypoint at index 1 as 0 is the starting position
+            self.builder_for_waypoint(point, idx + 2).build()
 
         # Set here rather than when the FlightData is created so they waypoints
         # have their TOTs and fuel minimums set. Once we're more confident in our fuel
@@ -120,7 +123,9 @@ class WaypointGenerator:
         self._estimate_min_fuel_for(waypoints)
         return mission_start_time, waypoints
 
-    def builder_for_waypoint(self, waypoint: FlightWaypoint) -> PydcsWaypointBuilder:
+    def builder_for_waypoint(
+        self, waypoint: FlightWaypoint, generated_waypoint_index: int
+    ) -> PydcsWaypointBuilder:
         builders = {
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
@@ -151,6 +156,7 @@ class WaypointGenerator:
             self.time,
             self.mission_data,
             self.unit_map,
+            generated_waypoint_index,
         )
 
     def _estimate_min_fuel_for(self, waypoints: list[FlightWaypoint]) -> None:
