@@ -22,3 +22,4 @@ tasks:
   OCA/Runway: 630
   Strike: 640
   TARCAP: 240
+has_built_in_target_pod: true

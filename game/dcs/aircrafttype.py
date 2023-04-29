@@ -200,6 +200,11 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     task_priorities: dict[FlightType, int]
 
+    # Set to True when aircraft mounts a targeting pod by default i.e. the pod does
+    # not take up a weapons station. If True, do not replace LGBs with dumb bombs
+    # when no TGP is mounted on any station.
+    has_built_in_target_pod: bool
+
     _by_name: ClassVar[dict[str, AircraftType]] = {}
     _by_unit_type: ClassVar[dict[type[FlyingType], list[AircraftType]]] = defaultdict(
         list
@@ -480,6 +485,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 cabin_size=data.get("cabin_size", 10 if aircraft.helicopter else 0),
                 can_carry_crates=data.get("can_carry_crates", aircraft.helicopter),
                 task_priorities=task_priorities,
+                has_built_in_target_pod=data.get("has_built_in_target_pod", False),
             )
 
     def __hash__(self) -> int:

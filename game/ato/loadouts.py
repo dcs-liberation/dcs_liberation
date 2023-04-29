@@ -92,6 +92,9 @@ class Loadout:
         if self.has_weapon_of_type(WeaponType.TGP):
             return
 
+        if unit_type.has_built_in_target_pod:
+            return
+
         new_pylons = dict(self.pylons)
         for pylon_number, weapon in self.pylons.items():
             if weapon is not None and weapon.weapon_group.type is WeaponType.LGB:
