@@ -6,7 +6,11 @@ from game.ato.flight import Flight
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.package import Package
+from game.utils import Distance
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import QWaypointItem
+
+
+HEADER_LABELS = ["Name", "Alt (ft)", "Alt Type", "TOT/DEPART"]
 
 
 class QFlightWaypointList(QTableView):
@@ -16,8 +20,9 @@ class QFlightWaypointList(QTableView):
         self.flight = flight
 
         self.model = QStandardItemModel(self)
+        self.model.itemChanged.connect(self.on_changed)
         self.setModel(self.model)
-        self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
+        self.model.setHorizontalHeaderLabels(HEADER_LABELS)
 
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
@@ -27,17 +32,21 @@ class QFlightWaypointList(QTableView):
             self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select
         )
 
-    def update_list(self):
+    def update_list(self) -> None:
+        # disconnect itemChanged signal from handler slot for making altitude changes
+        # in advance updating waypoint list
+        self.model.itemChanged.disconnect(self.on_changed)
+
         # We need to keep just the row and rebuild the index later because the
         # QModelIndex will not be valid after the model is cleared.
         current_index = self.currentIndex().row()
         self.model.clear()
 
-        self.model.setHorizontalHeaderLabels(["Name", "Alt", "TOT/DEPART"])
+        self.model.setHorizontalHeaderLabels(HEADER_LABELS)
 
         waypoints = self.flight.flight_plan.waypoints
         for row, waypoint in enumerate(waypoints):
-            self.add_waypoint_row(row, self.flight, waypoint)
+            self._add_waypoint_row(row, self.flight, waypoint)
         self.selectionModel().setCurrentIndex(
             self.model.index(current_index, 0), QItemSelectionModel.Select
         )
@@ -47,7 +56,10 @@ class QFlightWaypointList(QTableView):
             total_column_width += self.columnWidth(i) + self.lineWidth()
         self.setFixedWidth(total_column_width)
 
-    def add_waypoint_row(
+        # reconnect itemChanged signal to handler slot for making altitude changes
+        self.model.itemChanged.connect(self.on_changed)
+
+    def _add_waypoint_row(
         self, row: int, flight: Flight, waypoint: FlightWaypoint
     ) -> None:
         self.model.insertRow(self.model.rowCount())
@@ -55,15 +67,28 @@ class QFlightWaypointList(QTableView):
         self.model.setItem(row, 0, QWaypointItem(waypoint, row))
 
         altitude = int(waypoint.alt.feet)
-        altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
-        altitude_item = QStandardItem(f"{altitude} ft {altitude_type}")
-        altitude_item.setEditable(False)
+        altitude_item = QStandardItem(f"{altitude}")
+        altitude_item.setEditable(True)
         self.model.setItem(row, 1, altitude_item)
+
+        altitude_type = "AGL" if waypoint.alt_type == "RADIO" else "MSL"
+        altitude_type_item = QStandardItem(f"{altitude_type}")
+        altitude_type_item.setEditable(False)
+        self.model.setItem(row, 2, altitude_type_item)
 
         tot = self.tot_text(flight, waypoint)
         tot_item = QStandardItem(tot)
         tot_item.setEditable(False)
-        self.model.setItem(row, 2, tot_item)
+        self.model.setItem(row, 3, tot_item)
+
+    def on_changed(self) -> None:
+        for i in range(self.model.rowCount()):
+            altitude = self.model.item(i, 1).text()
+            try:
+                altitude_feet = float(altitude)
+            except:
+                continue
+            self.flight.flight_plan.waypoints[i].alt = Distance.from_feet(altitude_feet)
 
     def tot_text(self, flight: Flight, waypoint: FlightWaypoint) -> str:
         if waypoint.waypoint_type == FlightWaypointType.TAKEOFF:
