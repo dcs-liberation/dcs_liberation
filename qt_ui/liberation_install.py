@@ -36,7 +36,9 @@ def init():
                 "ignore_empty_install_directory", False
             )
             is_first_start = False
-        except KeyError:
+        except (KeyError, ValueError):
+            # KeyError in case of missing contents, ValueError in case of decoding
+            # errors from a corrupted file.
             __dcs_saved_game_directory = ""
             __dcs_installation_directory = ""
             __last_save_file = ""
