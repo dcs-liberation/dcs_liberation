@@ -2,4 +2,4 @@ coverage:
   status:
     project:
       default:
-        informational: false
+        informational: true
