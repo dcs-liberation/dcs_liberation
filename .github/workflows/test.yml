@@ -15,4 +15,7 @@ jobs:
       - name: run tests
         run: |
           ./venv/scripts/activate
-          pytest tests
+          pytest --cov game --cov-branch --cov-report=xml tests
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
