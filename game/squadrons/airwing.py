@@ -23,6 +23,7 @@ class AirWing:
         self.squadrons: dict[AircraftType, list[Squadron]] = defaultdict(list)
         self.squadron_defs = SquadronDefLoader(game, faction).load()
         self.squadron_def_generator = SquadronDefGenerator(faction)
+        self.settings = game.settings
 
     def unclaim_squadron_def(self, squadron: Squadron) -> None:
         if squadron.aircraft in self.squadron_defs:
@@ -65,6 +66,17 @@ class AirWing:
                     capable_at_base,
                     key=lambda s: best_aircraft.index(s.aircraft),
                 )
+            )
+
+        if self.settings.prefer_squadrons_with_matching_primary_task:
+            return sorted(
+                ordered,
+                key=lambda s: (
+                    # This looks like the opposite of what we want because False sorts
+                    # before True.
+                    s.primary_task != task,
+                    s.location.distance_to(location),
+                ),
             )
         return ordered
 

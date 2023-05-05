@@ -43,7 +43,11 @@ class DefaultSquadronAssigner:
                     continue
 
                 squadron = Squadron.create_from(
-                    squadron_def, control_point, self.coalition, self.game
+                    squadron_def,
+                    squadron_config.primary,
+                    control_point,
+                    self.coalition,
+                    self.game,
                 )
                 squadron.set_auto_assignable_mission_types(
                     squadron_config.auto_assignable
