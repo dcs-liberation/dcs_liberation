@@ -21,6 +21,7 @@ from game.data.weapons import Pylon, Weapon, WeaponGroup
 from game.dcs.aircrafttype import AircraftType
 from game.factions.factions import Factions
 from game.persistence.paths import liberation_user_dir
+from game.plugins import LuaPluginManager
 from game.profiling import logged_duration
 from game.server import EventStream, Server
 from game.settings import Settings
@@ -281,6 +282,8 @@ def create_game(
     campaign = Campaign.from_file(campaign_path)
     theater = campaign.load_theater(advanced_iads)
     faction_loader = Factions.load()
+    lua_plugin_manager = LuaPluginManager.load()
+    lua_plugin_manager.merge_player_settings()
     generator = GameGenerator(
         faction_loader.get_by_name(blue),
         faction_loader.get_by_name(red),
@@ -317,6 +320,7 @@ def create_game(
             frenchpack=False,
             high_digit_sams=False,
         ),
+        lua_plugin_manager,
     )
     game = generator.generate()
     game.begin_turn_0()
