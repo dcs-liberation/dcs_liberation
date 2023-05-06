@@ -125,9 +125,9 @@ class AirWing:
     def squadron_at_index(self, index: int) -> Squadron:
         return list(self.iter_squadrons())[index]
 
-    def populate_for_turn_0(self) -> None:
+    def populate_for_turn_0(self, squadrons_start_full: bool) -> None:
         for squadron in self.iter_squadrons():
-            squadron.populate_for_turn_0()
+            squadron.populate_for_turn_0(squadrons_start_full)
 
     def end_turn(self) -> None:
         for squadron in self.iter_squadrons():

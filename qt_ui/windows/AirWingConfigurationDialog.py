@@ -27,10 +27,12 @@ from PySide6.QtWidgets import (
     QToolButton,
     QVBoxLayout,
     QWidget,
+    QSpinBox,
 )
 
 from game import Game
 from game.ato.flighttype import FlightType
+from game.campaignloader.campaignairwingconfig import DEFAULT_SQUADRON_SIZE
 from game.coalition import Coalition
 from game.dcs.aircrafttype import AircraftType
 from game.squadrons import AirWing, Pilot, Squadron
@@ -127,6 +129,26 @@ class SquadronBaseSelector(QComboBox):
         self.update()
 
 
+class SquadronSizeSpinner(QSpinBox):
+    def __init__(self, starting_size: int, parent: QWidget | None) -> None:
+        super().__init__(parent)
+
+        # Disable text editing, which wouldn't work in the first place, but also
+        # obnoxiously selects the text on change (highlighting it) and leaves a flashing
+        # cursor in the middle of the element when clicked.
+        self.lineEdit().setEnabled(False)
+
+        self.setMinimum(1)
+        self.setValue(starting_size)
+
+    # def sizeHint(self) -> QSize:
+    #     # The default size hinting fails to deal with label width, and will truncate
+    #     # "Paused".
+    #     size = super().sizeHint()
+    #     size.setWidth(86)
+    #     return size
+
+
 class SquadronConfigurationBox(QGroupBox):
     remove_squadron_signal = Signal(Squadron)
 
@@ -166,9 +188,20 @@ class SquadronConfigurationBox(QGroupBox):
         reroll_nickname_button.clicked.connect(self.reroll_nickname)
         nickname_edit_layout.addWidget(reroll_nickname_button, 1, 1, Qt.AlignTop)
 
-        left_column.addWidget(QLabel("Primary task:"))
+        task_and_size_row = QHBoxLayout()
+        left_column.addLayout(task_and_size_row)
+
+        size_column = QVBoxLayout()
+        left_column.addLayout(size_column)
+        size_column.addWidget(QLabel("Max size:"))
+        self.max_size_selector = SquadronSizeSpinner(self.squadron.max_size, self)
+        size_column.addWidget(self.max_size_selector)
+
+        task_column = QVBoxLayout()
+        left_column.addLayout(task_column)
+        task_column.addWidget(QLabel("Primary task:"))
         self.primary_task_selector = PrimaryTaskSelector.for_squadron(self.squadron)
-        left_column.addWidget(self.primary_task_selector)
+        task_column.addWidget(self.primary_task_selector)
 
         left_column.addWidget(QLabel("Base:"))
         self.base_selector = SquadronBaseSelector(
@@ -222,6 +255,7 @@ class SquadronConfigurationBox(QGroupBox):
             self.name_edit.setText(self.squadron.name)
             self.nickname_edit.setText(self.squadron.nickname)
             self.primary_task_selector.setCurrentText(self.squadron.primary_task.value)
+            self.max_size_selector.setValue(self.squadron.max_size)
             self.base_selector.setCurrentText(self.squadron.location.name)
             self.player_list.setText(
                 "<br />".join(p.name for p in self.claim_players_from_squadron())
@@ -246,6 +280,7 @@ class SquadronConfigurationBox(QGroupBox):
         squadron = Squadron.create_from(
             selected_def,
             self.squadron.primary_task,
+            self.squadron.max_size,
             self.squadron.location,
             self.coalition,
             self.game,
@@ -292,6 +327,7 @@ class SquadronConfigurationBox(QGroupBox):
     def apply(self) -> Squadron:
         self.squadron.name = self.name_edit.text()
         self.squadron.nickname = self.nickname_edit.text()
+        self.squadron.max_size = self.max_size_selector.value()
         if (primary_task := self.primary_task_selector.selected_task) is not None:
             self.squadron.primary_task = primary_task
         else:
@@ -557,7 +593,12 @@ class AirWingConfigurationTab(QWidget):
         )
 
         squadron = Squadron.create_from(
-            squadron_def, selected_task, selected_base, self.coalition, self.game
+            squadron_def,
+            selected_task,
+            DEFAULT_SQUADRON_SIZE,
+            selected_base,
+            self.coalition,
+            self.game,
         )
 
         # Add Squadron

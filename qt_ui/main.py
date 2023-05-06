@@ -222,6 +222,15 @@ def parse_args() -> argparse.Namespace:
     )
 
     new_game.add_argument(
+        "--use-new-squadron-rules",
+        action="store_true",
+        help=(
+            "Limit the number of aircraft per squadron and begin the campaign with "
+            "them at full strength."
+        ),
+    )
+
+    new_game.add_argument(
         "--inverted", action="store_true", help="Invert the campaign."
     )
 
@@ -263,6 +272,7 @@ def create_game(
     start_date: datetime,
     restrict_weapons_by_date: bool,
     advanced_iads: bool,
+    use_new_squadron_rules: bool,
 ) -> Game:
     first_start = liberation_install.init()
     if first_start:
@@ -297,6 +307,7 @@ def create_game(
             enable_frontline_cheats=cheats,
             enable_base_capture_cheat=cheats,
             restrict_weapons_by_date=restrict_weapons_by_date,
+            enable_squadron_aircraft_limits=use_new_squadron_rules,
         ),
         GeneratorSettings(
             start_date=start_date,
@@ -323,7 +334,7 @@ def create_game(
         lua_plugin_manager,
     )
     game = generator.generate()
-    game.begin_turn_0()
+    game.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
     return game
 
 
@@ -417,6 +428,7 @@ def main():
                 args.date,
                 args.restrict_weapons_by_date,
                 args.advanced_iads,
+                args.use_new_squadron_rules,
             )
     if args.subcommand == "lint-weapons":
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
