@@ -155,6 +155,7 @@ class NewGameWizard(QtWidgets.QWizard):
 
         self.lua_plugin_manager.save_player_settings()
 
+        use_new_squadron_rules = self.field("use_new_squadron_rules")
         logging.info("New campaign start date: %s", start_date.strftime("%m/%d/%Y"))
         settings = Settings(
             player_income_multiplier=self.field("player_income_multiplier") / 10,
@@ -168,6 +169,7 @@ class NewGameWizard(QtWidgets.QWizard):
             ),
             automate_aircraft_reinforcements=self.field("automate_aircraft_purchases"),
             supercarrier=self.field("supercarrier"),
+            enable_squadron_aircraft_limits=use_new_squadron_rules,
         )
         settings.save_player_settings()
         generator_settings = GeneratorSettings(
@@ -223,7 +225,7 @@ class NewGameWizard(QtWidgets.QWizard):
 
         AirWingConfigurationDialog(self.generatedGame, self).exec_()
 
-        self.generatedGame.begin_turn_0()
+        self.generatedGame.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
 
         super(NewGameWizard, self).accept()
 
@@ -602,6 +604,17 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         self.enemy_budget = BudgetInputs("Enemy starting budget", DEFAULT_BUDGET)
         self.registerField("enemy_starting_money", self.enemy_budget.starting_money)
         economy_layout.addLayout(self.enemy_budget)
+
+        new_squadron_rules = QtWidgets.QCheckBox("Enable new squadron rules")
+        new_squadron_rules.setChecked(default_settings.enable_squadron_aircraft_limits)
+        self.registerField("use_new_squadron_rules", new_squadron_rules)
+        economy_layout.addWidget(new_squadron_rules)
+        economy_layout.addWidget(
+            QLabel(
+                "With new squadron rules enabled, squadrons will not be able to exceed a maximum number of aircraft "
+                "(configurable), and the campaign will begin with all squadrons at full strength."
+            )
+        )
 
         assist_group = QtWidgets.QGroupBox("Player assists")
         layout.addWidget(assist_group)

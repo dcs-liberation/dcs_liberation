@@ -9,7 +9,7 @@ recommended_enemy_faction: Russia 2010
 recommended_start_date: 2004-01-07
 miz: black_sea.miz
 performance: 2
-version: "10.2"
+version: "10.7"
 squadrons:
   # Anapa-Vityazevo
   12:
@@ -20,16 +20,20 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - A-50
+      size: 2
     - primary: Refueling
       aircraft:
         - IL-78M
+      size: 2
     - primary: Transport
       aircraft:
         - IL-78MD
+      size: 4
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - Tu-160 Blackjack
+      size: 4
   # Krasnodar-Center
   13:
     - primary: BARCAP
@@ -77,6 +81,7 @@ squadrons:
     - primary: Transport
       aircraft:
         - UH-60A
+      size: 8
   # Kobuleti
   24:
     - primary: BARCAP
@@ -99,16 +104,20 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - E-3A
+      size: 2
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
+      size: 2
     - primary: Transport
       aircraft:
         - C-17A
+      size: 4
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - B-1B Lancer
+      size: 4
   Blue CV:
     - primary: BARCAP
       secondary: air-to-air
@@ -129,6 +138,7 @@ squadrons:
     - primary: Refueling
       aircraft:
         - S-3B Tanker
+      size: 2
   Blue LHA:
     - primary: BAI
       secondary: air-to-ground
@@ -148,6 +158,7 @@ squadrons:
     - primary: BAI
       secondary: any
     - primary: Refueling
+      size: 2
   Red LHA:
     - primary: BAI
       secondary: air-to-ground

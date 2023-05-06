@@ -45,6 +45,7 @@ class DefaultSquadronAssigner:
                 squadron = Squadron.create_from(
                     squadron_def,
                     squadron_config.primary,
+                    squadron_config.max_size,
                     control_point,
                     self.coalition,
                     self.game,

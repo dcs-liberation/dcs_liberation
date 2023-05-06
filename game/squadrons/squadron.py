@@ -31,6 +31,7 @@ class Squadron:
     country: str
     role: str
     aircraft: AircraftType
+    max_size: int
     livery: Optional[str]
     primary_task: FlightType
     auto_assignable_mission_types: set[FlightType]
@@ -161,10 +162,12 @@ class Squadron:
         self.current_roster.extend(new_pilots)
         self.available_pilots.extend(new_pilots)
 
-    def populate_for_turn_0(self) -> None:
+    def populate_for_turn_0(self, squadrons_start_full: bool) -> None:
         if any(p.status is not PilotStatus.Active for p in self.pilot_pool):
             raise ValueError("Squadrons can only be created with active pilots.")
         self._recruit_pilots(self.settings.squadron_pilot_limit)
+        if squadrons_start_full:
+            self.owned_aircraft = self.max_size
 
     def end_turn(self) -> None:
         if self.destination is not None:
@@ -202,7 +205,7 @@ class Squadron:
         return [p for p in self.current_roster if p.status != status]
 
     @property
-    def max_size(self) -> int:
+    def pilot_limit(self) -> int:
         return self.settings.squadron_pilot_limit
 
     @property
@@ -230,7 +233,7 @@ class Squadron:
 
     @property
     def _number_of_unfilled_pilot_slots(self) -> int:
-        return self.max_size - len(self.active_pilots)
+        return self.pilot_limit - len(self.active_pilots)
 
     @property
     def number_of_available_pilots(self) -> int:
@@ -334,6 +337,12 @@ class Squadron:
     def expected_size_next_turn(self) -> int:
         return self.owned_aircraft + self.pending_deliveries
 
+    def has_aircraft_capacity_for(self, n: int) -> bool:
+        if not self.settings.enable_squadron_aircraft_limits:
+            return True
+        remaining = self.max_size - self.owned_aircraft - self.pending_deliveries
+        return remaining >= n
+
     @property
     def arrival(self) -> ControlPoint:
         return self.location if self.destination is None else self.destination
@@ -424,6 +433,7 @@ class Squadron:
         cls,
         squadron_def: SquadronDef,
         primary_task: FlightType,
+        max_size: int,
         base: ControlPoint,
         coalition: Coalition,
         game: Game,
@@ -435,6 +445,7 @@ class Squadron:
             squadron_def.country,
             squadron_def.role,
             squadron_def.aircraft,
+            max_size,
             squadron_def.livery,
             primary_task,
             squadron_def.auto_assignable_mission_types,

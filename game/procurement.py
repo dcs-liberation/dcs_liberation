@@ -235,6 +235,8 @@ class ProcurementAi:
         ):
             if not squadron.can_provide_pilots(request.number):
                 continue
+            if not squadron.has_aircraft_capacity_for(request.number):
+                continue
             if squadron.location.unclaimed_parking() < request.number:
                 continue
             if self.threat_zones.threatened(squadron.location.position):
