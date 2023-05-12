@@ -2,7 +2,6 @@ from typing import Any, Dict, Set
 
 from dcs import task
 from dcs.helicopters import HelicopterType
-from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 
 from game.modsupport import helicoptermod, planemod
@@ -114,7 +113,6 @@ class UH_60L(HelicopterType):
                 Equally_Responsible = -2
 
     livery_name = "UH-60L"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         CEFS_Fuel_Tank_200_gallons = (1, WeaponsUH60L.CEFS_Fuel_Tank_200_gallons)
@@ -170,7 +168,6 @@ class KC130J(PlaneType):
     category = "Tankers"  # {8A302789-A55D-4897-B647-66493FA6826F}
 
     livery_name = "KC130J"  # from type
-    Liveries = Liveries()[livery_name]
 
     pylons: Set[int] = set()
 
