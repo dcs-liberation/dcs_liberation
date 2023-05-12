@@ -1,7 +1,6 @@
 from typing import Set
 
 from dcs import task
-from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
@@ -67,7 +66,6 @@ class VSN_F104C(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104C"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
@@ -321,7 +319,6 @@ class VSN_F104G(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104G"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
@@ -584,7 +581,6 @@ class VSN_F104S(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104S"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
@@ -709,7 +705,6 @@ class VSN_F104S_AG(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104S_AG"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
