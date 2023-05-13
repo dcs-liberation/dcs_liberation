@@ -26,13 +26,11 @@ class PackageBuilder:
         air_wing: AirWing,
         flight_db: Database[Flight],
         is_player: bool,
-        package_country: str,
         start_type: StartType,
         asap: bool,
     ) -> None:
         self.closest_airfields = closest_airfields
         self.is_player = is_player
-        self.package_country = package_country
         self.package = Package(location, flight_db, auto_asap=asap)
         self.air_wing = air_wing
         self.start_type = start_type
@@ -56,7 +54,6 @@ class PackageBuilder:
 
         flight = Flight(
             self.package,
-            self.package_country,
             squadron,
             plan.num_aircraft,
             plan.task,

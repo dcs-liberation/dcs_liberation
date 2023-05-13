@@ -24,6 +24,7 @@ from .ato.flighttype import FlightType
 from .campaignloader import CampaignAirWingConfig
 from .coalition import Coalition
 from .db.gamedb import GameDb
+from .dcs.countries import country_with_name
 from .infos.information import Information
 from .persistence import SaveManager
 from .profiling import logged_duration
@@ -179,13 +180,15 @@ class Game:
         Make sure the opposing factions are using different countries
         :return:
         """
+        # TODO: This should just be rejected and sent back to the user to fix.
+        # This isn't always something that the original faction can support.
         if player_faction.country == enemy_faction.country:
-            if player_faction.country == "USA":
-                enemy_faction.country = "USAF Aggressors"
-            elif player_faction.country == "Russia":
-                enemy_faction.country = "USSR"
+            if player_faction.country.name == "USA":
+                enemy_faction.country = country_with_name("USAF Aggressors")
+            elif player_faction.country.name == "Russia":
+                enemy_faction.country = country_with_name("USSR")
             else:
-                enemy_faction.country = "Russia"
+                enemy_faction.country = country_with_name("Russia")
 
     def faction_for(self, player: bool) -> Faction:
         return self.coalition_for(player).faction
@@ -196,13 +199,10 @@ class Game:
     def air_wing_for(self, player: bool) -> AirWing:
         return self.coalition_for(player).air_wing
 
-    def country_for(self, player: bool) -> str:
-        return self.coalition_for(player).country_name
-
     @property
     def neutral_country(self) -> Type[Country]:
         """Return the best fitting country that can be used as neutral faction in the generated mission"""
-        countries_in_use = [self.red.country_name, self.blue.country_name]
+        countries_in_use = {self.red.faction.country, self.blue.faction.country}
         if UnitedNationsPeacekeepers not in countries_in_use:
             return UnitedNationsPeacekeepers
         elif Switzerland.name not in countries_in_use:

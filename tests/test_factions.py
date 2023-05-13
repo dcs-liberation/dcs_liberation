@@ -41,7 +41,7 @@ class TestFactionLoader(unittest.TestCase):
         with (RESOURCES_DIR / "valid_faction.json").open("r") as data:
             faction = Faction.from_dict(json.load(data))
 
-            self.assertEqual(faction.country, "USA")
+            self.assertEqual(faction.country.name, "USA")
             self.assertEqual(faction.name, "USA 2005")
             self.assertEqual(faction.authors, "Khopa")
             self.assertEqual(faction.description, "This is a test description")

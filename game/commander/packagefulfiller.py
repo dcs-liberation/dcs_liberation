@@ -143,7 +143,6 @@ class PackageFulfiller:
             self.air_wing,
             self.flight_db,
             self.is_player,
-            self.coalition.country_name,
             self.default_start_type,
             mission.asap,
         )
