@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
     QStackedLayout,
     QVBoxLayout,
     QWidget,
+    QScrollArea,
 )
 
 import qt_ui.uiconstants as CONST
@@ -232,7 +233,18 @@ class AutoSettingsPage(QWidget):
         write_full_settings: Callable[[], None],
     ) -> None:
         super().__init__()
-        self.setLayout(AutoSettingsPageLayout(page, settings, write_full_settings))
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        scroll_content = QWidget()
+        scroll_content.setLayout(
+            AutoSettingsPageLayout(page, settings, write_full_settings)
+        )
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        layout.addWidget(scroll)
 
 
 class QSettingsWindow(QDialog):
