@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional, Sequence, TYPE_CHECKING
 
+from dcs.country import Country
 from faker import Faker
 
 from game.ato import Flight, FlightType, Package
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
 class Squadron:
     name: str
     nickname: Optional[str]
-    country: str
+    country: Country
     role: str
     aircraft: AircraftType
     max_size: int
@@ -71,7 +72,7 @@ class Squadron:
             (
                 self.name,
                 self.nickname,
-                self.country,
+                self.country.id,
                 self.role,
                 self.aircraft,
             )
@@ -418,7 +419,6 @@ class Squadron:
 
         flight = Flight(
             package,
-            self.coalition.country_name,
             self,
             size,
             FlightType.FERRY,

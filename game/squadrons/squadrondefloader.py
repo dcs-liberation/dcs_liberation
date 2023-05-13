@@ -29,13 +29,13 @@ class SquadronDefLoader:
         squadrons: dict[AircraftType, list[SquadronDef]] = defaultdict(list)
         country = self.faction.country
         faction = self.faction
-        any_country = country.startswith("Combined Joint Task Forces ")
+        any_country = country.name.startswith("Combined Joint Task Forces ")
         for directory in self.squadron_directories():
             for path, squadron_def in self.load_squadrons_from(directory):
                 if not any_country and squadron_def.country != country:
                     logging.debug(
                         "Not using squadron for non-matching country (is "
-                        f"{squadron_def.country}, need {country}: {path}"
+                        f"{squadron_def.country.name}, need {country.name}: {path}"
                     )
                     continue
                 if squadron_def.aircraft not in faction.aircrafts:

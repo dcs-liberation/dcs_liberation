@@ -135,19 +135,12 @@ class MissionGenerator:
             "neutrals", bullseye=Bullseye(Point(0, 0, self.mission.terrain)).to_pydcs()
         )
 
-        p_country = self.game.blue.country_name
-        e_country = self.game.red.country_name
-        self.mission.coalition["blue"].add_country(
-            country_dict[country_id_from_name(p_country)]()
-        )
-        self.mission.coalition["red"].add_country(
-            country_dict[country_id_from_name(e_country)]()
-        )
+        p_country = self.game.blue.faction.country
+        e_country = self.game.red.faction.country
+        self.mission.coalition["blue"].add_country(p_country)
+        self.mission.coalition["red"].add_country(e_country)
 
-        belligerents = [
-            country_id_from_name(p_country),
-            country_id_from_name(e_country),
-        ]
+        belligerents = {p_country, e_country}
         for country in country_dict.keys():
             if country not in belligerents:
                 self.mission.coalition["neutrals"].add_country(country_dict[country]())
@@ -271,18 +264,18 @@ class MissionGenerator:
         aircraft_generator.clear_parking_slots()
 
         aircraft_generator.generate_flights(
-            self.mission.country(self.game.blue.country_name),
+            self.game.blue.faction.country,
             self.game.blue.ato,
             tgo_generator.runways,
         )
         aircraft_generator.generate_flights(
-            self.mission.country(self.game.red.country_name),
+            self.game.red.faction.country,
             self.game.red.ato,
             tgo_generator.runways,
         )
         aircraft_generator.spawn_unused_aircraft(
-            self.mission.country(self.game.blue.country_name),
-            self.mission.country(self.game.red.country_name),
+            self.game.blue.faction.country,
+            self.game.red.faction.country,
         )
 
         for flight in aircraft_generator.flights:
@@ -314,7 +307,7 @@ class MissionGenerator:
             pos = Point(cast(float, d["x"]), cast(float, d["z"]), self.mission.terrain)
             if utype is not None and not self.game.position_culled(pos):
                 self.mission.static_group(
-                    country=self.mission.country(self.game.blue.country_name),
+                    country=self.game.blue.faction.country,
                     name="",
                     _type=utype,
                     hidden=True,

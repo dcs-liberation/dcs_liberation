@@ -7,7 +7,7 @@ from functools import cached_property
 from typing import Any, Dict, Iterator, List, Optional, TYPE_CHECKING, Type
 
 import dcs
-from dcs.countries import country_dict
+from dcs.country import Country
 from dcs.unittype import ShipType, StaticType, UnitType as DcsUnitType
 
 from game.armedforces.forcegroup import ForceGroup
@@ -28,6 +28,7 @@ from game.data.doctrine import (
 from game.data.groups import GroupRole
 from game.data.units import UnitClass
 from game.dcs.aircrafttype import AircraftType
+from game.dcs.countries import country_with_name
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
@@ -43,7 +44,7 @@ class Faction:
     locales: Optional[List[str]]
 
     # Country used by this faction
-    country: str = field(default="")
+    country: Country
 
     # Nice name of the faction
     name: str = field(default="")
@@ -168,15 +169,15 @@ class Faction:
 
     @classmethod
     def from_dict(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
-        faction = Faction(locales=json.get("locales"))
+        try:
+            country = country_with_name(json["country"])
+        except KeyError as ex:
+            raise KeyError(
+                f'Faction\'s country ("{json.get("country")}") is not a valid DCS '
+                "country ID"
+            ) from ex
 
-        faction.country = json.get("country", "/")
-        if faction.country not in [c.name for c in country_dict.values()]:
-            raise AssertionError(
-                'Faction\'s country ("{}") is not a valid DCS country ID'.format(
-                    faction.country
-                )
-            )
+        faction = Faction(locales=json.get("locales"), country=country)
 
         faction.name = json.get("name", "")
         if not faction.name:
