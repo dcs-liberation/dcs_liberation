@@ -21,6 +21,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[New Game Wizard]** Choices for some options will be remembered for the next new game. Not all settings will be preserved, as many are campaign dependent.
 * **[New Game Wizard]** Lua plugins can now be set while creating a new game.
 * **[New Game Wizard]** Squadrons can be directly replaced with a preset during air wing configuration rather than needing to remove and create a new squadron.
+* **[New Game Wizard]** Squadron liveries can now be selected during air wing configuration.
 * **[Squadrons]** Squadron-specific mission capability lists no longer restrict players from assigning missions outside the squadron's preferences.
 
 ## Fixes
