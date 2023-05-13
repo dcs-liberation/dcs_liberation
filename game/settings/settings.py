@@ -317,7 +317,11 @@ class Settings:
         section=GAMEPLAY_SECTION,
         default=False,
         detail=(
-            "If enabled, the mission will be generated at the point of first contact."
+            "If enabled, the mission will be generated at the point of first contact. "
+            "If you enable this option, you will not be able to create new flights "
+            'after pressing "TAKE OFF". Doing so will create an error the next time '
+            'you press "TAKE OFF". Save your game first if you want to make '
+            "modifications."
         ),
     )
     player_mission_interrupts_sim_at: Optional[StartType] = choices_option(
