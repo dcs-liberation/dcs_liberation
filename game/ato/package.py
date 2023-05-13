@@ -225,3 +225,7 @@ class Package:
             if not flight.state.is_waiting_for_start:
                 return False
         return True
+
+    def has_flight_with_task(self, task: FlightType) -> bool:
+        """Returns True if any flight in the package has the given task."""
+        return task in (f.flight_type for f in self.flights)
