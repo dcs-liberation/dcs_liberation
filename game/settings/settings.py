@@ -195,18 +195,6 @@ class Settings:
             "future release."
         ),
     )
-    prefer_squadrons_with_matching_primary_task: bool = boolean_option(
-        "Prefer squadrons with matching primary task when planning missions",
-        page=CAMPAIGN_MANAGEMENT_PAGE,
-        section=GENERAL_SECTION,
-        default=False,
-        detail=(
-            "If checked, squadrons with a primary task matching the mission will be "
-            "preferred even if there is a closer squadron capable of the mission as a"
-            "secondary task. Expect longer flights, but squadrons will be more often "
-            "assigned to their primary task."
-        ),
-    )
     # Pilots and Squadrons
     ai_pilot_levelling: bool = boolean_option(
         "Allow AI pilot leveling",
