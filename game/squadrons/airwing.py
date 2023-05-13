@@ -68,17 +68,15 @@ class AirWing:
                 )
             )
 
-        if self.settings.prefer_squadrons_with_matching_primary_task:
-            return sorted(
-                ordered,
-                key=lambda s: (
-                    # This looks like the opposite of what we want because False sorts
-                    # before True.
-                    s.primary_task != task,
-                    s.location.distance_to(location),
-                ),
-            )
-        return ordered
+        return sorted(
+            ordered,
+            key=lambda s: (
+                # This looks like the opposite of what we want because False sorts
+                # before True.
+                s.primary_task != task,
+                s.location.distance_to(location),
+            ),
+        )
 
     def best_squadron_for(
         self, location: MissionTarget, task: FlightType, size: int, this_turn: bool
