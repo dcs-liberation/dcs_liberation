@@ -23,6 +23,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[New Game Wizard]** Squadrons can be directly replaced with a preset during air wing configuration rather than needing to remove and create a new squadron.
 * **[New Game Wizard]** Squadron liveries can now be selected during air wing configuration.
 * **[Squadrons]** Squadron-specific mission capability lists no longer restrict players from assigning missions outside the squadron's preferences.
+* **[UI]** The orientation of objects like SAMs, EWRs, garrisons, and ships can now be manually adjusted.
 
 ## Fixes
 
