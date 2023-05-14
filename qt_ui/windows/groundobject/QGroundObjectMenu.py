@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QSpinBox,
+    QWidget,
 )
 from dcs import Point
 
@@ -28,6 +29,18 @@ from qt_ui.widgets.QBudgetBox import QBudgetBox
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.groundobject.QBuildingInfo import QBuildingInfo
 from qt_ui.windows.groundobject.QGroundObjectBuyMenu import QGroundObjectBuyMenu
+
+
+class HeadingIndicator(QLabel):
+    def __init__(self, initial_heading: Heading, parent: QWidget) -> None:
+        super().__init__(parent)
+        self.set_heading(initial_heading)
+        self.setFixedSize(32, 32)
+
+    def set_heading(self, heading: Heading) -> None:
+        self.setPixmap(
+            ICONS["heading"].transformed(QTransform().rotate(heading.degrees))
+        )
 
 
 class QGroundObjectMenu(QDialog):
@@ -150,24 +163,21 @@ class QGroundObjectMenu(QDialog):
         self.orientationBox = QGroupBox("Orientation :")
         self.orientationBoxLayout = QHBoxLayout()
 
-        heading_image = QLabel()
-        heading_image.setPixmap(
-            ICONS["heading"].transformed(
-                QTransform().rotate(self.ground_object.heading.degrees)
-            )
-        )
+        heading_image = HeadingIndicator(self.ground_object.heading, self)
         self.orientationBoxLayout.addWidget(heading_image)
         self.headingLabel = QLabel("Heading:")
         self.orientationBoxLayout.addWidget(self.headingLabel)
         self.headingSelector = QSpinBox()
-        self.headingSelector.setEnabled(False)  # Disable for now
-        self.headingSelector.setMinimum(0)
-        self.headingSelector.setMaximum(360)
+        self.headingSelector.setEnabled(self.cp.is_friendly(to_player=True))
+        self.headingSelector.setRange(0, 359)
+        self.headingSelector.setWrapping(True)
+        self.headingSelector.setSingleStep(5)
         self.headingSelector.setValue(self.ground_object.heading.degrees)
+        self.headingSelector.valueChanged.connect(
+            lambda degrees: heading_image.set_heading(Heading(degrees))
+        )
         self.orientationBoxLayout.addWidget(self.headingSelector)
         if self.cp.captured:
-            # TODO Let the user choose the heading with the SpinBox
-            self.headingSelector.setEnabled(False)
             self.head_to_conflict_button = QPushButton("Head to conflict")
             heading = (
                 self.game.theater.heading_to_conflict_from(self.ground_object.position)
