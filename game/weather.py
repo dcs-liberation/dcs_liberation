@@ -50,6 +50,12 @@ class WindConditions:
 
 
 @dataclass(frozen=True)
+class WeibullWindSpeedParameters:
+    shape: float
+    scale: Speed
+
+
+@dataclass(frozen=True)
 class Clouds:
     base: int
     density: int
@@ -181,10 +187,9 @@ class Weather:
 
     @staticmethod
     def random_wind(
-        weibull_shape: float,
-        weibull_scale_speed: Speed,
-        at_2000m_factor_range: tuple[float, float],
-        at_8000m_factor_range: tuple[float, float],
+        params_at_msl: WeibullWindSpeedParameters,
+        params_at_2000m: WeibullWindSpeedParameters,
+        params_at_8000m: WeibullWindSpeedParameters,
     ) -> WindConditions:
         """Generates random wind."""
         wind_direction = Heading.random()
@@ -195,10 +200,14 @@ class Weather:
         # value.
         # https://www.itl.nist.gov/div898/handbook/eda/section3/weibplot.htm
         msl = random.weibullvariate(
-            weibull_scale_speed.meters_per_second, weibull_shape
+            params_at_msl.scale.meters_per_second, params_at_msl.shape
         )
-        at_2000m_factor = random.uniform(*at_2000m_factor_range)
-        at_8000m_factor = random.uniform(*at_8000m_factor_range)
+        at_2000m = random.weibullvariate(
+            msl + params_at_2000m.scale.meters_per_second, params_at_2000m.shape
+        )
+        at_8000m = random.weibullvariate(
+            at_2000m + params_at_8000m.scale.meters_per_second, params_at_8000m.shape
+        )
 
         # DCS is limited to 97 knots wind speed.
         max_supported_wind_speed = knots(97).meters_per_second
@@ -208,11 +217,11 @@ class Weather:
             at_0m=Wind(wind_direction.degrees, max(1.0, msl)),
             at_2000m=Wind(
                 wind_direction_2000m.degrees,
-                min(max_supported_wind_speed, msl * at_2000m_factor),
+                min(max_supported_wind_speed, at_2000m),
             ),
             at_8000m=Wind(
                 wind_direction_8000m.degrees,
-                min(max_supported_wind_speed, msl * at_8000m_factor),
+                min(max_supported_wind_speed, at_8000m),
             ),
         )
 
@@ -312,7 +321,11 @@ class ClearSkies(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(1.5, knots(5), (1, 1.8), (1.5, 2.5))
+        return self.random_wind(
+            WeibullWindSpeedParameters(1.5, knots(5)),
+            WeibullWindSpeedParameters(3.5, knots(20)),
+            WeibullWindSpeedParameters(6.4, knots(20)),
+        )
 
 
 class Cloudy(Weather):
@@ -336,7 +349,11 @@ class Cloudy(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(1.6, knots(6.5), (1, 1.8), (1.5, 2.5))
+        return self.random_wind(
+            WeibullWindSpeedParameters(1.6, knots(6.5)),
+            WeibullWindSpeedParameters(3.5, knots(22)),
+            WeibullWindSpeedParameters(6.4, knots(18)),
+        )
 
 
 class Raining(Weather):
@@ -360,7 +377,11 @@ class Raining(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(2.6, knots(12), (1, 1.7), (2.2, 2.8))
+        return self.random_wind(
+            WeibullWindSpeedParameters(2.6, knots(8)),
+            WeibullWindSpeedParameters(4.2, knots(20)),
+            WeibullWindSpeedParameters(6.4, knots(20)),
+        )
 
 
 class Thunderstorm(Weather):
@@ -385,7 +406,11 @@ class Thunderstorm(Weather):
         )
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(6, knots(20), (1, 2), (2.5, 3.5))
+        return self.random_wind(
+            WeibullWindSpeedParameters(6, knots(20)),
+            WeibullWindSpeedParameters(6.2, knots(20)),
+            WeibullWindSpeedParameters(6.4, knots(20)),
+        )
 
 
 @dataclass
