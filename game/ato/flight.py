@@ -37,6 +37,7 @@ class Flight(SidcDescribable):
     def __init__(
         self,
         package: Package,
+        country: str,
         squadron: Squadron,
         count: int,
         flight_type: FlightType,
@@ -48,6 +49,7 @@ class Flight(SidcDescribable):
     ) -> None:
         self.id = uuid.uuid4()
         self.package = package
+        self.country = country
         self.coalition = squadron.coalition
         self.squadron = squadron
         self.squadron.claim_inventory(count)

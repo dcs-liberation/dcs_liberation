@@ -93,8 +93,9 @@ class LogisticsGenerator:
             "ctld", "logisticunit"
         ):
             # Spawn logisticsunit at pickup zones
+            country = self.mission.country(self.flight.country)
             logistic_unit = self.mission.static_group(
-                self.flight.squadron.coalition.faction.country,
+                country,
                 f"{self.group.name}logistic",
                 Fortification.FARP_Ammo_Dump_Coating,
                 pickup_point,

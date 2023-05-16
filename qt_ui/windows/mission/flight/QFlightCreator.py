@@ -40,6 +40,7 @@ class QFlightCreator(QDialog):
         self.game = game
         self.package = package
         self.custom_name_text = None
+        self.country = self.game.blue.country_name
 
         # Make dialog modal to prevent background windows to close unexpectedly.
         self.setModal(True)
@@ -182,6 +183,7 @@ class QFlightCreator(QDialog):
 
         flight = Flight(
             self.package,
+            self.country,
             squadron,
             # A bit of a hack to work around the old API. Not actually relevant because
             # the roster is passed explicitly. Needs a refactor.

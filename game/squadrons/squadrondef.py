@@ -5,10 +5,8 @@ from pathlib import Path
 from typing import Optional, TYPE_CHECKING
 
 import yaml
-from dcs.country import Country
 
 from game.dcs.aircrafttype import AircraftType
-from game.dcs.countries import country_with_name
 from game.squadrons.operatingbases import OperatingBases
 from game.squadrons.pilot import Pilot
 
@@ -21,7 +19,7 @@ if TYPE_CHECKING:
 class SquadronDef:
     name: str
     nickname: Optional[str]
-    country: Country
+    country: str
     role: str
     aircraft: AircraftType
     livery: Optional[str]
@@ -73,7 +71,7 @@ class SquadronDef:
         return SquadronDef(
             name=data["name"],
             nickname=data.get("nickname"),
-            country=country_with_name(data["country"]),
+            country=data["country"],
             role=data["role"],
             aircraft=unit_type,
             livery=data.get("livery"),

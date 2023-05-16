@@ -72,6 +72,10 @@ class Coalition:
         return 1
 
     @property
+    def country_name(self) -> str:
+        return self.faction.country
+
+    @property
     def opponent(self) -> Coalition:
         assert self._opponent is not None
         return self._opponent

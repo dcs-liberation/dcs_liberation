@@ -73,7 +73,7 @@ class AirSupportGenerator:
             else self.conflict.red_cp
         )
 
-        country = self.game.blue.faction.country
+        country = self.mission.country(self.game.blue.country_name)
 
         if not self.game.settings.disable_legacy_tanker:
             fallback_tanker_number = 0
