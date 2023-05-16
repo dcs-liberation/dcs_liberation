@@ -12,6 +12,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[Mission Generation]** Units on the front line are now hidden on MFDs.
 * **[Mission Generation]** Preset radio channels will now be configured for both A-10C modules.
 * **[Mission Generation]** The A-10C II now uses separate radios for inter- and intra-flight comms (similar to other modern aircraft).
+* **[Mission Generation]** Wind speeds no longer follow a uniform distribution. Median wind speeds are now much lower and the standard deviation has been reduced considerably at altitude but increased somewhat at MSL.
 * **[Modding]** Updated Community A-4E-C mod version support to 2.1.0 release.
 * **[Modding]** Add support for VSN F-4B and F-4C mod.
 * **[Modding]** Custom factions can now be defined in YAML as well as JSON. JSON support may be removed in the future if having both formats causes confusion.
