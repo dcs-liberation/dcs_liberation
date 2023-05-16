@@ -39,6 +39,7 @@ from game.squadrons import AirWing, Pilot, Squadron
 from game.squadrons.squadrondef import SquadronDef
 from game.theater import ControlPoint
 from qt_ui.uiconstants import AIRCRAFT_ICONS, ICONS
+from qt_ui.widgets.combos.liveryselector import LiverySelector
 from qt_ui.widgets.combos.primarytaskselector import PrimaryTaskSelector
 
 
@@ -188,6 +189,10 @@ class SquadronConfigurationBox(QGroupBox):
         reroll_nickname_button.clicked.connect(self.reroll_nickname)
         nickname_edit_layout.addWidget(reroll_nickname_button, 1, 1, Qt.AlignTop)
 
+        left_column.addWidget(QLabel("Livery:"))
+        self.livery_selector = LiverySelector(self.squadron)
+        left_column.addWidget(self.livery_selector)
+
         task_and_size_row = QHBoxLayout()
         left_column.addLayout(task_and_size_row)
 
@@ -254,6 +259,7 @@ class SquadronConfigurationBox(QGroupBox):
         try:
             self.name_edit.setText(self.squadron.name)
             self.nickname_edit.setText(self.squadron.nickname)
+            self.livery_selector.set_squadron(self.squadron)
             self.primary_task_selector.setCurrentText(self.squadron.primary_task.value)
             self.max_size_selector.setValue(self.squadron.max_size)
             self.base_selector.setCurrentText(self.squadron.location.name)
@@ -327,6 +333,8 @@ class SquadronConfigurationBox(QGroupBox):
     def apply(self) -> Squadron:
         self.squadron.name = self.name_edit.text()
         self.squadron.nickname = self.nickname_edit.text()
+        if (livery := self.livery_selector.selected_livery) is not None:
+            self.squadron.livery = livery.id
         self.squadron.max_size = self.max_size_selector.value()
         if (primary_task := self.primary_task_selector.selected_task) is not None:
             self.squadron.primary_task = primary_task

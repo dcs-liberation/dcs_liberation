@@ -1,7 +1,6 @@
 from typing import Any, Dict, Set
 
 from dcs import task
-from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
@@ -44,7 +43,6 @@ class F_22A(PlaneType):
             id = "BAY_DOOR_OPTION"
 
     livery_name = "F-22A"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         AIM_9X_Sidewinder_IR_AAM = (1, Weapons.AIM_9X_Sidewinder_IR_AAM)

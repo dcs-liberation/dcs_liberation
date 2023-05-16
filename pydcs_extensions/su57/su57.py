@@ -1,7 +1,6 @@
 from typing import Set
 
 from dcs import task
-from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
@@ -42,7 +41,6 @@ class Su_57(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "SU-57"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         R_73__AA_11_Archer____Infra_Red = (1, Weapons.R_73__AA_11_Archer____Infra_Red)

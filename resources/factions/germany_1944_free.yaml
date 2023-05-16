@@ -10,7 +10,7 @@ aircrafts:
   - Fw 190 A-8 Anton
   - Fw 190 D-9 Dora
 frontline_units:
-  - 8.8 cm Flak 18
+  - Truck Opel Blitz
   - Panzerkampfwagen IV Ausf. H
   - Sd.Kfz.251 "Hanomag"
 artillery_units: []
@@ -19,7 +19,7 @@ logistics_units:
 infantry_units:
   - Infantry AK-74 Rus
 air_defense_units:
-  - 8.8 cm Flak 18
+  - Watch tower armed
 preset_groups: []
 naval_units: []
 requirements: {}

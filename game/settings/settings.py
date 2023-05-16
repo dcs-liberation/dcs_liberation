@@ -195,18 +195,6 @@ class Settings:
             "future release."
         ),
     )
-    prefer_squadrons_with_matching_primary_task: bool = boolean_option(
-        "Prefer squadrons with matching primary task when planning missions",
-        page=CAMPAIGN_MANAGEMENT_PAGE,
-        section=GENERAL_SECTION,
-        default=False,
-        detail=(
-            "If checked, squadrons with a primary task matching the mission will be "
-            "preferred even if there is a closer squadron capable of the mission as a"
-            "secondary task. Expect longer flights, but squadrons will be more often "
-            "assigned to their primary task."
-        ),
-    )
     # Pilots and Squadrons
     ai_pilot_levelling: bool = boolean_option(
         "Allow AI pilot leveling",
@@ -329,7 +317,11 @@ class Settings:
         section=GAMEPLAY_SECTION,
         default=False,
         detail=(
-            "If enabled, the mission will be generated at the point of first contact."
+            "If enabled, the mission will be generated at the point of first contact. "
+            "If you enable this option, you will not be able to create new flights "
+            'after pressing "TAKE OFF". Doing so will create an error the next time '
+            'you press "TAKE OFF". Save your game first if you want to make '
+            "modifications."
         ),
     )
     player_mission_interrupts_sim_at: Optional[StartType] = choices_option(

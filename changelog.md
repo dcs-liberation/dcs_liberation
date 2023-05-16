@@ -4,24 +4,28 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.8.3.37556.
+* **[Engine]** Support for DCS 2.8.4.39731.
 * **[Engine]** Saved games are now a zip file of save assets for easier bug reporting. The new extension is .liberation.zip. Drag and drop that file into bug reports.
 * **[Campaign]** Added options to limit squadron sizes and to begin all squadrons at maximum strength. Maximum squadron size is defined during air wing configuration with default values provided by the campaign.
-* **[Campaign AI]** Added an option to instruct the campaign AI to prefer fulfilling missions with squadrons which have a matching primary task. Previously distance from target held a stronger influence than task preference. Primary tasks for squadrons are set by campaign designers but are user-configurable.
+* **[Campaign AI]** The campaign AI now prefers fulfilling missions with squadrons which have a matching primary task. Previously distance from target held a stronger influence than task preference. Primary tasks for squadrons are set by campaign designers but are user-configurable.
 * **[Flight Planning]** Package TOT and composition can be modified after advancing time in Liberation. 
 * **[Mission Generation]** Units on the front line are now hidden on MFDs.
 * **[Mission Generation]** Preset radio channels will now be configured for both A-10C modules.
 * **[Mission Generation]** The A-10C II now uses separate radios for inter- and intra-flight comms (similar to other modern aircraft).
+* **[Mission Generation]** Wind speeds no longer follow a uniform distribution. Median wind speeds are now much lower and the standard deviation has been reduced considerably at altitude but increased somewhat at MSL.
 * **[Modding]** Updated Community A-4E-C mod version support to 2.1.0 release.
 * **[Modding]** Add support for VSN F-4B and F-4C mod.
 * **[Modding]** Custom factions can now be defined in YAML as well as JSON. JSON support may be removed in the future if having both formats causes confusion.
 * **[Modding]** Campaigns which require custom factions can now define those factions directly in the campaign YAML. See Operation Aliied Sword for an example.
 * **[Modding]** The `mission_types` field in squadron files has been removed. Squadron task capability is now determined by airframe, and the auto-assignable list has always been overridden by the campaign settings.
 * **[Modding]** Aircraft task capabilities and preferred aircraft for each task are now moddable in the aircraft unit yaml files. Each aircraft has a weight per task. Higher weights are given higher preference.
+* **[Modding]** Wind speed generation inputs are now moddable. See https://dcs-liberation.rtfd.io/en/latest/modding/weather.html.
 * **[New Game Wizard]** Choices for some options will be remembered for the next new game. Not all settings will be preserved, as many are campaign dependent.
 * **[New Game Wizard]** Lua plugins can now be set while creating a new game.
 * **[New Game Wizard]** Squadrons can be directly replaced with a preset during air wing configuration rather than needing to remove and create a new squadron.
+* **[New Game Wizard]** Squadron liveries can now be selected during air wing configuration.
 * **[Squadrons]** Squadron-specific mission capability lists no longer restrict players from assigning missions outside the squadron's preferences.
+* **[UI]** The orientation of objects like SAMs, EWRs, garrisons, and ships can now be manually adjusted.
 
 ## Fixes
 
@@ -31,6 +35,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[Modding]** Fixed decoding of campaign yaml files to use UTF-8 rather than the system locale's default. It's now possible to use "Bf 109 K-4 Kurfürst" as a preferred aircraft type.
 * **[Mission Generation]** Planes will no longer spawn in helipads that are not also designated for fixed wing parking.
 * **[Mission Generation]** Potentially an issue where ground war planning game state could become corrupted, preventing mission generation.
+* **[Mission Generation]** Refueling tasks will now only be created for flights that have a tanker in their package.
 
 # 6.1.1
 
