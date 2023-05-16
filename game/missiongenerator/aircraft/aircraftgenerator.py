@@ -17,8 +17,8 @@ from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.ato.starttype import StartType
 from game.factions.faction import Faction
-from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
 from game.missiongenerator.missiondata import MissionData
+from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanRegistry
 from game.runways import RunwayData
@@ -143,6 +143,7 @@ class AircraftGenerator:
             # TODO: Special flight type?
             flight = Flight(
                 Package(squadron.location, self.game.db.flights),
+                faction.country,
                 squadron,
                 1,
                 FlightType.BARCAP,

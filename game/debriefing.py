@@ -157,8 +157,8 @@ class Debriefing:
         self.game = game
         self.unit_map = unit_map
 
-        self.player_country = game.blue.faction.country.name
-        self.enemy_country = game.red.faction.country.name
+        self.player_country = game.blue.country_name
+        self.enemy_country = game.red.country_name
 
         self.air_losses = self.dead_aircraft()
         self.ground_losses = self.dead_ground_units()

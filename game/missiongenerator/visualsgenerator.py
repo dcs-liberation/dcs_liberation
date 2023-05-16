@@ -99,7 +99,7 @@ class VisualsGenerator:
                             break
 
                         self.mission.static_group(
-                            self.game.red.faction.country,
+                            self.mission.country(self.game.red.country_name),
                             "",
                             _type=v,
                             position=pos,

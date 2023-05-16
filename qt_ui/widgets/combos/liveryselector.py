@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dcs.countries
 from PySide6.QtWidgets import QComboBox
 from dcs.liveries.livery import Livery
 
@@ -21,7 +22,9 @@ class LiverySelector(QComboBox):
         self.clear()
         self.addItem("Default", None)
         for idx, livery in enumerate(
-            squadron.aircraft.dcs_unit_type.iter_liveries_for_country(squadron.country)
+            squadron.aircraft.dcs_unit_type.iter_liveries_for_country(
+                dcs.countries.get_by_name(squadron.country)
+            )
         ):
             self.addItem(livery.name, livery)
             if squadron.livery == livery.id:
