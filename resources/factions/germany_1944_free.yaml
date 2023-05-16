@@ -19,7 +19,7 @@ logistics_units:
 infantry_units:
   - Infantry AK-74 Rus
 air_defense_units:
-  - Watch tower armed
+  - 8.8 cm Flak 18
 preset_groups: []
 naval_units: []
 requirements: {}
