@@ -24,6 +24,7 @@ aircrafts:
   - F-22A Raptor
   - F-5E Tiger II
   - F/A-18C Hornet (Lot 20)
+  - J-11A Flanker-L
   - JF-17 Thunder
   - Ka-50 Hokum
   - Ka-50 Hokum (Blackshark 3)
@@ -103,8 +104,14 @@ has_jtac: true
 jtac_unit: MQ-9 Reaper
 unrestricted_satnav: true
 liveries_overrides:
+  J-11A Flanker-L:
+    - USN Aggressor VFC-13 'Ferris' (Fictional)
+  JF-17 Thunder:
+    - 'Chips' Camo for Blue Side (Fictional)
   Ka-50 Hokum:
     - georgia camo
+  Ka-50 Hokum (Blackshark 3):
+    - Ka-50_black_neutral
   Mi-8MTV2 Hip:
     - Ukraine
   Mi-24P Hind-F:
