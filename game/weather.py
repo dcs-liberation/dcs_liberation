@@ -21,6 +21,7 @@ from game.utils import (
     interpolate,
     knots,
     meters,
+    Speed,
 )
 
 if TYPE_CHECKING:
@@ -179,56 +180,39 @@ class Weather:
         raise NotImplementedError
 
     @staticmethod
-    def random_wind(minimum: int, maximum: int) -> WindConditions:
+    def random_wind(
+        weibull_shape: float,
+        weibull_scale_speed: Speed,
+        at_2000m_factor_range: tuple[float, float],
+        at_8000m_factor_range: tuple[float, float],
+    ) -> WindConditions:
+        """Generates random wind."""
         wind_direction = Heading.random()
         wind_direction_2000m = wind_direction + Heading.random(-90, 90)
         wind_direction_8000m = wind_direction + Heading.random(-90, 90)
-        at_0m_factor = 1
-        at_2000m_factor = 3 + random.choice([0, 0, 0, 0, 0, 1, 1])
 
-        high_alt_variation = random.choice(
-            [
-                -3,
-                -3,
-                -2,
-                -2,
-                -2,
-                -2,
-                -2,
-                -2,
-                -1,
-                -1,
-                -1,
-                -1,
-                -1,
-                -1,
-                -1,
-                0,
-                0,
-                0,
-                1,
-                1,
-                2,
-                3,
-            ]
+        # The first parameter is the scale. 63.2% of all results will fall below that
+        # value.
+        # https://www.itl.nist.gov/div898/handbook/eda/section3/weibplot.htm
+        msl = random.weibullvariate(
+            weibull_scale_speed.meters_per_second, weibull_shape
         )
-        at_8000m_factor = at_2000m_factor + 5 + high_alt_variation
-
-        base_wind = random.randint(minimum, maximum)
+        at_2000m_factor = random.uniform(*at_2000m_factor_range)
+        at_8000m_factor = random.uniform(*at_8000m_factor_range)
 
         # DCS is limited to 97 knots wind speed.
         max_supported_wind_speed = knots(97).meters_per_second
 
         return WindConditions(
             # Always some wind to make the smoke move a bit.
-            at_0m=Wind(wind_direction.degrees, max(1, base_wind * at_0m_factor)),
+            at_0m=Wind(wind_direction.degrees, max(1.0, msl)),
             at_2000m=Wind(
                 wind_direction_2000m.degrees,
-                min(max_supported_wind_speed, base_wind * at_2000m_factor),
+                min(max_supported_wind_speed, msl * at_2000m_factor),
             ),
             at_8000m=Wind(
                 wind_direction_8000m.degrees,
-                min(max_supported_wind_speed, base_wind * at_8000m_factor),
+                min(max_supported_wind_speed, msl * at_8000m_factor),
             ),
         )
 
@@ -328,7 +312,7 @@ class ClearSkies(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(1, 4)
+        return self.random_wind(1.5, knots(5), (1, 1.8), (1.5, 2.5))
 
 
 class Cloudy(Weather):
@@ -352,7 +336,7 @@ class Cloudy(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(2, 4)
+        return self.random_wind(1.6, knots(6.5), (1, 1.8), (1.5, 2.5))
 
 
 class Raining(Weather):
@@ -376,7 +360,7 @@ class Raining(Weather):
         return None
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(2, 6)
+        return self.random_wind(2.6, knots(12), (1, 1.7), (2.2, 2.8))
 
 
 class Thunderstorm(Weather):
@@ -401,7 +385,7 @@ class Thunderstorm(Weather):
         )
 
     def generate_wind(self) -> WindConditions:
-        return self.random_wind(2, 8)
+        return self.random_wind(6, knots(20), (1, 2), (2.5, 3.5))
 
 
 @dataclass
