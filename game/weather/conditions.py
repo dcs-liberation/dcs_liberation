@@ -79,7 +79,9 @@ class Conditions:
         season = determine_season(day)
         logging.debug("Weather: Season {}".format(season))
         weather_chances = seasonal_conditions.weather_type_chances[season]
-        chances = {
+        chances: dict[
+            type[ClearSkies] | type[Cloudy] | type[Raining] | type[Thunderstorm], float
+        ] = {
             Thunderstorm: weather_chances.thunderstorm,
             Raining: weather_chances.raining,
             Cloudy: weather_chances.cloudy,
