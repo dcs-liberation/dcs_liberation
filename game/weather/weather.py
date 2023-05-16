@@ -4,17 +4,13 @@ import datetime
 import logging
 import math
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional, TYPE_CHECKING
 
-from dcs.cloud_presets import Clouds as PydcsClouds
-from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
+from dcs.weather import Weather as PydcsWeather, Wind
 
-from game.theater.daytimemap import DaytimeMap
-from game.theater.seasonalconditions import determine_season
 from game.timeofday import TimeOfDay
 from game.utils import (
-    Distance,
     Heading,
     Pressure,
     inches_hg,
@@ -23,67 +19,19 @@ from game.utils import (
     meters,
     Speed,
 )
+from game.weather.atmosphericconditions import AtmosphericConditions
+from game.weather.clouds import Clouds
+from game.weather.fog import Fog
+from game.weather.wind import WindConditions
 
 if TYPE_CHECKING:
-    from game.settings import Settings
-    from game.theater import ConflictTheater
     from game.theater.seasonalconditions import SeasonalConditions
-
-
-@dataclass(frozen=True)
-class AtmosphericConditions:
-    #: Pressure at sea level.
-    qnh: Pressure
-
-    #: Temperature at sea level in Celcius.
-    temperature_celsius: float
-
-    #: Turbulence per 10 cm.
-    turbulence_per_10cm: float
-
-
-@dataclass(frozen=True)
-class WindConditions:
-    at_0m: Wind
-    at_2000m: Wind
-    at_8000m: Wind
 
 
 @dataclass(frozen=True)
 class WeibullWindSpeedParameters:
     shape: float
     scale: Speed
-
-
-@dataclass(frozen=True)
-class Clouds:
-    base: int
-    density: int
-    thickness: int
-    precipitation: PydcsWeather.Preceptions
-    preset: Optional[CloudPreset] = field(default=None)
-
-    @classmethod
-    def random_preset(cls, rain: bool) -> Clouds:
-        clouds = (p.value for p in PydcsClouds)
-        if rain:
-            presets = [p for p in clouds if "Rain" in p.name]
-        else:
-            presets = [p for p in clouds if "Rain" not in p.name]
-        preset = random.choice(presets)
-        return Clouds(
-            base=random.randint(preset.min_base, preset.max_base),
-            density=0,
-            thickness=0,
-            precipitation=PydcsWeather.Preceptions.None_,
-            preset=preset,
-        )
-
-
-@dataclass(frozen=True)
-class Fog:
-    visibility: Distance
-    thickness: int
 
 
 class Weather:
@@ -411,84 +359,3 @@ class Thunderstorm(Weather):
             WeibullWindSpeedParameters(6.2, knots(20)),
             WeibullWindSpeedParameters(6.4, knots(20)),
         )
-
-
-@dataclass
-class Conditions:
-    time_of_day: TimeOfDay
-    start_time: datetime.datetime
-    weather: Weather
-
-    @classmethod
-    def generate(
-        cls,
-        theater: ConflictTheater,
-        day: datetime.date,
-        time_of_day: TimeOfDay,
-        settings: Settings,
-        forced_time: datetime.time | None = None,
-    ) -> Conditions:
-        # The time might be forced by the campaign for the first turn.
-        if forced_time is not None:
-            _start_time = datetime.datetime.combine(day, forced_time)
-        else:
-            _start_time = cls.generate_start_time(
-                theater, day, time_of_day, settings.night_disabled
-            )
-
-        return cls(
-            time_of_day=time_of_day,
-            start_time=_start_time,
-            weather=cls.generate_weather(theater.seasonal_conditions, day, time_of_day),
-        )
-
-    @classmethod
-    def generate_start_time(
-        cls,
-        theater: ConflictTheater,
-        day: datetime.date,
-        time_of_day: TimeOfDay,
-        night_disabled: bool,
-    ) -> datetime.datetime:
-        if night_disabled:
-            logging.info("Skip Night mission due to user settings")
-            time_range = DaytimeMap(
-                dawn=(datetime.time(hour=8), datetime.time(hour=9)),
-                day=(datetime.time(hour=10), datetime.time(hour=12)),
-                dusk=(datetime.time(hour=12), datetime.time(hour=14)),
-                night=(datetime.time(hour=14), datetime.time(hour=17)),
-            ).range_of(time_of_day)
-        else:
-            time_range = theater.daytime_map.range_of(time_of_day)
-
-        # Starting missions on the hour is a nice gameplay property, so keep the random
-        # time constrained to that. DaytimeMap enforces that we have only whole hour
-        # ranges for now, so we don't need to worry about accidentally changing the time
-        # of day by truncating sub-hours.
-        time = datetime.time(
-            hour=random.randint(time_range[0].hour, time_range[1].hour)
-        )
-        return datetime.datetime.combine(day, time)
-
-    @classmethod
-    def generate_weather(
-        cls,
-        seasonal_conditions: SeasonalConditions,
-        day: datetime.date,
-        time_of_day: TimeOfDay,
-    ) -> Weather:
-        season = determine_season(day)
-        logging.debug("Weather: Season {}".format(season))
-        weather_chances = seasonal_conditions.weather_type_chances[season]
-        chances = {
-            Thunderstorm: weather_chances.thunderstorm,
-            Raining: weather_chances.raining,
-            Cloudy: weather_chances.cloudy,
-            ClearSkies: weather_chances.clear_skies,
-        }
-        logging.debug("Weather: Chances {}".format(weather_chances))
-        weather_type = random.choices(
-            list(chances.keys()), weights=list(chances.values())
-        )[0]
-        logging.debug("Weather: Type {}".format(weather_type))
-        return weather_type(seasonal_conditions, day, time_of_day)
