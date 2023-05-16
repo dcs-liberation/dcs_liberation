@@ -12,7 +12,7 @@ def test_mission_types_friendly(mocker: Any) -> None:
     """
     # Airfield
     mocker.patch("game.theater.controlpoint.Airfield.is_friendly", return_value=True)
-    airport = Airport(None, None)
+    airport = Airport(None, None)  # type: ignore
     airport.name = "test"  # required for Airfield.__init__
     airfield = Airfield(airport, theater=None, starts_blue=True)  # type: ignore
     mission_types = list(airfield.mission_types(for_player=True))
@@ -60,7 +60,7 @@ def test_mission_types_enemy(mocker: Any) -> None:
     """
     # Airfield
     mocker.patch("game.theater.controlpoint.Airfield.is_friendly", return_value=False)
-    airport = Airport(None, None)
+    airport = Airport(None, None)  # type: ignore
     airport.name = "test"  # required for Airfield.__init__
     airfield = Airfield(airport, theater=None, starts_blue=True)  # type: ignore
     mission_types = list(airfield.mission_types(for_player=True))
