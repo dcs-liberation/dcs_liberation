@@ -4,37 +4,29 @@ import datetime
 import logging
 import math
 import random
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from typing import Optional, TYPE_CHECKING
 
-from dcs.weather import Weather as PydcsWeather, Wind
+from dcs.weather import Weather as PydcsWeather
 
 from game.timeofday import TimeOfDay
 from game.utils import (
-    Heading,
     Pressure,
     inches_hg,
     interpolate,
-    knots,
     meters,
-    Speed,
 )
 from game.weather.atmosphericconditions import AtmosphericConditions
 from game.weather.clouds import Clouds
 from game.weather.fog import Fog
+from game.weather.weatherarchetype import WeatherArchetype, WeatherArchetypes
 from game.weather.wind import WindConditions
 
 if TYPE_CHECKING:
     from game.theater.seasonalconditions import SeasonalConditions
 
 
-@dataclass(frozen=True)
-class WeibullWindSpeedParameters:
-    shape: float
-    scale: Speed
-
-
-class Weather:
+class Weather(ABC):
     def __init__(
         self,
         seasonal_conditions: SeasonalConditions,
@@ -108,6 +100,11 @@ class Weather:
         return conditions
 
     @property
+    @abstractmethod
+    def archetype(self) -> WeatherArchetype:
+        ...
+
+    @property
     def pressure_adjustment(self) -> float:
         raise NotImplementedError
 
@@ -131,47 +128,7 @@ class Weather:
         )
 
     def generate_wind(self) -> WindConditions:
-        raise NotImplementedError
-
-    @staticmethod
-    def random_wind(
-        params_at_msl: WeibullWindSpeedParameters,
-        params_at_2000m: WeibullWindSpeedParameters,
-        params_at_8000m: WeibullWindSpeedParameters,
-    ) -> WindConditions:
-        """Generates random wind."""
-        wind_direction = Heading.random()
-        wind_direction_2000m = wind_direction + Heading.random(-90, 90)
-        wind_direction_8000m = wind_direction + Heading.random(-90, 90)
-
-        # The first parameter is the scale. 63.2% of all results will fall below that
-        # value.
-        # https://www.itl.nist.gov/div898/handbook/eda/section3/weibplot.htm
-        msl = random.weibullvariate(
-            params_at_msl.scale.meters_per_second, params_at_msl.shape
-        )
-        at_2000m = random.weibullvariate(
-            msl + params_at_2000m.scale.meters_per_second, params_at_2000m.shape
-        )
-        at_8000m = random.weibullvariate(
-            at_2000m + params_at_8000m.scale.meters_per_second, params_at_8000m.shape
-        )
-
-        # DCS is limited to 97 knots wind speed.
-        max_supported_wind_speed = knots(97).meters_per_second
-
-        return WindConditions(
-            # Always some wind to make the smoke move a bit.
-            at_0m=Wind(wind_direction.degrees, max(1.0, msl)),
-            at_2000m=Wind(
-                wind_direction_2000m.degrees,
-                min(max_supported_wind_speed, at_2000m),
-            ),
-            at_8000m=Wind(
-                wind_direction_8000m.degrees,
-                min(max_supported_wind_speed, at_8000m),
-            ),
-        )
+        return self.archetype.wind_parameters.speed.random_wind()
 
     @staticmethod
     def random_cloud_base() -> int:
@@ -251,6 +208,10 @@ class Weather:
 
 class ClearSkies(Weather):
     @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("clear")
+
+    @property
     def pressure_adjustment(self) -> float:
         return 0.22
 
@@ -268,15 +229,12 @@ class ClearSkies(Weather):
     def generate_fog(self) -> Optional[Fog]:
         return None
 
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(
-            WeibullWindSpeedParameters(1.5, knots(5)),
-            WeibullWindSpeedParameters(3.5, knots(20)),
-            WeibullWindSpeedParameters(6.4, knots(20)),
-        )
-
 
 class Cloudy(Weather):
+    @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("cloudy")
+
     @property
     def pressure_adjustment(self) -> float:
         return 0.0
@@ -296,15 +254,12 @@ class Cloudy(Weather):
         # DCS 2.7 says to not use fog with the cloud presets.
         return None
 
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(
-            WeibullWindSpeedParameters(1.6, knots(6.5)),
-            WeibullWindSpeedParameters(3.5, knots(22)),
-            WeibullWindSpeedParameters(6.4, knots(18)),
-        )
-
 
 class Raining(Weather):
+    @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("raining")
+
     @property
     def pressure_adjustment(self) -> float:
         return -0.22
@@ -324,15 +279,12 @@ class Raining(Weather):
         # DCS 2.7 says to not use fog with the cloud presets.
         return None
 
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(
-            WeibullWindSpeedParameters(2.6, knots(8)),
-            WeibullWindSpeedParameters(4.2, knots(20)),
-            WeibullWindSpeedParameters(6.4, knots(20)),
-        )
-
 
 class Thunderstorm(Weather):
+    @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("thunderstorm")
+
     @property
     def pressure_adjustment(self) -> float:
         return 0.1
@@ -351,11 +303,4 @@ class Thunderstorm(Weather):
             density=random.randint(9, 10),
             thickness=self.random_cloud_thickness(),
             precipitation=PydcsWeather.Preceptions.Thunderstorm,
-        )
-
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(
-            WeibullWindSpeedParameters(6, knots(20)),
-            WeibullWindSpeedParameters(6.2, knots(20)),
-            WeibullWindSpeedParameters(6.4, knots(20)),
         )

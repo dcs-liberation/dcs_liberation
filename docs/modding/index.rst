@@ -7,3 +7,4 @@ Modding guide
 
    fuel-consumption-measurement.md
    layouts.rst
+   weather.rst
