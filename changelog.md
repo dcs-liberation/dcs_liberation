@@ -45,6 +45,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[Mission Generation]** Fixed missing Tanker task on recovery tanker missions.
 * **[UI]** Fixed error when resetting air wing configuration during game setup.
 * **[UI]** Fixed flight plan recreation when changing mission type with "Recreate as" flight options.
+* **[UI]** Fixed failure to launch UI when Liberation persistent preferences file was corrupt.
 
 # 6.1.1
 
