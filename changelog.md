@@ -8,7 +8,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[Engine]** Saved games are now a zip file of save assets for easier bug reporting. The new extension is .liberation.zip. Drag and drop that file into bug reports.
 * **[Campaign]** Added options to limit squadron sizes and to begin all squadrons at maximum strength. Maximum squadron size is defined during air wing configuration with default values provided by the campaign.
 * **[Campaign AI]** The campaign AI now prefers fulfilling missions with squadrons which have a matching primary task. Previously distance from target held a stronger influence than task preference. Primary tasks for squadrons are set by campaign designers but are user-configurable.
-* **[Flight Planning]** Package TOT and composition can be modified after advancing time in Liberation. 
+* **[Flight Planning]** Package TOT and composition can be modified after advancing time in Liberation.
 * **[Mission Generation]** Units on the front line are now hidden on MFDs.
 * **[Mission Generation]** Preset radio channels will now be configured for both A-10C modules.
 * **[Mission Generation]** The A-10C II now uses separate radios for inter- and intra-flight comms (similar to other modern aircraft).
@@ -31,6 +31,7 @@ Saves from 6.x are not compatible with 7.0.
 ## Fixes
 
 * **[Campaign]** Fixed a longstanding bug where oversized airlifts could corrupt a save with empty convoys.
+* **[Campaign]** Aircraft with built-in TGPs but without an external pod will no longer degrade automatic loadouts to iron bombs.
 * **[Engine]** Fixed crash in startup caused by a corrupted Liberation preferences file.
 * **[Flight Planning]** AEW&C missions are now plannable over FOBs and LHAs.
 * **[Modding]** Fixed an issue where Falklands campaigns created or edited with new versions of DCS could not be loaded.
