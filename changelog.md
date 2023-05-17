@@ -43,6 +43,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[Mission Generation]** Refueling tasks will now only be created for flights that have a tanker in their package.
 * **[Mission Generation]** Fixed missing Tanker task on recovery tanker missions.
 * **[UI]** Fixed error when resetting air wing configuration during game setup.
+* **[UI]** Fixed flight plan recreation when changing mission type with "Recreate as" flight options.
 
 # 6.1.1
 
