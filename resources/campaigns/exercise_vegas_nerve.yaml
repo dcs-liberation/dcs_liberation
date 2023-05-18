@@ -8,94 +8,100 @@ description: <p>Welcome to Vegas Nerve, an asymmetrical Red Flag Exercise scenar
 miz: exercise_vegas_nerve.miz
 performance: 1
 recommended_start_date: 2011-02-24
-version: "10.5"
+version: "10.7"
 squadrons:
 # Tonopah Airport
   17:
-    - primary: TARCAP
+    - primary: BARCAP
       secondary: air-to-air
       aircraft:
         - F-15C Eagle
-    - primary: BARCAP
-      secondary: any
-      aircraft:
-        - F-14B Tomcat
-    - primary: AEW&C
-      aircraft:
-        - E-3A
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker MPRS
-    - primary: Transport
-      aircraft:
-        - C-130
+      size: 12
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle
+      size: 12
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+      size: 1
 # Tonopah Test Range
   18:
-    - primary: CAS
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
+      size: 8
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - AH-64D Apache Longbow
+      size: 10
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - F/A-18C Hornet (Lot 20)
+      size: 24
     - primary: SEAD
       secondary: air-to-ground
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - AV-8B Harrier II Night Attack
+      size: 24
     - primary: Air Assault
       secondary: air-to-ground
       aircraft:
         - UH-1H Iroquois
+      size: 2
 # Groom Lake
   2:
-    - primary: BARCAP
+    - primary: Escort
       secondary: air-to-air
       aircraft:
         - J-11A Flanker-L
+      size: 20
     - primary: BAI
       secondary: air-to-ground
       aircraft:
-        - Su-34 Fullback
+        - Su-25T Frogfoot
+      size: 20
 # Creech
   Creech FARP:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Ka-50 Hokum
+        - Ka-50 Hokum (Blackshark 3)
+      size: 8
+    - primary: Air Assault
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 4
 # Nellis AFB
   4:
-    - primary: SEAD
-      secondary: any
-      aircraft:
-        - FC-1 Fierce Dragon
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - H-6J Badger
-# Boulder City Airport
-  6:
+      size: 20
     - primary: AEW&C
       aircraft:
         - KJ-2000
-    - primary: Refueling
+      size: 1
+    - primary: SEAD
+      secondary: air-to-ground
       aircraft:
-        - IL-78M
-    - primary: Transport
+        - Su-24M Fencer-D
+      size: 20
+    - primary: DEAD
+      secondary: air-to-ground
       aircraft:
-        - IL-76MD
+        - Su-34 Fullback
+      size: 20
+# Boulder City Airport
+  6:
+    - primary: SEAD Escort
+      secondary: any
+      aircraft:
+        - FC-1 Fierce Dragon
+      size: 20

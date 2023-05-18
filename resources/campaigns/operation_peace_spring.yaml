@@ -8,66 +8,80 @@ description: <p>This is a semi-fictional what-if scenario for Operation Peace Sp
 miz: operation_peace_spring.miz
 performance: 1
 recommended_start_date: 2019-12-23
-version: "10.5"
+version: "10.7"
 squadrons:
 # Ramat David
   30:
-    - primary: BARCAP
-      secondary: air-to-air
-      aircraft:
-        - F-15C Eagle
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - AH-64D Apache Longbow
+      size: 8
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-    - primary: DEAD
-      secondary: any
-      aircraft:
-        - F-16CM Fighting Falcon (Block 50)
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - AV-8B Harrier II Night Attack
+      size: 20
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle
+      size: 12
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+      size: 2
+# King Hussein Air College
+  19:
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 20
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack
+      size: 8
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-15C Eagle
+      size: 12
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 8
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+      size: 2
     - primary: Air Assault
       secondary: air-to-ground
       aircraft:
         - UH-1H Iroquois
-    - primary: AEW&C
-      aircraft:
-        - E-3A
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker MPRS
-    - primary: Transport
-      aircraft:
-        - C-130    
+      size: 2
 # Damascus
   7:
-    - primary: BARCAP
-      secondary: any
+    - primary: TARCAP
+      secondary: air-to-air
       aircraft:
         - F-4E Phantom II
-        - MiG-21bis Fishbed-N
-    - primary: CAS
+        - Mirage-F1EQ
+      size: 12
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - AH-1W SuperCobra
         - Su-25 Frogfoot
+      size: 12
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - OH-58D Kiowa Warrior
+        - Mi-24P Hind-F
+      size: 8
 # Tiyas
   39:
     - primary: SEAD
@@ -75,37 +89,43 @@ squadrons:
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
         - Su-24M Fencer-D
+      size: 20
 # Abu Al Duhur
-#  1:
-# Gaziantep
-  11:
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - OH-58D Kiowa Warrior
-        - Mi-24P Hind-F
-# Incirlik
-  16:
-    - primary: TARCAP
-      secondary: any
-      aircraft:
-        - F-16CM Fighting Falcon (Block 50)
-        - MiG-29A Fulcrum-A
+  1:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - F-4E Phantom II
         - H-6J Badger
+      size: 20
+# Gaziantep
+  11:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - MiG-29A Fulcrum-A
+      size: 12
+# Incirlik
+  16:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-4E Phantom II
+        - Tu-22M3 Backfire-C
+      size: 20
     - primary: AEW&C
       aircraft:
         - E-3A
         - A-50
+      size: 2
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
         - IL-78M
+      size: 2
     - primary: Transport
       aircraft:
         - C-130
         - IL-76MD
-        
+      size: 4

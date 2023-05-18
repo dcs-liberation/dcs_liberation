@@ -3,102 +3,145 @@ name: Caucasus - Operation Vectron's Claw
 theater: Caucasus
 authors: Starfire
 recommended_player_faction: USA 2005
-recommended_enemy_faction: Russia 1990
+recommended_enemy_faction: Russia 2010
 description: <p>United Nations Observer Mission in Georgia (UNOMIG) observers stationed in Georgia to monitor the ceasefire between Georgia and Abkhazia have been cut off from friendly forces by Russian troops backing the separatist state. The UNOMIG HQ at Sukhumi has been taken, and a small contingent of observers and troops at the Zugdidi Sector HQ will have to make a run for the coast, supported by offshore US naval aircraft. The contingent is aware that their best shot at survival is to swiftly retake Sukhumi before Russian forces have a chance to dig in, so that friendly ground forces can land and reinforce them.</p><p><strong>Note:</strong> Ground unit purchase will not be available past Turn 0 until Sukhumi is retaken, so it is imperative you reach Sukhumi with at least one surviving ground unit to capture it. Two Hueys are available at Zugdidi for some close air support. The player can either play the first leg of the scenario as an evacuation with a couple of light vehicles (e.g. Humvees) set on breakthrough (modifying waypoints in the mission editor so they are not charging head-on into enemy ground forces is suggested), or purchase heavier ground units if they wish to experience a more traditional frontline ground war. Once Sukhumi has been captured, squadrons based in Incirlik Turkey can be ferried in via the "From Incirlik" off-map spawn point.</p>
 miz: operation_vectrons_claw.miz
 performance: 1
 recommended_start_date: 2008-08-08
-version: "10.5"
+version: "10.7"
 squadrons:
   Blue CV-1:
     - primary: BARCAP
       secondary: any
       aircraft:
         - F-14B Tomcat
+      size: 20
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
+      size: 32
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+      size: 32
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
+      size: 1
     - primary: Refueling
       aircraft:
         - S-3B Tanker
+      size: 3
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - SH-60B Seahawk
+      size: 2
   Blue LHA:
     - primary: BAI
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
+      size: 20
+  From Incirlik:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - AH-64D Apache Longbow
-  From Incirlik:
-    - primary: BARCAP
-      secondary: air-to-air
-      aircraft:
-        - F-15C Eagle
+      size: 8
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
+      size: 6
     - primary: DEAD
       secondary: any
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
-    - primary: Strike
+      size: 16
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 16
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle
-    - primary: AEW&C
+      size: 12
+    - primary: Strike
+      secondary: air-to-ground
       aircraft:
-        - E-3A
+        - B-1B Lancer
+      size: 8
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+      size: 8
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
+      size: 1
 #FARPs
   UNOMIG Sector HQ:
-    - primary: Air Assault
-      secondary: air-to-ground
-      aircraft:
-        - UH-1H Iroquois
-  Dzhugba:
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - Mi-24P Hind-F
-#Sukhumi-Babushara
-  20:
-    - primary: BARCAP
+    - primary: Transport
       secondary: any
       aircraft:
-        - MiG-29S Fulcrum-C
-#Sochi-Adler
-  18:
+        - UH-1H Iroquois
+      size: 2
+  Dzhugba:
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
-        - Su-24M Fencer-D
-#Anapa-Vityazevo
-  12:
-    - primary: CAS
+        - Mi-24P Hind-F
+      size: 8
+#Sukhumi-Babushara
+  20:
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29S Fulcrum-C
+      size: 8
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - Su-25T Frogfoot
-    - primary: AEW&C
+      size: 12
+#Sochi-Adler
+  18:
+    - primary: Escort
+      secondary: air-to-air
       aircraft:
-        - A-50
-    - primary: Refueling
+        - Su-27 Flanker-B
+      size: 8
+    - primary: SEAD
+      secondary: air-to-ground
       aircraft:
-        - IL-78M
+        - Su-24M Fencer-D
+      size: 20
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-34 Fullback
+      size: 20
+#Anapa-Vityazevo
+  12:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Tu-95MS Bear-H
+      size: 16
   Red CV:
     - primary: BARCAP
       secondary: any
       aircraft:
         - SU-33 Flanker-D
+      size: 18
  #I am aware there is no Russian LHA. This is just for campaign inversion.
   Red LHA:
     - primary: BAI
-      secondary: air-to-ground    
-        
+      secondary: air-to-ground
+      size: 20

@@ -3,7 +3,7 @@ name: Falklands - Operation Grabthar's Hammer
 theater: Falklands
 authors: Starfire
 recommended_player_faction: USA 2005
-recommended_enemy_faction: Russia 1990
+recommended_enemy_faction: Russia 2010
 description:
   <p>An Argentinean extremist group has contracted the Sons of Warvan (SoW), an
   unusually well-equipped PMC with close ties to the Russian government, to
@@ -15,96 +15,134 @@ description:
   the SoW are trying to avoid unwanted attention.</p>
 miz: grabthars_hammer.miz
 performance: 2
-recommended_start_date: 2000-07-13
-version: "10.5"
+recommended_start_date: 1999-12-25
+version: "10.7"
 squadrons:
   #Mount Pleasant
   2:
-    - primary: TARCAP
-      secondary: air-to-air
-      aircraft:
-        - F-15C Eagle
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - F-15E Strike Eagle
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - A-10C Thunderbolt II (Suite 7)
-    - primary: Strike
-      secondary: air-to-ground
-      aircraft:
-        - B-1B Lancer
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker
-  #San Julian
-  11:
     - primary: DEAD
       secondary: any
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
-  #El Calafate
-  14:
+      size: 16
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - Su-25T Frogfoot
-  #Rio Gallegros
-  5:
-    - primary: BARCAP
-      secondary: any
-      aircraft:
-        - Su-27 Flanker-B
-  #Punta Arenas
-  9:
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - Su-24M Fencer-D
+        - A-10C Thunderbolt II (Suite 7)
+      size: 8
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - Tu-22M3 Backfire-C
-  #Ushuaia
-  7:
-    - primary: Transport
+        - B-1B Lancer
+      size: 12
+    - primary: Refueling
       aircraft:
-        - IL-76MD
-  #Ushuaia Helo Port
-  8:
+        - KC-135 Stratotanker
+      size: 1
+  #San Julian
+  11:
     - primary: BAI
       secondary: air-to-ground
       aircraft:
-        - Mi-24P Hind-F
+        - F-15E Strike Eagle
+      size: 8
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-1H Iroquois
+      size: 1
   #Blue CV
   Blue-CV:
     - primary: BARCAP
       secondary: any
       aircraft:
         - F-14B Tomcat
+      size: 20
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
+      size: 32
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+      size: 32
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
+      size: 1
     - primary: Refueling
       aircraft:
         - S-3B Tanker
+      size: 3
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - SH-60B Seahawk
+      size: 2
   # Blue LHA
   Blue-LHA:
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
+      size: 18
     - primary: Air Assault
       secondary: air-to-ground
       aircraft:
         - UH-1H Iroquois
+      size: 2
+  #El Calafate
+  14:
+    - primary: Transport
+      aircraft:
+        - Mi-8MTV2 Hip
+      size: 10
+  #Rio Gallegros
+  5:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - Su-27 Flanker-B
+      size: 12
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Su-25T Frogfoot
+      size: 12
+  #Punta Arenas
+  9:
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-24M Fencer-D
+      size: 16
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-34 Fullback
+      size: 16
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Tu-22M3 Backfire-C
+      size: 16
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+      size: 2
+  #Ushuaia
+  7:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - AH-64D Apache Longbow
+        - Ka-50 Hokum (Blackshark 3)
+      size: 8
+  #Ushuaia Helo Port
+  8:
+    - primary: Air Assault
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 8
