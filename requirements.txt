@@ -32,7 +32,7 @@ platformdirs==2.6.2
 pluggy==1.0.0
 pre-commit==2.21.0
 pydantic==1.10.7
-git+https://github.com/pydcs/dcs@97cc0a28941fac32bac66884f29461fd8a5fdfde#egg=pydcs
+git+https://github.com/pydcs/dcs@8fdeda106ba7e847a5d0a1ed358a1463636b513d#egg=pydcs
 pyinstaller==5.7.0
 pyinstaller-hooks-contrib==2022.14
 pyproj==3.4.1
