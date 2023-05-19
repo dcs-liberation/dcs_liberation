@@ -36,6 +36,14 @@ class GameLoop:
     def elapsed_time(self) -> timedelta:
         return self.sim.time - self.game.conditions.start_time
 
+    def reset(self) -> None:
+        self.pause()
+        self.events = GameUpdateEvents()
+        self.sim.reset(self.events)
+        self.send_update(rate_limit=False)
+        self.started = False
+        self.completed = False
+
     def start(self) -> None:
         if self.started:
             raise RuntimeError("Cannot start game loop because it has already started")
