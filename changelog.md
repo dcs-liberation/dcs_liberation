@@ -16,6 +16,7 @@ Saves from 6.x are not compatible with 7.0.
 * **[Mission Generation]** Wind speeds no longer follow a uniform distribution. Median wind speeds are now much lower and the standard deviation has been reduced considerably at altitude but increased somewhat at MSL.
 * **[Mission Generation]** Improved task generation for SEAD flights carrying TALDs.
 * **[Mission Generation]** Added task timeout for SEAD flights with TALDs to prevent AI from overflying the target.
+* **[Mission Generation]** Added (experimental!) option to rewind when aborting take off. This will allow you to modify your ATO after clicking take off without having to reload your game.
 * **[Modding]** Updated Community A-4E-C mod version support to 2.1.0 release.
 * **[Modding]** Add support for VSN F-4B and F-4C mod.
 * **[Modding]** Added support for AI C-47 mod.
