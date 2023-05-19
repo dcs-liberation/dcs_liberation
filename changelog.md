@@ -4,7 +4,7 @@ Saves from 6.x are not compatible with 7.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.8.4.39731.
+* **[Engine]** Support for DCS 2.8.5.40170.
 * **[Engine]** Saved games are now a zip file of save assets for easier bug reporting. The new extension is .liberation.zip. Drag and drop that file into bug reports.
 * **[Campaign]** Added options to limit squadron sizes and to begin all squadrons at maximum strength. Maximum squadron size is defined during air wing configuration with default values provided by the campaign.
 * **[Campaign]** Added handling for more DCS death events. This probably does not catch any deaths that weren't previously tracked, but it should record them sooner, which will improve results for game crashes or other early exits.

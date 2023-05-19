@@ -96,10 +96,6 @@ class Su_57(PlaneType):
             2,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
         )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            2,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             2,
             Weapons.B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag,
@@ -216,10 +212,6 @@ class Su_57(PlaneType):
         MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD = (
             4,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
-        )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            4,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
         )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             4,
@@ -346,10 +338,6 @@ class Su_57(PlaneType):
             9,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
         )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            9,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             9,
             Weapons.B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag,
@@ -459,10 +447,6 @@ class Su_57(PlaneType):
         MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD = (
             11,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
-        )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            11,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
         )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             11,
