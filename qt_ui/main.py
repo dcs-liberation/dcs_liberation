@@ -186,7 +186,7 @@ def parse_args() -> argparse.Namespace:
     speed_controls_group.add_argument(
         "--show-sim-speed-controls",
         action="store_true",
-        default=True,
+        default=False,
         help="Shows the sim speed controls in the top panel.",
     )
     speed_controls_group.add_argument(
