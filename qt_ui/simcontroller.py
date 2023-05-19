@@ -84,6 +84,9 @@ class SimController(QObject):
         with self.game_loop.paused_sim():
             yield
 
+    def reset_simulation(self) -> None:
+        self.game_loop.reset()
+
     def run_to_first_contact(self) -> None:
         self.game_loop.run_to_first_contact()
 

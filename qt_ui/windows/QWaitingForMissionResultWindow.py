@@ -111,7 +111,7 @@ class QWaitingForMissionResultWindow(QDialog):
         self.manually_submit.clicked.connect(self.submit_manually)
         self.actions_layout.addWidget(self.manually_submit)
         self.cancel = QPushButton("Abort mission")
-        self.cancel.clicked.connect(self.close)
+        self.cancel.clicked.connect(self.reject)
         self.actions_layout.addWidget(self.cancel)
         self.gridLayout.addWidget(self.actions, 2, 0)
 
@@ -122,7 +122,7 @@ class QWaitingForMissionResultWindow(QDialog):
         self.manually_submit2.clicked.connect(self.submit_manually)
         self.actions2_layout.addWidget(self.manually_submit2)
         self.cancel2 = QPushButton("Abort mission")
-        self.cancel2.clicked.connect(self.close)
+        self.cancel2.clicked.connect(self.reject)
         self.actions2_layout.addWidget(self.cancel2)
         self.proceed = QPushButton("Accept results")
         self.proceed.setProperty("style", "btn-success")
@@ -132,6 +132,11 @@ class QWaitingForMissionResultWindow(QDialog):
         progress_bar.start()
         self.layout.addLayout(self.gridLayout, 1, 0)
         self.setLayout(self.layout)
+
+    def reject(self) -> None:
+        if self.game.settings.reset_simulation_on_abort:
+            self.sim_controller.reset_simulation()
+        super().reject()
 
     @staticmethod
     def add_update_row(description: str, count: int, layout: QGridLayout) -> None:
@@ -217,7 +222,7 @@ class QWaitingForMissionResultWindow(QDialog):
 
             GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
             GameUpdateSignal.get_instance().updateGame(self.game)
-        self.close()
+        self.accept()
 
     def closeEvent(self, evt):
         super(QWaitingForMissionResultWindow, self).closeEvent(evt)
