@@ -27,16 +27,20 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - VAW-125
+      size: 2
     - primary: Refueling
       aircraft:
         - VS-35 (Tanker)
+      size: 4
     - primary: Anti-ship
       secondary: air-to-ground
       aircraft:
         - VS-35
+      size: 8
     - primary: Transport
       aircraft:
         - HSM-40
+      size: 2
   # BLUFOR LHA
   Naval-2:
     - primary: BAI
@@ -47,6 +51,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - HMLA-169 (UH-1H)
+      size: 4
     - primary: CAS
       secondary: air-to-ground
       aircraft:
@@ -92,6 +97,7 @@ squadrons:
     - primary: Transport
       aircraft:
         - IL-76MD
+      size: 2
     - primary: BARCAP
       secondary: any
       aircraft:
@@ -105,6 +111,7 @@ squadrons:
     - primary: Refueling
       aircraft:
         - IL-78M
+      size: 2
   # Andersen AFB
   6:
     - primary: TARCAP
@@ -122,6 +129,7 @@ squadrons:
     - primary: Transport
       aircraft:
         - IL-76MD
+      size: 2
   # Antonio B. Won Pat Intl
   4:
     - primary: TARCAP
