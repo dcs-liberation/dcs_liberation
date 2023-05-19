@@ -198,16 +198,20 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - VAW-125
+      size: 2
     - primary: Refueling
       aircraft:
         - VS-35 (Tanker)
+      size: 4
     - primary: Anti-ship
       secondary: air-to-ground
       aircraft:
         - VS-35
+      size: 8
     - primary: Transport
       aircraft:
         - HSM-40
+      size: 2
   #BLUFOR LHA
   Naval-3:
     - primary: BAI
@@ -218,6 +222,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - HMLA-269 (UH-1H)
+      size: 4
     - primary: CAS
       secondary: air-to-ground
       aircraft:
@@ -257,6 +262,7 @@ squadrons:
     - primary: Refueling
       aircraft:
         - VMGR-352
+      size: 2
     - primary: Strike
       secondary: any
       aircraft:
@@ -322,6 +328,7 @@ squadrons:
     - primary: Refueling
       aircraft:
         - IL-78M
+      size: 2
   # Bassel Al-Assad
   21:
     - primary: TARCAP
@@ -335,12 +342,15 @@ squadrons:
     - primary: Refueling
       aircraft:
         - IL-78M
+      size: 2
     - primary: Transport
       aircraft:
         - IL-76MD
+      size: 2
     - primary: AEW&C
       aircraft:
         - A-50
+      size: 2
     - primary: Strike
       secondary: air-to-ground
       aircraft:
@@ -389,3 +399,4 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-8MTV2 Hip
+      size: 4
