@@ -56,6 +56,16 @@ def test_save_start_of_turn(game: Game, tmp_bundle: SaveGameBundle) -> None:
         assert zip_file.namelist() == [SaveGameBundle.START_OF_TURN_SAVE_NAME]
 
 
+def test_save_pre_sim_checkpoint(game: Game, tmp_bundle: SaveGameBundle) -> None:
+    with ZipFile(tmp_bundle.bundle_path, "r") as zip_file:
+        with pytest.raises(KeyError):
+            zip_file.read(SaveGameBundle.PRE_SIM_CHECKPOINT_SAVE_NAME)
+    tmp_bundle.save_pre_sim_checkpoint(game)
+
+    with ZipFile(tmp_bundle.bundle_path, "r") as zip_file:
+        assert zip_file.namelist() == [SaveGameBundle.PRE_SIM_CHECKPOINT_SAVE_NAME]
+
+
 def test_failed_save_leaves_original_intact(
     game: Game, tmp_bundle: SaveGameBundle
 ) -> None:

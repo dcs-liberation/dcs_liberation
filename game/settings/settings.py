@@ -324,17 +324,15 @@ class Settings:
             "modifications."
         ),
     )
-    reset_simulation_on_abort: bool = boolean_option(
-        "Reset mission to pre-take off conditions on abort (experimental)",
+    reload_pre_sim_checkpoint_on_abort: bool = boolean_option(
+        "Reset mission to pre-take off conditions on abort",
         page=MISSION_GENERATOR_PAGE,
         section=GAMEPLAY_SECTION,
-        default=False,
+        default=True,
         detail=(
-            "If enabled, the fast-forward effects will be rewound when aborting take "
-            "off. <strong>DO NOT USE THIS WITH AUTO-RESOLVE ENABLED.</strong> Lost "
-            "aircraft will not be recovered. This option is experimental and may not "
-            "work. It is always safer to reload your save after abort when using fast-"
-            "forward."
+            "If enabled, the game will automatically reload a pre-take off save when "
+            "aborting take off. If this is disabled, you will need to manually re-load "
+            "your game after aborting take off."
         ),
     )
     player_mission_interrupts_sim_at: Optional[StartType] = choices_option(
