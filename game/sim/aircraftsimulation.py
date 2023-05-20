@@ -69,12 +69,9 @@ class AircraftSimulation:
         for flight in self.iter_flights():
             flight.state.reinitialize(now)
 
-    def reset(self, events: GameUpdateEvents | None = None) -> None:
-        if events is None:
-            events = GameUpdateEvents()
+    def reset(self) -> None:
         for flight in self.iter_flights():
             flight.set_state(Uninitialized(flight, self.game.settings))
-            events.update_flight(flight)
         self.combats = []
 
     def iter_flights(self) -> Iterator[Flight]:
