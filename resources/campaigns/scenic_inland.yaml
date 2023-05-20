@@ -91,7 +91,7 @@ squadrons:
       aircraft:
         - Wolfpack, 1-82 ARB
         #US Army Apache AH-64D
-        size: 2
+      size: 2
   # OPFOR L1F1
   FOB Tang-e Dalan:
     - primary: CAS
