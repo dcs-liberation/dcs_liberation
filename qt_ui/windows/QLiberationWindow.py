@@ -133,7 +133,14 @@ class QLiberationWindow(QMainWindow):
 
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0, 0, 0, 0)
-        vbox.addWidget(QTopPanel(self.game_model, self.sim_controller, ui_flags))
+        vbox.addWidget(
+            QTopPanel(
+                self.game_model,
+                self.sim_controller,
+                ui_flags,
+                self.reset_to_pre_sim_checkpoint,
+            )
+        )
         vbox.addWidget(hbox)
 
         central_widget = QWidget()
@@ -339,6 +346,23 @@ class QLiberationWindow(QMainWindow):
                 self.updateWindowTitle(Path(file[0]))
             except Exception:
                 logging.exception("Error loading save game %s", file[0])
+
+    def reset_to_pre_sim_checkpoint(self) -> None:
+        """Loads the game that was saved before pressing the take-off button.
+
+        A checkpoint will be saved when the player presses take-off to save their state
+        before the mission simulation begins. If the mission is aborted, we usually want
+        to reset to the pre-simulation state to allow players to effectively "rewind",
+        since they probably aborted so that they could make changes. Implementing rewind
+        for real is impractical, but checkpoints are easy.
+        """
+        if self.game is None:
+            raise RuntimeError(
+                "Cannot reset to pre-sim checkpoint when no game is loaded"
+            )
+        GameUpdateSignal.get_instance().game_loaded.emit(
+            self.game.save_manager.load_pre_sim_checkpoint()
+        )
 
     def saveGame(self):
         logging.info("Saving game")

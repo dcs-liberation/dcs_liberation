@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Callable
 
 from PySide6.QtWidgets import (
     QDialog,
@@ -33,11 +33,16 @@ from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResul
 
 class QTopPanel(QFrame):
     def __init__(
-        self, game_model: GameModel, sim_controller: SimController, ui_flags: UiFlags
+        self,
+        game_model: GameModel,
+        sim_controller: SimController,
+        ui_flags: UiFlags,
+        reset_to_pre_sim_checkpoint: Callable[[], None],
     ) -> None:
         super(QTopPanel, self).__init__()
         self.game_model = game_model
         self.sim_controller = sim_controller
+        self.reset_to_pre_sim_checkpoint = reset_to_pre_sim_checkpoint
         self.dialog: Optional[QDialog] = None
 
         self.setMaximumHeight(70)
@@ -293,7 +298,9 @@ class QTopPanel(QFrame):
             persistence.mission_path_for("liberation_nextturn.miz")
         )
 
-        waiting = QWaitingForMissionResultWindow(self.game, self.sim_controller, self)
+        waiting = QWaitingForMissionResultWindow(
+            self.game, self.sim_controller, self.reset_to_pre_sim_checkpoint, self
+        )
         waiting.exec_()
 
     def budget_update(self, game: Game):

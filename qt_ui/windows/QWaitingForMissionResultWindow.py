@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Callable
 
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, Signal
@@ -52,12 +52,14 @@ class QWaitingForMissionResultWindow(QDialog):
         self,
         game: Game,
         sim_controller: SimController,
+        reset_to_pre_sim_checkpoint: Callable[[], None],
         parent: Optional[QWidget] = None,
     ) -> None:
         super(QWaitingForMissionResultWindow, self).__init__(parent=parent)
         self.setWindowModality(QtCore.Qt.WindowModal)
         self.game = game
         self.sim_controller = sim_controller
+        self.reset_to_pre_sim_checkpoint = reset_to_pre_sim_checkpoint
         self.setWindowTitle("Waiting for mission completion.")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
@@ -134,8 +136,8 @@ class QWaitingForMissionResultWindow(QDialog):
         self.setLayout(self.layout)
 
     def reject(self) -> None:
-        if self.game.settings.reset_simulation_on_abort:
-            self.sim_controller.reset_simulation()
+        if self.game.settings.reload_pre_sim_checkpoint_on_abort:
+            self.reset_to_pre_sim_checkpoint()
         super().reject()
 
     @staticmethod
