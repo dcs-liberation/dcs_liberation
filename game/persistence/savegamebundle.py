@@ -25,6 +25,7 @@ class SaveGameBundle:
     MANUAL_SAVE_NAME = "player.liberation"
     LAST_TURN_SAVE_NAME = "last_turn.liberation"
     START_OF_TURN_SAVE_NAME = "start_of_turn.liberation"
+    PRE_SIM_CHECKPOINT_SAVE_NAME = "pre_sim_checkpoint.liberation"
 
     def __init__(self, bundle_path: Path) -> None:
         self.bundle_path = bundle_path
@@ -58,6 +59,19 @@ class SaveGameBundle:
                 game, self.START_OF_TURN_SAVE_NAME, copy_from=self
             )
 
+    def save_pre_sim_checkpoint(self, game: Game) -> None:
+        """Writes the save file for the state before beginning simulation.
+
+        This save is the state of the game after the player presses "TAKE OFF", but
+        before the fast-forward simulation begins. It is not practical to rewind, but
+        players commonly will want to cancel and continue planning after pressing that
+        button, so we make a checkpoint that we can reload on abort.
+        """
+        with logged_duration("Saving pre-sim checkpoint"):
+            self._update_bundle_member(
+                game, self.PRE_SIM_CHECKPOINT_SAVE_NAME, copy_from=self
+            )
+
     def load_player(self) -> Game:
         """Loads the save manually created by the player via save/save-as."""
         return self._load_from(self.MANUAL_SAVE_NAME)
@@ -69,6 +83,10 @@ class SaveGameBundle:
     def load_last_turn(self) -> Game:
         """Loads the save automatically created at the end of the last turn."""
         return self._load_from(self.LAST_TURN_SAVE_NAME)
+
+    def load_pre_sim_checkpoint(self) -> Game:
+        """Loads the save automatically created before the simulation began."""
+        return self._load_from(self.PRE_SIM_CHECKPOINT_SAVE_NAME)
 
     def _load_from(self, name: str) -> Game:
         with ZipFile(self.bundle_path) as zip_bundle:

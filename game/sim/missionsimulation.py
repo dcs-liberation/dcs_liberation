@@ -33,11 +33,6 @@ class MissionSimulation:
         self.completed = False
         self.time = self.game.conditions.start_time
 
-    def reset(self, events: GameUpdateEvents) -> None:
-        self.completed = False
-        self.time = self.game.conditions.start_time
-        self.aircraft_simulation.reset(events)
-
     def begin_simulation(self) -> None:
         self.time = self.game.conditions.start_time
         self.aircraft_simulation.begin_simulation()

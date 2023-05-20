@@ -51,6 +51,10 @@ class SaveManager:
         with self._save_bundle_context() as bundle:
             bundle.save_start_of_turn(self.game)
 
+    def save_pre_sim_checkpoint(self) -> None:
+        with self._save_bundle_context() as bundle:
+            bundle.save_pre_sim_checkpoint(self.game)
+
     def set_loaded_from(self, bundle: SaveGameBundle) -> None:
         """Reconfigures this save manager based on the loaded game.
 
@@ -80,6 +84,9 @@ class SaveManager:
         except Exception:
             self.last_saved_bundle = previous_saved_bundle
             raise
+
+    def load_pre_sim_checkpoint(self) -> Game:
+        return self.default_save_bundle.load_pre_sim_checkpoint()
 
     @staticmethod
     def load_last_turn(bundle_path: Path) -> Game:
