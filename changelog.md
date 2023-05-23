@@ -6,6 +6,12 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Fixes
 
+# 7.1.0
+
+## Features/Improvements
+
+## Fixes
+
 # 7.0.0
 
 Saves from 6.x are not compatible with 7.0.
