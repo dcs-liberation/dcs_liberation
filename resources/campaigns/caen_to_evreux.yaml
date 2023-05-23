@@ -12,89 +12,61 @@ recommended_enemy_faction: Germany 1944
 recommended_start_date: 1944-07-04
 miz: caen_to_evreux.miz
 performance: 1
-version: "10.0"
+version: "10.7"
 squadrons:
   # Evreux
   26:
-    - primary: BARCAP
-      aircraft:
-        - Bf 109 K-4 Kurfürst
-    - primary: BARCAP
-      aircraft:
-        - Fw 190 A-8 Anton
-    - primary: BARCAP
+    - primary: Escort
       aircraft:
         - Fw 190 D-9 Dora
+      size: 12
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - Ju 88 A-4
-    - primary: AEW&C
-    - primary: Refueling
-    - primary: Transport
+      size: 12
   # Conches
   40:
     - primary: BARCAP
+      secondary: any
       aircraft:
         - Bf 109 K-4 Kurfürst
-    - primary: BARCAP
-      aircraft:
-        - Fw 190 A-8 Anton
-    - primary: BARCAP
-      aircraft:
-        - Fw 190 D-9 Dora
-    - primary: SEAD
-      secondary: any
-    - primary: DEAD
-      secondary: any
+      size: 4
   # Carpiquet
   19:
-    - primary: BARCAP
+    - primary: CAS
+      secondary: any
       aircraft:
         - Thunderbolt Mk.II (Late)
         - P-47D-40 Thunderbolt
+      size: 12
     - primary: BARCAP
-      aircraft:
-        - Mustang Mk.IV (Late)
-        - P-51D-30-NA Mustang
-    - primary: BARCAP
+      secondary: any
       aircraft:
         - Spitfire LF Mk IX
-    - primary: BARCAP
-      aircraft:
-        - Spitfire LF Mk IX (Clipped Wings)
-    - primary: Strike
+      size: 12
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - MosquitoFBMkVI
-    - primary: SEAD
-      secondary: any
-    - primary: DEAD
-      secondary: any
+      size: 12
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - Boston Mk.III  
+        - A-20G Havoc
+      size: 10
   # Ford_AF
   31:
-    - primary: BARCAP
-      aircraft:
-        - Thunderbolt Mk.II (Mid)
-        - P-47D-30 Thunderbolt (Late)
-    - primary: BARCAP
-      aircraft:
-        - Thunderbolt Mk.II (Early)
-        - P-47D-30 Thunderbolt (Early)
-    - primary: BARCAP
+    - primary: Escort
+      secondary: air-to-air
       aircraft:
         - Mustang Mk.IV (Early)
         - P-51D-25-NA Mustang
-    - primary: Strike
-      secondary: air-to-ground
-      aircraft:
-        - Boston Mk.III
-        - A-20G Havoc
+      size: 10
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - Fortress Mk.III
         - B-17G Flying Fortress
-    - primary: AEW&C
-    - primary: Refueling
-    - primary: Transport
+      size: 10
