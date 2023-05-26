@@ -29,6 +29,7 @@ class QEditFlightDialog(QDialog):
 
         self.setWindowTitle("Edit flight")
         self.setWindowIcon(EVENT_ICONS["strike"])
+        self.setModal(True)
 
         layout = QVBoxLayout()
 
