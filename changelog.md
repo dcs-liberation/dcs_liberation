@@ -14,6 +14,8 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Fixes
 
+* **[UI]** Fixed formatting of departure time in flight details dialog.
+
 # 7.0.0
 
 Saves from 6.x are not compatible with 7.0.
