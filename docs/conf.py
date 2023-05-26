@@ -9,7 +9,7 @@
 project = "DCS Liberation"
 copyright = "2023, DCS Liberation Team"
 author = "DCS Liberation Team"
-release = "7.0.1"
+release = "7.1.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
