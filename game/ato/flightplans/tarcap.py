@@ -35,10 +35,6 @@ class TarCapLayout(PatrollingLayout):
 
 class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
     @property
-    def lead_time(self) -> timedelta:
-        return timedelta(minutes=2)
-
-    @property
     def patrol_duration(self) -> timedelta:
         # Note that this duration only has an effect if there are no
         # flights in the package that have requested escort. If the package
@@ -64,9 +60,8 @@ class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
         return {self.layout.patrol_start, self.layout.patrol_end}
 
-    @property
-    def tot_offset(self) -> timedelta:
-        return -self.lead_time
+    def default_tot_offset(self) -> timedelta:
+        return -timedelta(minutes=2)
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         if waypoint == self.layout.patrol_end:
