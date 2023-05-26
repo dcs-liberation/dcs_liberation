@@ -16,9 +16,8 @@ class SeadFlightPlan(FormationAttackFlightPlan):
     def builder_type() -> Type[Builder]:
         return Builder
 
-    @property
-    def lead_time(self) -> timedelta:
-        return timedelta(minutes=1)
+    def default_tot_offset(self) -> timedelta:
+        return -timedelta(minutes=1)
 
 
 class Builder(FormationAttackBuilder[SeadFlightPlan, FormationAttackLayout]):

@@ -38,10 +38,6 @@ class SweepLayout(LoiterLayout):
 
 
 class SweepFlightPlan(LoiterFlightPlan):
-    @property
-    def lead_time(self) -> timedelta:
-        return timedelta(minutes=5)
-
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
@@ -54,9 +50,8 @@ class SweepFlightPlan(LoiterFlightPlan):
     def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.sweep_end
 
-    @property
-    def tot_offset(self) -> timedelta:
-        return -self.lead_time
+    def default_tot_offset(self) -> timedelta:
+        return -timedelta(minutes=5)
 
     @property
     def sweep_start_time(self) -> datetime:
