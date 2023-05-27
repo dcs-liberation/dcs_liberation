@@ -60,7 +60,8 @@ def to_miz(landmap: Landmap, terrain: Terrain, mission_filename: str) -> None:
         multi_polygon: MultiPolygon,
         color: Rgba,
         prefix: str,
-        layer_index: int = 1,
+        layer_index: int = 4,
+        layer_name: str = "Author",
     ) -> None:
         reference_position = Point(0, 0, terrain)
         for i in range(len(multi_polygon.geoms)):
@@ -78,7 +79,7 @@ def to_miz(landmap: Landmap, terrain: Terrain, mission_filename: str) -> None:
                 position=reference_position,
                 name=f"{prefix}-{i}",
                 color=color,
-                layer_name="Author",
+                layer_name=layer_name,
                 fill=color,
                 line_thickness=10,
                 line_style=LineStyle.Solid,
@@ -99,7 +100,7 @@ def to_miz(landmap: Landmap, terrain: Terrain, mission_filename: str) -> None:
     mission.save(mission_filename)
 
 
-def from_miz(mission_filename: str, layer_index: int = 1) -> Landmap:
+def from_miz(mission_filename: str, layer_index: int = 4) -> Landmap:
     """
     Generate Landmap object from Free Form Polygons drawn in a .miz file.
     Landmap.inclusion_zones are expected to be named Inclusion-<suffix>
@@ -126,7 +127,9 @@ def from_miz(mission_filename: str, layer_index: int = 1) -> Landmap:
             continue
         polygon_points = []
         for point in draw_object.points:
-            polygon_points.append((point.x, point.y))
+            polygon_points.append(
+                (point.x + draw_object.position.x, point.y + draw_object.position.y)
+            )
         polygons[zone_type].append(Polygon(polygon_points))
     landmap = Landmap(
         inclusion_zones=MultiPolygon(polygons["Inclusion"]),
