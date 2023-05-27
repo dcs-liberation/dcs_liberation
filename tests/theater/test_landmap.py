@@ -18,7 +18,7 @@ def test_miz() -> None:
     )
     test_filename = "test.miz"
     landmap.to_miz(test_map, Caucasus(), test_filename)
-    assert os.path.isfile("test.miz") 
+    assert os.path.isfile("test.miz")
     loaded_map = landmap.from_miz("test.miz")
     assert test_map.inclusion_zones.equals_exact(
         loaded_map.inclusion_zones, tolerance=1e-6
@@ -27,6 +27,6 @@ def test_miz() -> None:
     assert test_map.exclusion_zones.equals_exact(
         loaded_map.exclusion_zones, tolerance=1e-6
     )
-    
+
     if os.path.isfile(test_filename):
         os.remove(test_filename)
