@@ -180,7 +180,8 @@ def test_mission_types_enemy(mocker: Any) -> None:
             control_point=dummy_control_point,
         )
         mission_types = list(ground_object.mission_types(for_player=False))
-        assert len(mission_types) == 6
+        assert len(mission_types) == 7
+        assert FlightType.BAI in mission_types
         assert FlightType.STRIKE in mission_types
         assert FlightType.REFUELING in mission_types
         assert FlightType.ESCORT in mission_types
