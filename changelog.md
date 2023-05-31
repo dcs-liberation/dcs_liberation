@@ -14,6 +14,7 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Fixes
 
+* **[Mission Planning]** BAI is once again plannable against missile sites and coastal defense batteries.
 * **[UI]** Fixed formatting of departure time in flight details dialog.
 
 # 7.0.0
