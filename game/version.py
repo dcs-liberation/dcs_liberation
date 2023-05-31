@@ -175,4 +175,7 @@ VERSION = _build_version_string()
 #:
 #: Version 10.7
 #: * Support for defining squadron sizes.
-CAMPAIGN_FORMAT_VERSION = (10, 7)
+#:
+#: Version 10.8
+#: * Support for Normandy 2.
+CAMPAIGN_FORMAT_VERSION = (10, 8)
