@@ -2,6 +2,7 @@
 
 ## Features/Improvements
 
+* **[Engine]** Support for Normandy 2 airfields.
 * **[Factions]** Replaced Patriot STRs "EWRs" with AN/FPS-117 for blue factions 1980 or newer.
 * **[Mission Generation]** Added option to prevent scud and V2 sites from firing at the start of the mission.
 * **[Mission Generation]** Added settings for controlling number of tactical commander, observer, JTAC, and game master slots.
