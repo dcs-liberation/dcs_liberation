@@ -8,6 +8,8 @@ Saves from 7.x are not compatible with 8.0.
 
 # 7.1.0
 
+Saves from 7.0.0 are compatible with 7.1.0
+
 ## Features/Improvements
 
 * **[Engine]** Support for Normandy 2 airfields.
