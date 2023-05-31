@@ -44,7 +44,7 @@ naval_units:
   - CVN-74 John C. Stennis
 missiles: []
 air_defense_units:
-  - SAM Patriot STR
+  - EWR AN/FPS-117 Radar
   - M1097 Heavy HMMWV Avenger
 requirements: {}
 carrier_names:

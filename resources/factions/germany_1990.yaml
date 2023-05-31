@@ -42,7 +42,7 @@ naval_units:
   - CG Ticonderoga
 missiles: []
 air_defense_units:
-  - SAM Patriot STR
+  - EWR AN/FPS-117 Radar
   - Flakpanzer Gepard
 requirements: {}
 carrier_names: []
