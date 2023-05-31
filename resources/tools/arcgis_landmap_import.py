@@ -8,6 +8,7 @@ from pathlib import Path
 
 from pyproj import CRS, Transformer
 from shapefile import Reader, Shape
+from shapely import validation
 from shapely.geometry import LineString, MultiPolygon, Polygon, shape
 from shapely.ops import unary_union
 
@@ -46,11 +47,13 @@ class CoordinateConverter:
         for poly in polys:
             for boundary, holes in self._boundary_and_holes_of(poly):
                 new_polys.append(
-                    Polygon(
-                        self._convert_line_to_dcs_coords(boundary),
-                        holes=[
-                            self._convert_line_to_dcs_coords(hole) for hole in holes
-                        ],
+                    validation.make_valid(
+                        Polygon(
+                            self._convert_line_to_dcs_coords(boundary),
+                            holes=[
+                                self._convert_line_to_dcs_coords(hole) for hole in holes
+                            ],
+                        )
                     )
                 )
         return new_polys
