@@ -78,7 +78,7 @@
  },
  "airfield32_3": {
   "name": "Beslan",
-  "callsign": "",
+  "callsign": "ICH",
   "beacon_type": 14,
   "hertz": 110500000,
   "channel": null
