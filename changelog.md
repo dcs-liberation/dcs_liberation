@@ -9,6 +9,7 @@ Saves from 7.0.0 are compatible with 7.1.0
 * **[Mission Generation]** Added option to prevent scud and V2 sites from firing at the start of the mission.
 * **[Mission Generation]** Added settings for controlling number of tactical commander, observer, JTAC, and game master slots.
 * **[Mission Planning]** Per-flight TOT offsets can now be set in the flight details UI. This allows individual flights to be scheduled ahead of or behind the rest of the package.
+* **[UI]** Parking capacity of each squadron's base is now shown during air wing configuration to avoid overcrowding bases when beginning the game with full squadrons.
 
 ## Fixes
 
