@@ -42,6 +42,8 @@ HQ_AUTOMATION_SECTION = "HQ Automation"
 
 MISSION_GENERATOR_PAGE = "Mission Generator"
 
+COMMANDERS_SECTION = "Battlefield Commanders"
+
 GAMEPLAY_SECTION = "Gameplay"
 
 # TODO: Make sections a type and add headers.
@@ -310,6 +312,41 @@ class Settings:
     reserves_procurement_target: int = 10
 
     # Mission Generator
+
+    # Commanders
+    game_master_slots: int = bounded_int_option(
+        "Game master",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=0,
+        min=0,
+        max=100,
+    )
+    tactical_commander_slots: int = bounded_int_option(
+        "Tactical commander",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=1,
+        min=0,
+        max=100,
+    )
+    jtac_operator_slots: int = bounded_int_option(
+        "JTAC/Operator",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=0,
+        min=0,
+        max=100,
+    )
+    observer_slots: int = bounded_int_option(
+        "Observer",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=1,
+        min=0,
+        max=100,
+    )
+
     # Gameplay
     fast_forward_to_first_contact: bool = boolean_option(
         "Fast forward mission to first contact (WIP)",
