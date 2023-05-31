@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Iterable, Iterator, Optional
 
 from PySide6.QtCore import (
@@ -150,6 +151,41 @@ class SquadronSizeSpinner(QSpinBox):
     #     return size
 
 
+class AirWingConfigParkingTracker(QWidget):
+    allocation_changed = Signal()
+
+    def __init__(self, squadrons: Iterable[Squadron]) -> None:
+        super().__init__()
+        self.by_cp: dict[ControlPoint, set[Squadron]] = defaultdict(set)
+        for squadron in squadrons:
+            self.add_squadron(squadron)
+
+    def add_squadron(self, squadron: Squadron) -> None:
+        self.by_cp[squadron.location].add(squadron)
+        self.signal_change()
+
+    def remove_squadron(self, squadron: Squadron) -> None:
+        self.by_cp[squadron.location].remove(squadron)
+        self.signal_change()
+
+    def relocate_squadron(
+        self,
+        squadron: Squadron,
+        prior_location: ControlPoint,
+        new_location: ControlPoint,
+    ) -> None:
+        self.by_cp[prior_location].remove(squadron)
+        self.by_cp[new_location].add(squadron)
+        squadron.relocate_to(new_location)
+        self.signal_change()
+
+    def used_parking_at(self, control_point: ControlPoint) -> int:
+        return sum(s.max_size for s in self.by_cp[control_point])
+
+    def signal_change(self) -> None:
+        self.allocation_changed.emit()
+
+
 class SquadronConfigurationBox(QGroupBox):
     remove_squadron_signal = Signal(Squadron)
 
@@ -158,11 +194,13 @@ class SquadronConfigurationBox(QGroupBox):
         game: Game,
         coalition: Coalition,
         squadron: Squadron,
+        parking_tracker: AirWingConfigParkingTracker,
     ) -> None:
         super().__init__()
         self.game = game
         self.coalition = coalition
         self.squadron = squadron
+        self.parking_tracker = parking_tracker
 
         columns = QHBoxLayout()
         self.setLayout(columns)
@@ -200,6 +238,7 @@ class SquadronConfigurationBox(QGroupBox):
         left_column.addLayout(size_column)
         size_column.addWidget(QLabel("Max size:"))
         self.max_size_selector = SquadronSizeSpinner(self.squadron.max_size, self)
+        self.max_size_selector.valueChanged.connect(self.update_max_size)
         size_column.addWidget(self.max_size_selector)
 
         task_column = QVBoxLayout()
@@ -214,7 +253,13 @@ class SquadronConfigurationBox(QGroupBox):
             squadron.location,
             squadron.aircraft,
         )
+        self.base_selector.currentIndexChanged.connect(self.relocate_squadron)
         left_column.addWidget(self.base_selector)
+
+        self.parking_label = QLabel()
+        self.update_parking_label()
+        self.parking_tracker.allocation_changed.connect(self.update_parking_label)
+        left_column.addWidget(self.parking_label)
 
         if not squadron.player and squadron.aircraft.flyable:
             player_label = QLabel("Player slots not available for opfor")
@@ -266,8 +311,25 @@ class SquadronConfigurationBox(QGroupBox):
             self.player_list.setText(
                 "<br />".join(p.name for p in self.claim_players_from_squadron())
             )
+            self.update_parking_label()
         finally:
             self.blockSignals(old_state)
+
+    def update_parking_label(self) -> None:
+        self.parking_label.setText(
+            f"{self.parking_tracker.used_parking_at(self.squadron.location)}/"
+            f"{self.squadron.location.total_aircraft_parking}"
+        )
+
+    def update_max_size(self) -> None:
+        self.squadron.max_size = self.max_size_selector.value()
+        self.parking_tracker.signal_change()
+
+    def relocate_squadron(self) -> None:
+        location = self.base_selector.currentData()
+        self.parking_tracker.relocate_squadron(
+            self.squadron, self.squadron.location, location
+        )
 
     def remove_from_squadron_config(self) -> None:
         self.remove_squadron_signal.emit(self.squadron)
@@ -321,6 +383,7 @@ class SquadronConfigurationBox(QGroupBox):
         self.squadron = new_squadron
         self.bind_data()
         self.mission_types.replace_squadron(self.squadron)
+        self.parking_tracker.signal_change()
 
     def reset_title(self) -> None:
         self.setTitle(f"{self.name_edit.text()} - {self.squadron.aircraft}")
@@ -361,11 +424,13 @@ class SquadronConfigurationLayout(QVBoxLayout):
         game: Game,
         coalition: Coalition,
         squadrons: list[Squadron],
+        parking_tracker: AirWingConfigParkingTracker,
     ) -> None:
         super().__init__()
         self.game = game
         self.coalition = coalition
         self.squadron_configs = []
+        self.parking_tracker = parking_tracker
         for squadron in squadrons:
             self.add_squadron(squadron)
 
@@ -376,6 +441,7 @@ class SquadronConfigurationLayout(QVBoxLayout):
         return keep_squadrons
 
     def remove_squadron(self, squadron: Squadron) -> None:
+        self.parking_tracker.remove_squadron(squadron)
         for squadron_config in self.squadron_configs:
             if squadron_config.squadron == squadron:
                 squadron_config.deleteLater()
@@ -386,23 +452,32 @@ class SquadronConfigurationLayout(QVBoxLayout):
                 return
 
     def add_squadron(self, squadron: Squadron) -> None:
-        squadron_config = SquadronConfigurationBox(self.game, self.coalition, squadron)
+        squadron_config = SquadronConfigurationBox(
+            self.game, self.coalition, squadron, self.parking_tracker
+        )
         squadron_config.remove_squadron_signal.connect(self.remove_squadron)
         self.squadron_configs.append(squadron_config)
         self.addWidget(squadron_config)
+        self.parking_tracker.add_squadron(squadron)
 
 
 class AircraftSquadronsPage(QWidget):
     remove_squadron_page = Signal(AircraftType)
 
     def __init__(
-        self, game: Game, coalition: Coalition, squadrons: list[Squadron]
+        self,
+        game: Game,
+        coalition: Coalition,
+        squadrons: list[Squadron],
+        parking_tracker: AirWingConfigParkingTracker,
     ) -> None:
         super().__init__()
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        self.squadrons_config = SquadronConfigurationLayout(game, coalition, squadrons)
+        self.squadrons_config = SquadronConfigurationLayout(
+            game, coalition, squadrons, parking_tracker
+        )
         self.squadrons_config.config_changed.connect(self.on_squadron_config_changed)
 
         scrolling_widget = QWidget()
@@ -430,10 +505,16 @@ class AircraftSquadronsPage(QWidget):
 class AircraftSquadronsPanel(QStackedLayout):
     page_removed = Signal(AircraftType)
 
-    def __init__(self, game: Game, coalition: Coalition) -> None:
+    def __init__(
+        self,
+        game: Game,
+        coalition: Coalition,
+        parking_tracker: AirWingConfigParkingTracker,
+    ) -> None:
         super().__init__()
         self.game = game
         self.coalition = coalition
+        self.parking_tracker = parking_tracker
         self.squadrons_pages: dict[AircraftType, AircraftSquadronsPage] = {}
         for aircraft, squadrons in self.air_wing.squadrons.items():
             self.new_page_for_type(aircraft, squadrons)
@@ -453,7 +534,9 @@ class AircraftSquadronsPanel(QStackedLayout):
     def new_page_for_type(
         self, aircraft_type: AircraftType, squadrons: list[Squadron]
     ) -> None:
-        page = AircraftSquadronsPage(self.game, self.coalition, squadrons)
+        page = AircraftSquadronsPage(
+            self.game, self.coalition, squadrons, self.parking_tracker
+        )
         page.remove_squadron_page.connect(self.remove_page_for_type)
         self.addWidget(page)
         self.squadrons_pages[aircraft_type] = page
@@ -547,6 +630,9 @@ class AirWingConfigurationTab(QWidget):
         self.setLayout(layout)
         self.game = game
         self.coalition = coalition
+        self.parking_tracker = AirWingConfigParkingTracker(
+            coalition.air_wing.iter_squadrons()
+        )
 
         self.type_list = AircraftTypeList(coalition.air_wing)
 
@@ -556,7 +642,9 @@ class AirWingConfigurationTab(QWidget):
         add_button.clicked.connect(lambda state: self.add_squadron())
         layout.addWidget(add_button, 2, 1, 1, 1)
 
-        self.squadrons_panel = AircraftSquadronsPanel(game, coalition)
+        self.squadrons_panel = AircraftSquadronsPanel(
+            game, coalition, self.parking_tracker
+        )
         self.squadrons_panel.page_removed.connect(self.type_list.remove_aircraft_type)
         layout.addLayout(self.squadrons_panel, 1, 3, 2, 1)
 
