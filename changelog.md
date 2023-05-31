@@ -7,6 +7,7 @@
 
 ## Fixes
 
+* **[Mission Planning]** BAI is once again plannable against missile sites and coastal defense batteries.
 * **[UI]** Fixed formatting of departure time in flight details dialog.
 
 # 7.0.0
