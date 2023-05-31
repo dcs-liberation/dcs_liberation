@@ -167,6 +167,13 @@
   "hertz": 1000000,
   "channel": 31
  },
+ "airfield20_0": {
+  "name": "BIO",
+  "callsign": "BIO",
+  "beacon_type": 9,
+  "hertz": 205000000,
+  "channel": null
+ },
  "airfield11_0": {
   "name": "San Julian",
   "callsign": "",

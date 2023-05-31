@@ -1,17 +1,192 @@
 {
- "airfield22_0": {
-  "name": "ABUDHABI",
-  "callsign": "ADV",
-  "beacon_type": 1,
-  "hertz": 114250000,
+ "world_0": {
+  "name": "Kish",
+  "callsign": "KIS",
+  "beacon_type": 3,
+  "hertz": 117400000,
+  "channel": 121
+ },
+ "world_1": {
+  "name": "DohaAirport",
+  "callsign": "DIA",
+  "beacon_type": 3,
+  "hertz": 112400000,
+  "channel": 71
+ },
+ "world_2": {
+  "name": "HamadInternationalAirport",
+  "callsign": "DOH",
+  "beacon_type": 3,
+  "hertz": 114400000,
+  "channel": 91
+ },
+ "world_3": {
+  "name": "DezfulAirport",
+  "callsign": "DZF",
+  "beacon_type": 8,
+  "hertz": 293000,
   "channel": null
  },
- "airfield22_1": {
+ "world_4": {
+  "name": "AbadanIntAirport",
+  "callsign": "ABD",
+  "beacon_type": 3,
+  "hertz": 115100000,
+  "channel": 98
+ },
+ "world_5": {
+  "name": "AhvazIntAirport",
+  "callsign": "AWZ",
+  "beacon_type": 3,
+  "hertz": 114000000,
+  "channel": 87
+ },
+ "world_6": {
+  "name": "AghajariAirport",
+  "callsign": "AJR",
+  "beacon_type": 3,
+  "hertz": 114900000,
+  "channel": 96
+ },
+ "world_7": {
+  "name": "BirjandIntAirport",
+  "callsign": "BJD",
+  "beacon_type": 3,
+  "hertz": 113500000,
+  "channel": 82
+ },
+ "world_8": {
+  "name": "BushehrIntAirport",
+  "callsign": "BUZ",
+  "beacon_type": 3,
+  "hertz": 117450000,
+  "channel": 121
+ },
+ "world_9": {
+  "name": "KonarakAirport",
+  "callsign": "CBH",
+  "beacon_type": 3,
+  "hertz": 115600000,
+  "channel": 103
+ },
+ "world_10": {
+  "name": "IsfahanIntAirport",
+  "callsign": "ISN",
+  "beacon_type": 3,
+  "hertz": 113200000,
+  "channel": 79
+ },
+ "world_11": {
+  "name": "KhoramabadAirport",
+  "callsign": "KRD",
+  "beacon_type": 3,
+  "hertz": 113750000,
+  "channel": 84
+ },
+ "world_12": {
+  "name": "PersianGulfIntAirport",
+  "callsign": "PRG",
+  "beacon_type": 3,
+  "hertz": 112100000,
+  "channel": 58
+ },
+ "world_13": {
+  "name": "YasoujAirport",
+  "callsign": "YSJ",
+  "beacon_type": 3,
+  "hertz": 116550000,
+  "channel": 112
+ },
+ "world_14": {
+  "name": "BamAirport",
+  "callsign": "BAM",
+  "beacon_type": 3,
+  "hertz": 114900000,
+  "channel": 96
+ },
+ "world_15": {
+  "name": "MahshahrAirport",
+  "callsign": "MAH",
+  "beacon_type": 3,
+  "hertz": 115800000,
+  "channel": 105
+ },
+ "world_16": {
+  "name": "IranShahrAirport",
+  "callsign": "ISR",
+  "beacon_type": 3,
+  "hertz": 117000000,
+  "channel": 117
+ },
+ "world_17": {
+  "name": "LamerdAirport",
+  "callsign": "LAM",
+  "beacon_type": 3,
+  "hertz": 117000000,
+  "channel": 117
+ },
+ "world_18": {
+  "name": "SirjanAirport",
+  "callsign": "SRJ",
+  "beacon_type": 3,
+  "hertz": 114600000,
+  "channel": 93
+ },
+ "world_19": {
+  "name": "YazdIntAirport",
+  "callsign": "YZD",
+  "beacon_type": 3,
+  "hertz": 117700000,
+  "channel": 124
+ },
+ "world_20": {
+  "name": "ZabolAirport",
+  "callsign": "ZAL",
+  "beacon_type": 3,
+  "hertz": 113100000,
+  "channel": 78
+ },
+ "world_21": {
+  "name": "ZahedanIntAirport",
+  "callsign": "ZDN",
+  "beacon_type": 3,
+  "hertz": 116000000,
+  "channel": 107
+ },
+ "world_22": {
+  "name": "RafsanjanAirport",
+  "callsign": "RAF",
+  "beacon_type": 3,
+  "hertz": 112300000,
+  "channel": 70
+ },
+ "world_23": {
+  "name": "SaravanAirport",
+  "callsign": "SRN",
+  "beacon_type": 3,
+  "hertz": 114100000,
+  "channel": 88
+ },
+ "world_24": {
+  "name": "BuHasa",
+  "callsign": "BH",
+  "beacon_type": 2,
+  "hertz": 309000000,
+  "channel": null
+ },
+ "airfield22_0": {
   "name": "AbuDhabiInt",
   "callsign": "ADV",
   "beacon_type": 2,
   "hertz": 114250000,
   "channel": 119
+ },
+ "airfield22_1": {
+  "name": "ABUDHABI",
+  "callsign": "ADV",
+  "beacon_type": 1,
+  "hertz": 114250000,
+  "channel": null
  },
  "airfield1_0": {
   "name": "Abumusa",
@@ -530,180 +705,5 @@
   "beacon_type": 4,
   "hertz": 114200000,
   "channel": 89
- },
- "world_0": {
-  "name": "Kish",
-  "callsign": "KIS",
-  "beacon_type": 3,
-  "hertz": 117400000,
-  "channel": 121
- },
- "world_1": {
-  "name": "DohaAirport",
-  "callsign": "DIA",
-  "beacon_type": 3,
-  "hertz": 112400000,
-  "channel": 71
- },
- "world_2": {
-  "name": "HamadInternationalAirport",
-  "callsign": "DOH",
-  "beacon_type": 3,
-  "hertz": 114400000,
-  "channel": 91
- },
- "world_3": {
-  "name": "DezfulAirport",
-  "callsign": "DZF",
-  "beacon_type": 8,
-  "hertz": 293000,
-  "channel": null
- },
- "world_4": {
-  "name": "AbadanIntAirport",
-  "callsign": "ABD",
-  "beacon_type": 3,
-  "hertz": 115100000,
-  "channel": 98
- },
- "world_5": {
-  "name": "AhvazIntAirport",
-  "callsign": "AWZ",
-  "beacon_type": 3,
-  "hertz": 114000000,
-  "channel": 87
- },
- "world_6": {
-  "name": "AghajariAirport",
-  "callsign": "AJR",
-  "beacon_type": 3,
-  "hertz": 114900000,
-  "channel": 96
- },
- "world_7": {
-  "name": "BirjandIntAirport",
-  "callsign": "BJD",
-  "beacon_type": 3,
-  "hertz": 113500000,
-  "channel": 82
- },
- "world_8": {
-  "name": "BushehrIntAirport",
-  "callsign": "BUZ",
-  "beacon_type": 3,
-  "hertz": 117450000,
-  "channel": 121
- },
- "world_9": {
-  "name": "KonarakAirport",
-  "callsign": "CBH",
-  "beacon_type": 3,
-  "hertz": 115600000,
-  "channel": 103
- },
- "world_10": {
-  "name": "IsfahanIntAirport",
-  "callsign": "ISN",
-  "beacon_type": 3,
-  "hertz": 113200000,
-  "channel": 79
- },
- "world_11": {
-  "name": "KhoramabadAirport",
-  "callsign": "KRD",
-  "beacon_type": 3,
-  "hertz": 113750000,
-  "channel": 84
- },
- "world_12": {
-  "name": "PersianGulfIntAirport",
-  "callsign": "PRG",
-  "beacon_type": 3,
-  "hertz": 112100000,
-  "channel": 58
- },
- "world_13": {
-  "name": "YasoujAirport",
-  "callsign": "YSJ",
-  "beacon_type": 3,
-  "hertz": 116550000,
-  "channel": 112
- },
- "world_14": {
-  "name": "BamAirport",
-  "callsign": "BAM",
-  "beacon_type": 3,
-  "hertz": 114900000,
-  "channel": 96
- },
- "world_15": {
-  "name": "MahshahrAirport",
-  "callsign": "MAH",
-  "beacon_type": 3,
-  "hertz": 115800000,
-  "channel": 105
- },
- "world_16": {
-  "name": "IranShahrAirport",
-  "callsign": "ISR",
-  "beacon_type": 3,
-  "hertz": 117000000,
-  "channel": 117
- },
- "world_17": {
-  "name": "LamerdAirport",
-  "callsign": "LAM",
-  "beacon_type": 3,
-  "hertz": 117000000,
-  "channel": 117
- },
- "world_18": {
-  "name": "SirjanAirport",
-  "callsign": "SRJ",
-  "beacon_type": 3,
-  "hertz": 114600000,
-  "channel": 93
- },
- "world_19": {
-  "name": "YazdIntAirport",
-  "callsign": "YZD",
-  "beacon_type": 3,
-  "hertz": 117700000,
-  "channel": 124
- },
- "world_20": {
-  "name": "ZabolAirport",
-  "callsign": "ZAL",
-  "beacon_type": 3,
-  "hertz": 113100000,
-  "channel": 78
- },
- "world_21": {
-  "name": "ZahedanIntAirport",
-  "callsign": "ZDN",
-  "beacon_type": 3,
-  "hertz": 116000000,
-  "channel": 107
- },
- "world_22": {
-  "name": "RafsanjanAirport",
-  "callsign": "RAF",
-  "beacon_type": 3,
-  "hertz": 112300000,
-  "channel": 70
- },
- "world_23": {
-  "name": "SaravanAirport",
-  "callsign": "SRN",
-  "beacon_type": 3,
-  "hertz": 114100000,
-  "channel": 88
- },
- "world_24": {
-  "name": "BuHasa",
-  "callsign": "BH",
-  "beacon_type": 2,
-  "hertz": 309000000,
-  "channel": null
  }
 }
