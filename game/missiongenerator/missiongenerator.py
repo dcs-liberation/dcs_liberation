@@ -353,6 +353,14 @@ class MissionGenerator:
             gen.generate()
 
     def setup_combined_arms(self) -> None:
-        self.mission.groundControl.pilot_can_control_vehicles = COMBINED_ARMS_SLOTS > 0
-        self.mission.groundControl.blue_tactical_commander = COMBINED_ARMS_SLOTS
-        self.mission.groundControl.blue_observer = 1
+        self.mission.groundControl.blue_game_masters = (
+            self.game.settings.game_master_slots
+        )
+        self.mission.groundControl.blue_tactical_commander = (
+            self.game.settings.tactical_commander_slots
+        )
+        self.mission.groundControl.pilot_can_control_vehicles = (
+            self.mission.groundControl.blue_tactical_commander > 0
+        )
+        self.mission.groundControl.blue_jtac = self.game.settings.jtac_operator_slots
+        self.mission.groundControl.blue_observer = self.game.settings.observer_slots
