@@ -581,6 +581,10 @@ class Settings:
         with settings_path.open(encoding="utf-8") as settings_file:
             data = yaml.safe_load(settings_file)
 
+        if data is None:
+            logging.warning("Saved settings file %s is empty", settings_path)
+            return
+
         expected_types = get_type_hints(Settings)
         for key, value in data.items():
             if key not in self.__dict__:
