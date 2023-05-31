@@ -315,6 +315,10 @@ class MissileSiteGenerator(GroundObjectGenerator):
 
     def generate(self) -> None:
         super(MissileSiteGenerator, self).generate()
+
+        if not self.game.settings.generate_fire_tasks_for_missile_sites:
+            return
+
         # Note : Only the SCUD missiles group can fire (V1 site cannot fire in game right now)
         # TODO : Should be pre-planned ?
         # TODO : Add delay to task to spread fire task over mission duration ?

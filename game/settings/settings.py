@@ -454,6 +454,16 @@ class Settings:
         section=PERFORMANCE_SECTION,
         default=True,
     )
+    generate_fire_tasks_for_missile_sites: bool = boolean_option(
+        "Generate fire tasks for missile sites",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        detail=(
+            "If enabled, missile sites like V2s and Scuds will fire on random targets "
+            "at the start of the mission."
+        ),
+        default=True,
+    )
     perf_moving_units: bool = boolean_option(
         "Moving ground units",
         page=MISSION_GENERATOR_PAGE,
