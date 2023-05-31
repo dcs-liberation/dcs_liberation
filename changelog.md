@@ -3,6 +3,7 @@
 ## Features/Improvements
 
 * **[Factions]** Replaced Patriot STRs "EWRs" with AN/FPS-117 for blue factions 1980 or newer.
+* **[Mission Generation]** Added option to prevent scud and V2 sites from firing at the start of the mission.
 * **[Mission Planning]** Per-flight TOT offsets can now be set in the flight details UI. This allows individual flights to be scheduled ahead of or behind the rest of the package.
 
 ## Fixes
