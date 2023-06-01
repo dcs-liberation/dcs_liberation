@@ -22,7 +22,7 @@ tankers:
 frontline_units:
   - BMP-1
   - HQ-7 Launcher
-  - T-55A
+  - MT Type 59
   - Type 04A (ZBD-04A)
   - Type 96B (ZTZ-96B)
 artillery_units:
@@ -52,6 +52,7 @@ naval_units:
   - Type 052B Destroyer
   - Type 052C Destroyer
   - Type 054A Frigate
+  - Type 093 Attack Submarine
   - CV 1143.5 Admiral Kuznetsov
   - Type 071 Amphibious Transport Dock
 air_defense_units:
