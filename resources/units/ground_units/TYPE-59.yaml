@@ -1,0 +1,9 @@
+class: Tank
+description: Type 59
+introduced: 
+manufacturer: 
+origin: China
+price: 15
+role: Main Battle Tank
+variants:
+  MT Type 59: {}
