@@ -8,7 +8,6 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import yaml
 from PySide6 import QtWidgets
@@ -70,7 +69,7 @@ def on_game_load(game: Game | None) -> None:
     EventStream.put_nowait(GameUpdateEvents().game_loaded(game))
 
 
-def run_ui(game: Game | None, ui_flags: UiFlags) -> None:
+def run_ui(create_game_params: CreateGameParams | None, ui_flags: UiFlags) -> None:
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"  # Potential fix for 4K screens
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
@@ -153,6 +152,11 @@ def run_ui(game: Game | None, ui_flags: UiFlags) -> None:
     # Apply CSS (need works)
     GameUpdateSignal()
     GameUpdateSignal.get_instance().game_loaded.connect(on_game_load)
+
+    game: Game | None = None
+    if create_game_params is not None:
+        with logged_duration("New game creation"):
+            game = create_game(create_game_params)
 
     # Start window
     window = QLiberationWindow(game, ui_flags)
@@ -279,7 +283,9 @@ class CreateGameParams:
     use_new_squadron_rules: bool
 
     @staticmethod
-    def from_args(args: argparse.Namespace) -> CreateGameParams:
+    def from_args(args: argparse.Namespace) -> CreateGameParams | None:
+        if args.subcommand != "new-game":
+            return None
         return CreateGameParams(
             args.campaign,
             args.blue,
@@ -296,21 +302,6 @@ class CreateGameParams:
 
 
 def create_game(params: CreateGameParams) -> Game:
-    first_start = liberation_install.init()
-    if first_start:
-        sys.exit(
-            "Cannot generate campaign without configuring DCS Liberation. Start the UI "
-            "for the first run configuration."
-        )
-
-    # This needs to run before the pydcs payload cache is created, which happens
-    # extremely early. It's not a problem that we inject these paths twice because we'll
-    # get the same answers each time.
-    #
-    # Without this, it is not possible to use next turn (or anything that needs to check
-    # for loadouts) without saving the generated campaign and reloading it the normal
-    # way.
-    inject_custom_payloads(Path(persistence.base_path()))
     campaign = Campaign.from_file(params.campaign_path)
     theater = campaign.load_theater(params.advanced_iads)
     faction_loader = Factions.load()
@@ -427,8 +418,6 @@ def main():
             "Installation path contains non-ASCII characters. This is known to cause problems."
         )
 
-    game: Optional[Game] = None
-
     args = parse_args()
 
     # TODO: Flesh out data and then make unconditional.
@@ -437,9 +426,6 @@ def main():
 
     load_mods()
 
-    if args.subcommand == "new-game":
-        with logged_duration("New game creation"):
-            game = create_game(CreateGameParams.from_args(args))
     if args.subcommand == "lint-weapons":
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
         return
@@ -448,7 +434,10 @@ def main():
         return
 
     with Server().run_in_thread():
-        run_ui(game, UiFlags(args.dev, args.show_sim_speed_controls))
+        run_ui(
+            CreateGameParams.from_args(args),
+            UiFlags(args.dev, args.show_sim_speed_controls),
+        )
 
 
 if __name__ == "__main__":
