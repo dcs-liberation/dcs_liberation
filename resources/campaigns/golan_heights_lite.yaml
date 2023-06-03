@@ -7,7 +7,7 @@ recommended_enemy_faction: Syria 2011
 description: <p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/><br/>This scenario is designed to be performance and helicopter friendly.</p>
 miz: golan_heights_lite.miz
 performance: 1
-version: "10.7"
+version: "10.9"
 advanced_iads: true # Campaign has connection_nodes / power_sources / command_centers
 iads_config:
   - LHA-1 Tarawa # A Naval Group without connections but still participating as EWR

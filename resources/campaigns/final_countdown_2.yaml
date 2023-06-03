@@ -65,7 +65,7 @@ description:
 miz: final_countdown_2.miz
 performance: 2
 recommended_start_date: 1944-06-06
-version: "10.8"
+version: "10.9"
 squadrons:
   #Blue CV (90)
   Blue-CV:
