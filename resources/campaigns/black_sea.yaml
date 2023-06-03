@@ -9,7 +9,7 @@ recommended_enemy_faction: Russia 2010
 recommended_start_date: 2004-01-07
 miz: black_sea.miz
 performance: 2
-version: "10.7"
+version: "10.9"
 squadrons:
   # Anapa-Vityazevo
   12:
@@ -148,6 +148,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - UH-1H Iroquois
+      size: 8
   Red CV:
     - primary: BARCAP
       secondary: air-to-air
@@ -164,3 +165,4 @@ squadrons:
       secondary: air-to-ground
     - primary: CAS
       secondary: air-to-ground
+      size: 8
