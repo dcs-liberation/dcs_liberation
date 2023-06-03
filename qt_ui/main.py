@@ -13,7 +13,7 @@ import yaml
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen
+from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen, QDialog
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, logging_config, persistence
@@ -357,7 +357,8 @@ def create_game(params: CreateGameParams) -> Game:
     )
     game = generator.generate()
     if params.show_air_wing_config:
-        AirWingConfigurationDialog(game, None).exec_()
+        if AirWingConfigurationDialog(game, None).exec() == QDialog.DialogCode.Rejected:
+            sys.exit("Aborted air wing configuration")
     game.begin_turn_0(squadrons_start_full=params.use_new_squadron_rules)
     return game
 
