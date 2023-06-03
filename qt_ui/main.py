@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import argparse
 import logging
 import ntpath
 import os
 import sys
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -261,19 +264,38 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def create_game(
-    campaign_path: Path,
-    blue: str,
-    red: str,
-    supercarrier: bool,
-    auto_procurement: bool,
-    inverted: bool,
-    cheats: bool,
-    start_date: datetime,
-    restrict_weapons_by_date: bool,
-    advanced_iads: bool,
-    use_new_squadron_rules: bool,
-) -> Game:
+@dataclass(frozen=True)
+class CreateGameParams:
+    campaign_path: Path
+    blue: str
+    red: str
+    supercarrier: bool
+    auto_procurement: bool
+    inverted: bool
+    cheats: bool
+    start_date: datetime
+    restrict_weapons_by_date: bool
+    advanced_iads: bool
+    use_new_squadron_rules: bool
+
+    @staticmethod
+    def from_args(args: argparse.Namespace) -> CreateGameParams:
+        return CreateGameParams(
+            args.campaign,
+            args.blue,
+            args.red,
+            args.supercarrier,
+            args.auto_procurement,
+            args.inverted,
+            args.cheats,
+            args.date,
+            args.restrict_weapons_by_date,
+            args.advanced_iads,
+            args.use_new_squadron_rules,
+        )
+
+
+def create_game(params: CreateGameParams) -> Game:
     first_start = liberation_install.init()
     if first_start:
         sys.exit(
@@ -289,32 +311,32 @@ def create_game(
     # for loadouts) without saving the generated campaign and reloading it the normal
     # way.
     inject_custom_payloads(Path(persistence.base_path()))
-    campaign = Campaign.from_file(campaign_path)
-    theater = campaign.load_theater(advanced_iads)
+    campaign = Campaign.from_file(params.campaign_path)
+    theater = campaign.load_theater(params.advanced_iads)
     faction_loader = Factions.load()
     lua_plugin_manager = LuaPluginManager.load()
     lua_plugin_manager.merge_player_settings()
     generator = GameGenerator(
-        faction_loader.get_by_name(blue),
-        faction_loader.get_by_name(red),
+        faction_loader.get_by_name(params.blue),
+        faction_loader.get_by_name(params.red),
         theater,
         campaign.load_air_wing_config(theater),
         Settings(
-            supercarrier=supercarrier,
-            automate_runway_repair=auto_procurement,
-            automate_front_line_reinforcements=auto_procurement,
-            automate_aircraft_reinforcements=auto_procurement,
-            enable_frontline_cheats=cheats,
-            enable_base_capture_cheat=cheats,
-            restrict_weapons_by_date=restrict_weapons_by_date,
-            enable_squadron_aircraft_limits=use_new_squadron_rules,
+            supercarrier=params.supercarrier,
+            automate_runway_repair=params.auto_procurement,
+            automate_front_line_reinforcements=params.auto_procurement,
+            automate_aircraft_reinforcements=params.auto_procurement,
+            enable_frontline_cheats=params.cheats,
+            enable_base_capture_cheat=params.cheats,
+            restrict_weapons_by_date=params.restrict_weapons_by_date,
+            enable_squadron_aircraft_limits=params.use_new_squadron_rules,
         ),
         GeneratorSettings(
-            start_date=start_date,
+            start_date=params.start_date,
             start_time=campaign.recommended_start_time,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
-            inverted=inverted,
+            inverted=params.inverted,
             advanced_iads=theater.iads_network.advanced_iads,
             no_carrier=False,
             no_lha=False,
@@ -334,7 +356,7 @@ def create_game(
         lua_plugin_manager,
     )
     game = generator.generate()
-    game.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
+    game.begin_turn_0(squadrons_start_full=params.use_new_squadron_rules)
     return game
 
 
@@ -417,19 +439,7 @@ def main():
 
     if args.subcommand == "new-game":
         with logged_duration("New game creation"):
-            game = create_game(
-                args.campaign,
-                args.blue,
-                args.red,
-                args.supercarrier,
-                args.auto_procurement,
-                args.inverted,
-                args.cheats,
-                args.date,
-                args.restrict_weapons_by_date,
-                args.advanced_iads,
-                args.use_new_squadron_rules,
-            )
+            game = create_game(CreateGameParams.from_args(args))
     if args.subcommand == "lint-weapons":
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
         return
