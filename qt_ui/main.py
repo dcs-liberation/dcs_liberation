@@ -36,6 +36,7 @@ from qt_ui import (
     uiconstants,
 )
 from qt_ui.uiflags import UiFlags
+from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
@@ -260,6 +261,12 @@ def parse_args() -> argparse.Namespace:
         "--advanced-iads", action="store_true", help="Enable advanced IADS."
     )
 
+    new_game.add_argument(
+        "--show-air-wing-config",
+        action="store_true",
+        help="Show the air wing configuration dialog after generating the game.",
+    )
+
     lint_weapons = subparsers.add_parser("lint-weapons")
     lint_weapons.add_argument("aircraft", help="Name of the aircraft variant to lint.")
 
@@ -281,6 +288,7 @@ class CreateGameParams:
     restrict_weapons_by_date: bool
     advanced_iads: bool
     use_new_squadron_rules: bool
+    show_air_wing_config: bool
 
     @staticmethod
     def from_args(args: argparse.Namespace) -> CreateGameParams | None:
@@ -298,6 +306,7 @@ class CreateGameParams:
             args.restrict_weapons_by_date,
             args.advanced_iads,
             args.use_new_squadron_rules,
+            args.show_air_wing_config,
         )
 
 
@@ -347,6 +356,8 @@ def create_game(params: CreateGameParams) -> Game:
         lua_plugin_manager,
     )
     game = generator.generate()
+    if params.show_air_wing_config:
+        AirWingConfigurationDialog(game, None).exec_()
     game.begin_turn_0(squadrons_start_full=params.use_new_squadron_rules)
     return game
 
