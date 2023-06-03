@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
+    QDialog,
 )
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -223,7 +224,12 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         self.generatedGame = generator.generate()
 
-        AirWingConfigurationDialog(self.generatedGame, self).exec_()
+        if (
+            AirWingConfigurationDialog(self.generatedGame, self).exec()
+            == QDialog.DialogCode.Rejected
+        ):
+            logging.info("Aborted air wing configuration")
+            return
 
         self.generatedGame.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
 
