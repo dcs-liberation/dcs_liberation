@@ -64,7 +64,7 @@ def test_mission_types_enemy(mocker: Any) -> None:
     airport.name = "test"  # required for Airfield.__init__
     airfield = Airfield(airport, theater=None, starts_blue=True)  # type: ignore
     mission_types = list(airfield.mission_types(for_player=True))
-    assert len(mission_types) == 8
+    assert len(mission_types) == 9
     assert FlightType.OCA_AIRCRAFT in mission_types
     assert FlightType.OCA_RUNWAY in mission_types
     assert FlightType.AIR_ASSAULT in mission_types
@@ -73,6 +73,7 @@ def test_mission_types_enemy(mocker: Any) -> None:
     assert FlightType.SEAD_ESCORT in mission_types
     assert FlightType.SWEEP in mission_types
     assert FlightType.REFUELING in mission_types
+    assert FlightType.CAS in mission_types
 
     # Carrier
     mocker.patch("game.theater.controlpoint.Carrier.is_friendly", return_value=False)
@@ -100,13 +101,14 @@ def test_mission_types_enemy(mocker: Any) -> None:
     mocker.patch("game.theater.controlpoint.Fob.is_friendly", return_value=False)
     fob = Fob(name="test", at=None, theater=None, starts_blue=True)  # type: ignore
     mission_types = list(fob.mission_types(for_player=True))
-    assert len(mission_types) == 6
+    assert len(mission_types) == 7
     assert FlightType.AIR_ASSAULT in mission_types
     assert FlightType.ESCORT in mission_types
     assert FlightType.TARCAP in mission_types
     assert FlightType.SEAD_ESCORT in mission_types
     assert FlightType.SWEEP in mission_types
     assert FlightType.STRIKE in mission_types
+    assert FlightType.CAS in mission_types
 
     # Off map spawn
     mocker.patch(

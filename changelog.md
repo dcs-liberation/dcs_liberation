@@ -4,6 +4,8 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Features/Improvements
 
+* **[Mission Planning]** CAS now plannable against airfields and FOBs.
+
 ## Fixes
 
 # 7.1.0
