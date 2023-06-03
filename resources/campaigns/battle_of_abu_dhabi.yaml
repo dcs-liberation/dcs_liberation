@@ -9,7 +9,7 @@ description:
   pushing south.</p>
 miz: battle_of_abu_dhabi.miz
 performance: 2
-version: "10.2"
+version: "10.9"
 squadrons:
   # Blue CPs:
   # The default faction is Iran, but the F-14B is given higher precedence so
@@ -41,16 +41,20 @@ squadrons:
         - F-16CM Fighting Falcon (Block 50)
         - F-4E Phantom II
     - primary: AEW&C
+      size: 2
       aircraft:
         - E-3A
     - primary: Refueling
+      size: 2
       aircraft:
         - KC-135 Stratotanker
     - primary: Transport
+      size: 4
       aircraft:
         - C-17A
     - primary: Strike
       secondary: air-to-ground
+      size: 4
       aircraft:
         - B-1B Lancer
         - Su-24MK Fencer-D
@@ -72,6 +76,7 @@ squadrons:
         - Su-25 Frogfoot
     - primary: BAI
       secondary: air-to-ground
+      size: 8
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
         - Su-24MK Fencer-D
@@ -102,6 +107,7 @@ squadrons:
         - F/A-18C Hornet (Lot 20)
         - F-14A Tomcat (Block 135-GR Late)
     - primary: Refueling
+      size: 2
       aircraft:
         - S-3B Tanker
 
@@ -111,6 +117,7 @@ squadrons:
       aircraft:
         - AV-8B Harrier II Night Attack
     - primary: CAS
+      size: 8
       secondary: air-to-ground
       aircraft:
         - UH-1H Iroquois
