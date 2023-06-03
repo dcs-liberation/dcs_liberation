@@ -12,7 +12,7 @@ recommended_enemy_faction: Germany 1944
 recommended_start_date: 1944-07-04
 miz: caen_to_evreux.miz
 performance: 1
-version: "10.7"
+version: "10.9"
 squadrons:
   # Evreux
   26:
