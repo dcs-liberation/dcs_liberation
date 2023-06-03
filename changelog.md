@@ -1,3 +1,11 @@
+# 7.1.1
+
+Saves from 7.1.0 are compatible with 7.1.1
+
+## Features/Improvements
+
+## Fixes
+
 # 7.1.0
 
 Saves from 7.0.0 are compatible with 7.1.0
