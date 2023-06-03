@@ -1,3 +1,4 @@
+import textwrap
 from collections import defaultdict
 from typing import Iterable, Iterator, Optional
 
@@ -630,6 +631,32 @@ class AircraftTypeList(QListView):
         self.update(self.selectionModel().currentIndex())
 
 
+def describe_overfull_airbases(
+    overfull: Iterable[tuple[ControlPoint, int, list[Squadron]]]
+) -> str:
+    string_builder = []
+    for (
+        control_point,
+        used_parking,
+        squadrons,
+    ) in overfull:
+        capacity = control_point.total_aircraft_parking
+        base_description = f"{control_point.name} {used_parking}/{capacity}"
+        string_builder.append(f"<p><strong>{base_description}</strong></p>")
+        squadron_descriptions = []
+        for squadron in squadrons:
+            squadron_details = (
+                f"{squadron.aircraft} {squadron.name} {squadron.max_size} aircraft"
+            )
+            squadron_descriptions.append(f"<li>{squadron_details}</li>")
+        string_builder.append(f"<ul>{''.join(squadron_descriptions)}</ul>")
+
+    if not string_builder:
+        string_builder.append("All airbases are within parking limits.")
+
+    return "".join(string_builder)
+
+
 class OverfullAirbasesDisplay(QGroupBox):
     def __init__(
         self,
@@ -649,27 +676,9 @@ class OverfullAirbasesDisplay(QGroupBox):
         self.on_allocation_changed()
 
     def on_allocation_changed(self) -> None:
-        string_builder = []
-        for (
-            control_point,
-            used_parking,
-            squadrons,
-        ) in self.parking_tracker.iter_overfull():
-            capacity = control_point.total_aircraft_parking
-            base_description = f"{control_point.name} {used_parking}/{capacity}"
-            string_builder.append(f"<p><strong>{base_description}</strong></p>")
-            squadron_descriptions = []
-            for squadron in squadrons:
-                squadron_details = (
-                    f"{squadron.aircraft} {squadron.name} {squadron.max_size} aircraft"
-                )
-                squadron_descriptions.append(f"<li>{squadron_details}</li>")
-            string_builder.append(f"<ul>{''.join(squadron_descriptions)}</ul>")
-
-        if not string_builder:
-            string_builder.append("All airbases are within parking limits.")
-
-        self.label.setText("".join(string_builder))
+        self.label.setText(
+            describe_overfull_airbases(self.parking_tracker.iter_overfull())
+        )
 
 
 class AirWingConfigurationTab(QWidget):
@@ -771,6 +780,7 @@ class AirWingConfigurationDialog(QDialog):
 
     def __init__(self, game: Game, parent) -> None:
         super().__init__(parent)
+        self.game = game
         self.parking_tracker = AirWingConfigParkingTracker(game)
 
         self.setMinimumSize(1024, 768)
@@ -821,7 +831,29 @@ class AirWingConfigurationDialog(QDialog):
         for tab in self.tabs:
             tab.revert()
 
+    def can_continue(self) -> bool:
+        if not self.game.settings.enable_squadron_aircraft_limits:
+            return True
+
+        overfull = list(self.parking_tracker.iter_overfull())
+        if not overfull:
+            return True
+
+        description = (
+            "<p>The following airbases are over capacity:</p>"
+            f"{describe_overfull_airbases(overfull)}"
+        )
+        QMessageBox().critical(
+            self,
+            "Cannot continue with overfull bases",
+            description,
+            QMessageBox.Ok,
+        )
+        return False
+
     def accept(self) -> None:
+        if not self.can_continue():
+            return
         for tab in self.tabs:
             tab.apply()
         super().accept()
@@ -829,8 +861,16 @@ class AirWingConfigurationDialog(QDialog):
     def reject(self) -> None:
         result = QMessageBox.information(
             None,
-            "Discard changes?",
-            "Are you sure you want to discard your changes and start the campaign?",
+            "Abort new game?",
+            "<br />".join(
+                textwrap.wrap(
+                    "Are you sure you want to cancel air wing configuration and "
+                    "return to the new game wizard? If you instead want to revert your "
+                    "air wing changes and continue, use the revert and accept buttons "
+                    "below.",
+                    width=55,
+                )
+            ),
             QMessageBox.Yes,
             QMessageBox.No,
         )
