@@ -1,5 +1,5 @@
 import App from "./App";
-import { store } from "./app/store";
+import { setupStore } from "./app/store";
 import { SocketProvider } from "./components/socketprovider/socketprovider";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <Provider store={setupStore()}>
       <SocketProvider>
         <App />
       </SocketProvider>
