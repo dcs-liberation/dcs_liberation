@@ -1,0 +1,6 @@
+name: AGM-114K * 3
+year: 1993
+fallback: 4 x BGM-71D TOW ATGM
+clsids:
+  - "{M299_3xAGM_114K_OUTBOARD_PORT}"
+  - "{M299_3xAGM_114K_OUTBOARD_STARBOARD}"
