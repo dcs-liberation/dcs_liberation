@@ -33,8 +33,10 @@ from qt_ui.uncaughtexceptionhandler import UncaughtExceptionHandler
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
+from qt_ui.windows.AirWingDialog import AirWingDialog
 from qt_ui.windows.BugReportDialog import BugReportDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
@@ -221,6 +223,12 @@ class QLiberationWindow(QMainWindow):
         self.openNotesAction.setIcon(CONST.ICONS["Notes"])
         self.openNotesAction.triggered.connect(self.showNotesDialog)
 
+        self.openAirWingAction = QAction("Air Wing", self)
+        self.openAirWingAction.triggered.connect(self.showAirWingDialog)
+
+        self.openTransfersAction = QAction("Transfers", self)
+        self.openTransfersAction.triggered.connect(self.showTransfersDialog)
+
         self.importTemplatesAction = QAction("Import Layouts", self)
         self.importTemplatesAction.triggered.connect(self.import_templates)
 
@@ -253,6 +261,8 @@ class QLiberationWindow(QMainWindow):
         self.actions_bar.addAction(self.openSettingsAction)
         self.actions_bar.addAction(self.openStatsAction)
         self.actions_bar.addAction(self.openNotesAction)
+        self.actions_bar.addAction(self.openAirWingAction)
+        self.actions_bar.addAction(self.openTransfersAction)
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -524,6 +534,14 @@ class QLiberationWindow(QMainWindow):
 
     def showNotesDialog(self):
         self.dialog = QNotesWindow(self.game)
+        self.dialog.show()
+
+    def showAirWingDialog(self) -> None:
+        self.dialog = AirWingDialog(self.game_model, self)
+        self.dialog.show()
+
+    def showTransfersDialog(self) -> None:
+        self.dialog = PendingTransfersDialog(self.game_model)
         self.dialog.show()
 
     def import_templates(self):

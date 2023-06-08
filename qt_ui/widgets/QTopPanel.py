@@ -25,9 +25,7 @@ from qt_ui.widgets.QFactionsInfos import QFactionsInfos
 from qt_ui.widgets.QIntelBox import QIntelBox
 from qt_ui.widgets.clientslots import MaxPlayerCount
 from qt_ui.widgets.simspeedcontrols import SimSpeedControls
-from qt_ui.windows.AirWingDialog import AirWingDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
-from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QWaitingForMissionResultWindow import QWaitingForMissionResultWindow
 
 
@@ -69,23 +67,7 @@ class QTopPanel(QFrame):
 
         self.factionsInfos = QFactionsInfos(self.game)
 
-        self.air_wing = QPushButton("Air Wing")
-        self.air_wing.setDisabled(True)
-        self.air_wing.setProperty("style", "btn-primary")
-        self.air_wing.clicked.connect(self.open_air_wing)
-
-        self.transfers = QPushButton("Transfers")
-        self.transfers.setDisabled(True)
-        self.transfers.setProperty("style", "btn-primary")
-        self.transfers.clicked.connect(self.open_transfers)
-
         self.intel_box = QIntelBox(self.game)
-
-        self.buttonBox = QGroupBox("Misc")
-        self.buttonBoxLayout = QHBoxLayout()
-        self.buttonBoxLayout.addWidget(self.air_wing)
-        self.buttonBoxLayout.addWidget(self.transfers)
-        self.buttonBox.setLayout(self.buttonBoxLayout)
 
         self.proceedBox = QGroupBox("Proceed")
         self.proceedBoxLayout = QHBoxLayout()
@@ -102,7 +84,6 @@ class QTopPanel(QFrame):
         self.layout.addWidget(self.conditionsWidget)
         self.layout.addWidget(self.budgetBox)
         self.layout.addWidget(self.intel_box)
-        self.layout.addWidget(self.buttonBox)
         self.layout.addStretch(1)
         self.layout.addWidget(self.proceedBox)
 
@@ -120,9 +101,6 @@ class QTopPanel(QFrame):
     def setGame(self, game: Optional[Game]):
         if game is None:
             return
-
-        self.air_wing.setEnabled(True)
-        self.transfers.setEnabled(True)
 
         self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
 
@@ -146,14 +124,6 @@ class QTopPanel(QFrame):
             self.proceedButton.setEnabled(False)
         else:
             self.proceedButton.setEnabled(True)
-
-    def open_air_wing(self):
-        self.dialog = AirWingDialog(self.game_model, self.window())
-        self.dialog.show()
-
-    def open_transfers(self):
-        self.dialog = PendingTransfersDialog(self.game_model)
-        self.dialog.show()
 
     def passTurn(self):
         with logged_duration("Skipping turn"):
