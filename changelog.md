@@ -4,6 +4,8 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Features/Improvements
 
+* **[UI]** Limited size of overfull airbase display and added scrollbar.
+
 ## Fixes
 
 # 7.1.0

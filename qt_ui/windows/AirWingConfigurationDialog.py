@@ -664,6 +664,8 @@ class OverfullAirbasesDisplay(QGroupBox):
         parent: QWidget | None = None,
     ) -> None:
         super().__init__("Overfull airbases", parent)
+        self.setMaximumHeight(200)
+
         self.parking_tracker = parking_tracker
         self.parking_tracker.allocation_changed.connect(self.on_allocation_changed)
 
@@ -671,7 +673,12 @@ class OverfullAirbasesDisplay(QGroupBox):
         self.setLayout(layout)
 
         self.label = QLabel()
-        layout.addWidget(self.label)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(self.label)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        layout.addWidget(scroll)
 
         self.on_allocation_changed()
 
