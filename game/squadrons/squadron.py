@@ -5,7 +5,8 @@ import random
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Sequence, TYPE_CHECKING
+from typing import Optional, Sequence, TYPE_CHECKING, Any
+from uuid import uuid4, UUID
 
 from faker import Faker
 
@@ -13,6 +14,7 @@ from game.ato import Flight, FlightType, Package
 from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
 from ..db.database import Database
+from ..savecompat import has_save_compat_for
 from ..utils import meters
 
 if TYPE_CHECKING:
@@ -26,6 +28,8 @@ if TYPE_CHECKING:
 
 @dataclass
 class Squadron:
+    id: UUID = field(init=False, default_factory=uuid4)
+
     name: str
     nickname: Optional[str]
     country: str
@@ -61,21 +65,24 @@ class Squadron:
     untasked_aircraft: int = field(init=False, hash=False, compare=False, default=0)
     pending_deliveries: int = field(init=False, hash=False, compare=False, default=0)
 
+    @has_save_compat_for(7)
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        if "id" not in state:
+            state["id"] = uuid4()
+        self.__dict__.update(state)
+
     def __str__(self) -> str:
         if self.nickname is None:
             return self.name
         return f'{self.name} "{self.nickname}"'
 
     def __hash__(self) -> int:
-        return hash(
-            (
-                self.name,
-                self.nickname,
-                self.country,
-                self.role,
-                self.aircraft,
-            )
-        )
+        return hash(self.id)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Squadron):
+            return False
+        return self.id == other.id
 
     @property
     def player(self) -> bool:

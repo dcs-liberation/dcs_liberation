@@ -63,6 +63,10 @@ QToolBar::separator {
     height:1px;
 }
 
+QToolBar QToolButton {
+    font: bold 18px;
+}
+
 QMenu::item:selected  {
     background: #435466;
 }

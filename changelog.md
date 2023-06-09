@@ -5,6 +5,7 @@ Saves from 7.x are not compatible with 8.0.
 ## Features/Improvements
 
 * **[Mission Planning]** CAS now plannable against airfields and FOBs.
+* **[UI]** Limited size of overfull airbase display and added scrollbar.
 
 ## Fixes
 
@@ -19,6 +20,10 @@ Saves from 7.0.0 are compatible with 7.1.0
 * **[Mission Generation]** Added option to prevent scud and V2 sites from firing at the start of the mission.
 * **[Mission Generation]** Added settings for controlling number of tactical commander, observer, JTAC, and game master slots.
 * **[Mission Planning]** Per-flight TOT offsets can now be set in the flight details UI. This allows individual flights to be scheduled ahead of or behind the rest of the package.
+* **[New Game Wizard]** The air wing configuration dialog will check for and reject overfull airbases before continuing when the new squadron rules are used.
+* **[New Game Wizard]** Closing the air wing configuration dialog will now cancel and return to the new game wizard rather than reverting changes and continuing.
+* **[New Game Wizard]** A warning will be displayed next to the new squadron rules button if the campaign predates the new rules and will likely require user intervention before continuing.
+* **[UI]** Parking capacity of each squadron's base is now shown during air wing configuration to avoid overcrowding bases when beginning the game with full squadrons.
 
 ## Fixes
 

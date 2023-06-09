@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import logging
+import textwrap
 from datetime import datetime, timedelta
 from typing import List
 
@@ -13,6 +14,7 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
+    QDialog,
 )
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -38,7 +40,6 @@ jinja_env = Environment(
     trim_blocks=True,
     lstrip_blocks=True,
 )
-
 
 """
 Possible time periods for new games
@@ -86,6 +87,10 @@ TIME_PERIODS = {
 }
 
 
+def wrap_label_text(text: str, width: int = 100) -> str:
+    return "<br />".join(textwrap.wrap(text, width=width))
+
+
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
@@ -114,7 +119,9 @@ class NewGameWizard(QtWidgets.QWizard):
         self.addPage(self.theater_page)
         self.addPage(self.faction_selection_page)
         self.addPage(GeneratorOptions(default_settings, mod_settings))
-        self.difficulty_page = DifficultyAndAutomationOptions(default_settings)
+        self.difficulty_page = DifficultyAndAutomationOptions(
+            default_settings, self.theater_page.campaignList.selected_campaign
+        )
         self.plugins_page = PluginsPage(self.lua_plugin_manager)
 
         # Update difficulty page on campaign select
@@ -223,7 +230,12 @@ class NewGameWizard(QtWidgets.QWizard):
         )
         self.generatedGame = generator.generate()
 
-        AirWingConfigurationDialog(self.generatedGame, self).exec_()
+        if (
+            AirWingConfigurationDialog(self.generatedGame, self).exec()
+            == QDialog.DialogCode.Rejected
+        ):
+            logging.info("Aborted air wing configuration")
+            return
 
         self.generatedGame.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
 
@@ -567,8 +579,39 @@ class BudgetInputs(QtWidgets.QGridLayout):
         self.addWidget(self.starting_money, 1, 1)
 
 
+class NewSquadronRulesWarning(QLabel):
+    def __init__(
+        self, campaign: Campaign | None, parent: QWidget | None = None
+    ) -> None:
+        super().__init__(parent)
+        self.set_campaign(campaign)
+
+    def set_campaign(self, campaign: Campaign | None) -> None:
+        if campaign is None:
+            self.setText("No campaign selected")
+            return
+        if campaign.version >= (10, 9):
+            text = f"{campaign.name} is compatible with the new squadron rules."
+        elif campaign.version >= (10, 7):
+            text = (
+                f"{campaign.name} has been updated since the new squadron rules were "
+                "introduced, but support for those rules was still optional. You may "
+                "need to remove, resize, or relocate squadrons before beginning the "
+                "game."
+            )
+        else:
+            text = (
+                f"{campaign.name} has not been updated since the new squadron rules. "
+                "Were introduced. You may need to remove, resize, or relocate "
+                "squadrons before beginning the game."
+            )
+        self.setText(wrap_label_text(text))
+
+
 class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
-    def __init__(self, default_settings: Settings, parent=None) -> None:
+    def __init__(
+        self, default_settings: Settings, current_campaign: Campaign | None, parent=None
+    ) -> None:
         super().__init__(parent)
 
         self.setTitle("Difficulty and automation options")
@@ -609,10 +652,15 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         new_squadron_rules.setChecked(default_settings.enable_squadron_aircraft_limits)
         self.registerField("use_new_squadron_rules", new_squadron_rules)
         economy_layout.addWidget(new_squadron_rules)
+        self.new_squadron_rules_warning = NewSquadronRulesWarning(current_campaign)
+        economy_layout.addWidget(self.new_squadron_rules_warning)
         economy_layout.addWidget(
             QLabel(
-                "With new squadron rules enabled, squadrons will not be able to exceed a maximum number of aircraft "
-                "(configurable), and the campaign will begin with all squadrons at full strength."
+                wrap_label_text(
+                    "With new squadron rules enabled, squadrons will not be able to "
+                    "exceed a maximum number of aircraft (configurable), and the "
+                    "campaign will begin with all squadrons at full strength."
+                )
             )
         )
 
@@ -650,6 +698,7 @@ class DifficultyAndAutomationOptions(QtWidgets.QWizardPage):
         self.enemy_income.spinner.setValue(
             int(campaign.recommended_enemy_income_multiplier * 10)
         )
+        self.new_squadron_rules_warning.set_campaign(campaign)
 
 
 class PluginOptionCheckbox(QCheckBox):

@@ -8,15 +8,12 @@ from .liberation_theme import get_theme_icons
 LABELS_OPTIONS = ["Full", "Abbreviated", "Dot Only", "Neutral Dot", "Off"]
 SKILL_OPTIONS = ["Average", "Good", "High", "Excellent"]
 
-AIRCRAFT_BANNERS: Dict[str, QPixmap] = {}
 AIRCRAFT_ICONS: Dict[str, QPixmap] = {}
-VEHICLE_BANNERS: Dict[str, QPixmap] = {}
 VEHICLES_ICONS: Dict[str, QPixmap] = {}
 ICONS: Dict[str, QPixmap] = {}
 
 
 def load_icons():
-
     ICONS["New"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/new.png")
     ICONS["Open"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/open.png")
     ICONS["Save"] = QPixmap("./resources/ui/misc/" + get_theme_icons() + "/save.png")
@@ -212,26 +209,4 @@ def load_vehicle_icons():
         if vehicle.endswith(".jpg"):
             VEHICLES_ICONS[vehicle[:-7]] = QPixmap(
                 os.path.join("./resources/ui/units/vehicles/icons/", vehicle)
-            )
-
-
-def load_aircraft_banners():
-    for aircraft in os.listdir("./resources/ui/units/aircrafts/banners/"):
-        if aircraft.endswith(".jpg"):
-            AIRCRAFT_BANNERS[aircraft[:-7]] = QPixmap(
-                os.path.join("./resources/ui/units/aircrafts/banners/", aircraft)
-            )
-    variants = ["Mirage-F1CT", "Mirage-F1EE", "Mirage-F1M-EE", "Mirage-F1EQ"]
-    for f1 in variants:
-        AIRCRAFT_BANNERS[f1] = AIRCRAFT_BANNERS["Mirage-F1C-200"]
-    variants = ["Mirage-F1CE", "Mirage-F1M-CE"]
-    for f1 in variants:
-        AIRCRAFT_BANNERS[f1] = AIRCRAFT_BANNERS["Mirage-F1C"]
-
-
-def load_vehicle_banners():
-    for aircraft in os.listdir("./resources/ui/units/vehicles/banners/"):
-        if aircraft.endswith(".jpg"):
-            VEHICLE_BANNERS[aircraft[:-7]] = QPixmap(
-                os.path.join("./resources/ui/units/vehicles/banners/", aircraft)
             )

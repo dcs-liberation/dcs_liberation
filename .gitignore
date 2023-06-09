@@ -9,6 +9,7 @@ venv
 .vscode/settings.json
 dist/**
 /.coverage
+/coverage.xml
 # User-specific stuff
 .idea/
 .env

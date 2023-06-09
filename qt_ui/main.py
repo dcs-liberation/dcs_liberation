@@ -1,17 +1,19 @@
+from __future__ import annotations
+
 import argparse
 import logging
 import ntpath
 import os
 import sys
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import yaml
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen
+from PySide6.QtWidgets import QApplication, QCheckBox, QSplashScreen, QDialog
 from dcs.payloads import PayloadDirectories
 
 from game import Game, VERSION, logging_config, persistence
@@ -34,6 +36,7 @@ from qt_ui import (
     uiconstants,
 )
 from qt_ui.uiflags import UiFlags
+from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.QLiberationWindow import QLiberationWindow
 from qt_ui.windows.preferences.QLiberationFirstStartWindow import (
@@ -67,7 +70,7 @@ def on_game_load(game: Game | None) -> None:
     EventStream.put_nowait(GameUpdateEvents().game_loaded(game))
 
 
-def run_ui(game: Game | None, ui_flags: UiFlags) -> None:
+def run_ui(create_game_params: CreateGameParams | None, ui_flags: UiFlags) -> None:
     os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "1"  # Potential fix for 4K screens
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
@@ -108,8 +111,6 @@ def run_ui(game: Game | None, ui_flags: UiFlags) -> None:
     uiconstants.load_event_icons()
     uiconstants.load_aircraft_icons()
     uiconstants.load_vehicle_icons()
-    uiconstants.load_aircraft_banners()
-    uiconstants.load_vehicle_banners()
 
     # Show warning if no DCS Installation directory was set
     if liberation_install.get_dcs_install_directory() == "":
@@ -150,6 +151,11 @@ def run_ui(game: Game | None, ui_flags: UiFlags) -> None:
     # Apply CSS (need works)
     GameUpdateSignal()
     GameUpdateSignal.get_instance().game_loaded.connect(on_game_load)
+
+    game: Game | None = None
+    if create_game_params is not None:
+        with logged_duration("New game creation"):
+            game = create_game(create_game_params)
 
     # Start window
     window = QLiberationWindow(game, ui_flags)
@@ -253,6 +259,12 @@ def parse_args() -> argparse.Namespace:
         "--advanced-iads", action="store_true", help="Enable advanced IADS."
     )
 
+    new_game.add_argument(
+        "--show-air-wing-config",
+        action="store_true",
+        help="Show the air wing configuration dialog after generating the game.",
+    )
+
     lint_weapons = subparsers.add_parser("lint-weapons")
     lint_weapons.add_argument("aircraft", help="Name of the aircraft variant to lint.")
 
@@ -261,60 +273,68 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def create_game(
-    campaign_path: Path,
-    blue: str,
-    red: str,
-    supercarrier: bool,
-    auto_procurement: bool,
-    inverted: bool,
-    cheats: bool,
-    start_date: datetime,
-    restrict_weapons_by_date: bool,
-    advanced_iads: bool,
-    use_new_squadron_rules: bool,
-) -> Game:
-    first_start = liberation_install.init()
-    if first_start:
-        sys.exit(
-            "Cannot generate campaign without configuring DCS Liberation. Start the UI "
-            "for the first run configuration."
+@dataclass(frozen=True)
+class CreateGameParams:
+    campaign_path: Path
+    blue: str
+    red: str
+    supercarrier: bool
+    auto_procurement: bool
+    inverted: bool
+    cheats: bool
+    start_date: datetime
+    restrict_weapons_by_date: bool
+    advanced_iads: bool
+    use_new_squadron_rules: bool
+    show_air_wing_config: bool
+
+    @staticmethod
+    def from_args(args: argparse.Namespace) -> CreateGameParams | None:
+        if args.subcommand != "new-game":
+            return None
+        return CreateGameParams(
+            args.campaign,
+            args.blue,
+            args.red,
+            args.supercarrier,
+            args.auto_procurement,
+            args.inverted,
+            args.cheats,
+            args.date,
+            args.restrict_weapons_by_date,
+            args.advanced_iads,
+            args.use_new_squadron_rules,
+            args.show_air_wing_config,
         )
 
-    # This needs to run before the pydcs payload cache is created, which happens
-    # extremely early. It's not a problem that we inject these paths twice because we'll
-    # get the same answers each time.
-    #
-    # Without this, it is not possible to use next turn (or anything that needs to check
-    # for loadouts) without saving the generated campaign and reloading it the normal
-    # way.
-    inject_custom_payloads(Path(persistence.base_path()))
-    campaign = Campaign.from_file(campaign_path)
-    theater = campaign.load_theater(advanced_iads)
+
+def create_game(params: CreateGameParams) -> Game:
+    campaign = Campaign.from_file(params.campaign_path)
+    theater = campaign.load_theater(params.advanced_iads)
     faction_loader = Factions.load()
     lua_plugin_manager = LuaPluginManager.load()
     lua_plugin_manager.merge_player_settings()
     generator = GameGenerator(
-        faction_loader.get_by_name(blue),
-        faction_loader.get_by_name(red),
+        faction_loader.get_by_name(params.blue),
+        faction_loader.get_by_name(params.red),
         theater,
         campaign.load_air_wing_config(theater),
         Settings(
-            supercarrier=supercarrier,
-            automate_runway_repair=auto_procurement,
-            automate_front_line_reinforcements=auto_procurement,
-            automate_aircraft_reinforcements=auto_procurement,
-            enable_frontline_cheats=cheats,
-            enable_base_capture_cheat=cheats,
-            restrict_weapons_by_date=restrict_weapons_by_date,
-            enable_squadron_aircraft_limits=use_new_squadron_rules,
+            supercarrier=params.supercarrier,
+            automate_runway_repair=params.auto_procurement,
+            automate_front_line_reinforcements=params.auto_procurement,
+            automate_aircraft_reinforcements=params.auto_procurement,
+            enable_frontline_cheats=params.cheats,
+            enable_base_capture_cheat=params.cheats,
+            restrict_weapons_by_date=params.restrict_weapons_by_date,
+            enable_squadron_aircraft_limits=params.use_new_squadron_rules,
         ),
         GeneratorSettings(
-            start_date=start_date,
+            start_date=params.start_date,
             start_time=campaign.recommended_start_time,
             player_budget=DEFAULT_BUDGET,
             enemy_budget=DEFAULT_BUDGET,
-            inverted=inverted,
+            inverted=params.inverted,
             advanced_iads=theater.iads_network.advanced_iads,
             no_carrier=False,
             no_lha=False,
@@ -334,7 +354,10 @@ def create_game(
         lua_plugin_manager,
     )
     game = generator.generate()
-    game.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
+    if params.show_air_wing_config:
+        if AirWingConfigurationDialog(game, None).exec() == QDialog.DialogCode.Rejected:
+            sys.exit("Aborted air wing configuration")
+    game.begin_turn_0(squadrons_start_full=params.use_new_squadron_rules)
     return game
 
 
@@ -405,8 +428,6 @@ def main():
             "Installation path contains non-ASCII characters. This is known to cause problems."
         )
 
-    game: Optional[Game] = None
-
     args = parse_args()
 
     # TODO: Flesh out data and then make unconditional.
@@ -415,21 +436,6 @@ def main():
 
     load_mods()
 
-    if args.subcommand == "new-game":
-        with logged_duration("New game creation"):
-            game = create_game(
-                args.campaign,
-                args.blue,
-                args.red,
-                args.supercarrier,
-                args.auto_procurement,
-                args.inverted,
-                args.cheats,
-                args.date,
-                args.restrict_weapons_by_date,
-                args.advanced_iads,
-                args.use_new_squadron_rules,
-            )
     if args.subcommand == "lint-weapons":
         lint_weapon_data_for_aircraft(AircraftType.named(args.aircraft))
         return
@@ -438,7 +444,10 @@ def main():
         return
 
     with Server().run_in_thread():
-        run_ui(game, UiFlags(args.dev, args.show_sim_speed_controls))
+        run_ui(
+            CreateGameParams.from_args(args),
+            UiFlags(args.dev, args.show_sim_speed_controls),
+        )
 
 
 if __name__ == "__main__":
