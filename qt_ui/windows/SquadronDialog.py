@@ -21,6 +21,7 @@ from qt_ui.delegates import TwoColumnRowDelegate
 from qt_ui.errorreporter import report_errors
 from qt_ui.models import AtoModel, SquadronModel
 from qt_ui.simcontroller import SimController
+from qt_ui.widgets.combos.primarytaskselector import PrimaryTaskSelector
 
 
 class PilotDelegate(TwoColumnRowDelegate):
@@ -154,8 +155,20 @@ class SquadronDialog(QDialog):
         columns = QHBoxLayout()
         layout.addLayout(columns)
 
+        left_column = QVBoxLayout()
+        columns.addLayout(left_column)
+
+        left_column.addWidget(QLabel("Primary task"))
+        self.primary_task_selector = PrimaryTaskSelector.for_squadron(
+            self.squadron_model.squadron
+        )
+        self.primary_task_selector.currentIndexChanged.connect(
+            self.on_task_index_changed
+        )
+        left_column.addWidget(self.primary_task_selector)
+
         auto_assigned_tasks = AutoAssignedTaskControls(squadron_model)
-        columns.addLayout(auto_assigned_tasks)
+        left_column.addLayout(auto_assigned_tasks)
 
         self.pilot_list = PilotList(squadron_model)
         self.pilot_list.selectionModel().selectionChanged.connect(
@@ -261,3 +274,9 @@ class SquadronDialog(QDialog):
         index = selected.indexes()[0]
         self.reset_ai_toggle_state(index)
         self.reset_leave_toggle_state(index)
+
+    def on_task_index_changed(self, index: int) -> None:
+        task = self.primary_task_selector.itemData(index)
+        if task is None:
+            raise RuntimeError("Selected task cannot be None")
+        self.squadron.primary_task = task

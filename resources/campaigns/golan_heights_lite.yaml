@@ -7,7 +7,7 @@ recommended_enemy_faction: Syria 2011
 description: <p>In this scenario, you start in Israel and the conflict is focused around the golan heights, an historically disputed territory.<br/><br/>This scenario is designed to be performance and helicopter friendly.</p>
 miz: golan_heights_lite.miz
 performance: 1
-version: "10.5"
+version: "10.9"
 advanced_iads: true # Campaign has connection_nodes / power_sources / command_centers
 iads_config:
   - LHA-1 Tarawa # A Naval Group without connections but still participating as EWR
@@ -102,28 +102,31 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - E-3A
+      size: 1
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
-    - primary: Transport
-      aircraft:
-        - C-130
-    - primary: BARCAP
-      secondary: any
+      size: 1
+    - primary: Escort
+      secondary: air-to-air
       aircraft:
         - F-15C Eagle
+      size: 10
     - primary: BARCAP
       secondary: any
       aircraft:
         - F-4E Phantom II
+      size: 10
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle
+      size: 10
     - primary: SEAD
       secondary: any
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
+      size: 10
   # Golan South
   Golan South:
     - primary: CAS
@@ -132,65 +135,67 @@ squadrons:
       female_pilot_percentage: 15
       aircraft:
         - AH-1W SuperCobra
-    - primary: CAS
+      size: 4
+    - primary: BAI
       secondary: air-to-ground
       nickname: Defenders of Golan
       female_pilot_percentage: 25
       aircraft:
         - AH-64D Apache Longbow
-    - primary: Transport
+      size: 6
+    - primary: Air Assault
+      secondary: any
       aircraft:
         - UH-1H Iroquois
+      size: 2
   # Golan North
   Golan North:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 4
     - primary: CAS
-      aircraft:
-        - SA 342M Gazelle
-    - primary: Transport
       secondary: air-to-ground
       aircraft:
+        - SA 342M Gazelle
+      size: 4
+    - primary: Air Assault
+      secondary: any
+      aircraft:
         - Mi-8MTV2 Hip
+      size: 2
   # Marj Ruhayyil
   23:
-    - primary: BARCAP
+    - primary: BAI
       secondary: any
       aircraft:
         - MiG-21bis Fishbed-N
-    - primary: BARCAP
+      size: 12
+    - primary: Escort
       secondary: any
       aircraft:
-        - MiG-23MLD Flogger-K
-    - primary: SEAD
-      secondary: air-to-ground
-      aircraft:
-        - Su-17M4 Fitter-K
-    - primary: Strike
-      secondary: air-to-ground
-      aircraft:
-        - Su-17M4 Fitter-K
+        - MiG-21bis Fishbed-N
+      size: 12
   # Damascus
   7:
     - primary: BARCAP
       secondary: any
       aircraft:
-        - MiG-29S Fulcrum-C
-    - primary: BARCAP
-      secondary: any
-      aircraft:
-        - MiG-21bis Fishbed-N
-    - primary: BARCAP
+        - MiG-23MLD Flogger-K
+      size: 12
+    - primary: TARCAP
       secondary: any
       aircraft:
         - MiG-25PD Foxbat-E
+      size: 12
     - primary: SEAD
       secondary: air-to-ground
       aircraft:
         - Su-24M Fencer-D
+      size: 12
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - Su-17M4 Fitter-K
+      size: 12

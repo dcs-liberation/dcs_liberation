@@ -109,7 +109,11 @@ class AircraftPurchaseAdapter(PurchaseAdapter[Squadron]):
         return item.owned_aircraft
 
     def can_buy(self, item: Squadron) -> bool:
-        return super().can_buy(item) and self.control_point.unclaimed_parking() > 0
+        return (
+            super().can_buy(item)
+            and self.control_point.unclaimed_parking() > 0
+            and item.has_aircraft_capacity_for(1)
+        )
 
     def can_sell(self, item: Squadron) -> bool:
         return item.untasked_aircraft > 0

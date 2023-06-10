@@ -37,6 +37,7 @@ squadrons:
       aircraft:
         - 101st Combat Aviation Brigade
         #US Army UH-60
+      size: 6
   # Havadarya
   9:
     - primary: BARCAP
@@ -62,9 +63,11 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - VAW-125
+      size: 2
     - primary: Refueling
       aircraft:
         - VS-35 (Tanker)
+      size: 4
   # BLUFOR LHA
   BLUFOR LHA:
     - primary: BAI
@@ -75,6 +78,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - HMLA-169 (UH-1H)
+      size: 4
   # BLUFOR Start FOB
   FOB Anguran:
     - primary: CAS
@@ -87,6 +91,7 @@ squadrons:
       aircraft:
         - Wolfpack, 1-82 ARB
         #US Army Apache AH-64D
+      size: 2
   # OPFOR L1F1
   FOB Tang-e Dalan:
     - primary: CAS
@@ -140,9 +145,11 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - A-50
+      size: 2
     - primary: Refueling
       aircraft:
         - IL-78M
+      size: 2
     - primary: BARCAP
       secondary: any
       aircraft:
@@ -159,6 +166,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 4
     - primary: SEAD
       secondary: air-to-ground
       aircraft:
@@ -228,12 +236,15 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - A-50
+      size: 2
     - primary: Refueling
       aircraft:
         - IL-78M
+      size: 2
     - primary: Transport
       aircraft:
         - IL-78MD
+      size: 2
     - primary: BARCAP
       secondary: any
       aircraft:

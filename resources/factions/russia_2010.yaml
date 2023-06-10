@@ -68,6 +68,8 @@ naval_units:
   - Frigate 1135M Rezky
   - Corvette 1241.1 Molniya
   - CV 1143.5 Admiral Kuznetsov
+  - LS Ropucha
+  - SSK 636 Improved Kilo
 air_defense_units:
   - EWR 1L13
   - EWR 55G6

@@ -11,11 +11,15 @@ if TYPE_CHECKING:
     from game.theater import ConflictTheater
 
 
+DEFAULT_SQUADRON_SIZE = 12
+
+
 @dataclass(frozen=True)
 class SquadronConfig:
     primary: FlightType
     secondary: list[FlightType]
     aircraft: list[str]
+    max_size: int
 
     name: Optional[str]
     nickname: Optional[str]
@@ -39,6 +43,7 @@ class SquadronConfig:
             FlightType(data["primary"]),
             secondary,
             data.get("aircraft", []),
+            data.get("size", DEFAULT_SQUADRON_SIZE),
             data.get("name", None),
             data.get("nickname", None),
             data.get("female_pilot_percentage", None),

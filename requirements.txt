@@ -1,4 +1,4 @@
-﻿altgraph==0.17.3
+altgraph==0.17.3
 anyio==3.6.2
 asgiref==3.6.0
 attrs==22.2.0
@@ -11,7 +11,7 @@ coverage==7.0.5
 distlib==0.3.6
 exceptiongroup==1.1.0
 Faker==15.3.4
-fastapi==0.95.1
+fastapi==0.95.2
 filelock==3.9.0
 future==0.18.3
 h11==0.14.0
@@ -32,7 +32,7 @@ platformdirs==2.6.2
 pluggy==1.0.0
 pre-commit==2.21.0
 pydantic==1.10.7
--e git+https://github.com/pydcs/dcs@832c8a361319553cb6f2b46f5b2542180b7f72b6#egg=pydcs
+git+https://github.com/pydcs/dcs@e74c3885a55affda09b36907aa7afe5588b0702f#egg=pydcs
 pyinstaller==5.7.0
 pyinstaller-hooks-contrib==2022.14
 pyproj==3.4.1
@@ -50,7 +50,7 @@ Shapely==1.8.5
 shiboken6==6.4.1
 six==1.16.0
 sniffio==1.3.0
-starlette==0.26.1
+starlette==0.27.0
 tabulate==0.9.0
 tomli==2.0.1
 types-Jinja2==2.11.9

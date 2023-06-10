@@ -1,7 +1,6 @@
 from typing import Set
 
 from dcs import task
-from dcs.liveries_scanner import Liveries
 from dcs.planes import PlaneType
 from dcs.weapons_data import Weapons
 
@@ -67,7 +66,6 @@ class VSN_F104C(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104C"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
@@ -99,19 +97,11 @@ class VSN_F104C(PlaneType):
             4,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            4,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             4,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (4, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            4,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
@@ -199,19 +189,11 @@ class VSN_F104C(PlaneType):
             8,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            8,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             8,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (8, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            8,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (8, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (8, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
@@ -321,7 +303,6 @@ class VSN_F104G(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104G"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
@@ -353,19 +334,11 @@ class VSN_F104G(PlaneType):
             4,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            4,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             4,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (4, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            4,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
@@ -462,19 +435,11 @@ class VSN_F104G(PlaneType):
             8,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            8,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             8,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (8, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            8,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (8, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (8, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
@@ -584,7 +549,6 @@ class VSN_F104S(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104S"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
@@ -709,7 +673,6 @@ class VSN_F104S_AG(PlaneType):
     category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
 
     livery_name = "VSN_F104S_AG"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         Smoke_Generator___red_ = (1, Weapons.Smoke_Generator___red_)
@@ -754,19 +717,11 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (3, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            3,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             3,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (3, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            3,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         AIM_9L_Sidewinder_IR_AAM = (3, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (3, Weapons.AIM_9B_Sidewinder_IR_AAM)
         AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (
@@ -799,19 +754,11 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (4, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            4,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             4,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (4, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            4,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
@@ -920,19 +867,11 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (8, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            8,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             8,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (8, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            8,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (8, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (8, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
@@ -1021,19 +960,11 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (9, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
-        B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP = (
-            9,
-            Weapons.B_8M1_pod___20_x_S_8KOM__80mm_UnGd_Rkts__HEAT_AP,
-        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             9,
             Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
         )
         B_8M1___20_S_8OFP2 = (9, Weapons.B_8M1___20_S_8OFP2)
-        B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk = (
-            9,
-            Weapons.B_8M1_pod___20_x_S_8TsM__80mm_UnGd_Rkts__Smk,
-        )
         AIM_9P_Sidewinder_IR_AAM = (9, Weapons.AIM_9P_Sidewinder_IR_AAM)
         AIM_9P5_Sidewinder_IR_AAM = (9, Weapons.AIM_9P5_Sidewinder_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM = (9, Weapons.AIM_9L_Sidewinder_IR_AAM)

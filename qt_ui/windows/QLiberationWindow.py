@@ -33,8 +33,10 @@ from qt_ui.uncaughtexceptionhandler import UncaughtExceptionHandler
 from qt_ui.widgets.QTopPanel import QTopPanel
 from qt_ui.widgets.ato import QAirTaskingOrderPanel
 from qt_ui.widgets.map.QLiberationMap import QLiberationMap
+from qt_ui.windows.AirWingDialog import AirWingDialog
 from qt_ui.windows.BugReportDialog import BugReportDialog
 from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
@@ -133,7 +135,14 @@ class QLiberationWindow(QMainWindow):
 
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0, 0, 0, 0)
-        vbox.addWidget(QTopPanel(self.game_model, self.sim_controller, ui_flags))
+        vbox.addWidget(
+            QTopPanel(
+                self.game_model,
+                self.sim_controller,
+                ui_flags,
+                self.reset_to_pre_sim_checkpoint,
+            )
+        )
         vbox.addWidget(hbox)
 
         central_widget = QWidget()
@@ -214,6 +223,12 @@ class QLiberationWindow(QMainWindow):
         self.openNotesAction.setIcon(CONST.ICONS["Notes"])
         self.openNotesAction.triggered.connect(self.showNotesDialog)
 
+        self.openAirWingAction = QAction("Air Wing", self)
+        self.openAirWingAction.triggered.connect(self.showAirWingDialog)
+
+        self.openTransfersAction = QAction("Transfers", self)
+        self.openTransfersAction.triggered.connect(self.showTransfersDialog)
+
         self.importTemplatesAction = QAction("Import Layouts", self)
         self.importTemplatesAction.triggered.connect(self.import_templates)
 
@@ -246,6 +261,8 @@ class QLiberationWindow(QMainWindow):
         self.actions_bar.addAction(self.openSettingsAction)
         self.actions_bar.addAction(self.openStatsAction)
         self.actions_bar.addAction(self.openNotesAction)
+        self.actions_bar.addAction(self.openAirWingAction)
+        self.actions_bar.addAction(self.openTransfersAction)
 
     def initMenuBar(self):
         self.menu = self.menuBar()
@@ -339,6 +356,23 @@ class QLiberationWindow(QMainWindow):
                 self.updateWindowTitle(Path(file[0]))
             except Exception:
                 logging.exception("Error loading save game %s", file[0])
+
+    def reset_to_pre_sim_checkpoint(self) -> None:
+        """Loads the game that was saved before pressing the take-off button.
+
+        A checkpoint will be saved when the player presses take-off to save their state
+        before the mission simulation begins. If the mission is aborted, we usually want
+        to reset to the pre-simulation state to allow players to effectively "rewind",
+        since they probably aborted so that they could make changes. Implementing rewind
+        for real is impractical, but checkpoints are easy.
+        """
+        if self.game is None:
+            raise RuntimeError(
+                "Cannot reset to pre-sim checkpoint when no game is loaded"
+            )
+        GameUpdateSignal.get_instance().game_loaded.emit(
+            self.game.save_manager.load_pre_sim_checkpoint()
+        )
 
     def saveGame(self):
         logging.info("Saving game")
@@ -452,6 +486,10 @@ class QLiberationWindow(QMainWindow):
             "NickJZX",
             "Sith1144",
             "Raffson",
+            "zhexu14",
+            "ColonelAkirNakesh",
+            "Nosajthedevil",
+            "kivipe",
         ]
         text = (
             "<h3>DCS Liberation "
@@ -496,6 +534,14 @@ class QLiberationWindow(QMainWindow):
 
     def showNotesDialog(self):
         self.dialog = QNotesWindow(self.game)
+        self.dialog.show()
+
+    def showAirWingDialog(self) -> None:
+        self.dialog = AirWingDialog(self.game_model, self)
+        self.dialog.show()
+
+    def showTransfersDialog(self) -> None:
+        self.dialog = PendingTransfersDialog(self.game_model)
         self.dialog.show()
 
     def import_templates(self):

@@ -31,7 +31,7 @@ body:
         If the bug was found in a development build, select "Development build"
         and provide a link to the build in the field below.
       options:
-        - 6.1.1
+        - 7.1.0
         - Development build
   - type: textarea
     attributes:
@@ -53,9 +53,9 @@ body:
       description: >
         Attach any files needed to reproduce the bug here. **A save game is
         required.** We typically cannot help without a save game (the
-        `.liberation` (or `.liberation.zip`, for 7.x) file found in
-        `%USERPROFILE%/Saved Games/DCS/Liberation/Saves`), so most bugs filed
-        without saved games will be closed without investigation.
+        `.liberation.zip` file found in `%USERPROFILE%/Saved
+        Games/DCS/Liberation/Saves`), so most bugs filed without saved games
+        will be closed without investigation.
 
 
         Other useful files to include are:
@@ -73,10 +73,7 @@ body:
 
         The `state.json` file for the most recently completed turn, located at
         `<Liberation install directory>/state.json`. This file is essential for
-        investigating any issues with end-of-turn results processing. **If you
-        include this file, also include `last_turn.liberation`** (unless the
-        save is from 7.x or newer, which includes that information in the save
-        automatically).
+        investigating any issues with end-of-turn results processing.
 
 
         You can attach files to the bug by dragging and dropping the file into

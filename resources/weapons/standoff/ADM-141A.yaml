@@ -7,3 +7,6 @@ clsids:
   - "{BRU3242_ADM141}"
   - "{ADM_141A}"
   - "{ADM_141B}"
+  - "{BRU_42A_x1_ADM_141A}"
+  - "{BRU_42A_x2_ADM_141A}"
+  - "{BRU_42A_x3_ADM_141A}"

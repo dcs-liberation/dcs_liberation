@@ -158,14 +158,14 @@ class Coalition:
         # is handled correctly.
         self.transfers.perform_transfers()
 
-    def preinit_turn_0(self) -> None:
+    def preinit_turn_0(self, squadrons_start_full: bool) -> None:
         """Runs final Coalition initialization.
 
         Final initialization occurs before Game.initialize_turn runs for turn 0.
         """
-        self.air_wing.populate_for_turn_0()
+        self.air_wing.populate_for_turn_0(squadrons_start_full)
 
-    def initialize_turn(self) -> None:
+    def initialize_turn(self, is_turn_0: bool) -> None:
         """Processes coalition-specific turn initialization.
 
         For more information on turn initialization in general, see the documentation
@@ -184,7 +184,8 @@ class Coalition:
         with logged_duration("Transport planning"):
             self.transfers.plan_transports(self.game.conditions.start_time)
 
-        self.plan_missions(self.game.conditions.start_time)
+        if not is_turn_0 or not self.game.settings.enable_squadron_aircraft_limits:
+            self.plan_missions(self.game.conditions.start_time)
         self.plan_procurement()
 
     def refund_outstanding_orders(self) -> None:

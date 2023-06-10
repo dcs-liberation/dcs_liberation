@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (
     QStackedLayout,
     QVBoxLayout,
     QWidget,
+    QScrollArea,
 )
 
 import qt_ui.uiconstants as CONST
@@ -111,7 +112,8 @@ class AutoSettingsLayout(QGridLayout):
                 raise TypeError(f"Unhandled option type: {description}")
 
     def add_label(self, row: int, description: OptionDescription) -> None:
-        text = f"<strong>{description.text}</strong>"
+        wrapped_title = "<br />".join(textwrap.wrap(description.text, width=55))
+        text = f"<strong>{wrapped_title}</strong>"
         if description.detail is not None:
             wrapped = "<br />".join(textwrap.wrap(description.detail, width=55))
             text += f"<br />{wrapped}"
@@ -232,7 +234,18 @@ class AutoSettingsPage(QWidget):
         write_full_settings: Callable[[], None],
     ) -> None:
         super().__init__()
-        self.setLayout(AutoSettingsPageLayout(page, settings, write_full_settings))
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        scroll_content = QWidget()
+        scroll_content.setLayout(
+            AutoSettingsPageLayout(page, settings, write_full_settings)
+        )
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        layout.addWidget(scroll)
 
 
 class QSettingsWindow(QDialog):

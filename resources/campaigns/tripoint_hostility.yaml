@@ -24,6 +24,7 @@ squadrons:
       aircraft:
         - 960th AAC Squadron
         #USAF E-3A
+      size: 2
   # King Hussein Air College, BLUFOR start
   19:
     - primary: BARCAP
@@ -46,6 +47,7 @@ squadrons:
       aircraft:
         - 101st Combat Aviation Brigade
         #US Army UH-60
+      size: 4
   # FOB Tha'lah, BLUFOR 1st FOB north
   FOB Tha'lah:
     - primary: CAS

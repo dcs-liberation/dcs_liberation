@@ -26,10 +26,6 @@ if TYPE_CHECKING:
 
 class FormationAttackFlightPlan(FormationFlightPlan, ABC):
     @property
-    def lead_time(self) -> timedelta:
-        return timedelta()
-
-    @property
     def package_speed_waypoints(self) -> set[FlightWaypoint]:
         return {
             self.layout.ingress,
@@ -49,13 +45,6 @@ class FormationAttackFlightPlan(FormationFlightPlan, ABC):
     @property
     def tot_waypoint(self) -> FlightWaypoint:
         return self.layout.targets[0]
-
-    @property
-    def tot_offset(self) -> timedelta:
-        try:
-            return -self.lead_time
-        except AttributeError:
-            return timedelta()
 
     @property
     def target_area_waypoint(self) -> FlightWaypoint:

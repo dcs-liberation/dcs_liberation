@@ -2,3 +2,7 @@
 exclude_lines =
     pragma: no cover
     if TYPE_CHECKING:
+
+[run]
+branch = True
+source = game,pydcs_extensions,qt_ui,resources/tools

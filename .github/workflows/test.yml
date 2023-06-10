@@ -15,4 +15,24 @@ jobs:
       - name: run tests
         run: |
           ./venv/scripts/activate
-          pytest tests
+          pytest --cov --cov-report=xml tests
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+
+  ts-tests:
+    name: Typescript tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JS environment
+        uses: ./.github/actions/setup-liberation-js
+
+      - name: run tests
+        run: |
+          cd client
+          npm test -- --coverage
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3

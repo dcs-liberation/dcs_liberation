@@ -1,12 +1,15 @@
 *.pyc
 __pycache__
 build/**
+# Sphinx
+docs/_build
 resources/payloads/*.lua
 venv
 .DS_Store
 .vscode/settings.json
 dist/**
 /.coverage
+/coverage.xml
 # User-specific stuff
 .idea/
 .env

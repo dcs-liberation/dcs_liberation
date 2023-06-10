@@ -11,12 +11,12 @@ from game.ato.flightstate import (
     Uninitialized,
 )
 from .combat import CombatInitiator, FrozenCombat
+from .gameupdateevents import GameUpdateEvents
 from .simulationresults import SimulationResults
 
 if TYPE_CHECKING:
     from game import Game
     from game.ato import Flight
-    from .gameupdateevents import GameUpdateEvents
 
 
 class AircraftSimulation:
@@ -72,6 +72,7 @@ class AircraftSimulation:
     def reset(self) -> None:
         for flight in self.iter_flights():
             flight.set_state(Uninitialized(flight, self.game.settings))
+        self.combats = []
 
     def iter_flights(self) -> Iterator[Flight]:
         packages = itertools.chain(

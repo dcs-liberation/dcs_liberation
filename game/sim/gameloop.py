@@ -39,6 +39,7 @@ class GameLoop:
     def start(self) -> None:
         if self.started:
             raise RuntimeError("Cannot start game loop because it has already started")
+        self.game.save_manager.save_pre_sim_checkpoint()
         self.started = True
         self.sim.begin_simulation()
 

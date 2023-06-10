@@ -4,82 +4,29 @@ import datetime
 import logging
 import math
 import random
-from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 from typing import Optional, TYPE_CHECKING
 
-from dcs.cloud_presets import Clouds as PydcsClouds
-from dcs.weather import CloudPreset, Weather as PydcsWeather, Wind
+from dcs.weather import Weather as PydcsWeather
 
-from game.theater.daytimemap import DaytimeMap
-from game.theater.seasonalconditions import determine_season
 from game.timeofday import TimeOfDay
 from game.utils import (
-    Distance,
-    Heading,
     Pressure,
     inches_hg,
     interpolate,
-    knots,
     meters,
 )
+from game.weather.atmosphericconditions import AtmosphericConditions
+from game.weather.clouds import Clouds
+from game.weather.fog import Fog
+from game.weather.weatherarchetype import WeatherArchetype, WeatherArchetypes
+from game.weather.wind import WindConditions
 
 if TYPE_CHECKING:
-    from game.settings import Settings
-    from game.theater import ConflictTheater
     from game.theater.seasonalconditions import SeasonalConditions
 
 
-@dataclass(frozen=True)
-class AtmosphericConditions:
-    #: Pressure at sea level.
-    qnh: Pressure
-
-    #: Temperature at sea level in Celcius.
-    temperature_celsius: float
-
-    #: Turbulence per 10 cm.
-    turbulence_per_10cm: float
-
-
-@dataclass(frozen=True)
-class WindConditions:
-    at_0m: Wind
-    at_2000m: Wind
-    at_8000m: Wind
-
-
-@dataclass(frozen=True)
-class Clouds:
-    base: int
-    density: int
-    thickness: int
-    precipitation: PydcsWeather.Preceptions
-    preset: Optional[CloudPreset] = field(default=None)
-
-    @classmethod
-    def random_preset(cls, rain: bool) -> Clouds:
-        clouds = (p.value for p in PydcsClouds)
-        if rain:
-            presets = [p for p in clouds if "Rain" in p.name]
-        else:
-            presets = [p for p in clouds if "Rain" not in p.name]
-        preset = random.choice(presets)
-        return Clouds(
-            base=random.randint(preset.min_base, preset.max_base),
-            density=0,
-            thickness=0,
-            precipitation=PydcsWeather.Preceptions.None_,
-            preset=preset,
-        )
-
-
-@dataclass(frozen=True)
-class Fog:
-    visibility: Distance
-    thickness: int
-
-
-class Weather:
+class Weather(ABC):
     def __init__(
         self,
         seasonal_conditions: SeasonalConditions,
@@ -153,6 +100,11 @@ class Weather:
         return conditions
 
     @property
+    @abstractmethod
+    def archetype(self) -> WeatherArchetype:
+        ...
+
+    @property
     def pressure_adjustment(self) -> float:
         raise NotImplementedError
 
@@ -176,61 +128,7 @@ class Weather:
         )
 
     def generate_wind(self) -> WindConditions:
-        raise NotImplementedError
-
-    @staticmethod
-    def random_wind(minimum: int, maximum: int) -> WindConditions:
-        wind_direction = Heading.random()
-        wind_direction_2000m = wind_direction + Heading.random(-90, 90)
-        wind_direction_8000m = wind_direction + Heading.random(-90, 90)
-        at_0m_factor = 1
-        at_2000m_factor = 3 + random.choice([0, 0, 0, 0, 0, 1, 1])
-
-        high_alt_variation = random.choice(
-            [
-                -3,
-                -3,
-                -2,
-                -2,
-                -2,
-                -2,
-                -2,
-                -2,
-                -1,
-                -1,
-                -1,
-                -1,
-                -1,
-                -1,
-                -1,
-                0,
-                0,
-                0,
-                1,
-                1,
-                2,
-                3,
-            ]
-        )
-        at_8000m_factor = at_2000m_factor + 5 + high_alt_variation
-
-        base_wind = random.randint(minimum, maximum)
-
-        # DCS is limited to 97 knots wind speed.
-        max_supported_wind_speed = knots(97).meters_per_second
-
-        return WindConditions(
-            # Always some wind to make the smoke move a bit.
-            at_0m=Wind(wind_direction.degrees, max(1, base_wind * at_0m_factor)),
-            at_2000m=Wind(
-                wind_direction_2000m.degrees,
-                min(max_supported_wind_speed, base_wind * at_2000m_factor),
-            ),
-            at_8000m=Wind(
-                wind_direction_8000m.degrees,
-                min(max_supported_wind_speed, base_wind * at_8000m_factor),
-            ),
-        )
+        return self.archetype.wind_parameters.speed.random_wind()
 
     @staticmethod
     def random_cloud_base() -> int:
@@ -310,6 +208,10 @@ class Weather:
 
 class ClearSkies(Weather):
     @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("clear")
+
+    @property
     def pressure_adjustment(self) -> float:
         return 0.22
 
@@ -327,11 +229,12 @@ class ClearSkies(Weather):
     def generate_fog(self) -> Optional[Fog]:
         return None
 
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(1, 4)
-
 
 class Cloudy(Weather):
+    @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("cloudy")
+
     @property
     def pressure_adjustment(self) -> float:
         return 0.0
@@ -351,11 +254,12 @@ class Cloudy(Weather):
         # DCS 2.7 says to not use fog with the cloud presets.
         return None
 
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(2, 4)
-
 
 class Raining(Weather):
+    @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("raining")
+
     @property
     def pressure_adjustment(self) -> float:
         return -0.22
@@ -375,11 +279,12 @@ class Raining(Weather):
         # DCS 2.7 says to not use fog with the cloud presets.
         return None
 
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(2, 6)
-
 
 class Thunderstorm(Weather):
+    @property
+    def archetype(self) -> WeatherArchetype:
+        return WeatherArchetypes.with_id("thunderstorm")
+
     @property
     def pressure_adjustment(self) -> float:
         return 0.1
@@ -399,87 +304,3 @@ class Thunderstorm(Weather):
             thickness=self.random_cloud_thickness(),
             precipitation=PydcsWeather.Preceptions.Thunderstorm,
         )
-
-    def generate_wind(self) -> WindConditions:
-        return self.random_wind(2, 8)
-
-
-@dataclass
-class Conditions:
-    time_of_day: TimeOfDay
-    start_time: datetime.datetime
-    weather: Weather
-
-    @classmethod
-    def generate(
-        cls,
-        theater: ConflictTheater,
-        day: datetime.date,
-        time_of_day: TimeOfDay,
-        settings: Settings,
-        forced_time: datetime.time | None = None,
-    ) -> Conditions:
-        # The time might be forced by the campaign for the first turn.
-        if forced_time is not None:
-            _start_time = datetime.datetime.combine(day, forced_time)
-        else:
-            _start_time = cls.generate_start_time(
-                theater, day, time_of_day, settings.night_disabled
-            )
-
-        return cls(
-            time_of_day=time_of_day,
-            start_time=_start_time,
-            weather=cls.generate_weather(theater.seasonal_conditions, day, time_of_day),
-        )
-
-    @classmethod
-    def generate_start_time(
-        cls,
-        theater: ConflictTheater,
-        day: datetime.date,
-        time_of_day: TimeOfDay,
-        night_disabled: bool,
-    ) -> datetime.datetime:
-        if night_disabled:
-            logging.info("Skip Night mission due to user settings")
-            time_range = DaytimeMap(
-                dawn=(datetime.time(hour=8), datetime.time(hour=9)),
-                day=(datetime.time(hour=10), datetime.time(hour=12)),
-                dusk=(datetime.time(hour=12), datetime.time(hour=14)),
-                night=(datetime.time(hour=14), datetime.time(hour=17)),
-            ).range_of(time_of_day)
-        else:
-            time_range = theater.daytime_map.range_of(time_of_day)
-
-        # Starting missions on the hour is a nice gameplay property, so keep the random
-        # time constrained to that. DaytimeMap enforces that we have only whole hour
-        # ranges for now, so we don't need to worry about accidentally changing the time
-        # of day by truncating sub-hours.
-        time = datetime.time(
-            hour=random.randint(time_range[0].hour, time_range[1].hour)
-        )
-        return datetime.datetime.combine(day, time)
-
-    @classmethod
-    def generate_weather(
-        cls,
-        seasonal_conditions: SeasonalConditions,
-        day: datetime.date,
-        time_of_day: TimeOfDay,
-    ) -> Weather:
-        season = determine_season(day)
-        logging.debug("Weather: Season {}".format(season))
-        weather_chances = seasonal_conditions.weather_type_chances[season]
-        chances = {
-            Thunderstorm: weather_chances.thunderstorm,
-            Raining: weather_chances.raining,
-            Cloudy: weather_chances.cloudy,
-            ClearSkies: weather_chances.clear_skies,
-        }
-        logging.debug("Weather: Chances {}".format(weather_chances))
-        weather_type = random.choices(
-            list(chances.keys()), weights=list(chances.values())
-        )[0]
-        logging.debug("Weather: Type {}".format(weather_type))
-        return weather_type(seasonal_conditions, day, time_of_day)

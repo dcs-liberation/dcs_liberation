@@ -42,6 +42,8 @@ HQ_AUTOMATION_SECTION = "HQ Automation"
 
 MISSION_GENERATOR_PAGE = "Mission Generator"
 
+COMMANDERS_SECTION = "Battlefield Commanders"
+
 GAMEPLAY_SECTION = "Gameplay"
 
 # TODO: Make sections a type and add headers.
@@ -252,6 +254,15 @@ class Settings:
             "this many pilots each turn up to the limit."
         ),
     )
+    # Feature flag for squadron limits.
+    enable_squadron_aircraft_limits: bool = boolean_option(
+        "Enable per-squadron aircraft limits",
+        CAMPAIGN_MANAGEMENT_PAGE,
+        PILOTS_AND_SQUADRONS_SECTION,
+        default=False,
+        remember_player_choice=True,
+        detail="If set, squadrons will be limited to a maximum number of aircraft.",
+    )
 
     # HQ Automation
     automate_runway_repair: bool = boolean_option(
@@ -301,6 +312,41 @@ class Settings:
     reserves_procurement_target: int = 10
 
     # Mission Generator
+
+    # Commanders
+    game_master_slots: int = bounded_int_option(
+        "Game master",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=0,
+        min=0,
+        max=100,
+    )
+    tactical_commander_slots: int = bounded_int_option(
+        "Tactical commander",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=1,
+        min=0,
+        max=100,
+    )
+    jtac_operator_slots: int = bounded_int_option(
+        "JTAC/Operator",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=0,
+        min=0,
+        max=100,
+    )
+    observer_slots: int = bounded_int_option(
+        "Observer",
+        page=MISSION_GENERATOR_PAGE,
+        section=COMMANDERS_SECTION,
+        default=1,
+        min=0,
+        max=100,
+    )
+
     # Gameplay
     fast_forward_to_first_contact: bool = boolean_option(
         "Fast forward mission to first contact (WIP)",
@@ -308,7 +354,22 @@ class Settings:
         section=GAMEPLAY_SECTION,
         default=False,
         detail=(
-            "If enabled, the mission will be generated at the point of first contact."
+            "If enabled, the mission will be generated at the point of first contact. "
+            "If you enable this option, you will not be able to create new flights "
+            'after pressing "TAKE OFF". Doing so will create an error the next time '
+            'you press "TAKE OFF". Save your game first if you want to make '
+            "modifications."
+        ),
+    )
+    reload_pre_sim_checkpoint_on_abort: bool = boolean_option(
+        "Reset mission to pre-take off conditions on abort",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=True,
+        detail=(
+            "If enabled, the game will automatically reload a pre-take off save when "
+            "aborting take off. If this is disabled, you will need to manually re-load "
+            "your game after aborting take off."
         ),
     )
     player_mission_interrupts_sim_at: Optional[StartType] = choices_option(
@@ -430,6 +491,16 @@ class Settings:
         section=PERFORMANCE_SECTION,
         default=True,
     )
+    generate_fire_tasks_for_missile_sites: bool = boolean_option(
+        "Generate fire tasks for missile sites",
+        page=MISSION_GENERATOR_PAGE,
+        section=PERFORMANCE_SECTION,
+        detail=(
+            "If enabled, missile sites like V2s and Scuds will fire on random targets "
+            "at the start of the mission."
+        ),
+        default=True,
+    )
     perf_moving_units: bool = boolean_option(
         "Moving ground units",
         page=MISSION_GENERATOR_PAGE,
@@ -509,6 +580,10 @@ class Settings:
             return
         with settings_path.open(encoding="utf-8") as settings_file:
             data = yaml.safe_load(settings_file)
+
+        if data is None:
+            logging.warning("Saved settings file %s is empty", settings_path)
+            return
 
         expected_types = get_type_hints(Settings)
         for key, value in data.items():

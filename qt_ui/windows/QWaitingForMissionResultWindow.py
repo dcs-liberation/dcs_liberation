@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Callable
 
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, Signal
@@ -52,12 +52,14 @@ class QWaitingForMissionResultWindow(QDialog):
         self,
         game: Game,
         sim_controller: SimController,
+        reset_to_pre_sim_checkpoint: Callable[[], None],
         parent: Optional[QWidget] = None,
     ) -> None:
         super(QWaitingForMissionResultWindow, self).__init__(parent=parent)
         self.setWindowModality(QtCore.Qt.WindowModal)
         self.game = game
         self.sim_controller = sim_controller
+        self.reset_to_pre_sim_checkpoint = reset_to_pre_sim_checkpoint
         self.setWindowTitle("Waiting for mission completion.")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
@@ -111,7 +113,7 @@ class QWaitingForMissionResultWindow(QDialog):
         self.manually_submit.clicked.connect(self.submit_manually)
         self.actions_layout.addWidget(self.manually_submit)
         self.cancel = QPushButton("Abort mission")
-        self.cancel.clicked.connect(self.close)
+        self.cancel.clicked.connect(self.reject)
         self.actions_layout.addWidget(self.cancel)
         self.gridLayout.addWidget(self.actions, 2, 0)
 
@@ -122,7 +124,7 @@ class QWaitingForMissionResultWindow(QDialog):
         self.manually_submit2.clicked.connect(self.submit_manually)
         self.actions2_layout.addWidget(self.manually_submit2)
         self.cancel2 = QPushButton("Abort mission")
-        self.cancel2.clicked.connect(self.close)
+        self.cancel2.clicked.connect(self.reject)
         self.actions2_layout.addWidget(self.cancel2)
         self.proceed = QPushButton("Accept results")
         self.proceed.setProperty("style", "btn-success")
@@ -132,6 +134,11 @@ class QWaitingForMissionResultWindow(QDialog):
         progress_bar.start()
         self.layout.addLayout(self.gridLayout, 1, 0)
         self.setLayout(self.layout)
+
+    def reject(self) -> None:
+        if self.game.settings.reload_pre_sim_checkpoint_on_abort:
+            self.reset_to_pre_sim_checkpoint()
+        super().reject()
 
     @staticmethod
     def add_update_row(description: str, count: int, layout: QGridLayout) -> None:
@@ -217,7 +224,7 @@ class QWaitingForMissionResultWindow(QDialog):
 
             GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
             GameUpdateSignal.get_instance().updateGame(self.game)
-        self.close()
+        self.accept()
 
     def closeEvent(self, evt):
         super(QWaitingForMissionResultWindow, self).closeEvent(evt)

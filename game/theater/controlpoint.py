@@ -75,7 +75,7 @@ from ..db import Database
 from ..dcs.aircrafttype import AircraftType
 from ..dcs.groundunittype import GroundUnitType
 from ..utils import nautical_miles
-from ..weather import Conditions
+from ..weather.conditions import Conditions
 
 if TYPE_CHECKING:
     from game import Game
@@ -1444,6 +1444,8 @@ class Fob(ControlPoint):
         if not self.is_friendly(for_player):
             yield FlightType.STRIKE
             yield FlightType.AIR_ASSAULT
+        else:
+            yield FlightType.AEWC
 
         yield from super().mission_types(for_player)
 

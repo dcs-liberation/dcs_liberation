@@ -11,7 +11,7 @@ from game.dcs.beacons import BeaconType, Beacons
 from game.radio.radios import RadioFrequency
 from game.radio.tacan import TacanChannel
 from game.utils import Heading
-from game.weather import Conditions
+from game.weather.conditions import Conditions
 
 if TYPE_CHECKING:
     from game.theater import ConflictTheater
