@@ -33,9 +33,8 @@ class QFlightWaypointList(QTableView):
         )
 
     def update_list(self) -> None:
-        # disconnect itemChanged signal from handler slot for making altitude changes
-        # in advance updating waypoint list
-        self.model.itemChanged.disconnect(self.on_changed)
+        # ignore signals when updating list so on_changed does not fire
+        self.model.blockSignals(True)
 
         # We need to keep just the row and rebuild the index later because the
         # QModelIndex will not be valid after the model is cleared.
@@ -56,8 +55,8 @@ class QFlightWaypointList(QTableView):
             total_column_width += self.columnWidth(i) + self.lineWidth()
         self.setFixedWidth(total_column_width)
 
-        # reconnect itemChanged signal to handler slot for making altitude changes
-        self.model.itemChanged.connect(self.on_changed)
+        # stop ignoring signals
+        self.model.blockSignals(False)
 
     def _add_waypoint_row(
         self, row: int, flight: Flight, waypoint: FlightWaypoint
@@ -86,7 +85,7 @@ class QFlightWaypointList(QTableView):
             altitude = self.model.item(i, 1).text()
             try:
                 altitude_feet = float(altitude)
-            except:
+            except ValueError:  # ignore any user inputs that can't be parsed as float
                 continue
             self.flight.flight_plan.waypoints[i].alt = Distance.from_feet(altitude_feet)
 
