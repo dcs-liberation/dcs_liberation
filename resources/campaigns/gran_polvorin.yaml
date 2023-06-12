@@ -14,7 +14,7 @@ description:
   fighting to the west, a USN battle group is dispatched from the east coast of
   the US to clear the Chinese forces from the continent and crush their carrier
   group.</p>
-version: "10.4"
+version: "10.9"
 recommended_player_faction: US Navy 2005
 recommended_enemy_faction: China 2010
 miz: gran_polvorin.miz
@@ -111,10 +111,6 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - H-6J Badger
-    - primary: Refueling
-      aircraft:
-        - IL-78M
-      size: 2
   # Rio Gallegos
   7:
     - primary: BARCAP

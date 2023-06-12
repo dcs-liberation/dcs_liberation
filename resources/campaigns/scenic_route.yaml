@@ -3,7 +3,7 @@ name: Persian Gulf - Scenic Route
 theater: Persian Gulf
 authors: Fuzzle
 description: <p>A lightweight naval campaign involving a US Navy carrier group pushing across the coast of Iran. <strong>This is a purely naval campaign, meaning you will need to use the Air Assault mission type with transports to take the first FOB. Ensure you soften it up enough first!</strong></p><p><strong>Backstory:</strong> Iran has declared war on all US forces in the Gulf resulting in all local allies withdrawing their support for American troops. A lone carrier group must pacify the southern coast of Iran and hold out until backup can arrive lest the US and her interests be ejected from the region permanently.</p>
-version: "10.4"
+version: "10.9"
 advanced_iads: true
 recommended_player_faction: US Navy 2005
 recommended_enemy_faction: Iran 2015
@@ -77,15 +77,7 @@ squadrons:
     - primary: AEW&C
       aircraft:
         - A-50
-      size: 2
-    - primary: Refueling
-      aircraft:
-        - IL-78M
-      size: 2
-    - primary: Transport
-      aircraft:
-        - IL-78MD
-      size: 2
+      size: 1
     - primary: BARCAP
       secondary: any
       aircraft:
