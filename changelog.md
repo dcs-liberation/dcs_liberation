@@ -4,9 +4,12 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS 2.8.6.41066.
 * **[UI]** Limited size of overfull airbase display and added scrollbar.
 
 ## Fixes
+
+* **[Mission Generation]** Fix crash during mission generation caused by out of date DCS data for the Gazelle.
 
 # 7.1.0
 
