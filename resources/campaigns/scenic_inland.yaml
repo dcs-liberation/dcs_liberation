@@ -3,7 +3,7 @@ name: Persian Gulf - Scenic Route 2 - Dust To Dust
 theater: Persian Gulf
 authors: Fuzzle
 description: <p>A continuation of Scenic Route. A NATO coalition pushes inland along a protracted axis of advance. Built with helicopters/FOB-based gameplay in mind. <p><strong>Backstory:</strong> With Iran's coastal defences pacified and their forces pushed inland, a beleaguered US Navy is reinforced by a NATO coalition task force. The going will not be easy however; Iran has assembled the full might of its armoured and mechanized divisions alongside rotary support to defend their heartland. The conflict intensifies.</p>
-version: "10.1"
+version: "10.9"
 advanced_iads: true
 recommended_player_faction: NATO OIF
 recommended_enemy_faction: Iran 2015
@@ -91,7 +91,7 @@ squadrons:
       aircraft:
         - Wolfpack, 1-82 ARB
         #US Army Apache AH-64D
-      size: 2
+        size: 2
   # OPFOR L1F1
   FOB Tang-e Dalan:
     - primary: CAS

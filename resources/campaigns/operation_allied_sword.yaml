@@ -176,7 +176,7 @@ description:
   northern border. With the arrival of a US carrier group, Israel prepares its
   counterattack. The US Navy will handle the Beirut region's coastal arena,
   while the IAF will push through Damascus and the inland mountain ranges.</p>
-version: "10.6"
+version: "10.9"
 miz: operation_allied_sword.miz
 performance: 2
 recommended_start_date: 2004-07-17
@@ -325,10 +325,6 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Su-24M Fencer-D
-    - primary: Refueling
-      aircraft:
-        - IL-78M
-      size: 2
   # Bassel Al-Assad
   21:
     - primary: TARCAP
@@ -342,15 +338,15 @@ squadrons:
     - primary: Refueling
       aircraft:
         - IL-78M
-      size: 2
+      size: 1
     - primary: Transport
       aircraft:
         - IL-76MD
-      size: 2
+      size: 1
     - primary: AEW&C
       aircraft:
         - A-50
-      size: 2
+      size: 1
     - primary: Strike
       secondary: air-to-ground
       aircraft:
@@ -399,4 +395,4 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-8MTV2 Hip
-      size: 4
+      size: 2
