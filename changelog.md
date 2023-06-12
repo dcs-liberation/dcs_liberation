@@ -5,6 +5,7 @@ Saves from 7.x are not compatible with 8.0.
 ## Features/Improvements
 
 * **[Engine]** Support for DCS 2.8.6.41066, including the new Sinai map.
+* **[Mission Generation]** Kneeboard files are now prefixed with "00_" to try to get them to show before DCS built-in pages.
 * **[UI]** Limited size of overfull airbase display and added scrollbar.
 * **[UI]** Moved air wing and transfer menus to the toolbar to improve UI fit on low resolution displays.
 

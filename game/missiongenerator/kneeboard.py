@@ -708,7 +708,7 @@ class KneeboardGenerator(MissionInfoGenerator):
             aircraft_dir = temp_dir / aircraft.dcs_unit_type.id
             aircraft_dir.mkdir(exist_ok=True)
             for idx, page in enumerate(pages):
-                page_path = aircraft_dir / f"page{idx:02}.png"
+                page_path = aircraft_dir / f"00_page{idx:02}.png"
                 page.write(page_path)
                 self.mission.add_aircraft_kneeboard(aircraft.dcs_unit_type, page_path)
 
