@@ -7,7 +7,7 @@ recommended_player_faction: USA 2005
 recommended_enemy_faction: Iraq 1991
 miz: tripoint_hostility.miz
 performance: 2
-version: "10.1"
+version: "10.9"
 recommended_start_date: 2006-08-03
 recommended_player_money: 900
 recommended_enemy_money: 1200
