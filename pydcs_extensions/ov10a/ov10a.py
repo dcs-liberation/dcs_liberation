@@ -41,7 +41,6 @@ class Bronco_OV_10A(PlaneType):
     }
 
     livery_name = "BRONCO-OV-10A"  # from type
-    Liveries = Liveries()[livery_name]
 
     class Pylon1:
         LAU_7_with_AIM_9P_Sidewinder_IR_AAM = (
