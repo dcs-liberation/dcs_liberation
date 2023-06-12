@@ -9,8 +9,10 @@ from pydcs_extensions.weapon_injector import inject_weapons
 
 
 class WeaponsOV10A:
+    LAU_33A = {"clsid": "{LAU-33A}", "name": "LAU-33A", "weight": 155}
+    Mk4_mod_0 = {"clsid": "{MK4_Mod0_OV10}", "name": "Mk4 mod 0", "weight": 612.35}
     OV10_SMOKE = {"clsid": "{OV10_SMOKE}", "name": "OV10_SMOKE", "weight": 1}
-    ParaTrooper = {"clsid": "{PARA}", "name": "ParaTrooper", "weight": 80}
+    OV10_Paratrooper = {"clsid": "OV10_Paratrooper", "name": "OV10_Paratrooper", "weight": 400}
     Fuel_Tank_150_gallons_ = {
         "clsid": "{150gal}",
         "name": "Fuel Tank 150 gallons",
