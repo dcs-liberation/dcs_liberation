@@ -4,7 +4,7 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.8.6.41066.
+* **[Engine]** Support for DCS 2.8.6.41066, including the new Sinai map.
 * **[UI]** Limited size of overfull airbase display and added scrollbar.
 * **[UI]** Moved air wing and transfer menus to the toolbar to improve UI fit on low resolution displays.
 
