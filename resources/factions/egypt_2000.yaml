@@ -1,0 +1,77 @@
+---
+country: Egypt
+name: Egypt 2000s
+authors: Starfire
+description: <p>Egyptian military in the 21st century.</p>
+locales:
+  - ar_SA
+aircrafts:
+  - MiG-29S Fulcrum-C
+  - Mirage 2000C
+  - F-16CM Fighting Falcon (Block 50)
+  - IL-76MD
+  - C-130
+  - C-130J-30 Super Hercules
+  - AH-64D Apache Longbow
+  - AH-64D Apache Longbow (AI)
+  - SA 342L Gazelle
+  - SA 342M Gazelle
+  - CH-47D
+  - Ka-50 Hokum
+  - Ka-50 Hokum (Blackshark 3)
+  - Mi-24V Hind-E
+  - Mi-24P Hind-F
+  - Mi-8MTV2 Hip
+awacs:
+  - E-2C Hawkeye
+frontline_units:
+  - M1A2 Abrams
+  - M60A3 "Patton"
+  - T-90A
+  - T-55A
+  - BMP-1
+  - M113
+  - BTR-80
+  - M1043 HMMWV (M2 HMG)
+  - M1045 HMMWV (BGM-71 TOW)
+  - M1097 Heavy HMMWV Avenger
+  - ZSU-23-4 Shilka
+  - M163 Vulcan Air Defense System
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck Ural-375
+  - Truck Ural-4320T
+  - Truck GAZ-66
+infantry_units:
+  - Infantry RPG
+  - Infantry AK-74 Rus
+  - MANPADS SA-18 Igla "Grouse"
+  - MANPADS Stinger
+  - Mortar 2B11 120mm
+  - Paratrooper AKS
+  - Paratrooper RPG-16
+preset_groups:
+  - SA-2/S-75
+  - SA-6
+  - SA-17
+  - SA-23/S-300VM
+  - Patriot
+  - Hawk
+missiles:
+  - SSM SS-1C Scud-B
+air_defense_units:
+  - EWR AN/FPS-117 Radar
+  - EWR 55G6
+  - M1097 Heavy HMMWV Avenger
+  - M48 Chaparral
+  - M163 Vulcan Air Defense System
+  - SA-9 Strela
+  - SA-15 Tor
+  - ZSU-23-4 Shilka
+  - AAA ZU-23 Closed Emplacement
+  - ZU-23 on Ural-375
+  - ZSU-57-2 'Sparka'
+has_jtac: true
+jtac_unit: MQ-9 Reaper
