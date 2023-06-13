@@ -1,0 +1,4 @@
+name: M261 - 19 x UnGd Rkts, 70 mm Hydra 70 M151 HE
+fallback: M260 pod - 7 x 2.75\" Hydra, UnGd Rkts Mk5, HEAT
+clsids:
+  - "M261_MK151"

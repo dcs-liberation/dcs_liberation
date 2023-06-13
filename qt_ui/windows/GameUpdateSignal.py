@@ -16,6 +16,7 @@ class GameUpdateSignal(QObject):
     debriefingReceived = Signal(Debriefing)
 
     game_loaded = Signal(Game)
+    game_generated = Signal(Game)
 
     def __init__(self):
         super(GameUpdateSignal, self).__init__()

@@ -220,10 +220,7 @@ class QWaitingForMissionResultWindow(QDialog):
     def process_debriefing(self):
         with logged_duration("Turn processing"):
             self.sim_controller.process_results(self.debriefing)
-            self.game.pass_turn()
-
             GameUpdateSignal.get_instance().sendDebriefing(self.debriefing)
-            GameUpdateSignal.get_instance().updateGame(self.game)
         self.accept()
 
     def closeEvent(self, evt):

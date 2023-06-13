@@ -5,7 +5,6 @@ import logging
 import math
 from collections.abc import Iterator
 from datetime import date, datetime, time, timedelta
-from enum import Enum
 from typing import Any, List, TYPE_CHECKING, Type, Union, cast
 
 from dcs.countries import Switzerland, USAFAggressors, UnitedNationsPeacekeepers
@@ -37,6 +36,7 @@ from .theater.theatergroundobject import (
 )
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
 from .timeofday import TimeOfDay
+from .turnstate import TurnState
 from .weather.conditions import Conditions
 
 if TYPE_CHECKING:
@@ -79,12 +79,6 @@ AWACS_BUDGET_COST = 4
 
 # Bonus multiplier logarithm base
 PLAYER_BUDGET_IMPORTANCE_LOG = 2
-
-
-class TurnState(Enum):
-    WIN = 0
-    LOSS = 1
-    CONTINUE = 2
 
 
 class Game:
