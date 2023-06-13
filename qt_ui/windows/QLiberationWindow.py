@@ -152,6 +152,7 @@ class QLiberationWindow(QMainWindow):
     def connectSignals(self):
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
         GameUpdateSignal.get_instance().debriefingReceived.connect(self.onDebriefing)
+        GameUpdateSignal.get_instance().game_generated.connect(self.onGameGenerated)
 
     def initActions(self):
         self.newGameAction = QAction("&New Game", self)
@@ -332,7 +333,6 @@ class QLiberationWindow(QMainWindow):
     def newGame(self):
         wizard = NewGameWizard(self)
         wizard.show()
-        wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def openFile(self):
         if (
