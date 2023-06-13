@@ -14,6 +14,7 @@ from dcs.terrain import (
     Nevada,
     Normandy,
     PersianGulf,
+    Sinai,
     Syria,
     TheChannel,
 )
@@ -31,6 +32,7 @@ ALL_TERRAINS = [
     MarianaIslands(),
     Nevada(),
     TheChannel(),
+    Sinai(),
     Syria(),
 ]
 
