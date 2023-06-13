@@ -95,6 +95,7 @@ def wrap_label_text(text: str, width: int = 100) -> str:
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
+        self.setModal(True)
 
         # The wizard should probably be refactored to edit this directly, but for now we
         # just create a Settings object so that we can load the player's preserved
