@@ -558,7 +558,9 @@ class QLiberationWindow(QMainWindow):
     def onDebriefing(self, debrief: Debriefing):
         logging.info("On Debriefing")
         self.debriefing = QDebriefingWindow(debrief)
-        self.debriefing.show()
+        self.debriefing.exec()
+        self.game.pass_turn()
+        GameUpdateSignal.get_instance().updateGame(self.game)
 
     def open_tgo_info_dialog(self, tgo: TheaterGroundObject) -> None:
         QGroundObjectMenu(self, tgo, tgo.control_point, self.game).show()
