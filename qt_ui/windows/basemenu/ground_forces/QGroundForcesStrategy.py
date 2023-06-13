@@ -3,10 +3,8 @@ from collections.abc import Callable
 from PySide6.QtWidgets import QGroupBox, QLabel, QPushButton, QVBoxLayout
 
 from game import Game
-from game.server import EventStream
-from game.sim.gameupdateevents import GameUpdateEvents
 from game.theater import ControlPoint
-from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
+from qt_ui.cheatcontext import game_state_modifying_cheat_context
 from qt_ui.windows.basemenu.ground_forces.QGroundForcesStrategySelector import (
     QGroundForcesStrategySelector,
 )
@@ -52,15 +50,12 @@ class QGroundForcesStrategy(QGroupBox):
         self.setLayout(layout)
 
     def cheat_alter_front_line(self, enemy_point: ControlPoint, advance: bool) -> None:
-        amount = 0.2
-        if not advance:
-            amount *= -1
-        self.cp.base.affect_strength(amount)
-        enemy_point.base.affect_strength(-amount)
-        front_line = self.cp.front_line_with(enemy_point)
-        front_line.update_position()
-        events = GameUpdateEvents().update_front_line(front_line)
-        # Clear the ATO to replan missions affected by the front line.
-        self.game.initialize_turn(events)
-        EventStream.put_nowait(events)
-        GameUpdateSignal.get_instance().updateGame(self.game)
+        with game_state_modifying_cheat_context(self.game) as events:
+            amount = 0.2
+            if not advance:
+                amount *= -1
+            self.cp.base.affect_strength(amount)
+            enemy_point.base.affect_strength(-amount)
+            front_line = self.cp.front_line_with(enemy_point)
+            front_line.update_position()
+            events.update_front_line(front_line)
