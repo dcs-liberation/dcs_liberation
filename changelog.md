@@ -8,6 +8,8 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Fixes
 
+* **[Campaign]** Fix bug introduced in 7.0 where map strike target deaths are no longer tracked.
+
 # 7.1.0
 
 Saves from 7.0.0 are compatible with 7.1.0
