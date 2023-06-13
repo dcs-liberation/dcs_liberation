@@ -10,6 +10,7 @@ unit_lost_events = {} -- killed units will be added via S_EVENT_UNIT_LOST
 kill_events = {} -- killed units will be added via S_EVENT_KILL 
 base_capture_events = {}
 destroyed_objects_positions = {} -- will be added via S_EVENT_DEAD event
+killed_ground_units = {} -- keep track of static ground object deaths
 mission_ended = false
 
 local function ends_with(str, ending)
@@ -39,6 +40,7 @@ function write_state()
 		["kill_events"] = kill_events,
         ["mission_ended"] = mission_ended,
         ["destroyed_objects_positions"] = destroyed_objects_positions,
+		["killed_ground_units"] = killed_ground_units,
     }
     if not json then
         local message = string.format("Unable to save DCS Liberation state to %s, JSON library is not loaded !", _debriefing_file_location)
