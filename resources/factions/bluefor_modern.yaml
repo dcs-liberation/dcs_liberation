@@ -17,6 +17,10 @@ aircrafts:
   - B-52H Stratofortress
   - C-130
   - C-130J-30 Super Hercules
+  - C-17A
+  - CH-47D
+  - CH-53E
+  - F-117A Nighthawk
   - F-14B Tomcat
   - F-15C Eagle
   - F-15E Strike Eagle
@@ -44,7 +48,11 @@ aircrafts:
   - SA 342M Gazelle
   - Su-25T Frogfoot
   - Su-27 Flanker-B
+  - S-3B Viking
+  - SH-60B Seahawk
   - UH-1H Iroquois
+  - UH-60A
+  - UH-60L
 awacs:
   - E-2D Advanced Hawkeye
   - E-3A
@@ -75,6 +83,7 @@ infantry_units:
   - Infantry M249
   - Infantry M4
   - MANPADS Stinger
+  - Mortar 2B11 120mm
 preset_groups:
   - Hawk
   - Patriot
