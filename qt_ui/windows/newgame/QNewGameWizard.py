@@ -28,6 +28,7 @@ from game.theater.start_generator import GameGenerator, GeneratorSettings, ModSe
 from qt_ui.widgets.QLiberationCalendar import QLiberationCalendar
 from qt_ui.widgets.spinsliders import CurrencySpinner, FloatSpinSlider, TimeInputs
 from qt_ui.windows.AirWingConfigurationDialog import AirWingConfigurationDialog
+from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.newgame.QCampaignList import QCampaignList
 
 jinja_env = Environment(
@@ -94,6 +95,7 @@ def wrap_label_text(text: str, width: int = 100) -> str:
 class NewGameWizard(QtWidgets.QWizard):
     def __init__(self, parent=None):
         super(NewGameWizard, self).__init__(parent)
+        self.setModal(True)
 
         # The wizard should probably be refactored to edit this directly, but for now we
         # just create a Settings object so that we can load the player's preserved
@@ -139,7 +141,6 @@ class NewGameWizard(QtWidgets.QWizard):
         self.setWizardStyle(QtWidgets.QWizard.ModernStyle)
 
         self.setWindowTitle("New Game")
-        self.generatedGame = None
 
     def accept(self):
         logging.info("New Game Wizard accept")
@@ -228,16 +229,14 @@ class NewGameWizard(QtWidgets.QWizard):
             mod_settings,
             self.lua_plugin_manager,
         )
-        self.generatedGame = generator.generate()
+        game = generator.generate()
 
-        if (
-            AirWingConfigurationDialog(self.generatedGame, self).exec()
-            == QDialog.DialogCode.Rejected
-        ):
+        if AirWingConfigurationDialog(game, self).exec() == QDialog.DialogCode.Rejected:
             logging.info("Aborted air wing configuration")
             return
 
-        self.generatedGame.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
+        game.begin_turn_0(squadrons_start_full=use_new_squadron_rules)
+        GameUpdateSignal.get_instance().game_generated.emit(game)
 
         super(NewGameWizard, self).accept()
 

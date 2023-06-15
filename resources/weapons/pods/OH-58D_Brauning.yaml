@@ -1,0 +1,4 @@
+name: Brauning Gun Pod
+fallback: M261 - 19 x UnGd Rkts, 70 mm Hydra 70 M151 HE
+clsids:
+  - "oh-58-brauning"

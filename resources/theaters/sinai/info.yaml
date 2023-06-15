@@ -1,6 +1,6 @@
 ---
 name: Sinai
-timezone: +3 # TODO
+timezone: +2
 daytime:
   dawn: [6, 8]
   day: [8, 16]

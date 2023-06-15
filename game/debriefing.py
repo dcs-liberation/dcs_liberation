@@ -133,6 +133,7 @@ class StateData:
             + data["kill_events"]
             + data["crash_events"]
             + data["dead_events"]
+            + data["killed_ground_units"]
         )
         for unit in killed_units:  # organize killed units into aircraft vs ground
             if unit_map.flight(unit) is not None:

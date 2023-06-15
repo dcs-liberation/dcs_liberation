@@ -4,13 +4,15 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.8.6.41066.
+* **[Engine]** Support for DCS 2.8.6.41066, including the new Sinai map.
 * **[UI]** Limited size of overfull airbase display and added scrollbar.
 * **[UI]** Waypoint altitudes can be edited in Waypoints tab of Edit Flight window.
 * **[UI]** Moved air wing and transfer menus to the toolbar to improve UI fit on low resolution displays.
+* **[UI]** Added basic game over dialog.
 
 ## Fixes
 
+* **[Campaign]** Fix bug introduced in 7.0 where map strike target deaths are no longer tracked.
 * **[Mission Generation]** Fix crash during mission generation caused by out of date DCS data for the Gazelle.
 
 # 7.1.0

@@ -24,6 +24,7 @@ from game.persistence import SaveManager
 from game.server import EventStream, GameContext
 from game.server.dependencies import QtCallbacks, QtContext
 from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
+from game.turnstate import TurnState
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
@@ -39,6 +40,7 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 from qt_ui.windows.PendingTransfersDialog import PendingTransfersDialog
 from qt_ui.windows.QDebriefingWindow import QDebriefingWindow
 from qt_ui.windows.basemenu.QBaseMenu2 import QBaseMenu2
+from qt_ui.windows.gameoverdialog import GameOverDialog
 from qt_ui.windows.groundobject.QGroundObjectMenu import QGroundObjectMenu
 from qt_ui.windows.infos.QInfoPanel import QInfoPanel
 from qt_ui.windows.logs.QLogsWindow import QLogsWindow
@@ -152,6 +154,7 @@ class QLiberationWindow(QMainWindow):
     def connectSignals(self):
         GameUpdateSignal.get_instance().gameupdated.connect(self.setGame)
         GameUpdateSignal.get_instance().debriefingReceived.connect(self.onDebriefing)
+        GameUpdateSignal.get_instance().game_generated.connect(self.onGameGenerated)
 
     def initActions(self):
         self.newGameAction = QAction("&New Game", self)
@@ -332,7 +335,6 @@ class QLiberationWindow(QMainWindow):
     def newGame(self):
         wizard = NewGameWizard(self)
         wizard.show()
-        wizard.accepted.connect(lambda: self.onGameGenerated(wizard.generatedGame))
 
     def openFile(self):
         if (
@@ -558,7 +560,14 @@ class QLiberationWindow(QMainWindow):
     def onDebriefing(self, debrief: Debriefing):
         logging.info("On Debriefing")
         self.debriefing = QDebriefingWindow(debrief)
-        self.debriefing.show()
+        self.debriefing.exec()
+
+        state = self.game.check_win_loss()
+        if state is not TurnState.CONTINUE:
+            GameOverDialog(won=state is TurnState.WIN, parent=self).exec()
+        else:
+            self.game.pass_turn()
+            GameUpdateSignal.get_instance().updateGame(self.game)
 
     def open_tgo_info_dialog(self, tgo: TheaterGroundObject) -> None:
         QGroundObjectMenu(self, tgo, tgo.control_point, self.game).show()

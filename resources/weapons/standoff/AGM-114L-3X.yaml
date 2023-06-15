@@ -1,0 +1,6 @@
+name: AGM-114L * 3
+year: 2000
+fallback: AGM-114K * 3
+clsids:
+  - "{M299_3xAGM_114L_OUTBOARD_PORT}"
+  - "{M299_3xAGM_114L_OUTBOARD_STARBOARD}"

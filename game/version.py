@@ -182,4 +182,7 @@ VERSION = _build_version_string()
 #: Version 10.9
 #: * Campaign is compatible with new squadron rules. The default air wing configuration
 #:   has enough parking available at each base when squadrons begin at full strength.
-CAMPAIGN_FORMAT_VERSION = (10, 9)
+#:
+#: Version 10.10
+#: * Support for Sinai.
+CAMPAIGN_FORMAT_VERSION = (10, 10)

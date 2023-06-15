@@ -4,10 +4,15 @@ max_range: 350
 variants:
   F-16A: null
 tasks:
+  Anti-ship: 100
+  BAI: 570
   BARCAP: 420
+  CAS: 570
+  DEAD: 420
   Escort: 420
   Fighter sweep: 420
   Intercept: 420
+  OCA/Aircraft: 570
   OCA/Runway: 570
   Strike: 570
   TARCAP: 420

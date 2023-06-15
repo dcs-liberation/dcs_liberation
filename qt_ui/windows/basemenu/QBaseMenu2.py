@@ -9,19 +9,17 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from dcs.ships import Stennis, KUZNECOW
 
 from game import Game
 from game.ato.flighttype import FlightType
 from game.config import RUNWAY_REPAIR_COST
-from game.server import EventStream
-from game.sim import GameUpdateEvents
 from game.theater import (
     AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
     ControlPoint,
     ControlPointType,
     FREE_FRONTLINE_UNIT_SUPPLY,
 )
+from qt_ui.cheatcontext import game_state_modifying_cheat_context
 from qt_ui.dialogs import Dialog
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import EVENT_ICONS
@@ -119,13 +117,11 @@ class QBaseMenu2(QDialog):
         return self.game_model.game.settings.enable_base_capture_cheat
 
     def cheat_capture(self) -> None:
-        events = GameUpdateEvents()
-        self.cp.capture(self.game_model.game, events, for_player=not self.cp.captured)
-        # Reinitialized ground planners and the like. The ATO needs to be reset because
-        # missions planned against the flipped base are no longer valid.
-        self.game_model.game.initialize_turn(events)
-        EventStream.put_nowait(events)
-        GameUpdateSignal.get_instance().updateGame(self.game_model.game)
+        with game_state_modifying_cheat_context(self.game_model.game) as events:
+            self.cp.capture(
+                self.game_model.game, events, for_player=not self.cp.captured
+            )
+            self.close()
 
     @property
     def has_transfer_destinations(self) -> bool:
