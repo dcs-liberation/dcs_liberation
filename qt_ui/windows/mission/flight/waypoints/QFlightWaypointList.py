@@ -1,6 +1,13 @@
-from PySide6.QtCore import QItemSelectionModel, QPoint
+from PySide6.QtCore import QItemSelectionModel, QPoint, QModelIndex
 from PySide6.QtGui import QStandardItem, QStandardItemModel
-from PySide6.QtWidgets import QHeaderView, QTableView
+from PySide6.QtWidgets import (
+    QHeaderView,
+    QTableView,
+    QStyledItemDelegate,
+    QDoubleSpinBox,
+    QWidget,
+    QStyleOptionViewItem,
+)
 
 from game.ato.flight import Flight
 from game.ato.flightwaypoint import FlightWaypoint
@@ -11,6 +18,16 @@ from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import QWaypoint
 
 
 HEADER_LABELS = ["Name", "Alt (ft)", "Alt Type", "TOT/DEPART"]
+
+
+class AltitudeEditorDelegate(QStyledItemDelegate):
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ) -> QDoubleSpinBox:
+        editor = QDoubleSpinBox(parent)
+        editor.setMinimum(0)
+        editor.setMaximum(40000)
+        return editor
 
 
 class QFlightWaypointList(QTableView):
@@ -32,31 +49,34 @@ class QFlightWaypointList(QTableView):
             self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select
         )
 
+        self.altitude_editor_delegate = AltitudeEditorDelegate(self)
+        self.setItemDelegateForColumn(1, self.altitude_editor_delegate)
+
     def update_list(self) -> None:
         # ignore signals when updating list so on_changed does not fire
         self.model.blockSignals(True)
+        try:
+            # We need to keep just the row and rebuild the index later because the
+            # QModelIndex will not be valid after the model is cleared.
+            current_index = self.currentIndex().row()
+            self.model.clear()
 
-        # We need to keep just the row and rebuild the index later because the
-        # QModelIndex will not be valid after the model is cleared.
-        current_index = self.currentIndex().row()
-        self.model.clear()
+            self.model.setHorizontalHeaderLabels(HEADER_LABELS)
 
-        self.model.setHorizontalHeaderLabels(HEADER_LABELS)
-
-        waypoints = self.flight.flight_plan.waypoints
-        for row, waypoint in enumerate(waypoints):
-            self._add_waypoint_row(row, self.flight, waypoint)
-        self.selectionModel().setCurrentIndex(
-            self.model.index(current_index, 0), QItemSelectionModel.Select
-        )
-        self.resizeColumnsToContents()
-        total_column_width = self.verticalHeader().width() + self.lineWidth()
-        for i in range(0, self.model.columnCount()):
-            total_column_width += self.columnWidth(i) + self.lineWidth()
-        self.setFixedWidth(total_column_width)
-
-        # stop ignoring signals
-        self.model.blockSignals(False)
+            waypoints = self.flight.flight_plan.waypoints
+            for row, waypoint in enumerate(waypoints):
+                self._add_waypoint_row(row, self.flight, waypoint)
+            self.selectionModel().setCurrentIndex(
+                self.model.index(current_index, 0), QItemSelectionModel.Select
+            )
+            self.resizeColumnsToContents()
+            total_column_width = self.verticalHeader().width() + self.lineWidth()
+            for i in range(0, self.model.columnCount()):
+                total_column_width += self.columnWidth(i) + self.lineWidth()
+            self.setFixedWidth(total_column_width)
+        finally:
+            # stop ignoring signals
+            self.model.blockSignals(False)
 
     def _add_waypoint_row(
         self, row: int, flight: Flight, waypoint: FlightWaypoint
@@ -83,10 +103,7 @@ class QFlightWaypointList(QTableView):
     def on_changed(self) -> None:
         for i in range(self.model.rowCount()):
             altitude = self.model.item(i, 1).text()
-            try:
-                altitude_feet = float(altitude)
-            except ValueError:  # ignore any user inputs that can't be parsed as float
-                continue
+            altitude_feet = float(altitude)
             self.flight.flight_plan.waypoints[i].alt = Distance.from_feet(altitude_feet)
 
     def tot_text(self, flight: Flight, waypoint: FlightWaypoint) -> str:
