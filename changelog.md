@@ -11,6 +11,7 @@ Saves from 7.x are not compatible with 8.0.
 
 ## Fixes
 
+* **[Campaign]** Fix bug introduced in 7.0 where map strike target deaths are no longer tracked.
 * **[Mission Generation]** Fix crash during mission generation caused by out of date DCS data for the Gazelle.
 
 # 7.1.0
