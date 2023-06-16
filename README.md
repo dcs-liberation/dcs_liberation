@@ -8,6 +8,7 @@
 
 [![Discord](https://img.shields.io/discord/595702951800995872?label=Discord&logo=discord)](https://discord.gg/bKrtrkJ)
 
+[![codecov](https://codecov.io/gh/dcs-liberation/dcs_liberation/branch/develop/graph/badge.svg?token=EEQ7G76K2L)](https://codecov.io/gh/dcs-liberation/dcs_liberation)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/dcs-liberation/dcs_liberation)](https://github.com/dcs-liberation/dcs_liberation)
 [![GitHub issues](https://img.shields.io/github/issues/dcs-liberation/dcs_liberation)](https://github.com/dcs-liberation/dcs_liberation/issues)
 ![GitHub stars](https://img.shields.io/github/stars/dcs-liberation/dcs_liberation?style=social)
