@@ -30,18 +30,10 @@ const CullingExclusionCircles = (props: CullingExclusionCirclesProps) => {
 
 export default function CullingExclusionZones() {
   const data = useAppSelector(selectUnculledZones).zones;
-  var cez = <></>;
 
-  if (!data) {
-    console.log("Empty response when loading culling exclusion zones");
-  } else {
-    cez = (
-      <CullingExclusionCircles zones={data}></CullingExclusionCircles>
-    );
-  }
   return (
     <LayersControl.Overlay name="Culling exclusion zones">
-      {cez}
+      <CullingExclusionCircles zones={data}></CullingExclusionCircles>
     </LayersControl.Overlay>
   );
 }
