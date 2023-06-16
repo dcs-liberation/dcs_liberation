@@ -9,7 +9,7 @@ interface TgoRangeCirclesProps {
   detection?: boolean;
 }
 
-function colorFor(blue: boolean, detection: boolean) {
+export function colorFor(blue: boolean, detection: boolean) {
   if (blue) {
     return detection ? "#bb89ff" : "#0084ff";
   }
