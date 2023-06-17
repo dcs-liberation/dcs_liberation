@@ -3,7 +3,7 @@ import { useAppSelector } from "../../app/hooks";
 import FrontLine from "../frontline";
 import { LayerGroup } from "react-leaflet";
 
-export default function SupplyRoutesLayer() {
+export default function FrontLinesLayer() {
   const fronts = useAppSelector(selectFrontLines).fronts;
   return (
     <LayerGroup>
