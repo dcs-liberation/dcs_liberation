@@ -1,0 +1,133 @@
+---
+name: Sinai - Exercise Bright Star
+theater: Sinai
+authors: Starfire
+recommended_player_faction: Bluefor Modern
+recommended_enemy_faction: Egypt 2000s
+description: <p>For over 4 decades, the United States and Egypt have run a series of biannual joint military exercises called Bright Star. Over the years, the number of participating countries has grown substantially. Exercise Bright Star 2025 boasts 8 participant nations and 14 observer nations. The United States and a portion of the exercise coalition will play the part of a fictional hostile nation dubbed Orangeland, staging a mock invasion against Cairo. Israel, having for the first time accepted the invitation to observe, is hosting the aggressor faction of the exercise coalition at its airfields.</p>
+miz: exercise_bright_star.miz
+performance: 1
+recommended_start_date: 2025-09-01
+version: "10.9"
+squadrons:
+# Hatzerim (141)
+  7:
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+      size: 20
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - F-15C Eagle
+      size: 20
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-15E Strike Eagle
+      size: 12
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 20
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - JF-17 Thunder
+      size: 16
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Mirage 2000C
+      size: 16
+# Kedem
+  12:
+    - primary: Transport
+      aircraft:
+        - CH-47D
+      size: 20
+    - primary: Air Assault
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
+      size: 4
+# Nevatim (106)
+  8:
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+      size: 1
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker MPRS
+      size: 1
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+      size: 8
+# Melez (30)
+  5:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Ka-50 Hokum (Blackshark 3)
+      size: 4
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - Mirage 2000C
+      size: 12
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Mirage 2000C
+      size: 12
+# Wadi al Jandali (72)
+  13:
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 20
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 20
+    - primary: Air Assault
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 4
+    - primary: OCA/Aircraft
+      secondary: air-to-ground
+      aircraft:
+        - SA 342L Gazelle
+      size: 4
+# Cairo West (95)
+  18:
+    - primary: Transport
+      aircraft:
+        - C-130
+      size: 8
+    - primary: Escort
+      secondary: air-to-air
+      aircraft:
+        - MiG-29S Fulcrum-C
+      size: 20
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - J-7B
+      size: 20
