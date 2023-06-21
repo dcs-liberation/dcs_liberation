@@ -5,7 +5,7 @@ import random
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Sequence, TYPE_CHECKING, Any
+from typing import Optional, Sequence, TYPE_CHECKING
 from uuid import uuid4, UUID
 
 from faker import Faker
@@ -14,7 +14,6 @@ from game.ato import Flight, FlightType, Package
 from game.settings import AutoAtoBehavior, Settings
 from .pilot import Pilot, PilotStatus
 from ..db.database import Database
-from ..savecompat import has_save_compat_for
 from ..utils import meters
 
 if TYPE_CHECKING:
@@ -64,12 +63,6 @@ class Squadron:
     owned_aircraft: int = field(init=False, hash=False, compare=False, default=0)
     untasked_aircraft: int = field(init=False, hash=False, compare=False, default=0)
     pending_deliveries: int = field(init=False, hash=False, compare=False, default=0)
-
-    @has_save_compat_for(7)
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        if "id" not in state:
-            state["id"] = uuid4()
-        self.__dict__.update(state)
 
     def __str__(self) -> str:
         if self.nickname is None:
