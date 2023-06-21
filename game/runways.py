@@ -1,6 +1,7 @@
 """Runway information and selection."""
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Iterator, Optional, TYPE_CHECKING
 
@@ -51,7 +52,20 @@ class RunwayData:
             atc = atc_radio.uhf
 
         for beacon_data in airport.beacons:
-            beacon = Beacons.with_id(beacon_data.id, theater)
+            try:
+                beacon = Beacons.with_id(beacon_data.id, theater)
+            except KeyError:
+                # DCS data is not always correct. At time of writing, Hatzor in Sinai
+                # claims to have a beacon named airfield20_0, but the Sinai beacons.lua
+                # has no such beacon.
+                # See https://github.com/dcs-liberation/dcs_liberation/issues/3021.
+                logging.exception(
+                    "Airport %s claims to have beacon %s but the map has no beacon "
+                    "with that ID",
+                    airport.name,
+                    beacon_data.id,
+                )
+                continue
             if beacon.is_tacan:
                 tacan = beacon.tacan_channel
                 tacan_callsign = beacon.callsign
