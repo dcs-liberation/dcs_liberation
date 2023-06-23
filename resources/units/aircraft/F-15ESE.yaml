@@ -11,6 +11,17 @@ role: Multirole Strike Fighter
 max_range: 300
 variants:
   F-15E Strike Eagle (Suite 4+): {}
+radios:
+  intra_flight: AN/ARC-210
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    # Radio 1 is the UHF AN/ARC-164, and Radio 2 is the V/UHF AN/ARC-210. We
+    # only ever allocate UHF for inter-flight, so we'd prefer to use radio 2 for
+    # intra-flight, but as is often the case the flight's frequency will be
+    # assigned to radio 1 channel 1 no matter what we do.
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 2
 tasks:
   BAI: 760
   BARCAP: 240
