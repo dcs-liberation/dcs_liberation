@@ -3,8 +3,8 @@ country: Combined Joint Task Forces Blue
 name: NATO Desert Storm
 authors: Hawkmoon
 description:
-  <p>A faction to recreate the actual unit lineup during Desert Storm as
-  closely as possible</p>
+  <p>A faction to recreate the actual unit lineup during Desert Storm as closely
+  as possible</p>
 aircrafts:
   - A-10A Thunderbolt II
   - AH-64A Apache
@@ -17,7 +17,8 @@ aircrafts:
   - F-14A Tomcat (Block 135-GR Late)
   - F-14B Tomcat
   - F-15C Eagle
-  - F-15E Strike Eagle
+  - F-15E Strike Eagle (AI)
+  - F-15E Strike Eagle (Suite 4+)
   - F-16CM Fighting Falcon (Block 50)
   - F-4E Phantom II
   - F/A-18C Hornet (Lot 20)
