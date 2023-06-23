@@ -43,10 +43,10 @@ squadrons:
       aircraft:
         - AV-8B Harrier II Night Attack
       size: 8
-    - primary: BARCAP
-      secondary: air-to-air
+    - primary: TARCAP
+      secondary: any
       aircraft:
-        - F-15C Eagle
+        - F-15E Strike Eagle (Suite 4+)
       size: 12
     - primary: CAS
       secondary: air-to-ground
