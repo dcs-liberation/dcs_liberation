@@ -16,11 +16,11 @@ squadrons:
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 20
+      size: 24
     - primary: TARCAP
       secondary: any
       aircraft:
-        - F-15C Eagle
+        - F-15E Strike Eagle (Suite 4+)
       size: 20
     - primary: Strike
       secondary: air-to-ground
@@ -41,7 +41,7 @@ squadrons:
       secondary: any
       aircraft:
         - Mirage 2000C
-      size: 16
+      size: 12
 # Kedem
   12:
     - primary: Transport
