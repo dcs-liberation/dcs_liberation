@@ -12,7 +12,7 @@ Saves from 8.0.0 are compatible with 8.1.0
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.8.6.41363.
+* **[Engine]** Support for DCS 2.8.6.41363, including F-15E support.
 
 ## Fixes
 
