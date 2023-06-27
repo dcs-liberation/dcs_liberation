@@ -64,7 +64,23 @@ class QFlightWaypointList(QTableView):
             self.model.setHorizontalHeaderLabels(HEADER_LABELS)
 
             waypoints = self.flight.flight_plan.waypoints
-            for row, waypoint in enumerate(waypoints):
+            # Why [1:]? Qt starts indexing at 1 rather than 0, whereas DCS numbers
+            # waypoints starting with 0, and for whatever reason Qt crashes whenever I
+            # set the vertical labels manually.
+            #
+            # Starting with the second waypoint is a bit of a hack, but it's also the
+            # historical behavior anyway. This view used to have waypoints starting at 1
+            # and just didn't show the departure waypoint because the departure waypoint
+            # wasn't actually part of the flight plan tracked by Liberation. That
+            # changed at some point, so now we need to skip it manually to preserve that
+            # behavior.
+            #
+            # It really ought to show the departure waypoint and start indexing at 0,
+            # but since this all pending a move to React anyway, it's not worth fighting
+            # the Qt crashes for now.
+            #
+            # https://github.com/dcs-liberation/dcs_liberation/issues/3037
+            for row, waypoint in enumerate(waypoints[1:]):
                 self._add_waypoint_row(row, self.flight, waypoint)
             self.selectionModel().setCurrentIndex(
                 self.model.index(current_index, 0), QItemSelectionModel.Select
