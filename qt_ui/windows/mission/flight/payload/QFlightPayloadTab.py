@@ -4,6 +4,8 @@ from PySide6.QtWidgets import (
     QFrame,
     QLabel,
     QVBoxLayout,
+    QScrollArea,
+    QWidget,
 )
 
 from game import Game
@@ -35,6 +37,16 @@ class QFlightPayloadTab(QFrame):
 
         layout = QVBoxLayout()
 
+        scroll_content = QWidget()
+        scrolling_layout = QVBoxLayout()
+        scroll_content.setLayout(scrolling_layout)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(scroll_content)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        layout.addWidget(scroll)
+
         # Docs Link
         docsText = QLabel(
             '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Custom-Loadouts"><span style="color:#FFFFFF;">How to create your own default loadout</span></a>'
@@ -42,12 +54,12 @@ class QFlightPayloadTab(QFrame):
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)
 
-        layout.addLayout(PropertyEditor(self.flight))
+        scrolling_layout.addLayout(PropertyEditor(self.flight))
         self.loadout_selector = DcsLoadoutSelector(flight)
         self.loadout_selector.currentIndexChanged.connect(self.on_new_loadout)
-        layout.addWidget(self.loadout_selector)
-        layout.addWidget(self.payload_editor)
-        layout.addWidget(docsText)
+        scrolling_layout.addWidget(self.loadout_selector)
+        scrolling_layout.addWidget(self.payload_editor)
+        scrolling_layout.addWidget(docsText)
 
         self.setLayout(layout)
 
