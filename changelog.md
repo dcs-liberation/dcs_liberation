@@ -6,6 +6,8 @@ Saves from 8.x are not compatible with 9.0.0.
 
 ## Fixes
 
+* **[Data]** Fixed the class of the Samuel Chase so it can't be picked for a AAA or SHORAD site.
+
 # 8.1.0
 
 Saves from 8.0.0 are compatible with 8.1.0
