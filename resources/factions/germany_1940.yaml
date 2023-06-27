@@ -3,8 +3,8 @@ country: Third Reich
 name: Germany 1940
 authors: Khopa
 description:
-  <p>Germany 1940, Early german faction for Battle of France, or Battle
-  of England.</p>
+  <p>Germany 1940, Early german faction for Battle of France, or Battle of
+  England.</p>
 locales:
   - de_DE
 aircrafts:
@@ -37,3 +37,4 @@ helicopter_carrier_names: []
 has_jtac: false
 doctrine: ww2
 building_set: ww2germany
+cargo_ship: LST Mk.II

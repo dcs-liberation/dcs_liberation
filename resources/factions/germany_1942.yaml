@@ -3,8 +3,8 @@ country: Third Reich
 name: Germany 1942
 authors: Khopa
 description:
-  <p>Germany 1942, is a faction that does not use the late war german units
-  such as the Tiger tank, so it's a bit easier to perform CAS against them.</p>
+  <p>Germany 1942, is a faction that does not use the late war german units such
+  as the Tiger tank, so it's a bit easier to perform CAS against them.</p>
 locales:
   - de_DE
 aircrafts:
@@ -40,3 +40,4 @@ helicopter_carrier_names: []
 has_jtac: false
 doctrine: ww2
 building_set: ww2germany
+cargo_ship: LST Mk.II

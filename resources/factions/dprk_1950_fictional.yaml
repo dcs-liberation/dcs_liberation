@@ -3,8 +3,8 @@ country: North Korea
 name: North Korea 1950, fictional
 authors: BenBenBeartrax
 description:
-  <p>Fictional DPRK (North Korea) army around 1955, during the Korean War,
-  with some WW2 planes added in place of their post-war counterparts.</p>
+  <p>Fictional DPRK (North Korea) army around 1955, during the Korean War, with
+  some WW2 planes added in place of their post-war counterparts.</p>
 aircrafts:
   - "Bf 109 K-4 Kurf\xFCrst"
   - Fw 190 A-8 Anton
@@ -40,3 +40,4 @@ requirements:
 carrier_names: []
 has_jtac: false
 doctrine: ww2
+cargo_ship: LST Mk.II

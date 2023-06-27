@@ -3,8 +3,8 @@ country: Third Reich
 name: Germany 1944
 authors: Khopa
 description:
-  <p>Late war Germany with access to all the late-war ground units such
-  as the Tiger and Tiger II tanks.</p>
+  <p>Late war Germany with access to all the late-war ground units such as the
+  Tiger and Tiger II tanks.</p>
 locales:
   - de_DE
 aircrafts:
@@ -50,3 +50,4 @@ missiles:
 has_jtac: false
 doctrine: ww2
 building_set: ww2germany
+cargo_ship: LST Mk.II
