@@ -24,7 +24,8 @@ class LiverySelector(QComboBox):
         for idx, livery in enumerate(
             squadron.aircraft.dcs_unit_type.iter_liveries_for_country(
                 dcs.countries.get_by_name(squadron.country)
-            )
+            ),
+            1,  # First entry is "Default".
         ):
             self.addItem(livery.name, livery)
             if squadron.livery == livery.id:

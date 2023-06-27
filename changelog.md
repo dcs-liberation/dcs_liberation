@@ -16,6 +16,7 @@ Saves from 8.0.0 are compatible with 8.1.0
 
 ## Fixes
 
+* **[Campaign]** Fixed liveries for premade squadrons all being off-by-one.
 * **[UI]** Fixed numbering of waypoints in the map and flight dialog (first waypoint is now 0 rather than 1).
 
 # 8.0.0
