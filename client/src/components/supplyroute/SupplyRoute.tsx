@@ -4,6 +4,13 @@ import { Polyline as LPolyline } from "leaflet";
 import { useEffect, useRef } from "react";
 import { Polyline, Tooltip } from "react-leaflet";
 
+export enum RouteColor {
+  Blue = "#2d3e50",
+  Contested = "#c85050",
+  Highlight = "#ffffff",
+  Red = "#8c1414",
+}
+
 interface SupplyRouteProps {
   route: SupplyRouteModel;
 }
@@ -26,18 +33,22 @@ function ActiveSupplyRouteHighlight(props: SupplyRouteProps) {
   }
 
   return (
-    <Polyline positions={props.route.points} color={"#ffffff"} weight={2} />
+    <Polyline
+      positions={props.route.points}
+      color={RouteColor.Highlight}
+      weight={2}
+    />
   );
 }
 
 function colorFor(route: SupplyRouteModel) {
   if (route.front_active) {
-    return "#c85050";
+    return RouteColor.Contested;
   }
   if (route.blue) {
-    return "#2d3e50";
+    return RouteColor.Blue;
   }
-  return "#8c1414";
+  return RouteColor.Red;
 }
 
 export default function SupplyRoute(props: SupplyRouteProps) {
