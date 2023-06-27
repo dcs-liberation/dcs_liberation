@@ -11,7 +11,6 @@ role: Multirole Strike Fighter
 max_range: 300
 variants:
   F-15E Strike Eagle: {}
-  F-15E Strike Eagle (AI): {}
 tasks:
   BAI: 760
   BARCAP: 240
