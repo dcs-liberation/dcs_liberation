@@ -42,6 +42,9 @@ class Faction:
     #: choose the default locale.
     locales: Optional[List[str]]
 
+    # The unit type to spawn for cargo shipping.
+    cargo_ship: ShipUnitType
+
     # Country used by this faction
     country: str = field(default="")
 
@@ -168,7 +171,10 @@ class Faction:
 
     @classmethod
     def from_dict(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
-        faction = Faction(locales=json.get("locales"))
+        faction = Faction(
+            locales=json.get("locales"),
+            cargo_ship=ShipUnitType.named(json.get("cargo_ship", "Handy Wind")),
+        )
 
         faction.country = json.get("country", "/")
         if faction.country not in [c.name for c in country_dict.values()]:
