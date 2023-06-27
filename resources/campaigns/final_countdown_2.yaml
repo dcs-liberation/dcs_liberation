@@ -59,6 +59,7 @@ recommended_player_faction:
   unrestricted_satnav: true
   doctrine: ww2
   building_set: ww2ally
+  cargo_ship: LST Mk.II
 recommended_enemy_faction: Germany 1944
 description:
   <p>While enroute to the Persian Gulf for Operation Desert Shield, the USS Theodore Roosevelt and its carrier strike group are engufled by an electrical vortex and transported through time and space to the English channel on the morning of the Normandy Landings - June 6th 1944. Seeking to reduce the cost in lives to the Allied Forces about to storm the beaches, the captain of the Roosevelt has elected to provide air support for the landings.</p><p><strong>Note:</strong> This campaign has a custom faction that combines modern US naval forces with WW2 Allied forces. To play it as intended, you should carefully ration your use of modern aircraft and not replenish them if shot down (as you cannot get new Tomcats and Hornets in 1944). You can also choose to play it as a purely WW2 campaign by switching to one of the WW2 Ally factions.</p>
