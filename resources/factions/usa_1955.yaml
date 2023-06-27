@@ -30,5 +30,6 @@ preset_groups:
 naval_units: []
 doctrine: ww2
 building_set: ww2ally
+cargo_ship: LST Mk.II
 requirements:
   WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/

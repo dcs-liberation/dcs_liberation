@@ -29,6 +29,7 @@ missiles: []
 has_jtac: false
 doctrine: ww2
 building_set: ww2free
+cargo_ship: LST Mk.II
 liveries_overrides:
   Fw 190 A-8 Anton:
     - Fictional IJN 256th Kokutai Rai-153
