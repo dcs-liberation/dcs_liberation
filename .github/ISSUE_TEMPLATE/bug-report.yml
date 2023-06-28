@@ -49,13 +49,19 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Save game and other files
+      label: Save game and other files (save game required, bugs without saves will be closed)
       description: >
         Attach any files needed to reproduce the bug here. **A save game is
-        required.** We typically cannot help without a save game (the
-        `.liberation.zip` file found in `%USERPROFILE%/Saved
-        Games/DCS/Liberation/Saves`), so most bugs filed without saved games
-        will be closed without investigation.
+        required.** Even if it seems unnecessary to you, this is required.
+        Repro steps that are obvious to you might not be obvious to anyone
+        else, and it is impossible for us to know what default settings or mods
+        may be impacting behavior without a save game. Bugs filed without a
+        save game are very often not reproducible, and those waste scarce
+        developer time. It is **much** easier for you to attach a save game
+        than it is for us to recreate your save state by guessing at what you
+        did. As such, bug reports that do not attach a saved game will be
+        closed without investigation. Attach the `.liberation.zip` file found
+        in `%USERPROFILE%/Saved Games/DCS/Liberation/Saves`.
 
 
         Other useful files to include are:
