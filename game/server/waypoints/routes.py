@@ -50,7 +50,7 @@ def set_position(
     if waypoint_idx == 0:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-    waypoint = flight.flight_plan.waypoints[waypoint_idx - 1]
+    waypoint = flight.flight_plan.waypoints[waypoint_idx]
     waypoint.position = Point.from_latlng(
         LatLng(position.lat, position.lng), game.theater.terrain
     )
