@@ -110,7 +110,7 @@ class FlightGroupConfigurator:
             flight_type=self.flight.flight_type,
             units=self.group.units,
             size=len(self.group.units),
-            friendly=self.flight.from_cp.captured,
+            friendly=self.flight.departure.captured,
             departure_delay=mission_start_time,
             departure=self.flight.departure.active_runway(
                 self.game.theater, self.game.conditions, self.dynamic_runways

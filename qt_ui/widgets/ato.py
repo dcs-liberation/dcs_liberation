@@ -46,7 +46,7 @@ class FlightDelegate(TwoColumnRowDelegate):
             clients = self.num_clients(index)
             return f"Player Slots: {clients}" if clients else ""
         elif (row, column) == (1, 0):
-            origin = flight.from_cp.name
+            origin = flight.departure.name
             if flight.arrival != flight.departure:
                 return f"From {origin} to {flight.arrival.name}"
             return f"From {origin}"
