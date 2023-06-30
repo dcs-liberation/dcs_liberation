@@ -32,7 +32,7 @@ class FlightPlanPropertiesGroup(QGroupBox):
         self.departure_time = QLabel()
         layout.addLayout(
             QLabeledWidget(
-                f"Departing from <b>{flight.from_cp.name}</b>", self.departure_time
+                f"Departing from <b>{flight.departure.name}</b>", self.departure_time
             )
         )
         self.package_model.tot_changed.connect(self.update_departure_time)

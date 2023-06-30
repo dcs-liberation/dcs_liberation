@@ -286,7 +286,7 @@ class WaypointGenerator:
             # hot aircraft hours before their takeoff time.
             return True
 
-        if self.flight.from_cp.is_fleet:
+        if self.flight.departure.is_fleet:
             # Carrier spawns will crowd the carrier deck, especially without
             # super carrier.
             # TODO: Is there enough parking on the supercarrier?

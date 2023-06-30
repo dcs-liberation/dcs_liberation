@@ -150,10 +150,6 @@ class Flight(SidcDescribable):
         return self.unit_type.dcs_unit_type.helicopter
 
     @property
-    def from_cp(self) -> ControlPoint:
-        return self.departure
-
-    @property
     def points(self) -> List[FlightWaypoint]:
         return self.flight_plan.waypoints[1:]
 

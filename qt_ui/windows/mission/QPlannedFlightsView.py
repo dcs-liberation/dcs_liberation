@@ -25,7 +25,7 @@ class QPlannedFlightsView(QListView):
         self.flight_items = []
         for package in self.game_model.ato_model.packages:
             for flight in package.flights:
-                if flight.from_cp == self.cp:
+                if flight.departure == self.cp:
                     item = QFlightItem(package.package, flight)
                     self.flight_items.append(item)
 

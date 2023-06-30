@@ -138,7 +138,7 @@ class PackageModel(QAbstractListModel):
     @staticmethod
     def text_for_flight(flight: Flight) -> str:
         """Returns the text that should be displayed for the flight."""
-        origin = flight.from_cp.name
+        origin = flight.departure.name
         startup = flight.flight_plan.startup_time()
         return f"{flight} from {origin} at {startup}"
 
