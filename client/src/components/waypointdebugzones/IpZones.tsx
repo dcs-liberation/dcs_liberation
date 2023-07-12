@@ -1,5 +1,5 @@
 import { useGetDebugIpZonesQuery } from "../../api/liberationApi";
-import { LayerGroup, Polygon } from "react-leaflet";
+import { LayerGroup, Polygon, Polyline } from "react-leaflet";
 
 interface IpZonesProps {
   flightId: string;
@@ -52,6 +52,29 @@ function IpZones(props: IpZonesProps) {
             positions={zone}
             color="#80BA80"
             fillOpacity={0.1}
+            interactive={false}
+          />
+        );
+      })}
+
+      {data.preferredThreatenedZones.map((zone, idx) => {
+        return (
+          <Polygon
+            key={idx}
+            positions={zone}
+            color="#fe7d0a"
+            fillOpacity={0.1}
+            interactive={false}
+          />
+        );
+      })}
+
+      {data.tolerableThreatenedLines.map((line, idx) => {
+        return (
+          <Polyline
+            key={idx}
+            positions={line}
+            color="#80BA80"
             interactive={false}
           />
         );
