@@ -64,13 +64,15 @@ class IpZonesJs(BaseModel):
     ipBubble: LeafletPoly = Field(alias="ipBubble")
     permissibleZone: LeafletPoly = Field(alias="permissibleZone")
     safeZones: list[LeafletPoly] = Field(alias="safeZones")
+    preferred_threatened_zones: list[LeafletPoly] = Field(
+        alias="preferredThreatenedZones"
+    )
+    tolerable_threatened_lines: list[LeafletLine] = Field(
+        alias="tolerableThreatenedLines"
+    )
 
     class Config:
         title = "IpZones"
-
-    @classmethod
-    def empty(cls) -> IpZonesJs:
-        return IpZonesJs(homeBubble=[], ipBubble=[], permissibleZone=[], safeZones=[])
 
     @classmethod
     def for_flight(cls, flight: Flight, game: Game) -> IpZonesJs:
@@ -84,6 +86,12 @@ class IpZonesJs(BaseModel):
                 geometry.permissible_zone, game.theater
             ),
             safeZones=ShapelyUtil.polys_to_leaflet(geometry.safe_zones, game.theater),
+            preferredThreatenedZones=ShapelyUtil.polys_to_leaflet(
+                geometry.preferred_threatened_zones, game.theater
+            ),
+            tolerableThreatenedLines=ShapelyUtil.lines_to_leaflet(
+                geometry.tolerable_threatened_lines, game.theater
+            ),
         )
 
 

@@ -384,6 +384,8 @@ export type IpZones = {
   ipBubble: LatLng[][];
   permissibleZone: LatLng[][];
   safeZones: LatLng[][][];
+  preferredThreatenedZones: LatLng[][][];
+  tolerableThreatenedLines: LatLng[][];
 };
 export type JoinZones = {
   homeBubble: LatLng[][];
