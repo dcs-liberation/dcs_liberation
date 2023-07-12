@@ -24,6 +24,7 @@ from game.missiongenerator.missiondata import MissionData
 from game.settings import Settings
 from game.unitmap import UnitMap
 from game.utils import pairwise
+from .antishipingress import AntiShipIngressBuilder
 from .baiingress import BaiIngressBuilder
 from .casingress import CasIngressBuilder
 from .deadingress import DeadIngressBuilder
@@ -127,6 +128,7 @@ class WaypointGenerator:
         self, waypoint: FlightWaypoint, generated_waypoint_index: int
     ) -> PydcsWaypointBuilder:
         builders = {
+            FlightWaypointType.INGRESS_ANTI_SHIP: AntiShipIngressBuilder,
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
             FlightWaypointType.INGRESS_DEAD: DeadIngressBuilder,
