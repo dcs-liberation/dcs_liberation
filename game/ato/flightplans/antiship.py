@@ -35,7 +35,7 @@ class Builder(FormationAttackBuilder[AntiShipFlightPlan, FormationAttackLayout])
         else:
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(FlightWaypointType.INGRESS_BAI, targets)
+        return self._build(FlightWaypointType.INGRESS_ANTI_SHIP, targets)
 
     @staticmethod
     def anti_ship_targets_for_tgo(tgo: NavalGroundObject) -> list[StrikeTarget]:

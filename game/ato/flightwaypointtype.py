@@ -50,3 +50,4 @@ class FlightWaypointType(IntEnum):
     CARGO_STOP = 30  # Stopover landing point using the LandingReFuAr waypoint type
     INGRESS_AIR_ASSAULT = 31
     RECOVERY_TANKER = 32
+    INGRESS_ANTI_SHIP = 33
