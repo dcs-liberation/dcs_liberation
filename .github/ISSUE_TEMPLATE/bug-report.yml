@@ -82,6 +82,10 @@ body:
         investigating any issues with end-of-turn results processing.
 
 
+        If reporting an issue that occurred during or after flying the mission
+        in DCS, the DCS log file found in `%USERPROFILE%/Saved Games/DCS/Logs`.
+
+
         You can attach files to the bug by dragging and dropping the file into
         this text box. GitHub will not allow uploads of all file types, so
         attach a zip of the files if needed.
