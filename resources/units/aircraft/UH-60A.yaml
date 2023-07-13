@@ -1,4 +1,6 @@
 class: Helicopter
+carrier_capable: true
+lha_capable: true
 price: 4
 cabin_size: 10
 can_carry_crates: true
