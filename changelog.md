@@ -11,6 +11,7 @@ Saves from 8.x are not compatible with 9.0.0.
 
 * **[Data]** Fixed the class of the Samuel Chase so it can't be picked for a AAA or SHORAD site.
 * **[Mission Generation]** Restored previous AI behavior for anti-ship missions. A DCS update caused only a single aircraft in a flight to attack. The full flight will now attack like they used to.
+* **[Plugins]** Fixed Lua errors in Skynet plugin that would occur whenever one coalition had no IADS nodes.
 
 # 8.1.0
 

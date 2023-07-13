@@ -188,6 +188,11 @@ class LuaGenerator:
 
         # Generate IADS Lua Item
         iads_object = lua_data.add_item("IADS")
+        # These should always be created even if they are empty.
+        iads_object.get_or_create_item("BLUE")
+        iads_object.get_or_create_item("RED")
+        # Should probably do the same with all the roles... but the script is already
+        # tolerant of those being empty.
         for node in self.game.theater.iads_network.skynet_nodes(self.game):
             coalition = iads_object.get_or_create_item("BLUE" if node.player else "RED")
             iads_type = coalition.get_or_create_item(node.iads_role.value)
