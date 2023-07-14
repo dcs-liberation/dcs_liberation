@@ -1,7 +1,12 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import Bombing, BombingRunway, OptFormation, WeaponType as DcsWeaponType
+from dcs.task import (
+    Bombing,
+    BombingRunway,
+    OptFormation,
+    WeaponType as DcsWeaponType,
+)
 
 from game.data.weapons import WeaponType
 from game.theater import Airfield
