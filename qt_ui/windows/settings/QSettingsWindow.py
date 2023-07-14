@@ -69,6 +69,18 @@ class CheatSettingsBox(QGroupBox):
         self.base_capture_cheat = QLabeledWidget(
             "Enable Base Capture Cheat:", self.base_capture_cheat_checkbox
         )
+
+        self.base_runway_state_cheat_checkbox = QCheckBox()
+        self.base_runway_state_cheat_checkbox.setChecked(
+            game.settings.enable_runway_state_cheat
+        )
+        self.base_runway_state_cheat_checkbox.toggled.connect(apply_settings)
+        self.main_layout.addLayout(
+            QLabeledWidget(
+                "Enable runway state cheat:", self.base_runway_state_cheat_checkbox
+            )
+        )
+
         self.main_layout.addLayout(self.base_capture_cheat)
 
     @property
@@ -82,6 +94,10 @@ class CheatSettingsBox(QGroupBox):
     @property
     def show_base_capture_cheat(self) -> bool:
         return self.base_capture_cheat_checkbox.isChecked()
+
+    @property
+    def enable_runway_state_cheat(self) -> bool:
+        return self.base_runway_state_cheat_checkbox.isChecked()
 
 
 class AutoSettingsLayout(QGridLayout):
@@ -369,6 +385,9 @@ class QSettingsWindow(QDialog):
         )
         self.game.settings.enable_base_capture_cheat = (
             self.cheat_options.show_base_capture_cheat
+        )
+        self.game.settings.enable_runway_state_cheat = (
+            self.cheat_options.enable_runway_state_cheat
         )
 
         events = GameUpdateEvents()

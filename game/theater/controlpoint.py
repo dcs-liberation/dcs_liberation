@@ -249,6 +249,10 @@ class RunwayStatus:
         # is reset.
         self.repair_turns_remaining = None
 
+    def repair(self) -> None:
+        self.repair_turns_remaining = None
+        self.damaged = False
+
     def begin_repair(self) -> None:
         if self.repair_turns_remaining is not None:
             logging.error("Runway already under repair. Restarting.")
@@ -257,8 +261,7 @@ class RunwayStatus:
     def process_turn(self) -> None:
         if self.repair_turns_remaining is not None:
             if self.repair_turns_remaining == 1:
-                self.repair_turns_remaining = None
-                self.damaged = False
+                self.repair()
             else:
                 self.repair_turns_remaining -= 1
 
@@ -893,6 +896,11 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
 
     @property
     @abstractmethod
+    def runway_is_destroyable(self) -> bool:
+        ...
+
+    @property
+    @abstractmethod
     def runway_status(self) -> RunwayStatus:
         ...
 
@@ -1127,6 +1135,10 @@ class Airfield(ControlPoint):
     def heading(self) -> Heading:
         return Heading.from_degrees(self.airport.runways[0].heading)
 
+    @property
+    def runway_is_destroyable(self) -> bool:
+        return True
+
     def runway_is_operational(self) -> bool:
         return not self.runway_status.damaged
 
@@ -1214,6 +1226,10 @@ class NavalControlPoint(ControlPoint, ABC):
             if isinstance(g, GenericCarrierGroundObject):
                 return g
         raise RuntimeError(f"Found no carrier/LHA group for {self.name}")
+
+    @property
+    def runway_is_destroyable(self) -> bool:
+        return False
 
     def runway_is_operational(self) -> bool:
         # Necessary because it's possible for the carrier itself to have sunk
@@ -1393,6 +1409,10 @@ class OffMapSpawn(ControlPoint):
         return self.stub_runway_data()
 
     @property
+    def runway_is_destroyable(self) -> bool:
+        return False
+
+    @property
     def runway_status(self) -> RunwayStatus:
         return RunwayStatus()
 
@@ -1421,6 +1441,10 @@ class Fob(ControlPoint):
     @property
     def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
         return SymbolSet.LAND_INSTALLATIONS, LandInstallationEntity.MILITARY_BASE
+
+    @property
+    def runway_is_destroyable(self) -> bool:
+        return False
 
     def runway_is_operational(self) -> bool:
         return self.has_helipads
