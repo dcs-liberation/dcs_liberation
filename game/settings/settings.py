@@ -397,10 +397,12 @@ class Settings:
         section=GAMEPLAY_SECTION,
         default=False,
         detail=(
-            "If enabled, aircraft entering combat during fast forward will have their "
-            "combat auto-resolved after a period of time. This allows the simulation "
-            "to advance further into the mission before requiring mission generation, "
-            "but simulation is currently very rudimentary so may result in huge losses."
+            'Requires a "Player missions interrupt fast forward" setting other than '
+            '"Never" If enabled, aircraft entering combat during fast forward will have'
+            "their combat auto-resolved after a period of time. This allows the "
+            "simulation to advance further into the mission before requiring mission "
+            "generation, but simulation is currently very rudimentary so may result in "
+            "huge losses."
         ),
     )
     supercarrier: bool = boolean_option(
