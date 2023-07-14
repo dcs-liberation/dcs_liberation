@@ -376,7 +376,7 @@ class Squadron:
             )
             return
 
-        if self.expected_size_next_turn >= self.location.unclaimed_parking():
+        if self.expected_size_next_turn > self.location.unclaimed_parking():
             raise RuntimeError(f"Not enough parking for {self} at {self.location}.")
         self.destination = None
         self.cancel_ferry_flights()

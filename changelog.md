@@ -10,6 +10,7 @@ Saves from 8.x are not compatible with 9.0.0.
 
 ## Fixes
 
+* **[Campaign]** Fixed error when canceling squadron transfer if the current location would be exactly full.
 * **[Data]** Fixed the class of the Samuel Chase so it can't be picked for a AAA or SHORAD site.
 * **[Data]** Allow CH-47D, CH-53E and UH-60A to operate from carriers and LHAs.
 * **[Mission Generation]** Restored previous AI behavior for anti-ship missions. A DCS update caused only a single aircraft in a flight to attack. The full flight will now attack like they used to.
