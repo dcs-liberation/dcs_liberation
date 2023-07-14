@@ -101,7 +101,9 @@ class QFlightWaypointTab(QFrame):
         selection = self.flight_waypoint_list.selectionModel()
         for selected_row in selection.selectedIndexes():
             if selected_row.row() > 0:
-                waypoints.append(self.flight.flight_plan.waypoints[selected_row.row()])
+                waypoints.append(
+                    self.flight.flight_plan.waypoints[selected_row.row() + 1]
+                )
         for waypoint in waypoints:
             self.delete_waypoint(waypoint)
         self.flight_waypoint_list.update_list()
