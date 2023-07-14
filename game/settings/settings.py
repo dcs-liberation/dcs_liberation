@@ -562,6 +562,7 @@ class Settings:
     show_red_ato: bool = False
     enable_frontline_cheats: bool = False
     enable_base_capture_cheat: bool = False
+    enable_runway_state_cheat: bool = False
 
     only_player_takeoff: bool = True  # Legacy parameter do not use
 

@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
 from game import Game
 from game.ato.flighttype import FlightType
 from game.config import RUNWAY_REPAIR_COST
+from game.server import EventStream
 from game.theater import (
     AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
     ControlPoint,
@@ -69,10 +70,23 @@ class QBaseMenu2(QDialog):
         top_layout.addWidget(self.intel_summary)
         top_layout.setAlignment(Qt.AlignTop)
 
+        runway_buttons_layout = QVBoxLayout()
+        top_layout.addLayout(runway_buttons_layout)
+
+        if (
+            self.cp.runway_is_destroyable
+            and self.game_model.game.settings.enable_runway_state_cheat
+        ):
+            self.cheat_runway_state = QPushButton()
+            self.update_cheat_runway_state_text()
+            self.cheat_runway_state.clicked.connect(self.on_cheat_runway_state)
+            runway_buttons_layout.addWidget(self.cheat_runway_state)
+
         self.repair_button = QPushButton()
         self.repair_button.clicked.connect(self.begin_runway_repair)
         self.update_repair_button()
-        top_layout.addWidget(self.repair_button)
+        runway_buttons_layout.addWidget(self.repair_button)
+        runway_buttons_layout.addStretch()
 
         base_menu_header.setProperty("style", "baseMenuHeader")
         base_menu_header.setLayout(top_layout)
@@ -128,6 +142,23 @@ class QBaseMenu2(QDialog):
         return self.game_model.game.transit_network_for(
             self.cp.captured
         ).has_destinations(self.cp)
+
+    def update_cheat_runway_state_text(self) -> None:
+        if self.cp.runway_can_be_repaired:
+            self.cheat_runway_state.setText("CHEAT: Repair runway")
+        else:
+            self.cheat_runway_state.setText("CHEAT: Destroy runway")
+
+    def on_cheat_runway_state(self) -> None:
+        if self.cp.runway_can_be_repaired:
+            self.cp.runway_status.repair()
+        else:
+            self.cp.runway_status.damage()
+        self.update_cheat_runway_state_text()
+        self.update_repair_button()
+        self.update_intel_summary()
+        with EventStream.event_context() as events:
+            events.update_control_point(self.cp)
 
     @property
     def can_repair_runway(self) -> bool:
