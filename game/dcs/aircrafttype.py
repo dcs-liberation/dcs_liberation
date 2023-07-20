@@ -10,10 +10,10 @@ from typing import Any, ClassVar, Dict, Iterator, Optional, TYPE_CHECKING, Type
 import yaml
 from dcs.helicopters import helicopter_map
 from dcs.planes import plane_map
+from dcs.unitpropertydescription import UnitPropertyDescription
 from dcs.unittype import FlyingType
 
 from game.data.units import UnitClass
-from game.dcs.unitproperty import UnitProperty
 from game.dcs.unittype import UnitType
 from game.radio.channels import (
     ApacheChannelNamer,
@@ -322,8 +322,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
     def channel_name(self, radio_id: int, channel_id: int) -> str:
         return self.channel_namer.channel_name(radio_id, channel_id)
 
-    def iter_props(self) -> Iterator[UnitProperty[Any]]:
-        return UnitProperty.for_aircraft(self.dcs_unit_type)
+    def iter_props(self) -> Iterator[UnitPropertyDescription]:
+        yield from self.dcs_unit_type.properties.values()
 
     def capable_of(self, task: FlightType) -> bool:
         return task in self.task_priorities
