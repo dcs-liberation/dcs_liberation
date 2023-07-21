@@ -28,7 +28,7 @@ class OcaRunwayIngressBuilder(PydcsWaypointBuilder):
         # for more details.
         # The LGB work around assumes the Airfield position in DCS is on a runway, which seems
         # to be the case for most if not all airfields.
-        if self.flight.loadout.has_weapon_of_type(WeaponType.LGB):
+        if self.flight.any_member_has_weapon_of_type(WeaponType.LGB):
             waypoint.tasks.append(
                 Bombing(
                     position=target.position,

@@ -174,9 +174,10 @@ class QFlightWaypointTab(QFrame):
                 QMessageBox.critical(
                     self, "Could not recreate flight", str(ex), QMessageBox.Ok
                 )
-            if not self.flight.loadout.is_custom:
-                self.flight.loadout = Loadout.default_for(self.flight)
-                self.loadout_changed.emit()
+            for member in self.flight.iter_members():
+                if not member.loadout.is_custom:
+                    member.loadout = Loadout.default_for(self.flight)
+                    self.loadout_changed.emit()
             self.flight_waypoint_list.update_list()
             self.on_change()
 

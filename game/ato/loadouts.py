@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import datetime
 import logging
 from collections.abc import Iterable
@@ -34,6 +35,11 @@ class Loadout:
 
     def derive_custom(self, name: str) -> Loadout:
         return Loadout(name, self.pylons, self.date, is_custom=True)
+
+    def clone(self) -> Loadout:
+        return Loadout(
+            self.name, dict(self.pylons), copy.deepcopy(self.date), self.is_custom
+        )
 
     def has_weapon_of_type(self, weapon_type: WeaponType) -> bool:
         for weapon in self.pylons.values():

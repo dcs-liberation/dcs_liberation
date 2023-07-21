@@ -10,10 +10,10 @@ from dcs.triggers import TriggerZone
 from dcs.unit import Unit
 from dcs.unitgroup import FlyingGroup, VehicleGroup, ShipGroup
 
+from game.ato.flight import Flight
 from game.dcs.groundunittype import GroundUnitType
 from game.squadrons import Pilot
 from game.theater import Airfield, ControlPoint, TheaterUnit
-from game.ato.flight import Flight
 from game.theater.theatergroup import SceneryUnit
 
 if TYPE_CHECKING:
@@ -69,7 +69,7 @@ class UnitMap:
         self.airlifts: Dict[str, AirliftUnits] = {}
 
     def add_aircraft(self, group: FlyingGroup[Any], flight: Flight) -> None:
-        for pilot, unit in zip(flight.roster.pilots, group.units):
+        for pilot, unit in zip(flight.roster.iter_pilots(), group.units):
             # The actual name is a String (the pydcs translatable string), which
             # doesn't define __eq__.
             name = str(unit.name)

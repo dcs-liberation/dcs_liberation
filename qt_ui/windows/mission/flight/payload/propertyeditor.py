@@ -1,9 +1,11 @@
 import logging
+from typing import Callable
 
 from PySide6.QtWidgets import QGridLayout, QLabel, QWidget
 from dcs.unitpropertydescription import UnitPropertyDescription
 
 from game.ato import Flight
+from game.ato.flightmember import FlightMember
 from .missingpropertydataerror import MissingPropertyDataError
 from .propertycheckbox import PropertyCheckBox
 from .propertycombobox import PropertyComboBox
@@ -16,9 +18,10 @@ class UnhandledControlTypeError(RuntimeError):
 
 
 class PropertyEditor(QGridLayout):
-    def __init__(self, flight: Flight) -> None:
+    def __init__(self, flight: Flight, flight_member: FlightMember) -> None:
         super().__init__()
-        self.flight = flight
+        self.flight_member = flight_member
+        self.flight_member_update_listeners: list[Callable[[FlightMember], None]] = []
 
         for row, prop in enumerate(flight.unit_type.iter_props()):
             if prop.label is None:
@@ -56,12 +59,23 @@ class PropertyEditor(QGridLayout):
         # "checkbox", "comboList", "groupbox", "label", "slider", "spinbox"
         match prop.control:
             case "checkbox":
-                return PropertyCheckBox(self.flight, prop)
+                widget = PropertyCheckBox(self.flight_member, prop)
+                self.flight_member_update_listeners.append(widget.set_flight_member)
+                return widget
             case "comboList":
-                return PropertyComboBox(self.flight, prop)
+                widget = PropertyComboBox(self.flight_member, prop)
+                self.flight_member_update_listeners.append(widget.set_flight_member)
+                return widget
             case "groupbox" | "label":
                 return None
             case "slider" | "spinbox":
-                return PropertySpinBox(self.flight, prop)
+                widget = PropertySpinBox(self.flight_member, prop)
+                self.flight_member_update_listeners.append(widget.set_flight_member)
+                return widget
             case _:
                 raise UnhandledControlTypeError(prop.control)
+
+    def set_flight_member(self, flight_member: FlightMember) -> None:
+        self.flight_member = flight_member
+        for listener in self.flight_member_update_listeners:
+            listener(self.flight_member)

@@ -6,36 +6,71 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QScrollArea,
     QWidget,
+    QSpinBox,
+    QCheckBox,
 )
 
 from game import Game
 from game.ato.flight import Flight
+from game.ato.flightmember import FlightMember
 from game.ato.loadouts import Loadout
+from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from .QLoadoutEditor import QLoadoutEditor
 from .propertyeditor import PropertyEditor
 
 
 class DcsLoadoutSelector(QComboBox):
-    def __init__(self, flight: Flight) -> None:
+    def __init__(self, flight: Flight, member: FlightMember) -> None:
         super().__init__()
         for loadout in Loadout.iter_for(flight):
             self.addItem(loadout.name, loadout)
         self.model().sort(0)
-        self.setDisabled(flight.loadout.is_custom)
-        if flight.loadout.is_custom:
+        self.setDisabled(member.loadout.is_custom)
+        if member.loadout.is_custom:
             self.setCurrentText(Loadout.default_for(flight).name)
         else:
-            self.setCurrentText(flight.loadout.name)
+            self.setCurrentText(member.loadout.name)
+
+
+class FlightMemberSelector(QSpinBox):
+    def __init__(self, flight: Flight, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.flight = flight
+        self.setMinimum(0)
+        self.setMaximum(flight.count - 1)
+
+    @property
+    def selected_member(self) -> FlightMember:
+        return self.flight.roster.members[self.value()]
 
 
 class QFlightPayloadTab(QFrame):
     def __init__(self, flight: Flight, game: Game):
         super(QFlightPayloadTab, self).__init__()
         self.flight = flight
-        self.payload_editor = QLoadoutEditor(flight, game)
+        self.payload_editor = QLoadoutEditor(
+            flight, self.flight.roster.members[0], game
+        )
         self.payload_editor.toggled.connect(self.on_custom_toggled)
 
         layout = QVBoxLayout()
+
+        self.member_selector = FlightMemberSelector(self.flight, self)
+        self.member_selector.valueChanged.connect(self.rebind_to_selected_member)
+        layout.addLayout(QLabeledWidget("Flight member:", self.member_selector))
+        self.same_loadout_for_all_checkbox = QCheckBox(
+            "Use same loadout for all flight members"
+        )
+        self.same_loadout_for_all_checkbox.setChecked(
+            self.flight.use_same_loadout_for_all_members
+        )
+        self.same_loadout_for_all_checkbox.toggled.connect(self.on_same_loadout_toggled)
+        layout.addWidget(self.same_loadout_for_all_checkbox)
+        layout.addWidget(
+            QLabel(
+                "<strong>Warning: AI flights should use the same loadout for all members.</strong>"
+            )
+        )
 
         scroll_content = QWidget()
         scrolling_layout = QVBoxLayout()
@@ -54,8 +89,13 @@ class QFlightPayloadTab(QFrame):
         docsText.setAlignment(Qt.AlignCenter)
         docsText.setOpenExternalLinks(True)
 
-        scrolling_layout.addLayout(PropertyEditor(self.flight))
-        self.loadout_selector = DcsLoadoutSelector(flight)
+        self.property_editor = PropertyEditor(
+            self.flight, self.member_selector.selected_member
+        )
+        scrolling_layout.addLayout(self.property_editor)
+        self.loadout_selector = DcsLoadoutSelector(
+            flight, self.member_selector.selected_member
+        )
         self.loadout_selector.currentIndexChanged.connect(self.on_new_loadout)
         scrolling_layout.addWidget(self.loadout_selector)
         scrolling_layout.addWidget(self.payload_editor)
@@ -63,8 +103,27 @@ class QFlightPayloadTab(QFrame):
 
         self.setLayout(layout)
 
+    def resize_for_flight(self) -> None:
+        self.member_selector.setMaximum(self.flight.count - 1)
+
     def reload_from_flight(self) -> None:
-        self.loadout_selector.setCurrentText(self.flight.loadout.name)
+        self.loadout_selector.setCurrentText(
+            self.member_selector.selected_member.loadout.name
+        )
+
+    def rebind_to_selected_member(self) -> None:
+        member = self.member_selector.selected_member
+        self.property_editor.set_flight_member(member)
+        self.loadout_selector.setCurrentText(member.loadout.name)
+        self.loadout_selector.setDisabled(member.loadout.is_custom)
+        self.payload_editor.set_flight_member(member)
+        if self.member_selector.value() != 0:
+            self.loadout_selector.setDisabled(
+                self.flight.use_same_loadout_for_all_members
+            )
+            self.payload_editor.setDisabled(
+                self.flight.use_same_loadout_for_all_members
+            )
 
     def loadout_at(self, index: int) -> Loadout:
         loadout = self.loadout_selector.itemData(index)
@@ -79,13 +138,25 @@ class QFlightPayloadTab(QFrame):
         return loadout
 
     def on_new_loadout(self, index: int) -> None:
-        self.flight.loadout = self.loadout_at(index)
+        self.member_selector.selected_member.loadout = self.loadout_at(index)
         self.payload_editor.reset_pylons()
 
     def on_custom_toggled(self, use_custom: bool) -> None:
         self.loadout_selector.setDisabled(use_custom)
+        member = self.member_selector.selected_member
+        member.use_custom_loadout = use_custom
         if use_custom:
-            self.flight.loadout = self.flight.loadout.derive_custom("Custom")
+            member.loadout = member.loadout.derive_custom("Custom")
         else:
-            self.flight.loadout = self.current_loadout()
+            member.loadout = self.current_loadout()
             self.payload_editor.reset_pylons()
+
+    def on_same_loadout_toggled(self, checked: bool) -> None:
+        self.flight.use_same_loadout_for_all_members = checked
+        if self.member_selector.value():
+            self.loadout_selector.setDisabled(checked)
+            self.payload_editor.setDisabled(checked)
+        if checked:
+            self.flight.roster.use_same_loadout_for_all_members()
+            if self.member_selector.value():
+                self.rebind_to_selected_member()

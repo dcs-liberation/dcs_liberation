@@ -18,6 +18,9 @@ class QFlightPlanner(QTabWidget):
             game, package_model, flight
         )
         self.payload_tab = QFlightPayloadTab(flight, game)
+        self.general_settings_tab.flight_size_changed.connect(
+            self.payload_tab.resize_for_flight
+        )
         self.waypoint_tab = QFlightWaypointTab(game, package_model.package, flight)
         self.waypoint_tab.loadout_changed.connect(self.payload_tab.reload_from_flight)
         self.addTab(self.general_settings_tab, "General Flight settings")

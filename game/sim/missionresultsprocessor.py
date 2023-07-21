@@ -60,7 +60,7 @@ class MissionResultsProcessor:
     def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
         for package in ato.packages:
             for flight in package.flights:
-                for idx, pilot in enumerate(flight.roster.pilots):
+                for idx, pilot in enumerate(flight.roster.iter_pilots()):
                     if pilot is None:
                         logging.error(
                             f"Cannot award experience to pilot #{idx} of {flight} "

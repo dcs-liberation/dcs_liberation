@@ -1,28 +1,29 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from typing import Optional, TYPE_CHECKING
+
+from game.ato.iflightroster import IFlightRoster
 
 if TYPE_CHECKING:
     from game.squadrons import Squadron, Pilot
 
 
-class FlightRoster:
+class FlightRoster(IFlightRoster):
     def __init__(self, squadron: Squadron, initial_size: int = 0) -> None:
         self.squadron = squadron
         self.pilots: list[Optional[Pilot]] = []
         self.resize(initial_size)
 
+    def iter_pilots(self) -> Iterator[Pilot | None]:
+        yield from self.pilots
+
+    def pilot_at(self, idx: int) -> Pilot | None:
+        return self.pilots[idx]
+
     @property
     def max_size(self) -> int:
         return len(self.pilots)
-
-    @property
-    def player_count(self) -> int:
-        return len([p for p in self.pilots if p is not None and p.player])
-
-    @property
-    def missing_pilots(self) -> int:
-        return len([p for p in self.pilots if p is None])
 
     def resize(self, new_size: int) -> None:
         if self.max_size > new_size:
