@@ -5,20 +5,24 @@ from typing import Optional
 from PySide6.QtWidgets import QComboBox
 
 from game import Game
-from game.data.weapons import Pylon, Weapon
 from game.ato.flight import Flight
+from game.ato.flightmember import FlightMember
 from game.ato.loadouts import Loadout
+from game.data.weapons import Pylon, Weapon
 
 
 class QPylonEditor(QComboBox):
-    def __init__(self, game: Game, flight: Flight, pylon: Pylon) -> None:
+    def __init__(
+        self, game: Game, flight: Flight, flight_member: FlightMember, pylon: Pylon
+    ) -> None:
         super().__init__()
         self.flight = flight
+        self.flight_member = flight_member
         self.pylon = pylon
         self.game = game
         self.has_added_clean_item = False
 
-        current = self.flight.loadout.pylons.get(self.pylon.number)
+        current = self.flight_member.loadout.pylons.get(self.pylon.number)
 
         self.addItem("None", None)
         if self.game.settings.restrict_weapons_by_date:
@@ -35,7 +39,7 @@ class QPylonEditor(QComboBox):
 
     def on_pylon_change(self):
         selected: Optional[Weapon] = self.currentData()
-        self.flight.loadout.pylons[self.pylon.number] = selected
+        self.flight_member.loadout.pylons[self.pylon.number] = selected
 
         if selected is None:
             logging.debug(f"Pylon {self.pylon.number} emptied")
@@ -69,6 +73,10 @@ class QPylonEditor(QComboBox):
         if weapon is None:
             return "None"
         return weapon.name
+
+    def set_flight_member(self, flight_member: FlightMember) -> None:
+        self.flight_member = flight_member
+        self.set_from(self.flight_member.loadout)
 
     def set_from(self, loadout: Loadout) -> None:
         self.setCurrentText(self.matching_weapon_name(loadout))

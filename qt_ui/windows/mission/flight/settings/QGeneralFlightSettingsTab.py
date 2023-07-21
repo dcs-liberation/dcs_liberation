@@ -16,7 +16,7 @@ from qt_ui.windows.mission.flight.settings.QFlightTypeTaskInfo import (
 
 
 class QGeneralFlightSettingsTab(QFrame):
-    on_flight_settings_changed = Signal()
+    flight_size_changed = Signal()
 
     def __init__(self, game: Game, package_model: PackageModel, flight: Flight):
         super().__init__()
@@ -24,7 +24,9 @@ class QGeneralFlightSettingsTab(QFrame):
         layout = QGridLayout()
         layout.addWidget(QFlightTypeTaskInfo(flight), 0, 0)
         layout.addWidget(FlightPlanPropertiesGroup(game, package_model, flight), 1, 0)
-        layout.addWidget(QFlightSlotEditor(package_model, flight, game), 2, 0)
+        self.flight_slot_editor = QFlightSlotEditor(package_model, flight, game)
+        self.flight_slot_editor.flight_resized.connect(self.flight_size_changed)
+        layout.addWidget(self.flight_slot_editor, 2, 0)
         layout.addWidget(QFlightStartType(package_model, flight), 3, 0)
         layout.addWidget(QFlightCustomName(flight), 4, 0)
         vstretch = QVBoxLayout()

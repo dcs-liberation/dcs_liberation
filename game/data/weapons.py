@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Iterator, Optional, Any, ClassVar
 
 import yaml
-from dcs.unitgroup import FlyingGroup
+from dcs.flyingunit import FlyingUnit
 from dcs.weapons_data import weapon_ids
 
 from game.dcs.aircrafttype import AircraftType
@@ -235,10 +235,10 @@ class Pylon:
         # configuration.
         return weapon in self.allowed or weapon.clsid == "<CLEAN>"
 
-    def equip(self, group: FlyingGroup[Any], weapon: Weapon) -> None:
+    def equip(self, unit: FlyingUnit, weapon: Weapon) -> None:
         if not self.can_equip(weapon):
             logging.error(f"Pylon {self.number} cannot equip {weapon.name}")
-        group.load_pylon(self.make_pydcs_assignment(weapon), self.number)
+        unit.load_pylon(self.make_pydcs_assignment(weapon), self.number)
 
     def make_pydcs_assignment(self, weapon: Weapon) -> PydcsWeaponAssignment:
         return self.number, weapon.pydcs_data

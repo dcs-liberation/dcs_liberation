@@ -10,7 +10,7 @@ from dcs.task import (
     SwitchWaypoint,
     WeaponType as DcsWeaponType,
 )
-from game.ato.flightstate import InFlight
+
 from game.data.weapons import WeaponType
 from game.theater import TheaterGroundObject
 from .pydcswaypointbuilder import PydcsWaypointBuilder
@@ -36,7 +36,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 )
                 continue
 
-            if self.flight.loadout.has_weapon_of_type(WeaponType.ARM):
+            if self.flight.any_member_has_weapon_of_type(WeaponType.ARM):
                 # Special handling for ARM Weapon types:
                 # The SEAD flight will Search for the targeted group and then engage it
                 # if it is found only. This will prevent AI from having huge problems
@@ -47,7 +47,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
                 engage_task.params["groupAttack"] = True
                 engage_task.params["expend"] = Expend.All.value
                 waypoint.tasks.append(engage_task)
-            elif self.flight.loadout.has_weapon_of_type(WeaponType.DECOY):
+            elif self.flight.any_member_has_weapon_of_type(WeaponType.DECOY):
                 # Special handling for DECOY weapon types:
                 # - Specify that DECOY weapon type is used in AttackGroup task so that
                 #   the flight actually launches the decoy. See link below for details
@@ -86,7 +86,7 @@ class SeadIngressBuilder(PydcsWaypointBuilder):
         # INGRESS point to the SPLIT point. This tasking prevents the flights continuing to
         # overfly the target. See link below for the details of this issue
         # https://github.com/dcs-liberation/dcs_liberation/issues/2781
-        if self.flight.loadout.has_weapon_of_type(WeaponType.DECOY):
+        if self.flight.any_member_has_weapon_of_type(WeaponType.DECOY):
             switch_waypoint_task = SwitchWaypoint(
                 self.generated_waypoint_idx, self.generated_waypoint_idx + 2
             )

@@ -90,9 +90,10 @@ class QFlightCreator(QDialog):
             roster = None
         else:
             roster = FlightRoster(
-                squadron, initial_size=self.flight_size_spinner.value()
+                squadron,
+                initial_size=self.flight_size_spinner.value(),
             )
-        self.roster_editor = FlightRosterEditor(roster)
+        self.roster_editor = FlightRosterEditor(squadron, roster)
         self.flight_size_spinner.valueChanged.connect(self.roster_editor.resize)
         self.squadron_selector.currentIndexChanged.connect(self.on_squadron_changed)
         roster_layout = QHBoxLayout()
@@ -234,7 +235,7 @@ class QFlightCreator(QDialog):
         self.roster_editor.replace(None)
         if squadron is not None:
             self.roster_editor.replace(
-                FlightRoster(squadron, self.flight_size_spinner.value())
+                squadron, FlightRoster(squadron, self.flight_size_spinner.value())
             )
             self.on_departure_changed(squadron.location)
 
