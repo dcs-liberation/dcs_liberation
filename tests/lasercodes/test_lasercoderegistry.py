@@ -10,6 +10,16 @@ def test_initial_laser_codes() -> None:
 
 def test_alloc_laser_code() -> None:
     reg = LaserCodeRegistry()
-    assert reg.alloc_laser_code() == 1688
+    assert reg.alloc_laser_code().code == 1688
     assert 1688 not in reg.available_codes
     assert len(reg.available_codes) == 191
+
+
+def test_release_code() -> None:
+    reg = LaserCodeRegistry()
+    code = reg.alloc_laser_code()
+    code.release()
+    assert code.code in reg.available_codes
+    assert len(reg.available_codes) == 192
+    code.release()
+    assert len(reg.available_codes) == 192

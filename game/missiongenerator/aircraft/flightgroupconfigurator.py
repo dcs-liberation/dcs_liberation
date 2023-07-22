@@ -133,7 +133,7 @@ class FlightGroupConfigurator:
     ) -> None:
         self.set_skill(unit, member)
         if member.loadout.has_weapon_of_type(WeaponTypeEnum.TGP) and member.is_player:
-            laser_codes.append(self.laser_code_registry.alloc_laser_code())
+            laser_codes.append(self.laser_code_registry.alloc_laser_code().code)
         else:
             laser_codes.append(None)
 
