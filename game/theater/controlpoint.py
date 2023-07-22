@@ -81,6 +81,7 @@ if TYPE_CHECKING:
     from game import Game
     from game.ato.flighttype import FlightType
     from game.coalition import Coalition
+    from game.lasercodes.lasercoderegistry import LaserCodeRegistry
     from game.sim import GameUpdateEvents
     from game.squadrons.squadron import Squadron
     from game.transfers import PendingTransfers
@@ -377,42 +378,50 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         assert self._front_line_db is None
         self._front_line_db = game.db.front_lines
 
-    def initialize_turn_0(self) -> None:
+    def initialize_turn_0(self, laser_code_registry: LaserCodeRegistry) -> None:
         # We don't need to send events for turn 0. The UI isn't up yet, and it'll fetch
         # the entire game state when it comes up.
         from game.sim import GameUpdateEvents
 
-        self._create_missing_front_lines(GameUpdateEvents())
+        self._create_missing_front_lines(laser_code_registry, GameUpdateEvents())
 
     @property
     def front_line_db(self) -> Database[FrontLine]:
         assert self._front_line_db is not None
         return self._front_line_db
 
-    def _create_missing_front_lines(self, events: GameUpdateEvents) -> None:
+    def _create_missing_front_lines(
+        self, laser_code_registry: LaserCodeRegistry, events: GameUpdateEvents
+    ) -> None:
         for connection in self.convoy_routes.keys():
             if not connection.front_line_active_with(
                 self
             ) and not connection.is_friendly_to(self):
-                self._create_front_line_with(connection, events)
+                self._create_front_line_with(laser_code_registry, connection, events)
 
     def _create_front_line_with(
-        self, connection: ControlPoint, events: GameUpdateEvents
+        self,
+        laser_code_registry: LaserCodeRegistry,
+        connection: ControlPoint,
+        events: GameUpdateEvents,
     ) -> None:
         blue, red = FrontLine.sort_control_points(self, connection)
-        front = FrontLine(blue, red)
+        front = FrontLine(blue, red, laser_code_registry.alloc_laser_code())
         self.front_lines[connection] = front
         connection.front_lines[self] = front
         self.front_line_db.add(front.id, front)
         events.update_front_line(front)
 
     def _remove_front_line_with(
-        self, connection: ControlPoint, events: GameUpdateEvents
+        self,
+        connection: ControlPoint,
+        events: GameUpdateEvents,
     ) -> None:
         front = self.front_lines[connection]
         del self.front_lines[connection]
         del connection.front_lines[self]
         self.front_line_db.remove(front.id)
+        front.laser_code.release()
         events.delete_front_line(front)
 
     def _clear_front_lines(self, events: GameUpdateEvents) -> None:
@@ -839,7 +848,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self._coalition = new_coalition
         self.base.set_strength_to_minimum()
         self._clear_front_lines(events)
-        self._create_missing_front_lines(events)
+        self._create_missing_front_lines(game.laser_code_registry, events)
         events.update_control_point(self)
 
         # All the attached TGOs have either been depopulated or captured. Tell the UI to

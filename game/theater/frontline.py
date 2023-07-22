@@ -8,6 +8,7 @@ from typing import Any, Iterator, List, TYPE_CHECKING, Tuple
 from dcs.mapping import Point
 
 from .missiontarget import MissionTarget
+from ..lasercodes.lasercode import LaserCode
 from ..utils import Heading, pairwise
 
 if TYPE_CHECKING:
@@ -49,10 +50,12 @@ class FrontLine(MissionTarget):
         self,
         blue_point: ControlPoint,
         red_point: ControlPoint,
+        laser_code: LaserCode,
     ) -> None:
         self.id = uuid.uuid4()
         self.blue_cp = blue_point
         self.red_cp = red_point
+        self.laser_code = laser_code
         try:
             route = list(blue_point.convoy_route_to(red_point))
         except KeyError:

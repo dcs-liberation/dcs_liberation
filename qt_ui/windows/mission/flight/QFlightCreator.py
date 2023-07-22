@@ -196,6 +196,12 @@ class QFlightCreator(QDialog):
             roster=roster,
         )
 
+        for member in flight.iter_members():
+            if member.is_player:
+                member.assign_tgp_laser_code(
+                    self.game.laser_code_registry.alloc_laser_code()
+                )
+
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
         self.accept()

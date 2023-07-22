@@ -46,9 +46,11 @@ class FlightMembers(IFlightRoster):
 
     def resize(self, new_size: int) -> None:
         if self.max_size > new_size:
-            self.flight.squadron.return_pilots(
-                [m.pilot for m in self.members[new_size:] if m.pilot is not None]
-            )
+            for member in self.members[new_size:]:
+                if (pilot := member.pilot) is not None:
+                    self.flight.squadron.return_pilot(pilot)
+                if (code := member.tgp_laser_code) is not None:
+                    code.release()
             self.members = self.members[:new_size]
             return
         if self.max_size:
@@ -71,6 +73,9 @@ class FlightMembers(IFlightRoster):
         self.flight.squadron.return_pilots(
             [p for p in self.iter_pilots() if p is not None]
         )
+        for member in self.members:
+            if (code := member.tgp_laser_code) is not None:
+                code.release()
 
     def use_same_loadout_for_all_members(self) -> None:
         if not self.members:

@@ -18,7 +18,6 @@ from game.ato.package import Package
 from game.ato.starttype import StartType
 from game.factions.faction import Faction
 from game.missiongenerator.missiondata import MissionData
-from game.lasercodes import LaserCodeRegistry
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanRegistry
 from game.runways import RunwayData
@@ -48,7 +47,6 @@ class AircraftGenerator:
         time: datetime,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
-        laser_code_registry: LaserCodeRegistry,
         unit_map: UnitMap,
         mission_data: MissionData,
         helipads: dict[ControlPoint, StaticGroup],
@@ -59,7 +57,6 @@ class AircraftGenerator:
         self.time = time
         self.radio_registry = radio_registry
         self.tacan_registy = tacan_registry
-        self.laser_code_registry = laser_code_registry
         self.unit_map = unit_map
         self.flights: List[FlightData] = []
         self.mission_data = mission_data
@@ -174,7 +171,6 @@ class AircraftGenerator:
                 self.time,
                 self.radio_registry,
                 self.tacan_registy,
-                self.laser_code_registry,
                 self.mission_data,
                 dynamic_runways,
                 self.use_client,
