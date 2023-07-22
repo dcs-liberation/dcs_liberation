@@ -34,3 +34,24 @@ tasks:
   OCA/Runway: 630
   Strike: 640
   TARCAP: 240
+laser_codes:
+  - pylon: 2
+    property:
+      id: Sta2LaserCode
+      digits: 3
+  - pylon: 4
+    property:
+      id: LCFTLaserCode
+      digits: 3
+  - pylon: 5
+    property:
+      id: Sta5LaserCode
+      digits: 3
+  - pylon: 12
+    property:
+      id: RCFTLaserCode
+      digits: 3
+  - pylon: 14
+    property:
+      id: Sta8LaserCode
+      digits: 3
