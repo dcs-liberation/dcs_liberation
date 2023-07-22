@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from .data.doctrine import Doctrine
     from .factions.faction import Faction
     from .game import Game
+    from .lasercodes import LaserCodeRegistry
     from .sim import GameUpdateEvents
 
 
@@ -89,6 +90,10 @@ class Coalition:
     def nav_mesh(self) -> NavMesh:
         assert self._navmesh is not None
         return self._navmesh
+
+    @property
+    def laser_code_registry(self) -> LaserCodeRegistry:
+        return self.game.laser_code_registry
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()

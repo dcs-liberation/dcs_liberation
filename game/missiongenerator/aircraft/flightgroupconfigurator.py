@@ -11,8 +11,7 @@ from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
 from game.callsigns import callsign_for_support_unit
-from game.data.weapons import Pylon, WeaponType as WeaponTypeEnum
-from game.lasercodes import LaserCodeRegistry
+from game.data.weapons import Pylon
 from game.missiongenerator.logisticsgenerator import LogisticsGenerator
 from game.missiongenerator.missiondata import AwacsInfo, MissionData, TankerInfo
 from game.radio.radios import RadioFrequency, RadioRegistry
@@ -40,7 +39,6 @@ class FlightGroupConfigurator:
         time: datetime,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
-        laser_code_registry: LaserCodeRegistry,
         mission_data: MissionData,
         dynamic_runways: dict[str, RunwayData],
         use_client: bool,
@@ -53,7 +51,6 @@ class FlightGroupConfigurator:
         self.time = time
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
-        self.laser_code_registry = laser_code_registry
         self.mission_data = mission_data
         self.dynamic_runways = dynamic_runways
         self.use_client = use_client
@@ -132,8 +129,8 @@ class FlightGroupConfigurator:
         self, unit: FlyingUnit, member: FlightMember, laser_codes: list[Optional[int]]
     ) -> None:
         self.set_skill(unit, member)
-        if member.loadout.has_weapon_of_type(WeaponTypeEnum.TGP) and member.is_player:
-            laser_codes.append(self.laser_code_registry.alloc_laser_code().code)
+        if (code := member.tgp_laser_code) is not None:
+            laser_codes.append(code.code)
         else:
             laser_codes.append(None)
 
