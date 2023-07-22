@@ -518,7 +518,6 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
                 self.advanced_iads.setToolTip("Enable Advanced IADS")
 
             self.campaign_selected.emit(campaign)
-            self.completeChanged.emit()
 
         self.campaignList.selectionModel().setCurrentIndex(
             self.campaignList.indexAt(QPoint(1, 1)), QItemSelectionModel.Rows
