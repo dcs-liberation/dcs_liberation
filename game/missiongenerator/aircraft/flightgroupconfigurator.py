@@ -213,7 +213,11 @@ class FlightGroupConfigurator:
 
     def setup_props(self) -> None:
         for unit, member in zip(self.group.units, self.flight.iter_members()):
-            for prop_id, value in member.properties.items():
+            props = dict(member.properties)
+            if (code := member.weapon_laser_code) is not None:
+                for laser_code_config in self.flight.unit_type.laser_code_configs:
+                    props.update(laser_code_config.property_dict_for_code(code.code))
+            for prop_id, value in props.items():
                 unit.set_property(prop_id, value)
 
     def setup_payloads(self) -> None:

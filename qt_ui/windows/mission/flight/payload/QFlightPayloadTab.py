@@ -18,6 +18,7 @@ from qt_ui.widgets.QLabeledWidget import QLabeledWidget
 from .QLoadoutEditor import QLoadoutEditor
 from .ownlasercodeinfo import OwnLaserCodeInfo
 from .propertyeditor import PropertyEditor
+from .weaponlasercodeselector import WeaponLaserCodeSelector
 
 
 class DcsLoadoutSelector(QComboBox):
@@ -95,6 +96,24 @@ class QFlightPayloadTab(QFrame):
         )
         scrolling_layout.addLayout(self.own_laser_code_info)
 
+        self.weapon_laser_code_selector = WeaponLaserCodeSelector(
+            game, self.member_selector.selected_member, self
+        )
+        self.own_laser_code_info.assigned_laser_code_changed.connect(
+            self.weapon_laser_code_selector.rebuild
+        )
+        scrolling_layout.addLayout(
+            QLabeledWidget(
+                "Preset laser code for weapons:", self.weapon_laser_code_selector
+            )
+        )
+        scrolling_layout.addWidget(
+            QLabel(
+                "Equipped weapons will be pre-configured to the selected laser code at "
+                "mission start."
+            )
+        )
+
         self.property_editor = PropertyEditor(
             self.flight, self.member_selector.selected_member
         )
@@ -123,6 +142,7 @@ class QFlightPayloadTab(QFrame):
         self.loadout_selector.setCurrentText(member.loadout.name)
         self.loadout_selector.setDisabled(member.loadout.is_custom)
         self.payload_editor.set_flight_member(member)
+        self.weapon_laser_code_selector.set_flight_member(member)
         self.own_laser_code_info.set_flight_member(member)
         if self.member_selector.value() != 0:
             self.loadout_selector.setDisabled(
