@@ -43,7 +43,7 @@ from game.theater.controlpoint import ControlPoint
 from game.unitmap import UnitMap
 from game.utils import Heading
 from .frontlineconflictdescription import FrontLineConflictDescription
-from .lasercoderegistry import LaserCodeRegistry
+from game.lasercodes import LaserCodeRegistry
 from .missiondata import JtacInfo, MissionData
 
 if TYPE_CHECKING:
@@ -144,7 +144,7 @@ class FlotGenerator:
             if self.game.lua_plugin_manager.is_option_enabled("ctld", "fc3LaserCode"):
                 code = 1113
             else:
-                code = self.laser_code_registry.get_next_laser_code()
+                code = self.laser_code_registry.alloc_laser_code()
 
             utype = self.game.blue.faction.jtac_unit
             if utype is None:

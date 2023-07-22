@@ -34,7 +34,7 @@ from .flotgenerator import FlotGenerator
 from .forcedoptionsgenerator import ForcedOptionsGenerator
 from .frontlineconflictdescription import FrontLineConflictDescription
 from .kneeboard import KneeboardGenerator
-from .lasercoderegistry import LaserCodeRegistry
+from game.lasercodes import LaserCodeRegistry
 from .luagenerator import LuaGenerator
 from .missiondata import MissionData
 from .tgogenerator import TgoGenerator
