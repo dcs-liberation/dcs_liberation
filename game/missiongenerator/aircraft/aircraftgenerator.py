@@ -18,7 +18,7 @@ from game.ato.package import Package
 from game.ato.starttype import StartType
 from game.factions.faction import Faction
 from game.missiongenerator.missiondata import MissionData
-from game.missiongenerator.lasercoderegistry import LaserCodeRegistry
+from game.lasercodes import LaserCodeRegistry
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanRegistry
 from game.runways import RunwayData

@@ -1,0 +1,1 @@
+from .lasercoderegistry import LaserCodeRegistry

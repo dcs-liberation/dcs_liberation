@@ -1,30 +1,21 @@
 from collections import deque
-from typing import Iterator
-
-
-class OutOfLaserCodesError(RuntimeError):
-    def __init__(self) -> None:
-        super().__init__(
-            f"All JTAC laser codes have been allocated.  No available codes."
-        )
 
 
 class LaserCodeRegistry:
     def __init__(self) -> None:
         self.allocated_codes: set[int] = set()
-        self.allocator: Iterator[int] = LaserCodeRegistry.__laser_code_generator()
+        self.available_codes = LaserCodeRegistry._all_valid_laser_codes()
 
-    def get_next_laser_code(self) -> int:
+    def alloc_laser_code(self) -> int:
         try:
-            while (code := next(self.allocator)) in self.allocated_codes:
-                pass
+            code = self.available_codes.popleft()
             self.allocated_codes.add(code)
             return code
-        except StopIteration:
-            raise OutOfLaserCodesError
+        except IndexError:
+            raise RuntimeError("All laser codes have been allocated")
 
     @staticmethod
-    def __laser_code_generator() -> Iterator[int]:
+    def _all_valid_laser_codes() -> deque[int]:
         # Valid laser codes are as follows
         # First digit is always 1
         # Second digit is 5-7
@@ -34,4 +25,4 @@ class LaserCodeRegistry:
 
         # We start with the default of 1688 and wrap around when we reach the end
         q.rotate(-q.index(1688))
-        return iter(q)
+        return q
