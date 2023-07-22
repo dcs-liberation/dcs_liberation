@@ -18,6 +18,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Data]** Allow CH-47D, CH-53E and UH-60A to operate from carriers and LHAs.
 * **[Mission Generation]** Restored previous AI behavior for anti-ship missions. A DCS update caused only a single aircraft in a flight to attack. The full flight will now attack like they used to.
 * **[Mission Generation]** Fix generation of OCA Runway missions to allow LGBs to be used.
+* **[New Game Wizard]** Factions are reset to default after clicking "Back" to Theater Configuration screen.
 * **[Plugins]** Fixed Lua errors in Skynet plugin that would occur whenever one coalition had no IADS nodes.
 * **[UI]** Fixed deleting waypoints in custom flight plans deleting the wrong waypoint.
 * **[UI]** Fixed flight properties UI to support F-15E S4+ laser codes.

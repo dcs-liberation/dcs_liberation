@@ -361,6 +361,10 @@ class FactionSelection(QtWidgets.QWizardPage):
 
         self.updateUnitRecap()
 
+    def cleanupPage(self):
+        """When clicking Back button, reset factions to campaign defaults"""
+        self.setDefaultFactions(self.field("selectedCampaign"))
+
     def updateUnitRecap(self):
         red_faction = self.factions.get_by_name(self.redFactionSelect.currentText())
         blue_faction = self.factions.get_by_name(self.blueFactionSelect.currentText())
@@ -556,6 +560,11 @@ class TheaterConfiguration(QtWidgets.QWizardPage):
         layout.addWidget(mapSettingsGroup, 2, 1, 1, 1)
         layout.addWidget(timeGroup, 3, 1, 3, 1)
         self.setLayout(layout)
+
+    def initializePage(self):
+        """Ensure that selectCampaign field is set after user clicks Back to previous page and Next back onto this page"""
+        campaign = self.campaignList.selected_campaign
+        self.setField("selectedCampaign", campaign)
 
 
 class BudgetInputs(QtWidgets.QGridLayout):
