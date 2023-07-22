@@ -14,6 +14,7 @@ from dcs.unitpropertydescription import UnitPropertyDescription
 from dcs.unittype import FlyingType
 
 from game.data.units import UnitClass
+from game.dcs.lasercodeconfig import LaserCodeConfig
 from game.dcs.unittype import UnitType
 from game.radio.channels import (
     ApacheChannelNamer,
@@ -204,6 +205,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
     # not take up a weapons station. If True, do not replace LGBs with dumb bombs
     # when no TGP is mounted on any station.
     has_built_in_target_pod: bool
+
+    laser_code_configs: list[LaserCodeConfig]
 
     _by_name: ClassVar[dict[str, AircraftType]] = {}
     _by_unit_type: ClassVar[dict[type[FlyingType], list[AircraftType]]] = defaultdict(
@@ -486,6 +489,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 can_carry_crates=data.get("can_carry_crates", aircraft.helicopter),
                 task_priorities=task_priorities,
                 has_built_in_target_pod=data.get("has_built_in_target_pod", False),
+                laser_code_configs=[
+                    LaserCodeConfig.from_yaml(d) for d in data.get("laser_codes", [])
+                ],
             )
 
     def __hash__(self) -> int:
