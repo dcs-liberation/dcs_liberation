@@ -9,6 +9,7 @@ origin: USA
 price: 24
 role: Multirole Strike Fighter
 max_range: 300
+use_f15e_waypoint_names: true
 variants:
   F-15E Strike Eagle (Suite 4+): {}
 radios:

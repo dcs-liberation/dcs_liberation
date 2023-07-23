@@ -208,6 +208,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     laser_code_configs: list[LaserCodeConfig]
 
+    use_f15e_waypoint_names: bool
+
     _by_name: ClassVar[dict[str, AircraftType]] = {}
     _by_unit_type: ClassVar[dict[type[FlyingType], list[AircraftType]]] = defaultdict(
         list
@@ -502,6 +504,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 laser_code_configs=[
                     LaserCodeConfig.from_yaml(d) for d in data.get("laser_codes", [])
                 ],
+                use_f15e_waypoint_names=data.get("use_f15e_waypoint_names", False),
             )
 
     def __hash__(self) -> int:
