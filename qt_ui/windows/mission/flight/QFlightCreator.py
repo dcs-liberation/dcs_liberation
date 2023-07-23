@@ -144,7 +144,7 @@ class QFlightCreator(QDialog):
     def reject(self) -> None:
         super().reject()
         # Clear the roster to return pilots to the pool.
-        self.roster_editor.replace(None)
+        self.roster_editor.replace(None, None)
 
     def set_custom_name_text(self, text: str):
         self.custom_name_text = text
@@ -230,9 +230,9 @@ class QFlightCreator(QDialog):
     def on_squadron_changed(self, index: int) -> None:
         squadron: Optional[Squadron] = self.squadron_selector.itemData(index)
         self.update_max_size(self.squadron_selector.aircraft_available)
-        # Clear the roster first so we return the pilots to the pool. This way if we end
-        # up repopulating from the same squadron we'll get the same pilots back.
-        self.roster_editor.replace(None)
+        # Clear the roster first so that we return the pilots to the pool. This way if
+        # we end up repopulating from the same squadron we'll get the same pilots back.
+        self.roster_editor.replace(None, None)
         if squadron is not None:
             self.roster_editor.replace(
                 squadron, FlightRoster(squadron, self.flight_size_spinner.value())
