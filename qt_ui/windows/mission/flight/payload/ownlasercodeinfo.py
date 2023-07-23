@@ -15,7 +15,7 @@ class OwnLaserCodeInfo(QHBoxLayout):
         self.game = game
         self.flight_member = flight_member
 
-        self.addWidget(QLabel("Assigned laser code:"))
+        self.addWidget(QLabel("Assigned TGP laser code:"))
         self.addStretch()
 
         self.code_display = QLabel()
