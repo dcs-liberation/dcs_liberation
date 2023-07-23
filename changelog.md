@@ -6,7 +6,7 @@ Saves from 8.x are not compatible with 9.0.0.
 
 * **[Flight Planning]** Improved IP selection for targets that are near the center of a threat zone.
 * **[Flight Planning]** Loadouts and aircraft properties can now be set per-flight member. Warning: AI flights should not use mixed loadouts.
-* **[Flight Planning]** Laser codes that are pre-assigned to weapons at mission start can now be chosen from a list in the loadout UI. This does not affect the aircraft's TGP, just the weapons. Currently only implemented for the F-15E S4+.
+* **[Flight Planning]** Laser codes that are pre-assigned to weapons at mission start can now be chosen from a list in the loadout UI. This does not affect the aircraft's TGP, just the weapons. Currently only implemented for the F-15E S4+ and F-16C.
 * **[Modding]** Factions can now specify the ship type to be used for cargo shipping. The Handy Wind will be used by default, but WW2 factions can pick something more appropriate.
 * **[UI]** An error will be displayed when invalid fast-forward options are selected rather than beginning a never ending simulation.
 * **[UI]** Added cheats for instantly repairing and destroying runways.
