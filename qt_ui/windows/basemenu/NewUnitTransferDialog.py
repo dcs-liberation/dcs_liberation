@@ -36,7 +36,11 @@ class TransferDestinationComboBox(QComboBox):
         self.game = game
         self.origin = origin
 
-        for cp in self.game.blue.transit_network.connections_from(origin):
+        for cp in self.game.blue.transit_network.nodes:
+            if cp == origin:
+                continue
+            if not self.game.blue.transit_network.has_path_between(origin, cp):
+                continue
             self.addItem(cp.name, cp)
         self.model().sort(0)
         self.setCurrentIndex(0)
