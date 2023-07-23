@@ -36,13 +36,12 @@ class TransferDestinationComboBox(QComboBox):
         self.game = game
         self.origin = origin
 
-        for cp in self.game.theater.controlpoints:
-            if (
-                cp != self.origin
-                and cp.is_friendly(to_player=True)
-                and cp.can_deploy_ground_units
-            ):
-                self.addItem(cp.name, cp)
+        for cp in self.game.blue.transit_network.nodes:
+            if cp == origin:
+                continue
+            if not self.game.blue.transit_network.has_path_between(origin, cp):
+                continue
+            self.addItem(cp.name, cp)
         self.model().sort(0)
         self.setCurrentIndex(0)
 
