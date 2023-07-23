@@ -84,7 +84,9 @@ class PilotSelector(QComboBox):
         self.roster.set_pilot(self.pilot_index, pilot)
         self.available_pilots_changed.emit()
 
-    def replace(self, squadron: Squadron, new_roster: Optional[FlightRoster]) -> None:
+    def replace(
+        self, squadron: Squadron | None, new_roster: Optional[FlightRoster]
+    ) -> None:
         self.squadron = squadron
         self.roster = new_roster
         self.rebuild()
@@ -199,7 +201,9 @@ class FlightRosterEditor(QVBoxLayout):
         for controls in self.pilot_controls[new_size:]:
             controls.disable_and_clear()
 
-    def replace(self, squadron: Squadron, new_roster: Optional[FlightRoster]) -> None:
+    def replace(
+        self, squadron: Squadron | None, new_roster: Optional[FlightRoster]
+    ) -> None:
         if self.roster is not None:
             self.roster.clear()
         self.roster = new_roster
