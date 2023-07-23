@@ -6,18 +6,14 @@ from typing import Any
 
 
 class LaserCodeConfig(ABC):
-    def __init__(self, pylon: int) -> None:
-        self.pylon = pylon
-
     @staticmethod
     def from_yaml(data: dict[str, Any]) -> LaserCodeConfig:
-        pylon = data["pylon"]
         if (property_def := data.get("property")) is not None:
             return SinglePropertyLaserCodeConfig(
-                pylon, property_def["id"], int(property_def["digits"])
+                property_def["id"], int(property_def["digits"])
             )
         return MultiplePropertyLaserCodeConfig(
-            pylon, [(d["id"], d["digit"]) for d in data["properties"]]
+            [(d["id"], d["digit"]) for d in data["properties"]]
         )
 
     @abstractmethod
@@ -30,8 +26,7 @@ class LaserCodeConfig(ABC):
 
 
 class SinglePropertyLaserCodeConfig(LaserCodeConfig):
-    def __init__(self, pylon: int, property_id: str, digits: int) -> None:
-        super().__init__(pylon)
+    def __init__(self, property_id: str, digits: int) -> None:
         self.property_id = property_id
         self.digits = digits
 
@@ -43,10 +38,7 @@ class SinglePropertyLaserCodeConfig(LaserCodeConfig):
 
 
 class MultiplePropertyLaserCodeConfig(LaserCodeConfig):
-    def __init__(
-        self, pylon: int, property_digit_mappings: list[tuple[str, int]]
-    ) -> None:
-        super().__init__(pylon)
+    def __init__(self, property_digit_mappings: list[tuple[str, int]]) -> None:
         self.property_digit_mappings = property_digit_mappings
 
     def iter_prop_ids(self) -> Iterator[str]:
