@@ -35,23 +35,18 @@ tasks:
   Strike: 640
   TARCAP: 240
 laser_codes:
-  - pylon: 2
-    property:
+  - property:
       id: Sta2LaserCode
       digits: 3
-  - pylon: 4
-    property:
+  - property:
       id: LCFTLaserCode
       digits: 3
-  - pylon: 5
-    property:
+  - property:
       id: Sta5LaserCode
       digits: 3
-  - pylon: 12
-    property:
+  - property:
       id: RCFTLaserCode
       digits: 3
-  - pylon: 14
-    property:
+  - property:
       id: Sta8LaserCode
       digits: 3

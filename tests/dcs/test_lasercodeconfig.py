@@ -6,7 +6,7 @@ from game.dcs.lasercodeconfig import (
 
 
 def test_singlepropertylasercodeproperty() -> None:
-    config = SinglePropertyLaserCodeConfig(0, "code", 3)
+    config = SinglePropertyLaserCodeConfig("code", 3)
     assert list(config.iter_prop_ids()) == ["code"]
     assert config.property_dict_for_code(1688) == {"code": 688}
     assert config.property_dict_for_code(1000) == {"code": 0}
@@ -16,7 +16,6 @@ def test_singlepropertylasercodeproperty() -> None:
 
 def test_multiplepropertylasercodeproperty() -> None:
     config = MultiplePropertyLaserCodeConfig(
-        0,
         [
             ("digit0", 0),
             ("digit1", 1),
@@ -46,7 +45,6 @@ def test_lasercodeconfig_from_yaml() -> None:
     config = LaserCodeConfig.from_yaml(
         {"pylon": 0, "property": {"id": "code", "digits": 3}}
     )
-    assert config.pylon == 0
     assert config.property_dict_for_code(1688) == {"code": 688}
 
     config = LaserCodeConfig.from_yaml(
@@ -59,7 +57,6 @@ def test_lasercodeconfig_from_yaml() -> None:
             ],
         }
     )
-    assert config.pylon == 1
     assert config.property_dict_for_code(1688) == {
         "digit0": 8,
         "digit1": 8,
