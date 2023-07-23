@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from typing import Any
 
 
@@ -20,6 +21,10 @@ class LaserCodeConfig(ABC):
         )
 
     @abstractmethod
+    def iter_prop_ids(self) -> Iterator[str]:
+        ...
+
+    @abstractmethod
     def property_dict_for_code(self, code: int) -> dict[str, int]:
         ...
 
@@ -29,6 +34,9 @@ class SinglePropertyLaserCodeConfig(LaserCodeConfig):
         super().__init__(pylon)
         self.property_id = property_id
         self.digits = digits
+
+    def iter_prop_ids(self) -> Iterator[str]:
+        yield self.property_id
 
     def property_dict_for_code(self, code: int) -> dict[str, int]:
         return {self.property_id: code % 10**self.digits}
@@ -40,6 +48,9 @@ class MultiplePropertyLaserCodeConfig(LaserCodeConfig):
     ) -> None:
         super().__init__(pylon)
         self.property_digit_mappings = property_digit_mappings
+
+    def iter_prop_ids(self) -> Iterator[str]:
+        yield from (i for i, p in self.property_digit_mappings)
 
     def property_dict_for_code(self, code: int) -> dict[str, int]:
         d = {}

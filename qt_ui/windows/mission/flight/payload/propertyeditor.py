@@ -37,6 +37,9 @@ class PropertyEditor(QGridLayout):
             if prop.player_only and not flight.client_count:
                 continue
 
+            if not flight.unit_type.should_show_prop(prop.identifier):
+                continue
+
             try:
                 widget = self.control_for_property(prop)
             except (MissingPropertyDataError, UnhandledControlTypeError):
