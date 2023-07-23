@@ -43,11 +43,14 @@ class PydcsWaypointBuilder:
         self.unit_map = unit_map
         self.generated_waypoint_idx = generated_waypoint_idx
 
+    def dcs_name_for_waypoint(self) -> str:
+        return self.waypoint.name
+
     def build(self) -> MovingPoint:
         waypoint = self.group.add_waypoint(
             self.waypoint.position,
             self.waypoint.alt.meters,
-            name=self.waypoint.name,
+            name=self.dcs_name_for_waypoint(),
         )
 
         if self.waypoint.flyover:

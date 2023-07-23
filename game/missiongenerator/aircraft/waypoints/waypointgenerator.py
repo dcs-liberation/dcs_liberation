@@ -43,6 +43,7 @@ from .seadingress import SeadIngressBuilder
 from .splitpoint import SplitPointBuilder
 from .strikeingress import StrikeIngressBuilder
 from .sweepingress import SweepIngressBuilder
+from .target import TargetBuilder
 
 
 class WaypointGenerator:
@@ -128,6 +129,8 @@ class WaypointGenerator:
         self, waypoint: FlightWaypoint, generated_waypoint_index: int
     ) -> PydcsWaypointBuilder:
         builders = {
+            FlightWaypointType.CARGO_STOP: CargoStopBuilder,
+            FlightWaypointType.DROPOFF_ZONE: LandingZoneBuilder,
             FlightWaypointType.INGRESS_ANTI_SHIP: AntiShipIngressBuilder,
             FlightWaypointType.INGRESS_BAI: BaiIngressBuilder,
             FlightWaypointType.INGRESS_CAS: CasIngressBuilder,
@@ -138,16 +141,16 @@ class WaypointGenerator:
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
             FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
-            FlightWaypointType.SPLIT: SplitPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP_ZONE: LandingZoneBuilder,
-            FlightWaypointType.DROPOFF_ZONE: LandingZoneBuilder,
-            FlightWaypointType.REFUEL: RefuelPointBuilder,
             FlightWaypointType.RECOVERY_TANKER: RecoveryTankerBuilder,
-            FlightWaypointType.CARGO_STOP: CargoStopBuilder,
+            FlightWaypointType.REFUEL: RefuelPointBuilder,
+            FlightWaypointType.SPLIT: SplitPointBuilder,
+            FlightWaypointType.TARGET_GROUP_LOC: TargetBuilder,
+            FlightWaypointType.TARGET_POINT: TargetBuilder,
         }
         builder = builders.get(waypoint.waypoint_type, DefaultWaypointBuilder)
         return builder(
