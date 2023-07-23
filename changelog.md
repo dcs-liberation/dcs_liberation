@@ -25,6 +25,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[UI]** Fixed deleting waypoints in custom flight plans deleting the wrong waypoint.
 * **[UI]** Fixed flight properties UI to support F-15E S4+ laser codes.
 * **[UI]** In unit transfer dialog, only list control points that are reachable from the control point units are being transferred from.
+* **[UI]** Fixed UI bug where altering an "ahead of package" TOT offset would change the offset back to a "behind pacakge" offset.
 
 # 8.1.0
 

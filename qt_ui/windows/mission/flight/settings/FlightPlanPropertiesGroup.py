@@ -51,10 +51,10 @@ class FlightPlanPropertiesGroup(QGroupBox):
 
         tot_offset_layout.addWidget(QLabel("TOT Offset (minutes:seconds)"))
         tot_offset_layout.addStretch()
-        negative_offset_checkbox = QCheckBox("Ahead of package")
-        negative_offset_checkbox.setChecked(negative)
-        negative_offset_checkbox.toggled.connect(self.toggle_negative_offset)
-        tot_offset_layout.addWidget(negative_offset_checkbox)
+        self.negative_offset_checkbox = QCheckBox("Ahead of package")
+        self.negative_offset_checkbox.setChecked(negative)
+        self.negative_offset_checkbox.toggled.connect(self.toggle_negative_offset)
+        tot_offset_layout.addWidget(self.negative_offset_checkbox)
 
         self.tot_offset_spinner = QTimeEdit(QTime(hours, minutes, seconds))
         self.tot_offset_spinner.setMaximumTime(QTime(59, 0))
@@ -113,9 +113,12 @@ class FlightPlanPropertiesGroup(QGroupBox):
             )
 
     def set_tot_offset(self, offset: QTime) -> None:
-        self.flight.flight_plan.tot_offset = timedelta(
+        offset = timedelta(
             hours=offset.hour(), minutes=offset.minute(), seconds=offset.second()
         )
+        if self.negative_offset_checkbox.isChecked():
+            offset = -offset
+        self.flight.flight_plan.tot_offset = offset
         self.update_departure_time()
 
     def toggle_negative_offset(self) -> None:
