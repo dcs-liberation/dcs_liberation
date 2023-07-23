@@ -119,8 +119,10 @@ class FlightPlanPropertiesGroup(QGroupBox):
         if self.negative_offset_checkbox.isChecked():
             offset = -offset
         self.flight.flight_plan.tot_offset = offset
+        self.package_model.update_tot()
         self.update_departure_time()
 
     def toggle_negative_offset(self) -> None:
         self.flight.flight_plan.tot_offset = -self.flight.flight_plan.tot_offset
+        self.package_model.update_tot()
         self.update_departure_time()
