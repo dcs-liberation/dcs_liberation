@@ -62,7 +62,7 @@ class PatrollingFlightPlan(StandardFlightPlan[LayoutT], UiZoneDisplay, ABC):
 
     @property
     def patrol_start_time(self) -> datetime:
-        return self.package.time_over_target
+        return self.tot
 
     @property
     def patrol_end_time(self) -> datetime:
