@@ -325,8 +325,18 @@ class AircraftType(UnitType[Type[FlyingType]]):
     def channel_name(self, radio_id: int, channel_id: int) -> str:
         return self.channel_namer.channel_name(radio_id, channel_id)
 
+    @cached_property
+    def laser_code_prop_ids(self) -> set[str]:
+        laser_code_props: set[str] = set()
+        for laser_code_config in self.laser_code_configs:
+            laser_code_props.update(laser_code_config.iter_prop_ids())
+        return laser_code_props
+
     def iter_props(self) -> Iterator[UnitPropertyDescription]:
         yield from self.dcs_unit_type.properties.values()
+
+    def should_show_prop(self, prop_id: str) -> bool:
+        return prop_id not in self.laser_code_prop_ids
 
     def capable_of(self, task: FlightType) -> bool:
         return task in self.task_priorities
