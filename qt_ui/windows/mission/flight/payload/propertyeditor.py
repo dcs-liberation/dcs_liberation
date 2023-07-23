@@ -1,3 +1,4 @@
+import itertools
 import logging
 from typing import Callable
 
@@ -23,7 +24,9 @@ class PropertyEditor(QGridLayout):
         self.flight_member = flight_member
         self.flight_member_update_listeners: list[Callable[[FlightMember], None]] = []
 
-        for row, prop in enumerate(flight.unit_type.iter_props()):
+        last_label: QWidget | None = None
+        row = itertools.count()
+        for prop in flight.unit_type.iter_props():
             if prop.label is None:
                 if prop.control != "label":
                     logging.error(
@@ -44,15 +47,26 @@ class PropertyEditor(QGridLayout):
                 )
                 continue
 
+            # Draw any deferred label if this is a real control.
+            if last_label is not None and widget is not None:
+                self.addWidget(last_label, next(row), 0)
+                last_label = None
+
             label = prop.label
             if widget is None:
                 label = f"<strong>{label}</label>"
-            self.addWidget(QLabel(label), row, 0)
 
-            # If prop.control is "label", widget will be None. We only need to add the
-            # label, not the control.
-            if widget is not None:
-                self.addWidget(widget, row, 1)
+            label = QLabel(label)
+            if widget is None:
+                # The "control" is only a section label. Defer adding it to the layout
+                # so that we can skip empty sections.
+                last_label = label
+            else:
+                # Else the label is for the control itself and should be drawn
+                # immediately.
+                this_row = next(row)
+                self.addWidget(label, this_row, 0)
+                self.addWidget(widget, this_row, 1)
 
     def control_for_property(self, prop: UnitPropertyDescription) -> QWidget | None:
         # Valid values are:
