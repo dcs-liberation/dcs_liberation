@@ -82,4 +82,10 @@ class FlightMembers(IFlightRoster):
             return
         loadout = self.members[0].loadout
         for member in self.members[1:]:
-            member.loadout = loadout.clone()
+            # Do not clone the loadout, we want any changes in the UI to be mirrored
+            # across all flight members.
+            member.loadout = loadout
+
+    def use_distinct_loadouts_for_each_member(self) -> None:
+        for member in self.members:
+            member.loadout = member.loadout.clone()
