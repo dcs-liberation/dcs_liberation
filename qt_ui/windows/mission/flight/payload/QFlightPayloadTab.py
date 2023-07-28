@@ -151,6 +151,9 @@ class QFlightPayloadTab(QFrame):
             self.payload_editor.setDisabled(
                 self.flight.use_same_loadout_for_all_members
             )
+        else:
+            self.loadout_selector.setEnabled(True)
+            self.payload_editor.setEnabled(True)
 
     def loadout_at(self, index: int) -> Loadout:
         loadout = self.loadout_selector.itemData(index)
