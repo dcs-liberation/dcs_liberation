@@ -22,6 +22,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Flight Planning]** Patrolling flight plans (CAS, CAP, refueling, etc) now handle TOT offsets.
 * **[Mission Generation]** Restored previous AI behavior for anti-ship missions. A DCS update caused only a single aircraft in a flight to attack. The full flight will now attack like they used to.
 * **[Mission Generation]** Fix generation of OCA Runway missions to allow LGBs to be used.
+* **[Mission Generation]** Fixed AI flights flying far too slowly toward NAV points.
 * **[New Game Wizard]** Factions are reset to default after clicking "Back" to Theater Configuration screen.
 * **[Plugins]** Fixed Lua errors in Skynet plugin that would occur whenever one coalition had no IADS nodes.
 * **[UI]** Fixed deleting waypoints in custom flight plans deleting the wrong waypoint.
