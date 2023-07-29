@@ -245,7 +245,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[5] = {
-					["CLSID"] = "{CFT_R_MK84LD_x_2}",
+					["CLSID"] = "{CFT_R_BLU107_x_6}",
 					["num"] = 12,
 				},
 				[6] = {
@@ -253,12 +253,8 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[7] = {
-					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
-					["num"] = 8,
-					["settings"] = {
-						["GUI_fuze_type"] = 1,
-						["arm_delay_ctrl_FMU139CB_LD"] = 1,
-						["function_delay_ctrl_FMU139CB_LD"] = 0,
+					["CLSID"] = "{F-15E_AAQ-14_LANTIRN}",
+					["num"] = 7,
 					},
 				},
 				[8] = {
@@ -266,7 +262,7 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[9] = {
-					["CLSID"] = "{CFT_L_MK84LD_x_2}",
+					["CLSID"] = "{CFT_L_BLU107_x_6}",
 					["num"] = 4,
 				},
 				[10] = {
