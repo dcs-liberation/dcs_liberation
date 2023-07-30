@@ -255,7 +255,6 @@ local unitPayloads = {
 				[7] = {
 					["CLSID"] = "{F-15E_AAQ-14_LANTIRN}",
 					["num"] = 7,
-					},
 				},
 				[8] = {
 					["CLSID"] = "{F-15E_AAQ-14_LANTIRN}",
