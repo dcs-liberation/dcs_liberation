@@ -397,6 +397,9 @@ class Heading:
     def __sub__(self, other: Heading) -> Heading:
         return Heading.from_degrees(self.degrees - other.degrees)
 
+    def __str__(self) -> str:
+        return f"{self.heading_in_degrees}°"
+
 
 @dataclass(frozen=True, order=True)
 class Pressure:
