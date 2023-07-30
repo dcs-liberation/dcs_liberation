@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 from game import Game
 from game.ato import Flight
-from game.flightplan import HoldZoneGeometry, IpZoneGeometry, JoinZoneGeometry
+from game.flightplan import HoldZoneGeometry, JoinZoneGeometry
 from ..leaflet import LeafletLine, LeafletPoly, ShapelyUtil
 
 
@@ -55,42 +55,6 @@ class HoldZonesJs(BaseModel):
             ),
             preferredLines=ShapelyUtil.lines_to_leaflet(
                 geometry.preferred_lines, game.theater
-            ),
-        )
-
-
-class IpZonesJs(BaseModel):
-    home_bubble: LeafletPoly = Field(alias="homeBubble")
-    ipBubble: LeafletPoly = Field(alias="ipBubble")
-    permissibleZone: LeafletPoly = Field(alias="permissibleZone")
-    safeZones: list[LeafletPoly] = Field(alias="safeZones")
-    preferred_threatened_zones: list[LeafletPoly] = Field(
-        alias="preferredThreatenedZones"
-    )
-    tolerable_threatened_lines: list[LeafletLine] = Field(
-        alias="tolerableThreatenedLines"
-    )
-
-    class Config:
-        title = "IpZones"
-
-    @classmethod
-    def for_flight(cls, flight: Flight, game: Game) -> IpZonesJs:
-        target = flight.package.target
-        home = flight.departure
-        geometry = IpZoneGeometry(target.position, home.position, game.blue)
-        return IpZonesJs(
-            homeBubble=ShapelyUtil.poly_to_leaflet(geometry.home_bubble, game.theater),
-            ipBubble=ShapelyUtil.poly_to_leaflet(geometry.ip_bubble, game.theater),
-            permissibleZone=ShapelyUtil.poly_to_leaflet(
-                geometry.permissible_zone, game.theater
-            ),
-            safeZones=ShapelyUtil.polys_to_leaflet(geometry.safe_zones, game.theater),
-            preferredThreatenedZones=ShapelyUtil.polys_to_leaflet(
-                geometry.preferred_threatened_zones, game.theater
-            ),
-            tolerableThreatenedLines=ShapelyUtil.lines_to_leaflet(
-                geometry.tolerable_threatened_lines, game.theater
             ),
         )
 

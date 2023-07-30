@@ -50,14 +50,6 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/debug/waypoint-geometries/hold/${queryArg.flightId}`,
       }),
     }),
-    getDebugIpZones: build.query<
-      GetDebugIpZonesApiResponse,
-      GetDebugIpZonesApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/debug/waypoint-geometries/ip/${queryArg.flightId}`,
-      }),
-    }),
     getDebugJoinZones: build.query<
       GetDebugJoinZonesApiResponse,
       GetDebugJoinZonesApiArg
@@ -245,11 +237,6 @@ export type GetDebugHoldZonesApiResponse =
 export type GetDebugHoldZonesApiArg = {
   flightId: string;
 };
-export type GetDebugIpZonesApiResponse =
-  /** status 200 Successful Response */ IpZones;
-export type GetDebugIpZonesApiArg = {
-  flightId: string;
-};
 export type GetDebugJoinZonesApiResponse =
   /** status 200 Successful Response */ JoinZones;
 export type GetDebugJoinZonesApiArg = {
@@ -379,14 +366,6 @@ export type HoldZones = {
   permissibleZones: LatLng[][][];
   preferredLines: LatLng[][];
 };
-export type IpZones = {
-  homeBubble: LatLng[][];
-  ipBubble: LatLng[][];
-  permissibleZone: LatLng[][];
-  safeZones: LatLng[][][];
-  preferredThreatenedZones: LatLng[][][];
-  tolerableThreatenedLines: LatLng[][];
-};
 export type JoinZones = {
   homeBubble: LatLng[][];
   targetBubble: LatLng[][];
@@ -499,7 +478,6 @@ export const {
   useSetControlPointDestinationMutation,
   useClearControlPointDestinationMutation,
   useGetDebugHoldZonesQuery,
-  useGetDebugIpZonesQuery,
   useGetDebugJoinZonesQuery,
   useListFlightsQuery,
   useGetFlightByIdQuery,

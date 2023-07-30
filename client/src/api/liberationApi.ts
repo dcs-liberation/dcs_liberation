@@ -30,11 +30,6 @@ export const liberationApi = _liberationApi.enhanceEndpoints({
         { type: Tags.FLIGHT_PLAN, id: arg.flightId },
       ],
     },
-    getDebugIpZones: {
-      providesTags: (result, error, arg) => [
-        { type: Tags.FLIGHT_PLAN, id: arg.flightId },
-      ],
-    },
     getDebugJoinZones: {
       providesTags: (result, error, arg) => [
         { type: Tags.FLIGHT_PLAN, id: arg.flightId },
