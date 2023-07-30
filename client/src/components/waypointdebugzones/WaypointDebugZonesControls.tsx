@@ -1,7 +1,6 @@
 import { selectSelectedFlightId } from "../../api/flightsSlice";
 import { useAppSelector } from "../../app/hooks";
 import { HoldZonesLayer } from "./HoldZones";
-import { IpZonesLayer } from "./IpZones";
 import { JoinZonesLayer } from "./JoinZones";
 import { LayersControl } from "react-leaflet";
 
@@ -16,9 +15,6 @@ export function WaypointDebugZonesControls() {
 
   return (
     <>
-      <LayersControl.Overlay name="IP zones">
-        <IpZonesLayer flightId={selectedFlightId} />
-      </LayersControl.Overlay>
       <LayersControl.Overlay name="Join zones">
         <JoinZonesLayer flightId={selectedFlightId} />
       </LayersControl.Overlay>

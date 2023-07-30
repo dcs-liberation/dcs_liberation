@@ -6,8 +6,10 @@ from typing import TYPE_CHECKING
 from dcs import Point
 
 from game.ato.flightplans.waypointbuilder import WaypointBuilder
-from game.flightplan import IpZoneGeometry, JoinZoneGeometry
+from game.flightplan import JoinZoneGeometry
+from game.flightplan.ipsolver import IpSolver
 from game.flightplan.refuelzonegeometry import RefuelZoneGeometry
+from game.utils import dcs_to_shapely_point
 
 if TYPE_CHECKING:
     from game.ato import Package
@@ -26,11 +28,15 @@ class PackageWaypoints:
         origin = package.departure_closest_to_target()
 
         # Start by picking the best IP for the attack.
-        ingress_point = IpZoneGeometry(
-            package.target.position,
-            origin.position,
-            coalition,
-        ).find_best_ip()
+        ingress_point_shapely = IpSolver(
+            dcs_to_shapely_point(origin.position),
+            dcs_to_shapely_point(package.target.position),
+            coalition.doctrine,
+            coalition.opponent.threat_zone.all,
+        ).solve()
+        ingress_point = origin.position.new_in_same_map(
+            ingress_point_shapely.x, ingress_point_shapely.y
+        )
 
         join_point = JoinZoneGeometry(
             package.target.position,

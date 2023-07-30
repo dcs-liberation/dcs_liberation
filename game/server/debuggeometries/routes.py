@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from game import Game
 from game.server import GameContext
-from .models import HoldZonesJs, IpZonesJs, JoinZonesJs
+from .models import HoldZonesJs, JoinZonesJs
 
 router: APIRouter = APIRouter(prefix="/debug/waypoint-geometries")
 
@@ -16,13 +16,6 @@ def hold_zones(
     flight_id: UUID, game: Game = Depends(GameContext.require)
 ) -> HoldZonesJs:
     return HoldZonesJs.for_flight(game.db.flights.get(flight_id), game)
-
-
-@router.get(
-    "/ip/{flight_id}", operation_id="get_debug_ip_zones", response_model=IpZonesJs
-)
-def ip_zones(flight_id: UUID, game: Game = Depends(GameContext.require)) -> IpZonesJs:
-    return IpZonesJs.for_flight(game.db.flights.get(flight_id), game)
 
 
 @router.get(

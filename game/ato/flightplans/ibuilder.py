@@ -44,7 +44,11 @@ class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
             ) from ex
 
     def _generate_package_waypoints_if_needed(self) -> None:
-        if self.package.waypoints is None:
+        # Package waypoints are only valid for offensive missions. Skip this if the
+        # target is friendly.
+        if self.package.waypoints is None and not self.package.target.is_friendly(
+            self.is_player
+        ):
             self.package.waypoints = PackageWaypoints.create(
                 self.package, self.coalition
             )
