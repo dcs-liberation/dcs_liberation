@@ -97,6 +97,8 @@ class JoinZoneGeometry:
         self.preferred_lines = preferred_lines
 
     def find_best_join_point(self) -> Point:
+        # TODO: afaict the permissible_lines case is entirely unnecessary. The two
+        # definitions appear equivalent.
         if self.preferred_lines.is_empty:
             join, _ = shapely.ops.nearest_points(self.permissible_zones, self.ip)
         else:
