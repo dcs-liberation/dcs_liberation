@@ -2,7 +2,7 @@
 country: Argentina
 name: Argentina 1982
 authors: Nosaj
-description: <p>Starter Argentina faction during falklands war for testing the ARA Vienticinco de Mayo. Using the Castle Class as a stand-in for the rest of the Argentine Navy. </p>
+description: <p>Starter Argentina faction during falklands war for testing the ARA Veinticinco de Mayo. Using the Castle Class as a stand-in for the rest of the Argentine Navy. </p>
 locales:
   - es_ES
 aircrafts:
@@ -30,7 +30,7 @@ infantry_units:
 preset_groups:
   - Roland
 naval_units:
-  - ARA Vienticinco de Mayo
+  - ARA Veinticinco de Mayo
   - Castle Class
 missiles: []
 air_defense_units:
