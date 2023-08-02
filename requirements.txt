@@ -1,4 +1,4 @@
-altgraph==0.17.3
+﻿altgraph==0.17.3
 anyio==3.6.2
 asgiref==3.6.0
 attrs==22.2.0
@@ -34,8 +34,8 @@ pluggy==1.0.0
 pre-commit==2.21.0
 pydantic==1.10.7
 git+https://github.com/pydcs/dcs@fe541426f36889d7e0275b71656f5c2db2c617ce#egg=pydcs
-pyinstaller==5.12.0
-pyinstaller-hooks-contrib==2022.14
+pyinstaller==5.13.0
+pyinstaller-hooks-contrib==2023.6
 pyproj==3.4.1
 PySide6==6.4.1
 PySide6-Addons==6.4.1
@@ -45,7 +45,7 @@ pytest-cov==4.0.0
 pytest-mock==3.10.0
 python-dateutil==2.8.2
 python-dotenv==0.21.0
-pywin32-ctypes==0.2.0
+pywin32-ctypes==0.2.2
 PyYAML==6.0
 shapely==2.0.1
 shiboken6==6.4.1
