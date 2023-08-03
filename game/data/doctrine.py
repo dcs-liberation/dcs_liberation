@@ -18,6 +18,8 @@ class GroundUnitProcurementRatios:
 
 @dataclass(frozen=True)
 class Doctrine:
+    name: str
+
     cas: bool
     cap: bool
     sead: bool
@@ -79,6 +81,7 @@ class Doctrine:
 
 
 MODERN_DOCTRINE = Doctrine(
+    "modern",
     cap=True,
     cas=True,
     sead=True,
@@ -116,6 +119,7 @@ MODERN_DOCTRINE = Doctrine(
 )
 
 COLDWAR_DOCTRINE = Doctrine(
+    name="coldwar",
     cap=True,
     cas=True,
     sead=True,
@@ -153,6 +157,7 @@ COLDWAR_DOCTRINE = Doctrine(
 )
 
 WWII_DOCTRINE = Doctrine(
+    name="ww2",
     cap=True,
     cas=True,
     sead=False,
@@ -187,3 +192,9 @@ WWII_DOCTRINE = Doctrine(
         }
     ),
 )
+
+ALL_DOCTRINES = [
+    COLDWAR_DOCTRINE,
+    MODERN_DOCTRINE,
+    WWII_DOCTRINE,
+]
