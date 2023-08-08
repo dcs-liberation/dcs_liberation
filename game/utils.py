@@ -201,6 +201,9 @@ class Distance:
     def inf(cls) -> Distance:
         return cls.from_meters(math.inf)
 
+    def __str__(self) -> str:
+        return f"{self.distance_in_meters} meters"
+
     def __add__(self, other: Distance) -> Distance:
         return meters(self.meters + other.meters)
 
