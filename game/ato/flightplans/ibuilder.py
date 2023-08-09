@@ -32,9 +32,9 @@ class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
             assert self._flight_plan is not None
         return self._flight_plan
 
-    def regenerate(self) -> None:
+    def regenerate(self, dump_debug_info: bool = False) -> None:
         try:
-            self._generate_package_waypoints_if_needed()
+            self._generate_package_waypoints_if_needed(dump_debug_info)
             self._flight_plan = self.build()
         except NavMeshError as ex:
             color = "blue" if self.flight.squadron.player else "red"
@@ -43,14 +43,15 @@ class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
                 f"{self.flight.departure} to {self.package.target}"
             ) from ex
 
-    def _generate_package_waypoints_if_needed(self) -> None:
+    def _generate_package_waypoints_if_needed(self, dump_debug_info: bool) -> None:
         # Package waypoints are only valid for offensive missions. Skip this if the
         # target is friendly.
-        if self.package.waypoints is None and not self.package.target.is_friendly(
-            self.is_player
-        ):
+        if self.package.target.is_friendly(self.is_player):
+            return
+
+        if self.package.waypoints is None or dump_debug_info:
             self.package.waypoints = PackageWaypoints.create(
-                self.package, self.coalition
+                self.package, self.coalition, dump_debug_info
             )
 
     @property
