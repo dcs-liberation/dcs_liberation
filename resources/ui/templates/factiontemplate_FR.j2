@@ -7,20 +7,17 @@
 
 <strong>Aéronefs disponibles :</strong>
 <ul>
-{% for aircraft in faction.aircrafts | sort(attribute="name") %}
-<li>{{aircraft.name}}</li>
+{% for aircraft in faction.aircrafts | sort(attribute="display_name") %}
+<li>{{aircraft.display_name}}</li>
 {% endfor %}
 </ul>
 <br/>
 
 <strong>Véhicules disponibles :</strong>
 <ul>
-{% for vehicle in faction.frontline_units | sort(attribute="name") %}
+{% for vehicle in faction.frontline_units | sort(attribute="display_name") %}
 <li>
-{% if vehicle.name is not none %}
-    {{ vehicle.name }}
-{% else %}
-    {{ vehicle.id }}
+{{ vehicle.display_name }}
 {%endif %}
 </li>
 {% endfor %}
@@ -29,13 +26,9 @@
 
 <strong>Pièces d'artillerie :</strong>
 <ul>
-{% for arty in faction.artillery_units | sort(attribute="name") %}
+{% for arty in faction.artillery_units | sort(attribute="display_name") %}
 <li>
-{% if arty.name is not none %}
-    {{ arty.name }}
-{% else %}
-    {{ arty.id }}
-{%endif %}
+{{ arty.display_name }}
 </li>
 {% endfor %}
 </ul>

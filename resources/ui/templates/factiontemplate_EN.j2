@@ -19,21 +19,17 @@
     custom campaigns guide</a>.
 </p>
 <ul>
-{% for aircraft in faction.aircrafts | sort(attribute="name") %}
-<li>{{aircraft.name}}</li>
+{% for aircraft in faction.aircrafts | sort(attribute="display_name") %}
+<li>{{aircraft.display_name}}</li>
 {% endfor %}
 </ul>
 <br/>
 
 <strong>Frontlines vehicles:</strong>
 <ul>
-{% for vehicle in faction.frontline_units | sort(attribute="name") %}
+{% for vehicle in faction.frontline_units | sort(attribute="display_name") %}
 <li>
-{% if vehicle.name is not none %}
-    {{ vehicle.name }}
-{% else %}
-    {{ vehicle.id }}
-{%endif %}
+{{ vehicle.display_name }}
 </li>
 {% endfor %}
 </ul>
@@ -41,13 +37,9 @@
 
 <strong>Artillery units:</strong>
 <ul>
-{% for arty in faction.artillery_units | sort(attribute="name") %}
+{% for arty in faction.artillery_units | sort(attribute="display_name") %}
 <li>
-{% if arty.name is not none %}
-    {{ arty.name }}
-{% else %}
-    {{ arty.id }}
-{%endif %}
+{{ arty.display_name }}
 </li>
 {% endfor %}
 </ul>
