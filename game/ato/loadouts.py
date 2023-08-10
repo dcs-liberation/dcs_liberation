@@ -138,7 +138,9 @@ class Loadout:
                 }
             except KeyError:
                 logging.exception(
-                    "Ignoring %s loadout with invalid weapons: %s", aircraft.name, name
+                    "Ignoring %s loadout with invalid weapons: %s",
+                    aircraft.variant_id,
+                    name,
                 )
                 continue
 

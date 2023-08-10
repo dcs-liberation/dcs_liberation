@@ -4,7 +4,7 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Iterator, Type
+from typing import ClassVar, Iterator, Type, Any
 
 import yaml
 from dcs.ships import ship_map
@@ -12,6 +12,7 @@ from dcs.unittype import ShipType
 
 from game.data.units import UnitClass
 from game.dcs.unittype import UnitType
+from game.savecompat import has_save_compat_for
 
 
 @dataclass(frozen=True)
@@ -21,9 +22,20 @@ class ShipUnitType(UnitType[Type[ShipType]]):
         list
     )
 
+    @has_save_compat_for(9)
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        # Save compat: the `name` field has been renamed `variant_id`.
+        if "name" in state:
+            state["variant_id"] = state.pop("name")
+
+        # Update any existing models with new data on load.
+        updated = ShipUnitType.named(state["variant_id"])
+        state.update(updated.__dict__)
+        self.__dict__.update(state)
+
     @classmethod
     def register(cls, unit_type: ShipUnitType) -> None:
-        cls._by_name[unit_type.name] = unit_type
+        cls._by_name[unit_type.variant_id] = unit_type
         cls._by_unit_type[unit_type.dcs_unit_type].append(unit_type)
 
     @classmethod
@@ -66,7 +78,7 @@ class ShipUnitType(UnitType[Type[ShipType]]):
             yield ShipUnitType(
                 dcs_unit_type=ship,
                 unit_class=unit_class,
-                name=variant,
+                variant_id=variant,
                 description=data.get(
                     "description",
                     f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",

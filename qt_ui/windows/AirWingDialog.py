@@ -44,7 +44,7 @@ class SquadronDelegate(TwoColumnRowDelegate):
                 nickname = ""
             return f"{squadron.name}{nickname}"
         elif (row, column) == (0, 1):
-            return squadron.aircraft.name
+            return squadron.aircraft.variant_id
         elif (row, column) == (1, 0):
             return squadron.location.name
         elif (row, column) == (1, 1):
@@ -134,7 +134,7 @@ class AircraftInventoryData:
                 player = "Player" if pilot.player else "AI"
             yield AircraftInventoryData(
                 flight.departure.name,
-                flight.unit_type.name,
+                flight.unit_type.variant_id,
                 flight_type,
                 target,
                 pilot_name,
@@ -147,7 +147,7 @@ class AircraftInventoryData:
     ) -> Iterator[AircraftInventoryData]:
         for _ in range(0, squadron.untasked_aircraft):
             yield AircraftInventoryData(
-                squadron.name, squadron.aircraft.name, "Idle", "N/A", "N/A", "N/A"
+                squadron.name, squadron.aircraft.variant_id, "Idle", "N/A", "N/A", "N/A"
             )
 
 

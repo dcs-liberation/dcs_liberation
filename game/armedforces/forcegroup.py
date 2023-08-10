@@ -10,19 +10,18 @@ import yaml
 from dcs.unittype import ShipType, StaticType, UnitType as DcsUnitType, VehicleType
 
 from game.data.groups import GroupTask
-from game.data.radar_db import UNITS_WITH_RADAR
 from game.dcs.groundunittype import GroundUnitType
 from game.dcs.helpers import static_type_from_name
 from game.dcs.shipunittype import ShipUnitType
 from game.dcs.unittype import UnitType
+from game.layout import LAYOUTS
+from game.layout.layout import TgoLayout, TgoLayoutUnitGroup
+from game.point_with_heading import PointWithHeading
 from game.theater.theatergroundobject import (
     IadsGroundObject,
     IadsBuildingGroundObject,
     NavalGroundObject,
 )
-from game.layout import LAYOUTS
-from game.layout.layout import TgoLayout, TgoLayoutUnitGroup
-from game.point_with_heading import PointWithHeading
 from game.theater.theatergroup import IadsGroundGroup, IadsRole, TheaterGroup
 from game.utils import escape_string_for_lua
 
@@ -288,7 +287,7 @@ class ForceGroup:
             unit.id = game.next_unit_id()
             # Add unit name escaped so that we do not have scripting issues later
             unit.name = escape_string_for_lua(
-                unit.unit_type.name if unit.unit_type else unit.type.name
+                unit.unit_type.variant_id if unit.unit_type else unit.type.name
             )
             unit.position = PointWithHeading.from_point(
                 ground_object.position + unit.position,

@@ -159,7 +159,7 @@ class Faction:
     def air_defenses(self) -> list[str]:
         """Returns the Air Defense types"""
         # This is used for the faction overview in NewGameWizard
-        air_defenses = [a.name for a in self.air_defense_units]
+        air_defenses = [a.variant_id for a in self.air_defense_units]
         air_defenses.extend(
             [
                 pg.name

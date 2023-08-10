@@ -84,11 +84,11 @@ class AircraftIntelLayout(IntelTableLayout):
                 continue
 
             self.add_header(f"{control_point.name} ({base_total})")
-            for airframe in sorted(allocation.present, key=lambda k: k.name):
+            for airframe in sorted(allocation.present, key=lambda k: k.variant_id):
                 count = allocation.present[airframe]
                 if not count:
                     continue
-                self.add_row(f"    {airframe.name}", count)
+                self.add_row(f"    {airframe.variant_id}", count)
             self.add_row("")
 
         self.add_row("<b>Total</b>", total)
@@ -113,11 +113,11 @@ class ArmyIntelLayout(IntelTableLayout):
                 continue
 
             self.add_header(f"{control_point.name} ({base.total_armor})")
-            for vehicle in sorted(base.armor, key=lambda k: k.name):
+            for vehicle in sorted(base.armor, key=lambda k: k.variant_id):
                 count = base.armor[vehicle]
                 if not count:
                     continue
-                self.add_row(f"    {vehicle.name}", count)
+                self.add_row(f"    {vehicle.variant_id}", count)
             self.add_row("")
 
         self.add_row("<b>Total</b>", total)

@@ -11,12 +11,12 @@ from PySide6.QtWidgets import (
 )
 
 from game.dcs.aircrafttype import AircraftType
+from game.purchaseadapter import AircraftPurchaseAdapter
 from game.squadrons import Squadron
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.uiconstants import ICONS
 from qt_ui.windows.basemenu.UnitTransactionFrame import UnitTransactionFrame
-from game.purchaseadapter import AircraftPurchaseAdapter
 
 
 class QAircraftRecruitmentMenu(UnitTransactionFrame[Squadron]):
@@ -44,7 +44,9 @@ class QAircraftRecruitmentMenu(UnitTransactionFrame[Squadron]):
         for squadron in cp.squadrons:
             unit_types.add(squadron.aircraft)
 
-        sorted_squadrons = sorted(cp.squadrons, key=lambda s: (s.aircraft.name, s.name))
+        sorted_squadrons = sorted(
+            cp.squadrons, key=lambda s: (s.aircraft.variant_id, s.name)
+        )
         for row, squadron in enumerate(sorted_squadrons):
             self.add_purchase_row(squadron, task_box_layout, row)
 
