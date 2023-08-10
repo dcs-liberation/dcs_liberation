@@ -12,7 +12,6 @@ from .flightmembers import FlightMembers
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Navigating, Uninitialized
 from .flightstate.killed import Killed
-from ..savecompat import has_save_compat_for
 from ..sidc import (
     Entity,
     SidcDescribable,
@@ -108,14 +107,9 @@ class Flight(SidcDescribable):
         del state["state"]
         return state
 
-    @has_save_compat_for(9)
     def __setstate__(self, state: dict[str, Any]) -> None:
         state["state"] = Uninitialized(self, state["squadron"].settings)
-        if "use_same_loadout_for_all_members" not in state:
-            state["use_same_loadout_for_all_members"] = True
         self.__dict__.update(state)
-        if isinstance(self.roster, FlightRoster):
-            self.roster = FlightMembers.from_roster(self, self.roster)
 
     @property
     def blue(self) -> bool:

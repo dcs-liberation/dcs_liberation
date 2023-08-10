@@ -10,7 +10,6 @@ from dcs.unittype import ShipType
 
 from game.data.units import UnitClass
 from game.dcs.unittype import UnitType
-from game.savecompat import has_save_compat_for
 
 
 @dataclass(frozen=True)
@@ -20,12 +19,7 @@ class ShipUnitType(UnitType[Type[ShipType]]):
         list
     )
 
-    @has_save_compat_for(9)
     def __setstate__(self, state: dict[str, Any]) -> None:
-        # Save compat: the `name` field has been renamed `variant_id`.
-        if "name" in state:
-            state["variant_id"] = state.pop("name")
-
         # Update any existing models with new data on load.
         updated = ShipUnitType.named(state["variant_id"])
         state.update(updated.__dict__)
