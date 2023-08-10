@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, ClassVar, Iterator, Optional, Type
 
-import yaml
 from dcs.unittype import VehicleType
 from dcs.vehicles import vehicle_map
 
@@ -99,15 +98,13 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
         yield from vehicle_map.values()
 
     @classmethod
-    def _each_variant_of(cls, vehicle: Type[VehicleType]) -> Iterator[GroundUnitType]:
-        data_path = Path("resources/units/ground_units") / f"{vehicle.id}.yaml"
-        if not data_path.exists():
-            logging.warning(f"No data for {vehicle.id}; it will not be available")
-            return
+    def _data_directory(cls) -> Path:
+        return Path("resources/units/ground_units")
 
-        with data_path.open(encoding="utf-8") as data_file:
-            data = yaml.safe_load(data_file)
-
+    @classmethod
+    def _variant_from_dict(
+        cls, vehicle: Type[VehicleType], variant_id: str, data: dict[str, Any]
+    ) -> GroundUnitType:
         try:
             introduction = data["introduced"]
             if introduction is None:
@@ -122,23 +119,22 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
         else:
             unit_class = UnitClass(class_name)
 
-        for variant in data.get("variants", [vehicle.id]):
-            yield GroundUnitType(
-                dcs_unit_type=vehicle,
-                unit_class=unit_class,
-                spawn_weight=data.get("spawn_weight", 0),
-                variant_id=variant,
-                description=data.get(
-                    "description",
-                    f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",
-                ),
-                year_introduced=introduction,
-                country_of_origin=data.get("origin", "No data."),
-                manufacturer=data.get("manufacturer", "No data."),
-                role=data.get("role", "No data."),
-                price=data.get("price", 1),
-                skynet_properties=SkynetProperties.from_data(
-                    data.get("skynet_properties", {})
-                ),
-                reversed_heading=data.get("reversed_heading", False),
-            )
+        return GroundUnitType(
+            dcs_unit_type=vehicle,
+            unit_class=unit_class,
+            spawn_weight=data.get("spawn_weight", 0),
+            variant_id=variant_id,
+            description=data.get(
+                "description",
+                f"No data. <a href=\"https://google.com/search?q=DCS+{variant_id.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant_id}</span></a>",
+            ),
+            year_introduced=introduction,
+            country_of_origin=data.get("origin", "No data."),
+            manufacturer=data.get("manufacturer", "No data."),
+            role=data.get("role", "No data."),
+            price=data.get("price", 1),
+            skynet_properties=SkynetProperties.from_data(
+                data.get("skynet_properties", {})
+            ),
+            reversed_heading=data.get("reversed_heading", False),
+        )
