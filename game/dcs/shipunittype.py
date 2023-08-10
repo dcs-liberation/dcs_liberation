@@ -70,13 +70,15 @@ class ShipUnitType(UnitType[Type[ShipType]]):
         class_name = data.get("class")
         unit_class = UnitClass(class_name)
 
+        display_name = data.get("display_name", variant_id)
         return ShipUnitType(
             dcs_unit_type=ship,
             unit_class=unit_class,
             variant_id=variant_id,
+            display_name=data.get("display_name", variant_id),
             description=data.get(
                 "description",
-                f"No data. <a href=\"https://google.com/search?q=DCS+{variant_id.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant_id}</span></a>",
+                f"No data. <a href=\"https://google.com/search?q=DCS+{display_name.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {display_name}</span></a>",
             ),
             year_introduced=introduction,
             country_of_origin=data.get("origin", "No data."),

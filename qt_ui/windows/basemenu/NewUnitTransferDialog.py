@@ -62,7 +62,7 @@ class UnitTransferList(QFrame):
         task_box_layout = QGridLayout()
         scroll_content.setLayout(task_box_layout)
 
-        units_column = sorted(cp.base.armor, key=lambda u: u.variant_id)
+        units_column = sorted(cp.base.armor, key=lambda u: u.display_name)
 
         count = 0
         for count, unit_type in enumerate(units_column):
@@ -171,7 +171,7 @@ class ScrollingUnitTransferGrid(QFrame):
         unit_types = set(self.game_model.game.faction_for(player=True).ground_units)
         sorted_units = sorted(
             {u for u in unit_types if self.cp.base.total_units_of_type(u)},
-            key=lambda u: u.variant_id,
+            key=lambda u: u.display_name,
         )
         for row, unit_type in enumerate(sorted_units):
             self.add_unit_row(unit_type, task_box_layout, row)
@@ -203,7 +203,7 @@ class ScrollingUnitTransferGrid(QFrame):
 
         origin_inventory = self.cp.base.total_units_of_type(unit_type)
 
-        unit_name = QLabel(f"<b>{unit_type.variant_id}</b>")
+        unit_name = QLabel(f"<b>{unit_type.display_name}</b>")
         unit_name.setSizePolicy(
             QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         )

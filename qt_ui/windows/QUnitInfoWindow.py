@@ -51,7 +51,7 @@ class QUnitInfoWindow(QDialog):
         self.setModal(True)
         self.game = game
         self.unit_type = unit_type
-        self.name = unit_type.variant_id
+        self.name = unit_type.display_name
         self.setWindowTitle(f"Unit Info: {self.name}")
         self.setWindowIcon(QIcon("./resources/icon.png"))
         self.setMinimumHeight(570)
@@ -78,7 +78,7 @@ class QUnitInfoWindow(QDialog):
         self.details_grid_layout.setContentsMargins(0, 0, 0, 0)
 
         self.name_box = QLabel(
-            f"<b>Name:</b> {unit_type.manufacturer} {unit_type.variant_id}"
+            f"<b>Name:</b> {unit_type.manufacturer} {unit_type.display_name}"
         )
         self.name_box.setProperty("style", "info-element")
 

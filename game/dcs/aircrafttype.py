@@ -291,7 +291,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
             else:
                 # Slow like warbirds or helicopters
                 # Use whichever is slowest - mach 0.35 or 70% of max speed
-                logging.debug(f"{self.variant_id} max_speed * 0.7 is {max_speed * 0.7}")
+                logging.debug(
+                    f"{self.display_name} max_speed * 0.7 is {max_speed * 0.7}"
+                )
                 return min(Speed.from_mach(0.35, altitude), max_speed * 0.7)
 
     def alloc_flight_radio(self, radio_registry: RadioRegistry) -> RadioFrequency:
@@ -471,12 +473,14 @@ class AircraftType(UnitType[Type[FlyingType]]):
         for task_name, priority in data.get("tasks", {}).items():
             task_priorities[FlightType(task_name)] = priority
 
+        display_name = data.get("display_name", variant_id)
         return AircraftType(
             dcs_unit_type=aircraft,
             variant_id=variant_id,
+            display_name=display_name,
             description=data.get(
                 "description",
-                f"No data. <a href=\"https://google.com/search?q=DCS+{variant_id.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant_id}</span></a>",
+                f"No data. <a href=\"https://google.com/search?q=DCS+{display_name.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {display_name}</span></a>",
             ),
             year_introduced=introduction,
             country_of_origin=data.get("origin", "No data."),

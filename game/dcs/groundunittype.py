@@ -119,14 +119,16 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
         else:
             unit_class = UnitClass(class_name)
 
+        display_name = data.get("display_name", variant_id)
         return GroundUnitType(
             dcs_unit_type=vehicle,
             unit_class=unit_class,
             spawn_weight=data.get("spawn_weight", 0),
             variant_id=variant_id,
+            display_name=display_name,
             description=data.get(
                 "description",
-                f"No data. <a href=\"https://google.com/search?q=DCS+{variant_id.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant_id}</span></a>",
+                f"No data. <a href=\"https://google.com/search?q=DCS+{display_name.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {display_name}</span></a>",
             ),
             year_introduced=introduction,
             country_of_origin=data.get("origin", "No data."),

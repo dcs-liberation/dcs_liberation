@@ -45,7 +45,7 @@ class QAircraftRecruitmentMenu(UnitTransactionFrame[Squadron]):
             unit_types.add(squadron.aircraft)
 
         sorted_squadrons = sorted(
-            cp.squadrons, key=lambda s: (s.aircraft.variant_id, s.name)
+            cp.squadrons, key=lambda s: (s.aircraft.display_name, s.name)
         )
         for row, squadron in enumerate(sorted_squadrons):
             self.add_purchase_row(squadron, task_box_layout, row)
