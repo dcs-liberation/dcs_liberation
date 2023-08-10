@@ -253,21 +253,6 @@ class WaypointBuilder:
             targets=objective.strike_targets,
         )
 
-    def egress(self, position: Point, target: MissionTarget) -> FlightWaypoint:
-        alt_type: AltitudeReference = "BARO"
-        if self.is_helo:
-            alt_type = "RADIO"
-
-        return FlightWaypoint(
-            "EGRESS",
-            FlightWaypointType.EGRESS,
-            position,
-            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
-            alt_type,
-            description=f"EGRESS from {target.name}",
-            pretty_name=f"EGRESS from {target.name}",
-        )
-
     def bai_group(self, target: StrikeTarget) -> FlightWaypoint:
         return self._target_point(target, f"ATTACK {target.name}")
 
@@ -356,17 +341,6 @@ class WaypointBuilder:
         else:
             waypoint.only_for_player = True
         return waypoint
-
-    def cas(self, position: Point) -> FlightWaypoint:
-        return FlightWaypoint(
-            "CAS",
-            FlightWaypointType.CAS,
-            position,
-            meters(60) if self.is_helo else meters(1000),
-            "RADIO",
-            description="Provide CAS",
-            pretty_name="CAS",
-        )
 
     @staticmethod
     def race_track_start(position: Point, altitude: Distance) -> FlightWaypoint:

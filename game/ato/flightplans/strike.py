@@ -32,5 +32,5 @@ class Builder(FormationAttackBuilder[StrikeFlightPlan, FormationAttackLayout]):
 
         return self._build(FlightWaypointType.INGRESS_STRIKE, targets)
 
-    def build(self) -> StrikeFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> StrikeFlightPlan:
         return StrikeFlightPlan(self.flight, self.layout())

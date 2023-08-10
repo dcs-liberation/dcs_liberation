@@ -137,5 +137,5 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
             target, origin, ip, join, self.coalition, self.theater
         ).find_best_hold_point()
 
-    def build(self) -> SweepFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> SweepFlightPlan:
         return SweepFlightPlan(self.flight, self.layout())

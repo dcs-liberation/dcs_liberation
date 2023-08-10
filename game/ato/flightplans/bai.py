@@ -39,5 +39,5 @@ class Builder(FormationAttackBuilder[BaiFlightPlan, FormationAttackLayout]):
 
         return self._build(FlightWaypointType.INGRESS_BAI, targets)
 
-    def build(self) -> BaiFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> BaiFlightPlan:
         return BaiFlightPlan(self.flight, self.layout())

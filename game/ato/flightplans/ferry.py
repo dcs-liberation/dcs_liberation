@@ -83,5 +83,5 @@ class Builder(IBuilder[FerryFlightPlan, FerryLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> FerryFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> FerryFlightPlan:
         return FerryFlightPlan(self.flight, self.layout())

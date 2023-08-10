@@ -152,5 +152,5 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> AirAssaultFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> AirAssaultFlightPlan:
         return AirAssaultFlightPlan(self.flight, self.layout())

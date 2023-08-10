@@ -41,5 +41,5 @@ class Builder(FormationAttackBuilder[AntiShipFlightPlan, FormationAttackLayout])
     def anti_ship_targets_for_tgo(tgo: NavalGroundObject) -> list[StrikeTarget]:
         return [StrikeTarget(f"{g.group_name} at {tgo.name}", g) for g in tgo.groups]
 
-    def build(self) -> AntiShipFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> AntiShipFlightPlan:
         return AntiShipFlightPlan(self.flight, self.layout())

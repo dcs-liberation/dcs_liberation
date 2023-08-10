@@ -11,9 +11,13 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 class CasIngressBuilder(PydcsWaypointBuilder):
     def add_tasks(self, waypoint: MovingPoint) -> None:
         if isinstance(self.flight.flight_plan, CasFlightPlan):
+            patrol_center = (
+                self.flight.flight_plan.layout.patrol_start.position
+                + self.flight.flight_plan.layout.patrol_end.position
+            ) / 2
             waypoint.add_task(
                 EngageTargetsInZone(
-                    position=self.flight.flight_plan.layout.target.position,
+                    position=patrol_center,
                     radius=int(self.flight.flight_plan.engagement_distance.meters),
                     targets=[
                         Targets.All.GroundUnits.GroundVehicles,

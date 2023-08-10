@@ -90,5 +90,5 @@ class Builder(IBuilder[AewcFlightPlan, PatrollingLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> AewcFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> AewcFlightPlan:
         return AewcFlightPlan(self.flight, self.layout())
