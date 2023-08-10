@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from game.ato.loadouts import Loadout
 from game.lasercodes import LaserCode
-from game.savecompat import has_save_compat_for
 
 if TYPE_CHECKING:
     from game.squadrons import Pilot
@@ -18,14 +17,6 @@ class FlightMember:
         self.tgp_laser_code: LaserCode | None = None
         self.weapon_laser_code: LaserCode | None = None
         self.properties: dict[str, bool | float | int] = {}
-
-    @has_save_compat_for(9)
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        if "tgp_laser_code" not in state:
-            state["tgp_laser_code"] = None
-        if "weapon_laser_code" not in state:
-            state["weapon_laser_code"] = None
-        self.__dict__.update(state)
 
     def assign_tgp_laser_code(self, code: LaserCode) -> None:
         if self.tgp_laser_code is not None:
