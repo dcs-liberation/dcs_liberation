@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import logging
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Iterator, Type, Any
 
-import yaml
 from dcs.ships import ship_map
 from dcs.unittype import ShipType
 
@@ -55,15 +53,13 @@ class ShipUnitType(UnitType[Type[ShipType]]):
         yield from ship_map.values()
 
     @classmethod
-    def _each_variant_of(cls, ship: Type[ShipType]) -> Iterator[ShipUnitType]:
-        data_path = Path("resources/units/ships") / f"{ship.id}.yaml"
-        if not data_path.exists():
-            logging.warning(f"No data for {ship.id}; it will not be available")
-            return
+    def _data_directory(cls) -> Path:
+        return Path("resources/units/ships")
 
-        with data_path.open(encoding="utf-8") as data_file:
-            data = yaml.safe_load(data_file)
-
+    @classmethod
+    def _variant_from_dict(
+        cls, ship: Type[ShipType], variant_id: str, data: dict[str, Any]
+    ) -> ShipUnitType:
         try:
             introduction = data["introduced"]
             if introduction is None:
@@ -74,18 +70,17 @@ class ShipUnitType(UnitType[Type[ShipType]]):
         class_name = data.get("class")
         unit_class = UnitClass(class_name)
 
-        for variant in data.get("variants", [ship.id]):
-            yield ShipUnitType(
-                dcs_unit_type=ship,
-                unit_class=unit_class,
-                variant_id=variant,
-                description=data.get(
-                    "description",
-                    f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",
-                ),
-                year_introduced=introduction,
-                country_of_origin=data.get("origin", "No data."),
-                manufacturer=data.get("manufacturer", "No data."),
-                role=data.get("role", "No data."),
-                price=data.get("price"),
-            )
+        return ShipUnitType(
+            dcs_unit_type=ship,
+            unit_class=unit_class,
+            variant_id=variant_id,
+            description=data.get(
+                "description",
+                f"No data. <a href=\"https://google.com/search?q=DCS+{variant_id.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant_id}</span></a>",
+            ),
+            year_introduced=introduction,
+            country_of_origin=data.get("origin", "No data."),
+            manufacturer=data.get("manufacturer", "No data."),
+            role=data.get("role", "No data."),
+            price=data["price"],
+        )

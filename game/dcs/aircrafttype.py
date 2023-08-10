@@ -7,7 +7,6 @@ from functools import cache, cached_property
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Iterator, Optional, TYPE_CHECKING, Type
 
-import yaml
 from dcs.helicopters import helicopter_map
 from dcs.planes import plane_map
 from dcs.unitpropertydescription import UnitPropertyDescription
@@ -395,11 +394,11 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     @staticmethod
     def _set_props_overrides(
-        config: Dict[str, Any], aircraft: Type[FlyingType], data_path: Path
+        config: Dict[str, Any], aircraft: Type[FlyingType]
     ) -> None:
         if aircraft.property_defaults is None:
             logging.warning(
-                f"'{data_path.name}' attempted to set default prop that does not exist."
+                f"'{aircraft.id}' attempted to set default prop that does not exist."
             )
         else:
             for k in config:
@@ -407,25 +406,23 @@ class AircraftType(UnitType[Type[FlyingType]]):
                     aircraft.property_defaults[k] = config[k]
                 else:
                     logging.warning(
-                        f"'{data_path.name}' attempted to set default prop '{k}' that does not exist"
+                        f"'{aircraft.id}' attempted to set default prop '{k}' that does not exist"
                     )
 
     @classmethod
-    def _each_variant_of(cls, aircraft: Type[FlyingType]) -> Iterator[AircraftType]:
+    def _data_directory(cls) -> Path:
+        return Path("resources/units/aircraft")
+
+    @classmethod
+    def _variant_from_dict(
+        cls, aircraft: Type[FlyingType], variant_id: str, data: dict[str, Any]
+    ) -> AircraftType:
         from game.ato.flighttype import FlightType
-
-        data_path = Path("resources/units/aircraft") / f"{aircraft.id}.yaml"
-        if not data_path.exists():
-            logging.warning(f"No data for {aircraft.id}; it will not be available")
-            return
-
-        with data_path.open(encoding="utf-8") as data_file:
-            data = yaml.safe_load(data_file)
 
         try:
             price = data["price"]
         except KeyError as ex:
-            raise KeyError(f"Missing required price field: {data_path}") from ex
+            raise KeyError(f"Missing required price field") from ex
 
         radio_config = RadioConfig.from_data(data.get("radios", {}))
         patrol_config = PatrolConfig.from_data(data.get("patrol", {}))
@@ -468,50 +465,49 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
         prop_overrides = data.get("default_overrides")
         if prop_overrides is not None:
-            cls._set_props_overrides(prop_overrides, aircraft, data_path)
+            cls._set_props_overrides(prop_overrides, aircraft)
 
         task_priorities: dict[FlightType, int] = {}
         for task_name, priority in data.get("tasks", {}).items():
             task_priorities[FlightType(task_name)] = priority
 
-        for variant in data.get("variants", [aircraft.id]):
-            yield AircraftType(
-                dcs_unit_type=aircraft,
-                variant_id=variant,
-                description=data.get(
-                    "description",
-                    f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",
-                ),
-                year_introduced=introduction,
-                country_of_origin=data.get("origin", "No data."),
-                manufacturer=data.get("manufacturer", "No data."),
-                role=data.get("role", "No data."),
-                price=price,
-                carrier_capable=data.get("carrier_capable", False),
-                lha_capable=data.get("lha_capable", False),
-                always_keeps_gun=data.get("always_keeps_gun", False),
-                gunfighter=data.get("gunfighter", False),
-                max_group_size=data.get("max_group_size", aircraft.group_size_max),
-                patrol_altitude=patrol_config.altitude,
-                patrol_speed=patrol_config.speed,
-                max_mission_range=mission_range,
-                fuel_consumption=fuel_consumption,
-                default_livery=data.get("default_livery"),
-                intra_flight_radio=radio_config.intra_flight,
-                channel_allocator=radio_config.channel_allocator,
-                channel_namer=radio_config.channel_namer,
-                kneeboard_units=units,
-                utc_kneeboard=data.get("utc_kneeboard", False),
-                unit_class=unit_class,
-                cabin_size=data.get("cabin_size", 10 if aircraft.helicopter else 0),
-                can_carry_crates=data.get("can_carry_crates", aircraft.helicopter),
-                task_priorities=task_priorities,
-                has_built_in_target_pod=data.get("has_built_in_target_pod", False),
-                laser_code_configs=[
-                    LaserCodeConfig.from_yaml(d) for d in data.get("laser_codes", [])
-                ],
-                use_f15e_waypoint_names=data.get("use_f15e_waypoint_names", False),
-            )
+        return AircraftType(
+            dcs_unit_type=aircraft,
+            variant_id=variant_id,
+            description=data.get(
+                "description",
+                f"No data. <a href=\"https://google.com/search?q=DCS+{variant_id.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant_id}</span></a>",
+            ),
+            year_introduced=introduction,
+            country_of_origin=data.get("origin", "No data."),
+            manufacturer=data.get("manufacturer", "No data."),
+            role=data.get("role", "No data."),
+            price=price,
+            carrier_capable=data.get("carrier_capable", False),
+            lha_capable=data.get("lha_capable", False),
+            always_keeps_gun=data.get("always_keeps_gun", False),
+            gunfighter=data.get("gunfighter", False),
+            max_group_size=data.get("max_group_size", aircraft.group_size_max),
+            patrol_altitude=patrol_config.altitude,
+            patrol_speed=patrol_config.speed,
+            max_mission_range=mission_range,
+            fuel_consumption=fuel_consumption,
+            default_livery=data.get("default_livery"),
+            intra_flight_radio=radio_config.intra_flight,
+            channel_allocator=radio_config.channel_allocator,
+            channel_namer=radio_config.channel_namer,
+            kneeboard_units=units,
+            utc_kneeboard=data.get("utc_kneeboard", False),
+            unit_class=unit_class,
+            cabin_size=data.get("cabin_size", 10 if aircraft.helicopter else 0),
+            can_carry_crates=data.get("can_carry_crates", aircraft.helicopter),
+            task_priorities=task_priorities,
+            has_built_in_target_pod=data.get("has_built_in_target_pod", False),
+            laser_code_configs=[
+                LaserCodeConfig.from_yaml(d) for d in data.get("laser_codes", [])
+            ],
+            use_f15e_waypoint_names=data.get("use_f15e_waypoint_names", False),
+        )
 
     def __hash__(self) -> int:
         return hash(self.variant_id)
