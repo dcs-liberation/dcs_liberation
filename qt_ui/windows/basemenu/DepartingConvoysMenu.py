@@ -33,11 +33,11 @@ class DepartingConvoyInfo(QGroupBox):
             if unit_type.dcs_id in VEHICLES_ICONS.keys():
                 icon.setPixmap(VEHICLES_ICONS[unit_type.dcs_id])
             else:
-                icon.setText("<b>" + unit_type.variant_id + "</b>")
+                icon.setText("<b>" + unit_type.display_name + "</b>")
             icon.setProperty("style", "icon-armor")
             unit_layout.addWidget(icon, idx, 0)
             unit_layout.addWidget(
-                QLabel(f"{count} x <strong>{unit_type.variant_id}</strong>"),
+                QLabel(f"{count} x <strong>{unit_type.display_name}</strong>"),
                 idx,
                 1,
             )

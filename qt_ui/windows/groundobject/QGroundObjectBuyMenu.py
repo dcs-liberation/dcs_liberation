@@ -76,7 +76,7 @@ class QTgoLayoutGroupRow(QWidget):
         # Add all possible units with the price
         for unit_type in force_group.unit_types_for_group(group):
             self.unit_selector.addItem(
-                f"{unit_type.variant_id} [${unit_type.price}M]",
+                f"{unit_type.display_name} [${unit_type.price}M]",
                 userData=(unit_type.dcs_unit_type, unit_type.price),
             )
         # Add all possible statics with price = 0

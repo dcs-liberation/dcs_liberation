@@ -19,6 +19,7 @@ DcsUnitTypeT = TypeVar("DcsUnitTypeT", bound=Type[DcsUnitType])
 class UnitType(ABC, Generic[DcsUnitTypeT]):
     dcs_unit_type: DcsUnitTypeT
     variant_id: str
+    display_name: str
     description: str
     year_introduced: str
     country_of_origin: str
@@ -30,7 +31,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
     _loaded: ClassVar[bool] = False
 
     def __str__(self) -> str:
-        return self.variant_id
+        return self.display_name
 
     @property
     def dcs_id(self) -> str:
