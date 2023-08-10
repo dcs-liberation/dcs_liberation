@@ -25,7 +25,6 @@ from game.data.doctrine import (
     MODERN_DOCTRINE,
     WWII_DOCTRINE,
 )
-from game.data.groups import GroupRole
 from game.data.units import UnitClass
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType
@@ -154,20 +153,6 @@ class Faction:
             ),
         )
         return list(set(all_units))
-
-    @property
-    def air_defenses(self) -> list[str]:
-        """Returns the Air Defense types"""
-        # This is used for the faction overview in NewGameWizard
-        air_defenses = [a.variant_id for a in self.air_defense_units]
-        air_defenses.extend(
-            [
-                pg.name
-                for pg in self.preset_groups
-                if any(task.role == GroupRole.AIR_DEFENSE for task in pg.tasks)
-            ]
-        )
-        return sorted(air_defenses)
 
     @classmethod
     def from_dict(cls: Type[Faction], json: Dict[str, Any]) -> Faction:
