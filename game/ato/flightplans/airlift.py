@@ -155,5 +155,5 @@ class Builder(IBuilder[AirliftFlightPlan, AirliftLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> AirliftFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> AirliftFlightPlan:
         return AirliftFlightPlan(self.flight, self.layout())

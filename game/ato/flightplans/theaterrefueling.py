@@ -79,5 +79,5 @@ class Builder(IBuilder[TheaterRefuelingFlightPlan, PatrollingLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> TheaterRefuelingFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> TheaterRefuelingFlightPlan:
         return TheaterRefuelingFlightPlan(self.flight, self.layout())

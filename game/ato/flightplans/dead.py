@@ -37,5 +37,5 @@ class Builder(FormationAttackBuilder[DeadFlightPlan, FormationAttackLayout]):
 
         return self._build(FlightWaypointType.INGRESS_DEAD)
 
-    def build(self) -> DeadFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> DeadFlightPlan:
         return DeadFlightPlan(self.flight, self.layout())

@@ -121,5 +121,5 @@ class Builder(IBuilder[PackageRefuelingFlightPlan, PatrollingLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> PackageRefuelingFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> PackageRefuelingFlightPlan:
         return PackageRefuelingFlightPlan(self.flight, self.layout())

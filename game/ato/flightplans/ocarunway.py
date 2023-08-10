@@ -32,5 +32,5 @@ class Builder(FormationAttackBuilder[OcaRunwayFlightPlan, FormationAttackLayout]
 
         return self._build(FlightWaypointType.INGRESS_OCA_RUNWAY)
 
-    def build(self) -> OcaRunwayFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> OcaRunwayFlightPlan:
         return OcaRunwayFlightPlan(self.flight, self.layout())

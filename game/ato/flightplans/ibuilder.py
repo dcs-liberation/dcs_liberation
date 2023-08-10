@@ -35,7 +35,7 @@ class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
     def regenerate(self, dump_debug_info: bool = False) -> None:
         try:
             self._generate_package_waypoints_if_needed(dump_debug_info)
-            self._flight_plan = self.build()
+            self._flight_plan = self.build(dump_debug_info)
         except NavMeshError as ex:
             color = "blue" if self.flight.squadron.player else "red"
             raise PlanningError(
@@ -59,11 +59,7 @@ class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
         return self.flight.departure.theater
 
     @abstractmethod
-    def layout(self) -> LayoutT:
-        ...
-
-    @abstractmethod
-    def build(self) -> FlightPlanT:
+    def build(self, dump_debug_info: bool = False) -> FlightPlanT:
         ...
 
     @property

@@ -6,13 +6,15 @@ from datetime import timedelta
 from typing import TYPE_CHECKING, Type
 
 from game.theater import FrontLine
-from game.utils import Distance, Speed, kph, meters
+from game.utils import Distance, Speed, kph, meters, dcs_to_shapely_point
 from .ibuilder import IBuilder
 from .invalidobjectivelocation import InvalidObjectiveLocation
 from .patrolling import PatrollingFlightPlan, PatrollingLayout
 from .uizonedisplay import UiZone, UiZoneDisplay
 from .waypointbuilder import WaypointBuilder
 from ..flightwaypointtype import FlightWaypointType
+from ...flightplan.ipsolver import IpSolver
+from ...persistence.paths import waypoint_debug_directory
 
 if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
@@ -20,13 +22,13 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class CasLayout(PatrollingLayout):
-    target: FlightWaypoint
+    ingress: FlightWaypoint
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.departure
         yield from self.nav_to
+        yield self.ingress
         yield self.patrol_start
-        yield self.target
         yield self.patrol_end
         yield from self.nav_from
         yield self.arrival
@@ -59,7 +61,7 @@ class CasFlightPlan(PatrollingFlightPlan[CasLayout], UiZoneDisplay):
 
     @property
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
-        return {self.layout.patrol_start, self.layout.target, self.layout.patrol_end}
+        return {self.layout.ingress, self.layout.patrol_start, self.layout.patrol_end}
 
     def request_escort_at(self) -> FlightWaypoint | None:
         return self.layout.patrol_start
@@ -68,14 +70,17 @@ class CasFlightPlan(PatrollingFlightPlan[CasLayout], UiZoneDisplay):
         return self.layout.patrol_end
 
     def ui_zone(self) -> UiZone:
+        midpoint = (
+            self.layout.patrol_start.position + self.layout.patrol_end.position
+        ) / 2
         return UiZone(
-            [self.layout.target.position],
+            [midpoint],
             self.engagement_distance,
         )
 
 
 class Builder(IBuilder[CasFlightPlan, CasLayout]):
-    def layout(self) -> CasLayout:
+    def layout(self, dump_debug_info: bool) -> CasLayout:
         location = self.package.target
 
         if not isinstance(location, FrontLine):
@@ -86,46 +91,77 @@ class Builder(IBuilder[CasFlightPlan, CasLayout]):
         )
 
         bounds = FrontLineConflictDescription.frontline_bounds(location, self.theater)
-        ingress = bounds.left_position
-        center = bounds.center
-        egress = bounds.right_position
+        patrol_start = bounds.left_position
+        patrol_end = bounds.right_position
 
-        ingress_distance = ingress.distance_to_point(self.flight.departure.position)
-        egress_distance = egress.distance_to_point(self.flight.departure.position)
-        if egress_distance < ingress_distance:
-            ingress, egress = egress, ingress
+        start_distance = patrol_start.distance_to_point(self.flight.departure.position)
+        end_distance = patrol_end.distance_to_point(self.flight.departure.position)
+        if end_distance < start_distance:
+            patrol_start, patrol_end = patrol_end, patrol_start
 
         builder = WaypointBuilder(self.flight, self.coalition)
 
         is_helo = self.flight.unit_type.dcs_unit_type.helicopter
-        ingress_egress_altitude = (
-            self.doctrine.ingress_altitude if not is_helo else meters(50)
+        patrol_altitude = self.doctrine.ingress_altitude if not is_helo else meters(50)
+        use_agl_patrol_altitude = is_helo
+
+        ip_solver = IpSolver(
+            dcs_to_shapely_point(self.flight.departure.position),
+            dcs_to_shapely_point(patrol_start),
+            self.doctrine,
+            self.threat_zones.all,
         )
-        use_agl_ingress_egress = is_helo
+        ip_solver.set_debug_properties(
+            waypoint_debug_directory() / "IP", self.theater.terrain
+        )
+        ingress_point_shapely = ip_solver.solve()
+        if dump_debug_info:
+            ip_solver.dump_debug_info()
+
+        ingress_point = patrol_start.new_in_same_map(
+            ingress_point_shapely.x, ingress_point_shapely.y
+        )
+
+        patrol_start_waypoint = builder.nav(
+            patrol_start, patrol_altitude, use_agl_patrol_altitude
+        )
+        patrol_start_waypoint.name = "FLOT START"
+        patrol_start_waypoint.pretty_name = "FLOT start"
+        patrol_start_waypoint.description = "FLOT boundary"
+
+        patrol_end_waypoint = builder.nav(
+            patrol_end, patrol_altitude, use_agl_patrol_altitude
+        )
+        patrol_end_waypoint.name = "FLOT END"
+        patrol_end_waypoint.pretty_name = "FLOT end"
+        patrol_end_waypoint.description = "FLOT boundary"
+
+        ingress = builder.ingress(
+            FlightWaypointType.INGRESS_CAS, ingress_point, location
+        )
+        ingress.description = f"Ingress to provide CAS at {location}"
 
         return CasLayout(
             departure=builder.takeoff(self.flight.departure),
             nav_to=builder.nav_path(
                 self.flight.departure.position,
-                ingress,
-                ingress_egress_altitude,
-                use_agl_ingress_egress,
+                ingress_point,
+                patrol_altitude,
+                use_agl_patrol_altitude,
             ),
             nav_from=builder.nav_path(
-                egress,
+                patrol_end,
                 self.flight.arrival.position,
-                ingress_egress_altitude,
-                use_agl_ingress_egress,
+                patrol_altitude,
+                use_agl_patrol_altitude,
             ),
-            patrol_start=builder.ingress(
-                FlightWaypointType.INGRESS_CAS, ingress, location
-            ),
-            target=builder.cas(center),
-            patrol_end=builder.egress(egress, location),
+            ingress=ingress,
+            patrol_start=patrol_start_waypoint,
+            patrol_end=patrol_end_waypoint,
             arrival=builder.land(self.flight.arrival),
             divert=builder.divert(self.flight.divert),
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> CasFlightPlan:
-        return CasFlightPlan(self.flight, self.layout())
+    def build(self, dump_debug_info: bool = False) -> CasFlightPlan:
+        return CasFlightPlan(self.flight, self.layout(dump_debug_info))

@@ -93,5 +93,5 @@ class Builder(IBuilder[RtbFlightPlan, RtbLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> RtbFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> RtbFlightPlan:
         return RtbFlightPlan(self.flight, self.layout())

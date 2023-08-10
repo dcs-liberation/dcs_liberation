@@ -29,3 +29,7 @@ def save_dir() -> Path:
 
 def mission_path_for(name: str) -> Path:
     return Path(base_path()) / "Missions" / name
+
+
+def waypoint_debug_directory() -> Path:
+    return liberation_user_dir() / "Debug/Waypoints"

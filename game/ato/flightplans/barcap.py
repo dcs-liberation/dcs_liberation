@@ -66,5 +66,5 @@ class Builder(CapBuilder[BarCapFlightPlan, PatrollingLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> BarCapFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> BarCapFlightPlan:
         return BarCapFlightPlan(self.flight, self.layout())

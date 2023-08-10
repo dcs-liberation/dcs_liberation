@@ -91,5 +91,5 @@ class Builder(IBuilder[RecoveryTankerFlightPlan, RecoveryTankerLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> RecoveryTankerFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> RecoveryTankerFlightPlan:
         return RecoveryTankerFlightPlan(self.flight, self.layout())

@@ -25,7 +25,7 @@ class FlightWaypointType(IntEnum):
     INGRESS_STRIKE = 5  # Ingress strike (For generator, means that this should have bombing on next TARGET_POINT points)
     INGRESS_SEAD = 6  # Ingress sead (For generator, means that this should attack groups on TARGET_GROUP_LOC points)
     INGRESS_CAS = 7  # Ingress cas (should start CAS task)
-    CAS = 8  # Should do CAS there
+    CAS = 8  # Unused.
     EGRESS = 9  # Should stop attack
     DESCENT_POINT = 10  # Should start descending to pattern alt
     LANDING_POINT = 11  # Should land there

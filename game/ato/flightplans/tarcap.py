@@ -122,5 +122,5 @@ class Builder(CapBuilder[TarCapFlightPlan, TarCapLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> TarCapFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> TarCapFlightPlan:
         return TarCapFlightPlan(self.flight, self.layout())

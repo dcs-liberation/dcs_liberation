@@ -50,5 +50,5 @@ class Builder(FormationAttackBuilder[EscortFlightPlan, FormationAttackLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def build(self) -> EscortFlightPlan:
+    def build(self, dump_debug_info: bool = False) -> EscortFlightPlan:
         return EscortFlightPlan(self.flight, self.layout())
