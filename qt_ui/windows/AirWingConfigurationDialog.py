@@ -594,12 +594,12 @@ class AircraftTypeList(QListView):
             self.add_aircraft_type(aircraft)
 
     def remove_aircraft_type(self, aircraft: AircraftType):
-        for item in self.item_model.findItems(aircraft.name):
+        for item in self.item_model.findItems(aircraft.variant_id):
             self.item_model.removeRow(item.row())
         self.page_index_changed.emit(self.selectionModel().currentIndex().row())
 
     def add_aircraft_type(self, aircraft: AircraftType):
-        aircraft_item = QStandardItem(aircraft.name)
+        aircraft_item = QStandardItem(aircraft.variant_id)
         icon = self.icon_for(aircraft)
         if icon is not None:
             aircraft_item.setIcon(icon)
@@ -767,7 +767,7 @@ class AirWingConfigurationTab(QWidget):
         )
 
         # Add Squadron
-        if not self.type_list.item_model.findItems(selected_type.name):
+        if not self.type_list.item_model.findItems(selected_type.variant_id):
             self.type_list.add_aircraft_type(selected_type)
             # TODO Select the newly added type
         self.squadrons_panel.add_squadron_to_panel(squadron)
@@ -893,8 +893,8 @@ class SquadronAircraftTypeSelector(QComboBox):
         super().__init__()
         self.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
 
-        for type in sorted(types, key=lambda type: type.name):
-            self.addItem(type.name, type)
+        for type in sorted(types, key=lambda type: type.variant_id):
+            self.addItem(type.variant_id, type)
 
         if selected_aircraft:
             self.setCurrentText(selected_aircraft)

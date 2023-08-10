@@ -12,6 +12,7 @@ from dcs.vehicles import vehicle_map
 
 from game.data.units import UnitClass
 from game.dcs.unittype import UnitType
+from game.savecompat import has_save_compat_for
 
 
 @dataclass
@@ -65,9 +66,20 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
         dict[type[VehicleType], list[GroundUnitType]]
     ] = defaultdict(list)
 
+    @has_save_compat_for(9)
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        # Save compat: the `name` field has been renamed `variant_id`.
+        if "name" in state:
+            state["variant_id"] = state.pop("name")
+
+        # Update any existing models with new data on load.
+        updated = GroundUnitType.named(state["variant_id"])
+        state.update(updated.__dict__)
+        self.__dict__.update(state)
+
     @classmethod
     def register(cls, unit_type: GroundUnitType) -> None:
-        cls._by_name[unit_type.name] = unit_type
+        cls._by_name[unit_type.variant_id] = unit_type
         cls._by_unit_type[unit_type.dcs_unit_type].append(unit_type)
 
     @classmethod
@@ -115,7 +127,7 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
                 dcs_unit_type=vehicle,
                 unit_class=unit_class,
                 spawn_weight=data.get("spawn_weight", 0),
-                name=variant,
+                variant_id=variant,
                 description=data.get(
                     "description",
                     f"No data. <a href=\"https://google.com/search?q=DCS+{variant.replace(' ', '+')}\"><span style=\"color:#FFFFFF\">Google {variant}</span></a>",

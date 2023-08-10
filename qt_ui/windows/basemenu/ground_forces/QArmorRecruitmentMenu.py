@@ -2,10 +2,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGridLayout, QScrollArea, QVBoxLayout, QWidget
 
 from game.dcs.groundunittype import GroundUnitType
+from game.purchaseadapter import GroundUnitPurchaseAdapter
 from game.theater import ControlPoint
 from qt_ui.models import GameModel
 from qt_ui.windows.basemenu.UnitTransactionFrame import UnitTransactionFrame
-from game.purchaseadapter import GroundUnitPurchaseAdapter
 
 
 class QArmorRecruitmentMenu(UnitTransactionFrame[GroundUnitType]):
@@ -32,7 +32,7 @@ class QArmorRecruitmentMenu(UnitTransactionFrame[GroundUnitType]):
         unit_types = list(
             set(self.game_model.game.faction_for(player=True).ground_units)
         )
-        unit_types.sort(key=lambda u: u.name)
+        unit_types.sort(key=lambda u: u.variant_id)
         for row, unit_type in enumerate(unit_types):
             self.add_purchase_row(unit_type, task_box_layout, row)
         stretch = QVBoxLayout()

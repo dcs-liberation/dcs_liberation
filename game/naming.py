@@ -484,13 +484,13 @@ class NameGenerator:
         else:
             name_str = "{} {}".format(flight.package.target.name, flight.flight_type)
         return "{}|{}|{}|{}|".format(
-            name_str, country.id, cls.aircraft_number, flight.unit_type.name
+            name_str, country.id, cls.aircraft_number, flight.unit_type.variant_id
         )
 
     @classmethod
     def next_unit_name(cls, country: Country, unit_type: UnitType[Any]) -> str:
         cls.number += 1
-        return "unit|{}|{}|{}|".format(country.id, cls.number, unit_type.name)
+        return "unit|{}|{}|{}|".format(country.id, cls.number, unit_type.variant_id)
 
     @classmethod
     def next_infantry_name(cls, country: Country, unit_type: UnitType[Any]) -> str:
@@ -498,7 +498,7 @@ class NameGenerator:
         return "infantry|{}|{}|{}|".format(
             country.id,
             cls.infantry_number,
-            unit_type.name,
+            unit_type.variant_id,
         )
 
     @classmethod
@@ -509,7 +509,7 @@ class NameGenerator:
     @classmethod
     def next_tanker_name(cls, country: Country, unit_type: AircraftType) -> str:
         cls.number += 1
-        return "tanker|{}|{}|0|{}".format(country.id, cls.number, unit_type.name)
+        return "tanker|{}|{}|0|{}".format(country.id, cls.number, unit_type.variant_id)
 
     @classmethod
     def next_carrier_name(cls, country: Country) -> str:

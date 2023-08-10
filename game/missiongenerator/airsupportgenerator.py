@@ -152,7 +152,7 @@ class AirSupportGenerator:
                     TankerInfo(
                         group_name=str(tanker_group.name),
                         callsign=callsign,
-                        variant=tanker_unit_type.name,
+                        variant=tanker_unit_type.variant_id,
                         freq=freq,
                         tacan=tacan,
                         start_time=None,

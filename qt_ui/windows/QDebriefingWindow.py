@@ -22,7 +22,9 @@ class LossGrid(QGridLayout):
     def __init__(self, debriefing: Debriefing, player: bool) -> None:
         super().__init__()
 
-        self.add_loss_rows(debriefing.air_losses.by_type(player), lambda u: u.name)
+        self.add_loss_rows(
+            debriefing.air_losses.by_type(player), lambda u: u.variant_id
+        )
         self.add_loss_rows(
             debriefing.front_line_losses_by_type(player), lambda u: str(u)
         )
