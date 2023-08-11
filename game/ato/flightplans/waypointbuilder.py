@@ -168,6 +168,9 @@ class WaypointBuilder:
             "HOLD",
             FlightWaypointType.LOITER,
             position,
+            # Bug: DCS only accepts MSL altitudes for the orbit task and 500 meters is
+            # below the ground for most if not all of NTTR (and lots of places in other
+            # maps).
             meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
             alt_type,
             description="Wait until push time",

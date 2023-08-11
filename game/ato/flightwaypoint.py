@@ -7,6 +7,7 @@ from typing import Literal, TYPE_CHECKING
 from dcs import Point
 
 from game.ato.flightwaypointtype import FlightWaypointType
+from game.flightplan.waypointactions.waypointaction import WaypointAction
 from game.theater.theatergroup import TheaterUnit
 from game.utils import Distance, meters
 
@@ -39,12 +40,17 @@ class FlightWaypoint:
     # The minimum amount of fuel remaining at this waypoint in pounds.
     min_fuel: float | None = None
 
+    actions: list[WaypointAction] = field(default_factory=list)
+
     # These are set very late by the air conflict generator (part of mission
     # generation). We do it late so that we don't need to propagate changes
     # to waypoint times whenever the player alters the package TOT or the
     # flight's offset in the UI.
     tot: datetime | None = None
     departure_time: datetime | None = None
+
+    def add_action(self, action: WaypointAction) -> None:
+        self.actions.append(action)
 
     @property
     def x(self) -> float:

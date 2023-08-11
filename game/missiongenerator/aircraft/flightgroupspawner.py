@@ -161,6 +161,8 @@ class FlightGroupSpawner:
         )
 
         group.points[0].alt_type = alt_type
+        # We don't need to add waypoint tasks for the starting waypoint here because we
+        # do that in WaypointGenerator.
         return group
 
     def _generate_at_airport(self, name: str, airport: Airport) -> FlyingGroup[Any]:

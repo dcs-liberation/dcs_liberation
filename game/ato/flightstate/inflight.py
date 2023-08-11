@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections import deque
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 from dcs import Point
+from dcs.task import Task
 
 from game.ato.flightstate import Completed
+from game.ato.flightstate.actionstate import ActionState
 from game.ato.flightstate.flightstate import FlightState
 from game.ato.flightwaypoint import FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
@@ -37,6 +40,15 @@ class InFlight(FlightState, ABC):
         self.total_time_to_next_waypoint = self.travel_time_between_waypoints()
         self.elapsed_time = timedelta()
         self.current_waypoint_elapsed = False
+        self.pending_actions: deque[ActionState] = deque(
+            ActionState(a) for a in self.current_waypoint.actions
+        )
+
+    @property
+    def current_action(self) -> ActionState | None:
+        if self.pending_actions:
+            return self.pending_actions[0]
+        return None
 
     @property
     def cancelable(self) -> bool:
@@ -80,7 +92,6 @@ class InFlight(FlightState, ABC):
         return initial_fuel
 
     def next_waypoint_state(self) -> FlightState:
-        from .loiter import Loiter
         from .racetrack import RaceTrack
         from .navigating import Navigating
 
@@ -89,8 +100,6 @@ class InFlight(FlightState, ABC):
             return Completed(self.flight, self.settings)
         if self.next_waypoint.waypoint_type is FlightWaypointType.PATROL_TRACK:
             return RaceTrack(self.flight, self.settings, new_index)
-        if self.next_waypoint.waypoint_type is FlightWaypointType.LOITER:
-            return Loiter(self.flight, self.settings, new_index)
         return Navigating(self.flight, self.settings, new_index)
 
     def advance_to_next_waypoint(self) -> FlightState:
@@ -102,6 +111,12 @@ class InFlight(FlightState, ABC):
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
+        if (action := self.current_action) is not None:
+            action.on_game_tick(time, duration)
+            if action.is_finished():
+                self.pending_actions.popleft()
+            return
+
         self.elapsed_time += duration
         if self.elapsed_time > self.total_time_to_next_waypoint:
             new_state = self.advance_to_next_waypoint()
@@ -152,11 +167,3 @@ class InFlight(FlightState, ABC):
     @property
     def spawn_type(self) -> StartType:
         return StartType.IN_FLIGHT
-
-    @property
-    def description(self) -> str:
-        if self.has_aborted:
-            abort = "(Aborted) "
-        else:
-            abort = ""
-        return f"{abort}Flying to {self.next_waypoint.name}"

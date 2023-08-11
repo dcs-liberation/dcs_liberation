@@ -36,6 +36,7 @@ class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
         try:
             self._generate_package_waypoints_if_needed(dump_debug_info)
             self._flight_plan = self.build(dump_debug_info)
+            self._flight_plan.add_waypoint_actions()
         except NavMeshError as ex:
             color = "blue" if self.flight.squadron.player else "red"
             raise PlanningError(

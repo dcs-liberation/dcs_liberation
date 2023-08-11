@@ -330,3 +330,6 @@ class FlightPlan(ABC, Generic[LayoutT]):
         self, flight_plan: FlightPlan[Any]
     ) -> TypeGuard[FormationFlightPlan[Any]]:
         return False
+
+    def add_waypoint_actions(self) -> None:
+        pass
