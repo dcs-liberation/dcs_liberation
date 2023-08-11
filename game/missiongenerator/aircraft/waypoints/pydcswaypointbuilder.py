@@ -11,6 +11,7 @@ from dcs.unitgroup import FlyingGroup
 from game.ato import Flight, FlightWaypoint
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.ato.traveltime import GroundSpeed
+from game.flightplan.waypointactions.taskcontext import TaskContext
 from game.missiongenerator.missiondata import MissionData
 from game.theater import MissionTarget, TheaterUnit
 from game.unitmap import UnitMap
@@ -86,7 +87,10 @@ class PydcsWaypointBuilder:
         return waypoint
 
     def add_tasks(self, waypoint: MovingPoint) -> None:
-        pass
+        ctx = TaskContext(self.now)
+        for action in self.waypoint.actions:
+            for task in action.iter_tasks(ctx):
+                waypoint.add_task(task)
 
     def set_waypoint_tot(self, waypoint: MovingPoint, tot: datetime) -> None:
         self.waypoint.tot = tot

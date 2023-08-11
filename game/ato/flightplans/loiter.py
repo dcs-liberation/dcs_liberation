@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any, TYPE_CHECKING, TypeGuard, TypeVar
 
+from game.flightplan.waypointactions.hold import Hold
 from game.typeguard import self_type_guard
+from game.utils import Speed
 from .flightplan import FlightPlan
 from .standard import StandardFlightPlan, StandardLayout
 
@@ -49,3 +51,13 @@ class LoiterFlightPlan(StandardFlightPlan[LayoutT], ABC):
         self, flight_plan: FlightPlan[Any]
     ) -> TypeGuard[LoiterFlightPlan[Any]]:
         return True
+
+    def provide_push_time(self) -> datetime:
+        return self.push_time
+
+    def add_waypoint_actions(self) -> None:
+        hold = self.layout.hold
+        speed = self.flight.unit_type.patrol_speed
+        if speed is None:
+            speed = Speed.from_mach(0.6, hold.alt)
+        hold.add_action(Hold(self.provide_push_time, hold.alt, speed))

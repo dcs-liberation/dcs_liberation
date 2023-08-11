@@ -29,7 +29,6 @@ from .baiingress import BaiIngressBuilder
 from .casingress import CasIngressBuilder
 from .deadingress import DeadIngressBuilder
 from .default import DefaultWaypointBuilder
-from .holdpoint import HoldPointBuilder
 from .joinpoint import JoinPointBuilder
 from .landingpoint import LandingPointBuilder
 from .landingzone import LandingZoneBuilder
@@ -142,7 +141,6 @@ class WaypointGenerator:
             FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
-            FlightWaypointType.LOITER: HoldPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP_ZONE: LandingZoneBuilder,

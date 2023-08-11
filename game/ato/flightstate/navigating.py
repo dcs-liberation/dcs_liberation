@@ -80,3 +80,14 @@ class Navigating(InFlight):
     @property
     def spawn_type(self) -> StartType:
         return StartType.IN_FLIGHT
+
+    @property
+    def description(self) -> str:
+        if (action := self.current_action) is not None:
+            return action.describe()
+
+        if self.has_aborted:
+            abort = "(Aborted) "
+        else:
+            abort = ""
+        return f"{abort}Flying to {self.next_waypoint.name}"
