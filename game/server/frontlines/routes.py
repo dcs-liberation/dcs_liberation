@@ -20,4 +20,6 @@ def list_front_lines(game: Game = Depends(GameContext.require)) -> list[FrontLin
 def get_front_line(
     front_line_id: UUID, game: Game = Depends(GameContext.require)
 ) -> FrontLineJs:
-    return FrontLineJs.for_front_line(game.db.front_lines.get(front_line_id))
+    return FrontLineJs.for_front_line(
+        game.theater, game.db.front_lines.get(front_line_id)
+    )

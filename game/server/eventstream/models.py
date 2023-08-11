@@ -11,10 +11,9 @@ from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
 from game.server.iadsnetwork.models import IadsConnectionJs
 from game.server.leaflet import LeafletPoint
-from game.server.mapzones.models import ThreatZonesJs
+from game.server.mapzones.models import ThreatZonesJs, UnculledZoneJs
 from game.server.navmesh.models import NavMeshJs
 from game.server.tgos.models import TgoJs
-from game.server.mapzones.models import UnculledZoneJs
 
 if TYPE_CHECKING:
     from game import Game
@@ -57,6 +56,7 @@ class GameUpdateEventsJs(BaseModel):
         updated_threat_zones = {}
         updated_unculled_zones = []
         updated_iads = []
+        updated_front_lines = []
         if game is not None:
             new_combats = [
                 FrozenCombatJs.for_combat(c, game.theater) for c in events.new_combats
@@ -76,6 +76,10 @@ class GameUpdateEventsJs(BaseModel):
             updated_unculled_zones = UnculledZoneJs.from_game(game)
             for node in events.updated_iads:
                 updated_iads.extend(IadsConnectionJs.connections_for_node(node))
+            updated_front_lines = [
+                FrontLineJs.for_front_line(game.theater, f)
+                for f in events.updated_front_lines
+            ]
 
         return GameUpdateEventsJs(
             updated_flight_positions={
@@ -97,9 +101,7 @@ class GameUpdateEventsJs(BaseModel):
             deleted_flights=events.deleted_flights,
             selected_flight=events.selected_flight,
             deselected_flight=events.deselected_flight,
-            updated_front_lines=[
-                FrontLineJs.for_front_line(f) for f in events.updated_front_lines
-            ],
+            updated_front_lines=updated_front_lines,
             deleted_front_lines=events.deleted_front_lines,
             updated_tgos=[TgoJs.for_tgo(tgo) for tgo in events.updated_tgos],
             updated_control_points=[
