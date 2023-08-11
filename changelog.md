@@ -16,6 +16,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[UI]** An error will be displayed when invalid fast-forward options are selected rather than beginning a never ending simulation.
 * **[UI]** Added cheats for instantly repairing and destroying runways.
 * **[UI]** Improved usability of the flight properties UI. It now shows human-readable names and uses more appropriate UI elements.
+* **[UI]** The map now shows the real front line bounds.
 
 ## Fixes
 

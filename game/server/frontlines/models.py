@@ -5,12 +5,14 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from game.missiongenerator.frontlineconflictdescription import (
+    FrontLineConflictDescription,
+)
 from game.server.leaflet import LeafletPoint
-from game.utils import nautical_miles
 
 if TYPE_CHECKING:
     from game import Game
-    from game.theater import FrontLine
+    from game.theater import FrontLine, ConflictTheater
 
 
 class FrontLineJs(BaseModel):
@@ -21,17 +23,16 @@ class FrontLineJs(BaseModel):
         title = "FrontLine"
 
     @staticmethod
-    def for_front_line(front_line: FrontLine) -> FrontLineJs:
-        a = front_line.position.point_from_heading(
-            front_line.blue_forward_heading.right.degrees,
-            nautical_miles(2).meters,
+    def for_front_line(theater: ConflictTheater, front_line: FrontLine) -> FrontLineJs:
+        bounds = FrontLineConflictDescription.frontline_bounds(front_line, theater)
+        return FrontLineJs(
+            id=front_line.id,
+            extents=[bounds.left_position.latlng(), bounds.right_position.latlng()],
         )
-        b = front_line.position.point_from_heading(
-            front_line.blue_forward_heading.left.degrees,
-            nautical_miles(2).meters,
-        )
-        return FrontLineJs(id=front_line.id, extents=[a.latlng(), b.latlng()])
 
     @staticmethod
     def all_in_game(game: Game) -> list[FrontLineJs]:
-        return [FrontLineJs.for_front_line(f) for f in game.theater.conflicts()]
+        return [
+            FrontLineJs.for_front_line(game.theater, f)
+            for f in game.theater.conflicts()
+        ]
