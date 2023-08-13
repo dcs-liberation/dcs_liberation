@@ -57,17 +57,17 @@ class FormationAttackFlightPlan(FormationFlightPlan, ABC):
 
     @property
     def join_time(self) -> datetime:
-        travel_time = self.travel_time_between_waypoints(
+        travel_time = self.total_time_between_waypoints(
             self.layout.join, self.layout.ingress
         )
         return self.ingress_time - travel_time
 
     @property
     def split_time(self) -> datetime:
-        travel_time_ingress = self.travel_time_between_waypoints(
+        travel_time_ingress = self.total_time_between_waypoints(
             self.layout.ingress, self.target_area_waypoint
         )
-        travel_time_egress = self.travel_time_between_waypoints(
+        travel_time_egress = self.total_time_between_waypoints(
             self.target_area_waypoint, self.layout.split
         )
         minutes_at_target = 0.75 * len(self.layout.targets)
@@ -82,7 +82,7 @@ class FormationAttackFlightPlan(FormationFlightPlan, ABC):
     @property
     def ingress_time(self) -> datetime:
         tot = self.tot
-        travel_time = self.travel_time_between_waypoints(
+        travel_time = self.total_time_between_waypoints(
             self.layout.ingress, self.target_area_waypoint
         )
         return tot - travel_time

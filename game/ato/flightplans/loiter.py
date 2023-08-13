@@ -33,10 +33,10 @@ class LoiterFlightPlan(StandardFlightPlan[Any], ABC):
             return self.push_time
         return None
 
-    def travel_time_between_waypoints(
+    def total_time_between_waypoints(
         self, a: FlightWaypoint, b: FlightWaypoint
     ) -> timedelta:
-        travel_time = super().travel_time_between_waypoints(a, b)
+        travel_time = super().total_time_between_waypoints(a, b)
         if a != self.layout.hold:
             return travel_time
         return travel_time + self.hold_duration

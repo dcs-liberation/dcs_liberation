@@ -55,7 +55,7 @@ class SweepFlightPlan(LoiterFlightPlan):
 
     @property
     def sweep_start_time(self) -> datetime:
-        travel_time = self.travel_time_between_waypoints(
+        travel_time = self.total_time_between_waypoints(
             self.layout.sweep_start, self.layout.sweep_end
         )
         return self.sweep_end_time - travel_time

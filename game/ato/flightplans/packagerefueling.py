@@ -59,10 +59,10 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
             "REFUEL", FlightWaypointType.REFUEL, refuel, altitude
         )
 
-        delay_target_to_split: timedelta = self.travel_time_between_waypoints(
+        delay_target_to_split: timedelta = self.total_time_between_waypoints(
             self.target_area_waypoint(), split_waypoint
         )
-        delay_split_to_refuel: timedelta = self.travel_time_between_waypoints(
+        delay_split_to_refuel: timedelta = self.total_time_between_waypoints(
             split_waypoint, refuel_waypoint
         )
 
