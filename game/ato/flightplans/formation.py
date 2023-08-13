@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from functools import cached_property
-from typing import Any, TYPE_CHECKING, TypeGuard
+from typing import Any, TYPE_CHECKING, TypeGuard, TypeVar
 
 from game.typeguard import self_type_guard
 from game.utils import Speed
@@ -25,7 +25,10 @@ class FormationLayout(LoiterLayout, ABC):
     nav_from: list[FlightWaypoint]
 
 
-class FormationFlightPlan(LoiterFlightPlan, ABC):
+LayoutT = TypeVar("LayoutT", bound=FormationLayout)
+
+
+class FormationFlightPlan(LoiterFlightPlan[LayoutT], ABC):
     @property
     @abstractmethod
     def package_speed_waypoints(self) -> set[FlightWaypoint]:
@@ -107,5 +110,5 @@ class FormationFlightPlan(LoiterFlightPlan, ABC):
     @self_type_guard
     def is_formation(
         self, flight_plan: FlightPlan[Any]
-    ) -> TypeGuard[FormationFlightPlan]:
+    ) -> TypeGuard[FormationFlightPlan[Any]]:
         return True

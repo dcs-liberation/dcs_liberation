@@ -23,7 +23,29 @@ if TYPE_CHECKING:
     from ..flight import Flight
 
 
-class FormationAttackFlightPlan(FormationFlightPlan, ABC):
+@dataclass(frozen=True)
+class FormationAttackLayout(FormationLayout):
+    ingress: FlightWaypoint
+    targets: list[FlightWaypoint]
+
+    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
+        yield self.departure
+        yield self.hold
+        yield from self.nav_to
+        yield self.join
+        yield self.ingress
+        yield from self.targets
+        yield self.split
+        if self.refuel is not None:
+            yield self.refuel
+        yield from self.nav_from
+        yield self.arrival
+        if self.divert is not None:
+            yield self.divert
+        yield self.bullseye
+
+
+class FormationAttackFlightPlan(FormationFlightPlan[FormationAttackLayout], ABC):
     @property
     def package_speed_waypoints(self) -> set[FlightWaypoint]:
         return {
@@ -93,28 +115,6 @@ class FormationAttackFlightPlan(FormationFlightPlan, ABC):
         elif waypoint in self.layout.targets:
             return self.tot
         return super().tot_for_waypoint(waypoint)
-
-
-@dataclass(frozen=True)
-class FormationAttackLayout(FormationLayout):
-    ingress: FlightWaypoint
-    targets: list[FlightWaypoint]
-
-    def iter_waypoints(self) -> Iterator[FlightWaypoint]:
-        yield self.departure
-        yield self.hold
-        yield from self.nav_to
-        yield self.join
-        yield self.ingress
-        yield from self.targets
-        yield self.split
-        if self.refuel is not None:
-            yield self.refuel
-        yield from self.nav_from
-        yield self.arrival
-        if self.divert is not None:
-            yield self.divert
-        yield self.bullseye
 
 
 FlightPlanT = TypeVar("FlightPlanT", bound=FlightPlan[FormationAttackLayout])

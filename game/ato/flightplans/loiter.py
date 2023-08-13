@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, TYPE_CHECKING, TypeGuard
+from typing import Any, TYPE_CHECKING, TypeGuard, TypeVar
 
 from game.typeguard import self_type_guard
 from .flightplan import FlightPlan
@@ -18,7 +18,10 @@ class LoiterLayout(StandardLayout, ABC):
     hold: FlightWaypoint
 
 
-class LoiterFlightPlan(StandardFlightPlan[Any], ABC):
+LayoutT = TypeVar("LayoutT", bound=LoiterLayout)
+
+
+class LoiterFlightPlan(StandardFlightPlan[LayoutT], ABC):
     @property
     def hold_duration(self) -> timedelta:
         return timedelta(minutes=5)
@@ -42,5 +45,7 @@ class LoiterFlightPlan(StandardFlightPlan[Any], ABC):
         return travel_time + self.hold_duration
 
     @self_type_guard
-    def is_loiter(self, flight_plan: FlightPlan[Any]) -> TypeGuard[LoiterFlightPlan]:
+    def is_loiter(
+        self, flight_plan: FlightPlan[Any]
+    ) -> TypeGuard[LoiterFlightPlan[Any]]:
         return True

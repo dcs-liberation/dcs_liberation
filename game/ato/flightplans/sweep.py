@@ -37,7 +37,7 @@ class SweepLayout(LoiterLayout):
         yield self.bullseye
 
 
-class SweepFlightPlan(LoiterFlightPlan):
+class SweepFlightPlan(LoiterFlightPlan[SweepLayout]):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
