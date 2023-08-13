@@ -214,7 +214,7 @@ class FlightPlan(ABC, Generic[LayoutT]):
             )
 
         for previous_waypoint, waypoint in self.edges(until=destination):
-            total += self.travel_time_between_waypoints(previous_waypoint, waypoint)
+            total += self.total_time_between_waypoints(previous_waypoint, waypoint)
 
         # Trim microseconds. Our simulation tick rate is 1 second, so anything that
         # takes 100.1 or 100.9 seconds will take 100 seconds. DCS doesn't handle
@@ -222,6 +222,16 @@ class FlightPlan(ABC, Generic[LayoutT]):
         # mission planning perspective, so there's little value to keeping them in the
         # model.
         return timedelta(seconds=math.floor(total.total_seconds()))
+
+    def total_time_between_waypoints(
+        self, a: FlightWaypoint, b: FlightWaypoint
+    ) -> timedelta:
+        """Returns the total time spent between a and b.
+
+        The total time between waypoints differs from the travel time in that it may
+        include additional time for actions such as loitering.
+        """
+        return self.travel_time_between_waypoints(a, b)
 
     def travel_time_between_waypoints(
         self, a: FlightWaypoint, b: FlightWaypoint

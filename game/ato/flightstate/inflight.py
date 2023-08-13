@@ -51,17 +51,9 @@ class InFlight(FlightState, ABC):
         return index <= self.waypoint_index
 
     def travel_time_between_waypoints(self) -> timedelta:
-        travel_time = self.flight.flight_plan.travel_time_between_waypoints(
+        return self.flight.flight_plan.travel_time_between_waypoints(
             self.current_waypoint, self.next_waypoint
         )
-        if self.current_waypoint.waypoint_type is FlightWaypointType.LOITER:
-            # Loiter time is already built into travel_time_between_waypoints. If we're
-            # at a loiter point but still a regular InFlight (Loiter overrides this
-            # method) that means we're traveling from the loiter point but no longer
-            # loitering.
-            assert self.flight.flight_plan.is_loiter(self.flight.flight_plan)
-            travel_time -= self.flight.flight_plan.hold_duration
-        return travel_time
 
     @abstractmethod
     def estimate_position(self) -> Point:
