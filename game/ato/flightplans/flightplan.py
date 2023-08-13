@@ -314,7 +314,9 @@ class FlightPlan(ABC, Generic[LayoutT]):
         raise NotImplementedError
 
     @self_type_guard
-    def is_loiter(self, flight_plan: FlightPlan[Any]) -> TypeGuard[LoiterFlightPlan]:
+    def is_loiter(
+        self, flight_plan: FlightPlan[Any]
+    ) -> TypeGuard[LoiterFlightPlan[Any]]:
         return False
 
     @self_type_guard
@@ -326,5 +328,5 @@ class FlightPlan(ABC, Generic[LayoutT]):
     @self_type_guard
     def is_formation(
         self, flight_plan: FlightPlan[Any]
-    ) -> TypeGuard[FormationFlightPlan]:
+    ) -> TypeGuard[FormationFlightPlan[Any]]:
         return False
