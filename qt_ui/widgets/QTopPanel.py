@@ -138,10 +138,11 @@ class QTopPanel(QFrame):
             if not package.flights:
                 continue
             for flight in package.flights:
-                startup = flight.flight_plan.startup_time()
-                if startup < now:
-                    packages.append(package)
-                    break
+                if flight.state.is_waiting_for_start:
+                    startup = flight.flight_plan.startup_time()
+                    if startup < now:
+                        packages.append(package)
+                        break
         return packages
 
     @staticmethod
