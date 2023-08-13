@@ -14,7 +14,6 @@ from game.utils import Speed, meters
 from .flightplan import FlightPlan
 from .formation import FormationFlightPlan, FormationLayout
 from .ibuilder import IBuilder
-from .planningerror import PlanningError
 from .waypointbuilder import StrikeTarget, WaypointBuilder
 from .. import FlightType
 from ..flightwaypoint import FlightWaypoint
@@ -55,29 +54,6 @@ class FormationAttackFlightPlan(FormationFlightPlan, ABC):
             meters(0),
             "RADIO",
         )
-
-    @property
-    def travel_time_to_target(self) -> timedelta:
-        """The estimated time between the first waypoint and the target."""
-        destination = self.tot_waypoint
-        total = timedelta()
-        for previous_waypoint, waypoint in self.edges():
-            if waypoint == self.tot_waypoint:
-                # For anything strike-like the TOT waypoint is the *flight's*
-                # mission target, but to synchronize with the rest of the
-                # package we need to use the travel time to the same position as
-                # the others.
-                total += self.travel_time_between_waypoints(
-                    previous_waypoint, self.target_area_waypoint
-                )
-                break
-            total += self.travel_time_between_waypoints(previous_waypoint, waypoint)
-        else:
-            raise PlanningError(
-                f"Did not find destination waypoint {destination} in "
-                f"waypoints for {self.flight}"
-            )
-        return total
 
     @property
     def join_time(self) -> datetime:
