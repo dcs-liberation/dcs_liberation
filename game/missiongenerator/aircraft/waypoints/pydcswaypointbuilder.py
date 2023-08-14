@@ -91,6 +91,9 @@ class PydcsWaypointBuilder:
         for action in self.waypoint.actions:
             for task in action.iter_tasks(ctx):
                 waypoint.add_task(task)
+        for option in self.waypoint.options.values():
+            for task in option.iter_tasks(ctx):
+                waypoint.add_task(task)
 
     def set_waypoint_tot(self, waypoint: MovingPoint, tot: datetime) -> None:
         self.waypoint.tot = tot

@@ -5,12 +5,15 @@ from datetime import datetime, timedelta
 from typing import Iterator, TYPE_CHECKING, Type
 
 from dcs import Point
+from dcs.task import Targets
 
-from game.utils import Heading
+from game.flightplan import HoldZoneGeometry
+from game.flightplan.waypointactions.engagetargets import EngageTargets
+from game.flightplan.waypointoptions.formation import Formation
+from game.utils import Heading, nautical_miles
 from .ibuilder import IBuilder
 from .loiter import LoiterFlightPlan, LoiterLayout
 from .waypointbuilder import WaypointBuilder
-from ...flightplan import HoldZoneGeometry
 
 if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
@@ -88,6 +91,19 @@ class SweepFlightPlan(LoiterFlightPlan[SweepLayout]):
     @property
     def mission_departure_time(self) -> datetime:
         return self.sweep_end_time
+
+    def add_waypoint_actions(self) -> None:
+        super().add_waypoint_actions()
+        self.layout.sweep_start.set_option(Formation.LINE_ABREAST_OPEN)
+        self.layout.sweep_start.add_action(
+            EngageTargets(
+                nautical_miles(50),
+                [
+                    Targets.All.Air.Planes.Fighters,
+                    Targets.All.Air.Planes.MultiroleFighters,
+                ],
+            )
+        )
 
 
 class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
