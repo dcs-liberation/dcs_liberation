@@ -32,9 +32,12 @@ class Hold(WaypointAction):
 
     def update_state(
         self, state: ActionState, time: datetime, duration: timedelta
-    ) -> None:
-        if self._push_time_provider() <= time:
+    ) -> timedelta:
+        push_time = self._push_time_provider()
+        if push_time <= time:
             state.finish()
+            return time - push_time
+        return timedelta()
 
     def iter_tasks(self, ctx: TaskContext) -> Iterator[Task]:
         remaining_time = self._push_time_provider() - ctx.mission_start_time

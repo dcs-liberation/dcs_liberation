@@ -21,5 +21,5 @@ class ActionState:
     def is_finished(self) -> bool:
         return self._finished
 
-    def on_game_tick(self, time: datetime, duration: timedelta) -> None:
-        self.action.update_state(self, time, duration)
+    def on_game_tick(self, time: datetime, duration: timedelta) -> timedelta:
+        return self.action.update_state(self, time, duration)
