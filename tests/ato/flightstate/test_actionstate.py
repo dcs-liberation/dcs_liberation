@@ -14,8 +14,8 @@ class TestAction(WaypointAction):
 
     def update_state(
         self, state: ActionState, time: datetime, duration: timedelta
-    ) -> None:
-        pass
+    ) -> timedelta:
+        return timedelta()
 
     def iter_tasks(self, ctx: TaskContext) -> Iterator[Task]:
         yield from []

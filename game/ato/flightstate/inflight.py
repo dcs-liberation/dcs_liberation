@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 from dcs import Point
-from dcs.task import Task
 
 from game.ato.flightstate import Completed
 from game.ato.flightstate.actionstate import ActionState
@@ -111,11 +110,12 @@ class InFlight(FlightState, ABC):
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
-        if (action := self.current_action) is not None:
-            action.on_game_tick(time, duration)
+        while (action := self.current_action) is not None:
+            duration = action.on_game_tick(time, duration)
             if action.is_finished():
                 self.pending_actions.popleft()
-            return
+            if duration <= timedelta():
+                return
 
         self.elapsed_time += duration
         if self.elapsed_time > self.total_time_to_next_waypoint:

@@ -21,7 +21,7 @@ class WaypointAction(ABC):
     @abstractmethod
     def update_state(
         self, state: ActionState, time: datetime, duration: timedelta
-    ) -> None:
+    ) -> timedelta:
         ...
 
     @abstractmethod
