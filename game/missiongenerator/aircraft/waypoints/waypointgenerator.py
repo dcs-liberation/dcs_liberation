@@ -41,7 +41,6 @@ from .refuel import RefuelPointBuilder
 from .seadingress import SeadIngressBuilder
 from .splitpoint import SplitPointBuilder
 from .strikeingress import StrikeIngressBuilder
-from .sweepingress import SweepIngressBuilder
 from .target import TargetBuilder
 
 
@@ -138,7 +137,6 @@ class WaypointGenerator:
             FlightWaypointType.INGRESS_OCA_RUNWAY: OcaRunwayIngressBuilder,
             FlightWaypointType.INGRESS_SEAD: SeadIngressBuilder,
             FlightWaypointType.INGRESS_STRIKE: StrikeIngressBuilder,
-            FlightWaypointType.INGRESS_SWEEP: SweepIngressBuilder,
             FlightWaypointType.JOIN: JoinPointBuilder,
             FlightWaypointType.LANDING_POINT: LandingPointBuilder,
             FlightWaypointType.PATROL: RaceTrackEndBuilder,

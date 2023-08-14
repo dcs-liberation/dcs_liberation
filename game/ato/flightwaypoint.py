@@ -8,6 +8,7 @@ from dcs import Point
 
 from game.ato.flightwaypointtype import FlightWaypointType
 from game.flightplan.waypointactions.waypointaction import WaypointAction
+from game.flightplan.waypointoptions.waypointoption import WaypointOption
 from game.theater.theatergroup import TheaterUnit
 from game.utils import Distance, meters
 
@@ -41,6 +42,7 @@ class FlightWaypoint:
     min_fuel: float | None = None
 
     actions: list[WaypointAction] = field(default_factory=list)
+    options: dict[str, WaypointOption] = field(default_factory=dict)
 
     # These are set very late by the air conflict generator (part of mission
     # generation). We do it late so that we don't need to propagate changes
@@ -51,6 +53,9 @@ class FlightWaypoint:
 
     def add_action(self, action: WaypointAction) -> None:
         self.actions.append(action)
+
+    def set_option(self, option: WaypointOption) -> None:
+        self.options[option.id()] = option
 
     @property
     def x(self) -> float:
