@@ -10,23 +10,42 @@ performance: 1
 recommended_start_date: 2025-09-01
 version: "10.9"
 squadrons:
-# Hatzerim (141)
-  7:
+  Blue CV-1:
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
       size: 24
-    - primary: TARCAP
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+      size: 2
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - SH-60B Seahawk
+      size: 2
+# Hatzerim (141)
+  7:
+    - primary: Escort
+      secondary: air-to-air
+      aircraft:
+        - F-15C Eagle
+      size: 20
+    - primary: OCA/Runway
       secondary: any
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
-      size: 20
+      size: 8
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle
-      size: 12
+      size: 8
     - primary: DEAD
       secondary: any
       aircraft:
