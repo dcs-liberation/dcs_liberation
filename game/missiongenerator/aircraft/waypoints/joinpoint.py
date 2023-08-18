@@ -26,10 +26,7 @@ class JoinPointBuilder(PydcsWaypointBuilder):
                 ],
             )
 
-            if self.flight.count < 4:
-                waypoint.tasks.append(OptFormation.line_abreast_open())
-            else:
-                waypoint.tasks.append(OptFormation.spread_four_open())
+            waypoint.tasks.append(OptFormation.line_abreast_open())
 
         elif self.flight.flight_type == FlightType.SEAD_ESCORT:
             self.configure_escort_tasks(
@@ -40,10 +37,7 @@ class JoinPointBuilder(PydcsWaypointBuilder):
             ecm_option = OptECMUsing(value=OptECMUsing.Values.UseIfDetectedLockByRadar)
             waypoint.tasks.append(ecm_option)
 
-            if self.flight.count < 4:
-                waypoint.tasks.append(OptFormation.line_abreast_open())
-            else:
-                waypoint.tasks.append(OptFormation.spread_four_open())
+            waypoint.tasks.append(OptFormation.line_abreast_open())
 
         elif not self.flight.flight_type.is_air_to_air:
             # Capture any non A/A type to avoid issues with SPJs that use the primary radar such as the F/A-18C.
