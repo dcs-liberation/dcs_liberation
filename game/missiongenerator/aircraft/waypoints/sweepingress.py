@@ -28,7 +28,4 @@ class SweepIngressBuilder(PydcsWaypointBuilder):
             )
         )
 
-        if self.flight.count < 4:
-            waypoint.tasks.append(OptFormation.line_abreast_open())
-        else:
-            waypoint.tasks.append(OptFormation.spread_four_open())
+        waypoint.tasks.append(OptFormation.line_abreast_open())
