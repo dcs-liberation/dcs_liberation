@@ -2,11 +2,12 @@
 country: Russia
 name: Russia 1975
 authors: Khopa
-description: <p>Soviet army in the late 70s, using their prototype Mig-29A.</p>
+description: <p>Soviet army in the late 70s, using their prototype Mig-29A and Mi-24P.</p>
 locales:
   - ru_RU
 aircrafts:
   - IL-76MD
+  - Mi-24P Hind-F
   - Mi-24V Hind-E
   - Mi-8MTV2 Hip
   - MiG-21bis Fishbed-N
