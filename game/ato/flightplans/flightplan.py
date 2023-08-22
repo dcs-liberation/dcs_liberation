@@ -32,14 +32,6 @@ if TYPE_CHECKING:
     from .loiter import LoiterFlightPlan
     from .patrolling import PatrollingFlightPlan
 
-INGRESS_TYPES = {
-    FlightWaypointType.INGRESS_CAS,
-    FlightWaypointType.INGRESS_ESCORT,
-    FlightWaypointType.INGRESS_SEAD,
-    FlightWaypointType.INGRESS_STRIKE,
-    FlightWaypointType.INGRESS_DEAD,
-}
-
 
 @dataclass(frozen=True)
 class Layout(ABC):
