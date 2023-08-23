@@ -10,7 +10,6 @@ from game.typeguard import self_type_guard
 from game.utils import Speed
 from .flightplan import FlightPlan
 from .loiter import LoiterFlightPlan, LoiterLayout
-from ..traveltime import GroundSpeed, TravelTime
 
 if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
@@ -93,10 +92,8 @@ class FormationFlightPlan(LoiterFlightPlan[LayoutT], ABC):
 
     @property
     def push_time(self) -> datetime:
-        return self.join_time - TravelTime.between_points(
-            self.layout.hold.position,
-            self.layout.join.position,
-            GroundSpeed.for_flight(self.flight, self.layout.hold.alt),
+        return self.join_time - self.travel_time_between_waypoints(
+            self.layout.hold, self.layout.join
         )
 
     @property

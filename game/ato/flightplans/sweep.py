@@ -10,7 +10,6 @@ from game.utils import Heading
 from .ibuilder import IBuilder
 from .loiter import LoiterFlightPlan, LoiterLayout
 from .waypointbuilder import WaypointBuilder
-from ..traveltime import GroundSpeed, TravelTime
 from ...flightplan import HoldZoneGeometry
 
 if TYPE_CHECKING:
@@ -78,10 +77,8 @@ class SweepFlightPlan(LoiterFlightPlan[SweepLayout]):
 
     @property
     def push_time(self) -> datetime:
-        return self.sweep_end_time - TravelTime.between_points(
-            self.layout.hold.position,
-            self.layout.sweep_end.position,
-            GroundSpeed.for_flight(self.flight, self.layout.hold.alt),
+        return self.sweep_end_time - self.travel_time_between_waypoints(
+            self.layout.hold, self.layout.sweep_end
         )
 
     @property

@@ -20,7 +20,7 @@ from game.utils import Distance, Speed, meters
 from .planningerror import PlanningError
 from ..flightwaypointtype import FlightWaypointType
 from ..starttype import StartType
-from ..traveltime import GroundSpeed, TravelTime
+from ..traveltime import GroundSpeed
 
 if TYPE_CHECKING:
     from game.dcs.aircrafttype import FuelConsumption
@@ -228,9 +228,10 @@ class FlightPlan(ABC, Generic[LayoutT]):
     def travel_time_between_waypoints(
         self, a: FlightWaypoint, b: FlightWaypoint
     ) -> timedelta:
-        return TravelTime.between_points(
-            a.position, b.position, self.speed_between_waypoints(a, b)
-        )
+        error_factor = 1.05
+        speed = self.speed_between_waypoints(a, b)
+        distance = meters(a.position.distance_to_point(b.position))
+        return timedelta(hours=distance.nautical_miles / speed.knots * error_factor)
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         raise NotImplementedError
