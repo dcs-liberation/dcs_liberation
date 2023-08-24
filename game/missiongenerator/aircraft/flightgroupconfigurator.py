@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from typing import Any, Optional, TYPE_CHECKING
 
-from dcs import Mission
+from dcs import Mission, Point
 from dcs.flyingunit import FlyingUnit
 from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
@@ -21,6 +21,7 @@ from game.squadrons import Pilot
 from game.unitmap import UnitMap
 from .aircraftbehavior import AircraftBehavior
 from .aircraftpainter import AircraftPainter
+from .bingoestimator import BingoEstimator
 from .flightdata import FlightData
 from .waypoints import WaypointGenerator
 from ...ato.flightmember import FlightMember
@@ -102,6 +103,16 @@ class FlightGroupConfigurator:
             self.unit_map,
         ).create_waypoints()
 
+        divert_position: Point | None = None
+        if self.flight.divert is not None:
+            divert_position = self.flight.divert.position
+        bingo_estimator = BingoEstimator(
+            self.flight.unit_type.fuel_consumption,
+            self.flight.arrival.position,
+            divert_position,
+            self.flight.flight_plan.waypoints,
+        )
+
         return FlightData(
             package=self.flight.package,
             aircraft_type=self.flight.unit_type,
@@ -119,8 +130,8 @@ class FlightGroupConfigurator:
             divert=divert,
             waypoints=waypoints,
             intra_flight_channel=flight_channel,
-            bingo_fuel=self.flight.flight_plan.bingo_fuel,
-            joker_fuel=self.flight.flight_plan.joker_fuel,
+            bingo_fuel=bingo_estimator.estimate_bingo(),
+            joker_fuel=bingo_estimator.estimate_joker(),
             custom_name=self.flight.custom_name,
             laser_codes=laser_codes,
         )
