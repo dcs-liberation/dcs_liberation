@@ -12,7 +12,6 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from functools import cached_property
 from typing import Any, Generic, TYPE_CHECKING, TypeGuard, TypeVar
 
 from game.typeguard import self_type_guard
@@ -23,7 +22,6 @@ from ..starttype import StartType
 from ..traveltime import GroundSpeed
 
 if TYPE_CHECKING:
-    from game.dcs.aircrafttype import FuelConsumption
     from game.theater import ControlPoint
     from ..flight import Flight
     from ..flightwaypoint import FlightWaypoint
@@ -144,39 +142,6 @@ class FlightPlan(ABC, Generic[LayoutT]):
     @property
     def tot(self) -> datetime:
         return self.package.time_over_target + self.tot_offset
-
-    @cached_property
-    def bingo_fuel(self) -> int:
-        """Bingo fuel value for the FlightPlan"""
-        if (fuel := self.flight.unit_type.fuel_consumption) is not None:
-            return self._bingo_estimate(fuel)
-        return self._legacy_bingo_estimate()
-
-    def _bingo_estimate(self, fuel: FuelConsumption) -> int:
-        distance_to_arrival = self.max_distance_from(self.flight.arrival)
-        fuel_consumed = fuel.cruise * distance_to_arrival.nautical_miles
-        bingo = fuel_consumed + fuel.min_safe
-        return math.ceil(bingo / 100) * 100
-
-    def _legacy_bingo_estimate(self) -> int:
-        distance_to_arrival = self.max_distance_from(self.flight.arrival)
-
-        bingo = 1000.0  # Minimum Emergency Fuel
-        bingo += 500  # Visual Traffic
-        bingo += 15 * distance_to_arrival.nautical_miles
-
-        # TODO: Per aircraft tweaks.
-
-        if self.flight.divert is not None:
-            max_divert_distance = self.max_distance_from(self.flight.divert)
-            bingo += 10 * max_divert_distance.nautical_miles
-
-        return round(bingo / 100) * 100
-
-    @cached_property
-    def joker_fuel(self) -> int:
-        """Joker fuel value for the FlightPlan"""
-        return self.bingo_fuel + 1000
 
     def max_distance_from(self, cp: ControlPoint) -> Distance:
         """Returns the farthest waypoint of the flight plan from a ControlPoint.
