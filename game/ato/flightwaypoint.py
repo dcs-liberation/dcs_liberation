@@ -41,6 +41,8 @@ class FlightWaypoint:
     # The minimum amount of fuel remaining at this waypoint in pounds.
     min_fuel: float | None = None
 
+    wants_escort: bool = False
+
     actions: list[WaypointAction] = field(default_factory=list)
     options: dict[str, WaypointOption] = field(default_factory=dict)
 

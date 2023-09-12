@@ -37,12 +37,6 @@ class FormationFlightPlan(LoiterFlightPlan[LayoutT], ABC):
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
         return self.package_speed_waypoints
 
-    def request_escort_at(self) -> FlightWaypoint | None:
-        return self.layout.join
-
-    def dismiss_escort_at(self) -> FlightWaypoint | None:
-        return self.layout.split
-
     @cached_property
     def best_flight_formation_speed(self) -> Speed:
         """The best speed this flight is capable at all formation waypoints.
