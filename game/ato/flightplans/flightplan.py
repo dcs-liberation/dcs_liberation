@@ -205,24 +205,21 @@ class FlightPlan(ABC, Generic[LayoutT]):
         raise NotImplementedError
 
     def request_escort_at(self) -> FlightWaypoint | None:
-        return None
+        try:
+            return next(self.escorted_waypoints())
+        except StopIteration:
+            return None
 
     def dismiss_escort_at(self) -> FlightWaypoint | None:
-        return None
+        try:
+            return list(self.escorted_waypoints())[-1]
+        except IndexError:
+            return None
 
     def escorted_waypoints(self) -> Iterator[FlightWaypoint]:
-        begin = self.request_escort_at()
-        end = self.dismiss_escort_at()
-        if begin is None or end is None:
-            return
-        escorting = False
-        for waypoint in self.waypoints:
-            if waypoint == begin:
-                escorting = True
-            if escorting:
+        for waypoint in self.iter_waypoints():
+            if waypoint.wants_escort:
                 yield waypoint
-            if waypoint == end:
-                return
 
     def takeoff_time(self) -> datetime:
         return self.tot - self._travel_time_to_waypoint(self.tot_waypoint)

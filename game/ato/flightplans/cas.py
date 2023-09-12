@@ -63,12 +63,6 @@ class CasFlightPlan(PatrollingFlightPlan[CasLayout], UiZoneDisplay):
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
         return {self.layout.ingress, self.layout.patrol_start, self.layout.patrol_end}
 
-    def request_escort_at(self) -> FlightWaypoint | None:
-        return self.layout.patrol_start
-
-    def dismiss_escort_at(self) -> FlightWaypoint | None:
-        return self.layout.patrol_end
-
     def ui_zone(self) -> UiZone:
         midpoint = (
             self.layout.patrol_start.position + self.layout.patrol_end.position
@@ -128,6 +122,7 @@ class Builder(IBuilder[CasFlightPlan, CasLayout]):
         patrol_start_waypoint.name = "FLOT START"
         patrol_start_waypoint.pretty_name = "FLOT start"
         patrol_start_waypoint.description = "FLOT boundary"
+        patrol_start_waypoint.wants_escort = True
 
         patrol_end_waypoint = builder.nav(
             patrol_end, patrol_altitude, use_agl_patrol_altitude
@@ -135,6 +130,7 @@ class Builder(IBuilder[CasFlightPlan, CasLayout]):
         patrol_end_waypoint.name = "FLOT END"
         patrol_end_waypoint.pretty_name = "FLOT end"
         patrol_end_waypoint.description = "FLOT boundary"
+        patrol_end_waypoint.wants_escort = True
 
         ingress = builder.ingress(
             FlightWaypointType.INGRESS_CAS, ingress_point, location
