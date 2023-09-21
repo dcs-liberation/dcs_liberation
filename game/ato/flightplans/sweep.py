@@ -7,13 +7,13 @@ from typing import Iterator, TYPE_CHECKING, Type
 from dcs import Point
 from dcs.task import Targets
 
-from game.flightplan import HoldZoneGeometry
 from game.flightplan.waypointactions.engagetargets import EngageTargets
 from game.flightplan.waypointoptions.formation import Formation
 from game.utils import Heading, nautical_miles
 from .ibuilder import IBuilder
 from .loiter import LoiterFlightPlan, LoiterLayout
 from .waypointbuilder import WaypointBuilder
+from ...flightplan.holdpointsolver import HoldPointSolver
 
 if TYPE_CHECKING:
     from ..flightwaypoint import FlightWaypoint
@@ -107,7 +107,7 @@ class SweepFlightPlan(LoiterFlightPlan[SweepLayout]):
 
 
 class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
-    def layout(self) -> SweepLayout:
+    def layout(self, dump_debug_info: bool) -> SweepLayout:
         assert self.package.waypoints is not None
         target = self.package.target.position
         heading = Heading.from_degrees(
@@ -120,7 +120,7 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
         builder = WaypointBuilder(self.flight, self.coalition)
         start, end = builder.sweep(start_pos, target, self.doctrine.ingress_altitude)
 
-        hold = builder.hold(self._hold_point())
+        hold = builder.hold(self._hold_point(dump_debug_info))
 
         return SweepLayout(
             departure=builder.takeoff(self.flight.departure),
@@ -140,15 +140,8 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
             bullseye=builder.bullseye(),
         )
 
-    def _hold_point(self) -> Point:
-        assert self.package.waypoints is not None
-        origin = self.flight.departure.position
-        target = self.package.target.position
-        join = self.package.waypoints.join
-        ip = self.package.waypoints.ingress
-        return HoldZoneGeometry(
-            target, origin, ip, join, self.coalition, self.theater
-        ).find_best_hold_point()
+    def _hold_point(self, dump_debug_info: bool) -> Point:
+        return HoldPointSolver.solve_for_flight(self.flight, dump_debug_info)
 
     def build(self, dump_debug_info: bool = False) -> SweepFlightPlan:
-        return SweepFlightPlan(self.flight, self.layout())
+        return SweepFlightPlan(self.flight, self.layout(dump_debug_info))
