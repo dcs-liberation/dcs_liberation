@@ -188,7 +188,7 @@ class WaypointStrategy:
     def __init__(self, threat_zones: MultiPolygon) -> None:
         self.threat_zones = threat_zones
         self.prerequisites: list[Prerequisite] = []
-        self._max_area = Point(0, 0).buffer(1_000_000)
+        self._max_area = Point(0, 0).buffer(2_000_000)
         self.allowed_area = self._max_area.buffer(0)
         self.debug_infos: list[WaypointDebugInfo] = []
         self._threat_tolerance: ThreatTolerance | None = None
