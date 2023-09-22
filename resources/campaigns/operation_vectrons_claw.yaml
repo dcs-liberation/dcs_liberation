@@ -4,11 +4,33 @@ theater: Caucasus
 authors: Starfire
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Russia 2010
-description: <p>United Nations Observer Mission in Georgia (UNOMIG) observers stationed in Georgia to monitor the ceasefire between Georgia and Abkhazia have been cut off from friendly forces by Russian troops backing the separatist state. The UNOMIG HQ at Sukhumi has been taken, and a small contingent of observers and troops at the Zugdidi Sector HQ will have to make a run for the coast, supported by offshore US naval aircraft. The contingent is aware that their best shot at survival is to swiftly retake Sukhumi before Russian forces have a chance to dig in, so that friendly ground forces can land and reinforce them.</p><p><strong>Note:</strong> Ground unit purchase will not be available past Turn 0 until Sukhumi is retaken, so it is imperative you reach Sukhumi with at least one surviving ground unit to capture it. Two Hueys are available at Zugdidi for some close air support. The player can either play the first leg of the scenario as an evacuation with a couple of light vehicles (e.g. Humvees) set on breakthrough (modifying waypoints in the mission editor so they are not charging head-on into enemy ground forces is suggested), or purchase heavier ground units if they wish to experience a more traditional frontline ground war. Once Sukhumi has been captured, squadrons based in Incirlik Turkey can be ferried in via the "From Incirlik" off-map spawn point.</p>
+description:
+  <p>United Nations Observer Mission in Georgia (UNOMIG) observers stationed in
+  Georgia to monitor the ceasefire between Georgia and Abkhazia have been cut
+  off from friendly forces by Russian troops backing the separatist state. The
+  UNOMIG HQ at Sukhumi has been taken, and a small contingent of observers and
+  troops at the Zugdidi Sector HQ will have to make a run for the coast,
+  supported by offshore US naval aircraft. The contingent is aware that their
+  best shot at survival is to swiftly retake Sukhumi before Russian forces have
+  a chance to dig in, so that friendly ground forces can land and reinforce
+  them.</p><p><strong>Note:</strong> Ground unit purchase will not be available
+  past Turn 0 until Sukhumi is retaken, so it is imperative you reach Sukhumi
+  with at least one surviving ground unit to capture it. Two Hueys are available
+  at Zugdidi for some close air support. The player can either play the first
+  leg of the scenario as an evacuation with a couple of light vehicles (e.g.
+  Humvees) set on breakthrough (modifying waypoints in the mission editor so
+  they are not charging head-on into enemy ground forces is suggested), or
+  purchase heavier ground units if they wish to experience a more traditional
+  frontline ground war. Once Sukhumi has been captured, squadrons based in
+  Incirlik Turkey can be ferried in via the "From Incirlik" off-map spawn
+  point.</p>
 miz: operation_vectrons_claw.miz
 performance: 1
 recommended_start_date: 2008-08-08
-version: "10.9"
+version: "10.11"
+control_points:
+  From Incirlik:
+    ferry_only: true
 squadrons:
   Blue CV-1:
     - primary: BARCAP
@@ -90,7 +112,7 @@ squadrons:
       aircraft:
         - KC-135 Stratotanker
       size: 1
-#FARPs
+  #FARPs
   UNOMIG Sector HQ:
     - primary: Transport
       secondary: any
@@ -103,7 +125,7 @@ squadrons:
       aircraft:
         - Mi-24P Hind-F
       size: 8
-#Sukhumi-Babushara
+  #Sukhumi-Babushara
   20:
     - primary: TARCAP
       secondary: air-to-air
@@ -115,7 +137,7 @@ squadrons:
       aircraft:
         - Su-25T Frogfoot
       size: 12
-#Sochi-Adler
+  #Sochi-Adler
   18:
     - primary: Escort
       secondary: air-to-air
@@ -132,7 +154,7 @@ squadrons:
       aircraft:
         - Su-34 Fullback
       size: 20
-#Anapa-Vityazevo
+  #Anapa-Vityazevo
   12:
     - primary: Strike
       secondary: air-to-ground
@@ -145,7 +167,7 @@ squadrons:
       aircraft:
         - SU-33 Flanker-D
       size: 18
- #I am aware there is no Russian LHA. This is just for campaign inversion.
+  #I am aware there is no Russian LHA. This is just for campaign inversion.
   Red LHA:
     - primary: BAI
       secondary: air-to-ground

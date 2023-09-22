@@ -12,20 +12,14 @@ from dcs.country import Country
 from dcs.planes import F_15C
 from dcs.ships import HandyWind, LHA_Tarawa, Stennis, USS_Arleigh_Burke_IIa
 from dcs.statics import Fortification, Warehouse
-from dcs.terrain import Airport
 from dcs.unitgroup import PlaneGroup, ShipGroup, StaticGroup, VehicleGroup
 from dcs.vehicles import AirDefence, Armor, MissilesSS, Unarmed
 
+from game.campaignloader.controlpointbuilder import ControlPointBuilder
+from game.campaignloader.controlpointconfig import ControlPointConfig
 from game.profiling import logged_duration
 from game.scenery_group import SceneryGroup
-from game.theater.controlpoint import (
-    Airfield,
-    Carrier,
-    ControlPoint,
-    Fob,
-    Lha,
-    OffMapSpawn,
-)
+from game.theater.controlpoint import ControlPoint
 from game.theater.presetlocation import PresetLocation
 
 if TYPE_CHECKING:
@@ -92,8 +86,14 @@ class MizCampaignLoader:
 
     STRIKE_TARGET_UNIT_TYPE = Fortification.Tech_combine.id
 
-    def __init__(self, miz: Path, theater: ConflictTheater) -> None:
+    def __init__(
+        self,
+        miz: Path,
+        theater: ConflictTheater,
+        control_point_configs: dict[str | int, ControlPointConfig],
+    ) -> None:
         self.theater = theater
+        self.control_point_builder = ControlPointBuilder(theater, control_point_configs)
         self.mission = Mission()
         with logged_duration("Loading miz"):
             self.mission.load_file(str(miz))
@@ -104,15 +104,6 @@ class MizCampaignLoader:
             self.mission.coalition["blue"].add_country(self.BLUE_COUNTRY)
         if self.mission.country(self.RED_COUNTRY.name) is None:
             self.mission.coalition["red"].add_country(self.RED_COUNTRY)
-
-    def control_point_from_airport(self, airport: Airport) -> ControlPoint:
-        cp = Airfield(airport, self.theater, starts_blue=airport.is_blue())
-
-        # Use the unlimited aircraft option to determine if an airfield should
-        # be owned by the player when the campaign is "inverted".
-        cp.captured_invert = airport.unlimited_aircrafts
-
-        return cp
 
     def country(self, blue: bool) -> Country:
         country = self.mission.country(
@@ -240,36 +231,49 @@ class MizCampaignLoader:
 
     @cached_property
     def control_points(self) -> dict[UUID, ControlPoint]:
-        control_points = {}
+        control_points: dict[UUID, ControlPoint] = {}
+        control_point: ControlPoint
         for airport in self.mission.terrain.airport_list():
             if airport.is_blue() or airport.is_red():
-                control_point = self.control_point_from_airport(airport)
+                control_point = self.control_point_builder.create_airfield(airport)
                 control_points[control_point.id] = control_point
 
         for blue in (False, True):
             for group in self.off_map_spawns(blue):
-                control_point = OffMapSpawn(
-                    str(group.name), group.position, self.theater, starts_blue=blue
+                control_point = self.control_point_builder.create_off_map(
+                    str(group.name),
+                    group.position,
+                    self.theater,
+                    starts_blue=blue,
+                    captured_invert=group.late_activation,
                 )
-                control_point.captured_invert = group.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.carriers(blue):
-                control_point = Carrier(
-                    ship.name, ship.position, self.theater, starts_blue=blue
+                control_point = self.control_point_builder.create_carrier(
+                    ship.name,
+                    ship.position,
+                    self.theater,
+                    starts_blue=blue,
+                    captured_invert=ship.late_activation,
                 )
-                control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
             for ship in self.lhas(blue):
-                control_point = Lha(
-                    ship.name, ship.position, self.theater, starts_blue=blue
+                control_point = self.control_point_builder.create_lha(
+                    ship.name,
+                    ship.position,
+                    self.theater,
+                    starts_blue=blue,
+                    captured_invert=ship.late_activation,
                 )
-                control_point.captured_invert = ship.late_activation
                 control_points[control_point.id] = control_point
             for fob in self.fobs(blue):
-                control_point = Fob(
-                    str(fob.name), fob.position, self.theater, starts_blue=blue
+                control_point = self.control_point_builder.create_fob(
+                    str(fob.name),
+                    fob.position,
+                    self.theater,
+                    starts_blue=blue,
+                    captured_invert=fob.late_activation,
                 )
-                control_point.captured_invert = fob.late_activation
                 control_points[control_point.id] = control_point
 
         return control_points

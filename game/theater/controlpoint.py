@@ -356,6 +356,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.ground_unit_orders = GroundUnitOrders(self)
 
         self.target_position: Optional[Point] = None
+        self.ferry_only = False
 
         # Initialized late because ControlPoints are constructed before the game is.
         self._front_line_db: Database[FrontLine] | None = None
