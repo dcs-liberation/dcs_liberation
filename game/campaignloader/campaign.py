@@ -17,6 +17,7 @@ from game.theater.iadsnetwork.iadsnetwork import IadsNetwork
 from game.theater.theaterloader import TheaterLoader
 from game.version import CAMPAIGN_FORMAT_VERSION
 from .campaignairwingconfig import CampaignAirWingConfig
+from .controlpointconfig import ControlPointConfig
 from .factionrecommendation import FactionRecommendation
 from .mizcampaignloader import MizCampaignLoader
 
@@ -123,7 +124,15 @@ class Campaign:
             ) from ex
 
         with logged_duration("Importing miz data"):
-            MizCampaignLoader(self.path.parent / miz, t).populate_theater()
+            MizCampaignLoader(
+                self.path.parent / miz,
+                t,
+                dict(
+                    ControlPointConfig.iter_from_data(
+                        self.data.get("control_points", {})
+                    )
+                ),
+            ).populate_theater()
 
         # TODO: Move into MizCampaignLoader so this doesn't have unknown initialization
         # in ConflictTheater.

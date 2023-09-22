@@ -53,6 +53,8 @@ class AirWing:
         for control_point in airfield_cache.operational_airfields:
             if control_point.captured != self.player:
                 continue
+            if control_point.ferry_only:
+                continue
             capable_at_base = []
             for squadron in control_point.squadrons:
                 if squadron.can_auto_assign_mission(location, task, size, this_turn):
@@ -91,6 +93,8 @@ class AirWing:
         best_aircraft_for_task = AircraftType.priority_list_for_task(task)
         for aircraft, squadrons in self.squadrons.items():
             for squadron in squadrons:
+                if squadron.location.ferry_only:
+                    continue
                 if squadron.untasked_aircraft and squadron.capable_of(task):
                     aircrafts.append(aircraft)
                     if aircraft not in best_aircraft_for_task:

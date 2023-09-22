@@ -5,6 +5,7 @@ Saves from 8.x are not compatible with 9.0.0.
 ## Features/Improvements
 
 * **[Engine]** Support for DCS Open Beta 2.8.8.43489.
+* **[Campaign]** Added ferry only control points, which offer campaign designers a way to add squadrons that can be brought in after additional airfields are captured.
 * **[Data]** Added support for the ARA Veinticinco de Mayo.
 * **[Data]** Changed display name of the AI-only F-15E Strike Eagle for clarity.
 * **[Flight Planning]** Improved IP selection for targets that are near the center of a threat zone.

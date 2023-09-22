@@ -185,4 +185,7 @@ VERSION = _build_version_string()
 #:
 #: Version 10.10
 #: * Support for Sinai.
+#:
+#: Version 10.11
+#: * Support for ferry-only bases.
 CAMPAIGN_FORMAT_VERSION = (10, 10)

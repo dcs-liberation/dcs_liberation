@@ -1,3 +1,5 @@
+import textwrap
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QCloseEvent, QPixmap
 from PySide6.QtWidgets import (
@@ -60,13 +62,32 @@ class QBaseMenu2(QDialog):
         pixmap = QPixmap(self.get_base_image())
         header.setPixmap(pixmap)
 
+        description_layout = QVBoxLayout()
+        top_layout.addLayout(description_layout)
+
         title = QLabel("<b>" + self.cp.name + "</b>")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setProperty("style", "base-title")
+        description_layout.addWidget(title)
+
+        if self.cp.ferry_only:
+            description_layout.addWidget(
+                QLabel(
+                    "<br />".join(
+                        textwrap.wrap(
+                            "This base only supports ferry missions. Transfer the "
+                            "squadrons to a different base to use them.",
+                            width=80,
+                        )
+                    )
+                )
+            )
+
+        description_layout.addStretch()
+
         self.intel_summary = QLabel()
         self.intel_summary.setToolTip(self.generate_intel_tooltip())
         self.update_intel_summary()
-        top_layout.addWidget(title)
         top_layout.addWidget(self.intel_summary)
         top_layout.setAlignment(Qt.AlignTop)
 
