@@ -30,6 +30,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Mission Generation]** Restored previous AI behavior for anti-ship missions. A DCS update caused only a single aircraft in a flight to attack. The full flight will now attack like they used to.
 * **[Mission Generation]** Fix generation of OCA Runway missions to allow LGBs to be used.
 * **[Mission Generation]** Fixed AI flights flying far too slowly toward NAV points.
+* **[Mission Generation]** Fixed Recovery Tanker mission type intermittently failing due to not being able to find the CVN.
 * **[Modding]** Unit variants can now actually override base unit type properties.
 * **[New Game Wizard]** Factions are reset to default after clicking "Back" to Theater Configuration screen.
 * **[Plugins]** Fixed Lua errors in Skynet plugin that would occur whenever one coalition had no IADS nodes.
