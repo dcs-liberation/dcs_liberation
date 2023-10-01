@@ -192,10 +192,11 @@ squadrons:
       secondary: air-to-air
       aircraft:
         - VF-143
+      size: 14
     - primary: SEAD
       secondary: any
       aircraft:
-        - VFA-106
+        - VFA-192
     - primary: AEW&C
       aircraft:
         - VAW-125
@@ -219,6 +220,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - VMA-214
+      size: 10
     - primary: Transport
       secondary: air-to-ground
       aircraft:
@@ -228,6 +230,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - HMLA-269 (AH-1W)
+      size: 6
   # OPFOR CVN
   Naval-2:
     - primary: BARCAP
@@ -244,6 +247,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24V Hind-E
+      size: 6
   #Haifa
   13:
     - primary: CAS
@@ -268,10 +272,12 @@ squadrons:
       secondary: any
       aircraft:
         - 69th Squadron
+      size: 8
     - primary: BAI
       secondary: any
       aircraft:
         - 110th Squadron
+      size: 8
   # Damascus
   7:
     - primary: TARCAP
@@ -310,22 +316,26 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - SA 342M Gazelle
+      size: 6
   # OPFOR Second inland FOB
   FOB Homs:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - SA 342M Gazelle
+      size: 6
   # Palmyra
   28:
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
         - MiG-29A Fulcrum-A
+      size: 12
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - Su-24M Fencer-D
+      size: 10
   # Bassel Al-Assad
   21:
     - primary: TARCAP
@@ -362,12 +372,14 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24V Hind-E
+      size: 6
   # OPFOR Second coastal FOB
   FOB Samandag:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24V Hind-E
+      size: 6
   # Aleppo
   27:
     - primary: BARCAP
@@ -378,6 +390,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24V Hind-E
+      size: 8
   # Kuweires
   31:
     - primary: TARCAP
@@ -388,6 +401,7 @@ squadrons:
       secondary: any
       aircraft:
         - MiG-29A Fulcrum-A
+      size: 8
     - primary: Strike
       secondary: air-to-ground
       aircraft:

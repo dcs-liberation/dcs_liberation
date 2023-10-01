@@ -20,6 +20,7 @@ squadrons:
       secondary: any
       aircraft:
         - VF-143
+      size: 14
     - primary: SEAD
       secondary: air-to-ground
       aircraft:
@@ -47,6 +48,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - VMA-223
+      size: 10
     - primary: Transport
       secondary: air-to-ground
       aircraft:
@@ -56,6 +58,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - HMLA-169 (AH-1W)
+      size: 6
   # OPFOR CVN 1
   Naval-3:
     - primary: BARCAP
@@ -102,10 +105,12 @@ squadrons:
       secondary: any
       aircraft:
         - J-7B
+      size: 8
     - primary: BARCAP
       secondary: any
       aircraft:
         - FC-1 Fierce Dragon
+      size: 9
   # Tinian Intl
   3:
     - primary: Refueling
@@ -136,7 +141,9 @@ squadrons:
       secondary: any
       aircraft:
         - J-7B
+      size: 10
     - primary: BARCAP
       secondary: air-to-ground
       aircraft:
         - FC-1 Fierce Dragon
+      size: 12

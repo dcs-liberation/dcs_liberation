@@ -20,6 +20,7 @@ squadrons:
       secondary: air-to-air
       aircraft:
         - VF-142
+      size: 14
     - primary: SEAD
       secondary: air-to-ground
       aircraft:
@@ -47,6 +48,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - VMA-223
+      size: 10
     - primary: Transport
       secondary: air-to-ground
       aircraft:
@@ -56,12 +58,14 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - HMLA-269 (AH-1W)
+      size: 6
   # OPFOR Start FOB
   FOB Andreas:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Ka-50 Hokum
+      size: 6
   # OPFOR CVN
   Naval-3:
     - primary: BARCAP
@@ -78,6 +82,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Ka-50 Hokum
+      size: 6
   # Larnaca
   47:
     - primary: TARCAP
@@ -116,10 +121,12 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-28N Havoc
+      size: 6
     - primary: Strike
       secondary: air-to-ground
       aircraft:
       - Tu-160 Blackjack
+      size: 6
     - primary: AEW&C
       aircraft:
         - A-50
@@ -138,6 +145,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR Second FOB
   FOB Guzelyurt:
     - primary: Transport
@@ -149,3 +157,4 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 4
