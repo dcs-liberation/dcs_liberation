@@ -6,6 +6,7 @@ Saves from 8.x are not compatible with 9.0.0.
 
 * **[Engine]** Support for DCS Open Beta 2.8.8.43489.
 * **[Campaign]** Added ferry only control points, which offer campaign designers a way to add squadrons that can be brought in after additional airfields are captured.
+* **[Campaign]** The new squadron rules (size limits, beginning the campaign at full strength) are now the default and required. The old style of unlimited squadron sizes and starting with zero aircraft has been removed.
 * **[Data]** Added support for the ARA Veinticinco de Mayo.
 * **[Data]** Changed display name of the AI-only F-15E Strike Eagle for clarity.
 * **[Flight Planning]** Improved IP selection for targets that are near the center of a threat zone.

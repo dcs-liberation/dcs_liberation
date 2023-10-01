@@ -292,7 +292,7 @@ class Game:
         if self.turn > 1:
             self.conditions = self.generate_conditions()
 
-    def begin_turn_0(self, squadrons_start_full: bool) -> None:
+    def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""
         from .sim import GameUpdateEvents
 
@@ -317,8 +317,8 @@ class Game:
                 # Rotate the whole TGO with the new heading
                 tgo.rotate(heading or tgo.heading)
 
-        self.blue.preinit_turn_0(squadrons_start_full)
-        self.red.preinit_turn_0(squadrons_start_full)
+        self.blue.preinit_turn_0()
+        self.red.preinit_turn_0()
         # TODO: Check for overfull bases.
         # We don't need to actually stream events for turn zero because we haven't given
         # *any* state to the UI yet, so it will need to do a full draw once we do.

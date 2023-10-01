@@ -230,10 +230,7 @@ def parse_args() -> argparse.Namespace:
     new_game.add_argument(
         "--use-new-squadron-rules",
         action="store_true",
-        help=(
-            "Limit the number of aircraft per squadron and begin the campaign with "
-            "them at full strength."
-        ),
+        help="Deprecated. Does nothing.",
     )
 
     new_game.add_argument(
@@ -285,7 +282,6 @@ class CreateGameParams:
     start_date: datetime
     restrict_weapons_by_date: bool
     advanced_iads: bool
-    use_new_squadron_rules: bool
     show_air_wing_config: bool
 
     @staticmethod
@@ -303,7 +299,6 @@ class CreateGameParams:
             args.date,
             args.restrict_weapons_by_date,
             args.advanced_iads,
-            args.use_new_squadron_rules,
             args.show_air_wing_config,
         )
 
@@ -327,7 +322,6 @@ def create_game(params: CreateGameParams) -> Game:
             enable_frontline_cheats=params.cheats,
             enable_base_capture_cheat=params.cheats,
             restrict_weapons_by_date=params.restrict_weapons_by_date,
-            enable_squadron_aircraft_limits=params.use_new_squadron_rules,
         ),
         GeneratorSettings(
             start_date=params.start_date,
@@ -357,7 +351,7 @@ def create_game(params: CreateGameParams) -> Game:
     if params.show_air_wing_config:
         if AirWingConfigurationDialog(game, None).exec() == QDialog.DialogCode.Rejected:
             sys.exit("Aborted air wing configuration")
-    game.begin_turn_0(squadrons_start_full=params.use_new_squadron_rules)
+    game.begin_turn_0()
     return game
 
 
