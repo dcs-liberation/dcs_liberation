@@ -31,6 +31,7 @@ squadrons:
       secondary: any
       aircraft:
         - VF-143
+      size: 14
     - primary: SEAD
       secondary: air-to-ground
       aircraft:
@@ -58,6 +59,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - VMA-223
+      size: 10
     - primary: Transport
       secondary: air-to-ground
       aircraft:
@@ -67,6 +69,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - HMLA-169 (AH-1W)
+      size: 6
   # OPFOR CVN
   Naval-1:
     - primary: BARCAP
@@ -83,6 +86,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # Rio Gallegos
   5:
     - primary: BARCAP
@@ -95,12 +99,14 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR Third FOB
   FOB Galy:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # Punta Arenas
   9:
     - primary: TARCAP
@@ -117,7 +123,9 @@ squadrons:
       secondary: any
       aircraft:
         - J-7B
+      size: 6
     - primary: Anti-ship
       secondary: air-to-ground
       aircraft:
         - H-6J Badger
+      size: 2

@@ -44,11 +44,13 @@ squadrons:
       secondary: any
       aircraft:
       - 493rd FS
-      #USAF F-15C 
+      #USAF F-15C
+      size: 12 
     - primary: BAI
       secondary: air-to-ground
       aircraft:
       - 81st FS
+      size: 10
       #USAF A-10CI
   #BLUFOR CVN
   BLUFOR CVN:
@@ -86,6 +88,7 @@ squadrons:
       aircraft:
         - SA 342M Gazelle
         #French Gazelle
+      size: 4
     - primary: CAS
       secondary: air-to-ground
       aircraft:
@@ -98,48 +101,56 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L1F2
   FOB Fars Border:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L1F2 split
   FOB Bikuyeh:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-28N Havoc
+      size: 6
   # Lar 
   11:
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
         - MiG-21bis Fishbed-N
+      size: 5
   # OPFOR L2F1
   FOB Mansurabad:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L2F2
   FOB Jahrom:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L2F3
   FOB Tower:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L2F3 split
   FOB Nouderan:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-28N Havoc
+      size: 6
   # Shiraz Intl
   19:
     - primary: AEW&C
@@ -177,60 +188,70 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F2
   FOB Tashk:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F3
   FOB Chahak:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F4
   FOB Plainhold:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F4 split
   FOB Robat:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F5
   FOB Plainguard:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F6
   FOB Hasanabad:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F6 split
   FOB Najafabad:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-28N Havoc
+      size: 6
   # OPFOR L3F7
   FOB Kabutarkhan:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # OPFOR L3F8
   FOB Sa'di:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # Kerman
   18:
     - primary: AEW&C
@@ -253,6 +274,7 @@ squadrons:
       secondary: air-to-air
       aircraft:
         - MiG-29A Fulcrum-A
+      size: 6
     - primary: Strike
       secondary: air-to-ground
       aircraft:
@@ -261,3 +283,4 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
