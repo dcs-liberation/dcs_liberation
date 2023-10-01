@@ -12,7 +12,7 @@ recommended_enemy_faction: Germany 1944
 recommended_start_date: 1944-07-04
 miz: caen_to_evreux.miz
 performance: 1
-version: "10.9"
+version: "11.0"
 squadrons:
   # Evreux
   26:
@@ -53,7 +53,7 @@ squadrons:
     - primary: OCA/Runway
       secondary: air-to-ground
       aircraft:
-        - Boston Mk.III  
+        - Boston Mk.III
         - A-20G Havoc
       size: 10
   # Ford_AF

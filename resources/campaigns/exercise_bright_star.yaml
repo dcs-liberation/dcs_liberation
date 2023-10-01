@@ -4,11 +4,20 @@ theater: Sinai
 authors: Starfire
 recommended_player_faction: Bluefor Modern
 recommended_enemy_faction: Egypt 2000s
-description: <p>For over 4 decades, the United States and Egypt have run a series of biannual joint military exercises called Bright Star. Over the years, the number of participating countries has grown substantially. Exercise Bright Star 2025 boasts 8 participant nations and 14 observer nations. The United States and a portion of the exercise coalition will play the part of a fictional hostile nation dubbed Orangeland, staging a mock invasion against Cairo. Israel, having for the first time accepted the invitation to observe, is hosting the aggressor faction of the exercise coalition at its airfields.</p>
+description:
+  <p>For over 4 decades, the United States and Egypt have run a series of
+  biannual joint military exercises called Bright Star. Over the years, the
+  number of participating countries has grown substantially. Exercise Bright
+  Star 2025 boasts 8 participant nations and 14 observer nations. The United
+  States and a portion of the exercise coalition will play the part of a
+  fictional hostile nation dubbed Orangeland, staging a mock invasion against
+  Cairo. Israel, having for the first time accepted the invitation to observe,
+  is hosting the aggressor faction of the exercise coalition at its
+  airfields.</p>
 miz: exercise_bright_star.miz
 performance: 1
 recommended_start_date: 2025-09-01
-version: "10.9"
+version: "11.0"
 squadrons:
   Blue CV-1:
     - primary: SEAD
@@ -29,7 +38,7 @@ squadrons:
       aircraft:
         - SH-60B Seahawk
       size: 2
-# Hatzerim (141)
+  # Hatzerim (141)
   7:
     - primary: Escort
       secondary: air-to-air
@@ -61,7 +70,7 @@ squadrons:
       aircraft:
         - Mirage 2000C
       size: 12
-# Kedem
+  # Kedem
   12:
     - primary: Transport
       aircraft:
@@ -72,7 +81,7 @@ squadrons:
       aircraft:
         - UH-1H Iroquois
       size: 4
-# Nevatim (106)
+  # Nevatim (106)
   8:
     - primary: AEW&C
       aircraft:
@@ -91,7 +100,7 @@ squadrons:
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
       size: 8
-# Melez (30)
+  # Melez (30)
   5:
     - primary: CAS
       secondary: air-to-ground
@@ -108,7 +117,7 @@ squadrons:
       aircraft:
         - Mirage 2000C
       size: 12
-# Wadi al Jandali (72)
+  # Wadi al Jandali (72)
   13:
     - primary: AEW&C
       aircraft:
@@ -134,7 +143,7 @@ squadrons:
       aircraft:
         - SA 342L Gazelle
       size: 4
-# Cairo West (95)
+  # Cairo West (95)
   18:
     - primary: Transport
       aircraft:

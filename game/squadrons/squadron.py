@@ -162,12 +162,11 @@ class Squadron:
         self.current_roster.extend(new_pilots)
         self.available_pilots.extend(new_pilots)
 
-    def populate_for_turn_0(self, squadrons_start_full: bool) -> None:
+    def populate_for_turn_0(self) -> None:
         if any(p.status is not PilotStatus.Active for p in self.pilot_pool):
             raise ValueError("Squadrons can only be created with active pilots.")
         self._recruit_pilots(self.settings.squadron_pilot_limit)
-        if squadrons_start_full:
-            self.owned_aircraft = self.max_size
+        self.owned_aircraft = self.max_size
 
     def end_turn(self) -> None:
         if self.destination is not None:
@@ -338,8 +337,6 @@ class Squadron:
         return self.owned_aircraft + self.pending_deliveries
 
     def has_aircraft_capacity_for(self, n: int) -> bool:
-        if not self.settings.enable_squadron_aircraft_limits:
-            return True
         remaining = self.max_size - self.owned_aircraft - self.pending_deliveries
         return remaining >= n
 

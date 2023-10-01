@@ -27,7 +27,7 @@ description:
 miz: operation_vectrons_claw.miz
 performance: 1
 recommended_start_date: 2008-08-08
-version: "10.11"
+version: "11.0"
 control_points:
   From Incirlik:
     ferry_only: true

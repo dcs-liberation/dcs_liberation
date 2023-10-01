@@ -4,13 +4,20 @@ theater: Nevada
 authors: Starfire
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Redfor (China) 2010
-description: <p>Welcome to Vegas Nerve, an asymmetrical Red Flag Exercise scenario. You are starting off in control of the two Tonopah airports, and will push south from there. For the duration of this exercise, Creech AFB has been cleared of all fixed wing aircraft and will function as a FARP for rotor ops. OPFOR has a substantial resource advantage and an extensive IADS. Reducing that resource advantage while degrading their IADS will be vital to a successful completion of this exercise. Good luck, Commander.</p>
+description:
+  <p>Welcome to Vegas Nerve, an asymmetrical Red Flag Exercise scenario. You are
+  starting off in control of the two Tonopah airports, and will push south from
+  there. For the duration of this exercise, Creech AFB has been cleared of all
+  fixed wing aircraft and will function as a FARP for rotor ops. OPFOR has a
+  substantial resource advantage and an extensive IADS. Reducing that resource
+  advantage while degrading their IADS will be vital to a successful completion
+  of this exercise. Good luck, Commander.</p>
 miz: exercise_vegas_nerve.miz
 performance: 1
 recommended_start_date: 2011-02-24
-version: "10.9"
+version: "11.0"
 squadrons:
-# Tonopah Airport
+  # Tonopah Airport
   17:
     - primary: TARCAP
       secondary: any
@@ -26,7 +33,7 @@ squadrons:
       aircraft:
         - E-3A
       size: 1
-# Tonopah Test Range
+  # Tonopah Test Range
   18:
     - primary: BAI
       secondary: air-to-ground
@@ -53,7 +60,7 @@ squadrons:
       aircraft:
         - UH-1H Iroquois
       size: 2
-# Groom Lake
+  # Groom Lake
   2:
     - primary: Escort
       secondary: air-to-air
@@ -65,7 +72,7 @@ squadrons:
       aircraft:
         - Su-25T Frogfoot
       size: 20
-# Creech
+  # Creech
   Creech FARP:
     - primary: CAS
       secondary: air-to-ground
@@ -77,7 +84,7 @@ squadrons:
       aircraft:
         - Mi-24P Hind-F
       size: 4
-# Nellis AFB
+  # Nellis AFB
   4:
     - primary: Strike
       secondary: air-to-ground
@@ -98,7 +105,7 @@ squadrons:
       aircraft:
         - Su-34 Fullback
       size: 20
-# Boulder City Airport
+  # Boulder City Airport
   6:
     - primary: SEAD Escort
       secondary: any
