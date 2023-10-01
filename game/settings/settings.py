@@ -254,15 +254,6 @@ class Settings:
             "this many pilots each turn up to the limit."
         ),
     )
-    # Feature flag for squadron limits.
-    enable_squadron_aircraft_limits: bool = boolean_option(
-        "Enable per-squadron aircraft limits",
-        CAMPAIGN_MANAGEMENT_PAGE,
-        PILOTS_AND_SQUADRONS_SECTION,
-        default=False,
-        remember_player_choice=True,
-        detail="If set, squadrons will be limited to a maximum number of aircraft.",
-    )
 
     # HQ Automation
     automate_runway_repair: bool = boolean_option(

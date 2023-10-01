@@ -839,9 +839,6 @@ class AirWingConfigurationDialog(QDialog):
             tab.revert()
 
     def can_continue(self) -> bool:
-        if not self.game.settings.enable_squadron_aircraft_limits:
-            return True
-
         overfull = list(self.parking_tracker.iter_overfull())
         if not overfull:
             return True
