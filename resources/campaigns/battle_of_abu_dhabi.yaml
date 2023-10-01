@@ -9,7 +9,7 @@ description:
   pushing south.</p>
 miz: battle_of_abu_dhabi.miz
 performance: 2
-version: "10.9"
+version: "11.0"
 squadrons:
   # Blue CPs:
   # The default faction is Iran, but the F-14B is given higher precedence so

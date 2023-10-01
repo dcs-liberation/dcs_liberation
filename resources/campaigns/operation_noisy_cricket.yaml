@@ -30,7 +30,7 @@ recommended_player_money: 0
 recommended_enemy_money: 0
 recommended_player_income_multiplier: 0.2
 recommended_enemy_income_multiplier: 0.2
-version: "10.9"
+version: "11.0"
 squadrons:
   Blue CV-1:
     - primary: SEAD
