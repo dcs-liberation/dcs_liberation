@@ -59,7 +59,6 @@ class FinancesLayout(QGridLayout):
         )
         budget = game.coalition_for(player).budget
         self.add_row(middle="Balance", right=f"<b>{budget:.1f}M</b>")
-        self.setRowStretch(next(self.row), 1)
 
     def add_row(
         self,
