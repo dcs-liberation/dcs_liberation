@@ -710,7 +710,9 @@ class PackagePage(KneeboardPage):
 
         table = []
         for flight in self.flights:
-            for idx, laser_code in enumerate(flight.laser_codes, 1):
+            for idx, (laser_code, stn) in enumerate(
+                zip(flight.laser_codes, flight.source_track_numbers), 1
+            ):
                 # Blank the flight-wide properties to make the table easier to scan.
                 if idx > 1:
                     task = ""
@@ -725,9 +727,10 @@ class PackagePage(KneeboardPage):
                         task,
                         radio,
                         "" if laser_code is None else str(laser_code),
+                        "" if stn is None else str(stn),
                     ]
                 )
-        writer.table(table, ["Aircraft", "Task", "Radio", "Laser code"])
+        writer.table(table, ["Aircraft", "Task", "Radio", "Laser code", "STN"])
 
         writer.write(path)
 
