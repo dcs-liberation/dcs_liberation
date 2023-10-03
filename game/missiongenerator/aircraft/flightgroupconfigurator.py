@@ -42,7 +42,7 @@ class FlightGroupConfigurator:
         time: datetime,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
-        stn_prefix: SourceTrackNumberPrefix,
+        stn_prefix: SourceTrackNumberPrefix | None,
         mission_data: MissionData,
         dynamic_runways: dict[str, RunwayData],
         use_client: bool,
@@ -70,12 +70,13 @@ class FlightGroupConfigurator:
         flight_channel = self.setup_radios()
 
         laser_codes: list[Optional[int]] = []
-        stns = []
+        stns: list[SourceTrackNumber] = []
         for idx, (unit, member) in enumerate(
             zip(self.group.units, self.flight.iter_members())
         ):
             self.configure_flight_member(unit, member, laser_codes)
-            stns.append(SourceTrackNumber(self.stn_prefix, idx))
+            if self.stn_prefix is not None:
+                stns.append(SourceTrackNumber(self.stn_prefix, idx))
 
         divert = None
         if self.flight.divert is not None:

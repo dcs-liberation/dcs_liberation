@@ -172,6 +172,10 @@ class AircraftGenerator:
             flight, country, self.mission, self.helipads
         ).create_flight_group()
 
+        stn_prefix: SourceTrackNumberPrefix | None = None
+        if flight.squadron.aircraft.should_alloc_stn():
+            stn_prefix = SourceTrackNumberPrefix(next(self.stn_prefix_allocator))
+
         briefing_data = FlightGroupConfigurator(
             flight,
             group,
@@ -180,7 +184,7 @@ class AircraftGenerator:
             self.time,
             self.radio_registry,
             self.tacan_registy,
-            SourceTrackNumberPrefix(next(self.stn_prefix_allocator)),
+            stn_prefix,
             self.mission_data,
             dynamic_runways,
             self.use_client,

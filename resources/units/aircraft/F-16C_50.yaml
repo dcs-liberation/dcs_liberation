@@ -78,3 +78,6 @@ laser_codes:
         digit: 1
       - id: LaserCode1
         digit: 0
+datalink:
+  max_team_members: 8
+  max_donors: 4
