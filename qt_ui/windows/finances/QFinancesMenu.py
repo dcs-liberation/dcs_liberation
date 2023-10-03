@@ -26,15 +26,14 @@ class QHorizontalSeparationLine(QFrame):
 
 
 class FinancesLayout(QGridLayout):
-    def __init__(self, game: Game, player: bool, total_at_top: bool = False) -> None:
+    def __init__(self, game: Game, player: bool) -> None:
         super().__init__()
         self.row = itertools.count(0)
 
         income = Income(game, player)
 
-        if total_at_top:
-            self.add_total(game, income, player)
-            self.add_line()
+        self.add_total(game, income, player)
+        self.add_line()
 
         control_points = reversed(
             sorted(income.control_points, key=lambda c: c.income_per_turn)
@@ -48,9 +47,7 @@ class FinancesLayout(QGridLayout):
         for building in buildings:
             self.add_building(building)
 
-        if not total_at_top:
-            self.add_line()
-            self.add_total(game, income, player)
+        self.setRowStretch(next(self.row), 1)
 
     def add_total(self, game, income, player):
         self.add_row(
