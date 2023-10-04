@@ -281,14 +281,15 @@ class MissionGenerator:
             self.mission.country(self.game.red.country_name),
         )
 
-        for flight in aircraft_generator.flights:
-            if not flight.client_units:
-                continue
-            flight.aircraft_type.assign_channels_for_flight(
-                flight, air_support_generator.mission_data
-            )
+        for package in aircraft_generator.briefing_data:
+            for flight in package:
+                if not flight.client_units:
+                    continue
+                flight.aircraft_type.assign_channels_for_flight(
+                    flight, air_support_generator.mission_data
+                )
 
-        self.mission_data.flights = aircraft_generator.flights
+        self.mission_data.briefing_data = aircraft_generator.briefing_data
 
     def generate_destroyed_units(self) -> None:
         """Add destroyed units to the Mission"""
@@ -344,8 +345,8 @@ class MissionGenerator:
                 if jtac.blue:
                     gen.add_jtac(jtac)
 
-            for flight in mission_data.flights:
-                gen.add_flight(flight)
+            for package in mission_data.briefing_data:
+                gen.add_package_briefing_data(package)
             gen.generate()
 
     def setup_combined_arms(self) -> None:

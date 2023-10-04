@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from functools import cached_property
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING
 
 from dcs.country import Country
 from dcs.mission import Mission
@@ -58,7 +58,9 @@ class AircraftGenerator:
         self.radio_registry = radio_registry
         self.tacan_registy = tacan_registry
         self.unit_map = unit_map
-        self.flights: List[FlightData] = []
+        # A list of per-package briefing data, which is in turn a list of per-flight
+        # briefing data.
+        self.briefing_data: list[list[FlightData]] = []
         self.mission_data = mission_data
         self.helipads = helipads
 
@@ -102,13 +104,16 @@ class AircraftGenerator:
         for package in ato.packages:
             if not package.flights:
                 continue
+            package_briefing_data: list[FlightData] = []
             for flight in package.flights:
                 if flight.alive:
                     logging.info(f"Generating flight: {flight.unit_type}")
-                    group = self.create_and_configure_flight(
+                    group, briefing_data = self.create_and_configure_flight(
                         flight, country, dynamic_runways
                     )
+                    package_briefing_data.append(briefing_data)
                     self.unit_map.add_aircraft(group, flight)
+            self.briefing_data.append(package_briefing_data)
 
     def spawn_unused_aircraft(
         self, player_country: Country, enemy_country: Country
@@ -157,26 +162,25 @@ class AircraftGenerator:
 
     def create_and_configure_flight(
         self, flight: Flight, country: Country, dynamic_runways: Dict[str, RunwayData]
-    ) -> FlyingGroup[Any]:
+    ) -> tuple[FlyingGroup[Any], FlightData]:
         """Creates and configures the flight group in the mission."""
         group = FlightGroupSpawner(
             flight, country, self.mission, self.helipads
         ).create_flight_group()
-        self.flights.append(
-            FlightGroupConfigurator(
-                flight,
-                group,
-                self.game,
-                self.mission,
-                self.time,
-                self.radio_registry,
-                self.tacan_registy,
-                self.mission_data,
-                dynamic_runways,
-                self.use_client,
-                self.unit_map,
-            ).configure()
-        )
+
+        briefing_data = FlightGroupConfigurator(
+            flight,
+            group,
+            self.game,
+            self.mission,
+            self.time,
+            self.radio_registry,
+            self.tacan_registy,
+            self.mission_data,
+            dynamic_runways,
+            self.use_client,
+            self.unit_map,
+        ).configure()
 
         wpt = group.waypoint("LANDING")
         if flight.is_helo and isinstance(flight.arrival, Fob) and wpt:
@@ -185,4 +189,4 @@ class AircraftGenerator:
             wpt.link_unit = hpad.id
             self.helipads[flight.arrival].units.append(hpad)
 
-        return group
+        return group, briefing_data

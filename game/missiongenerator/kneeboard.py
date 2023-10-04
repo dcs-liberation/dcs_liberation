@@ -724,12 +724,13 @@ class KneeboardGenerator(MissionInfoGenerator):
             that aircraft.
         """
         all_flights: Dict[AircraftType, List[KneeboardPage]] = defaultdict(list)
-        for flight in self.flights:
-            if not flight.client_units:
-                continue
-            all_flights[flight.aircraft_type].extend(
-                self.generate_flight_kneeboard(flight)
-            )
+        for flights in self.briefing_data:
+            for flight in flights:
+                if not flight.client_units:
+                    continue
+                all_flights[flight.aircraft_type].extend(
+                    self.generate_flight_kneeboard(flight)
+                )
         return all_flights
 
     def generate_task_page(self, flight: FlightData) -> Optional[KneeboardPage]:

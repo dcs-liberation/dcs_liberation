@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -135,37 +136,41 @@ class LuaGenerator:
             crate_item.add_key_value("weight", weight)
 
         target_points = lua_data.add_item("TargetPoints")
-        for flight in self.mission_data.flights:
-            if flight.friendly and flight.flight_type in [
-                FlightType.ANTISHIP,
-                FlightType.DEAD,
-                FlightType.SEAD,
-                FlightType.STRIKE,
-            ]:
-                flight_type = str(flight.flight_type)
-                flight_target = flight.package.target
-                if flight_target:
-                    flight_target_name = None
-                    flight_target_type = None
-                    if isinstance(flight_target, TheaterGroundObject):
-                        flight_target_name = flight_target.obj_name
-                        flight_target_type = (
-                            flight_type + f" TGT ({flight_target.category})"
+        all_packages = itertools.chain(
+            self.game.blue.ato.packages, self.game.red.ato.packages
+        )
+        for package in all_packages:
+            for flight in package.flights:
+                if flight.blue and flight.flight_type in [
+                    FlightType.ANTISHIP,
+                    FlightType.DEAD,
+                    FlightType.SEAD,
+                    FlightType.STRIKE,
+                ]:
+                    flight_type = str(flight.flight_type)
+                    flight_target = flight.package.target
+                    if flight_target:
+                        flight_target_name = None
+                        flight_target_type = None
+                        if isinstance(flight_target, TheaterGroundObject):
+                            flight_target_name = flight_target.obj_name
+                            flight_target_type = (
+                                flight_type + f" TGT ({flight_target.category})"
+                            )
+                        elif hasattr(flight_target, "name"):
+                            flight_target_name = flight_target.name
+                            flight_target_type = flight_type + " TGT (Airbase)"
+                        target_item = target_points.add_item()
+                        if flight_target_name:
+                            target_item.add_key_value("name", flight_target_name)
+                        if flight_target_type:
+                            target_item.add_key_value("type", flight_target_type)
+                        target_item.add_key_value(
+                            "positionX", str(flight_target.position.x)
                         )
-                    elif hasattr(flight_target, "name"):
-                        flight_target_name = flight_target.name
-                        flight_target_type = flight_type + " TGT (Airbase)"
-                    target_item = target_points.add_item()
-                    if flight_target_name:
-                        target_item.add_key_value("name", flight_target_name)
-                    if flight_target_type:
-                        target_item.add_key_value("type", flight_target_type)
-                    target_item.add_key_value(
-                        "positionX", str(flight_target.position.x)
-                    )
-                    target_item.add_key_value(
-                        "positionY", str(flight_target.position.y)
-                    )
+                        target_item.add_key_value(
+                            "positionY", str(flight_target.position.y)
+                        )
 
         for cp in self.game.theater.controlpoints:
             coalition_object = (

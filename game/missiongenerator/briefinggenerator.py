@@ -56,7 +56,7 @@ class MissionInfoGenerator:
         self.game = game
         self.awacs: List[AwacsInfo] = []
         self.comms: List[CommInfo] = []
-        self.flights: List[FlightData] = []
+        self.briefing_data: list[list[FlightData]] = []
         self.jtacs: List[JtacInfo] = []
         self.tankers: List[TankerInfo] = []
         self.frontlines: List[FrontLineInfo] = []
@@ -79,13 +79,13 @@ class MissionInfoGenerator:
         """
         self.comms.append(CommInfo(name, freq))
 
-    def add_flight(self, flight: FlightData) -> None:
+    def add_package_briefing_data(self, data: list[FlightData]) -> None:
         """Adds flight info to the mission.
 
         Args:
-            flight: Flight information.
+            data: The list of briefing data for each flight in a package.
         """
-        self.flights.append(flight)
+        self.briefing_data.append(data)
 
     def add_jtac(self, jtac: JtacInfo) -> None:
         """Adds a JTAC to the mission.
@@ -177,12 +177,13 @@ class BriefingGenerator(MissionInfoGenerator):
     # TODO: This should determine if runway is friendly through a method more robust than the existing string match
     def generate_allied_flights_by_departure(self) -> None:
         """Create iterable to display allied flights grouped by departure airfield."""
-        for flight in self.flights:
-            if not flight.client_units and flight.friendly:
-                name = flight.departure.airfield_name
-                if (
-                    name in self.allied_flights_by_departure
-                ):  # where else can we get this?
-                    self.allied_flights_by_departure[name].append(flight)
-                else:
-                    self.allied_flights_by_departure[name] = [flight]
+        for package in self.briefing_data:
+            for flight in package:
+                if not flight.client_units and flight.friendly:
+                    name = flight.departure.airfield_name
+                    if (
+                        name in self.allied_flights_by_departure
+                    ):  # where else can we get this?
+                        self.allied_flights_by_departure[name].append(flight)
+                    else:
+                        self.allied_flights_by_departure[name] = [flight]
