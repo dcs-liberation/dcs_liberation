@@ -48,6 +48,7 @@ from game.weather.weather import Weather
 from .aircraft.flightdata import FlightData
 from .airsupportgenerator import AwacsInfo, TankerInfo
 from .briefinggenerator import CommInfo, JtacInfo, MissionInfoGenerator
+from ..ato import Package
 
 if TYPE_CHECKING:
     from game import Game
@@ -691,6 +692,46 @@ class NotesPage(KneeboardPage):
         writer.write(path)
 
 
+class PackagePage(KneeboardPage):
+    """A kneeboard page showing information about the flight's package."""
+
+    def __init__(
+        self, package: Package, flights: list[FlightData], dark_kneeboard: bool
+    ) -> None:
+        self.package = package
+        self.flights = flights
+        self.dark_kneeboard = dark_kneeboard
+
+    def write(self, path: Path) -> None:
+        writer = KneeboardPageWriter(dark_theme=self.dark_kneeboard)
+        writer.title(
+            f"Package {self.package.package_description} {self.package.target.name}"
+        )
+
+        table = []
+        for flight in self.flights:
+            for idx, laser_code in enumerate(flight.laser_codes, 1):
+                # Blank the flight-wide properties to make the table easier to scan.
+                if idx > 1:
+                    task = ""
+                    radio = ""
+                else:
+                    task = str(flight.flight_type)
+                    radio = str(flight.intra_flight_channel)
+
+                table.append(
+                    [
+                        f"{flight.callsign}-{idx}",
+                        task,
+                        radio,
+                        "" if laser_code is None else str(laser_code),
+                    ]
+                )
+        writer.table(table, ["Aircraft", "Task", "Radio", "Laser code"])
+
+        writer.write(path)
+
+
 class KneeboardGenerator(MissionInfoGenerator):
     """Creates kneeboard pages for each client flight in the mission."""
 
@@ -729,7 +770,7 @@ class KneeboardGenerator(MissionInfoGenerator):
                 if not flight.client_units:
                     continue
                 all_flights[flight.aircraft_type].extend(
-                    self.generate_flight_kneeboard(flight)
+                    self.generate_flight_kneeboard(flight, flights)
                 )
         return all_flights
 
@@ -740,7 +781,9 @@ class KneeboardGenerator(MissionInfoGenerator):
             return StrikeTaskPage(flight, self.dark_kneeboard)
         return None
 
-    def generate_flight_kneeboard(self, flight: FlightData) -> List[KneeboardPage]:
+    def generate_flight_kneeboard(
+        self, flight: FlightData, flights: list[FlightData]
+    ) -> List[KneeboardPage]:
         """Returns a list of kneeboard pages for the given flight."""
 
         if flight.aircraft_type.utc_kneeboard:
@@ -767,6 +810,7 @@ class KneeboardGenerator(MissionInfoGenerator):
                 zoned_time,
                 self.dark_kneeboard,
             ),
+            PackagePage(flight.package, flights, self.dark_kneeboard),
         ]
 
         # Only create the notes page if there are notes to show.
