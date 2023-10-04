@@ -1,4 +1,4 @@
-﻿altgraph==0.17.3
+altgraph==0.17.3
 anyio==3.6.2
 asgiref==3.6.0
 attrs==22.2.0
@@ -28,7 +28,7 @@ numpy==1.25.1
 packaging==22.0
 pathspec==0.10.3
 pefile==2022.5.30
-Pillow==9.3.0
+Pillow==10.0.1
 platformdirs==2.6.2
 pluggy==1.0.0
 pre-commit==2.21.0
