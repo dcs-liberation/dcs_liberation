@@ -42,6 +42,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[UI]** In unit transfer dialog, only list control points that are reachable from the control point units are being transferred from.
 * **[UI]** Fixed UI bug where altering an "ahead of package" TOT offset would change the offset back to a "behind pacakge" offset.
 * **[UI]** Fixed bug where changing TOT offsets could result in flight startup times that are in the past.
+* **[UI]** Fixed odd spacing of the finance window when there were not enough items to fill the page.
 
 # 8.1.0
 
