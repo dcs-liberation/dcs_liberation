@@ -53,46 +53,40 @@ class QFlightWaypointList(QTableView):
         self.setItemDelegateForColumn(1, self.altitude_editor_delegate)
 
     def update_list(self) -> None:
-        # ignore signals when updating list so on_changed does not fire
-        self.model.blockSignals(True)
-        try:
-            # We need to keep just the row and rebuild the index later because the
-            # QModelIndex will not be valid after the model is cleared.
-            current_index = self.currentIndex().row()
-            self.model.clear()
+        # We need to keep just the row and rebuild the index later because the
+        # QModelIndex will not be valid after the model is cleared.
+        current_index = self.currentIndex().row()
+        self.model.clear()
 
-            self.model.setHorizontalHeaderLabels(HEADER_LABELS)
+        self.model.setHorizontalHeaderLabels(HEADER_LABELS)
 
-            waypoints = self.flight.flight_plan.waypoints
-            # Why [1:]? Qt starts indexing at 1 rather than 0, whereas DCS numbers
-            # waypoints starting with 0, and for whatever reason Qt crashes whenever I
-            # set the vertical labels manually.
-            #
-            # Starting with the second waypoint is a bit of a hack, but it's also the
-            # historical behavior anyway. This view used to have waypoints starting at 1
-            # and just didn't show the departure waypoint because the departure waypoint
-            # wasn't actually part of the flight plan tracked by Liberation. That
-            # changed at some point, so now we need to skip it manually to preserve that
-            # behavior.
-            #
-            # It really ought to show the departure waypoint and start indexing at 0,
-            # but since this all pending a move to React anyway, it's not worth fighting
-            # the Qt crashes for now.
-            #
-            # https://github.com/dcs-liberation/dcs_liberation/issues/3037
-            for row, waypoint in enumerate(waypoints[1:]):
-                self._add_waypoint_row(row, self.flight, waypoint)
-            self.selectionModel().setCurrentIndex(
-                self.model.index(current_index, 0), QItemSelectionModel.Select
-            )
-            self.resizeColumnsToContents()
-            total_column_width = self.verticalHeader().width() + self.lineWidth()
-            for i in range(0, self.model.columnCount()):
-                total_column_width += self.columnWidth(i) + self.lineWidth()
-            self.setFixedWidth(total_column_width)
-        finally:
-            # stop ignoring signals
-            self.model.blockSignals(False)
+        waypoints = self.flight.flight_plan.waypoints
+        # Why [1:]? Qt starts indexing at 1 rather than 0, whereas DCS numbers
+        # waypoints starting with 0, and for whatever reason Qt crashes whenever I
+        # set the vertical labels manually.
+        #
+        # Starting with the second waypoint is a bit of a hack, but it's also the
+        # historical behavior anyway. This view used to have waypoints starting at 1
+        # and just didn't show the departure waypoint because the departure waypoint
+        # wasn't actually part of the flight plan tracked by Liberation. That
+        # changed at some point, so now we need to skip it manually to preserve that
+        # behavior.
+        #
+        # It really ought to show the departure waypoint and start indexing at 0,
+        # but since this all pending a move to React anyway, it's not worth fighting
+        # the Qt crashes for now.
+        #
+        # https://github.com/dcs-liberation/dcs_liberation/issues/3037
+        for row, waypoint in enumerate(waypoints[1:]):
+            self._add_waypoint_row(row, self.flight, waypoint)
+        self.selectionModel().setCurrentIndex(
+            self.model.index(current_index, 0), QItemSelectionModel.Select
+        )
+        self.resizeColumnsToContents()
+        total_column_width = self.verticalHeader().width() + self.lineWidth()
+        for i in range(0, self.model.columnCount()):
+            total_column_width += self.columnWidth(i) + self.lineWidth()
+        self.setFixedWidth(total_column_width)
 
     def _add_waypoint_row(
         self, row: int, flight: Flight, waypoint: FlightWaypoint
@@ -118,9 +112,13 @@ class QFlightWaypointList(QTableView):
 
     def on_changed(self) -> None:
         for i in range(self.model.rowCount()):
-            altitude = self.model.item(i, 1).text()
-            altitude_feet = float(altitude)
-            self.flight.flight_plan.waypoints[i].alt = Distance.from_feet(altitude_feet)
+            if self.model.item(i, 1) is not None:
+                altitude = self.model.item(i, 1).text()
+                altitude_feet = float(altitude)
+                # update waypoint index i+1 as rows are 1-indexed
+                self.flight.flight_plan.waypoints[i + 1].alt = Distance.from_feet(
+                    altitude_feet
+                )
 
     def tot_text(self, flight: Flight, waypoint: FlightWaypoint) -> str:
         if waypoint.waypoint_type == FlightWaypointType.TAKEOFF:

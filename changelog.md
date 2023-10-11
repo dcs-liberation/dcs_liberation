@@ -43,6 +43,8 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[UI]** Fixed UI bug where altering an "ahead of package" TOT offset would change the offset back to a "behind pacakge" offset.
 * **[UI]** Fixed bug where changing TOT offsets could result in flight startup times that are in the past.
 * **[UI]** Fixed odd spacing of the finance window when there were not enough items to fill the page.
+* **[UI]** Fixed regression where waypoint altitude changes in the waypoint list screen are applied to the wrong waypoint.
+* **[UI]** Fixed regression where waypoint additions in custom flight plans are not reflected until the window is reloaded. 
 
 # 8.1.0
 
