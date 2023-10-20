@@ -29,6 +29,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Data]** Allow CH-47D, CH-53E and UH-60A to operate from carriers and LHAs.
 * **[Data]** Added the F-15E's LANTIRN to the list of known targeting pods. Player F-15E flight with TGPs will now be assigned laser codes.
 * **[Flight Planning]** Patrolling flight plans (CAS, CAP, refueling, etc) now handle TOT offsets.
+* **[Loadouts]** Fixed error when loading certain DCS loadouts which contained an empty pylon (notably the Mosquito).
 * **[Mission Generation]** Restored previous AI behavior for anti-ship missions. A DCS update caused only a single aircraft in a flight to attack. The full flight will now attack like they used to.
 * **[Mission Generation]** Fix generation of OCA Runway missions to allow LGBs to be used.
 * **[Mission Generation]** Fixed AI flights flying far too slowly toward NAV points.
