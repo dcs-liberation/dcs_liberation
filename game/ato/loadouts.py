@@ -4,7 +4,7 @@ import copy
 import datetime
 import logging
 from collections.abc import Iterable
-from typing import Iterator, Mapping, Optional, TYPE_CHECKING, Type
+from typing import Iterator, Mapping, Optional, TYPE_CHECKING, Type, Any
 
 from dcs.unittype import FlyingType
 
@@ -115,6 +115,24 @@ class Loadout:
         self.pylons = new_pylons
 
     @classmethod
+    def convert_dcs_loadout_to_pylon_map(
+        cls, pylons: dict[int, dict[str, Any]]
+    ) -> dict[int, Weapon | None]:
+        return {
+            p["num"]: Weapon.with_clsid(p["CLSID"])
+            for p in pylons.values()
+            # When unloading incompatible pylons (for example, some of the
+            # Mosquito's pylons cannot be loaded when other pylons are carrying
+            # rockets), DCS sometimes equips the empty string rather than
+            # unsetting the pylon. An unset pylon and the empty string appear to
+            # have identical behavior, and it's annoying to deal with weapons
+            # that pydcs doesn't know about, so just clear those pylons rather
+            # than explicitly handling "".
+            # https://github.com/dcs-liberation/dcs_liberation/issues/3171
+            if p["CLSID"] != ""
+        }
+
+    @classmethod
     def iter_for(cls, flight: Flight) -> Iterator[Loadout]:
         return cls.iter_for_aircraft(flight.unit_type)
 
@@ -131,21 +149,10 @@ class Loadout:
         payloads = aircraft.dcs_unit_type.load_payloads()
         for payload in payloads.values():
             name = payload["name"]
-            pylons = payload["pylons"]
             try:
-                pylon_assignments = {
-                    p["num"]: Weapon.with_clsid(p["CLSID"])
-                    for p in pylons.values()
-                    # When unloading incompatible pylons (for example, some of the
-                    # Mosquito's pylons cannot be loaded when other pylons are carrying
-                    # rockets), DCS sometimes equips the empty string rather than
-                    # unsetting the pylon. An unset pylon and the empty string appear to
-                    # have identical behavior, and it's annoying to deal with weapons
-                    # that pydcs doesn't know about, so just clear those pylons rather
-                    # than explicitly handling "".
-                    # https://github.com/dcs-liberation/dcs_liberation/issues/3171
-                    if p["CLSID"] != ""
-                }
+                pylon_assignments = cls.convert_dcs_loadout_to_pylon_map(
+                    payload["pylons"]
+                )
             except KeyError:
                 logging.exception(
                     "Ignoring %s loadout with invalid weapons: %s",
@@ -222,7 +229,25 @@ class Loadout:
             payload = dcs_unit_type.loadout_by_name(name)
             if payload is not None:
                 try:
-                    pylons = {i: Weapon.with_clsid(d["clsid"]) for i, d in payload}
+                    # Pydcs returns the data in a different format for loadout_by_name()
+                    # than it does for load_payloads(), for some reason. Convert this
+                    # result to match the other so that we can reuse
+                    # convert_dcs_loadout_to_pylon_map.
+                    #
+                    # loadout_by_name() returns a list of pairs, with the first item
+                    # being the pylon index and the second being a dict with a single
+                    # clsid key.
+                    #
+                    # Each element of load_payloads() pylons is a dict of dicts with
+                    # both the CLSID key (yes, different case from the other API!) and a
+                    # num key for the pylon index. The outer dict is a mapping for a lua
+                    # table, so its keys are just indexes.
+                    pylons = cls.convert_dcs_loadout_to_pylon_map(
+                        {
+                            i: {"num": n, "CLSID": p["clsid"]}
+                            for i, (n, p) in enumerate(payload)
+                        }
+                    )
                 except KeyError:
                     logging.exception(
                         "Ignoring %s loadout with invalid weapons: %s",
