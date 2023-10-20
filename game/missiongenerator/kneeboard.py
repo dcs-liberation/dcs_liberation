@@ -73,18 +73,10 @@ class KneeboardPageWriter:
         # more information in the comm ladder (the latter of which we should
         # probably do), we'll need to split some of this information off into a
         # second page.
-        self.title_font = ImageFont.truetype(
-            "arial.ttf", 32, layout_engine=ImageFont.LAYOUT_BASIC
-        )
-        self.heading_font = ImageFont.truetype(
-            "arial.ttf", 24, layout_engine=ImageFont.LAYOUT_BASIC
-        )
-        self.content_font = ImageFont.truetype(
-            "arial.ttf", 16, layout_engine=ImageFont.LAYOUT_BASIC
-        )
-        self.table_font = ImageFont.truetype(
-            "resources/fonts/Inconsolata.otf", 20, layout_engine=ImageFont.LAYOUT_BASIC
-        )
+        self.title_font = ImageFont.truetype("arial.ttf", 32)
+        self.heading_font = ImageFont.truetype("arial.ttf", 24)
+        self.content_font = ImageFont.truetype("arial.ttf", 16)
+        self.table_font = ImageFont.truetype("resources/fonts/Inconsolata.otf", 20)
         self.draw = ImageDraw.Draw(self.image)
         self.page_margin = page_margin
         self.x = page_margin
@@ -116,7 +108,8 @@ class KneeboardPageWriter:
             )
 
         self.draw.text(self.position, text, font=font, fill=fill)
-        width, height = self.draw.textsize(text, font=font)
+        left, top, right, bottom = self.draw.textbbox((0, 0), text, font=font)
+        height = bottom - top
         self.y += height + self.line_spacing
 
     def title(self, title: str) -> None:
@@ -330,9 +323,7 @@ class BriefingPage(KneeboardPage):
         self.start_time = start_time
         self.dark_kneeboard = dark_kneeboard
         self.flight_plan_font = ImageFont.truetype(
-            "resources/fonts/Inconsolata.otf",
-            16,
-            layout_engine=ImageFont.LAYOUT_BASIC,
+            "resources/fonts/Inconsolata.otf", 16
         )
 
     def write(self, path: Path) -> None:
