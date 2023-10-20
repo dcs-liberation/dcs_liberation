@@ -82,7 +82,7 @@ class PydcsWaypointBuilder:
         waypoint.alt_type = self.waypoint.alt_type
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
         if tot is not None:
-            self.set_waypoint_tot(waypoint, tot)
+            self.set_waypoint_tot(waypoint, tot, self.generated_waypoint_idx)
         self.add_tasks(waypoint)
         return waypoint
 
@@ -95,12 +95,18 @@ class PydcsWaypointBuilder:
             for task in option.iter_tasks(ctx):
                 waypoint.add_task(task)
 
-    def set_waypoint_tot(self, waypoint: MovingPoint, tot: datetime) -> None:
+    def set_waypoint_tot(
+        self, waypoint: MovingPoint, tot: datetime, waypoint_index: int
+    ) -> None:
         self.waypoint.tot = tot
         if not self._viggen_client_tot():
             waypoint.ETA = int((tot - self.now).total_seconds())
             waypoint.ETA_locked = True
-            waypoint.speed_locked = False
+            # The first waypoint must always have a locked speed (see the bug). Other
+            # waypoints cannot lock both a speed and an ETA, so we need to clear the
+            # speed lock when setting a TOT.
+            # https://github.com/dcs-liberation/dcs_liberation/issues/3195
+            waypoint.speed_locked = waypoint_index == 0
 
     def _viggen_client_tot(self) -> bool:
         """Viggen player aircraft consider any waypoint with a TOT set to be a target ("M") waypoint.
