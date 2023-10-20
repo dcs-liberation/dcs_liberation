@@ -4,7 +4,7 @@ Saves from 8.x are not compatible with 9.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS Open Beta 2.8.8.43489.
+* **[Engine]** Support for DCS Open Beta 2.9.0.46801.
 * **[Campaign]** Added ferry only control points, which offer campaign designers a way to add squadrons that can be brought in after additional airfields are captured.
 * **[Campaign]** The new squadron rules (size limits, beginning the campaign at full strength) are now the default and required. The old style of unlimited squadron sizes and starting with zero aircraft has been removed.
 * **[Data]** Added support for the ARA Veinticinco de Mayo.
