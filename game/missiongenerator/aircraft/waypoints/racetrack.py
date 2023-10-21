@@ -55,7 +55,6 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
         )
 
         racetrack = ControlledTask(orbit)
-        self.set_waypoint_tot(waypoint, flight_plan.patrol_start_time)
         loiter_duration = flight_plan.patrol_end_time - self.now
         racetrack.stop_after_time(int(loiter_duration.total_seconds()))
         waypoint.add_task(racetrack)

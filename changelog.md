@@ -4,7 +4,7 @@ Saves from 8.x are not compatible with 9.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS Open Beta 2.8.8.43489.
+* **[Engine]** Support for DCS Open Beta 2.9.0.46801.
 * **[Campaign]** Added ferry only control points, which offer campaign designers a way to add squadrons that can be brought in after additional airfields are captured.
 * **[Campaign]** The new squadron rules (size limits, beginning the campaign at full strength) are now the default and required. The old style of unlimited squadron sizes and starting with zero aircraft has been removed.
 * **[Data]** Added support for the ARA Veinticinco de Mayo.
@@ -29,11 +29,13 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Data]** Allow CH-47D, CH-53E and UH-60A to operate from carriers and LHAs.
 * **[Data]** Added the F-15E's LANTIRN to the list of known targeting pods. Player F-15E flight with TGPs will now be assigned laser codes.
 * **[Flight Planning]** Patrolling flight plans (CAS, CAP, refueling, etc) now handle TOT offsets.
+* **[Loadouts]** Fixed error when loading certain DCS loadouts which contained an empty pylon (notably the Mosquito).
 * **[Mission Generation]** Restored previous AI behavior for anti-ship missions. A DCS update caused only a single aircraft in a flight to attack. The full flight will now attack like they used to.
 * **[Mission Generation]** Fix generation of OCA Runway missions to allow LGBs to be used.
 * **[Mission Generation]** Fixed AI flights flying far too slowly toward NAV points.
 * **[Mission Generation]** Fixed Recovery Tanker mission type intermittently failing due to not being able to find the CVN.
 * **[Mission Generation]** Fixed "division by zero" error on mission generation when a flight has an "In-Flight" start type and starts on top of a mission waypoint.
+* **[Mission Generation]** Fixed flights not being selectable in the mission editor if fast-forward was used and they were generated at a waypoint that had a fixed TOT (such as a BARCAP that was on-station).
 * **[Modding]** Unit variants can now actually override base unit type properties.
 * **[New Game Wizard]** Factions are reset to default after clicking "Back" to Theater Configuration screen.
 * **[Plugins]** Fixed Lua errors in Skynet plugin that would occur whenever one coalition had no IADS nodes.
