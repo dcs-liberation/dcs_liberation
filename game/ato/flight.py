@@ -97,6 +97,13 @@ class Flight(SidcDescribable):
 
         self._flight_plan_builder = CustomBuilder(self, self.flight_plan.waypoints[1:])
         self.recreate_flight_plan()
+        # We need to clear the existing actions/options when moving the waypoints into
+        # the new flight plan because the actions/options that are currently set will be
+        # the actions of whatever flight plan was previously used.
+        # https://github.com/dcs-liberation/dcs_liberation/issues/3189
+        for waypoint in self.flight_plan.iter_waypoints():
+            waypoint.actions.clear()
+            waypoint.options.clear()
 
     def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
