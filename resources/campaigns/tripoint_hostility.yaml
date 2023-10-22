@@ -7,13 +7,61 @@ recommended_player_faction: USA 2005
 recommended_enemy_faction: Iraq 1991
 miz: tripoint_hostility.miz
 performance: 2
-version: "10.9"
+version: "11.0"
 recommended_start_date: 2006-08-03
 recommended_player_money: 900
 recommended_enemy_money: 1200
 recommended_player_income_multiplier: 1.0
 recommended_enemy_income_multiplier: 0.6
+control_points:
+  From Turkey:
+    ferry_only: true
 squadrons:
+  #BLUFOR CVN
+  Naval-1:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - VF-143
+      size: 14
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - VFA-192
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - VS-35 (Tanker)
+      size: 4
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - VS-35
+      size: 8
+    - primary: Transport
+      aircraft:
+        - HSM-40
+      size: 2
+  # BLUFOR LHA
+  Naval-2:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+      size: 10
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+      size: 4
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (AH-1W)
+      size: 6
   # Off-theatre forces
   From Turkey:
     - primary: Strike
@@ -51,6 +99,7 @@ squadrons:
   # FOB Tha'lah, BLUFOR 1st FOB north
   FOB Tha'lah:
     - primary: CAS
+      size: 6
       secondary: air-to-ground
       aircraft:
         - A Company, 1-227th ARB
@@ -61,6 +110,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - C Company, 2-159th ARB
+      size: 6
         #US Army AH-64D
   # FOB Qalea, first OPFOR FOB south
   FOB Qalea:
@@ -69,6 +119,7 @@ squadrons:
       aircraft:
         - SA 342M Gazelle
   # H4 Airbase, 1st OPFOR airfield south
+      size: 6
   12:
     - primary: BARCAP
       secondary: any
@@ -78,6 +129,7 @@ squadrons:
   FOB Eadla:
     - primary: CAS
       secondary: air-to-ground
+      size: 6
       aircraft:
         - Mi-24P Hind-F
   # Ruwayshid, 2nd OPFOR airfield south
@@ -118,24 +170,28 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - SA 342M Gazelle
+      size: 6
   # FOB Kataf, 2nd OPFOR FOB north
   FOB Kataf:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # At Tanf, 3rd OPFOR heliport north
   63:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - SA 342M Gazelle
+      size: 2
   # FOB Qalb, 4th OPFOR FOB north
   FOB Qalb:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - Mi-24P Hind-F
+      size: 6
   # H3 Northwest, 2nd OPFOR airfield north
   54:
     - primary: BARCAP
