@@ -177,7 +177,7 @@ description:
   northern border. With the arrival of a US carrier group, Israel prepares its
   counterattack. The US Navy will handle the Beirut region's coastal arena,
   while the IAF will push through Damascus and the inland mountain ranges.</p>
-version: "10.9"
+version: "11.0"
 miz: operation_allied_sword.miz
 performance: 2
 recommended_start_date: 2004-07-17
