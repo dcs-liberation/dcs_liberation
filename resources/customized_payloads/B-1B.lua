@@ -2,38 +2,41 @@ local unitPayloads = {
 	["name"] = "B-1B",
 	["payloads"] = {
 		[1] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["CLSID"] = "GBU-31V3B*8",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["CLSID"] = "GBU-31V3B*8",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["CLSID"] = "GBU-31V3B*8",
 					["num"] = 3,
 				},
 			},
 			["tasks"] = {
-				[1] = 33,
+				[1] = 34,
+				[2] = 32,
 			},
 		},
 		[2] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "B-1B_Mk-84*8",
+					["CLSID"] = "GBU-31V3B*8",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "B-1B_Mk-84*8",
+					["CLSID"] = "GBU-31V3B*8",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "B-1B_Mk-84*8",
+					["CLSID"] = "GBU-31V3B*8",
 					["num"] = 3,
 				},
 			},
@@ -43,6 +46,56 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
+			["name"] = "CAS",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "CBU97*10",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "CBU97*10",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "CBU97*10",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 33,
+			},
+		},
+		[4] = {
+			["name"] = "CAP",
+			["pylons"] = {
+			},
+			["tasks"] = {
+				[1] = 33,
+			},
+		},
+		[5] = {
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "GBU-31V3B*8",
+					["num"] = 1,
+				},
+				[2] = {
+					["CLSID"] = "GBU-31V3B*8",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "GBU-31V3B*8",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 34,
+				[2] = 32,
+			},
+		},
+		[6] = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
@@ -62,28 +115,86 @@ local unitPayloads = {
 				[1] = 33,
 			},
 		},
-		[4] = {
-			["name"] = "CAP",
-			["pylons"] = {
-			},
-			["tasks"] = {
-				[1] = 33,
-			},
-		},
-		[5] = {
-			["name"] = "CAS",
+		[7] = {
+			["displayName"] = "Liberation CAS",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "CBU97*10",
-					["num"] = 3,
+					["CLSID"] = "GBU-31*8",
+					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "CBU97*10",
+					["CLSID"] = "GBU-31*8",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "CBU97*10",
+					["CLSID"] = "GBU-31*8",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 34,
+				[2] = 32,
+			},
+		},
+		[8] = {
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
 					["num"] = 1,
+				},
+				[2] = {
+					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 34,
+				[2] = 32,
+			},
+		},
+		[9] = {
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "GBU-31*8",
+					["num"] = 1,
+				},
+				[2] = {
+					["CLSID"] = "GBU-31*8",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "GBU-31*8",
+					["num"] = 3,
+				},
+			},
+			["tasks"] = {
+				[1] = 34,
+				[2] = 32,
+			},
+		},
+		[10] = {
+			["name"] = "SEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["num"] = 1,
+				},
+				[2] = {
+					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{AABA1A14-78A1-4E85-94DD-463CF75BD9E4}",
+					["num"] = 3,
 				},
 			},
 			["tasks"] = {
