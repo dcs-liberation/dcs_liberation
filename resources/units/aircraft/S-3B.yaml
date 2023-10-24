@@ -22,7 +22,7 @@ tasks:
   Anti-ship: 50
   BAI: 570
   CAS: 570
-  DEAD: 100
+  DEAD: 200
   OCA/Aircraft: 570
   OCA/Runway: 370
   Strike: 370
