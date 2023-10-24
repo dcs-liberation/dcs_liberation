@@ -400,7 +400,7 @@ def dump_task_priorities() -> None:
     data: dict[str, dict[str, int]] = {}
     for task in FlightType:
         data[task.value] = {
-            a.name: a.task_priority(task)
+            a.display_name: a.task_priority(task)
             for a in AircraftType.priority_list_for_task(task)
         }
 
