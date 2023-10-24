@@ -18,7 +18,8 @@ recommended_player_faction:
     - MosquitoFBMkVI
     - F-14B Tomcat
     - F/A-18C Hornet (Lot 20)
-    - SH-60B Seahawk
+    - S-3B Viking
+    - UH-60A
   awacs:
     - E-2C Hawkeye
   tankers:
@@ -90,6 +91,11 @@ squadrons:
       aircraft:
         - F/A-18C Hornet (Lot 20)
       size: 24
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - S-3B Viking
+      size: 12
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
@@ -101,7 +107,7 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
-        - SH-60B Seahawk
+        - UH-60A
       size: 4
   #Stoney Cross (39)
   58:
