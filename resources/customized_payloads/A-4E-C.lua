@@ -2,19 +2,28 @@ local unitPayloads = {
 	["name"] = "A-4E-C",
 	["payloads"] = {
 		[1] = {
-			["name"] = "CAP",
+			["displayName"] = "Liberation SEAD Escort",
+			["name"] = "Liberation SEAD Escort",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{GAR-8}",
-					["num"] = 4,
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{GAR-8}",
-					["num"] = 2,
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{DFT-150gal}",
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "<CLEAN>",
 					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 2,
 				},
 			},
 			["tasks"] = {
@@ -22,27 +31,28 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "CAS",
+			["displayName"] = "Liberation OCA/Runway",
+			["name"] = "Liberation OCA/Runway",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{F3EFE0AB-E91A-42D8-9CA2-B63C91ED570A}",
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
 					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{F3EFE0AB-E91A-42D8-9CA2-B63C91ED570A}",
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 4,
 				},
-				[5] = {
-					["CLSID"] = "{DFT-150gal}",
+				[4] = {
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
 					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AB8B8299-F1CC-4359-89B5-2172E0CF4A5A}",
+					["num"] = 2,
 				},
 			},
 			["tasks"] = {
@@ -50,27 +60,28 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "STRIKE",
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
 					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{BCE4E030-38E9-423E-98ED-24BE3DA87C32}",
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}",
+					["CLSID"] = "{Mk-82 Snakeye_TER_2_R}",
 					["num"] = 4,
 				},
-				[5] = {
-					["CLSID"] = "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}",
+				[4] = {
+					["CLSID"] = "{Mk-82 Snakeye_MER_6_C}",
 					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{Mk-82 Snakeye_TER_2_L}",
+					["num"] = 2,
 				},
 			},
 			["tasks"] = {
@@ -78,27 +89,28 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "SEAD",
+			["displayName"] = "Liberation CAS",
+			["name"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{AGM_45A}",
-					["num"] = 4,
-				},
-				[2] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{ADD3FAE1-EBF6-4EF9-8EFC-B36B5DDF1E6B}",
 					["num"] = 5,
 				},
-				[3] = {
-					["CLSID"] = "{AGM_45A}",
-					["num"] = 2,
-				},
-				[4] = {
-					["CLSID"] = "{AGM_45A}",
+				[2] = {
+					["CLSID"] = "{ADD3FAE1-EBF6-4EF9-8EFC-B36B5DDF1E6B}",
 					["num"] = 1,
 				},
-				[5] = {
-					["CLSID"] = "{DFT-150gal}",
+				[3] = {
+					["CLSID"] = "{CBU-2B/A_TER_2_R}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{Mk-82 Snakeye_MER_4_C}",
 					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{CBU-2B/A_TER_2_L}",
+					["num"] = 2,
 				},
 			},
 			["tasks"] = {
@@ -106,27 +118,286 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "ANTISHIP",
+			["displayName"] = "Liberation Fighter Sweep",
+			["name"] = "Liberation Fighter Sweep",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
 					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[6] = {
+			["displayName"] = "Liberation BAI",
+			["name"] = "Liberation BAI",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{ADD3FAE1-EBF6-4EF9-8EFC-B36B5DDF1E6B}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{ADD3FAE1-EBF6-4EF9-8EFC-B36B5DDF1E6B}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{Mk-20_TER_2_R}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{Mk-20_TER_3_C}",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{Mk-20_TER_2_L}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[7] = {
+			["name"] = "Liberation TARCAP",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[8] = {
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{Mk-82_TER_2_R}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{Mk-82_TER_3_C}",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{Mk-82_TER_2_L}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[9] = {
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[10] = {
+			["displayName"] = "Liberation SEAD",
+			["name"] = "Liberation SEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[11] = {
+			["displayName"] = "Liberation BARCAP",
+			["name"] = "Liberation BARCAP",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{AIM-9P5-ON-ADAPTER}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[12] = {
+			["displayName"] = "Liberation OCA/Aircraft",
+			["name"] = "Liberation OCA/Aircraft",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "LAU3_HE5",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "LAU3_HE5",
+					["num"] = 1,
+				},
+				[3] = {
+					["CLSID"] = "{Mk4 HIPEG}",
+					["num"] = 4,
+				},
+				[4] = {
+					["CLSID"] = "{LAU3_HE5_TER_3_C}",
+					["num"] = 3,
+				},
+				[5] = {
+					["CLSID"] = "{Mk4 HIPEG}",
+					["num"] = 2,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[13] = {
+			["name"] = "Aerobatics",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "<CLEAN>",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "<CLEAN>",
 					["num"] = 4,
 				},
 				[3] = {
-					["CLSID"] = "{AGM_45A}",
-					["num"] = 2,
+					["CLSID"] = "<CLEAN>",
+					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{AGM_45A}",
-					["num"] = 1,
+					["CLSID"] = "<CLEAN>",
+					["num"] = 2,
 				},
 				[5] = {
-					["CLSID"] = "{DFT-150gal}",
+					["CLSID"] = "<CLEAN>",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[14] = {
+			["name"] = "Liberation Napalm",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{mk77mod1}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{mk77mod1}",
+					["num"] = 4,
+				},
+				[3] = {
+					["CLSID"] = "{Mk-77 mod 1_TER_2_C}",
 					["num"] = 3,
+				},
+				[4] = {
+					["CLSID"] = "{mk77mod1}",
+					["num"] = 2,
+				},
+				[5] = {
+					["CLSID"] = "{mk77mod1}",
+					["num"] = 1,
 				},
 			},
 			["tasks"] = {
