@@ -15,82 +15,100 @@ description:
   units. While Turkey 2005 would be the historical faction (and has preset
   squadrons included), they only have two jets available (F-4 and F-16).</p>
 miz: operation_peace_spring.miz
-performance: 1
+performance: 2
 recommended_start_date: 2019-12-23
 version: "11.0"
 squadrons:
-  # Ramat David
-  30:
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - A-10C Thunderbolt II (Suite 7)
-      size: 8
+  Blue CV-1:
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
+      size: 40
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - S-3B Viking
       size: 20
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 4
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+      size: 4
+  Bombers from RAF Fairford:
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+      size: 8
+  # Akrotiri
+  44:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - F-15E Strike Eagle
-      size: 12
-    - primary: AEW&C
+        - B-1B Lancer
+      size: 8
+    - primary: OCA/Runway
+      secondary: any
       aircraft:
-        - E-3A
-      size: 2
-  # King Hussein Air College
-  19:
+        - F-15E Strike Eagle (Suite 4+)
+      size: 4
+    - primary: OCA/Aircraft
+      secondary: any
+      aircraft:
+        - F-15E Strike Eagle
+      size: 8
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-15C Eagle
+      size: 20
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-60L
+        - UH-60A
+      size: 4
+   # Ramat David
+  30:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+      size: 8
     - primary: DEAD
       secondary: any
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
-      size: 20
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - AV-8B Harrier II Night Attack
-      size: 8
-    - primary: TARCAP
-      secondary: any
-      aircraft:
-        - F-15E Strike Eagle (Suite 4+)
-      size: 12
+      size: 28
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - AH-64D Apache Longbow
-      size: 8
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker
-      size: 2
-    - primary: Air Assault
-      secondary: air-to-ground
-      aircraft:
-        - UH-1H Iroquois
-      size: 2
+      size: 4
   # Damascus
   7:
-    - primary: TARCAP
-      secondary: air-to-air
+    - primary: Strike
+      secondary: air-to-ground
       aircraft:
         - F-4E Phantom II
-        - Mirage-F1EQ
-      size: 12
+        - H-6J Badger
+      size: 16
     - primary: BAI
       secondary: air-to-ground
       aircraft:
         - AH-1W SuperCobra
         - Su-25 Frogfoot
-      size: 12
+      size: 16
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - OH-58D Kiowa Warrior
         - Mi-24P Hind-F
-      size: 8
+      size: 4
   # Tiyas
   39:
     - primary: SEAD
@@ -98,15 +116,21 @@ squadrons:
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
         - Su-24M Fencer-D
-      size: 20
-  # Abu Al Duhur
-  1:
-    - primary: Strike
-      secondary: air-to-ground
+      size: 16
+    - primary: Escort
+      secondary: air-to-air
       aircraft:
         - F-4E Phantom II
-        - H-6J Badger
-      size: 20
+        - Mirage-F1EQ
+      size: 16
+  # Abu Al Duhur
+  1:
+    - primary: Fighter sweep
+      secondary: air-to-air
+      aircraft:
+        - F-4E Phantom II
+        - MiG-23ML Flogger-G
+      size: 8
   # Gaziantep
   11:
     - primary: BARCAP
@@ -114,7 +138,7 @@ squadrons:
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
         - MiG-29A Fulcrum-A
-      size: 12
+      size: 8
   # Incirlik
   16:
     - primary: Strike
@@ -122,19 +146,20 @@ squadrons:
       aircraft:
         - F-4E Phantom II
         - Tu-22M3 Backfire-C
-      size: 20
+      size: 16
     - primary: AEW&C
       aircraft:
         - E-3A
         - A-50
-      size: 2
+      size: 1
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
         - IL-78M
-      size: 2
-    - primary: Transport
+      size: 1
+    - primary: Escort
+      secondary: any
       aircraft:
-        - C-130
-        - IL-76MD
-      size: 4
+        - F-4E Phantom II
+        - MiG-21bis Fishbed-N
+      size: 16
