@@ -36,7 +36,7 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
-        - SH-60B Seahawk
+        - UH-60A
       size: 2
   # Hatzerim (141)
   7:
@@ -126,7 +126,7 @@ squadrons:
     - primary: SEAD
       secondary: any
       aircraft:
-        - F-16CM Fighting Falcon (Block 50)
+        - F-4E Phantom II
       size: 20
     - primary: DEAD
       secondary: any

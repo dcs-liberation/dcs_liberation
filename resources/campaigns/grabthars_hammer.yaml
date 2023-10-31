@@ -57,29 +57,29 @@ squadrons:
       secondary: any
       aircraft:
         - F-14B Tomcat
-      size: 20
+      size: 16
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 32
-    - primary: Escort
-      secondary: any
+      size: 60
+    - primary: CAS
+      secondary: air-to-ground
       aircraft:
-        - F/A-18C Hornet (Lot 20)
-      size: 32
+        - S-3B Viking
+      size: 8
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
-      size: 1
+      size: 2
     - primary: Refueling
       aircraft:
         - S-3B Tanker
-      size: 3
+      size: 2
     - primary: Air Assault
       secondary: any
       aircraft:
-        - SH-60B Seahawk
+        - UH-60A
       size: 2
   # Blue LHA
   Blue-LHA:

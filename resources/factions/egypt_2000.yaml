@@ -7,8 +7,9 @@ locales:
   - ar_SA
 aircrafts:
   - MiG-29S Fulcrum-C
-  - J-7B
+  - MiG-21bis Fishbed-N
   - Mirage 2000C
+  - F-4E Phantom II
   - F-16CM Fighting Falcon (Block 50)
   - IL-76MD
   - C-130

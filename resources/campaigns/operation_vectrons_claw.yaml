@@ -37,29 +37,29 @@ squadrons:
       secondary: any
       aircraft:
         - F-14B Tomcat
-      size: 20
+      size: 16
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 32
-    - primary: Escort
-      secondary: any
+      size: 60
+    - primary: CAS
+      secondary: air-to-ground
       aircraft:
-        - F/A-18C Hornet (Lot 20)
-      size: 32
+        - S-3B Viking
+      size: 8
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
-      size: 1
+      size: 2
     - primary: Refueling
       aircraft:
         - S-3B Tanker
-      size: 3
+      size: 2
     - primary: Air Assault
       secondary: any
       aircraft:
-        - SH-60B Seahawk
+        - UH-60A
       size: 2
   Blue LHA:
     - primary: BAI
@@ -77,7 +77,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
-      size: 6
+      size: 8
     - primary: DEAD
       secondary: any
       aircraft:
@@ -92,22 +92,22 @@ squadrons:
       secondary: any
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
-      size: 12
+      size: 8
     - primary: BAI
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle
-      size: 12
+      size: 8
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - B-1B Lancer
-      size: 8
+      size: 4
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - B-52H Stratofortress
-      size: 8
+      size: 4
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
