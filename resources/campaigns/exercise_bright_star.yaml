@@ -32,16 +32,22 @@ squadrons:
     - primary: Refueling
       aircraft:
         - S-3B Tanker
-      size: 2
-    - primary: Air Assault
-      secondary: any
+      size: 4
+  Bombers from RAF Fairford:
+    - primary: Anti-ship
+      secondary: air-to-ground
       aircraft:
-        - UH-60A
-      size: 2
+        - B-52H Stratofortress
+      size: 8
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+      size: 8
   # Hatzerim (141)
   7:
     - primary: Escort
-      secondary: air-to-air
+      secondary: any
       aircraft:
         - F-15C Eagle
       size: 20
@@ -51,7 +57,7 @@ squadrons:
         - F-15E Strike Eagle (Suite 4+)
       size: 8
     - primary: Strike
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - F-15E Strike Eagle
       size: 8
@@ -73,13 +79,15 @@ squadrons:
   # Kedem
   12:
     - primary: Transport
+      secondary: any
       aircraft:
         - CH-47D
       size: 20
     - primary: Air Assault
-      secondary: air-to-ground
+      secondary: any
       aircraft:
-        - UH-1H Iroquois
+        - UH-60L
+        - UH-60A
       size: 4
   # Nevatim (106)
   8:
@@ -90,11 +98,7 @@ squadrons:
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
-      size: 1
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker MPRS
-      size: 1
+      size: 2
     - primary: CAS
       secondary: air-to-ground
       aircraft:
@@ -107,15 +111,15 @@ squadrons:
       aircraft:
         - Ka-50 Hokum (Blackshark 3)
       size: 4
-    - primary: TARCAP
-      secondary: air-to-air
+    - primary: BAI
+      secondary: any
       aircraft:
         - Mirage 2000C
       size: 12
-    - primary: Strike
-      secondary: air-to-ground
+    - primary: Escort
+      secondary: any
       aircraft:
-        - Mirage 2000C
+        - MiG-21bis Fishbed-N
       size: 12
   # Wadi al Jandali (72)
   13:
@@ -134,12 +138,12 @@ squadrons:
         - F-16CM Fighting Falcon (Block 50)
       size: 20
     - primary: Air Assault
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - Mi-24P Hind-F
       size: 4
     - primary: OCA/Aircraft
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - SA 342L Gazelle
       size: 4
@@ -149,13 +153,8 @@ squadrons:
       aircraft:
         - C-130
       size: 8
-    - primary: Escort
+    - primary: BARCAP
       secondary: air-to-air
       aircraft:
         - MiG-29S Fulcrum-C
-      size: 20
-    - primary: BARCAP
-      secondary: any
-      aircraft:
-        - J-7B
       size: 20

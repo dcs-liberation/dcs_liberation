@@ -130,7 +130,7 @@ squadrons:
         - MosquitoFBMkVI
       size: 20
   #RAF Grafton Underwood (1000)
-  From RAF Grafton Underwood:
+  Bombers from RAF Grafton Underwood:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
