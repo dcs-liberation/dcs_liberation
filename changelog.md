@@ -17,6 +17,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Mission Generation]** Added a package kneeboard page that shows the radio frequencies, tasks, and laser codes for each member of your package.
 * **[Modding]** Factions can now specify the ship type to be used for cargo shipping. The Handy Wind will be used by default, but WW2 factions can pick something more appropriate.
 * **[Modding]** Unit variants can now set a display name separate from their ID.
+* **[Modding]** Updated Community A-4E-C mod version support to 2.2.0 release.
 * **[UI]** An error will be displayed when invalid fast-forward options are selected rather than beginning a never ending simulation.
 * **[UI]** Added cheats for instantly repairing and destroying runways.
 * **[UI]** Improved usability of the flight properties UI. It now shows human-readable names and uses more appropriate UI elements.
