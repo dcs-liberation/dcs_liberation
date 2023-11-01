@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import random
 from abc import ABC
 from typing import Any, TYPE_CHECKING, TypeVar
@@ -26,6 +27,9 @@ class CapBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
         self, location: MissionTarget, barcap: bool
     ) -> tuple[Point, Point]:
         closest_cache = ObjectiveDistanceCache.get_closest_airfields(location)
+        closest_friendly_field = (
+            None  # keep track of closest frieldly airfield in case we need it
+        )
         for airfield in closest_cache.operational_airfields:
             # If the mission is a BARCAP of an enemy airfield, find the *next*
             # closest enemy airfield.
@@ -34,8 +38,43 @@ class CapBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
             if airfield.captured != self.is_player:
                 closest_airfield = airfield
                 break
+            elif closest_friendly_field is None:
+                closest_friendly_field = airfield
         else:
-            raise PlanningError("Could not find any enemy airfields")
+            if barcap:
+                # If planning a BARCAP, we should be able to find at least one enemy
+                # airfield. If we can't, it's an error.
+                raise PlanningError("Could not find any enemy airfields")
+            else:
+                # if we cannot find any friendly or enemy airfields other than the target,
+                # there's nothing we can do
+                if closest_friendly_field is None:
+                    raise PlanningError(
+                        "Could not find any enemy or friendly airfields"
+                    )
+
+                # If planning other race tracks (TARCAPs, currently), the target may be
+                # the only enemy airfield. In this case, set the race track orientation using
+                # a virtual point equi-distant from but opposite to the target from the closest
+                # friendly airfield like below, where F is the closest friendly airfield, T is
+                # the sole enemy airfield and V the virtual point
+                #
+                # F ---- T ----- V
+                #
+                # We need to create this virtual point, rather than using F to make sure
+                # the race track is aligned towards the target.
+                closest_friendly_field_position = copy.deepcopy(
+                    closest_friendly_field.position
+                )
+                closest_airfield = closest_friendly_field
+                closest_airfield.position.x = (
+                    2 * self.package.target.position.x
+                    - closest_friendly_field_position.x
+                )
+                closest_airfield.position.y = (
+                    2 * self.package.target.position.y
+                    - closest_friendly_field_position.y
+                )
 
         heading = Heading.from_degrees(
             location.position.heading_between_point(closest_airfield.position)
