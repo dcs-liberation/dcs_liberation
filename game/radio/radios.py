@@ -337,11 +337,13 @@ class RadioRegistry:
         "BLUFOR UHF", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)
     )
 
+    LINK_4 = Radio("Link 4", (RadioRange(MHz(300), MHz(325), kHz(100), Modulation.AM),))
+
     def __init__(self) -> None:
         self.allocated_channels: Set[RadioFrequency] = set()
         self.radio_allocators: Dict[Radio, Iterator[RadioFrequency]] = {}
 
-        radios = itertools.chain(RADIOS, [self.BLUFOR_UHF])
+        radios = itertools.chain(RADIOS, [self.BLUFOR_UHF, self.LINK_4])
         for radio in radios:
             self.radio_allocators[radio] = radio.range()
 
@@ -385,6 +387,9 @@ class RadioRegistry:
                 already allocated.
         """
         return self.alloc_for_radio(self.BLUFOR_UHF)
+
+    def alloc_link4(self) -> RadioFrequency:
+        return self.alloc_for_radio(self.LINK_4)
 
     def reserve(self, frequency: RadioFrequency) -> None:
         """Reserves the given channel.

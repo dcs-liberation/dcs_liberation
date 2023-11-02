@@ -339,6 +339,18 @@ class Settings:
     )
 
     # Gameplay
+    ai_has_unlimited_fuel: bool = boolean_option(
+        "Unlimited fuel for AI flights",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=True,
+        detail=(
+            "If enabled, AI-only flights will have unlimited fuel. This can be "
+            "disabled to force AI flights to play by the same rules as players, but be "
+            "warned that the DCS AI is not particularly fuel conscious, so will often "
+            "run out of fuel when players would not."
+        ),
+    )
     fast_forward_to_first_contact: bool = boolean_option(
         "Fast forward mission to first contact (WIP)",
         page=MISSION_GENERATOR_PAGE,

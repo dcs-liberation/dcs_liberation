@@ -15,8 +15,10 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Flight Planning]** Laser codes that are pre-assigned to weapons at mission start can now be chosen from a list in the loadout UI. This does not affect the aircraft's TGP, just the weapons. Currently only implemented for the F-15E S4+ and F-16C.
 * **[Mission Generation]** Configured target and initial points for F-15E S4+.
 * **[Mission Generation]** Added a package kneeboard page that shows the radio frequencies, tasks, and laser codes for each member of your package.
+* **[Mission Generation]** Added option to generate AI flights with unlimited fuel (enabled by default).
 * **[Modding]** Factions can now specify the ship type to be used for cargo shipping. The Handy Wind will be used by default, but WW2 factions can pick something more appropriate.
 * **[Modding]** Unit variants can now set a display name separate from their ID.
+* **[Modding]** Updated Community A-4E-C mod version support to 2.2.0 release.
 * **[UI]** An error will be displayed when invalid fast-forward options are selected rather than beginning a never ending simulation.
 * **[UI]** Added cheats for instantly repairing and destroying runways.
 * **[UI]** Improved usability of the flight properties UI. It now shows human-readable names and uses more appropriate UI elements.
@@ -36,6 +38,8 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Mission Generation]** Fixed Recovery Tanker mission type intermittently failing due to not being able to find the CVN.
 * **[Mission Generation]** Fixed "division by zero" error on mission generation when a flight has an "In-Flight" start type and starts on top of a mission waypoint.
 * **[Mission Generation]** Fixed flights not being selectable in the mission editor if fast-forward was used and they were generated at a waypoint that had a fixed TOT (such as a BARCAP that was on-station).
+* **[Mission Generation]** Fixed error when planning TARCAPs on the sole remaining enemy airfield.
+* **[Mission Generation]** Fixed allocation range for carrier Link 4 datalink.
 * **[Modding]** Unit variants can now actually override base unit type properties.
 * **[New Game Wizard]** Factions are reset to default after clicking "Back" to Theater Configuration screen.
 * **[Plugins]** Fixed Lua errors in Skynet plugin that would occur whenever one coalition had no IADS nodes.

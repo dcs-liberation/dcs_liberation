@@ -20,6 +20,7 @@ from dcs.task import (
     RunwayAttack,
     SEAD,
     Transport,
+    SetUnlimitedFuelCommand,
 )
 from dcs.unitgroup import FlyingGroup
 
@@ -27,11 +28,13 @@ from game.ato import Flight, FlightType
 from game.ato.flightplans.aewc import AewcFlightPlan
 from game.ato.flightplans.shiprecoverytanker import RecoveryTankerFlightPlan
 from game.ato.flightplans.theaterrefueling import TheaterRefuelingFlightPlan
+from game.settings import Settings
 
 
 class AircraftBehavior:
-    def __init__(self, task: FlightType) -> None:
+    def __init__(self, task: FlightType, settings: Settings) -> None:
         self.task = task
+        self.settings = settings
 
     def apply_to(self, flight: Flight, group: FlyingGroup[Any]) -> None:
         if self.task in [
@@ -74,6 +77,7 @@ class AircraftBehavior:
         else:
             self.configure_unknown_task(group, flight)
 
+        self.configure_unlimited_fuel(group, flight)
         self.configure_eplrs(group, flight)
 
     def configure_behavior(
@@ -114,6 +118,17 @@ class AircraftBehavior:
     def configure_eplrs(group: FlyingGroup[Any], flight: Flight) -> None:
         if flight.unit_type.eplrs_capable:
             group.points[0].tasks.append(EPLRS(group.id))
+
+    def configure_unlimited_fuel(self, group: FlyingGroup[Any], flight: Flight) -> None:
+        if not flight.client_count and self.settings.ai_has_unlimited_fuel:
+            # This task is prepended according to the notes from the DCS changelog:
+            #
+            #    NEW: Advanced Waypoint Action for Unlimited Fuel Option for AI. Please
+            #    note the task must be at the top of Advanced Waypoint Actions list to
+            #    make sure it works properly.
+            #
+            # https://www.digitalcombatsimulator.com/en/news/changelog/openbeta/2.9.0.46801/
+            group.points[0].tasks.insert(0, SetUnlimitedFuelCommand(True))
 
     def configure_cap(self, group: FlyingGroup[Any], flight: Flight) -> None:
         group.task = CAP.name
