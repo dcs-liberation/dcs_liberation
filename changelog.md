@@ -15,6 +15,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Flight Planning]** Laser codes that are pre-assigned to weapons at mission start can now be chosen from a list in the loadout UI. This does not affect the aircraft's TGP, just the weapons. Currently only implemented for the F-15E S4+ and F-16C.
 * **[Mission Generation]** Configured target and initial points for F-15E S4+.
 * **[Mission Generation]** Added a package kneeboard page that shows the radio frequencies, tasks, and laser codes for each member of your package.
+* **[Mission Generation]** Added option to generate AI flights with unlimited fuel (enabled by default).
 * **[Modding]** Factions can now specify the ship type to be used for cargo shipping. The Handy Wind will be used by default, but WW2 factions can pick something more appropriate.
 * **[Modding]** Unit variants can now set a display name separate from their ID.
 * **[Modding]** Updated Community A-4E-C mod version support to 2.2.0 release.
