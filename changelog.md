@@ -38,6 +38,7 @@ Saves from 8.x are not compatible with 9.0.0.
 * **[Mission Generation]** Fixed "division by zero" error on mission generation when a flight has an "In-Flight" start type and starts on top of a mission waypoint.
 * **[Mission Generation]** Fixed flights not being selectable in the mission editor if fast-forward was used and they were generated at a waypoint that had a fixed TOT (such as a BARCAP that was on-station).
 * **[Mission Generation]** Fixed error when planning TARCAPs on the sole remaining enemy airfield.
+* **[Mission Generation]** Fixed allocation range for carrier Link 4 datalink.
 * **[Modding]** Unit variants can now actually override base unit type properties.
 * **[New Game Wizard]** Factions are reset to default after clicking "Back" to Theater Configuration screen.
 * **[Plugins]** Fixed Lua errors in Skynet plugin that would occur whenever one coalition had no IADS nodes.
