@@ -58,7 +58,9 @@ class FlightGroupConfigurator:
         self.unit_map = unit_map
 
     def configure(self) -> FlightData:
-        AircraftBehavior(self.flight.flight_type).apply_to(self.flight, self.group)
+        AircraftBehavior(self.flight.flight_type, self.game.settings).apply_to(
+            self.flight, self.group
+        )
         AircraftPainter(self.flight, self.group).apply_livery()
         self.setup_props()
         self.setup_payloads()
