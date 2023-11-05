@@ -24,21 +24,26 @@ squadrons:
       secondary: any
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
-      size: 16
+      size: 8
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
       size: 8
-    - primary: Strike
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - F-15C Eagle
+      size: 8
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
-        - B-1B Lancer
-      size: 12
+        - F-15E Strike Eagle
+      size: 8
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
-      size: 1
+      size: 2
   #San Julian
   11:
     - primary: BAI
@@ -46,28 +51,23 @@ squadrons:
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
       size: 8
-    - primary: Air Assault
-      secondary: any
-      aircraft:
-        - UH-1H Iroquois
-      size: 1
   #Blue CV
   Blue-CV:
     - primary: BARCAP
       secondary: any
       aircraft:
         - F-14B Tomcat
-      size: 16
+      size: 20
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 60
-    - primary: CAS
+      size: 20
+    - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - S-3B Viking
-      size: 8
+      size: 20
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
@@ -75,12 +75,13 @@ squadrons:
     - primary: Refueling
       aircraft:
         - S-3B Tanker
-      size: 2
+      size: 4
     - primary: Air Assault
       secondary: any
       aircraft:
+        - UH-60L
         - UH-60A
-      size: 2
+      size: 4
   # Blue LHA
   Blue-LHA:
     - primary: DEAD
@@ -93,6 +94,17 @@ squadrons:
       aircraft:
         - UH-1H Iroquois
       size: 2
+  Bombers from Edwards AFB:
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+      size: 12
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+      size: 12
   #El Calafate
   14:
     - primary: Transport
@@ -101,7 +113,7 @@ squadrons:
       size: 10
   #Rio Gallegros
   5:
-    - primary: BARCAP
+    - primary: Escort
       secondary: air-to-air
       aircraft:
         - Su-27 Flanker-B
