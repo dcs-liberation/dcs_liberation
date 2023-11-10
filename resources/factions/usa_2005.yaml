@@ -75,6 +75,7 @@ air_defense_units:
   - EWR AN/FPS-117 Radar
   - M1097 Heavy HMMWV Avenger
   - M6 Linebacker
+  - Centurion C-RAM LPWS
 requirements: {}
 carrier_names:
   - CVN-71 Theodore Roosevelt

@@ -1,0 +1,18 @@
+class: AAA
+description: "The Centurion C-RAM Land Phalanx Weapon System (LPWS) is a sophisticated and\
+  \ highly effective close-in defense system designed to protect military installations,\
+  \ forward operating bases, and critical infrastructure from incoming rocket, artillery,\
+  \ and mortar (RAM) threats. Developed to provide a rapid response to such threats, the\
+  \ LPWS combines radar and computerized tracking systems with a 20mm M61A1 Gatling gun,\
+  \ which is capable of engaging and neutralizing incoming projectiles. The LPWS is\
+  \ particularly adept at countering the dangers posed by asymmetric warfare, as it can\
+  \ swiftly detect, track, and eliminate RAM threats, providing a critical layer of\
+  \ protection for both military and civilian assets in vulnerable areas."
+
+introduced: 2006
+manufacturer: Raytheon
+origin: USA
+price: 12
+role: Self-Propelled Anti-Aircraft Gun
+variants:
+  Centurion C-RAM LPWS: {}
