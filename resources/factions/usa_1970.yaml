@@ -39,7 +39,6 @@ infantry_units:
 missiles: []
 preset_groups:
   - Hawk
-  - Cold-War-Flak
 naval_units:
   - FFG Oliver Hazard Perry
   - CV-59 Forrestal
