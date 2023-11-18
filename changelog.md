@@ -4,7 +4,7 @@ Saves from 9.x are not compatible with 10.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.9.1.48111 Open Beta (F-15E JDAM).
+* **[Engine]** Support for DCS 2.9.1.48111 Open Beta (F-15E JDAM, updated Falklands and Normandy airfields).
 
 ## Fixes
 
