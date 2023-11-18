@@ -19,6 +19,7 @@ aircrafts:
   - C-130
   - UH-1H Iroquois
   - AH-1W SuperCobra
+  - OH-58D Kiowa Warrior
   - CH-47D
   - CH-53E
 awacs:
@@ -52,6 +53,6 @@ carrier_names:
   - CV-59 Forrestal
   - CV-60 Saratoga
   - CV-61 Ranger
-  - CV-62 Independence  
+  - CV-62 Independence
 requirements: {}
 doctrine: coldwar
