@@ -32,7 +32,7 @@ squadrons:
       size: 20
     - primary: AEW&C
       aircraft:
-        - E-2C Hawkeye
+        - E-2D Advanced Hawkeye
       size: 4
     - primary: Refueling
       aircraft:
@@ -55,12 +55,7 @@ squadrons:
       secondary: any
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
-      size: 4
-    - primary: OCA/Aircraft
-      secondary: any
-      aircraft:
-        - F-15E Strike Eagle
-      size: 8
+      size: 12
     - primary: TARCAP
       secondary: air-to-air
       aircraft:

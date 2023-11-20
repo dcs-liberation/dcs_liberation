@@ -59,6 +59,7 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
+        - UH-60L
         - UH-60A
       size: 2
   Blue LHA:
@@ -83,31 +84,11 @@ squadrons:
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
       size: 16
-    - primary: DEAD
-      secondary: any
-      aircraft:
-        - F-16CM Fighting Falcon (Block 50)
-      size: 16
     - primary: BAI
       secondary: any
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
       size: 8
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - F-15E Strike Eagle
-      size: 8
-    - primary: Strike
-      secondary: air-to-ground
-      aircraft:
-        - B-1B Lancer
-      size: 4
-    - primary: Strike
-      secondary: air-to-ground
-      aircraft:
-        - B-52H Stratofortress
-      size: 4
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
