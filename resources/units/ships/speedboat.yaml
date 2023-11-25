@@ -1,0 +1,4 @@
+class: Boat
+price: 0
+variants:
+  Boat Armed Hi-speed: null
