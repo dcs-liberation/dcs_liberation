@@ -17,17 +17,29 @@ performance: 1
 recommended_start_date: 2011-02-24
 version: "11.0"
 squadrons:
+  Bombers from Minot AFB:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+      size: 4
+  Bombers from Ellsworth AFB:
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+      size: 4
   # Tonopah Airport
   17:
     - primary: TARCAP
       secondary: any
       aircraft:
-        - F-15E Strike Eagle (Suite 4+)
+        - F-15C Eagle
       size: 12
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - F-15E Strike Eagle
+        - F-15E Strike Eagle (Suite 4+)
       size: 12
     - primary: AEW&C
       aircraft:
@@ -58,7 +70,8 @@ squadrons:
     - primary: Air Assault
       secondary: air-to-ground
       aircraft:
-        - UH-1H Iroquois
+        - UH-60L
+        - UH-60A
       size: 2
   # Groom Lake
   2:
