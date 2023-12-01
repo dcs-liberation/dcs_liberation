@@ -41,7 +41,6 @@ class ProcurementAi:
         manage_front_line: bool,
         manage_aircraft: bool,
     ) -> None:
-
         self.game = game
         self.is_player = for_player
         self.air_wing = game.air_wing_for(for_player)

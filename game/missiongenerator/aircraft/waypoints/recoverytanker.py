@@ -8,7 +8,6 @@ from .pydcswaypointbuilder import PydcsWaypointBuilder
 
 class RecoveryTankerBuilder(PydcsWaypointBuilder):
     def add_tasks(self, waypoint: MovingPoint) -> None:
-
         assert self.flight.flight_type == FlightType.REFUELING
 
         # Tanker task required in conjunction with RecoveryTanker task.
@@ -48,7 +47,6 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
         )
 
     def configure_tanker_tacan(self, waypoint: MovingPoint) -> None:
-
         if self.flight.unit_type.dcs_unit_type.tacan:
             tanker_info = self.mission_data.tankers[-1]
             tacan = tanker_info.tacan

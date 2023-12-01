@@ -47,7 +47,6 @@ class GameUpdateEventsJs(BaseModel):
     def from_events(
         cls, events: GameUpdateEvents, game: Game | None
     ) -> GameUpdateEventsJs:
-
         # We still need to be able to send update events when there is no game loaded
         # because we need to send the unload event.
         new_combats = []

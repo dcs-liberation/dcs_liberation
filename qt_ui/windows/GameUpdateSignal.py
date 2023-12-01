@@ -9,7 +9,6 @@ from game.debriefing import Debriefing
 
 
 class GameUpdateSignal(QObject):
-
     instance = None
     gameupdated = Signal(Game)
     budgetupdated = Signal(Game)

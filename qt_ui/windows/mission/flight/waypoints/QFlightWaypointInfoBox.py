@@ -14,7 +14,6 @@ class QFlightWaypointInfoBox(QGroupBox):
         self.init_ui()
 
     def init_ui(self) -> None:
-
         layout = QVBoxLayout()
 
         x_pos_layout = QHBoxLayout()

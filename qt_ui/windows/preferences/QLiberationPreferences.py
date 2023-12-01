@@ -87,7 +87,6 @@ class QLiberationPreferences(QFrame):
             self.edit_dcs_install_dir.setText(install_dir)
 
     def apply(self):
-
         print("Applying changes")
         self.saved_game_dir = self.edit_saved_game_dir.text()
         self.dcs_install_dir = self.edit_dcs_install_dir.text()

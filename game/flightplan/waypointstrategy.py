@@ -119,7 +119,6 @@ class RequirementBuilder:
     def maximum_turn_to(
         self, turn_point: Point, next_point: Point, turn_limit: Heading
     ) -> None:
-
         large_distance = nautical_miles(400)
         next_heading = Heading.from_degrees(
             angle_between_points(next_point, turn_point)

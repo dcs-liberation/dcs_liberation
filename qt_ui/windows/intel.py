@@ -160,7 +160,6 @@ class IntelWindow(QDialog):
         self.refresh_layout()
 
     def refresh_layout(self) -> None:
-
         # Clear the existing layout
         if self.layout():
             idx = 0

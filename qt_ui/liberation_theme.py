@@ -32,7 +32,7 @@ def init():
 
     if os.path.isfile(THEME_PREFERENCES_FILE_PATH):
         try:
-            with (open(THEME_PREFERENCES_FILE_PATH)) as prefs:
+            with open(THEME_PREFERENCES_FILE_PATH) as prefs:
                 pref_data = json.loads(prefs.read())
                 __theme_index = pref_data["theme_index"]
                 set_theme_index(__theme_index)
@@ -83,5 +83,5 @@ def get_theme_css_file():
 # save current theme index to json file
 def save_theme_config():
     pref_data = {"theme_index": get_theme_index()}
-    with (open(THEME_PREFERENCES_FILE_PATH, "w")) as prefs:
+    with open(THEME_PREFERENCES_FILE_PATH, "w") as prefs:
         prefs.write(json.dumps(pref_data))

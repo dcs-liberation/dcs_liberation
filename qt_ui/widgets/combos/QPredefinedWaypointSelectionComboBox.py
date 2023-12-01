@@ -54,7 +54,6 @@ class QPredefinedWaypointSelectionComboBox(QFilteredComboBox):
         return waypoints
 
     def find_possible_waypoints(self):
-
         self.wpts = []
         model = QStandardItemModel()
         i = 0

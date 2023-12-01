@@ -241,7 +241,6 @@ class AntiAirLayout(TgoLayout):
         location: PresetLocation,
         control_point: ControlPoint,
     ) -> IadsGroundObject:
-
         if GroupTask.EARLY_WARNING_RADAR in self.tasks:
             return EwrGroundObject(name, location, control_point)
         elif any(tasking in self.tasks for tasking in GroupRole.AIR_DEFENSE.tasks):
