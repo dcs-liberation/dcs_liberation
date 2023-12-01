@@ -81,9 +81,13 @@ class GameUpdateEventsJs(BaseModel):
                 for f in events.updated_front_lines
             ]
 
+        reset_on_map_center: LeafletPoint | None = None
+        if events.reset_on_map_center is not None:
+            reset_on_map_center = LeafletPoint.from_pydcs(events.reset_on_map_center)
         return GameUpdateEventsJs(
             updated_flight_positions={
-                f[0].id: f[1].latlng() for f in events.updated_flight_positions
+                f[0].id: LeafletPoint.from_pydcs(f[1])
+                for f in events.updated_flight_positions
             },
             new_combats=new_combats,
             updated_combats=updated_combats,
@@ -110,7 +114,7 @@ class GameUpdateEventsJs(BaseModel):
             ],
             updated_iads=updated_iads,
             deleted_iads=events.deleted_iads_connections,
-            reset_on_map_center=events.reset_on_map_center,
+            reset_on_map_center=reset_on_map_center,
             game_unloaded=events.game_unloaded,
             new_turn=events.new_turn,
         )

@@ -33,7 +33,7 @@ class ControlPointJs(BaseModel):
             id=control_point.id,
             name=control_point.name,
             blue=control_point.captured,
-            position=control_point.position.latlng(),
+            position=LeafletPoint.from_pydcs(control_point.position),
             mobile=control_point.moveable and control_point.captured,
             destination=destination,
             sidc=str(control_point.sidc()),

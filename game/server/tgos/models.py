@@ -38,7 +38,7 @@ class TgoJs(BaseModel):
             control_point_name=tgo.control_point.name,
             category=tgo.category,
             blue=tgo.control_point.captured,
-            position=tgo.position.latlng(),
+            position=LeafletPoint.from_pydcs(tgo.position),
             units=[unit.display_name for unit in tgo.units],
             threat_ranges=threat_ranges,
             detection_ranges=detection_ranges,
