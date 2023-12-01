@@ -19,6 +19,7 @@ recommended_player_faction:
     - F-14B Tomcat
     - F/A-18C Hornet (Lot 20)
     - S-3B Viking
+    - UH-60L
     - UH-60A
   awacs:
     - E-2C Hawkeye
@@ -107,8 +108,9 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
+        - UH-60L
         - UH-60A
-      size: 4
+      size: 6
   #Stoney Cross (39)
   58:
     - primary: OCA/Runway

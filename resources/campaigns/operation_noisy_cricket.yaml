@@ -40,7 +40,7 @@ squadrons:
       size: 40
     - primary: AEW&C
       aircraft:
-        - E-2C Hawkeye
+        - E-2D Advanced Hawkeye
       size: 2
     - primary: Refueling
       aircraft:
@@ -49,7 +49,8 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
-        - SH-60B Seahawk
+        - UH-60L
+        - UH-60A
       size: 4
   #Al Minhad AFB (61)
   12:
@@ -78,12 +79,12 @@ squadrons:
       secondary: any
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
-      size: 8
-    - primary: BAI
+      size: 20
+    - primary: DEAD
       secondary: air-to-ground
       aircraft:
-        - F-15E Strike Eagle
-      size: 12
+        - AV-8B Harrier II Night Attack
+      size: 20
   #Bandar Abbas Intl (51)
   2:
     - primary: SEAD
