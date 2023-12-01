@@ -288,7 +288,7 @@ class AtoModel(QAbstractListModel):
                     return
 
                 package_model = self.find_matching_package_model(package)
-                for flight in package.flights:
+                for flight in list(package.flights):
                     if flight.state.cancelable:
                         package_model.delete_flight(flight)
                         events.delete_flight(flight)

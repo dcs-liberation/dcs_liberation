@@ -261,7 +261,7 @@ class QNewPackageDialog(QPackageDialog):
 
     def on_cancel(self) -> None:
         super().on_cancel()
-        for flight in self.package_model.package.flights:
+        for flight in list(self.package_model.package.flights):
             self.package_model.cancel_or_abort_flight(flight)
 
 
