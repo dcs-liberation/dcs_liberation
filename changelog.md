@@ -8,6 +8,8 @@ Saves from 9.x are not compatible with 10.0.0.
 
 ## Fixes
 
+* **[UI]** Flight members in the loadout menu are now numbered starting from 1 instead of 0.
+
 # 9.0.0
 
 Saves from 8.x are not compatible with 9.0.0.
