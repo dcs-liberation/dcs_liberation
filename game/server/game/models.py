@@ -7,12 +7,12 @@ from pydantic import BaseModel
 from game.server.controlpoints.models import ControlPointJs
 from game.server.flights.models import FlightJs
 from game.server.frontlines.models import FrontLineJs
+from game.server.iadsnetwork.models import IadsNetworkJs
 from game.server.leaflet import LeafletPoint
 from game.server.mapzones.models import ThreatZoneContainerJs, UnculledZoneJs
 from game.server.navmesh.models import NavMeshesJs
 from game.server.supplyroutes.models import SupplyRouteJs
 from game.server.tgos.models import TgoJs
-from game.server.iadsnetwork.models import IadsConnectionJs, IadsNetworkJs
 
 if TYPE_CHECKING:
     from game import Game
@@ -44,6 +44,8 @@ class GameJs(BaseModel):
             iads_network=IadsNetworkJs.from_network(game.theater.iads_network),
             threat_zones=ThreatZoneContainerJs.for_game(game),
             navmeshes=NavMeshesJs.from_game(game),
-            map_center=game.theater.terrain.map_view_default.position.latlng(),
+            map_center=LeafletPoint.from_pydcs(
+                game.theater.terrain.map_view_default.position
+            ),
             unculled_zones=UnculledZoneJs.from_game(game),
         )

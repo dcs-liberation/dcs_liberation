@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from uuid import UUID
 
 from dcs import Point
-from dcs.mapping import LatLng
 
 if TYPE_CHECKING:
     from game import Game
@@ -38,7 +37,7 @@ class GameUpdateEvents:
     updated_control_points: set[ControlPoint] = field(default_factory=set)
     updated_iads: set[IadsNetworkNode] = field(default_factory=set)
     deleted_iads_connections: set[UUID] = field(default_factory=set)
-    reset_on_map_center: LatLng | None = None
+    reset_on_map_center: Point | None = None
     game_unloaded: bool = False
     new_turn: bool = False
     shutting_down: bool = False
@@ -140,9 +139,7 @@ class GameUpdateEvents:
             self.game_unloaded = True
             self.reset_on_map_center = None
         else:
-            self.reset_on_map_center = (
-                game.theater.terrain.map_view_default.position.latlng()
-            )
+            self.reset_on_map_center = game.theater.terrain.map_view_default.position
             self.game_unloaded = False
         return self
 

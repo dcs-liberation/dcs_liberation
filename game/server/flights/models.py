@@ -37,7 +37,7 @@ class FlightJs(BaseModel):
         # lost.
         position = None
         if isinstance(flight.state, InFlight) or isinstance(flight.state, Killed):
-            position = flight.position().latlng()
+            position = LeafletPoint.from_pydcs(flight.position())
         waypoints = None
         if with_waypoints:
             waypoints = waypoints_for_flight(flight)
