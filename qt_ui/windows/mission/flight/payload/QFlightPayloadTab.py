@@ -38,12 +38,12 @@ class FlightMemberSelector(QSpinBox):
     def __init__(self, flight: Flight, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.flight = flight
-        self.setMinimum(0)
-        self.setMaximum(flight.count - 1)
+        self.setMinimum(1)
+        self.setMaximum(flight.count)
 
     @property
     def selected_member(self) -> FlightMember:
-        return self.flight.roster.members[self.value()]
+        return self.flight.roster.members[self.value() - 1]
 
 
 class QFlightPayloadTab(QFrame):
