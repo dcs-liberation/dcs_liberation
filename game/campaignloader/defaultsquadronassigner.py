@@ -29,7 +29,6 @@ class DefaultSquadronAssigner:
             self.coalition.player
         ):
             for squadron_config in self.config.by_location[control_point]:
-
                 squadron_def = self.override_squadron_defaults(
                     self.find_squadron_for(squadron_config, control_point),
                     squadron_config,
@@ -162,7 +161,6 @@ class DefaultSquadronAssigner:
     def override_squadron_defaults(
         squadron_def: Optional[SquadronDef], config: SquadronConfig
     ) -> Optional[SquadronDef]:
-
         if squadron_def is None:
             return None
 

@@ -245,7 +245,6 @@ class MissionResultsProcessor:
                                 delta = DEFEAT_INFLUENCE
                                 status_msg = f"Enemy casualties outnumber allied casualties along the {cp.name}-{enemy_cp.name} frontline.  Allied forces claim a victory."
                     elif ally_casualties > enemy_casualties:
-
                         if (
                             ally_units_alive > 2 * enemy_units_alive
                             and player_aggresive

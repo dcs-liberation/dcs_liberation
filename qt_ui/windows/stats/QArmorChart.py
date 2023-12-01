@@ -18,7 +18,6 @@ class QArmorChart(QFrame):
         self.setLayout(self.layout)
 
     def generateUnitCharts(self):
-
         self.alliedArmor = [
             d.allied_units.vehicles_count for d in self.game.game_stats.data_per_turn
         ]

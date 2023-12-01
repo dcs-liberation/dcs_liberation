@@ -196,7 +196,8 @@ class TheaterGroup:
 
     def max_threat_range(self, radar_only: bool = False) -> Distance:
         """Calculate the maximum threat range of the TheaterGroup.
-        This also checks for Launcher and Tracker Pairs and if they are functioning or not. Allows to also use only radar emitting units for the calculation with the parameter."""
+        This also checks for Launcher and Tracker Pairs and if they are functioning or not. Allows to also use only radar emitting units for the calculation with the parameter.
+        """
         max_non_radar = meters(0)
         max_telar_range = meters(0)
         max_tel_range = meters(0)

@@ -345,7 +345,6 @@ class QSettingsWindow(QDialog):
         self.setLayout(self.layout)
 
     def initCheatLayout(self):
-
         self.cheatPage = QWidget()
         self.cheatLayout = QVBoxLayout()
         self.cheatPage.setLayout(self.cheatLayout)

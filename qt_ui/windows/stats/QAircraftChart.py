@@ -18,7 +18,6 @@ class QAircraftChart(QFrame):
         self.setLayout(self.layout)
 
     def generateUnitCharts(self):
-
         self.alliedAircraft = [
             d.allied_units.aircraft_count for d in self.game.game_stats.data_per_turn
         ]

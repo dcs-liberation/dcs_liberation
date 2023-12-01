@@ -402,7 +402,6 @@ class GenericCarrierGenerator(GroundObjectGenerator):
         self.mission_data = mission_data
 
     def generate(self) -> None:
-
         # This can also be refactored as the general generation was updated
         atc = self.radio_registry.alloc_uhf()
 
