@@ -1,6 +1,6 @@
 import pytest
-
 from faker import Faker
+
 from game.squadrons.pilot import Pilot, PilotStatus
 
 
@@ -29,7 +29,8 @@ def test_pilot_on_leave(pilot: Pilot) -> None:
     assert pilot.on_leave == True
     pilot.return_from_leave()
     assert pilot.status == PilotStatus.Active
-    assert pilot.on_leave == False
+    # mypy thinks this line is unreachable. It isn't.
+    assert pilot.on_leave == False  # type: ignore
 
 
 def test_pilot_on_leave_twice(pilot: Pilot) -> None:
