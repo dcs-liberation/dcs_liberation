@@ -37,8 +37,8 @@ pydantic==2.5.2
 pydantic-settings==2.1.0
 pydantic_core==2.14.5
 pydcs @ git+https://github.com/pydcs/dcs@05ebda06cbe77b09b2b0fae915993caaa30c81bd
-pyinstaller==6.2.0
-pyinstaller-hooks-contrib==2023.10
+pyinstaller==5.13.0
+pyinstaller-hooks-contrib==2023.6
 pyproj==3.6.1
 PySide6==6.6.0
 PySide6-Addons==6.6.0
