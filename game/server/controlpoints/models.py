@@ -28,7 +28,7 @@ class ControlPointJs(BaseModel):
     def for_control_point(control_point: ControlPoint) -> ControlPointJs:
         destination = None
         if control_point.target_position is not None:
-            destination = control_point.target_position.latlng()
+            destination = LeafletPoint.from_pydcs(control_point.target_position)
         return ControlPointJs(
             id=control_point.id,
             name=control_point.name,
