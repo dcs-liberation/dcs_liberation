@@ -1,14 +1,13 @@
-import logging
 import typing
 
 from PySide6.QtCore import Signal
+from PySide6.QtGui import QTextCursor, QIcon
 from PySide6.QtWidgets import (
     QDialog,
     QPlainTextEdit,
     QVBoxLayout,
     QPushButton,
 )
-from PySide6.QtGui import QTextCursor, QIcon
 
 from qt_ui.logging_handler import HookableInMemoryHandler
 
@@ -50,12 +49,17 @@ class QLogsWindow(QDialog):
 
         self.appendLogSignal.connect(self.appendLog)
 
-        self._logging_handler = None
-        logger = logging.getLogger()
-        for handler in logger.handlers:
-            if isinstance(handler, HookableInMemoryHandler):
-                self._logging_handler = handler
-                break
+        try:
+            # This assumes that there's never more than one in memory handler. We don't
+            # configure more than one by default, but logging is customizable with
+            # resources/logging.yaml. If someone adds a second in-memory handler, only
+            # the first one (in arbitrary order) will be shown.
+            self._logging_handler = next(
+                HookableInMemoryHandler.iter_registered_handlers()
+            )
+        except StopIteration:
+            self._logging_handler = None
+
         if self._logging_handler is not None:
             self.textbox.setPlainText(self._logging_handler.log)
             self.textbox.moveCursor(QTextCursor.End)
