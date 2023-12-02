@@ -1,11 +1,11 @@
 from __future__ import annotations
+
 from uuid import UUID
 
 from pydantic import BaseModel
 
 from game.server.leaflet import LeafletPoint
 from game.theater.iadsnetwork.iadsnetwork import IadsNetworkNode, IadsNetwork
-from game.theater.theatergroundobject import TheaterGroundObject
 
 
 class IadsConnectionJs(BaseModel):
@@ -45,8 +45,8 @@ class IadsConnectionJs(BaseModel):
                 IadsConnectionJs(
                     id=id,
                     points=[
-                        tgo.position.latlng(),
-                        connection.ground_object.position.latlng(),
+                        LeafletPoint.from_pydcs(tgo.position),
+                        LeafletPoint.from_pydcs(connection.ground_object.position),
                     ],
                     node=tgo.id,
                     connected=connection.ground_object.id,
