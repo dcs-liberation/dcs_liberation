@@ -50,7 +50,6 @@ python-dateutil==2.8.2
 python-dotenv==1.0.0
 pywin32-ctypes==0.2.2
 PyYAML==6.0.1
-setuptools==69.0.2
 shapely==2.0.2
 shiboken6==6.6.0
 six==1.16.0
