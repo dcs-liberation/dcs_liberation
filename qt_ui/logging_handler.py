@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import logging
 import typing
+from collections.abc import Iterator
 
 LogHook = typing.Callable[[str], None]
 
@@ -14,6 +17,16 @@ class HookableInMemoryHandler(logging.Handler):
         super(HookableInMemoryHandler, self).__init__(*args, **kwargs)
         self._log = ""
         self._hook = None
+
+    @staticmethod
+    def iter_registered_handlers(
+        logger: logging.Logger | None = None,
+    ) -> Iterator[HookableInMemoryHandler]:
+        if logger is None:
+            logger = logging.getLogger()
+        for handler in logger.handlers:
+            if isinstance(handler, HookableInMemoryHandler):
+                yield handler
 
     @property
     def log(self) -> str:

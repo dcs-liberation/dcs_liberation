@@ -27,6 +27,7 @@ from game.theater import ControlPoint, MissionTarget, TheaterGroundObject
 from game.turnstate import TurnState
 from qt_ui import liberation_install
 from qt_ui.dialogs import Dialog
+from qt_ui.logging_handler import HookableInMemoryHandler
 from qt_ui.models import GameModel
 from qt_ui.simcontroller import SimController
 from qt_ui.uiflags import UiFlags
@@ -576,6 +577,10 @@ class QLiberationWindow(QMainWindow):
         self._cp_dialog = QBaseMenu2(None, cp, self.game_model)
         self._cp_dialog.show()
 
+    def _disconnect_log_signals(self) -> None:
+        for handler in HookableInMemoryHandler.iter_registered_handlers():
+            handler.clearHook()
+
     def _qsettings(self) -> QSettings:
         return QSettings("DCS Liberation", "Qt UI")
 
@@ -597,6 +602,7 @@ class QLiberationWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if result == QMessageBox.Yes:
+            self._disconnect_log_signals()
             self._save_window_geometry()
             super().closeEvent(event)
             self.dialog = None
