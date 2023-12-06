@@ -1,0 +1,9 @@
+name: AIM-9P3
+year: 1979
+fallback: AIM-9P
+clsids:
+  - "{AIM-9P3}"
+  - "{AIM-9P3-ON-ADAPTER}"
+  - "{A4E-AIM-9P3-ON-ADAPTER}"
+  - "{Robot24J}"
+  - "{Rb_24J}"
