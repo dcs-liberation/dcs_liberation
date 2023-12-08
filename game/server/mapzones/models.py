@@ -36,7 +36,7 @@ class UnculledZoneJs(BaseModel):
     def from_game(game: Game) -> list[UnculledZoneJs]:
         return [
             UnculledZoneJs(
-                position=zone.latlng(),
+                position=LeafletPoint.from_pydcs(zone),
                 radius=game.settings.perf_culling_distance * 1000,
             )
             for zone in game.get_culling_zones()

@@ -35,11 +35,6 @@ squadrons:
       aircraft:
         - F-15C Eagle
       size: 8
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - F-15E Strike Eagle
-      size: 8
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
@@ -90,12 +85,12 @@ squadrons:
         - AV-8B Harrier II Night Attack
       size: 18
     - primary: Air Assault
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - UH-1H Iroquois
       size: 2
   Bombers from Edwards AFB:
-    - primary: DEAD
+    - primary: Strike
       secondary: air-to-ground
       aircraft:
         - B-52H Stratofortress

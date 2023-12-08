@@ -59,7 +59,6 @@ class DrawingsGenerator:
                 if destination in seen:
                     continue
                 else:
-
                     # Determine path color
                     if cp.captured and destination.captured:
                         color = BLUE_PATH_COLOR

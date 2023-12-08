@@ -65,7 +65,6 @@ class RecoveryTankerFlightPlan(StandardFlightPlan[RecoveryTankerLayout]):
 
 class Builder(IBuilder[RecoveryTankerFlightPlan, RecoveryTankerLayout]):
     def layout(self) -> RecoveryTankerLayout:
-
         builder = WaypointBuilder(self.flight, self.coalition)
 
         # TODO: Propagate the ship position to the Tanker's TOT,

@@ -1,0 +1,94 @@
+---
+name: Marianas - Operation Velvet Thunder
+theater: MarianaIslands
+authors: Starfire
+recommended_player_faction: USA 1970
+recommended_enemy_faction: NVA 1970
+description:
+  <p>Operation Velvet Thunder is a high-intensity training exercise designed to
+  prepare fresh troops for the challenges they will face in Vietnam. The dense
+  jungle and rugged terrain of the Mariana Islands will provide a realistic
+  backdrop, allowing our forces to hone essential skills in jungle warfare,
+  unconventional tactics, and counterinsurgency operations. There are multiple
+  checkpoints scattered across the area of operations that will have to be
+  captured by Air Assault. Due to the limited size and availability of LZs, it
+  is vital to pay close attention to where you designate troop drop off zones.
+  </p><p><strong>Note:</strong> This campaign is intended to be played with the
+  A-4 Skyhawk and OV-10a aircraft mods active. The C-101CC has also been included
+  as a stand-in for the Cessna A-37 Dragonfly in order to provide a CAS platform
+  of roughly equivalent combat capability. This campaign will be updated to use
+  Heatblur's F-4 Phantom II once it is in early access.</p>
+miz: operation_velvet_thunder.miz
+performance: 1
+recommended_start_date: 1970-11-29
+version: "11.0"
+squadrons:
+  #Andersen AFB
+  6:
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - F-5E Tiger II
+      size: 8
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - C-101CC Aviojet
+      size: 8
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - OV-10A Bronco
+      size: 8
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F-4E Phantom II
+      size: 16
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - B-52H Stratofortress
+      size: 4
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-1H Iroquois
+      size: 4
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - CH-47D
+      size: 4
+  #Blue CV
+  Blue-CV:
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - A-4E Skyhawk
+      size: 16
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+  #Rota Intl
+  1:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - MiG-19P Farmer-B
+      size: 8
+  #Tinian Intl
+  3:
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - Mi-8MTV2 Hip
+      size: 4
+  #Saipan Intl
+  2:
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+      size: 8

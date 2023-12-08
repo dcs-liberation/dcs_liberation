@@ -27,7 +27,6 @@ PREDEFINED_WAYPOINT_CATEGORIES = [
 
 
 class QPredefinedWaypointSelectionWindow(QDialog):
-
     # List of FlightWaypoint
     waypoints_added = Signal(list)
 

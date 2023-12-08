@@ -89,7 +89,6 @@ class GroundPlanner:
         self.reserve: List[CombatGroup] = []
 
     def plan_groundwar(self) -> None:
-
         ground_unit_limit = self.cp.frontline_unit_count_limit
 
         remaining_available_frontline_units = ground_unit_limit
@@ -139,7 +138,6 @@ class GroundPlanner:
             remaining_available_frontline_units -= available
 
             while available > 0:
-
                 if role == CombatGroupRole.SHORAD:
                     count = 1
                 else:

@@ -5,3 +5,5 @@ clsids:
   - "LAU-105_2*AIM-9L"
   - "LAU-115_2*LAU-127_AIM-9L"
   - "{F4-2-AIM9L}"
+  - "{VSN_F104_LAU105_AIM9L}"
+  - "{VSN_F104_LAU115C_AIM9L}"

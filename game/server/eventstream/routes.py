@@ -1,5 +1,5 @@
 import asyncio
-from asyncio import wait
+from asyncio import wait, Future
 
 from fastapi import APIRouter, WebSocket
 from fastapi.encoders import jsonable_encoder
@@ -16,9 +16,9 @@ class ConnectionManager:
         self.active_connections: list[WebSocket] = []
 
     async def shutdown(self) -> None:
-        futures = []
+        futures: list[Future[None]] = []
         for connection in self.active_connections:
-            futures.append(connection.close())
+            futures.append(asyncio.create_task(connection.close()))
         await wait(futures)
 
     async def connect(self, websocket: WebSocket) -> None:

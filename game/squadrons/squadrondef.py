@@ -54,7 +54,6 @@ class SquadronDef:
 
     @classmethod
     def from_yaml(cls, path: Path) -> SquadronDef:
-
         with path.open(encoding="utf8") as squadron_file:
             data = yaml.safe_load(squadron_file)
 

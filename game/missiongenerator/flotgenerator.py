@@ -191,7 +191,6 @@ class FlotGenerator:
         side: Country,
         forward_heading: Heading,
     ) -> None:
-
         infantry_position = self.conflict.find_ground_position(
             group.points[0].position.random_point_within(250, 50),
             500,
@@ -304,7 +303,6 @@ class FlotGenerator:
 
         # Artillery will fall back when under attack
         if stance != CombatStance.RETREAT:
-
             # Hold position
             dcs_group.points[1].tasks.append(Hold())
             retreat = self.find_retreat_point(
@@ -476,7 +474,6 @@ class FlotGenerator:
         from_cp: ControlPoint,
         to_cp: ControlPoint,
     ) -> None:
-
         if not self.game.settings.perf_moving_units:
             return
 

@@ -132,7 +132,6 @@ class LayoutLoader:
                     temp_mis.country(country.name).ship_group,
                     temp_mis.country(country.name).static_group,
                 ):
-
                     try:
                         g_id, u_id, group_name, group_mapping = mapping.group_for_name(
                             dcs_group.name

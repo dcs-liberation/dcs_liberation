@@ -82,7 +82,7 @@ class FlightWaypointJs(BaseModel):
 
         return FlightWaypointJs(
             name=waypoint.name,
-            position=waypoint.position.latlng(),
+            position=LeafletPoint.from_pydcs(waypoint.position),
             altitude_ft=waypoint.alt.feet,
             altitude_reference=waypoint.alt_type,
             is_movable=is_movable,

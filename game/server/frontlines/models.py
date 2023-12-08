@@ -27,7 +27,10 @@ class FrontLineJs(BaseModel):
         bounds = FrontLineConflictDescription.frontline_bounds(front_line, theater)
         return FrontLineJs(
             id=front_line.id,
-            extents=[bounds.left_position.latlng(), bounds.right_position.latlng()],
+            extents=[
+                LeafletPoint.from_pydcs(bounds.left_position),
+                LeafletPoint.from_pydcs(bounds.right_position),
+            ],
         )
 
     @staticmethod

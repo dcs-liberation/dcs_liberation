@@ -21,7 +21,6 @@ def mock_registry() -> MockRegistry:
 
 
 def test_lasercode_code(registry: ILaserCodeRegistry) -> None:
-
     assert LaserCode(1688, registry).code == 1688
 
     # 1113 doesn't comply to the rules, but is the only code valid for FC3 aircraft like

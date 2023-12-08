@@ -28,7 +28,6 @@ from qt_ui.windows.GameUpdateSignal import GameUpdateSignal
 
 
 class DebriefingFileWrittenSignal(QObject):
-
     instance = None
     debriefingReceived = Signal(Debriefing)
 

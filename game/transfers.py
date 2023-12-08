@@ -718,7 +718,6 @@ class PendingTransfers:
                 self.order_airlift_assets_at(control_point)
 
     def desired_airlift_capacity(self, control_point: ControlPoint) -> int:
-
         if control_point.has_factory:
             is_major_hub = control_point.total_aircraft_parking > 0
             # Check if there is a CP which is only reachable via Airlift

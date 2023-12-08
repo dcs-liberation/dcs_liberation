@@ -19,6 +19,11 @@ class LeafletPoint(BaseModel):
 
         title = "LatLng"
 
+    @staticmethod
+    def from_pydcs(point: Point) -> LeafletPoint:
+        latlng = point.latlng()
+        return LeafletPoint(lat=latlng.lat, lng=latlng.lng)
+
 
 LeafletLine = list[LeafletPoint]
 
