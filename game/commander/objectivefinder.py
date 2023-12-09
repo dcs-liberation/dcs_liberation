@@ -25,6 +25,7 @@ from game.utils import meters, nautical_miles
 if TYPE_CHECKING:
     from game import Game
     from game.transfers import CargoShip, Convoy
+    from game.threatzones import ThreatZones
 
 MissionTargetType = TypeVar("MissionTargetType", bound=MissionTarget)
 
@@ -193,17 +194,36 @@ class ObjectiveFinder:
 
     def farthest_friendly_control_point(self) -> ControlPoint:
         """Finds the friendly control point that is farthest from any threats."""
+
+        def find_farthest(
+            control_points: Iterator[ControlPoint],
+            threat_zones: ThreatZones,
+            consider_off_map_spawn: bool,
+        ) -> ControlPoint | None:
+            farthest = None
+            max_distance = meters(0)
+            for cp in control_points:
+                if isinstance(cp, OffMapSpawn) and not consider_off_map_spawn:
+                    continue
+                distance = threat_zones.distance_to_threat(cp.position)
+                if distance > max_distance:
+                    farthest = cp
+                    max_distance = distance
+            return farthest
+
         threat_zones = self.game.threat_zone_for(not self.is_player)
 
-        farthest = None
-        max_distance = meters(0)
-        for cp in self.friendly_control_points():
-            if isinstance(cp, OffMapSpawn):
-                continue
-            distance = threat_zones.distance_to_threat(cp.position)
-            if distance > max_distance:
-                farthest = cp
-                max_distance = distance
+        farthest = find_farthest(
+            self.friendly_control_points(), threat_zones, consider_off_map_spawn=False
+        )
+
+        # If there are only off-map spawn control points, fall back to the farthest amongst off map spawn points
+        if farthest is None:
+            farthest = find_farthest(
+                self.friendly_control_points(),
+                threat_zones,
+                consider_off_map_spawn=True,
+            )
 
         if farthest is None:
             raise RuntimeError("Found no friendly control points. You probably lost.")
