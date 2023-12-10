@@ -126,38 +126,39 @@ class Doctrine:
         for doctrine_file_path in Path("resources/doctrines").glob("**/*.yaml"):
             with doctrine_file_path.open(encoding="utf8") as doctrine_file:
                 data = yaml.safe_load(doctrine_file)
-            name = data["name"]
-            cls._by_name[name] = Doctrine(
-                name,
-                cap=data["cap"],
-                cas=data["cas"],
-                sead=data["sead"],
-                strike=data["strike"],
-                antiship=data["antiship"],
-                rendezvous_altitude=feet(data["rendezvous_altitude"]),
-                hold_distance=nautical_miles(data["hold_distance"]),
-                push_distance=nautical_miles(data["push_distance"]),
-                join_distance=nautical_miles(data["join_distance"]),
-                max_ingress_distance=nautical_miles(data["max_ingress_distance"]),
-                min_ingress_distance=nautical_miles(data["min_ingress_distance"]),
-                ingress_altitude=feet(data["ingress_altitude"]),
-                min_patrol_altitude=feet(data["min_patrol_altitude"]),
-                max_patrol_altitude=feet(data["max_patrol_altitude"]),
-                pattern_altitude=feet(data["pattern_altitude"]),
-                cap_duration=timedelta(minutes=data["cap_duration"]),
-                cap_min_track_length=nautical_miles(data["cap_min_track_length"]),
-                cap_max_track_length=nautical_miles(data["cap_max_track_length"]),
-                cap_min_distance_from_cp=nautical_miles(
-                    data["cap_min_distance_from_cp"]
-                ),
-                cap_max_distance_from_cp=nautical_miles(
-                    data["cap_max_distance_from_cp"]
-                ),
-                cap_engagement_range=nautical_miles(data["cap_engagement_range"]),
-                cas_duration=timedelta(minutes=data["cas_duration"]),
-                sweep_distance=nautical_miles(data["sweep_distance"]),
-                ground_unit_procurement_ratios=GroundUnitProcurementRatios.from_dict(
-                    data["ground_unit_procurement_ratios"]
-                ),
+            cls.register(
+                Doctrine(
+                    name=data["name"],
+                    cap=data["cap"],
+                    cas=data["cas"],
+                    sead=data["sead"],
+                    strike=data["strike"],
+                    antiship=data["antiship"],
+                    rendezvous_altitude=feet(data["rendezvous_altitude"]),
+                    hold_distance=nautical_miles(data["hold_distance"]),
+                    push_distance=nautical_miles(data["push_distance"]),
+                    join_distance=nautical_miles(data["join_distance"]),
+                    max_ingress_distance=nautical_miles(data["max_ingress_distance"]),
+                    min_ingress_distance=nautical_miles(data["min_ingress_distance"]),
+                    ingress_altitude=feet(data["ingress_altitude"]),
+                    min_patrol_altitude=feet(data["min_patrol_altitude"]),
+                    max_patrol_altitude=feet(data["max_patrol_altitude"]),
+                    pattern_altitude=feet(data["pattern_altitude"]),
+                    cap_duration=timedelta(minutes=data["cap_duration"]),
+                    cap_min_track_length=nautical_miles(data["cap_min_track_length"]),
+                    cap_max_track_length=nautical_miles(data["cap_max_track_length"]),
+                    cap_min_distance_from_cp=nautical_miles(
+                        data["cap_min_distance_from_cp"]
+                    ),
+                    cap_max_distance_from_cp=nautical_miles(
+                        data["cap_max_distance_from_cp"]
+                    ),
+                    cap_engagement_range=nautical_miles(data["cap_engagement_range"]),
+                    cas_duration=timedelta(minutes=data["cas_duration"]),
+                    sweep_distance=nautical_miles(data["sweep_distance"]),
+                    ground_unit_procurement_ratios=GroundUnitProcurementRatios.from_dict(
+                        data["ground_unit_procurement_ratios"]
+                    ),
+                )
             )
         cls._loaded = True
