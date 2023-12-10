@@ -1,0 +1,31 @@
+name: ww2
+cap: true
+cas: true
+sead: false
+strike: true
+antiship: true
+hold_distance: 10
+push_distance: 5
+join_distance: 5
+rendezvous_altitude: 10000
+max_ingress_distance: 7
+min_ingress_distance: 5
+ingress_altitude: 8000
+min_patrol_altitude: 4000
+max_patrol_altitude: 15000
+pattern_altitude: 5000
+cap_duration: 30
+cap_min_track_length: 8
+cap_max_track_length: 18
+cap_min_distance_from_cp: 0
+cap_max_distance_from_cp: 5
+cap_engagement_range: 20
+cas_duration: 30
+sweep_distance: 10
+ground_unit_procurement_ratios:
+    Tank: 3
+    ATGM: 3
+    APC: 3
+    Artillery: 1
+    SHORAD: 3
+    Recon: 1

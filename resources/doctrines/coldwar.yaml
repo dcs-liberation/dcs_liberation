@@ -1,0 +1,32 @@
+name: coldwar
+cap: true
+cas: true
+sead: true
+strike: true
+antiship: true
+rendezvous_altitude: 22000
+hold_distance: 15
+push_distance: 10
+join_distance: 10
+max_ingress_distance: 30
+min_ingress_distance: 10
+ingress_altitude: 18000
+min_patrol_altitude: 10000
+max_patrol_altitude: 24000
+pattern_altitude: 5000
+cap_duration: 30
+cap_min_track_length: 12
+cap_max_track_length: 24
+cap_min_distance_from_cp: 8
+cap_max_distance_from_cp: 25
+cap_engagement_range: 35
+cas_duration: 30
+sweep_distance: 40
+ground_unit_procurement_ratios:
+    Tank: 4
+    ATGM: 2
+    APC: 3
+    IFV: 2
+    Artillery: 1
+    SHORAD: 2
+    Recon: 1
