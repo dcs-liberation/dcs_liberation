@@ -1,9 +1,4 @@
 name: modern
-cap: true
-cas: true
-sead: true
-strike: true
-antiship: true
 rendezvous_altitude_ft_msl: 25000
 hold_distance_nm: 25
 push_distance_nm: 20
@@ -13,7 +8,6 @@ min_ingress_distance_nm: 10
 ingress_altitude_ft_msl: 20000
 min_patrol_altitude_ft_msl: 15000
 max_patrol_altitude_ft_msl: 33000
-pattern_altitude_ft_msl: 5000
 cap_duration_minutes: 30
 cap_min_track_length_nm: 15
 cap_max_track_length_nm: 40

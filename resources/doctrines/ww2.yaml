@@ -1,9 +1,4 @@
 name: ww2
-cap: true
-cas: true
-sead: false
-strike: true
-antiship: true
 hold_distance_nm: 10
 push_distance_nm: 5
 join_distance_nm: 5
@@ -13,7 +8,6 @@ min_ingress_distance_nm: 5
 ingress_altitude_ft_msl: 8000
 min_patrol_altitude_ft_msl: 4000
 max_patrol_altitude_ft_msl: 15000
-pattern_altitude_ft_msl: 5000
 cap_duration_minutes: 30
 cap_min_track_length_nm: 8
 cap_max_track_length_nm: 18

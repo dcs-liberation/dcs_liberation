@@ -36,12 +36,6 @@ class GroundUnitProcurementRatios:
 class Doctrine:
     name: str
 
-    cas: bool
-    cap: bool
-    sead: bool
-    strike: bool
-    antiship: bool
-
     rendezvous_altitude: Distance
 
     #: The minimum distance between the departure airfield and the hold point.
@@ -66,7 +60,6 @@ class Doctrine:
 
     min_patrol_altitude: Distance
     max_patrol_altitude: Distance
-    pattern_altitude: Distance
 
     #: The duration that CAP flights will remain on-station.
     cap_duration: timedelta
@@ -127,11 +120,6 @@ class Doctrine:
             cls.register(
                 Doctrine(
                     name=data["name"],
-                    cap=data["cap"],
-                    cas=data["cas"],
-                    sead=data["sead"],
-                    strike=data["strike"],
-                    antiship=data["antiship"],
                     rendezvous_altitude=feet(data["rendezvous_altitude_ft_msl"]),
                     hold_distance=nautical_miles(data["hold_distance_nm"]),
                     push_distance=nautical_miles(data["push_distance_nm"]),
@@ -145,7 +133,6 @@ class Doctrine:
                     ingress_altitude=feet(data["ingress_altitude_ft_msl"]),
                     min_patrol_altitude=feet(data["min_patrol_altitude_ft_msl"]),
                     max_patrol_altitude=feet(data["max_patrol_altitude_ft_msl"]),
-                    pattern_altitude=feet(data["pattern_altitude_ft_msl"]),
                     cap_duration=timedelta(minutes=data["cap_duration_minutes"]),
                     cap_min_track_length=nautical_miles(
                         data["cap_min_track_length_nm"]
