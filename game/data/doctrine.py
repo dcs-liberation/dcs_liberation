@@ -16,8 +16,6 @@ class GroundUnitProcurementRatios:
     ratios: dict[UnitClass, float]
 
     def for_unit_class(self, unit_class: UnitClass) -> float:
-        if not self.ratios:
-            return 0.0
         try:
             return self.ratios[unit_class] / sum(self.ratios.values())
         except KeyError:
@@ -134,28 +132,38 @@ class Doctrine:
                     sead=data["sead"],
                     strike=data["strike"],
                     antiship=data["antiship"],
-                    rendezvous_altitude=feet(data["rendezvous_altitude"]),
-                    hold_distance=nautical_miles(data["hold_distance"]),
-                    push_distance=nautical_miles(data["push_distance"]),
-                    join_distance=nautical_miles(data["join_distance"]),
-                    max_ingress_distance=nautical_miles(data["max_ingress_distance"]),
-                    min_ingress_distance=nautical_miles(data["min_ingress_distance"]),
-                    ingress_altitude=feet(data["ingress_altitude"]),
-                    min_patrol_altitude=feet(data["min_patrol_altitude"]),
-                    max_patrol_altitude=feet(data["max_patrol_altitude"]),
-                    pattern_altitude=feet(data["pattern_altitude"]),
-                    cap_duration=timedelta(minutes=data["cap_duration"]),
-                    cap_min_track_length=nautical_miles(data["cap_min_track_length"]),
-                    cap_max_track_length=nautical_miles(data["cap_max_track_length"]),
+                    rendezvous_altitude=feet(data["rendezvous_altitude_ft_msl"]),
+                    hold_distance=nautical_miles(data["hold_distance_nm"]),
+                    push_distance=nautical_miles(data["push_distance_nm"]),
+                    join_distance=nautical_miles(data["join_distance_nm"]),
+                    max_ingress_distance=nautical_miles(
+                        data["max_ingress_distance_nm"]
+                    ),
+                    min_ingress_distance=nautical_miles(
+                        data["min_ingress_distance_nm"]
+                    ),
+                    ingress_altitude=feet(data["ingress_altitude_ft_msl"]),
+                    min_patrol_altitude=feet(data["min_patrol_altitude_ft_msl"]),
+                    max_patrol_altitude=feet(data["max_patrol_altitude_ft_msl"]),
+                    pattern_altitude=feet(data["pattern_altitude_ft_msl"]),
+                    cap_duration=timedelta(minutes=data["cap_duration_minutes"]),
+                    cap_min_track_length=nautical_miles(
+                        data["cap_min_track_length_nm"]
+                    ),
+                    cap_max_track_length=nautical_miles(
+                        data["cap_max_track_length_nm"]
+                    ),
                     cap_min_distance_from_cp=nautical_miles(
-                        data["cap_min_distance_from_cp"]
+                        data["cap_min_distance_from_cp_nm"]
                     ),
                     cap_max_distance_from_cp=nautical_miles(
-                        data["cap_max_distance_from_cp"]
+                        data["cap_max_distance_from_cp_nm"]
                     ),
-                    cap_engagement_range=nautical_miles(data["cap_engagement_range"]),
-                    cas_duration=timedelta(minutes=data["cas_duration"]),
-                    sweep_distance=nautical_miles(data["sweep_distance"]),
+                    cap_engagement_range=nautical_miles(
+                        data["cap_engagement_range_nm"]
+                    ),
+                    cas_duration=timedelta(minutes=data["cas_duration_minutes"]),
+                    sweep_distance=nautical_miles(data["sweep_distance_nm"]),
                     ground_unit_procurement_ratios=GroundUnitProcurementRatios.from_dict(
                         data["ground_unit_procurement_ratios"]
                     ),
