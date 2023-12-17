@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import yaml
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from dataclasses import dataclass
 from datetime import timedelta
@@ -30,6 +30,25 @@ class GroundUnitProcurementRatios:
                 raise ValueError(f"Could not find unit type {unit_class}")
             r[unit_class_enum_from_name[unit_class]] = float(data[unit_class])
         return GroundUnitProcurementRatios(r)
+
+
+@dataclass
+class Helicopter:
+    # Helo specific doctrine
+
+    ingress_altitude: Distance
+
+    rendezvous_altitude: Distance
+
+    air_assault_nav_altitude: Distance
+
+    @staticmethod
+    def from_dict(data: dict[str, Any]) -> Helicopter:
+        return Helicopter(
+            ingress_altitude=feet(data["ingress_altitude_ft_agl"]),
+            rendezvous_altitude=feet(data["rendezvous_altitude_ft_agl"]),
+            air_assault_nav_altitude=feet(data["air_assault_nav_altitude_ft_agl"]),
+        )
 
 
 @dataclass(frozen=True)
@@ -87,6 +106,8 @@ class Doctrine:
     sweep_distance: Distance
 
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
+
+    helicopter: Helicopter
 
     _by_name: ClassVar[dict[str, Doctrine]] = {}
     _loaded: ClassVar[bool] = False
@@ -154,6 +175,7 @@ class Doctrine:
                     ground_unit_procurement_ratios=GroundUnitProcurementRatios.from_dict(
                         data["ground_unit_procurement_ratios"]
                     ),
+                    helicopter=Helicopter.from_dict(data["helicopter"]),
                 )
             )
         cls._loaded = True

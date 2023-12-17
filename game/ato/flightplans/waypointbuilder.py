@@ -72,7 +72,9 @@ class WaypointBuilder:
                 "NAV",
                 FlightWaypointType.NAV,
                 position,
-                meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+                self.doctrine.helicopter.rendezvous_altitude
+                if self.is_helo
+                else self.doctrine.rendezvous_altitude,
                 description="Enter theater",
                 pretty_name="Enter theater",
             )
@@ -99,7 +101,9 @@ class WaypointBuilder:
                 "NAV",
                 FlightWaypointType.NAV,
                 position,
-                meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+                self.doctrine.helicopter.rendezvous_altitude
+                if self.is_helo
+                else self.doctrine.rendezvous_altitude,
                 description="Exit theater",
                 pretty_name="Exit theater",
             )
@@ -128,7 +132,7 @@ class WaypointBuilder:
         altitude_type: AltitudeReference
         if isinstance(divert, OffMapSpawn):
             if self.is_helo:
-                altitude = meters(500)
+                altitude = self.doctrine.helicopter.rendezvous_altitude
             else:
                 altitude = self.doctrine.rendezvous_altitude
             altitude_type = "BARO"
@@ -171,7 +175,9 @@ class WaypointBuilder:
             # Bug: DCS only accepts MSL altitudes for the orbit task and 500 meters is
             # below the ground for most if not all of NTTR (and lots of places in other
             # maps).
-            meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+            self.doctrine.helicopter.rendezvous_altitude
+            if self.is_helo
+            else self.doctrine.rendezvous_altitude,
             alt_type,
             description="Wait until push time",
             pretty_name="Hold",
@@ -186,7 +192,9 @@ class WaypointBuilder:
             "JOIN",
             FlightWaypointType.JOIN,
             position,
-            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.helicopter.ingress_altitude
+            if self.is_helo
+            else self.doctrine.ingress_altitude,
             alt_type,
             description="Rendezvous with package",
             pretty_name="Join",
@@ -201,7 +209,9 @@ class WaypointBuilder:
             "REFUEL",
             FlightWaypointType.REFUEL,
             position,
-            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.helicopter.ingress_altitude
+            if self.is_helo
+            else self.doctrine.ingress_altitude,
             alt_type,
             description="Refuel from tanker",
             pretty_name="Refuel",
@@ -229,7 +239,9 @@ class WaypointBuilder:
             "SPLIT",
             FlightWaypointType.SPLIT,
             position,
-            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.helicopter.ingress_altitude
+            if self.is_helo
+            else self.doctrine.ingress_altitude,
             alt_type,
             description="Depart from package",
             pretty_name="Split",
@@ -249,7 +261,9 @@ class WaypointBuilder:
             "INGRESS",
             ingress_type,
             position,
-            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.helicopter.ingress_altitude
+            if self.is_helo
+            else self.doctrine.ingress_altitude,
             alt_type,
             description=f"INGRESS on {objective.name}",
             pretty_name=f"INGRESS on {objective.name}",
@@ -484,7 +498,9 @@ class WaypointBuilder:
             "TARGET",
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position,
-            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.helicopter.ingress_altitude
+            if self.is_helo
+            else self.doctrine.ingress_altitude,
             alt_type,
             description="Escort the package",
             pretty_name="Target area",

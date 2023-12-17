@@ -23,3 +23,8 @@ ground_unit_procurement_ratios:
     Artillery: 1
     SHORAD: 3
     Recon: 1
+helicopter:
+    ingress_altitude_ft_agl: 200
+    rendezvous_altitude_ft_agl: 1500
+    air_assault_nav_altitude_ft_agl: 1500
+    
