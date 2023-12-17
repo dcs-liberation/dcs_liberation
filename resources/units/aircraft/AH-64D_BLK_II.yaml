@@ -37,4 +37,5 @@ radios:
 tasks:
   BAI: 510
   CAS: 510
+  DEAD: 115
   OCA/Aircraft: 510
