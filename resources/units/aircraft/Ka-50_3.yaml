@@ -27,4 +27,5 @@ kneeboard_units: "metric"
 tasks:
   BAI: 440
   CAS: 440
+  DEAD: 114
   OCA/Aircraft: 440
