@@ -1,0 +1,45 @@
+---
+country: Russia
+name: Private Military Company - Russian (Hard)
+authors: Starfire
+description: <p>A well-equipped private military company using a mix of modern and older Russian hardware.</p>
+locales:
+  - ru_RU
+aircrafts:
+  - Ka-50 Hokum
+  - Ka-50 Hokum (Blackshark 3)
+  - L-39ZA Albatros
+  - Mi-24V Hind-E
+  - Mi-24P Hind-F
+  - Mi-8MTV2 Hip
+frontline_units:
+  - BMP-1
+  - BRDM-2
+  - BTR-80
+  - BTR-D
+  - Cobra
+  - MT-LB
+  - PT-76
+  - T-55A
+  - ZSU-57-2 'Sparka'
+artillery_units:
+  - 2S1 Gvozdika
+  - 2S19 Msta-S
+  - BM-27 Uragan
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry AK-74 Rus
+  - MANPADS SA-18 Igla-S "Grouse"
+  - Mortar 2B11 120mm
+  - Paratrooper AKS
+  - Paratrooper RPG-16  
+air_defense_units:
+  - SA-9 Strela
+  - SA-13 Gopher (9K35 Strela-10M3)
+  - ZSU-57-2 'Sparka'
+  - ZSU-23-4 Shilka
+preset_groups: []
+naval_units: []
+missiles: []
