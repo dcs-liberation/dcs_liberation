@@ -11,17 +11,14 @@ from shapely import transform
 from shapely.geometry import shape
 from shapely.geometry.base import BaseGeometry
 
-from game.data.doctrine import Doctrine, ALL_DOCTRINES
+from game.data.doctrine import Doctrine
 from .ipsolver import IpSolver
 from .waypointsolver import WaypointSolver
 from ..theater.theaterloader import TERRAINS_BY_NAME
 
 
 def doctrine_from_name(name: str) -> Doctrine:
-    for doctrine in ALL_DOCTRINES:
-        if doctrine.name == name:
-            return doctrine
-    raise KeyError
+    return Doctrine.named(name)
 
 
 def geometry_ll_to_xy(geometry: BaseGeometry, terrain: Terrain) -> BaseGeometry:

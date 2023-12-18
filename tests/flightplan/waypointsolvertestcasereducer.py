@@ -8,7 +8,7 @@ from typing import Any, TypeVar, Generic
 from shapely import Point, MultiPolygon
 from shapely.geometry import shape
 
-from game.data.doctrine import Doctrine, ALL_DOCTRINES
+from game.data.doctrine import Doctrine
 from game.flightplan.ipsolver import IpSolver
 from game.flightplan.waypointsolver import WaypointSolver, NoSolutionsError
 from game.flightplan.waypointsolverloader import WaypointSolverLoader
@@ -18,10 +18,7 @@ ReducerT = TypeVar("ReducerT")
 
 
 def doctrine_from_name(name: str) -> Doctrine:
-    for doctrine in ALL_DOCTRINES:
-        if doctrine.name == name:
-            return doctrine
-    raise KeyError
+    return Doctrine.named(name)
 
 
 class Reducer(Generic[ReducerT], Iterator[ReducerT], ABC):

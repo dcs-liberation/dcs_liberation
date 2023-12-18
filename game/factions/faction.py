@@ -19,12 +19,7 @@ from game.data.building_data import (
     WW2_FREE,
     WW2_GERMANY_BUILDINGS,
 )
-from game.data.doctrine import (
-    COLDWAR_DOCTRINE,
-    Doctrine,
-    MODERN_DOCTRINE,
-    WWII_DOCTRINE,
-)
+from game.data.doctrine import Doctrine
 from game.data.groups import GroupRole
 from game.data.units import UnitClass
 from game.dcs.aircrafttype import AircraftType
@@ -106,7 +101,7 @@ class Faction:
     jtac_unit: Optional[AircraftType] = field(default=None)
 
     # doctrine
-    doctrine: Doctrine = field(default=MODERN_DOCTRINE)
+    doctrine: Doctrine = field(default=Doctrine.named("modern"))
 
     # List of available building layouts for this faction
     building_set: List[str] = field(default_factory=list)
@@ -238,14 +233,7 @@ class Faction:
 
         # Load doctrine
         doctrine = json.get("doctrine", "modern")
-        if doctrine == "modern":
-            faction.doctrine = MODERN_DOCTRINE
-        elif doctrine == "coldwar":
-            faction.doctrine = COLDWAR_DOCTRINE
-        elif doctrine == "ww2":
-            faction.doctrine = WWII_DOCTRINE
-        else:
-            faction.doctrine = MODERN_DOCTRINE
+        faction.doctrine = Doctrine.named(doctrine)
 
         # Load the building set
         faction.building_set = []
