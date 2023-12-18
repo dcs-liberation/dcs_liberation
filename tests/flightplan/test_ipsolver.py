@@ -8,7 +8,7 @@ import pytest
 from dcs.terrain import Caucasus
 from shapely import Point, MultiPolygon, Polygon, unary_union
 
-from game.data.doctrine import ALL_DOCTRINES
+from game.data.doctrine import Doctrine
 from game.flightplan.ipsolver import IpSolver
 from game.flightplan.waypointsolver import NoSolutionsError
 from game.flightplan.waypointstrategy import point_at_heading
@@ -70,7 +70,7 @@ def fuzzed_solver_fixture(
     departure = Point(0, 0)
     target = point_at_heading(departure, target_heading, fuzzed_target_distance)
     solver = IpSolver(
-        departure, target, random.choice(ALL_DOCTRINES), fuzzed_threat_poly
+        departure, target, random.choice(Doctrine.all_doctrines()), fuzzed_threat_poly
     )
     solver.set_debug_properties(tmp_path, Caucasus())
     return solver
@@ -98,4 +98,4 @@ def test_fuzz_ipsolver(fuzzed_solver: IpSolver, run_number: int) -> None:
 
 
 def test_can_construct_solver_with_empty_threat() -> None:
-    IpSolver(Point(0, 0), Point(0, 0), ALL_DOCTRINES[0], MultiPolygon([]))
+    IpSolver(Point(0, 0), Point(0, 0), Doctrine.named("coldwar"), MultiPolygon([]))

@@ -1,3 +1,9 @@
+from __future__ import annotations
+
+from pathlib import Path
+import yaml
+from typing import ClassVar
+
 from dataclasses import dataclass
 from datetime import timedelta
 
@@ -14,6 +20,16 @@ class GroundUnitProcurementRatios:
             return self.ratios[unit_class] / sum(self.ratios.values())
         except KeyError:
             return 0.0
+
+    @staticmethod
+    def from_dict(data: dict[str, float]) -> GroundUnitProcurementRatios:
+        unit_class_enum_from_name = {unit.value: unit for unit in UnitClass}
+        r = {}
+        for unit_class in data:
+            if unit_class not in unit_class_enum_from_name:
+                raise ValueError(f"Could not find unit type {unit_class}")
+            r[unit_class_enum_from_name[unit_class]] = float(data[unit_class])
+        return GroundUnitProcurementRatios(r)
 
 
 @dataclass(frozen=True)
@@ -79,122 +95,78 @@ class Doctrine:
 
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
 
+    _by_name: ClassVar[dict[str, Doctrine]] = {}
+    _loaded: ClassVar[bool] = False
 
-MODERN_DOCTRINE = Doctrine(
-    "modern",
-    cap=True,
-    cas=True,
-    sead=True,
-    strike=True,
-    antiship=True,
-    rendezvous_altitude=feet(25000),
-    hold_distance=nautical_miles(25),
-    push_distance=nautical_miles(20),
-    join_distance=nautical_miles(20),
-    max_ingress_distance=nautical_miles(45),
-    min_ingress_distance=nautical_miles(10),
-    ingress_altitude=feet(20000),
-    min_patrol_altitude=feet(15000),
-    max_patrol_altitude=feet(33000),
-    pattern_altitude=feet(5000),
-    cap_duration=timedelta(minutes=30),
-    cap_min_track_length=nautical_miles(15),
-    cap_max_track_length=nautical_miles(40),
-    cap_min_distance_from_cp=nautical_miles(10),
-    cap_max_distance_from_cp=nautical_miles(40),
-    cap_engagement_range=nautical_miles(50),
-    cas_duration=timedelta(minutes=30),
-    sweep_distance=nautical_miles(60),
-    ground_unit_procurement_ratios=GroundUnitProcurementRatios(
-        {
-            UnitClass.TANK: 3,
-            UnitClass.ATGM: 2,
-            UnitClass.APC: 2,
-            UnitClass.IFV: 3,
-            UnitClass.ARTILLERY: 1,
-            UnitClass.SHORAD: 2,
-            UnitClass.RECON: 1,
-        }
-    ),
-)
+    @classmethod
+    def register(cls, doctrine: Doctrine) -> None:
+        if doctrine.name in cls._by_name:
+            duplicate = cls._by_name[doctrine.name]
+            raise ValueError(f"Doctrine {doctrine.name} is already loaded")
+        cls._by_name[doctrine.name] = doctrine
 
-COLDWAR_DOCTRINE = Doctrine(
-    name="coldwar",
-    cap=True,
-    cas=True,
-    sead=True,
-    strike=True,
-    antiship=True,
-    rendezvous_altitude=feet(22000),
-    hold_distance=nautical_miles(15),
-    push_distance=nautical_miles(10),
-    join_distance=nautical_miles(10),
-    max_ingress_distance=nautical_miles(30),
-    min_ingress_distance=nautical_miles(10),
-    ingress_altitude=feet(18000),
-    min_patrol_altitude=feet(10000),
-    max_patrol_altitude=feet(24000),
-    pattern_altitude=feet(5000),
-    cap_duration=timedelta(minutes=30),
-    cap_min_track_length=nautical_miles(12),
-    cap_max_track_length=nautical_miles(24),
-    cap_min_distance_from_cp=nautical_miles(8),
-    cap_max_distance_from_cp=nautical_miles(25),
-    cap_engagement_range=nautical_miles(35),
-    cas_duration=timedelta(minutes=30),
-    sweep_distance=nautical_miles(40),
-    ground_unit_procurement_ratios=GroundUnitProcurementRatios(
-        {
-            UnitClass.TANK: 4,
-            UnitClass.ATGM: 2,
-            UnitClass.APC: 3,
-            UnitClass.IFV: 2,
-            UnitClass.ARTILLERY: 1,
-            UnitClass.SHORAD: 2,
-            UnitClass.RECON: 1,
-        }
-    ),
-)
+    @classmethod
+    def named(cls, name: str) -> Doctrine:
+        if not cls._loaded:
+            cls.load_all()
+        return cls._by_name[name]
 
-WWII_DOCTRINE = Doctrine(
-    name="ww2",
-    cap=True,
-    cas=True,
-    sead=False,
-    strike=True,
-    antiship=True,
-    hold_distance=nautical_miles(10),
-    push_distance=nautical_miles(5),
-    join_distance=nautical_miles(5),
-    rendezvous_altitude=feet(10000),
-    max_ingress_distance=nautical_miles(7),
-    min_ingress_distance=nautical_miles(5),
-    ingress_altitude=feet(8000),
-    min_patrol_altitude=feet(4000),
-    max_patrol_altitude=feet(15000),
-    pattern_altitude=feet(5000),
-    cap_duration=timedelta(minutes=30),
-    cap_min_track_length=nautical_miles(8),
-    cap_max_track_length=nautical_miles(18),
-    cap_min_distance_from_cp=nautical_miles(0),
-    cap_max_distance_from_cp=nautical_miles(5),
-    cap_engagement_range=nautical_miles(20),
-    cas_duration=timedelta(minutes=30),
-    sweep_distance=nautical_miles(10),
-    ground_unit_procurement_ratios=GroundUnitProcurementRatios(
-        {
-            UnitClass.TANK: 3,
-            UnitClass.ATGM: 3,
-            UnitClass.APC: 3,
-            UnitClass.ARTILLERY: 1,
-            UnitClass.SHORAD: 3,
-            UnitClass.RECON: 1,
-        }
-    ),
-)
+    @classmethod
+    def all_doctrines(cls) -> list[Doctrine]:
+        if not cls._loaded:
+            cls.load_all()
+        return list(cls._by_name.values())
 
-ALL_DOCTRINES = [
-    COLDWAR_DOCTRINE,
-    MODERN_DOCTRINE,
-    WWII_DOCTRINE,
-]
+    @classmethod
+    def load_all(cls) -> None:
+        if cls._loaded:
+            return
+        for doctrine_file_path in Path("resources/doctrines").glob("**/*.yaml"):
+            with doctrine_file_path.open(encoding="utf8") as doctrine_file:
+                data = yaml.safe_load(doctrine_file)
+            cls.register(
+                Doctrine(
+                    name=data["name"],
+                    cap=data["cap"],
+                    cas=data["cas"],
+                    sead=data["sead"],
+                    strike=data["strike"],
+                    antiship=data["antiship"],
+                    rendezvous_altitude=feet(data["rendezvous_altitude_ft_msl"]),
+                    hold_distance=nautical_miles(data["hold_distance_nm"]),
+                    push_distance=nautical_miles(data["push_distance_nm"]),
+                    join_distance=nautical_miles(data["join_distance_nm"]),
+                    max_ingress_distance=nautical_miles(
+                        data["max_ingress_distance_nm"]
+                    ),
+                    min_ingress_distance=nautical_miles(
+                        data["min_ingress_distance_nm"]
+                    ),
+                    ingress_altitude=feet(data["ingress_altitude_ft_msl"]),
+                    min_patrol_altitude=feet(data["min_patrol_altitude_ft_msl"]),
+                    max_patrol_altitude=feet(data["max_patrol_altitude_ft_msl"]),
+                    pattern_altitude=feet(data["pattern_altitude_ft_msl"]),
+                    cap_duration=timedelta(minutes=data["cap_duration_minutes"]),
+                    cap_min_track_length=nautical_miles(
+                        data["cap_min_track_length_nm"]
+                    ),
+                    cap_max_track_length=nautical_miles(
+                        data["cap_max_track_length_nm"]
+                    ),
+                    cap_min_distance_from_cp=nautical_miles(
+                        data["cap_min_distance_from_cp_nm"]
+                    ),
+                    cap_max_distance_from_cp=nautical_miles(
+                        data["cap_max_distance_from_cp_nm"]
+                    ),
+                    cap_engagement_range=nautical_miles(
+                        data["cap_engagement_range_nm"]
+                    ),
+                    cas_duration=timedelta(minutes=data["cas_duration_minutes"]),
+                    sweep_distance=nautical_miles(data["sweep_distance_nm"]),
+                    ground_unit_procurement_ratios=GroundUnitProcurementRatios.from_dict(
+                        data["ground_unit_procurement_ratios"]
+                    ),
+                )
+            )
+        cls._loaded = True

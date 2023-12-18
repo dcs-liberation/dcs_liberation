@@ -1,0 +1,32 @@
+name: modern
+cap: true
+cas: true
+sead: true
+strike: true
+antiship: true
+rendezvous_altitude_ft_msl: 25000
+hold_distance_nm: 25
+push_distance_nm: 20
+join_distance_nm: 20
+max_ingress_distance_nm: 45
+min_ingress_distance_nm: 10
+ingress_altitude_ft_msl: 20000
+min_patrol_altitude_ft_msl: 15000
+max_patrol_altitude_ft_msl: 33000
+pattern_altitude_ft_msl: 5000
+cap_duration_minutes: 30
+cap_min_track_length_nm: 15
+cap_max_track_length_nm: 40
+cap_min_distance_from_cp_nm: 10
+cap_max_distance_from_cp_nm: 40
+cap_engagement_range_nm: 50
+cas_duration_minutes: 30
+sweep_distance_nm: 60
+ground_unit_procurement_ratios:    
+    Tank: 3
+    ATGM: 2
+    APC: 2
+    IFV: 3
+    Artillery: 1
+    SHORAD: 2
+    Recon: 1
