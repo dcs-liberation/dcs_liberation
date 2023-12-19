@@ -10,6 +10,7 @@ Saves from 9.x are not compatible with 10.0.0.
 
 * **[Flight Planning]** Aircraft from even numbered flights will no longer become inaccessible when canceling a draft package.
 * **[UI]** Flight members in the loadout menu are now numbered starting from 1 instead of 0.
+* **[UI]** Flight plan paths are now drawn behind all other map elements, fixing rare cases where they could prevent other UI elements from being clickable.
 
 # 9.0.0
 
