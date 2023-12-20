@@ -1,4 +1,12 @@
 name: coldwar
+<<<<<<< HEAD
+=======
+cap: true
+cas: true
+sead: true
+strike: true
+antiship: true
+>>>>>>> develop
 rendezvous_altitude_ft_msl: 22000
 hold_distance_nm: 15
 push_distance_nm: 10
@@ -8,6 +16,10 @@ min_ingress_distance_nm: 10
 ingress_altitude_ft_msl: 18000
 min_patrol_altitude_ft_msl: 10000
 max_patrol_altitude_ft_msl: 24000
+<<<<<<< HEAD
+=======
+pattern_altitude_ft_msl: 5000
+>>>>>>> develop
 cap_duration_minutes: 30
 cap_min_track_length_nm: 12
 cap_max_track_length_nm: 24
@@ -24,7 +36,10 @@ ground_unit_procurement_ratios:
     Artillery: 1
     SHORAD: 2
     Recon: 1
+<<<<<<< HEAD
 helicopter:
     ingress_altitude_ft_agl: 200
     rendezvous_altitude_ft_agl: 1500
     air_assault_nav_altitude_ft_agl: 1500
+=======
+>>>>>>> develop
