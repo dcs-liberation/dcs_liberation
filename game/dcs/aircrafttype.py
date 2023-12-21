@@ -402,7 +402,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                     aircraft.property_defaults[k] = config[k]
                     # In addition to setting the property_defaults, we have to set the "default" property in the
                     # value of aircraft.properties for the key, as this is used in parts of the codebase to get
-                    # the default value. 
+                    # the default value.
                     aircraft.properties[k] = dataclasses_replace(
                         aircraft.properties[k], default=config[k]
                     )
