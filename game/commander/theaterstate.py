@@ -158,7 +158,7 @@ class TheaterState(WorldState["TheaterState"]):
         # Plan enough rounds of CAP that the target has coverage over the expected
         # mission duration.
         mission_duration = game.settings.desired_player_mission_duration.total_seconds()
-        barcap_duration = coalition.doctrine.cap_duration.total_seconds()
+        barcap_duration = coalition.doctrine.cap.duration.total_seconds()
         barcap_rounds = math.ceil(mission_duration / barcap_duration)
 
         refueling_targets: list[MissionTarget] = []

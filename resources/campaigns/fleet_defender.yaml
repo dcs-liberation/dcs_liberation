@@ -1,0 +1,51 @@
+---
+name: Marianas - Fleet Defender
+theater: MarianaIslands
+authors: Xray
+description:  
+version: "11.0"
+recommended_player_faction: US Navy 1985
+recommended_enemy_faction: Russia 1975
+miz: fleet_defender.miz
+performance: 1
+recommended_start_date: 1985-01-01
+recommended_player_money: 0
+recommended_enemy_money: 0
+recommended_player_income_multiplier: 0.0
+recommended_enemy_income_multiplier: 0.0
+squadrons:
+  #BLUFOR CVN
+  Carrier:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - VF-143
+      size: 14
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - VMFA-251
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - VS-35 (Tanker)
+      size: 4
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - VS-35
+      size: 8
+    - primary: Transport
+      aircraft:
+        - HSM-40
+      size: 2
+  Bomber-Spawn:
+    - primary: Anti-ship
+      secondary: any
+      aircraft:
+        - Tu-142 Bear-F
+      size: 16
+

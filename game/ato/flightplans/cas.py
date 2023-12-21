@@ -44,7 +44,7 @@ class CasFlightPlan(PatrollingFlightPlan[CasLayout], UiZoneDisplay):
 
     @property
     def patrol_duration(self) -> timedelta:
-        return self.flight.coalition.doctrine.cas_duration
+        return self.flight.coalition.doctrine.cas.duration
 
     @property
     def patrol_speed(self) -> Speed:

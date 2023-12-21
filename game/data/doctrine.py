@@ -34,12 +34,12 @@ class GroundUnitProcurementRatios:
 
 @dataclass
 class Helicopter:
-    # Helo specific doctrine
 
     ingress_altitude: Distance
 
     rendezvous_altitude: Distance
 
+    #: The altitude used for Nav points for air assault missions
     air_assault_nav_altitude: Distance
 
     @staticmethod
@@ -48,6 +48,71 @@ class Helicopter:
             ingress_altitude=feet(data["ingress_altitude_ft_agl"]),
             rendezvous_altitude=feet(data["rendezvous_altitude_ft_agl"]),
             air_assault_nav_altitude=feet(data["air_assault_nav_altitude_ft_agl"]),
+        )
+
+
+@dataclass
+class Cas:
+
+    #: The duration that CAP flights will remain on-station.
+    duration: timedelta
+
+    @staticmethod
+    def from_dict(data: dict[str, Any]) -> Cas:
+        return Cas(duration=timedelta(minutes=data["duration_minutes"]))
+
+
+@dataclass
+class Sweep:
+
+    distance: Distance
+
+    @staticmethod
+    def from_dict(data: dict[str, Any]) -> Sweep:
+        return Sweep(
+            distance=nautical_miles(data["distance_nm"]),
+        )
+
+
+@dataclass
+class Cap:
+
+    #: The duration that CAP flights will remain on-station.
+    duration: timedelta
+
+    #: The minimum length of the CAP race track.
+    min_track_length: Distance
+
+    #: The maximum length of the CAP race track.
+    max_track_length: Distance
+
+    #: The minimum distance between the defended position and the *end* of the
+    #: CAP race track.
+    min_distance_from_cp: Distance
+
+    #: The maximum distance between the defended position and the *end* of the
+    #: CAP race track.
+    max_distance_from_cp: Distance
+
+    #: The engagement range of CAP flights. Any enemy aircraft within this range
+    #: of the CAP's current position will be engaged by the CAP.
+    engagement_range: Distance
+
+    #: Defines the range of altitudes CAP racetracks are planned at.
+    min_patrol_altitude: Distance
+    max_patrol_altitude: Distance
+
+    @staticmethod
+    def from_dict(data: dict[str, Any]) -> Cap:
+        return Cap(
+            duration=timedelta(minutes=data["duration_minutes"]),
+            min_track_length=nautical_miles(data["min_track_length_nm"]),
+            max_track_length=nautical_miles(data["max_track_length_nm"]),
+            min_distance_from_cp=nautical_miles(data["min_distance_from_cp_nm"]),
+            max_distance_from_cp=nautical_miles(data["max_distance_from_cp_nm"]),
+            engagement_range=nautical_miles(data["engagement_range_nm"]),
+            min_patrol_altitude=feet(data["min_patrol_altitude_ft_msl"]),
+            max_patrol_altitude=feet(data["max_patrol_altitude_ft_msl"]),
         )
 
 
@@ -77,47 +142,29 @@ class Doctrine:
 
     ingress_altitude: Distance
 
-    min_patrol_altitude: Distance
-    max_patrol_altitude: Distance
-
-    #: The duration that CAP flights will remain on-station.
-    cap_duration: timedelta
-
-    #: The minimum length of the CAP race track.
-    cap_min_track_length: Distance
-
-    #: The maximum length of the CAP race track.
-    cap_max_track_length: Distance
-
-    #: The minimum distance between the defended position and the *end* of the
-    #: CAP race track.
-    cap_min_distance_from_cp: Distance
-
-    #: The maximum distance between the defended position and the *end* of the
-    #: CAP race track.
-    cap_max_distance_from_cp: Distance
-
-    #: The engagement range of CAP flights. Any enemy aircraft within this range
-    #: of the CAP's current position will be engaged by the CAP.
-    cap_engagement_range: Distance
-
-    cas_duration: timedelta
-
-    sweep_distance: Distance
-
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
 
+    # : Helicopter specific doctrines
     helicopter: Helicopter
+
+    #: Doctrine for CAS missions
+    cas: Cas
+
+    #: Doctrine for CAP missions
+    cap: Cap
+
+    #: Doctrine for Fighter Sweep missions
+    sweep: Sweep
 
     _by_name: ClassVar[dict[str, Doctrine]] = {}
     _loaded: ClassVar[bool] = False
-    
-    def resolve_ingress_altitude(self, is_helo=False):
+
+    def resolve_ingress_altitude(self, is_helo: bool = False) -> Distance:
         if is_helo:
             return self.helicopter.ingress_altitude
         return self.ingress_altitude
 
-    def resolve_rendezvous_altitude(self, is_helo=False):
+    def resolve_rendezvous_altitude(self, is_helo: bool = False) -> Distance:
         if is_helo:
             return self.helicopter.rendezvous_altitude
         return self.rendezvous_altitude
@@ -162,30 +209,13 @@ class Doctrine:
                         data["min_ingress_distance_nm"]
                     ),
                     ingress_altitude=feet(data["ingress_altitude_ft_msl"]),
-                    min_patrol_altitude=feet(data["min_patrol_altitude_ft_msl"]),
-                    max_patrol_altitude=feet(data["max_patrol_altitude_ft_msl"]),
-                    cap_duration=timedelta(minutes=data["cap_duration_minutes"]),
-                    cap_min_track_length=nautical_miles(
-                        data["cap_min_track_length_nm"]
-                    ),
-                    cap_max_track_length=nautical_miles(
-                        data["cap_max_track_length_nm"]
-                    ),
-                    cap_min_distance_from_cp=nautical_miles(
-                        data["cap_min_distance_from_cp_nm"]
-                    ),
-                    cap_max_distance_from_cp=nautical_miles(
-                        data["cap_max_distance_from_cp_nm"]
-                    ),
-                    cap_engagement_range=nautical_miles(
-                        data["cap_engagement_range_nm"]
-                    ),
-                    cas_duration=timedelta(minutes=data["cas_duration_minutes"]),
-                    sweep_distance=nautical_miles(data["sweep_distance_nm"]),
                     ground_unit_procurement_ratios=GroundUnitProcurementRatios.from_dict(
                         data["ground_unit_procurement_ratios"]
                     ),
                     helicopter=Helicopter.from_dict(data["helicopter"]),
+                    cas=Cas.from_dict(data["cas"]),
+                    cap=Cap.from_dict(data["cap"]),
+                    sweep=Sweep.from_dict(data["sweep"]),
                 )
             )
         cls._loaded = True

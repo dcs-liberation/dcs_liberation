@@ -6,16 +6,19 @@ join_distance_nm: 20
 max_ingress_distance_nm: 45
 min_ingress_distance_nm: 10
 ingress_altitude_ft_msl: 20000
-min_patrol_altitude_ft_msl: 15000
-max_patrol_altitude_ft_msl: 33000
-cap_duration_minutes: 30
-cap_min_track_length_nm: 15
-cap_max_track_length_nm: 40
-cap_min_distance_from_cp_nm: 10
-cap_max_distance_from_cp_nm: 40
-cap_engagement_range_nm: 50
-cas_duration_minutes: 30
-sweep_distance_nm: 60
+cap:
+  duration_minutes: 30
+  min_track_length_nm: 15
+  max_track_length_nm: 40
+  min_distance_from_cp_nm: 10
+  max_distance_from_cp_nm: 40
+  engagement_range_nm: 50
+  min_patrol_altitude_ft_msl: 15000
+  max_patrol_altitude_ft_msl: 33000
+cas:
+  duration_minutes: 30
+sweep:
+  distance_nm: 60
 ground_unit_procurement_ratios:    
     Tank: 3
     ATGM: 2

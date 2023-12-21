@@ -165,7 +165,7 @@ class ThreatZones:
         cls, doctrine: Doctrine, control_point: ControlPoint
     ) -> Distance:
         cap_threat_range = (
-            doctrine.cap_max_distance_from_cp + doctrine.cap_engagement_range
+            doctrine.cap.max_distance_from_cp + doctrine.cap.engagement_range
         )
         opposing_airfield = cls.closest_enemy_airbase(
             control_point, cap_threat_range * 2

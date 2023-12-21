@@ -114,7 +114,7 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
             self.package.waypoints.join.heading_between_point(target)
         )
         start_pos = target.point_from_heading(
-            heading.degrees, -self.doctrine.sweep_distance.meters
+            heading.degrees, -self.doctrine.sweep.distance.meters
         )
 
         builder = WaypointBuilder(self.flight, self.coalition)
