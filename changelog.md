@@ -5,6 +5,7 @@ Saves from 9.x are not compatible with 10.0.0.
 ## Features/Improvements
 
 * **[Engine]** Support for DCS 2.9.1.48111 Open Beta (F-15E JDAM, updated Falklands and Normandy airfields).
+* **[Modding]** Doctrines (tuning parameters for the auto planner) can now be modded. See existing doctrines (Modern, ColdWar and WWII) for examples.
 
 ## Fixes
 
