@@ -1,0 +1,69 @@
+---
+name: Falklands - Battle for No Man's Land
+theater: Falklands
+authors: Starfire
+recommended_player_faction: USA 2005
+recommended_enemy_faction: Private Military Company - Russian (Hard)
+description:
+  <p><strong>Note:</strong> This campaign was designed for helicopters.</p><p>
+  Set against the rugged and windswept backdrop of the Falkland Islands,
+  this fictional campaign scenario unfolds with a dramatic dawn sneak attack
+  on RAF Mount Pleasant Airbase. Orchestrated by a Russia-backed private
+  military company, the deadly offensive with helicopter gunships and ground troops
+  has left the airbase's runways in ruins and its defences obliterated. This brutal
+  incursion resulted in significant casualties among the RAF personnel, with many
+  killed or wounded in the unexpected onslaught. The carrier HMS Queen Elizabeth and
+  its task force are on their way to evacuate the survivors and retake Mount Pleasant.
+  However, they are eight days away at full steam.</p><p>
+  Amidst this chaos, a beacon of hope emerges in the heart of the Falklands. At Port
+  Stanley, a small detachment of US military personnel, including helicopter pilots
+  and armor units, find themselves inadvertently thrust into the fray. Originally at
+  Port Stanley for some R&R following a training exercise, these soldiers now face
+  an unexpected and urgent call to action. Their mission is daunting but clear - to
+  prevent the capture of Port Stanley and liberate East Falkland from the clutches
+  of the PMC forces.</p><p>
+  This small group must strategically push the PMC forces back through the treacherous
+  valley lying between Wickham Heights and the Onion Ranges, an area ominously known
+  as No Man's Land. Their plan involves a daring assault to destroy the enemy's
+  helicopter gunships stationed at San Carlos FOB. Following this, they aim to force
+  the PMC ground forces into a strategic retreat southward, along the 1.6 mile wide
+  isthmus into Lafonia. This calculated offensive is designed to create a defensible
+  position at Goose Green on the narrow isthmus, which can be held against a numerically
+  superior force until the arrival of Big Lizzie.</p>
+miz: battle_for_no_mans_land.miz
+performance: 1
+recommended_start_date: 2001-11-10
+version: "11.0"
+squadrons:
+  #Port Stanley
+  1:
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 6
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 6
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-60L
+        - UH-60A
+      size: 4
+  #San Carlos FOB
+  3:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 6
+  #Goose Green
+  24:
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - Ka-50 Hokum (Blackshark 3)
+      size: 6
