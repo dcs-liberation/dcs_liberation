@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace as dataclasses_replace
 from functools import cache, cached_property
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Iterator, Optional, TYPE_CHECKING, Type
@@ -400,6 +400,12 @@ class AircraftType(UnitType[Type[FlyingType]]):
             for k in config:
                 if k in aircraft.property_defaults:
                     aircraft.property_defaults[k] = config[k]
+                    # In addition to setting the property_defaults, we have to set the "default" property in the
+                    # value of aircraft.properties for the key, as this is used in parts of the codebase to get
+                    # the default value.
+                    aircraft.properties[k] = dataclasses_replace(
+                        aircraft.properties[k], default=config[k]
+                    )
                 else:
                     logging.warning(
                         f"'{aircraft.id}' attempted to set default prop '{k}' that does not exist"
