@@ -9,7 +9,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[2] = {
-					["CLSID"] = "{88D18A5E-99C8-4B04-B40B-1C02F2018B6E}",
+					["CLSID"] = "{M299_4xAGM_114L}",
 					["num"] = 4,
 				},
 				[3] = {
@@ -17,7 +17,7 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[4] = {
-					["CLSID"] = "{88D18A5E-99C8-4B04-B40B-1C02F2018B6E}",
+					["CLSID"] = "{M299_4xAGM_114L}",
 					["num"] = 1,
 				},
 			},
@@ -51,6 +51,31 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
+			["displayName"] = "Liberation DEAD",
+			["name"] = "Liberation DEAD",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{M299_4xAGM_114L}",
+					["num"] = 3,
+				},
+				[2] = {
+					["CLSID"] = "{M299_4xAGM_114L}",
+					["num"] = 4,
+				},
+				[3] = {
+					["CLSID"] = "{M299_4xAGM_114L}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{M299_4xAGM_114L}",
+					["num"] = 1,
+				},
+			},
+			["tasks"] = {
+				[1] = 31,
+			},
+		},
+		[4] = {
 			["name"] = "Liberation OCA/Aircraft",
 			["pylons"] = {
 				[1] = {
