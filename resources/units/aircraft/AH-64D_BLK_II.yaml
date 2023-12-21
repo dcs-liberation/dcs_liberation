@@ -39,3 +39,5 @@ tasks:
   CAS: 510
   DEAD: 115
   OCA/Aircraft: 510
+default_overrides:
+  FCR_RFI_removed: false
