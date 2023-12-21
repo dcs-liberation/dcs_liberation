@@ -35,8 +35,13 @@ class GroundUnitProcurementRatios:
 @dataclass
 class Helicopter:
 
+    #: The altitude used for combat section of a flight, overrides the base combat_altitude parameter for helos
     combat_altitude: Distance
+
+    #: The altitude used for forming up a pacakge. Overrides the base rendezvous_altitude parameter for helos
     rendezvous_altitude: Distance
+
+    #: Altitude of the nav points (cruise section) of air assault missions.
     air_assault_nav_altitude: Distance
 
     @staticmethod
@@ -62,6 +67,7 @@ class Cas:
 @dataclass
 class Sweep:
 
+    #: Length of the sweep / patrol leg
     distance: Distance
 
     @staticmethod
@@ -115,6 +121,7 @@ class Cap:
 
 @dataclass(frozen=True)
 class Doctrine:
+    #: Name of the doctrine, used to assign a doctrine in a faction.
     name: str
 
     #: The minimum distance between the departure airfield and the hold point.
@@ -135,25 +142,25 @@ class Doctrine:
     #: target.
     min_ingress_distance: Distance
 
-    #: The altitude used for combat section of a flight
+    #: The altitude used for combat section of a flight.
     combat_altitude: Distance
 
-    #: The altitude used for forming up a pacakge
+    #: The altitude used for forming up a pacakge.
     rendezvous_altitude: Distance
 
-    #: Defines prioritization of ground unit purchases
+    #: Defines prioritization of ground unit purchases.
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
 
-    # : Helicopter specific doctrines
+    #: Helicopter specific doctrines.
     helicopter: Helicopter
 
-    #: Doctrine for CAS missions
+    #: Doctrine for CAS missions.
     cas: Cas
 
-    #: Doctrine for CAP missions
+    #: Doctrine for CAP missions.
     cap: Cap
 
-    #: Doctrine for Fighter Sweep missions
+    #: Doctrine for Fighter Sweep missions.
     sweep: Sweep
 
     _by_name: ClassVar[dict[str, Doctrine]] = {}
