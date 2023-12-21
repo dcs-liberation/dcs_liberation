@@ -1,7 +1,8 @@
 import { Flight } from "../../api/liberationApi";
 import { useGetCommitBoundaryForFlightQuery } from "../../api/liberationApi";
 import WaypointMarker from "../waypointmarker";
-import { ReactElement } from "react";
+import { Polyline as LPolyline } from "leaflet";
+import { ReactElement, useEffect, useRef } from "react";
 import { Polyline } from "react-leaflet";
 
 const BLUE_PATH = "#0084ff";
@@ -27,16 +28,39 @@ const pathColor = (props: FlightPlanProps) => {
 function FlightPlanPath(props: FlightPlanProps) {
   const color = pathColor(props);
   const waypoints = props.flight.waypoints;
+
+  const polylineRef = useRef<LPolyline | null>(null);
+
+  // Flight paths should be drawn under everything else. There seems to be an
+  // issue where `interactive: false` doesn't do as its told (there's nuance,
+  // see the bug for details). It looks better if we draw the other elements on
+  // top of the flight plans anyway, so just push the flight plan to the back.
+  //
+  // https://github.com/dcs-liberation/dcs_liberation/issues/3295
+  //
+  // It's not possible to z-index a polyline (and leaflet says it never will be,
+  // because this is a limitation of SVG, not leaflet:
+  // https://github.com/Leaflet/Leaflet/issues/185), so we need to use
+  // bringToBack() to push the flight paths to the back of the drawing once
+  // they've been added to the map. They'll still draw on top of the map, but
+  // behind everything than was added before them. Anything added after always
+  // goes on top.
+  useEffect(() => {
+    polylineRef.current?.bringToBack();
+  });
+
   if (waypoints == null) {
     return <></>;
   }
   const points = waypoints
     .filter((waypoint) => waypoint.include_in_path)
     .map((waypoint) => waypoint.position);
+
   return (
     <Polyline
       positions={points}
       pathOptions={{ color: color, interactive: false }}
+      ref={polylineRef}
     />
   );
 }
