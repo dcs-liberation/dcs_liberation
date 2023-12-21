@@ -35,17 +35,14 @@ class GroundUnitProcurementRatios:
 @dataclass
 class Helicopter:
 
-    ingress_altitude: Distance
-
+    combat_altitude: Distance
     rendezvous_altitude: Distance
-
-    #: The altitude used for Nav points for air assault missions
     air_assault_nav_altitude: Distance
 
     @staticmethod
     def from_dict(data: dict[str, Any]) -> Helicopter:
         return Helicopter(
-            ingress_altitude=feet(data["ingress_altitude_ft_agl"]),
+            combat_altitude=feet(data["combat_altitude_ft_agl"]),
             rendezvous_altitude=feet(data["rendezvous_altitude_ft_agl"]),
             air_assault_nav_altitude=feet(data["air_assault_nav_altitude_ft_agl"]),
         )
@@ -120,8 +117,6 @@ class Cap:
 class Doctrine:
     name: str
 
-    rendezvous_altitude: Distance
-
     #: The minimum distance between the departure airfield and the hold point.
     hold_distance: Distance
 
@@ -140,8 +135,13 @@ class Doctrine:
     #: target.
     min_ingress_distance: Distance
 
-    ingress_altitude: Distance
+    #: The altitude used for combat section of a flight
+    combat_altitude: Distance
 
+    #: The altitude used for forming up a pacakge
+    rendezvous_altitude: Distance
+
+    #: Defines prioritization of ground unit purchases
     ground_unit_procurement_ratios: GroundUnitProcurementRatios
 
     # : Helicopter specific doctrines
@@ -159,10 +159,10 @@ class Doctrine:
     _by_name: ClassVar[dict[str, Doctrine]] = {}
     _loaded: ClassVar[bool] = False
 
-    def resolve_ingress_altitude(self, is_helo: bool = False) -> Distance:
+    def resolve_combat_altitude(self, is_helo: bool = False) -> Distance:
         if is_helo:
-            return self.helicopter.ingress_altitude
-        return self.ingress_altitude
+            return self.helicopter.combat_altitude
+        return self.combat_altitude
 
     def resolve_rendezvous_altitude(self, is_helo: bool = False) -> Distance:
         if is_helo:
@@ -208,7 +208,7 @@ class Doctrine:
                     min_ingress_distance=nautical_miles(
                         data["min_ingress_distance_nm"]
                     ),
-                    ingress_altitude=feet(data["ingress_altitude_ft_msl"]),
+                    combat_altitude=feet(data["combat_altitude_ft_msl"]),
                     ground_unit_procurement_ratios=GroundUnitProcurementRatios.from_dict(
                         data["ground_unit_procurement_ratios"]
                     ),

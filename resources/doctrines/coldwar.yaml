@@ -1,11 +1,11 @@
 name: coldwar
-rendezvous_altitude_ft_msl: 22000
 hold_distance_nm: 15
 push_distance_nm: 10
 join_distance_nm: 10
 max_ingress_distance_nm: 30
 min_ingress_distance_nm: 10
-ingress_altitude_ft_msl: 18000
+rendezvous_altitude_ft_msl: 22000
+combat_altitude_ft_msl: 18000
 cap:
   duration_minutes: 30
   min_track_length_nm: 12
@@ -28,7 +28,7 @@ ground_unit_procurement_ratios:
     SHORAD: 2
     Recon: 1
 helicopter:
-    ingress_altitude_ft_agl: 200
+    combat_altitude_ft_agl: 200
     rendezvous_altitude_ft_agl: 1500
     air_assault_nav_altitude_ft_agl: 1500
 

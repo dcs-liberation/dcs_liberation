@@ -118,7 +118,7 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
         )
 
         builder = WaypointBuilder(self.flight, self.coalition)
-        start, end = builder.sweep(start_pos, target, self.doctrine.ingress_altitude)
+        start, end = builder.sweep(start_pos, target, self.doctrine.combat_altitude)
 
         hold = builder.hold(self._hold_point())
 
@@ -126,12 +126,12 @@ class Builder(IBuilder[SweepFlightPlan, SweepLayout]):
             departure=builder.takeoff(self.flight.departure),
             hold=hold,
             nav_to=builder.nav_path(
-                hold.position, start.position, self.doctrine.ingress_altitude
+                hold.position, start.position, self.doctrine.combat_altitude
             ),
             nav_from=builder.nav_path(
                 end.position,
                 self.flight.arrival.position,
-                self.doctrine.ingress_altitude,
+                self.doctrine.combat_altitude,
             ),
             sweep_start=start,
             sweep_end=end,

@@ -2,10 +2,10 @@ name: ww2
 hold_distance_nm: 10
 push_distance_nm: 5
 join_distance_nm: 5
-rendezvous_altitude_ft_msl: 10000
 max_ingress_distance_nm: 7
 min_ingress_distance_nm: 5
-ingress_altitude_ft_msl: 8000
+rendezvous_altitude_ft_msl: 10000
+combat_altitude_ft_msl: 8000
 cap:
   duration_minutes: 30
   min_track_length_nm: 8
@@ -27,6 +27,6 @@ ground_unit_procurement_ratios:
     SHORAD: 3
     Recon: 1
 helicopter:
-    ingress_altitude_ft_agl: 200
+    combat_altitude_ft_agl: 200
     rendezvous_altitude_ft_agl: 1500
     air_assault_nav_altitude_ft_agl: 1500
