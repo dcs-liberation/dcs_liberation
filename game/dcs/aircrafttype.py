@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace as dataclasses_replace
 from functools import cache, cached_property
 from pathlib import Path
 from typing import Any, ClassVar, Dict, Iterator, Optional, TYPE_CHECKING, Type
@@ -404,19 +404,8 @@ class AircraftType(UnitType[Type[FlyingType]]):
                     # value of aircraft.properties for the key, as this is used in parts of the codebase to get
                     # the default value. We have to instantiate a new UnitPropertyDescription object as this dataclass
                     # is set to frozen in pydcs.
-                    aircraft.properties[k] = UnitPropertyDescription(
-                        identifier=aircraft.properties[k].identifier,
-                        control=aircraft.properties[k].control,
-                        label=aircraft.properties[k].label,
-                        player_only=aircraft.properties[k].player_only,
-                        minimum=aircraft.properties[k].minimum,
-                        maximum=aircraft.properties[k].maximum,
-                        default=config[k],
-                        weight_when_on=aircraft.properties[k].weight_when_on,
-                        values=aircraft.properties[k].values,
-                        dimension=aircraft.properties[k].dimension,
-                        x_lbl=aircraft.properties[k].x_lbl,
-                        w_ctrl=aircraft.properties[k].w_ctrl,
+                    aircraft.properties[k] = dataclasses_replace(
+                        aircraft.properties[k], default=config[k]
                     )
                 else:
                     logging.warning(
