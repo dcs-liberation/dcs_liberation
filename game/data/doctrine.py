@@ -111,6 +111,16 @@ class Doctrine:
 
     _by_name: ClassVar[dict[str, Doctrine]] = {}
     _loaded: ClassVar[bool] = False
+    
+    def resolve_ingress_altitude(self, is_helo=False):
+        if is_helo:
+            return self.helicopter.ingress_altitude
+        return self.ingress_altitude
+
+    def resolve_rendezvous_altitude(self, is_helo=False):
+        if is_helo:
+            return self.helicopter.rendezvous_altitude
+        return self.rendezvous_altitude
 
     @classmethod
     def register(cls, doctrine: Doctrine) -> None:

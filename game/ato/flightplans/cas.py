@@ -96,11 +96,7 @@ class Builder(IBuilder[CasFlightPlan, CasLayout]):
         builder = WaypointBuilder(self.flight, self.coalition)
 
         is_helo = self.flight.unit_type.dcs_unit_type.helicopter
-        patrol_altitude = (
-            self.doctrine.ingress_altitude
-            if not is_helo
-            else self.doctrine.helicopter.ingress_altitude
-        )
+        patrol_altitude = self.doctrine.resolve_ingress_altitude(is_helo)
         use_agl_patrol_altitude = is_helo
 
         ip_solver = IpSolver(
