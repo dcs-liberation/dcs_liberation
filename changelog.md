@@ -5,6 +5,7 @@ Saves from 9.x are not compatible with 10.0.0.
 ## Features/Improvements
 
 * **[Engine]** Support for DCS 2.9.2.49629 Open Beta. (F-15E JDAM and JSOW, F-16 AIM-9P, updated Falklands and Normandy airfields).
+* **[UI]** Improved the description of "runway" state for FARPs, FOBs, carriers, and off-map spawns.
 
 ## Fixes
 
