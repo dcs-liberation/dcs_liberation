@@ -271,15 +271,15 @@ class RunwayStatus:
     def needs_repair(self) -> bool:
         return self.damaged and self.repair_turns_remaining is None
 
-    def __str__(self) -> str:
+    def describe(self) -> str:
         if not self.damaged:
-            return "Runway operational"
+            return "operational"
 
         turns_remaining = self.repair_turns_remaining
         if turns_remaining is None:
-            return "Runway damaged"
+            return "damaged"
 
-        return f"Runway repairing, {turns_remaining} turns remaining"
+        return f"repairing, {turns_remaining} turns remaining"
 
 
 @total_ordering
@@ -915,6 +915,10 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     def runway_status(self) -> RunwayStatus:
         ...
 
+    @abstractmethod
+    def describe_runway_status(self) -> str | None:
+        """Description of the runway status suitable for UI use."""
+
     @property
     def runway_can_be_repaired(self) -> bool:
         return self.runway_status.needs_repair
@@ -1157,6 +1161,9 @@ class Airfield(ControlPoint):
     def runway_status(self) -> RunwayStatus:
         return self._runway_status
 
+    def describe_runway_status(self) -> str:
+        return f"Runway {self.runway_status.describe()}"
+
     def damage_runway(self) -> None:
         self.runway_status.damage()
 
@@ -1274,6 +1281,9 @@ class NavalControlPoint(ControlPoint, ABC):
     @property
     def runway_status(self) -> RunwayStatus:
         return RunwayStatus(damaged=not self.runway_is_operational())
+
+    def describe_runway_status(self) -> str:
+        return f"Flight deck {self.runway_status.describe()}"
 
     @property
     def runway_can_be_repaired(self) -> bool:
@@ -1428,6 +1438,9 @@ class OffMapSpawn(ControlPoint):
     def runway_status(self) -> RunwayStatus:
         return RunwayStatus()
 
+    def describe_runway_status(self) -> str:
+        return f"Off-map airport {self.runway_status.describe()}"
+
     @property
     def can_deploy_ground_units(self) -> bool:
         return False
@@ -1473,6 +1486,11 @@ class Fob(ControlPoint):
     @property
     def runway_status(self) -> RunwayStatus:
         return RunwayStatus()
+
+    def describe_runway_status(self) -> str | None:
+        if not self.has_helipads:
+            return None
+        return f"FARP {self.runway_status.describe()}"
 
     def mission_types(self, for_player: bool) -> Iterator[FlightType]:
         from game.ato import FlightType
