@@ -17,7 +17,7 @@ class GroundSpeed:
         # The cruise speed can be used for ascent, hold, join, and RTB to save
         # on fuel, but mission speed will be fast enough to keep the flight
         # safer.
-        
+
         if flight.squadron.aircraft.cruise_speed is not None:
             return flight.squadron.aircraft.cruise_speed
 
