@@ -19,7 +19,7 @@ class GroundSpeed:
         # safer.
 
         if flight.squadron.aircraft.cruise_speed is not None:
-            return flight.squadron.aircraft.cruise_speed
+            return mach(flight.squadron.aircraft.cruise_speed.mach(), altitude)
 
         # DCS's max speed is in kph at 0 MSL.
         max_speed = flight.unit_type.max_speed
