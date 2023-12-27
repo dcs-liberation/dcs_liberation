@@ -34,7 +34,6 @@ class GroundUnitProcurementRatios:
 
 @dataclass
 class Helicopter:
-
     #: The altitude used for combat section of a flight, overrides the base combat_altitude parameter for helos
     combat_altitude: Distance
 
@@ -55,7 +54,6 @@ class Helicopter:
 
 @dataclass
 class Cas:
-
     #: The duration that CAP flights will remain on-station.
     duration: timedelta
 
@@ -66,7 +64,6 @@ class Cas:
 
 @dataclass
 class Sweep:
-
     #: Length of the sweep / patrol leg
     distance: Distance
 
@@ -79,7 +76,6 @@ class Sweep:
 
 @dataclass
 class Cap:
-
     #: The duration that CAP flights will remain on-station.
     duration: timedelta
 
