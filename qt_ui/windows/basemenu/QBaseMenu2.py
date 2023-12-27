@@ -254,18 +254,21 @@ class QBaseMenu2(QDialog):
                 f" (Up to {ground_unit_limit} deployable, {unit_overage} reserve)"
             )
 
-        self.intel_summary.setText(
-            "\n".join(
-                [
-                    f"{aircraft}/{parking} aircraft",
-                    f"{self.cp.base.total_armor} ground units" + deployable_unit_info,
-                    f"{allocated.total_transferring} more ground units en route, {allocated.total_ordered} ordered",
-                    str(self.cp.runway_status),
-                    f"{self.cp.active_ammo_depots_count}/{self.cp.total_ammo_depots_count} ammo depots",
-                    f"{'Factory can produce units' if self.cp.has_factory else 'Does not have a factory'}",
-                ]
-            )
+        intel_lines = [
+            f"{aircraft}/{parking} aircraft",
+            f"{self.cp.base.total_armor} ground units" + deployable_unit_info,
+            f"{allocated.total_transferring} more ground units en route, {allocated.total_ordered} ordered",
+        ]
+        if (runway_description := self.cp.describe_runway_status()) is not None:
+            intel_lines.append(runway_description)
+        intel_lines.extend(
+            [
+                f"{self.cp.active_ammo_depots_count}/{self.cp.total_ammo_depots_count} ammo depots",
+                f"{'Factory can produce units' if self.cp.has_factory else 'Does not have a factory'}",
+            ]
         )
+
+        self.intel_summary.setText("\n".join(intel_lines))
 
     def generate_intel_tooltip(self) -> str:
         tooltip = (
