@@ -18,6 +18,9 @@ class GroundSpeed:
         # on fuel, but mission speed will be fast enough to keep the flight
         # safer.
 
+        if flight.squadron.aircraft.cruise_speed is not None:
+            return mach(flight.squadron.aircraft.cruise_speed.mach(), altitude)
+
         # DCS's max speed is in kph at 0 MSL.
         max_speed = flight.unit_type.max_speed
         if max_speed > SPEED_OF_SOUND_AT_SEA_LEVEL:
