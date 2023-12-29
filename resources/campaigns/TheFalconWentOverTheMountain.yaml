@@ -292,10 +292,11 @@ squadrons:
     #carrier
     Blue Carrier:
         - primary: BARCAP
+          secondary: air-to-air
           aircraft:
             - F-14B Tomcat
           size: 12
-        - primary: Strike
+        - primary: BARCAP
           secondary: any
           aircraft:
           - F/A-18C Hornet (Lot 20)
@@ -307,6 +308,7 @@ squadrons:
     #LHA
     Blue LHA:
         - primary: CAS
+          secondary: any        
           aircraft:
           - AV-8B Harrier II Night Attack
           size: 8
@@ -347,8 +349,9 @@ squadrons:
           secondary: air-to-air
           aircraft:
           - Su-30 Flanker-C
-          size: 4
+          size: 8
         - primary: SEAD
+          secondary: air-to-ground        
           aircraft:
           - Su-34 Fullback
           size: 4
@@ -379,6 +382,7 @@ squadrons:
           - MiG-29S Fulcrum-C
           size: 4
         - primary: BARCAP
+          secondary: air-to-air
           aircraft: 
           - MiG-23MLD Flogger-K
           size: 4
@@ -391,23 +395,29 @@ squadrons:
     #Abu Al-Duhur (36)
     1:
         - primary: BARCAP
+          secondary: air-to-air
           aircraft: 
           - MiG-23MLD Flogger-K
-          size: 8
+          size: 12
         - primary: SEAD
+          secondary: air-to-ground
           aircraft:
           - Su-34 Fullback
-          size: 4
+          size: 8
         - primary: Strike
           size: 8
     #Kuweires (37)  ID: 31
     #Jirah (28)
     17:
         - primary: BARCAP
+          secondary: air-to-air
           aircraft: 
           - MiG-23MLD Flogger-K
           size: 12
         - primary: BAI
+          secondary: air-to-ground
           aircraft:
           - Su-24M Fencer-D
           size: 8
+#
+# air-to-air:  Barcap, Tarcap, Escort, and Fighter Sweep
