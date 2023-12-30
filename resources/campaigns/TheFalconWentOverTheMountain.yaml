@@ -264,49 +264,60 @@ squadrons:
             - F-16CM Fighting Falcon (Block 50)
           size: 12
         - primary: Strike
+          secondary: any
           aircraft: 
             - F-15E Strike Eagle (Suite 4+)
           size: 8
         - primary: CAS
+          secondary: air-to-ground
           aircraft:
             - A-10C Thunderbolt II (Suite 7)
           size: 8
         - primary: CAS
+          secondary: any
           aircraft:
             - AH-64D Apache Longbow
           size: 8
         - primary: Strike
+          secondary: air-to-ground
           aircraft:
             - F-117A Nighthawk
           size: 4
         - primary: Strike
+          secondary: air-to-ground
           aircraft:
             - B-1B Lancer
           size: 2
         - primary: AEW&C
+          secondary: any
           size: 1
         - primary: Refueling
+          secondary: any
           aircraft: 
             - KC-135 Stratotanker MPRS
           size: 1
     #carrier
     Blue Carrier:
         - primary: BARCAP
+          secondary: air-to-air
           aircraft:
             - F-14B Tomcat
           size: 12
-        - primary: Strike
+        - primary: BARCAP
           secondary: any
           aircraft:
           - F/A-18C Hornet (Lot 20)
           size: 12
         - primary: AEW&C
+          secondary: any
           size: 1
         - primary: Refueling
+          secondary: any
           size: 2
     #LHA
     Blue LHA:
         - primary: CAS
+          secondary: any        
           aircraft:
           - AV-8B Harrier II Night Attack
           size: 8
@@ -318,6 +329,7 @@ squadrons:
            - F-16CM Fighting Falcon (Block 50)
          size: 12
        - primary: CAS
+         secondary: air-to-ground
          aircraft:
            - A-10C Thunderbolt II (Suite 3)
          size: 12
@@ -329,85 +341,107 @@ squadrons:
     #Hatay (10)
     15:
         - primary: BARCAP
-          secondary: air-to-air
+          secondary: any
           aircraft:
           - MiG-29S Fulcrum-C
           size: 4
         - primary: CAS
+          secondary: any
           aircraft:
           - Su-25 Frogfoot
           size: 4
         - primary: CAS
+          secondary: any
           aircraft:
           - Mi-24P Hind-F
           size: 2
     #Minakh (20)
     26:
         - primary: BARCAP
-          secondary: air-to-air
+          secondary: any
           aircraft:
           - Su-30 Flanker-C
-          size: 4
+          size: 8
         - primary: SEAD
+          secondary: any
           aircraft:
           - Su-34 Fullback
           size: 4
         - primary: Strike
+          secondary: any
           size: 4
         - primary: CAS
+          secondary: any
           aircraft:
           - Su-25 Frogfoot
           size: 4
     #Gaziantep (12)
     11:
         - primary: BARCAP
-          secondary: air-to-air
+          secondary: any
           aircraft:
           - MiG-29S Fulcrum-C
           size: 4
         - primary: CAS
+          secondary: any
           aircraft:
           - Su-25 Frogfoot
           size: 4
         - primary: Strike
+          secondary: any
+          aircraft:
+          - Su-24M Fencer-D
           size: 4
     #Aleppo (14)
     27:
         - primary: BARCAP
-          secondary: air-to-air
+          secondary: any
           aircraft:
           - MiG-29S Fulcrum-C
           size: 4
         - primary: BARCAP
+          secondary: any
           aircraft: 
           - MiG-23MLD Flogger-K
           size: 4
         - primary: AEW&C
+          secondary: any
           size: 1
         - primary: Refueling
+          secondary: any
           size: 1
         - primary: Transport
+          secondary: any
           size: 2
     #Abu Al-Duhur (36)
     1:
         - primary: BARCAP
+          secondary: any
           aircraft: 
           - MiG-23MLD Flogger-K
-          size: 8
+          size: 12
         - primary: SEAD
+          secondary: any
           aircraft:
           - Su-34 Fullback
-          size: 4
+          size: 8
         - primary: Strike
+          secondary: any
+          aircraft:
+          - Su-24M Fencer-D
           size: 8
     #Kuweires (37)  ID: 31
     #Jirah (28)
     17:
         - primary: BARCAP
+          secondary: any
           aircraft: 
           - MiG-23MLD Flogger-K
           size: 12
         - primary: BAI
+          secondary: any
           aircraft:
           - Su-24M Fencer-D
           size: 8
+#
+# air-to-air:  Barcap, Tarcap, Escort, and Fighter Sweep
