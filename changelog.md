@@ -1,3 +1,11 @@
+# 11.0.0
+
+Saves from 10.x are not compatible with 11.0.0.
+
+## Features/Improvements
+
+## Fixes
+
 # 10.0.0
 
 Saves from 9.x are not compatible with 10.0.0.
