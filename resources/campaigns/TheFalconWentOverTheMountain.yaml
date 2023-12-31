@@ -1,14 +1,18 @@
 ---
 name: Syria - The Falcon went over the mountain
 theater: Syria
-authors: Sith1144
+authors: Sith1144, updated by Astro
 description: <p>Campaign about a task force attacking northern Syria from Incirlik. Culling recommended. Do you love SEAD? Know no greater joy in than showing SAMs who truly rules the skies? this is the campaign for you!</p>
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Syria 2012'ish
 recommended_start_date: 2012-06-01
+recommended_player_money: 400
+recommended_enemy_money: 400
+recommended_player_income_multiplier: 1.0
+recommended_enemy_income_multiplier: 1.0
 miz: TheFalconWentOverTheMountain.miz
 performance: 2
-version: "10.4"
+version: "11.0"
 advanced_iads: true # Campaign has connection_nodes / power_sources / command_centers
 #IADS: EWR and C2 get power generators. batteries have their own generators.
 iads_config:
@@ -43,7 +47,7 @@ iads_config:
     - YellowEWRS: #mountainrange (center)
         - YellowPPW
         - YellowControlW
-    - YellowEWRC: # internal
+    - YellowEWRC: #internal
         - HamidiyeControl
         - GaziantepControl
         - GaziantepPP
@@ -243,94 +247,201 @@ iads_config:
         - Aleppo Control
     - Aleppo Control:
         - Aleppo Power
+control_points:
+  From Reserves:
+    ferry_only: true
 squadrons:
-    #Incirlik
+    #Incirlik (120)
     16:
         - primary: BARCAP
+          secondary: air-to-air
           aircraft:
             - F-15C Eagle
+          size: 12
         - primary: SEAD
+          secondary: any
           aircraft:
             - F-16CM Fighting Falcon (Block 50)
-        - primary: DEAD
+          size: 12
+        - primary: Strike
+          secondary: any
           aircraft: 
-            - F-15E Strike Eagle
-        - primary: BARCAP
-          aircraft:
-            - F-16CM Fighting Falcon (Block 50)
+            - F-15E Strike Eagle (Suite 4+)
+          size: 8
         - primary: CAS
-          aircraft:
-            - A-10C Thunderbolt II (Suite 3)
-        - primary: CAS
+          secondary: air-to-ground
           aircraft:
             - A-10C Thunderbolt II (Suite 7)
+          size: 8
         - primary: CAS
+          secondary: any
           aircraft:
             - AH-64D Apache Longbow
+          size: 8
         - primary: Strike
+          secondary: air-to-ground
           aircraft:
             - F-117A Nighthawk
+          size: 4
         - primary: Strike
+          secondary: air-to-ground
           aircraft:
             - B-1B Lancer
+          size: 2
         - primary: AEW&C
+          secondary: any
+          size: 1
         - primary: Refueling
+          secondary: any
           aircraft: 
             - KC-135 Stratotanker MPRS
+          size: 1
     #carrier
     Blue Carrier:
         - primary: BARCAP
+          secondary: air-to-air
           aircraft:
             - F-14B Tomcat
+          size: 12
         - primary: BARCAP
-          aircraft:
-            - F-14B Tomcat
-        - primary: Strike
           secondary: any
           aircraft:
           - F/A-18C Hornet (Lot 20)
-        - primary: Strike
+          size: 12
+        - primary: AEW&C
           secondary: any
-          aircraft:
-          - F/A-18C Hornet (Lot 20)
+          size: 1
         - primary: Refueling
+          secondary: any
+          size: 2
     #LHA
     Blue LHA:
         - primary: CAS
+          secondary: any        
           aircraft:
           - AV-8B Harrier II Night Attack
-    #Abu Al-Duhur
-    1:
-        - primary: BARCAP
-          aircraft:
-          - MiG-29S Fulcrum-C
-        - primary: BAI
-          aircraft:
-          - Su-24M Fencer-D
-        - primary: BARCAP
-          aircraft:
-          - Su-30 Flanker-C
-    #Hatay
+          size: 8
+    #Ferry-only
+    From Reserves:
+       - primary: SEAD
+         secondary: any
+         aircraft:
+           - F-16CM Fighting Falcon (Block 50)
+         size: 12
+       - primary: CAS
+         secondary: air-to-ground
+         aircraft:
+           - A-10C Thunderbolt II (Suite 3)
+         size: 12
+    # REDFOR squadrons
+    # Smaller number of modern fighters in forward airfields (Hatay, Minakh and Gaziantep)
+    # Larger number of older fighters in the rear (Aleppo, Abu Al-Duhur and Jirah)
+    # CAS aircraft distributed over all airfields, helos more forward
+    # Aleppo is main airfield for AWACS, Refueling and Transport, for protection it has some modern fighters
+    #Hatay (10)
     15:
         - primary: BARCAP
-          aircraft: 
-          - MiG-23MLD Flogger-K
-    #Aleppo
-    27:
-        - primary: AEW&C
-        - primary: Refueling
-        - primary: CAS
+          secondary: any
           aircraft:
-          - Mi-24P Hind-F
-        - primary: Transport
-    #Jirah
-    17:
-        - primary: SEAD
-          aircraft:
-          - Su-34 Fullback
-        - primary: Strike
-    #Gaziantep
-    11:
+          - MiG-29S Fulcrum-C
+          size: 4
         - primary: CAS
+          secondary: any
           aircraft:
           - Su-25 Frogfoot
+          size: 4
+        - primary: CAS
+          secondary: any
+          aircraft:
+          - Mi-24P Hind-F
+          size: 2
+    #Minakh (20)
+    26:
+        - primary: BARCAP
+          secondary: any
+          aircraft:
+          - Su-30 Flanker-C
+          size: 8
+        - primary: SEAD
+          secondary: any
+          aircraft:
+          - Su-34 Fullback
+          size: 4
+        - primary: Strike
+          secondary: any
+          size: 4
+        - primary: CAS
+          secondary: any
+          aircraft:
+          - Su-25 Frogfoot
+          size: 4
+    #Gaziantep (12)
+    11:
+        - primary: BARCAP
+          secondary: any
+          aircraft:
+          - MiG-29S Fulcrum-C
+          size: 4
+        - primary: CAS
+          secondary: any
+          aircraft:
+          - Su-25 Frogfoot
+          size: 4
+        - primary: Strike
+          secondary: any
+          aircraft:
+          - Su-24M Fencer-D
+          size: 4
+    #Aleppo (14)
+    27:
+        - primary: BARCAP
+          secondary: any
+          aircraft:
+          - MiG-29S Fulcrum-C
+          size: 4
+        - primary: BARCAP
+          secondary: any
+          aircraft: 
+          - MiG-23MLD Flogger-K
+          size: 4
+        - primary: AEW&C
+          secondary: any
+          size: 1
+        - primary: Refueling
+          secondary: any
+          size: 1
+        - primary: Transport
+          secondary: any
+          size: 2
+    #Abu Al-Duhur (36)
+    1:
+        - primary: BARCAP
+          secondary: any
+          aircraft: 
+          - MiG-23MLD Flogger-K
+          size: 12
+        - primary: SEAD
+          secondary: any
+          aircraft:
+          - Su-34 Fullback
+          size: 8
+        - primary: Strike
+          secondary: any
+          aircraft:
+          - Su-24M Fencer-D
+          size: 8
+    #Kuweires (37)  ID: 31
+    #Jirah (28)
+    17:
+        - primary: BARCAP
+          secondary: any
+          aircraft: 
+          - MiG-23MLD Flogger-K
+          size: 12
+        - primary: BAI
+          secondary: any
+          aircraft:
+          - Su-24M Fencer-D
+          size: 8
+#
+# air-to-air:  Barcap, Tarcap, Escort, and Fighter Sweep
