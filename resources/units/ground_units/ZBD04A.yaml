@@ -10,3 +10,4 @@ price: 12
 role: Infantry Fighting Vehicle
 variants:
   Type 04A (ZBD-04A): {}
+hit_points: 6

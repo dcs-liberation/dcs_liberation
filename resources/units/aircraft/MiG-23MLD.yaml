@@ -25,3 +25,4 @@ tasks:
   Fighter sweep: 360
   Intercept: 360
   TARCAP: 360
+hit_points: 16

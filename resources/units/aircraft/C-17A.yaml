@@ -5,3 +5,4 @@ variants:
   C-17A: null
 tasks:
   Transport: 150
+hit_points: 45

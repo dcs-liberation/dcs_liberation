@@ -2,3 +2,4 @@ class: Logistics
 price: 1
 variants:
   Truck Land Rover 101 FC: null
+hit_points: 3

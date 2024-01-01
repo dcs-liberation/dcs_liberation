@@ -8,3 +8,4 @@ price: 28
 role: Self-Propelled Gun
 variants:
   Firtina: {}
+hit_points: 5

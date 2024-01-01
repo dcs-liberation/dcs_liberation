@@ -6,3 +6,4 @@ variants:
   SA342Minigun: null
 kneeboard_units: "metric"
 tasks: {}
+hit_points: 18

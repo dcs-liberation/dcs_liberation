@@ -10,3 +10,4 @@ variants:
 tasks:
   Air Assault: 100
   Transport: 80
+hit_points: 20

@@ -17,3 +17,4 @@ price: 6
 role: Anti-Aircraft Gun/Anti-Tank Gun
 variants:
   8.8 cm Flak 18: {}
+hit_points: 2

@@ -11,3 +11,4 @@ price: 20
 role: Shorad
 variants:
   HQ-7 Launcher: {}
+hit_points: 2

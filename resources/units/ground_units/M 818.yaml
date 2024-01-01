@@ -2,3 +2,4 @@ class: Logistics
 price: 3
 variants:
   Truck M818 6x6: null
+hit_points: 2

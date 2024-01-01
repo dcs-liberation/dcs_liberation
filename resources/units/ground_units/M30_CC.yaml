@@ -11,3 +11,4 @@ price: 2
 role: Tracked Cargo Transporter
 variants:
   M30 Cargo Carrier: {}
+hit_points: 15

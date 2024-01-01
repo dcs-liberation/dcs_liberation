@@ -2,3 +2,4 @@ class: HelicopterCarrier
 price: 0
 variants:
   Type 071 Amphibious Transport Dock: null
+hit_points: 7300

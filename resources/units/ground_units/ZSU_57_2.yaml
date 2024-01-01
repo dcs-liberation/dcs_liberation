@@ -13,3 +13,4 @@ price: 12
 role: Self-Propelled Anti-Aircraft Gun
 variants:
   ZSU-57-2 'Sparka': {}
+hit_points: 18

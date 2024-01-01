@@ -133,4 +133,5 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
                 data.get("skynet_properties", {})
             ),
             reversed_heading=data.get("reversed_heading", False),
+            hit_points=data.get("hit_points", 1),
         )

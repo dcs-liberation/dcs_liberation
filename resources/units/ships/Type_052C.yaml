@@ -2,3 +2,4 @@ class: Destroyer
 price: 0
 variants:
   Type 052C Destroyer: null
+hit_points: 3200

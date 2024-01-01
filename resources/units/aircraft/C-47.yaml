@@ -13,3 +13,4 @@ variants:
   C-47 Dakota: null
 tasks:
   Transport: 90
+hit_points: 18

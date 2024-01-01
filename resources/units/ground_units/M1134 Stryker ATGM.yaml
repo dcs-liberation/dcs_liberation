@@ -8,3 +8,4 @@ price: 12
 role: Armoured Car
 variants:
   M1134 Stryker ATGM (BGM-71 TOW): {}
+hit_points: 4

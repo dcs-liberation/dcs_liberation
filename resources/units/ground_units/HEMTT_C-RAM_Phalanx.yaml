@@ -16,3 +16,4 @@ price: 12
 role: Self-Propelled Anti-Aircraft Gun
 variants:
   Centurion C-RAM LPWS: {}
+hit_points: 3

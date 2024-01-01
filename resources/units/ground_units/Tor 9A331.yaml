@@ -10,3 +10,4 @@ price: 40
 role: Self-Propelled Anti-Aircraft System
 variants:
   SA-15 Tor: {}
+hit_points: 4

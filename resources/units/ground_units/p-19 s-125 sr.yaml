@@ -2,3 +2,4 @@ class: SearchRadar
 price: 14
 variants:
   SAM P19 "Flat Face" SR (SA-2/3): null
+hit_points: 2

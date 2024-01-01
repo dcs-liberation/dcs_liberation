@@ -16,3 +16,4 @@ price: 26
 role: Heavy Tank
 variants:
   Panzerkampfwagen Tiger Ausf. B Tiger II: {}
+hit_points: 20

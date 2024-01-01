@@ -2,3 +2,4 @@ class: TELAR
 price: 20
 variants:
   SAM SA-6 Kub "Gainful" TEL: null
+hit_points: 4

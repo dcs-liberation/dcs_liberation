@@ -2,3 +2,4 @@ class: Launcher
 price: 22
 variants:
   SAM SA-10 S-300 "Grumble" TEL C: null
+hit_points: 4

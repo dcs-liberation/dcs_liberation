@@ -2,3 +2,4 @@ class: Submarine
 price: 0
 variants:
   ARA Santa Fe S-21: null
+hit_points: 100

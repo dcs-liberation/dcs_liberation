@@ -10,3 +10,4 @@ price: 8
 role: Light Armoured Car
 variants:
   M8 Greyhound Light Armored Car: {}
+hit_points: 4

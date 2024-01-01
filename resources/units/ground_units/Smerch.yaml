@@ -10,3 +10,4 @@ price: 60
 role: Multiple-Launch Rocket System
 variants:
   BM-30 Smerch (9M55K Cluster Rockets): {}
+hit_points: 4

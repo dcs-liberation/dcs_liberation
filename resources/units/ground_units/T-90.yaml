@@ -11,3 +11,4 @@ price: 30
 role: Main Battle Tank
 variants:
   T-90A: {}
+hit_points: 30

@@ -9,3 +9,4 @@ price: 2
 role: Recon
 variants:
   M1043 HMMWV (M2 HMG): {}
+hit_points: 2

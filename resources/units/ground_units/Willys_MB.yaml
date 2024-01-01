@@ -9,3 +9,4 @@ price: 1
 role: Recon Vehicle
 variants:
   Willys Jeep: {}
+hit_points: 2

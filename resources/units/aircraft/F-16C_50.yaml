@@ -78,3 +78,4 @@ laser_codes:
         digit: 1
       - id: LaserCode1
         digit: 0
+hit_points: 20

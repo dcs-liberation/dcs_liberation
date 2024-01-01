@@ -8,3 +8,4 @@ price: 12
 role: ATGM Vehicle
 variants:
   VAB Mephisto: {}
+hit_points: 4

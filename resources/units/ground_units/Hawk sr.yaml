@@ -2,3 +2,4 @@ class: SearchRadar
 price: 18
 variants:
   SAM Hawk SR (AN/MPQ-50): null
+hit_points: 2

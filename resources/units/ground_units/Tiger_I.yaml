@@ -14,3 +14,4 @@ price: 24
 role: Heavy Tank
 variants:
   Panzerkampfwagen VI Tiger Ausf. E: {}
+hit_points: 20

@@ -2,3 +2,4 @@ class: Frigate
 price: 0
 variants:
   HMS Achilles (F12): null
+hit_points: 1000

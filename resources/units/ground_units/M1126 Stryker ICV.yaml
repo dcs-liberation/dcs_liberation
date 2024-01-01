@@ -8,3 +8,4 @@ price: 10
 role: Armoured Personnel Carrier
 variants:
   M1126 Stryker ICV (M2 HMG): {}
+hit_points: 4

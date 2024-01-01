@@ -7,3 +7,4 @@ price: 10
 role: Field Howitzer
 variants:
   FH M2A1 105mm: {}
+hit_points: 2

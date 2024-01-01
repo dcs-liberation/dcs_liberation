@@ -12,3 +12,4 @@ price: 10
 role: Amphibious Armoured Personnel Carrier
 variants:
   BTR-82A: {}
+hit_points: 3

@@ -9,3 +9,4 @@ price: 18
 role: Self-Propelled Gun
 variants:
   2S1 Gvozdika: {}
+hit_points: 4

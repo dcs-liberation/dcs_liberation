@@ -18,3 +18,4 @@ price: 12
 role: Infantry Fighting Vehicle
 variants:
   M2A2 Bradley: {}
+hit_points: 6

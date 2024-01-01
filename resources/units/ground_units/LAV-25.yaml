@@ -9,3 +9,4 @@ price: 7
 role: Amphibious Armoured Car
 variants:
   LAV-25: {}
+hit_points: 4

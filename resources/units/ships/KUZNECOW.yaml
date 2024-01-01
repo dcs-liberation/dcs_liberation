@@ -2,3 +2,4 @@ class: AircraftCarrier
 price: 0
 variants:
   CV 1143.5 Admiral Kuznetsov: null
+hit_points: 7000

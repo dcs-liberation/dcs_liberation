@@ -13,3 +13,4 @@ price: 24
 role: Medium Tank
 variants:
   Panzerkampfwagen V Panther Ausf. G: {}
+hit_points: 15

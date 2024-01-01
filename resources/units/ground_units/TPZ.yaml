@@ -13,3 +13,4 @@ price: 5
 role: Armoured Personnel Carrier
 variants:
   TPz Fuchs: {}
+hit_points: 3

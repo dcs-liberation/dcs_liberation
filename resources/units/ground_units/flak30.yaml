@@ -12,3 +12,4 @@ price: 6
 role: Anti-Aircraft Gun
 variants:
   2 cm Flak 38: {}
+hit_points: 1

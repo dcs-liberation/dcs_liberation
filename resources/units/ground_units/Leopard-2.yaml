@@ -17,3 +17,4 @@ role: Main Battle Tank
 variants:
   Leopard 2: {}
   Leopard 2A6M: {}
+hit_points: 32

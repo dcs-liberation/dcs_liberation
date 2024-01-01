@@ -11,3 +11,4 @@ price: 16
 role: Medium Tank
 variants:
   Panzerkampfwagen IV Ausf. H: {}
+hit_points: 15

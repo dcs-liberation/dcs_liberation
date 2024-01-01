@@ -2,3 +2,4 @@ class: Launcher
 price: 8
 variants:
   SAM SA-2 S-75 "Guideline" LN: null
+hit_points: 2
