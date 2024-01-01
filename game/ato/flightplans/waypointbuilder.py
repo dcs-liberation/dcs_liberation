@@ -72,7 +72,7 @@ class WaypointBuilder:
                 "NAV",
                 FlightWaypointType.NAV,
                 position,
-                meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+                self.doctrine.resolve_rendezvous_altitude(self.is_helo),
                 description="Enter theater",
                 pretty_name="Enter theater",
             )
@@ -99,7 +99,7 @@ class WaypointBuilder:
                 "NAV",
                 FlightWaypointType.NAV,
                 position,
-                meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+                self.doctrine.resolve_rendezvous_altitude(self.is_helo),
                 description="Exit theater",
                 pretty_name="Exit theater",
             )
@@ -127,10 +127,7 @@ class WaypointBuilder:
         position = divert.position
         altitude_type: AltitudeReference
         if isinstance(divert, OffMapSpawn):
-            if self.is_helo:
-                altitude = meters(500)
-            else:
-                altitude = self.doctrine.rendezvous_altitude
+            altitude = self.doctrine.resolve_rendezvous_altitude(self.is_helo)
             altitude_type = "BARO"
         else:
             altitude = meters(0)
@@ -168,10 +165,7 @@ class WaypointBuilder:
             "HOLD",
             FlightWaypointType.LOITER,
             position,
-            # Bug: DCS only accepts MSL altitudes for the orbit task and 500 meters is
-            # below the ground for most if not all of NTTR (and lots of places in other
-            # maps).
-            meters(500) if self.is_helo else self.doctrine.rendezvous_altitude,
+            self.doctrine.resolve_rendezvous_altitude(self.is_helo),
             alt_type,
             description="Wait until push time",
             pretty_name="Hold",
@@ -186,7 +180,7 @@ class WaypointBuilder:
             "JOIN",
             FlightWaypointType.JOIN,
             position,
-            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.resolve_combat_altitude(self.is_helo),
             alt_type,
             description="Rendezvous with package",
             pretty_name="Join",
@@ -201,7 +195,7 @@ class WaypointBuilder:
             "REFUEL",
             FlightWaypointType.REFUEL,
             position,
-            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.resolve_combat_altitude(self.is_helo),
             alt_type,
             description="Refuel from tanker",
             pretty_name="Refuel",
@@ -229,7 +223,7 @@ class WaypointBuilder:
             "SPLIT",
             FlightWaypointType.SPLIT,
             position,
-            meters(80) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.resolve_combat_altitude(self.is_helo),
             alt_type,
             description="Depart from package",
             pretty_name="Split",
@@ -249,7 +243,7 @@ class WaypointBuilder:
             "INGRESS",
             ingress_type,
             position,
-            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.resolve_combat_altitude(self.is_helo),
             alt_type,
             description=f"INGRESS on {objective.name}",
             pretty_name=f"INGRESS on {objective.name}",
@@ -294,7 +288,7 @@ class WaypointBuilder:
             f"SEAD on {target.name}",
             target,
             flyover=True,
-            altitude=self.doctrine.ingress_altitude,
+            altitude=self.doctrine.combat_altitude,
             alt_type="BARO",
         )
 
@@ -484,7 +478,7 @@ class WaypointBuilder:
             "TARGET",
             FlightWaypointType.TARGET_GROUP_LOC,
             target.position,
-            meters(60) if self.is_helo else self.doctrine.ingress_altitude,
+            self.doctrine.resolve_combat_altitude(self.is_helo),
             alt_type,
             description="Escort the package",
             pretty_name="Target area",

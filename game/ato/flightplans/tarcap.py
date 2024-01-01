@@ -40,7 +40,7 @@ class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
         # flights in the package that have requested escort. If the package
         # requests an escort the CAP self.flight will remain on station for the
         # duration of the escorted mission, or until it is winchester/bingo.
-        return self.flight.coalition.doctrine.cap_duration
+        return self.flight.coalition.doctrine.cap.duration
 
     @property
     def patrol_speed(self) -> Speed:
@@ -50,7 +50,7 @@ class TarCapFlightPlan(PatrollingFlightPlan[TarCapLayout]):
 
     @property
     def engagement_distance(self) -> Distance:
-        return self.flight.coalition.doctrine.cap_engagement_range
+        return self.flight.coalition.doctrine.cap.engagement_range
 
     @staticmethod
     def builder_type() -> Type[Builder]:
@@ -90,8 +90,8 @@ class Builder(CapBuilder[TarCapFlightPlan, TarCapLayout]):
         preferred_alt = self.flight.unit_type.preferred_patrol_altitude
         randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
         patrol_alt = max(
-            self.doctrine.min_patrol_altitude,
-            min(self.doctrine.max_patrol_altitude, randomized_alt),
+            self.doctrine.cap.min_patrol_altitude,
+            min(self.doctrine.cap.max_patrol_altitude, randomized_alt),
         )
 
         builder = WaypointBuilder(self.flight, self.coalition)

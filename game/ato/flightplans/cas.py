@@ -44,7 +44,7 @@ class CasFlightPlan(PatrollingFlightPlan[CasLayout], UiZoneDisplay):
 
     @property
     def patrol_duration(self) -> timedelta:
-        return self.flight.coalition.doctrine.cas_duration
+        return self.flight.coalition.doctrine.cas.duration
 
     @property
     def patrol_speed(self) -> Speed:
@@ -96,7 +96,7 @@ class Builder(IBuilder[CasFlightPlan, CasLayout]):
         builder = WaypointBuilder(self.flight, self.coalition)
 
         is_helo = self.flight.unit_type.dcs_unit_type.helicopter
-        patrol_altitude = self.doctrine.ingress_altitude if not is_helo else meters(50)
+        patrol_altitude = self.doctrine.resolve_combat_altitude(is_helo)
         use_agl_patrol_altitude = is_helo
 
         ip_solver = IpSolver(

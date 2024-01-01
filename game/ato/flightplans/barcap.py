@@ -19,7 +19,7 @@ class BarCapFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
 
     @property
     def patrol_duration(self) -> timedelta:
-        return self.flight.coalition.doctrine.cap_duration
+        return self.flight.coalition.doctrine.cap.duration
 
     @property
     def patrol_speed(self) -> Speed:
@@ -29,7 +29,7 @@ class BarCapFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
 
     @property
     def engagement_distance(self) -> Distance:
-        return self.flight.coalition.doctrine.cap_engagement_range
+        return self.flight.coalition.doctrine.cap.engagement_range
 
 
 class Builder(CapBuilder[BarCapFlightPlan, PatrollingLayout]):
@@ -44,8 +44,8 @@ class Builder(CapBuilder[BarCapFlightPlan, PatrollingLayout]):
         preferred_alt = self.flight.unit_type.preferred_patrol_altitude
         randomized_alt = preferred_alt + feet(random.randint(-2, 1) * 1000)
         patrol_alt = max(
-            self.doctrine.min_patrol_altitude,
-            min(self.doctrine.max_patrol_altitude, randomized_alt),
+            self.doctrine.cap.min_patrol_altitude,
+            min(self.doctrine.cap.max_patrol_altitude, randomized_alt),
         )
 
         builder = WaypointBuilder(self.flight, self.coalition)

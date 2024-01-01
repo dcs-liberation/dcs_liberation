@@ -163,7 +163,7 @@ class FormationAttackBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
             departure=builder.takeoff(self.flight.departure),
             hold=hold,
             nav_to=builder.nav_path(
-                hold.position, join.position, self.doctrine.ingress_altitude
+                hold.position, join.position, self.doctrine.combat_altitude
             ),
             join=join,
             ingress=ingress,
@@ -173,7 +173,7 @@ class FormationAttackBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
             nav_from=builder.nav_path(
                 refuel.position,
                 self.flight.arrival.position,
-                self.doctrine.ingress_altitude,
+                self.doctrine.combat_altitude,
             ),
             arrival=builder.land(self.flight.arrival),
             divert=builder.divert(self.flight.divert),
