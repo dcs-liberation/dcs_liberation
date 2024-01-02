@@ -1,4 +1,3 @@
-import argparse
 import csv
 import os
 import yaml
@@ -28,20 +27,18 @@ def update_yaml(file, hit_points):
 
     with open(file, "w") as f:
         f.writelines(data)
-        
-        
-description = """
-Writes 
-"""
 
 
 if __name__ == "__main__":
-    hit_points_file = "D:/pydcs/out.csv"
+    hit_points_file = os.path.join(os.path.dirname(__file__), "hit_points_data.csv")
 
-    resources_path = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..", "resources"
-    )
-    resource_type_paths = {"ship": "units\\ships", "helicopter": "units\\aircraft", "plane": "units\\aircraft", "vehicle": "units\\ground_units"}
+    resources_path = os.path.join(os.path.dirname(__file__), "..", "..", "resources")
+    resource_type_paths = {
+        "ship": "units\\ships",
+        "helicopter": "units\\aircraft",
+        "plane": "units\\aircraft",
+        "vehicle": "units\\ground_units",
+    }
 
     with open(hit_points_file, "r") as file:
         reader = csv.DictReader(file, fieldnames=["type", "name", "hit_points"])

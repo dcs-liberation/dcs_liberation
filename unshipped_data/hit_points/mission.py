@@ -1,4 +1,5 @@
 import copy
+import os
 import typing
 
 from dcs import (
@@ -49,7 +50,7 @@ def handle_flying_unit(unit: dict, altitude: int):
 def setup_export_trigger(mission, output_filename, script_file="export.lua"):
     trigger_rule = triggers.TriggerStart(comment="Run export script")
     script = f"""
-local output_file = io.open({output_filename}, 'w')
+local output_file = io.open('{output_filename}', 'w')
 for i, group in pairs(coalition.getGroups(2)) do
  for j, unit in pairs(group:getUnits()) do
   output_file:write(group:getName(), ',', unit:getLife(), '\\n')
@@ -64,13 +65,16 @@ output_file:close()
     script_string = String(_id=script, translation=translation)
     script_string.set(script)
     trigger_rule.add_action(action.DoScript(script_string))
-    print(script_string.str())
     mission.triggerrules.triggers.append(trigger_rule)
 
 
 if __name__ == "__main__":
+    output_path = os.path.dirname(__file__)
+    miz_output = os.path.join(output_path, 'hit_points_generator.miz')
+    data_output = os.path.join(output_path, 'hit_points_data.csv')
+ 
     mission = Mission(terrain=Caucasus())
-    mission.filename = "C://Users//zhexu//Saved Games//DCS//Missions//sample.miz"
+    mission.filename = miz_output
 
     # Add ships
     for unit in add_units(
@@ -112,6 +116,6 @@ if __name__ == "__main__":
         handle_flying_unit(unit, altitude=10000)
         mission.flight_group_inflight(**unit)
 
-    setup_export_trigger(mission, output_filename="""'D://pydcs//out.csv'""")
+    setup_export_trigger(mission, output_filename=data_output.replace(os.sep, '//'))
 
     mission.save()
