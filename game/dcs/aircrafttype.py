@@ -182,6 +182,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
     #: planner will consider this aircraft usable for a mission.
     max_mission_range: Distance
 
+    #: Speed used for TOT calculations
+    cruise_speed: Optional[Speed]
+
     fuel_consumption: Optional[FuelConsumption]
 
     default_livery: Optional[str]
@@ -495,6 +498,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
             patrol_altitude=patrol_config.altitude,
             patrol_speed=patrol_config.speed,
             max_mission_range=mission_range,
+            cruise_speed=knots(data["cruise_speed_kt_indicated"])
+            if "cruise_speed_kt_indicated" in data
+            else None,
             fuel_consumption=fuel_consumption,
             default_livery=data.get("default_livery"),
             intra_flight_radio=radio_config.intra_flight,

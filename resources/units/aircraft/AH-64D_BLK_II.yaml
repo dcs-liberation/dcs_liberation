@@ -19,6 +19,7 @@ manufacturer: Boeing
 origin: USA
 price: 20
 role: Attack
+cruise_speed_kt_indicated: 120
 variants:
   AH-64D Apache Longbow: {}
 radios:
