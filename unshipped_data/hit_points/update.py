@@ -3,7 +3,7 @@ import os
 import yaml
 
 
-def update_yaml(file, hit_points):
+def update_yaml(file: str, hit_points: int) -> None:
     with open(file, "r") as f:
         data = f.readlines()
 
