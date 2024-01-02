@@ -1,27 +1,24 @@
 name: coldwar
-cap: true
-cas: true
-sead: true
-strike: true
-antiship: true
-rendezvous_altitude_ft_msl: 22000
 hold_distance_nm: 15
 push_distance_nm: 10
 join_distance_nm: 10
 max_ingress_distance_nm: 30
 min_ingress_distance_nm: 10
-ingress_altitude_ft_msl: 18000
-min_patrol_altitude_ft_msl: 10000
-max_patrol_altitude_ft_msl: 24000
-pattern_altitude_ft_msl: 5000
-cap_duration_minutes: 30
-cap_min_track_length_nm: 12
-cap_max_track_length_nm: 24
-cap_min_distance_from_cp_nm: 8
-cap_max_distance_from_cp_nm: 25
-cap_engagement_range_nm: 35
-cas_duration_minutes: 30
-sweep_distance_nm: 40
+rendezvous_altitude_ft_msl: 22000
+combat_altitude_ft_msl: 18000
+cap:
+  duration_minutes: 30
+  min_track_length_nm: 12
+  max_track_length_nm: 24
+  min_distance_from_cp_nm: 8
+  max_distance_from_cp_nm: 25
+  engagement_range_nm: 35
+  min_patrol_altitude_ft_msl: 10000
+  max_patrol_altitude_ft_msl: 24000
+cas:
+  duration_minutes: 30
+sweep:
+  distance_nm: 40
 ground_unit_procurement_ratios:
     Tank: 4
     ATGM: 2
@@ -30,3 +27,8 @@ ground_unit_procurement_ratios:
     Artillery: 1
     SHORAD: 2
     Recon: 1
+helicopter:
+    combat_altitude_ft_agl: 200
+    rendezvous_altitude_ft_agl: 1500
+    air_assault_nav_altitude_ft_agl: 1500
+

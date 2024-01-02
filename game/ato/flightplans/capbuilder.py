@@ -90,10 +90,10 @@ class CapBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
             # buffer.
             distance_to_no_fly = (
                 meters(position.distance(self.threat_zones.all))
-                - self.doctrine.cap_engagement_range
+                - self.doctrine.cap.engagement_range
                 - nautical_miles(5)
             )
-            max_track_length = self.doctrine.cap_max_track_length
+            max_track_length = self.doctrine.cap.max_track_length
         else:
             # Other race tracks (TARCAPs, currently) just try to keep some
             # distance from the nearest enemy airbase, but since they are by
@@ -108,15 +108,15 @@ class CapBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
             distance_to_no_fly = distance_to_airfield - min_distance_from_enemy
 
             # TARCAPs fly short racetracks because they need to react faster.
-            max_track_length = self.doctrine.cap_min_track_length + 0.3 * (
-                self.doctrine.cap_max_track_length - self.doctrine.cap_min_track_length
+            max_track_length = self.doctrine.cap.min_track_length + 0.3 * (
+                self.doctrine.cap.max_track_length - self.doctrine.cap.min_track_length
             )
 
         min_cap_distance = min(
-            self.doctrine.cap_min_distance_from_cp, distance_to_no_fly
+            self.doctrine.cap.min_distance_from_cp, distance_to_no_fly
         )
         max_cap_distance = min(
-            self.doctrine.cap_max_distance_from_cp, distance_to_no_fly
+            self.doctrine.cap.max_distance_from_cp, distance_to_no_fly
         )
 
         end = location.position.point_from_heading(
@@ -125,7 +125,7 @@ class CapBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
         )
 
         track_length = random.randint(
-            int(self.doctrine.cap_min_track_length.meters),
+            int(self.doctrine.cap.min_track_length.meters),
             int(max_track_length.meters),
         )
         start = end.point_from_heading(heading.opposite.degrees, track_length)
