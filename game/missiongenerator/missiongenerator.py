@@ -66,6 +66,7 @@ class MissionGenerator:
 
         self.radio_registry = RadioRegistry()
         self.tacan_registry = TacanRegistry()
+        self.stn_prefix_allocator = iter(range(0o10000))
 
         self.generation_started = False
 
@@ -259,6 +260,7 @@ class MissionGenerator:
             self.time,
             self.radio_registry,
             self.tacan_registry,
+            self.stn_prefix_allocator,
             self.unit_map,
             mission_data=air_support_generator.mission_data,
             helipads=tgo_generator.helipads,

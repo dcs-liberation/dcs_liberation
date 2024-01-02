@@ -13,6 +13,7 @@ from dcs.unitpropertydescription import UnitPropertyDescription
 from dcs.unittype import FlyingType
 
 from game.data.units import UnitClass
+from game.dcs.datalinkconfig import DatalinkConfig
 from game.dcs.lasercodeconfig import LaserCodeConfig
 from game.dcs.unittype import UnitType
 from game.radio.channels import (
@@ -209,6 +210,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
     has_built_in_target_pod: bool
 
     laser_code_configs: list[LaserCodeConfig]
+    datalink_config: DatalinkConfig | None
 
     use_f15e_waypoint_names: bool
 
@@ -349,6 +351,9 @@ class AircraftType(UnitType[Type[FlyingType]]):
 
     def task_priority(self, task: FlightType) -> int:
         return self.task_priorities[task]
+
+    def should_alloc_stn(self) -> bool:
+        return self.datalink_config is not None
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         # Update any existing models with new data on load.
@@ -516,6 +521,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
             laser_code_configs=[
                 LaserCodeConfig.from_yaml(d) for d in data.get("laser_codes", [])
             ],
+            datalink_config=DatalinkConfig.from_data(data),
             use_f15e_waypoint_names=data.get("use_f15e_waypoint_names", False),
         )
 

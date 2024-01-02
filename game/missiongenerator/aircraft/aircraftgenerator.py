@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator
 from datetime import datetime
 from functools import cached_property
 from typing import Any, Dict, TYPE_CHECKING
@@ -16,6 +17,7 @@ from game.ato.flightstate import Completed
 from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.ato.starttype import StartType
+from game.datalink.sourcetracknumberprefix import SourceTrackNumberPrefix
 from game.factions.faction import Faction
 from game.missiongenerator.missiondata import MissionData
 from game.radio.radios import RadioRegistry
@@ -47,6 +49,7 @@ class AircraftGenerator:
         time: datetime,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
+        stn_prefix_allocator: Iterator[int],
         unit_map: UnitMap,
         mission_data: MissionData,
         helipads: dict[ControlPoint, StaticGroup],
@@ -57,6 +60,7 @@ class AircraftGenerator:
         self.time = time
         self.radio_registry = radio_registry
         self.tacan_registy = tacan_registry
+        self.stn_prefix_allocator = stn_prefix_allocator
         self.unit_map = unit_map
         # A list of per-package briefing data, which is in turn a list of per-flight
         # briefing data.
@@ -168,6 +172,10 @@ class AircraftGenerator:
             flight, country, self.mission, self.helipads
         ).create_flight_group()
 
+        stn_prefix: SourceTrackNumberPrefix | None = None
+        if flight.squadron.aircraft.should_alloc_stn():
+            stn_prefix = SourceTrackNumberPrefix(next(self.stn_prefix_allocator))
+
         briefing_data = FlightGroupConfigurator(
             flight,
             group,
@@ -176,6 +184,7 @@ class AircraftGenerator:
             self.time,
             self.radio_registry,
             self.tacan_registy,
+            stn_prefix,
             self.mission_data,
             dynamic_runways,
             self.use_client,

@@ -12,6 +12,8 @@ from dcs.unitgroup import FlyingGroup
 from game.ato import Flight, FlightType
 from game.callsigns import callsign_for_support_unit
 from game.data.weapons import Pylon
+from game.datalink.sourcetracknumber import SourceTrackNumber
+from game.datalink.sourcetracknumberprefix import SourceTrackNumberPrefix
 from game.missiongenerator.logisticsgenerator import LogisticsGenerator
 from game.missiongenerator.missiondata import AwacsInfo, MissionData, TankerInfo
 from game.radio.radios import RadioFrequency, RadioRegistry
@@ -40,6 +42,7 @@ class FlightGroupConfigurator:
         time: datetime,
         radio_registry: RadioRegistry,
         tacan_registry: TacanRegistry,
+        stn_prefix: SourceTrackNumberPrefix | None,
         mission_data: MissionData,
         dynamic_runways: dict[str, RunwayData],
         use_client: bool,
@@ -52,6 +55,7 @@ class FlightGroupConfigurator:
         self.time = time
         self.radio_registry = radio_registry
         self.tacan_registry = tacan_registry
+        self.stn_prefix = stn_prefix
         self.mission_data = mission_data
         self.dynamic_runways = dynamic_runways
         self.use_client = use_client
@@ -68,8 +72,13 @@ class FlightGroupConfigurator:
         flight_channel = self.setup_radios()
 
         laser_codes: list[Optional[int]] = []
-        for unit, member in zip(self.group.units, self.flight.iter_members()):
+        stns: list[SourceTrackNumber] = []
+        for idx, (unit, member) in enumerate(
+            zip(self.group.units, self.flight.iter_members())
+        ):
             self.configure_flight_member(unit, member, laser_codes)
+            if self.stn_prefix is not None:
+                stns.append(SourceTrackNumber(self.stn_prefix, idx))
 
         divert = None
         if self.flight.divert is not None:
@@ -136,6 +145,7 @@ class FlightGroupConfigurator:
             joker_fuel=bingo_estimator.estimate_joker(),
             custom_name=self.flight.custom_name,
             laser_codes=laser_codes,
+            source_track_numbers=stns,
         )
 
     def configure_flight_member(

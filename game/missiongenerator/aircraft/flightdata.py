@@ -7,6 +7,7 @@ from typing import Optional, TYPE_CHECKING
 from dcs.flyingunit import FlyingUnit
 
 from game.callsigns import create_group_callsign_from_unit
+from game.datalink.sourcetracknumber import SourceTrackNumber
 
 if TYPE_CHECKING:
     from game.ato import FlightType, FlightWaypoint, Package
@@ -65,6 +66,8 @@ class FlightData:
     joker_fuel: Optional[int]
 
     laser_codes: list[Optional[int]]
+
+    source_track_numbers: list[SourceTrackNumber]
 
     custom_name: Optional[str]
 
