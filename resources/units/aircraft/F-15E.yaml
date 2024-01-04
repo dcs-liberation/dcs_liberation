@@ -25,3 +25,4 @@ tasks:
   Strike: 640
   TARCAP: 240
 has_built_in_target_pod: true
+hit_points: 20

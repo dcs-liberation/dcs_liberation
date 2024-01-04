@@ -8,3 +8,4 @@ price: 12
 role: Self-Propelled Surface-to-Air Missile Launcher
 variants:
   Roland 2 (Marder Chassis): {}
+hit_points: 5

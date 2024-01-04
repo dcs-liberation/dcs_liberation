@@ -8,3 +8,4 @@ price: 15
 role: Multiple-Launch Rocket System
 variants:
   BM-21 Grad: {}
+hit_points: 2

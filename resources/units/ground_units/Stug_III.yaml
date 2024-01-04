@@ -15,3 +15,4 @@ price: 12
 role: Assault Gun/Tank Destroyer
 variants:
   "Sturmgeschütz III Ausf. G": {}
+hit_points: 10

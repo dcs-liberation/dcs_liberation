@@ -2,3 +2,4 @@ class: Destroyer
 price: 0
 variants:
   Frigate 11540 Neustrashimy: null
+hit_points: 2180

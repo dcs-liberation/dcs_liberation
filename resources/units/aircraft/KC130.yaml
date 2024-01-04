@@ -15,3 +15,4 @@ variants:
   KC-130: {}
 tasks:
   Refueling: 10
+hit_points: 18

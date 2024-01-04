@@ -17,3 +17,4 @@ variants:
   KC-135 Stratotanker: {}
 tasks:
   Refueling: 50
+hit_points: 60

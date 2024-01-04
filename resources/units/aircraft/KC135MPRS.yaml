@@ -17,3 +17,4 @@ variants:
   KC-135 Stratotanker MPRS: {}
 tasks:
   Refueling: 40
+hit_points: 18

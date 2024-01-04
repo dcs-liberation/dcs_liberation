@@ -21,3 +21,4 @@ variants:
   SA 342M Gazelle Mistral: {}
 kneeboard_units: "metric"
 tasks: {}
+hit_points: 18

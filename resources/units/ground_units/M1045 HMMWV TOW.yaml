@@ -9,3 +9,4 @@ price: 8
 role: Armoured Car
 variants:
   M1045 HMMWV (BGM-71 TOW): {}
+hit_points: 2

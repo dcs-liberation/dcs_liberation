@@ -2,3 +2,4 @@ class: Frigate
 price: 0
 variants:
   CNS Almirante Condell (PFG-06): null
+hit_points: 1000

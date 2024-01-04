@@ -3,3 +3,4 @@ price: 0
 spawn_weight: 4
 variants:
   Infantry M4 Georgia: null
+hit_points: 1

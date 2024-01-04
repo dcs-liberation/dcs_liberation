@@ -5,3 +5,4 @@ variants:
   C-130: null
 tasks:
   Transport: 130
+hit_points: 45

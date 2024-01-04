@@ -3,3 +3,4 @@ price: 30
 reversed_heading: true # Needs to be placed backwards!
 variants:
   SAM SA-11 Buk "Gadfly" Fire Dome TEL: null
+hit_points: 4

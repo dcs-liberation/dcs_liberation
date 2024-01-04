@@ -10,3 +10,4 @@ price: 8
 role: Airborne Light Tank
 variants:
   A17 Light Tank Mk VII Tetrarch: {}
+hit_points: 4

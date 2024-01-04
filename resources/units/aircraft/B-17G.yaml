@@ -23,3 +23,4 @@ variants:
 tasks:
   OCA/Runway: 150
   Strike: 150
+hit_points: 18

@@ -2,3 +2,4 @@ class: SearchRadar
 price: 30
 variants:
   SAM SA-10 S-300 "Grumble" Big Bird SR: null
+hit_points: 4

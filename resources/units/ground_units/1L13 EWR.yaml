@@ -2,3 +2,4 @@ class: EarlyWarningRadar
 price: 30
 variants:
   EWR 1L13: null
+hit_points: 2

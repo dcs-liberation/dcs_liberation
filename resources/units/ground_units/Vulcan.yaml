@@ -14,3 +14,4 @@ price: 10
 role: Self-Propelled Anti-Aircraft Gun
 variants:
   M163 Vulcan Air Defense System: {}
+hit_points: 3

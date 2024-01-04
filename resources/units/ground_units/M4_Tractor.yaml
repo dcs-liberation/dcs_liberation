@@ -8,3 +8,4 @@ price: 2
 role: Tracked Cargo Transporter
 variants:
   M4 High-Speed Tractor: {}
+hit_points: 4

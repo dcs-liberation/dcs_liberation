@@ -2,3 +2,4 @@ class: Submarine
 price: 0
 variants:
   Type 093 Attack Submarine: null
+hit_points: 1500

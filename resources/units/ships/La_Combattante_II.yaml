@@ -2,3 +2,4 @@ class: Destroyer
 price: 0
 variants:
   FAC La Combattante IIa: null
+hit_points: 750

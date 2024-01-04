@@ -8,3 +8,4 @@ price: 11
 role: Tank Destroyer
 variants:
   Jagdpanzer IV: {}
+hit_points: 15

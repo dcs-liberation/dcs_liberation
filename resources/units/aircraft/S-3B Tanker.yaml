@@ -26,3 +26,4 @@ variants:
   S-3B Tanker: {}
 tasks:
   Refueling: 0
+hit_points: 25

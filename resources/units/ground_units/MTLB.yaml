@@ -14,3 +14,4 @@ price: 4
 role: Armoured Personnel Carrier
 variants:
   MT-LB: {}
+hit_points: 3

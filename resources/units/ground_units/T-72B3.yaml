@@ -12,3 +12,4 @@ price: 25
 role: Main Battle Tank
 variants:
   T-72B3 model 2011: {}
+hit_points: 25

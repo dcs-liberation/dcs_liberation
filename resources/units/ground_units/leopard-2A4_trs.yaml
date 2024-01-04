@@ -16,3 +16,4 @@ price: 20
 role: Main Battle Tank
 variants:
   Leopard 2A4 Trs: {}
+hit_points: 32

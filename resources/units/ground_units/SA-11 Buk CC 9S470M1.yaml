@@ -2,3 +2,4 @@ class: CommandPost
 price: 25
 variants:
   SAM SA-11 Buk "Gadfly" C2: null
+hit_points: 4

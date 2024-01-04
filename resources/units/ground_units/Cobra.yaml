@@ -8,3 +8,4 @@ price: 4
 role: Recon
 variants:
   Cobra: {}
+hit_points: 2

@@ -7,3 +7,4 @@ price: 1
 role: Tracked Cargo Transporter
 variants:
   Sd.Kfz.7 Tractor: {}
+hit_points: 6

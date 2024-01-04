@@ -27,6 +27,7 @@ class UnitType(ABC, Generic[DcsUnitTypeT]):
     role: str
     price: int
     unit_class: UnitClass
+    hit_points: int
 
     _loaded: ClassVar[bool] = False
 

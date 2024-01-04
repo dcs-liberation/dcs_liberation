@@ -2,3 +2,4 @@ class: TrackRadar
 price: 24
 variants:
   SAM SA-10 S-300 "Grumble" Flap Lid TR: null
+hit_points: 4

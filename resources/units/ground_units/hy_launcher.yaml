@@ -3,3 +3,4 @@ price: 0
 reversed_heading: true # Needs to be placed backwards!
 variants:
   AShM SS-N-2 Silkworm: null
+hit_points: 4

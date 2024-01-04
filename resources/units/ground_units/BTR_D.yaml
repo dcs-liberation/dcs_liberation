@@ -12,3 +12,4 @@ price: 6
 role: Airborne Amphibious Armoured Personnel Carrier
 variants:
   BTR-D: {}
+hit_points: 4

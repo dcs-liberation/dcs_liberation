@@ -14,3 +14,4 @@ variants:
   Bofors 40 mm Gun: {}
   QF 40 mm Mark III:
     introduced: 1939
+hit_points: 1

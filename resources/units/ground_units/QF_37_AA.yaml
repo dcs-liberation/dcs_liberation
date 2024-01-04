@@ -12,3 +12,4 @@ price: 10
 role: Anti-Aircraft Gun
 variants:
   QF 3.7-inch AA Gun: {}
+hit_points: 2

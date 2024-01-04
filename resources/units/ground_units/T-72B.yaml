@@ -12,3 +12,4 @@ price: 20
 role: Main Battle Tank
 variants:
   T-72B with Kontakt-1 ERA: {}
+hit_points: 25

@@ -2,3 +2,4 @@ class: SearchRadar
 price: 16
 variants:
   SAM SA-5 S-200 ST-68U "Tin Shield" SR: null
+hit_points: 4

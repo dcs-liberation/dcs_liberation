@@ -2,3 +2,4 @@ class: TrackRadar
 price: 30
 variants:
   SAM Patriot ECS: null
+hit_points: 2

@@ -2,3 +2,4 @@ class: Frigate
 price: 0
 variants:
   Corvette 1124.4 Grish: null
+hit_points: 1600

@@ -11,3 +11,4 @@ price: 10
 role: Cruiser Tank
 variants:
   A27L Cruiser Tank MK VIII Centaur IV: {}
+hit_points: 12

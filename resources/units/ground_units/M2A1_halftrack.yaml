@@ -8,3 +8,4 @@ price: 4
 role: Armoured Personnel Carrier
 variants:
   M2A1 Half-Track: {}
+hit_points: 7

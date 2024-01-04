@@ -21,3 +21,4 @@ price: 10
 role: Infantry Fighting Vehicle
 variants:
   Marder 1A3: {}
+hit_points: 5

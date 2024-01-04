@@ -42,3 +42,4 @@ tasks:
   OCA/Aircraft: 510
 default_overrides:
   FCR_RFI_removed: false
+hit_points: 20

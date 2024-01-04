@@ -12,3 +12,4 @@ price: 5
 role: Anti-Aircraft Gun
 variants:
   2 cm Flakvierling 38: {}
+hit_points: 1

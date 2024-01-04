@@ -13,3 +13,4 @@ price: 8
 role: Airborne Amphibious Infantry Fighting Vehicle
 variants:
   BMD-1: {}
+hit_points: 3

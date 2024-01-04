@@ -12,3 +12,4 @@ price: 25
 role: Main Battle Tank
 variants:
   Merkava Mk IV: {}
+hit_points: 20

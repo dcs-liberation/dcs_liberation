@@ -517,6 +517,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
                 LaserCodeConfig.from_yaml(d) for d in data.get("laser_codes", [])
             ],
             use_f15e_waypoint_names=data.get("use_f15e_waypoint_names", False),
+            hit_points=data.get("hit_points", 1),
         )
 
     def __hash__(self) -> int:

@@ -11,3 +11,4 @@ price: 16
 role: Infantry Tank
 variants:
   A22 Infantry Tank MK IV Churchill VII: {}
+hit_points: 13

@@ -8,3 +8,4 @@ price: 25
 role: Self-Propelled Gun
 variants:
   M109A6 Paladin: {}
+hit_points: 3

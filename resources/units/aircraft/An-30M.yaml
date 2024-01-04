@@ -3,3 +3,4 @@ price: 15
 variants:
   An-30M: null
 tasks: {}
+hit_points: 45

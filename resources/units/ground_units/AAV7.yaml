@@ -16,3 +16,4 @@ price: 10
 role: Amphibious Armoured Personnel Carrier
 variants:
   AAVP-7A1 'Amtrac': {}
+hit_points: 4

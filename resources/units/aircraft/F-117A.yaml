@@ -20,3 +20,4 @@ variants:
 tasks:
   Strike: 710
 has_built_in_target_pod: true
+hit_points: 20

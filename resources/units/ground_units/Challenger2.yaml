@@ -12,3 +12,4 @@ price: 25
 role: Main Battle Tank
 variants:
   FV4034 Challenger 2: {}
+hit_points: 32

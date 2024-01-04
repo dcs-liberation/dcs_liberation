@@ -10,3 +10,4 @@ price: 30
 role: Main Battle Tank
 variants:
   Type 96B (ZTZ-96B): {}
+hit_points: 25

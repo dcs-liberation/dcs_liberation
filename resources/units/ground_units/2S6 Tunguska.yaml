@@ -12,3 +12,4 @@ price: 30
 role: Self-Propelled Anti-Aircraft System
 variants:
   SA-19 Grison (2K22 Tunguska): {}
+hit_points: 4

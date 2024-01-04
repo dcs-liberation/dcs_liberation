@@ -14,3 +14,4 @@ role: Tank Destroyer
 variants:
   3in SPM M10 Achilles Mk II: {}
   M10 3-inch Gun Motor Carriage: {}
+hit_points: 10

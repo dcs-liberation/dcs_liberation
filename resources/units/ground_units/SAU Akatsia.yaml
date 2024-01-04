@@ -8,3 +8,4 @@ price: 24
 role: Self-Propelled Gun
 variants:
   2S3 Akatsiya: {}
+hit_points: 4

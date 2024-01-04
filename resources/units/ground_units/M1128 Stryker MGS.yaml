@@ -10,3 +10,4 @@ price: 14
 role: Armoured Car
 variants:
   M1128 Stryker Mobile Gun System: {}
+hit_points: 4

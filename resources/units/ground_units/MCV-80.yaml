@@ -13,3 +13,4 @@ price: 10
 role: Infantry Fighting Vehicle
 variants:
   FV510 Warrior: {}
+hit_points: 5

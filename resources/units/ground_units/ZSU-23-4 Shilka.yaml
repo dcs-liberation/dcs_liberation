@@ -8,3 +8,4 @@ price: 10
 role: Self-Propelled Anti-Aircraft Gun
 variants:
   ZSU-23-4 Shilka: {}
+hit_points: 4

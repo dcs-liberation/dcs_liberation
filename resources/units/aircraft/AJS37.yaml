@@ -43,3 +43,4 @@ tasks:
   OCA/Aircraft: 620
   OCA/Runway: 620
   Strike: 630
+hit_points: 18

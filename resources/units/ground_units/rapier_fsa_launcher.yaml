@@ -2,3 +2,4 @@ class: Launcher
 price: 6
 variants:
   SAM Rapier LN: null
+hit_points: 3

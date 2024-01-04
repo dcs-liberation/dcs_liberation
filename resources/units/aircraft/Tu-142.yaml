@@ -17,3 +17,4 @@ variants:
   Tu-142 Bear-F: {}
 tasks:
   Anti-ship: 180
+hit_points: 60

@@ -2,3 +2,4 @@ class: AAA
 price: 10
 variants:
   AAA 100mm KS-19: null
+hit_points: 4

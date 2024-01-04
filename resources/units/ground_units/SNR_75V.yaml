@@ -2,3 +2,4 @@ class: TrackRadar
 price: 12
 variants:
   SAM SA-2 S-75 "Fan Song" TR: null
+hit_points: 2

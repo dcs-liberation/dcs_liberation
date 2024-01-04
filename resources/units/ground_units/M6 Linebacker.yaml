@@ -15,3 +15,4 @@ price: 18
 role: Self-Propelled Anti-Aircraft System
 variants:
   M6 Linebacker: {}
+hit_points: 6

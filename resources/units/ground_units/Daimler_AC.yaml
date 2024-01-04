@@ -12,3 +12,4 @@ price: 8
 role: Recon
 variants:
   Daimler Armoured Car Mk I: {}
+hit_points: 4

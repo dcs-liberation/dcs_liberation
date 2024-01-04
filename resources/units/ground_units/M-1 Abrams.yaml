@@ -16,3 +16,4 @@ price: 25
 role: Main Battle Tank
 variants:
   M1A2 Abrams: {}
+hit_points: 32
