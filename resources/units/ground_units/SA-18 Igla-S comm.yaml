@@ -2,3 +2,4 @@ class: Infantry
 price: 8
 variants:
   MANPADS SA-18 Igla-S "Grouse" C2: null
+hit_points: 1

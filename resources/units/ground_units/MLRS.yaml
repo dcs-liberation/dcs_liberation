@@ -12,3 +12,4 @@ price: 55
 role: Multiple-Launch Rocket System
 variants:
   M270 Multiple Launch Rocket System: {}
+hit_points: 3

@@ -12,3 +12,4 @@ price: 12
 role: Self-Propelled Anti-Aircraft System
 variants:
   SA-9 Strela: {}
+hit_points: 3

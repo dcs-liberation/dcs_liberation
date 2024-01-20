@@ -2,3 +2,4 @@ class: SearchTrackRadar
 price: 24
 variants:
   HQ-7 Self-Propelled STR: null
+hit_points: 2

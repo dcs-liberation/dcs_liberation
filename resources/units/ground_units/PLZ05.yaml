@@ -11,3 +11,4 @@ price: 25
 role: Self propelled artillery
 variants:
   PLZ-05: {}
+hit_points: 4

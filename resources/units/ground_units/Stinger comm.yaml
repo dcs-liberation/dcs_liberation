@@ -2,3 +2,4 @@ class: Infantry
 price: 4
 variants:
   MANPADS Stinger C2: null
+hit_points: 1

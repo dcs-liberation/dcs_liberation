@@ -9,3 +9,4 @@ variants:
   IL-78M: null
 tasks:
   Refueling: 30
+hit_points: 60

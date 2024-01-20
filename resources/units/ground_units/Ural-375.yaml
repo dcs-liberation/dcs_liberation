@@ -2,3 +2,4 @@ class: Logistics
 price: 3
 variants:
   Truck Ural-375: null
+hit_points: 2

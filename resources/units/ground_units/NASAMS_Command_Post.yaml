@@ -7,3 +7,4 @@ manufacturer: Kongsberg Defence & Aerospace, Raytheon
 origin: Norway, USA
 variants:
   SAM NASAMS C2: null
+hit_points: 2

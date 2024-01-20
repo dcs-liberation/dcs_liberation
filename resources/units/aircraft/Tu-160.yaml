@@ -19,3 +19,4 @@ variants:
 tasks:
   DEAD: 200
   Strike: 680
+hit_points: 60

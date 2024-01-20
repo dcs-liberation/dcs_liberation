@@ -3,3 +3,4 @@ max_range: 200
 variants:
   Su-24MR: null
 tasks: {}
+hit_points: 20

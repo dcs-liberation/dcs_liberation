@@ -14,3 +14,4 @@ price: 9
 role: Recon light tank
 variants:
   PT-76: {}
+hit_points: 5

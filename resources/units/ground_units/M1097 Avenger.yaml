@@ -10,3 +10,4 @@ price: 20
 role: Self-Propelled Surface-to-Air Missile Launcher
 variants:
   M1097 Heavy HMMWV Avenger: {}
+hit_points: 2

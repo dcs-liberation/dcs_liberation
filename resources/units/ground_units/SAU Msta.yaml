@@ -10,3 +10,4 @@ price: 30
 role: Self-Propelled Gun
 variants:
   2S19 Msta-S: {}
+hit_points: 4

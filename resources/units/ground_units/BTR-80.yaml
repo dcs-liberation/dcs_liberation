@@ -12,3 +12,4 @@ price: 8
 role: Amphibious Armoured Personnel Carrier
 variants:
   BTR-80: {}
+hit_points: 3

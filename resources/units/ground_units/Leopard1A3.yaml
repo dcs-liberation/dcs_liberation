@@ -16,3 +16,4 @@ price: 18
 role: Main Battle Tank
 variants:
   Leopard 1A3: {}
+hit_points: 20

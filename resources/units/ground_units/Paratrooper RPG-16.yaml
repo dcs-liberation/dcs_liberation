@@ -3,3 +3,4 @@ price: 0
 spawn_weight: 1
 variants:
   Paratrooper RPG-16: null
+hit_points: 1

@@ -23,3 +23,4 @@ price: 16
 role: Main Battle Tank
 variants:
   M60A3 "Patton": {}
+hit_points: 20

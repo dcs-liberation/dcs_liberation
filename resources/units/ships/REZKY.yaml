@@ -2,3 +2,4 @@ class: Destroyer
 price: 0
 variants:
   Frigate 1135M Rezky: null
+hit_points: 1800

@@ -2,3 +2,4 @@ class: LandingShip
 price: 0
 variants:
   LS Ropucha: null
+hit_points: 2000

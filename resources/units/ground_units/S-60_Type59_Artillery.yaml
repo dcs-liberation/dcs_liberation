@@ -12,3 +12,4 @@ price: 8
 role: Anti-Aircraft Gun/Anti-Tank Gun
 variants:
   S-60 57mm: {}
+hit_points: 1

@@ -2,3 +2,4 @@ class: SearchTrackRadar
 price: 16
 variants:
   SAM Roland EWR: null
+hit_points: 5

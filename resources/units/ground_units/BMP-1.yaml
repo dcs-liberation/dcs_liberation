@@ -13,3 +13,4 @@ price: 14
 role: Amphibious Infantry Fighting Vehicle
 variants:
   BMP-1: {}
+hit_points: 5

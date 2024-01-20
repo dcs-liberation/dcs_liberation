@@ -30,3 +30,4 @@ tasks:
   BAI: 400
   CAS: 400
   OCA/Aircraft: 400
+hit_points: 16

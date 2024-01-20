@@ -11,3 +11,4 @@ price: 8
 role: Recon Vehicle
 variants:
   Sd.Kfz.234/2 Puma: {}
+hit_points: 8

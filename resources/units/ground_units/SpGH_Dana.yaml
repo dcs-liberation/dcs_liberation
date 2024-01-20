@@ -9,3 +9,4 @@ price: 26
 role: Self-Propelled Gun
 variants:
   SpGH DANA: {}
+hit_points: 3

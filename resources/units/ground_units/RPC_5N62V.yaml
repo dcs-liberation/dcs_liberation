@@ -2,3 +2,4 @@ class: TrackRadar
 price: 18
 variants:
   SAM SA-5 S-200 "Square Pair" TR": null
+hit_points: 2

@@ -2,3 +2,4 @@ class: EarlyWarningRadar
 price: 30
 variants:
   EWR AN/FPS-117 Radar (domed): null
+hit_points: 2

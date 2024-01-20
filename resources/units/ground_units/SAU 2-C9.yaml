@@ -15,3 +15,4 @@ price: 12
 role: Self-Propelled Mortar
 variants:
   2S9 Nona-S: {}
+hit_points: 4

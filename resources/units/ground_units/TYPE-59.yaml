@@ -7,3 +7,4 @@ price: 15
 role: Main Battle Tank
 variants:
   MT Type 59: {}
+hit_points: 18

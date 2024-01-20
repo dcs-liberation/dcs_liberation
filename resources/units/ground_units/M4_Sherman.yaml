@@ -13,3 +13,4 @@ role: Medium Tank
 variants:
   M4A2(75) Sherman: {}
   Sherman III: {}
+hit_points: 15

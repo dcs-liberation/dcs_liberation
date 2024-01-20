@@ -16,3 +16,4 @@ variants:
   E-2D Advanced Hawkeye: {}
 tasks:
   AEW&C: 20
+hit_points: 25

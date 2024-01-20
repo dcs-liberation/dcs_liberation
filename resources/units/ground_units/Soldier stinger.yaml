@@ -3,3 +3,4 @@ spawn_weight: 1
 price: 0
 variants:
   MANPADS Stinger: null
+hit_points: 1

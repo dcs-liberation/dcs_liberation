@@ -12,3 +12,4 @@ price: 18
 role: Tank Destroyer
 variants:
   Sd.Kfz.184 Elefant: {}
+hit_points: 20

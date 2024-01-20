@@ -7,3 +7,4 @@ price: 5
 role: Field Howitzer
 variants:
   FH Pak 40 75mm: {}
+hit_points: 2

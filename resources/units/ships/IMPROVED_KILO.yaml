@@ -2,3 +2,4 @@ class: Submarine
 price: 0
 variants:
   SSK 636 Improved Kilo: null
+hit_points: 300

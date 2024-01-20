@@ -2,3 +2,4 @@ class: Logistics
 price: 1
 variants:
   Truck GMC "Jimmy" 6x6 Truck: null
+hit_points: 3

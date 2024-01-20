@@ -7,3 +7,4 @@ price: 5
 role: Field Howitzer
 variants:
   FH LeFH-18 105mm: {}
+hit_points: 2

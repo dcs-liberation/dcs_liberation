@@ -2,3 +2,4 @@ class: SearchTrackRadar
 price: 22
 variants:
   SAM SA-6 Kub "Straight Flush" STR: null
+hit_points: 4

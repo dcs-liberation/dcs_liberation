@@ -2,3 +2,4 @@ class: Frigate
 price: 0
 variants:
   Corvette 1241.1 Molniya: null
+hit_points: 700

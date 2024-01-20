@@ -11,3 +11,4 @@ price: 16
 role: Self-Propelled Surface-to-Air Missile Launcher
 variants:
   SA-13 Gopher (9K35 Strela-10M3): {}
+hit_points: 3

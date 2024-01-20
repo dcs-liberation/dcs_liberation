@@ -16,3 +16,4 @@ price: 22
 role: Main Battle Tank
 variants:
   Leopard 2A5: {}
+hit_points: 32

@@ -4,3 +4,4 @@ variants:
   IL-76MD: null
 tasks:
   Transport: 120
+hit_points: 60

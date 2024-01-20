@@ -5,3 +5,4 @@ variants:
   An-26B: null
 tasks:
   Transport: 110
+hit_points: 45

@@ -14,3 +14,4 @@ price: 6
 role: Amphibious Armoured Car
 variants:
   BRDM-2: {}
+hit_points: 3

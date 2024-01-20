@@ -9,3 +9,4 @@ price: 10
 role: Self-Propelled Gun
 variants:
   M12 Gun Motor Carriage: {}
+hit_points: 15

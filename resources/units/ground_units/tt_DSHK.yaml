@@ -3,3 +3,4 @@ price: 4
 role: Recon
 variants:
   Scout LC with DSHK 12.7mm: {}
+hit_points: 1

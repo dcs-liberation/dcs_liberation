@@ -2,3 +2,4 @@ class: TrackRadar
 price: 14
 variants:
   SAM Hawk TR (AN/MPQ-46): null
+hit_points: 2

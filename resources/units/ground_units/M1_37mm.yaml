@@ -12,3 +12,4 @@ price: 7
 role: Anti-Aircraft Gun
 variants:
   M1 37mm Gun: {}
+hit_points: 2

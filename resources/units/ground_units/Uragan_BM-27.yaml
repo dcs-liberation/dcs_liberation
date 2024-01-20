@@ -9,3 +9,4 @@ price: 50
 role: Multiple-Launch Rocket System
 variants:
   BM-27 Uragan: {}
+hit_points: 4

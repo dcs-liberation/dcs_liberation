@@ -51,3 +51,4 @@ laser_codes:
   - property:
       id: Sta8LaserCode
       digits: 3
+hit_points: 18

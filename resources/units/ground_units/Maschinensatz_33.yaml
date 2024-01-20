@@ -2,3 +2,4 @@ class: Logistics
 price: 10
 variants:
   PU Maschinensatz_33: null
+hit_points: 2

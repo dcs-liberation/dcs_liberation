@@ -13,3 +13,4 @@ price: 4
 role: Anti-Aircraft Gun
 variants:
   M45 Quadmount: {}
+hit_points: 1

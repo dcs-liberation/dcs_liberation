@@ -12,3 +12,4 @@ price: 4
 role: Armoured Personnel Carrier
 variants:
   Sd.Kfz.251 "Hanomag": {}
+hit_points: 7

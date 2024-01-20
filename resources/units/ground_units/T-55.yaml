@@ -15,3 +15,4 @@ price: 18
 role: Main Battle Tank
 variants:
   T-55A: {}
+hit_points: 18

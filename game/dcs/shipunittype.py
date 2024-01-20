@@ -79,4 +79,5 @@ class ShipUnitType(UnitType[Type[ShipType]]):
             manufacturer=data.get("manufacturer", "No data."),
             role=data.get("role", "No data."),
             price=data["price"],
+            hit_points=data.get("hit_points", 1),
         )

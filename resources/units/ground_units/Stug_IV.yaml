@@ -14,3 +14,4 @@ price: 14
 role: Assault Gun/Tank Destroyer
 variants:
   "Sturmgeschütz IV": {}
+hit_points: 15
