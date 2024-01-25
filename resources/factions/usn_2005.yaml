@@ -13,6 +13,9 @@ aircrafts:
   - S-3B Viking
   - SH-60B Seahawk
   - UH-1H Iroquois
+  - F/A-18E Super Hornet
+  - F/A-18F Super Hornet
+  - EA-18G Growler
 awacs:
   - E-2C Hawkeye
 tankers:

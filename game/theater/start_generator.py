@@ -66,6 +66,7 @@ class ModSettings:
     frenchpack: bool = False
     high_digit_sams: bool = False
     ov10a_bronco: bool = False
+    superhornet: bool = False
 
     def save_player_settings(self) -> None:
         """Saves the player's global settings to the user directory."""
