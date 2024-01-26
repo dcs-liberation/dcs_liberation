@@ -21,8 +21,8 @@ manufacturer: Boeing Defense, Space & Security
 origin: USA
 price: 28
 role: Carrier-based Multirole Fighter
-
-default_livery: "VFA-146"
+# DCS default livery for the Hornet is the Blue Angels.
+default_livery: "VFA-34"
 fuel:
 
 variants:

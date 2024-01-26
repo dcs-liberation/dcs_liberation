@@ -41,7 +41,7 @@ utc_kneeboard: true
 #   InnerBoard: 0
 #   OuterBoard: 0
 tasks:
-  DEAD: 600
-  SEAD: 500
+  DEAD: 500
+  SEAD: 600
   EA: 750
 hit_points: 20

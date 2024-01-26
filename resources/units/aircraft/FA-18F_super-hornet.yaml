@@ -19,10 +19,10 @@ description:
 introduced: 1999
 manufacturer: Boeing Defense, Space & Security
 origin: USA
-price: 30
+price: 32
 role: Carrier-based Multirole Fighter
 
-default_livery: "VFA-102"
+default_livery: "VFA-34"
 fuel:
 
 variants:
