@@ -204,6 +204,7 @@ class NewGameWizard(QtWidgets.QWizard):
             ov10a_bronco=self.field("ov10a_bronco"),
             frenchpack=self.field("frenchpack"),
             high_digit_sams=self.field("high_digit_sams"),
+            superhornet=self.field("superhornet"),
         )
         mod_settings.save_player_settings()
 
@@ -826,6 +827,10 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         high_digit_sams.setChecked(mod_settings.high_digit_sams)
         self.registerField("high_digit_sams", high_digit_sams)
 
+        superhornet = QtWidgets.QCheckBox()
+        superhornet.setChecked(mod_settings.superhornet)
+        self.registerField("superhornet", superhornet)
+
         modHelpText = QtWidgets.QLabel(
             "<p>Select the mods you have installed. If your chosen factions support them, you'll be able to use these mods in your campaign.</p>"
         )
@@ -877,6 +882,11 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), modLayout_row, 0)
         modLayout.addWidget(high_digit_sams, modLayout_row, 1)
         modSettingsGroup.setLayout(modLayout)
+        modLayout_row += 1
+        modLayout.addWidget(QtWidgets.QLabel("Super Hornet"), modLayout_row, 0)
+        modLayout.addWidget(superhornet, modLayout_row, 1)
+        modSettingsGroup.setLayout(modLayout)
+        modLayout_row += 1
 
         mlayout = QVBoxLayout()
         mlayout.addWidget(generatorSettingsGroup)
