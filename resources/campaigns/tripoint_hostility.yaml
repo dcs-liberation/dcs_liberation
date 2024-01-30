@@ -83,6 +83,12 @@ squadrons:
       size: 12
   # King Hussein Air College, BLUFOR start
   19:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+        #USAF A-10CII
+        size: 8
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
@@ -93,11 +99,6 @@ squadrons:
       aircraft:
         - 23rd FS
         #USAF F-16C
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - 81st FS
-        #USAF A-10CII
     - primary: Transport
       secondary: air-to-ground
       aircraft:
