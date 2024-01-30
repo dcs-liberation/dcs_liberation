@@ -49,7 +49,7 @@ squadrons:
     - primary: BAI
       secondary: air-to-ground
       aircraft:
-      - 81st FS
+      - A-10C Thunderbolt II (Suite 7)
       size: 10
       #USAF A-10CI
   #BLUFOR CVN
