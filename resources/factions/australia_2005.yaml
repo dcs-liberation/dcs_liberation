@@ -1,19 +1,18 @@
----
 country: Australia
 name: Australia 2005
-authors: Khopa, SpaceEnthusiast
-description:
-  <p>The Australian army in 2005.</p><p>Some units might not be accurate,
-  but were picked to represent at best this army.</p>
+authors: 'Khopa, SpaceEnthusiast'
+description: >-
+  <p>The Australian army in 2005.</p><p>Some units might not be accurate, but
+  were picked to represent at best this army.</p>
 aircrafts:
   - AH-1W SuperCobra
   - C-130J-30 Super Hercules
   - F/A-18C Hornet (Lot 20)
-  - SH-60B Seahawk
-  - UH-1H Iroquois
   - F/A-18E Super Hornet
   - F/A-18F Super Hornet
   - EA-18G Growler
+  - SH-60B Seahawk
+  - UH-1H Iroquois
 awacs:
   - E-3A
 tankers:
@@ -42,7 +41,7 @@ missiles: []
 air_defense_units:
   - SAM Hawk SR (AN/MPQ-50)
 requirements:
-  C-130J-30 Super Hercules Mod by Anubis: https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/
+  C-130J-30 Super Hercules Mod by Anubis: 'https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/'
 carrier_names: []
 helicopter_carrier_names:
   - HMAS Canberra

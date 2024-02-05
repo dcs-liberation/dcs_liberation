@@ -9,6 +9,7 @@ from .jas39 import *
 from .ov10a import *
 from .su57 import *
 from .uh60l import *
+from .fa18efg import *
 
 
 def load_mods() -> None:

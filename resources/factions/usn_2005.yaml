@@ -1,4 +1,3 @@
----
 country: USA
 name: US Navy 2005
 authors: Fuzzle
@@ -8,14 +7,14 @@ locales:
 aircrafts:
   - F-14B Tomcat
   - F/A-18C Hornet (Lot 20)
+  - F/A-18E Super Hornet
+  - F/A-18F Super Hornet
+  - EA-18G Growler
   - AV-8B Harrier II Night Attack
   - AH-1W SuperCobra
   - S-3B Viking
   - SH-60B Seahawk
   - UH-1H Iroquois
-  - F/A-18E Super Hornet
-  - F/A-18F Super Hornet
-  - EA-18G Growler
 awacs:
   - E-2C Hawkeye
 tankers:
