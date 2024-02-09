@@ -13,6 +13,9 @@ aircrafts:
   - EA-18G Growler
   - SH-60B Seahawk
   - UH-1H Iroquois
+  - F/A-18E Super Hornet
+  - F/A-18F Super Hornet
+  - EA-18G Growler
 awacs:
   - E-3A
 tankers:
