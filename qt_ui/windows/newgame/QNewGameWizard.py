@@ -205,6 +205,7 @@ class NewGameWizard(QtWidgets.QWizard):
             frenchpack=self.field("frenchpack"),
             high_digit_sams=self.field("high_digit_sams"),
             fa18efg=self.field("fa18efg"),
+
         )
         mod_settings.save_player_settings()
 
@@ -830,6 +831,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         fa18efg = QtWidgets.QCheckBox()
         fa18efg.setChecked(mod_settings.fa18efg)
         self.registerField("fa18efg", fa18efg)
+
 
         modHelpText = QtWidgets.QLabel(
             "<p>Select the mods you have installed. If your chosen factions support them, you'll be able to use these mods in your campaign.</p>"

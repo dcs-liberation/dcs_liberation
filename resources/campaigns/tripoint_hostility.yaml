@@ -13,9 +13,6 @@ recommended_player_money: 900
 recommended_enemy_money: 1200
 recommended_player_income_multiplier: 1.0
 recommended_enemy_income_multiplier: 0.6
-control_points:
-  From Turkey:
-    ferry_only: true
 squadrons:
   #BLUFOR CVN
   Naval-1:
@@ -62,8 +59,8 @@ squadrons:
       aircraft:
         - HMLA-169 (AH-1W)
       size: 6
-  # Off-theatre forces
-  From Turkey:
+  # Incirlik
+  16:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
@@ -73,8 +70,25 @@ squadrons:
         - 960th AAC Squadron
         #USAF E-3A
       size: 2
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-15E Strike Eagle (Suite 4+)
+      size: 12
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - 77th FS
+        #USAF F-16C
+      size: 12
   # King Hussein Air College, BLUFOR start
   19:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+        #USAF A-10CII
+        size: 8
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
@@ -85,11 +99,6 @@ squadrons:
       aircraft:
         - 23rd FS
         #USAF F-16C
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - 81st FS
-        #USAF A-10CII
     - primary: Transport
       secondary: air-to-ground
       aircraft:
