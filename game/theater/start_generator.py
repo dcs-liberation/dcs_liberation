@@ -69,7 +69,6 @@ class ModSettings:
 
     fa18efg: bool = False
 
-
     def save_player_settings(self) -> None:
         """Saves the player's global settings to the user directory."""
         settings: dict[str, dict[str, bool]] = {}
