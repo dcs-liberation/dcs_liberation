@@ -883,7 +883,11 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(high_digit_sams, modLayout_row, 1)
         modSettingsGroup.setLayout(modLayout)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("fa18efg"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("F/A-18E/F/G Super Hornet (version 2.2.5)"),
+            modLayout_row,
+            0,
+        )
         modLayout.addWidget(fa18efg, modLayout_row, 1)
         modSettingsGroup.setLayout(modLayout)
         modLayout_row += 1
