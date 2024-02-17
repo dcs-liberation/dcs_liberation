@@ -1,0 +1,47 @@
+carrier_capable: true
+description:
+  'The EA-18G Growler is twin engine, supersonic Electronic Warfare Aircraft that is flown
+  by a pilot and a WSO (Weapon Systems Officer) in a "glass cockpit". It combines extreme maneuverability , a
+  deadly arsenal of weapons, and the ability to operate from an aircraft carrier.
+  Operated by several nations, this multi-role fighter has been instrumental in conflicts
+  from 2009 to today.
+  
+  The flight capabilities of the Growler closely mirror those of the F/A-18E/F. 
+  This characteristic allows the Growler to excel in both escort jamming and the conventional standoff jamming mission,
+  which involves radar jamming and deception. Growlers can seamlessly accompany F/A-18s throughout
+  all stages of an attack mission. To enhance the Growler's stability during electronic warfare operations, 
+  Boeing made modifications to the leading edge fairings and wing fold hinge fairings, incorporating wing fences and
+  aileron "tripper strips".'
+
+introduced: 1999
+manufacturer: Boeing Defense, Space & Security
+origin: USA
+price: 32
+role: Carrier-based Electronic Warfare Aircraft
+
+default_livery: "VAQ-139"
+fuel:
+
+variants:
+
+radios:
+  intra_flight: AN/ARC-210
+  inter_flight: AN/ARC-210
+  channels:
+    type: common
+    # DCS will clobber channel 1 of the first radio compatible with the flight's
+    # assigned frequency. Since the EA-18's two radios are both AN/ARC-210s,
+    # radio 1 will be compatible regardless of which frequency is assigned, so
+    # we must use radio 1 for the intra-flight radio.
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 2
+utc_kneeboard: true
+# default_overrides:
+#   HelmetMountedDevice: 1
+#   InnerBoard: 0
+#   OuterBoard: 0
+tasks:
+  DEAD: 600
+  SEAD: 500
+  EA: 750
+hit_points: 20
