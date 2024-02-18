@@ -35,6 +35,8 @@ class TheaterUnit:
     position: PointWithHeading
     # The parent ground object
     ground_object: TheaterGroundObject
+    # Number of hit points the unit has
+    hit_points: Optional[int]
     # State of the unit, dead or alive
     alive: bool = True
 
@@ -42,13 +44,18 @@ class TheaterUnit:
     def from_template(
         id: int, dcs_type: Type[DcsUnitType], t: LayoutUnit, go: TheaterGroundObject
     ) -> TheaterUnit:
-        return TheaterUnit(
+        unit = TheaterUnit(
             id,
             t.name,
             dcs_type,
             PointWithHeading.from_point(t.position, Heading.from_degrees(t.heading)),
             go,
+            None,
         )
+        # if the TheaterUnit represents a GroundUnitType or ShipUnitType, initialize health to full hit points
+        if unit.unit_type is not None:
+            unit.hit_points = unit.unit_type.hit_points
+        return unit
 
     @property
     def unit_type(self) -> Optional[UnitType[Any]]:

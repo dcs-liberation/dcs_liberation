@@ -148,6 +148,10 @@ class MissionResultsProcessor:
                 return
 
     @staticmethod
+    def commit_damage(debriefing: Debriefing, events: GameUpdateEvents) -> None:
+        pass
+
+    @staticmethod
     def commit_damaged_runways(debriefing: Debriefing) -> None:
         for damaged_runway in debriefing.damaged_runways:
             damaged_runway.damage_runway()

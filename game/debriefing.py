@@ -108,6 +108,10 @@ class StateData:
     #: Mangled names of bases that were captured during the mission.
     base_capture_events: List[str]
 
+    # List of descriptions of damage done to units. Each list element is a dict like the following
+    # {"name": "<damaged unit name>", "life": <hit points as float>}
+    unit_hit_point_updates: List[dict[str, Union[float, str]]]
+
     @classmethod
     def from_json(cls, data: Dict[str, Any], unit_map: UnitMap) -> StateData:
         def clean_unit_list(unit_list: List[Any]) -> List[str]:
@@ -147,6 +151,7 @@ class StateData:
             killed_ground_units=killed_ground_units,
             destroyed_statics=data["destroyed_objects_positions"],
             base_capture_events=data["base_capture_events"],
+            unit_hit_point_updates=data["unit_hit_point_updates"],
         )
 
 
@@ -356,6 +361,27 @@ class Debriefing:
                     losses.enemy_airlifts.append(airlift_unit)
                 continue
 
+        for damaged_unit in self.state_data.unit_hit_point_updates:
+            ground_object = self.unit_map.theater_units(damaged_unit["name"])
+            if ground_object is not None:
+                # DCS can output floating point hit points but we reduce to integers for simplicity
+                sim_hit_points = int(float(damaged_unit["hit_points"]))
+                previous_turn_hit_points = ground_object.theater_unit.hit_points
+                full_health_hit_points = ground_object.theater_unit.unit_type.hit_points
+                new_hit_points = previous_turn_hit_points - (
+                    full_health_hit_points - sim_hit_points
+                )
+
+                if new_hit_points > 1:  # unit still alive
+                    continue
+                if full_health_hit_points <= 1:
+                    continue
+
+                if ground_object.theater_unit.ground_object.is_friendly(to_player=True):
+                    losses.player_ground_objects.append(ground_object)
+                else:
+                    losses.enemy_ground_objects.append(ground_object)
+                continue
         return losses
 
     def base_capture_events(self) -> List[BaseCaptureEvent]:
