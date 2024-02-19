@@ -36,7 +36,7 @@ class TheaterUnit:
     # The parent ground object
     ground_object: TheaterGroundObject
     # Number of hit points the unit has
-    hit_points: Optional[int]
+    hit_points: Optional[int] = None
     # State of the unit, dead or alive
     alive: bool = True
 
@@ -50,7 +50,6 @@ class TheaterUnit:
             dcs_type,
             PointWithHeading.from_point(t.position, Heading.from_degrees(t.heading)),
             go,
-            None,
         )
         # if the TheaterUnit represents a GroundUnitType or ShipUnitType, initialize health to full hit points
         if unit.unit_type is not None:
