@@ -232,7 +232,6 @@ class Debriefing:
         self.air_losses = self.dead_aircraft()
         self.ground_losses = self.dead_ground_units()
         self.base_captures = self.base_capture_events()
-        self.damaged_units = self.unit_hit_point_update_events()
 
     def merge_simulation_results(self, results: SimulationResults) -> None:
         for air_loss in results.air_losses:
