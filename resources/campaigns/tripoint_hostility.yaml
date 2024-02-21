@@ -88,7 +88,7 @@ squadrons:
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
         #USAF A-10CII
-        size: 8
+      size: 8
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
