@@ -4,7 +4,7 @@ Saves from 10.x are not compatible with 11.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.9.3.51704 Open Beta. (F-15E JDAM and JSOW, F-16 AIM-9P, updated Falklands and Normandy airfields).
+* **[Engine]** Support for DCS 2.9.3.51704 Open Beta. 
 
 ## Fixes
 
