@@ -5,28 +5,20 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{HOT3_R2_M}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{HOT3G}",
+					["CLSID"] = "{HOT3_L2_M}",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{FAS}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{HOT3G}",
-					["num"] = 4,
-				},
-				[5] = {
-					["CLSID"] = "{FAS}",
-					["num"] = 5,
-				},
-				[6] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -37,28 +29,20 @@ local unitPayloads = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{HOT3_R2_M}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{HOT3G}",
+					["CLSID"] = "{HOT3_L2_M}",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{FAS}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{HOT3G}",
-					["num"] = 4,
-				},
-				[5] = {
-					["CLSID"] = "{FAS}",
-					["num"] = 5,
-				},
-				[6] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -69,28 +53,20 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{HOT3_R2_M}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{HOT3G}",
+					["CLSID"] = "{HOT3_L2_M}",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{FAS}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{HOT3G}",
-					["num"] = 4,
-				},
-				[5] = {
-					["CLSID"] = "{FAS}",
-					["num"] = 5,
-				},
-				[6] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -101,28 +77,20 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{HOT3_R2_M}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{HOT3G}",
+					["CLSID"] = "{HOT3_L2_M}",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{FAS}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{HOT3G}",
-					["num"] = 4,
-				},
-				[5] = {
-					["CLSID"] = "{FAS}",
-					["num"] = 5,
-				},
-				[6] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -133,28 +101,20 @@ local unitPayloads = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{HOT3_R2_M}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{HOT3G}",
+					["CLSID"] = "{HOT3_L2_M}",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{HOT3D}",
+					["CLSID"] = "{FAS}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{HOT3G}",
-					["num"] = 4,
-				},
-				[5] = {
-					["CLSID"] = "{FAS}",
-					["num"] = 5,
-				},
-				[6] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {

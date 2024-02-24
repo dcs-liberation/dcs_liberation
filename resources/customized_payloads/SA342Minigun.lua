@@ -6,7 +6,7 @@ local unitPayloads = {
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {
@@ -19,7 +19,7 @@ local unitPayloads = {
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 			},
 			["tasks"] = {

@@ -4,6 +4,8 @@ Saves from 10.x are not compatible with 11.0.0.
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS 2.9.3.51704 Open Beta. 
+
 ## Fixes
 
 # 10.0.0
