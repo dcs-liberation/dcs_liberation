@@ -46,6 +46,11 @@ squadrons:
       size: 8
   # Hatzerim (141)
   7:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+      size: 6
     - primary: Escort
       secondary: any
       aircraft:
@@ -85,20 +90,15 @@ squadrons:
         - UH-60A
       size: 4
   # Nevatim (106)
-  8:
-    - primary: AEW&C
-      aircraft:
-        - E-3A
-      size: 2
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker
-      size: 2
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - A-10C Thunderbolt II (Suite 7)
-      size: 8
+#  8:
+#    - primary: AEW&C
+#      aircraft:
+#        - E-3A
+#      size: 2
+#    - primary: Refueling
+#      aircraft:
+#        - KC-135 Stratotanker
+#      size: 2
   # Melez (30)
   5:
     - primary: CAS
