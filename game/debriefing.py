@@ -11,6 +11,7 @@ from typing import (
     List,
     Optional,
     TYPE_CHECKING,
+    TypeVar,
     Union,
 )
 from uuid import UUID
@@ -94,14 +95,41 @@ class BaseCaptureEvent:
 
 
 @dataclass
-class UnitHitPointUpdate:
+class FlyingUnitHitPointUpdate:
+    unit: FlyingUnit
+    hit_points: int
+
+    @classmethod
+    def from_json(
+        cls, data: dict[str, Any], unit_map: UnitMap
+    ) -> Optional[FlyingUnitHitPointUpdate]:
+        unit = unit_map.flight(data["name"])
+        if unit is None:
+            return None
+        return cls(unit, int(float(data["hit_points"])))
+
+    def is_dead(self) -> bool:
+        # Use hit_points > 1 to indicate unit is alive, rather than >=1 (DCS logic) to account for uncontrolled units which often have a
+        # health floor of 1
+        if self.hit_points > 1:
+            return False
+        return True
+
+    def is_friendly(self, to_player: bool) -> bool:
+        if to_player:
+            return self.unit.flight.departure.captured
+        return not self.unit.flight.departure.captured
+
+
+@dataclass
+class TheaterUnitHitPointUpdate:
     unit: TheaterUnitMapping
     hit_points: int
 
     @classmethod
     def from_json(
         cls, data: dict[str, Any], unit_map: UnitMap
-    ) -> Optional[UnitHitPointUpdate]:
+    ) -> Optional[TheaterUnitHitPointUpdate]:
         unit = unit_map.theater_units(data["name"])
         if unit is None:
             return None
@@ -352,6 +380,16 @@ class Debriefing:
                 player_losses.append(aircraft)
             else:
                 enemy_losses.append(aircraft)
+
+        for unit_data in self.state_data.unit_hit_point_updates:
+            damaged_unit = FlyingUnitHitPointUpdate.from_json(unit_data, self.unit_map)
+            if damaged_unit is None:
+                continue
+            if damaged_unit.is_dead():
+                if damaged_unit.is_friendly(to_player=True):
+                    player_losses.append(damaged_unit.unit)
+                else:
+                    enemy_losses.append(damaged_unit.unit)
         return AirLosses(player_losses, enemy_losses)
 
     def dead_ground_units(self) -> GroundLosses:
@@ -425,7 +463,7 @@ class Debriefing:
                 continue
 
         for unit_data in self.state_data.unit_hit_point_updates:
-            damaged_unit = UnitHitPointUpdate.from_json(unit_data, self.unit_map)
+            damaged_unit = TheaterUnitHitPointUpdate.from_json(unit_data, self.unit_map)
             if damaged_unit is None:
                 continue
             if damaged_unit.is_dead():
@@ -436,10 +474,10 @@ class Debriefing:
 
         return losses
 
-    def unit_hit_point_update_events(self) -> List[UnitHitPointUpdate]:
+    def unit_hit_point_update_events(self) -> List[TheaterUnitHitPointUpdate]:
         damaged_units = []
         for unit_data in self.state_data.unit_hit_point_updates:
-            unit = UnitHitPointUpdate.from_json(unit_data, self.unit_map)
+            unit = TheaterUnitHitPointUpdate.from_json(unit_data, self.unit_map)
             if unit is None:
                 continue
             damaged_units.append(unit)
