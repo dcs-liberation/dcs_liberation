@@ -396,6 +396,9 @@ class Debriefing:
             if damaged_unit is None:
                 continue
             if damaged_unit.is_dead():
+                # If unit already killed, nothing to do.
+                if unit_data[ 'name' ] in self.state_data.killed_aircraft:
+                    continue
                 if damaged_unit.is_friendly(to_player=True):
                     player_losses.append(damaged_unit.unit)
                 else:
@@ -477,6 +480,8 @@ class Debriefing:
             if damaged_unit is None:
                 continue
             if damaged_unit.is_dead():
+                if unit_data["name"] in self.state_data.killed_ground_units:
+                    continue
                 if damaged_unit.is_friendly(to_player=True):
                     losses.player_ground_objects.append(damaged_unit.unit)
                 else:
