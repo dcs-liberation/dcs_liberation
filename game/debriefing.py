@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from abc import ABC
 import itertools
 import logging
 from collections import defaultdict
@@ -95,9 +95,30 @@ class BaseCaptureEvent:
 
 
 @dataclass
-class FlyingUnitHitPointUpdate:
-    unit: FlyingUnit
+class UnitHitpointUpdate(ABC):
+    unit: Any
     hit_points: int
+
+    @classmethod
+    def from_json(
+        cls, data: dict[str, Any], unit_map: UnitMap
+    ) -> Optional[UnitHitpointUpdate]:
+        raise NotImplementedError()
+
+    def is_dead(self) -> bool:
+        # Use hit_points > 1 to indicate unit is alive, rather than >=1 (DCS logic) to account for uncontrolled units which often have a
+        # health floor of 1
+        if self.hit_points > 1:
+            return False
+        return True
+
+    def is_friendly(self, to_player: bool) -> bool:
+        raise NotImplementedError()
+
+
+@dataclass
+class FlyingUnitHitPointUpdate(UnitHitpointUpdate):
+    unit: FlyingUnit
 
     @classmethod
     def from_json(
@@ -108,13 +129,6 @@ class FlyingUnitHitPointUpdate:
             return None
         return cls(unit, int(float(data["hit_points"])))
 
-    def is_dead(self) -> bool:
-        # Use hit_points > 1 to indicate unit is alive, rather than >=1 (DCS logic) to account for uncontrolled units which often have a
-        # health floor of 1
-        if self.hit_points > 1:
-            return False
-        return True
-
     def is_friendly(self, to_player: bool) -> bool:
         if to_player:
             return self.unit.flight.departure.captured
@@ -122,9 +136,8 @@ class FlyingUnitHitPointUpdate:
 
 
 @dataclass
-class TheaterUnitHitPointUpdate:
+class TheaterUnitHitPointUpdate(UnitHitpointUpdate):
     unit: TheaterUnitMapping
-    hit_points: int
 
     @classmethod
     def from_json(
@@ -162,17 +175,14 @@ class TheaterUnitHitPointUpdate:
         return cls(unit, new_hit_points)
 
     def is_dead(self) -> bool:
-        # Use hit_points > 1 to indicate unit is alive, rather than >=1 (DCS logic) to account for uncontrolled units which often have a
-        # health floor of 1
-        if self.hit_points > 1:
-            return False
+        # Some TheaterUnits can start with low health of around 1, make sure we don't always kill them off.
         if (
             self.unit.theater_unit.unit_type is not None
             and self.unit.theater_unit.unit_type.hit_points is not None
             and self.unit.theater_unit.unit_type.hit_points <= 1
         ):
             return False
-        return True
+        return super().is_dead()
 
     def is_friendly(self, to_player: bool) -> bool:
         return self.unit.theater_unit.ground_object.is_friendly(to_player)
