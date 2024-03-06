@@ -2,7 +2,7 @@
 
 (Github Readme Banner and Splash screen Artwork by Andriy Dankovych, CC BY-SA 4.0)
 
-[![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange?logo=patreon)](https://patreon.com/khopa)
+[![Patreon](https://img.shields.io/badge/patreon-become%20a%20patron-orange?logo=patreon)](https://patreon.com/dcsliberation)
 
 [![Download](https://img.shields.io/github/downloads/dcs-liberation/dcs_liberation/total?label=Download)](https://github.com/dcs-liberation/dcs_liberation/releases)
 
