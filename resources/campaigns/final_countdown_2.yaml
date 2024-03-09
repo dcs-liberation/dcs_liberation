@@ -2,65 +2,7 @@
 name: Normandy - The Final Countdown II
 theater: Normandy
 authors: Starfire
-recommended_player_faction:
-  country: Combined Joint Task Forces Blue
-  name: D-Day Allied Forces 1944 and 1990
-  authors: Starfire
-  description: <p>Faction for Final Countdown II</p>
-  locales:
-    - en_US
-  aircrafts:
-    - Boston Mk.III
-    - Fortress Mk.III
-    - Mustang Mk.IV (Late)
-    - Spitfire LF Mk IX
-    - Thunderbolt Mk.II (Late)
-    - MosquitoFBMkVI
-    - F-14B Tomcat
-    - F/A-18C Hornet (Lot 20)
-    - S-3B Viking
-    - UH-60L
-    - UH-60A
-  awacs:
-    - E-2C Hawkeye
-  tankers:
-    - S-3B Tanker
-  frontline_units:
-    - A17 Light Tank Mk VII Tetrarch
-    - A22 Infantry Tank MK IV Churchill VII
-    - A27L Cruiser Tank MK VIII Centaur IV
-    - A27M Cruiser Tank MK VIII Cromwell IV
-    - Daimler Armoured Car Mk I
-    - M2A1 Half-Track
-    - QF 40 mm Mark III
-    - Sherman Firefly VC
-    - Sherman III
-  artillery_units:
-    - M12 Gun Motor Carriage
-  logistics_units:
-    - Truck Bedford
-    - Truck GMC "Jimmy" 6x6 Truck
-  infantry_units:
-    - Infantry M1 Garand
-  naval_units:
-    - DDG Arleigh Burke IIa
-    - CG Ticonderoga
-    - CVN-74 John C. Stennis
-  missiles: []
-  air_defense_units:
-    - Bofors 40 mm Gun
-  preset_groups:
-    - Ally Flak
-  requirements:
-    WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/
-  carrier_names:
-    - CVN-71 Theodore Roosevelt
-  has_jtac: true
-  jtac_unit: MQ-9 Reaper
-  unrestricted_satnav: true
-  doctrine: ww2
-  building_set: ww2ally
-  cargo_ship: LST Mk.II
+recommended_player_faction: D-Day Allied Forces 1944 and 1990
 recommended_enemy_faction: Germany 1944
 description:
   <p>While enroute to the Persian Gulf for Operation Desert Shield, the USS

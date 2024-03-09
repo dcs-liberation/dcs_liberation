@@ -53,7 +53,7 @@ squadrons:
         - A-10C Thunderbolt II (Suite 7)
       size: 8
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - AH-64D Apache Longbow
       size: 10
@@ -86,14 +86,15 @@ squadrons:
         - Su-25T Frogfoot
       size: 20
   # Creech
-  Creech FARP:
+  1:
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
+        - Ka-50 Hokum III
         - Ka-50 Hokum (Blackshark 3)
       size: 8
     - primary: Air Assault
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - Mi-24P Hind-F
       size: 4
