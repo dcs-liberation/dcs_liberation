@@ -48,7 +48,7 @@ squadrons:
   #Tarawa Class LHA
   Blue-LHA:
     - primary: DEAD
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - AH-64D Apache Longbow
       size: 12
@@ -72,7 +72,7 @@ squadrons:
   #Akrotiri
   44:
     - primary: BAI
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - AH-1W SuperCobra
       size: 4
@@ -81,8 +81,8 @@ squadrons:
       aircraft:
         - OH-58D Kiowa Warrior
       size: 4
-    - primary: Air Assault
-      secondary: air-to-ground
+    - primary: Transport
+      secondary: any
       aircraft:
         - UH-60A
       size: 4
@@ -95,6 +95,7 @@ squadrons:
   #Ercan
   49:
     - primary: Transport
+      secondary: any
       aircraft:
         - CH-47D
       size: 6
