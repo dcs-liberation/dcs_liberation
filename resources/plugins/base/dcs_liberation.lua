@@ -11,6 +11,7 @@ kill_events = {} -- killed units will be added via S_EVENT_KILL
 base_capture_events = {}
 destroyed_objects_positions = {} -- will be added via S_EVENT_DEAD event
 killed_ground_units = {} -- keep track of static ground object deaths
+unit_hit_point_updates = {} -- stores updates to unit hit points, triggered by S_EVENT_HIT
 mission_ended = false
 
 local function ends_with(str, ending)
@@ -41,6 +42,7 @@ function write_state()
         ["mission_ended"] = mission_ended,
         ["destroyed_objects_positions"] = destroyed_objects_positions,
 		["killed_ground_units"] = killed_ground_units,
+		["unit_hit_point_updates"] = unit_hit_point_updates,
     }
     if not json then
         local message = string.format("Unable to save DCS Liberation state to %s, JSON library is not loaded !", _debriefing_file_location)
@@ -146,6 +148,14 @@ write_state_error_handling = function()
     mist.scheduleFunction(write_state_error_handling, {}, timer.getTime() + WRITESTATE_SCHEDULE_IN_SECONDS)
 end
 
+function update_hit_points(event)
+	local update = {}
+	update.name = event.target:getName()
+	update.hit_points = event.target:getLife()
+	unit_hit_point_updates[#unit_hit_point_updates + 1] = update
+	write_state()
+end 
+
 activeWeapons = {}
 local function onEvent(event)
     if event.id == world.event.S_EVENT_CRASH and event.initiator then
@@ -175,6 +185,15 @@ local function onEvent(event)
         destroyed_objects_positions[#destroyed_objects_positions + 1] = destruction
         write_state()
     end
+	
+	if event.id == world.event.S_EVENT_HIT then
+        target_category = event.target:getCategory()
+		if target_category == Object.Category.UNIT then
+			-- check on the health of the target 1 second after as the life value is sometimes not updated
+			-- at the time of the event
+			timer.scheduleFunction(update_hit_points, event, timer.getTime() + 1)
+		end
+	end
 
     if event.id == world.event.S_EVENT_MISSION_END then
         mission_ended = true

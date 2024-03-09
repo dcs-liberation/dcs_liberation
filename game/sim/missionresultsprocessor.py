@@ -34,6 +34,7 @@ class MissionResultsProcessor:
         self.commit_damaged_runways(debriefing)
         self.commit_captures(debriefing, events)
         self.commit_front_line_battle_impact(debriefing, events)
+        self.commit_unit_damage(debriefing)
         self.record_carcasses(debriefing)
 
     def commit_air_losses(self, debriefing: Debriefing) -> None:
@@ -306,6 +307,14 @@ class MissionResultsProcessor:
                             f"Our ground forces from {cp.name} are losing ground against the enemy forces from "
                             f"{enemy_cp.name}. {status_msg}",
                         )
+
+    @staticmethod
+    def commit_unit_damage(debriefing: Debriefing) -> None:
+        for damaged_unit in debriefing.unit_hit_point_update_events():
+            logging.info(
+                f"{damaged_unit.unit.theater_unit.name} damaged, setting hit points to {damaged_unit.hit_points}"
+            )
+            damaged_unit.commit()
 
     def redeploy_units(self, cp: ControlPoint) -> None:
         """ "
