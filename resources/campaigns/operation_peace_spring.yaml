@@ -80,7 +80,7 @@ squadrons:
         - F-16CM Fighting Falcon (Block 50)
       size: 28
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - AH-64D Apache Longbow
       size: 4
@@ -93,13 +93,13 @@ squadrons:
         - H-6J Badger
       size: 16
     - primary: BAI
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - AH-1W SuperCobra
         - Su-25 Frogfoot
       size: 16
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - OH-58D Kiowa Warrior
         - Mi-24P Hind-F

@@ -10,11 +10,11 @@ local unitPayloads = {
 				},
 				[2] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 				[3] = {
 					["CLSID"] = "{FAS}",
-					["num"] = 5,
+					["num"] = 3,
 				},
 			},
 			["tasks"] = {
@@ -30,11 +30,11 @@ local unitPayloads = {
 				},
 				[2] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 				[3] = {
 					["CLSID"] = "{FAS}",
-					["num"] = 5,
+					["num"] = 3,
 				},
 			},
 			["tasks"] = {
@@ -50,11 +50,11 @@ local unitPayloads = {
 				},
 				[2] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 				[3] = {
 					["CLSID"] = "{FAS}",
-					["num"] = 5,
+					["num"] = 3,
 				},
 			},
 			["tasks"] = {
@@ -70,11 +70,11 @@ local unitPayloads = {
 				},
 				[2] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 				[3] = {
 					["CLSID"] = "{FAS}",
-					["num"] = 5,
+					["num"] = 3,
 				},
 			},
 			["tasks"] = {
@@ -90,11 +90,11 @@ local unitPayloads = {
 				},
 				[2] = {
 					["CLSID"] = "{IR_Deflector}",
-					["num"] = 6,
+					["num"] = 4,
 				},
 				[3] = {
 					["CLSID"] = "{FAS}",
-					["num"] = 5,
+					["num"] = 3,
 				},
 			},
 			["tasks"] = {

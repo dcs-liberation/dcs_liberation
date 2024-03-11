@@ -5,31 +5,18 @@ authors: Starfire
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Russia 2010
 description:
-  <p>United Nations Observer Mission in Georgia (UNOMIG) observers stationed in
-  Georgia to monitor the ceasefire between Georgia and Abkhazia have been cut
-  off from friendly forces by Russian troops backing the separatist state. The
-  UNOMIG HQ at Sukhumi has been taken, and a small contingent of observers and
-  troops at the Zugdidi Sector HQ will have to make a run for the coast,
-  supported by offshore US naval aircraft. The contingent is aware that their
-  best shot at survival is to swiftly retake Sukhumi before Russian forces have
-  a chance to dig in, so that friendly ground forces can land and reinforce
-  them.</p><p><strong>Note:</strong> Ground unit purchase will not be available
-  past Turn 0 until Sukhumi is retaken, so it is imperative you reach Sukhumi
-  with at least one surviving ground unit to capture it. Two Hueys are available
-  at Zugdidi for some close air support. The player can either play the first
-  leg of the scenario as an evacuation with a couple of light vehicles (e.g.
-  Humvees) set on breakthrough (modifying waypoints in the mission editor so
-  they are not charging head-on into enemy ground forces is suggested), or
-  purchase heavier ground units if they wish to experience a more traditional
-  frontline ground war. Once Sukhumi has been captured, squadrons based in
-  Incirlik Turkey can be ferried in via the "From Incirlik" off-map spawn
-  point.</p>
+  <p><strong>Background</strong>  - The United Nations Observer Mission in Georgia (UNOMIG) has been actively monitoring the ceasefire agreement between Georgia and its breakaway region of Abkhazia. Recent developments have escalated tensions in the area, leading to a precarious situation for UN observers and affiliated personnel.
+  </p><p><strong>Current Situation</strong>  - UNOMIG observers, along with a contingent of international troops, have found themselves isolated due to the intervention of Russian forces supporting the separatist ambitions of Abkhazia. The UNOMIG headquarters located in Sukhumi has fallen into enemy hands. A smaller group based at the Zugdidi Sector Headquarters now faces the daunting task of navigating to safety with the aid of offshore naval air support.
+  </p><p><strong>Objective</strong>  - The immediate goal is to orchestrate a strategic withdrawal of UN forces to the coastline, leveraging support from US naval aircraft positioned offshore. The critical mission objective is the rapid recapture of Sukhumi. This action is essential to enable the landing of friendly ground forces and the ferrying in of land-based sqwuadrons from Incirlik.
+  </p><p><strong>Operational Constraints</strong>  - It is crucial to note that reinforcement of ground units will not be possible until Sukhumi is successfully recaptured. This recapture can either be performed using existing UN personnel and ground vehicles, or via heliborne assault troop insertion.
+  </p><p><strong>Assets & Support</strong>  - Available assets include two Huey helicopters for close air support. Commanders may opt to initiate the operation with light vehicles, such as Humvees, employing breakthrough tactics to avoid direct confrontations with enemy forces. Alternatively, the use of heavier ground units is an option for commanders seeking a more conventional combat engagement. Upon the recapture of Sukhumi, additional squadrons from Incirlik, Turkey, will become operational.
+  </p><p><strong>Secondary Objective</strong>  - Consider prioritising the capture of the Batumi airfield, located to the south, for its strategic value as a forward operating base. Commanders should be aware of the inherent risks, as the airfield is relatively small and lacks air defence systems, posing a significant threat to any stationed aircraft.</p>
 miz: operation_vectrons_claw.miz
 performance: 1
 recommended_start_date: 2008-08-08
 version: "11.0"
 control_points:
-  From Incirlik:
+  Squadrons from Incirlik:
     ferry_only: true
 squadrons:
   Blue CV-1:
@@ -68,17 +55,17 @@ squadrons:
       aircraft:
         - AV-8B Harrier II Night Attack
       size: 20
-  From Incirlik:
+  Squadrons from Incirlik:
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - AH-64D Apache Longbow
-      size: 8
+      size: 4
     - primary: CAS
       secondary: air-to-ground
       aircraft:
         - A-10C Thunderbolt II (Suite 7)
-      size: 8
+      size: 6
     - primary: DEAD
       secondary: any
       aircraft:
@@ -93,6 +80,18 @@ squadrons:
       aircraft:
         - KC-135 Stratotanker
       size: 1
+  Bombers from RAF Fairford:
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+      size: 4
+  Bombers from Base Aérea de Morón:
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+      size: 4
   #FARPs
   UNOMIG Sector HQ:
     - primary: Transport
@@ -105,7 +104,7 @@ squadrons:
       secondary: any
       aircraft:
         - Mi-24P Hind-F
-      size: 8
+      size: 4
   #Sukhumi-Babushara
   20:
     - primary: TARCAP
@@ -135,6 +134,13 @@ squadrons:
       aircraft:
         - Su-34 Fullback
       size: 20
+  #Maykop-Khanskaya
+  16:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Tu-22M3 Backfire-C
+      size: 20
   #Anapa-Vityazevo
   12:
     - primary: Strike
@@ -147,9 +153,4 @@ squadrons:
       secondary: any
       aircraft:
         - SU-33 Flanker-D
-      size: 18
-  #I am aware there is no Russian LHA. This is just for campaign inversion.
-  Red LHA:
-    - primary: BAI
-      secondary: air-to-ground
-      size: 20
+      size: 16
