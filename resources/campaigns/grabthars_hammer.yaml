@@ -8,10 +8,10 @@ description:
   <p>An Argentinean extremist group has contracted the Sons of Warvan (SoW), an
   unusually well-equipped PMC with close ties to the Russian government, to
   construct a beryllium bomb at the secret Omega 13 production facility in
-  Ushaia for use in its ongoing conflict with Chile. United States military
+  Ushuaia for use in its ongoing conflict with Chile. United States military
   forces have established a foothold at San Julian. While the SoW are distracted
-  up north, it is up to the Marines to launch an assault upon Ushaia from an LHA
-  in order to disable the bomb production facility. Fortunately, Ushaia is
+  up north, it is up to the Marines to launch an assault upon Ushuaia from an LHA
+  in order to disable the bomb production facility. Fortunately, Ushuaia is
   lightly defended as the SoW are trying to avoid unwanted attention.</p>
 miz: grabthars_hammer.miz
 performance: 2
@@ -35,6 +35,11 @@ squadrons:
       aircraft:
         - F-15C Eagle
       size: 8
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 8
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
@@ -57,7 +62,7 @@ squadrons:
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 20
+      size: 40
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
@@ -142,14 +147,15 @@ squadrons:
   #Ushuaia
   7:
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
+        - Ka-50 Hokum III
         - Ka-50 Hokum (Blackshark 3)
       size: 8
   #Ushuaia Helo Port
   8:
     - primary: Air Assault
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - Mi-24P Hind-F
       size: 8

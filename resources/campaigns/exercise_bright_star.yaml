@@ -3,17 +3,29 @@ name: Sinai - Exercise Bright Star
 theater: Sinai
 authors: Starfire
 recommended_player_faction: Bluefor Modern
-recommended_enemy_faction: Egypt 2000s
+recommended_enemy_faction: Egypt 2000
 description:
-  <p>For over 4 decades, the United States and Egypt have run a series of
-  biannual joint military exercises called Bright Star. Over the years, the
-  number of participating countries has grown substantially. Exercise Bright
-  Star 2025 boasts 8 participant nations and 14 observer nations. The United
-  States and a portion of the exercise coalition will play the part of a
-  fictional hostile nation dubbed Orangeland, staging a mock invasion against
-  Cairo. Israel, having for the first time accepted the invitation to observe,
-  is hosting the aggressor faction of the exercise coalition at its
-  airfields.</p>
+    <p>For over four decades, the United States and Egypt have conducted a series 
+    of biannual joint military exercises known as Bright Star. As the 
+    geopolitical landscape has transformed, so too has the scope and scale of 
+    Exercise Bright Star. The exercise has grown over the years to incorporate 
+    a wide array of international participants. The 2025 iteration of 
+    Exercise Bright Star features eight participating nations alongside 
+    fourteen observer nations.</p><p>
+    For the 2025 exercises, the United States, along with a select contingent 
+    from the exercise coalition, will take on the role of a hypothetical 
+    adversarial nation, dubbed Orangeland. This scenario is designed to 
+    simulate a mock invasion against Cairo, and presents a valuable 
+    opportunity for participating nations to refine their joint operational 
+    capabilities and improve logistical and tactical interoperability</p><p>
+    A historic addition to Exercise Bright Star 2025 is the participation of 
+    Israel as an observer nation. This marks a significant milestone, given 
+    the complex historical relations in the region, and symbolises a step 
+    forward in regional collaboration and military diplomacy. Israel's role, 
+    hosting the aggressor faction of the exercise coalition at its airfields, 
+    not only demonstrates the broadening scope of the exercise but also highlights 
+    the value of fostering an environment of mutual cooperation and shared 
+    security objectives.</p>
 miz: exercise_bright_star.miz
 performance: 1
 recommended_start_date: 2025-09-01
@@ -46,6 +58,11 @@ squadrons:
       size: 8
   # Hatzerim (141)
   7:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+      size: 6
     - primary: Escort
       secondary: any
       aircraft:
@@ -78,6 +95,11 @@ squadrons:
       aircraft:
         - CH-47D
       size: 20
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 8
     - primary: Air Assault
       secondary: any
       aircraft:
@@ -85,25 +107,22 @@ squadrons:
         - UH-60A
       size: 4
   # Nevatim (106)
-  8:
-    - primary: AEW&C
-      aircraft:
-        - E-3A
-      size: 2
-    - primary: Refueling
-      aircraft:
-        - KC-135 Stratotanker
-      size: 2
-    - primary: CAS
-      secondary: air-to-ground
-      aircraft:
-        - A-10C Thunderbolt II (Suite 7)
-      size: 8
+# Nevatim temporarilly disabled because airfield is borked
+#  8:
+#    - primary: AEW&C
+#      aircraft:
+#        - E-3A
+#      size: 2
+#    - primary: Refueling
+#      aircraft:
+#        - KC-135 Stratotanker
+#      size: 2
   # Melez (30)
   5:
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
+        - Ka-50 Hokum III
         - Ka-50 Hokum (Blackshark 3)
       size: 4
     - primary: BAI

@@ -35,6 +35,8 @@ class TheaterUnit:
     position: PointWithHeading
     # The parent ground object
     ground_object: TheaterGroundObject
+    # Number of hit points the unit has
+    hit_points: Optional[int] = None
     # State of the unit, dead or alive
     alive: bool = True
 
@@ -42,13 +44,17 @@ class TheaterUnit:
     def from_template(
         id: int, dcs_type: Type[DcsUnitType], t: LayoutUnit, go: TheaterGroundObject
     ) -> TheaterUnit:
-        return TheaterUnit(
+        unit = TheaterUnit(
             id,
             t.name,
             dcs_type,
             PointWithHeading.from_point(t.position, Heading.from_degrees(t.heading)),
             go,
         )
+        # if the TheaterUnit represents a GroundUnitType or ShipUnitType, initialize health to full hit points
+        if unit.unit_type is not None:
+            unit.hit_points = unit.unit_type.hit_points
+        return unit
 
     @property
     def unit_type(self) -> Optional[UnitType[Any]]:
@@ -70,14 +76,12 @@ class TheaterUnit:
 
     @property
     def display_name(self) -> str:
-        dead_label = " [DEAD]" if not self.alive else ""
         unit_label = self.unit_type or self.type.name or self.name
-        return f"{str(self.id).zfill(4)} | {unit_label}{dead_label}"
+        return f"{str(self.id).zfill(4)} | {unit_label}{self._status_label()}"
 
     @property
     def short_name(self) -> str:
-        dead_label = " [DEAD]" if not self.alive else ""
-        return f"<b>{self.type.id[0:18]}</b> {dead_label}"
+        return f"<b>{self.type.id[0:18]}</b> {self._status_label()}"
 
     @property
     def is_static(self) -> bool:
@@ -116,6 +120,18 @@ class TheaterUnit:
     def threat_range(self) -> Distance:
         unit_range = getattr(self.type, "threat_range", None)
         return meters(unit_range if unit_range is not None and self.alive else 0)
+
+    def _status_label(self) -> str:
+        if not self.alive:
+            return " [DEAD]"
+        if self.unit_type is None:
+            return ""
+        if self.hit_points is None:
+            return ""
+        if self.unit_type.hit_points == self.hit_points:
+            return ""
+        damage_percentage = 100 - int(100 * self.hit_points / self.unit_type.hit_points)
+        return f" [DAMAGED {damage_percentage}%]"
 
 
 class SceneryUnit(TheaterUnit):

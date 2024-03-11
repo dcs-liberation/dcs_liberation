@@ -100,7 +100,7 @@ squadrons:
   #Qeshm Island (12)
   13:
     - primary: Air Assault
-      secondary: air-to-ground
+      secondary: any
       aircraft:
         - Mi-24P Hind-F
       size: 12
