@@ -884,7 +884,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modSettingsGroup.setLayout(modLayout)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("F/A-18E/F/G Super Hornet (version 2.2.5)"),
+            QtWidgets.QLabel("fa18efg"),
             modLayout_row,
             0,
         )
