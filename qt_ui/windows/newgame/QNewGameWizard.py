@@ -881,7 +881,6 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("High Digit SAMs"), modLayout_row, 0)
         modLayout.addWidget(high_digit_sams, modLayout_row, 1)
-        modSettingsGroup.setLayout(modLayout)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("fa18efg"), modLayout_row, 0)
         modLayout.addWidget(fa18efg, modLayout_row, 1)
