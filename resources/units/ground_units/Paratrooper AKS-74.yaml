@@ -1,6 +1,0 @@
-class: Infantry
-price: 0
-spawn_weight: 5
-variants:
-  Paratrooper AKS: null
-hit_points: 1

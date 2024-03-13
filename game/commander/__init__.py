@@ -1,1 +1,0 @@
-from .theatercommander import TheaterCommander

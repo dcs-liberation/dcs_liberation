@@ -1,5 +1,0 @@
-class: Missile
-price: 0
-variants:
-  SSM SS-1C Scud-B: null
-hit_points: 4
