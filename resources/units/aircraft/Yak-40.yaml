@@ -1,7 +1,0 @@
-price: 25
-max_range: 600
-variants:
-  Yak-40: null
-tasks:
-  Transport: 100
-hit_points: 45

@@ -1,1 +1,0 @@
-from .waypointgenerator import WaypointGenerator
