@@ -75,3 +75,4 @@ weapon_injections: # AGM-154B only works for AI
   8:
     - "{AGM-154B}"
     - "{BRU57_2*AGM-154B}"
+hit_points: 20

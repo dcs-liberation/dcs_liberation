@@ -39,3 +39,4 @@ utc_kneeboard: true
 tasks:
   DEAD: 500
   SEAD: 600
+hit_points: 20
