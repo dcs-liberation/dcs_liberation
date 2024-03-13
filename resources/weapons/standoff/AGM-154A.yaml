@@ -1,0 +1,5 @@
+name: AGM-154A JSOW
+year: 1998
+fallback: AGM-65G
+clsids:
+  - "{AGM-154A}"

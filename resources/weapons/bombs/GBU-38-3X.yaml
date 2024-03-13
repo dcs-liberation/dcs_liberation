@@ -1,0 +1,5 @@
+name: 3xGBU-38
+year: 2002
+fallback: 3xGBU-12
+clsids:
+  - "{BRU-42_3*GBU-38}"

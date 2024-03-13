@@ -1,0 +1,16 @@
+name: Naval Two Ship
+generic: true
+tasks:
+  - Navy
+groups:
+  - Naval Two Ship:
+    - name: Naval Two Ship
+      unit_count:
+        - 2
+      unit_classes:
+        - Frigate
+        - Destroyer
+        - Cruiser
+        - Boat
+        - Submarine
+        - LandingShip

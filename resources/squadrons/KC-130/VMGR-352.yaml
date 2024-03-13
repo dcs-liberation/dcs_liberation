@@ -1,0 +1,9 @@
+---
+name: VMGR-352
+nickname: Raiders
+female_pilot_percentage: 6
+country: USA
+role: Air-to-Air Refueling
+aircraft: KC-130
+mission_types:
+  - Refueling

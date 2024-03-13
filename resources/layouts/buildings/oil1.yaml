@@ -1,0 +1,18 @@
+name: oil1
+generic: true
+tasks:
+  - OffShoreStrikeTarget
+  - Oil
+groups:
+  - Oil:
+    - name: oil1 0
+      statics:
+        - oil1 0-0
+        - oil1 0-1
+        - oil1 0-2
+        - oil1 0-3
+      unit_count:
+        - 4
+      unit_types:
+        - Oil platform
+layout_file: resources/layouts/buildings/buildings.miz

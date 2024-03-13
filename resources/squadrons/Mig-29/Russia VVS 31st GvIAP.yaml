@@ -1,0 +1,15 @@
+---
+name: 31st Guards Aviation Regiment
+nickname: 31st GvIAP
+female_pilot_percentage: 0
+country: Russia
+role: Air Superiority Fighter
+aircraft: MiG-29S Fulcrum-C
+livery: "31 GvIAP_Zernograd"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

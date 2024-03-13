@@ -1,0 +1,387 @@
+---
+name: Persian Gulf - Scenic Route Merged
+theater: Persian Gulf
+authors: Fuzzle, merged by tmz42
+description: <p>A merge of the two Scenic Route campaigns. <p><strong>Backstory:</strong> Iran has declared war on all US forces in the Gulf resulting in all local allies withdrawing their support for American troops. A carrier group, aided by USAF units stationed on the south bank must pacify Iran's coastal defences and push inland. Iran has assembled the full might of its air and ground divisions to defend their heartland.</p>
+version: "11.0"
+advanced_iads: true
+recommended_player_faction: USA 2005
+recommended_enemy_faction: Iran 2015
+miz: scenic_merge.miz
+performance: 3
+recommended_start_date: 2005-06-29
+recommended_player_money: 2000
+recommended_enemy_money: 1000
+recommended_player_income_multiplier: 1.5
+recommended_enemy_income_multiplier: 0.7
+squadrons:
+  #BLUFOR CVN
+  Naval-3:
+    # Pukin' Dogs F-14
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - VF-143
+      size: 14
+    # Golden Dragons F/A-18
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - VFA-192
+      size: 12
+    # Thunderbolts F/A-18C
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - VMFA-251
+      size: 12
+    # Hawkeye
+    - primary: AEW&C
+      aircraft:
+        - VAW-125
+      size: 2
+    # S-3 Tankers
+    - primary: Refueling
+      aircraft:
+        - VS-35 (Tanker)
+      size: 4
+  # BLUFOR LHA
+  Naval-4:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - VMA-223
+      size: 12
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+      size: 8
+  # Al-Dhafra AFB
+  4:        
+    #USAF F-16C Gamblers
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - 77th FS
+      size: 12
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer 
+      size: 6
+    - primary: Refueling
+      size: 2
+      aircraft:
+        - 18th Air Refueling Squadron
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - HMLA-169 (UH-1H)
+      size: 4
+    - primary: AEW&C
+      aircraft:
+        - E-3
+      size: 2
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+      - 493rd FS
+      #USAF F-15C 
+  # Al-Minhab AFB
+  12:
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - 101st Combat Aviation Brigade
+        #US Army UH-60
+      size: 6
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - 480th FS
+        #USAF F-16C 
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - F-15E Strike Eagle (Suite 4+)
+        # Strike Eagle (Chiefs?)
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+      - A-10C Thunderbolt II (Suite 7)
+      #USAF A-10CII
+    - primary: Transport
+      aircraft:
+        - C-130
+      size: 8
+  # Kish Intl
+  24:
+    - primary: AEW&C
+      aircraft:
+        - A-50
+      size: 1
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14A Tomcat (Block 135-GR Late)
+      size: 12
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24MK Fencer-D
+      size: 12
+  # Havadarya
+  9:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+      - F-4E Phantom II
+      size: 6
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+      - Su-25 Frogfoot
+      size: 6
+  # Bandar Abbas Intl
+  2:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - F-5E Tiger II
+      size: 6
+    - primary: BARCAP
+      secondary: air-to-ground
+      aircraft:
+        - MiG-29A Fulcrum-A
+      size: 6
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24MK
+      size: 6
+  # OPFOR First FOB
+  FOB Seerik:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-E
+      size: 2
+  # OPFOR Second FOB
+  FOB Kohnehshahr:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-F
+      size: 2
+  # OPFOR Third FOB
+  FOB Khvosh:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+      size: 2
+  # OPFOR Last FOB
+  FOB Charak:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+      size: 2
+  # BLUFOR Start FOB
+  FOB Anguran:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-F
+      size: 2
+  # OPFOR L1F1
+  FOB Tang-e Dalan:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L1F2
+  FOB Fars Border:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L1F2 split
+  FOB Bikuyeh:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+      size: 2
+  # Lar 
+  11:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-21bis Fishbed-N
+      size: 4
+  # OPFOR L2F1
+  FOB Mansurabad:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L2F2
+  FOB Jahrom:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L2F3
+  FOB Tower:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L2F3 split
+  FOB Nouderan:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+      size: 2
+  # Shiraz Intl
+  19:
+    - primary: AEW&C
+      aircraft:
+        - A-50
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+      size: 2
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29A Fulcrum-A
+      size: 12
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-22M4 Fitter-K
+      size: 6
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 4
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-25T Frogfoot
+      size: 6
+  # OPFOR L3F1
+  FOB Kherameh:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F2
+  FOB Tashk:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F3
+  FOB Chahak:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F4
+  FOB Plainhold:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F4 split
+  FOB Robat:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F5
+  FOB Plainguard:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F6
+  FOB Hasanabad:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F6 split
+  FOB Najafabad:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-28N Havoc
+      size: 2
+  # OPFOR L3F7
+  FOB Kabutarkhan:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # OPFOR L3F8
+  FOB Sa'di:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2
+  # Kerman
+  18:
+    - primary: AEW&C
+      aircraft:
+        - A-50
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+      size: 2
+    - primary: Transport
+      aircraft:
+        - IL-78MD
+      size: 2
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14A Tomcat (Block 135-GR Late)
+      size: 12
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29A Fulcrum-A
+      size: 12
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-24MK Fencer-D
+      size: 6
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 2

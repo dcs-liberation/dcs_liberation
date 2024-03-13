@@ -1,0 +1,15 @@
+name: Freya
+tasks:
+  - SHORAD
+units:
+  - EWR FuMG-401 Freya LZ
+  - 2 cm Flakvierling 38
+  - 8.8 cm Flak 18
+  - LUV Kubelwagen 82
+  - Sd.Kfz.7 Tractor
+  - LUV Kettenrad
+  - PU Maschinensatz_33
+  - AAA SP Kdo.G.40
+  - Infantry Mauser 98
+layouts:
+  - Freya EWR Site

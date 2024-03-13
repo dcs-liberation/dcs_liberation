@@ -1,0 +1,25 @@
+---
+name: VMA-211
+nickname: Avengers
+female_pilot_percentage: 0
+country: USA
+role: Carrier-based Attack/Light Fighter
+aircraft: A-4E Skyhawk
+bases:
+  carrier: true
+  shore: true
+livery: USMC VMA-211 Avengers
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
+# http://skyhawk.org/article-unit/vma211

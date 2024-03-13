@@ -1,0 +1,5 @@
+name: AGM-86C
+year: 1988
+fallback: 27xMk 82
+clsids:
+  - "{AGM_86C}"

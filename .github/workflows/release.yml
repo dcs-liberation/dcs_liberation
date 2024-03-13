@@ -1,0 +1,84 @@
+name: Release Pipeline
+
+on:
+  push:
+    tags: ["*"]
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Set up Python environment
+        uses: ./.github/actions/setup-liberation-python
+
+      - name: Set up JS environment
+        uses: ./.github/actions/setup-liberation-js
+
+      - name: Finalize build
+        run: |
+          New-Item -ItemType file resources\final
+
+      - name: Build app
+        uses: ./.github/actions/build-app
+        with:
+          release: true
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: dcs_liberation
+          path: dist/
+
+  release:
+    needs: [build]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: dcs_liberation
+
+      - name: "Get Version"
+        id: version
+        env:
+          TAG_NAME: ${{ github.ref }}
+        run: |
+          Get-ChildItem -Recurse -Depth 1
+          $version = ($env:TAG_NAME -split "/") | Select-Object -Last 1
+          $prerelease = ("2.1.1-alpha3" -match '[^\.\d]').ToString().ToLower()
+          Write-Host $version
+          Write-Host $prerelease
+          Write-Output "::set-output name=number::$version"
+          Write-Output "::set-output name=prerelease::$prerelease"
+          $changelog = Get-Content .\changelog.md
+          $last_change = ($changelog | Select-String -Pattern "^#\s" | Select-Object -Skip 1 -First 1).LineNumber - 2
+          ($changelog | Select-Object -First $last_change) -join "`n" | Out-File .\releasenotes.md
+          Compress-Archive -Path .\dcs_liberation -DestinationPath "dcs_liberation.$version.zip" -Compression Optimal
+
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body_path: releasenotes.md
+          draft: false
+          prerelease: ${{ steps.version.outputs.prerelease }}
+
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dcs_liberation.${{ steps.version.outputs.number }}.zip
+          asset_name: dcs_liberation.${{ steps.version.outputs.number }}.zip
+          asset_content_type: application/zip

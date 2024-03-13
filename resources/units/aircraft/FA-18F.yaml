@@ -1,0 +1,77 @@
+carrier_capable: true
+description:
+  "The F/A-18F Super Hornet is a tandem-seat, twin engine, carrier-capable, multirole
+  fighter aircraft. The Super Hornets are larger and more advanced derivatives of the
+  McDonnell Douglas F/A-18C and D Hornets, also known as legacy Hornets.
+
+
+  The Super Hornet is equipped with a large suite of sensors that includes a radar, targeting
+  pod, and a helmet mounted sight. In addition to its internal 20mm cannon, the Super Hornet
+  can be armed with a large assortment of unguided bombs and rockets, laser and GPS-guided
+  bombs, air-to-surface missiles of all sorts, and both radar and infrared-guided
+  air-to-air missiles.
+
+
+  The Super Hornet is also known for its extreme, slow-speed maneuverability in a dogfight.
+  Although incredibly deadly, the Super Hornet is also a very easy aircraft to fly."
+introduced: 2006
+manufacturer: Boeing
+origin: USA
+price: 25
+role: Carrier-based Multirole Fighter
+fuel:
+  # Parking A1 to RWY 32 at Akrotiri.
+  taxi: 170
+  # AB takeoff to 350/0.85, reduce to MIL and maintain 350 to 25k ft.
+  climb_ppm: 44.25
+  # 0.85 mach for 100NM.
+  cruise_ppm: 22.1
+  # ~0.9 mach for 100NM. Occasional AB use.
+  combat_ppm: 27.5
+  min_safe: 2000
+variants:
+  F/A-18F Super Hornet: {}
+radios:
+  intra_flight: AN/ARC-210
+  inter_flight: AN/ARC-210
+  channels:
+    type: common
+    # DCS will clobber channel 1 of the first radio compatible with the flight's
+    # assigned frequency. Since the F/A-18's two radios are both AN/ARC-210s,
+    # radio 1 will be compatible regardless of which frequency is assigned, so
+    # we must use radio 1 for the intra-flight radio.
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 2
+utc_kneeboard: true
+# default_overrides:
+#   HelmetMountedDevice: 1
+#   InnerBoard: 0
+#   OuterBoard: 0
+tasks:
+  Anti-ship: 150
+  BAI: 740
+  BARCAP: 450
+  CAS: 740
+  DEAD: 440
+  Escort: 450
+  Fighter sweep: 450
+  Intercept: 450
+  OCA/Aircraft: 740
+  OCA/Runway: 600
+  SEAD: 430
+  SEAD Escort: 430
+  Strike: 600
+  TARCAP: 450
+weapon_injections: # AGM-154B only works for AI
+  2:
+    - "{AGM-154B}"
+    - "{BRU57_2*AGM-154B}"
+  3:
+    - "{AGM-154B}"
+    - "{BRU57_2*AGM-154B}"
+  7:
+    - "{AGM-154B}"
+    - "{BRU57_2*AGM-154B}"
+  8:
+    - "{AGM-154B}"
+    - "{BRU57_2*AGM-154B}"

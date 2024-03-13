@@ -1,0 +1,40 @@
+---
+country: Argentina
+name: Argentina 1982
+authors: Nosaj
+description: <p>Starter Argentina faction during falklands war for testing the ARA Veinticinco de Mayo. Using the Castle Class as a stand-in for the rest of the Argentine Navy. </p>
+locales:
+  - es_ES
+aircrafts:
+  - A-4E Skyhawk
+  - C-130
+  - C-130J-30 Super Hercules
+  - CH-47D
+  - MB-339A
+  - UH-1H Iroquois
+awacs: []
+tankers:
+  - KC-130
+frontline_units:
+  - AAVP-7A1 'Amtrac'
+  - Scout LC with DSHK 12.7mm
+  - Scout LC with KORD 12.7mm
+artillery_units:
+  - MLRS LC with B8M1 80mm
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - Mortar 2B11 120mm
+preset_groups:
+  - Roland
+naval_units:
+  - ARA Veinticinco de Mayo
+  - Castle Class
+missiles: []
+air_defense_units:
+  - Bofors 40 mm Gun
+requirements: {}
+carrier_names:
+  - ARA Veinticinco de Mayo

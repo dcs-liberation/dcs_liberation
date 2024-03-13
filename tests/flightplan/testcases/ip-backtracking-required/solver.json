@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "name": "IpSolver",
+    "terrain": "Falklands",
+    "doctrine": "coldwar"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "description": "departure" },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-59.17351849883801, -52.46892777233296]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "description": "target" },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-59.12970828579045, -52.51860490233211]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "description": "threat_zones" },
+      "geometry": { "type": "MultiPolygon", "coordinates": [] }
+    }
+  ]
+}

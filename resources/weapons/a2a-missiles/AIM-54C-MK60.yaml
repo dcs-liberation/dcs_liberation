@@ -1,0 +1,7 @@
+name: AIM-54C-MK60
+year: 1986
+fallback: AIM-54C-MK47
+clsids:
+  - "{SHOULDER AIM_54C_Mk60 R}"
+  - "{SHOULDER AIM_54C_Mk60 L}"
+  - "{AIM_54C_Mk60}"

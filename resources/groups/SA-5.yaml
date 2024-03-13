@@ -1,0 +1,9 @@
+name: SA-5/S-200
+tasks:
+  - LORAD
+units:
+  - SAM SA-5 S-200 ST-68U "Tin Shield" SR
+  - SAM SA-5 S-200 "Square Pair" TR"
+  - SAM SA-5 S-200 "Gammon" LN"
+layouts:
+  - 6 Launcher Site (Circle)

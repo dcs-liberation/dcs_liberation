@@ -1,0 +1,17 @@
+name: Mk 83
+fallback: 2xMk 82
+clsids:
+  - "{MAK79_MK83 1R}"
+  - "{MAK79_MK83 1L}"
+  - "{BRU-32 MK-83}"
+  - "{Mk_83BT}"
+  - "{Mk_83CT}"
+  - "{Mk_83P}"
+  - "{Mk_83PT}"
+  - "{BRU42_MK83 RS}"
+  - "{BRU3242_MK83 RS}"
+  - "{PHXBRU3242_MK83 RS}"
+  - "{7A44FF09-527C-4B7E-B42B-3F111CFE50FB}"
+  - "{BRU42_MK83 LS}"
+  - "{BRU3242_MK83 LS}"
+  - "{PHXBRU3242_MK83 LS}"

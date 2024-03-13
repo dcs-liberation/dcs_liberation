@@ -1,0 +1,6 @@
+name: 2xAGM-65H
+year: 2002
+fallback: AGM-65H
+clsids:
+  - "LAU_88_AGM_65H_2_L"
+  - "LAU_88_AGM_65H_2_R"

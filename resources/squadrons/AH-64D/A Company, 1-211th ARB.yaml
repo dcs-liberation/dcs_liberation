@@ -1,0 +1,12 @@
+---
+name: A Company, 1-211th ARB
+nickname: Air Pirates
+female_pilot_percentage: 10
+country: USA
+role: Attack Helicopter
+aircraft: AH-64D Apache Longbow
+livery: The Air Pirates 1-211th ARB
+mission_types:
+  - CAS
+  - BAI
+  - OCA/Aircraft

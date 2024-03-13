@@ -1,0 +1,5 @@
+name: R-24T
+year: 1981
+fallback: R-24R
+clsids:
+  - "{6980735A-44CC-4BB9-A1B5-591532F1DC69}"

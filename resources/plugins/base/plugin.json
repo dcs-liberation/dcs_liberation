@@ -1,0 +1,21 @@
+{
+    "skipUI": true,
+    "nameInUI": "",
+    "defaultValue": true,
+    "specificOptions": [],
+    "scriptsWorkOrders": [
+        {
+            "file": "mist_4_5_107.lua",
+            "mnemonic": "mist"
+        },
+        {
+            "file": "json.lua",
+            "mnemonic": "json"
+        },
+        {
+            "file": "dcs_liberation.lua",
+            "mnemonic": "liberation"
+        }
+    ],
+    "configurationWorkOrders": []
+}

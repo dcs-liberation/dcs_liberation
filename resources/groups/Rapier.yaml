@@ -1,0 +1,9 @@
+name: Rapier
+tasks:
+  - SHORAD
+units:
+  - SAM Rapier Blindfire TR
+  - SAM Rapier Tracker
+  - SAM Rapier LN
+layouts:
+  - 2 Launcher Site

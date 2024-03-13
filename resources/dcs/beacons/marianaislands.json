@@ -1,0 +1,135 @@
+{
+ "world_0": {
+  "name": "MTMACAJNA",
+  "callsign": "AJA",
+  "beacon_type": 8,
+  "hertz": 385000,
+  "channel": null
+ },
+ "world_1": {
+  "name": "Nimitz",
+  "callsign": "UNZ",
+  "beacon_type": 5,
+  "hertz": 115800000,
+  "channel": 105
+ },
+ "world_2": {
+  "name": "SAIPAN",
+  "callsign": "SN",
+  "beacon_type": 8,
+  "hertz": 312000,
+  "channel": null
+ },
+ "airfield6_0": {
+  "name": "ANDERSEN",
+  "callsign": "UAM",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 54
+ },
+ "airfield6_1": {
+  "name": "",
+  "callsign": "IPMY",
+  "beacon_type": 14,
+  "hertz": 110150000,
+  "channel": null
+ },
+ "airfield6_2": {
+  "name": "",
+  "callsign": "IUAM",
+  "beacon_type": 14,
+  "hertz": 110100000,
+  "channel": null
+ },
+ "airfield6_3": {
+  "name": "",
+  "callsign": "IYIG",
+  "beacon_type": 14,
+  "hertz": 109350000,
+  "channel": null
+ },
+ "airfield6_4": {
+  "name": "",
+  "callsign": "IAND",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield6_5": {
+  "name": "",
+  "callsign": "IUAM",
+  "beacon_type": 13,
+  "hertz": 110100000,
+  "channel": null
+ },
+ "airfield6_6": {
+  "name": "",
+  "callsign": "IAND",
+  "beacon_type": 13,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield6_7": {
+  "name": "",
+  "callsign": "IYIG",
+  "beacon_type": 13,
+  "hertz": 109350000,
+  "channel": null
+ },
+ "airfield6_8": {
+  "name": "",
+  "callsign": "IPMY",
+  "beacon_type": 13,
+  "hertz": 110150000,
+  "channel": null
+ },
+ "airfield4_0": {
+  "name": "",
+  "callsign": "IGUM",
+  "beacon_type": 13,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield4_1": {
+  "name": "",
+  "callsign": "PGUM",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield4_2": {
+  "name": "",
+  "callsign": "IAWD",
+  "beacon_type": 13,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield4_3": {
+  "name": "",
+  "callsign": "PGUM",
+  "beacon_type": 14,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield1_0": {
+  "name": "ROTA",
+  "callsign": "GRO",
+  "beacon_type": 8,
+  "hertz": 332000,
+  "channel": null
+ },
+ "airfield2_0": {
+  "name": "",
+  "callsign": "IGSN",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield2_1": {
+  "name": "",
+  "callsign": "PGSN",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ }
+}

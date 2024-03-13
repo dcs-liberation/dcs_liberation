@@ -1,0 +1,15 @@
+---
+name: 699th Squadron
+nickname: 699th
+female_pilot_percentage: 0
+country: Syria
+role: Air Superiority Fighter
+aircraft: MiG-29S Fulcrum-C
+livery: "ERAF"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

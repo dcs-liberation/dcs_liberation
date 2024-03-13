@@ -1,0 +1,33 @@
+{% if performance == 0 %}
+    <div style="color:#82A466">
+{% elif performance == 1 %}
+    <div style="color:yellow">
+{% elif performance == 2 %}
+    <div style="color:orange">
+{% else %}
+    <div style="color:red">
+{%endif %}
+
+<strong>Impact sur les performances :&nbsp;</strong> {{performance}}/3
+
+{% if performance == 0 %}
+<p>
+Ce scénario est d'une taille limitée et pensé pour obtenir de bonnes performances en jeu.
+</p>
+{% elif performance == 1 %}
+<p>
+Ce scénario nécessite une machine puissante.
+</p>
+{% elif performance == 2 %}
+<p>
+Ce scénario n'est pas pensé pour la performance et requiert une machine très puissante.
+L'usage des paramètres "culling" est recommandé pour la plupart des utilisateurs.
+</p>
+{% elif performance == 3 %}
+<p>
+Ce scénario est gigantesque, et générera des missions DCS d'une grande compléxité contenant des centaines/milliers d'unités.
+Une machine extrêmement puissante est nécessaire, et l'utilisation des paramètres de "culling" sera obligatoire pour des performances décentes.
+</p>
+{%endif %}
+
+</div>

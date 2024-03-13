@@ -1,0 +1,54 @@
+---
+country: Turkey
+name: Turkey 2005
+authors: Khopa
+description: <p>Turkish army in the mid/late 2000s.</p>
+locales:
+  - tr_TR
+aircrafts:
+  - AH-1W SuperCobra
+  - C-130
+  - CH-47D
+  - F-16CM Fighting Falcon (Block 50)
+  - F-4E Phantom II
+  - OH-58D Kiowa Warrior
+  - UH-1H Iroquois
+  - UH-60A
+  - UH-60L
+awacs:
+  - E-3A
+tankers:
+  - KC-135 Stratotanker
+frontline_units:
+  - BTR-80
+  - Cobra
+  - Leopard 1A3
+  - Leopard 2A4 Trs
+  - M1097 Heavy HMMWV Avenger
+  - M113
+  - M60A3 "Patton"
+artillery_units:
+  - Firtina
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS SA-18 Igla-S "Grouse"
+  - Paratrooper AKS
+missiles: []
+preset_groups:
+  - Hawk
+  - SA-3/S-125
+  - Rapier
+naval_units:
+  - FFG Oliver Hazard Perry
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M1097 Heavy HMMWV Avenger
+  - ZSU-23-4 Shilka
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+unrestricted_satnav: true

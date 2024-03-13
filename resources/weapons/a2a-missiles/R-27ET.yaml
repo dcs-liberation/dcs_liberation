@@ -1,0 +1,5 @@
+name: R-27ET
+year: 1990 # Based on deagal.com may have been earlier 
+fallback: R-27T
+clsids:
+  - "{B79C379A-9E87-4E50-A1EE-7F7E29C2E87A}"

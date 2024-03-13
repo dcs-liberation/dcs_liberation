@@ -1,0 +1,19 @@
+blank_issues_enabled: false
+contact_links:
+  - name: FAQ
+    url: https://discord.gg/PXHA6AXw
+    about: Check to see if your issue is in the FAQ.
+  - name: Manual
+    url: https://github.com/dcs-liberation/dcs_liberation/wiki/
+  - name: Feature blocking DCS AI bugs
+    url: https://github.com/dcs-liberation/dcs_liberation#dcs-bugs
+    about: >
+      A list of known DCS bugs that prevent us from improving AI behavior. Check
+      the list before filing AI bugs here to see if it's something we know about
+      but cannot fix.
+  - name: DCS bugs
+    url: https://forums.eagle.ru/forum/119-dcs-world-27/
+    about: >
+      DCS bugs should be reported against DCS, not here. Occasionally we can add
+      workarounds for DCS bugs. Use the "Bug report" template if you can suggest
+      a workaround.

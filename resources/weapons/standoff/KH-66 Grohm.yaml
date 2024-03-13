@@ -1,0 +1,5 @@
+name: KH-66 Grohm
+year: 1968
+fallback: S-25OFM
+clsids:
+  - "{Kh-66_Grom}"

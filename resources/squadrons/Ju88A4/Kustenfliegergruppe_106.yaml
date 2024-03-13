@@ -1,0 +1,16 @@
+---
+name: Küstenfliegergruppe 106
+nickname: Kü.Fl.Gr.206.
+female_pilot_percentage: 0
+country: Third Reich
+role: Medium Bomber
+aircraft: Ju 88 A-4
+female_pilot_percentage: 0
+mission_types:
+  - Anti-ship
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

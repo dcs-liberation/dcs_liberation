@@ -1,0 +1,8 @@
+name: GBU-16
+type: LGB
+year: 1976
+fallback: Mk 83
+clsids:
+  - "DIS_GBU_16"
+  - "{BRU-32 GBU-16}"
+  - "{0D33DDAE-524F-4A4E-B5B8-621754FE3ADE}"

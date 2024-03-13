@@ -1,0 +1,54 @@
+---
+country: Syria
+name: Syria 1967 (With WW2 Weapons)
+authors: Khopa
+description:
+  <p>Syria and Arab armies in the 1967 6 days war against Israel. Using
+  WW2 units to be more accurate (Yes, Syria used Panzer IV, Stug III and Jagdpanzer
+  IV during this war)</p>
+aircrafts:
+  - Mi-8MTV2 Hip
+  - MiG-15bis Fagot
+  - MiG-19P Farmer-B
+  - MiG-21bis Fishbed-N
+  - Su-17M4 Fitter-K
+awacs:
+  - A-50
+tankers:
+  - IL-78M
+frontline_units:
+  - BRDM-2
+  - Jagdpanzer IV
+  - PT-76
+  - Panzerkampfwagen IV Ausf. H
+  - S-60 57mm
+  - "Sturmgesch\xFCtz III Ausf. G"
+  - T-55A
+  - ZSU-57-2 'Sparka'
+artillery_units:
+  - BM-21 Grad
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry AK-74 Rus
+  - Infantry RPG
+  - Paratrooper AKS
+missiles: []
+preset_groups:
+  - SA-2/S-75
+  - SA-3/S-125
+  - Cold-War-Flak
+naval_units:
+  - Corvette 1124.4 Grish
+air_defense_units:
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - ZSU-57-2 'Sparka'
+  - AAA ZU-23 Closed Emplacement
+  - ZU-23 on Ural-375
+  - ZSU-23-4 Shilka
+helicopter_carrier_names: []
+carrier_names: []
+requirements:
+  WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/
+doctrine: coldwar

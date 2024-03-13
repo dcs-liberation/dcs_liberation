@@ -1,0 +1,34 @@
+name: ww2bunker1
+generic: true
+tasks:
+  - StrikeTarget
+  - WW2Bunker
+groups:
+  - Bunker:
+    - name: ww2bunker1 0
+      statics:
+        - ww2bunker1 0-0
+        - ww2bunker1 0-1
+        - ww2bunker1 0-2
+        - ww2bunker1 0-3
+      unit_count:
+        - 4
+      unit_types:
+        - Siegfried Line
+    - name: ww2bunker1 1
+      statics:
+        - ww2bunker1 1-0
+        - ww2bunker1 1-1
+        - ww2bunker1 1-2
+        - ww2bunker1 1-3
+      unit_count:
+        - 4
+      unit_types:
+        - Fire Control Bunker
+  - Bunker2: # Vehicle and static can not be mixed
+    - name: ww2bunker1 2
+      unit_count:
+        - 4
+      unit_types:
+        - SK_C_28_naval_gun
+layout_file: resources/layouts/buildings/buildingsww2.miz

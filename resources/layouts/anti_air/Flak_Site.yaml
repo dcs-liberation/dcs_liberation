@@ -1,0 +1,50 @@
+name: Flak Site
+tasks:
+  - AAA
+groups:
+  - Flak:
+    - name: Flak Site 0
+      unit_count:
+        - 4
+      unit_types:
+        - flak38
+        - flak18
+        - flak36
+        - flak37
+        - flak41
+        - flak30
+    - name: Flak Site 1
+      unit_count:
+        - 1
+      unit_types:
+        - flak38
+    - name: Flak Site 2
+      unit_count:
+        - 1
+      unit_types:
+        - flak36
+    - name: Flak Site 3
+      unit_count:
+        - 2
+      unit_types:
+        - Flakscheinwerfer_37
+    - name: Flak Site 4
+      unit_count:
+        - 1
+      unit_types:
+        - Maschinensatz_33
+    - name: Flak Site 5
+      unit_count:
+        - 1
+      unit_types:
+        - KDO_Mod40
+    - name: Flak Site 6
+      unit_count:
+        - 1
+      unit_types:
+        - Kubelwagen_82
+    - name: Flak Site 7
+      unit_count:
+        - 4
+      unit_types:
+        - Blitz_36-6700A

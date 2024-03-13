@@ -1,0 +1,5 @@
+class: AAA
+price: 0
+variants:
+  Watch tower armed: null
+hit_points: 10

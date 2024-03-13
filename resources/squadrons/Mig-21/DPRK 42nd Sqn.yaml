@@ -1,0 +1,14 @@
+---
+name: 42nd Squadron
+nickname: 42nd
+country: North Korea
+role: Air Superiority Fighter
+aircraft: MiG-21bis Fishbed-N
+livery: "dprk - 2016 - 42"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

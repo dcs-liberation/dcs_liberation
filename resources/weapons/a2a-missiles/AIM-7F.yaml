@@ -1,0 +1,8 @@
+name: AIM-7F
+year: 1976
+fallback: AIM-7E
+clsids:
+  - "{SHOULDER AIM-7F}"
+  - "{BELLY AIM-7F}"
+  - "{AIM-7F}"
+  - "{LAU-115 - AIM-7F}"

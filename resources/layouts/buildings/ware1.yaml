@@ -1,0 +1,24 @@
+name: ware1
+generic: true
+tasks:
+  - StrikeTarget
+  - Ware
+groups:
+  - Ware:
+    - name: ware1 0
+      statics:
+        - ware1 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - Warehouse
+    - name: ware1 1
+      statics:
+        - ware1 1-0
+        - ware1 1-1
+        - ware1 1-2
+      unit_count:
+        - 3
+      unit_types:
+        - Hangar A
+layout_file: resources/layouts/buildings/buildings.miz

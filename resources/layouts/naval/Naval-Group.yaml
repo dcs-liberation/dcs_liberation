@@ -1,0 +1,22 @@
+name: Naval Group
+tasks:
+  - Navy
+groups:
+  - Naval Group:
+    - name: Naval Group 0
+      unit_count:
+        - 2
+      unit_classes:
+        - Frigate
+    - name: Naval Group 1
+      unit_count:
+        - 2
+      unit_classes:
+        - Destroyer
+    - name: Naval Group 2
+      optional: true
+      unit_count:
+        - 0
+        - 1
+      unit_classes:
+        - Cruiser

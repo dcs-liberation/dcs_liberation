@@ -1,0 +1,11 @@
+/*
+windows basis styles
+*/
+
+/*
+ * Makes all message box text selectable.
+ * https://stackoverflow.com/a/32595502/632035
+ */
+QMessageBox {
+    messagebox-text-interaction-flags: 5;
+}

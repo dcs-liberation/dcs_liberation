@@ -1,0 +1,43 @@
+# To override default logging behavior, copy this file to resources/logging.yaml
+# and make changes. logging.yaml will take precedence over the default config if
+# it exists, but is not tracked by git.
+#
+# See https://gist.github.com/kingspp/9451566a5555fb022215ca2b7b802f19 and
+# https://docs.python.org/3/howto/logging.html for examples.
+version: 1
+formatters:
+  default:
+    format: "%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: default
+    stream: ext://sys.stderr
+  file:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: default
+    filename: logs/liberation.log
+    maxBytes: 5242880
+    backupCount: 1
+    encoding: utf8
+  in_memory:
+    class: qt_ui.logging_handler.HookableInMemoryHandler
+    level: DEBUG
+    formatter: default
+root:
+  level: DEBUG
+  handlers: [console, file, in_memory]
+loggers:
+  uvicorn.access:
+    # uvicorn.access logs every HTTP request and its result. It's useful while
+    # debugging that interface, but otherwise is very noisy, so by default is
+    # only logged to the file. To include this in the console, add console to
+    # the list of handlers, or set propagate to true, which will also log to the
+    # UI's log window.
+    handlers: [file]
+    propagate: false
+  uvicorn.error:
+    level: INFO
+    propagate: true

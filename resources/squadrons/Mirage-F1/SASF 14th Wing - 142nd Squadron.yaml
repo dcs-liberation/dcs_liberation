@@ -1,0 +1,19 @@
+---
+name: 14th Wing, 142nd Squadron
+nickname: Tigres Voladores
+female_pilot_percentage: 3
+country: Spain
+role: Fighter
+aircraft: Mirage-F1CE
+livery: ALA 14 Camu Lagarto 1975-1990 SQ 142
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

@@ -1,0 +1,45 @@
+---
+name: Persian Gulf
+pydcs_name: PersianGulf
+timezone: +4
+daytime:
+  dawn: [6, 8]
+  day: [8, 16]
+  dusk: [16, 18]
+  night: [0, 5]
+climate:
+  day_night_temperature_difference: 2.0
+  seasons:
+    winter:
+      average_pressure: 29.80 # TODO: Find real-world data
+      average_temperature: 15.0
+      weather:
+        thunderstorm: 1
+        raining: 15
+        cloudy: 40
+        clear: 45
+    spring:
+      weather:
+        thunderstorm: 1
+        raining: 2
+        cloudy: 28
+        clear: 70
+    summer:
+      average_pressure: 29.98 # TODO: Find real-world data
+      average_temperature: 32.5
+      weather:
+        thunderstorm: 1
+        raining: 1
+        cloudy: 18
+        clear: 80
+    fall:
+      weather:
+        thunderstorm: 1
+        raining: 2
+        cloudy: 28
+        clear: 70
+  turbulence:
+    high_avg_yearly_turbulence_per_10cm: 9
+    low_avg_yearly_turbulence_per_10cm: 4.5
+    solar_noon_turbulence_per_10cm: 5.5
+    midnight_turbulence_per_10cm: -2

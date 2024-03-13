@@ -1,0 +1,16 @@
+---
+name: 492nd FS
+nickname: Bolars
+female_pilot_percentage: 6
+country: USA
+role: Strike Fighter
+aircraft: F-15E Strike Eagle
+livery: 492d Fighter SQN (LN)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+

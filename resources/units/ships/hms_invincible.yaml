@@ -1,0 +1,5 @@
+class: HelicopterCarrier
+price: 0
+variants:
+  HMS Invincible (R05): null
+hit_points: 7200

@@ -1,0 +1,205 @@
+
+
+/*QWidget {
+    background-color: #4E5760;
+    color:white;
+}
+
+QComboxBox {
+    background-color: #fff;
+    color:white;
+}
+
+QLiberationWindow{
+    background-color: #4E5760;
+    color:white;
+}
+
+QTopPanel,
+QTopPanel *{
+    background-color: #aaa;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}*/
+
+QPushButton[style="btn-success"]{
+    background-color:#699245;
+    color: white;
+    padding: 5px 5px 5px 5px;
+    border-radius:5px;
+}
+
+QPushButton[style="btn-success"]:hover{
+    background-color:#8ABC5A;
+    padding: 5px 5px 5px 5px;
+    border-radius:5px;
+}
+
+QPushButton[style="start-button"]{
+    background-color:#699245;
+    color: white;
+    padding: 5px 5px 5px 5px;
+    border-radius:5px;
+}
+
+QPushButton[style="start-button"]:hover{
+    background-color:#8ABC5A;
+    padding: 15px 15px 15px 15px;
+    border-radius:5px;
+}
+
+/* Buy button */
+QPushButton[style="btn-buy"]{
+    background-color:#82A466;
+    color: white;
+    border-radius:2px;
+    font-weight:bold;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 2px;
+}
+
+QPushButton[style="btn-buy"]:hover{
+    background:#5C863F;
+}
+
+/* Sell button */
+QPushButton[style="btn-sell"]{
+    background-color:#9E3232;
+    color: white;
+    border-radius:2px;
+    font-weight:bold;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 2px;
+}
+
+QPushButton[style="btn-sell"]:hover{
+    background:#D84545;
+}
+
+QPushButton[style="btn-danger"]{
+    background-color:#9E3232;
+    color: white;
+    padding: 5px 5px 5px 5px;
+    border-radius:5px;
+}
+
+QPushButton[style="btn-danger"]:hover{
+    background-color:#D84545;
+    padding: 5px 5px 5px 5px;
+    border-radius:5px;
+}
+
+QLabel[style="base-title"]{
+    font-size: 24px;
+    border: 1px solid #ccc;
+}
+
+QLabel[style="icon-plane"]{
+    background-color:#48719D;
+    min-height:24px;
+    max-width: 84px;
+    border: 1px solid black;
+    text-align:center;
+    color:white;
+}
+
+QLabel[style="icon-armor"]{
+    background-color:#48719D;
+    min-height:24px;
+    max-width: 64px;
+    border: 1px solid black;
+    text-align:center;
+    color:white;
+}
+
+QLabel[style="bordered"]{
+    border: 1px solid black;
+}
+
+QLabel[style="BARCAP"]{
+    border: 1px solid black;
+    background-color: #445299;
+    color:white;
+}
+
+QLabel[style="TARCAP"]{
+    border: 1px solid black;
+    background-color: #445299;
+    color:white;
+}
+
+QLabel[style="CAP"]{
+    border: 1px solid black;
+    background-color: #445299;
+    color:white;
+}
+
+QLabel[style="INTERCEPTION"]{
+    border: 1px solid black;
+    background-color: #7752bc;
+    color:white;
+}
+
+QLabel[style="CAS"]{
+    border: 1px solid black;
+    background-color: #ab2244;
+    color:white;
+}
+
+QLabel[style="BAI"]{
+    border: 1px solid black;
+    background-color: #ab2244;
+    color:white;
+}
+
+QLabel[style="ANTISHIP"]{
+    border: 1px solid black;
+    background-color: #ab2244;
+    color:white;
+}
+
+QLabel[style="STRIKE"]{
+    border: 1px solid black;
+    background-color: #ab2244;
+    color:white;
+}
+
+QLabel[style="DEAD"]{
+    border: 1px solid black;
+    background-color: #cc8844;
+    color:white;
+}
+
+QLabel[style="SEAD"]{
+    border: 1px solid black;
+    background-color: #aa7744;
+    color:white;
+}
+
+/*QBaseMenu{
+    background-color:#699245;
+    color:white;
+}
+
+QWidget[style="baseMenuHeader"]{
+    font-size: 24px;
+    font-weight: bold;
+}*/
+
+QLabel[style="small"]{
+    font-size: 8px;
+}
+
+QCheckBox:disabled {
+    color: #888888;
+}
+QCheckBox::indicator:disabled {
+    background-color: rgba(255, 255, 255, 5%);
+}
+
+QLabel:disabled {
+    color: #888888;
+}

@@ -1,0 +1,114 @@
+DCS Liberation Tour {{ game.turn }}
+====================
+
+La plupart des informations importantes, en particulier votre plan de vol et les fréquences de communications à utiliser, sont disponibles sur votre kneeboard.
+
+Situation actuelle :
+====================
+{% if not frontlines  %}
+Pour le moment, il n'y a pas de combats au sol.
+{% endif %}
+{% if frontlines %}
+{%+ for frontline in frontlines %}
+{% if frontline.player_zero %}
+Nous n'avons pas un seul véhicule disponible pour tenir nos positions. La situation est critique, nous allons inévitablement perdre du terrain sur le front entre {{ frontline.player_base.name }} et {{ frontline.enemy_base.name }}.
+{% endif %}
+{% if frontline.enemy_zero %}
+Les forces ennemies ont été écrasées, nous devrions être capable de progresser rapidement vers {{ frontline.enemy_base.name }}
+{% endif %}
+{% if not frontline.player_zero %}
+{# Pick a random sentence to describe each frontline #}
+{% set fl_sent1 %}Il y a des comabats entre {{ frontline.player_base.name }} et {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent2 %}Au sol, les combats se poursuivent entre {{frontline.player_base.name}} et {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent3 %}Nos forces au sol, basées à {{frontline.player_base.name}} sont opposées aux forces ennemies provenant de {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent4 %}Nos forces de {{frontline.player_base.name}} se battent contre les ennemis basés à {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent5 %}Il y a une ligne de front active entre {{frontline.player_base.name}} et {{frontline.enemy_base.name}}. {%+ endset %}
+{% set frontline_sentences = [fl_sent1, fl_sent2, fl_sent3, fl_sent4, fl_sent5] %}
+{{ frontline_sentences | random }}
+{%- if frontline.advantage %}
+    {%- if frontline.stance == frontline.combat_stances.AGGRESSIVE %}
+Sur ce front, nos forces vont tenter de progresser. Comme l'ennemi est en infériorité numérique, nous sommes confiant sur l'issue du combat.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.ELIMINATION %}
+Sur ce front, nos forces vont se focaliser sur la destruction des ennemis avant de tenter une progression vers {{frontline.enemy_base.name}}.  L'ennemi est déjà en infériorité, cette manoeuvre pourrait porter le coup final."
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.BREAKTHROUGH %}
+Sur ce front, nos forces vont tenter une progression rapide vers {{ frontline.enemy_base.name }}
+    {% endif %}
+    {%- if frontline.stance in [frontline.combat_stances.DEFENSIVE, frontline.combat_stances.AMBUSH] %}
+Sur ce front, nos forces vont garder leurs positions. Nous ne nous attendons pas à un assaut de l'ennemi.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.RETREAT %}
+{# TODO: Write a retreat sentence #}
+    {% endif %}
+{%- else %}
+    {%- if frontline.stance == frontline.combat_stances.AGGRESSIVE %}
+Sur ce front, nos forces au sol vont tenter un assaut audacieux contre un ennemi en surnombre. L'opération est périlleuse, et l'ennemi risque de contre-attaquer.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.ELIMINATION %}
+Sur ce front, nos forces au sol vont tenter une manoeuvre audacieuse pour éliminer des ennemis en surnombre. L'opération est périlleuse, et l'ennemi risque de contre-attaquer.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.BREAKTHROUGH %}
+Sur ce front, nos forces vont se précipiter sur l'objectif {{frontline.enemy_base.name}}, malgré leur infériorité numérique. Souhaitons-leur bonne chance... Nous nous attendons aussi à une contre-attaque.
+    {% endif %}
+    {%- if frontline.stance in [frontline.combat_stances.DEFENSIVE, frontline.combat_stances.AMBUSH] %}
+Sur ce front, nos forces au sol renforcent leurs positions, et se préparent à défendre. Un assaut ennemi serait imminent.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.RETREAT %}
+{# TODO: Write a retreat sentence #}
+    {% endif %}
+{% endif %}
+{% endif %}
+
+{%+ endfor %}{% endif %}
+
+Vols :
+==========
+{% for flight in flights if flight.client_units %}
+--------------------------------------------------
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, départ dans {{ flight.departure_delay }}, {{ flight.package.target.name}}
+Fréq : {{ flight|intra_flight_channel }}
+{% for waypoint in flight.waypoints %}
+{{ loop.index0 }} {{waypoint|waypoint_timing("Départ dans ")}}-- {{waypoint.name}} : {{ waypoint.description}}
+{% endfor %}
+--------------------------------------------------{% endfor %}
+
+
+{%- if allied_flights_by_departure|length > 0 %}
+Vols alliés prévus :
+====================
+{% for dep in allied_flights_by_departure %}
+{{ dep }}
+---------------------------------------------------
+{% for flight in allied_flights_by_departure[dep] %}
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, départ dans {{ flight.departure_delay }}, {{ flight.package.target.name}}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+{%- if dynamic_runways|length > 0 %}
+Porte-avions et FARPS :
+=======================
+{% for runway in dynamic_runways %}
+{{ runway.airfield_name}}
+--------------------------------------------------
+RADIO : {{ runway.atc }}
+TACAN : {{ runway.tacan }} {{ runway.tacan_callsign }}
+{% if runway.icls %}Channel ICLS : {{ runway.icls }}
+{% endif %}
+{% endif %}
+
+{% endfor %}
+{%- if awacs|length > 0 %}
+AWACS:
+====================
+{% for i in awacs %}{{ i.callsign }} -- Fréq : {{i.freq.mhz}}
+{% endfor %}
+{% endif %}
+
+{%- if jtacs|length > 0 %}
+JTACS [Menu F-10] :
+====================
+{% for jtac in jtacs %}Ligne de front {{ jtac.region }} -- Code : {{ jtac.code }}, Fréq : {{ jtac.freq.mhz }}
+{% endfor %}
+{% endif %}

@@ -1,0 +1,10 @@
+---
+name: VAW-125
+nickname: Tigertails
+female_pilot_percentage: 6
+country: USA
+role: AEW&C
+aircraft: E-2C Hawkeye
+livery: VAW-125 Tigertails
+mission_types:
+  - AEW&C

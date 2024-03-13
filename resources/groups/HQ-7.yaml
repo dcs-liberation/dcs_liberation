@@ -1,0 +1,8 @@
+name: HQ-7
+tasks:
+  - SHORAD
+units:
+  - HQ-7 Self-Propelled STR
+  - HQ-7 Launcher
+layouts:
+  - 4 Launcher Site (Semicircle)

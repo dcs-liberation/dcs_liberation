@@ -1,0 +1,22 @@
+---
+name: VA-164
+nickname: Ghostriders
+female_pilot_percentage: 0
+country: USA
+role: Carrier-based Attack/Light Fighter
+aircraft: A-4E Skyhawk
+livery: USN VA-164 Ghostriders
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
+# http://skyhawk.org/article-unit/va164

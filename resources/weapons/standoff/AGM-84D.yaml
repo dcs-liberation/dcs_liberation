@@ -1,0 +1,5 @@
+name: AGM-84D
+year: 1985
+fallback: AGM-84A
+clsids:
+  - "{AGM_84D}"

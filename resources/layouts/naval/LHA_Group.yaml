@@ -1,0 +1,17 @@
+name: LHA Group
+generic: true
+tasks:
+  - HelicopterCarrier
+groups:
+  - LHA:
+    - name: LHA Group 0
+      unit_count:
+        - 1
+      unit_classes:
+        - HelicopterCarrier
+  - Escort:
+    - name: LHA Group 1
+      unit_count:
+        - 2
+      unit_classes:
+        - Destroyer

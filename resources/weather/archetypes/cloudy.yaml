@@ -1,0 +1,14 @@
+---
+id: cloudy
+wind:
+  speed:
+    weibull:
+      at_msl:
+        shape: 1.6
+        scale_kts: 6.5
+      at_2000m:
+        shape: 3.5
+        scale_kts: 22
+      at_8000m:
+        shape: 6.4
+        scale_kts: 18

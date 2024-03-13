@@ -1,0 +1,5 @@
+name: KAB-500Kr
+year: 1975
+fallback: FAB-500 M62
+clsids:
+  - "{E2C426E3-8B10-4E09-B733-9CDC26520F48}"

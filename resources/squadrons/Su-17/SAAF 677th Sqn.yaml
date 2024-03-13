@@ -1,0 +1,16 @@
+---
+name: 677th Squadron
+nickname: 677th
+female_pilot_percentage: 0
+country: Syria
+role: Bomber
+aircraft: Su-17M4 Fitter-K
+livery: "af standard (worn-out)"
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - SEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

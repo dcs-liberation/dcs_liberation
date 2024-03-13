@@ -1,0 +1,16 @@
+---
+name: 190th FS
+nickname: Skull Bangers
+female_pilot_percentage: 0
+country: USA
+role: Close Air Support
+aircraft: A-10C Thunderbolt II (Suite 3)
+livery: 190th FS Boise ANGB, Idaho (ID)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+

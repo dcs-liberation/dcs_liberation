@@ -1,0 +1,5 @@
+name: 2xCBU-103
+year: 2001
+fallback: CBU-103
+clsids:
+  - "{BRU57_2*CBU-103}"

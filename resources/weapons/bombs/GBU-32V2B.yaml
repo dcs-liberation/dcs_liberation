@@ -1,0 +1,5 @@
+name: GBU-32(V)2/B
+year: 2002
+fallback: GBU-16
+clsids:
+  - "{GBU_32_V_2B}"

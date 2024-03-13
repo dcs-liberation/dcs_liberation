@@ -1,0 +1,205 @@
+{
+ "airfield14_0": {
+  "name": "ELCALACAFE",
+  "callsign": "EC",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield14_1": {
+  "name": "ELCALAFATE",
+  "callsign": "ec",
+  "beacon_type": 13,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield14_2": {
+  "name": "ECA",
+  "callsign": "ECA",
+  "beacon_type": 3,
+  "hertz": 114700000,
+  "channel": 94
+ },
+ "airfield2_0": {
+  "name": "MTPLEASANT",
+  "callsign": "imp",
+  "beacon_type": 13,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield2_1": {
+  "name": "MP",
+  "callsign": "MP",
+  "beacon_type": 9,
+  "hertz": 380000,
+  "channel": null
+ },
+ "airfield2_2": {
+  "name": "MPA",
+  "callsign": "MPA",
+  "beacon_type": 4,
+  "hertz": 112200000,
+  "channel": 59
+ },
+ "airfield2_3": {
+  "name": "MTP",
+  "callsign": "MTP",
+  "beacon_type": 1,
+  "hertz": 114700000,
+  "channel": 94
+ },
+ "airfield2_4": {
+  "name": "MTPLEASANT",
+  "callsign": "IMP",
+  "beacon_type": 14,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield1_0": {
+  "name": "stanleyairport",
+  "callsign": "SA",
+  "beacon_type": 9,
+  "hertz": 305000,
+  "channel": null
+ },
+ "airfield1_1": {
+  "name": "DFO",
+  "callsign": "DFO",
+  "beacon_type": 1,
+  "hertz": 113300000,
+  "channel": null
+ },
+ "airfield13_0": {
+  "name": "PUERTO NATALES",
+  "callsign": "PNT",
+  "beacon_type": 3,
+  "hertz": 115900000,
+  "channel": 106
+ },
+ "airfield12_0": {
+  "name": "Puerto Williams",
+  "callsign": "PWL",
+  "beacon_type": 3,
+  "hertz": 114900000,
+  "channel": 96
+ },
+ "airfield9_0": {
+  "name": "ptarenas",
+  "callsign": "inas",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield9_1": {
+  "name": "",
+  "callsign": "INAS",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield9_2": {
+  "name": "NAS",
+  "callsign": "NAS",
+  "beacon_type": 3,
+  "hertz": 114100000,
+  "channel": null
+ },
+ "airfield9_3": {
+  "name": "NAS",
+  "callsign": "NAS",
+  "beacon_type": 8,
+  "hertz": 270000,
+  "channel": null
+ },
+ "airfield5_0": {
+  "name": "GAL",
+  "callsign": "GAL",
+  "beacon_type": 3,
+  "hertz": 116700000,
+  "channel": 114
+ },
+ "airfield5_1": {
+  "name": "RIOGALLEGOS",
+  "callsign": "gl",
+  "beacon_type": 13,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield5_2": {
+  "name": "RIOGALLEGOS",
+  "callsign": "gl",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield6_0": {
+  "name": "RIOGRANDE",
+  "callsign": "gr",
+  "beacon_type": 13,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield6_1": {
+  "name": "GRA",
+  "callsign": "GRA",
+  "beacon_type": 3,
+  "hertz": 117300000,
+  "channel": 120
+ },
+ "airfield6_2": {
+  "name": "RIOGRANDE",
+  "callsign": "gr",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield6_3": {
+  "name": "riograndendb",
+  "callsign": "P",
+  "beacon_type": 9,
+  "hertz": 265000,
+  "channel": null
+ },
+ "airfield6_4": {
+  "name": "riogrande",
+  "callsign": "gra",
+  "beacon_type": 4,
+  "hertz": 1000000,
+  "channel": 31
+ },
+ "airfield20_0": {
+  "name": "BIO",
+  "callsign": "BIO",
+  "beacon_type": 9,
+  "hertz": 205000000,
+  "channel": null
+ },
+ "airfield11_0": {
+  "name": "San Julian",
+  "callsign": "",
+  "beacon_type": 3,
+  "hertz": 117700000,
+  "channel": null
+ },
+ "airfield7_0": {
+  "name": "RIOGRANDE",
+  "callsign": "us",
+  "beacon_type": 13,
+  "hertz": 111300000,
+  "channel": null
+ },
+ "airfield7_1": {
+  "name": "Ushuaia",
+  "callsign": "us",
+  "beacon_type": 14,
+  "hertz": 111300000,
+  "channel": null
+ },
+ "airfield7_2": {
+  "name": "USU",
+  "callsign": "USU",
+  "beacon_type": 1,
+  "hertz": 113700000,
+  "channel": 84
+ }
+}

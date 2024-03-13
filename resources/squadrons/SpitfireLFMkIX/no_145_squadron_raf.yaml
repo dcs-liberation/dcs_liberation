@@ -1,0 +1,16 @@
+---
+name: RAF, No. 145 Squadron
+nickname: No. 145
+female_pilot_percentage: 0
+country: UK
+role: Fighter
+aircraft: Spitfire LF Mk IX
+livery: RAF, No. 145 Squadron
+mission_types:
+  - CAS
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - Fighter sweep
+  - BARCAP
+  - TARCAP

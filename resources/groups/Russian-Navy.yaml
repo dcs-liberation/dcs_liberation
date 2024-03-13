@@ -1,0 +1,11 @@
+name: Russian Navy
+tasks:
+  - Navy
+units:
+  - Corvette 1124.4 Grish
+  - Corvette 1241.1 Molniya
+  - Frigate 11540 Neustrashimy
+  - Frigate 1135M Rezky
+  - Cruiser 1164 Moskva
+layouts:
+  - Naval Group

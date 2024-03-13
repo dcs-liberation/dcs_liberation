@@ -1,0 +1,33 @@
+{% if performance == 0 %}
+    <div style="color:#82A466">
+{% elif performance == 1 %}
+    <div style="color:yellow">
+{% elif performance == 2 %}
+    <div style="color:orange">
+{% else %}
+    <div style="color:red">
+{%endif %}
+
+<strong>Performance impact :&nbsp;</strong> {{performance}}/3
+
+{% if performance == 0 %}
+<p>
+This scenario is rather performance friendly.
+</p>
+{% elif performance == 1 %}
+<p>
+This scenario requires a very good computer to run.
+</p>
+{% elif performance == 2 %}
+<p>
+This scenario is not performance friendly. The usage of the culling settings is recommended for most users.
+</p>
+{% elif performance == 3 %}
+<p>
+This theater is huge, and will generate very complex DCS missions with hundreds of units, pushing the limits of DCS engine.
+An insanely powerful computer will be necessary to run it.
+Usage of culling settings will probably be mandatory for decent FPS.
+</p>
+{%endif %}
+
+</div>

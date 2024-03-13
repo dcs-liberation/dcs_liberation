@@ -1,0 +1,41 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Set up Python environment
+        uses: ./.github/actions/setup-liberation-python
+
+      - name: Set up JS environment
+        uses: ./.github/actions/setup-liberation-js
+
+      - name: Set build number
+        run: |
+          [IO.File]::WriteAllLines($pwd.path + "\resources\buildnumber", $env:GITHUB_RUN_NUMBER)
+          [IO.File]::WriteAllLines($pwd.path + "\resources\gitsha", $env:GITHUB_SHA)
+
+      - name: Build app
+        uses: ./.github/actions/build-app
+
+      - name: Create archive
+        run:
+          Compress-Archive -Path .\dist\dcs_liberation\ -DestinationPath
+          dist\dcs_liberation.zip
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: dcs_liberation
+          path: dist/dcs_liberation.zip

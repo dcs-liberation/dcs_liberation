@@ -1,0 +1,5 @@
+name: 2xAIM-9X
+year: 2003
+fallback: 2xAIM-9M
+clsids:
+  - "LAU-115_2*LAU-127_AIM-9X"

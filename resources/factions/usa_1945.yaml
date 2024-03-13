@@ -1,0 +1,108 @@
+---
+country: USA
+name: USA 1945
+authors: Ghosti
+description: <p>US army in 1945, Pacific Theater of Operations.</p>
+locales:
+  - en_US
+aircrafts:
+  - P-51D-25-NA Mustang
+  - P-51D-30-NA Mustang
+  - P-47D-30 Thunderbolt (Early)
+  - P-47D-30 Thunderbolt (Late)
+  - P-47D-40 Thunderbolt
+  - A-20G Havoc
+frontline_units:
+  - Bofors 40 mm Gun
+  - M2A1 Half-Track
+  - M4A2(75) Sherman
+artillery_units:
+  - M109A6 Paladin
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M4
+missiles: []
+air_defense_units:
+  - Bofors 40 mm Gun
+preset_groups:
+  - Cold-War-Flak
+naval_units: []
+doctrine: ww2
+building_set: ww2free
+requirements: {}
+liveries_overrides:
+  A-20G Havoc:
+    - USAF 645th BS
+    - USAF 668th BS
+  P-47D-30 Thunderbolt (Early):
+    - 53rd_FS_9th_Air_Force
+    - 61st_FS_8th_AF_HVZ
+    - 61st_FS_1944
+    - 61st_FS_D_day
+    - 79thFG 86thFS The Trojan Warhorse
+    - Lt_Col_Benjamin_Mayo
+    - Lt_Col_Gabreski_1944
+    - Lt_Col_Gabreski_D_day
+    - Maj_Howard_Park_1945
+    - TONY 5th Emergency Rescue Squadron
+    - USAAF 509th FS, 405th FG, ETO 1944, Chief Ski-U-Mah D28
+    - USAAF 509th FS, 405th FG, ETO 1944, Chief Ski-U-Mah D40
+    - USAF Standard
+    - WarChief
+  P-47D-30 Thunderbolt (Late):
+    - 53rd_FS_9th_Air_Force
+    - 61st_FS_8th_AF_HVZ
+    - 61st_FS_1944
+    - 61st_FS_D_day
+    - 79thFG 86thFS The Trojan Warhorse
+    - Lt_Col_Benjamin_Mayo
+    - Lt_Col_Gabreski_1944
+    - Lt_Col_Gabreski_D_day
+    - Maj_Howard_Park_1945
+    - TONY 5th Emergency Rescue Squadron
+    - USAAF 509th FS, 405th FG, ETO 1944, Chief Ski-U-Mah D28
+    - USAAF 509th FS, 405th FG, ETO 1944, Chief Ski-U-Mah D40
+    - USAF Standard
+    - WarChief
+  P-47D-40 Thunderbolt:
+    - 53rd_FS_9th_Air_Force
+    - 61st_FS_8th_AF_HVZ
+    - 61st_FS_1944
+    - 61st_FS_D_day
+    - 79thFG 86thFS The Trojan Warhorse
+    - Lt_Col_Benjamin_Mayo
+    - Lt_Col_Gabreski_1944
+    - Lt_Col_Gabreski_D_day
+    - Maj_Howard_Park_1945
+    - TONY 5th Emergency Rescue Squadron
+    - USAAF 509th FS, 405th FG, ETO 1944, Chief Ski-U-Mah D28
+    - USAAF 509th FS, 405th FG, ETO 1944, Chief Ski-U-Mah D40
+    - USAF Standard
+    - WarChief
+  P-51D-25-NA Mustang:
+    - USAF 302nd FS, RED TAILS
+    - USAF 344th FS, IRON ASS
+    - USAF 363rd FS
+    - USAF 363rd FS, 357th FG DESERT RAT
+    - USAF 364th FS
+    - USAF 364th FS, HURRY HOME HONEY
+    - USAF 375th FS
+    - USAF 84th FS
+    - USAF Big Beautiful Doll
+    - USAF Ferocious Frankie
+    - USAF Gentleman Jim
+    - USAF Miss Velma
+  P-51D-30-NA Mustang:
+    - USAF 302nd FS, RED TAILS
+    - USAF 344th FS, IRON ASS
+    - USAF 363rd FS
+    - USAF 363rd FS, 357th FG DESERT RAT
+    - USAF 364th FS
+    - USAF 364th FS, HURRY HOME HONEY
+    - USAF 375th FS
+    - USAF 84th FS
+    - USAF Big Beautiful Doll
+    - USAF Ferocious Frankie
+    - USAF Gentleman Jim
+    - USAF Miss Velma

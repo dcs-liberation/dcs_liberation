@@ -1,0 +1,17 @@
+name: Carrier Group
+generic: true
+tasks:
+  - AircraftCarrier
+groups:
+  - Carrier:
+    - name: Carrier Group 0
+      unit_count:
+        - 1
+      unit_classes:
+        - AircraftCarrier
+  - Escort:
+    - name: Carrier Group 1
+      unit_count:
+        - 4
+      unit_classes:
+        - Destroyer

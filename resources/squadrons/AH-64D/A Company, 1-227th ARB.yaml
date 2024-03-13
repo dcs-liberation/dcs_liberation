@@ -1,0 +1,12 @@
+---
+name: A Company, 1-227th ARB
+nickname: Avengers
+female_pilot_percentage: 10
+country: USA
+role: Attack Helicopter
+aircraft: AH-64D Apache Longbow
+livery: Avengers 1-227th ARB
+mission_types:
+  - CAS
+  - BAI
+  - OCA/Aircraft

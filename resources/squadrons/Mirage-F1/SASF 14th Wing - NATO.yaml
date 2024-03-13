@@ -1,0 +1,19 @@
+---
+name: 14th Wing, NATO
+nickname: Spaniards
+female_pilot_percentage: 5
+country: Spain
+role: Fighter
+aircraft: Mirage-F1M-EE
+livery: ALA 14 NATO Skin 1 (M-EE)
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

@@ -1,0 +1,7 @@
+name: R-60M
+year: 1982
+fallback: R-60
+clsids:
+  - "{APU-60-1_R_60M}"
+  - "{R-60M}"
+  - "{682A481F-0CB5-4693-A382-D00DD4A156D7}"

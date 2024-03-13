@@ -1,0 +1,136 @@
+---
+name: Normandy - The Final Countdown II
+theater: Normandy
+authors: Starfire
+recommended_player_faction: D-Day Allied Forces 1944 and 1990
+recommended_enemy_faction: Germany 1944
+description:
+  <p>While enroute to the Persian Gulf for Operation Desert Shield, the USS
+  Theodore Roosevelt and its carrier strike group are engufled by an electrical
+  vortex and transported through time and space to the English channel on the
+  morning of the Normandy Landings - June 6th 1944. Seeking to reduce the cost
+  in lives to the Allied Forces about to storm the beaches, the captain of the
+  Roosevelt has elected to provide air support for the
+  landings.</p><p><strong>Note:</strong> This campaign has a custom faction that
+  combines modern US naval forces with WW2 Allied forces. To play it as
+  intended, you should carefully ration your use of modern aircraft and not
+  replenish them if shot down (as you cannot get new Tomcats and Hornets in
+  1944). You can also choose to play it as a purely WW2 campaign by switching to
+  one of the WW2 Ally factions.</p>
+miz: final_countdown_2.miz
+performance: 2
+recommended_start_date: 1944-06-06
+version: "11.0"
+squadrons:
+  #Blue CV (90)
+  Blue-CV:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - F-14B Tomcat
+      size: 24
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+      size: 24
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - S-3B Viking
+      size: 12
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+      size: 2
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-60L
+        - UH-60A
+      size: 6
+  #Stoney Cross (39)
+  58:
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - A-20G Havoc
+        - Boston Mk.III
+      size: 20
+  #Needs Oar Point (55)
+  28:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Spitfire LF Mk IX
+      size: 20
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - MosquitoFBMkVI
+      size: 20
+  #RAF Grafton Underwood (1000)
+  Bombers from RAF Grafton Underwood:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-17G Flying Fortress
+        - Fortress Mk.III
+      size: 20
+  #Lymington (56)
+  37:
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - P-51D-30-NA Mustang
+        - Mustang Mk.IV (Late)
+      size: 20
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - P-47D-40 Thunderbolt
+        - Thunderbolt Mk.II (Late)
+      size: 20
+
+  #Carpiquet (47)
+  19:
+    - primary: TARCAP
+      secondary: air-to-air
+      aircraft:
+        - Fw 190 D-9 Dora
+      size: 12
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Ju 88 A-4
+      size: 8
+  #Broglie (32)
+  68:
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - Bf 109 K-4 Kurfürst
+      size: 24
+  #Saint-Andre-de-lEure (30)
+  70:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Ju 88 A-4
+      size: 12
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Ju 88 A-4
+      size: 12
+  #Vilacoublay (76)
+  42:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Fw 190 A-8 Anton
+      size: 20

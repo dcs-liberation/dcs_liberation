@@ -1,0 +1,114 @@
+DCS Liberation Turn {{ game.turn }}
+====================
+
+Most briefing information, including communications and flight plan information, can be found on your kneeboard.
+
+Current situation:
+====================
+{% if not frontlines  %}
+There are currently no fights on the ground.
+{% endif %}
+{% if frontlines %}
+{%+ for frontline in frontlines %}
+{% if frontline.player_zero %}
+We do not have a single vehicle available to hold our position.  The situation is critical, and we will lose ground inevitably between {{ frontline.player_base.name }} and {{ frontline.enemy_base.name }}.
+{% endif %}
+{% if frontline.enemy_zero %}
+The enemy forces have been crushed, we will be able to make significant progress toward {{ frontline.enemy_base.name }}
+{% endif %}
+{% if not frontline.player_zero %}
+{# Pick a random sentence to describe each frontline #}
+{% set fl_sent1 %}There are combats between {{ frontline.player_base.name }} and {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent2 %}The war on the ground is still going on between {{frontline.player_base.name}} and {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent3 %}Our ground forces in {{frontline.player_base.name}} are opposed to enemy forces based in {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent4 %}Our forces from {{frontline.player_base.name}} are fighting enemies based in {{frontline.enemy_base.name}}. {%+ endset %}
+{% set fl_sent5 %}There is an active frontline between {{frontline.player_base.name}} and {{frontline.enemy_base.name}}. {%+ endset %}
+{% set frontline_sentences = [fl_sent1, fl_sent2, fl_sent3, fl_sent4, fl_sent5] %}
+{{ frontline_sentences | random }}
+{%- if frontline.advantage %}
+    {%- if frontline.stance == frontline.combat_stances.AGGRESSIVE %}
+On this location, our ground forces will try to make progress against the enemy. As the enemy is outnumbered, our forces should have no issue making progress.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.ELIMINATION %}
+On this location, our ground forces will focus on the destruction of enemy assets, before attempting to make progress toward {{frontline.enemy_base.name}}.  The enemy is already outnumbered, and this maneuver might draw a final blow to their forces."
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.BREAKTHROUGH %}
+On this location, our ground forces will focus on progression toward {{ frontline.enemy_base.name }}
+    {% endif %}
+    {%- if frontline.stance in [frontline.combat_stances.DEFENSIVE, frontline.combat_stances.AMBUSH] %}
+On this location, our ground forces will hold position. We are not expecting an enemy assault.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.RETREAT %}
+{# TODO: Write a retreat sentence #}
+    {% endif %}
+{%- else %}
+    {%- if frontline.stance == frontline.combat_stances.AGGRESSIVE %}
+On this location, our ground forces will try an audacious assault against enemies in superior numbers. The operation is risky, and the enemy might counter attack.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.ELIMINATION %}
+On this location, our ground forces will try an audacious assault against enemies in superior numbers. The operation is risky, and the enemy might counter attack.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.BREAKTHROUGH %}
+On this location, our ground forces have been ordered to rush toward {{frontline.enemy_base.name}}. Wish them luck... We are also expecting a counter attack.
+    {% endif %}
+    {%- if frontline.stance in [frontline.combat_stances.DEFENSIVE, frontline.combat_stances.AMBUSH] %}
+On this location, our ground forces have been ordered to hold still, and defend against enemy attacks. An enemy assault might be iminent.
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.RETREAT %}
+{# TODO: Write a retreat sentence #}
+    {% endif %}
+{% endif %}
+{% endif %}
+
+{%+ endfor %}{% endif %}
+
+Your flights:
+====================
+{% for flight in flights if flight.client_units %}
+--------------------------------------------------
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{ flight.size }}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
+Freq : {{ flight|intra_flight_channel }}
+{% for waypoint in flight.waypoints %}
+{{ loop.index0 }} {{waypoint|waypoint_timing("Depart ")}}-- {{waypoint.name}} : {{ waypoint.description}}
+{% endfor %}
+--------------------------------------------------{% endfor %}
+
+
+{%- if allied_flights_by_departure|length > 0 %}
+Planned ally flights:
+====================
+{% for dep in allied_flights_by_departure %}
+{{ dep }}
+---------------------------------------------------
+{% for flight in allied_flights_by_departure[dep] %}
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+{%- if dynamic_runways|length > 0 %}
+Carriers and FARPs:
+====================
+{% for runway in dynamic_runways %}
+{{ runway.airfield_name}}
+--------------------------------------------------
+RADIO : {{ runway.atc }}
+TACAN : {{ runway.tacan }} {{ runway.tacan_callsign }}
+{% if runway.icls %}ICLS Channel: {{ runway.icls }}
+{% endif %}
+
+{% endfor %}
+{% endif %}
+{%- if awacs|length > 0 %}
+AWACS:
+====================
+{% for i in awacs %}{{ i.callsign }} -- Freq : {{i.freq.mhz}}
+{% endfor %}
+{% endif %}
+
+{%- if jtacs|length > 0 %}
+JTACS [F-10 Menu] :
+====================
+{% for jtac in jtacs %}Frontline {{ jtac.region }} -- Code : {{ jtac.code }}, Freq : {{ jtac.freq.mhz }}
+{% endfor %}
+{% endif %}

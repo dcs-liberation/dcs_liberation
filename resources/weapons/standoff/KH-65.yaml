@@ -1,0 +1,5 @@
+name: KH-65
+year: 1992
+fallback: KH-59M
+clsids:
+  - "{BADAF2DE-68B5-472A-8AAC-35BAEFF6B4A1}"

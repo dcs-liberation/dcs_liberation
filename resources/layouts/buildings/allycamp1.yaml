@@ -1,0 +1,84 @@
+name: allycamp1
+generic: true
+tasks:
+  - StrikeTarget
+  - AllyCamp
+groups:
+  - AllyCamp:
+    - name: allycamp1 0
+      statics:
+        - allycamp1 0-0
+        - allycamp1 0-1
+        - allycamp1 0-2
+        - allycamp1 0-3
+      unit_count:
+        - 4
+      unit_types:
+        - FARP Tent
+    - name: allycamp1 1
+      statics:
+        - allycamp1 1-0
+        - allycamp1 1-1
+        - allycamp1 1-2
+        - allycamp1 1-3
+        - allycamp1 1-4
+        - allycamp1 1-5
+        - allycamp1 1-6
+        - allycamp1 1-7
+        - allycamp1 1-8
+        - allycamp1 1-9
+        - allycamp1 1-10
+        - allycamp1 1-11
+        - allycamp1 1-12
+        - allycamp1 1-13
+        - allycamp1 1-14
+        - allycamp1 1-15
+        - allycamp1 1-16
+        - allycamp1 1-17
+        - allycamp1 1-18
+        - allycamp1 1-19
+        - allycamp1 1-20
+        - allycamp1 1-21
+      unit_count:
+        - 22
+      unit_types:
+        - Haystack 4
+    - name: allycamp1 2
+      statics:
+        - allycamp1 2-0
+        - allycamp1 2-1
+        - allycamp1 2-2
+        - allycamp1 2-3
+        - allycamp1 2-4
+        - allycamp1 2-5
+        - allycamp1 2-6
+        - allycamp1 2-7
+        - allycamp1 2-8
+        - allycamp1 2-9
+        - allycamp1 2-10
+        - allycamp1 2-11
+      unit_count:
+        - 12
+      unit_types:
+        - Haystack 3
+    - name: allycamp1 3
+      statics:
+        - allycamp1 3-0
+        - allycamp1 3-1
+        - allycamp1 3-2
+        - allycamp1 3-3
+        - allycamp1 3-4
+        - allycamp1 3-5
+        - allycamp1 3-6
+        - allycamp1 3-7
+      unit_count:
+        - 8
+      unit_types:
+        - Concertina wire
+  - AllyCamp2: # Vehicle and static can not be mixed
+    - name: allycamp1 4
+      unit_count:
+        - 4
+      unit_types:
+        - house2arm
+layout_file: resources/layouts/buildings/buildingsww2.miz

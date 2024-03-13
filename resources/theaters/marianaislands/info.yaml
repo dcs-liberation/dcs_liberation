@@ -1,0 +1,45 @@
+---
+name: Mariana Islands
+pydcs_name: MarianaIslands
+timezone: +10
+daytime:
+  dawn: [6, 8]
+  day: [8, 16]
+  dusk: [16, 18]
+  night: [0, 5]
+climate:
+  day_night_temperature_difference: 6.0
+  seasons:
+    winter:
+      average_pressure: 29.82 # TODO: Find real-world data
+      average_temperature: 27.0
+      weather:
+        thunderstorm: 2
+        raining: 20
+        cloudy: 40
+        clear: 40
+    spring:
+      weather:
+        thunderstorm: 1
+        raining: 10
+        cloudy: 30
+        clear: 60
+    summer:
+      average_pressure: 30.02 # TODO: Find real-world data
+      average_temperature: 28.0
+      weather:
+        thunderstorm: 2
+        raining: 20
+        cloudy: 40
+        clear: 40
+    fall:
+      weather:
+        thunderstorm: 5
+        raining: 45
+        cloudy: 30
+        clear: 20
+  turbulence:
+    high_avg_yearly_turbulence_per_10cm: 6.5
+    low_avg_yearly_turbulence_per_10cm: 4.5
+    solar_noon_turbulence_per_10cm: 2
+    midnight_turbulence_per_10cm: -1

@@ -1,0 +1,14 @@
+---
+name: Escadron de chasse 2/2
+nickname: Côte d'Or
+female_pilot_percentage: 6
+country: France
+role: Fighter
+aircraft: Mirage 2000-5
+livery: ec2_2 `cote d'or` spa57 `mouette`
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

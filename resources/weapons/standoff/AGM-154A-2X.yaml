@@ -1,0 +1,6 @@
+name: 2xAGM-154A JSOW
+year: 1998
+fallback: AGM-154C JSOW
+clsids:
+  - "{BRU55_2*AGM-154A}"
+  - "{BRU57_2*AGM-154A}"

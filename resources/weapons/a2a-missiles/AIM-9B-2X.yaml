@@ -1,0 +1,6 @@
+name: 2xAIM-9B
+year: 1956
+# have gone through the doubles so now back to the singles
+fallback: AIM-9X
+clsids:
+  - "{F4-2-AIM9B}"

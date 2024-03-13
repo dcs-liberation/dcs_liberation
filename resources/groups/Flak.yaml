@@ -1,0 +1,17 @@
+name: Flak
+tasks:
+  - AAA
+units:
+  - 2 cm Flakvierling 38
+  - 8.8 cm Flak 18
+  - 8.8 cm Flak 36
+  - 8.8 cm Flak 37
+  - 8.8 cm Flak 41
+  - 2 cm Flak 38
+  - SL Flakscheinwerfer 37
+  - PU Maschinensatz_33
+  - AAA SP Kdo.G.40
+  - LUV Kubelwagen 82
+  - Truck Opel Blitz
+layouts:
+  - Flak Site

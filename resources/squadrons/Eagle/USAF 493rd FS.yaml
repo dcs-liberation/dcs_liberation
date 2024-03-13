@@ -1,0 +1,15 @@
+---
+name: 493rd FS
+nickname: Grim Reapers
+female_pilot_percentage: 6
+country: USA
+role: Air Superiority Fighter
+aircraft: F-15C Eagle
+livery: 493rd Fighter SQN (LN)
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+

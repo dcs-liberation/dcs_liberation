@@ -1,0 +1,22 @@
+---
+name: 336 Squadron
+nickname: Olympus
+female_pilot_percentage: 6
+country: Greece
+role: Multirole Fighter
+aircraft: F-16CM Fighting Falcon (Block 50)
+livery: HAF_336_Olympus
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

@@ -1,0 +1,21 @@
+---
+name: VF-211
+nickname: Fighting Checkmates
+female_pilot_percentage: 0
+country: USA
+role: Strike Fighter
+aircraft: F-14A Tomcat (Block 135-GR Late)
+livery: VF-211 Fighting Checkmates 105
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - Strike
+  - Fighter sweep
+  - TARCAP

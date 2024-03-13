@@ -1,0 +1,16 @@
+---
+name: 184th FS
+nickname: Flying Razorbacks
+female_pilot_percentage: 0
+country: USA
+role: Close Air Support
+aircraft: A-10C Thunderbolt II (Suite 3)
+livery: 184th FS Arkansas ANG, Fort Smith (FS)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+

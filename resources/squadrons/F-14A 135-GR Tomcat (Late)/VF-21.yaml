@@ -1,0 +1,21 @@
+---
+name: VF-21
+nickname: Freelancers
+female_pilot_percentage: 0
+country: USA
+role: Strike Fighter
+aircraft: F-14A Tomcat (Block 135-GR Late)
+livery: VF-21 Freelancers 200
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - Strike
+  - Fighter sweep
+  - TARCAP

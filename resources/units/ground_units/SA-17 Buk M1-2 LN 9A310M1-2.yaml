@@ -1,0 +1,5 @@
+class: TELAR
+price: 40
+reversed_heading: true # Needs to be placed backwards!
+variants:
+  SAM SA-17 Buk M1-2 LN 9A310M1-2: null

@@ -1,0 +1,5 @@
+name: 3xAGM-65K
+year: 2008
+fallback: 2xAGM-65K
+clsids:
+  - "{907D835F-E650-4154-BAFD-C656882555C0}"

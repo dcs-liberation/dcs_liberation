@@ -1,0 +1,22 @@
+---
+name: 117th Squadron
+nickname: First Jet
+female_pilot_percentage: 6
+country: Israel
+role: Strike Fighter
+aircraft: F-16CM Fighting Falcon (Block 50)
+livery: IAF_117th_Squadron
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

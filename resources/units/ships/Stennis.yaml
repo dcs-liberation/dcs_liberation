@@ -1,0 +1,5 @@
+class: AircraftCarrier
+price: 0
+variants:
+  CVN-74 John C. Stennis: null
+hit_points: 7300

@@ -1,0 +1,9 @@
+name: Chinese Navy
+tasks:
+  - Navy
+units:
+  - Type 052C Destroyer
+  - Type 052B Destroyer
+  - Type 054A Frigate
+layouts:
+  - Naval Group

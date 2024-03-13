@@ -1,0 +1,29 @@
+name: Missile
+generic: true
+tasks:
+  - Missile
+groups:
+  - Missile:
+    - name: ScudGenerator 0
+      unit_count:
+        - 3
+      unit_classes:
+        - Missile
+    - name: ScudGenerator 1
+      unit_count:
+        - 1
+      unit_classes:
+        - Logistics
+    - name: ScudGenerator 2
+      optional: true
+      unit_count:
+        - 1
+      unit_classes:
+        - AAA
+    - name: ScudGenerator 3
+      optional: true
+      unit_count:
+        - 0
+        - 1
+      unit_classes:
+        - SHORAD

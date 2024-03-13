@@ -1,0 +1,13 @@
+---
+name: 765th Squadron
+nickname: 765th
+female_pilot_percentage: 0
+country: Syria
+role: Attack Helicopter
+aircraft: Mi-24P Hind-F
+livery: "SyAAF"
+mission_types:
+  - CAS
+  - BAI
+  - Transport
+  - Air Assault

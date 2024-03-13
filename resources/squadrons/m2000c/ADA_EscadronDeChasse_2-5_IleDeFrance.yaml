@@ -1,0 +1,19 @@
+---
+name: Escadron de chasse 2/5
+nickname: Île De France
+female_pilot_percentage: 6
+country: France
+role: Fighter
+aircraft: Mirage 2000C
+livery: AdA Chasse 2-5
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+  - BAI
+  - CAS
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

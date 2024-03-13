@@ -1,0 +1,5 @@
+name: 6xAGM-86D
+year: 2001
+fallback: 6xAGM-86C
+clsids:
+  - "{45447F82-01B5-4029-A572-9AAD28AF0275}"

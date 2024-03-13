@@ -1,0 +1,6 @@
+name: AGM-84E SLAM
+year: 1990
+fallback: AGM-65G
+clsids:
+  - "{AF42E6DF-9A60-46D8-A9A0-1708B241AADB}"
+  - "{AGM_84E}"

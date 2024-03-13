@@ -1,0 +1,22 @@
+---
+name: 522nd FS
+nickname: Fireballs
+female_pilot_percentage: 6
+country: USA
+role: Strike Fighter
+aircraft: F-16CM Fighting Falcon (Block 50)
+livery: 522nd_Fighter_Squadron
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

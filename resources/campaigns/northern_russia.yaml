@@ -1,0 +1,197 @@
+---
+name: Caucasus - Northern Russia
+theater: Caucasus
+authors: Plob
+description: <p><p>A medium campaign through the north eastern part of the Caucasus map.</p><p>Russia has invaded Georgia through the eastern mountains. Mount a counter offense and push them back!</p>
+recommended_player_faction: Bluefor Modern
+recommended_enemy_faction: Russia 1975
+recommended_start_date: 1995-06-13
+miz: northern_russia.miz
+performance: 2
+version: "10.5"
+squadrons:
+  # Kutaisi
+  25:
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker MPRS
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 3)
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - JF-17 Thunder
+    - primary: BARCAP
+      aircraft:
+        - MiG-23MLD Flogger-K
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Ka-50 Hokum
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - AJS-37 Viggen
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - Mirage 2000C
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-8MTV2 Hip
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+    
+  # Tbilisi-Lochini
+  29:
+    - primary: BARCAP
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BARCAP
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-E
+  # Beslan
+  32:
+    - primary: BARCAP
+      aircraft:
+        - MiG-23MLD Flogger-K
+    - primary: BARCAP
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BARCAP
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24V Hind-E
+    - primary: Strike
+      aircraft:
+        - Su-25 Frogfoot
+    - primary: BAI
+      aircraft:
+        - Su-25 Frogfoot
+  # Mozdok
+  28:
+    - primary: BARCAP
+      aircraft:
+        - MiG-23MLD Flogger-K
+    - primary: BARCAP
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BAI
+      aircraft:
+        - Su-25 Frogfoot
+    - primary: Strike
+      aircraft:
+        - Tu-95MS Bear-H
+    - primary: SEAD
+      aircraft:
+        - Su-17M4 Fitter-K
+    - primary: Strike
+      aircraft:
+        - Su-17M4 Fitter-K
+  # Nalchik
+  27:
+    - primary: BARCAP
+      aircraft:
+        - MiG-25PD Foxbat-E
+    - primary: BARCAP
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BARCAP
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - Su-24M Fencer-D
+  # Mineralnye Vody
+  26:
+    - primary: BARCAP
+      aircraft:
+        - MiG-25PD Foxbat-E
+    - primary: BARCAP
+      aircraft:
+        - MiG-21bis Fishbed-N
+    - primary: BARCAP
+      aircraft:
+        - MiG-25PD Foxbat-E
+    - primary: BARCAP
+      aircraft:
+        - MiG-23MLD Flogger-K
+    - primary: BARCAP
+      aircraft:
+        - MiG-23MLD Flogger-K
+    - primary: Strike
+      aircraft:
+        - Su-25 Frogfoot
+    - primary: AEW&C
+      aircraft:
+        - A-50
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+  Blue CV:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-14B Tomcat
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-14B Tomcat
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+  Blue LHA:
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack

@@ -1,0 +1,10 @@
+---
+name: Détachement ALAT des opérations spéciales
+nickname: DOAS
+female_pilot_percentage: 6
+country: France
+role: Combat Helicopter
+aircraft: SA342Minigun
+livery: Combat
+mission_types:
+  - CAS

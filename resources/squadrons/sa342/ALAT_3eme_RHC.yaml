@@ -1,0 +1,13 @@
+---
+name: 3ème régiment d'hélicoptères de combat
+nickname: Grand 3
+female_pilot_percentage: 6
+country: France
+role: Anti-Tank Helicopter
+aircraft: SA 342M Gazelle
+livery: Combat
+mission_types:
+  - Anti-ship
+  - CAS
+  - OCA/Aircraft
+  - Strike

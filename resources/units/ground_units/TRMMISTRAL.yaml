@@ -1,0 +1,9 @@
+class: SHORAD
+description: Mistral Missile on a Truck.
+introduced: 1993
+manufacturer: GIAT Industries
+origin: France
+price: 14
+role: Shorad
+variants:
+  Pamela: {}

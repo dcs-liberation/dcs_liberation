@@ -1,0 +1,19 @@
+name: Short Range Anti Air Group
+generic: true
+tasks:
+  - SHORAD
+groups:
+  - SHORAD:
+    - name: Launcher
+      unit_count:
+        - 2
+      unit_classes:
+        - SHORAD
+    - name: Logistics
+      optional: true
+      unit_count:
+        - 0
+        - 2
+      unit_classes:
+        - Logistics
+layout_file: resources/layouts/anti_air/2_Launcher.miz

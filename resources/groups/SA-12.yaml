@@ -1,0 +1,12 @@
+name: SA-12/S-300V
+tasks:
+  - LORAD
+units:
+  - SAM SA-12 S-300V 9S15 SR
+  - SAM SA-12 S-300V 9S19 SR
+  - SAM SA-12 S-300V 9S457 CP
+  - SAM SA-12 S-300V 9S32 TR
+  - SAM SA-12 S-300V 9A82 LN
+  - SAM SA-12 S-300V 9A83 LN
+layouts:
+  - S-300 Site

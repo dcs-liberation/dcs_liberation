@@ -1,0 +1,12 @@
+{
+    "nameInUI": "Include C130 Cargo script (Anubis Hercules mod)",
+    "defaultValue": false,
+	"specificOptions": [],
+    "scriptsWorkOrders": [
+        {
+            "file": "Hercules_Cargo.lua",
+            "mnemonic": "Hercules_Cargo"
+        }
+    ],
+	"configurationWorkOrders": []
+}

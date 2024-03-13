@@ -1,0 +1,67 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Main",
+      "type": "python",
+      "request": "launch",
+      "program": "qt_ui\\main.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs"
+      },
+      "preLaunchTask": "Prepare Environment"
+    },
+    {
+      "name": "Python: Debug",
+      "type": "python",
+      "request": "launch",
+      "program": "qt_ui\\main.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs",
+        "CORS_ALLOW_DEBUG_SERVER": "true"
+      },
+      "args": ["--dev"],
+      "preLaunchTask": "Prepare Environment"
+    },
+    {
+      "name": "Node: Development Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}\\client",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+          "run", "start"
+      ],
+      "env": {
+        "BROWSER": "none"
+      },
+    },
+    {
+      "name": "Python: Make Release",
+      "type": "python",
+      "request": "launch",
+      "program": "resources\\tools\\mkrelease.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs"
+      },
+      "preLaunchTask": "Prepare Environment"
+    },
+    {
+      "name": "Fix Layout orientation",
+      "type": "python",
+      "request": "launch",
+      "program": "resources\\tools\\fix_layout_orientation.py",
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": ".;./pydcs"
+      },
+      "args": ["resources/layouts/anti_air/S-300_Site.miz"]
+    },
+  ]
+}

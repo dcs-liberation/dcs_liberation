@@ -1,0 +1,13 @@
+---
+name: 255th Squadron
+nickname: 255th
+female_pilot_percentage: 0
+country: Syria
+role: Transport Helicopter
+aircraft: Mi-8MTV2 Hip
+livery: "BP_RS01"
+mission_types:
+  - Transport
+  - CAS
+  - BAI
+  - Air Assault

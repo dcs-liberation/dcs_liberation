@@ -1,0 +1,5 @@
+name: 3xGBU-54B
+year: 2012
+fallback: 3xGBU-38
+clsids:
+  - "{BRU-70A_3*GBU-54}"

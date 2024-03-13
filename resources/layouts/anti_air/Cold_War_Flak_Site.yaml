@@ -1,0 +1,36 @@
+name: Cold War Flak Site
+tasks:
+  - AAA
+groups:
+  - AAA:
+    - name: Cold War Flak Site Radar 
+      optional: true # Only available to Late Cold War
+      fill: false # Do not fill with faction possible units
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+    - name: Cold War Flak Site Flak
+      unit_count:
+        - 4
+        - 6
+      unit_types:
+        - flak18
+    - name: Cold War Flak Site S-60
+      unit_count:
+        - 2
+      unit_types:
+        - S-60_Type59_Artillery
+    - name: Cold War Flak Site AAA
+      optional: true
+      unit_count:
+        - 2
+      unit_classes:
+        - AAA
+    - name: Cold War Flak Site Logistics
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - Logistics

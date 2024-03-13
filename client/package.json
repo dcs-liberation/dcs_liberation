@@ -1,0 +1,87 @@
+{
+  "name": "liberation-client",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "license": "LGPL-3.0-or-later",
+  "homepage": ".",
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.8.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.1.2",
+    "@types/node": "^18.8.3",
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-redux": "^7.1.24",
+    "axios": "^1.6.0",
+    "electron-window-state": "^5.0.3",
+    "esri-leaflet": "^3.0.8",
+    "leaflet": "^1.9.2",
+    "leaflet-ruler": "^1.0.0",
+    "milsymbol": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-esri-leaflet": "^2.0.1",
+    "react-leaflet": "^4.1.0",
+    "react-redux": "^8.0.4",
+    "redux-logger": "^3.0.6",
+    "typescript": "~4.8.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && generate-license-file --input package.json --output build/NOTICE",
+    "regenerate-api": "rtk-query-codegen-openapi ./openapi-config.ts",
+    "lint": "eslint src",
+    "prepare": "eslint src && license-checker --onlyAllow \"MIT;Apache-2.0;CC0-1.0;BSD-3-Clause;ISC;Custom: https://github.com/tmcw/jsonlint;BSD-2-Clause;Hippocratic-2.1;BSD*;WTFPL\" --excludePrivatePackages --production",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "wait-on tcp:3000 && electron ."
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "eslintIgnore": [
+    "leaflet-ruler.d.ts"
+  ],
+  "prettier": {
+    "endOfLine": "auto"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@rtk-query/codegen-openapi": "^1.0.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.1",
+    "@types/leaflet": "^1.8.0",
+    "@types/redux-logger": "^3.0.9",
+    "@types/websocket": "^1.0.5",
+    "electron": "^22.3.25",
+    "electron-is-dev": "^2.0.0",
+    "generate-license-file": "^2.0.0",
+    "jest-transform-stub": "^2.0.0",
+    "license-checker": "^25.0.1",
+    "msw": "^1.2.2",
+    "react-scripts": "5.0.1",
+    "ts-node": "^10.9.1",
+    "wait-on": "^6.0.1"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@?react-leaflet|axios)/)"
+    ],
+    "moduleNameMapper": {
+      ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "jest-transform-stub"
+    }
+  }
+}

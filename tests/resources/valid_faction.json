@@ -1,0 +1,75 @@
+{
+  "country": "USA",
+  "name": "USA 2005",
+  "authors": "Khopa",
+  "description": "This is a test description",
+  "aircrafts": [
+    "F_15C",
+    "F_15E",
+    "F_14B",
+    "FA_18C_hornet",
+    "F_16C_50",
+    "A_10A",
+    "AV8BNA",
+    "UH_1H",
+    "AH_64A",
+    "B_52H",
+    "B_1B",
+    "F_117A",
+    "A_10C",
+    "A_10C_2"
+  ],
+  "awacs": [
+    "E_3A"
+  ],
+  "tankers": [
+    "KC_135",
+    "KC130"
+  ],
+  "frontline_units": [
+    "MBT_M1A2_Abrams",
+    "ATGM_Stryker",
+    "IFV_M1126_Stryker_ICV",
+    "IFV_M2A2_Bradley",
+    "IFV_LAV_25",
+    "Scout_HMMWV",
+    "ATGM_HMMWV"
+  ],
+  "artillery_units": [
+    "MLRS_M270_227mm",
+    "SPH_M109_Paladin_155mm"
+  ],
+  "logistics_units": [
+    "M_818"
+  ],
+  "infantry_units": [
+    "Infantry_M4",
+    "Infantry_M249"
+  ],
+  "shorads": [
+    "AvengerGenerator"
+  ],
+  "sams": [
+    "HawkGenerator"
+  ],
+  "naval_units": [
+    "LHA-1 Tarawa",
+    "CVN-74 John C. Stennis"
+  ],
+  "requirements": {"mod": "Some mod is required"},
+  "carrier_names": [
+    "CVN-71 Theodore Roosevelt",
+    "CVN-72 Abraham Lincoln",
+    "CVN-73 George Washington",
+    "CVN-74 John C. Stennis"
+  ],
+  "helicopter_carrier_names": [
+    "LHA-1 Tarawa",
+    "LHA-2 Saipan",
+    "LHA-3 Belleau Wood",
+    "LHA-4 Nassau",
+    "LHA-5 Peleliu"
+  ],
+  "has_jtac": true,
+  "jtac_unit": "MQ_9_Reaper"
+}

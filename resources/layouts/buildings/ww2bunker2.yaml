@@ -1,0 +1,57 @@
+name: ww2bunker2
+generic: true
+tasks:
+  - StrikeTarget
+  - WW2Bunker
+groups:
+  - Bunker:
+    - name: ww2bunker2 0
+      statics:
+        - ww2bunker2 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - Fire Control Bunker
+    - name: ww2bunker2 1
+      statics:
+        - ww2bunker2 1-0
+        - ww2bunker2 1-1
+      unit_count:
+        - 2
+      unit_types:
+        - Siegfried Line
+    - name: ww2bunker2 2
+      statics:
+        - ww2bunker2 2-0
+        - ww2bunker2 2-1
+        - ww2bunker2 2-2
+        - ww2bunker2 2-3
+        - ww2bunker2 2-4
+        - ww2bunker2 2-5
+        - ww2bunker2 2-6
+        - ww2bunker2 2-7
+      unit_count:
+        - 8
+      unit_types:
+        - Concertina wire
+    - name: ww2bunker2 3
+      statics:
+        - ww2bunker2 3-0
+      unit_count:
+        - 1
+      unit_types:
+        - Belgian gate
+    - name: ww2bunker2 4
+      statics:
+        - ww2bunker2 4-0
+        - ww2bunker2 4-1
+        - ww2bunker2 4-2
+        - ww2bunker2 4-3
+        - ww2bunker2 4-4
+        - ww2bunker2 4-5
+        - ww2bunker2 4-6
+      unit_count:
+        - 7
+      unit_types:
+        - Czech hedgehogs 1
+layout_file: resources/layouts/buildings/buildingsww2.miz

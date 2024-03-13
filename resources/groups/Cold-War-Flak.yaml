@@ -1,0 +1,8 @@
+name: Cold-War-Flak
+tasks:
+  - AAA
+units:
+  - 8.8 cm Flak 18
+  - S-60 57mm
+layouts:
+  - Cold War Flak Site

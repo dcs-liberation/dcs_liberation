@@ -1,0 +1,5 @@
+name: AGM-65G
+year: 1989
+fallback: AGM-65F
+clsids:
+  - "LAU_117_AGM_65G"

@@ -1,0 +1,6 @@
+name: AGM-65E
+type: LGB
+year: 1985
+fallback: AGM-65G
+clsids:
+  - "{F16A4DE0-116C-4A71-97F0-2CF85B0313EC}"

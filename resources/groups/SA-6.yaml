@@ -1,0 +1,8 @@
+name: SA-6
+tasks:
+  - MERAD
+units:
+  - SAM SA-6 Kub "Straight Flush" STR
+  - SAM SA-6 Kub "Gainful" TEL
+layouts:
+  - 4 Launcher Site (Circle)

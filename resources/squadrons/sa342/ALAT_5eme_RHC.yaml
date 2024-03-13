@@ -1,0 +1,11 @@
+---
+name: 5ème régiment d'hélicoptères de combat
+nickname: Le régiment du Béarn
+female_pilot_percentage: 6
+country: France
+role: Combat Helicopter
+aircraft: SA 342L Gazelle
+livery: Combat
+mission_types:
+  - CAS
+  - OCA/Aircraft

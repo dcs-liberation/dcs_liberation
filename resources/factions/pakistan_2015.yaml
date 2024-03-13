@@ -1,0 +1,56 @@
+---
+country: Pakistan
+name: Pakistan 2015
+authors: Khopa
+description: <p>Pakistan circa 2015 for JF-17 and F-16 enthusiasts.</p>
+aircrafts:
+  - AH-1W SuperCobra
+  - F-16CM Fighting Falcon (Block 50)
+  - JF-17 Thunder
+  - Mi-8MTV2 Hip
+  - MiG-19P Farmer-B
+  - MiG-21bis Fishbed-N
+  - UH-1H Iroquois
+awacs:
+  - KJ-2000
+tankers:
+  - IL-78M
+frontline_units:
+  - BTR-80
+  - HQ-7 Launcher
+  - M113
+  - T-55A
+  - T-80UD
+  - Type 04A (ZBD-04A)
+artillery_units:
+  - 2S9 Nona-S
+  - BM-30 Smerch (9M55K5 HE Rockets)
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry AK-74 Rus
+  - MANPADS Stinger
+  - Paratrooper AKS
+  - Paratrooper RPG-16
+missiles: []
+preset_groups:
+  - SA-2/S-75
+  - HQ-2
+  - SA-11
+  - HQ-7
+  - SA-10/S-300PS
+naval_units:
+  - FFG Oliver Hazard Perry
+  - Type 054A Frigate
+air_defense_units:
+  - EWR 1L13
+  - EWR 55G6
+  - AAA ZU-23 Closed Emplacement
+  - ZU-23 on Ural-375
+carrier_names: []
+helicopter_carrier_names: []
+cruiser: []
+requirements: {}
+has_jtac: true
+jtac_unit: WingLoong-I

@@ -1,0 +1,22 @@
+---
+name: 347 Squadron
+nickname: Perseus
+female_pilot_percentage: 6
+country: Greece
+role: Multirole Fighter
+aircraft: F-16CM Fighting Falcon (Block 50)
+livery: HAF_347_Perseus
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

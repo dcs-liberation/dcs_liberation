@@ -1,0 +1,15 @@
+name: WW2 Flak Site
+tasks:
+  - AAA
+groups:
+  - Flak:
+    - name: WW2 Flak Site 0
+      unit_count:
+        - 6
+      unit_types:
+        - flak18
+    - name: WW2 Flak Site 1
+      unit_count:
+        - 1
+      unit_types:
+        - Blitz_36-6700A
