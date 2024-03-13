@@ -1,0 +1,6 @@
+name: R-60 x 2
+year: 1973
+fallback: R-60M
+clsids:
+  - "{R-60 2L}"
+  - "{R-60 2R}"

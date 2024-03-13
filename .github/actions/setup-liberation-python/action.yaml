@@ -1,0 +1,21 @@
+name: Liberation Python set-up
+description: Sets up the Liberation Python environment.
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.11"
+        cache: pip
+
+    - name: Install environment
+      shell: powershell
+      run: |
+        python -m venv ./venv
+
+    - name: Install dependencies
+      shell: powershell
+      run: |
+        ./venv/scripts/activate
+        python -m pip install -r requirements.txt

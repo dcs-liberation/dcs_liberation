@@ -1,0 +1,39 @@
+---
+country: Sweden
+name: Sweden 1990
+authors: Khopa
+description:
+  "<p>Sweden in the 90s.</p><p>Note : Since we're missing the Draken and
+  the Air-to-Air variant of the Viggen, this faction will struggle in air-to-air scenarios.</p>"
+locales:
+  - sv_SE
+aircrafts:
+  - AJS-37 Viggen
+  - UH-1H Iroquois
+awacs:
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - FV510 Warrior
+  - Leopard 2A4
+  - M1097 Heavy HMMWV Avenger
+  - M1126 Stryker ICV (M2 HMG)
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+preset_groups:
+  - Hawk
+naval_units:
+  - FFG Oliver Hazard Perry
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M1097 Heavy HMMWV Avenger
+has_jtac: true
+jtac_unit: MQ-9 Reaper

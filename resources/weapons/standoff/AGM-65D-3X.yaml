@@ -1,0 +1,5 @@
+name: 3xAGM-65D
+year: 1986
+fallback: 2xAGM-65D
+clsids:
+  - "{DAC53A2F-79CA-42FF-A77A-F5649B601308}"

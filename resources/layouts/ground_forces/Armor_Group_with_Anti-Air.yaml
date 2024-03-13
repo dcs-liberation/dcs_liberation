@@ -1,0 +1,26 @@
+name: Armor Group with Anti-Air
+generic: true
+tasks:
+  - BaseDefense
+  - FrontLine
+groups:
+  - Armor Group:
+    - name: Armor Group with Anti-Air 0
+      unit_count:
+        - 2
+        - 6
+      unit_classes:
+        - APC
+        - ATGM
+        - IFV
+        - Tank
+    - name: Armor Group with Anti-Air 1
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - AAA
+        - SHORAD
+        - Manpad
+layout_file: resources/layouts/ground_forces/ground_forces.miz

@@ -1,0 +1,6 @@
+name: 2xGBU-10
+type: LGB
+year: 1976
+fallback: 2xMk 84
+clsids:
+  - "{62BE78B1-9258-48AE-B882-279534C0D278}"

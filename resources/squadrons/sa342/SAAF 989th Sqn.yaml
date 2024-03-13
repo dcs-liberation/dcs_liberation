@@ -1,0 +1,11 @@
+---
+name: 989th Squadron
+nickname: 989th
+female_pilot_percentage: 6
+country: Syria
+role: Anti-Tank Helicopter
+aircraft: SA 342M Gazelle
+livery: "Syria Fictional"
+mission_types:
+  - CAS
+  - BAI

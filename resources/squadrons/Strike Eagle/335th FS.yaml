@@ -1,0 +1,15 @@
+---
+name: 335th FS
+nickname: Chiefs
+female_pilot_percentage: 6
+country: USA
+role: Strike Fighter
+aircraft: F-15E Strike Eagle
+livery: 335th Fighter SQN (SJ)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

@@ -1,0 +1,11 @@
+class: Recon
+description: The AMX-10 RC is a reconnaissance vehicle built by GIAT. Over 240 are
+  in service in the French Army. In addition, 108 vehicles were sold to Morocco and
+  12 to Qatar. RC stands for Roues-Canon, or wheeled gun.
+introduced: 1970
+manufacturer: GIAT Industries
+origin: France
+price: 10
+role: Recon Vehicle
+variants:
+  "AMX-10 RCR": {}

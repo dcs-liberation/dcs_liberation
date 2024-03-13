@@ -1,0 +1,5 @@
+class: LandingShip
+price: 0
+variants:
+  LST Mk.II: null
+hit_points: 2100

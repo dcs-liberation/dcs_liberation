@@ -1,0 +1,14 @@
+---
+name: VPAF - 927th Fighter Regiment Intercept
+nickname: 927th Int
+female_pilot_percentage: 0
+country: Vietnam
+role: Air Superiority Fighter
+aircraft: MiG-21bis Fishbed-N
+livery: "VPAF - 927th Fighter Regiment Metal"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep

@@ -1,0 +1,5 @@
+name: GBU-31(V)4/B
+year: 2001
+fallback: GBU-24
+clsids:
+  - "{GBU_31_V_4B}"

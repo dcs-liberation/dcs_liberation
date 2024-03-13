@@ -1,0 +1,73 @@
+---
+country: USA
+name: US Navy 1985
+authors: HerrTom
+description: <p>Highway to the Danger Zone! For Tomcat lovers.</p>
+locales:
+  - en_US
+aircrafts:
+  - AH-1W SuperCobra
+  - A-4E Skyhawk
+  - F-14A Tomcat (Block 135-GR Late)
+  - F-14B Tomcat
+  - F-4B Phantom II
+  - F-4E Phantom II
+  - S-3B Viking
+  - SH-60B Seahawk
+  - UH-1H Iroquois
+awacs:
+  - E-2C Hawkeye
+tankers:
+  - S-3B Tanker
+frontline_units:
+  - M1043 HMMWV (M2 HMG)
+  - M113
+  - M163 Vulcan Air Defense System
+  - M60A3 "Patton"
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+  - Mortar 2B11 120mm
+air_defense_units:
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+preset_groups:
+  - Hawk
+naval_units:
+  - FFG Oliver Hazard Perry
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+  - CVN-74 John C. Stennis
+missiles: []
+carrier_names:
+  - CVN-71 Theodore Roosevelt
+  - CVN-72 Abraham Lincoln
+  - CVN-73 George Washington
+  - CVN-74 John C. Stennis
+  - CVN-75 Harry S. Truman
+helicopter_carrier_names:
+  - LHA-1 Tarawa
+  - LHA-2 Saipan
+  - LHA-3 Belleau Wood
+  - LHA-4 Nassau
+  - LHA-5 Peleliu
+requirements: {}
+doctrine: coldwar
+liveries_overrides:
+  F/A-18C Hornet (Lot 20):
+    - VFA-106
+    - VFA-113
+    - VFA-122
+    - VFA-131
+    - VFA-192
+    - VFA-34
+    - VFA-37
+    - VFA-83
+    - VFA-87
+    - VFA-97

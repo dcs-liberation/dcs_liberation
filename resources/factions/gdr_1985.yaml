@@ -1,0 +1,59 @@
+---
+country: GDR
+name: German Democratic Republic 1985
+authors: Colonel Panic
+description: <p>The German Democratic Republic in 1985.</p>
+locales:
+  - de_DE
+doctrine: coldwar
+aircrafts:
+  - L-39ZA Albatros
+  - Mi-24V Hind-E
+  - Mi-24P Hind-F
+  - Mi-8MTV2 Hip
+  - MiG-21bis Fishbed-N
+  - MiG-23MLD Flogger-K
+  - Su-17M4 Fitter-K
+awacs: []
+tankers: []
+frontline_units:
+  - BMP-1
+  - BMP-2
+  - BRDM-2
+  - MT-LB
+  - T-55A
+  - T-72B with Kontakt-1 ERA
+artillery_units:
+  - 2S1 Gvozdika
+  - BM-21 Grad
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry AK-74 Rus
+  - Infantry RPG
+  - Mortar 2B11 120mm
+missiles: []
+preset_groups:
+  - SA-2/S-75
+  - SA-2/S-75 V-759/5V23
+  - SA-3/S-125
+  - SA-3/S-125 V-601P/5V27
+  - SA-6
+  - Cold-War-Flak
+naval_units:
+  - CG Ticonderoga
+air_defense_units:
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - SAM SA-5 S-200 ST-68U "Tin Shield" SR
+  - SAM SA-8 Osa "Gecko" TEL
+  - SA-9 Strela
+  - SA-13 Gopher (9K35 Strela-10M3)
+  - ZSU-57-2 'Sparka'
+  - AAA ZU-23 Closed Emplacement
+  - ZSU-23-4 Shilka
+requirements: {}
+carrier_names: []
+helicopter_carrier_names: []
+has_jtac: true
+jtac_unit: Mi-8MTV2 Hip

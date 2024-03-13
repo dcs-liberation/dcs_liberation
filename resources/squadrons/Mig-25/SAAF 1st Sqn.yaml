@@ -1,0 +1,15 @@
+---
+name: 1st Squadron
+nickname: 1st
+female_pilot_percentage: 0
+country: Syria
+role: Air Superiority Fighter
+aircraft: MiG-25PD Foxbat-E
+livery: "af standard"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP

@@ -1,0 +1,31 @@
+name: derrick1
+generic: true
+tasks:
+  - StrikeTarget
+  - Derrick
+groups:
+  - Derrick:
+    - name: derrick1 0
+      statics:
+        - derrick1 0-0
+        - derrick1 0-1
+      unit_count:
+        - 2
+      unit_types:
+        - Oil derrick
+    - name: derrick1 1
+      statics:
+        - derrick1 1-0
+        - derrick1 1-1
+      unit_count:
+        - 2
+      unit_types:
+        - Pump station
+    - name: derrick1 2
+      statics:
+        - derrick1 2-0
+      unit_count:
+        - 1
+      unit_types:
+        - Subsidiary structure 2
+layout_file: resources/layouts/buildings/buildings.miz

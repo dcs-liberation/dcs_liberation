@@ -1,0 +1,5 @@
+name: R-27ER
+year: 1990 # Based on deagal.com may have been earlier 
+fallback: R-27R
+clsids:
+  - "{E8069896-8435-4B90-95C0-01A03AE6E400}"

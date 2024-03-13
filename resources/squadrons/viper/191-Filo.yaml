@@ -1,0 +1,22 @@
+---
+name: 191. Filo
+nickname: Kobra
+female_pilot_percentage: 6
+country: Turkey
+role: Strike Fighter
+aircraft: F-16CM Fighting Falcon (Block 50)
+livery: THK_191_Filo
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

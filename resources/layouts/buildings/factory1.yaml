@@ -1,0 +1,23 @@
+name: factory1
+generic: true
+tasks:
+  - Factory
+groups:
+  - Factory:
+    - name: factory1 0
+      statics:
+        - factory1 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - Tech combine
+    - name: factory1 1
+      statics:
+        - factory1 1-0
+        - factory1 1-1
+        - factory1 1-2
+      unit_count:
+        - 3
+      unit_types:
+        - Tech hangar A
+layout_file: resources/layouts/buildings/buildings.miz

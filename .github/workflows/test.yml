@@ -1,0 +1,38 @@
+name: Tests
+on: workflow_call
+jobs:
+  python-tests:
+    name: Python tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Set up Python environment
+        uses: ./.github/actions/setup-liberation-python
+
+      - name: run tests
+        run: |
+          ./venv/scripts/activate
+          pytest --cov --cov-report=xml tests
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+
+  ts-tests:
+    name: Typescript tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JS environment
+        uses: ./.github/actions/setup-liberation-js
+
+      - name: run tests
+        run: |
+          cd client
+          npm test -- --coverage
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3

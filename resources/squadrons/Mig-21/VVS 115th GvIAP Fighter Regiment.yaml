@@ -1,0 +1,16 @@
+---
+name: 115th GvIAP Fighter Regiment
+nickname: 115th
+female_pilot_percentage: 0
+country: Russia
+role: Air Superiority Fighter
+aircraft: MiG-21bis Fishbed-N
+livery: "VVS - 115 GvIAP"
+mission_types:
+  - BARCAP
+  - TARCAP
+  - CAS
+  - Strike  
+  - Escort
+  - Intercept
+  - Fighter sweep

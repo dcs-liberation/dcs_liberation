@@ -1,0 +1,5 @@
+name: 20xAGM-86D
+year: 2001
+fallback: 20xAGM-86C
+clsids:
+  - "{22906569-A97F-404B-BA4F-D96DBF94D05E}"

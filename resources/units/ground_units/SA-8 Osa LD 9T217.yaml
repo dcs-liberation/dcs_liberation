@@ -1,0 +1,12 @@
+class: Logistics
+description: "The 9K33 Osa (Russian: 9\u041A33 \xAB\u041E\u0441\u0430\xBB, literally\
+  \ \"wasp\"; NATO reporting name SA-8 Gecko) is a highly mobile, low-altitude, short-range\
+  \ tactical surface-to-air missile system developed in the Soviet Union in the 1960s\
+  \ and fielded in 1972. Its export version name is Romb."
+introduced: 1981
+manufacturer: Ulyanovsk
+origin: USSR/Russia
+price: 3
+role: Self-Propelled Surface-to-Air Missile Launcher
+variants:
+  SAM SA-8 Osa LD 9T217: {}

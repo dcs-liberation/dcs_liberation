@@ -1,0 +1,16 @@
+---
+name: RAF, No. 16 Squadron
+nickname: No. 16
+female_pilot_percentage: 0
+country: UK
+role: Fighter
+aircraft: Spitfire LF Mk IX
+livery: RAF, No. 16 Squadron
+mission_types:
+  - CAS
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - Fighter sweep
+  - BARCAP
+  - TARCAP

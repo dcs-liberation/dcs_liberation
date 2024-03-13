@@ -1,0 +1,5 @@
+name: LAU-131 7xMPP APKWS
+year: 2012
+fallback: AGM-65E2/L
+clsids:
+  - "{LAU-131 - 7 AGR-20 M282}"

@@ -1,0 +1,8 @@
+name: Roland
+tasks:
+  - SHORAD
+units:
+  - SAM Roland EWR
+  - Roland 2 (Marder Chassis)
+layouts:
+  - 2 Launcher Site

@@ -1,0 +1,28 @@
+name: fuel1
+generic: true
+tasks:
+  - StrikeTarget
+  - Fuel
+groups:
+  - Fuel:
+    - name: fuel1 0
+      statics:
+        - fuel1 0-0
+        - fuel1 0-1
+        - fuel1 0-2
+        - fuel1 0-3
+        - fuel1 0-4
+        - fuel1 0-5
+      unit_count:
+        - 6
+      unit_types:
+        - Tank
+    - name: fuel1 1
+      statics:
+        - fuel1 1-0
+        - fuel1 1-1
+      unit_count:
+        - 2
+      unit_types:
+        - Tank 3
+layout_file: resources/layouts/buildings/buildings.miz

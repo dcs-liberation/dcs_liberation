@@ -1,0 +1,24 @@
+---
+name: VMA-124
+nickname: Memphis Marines
+female_pilot_percentage: 0
+country: USA
+role: Carrier-based Attack/Light Fighter
+aircraft: A-4E Skyhawk
+bases:
+  carrier: true
+  shore: true
+livery: USMC VMA-124 Memphis Marines
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

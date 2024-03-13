@@ -1,0 +1,13 @@
+---
+name: HMLA-169 (UH-1H)
+nickname: Vipers
+female_pilot_percentage: 0
+country: USA
+role: Transport/Light Attack
+aircraft: UH-1H Iroquois
+livery: US NAVY
+mission_types:
+  - CAS
+  - OCA/Aircraft
+  - Transport
+  - Air Assault

@@ -1,0 +1,7 @@
+name: KH-29T
+year: 1980
+fallback: KH-29L
+clsids:
+  - "{B4FC81C9-B861-4E87-BBDC-A1158E648EBF}"
+  - "{601C99F7-9AF3-4ed7-A565-F8B8EC0D7AAC}"
+  - "{X-29T}"

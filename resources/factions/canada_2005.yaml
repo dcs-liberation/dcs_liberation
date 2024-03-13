@@ -1,0 +1,55 @@
+---
+country: Canada
+name: Canada 2005
+authors: Khopa, SpaceEnthusiast
+description: <p>Canada in the 2000s, an F/A-18C Hornet focused faction.</p>
+locales:
+  - en_US
+  - fr_CA
+aircrafts:
+  - AH-1W SuperCobra
+  - C-130J-30 Super Hercules
+  - CF-188 Hornet
+  - UH-1H Iroquois
+awacs:
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - FV510 Warrior
+  - LAV-25
+  - Leopard 1A3
+  - Leopard 2
+  - Leopard 2A4
+  - M1097 Heavy HMMWV Avenger
+  - M113
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+preset_groups:
+  - Hawk
+naval_units:
+  - DDG Arleigh Burke IIa
+  - CG Ticonderoga
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - M1097 Heavy HMMWV Avenger
+requirements:
+  C-130J-30 Super Hercules Mod by Anubis: https://forums.eagle.ru/topic/252075-dcs-super-hercules-mod-by-anubis/
+carrier_names: []
+helicopter_carrier_names: []
+has_jtac: true
+jtac_unit: MQ-9 Reaper
+liveries_overrides:
+  CF-188 Hornet:
+    - Canada 409th Squadron
+    - Canada 425th Squadron
+  C-130J-30 Super Hercules:
+    - Royal Canadian AF CC-130J
+unrestricted_satnav: true

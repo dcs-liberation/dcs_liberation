@@ -1,0 +1,12 @@
+name: Patriot
+tasks:
+  - LORAD
+units:
+  - SAM Patriot STR
+  - SAM Patriot CR (AMG AN/MRC-137)
+  - SAM Patriot ECS
+  - SAM Patriot C2 ICC
+  - SAM Patriot EPP-III
+  - SAM Patriot LN
+layouts:
+  - Patriot Battery

@@ -1,0 +1,17 @@
+---
+name: RAF, No. 21 Squadron
+nickname: No. 21
+female_pilot_percentage: 0
+country: UK
+role: Fighter Bomber
+aircraft: MosquitoFBMkVI
+livery: RAF
+mission_types:
+  - CAS
+  - Strike
+  - Anti-ship
+  - OCA/Aircraft
+  - Intercept
+  - Fighter sweep
+  - BARCAP
+  - TARCAP

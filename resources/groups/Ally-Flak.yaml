@@ -1,0 +1,13 @@
+name: Ally Flak
+tasks:
+  - AAA
+units:
+  - QF 3.7-inch AA Gun
+  - M1 37mm Gun
+  - M45 Quadmount
+  - Willys Jeep
+  - M30 Cargo Carrier
+  - M4 High-Speed Tractor
+  - Truck Bedford
+layouts:
+  - WW2 Ally Flak Site

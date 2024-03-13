@@ -1,0 +1,6 @@
+name: KH-59M
+year: 1992
+# Base KH-59 (AS-13 Kingbolt) entered service in 1982 - had smaller warhead
+fallback: KH-29T
+clsids:
+  - "{40AB87E8-BEFB-4D85-90D9-B2753ACF9514}"

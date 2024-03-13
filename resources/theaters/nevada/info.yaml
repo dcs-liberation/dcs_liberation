@@ -1,0 +1,44 @@
+---
+name: Nevada
+timezone: -8
+daytime:
+  dawn: [4, 6]
+  day: [6, 17]
+  dusk: [17, 18]
+  night: [0, 5]
+climate:
+  day_night_temperature_difference: 6.0
+  seasons:
+    winter:
+      average_pressure: 29.72 # TODO: Find real-world data
+      average_temperature: 5.0
+      weather:
+        thunderstorm: 1
+        raining: 10
+        cloudy: 50
+        clear: 40
+    spring:
+      weather:
+        thunderstorm: 1
+        raining: 5
+        cloudy: 45
+        clear: 50
+    summer:
+      average_pressure: 30.02 # TODO: Find real-world data
+      average_temperature: 31.5
+      weather:
+        thunderstorm: 1
+        raining: 5
+        cloudy: 30
+        clear: 65
+    fall:
+      weather:
+        thunderstorm: 1
+        raining: 10
+        cloudy: 45
+        clear: 45
+  turbulence:
+    high_avg_yearly_turbulence_per_10cm: 17
+    low_avg_yearly_turbulence_per_10cm: 3.5
+    solar_noon_turbulence_per_10cm: 3.5
+    midnight_turbulence_per_10cm: -3

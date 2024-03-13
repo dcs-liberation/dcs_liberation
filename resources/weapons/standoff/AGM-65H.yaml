@@ -1,0 +1,6 @@
+name: AGM-65H
+year: 2002
+fallback: 3xAGM-65D
+clsids:
+  - "LAU_117_AGM_65H"
+  - "LAU_88_AGM_65H"

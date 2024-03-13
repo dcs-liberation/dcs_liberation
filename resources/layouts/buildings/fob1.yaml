@@ -1,0 +1,31 @@
+name: fob1
+generic: true
+tasks:
+  - FOB
+groups:
+  - FOB:
+    - name: fob1 0
+      statics:
+        - fob1 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - .Command Center
+    - name: fob1 1
+      statics:
+        - fob1 1-0
+        - fob1 1-1
+        - fob1 1-2
+      unit_count:
+        - 3
+      unit_types:
+        - Barracks 2
+    - name: fob1 2
+      statics:
+        - fob1 2-0
+        - fob1 2-1
+      unit_count:
+        - 2
+      unit_types:
+        - Garage small B
+layout_file: resources/layouts/buildings/buildings.miz

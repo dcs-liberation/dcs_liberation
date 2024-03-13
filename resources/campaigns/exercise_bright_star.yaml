@@ -1,0 +1,174 @@
+---
+name: Sinai - Exercise Bright Star
+theater: Sinai
+authors: Starfire
+recommended_player_faction: Bluefor Modern
+recommended_enemy_faction: Egypt 2000
+description:
+    <p>For over four decades, the United States and Egypt have conducted a series 
+    of biannual joint military exercises known as Bright Star. As the 
+    geopolitical landscape has transformed, so too has the scope and scale of 
+    Exercise Bright Star. The exercise has grown over the years to incorporate 
+    a wide array of international participants. The 2025 iteration of 
+    Exercise Bright Star features eight participating nations alongside 
+    fourteen observer nations.</p><p>
+    For the 2025 exercises, the United States, along with a select contingent 
+    from the exercise coalition, will take on the role of a hypothetical 
+    adversarial nation, dubbed Orangeland. This scenario is designed to 
+    simulate a mock invasion against Cairo, and presents a valuable 
+    opportunity for participating nations to refine their joint operational 
+    capabilities and improve logistical and tactical interoperability</p><p>
+    A historic addition to Exercise Bright Star 2025 is the participation of 
+    Israel as an observer nation. This marks a significant milestone, given 
+    the complex historical relations in the region, and symbolises a step 
+    forward in regional collaboration and military diplomacy. Israel's role, 
+    hosting the aggressor faction of the exercise coalition at its airfields, 
+    not only demonstrates the broadening scope of the exercise but also highlights 
+    the value of fostering an environment of mutual cooperation and shared 
+    security objectives.</p>
+miz: exercise_bright_star.miz
+performance: 1
+recommended_start_date: 2025-09-01
+version: "11.0"
+squadrons:
+  Blue CV-1:
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F/A-18C Hornet (Lot 20)
+      size: 24
+    - primary: AEW&C
+      aircraft:
+        - E-2D Advanced Hawkeye
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+      size: 4
+  Bombers from RAF Fairford:
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - B-52H Stratofortress
+      size: 8
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+      size: 8
+  # Hatzerim (141)
+  7:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+      size: 6
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - F-15C Eagle
+      size: 20
+    - primary: OCA/Runway
+      secondary: any
+      aircraft:
+        - F-15E Strike Eagle (Suite 4+)
+      size: 16
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 20
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - JF-17 Thunder
+      size: 16
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Mirage 2000C
+      size: 12
+  # Kedem
+  12:
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - CH-47D
+      size: 20
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 8
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-60L
+        - UH-60A
+      size: 4
+  # Nevatim (106)
+# Nevatim temporarilly disabled because airfield is borked
+#  8:
+#    - primary: AEW&C
+#      aircraft:
+#        - E-3A
+#      size: 2
+#    - primary: Refueling
+#      aircraft:
+#        - KC-135 Stratotanker
+#      size: 2
+  # Melez (30)
+  5:
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - Ka-50 Hokum III
+        - Ka-50 Hokum (Blackshark 3)
+      size: 4
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - Mirage 2000C
+      size: 12
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+      size: 12
+  # Wadi al Jandali (72)
+  13:
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F-4E Phantom II
+      size: 20
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 20
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - Mi-24P Hind-F
+      size: 4
+    - primary: OCA/Aircraft
+      secondary: any
+      aircraft:
+        - SA 342L Gazelle
+      size: 4
+  # Cairo West (95)
+  18:
+    - primary: Transport
+      aircraft:
+        - C-130
+      size: 8
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29S Fulcrum-C
+      size: 20

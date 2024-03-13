@@ -1,0 +1,53 @@
+---
+name: Falklands
+timezone: -3
+daytime:
+  dawn: [6, 9]
+  day: [9, 18]
+  dusk: [18, 20]
+  night: [0, 5]
+# Sourced from
+# https://www.worlddata.info/america/argentina/climate-santa-cruz.php
+# This map is huge and probably has wide climate variations across the region,
+# but that's not something we (or DCS) can model, so Santa Cruz was picked
+# arbitrarily.
+# Pressure data sourced from
+# https://www.weather-atlas.com/en/argentina/puerto-santa-cruz-climate#pressure
+climate:
+  day_night_temperature_difference: 11.0
+  seasons:
+    # "winter" and "summer" are actually interpreted as northern hemisphere
+    # seasons in liberation, so these seasons are all inverted.
+    winter:
+      average_pressure: 29.63
+      average_temperature: 21.0
+      weather:
+        thunderstorm: 1
+        raining: 10
+        cloudy: 55
+        clear: 35
+    spring:
+      weather:
+        thunderstorm: 1
+        raining: 10
+        cloudy: 65
+        clear: 25
+    summer:
+      average_pressure: 29.77
+      average_temperature: -2.0
+      weather:
+        thunderstorm: 1
+        raining: 5
+        cloudy: 75
+        clear: 20
+    fall:
+      weather:
+        thunderstorm: 1
+        raining: 30
+        cloudy: 45
+        clear: 25
+  turbulence:
+    high_avg_yearly_turbulence_per_10cm: 8
+    low_avg_yearly_turbulence_per_10cm: 4.5
+    solar_noon_turbulence_per_10cm: 3
+    midnight_turbulence_per_10cm: -2

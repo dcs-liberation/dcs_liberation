@@ -1,0 +1,114 @@
+DCS Liberation 第 {{ game.turn }} 回合
+====================
+
+简报中的大部分信息，包括通讯、飞行计划等，都可以在你的膝板中找到。
+
+当前局势：
+====================
+{% if not frontlines  %}
+目前没有地面战斗发生。
+{% endif %}
+{% if frontlines %}
+{%+ for frontline in frontlines %}
+{% if frontline.player_zero %}
+前线已经没有任何地面力量来进行防御了。 情况极其危急，我们将不可避免地失去{{ frontline.player_base.name }} 和 {{ frontline.enemy_base.name }}之间的区域控制权。
+{% endif %}
+{% if frontline.enemy_zero %}
+我们已经击溃了敌军部队，将在 {{ frontline.enemy_base.name }} 区域取得重大突破。
+{% endif %}
+{% if not frontline.player_zero %}
+{# Pick a random sentence to describe each frontline #}
+{% set fl_sent1 %}在 {{ frontline.player_base.name }} 和 {{frontline.enemy_base.name}} 之间仍有交火发生。 {%+ endset %}
+{% set fl_sent2 %}在 {{frontline.player_base.name}} 和 {{frontline.enemy_base.name}} 之间的地面战斗仍在继续。 {%+ endset %}
+{% set fl_sent3 %}我们 {{frontline.player_base.name}} 的部队，正在对抗来自 {{frontline.enemy_base.name}}的敌军部队。 {%+ endset %}
+{% set fl_sent4 %}来自 {{frontline.player_base.name}} 的我军部队，正与来自 {{frontline.enemy_base.name}} 的敌军部队交战。 {%+ endset %}
+{% set fl_sent5 %}当前的战斗前线在 {{frontline.player_base.name}} 和 {{frontline.enemy_base.name}} 之间。 {%+ endset %}
+{% set frontline_sentences = [fl_sent1, fl_sent2, fl_sent3, fl_sent4, fl_sent5] %}
+{{ frontline_sentences | random }}
+{%- if frontline.advantage %}
+    {%- if frontline.stance == frontline.combat_stances.AGGRESSIVE %}
+我军部队将从这个位置出发向敌军发起进攻，鉴于敌军已经寡不敌众，毫无疑问我军将取得进展。
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.ELIMINATION %}
+我军地面部队将从这个位置出发，集中力量优先摧毁敌方有生力量，然后再向 {{frontline.enemy_base.name}} 进发。 敌军已经寡不敌众，此举或将给予他们致命一击。"
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.BREAKTHROUGH %}
+我军部队将从这个位置出发，集中力量突击 {{ frontline.enemy_base.name }} 。
+    {% endif %}
+    {%- if frontline.stance in [frontline.combat_stances.DEFENSIVE, frontline.combat_stances.AMBUSH] %}
+我们的地面部队将在当前位置驻守防御。我们并不期望敌人会来一次突击。
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.RETREAT %}
+{# TODO: Write a retreat sentence #}
+    {% endif %}
+{%- else %}
+    {%- if frontline.stance == frontline.combat_stances.AGGRESSIVE %}
+我们的地面部队将试图利用优势数量从当前位置向敌军发起一次大胆的突击。这次行动有些冒险，敌人也可能会发动反击。
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.ELIMINATION %}
+我们的地面部队将试图利用优势数量从当前位置向敌军发起一次大胆的突击。这次行动有些冒险，敌人也可能会发动反击。
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.BREAKTHROUGH %}
+我们的地面部队将从当前位置向 {{frontline.enemy_base.name}} 发起一次主要突破攻势。祝他们好运，预计会有敌方反击。
+    {% endif %}
+    {%- if frontline.stance in [frontline.combat_stances.DEFENSIVE, frontline.combat_stances.AMBUSH] %}
+我们的地面部队奉命驻守在当前位置，以防御敌人的攻击。 预计敌方即将发起突击行动。
+    {% endif %}
+    {%- if frontline.stance == frontline.combat_stances.RETREAT %}
+{# TODO: Write a retreat sentence #}
+    {% endif %}
+{% endif %}
+{% endif %}
+
+{%+ endfor %}{% endif %}
+
+本小队：
+====================
+{% for flight in flights if flight.client_units %}
+--------------------------------------------------
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
+频率 : {{ flight|intra_flight_channel }}
+{% for waypoint in flight.waypoints %}
+{{ loop.index0 }} {{waypoint|waypoint_timing("Depart ")}}-- {{waypoint.name}} : {{ waypoint.description}}
+{% endfor %}
+--------------------------------------------------{% endfor %}
+
+
+{%- if allied_flights_by_departure|length > 0 %}
+其他友军单位飞行计划：
+====================
+{% for dep in allied_flights_by_departure %}
+{{ dep }}
+---------------------------------------------------
+{% for flight in allied_flights_by_departure[dep] %}
+{{ flight.flight_type }} {{ flight.units[0].type }} x {{flight.size}}, departing in {{ flight.departure_delay }}, {{ flight.package.target.name}}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
+{%- if dynamic_runways|length > 0 %}
+航母及FARPs：
+====================
+{% for runway in dynamic_runways %}
+{{ runway.airfield_name}}
+--------------------------------------------------
+无线电 : {{ runway.atc }}
+TACAN : {{ runway.tacan }} {{ runway.tacan_callsign }}
+{% if runway.icls %}ILS/ICLS频道: {{ runway.icls }}
+{% endif %}
+
+{% endfor %}
+{% endif %}
+{%- if awacs|length > 0 %}
+AWACS:
+====================
+{% for i in awacs %}{{ i.callsign }} -- 频率 : {{i.freq.mhz}}
+{% endfor %}
+{% endif %}
+
+{%- if jtacs|length > 0 %}
+JTACS [F-10 菜单] :
+====================
+{% for jtac in jtacs %}前线 {{ jtac.region }} -- 激光编码 : {{ jtac.code }}, 频率 : {{ jtac.freq.mhz }}
+{% endfor %}
+{% endif %}

@@ -1,0 +1,9 @@
+class: Recon
+description: The Panhard Véhicule Blindé Léger ("Light armoured vehicle"), also known by its acronym Panhard VBL or simply VBL, is a French wheeled 4x4 all-terrain vehicle built by Panhard. The vehicle is offered in various configurations, and was designed to combine the agility of the Peugeot P4 liaison vehicle with adequate protection against small arms fire, artillery fragments, mines and NBC weapons. Produced between 1985 and 2010, the vehicle has been used by the French Army and other European, African and Central American armies in various conflicts since the 1980s. This variant is equiped with the AN/F1 machine gun.
+introduced: 1985
+manufacturer: Panhard
+origin: France
+price: 2
+role: Recon Vehicle
+variants:
+  VBL AANF1: null

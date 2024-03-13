@@ -1,0 +1,33 @@
+{
+    "nameInUI": "LotATC Export",
+    "defaultValue": false,
+    "specificOptions": [
+        {
+            "nameInUI": "Export RED AA",
+            "mnemonic": "exportRedAA",
+            "defaultValue": true
+        },
+        {
+            "nameInUI": "Export BLUE AA",
+            "mnemonic": "exportBlueAA",
+            "defaultValue": false
+        },
+        {
+            "nameInUI": "Export AA Symbols",
+            "mnemonic": "exportSymbols",
+            "defaultValue": true
+        }
+    ],
+    "scriptsWorkOrders": [
+        {
+            "file": "LotAtcExport.lua",
+            "mnemonic": "LotAtcExport-script"
+        }
+    ],
+    "configurationWorkOrders": [
+        {
+            "file": "LotAtcExport-config.lua",
+            "mnemonic": "LotAtcExport-config"
+        }
+    ]
+}

@@ -1,0 +1,41 @@
+name: farp1
+generic: true
+tasks:
+  - StrikeTarget
+  - Farp
+groups:
+  - Farp:
+    - name: farp1 0
+      statics:
+        - farp1 0-0
+        - farp1 0-1
+        - farp1 0-2
+        - farp1 0-3
+        - farp1 0-4
+      unit_count:
+        - 5
+      unit_types:
+        - FARP Tent
+    - name: farp1 1
+      statics:
+        - farp1 1-0
+      unit_count:
+        - 1
+      unit_types:
+        - FARP Ammo Dump Coating
+    - name: farp1 2
+      statics:
+        - farp1 2-0
+      unit_count:
+        - 1
+      unit_types:
+        - FARP CP Blindage
+    - name: farp1 3
+      statics:
+        - farp1 3-0
+        - farp1 3-1
+      unit_count:
+        - 2
+      unit_types:
+        - FARP Fuel Depot
+layout_file: resources/layouts/buildings/buildings.miz

@@ -1,0 +1,6 @@
+name: 2xAIM-120B
+year: 1994
+# If we've run out of doubles, start over with the singles.
+fallback: AIM-120C
+clsids:
+  - "LAU-115_2*LAU-127_AIM-120B"

@@ -1,0 +1,6 @@
+name: AN/ALQ-184 Long ECM
+# https://www.deagel.com/Protection%20Systems/ANALQ-184/a001666
+year: 1987
+fallback: AN/ALQ-184 ECM
+clsids:
+  - "ALQ_184_Long"

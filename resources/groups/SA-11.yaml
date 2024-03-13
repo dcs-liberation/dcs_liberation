@@ -1,0 +1,9 @@
+name: SA-11
+tasks:
+  - MERAD
+units:
+  - SAM SA-11 Buk "Gadfly" Snow Drift SR
+  - SAM SA-11 Buk "Gadfly" C2
+  - SAM SA-11 Buk "Gadfly" Fire Dome TEL
+layouts:
+  - 4 Launcher Site (Semicircle)

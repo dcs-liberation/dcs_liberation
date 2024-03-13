@@ -1,0 +1,35 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Prepare Environment",
+      "type": "shell",
+      "isBackground":  false,
+      "problemMatcher": [],
+      "command": "powershell",
+      "args": [
+        "-Command",
+        "& {if (-not (Test-Path ${workspaceFolder}\\venv)) { python -m venv ${workspaceFolder}\\venv; . ${workspaceFolder}\\venv\\scripts\\activate.ps1; pip install -r requirements.txt; Copy-Item ${workspaceFolder}\\venv\\Lib\\site-packages\\shiboken2\\shiboken2.abi3.dll ${workspaceFolder}\\venv\\Lib\\site-packages\\PySide2 } }",
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "PYTHONPATH": ".;./pydcs"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

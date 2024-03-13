@@ -1,0 +1,5 @@
+name: AGM-84H SLAM-ER
+year: 2000
+fallback: AGM-84E SLAM
+clsids:
+  - "{AGM_84H}"

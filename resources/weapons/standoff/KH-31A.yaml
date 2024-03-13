@@ -1,0 +1,7 @@
+name: KH-31A
+year: 1989
+fallback: KH-29L
+clsids:
+  - "{4D13E282-DF46-4B23-864A-A9423DFDE504}"
+  - "{4D13E282-DF46-4B23-864A-A9423DFDE50A}"
+  - "{X-31A}"

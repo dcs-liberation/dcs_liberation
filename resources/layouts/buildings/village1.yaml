@@ -1,0 +1,39 @@
+name: village1
+generic: true
+tasks:
+  - StrikeTarget
+  - Village
+groups:
+  - Village:
+    - name: village1 0
+      statics:
+        - village1 0-0
+        - village1 0-1
+      unit_count:
+        - 2
+      unit_types:
+        - Small house 1A
+    - name: village1 1
+      statics:
+        - village1 1-0
+        - village1 1-1
+        - village1 1-2
+        - village1 1-3
+        - village1 1-4
+        - village1 1-5
+        - village1 1-6
+        - village1 1-7
+      unit_count:
+        - 8
+      unit_types:
+        - Small werehouse 1
+    - name: village1 2
+      statics:
+        - village1 2-0
+        - village1 2-1
+        - village1 2-2
+      unit_count:
+        - 3
+      unit_types:
+        - Small house 1B
+layout_file: resources/layouts/buildings/buildings.miz

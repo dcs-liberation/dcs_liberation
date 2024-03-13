@@ -1,0 +1,14 @@
+name: Early-Warning Radar
+generic: true
+tasks:
+  - EarlyWarningRadar
+groups:
+  - EWR:
+    - name: Early-Warning Radar 0
+      unit_count:
+        - 1
+      unit_classes:
+        - EarlyWarningRadar
+      fallback_classes:
+        - SearchRadar
+        - SearchTrackRadar

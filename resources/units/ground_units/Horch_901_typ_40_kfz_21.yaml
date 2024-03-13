@@ -1,0 +1,5 @@
+class: Logistics
+price: 1
+variants:
+  LUV Horch 901 Staff Car: null
+hit_points: 3

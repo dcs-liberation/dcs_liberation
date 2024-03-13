@@ -1,0 +1,22 @@
+name: Build Liberation package
+description: Assembles the full Liberation application.
+runs:
+  using: composite
+  steps:
+    - name: Build client
+      shell: powershell
+      run: |
+        cd client
+        npm run build
+
+    - name: Build binaries
+      shell: powershell
+      run: |
+        ./venv/scripts/activate
+        $env:PYTHONPATH=".;./pydcs"
+        pyinstaller pyinstaller.spec
+
+    - name: Install changelog
+      shell: powershell
+      run: |
+        Copy-Item .\changelog.md .\dist

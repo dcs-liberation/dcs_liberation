@@ -1,0 +1,5 @@
+name: KAB-500LG
+year: 1975
+fallback: KAB-500Kr
+clsids:
+  - "{BA565F89-2373-4A84-9502-A0E017D3A44A}"

@@ -1,0 +1,31 @@
+---
+country: USA
+name: USA 1960
+authors: Khopa
+description: <p>US army in the 60s, pre-Vietnam war.</p>
+locales:
+  - en_US
+aircrafts:
+  - B-52H Stratofortress
+  - C-130
+  - F-86F Sabre
+  - P-51D-25-NA Mustang
+  - P-51D-30-NA Mustang
+  - UH-1H Iroquois
+frontline_units:
+  - M113
+  - M163 Vulcan Air Defense System
+  - M60A3 "Patton"
+artillery_units: []
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M4
+missiles: []
+air_defense_units:
+  - M163 Vulcan Air Defense System
+preset_groups:
+  - Cold-War-Flak
+naval_units: []
+requirements: {}
+doctrine: coldwar

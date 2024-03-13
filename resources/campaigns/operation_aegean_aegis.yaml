@@ -1,0 +1,101 @@
+---
+name: Syria - Operation Aegean Aegis
+theater: Syria
+authors: Starfire
+recommended_player_faction: USA 2005
+recommended_enemy_faction: Turkey 2005
+description:
+  <p><strong>Note:</strong> This fictional campaign was designed for the Apache
+  and Harrier. It requires manual flight planning. While enemy aircraft are present
+  at airfields, there will be no enemy flights as their aircraft are grounded.</p>
+  <p>
+  In a sudden and alarming escalation of tensions in Cyprus, the Anatolian Order,
+  a North Cypriot insurgent faction, has carried out a bold night-time assault on
+  three crucial airfields in the Republic of Cyprus; Paphos, Akrotiri, and Larnaca.
+  The insurgents, equipped with stolen surplus Turkish military hardware, used
+  chemical weapons in their attack, forcing the evacuation of all three airfields.
+  Notably, the capture of Akrotiri, a British Overseas Territory hosting a Royal
+  Air Force base, has drawn significant international attention and concern.</p>
+  <p>
+  The EU has strongly condemned this unprovoked attack against one of its member
+  states. Turkey, despite its historical connections with North Cyprus, has also
+  denounced the Anatolian Order's actions and is investigating how its aircraft,
+  ground vehicles, and weaponry held in storage ended up in insurgent hands.</p>
+  <p>
+  Amidst the crisis, a lone US Navy LHA, strategically positioned in the Aegean Sea,
+  is preparing a response to the crisis. Its mission is to deploy Apache helicopters
+  to neutralise the hastily erected air defenses around the captured airfields, before
+  Harrier jumpjets neutralise the Anatolian Order's aircraft. These aircraft, a
+  selection of mothballed Turkish F-4s and helicopters, are currently grounded due to
+  lack of suitable fuel and spare parts. It is imperative that they are dealt with
+  swiftly before ground troops are air-lifted in to reclaim the airfields.</p>
+  <p>
+  The operation's final phase involves targeting North Cyprus's only airport at Ercan.
+  The plan is to bomb its runway, preventing any further airborne reinforcements by the
+  insurgents. However, due to the air defenses established along the northern edge of
+  the Green Line (the UN-patrolled demilitarised zone) there are strict advisories against
+  overflying North Cyprus unless absolutely necessary, to minimise the risk of losses.
+  </p>
+miz: operation_aegean_aegis.miz
+performance: 1
+recommended_start_date: 2017-04-20
+recommended_player_money: 1000
+recommended_enemy_money: 0
+recommended_player_income_multiplier: 1.0
+recommended_enemy_income_multiplier: 0.0
+version: "11.0"
+squadrons:
+  #Tarawa Class LHA
+  Blue-LHA:
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 12
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack
+      size: 6
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-1H Iroquois
+      size: 2
+  #Paphos
+  46:
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - F-4E Phantom II
+      size: 12
+  #Akrotiri
+  44:
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - AH-1W SuperCobra
+      size: 4
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - OH-58D Kiowa Warrior
+      size: 4
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - UH-60A
+      size: 4
+  #Larnaca
+  47:
+    - primary: Transport
+      aircraft:
+        - C-130
+      size: 6
+  #Ercan
+  49:
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - CH-47D
+      size: 6

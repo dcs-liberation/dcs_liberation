@@ -1,0 +1,5 @@
+name: 8xGBU-31(V)1/B
+year: 2001
+fallback: 8xMk 84
+clsids:
+  - "GBU-31*8"

@@ -1,0 +1,8 @@
+name: WW2LST
+tasks:
+  - Navy
+units:
+  - LS Samuel Chase
+  - LST Mk.II
+layouts:
+  - WW2 LST Group

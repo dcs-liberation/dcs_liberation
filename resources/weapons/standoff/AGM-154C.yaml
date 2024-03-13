@@ -1,0 +1,5 @@
+name: AGM-154C JSOW
+year: 2005
+fallback: AGM-154A JSOW
+clsids:
+  - "{9BCC2A2B-5708-4860-B1F1-053A18442067}"

@@ -1,0 +1,14 @@
+---
+id: raining
+wind:
+  speed:
+    weibull:
+      at_msl:
+        shape: 2.6
+        scale_kts: 8
+      at_2000m:
+        shape: 4.2
+        scale_kts: 20
+      at_8000m:
+        shape: 6.4
+        scale_kts: 20

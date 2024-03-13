@@ -1,0 +1,52 @@
+---
+country: Insurgents
+name: Insurgents (Hard)
+authors: Khopa
+description: <p>Insurgents faction.</p>
+aircrafts: []
+frontline_units:
+  - DIM' KAMIKAZE
+  - DIM' TOYOTA BLUE
+  - DIM' TOYOTA DESERT
+  - DIM' TOYOTA GREEN
+  - SPAAA LC with ZU-23
+  - Scout LC with DSHK 12.7mm
+  - Scout LC with KORD 12.7mm
+  - Scout HL with DSHK 12.7mm
+  - Scout HL with KORD 12.7mm
+  - SPAAA HL with ZU-23
+  - BMP-1
+  - BRDM-2
+  - BTR-80
+  - BTR-D
+  - M1043 HMMWV (M2 HMG)
+  - M1045 HMMWV (BGM-71 TOW)
+  - PT-76
+  - T-55A
+  - ZSU-57-2 'Sparka'
+  - ZU-23 on Ural-375
+artillery_units:
+  - 2S3 Akatsiya
+  - MLRS LC with B8M1 80mm
+  - MLRS HL with B8M1 80mm
+  - BM-21 Grad
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - Infantry RPG
+  - Insurgent AK-74
+  - MANPADS SA-18 Igla "Grouse"
+  - Mortar 2B11 120mm
+air_defense_units:
+  - SA-9 Strela
+  - ZSU-57-2 'Sparka'
+  - SPAAA LC with ZU-23
+  - SPAAA HL with ZU-23
+  - AAA ZU-23 Insurgent Closed Emplacement
+  - ZU-23 on Ural-375 Insurgent
+  - ZSU-23-4 Shilka
+preset_groups: []
+naval_units: []
+missiles:
+  - SSM SS-1C Scud-B

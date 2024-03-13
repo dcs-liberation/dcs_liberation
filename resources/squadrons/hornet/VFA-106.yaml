@@ -1,0 +1,23 @@
+---
+name: VFA-106
+nickname: Gladiators
+female_pilot_percentage: 7
+country: USA
+role: Strike Fighter
+aircraft: F/A-18C Hornet (Lot 20)
+livery: VFA-106 high visibility
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

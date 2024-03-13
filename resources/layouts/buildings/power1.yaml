@@ -1,0 +1,36 @@
+name: power1
+generic: true
+tasks:
+  - Power
+groups:
+  - Power:
+    - name: power1 0
+      statics:
+        - power1 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - Repair workshop
+    - name: power1 1
+      statics:
+        - power1 1-0
+      unit_count:
+        - 1
+      unit_types:
+        - Workshop A
+    - name: power1 2
+      statics:
+        - power1 2-0
+        - power1 2-1
+      unit_count:
+        - 2
+      unit_types:
+        - Garage B
+    - name: power1 3
+      statics:
+        - power1 3-0
+      unit_count:
+        - 1
+      unit_types:
+        - Farm B
+layout_file: resources/layouts/buildings/buildings.miz

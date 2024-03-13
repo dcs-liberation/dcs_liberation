@@ -1,0 +1,7 @@
+name: AGM-88C HARM
+# https://www.af.mil/About-Us/Fact-Sheets/Display/Article/104574/agm-88-harm/
+# 1984 is the date for the A variant but as we do not have that one we use it for C
+year: 1984
+clsids:
+  - "{B06DD79A-F21E-4EB9-BD9D-AB3844618C9C}"
+  - "{B06DD79A-F21E-4EB9-BD9D-AB3844618C93}"

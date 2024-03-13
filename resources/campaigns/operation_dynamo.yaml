@@ -1,0 +1,54 @@
+name: "The Channel - Operation Dynamo"
+theater: "The Channel"
+authors: "Khopa"
+recommended_player_faction: "Allies 1940"
+recommended_enemy_faction: "Germany 1940"
+description: "<p>The Battle of Dunkirk (French: Bataille de Dunkerque) was fought around the French port of Dunkirk (Dunkerque) during the Second World War, between the Allies and Nazi Germany. As the Allies were losing the Battle of France on the Western Front, the Battle of Dunkirk was the defence and evacuation of British and other Allied forces to Britain from 26 May to 4 June 1940..</p>"
+miz: "operation_dynamo.miz"
+performance: 1
+version: "10.0"
+squadrons:
+  # Manston
+  5:
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - Boston Mk.III
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Spitfire LF Mk IX
+  # Hawkinge
+  6:
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - MosquitoFBMkVI
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Spitfire LF Mk IX
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Spitfire LF Mk IX (Clipped Wings)
+  # Dunkirk Mardyck
+  4:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Spitfire LF Mk IX
+  # St Omer
+  3:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Bf 109 K-4 Kurfürst
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - Fw 190 A-8 Anton
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - Ju 88 A-4

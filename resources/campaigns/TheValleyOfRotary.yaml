@@ -1,0 +1,67 @@
+---
+name: Persian Gulf - Valley of Rotary
+theater: Persian Gulf
+authors: Sith1144
+description: <p>Helicopter-focused counterinsurgency campaign set in Southern Iran. The starting airfield is big and easily supports fixed wing aircraft too.</p>
+recommended_player_faction: Iran 2015
+recommended_enemy_faction: Insurgents (Hard)
+recommended_start_date: 2022-06-13
+recommended_player_money: 800
+recommended_enemy_money: 1000
+miz: TheValleyOfRotary.miz
+performance: 2
+version: "10.4"
+squadrons:
+  # Shiraz International, BLUFOR start
+  19:
+    - primary: CAS
+      aircraft:
+        - Mi-24P Hind-F
+        - AH-64D Apache Longbow
+        - AH-1J SeaCobra
+        - AH-1W SuperCobra
+    - primary: CAS
+      aircraft:
+        - Mi-24V Hind-E
+        - UH-1H Iroquois
+        - A-4E Skyhawk
+        - AV-8B Harrier II Night Attack
+        - L-39ZA Albatros
+        - C-101CC Aviojet
+    - primary: BAI
+      aircraft:
+        - Ka-50 Hokum
+        - SA 342M Gazelle
+        - AH-64D Apache Longbow
+        - Mi-28N Havoc
+    - primary: Transport
+      aircraft:
+        - Mi-8MTV2 Hip
+        - UH-1H Iroquois
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 3)
+        - Su-25 Frogfoot
+        - Su-25T Frogfoot
+        - A-10A Thunderbolt II
+  # Jowkan FARP, REDFOR frontline.
+  Jowkan:
+    - primary: CAS
+  # Lar, REDFOR airbase + inverted start
+  11:
+    - primary: CAS
+      aircraft:
+        - Mi-24P Hind-F
+        - Mi-24V Hind-E
+        - UH-1H Iroquois
+        - A-4E Skyhawk
+        - AV-8B Harrier II Night Attack
+        - L-39ZA Albatros
+        - C-101CC Aviojet
+  # Mansurabad, inverted start frontline north
+  Mansurabad:
+    - primary: CAS
+  # Bagh, inverted start frontline south
+  Bagh:
+    - primary: Transport

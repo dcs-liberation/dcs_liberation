@@ -1,0 +1,67 @@
+---
+country: France
+name: France 1995
+authors: Khopa
+description:
+  <p>France in the late 90s before Rafale introduction. A Mirage-2000 centric
+  faction choice. Frenchpack 4.6+ mod is recommended to enable most of the ground
+  units of this faction available.</p>
+locales:
+  - fr_FR
+aircrafts:
+  - C-130
+  - Mirage 2000-5
+  - Mirage 2000C
+  - Mirage-F1B
+  - Mirage-F1CE
+  - Mirage-F1C-200
+  - Mirage-F1CT
+  - SA 342L Gazelle
+  - SA 342M Gazelle
+  - SA 342M Gazelle Mistral
+awacs:
+  - E-3A
+tankers:
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units:
+  - AMX-10 RCR
+  - AMX-13 90mm
+  - AMX.30B2
+  - "Leclerc S\xE9ries 2"
+  - Leclerc_XXI
+  - Pamela
+  - Panhard
+  - Roland 2 (Marder Chassis)
+  - VAB .50
+  - VAB Mephisto
+  - VAB T20/13
+  - VBL .50
+  - VBL AANF1
+artillery_units:
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units:
+  - Truck M818 6x6
+infantry_units:
+  - Infantry M249
+  - Infantry M4
+  - MANPADS Stinger
+  - Mortar 2B11 120mm
+preset_groups:
+  - Hawk
+  - Roland
+naval_units:
+  - FFG Oliver Hazard Perry
+  - DDG Arleigh Burke IIa
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+missiles: []
+air_defense_units:
+  - SAM Hawk SR (AN/MPQ-50)
+requirements: {}
+carrier_names: []
+helicopter_carrier_names:
+  - Jeanne d'Arc
+has_jtac: true
+jtac_unit: MQ-9 Reaper

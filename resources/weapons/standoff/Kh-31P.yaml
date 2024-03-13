@@ -1,0 +1,7 @@
+name: KH-31P
+year: 1988
+fallback: KH-25MPU
+clsids:
+  - "{D8F2C90B-887B-4B9E-9FE2-996BC9E9AF03}"
+  - "{D8F2C90B-887B-4B9E-9FE2-996BC9E9AF0A}"
+  - "{X-31P}"

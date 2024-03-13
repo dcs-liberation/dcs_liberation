@@ -1,0 +1,16 @@
+---
+name: 47th FS
+nickname: Termites
+female_pilot_percentage: 0
+country: USA
+role: Close Air Support
+aircraft: A-10C Thunderbolt II (Suite 3)
+livery: 47th FS Barksdale AFB, Louisiana (BD)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+

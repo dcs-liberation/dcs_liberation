@@ -1,0 +1,6 @@
+name: KH-25MR
+year: 1974
+fallback: KH-66 Grohm
+clsids:
+  - "{292960BB-6518-41AC-BADA-210D65D5073C}"
+  - "{X-25MR}"

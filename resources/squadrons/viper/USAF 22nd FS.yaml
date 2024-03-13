@@ -1,0 +1,22 @@
+---
+name: 22nd FS
+nickname: Stingers
+female_pilot_percentage: 6
+country: USA
+role: Strike Fighter
+aircraft: F-16CM Fighting Falcon (Block 50)
+livery: 22nd_Fighter_Squadron
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

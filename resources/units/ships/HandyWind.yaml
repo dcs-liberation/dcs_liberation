@@ -1,0 +1,5 @@
+class: Boat
+price: 0
+variants:
+  Handy Wind: null
+hit_points: 1000

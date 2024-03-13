@@ -1,0 +1,5 @@
+name: KAB-1500LG-Pr
+year: 2000
+fallback: KAB-1500L
+clsids:
+  - "{KAB_1500LG_LOADOUT}"

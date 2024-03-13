@@ -1,0 +1,12 @@
+{
+    "nameInUI": "Splash Damage",
+    "defaultValue": false,
+    "specificOptions": [],
+    "scriptsWorkOrders": [
+        {
+            "file": "Weapons_Damage_Updated.lua",
+            "mnemonic": "Splash Damage"
+        }
+    ],
+    "configurationWorkOrders": []
+}

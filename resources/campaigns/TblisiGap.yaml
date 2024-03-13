@@ -1,0 +1,86 @@
+---
+name: Caucasus - The Tblisi Gap
+theater: Caucasus
+authors: Sith1144
+description: <p>A 1980 Cold-war-gone-hot campaign set in the hilly terrain between Tblisi and Kutaisi. Made for the Hind and Hip with a narrow front with lots of targets. Can also be played as Blufor Cold War vs GDR 1985 or as Blufor Modern vs a modern opfor faction. Recommended way to play is focusing on helicopters, with aggressive culling (50-60km is workable, maybe even lower)</p>
+recommended_player_faction: Russia 1975 (Mi-24P)
+recommended_enemy_faction: Germany 1990
+recommended_start_date: 1980-09-21 6:40:00
+miz: TblisiGap.miz
+performance: 2
+version: "10.4"
+squadrons:
+  #Vaziani, blufor jet base
+  31:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-23MLD Flogger-K
+        - F-14A Tomcat (Block 135-GR Late)
+        - F/A-18C Hornet (Lot 20)
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+        - F-16CM Fighting Falcon (Block 50)
+        - F-5E Tiger II
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Su-17M4 Fitter-K
+        - AJS-37 Viggen
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - Su-25 Frogfoot
+        - A-10C Thunderbolt II (Suite 3)
+        - A-4E Skyhawk
+        - A-10A Thunderbolt II
+    - primary: Refueling
+    - primary: AEW&C
+  #Tbilisi-Lochini, blue helicopter base
+  29:
+    - primary: CAS
+      aircraft:
+        - Mi-24P Hind-F
+        - AV-8B Harrier II Night Attack
+        - Ka-50 Hokum
+        - AH-64D Apache Longbow
+    - primary: CAS
+      aircraft:
+        - Ka-50 Hokum
+        - SA 342M Gazelle
+        - Mi-24V Hind-E
+    - primary: Transport
+      aircraft:
+        - Mi-8MTV2 Hip
+        - UH-1H Iroquois
+  #frontline FARP, called "FARP Mayhem"
+  FARP Mayhem:
+    - primary: CAS
+      aircraft:
+        - AH-1W SuperCobra
+        - AH-64D Apache Longbow
+        - SA 342M Gazelle
+        - Ka-50 Hokum
+        - Mi-24V Hind-E
+  #Kutaisi, primary opfor base
+  25:
+    - primary: BAI
+      aircraft:
+        - Tornado IDS
+        - Su-17M4 Fitter-K
+        - Su-24M Fencer-D
+    - primary: BARCAP
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+        - F-4F Phantom II
+        - F-5E Tiger II
+        - MiG-23MLD Flogger-K
+        - FC-1 Fierce Dragon
+        - JF-17 Thunder
+        - Su-27 Flanker-B
+  #Senaki, secondary opfor base
+  23:
+    - primary: Transport
+    - primary: AEW&C

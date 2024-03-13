@@ -1,0 +1,12 @@
+name: SA-10/S-300PS
+tasks:
+  - LORAD
+units:
+  - SAM SA-10 S-300 "Grumble" Clam Shell SR
+  - SAM SA-10 S-300 "Grumble" Big Bird SR
+  - SAM SA-10 S-300 "Grumble" C2
+  - SAM SA-10 S-300 "Grumble" Flap Lid TR
+  - SAM SA-10 S-300 "Grumble" TEL D
+  - SAM SA-10 S-300 "Grumble" TEL C
+layouts:
+  - S-300 Site

@@ -1,0 +1,22 @@
+name: Carrier Strike Group 8
+generic: true
+tasks:
+  - AircraftCarrier
+groups:
+  - Carrier:
+    - name: Carrier Strike Group 8 0
+      unit_count:
+        - 1
+      unit_types:
+        - Stennis
+  - Escort:
+    - name: Carrier Strike Group 8 1
+      unit_count:
+        - 4
+      unit_types:
+        - USS_Arleigh_Burke_IIa
+    - name: Carrier Strike Group 8 2
+      unit_count:
+        - 1
+      unit_types:
+        - TICONDEROG

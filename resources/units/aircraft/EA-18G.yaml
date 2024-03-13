@@ -1,0 +1,41 @@
+carrier_capable: true
+description:
+  "The Boeing EA-18G Growler is an American carrier-based electronic warfare aircraft,
+  a specialized version of the two-seat F/A-18F Super Hornet. The EA-18G replaced the
+  Northrop Grumman EA-6B Prowlers in service with the United States Navy."
+introduced: 1999
+manufacturer: McDonnell Douglas
+origin: USA
+price: 25
+role: Carrier-based Multirole Fighter
+fuel:
+  # Parking A1 to RWY 32 at Akrotiri.
+  taxi: 170
+  # AB takeoff to 350/0.85, reduce to MIL and maintain 350 to 25k ft.
+  climb_ppm: 44.25
+  # 0.85 mach for 100NM.
+  cruise_ppm: 22.1
+  # ~0.9 mach for 100NM. Occasional AB use.
+  combat_ppm: 27.5
+  min_safe: 2000
+variants:
+  EA-18G Growler: {}
+radios:
+  intra_flight: AN/ARC-210
+  inter_flight: AN/ARC-210
+  channels:
+    type: common
+    # DCS will clobber channel 1 of the first radio compatible with the flight's
+    # assigned frequency. Since the F/A-18's two radios are both AN/ARC-210s,
+    # radio 1 will be compatible regardless of which frequency is assigned, so
+    # we must use radio 1 for the intra-flight radio.
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 2
+utc_kneeboard: true
+# default_overrides:
+#   HelmetMountedDevice: 1
+#   InnerBoard: 0
+#   OuterBoard: 0
+tasks:
+  DEAD: 500
+  SEAD: 600

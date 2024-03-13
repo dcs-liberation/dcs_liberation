@@ -1,0 +1,7 @@
+name: AN/ASQ-213 HARM Targeting System
+# https://www.af.mil/About-Us/Fact-Sheets/Display/Article/104602/high-speed-anti-radiation-missile-targeting-system/
+# We have the R7 pod, but since we never get older variants of things in DCS
+# just pretend it's as old as the initial revision.
+year: 1994
+clsids:
+  - "{AN_ASQ_213}"

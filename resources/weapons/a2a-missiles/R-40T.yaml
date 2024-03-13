@@ -1,0 +1,5 @@
+name: R-40T
+year: 1983
+fallback: R-40R
+clsids:
+  - "{5F26DBC2-FB43-4153-92DE-6BBCE26CB0FF}"

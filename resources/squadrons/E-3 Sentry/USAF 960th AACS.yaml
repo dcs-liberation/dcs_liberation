@@ -1,0 +1,10 @@
+---
+name: 960th AAC Squadron
+nickname: Vikings
+female_pilot_percentage: 6
+country: USA
+role: AEW&C
+aircraft: E-3A
+livery: usaf standard
+mission_types:
+  - AEW&C

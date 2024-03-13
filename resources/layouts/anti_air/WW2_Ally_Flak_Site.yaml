@@ -1,0 +1,40 @@
+name: WW2 Ally Flak Site
+tasks:
+  - AAA
+groups:
+  - Flak:
+    - name: WW2 Ally Flak Site 0
+      unit_count:
+        - 4
+      unit_types:
+        - QF_37_AA
+    - name: WW2 Ally Flak Site 1
+      unit_count:
+        - 8
+      unit_types:
+        - M1_37mm
+    - name: WW2 Ally Flak Site 2
+      unit_count:
+        - 8
+      unit_types:
+        - M45_Quadmount
+    - name: WW2 Ally Flak Site 3
+      unit_count:
+        - 1
+      unit_types:
+        - Willys_MB
+    - name: WW2 Ally Flak Site 4
+      unit_count:
+        - 1
+      unit_types:
+        - M30_CC
+    - name: WW2 Ally Flak Site 5
+      unit_count:
+        - 1
+      unit_types:
+        - M4_Tractor
+    - name: WW2 Ally Flak Site 6
+      unit_count:
+        - 1
+      unit_types:
+        - Bedford_MWD

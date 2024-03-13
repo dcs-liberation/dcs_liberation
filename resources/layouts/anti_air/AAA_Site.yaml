@@ -1,0 +1,28 @@
+name: AAA Site
+description: A standard AAA template
+generic: true
+tasks:
+  - AAA
+groups:
+  - AAA:
+    - name: AAA Site Radar
+      optional: true # Optional if the AAA Site has a Radar
+      fill: false # Do not fill if no Radar is required!
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+        - SearchTrackRadar
+    - name: AAA Site
+      unit_count:
+        - 2
+        - 6
+      unit_classes:
+        - AAA
+    - name: AAA Site Logistics
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - Logistics

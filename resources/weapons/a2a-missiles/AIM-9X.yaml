@@ -1,0 +1,9 @@
+name: AIM-9X
+year: 2003
+fallback: AIM-9M
+clsids:
+  - "{5CE2FF2A-645A-4197-B48D-8720AC69394F}"
+  - "LAU-115_LAU-127_AIM-9X"
+  - "LAU-115_LAU-127_AIM-9X_R"
+  - "LAU-127_AIM-9X"
+  - "{AIM-9X-ON-ADAPTER}"

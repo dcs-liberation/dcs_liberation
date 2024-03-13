@@ -1,0 +1,7 @@
+name: KH-25MPU
+year: 1985
+fallback: KH-25MP
+clsids:
+  - "{E86C5AA5-6D49-4F00-AD2E-79A62D6DDE26}"
+  - "{752AF1D2-EBCC-4bd7-A1E7-2357F5601C70}"
+  - "{X-25MPU}"

@@ -1,0 +1,34 @@
+---
+country: Russia
+name: Private Military Company - Russian
+authors: Khopa
+description: <p>A private military company using Russian units.</p>
+locales:
+  - ru_RU
+aircrafts:
+  - Ka-50 Hokum
+  - Ka-50 Hokum (Blackshark 3)
+  - L-39ZA Albatros
+  - Mi-24V Hind-E
+  - Mi-24P Hind-F
+  - Mi-8MTV2 Hip
+frontline_units:
+  - BRDM-2
+  - BTR-80
+  - Cobra
+  - SA-13 Gopher (9K35 Strela-10M3)
+artillery_units:
+  - 2S19 Msta-S
+logistics_units:
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units:
+  - MANPADS SA-18 Igla-S "Grouse"
+  - Paratrooper AKS
+  - Paratrooper RPG-16
+air_defense_units:
+  - SA-9 Strela
+  - SA-13 Gopher (9K35 Strela-10M3)
+preset_groups: []
+naval_units: []
+missiles: []

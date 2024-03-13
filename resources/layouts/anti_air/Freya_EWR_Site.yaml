@@ -1,0 +1,50 @@
+name: Freya EWR Site
+tasks:
+  - SHORAD
+groups:
+  - Freya:
+    - name: Freya EWR Site 0
+      unit_count:
+        - 1
+      unit_types:
+        - FuMG-401
+    - name: Freya EWR Site 1
+      unit_count:
+        - 4
+      unit_types:
+        - flak38
+    - name: Freya EWR Site 2
+      unit_count:
+        - 4
+      unit_types:
+        - flak18
+    - name: Freya EWR Site 3
+      unit_count:
+        - 1
+      unit_types:
+        - Kubelwagen_82
+    - name: Freya EWR Site 4
+      unit_count:
+        - 1
+      unit_types:
+        - Sd_Kfz_7
+    - name: Freya EWR Site 5
+      unit_count:
+        - 1
+      unit_types:
+        - Sd_Kfz_2
+    - name: Freya EWR Site 6
+      unit_count:
+        - 1
+      unit_types:
+        - Maschinensatz_33
+    - name: Freya EWR Site 7
+      unit_count:
+        - 1
+      unit_types:
+        - KDO_Mod40
+    - name: Freya EWR Site 8
+      unit_count:
+        - 3
+      unit_types:
+        - soldier_mauser98

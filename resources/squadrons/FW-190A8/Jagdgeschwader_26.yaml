@@ -1,0 +1,15 @@
+name: Jagdgeschwader 26
+nickname: Schlageter
+female_pilot_percentage: 0
+country: Third Reich
+role: Fighter
+aircraft: Fw 190 A-8 Anton
+livery: FW-190A8 JG26 Priller
+mission_types:
+  - CAS
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - Fighter sweep
+  - BARCAP
+  - TARCAP

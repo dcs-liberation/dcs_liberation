@@ -1,0 +1,5 @@
+name: GBU-38
+year: 2002
+fallback: GBU-12
+clsids:
+  - "{GBU-38}"

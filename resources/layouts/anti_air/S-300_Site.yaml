@@ -1,0 +1,88 @@
+name: S-300 Site
+tasks:
+  - LORAD
+groups:
+  - S-300:
+    - name: S-300 Site SR1
+      unit_count:
+        - 1
+      unit_types:
+        - S-300PS 40B6MD sr # SA-10
+        - S-300PS SA-10B 40B6MD MAST sr # SA-10B
+        - S-300V 9S15 sr # SA-12
+        - S-300PMU1 40B6MD sr # SA-20 + B, is the 5N66E
+        - S-300VM 9S15M2 sr # SA-23
+    - name: S-300 Site SR2
+      unit_count:
+        - 1
+      unit_types:
+        - S-300PS 64H6E sr # SA-10
+        - S-300PS 64H6E TRAILER sr # SA-10B
+        - S-300V 9S19 sr # SA-12
+        - S-300PMU1 64N6E sr # SA-20 + B
+        - S-300VM 9S19M2 sr # SA-23
+    - name: S-300 Site CP
+      unit_count:
+        - 1
+      unit_types:
+        - S-300PS 54K6 cp # SA-10
+        - S-300PS SA-10B 54K6 cp # SA-10B
+        - S-300V 9S457 cp # SA-12
+        - S-300PMU1 54K6 cp # SA-20
+        - S-300PMU2 54K6E2 cp # SA-20B
+        - S-300VM 9S457ME cp # SA-23
+    - name: S-300 Site TR
+      unit_count:
+        - 1
+      unit_types:
+        - S-300PS 40B6M tr # SA-10
+        - S-300PS 30N6 TRAILER tr # SA-10B
+        - S-300V 9S32 tr # SA-12
+        - S-300PMU1 40B6M tr # SA-20, is the 30N6E!
+        - S-300PMU2 92H6E tr # SA-20B
+        - S-300VM 9S32ME tr # SA-23
+    - name: S-300 Site LN1
+      unit_count:
+        - 3
+      unit_types:
+        - S-300PS 5P85C ln # SA-10
+        - S-300PS 5P85SE_mod ln # SA-10B
+        - S-300V 9A82 ln # SA-12
+        - S-300PMU1 5P85CE ln # SA-20
+        - S-300PMU2 5P85SE2 ln # SA-20B
+        - S-300VM 9A82ME ln # SA-23
+    - name: S-300 Site LN2
+      unit_count:
+        - 3
+      unit_types:
+        - S-300PS 5P85D ln # SA-10
+        - S-300PS 5P85SU_mod ln # SA-10B
+        - S-300V 9A83 ln # SA-12
+        - S-300PMU1 5P85DE ln # SA-20
+        - S-300PMU2 5P85SE2 ln # SA-20B
+        - S-300VM 9A83ME ln # SA-23
+  - PD:
+    - name: S-300 Site SHORAD1
+      optional: true
+      sub_task: PointDefense
+      unit_count:
+        - 0
+        - 2
+      unit_classes:
+        - SHORAD
+    - name: S-300 Site SHORAD2
+      optional: true
+      sub_task: PointDefense
+      unit_count:
+        - 0
+        - 1
+      unit_types:
+        - Tor 9A331 # Explicit TOR / SA-15 SHORAD PointDefense
+    - name: S-300 Site AAA
+      sub_task: AAA
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - AAA

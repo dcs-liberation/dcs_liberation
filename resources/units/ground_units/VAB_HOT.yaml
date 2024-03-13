@@ -1,0 +1,10 @@
+class: ATGM
+description: The VAB HOT Mephisto is a wheeled armoured vehicle personnel carrier
+  VAB fitted with anti-tank missile launcher turret.
+introduced: 1990
+manufacturer: GIAT Industries
+origin: France
+price: 8
+role: ATGM Vehicle
+variants:
+  VAB Mephisto Frenchpack: {}

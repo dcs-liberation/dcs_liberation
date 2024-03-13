@@ -1,0 +1,9 @@
+name: NASAMS AIM-120C
+tasks:
+  - MERAD
+units:
+  - SAM NASAMS C2
+  - SAM NASAMS SR MPQ64F1
+  - SAM NASAMS LN AIM-120C
+layouts:
+  - 4 Launcher Site (Circle)

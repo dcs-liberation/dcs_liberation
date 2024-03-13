@@ -1,0 +1,5 @@
+name: AGM-65A
+year: 1972
+fallback: AGM-62 Walleye II
+clsids:
+  - "LAU_117_AGM_65A"

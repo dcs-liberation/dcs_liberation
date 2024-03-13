@@ -1,0 +1,16 @@
+---
+name: 25th FS
+nickname: Assam Draggins
+female_pilot_percentage: 0
+country: USA
+role: Close Air Support
+aircraft: A-10C Thunderbolt II (Suite 3)
+livery: 25th FS Osab AB, Korea (OS)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+

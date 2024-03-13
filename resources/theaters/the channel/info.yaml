@@ -1,0 +1,45 @@
+---
+name: The Channel
+pydcs_name: TheChannel
+timezone: +2
+daytime:
+  dawn: [6, 8]
+  day: [10, 17]
+  dusk: [17, 18]
+  night: [0, 5]
+climate:
+  day_night_temperature_difference: 5.0
+  seasons:
+    winter:
+      average_pressure: 29.72 # TODO: Find real-world data
+      average_temperature: 0.0
+      weather:
+        thunderstorm: 1
+        raining: 20
+        cloudy: 60
+        clear: 20
+    spring:
+      weather:
+        thunderstorm: 1
+        raining: 20
+        cloudy: 40
+        clear: 40
+    summer:
+      average_pressure: 30.02 # TODO: Find real-world data
+      average_temperature: 20.0
+      weather:
+        thunderstorm: 1
+        raining: 10
+        cloudy: 35
+        clear: 55
+    fall:
+      weather:
+        thunderstorm: 1
+        raining: 30
+        cloudy: 50
+        clear: 20
+  turbulence:
+    high_avg_yearly_turbulence_per_10cm: 9
+    low_avg_yearly_turbulence_per_10cm: 3.5
+    solar_noon_turbulence_per_10cm: 3.5
+    midnight_turbulence_per_10cm: -3

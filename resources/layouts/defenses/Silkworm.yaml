@@ -1,0 +1,36 @@
+name: Silkworm
+tasks:
+  - Coastal
+groups:
+  - Silkworm:
+    - name: SilkwormGenerator 0
+      unit_count:
+        - 1
+      unit_classes:
+        - SearchRadar
+    - name: SilkwormGenerator 1
+      unit_count:
+        - 5
+      unit_classes:
+        - AntiShipMissile
+    - name: SilkwormGenerator 2
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - Logistics
+    - name: SilkwormGenerator 3
+      optional: true
+      unit_count:
+        - 1
+        - 2
+      unit_classes:
+        - AAA
+    - name: SilkwormGenerator 4
+      optional: true
+      unit_count:
+        - 0
+        - 1
+      unit_classes:
+        - SHORAD

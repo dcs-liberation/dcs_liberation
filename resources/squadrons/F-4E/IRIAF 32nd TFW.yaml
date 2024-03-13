@@ -1,0 +1,23 @@
+---
+name: IRIAF 32nd TFW
+nickname: 32nd TFW
+female_pilot_percentage: 0
+country: Iran
+role: Air Superiority Fighter
+aircraft: F-4E Phantom II
+livery: IRIAF Asia Minor
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

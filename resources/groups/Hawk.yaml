@@ -1,0 +1,10 @@
+name: Hawk
+tasks:
+  - MERAD
+units:
+  - SAM Hawk SR (AN/MPQ-50)
+  - SAM Hawk Platoon Command Post (PCP)
+  - SAM Hawk TR (AN/MPQ-46)
+  - SAM Hawk LN M192
+layouts:
+  - 6 Launcher Site (Semicircle)

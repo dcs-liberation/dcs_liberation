@@ -1,0 +1,22 @@
+name: ammo1
+generic: true
+tasks:
+  - Ammo
+groups:
+  - Ammo:
+    - name: ammo1 0
+      statics:
+        - ammo1 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - .Ammunition depot
+    - name: ammo1 1
+      statics:
+        - ammo1 1-0
+        - ammo1 1-1
+      unit_count:
+        - 2
+      unit_types:
+        - Hangar B
+layout_file: resources/layouts/buildings/buildings.miz

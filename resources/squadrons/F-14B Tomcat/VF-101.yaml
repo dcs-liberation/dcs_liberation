@@ -1,0 +1,21 @@
+---
+name: VF-101
+nickname: Grim Reapers
+female_pilot_percentage: 7
+country: USA
+role: Strike Fighter
+aircraft: F-14B Tomcat
+livery: VF-101 Dark
+mission_types:
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - Strike
+  - Fighter sweep
+  - TARCAP

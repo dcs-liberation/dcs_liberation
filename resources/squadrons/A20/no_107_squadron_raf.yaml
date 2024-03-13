@@ -1,0 +1,16 @@
+---
+name: RAF, No. 107 Squadron
+nickname: Lowestoft's 'own' Squadron
+female_pilot_percentage: 0
+country: UK
+role: Medium Bomber
+aircraft: Boston Mk.III
+livery: 107 Sqn
+mission_types:
+  - Anti-ship
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike

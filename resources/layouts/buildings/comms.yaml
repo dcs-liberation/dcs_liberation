@@ -1,0 +1,15 @@
+name: comms
+generic: true
+tasks:
+  - Comms
+groups:
+  - Comms:
+    - name: comms1 0
+      statics:
+        - comms1 0-0
+      unit_count:
+        - 1
+      unit_types:
+        - TV tower
+        - Comms tower M
+layout_file: resources/layouts/buildings/buildings.miz

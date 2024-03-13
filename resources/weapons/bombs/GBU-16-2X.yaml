@@ -1,0 +1,8 @@
+name: 2xGBU-16
+type: LGB
+year: 1976
+fallback: 2xMk 83
+clsids:
+  - "{BRU33_2X_GBU-16}"
+  - "{BRU-42_2*GBU-16_LEFT}"
+  - "{BRU-42_2*GBU-16_RIGHT}"

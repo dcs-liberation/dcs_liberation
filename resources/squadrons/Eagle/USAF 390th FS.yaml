@@ -1,0 +1,15 @@
+---
+name: 390th FS
+nickname: Wild Boars
+female_pilot_percentage: 6
+country: USA
+role: Air Superiority Fighter
+aircraft: F-15C Eagle
+livery: 390th Fighter SQN
+mission_types:
+  - BARCAP
+  - Escort
+  - Intercept
+  - Fighter sweep
+  - TARCAP
+

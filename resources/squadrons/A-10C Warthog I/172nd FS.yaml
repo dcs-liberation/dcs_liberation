@@ -1,0 +1,16 @@
+---
+name: 172nd FS
+nickname:
+female_pilot_percentage: 0
+country: USA
+role: Close Air Support
+aircraft: A-10C Thunderbolt II (Suite 3)
+livery: 172nd FS Battle Creek ANGB, Michigan (BC)
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - OCA/Aircraft
+  - OCA/Runway
+  - Strike
+
