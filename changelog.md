@@ -8,8 +8,10 @@ Saves from 10.x are not compatible with 11.0.0.
 * **[Campaign]** Improved tracking of parked aircraft deaths. Parked aircraft are now considered dead once sufficient damage is done, meaning guns, rockets and AGMs are viable weapons for OCA/Aircraft missions. Previously Liberation relied on DCS death tracking which required parked aircraft to be hit with more powerful weapons e.g. 2000lb bombs as they were uncontrolled.
 * **[Campaign]** Track damage to theater ground objects across turns. Damage can accumulate across turns leading to death of the unit. This behavior only applies to SAMs, ships and other units that appear on the Liberation map. Frontline units and buildings are not tracked (yet).
 
-
 ## Fixes
+
+* **[Mission Generation]** When planning anti-ship missions against carriers or LHAs, target escorts (if present) if the carrier/LHA is sunk.
+* **[UI]** Identify that a carrier or LHA is sunk instead of "damaged".
 
 # 10.0.0
 
