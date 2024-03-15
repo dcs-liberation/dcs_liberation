@@ -20,8 +20,14 @@ class AntiShipIngressBuilder(PydcsWaypointBuilder):
             group_names.append(target.name)
         elif isinstance(target, NavalControlPoint):
             carrier_name = target.get_carrier_group_name()
-            if carrier_name:
+            if carrier_name and self.mission.find_group(
+                carrier_name
+            ):  # Found a carrier, target it.
                 group_names.append(carrier_name)
+            else:  # Could not find carrier/LHA, indicating it was sunk. Target other groups if present e.g. escorts.
+                for ground_object in target.ground_objects:
+                    for group in ground_object.groups:
+                        group_names.append(group.group_name)
         else:
             logging.error(
                 "Unexpected target type for anti-ship mission: %s",
