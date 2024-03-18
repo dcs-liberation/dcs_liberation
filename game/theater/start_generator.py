@@ -66,7 +66,6 @@ class ModSettings:
     frenchpack: bool = False
     high_digit_sams: bool = False
     ov10a_bronco: bool = False
-
     fa18efg: bool = False
 
     def save_player_settings(self) -> None:
