@@ -80,6 +80,14 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[tuple[str, Beac
             )
         )
 
+        lua.execute(
+            textwrap.dedent(
+                """
+                function math.pow(x,y) return x^y end
+                """
+            )
+        )
+
         bind_gettext = lua.eval(
             textwrap.dedent(
                 """\
