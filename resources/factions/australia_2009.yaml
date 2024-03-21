@@ -1,6 +1,6 @@
 country: Australia
-name: Australia 2005
-authors: 'Khopa, SpaceEnthusiast'
+name: Australia 2009
+authors: 'Khopa, SpaceEnthusiast, Chilli'
 description: >-
   <p>The Australian army in 2005.</p><p>Some units might not be accurate, but
   were picked to represent at best this army.</p>
@@ -8,6 +8,8 @@ aircrafts:
   - AH-1W SuperCobra
   - C-130J-30 Super Hercules
   - F/A-18C Hornet (Lot 20)
+  - F/A-18F Super Hornet
+  - EA-18G Growler
   - SH-60B Seahawk
   - UH-1H Iroquois
 awacs:
