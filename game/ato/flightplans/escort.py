@@ -17,14 +17,14 @@ class EscortFlightPlan(FormationAttackFlightPlan):
 
 
 class Builder(FormationAttackBuilder[EscortFlightPlan, FormationAttackLayout]):
-    def layout(self) -> FormationAttackLayout:
+    def layout(self, dump_debug_info: bool) -> FormationAttackLayout:
         assert self.package.waypoints is not None
 
         builder = WaypointBuilder(self.flight, self.coalition)
         ingress, target = builder.escort(
             self.package.waypoints.ingress, self.package.target
         )
-        hold = builder.hold(self._hold_point())
+        hold = builder.hold(self._hold_point(dump_debug_info))
         join = builder.join(self.package.waypoints.join)
         split = builder.split(self.package.waypoints.split)
         refuel = builder.refuel(self.package.waypoints.refuel)
@@ -51,4 +51,4 @@ class Builder(FormationAttackBuilder[EscortFlightPlan, FormationAttackLayout]):
         )
 
     def build(self, dump_debug_info: bool = False) -> EscortFlightPlan:
-        return EscortFlightPlan(self.flight, self.layout())
+        return EscortFlightPlan(self.flight, self.layout(dump_debug_info))
