@@ -31,7 +31,7 @@ body:
         If the bug was found in a development build, select "Development build"
         and provide a link to the build in the field below.
       options:
-        - 10.0.0
+        - 11.0.0
         - Development build
   - type: textarea
     attributes:
