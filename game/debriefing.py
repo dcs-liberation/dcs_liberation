@@ -391,7 +391,7 @@ class Debriefing:
             else:
                 enemy_losses.append(aircraft)
 
-        # Keep track of damaged units that are counted as killed so we don't double count 
+        # Keep track of damaged units that are counted as killed so we don't double count
         # when DCS reports damage multiple times.
         units_killed_by_damage = set()
         for unit_data in self.state_data.unit_hit_point_updates:
