@@ -391,6 +391,9 @@ class Debriefing:
             else:
                 enemy_losses.append(aircraft)
 
+        # Keep track of damaged units that are counted as killed so we don't double count 
+        # when DCS reports damage multiple times.
+        units_killed_by_damage = set()
         for unit_data in self.state_data.unit_hit_point_updates:
             damaged_unit = FlyingUnitHitPointUpdate.from_json(unit_data, self.unit_map)
             if damaged_unit is None:
@@ -399,6 +402,9 @@ class Debriefing:
                 # If unit already killed, nothing to do.
                 if unit_data["name"] in self.state_data.killed_aircraft:
                     continue
+                if unit_data["name"] in units_killed_by_damage:
+                    continue
+                units_killed_by_damage.add(unit_data["name"])
                 if damaged_unit.is_friendly(to_player=True):
                     player_losses.append(damaged_unit.unit)
                 else:
