@@ -6,6 +6,10 @@ Saves from 11.x are not compatible with 12.0.0.
 
 ## Fixes
 
+* **[Campaign]** Fixed double counting of parked aircraft kills when DCS reports multiple kill events.
+* **[UI]** Naval control points (carriers, LHAs) can no longer be moved onto land.
+
+
 # 11.0.0
 
 Saves from 10.x are not compatible with 11.0.0.
