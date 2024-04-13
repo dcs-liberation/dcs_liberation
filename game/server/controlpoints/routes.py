@@ -89,6 +89,11 @@ def set_destination(
             detail=f"Cannot move {cp} more than "
             f"{cp.max_move_distance.nautical_miles}nm.",
         )
+    if cp.is_fleet and not game.theater.is_in_sea(point):
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot move naval control point {cp} onto land.",
+        )
     cp.target_position = point
     from .. import EventStream
 
