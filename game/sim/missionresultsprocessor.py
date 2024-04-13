@@ -320,7 +320,7 @@ class MissionResultsProcessor:
         """ "
         Auto redeploy units to newly captured base
         """
-        # Find the set of friendly CPsthat can either contribute or receive frontline units
+        # Find the set of friendly CPs that can either contribute or receive frontline units
         all_ally_connected_cps = cp.transitive_connected_friendly_points() + [cp]
 
         # Split into frontline CPs that are connected to enemy CPs and should receive units

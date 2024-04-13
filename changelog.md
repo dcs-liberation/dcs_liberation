@@ -7,6 +7,8 @@ Saves from 11.x are not compatible with 12.0.0.
 ## Fixes
 
 * **[Campaign]** Fixed double counting of parked aircraft kills when DCS reports multiple kill events.
+* **[Campaign]** Fixed error where frontline units are not re-deployed when multiple control points were captured in one turn or when control points are captured "out of order" using air-assault missions.
+* **[Cheat Menu]** Re-deploy frontline units when using cheats to capture control points, so that cheats behave the same way as capturing a control point in-mission.
 * **[UI]** Naval control points (carriers, LHAs) can no longer be moved onto land.
 
 

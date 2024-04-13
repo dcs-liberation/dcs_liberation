@@ -16,6 +16,7 @@ from game import Game
 from game.ato.flighttype import FlightType
 from game.config import RUNWAY_REPAIR_COST
 from game.server import EventStream
+from game.sim.missionresultsprocessor import MissionResultsProcessor
 from game.theater import (
     AMMO_DEPOT_FRONTLINE_UNIT_CONTRIBUTION,
     ControlPoint,
@@ -156,6 +157,9 @@ class QBaseMenu2(QDialog):
             self.cp.capture(
                 self.game_model.game, events, for_player=not self.cp.captured
             )
+            # Redeploy frontline units, as if the CP capture was done in mission.
+            results_processor = MissionResultsProcessor(self.game_model.game)
+            results_processor.redeploy_units(self.cp)
             self.close()
 
     @property
