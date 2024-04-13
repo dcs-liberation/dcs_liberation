@@ -320,37 +320,39 @@ class MissionResultsProcessor:
         """ "
         Auto redeploy units to newly captured base
         """
+        # Find the set of friendly CPsthat can either contribute or receive frontline units
+        all_ally_connected_cps = cp.transitive_connected_friendly_points() + [cp]
 
-        ally_connected_cps = [
-            ocp for ocp in cp.connected_points if cp.captured == ocp.captured
-        ]
-        enemy_connected_cps = [
-            ocp for ocp in cp.connected_points if cp.captured != ocp.captured
-        ]
+        # Split into frontline CPs that are connected to enemy CPs and should receive units
+        # vs. non-frontline CPs that are not connected to enemy CPs and should send units.
+        frontline_cps = []
+        non_frontline_cps = []
+        for cp in all_ally_connected_cps:
+            is_frontline = False
+            for ocp in cp.connected_points:
+                if not ocp.captured:
+                    is_frontline = True
+                    break
+            if is_frontline:
+                frontline_cps.append(cp)
+            else:
+                non_frontline_cps.append(cp)
 
-        # If the newly captured cp does not have enemy connected cp,
-        # then it is not necessary to redeploy frontline units there.
-        if len(enemy_connected_cps) == 0:
+        # If there are no frontline CPs, then nothing to do.
+        if len(frontline_cps) == 0:
             return
 
-        # From each ally cp, send reinforcements
-        for ally_cp in ally_connected_cps:
-            self.redeploy_between(cp, ally_cp)
+        # Equally split between all frontline CPs
+        move_factor = 1.0 / len(frontline_cps)
+        for non_frontline_cp in non_frontline_cps:
+            for frontline_cp in frontline_cps:
+                self.redeploy_between(frontline_cp, non_frontline_cp, move_factor)
 
-    def redeploy_between(self, destination: ControlPoint, source: ControlPoint) -> None:
+    def redeploy_between(
+        self, destination: ControlPoint, source: ControlPoint, move_factor: float
+    ) -> None:
         total_units_redeployed = 0
         moved_units = {}
-
-        if source.has_active_frontline or not destination.captured:
-            # If there are still active front lines to defend at the
-            # transferring CP we should not transfer all units.
-            #
-            # Opfor also does not transfer all of their units.
-            # TODO: Balance the CPs rather than moving half from everywhere.
-            move_factor = 0.5
-        else:
-            # Otherwise we can move everything.
-            move_factor = 1
 
         for frontline_unit, count in source.base.armor.items():
             moved_units[frontline_unit] = int(count * move_factor)
