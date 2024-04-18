@@ -18,9 +18,19 @@ class QFlightTypeTaskInfo(QGroupBox):
         self.task_type = QLabel(str(flight.flight_type))
         self.task_type.setProperty("style", flight.flight_type.name)
 
+        self.callsign_label = QLabel("Callsign:")
+        if flight.callsign is not None:
+            callsign = flight.callsign.group_callsign()
+        else:
+            callsign = ""
+        self.callsign = QLabel(callsign)
+
         layout.addWidget(self.aircraft_icon, 0, 0)
 
         layout.addWidget(self.task, 1, 0)
         layout.addWidget(self.task_type, 1, 1)
+
+        layout.addWidget(self.callsign_label, 2, 0)
+        layout.addWidget(self.callsign, 2, 1)
 
         self.setLayout(layout)

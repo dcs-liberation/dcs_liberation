@@ -21,6 +21,7 @@ from ..sidc import (
 )
 
 if TYPE_CHECKING:
+    from game.callsigns.callsigngenerator import Callsign
     from game.dcs.aircrafttype import AircraftType
     from game.sim.gameupdateevents import GameUpdateEvents
     from game.sim.simulationresults import SimulationResults
@@ -49,6 +50,7 @@ class Flight(SidcDescribable):
         custom_name: Optional[str] = None,
         cargo: Optional[TransferOrder] = None,
         roster: Optional[FlightRoster] = None,
+        callsign: Optional[Callsign] = None,
     ) -> None:
         self.id = uuid.uuid4()
         self.package = package
@@ -68,6 +70,8 @@ class Flight(SidcDescribable):
 
         # Only used by transport missions.
         self.cargo = cargo
+
+        self.callsign = callsign
 
         # Flight properties that can be set in the mission editor. This is used for
         # things like HMD selection, ripple quantity, etc. Any values set here will take

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
 
+from game.callsigns.callsigngenerator import FlightCallsignGenerator
 from game.theater import ControlPoint, MissionTarget, OffMapSpawn
 from game.utils import nautical_miles
 from ..ato.flight import Flight
@@ -26,6 +27,7 @@ class PackageBuilder:
         closest_airfields: ClosestAirfields,
         air_wing: AirWing,
         laser_code_registry: LaserCodeRegistry,
+        callsign_generator: FlightCallsignGenerator,
         flight_db: Database[Flight],
         is_player: bool,
         package_country: str,
@@ -38,6 +40,7 @@ class PackageBuilder:
         self.package = Package(location, flight_db, auto_asap=asap)
         self.air_wing = air_wing
         self.laser_code_registry = laser_code_registry
+        self.callsign_generator = callsign_generator
         self.start_type = start_type
 
     def plan_flight(self, plan: ProposedFlight) -> bool:
@@ -71,6 +74,7 @@ class PackageBuilder:
                 member.assign_tgp_laser_code(
                     self.laser_code_registry.alloc_laser_code()
                 )
+        flight.callsign = self.callsign_generator.alloc_callsign(flight)
         self.package.add_flight(flight)
         return True
 

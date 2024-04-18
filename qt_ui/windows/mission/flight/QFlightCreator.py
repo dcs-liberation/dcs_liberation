@@ -202,6 +202,8 @@ class QFlightCreator(QDialog):
                     self.game.laser_code_registry.alloc_laser_code()
                 )
 
+        flight.callsign = self.game.blue.callsign_generator.alloc_callsign(flight)
+
         # noinspection PyUnresolvedReferences
         self.created.emit(flight)
         self.accept()

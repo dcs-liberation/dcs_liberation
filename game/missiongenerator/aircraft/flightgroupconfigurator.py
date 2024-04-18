@@ -11,6 +11,7 @@ from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
 from game.callsigns.callsign import callsign_for_support_unit
+from game.callsigns.callsigngenerator import Callsign, FlightCallsignGenerator
 from game.data.weapons import Pylon
 from game.missiongenerator.logisticsgenerator import LogisticsGenerator
 from game.missiongenerator.missiondata import AwacsInfo, MissionData, TankerInfo
@@ -114,6 +115,8 @@ class FlightGroupConfigurator:
             divert_position,
             self.flight.flight_plan.waypoints,
         )
+
+        self.set_callsigns()
 
         return FlightData(
             package=self.flight.package,
@@ -269,3 +272,15 @@ class FlightGroupConfigurator:
                 # our own tracking, so undo that.
                 # https://github.com/pydcs/dcs/commit/303a81a8e0c778599fe136dd22cb2ae8123639a6
                 unit.fuel = self.flight.unit_type.dcs_unit_type.fuel_max
+
+    def set_callsigns(self) -> None:
+        if self.flight.callsign is None:
+            return
+        for unit_index, unit in enumerate(self.group.units):
+            unit_callsign = Callsign(
+                self.flight.callsign.name,
+                self.flight.callsign.index,
+                self.flight.callsign.group_id,
+                unit_index + 1,
+            )
+            unit.callsign_dict = unit_callsign.pydcs_dict()
