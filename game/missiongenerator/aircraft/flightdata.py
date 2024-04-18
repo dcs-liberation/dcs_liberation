@@ -6,7 +6,7 @@ from typing import Optional, TYPE_CHECKING
 
 from dcs.flyingunit import FlyingUnit
 
-from game.callsigns import create_group_callsign_from_unit
+from game.callsigns.callsign import create_group_callsign_from_unit
 
 if TYPE_CHECKING:
     from game.ato import FlightType, FlightWaypoint, Package

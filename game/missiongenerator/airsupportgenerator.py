@@ -16,7 +16,7 @@ from dcs.task import (
 from dcs.unittype import UnitType
 
 from game.ato import FlightType
-from game.callsigns import callsign_for_support_unit
+from game.callsigns.callsign import callsign_for_support_unit
 from game.naming import namegen
 from game.radio.radios import RadioRegistry
 from game.radio.tacan import TacanBand, TacanRegistry, TacanUsage

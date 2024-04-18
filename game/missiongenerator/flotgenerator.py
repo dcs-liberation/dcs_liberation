@@ -27,7 +27,7 @@ from dcs.triggers import Event, TriggerOnce
 from dcs.unit import Skill, Vehicle
 from dcs.unitgroup import VehicleGroup
 
-from game.callsigns import callsign_for_support_unit
+from game.callsigns.callsign import callsign_for_support_unit
 from game.data.units import UnitClass
 from game.dcs.aircrafttype import AircraftType
 from game.dcs.groundunittype import GroundUnitType

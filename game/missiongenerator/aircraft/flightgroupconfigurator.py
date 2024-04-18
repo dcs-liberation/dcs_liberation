@@ -10,7 +10,7 @@ from dcs.unit import Skill
 from dcs.unitgroup import FlyingGroup
 
 from game.ato import Flight, FlightType
-from game.callsigns import callsign_for_support_unit
+from game.callsigns.callsign import callsign_for_support_unit
 from game.data.weapons import Pylon
 from game.missiongenerator.logisticsgenerator import LogisticsGenerator
 from game.missiongenerator.missiondata import AwacsInfo, MissionData, TankerInfo
