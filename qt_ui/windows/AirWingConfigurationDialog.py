@@ -285,6 +285,7 @@ class SquadronConfigurationBox(QGroupBox):
         )
         self.player_list.setAcceptRichText(False)
         self.player_list.setEnabled(squadron.player and squadron.aircraft.flyable)
+        self.player_list.setMaximumHeight(125)
         left_column.addWidget(self.player_list)
 
         button_row = QHBoxLayout()
@@ -664,7 +665,7 @@ class OverfullAirbasesDisplay(QGroupBox):
         parent: QWidget | None = None,
     ) -> None:
         super().__init__("Overfull airbases", parent)
-        self.setMaximumHeight(200)
+        self.setMaximumHeight(125)
 
         self.parking_tracker = parking_tracker
         self.parking_tracker.allocation_changed.connect(self.on_allocation_changed)
@@ -790,7 +791,7 @@ class AirWingConfigurationDialog(QDialog):
         self.game = game
         self.parking_tracker = AirWingConfigParkingTracker(game)
 
-        self.setMinimumSize(1024, 768)
+        self.resize(1024, 900)
         self.setWindowTitle(f"Air Wing Configuration")
         # TODO: self.setWindowIcon()
 
