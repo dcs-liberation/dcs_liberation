@@ -1,8 +1,6 @@
-# 12.0.0
+# 11.1.0
 
-Saves from 11.x are not compatible with 12.0.0.
-
-## Features/Improvements
+Saves from 11.0.0 are compatible with 11.1.0.
 
 ## Fixes
 
@@ -10,6 +8,7 @@ Saves from 11.x are not compatible with 12.0.0.
 * **[Campaign]** Fixed error where frontline units are not re-deployed when multiple control points were captured in one turn or when control points are captured "out of order" using air-assault missions.
 * **[Cheat Menu]** Re-deploy frontline units when using cheats to capture control points, so that cheats behave the same way as capturing a control point in-mission.
 * **[Flight Planning]** Theater refuelling flight plans (those not tied to a particular package) will remain on station for a longer period, specifically the desired mission duration + 30 minutes. By default, this increases the on-station time from 1 hour to 1.5 hours. 
+* **[Mission Generation]** Patched bug where Liberation crashed when aborting a turn when Fighter Sweep missions were planned.
 * **[UI]** Naval control points (carriers, LHAs) can no longer be moved onto land.
 
 
