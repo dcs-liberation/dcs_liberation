@@ -1,10 +1,21 @@
+# 12.0.0
+
+Saves from 12.x are not compatible with 11.x.
+
+## Features/Improvements
+
+
+
+## Fixes
+
+* **[Campaign]** Removed deprecated settings for generating persistent and invulnerable AWACs and tankers.
+
 # 11.1.0
 
 Saves from 11.0.0 are compatible with 11.1.0.
 
 ## Fixes
 
-* **[Campaign]** Removed deprecated settings for generating persistent and invulnerable AWACs and tankers.
 * **[Campaign]** Fixed double counting of parked aircraft kills when DCS reports multiple kill events.
 * **[Campaign]** Fixed error where frontline units are not re-deployed when multiple control points were captured in one turn or when control points are captured "out of order" using air-assault missions.
 * **[Cheat Menu]** Re-deploy frontline units when using cheats to capture control points, so that cheats behave the same way as capturing a control point in-mission.
