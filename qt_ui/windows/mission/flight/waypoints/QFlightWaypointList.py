@@ -83,7 +83,7 @@ class QFlightWaypointList(QTableView):
             self.model.index(current_index, 0), QItemSelectionModel.Select
         )
         self.resizeColumnsToContents()
-        total_column_width = self.verticalHeader().width() + self.lineWidth()
+        total_column_width = self.verticalHeader().sizeHint().width() + self.lineWidth()
         for i in range(0, self.model.columnCount()):
             total_column_width += self.columnWidth(i) + self.lineWidth()
         self.setFixedWidth(total_column_width)
