@@ -279,8 +279,7 @@ class FlightGroupConfigurator:
         for unit_index, unit in enumerate(self.group.units):
             unit_callsign = Callsign(
                 self.flight.callsign.name,
-                self.flight.callsign.index,
                 self.flight.callsign.group_id,
                 unit_index + 1,
             )
-            unit.callsign_dict = unit_callsign.pydcs_dict()
+            unit.callsign_dict = unit_callsign.pydcs_dict(country=self.flight.country)

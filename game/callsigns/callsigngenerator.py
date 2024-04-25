@@ -13,12 +13,20 @@ from game.ato.flighttype import FlightType
 MAX_GROUP_ID = 999
 
 
+class CallsignCategory(StrEnum):
+    AIR = "Air"
+    TANKERS = "Tankers"
+    AWACS = "AWACS"
+    GROUND_UNITS = "GroundUnits"
+    HELIPADS = "Helipad"
+    GRASS_AIRFIELDS = "GrassAirfield"
+
+
 @dataclass(frozen=True)
 class Callsign:
-    name: str
-    index: int
-    group_id: int
-    unit_id: int
+    name: str  # Callsign name e.g. "Enfield"
+    group_id: int  # ID of the group e.g. 2 in Enfield-2-3
+    unit_id: int  # ID of the unit e.g. 3 in Enfield-2-3
 
     def __post_init__(self) -> None:
         if self.group_id < 1 or self.group_id > MAX_GROUP_ID:
@@ -32,38 +40,30 @@ class Callsign:
 
     def __str__(self) -> str:
         return f"{self.name}{self.group_id}{self.unit_id}"
-        
+
     def group_callsign(self) -> str:
         return f"{self.name}-{self.group_id}"
-        
-    def pydcs_dict(self) -> dict[Any, Any]:
-        return { "name": str(self),
-                 1: self.index,
-                 2: self.group_id,
-                 3: self.unit_id }
 
-
-class CallsignCategory(StrEnum):
-    AIR = "Air"
-    TANKERS = "Tankers"
-    AWACS = "AWACS"
-    GROUND_UNITS = "GroundUnits"
-    HELIPADS = "Helipad"
-    GRASS_AIRFIELDS = "GrassAirfield"
+    def pydcs_dict(self, country: str) -> dict[Any, Any]:
+        country_obj = countries_by_name[country]()
+        for category in CallsignCategory:
+            if category in country_obj.callsign:
+                for index, name in enumerate(country_obj.callsign[category]):
+                    if name == self.name:
+                        return {
+                            "name": str(self),
+                            1: index + 1,
+                            2: self.group_id,
+                            3: self.unit_id,
+                        }
+        raise ValueError(f"Could not find callsign {name} in {country}.")
 
 
 class GroupIdRegistry:
 
     def __init__(self, country: Country):
         self._names: dict[str, deque[int]] = {}
-        for category in [
-            CallsignCategory.AIR,
-            CallsignCategory.TANKERS,
-            CallsignCategory.AWACS,
-            CallsignCategory.GROUND_UNITS,
-            CallsignCategory.HELIPADS,
-            CallsignCategory.GRASS_AIRFIELDS,
-        ]:
+        for category in CallsignCategory:
             if category in country.callsign:
                 for name in country.callsign[category]:
                     self._names[name] = deque()
@@ -90,22 +90,22 @@ class RoundRobinNameAllocator:
         self.names = names
         self._index = 0
 
-    def allocate(self) -> tuple[str, int]:
+    def allocate(self) -> str:
         this_index = self._index
         if this_index == len(self.names) - 1:
             self._index = 0
         else:
             self._index += 1
-        return self.names[this_index], this_index + 1
+        return self.names[this_index]
 
 
 class FlightTypeNameAllocator:
     def __init__(self, names: List[str]):
         self.names = names
 
-    def allocate(self, flight: Flight) -> tuple[str, int]:
+    def allocate(self, flight: Flight) -> str:
         index = self.FLIGHT_TYPE_LOOKUP.get(flight.flight_type, 0)
-        return self.names[index], index + 1
+        return self.names[index]
 
     FLIGHT_TYPE_LOOKUP: dict[FlightType, int] = {
         FlightType.TARCAP: 1,
@@ -132,11 +132,11 @@ class FlightCallsignGenerator:
 
     def __init__(self, country: str):
         self._country = countries_by_name[country]()
-    
+
         self._group_id_registry = GroupIdRegistry(self._country)
         self._awacs_name_allocator = None
         self._tankers_name_allocator = None
-        
+
         if CallsignCategory.AWACS in self._country.callsign:
             self._awacs_name_allocator = RoundRobinNameAllocator(
                 self._country.callsign[CallsignCategory.AWACS]
@@ -156,15 +156,15 @@ class FlightCallsignGenerator:
         if flight.flight_type == FlightType.AEWC:
             if self._awacs_name_allocator is None:
                 raise ValueError(f"{self._country.name} does not have AWACs callsigns")
-            name, index = self._awacs_name_allocator.allocate()
+            name = self._awacs_name_allocator.allocate()
         elif flight.flight_type == FlightType.REFUELING:
             if self._tankers_name_allocator is None:
                 raise ValueError(f"{self._country.name} does not have tanker callsigns")
-            name, index = self._tankers_name_allocator.allocate()
+            name = self._tankers_name_allocator.allocate()
         else:
-            name, index = self._air_name_allocator.allocate(flight)
+            name = self._air_name_allocator.allocate(flight)
         group_id = self._group_id_registry.alloc_group_id(name)
-        return Callsign(name, index, group_id, 1)
+        return Callsign(name, group_id, 1)
 
     def release_callsign(self, callsign: Callsign) -> None:
         self._group_id_registry.release_group_id(callsign)
