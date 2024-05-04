@@ -142,6 +142,10 @@ class NewGameWizard(QtWidgets.QWizard):
 
         self.setWindowTitle("New Game")
 
+        # Resize wizard to the size of the largest page to keep size and position
+        # consistent.
+        self.resize(self.theater_page.sizeHint())
+
     def accept(self):
         logging.info("New Game Wizard accept")
         logging.info("======================")
