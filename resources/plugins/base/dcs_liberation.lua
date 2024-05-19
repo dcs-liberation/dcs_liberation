@@ -151,9 +151,11 @@ end
 function update_hit_points(event)
 	local update = {}
 	update.name = event.target:getName()
-	update.hit_points = event.target:getLife()
-	unit_hit_point_updates[#unit_hit_point_updates + 1] = update
-	write_state()
+	get_life_success, update.hit_points = pcall(event.target.getLife, event.target)
+	if get_life_success then
+		unit_hit_point_updates[#unit_hit_point_updates + 1] = update
+		write_state()
+	end
 end 
 
 activeWeapons = {}
