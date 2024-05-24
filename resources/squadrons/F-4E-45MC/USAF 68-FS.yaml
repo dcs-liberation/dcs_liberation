@@ -1,0 +1,22 @@
+---
+name: USAF 68th FS
+nickname: Lightning Lancers
+country: USA
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - USAF - MY68-328 - Euro One - 68th FS Lightning Lancers
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

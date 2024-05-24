@@ -1,0 +1,22 @@
+---
+name: USAF 57th FIS
+nickname: Black Knights
+country: USA
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - USAF - AF66-300 - ADC - 57th FIS by Mach3DS
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

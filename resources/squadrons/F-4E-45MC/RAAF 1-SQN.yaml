@@ -1,0 +1,22 @@
+---
+name: RAAF No. 1 SQN
+nickname: Fighting First
+country: Australia
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - RAAF - 97203 - SEA
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

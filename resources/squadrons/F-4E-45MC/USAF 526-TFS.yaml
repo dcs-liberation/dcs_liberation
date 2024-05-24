@@ -1,0 +1,22 @@
+---
+name: USAF 526th TFS
+nickname: Black Knights
+country: USA
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - USAF - RS68-381 - Euro One - 526th TFS
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

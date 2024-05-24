@@ -1,0 +1,21 @@
+---
+name: ROKAF 153rd FS
+country: South Korea
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - ROKAF - 78740 - Compass Ghost - 153rd FS
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

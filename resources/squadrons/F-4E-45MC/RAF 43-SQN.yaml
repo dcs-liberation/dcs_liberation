@@ -1,0 +1,22 @@
+---
+name: RAF No. 43 SQN
+nickname: Fighting Cocks
+country: UK
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: Fictional Royal Air Force 43(F) Sqn FG.1 by Fish
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

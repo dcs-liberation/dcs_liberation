@@ -1,0 +1,35 @@
+description:
+  Proving highly adaptable, the F-4 entered service with the Navy in 1961
+  before it was adopted by the United States Marine Corps and the United States Air
+  Force, and by the mid-1960s it had become a major part of their air arms. Phantom
+  production ran from 1958 to 1981 with a total of 5,195 aircraft built, making it
+  the most produced American supersonic military aircraft in history, and cementing
+  its position as an iconic combat aircraft of the Cold War. The F-4 was used extensively
+  during the Vietnam War. It served as the principal air superiority fighter for the
+  U.S. Air Force, Navy, and Marine Corps and became important in the ground-attack
+  and aerial reconnaissance roles late in the war.
+introduced: 1968
+manufacturer: McDonnell Douglas
+origin: USA
+price: 10
+role: Fighter-Bomber
+max_range: 200
+variants:
+  F-4E-45MC Phantom II: {}
+  Phantom FGR.2: {}
+  F-4EJ Phantom II: {}
+tasks:
+  Anti-ship: 110
+  BAI: 570
+  BARCAP: 410
+  CAS: 570
+  DEAD: 400
+  Escort: 410
+  Fighter sweep: 410
+  Intercept: 410
+  OCA/Aircraft: 570
+  OCA/Runway: 330
+  SEAD: 120
+  SEAD Escort: 120
+  Strike: 400
+  TARCAP: 410

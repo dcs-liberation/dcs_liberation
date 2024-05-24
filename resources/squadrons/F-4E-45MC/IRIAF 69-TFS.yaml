@@ -1,0 +1,22 @@
+---
+name: IRIAF 61st TFS
+nickname: Panthers
+country: Iran
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - IRIAF - 3-6643 - 61st TFS by ISAAC
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

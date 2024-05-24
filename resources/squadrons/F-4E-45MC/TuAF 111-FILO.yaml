@@ -1,0 +1,22 @@
+---
+name: TuAF 111 Filo
+nickname: Panter
+country: Turkey
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - TuAF - 67-0268 - Hill Two by Aqil
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

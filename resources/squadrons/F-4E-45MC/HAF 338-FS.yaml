@@ -1,0 +1,22 @@
+---
+name: HAF 338rd FS
+nickname: Ares
+country: Greece
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: F-4E - HAF - 01507 - Aegean Ghost
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP
