@@ -1,10 +1,10 @@
 ---
 name: USAF 36th TFS
-nickname: Flying Fiends
+nickname: The Flying Fiends
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - OS68-349 - SEA - 36th TFS The Flying Fiends
+livery: OS68-349_SEAW_36TFS
 mission_types:
   - Anti-ship
   - BAI

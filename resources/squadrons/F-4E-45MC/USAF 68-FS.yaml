@@ -4,7 +4,7 @@ nickname: Lightning Lancers
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - MY68-328 - Euro One - 68th FS Lightning Lancers
+livery: MY68-328_E1_68FS
 mission_types:
   - Anti-ship
   - BAI

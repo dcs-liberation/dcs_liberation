@@ -4,7 +4,7 @@ nickname: Silver Lobos
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - GA68-400 - Hill Two - 20th TFTS Silver Lobos
+livery: default
 mission_types:
   - Anti-ship
   - BAI

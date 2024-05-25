@@ -4,7 +4,7 @@ nickname: Black Knights
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - RS68-381 - Euro One - 526th TFS
+livery: RS68-381_E1_526TFS
 mission_types:
   - Anti-ship
   - BAI

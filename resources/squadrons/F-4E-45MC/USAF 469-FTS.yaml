@@ -4,7 +4,7 @@ nickname: Fighting Bulls
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - JV70-288 - SEA - 469th TFS Tigers
+livery: JV67-288_SEAW_469TFS
 mission_types:
   - Anti-ship
   - BAI

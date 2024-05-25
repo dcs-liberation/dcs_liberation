@@ -4,7 +4,7 @@ nickname: Spads
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - TH68-450 - Hill Two - 457th FS Spads
+livery: TH68-450_H1_457FS
 mission_types:
   - Anti-ship
   - BAI

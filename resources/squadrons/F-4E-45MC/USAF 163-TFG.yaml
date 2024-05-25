@@ -4,7 +4,7 @@ nickname: Grizzlys
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - CA68-426 - Hill Two - 163rd TFG
+livery: CA68-426_H2_163tfg
 mission_types:
   - Anti-ship
   - BAI

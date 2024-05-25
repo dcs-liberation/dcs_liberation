@@ -4,7 +4,7 @@ nickname: Black Knights
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - AF66-300 - ADC - 57th FIS by Mach3DS
+livery: ADC AF66-300
 mission_types:
   - Anti-ship
   - BAI

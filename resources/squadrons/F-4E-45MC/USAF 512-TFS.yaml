@@ -4,7 +4,7 @@ nickname: Dragons
 country: USA
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - USAF - RS68-480 - SEA Wrap Around - 512th TFS Dragons
+livery: RS68-480_SEA_512TFS
 mission_types:
   - Anti-ship
   - BAI

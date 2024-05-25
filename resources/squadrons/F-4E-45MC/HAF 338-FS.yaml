@@ -4,7 +4,7 @@ nickname: Ares
 country: Greece
 role: Fighter Bomber
 aircraft: F-4E-45MC Phantom II
-livery: F-4E - HAF - 01507 - Aegean Ghost
+livery: HAF-01507_AG
 mission_types:
   - Anti-ship
   - BAI
