@@ -36,7 +36,7 @@ pre-commit==3.5.0
 pydantic==2.5.2
 pydantic-settings==2.1.0
 pydantic_core==2.14.5
-pydcs @ git+https://github.com/zhexu14/dcs@bb41fa849e718fee1b97d5d7a7c2e417f78de3d8
+pydcs @ git+https://github.com/dcs-liberation/dcs@b83c5a00bdda9719737ce61719a4d64a0dd4321c
 pyinstaller==5.13.1
 pyinstaller-hooks-contrib==2023.6
 pyproj==3.6.1
