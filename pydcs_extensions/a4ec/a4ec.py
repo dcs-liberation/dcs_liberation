@@ -109,7 +109,12 @@ class WeaponsA4EC:
         "name": "Fuel Tank 400 gallons (EMPTY)",
         "weight": 1320.06208,
     }
-    LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_ = {
+    LAU_7_with_AIM_9J_Sidewinder_IR_AAM = {
+        "clsid": "{AIM-9J-ON-ADAPTER}",
+        "name": "LAU-7 with AIM-9J Sidewinder IR AAM",
+        "weight": 115.84,
+    }
+    LAU_7_with_AIM_9P3_Sidewinder_IR_AAM = {
         "clsid": "{A4E-AIM-9P3-ON-ADAPTER}",
         "name": "LAU-7 with AIM-9P3 Sidewinder IR AAM",
         "weight": 121.7,
@@ -206,7 +211,7 @@ class WeaponsA4EC:
     }
     _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___ = {
         "clsid": "{LAU-3 FFAR WP156_TER_2_R}",
-        "name": '2 x LAU-3 pod - 19 x 2.75" FFAR, UnGd Rkts M156, Wht Phos (TER)',
+        "name": '2 x LAU-3 pod - 19 x 2.75" FFAR, UnGd Rkts  M156, Wht Phos (TER)',
         "weight": 542.3414512,
     }
     _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_ = {
@@ -336,12 +341,12 @@ class WeaponsA4EC:
     }
     _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER__ = {
         "clsid": "{LAU-68 FFAR WP156_TER_2_L}",
-        "name": '2 x LAU-68 pod - 7 x 2.75" FFAR, UnGd Rkts M156, Wht Phos (TER)',
+        "name": '2 x LAU-68 pod - 7 x 2.75" FFAR, UnGd Rkts  M156, Wht Phos (TER)',
         "weight": 287.9121136,
     }
     _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___ = {
         "clsid": "{LAU-68 FFAR WP156_TER_2_R}",
-        "name": '2 x LAU-68 pod - 7 x 2.75" FFAR, UnGd Rkts M156, Wht Phos (TER)',
+        "name": '2 x LAU-68 pod - 7 x 2.75" FFAR, UnGd Rkts  M156, Wht Phos (TER)',
         "weight": 287.9121136,
     }
     _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_ = {
@@ -836,7 +841,6 @@ class A_4E_C(PlaneType):
     }
 
     class Properties:
-
         class HideECMPanel:
             id = "HideECMPanel"
 
@@ -922,17 +926,17 @@ class A_4E_C(PlaneType):
             1,
             Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
         )
-        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_ = (
+        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM = (
             1,
-            Weapons.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_,
+            WeaponsA4EC.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM,
         )
         LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_ = (
             1,
-            Weapons.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
+            WeaponsA4EC.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
         )
         LAU_7_with_AIM_9J_Sidewinder_IR_AAM = (
             1,
-            Weapons.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
+            WeaponsA4EC.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
         )
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             1,
@@ -1000,21 +1004,27 @@ class A_4E_C(PlaneType):
         LAU3_WP156 = (1, Weapons.LAU3_WP156)
         LAU3_HE151 = (1, Weapons.LAU3_HE151)
         AGM_45A_Shrike_ARM = (1, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {3E6B632D-65EB-44D2-9501-1C2D04515404}
+        AGM_45B_Shrike_ARM = (1, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             1,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
         )
         Mk_81___250lb_GP_Bomb_LD = (1, Weapons.Mk_81___250lb_GP_Bomb_LD)
-        Mk_81_Snakeye___250lb_GP_Bomb_HD = (1, Weapons.Mk_81_Snakeye___250lb_GP_Bomb_HD)
+        Mk_81_Snakeye___250lb_GP_Bomb_HD = (
+            1,
+            WeaponsA4EC.Mk_81_Snakeye___250lb_GP_Bomb_HD,
+        )
         Mk_82___500lb_GP_Bomb_LD = (1, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (1, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        Mk_77_mod_1___500lb_Fire_Bomb_LD = (1, Weapons.Mk_77_mod_1___500lb_Fire_Bomb_LD)
+        Mk_77_mod_1___500lb_Fire_Bomb_LD = (
+            1,
+            WeaponsA4EC.Mk_77_mod_1___500lb_Fire_Bomb_LD,
+        )
         AN_M30A1___100lb_GP_Bomb_LD = (1, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
         AN_M57___250lb_GP_Bomb_LD = (1, Weapons.AN_M57___250lb_GP_Bomb_LD)
         AN_M64___500lb_GP_Bomb_LD = (1, Weapons.AN_M64___500lb_GP_Bomb_LD)
-        AN_M81___260lb_GP_Bomb_LD = (1, Weapons.AN_M81___260lb_GP_Bomb_LD)
-        AN_M88___220lb_GP_Bomb_LD = (1, Weapons.AN_M88___220lb_GP_Bomb_LD)
+        AN_M81___260lb_GP_Bomb_LD = (1, WeaponsA4EC.AN_M81___260lb_GP_Bomb_LD)
+        AN_M88___220lb_GP_Bomb_LD = (1, WeaponsA4EC.AN_M88___220lb_GP_Bomb_LD)
         Smokewinder___red = (1, Weapons.Smokewinder___red)
         Smokewinder___green = (1, Weapons.Smokewinder___green)
         Smokewinder___blue = (1, Weapons.Smokewinder___blue)
@@ -1029,10 +1039,10 @@ class A_4E_C(PlaneType):
     # ERRR <CLEAN>
 
     class Pylon2:
-        Fuel_Tank_300_gallons_ = (2, Weapons.Fuel_Tank_300_gallons_)
-        Fuel_Tank_300_gallons__EMPTY__ = (2, Weapons.Fuel_Tank_300_gallons__EMPTY__)
-        Fuel_Tank_150_gallons = (2, Weapons.Fuel_Tank_150_gallons)
-        Fuel_Tank_150_gallons__EMPTY_ = (2, Weapons.Fuel_Tank_150_gallons__EMPTY_)
+        Fuel_Tank_300_gallons_ = (2, WeaponsA4EC.Fuel_Tank_300_gallons_)
+        Fuel_Tank_300_gallons__EMPTY__ = (2, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__)
+        Fuel_Tank_150_gallons = (2, WeaponsA4EC.Fuel_Tank_150_gallons)
+        Fuel_Tank_150_gallons__EMPTY_ = (2, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
         LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
             2,
             Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
@@ -1045,17 +1055,17 @@ class A_4E_C(PlaneType):
             2,
             Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
         )
-        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_ = (
+        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM = (
             2,
-            Weapons.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_,
+            WeaponsA4EC.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM,
         )
         LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_ = (
             2,
-            Weapons.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
+            WeaponsA4EC.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
         )
         LAU_7_with_AIM_9J_Sidewinder_IR_AAM = (
             2,
-            Weapons.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
+            WeaponsA4EC.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
         )
         LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
             2,
@@ -1071,15 +1081,15 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER__,
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER__,
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER__,
         )
         LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
             2,
@@ -1095,15 +1105,15 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER__,
         )
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             2,
@@ -1139,35 +1149,35 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER__,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER__ = (
             2,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER__,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER__,
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             2,
@@ -1175,7 +1185,7 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER__ = (
             2,
-            Weapons._2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER__,
+            WeaponsA4EC._2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER__,
         )
         LAU3_WP61 = (2, Weapons.LAU3_WP61)
         LAU3_WP1B = (2, Weapons.LAU3_WP1B)
@@ -1184,110 +1194,119 @@ class A_4E_C(PlaneType):
         LAU3_HE151 = (2, Weapons.LAU3_HE151)
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER__,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER__,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER__,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER__,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER__ = (
             2,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER__,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER__,
         )
         AGM_45A_Shrike_ARM = (2, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {3E6B632D-65EB-44D2-9501-1C2D04515404}
+        AGM_45B_Shrike_ARM = (2, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             2,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
         )
         Mk_81___250lb_GP_Bomb_LD = (2, Weapons.Mk_81___250lb_GP_Bomb_LD)
-        Mk_81_Snakeye___250lb_GP_Bomb_HD = (2, Weapons.Mk_81_Snakeye___250lb_GP_Bomb_HD)
+        Mk_81_Snakeye___250lb_GP_Bomb_HD = (
+            2,
+            WeaponsA4EC.Mk_81_Snakeye___250lb_GP_Bomb_HD,
+        )
         Mk_82___500lb_GP_Bomb_LD = (2, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (2, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (2, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (2, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         M117___750lb_GP_Bomb_LD = (2, Weapons.M117___750lb_GP_Bomb_LD)
-        Mk_77_mod_0___750lb_Fire_Bomb_LD = (2, Weapons.Mk_77_mod_0___750lb_Fire_Bomb_LD)
-        Mk_77_mod_1___500lb_Fire_Bomb_LD = (2, Weapons.Mk_77_mod_1___500lb_Fire_Bomb_LD)
+        Mk_77_mod_0___750lb_Fire_Bomb_LD = (
+            2,
+            WeaponsA4EC.Mk_77_mod_0___750lb_Fire_Bomb_LD,
+        )
+        Mk_77_mod_1___500lb_Fire_Bomb_LD = (
+            2,
+            WeaponsA4EC.Mk_77_mod_1___500lb_Fire_Bomb_LD,
+        )
         AN_M30A1___100lb_GP_Bomb_LD = (2, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
         AN_M57___250lb_GP_Bomb_LD = (2, Weapons.AN_M57___250lb_GP_Bomb_LD)
         AN_M64___500lb_GP_Bomb_LD = (2, Weapons.AN_M64___500lb_GP_Bomb_LD)
         AN_M65___1000lb_GP_Bomb_LD = (2, Weapons.AN_M65___1000lb_GP_Bomb_LD)
-        AN_M81___260lb_GP_Bomb_LD = (2, Weapons.AN_M81___260lb_GP_Bomb_LD)
-        AN_M88___220lb_GP_Bomb_LD = (2, Weapons.AN_M88___220lb_GP_Bomb_LD)
+        AN_M81___260lb_GP_Bomb_LD = (2, WeaponsA4EC.AN_M81___260lb_GP_Bomb_LD)
+        AN_M88___220lb_GP_Bomb_LD = (2, WeaponsA4EC.AN_M88___220lb_GP_Bomb_LD)
         CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE = (
             2,
-            Weapons.CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE,
+            WeaponsA4EC.CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE,
         )
         CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE = (
             2,
-            Weapons.CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
+            WeaponsA4EC.CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
         )
         CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE = (
             2,
-            Weapons.CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
+            WeaponsA4EC.CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
         )
         _2_x_CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE__TER_ = (
             2,
-            Weapons._2_x_CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE__TER_,
+            WeaponsA4EC._2_x_CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE__TER_,
         )
         _2_x_CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER_ = (
             2,
-            Weapons._2_x_CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER_,
+            WeaponsA4EC._2_x_CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER_,
         )
         _2_x_CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER_ = (
             2,
-            Weapons._2_x_CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER_,
+            WeaponsA4EC._2_x_CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER_,
         )
         _2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER_ = (
             2,
-            Weapons._2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER_,
+            WeaponsA4EC._2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER_,
         )
         _5_x_Mk_81___250lb_GP_Bomb_LD__MER_ = (
             2,
-            Weapons._5_x_Mk_81___250lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._5_x_Mk_81___250lb_GP_Bomb_LD__MER_,
         )
         _5_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER_ = (
             2,
-            Weapons._5_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER_,
+            WeaponsA4EC._5_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER_,
         )
         _2_x_Mk_82___500lb_GP_Bomb_LD__TER_ = (
             2,
-            Weapons._2_x_Mk_82___500lb_GP_Bomb_LD__TER_,
+            WeaponsA4EC._2_x_Mk_82___500lb_GP_Bomb_LD__TER_,
         )
         _2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER_ = (
             2,
-            Weapons._2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER_,
+            WeaponsA4EC._2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER_,
         )
         _5_x_AN_M57___250lb_GP_Bomb_LD__MER_ = (
             2,
-            Weapons._5_x_AN_M57___250lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._5_x_AN_M57___250lb_GP_Bomb_LD__MER_,
         )
         _2_x_AN_M57___250lb_GP_Bomb_LD__TER_ = (
             2,
-            Weapons._2_x_AN_M57___250lb_GP_Bomb_LD__TER_,
+            WeaponsA4EC._2_x_AN_M57___250lb_GP_Bomb_LD__TER_,
         )
         _5_x_AN_M81___260lb_GP_Bomb_LD__MER_ = (
             2,
-            Weapons._5_x_AN_M81___260lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._5_x_AN_M81___260lb_GP_Bomb_LD__MER_,
         )
         _5_x_AN_M88___220lb_GP_Bomb_LD__MER_ = (
             2,
-            Weapons._5_x_AN_M88___220lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._5_x_AN_M88___220lb_GP_Bomb_LD__MER_,
         )
         _5_x_BDU_33___25lb_Practice_Bomb_LD__MER_ = (
             2,
-            Weapons._5_x_BDU_33___25lb_Practice_Bomb_LD__MER_,
+            WeaponsA4EC._5_x_BDU_33___25lb_Practice_Bomb_LD__MER_,
         )
-        Mk4_HIPEG___Gunpod = (2, Weapons.Mk4_HIPEG___Gunpod)
+        Mk4_HIPEG___Gunpod = (2, WeaponsA4EC.Mk4_HIPEG___Gunpod)
         Smokewinder___red = (2, Weapons.Smokewinder___red)
         Smokewinder___green = (2, Weapons.Smokewinder___green)
         Smokewinder___blue = (2, Weapons.Smokewinder___blue)
@@ -1302,12 +1321,12 @@ class A_4E_C(PlaneType):
     # ERRR <CLEAN>
 
     class Pylon3:
-        Fuel_Tank_400_gallons = (3, Weapons.Fuel_Tank_400_gallons)
-        Fuel_Tank_300_gallons = (3, Weapons.Fuel_Tank_300_gallons)
-        Fuel_Tank_150_gallons = (3, Weapons.Fuel_Tank_150_gallons)
-        Fuel_Tank_400_gallons__EMPTY_ = (3, Weapons.Fuel_Tank_400_gallons__EMPTY_)
-        Fuel_Tank_300_gallons__EMPTY_ = (3, Weapons.Fuel_Tank_300_gallons__EMPTY_)
-        Fuel_Tank_150_gallons__EMPTY_ = (3, Weapons.Fuel_Tank_150_gallons__EMPTY_)
+        Fuel_Tank_400_gallons = (3, WeaponsA4EC.Fuel_Tank_400_gallons)
+        Fuel_Tank_300_gallons = (3, WeaponsA4EC.Fuel_Tank_300_gallons)
+        Fuel_Tank_150_gallons = (3, WeaponsA4EC.Fuel_Tank_150_gallons)
+        Fuel_Tank_400_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_400_gallons__EMPTY_)
+        Fuel_Tank_300_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY_)
+        Fuel_Tank_150_gallons__EMPTY_ = (3, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
         LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
             3,
             Weapons.LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos,
@@ -1322,27 +1341,27 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER_,
         )
         _3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
         )
         _3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
         )
         _3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER_,
         )
         LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
             3,
@@ -1358,27 +1377,27 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER_,
         )
         LAU3_WP156 = (3, Weapons.LAU3_WP156)
         LAU3_HE5 = (3, Weapons.LAU3_HE5)
@@ -1426,67 +1445,67 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_ = (
             3,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
         )
         _3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_ = (
             3,
-            Weapons._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
+            WeaponsA4EC._3_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             3,
@@ -1494,150 +1513,155 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER_ = (
             3,
-            Weapons._2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER_,
+            WeaponsA4EC._2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER_,
         )
         _3_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER_ = (
             3,
-            Weapons._3_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER_,
+            WeaponsA4EC._3_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER_,
         )
-        LAU3_WP61 = (3, Weapons.LAU3_WP61)
-        LAU3_WP1B = (3, Weapons.LAU3_WP1B)
-        LAU3_HE5 = (3, Weapons.LAU3_HE5)
-        LAU3_WP156 = (3, Weapons.LAU3_WP156)
         LAU3_HE151 = (3, Weapons.LAU3_HE151)
         _3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
         )
         _3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
         )
         _3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
         )
         _3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
         )
         _3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_ = (
             3,
-            Weapons._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
+            WeaponsA4EC._3_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER_,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER_,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER_,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER_,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_ = (
             3,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER_,
         )
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             3,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
         )
         Mk_81___250lb_GP_Bomb_LD = (3, Weapons.Mk_81___250lb_GP_Bomb_LD)
-        Mk_81_Snakeye___250lb_GP_Bomb_HD = (3, Weapons.Mk_81_Snakeye___250lb_GP_Bomb_HD)
+        Mk_81_Snakeye___250lb_GP_Bomb_HD = (
+            3,
+            WeaponsA4EC.Mk_81_Snakeye___250lb_GP_Bomb_HD,
+        )
         Mk_82___500lb_GP_Bomb_LD = (3, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (3, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (3, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (3, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         M117___750lb_GP_Bomb_LD = (3, Weapons.M117___750lb_GP_Bomb_LD)
-        Mk_77_mod_0___750lb_Fire_Bomb_LD = (3, Weapons.Mk_77_mod_0___750lb_Fire_Bomb_LD)
-        Mk_77_mod_1___500lb_Fire_Bomb_LD = (3, Weapons.Mk_77_mod_1___500lb_Fire_Bomb_LD)
+        Mk_77_mod_0___750lb_Fire_Bomb_LD = (
+            3,
+            WeaponsA4EC.Mk_77_mod_0___750lb_Fire_Bomb_LD,
+        )
+        Mk_77_mod_1___500lb_Fire_Bomb_LD = (
+            3,
+            WeaponsA4EC.Mk_77_mod_1___500lb_Fire_Bomb_LD,
+        )
         AN_M30A1___100lb_GP_Bomb_LD = (3, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
         AN_M57___250lb_GP_Bomb_LD = (3, Weapons.AN_M57___250lb_GP_Bomb_LD)
         AN_M64___500lb_GP_Bomb_LD = (3, Weapons.AN_M64___500lb_GP_Bomb_LD)
         AN_M65___1000lb_GP_Bomb_LD = (3, Weapons.AN_M65___1000lb_GP_Bomb_LD)
-        AN_M66A2___2000lb_GP_Bomb_LD = (3, Weapons.AN_M66A2___2000lb_GP_Bomb_LD)
-        AN_M81___260lb_GP_Bomb_LD = (3, Weapons.AN_M81___260lb_GP_Bomb_LD)
-        AN_M88___220lb_GP_Bomb_LD = (3, Weapons.AN_M88___220lb_GP_Bomb_LD)
+        AN_M66A2___2000lb_GP_Bomb_LD = (3, WeaponsA4EC.AN_M66A2___2000lb_GP_Bomb_LD)
+        AN_M81___260lb_GP_Bomb_LD = (3, WeaponsA4EC.AN_M81___260lb_GP_Bomb_LD)
+        AN_M88___220lb_GP_Bomb_LD = (3, WeaponsA4EC.AN_M88___220lb_GP_Bomb_LD)
         _3_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER_ = (
             3,
-            Weapons._3_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER_,
+            WeaponsA4EC._3_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER_,
         )
         _2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER___ = (
             3,
-            Weapons._2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER___,
+            WeaponsA4EC._2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER___,
         )
         _6_x_Mk_81___250lb_GP_Bomb_LD__MER_ = (
             3,
-            Weapons._6_x_Mk_81___250lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._6_x_Mk_81___250lb_GP_Bomb_LD__MER_,
         )
         _6_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER_ = (
             3,
-            Weapons._6_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER_,
+            WeaponsA4EC._6_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER_,
         )
         _6_x_Mk_82___500lb_GP_Bomb_LD__MER_ = (
             3,
-            Weapons._6_x_Mk_82___500lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._6_x_Mk_82___500lb_GP_Bomb_LD__MER_,
         )
         _4_x_Mk_82___500lb_GP_Bomb_LD__MER_ = (
             3,
-            Weapons._4_x_Mk_82___500lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._4_x_Mk_82___500lb_GP_Bomb_LD__MER_,
         )
         _3_x_Mk_82___500lb_GP_Bomb_LD__TER_ = (
             3,
-            Weapons._3_x_Mk_82___500lb_GP_Bomb_LD__TER_,
+            WeaponsA4EC._3_x_Mk_82___500lb_GP_Bomb_LD__TER_,
         )
         _6_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__MER_ = (
             3,
-            Weapons._6_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__MER_,
+            WeaponsA4EC._6_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__MER_,
         )
         _4_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__MER_ = (
             3,
-            Weapons._4_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__MER_,
+            WeaponsA4EC._4_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__MER_,
         )
         _3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER_ = (
             3,
-            Weapons._3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER_,
+            WeaponsA4EC._3_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER_,
         )
         _3_x_Mk_83___1000lb_GP_Bomb_LD__TER_ = (
             3,
-            Weapons._3_x_Mk_83___1000lb_GP_Bomb_LD__TER_,
+            WeaponsA4EC._3_x_Mk_83___1000lb_GP_Bomb_LD__TER_,
         )
         _2_x_Mk_83___1000lb_GP_Bomb_LD__TER_ = (
             3,
-            Weapons._2_x_Mk_83___1000lb_GP_Bomb_LD__TER_,
+            WeaponsA4EC._2_x_Mk_83___1000lb_GP_Bomb_LD__TER_,
         )
         _2_x_Mk_77_mod_1___500lb_Fire_Bomb_LD__TER___ = (
             3,
-            Weapons._2_x_Mk_77_mod_1___500lb_Fire_Bomb_LD__TER___,
+            WeaponsA4EC._2_x_Mk_77_mod_1___500lb_Fire_Bomb_LD__TER___,
         )
         _6_x_AN_M57___250lb_GP_Bomb_LD__MER_ = (
             3,
-            Weapons._6_x_AN_M57___250lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._6_x_AN_M57___250lb_GP_Bomb_LD__MER_,
         )
         _3_x_AN_M57___250lb_GP_Bomb_LD__TER_ = (
             3,
-            Weapons._3_x_AN_M57___250lb_GP_Bomb_LD__TER_,
+            WeaponsA4EC._3_x_AN_M57___250lb_GP_Bomb_LD__TER_,
         )
         _6_x_AN_M81___260lb_GP_Bomb_LD__MER_ = (
             3,
-            Weapons._6_x_AN_M81___260lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._6_x_AN_M81___260lb_GP_Bomb_LD__MER_,
         )
         _6_x_AN_M88___220lb_GP_Bomb_LD__MER_ = (
             3,
-            Weapons._6_x_AN_M88___220lb_GP_Bomb_LD__MER_,
+            WeaponsA4EC._6_x_AN_M88___220lb_GP_Bomb_LD__MER_,
         )
         _6_x_BDU_33___25lb_Practice_Bomb_LD__MER_ = (
             3,
-            Weapons._6_x_BDU_33___25lb_Practice_Bomb_LD__MER_,
+            WeaponsA4EC._6_x_BDU_33___25lb_Practice_Bomb_LD__MER_,
         )
-        Mk4_HIPEG___Gunpod = (3, Weapons.Mk4_HIPEG___Gunpod)
+        Mk4_HIPEG___Gunpod = (3, WeaponsA4EC.Mk4_HIPEG___Gunpod)
         Smokewinder___red = (3, Weapons.Smokewinder___red)
         Smokewinder___green = (3, Weapons.Smokewinder___green)
         Smokewinder___blue = (3, Weapons.Smokewinder___blue)
@@ -1652,10 +1676,10 @@ class A_4E_C(PlaneType):
     # ERRR <CLEAN>
 
     class Pylon4:
-        Fuel_Tank_300_gallons_ = (4, Weapons.Fuel_Tank_300_gallons_)
-        Fuel_Tank_300_gallons__EMPTY__ = (4, Weapons.Fuel_Tank_300_gallons__EMPTY__)
-        Fuel_Tank_150_gallons = (4, Weapons.Fuel_Tank_150_gallons)
-        Fuel_Tank_150_gallons__EMPTY_ = (4, Weapons.Fuel_Tank_150_gallons__EMPTY_)
+        Fuel_Tank_300_gallons_ = (4, WeaponsA4EC.Fuel_Tank_300_gallons_)
+        Fuel_Tank_300_gallons__EMPTY__ = (4, WeaponsA4EC.Fuel_Tank_300_gallons__EMPTY__)
+        Fuel_Tank_150_gallons = (4, WeaponsA4EC.Fuel_Tank_150_gallons)
+        Fuel_Tank_150_gallons__EMPTY_ = (4, WeaponsA4EC.Fuel_Tank_150_gallons__EMPTY_)
         LAU_7_with_AIM_9B_Sidewinder_IR_AAM = (
             4,
             Weapons.LAU_7_with_AIM_9B_Sidewinder_IR_AAM,
@@ -1668,17 +1692,17 @@ class A_4E_C(PlaneType):
             4,
             Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
         )
-        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_ = (
+        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM = (
             4,
-            Weapons.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_,
+            WeaponsA4EC.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM,
         )
         LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_ = (
             4,
-            Weapons.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
+            WeaponsA4EC.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
         )
         LAU_7_with_AIM_9J_Sidewinder_IR_AAM = (
             4,
-            Weapons.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
+            WeaponsA4EC.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
         )
         LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
             4,
@@ -1694,15 +1718,15 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___,
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER___,
         )
         _2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_FFAR__UnGd_Rkts__Mk5__HEAT__TER___,
         )
         LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_M156__Wht_Phos = (
             4,
@@ -1718,15 +1742,15 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__M156__Wht_Phos__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts__Mk1__HE__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_FFAR__UnGd_Rkts_Mk5__HEAT__TER___,
         )
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
@@ -1762,35 +1786,35 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M274__Practice_Smk__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk1__Practice__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER___,
         )
         _2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER___ = (
             4,
-            Weapons._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER___,
+            WeaponsA4EC._2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER___,
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             4,
@@ -1798,7 +1822,7 @@ class A_4E_C(PlaneType):
         )
         _2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER___ = (
             4,
-            Weapons._2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER___,
+            WeaponsA4EC._2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_MK_71__HE_FRAG__TER___,
         )
         LAU3_WP61 = (4, Weapons.LAU3_WP61)
         LAU3_WP1B = (4, Weapons.LAU3_WP1B)
@@ -1807,110 +1831,119 @@ class A_4E_C(PlaneType):
         LAU3_HE151 = (4, Weapons.LAU3_HE151)
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE__TER___,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_M156__Wht_Phos__TER___,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT__TER___,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_Mk61__Practice__TER___,
         )
         _2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER___ = (
             4,
-            Weapons._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER___,
+            WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER___,
         )
         AGM_45A_Shrike_ARM = (4, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {3E6B632D-65EB-44D2-9501-1C2D04515404}
+        AGM_45B_Shrike_ARM = (4, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             4,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
         )
         Mk_81___250lb_GP_Bomb_LD = (4, Weapons.Mk_81___250lb_GP_Bomb_LD)
-        Mk_81_Snakeye___250lb_GP_Bomb_HD = (4, Weapons.Mk_81_Snakeye___250lb_GP_Bomb_HD)
+        Mk_81_Snakeye___250lb_GP_Bomb_HD = (
+            4,
+            WeaponsA4EC.Mk_81_Snakeye___250lb_GP_Bomb_HD,
+        )
         Mk_82___500lb_GP_Bomb_LD = (4, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         Mk_84___2000lb_GP_Bomb_LD = (4, Weapons.Mk_84___2000lb_GP_Bomb_LD)
         M117___750lb_GP_Bomb_LD = (4, Weapons.M117___750lb_GP_Bomb_LD)
-        Mk_77_mod_0___750lb_Fire_Bomb_LD = (4, Weapons.Mk_77_mod_0___750lb_Fire_Bomb_LD)
-        Mk_77_mod_1___500lb_Fire_Bomb_LD = (4, Weapons.Mk_77_mod_1___500lb_Fire_Bomb_LD)
+        Mk_77_mod_0___750lb_Fire_Bomb_LD = (
+            4,
+            WeaponsA4EC.Mk_77_mod_0___750lb_Fire_Bomb_LD,
+        )
+        Mk_77_mod_1___500lb_Fire_Bomb_LD = (
+            4,
+            WeaponsA4EC.Mk_77_mod_1___500lb_Fire_Bomb_LD,
+        )
         AN_M30A1___100lb_GP_Bomb_LD = (4, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
         AN_M57___250lb_GP_Bomb_LD = (4, Weapons.AN_M57___250lb_GP_Bomb_LD)
         AN_M64___500lb_GP_Bomb_LD = (4, Weapons.AN_M64___500lb_GP_Bomb_LD)
         AN_M65___1000lb_GP_Bomb_LD = (4, Weapons.AN_M65___1000lb_GP_Bomb_LD)
-        AN_M81___260lb_GP_Bomb_LD = (4, Weapons.AN_M81___260lb_GP_Bomb_LD)
-        AN_M88___220lb_GP_Bomb_LD = (4, Weapons.AN_M88___220lb_GP_Bomb_LD)
+        AN_M81___260lb_GP_Bomb_LD = (4, WeaponsA4EC.AN_M81___260lb_GP_Bomb_LD)
+        AN_M88___220lb_GP_Bomb_LD = (4, WeaponsA4EC.AN_M88___220lb_GP_Bomb_LD)
         CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE = (
             4,
-            Weapons.CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE,
+            WeaponsA4EC.CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE,
         )
         CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE = (
             4,
-            Weapons.CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
+            WeaponsA4EC.CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
         )
         CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE = (
             4,
-            Weapons.CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
+            WeaponsA4EC.CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE,
         )
         _2_x_CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE__TER__ = (
             4,
-            Weapons._2_x_CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE__TER__,
+            WeaponsA4EC._2_x_CBU_1_A_pod___19_x_tubes_of_Bomblets_BLU_4B_x_27__HE__TER__,
         )
         _2_x_CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER__ = (
             4,
-            Weapons._2_x_CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER__,
+            WeaponsA4EC._2_x_CBU_2_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER__,
         )
         _2_x_CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER__ = (
             4,
-            Weapons._2_x_CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER__,
+            WeaponsA4EC._2_x_CBU_2B_A_pod___19_x_tubes_of_Bomblets_BLU_3B_x_19__HE__TER__,
         )
         _2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER__ = (
             4,
-            Weapons._2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER__,
+            WeaponsA4EC._2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets__TER__,
         )
         _5_x_Mk_81___250lb_GP_Bomb_LD__MER__ = (
             4,
-            Weapons._5_x_Mk_81___250lb_GP_Bomb_LD__MER__,
+            WeaponsA4EC._5_x_Mk_81___250lb_GP_Bomb_LD__MER__,
         )
         _5_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER__ = (
             4,
-            Weapons._5_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER__,
+            WeaponsA4EC._5_x_Mk_81_Snakeye___250lb_GP_Bomb_HD__MER__,
         )
         _2_x_Mk_82___500lb_GP_Bomb_LD__TER__ = (
             4,
-            Weapons._2_x_Mk_82___500lb_GP_Bomb_LD__TER__,
+            WeaponsA4EC._2_x_Mk_82___500lb_GP_Bomb_LD__TER__,
         )
         _2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER__ = (
             4,
-            Weapons._2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER__,
+            WeaponsA4EC._2_x_Mk_82_Snakeye___500lb_GP_Bomb_HD__TER__,
         )
         _5_x_AN_M57___250lb_GP_Bomb_LD__MER__ = (
             4,
-            Weapons._5_x_AN_M57___250lb_GP_Bomb_LD__MER__,
+            WeaponsA4EC._5_x_AN_M57___250lb_GP_Bomb_LD__MER__,
         )
         _2_x_AN_M57___250lb_GP_Bomb_LD__TER__ = (
             4,
-            Weapons._2_x_AN_M57___250lb_GP_Bomb_LD__TER__,
+            WeaponsA4EC._2_x_AN_M57___250lb_GP_Bomb_LD__TER__,
         )
         _5_x_AN_M81___260lb_GP_Bomb_LD__MER__ = (
             4,
-            Weapons._5_x_AN_M81___260lb_GP_Bomb_LD__MER__,
+            WeaponsA4EC._5_x_AN_M81___260lb_GP_Bomb_LD__MER__,
         )
         _5_x_AN_M88___220lb_GP_Bomb_LD__MER__ = (
             4,
-            Weapons._5_x_AN_M88___220lb_GP_Bomb_LD__MER__,
+            WeaponsA4EC._5_x_AN_M88___220lb_GP_Bomb_LD__MER__,
         )
         _5_x_BDU_33___25lb_Practice_Bomb_LD__MER__ = (
             4,
-            Weapons._5_x_BDU_33___25lb_Practice_Bomb_LD__MER__,
+            WeaponsA4EC._5_x_BDU_33___25lb_Practice_Bomb_LD__MER__,
         )
-        Mk4_HIPEG___Gunpod = (4, Weapons.Mk4_HIPEG___Gunpod)
+        Mk4_HIPEG___Gunpod = (4, WeaponsA4EC.Mk4_HIPEG___Gunpod)
         Smokewinder___red = (4, Weapons.Smokewinder___red)
         Smokewinder___green = (4, Weapons.Smokewinder___green)
         Smokewinder___blue = (4, Weapons.Smokewinder___blue)
@@ -1937,17 +1970,17 @@ class A_4E_C(PlaneType):
             5,
             Weapons.LAU_7_with_AIM_9P5_Sidewinder_IR_AAM,
         )
-        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_ = (
+        LAU_7_with_AIM_9P3_Sidewinder_IR_AAM = (
             5,
-            Weapons.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM_,
+            WeaponsA4EC.LAU_7_with_AIM_9P3_Sidewinder_IR_AAM,
         )
         LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_ = (
             5,
-            Weapons.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
+            WeaponsA4EC.LAU_7_with_AN_ASQ_T50_TCTS_Pod___ACMI_Pod_,
         )
         LAU_7_with_AIM_9J_Sidewinder_IR_AAM = (
             5,
-            Weapons.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
+            WeaponsA4EC.LAU_7_with_AIM_9J_Sidewinder_IR_AAM,
         )
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             5,
@@ -2015,21 +2048,27 @@ class A_4E_C(PlaneType):
         LAU3_WP156 = (5, Weapons.LAU3_WP156)
         LAU3_HE151 = (5, Weapons.LAU3_HE151)
         AGM_45A_Shrike_ARM = (5, Weapons.AGM_45A_Shrike_ARM)
-        # ERRR {3E6B632D-65EB-44D2-9501-1C2D04515404}
+        AGM_45B_Shrike_ARM = (5, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             5,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
         )
         Mk_81___250lb_GP_Bomb_LD = (5, Weapons.Mk_81___250lb_GP_Bomb_LD)
-        Mk_81_Snakeye___250lb_GP_Bomb_HD = (5, Weapons.Mk_81_Snakeye___250lb_GP_Bomb_HD)
+        Mk_81_Snakeye___250lb_GP_Bomb_HD = (
+            5,
+            WeaponsA4EC.Mk_81_Snakeye___250lb_GP_Bomb_HD,
+        )
         Mk_82___500lb_GP_Bomb_LD = (5, Weapons.Mk_82___500lb_GP_Bomb_LD)
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (5, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
-        Mk_77_mod_1___500lb_Fire_Bomb_LD = (5, Weapons.Mk_77_mod_1___500lb_Fire_Bomb_LD)
+        Mk_77_mod_1___500lb_Fire_Bomb_LD = (
+            5,
+            WeaponsA4EC.Mk_77_mod_1___500lb_Fire_Bomb_LD,
+        )
         AN_M30A1___100lb_GP_Bomb_LD = (5, Weapons.AN_M30A1___100lb_GP_Bomb_LD)
         AN_M57___250lb_GP_Bomb_LD = (5, Weapons.AN_M57___250lb_GP_Bomb_LD)
         AN_M64___500lb_GP_Bomb_LD = (5, Weapons.AN_M64___500lb_GP_Bomb_LD)
-        AN_M81___260lb_GP_Bomb_LD = (5, Weapons.AN_M81___260lb_GP_Bomb_LD)
-        AN_M88___220lb_GP_Bomb_LD = (5, Weapons.AN_M88___220lb_GP_Bomb_LD)
+        AN_M81___260lb_GP_Bomb_LD = (5, WeaponsA4EC.AN_M81___260lb_GP_Bomb_LD)
+        AN_M88___220lb_GP_Bomb_LD = (5, WeaponsA4EC.AN_M88___220lb_GP_Bomb_LD)
         Smokewinder___red = (5, Weapons.Smokewinder___red)
         Smokewinder___green = (5, Weapons.Smokewinder___green)
         Smokewinder___blue = (5, Weapons.Smokewinder___blue)
