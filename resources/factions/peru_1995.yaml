@@ -11,12 +11,15 @@ aircrafts:
   - Mi-8MTV2 Hip
   - MB-339A
   - Su-22M4 Fitter-K
-frontline_units:
-  - T-55A
-  - M113
+  - UH-1H Iroquois
+frontline_units: 
+  - AMX-13 75mm  
   - BRDM-2
-  - BTR-80
+  - BTR-80 
+  - T-55A
   - M1043 HMMWV (M2 HMG)
+  - M113
+  - M2A1 Half-Track 
   - ZSU-23-4 Shilka
 artillery_units:
   - BM-21 Grad
