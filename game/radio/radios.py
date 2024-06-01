@@ -236,6 +236,8 @@ RADIOS: List[Radio] = [
     Radio("AN/ARC-51BX", (RadioRange(MHz(225), MHz(400), kHz(50), Modulation.AM),)),
     Radio("AN/ARC-131", (RadioRange(MHz(30), MHz(76), kHz(50), Modulation.FM),)),
     Radio("AN/ARC-134", (RadioRange(MHz(116), MHz(150), kHz(25), Modulation.AM),)),
+    # F-4E
+    Radio("AN/ARC-164", (RadioRange(MHz(225), MHz(400), kHz(50), Modulation.AM),)),
     # JAS39
     Radio("R&S Series 6000", (RadioRange(MHz(100), MHz(156), kHz(25), Modulation.AM),)),
     # Mirage F1

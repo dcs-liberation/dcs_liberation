@@ -389,3 +389,19 @@ class WarthogChannelNamer(ChannelNamer):
     @classmethod
     def name(cls) -> str:
         return "a10c-ii"
+
+
+class PhantomChannelNamer(ChannelNamer):
+    """Channel namer for the F4-E."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = [
+            "COMM",  # AN/ARC-164 COMM
+            "AUX",  # AN/ARC-164 AUX
+        ][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "phantom"

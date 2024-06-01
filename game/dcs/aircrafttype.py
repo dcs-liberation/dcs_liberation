@@ -34,6 +34,7 @@ from game.radio.channels import (
     ViggenRadioChannelAllocator,
     ViperChannelNamer,
     WarthogChannelNamer,
+    PhantomChannelNamer,
 )
 from game.utils import (
     Distance,
@@ -110,6 +111,7 @@ class RadioConfig:
             "apache": ApacheChannelNamer,
             "a10c-legacy": LegacyWarthogChannelNamer,
             "a10c-ii": WarthogChannelNamer,
+            "phantom": PhantomChannelNamer,
         }[config.get("namer", "default")]
 
 

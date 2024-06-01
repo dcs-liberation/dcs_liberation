@@ -14,6 +14,14 @@ origin: USA
 price: 10
 role: Fighter-Bomber
 max_range: 200
+radios:
+  intra_flight: AN/ARC-164
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    namer: phantom
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1
 variants:
   F-4E-45MC Phantom II: {}
   Phantom FGR.2: {}
