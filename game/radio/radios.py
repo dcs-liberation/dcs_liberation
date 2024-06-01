@@ -1,4 +1,5 @@
 """Radio frequency types and allocators."""
+
 from __future__ import annotations
 
 import itertools
