@@ -13,7 +13,7 @@ manufacturer: McDonnell Douglas
 origin: USA
 price: 10
 role: Fighter-Bomber
-max_range: 200
+max_range: 500  # Heatblur F-4 Manual, Dash-1 sample mission profile
 radios:
   intra_flight: AN/ARC-164
   inter_flight: AN/ARC-164
