@@ -1,6 +1,10 @@
 # 11.1.0
 
-Saves from 11.0.0 are compatible with 11.1.0.
+Saves from 11.0.0 are compatible with 11.1.0. See Known Issues section for exceptions.
+
+## Features/Improvements
+
+* **[Engine]** Support for DCS 2.9.5.55300 including Heatblur F-4E. 
 
 ## Fixes
 
@@ -11,6 +15,9 @@ Saves from 11.0.0 are compatible with 11.1.0.
 * **[Mission Generation]** Patched bug where Liberation crashed when aborting a turn when Fighter Sweep missions were planned.
 * **[UI]** Naval control points (carriers, LHAs) can no longer be moved onto land.
 
+## Known Issues
+
+* When loading saves from 11.0, loadouts with AGM-45B (Imp), typically on A-4E-C mod, will have the AGM-45B replaced with an empty pylon due to changes in DCS for this weapon. The AGM-45A is not affected by this issue.
 
 # 11.0.0
 
