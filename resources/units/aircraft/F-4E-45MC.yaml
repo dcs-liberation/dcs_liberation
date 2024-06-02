@@ -22,6 +22,16 @@ radios:
     namer: phantom
     intra_flight_radio_index: 1
     inter_flight_radio_index: 1
+fuel:
+  # Parking A1 to RWY 32 at Akrotiri.
+  taxi: 250
+  # Source: Dash-1 Supplemental Data
+  # 2 Wing tanks, 1 Centerline tank, 4 AIM-7, 4 AIM-9 (Drag Index 40)
+  climb_ppm: 40  # Takeoff weight 57,000lbs, climb to 25,000'
+  cruise_ppm: 17  # Cruise at 25,000', M0.85, gross weight 50,000lbs
+  combat_ppm: 19  # Combat at M0.9, gross weight 50,000lbs
+  # Source: Heatblur F-4 Manual, Mission Planning section.
+  min_safe: 2000
 variants:
   F-4E-45MC Phantom II: {}
   Phantom FGR.2: {}
