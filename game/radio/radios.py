@@ -186,6 +186,7 @@ RADIOS: List[Radio] = [
         ),
     ),
     Radio("AN/ARC-222", (RadioRange(MHz(116), MHz(152), MHz(1), Modulation.AM),)),
+    Radio("AN/ARC-27", (RadioRange(MHz(225), MHz(400), kHz(100), Modulation.AM),)),
     Radio("SCR-522", (RadioRange(MHz(100), MHz(156), MHz(1), Modulation.AM),)),
     Radio("A.R.I. 1063", (RadioRange(MHz(100), MHz(156), MHz(1), Modulation.AM),)),
     Radio("BC-1206", (RadioRange(kHz(200), kHz(400), kHz(10), Modulation.AM),)),
@@ -237,8 +238,6 @@ RADIOS: List[Radio] = [
     Radio("AN/ARC-51BX", (RadioRange(MHz(225), MHz(400), kHz(50), Modulation.AM),)),
     Radio("AN/ARC-131", (RadioRange(MHz(30), MHz(76), kHz(50), Modulation.FM),)),
     Radio("AN/ARC-134", (RadioRange(MHz(116), MHz(150), kHz(25), Modulation.AM),)),
-    # F-4E
-    Radio("AN/ARC-164", (RadioRange(MHz(225), MHz(400), kHz(50), Modulation.AM),)),
     # JAS39
     Radio("R&S Series 6000", (RadioRange(MHz(100), MHz(156), kHz(25), Modulation.AM),)),
     # Mirage F1
@@ -295,6 +294,9 @@ RADIOS: List[Radio] = [
             ),
         ),
     ),
+    # Mi-8/Mi-24
+    Radio("R863", (RadioRange(MHz(220), MHz(400), kHz(25), Modulation.AM),)),
+    Radio("R828", (RadioRange(MHz(20), MHz(60), kHz(25), Modulation.FM),)),
 ]
 
 

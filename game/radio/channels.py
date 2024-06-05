@@ -405,3 +405,35 @@ class PhantomChannelNamer(ChannelNamer):
     @classmethod
     def name(cls) -> str:
         return "phantom"
+
+
+class HindChannelNamer(ChannelNamer):
+    """Channel namer for Mi-24 Hind"""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = [
+            "R863",
+            "R828",
+        ][radio_id - 1]
+        return f"{radio_name} Ch {channel_id-1}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "hind"
+
+
+class HipChannelNamer(ChannelNamer):
+    """Channel namer for Mi-8 Hip"""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = [
+            "R863",
+            "R828",
+        ][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "hip"

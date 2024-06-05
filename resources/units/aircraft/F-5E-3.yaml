@@ -22,6 +22,14 @@ origin: USA
 price: 12
 role: Light Fighter
 max_range: 100
+radios:
+  intra_flight: AN/ARC-164
+  inter_flight: AN/ARC-164
+  channels:
+    type: common
+    namer: single
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1
 gunfighter: true
 variants:
   F-5E Tiger II: {}
