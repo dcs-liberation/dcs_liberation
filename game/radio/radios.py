@@ -160,6 +160,7 @@ RADIOS: List[Radio] = [
     Radio("AN/ARC-164", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)),
     Radio("AN/ARC-186(V) AM", (RadioRange(MHz(116), MHz(152), MHz(1), Modulation.AM),)),
     Radio("AN/ARC-186(V) FM", (RadioRange(MHz(30), MHz(76), MHz(1), Modulation.FM),)),
+    Radio("AN/ARC-201", (RadioRange(MHz(30), MHz(88), kHz(25), Modulation.FM),)),
     Radio(
         "AN/ARC-210",
         (
