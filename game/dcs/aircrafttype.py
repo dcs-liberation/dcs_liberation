@@ -37,7 +37,10 @@ from game.radio.channels import (
     PhantomChannelNamer,
     HindChannelNamer,
     HipChannelNamer,
+<<<<<<< HEAD
     KiowaChannelNamer,
+=======
+>>>>>>> origin
 )
 from game.utils import (
     Distance,
