@@ -4,7 +4,7 @@ Saves from 11.0.0 are compatible with 11.1.0. See Known Issues section for excep
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.9.5.55918 including Heatblur F-4E. 
+* **[Engine]** Support for DCS 2.9.5.55918 including Heatblur F-4E and Polychop OH-58D Kiowa Warrior support. 
 
 ## Fixes
 
