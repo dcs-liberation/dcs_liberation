@@ -1,0 +1,13 @@
+---
+name: Israeli Army
+country: Israel
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery:
+  - ISR Army Fictional
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

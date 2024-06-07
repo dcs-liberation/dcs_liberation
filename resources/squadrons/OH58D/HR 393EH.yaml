@@ -1,0 +1,29 @@
+---
+name: Croatian Air Force 393rd Helicopter Squadron
+nickname: Night Owls
+country: Croatia
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery_set:
+  - HR 393EH 321
+  - HR 393EH 322
+  - HR 393EH 323
+  - HR 393EH 324
+  - HR 393EH 325
+  - HR 393EH 326
+  - HR 393EH 327
+  - HR 393EH 328
+  - HR 393EH 329
+  - HR 393EH 330
+  - HR 393EH 331
+  - HR 393EH 332
+  - HR 393EH 333
+  - HR 393EH 334
+  - HR 393EH 335
+  - HR 393EH 336
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

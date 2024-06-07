@@ -1,0 +1,18 @@
+---
+name: US Army 17th Cavalry Regiment 7th Squadron Troop A
+nickname: Shadow
+female_pilot_percentage: 10
+country: USA
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery_set:
+  - US 7-17 A 014 Bugs
+  - US 7-17 A 039 Lola
+  - US 7-17 A 964 Marvin
+  - US -17 A 604 Taz
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

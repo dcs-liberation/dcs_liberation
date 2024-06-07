@@ -1,0 +1,13 @@
+---
+name: Japanese Army
+country: Japan
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery:
+  - JPN Army Fictional
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

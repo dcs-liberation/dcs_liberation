@@ -1,0 +1,16 @@
+---
+name: US Army 17th Cavalry Regiment 1st Squadron Troop B
+nickname: Bootleg
+female_pilot_percentage: 10
+country: USA
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery_set:
+  - US 1-17 B 024
+  - US 1-17 B 381
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

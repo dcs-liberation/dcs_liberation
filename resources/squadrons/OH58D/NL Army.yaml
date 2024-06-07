@@ -1,0 +1,13 @@
+---
+name: Dutch Army
+country: Netherlands
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery:
+  - NL Army Fictional
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft
