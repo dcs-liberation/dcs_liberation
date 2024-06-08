@@ -1,0 +1,13 @@
+---
+name: British Army Air Corps Desert
+country: UK
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery:
+  - UK Army Fictional Desert
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

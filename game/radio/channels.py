@@ -389,3 +389,64 @@ class WarthogChannelNamer(ChannelNamer):
     @classmethod
     def name(cls) -> str:
         return "a10c-ii"
+
+
+class PhantomChannelNamer(ChannelNamer):
+    """Channel namer for the F4-E."""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = [
+            "COMM",  # AN/ARC-164 COMM
+            "AUX",  # AN/ARC-164 AUX
+        ][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "phantom"
+
+
+class HindChannelNamer(ChannelNamer):
+    """Channel namer for Mi-24 Hind"""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = [
+            "R863",
+            "R828",
+        ][radio_id - 1]
+        return f"{radio_name} Ch {channel_id-1}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "hind"
+
+
+class HipChannelNamer(ChannelNamer):
+    """Channel namer for Mi-8 Hip"""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = [
+            "R863",
+            "R828",
+        ][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "hip"
+
+
+class KiowaChannelNamer(ChannelNamer):
+    """Channel namer for OH58D Kiowa Warrior"""
+
+    @staticmethod
+    def channel_name(radio_id: int, channel_id: int) -> str:
+        radio_name = ["UHF AM", "VHF AM", "VHF FM1", "VHF FM2"][radio_id - 1]
+        return f"{radio_name} Ch {channel_id}"
+
+    @classmethod
+    def name(cls) -> str:
+        return "kiowa"

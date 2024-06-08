@@ -127,6 +127,12 @@ class QFlightPayloadTab(QFrame):
         scrolling_layout.addWidget(docsText)
 
         self.setLayout(layout)
+        # Increase width of tab when there are long loadout names. Add 50px to loadout selector
+        # to account for padding around the selector.
+        width = max(
+            self.sizeHint().width(), self.loadout_selector.sizeHint().width() + 50
+        )
+        self.setMinimumWidth(width)
 
     def resize_for_flight(self) -> None:
         self.member_selector.setMaximum(self.flight.count - 1)

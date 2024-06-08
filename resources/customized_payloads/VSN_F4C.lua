@@ -91,11 +91,11 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["CLSID"] = "{AGM_45A}",
 					["num"] = 9,
 				},
 				[2] = {
-					["CLSID"] = "{3E6B632D-65EB-44D2-9501-1C2D04515404}",
+					["CLSID"] = "{AGM_45A}",
 					["num"] = 3,
 				},
 				[3] = {

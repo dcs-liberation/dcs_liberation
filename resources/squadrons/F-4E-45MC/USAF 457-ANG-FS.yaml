@@ -1,0 +1,22 @@
+---
+name: USAF 457th ANG FS
+nickname: Spads
+country: USA
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: TH68-450_H1_457FS
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

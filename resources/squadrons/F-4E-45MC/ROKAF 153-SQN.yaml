@@ -1,0 +1,22 @@
+---
+name: ROKAF 153rd FS
+nickname: 153rd Fighter Squadron
+country: South Korea
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: ROKAF-80470-CG-153FS
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

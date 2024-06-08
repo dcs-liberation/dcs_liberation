@@ -13,6 +13,7 @@ recommended_player_faction:
     - en_US
   aircrafts:
     - F-4E Phantom II
+    - F-4E-45MC Phantom II
     - F-15C Eagle
     - F-15E Strike Eagle
     - F-15E Strike Eagle (Suite 4+)
@@ -100,7 +101,6 @@ recommended_enemy_faction:
     assets. Designed for use with the Allied Sword scenario.</p>
   aircrafts:
     - MiG-23ML Flogger-G
-    - MiG-25RBT Foxbat-B
     - MiG-29A Fulcrum-A
     - Su-17M4 Fitter-K
     - Su-24M Fencer-D
@@ -110,7 +110,6 @@ recommended_enemy_faction:
     - Tu-22M3 Backfire-C
     - Mi-24V Hind-E
     - Mi-8MTV2 Hip
-    - SA 342M Gazelle
     - SA 342L Gazelle
     - IL-76MD
   awacs:
@@ -263,7 +262,9 @@ squadrons:
     - primary: SEAD
       secondary: any
       aircraft:
+        - F-4E-45MC Phantom II
         - 201th Squadron
+      size: 16
     - primary: Refueling
       aircraft:
         - VMGR-352
@@ -272,12 +273,12 @@ squadrons:
       secondary: any
       aircraft:
         - 69th Squadron
-      size: 8
+      size: 12
     - primary: BAI
       secondary: any
       aircraft:
         - 110th Squadron
-      size: 8
+      size: 16
   # Damascus
   7:
     - primary: TARCAP
@@ -315,20 +316,21 @@ squadrons:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - SA 342M Gazelle
+        - SA 342L Gazelle
       size: 6
   # OPFOR Second inland FOB
   FOB Homs:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - SA 342M Gazelle
+        - SA 342L Gazelle
       size: 6
   # Palmyra
   28:
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
+        - MiG-21bis Fishbed-N
         - MiG-29A Fulcrum-A
       size: 12
     - primary: Strike
@@ -365,7 +367,7 @@ squadrons:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - SA 342M Gazelle
+        - SA 342L Gazelle
   # OPFOR Second inland FOB
   FOB Ithriyah:
     - primary: CAS
@@ -385,6 +387,7 @@ squadrons:
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
+        - MiG-23MLD Flogger-K
         - Su-30 Flanker-C
     - primary: CAS
       secondary: air-to-ground
@@ -396,6 +399,7 @@ squadrons:
     - primary: TARCAP
       secondary: air-to-air
       aircraft:
+        - MiG-25PD Foxbat-E
         - MiG-23ML Flogger-G
     - primary: BARCAP
       secondary: any
@@ -405,6 +409,7 @@ squadrons:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
+        - Su-24M Fencer-D
         - Su-34 Fullback
     - primary: Transport
       secondary: air-to-ground

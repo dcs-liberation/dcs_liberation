@@ -1,0 +1,17 @@
+---
+name: US Army 17th Cavalry Regiment 6th Squadron
+female_pilot_percentage: 10
+country: USA
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery_set:
+  - US 6-17 A 523 Iraq 2011
+  - US 6-17 A 571 Korea 2014
+  - US 6-17 B 366
+  - US 6-17 C 367
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft
