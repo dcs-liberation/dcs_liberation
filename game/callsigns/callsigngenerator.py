@@ -1,3 +1,4 @@
+from abc import ABC
 from dataclasses import dataclass
 from enum import StrEnum
 from collections import deque
@@ -20,10 +21,43 @@ class CallsignCategory(StrEnum):
     GROUND_UNITS = "GroundUnits"
     HELIPADS = "Helipad"
     GRASS_AIRFIELDS = "GrassAirfield"
+    
+    
+class AbstractCallsign(ABC):
+
+    def __str__(self) -> str:
+        ...
+        
+    def group_callsign(self) -> str:
+        ...
+        
+    def pydcs_dict(self, country: str) -> dict[Any, Any]:
+        ...
+        
+        
+@dataclass(frozen=True)
+class EasternCallsign(AbstractCallsign):
+    number: int
+    
+    def __post_init__(self) -> None:
+        if self.number < 1 or self.number > MAX_GROUP_ID:
+            raise ValueError(
+                f"Invalid callsign {numberd}. Callsigns have to be between 1 and {MAX_GROUP_ID}."
+            )
+        if self.unit_id < 1 or self.unit_id > 9:
+            raise ValueError(
+                f"Invalid unit ID {self.unit_id}. Unit IDs have to be between 1 and 9."
+            )
+    
+    def __str__(self):
+        return str(self.number)
+        
+    def group_callsign(self) -> str:
+        return str(self.number)
 
 
 @dataclass(frozen=True)
-class Callsign:
+class Callsign(AbstractCallsign):
     name: str  # Callsign name e.g. "Enfield"
     group_id: int  # ID of the group e.g. 2 in Enfield-2-3
     unit_id: int  # ID of the unit e.g. 3 in Enfield-2-3
@@ -31,7 +65,7 @@ class Callsign:
     def __post_init__(self) -> None:
         if self.group_id < 1 or self.group_id > MAX_GROUP_ID:
             raise ValueError(
-                f"Invalid group ID {self.group_id}. Group IDs have to be between 1 and 999."
+                f"Invalid group ID {self.group_id}. Group IDs have to be between 1 and {MAX_GROUP_ID}."
             )
         if self.unit_id < 1 or self.unit_id > 9:
             raise ValueError(
@@ -82,6 +116,20 @@ class GroupIdRegistry:
 
     def release_group_id(self, callsign: Callsign) -> None:
         self._names[callsign.name].appendleft(callsign.group_id)
+        
+        
+class EasternCallsignRegistry:
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self) -> None:
+        self.next = 1
+        
+    def alloc_callsign(self) -> int:
+        callsign = self.next
+        self.next += 1
+        return callsign
 
 
 class RoundRobinNameAllocator:
