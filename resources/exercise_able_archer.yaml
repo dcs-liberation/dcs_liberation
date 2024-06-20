@@ -1,0 +1,248 @@
+---
+name: Kola Peninsula - Able Archer 83
+theater: Kola
+authors: Starfire
+recommended_player_faction: Blufor Late Cold War (80s)
+recommended_enemy_faction: Russia 1980
+description:
+  <p>In 1983, during the height of the Cold War, tensions escalate to 
+  a breaking point as the Soviet Union, misinterpreting NATO's Able 
+  Archer 83 exercise as a genuine mobilisation for a surprise nuclear 
+  attack, decides to launch a pre-emptive conventional strike. On the 
+  9th of November, Soviet forces commence a sudden invasion of Norway, 
+  aiming to secure strategic territories and disrupt NATO's northern 
+  flank before it can organize an effective response.</p>
+  <p>Simultaneously, the Soviet Union extends its offensive to include 
+  Finland and Sweden. Although officially neutral, these nations are 
+  perceived as potential staging grounds for NATO reinforcements and 
+  supply lines. The Soviet high command believes that controlling 
+  these territories will prevent NATO from using their airspace and 
+  ports to launch counterattacks or obtain logistical support.</p>
+  <p>As Soviet forces push across the borders, NATO and its new allies 
+  must swiftly mobilise to defend their territories. The battle quickly 
+  expands into a broader conflict, with both sides aiming to gain 
+  control of critical regions. The ultimate objective for NATO and its 
+  allies becomes clear. They must push eastward to the Kola Peninsula 
+  to neutralise the Soviet threat and restore stability to Northern Europe.</p>
+miz: exercise_able_archer.miz
+performance: 1
+recommended_start_date: 1983-11-09
+version: "11.0"
+settings:
+  hercules: true
+  squadron_start_full: true
+squadrons:
+  #Bodo
+  7:
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - A-10A Thunderbolt II
+      size: 4
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - F-5E Tiger II
+      size: 8
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - F-15C Eagle
+      size: 8
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+      size: 2
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 2
+  #Banak
+  1:
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
+      size: 12
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - OH-58D(R) Kiowa Warrior
+      size: 4
+    - primary: Refueling
+      aircraft:
+        - KC-130
+      size: 1
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 2
+  #Rovaniemi
+  2:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+      size: 8
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - F-4E-45MC Phantom II
+      size: 12
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - Mirage-F1CE
+      size: 8
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - Mi-8MTV2 Hip
+      size: 4
+  #Kemi Tornio
+  3:
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-47 Dakota
+      size: 3
+  #Kiruna
+  5:
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - AJS-37 Viggen
+      size: 8
+  #Blue Carrier
+  Blue-CV:
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - F-14A Tomcat
+      size: 24
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+    - primary: BAI
+      secondary: air-to-ground
+      aircraft:
+        - S-3B Viking
+      size: 12
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-60A
+      size: 4
+  #Blue LHA
+  Blue-LHA:
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - AV-8B Harrier II Night Attack
+      size: 20
+  #RAF Fairford
+  Bombers from RAF Fairford:
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - B-52H Stratofortress
+      size: 8
+  #Bas 100
+  4:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-25 Frogfoot
+      size: 4
+    - primary: DEAD
+      secondary: air-to-ground
+      aircraft:
+        - Su-17M4 Fitter-K
+      size: 4
+  #Severomorsk-1
+  8:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-31 Foxhound
+      size: 4
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - MiG-23MLD Flogger-K
+      size: 8
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - MiG-27K Flogger-J2
+      size: 12
+  #Severomorsk-3
+  6:
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+      size: 2
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - Su-24M Fencer-D
+      size: 12
+    - primary: TARCAP
+      secondary: any
+      aircraft:
+        - Su-27 Flanker-B
+      size: 8
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - Mi-8MTV2 Hip
+      size: 2
+  #Olenya
+  9:
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - Tu-95MS Bear-H
+      size: 8
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - Tu-22M3 Backfire-C
+      size: 8
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+      size: 2
+  #Monchegorsk
+  10:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-25PD Foxbat-E
+      size: 4
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - MiG-29A Fulcrum-A
+      size: 8
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+      size: 12
+  #Murmansk International
+  12:
+    - primary: AEW&C
+      aircraft:
+        - A-50
+      size: 1
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - IL-76MD
+      size: 2
