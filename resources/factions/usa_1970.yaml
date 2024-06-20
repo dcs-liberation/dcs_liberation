@@ -3,9 +3,9 @@ country: USA
 name: USA 1970
 authors: Starfire
 description: <p>US military during the Vietnam War from 1965 to 1975</p>
-locales:
+locales: 
   - en_US
-aircrafts:
+aircrafts: 
   - F-14A Tomcat (Block 135-GR Late)
   - F-4C Phantom II
   - F-4B Phantom II
@@ -18,42 +18,43 @@ aircrafts:
   - B-52H Stratofortress
   - C-47 Skytrain
   - C-130
+  - C-130J-30 Super Hercules
   - UH-1H Iroquois
   - AH-1W SuperCobra
-  - OH-58D Kiowa Warrior
+  - OH-58D(R) Kiowa Warrior
   - CH-47D
   - CH-53E
-awacs:
+awacs: 
   - E-2C Hawkeye
-tankers:
+tankers: 
   - KC-130
   - KC-135 Stratotanker
-frontline_units:
+frontline_units: 
   - M113
   - M163 Vulcan Air Defense System
   - M60A3 "Patton"
-artillery_units:
+artillery_units: 
   - M109A6 Paladin
-logistics_units:
+logistics_units: 
   - Truck M818 6x6
   - LARC-V
-infantry_units:
+infantry_units: 
   - Infantry M249
   - Infantry M4
 missiles: []
-preset_groups:
+preset_groups: 
   - Hawk
-naval_units:
+naval_units: 
   - FFG Oliver Hazard Perry
   - CV-59 Forrestal
-air_defense_units:
+air_defense_units: 
   - SAM Hawk SR (AN/MPQ-50)
   - M163 Vulcan Air Defense System
   - M48 Chaparral
-carrier_names:
+carrier_names: 
   - CV-59 Forrestal
   - CV-60 Saratoga
   - CV-61 Ranger
   - CV-62 Independence
-requirements: {}
-doctrine: coldwar
+has_jtac: "false"
+doctrine: "coldwar"
