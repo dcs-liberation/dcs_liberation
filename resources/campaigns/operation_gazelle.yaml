@@ -1,0 +1,122 @@
+---
+name: Sinai - Operation Gazelle (Yom Kippur War)
+theater: Sinai
+authors: Starfire
+recommended_player_faction: Israel 1973
+recommended_enemy_faction: Egypt 1973
+description:
+    <p>In this semi-historical scenario set during the early stages of the 
+    Yom Kippur War, Egypt has successfully captured extensive territory 
+    across the Sinai Peninsula during the initial surprise attack. 
+    Operation Gazelle represents a critical Israeli counter-offensive to 
+    reclaim these areas. Supported by armoured brigades, paratrooper units, 
+    and air cover, Israeli forces are tasked with driving the Egyptian Third 
+    Army back across the Al Salam Bridge. Their mission also involves encircling 
+    and cutting off the Egyptian forces that are advancing eastward from the 
+    Port Tewfik Pontoon Bridge through the Mitla and Gidi mountain passes. This 
+    operation aims to decisively shift the war's momentum, re-establishing 
+    Israeli dominance in the crucial Sinai region.</p>
+miz: operation_gazelle.miz
+performance: 1
+recommended_start_date: 1973-10-15
+version: "11.0"
+settings:
+  a4_skyhawk: true
+  hercules: true
+  squadron_start_full: true
+squadrons:
+  # Ben-Gurion
+  24:
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 4
+  # Tel Nof
+  23:
+    - primary: SEAD
+      secondary: any
+      aircraft:
+        - F-4E-45MC Phantom II
+      size: 20
+    - primary: Escort
+      secondary: any
+      aircraft:
+        - F-4E-45MC Phantom II
+      size: 20
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - UH-1H Iroquois
+      size: 4
+  # Hatzor
+  20:
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - A-4E Skyhawk
+        - F-4E-45MC Phantom II
+      size: 20
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - A-4E Skyhawk
+        - F-4E-45MC Phantom II
+      size: 20
+  # El Arish
+  29:
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - MiG-19P Farmer-B
+      size: 12
+  # Baluza
+  #27:
+  # Melez
+  5:
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - MiG-15bis Fagot
+      size: 16
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - Mi-8MTV2 Hip
+      size: 4
+  # Al Mansurah
+  14:
+    - primary: BARCAP
+      secondary: any
+      aircraft:
+        - MiG-21bis Fishbed-N
+      size: 16
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - MiG-19P Farmer-B
+      size: 16
+  # Cairo West
+  18:
+    - primary: Strike
+      secondary: any
+      aircraft:
+        - Tu-16 Badger
+      size: 14
+    - primary: Escort
+      secondary: air-to-air
+      aircraft:
+        - MiG-21bis Fishbed-N
+      size: 16
+  # FARP
+  Port Tewfik Staging Area:
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - Mi-8MTV2 Hip
+      size: 8

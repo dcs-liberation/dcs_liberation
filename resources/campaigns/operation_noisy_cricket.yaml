@@ -30,6 +30,9 @@ recommended_player_money: 0
 recommended_enemy_money: 0
 recommended_player_income_multiplier: 0.2
 recommended_enemy_income_multiplier: 0.2
+settings:
+  hercules: true
+  squadron_start_full: true
 version: "11.0"
 squadrons:
   Blue CV-1:
@@ -40,7 +43,7 @@ squadrons:
       size: 40
     - primary: AEW&C
       aircraft:
-        - E-2D Advanced Hawkeye
+        - E-2C Hawkeye
       size: 2
     - primary: Refueling
       aircraft:
@@ -49,21 +52,26 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
-        - UH-60L
         - UH-60A
       size: 4
   #Al Minhad AFB (61)
   12:
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 2
     - primary: DEAD
       secondary: any
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
-      size: 32
+      size: 20
     - primary: Escort
       secondary: air-to-air
       aircraft:
         - F-15C Eagle
-      size: 24
+      size: 20
   #Al Dhafra AFB (251)
   4:
     - primary: Strike
@@ -79,18 +87,18 @@ squadrons:
       secondary: any
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
-      size: 20
+      size: 16
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
-      size: 20
+      size: 16
   #Bandar Abbas Intl (51)
   2:
     - primary: SEAD
       secondary: air-to-ground
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
       size: 20
     - primary: TARCAP
       secondary: air-to-air
@@ -106,7 +114,7 @@ squadrons:
       size: 12
   #Abu Musa Island (8)
   1:
-    - primary: DEAD
+    - primary: SEAD Escort
       secondary: air-to-ground
       aircraft:
         - Su-25T Frogfoot
@@ -126,9 +134,10 @@ squadrons:
   #Shiraz Intl (122)
   19:
     - primary: Transport
+      secondary: any
       aircraft:
         - IL-76MD
-      size: 5
+      size: 4
     - primary: BARCAP
       secondary: air-to-air
       aircraft:
