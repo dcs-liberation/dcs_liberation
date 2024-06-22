@@ -1,6 +1,6 @@
-# 11.1.0
+# 11.1.1
 
-Saves from 11.0.0 are compatible with 11.1.0. See Known Issues section for exceptions.
+Saves from 11.0.0 are compatible with 11.1.1. See Known Issues section for exceptions.
 
 ## Features/Improvements
 
