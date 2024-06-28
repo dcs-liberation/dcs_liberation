@@ -1,3 +1,14 @@
+# 12.0.0
+
+Saves from 11.x are not compatible with 12.0.0.
+
+## Features/Improvements
+
+* **[Mods]** F/A-18 E/F/G Super Hornet mod version updated to 2.3.
+
+## Fixes
+
+
 # 11.1.1
 
 Saves from 11.0.0 are compatible with 11.1.1. See Known Issues section for exceptions.
