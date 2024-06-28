@@ -15,6 +15,14 @@ role: Transport/Light Attack
 variants:
   Mi-8MTV2 Hip: {}
 kneeboard_units: "metric"
+radios:
+  intra_flight: R863
+  inter_flight: R863
+  channels:
+    type: common
+    namer: hip
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1
 tasks:
   Air Assault: 40
   BAI: 390

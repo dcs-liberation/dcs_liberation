@@ -27,7 +27,10 @@ frontline_units:
   - "Sturmgesch\xFCtz III Ausf. G"
   - "Sturmgesch\xFCtz IV"
   - "Sturmpanzer IV Brummb\xE4r"
-artillery_units: []
+artillery_units:
+  - FH Pak 40 75mm
+  - FH LeFH-18 105mm
+  - SPH Sd.Kfz.124 Wespe 105mm
 logistics_units:
   - LUV Kettenrad
   - LUV Kubelwagen 82
@@ -41,6 +44,7 @@ preset_groups:
   - Freya
 naval_units:
   - Boat Schnellboot type S130
+  - U-boat VIIC U-flak
 requirements:
   WW2 Asset Pack: https://www.digitalcombatsimulator.com/en/products/other/wwii_assets_pack/
 carrier_names: []

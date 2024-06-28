@@ -3,37 +3,37 @@ country: Vietnam
 name: NVA 1970
 authors: Starfire
 description: <p>North Vietnamese Army during the Vietnam War from 1965 to 1975</p>
-locales:
+locales: 
   - vi_Vn
-aircrafts:
+aircrafts: 
   - Mi-8MTV2 Hip
   - MiG-19P Farmer-B
   - MiG-21bis Fishbed-N
 awacs: []
 tankers: []
-frontline_units:
+frontline_units: 
   - T-55A
   - PT-76
   - M2A1 Half-Track
   - Grad MRL FDDM (FC)
-artillery_units:
+artillery_units: 
   - BM-21 Grad
-logistics_units:
+logistics_units: 
   - LUV UAZ-469 Jeep
   - Truck Ural-375
-infantry_units:
+infantry_units: 
   - Infantry AK-74 Rus
   - Infantry RPG
 missiles: []
-preset_groups:
+preset_groups: 
   - SA-2/S-75
   - SA-3/S-125
   - KS-19
   - Cold-War-Flak
-naval_units:
+naval_units: 
   - Boat Armed Hi-speed
   - Boat Schnellboot type S130
-air_defense_units:
+air_defense_units: 
   - SAM P19 "Flat Face" SR (SA-2/3)
   - S-60 57mm
   - 8.8 cm Flak 18
@@ -41,6 +41,5 @@ air_defense_units:
   - AAA ZU-23 Emplacement
   - ZU-23 on Ural-375
   - ZSU-23-4 Shilka
-
-requirements: {}
-doctrine: coldwar
+has_jtac: "false"
+doctrine: "coldwar"

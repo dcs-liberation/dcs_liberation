@@ -1,0 +1,16 @@
+---
+name: US Army 6th Cavalry Regiment 1st Squadron Troop A
+nickname: Fighting Sixth
+female_pilot_percentage: 10
+country: USA
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery_set:
+  - US 1-6 A 161
+  - US 1-6 A 340
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

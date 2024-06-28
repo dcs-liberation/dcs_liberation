@@ -13,6 +13,14 @@ origin: USA
 price: 8
 role: Fighter
 gunfighter: true
+radios:
+  intra_flight: AN/ARC-27
+  inter_flight: AN/ARC-27
+  channels:
+    type: common
+    namer: single
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1
 variants:
   F-86F Sabre: {}
 tasks:

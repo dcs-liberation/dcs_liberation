@@ -1,0 +1,22 @@
+---
+name: USAF 163rd TFG
+nickname: Grizzlys
+country: USA
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: CA68-426_H2_163tfg
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

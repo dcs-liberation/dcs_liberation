@@ -1,0 +1,15 @@
+---
+name: US Army 17th Cavalry Regiment 3rd Squadron Troop B
+nickname: Blackjack
+female_pilot_percentage: 10
+country: USA
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery:
+  - US 3-17 B 937 Iraq
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

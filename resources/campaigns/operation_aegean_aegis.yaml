@@ -38,12 +38,14 @@ description:
   </p>
 miz: operation_aegean_aegis.miz
 performance: 1
-recommended_start_date: 2017-04-20
+recommended_start_date: 2013-04-20
 recommended_player_money: 1000
 recommended_enemy_money: 0
 recommended_player_income_multiplier: 1.0
 recommended_enemy_income_multiplier: 0.0
 version: "11.0"
+settings:
+  squadron_start_full: true
 squadrons:
   #Tarawa Class LHA
   Blue-LHA:
@@ -51,7 +53,12 @@ squadrons:
       secondary: any
       aircraft:
         - AH-64D Apache Longbow
-      size: 12
+      size: 8
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - OH-58D(R) Kiowa Warrior
+      size: 4
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
@@ -67,7 +74,7 @@ squadrons:
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
       size: 12
   #Akrotiri
   44:
@@ -79,7 +86,7 @@ squadrons:
     - primary: CAS
       secondary: air-to-ground
       aircraft:
-        - OH-58D Kiowa Warrior
+        - OH-58D(R) Kiowa Warrior
       size: 4
     - primary: Transport
       secondary: any

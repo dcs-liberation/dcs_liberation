@@ -1,26 +1,38 @@
 # 12.0.0
 
-Saves from 12.x are not compatible with 11.x.
+Saves from 11.x are not compatible with 12.0.0.
 
 ## Features/Improvements
 
+* **[Campaign]** Removed deprecated settings for generating persistent and invulnerable AWACs and tankers.
+* **[Mods]** F/A-18 E/F/G Super Hornet mod version updated to 2.3.
 
 ## Fixes
 
-* **[Campaign]** Removed deprecated settings for generating persistent and invulnerable AWACs and tankers.
 
-# 11.1.0
+# 11.1.1
 
-Saves from 11.0.0 are compatible with 11.1.0.
+Saves from 11.0.0 are compatible with 11.1.1. See Known Issues section for exceptions.
+
+## Features/Improvements
+
+* **[Engine]** Support for DCS 2.9.5.55918 including Heatblur F-4E and Polychop OH-58D Kiowa Warrior support. 
 
 ## Fixes
 
 * **[Campaign]** Fixed double counting of parked aircraft kills when DCS reports multiple kill events.
 * **[Campaign]** Fixed error where frontline units are not re-deployed when multiple control points were captured in one turn or when control points are captured "out of order" using air-assault missions.
 * **[Cheat Menu]** Re-deploy frontline units when using cheats to capture control points, so that cheats behave the same way as capturing a control point in-mission.
+* **[Data]** Added FuSe-65 Early Warning Radar.
+* **[Data]** Updated Peru 1995 and Germany 1944 factions.
 * **[Flight Planning]** Theater refuelling flight plans (those not tied to a particular package) will remain on station for a longer period, specifically the desired mission duration + 30 minutes. By default, this increases the on-station time from 1 hour to 1.5 hours. 
 * **[Mission Generation]** Patched bug where Liberation crashed when aborting a turn when Fighter Sweep missions were planned.
+* **[Radios]** Added radio setup for F-5E, F-86, Mi-8 and Mi-24.
 * **[UI]** Naval control points (carriers, LHAs) can no longer be moved onto land.
+
+## Known Issues
+
+* When loading saves from 11.0, loadouts with AGM-45B (Imp), typically on A-4E-C mod, will have the AGM-45B replaced with an empty pylon due to changes in DCS for this weapon. The AGM-45A is not affected by this issue.
 
 # 11.0.0
 

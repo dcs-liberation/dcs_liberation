@@ -16,6 +16,9 @@ miz: exercise_vegas_nerve.miz
 performance: 1
 recommended_start_date: 2011-02-24
 version: "11.0"
+settings:
+  hercules: true
+  squadron_start_full: true
 squadrons:
   Bombers from Minot AFB:
     - primary: Strike
@@ -35,16 +38,12 @@ squadrons:
       secondary: any
       aircraft:
         - F-15C Eagle
-      size: 12
+      size: 16
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
-      size: 12
-    - primary: AEW&C
-      aircraft:
-        - E-3A
-      size: 1
+      size: 8
   # Tonopah Test Range
   18:
     - primary: BAI
@@ -56,7 +55,12 @@ squadrons:
       secondary: any
       aircraft:
         - AH-64D Apache Longbow
-      size: 10
+      size: 2
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - OH-58D(R) Kiowa Warrior
+      size: 2
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
@@ -67,24 +71,28 @@ squadrons:
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
       size: 24
-    - primary: Air Assault
-      secondary: air-to-ground
+    - primary: AEW&C
       aircraft:
-        - UH-60L
-        - UH-60A
-      size: 2
+        - E-3A
+      size: 1
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - CH-47D
+      size: 1
   # Groom Lake
   2:
     - primary: Escort
       secondary: air-to-air
       aircraft:
         - J-11A Flanker-L
-      size: 20
+      size: 16
     - primary: BAI
       secondary: air-to-ground
       aircraft:
         - Su-25T Frogfoot
-      size: 20
+      size: 12
   # Creech
   1:
     - primary: CAS
@@ -113,16 +121,16 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - Su-24M Fencer-D
-      size: 20
+      size: 16
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - Su-34 Fullback
-      size: 20
+      size: 16
   # Boulder City Airport
   6:
     - primary: SEAD Escort
       secondary: any
       aircraft:
         - FC-1 Fierce Dragon
-      size: 20
+      size: 16

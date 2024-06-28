@@ -1,0 +1,13 @@
+---
+name: Spanish Army
+country: Spain
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery:
+  - ES Army Fictional
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

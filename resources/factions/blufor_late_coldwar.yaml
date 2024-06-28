@@ -1,0 +1,96 @@
+---
+country: Combined Joint Task Forces Blue
+name: Blufor Late Cold War (80s)
+authors: Starfire
+description: <p>Blufor 1980s late cold war faction featuring units from NATO and NATO-aligned nations.</p>
+aircrafts: 
+  - A-10A Thunderbolt II
+  - A-4E Skyhawk
+  - AH-1W SuperCobra
+  - AJS-37 Viggen
+  - AV-8B Harrier II Night Attack
+  - B-1B Lancer
+  - B-52H Stratofortress
+  - C-101CC Aviojet
+  - C-130
+  - C-130J-30 Super Hercules
+  - C-47 Dakota
+  - CH-47D
+  - CH-53E
+  - F-14A Tomcat (Block 135-GR Late)
+  - F-14B Tomcat
+  - F-15C Eagle
+  - F-15E Strike Eagle (Suite 4+)
+  - F-16CM Fighting Falcon (Block 50)
+  - F/A-18C Hornet (Lot 20)
+  - F-4E Phantom II
+  - F-4E-45MC Phantom II
+  - F-5E Tiger II
+  - OH-58D(R) Kiowa Warrior
+  - Mi-8MTV2 Hip
+  - MiG-21bis Fishbed-N
+  - Mirage-F1B
+  - Mirage-F1BE
+  - Mirage-F1CE
+  - Mirage-F1C-200
+  - Mirage-F1EE
+  - S-3B Viking
+  - SA 342L Gazelle
+  - SA 342M Gazelle
+  - SH-60B Seahawk
+  - UH-1H Iroquois
+  - UH-60A
+  - UH-60L
+awacs: 
+  - E-2C Hawkeye
+  - E-3A
+tankers: 
+  - KC-130
+  - KC-135 Stratotanker
+frontline_units: 
+  - M113
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+  - M60A3 "Patton"
+  - Leopard 2
+  - M1A2 Abrams
+  - M2A2 Bradley
+  - Marder 1A3
+  - VAB Mephisto
+artillery_units: 
+  - M109A6 Paladin
+  - M270 Multiple Launch Rocket System
+logistics_units: 
+  - Truck M818 6x6
+infantry_units: 
+  - Infantry M249
+  - Infantry M4
+missiles: []
+preset_groups: 
+  - Hawk
+  - Patriot
+  - Rapier
+naval_units: 
+  - FFG Oliver Hazard Perry
+  - CG Ticonderoga
+  - LHA-1 Tarawa
+  - CV-59 Forrestal
+air_defense_units: 
+  - SAM Hawk SR (AN/MPQ-50)
+  - M163 Vulcan Air Defense System
+  - M48 Chaparral
+  - Flakpanzer Gepard
+  - Roland 2 (Marder Chassis)
+carrier_names: 
+  - CVN-59 Forrestal
+  - CVN-60 Saratoga
+  - CVN-61 Ranger
+  - CVN-62 Independence
+helicopter_carrier_names: 
+  - LHA-1 Tarawa
+  - LHA-2 Saipan
+  - LHA-3 Belleau Wood
+  - LHA-4 Nassau
+  - LHA-5 Peleliu
+has_jtac: "false"
+doctrine: "coldwar"

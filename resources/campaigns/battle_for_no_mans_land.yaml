@@ -34,6 +34,8 @@ miz: battle_for_no_mans_land.miz
 performance: 1
 recommended_start_date: 2001-11-10
 version: "11.0"
+settings:
+  squadron_start_full: true
 squadrons:
   #Port Stanley
   1:
@@ -45,12 +47,11 @@ squadrons:
     - primary: BAI
       secondary: any
       aircraft:
-        - AH-64D Apache Longbow
+        - OH-58D(R) Kiowa Warrior
       size: 6
     - primary: Air Assault
       secondary: any
       aircraft:
-        - UH-60L
         - UH-60A
       size: 4
   #San Carlos FOB

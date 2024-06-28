@@ -1,0 +1,18 @@
+---
+name: US Army 17th Cavalry Regiment 3rd Squadron Troop C
+nickname: Crazy Horse
+female_pilot_percentage: 10
+country: USA
+role: Light Attack and Scout Helicopter
+aircraft: OH-58D(R) Kiowa Warrior
+livery_set:
+  - US 3-17 C 001 Jasmine
+  - US 3-17 C 179 Presley Marie
+  - US 3-17 C 561 Ariel
+  - US 3-17 C 976 Jenny
+mission_types:
+  - BAI
+  - CAS
+  - DEAD
+  - Escort
+  - OCA/Aircraft

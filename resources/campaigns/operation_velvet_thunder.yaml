@@ -14,18 +14,21 @@ description:
   captured by Air Assault. Due to the limited size and availability of LZs, it 
   is vital to pay close attention to where you designate troop drop off zones.
   </p><p><strong>Note:</strong> This campaign is intended to be played with the 
-  A-4 Skyhawk and OV-10a aircraft mods active. The C-101CC has also been included 
-  as a stand-in for the Cessna A-37 Dragonfly in order to provide a CAS platform 
-  of roughly equivalent combat capability. This campaign will be updated to use 
-  Heatblur's F-4 Phantom II once it is in early access.</p>
+  A-4 Skyhawk, OV-10A, and C-130J aircraft mods active. The C-101CC has also 
+  been included as a stand-in for the Cessna A-37 Dragonfly in order to provide 
+  a CAS platform of roughly equivalent combat capability.</p>
+  <strong>Note:</strong> Airbase threat range should be set to 25 for this campaign.
 miz: operation_velvet_thunder.miz
 performance: 1
 recommended_start_date: 1970-11-29
 version: "11.0"
 settings:
+  airbase_threat_range: 25
+  restrict_weapons_by_date: true
   a4_skyhawk: true
-  f4bc_phantom: true
+  hercules: true
   ov10a_bronco: true
+  squadron_start_full: true
 squadrons:
   #Andersen AFB
   6:
@@ -33,11 +36,6 @@ squadrons:
       secondary: any
       aircraft:
         - F-5E Tiger II
-      size: 8
-    - primary: BAI
-      secondary: any
-      aircraft:
-        - C-101CC Aviojet
       size: 8
     - primary: CAS
       secondary: any
@@ -47,7 +45,11 @@ squadrons:
     - primary: SEAD
       secondary: any
       aircraft:
-        - F-4C Phantom II
+        - F-4E-45MC Phantom II
+      size: 8
+    - primary: DEAD
+      secondary: any
+      aircraft:
         - F-4E Phantom II
       size: 8
     - primary: Strike
@@ -65,6 +67,19 @@ squadrons:
       aircraft:
         - CH-47D
       size: 4
+  #Antonio B. Won Pat Intl
+  4:
+    - primary: Air Assault
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 8
+    - primary: BAI
+      secondary: any
+      aircraft:
+        - C-101CC Aviojet
+      size: 8
   #Blue CV
   Blue-CV:
     - primary: DEAD

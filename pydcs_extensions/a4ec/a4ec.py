@@ -1004,7 +1004,7 @@ class A_4E_C(PlaneType):
         LAU3_WP156 = (1, Weapons.LAU3_WP156)
         LAU3_HE151 = (1, Weapons.LAU3_HE151)
         AGM_45A_Shrike_ARM = (1, Weapons.AGM_45A_Shrike_ARM)
-        AGM_45B_Shrike_ARM__Imp_ = (1, Weapons.AGM_45B_Shrike_ARM__Imp_)
+        AGM_45B_Shrike_ARM = (1, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             1,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -1213,7 +1213,7 @@ class A_4E_C(PlaneType):
             WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER__,
         )
         AGM_45A_Shrike_ARM = (2, Weapons.AGM_45A_Shrike_ARM)
-        AGM_45B_Shrike_ARM__Imp_ = (2, Weapons.AGM_45B_Shrike_ARM__Imp_)
+        AGM_45B_Shrike_ARM = (2, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             2,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -1850,7 +1850,7 @@ class A_4E_C(PlaneType):
             WeaponsA4EC._2_x_LAU_3_pod___19_x_2_75_Hydra__UnGd_Rkts_WTU_1_B__Practice__TER___,
         )
         AGM_45A_Shrike_ARM = (4, Weapons.AGM_45A_Shrike_ARM)
-        AGM_45B_Shrike_ARM__Imp_ = (4, Weapons.AGM_45B_Shrike_ARM__Imp_)
+        AGM_45B_Shrike_ARM = (4, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             4,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,
@@ -2048,7 +2048,7 @@ class A_4E_C(PlaneType):
         LAU3_WP156 = (5, Weapons.LAU3_WP156)
         LAU3_HE151 = (5, Weapons.LAU3_HE151)
         AGM_45A_Shrike_ARM = (5, Weapons.AGM_45A_Shrike_ARM)
-        AGM_45B_Shrike_ARM__Imp_ = (5, Weapons.AGM_45B_Shrike_ARM__Imp_)
+        AGM_45B_Shrike_ARM = (5, Weapons.AGM_45B_Shrike_ARM)
         Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             5,
             Weapons.Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets,

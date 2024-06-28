@@ -1,0 +1,22 @@
+---
+name: GAF JG 74
+nickname: Moelders
+country: Germany
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: 37+36_N72_JG74
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

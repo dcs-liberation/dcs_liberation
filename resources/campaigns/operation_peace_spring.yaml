@@ -18,18 +18,16 @@ miz: operation_peace_spring.miz
 performance: 2
 recommended_start_date: 2019-12-23
 version: "11.0"
+settings:
+  hercules: true
+  squadron_start_full: true
 squadrons:
   Blue CV-1:
     - primary: SEAD
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 40
-    - primary: BAI
-      secondary: air-to-ground
-      aircraft:
-        - S-3B Viking
-      size: 20
+      size: 24
     - primary: AEW&C
       aircraft:
         - E-2D Advanced Hawkeye
@@ -38,19 +36,28 @@ squadrons:
       aircraft:
         - S-3B Tanker
       size: 4
-  Bombers from RAF Fairford:
-    - primary: DEAD
-      secondary: air-to-ground
+    - primary: Air Assault
+      secondary: any
       aircraft:
-        - B-52H Stratofortress
-      size: 8
+        - UH-60A
+      size: 4      
   # Akrotiri
   44:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
         - B-1B Lancer
-      size: 8
+      size: 4
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+      size: 2
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 2
     - primary: OCA/Runway
       secondary: any
       aircraft:
@@ -61,12 +68,6 @@ squadrons:
       aircraft:
         - F-15C Eagle
       size: 20
-    - primary: Air Assault
-      secondary: any
-      aircraft:
-        - UH-60L
-        - UH-60A
-      size: 4
    # Ramat David
   30:
     - primary: BAI
@@ -84,12 +85,17 @@ squadrons:
       aircraft:
         - AH-64D Apache Longbow
       size: 4
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - OH-58D(R) Kiowa Warrior
+      size: 4
   # Damascus
   7:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
         - H-6J Badger
       size: 16
     - primary: BAI
@@ -101,7 +107,7 @@ squadrons:
     - primary: CAS
       secondary: any
       aircraft:
-        - OH-58D Kiowa Warrior
+        - OH-58D(R) Kiowa Warrior
         - Mi-24P Hind-F
       size: 4
   # Tiyas
@@ -115,7 +121,7 @@ squadrons:
     - primary: Escort
       secondary: air-to-air
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
         - Mirage-F1EQ
       size: 16
   # Abu Al Duhur
@@ -123,7 +129,7 @@ squadrons:
     - primary: Fighter sweep
       secondary: air-to-air
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
         - MiG-23ML Flogger-G
       size: 8
   # Gaziantep
@@ -139,7 +145,7 @@ squadrons:
     - primary: Strike
       secondary: air-to-ground
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
         - Tu-22M3 Backfire-C
       size: 16
     - primary: AEW&C
@@ -155,6 +161,6 @@ squadrons:
     - primary: Escort
       secondary: any
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
         - MiG-21bis Fishbed-N
       size: 16

@@ -1,0 +1,22 @@
+---
+name: IAF 119 FS
+nickname: Bat Squadron
+country: Israel
+role: Fighter Bomber
+aircraft: F-4E-45MC Phantom II
+livery: IAF-Kurnass-114-119SQN
+mission_types:
+  - Anti-ship
+  - BAI
+  - BARCAP
+  - CAS
+  - DEAD
+  - Escort
+  - Intercept
+  - OCA/Aircraft
+  - OCA/Runway
+  - SEAD
+  - SEAD Escort
+  - Strike
+  - Fighter sweep
+  - TARCAP

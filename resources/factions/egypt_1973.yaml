@@ -1,0 +1,44 @@
+---
+country: Egypt
+name: Egypt 1973
+authors: Starfire
+description: "<p>Egypt during the 1973 Yom Kippur War.</p>"
+locales:
+  - ar_SA
+aircrafts:
+  - MiG-21bis Fishbed-N
+  - MiG-19P Farmer-B
+  - Mi-8MTV2 Hip
+  - Tu-16 Badger
+awacs: []
+frontline_units:
+  - T-55A
+  - BMP-1
+  - BRDM-2
+  - BTR-80
+  - PT-76
+  - ZSU-23-4 Shilka
+artillery_units:
+  - BM-21 Grad
+logistics_units:
+  - Truck Ural-375
+  - Truck GAZ-66
+infantry_units:
+  - Infantry RPG
+  - Infantry AK-74 Rus
+preset_groups:
+  - SA-2/S-75
+  - SA-3/S-125
+  - SA-6
+naval_units: []
+missiles: []
+air_defense_units:
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - SAM SA-5 S-200 ST-68U "Tin Shield" SR
+  - ZSU-23-4 Shilka
+  - AAA ZU-23 Closed Emplacement
+  - ZU-23 on Ural-375
+  - S-60 57mm
+  - ZSU-57-2 'Sparka'
+has_jtac: false
+doctrine: coldwar

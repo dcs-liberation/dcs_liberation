@@ -142,6 +142,10 @@ class NewGameWizard(QtWidgets.QWizard):
 
         self.setWindowTitle("New Game")
 
+        # Resize wizard to the size of the largest page to keep size and position
+        # consistent.
+        self.resize(self.theater_page.sizeHint())
+
     def accept(self):
         logging.info("New Game Wizard accept")
         logging.info("======================")
@@ -884,7 +888,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modSettingsGroup.setLayout(modLayout)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("F/A-18EFG Super Hornet (version 2.2.5)"), modLayout_row, 0
+            QtWidgets.QLabel("F/A-18EFG Super Hornet (version 2.3.2)"), modLayout_row, 0
         )
         modLayout.addWidget(fa18efg, modLayout_row, 1)
         modSettingsGroup.setLayout(modLayout)
