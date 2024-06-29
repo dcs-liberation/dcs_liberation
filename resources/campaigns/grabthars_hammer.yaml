@@ -7,7 +7,7 @@ recommended_enemy_faction: Russia 2010
 description:
   <p>An Argentinean extremist group has contracted the Sons of Warvan (SoW), an
   unusually well-equipped PMC with close ties to the Russian government, to
-  construct a beryllium bomb at the secret Omega 13 production facility in
+  construct a beryllium bomb at the secret Omega-13 production facility in
   Ushuaia for use in its ongoing conflict with Chile. United States military
   forces have established a foothold at San Julian. While the SoW are distracted
   up north, it is up to the Marines to launch an assault upon Ushuaia from an LHA
@@ -17,13 +17,16 @@ miz: grabthars_hammer.miz
 performance: 2
 recommended_start_date: 1999-12-25
 version: "11.0"
+settings:
+  hercules: true
+  squadron_start_full: true
 squadrons:
   #Mount Pleasant
   2:
-    - primary: DEAD
+    - primary: BAI
       secondary: any
       aircraft:
-        - F-16CM Fighting Falcon (Block 50)
+        - F-15E Strike Eagle (Suite 4+)
       size: 8
     - primary: CAS
       secondary: air-to-ground
@@ -39,17 +42,23 @@ squadrons:
       secondary: any
       aircraft:
         - AH-64D Apache Longbow
-      size: 8
+      size: 4
     - primary: Refueling
       aircraft:
         - KC-135 Stratotanker
-      size: 2
-  #San Julian
-  11:
-    - primary: BAI
+      size: 1
+    - primary: Transport
       secondary: any
       aircraft:
-        - F-15E Strike Eagle (Suite 4+)
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 1
+  #San Julian
+  11:
+    - primary: DEAD
+      secondary: any
+      aircraft:
+        - F-16CM Fighting Falcon (Block 50)
       size: 8
   #Blue CV
   Blue-CV:
@@ -62,12 +71,12 @@ squadrons:
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 40
+      size: 32
     - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - S-3B Viking
-      size: 20
+      size: 16
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
@@ -79,7 +88,6 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
-        - UH-60L
         - UH-60A
       size: 4
   # Blue LHA
@@ -88,7 +96,12 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
-      size: 18
+      size: 10
+    - primary: CAS
+      secondary: any
+      aircraft:
+        - OH-58D(R) Kiowa Warrior
+      size: 8      
     - primary: Air Assault
       secondary: any
       aircraft:
@@ -99,18 +112,18 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - B-52H Stratofortress
-      size: 12
+      size: 4
     - primary: OCA/Runway
       secondary: air-to-ground
       aircraft:
         - B-1B Lancer
-      size: 12
+      size: 4
   #El Calafate
   14:
     - primary: Transport
       aircraft:
         - Mi-8MTV2 Hip
-      size: 10
+      size: 8
   #Rio Gallegros
   5:
     - primary: Escort

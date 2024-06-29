@@ -24,7 +24,6 @@ from game.theater import Airfield
 from game.theater.bullseye import Bullseye
 from game.unitmap import UnitMap
 from .airconflictdescription import AirConflictDescription
-from .airsupportgenerator import AirSupportGenerator
 from .briefinggenerator import BriefingGenerator, MissionInfoGenerator
 from .cargoshipgenerator import CargoShipGenerator
 from .convoygenerator import ConvoyGenerator
@@ -240,17 +239,6 @@ class MissionGenerator:
     def generate_air_units(self, tgo_generator: TgoGenerator) -> None:
         """Generate the air units for the Operation"""
 
-        # Air Support (Tanker & Awacs)
-        air_support_generator = AirSupportGenerator(
-            self.mission,
-            AirConflictDescription.for_theater(self.game.theater),
-            self.game,
-            self.radio_registry,
-            self.tacan_registry,
-            self.mission_data,
-        )
-        air_support_generator.generate()
-
         # Generate Aircraft Activity on the map
         aircraft_generator = AircraftGenerator(
             self.mission,
@@ -260,7 +248,7 @@ class MissionGenerator:
             self.radio_registry,
             self.tacan_registry,
             self.unit_map,
-            mission_data=air_support_generator.mission_data,
+            mission_data=self.mission_data,
             helipads=tgo_generator.helipads,
         )
 
@@ -286,7 +274,7 @@ class MissionGenerator:
                 if not flight.client_units:
                     continue
                 flight.aircraft_type.assign_channels_for_flight(
-                    flight, air_support_generator.mission_data
+                    flight, self.mission_data
                 )
 
         self.mission_data.briefing_data = aircraft_generator.briefing_data

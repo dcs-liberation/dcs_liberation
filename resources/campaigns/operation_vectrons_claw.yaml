@@ -5,19 +5,30 @@ authors: Starfire
 recommended_player_faction: USA 2005
 recommended_enemy_faction: Russia 2010
 description:
-  <p><strong>Background</strong>  - The United Nations Observer Mission in Georgia (UNOMIG) has been actively monitoring the ceasefire agreement between Georgia and its breakaway region of Abkhazia. Recent developments have escalated tensions in the area, leading to a precarious situation for UN observers and affiliated personnel.
-  </p><p><strong>Current Situation</strong>  - UNOMIG observers, along with a contingent of international troops, have found themselves isolated due to the intervention of Russian forces supporting the separatist ambitions of Abkhazia. The UNOMIG headquarters located in Sukhumi has fallen into enemy hands. A smaller group based at the Zugdidi Sector Headquarters now faces the daunting task of navigating to safety with the aid of offshore naval air support.
-  </p><p><strong>Objective</strong>  - The immediate goal is to orchestrate a strategic withdrawal of UN forces to the coastline, leveraging support from US naval aircraft positioned offshore. The critical mission objective is the rapid recapture of Sukhumi. This action is essential to enable the landing of friendly ground forces and the ferrying in of land-based sqwuadrons from Incirlik.
-  </p><p><strong>Operational Constraints</strong>  - It is crucial to note that reinforcement of ground units will not be possible until Sukhumi is successfully recaptured. This recapture can either be performed using existing UN personnel and ground vehicles, or via heliborne assault troop insertion.
-  </p><p><strong>Assets & Support</strong>  - Available assets include two Huey helicopters for close air support. Commanders may opt to initiate the operation with light vehicles, such as Humvees, employing breakthrough tactics to avoid direct confrontations with enemy forces. Alternatively, the use of heavier ground units is an option for commanders seeking a more conventional combat engagement. Upon the recapture of Sukhumi, additional squadrons from Incirlik, Turkey, will become operational.
-  </p><p><strong>Secondary Objective</strong>  - Consider prioritising the capture of the Batumi airfield, located to the south, for its strategic value as a forward operating base. Commanders should be aware of the inherent risks, as the airfield is relatively small and lacks air defence systems, posing a significant threat to any stationed aircraft.</p>
+  <p>The United Nations Observer Mission in Georgia (UNOMIG) has been actively 
+  monitoring the ceasefire agreement between Georgia and its breakaway region 
+  of Abkhazia. However, recent developments have escalated tensions, leading 
+  to a precarious situation for the UN observers. Along with a small contingent 
+  of international troops, they have found themselves isolated due to the 
+  intervention of Russian forces supporting Abkhazia's separatist ambitions. 
+  The UNOMIG headquarters in Sukhumi has fallen into enemy hands, leaving a 
+  small group based at the Zugdidi Sector Headquarters facing the daunting 
+  task of navigating to safety with the aid of close air support.</p>
+  <p>The immediate goal is to orchestrate a strategic withdrawal of UN forces to 
+  the coastline, leveraging support from US naval aircraft positioned offshore 
+  as well as US Air force squadrons newly arrived at Tbilisi. Commanders may opt 
+  to begin the operation with light vehicles, employing breakthrough tactics to 
+  avoid direct confrontations with enemy forces. Alternatively, the use of 
+  heavier ground units is an option for commanders seeking a more conventional 
+  combat engagement. C-17 Globemasters stand ready bring in additional ground 
+  units from Incirlik to reinforce existing troops, upon recapture of Sukhumi.</p>
 miz: operation_vectrons_claw.miz
 performance: 1
 recommended_start_date: 2008-08-08
 version: "11.0"
-control_points:
-  Squadrons from Incirlik:
-    ferry_only: true
+settings:
+  hercules: true
+  squadron_start_full: true
 squadrons:
   Blue CV-1:
     - primary: BARCAP
@@ -29,12 +40,12 @@ squadrons:
       secondary: any
       aircraft:
         - F/A-18C Hornet (Lot 20)
-      size: 60
-    - primary: CAS
+      size: 24
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - S-3B Viking
-      size: 8
+      size: 12
     - primary: AEW&C
       aircraft:
         - E-2C Hawkeye
@@ -42,30 +53,46 @@ squadrons:
     - primary: Refueling
       aircraft:
         - S-3B Tanker
-      size: 2
+      size: 4
     - primary: Air Assault
       secondary: any
       aircraft:
-        - UH-60L
         - UH-60A
-      size: 2
+      size: 4
   Blue LHA:
     - primary: BAI
       secondary: air-to-ground
       aircraft:
         - AV-8B Harrier II Night Attack
       size: 20
-  Squadrons from Incirlik:
+  #Tbilisi-Lochini
+  29:
+    - primary: OCA/Runway
+      secondary: air-to-ground
+      aircraft:
+        - B-1B Lancer
+      size: 4    
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+      size: 2
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10C Thunderbolt II (Suite 7)
+      size: 4
     - primary: CAS
       secondary: any
       aircraft:
         - AH-64D Apache Longbow
       size: 4
     - primary: CAS
-      secondary: air-to-ground
+      secondary: any
       aircraft:
-        - A-10C Thunderbolt II (Suite 7)
-      size: 6
+        - OH-58D(R) Kiowa Warrior
+      size: 4
+  #Vaziani
+  31:
     - primary: DEAD
       secondary: any
       aircraft:
@@ -75,51 +102,48 @@ squadrons:
       secondary: any
       aircraft:
         - F-15E Strike Eagle (Suite 4+)
-      size: 8
-    - primary: Refueling
+      size: 12
+    - primary: Escort
+      secondary: any
       aircraft:
-        - KC-135 Stratotanker
-      size: 1
+        - F-15C Eagle
+      size: 12
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - C-130J-30 Super Hercules
+        - C-130
+      size: 2
   Bombers from RAF Fairford:
     - primary: Anti-ship
       secondary: air-to-ground
       aircraft:
         - B-52H Stratofortress
       size: 4
-  Bombers from Base Aérea de Morón:
-    - primary: OCA/Runway
-      secondary: air-to-ground
-      aircraft:
-        - B-1B Lancer
-      size: 4
-  #FARPs
+  #OWNFOR FARP
   UNOMIG Sector HQ:
     - primary: Transport
       secondary: any
       aircraft:
         - UH-1H Iroquois
       size: 2
+  #OPFOR FARP
   Dzhugba:
-    - primary: CAS
+    - primary: Air Assault
       secondary: any
       aircraft:
         - Mi-24P Hind-F
       size: 4
   #Sukhumi-Babushara
   20:
-    - primary: TARCAP
-      secondary: air-to-air
-      aircraft:
-        - MiG-29S Fulcrum-C
-      size: 8
-    - primary: BAI
+    - primary: SEAD Escort
       secondary: air-to-ground
       aircraft:
         - Su-25T Frogfoot
-      size: 12
+      size: 20
   #Sochi-Adler
   18:
-    - primary: Escort
+    - primary: TARCAP
       secondary: air-to-air
       aircraft:
         - Su-27 Flanker-B
@@ -129,28 +153,48 @@ squadrons:
       aircraft:
         - Su-24M Fencer-D
       size: 20
-    - primary: DEAD
+    - primary: BAI
       secondary: air-to-ground
       aircraft:
         - Su-34 Fullback
       size: 20
+  #Mineralnye Vody
+  26:
+    - primary: Strike
+      secondary: air-to-ground
+      aircraft:
+        - Tu-95MS Bear-H
+      size: 12
+    - primary: Escort
+      secondary: air-to-air
+      aircraft:
+        - MiG-29S Fulcrum-C
+      size: 12
   #Maykop-Khanskaya
   16:
-    - primary: Strike
+    - primary: DEAD
       secondary: air-to-ground
       aircraft:
         - Tu-22M3 Backfire-C
       size: 20
   #Anapa-Vityazevo
   12:
-    - primary: Strike
-      secondary: air-to-ground
+    - primary: AEW&C
       aircraft:
-        - Tu-95MS Bear-H
-      size: 16
+        - A-50
+      size: 2
+    - primary: Transport
+      secondary: any
+      aircraft:
+        - IL-76MD
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+      size: 2
   Red CV:
     - primary: BARCAP
       secondary: any
       aircraft:
         - SU-33 Flanker-D
-      size: 16
+      size: 12

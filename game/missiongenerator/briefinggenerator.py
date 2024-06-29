@@ -16,7 +16,7 @@ from game.radio.radios import RadioFrequency
 from game.runways import RunwayData
 from game.theater import ControlPoint, FrontLine
 from .aircraft.flightdata import FlightData
-from .airsupportgenerator import AwacsInfo, TankerInfo
+from .missiondata import AwacsInfo, TankerInfo
 from .flotgenerator import JtacInfo
 
 if TYPE_CHECKING:

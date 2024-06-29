@@ -46,7 +46,7 @@ from game.theater.bullseye import Bullseye
 from game.utils import Distance, UnitSystem, meters, mps, pounds
 from game.weather.weather import Weather
 from .aircraft.flightdata import FlightData
-from .airsupportgenerator import AwacsInfo, TankerInfo
+from .missiondata import AwacsInfo, TankerInfo
 from .briefinggenerator import CommInfo, JtacInfo, MissionInfoGenerator
 from ..ato import Package
 

@@ -173,30 +173,6 @@ class Settings:
             "extremely incomplete so does not affect all weapons."
         ),
     )
-    disable_legacy_aewc: bool = boolean_option(
-        "Spawn invulnerable, always-available AEW&C aircraft (deprecated)",
-        page=CAMPAIGN_MANAGEMENT_PAGE,
-        section=GENERAL_SECTION,
-        default=True,
-        invert=True,
-        detail=(
-            "If checked, an invulnerable friendly AEW&C aircraft that begins the "
-            "mission on station will be be spawned. This behavior will be removed in a "
-            "future release."
-        ),
-    )
-    disable_legacy_tanker: bool = boolean_option(
-        "Spawn invulnerable, always-available tanker aircraft (deprecated)",
-        page=CAMPAIGN_MANAGEMENT_PAGE,
-        section=GENERAL_SECTION,
-        default=True,
-        invert=True,
-        detail=(
-            "If checked, an invulnerable friendly tanker aircraft that begins the "
-            "mission on station will be be spawned. This behavior will be removed in a "
-            "future release."
-        ),
-    )
     # Pilots and Squadrons
     ai_pilot_levelling: bool = boolean_option(
         "Allow AI pilot leveling",

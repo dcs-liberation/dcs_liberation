@@ -21,6 +21,8 @@ miz: final_countdown_2.miz
 performance: 2
 recommended_start_date: 1944-06-06
 version: "11.0"
+settings:
+  squadron_start_full: true
 squadrons:
   #Blue CV (90)
   Blue-CV:
@@ -50,7 +52,6 @@ squadrons:
     - primary: Air Assault
       secondary: any
       aircraft:
-        - UH-60L
         - UH-60A
       size: 6
   #Stoney Cross (39)

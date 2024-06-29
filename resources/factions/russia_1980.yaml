@@ -1,0 +1,76 @@
+---
+country: Russia
+name: Russia 1980
+authors: Starfire
+description: <p>Soviet military in the 1980s.</p>
+locales: 
+  - ru_RU
+aircrafts: 
+  - IL-76MD
+  - Mi-24V Hind-E
+  - Mi-24P Hind-F
+  - Mi-8MTV2 Hip
+  - MiG-21bis Fishbed-N
+  - MiG-23MLD Flogger-K
+  - MiG-25PD Foxbat-E
+  - MiG-27K Flogger-J2
+  - MiG-29A Fulcrum-A
+  - MiG-31 Foxhound
+  - Su-17M4 Fitter-K
+  - Su-24M Fencer-D
+  - Su-25 Frogfoot
+  - Su-27 Flanker-B
+  - Tu-142 Bear-F
+  - Tu-22M3 Backfire-C
+  - Tu-95MS Bear-H
+awacs: 
+  - A-50
+tankers: 
+  - IL-78M
+frontline_units: 
+  - BMD-1
+  - BMP-1
+  - BRDM-2
+  - BTR-80
+  - PT-76
+  - T-55A
+  - T-72B with Kontakt-1 ERA
+artillery_units: 
+  - 2S1 Gvozdika
+  - 2S9 Nona-S
+  - BM-21 Grad
+logistics_units: 
+  - LUV UAZ-469 Jeep
+  - Truck Ural-375
+infantry_units: 
+  - Infantry AK-74 Rus
+  - Infantry RPG
+  - Mortar 2B11 120mm
+preset_groups: 
+  - SA-2/S-75
+  - SA-2/S-75 V-759/5V23
+  - SA-3/S-125
+  - SA-3/S-125 V-601P/5V27
+  - SA-5/S-200
+  - SA-6
+  - KS-19
+naval_units: 
+  - Corvette 1241.1 Molniya
+  - Corvette 1124.4 Grish
+air_defense_units: 
+  - SAM P19 "Flat Face" SR (SA-2/3)
+  - SAM SA-5 S-200 ST-68U "Tin Shield" SR
+  - SAM SA-8 Osa "Gecko" TEL
+  - SA-9 Strela
+  - SA-13 Gopher (9K35 Strela-10M3)
+  - ZSU-57-2 'Sparka'
+  - AAA ZU-23 Closed Emplacement
+  - ZU-23 on Ural-375
+  - ZSU-23-4 Shilka
+helicopter_carrier_names: 
+missiles: 
+  - SSM SS-1C Scud-B
+requirements: 
+carrier_names: 
+has_jtac: "false"
+doctrine: "coldwar"
