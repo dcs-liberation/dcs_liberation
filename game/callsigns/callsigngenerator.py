@@ -28,7 +28,7 @@ class AbstractCallsign(ABC):
     def __str__(self) -> str:
         ...
         
-    def group_callsign(self) -> str:
+    def lead_callsign(self) -> str:
         ...
         
     def pydcs_dict(self, country: str) -> dict[Any, Any]:
@@ -44,15 +44,11 @@ class EasternCallsign(AbstractCallsign):
             raise ValueError(
                 f"Invalid callsign {numberd}. Callsigns have to be between 1 and {MAX_GROUP_ID}."
             )
-        if self.unit_id < 1 or self.unit_id > 9:
-            raise ValueError(
-                f"Invalid unit ID {self.unit_id}. Unit IDs have to be between 1 and 9."
-            )
     
     def __str__(self):
-        return str(self.number)
+        return str(self.number).zfill(3)
         
-    def group_callsign(self) -> str:
+    def lead_callsign(self) -> str:
         return str(self.number)
 
 
@@ -75,8 +71,8 @@ class Callsign(AbstractCallsign):
     def __str__(self) -> str:
         return f"{self.name}{self.group_id}{self.unit_id}"
 
-    def group_callsign(self) -> str:
-        return f"{self.name}-{self.group_id}"
+    def lead_callsign(self) -> str:
+        return f"{self.name}-{self.group_id}-1"
 
     def pydcs_dict(self, country: str) -> dict[Any, Any]:
         country_obj = countries_by_name[country]()
