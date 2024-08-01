@@ -97,32 +97,40 @@ class VSN_F104C(PlaneType):
             4,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            4,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             4,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (4, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            4,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE_,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_Mk_5_HEAT,
         )
         BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         AIM_9L_Sidewinder_IR_AAM = (4, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (4, Weapons.AIM_9B_Sidewinder_IR_AAM)
@@ -134,7 +142,7 @@ class VSN_F104C(PlaneType):
         )
         BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.BRU_33_2_x_LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_33_with_2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             4,
@@ -150,7 +158,7 @@ class VSN_F104C(PlaneType):
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             4,
-            Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_42_with_3_x_Mk_81___250lb_GP_Bombs_LD = (
             4,
@@ -189,32 +197,40 @@ class VSN_F104C(PlaneType):
             8,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            8,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             8,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (8, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            8,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (8, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (8, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE_,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_Mk_5_HEAT,
         )
         BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         AIM_9L_Sidewinder_IR_AAM = (8, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (8, Weapons.AIM_9B_Sidewinder_IR_AAM)
@@ -226,7 +242,7 @@ class VSN_F104C(PlaneType):
         )
         BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.BRU_33_2_x_LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_33_with_2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             8,
@@ -242,7 +258,7 @@ class VSN_F104C(PlaneType):
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             8,
-            Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_42_with_3_x_Mk_81___250lb_GP_Bombs_LD = (
             8,
@@ -334,32 +350,40 @@ class VSN_F104G(PlaneType):
             4,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            4,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             4,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (4, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            4,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE_,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_Mk_5_HEAT,
         )
         BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         AIM_9L_Sidewinder_IR_AAM = (4, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (4, Weapons.AIM_9B_Sidewinder_IR_AAM)
@@ -371,7 +395,7 @@ class VSN_F104G(PlaneType):
         )
         BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.BRU_33_2_x_LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_33_with_2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             4,
@@ -387,7 +411,7 @@ class VSN_F104G(PlaneType):
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             4,
-            Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_42_with_3_x_Mk_81___250lb_GP_Bombs_LD = (
             4,
@@ -435,32 +459,40 @@ class VSN_F104G(PlaneType):
             8,
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            8,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             8,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (8, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            8,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (8, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (8, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE_,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_Mk_5_HEAT,
         )
         BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         AIM_9L_Sidewinder_IR_AAM = (8, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (8, Weapons.AIM_9B_Sidewinder_IR_AAM)
@@ -472,7 +504,7 @@ class VSN_F104G(PlaneType):
         )
         BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.BRU_33_2_x_LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_33_with_2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             8,
@@ -488,7 +520,7 @@ class VSN_F104G(PlaneType):
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             8,
-            Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_42_with_3_x_Mk_81___250lb_GP_Bombs_LD = (
             8,
@@ -577,6 +609,10 @@ class VSN_F104S(PlaneType):
         AIM_9M_Sidewinder_IR_AAM = (3, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9P_Sidewinder_IR_AAM = (3, Weapons.AIM_9P_Sidewinder_IR_AAM)
         AIM_9P5_Sidewinder_IR_AAM = (3, Weapons.AIM_9P5_Sidewinder_IR_AAM)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            3,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
         AIM_7F_Sparrow_Semi_Active_Radar = (3, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
 
     class Pylon4:
@@ -622,6 +658,10 @@ class VSN_F104S(PlaneType):
         AIM_9M_Sidewinder_IR_AAM = (9, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9P_Sidewinder_IR_AAM = (9, Weapons.AIM_9P_Sidewinder_IR_AAM)
         AIM_9P5_Sidewinder_IR_AAM = (9, Weapons.AIM_9P5_Sidewinder_IR_AAM)
+        AIM_7E_2_Sparrow_Semi_Active_Radar = (
+            9,
+            Weapons.AIM_7E_2_Sparrow_Semi_Active_Radar,
+        )
         AIM_7F_Sparrow_Semi_Active_Radar = (9, Weapons.AIM_7F_Sparrow_Semi_Active_Radar)
 
     class Pylon10:
@@ -717,11 +757,19 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (3, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            3,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             3,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (3, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            3,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         AIM_9L_Sidewinder_IR_AAM = (3, Weapons.AIM_9L_Sidewinder_IR_AAM)
         AIM_9B_Sidewinder_IR_AAM = (3, Weapons.AIM_9B_Sidewinder_IR_AAM)
         AGM_88C_HARM___High_Speed_Anti_Radiation_Missile_ = (
@@ -754,32 +802,40 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (4, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            4,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             4,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (4, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            4,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (4, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (4, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE_,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_Mk_5_HEAT,
         )
         BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         AIM_9M_Sidewinder_IR_AAM = (4, Weapons.AIM_9M_Sidewinder_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM = (4, Weapons.AIM_9L_Sidewinder_IR_AAM)
@@ -792,7 +848,7 @@ class VSN_F104S_AG(PlaneType):
         )
         BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             4,
-            Weapons.BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.BRU_33_2_x_LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_33_with_2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             4,
@@ -808,7 +864,7 @@ class VSN_F104S_AG(PlaneType):
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             4,
-            Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_42_with_3_x_Mk_81___250lb_GP_Bombs_LD = (
             4,
@@ -867,32 +923,40 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (8, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            8,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             8,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (8, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            8,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         Mk_82_Snakeye___500lb_GP_Bomb_HD = (8, Weapons.Mk_82_Snakeye___500lb_GP_Bomb_HD)
         Mk_83___1000lb_GP_Bomb_LD = (8, Weapons.Mk_83___1000lb_GP_Bomb_LD)
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE_,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_Mk5__HEAT,
+            Weapons.BRU_33_2_x_LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_Mk_5_HEAT,
         )
         BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_61_pod___19_x_2_75_Hydra__UnGd_Rkts_M151__HE,
+            Weapons.BRU_33_2_x_LAU_61___19_x_UnGd_Rkts__70_mm_Hydra_70_M151_HE,
         )
         AIM_9B_Sidewinder_IR_AAM = (8, Weapons.AIM_9B_Sidewinder_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM = (8, Weapons.AIM_9L_Sidewinder_IR_AAM)
@@ -904,7 +968,7 @@ class VSN_F104S_AG(PlaneType):
         )
         BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             8,
-            Weapons.BRU_33_with_2_x_LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.BRU_33_2_x_LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_33_with_2_x_Mk_20_Rockeye___490lbs_CBU__247_x_HEAT_Bomblets = (
             8,
@@ -920,7 +984,7 @@ class VSN_F104S_AG(PlaneType):
         )
         LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG = (
             8,
-            Weapons.LAU_10_pod___4_x_127mm_ZUNI__UnGd_Rkts_Mk71__HE_FRAG,
+            Weapons.LAU_10___4_x_UnGd_Rkts__127_mm_Zuni_Mk__24_Mod__1_HE,
         )
         BRU_42_with_3_x_Mk_81___250lb_GP_Bombs_LD = (
             8,
@@ -960,11 +1024,19 @@ class VSN_F104S_AG(PlaneType):
             Weapons.BL_755_CBU___450kg__147_Frag_Pen_bomblets,
         )
         CBU_97___10_x_SFW_Cluster_Bomb = (9, Weapons.CBU_97___10_x_SFW_Cluster_Bomb)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            9,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__ = (
             9,
-            Weapons.S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk__,
+            Weapons.APU_68___S_24B___240mm_UnGd_Rkt__235kg__HE_Frag___Low_Smk_,
         )
         B_8M1___20_S_8OFP2 = (9, Weapons.B_8M1___20_S_8OFP2)
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange = (
+            9,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8TsM_SM_Orange,
+        )
         AIM_9P_Sidewinder_IR_AAM = (9, Weapons.AIM_9P_Sidewinder_IR_AAM)
         AIM_9P5_Sidewinder_IR_AAM = (9, Weapons.AIM_9P5_Sidewinder_IR_AAM)
         AIM_9L_Sidewinder_IR_AAM = (9, Weapons.AIM_9L_Sidewinder_IR_AAM)

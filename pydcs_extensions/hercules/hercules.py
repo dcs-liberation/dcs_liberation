@@ -736,7 +736,7 @@ class Hercules(PlaneType):
     class Pylon2:
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             2,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M257_IL,
         )
         Smokewinder___red = (2, Weapons.Smokewinder___red)
         Smokewinder___green = (2, Weapons.Smokewinder___green)
@@ -753,7 +753,7 @@ class Hercules(PlaneType):
     class Pylon3:
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             3,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M257_IL,
         )
         Smokewinder___red = (3, Weapons.Smokewinder___red)
         Smokewinder___green = (3, Weapons.Smokewinder___green)
@@ -770,7 +770,7 @@ class Hercules(PlaneType):
     class Pylon4:
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             4,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M257_IL,
         )
         Smokewinder___red = (4, Weapons.Smokewinder___red)
         Smokewinder___green = (4, Weapons.Smokewinder___green)
@@ -787,7 +787,7 @@ class Hercules(PlaneType):
     class Pylon5:
         LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum = (
             5,
-            Weapons.LAU_68_pod___7_x_2_75_Hydra__UnGd_Rkts_M257__Para_Illum,
+            Weapons.LAU_68___7_x_UnGd_Rkts__70_mm_Hydra_70_M257_IL,
         )
         Smokewinder___red = (5, Weapons.Smokewinder___red)
         Smokewinder___green = (5, Weapons.Smokewinder___green)

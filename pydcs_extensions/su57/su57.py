@@ -14,10 +14,22 @@ class Su57Weapons:
     RVV_BD = {"clsid": "{RVV-BD}", "name": "RVV-BD", "weight": 600}
     RVV_L = {"clsid": "{RVV-L}", "name": "RVV-L", "weight": 748}
     RVV_M = {"clsid": "{RVV-M}", "name": "RVV-M", "weight": 190}
+    R_37M_Active_Rdr = {"clsid": "{RVV-BD}", "name": "R-37M Active Rdr", "weight": 600}
     Su_57_Fuel_Tank = {
         "clsid": "{SU_57Tank}",
         "name": "Su-57 Fuel Tank",
         "weight": 1561.421,
+    }
+    R_77PD_Active_rdr = {
+        "clsid": "{RVV-AE}",
+        "name": "R-77PD Active rdr",
+        "weight": 250,
+    }
+    K_77M_Active_Rdr = {"clsid": "{RVV-M}", "name": "K-77M Active Rdr", "weight": 190}
+    KS_172_Passive_Rdr = {
+        "clsid": "{RVV-L}",
+        "name": "KS-172 Passive Rdr",
+        "weight": 748,
     }
 
 
@@ -44,8 +56,9 @@ class Su_57(PlaneType):
 
     class Pylon1:
         R_73__AA_11_Archer____Infra_Red = (1, Weapons.R_73__AA_11_Archer____Infra_Red)
-        RVV_AE = (1, Su57Weapons.RVV_AE)
-        RVV_M = (1, Su57Weapons.RVV_M)
+        R_77PD_Active_rdr = (1, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (1, Su57Weapons.K_77M_Active_Rdr)
+        L_081_Fantasmagoria_ELINT_pod = (1, Weapons.L_081_Fantasmagoria_ELINT_pod)
         Smoke_Generator___red = (1, Weapons.Smoke_Generator___red)
         Smoke_Generator___green = (1, Weapons.Smoke_Generator___green)
         Smoke_Generator___blue = (1, Weapons.Smoke_Generator___blue)
@@ -96,13 +109,17 @@ class Su_57(PlaneType):
             2,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            2,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             2,
-            Weapons.B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag,
+            Weapons.B_13L___5_x_UnGd_Rkts__122_mm_S_13OF_Blast_Fragmentation,
         )
         S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator = (
             2,
-            Weapons.S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator,
+            Weapons.O_25___1_x_UnGd_Rkts__340_mm_S_25_OFM_Hardened_Target_Penetrator,
         )
         BetAB_500___500kg_Concrete_Piercing_Bomb_LD = (
             2,
@@ -143,10 +160,10 @@ class Su_57(PlaneType):
             2,
             Weapons.MBD3_U6_68_with_6_x_FAB_250___250kg_GP_Bombs_LD,
         )
-        RVV_BD = (2, Su57Weapons.RVV_BD)
-        RVV_AE = (2, Su57Weapons.RVV_AE)
-        RVV_M = (2, Su57Weapons.RVV_M)
-        RVV_L = (2, Su57Weapons.RVV_L)
+        R_37M_Active_Rdr = (2, Su57Weapons.R_37M_Active_Rdr)
+        R_77PD_Active_rdr = (2, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (2, Su57Weapons.K_77M_Active_Rdr)
+        KS_172_Passive_Rdr = (2, Su57Weapons.KS_172_Passive_Rdr)
         Fuel_tank_800L_Wing = (2, Weapons.Fuel_tank_800L_Wing)
         RN_28___260_kg__nuclear_bomb__free_fall = (
             2,
@@ -213,13 +230,17 @@ class Su_57(PlaneType):
             4,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            4,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             4,
-            Weapons.B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag,
+            Weapons.B_13L___5_x_UnGd_Rkts__122_mm_S_13OF_Blast_Fragmentation,
         )
         S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator = (
             4,
-            Weapons.S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator,
+            Weapons.O_25___1_x_UnGd_Rkts__340_mm_S_25_OFM_Hardened_Target_Penetrator,
         )
         BetAB_500___500kg_Concrete_Piercing_Bomb_LD = (
             4,
@@ -260,10 +281,10 @@ class Su_57(PlaneType):
             4,
             Weapons.MBD3_U6_68_with_6_x_FAB_250___250kg_GP_Bombs_LD,
         )
-        RVV_BD = (4, Su57Weapons.RVV_BD)
-        RVV_AE = (4, Su57Weapons.RVV_AE)
-        RVV_M = (4, Su57Weapons.RVV_M)
-        RVV_L = (4, Su57Weapons.RVV_L)
+        R_37M_Active_Rdr = (4, Su57Weapons.R_37M_Active_Rdr)
+        R_77PD_Active_rdr = (4, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (4, Su57Weapons.K_77M_Active_Rdr)
+        KS_172_Passive_Rdr = (4, Su57Weapons.KS_172_Passive_Rdr)
         RN_28___260_kg__nuclear_bomb__free_fall = (
             4,
             Weapons.RN_28___260_kg__nuclear_bomb__free_fall,
@@ -273,26 +294,26 @@ class Su_57(PlaneType):
 
     class Pylon5:
         R_77__AA_12_Adder____Active_Rdr = (5, Weapons.R_77__AA_12_Adder____Active_Rdr)
-        RVV_AE = (5, Su57Weapons.RVV_AE)
-        RVV_M = (5, Su57Weapons.RVV_M)
+        R_77PD_Active_rdr = (5, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (5, Su57Weapons.K_77M_Active_Rdr)
         Kh_59MK2 = (5, Su57Weapons.Kh_59MK2)
 
     class Pylon6:
         R_77__AA_12_Adder____Active_Rdr = (6, Weapons.R_77__AA_12_Adder____Active_Rdr)
-        RVV_AE = (6, Su57Weapons.RVV_AE)
-        RVV_M = (6, Su57Weapons.RVV_M)
+        R_77PD_Active_rdr = (6, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (6, Su57Weapons.K_77M_Active_Rdr)
         Kh_59MK2 = (6, Su57Weapons.Kh_59MK2)
 
     class Pylon7:
         R_77__AA_12_Adder____Active_Rdr = (7, Weapons.R_77__AA_12_Adder____Active_Rdr)
-        RVV_AE = (7, Su57Weapons.RVV_AE)
-        RVV_M = (7, Su57Weapons.RVV_M)
+        R_77PD_Active_rdr = (7, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (7, Su57Weapons.K_77M_Active_Rdr)
         Kh_59MK2 = (7, Su57Weapons.Kh_59MK2)
 
     class Pylon8:
         R_77__AA_12_Adder____Active_Rdr = (8, Weapons.R_77__AA_12_Adder____Active_Rdr)
-        RVV_AE = (8, Su57Weapons.RVV_AE)
-        RVV_M = (8, Su57Weapons.RVV_M)
+        R_77PD_Active_rdr = (8, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (8, Su57Weapons.K_77M_Active_Rdr)
         Kh_59MK2 = (8, Su57Weapons.Kh_59MK2)
 
     class Pylon9:
@@ -338,13 +359,17 @@ class Su_57(PlaneType):
             9,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            9,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             9,
-            Weapons.B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag,
+            Weapons.B_13L___5_x_UnGd_Rkts__122_mm_S_13OF_Blast_Fragmentation,
         )
         S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator = (
             9,
-            Weapons.S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator,
+            Weapons.O_25___1_x_UnGd_Rkts__340_mm_S_25_OFM_Hardened_Target_Penetrator,
         )
         BetAB_500___500kg_Concrete_Piercing_Bomb_LD = (
             9,
@@ -385,10 +410,10 @@ class Su_57(PlaneType):
             9,
             Weapons.MBD3_U6_68_with_6_x_FAB_250___250kg_GP_Bombs_LD,
         )
-        RVV_BD = (9, Su57Weapons.RVV_BD)
-        RVV_AE = (9, Su57Weapons.RVV_AE)
-        RVV_M = (9, Su57Weapons.RVV_M)
-        RVV_L = (9, Su57Weapons.RVV_L)
+        R_37M_Active_Rdr = (9, Su57Weapons.R_37M_Active_Rdr)
+        R_77PD_Active_rdr = (9, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (9, Su57Weapons.K_77M_Active_Rdr)
+        KS_172_Passive_Rdr = (9, Su57Weapons.KS_172_Passive_Rdr)
         RN_28___260_kg__nuclear_bomb__free_fall = (
             9,
             Weapons.RN_28___260_kg__nuclear_bomb__free_fall,
@@ -448,13 +473,17 @@ class Su_57(PlaneType):
             11,
             Weapons.MBD3_U6_68_with_6_x_FAB_100___100kg_GP_Bombs_LD,
         )
+        B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag = (
+            11,
+            Weapons.B_8M1___20_x_UnGd_Rkts__80_mm_S_8KOM_HEAT_Frag,
+        )
         B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag = (
             11,
-            Weapons.B_13L_pod___5_x_S_13_OF__122mm_UnGd_Rkts__Blast_Frag,
+            Weapons.B_13L___5_x_UnGd_Rkts__122_mm_S_13OF_Blast_Fragmentation,
         )
         S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator = (
             11,
-            Weapons.S_25_OFM___340mm_UnGd_Rkt__480kg_Penetrator,
+            Weapons.O_25___1_x_UnGd_Rkts__340_mm_S_25_OFM_Hardened_Target_Penetrator,
         )
         BetAB_500___500kg_Concrete_Piercing_Bomb_LD = (
             11,
@@ -499,10 +528,10 @@ class Su_57(PlaneType):
             Weapons.MBD3_U6_68_with_6_x_FAB_250___250kg_GP_Bombs_LD,
         )
         # ERRR {R-33}
-        RVV_BD = (11, Su57Weapons.RVV_BD)
-        RVV_AE = (11, Su57Weapons.RVV_AE)
-        RVV_M = (11, Su57Weapons.RVV_M)
-        RVV_L = (11, Su57Weapons.RVV_L)
+        R_37M_Active_Rdr = (11, Su57Weapons.R_37M_Active_Rdr)
+        R_77PD_Active_rdr = (11, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (11, Su57Weapons.K_77M_Active_Rdr)
+        KS_172_Passive_Rdr = (11, Su57Weapons.KS_172_Passive_Rdr)
         Fuel_tank_800L_Wing = (11, Weapons.Fuel_tank_800L_Wing)
         Su_57_Fuel_Tank = (11, Su57Weapons.Su_57_Fuel_Tank)
         RN_28___260_kg__nuclear_bomb__free_fall = (
@@ -519,8 +548,8 @@ class Su_57(PlaneType):
 
     class Pylon12:
         R_73__AA_11_Archer____Infra_Red = (12, Weapons.R_73__AA_11_Archer____Infra_Red)
-        RVV_AE = (12, Su57Weapons.RVV_AE)
-        RVV_M = (12, Su57Weapons.RVV_M)
+        R_77PD_Active_rdr = (12, Su57Weapons.R_77PD_Active_rdr)
+        K_77M_Active_Rdr = (12, Su57Weapons.K_77M_Active_Rdr)
         Smoke_Generator___red = (12, Weapons.Smoke_Generator___red)
         Smoke_Generator___green = (12, Weapons.Smoke_Generator___green)
         Smoke_Generator___blue = (12, Weapons.Smoke_Generator___blue)
