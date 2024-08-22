@@ -39,7 +39,7 @@ squadrons:
       secondary: air-to-ground
       aircraft:
         - F-16CM Fighting Falcon (Block 50)
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
     - primary: AEW&C
       size: 2
       aircraft:

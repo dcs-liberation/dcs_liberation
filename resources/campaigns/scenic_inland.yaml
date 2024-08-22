@@ -164,7 +164,7 @@ squadrons:
     - primary: BARCAP
       secondary: any
       aircraft:
-        - F-4E Phantom II
+        - F-4E-45MC Phantom II
     - primary: TARCAP
       secondary: air-to-air
       aircraft:

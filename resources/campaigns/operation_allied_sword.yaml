@@ -12,7 +12,6 @@ recommended_player_faction:
   locales:
     - en_US
   aircrafts:
-    - F-4E Phantom II
     - F-4E-45MC Phantom II
     - F-15C Eagle
     - F-15E Strike Eagle
