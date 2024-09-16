@@ -35,7 +35,7 @@ jobs:
           Compress-Archive -Path .\dist\dcs_liberation\ -DestinationPath
           dist\dcs_liberation.zip
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: dcs_liberation
           path: dist/dcs_liberation.zip
