@@ -4,7 +4,7 @@ anyio==3.7.1
 asgiref==3.7.2
 attrs==23.1.0
 black==24.3.0
-certifi==2023.11.17
+certifi==2024.7.4
 cfgv==3.4.0
 click==8.1.7
 colorama==0.4.6
@@ -36,7 +36,7 @@ pre-commit==3.5.0
 pydantic==2.5.2
 pydantic-settings==2.1.0
 pydantic_core==2.14.5
-pydcs @ git+https://github.com/dcs-liberation/dcs@58b4cc91bfb068e094f684e4747190d1dcd57232
+pydcs @ git+https://github.com/dcs-liberation/dcs@d94fa3d0735d3f11f144ecfb01a2eb2057ee2385
 pyinstaller==5.13.1
 pyinstaller-hooks-contrib==2023.6
 pyproj==3.6.1
