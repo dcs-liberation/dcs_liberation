@@ -277,9 +277,9 @@ class FlightGroupConfigurator:
         if self.flight.callsign is None:
             return
         for unit_index, unit in enumerate(self.group.units):
-            unit_callsign = Callsign(
-                self.flight.callsign.name,
-                self.flight.callsign.group_id,
-                unit_index + 1,
-            )
+            unit_callsign = self.flight.callsign.unit_callsign(unit_index + 1)
+            if (
+                unit_callsign.name is None
+            ):  # pydcs needs unit.callsign to be set for eastern callsigns
+                unit.callsign = str(unit_callsign)
             unit.callsign_dict = unit_callsign.pydcs_dict(country=self.flight.country)
