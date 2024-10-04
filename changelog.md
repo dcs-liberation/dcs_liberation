@@ -4,6 +4,7 @@ Saves from 11.x are not compatible with 12.0.0.
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS 2.9.8.1214.
 * **[Campaign]** Removed deprecated settings for generating persistent and invulnerable AWACs and tankers.
 * **[Campaign]** Do not allow aircraft from a captured control point to retreat if the captured control point has a damaged runway.
 * **[Mods]** F/A-18 E/F/G Super Hornet mod version updated to 2.3.
