@@ -20,6 +20,7 @@ beacons = {
 }
 
 """
+
 import argparse
 import dataclasses
 import gettext

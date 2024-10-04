@@ -1,4 +1,5 @@
 """Generates landmaps from GIS shapefiles."""
+
 import argparse
 import logging
 import pickle
