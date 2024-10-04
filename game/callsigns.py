@@ -1,4 +1,5 @@
 """Support for working with DCS group callsigns."""
+
 import logging
 import re
 from typing import Any

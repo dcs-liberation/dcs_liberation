@@ -10,9 +10,11 @@ class Information:
 
     def __str__(self) -> str:
         return "[{}][{}] {} {}".format(
-            self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-            if self.timestamp is not None
-            else "",
+            (
+                self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+                if self.timestamp is not None
+                else ""
+            ),
             self.turn,
             self.title,
             self.text,

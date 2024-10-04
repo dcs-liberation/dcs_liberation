@@ -1,4 +1,5 @@
 """Dialogs for creating and editing ATO packages."""
+
 import logging
 from typing import Optional
 

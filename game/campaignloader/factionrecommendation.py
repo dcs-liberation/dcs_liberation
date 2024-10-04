@@ -14,12 +14,10 @@ class FactionRecommendation(ABC):
         self.name = name
 
     @abstractmethod
-    def register_campaign_specific_faction(self, factions: Factions) -> None:
-        ...
+    def register_campaign_specific_faction(self, factions: Factions) -> None: ...
 
     @abstractmethod
-    def get_faction(self, factions: Factions) -> Faction:
-        ...
+    def get_faction(self, factions: Factions) -> Faction: ...
 
     @staticmethod
     def from_field(

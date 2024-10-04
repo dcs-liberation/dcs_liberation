@@ -1,4 +1,5 @@
 """Tools for aiding in save compat removal after compatibility breaks."""
+
 from collections.abc import Callable
 from typing import TypeVar
 

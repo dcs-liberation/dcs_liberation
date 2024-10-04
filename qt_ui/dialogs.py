@@ -1,4 +1,5 @@
 """Application-wide dialog management."""
+
 from typing import Optional
 
 from game.ato.flight import Flight

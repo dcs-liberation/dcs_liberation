@@ -28,14 +28,12 @@ def point_at_heading(p: Point, heading: Heading, distance: Distance) -> Point:
 
 class Prerequisite(ABC):
     @abstractmethod
-    def is_satisfied(self) -> bool:
-        ...
+    def is_satisfied(self) -> bool: ...
 
     @abstractmethod
     def describe_debug_info(
         self, to_geojson: Callable[[BaseGeometry], dict[str, Any]]
-    ) -> dict[str, Any]:
-        ...
+    ) -> dict[str, Any]: ...
 
 
 class DistancePrerequisite(Prerequisite):

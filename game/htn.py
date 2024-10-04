@@ -11,8 +11,7 @@ WorldStateT = TypeVar("WorldStateT", bound="WorldState[Any]")
 
 class WorldState(ABC, Generic[WorldStateT]):
     @abstractmethod
-    def clone(self) -> WorldStateT:
-        ...
+    def clone(self) -> WorldStateT: ...
 
 
 class Task(Generic[WorldStateT]):
@@ -24,18 +23,17 @@ Method = Sequence[Task[WorldStateT]]
 
 class PrimitiveTask(Task[WorldStateT], Generic[WorldStateT], ABC):
     @abstractmethod
-    def preconditions_met(self, state: WorldStateT) -> bool:
-        ...
+    def preconditions_met(self, state: WorldStateT) -> bool: ...
 
     @abstractmethod
-    def apply_effects(self, state: WorldStateT) -> None:
-        ...
+    def apply_effects(self, state: WorldStateT) -> None: ...
 
 
 class CompoundTask(Task[WorldStateT], Generic[WorldStateT], ABC):
     @abstractmethod
-    def each_valid_method(self, state: WorldStateT) -> Iterator[Method[WorldStateT]]:
-        ...
+    def each_valid_method(
+        self, state: WorldStateT
+    ) -> Iterator[Method[WorldStateT]]: ...
 
 
 PrimitiveTaskT = TypeVar("PrimitiveTaskT", bound=PrimitiveTask[Any])

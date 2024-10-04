@@ -101,8 +101,7 @@ class Weather(ABC):
 
     @property
     @abstractmethod
-    def archetype(self) -> WeatherArchetype:
-        ...
+    def archetype(self) -> WeatherArchetype: ...
 
     @property
     def pressure_adjustment(self) -> float:

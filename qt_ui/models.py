@@ -1,4 +1,5 @@
 """Qt data models for game objects."""
+
 from __future__ import annotations
 
 import datetime

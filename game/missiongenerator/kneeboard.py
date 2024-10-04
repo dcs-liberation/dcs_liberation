@@ -22,6 +22,7 @@ https://forums.eagle.ru/showthread.php?t=206360 claims that kneeboard pages can
 only be added per airframe, so PvP missions where each side have the same
 aircraft will be able to see the enemy's kneeboard for the same airframe.
 """
+
 import datetime
 import math
 import textwrap

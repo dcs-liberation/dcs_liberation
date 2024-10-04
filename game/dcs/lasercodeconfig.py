@@ -17,12 +17,10 @@ class LaserCodeConfig(ABC):
         )
 
     @abstractmethod
-    def iter_prop_ids(self) -> Iterator[str]:
-        ...
+    def iter_prop_ids(self) -> Iterator[str]: ...
 
     @abstractmethod
-    def property_dict_for_code(self, code: int) -> dict[str, int]:
-        ...
+    def property_dict_for_code(self, code: int) -> dict[str, int]: ...
 
 
 class SinglePropertyLaserCodeConfig(LaserCodeConfig):

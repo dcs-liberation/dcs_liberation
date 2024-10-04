@@ -1,6 +1,7 @@
 """
 Briefing generation logic
 """
+
 from __future__ import annotations
 
 import os

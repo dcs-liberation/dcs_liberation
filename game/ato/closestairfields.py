@@ -1,4 +1,5 @@
 """Objective adjacency lists."""
+
 from __future__ import annotations
 
 from typing import Dict, Iterator, List, Optional, TYPE_CHECKING

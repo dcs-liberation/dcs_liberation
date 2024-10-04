@@ -1,4 +1,5 @@
 """Dialog window for editing flights."""
+
 from PySide6.QtWidgets import (
     QDialog,
     QVBoxLayout,

@@ -21,8 +21,7 @@ class FrontLineStanceTask(TheaterCommanderTask, ABC):
 
     @property
     @abstractmethod
-    def stance(self) -> CombatStance:
-        ...
+    def stance(self) -> CombatStance: ...
 
     @staticmethod
     def management_allowed(state: TheaterState) -> bool:
@@ -49,8 +48,7 @@ class FrontLineStanceTask(TheaterCommanderTask, ABC):
 
     @property
     @abstractmethod
-    def have_sufficient_front_line_advantage(self) -> bool:
-        ...
+    def have_sufficient_front_line_advantage(self) -> bool: ...
 
     @property
     def ground_force_balance(self) -> float:
