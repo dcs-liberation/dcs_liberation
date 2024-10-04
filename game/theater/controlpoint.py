@@ -764,6 +764,9 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     def aircraft_retreat_destination(
         self, squadron: Squadron
     ) -> Optional[ControlPoint]:
+        if not self.runway_is_operational():
+            return None
+
         closest = ObjectiveDistanceCache.get_closest_airfields(self)
         max_retreat_distance = squadron.aircraft.max_mission_range
         # Skip the first airbase because that's the airbase we're retreating
