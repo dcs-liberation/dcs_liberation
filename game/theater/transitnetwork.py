@@ -47,9 +47,9 @@ class TransitConnection(Enum):
 
 class TransitNetwork:
     def __init__(self) -> None:
-        self.nodes: Dict[
-            ControlPoint, Dict[ControlPoint, TransitConnection]
-        ] = defaultdict(dict)
+        self.nodes: Dict[ControlPoint, Dict[ControlPoint, TransitConnection]] = (
+            defaultdict(dict)
+        )
 
     def has_destinations(self, control_point: ControlPoint) -> bool:
         return bool(self.nodes[control_point])

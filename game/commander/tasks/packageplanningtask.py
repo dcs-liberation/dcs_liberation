@@ -54,8 +54,7 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         coalition.ato.add_package(self.package)
 
     @abstractmethod
-    def propose_flights(self) -> None:
-        ...
+    def propose_flights(self) -> None: ...
 
     def propose_flight(
         self,
@@ -118,9 +117,9 @@ class PackagePlanningTask(TheaterCommanderTask, Generic[MissionTargetT]):
         target_ranges: list[
             tuple[Union[IadsGroundObject, NavalGroundObject], Distance]
         ] = []
-        all_iads: Iterator[
-            Union[IadsGroundObject, NavalGroundObject]
-        ] = itertools.chain(state.enemy_air_defenses, state.enemy_ships)
+        all_iads: Iterator[Union[IadsGroundObject, NavalGroundObject]] = (
+            itertools.chain(state.enemy_air_defenses, state.enemy_ships)
+        )
         for target in all_iads:
             distance = meters(target.distance_to(self.target))
             if range_type is RangeType.Detection:

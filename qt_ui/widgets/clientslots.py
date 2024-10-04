@@ -1,4 +1,5 @@
 """Widgets for displaying client slots."""
+
 from PySide6.QtWidgets import QLabel
 
 from qt_ui.models import AtoModel

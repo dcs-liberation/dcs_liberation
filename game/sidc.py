@@ -10,6 +10,7 @@ from the output.
 https://nso.nato.int/nso/nsdd/main/standards/ap-details/1912/EN
 https://www.spatialillusions.com/milsymbol/docs/milsymbol-APP6d.html
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -330,18 +331,15 @@ class SymbolIdentificationCode:
 class SidcDescribable(ABC):
     @property
     @abstractmethod
-    def standard_identity(self) -> StandardIdentity:
-        ...
+    def standard_identity(self) -> StandardIdentity: ...
 
     @property
     @abstractmethod
-    def sidc_status(self) -> Status:
-        ...
+    def sidc_status(self) -> Status: ...
 
     @property
     @abstractmethod
-    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]:
-        ...
+    def symbol_set_and_entity(self) -> tuple[SymbolSet, Entity]: ...
 
     def sidc(self) -> SymbolIdentificationCode:
         symbol_set, entity = self.symbol_set_and_entity

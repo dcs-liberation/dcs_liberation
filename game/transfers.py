@@ -29,6 +29,7 @@ transports and processing the turn's transit actions.
 
 Routing is handled by TransitNetwork.
 """
+
 from __future__ import annotations
 
 import logging
@@ -494,9 +495,9 @@ TransportType = TypeVar("TransportType", bound=MultiGroupTransport)
 class TransportMap(Generic[TransportType]):
     def __init__(self) -> None:
         # Dict of origin -> destination -> transport.
-        self.transports: dict[
-            ControlPoint, dict[ControlPoint, TransportType]
-        ] = defaultdict(dict)
+        self.transports: dict[ControlPoint, dict[ControlPoint, TransportType]] = (
+            defaultdict(dict)
+        )
 
     def create_transport(
         self, origin: ControlPoint, destination: ControlPoint

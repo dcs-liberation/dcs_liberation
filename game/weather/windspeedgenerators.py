@@ -25,8 +25,7 @@ class WeibullWindSpeedParameters:
 
 class WindSpeedGenerator(ABC):
     @abstractmethod
-    def random_wind(self) -> WindConditions:
-        ...
+    def random_wind(self) -> WindConditions: ...
 
     @staticmethod
     def from_data(data: dict[str, Any]) -> WindSpeedGenerator:

@@ -14,5 +14,4 @@ class UiZone:
 
 class UiZoneDisplay(abc.ABC):
     @abc.abstractmethod
-    def ui_zone(self) -> UiZone:
-        ...
+    def ui_zone(self) -> UiZone: ...

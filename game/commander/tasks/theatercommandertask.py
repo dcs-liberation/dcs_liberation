@@ -12,5 +12,4 @@ if TYPE_CHECKING:
 
 class TheaterCommanderTask(PrimitiveTask[TheaterState]):
     @abstractmethod
-    def execute(self, coalition: Coalition) -> None:
-        ...
+    def execute(self, coalition: Coalition) -> None: ...

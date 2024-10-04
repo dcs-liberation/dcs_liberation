@@ -1,4 +1,5 @@
 """Command-line utility for displaying human readable loadout configurations."""
+
 import argparse
 import sys
 from collections.abc import Iterator

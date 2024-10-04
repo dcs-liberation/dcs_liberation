@@ -23,12 +23,10 @@ def doctrine_from_name(name: str) -> Doctrine:
 
 class Reducer(Generic[ReducerT], Iterator[ReducerT], ABC):
     @abstractmethod
-    def accept(self) -> None:
-        ...
+    def accept(self) -> None: ...
 
     @abstractmethod
-    def reject(self) -> None:
-        ...
+    def reject(self) -> None: ...
 
 
 class MultiPolyReducer(Reducer[MultiPolygon]):

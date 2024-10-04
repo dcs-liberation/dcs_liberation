@@ -5,6 +5,7 @@ MissionPlanner. Those only plan basic information like the objective, aircraft
 type, and the size of the flight. The FlightPlanBuilder is responsible for
 generating the waypoints for the mission.
 """
+
 from __future__ import annotations
 
 import math

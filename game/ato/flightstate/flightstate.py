@@ -57,14 +57,12 @@ class FlightState(ABC):
 
     @property
     @abstractmethod
-    def cancelable(self) -> bool:
-        ...
+    def cancelable(self) -> bool: ...
 
     @abstractmethod
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @property
     def in_flight(self) -> bool:
@@ -95,17 +93,14 @@ class FlightState(ABC):
 
     @property
     @abstractmethod
-    def is_waiting_for_start(self) -> bool:
-        ...
+    def is_waiting_for_start(self) -> bool: ...
 
     @abstractmethod
-    def estimate_position(self) -> Point:
-        ...
+    def estimate_position(self) -> Point: ...
 
     @property
     @abstractmethod
-    def spawn_type(self) -> StartType:
-        ...
+    def spawn_type(self) -> StartType: ...
 
     def a2a_commit_region(self) -> Optional[ThreatPoly]:
         return None

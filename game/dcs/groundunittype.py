@@ -60,9 +60,9 @@ class GroundUnitType(UnitType[Type[VehicleType]]):
     reversed_heading: bool = False
 
     _by_name: ClassVar[dict[str, GroundUnitType]] = {}
-    _by_unit_type: ClassVar[
-        dict[type[VehicleType], list[GroundUnitType]]
-    ] = defaultdict(list)
+    _by_unit_type: ClassVar[dict[type[VehicleType], list[GroundUnitType]]] = (
+        defaultdict(list)
+    )
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         # Update any existing models with new data on load.

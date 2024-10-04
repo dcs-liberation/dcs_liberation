@@ -67,16 +67,13 @@ class InFlight(FlightState, ABC):
         )
 
     @abstractmethod
-    def estimate_position(self) -> Point:
-        ...
+    def estimate_position(self) -> Point: ...
 
     @abstractmethod
-    def estimate_altitude(self) -> tuple[Distance, str]:
-        ...
+    def estimate_altitude(self) -> tuple[Distance, str]: ...
 
     @abstractmethod
-    def estimate_speed(self) -> Speed:
-        ...
+    def estimate_speed(self) -> Speed: ...
 
     def estimate_fuel_at_current_waypoint(self) -> float:
         initial_fuel = super().estimate_fuel()

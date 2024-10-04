@@ -60,8 +60,7 @@ class IBuilder(ABC, Generic[FlightPlanT, LayoutT]):
         return self.flight.departure.theater
 
     @abstractmethod
-    def build(self, dump_debug_info: bool = False) -> FlightPlanT:
-        ...
+    def build(self, dump_debug_info: bool = False) -> FlightPlanT: ...
 
     @property
     def package(self) -> Package:

@@ -5,6 +5,7 @@ groups, statics, missile sites, and AA sites for the mission. Each of these
 objectives is defined in the Theater by a TheaterGroundObject. These classes
 create the pydcs groups and statics for those areas and add them to the mission.
 """
+
 from __future__ import annotations
 
 import logging

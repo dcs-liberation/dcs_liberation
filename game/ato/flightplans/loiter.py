@@ -30,8 +30,7 @@ class LoiterFlightPlan(StandardFlightPlan[LayoutT], ABC):
 
     @property
     @abstractmethod
-    def push_time(self) -> datetime:
-        ...
+    def push_time(self) -> datetime: ...
 
     def depart_time_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         if waypoint == self.layout.hold:

@@ -30,8 +30,7 @@ LayoutT = TypeVar("LayoutT", bound=FormationLayout)
 class FormationFlightPlan(LoiterFlightPlan[LayoutT], ABC):
     @property
     @abstractmethod
-    def package_speed_waypoints(self) -> set[FlightWaypoint]:
-        ...
+    def package_speed_waypoints(self) -> set[FlightWaypoint]: ...
 
     @property
     def combat_speed_waypoints(self) -> set[FlightWaypoint]:
@@ -69,13 +68,11 @@ class FormationFlightPlan(LoiterFlightPlan[LayoutT], ABC):
 
     @property
     @abstractmethod
-    def join_time(self) -> datetime:
-        ...
+    def join_time(self) -> datetime: ...
 
     @property
     @abstractmethod
-    def split_time(self) -> datetime:
-        ...
+    def split_time(self) -> datetime: ...
 
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         if waypoint == self.layout.join:

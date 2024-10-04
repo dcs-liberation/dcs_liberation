@@ -17,8 +17,7 @@ from game import VERSION
 
 class ReportElement(ABC):
     @abstractmethod
-    def __str__(self) -> str:
-        ...
+    def __str__(self) -> str: ...
 
 
 class Heading(ReportElement):
@@ -75,8 +74,7 @@ ReportStream: TypeAlias = Iterator[ReportElement]
 
 
 class LinterBase(ABC):
-    def stream_reports(self) -> ReportStream:
-        ...
+    def stream_reports(self) -> ReportStream: ...
 
 
 class UncheckedDataLinter(LinterBase):

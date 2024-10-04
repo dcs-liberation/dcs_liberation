@@ -52,6 +52,7 @@ even though it is a primitive task used by many other tasks.
 
 https://en.wikipedia.org/wiki/Hierarchical_task_network
 """
+
 from __future__ import annotations
 
 from datetime import datetime

@@ -18,8 +18,7 @@ class JoinableCombat(FrozenCombat, ABC):
         self.flights = flights
 
     @abstractmethod
-    def joinable_by(self, flight: Flight) -> bool:
-        ...
+    def joinable_by(self, flight: Flight) -> bool: ...
 
     def join(self, flight: Flight) -> None:
         assert isinstance(flight.state, InFlight)
