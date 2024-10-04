@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: psf/black@stable
         with:
-          version: ~=23.11
+          version: ~=24.3.0
           src: "."
           options: "--check"
 
