@@ -282,4 +282,7 @@ class FlightGroupConfigurator:
                 unit_callsign.name is None
             ):  # pydcs needs unit.callsign to be set for eastern callsigns
                 unit.callsign = str(unit_callsign)  # type: ignore
-            unit.callsign_dict = unit_callsign.pydcs_dict(country=self.flight.country)
+            else:  # Use western callsign
+                unit.callsign_dict = unit_callsign.pydcs_dict(
+                    country=self.flight.country
+                )
