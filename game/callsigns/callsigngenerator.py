@@ -61,9 +61,7 @@ class Callsign:
         else:
             return str(self.lead_callsign())
 
-    def pydcs_dict(self, country: str) -> dict[Any, Any] | str:
-        if self.name is None:
-            return str(self)
+    def pydcs_dict(self, country: str) -> dict[Any, Any]:
         country_obj = countries_by_name[country]()
         for category in CallsignCategory:
             if category in country_obj.callsign:
