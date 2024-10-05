@@ -52,8 +52,8 @@ def test_western_group_id_registry() -> None:
     registry.reset()
     assert registry.alloc_group_id("Enfield") == 1
     assert registry.alloc_group_id("Springfield") == 1
-    
-    
+
+
 def test_eastern_group_id_registry() -> None:
     registry = EasternGroupIdRegistry()
 
