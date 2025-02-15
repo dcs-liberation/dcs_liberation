@@ -1,10 +1,10 @@
-# 12.1.0
+# 13.0.0
 
-Saves from 12.x are compatible with 12.1.0.
+Saves from 12.x are not compatible with 13.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.9.10.3948.
+* **[Engine]** Support for DCS 2.9.12.5536.
 * **[Data]** Support for CH-47 Chinook.
 
 ## Fixes
@@ -12,6 +12,8 @@ Saves from 12.x are compatible with 12.1.0.
 * **[Data]** Added/updated CBU weapons data.
 * **[Data]** Added Strike mission type for KA-50 (all playable variants).
 * **[Mission Generation]** Fixed crash when using factions that have Eastern callsign conventions.
+* **[Mission Generation]** Fixed issues when spawning on carriers and FARPs in multiplayer sessions.
+
 
 # 12.0.0
 
