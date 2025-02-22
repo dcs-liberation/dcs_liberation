@@ -1,3 +1,15 @@
+# 14.0.0
+
+Saves from 13.x are not compatible with 14.0.0.
+
+## Features/Improvements
+
+* **[Engine]** Support for DCS 2.9.13.6818.
+
+## Fixes
+
+* **[UI]** Air Wing and Transfers buttons disabled when no game is loaded as pressing them without a game loaded resulted in a crash.
+
 # 13.0.0
 
 Saves from 12.x are not compatible with 13.0.0.
