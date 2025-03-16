@@ -28,5 +28,6 @@ tasks:
   BAI: 430
   CAS: 430
   DEAD: 113
+  Strike: 200
   OCA/Aircraft: 430
 hit_points: 15

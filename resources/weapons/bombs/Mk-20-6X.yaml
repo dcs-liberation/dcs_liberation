@@ -1,0 +1,9 @@
+name: 6xMk 20 Rockeye
+year: 1968
+fallback: 6xMk 82
+clsids:
+  - "{3C7CD675-7D39-41C5-8735-0F4F537818A8}"
+  - "{CFT_L_CBU_100_x_6}"
+  - "{CFT_R_CBU_100_x_6}"
+  - "{HB_F4E_ROCKEYE_6x}"
+  - "{E79759F7-C622-4AA4-B1EF-37639A34D924}"

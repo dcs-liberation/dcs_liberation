@@ -1,6 +1,8 @@
 name: 2xCBU-87
 year: 1986
-fallback: 2xMk 82
+fallback: 2xCBU-52B
 clsids:
   - "{TER_9A_2L*CBU-87}"
   - "{TER_9A_2R*CBU-87}"
+  - "{HB_F4E_CBU-87_2x}"
+  - "{HB_F4E_CBU-87_2x_SWA}"

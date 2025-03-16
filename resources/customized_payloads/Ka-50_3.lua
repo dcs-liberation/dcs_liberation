@@ -129,7 +129,32 @@ local unitPayloads = {
 				},
 			},
 			["tasks"] = {
-				[1] = 31,
+				[1] = 29,
+			},
+		},
+		[5] = {
+			["displayName"] = "Liberation Strike",
+			["name"] = "Liberation Strike",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{37DCC01E-9E02-432F-B61D-10C166CA2798}",
+					["num"] = 1,
+				},
+				[2] = {
+					["CLSID"] = "{37DCC01E-9E02-432F-B61D-10C166CA2798}",
+					["num"] = 2,
+				},
+				[3] = {
+					["CLSID"] = "{37DCC01E-9E02-432F-B61D-10C166CA2798}",
+					["num"] = 3,
+				},
+				[4] = {
+					["CLSID"] = "{37DCC01E-9E02-432F-B61D-10C166CA2798}",
+					["num"] = 4,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
 			},
 		},
 	},

@@ -1,5 +1,6 @@
 name: CBU-87
 year: 1986
-fallback: Mk 82
+fallback: CBU-52B
 clsids:
   - "{CBU-87}"
+  - "{HB_CBU-87_SWA}"

@@ -1,0 +1,10 @@
+name: 2xMk 20 Rockeye
+year: 1968
+fallback: 2xMk 82
+clsids:
+  - "{BRU33_2X_ROCKEYE}"
+  - "{0B9ABA77-93B8-45FC-9C63-82AFB2CB50A4}"
+  - "{HB_F4E_ROCKEYE_2x}"
+  - "{BRU-42_2*MK-20_LEFT}"
+  - "{BRU-42_2*MK-20_RIGHT}"
+  - "{HB_F4E_ROCKEYE_2x_SWA}"

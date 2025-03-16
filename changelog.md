@@ -1,3 +1,32 @@
+# 14.0.0
+
+Saves from 13.x are not compatible with 14.0.0.
+
+## Features/Improvements
+
+* **[Engine]** Support for DCS 2.9.13.6818.
+
+## Fixes
+
+* **[UI]** Air Wing and Transfers buttons disabled when no game is loaded as pressing them without a game loaded resulted in a crash.
+
+# 13.0.0
+
+Saves from 12.x are not compatible with 13.0.0.
+
+## Features/Improvements
+
+* **[Engine]** Support for DCS 2.9.12.5536.
+* **[Data]** Support for CH-47 Chinook.
+
+## Fixes
+
+* **[Data]** Added/updated CBU weapons data.
+* **[Data]** Added Strike mission type for KA-50 (all playable variants).
+* **[Mission Generation]** Fixed crash when using factions that have Eastern callsign conventions.
+* **[Mission Generation]** Fixed issues when spawning on carriers and FARPs in multiplayer sessions.
+
+
 # 12.0.0
 
 Saves from 11.x are not compatible with 12.0.0.

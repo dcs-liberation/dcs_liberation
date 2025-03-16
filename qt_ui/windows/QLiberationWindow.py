@@ -242,6 +242,8 @@ class QLiberationWindow(QMainWindow):
         self.openSettingsAction.setVisible(enabled)
         self.openStatsAction.setVisible(enabled)
         self.openNotesAction.setVisible(enabled)
+        self.openAirWingAction.setVisible(enabled)
+        self.openTransfersAction.setVisible(enabled)
 
         # Also Disable SaveAction to prevent Keyboard Shortcut
         self.saveGameAction.setEnabled(enabled)

@@ -1,0 +1,6 @@
+name: 2xCBU-52B
+year: 1972
+fallback: 2xMk 20 Rockeye
+clsids:
+  - "{HB_F4E_CBU-52B_2x}"
+  - "{HB_F4E_CBU-52B_2x_SWA}"

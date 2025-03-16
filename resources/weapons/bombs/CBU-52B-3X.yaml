@@ -1,0 +1,6 @@
+name: 3xCBU-52B
+year: 1972
+fallback: 3xMk 20 Rockeye
+clsids:
+  - "{HB_F4E_CBU-52B_MER_3x_Left}"
+  - "{HB_F4E_CBU-52B_MER_3x_Right}"

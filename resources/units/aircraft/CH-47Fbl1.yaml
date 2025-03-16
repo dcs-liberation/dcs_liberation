@@ -1,0 +1,32 @@
+class: Helicopter
+carrier_capable: true
+description:  # from https://en.wikipedia.org/wiki/Boeing_CH-47_Chinook
+  In 2001, the CH-47F, an upgraded CH-47D, made its maiden flight. The first production model rolled out at Boeing's
+  facility in Ridley Park, Pennsylvania, and first flew on 23 October 2006. Upgrades included 4,868-shaft-horsepower
+  (3,630 kW) Honeywell engines and airframe with better integrated construction for lower maintenance requirements. 
+  The milled construction reduces vibration, as well as inspection and repair needs, and eliminates flexing points to
+  increase service life. The CH-47F can fly at speeds of over 175 mph (282 km/h) with a payload of more than
+  21,000 lb (9,500 kg). New avionics include a Rockwell Collins Common Avionics Architecture System (CAAS) cockpit,
+  and BAE Systems' Digital Advanced Flight Control System (DAFCS). AgustaWestland assembles the CH-47F under license,
+  known as the Chinook ICH-47F, for several customers. Boeing delivered 48 CH-47Fs to the U.S. Army through August 2008;
+  at that time Boeing announced a $4.8 billion (~$6.67 billion in 2023) contract with the Army for 191 Chinooks.
+lha_capable: true
+introduced: 2006
+cabin_size: 24 # It should have 33 but we do not want so much for CTLD to be possible
+can_carry_crates: true
+manufacturer: Boeing
+origin: USA
+price: 8
+role: Transport
+variants:
+  CH-47F Block I: {}
+radios:
+  intra_flight: AN/ARC-186(V) FM
+  inter_flight: AN/ARC-186(V) FM
+  channels:
+    type: common
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1
+tasks:
+  Air Assault: 120
+  Transport: 110

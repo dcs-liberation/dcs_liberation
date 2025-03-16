@@ -1,0 +1,8 @@
+name: 3xMk 20 Rockeye
+year: 1968
+fallback: 3xMk 82
+clsids:
+  - "{B83CB620-5BBE-4BEA-910C-EB605A327EF9}"
+  - "{CFT_L_CBU_100_x_3}"
+  - "{CFT_R_CBU_100_x_3}"
+  - "{HB_F4E_ROCKEYE_3x}"

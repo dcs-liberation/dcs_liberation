@@ -1,0 +1,7 @@
+name: 6xCBU-87
+year: 1986
+fallback: 6xCBU-52B
+clsids:
+  - "{CFT_L_CBU_87_x_6}"
+  - "{CFT_R_CBU_87_x_6}"
+  - "{HB_F4E_CBU-87_MER_4x}"

@@ -1,6 +1,7 @@
 ---
 name: Escuadrón Aéreo 412
 nickname: Halcones
+female_pilot_percentage: 0
 country: Peru
 role: Fighter
 aircraft: Mirage 2000C

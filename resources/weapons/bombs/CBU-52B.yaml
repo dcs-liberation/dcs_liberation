@@ -1,0 +1,6 @@
+name: CBU-52B
+year: 1972
+fallback: Mk 20 Rockeye
+clsids:
+  - "{CBU-52B}"
+  - "{HB_CBU-52B_SWA}"

@@ -32,6 +32,5 @@ helicopter:
     rendezvous_altitude_ft_agl: 1500
     air_assault_nav_altitude_ft_agl: 1500
 tactics:
-    use_countermeasures: true
     air_defence_evades_anti_radiation_missiles: false
     air_to_air_missile_attack_range: ~

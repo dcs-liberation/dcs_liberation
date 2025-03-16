@@ -117,8 +117,6 @@ class Cap:
 
 @dataclass(frozen=True)
 class Tactics:
-    #: Aircraft use countermeasures (chaff, flares)
-    use_countermeasures: bool
 
     #: Air-to-air missile attack range options
     air_to_air_missile_attack_range: Optional[OptAAMissileAttackRange.Values]
@@ -129,7 +127,6 @@ class Tactics:
     @staticmethod
     def from_dict(data: dict[str, Any]) -> Tactics:
         return Tactics(
-            use_countermeasures=data.get("use_countermeasures", True),
             air_to_air_missile_attack_range=None,
             air_defence_evades_anti_radiation_missiles=data.get(
                 "air_defence_evades_anti_radiation_missiles", False
