@@ -176,16 +176,19 @@ local function onEvent(event)
     end
 
     if event.id == world.event.S_EVENT_DEAD and event.initiator then
-        dead_events[#dead_events + 1] = event.initiator.getName(event.initiator)
-        local position = event.initiator.getPosition(event.initiator)
-        local destruction = {}
-        destruction.x = position.p.x
-        destruction.y = position.p.y
-        destruction.z = position.p.z
-        destruction.type = event.initiator:getTypeName()
-        destruction.orientation = mist.getHeading(event.initiator) * 57.3
-        destroyed_objects_positions[#destroyed_objects_positions + 1] = destruction
-        write_state()
+	    get_initiator_name_success, initiator_name = pcall(event.initiator.getName, event.initiator)
+		if get_initiator_name_success then
+			dead_events[#dead_events + 1] = event.initiator.getName(event.initiator)
+			local position = event.initiator.getPosition(event.initiator)
+			local destruction = {}
+			destruction.x = position.p.x
+			destruction.y = position.p.y
+			destruction.z = position.p.z
+			destruction.type = event.initiator:getTypeName()
+			destruction.orientation = mist.getHeading(event.initiator) * 57.3
+			destroyed_objects_positions[#destroyed_objects_positions + 1] = destruction
+			write_state()
+		end
     end
 	
 	if event.id == world.event.S_EVENT_HIT then
