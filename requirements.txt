@@ -15,7 +15,7 @@ Faker==20.1.0
 fastapi==0.115.8
 filelock==3.13.1
 future==0.18.3
-h11==0.14.0
+h11==0.16.0
 httptools==0.6.1
 identify==2.5.32
 idna==3.7
