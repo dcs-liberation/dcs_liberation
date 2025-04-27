@@ -5,7 +5,7 @@ jobs:
     name: Python tests
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -24,7 +24,7 @@ jobs:
     name: Typescript tests
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up JS environment
         uses: ./.github/actions/setup-liberation-js
