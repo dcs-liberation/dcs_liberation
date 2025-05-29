@@ -803,7 +803,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[UI]** Ship groups could be replaced by SAM sites in the UI, which would lead to broken mission being generated - fixed 
 * **[New Game Wizard]** Removed the "mid game" campaign generator option which is currently broken
 * **[Mission Generator]** Empty navy groups will no longer be generated
-* **[Mission Generator]** Fixed BAI, SEAD, and DEAD flights ocassionally being assigned the wrong targets.
+* **[Mission Generator]** Fixed BAI, SEAD, and DEAD flights occasionally being assigned the wrong targets.
 * **[Flight Planner]** Fixed not being able to plan packages against opfor carriers
 * **[UI]** Repaired SAMs no longer show as dead.
 * **[UI]** Fixed not being able to manage a disbanded site after disbanding and closing the base menu.
