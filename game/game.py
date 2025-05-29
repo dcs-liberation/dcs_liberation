@@ -584,7 +584,7 @@ class Game:
                         respect_bubble = (
                             max_threat_range + Distance.from_nautical_miles(12).meters
                         )
-                        if seperation < respect_bubble:
+                        if separation < respect_bubble:
                             return False
             return self.position_culled(tgo.position)
 
