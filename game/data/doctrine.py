@@ -160,7 +160,7 @@ class Doctrine:
     #: The altitude used for combat section of a flight.
     combat_altitude: Distance
 
-    #: The altitude used for forming up a pacakge.
+    #: The altitude used for forming up a package.
     rendezvous_altitude: Distance
 
     #: Defines prioritization of ground unit purchases.
