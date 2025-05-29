@@ -8,7 +8,7 @@ class QLiberationCalendar(QCalendarWidget):
         self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
         self.setGridVisible(False)
 
-        # Overrride default QCalendar behaviour that is rendering week end days in red
+        # Override default QCalendar behaviour that is rendering week end days in red
         for d in (
             QtCore.Qt.Monday,
             QtCore.Qt.Tuesday,
