@@ -444,7 +444,7 @@ class Game:
         events.begin_new_turn()
 
     def message(self, title: str, text: str = "") -> None:
-        self.informations.append(Information(title, text, turn=self.turn))
+        self.information.append(Information(title, text, turn=self.turn))
 
     @property
     def current_turn_time_of_day(self) -> TimeOfDay:
