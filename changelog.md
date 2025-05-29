@@ -910,7 +910,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Moddability]** LUA plugins can now be injected into Liberation missions.
 * **[Moddability]** Optional Skynet IADS lua plugin now included
 * **[New Game]** Starting budget can be freely selected
-* **[New Game]** Exanded information for faction and campaign selection in the new game wizard
+* **[New Game]** Expanded information for faction and campaign selection in the new game wizard
 * **[UI]** Add double and right click actions to many UI elements.
 * **[UI]** Add polygon drawing mode for map background
 * **[UI]** Added a warning if you press takeoff with no player enabled flights
