@@ -150,7 +150,7 @@ class Weather(ABC):
     @staticmethod
     def random_temperature(average_temperature: float) -> float:
         # "Safe" constants based roughly on ME.
-        # Temperatures are in Celcius.
+        # Temperatures are in Celsius.
         SAFE_MIN = -12
         SAFE_MAX = 49
         # Use normalvariate to get normal distribution, more realistic than uniform
