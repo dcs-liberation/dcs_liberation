@@ -574,7 +574,7 @@ class Game:
                     for z in self.__culling_zones:
                         separation = z.distance_to_point(tgo.position)
                         # Don't cull EWR if in detection range.
-                        if seperation < max_detection_range:
+                        if separation < max_detection_range:
                             return False
                 if isinstance(tgo, SamGroundObject):
                     max_threat_range = tgo.max_threat_range().meters
