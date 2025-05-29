@@ -305,7 +305,7 @@ class Game:
             for tgo in control_point.connected_objectives:
                 self.db.tgos.add(tgo.id, tgo)
 
-        # Correct the heading of specifc TGOs, can only be done after init turn 0
+        # Correct the heading of specific TGOs, can only be done after init turn 0
         for tgo in self.theater.ground_objects:
             # If heading is 0 then we change the orientation to head towards the
             # closest conflict. Heading of 0 means that the campaign designer wants
