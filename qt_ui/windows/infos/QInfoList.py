@@ -25,7 +25,7 @@ class QInfoList(QListView):
     def update_list(self):
         self.model.clear()
         if self.game is not None:
-            for i, info in enumerate(reversed(self.game.informations)):
+            for i, info in enumerate(reversed(self.game.information)):
                 self.model.appendRow(QInfoItem(info))
             self.selectionModel().setCurrentIndex(
                 self.indexAt(QPoint(1, 1)), QItemSelectionModel.Select
