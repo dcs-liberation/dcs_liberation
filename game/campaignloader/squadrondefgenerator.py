@@ -295,7 +295,7 @@ class SquadronDefGenerator:
                 "Ultramarine",
                 "Vengeful",
                 "Venom",
-                "Vermillion",
+                "Vermilion",
                 "Vicious",
                 "Victorious",
                 "Vigilant",
