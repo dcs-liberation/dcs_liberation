@@ -119,7 +119,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
         assault_area = builder.assault_area(self.package.target)
         heading = self.package.target.position.heading_between_point(pickup_position)
 
-        # TODO we can not gurantee a safe LZ for DropOff. See comment above.
+        # TODO we can not guarantee a safe LZ for DropOff. See comment above.
         drop_off_zone = MissionTarget(
             "Dropoff zone",
             self.package.target.position.point_from_heading(heading, 1200),
