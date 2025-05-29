@@ -248,7 +248,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
             return self.patrol_altitude
         else:
             # Estimate based on max speed.
-            # Aircaft with max speed 600 kph will prefer patrol at 10 000 ft
+            # Aircraft with max speed 600 kph will prefer patrol at 10 000 ft
             # Aircraft with max speed 2800 kph will prefer pratrol at 33 000 ft
             altitude_for_lowest_speed = feet(10 * 1000)
             altitude_for_highest_speed = feet(33 * 1000)
