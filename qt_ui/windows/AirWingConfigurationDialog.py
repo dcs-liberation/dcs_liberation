@@ -115,7 +115,7 @@ class SquadronBaseSelector(QComboBox):
 
         if selected_base:
             self.setCurrentText(selected_base.name)
-        # TODO can we get a prefered base if none is selected?
+        # TODO can we get a preferred base if none is selected?
 
     def set_aircraft_type(self, aircraft_type: Optional[AircraftType]):
         self.clear()
