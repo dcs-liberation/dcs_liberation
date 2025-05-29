@@ -104,7 +104,7 @@ class Builder(IBuilder[AirAssaultFlightPlan, AirAssaultLayout]):
             pickup_position = self.flight.departure.position
         else:
             # TODO The calculation of the Pickup LZ is currently randomized. This
-            # leads to the problem that we can not gurantee that the LZ is clear of
+            # leads to the problem that we can not guarantee that the LZ is clear of
             # obstacles. This has to be improved in the future so that the Mission can
             # be autoplanned. In the current state the User has to check the created
             # Waypoints for the Pickup and Dropoff LZs are free of obstacles.
