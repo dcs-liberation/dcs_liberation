@@ -37,7 +37,7 @@ class Helicopter:
     #: The altitude used for combat section of a flight, overrides the base combat_altitude parameter for helos
     combat_altitude: Distance
 
-    #: The altitude used for forming up a pacakge. Overrides the base rendezvous_altitude parameter for helos
+    #: The altitude used for forming up a package. Overrides the base rendezvous_altitude parameter for helos
     rendezvous_altitude: Distance
 
     #: Altitude of the nav points (cruise section) of air assault missions.
