@@ -95,7 +95,7 @@ class Planner(Generic[WorldStateT, PrimitiveTaskT]):
                 # resuming a prior attempt to execute this task after a subtask of the
                 # previously selected method failed.
                 #
-                # Otherwise this is the first exectution of this task so we need to
+                # Otherwise this is the first execution of this task so we need to
                 # create the generator.
                 if planning_state.methods is None:
                     methods = task.each_valid_method(planning_state.state)
