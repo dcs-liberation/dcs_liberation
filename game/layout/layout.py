@@ -105,7 +105,7 @@ class TgoLayoutUnitGroup:
     # size / all available LayoutUnits
     unit_count: list[int] = field(default_factory=list)
 
-    # defintion which unit types are supported
+    # definition which unit types are supported
     unit_types: list[Type[DcsUnitType]] = field(default_factory=list)
     unit_classes: list[UnitClass] = field(default_factory=list)
     fallback_classes: list[UnitClass] = field(default_factory=list)
