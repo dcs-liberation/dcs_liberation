@@ -579,7 +579,7 @@ class Game:
                 if isinstance(tgo, SamGroundObject):
                     max_threat_range = tgo.max_threat_range().meters
                     for z in self.__culling_zones:
-                        seperation = z.distance_to_point(tgo.position)
+                        separation = z.distance_to_point(tgo.position)
                         # Create a 12nm buffer around nearby SAMs.
                         respect_bubble = (
                             max_threat_range + Distance.from_nautical_miles(12).meters
