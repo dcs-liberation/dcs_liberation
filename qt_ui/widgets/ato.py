@@ -298,7 +298,7 @@ class QPackageList(QListView):
         self.ato_model.cancel_or_abort_package_at_index(index)
 
     def on_new_packages(self, _parent: QModelIndex, first: int, _last: int) -> None:
-        # Select the newly created pacakges. This should only ever happen due to
+        # Select the newly created packages. This should only ever happen due to
         # the player saving a new package, so selecting it helps them view/edit
         # it faster.
         self.selectionModel().setCurrentIndex(
