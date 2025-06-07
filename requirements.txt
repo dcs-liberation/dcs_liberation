@@ -15,7 +15,7 @@ Faker==20.1.0
 fastapi==0.115.8
 filelock==3.13.1
 future==0.18.3
-h11==0.14.0
+h11==0.16.0
 httptools==0.6.1
 identify==2.5.32
 idna==3.7
@@ -36,7 +36,7 @@ pre-commit==3.5.0
 pydantic==2.5.2
 pydantic-settings==2.1.0
 pydantic_core==2.14.5
-pydcs @ git+https://github.com/dcs-liberation/dcs@d1c8e9557aa1113908f9705fbe084e7cf08d6000
+pydcs @ git+https://github.com/dcs-liberation/dcs@0a44d7ec87ffa7ab4fea4a17cd0d3ac44bcc85e5
 pyinstaller==5.13.1
 pyinstaller-hooks-contrib==2023.6
 pyproj==3.6.1
