@@ -9,6 +9,7 @@ Saves from 13.x are not compatible with 14.0.0.
 ## Fixes
 
 * **[UI]** Air Wing and Transfers buttons disabled when no game is loaded as pressing them without a game loaded resulted in a crash.
+* **[UI]** Units are restored to full health when repaired.
 
 # 13.0.0
 
