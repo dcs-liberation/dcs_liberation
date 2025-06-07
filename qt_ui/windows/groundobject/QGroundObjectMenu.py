@@ -23,6 +23,7 @@ from game.theater import ControlPoint, TheaterGroundObject
 from game.theater.theatergroundobject import (
     BuildingGroundObject,
 )
+from game.theater.theatergroup import TheaterUnit
 from game.utils import Heading
 from qt_ui.uiconstants import EVENT_ICONS, ICONS
 from qt_ui.widgets.QBudgetBox import QBudgetBox
@@ -229,10 +230,11 @@ class QGroundObjectMenu(QDialog):
         if self.sell_all_button is not None:
             self.sell_all_button.setText("Disband (+$" + str(self.total_value) + "M)")
 
-    def repair_unit(self, unit, price):
+    def repair_unit(self, unit: TheaterUnit, price: float):
         if self.game.blue.budget > price:
             self.game.blue.budget -= price
             unit.alive = True
+            unit.hit_points = unit.unit_type.hit_points  # Restore unit health to full
             GameUpdateSignal.get_instance().updateGame(self.game)
 
             # Remove destroyed units in the vicinity
