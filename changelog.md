@@ -4,7 +4,7 @@ Saves from 13.x are not compatible with 14.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.9.13.6818.
+* **[Engine]** Support for DCS 2.9.16.10973
 
 ## Fixes
 
