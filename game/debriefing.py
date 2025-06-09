@@ -196,6 +196,9 @@ class StateData:
     #: True if the mission ended. If False, the mission exited abnormally.
     mission_ended: bool
 
+    #: Simulation time since mission start in seconds
+    simulation_time_seconds: float
+
     #: Names of aircraft units that were killed during the mission.
     killed_aircraft: List[str]
 
@@ -248,6 +251,7 @@ class StateData:
 
         return cls(
             mission_ended=data["mission_ended"],
+            simulation_time_seconds=data["simulation_time_seconds"],
             killed_aircraft=killed_aircraft,
             killed_ground_units=killed_ground_units,
             destroyed_statics=data["destroyed_objects_positions"],
