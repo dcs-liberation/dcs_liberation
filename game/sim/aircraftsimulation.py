@@ -7,9 +7,7 @@ from datetime import datetime, timedelta
 
 from typing_extensions import TYPE_CHECKING
 
-from game.ato.flightstate import (
-    Uninitialized,
-)
+from game.ato.flightstate import Uninitialized, Completed
 from game.settings.settings import FastForwardStopCondition, CombatResolutionMethod
 from .combat import CombatInitiator, FrozenCombat
 from .gameupdateevents import GameUpdateEvents
@@ -67,6 +65,15 @@ class AircraftSimulation:
             if flight.should_halt_sim():
                 events.complete_simulation()
                 return
+
+        # Find completed flights, removing them from the ATO and returning aircraft
+        # and pilots back to the squadron.
+        for flight in self.iter_flights():
+            if type(flight.state) == Completed:
+                flight.return_pilots_and_aircraft()
+                flight.package.remove_flight(flight)
+                if len(flight.package.flights) == 0:
+                    flight.squadron.coalition.ato.remove_package(flight.package)
 
         if not self._auto_resolve_combat() and self.combats:
             events.complete_simulation()
