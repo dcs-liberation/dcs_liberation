@@ -58,17 +58,18 @@ class MissionResultsProcessor:
             squadron.owned_aircraft -= 1
 
             # Remove air losses from the flight. Remove the flight if all aircraft are lost.
-            # Remove the package if all flights are lost.
+            # Remove the package if the flight is the last flight in the package.
             # This logic is redundant if we are going to a new turn, since the whole ATO is
             # regenerated. However if we want to keep the ATO to continue a turn, this update
-            # is necessary to make sure lost aircraft do not re-appear in the ATO.
-            loss.flight.roster.resize(loss.flight.count - 1)
-            package = loss.flight.package
-            coalition = loss.flight.squadron.coalition
-            if loss.flight.count == 0:
+            # is necessary to make sure lost aircraft are removed from the ATO.
+            if loss.flight.count == 1:  # Last aircraft in the flight, remove the flight
                 loss.flight.package.remove_flight(loss.flight)
-            if len(package.flights) == 0:
-                coalition.ato.remove_package(package)
+                if len(loss.flight.package.flights) == 0:
+                    loss.flight.squadron.coalition.ato.remove_package(
+                        loss.flight.package
+                    )
+            else:  # Decrement number of aircraft in the flight
+                loss.flight.roster.resize(loss.flight.count - 1)
 
     @staticmethod
     def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
