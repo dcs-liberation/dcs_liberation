@@ -104,7 +104,9 @@ class QTopPanel(QFrame):
         if game is None:
             return
 
-        self.conditionsWidget.setCurrentTurn(game.turn, game.conditions)
+        self.conditionsWidget.setCurrentTurn(
+            game.turn, game.conditions, game.simulation_time
+        )
 
         if game.conditions.weather.clouds:
             base_m = game.conditions.weather.clouds.base

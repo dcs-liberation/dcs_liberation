@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import copy
 import json
 from datetime import timedelta
 from pathlib import Path
@@ -31,14 +31,15 @@ class MissionSimulation:
         self.unit_map: Optional[UnitMap] = None
         self.aircraft_simulation = AircraftSimulation(self.game)
         self.completed = False
-        self.time = self.game.conditions.start_time
+        self.time = self.game.simulation_time
 
     def begin_simulation(self) -> None:
-        self.time = self.game.conditions.start_time
+        self.time = self.game.simulation_time
         self.aircraft_simulation.begin_simulation()
 
     def tick(self, events: GameUpdateEvents) -> GameUpdateEvents:
         self.time += TICK
+        self.game.simulation_time = self.time
         if self.completed:
             raise RuntimeError("Simulation already completed")
         self.aircraft_simulation.on_game_tick(events, self.time, TICK)
