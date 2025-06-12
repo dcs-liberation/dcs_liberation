@@ -125,7 +125,11 @@ class Game:
             self.time_of_day_offset_for_start_time = list(TimeOfDay).index(
                 self.theater.daytime_map.best_guess_time_of_day_at(start_time)
             )
+        # self.conditions.start_time is the time at the start of a turn and does not change within a turn.
+        # self.simulation_time tracks time progression within a turn and is synchronized with the
+        # MissionSimulation object.
         self.conditions = self.generate_conditions(forced_time=start_time)
+        self.simulation_time = self.conditions.start_time
 
         self.sanitize_sides(player_faction, enemy_faction)
         self.blue = Coalition(self, player_faction, player_budget, player=True)
@@ -291,6 +295,7 @@ class Game:
         # turn 1.
         if self.turn > 1:
             self.conditions = self.generate_conditions()
+            self.simulation_time = self.conditions.start_time
 
     def begin_turn_0(self) -> None:
         """Initialization for the first turn of the game."""

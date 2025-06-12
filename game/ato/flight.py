@@ -109,19 +109,6 @@ class Flight(SidcDescribable):
             waypoint.actions.clear()
             waypoint.options.clear()
 
-    def __getstate__(self) -> dict[str, Any]:
-        state = self.__dict__.copy()
-        # Avoid persisting the flight state since that's not (currently) used outside
-        # mission generation. This is a bit of a hack for the moment and in the future
-        # we will need to persist the flight state, but for now keep it out of save
-        # compat (it also contains a generator that cannot be pickled).
-        del state["state"]
-        return state
-
-    def __setstate__(self, state: dict[str, Any]) -> None:
-        state["state"] = Uninitialized(self, state["squadron"].settings)
-        self.__dict__.update(state)
-
     @property
     def blue(self) -> bool:
         return self.squadron.player

@@ -65,14 +65,17 @@ class QTimeTurnWidget(QGroupBox):
         else:
             self.set_date_and_time(time)
 
-    def set_current_turn(self, turn: int, conditions: Conditions) -> None:
+    def set_current_turn(
+        self, turn: int, conditions: Conditions, time: datetime
+    ) -> None:
         """Sets the turn information display.
 
         :arg turn Current turn number.
-        :arg conditions Current time and weather conditions.
+        :arg conditions Current weather conditions.
+        :arg time Current time.
         """
         self.daytime_icon.setPixmap(self.icons[conditions.time_of_day])
-        self.set_date_and_time(conditions.start_time)
+        self.set_date_and_time(time)
         self.setTitle(f"Turn {turn}")
 
     def set_date_and_time(self, time: datetime) -> None:
@@ -305,12 +308,15 @@ class QConditionsWidget(QFrame):
         self.weather_widget.hide()
         self.layout.addWidget(self.weather_widget, 0, 1)
 
-    def setCurrentTurn(self, turn: int, conditions: Conditions) -> None:
+    def setCurrentTurn(
+        self, turn: int, conditions: Conditions, time: datetime | None
+    ) -> None:
         """Sets the turn information display.
 
         :arg turn Current turn number.
-        :arg conditions Current time and weather conditions.
+        :arg conditions Current weather conditions.
+        :arg time Current time.
         """
-        self.time_turn_widget.set_current_turn(turn, conditions)
+        self.time_turn_widget.set_current_turn(turn, conditions, time)
         self.weather_widget.setCurrentTurn(turn, conditions)
         self.weather_widget.show()

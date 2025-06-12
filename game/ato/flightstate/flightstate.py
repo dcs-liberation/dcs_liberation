@@ -21,8 +21,14 @@ class FlightState(ABC):
         self.settings = settings
         self.avoid_further_combat = False
 
-    def reinitialize(self, now: datetime) -> None:
-        from game.ato.flightstate import WaitingForStart
+    def initialize(self, now: datetime) -> None:
+        from game.ato.flightstate import Uninitialized, WaitingForStart
+
+        # Flight objects are created with Uninitialized state. However when the simulation runs
+        # the flight state changes and may be serialized. We only want to initialize the state
+        # for newly created flights and not ones deserialized from a save file.
+        if type(self.flight.state) != Uninitialized:
+            return
 
         if self.flight.flight_plan.startup_time() <= now:
             self._set_active_flight_state(now)

@@ -25,7 +25,6 @@ class AircraftSimulation:
         self.results = SimulationResults()
 
     def begin_simulation(self) -> None:
-        self.reset()
         self.set_initial_flight_states()
 
     def on_game_tick(
@@ -79,14 +78,9 @@ class AircraftSimulation:
             events.complete_simulation()
 
     def set_initial_flight_states(self) -> None:
-        now = self.game.conditions.start_time
+        now = self.game.simulation_time
         for flight in self.iter_flights():
-            flight.state.reinitialize(now)
-
-    def reset(self) -> None:
-        for flight in self.iter_flights():
-            flight.set_state(Uninitialized(flight, self.game.settings))
-        self.combats = []
+            flight.state.initialize(now)
 
     def iter_flights(self) -> Iterator[Flight]:
         packages = itertools.chain(
