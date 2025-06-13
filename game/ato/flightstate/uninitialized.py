@@ -20,7 +20,7 @@ class Uninitialized(FlightState):
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
-        self.reinitialize(time)
+        self.initialize(time)
         self.flight.state.on_game_tick(events, time, duration)
 
     @property

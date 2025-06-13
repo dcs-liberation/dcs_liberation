@@ -5,11 +5,12 @@ Saves from 13.x are not compatible with 14.0.0.
 ## Features/Improvements
 
 * **[Engine]** Support for DCS 2.9.16.10973
+* **[UI]** Allow saving after fast forwarding manually with sim speed controls (--show-sim-speed-controls option).
 
 ## Fixes
 
+* **[Campaign]** Units are restored to full health when repaired.
 * **[UI]** Air Wing and Transfers buttons disabled when no game is loaded as pressing them without a game loaded resulted in a crash.
-* **[UI]** Units are restored to full health when repaired.
 * **[UI]** A package is cancelled (deleted) when the last flight in the package is cancelled instead of showing "No mission".
 
 # 13.0.0
