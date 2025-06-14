@@ -100,7 +100,7 @@ class GameLoop:
         if not self.started:
             raise RuntimeError("Attempted to tick game loop before initialization")
         try:
-            self.sim.tick(self.events)
+            self.sim.tick(self.events, self.game.settings.combat_resolution_method)
             self.completed = self.events.simulation_complete
             if not suppress_events:
                 self.send_update(rate_limit=True)

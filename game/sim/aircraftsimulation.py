@@ -28,7 +28,11 @@ class AircraftSimulation:
         self.set_initial_flight_states()
 
     def on_game_tick(
-        self, events: GameUpdateEvents, time: datetime, duration: timedelta
+        self,
+        events: GameUpdateEvents,
+        time: datetime,
+        duration: timedelta,
+        combat_resolution_method: CombatResolutionMethod,
     ) -> None:
         if not self._auto_resolve_combat() and self.combats:
             logging.error(
@@ -45,7 +49,7 @@ class AircraftSimulation:
                 duration,
                 self.results,
                 events,
-                self.game.settings.combat_resolution_method,
+                combat_resolution_method,
             ):
                 events.end_combat(combat)
             else:

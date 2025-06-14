@@ -355,6 +355,16 @@ class Settings:
             "your game after aborting take off."
         ),
     )
+    turnless_mode: bool = boolean_option(
+        "Enable turnless mode (WIP)",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=False,
+        detail=(
+            "If enabled, turns do not end after mission completion. A new mission "
+            "can be started picking up from where the previous mission ended."
+        ),
+    )
     fast_forward_stop_condition: FastForwardStopCondition = choices_option(
         "Fast forward until",
         page=MISSION_GENERATOR_PAGE,

@@ -50,10 +50,7 @@ class QTopPanel(QFrame):
         self.conditionsWidget = QConditionsWidget(sim_controller)
         self.budgetBox = QBudgetBox(self.game)
 
-        pass_turn_text = "Pass Turn"
-        if not self.game or self.game.turn == 0:
-            pass_turn_text = "Begin Campaign"
-        self.passTurnButton = QPushButton(pass_turn_text)
+        self.passTurnButton = QPushButton(self._pass_turn_button_text(self.game))
         self.passTurnButton.setIcon(CONST.ICONS["PassTurn"])
         self.passTurnButton.setProperty("style", "btn-primary")
         self.passTurnButton.clicked.connect(self.passTurn)
@@ -120,11 +117,9 @@ class QTopPanel(QFrame):
         self.factionsInfos.setGame(game)
 
         self.passTurnButton.setEnabled(True)
-        if game and game.turn > 0:
-            self.passTurnButton.setText("Pass Turn")
+        self.passTurnButton.setText(self._pass_turn_button_text(game))
 
         if game and game.turn == 0:
-            self.passTurnButton.setText("Begin Campaign")
             self.proceedButton.setEnabled(False)
         else:
             self.proceedButton.setEnabled(True)
@@ -283,3 +278,11 @@ class QTopPanel(QFrame):
 
     def budget_update(self, game: Game):
         self.budgetBox.setGame(game)
+
+    def _pass_turn_button_text(self, game: Game) -> None:
+        if game and game.turn > 0:
+            if game.settings.turnless_mode:
+                return "End Turn"
+            else:
+                return "Pass Turn"
+        return "Begin campaign"
