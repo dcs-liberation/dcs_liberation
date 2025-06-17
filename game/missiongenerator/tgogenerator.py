@@ -601,7 +601,7 @@ class HelipadGenerator:
         # This gets called for every control point, so we don't want to add an empty group (causes DCS mission editor to crash)
         if len(self.cp.helipads) == 0:
             return
-        # Note: Helipad are generated as neutral object in order not to interfer with
+        # Note: Helipad are generated as neutral object in order not to interfere with
         # capture triggers
         country = self.m.country(self.game.coalition_for(self.cp.captured).country_name)
 
