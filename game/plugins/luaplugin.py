@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class LuaPluginWorkOrder:
-    """A script to be loaded at mision start.
+    """A script to be loaded at mission start.
 
     Typically, a work order is used for the main plugin script, and another for
     configuration. The main script is added to scriptsWorkOrders and the configuration
