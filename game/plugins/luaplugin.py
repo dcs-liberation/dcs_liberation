@@ -76,7 +76,7 @@ class LuaPluginDefinition:
 
     @classmethod
     def from_json(cls, name: str, path: Path) -> LuaPluginDefinition:
-        """Loads teh plugin definitions from the given plugin.json path."""
+        """Loads the plugin definitions from the given plugin.json path."""
         data = json.loads(path.read_text())
 
         options = []
