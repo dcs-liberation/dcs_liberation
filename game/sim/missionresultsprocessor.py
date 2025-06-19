@@ -63,6 +63,11 @@ class MissionResultsProcessor:
             # regenerated. However if we want to keep the ATO to continue a turn, this update
             # is necessary to make sure lost aircraft are removed from the ATO.
             if loss.flight.count == 1:  # Last aircraft in the flight, remove the flight
+                # If no flights in package, generally indicates that the loss is an aircraft
+                # that is not assigned to a mission and is parked on the ground. There is no need
+                # to remove the aircraft from the ATO as it was never in the ATO in the first place.
+                if len(loss.flight.package.flights) == 0:
+                    continue
                 loss.flight.package.remove_flight(loss.flight)
                 if len(loss.flight.package.flights) == 0:
                     loss.flight.squadron.coalition.ato.remove_package(
