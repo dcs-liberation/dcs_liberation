@@ -7,13 +7,7 @@ from datetime import datetime, timedelta
 
 from typing_extensions import TYPE_CHECKING
 
-<<<<<<< Updated upstream
-from game.ato.flightstate import (
-    Uninitialized,
-)
-=======
 from game.ato.flightstate import Uninitialized, Completed, InCombat
->>>>>>> Stashed changes
 from game.settings.settings import FastForwardStopCondition, CombatResolutionMethod
 from .combat import CombatInitiator, FrozenCombat
 from .gameupdateevents import GameUpdateEvents
