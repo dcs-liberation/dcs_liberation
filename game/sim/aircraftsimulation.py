@@ -7,9 +7,13 @@ from datetime import datetime, timedelta
 
 from typing_extensions import TYPE_CHECKING
 
+<<<<<<< Updated upstream
 from game.ato.flightstate import (
     Uninitialized,
 )
+=======
+from game.ato.flightstate import Uninitialized, Completed, InCombat
+>>>>>>> Stashed changes
 from game.settings.settings import FastForwardStopCondition, CombatResolutionMethod
 from .combat import CombatInitiator, FrozenCombat
 from .gameupdateevents import GameUpdateEvents
@@ -71,9 +75,19 @@ class AircraftSimulation:
             events.complete_simulation()
 
     def set_initial_flight_states(self) -> None:
+        # Initialize flights in Uninitialized state
         now = self.game.simulation_time
         for flight in self.iter_flights():
             flight.state.initialize(now)
+
+        # Recover combat instances from flight states. Flight state information is serialized
+        # when saving a game but the aircraft simulation state is not. Combat instances are
+        # de-duplicated as multiple flights can be involved in a single combat instance.
+        combats = set()
+        for flight in self.iter_flights():
+            if type(flight.state) == InCombat:
+                combats.add(flight.state.combat)
+        self.combats = list(combats)
 
     def iter_flights(self) -> Iterator[Flight]:
         packages = itertools.chain(
