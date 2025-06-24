@@ -8,6 +8,7 @@ from game.ground_forces.combat_stance import CombatStance
 from game.theater import ControlPoint
 from .gameupdateevents import GameUpdateEvents
 from ..ato.airtaaskingorder import AirTaskingOrder
+from ..ato.flightstate.atdeparture import AtDeparture
 
 if TYPE_CHECKING:
     from ..game import Game
@@ -167,10 +168,21 @@ class MissionResultsProcessor:
                 iads_network.update_network(events)
                 return
 
-    @staticmethod
-    def commit_damaged_runways(debriefing: Debriefing) -> None:
+    def commit_damaged_runways(self, debriefing: Debriefing) -> None:
         for damaged_runway in debriefing.damaged_runways:
             damaged_runway.damage_runway()
+            # Remove any flight in ATO scheduled to take off from the damaged runway.
+            for coalition in self.game.coalitions:
+                for package in coalition.ato.packages:
+                    for flight in package.flights:
+                        if flight.departure.name == damaged_runway.name and isinstance(
+                            flight.state, AtDeparture
+                        ):
+                            flight.package.remove_flight(flight)
+                            if len(flight.package.flights) == 0:
+                                flight.squadron.coalition.ato.remove_package(
+                                    flight.package
+                                )
 
     def commit_captures(self, debriefing: Debriefing, events: GameUpdateEvents) -> None:
         for captured in debriefing.base_captures:
