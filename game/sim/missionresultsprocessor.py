@@ -63,7 +63,8 @@ class MissionResultsProcessor:
             # This logic is redundant if we are going to a new turn, since the whole ATO is
             # regenerated. However if we want to keep the ATO to continue a turn, this update
             # is necessary to make sure lost aircraft are removed from the ATO.
-            if loss.flight.count == 1:  # Last aircraft in the flight, remove the flight
+            loss.flight.roster.resize(loss.flight.count - 1)
+            if loss.flight.count == 0:  # Last aircraft in the flight, remove the flight
                 # If no flights in package, generally indicates that the loss is an aircraft
                 # that is not assigned to a mission and is parked on the ground. There is no need
                 # to remove the aircraft from the ATO as it was never in the ATO in the first place.
@@ -74,8 +75,6 @@ class MissionResultsProcessor:
                     loss.flight.squadron.coalition.ato.remove_package(
                         loss.flight.package
                     )
-            else:  # Decrement number of aircraft in the flight
-                loss.flight.roster.resize(loss.flight.count - 1)
 
     @staticmethod
     def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
