@@ -174,10 +174,15 @@ class PackageModel(QAbstractListModel):
                 EventStream.put_nowait(GameUpdateEvents().update_flight(flight))
             # If there are no more flights in the package, delete the package.
             if len(self.package.flights) == 0:
-                flight.squadron.coalition.ato.remove_package(flight.package)
-                # Update ATO model so packages list is refreshed.
-                is_player = flight.squadron.coalition.player
-                self.game_model.ato_model_for(is_player).replace_from_game(is_player)
+                # Check if package is in ATO first as flight may still be "tentative" i.e.
+                # not added to the ATO yet.
+                if flight.package in flight.squadron.coalition.ato.packages:
+                    flight.squadron.coalition.ato.remove_package(flight.package)
+                    # Update ATO model so packages list is refreshed.
+                    is_player = flight.squadron.coalition.player
+                    self.game_model.ato_model_for(is_player).replace_from_game(
+                        is_player
+                    )
 
     def delete_flight(self, flight: Flight) -> None:
         """Removes the given flight from the package."""
