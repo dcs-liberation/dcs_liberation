@@ -482,7 +482,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[Plugins]** Updated SkynetIADS to 2.2.0 (adds NASAMS support).  
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
-* **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
+* **[UI]** Hovering over the weather information now displays the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
 * **[UI]** Control point name displayed with ground object group name on map.
 * **[UI]** Buy or Replace will now show the correct price for generated ground objects like sams.
