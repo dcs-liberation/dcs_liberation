@@ -13,7 +13,7 @@ When you enter the jet, note the amount of fuel below, then taxi to the far end
 of the runway. Hold short and note the remaining fuel below.
 
 Follow a typical takeoff pattern for the aircraft. For the F/A-18C, this might
-be AB takeoff, reduce to MIL at 350KIAS, and maintian 350KIAS/0.85 mach until
+be AB takeoff, reduce to MIL at 350KIAS, and maintain 350KIAS/0.85 mach until
 cruise altitude (angles 25).
 
 Once you reach angels 25, pause the game. Note your remaining fuel below and
@@ -21,7 +21,7 @@ measure the distance traveled from takeoff. Mark your location on the map.
 
 Level out and increase to cruise speed if needed. Liberation assumes 0.85 mach
 for supersonic aircraft, for subsonic aircraft it depends so pick something
-reasonable and note your descision in a comment in the file when done. Maintain
+reasonable and note your decision in a comment in the file when done. Maintain
 speed, heading, and altitude for a long distance (the longer the distance, the
 more accurate the result, but be careful to leave enough fuel for the final
 section). Once complete, note the distance traveled and the remaining fuel.

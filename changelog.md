@@ -482,7 +482,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Plugins]** Increased time JTAC Autolase messages stay visible on the UI.
 * **[Plugins]** Updated SkynetIADS to 2.2.0 (adds NASAMS support).  
 * **[UI]** Added ability to take notes and have those notes appear as a kneeboard page.
-* **[UI]** Hovering over the weather information now dispalys the cloud base (meters and feet).
+* **[UI]** Hovering over the weather information now displays the cloud base (meters and feet).
 * **[UI]** Google search link added to unit information when there is no information provided.
 * **[UI]** Control point name displayed with ground object group name on map.
 * **[UI]** Buy or Replace will now show the correct price for generated ground objects like sams.
@@ -500,7 +500,7 @@ Saves from 4.0.0 are compatible with 4.1.0.
 * **[Mission Generation]** The lua data for other plugins is now generated correctly
 * **[Mission Generation]** Fixed problem with opfor planning missions against sold ground objects like SAMs
 * **[Mission Generation]** The legacy always-available tanker option no longer prevents mission creation.
-* **[Mission Generation]** Prevent the creation of a transfer order with 0 units for a rare situtation when a point was captured.
+* **[Mission Generation]** Prevent the creation of a transfer order with 0 units for a rare situation when a point was captured.
 * **[Mission Generation]** Planned transfers which will be impossible after a base capture will no longer prevent the mission result submit.
 * **[Mission Generation]** Fix occasional KeyError preventing mission generation when all units of the same type in a convoy were killed.
 * **[Mission Generation]** Fix for AAA Flak generator using Opel Blitz preventing the mission from being generated because duplicate unit names were used.
@@ -806,7 +806,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[UI]** Ship groups could be replaced by SAM sites in the UI, which would lead to broken mission being generated - fixed 
 * **[New Game Wizard]** Removed the "mid game" campaign generator option which is currently broken
 * **[Mission Generator]** Empty navy groups will no longer be generated
-* **[Mission Generator]** Fixed BAI, SEAD, and DEAD flights ocassionally being assigned the wrong targets.
+* **[Mission Generator]** Fixed BAI, SEAD, and DEAD flights occasionally being assigned the wrong targets.
 * **[Flight Planner]** Fixed not being able to plan packages against opfor carriers
 * **[UI]** Repaired SAMs no longer show as dead.
 * **[UI]** Fixed not being able to manage a disbanded site after disbanding and closing the base menu.
@@ -913,7 +913,7 @@ Saves from 2.3 are not compatible with 2.4.
 * **[Moddability]** LUA plugins can now be injected into Liberation missions.
 * **[Moddability]** Optional Skynet IADS lua plugin now included
 * **[New Game]** Starting budget can be freely selected
-* **[New Game]** Exanded information for faction and campaign selection in the new game wizard
+* **[New Game]** Expanded information for faction and campaign selection in the new game wizard
 * **[UI]** Add double and right click actions to many UI elements.
 * **[UI]** Add polygon drawing mode for map background
 * **[UI]** Added a warning if you press takeoff with no player enabled flights
@@ -989,7 +989,7 @@ Saves from 2.3 are not compatible with 2.4.
   * M-2000C (Thanks to contributor danalbert)
 * **[Base Menu]** Added possibility to repair destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
 * **[Base Menu]** Added possibility to buy/sell/replace SAM units
-* **[Map]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
+* **[Map]** Added recon images for buildings on strike targets, click on a Strike target to get detailed informations
 * **[Units/Factions]** Added F-16C to USA 1990
 * **[Units/Factions]** Added MQ-9 Reaper as CAS unit for USA 2005
 * **[Units/Factions]** Added Mig-21, Mig-23, SA-342L to Syria 2011
