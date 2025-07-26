@@ -989,7 +989,7 @@ Saves from 2.3 are not compatible with 2.4.
   * M-2000C (Thanks to contributor danalbert)
 * **[Base Menu]** Added possibility to repair destroyed SAM and base defenses units for the player (Click on a SAM site to fix it)
 * **[Base Menu]** Added possibility to buy/sell/replace SAM units
-* **[Map]** Added recon images for buildings on strike targets, click on a Strike target to get detailled informations
+* **[Map]** Added recon images for buildings on strike targets, click on a Strike target to get detailed informations
 * **[Units/Factions]** Added F-16C to USA 1990
 * **[Units/Factions]** Added MQ-9 Reaper as CAS unit for USA 2005
 * **[Units/Factions]** Added Mig-21, Mig-23, SA-342L to Syria 2011
