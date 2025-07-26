@@ -21,7 +21,7 @@ measure the distance traveled from takeoff. Mark your location on the map.
 
 Level out and increase to cruise speed if needed. Liberation assumes 0.85 mach
 for supersonic aircraft, for subsonic aircraft it depends so pick something
-reasonable and note your descision in a comment in the file when done. Maintain
+reasonable and note your decision in a comment in the file when done. Maintain
 speed, heading, and altitude for a long distance (the longer the distance, the
 more accurate the result, but be careful to leave enough fuel for the final
 section). Once complete, note the distance traveled and the remaining fuel.
