@@ -71,7 +71,7 @@
     "generate-license-file": "^2.0.0",
     "jest-transform-stub": "^2.0.0",
     "license-checker": "^25.0.1",
-    "msw": "^1.2.2",
+    "msw": "^2.10.4",
     "react-scripts": "5.0.1",
     "ts-node": "^10.9.1",
     "wait-on": "^8.0.0"
