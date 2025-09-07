@@ -12,7 +12,7 @@ from game.utils import Distance, Heading, Speed, feet, knots, meters, nautical_m
 class AewcFlightPlan(PatrollingFlightPlan[PatrollingLayout]):
     @property
     def patrol_duration(self) -> timedelta:
-        return timedelta(hours=4)
+        return self.flight.coalition.doctrine.aewc.duration
 
     @property
     def patrol_speed(self) -> Speed:

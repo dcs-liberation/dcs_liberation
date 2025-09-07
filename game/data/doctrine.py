@@ -53,6 +53,16 @@ class Helicopter:
 
 
 @dataclass
+class Aewc:
+    #: The duration that AEWC flights will remain on-station
+    duration: timedelta
+
+    @staticmethod
+    def from_dict(data: dict[str, Any]) -> Aewc:
+        return Aewc(duration=timedelta(minutes=data["duration_minutes"]))
+
+
+@dataclass
 class Cas:
     #: The duration that CAP flights will remain on-station.
     duration: timedelta
@@ -169,6 +179,9 @@ class Doctrine:
     #: Helicopter specific doctrines.
     helicopter: Helicopter
 
+    #: Doctrine for AEWC missions.
+    aewc: Aewc
+
     #: Doctrine for CAS missions.
     cas: Cas
 
@@ -238,6 +251,7 @@ class Doctrine:
                         data["ground_unit_procurement_ratios"]
                     ),
                     helicopter=Helicopter.from_dict(data["helicopter"]),
+                    aewc=Aewc.from_dict(data["aewc"]),
                     cas=Cas.from_dict(data["cas"]),
                     cap=Cap.from_dict(data["cap"]),
                     sweep=Sweep.from_dict(data["sweep"]),
