@@ -57,6 +57,7 @@ class FlightType(Enum):
     REFUELING = "Refueling"
     FERRY = "Ferry"
     AIR_ASSAULT = "Air Assault"
+    IDLE = "Idle"
 
     def __str__(self) -> str:
         return self.value

@@ -12,6 +12,7 @@ from .flightmembers import FlightMembers
 from .flightroster import FlightRoster
 from .flightstate import FlightState, Navigating, Uninitialized
 from .flightstate.killed import Killed
+from .flighttype import FlightType
 from ..sidc import (
     Entity,
     SidcDescribable,
@@ -31,7 +32,6 @@ if TYPE_CHECKING:
     from game.data.weapons import WeaponType
     from .flightmember import FlightMember
     from .flightplans.flightplan import FlightPlan
-    from .flighttype import FlightType
     from .flightwaypoint import FlightWaypoint
     from .package import Package
     from .starttype import StartType
@@ -58,7 +58,8 @@ class Flight(SidcDescribable):
         self.coalition = squadron.coalition
         self.squadron = squadron
         self.flight_type = flight_type
-        self.squadron.claim_inventory(count)
+        if flight_type != FlightType.IDLE:
+            self.squadron.claim_inventory(count)
         if roster is None:
             self.roster = FlightMembers(self, initial_size=count)
         else:

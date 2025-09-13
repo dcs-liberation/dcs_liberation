@@ -64,6 +64,7 @@ class FlightPlanBuilderTypes:
             FlightType.TRANSPORT: AirliftFlightPlan.builder_type(),
             FlightType.FERRY: FerryFlightPlan.builder_type(),
             FlightType.AIR_ASSAULT: AirAssaultFlightPlan.builder_type(),
+            FlightType.IDLE: BarCapFlightPlan.builder_type(),
         }
         try:
             return builder_dict[flight.flight_type]

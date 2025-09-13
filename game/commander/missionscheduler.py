@@ -47,6 +47,16 @@ class MissionScheduler:
             margin=5 * 60,
         )
         for package in self.coalition.ato.packages:
+            if package.time_over_target > datetime.min:
+                if package.primary_task in dca_types:
+                    if (
+                        package.mission_departure_time
+                        > previous_cap_end_time[package.target]
+                    ):
+                        previous_cap_end_time[package.target] = (
+                            package.mission_departure_time
+                        )
+                continue  # If package already has TOT, leave it.
             tot = TotEstimator(package).earliest_tot(now)
             if package.primary_task in dca_types:
                 previous_end_time = previous_cap_end_time[package.target]
