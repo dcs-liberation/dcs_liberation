@@ -50,7 +50,8 @@ class MissionScheduler:
             if package.time_over_target > datetime.min:
                 if package.primary_task in dca_types:
                     if (
-                        package.mission_departure_time
+                        package.mission_departure_time is not None
+                        and package.mission_departure_time
                         > previous_cap_end_time[package.target]
                     ):
                         previous_cap_end_time[package.target] = (

@@ -193,11 +193,15 @@ class TheaterState(WorldState["TheaterState"]):
         for package in coalition.ato.packages:
             if isinstance(package.target, NavalGroundObject):
                 theater_state.eliminate_ship(package.target)
-            if package.primary_task == FlightType.BAI:
+            if package.primary_task == FlightType.BAI and isinstance(
+                package.target, VehicleGroupGroundObject
+            ):
                 theater_state.eliminate_battle_position(package.target)
             if isinstance(package.target, IadsGroundObject):
                 theater_state.eliminate_air_defense(package.target)
-            if package.primary_task == FlightType.STRIKE:
+            if package.primary_task == FlightType.STRIKE and isinstance(
+                package.target, TheaterGroundObject
+            ):
                 theater_state.strike_targets.remove(package.target)
             if package.primary_task == FlightType.AEWC:
                 # If a planned AEWC mission covers the target beyond the planned mission duration, it can safely be removed
@@ -206,17 +210,19 @@ class TheaterState(WorldState["TheaterState"]):
                     > now + game.settings.desired_player_mission_duration
                 ):
                     theater_state.aewc_targets.remove(package.target)
-            if package.primary_task in (FlightType.OCA_AIRCRAFT, FlightType.OCA_RUNWAY):
+            if package.primary_task in (
+                FlightType.OCA_AIRCRAFT,
+                FlightType.OCA_RUNWAY,
+            ) and isinstance(package.target, ControlPoint):
                 theater_state.oca_targets.remove(package.target)
         return theater_state
 
     @classmethod
     def _barcap_rounds(
         cls, game: Game, player: bool, now: datetime, control_point: ControlPoint
-    ):
+    ) -> int:
         """Calculate number of additional rounds of CAP required to cover mission duration."""
         coalition = game.coalition_for(player)
-        print(now)
 
         # Look through ATO for any existing planned CAP missions and calculate last planned CAP end
         planned_cap_coverage_end_time = now
@@ -229,8 +235,6 @@ class TheaterState(WorldState["TheaterState"]):
                     planned_cap_coverage_end_time = cap_end_time
         # When mission is expected to finish
         mission_end_time = now + game.settings.desired_player_mission_duration
-        print(mission_end_time)
-        print(planned_cap_coverage_end_time)
         return math.ceil(
             (mission_end_time - planned_cap_coverage_end_time).total_seconds()
             / coalition.doctrine.cap.duration.total_seconds()
