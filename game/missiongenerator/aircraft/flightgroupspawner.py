@@ -243,11 +243,7 @@ class FlightGroupSpawner:
         for i in range(self.flight.count):
             group.units[i].position = hpad.position
             group.units[i].heading = hpad.heading
-            # pydcs has just `parking_id = None`, so mypy thinks str is invalid. Ought
-            # to fix pydcs, but that's not the kind of change we want to pull into the
-            # 6.1 branch, and frankly we should probably just improve pydcs's handling
-            # of FARPs instead.
-            group.units[i].parking_id = str(i + 1)  # type: ignore
+            group.units[i].parking_id = str(i + 1)
         return group
 
     def dcs_start_type(self) -> DcsStartType:
