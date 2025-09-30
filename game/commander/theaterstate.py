@@ -78,7 +78,8 @@ class TheaterState(WorldState["TheaterState"]):
             self.threatening_air_defenses.remove(target)
         if target in self.detecting_air_defenses:
             self.detecting_air_defenses.remove(target)
-        self.enemy_air_defenses.remove(target)
+        if target in self.enemy_air_defenses:
+            self.enemy_air_defenses.remove(target)
         self._rebuild_threat_zones()
 
     def eliminate_ship(self, target: NavalGroundObject) -> None:
@@ -86,7 +87,8 @@ class TheaterState(WorldState["TheaterState"]):
             self.threatening_air_defenses.remove(target)
         if target in self.detecting_air_defenses:
             self.detecting_air_defenses.remove(target)
-        self.enemy_ships.remove(target)
+        if target in self.enemy_ships:
+            self.enemy_ships.remove(target)
         self._rebuild_threat_zones()
 
     def has_battle_position(self, target: VehicleGroupGroundObject) -> bool:
@@ -208,12 +210,17 @@ class TheaterState(WorldState["TheaterState"]):
                 if (
                     package.time_over_target + coalition.doctrine.aewc.duration
                     > now + game.settings.desired_player_mission_duration
-                ):
+                ) and package.target in theater_state.aewc_targets:
                     theater_state.aewc_targets.remove(package.target)
-            if package.primary_task in (
-                FlightType.OCA_AIRCRAFT,
-                FlightType.OCA_RUNWAY,
-            ) and isinstance(package.target, ControlPoint):
+            if (
+                package.primary_task
+                in (
+                    FlightType.OCA_AIRCRAFT,
+                    FlightType.OCA_RUNWAY,
+                )
+                and isinstance(package.target, ControlPoint)
+                and package.target in theater_state.oca_targets
+            ):
                 theater_state.oca_targets.remove(package.target)
         return theater_state
 
