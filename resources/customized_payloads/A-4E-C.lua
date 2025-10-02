@@ -178,15 +178,15 @@ local unitPayloads = {
 			["name"] = "Liberation SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{C_A4E_AGM-45B_LAU34}",
 					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{C_A4E_AGM-45B_LAU34}",
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 4,
 				},
 				[4] = {
@@ -194,7 +194,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[5] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 			},
@@ -265,15 +265,15 @@ local unitPayloads = {
 			["name"] = "Liberation SEAD Escort",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{C_A4E_AGM-45B_LAU34}",
 					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{C_A4E_AGM-45B_LAU34}",
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 4,
 				},
 				[4] = {
@@ -281,7 +281,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[5] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 			},
@@ -352,11 +352,11 @@ local unitPayloads = {
 			["name"] = "Liberation DEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{C_A4E_AGM-45B_LAU34}",
 					["num"] = 5,
 				},
 				[2] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{C_A4E_AGM-45B_LAU34}",
 					["num"] = 1,
 				},
 				[3] = {
