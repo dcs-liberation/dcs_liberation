@@ -5,6 +5,7 @@ Saves from 13.x are not compatible with 14.0.0.
 ## Features/Improvements
 
 * **[Engine]** Support for DCS 2.9.19.13478
+* **[Mods]** A4EC mod version updated to 2.3.
 * **[UI]** Allow saving after fast forwarding manually with sim speed controls (--show-sim-speed-controls option).
 
 ## Fixes
