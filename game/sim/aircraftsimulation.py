@@ -33,8 +33,12 @@ class AircraftSimulation:
         time: datetime,
         duration: timedelta,
         combat_resolution_method: CombatResolutionMethod,
+        force_continue: bool,
     ) -> None:
-        if not self._auto_resolve_combat(combat_resolution_method) and self.combats:
+        if (
+            not self._auto_resolve_combat(combat_resolution_method, force_continue)
+            and self.combats
+        ):
             logging.error(
                 "Cannot resume simulation because aircraft are in combat and "
                 "auto-resolve is disabled"
@@ -65,7 +69,7 @@ class AircraftSimulation:
 
         # After updating all combat states, check for halts.
         for flight in self.iter_flights():
-            if flight.should_halt_sim():
+            if flight.should_halt_sim() and not force_continue:
                 events.complete_simulation()
                 return
 
@@ -78,7 +82,10 @@ class AircraftSimulation:
                 if len(flight.package.flights) == 0:
                     flight.squadron.coalition.ato.remove_package(flight.package)
 
-        if not self._auto_resolve_combat(combat_resolution_method) and self.combats:
+        if (
+            not self._auto_resolve_combat(combat_resolution_method, force_continue)
+            and self.combats
+        ):
             events.complete_simulation()
 
     def set_initial_flight_states(self) -> None:
@@ -104,10 +111,8 @@ class AircraftSimulation:
             yield from package.flights
 
     def _auto_resolve_combat(
-        self, combat_resolution_method: CombatResolutionMethod
+        self, combat_resolution_method: CombatResolutionMethod, force_continue: bool
     ) -> bool:
-        return (
-            self.game.settings.fast_forward_stop_condition
-            != FastForwardStopCondition.DISABLED
-            and combat_resolution_method != CombatResolutionMethod.PAUSE
-        )
+        if force_continue:
+            return True
+        return combat_resolution_method != CombatResolutionMethod.PAUSE
