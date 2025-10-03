@@ -7,7 +7,7 @@ from typing import Optional, TYPE_CHECKING
 
 from game.debriefing import Debriefing
 from game.missiongenerator import MissionGenerator
-from game.settings.settings import CombatResolutionMethod
+from game.settings.settings import FastForwardStopCondition, CombatResolutionMethod
 from game.unitmap import UnitMap
 from .aircraftsimulation import AircraftSimulation
 from .missionresultsprocessor import MissionResultsProcessor
@@ -39,14 +39,23 @@ class MissionSimulation:
         self.aircraft_simulation.begin_simulation()
 
     def tick(
-        self, events: GameUpdateEvents, combat_resolution_method: CombatResolutionMethod
+        self,
+        events: GameUpdateEvents,
+        combat_resolution_method: CombatResolutionMethod,
+        force_continue: bool,
     ) -> GameUpdateEvents:
         self.time += TICK
         self.game.simulation_time = self.time
         if self.completed:
             raise RuntimeError("Simulation already completed")
+        if (
+            self.game.settings.fast_forward_stop_condition
+            == FastForwardStopCondition.DISABLED
+        ):
+            events.complete_simulation()
+            return events
         self.aircraft_simulation.on_game_tick(
-            events, self.time, TICK, combat_resolution_method
+            events, self.time, TICK, combat_resolution_method, force_continue
         )
         self.completed = events.simulation_complete
         return events
@@ -90,7 +99,7 @@ class MissionSimulation:
             ):
                 # Always skip combat as we are processing results from DCS. Any combat has already
                 # been resolved in-game
-                self.tick(events, CombatResolutionMethod.SKIP)
+                self.tick(events, CombatResolutionMethod.SKIP, force_continue=True)
             self.game.blue.plan_missions(self.game.simulation_time)
             self.game.red.plan_missions(self.game.simulation_time)
 
