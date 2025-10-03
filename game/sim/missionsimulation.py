@@ -102,6 +102,7 @@ class MissionSimulation:
                 self.tick(events, CombatResolutionMethod.SKIP, force_continue=True)
             self.game.blue.plan_missions(self.game.simulation_time)
             self.game.red.plan_missions(self.game.simulation_time)
+            self.game.game_stats.update(self.game)
 
     def finish(self) -> None:
         self.unit_map = None
