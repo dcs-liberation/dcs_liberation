@@ -91,6 +91,8 @@ class MissionSimulation:
         self.game.save_last_turn_state()
         MissionResultsProcessor(self.game).commit(debriefing, events)
         if self.game.settings.turnless_mode:
+            # Set completed to False to clear completion of any previous simulation tick.
+            self.completed = False
             # If running in turnless mode, run sim to calculate planned positions of flights
             # for the duration of time the DCS mission ran.
             start_time = copy.deepcopy(self.time)
