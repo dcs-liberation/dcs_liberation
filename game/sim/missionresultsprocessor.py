@@ -63,7 +63,8 @@ class MissionResultsProcessor:
             # This logic is redundant if we are going to a new turn, since the whole ATO is
             # regenerated. However if we want to keep the ATO to continue a turn, this update
             # is necessary to make sure lost aircraft are removed from the ATO.
-            loss.flight.roster.remove_pilot(loss.pilot)
+            if loss.pilot is not None:
+                loss.flight.roster.remove_pilot(loss.pilot)
             if loss.flight.count == 0:  # Last aircraft in the flight, remove the flight
                 # If no flights in package, generally indicates that the loss is an aircraft
                 # that is not assigned to a mission and is parked on the ground. There is no need
