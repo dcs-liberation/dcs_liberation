@@ -77,7 +77,6 @@ class AircraftSimulation:
         # and pilots back to the squadron.
         for flight in self.iter_flights():
             if type(flight.state) == Completed:
-                flight.return_pilots_and_aircraft()
                 flight.package.remove_flight(flight)
                 if len(flight.package.flights) == 0:
                     flight.squadron.coalition.ato.remove_package(flight.package)
