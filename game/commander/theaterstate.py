@@ -201,8 +201,10 @@ class TheaterState(WorldState["TheaterState"]):
                 theater_state.eliminate_battle_position(package.target)
             if isinstance(package.target, IadsGroundObject):
                 theater_state.eliminate_air_defense(package.target)
-            if package.primary_task == FlightType.STRIKE and isinstance(
-                package.target, TheaterGroundObject
+            if (
+                package.primary_task == FlightType.STRIKE
+                and isinstance(package.target, TheaterGroundObject)
+                and package.target in theater_state.strike_targets
             ):
                 theater_state.strike_targets.remove(package.target)
             if package.primary_task == FlightType.AEWC:
