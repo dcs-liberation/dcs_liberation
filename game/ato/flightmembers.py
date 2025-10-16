@@ -69,6 +69,15 @@ class FlightMembers(IFlightRoster):
             self.flight.squadron.return_pilot(current_pilot)
         self.members[index].pilot = pilot
 
+    def remove_pilot(self, pilot: Pilot) -> None:
+        for i, member in enumerate(self.members):
+            if member.pilot is not None and member.pilot.name == pilot.name:
+                self.members.pop(i)
+                if (code := member.tgp_laser_code) is not None:
+                    code.release()
+                return
+        raise ValueError(f"Pilot {pilot.name} not a member")
+
     def clear(self) -> None:
         self.flight.squadron.return_pilots(
             [p for p in self.iter_pilots() if p is not None]

@@ -8,6 +8,7 @@ from game.ground_forces.combat_stance import CombatStance
 from game.theater import ControlPoint
 from .gameupdateevents import GameUpdateEvents
 from ..ato.airtaaskingorder import AirTaskingOrder
+from ..ato.flightstate.atdeparture import AtDeparture
 
 if TYPE_CHECKING:
     from ..game import Game
@@ -56,6 +57,25 @@ class MissionResultsProcessor:
 
             logging.info(f"{aircraft} destroyed from {squadron}")
             squadron.owned_aircraft -= 1
+
+            # Remove air losses from the flight. Remove the flight if all aircraft are lost.
+            # Remove the package if the flight is the last flight in the package.
+            # This logic is redundant if we are going to a new turn, since the whole ATO is
+            # regenerated. However if we want to keep the ATO to continue a turn, this update
+            # is necessary to make sure lost aircraft are removed from the ATO.
+            if loss.pilot is not None:
+                loss.flight.roster.remove_pilot(loss.pilot)
+            if loss.flight.count == 0:  # Last aircraft in the flight, remove the flight
+                # If no flights in package, generally indicates that the loss is an aircraft
+                # that is not assigned to a mission and is parked on the ground. There is no need
+                # to remove the aircraft from the ATO as it was never in the ATO in the first place.
+                if len(loss.flight.package.flights) == 0:
+                    continue
+                loss.flight.package.remove_flight(loss.flight)
+                if len(loss.flight.package.flights) == 0:
+                    loss.flight.squadron.coalition.ato.remove_package(
+                        loss.flight.package
+                    )
 
     @staticmethod
     def _commit_pilot_experience(ato: AirTaskingOrder) -> None:
@@ -148,10 +168,21 @@ class MissionResultsProcessor:
                 iads_network.update_network(events)
                 return
 
-    @staticmethod
-    def commit_damaged_runways(debriefing: Debriefing) -> None:
+    def commit_damaged_runways(self, debriefing: Debriefing) -> None:
         for damaged_runway in debriefing.damaged_runways:
             damaged_runway.damage_runway()
+            # Remove any flight in ATO scheduled to take off from the damaged runway.
+            for coalition in self.game.coalitions:
+                for package in coalition.ato.packages:
+                    for flight in package.flights:
+                        if flight.departure.name == damaged_runway.name and isinstance(
+                            flight.state, AtDeparture
+                        ):
+                            flight.package.remove_flight(flight)
+                            if len(flight.package.flights) == 0:
+                                flight.squadron.coalition.ato.remove_package(
+                                    flight.package
+                                )
 
     def commit_captures(self, debriefing: Debriefing, events: GameUpdateEvents) -> None:
         for captured in debriefing.base_captures:

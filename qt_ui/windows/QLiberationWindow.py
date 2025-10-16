@@ -571,7 +571,8 @@ class QLiberationWindow(QMainWindow):
         if state is not TurnState.CONTINUE:
             GameOverDialog(won=state is TurnState.WIN, parent=self).exec()
         else:
-            self.game.pass_turn()
+            if not self.game.settings.turnless_mode:
+                self.game.pass_turn()
             GameUpdateSignal.get_instance().updateGame(self.game)
 
     def open_tgo_info_dialog(self, tgo: TheaterGroundObject) -> None:

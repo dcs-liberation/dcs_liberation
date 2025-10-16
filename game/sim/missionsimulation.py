@@ -7,6 +7,7 @@ from typing import Optional, TYPE_CHECKING
 
 from game.debriefing import Debriefing
 from game.missiongenerator import MissionGenerator
+from game.settings.settings import FastForwardStopCondition, CombatResolutionMethod
 from game.unitmap import UnitMap
 from .aircraftsimulation import AircraftSimulation
 from .missionresultsprocessor import MissionResultsProcessor
@@ -37,12 +38,25 @@ class MissionSimulation:
         self.time = self.game.simulation_time
         self.aircraft_simulation.begin_simulation()
 
-    def tick(self, events: GameUpdateEvents) -> GameUpdateEvents:
+    def tick(
+        self,
+        events: GameUpdateEvents,
+        combat_resolution_method: CombatResolutionMethod,
+        force_continue: bool,
+    ) -> GameUpdateEvents:
         self.time += TICK
         self.game.simulation_time = self.time
         if self.completed:
             raise RuntimeError("Simulation already completed")
-        self.aircraft_simulation.on_game_tick(events, self.time, TICK)
+        if (
+            self.game.settings.fast_forward_stop_condition
+            == FastForwardStopCondition.DISABLED
+        ):
+            events.complete_simulation()
+            return events
+        self.aircraft_simulation.on_game_tick(
+            events, self.time, TICK, combat_resolution_method, force_continue
+        )
         self.completed = events.simulation_complete
         return events
 
@@ -76,6 +90,18 @@ class MissionSimulation:
 
         self.game.save_last_turn_state()
         MissionResultsProcessor(self.game).commit(debriefing, events)
+        if self.game.settings.turnless_mode:
+            # Set completed to False to clear completion of any previous simulation tick.
+            self.completed = False
+            # If running in turnless mode, run sim to calculate planned positions of flights
+            # for the duration of time the DCS mission ran.
+            start_time = copy.deepcopy(self.time)
+            while self.time < start_time + timedelta(
+                seconds=int(debriefing.state_data.simulation_time_seconds)
+            ):
+                # Always skip combat as we are processing results from DCS. Any combat has already
+                # been resolved in-game
+                self.tick(events, CombatResolutionMethod.SKIP, force_continue=True)
 
     def finish(self) -> None:
         self.unit_map = None

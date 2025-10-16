@@ -4,6 +4,7 @@ local WRITESTATE_SCHEDULE_IN_SECONDS = 60
 logger = mist.Logger:new("DCSLiberation", "info")
 logger:info("Check that json.lua is loaded : json = "..tostring(json))
 
+simulation_time_seconds = 0
 crash_events = {} -- killed aircraft will be added via S_EVENT_CRASH event
 dead_events = {} -- killed units will be added via S_EVENT_DEAD event
 unit_lost_events = {} -- killed units will be added via S_EVENT_UNIT_LOST
@@ -43,6 +44,7 @@ function write_state()
         ["destroyed_objects_positions"] = destroyed_objects_positions,
 		["killed_ground_units"] = killed_ground_units,
 		["unit_hit_point_updates"] = unit_hit_point_updates,
+		["simulation_time_seconds"] = simulation_time_seconds
     }
     if not json then
         local message = string.format("Unable to save DCS Liberation state to %s, JSON library is not loaded !", _debriefing_file_location)
@@ -160,6 +162,9 @@ end
 
 activeWeapons = {}
 local function onEvent(event)
+
+	simulation_time_seconds = event.time
+
     if event.id == world.event.S_EVENT_CRASH and event.initiator then
         crash_events[#crash_events + 1] = event.initiator.getName(event.initiator)
         write_state()
