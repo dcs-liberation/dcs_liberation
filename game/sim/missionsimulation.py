@@ -102,6 +102,12 @@ class MissionSimulation:
                 # Always skip combat as we are processing results from DCS. Any combat has already
                 # been resolved in-game
                 self.tick(events, CombatResolutionMethod.SKIP, force_continue=True)
+            self.game.blue.plan_missions(self.game.simulation_time)
+            self.game.red.plan_missions(self.game.simulation_time)
+            self.game.game_stats.update(self.game)
+            # Generate begin_new_turn event which triggers a refresh of the React map screen to
+            # show newly planned missions.
+            events.begin_new_turn()
 
     def finish(self) -> None:
         self.unit_map = None

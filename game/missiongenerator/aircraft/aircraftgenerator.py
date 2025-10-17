@@ -148,7 +148,7 @@ class AircraftGenerator:
                 faction.country,
                 squadron,
                 1,
-                FlightType.BARCAP,
+                FlightType.IDLE,
                 StartType.COLD,
                 divert=None,
             )

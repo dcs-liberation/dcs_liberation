@@ -24,6 +24,7 @@ from game.theater.theatergroundobject import (
     VehicleGroupGroundObject,
 )
 from game.threatzones import ThreatZones
+from game.ato.flighttype import FlightType
 
 if TYPE_CHECKING:
     from game import Game
@@ -77,7 +78,8 @@ class TheaterState(WorldState["TheaterState"]):
             self.threatening_air_defenses.remove(target)
         if target in self.detecting_air_defenses:
             self.detecting_air_defenses.remove(target)
-        self.enemy_air_defenses.remove(target)
+        if target in self.enemy_air_defenses:
+            self.enemy_air_defenses.remove(target)
         self._rebuild_threat_zones()
 
     def eliminate_ship(self, target: NavalGroundObject) -> None:
@@ -85,7 +87,8 @@ class TheaterState(WorldState["TheaterState"]):
             self.threatening_air_defenses.remove(target)
         if target in self.detecting_air_defenses:
             self.detecting_air_defenses.remove(target)
-        self.enemy_ships.remove(target)
+        if target in self.enemy_ships:
+            self.enemy_ships.remove(target)
         self._rebuild_threat_zones()
 
     def has_battle_position(self, target: VehicleGroupGroundObject) -> bool:
@@ -155,21 +158,16 @@ class TheaterState(WorldState["TheaterState"]):
             tracer,
         )
 
-        # Plan enough rounds of CAP that the target has coverage over the expected
-        # mission duration.
-        mission_duration = game.settings.desired_player_mission_duration.total_seconds()
-        barcap_duration = coalition.doctrine.cap.duration.total_seconds()
-        barcap_rounds = math.ceil(mission_duration / barcap_duration)
-
         refueling_targets: list[MissionTarget] = []
         theater_refuling_point = finder.preferred_theater_refueling_control_point()
         if theater_refuling_point is not None:
             refueling_targets.append(theater_refuling_point)
 
-        return TheaterState(
+        theater_state = TheaterState(
             context=context,
             barcaps_needed={
-                cp: barcap_rounds for cp in finder.vulnerable_control_points()
+                cp: cls._barcap_rounds(game, player, now, cp)
+                for cp in finder.vulnerable_control_points()
             },
             active_front_lines=list(finder.front_lines()),
             front_line_stances={f: None for f in finder.front_lines()},
@@ -190,4 +188,63 @@ class TheaterState(WorldState["TheaterState"]):
             strike_targets=list(finder.strike_targets()),
             enemy_barcaps=list(game.theater.control_points_for(not player)),
             threat_zones=game.threat_zone_for(not player),
+        )
+
+        # Look through packages already planned in the ATO and eliminate from the
+        # list of targets.
+        for package in coalition.ato.packages:
+            if isinstance(package.target, NavalGroundObject):
+                theater_state.eliminate_ship(package.target)
+            if package.primary_task == FlightType.BAI and isinstance(
+                package.target, VehicleGroupGroundObject
+            ):
+                theater_state.eliminate_battle_position(package.target)
+            if isinstance(package.target, IadsGroundObject):
+                theater_state.eliminate_air_defense(package.target)
+            if (
+                package.primary_task == FlightType.STRIKE
+                and isinstance(package.target, TheaterGroundObject)
+                and package.target in theater_state.strike_targets
+            ):
+                theater_state.strike_targets.remove(package.target)
+            if package.primary_task == FlightType.AEWC:
+                # If a planned AEWC mission covers the target beyond the planned mission duration, it can safely be removed
+                if (
+                    package.time_over_target + coalition.doctrine.aewc.duration
+                    > now + game.settings.desired_player_mission_duration
+                ) and package.target in theater_state.aewc_targets:
+                    theater_state.aewc_targets.remove(package.target)
+            if (
+                package.primary_task
+                in (
+                    FlightType.OCA_AIRCRAFT,
+                    FlightType.OCA_RUNWAY,
+                )
+                and isinstance(package.target, ControlPoint)
+                and package.target in theater_state.oca_targets
+            ):
+                theater_state.oca_targets.remove(package.target)
+        return theater_state
+
+    @classmethod
+    def _barcap_rounds(
+        cls, game: Game, player: bool, now: datetime, control_point: ControlPoint
+    ) -> int:
+        """Calculate number of additional rounds of CAP required to cover mission duration."""
+        coalition = game.coalition_for(player)
+
+        # Look through ATO for any existing planned CAP missions and calculate last planned CAP end
+        planned_cap_coverage_end_time = now
+        for package in coalition.ato.packages:
+            if package.target == control_point:
+                cap_end_time = (
+                    package.time_over_target + coalition.doctrine.cap.duration
+                )
+                if cap_end_time > planned_cap_coverage_end_time:
+                    planned_cap_coverage_end_time = cap_end_time
+        # When mission is expected to finish
+        mission_end_time = now + game.settings.desired_player_mission_duration
+        return math.ceil(
+            (mission_end_time - planned_cap_coverage_end_time).total_seconds()
+            / coalition.doctrine.cap.duration.total_seconds()
         )

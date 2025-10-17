@@ -6,6 +6,8 @@ max_ingress_distance_nm: 45
 min_ingress_distance_nm: 10
 rendezvous_altitude_ft_msl: 25000
 combat_altitude_ft_msl: 20000
+aewc:
+  duration_minutes: 240
 cap:
   duration_minutes: 30
   min_track_length_nm: 15
