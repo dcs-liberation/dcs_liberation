@@ -38,6 +38,7 @@ from game.radio.channels import (
     HindChannelNamer,
     HipChannelNamer,
     KiowaChannelNamer,
+    FulcrumChannelNamer,
 )
 from game.utils import (
     Distance,
@@ -118,6 +119,7 @@ class RadioConfig:
             "hind": HindChannelNamer,
             "hip": HipChannelNamer,
             "kiowa": KiowaChannelNamer,
+            "fulcrum": FulcrumChannelNamer,
         }[config.get("namer", "default")]
 
 
