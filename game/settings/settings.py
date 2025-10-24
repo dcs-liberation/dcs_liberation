@@ -35,6 +35,7 @@ class FastForwardStopCondition(Enum):
     PLAYER_TAKEOFF = "Player takeoff time"
     PLAYER_TAXI = "Player taxi time"
     PLAYER_STARTUP = "Player startup time"
+    PLAYER_AT_IP = "Player at IP"
     MANUAL = "Manual fast forward control"
 
 
@@ -375,6 +376,7 @@ class Settings:
             "Player startup time": FastForwardStopCondition.PLAYER_STARTUP,
             "Player taxi time": FastForwardStopCondition.PLAYER_TAXI,
             "Player takeoff time": FastForwardStopCondition.PLAYER_TAKEOFF,
+            "Player at IP": FastForwardStopCondition.PLAYER_AT_IP,
             "First contact": FastForwardStopCondition.FIRST_CONTACT,
             "Manual": FastForwardStopCondition.MANUAL,
         },
