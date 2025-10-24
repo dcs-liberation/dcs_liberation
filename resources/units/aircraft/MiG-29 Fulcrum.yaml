@@ -27,9 +27,17 @@ price: 15
 role: Multirole Fighter
 max_range: 150
 variants:
-  MiG-29A Fulcrum-A:
-    display_name: MiG-29A Fulcrum-A (FC3)
+  MIG-29-FULCRUM:
+    display_name: MiG-29A Fulcrum-A
 kneeboard_units: "metric"
+radios:
+  intra_flight: R862
+  inter_flight: R862
+  channels:
+    type: common
+    namer: fulcrum
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1
 tasks:
   BAI: 530
   BARCAP: 370
