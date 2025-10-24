@@ -7,6 +7,7 @@ Saves from 13.x are not compatible with 14.0.0.
 * **[Engine]** Support for DCS 2.9.20 including MiG-29 Fulcrum (full fidelity version).
 * **[Mods]** A4EC mod version updated to 2.3.
 * **[UI]** Allow saving after fast forwarding manually with sim speed controls (--show-sim-speed-controls option).
+* **[UI]** Add new option to fast forward until player is at the IP.
 
 ## Fixes
 
