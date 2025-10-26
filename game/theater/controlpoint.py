@@ -8,6 +8,7 @@ import uuid
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
+from datetime import datetime, MAXYEAR, timedelta
 from enum import Enum, IntEnum, auto, unique
 from functools import cached_property, total_ordering
 from typing import (
@@ -243,43 +244,43 @@ class GroundUnitAllocations:
 @dataclass
 class RunwayStatus:
     damaged: bool = False
-    repair_turns_remaining: Optional[int] = None
+    _repaired_time: Optional[datetime] = None
+    _max_time: datetime = datetime(year=MAXYEAR, month=1, day=1)
 
     def damage(self) -> None:
         self.damaged = True
         # If the runway is already under repair and is damaged again, progress
         # is reset.
-        self.repair_turns_remaining = None
+        self._repaired_time = self._max_time
 
     def repair(self) -> None:
-        self.repair_turns_remaining = None
+        self._repaired_time = None
         self.damaged = False
 
-    def begin_repair(self) -> None:
-        if self.repair_turns_remaining is not None:
+    def begin_repair(self, time: datetime) -> None:
+        if self._repaired_time is not None:
             logging.error("Runway already under repair. Restarting.")
-        self.repair_turns_remaining = 4
-
-    def process_turn(self) -> None:
-        if self.repair_turns_remaining is not None:
-            if self.repair_turns_remaining == 1:
-                self.repair()
-            else:
-                self.repair_turns_remaining -= 1
+        self._repaired_time = time
 
     @property
     def needs_repair(self) -> bool:
-        return self.damaged and self.repair_turns_remaining is None
+        return self.damaged and self._repaired_time == self._max_time
 
     def describe(self) -> str:
         if not self.damaged:
             return "operational"
 
-        turns_remaining = self.repair_turns_remaining
-        if turns_remaining is None:
+        if self._repaired_time == self._max_time:
             return "damaged"
 
-        return f"repairing, {turns_remaining} turns remaining"
+        return f"repairing, ETA {self._repaired_time}"
+
+    def update_repair_status(self, time: datetime) -> None:
+        if self._repaired_time is None:
+            logging.error(f"Runway at {self} is not damaged")
+            return
+        if self._repaired_time < time:
+            self.repair()
 
 
 @total_ordering
@@ -920,11 +921,14 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
     def runway_can_be_repaired(self) -> bool:
         return self.runway_status.needs_repair
 
-    def begin_runway_repair(self) -> None:
+    def begin_runway_repair(self, time: datetime) -> None:
         if not self.runway_can_be_repaired:
             logging.error(f"Cannot repair runway at {self}")
             return
-        self.runway_status.begin_repair()
+        runway_repair_completion_time = (
+            time + self.coalition.faction.runway_repair_duration
+        )
+        self.runway_status.begin_repair(runway_repair_completion_time)
 
     def process_turn(self, game: Game) -> None:
         # We're running at the end of the turn, so the time right now is irrelevant, and
@@ -932,10 +936,6 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         # matter though, because the first thing the start of turn action will do is
         # clear the ATO and replan the airlifts with the correct time.
         self.ground_unit_orders.process(game, game.conditions.start_time)
-
-        runway_status = self.runway_status
-        if runway_status is not None:
-            runway_status.process_turn()
 
         # Process movements for ships control points group
         if self.target_position is not None:

@@ -212,7 +212,7 @@ class QBaseMenu2(QDialog):
             )
             return
 
-        self.cp.begin_runway_repair()
+        self.cp.begin_runway_repair(self.game_model.game.simulation_time)
         self.game_model.game.blue.budget -= RUNWAY_REPAIR_COST
         self.update_repair_button()
         self.update_intel_summary()
