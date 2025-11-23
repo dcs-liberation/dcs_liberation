@@ -281,8 +281,8 @@ class RunwayStatus:
             return
         if self._repaired_time < time:
             self.repair()
-            
-    def is_repairing(self):
+
+    def is_repairing(self) -> bool:
         if not self.damaged:
             return False
         return self._repaired_time == self._max_time
