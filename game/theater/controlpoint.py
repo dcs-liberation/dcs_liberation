@@ -281,6 +281,11 @@ class RunwayStatus:
             return
         if self._repaired_time < time:
             self.repair()
+            
+    def is_repairing(self):
+        if not self.damaged:
+            return False
+        return self._repaired_time == self._max_time
 
 
 @total_ordering
