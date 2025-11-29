@@ -102,7 +102,7 @@ class ProcurementAi:
             if budget < RUNWAY_REPAIR_COST:
                 break
             if control_point.runway_can_be_repaired:
-                control_point.begin_runway_repair()
+                control_point.begin_runway_repair(self.game.simulation_time)
                 budget -= RUNWAY_REPAIR_COST
                 if self.is_player:
                     self.game.message(

@@ -126,6 +126,9 @@ class Faction:
     #: Set to True if the faction has access to countermeasures (chaff and flares).
     countermeasures_available: bool = True
 
+    #: Time needed to repair a runway after damage, defaults to 1 day.
+    runway_repair_duration: datetime.timedelta = datetime.timedelta(days=1)
+
     def has_access_to_dcs_type(self, unit_type: Type[DcsUnitType]) -> bool:
         # Vehicle and Ship Units
         if any(unit_type == u.dcs_unit_type for u in self.accessible_units):
@@ -275,6 +278,10 @@ class Faction:
         )
 
         faction.countermeasures_available = json.get("countermeasures_available", True)
+
+        faction.runway_repair_duration = datetime.timedelta(
+            minutes=json.get("runway_repair_time_minutes", 1440)
+        )
 
         return faction
 

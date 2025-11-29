@@ -212,7 +212,7 @@ class QBaseMenu2(QDialog):
             )
             return
 
-        self.cp.begin_runway_repair()
+        self.cp.begin_runway_repair(self.game_model.game.simulation_time)
         self.game_model.game.blue.budget -= RUNWAY_REPAIR_COST
         self.update_repair_button()
         self.update_intel_summary()
@@ -220,8 +220,7 @@ class QBaseMenu2(QDialog):
 
     def update_repair_button(self) -> None:
         self.repair_button.setVisible(True)
-        turns_remaining = self.cp.runway_status.repair_turns_remaining
-        if self.cp.captured and turns_remaining is not None:
+        if self.cp.captured and self.cp.runway_status.is_repairing():
             self.repair_button.setText("Repairing...")
             self.repair_button.setDisabled(True)
             return
