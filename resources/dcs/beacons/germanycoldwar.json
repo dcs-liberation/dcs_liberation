@@ -1,0 +1,2893 @@
+{
+ "world_0": {
+  "name": "",
+  "callsign": "LUB",
+  "beacon_type": 1,
+  "hertz": 110600000,
+  "channel": null
+ },
+ "world_1": {
+  "name": "Hamburg",
+  "callsign": "HAM",
+  "beacon_type": 5,
+  "hertz": 113100000,
+  "channel": 78
+ },
+ "world_2": {
+  "name": "",
+  "callsign": "HLZ",
+  "beacon_type": 5,
+  "hertz": 117300000,
+  "channel": 120
+ },
+ "world_3": {
+  "name": "",
+  "callsign": "OSN",
+  "beacon_type": 1,
+  "hertz": 114300000,
+  "channel": null
+ },
+ "world_4": {
+  "name": "",
+  "callsign": "COL",
+  "beacon_type": 5,
+  "hertz": 108800000,
+  "channel": null
+ },
+ "world_5": {
+  "name": "",
+  "callsign": "NIE",
+  "beacon_type": 1,
+  "hertz": 116500000,
+  "channel": null
+ },
+ "world_6": {
+  "name": "",
+  "callsign": "WSR",
+  "beacon_type": 5,
+  "hertz": 112900000,
+  "channel": 76
+ },
+ "world_7": {
+  "name": "",
+  "callsign": "WYP",
+  "beacon_type": 1,
+  "hertz": 109600000,
+  "channel": null
+ },
+ "world_8": {
+  "name": "",
+  "callsign": "BKD",
+  "beacon_type": 9,
+  "hertz": 378000,
+  "channel": null
+ },
+ "world_9": {
+  "name": "",
+  "callsign": "KIR",
+  "beacon_type": 5,
+  "hertz": 117500000,
+  "channel": 122
+ },
+ "world_10": {
+  "name": "Fulda",
+  "callsign": "FUL",
+  "beacon_type": 5,
+  "hertz": 112100000,
+  "channel": 58
+ },
+ "world_11": {
+  "name": "",
+  "callsign": "WRB",
+  "beacon_type": 3,
+  "hertz": 115750000,
+  "channel": 104
+ },
+ "world_12": {
+  "name": "",
+  "callsign": "BKD",
+  "beacon_type": 5,
+  "hertz": 117700000,
+  "channel": 124
+ },
+ "world_13": {
+  "name": "",
+  "callsign": "WRB",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 84
+ },
+ "world_14": {
+  "name": "",
+  "callsign": "DLE",
+  "beacon_type": 3,
+  "hertz": 115200000,
+  "channel": 99
+ },
+ "world_15": {
+  "name": "",
+  "callsign": "ROD",
+  "beacon_type": 1,
+  "hertz": 113400000,
+  "channel": null
+ },
+ "world_16": {
+  "name": "Leipzig",
+  "callsign": "LEG",
+  "beacon_type": 3,
+  "hertz": 117200000,
+  "channel": 119
+ },
+ "world_17": {
+  "name": "",
+  "callsign": "LBE",
+  "beacon_type": 3,
+  "hertz": 116350000,
+  "channel": 110
+ },
+ "world_18": {
+  "name": "Nattenheim",
+  "callsign": "NTM",
+  "beacon_type": 5,
+  "hertz": 115300000,
+  "channel": 100
+ },
+ "world_19": {
+  "name": "SOLLING",
+  "callsign": "SOG",
+  "beacon_type": 9,
+  "hertz": 374500,
+  "channel": null
+ },
+ "airfield33_0": {
+  "name": "Bornholm",
+  "callsign": "ROE",
+  "beacon_type": 1,
+  "hertz": 112000000,
+  "channel": null
+ },
+ "airfield33_1": {
+  "name": "Bornholm",
+  "callsign": "IAR",
+  "beacon_type": 14,
+  "hertz": 109350000,
+  "channel": null
+ },
+ "airfield33_2": {
+  "name": "Bornholm",
+  "callsign": "IAR",
+  "beacon_type": 13,
+  "hertz": 109350000,
+  "channel": null
+ },
+ "airfield33_3": {
+  "name": "",
+  "callsign": "IAR",
+  "beacon_type": 3,
+  "hertz": 112000000,
+  "channel": 30
+ },
+ "airfield33_4": {
+  "name": "",
+  "callsign": "FAU",
+  "beacon_type": 9,
+  "hertz": 334000,
+  "channel": null
+ },
+ "airfield33_5": {
+  "name": "Bornholm",
+  "callsign": "IRE",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield33_6": {
+  "name": "Bornholm",
+  "callsign": "IRE",
+  "beacon_type": 13,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield33_7": {
+  "name": "Bornholm",
+  "callsign": "ROE",
+  "beacon_type": 4,
+  "hertz": 112000000,
+  "channel": 57
+ },
+ "airfield34_0": {
+  "name": "Brand",
+  "callsign": "ZP",
+  "beacon_type": 11,
+  "hertz": 360000,
+  "channel": null
+ },
+ "airfield34_1": {
+  "name": "Brand",
+  "callsign": "Z",
+  "beacon_type": 12,
+  "hertz": 735000,
+  "channel": null
+ },
+ "airfield34_2": {
+  "name": "Brand",
+  "callsign": "D",
+  "beacon_type": 12,
+  "hertz": 735000,
+  "channel": null
+ },
+ "airfield34_3": {
+  "name": "Brand",
+  "callsign": "DW",
+  "beacon_type": 11,
+  "hertz": 360000,
+  "channel": null
+ },
+ "airfield34_4": {
+  "name": "Brand",
+  "callsign": "ZB",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 5
+ },
+ "airfield35_0": {
+  "name": "Brandis",
+  "callsign": "C",
+  "beacon_type": 12,
+  "hertz": 483000,
+  "channel": null
+ },
+ "airfield35_1": {
+  "name": "Brandis",
+  "callsign": "CZ",
+  "beacon_type": 11,
+  "hertz": 980000,
+  "channel": null
+ },
+ "airfield36_0": {
+  "name": "Chojna",
+  "callsign": "OJ",
+  "beacon_type": 11,
+  "hertz": 975000,
+  "channel": null
+ },
+ "airfield36_1": {
+  "name": "Chojna",
+  "callsign": "AJ",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 41
+ },
+ "airfield36_2": {
+  "name": "Chojna",
+  "callsign": "AT",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 41
+ },
+ "airfield36_3": {
+  "name": "Chojna",
+  "callsign": "AJ",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 41
+ },
+ "airfield36_4": {
+  "name": "Chojna",
+  "callsign": "AT",
+  "beacon_type": 11,
+  "hertz": 975000,
+  "channel": null
+ },
+ "airfield36_5": {
+  "name": "Chojna",
+  "callsign": "AT",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 41
+ },
+ "airfield36_6": {
+  "name": "Chojna",
+  "callsign": "O",
+  "beacon_type": 12,
+  "hertz": 480000,
+  "channel": null
+ },
+ "airfield36_7": {
+  "name": "Chojna",
+  "callsign": "AT",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 43
+ },
+ "airfield36_8": {
+  "name": "Chojna",
+  "callsign": "A",
+  "beacon_type": 12,
+  "hertz": 480000,
+  "channel": null
+ },
+ "airfield37_0": {
+  "name": "KOLN",
+  "callsign": "DLW",
+  "beacon_type": 13,
+  "hertz": 109100000,
+  "channel": null
+ },
+ "airfield37_1": {
+  "name": "KOLN",
+  "callsign": "IKEN",
+  "beacon_type": 14,
+  "hertz": 111100000,
+  "channel": null
+ },
+ "airfield37_2": {
+  "name": "KOLN",
+  "callsign": "DLW",
+  "beacon_type": 14,
+  "hertz": 109100000,
+  "channel": null
+ },
+ "airfield37_3": {
+  "name": "Cologne",
+  "callsign": "LV",
+  "beacon_type": 11,
+  "hertz": 327000,
+  "channel": null
+ },
+ "airfield37_4": {
+  "name": "",
+  "callsign": "KBO",
+  "beacon_type": 3,
+  "hertz": 112150000,
+  "channel": null
+ },
+ "airfield37_5": {
+  "name": "Cologne",
+  "callsign": "LW",
+  "beacon_type": 11,
+  "hertz": 467000,
+  "channel": null
+ },
+ "airfield37_6": {
+  "name": "KOLN",
+  "callsign": "IKEN",
+  "beacon_type": 13,
+  "hertz": 111100000,
+  "channel": null
+ },
+ "airfield37_7": {
+  "name": "KOLN",
+  "callsign": "IKES",
+  "beacon_type": 13,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield37_8": {
+  "name": "Cologne",
+  "callsign": "LJ",
+  "beacon_type": 11,
+  "hertz": 365000,
+  "channel": null
+ },
+ "airfield37_9": {
+  "name": "KOLN",
+  "callsign": "IKES",
+  "beacon_type": 14,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield38_0": {
+  "name": "Dusseldorf",
+  "callsign": "IDSW",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield38_1": {
+  "name": "Dusseldorf",
+  "callsign": "IDSE",
+  "beacon_type": 13,
+  "hertz": 111500000,
+  "channel": null
+ },
+ "airfield38_2": {
+  "name": "Dusseldorf",
+  "callsign": "DUS",
+  "beacon_type": 1,
+  "hertz": 115150000,
+  "channel": null
+ },
+ "airfield38_3": {
+  "name": "Dusseldorf",
+  "callsign": "IDSW",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield38_4": {
+  "name": "Dusseldorf",
+  "callsign": "LI",
+  "beacon_type": 11,
+  "hertz": 417000,
+  "channel": null
+ },
+ "airfield38_5": {
+  "name": "Dusseldorf",
+  "callsign": "DY",
+  "beacon_type": 11,
+  "hertz": 284500,
+  "channel": null
+ },
+ "airfield38_6": {
+  "name": "Dusseldorf",
+  "callsign": "IDSE",
+  "beacon_type": 14,
+  "hertz": 111500000,
+  "channel": null
+ },
+ "airfield39_0": {
+  "name": "Falkenberg",
+  "callsign": "BL",
+  "beacon_type": 9,
+  "hertz": 462000,
+  "channel": null
+ },
+ "airfield39_1": {
+  "name": "Falkenberg",
+  "callsign": "BL",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 34
+ },
+ "airfield39_2": {
+  "name": "Falkenberg",
+  "callsign": "B",
+  "beacon_type": 9,
+  "hertz": 938000,
+  "channel": null
+ },
+ "airfield39_3": {
+  "name": "Falkenberg",
+  "callsign": "BL",
+  "beacon_type": 9,
+  "hertz": 462000,
+  "channel": null
+ },
+ "airfield39_4": {
+  "name": "Falkenberg",
+  "callsign": "S",
+  "beacon_type": 9,
+  "hertz": 938000,
+  "channel": null
+ },
+ "airfield40_0": {
+  "name": "Heidelberg ",
+  "callsign": "HDL",
+  "beacon_type": 9,
+  "hertz": 417000,
+  "channel": null
+ },
+ "airfield41_0": {
+  "name": "Kastrup",
+  "callsign": "OXS",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield41_1": {
+  "name": "Kastrup",
+  "callsign": "KLK",
+  "beacon_type": 14,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield41_2": {
+  "name": "Kastrup",
+  "callsign": "CH",
+  "beacon_type": 13,
+  "hertz": 110500000,
+  "channel": null
+ },
+ "airfield41_3": {
+  "name": "Kastrup",
+  "callsign": "KLK",
+  "beacon_type": 13,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield41_4": {
+  "name": "Kastrup",
+  "callsign": "OY",
+  "beacon_type": 13,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield41_5": {
+  "name": "Kastrup",
+  "callsign": "KAS",
+  "beacon_type": 1,
+  "hertz": 112500000,
+  "channel": null
+ },
+ "airfield41_6": {
+  "name": "Kastrup",
+  "callsign": "KA",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield41_7": {
+  "name": "Kastrup",
+  "callsign": "KAS",
+  "beacon_type": 5,
+  "hertz": 112500000,
+  "channel": 72
+ },
+ "airfield41_8": {
+  "name": "Kastrup",
+  "callsign": "OXS",
+  "beacon_type": 13,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield41_9": {
+  "name": "Kastrup",
+  "callsign": "NE",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield41_10": {
+  "name": "Kastrup",
+  "callsign": "CH",
+  "beacon_type": 14,
+  "hertz": 110500000,
+  "channel": null
+ },
+ "airfield41_11": {
+  "name": "Kastrup",
+  "callsign": "OY",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield41_12": {
+  "name": "KASTRUP",
+  "callsign": "KAS",
+  "beacon_type": 9,
+  "hertz": 340000,
+  "channel": null
+ },
+ "airfield41_13": {
+  "name": "Kastrup",
+  "callsign": "KA",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield41_14": {
+  "name": "Kastrup",
+  "callsign": "NE",
+  "beacon_type": 13,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield41_15": {
+  "name": "Kastrup",
+  "callsign": "KLK",
+  "beacon_type": 2,
+  "hertz": 110900000,
+  "channel": 46
+ },
+ "airfield41_16": {
+  "name": "Kastrup",
+  "callsign": "CH",
+  "beacon_type": 2,
+  "hertz": 110500000,
+  "channel": 42
+ },
+ "airfield41_17": {
+  "name": "Kastrup",
+  "callsign": "KA",
+  "beacon_type": 2,
+  "hertz": 109900000,
+  "channel": 36
+ },
+ "airfield41_18": {
+  "name": "Kastrup",
+  "callsign": "OXS",
+  "beacon_type": 2,
+  "hertz": 110500000,
+  "channel": 32
+ },
+ "airfield41_19": {
+  "name": "Kastrup",
+  "callsign": "OY",
+  "beacon_type": 2,
+  "hertz": 108900000,
+  "channel": 26
+ },
+ "airfield41_20": {
+  "name": "Kastrup",
+  "callsign": "NE",
+  "beacon_type": 2,
+  "hertz": 109300000,
+  "channel": 30
+ },
+ "airfield42_0": {
+  "name": "Kiel",
+  "callsign": "IKHE",
+  "beacon_type": 13,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield42_1": {
+  "name": "Kiel",
+  "callsign": "KHD",
+  "beacon_type": 2,
+  "hertz": null,
+  "channel": 109
+ },
+ "airfield42_2": {
+  "name": "Kiel",
+  "callsign": "IKHE",
+  "beacon_type": 14,
+  "hertz": 109550000,
+  "channel": null
+ },
+ "airfield42_3": {
+  "name": "Kiel",
+  "callsign": "KIL",
+  "beacon_type": 9,
+  "hertz": 383500,
+  "channel": null
+ },
+ "airfield42_4": {
+  "name": "Kiel",
+  "callsign": "IKHW",
+  "beacon_type": 13,
+  "hertz": 109550000,
+  "channel": null
+ },
+ "airfield42_5": {
+  "name": "Kiel",
+  "callsign": "IKHW",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield44_0": {
+  "name": "Finthen",
+  "callsign": "FY",
+  "beacon_type": 9,
+  "hertz": 470000,
+  "channel": null
+ },
+ "airfield45_0": {
+  "name": "Sturup",
+  "callsign": "SMS",
+  "beacon_type": 13,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield45_1": {
+  "name": "Sturup",
+  "callsign": "SUP",
+  "beacon_type": 1,
+  "hertz": 113000000,
+  "channel": 77
+ },
+ "airfield45_2": {
+  "name": "Sturup",
+  "callsign": "NM",
+  "beacon_type": 14,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield45_3": {
+  "name": "Sturup",
+  "callsign": "NS",
+  "beacon_type": 9,
+  "hertz": 351000,
+  "channel": null
+ },
+ "airfield45_4": {
+  "name": "Sturup",
+  "callsign": "SMS",
+  "beacon_type": 13,
+  "hertz": 108100000,
+  "channel": null
+ },
+ "airfield45_5": {
+  "name": "Sturup",
+  "callsign": "SM",
+  "beacon_type": 14,
+  "hertz": 108100000,
+  "channel": null
+ },
+ "airfield45_6": {
+  "name": "Sturup",
+  "callsign": "SS",
+  "beacon_type": 9,
+  "hertz": 420000,
+  "channel": null
+ },
+ "airfield46_0": {
+  "name": "Marxwalde",
+  "callsign": "BU",
+  "beacon_type": 9,
+  "hertz": 472000,
+  "channel": 0
+ },
+ "airfield46_1": {
+  "name": "Marxwalde",
+  "callsign": "NE",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 29
+ },
+ "airfield46_2": {
+  "name": "Marxwalde",
+  "callsign": "BU",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 29
+ },
+ "airfield46_3": {
+  "name": "Marxwalde",
+  "callsign": "BU",
+  "beacon_type": 16,
+  "hertz": 110900000,
+  "channel": 29
+ },
+ "airfield46_4": {
+  "name": "Marxwalde",
+  "callsign": "U",
+  "beacon_type": 9,
+  "hertz": 958000,
+  "channel": 0
+ },
+ "airfield46_5": {
+  "name": "Marxwalde",
+  "callsign": "UB",
+  "beacon_type": 9,
+  "hertz": 472000,
+  "channel": 0
+ },
+ "airfield46_6": {
+  "name": "Marxwalde",
+  "callsign": "BU",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 31
+ },
+ "airfield46_7": {
+  "name": "Marxwalde",
+  "callsign": "B",
+  "beacon_type": 9,
+  "hertz": 958000,
+  "channel": 0
+ },
+ "airfield46_8": {
+  "name": "Marxwalde",
+  "callsign": "NE",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 29
+ },
+ "airfield47_0": {
+  "name": "Nordholz",
+  "callsign": "",
+  "beacon_type": 13,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield47_1": {
+  "name": "Nordholz",
+  "callsign": "NDO",
+  "beacon_type": 22,
+  "hertz": null,
+  "channel": 118
+ },
+ "airfield47_2": {
+  "name": "Nordholz",
+  "callsign": "",
+  "beacon_type": 14,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield47_3": {
+  "name": "Nordholz",
+  "callsign": "NDO",
+  "beacon_type": 9,
+  "hertz": 372000,
+  "channel": null
+ },
+ "airfield48_0": {
+  "name": "Norvenich",
+  "callsign": "NOR",
+  "beacon_type": 5,
+  "hertz": 116200000,
+  "channel": 77
+ },
+ "airfield51_0": {
+  "name": "Obermehler Schlotheim",
+  "callsign": "QI",
+  "beacon_type": 11,
+  "hertz": 445000,
+  "channel": null
+ },
+ "airfield51_1": {
+  "name": "Obermehler Schlotheim",
+  "callsign": "Q",
+  "beacon_type": 12,
+  "hertz": 217000,
+  "channel": null
+ },
+ "airfield49_0": {
+  "name": "Oranienburg",
+  "callsign": "H",
+  "beacon_type": 12,
+  "hertz": 286000,
+  "channel": null
+ },
+ "airfield49_1": {
+  "name": "Oranienburg",
+  "callsign": "HL",
+  "beacon_type": 11,
+  "hertz": 589000,
+  "channel": null
+ },
+ "airfield50_0": {
+  "name": "Szczecin Goleniow",
+  "callsign": "C",
+  "beacon_type": 12,
+  "hertz": 285000,
+  "channel": null
+ },
+ "airfield50_1": {
+  "name": "Szczecin Goleniow",
+  "callsign": "C",
+  "beacon_type": 12,
+  "hertz": 285000,
+  "channel": null
+ },
+ "airfield50_2": {
+  "name": "Szczecin Goleniow",
+  "callsign": "CL",
+  "beacon_type": 11,
+  "hertz": 589000,
+  "channel": null
+ },
+ "airfield50_3": {
+  "name": "Szczecin Goleniow",
+  "callsign": "CL",
+  "beacon_type": 11,
+  "hertz": 589000,
+  "channel": null
+ },
+ "airfield112_0": {
+  "name": "Gardelegen",
+  "callsign": "GN",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 36
+ },
+ "airfield157_0": {
+  "name": "Allstedt",
+  "callsign": "AL",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 38
+ },
+ "airfield157_1": {
+  "name": "Allstedt",
+  "callsign": "L",
+  "beacon_type": 9,
+  "hertz": 740000,
+  "channel": 0
+ },
+ "airfield157_2": {
+  "name": "Allstedt",
+  "callsign": "LU",
+  "beacon_type": 9,
+  "hertz": 365000,
+  "channel": 0
+ },
+ "airfield157_3": {
+  "name": "Allstedt",
+  "callsign": "BZ",
+  "beacon_type": 9,
+  "hertz": 365000,
+  "channel": 0
+ },
+ "airfield157_4": {
+  "name": "Allstedt",
+  "callsign": "B",
+  "beacon_type": 9,
+  "hertz": 740000,
+  "channel": 0
+ },
+ "airfield157_5": {
+  "name": "Allstedt",
+  "callsign": "CLH",
+  "beacon_type": 9,
+  "hertz": 419000,
+  "channel": null
+ },
+ "airfield2_0": {
+  "name": "AltesLager",
+  "callsign": "L",
+  "beacon_type": 12,
+  "hertz": 645000,
+  "channel": null
+ },
+ "airfield2_1": {
+  "name": "AltesLager",
+  "callsign": "B",
+  "beacon_type": 12,
+  "hertz": 645000,
+  "channel": null
+ },
+ "airfield2_2": {
+  "name": "AltesLager",
+  "callsign": "LG",
+  "beacon_type": 11,
+  "hertz": 313000,
+  "channel": null
+ },
+ "airfield2_3": {
+  "name": "AltesLager",
+  "callsign": "AR",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 24
+ },
+ "airfield2_4": {
+  "name": "AltesLager",
+  "callsign": "BM",
+  "beacon_type": 11,
+  "hertz": 313000,
+  "channel": null
+ },
+ "airfield164_0": {
+  "name": "Bindersleben",
+  "callsign": "RF",
+  "beacon_type": 11,
+  "hertz": 410000,
+  "channel": null
+ },
+ "airfield164_1": {
+  "name": "Bindersleben",
+  "callsign": "IRF",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield164_2": {
+  "name": "Bindersleben",
+  "callsign": "R",
+  "beacon_type": 12,
+  "hertz": 330000,
+  "channel": null
+ },
+ "airfield164_3": {
+  "name": "Bindersleben",
+  "callsign": "F",
+  "beacon_type": 12,
+  "hertz": 330000,
+  "channel": null
+ },
+ "airfield164_4": {
+  "name": "Bindersleben",
+  "callsign": "FR",
+  "beacon_type": 11,
+  "hertz": 306000,
+  "channel": null
+ },
+ "airfield164_5": {
+  "name": "Bindersleben",
+  "callsign": "IRF",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield200_0": {
+  "name": "Bitburg",
+  "callsign": "IBIT",
+  "beacon_type": 13,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield200_1": {
+  "name": "Bitburg",
+  "callsign": "IBIT",
+  "beacon_type": 14,
+  "hertz": 111900000,
+  "channel": null
+ },
+ "airfield200_2": {
+  "name": "Bitburg",
+  "callsign": "BIT",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 56
+ },
+ "airfield107_0": {
+  "name": "Wolfsburg",
+  "callsign": "BWG",
+  "beacon_type": 14,
+  "hertz": 111100000,
+  "channel": null
+ },
+ "airfield107_1": {
+  "name": "Wolfsburg",
+  "callsign": "BRU",
+  "beacon_type": 11,
+  "hertz": 427000,
+  "channel": null
+ },
+ "airfield107_2": {
+  "name": "Wolfsburg",
+  "callsign": "HLI",
+  "beacon_type": 9,
+  "hertz": 403500,
+  "channel": null
+ },
+ "airfield107_3": {
+  "name": "Wolfsburg",
+  "callsign": "BWG",
+  "beacon_type": 13,
+  "hertz": 111100000,
+  "channel": null
+ },
+ "airfield5_0": {
+  "name": "Bremen",
+  "callsign": "IBRW",
+  "beacon_type": 14,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield5_1": {
+  "name": "Bremen",
+  "callsign": "IBRE",
+  "beacon_type": 13,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield5_2": {
+  "name": "Bremen",
+  "callsign": "BMN",
+  "beacon_type": 11,
+  "hertz": 346500,
+  "channel": null
+ },
+ "airfield5_3": {
+  "name": "Bremen",
+  "callsign": "BMN",
+  "beacon_type": 3,
+  "hertz": 117450000,
+  "channel": 121
+ },
+ "airfield5_4": {
+  "name": "Bremen",
+  "callsign": "IBRW",
+  "beacon_type": 13,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield5_5": {
+  "name": "Bremen",
+  "callsign": "BW",
+  "beacon_type": 11,
+  "hertz": 276500,
+  "channel": null
+ },
+ "airfield5_6": {
+  "name": "Bremen",
+  "callsign": "IBRE",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield6_0": {
+  "name": "Briest",
+  "callsign": "UT",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 9
+ },
+ "airfield235_0": {
+  "name": "BUCHEL",
+  "callsign": "BUE",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 118
+ },
+ "airfield7_0": {
+  "name": "Platz",
+  "callsign": "BYC",
+  "beacon_type": 9,
+  "hertz": 368000,
+  "channel": null
+ },
+ "airfield8_0": {
+  "name": "Celle",
+  "callsign": "CEL",
+  "beacon_type": 9,
+  "hertz": 311000,
+  "channel": null
+ },
+ "airfield9_0": {
+  "name": "Cochstedt",
+  "callsign": "S",
+  "beacon_type": 11,
+  "hertz": 950000,
+  "channel": null
+ },
+ "airfield9_1": {
+  "name": "Cochstedt",
+  "callsign": "SL",
+  "beacon_type": 12,
+  "hertz": 470000,
+  "channel": null
+ },
+ "airfield10_0": {
+  "name": "Damgarten",
+  "callsign": "MA",
+  "beacon_type": 11,
+  "hertz": 668000,
+  "channel": null
+ },
+ "airfield10_1": {
+  "name": "Damgarten",
+  "callsign": "N",
+  "beacon_type": 12,
+  "hertz": 325000,
+  "channel": null
+ },
+ "airfield10_2": {
+  "name": "Damgarten",
+  "callsign": "MA",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 34
+ },
+ "airfield10_3": {
+  "name": "Damgarten",
+  "callsign": "MA",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 34
+ },
+ "airfield10_4": {
+  "name": "Damgarten",
+  "callsign": "MO",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 34
+ },
+ "airfield10_5": {
+  "name": "Damgarten",
+  "callsign": "M",
+  "beacon_type": 12,
+  "hertz": 325000,
+  "channel": null
+ },
+ "airfield10_6": {
+  "name": "Damgarten",
+  "callsign": "MA",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 32
+ },
+ "airfield10_7": {
+  "name": "Damgarten",
+  "callsign": "NW",
+  "beacon_type": 11,
+  "hertz": 668000,
+  "channel": null
+ },
+ "airfield10_8": {
+  "name": "Damgarten",
+  "callsign": "MO",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 34
+ },
+ "airfield83_0": {
+  "name": "Dessau",
+  "callsign": "W",
+  "beacon_type": 11,
+  "hertz": 668000,
+  "channel": null
+ },
+ "airfield83_1": {
+  "name": "Dessau",
+  "callsign": "WN",
+  "beacon_type": 12,
+  "hertz": 765000,
+  "channel": null
+ },
+ "airfield11_0": {
+  "name": "Fassberg",
+  "callsign": "FSB",
+  "beacon_type": 9,
+  "hertz": 284000,
+  "channel": null
+ },
+ "airfield11_1": {
+  "name": "Fassberg",
+  "callsign": "FSB",
+  "beacon_type": 5,
+  "hertz": 110000000,
+  "channel": 95
+ },
+ "airfield12_0": {
+  "name": "Finow",
+  "callsign": "R",
+  "beacon_type": 12,
+  "hertz": 895000,
+  "channel": null
+ },
+ "airfield12_1": {
+  "name": "Finow",
+  "callsign": "OM",
+  "beacon_type": 11,
+  "hertz": 442000,
+  "channel": null
+ },
+ "airfield12_2": {
+  "name": "Finow",
+  "callsign": "RG",
+  "beacon_type": 11,
+  "hertz": 442000,
+  "channel": null
+ },
+ "airfield12_3": {
+  "name": "Finow",
+  "callsign": "O",
+  "beacon_type": 12,
+  "hertz": 895000,
+  "channel": null
+ },
+ "airfield163_0": {
+  "name": "Frankfurt",
+  "callsign": "IFM",
+  "beacon_type": 13,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield163_1": {
+  "name": "Frankfurt",
+  "callsign": "IFM",
+  "beacon_type": 14,
+  "hertz": 110100000,
+  "channel": null
+ },
+ "airfield163_2": {
+  "name": "Frankfurt",
+  "callsign": "FR",
+  "beacon_type": 9,
+  "hertz": 297000,
+  "channel": null
+ },
+ "airfield163_3": {
+  "name": "Frankfurt",
+  "callsign": "DLF",
+  "beacon_type": 14,
+  "hertz": 111100000,
+  "channel": null
+ },
+ "airfield163_4": {
+  "name": "Frankfurt",
+  "callsign": "DLF",
+  "beacon_type": 13,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield163_5": {
+  "name": "Frankfurt",
+  "callsign": "FW",
+  "beacon_type": 9,
+  "hertz": 382000,
+  "channel": null
+ },
+ "airfield163_6": {
+  "name": "Frankfurt",
+  "callsign": "FFM",
+  "beacon_type": 5,
+  "hertz": 114200000,
+  "channel": 89
+ },
+ "airfield163_7": {
+  "name": "Frankfurt",
+  "callsign": "RHM",
+  "beacon_type": 14,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield163_8": {
+  "name": "Frankfurt",
+  "callsign": "RHM",
+  "beacon_type": 13,
+  "hertz": 110100000,
+  "channel": null
+ },
+ "airfield163_9": {
+  "name": "Frankfurt",
+  "callsign": "IRF",
+  "beacon_type": 13,
+  "hertz": 111100000,
+  "channel": null
+ },
+ "airfield163_10": {
+  "name": "Frankfurt",
+  "callsign": "IRF",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield163_11": {
+  "name": "Frankfurt",
+  "callsign": "FFM",
+  "beacon_type": 9,
+  "hertz": 320000,
+  "channel": null
+ },
+ "airfield154_0": {
+  "name": "Fritzlar",
+  "callsign": "FTZ",
+  "beacon_type": 9,
+  "hertz": 468000,
+  "channel": null
+ },
+ "airfield166_0": {
+  "name": "Fulda",
+  "callsign": "FDA",
+  "beacon_type": 9,
+  "hertz": 441000,
+  "channel": null
+ },
+ "airfield13_0": {
+  "name": "Garz",
+  "callsign": "GZ",
+  "beacon_type": 11,
+  "hertz": 679500,
+  "channel": null
+ },
+ "airfield13_1": {
+  "name": "Garz",
+  "callsign": "GZ",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 38
+ },
+ "airfield13_2": {
+  "name": "Garz",
+  "callsign": "GZ",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 38
+ },
+ "airfield13_3": {
+  "name": "Garz",
+  "callsign": "G",
+  "beacon_type": 12,
+  "hertz": 330000,
+  "channel": null
+ },
+ "airfield13_4": {
+  "name": "Garz",
+  "callsign": "ZG",
+  "beacon_type": 11,
+  "hertz": 679500,
+  "channel": null
+ },
+ "airfield13_5": {
+  "name": "Garz",
+  "callsign": "G",
+  "beacon_type": 12,
+  "hertz": 330000,
+  "channel": null
+ },
+ "airfield13_6": {
+  "name": "Garz",
+  "callsign": "GA",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 38
+ },
+ "airfield13_7": {
+  "name": "Garz",
+  "callsign": "GA",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 38
+ },
+ "airfield14_0": {
+  "name": "Gatow",
+  "callsign": "GWW",
+  "beacon_type": 13,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield14_1": {
+  "name": "Gatow",
+  "callsign": "HVL",
+  "beacon_type": 3,
+  "hertz": 113300000,
+  "channel": null
+ },
+ "airfield14_2": {
+  "name": "Gatow",
+  "callsign": "GW",
+  "beacon_type": 9,
+  "hertz": 370500,
+  "channel": null
+ },
+ "airfield14_3": {
+  "name": "Gatow",
+  "callsign": "SLR",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield159_0": {
+  "name": "Giebelstadt",
+  "callsign": "GBL",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 47
+ },
+ "airfield159_1": {
+  "name": "Giebelstadt",
+  "callsign": "GBL",
+  "beacon_type": 9,
+  "hertz": 507000,
+  "channel": null
+ },
+ "airfield16_0": {
+  "name": "Gutersloh",
+  "callsign": "GS",
+  "beacon_type": 13,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield16_1": {
+  "name": "Gutersloh",
+  "callsign": "GSO",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 108
+ },
+ "airfield16_2": {
+  "name": "Gutersloh",
+  "callsign": "GS",
+  "beacon_type": 14,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield16_3": {
+  "name": "Gutersloh",
+  "callsign": "GS",
+  "beacon_type": 9,
+  "hertz": 412000,
+  "channel": null
+ },
+ "airfield155_0": {
+  "name": "Hahn",
+  "callsign": "HAH",
+  "beacon_type": 4,
+  "hertz": 482000000,
+  "channel": 24
+ },
+ "airfield155_1": {
+  "name": "Hahn",
+  "callsign": "HAH",
+  "beacon_type": 11,
+  "hertz": 482000,
+  "channel": null
+ },
+ "airfield155_2": {
+  "name": "Hahn",
+  "callsign": "IHAW",
+  "beacon_type": 13,
+  "hertz": 111300000,
+  "channel": null
+ },
+ "airfield155_3": {
+  "name": "Hahn",
+  "callsign": "IHAW",
+  "beacon_type": 14,
+  "hertz": 111300000,
+  "channel": null
+ },
+ "airfield155_4": {
+  "name": "Hahn",
+  "callsign": "IHAE",
+  "beacon_type": 13,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield155_5": {
+  "name": "Hahn",
+  "callsign": "IHAE",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield155_6": {
+  "name": "Hahn",
+  "callsign": "HAH",
+  "beacon_type": 1,
+  "hertz": 113000000,
+  "channel": null
+ },
+ "airfield17_0": {
+  "name": "Hamburg",
+  "callsign": "FU",
+  "beacon_type": 11,
+  "hertz": 350500,
+  "channel": null
+ },
+ "airfield17_1": {
+  "name": "Hamburg",
+  "callsign": "IHHN",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield17_2": {
+  "name": "Hamburg",
+  "callsign": "IHHS",
+  "beacon_type": 13,
+  "hertz": 111350000,
+  "channel": null
+ },
+ "airfield17_3": {
+  "name": "Hamburg",
+  "callsign": "GT",
+  "beacon_type": 11,
+  "hertz": 323000,
+  "channel": null
+ },
+ "airfield17_4": {
+  "name": "Hamburg",
+  "callsign": "IHHN",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield17_5": {
+  "name": "Hamburg",
+  "callsign": "IHHW",
+  "beacon_type": 14,
+  "hertz": 111500000,
+  "channel": null
+ },
+ "airfield17_6": {
+  "name": "Hamburg",
+  "callsign": "HAM",
+  "beacon_type": 11,
+  "hertz": 339000,
+  "channel": null
+ },
+ "airfield17_7": {
+  "name": "Hamburg",
+  "callsign": "IHHS",
+  "beacon_type": 14,
+  "hertz": 111350000,
+  "channel": null
+ },
+ "airfield17_8": {
+  "name": "Hamburg",
+  "callsign": "ALF",
+  "beacon_type": 3,
+  "hertz": 115800000,
+  "channel": 105
+ },
+ "airfield17_9": {
+  "name": "Hamburg",
+  "callsign": "IHHE",
+  "beacon_type": 13,
+  "hertz": 110500000,
+  "channel": null
+ },
+ "airfield17_10": {
+  "name": "Hamburg",
+  "callsign": "IHHE",
+  "beacon_type": 14,
+  "hertz": 110500000,
+  "channel": null
+ },
+ "airfield17_11": {
+  "name": "Hamburg",
+  "callsign": "IHHW",
+  "beacon_type": 13,
+  "hertz": 111500000,
+  "channel": null
+ },
+ "airfield18_0": {
+  "name": "Finkenwerder",
+  "callsign": "IHFE",
+  "beacon_type": 14,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield18_1": {
+  "name": "Finkenwerder",
+  "callsign": "IHFE",
+  "beacon_type": 13,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield18_2": {
+  "name": "Finkenwerder",
+  "callsign": "IHFW",
+  "beacon_type": 13,
+  "hertz": 108500000,
+  "channel": null
+ },
+ "airfield18_3": {
+  "name": "Finkenwerder",
+  "callsign": "IHFW",
+  "beacon_type": 14,
+  "hertz": 108500000,
+  "channel": null
+ },
+ "airfield19_0": {
+  "name": "Hannover",
+  "callsign": "SLR",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield19_1": {
+  "name": "Hannover",
+  "callsign": "HAD",
+  "beacon_type": 2,
+  "hertz": null,
+  "channel": 86
+ },
+ "airfield19_2": {
+  "name": "Hannover",
+  "callsign": "HW",
+  "beacon_type": 9,
+  "hertz": 358000,
+  "channel": null
+ },
+ "airfield19_3": {
+  "name": "Hannover",
+  "callsign": "HA",
+  "beacon_type": 9,
+  "hertz": 320000,
+  "channel": null
+ },
+ "airfield19_4": {
+  "name": "Hannover",
+  "callsign": "IHSW",
+  "beacon_type": 13,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield19_5": {
+  "name": "Hannover",
+  "callsign": "IHNW",
+  "beacon_type": 13,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield19_6": {
+  "name": "Hannover",
+  "callsign": "IHSE",
+  "beacon_type": 13,
+  "hertz": 108700000,
+  "channel": null
+ },
+ "airfield19_7": {
+  "name": "Hannover",
+  "callsign": "PLG",
+  "beacon_type": 14,
+  "hertz": 108700000,
+  "channel": null
+ },
+ "airfield19_8": {
+  "name": "Hannover",
+  "callsign": "SLR",
+  "beacon_type": 14,
+  "hertz": 108900000,
+  "channel": null
+ },
+ "airfield19_9": {
+  "name": "Hannover",
+  "callsign": "HAE",
+  "beacon_type": 9,
+  "hertz": 332000,
+  "channel": null
+ },
+ "airfield19_10": {
+  "name": "Hannover",
+  "callsign": "IHNE",
+  "beacon_type": 13,
+  "hertz": 108300000,
+  "channel": null
+ },
+ "airfield19_11": {
+  "name": "Hannover",
+  "callsign": "PLG",
+  "beacon_type": 14,
+  "hertz": 108300000,
+  "channel": null
+ },
+ "airfield118_0": {
+  "name": "Holzdorf",
+  "callsign": "HX",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 31
+ },
+ "airfield118_1": {
+  "name": "Holzdorf",
+  "callsign": "HX",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 33
+ },
+ "airfield118_2": {
+  "name": "Holzdorf",
+  "callsign": "XH",
+  "beacon_type": 11,
+  "hertz": 609500,
+  "channel": null
+ },
+ "airfield118_3": {
+  "name": "Holzdorf",
+  "callsign": "HO",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 31
+ },
+ "airfield118_4": {
+  "name": "Holzdorf",
+  "callsign": "HX",
+  "beacon_type": 11,
+  "hertz": 609500,
+  "channel": null
+ },
+ "airfield118_5": {
+  "name": "Holzdorf",
+  "callsign": "HO",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 31
+ },
+ "airfield118_6": {
+  "name": "Holzdorf",
+  "callsign": "HX",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 31
+ },
+ "airfield118_7": {
+  "name": "Holzdorf",
+  "callsign": "X",
+  "beacon_type": 12,
+  "hertz": 295000,
+  "channel": null
+ },
+ "airfield118_8": {
+  "name": "Holzdorf",
+  "callsign": "H",
+  "beacon_type": 12,
+  "hertz": 295000,
+  "channel": null
+ },
+ "airfield82_0": {
+  "name": "Kothen",
+  "callsign": "GX",
+  "beacon_type": 11,
+  "hertz": 350000,
+  "channel": null
+ },
+ "airfield82_1": {
+  "name": "Kothen",
+  "callsign": "KT",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 35
+ },
+ "airfield82_2": {
+  "name": "Kothen",
+  "callsign": "RC",
+  "beacon_type": 11,
+  "hertz": 350000,
+  "channel": null
+ },
+ "airfield82_3": {
+  "name": "Kothen",
+  "callsign": "R",
+  "beacon_type": 12,
+  "hertz": 718000,
+  "channel": null
+ },
+ "airfield82_4": {
+  "name": "Kothen",
+  "callsign": "G",
+  "beacon_type": 12,
+  "hertz": 718000,
+  "channel": null
+ },
+ "airfield20_0": {
+  "name": "Laage",
+  "callsign": "R",
+  "beacon_type": 12,
+  "hertz": 976000,
+  "channel": null
+ },
+ "airfield20_1": {
+  "name": "Laage",
+  "callsign": "RL",
+  "beacon_type": 11,
+  "hertz": 1247000,
+  "channel": null
+ },
+ "airfield20_2": {
+  "name": "Laage",
+  "callsign": "LR",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 38
+ },
+ "airfield20_3": {
+  "name": "Laage",
+  "callsign": "L",
+  "beacon_type": 12,
+  "hertz": 976000,
+  "channel": null
+ },
+ "airfield20_4": {
+  "name": "Laage",
+  "callsign": "LR",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 40
+ },
+ "airfield20_5": {
+  "name": "Laage",
+  "callsign": "LR",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 38
+ },
+ "airfield20_6": {
+  "name": "Laage",
+  "callsign": "LR",
+  "beacon_type": 11,
+  "hertz": 1247000,
+  "channel": null
+ },
+ "airfield21_0": {
+  "name": "Lerz",
+  "callsign": "U",
+  "beacon_type": 12,
+  "hertz": 476000,
+  "channel": null
+ },
+ "airfield21_1": {
+  "name": "Lerz",
+  "callsign": "BA",
+  "beacon_type": 11,
+  "hertz": 965000,
+  "channel": null
+ },
+ "airfield21_2": {
+  "name": "Lerz",
+  "callsign": "LZ",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 37
+ },
+ "airfield21_3": {
+  "name": "Lerz",
+  "callsign": "BA",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 39
+ },
+ "airfield21_4": {
+  "name": "Lerz",
+  "callsign": "B",
+  "beacon_type": 12,
+  "hertz": 476000,
+  "channel": null
+ },
+ "airfield21_5": {
+  "name": "Lerz",
+  "callsign": "LZ",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 39
+ },
+ "airfield21_6": {
+  "name": "Lerz",
+  "callsign": "LZ",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 39
+ },
+ "airfield21_7": {
+  "name": "Lerz",
+  "callsign": "UK",
+  "beacon_type": 11,
+  "hertz": 965000,
+  "channel": null
+ },
+ "airfield21_8": {
+  "name": "Lerz",
+  "callsign": "BA",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 39
+ },
+ "airfield171_0": {
+  "name": "Leipzig",
+  "callsign": "IMA",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield171_1": {
+  "name": "Leipzig",
+  "callsign": "SK",
+  "beacon_type": 11,
+  "hertz": 446000,
+  "channel": null
+ },
+ "airfield171_2": {
+  "name": "Leipzig",
+  "callsign": "IMA",
+  "beacon_type": 13,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield171_3": {
+  "name": "Leipzig",
+  "callsign": "M",
+  "beacon_type": 12,
+  "hertz": 425000,
+  "channel": null
+ },
+ "airfield171_4": {
+  "name": "Leipzig",
+  "callsign": "S",
+  "beacon_type": 12,
+  "hertz": 425000,
+  "channel": null
+ },
+ "airfield171_5": {
+  "name": "Leipzig",
+  "callsign": "MA",
+  "beacon_type": 11,
+  "hertz": 357000,
+  "channel": null
+ },
+ "airfield236_0": {
+  "name": "Mockau",
+  "callsign": "LG",
+  "beacon_type": 11,
+  "hertz": 335000,
+  "channel": null
+ },
+ "airfield236_1": {
+  "name": "Mockau",
+  "callsign": "G",
+  "beacon_type": 12,
+  "hertz": 426000,
+  "channel": null
+ },
+ "airfield236_2": {
+  "name": "Mockau",
+  "callsign": "L",
+  "beacon_type": 12,
+  "hertz": 426000,
+  "channel": null
+ },
+ "airfield81_0": {
+  "name": "Lubeck",
+  "callsign": "LYE",
+  "beacon_type": 9,
+  "hertz": 394000,
+  "channel": null
+ },
+ "airfield22_0": {
+  "name": "Mahlwinkel",
+  "callsign": "ML",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 8
+ },
+ "airfield22_1": {
+  "name": "Mahlwinkel",
+  "callsign": "ML",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 8
+ },
+ "airfield22_2": {
+  "name": "Mahlwinkel",
+  "callsign": "MK",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 8
+ },
+ "airfield22_3": {
+  "name": "Mahlwinkel",
+  "callsign": "NU",
+  "beacon_type": 11,
+  "hertz": 620000,
+  "channel": null
+ },
+ "airfield22_4": {
+  "name": "Mahlwinkel",
+  "callsign": "MK",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 8
+ },
+ "airfield22_5": {
+  "name": "Mahlwinkel",
+  "callsign": "MK",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 6
+ },
+ "airfield22_6": {
+  "name": "Mahlwinkel",
+  "callsign": "ZW",
+  "beacon_type": 11,
+  "hertz": 620000,
+  "channel": null
+ },
+ "airfield22_7": {
+  "name": "Mahlwinkel",
+  "callsign": "Z",
+  "beacon_type": 12,
+  "hertz": 300000,
+  "channel": null
+ },
+ "airfield22_8": {
+  "name": "Mahlwinkel",
+  "callsign": "Z",
+  "beacon_type": 12,
+  "hertz": 300000,
+  "channel": null
+ },
+ "airfield168_0": {
+  "name": "Mending",
+  "callsign": "NMN",
+  "beacon_type": 9,
+  "hertz": 331000,
+  "channel": null
+ },
+ "airfield169_0": {
+  "name": "Merseburg",
+  "callsign": "DG",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 25
+ },
+ "airfield169_1": {
+  "name": "Merseburg",
+  "callsign": "DK",
+  "beacon_type": 11,
+  "hertz": 398000,
+  "channel": null
+ },
+ "airfield169_2": {
+  "name": "Merseburg",
+  "callsign": "K",
+  "beacon_type": 12,
+  "hertz": 810000,
+  "channel": null
+ },
+ "airfield169_3": {
+  "name": "Merseburg",
+  "callsign": "DK",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 23
+ },
+ "airfield169_4": {
+  "name": "Merseburg",
+  "callsign": "DG",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 25
+ },
+ "airfield169_5": {
+  "name": "Merseburg",
+  "callsign": "D",
+  "beacon_type": 12,
+  "hertz": 810000,
+  "channel": null
+ },
+ "airfield169_6": {
+  "name": "Merseburg",
+  "callsign": "DK",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 25
+ },
+ "airfield169_7": {
+  "name": "Merseburg",
+  "callsign": "KD",
+  "beacon_type": 11,
+  "hertz": 398000,
+  "channel": null
+ },
+ "airfield169_8": {
+  "name": "Merseburg",
+  "callsign": "DK",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 25
+ },
+ "airfield23_0": {
+  "name": "Neubrandenburg",
+  "callsign": "T",
+  "beacon_type": 11,
+  "hertz": 950000,
+  "channel": null
+ },
+ "airfield23_1": {
+  "name": "Neubrandenburg",
+  "callsign": "DT",
+  "beacon_type": 11,
+  "hertz": 950000,
+  "channel": null
+ },
+ "airfield23_2": {
+  "name": "Neubrandenburg",
+  "callsign": "T",
+  "beacon_type": 12,
+  "hertz": 460000,
+  "channel": null
+ },
+ "airfield23_3": {
+  "name": "Neubrandenburg",
+  "callsign": "D",
+  "beacon_type": 12,
+  "hertz": 460000,
+  "channel": null
+ },
+ "airfield24_0": {
+  "name": "Neuruppin",
+  "callsign": "GK",
+  "beacon_type": 11,
+  "hertz": 842000,
+  "channel": null
+ },
+ "airfield24_1": {
+  "name": "Neuruppin",
+  "callsign": "WO",
+  "beacon_type": 11,
+  "hertz": 842000,
+  "channel": null
+ },
+ "airfield24_2": {
+  "name": "Neuruppin",
+  "callsign": "W",
+  "beacon_type": 12,
+  "hertz": 412000,
+  "channel": null
+ },
+ "airfield24_3": {
+  "name": "Neuruppin",
+  "callsign": "G",
+  "beacon_type": 12,
+  "hertz": 412000,
+  "channel": null
+ },
+ "airfield84_0": {
+  "name": "Parchim",
+  "callsign": "UU",
+  "beacon_type": 11,
+  "hertz": 376000,
+  "channel": null
+ },
+ "airfield84_1": {
+  "name": "Parchim",
+  "callsign": "PM",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 20
+ },
+ "airfield84_2": {
+  "name": "Parchim",
+  "callsign": "A",
+  "beacon_type": 12,
+  "hertz": 766000,
+  "channel": null
+ },
+ "airfield84_3": {
+  "name": "Parchim",
+  "callsign": "AS",
+  "beacon_type": 11,
+  "hertz": 376000,
+  "channel": null
+ },
+ "airfield84_4": {
+  "name": "Parchim",
+  "callsign": "U",
+  "beacon_type": 12,
+  "hertz": 766000,
+  "channel": null
+ },
+ "airfield25_0": {
+  "name": "Peenemunde",
+  "callsign": "N",
+  "beacon_type": 12,
+  "hertz": 867000,
+  "channel": null
+ },
+ "airfield25_1": {
+  "name": "Peenemunde",
+  "callsign": "E",
+  "beacon_type": 12,
+  "hertz": 867000,
+  "channel": null
+ },
+ "airfield25_2": {
+  "name": "Peenemunde",
+  "callsign": "NE",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 16
+ },
+ "airfield25_3": {
+  "name": "Peenemunde",
+  "callsign": "NE",
+  "beacon_type": 11,
+  "hertz": 423000,
+  "channel": null
+ },
+ "airfield25_4": {
+  "name": "Peenemunde",
+  "callsign": "EN",
+  "beacon_type": 11,
+  "hertz": 423000,
+  "channel": null
+ },
+ "airfield232_0": {
+  "name": "Pferdsfeld",
+  "callsign": "PFF",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 77
+ },
+ "airfield232_1": {
+  "name": "Pferdsfeld",
+  "callsign": "PFF",
+  "beacon_type": 9,
+  "hertz": 394000,
+  "channel": null
+ },
+ "airfield165_0": {
+  "name": "Ramstein",
+  "callsign": "IRWR",
+  "beacon_type": 14,
+  "hertz": 110750000,
+  "channel": null
+ },
+ "airfield165_1": {
+  "name": "Ramstein",
+  "callsign": "IREL",
+  "beacon_type": 14,
+  "hertz": 111500000,
+  "channel": null
+ },
+ "airfield165_2": {
+  "name": "Ramstein",
+  "callsign": "RMS",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 81
+ },
+ "airfield165_3": {
+  "name": "Ramstein",
+  "callsign": "IRWR",
+  "beacon_type": 13,
+  "hertz": 110750000,
+  "channel": null
+ },
+ "airfield165_4": {
+  "name": "Ramstein",
+  "callsign": "IREL",
+  "beacon_type": 13,
+  "hertz": 111500000,
+  "channel": null
+ },
+ "airfield26_0": {
+  "name": "Schonefeld",
+  "callsign": "MVR",
+  "beacon_type": 14,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield26_1": {
+  "name": "Schonefeld",
+  "callsign": "SLR",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield26_2": {
+  "name": "Schonefeld",
+  "callsign": "M",
+  "beacon_type": 12,
+  "hertz": 430000,
+  "channel": null
+ },
+ "airfield26_3": {
+  "name": "Schonefeld",
+  "callsign": "SLL",
+  "beacon_type": 13,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield26_4": {
+  "name": "Schonefeld",
+  "callsign": "MVR",
+  "beacon_type": 13,
+  "hertz": 110700000,
+  "channel": null
+ },
+ "airfield26_5": {
+  "name": "Schonefeld",
+  "callsign": "MV",
+  "beacon_type": 11,
+  "hertz": 309000,
+  "channel": null
+ },
+ "airfield26_6": {
+  "name": "Schonefeld",
+  "callsign": "SL",
+  "beacon_type": 11,
+  "hertz": 299000,
+  "channel": null
+ },
+ "airfield26_7": {
+  "name": "Schonefeld",
+  "callsign": "SLL",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield26_8": {
+  "name": "Schonefeld",
+  "callsign": "S",
+  "beacon_type": 12,
+  "hertz": 430000,
+  "channel": null
+ },
+ "airfield26_9": {
+  "name": "Schonefeld",
+  "callsign": "SLL",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield160_0": {
+  "name": "Schweinfurt",
+  "callsign": "SCF",
+  "beacon_type": 9,
+  "hertz": 363000,
+  "channel": null
+ },
+ "airfield156_0": {
+  "name": "SEMBACH",
+  "callsign": "SEX",
+  "beacon_type": 9,
+  "hertz": 428000,
+  "channel": null
+ },
+ "airfield156_1": {
+  "name": "SEMBACH",
+  "callsign": "SEM",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 28
+ },
+ "airfield162_0": {
+  "name": "Spangdahlem",
+  "callsign": "ISPE",
+  "beacon_type": 13,
+  "hertz": 109150000,
+  "channel": null
+ },
+ "airfield162_1": {
+  "name": "Spangdahlem",
+  "callsign": "ISPA",
+  "beacon_type": 13,
+  "hertz": 108100000,
+  "channel": null
+ },
+ "airfield162_2": {
+  "name": "Spangdahlem",
+  "callsign": "ISPA",
+  "beacon_type": 14,
+  "hertz": 108100000,
+  "channel": null
+ },
+ "airfield162_3": {
+  "name": "Spangdahlem",
+  "callsign": "ISPE",
+  "beacon_type": 14,
+  "hertz": 109150000,
+  "channel": null
+ },
+ "airfield162_4": {
+  "name": "Spangdahlem",
+  "callsign": "SPA",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 32
+ },
+ "airfield101_0": {
+  "name": "Sperenberg",
+  "callsign": "ChC",
+  "beacon_type": 9,
+  "hertz": 221000,
+  "channel": null
+ },
+ "airfield101_1": {
+  "name": "Sperenberg",
+  "callsign": "CH",
+  "beacon_type": 9,
+  "hertz": 254000,
+  "channel": null
+ },
+ "airfield101_2": {
+  "name": "Sperenberg",
+  "callsign": "N",
+  "beacon_type": 9,
+  "hertz": 254000,
+  "channel": null
+ },
+ "airfield101_3": {
+  "name": "Sperenberg",
+  "callsign": "NZ",
+  "beacon_type": 9,
+  "hertz": 221000,
+  "channel": null
+ },
+ "airfield101_4": {
+  "name": "Sperenberg",
+  "callsign": "SR",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 28
+ },
+ "airfield27_0": {
+  "name": "Stendal",
+  "callsign": "U",
+  "beacon_type": 12,
+  "hertz": 449000,
+  "channel": null
+ },
+ "airfield27_1": {
+  "name": "Stendal",
+  "callsign": "UK",
+  "beacon_type": 11,
+  "hertz": 910000,
+  "channel": null
+ },
+ "airfield28_0": {
+  "name": "Tegel",
+  "callsign": "ITGE",
+  "beacon_type": 14,
+  "hertz": 108500000,
+  "channel": null
+ },
+ "airfield28_1": {
+  "name": "Tegel",
+  "callsign": "ITGW",
+  "beacon_type": 14,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield28_2": {
+  "name": "Tegel",
+  "callsign": "RW",
+  "beacon_type": 9,
+  "hertz": 392000,
+  "channel": null
+ },
+ "airfield28_3": {
+  "name": "Tegel",
+  "callsign": "ITGE",
+  "beacon_type": 13,
+  "hertz": 108500000,
+  "channel": null
+ },
+ "airfield28_4": {
+  "name": "Tegel",
+  "callsign": "ITLE",
+  "beacon_type": 14,
+  "hertz": 109100000,
+  "channel": null
+ },
+ "airfield28_5": {
+  "name": "Tegel",
+  "callsign": "GL",
+  "beacon_type": 9,
+  "hertz": 321500,
+  "channel": null
+ },
+ "airfield28_6": {
+  "name": "TEGEL",
+  "callsign": "TGL",
+  "beacon_type": 5,
+  "hertz": 112300000,
+  "channel": 70
+ },
+ "airfield28_7": {
+  "name": "Tegel",
+  "callsign": "ITLE",
+  "beacon_type": 13,
+  "hertz": 109100000,
+  "channel": null
+ },
+ "airfield28_8": {
+  "name": "Tegel",
+  "callsign": "ITLW",
+  "beacon_type": 13,
+  "hertz": 110100000,
+  "channel": null
+ },
+ "airfield28_9": {
+  "name": "Tegel",
+  "callsign": "DLS",
+  "beacon_type": 9,
+  "hertz": 413500,
+  "channel": null
+ },
+ "airfield28_10": {
+  "name": "Tegel",
+  "callsign": "ITGW",
+  "beacon_type": 13,
+  "hertz": 109300000,
+  "channel": null
+ },
+ "airfield28_11": {
+  "name": "Tegel",
+  "callsign": "ITLW",
+  "beacon_type": 14,
+  "hertz": 110100000,
+  "channel": null
+ },
+ "airfield29_0": {
+  "name": "Tempelhof",
+  "callsign": "IDBR",
+  "beacon_type": 13,
+  "hertz": 109700000,
+  "channel": null
+ },
+ "airfield29_1": {
+  "name": "Tempelhof",
+  "callsign": "TOF",
+  "beacon_type": 5,
+  "hertz": 114100000,
+  "channel": 88
+ },
+ "airfield29_2": {
+  "name": "Tempelhof",
+  "callsign": "DBR",
+  "beacon_type": 11,
+  "hertz": 347000,
+  "channel": null
+ },
+ "airfield29_3": {
+  "name": "Tempelhof",
+  "callsign": "IDLB",
+  "beacon_type": 14,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield29_4": {
+  "name": "Tempelhof",
+  "callsign": "IDBR",
+  "beacon_type": 14,
+  "hertz": 109700000,
+  "channel": null
+ },
+ "airfield29_5": {
+  "name": "Tempelhof",
+  "callsign": "DIP",
+  "beacon_type": 11,
+  "hertz": 327000,
+  "channel": null
+ },
+ "airfield29_6": {
+  "name": "Tempelhof",
+  "callsign": "IDLB",
+  "beacon_type": 13,
+  "hertz": 109500000,
+  "channel": null
+ },
+ "airfield15_0": {
+  "name": "Templin",
+  "callsign": "P",
+  "beacon_type": 12,
+  "hertz": 219000,
+  "channel": null
+ },
+ "airfield15_1": {
+  "name": "Templin",
+  "callsign": "LD",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 15
+ },
+ "airfield15_2": {
+  "name": "Templin",
+  "callsign": "IK",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 17
+ },
+ "airfield15_3": {
+  "name": "Templin",
+  "callsign": "PG",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 17
+ },
+ "airfield15_4": {
+  "name": "Templin",
+  "callsign": "PG",
+  "beacon_type": 11,
+  "hertz": 451000,
+  "channel": null
+ },
+ "airfield15_5": {
+  "name": "Templin",
+  "callsign": "PG",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 17
+ },
+ "airfield15_6": {
+  "name": "Templin",
+  "callsign": "IK",
+  "beacon_type": 11,
+  "hertz": 451000,
+  "channel": null
+ },
+ "airfield15_7": {
+  "name": "Templin",
+  "callsign": "IK",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 17
+ },
+ "airfield15_8": {
+  "name": "Templin",
+  "callsign": "I",
+  "beacon_type": 12,
+  "hertz": 219000,
+  "channel": null
+ },
+ "airfield30_0": {
+  "name": "Tutow",
+  "callsign": "Y",
+  "beacon_type": 11,
+  "hertz": 398000,
+  "channel": null
+ },
+ "airfield30_1": {
+  "name": "Tutow",
+  "callsign": "YC",
+  "beacon_type": 12,
+  "hertz": 803000,
+  "channel": null
+ },
+ "airfield31_0": {
+  "name": "Werneuchen",
+  "callsign": "WC",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 4
+ },
+ "airfield170_0": {
+  "name": "Wiesbaden",
+  "callsign": "WIB",
+  "beacon_type": 9,
+  "hertz": 399000,
+  "channel": null
+ },
+ "airfield170_1": {
+  "name": "Wiesbaden",
+  "callsign": "WBD",
+  "beacon_type": 4,
+  "hertz": null,
+  "channel": 88
+ },
+ "airfield1_0": {
+  "name": "Wittstock",
+  "callsign": "G",
+  "beacon_type": 12,
+  "hertz": 205000,
+  "channel": null
+ },
+ "airfield1_1": {
+  "name": "Wittstock",
+  "callsign": "GJ",
+  "beacon_type": 11,
+  "hertz": 421000,
+  "channel": null
+ },
+ "airfield1_2": {
+  "name": "Wittstock",
+  "callsign": "GJ",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 24
+ },
+ "airfield1_3": {
+  "name": "Wittstock",
+  "callsign": "GJ",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 22
+ },
+ "airfield1_4": {
+  "name": "Wittstock",
+  "callsign": "O",
+  "beacon_type": 12,
+  "hertz": 205000,
+  "channel": null
+ },
+ "airfield1_5": {
+  "name": "Wittstock",
+  "callsign": "GO",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 24
+ },
+ "airfield1_6": {
+  "name": "Wittstock",
+  "callsign": "OR",
+  "beacon_type": 11,
+  "hertz": 421000,
+  "channel": null
+ },
+ "airfield1_7": {
+  "name": "Wittstock",
+  "callsign": "GJ",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 24
+ },
+ "airfield1_8": {
+  "name": "Wittstock",
+  "callsign": "GO",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 24
+ },
+ "airfield32_0": {
+  "name": "Wunstorf",
+  "callsign": "WUH",
+  "beacon_type": 13,
+  "hertz": 109700000,
+  "channel": null
+ },
+ "airfield32_1": {
+  "name": "WUNSTORF",
+  "callsign": "WUN",
+  "beacon_type": 4,
+  "hertz": 114850000,
+  "channel": 116
+ },
+ "airfield32_2": {
+  "name": "Wunstorf",
+  "callsign": "WUN",
+  "beacon_type": 9,
+  "hertz": 419000,
+  "channel": null
+ },
+ "airfield32_3": {
+  "name": "Wunstorf",
+  "callsign": "WUH",
+  "beacon_type": 14,
+  "hertz": 109700000,
+  "channel": null
+ },
+ "airfield4_0": {
+  "name": "Zerbst",
+  "callsign": "ZB",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 19
+ },
+ "airfield4_1": {
+  "name": "Zerbst",
+  "callsign": "Z",
+  "beacon_type": 12,
+  "hertz": 345000,
+  "channel": null
+ },
+ "airfield4_2": {
+  "name": "Zerbst",
+  "callsign": "ZB",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 19
+ },
+ "airfield4_3": {
+  "name": "Zerbst",
+  "callsign": "KJ",
+  "beacon_type": 11,
+  "hertz": 708000,
+  "channel": null
+ },
+ "airfield4_4": {
+  "name": "Zerbst",
+  "callsign": "KJ",
+  "beacon_type": 15,
+  "hertz": null,
+  "channel": 19
+ },
+ "airfield4_5": {
+  "name": "Zerbst",
+  "callsign": "K",
+  "beacon_type": 12,
+  "hertz": 345000,
+  "channel": null
+ },
+ "airfield4_6": {
+  "name": "Zerbst",
+  "callsign": "ZB",
+  "beacon_type": 11,
+  "hertz": 708000,
+  "channel": null
+ },
+ "airfield4_7": {
+  "name": "Zerbst",
+  "callsign": "KJ",
+  "beacon_type": 6,
+  "hertz": null,
+  "channel": 17
+ },
+ "airfield4_8": {
+  "name": "Zerbst",
+  "callsign": "KJ",
+  "beacon_type": 16,
+  "hertz": null,
+  "channel": 19
+ },
+ "airfield158_0": {
+  "name": "Zweibrucken",
+  "callsign": "ZBU",
+  "beacon_type": 4,
+  "hertz": 362300000,
+  "channel": 48
+ },
+ "airfield158_1": {
+  "name": "Zweibrucken",
+  "callsign": "IZBU",
+  "beacon_type": 13,
+  "hertz": 111100000,
+  "channel": null
+ },
+ "airfield158_2": {
+  "name": "Zweibrucken",
+  "callsign": "IZBU",
+  "beacon_type": 14,
+  "hertz": 111100000,
+  "channel": null
+ }
+}

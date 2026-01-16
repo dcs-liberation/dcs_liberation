@@ -43,6 +43,10 @@ class BeaconType(IntEnum):
 
     BEACON_TYPE_NAUTICAL_HOMER = 19
 
+    BEACON_TYPE_ILS = 20
+    BEACON_TYPE_PRMG = 21
+    BEACON_TYPE_ICLS = 22
+
 
 @dataclass(frozen=True)
 class Beacon:
