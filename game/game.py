@@ -613,3 +613,10 @@ class Game:
             )
         elif turn_state is TurnState.LOSS:
             self.message("Game Over, you lose. Start a new campaign to continue.")
+
+    def ato_has_clients(self) -> bool:
+        for package in self.blue.ato.packages:
+            for flight in package.flights:
+                if flight.client_count > 0:
+                    return True
+        return False

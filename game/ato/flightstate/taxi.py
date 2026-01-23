@@ -47,7 +47,7 @@ class Taxi(AtDeparture):
                 "reached taxi time"
             )
             return True
-        if self.settings.fast_forwward_stop_condition in {
+        if self.settings.fast_forward_stop_condition in {
             FastForwardStopCondition.PLAYER_STARTUP,
         }:
             logging.info(

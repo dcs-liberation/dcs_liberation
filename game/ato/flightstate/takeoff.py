@@ -56,7 +56,7 @@ class Takeoff(AtDeparture):
             )
             return True
 
-        if self.settings.fast_forwward_stop_condition in {
+        if self.settings.fast_forward_stop_condition in {
             FastForwardStopCondition.PLAYER_TAXI,
             FastForwardStopCondition.PLAYER_STARTUP,
         }:

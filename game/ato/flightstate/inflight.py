@@ -180,7 +180,7 @@ class InFlight(FlightState, ABC):
             )
             return True
 
-        if self.settings.fast_forwward_stop_condition in {
+        if self.settings.fast_forward_stop_condition in {
             FastForwardStopCondition.PLAYER_TAKEOFF,
             FastForwardStopCondition.PLAYER_TAXI,
             FastForwardStopCondition.PLAYER_STARTUP,
@@ -215,7 +215,7 @@ class InFlight(FlightState, ABC):
         flight_plan_has_ip = False
         flight_plan_has_patrol_start = False  # BARCAP plans don't have IP, just a PATROL_TRACK at the start waypoint
         flight_plan_has_nav = False  # CAS plans don't have IP, but has NAV points.
-        for waypont_index in range(
+        for waypoint_index in range(
             self.waypoint_index, len(self.flight.flight_plan.waypoints)
         ):
             if (
@@ -236,13 +236,13 @@ class InFlight(FlightState, ABC):
                 flight_plan_has_nav = True
 
         if flight_plan_has_ip:
-            return self.current_waypoint.waypoint_point in ingress_waypoint_types
+            return self.current_waypoint.waypoint_type in ingress_waypoint_types
         if flight_plan_has_patrol_start:
             return (
-                self.current_waypoint.waypoint_point == FlightWaypointType.PATROL_TRACK
+                self.current_waypoint.waypoint_type == FlightWaypointType.PATROL_TRACK
             )
         if flight_plan_has_nav:
-            return self.current_waypoint.waypoint_point == FlightWaypointType.NAV
+            return self.current_waypoint.waypoint_type == FlightWaypointType.NAV
 
         # Not a recognized flight plan type, stop sim to be on the safe side.
         return True
