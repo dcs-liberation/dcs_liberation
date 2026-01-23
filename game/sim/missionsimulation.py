@@ -56,6 +56,21 @@ class MissionSimulation:
         ):
             events.complete_simulation()
             return events
+
+        # Stop fast forward if there are no clients and the settings require a player to reach a certain state.
+        if (
+            not self.game.ato_has_clients()
+            and self.game.settings.fast_forward_stop_condition
+            in {
+                FastForwardStopCondition.PLAYER_TAKEOFF,
+                FastForwardStopCondition.PLAYER_TAXI,
+                FastForwardStopCondition.PLAYER_STARTUP,
+                FastForwardStopCondition.PLAYER_AT_IP,
+            }
+        ):
+            events.complete_simulation()
+            return events
+
         self.aircraft_simulation.on_game_tick(
             events, self.time, TICK, combat_resolution_method, force_continue
         )

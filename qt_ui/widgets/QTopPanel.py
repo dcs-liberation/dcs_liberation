@@ -149,13 +149,6 @@ class QTopPanel(QFrame):
             estimator = TotEstimator(package)
             package.time_over_target = estimator.earliest_tot(now)
 
-    def ato_has_clients(self) -> bool:
-        for package in self.game.blue.ato.packages:
-            for flight in package.flights:
-                if flight.client_count > 0:
-                    return True
-        return False
-
     def confirm_no_client_launch(self) -> bool:
         result = QMessageBox.question(
             self,
@@ -248,7 +241,7 @@ class QTopPanel(QFrame):
 
     def launch_mission(self):
         """Finishes planning and waits for mission completion."""
-        if not self.ato_has_clients() and not self.confirm_no_client_launch():
+        if not self.game.ato_has_clients() and not self.confirm_no_client_launch():
             return
 
         if self.check_no_missing_pilots():

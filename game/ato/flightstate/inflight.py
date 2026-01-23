@@ -168,15 +168,76 @@ class InFlight(FlightState, ABC):
         return StartType.IN_FLIGHT
 
     def should_halt_sim(self) -> bool:
-        if (
-            self.flight.client_count > 0
-            and self.settings.fast_forward_stop_condition
-            == FastForwardStopCondition.PLAYER_AT_IP
-            and self.is_at_ip
-        ):
+        if self._halt_sim_for_player_at_ip():
             logging.info(
                 f"Interrupting simulation because {self.flight} has players and has "
                 "reached IP"
             )
             return True
+
+        if self.settings.fast_forward_stop_condition in {
+            FastForwardStopCondition.PLAYER_TAKEOFF,
+            FastForwardStopCondition.PLAYER_TAXI,
+            FastForwardStopCondition.PLAYER_STARTUP,
+        }:
+            logging.info(
+                f"Interrupting simulation because {self.flight} has players and is already inflight "
+            )
+            return True
         return False
+
+    def _halt_sim_for_player_at_ip(self) -> bool:
+        if (
+            self.settings.fast_forward_stop_condition
+            != FastForwardStopCondition.PLAYER_AT_IP
+        ):
+            return False
+
+        if self.flight.client_count == 0:
+            return False
+
+        ingress_waypoint_types = {
+            FlightWaypointType.INGRESS_BAI,
+            FlightWaypointType.INGRESS_CAS,
+            FlightWaypointType.INGRESS_DEAD,
+            FlightWaypointType.INGRESS_OCA_AIRCRAFT,
+            FlightWaypointType.INGRESS_OCA_RUNWAY,
+            FlightWaypointType.INGRESS_SEAD,
+            FlightWaypointType.INGRESS_STRIKE,
+            FlightWaypointType.INGRESS_AIR_ASSAULT,
+        }
+
+        flight_plan_has_ip = False
+        flight_plan_has_patrol_start = False  # BARCAP plans don't have IP, just a PATROL_TRACK at the start waypoint
+        flight_plan_has_nav = False  # CAS plans don't have IP, but has NAV points.
+        for waypoint_index in range(
+            self.waypoint_index, len(self.flight.flight_plan.waypoints)
+        ):
+            if (
+                self.flight.flight_plan.waypoints[waypoint_index].waypoint_type
+                in ingress_waypoint_types
+            ):
+                flight_plan_has_ip = True
+                break
+            if (
+                self.flight.flight_plan.waypoints[waypoint_index].waypoint_type
+                == FlightWaypointType.PATROL_TRACK
+            ):
+                flight_plan_has_patrol_start = True
+            if (
+                self.flight.flight_plan.waypoints[waypoint_index].waypoint_type
+                == FlightWaypointType.NAV
+            ):
+                flight_plan_has_nav = True
+
+        if flight_plan_has_ip:
+            return self.current_waypoint.waypoint_type in ingress_waypoint_types
+        if flight_plan_has_patrol_start:
+            return (
+                self.current_waypoint.waypoint_type == FlightWaypointType.PATROL_TRACK
+            )
+        if flight_plan_has_nav:
+            return self.current_waypoint.waypoint_type == FlightWaypointType.NAV
+
+        # Not a recognized flight plan type, stop sim to be on the safe side.
+        return True
