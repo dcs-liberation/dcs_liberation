@@ -168,12 +168,7 @@ class InFlight(FlightState, ABC):
         return StartType.IN_FLIGHT
 
     def should_halt_sim(self) -> bool:
-        if (
-            self.flight.client_count > 0
-            and self.settings.fast_forward_stop_condition
-            == FastForwardStopCondition.PLAYER_AT_IP
-            and self.is_at_ip
-        ):
+        if self._halt_sim_for_player_at_ip():
             logging.info(
                 f"Interrupting simulation because {self.flight} has players and has "
                 "reached IP"
