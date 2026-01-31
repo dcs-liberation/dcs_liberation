@@ -83,7 +83,7 @@ class InFlight(FlightState, ABC):
             return initial_fuel
         initial_fuel -= self.flight.unit_type.fuel_consumption.taxi * LBS_TO_KG
         waypoints = self.flight.flight_plan.waypoints[: self.waypoint_index + 1]
-        for a, b in pairwise(waypoints[:-1]):
+        for a, b in pairwise(waypoints):
             consumption = self.flight.flight_plan.fuel_consumption_between_points(a, b)
             assert consumption is not None
             initial_fuel -= consumption * LBS_TO_KG
