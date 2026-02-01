@@ -47,7 +47,7 @@ class SquadronSelector(QComboBox):
         if aircraft is None:
             self.addItem("No aircraft selected", None)
             return
-
+        feasible_squadrons = []
         for squadron in self.air_wing.squadrons_for(aircraft):
             if not squadron.capable_of(task):
                 continue
@@ -55,6 +55,10 @@ class SquadronSelector(QComboBox):
                 continue
             if squadron.location.ferry_only:
                 continue
+            feasible_squadrons.append(squadron)
+        for squadron in sorted(
+            feasible_squadrons, key=lambda s: s.untasked_aircraft, reverse=True
+        ):
             self.addItem(f"{squadron.location}: {squadron}", squadron)
 
         if self.count() == 0:
