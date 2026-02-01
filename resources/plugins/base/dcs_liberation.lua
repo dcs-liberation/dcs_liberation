@@ -4,6 +4,7 @@ local WRITESTATE_SCHEDULE_IN_SECONDS = 60
 logger = mist.Logger:new("DCSLiberation", "info")
 logger:info("Check that json.lua is loaded : json = "..tostring(json))
 
+last_write_simulation_time_seconds = 0
 simulation_time_seconds = 0
 crash_events = {} -- killed aircraft will be added via S_EVENT_CRASH event
 dead_events = {} -- killed units will be added via S_EVENT_DEAD event
@@ -28,6 +29,10 @@ local function messageAll(message)
 end
 
 function write_state()
+    if not mission_ended and simulation_time_seconds - last_write_simulation_time_seconds < WRITESTATE_SCHEDULE_IN_SECONDS then
+        return nil
+    end
+
     local _debriefing_file_location = debriefing_file_location
     if not debriefing_file_location then 
         _debriefing_file_location = "[nil]"
@@ -53,6 +58,7 @@ function write_state()
     end
     fp:write(json:encode(game_state))
     fp:close()
+    last_write_simulation_time_seconds = simulation_time_seconds
 end
 
 local function canWrite(name)
@@ -136,8 +142,8 @@ write_state_error_handling = function()
         _debriefing_file_location = "[nil]"
         logger:error("Unable to find where to write DCS Liberation state")
     end
-
-    if pcall(write_state) then
+    write_success, return_value = pcall(write_state)
+    if write_success then
     else
 	    messageAll("Unable to write DCS Liberation state to ".._debriefing_file_location..
                 "\nYou can abort the mission in DCS Liberation.\n"..
