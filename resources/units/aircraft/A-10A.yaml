@@ -16,6 +16,12 @@ price: 12
 role: Close Air Support/Attack
 variants:
   A-10A Thunderbolt II: {}
+fuel:
+  taxi: 100
+  climb_ppm: 16
+  cruise_ppm: 12
+  combat_ppm: 14
+  min_safe: 2000
 tasks:
   BAI: 680
   CAS: 680
