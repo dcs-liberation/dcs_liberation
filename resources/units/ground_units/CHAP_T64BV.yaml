@@ -1,0 +1,9 @@
+class: Tank
+description: The T-64 is a Soviet tank introduced in the early 1960s. The BV variant is a modernization by Ukroboronprom with third-generation surveillance and sighting units and is equipped with a new 12.7mm Snipex Laska K-2 heavy machine gun. It features up-to-date radio stations and additional "navigation, internal and external communication systems which meets NATO standards.
+introduced: 2022
+origin: Ukraine
+price: 18
+role: Main Battle Tank
+variants:
+  T-64BV: {}
+hit_points: 24

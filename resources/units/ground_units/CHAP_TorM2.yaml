@@ -1,0 +1,10 @@
+class: SHORAD
+description: "The Tor is an all-weather, low-to medium-altitude, short-range surface-to-air missile system designed for destroying airplanes, helicopters, cruise missiles, unmanned aerial vehicles and short-range ballistic threats (anti-munitions)"
+introduced: 1986
+manufacturer: IEMZ Kupol
+origin: USSR/Russia
+price: 10
+role: Self-Propelled Surface-to-Air Missile Launcher
+variants:
+  SA-15 Gauntlet: {}
+hit_points: 3

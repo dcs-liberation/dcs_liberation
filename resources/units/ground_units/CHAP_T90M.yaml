@@ -10,5 +10,5 @@ origin: Russia
 price: 30
 role: Main Battle Tank
 variants:
-  T-90A: {}
-hit_points: 26
+  T-90M: {}
+hit_points: 28

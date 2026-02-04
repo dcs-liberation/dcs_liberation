@@ -12,5 +12,5 @@ origin: USSR/Russia
 price: 25
 role: Main Battle Tank
 variants:
-  T-80UD: {}
+  T-80B: {}
 hit_points: 28

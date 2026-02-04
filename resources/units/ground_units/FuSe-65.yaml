@@ -2,3 +2,4 @@ class: EarlyWarningRadar
 price: 25
 variants:
   EWR FuSe-65 Würzburg-Riese: null
+hit_points: 20

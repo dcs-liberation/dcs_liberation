@@ -1,0 +1,9 @@
+class: APC
+description: "The BTR-60 is the first vehicle in a series of Soviet eight-wheeled armoured personnel carriers (APCs). It was developed in the late 1950s as a replacement for the BTR-152 and was seen in public for the first time in 1961."
+introduced: 1961
+origin: USSR/Russia
+price: 8
+role: Armoured Personnel Carrier
+variants:
+  BTR-70: {}
+hit_points: 3
