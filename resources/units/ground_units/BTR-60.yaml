@@ -5,5 +5,5 @@ origin: USSR/Russia
 price: 8
 role: Armoured Personnel Carrier
 variants:
-  BTR-70: {}
+  BTR-60: {}
 hit_points: 3

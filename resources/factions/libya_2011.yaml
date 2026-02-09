@@ -19,6 +19,7 @@ tankers:
 frontline_units:
   - BMP-1
   - BRDM-2
+  - BRDM-2_malyutka
   - PT-76
   - SAM SA-8 Osa "Gecko" TEL
   - T-55A

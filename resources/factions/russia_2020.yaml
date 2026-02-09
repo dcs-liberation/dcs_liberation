@@ -42,6 +42,7 @@ frontline_units:
 artillery_units:
   - 2S19 Msta-S
   - BM-27 Uragan
+  - TOS-1A
 logistics_units:
   - LUV UAZ-469 Jeep
   - Truck Ural-375
@@ -50,7 +51,9 @@ infantry_units:
   - MANPADS SA-18 Igla-S "Grouse"
   - Paratrooper AKS
   - Paratrooper RPG-16
-missiles: []
+missiles:
+  - SS-26 Stone (9K720 Iskander) Cluster Munitions
+  - SS-26 Stone (9K720 Iskander) HE
 preset_groups:
   - SA-11
   - SA-10/S-300PS

@@ -38,6 +38,7 @@ frontline_units:
 artillery_units:
   - 2S19 Msta-S
   - BM-27 Uragan
+  - TOS-1A
 logistics_units:
   - LUV UAZ-469 Jeep
   - Truck Ural-375
