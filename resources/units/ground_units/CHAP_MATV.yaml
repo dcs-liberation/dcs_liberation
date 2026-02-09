@@ -1,0 +1,10 @@
+class: Recon
+description: 'The Oshkosh M-ATV is a mine-resistant ambush protected vehicle.'
+introduced: 2009
+manufacturer: Oshkosh
+origin: USA
+price: 2
+role: Recon
+variants:
+  M-ATV MRAP: {}
+hit_points: 4

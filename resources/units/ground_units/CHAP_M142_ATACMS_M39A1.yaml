@@ -1,0 +1,9 @@
+class: Missile
+description: The M142 High Mobility Artillery Rocket System (HIMARS) is a light multiple rocket launcher. The M39A1 variant uses the Army Tactical Missile System (ATACMS) 610 mm surface-to-surface missile carrying 950 M74 Anti-personnel and Anti-materiel (APAM) bomblets and a range of up to 165km/100mi.
+manufacturer: Lockheed Martin
+origin: USA
+price: 20
+role: Multiple-Launch Rocket System
+variants:
+  M142 HIMARS M39A1 ATACMS Cluster Munitions: {}
+hit_points: 3
