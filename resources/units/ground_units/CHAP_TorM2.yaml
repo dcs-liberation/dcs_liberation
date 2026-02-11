@@ -6,5 +6,5 @@ origin: USSR/Russia
 price: 10
 role: Self-Propelled Surface-to-Air Missile Launcher
 variants:
-  SA-15 Gauntlet: {}
+  SA-15 Gauntlet 9K332 M2: {}
 hit_points: 3

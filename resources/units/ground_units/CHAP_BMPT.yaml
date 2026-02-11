@@ -5,5 +5,5 @@ origin: Russia
 price: 25
 role: Tank Support Vehicle
 variants:
-  BMPT "Terminator": {}
+  BMPT Terminator: {}
 hit_points: 20

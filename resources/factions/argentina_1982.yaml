@@ -19,6 +19,7 @@ frontline_units:
   - AAVP-7A1 'Amtrac'
   - Scout LC with DSHK 12.7mm
   - Scout LC with KORD 12.7mm
+  - FV101
 artillery_units:
   - MLRS LC with B8M1 80mm
 logistics_units:

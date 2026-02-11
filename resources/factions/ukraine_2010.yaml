@@ -24,8 +24,10 @@ frontline_units:
   - BTR-80
   - M1043 HMMWV (M2 HMG)
   - SA-13 Gopher (9K35 Strela-10M3)
+  - T-64BV
   - T-72B with Kontakt-1 ERA
   - T-80UD
+  - T-84 BM Oplot
 artillery_units: []
 logistics_units:
   - LUV UAZ-469 Jeep

@@ -30,6 +30,8 @@ artillery_units:
   - 2S1 Gvozdika
   - BM-21 Grad
   - SpGH DANA
+  - M142 HIMARS M31 GMLIRS HE
+  - M142 HIMARS M30 GMLIRS Cluster Munitions
 logistics_units:
   - LUV UAZ-469 Jeep
   - Truck Ural-375

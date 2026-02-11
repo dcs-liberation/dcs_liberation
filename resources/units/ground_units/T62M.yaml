@@ -6,5 +6,5 @@ origin: USSR/Russia
 price: 18
 role: Main Battle Tank
 variants:
-  T62M: {}
+  T-62M: {}
 hit_points: 18

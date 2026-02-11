@@ -6,6 +6,5 @@ origin: UK
 price: 6
 role: Recon light tank
 variants:
-  CHAP_FV101: {}
-
+  FV101: {}
 hit_points: 8

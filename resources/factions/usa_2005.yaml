@@ -47,15 +47,21 @@ frontline_units:
   - M1043 HMMWV (M2 HMG)
   - M1045 HMMWV (BGM-71 TOW)
   - M1097 Heavy HMMWV Avenger
+  - M1126 Stryker CV
   - M1126 Stryker ICV (M2 HMG)
   - M1128 Stryker Mobile Gun System
   - M1134 Stryker ATGM (BGM-71 TOW)
   - M1A2 Abrams
+  - M1A2 Abrams SEP V3
   - M2A2 Bradley
   - M6 Linebacker
+  - MaxxPro MRAP
+  - M-ATV MRAP
 artillery_units:
   - M109A6 Paladin
   - M270 Multiple Launch Rocket System
+  - M142 HIMARS M31 GMLIRS HE
+  - M142 HIMARS M30 GMLIRS Cluster Munitions
 logistics_units:
   - Truck M818 6x6
 infantry_units:
@@ -72,7 +78,9 @@ naval_units:
   - CG Ticonderoga
   - LHA-1 Tarawa
   - CVN-74 John C. Stennis
-missiles: []
+missiles:
+  - M142 HIMARS M39A1 ATACMS Cluster Munitions
+  - M142 HIMARS M48 ATACMS HE
 air_defense_units:
   - EWR AN/FPS-117 Radar
   - M1097 Heavy HMMWV Avenger
