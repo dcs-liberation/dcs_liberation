@@ -37,6 +37,12 @@ radios:
     type: common
     intra_flight_radio_index: 1
     inter_flight_radio_index: 2
+fuel:
+  taxi: 100
+  climb_ppm: 20
+  cruise_ppm: 11
+  combat_ppm: 14
+  min_safe: 2000
 # default_overrides:
 #   AAR_Zone1: 0
 #   AAR_Zone2: 0
