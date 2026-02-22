@@ -17,6 +17,7 @@ frontline_units:
   - Daimler Armoured Car Mk I
   - M2A1 Half-Track
   - M4A2(75) Sherman
+  - T-34-85
 artillery_units:
   - BM-21 Grad
 logistics_units:

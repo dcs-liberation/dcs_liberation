@@ -1,0 +1,9 @@
+class: Tank
+description: 'The BMPT Terminator is an armored fighting vehicle, designed for supporting tanks and other AFVs in urban areas. '
+introduced: 2011
+origin: Russia
+price: 25
+role: Tank Support Vehicle
+variants:
+  BMPT Terminator: {}
+hit_points: 20

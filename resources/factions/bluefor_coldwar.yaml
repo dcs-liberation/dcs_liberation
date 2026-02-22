@@ -33,6 +33,8 @@ frontline_units:
   - M113
   - M48 Chaparral
   - M60A3 "Patton"
+  - FV101
+  - FV107
 artillery_units:
   - M109A6 Paladin
 logistics_units:

@@ -1,0 +1,10 @@
+class: Recon
+description: "The FV101 Scorpion is a British armoured reconnaissance vehicle and light tank."
+introduced: 1973
+manufacturer: Alvis/BAE Systems
+origin: UK
+price: 6
+role: Recon light tank
+variants:
+  FV101: {}
+hit_points: 8

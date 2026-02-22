@@ -40,6 +40,7 @@ naval_units:
 missiles: []
 air_defense_units:
   - EWR AN/FPS-117 Radar
+  - SA-22 Greyhound
 requirements: {}
 carrier_names: []
 has_jtac: true

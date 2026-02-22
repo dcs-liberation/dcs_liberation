@@ -1,0 +1,9 @@
+class: Artillery
+description: The M142 High Mobility Artillery Rocket System (HIMARS) is a light multiple rocket launcher. The M31 variant uses the Guided Multiple Launch Rocket System (GMLRS) 227 mm rockets carrying a 200 lb (91 kg) high-explosive unitary warhead
+manufacturer: Lockheed Martin
+origin: USA
+price: 20
+role: Multiple-Launch Rocket System
+variants:
+  M142 HIMARS M31 GMLIRS HE: {}
+hit_points: 3

@@ -1,3 +1,13 @@
+# 14.1.0
+
+Saves from 14.x are compatible with 14.1.0.
+
+## Features/Improvements
+
+* **[Data]** Added new units from Currenthill and Cold War packs. Added M1A2 Abrams SEP V3 and MaxxPro M-RAP. Updated factions data for new units.
+* **[Data]** Added fuel usage data for A-4EC, A-10A, A-10C, AV-8B, F-14A, F-14B, F-15C allowing for better fuel estimation during fast forward and more detailed kneeboard fuel status.
+* **[Data]** Updated hit point data for all units.
+
 # 14.0.0
 
 Saves from 13.x are not compatible with 14.0.0.

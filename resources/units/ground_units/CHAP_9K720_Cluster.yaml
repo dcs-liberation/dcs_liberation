@@ -1,0 +1,9 @@
+class: Missile
+description: The 9K720 Iskander (NATO reporting name SS-26 Stone) is a family of Russian mobile short-range ballistic missile systems with a range of up to 500km (270 nmi; 310 mi). 
+introduced: 2006
+origin: Russia
+price: 20
+role: Multiple-Launch Rocket System
+variants:
+  SS-26 Stone (9K720 Iskander) Cluster Munitions: {}
+hit_points: 4

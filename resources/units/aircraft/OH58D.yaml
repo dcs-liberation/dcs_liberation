@@ -34,4 +34,4 @@ tasks:
   OCA/Aircraft: 470
   DEAD: 50
   Escort: 10
-hit_points: 12
+hit_points: 10

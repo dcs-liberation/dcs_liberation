@@ -15,6 +15,7 @@ aircrafts:
 frontline_units:
   - BMP-1
   - BRDM-2
+  - BRDM-2_malyutka
   - BTR-80
   - BTR-D
   - Cobra

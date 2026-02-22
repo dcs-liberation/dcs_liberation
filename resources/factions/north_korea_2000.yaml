@@ -20,10 +20,12 @@ tankers:
 frontline_units:
   - BMP-1
   - BRDM-2
-  - BTR-80
+  - BRDM-2_malyutka
+  - BTR-60
   - PT-76
   - SA-9 Strela
   - T-55A
+  - T-62M
   - T-72B with Kontakt-1 ERA
   - T-80UD
   - ZSU-57-2 'Sparka'

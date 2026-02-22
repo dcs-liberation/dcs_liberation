@@ -1,0 +1,10 @@
+class: Recon
+description: "The FV107 Scimitar is an armoured tracked military reconnaissance vehicle, sometimes classed as a light tank, used by the British Army"
+introduced: 1974
+manufacturer: Alvis/BAE Systems
+origin: UK
+price: 6
+role: Recon light tank
+variants:
+  FV107: {}
+hit_points: 8

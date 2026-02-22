@@ -1,0 +1,9 @@
+name: IRIS-T SLM
+tasks:
+  - MERAD
+units:
+  - IRIS-T SLM SR
+  - IRIS-T SLM CP
+  - IRIS-T SLM LN
+layouts:
+  - 4 Launcher Site (Semicircle)

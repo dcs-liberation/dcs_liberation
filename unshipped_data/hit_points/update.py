@@ -18,9 +18,9 @@ def update_yaml(file: str, hit_points: int) -> None:
     # update, ignore existing hit_points settings
     found = False
     key = "hit_points"
-    for line in data:
+    for index, line in enumerate(data):
         if line[0 : len(key) + 1] == f"{key}:":
-            line = f"{key}: {hit_points}\n"
+            data[index] = f"{key}: {hit_points}\n"
             found = True
     if not found:
         data.append(f"{key}: {hit_points}\n")

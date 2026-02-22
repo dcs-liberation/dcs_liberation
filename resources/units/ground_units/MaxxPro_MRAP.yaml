@@ -1,0 +1,10 @@
+class: Recon
+description: 'The International M1224 MaxxPro MRAP (Mine-Resistant Ambush Protected) is an armored fighting vehicle.'
+introduced: 2007
+manufacturer: Navistari
+origin: USA
+price: 2
+role: Recon
+variants:
+  MaxxPro MRAP: {}
+hit_points: 4
