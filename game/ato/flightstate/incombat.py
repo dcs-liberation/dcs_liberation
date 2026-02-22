@@ -48,6 +48,9 @@ class InCombat(InFlight):
     def estimate_speed(self) -> Speed:
         return self.previous_state.estimate_speed()
 
+    def estimate_fuel(self) -> float:
+        return self.estimate_fuel_at_current_waypoint()
+
     def on_game_tick(
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
