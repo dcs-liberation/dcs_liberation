@@ -92,10 +92,13 @@ class TheaterState(WorldState["TheaterState"]):
         self._rebuild_threat_zones()
 
     def has_battle_position(self, target: VehicleGroupGroundObject) -> bool:
+        if target.control_point not in self.enemy_battle_positions:
+            return False
         return target in self.enemy_battle_positions[target.control_point]
 
     def eliminate_battle_position(self, target: VehicleGroupGroundObject) -> None:
-        self.enemy_battle_positions[target.control_point].eliminate(target)
+        if target.control_point in self.enemy_battle_positions:
+            self.enemy_battle_positions[target.control_point].eliminate(target)
 
     def ammo_dumps_at(
         self, control_point: ControlPoint
