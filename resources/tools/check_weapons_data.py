@@ -5,6 +5,7 @@ import contextlib
 import importlib
 import io
 import pkgutil
+import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
@@ -56,6 +57,27 @@ def _iter_yaml_files(root: Path) -> list[Path]:
     return sorted(p for p in root.glob("**/*.yaml") if p.is_file())
 
 
+def _iter_lua_files(root: Path) -> list[Path]:
+    return sorted(p for p in root.glob("**/*.lua") if p.is_file())
+
+
+_LUA_CLSID_RE = re.compile(r"""\["CLSID"\]\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+
+
+def _extract_clsids_from_lua(path: Path) -> tuple[set[str], list[Issue]]:
+    issues: list[Issue] = []
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        raw = path.read_text(encoding="utf-8-sig")
+
+    clsids = {m.group(1).strip() for m in _LUA_CLSID_RE.finditer(raw)}
+    clsids.discard("")
+    if not clsids:
+        issues.append(Issue(path, 'no ["CLSID"] entries found'))
+    return clsids, issues
+
+
 def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Issue]]:
     issues: list[Issue] = []
     try:
@@ -94,13 +116,22 @@ def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Is
     return data, issues
 
 
-def check_weapons_data(weapons_dir: Path) -> list[Issue]:
+def check_weapons_data(weapons_dir: Path, customized_payloads_dir: Path) -> list[Issue]:
     issues: list[Issue] = []
     yaml_files = _iter_yaml_files(weapons_dir)
     if not yaml_files:
         return [Issue(weapons_dir, "no .yaml files found")]
 
-    weapon_ids = _load_weapon_ids()
+    try:
+        weapon_ids = _load_weapon_ids()
+    except Exception as ex:
+        return [
+            Issue(
+                weapons_dir,
+                "failed to import pydcs weapon database (including injected weapons): "
+                f"{type(ex).__name__}: {ex}",
+            )
+        ]
 
     names_to_paths: dict[str, Path] = {}
     clsid_to_paths: dict[str, list[Path]] = defaultdict(list)
@@ -147,16 +178,40 @@ def check_weapons_data(weapons_dir: Path) -> list[Issue]:
             rendered = ", ".join(p.as_posix() for p in sorted(set(paths)))
             issues.append(Issue(paths[0], f"CLSID used in multiple files: {clsid} ({rendered})"))
 
+    lua_files = _iter_lua_files(customized_payloads_dir)
+    if not lua_files:
+        issues.append(Issue(customized_payloads_dir, "no .lua files found"))
+    else:
+        for lua_path in lua_files:
+            lua_clsids, lua_issues = _extract_clsids_from_lua(lua_path)
+            issues.extend(lua_issues)
+            for clsid in sorted(lua_clsids):
+                if clsid == "<CLEAN>":
+                    continue
+                if clsid not in weapon_ids:
+                    issues.append(Issue(lua_path, f"unknown CLSID (not in pydcs): {clsid}"))
+
     return issues
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate resources/weapons YAML files.")
+    parser = argparse.ArgumentParser(
+        description="Validate weapons YAML and customized payload CLSIDs."
+    )
     parser.add_argument(
         "--weapons-dir",
         type=Path,
         default=Path("resources/weapons"),
         help="Path to the weapons resource directory (default: resources/weapons).",
+    )
+    parser.add_argument(
+        "--customized-payloads-dir",
+        type=Path,
+        default=Path("resources/customized_payloads"),
+        help=(
+            "Path to customized payload Lua files "
+            "(default: resources/customized_payloads)."
+        ),
     )
     return parser.parse_args(argv)
 
@@ -164,7 +219,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
     weapons_dir: Path = args.weapons_dir
-    issues = check_weapons_data(weapons_dir)
+    customized_payloads_dir: Path = args.customized_payloads_dir
+    issues = check_weapons_data(weapons_dir, customized_payloads_dir)
     if not issues:
         return 0
     for issue in issues:
