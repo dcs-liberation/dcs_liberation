@@ -78,6 +78,26 @@ def _extract_clsids_from_lua(path: Path) -> tuple[set[str], list[Issue]]:
     return clsids, issues
 
 
+_LUA_NAME_RE = re.compile(r"""\["name"\]\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+
+
+def _extract_unit_name_from_lua(path: Path) -> tuple[Optional[str], list[Issue]]:
+    issues: list[Issue] = []
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        raw = path.read_text(encoding="utf-8-sig")
+
+    match = _LUA_NAME_RE.search(raw)
+    if match is None:
+        return None, [Issue(path, 'no ["name"] entry found')]
+
+    name = match.group(1).strip()
+    if not name:
+        return None, [Issue(path, 'invalid ["name"] entry (empty string)')]
+    return name, issues
+
+
 def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Issue]]:
     issues: list[Issue] = []
     try:
@@ -116,7 +136,11 @@ def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Is
     return data, issues
 
 
-def check_weapons_data(weapons_dir: Path, customized_payloads_dir: Path) -> list[Issue]:
+def check_weapons_data(
+    weapons_dir: Path,
+    customized_payloads_dir: Path,
+    aircraft_dir: Path,
+) -> list[Issue]:
     issues: list[Issue] = []
     yaml_files = _iter_yaml_files(weapons_dir)
     if not yaml_files:
@@ -191,6 +215,51 @@ def check_weapons_data(weapons_dir: Path, customized_payloads_dir: Path) -> list
                 if clsid not in weapon_ids:
                     issues.append(Issue(lua_path, f"unknown CLSID (not in pydcs): {clsid}"))
 
+            unit_name, name_issues = _extract_unit_name_from_lua(lua_path)
+            issues.extend(name_issues)
+
+            aircraft_yaml = aircraft_dir / f"{lua_path.stem}.yaml"
+            if not aircraft_yaml.exists():
+                issues.append(
+                    Issue(
+                        lua_path,
+                        f"no matching aircraft YAML found: {aircraft_yaml.as_posix()}",
+                    )
+                )
+                continue
+
+            try:
+                aircraft_data = yaml.safe_load(aircraft_yaml.read_text(encoding="utf-8"))
+            except UnicodeDecodeError:
+                aircraft_data = yaml.safe_load(aircraft_yaml.read_text(encoding="utf-8-sig"))
+            except yaml.YAMLError as ex:
+                issues.append(Issue(aircraft_yaml, f"YAML parse error: {ex}"))
+                continue
+
+            if not isinstance(aircraft_data, dict):
+                issues.append(
+                    Issue(
+                        aircraft_yaml,
+                        f"expected a YAML mapping, got {type(aircraft_data).__name__}",
+                    )
+                )
+                continue
+
+            introduced = aircraft_data.get("introduced")
+            if introduced is None:
+                issues.append(Issue(aircraft_yaml, "missing required key: introduced"))
+            elif not isinstance(introduced, int):
+                issues.append(Issue(aircraft_yaml, "invalid key: introduced (must be an int)"))
+
+            # Optional consistency check: Lua's declared unit name should match its file stem.
+            if unit_name is not None and unit_name != lua_path.stem:
+                issues.append(
+                    Issue(
+                        lua_path,
+                        f'unit ["name"] "{unit_name}" does not match filename "{lua_path.stem}"',
+                    )
+                )
+
     return issues
 
 
@@ -213,6 +282,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "(default: resources/customized_payloads)."
         ),
     )
+    parser.add_argument(
+        "--aircraft-dir",
+        type=Path,
+        default=Path("resources/units/aircraft"),
+        help="Path to aircraft YAML directory (default: resources/units/aircraft).",
+    )
     return parser.parse_args(argv)
 
 
@@ -220,7 +295,8 @@ def main(argv: list[str]) -> int:
     args = parse_args(argv)
     weapons_dir: Path = args.weapons_dir
     customized_payloads_dir: Path = args.customized_payloads_dir
-    issues = check_weapons_data(weapons_dir, customized_payloads_dir)
+    aircraft_dir: Path = args.aircraft_dir
+    issues = check_weapons_data(weapons_dir, customized_payloads_dir, aircraft_dir)
     if not issues:
         return 0
     for issue in issues:
