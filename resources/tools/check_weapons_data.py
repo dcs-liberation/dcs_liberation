@@ -214,6 +214,24 @@ def check_weapons_data(
                     continue
                 if clsid not in weapon_ids:
                     issues.append(Issue(lua_path, f"unknown CLSID (not in pydcs): {clsid}"))
+                weapon_files = sorted(set(clsid_to_paths.get(clsid, [])))
+                if not weapon_files:
+                    issues.append(
+                        Issue(
+                            lua_path,
+                            "CLSID referenced by customized payload is not present in any "
+                            f"resources/weapons YAML: {clsid}",
+                        )
+                    )
+                elif len(weapon_files) != 1:
+                    rendered = ", ".join(p.as_posix() for p in weapon_files)
+                    issues.append(
+                        Issue(
+                            lua_path,
+                            "CLSID referenced by customized payload must appear in exactly one "
+                            f"resources/weapons YAML: {clsid} ({rendered})",
+                        )
+                    )
 
             unit_name, name_issues = _extract_unit_name_from_lua(lua_path)
             issues.extend(name_issues)
