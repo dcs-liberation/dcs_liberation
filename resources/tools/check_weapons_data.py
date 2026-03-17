@@ -21,6 +21,9 @@ class Issue:
 
 def _load_weapon_ids() -> Optional[set[str]]:
     try:
+        # Ensure modded weapons are registered into pydcs before we validate CLSIDs.
+        # These imports have intentional side effects via `inject_weapons`.
+        import pydcs_extensions  # noqa: F401
         from dcs.weapons_data import weapon_ids  # type: ignore[import-not-found]
     except Exception:
         return None
@@ -69,13 +72,13 @@ def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Is
     return data, issues
 
 
-def check_weapons_data(weapons_dir: Path, *, check_pydcs: bool) -> list[Issue]:
+def check_weapons_data(weapons_dir: Path) -> list[Issue]:
     issues: list[Issue] = []
     yaml_files = _iter_yaml_files(weapons_dir)
     if not yaml_files:
         return [Issue(weapons_dir, "no .yaml files found")]
 
-    weapon_ids = _load_weapon_ids() if check_pydcs else None
+    weapon_ids = _load_weapon_ids()
 
     names_to_paths: dict[str, Path] = {}
     clsid_to_paths: dict[str, list[Path]] = defaultdict(list)
@@ -133,18 +136,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=Path("resources/weapons"),
         help="Path to the weapons resource directory (default: resources/weapons).",
     )
-    parser.add_argument(
-        "--check-pydcs",
-        action="store_true",
-        help="Verify CLSIDs exist in pydcs (dcs.weapons_data.weapon_ids).",
-    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
     weapons_dir: Path = args.weapons_dir
-    issues = check_weapons_data(weapons_dir, check_pydcs=bool(args.check_pydcs))
+    issues = check_weapons_data(weapons_dir)
     if not issues:
         return 0
     for issue in issues:
