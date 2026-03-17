@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import importlib
+import io
+import pkgutil
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
@@ -21,9 +25,29 @@ class Issue:
 
 def _load_weapon_ids() -> Optional[set[str]]:
     try:
-        # Ensure modded weapons are registered into pydcs before we validate CLSIDs.
-        # These imports have intentional side effects via `inject_weapons`.
-        import pydcs_extensions  # noqa: F401
+        # When executed as a script (e.g. `python resources/tools/check_weapons_data.py`)
+        # Python's import root is `resources/tools`, not the repo root. Ensure the repo
+        # root is on sys.path so imports like `import pydcs_extensions` work.
+        repo_root = Path(__file__).resolve().parents[2]
+        if str(repo_root) not in sys.path:
+            sys.path.insert(0, str(repo_root))
+
+        # Ensure any modded weapons registered via `inject_weapons` are loaded into
+        # pydcs before we validate CLSIDs against `dcs.weapons_data.weapon_ids`.
+        #
+        # Import-time output can be noisy (DCS install detection), so suppress it.
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+            import pydcs_extensions
+
+            # Import every submodule under pydcs_extensions to catch modules that
+            # are not re-exported by pydcs_extensions/__init__.py but still inject
+            # weapons at import time.
+            for mod in pkgutil.iter_modules(
+                pydcs_extensions.__path__, prefix=f"{pydcs_extensions.__name__}."
+            ):
+                importlib.import_module(mod.name)
+
         from dcs.weapons_data import weapon_ids  # type: ignore[import-not-found]
     except Exception:
         return None
