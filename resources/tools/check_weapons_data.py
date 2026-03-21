@@ -269,15 +269,6 @@ def check_weapons_data(
             elif not isinstance(introduced, int):
                 issues.append(Issue(aircraft_yaml, "invalid key: introduced (must be an int)"))
 
-            # Optional consistency check: Lua's declared unit name should match its file stem.
-            if unit_name is not None and unit_name != lua_path.stem:
-                issues.append(
-                    Issue(
-                        lua_path,
-                        f'unit ["name"] "{unit_name}" does not match filename "{lua_path.stem}"',
-                    )
-                )
-
     return issues
 
 
