@@ -1,0 +1,5 @@
+name: 3xLAU-131 7xHE APKWS
+year: 2012
+fallback: 3xLAU-131 Mk5 HEAT
+clsids:
+  - "{LAU-131x3 - 7 AGR-20A}"
