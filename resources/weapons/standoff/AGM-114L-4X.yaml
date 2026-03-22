@@ -1,0 +1,5 @@
+name: AGM-114L * 4
+year: 2000
+fallback: AGM-114K * 4
+clsids:
+  - "{M299_4xAGM_114L}"
