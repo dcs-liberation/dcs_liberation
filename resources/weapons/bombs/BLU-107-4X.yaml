@@ -1,0 +1,5 @@
+name: 4xBLU-107
+year: 1977
+fallback: 4xSAMP-400
+clsids:
+  - "{CLB4_BLU107}"
