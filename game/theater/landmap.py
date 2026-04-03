@@ -39,8 +39,8 @@ def load_landmap(filename: Path) -> Optional[Landmap]:
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
-    except:
-        logging.exception(f"Failed to load landmap {filename}")
+    except Exception:
+        logging.exception("Failed to load landmap %s", filename)
         return None
 
 
