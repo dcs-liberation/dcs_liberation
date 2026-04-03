@@ -13,7 +13,6 @@ def set_dcs_save_game_directory(user_folder: Path) -> None:
 
 
 def base_path() -> str:
-    global _dcs_saved_game_folder
     assert _dcs_saved_game_folder is not None
     return str(_dcs_saved_game_folder)
 

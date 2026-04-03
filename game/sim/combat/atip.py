@@ -24,7 +24,7 @@ class AtIp(FrozenCombat):
         return f"{self.flight} is at its IP"
 
     def describe(self) -> str:
-        return f"at IP"
+        return "at IP"
 
     def iter_flights(self) -> Iterator[Flight]:
         yield self.flight
