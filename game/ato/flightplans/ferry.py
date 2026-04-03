@@ -58,7 +58,7 @@ class Builder(IBuilder[FerryFlightPlan, FerryLayout]):
     def layout(self) -> FerryLayout:
         if self.flight.departure == self.flight.arrival:
             raise PlanningError(
-                f"Cannot plan ferry self.flight: departure and arrival are both "
+                f"Cannot plan ferry {self.flight}: departure and arrival are both "
                 f"{self.flight.departure}"
             )
 
