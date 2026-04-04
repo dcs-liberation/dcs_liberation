@@ -164,12 +164,8 @@ def test_no_solutions_dumps_inputs(tmp_path: Path) -> None:
     }
     features = data["features"]
     assert len(features) == 2
-    assert_point_feature(
-        features[0], "foo", [34.265515188456, 45.129497060328966]
-    )
-    assert_point_feature(
-        features[1], "bar", [34.265528100962584, 45.1295059189547]
-    )
+    assert_point_feature(features[0], "foo", [34.265515188456, 45.129497060328966])
+    assert_point_feature(features[1], "bar", [34.265528100962584, 45.1295059189547])
 
 
 def test_solver_inputs_appear_in_strategy_features(tmp_path: Path) -> None:
@@ -188,12 +184,8 @@ def test_solver_inputs_appear_in_strategy_features(tmp_path: Path) -> None:
     }
     features = data["features"]
     assert len(features) == 3
-    assert_point_feature(
-        features[0], "foo", [34.265515188456, 45.129497060328966]
-    )
-    assert_point_feature(
-        features[1], "bar", [34.265528100962584, 45.1295059189547]
-    )
+    assert_point_feature(features[0], "foo", [34.265515188456, 45.129497060328966])
+    assert_point_feature(features[1], "bar", [34.265528100962584, 45.1295059189547])
     assert_point_feature(
         features[2], "solution", [34.265541013473154, 45.12951477757893]
     )
