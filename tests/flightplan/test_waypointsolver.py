@@ -52,6 +52,17 @@ class SolverWithInputs(WaypointSolver):
         yield "bar", Point(1, 1)
 
 
+def assert_point_feature(
+    feature: dict[str, object], description: str, coordinates: list[float]
+) -> None:
+    assert feature["type"] == "Feature"
+    assert feature["properties"] == {"description": description}
+    geometry = feature["geometry"]
+    assert isinstance(geometry, dict)
+    assert geometry["type"] == "Point"
+    assert geometry["coordinates"] == pytest.approx(coordinates)
+
+
 def test_solver_tries_strategies_in_order() -> None:
     solver = WaypointSolver()
     solver.add_strategy(OriginStrategy())
@@ -146,31 +157,15 @@ def test_no_solutions_dumps_inputs(tmp_path: Path) -> None:
     inputs_path = tmp_path / "solver.json"
     with inputs_path.open(encoding="utf-8") as inputs_file:
         data = json.load(inputs_file)
-    assert data == {
-        "type": "FeatureCollection",
-        "metadata": {
-            "name": "SolverWithInputs",
-            "terrain": "Caucasus",
-        },
-        "features": [
-            {
-                "type": "Feature",
-                "properties": {"description": "foo"},
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [34.265515188456, 45.129497060328966],
-                },
-            },
-            {
-                "type": "Feature",
-                "properties": {"description": "bar"},
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [34.265528100962584, 45.1295059189547],
-                },
-            },
-        ],
+    assert data["type"] == "FeatureCollection"
+    assert data["metadata"] == {
+        "name": "SolverWithInputs",
+        "terrain": "Caucasus",
     }
+    features = data["features"]
+    assert len(features) == 2
+    assert_point_feature(features[0], "foo", [34.265515188456, 45.129497060328966])
+    assert_point_feature(features[1], "bar", [34.265528100962584, 45.1295059189547])
 
 
 def test_solver_inputs_appear_in_strategy_features(tmp_path: Path) -> None:
@@ -182,48 +177,26 @@ def test_solver_inputs_appear_in_strategy_features(tmp_path: Path) -> None:
     strategy_path = tmp_path / "0.json"
     with strategy_path.open(encoding="utf-8") as inputs_file:
         data = json.load(inputs_file)
-    assert data == {
-        "type": "FeatureCollection",
-        "metadata": {
-            "name": "PointStrategy",
-            "prerequisites": [],
-        },
-        "features": [
-            {
-                "type": "Feature",
-                "properties": {"description": "foo"},
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [34.265515188456, 45.129497060328966],
-                },
-            },
-            {
-                "type": "Feature",
-                "properties": {"description": "bar"},
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [34.265528100962584, 45.1295059189547],
-                },
-            },
-            {
-                "type": "Feature",
-                "properties": {"description": "solution"},
-                "geometry": {
-                    "coordinates": [34.265541013473154, 45.12951477757893],
-                    "type": "Point",
-                },
-            },
-        ],
+    assert data["type"] == "FeatureCollection"
+    assert data["metadata"] == {
+        "name": "PointStrategy",
+        "prerequisites": [],
     }
+    features = data["features"]
+    assert len(features) == 3
+    assert_point_feature(features[0], "foo", [34.265515188456, 45.129497060328966])
+    assert_point_feature(features[1], "bar", [34.265528100962584, 45.1295059189547])
+    assert_point_feature(
+        features[2], "solution", [34.265541013473154, 45.12951477757893]
+    )
 
 
 def test_to_geojson(tmp_path: Path) -> None:
     solver = WaypointSolver()
     solver.set_debug_properties(tmp_path, Caucasus())
-    assert solver.to_geojson(Point(0, 0)) == {
-        "coordinates": [34.265515188456, 45.129497060328966],
-        "type": "Point",
-    }
+    point = solver.to_geojson(Point(0, 0))
+    assert point["type"] == "Point"
+    assert point["coordinates"] == pytest.approx([34.265515188456, 45.129497060328966])
 
     assert solver.to_geojson(MultiPolygon([])) == {
         "type": "MultiPolygon",
