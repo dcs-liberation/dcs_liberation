@@ -220,11 +220,10 @@ class MissionResultsProcessor:
                 front_line.update_position()
                 events.update_front_line(front_line)
 
-                print(
-                    "Compute frontline progression for : "
-                    + cp.name
-                    + " to "
-                    + enemy_cp.name
+                logging.debug(
+                    "Compute frontline progression for: %s to %s",
+                    cp.name,
+                    enemy_cp.name,
                 )
 
                 delta = 0.0
@@ -235,10 +234,10 @@ class MissionResultsProcessor:
                 ally_units_alive = cp.base.total_armor
                 enemy_units_alive = enemy_cp.base.total_armor
 
-                print(f"Remaining allied units: {ally_units_alive}")
-                print(f"Remaining enemy units: {enemy_units_alive}")
-                print(f"Allied casualties {ally_casualties}")
-                print(f"Enemy casualties {enemy_casualties}")
+                logging.debug("Remaining allied units: %d", ally_units_alive)
+                logging.debug("Remaining enemy units: %d", enemy_units_alive)
+                logging.debug("Allied casualties: %d", ally_casualties)
+                logging.debug("Enemy casualties: %d", enemy_casualties)
 
                 ratio = (1.0 + enemy_casualties) / (1.0 + ally_casualties)
 
@@ -307,22 +306,23 @@ class MissionResultsProcessor:
                         CombatStance.DEFENSIVE,
                         CombatStance.AMBUSH,
                     ]:
-                        print(
-                            f"Allied forces have adopted a defensive stance along the {cp.name}-{enemy_cp.name} "
-                            f"frontline, making only limited progress."
+                        logging.debug(
+                            "Allied forces have adopted a defensive stance along the %s-%s frontline, making only limited progress.",
+                            cp.name,
+                            enemy_cp.name,
                         )
                         delta = MINOR_DEFEAT_INFLUENCE
 
                 # Handle the case where there are no casualties at all on either side but both sides still have units
                 if delta == 0.0:
-                    print(status_msg)
+                    logging.debug("%s", status_msg)
                     self.game.message(
                         "Frontline Report",
                         f"Our ground forces from {cp.name} reached a stalemate with enemy forces from {enemy_cp.name}.",
                     )
                 else:
                     if player_won:
-                        print(status_msg)
+                        logging.debug("%s", status_msg)
                         cp.base.affect_strength(delta)
                         enemy_cp.base.affect_strength(-delta)
                         self.game.message(
@@ -330,7 +330,7 @@ class MissionResultsProcessor:
                             f"Our ground forces from {cp.name} are making progress toward {enemy_cp.name}. {status_msg}",
                         )
                     else:
-                        print(status_msg)
+                        logging.debug("%s", status_msg)
                         enemy_cp.base.affect_strength(delta)
                         cp.base.affect_strength(-delta)
                         self.game.message(
