@@ -80,3 +80,6 @@ jtac_unit: MQ-9 Reaper
 liveries_overrides:
   F-14A Tomcat (Block 135-GR Late):
     - Rogue Nation(Top Gun - Maverick)
+weapons_introduction_year_overrides:
+    AIM-54C-MK47: 2050
+    AIM-54C-MK60: 2050
