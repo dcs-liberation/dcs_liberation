@@ -111,11 +111,15 @@ def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Is
         return None, [Issue(path, f"YAML parse error: {ex}")]
 
     if not isinstance(data, dict):
-        return None, [Issue(path, f"expected a YAML mapping, got {type(data).__name__}")]
+        return None, [
+            Issue(path, f"expected a YAML mapping, got {type(data).__name__}")
+        ]
 
     name = data.get("name")
     if not isinstance(name, str) or not name.strip():
-        issues.append(Issue(path, "missing/invalid required key: name (non-empty string)"))
+        issues.append(
+            Issue(path, "missing/invalid required key: name (non-empty string)")
+        )
 
     year = data.get("year")
     if year is not None and not isinstance(year, int):
@@ -123,15 +127,21 @@ def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Is
 
     fallback = data.get("fallback")
     if fallback is not None and (not isinstance(fallback, str) or not fallback.strip()):
-        issues.append(Issue(path, "invalid key: fallback (must be a non-empty string if present)"))
+        issues.append(
+            Issue(path, "invalid key: fallback (must be a non-empty string if present)")
+        )
 
     clsids = data.get("clsids")
     if not isinstance(clsids, list) or not clsids:
-        issues.append(Issue(path, "missing/invalid required key: clsids (non-empty list)"))
+        issues.append(
+            Issue(path, "missing/invalid required key: clsids (non-empty list)")
+        )
     else:
         for i, clsid in enumerate(clsids):
             if not isinstance(clsid, str) or not clsid.strip():
-                issues.append(Issue(path, f"invalid clsids[{i}] (must be a non-empty string)"))
+                issues.append(
+                    Issue(path, f"invalid clsids[{i}] (must be a non-empty string)")
+                )
 
     return data, issues
 
@@ -195,12 +205,18 @@ def check_weapons_data(
 
     for path, fallback in fallback_refs:
         if fallback not in names_to_paths:
-            issues.append(Issue(path, f'fallback "{fallback}" does not match any weapon group name'))
+            issues.append(
+                Issue(
+                    path, f'fallback "{fallback}" does not match any weapon group name'
+                )
+            )
 
     for clsid, paths in clsid_to_paths.items():
         if len(paths) > 1:
             rendered = ", ".join(p.as_posix() for p in sorted(set(paths)))
-            issues.append(Issue(paths[0], f"CLSID used in multiple files: {clsid} ({rendered})"))
+            issues.append(
+                Issue(paths[0], f"CLSID used in multiple files: {clsid} ({rendered})")
+            )
 
     lua_files = _iter_lua_files(customized_payloads_dir)
     if not lua_files:
@@ -213,7 +229,9 @@ def check_weapons_data(
                 if clsid == "<CLEAN>":
                     continue
                 if clsid not in weapon_ids:
-                    issues.append(Issue(lua_path, f"unknown CLSID (not in pydcs): {clsid}"))
+                    issues.append(
+                        Issue(lua_path, f"unknown CLSID (not in pydcs): {clsid}")
+                    )
                 weapon_files = sorted(set(clsid_to_paths.get(clsid, [])))
                 if not weapon_files:
                     issues.append(
@@ -247,9 +265,13 @@ def check_weapons_data(
                 continue
 
             try:
-                aircraft_data = yaml.safe_load(aircraft_yaml.read_text(encoding="utf-8"))
+                aircraft_data = yaml.safe_load(
+                    aircraft_yaml.read_text(encoding="utf-8")
+                )
             except UnicodeDecodeError:
-                aircraft_data = yaml.safe_load(aircraft_yaml.read_text(encoding="utf-8-sig"))
+                aircraft_data = yaml.safe_load(
+                    aircraft_yaml.read_text(encoding="utf-8-sig")
+                )
             except yaml.YAMLError as ex:
                 issues.append(Issue(aircraft_yaml, f"YAML parse error: {ex}"))
                 continue
@@ -267,7 +289,9 @@ def check_weapons_data(
             if introduced is None:
                 issues.append(Issue(aircraft_yaml, "missing required key: introduced"))
             elif not isinstance(introduced, int):
-                issues.append(Issue(aircraft_yaml, "invalid key: introduced (must be an int)"))
+                issues.append(
+                    Issue(aircraft_yaml, "invalid key: introduced (must be an int)")
+                )
 
     return issues
 
@@ -315,4 +339,3 @@ def main(argv: list[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-
