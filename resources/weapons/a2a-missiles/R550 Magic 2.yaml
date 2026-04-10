@@ -1,0 +1,6 @@
+name: R550 Magic 2
+year: 1986
+fallback: R550 Magic 1
+clsids:
+  - "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}"
+  - "{MMagicII}"

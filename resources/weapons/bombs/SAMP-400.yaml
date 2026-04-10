@@ -1,4 +1,4 @@
 name: SAMP-400
-fallback: Mk 82
+fallback: SAMP-250
 clsids:
   - "{SAMP400LD}"
