@@ -1,0 +1,5 @@
+name: AGM-119
+year: 1994
+fallback: AGM-65G
+clsids:
+  - "{7B8DCEB4-820B-4015-9B48-1028A4195692}"
