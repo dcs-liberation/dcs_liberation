@@ -46,11 +46,11 @@ local unitPayloads = {
 			["name"] = "Liberation Anti-ship",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{HSAB-6xAGM-84}",
+					["CLSID"] = "{HSAB_4x_AGM84D_R}",
 					["num"] = 3,
 				},
 				[2] = {
-					["CLSID"] = "{HSAB-6xAGM-84}",
+					["CLSID"] = "{HSAB_4x_AGM84D_L}",
 					["num"] = 1,
 				},
 			},
