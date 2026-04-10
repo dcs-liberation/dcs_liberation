@@ -1,0 +1,6 @@
+name: 4xAGM-84D
+year: 1985
+fallback: AGM-84A
+clsids:
+  - "{HSAB_4x_AGM84D_L}"
+  - "{HSAB_4x_AGM84D_R}"
