@@ -1,0 +1,5 @@
+name: 2xS-25OFM
+year: 1978
+fallback: S-25O
+clsids:
+  - "{TWIN_S25}"
