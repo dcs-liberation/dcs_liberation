@@ -1,0 +1,7 @@
+name: 2xLAU-10 M71
+year: 1957
+clsids:
+  - "{PHXBRU3242_2*LAU10 LS}"
+  - "{PHXBRU3242_2*LAU10 RS}"
+  - "{BRU3242_2*LAU10 L}"
+  - "{BRU3242_2*LAU10 R}"

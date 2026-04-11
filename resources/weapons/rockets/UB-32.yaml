@@ -1,0 +1,12 @@
+name: UB-32
+year: 1975
+fallback: FAB-500 M62
+clsids:
+  - "{637334E4-AB5A-47C0-83A6-51B7F1DF3CD5}"
+  - "{UB-32A-24}"
+  - "{UB32A24_S5KP}"
+  - "{UB32A24_S5M}"
+  - "{637334E4-AB5A-47C0-83A6-51B7F1DF3CD5}"
+  - "{UB32A_S5KP}"
+  - "{UB32A_S5M}"
+  - "{UB-32_S5M}"
