@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import importlib
+import inspect
 import io
 import pkgutil
 import re
@@ -79,6 +80,69 @@ def _extract_clsids_from_lua(path: Path) -> tuple[set[str], list[Issue]]:
 
 
 _LUA_NAME_RE = re.compile(r"""\["unitType"\]\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+
+_LUA_NUM_AFTER_CLSID_RE = re.compile(r"""\["num"\]\s*=\s*(\d+)""", re.IGNORECASE)
+
+
+def _extract_pylon_clsid_pairs_from_lua(
+    path: Path,
+) -> tuple[list[tuple[int, str]], list[Issue]]:
+    """Each payload pylon entry pairs a CLSID with a DCS station index (["num"])."""
+    issues: list[Issue] = []
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        raw = path.read_text(encoding="utf-8-sig")
+
+    clsid_matches = list(_LUA_CLSID_RE.finditer(raw))
+    pairs: list[tuple[int, str]] = []
+    for i, clsid_m in enumerate(clsid_matches):
+        clsid = clsid_m.group(1).strip()
+        end = clsid_m.end()
+        boundary = len(raw)
+        if i + 1 < len(clsid_matches):
+            boundary = clsid_matches[i + 1].start()
+        segment = raw[end:boundary]
+        num_m = _LUA_NUM_AFTER_CLSID_RE.search(segment)
+        if num_m is None:
+            issues.append(
+                Issue(
+                    path,
+                    f'["CLSID"] = "{clsid}" has no following ["num"] in the same pylon block',
+                )
+            )
+            continue
+        pairs.append((int(num_m.group(1)), clsid))
+    return pairs, issues
+
+
+def _valid_pylon_indices_and_allowed_clsids(
+    dcs_type: type[Any],
+) -> tuple[Optional[set[int]], dict[int, set[str]]]:
+    """Mirror game.data.weapons.Pylon.for_aircraft: pydcs uses inner Pylon* classes."""
+    pylons_attr = getattr(dcs_type, "pylons", None)
+    if not isinstance(pylons_attr, (set, frozenset)):
+        return None, {}
+
+    valid_indices: set[int] = set(pylons_attr)
+    allowed: dict[int, set[str]] = defaultdict(set)
+    for attr in dcs_type.__dict__.values():
+        if not inspect.isclass(attr) or not attr.__name__.startswith("Pylon"):
+            continue
+        for key, value in attr.__dict__.items():
+            if key.startswith("__"):
+                continue
+            if not isinstance(value, tuple) or len(value) != 2:
+                continue
+            pylon_number, weapon = value
+            if not isinstance(pylon_number, int):
+                continue
+            if not isinstance(weapon, dict) or "clsid" not in weapon:
+                continue
+            clsid = weapon["clsid"]
+            if isinstance(clsid, str) and clsid:
+                allowed[pylon_number].add(clsid)
+    return valid_indices, dict(allowed)
 
 
 def _extract_unit_name_from_lua(path: Path) -> tuple[Optional[str], list[Issue]]:
@@ -167,6 +231,10 @@ def check_weapons_data(
             )
         ]
 
+    from dcs.helicopters import helicopter_map  # type: ignore[import-not-found]
+    from dcs.planes import plane_map  # type: ignore[import-not-found]
+    from dcs.unittype import FlyingType  # type: ignore[import-not-found]
+
     names_to_paths: dict[str, Path] = {}
     clsid_to_paths: dict[str, list[Path]] = defaultdict(list)
     fallback_refs: list[tuple[Path, str]] = []
@@ -224,7 +292,14 @@ def check_weapons_data(
     else:
         for lua_path in lua_files:
             lua_clsids, lua_issues = _extract_clsids_from_lua(lua_path)
+            pylon_pairs, pylon_parse_issues = _extract_pylon_clsid_pairs_from_lua(
+                lua_path
+            )
+            unit_name, name_issues = _extract_unit_name_from_lua(lua_path)
             issues.extend(lua_issues)
+            issues.extend(pylon_parse_issues)
+            issues.extend(name_issues)
+
             for clsid in sorted(lua_clsids):
                 if clsid == "<CLEAN>":
                     continue
@@ -251,8 +326,58 @@ def check_weapons_data(
                         )
                     )
 
-            unit_name, name_issues = _extract_unit_name_from_lua(lua_path)
-            issues.extend(name_issues)
+            if isinstance(unit_name, str) and unit_name.strip():
+                dcs_type = plane_map.get(unit_name) or helicopter_map.get(unit_name)
+                if dcs_type is None:
+                    issues.append(
+                        Issue(
+                            lua_path,
+                            f"unitType {unit_name!r} is not a pydcs plane or helicopter id",
+                        )
+                    )
+                elif inspect.isclass(dcs_type) and issubclass(dcs_type, FlyingType):
+                    valid_indices, allowed_by_pylon = (
+                        _valid_pylon_indices_and_allowed_clsids(dcs_type)
+                    )
+                    if valid_indices is None:
+                        issues.append(
+                            Issue(
+                                lua_path,
+                                f"pydcs unit {unit_name!r} has no usable pylons definition",
+                            )
+                        )
+                    else:
+                        reported_bad_station: set[int] = set()
+                        reported_bad_combo: set[tuple[int, str]] = set()
+                        for pylon_idx, clsid in pylon_pairs:
+                            if clsid == "<CLEAN>":
+                                continue
+                            if clsid not in weapon_ids:
+                                continue
+                            if pylon_idx not in valid_indices:
+                                if pylon_idx not in reported_bad_station:
+                                    reported_bad_station.add(pylon_idx)
+                                    issues.append(
+                                        Issue(
+                                            lua_path,
+                                            "pylon station index "
+                                            f"{pylon_idx} is not defined for pydcs unit "
+                                            f"{unit_name}",
+                                        )
+                                    )
+                                continue
+                            allowed_here = allowed_by_pylon.get(pylon_idx, set())
+                            if clsid not in allowed_here:
+                                key = (pylon_idx, clsid)
+                                if key not in reported_bad_combo:
+                                    reported_bad_combo.add(key)
+                                    issues.append(
+                                        Issue(
+                                            lua_path,
+                                            "CLSID is not a valid weapon for pylon "
+                                            f"{pylon_idx} on pydcs unit {unit_name}: {clsid}",
+                                        )
+                                    )
 
             aircraft_yaml = aircraft_dir / f"{unit_name}.yaml"
             if not aircraft_yaml.exists():
@@ -298,7 +423,10 @@ def check_weapons_data(
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Validate weapons YAML and customized payload CLSIDs."
+        description=(
+            "Validate weapons YAML, customized payload CLSIDs, and payload "
+            "pylon assignments against pydcs aircraft definitions."
+        )
     )
     parser.add_argument(
         "--weapons-dir",
