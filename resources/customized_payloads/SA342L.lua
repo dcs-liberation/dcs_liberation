@@ -5,7 +5,7 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{LAU_SNEB68G}",
+					["CLSID"] = "{TELSON8_SNEBT253}",
 					["num"] = 2,
 				},
 				[2] = {
@@ -25,7 +25,7 @@ local unitPayloads = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{LAU_SNEB68G}",
+					["CLSID"] = "{TELSON8_SNEBT253}",
 					["num"] = 2,
 				},
 				[2] = {
@@ -45,7 +45,7 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{LAU_SNEB68G}",
+					["CLSID"] = "{TELSON8_SNEBT253}",
 					["num"] = 2,
 				},
 				[2] = {
@@ -65,7 +65,7 @@ local unitPayloads = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{LAU_SNEB68G}",
+					["CLSID"] = "{TELSON8_SNEBT253}",
 					["num"] = 2,
 				},
 				[2] = {
@@ -85,7 +85,7 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{LAU_SNEB68G}",
+					["CLSID"] = "{TELSON8_SNEBT253}",
 					["num"] = 2,
 				},
 				[2] = {
