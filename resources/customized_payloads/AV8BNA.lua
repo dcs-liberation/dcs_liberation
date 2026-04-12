@@ -191,11 +191,11 @@ local unitPayloads = {
 					["num"] = 5,
 				},
 				[3] = {
-					["CLSID"] = "{BRU-42_2*GBU-38_LEFT}",
+					["CLSID"] = "{GBU_32_V_2B}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{BRU-42_3*GBU-38}",
+					["CLSID"] = "{GBU_32_V_2B}",
 					["num"] = 2,
 				},
 				[5] = {
@@ -203,11 +203,11 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[6] = {
-					["CLSID"] = "{BRU-42_2*GBU-38_RIGHT}",
+					["CLSID"] = "{GBU_32_V_2B}",
 					["num"] = 6,
 				},
 				[7] = {
-					["CLSID"] = "{BRU-42_3*GBU-38}",
+					["CLSID"] = "{GBU_32_V_2B}",
 					["num"] = 7,
 				},
 			},

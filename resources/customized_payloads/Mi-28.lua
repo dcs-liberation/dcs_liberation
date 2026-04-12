@@ -31,7 +31,7 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{57232979-8B0F-4db7-8D9A-55197E06B0F5}",
+					["CLSID"] = "{CHAP_8x9M120F_Ataka_V}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -43,7 +43,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{57232979-8B0F-4db7-8D9A-55197E06B0F5}",
+					["CLSID"] = "{CHAP_8x9M120F_Ataka_V}",
 					["num"] = 4,
 				},
 			},
@@ -58,7 +58,7 @@ local unitPayloads = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{57232979-8B0F-4db7-8D9A-55197E06B0F5}",
+					["CLSID"] = "{CHAP_8x9M120F_Ataka_V}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -70,7 +70,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{57232979-8B0F-4db7-8D9A-55197E06B0F5}",
+					["CLSID"] = "{CHAP_8x9M120F_Ataka_V}",
 					["num"] = 4,
 				},
 			},
@@ -85,11 +85,11 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{57232979-8B0F-4db7-8D9A-55197E06B0F5}",
+					["CLSID"] = "{CHAP_8x9M120F_Ataka_V}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{57232979-8B0F-4db7-8D9A-55197E06B0F5}",
+					["CLSID"] = "{CHAP_8x9M120F_Ataka_V}",
 					["num"] = 4,
 				},
 			},
@@ -103,19 +103,19 @@ local unitPayloads = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{05544F1A-C39C-466b-BC37-5BD1D52E57BB}",
+					["CLSID"] = "{CHAP_Mi28N_4xIGLA}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{05544F1A-C39C-466b-BC37-5BD1D52E57BB}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{05544F1A-C39C-466b-BC37-5BD1D52E57BB}",
+					["CLSID"] = "<CLEAN>",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{05544F1A-C39C-466b-BC37-5BD1D52E57BB}",
+					["CLSID"] = "{CHAP_Mi28N_4xIGLA}",
 					["num"] = 4,
 				},
 			},
