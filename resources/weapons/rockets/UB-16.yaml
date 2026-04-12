@@ -1,0 +1,5 @@
+name: UB-16
+year: 1975
+fallback: OFAB-100
+clsids:
+  - "{UB-16-57UMP}"
