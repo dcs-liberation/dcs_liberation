@@ -1,0 +1,5 @@
+name: 8x9M120F Ataka
+year: 2005
+fallback: 8x9M120 Ataka
+clsids:
+  - "{CHAP_8x9M120F_Ataka_V}"
