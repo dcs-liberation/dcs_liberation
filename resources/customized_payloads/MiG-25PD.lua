@@ -32,7 +32,7 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -44,7 +44,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 4,
 				},
 			},
@@ -59,7 +59,7 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -71,7 +71,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 4,
 				},
 			},
@@ -86,7 +86,7 @@ local unitPayloads = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -98,7 +98,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 4,
 				},
 			},
@@ -113,7 +113,7 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -125,7 +125,7 @@ local unitPayloads = {
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 4,
 				},
 			},

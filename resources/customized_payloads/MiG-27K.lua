@@ -9,7 +9,7 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 3,
 				},
 				[3] = {
@@ -17,7 +17,7 @@ local unitPayloads = {
 					["num"] = 5,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 7,
 				},
 				[5] = {
@@ -45,7 +45,7 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 3,
 				},
 				[3] = {
@@ -61,7 +61,7 @@ local unitPayloads = {
 					["num"] = 6,
 				},
 				[6] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 7,
 				},
 				[7] = {
@@ -81,7 +81,7 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 3,
 				},
 				[3] = {
@@ -89,7 +89,7 @@ local unitPayloads = {
 					["num"] = 5,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 7,
 				},
 				[5] = {
@@ -109,7 +109,7 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[2] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 3,
 				},
 				[3] = {
@@ -117,7 +117,7 @@ local unitPayloads = {
 					["num"] = 5,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 7,
 				},
 				[5] = {
@@ -133,19 +133,19 @@ local unitPayloads = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 7,
 				},
 				[2] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 3,
 				},
 				[3] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 2,
 				},
 				[4] = {
-					["CLSID"] = "{682A481F-0CB5-4693-A382-D00DD4A156D7}",
+					["CLSID"] = "{APU-60-1_R_60M}",
 					["num"] = 8,
 				},
 			},
