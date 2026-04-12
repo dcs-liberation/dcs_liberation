@@ -69,11 +69,11 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 4,
 				},
 				[5] = {
@@ -85,11 +85,11 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[7] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 9,
 				},
 				[8] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 10,
 				},
 				[9] = {
@@ -117,11 +117,11 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 4,
 				},
 				[5] = {
@@ -133,11 +133,11 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[7] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 9,
 				},
 				[8] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 10,
 				},
 				[9] = {

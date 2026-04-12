@@ -124,11 +124,11 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 5,
 				},
 				[4] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 3,
 				},
 				[5] = {
@@ -190,11 +190,11 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 5,
 				},
 				[4] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 3,
 				},
 				[5] = {
@@ -292,11 +292,11 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 5,
 				},
 				[4] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 3,
 				},
 				[5] = {
@@ -321,11 +321,11 @@ local unitPayloads = {
 					["num"] = 1,
 				},
 				[3] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 5,
 				},
 				[4] = {
-					["CLSID"] = "{R530F_EM}",
+					["CLSID"] = "{S530F}",
 					["num"] = 3,
 				},
 				[5] = {
