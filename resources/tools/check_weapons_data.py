@@ -78,7 +78,7 @@ def _extract_clsids_from_lua(path: Path) -> tuple[set[str], list[Issue]]:
     return clsids, issues
 
 
-_LUA_NAME_RE = re.compile(r"""\["name"\]\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+_LUA_NAME_RE = re.compile(r"""\["unitType"\]\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 
 
 def _extract_unit_name_from_lua(path: Path) -> tuple[Optional[str], list[Issue]]:
@@ -90,11 +90,11 @@ def _extract_unit_name_from_lua(path: Path) -> tuple[Optional[str], list[Issue]]
 
     match = _LUA_NAME_RE.search(raw)
     if match is None:
-        return None, [Issue(path, 'no ["name"] entry found')]
+        return None, [Issue(path, 'no ["unitType"] entry found')]
 
     name = match.group(1).strip()
     if not name:
-        return None, [Issue(path, 'invalid ["name"] entry (empty string)')]
+        return None, [Issue(path, 'invalid ["unitType"] entry (empty string)')]
     return name, issues
 
 
@@ -254,7 +254,7 @@ def check_weapons_data(
             unit_name, name_issues = _extract_unit_name_from_lua(lua_path)
             issues.extend(name_issues)
 
-            aircraft_yaml = aircraft_dir / f"{lua_path.stem}.yaml"
+            aircraft_yaml = aircraft_dir / f"{unit_name}.yaml"
             if not aircraft_yaml.exists():
                 issues.append(
                     Issue(
