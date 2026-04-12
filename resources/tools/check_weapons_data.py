@@ -65,29 +65,15 @@ def _iter_lua_files(root: Path) -> list[Path]:
 _LUA_CLSID_RE = re.compile(r"""\["CLSID"\]\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 
 
-def _extract_clsids_from_lua(path: Path) -> tuple[set[str], list[Issue]]:
-    issues: list[Issue] = []
-    try:
-        raw = path.read_text(encoding="utf-8")
-    except UnicodeDecodeError:
-        raw = path.read_text(encoding="utf-8-sig")
-
-    clsids = {m.group(1).strip() for m in _LUA_CLSID_RE.finditer(raw)}
-    clsids.discard("")
-    if not clsids:
-        issues.append(Issue(path, 'no ["CLSID"] entries found'))
-    return clsids, issues
-
-
 _LUA_NAME_RE = re.compile(r"""\["unitType"\]\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 
 _LUA_NUM_AFTER_CLSID_RE = re.compile(r"""\["num"\]\s*=\s*(\d+)""", re.IGNORECASE)
 
 
-def _extract_pylon_clsid_pairs_from_lua(
+def _extract_lua_clsids_and_pylon_pairs(
     path: Path,
-) -> tuple[list[tuple[int, str]], list[Issue]]:
-    """Each payload pylon entry pairs a CLSID with a DCS station index (["num"])."""
+) -> tuple[set[str], list[tuple[int, str]], list[Issue]]:
+    """Read Lua once: unique CLSIDs, (station, CLSID) pairs for payload pylons, issues."""
     issues: list[Issue] = []
     try:
         raw = path.read_text(encoding="utf-8")
@@ -95,9 +81,16 @@ def _extract_pylon_clsid_pairs_from_lua(
         raw = path.read_text(encoding="utf-8-sig")
 
     clsid_matches = list(_LUA_CLSID_RE.finditer(raw))
+    clsids = {m.group(1).strip() for m in clsid_matches}
+    clsids.discard("")
+    if not clsids:
+        issues.append(Issue(path, 'no ["CLSID"] entries found'))
+
     pairs: list[tuple[int, str]] = []
     for i, clsid_m in enumerate(clsid_matches):
         clsid = clsid_m.group(1).strip()
+        if not clsid:
+            continue
         end = clsid_m.end()
         boundary = len(raw)
         if i + 1 < len(clsid_matches):
@@ -113,7 +106,7 @@ def _extract_pylon_clsid_pairs_from_lua(
             )
             continue
         pairs.append((int(num_m.group(1)), clsid))
-    return pairs, issues
+    return clsids, pairs, issues
 
 
 def _valid_pylon_indices_and_allowed_clsids(
@@ -291,13 +284,11 @@ def check_weapons_data(
         issues.append(Issue(customized_payloads_dir, "no .lua files found"))
     else:
         for lua_path in lua_files:
-            lua_clsids, lua_issues = _extract_clsids_from_lua(lua_path)
-            pylon_pairs, pylon_parse_issues = _extract_pylon_clsid_pairs_from_lua(
-                lua_path
+            lua_clsids, pylon_pairs, lua_parse_issues = (
+                _extract_lua_clsids_and_pylon_pairs(lua_path)
             )
             unit_name, name_issues = _extract_unit_name_from_lua(lua_path)
-            issues.extend(lua_issues)
-            issues.extend(pylon_parse_issues)
+            issues.extend(lua_parse_issues)
             issues.extend(name_issues)
 
             for clsid in sorted(lua_clsids):
