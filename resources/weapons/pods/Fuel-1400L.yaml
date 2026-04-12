@@ -1,0 +1,4 @@
+name: Fuel Tank 1400L
+capacity_liters: 1400
+clsids:
+  - "{2BEC576B-CDF5-4B7F-961F-B0FA4312B841}"

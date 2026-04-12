@@ -1,0 +1,6 @@
+name: Fuel Tank 370Gal
+capacity_liters: 1400
+clsids:
+  - "{F4_SARGENT_TANK_370_GAL_R}"
+  - "{F4_SARGENT_TANK_370_GAL}"
+  - "{F376DBEE-4CAE-41BA-ADD9-B2910AC95DEC}"
