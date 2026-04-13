@@ -1,0 +1,4 @@
+name: Fuel Tank 1300L
+capacity_liters: 1300
+clsids:
+  - "{M2KC_RPL_522}"
