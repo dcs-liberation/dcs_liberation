@@ -1,0 +1,4 @@
+name: Fuel Tank 300Gal
+capacity_liters: 565
+clsids:
+  - "{150gal}"
