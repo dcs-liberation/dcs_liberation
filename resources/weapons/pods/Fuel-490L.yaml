@@ -1,0 +1,4 @@
+name: Fuel Tank 490L
+capacity_liters: 490
+clsids:
+  - "{PTB_490C_MIG21}"
