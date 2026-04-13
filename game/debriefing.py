@@ -11,7 +11,6 @@ from typing import (
     List,
     Optional,
     TYPE_CHECKING,
-    TypeVar,
     Union,
 )
 from uuid import UUID
@@ -23,10 +22,8 @@ from game.theater import Airfield, ControlPoint
 if TYPE_CHECKING:
     from game import Game
     from game.ato.flight import Flight
-    from game.dcs.unittype import UnitType
     from game.sim.simulationresults import SimulationResults
     from game.transfers import CargoShip
-    from game.theater import TheaterUnit
     from game.unitmap import (
         AirliftUnits,
         ConvoyUnit,

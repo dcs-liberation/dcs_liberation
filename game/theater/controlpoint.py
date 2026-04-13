@@ -1286,7 +1286,7 @@ class NavalControlPoint(ControlPoint, ABC):
         if self.runway_is_operational():
             return f"Flight deck {self.runway_status.describe()}"
         # Special handling for not operational carriers/LHAs
-        return f"Sunk"
+        return "Sunk"
 
     @property
     def runway_can_be_repaired(self) -> bool:

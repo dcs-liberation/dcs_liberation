@@ -437,7 +437,7 @@ class AircraftType(UnitType[Type[FlyingType]]):
         try:
             price = data["price"]
         except KeyError as ex:
-            raise KeyError(f"Missing required price field") from ex
+            raise KeyError("Missing required price field") from ex
 
         radio_config = RadioConfig.from_data(data.get("radios", {}))
         patrol_config = PatrolConfig.from_data(data.get("patrol", {}))
