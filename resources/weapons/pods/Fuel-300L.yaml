@@ -1,0 +1,4 @@
+name: Fuel Tank 300L
+capacity_liters: 300
+clsids:
+  - "PTB300_MIG15"
