@@ -1,5 +1,5 @@
-name: Fuel Tank 1400L
-capacity_liters: 1400
+name: Fuel Tank 1500L
+capacity_liters: 1500
 clsids:
   - "{EF124821-F9BB-4314-A153-E0E2FE1162C4}"
   - "{PTB_1500_MIG29A}"
