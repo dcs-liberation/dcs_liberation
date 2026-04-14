@@ -1,4 +1,5 @@
-name: Fuel Tank 300Gal
+name: Fuel Tank 150Gal
 capacity_liters: 565
 clsids:
   - "{150gal}"
+  - "{PTB-150GAL}"

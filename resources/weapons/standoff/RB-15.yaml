@@ -1,0 +1,6 @@
+name: RB-15
+year: 1984
+fallback: RB-04
+clsids:
+  - "{Rb15AI}"
+  - "{Rb15_HB}"
