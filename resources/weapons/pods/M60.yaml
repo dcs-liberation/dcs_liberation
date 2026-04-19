@@ -1,0 +1,5 @@
+name: M60
+year: 1957
+clsids:
+  - "M60_SIDE_L"
+  - "M60_SIDE_R"
