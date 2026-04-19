@@ -203,17 +203,92 @@ def _validate_weapon_file(path: Path) -> tuple[Optional[dict[str, Any]], list[Is
     return data, issues
 
 
+def _weapon_has_clsid_on_pylon(
+    data: dict[str, Any],
+    pylon_idx: int,
+    allowed_by_pylon: dict[int, set[str]],
+) -> bool:
+    allowed_here = allowed_by_pylon.get(pylon_idx, set())
+    clsids = data.get("clsids")
+    if not isinstance(clsids, list):
+        return False
+    for clsid in clsids:
+        if isinstance(clsid, str) and clsid.strip() and clsid in allowed_here:
+            return True
+    return False
+
+
+def _next_weapon_with_pylon_clsid(
+    start_path: Path,
+    pylon_idx: int,
+    allowed_by_pylon: dict[int, set[str]],
+    names_to_paths: dict[str, Path],
+    weapon_data_by_path: dict[Path, dict[str, Any]],
+) -> tuple[Optional[Path], Optional[str]]:
+    """
+    From ``start_path``, follow ``fallback`` until a weapon group has at least one
+    CLSID pydcs allows on ``pylon_idx``. Returns (path, None) or (None, error).
+    """
+    visited_skip: set[str] = set()
+    current: Optional[Path] = start_path
+    while current is not None:
+        data = weapon_data_by_path.get(current)
+        if data is None:
+            return None, f"missing weapon YAML data for {current.as_posix()}"
+
+        wname = data.get("name")
+        label = (
+            wname.strip() if isinstance(wname, str) and wname.strip() else current.stem
+        )
+        if isinstance(wname, str) and wname.strip():
+            if wname in visited_skip:
+                return None, (
+                    f"fallback chain cycles at weapon group {wname!r} while searching "
+                    f"for a CLSID allowed on pylon {pylon_idx}"
+                )
+            visited_skip.add(wname.strip())
+
+        if _weapon_has_clsid_on_pylon(data, pylon_idx, allowed_by_pylon):
+            return current, None
+
+        fb = data.get("fallback")
+        if not isinstance(fb, str) or not fb.strip():
+            return None, (
+                f"no fallback weapon with any CLSID allowed on pylon {pylon_idx} "
+                f"(exhausted chain at weapon group {label!r})"
+            )
+
+        next_name = fb.strip()
+        nxt = names_to_paths.get(next_name)
+        if nxt is None:
+            return (
+                None,
+                f"fallback weapon group {next_name!r} does not exist in resources/weapons",
+            )
+        current = nxt
+
+    return None, (
+        f"exhausted fallback chain without a weapon with a CLSID allowed on pylon "
+        f"{pylon_idx}"
+    )
+
+
 def _payload_weapon_introduced_chain_ok(
     weapon_start_path: Path,
     aircraft_introduced: int,
     names_to_paths: dict[str, Path],
     weapon_data_by_path: dict[Path, dict[str, Any]],
+    pylon_idx: int,
+    allowed_by_pylon: Optional[dict[int, set[str]]],
 ) -> Optional[str]:
     """
-    Return None if the CLSID's weapon group chain is valid for the aircraft:
-    some step has empty ``year``, or an int ``year`` strictly before
-    ``aircraft_introduced``. Otherwise return an error message when the chain
-    cannot resolve (missing fallback, unknown fallback name, or cycle).
+    Return None if the weapon group chain is valid for the aircraft: some step has
+    empty ``year``, or an int ``year`` not after ``aircraft_introduced``. When ``year``
+    forces a fallback, each fallback target must list a CLSID allowed on
+    ``pylon_idx`` (pydcs), or that target is skipped and the next fallback is tried.
+
+    If ``allowed_by_pylon`` is None (no pydcs pylon data), fallback targets are not
+    filtered by station.
     """
     current: Optional[Path] = weapon_start_path
     visited_names: set[str] = set()
@@ -258,7 +333,19 @@ def _payload_weapon_introduced_chain_ok(
         if nxt is None:
             return f"fallback weapon group {next_name!r} does not exist in resources/weapons"
 
-        current = nxt
+        if allowed_by_pylon is None:
+            current = nxt
+        else:
+            nxt2, skip_err = _next_weapon_with_pylon_clsid(
+                nxt,
+                pylon_idx,
+                allowed_by_pylon,
+                names_to_paths,
+                weapon_data_by_path,
+            )
+            if skip_err is not None:
+                return skip_err
+            current = nxt2
 
 
 def check_weapons_data(
@@ -477,8 +564,24 @@ def check_weapons_data(
                     Issue(aircraft_yaml, "invalid key: introduced (must be an int)")
                 )
             else:
-                for clsid in sorted(lua_clsids):
+                valid_indices_opt: Optional[set[int]] = None
+                allowed_by_pylon_opt: Optional[dict[int, set[str]]] = None
+                dcs_t = plane_map.get(unit_stem) or helicopter_map.get(unit_stem)
+                if inspect.isclass(dcs_t) and issubclass(dcs_t, FlyingType):
+                    _vi, abp = _valid_pylon_indices_and_allowed_clsids(dcs_t)
+                    if _vi is not None:
+                        valid_indices_opt = _vi
+                        allowed_by_pylon_opt = abp
+
+                for pylon_idx, clsid in pylon_pairs:
                     if clsid == "<CLEAN>":
+                        continue
+                    if clsid not in weapon_ids:
+                        continue
+                    if (
+                        valid_indices_opt is not None
+                        and pylon_idx not in valid_indices_opt
+                    ):
                         continue
                     weapon_files = sorted(set(clsid_to_paths.get(clsid, [])))
                     if len(weapon_files) != 1:
@@ -488,13 +591,15 @@ def check_weapons_data(
                         introduced,
                         names_to_paths,
                         weapon_data_by_path,
+                        pylon_idx,
+                        allowed_by_pylon_opt,
                     )
                     if chain_err is not None:
                         issues.append(
                             Issue(
                                 lua_path,
                                 f"weapon introduction vs aircraft {unit_stem!r} (introduced "
-                                f"{introduced}), CLSID {clsid}: {chain_err}",
+                                f"{introduced}), pylon {pylon_idx}, CLSID {clsid}: {chain_err}",
                             )
                         )
 
@@ -532,7 +637,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "resources/units/aircraft YAML stem for a pydcs plane/helicopter with "
             'weapon pylons matches some payload ["unitType"], and that each payload '
             "CLSID's weapon ``year`` (following ``fallback`` chains) is empty or "
-            "strictly before the aircraft ``introduced`` year."
+            "not after the aircraft ``introduced`` year; when pydcs pylon data exists, "
+            "each fallback must include a CLSID allowed on that payload station until "
+            "the chain resolves."
         )
     )
     parser.add_argument(
