@@ -4,3 +4,5 @@ clsids:
   - "PTB300_MIG15"
   - "{FUEL-TIP-ELLITTIC-L}"
   - "{FUEL-TIP-ELLITTIC-R}"
+  - "BF109K_4_FUEL_TANK"
+  - "FW109_FUEL_TANK"
