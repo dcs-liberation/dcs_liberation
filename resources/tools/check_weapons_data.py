@@ -238,7 +238,7 @@ def _payload_weapon_introduced_chain_ok(
         if not isinstance(year, int):
             # Invalid ``year`` is already reported by ``_validate_weapon_file``.
             return None
-        if year < aircraft_introduced:
+        if year <= aircraft_introduced:
             return None
 
         fb = data.get("fallback")
