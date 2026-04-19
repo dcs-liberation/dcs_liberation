@@ -1,4 +1,5 @@
 class: Helicopter
+introduced: 1977
 price: 4
 cabin_size: 2
 can_carry_crates: false
