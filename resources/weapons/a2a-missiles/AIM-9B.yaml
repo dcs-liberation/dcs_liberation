@@ -6,3 +6,5 @@ clsids:
   - "{Robot24}"
   - "{Rb_24}"
   - "{HB_A6E_LAU7_AIM9B}"
+no_fallback_for:
+  - F-86F Sabre

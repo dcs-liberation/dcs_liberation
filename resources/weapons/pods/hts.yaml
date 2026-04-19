@@ -5,3 +5,5 @@ name: AN/ASQ-213 HARM Targeting System
 year: 1994
 clsids:
   - "{AN_ASQ_213}"
+no_fallback_for:
+  - F-16C_50
