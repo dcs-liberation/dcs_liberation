@@ -279,6 +279,7 @@ def check_weapons_data(
                 Issue(paths[0], f"CLSID used in multiple files: {clsid} ({rendered})")
             )
 
+    payload_unit_types: set[str] = set()
     lua_files = _iter_lua_files(customized_payloads_dir)
     if not lua_files:
         issues.append(Issue(customized_payloads_dir, "no .lua files found"))
@@ -290,6 +291,8 @@ def check_weapons_data(
             unit_name, name_issues = _extract_unit_name_from_lua(lua_path)
             issues.extend(lua_parse_issues)
             issues.extend(name_issues)
+            if isinstance(unit_name, str) and unit_name.strip():
+                payload_unit_types.add(unit_name.strip())
 
             for clsid in sorted(lua_clsids):
                 if clsid == "<CLEAN>":
@@ -409,14 +412,39 @@ def check_weapons_data(
                     Issue(aircraft_yaml, "invalid key: introduced (must be an int)")
                 )
 
+    aircraft_yaml_files = _iter_yaml_files(aircraft_dir)
+    if not aircraft_yaml_files:
+        issues.append(Issue(aircraft_dir, "no aircraft .yaml files found"))
+    else:
+        for ay_path in aircraft_yaml_files:
+            stem = ay_path.stem
+            if stem in payload_unit_types:
+                continue
+            dcs_type = plane_map.get(stem) or helicopter_map.get(stem)
+            if dcs_type is None:
+                continue
+            if not inspect.isclass(dcs_type) or not issubclass(dcs_type, FlyingType):
+                continue
+            valid_indices, _ = _valid_pylon_indices_and_allowed_clsids(dcs_type)
+            if not valid_indices:
+                continue
+            issues.append(
+                Issue(
+                    ay_path,
+                    f"no customized payload .lua for  {stem!r}",
+                )
+            )
+
     return issues
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Validate weapons YAML, customized payload CLSIDs, and payload "
-            "pylon assignments against pydcs aircraft definitions."
+            "Validate weapons YAML, customized payload CLSIDs, payload "
+            "pylon assignments against pydcs aircraft definitions, and that each "
+            "resources/units/aircraft YAML stem for a pydcs plane/helicopter with "
+            'weapon pylons matches some payload ["unitType"].'
         )
     )
     parser.add_argument(
