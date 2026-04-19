@@ -1,0 +1,5 @@
+name: 2xHOT3
+year: 1977  # HOT3 introduced in 1998 but it is the only weapon available for SA342M as HOT1/2 are not modelled
+clsids:
+  - "{HOT3_L2_M}"
+  - "{HOT3_R2_M}"
