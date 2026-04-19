@@ -1,6 +1,7 @@
 description: The early verison of the F-16. It flew in Desert Storm.
 price: 15
 max_range: 350
+introduced: 1979
 variants:
   F-16A: null
 tasks:
