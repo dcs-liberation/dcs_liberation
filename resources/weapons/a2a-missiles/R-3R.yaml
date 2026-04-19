@@ -1,5 +1,5 @@
 name: R-3R - AAM, radar guided
 year: 1966
-fallback: R-3S - AAM, IR guided
+fallback: R-73 (AA-11 Archer) - Infra Red
 clsids:
   - "{R-3R}"
