@@ -3,3 +3,5 @@ year: 1977
 fallback: 3xMk 83
 clsids:
   - "{HB_F4E_BLU-107B_6x}"
+  - "{CFT_L_BLU107_x_6}"
+  - "{CFT_R_BLU107_x_6}"

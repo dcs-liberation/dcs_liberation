@@ -1,4 +1,5 @@
 name: RBK-250
 year: 1987
+fallback: FAB-250 M62
 clsids:
   - "{4203753F-8198-4E85-9924-6F8FF679F9FF}"

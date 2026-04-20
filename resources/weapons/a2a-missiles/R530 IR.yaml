@@ -1,4 +1,5 @@
 name: R530 IR
 year: 1962
+fallback: AIM-9X
 clsids:
   - "{R530F_IR}"
