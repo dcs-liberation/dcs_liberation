@@ -275,6 +275,7 @@ def _next_weapon_with_pylon_clsid(
 
 def _payload_weapon_introduced_chain_ok(
     weapon_start_path: Path,
+    aircraft_name: str,
     aircraft_introduced: int,
     names_to_paths: dict[str, Path],
     weapon_data_by_path: dict[Path, dict[str, Any]],
@@ -314,6 +315,8 @@ def _payload_weapon_introduced_chain_ok(
             # Invalid ``year`` is already reported by ``_validate_weapon_file``.
             return None
         if year <= aircraft_introduced:
+            return None
+        if 'no_fallback_for' in data and aircraft_name in data['no_fallback_for']:
             return None
 
         fb = data.get("fallback")
@@ -588,6 +591,7 @@ def check_weapons_data(
                         continue
                     chain_err = _payload_weapon_introduced_chain_ok(
                         weapon_files[0],
+                        unit_stem,
                         introduced,
                         names_to_paths,
                         weapon_data_by_path,
