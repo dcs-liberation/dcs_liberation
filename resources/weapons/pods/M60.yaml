@@ -3,3 +3,5 @@ year: 1957
 clsids:
   - "M60_SIDE_L"
   - "M60_SIDE_R"
+  - "{CH47_PORT_M60D}"
+  - "{CH47_STBD_M60D}"

@@ -81,11 +81,11 @@ local unitPayloads = {
 			["name"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{APU-60-1_R_60M}",
+					["CLSID"] = "{R-60M 2L}",
 					["num"] = 1,
 				},
 				[2] = {
-					["CLSID"] = "{APU-60-1_R_60M}",
+					["CLSID"] = "{R-60M 2R}",
 					["num"] = 4,
 				},
 			},
