@@ -316,7 +316,7 @@ def _payload_weapon_introduced_chain_ok(
             return None
         if year <= aircraft_introduced:
             return None
-        if 'no_fallback_for' in data and aircraft_name in data['no_fallback_for']:
+        if "no_fallback_for" in data and aircraft_name in data["no_fallback_for"]:
             return None
 
         fb = data.get("fallback")
