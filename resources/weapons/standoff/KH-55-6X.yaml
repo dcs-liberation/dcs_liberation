@@ -1,4 +1,4 @@
 name: 6xKH-55
-year: 1983
+year: 1981  # Introduction year is 1983 but as this is the only weapon for Tu-95MS, set year to unit introduction year of 1981.
 clsids:
   - "{CHAP_Kh555x6}"
