@@ -1,4 +1,6 @@
 name: 2x9M114 Shturm
 year: 1976
+fallback: R-60 x 2  # For Mi-24P
 clsids:
   - "{B919B0F4-7C25-455E-9A02-CEA51DB895E3}"
+  - "{2x9M114_with_adapter}"
