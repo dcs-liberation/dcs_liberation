@@ -43,7 +43,7 @@ pyproj==3.6.1
 PySide6==6.4.1
 PySide6-Addons==6.4.1
 PySide6-Essentials==6.4.1
-pytest==7.4.3
+pytest==9.0.3
 pytest-cov==4.1.0
 pytest-mock==3.12.0
 python-dateutil==2.8.2
