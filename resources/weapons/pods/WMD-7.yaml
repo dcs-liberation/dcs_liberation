@@ -1,5 +1,6 @@
 name: WMD-7
 year: 2012
+type: TGP
 clsids:
   - "DIS_WMD7"
 no_fallback_for:

@@ -1,0 +1,6 @@
+name: RS-82
+year: 1937
+no_fallback_for:
+  - I-16
+clsids:
+  - "I16_RS_82"

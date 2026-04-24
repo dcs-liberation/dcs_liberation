@@ -1,6 +1,6 @@
-name: LAU-131 7xHE APKWS
+name: HF-20
 year: 2012
 type: LGB
 fallback: LAU-68 Mk5 HEAT
 clsids:
-  - "{LAU-131 - 7 AGR-20A}"
+  - "DIS_BRM1_90"
