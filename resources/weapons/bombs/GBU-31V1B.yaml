@@ -3,3 +3,4 @@ year: 2001
 fallback: GBU-24
 clsids:
   - "{GBU-31}"
+  - "{JAS39_GBU31}"

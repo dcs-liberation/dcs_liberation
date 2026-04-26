@@ -13,6 +13,7 @@ fallback: AIM-120C
 clsids:
   - "{A111396E-D3E8-4b9c-8AC9-2432489304D5}"
   - "{AAQ-28_LEFT}"
+  - "{JAS39_Litening}"
 no_fallback_for:
   - AV8BNA
   - Tornado GR4
