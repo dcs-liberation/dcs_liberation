@@ -65,6 +65,6 @@ class Factions:
                     factions[faction.name] = faction
                     logging.info("Loaded faction from %s", path)
             except Exception:
-                logging.exception(f"Unable to load faction from %s", path)
+                logging.exception("Unable to load faction from %s", path)
 
         return Factions(factions)
