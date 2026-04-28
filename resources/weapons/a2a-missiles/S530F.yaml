@@ -1,0 +1,5 @@
+name: Super 530F
+year: 1979
+fallback: R530 EM
+clsids:
+  - "{S530F}"

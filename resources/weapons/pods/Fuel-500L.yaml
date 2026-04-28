@@ -1,0 +1,6 @@
+name: Fuel Tank 500L
+capacity_liters: 500
+clsids:
+  - "VSN_F104G_L_PTB"
+  - "VSN_F104G_R_PTB"
+  - "VSN_F104G_PTB"

@@ -1,0 +1,4 @@
+name: Fuel Tank 120Gal
+capacity_liters: 450
+clsids:
+  - "{PTB_120_F86F35}"

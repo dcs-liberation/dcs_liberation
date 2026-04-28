@@ -1,0 +1,7 @@
+name: 5xGBU-10
+type: LGB
+year: 1976
+fallback: 6xMk 84
+clsids:
+  - "{HSAB_5x_GBU10}"
+

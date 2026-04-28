@@ -1,0 +1,6 @@
+name: Sorbtsiya ECM
+year: 1995
+fallback: R-73 (AA-11 Archer) - Infra Red
+clsids:
+  - "{44EE8698-89F9-48EE-AF36-5FD31896A82F}"
+  - "{44EE8698-89F9-48EE-AF36-5FD31896A82A}"

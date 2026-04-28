@@ -1,0 +1,5 @@
+name: S-13
+year: 1983
+fallback: B-8V20
+clsids:
+  - "{FC56DF80-9B09-44C5-8976-DCFAFF219062}"

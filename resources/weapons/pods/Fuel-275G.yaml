@@ -1,0 +1,4 @@
+name: Fuel Tank 275Gal
+capacity_liters: 1040
+clsids:
+  - "{0395076D-2F77-4420-9D33-087A4398130B}"

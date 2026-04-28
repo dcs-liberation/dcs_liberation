@@ -1,0 +1,5 @@
+name: R530 EM
+year: 1962
+fallback: R550 Magic 2
+clsids:
+  - "{R530F_EM}"
