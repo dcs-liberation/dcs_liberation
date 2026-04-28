@@ -36,7 +36,7 @@ from .theater.theatergroundobject import (
     TheaterGroundObject,
 )
 from .theater.transitnetwork import TransitNetwork, TransitNetworkBuilder
-from .timeofday import TimeOfDay
+from .timeofday import TimeOfDay, from_datetime
 from .turnstate import TurnState
 from .weather.conditions import Conditions
 
@@ -122,8 +122,9 @@ class Game:
                 TimeOfDay.Day
             )
         else:
+            start_datetime = datetime.combine(self.date, start_time)
             self.time_of_day_offset_for_start_time = list(TimeOfDay).index(
-                self.theater.daytime_map.best_guess_time_of_day_at(start_time)
+                from_datetime(start_datetime, self.theater.terrain)
             )
         # self.conditions.start_time is the time at the start of a turn and does not change within a turn.
         # self.simulation_time tracks time progression within a turn and is synchronized with the

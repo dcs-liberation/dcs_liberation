@@ -9,7 +9,6 @@ from dcs.mapping import Point
 from dcs.terrain.terrain import Terrain
 from shapely import geometry, ops
 
-from .daytimemap import DaytimeMap
 from .frontline import FrontLine
 from .iadsnetwork.iadsnetwork import IadsNetwork
 from .landmap import Landmap, poly_contains
@@ -30,13 +29,11 @@ class ConflictTheater:
         landmap: Landmap | None,
         time_zone: timezone,
         seasonal_conditions: SeasonalConditions,
-        daytime_map: DaytimeMap,
     ) -> None:
         self.terrain = terrain
         self.landmap = landmap
         self.timezone = time_zone
         self.seasonal_conditions = seasonal_conditions
-        self.daytime_map = daytime_map
         self.controlpoints: list[ControlPoint] = []
 
     def add_controlpoint(self, point: ControlPoint) -> None:

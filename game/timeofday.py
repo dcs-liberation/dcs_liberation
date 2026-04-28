@@ -40,6 +40,8 @@ def to_datetime(
         date: the date for the time_of_day. Used to estimate dawn/dusk/sunrise/sunset as these vary throughout the year.
         terrain: pydcs terrain object
         night_disabled: if True, never output a time that is at night.
+    Return:
+        datetime.datetime object within the TimeOfDay window specified. This time is always on an even hour.
     """
 
     location = _location_info_from_terrain(terrain)

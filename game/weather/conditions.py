@@ -6,9 +6,9 @@ import random
 from dataclasses import dataclass
 
 from game.settings import Settings
-from game.theater import ConflictTheater, DaytimeMap, SeasonalConditions
+from game.theater import ConflictTheater, SeasonalConditions
 from game.theater.seasonalconditions import determine_season
-from game.timeofday import TimeOfDay
+from game.timeofday import TimeOfDay, to_datetime
 from game.weather.weather import Weather, Thunderstorm, Raining, Cloudy, ClearSkies
 
 
@@ -49,25 +49,7 @@ class Conditions:
         time_of_day: TimeOfDay,
         night_disabled: bool,
     ) -> datetime.datetime:
-        if night_disabled:
-            logging.info("Skip Night mission due to user settings")
-            time_range = DaytimeMap(
-                dawn=(datetime.time(hour=8), datetime.time(hour=9)),
-                day=(datetime.time(hour=10), datetime.time(hour=12)),
-                dusk=(datetime.time(hour=12), datetime.time(hour=14)),
-                night=(datetime.time(hour=14), datetime.time(hour=17)),
-            ).range_of(time_of_day)
-        else:
-            time_range = theater.daytime_map.range_of(time_of_day)
-
-        # Starting missions on the hour is a nice gameplay property, so keep the random
-        # time constrained to that. DaytimeMap enforces that we have only whole hour
-        # ranges for now, so we don't need to worry about accidentally changing the time
-        # of day by truncating sub-hours.
-        time = datetime.time(
-            hour=random.randint(time_range[0].hour, time_range[1].hour)
-        )
-        return datetime.datetime.combine(day, time)
+        return to_datetime(time_of_day, day, theater.terrain, night_disabled)
 
     @classmethod
     def generate_weather(
