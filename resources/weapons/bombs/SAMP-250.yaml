@@ -1,0 +1,5 @@
+name: SAMP-250
+fallback: Mk 82
+clsids:
+  - "{SAMP250LD}"
+  - "{SAMP250HD}"

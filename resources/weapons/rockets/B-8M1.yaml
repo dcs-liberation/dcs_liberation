@@ -1,0 +1,6 @@
+name: B-8M1
+year: 1984
+fallback: FAB-500 M62
+clsids:
+  - "{F72F47E5-C83A-4B85-96ED-D3E46671EE9A}"
+  - "B-8M1 - 20 S-8OFP2"

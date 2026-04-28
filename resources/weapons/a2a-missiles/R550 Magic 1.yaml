@@ -1,0 +1,5 @@
+name: R550 Magic 1
+year: 1968
+fallback: R530 IR
+clsids:
+  - "{R550_Magic_1}"

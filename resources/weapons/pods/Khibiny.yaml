@@ -1,0 +1,5 @@
+name: Khibiny ECM
+year: 2014
+fallback: Sorbtsiya ECM
+clsids:
+  - "{ECM_POD_L_175V}"

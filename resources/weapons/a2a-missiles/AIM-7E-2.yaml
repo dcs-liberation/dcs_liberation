@@ -4,3 +4,6 @@ fallback: AIM-7E
 clsids:
   - "{AIM-7E-2}"
   - "{HB_F4E_AIM-7E-2}"
+no_fallback_for:
+  - VSN_F4B  # VSN F4 mod does not support AIM-7E which does not allow a fallback to the introduction date of the F-4
+  - VSN_F4C

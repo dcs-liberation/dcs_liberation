@@ -1,0 +1,4 @@
+name: SAMP-400
+fallback: SAMP-250
+clsids:
+  - "{SAMP400LD}"

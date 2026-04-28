@@ -1,0 +1,6 @@
+name: 2xGBU-31(V)3/B
+year: 2001
+fallback: GBU-31(V)3/B
+clsids:
+  - "{CFT_L_GBU_31V3B_x_2}"
+  - "{CFT_R_GBU_31V3B_x_2}"

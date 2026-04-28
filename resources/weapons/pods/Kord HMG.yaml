@@ -1,0 +1,6 @@
+name: Kord HMG
+year: 1998
+no_fallback_for:
+  - Mi-8MT
+clsids:
+  - "KORD_12_7"

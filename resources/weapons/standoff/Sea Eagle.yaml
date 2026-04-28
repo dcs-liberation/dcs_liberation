@@ -1,0 +1,5 @@
+name: Sea Eagle
+year: 1985
+fallback: GBU-27
+clsids:
+  - "{1461CD18-429A-42A9-A21F-4C621ECD4573}"

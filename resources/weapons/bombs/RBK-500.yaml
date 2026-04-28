@@ -1,0 +1,5 @@
+name: RBK-500
+year: 1987
+fallback: FAB-500 M62
+clsids:
+  - "{D5435F26-F120-4FA3-9867-34ACE562EF1B}"

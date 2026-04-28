@@ -1,0 +1,6 @@
+name: Super 530D
+year: 1988
+fallback: Super 530F
+clsids:
+  - "{FD21B13E-57F3-4C2A-9F78-C522D0B5BCE1}"
+  - "{Matra_S530D}"

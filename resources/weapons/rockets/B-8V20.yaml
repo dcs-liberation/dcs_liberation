@@ -1,0 +1,6 @@
+name: B-8V20
+year: 1971
+fallback: UB-32
+clsids:
+  - "{6A4B9E69-64FE-439a-9163-3A87FB6A4D81}"
+  - "B_8V20A_OFP2"

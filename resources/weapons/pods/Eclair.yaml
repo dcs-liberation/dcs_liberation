@@ -1,0 +1,6 @@
+name: Eclair
+year: 1985
+clsids:
+  - "{Eclair}"
+no_fallback_for:
+  - M-2000C

@@ -5,7 +5,7 @@ local unitPayloads = {
 			["name"] = "ANTISHIP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82F}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -49,7 +49,7 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[12] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82A}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 12,
 				},
 			},
@@ -61,7 +61,7 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82F}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -69,11 +69,11 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 4,
 				},
 				[5] = {
@@ -85,11 +85,11 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[7] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 9,
 				},
 				[8] = {
-					["CLSID"] = "{X-25MPU}",
+					["CLSID"] = "{X-31P}",
 					["num"] = 10,
 				},
 				[9] = {
@@ -97,7 +97,7 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[10] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82A}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 12,
 				},
 			},
@@ -109,7 +109,7 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82F}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -117,11 +117,11 @@ local unitPayloads = {
 					["num"] = 2,
 				},
 				[3] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 3,
 				},
 				[4] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 4,
 				},
 				[5] = {
@@ -133,11 +133,11 @@ local unitPayloads = {
 					["num"] = 7,
 				},
 				[7] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 9,
 				},
 				[8] = {
-					["CLSID"] = "{X-25MR}",
+					["CLSID"] = "{X-29L}",
 					["num"] = 10,
 				},
 				[9] = {
@@ -145,7 +145,7 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[10] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82A}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 12,
 				},
 			},
@@ -157,7 +157,7 @@ local unitPayloads = {
 			["name"] = "STRIKE",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82F}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -201,7 +201,7 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[12] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82A}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 12,
 				},
 			},
@@ -213,7 +213,7 @@ local unitPayloads = {
 			["name"] = "CAP",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82F}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 1,
 				},
 				[2] = {
@@ -249,7 +249,7 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[10] = {
-					["CLSID"] = "{44EE8698-89F9-48EE-AF36-5FD31896A82A}",
+					["CLSID"] = "{ECM_POD_L_175V}",
 					["num"] = 12,
 				},
 				[11] = {

@@ -4,3 +4,5 @@ fallback: R-60M
 clsids:
   - "{R-60 2L}"
   - "{R-60 2R}"
+no_fallback_for:
+  - MiG-25RBT
