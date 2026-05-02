@@ -10,7 +10,6 @@ from ..starttype import StartType
 
 from game.settings.settings import FastForwardStopCondition
 
-
 if TYPE_CHECKING:
     from game.ato.flight import Flight
     from game.settings import Settings

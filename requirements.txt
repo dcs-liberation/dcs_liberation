@@ -3,7 +3,7 @@ annotated-types==0.6.0
 anyio==3.7.1
 asgiref==3.7.2
 attrs==23.1.0
-black==24.3.0
+black==26.3.1
 certifi==2024.7.4
 cfgv==3.4.0
 click==8.1.7
@@ -27,7 +27,7 @@ mypy-extensions==1.0.0
 nodeenv==1.8.0
 numpy==1.26.2
 packaging==23.2
-pathspec==0.11.2
+pathspec==1.0.4
 pefile==2023.2.7
 Pillow==12.2.0
 platformdirs==4.0.0
