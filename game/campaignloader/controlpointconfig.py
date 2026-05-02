@@ -15,7 +15,7 @@ class ControlPointConfig:
 
     @staticmethod
     def iter_from_data(
-        data: dict[str | int, Any]
+        data: dict[str | int, Any],
     ) -> Iterator[tuple[str | int, ControlPointConfig]]:
         for name_or_id, cp_data in data.items():
             yield name_or_id, ControlPointConfig.from_data(cp_data)
