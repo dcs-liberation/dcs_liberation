@@ -71,27 +71,17 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[tuple[str, Beac
     with cd(dcs_path):
         lua = lupa.LuaRuntime()
 
-        lua.execute(
-            textwrap.dedent(
-                """\
+        lua.execute(textwrap.dedent("""\
             function module(name)
             end
             
-        """
-            )
-        )
+        """))
 
-        lua.execute(
-            textwrap.dedent(
-                """
+        lua.execute(textwrap.dedent("""
                 function math.pow(x,y) return x^y end
-                """
-            )
-        )
+                """))
 
-        bind_gettext = lua.eval(
-            textwrap.dedent(
-                """\
+        bind_gettext = lua.eval(textwrap.dedent("""\
             function(py_gettext)
                 package.preload["i_18n"] = function()
                     return {
@@ -100,9 +90,7 @@ def beacons_from_terrain(dcs_path: Path, path: Path) -> Iterable[tuple[str, Beac
                 end
             end
             
-        """
-            )
-        )
+        """))
 
         try:
             translator = gettext.translation(
