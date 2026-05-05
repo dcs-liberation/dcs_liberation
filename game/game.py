@@ -432,6 +432,12 @@ class Game:
         if turn_state in (TurnState.LOSS, TurnState.WIN):
             return self.process_win_loss(turn_state)
 
+        # Update runway status ahead of threat/cull zone calculations and mission planning
+        # so that runway status is correctly handled.
+        for control_point in self.theater.controlpoints:
+            if not control_point.runway_is_operational():
+                control_point.runway_status.update_repair_status(self.simulation_time)
+
         # Plan flights & combat for next turn
         with logged_duration("Threat zone computation"):
             self.compute_threat_zones(events)
@@ -607,3 +613,10 @@ class Game:
             )
         elif turn_state is TurnState.LOSS:
             self.message("Game Over, you lose. Start a new campaign to continue.")
+
+    def ato_has_clients(self) -> bool:
+        for package in self.blue.ato.packages:
+            for flight in package.flights:
+                if flight.client_count > 0:
+                    return True
+        return False

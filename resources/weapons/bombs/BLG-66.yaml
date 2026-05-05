@@ -1,0 +1,6 @@
+name: BLG-66
+year: 1979
+fallback: SAMP-400
+clsids:
+  - "{BLG66_AC}"
+  - "{BLG66_BELOUGA_AC}"

@@ -13,7 +13,19 @@ global __dcs_installation_directory
 global __last_save_file
 
 
-USER_PATH = Path(os.environ["LOCALAPPDATA"]) / "DCSLiberation"
+def _default_user_path() -> Path:
+    localappdata = os.getenv("LOCALAPPDATA")
+    if localappdata:
+        return Path(localappdata) / "DCSLiberation"
+
+    xdg_data_home = os.getenv("XDG_DATA_HOME")
+    if xdg_data_home:
+        return Path(xdg_data_home) / "DCSLiberation"
+
+    return Path.home() / ".local" / "share" / "DCSLiberation"
+
+
+USER_PATH = _default_user_path()
 
 PREFERENCES_PATH = USER_PATH / "liberation_preferences.json"
 

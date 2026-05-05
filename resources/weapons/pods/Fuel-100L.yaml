@@ -1,0 +1,4 @@
+name: Fuel Tank 100L
+capacity_liters: 100
+clsids:
+  - "I16_DROP_FUEL_TANK"

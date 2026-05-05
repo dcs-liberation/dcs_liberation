@@ -1,0 +1,8 @@
+name: Fuel Tank 800L
+capacity_liters: 800
+clsids:
+  - "{A5BAEAB7-6FAF-4236-AF72-0FD900F493F9}"
+  - "{E8D4652F-FD48-45B7-BA5B-2AE05BB5A9CF}"
+  - "{PTB_800_MIG21}"
+  - "PTB760_MIG19"
+  - "DIS_TANK800"

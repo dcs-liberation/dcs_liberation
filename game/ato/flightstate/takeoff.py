@@ -55,6 +55,15 @@ class Takeoff(AtDeparture):
                 "reached takeoff time"
             )
             return True
+
+        if self.settings.fast_forward_stop_condition in {
+            FastForwardStopCondition.PLAYER_TAXI,
+            FastForwardStopCondition.PLAYER_STARTUP,
+        }:
+            logging.info(
+                f"Interrupting simulation because {self.flight} has players and is already taking off "
+            )
+            return True
         return False
 
     @property

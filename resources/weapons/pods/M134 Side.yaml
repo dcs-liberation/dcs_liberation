@@ -1,0 +1,6 @@
+name: M134 Side
+year: 1963
+fallback: M60
+clsids:
+  - "M134_SIDE_L"
+  - "M134_SIDE_R"

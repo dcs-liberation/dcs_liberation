@@ -1,0 +1,5 @@
+name: Kormoran
+year: 1973
+fallback: GBU-16
+clsids:
+  - "{7210496B-7B81-4B52-80D6-8529ECF847CD}"

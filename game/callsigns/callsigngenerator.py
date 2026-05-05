@@ -1,5 +1,4 @@
 from __future__ import annotations
-from abc import ABC
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -11,7 +10,6 @@ from dcs.countries import countries_by_name
 
 from game.ato.flight import Flight
 from game.ato.flighttype import FlightType
-
 
 MAX_GROUP_ID = 99
 

@@ -1,0 +1,5 @@
+name: M260 Mk151 APKWS
+year: 2012
+fallback: M260 Mk151 HE
+clsids:
+  - "{M260_APKWS_M151}"

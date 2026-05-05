@@ -5,11 +5,11 @@ local unitPayloads = {
 			["name"] = "CAS",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{88D18A5E-99C8-4B04-B40B-1C02F2018B6E}",
+					["CLSID"] = "AGM114x2_OH_58",
 					["num"] = 4,
 				},
 				[2] = {
-					["CLSID"] = "{88D18A5E-99C8-4B04-B40B-1C02F2018B6E}",
+					["CLSID"] = "AGM114x2_OH_58",
 					["num"] = 1,
 				},
 				[3] = {

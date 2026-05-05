@@ -1,0 +1,10 @@
+class: Tank
+description: The T-34 is a Soviet medium tank from World War II.
+introduced: 1940
+origin: USSR/Russia
+price: 18
+role: Main Battle Tank
+variants:
+  T-34-85: {}
+
+hit_points: 15

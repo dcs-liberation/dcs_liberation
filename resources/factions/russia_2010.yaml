@@ -44,6 +44,7 @@ frontline_units:
 artillery_units:
   - 2S19 Msta-S
   - BM-27 Uragan
+  - TOS-1A
 logistics_units:
   - LUV UAZ-469 Jeep
   - Truck Ural-375
@@ -53,7 +54,9 @@ infantry_units:
   - Mortar 2B11 120mm
   - Paratrooper AKS
   - Paratrooper RPG-16
-missiles: []
+missiles:
+  - SS-26 Stone (9K720 Iskander) Cluster Munitions
+  - SS-26 Stone (9K720 Iskander) HE
 preset_groups:
   - SA-11
   - SA-10/S-300PS
@@ -76,8 +79,9 @@ air_defense_units:
   - SAM SA-8 Osa "Gecko" TEL
   - SA-9 Strela
   - SA-13 Gopher (9K35 Strela-10M3)
-  - SA-15 Tor
+  - SA-15 Gauntlet 9K332 M2
   - SA-19 Grison (2K22 Tunguska)
+  - SA-22 Greyhound
   - AAA ZU-23 Closed Emplacement
   - ZU-23 on Ural-375
   - ZSU-23-4 Shilka

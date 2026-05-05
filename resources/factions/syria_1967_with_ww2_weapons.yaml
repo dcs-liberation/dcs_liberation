@@ -24,6 +24,7 @@ frontline_units:
   - S-60 57mm
   - "Sturmgesch\xFCtz III Ausf. G"
   - T-55A
+  - T-34-85
   - ZSU-57-2 'Sparka'
 artillery_units:
   - BM-21 Grad

@@ -1,0 +1,5 @@
+name: Mk 82 Snakeye
+year: 1960
+fallback: Mk 82
+clsids:
+  - "{Mk82SNAKEYE}"

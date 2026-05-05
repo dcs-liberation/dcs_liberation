@@ -1,0 +1,13 @@
+class: Recon
+description: "The BRDM-2 is an amphibious armoured patrol car used by Russia and the former\
+  \ Soviet Union. It was also known under the designations BTR-40PB, BTR-40P-2 and\
+  \ GAZ 41-08. This vehicle, like many other Soviet designs, has been exported extensively\
+  \ and is in use in at least 38 countries. This version is equipped with the AT-3 Sagger ATGM."
+introduced: 1963
+manufacturer: GAZ
+origin: USSR/Russia
+price: 6
+role: Amphibious Armoured Car
+variants:
+  BRDM-2_malyutka: {}
+hit_points: 3

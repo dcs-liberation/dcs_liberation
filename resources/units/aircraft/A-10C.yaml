@@ -24,6 +24,12 @@ radios:
     namer: a10c-legacy
     intra_flight_radio_index: 2
     inter_flight_radio_index: 2
+fuel:
+  taxi: 100
+  climb_ppm: 16
+  cruise_ppm: 12
+  combat_ppm: 14
+  min_safe: 2000
 tasks:
   BAI: 820
   CAS: 820

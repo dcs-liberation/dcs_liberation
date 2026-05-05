@@ -135,6 +135,12 @@ class Package:
 
     def remove_flight(self, flight: Flight) -> None:
         """Removes a flight from the package."""
+        # Check if flight.callsign is None to handle case where callsign was not generated.
+        # This can happen when a module does not support the standard  callsigns e.g. Kiowa.
+        if flight.callsign is not None:
+            flight.squadron.coalition.callsign_generator.release_callsign(
+                flight.callsign
+            )
         self.flights.remove(flight)
         self._db.remove(flight.id)
         flight.return_pilots_and_aircraft()

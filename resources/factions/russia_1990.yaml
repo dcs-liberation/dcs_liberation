@@ -35,9 +35,11 @@ frontline_units:
   - SA-13 Gopher (9K35 Strela-10M3)
   - T-72B with Kontakt-1 ERA
   - T-80UD
+  - T-80B
 artillery_units:
   - 2S19 Msta-S
   - BM-27 Uragan
+  - TOS-1A
 logistics_units:
   - LUV UAZ-469 Jeep
   - Truck Ural-375

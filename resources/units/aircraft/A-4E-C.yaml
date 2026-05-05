@@ -15,6 +15,12 @@ role: Carrier-based Attack/Light Fighter
 gunfighter: true
 variants:
   A-4E Skyhawk: {}
+fuel:
+  taxi: 100
+  climb_ppm: 14
+  cruise_ppm: 7.7
+  combat_ppm: 9
+  min_safe: 800
 tasks:
   BAI: 660
   BARCAP: 160

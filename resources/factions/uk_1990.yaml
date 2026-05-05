@@ -25,6 +25,8 @@ frontline_units:
   - M1043 HMMWV (M2 HMG)
   - M1045 HMMWV (BGM-71 TOW)
   - M1097 Heavy HMMWV Avenger
+  - FV101
+  - FV107
 artillery_units:
   - M109A6 Paladin
   - M270 Multiple Launch Rocket System

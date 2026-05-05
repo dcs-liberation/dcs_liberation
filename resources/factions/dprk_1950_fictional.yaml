@@ -18,8 +18,8 @@ frontline_units:
   - BRDM-2
   - Grad MRL FDDM (FC)
   - MT-LB
-  - T-55A
   - ZU-23 on Ural-375
+  - T-34-85
 artillery_units:
   - BM-21 Grad
 logistics_units:

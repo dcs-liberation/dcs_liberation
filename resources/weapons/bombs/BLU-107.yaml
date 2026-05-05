@@ -1,0 +1,5 @@
+name: BLU-107
+year: 1977
+fallback: SAMP-400
+clsids:
+  - "{BLU107B_DURANDAL}"

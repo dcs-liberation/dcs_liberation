@@ -3,3 +3,5 @@ year: 2002
 fallback: 3xGBU-12
 clsids:
   - "{BRU-42_3*GBU-38}"
+  - "{CFT_R_GBU_38_x_3}"
+  - "{CFT_L_GBU_38_x_3}"

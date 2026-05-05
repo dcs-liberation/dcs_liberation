@@ -1,12 +1,24 @@
+# 14.1.0
+
+Saves from 14.x are compatible with 14.1.0.
+
+## Features/Improvements
+
+* **[Campaign]** Improved performance when tracking events in DCS to reduce stutters when large number of units are killed.
+* **[Data]** Added new units from Currenthill and Cold War packs. Added M1A2 Abrams SEP V3 and MaxxPro M-RAP. Updated factions data for new units.
+* **[Data]** Added fuel usage data for A-4EC, A-10A, A-10C, AV-8B, F-14A, F-14B, F-15C allowing for better fuel estimation during fast forward and more detailed kneeboard fuel status.
+* **[Data]** Updated hit point data for all units.
+
 # 14.0.0
 
 Saves from 13.x are not compatible with 14.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.9.21.
+* **[Engine]** Support for DCS 2.9.23.
 * **[Engine]** Support for MiG-29 Fulcrum (full fidelity version).
 * **[Engine]** Support for F-14A-135-GR Early.
+* **[Mission Generation]** Introduced optional turn-less mode which allows the player the choice to jump into another mission without ending the turn. Airborne flights at the end of the mission are persisted to the next mission. Liberation will continue to generate new missions for Blue and Red and the player is able to edit the ATO.
 * **[Mods]** A4EC mod version updated to 2.3.
 * **[UI]** Allow saving after fast forwarding manually with sim speed controls (--show-sim-speed-controls option).
 * **[UI]** Add new option to fast forward until player is at the IP.

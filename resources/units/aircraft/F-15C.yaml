@@ -9,6 +9,12 @@ origin: USA
 price: 20
 role: Air-Superiority Fighter
 max_range: 400
+fuel:
+  taxi: 100
+  climb_ppm: 36
+  cruise_ppm: 11
+  combat_ppm: 13
+  min_safe: 2000
 variants:
   F-15C Eagle: {}
   F-15J Eagle: {}

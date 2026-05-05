@@ -16,7 +16,6 @@ from dcs.weapons_data import weapon_ids
 from game.dcs.aircrafttype import AircraftType
 from game.factions.faction import Faction
 
-
 PydcsWeapon = Any
 PydcsWeaponAssignment = tuple[int, PydcsWeapon]
 

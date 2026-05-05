@@ -633,7 +633,7 @@ class AircraftTypeList(QListView):
 
 
 def describe_overfull_airbases(
-    overfull: Iterable[tuple[ControlPoint, int, list[Squadron]]]
+    overfull: Iterable[tuple[ControlPoint, int, list[Squadron]]],
 ) -> str:
     string_builder = []
     for (

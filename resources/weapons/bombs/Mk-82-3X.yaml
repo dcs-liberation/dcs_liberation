@@ -3,3 +3,6 @@ fallback: 2xMk 82
 clsids:
   - "{60CC734F-0AFA-4E2E-82B8-93B941AB11CF}"
   - "{HB_F4E_MK-82_3x}"
+  - "{HB_F4E_MK-82_Snakeye_3x}"
+  - "{MAK79_MK82 3L}"
+  - "{MAK79_MK82 3R}"

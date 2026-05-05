@@ -1,0 +1,9 @@
+class: Artillery
+description: TOS-1 Buratino Heavy Flamethrower System is a Soviet 220 mm 30-barrel multiple rocket launcher capable of using thermobaric warheads.
+introduced: 1988
+origin: Russia
+price: 20
+role: Multiple-Launch Rocket System
+variants:
+  TOS-1A: {}
+hit_points: 12

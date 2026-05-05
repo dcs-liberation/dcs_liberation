@@ -188,9 +188,6 @@ class PackageModel(QAbstractListModel):
         """Removes the given flight from the package."""
         with self.game_model.sim_controller.paused_sim():
             index = self.package.flights.index(flight)
-            self.game_model.game.blue.callsign_generator.release_callsign(
-                flight.callsign
-            )
             self.beginRemoveRows(QModelIndex(), index, index)
             self.package.remove_flight(flight)
             self.endRemoveRows()
@@ -316,13 +313,6 @@ class AtoModel(QAbstractListModel):
         self.package_models.release(package)
         index = self.ato.packages.index(package)
         self.beginRemoveRows(QModelIndex(), index, index)
-        for flight in package.flights:
-            # Check if flight.callsign is None to handle case where callsign was not generated.
-            # This can happen when a module does not support the standard  callsigns e.g. Kiowa.
-            if flight.callsign is not None:
-                self.game_model.game.blue.callsign_generator.release_callsign(
-                    flight.callsign
-                )
         self.ato.remove_package(package)
         self.endRemoveRows()
         # noinspection PyUnresolvedReferences

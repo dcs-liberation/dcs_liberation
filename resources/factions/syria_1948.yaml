@@ -12,6 +12,7 @@ frontline_units:
   - Panzerkampfwagen IV Ausf. H
   - Sd.Kfz.234/2 Puma
   - Sd.Kfz.251 "Hanomag"
+  - T-34-85
 artillery_units: []
 logistics_units:
   - LUV UAZ-469 Jeep

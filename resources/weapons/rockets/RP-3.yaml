@@ -1,0 +1,7 @@
+name: RP-3
+year: 1943
+no_fallback_for:
+  - MosquitoFBMkVI
+clsids:
+  - "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_LEFT_WING_RAILS}"
+  - "{MOSSIE_4_British_HE_60LBSAPNo2_3INCHNo1_ON_RIGHT_WING_RAILS}"

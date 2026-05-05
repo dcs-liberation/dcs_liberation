@@ -1,0 +1,10 @@
+class: SHORAD
+description: "The Pantsir-S1 was designed to provide point air defence against aircraft, helicopters, precision munitions, cruise missiles and UAVs; and to provide additional protection to air defence units against enemy air attacks employing precision munitions, especially at low to extremely low altitudes"
+introduced: 2012
+manufacturer: Ulyanovsk
+origin: USSR/Russia
+price: 14
+role: Self-Propelled Surface-to-Air Missile Launcher
+variants:
+  SA-22 Greyhound: {}
+hit_points: 5

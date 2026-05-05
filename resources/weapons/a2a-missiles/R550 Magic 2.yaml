@@ -1,0 +1,6 @@
+name: R550 Magic 2
+year: 1983  # Real introduction date 1986 but M2000C (introduced in 1983) does not accept any other weapons on Pylons 1, 9
+fallback: R550 Magic 1
+clsids:
+  - "{FC23864E-3B80-48E3-9C03-4DA8B1D7497B}"
+  - "{MMagicII}"

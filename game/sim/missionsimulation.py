@@ -10,6 +10,7 @@ from game.missiongenerator import MissionGenerator
 from game.settings.settings import FastForwardStopCondition, CombatResolutionMethod
 from game.unitmap import UnitMap
 from .aircraftsimulation import AircraftSimulation
+from .controlpointsimulation import ControlPointSimulation
 from .missionresultsprocessor import MissionResultsProcessor
 from ..profiling import logged_duration
 
@@ -31,6 +32,7 @@ class MissionSimulation:
         self.game = game
         self.unit_map: Optional[UnitMap] = None
         self.aircraft_simulation = AircraftSimulation(self.game)
+        self.control_point_simulation = ControlPointSimulation(self.game)
         self.completed = False
         self.time = self.game.simulation_time
 
@@ -54,9 +56,25 @@ class MissionSimulation:
         ):
             events.complete_simulation()
             return events
+
+        # Stop fast forward if there are no clients and the settings require a player to reach a certain state.
+        if (
+            not self.game.ato_has_clients()
+            and self.game.settings.fast_forward_stop_condition
+            in {
+                FastForwardStopCondition.PLAYER_TAKEOFF,
+                FastForwardStopCondition.PLAYER_TAXI,
+                FastForwardStopCondition.PLAYER_STARTUP,
+                FastForwardStopCondition.PLAYER_AT_IP,
+            }
+        ):
+            events.complete_simulation()
+            return events
+
         self.aircraft_simulation.on_game_tick(
             events, self.time, TICK, combat_resolution_method, force_continue
         )
+        self.control_point_simulation.on_game_tick(events, self.time)
         self.completed = events.simulation_complete
         return events
 

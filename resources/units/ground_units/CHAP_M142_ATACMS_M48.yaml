@@ -1,0 +1,9 @@
+class: Missile
+description: The M142 High Mobility Artillery Rocket System (HIMARS) is a light multiple rocket launcher. The M48 variant uses the Army Tactical Missile System (ATACMS) 610 mm surface-to-surface missile carrying a 500-pound (230 kg) WDU-18/B penetrating high explosive blast fragmentation warhead of the US Navy's Harpoon anti-ship missile and a range of up to 300km/186mi.
+manufacturer: Lockheed Martin
+origin: USA
+price: 20
+role: Multiple-Launch Rocket System
+variants:
+  M142 HIMARS M48 ATACMS HE: {}
+hit_points: 3

@@ -3,3 +3,5 @@ year: 1973
 fallback: R-55 - AAM, IR guided
 clsids:
   - "{R-60}"
+  - "{R_60}"
+  - "{APU_60_1_R_60}"

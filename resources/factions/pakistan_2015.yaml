@@ -16,7 +16,6 @@ awacs:
 tankers:
   - IL-78M
 frontline_units:
-  - BTR-80
   - HQ-7 Launcher
   - M113
   - T-55A

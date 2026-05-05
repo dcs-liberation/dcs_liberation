@@ -32,6 +32,12 @@ radios:
     namer: tomcat
     intra_flight_radio_index: 2
     inter_flight_radio_index: 1
+fuel:
+  taxi: 250
+  climb_ppm: 35
+  cruise_ppm: 13
+  combat_ppm: 16
+  min_safe: 2000
 default_overrides:
   INSAlignmentStored: true
 #   ALE39Loadout: 0

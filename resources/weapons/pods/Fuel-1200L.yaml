@@ -1,0 +1,5 @@
+name: Fuel Tank 1200L
+capacity_liters: 1200
+clsids:
+  - "PTB-1200-F1"
+  - "{VIGGEN_X-TANK}"
