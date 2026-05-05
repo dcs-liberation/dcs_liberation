@@ -1,3 +1,5 @@
+import logging
+
 from game.dcs.groundunittype import GroundUnitType
 
 BASE_MAX_STRENGTH = 1.0
@@ -32,7 +34,7 @@ class Base:
     def commit_losses(self, units_lost: dict[GroundUnitType, int]) -> None:
         for unit_type, count in units_lost.items():
             if unit_type not in self.armor:
-                print("Base didn't find unit type {}".format(unit_type))
+                logging.warning("Base didn't find unit type %s", unit_type)
                 continue
 
             self.armor[unit_type] = max(self.armor[unit_type] - count, 0)

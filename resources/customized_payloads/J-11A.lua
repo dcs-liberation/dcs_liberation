@@ -112,7 +112,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[3] = {
-					["CLSID"] = "{TWIN_S25}",
+					["CLSID"] = "{A0648264-4BC0-4EE8-A543-D119F6BA4257}",
 					["num"] = 8,
 				},
 				[4] = {
@@ -132,7 +132,7 @@ local unitPayloads = {
 					["num"] = 4,
 				},
 				[8] = {
-					["CLSID"] = "{TWIN_S25}",
+					["CLSID"] = "{A0648264-4BC0-4EE8-A543-D119F6BA4257}",
 					["num"] = 3,
 				},
 				[9] = {
@@ -208,7 +208,7 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[3] = {
-					["CLSID"] = "{TWIN_B13L_5OF}",
+					["CLSID"] = "{FC56DF80-9B09-44C5-8976-DCFAFF219062}",
 					["num"] = 8,
 				},
 				[4] = {
@@ -228,7 +228,7 @@ local unitPayloads = {
 					["num"] = 4,
 				},
 				[8] = {
-					["CLSID"] = "{TWIN_B13L_5OF}",
+					["CLSID"] = "{FC56DF80-9B09-44C5-8976-DCFAFF219062}",
 					["num"] = 3,
 				},
 				[9] = {

@@ -1,0 +1,6 @@
+name: ALE-40
+year: 1974
+clsids:
+  - "{HB_ALE_40_30_60}"
+no_fallback_for:
+  - F-4E-45MC

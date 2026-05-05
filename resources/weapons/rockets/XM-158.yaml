@@ -1,0 +1,4 @@
+name: XM-158
+year: 1967  # Real introduction year ~1972 (XM-158 is the Army version of the LAU-68) but UH-1 cannot mount any older rockets.
+clsids:
+  - "XM158_MK5"

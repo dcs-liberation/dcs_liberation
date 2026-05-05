@@ -17,7 +17,7 @@ class DegradeIads(CompoundTask[TheaterState]):
 
     @staticmethod
     def plan_against(
-        target: Union[IadsGroundObject, NavalGroundObject]
+        target: Union[IadsGroundObject, NavalGroundObject],
     ) -> Union[PlanDead, PlanAntiShip]:
         if isinstance(target, IadsGroundObject):
             return PlanDead(target)

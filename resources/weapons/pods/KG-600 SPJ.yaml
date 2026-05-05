@@ -1,0 +1,6 @@
+name: KG-600 SPJ
+year: 2013
+clsids:
+  - "DIS_SPJ_POD"
+no_fallback_for:
+  -JF-17

@@ -1,0 +1,5 @@
+name: 8x9M120 Ataka
+year: 1985
+fallback: 9M114 Shturm
+clsids:
+  - "{CHAP_8x9M120_Ataka_V}"

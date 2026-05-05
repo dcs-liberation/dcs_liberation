@@ -1,0 +1,5 @@
+name: M260 Mk151 HE
+year: 1975
+fallback: M260 pod - 7 x 2.75\" Hydra, UnGd Rkts Mk5, HEAT
+clsids:
+  - "{M260_M151}"

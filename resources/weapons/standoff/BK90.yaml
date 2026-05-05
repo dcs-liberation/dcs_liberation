@@ -1,0 +1,5 @@
+name: BK90
+year: 1995
+fallback: AGM-65B
+clsids:
+  - "{BK90MJ1}"

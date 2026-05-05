@@ -7,7 +7,7 @@ from typing import Iterator, TYPE_CHECKING, Type
 from game.ato.flightplans.standard import StandardFlightPlan, StandardLayout
 from game.theater.controlpoint import ControlPointType
 from game.theater.missiontarget import MissionTarget
-from game.utils import Distance, feet, meters
+from game.utils import Distance, meters
 from .ibuilder import IBuilder
 from .planningerror import PlanningError
 from .uizonedisplay import UiZone, UiZoneDisplay

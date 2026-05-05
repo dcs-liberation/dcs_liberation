@@ -249,7 +249,7 @@ class IadsNetwork:
         for primary_node in self.iads_config.keys():
             warning_msg = (
                 f"IADS: No ground object found for {primary_node}."
-                f" This can be normal behaviour."
+                " This can be normal behaviour."
             )
             if primary_node in self.ground_objects:
                 node = self.node_for_tgo(self.ground_objects[primary_node])

@@ -1,0 +1,4 @@
+name: Fuel Tank 1800L
+capacity_liters: 1800
+clsids:
+  - "{FPU_12_FUEL_TANK}"

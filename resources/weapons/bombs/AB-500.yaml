@@ -1,0 +1,5 @@
+name: AB-500
+fallback: SC-500
+year: 1942
+clsids:
+  - "{AB_500_1_SD_10A}"

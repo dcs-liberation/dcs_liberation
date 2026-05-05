@@ -33,7 +33,7 @@ class DefendingSam(FrozenCombat):
         return f"{self.flight} is engaged by enemy air defenses: {sams}"
 
     def describe(self) -> str:
-        return f"engaged by enemy air defenses"
+        return "engaged by enemy air defenses"
 
     def iter_flights(self) -> Iterator[Flight]:
         yield self.flight

@@ -10,3 +10,6 @@ clsids:
   - "{BRU_42A_x1_ADM_141A}"
   - "{BRU_42A_x2_ADM_141A}"
   - "{BRU_42A_x3_ADM_141A}"
+no_fallback_for:
+  - F-14A-135-GR-Early
+  - F-14A-135-GR

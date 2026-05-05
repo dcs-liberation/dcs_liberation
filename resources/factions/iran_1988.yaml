@@ -62,3 +62,6 @@ missiles:
 has_jtac: true
 jtac_unit: MQ-9 Reaper
 doctrine: coldwar
+weapons_introduction_year_overrides:
+    AIM-54C-MK47: 2050
+    AIM-54C-MK60: 2050

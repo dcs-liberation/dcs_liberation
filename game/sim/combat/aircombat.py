@@ -60,7 +60,7 @@ class AirCombat(JoinableCombat):
         return f"of {self}"
 
     def describe(self) -> str:
-        return f"in air-to-air combat"
+        return "in air-to-air combat"
 
     def resolve(
         self,

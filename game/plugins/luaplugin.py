@@ -192,8 +192,7 @@ class LuaPlugin(PluginSettings):
 
             joined_options = "\n".join(option_decls)
 
-            lua = textwrap.dedent(
-                f"""\
+            lua = textwrap.dedent(f"""\
                 -- {self.identifier} plugin configuration.
 
                 if dcsLiberation then
@@ -204,8 +203,7 @@ class LuaPlugin(PluginSettings):
                     {joined_options}
                 end
 
-            """
-            )
+            """)
 
             lua_generator.inject_lua_trigger(
                 lua, f"{self.identifier} plugin configuration"
