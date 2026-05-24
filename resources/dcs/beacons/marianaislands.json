@@ -14,119 +14,119 @@
   "channel": 105
  },
  "world_2": {
-  "name": "SAIPAN",
+  "name": "Saipan",
   "callsign": "SN",
   "beacon_type": 8,
   "hertz": 312000,
   "channel": null
  },
  "airfield6_0": {
-  "name": "ANDERSEN",
+  "name": "Andersen",
   "callsign": "UAM",
   "beacon_type": 4,
   "hertz": null,
   "channel": 54
  },
  "airfield6_1": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IPMY",
   "beacon_type": 14,
   "hertz": 110150000,
   "channel": null
  },
  "airfield6_2": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IUAM",
   "beacon_type": 14,
   "hertz": 110100000,
   "channel": null
  },
  "airfield6_3": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IYIG",
   "beacon_type": 14,
   "hertz": 109350000,
   "channel": null
  },
  "airfield6_4": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IAND",
   "beacon_type": 14,
   "hertz": 109300000,
   "channel": null
  },
  "airfield6_5": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IUAM",
   "beacon_type": 13,
   "hertz": 110100000,
   "channel": null
  },
  "airfield6_6": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IAND",
   "beacon_type": 13,
   "hertz": 109300000,
   "channel": null
  },
  "airfield6_7": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IYIG",
   "beacon_type": 13,
   "hertz": 109350000,
   "channel": null
  },
  "airfield6_8": {
-  "name": "",
+  "name": "Andersen",
   "callsign": "IPMY",
   "beacon_type": 13,
   "hertz": 110150000,
   "channel": null
  },
  "airfield4_0": {
-  "name": "",
-  "callsign": "IGUM",
-  "beacon_type": 13,
-  "hertz": 110300000,
-  "channel": null
- },
- "airfield4_1": {
-  "name": "",
-  "callsign": "PGUM",
-  "beacon_type": 14,
-  "hertz": 110300000,
-  "channel": null
- },
- "airfield4_2": {
-  "name": "",
+  "name": "AntonioBWonPat",
   "callsign": "IAWD",
   "beacon_type": 13,
   "hertz": 110900000,
   "channel": null
  },
- "airfield4_3": {
-  "name": "",
-  "callsign": "PGUM",
+ "airfield4_1": {
+  "name": "AntonioBWonPat",
+  "callsign": "IAWD",
   "beacon_type": 14,
   "hertz": 110900000,
   "channel": null
  },
+ "airfield4_2": {
+  "name": "AntonioBWonPat",
+  "callsign": "IGUM",
+  "beacon_type": 13,
+  "hertz": 110300000,
+  "channel": null
+ },
+ "airfield4_3": {
+  "name": "AntonioBWonPat",
+  "callsign": "IGUM",
+  "beacon_type": 14,
+  "hertz": 110300000,
+  "channel": null
+ },
  "airfield1_0": {
-  "name": "ROTA",
+  "name": "Rota",
   "callsign": "GRO",
   "beacon_type": 8,
   "hertz": 332000,
   "channel": null
  },
  "airfield2_0": {
-  "name": "",
+  "name": "Saipan",
   "callsign": "IGSN",
   "beacon_type": 13,
   "hertz": 109900000,
   "channel": null
  },
  "airfield2_1": {
-  "name": "",
+  "name": "Saipan",
   "callsign": "PGSN",
   "beacon_type": 14,
   "hertz": 109900000,

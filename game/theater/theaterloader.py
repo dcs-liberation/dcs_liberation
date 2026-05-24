@@ -10,6 +10,8 @@ import yaml
 from dcs.terrain import (
     Caucasus,
     Falklands,
+    Germany,
+    Kola,
     MarianaIslands,
     Nevada,
     Normandy,
@@ -26,6 +28,8 @@ from .seasonalconditions import Season, SeasonalConditions, WeatherTypeChances
 ALL_TERRAINS = [
     Caucasus(),
     Falklands(),
+    Germany(),
+    Kola(),
     PersianGulf(),
     Normandy(),
     MarianaIslands(),

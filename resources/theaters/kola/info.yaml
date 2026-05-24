@@ -1,0 +1,39 @@
+---
+name: Kola
+timezone: +3
+climate:
+  day_night_temperature_difference: 10.0
+  seasons:
+    winter:
+      average_pressure: 29.92
+      average_temperature: -7
+      weather:
+        thunderstorm: 1
+        raining: 39
+        cloudy: 25
+        clear: 25
+    spring:
+      weather:
+        thunderstorm: 1
+        raining: 29
+        cloudy: 30
+        clear: 30
+    summer:
+      average_pressure: 29.92
+      average_temperature: 15.0
+      weather:
+        thunderstorm: 1
+        raining: 51
+        cloudy: 19
+        clear: 19
+    fall:
+      weather:
+        thunderstorm: 1
+        raining: 51
+        cloudy: 19
+        clear: 19
+  turbulence:
+    high_avg_yearly_turbulence_per_10cm: 9
+    low_avg_yearly_turbulence_per_10cm: 3.5
+    solar_noon_turbulence_per_10cm: 3.5
+    midnight_turbulence_per_10cm: -3
