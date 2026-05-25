@@ -1,7 +1,6 @@
 ---
 name: GermanyColdWar
 pydcs_name: GermanyCW
-timezone: +2
 climate:
   day_night_temperature_difference: 9.0
   seasons:

@@ -1,6 +1,5 @@
 ---
 name: Kola
-timezone: +3
 climate:
   day_night_temperature_difference: 10.0
   seasons:
