@@ -104,7 +104,6 @@ class TheaterLoader:
         return ConflictTheater(
             TERRAINS_BY_NAME[data.get("pydcs_name", data["name"])],
             load_landmap(self.landmap_path),
-            datetime.timezone(datetime.timedelta(hours=data["timezone"])),
             self._load_seasonal_conditions(data["climate"]),
         )
 

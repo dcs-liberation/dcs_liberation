@@ -27,12 +27,10 @@ class ConflictTheater:
         self,
         terrain: Terrain,
         landmap: Landmap | None,
-        time_zone: timezone,
         seasonal_conditions: SeasonalConditions,
     ) -> None:
         self.terrain = terrain
         self.landmap = landmap
-        self.timezone = time_zone
         self.seasonal_conditions = seasonal_conditions
         self.controlpoints: list[ControlPoint] = []
 
