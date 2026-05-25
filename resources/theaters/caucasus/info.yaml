@@ -1,11 +1,5 @@
 ---
 name: Caucasus
-timezone: +4
-daytime:
-  dawn: [6, 9]
-  day: [9, 18]
-  dusk: [18, 20]
-  night: [0, 5]
 climate:
   day_night_temperature_difference: 6.0
   seasons:

@@ -1,11 +1,5 @@
 ---
 name: Falklands
-timezone: -3
-daytime:
-  dawn: [6, 9]
-  day: [9, 18]
-  dusk: [18, 20]
-  night: [0, 5]
 # Sourced from
 # https://www.worlddata.info/america/argentina/climate-santa-cruz.php
 # This map is huge and probably has wide climate variations across the region,
