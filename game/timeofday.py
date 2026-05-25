@@ -48,13 +48,15 @@ def to_datetime(
     day_begin_utc = datetime.datetime.combine(
         date, datetime.time(0)
     ) - terrain.utc_offset.utcoffset(None)
-    day_begin_utc = day_begin_utc.replace(tzinfo = ZoneInfo('UTC'))
+    day_begin_utc = day_begin_utc.replace(tzinfo=ZoneInfo("UTC"))
     sun_info = sun.sun(location.observer, date=day_begin_utc.date())
 
     if night_disabled:
         # Evenly divide hours between dusk and dawn, less 2 hours so that missions end before dusk.
         hours_per_block = (
-            (sun_info["dusk"] - sun_info["dawn"] - datetime.timedelta(hours=1)) / datetime.timedelta(hours=2) / 4.0
+            (sun_info["dusk"] - sun_info["dawn"] - datetime.timedelta(hours=1))
+            / datetime.timedelta(hours=2)
+            / 4.0
         )
         if time_of_day == TimeOfDay.Dawn:
             begin = sun_info["dawn"]
@@ -80,7 +82,9 @@ def to_datetime(
             end = sun_info["dusk"]
         else:
             begin = sun_info["dusk"]
-            end = day_begin_utc + datetime.timedelta(hours=23)  # 11pm local time is the latest possible end time to maintain hour blocks
+            end = day_begin_utc + datetime.timedelta(
+                hours=23
+            )  # 11pm local time is the latest possible end time to maintain hour blocks
     if begin < day_begin_utc:
         begin += datetime.timedelta(days=1)
     if end < day_begin_utc:
@@ -100,7 +104,9 @@ def from_datetime(time: datetime.datetime, terrain: Terrain) -> TimeOfDay:
 
     """
     location = _location_info_from_terrain(terrain)
-    utc_time = (time - terrain.utc_offset.utcoffset(None)).replace(tzinfo = ZoneInfo('UTC'))
+    utc_time = (time - terrain.utc_offset.utcoffset(None)).replace(
+        tzinfo=ZoneInfo("UTC")
+    )
     sun_info = sun.sun(location.observer, date=utc_time.date())
 
     if utc_time < sun_info["dawn"] or utc_time > sun_info["dusk"]:
