@@ -107,13 +107,6 @@ class TheaterLoader:
             self._load_seasonal_conditions(data["climate"]),
         )
 
-    @staticmethod
-    def _load_daytime_range(
-        daytime_range: list[int],
-    ) -> tuple[datetime.time, datetime.time]:
-        begin, end = daytime_range
-        return datetime.time(hour=begin), datetime.time(hour=end)
-
     def _load_seasonal_conditions(
         self, climate_data: dict[str, Any]
     ) -> SeasonalConditions:
