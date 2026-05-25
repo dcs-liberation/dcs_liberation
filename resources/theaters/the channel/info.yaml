@@ -1,12 +1,6 @@
 ---
 name: The Channel
 pydcs_name: TheChannel
-timezone: +2
-daytime:
-  dawn: [6, 8]
-  day: [10, 17]
-  dusk: [17, 18]
-  night: [0, 5]
 climate:
   day_night_temperature_difference: 5.0
   seasons:

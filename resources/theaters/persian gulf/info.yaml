@@ -1,12 +1,6 @@
 ---
 name: Persian Gulf
 pydcs_name: PersianGulf
-timezone: +4
-daytime:
-  dawn: [6, 8]
-  day: [8, 16]
-  dusk: [16, 18]
-  night: [0, 5]
 climate:
   day_night_temperature_difference: 2.0
   seasons:

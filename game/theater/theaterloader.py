@@ -20,7 +20,6 @@ from dcs.terrain import (
 )
 
 from .conflicttheater import ConflictTheater
-from .daytimemap import DaytimeMap
 from .landmap import load_landmap
 from .seasonalconditions import Season, SeasonalConditions, WeatherTypeChances
 
@@ -105,25 +104,8 @@ class TheaterLoader:
         return ConflictTheater(
             TERRAINS_BY_NAME[data.get("pydcs_name", data["name"])],
             load_landmap(self.landmap_path),
-            datetime.timezone(datetime.timedelta(hours=data["timezone"])),
             self._load_seasonal_conditions(data["climate"]),
-            self._load_daytime_map(data["daytime"]),
         )
-
-    def _load_daytime_map(self, daytime_data: dict[str, list[int]]) -> DaytimeMap:
-        return DaytimeMap(
-            dawn=self._load_daytime_range(daytime_data["dawn"]),
-            day=self._load_daytime_range(daytime_data["day"]),
-            dusk=self._load_daytime_range(daytime_data["dusk"]),
-            night=self._load_daytime_range(daytime_data["night"]),
-        )
-
-    @staticmethod
-    def _load_daytime_range(
-        daytime_range: list[int],
-    ) -> tuple[datetime.time, datetime.time]:
-        begin, end = daytime_range
-        return datetime.time(hour=begin), datetime.time(hour=end)
 
     def _load_seasonal_conditions(
         self, climate_data: dict[str, Any]

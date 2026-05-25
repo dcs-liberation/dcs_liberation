@@ -778,7 +778,7 @@ class KneeboardGenerator(MissionInfoGenerator):
 
         if flight.aircraft_type.utc_kneeboard:
             zoned_time = self.game.conditions.start_time.replace(
-                tzinfo=self.game.theater.timezone
+                tzinfo=self.game.theater.terrain.utc_offset
             ).astimezone(datetime.timezone.utc)
         else:
             zoned_time = self.game.conditions.start_time

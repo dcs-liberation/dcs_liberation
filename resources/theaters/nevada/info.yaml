@@ -1,11 +1,5 @@
 ---
 name: Nevada
-timezone: -8
-daytime:
-  dawn: [4, 6]
-  day: [6, 17]
-  dusk: [17, 18]
-  night: [0, 5]
 climate:
   day_night_temperature_difference: 6.0
   seasons:
