@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
 from typing import Optional
 
 from PySide6 import QtGui
@@ -8,6 +10,7 @@ from PySide6.QtGui import QPixmap, QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QAbstractItemView, QListView
 
 from game.campaignloader.campaign import Campaign
+from game.theater.theaterloader import TheaterLoader
 from qt_ui.liberation_install import get_dcs_install_directory
 
 
@@ -15,8 +18,7 @@ class QCampaignItem(QStandardItem):
     def __init__(self, campaign: Campaign) -> None:
         super(QCampaignItem, self).__init__()
         self.setData(campaign, QCampaignList.CampaignRole)
-        dcs_path = get_dcs_install_directory()
-        icon_path = dcs_path / campaign.menu_thumbnail_dcs_relative_path
+        icon_path = self._icon_path(campaign)
         self.setIcon(QtGui.QIcon(QPixmap(str(icon_path))))
         self.setEditable(False)
         if campaign.is_compatible:
@@ -24,6 +26,26 @@ class QCampaignItem(QStandardItem):
         else:
             name = f"[INCOMPATIBLE] {campaign.name}"
         self.setText(name)
+
+    def _icon_path(self, campaign: Campaign) -> Path:
+        dcs_path = get_dcs_install_directory()
+        theater_loader = TheaterLoader(campaign.theater.lower())
+        theater_data = theater_loader.as_dict()
+        if "pydcs_name" in theater_data:
+            pydcs_name_path = (
+                Path(dcs_path)
+                / Path("Mods/terrains")
+                / theater_data["pydcs_name"]
+                / "Theme/icon.png"
+            )
+            if os.path.exists(pydcs_name_path):
+                return pydcs_name_path
+        return (
+            Path(dcs_path)
+            / Path("Mods/terrains")
+            / theater_data["name"]
+            / "Theme/icon.png"
+        )
 
 
 class QCampaignList(QListView):
