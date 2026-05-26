@@ -16,7 +16,6 @@ from game.ato.package import Package
 from game.utils import Distance
 from qt_ui.windows.mission.flight.waypoints.QFlightWaypointItem import QWaypointItem
 
-
 HEADER_LABELS = ["Name", "Alt (ft)", "Alt Type", "TOT/DEPART"]
 
 

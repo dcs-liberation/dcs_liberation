@@ -8,7 +8,7 @@ GuardT = TypeVar("GuardT")
 
 
 def self_type_guard(
-    f: Callable[[SelfT, BaseT], TypeGuard[GuardT]]
+    f: Callable[[SelfT, BaseT], TypeGuard[GuardT]],
 ) -> Callable[[SelfT, BaseT], TypeGuard[GuardT]]:
     def decorator(s: SelfT, arg: BaseT) -> TypeGuard[GuardT]:
         if id(s) != id(arg):

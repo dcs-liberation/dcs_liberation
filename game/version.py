@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 MAJOR_VERSION = 14
 MINOR_VERSION = 1
 MICRO_VERSION = 0
