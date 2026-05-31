@@ -431,6 +431,35 @@ class QAirTaskingOrderPanel(QSplitter):
         self.flight_panel = QFlightPanel(game_model)
         self.addWidget(self.flight_panel)
 
+    def select_flight_on_map(self, flight: Flight) -> None:
+        """Selects the package and flight owning the given flight.
+
+        Triggered when the player clicks a flight's route line on the web map.
+        """
+        # Make sure the panel is showing the ATO that owns this flight.
+        show_opfor = not flight.blue.is_blue
+        if self.red_ato_checkbox.isChecked() != show_opfor:
+            self.red_ato_checkbox.setChecked(show_opfor)
+
+        packages = list(self.ato_model.ato.packages)
+        if flight.package not in packages:
+            return
+        package_row = packages.index(flight.package)
+        self.package_panel.package_list.selectionModel().setCurrentIndex(
+            self.ato_model.index(package_row, 0),
+            QItemSelectionModel.SelectionFlag.ClearAndSelect,
+        )
+
+        # Selecting the package synchronously triggers on_package_change, which
+        # sets the flight panel's package model. Now select the flight row.
+        if flight not in flight.package.flights:
+            return
+        flight_row = flight.package.flights.index(flight)
+        self.flight_panel.flight_list.selectionModel().setCurrentIndex(
+            self.flight_panel.flight_list.model().index(flight_row, 0),
+            QItemSelectionModel.SelectionFlag.ClearAndSelect,
+        )
+
     def on_package_change(self) -> None:
         """Sets the newly selected flight for display in the bottom panel."""
         index = self.package_panel.package_list.currentIndex()

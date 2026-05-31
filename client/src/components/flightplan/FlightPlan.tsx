@@ -1,5 +1,8 @@
 import { Flight } from "../../api/liberationApi";
-import { useGetCommitBoundaryForFlightQuery } from "../../api/liberationApi";
+import {
+  useGetCommitBoundaryForFlightQuery,
+  useSelectFlightMutation,
+} from "../../api/liberationApi";
 import WaypointMarker from "../waypointmarker";
 import { Polyline as LPolyline } from "leaflet";
 import { ReactElement, useEffect, useRef } from "react";
@@ -28,6 +31,7 @@ const pathColor = (props: FlightPlanProps) => {
 function FlightPlanPath(props: FlightPlanProps) {
   const color = pathColor(props);
   const waypoints = props.flight.waypoints;
+  const [selectFlight] = useSelectFlightMutation();
 
   const polylineRef = useRef<LPolyline | null>(null);
 
@@ -58,11 +62,35 @@ function FlightPlanPath(props: FlightPlanProps) {
     .filter((waypoint) => waypoint.include_in_path)
     .map((waypoint) => waypoint.position);
 
+  // Only blue flight plans are interactive: hovering highlights the route in
+  // yellow and clicking selects the owning package (and flight) in the Qt
+  // sidebar via a round-trip through the server.
+  const interactive = props.flight.blue;
+
   return (
     <Polyline
       positions={points}
-      pathOptions={{ color: color, interactive: false }}
+      pathOptions={{ color: color, interactive: interactive }}
       ref={polylineRef}
+      eventHandlers={
+        interactive
+          ? {
+              mouseover: () => {
+                polylineRef.current?.setStyle({ color: SELECTED_PATH });
+                polylineRef.current?.bringToFront();
+              },
+              mouseout: () => {
+                if (!props.selected) {
+                  polylineRef.current?.setStyle({ color: color });
+                  polylineRef.current?.bringToBack();
+                }
+              },
+              click: () => {
+                selectFlight({ flightId: props.flight.id });
+              },
+            }
+          : undefined
+      }
     />
   );
 }
