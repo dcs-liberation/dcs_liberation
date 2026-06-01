@@ -10,6 +10,8 @@ import yaml
 from dcs.terrain import (
     Caucasus,
     Falklands,
+    Germany,
+    Kola,
     MarianaIslands,
     Nevada,
     Normandy,
@@ -26,6 +28,8 @@ from .seasonalconditions import Season, SeasonalConditions, WeatherTypeChances
 ALL_TERRAINS = [
     Caucasus(),
     Falklands(),
+    Germany(),
+    Kola(),
     PersianGulf(),
     Normandy(),
     MarianaIslands(),
@@ -91,12 +95,9 @@ class TheaterLoader:
     def landmap_path(self) -> Path:
         return self.descriptor_path.with_name("landmap.p")
 
-    @property
-    def menu_thumbnail_dcs_relative_path(self) -> Path:
+    def as_dict(self) -> Path:
         with self.descriptor_path.open(encoding="utf-8") as descriptor_file:
-            data = yaml.safe_load(descriptor_file)
-        name = data.get("pydcs_name", data["name"])
-        return Path("Mods/terrains") / name / "Theme/icon.png"
+            return yaml.safe_load(descriptor_file)
 
     def load(self) -> ConflictTheater:
         with self.descriptor_path.open(encoding="utf-8") as descriptor_file:
