@@ -96,7 +96,10 @@ class InFlight(FlightState, ABC):
         new_index = self.waypoint_index + 1
         if self.next_waypoint.waypoint_type is FlightWaypointType.LANDING_POINT:
             return Completed(self.flight, self.settings)
-        if self.next_waypoint.waypoint_type is FlightWaypointType.PATROL_TRACK:
+        if self.next_waypoint.waypoint_type in [
+            FlightWaypointType.PATROL_TRACK,
+            FlightWaypointType.INGRESS_CAS,
+        ]:
             return RaceTrack(self.flight, self.settings, new_index)
         return Navigating(self.flight, self.settings, new_index)
 
