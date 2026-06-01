@@ -13,7 +13,7 @@ coverage==7.3.2
 distlib==0.3.7
 exceptiongroup==1.2.0
 Faker==20.1.0
-fastapi==0.123.10
+fastapi==0.123.6
 filelock==3.20.3
 future==0.18.3
 h11==0.16.0
@@ -37,7 +37,7 @@ pre-commit==3.5.0
 pydantic==2.5.2
 pydantic-settings==2.1.0
 pydantic_core==2.14.5
-pydcs @ git+https://github.com/dcs-liberation/dcs@56def8266c1e0a174424a886542b6c949619e82c
+pydcs @ git+https://github.com/dcs-liberation/dcs@9bd4de5bc2e5c246ef0ca4afd75df8e9af5f54b8
 pyinstaller==6.18.0
 pyinstaller-hooks-contrib==2025.9
 pyproj==3.6.1
