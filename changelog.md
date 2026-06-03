@@ -8,6 +8,7 @@ Saves from 14.x are not compatible with 15.0.0.
 * **[Engine]** Support for Kola map.
 * **[Engine]** Support for Cold War Germany map.
 * **[Campaign]** Make dawn/dusk/day/night times more accurate so that dawn/dusk missions do not happen during the dark in some seasons.
+* **[Data]** Updated weapons availability by year and fallbacks. Restricting weapons availability by campaign date is turned on by default.
 
 
 # 14.1.0
