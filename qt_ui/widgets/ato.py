@@ -436,11 +436,6 @@ class QAirTaskingOrderPanel(QSplitter):
 
         Triggered when the player clicks a flight's route line on the web map.
         """
-        # Make sure the panel is showing the ATO that owns this flight.
-        show_opfor = not flight.blue.is_blue
-        if self.red_ato_checkbox.isChecked() != show_opfor:
-            self.red_ato_checkbox.setChecked(show_opfor)
-
         packages = list(self.ato_model.ato.packages)
         if flight.package not in packages:
             return
