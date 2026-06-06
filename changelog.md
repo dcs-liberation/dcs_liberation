@@ -13,6 +13,7 @@ Saves from 14.x are not compatible with 15.0.0.
 * **[Campaign]** Campaign designers can define exclusion zones where front line units cannot be spawned using Free Form Polygons in the DCS Mission Editor. 
 * **[Data]** Updated weapons availability by year and fallbacks. Restricting weapons availability by campaign date is turned on by default.
 * **[Data]** Added A-6E AI unit
+* **[UI]** Pressing Delete with a package selected in the ATO list list cancels the package.
 
 
 # 14.1.0
@@ -39,6 +40,7 @@ Saves from 13.x are not compatible with 14.0.0.
 * **[Mods]** A4EC mod version updated to 2.3.
 * **[UI]** Allow saving after fast forwarding manually with sim speed controls (--show-sim-speed-controls option).
 * **[UI]** Add new option to fast forward until player is at the IP.
+
 
 ## Fixes
 
