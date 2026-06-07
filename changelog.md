@@ -8,6 +8,8 @@ Saves from 14.x are not compatible with 15.0.0.
 * **[Engine]** Support for Kola map.
 * **[Engine]** Support for Cold War Germany map.
 * **[Campaign]** Make dawn/dusk/day/night times more accurate so that dawn/dusk missions do not happen during the dark in some seasons.
+* **[Campaign]** Campaign designers can define whether front line units travel on road or off road by setting the appropriate waypoint option for the M-113 unit defining the supply route. If the M-113 unit waypoints are set to travel on road, front line units will travel on road from where they are generated to their destinations. Otherwise, front line units will travel off road.
+* **[Campaign]** Campaign designers can define exclusion zones where front line units cannot be spawned using Free Form Polygons in the DCS Mission Editor. 
 * **[Data]** Updated weapons availability by year and fallbacks. Restricting weapons availability by campaign date is turned on by default.
 
 
