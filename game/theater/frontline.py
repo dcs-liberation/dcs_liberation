@@ -19,14 +19,23 @@ if TYPE_CHECKING:
 FRONTLINE_MIN_CP_DISTANCE = 5000
 
 
+class FrontLinePoint(Point):
+
+    def __init__(self, point: Point, on_road: bool):
+        self.__dict__.update(point.__dict__)
+        self.on_road = on_road
+
+    on_road: bool
+
+
 @dataclass
 class FrontLineSegment:
     """
     Describes a line segment of a FrontLine
     """
 
-    point_a: Point
-    point_b: Point
+    point_a: FrontLinePoint
+    point_b: FrontLinePoint
 
     @property
     def blue_forward_heading(self) -> Heading:
@@ -63,11 +72,14 @@ class FrontLine(MissionTarget):
             # *some* "front line" being drawn between these two. In this case there will
             # be no supply route to follow. Just create an arbitrary route between the
             # two points.
-            route = [blue_point.position, red_point.position]
+            route = [
+                FrontLinePoint(blue_point.position, False),
+                FrontLinePoint(red_point.position, False),
+            ]
         # Snap the beginning and end points to the CPs rather than the convoy waypoints,
         # which are on roads.
-        route[0] = blue_point.position
-        route[-1] = red_point.position
+        route[0] = FrontLinePoint(blue_point.position, False)
+        route[-1] = FrontLinePoint(red_point.position, False)
         self.segments: List[FrontLineSegment] = [
             FrontLineSegment(a, b) for a, b in pairwise(route)
         ]

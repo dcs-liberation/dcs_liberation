@@ -12,6 +12,7 @@ from game.server.leaflet import LeafletPoint
 if TYPE_CHECKING:
     from game import Game
     from game.theater import ControlPoint
+    from game.theater.frontline import FrontLinePoint
     from game.transfers import MultiGroupTransport, TransportMap
 
 
@@ -76,7 +77,11 @@ class SupplyRouteJs(BaseModel):
 
     @staticmethod
     def for_link(
-        game: Game, a: ControlPoint, b: ControlPoint, points: list[Point], sea: bool
+        game: Game,
+        a: ControlPoint,
+        b: ControlPoint,
+        points: list[Point | FrontLinePoint],
+        sea: bool,
     ) -> SupplyRouteJs:
         return SupplyRouteJs(
             # Although these are not persistent objects in the backend, the frontend
@@ -107,22 +112,22 @@ class SupplyRouteJs(BaseModel):
         routes = []
         for control_point in game.theater.controlpoints:
             seen.add(control_point)
-            for destination, route in control_point.convoy_routes.items():
+            for destination, convoy_route in control_point.convoy_routes.items():
                 if destination in seen:
                     continue
                 routes.append(
                     SupplyRouteJs.for_link(
-                        game, control_point, destination, list(route), sea=False
+                        game, control_point, destination, list(convoy_route), sea=False
                     )
                 )
-            for destination, route in control_point.shipping_lanes.items():
+            for destination, shipping_route in control_point.shipping_lanes.items():
                 if destination in seen:
                     continue
                 if not destination.is_friendly_to(control_point):
                     continue
                 routes.append(
                     SupplyRouteJs.for_link(
-                        game, control_point, destination, list(route), sea=True
+                        game, control_point, destination, list(shipping_route), sea=True
                     )
                 )
         return routes

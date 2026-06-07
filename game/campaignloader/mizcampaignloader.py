@@ -2,14 +2,20 @@ from __future__ import annotations
 
 import itertools
 from functools import cached_property
+import logging
 from pathlib import Path
 from typing import Iterator, List, TYPE_CHECKING
 from uuid import UUID
 
+from shapely.geometry import MultiPolygon, Polygon
+from shapely.ops import unary_union
+
 from dcs import Mission
 from dcs.countries import CombinedJointTaskForcesBlue, CombinedJointTaskForcesRed
 from dcs.country import Country
+from dcs.drawing.polygon import FreeFormPolygon
 from dcs.planes import F_15C
+from dcs.point import PointAction
 from dcs.ships import HandyWind, LHA_Tarawa, Stennis, USS_Arleigh_Burke_IIa
 from dcs.statics import Fortification, Warehouse
 from dcs.unitgroup import PlaneGroup, ShipGroup, StaticGroup, VehicleGroup
@@ -20,6 +26,9 @@ from game.campaignloader.controlpointconfig import ControlPointConfig
 from game.profiling import logged_duration
 from game.scenery_group import SceneryGroup
 from game.theater.controlpoint import ControlPoint
+from game.theater.frontline import FrontLinePoint
+from game.theater.landmap import Landmap
+
 from game.theater.presetlocation import PresetLocation
 
 if TYPE_CHECKING:
@@ -315,7 +324,11 @@ class MizCampaignLoader:
             # The unit will have its first waypoint at the source CP and the final
             # waypoint at the destination CP. Each waypoint defines the path of the
             # cargo ship.
-            waypoints = [p.position for p in group.points]
+            waypoints = []
+            for point in group.points:
+                waypoints.append(
+                    FrontLinePoint(point.position, point.action == PointAction.OnRoad)
+                )
             origin = self.theater.closest_control_point(waypoints[0])
             if origin is None:
                 raise RuntimeError(
@@ -453,9 +466,36 @@ class MizCampaignLoader:
             closest = self.theater.closest_control_point(scenery_group.centroid)
             closest.preset_locations.scenery.append(scenery_group)
 
+    def add_custom_exclusion_zones(self) -> None:
+        if self.theater.landmap is None:
+            return
+        polygons = []
+        for layer in self.mission.drawings.layers:
+            for draw_object in layer.objects:
+                if type(draw_object) != FreeFormPolygon:
+                    logging.debug(
+                        f"Object {draw_object.name} is not a FreeFormPolygon, ignoring"
+                    )
+                    continue
+                polygon_points = []
+                for point in draw_object.points:
+                    polygon_points.append(
+                        (
+                            point.x + draw_object.position.x,
+                            point.y + draw_object.position.y,
+                        )
+                    )
+                polygons.append(Polygon(polygon_points))
+        self.theater.landmap = Landmap(
+            self.theater.landmap.inclusion_zones,
+            unary_union([self.theater.landmap.exclusion_zones, MultiPolygon(polygons)]),
+            self.theater.landmap.sea_zones,
+        )
+
     def populate_theater(self) -> None:
         for control_point in self.control_points.values():
             self.theater.add_controlpoint(control_point)
         self.add_preset_locations()
         self.add_supply_routes()
         self.add_shipping_lanes()
+        self.add_custom_exclusion_zones()
