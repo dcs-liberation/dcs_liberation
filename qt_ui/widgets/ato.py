@@ -247,6 +247,8 @@ class PackageDelegate(TwoColumnRowDelegate):
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
         package = self.package(index)
+        if package is None:
+            return ""
         if (row, column) == (0, 0):
             return f"{package.package_description} {package.target.name}"
         elif (row, column) == (0, 1):
@@ -261,10 +263,14 @@ class PackageDelegate(TwoColumnRowDelegate):
 
     def num_clients(self, index: QModelIndex) -> int:
         package = self.package(index)
+        if package is None:
+            return 0
         return sum(f.client_count for f in package.flights)
 
     def missing_pilots(self, index: QModelIndex) -> int:
         package = self.package(index)
+        if package is None:
+            return 0
         return sum(f.missing_pilots for f in package.flights)
 
 
