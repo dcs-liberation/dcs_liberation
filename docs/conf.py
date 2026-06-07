@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "DCS Liberation"
-copyright = "2025, DCS Liberation Team"
+copyright = "2026, DCS Liberation Team"
 author = "DCS Liberation Team"
-release = "14.1.0"
+release = "15.0.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
