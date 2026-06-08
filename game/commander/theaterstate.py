@@ -60,6 +60,7 @@ class TheaterState(WorldState["TheaterState"]):
     enemy_ships: list[NavalGroundObject]
     enemy_battle_positions: dict[ControlPoint, BattlePositions]
     oca_targets: list[ControlPoint]
+    enemy_carriers: list[ControlPoint]
     strike_targets: list[TheaterGroundObject]
     enemy_barcaps: list[ControlPoint]
     threat_zones: ThreatZones
@@ -130,6 +131,7 @@ class TheaterState(WorldState["TheaterState"]):
                 for cp, g in self.enemy_battle_positions.items()
             },
             oca_targets=list(self.oca_targets),
+            enemy_carriers=list(self.enemy_carriers),
             strike_targets=list(self.strike_targets),
             enemy_barcaps=list(self.enemy_barcaps),
             threat_zones=self.threat_zones,
@@ -188,6 +190,7 @@ class TheaterState(WorldState["TheaterState"]):
                 for cp in ordered_capturable_points
             },
             oca_targets=list(finder.oca_targets(min_aircraft=20)),
+            enemy_carriers=list(finder.enemy_carriers()),
             strike_targets=list(finder.strike_targets()),
             enemy_barcaps=list(game.theater.control_points_for(not player)),
             threat_zones=game.threat_zone_for(not player),

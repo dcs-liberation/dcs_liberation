@@ -956,6 +956,8 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                     ground_object.position.x = ground_object.position.x + delta.x
                     ground_object.position.y = ground_object.position.y + delta.y
                     for group in ground_object.groups:
+                        group.position.x += delta.x
+                        group.position.y += delta.y
                         for u in group.units:
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y
