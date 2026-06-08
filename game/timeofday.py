@@ -49,7 +49,20 @@ def to_datetime(
         date, datetime.time(0)
     ) - terrain.utc_offset.utcoffset(None)
     day_begin_utc = day_begin_utc.replace(tzinfo=ZoneInfo("UTC"))
-    sun_info = sun.sun(location.observer, date=day_begin_utc.date())
+    try:
+        sun_info = sun.sun(location.observer, date=day_begin_utc.date())
+    except ValueError:
+        # astral throws ValueError when the location is always in day or night at the given date
+        # so use hard coded hours.
+        if time_of_day == TimeOfDay.Dawn:
+            hour = 6
+        elif time_of_day == TimeOfDay.Day:
+            hour = 12
+        elif time_of_day == TimeOfDay.Dusk:
+            hour = 18
+        else:
+            hour = 23
+        return datetime.datetime.combine(date, datetime.time(hour))
 
     if night_disabled:
         # Evenly divide hours between dusk and dawn, less 2 hours so that missions end before dusk.
