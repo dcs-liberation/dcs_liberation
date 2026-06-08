@@ -9,9 +9,12 @@ from game.ato.closestairfields import ClosestAirfields, ObjectiveDistanceCache
 from game.theater import (
     Airfield,
     ControlPoint,
+    Carrier,
     Fob,
     FrontLine,
+    Lha,
     MissionTarget,
+    NavalControlPoint,
     OffMapSpawn,
 )
 from game.theater.theatergroundobject import (
@@ -270,3 +273,14 @@ class ObjectiveFinder:
     def closest_airfields_to(location: MissionTarget) -> ClosestAirfields:
         """Returns the closest airfields to the given location."""
         return ObjectiveDistanceCache.get_closest_airfields(location)
+
+    def enemy_carriers(self) -> Iterator[NavalControlPoint]:
+        carriers = []
+        for control_point in self.enemy_control_points():
+            if not isinstance(control_point, Carrier) and not isinstance(
+                control_point, Lha
+            ):
+                continue
+            if control_point.allocated_aircraft().total_present >= 0:
+                carriers.append(control_point)
+        return self._targets_by_range(carriers)
