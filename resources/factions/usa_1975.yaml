@@ -6,6 +6,7 @@ description: <p>US army in the 70s at the end of the war in Vietnam.</p>
 locales:
   - en_US
 aircrafts:
+  - A-6E Intruder
   - B-52H Stratofortress
   - C-130
   - CH-47D

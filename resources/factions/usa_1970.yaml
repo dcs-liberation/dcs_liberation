@@ -6,6 +6,7 @@ description: <p>US military during the Vietnam War from 1965 to 1975</p>
 locales: 
   - en_US
 aircrafts: 
+  - A-6E Intruder
   - F-14A Tomcat (Block 135-GR Early)
   - F-14A Tomcat (Block 135-GR Late)
   - F-4C Phantom II
