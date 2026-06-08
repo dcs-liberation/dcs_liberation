@@ -1,0 +1,27 @@
+carrier_capable: true
+description:
+    The Grumman A-6 Intruder was a twin-engine, carrier-based all-weather attack aircraft designed for the 
+    US Navy and Marine Corps to deliver precision strike capability independent of daylight or clear visibility. 
+    Introduced in the early 1960s, it was built around a two-crew cockpit and a powerful integrated navigation 
+    and attack system that combined radar, inertial navigation, and terrain-following capability, allowing 
+    low-level penetration and accurate weapons delivery at night and in poor weather. The Intruder carried a large 
+    payload for a carrier aircraft, including guided and unguided bombs, anti-ship missiles, and other precision 
+    stand-off weapons. It became one of the Navy's principal strike platforms from Vietnam through the 1991 Gulf War.
+introduced: 1963
+manufacturer: Grumman
+origin: USA
+price: 10
+role: Carrier-based Attack
+variants:
+  A-6E Intruder: {}
+tasks:
+  Anti-ship: 140
+  BAI: 650
+  CAS: 650
+  DEAD: 300
+  OCA/Aircraft: 350
+  OCA/Runway: 350
+  SEAD: 120
+  SEAD Escort: 120
+  Strike: 360
+  Refueling: 0
