@@ -148,7 +148,7 @@ class QFlightList(QListView):
         menu.addAction(delete_action)
 
         menu.exec_(event.globalPos())
-        
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_Delete:
             index = self.currentIndex()
@@ -157,7 +157,7 @@ class QFlightList(QListView):
                 self.cancel_or_abort_flight(index)
                 # Keep a flight selected so repeated Delete clears consecutive
                 # flights: the same row now holds the next one (clamped to the
-                # new last row). 
+                # new last row).
                 remaining = self.model().rowCount()
                 if remaining:
                     self.setCurrentIndex(self.model().index(min(row, remaining - 1), 0))
@@ -455,7 +455,7 @@ class QPackagePanel(QGroupBox):
             logging.error(f"Cannot delete package when no package is selected.")
             return
         self.package_list.delete_package(index)
-       
+
 
 class QAirTaskingOrderPanel(QSplitter):
     """A split panel for displaying the packages and flights of an ATO.
