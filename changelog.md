@@ -13,6 +13,7 @@ Saves from 14.x are not compatible with 15.0.0.
 * **[Campaign]** Campaign designers can define exclusion zones where front line units cannot be spawned using Free Form Polygons in the DCS Mission Editor. 
 * **[Data]** Updated weapons availability by year and fallbacks. Restricting weapons availability by campaign date is turned on by default.
 * **[Data]** Added A-6E AI unit
+* **[UI]** In the ATO widget, pressing delete will abort/cancel the selected package or flight.
 
 
 # 14.1.0

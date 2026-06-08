@@ -9,7 +9,13 @@ from PySide6.QtCore import (
     QSize,
     Qt,
 )
-from PySide6.QtGui import QAction, QContextMenuEvent
+
+from PySide6.QtGui import (
+    QContextMenuEvent,
+    QAction,
+    QKeyEvent,
+)
+
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QGroupBox,
@@ -142,6 +148,22 @@ class QFlightList(QListView):
         menu.addAction(delete_action)
 
         menu.exec_(event.globalPos())
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key.Key_Delete:
+            index = self.currentIndex()
+            if index.isValid():
+                row = index.row()
+                self.cancel_or_abort_flight(index)
+                # Keep a flight selected so repeated Delete clears consecutive
+                # flights: the same row now holds the next one (clamped to the
+                # new last row).
+                remaining = self.model().rowCount()
+                if remaining:
+                    self.setCurrentIndex(self.model().index(min(row, remaining - 1), 0))
+                event.accept()
+                return
+        super().keyPressEvent(event)
 
 
 class QFlightPanel(QGroupBox):
@@ -330,6 +352,23 @@ class QPackageList(QListView):
         menu.addAction(delete_action)
 
         menu.exec_(event.globalPos())
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key.Key_Delete:
+            index = self.currentIndex()
+            if index.isValid():
+                row = index.row()
+                self.delete_package(index)
+                # Keep a package selected so repeated Delete clears consecutive
+                # packages: the same row now holds the next one (clamped to the
+                # new last row). If the package wasn't removed (its flights were
+                # only aborted, not cancelled), this re-selects it harmlessly.
+                remaining = self.model().rowCount()
+                if remaining:
+                    self.setCurrentIndex(self.model().index(min(row, remaining - 1), 0))
+                event.accept()
+                return
+        super().keyPressEvent(event)
 
 
 class QPackagePanel(QGroupBox):
