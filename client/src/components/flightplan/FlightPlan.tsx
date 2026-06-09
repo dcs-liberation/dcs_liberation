@@ -5,7 +5,7 @@ import {
 } from "../../api/liberationApi";
 import WaypointMarker from "../waypointmarker";
 import { Polyline as LPolyline } from "leaflet";
-import { ReactElement, useEffect, useRef } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { Polyline } from "react-leaflet";
 
 const BLUE_PATH = "#0084ff";
@@ -29,9 +29,13 @@ const pathColor = (props: FlightPlanProps) => {
 };
 
 function FlightPlanPath(props: FlightPlanProps) {
-  const color = pathColor(props);
   const waypoints = props.flight.waypoints;
   const [selectFlight] = useSelectFlightMutation();
+  const [hovered, setHovered] = useState(false);
+  let color = pathColor(props);
+  if (hovered && !props.selected){
+	color = SELECTED_PATH  
+  }
 
   const polylineRef = useRef<LPolyline | null>(null);
 
@@ -68,30 +72,31 @@ function FlightPlanPath(props: FlightPlanProps) {
   const interactive = props.flight.blue;
 
   return (
-    <Polyline
-      positions={points}
-      pathOptions={{ color: color, interactive: interactive }}
-      ref={polylineRef}
-      eventHandlers={
-        interactive
-          ? {
-              mouseover: () => {
-                polylineRef.current?.setStyle({ color: SELECTED_PATH });
-                polylineRef.current?.bringToFront();
-              },
-              mouseout: () => {
-                if (!props.selected) {
-                  polylineRef.current?.setStyle({ color: color });
-                  polylineRef.current?.bringToBack();
-                }
-              },
-              click: () => {
-                selectFlight({ flightId: props.flight.id });
-              },
-            }
-          : undefined
-      }
-    />
+    <>
+      <Polyline
+        positions={points}
+        pathOptions={{ color: color, interactive: interactive, weight: 5 }}
+        ref={polylineRef}
+        eventHandlers={
+          interactive
+            ? {
+                mouseover: () => {
+				  setHovered(true);
+                },
+                mouseout: () => {
+                  setHovered(false);
+                },
+                click: () => {
+                  selectFlight({ flightId: props.flight.id });
+                },
+              }
+            : undefined
+        }
+      />
+      {hovered && !props.selected && (
+        <CommitBoundary flightId={props.flight.id} selected={false} />
+      )}
+    </>
   );
 }
 
