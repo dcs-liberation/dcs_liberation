@@ -9,7 +9,13 @@ from PySide6.QtCore import (
     QSize,
     Qt,
 )
-from PySide6.QtGui import QAction, QContextMenuEvent
+
+from PySide6.QtGui import (
+    QContextMenuEvent,
+    QAction,
+    QKeyEvent,
+)
+
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QGroupBox,
@@ -143,6 +149,22 @@ class QFlightList(QListView):
 
         menu.exec_(event.globalPos())
 
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key.Key_Delete:
+            index = self.currentIndex()
+            if index.isValid():
+                row = index.row()
+                self.cancel_or_abort_flight(index)
+                # Keep a flight selected so repeated Delete clears consecutive
+                # flights: the same row now holds the next one (clamped to the
+                # new last row).
+                remaining = self.model().rowCount()
+                if remaining:
+                    self.setCurrentIndex(self.model().index(min(row, remaining - 1), 0))
+                event.accept()
+                return
+        super().keyPressEvent(event)
+
 
 class QFlightPanel(QGroupBox):
     """The flight display portion of the ATO panel.
@@ -247,6 +269,8 @@ class PackageDelegate(TwoColumnRowDelegate):
 
     def text_for(self, index: QModelIndex, row: int, column: int) -> str:
         package = self.package(index)
+        if package is None:
+            return ""
         if (row, column) == (0, 0):
             return f"{package.package_description} {package.target.name}"
         elif (row, column) == (0, 1):
@@ -261,10 +285,14 @@ class PackageDelegate(TwoColumnRowDelegate):
 
     def num_clients(self, index: QModelIndex) -> int:
         package = self.package(index)
+        if package is None:
+            return 0
         return sum(f.client_count for f in package.flights)
 
     def missing_pilots(self, index: QModelIndex) -> int:
         package = self.package(index)
+        if package is None:
+            return 0
         return sum(f.missing_pilots for f in package.flights)
 
 
@@ -324,6 +352,23 @@ class QPackageList(QListView):
         menu.addAction(delete_action)
 
         menu.exec_(event.globalPos())
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key.Key_Delete:
+            index = self.currentIndex()
+            if index.isValid():
+                row = index.row()
+                self.delete_package(index)
+                # Keep a package selected so repeated Delete clears consecutive
+                # packages: the same row now holds the next one (clamped to the
+                # new last row). If the package wasn't removed (its flights were
+                # only aborted, not cancelled), this re-selects it harmlessly.
+                remaining = self.model().rowCount()
+                if remaining:
+                    self.setCurrentIndex(self.model().index(min(row, remaining - 1), 0))
+                event.accept()
+                return
+        super().keyPressEvent(event)
 
 
 class QPackagePanel(QGroupBox):

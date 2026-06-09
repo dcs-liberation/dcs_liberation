@@ -182,13 +182,13 @@ class Settings:
     # Campaign management
     # General
     restrict_weapons_by_date: bool = boolean_option(
-        "Restrict weapons by date (WIP)",
+        "Restrict weapons by date",
         page=CAMPAIGN_MANAGEMENT_PAGE,
         section=GENERAL_SECTION,
-        default=False,
+        default=True,
         detail=(
-            "Restricts weapon availability based on the campaign date. Data is "
-            "extremely incomplete so does not affect all weapons."
+            "Restricts weapon availability based on the campaign date. May not apply to "
+            "custom loadouts due to incomplete data."
         ),
     )
     # Pilots and Squadrons

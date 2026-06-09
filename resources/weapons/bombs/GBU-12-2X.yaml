@@ -13,3 +13,6 @@ clsids:
   - "{BRU-42_2xGBU-12_right}"
   - "{BRU-42_2*GBU-12_LEFT}"
   - "{BRU-42_2*GBU-12_RIGHT}"
+  - "{HB_A6E_GBU12_MER_2x_LEFT}"
+  - "{HB_A6E_GBU12_MER_2x_RIGHT}"
+  

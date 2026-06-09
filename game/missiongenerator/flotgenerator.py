@@ -217,7 +217,7 @@ class FlotGenerator:
                             position=infantry_position,
                             group_size=1,
                             heading=forward_heading.degrees,
-                            move_formation=PointAction.OffRoad,
+                            move_formation=self._point_action(),
                         )
                         infantry_group.hidden_on_mfd = True
             return
@@ -243,7 +243,7 @@ class FlotGenerator:
             position=infantry_position,
             group_size=1,
             heading=forward_heading.degrees,
-            move_formation=PointAction.OffRoad,
+            move_formation=self._point_action(),
         )
         infantry_group.hidden_on_mfd = True
 
@@ -256,7 +256,7 @@ class FlotGenerator:
                 position=position,
                 group_size=1,
                 heading=forward_heading.degrees,
-                move_formation=PointAction.OffRoad,
+                move_formation=self._point_action(),
             )
             infantry_group.hidden_on_mfd = True
 
@@ -269,7 +269,7 @@ class FlotGenerator:
         reform_point = dcs_group.position.point_from_heading(
             forward_heading.degrees, 50
         )
-        dcs_group.add_waypoint(reform_point)
+        dcs_group.add_waypoint(reform_point, self._point_action())
 
     def _plan_artillery_action(
         self,
@@ -310,10 +310,10 @@ class FlotGenerator:
             )
             dcs_group.add_waypoint(
                 dcs_group.position.point_from_heading(forward_heading.degrees, 1),
-                PointAction.OffRoad,
+                self._point_action(),
             )
             dcs_group.points[2].tasks.append(Hold())
-            dcs_group.add_waypoint(retreat, PointAction.OffRoad)
+            dcs_group.add_waypoint(retreat, self._point_action())
 
             artillery_fallback = TriggerOnce(
                 Event.NoEvent, "ArtilleryRetreat #" + str(dcs_group.id)
@@ -366,7 +366,7 @@ class FlotGenerator:
                 target_point = self.conflict.theater.nearest_land_pos(
                     target.points[0].position + rand_offset
                 )
-                dcs_group.add_waypoint(target_point)
+                dcs_group.add_waypoint(target_point, self._point_action())
                 dcs_group.points[2].tasks.append(AttackGroup(target.id))
 
             if (
@@ -383,7 +383,7 @@ class FlotGenerator:
                 attack_point = self.find_offensive_point(
                     dcs_group, offset_heading, AGGRESIVE_MOVE_DISTANCE
                 )
-            dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
+            dcs_group.add_waypoint(attack_point, self._point_action())
         elif stance == CombatStance.BREAKTHROUGH:
             # In breakthrough mode, the units will move forward
             # If the enemy base is close enough, the units will attack the base
@@ -401,7 +401,7 @@ class FlotGenerator:
                 attack_point = self.find_offensive_point(
                     dcs_group, offset_heading, BREAKTHROUGH_OFFENSIVE_DISTANCE
                 )
-            dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
+            dcs_group.add_waypoint(attack_point, self._point_action())
         elif stance == CombatStance.ELIMINATION:
             # In elimination mode, the units focus on destroying as much enemy groups as possible
             targets = self.find_n_nearest_enemy_groups(dcs_group, enemy_groups, 3)
@@ -413,7 +413,7 @@ class FlotGenerator:
                 target_point = self.conflict.theater.nearest_land_pos(
                     target.points[0].position + rand_offset
                 )
-                dcs_group.add_waypoint(target_point, PointAction.OffRoad)
+                dcs_group.add_waypoint(target_point, self._point_action())
                 dcs_group.points[i + 1].tasks.append(AttackGroup(target.id))
             if (
                 to_cp.position.distance_to_point(dcs_group.points[0].position)
@@ -422,7 +422,7 @@ class FlotGenerator:
                 attack_point = self.conflict.theater.nearest_land_pos(
                     to_cp.position.random_point_within(500, 0)
                 )
-                dcs_group.add_waypoint(attack_point)
+                dcs_group.add_waypoint(attack_point, self._point_action())
 
         if stance != CombatStance.RETREAT:
             self.add_morale_trigger(dcs_group, forward_heading)
@@ -458,7 +458,7 @@ class FlotGenerator:
                 attack_point = self.find_offensive_point(
                     dcs_group, forward_heading, AGGRESIVE_MOVE_DISTANCE
                 )
-            dcs_group.add_waypoint(attack_point, PointAction.OffRoad)
+            dcs_group.add_waypoint(attack_point, self._point_action())
 
         if stance != CombatStance.RETREAT:
             self.add_morale_trigger(dcs_group, forward_heading)
@@ -512,8 +512,8 @@ class FlotGenerator:
                 reposition_point = retreat_point.point_from_heading(
                     forward_heading.degrees, 10
                 )  # Another point to make the unit face the enemy
-                dcs_group.add_waypoint(retreat_point, PointAction.OffRoad)
-                dcs_group.add_waypoint(reposition_point, PointAction.OffRoad)
+                dcs_group.add_waypoint(retreat_point, self._point_action())
+                dcs_group.add_waypoint(reposition_point, self._point_action())
 
     def add_morale_trigger(
         self, dcs_group: VehicleGroup, forward_heading: Heading
@@ -538,7 +538,7 @@ class FlotGenerator:
             self.find_retreat_point(
                 dcs_group, forward_heading, (int)(RETREAT_DISTANCE / 8)
             ),
-            PointAction.OffRoad,
+            self._point_action(),
         )
 
         # Fallback task
@@ -766,6 +766,7 @@ class FlotGenerator:
             position=at,
             group_size=count,
             heading=heading.degrees,
+            move_formation=self._point_action(),
         )
         group.hidden_on_mfd = True
 
@@ -776,3 +777,16 @@ class FlotGenerator:
             vehicle.player_can_drive = True
 
         return group
+
+    def _point_action(self) -> PointAction:
+        """
+        PointAction (OnRoad or OffRoad) for front line movements. If either point of the active segment
+        is set to go on road, the whole segment is to be traversed on roads as front line segments are
+        anchored at control points which are defined as off road.
+        """
+        if (
+            self.conflict.front_line.active_segment.point_a.on_road
+            or self.conflict.front_line.active_segment.point_b.on_road
+        ):
+            return PointAction.OnRoad
+        return PointAction.OffRoad

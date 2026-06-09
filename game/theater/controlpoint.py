@@ -62,7 +62,7 @@ from game.sidc import (
 from game.theater.presetlocation import PresetLocation
 from game.utils import Distance, Heading, meters
 from .base import Base
-from .frontline import FrontLine
+from .frontline import FrontLine, FrontLinePoint
 from .missiontarget import MissionTarget
 from .theatergroundobject import (
     GenericCarrierGroundObject,
@@ -351,7 +351,7 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         self.front_lines: dict[ControlPoint, FrontLine] = {}
         # TODO: Should be Airbase specific.
         self.connected_points: List[ControlPoint] = []
-        self.convoy_routes: Dict[ControlPoint, Tuple[Point, ...]] = {}
+        self.convoy_routes: Dict[ControlPoint, Tuple[FrontLinePoint, ...]] = {}
         self.shipping_lanes: Dict[ControlPoint, Tuple[Point, ...]] = {}
         self.base: Base = Base()
         self.cptype = cptype
@@ -610,13 +610,15 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
         """
         ...
 
-    def convoy_origin_for(self, destination: ControlPoint) -> Point:
+    def convoy_origin_for(self, destination: ControlPoint) -> FrontLinePoint:
         return self.convoy_route_to(destination)[0]
 
-    def convoy_route_to(self, destination: ControlPoint) -> Sequence[Point]:
+    def convoy_route_to(self, destination: ControlPoint) -> Sequence[FrontLinePoint]:
         return self.convoy_routes[destination]
 
-    def create_convoy_route(self, to: ControlPoint, waypoints: Iterable[Point]) -> None:
+    def create_convoy_route(
+        self, to: ControlPoint, waypoints: Iterable[FrontLinePoint]
+    ) -> None:
         self.connected_points.append(to)
         self.stances[to.id] = CombatStance.DEFENSIVE
         self.convoy_routes[to] = tuple(waypoints)
@@ -954,6 +956,8 @@ class ControlPoint(MissionTarget, SidcDescribable, ABC):
                     ground_object.position.x = ground_object.position.x + delta.x
                     ground_object.position.y = ground_object.position.y + delta.y
                     for group in ground_object.groups:
+                        group.position.x += delta.x
+                        group.position.y += delta.y
                         for u in group.units:
                             u.position.x = u.position.x + delta.x
                             u.position.y = u.position.y + delta.y

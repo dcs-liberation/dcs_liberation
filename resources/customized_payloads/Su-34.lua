@@ -2,7 +2,8 @@ local unitPayloads = {
 	["name"] = "Su-34",
 	["payloads"] = {
 		[1] = {
-			["name"] = "ANTISHIP",
+			["name"] = "Liberation Anti-ship",
+			["displayName"] = "Liberation Anti-ship",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ECM_POD_L_175V}",
@@ -58,7 +59,8 @@ local unitPayloads = {
 			},
 		},
 		[2] = {
-			["name"] = "SEAD",
+			["name"] = "Liberation SEAD",
+			["displayName"] = "Liberation SEAD",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ECM_POD_L_175V}",
@@ -106,7 +108,8 @@ local unitPayloads = {
 			},
 		},
 		[3] = {
-			["name"] = "CAS",
+			["name"] = "Liberation CAS",
+			["displayName"] = "Liberation CAS",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ECM_POD_L_175V}",
@@ -154,7 +157,8 @@ local unitPayloads = {
 			},
 		},
 		[4] = {
-			["name"] = "STRIKE",
+			["name"] = "Liberation Strike",
+			["displayName"] = "Liberation Strike",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ECM_POD_L_175V}",
@@ -210,7 +214,8 @@ local unitPayloads = {
 			},
 		},
 		[5] = {
-			["name"] = "CAP",
+			["name"] = "Liberation BARCAP",
+			["displayName"] = "Liberation BARCAP",
 			["pylons"] = {
 				[1] = {
 					["CLSID"] = "{ECM_POD_L_175V}",
