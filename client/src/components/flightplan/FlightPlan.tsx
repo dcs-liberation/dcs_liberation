@@ -18,23 +18,19 @@ interface FlightPlanProps {
   highlight?: boolean;
 }
 
-const pathColor = (props: FlightPlanProps) => {
-  if (props.selected && props.highlight) {
-    return SELECTED_PATH;
-  } else if (props.flight.blue) {
-    return BLUE_PATH;
-  } else {
-    return RED_PATH;
-  }
-};
-
 function FlightPlanPath(props: FlightPlanProps) {
   const waypoints = props.flight.waypoints;
   const [selectFlight] = useSelectFlightMutation();
   const [hovered, setHovered] = useState(false);
-  let color = pathColor(props);
-  if (hovered && !props.selected){
+  let color = null;
+  if (props.selected && props.highlight) {
+    color = SELECTED_PATH;
+  } else if (hovered && !props.selected){
 	color = SELECTED_PATH  
+  } else if (props.flight.blue) {
+    color = BLUE_PATH;
+  } else {
+    color = RED_PATH;
   }
 
   const polylineRef = useRef<LPolyline | null>(null);
@@ -54,9 +50,12 @@ function FlightPlanPath(props: FlightPlanProps) {
   // behind everything than was added before them. Anything added after always
   // goes on top.
   useEffect(() => {
-    if (!props.selected) {
+    if (!props.selected && !hovered) {
       polylineRef.current?.bringToBack();
     }
+	if (hovered){
+	  polylineRef.current?.bringToFront();
+	}
   });
 
   if (waypoints == null) {
@@ -75,7 +74,7 @@ function FlightPlanPath(props: FlightPlanProps) {
     <>
       <Polyline
         positions={points}
-        pathOptions={{ color: color, interactive: interactive, weight: 5 }}
+        pathOptions={{ color: color, interactive: interactive, weight: 4 }}
         ref={polylineRef}
         eventHandlers={
           interactive
