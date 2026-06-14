@@ -14,6 +14,7 @@ Saves from 14.x are not compatible with 15.0.0.
 * **[Data]** Updated weapons availability by year and fallbacks. Restricting weapons availability by campaign date is turned on by default.
 * **[Data]** Added A-6E AI unit
 * **[UI]** In the ATO widget, pressing delete will abort/cancel the selected package or flight.
+* **[UI]** Clicking on a flight plan in the map window will select the flight.
 
 
 # 14.1.0
