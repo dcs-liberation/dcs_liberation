@@ -4,7 +4,7 @@ Saves from 14.x are not compatible with 15.0.0.
 
 ## Features/Improvements
 
-* **[Engine]** Support for DCS 2.9.26.
+* **[Engine]** Support for DCS 2.9.27 including F-100D and F-14A (Export).
 * **[Engine]** Support for Kola map.
 * **[Engine]** Support for Cold War Germany map.
 * **[Campaign]** Make dawn/dusk/day/night times more accurate so that dawn/dusk missions do not happen during the dark in some seasons.
