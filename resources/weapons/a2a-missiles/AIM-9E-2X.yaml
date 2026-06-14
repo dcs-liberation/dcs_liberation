@@ -1,0 +1,5 @@
+name: 2xAIM-9E
+year: 1965
+fallback: 2xAIM-9B
+clsids:
+  - "{GD_F100_AIM-9E_x2}"

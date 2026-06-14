@@ -4,3 +4,4 @@ year: 1956
 fallback: AIM-9X
 clsids:
   - "{F4-2-AIM9B}"
+  - "{GD_F100_AIM-9B_x2}"

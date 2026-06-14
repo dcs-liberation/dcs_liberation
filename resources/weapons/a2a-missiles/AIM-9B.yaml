@@ -6,5 +6,7 @@ clsids:
   - "{Robot24}"
   - "{Rb_24}"
   - "{HB_A6E_LAU7_AIM9B}"
+  - "{GD_F100_AIM-9B_x1_Left}"
+  - "{GD_F100_AIM-9B_x1_Right}"
 no_fallback_for:
   - F-86F Sabre

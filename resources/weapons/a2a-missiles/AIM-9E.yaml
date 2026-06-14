@@ -1,0 +1,6 @@
+name: AIM-9E
+year: 1965
+fallback: AIM-9B
+clsids:
+  - "{GD_F100_AIM-9E_x1_Left}"
+  - "{GD_F100_AIM-9E_x1_Right}"

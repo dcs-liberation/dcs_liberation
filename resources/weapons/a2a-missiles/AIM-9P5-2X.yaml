@@ -4,3 +4,4 @@ fallback: 2xAIM-9P3
 clsids:
   - "LAU-105_2*AIM-9P5"
   - "{F4-2-AIM9P5}"
+  - "{GD_F100_AIM-9P5_x2}"

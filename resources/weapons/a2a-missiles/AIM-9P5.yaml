@@ -4,3 +4,5 @@ fallback: AIM-9P3
 clsids:
   - "{AIM-9P5}"
   - "{AIM-9P5-ON-ADAPTER}"
+  - "{GD_F100_AIM-9P5_x1_Left}"
+  - "{GD_F100_AIM-9P5_x1_Right}"
