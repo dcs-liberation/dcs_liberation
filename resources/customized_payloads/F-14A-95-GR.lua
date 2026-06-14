@@ -61,19 +61,19 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[5] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 7,
 				},
 				[6] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 4,
 				},
 				[7] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 6,
 				},
 				[8] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 5,
 				},
 			},
@@ -141,19 +141,19 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[5] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 7,
 				},
 				[6] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 4,
 				},
 				[7] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 6,
 				},
 				[8] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 5,
 				},
 			},
@@ -221,19 +221,19 @@ local unitPayloads = {
 					["num"] = 9,
 				},
 				[5] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 7,
 				},
 				[6] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 4,
 				},
 				[7] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 6,
 				},
 				[8] = {
-					["CLSID"] = "{BRU-32 MK-20}",
+					["CLSID"] = "{BRU-32 MK-82}",
 					["num"] = 5,
 				},
 			},
