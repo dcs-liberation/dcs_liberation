@@ -203,8 +203,9 @@ RADIOS: List[Radio] = [
     Radio(
         "ARC-34",
         (
-            RadioRange(MHz(225), MHz(400), kHz(100), Modulation.AM),
-            frozenset((MHz(243),)),
+            RadioRange(
+                MHz(225), MHz(400), kHz(100), Modulation.AM, frozenset((MHz(243),))
+            ),
         ),
     ),
     # F-14 Tomcat radios
