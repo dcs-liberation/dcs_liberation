@@ -67,6 +67,19 @@ def new_cp_package(
 
 
 @router.post(
+    "/select-flight/{flight_id}",
+    operation_id="select_flight",
+    status_code=status.HTTP_200_OK,
+)
+def select_flight(
+    flight_id: UUID,
+    game: Game = Depends(GameContext.require),
+    qt: QtCallbacks = Depends(QtContext.get),
+) -> None:
+    qt.select_flight(game.db.flights.get(flight_id))
+
+
+@router.post(
     "/info/control-point/{cp_id}",
     operation_id="open_control_point_info_dialog",
     status_code=status.HTTP_200_OK,

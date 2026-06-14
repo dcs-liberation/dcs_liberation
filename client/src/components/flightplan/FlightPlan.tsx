@@ -1,8 +1,11 @@
 import { Flight } from "../../api/liberationApi";
-import { useGetCommitBoundaryForFlightQuery } from "../../api/liberationApi";
+import {
+  useGetCommitBoundaryForFlightQuery,
+  useSelectFlightMutation,
+} from "../../api/liberationApi";
 import WaypointMarker from "../waypointmarker";
 import { Polyline as LPolyline } from "leaflet";
-import { ReactElement, useEffect, useRef } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { Polyline } from "react-leaflet";
 
 const BLUE_PATH = "#0084ff";
@@ -15,19 +18,20 @@ interface FlightPlanProps {
   highlight?: boolean;
 }
 
-const pathColor = (props: FlightPlanProps) => {
-  if (props.selected && props.highlight) {
-    return SELECTED_PATH;
-  } else if (props.flight.blue) {
-    return BLUE_PATH;
-  } else {
-    return RED_PATH;
-  }
-};
-
 function FlightPlanPath(props: FlightPlanProps) {
-  const color = pathColor(props);
   const waypoints = props.flight.waypoints;
+  const [selectFlight] = useSelectFlightMutation();
+  const [hovered, setHovered] = useState(false);
+  let color = null;
+  if (props.selected && props.highlight) {
+    color = SELECTED_PATH;
+  } else if (hovered && !props.selected){
+	color = SELECTED_PATH  
+  } else if (props.flight.blue) {
+    color = BLUE_PATH;
+  } else {
+    color = RED_PATH;
+  }
 
   const polylineRef = useRef<LPolyline | null>(null);
 
@@ -46,9 +50,12 @@ function FlightPlanPath(props: FlightPlanProps) {
   // behind everything than was added before them. Anything added after always
   // goes on top.
   useEffect(() => {
-    if (!props.selected) {
+    if (!props.selected && !hovered) {
       polylineRef.current?.bringToBack();
     }
+	if (hovered){
+	  polylineRef.current?.bringToFront();
+	}
   });
 
   if (waypoints == null) {
@@ -58,12 +65,37 @@ function FlightPlanPath(props: FlightPlanProps) {
     .filter((waypoint) => waypoint.include_in_path)
     .map((waypoint) => waypoint.position);
 
+  // Only blue flight plans are interactive: hovering highlights the route in
+  // yellow and clicking selects the owning package (and flight) in the Qt
+  // sidebar via a round-trip through the server.
+  const interactive = props.flight.blue;
+
   return (
-    <Polyline
-      positions={points}
-      pathOptions={{ color: color, interactive: false }}
-      ref={polylineRef}
-    />
+    <>
+      <Polyline
+        positions={points}
+        pathOptions={{ color: color, interactive: interactive, weight: 4 }}
+        ref={polylineRef}
+        eventHandlers={
+          interactive
+            ? {
+                mouseover: () => {
+				  setHovered(true);
+                },
+                mouseout: () => {
+                  setHovered(false);
+                },
+                click: () => {
+                  selectFlight({ flightId: props.flight.id });
+                },
+              }
+            : undefined
+        }
+      />
+      {hovered && !props.selected && (
+        <CommitBoundary flightId={props.flight.id} selected={false} />
+      )}
+    </>
   );
 }
 
