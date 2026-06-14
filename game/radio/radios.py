@@ -200,7 +200,13 @@ RADIOS: List[Radio] = [
     ),
     Radio("TRT ERA 7200 UHF", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)),
     # F-100D
-    Radio("ARC-34", (RadioRange(MHz(225), MHz(400), kHz(100), Modulation.AM), frozenset((MHz(243),)),)),
+    Radio(
+        "ARC-34",
+        (
+            RadioRange(MHz(225), MHz(400), kHz(100), Modulation.AM),
+            frozenset((MHz(243),)),
+        ),
+    ),
     # F-14 Tomcat radios
     # # https://www.heatblur.se/F-14Manual/general.html#an-arc-159-uhf-1-radio
     Radio("AN/ARC-159", (RadioRange(MHz(225), MHz(400), MHz(1), Modulation.AM),)),
