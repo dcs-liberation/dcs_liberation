@@ -5,3 +5,4 @@ fallback: AIM-9B
 clsids:
   - "{AIM-9J}"
   - "{AIM-9J-ON-ADAPTER}"
+  - "{LAU-7 wtip - AIM-9J}"

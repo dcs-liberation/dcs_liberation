@@ -16,14 +16,14 @@ description:
   \ other feature films including The Final Countdown, Executive Decision, and others.\n\
   \nThe Tomcat was also played a vital role in the Iran-Iraq war of the 1980s, where\
   \ is flew for the Islamic Republic of Iran Air Force."
-introduced: 1977
+introduced: 1976
 manufacturer: Grumman
 origin: USA
 price: 22
 role: Carrier-based Air-Superiority Fighter/Fighter Bomber
 max_range: 350
 variants:
-  F-14A Tomcat (Block 135-GR Early): {}
+  F-14A Tomcat (Block 95-GR Export): {}
 radios:
   intra_flight: AN/ARC-182
   inter_flight: AN/ARC-159
@@ -61,7 +61,7 @@ tasks:
   Intercept: 520
   OCA/Aircraft: 630
   OCA/Runway: 550
-  SEAD: 90
+  SEAD: 0
   SEAD Escort: 90
   Strike: 550
   TARCAP: 520

@@ -269,7 +269,7 @@ squadrons:
     - primary: BARCAP
       secondary: any
       aircraft:
-        - F-14A Tomcat (Block 135-GR Late)
+        - F-14A Tomcat (Block 95-GR Export)
     - primary: TARCAP
       secondary: air-to-air
       aircraft:
