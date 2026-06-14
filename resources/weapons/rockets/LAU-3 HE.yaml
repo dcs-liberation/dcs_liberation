@@ -2,3 +2,6 @@ name: LAU-3 HE
 year: 1960
 clsids:
   - "LAU3_HE5"
+  - "{LAU3_FFAR_MK1HE}"
+no_fallback_for:
+  - F-100D

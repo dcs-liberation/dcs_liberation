@@ -1,3 +1,5 @@
 name: D-704 Refuelling Pod
 clsids:
   - "{HB_A6E_D704}"
+  - "{GD_F100_335_GAL_TANK_L}"
+  - "{GD_F100_335_GAL_TANK_R}"

@@ -1,0 +1,36 @@
+description:
+  The North American F-100 Super Sabre is an American supersonic jet fighter aircraft designed 
+  and produced by the aircraft manufacturer North American Aviation. The first of the Century 
+  Series of American jet fighters, it was the first United States Air Force fighter capable 
+  of supersonic speed in level flight.
+introduced: 1956
+manufacturer: North American
+origin: USA
+price: 9
+role: Fighter-Bomber
+max_range: 500
+radios:
+  intra_flight: ARC-34
+  inter_flight: ARC-34
+  channels:
+    type: common
+    namer: single
+    intra_flight_radio_index: 1
+    inter_flight_radio_index: 1
+variants:
+  F-100D: {}
+tasks:
+  BAI: 360
+  BARCAP: 280
+  CAS: 360
+  DEAD: 300
+  Escort: 280
+  Fighter sweep: 280
+  Intercept: 280
+  OCA/Aircraft: 300
+  OCA/Runway: 300
+  SEAD: 100
+  SEAD Escort: 100
+  Strike: 300
+  TARCAP: 280
+hit_points: 20

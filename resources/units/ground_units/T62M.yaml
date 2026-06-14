@@ -7,4 +7,4 @@ price: 18
 role: Main Battle Tank
 variants:
   T-62M: {}
-hit_points: 18
+hit_points: 22

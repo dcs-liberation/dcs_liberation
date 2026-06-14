@@ -2,3 +2,4 @@ name: Fuel Tank 200Gal
 capacity_liters: 750
 clsids:
   - "{PTB_200_F86F35}"
+  - "{GD_F100_200_GAL_TANK}"

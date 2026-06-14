@@ -15,3 +15,5 @@ clsids:
   - "{AIM-9M}"
   - "{LAU-7_AIM-9M_Left}"
   - "{LAU-7_AIM-9M_Right}"
+  - "{GD_F100_AIM-9_x1_Left}"
+  - "{GD_F100_AIM-9_x1_Right}"
