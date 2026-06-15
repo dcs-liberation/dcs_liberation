@@ -9,5 +9,5 @@ from game.htn import CompoundTask, Method
 @dataclass(frozen=True)
 class DefendBases(CompoundTask[TheaterState]):
     def each_valid_method(self, state: TheaterState) -> Iterator[Method[TheaterState]]:
-        for front in state.active_front_lines:
+        for front in state.vulnerable_front_lines:
             yield [DefendBase(front)]
