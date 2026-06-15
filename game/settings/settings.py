@@ -394,7 +394,7 @@ class Settings:
         "Resolve combat when fast forwarding by",
         page=MISSION_GENERATOR_PAGE,
         section=GAMEPLAY_SECTION,
-        default=CombatResolutionMethod.PAUSE,
+        default=CombatResolutionMethod.SKIP,
         choices={
             "Pause": CombatResolutionMethod.PAUSE,
             "Resolving combat (WIP)": CombatResolutionMethod.RESOLVE,
