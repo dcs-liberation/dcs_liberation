@@ -49,7 +49,9 @@ class TheaterState(WorldState["TheaterState"]):
     barcaps_needed: dict[ControlPoint, int]
     active_front_lines: list[FrontLine]  # Front lines where there is offensive action
     front_line_stances: dict[FrontLine, Optional[CombatStance]]
-    vulnerable_front_lines: list[FrontLine]  # Front lines where there is defensive action
+    vulnerable_front_lines: list[
+        FrontLine
+    ]  # Front lines where there is defensive action
     aewc_targets: list[MissionTarget]
     refueling_targets: list[MissionTarget]
     enemy_air_defenses: list[IadsGroundObject]
