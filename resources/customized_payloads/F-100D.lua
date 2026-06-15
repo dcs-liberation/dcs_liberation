@@ -248,6 +248,55 @@ local unitPayloads = {
 				[1] = 32,
 			},
 		},
+		[9] = {
+			["displayName"] = "Liberation Escort",
+			["name"] = "Liberation Escort",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{GD_F100_AIM-9_x2}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{GD_F100_AIM-9_x2}",
+					["num"] = 3,
+				},
+				[3] = {
+					["CLSID"] = "{GD_F100_335_GAL_TANK_L}",
+					["num"] = 2,
+				},
+				[4] = {
+					["CLSID"] = "{GD_F100_335_GAL_TANK_R}",
+					["num"] = 6,
+				},
+			},
+			["tasks"] = {
+				[1] = 32,
+			},
+		},
+		[10] = {
+			["displayName"] = "Liberation SEAD Escort",
+			["name"] = "Liberation SEAD Escort",
+			["pylons"] = {
+				[1] = {
+					["CLSID"] = "{AGM_45A}",
+					["num"] = 5,
+				},
+				[2] = {
+					["CLSID"] = "{AGM_45A}",
+					["num"] = 3,
+				},
+				[3] = {
+					["CLSID"] = "{LAU3_FFAR_MK1HE}",
+					["num"] = 1,
+				},
+				[4] = {
+					["CLSID"] = "{LAU3_FFAR_MK1HE}",
+					["num"] = 7,
+				},
+			},
+			["tasks"] = {
+			},
+		},
 	},
 	["unitType"] = "F-100D",
 }
