@@ -1,0 +1,137 @@
+---
+name: Kola - Breaking the Bastion
+theater: Kola
+authors: Liberation
+description:
+  <p>The Soviet bastion strategy was a Cold War naval doctrine designed to protect the USSR’s nuclear ballistic missile submarines within heavily fortified, near-home "sanctuaries" to ensure their second-strike nuclear deterrent survived. In this campaign, 
+  the US Navy carrier battle group is tasked with breaking the bastion by striking Soviet bases directly to eliminate this threat.</p>
+recommended_player_faction: 
+    country: USA
+    name: US Navy 1985/Nordic Allies
+    authors: Liberation
+    description: <p>US Navy 1985 with Nordic Allies</p>
+    locales:
+      - en_US
+    aircrafts:
+      - AH-1W SuperCobra
+      - A-4E Skyhawk
+      - A-6E Intruder
+      - AJS-37 Viggen
+      - F-14A Tomcat (Block 135-GR Early)
+      - F-14A Tomcat (Block 135-GR Late)
+      - F-14B Tomcat
+      - F-4B Phantom II
+      - F-4E-45MC Phantom II
+      - S-3B Viking
+      - SH-60B Seahawk
+      - UH-1H Iroquois
+    awacs:
+      - E-2C Hawkeye
+    tankers:
+      - S-3B Tanker
+    frontline_units:
+      - M1043 HMMWV (M2 HMG)
+      - M113
+      - M163 Vulcan Air Defense System
+      - M60A3 "Patton"
+    artillery_units:
+      - M109A6 Paladin
+      - M270 Multiple Launch Rocket System
+    logistics_units:
+      - Truck M818 6x6
+    infantry_units:
+      - Infantry M249
+      - Infantry M4
+      - MANPADS Stinger
+      - Mortar 2B11 120mm
+    air_defense_units:
+      - M163 Vulcan Air Defense System
+      - M48 Chaparral
+    preset_groups:
+      - Hawk
+    naval_units:
+      - FFG Oliver Hazard Perry
+      - CG Ticonderoga
+      - LHA-1 Tarawa
+      - CVN-74 John C. Stennis
+    missiles: []
+    carrier_names:
+      - CVN-71 Theodore Roosevelt
+      - CVN-72 Abraham Lincoln
+      - CVN-73 George Washington
+      - CVN-74 John C. Stennis
+      - CVN-75 Harry S. Truman
+recommended_enemy_faction: Russia 1980
+recommended_start_date: 1986-04-01
+miz: breaking_bastion.miz
+recommended_player_money: 0
+recommended_enemy_money: 0
+recommended_player_income_multiplier: 0.0
+recommended_enemy_income_multiplier: 0.0
+performance: 1
+version: "11.0"
+squadrons:
+  # Severomorsk-1
+  8:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MIG-29-FULCRUM
+  # Olenya
+  9:
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - Tu-142 Bear-F
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - Tu-22M3 Backfire-C  
+  # Monchegorsk
+  10:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-31 Foxhound
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-31 Foxhound
+  # Kirkenes
+  14:
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - AJS-37 Viggen
+      size: 10  
+  # Carrier
+  Naval-2:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-14B Tomcat
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-14B Tomcat
+    - primary: SEAD
+      secondary: air-to-ground
+      aircraft:
+        - A-6E Intruder
+    - primary: Anti-ship
+      secondary: air-to-ground
+      aircraft:
+        - A-6E Intruder
+    - primary: AEW&C
+      aircraft:
+        - E-2C Hawkeye
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - S-3B Tanker
+      size: 6
+  

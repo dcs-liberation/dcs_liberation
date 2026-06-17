@@ -1,0 +1,176 @@
+---
+name: Germany - Fulda Gap
+theater: GermanyColdWar
+authors: Liberation
+description:
+  <p>During the Cold War, the Fulda Gap was a key route for any hypothetical Soviet tank attack on West Germany. The concept of a major tank battle along the Fulda Gap became a predominant element of NATO war planning during the Cold War. With such an eventuality in mind, weapons such as the A-10 and AH-64 were evolved to blunt such an attack.</p>
+recommended_player_faction:
+    country: USA
+    name: USA Late 1980's
+    authors: Liberation
+    description: <p>US army in the late 1980's</p>
+    locales:
+      - en_US
+    aircrafts:
+      - A-10A Thunderbolt II
+      - AH-64A Apache
+      - AH-64D Apache Longbow  # Substitute for AH-64A that is playable
+      - AV-8B Harrier II Night Attack
+      - B-52H Stratofortress
+      - C-130
+      - C-130J-30 Super Hercules
+      - CH-47D
+      - CH-53E
+      - F-117A Nighthawk
+      - F-15C Eagle
+      - F-15E Strike Eagle
+      - F-15E Strike Eagle (Suite 4+)
+      - F-16CM Fighting Falcon (Block 50)
+      - F-4E-45MC Phantom II
+      - OH-58D(R) Kiowa Warrior
+      - UH-1H Iroquois
+      - UH-60A
+      - UH-60L
+    awacs:
+      - E-2C Hawkeye
+      - E-3A
+    tankers:
+      - KC-130
+      - KC-130J
+      - KC-135 Stratotanker
+    frontline_units:
+      - M1045 HMMWV (BGM-71 TOW)
+      - M1A2 Abrams
+      - M2A2 Bradley
+      - M113
+      - M163 Vulcan Air Defense System
+      - M48 Chaparral
+    artillery_units:
+      - M109A6 Paladin
+      - M270 Multiple Launch Rocket System
+    logistics_units:
+      - Truck M818 6x6
+    infantry_units:
+      - Infantry M249
+      - Infantry M4
+      - MANPADS Stinger
+      - Mortar 2B11 120mm
+    preset_groups:
+      - Hawk
+      - Patriot
+      - Cold-War-Flak
+    missiles: []
+    air_defense_units:
+      - EWR AN/FPS-117 Radar
+      - M48 Chaparral
+      - SAM Hawk SR (AN/MPQ-50)
+      - M163 Vulcan Air Defense System
+    doctrine: "coldwar"
+    weapons_introduction_year_overrides:
+        AGM-114K * 4: 1983 # Simulates AGM-114A for AH-64
+        AGM-114K * 3: 1983
+        AGM-114K * 2: 1983
+        AGM-114K * 1: 1983
+recommended_enemy_faction: Russia 1980
+recommended_start_date: 1986-05-01
+miz: fulda.miz
+recommended_player_money: 300
+recommended_enemy_money: 1000
+recommended_player_income_multiplier: 0.0
+recommended_enemy_income_multiplier: 0.0
+performance: 1
+version: "11.0"
+squadrons:
+  # Ramstein
+  165:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - F-15C Eagle
+    - primary: SEAD
+      secondary: air-to-air
+      aircraft:
+        - F-4E-45MC Phantom II
+    - primary: AEW&C
+      aircraft:
+        - E-3A
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - KC-135 Stratotanker
+      size: 2
+    - primary: Transport
+      aircraft:
+        - C-130
+      size: 4
+  # Frankfurt
+  163:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10A Thunderbolt II
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - A-10A Thunderbolt II
+  # Fulda
+  166:
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - UH-1H Iroquois
+      size: 8     
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - AH-64D Apache Longbow
+      size: 8    
+  # Bindersleben
+  164:
+    - primary: Transport
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 8  
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Mi-24P Hind-F
+      size: 8    
+  # Allstedt
+  157:
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-25 Frogfoot
+    - primary: CAS
+      secondary: air-to-ground
+      aircraft:
+        - Su-25 Frogfoot
+    - primary: BARCAP
+      aircraft:
+        - MiG-21bis Fishbed-N
+  # Schonefeld
+  26:
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MiG-29A Fulcrum-A
+    - primary: BARCAP
+      secondary: air-to-air
+      aircraft:
+        - MIG-29-FULCRUM
+    - primary: AEW&C
+      aircraft:
+        - A-50
+      size: 2
+    - primary: Refueling
+      aircraft:
+        - IL-78M
+      size: 2
+    - primary: Transport
+      aircraft:
+        - IL-76MD
+      size: 4
+ 
+ 
