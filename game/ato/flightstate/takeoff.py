@@ -56,10 +56,14 @@ class Takeoff(AtDeparture):
             )
             return True
 
-        if self.settings.fast_forward_stop_condition in {
-            FastForwardStopCondition.PLAYER_TAXI,
-            FastForwardStopCondition.PLAYER_STARTUP,
-        }:
+        if (
+            self.settings.fast_forward_stop_condition
+            in {
+                FastForwardStopCondition.PLAYER_TAXI,
+                FastForwardStopCondition.PLAYER_STARTUP,
+            }
+            and self.flight.client_count > 0
+        ):
             logging.info(
                 f"Interrupting simulation because {self.flight} has players and is already taking off "
             )
