@@ -26,3 +26,4 @@ tasks:
   Strike: 360
   Refueling: 0
 hit_points: 18
+has_built_in_target_pod: true
