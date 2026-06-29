@@ -37,6 +37,8 @@ frontline_units:
   - PT-76
   - T-55A
   - T-62M
+  - ZSU-23-4 Shilka
+  - SA-9 Strela
 artillery_units: 
   - 2S1 Gvozdika
   - 2S9 Nona-S

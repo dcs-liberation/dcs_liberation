@@ -27,7 +27,8 @@ ground_unit_procurement_ratios:
     APC: 3
     IFV: 2
     Artillery: 1
-    SHORAD: 2
+    SHORAD: 1
+    AAA: 1
     Recon: 1
 helicopter:
     combat_altitude_ft_agl: 200
