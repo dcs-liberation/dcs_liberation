@@ -2,6 +2,7 @@ name: AGM-45A Shrike ARM
 type: ARM
 year: 1965
 fallback: Mk 20 Rockeye
+configurator: Shrike
 clsids:
   - "{AGM_45A}"
   - "{LAU118_AGM_45A}"

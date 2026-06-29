@@ -18,6 +18,7 @@ from game.factions.faction import Faction
 
 PydcsWeapon = Any
 PydcsWeaponAssignment = tuple[int, PydcsWeapon]
+WeaponSettings = dict[str, Any]
 
 
 @dataclass(frozen=True)
@@ -130,6 +131,9 @@ class WeaponGroup:
     #: The specific weapons that belong to this weapon group.
     weapons: list[Weapon] = field(init=False, default_factory=list)
 
+    #: The name of the fuzing logic
+    configurator: Optional[str] = field(compare=False)
+
     _by_name: ClassVar[dict[str, WeaponGroup]] = {}
     _loaded: ClassVar[bool] = False
 
@@ -176,7 +180,8 @@ class WeaponGroup:
                 weapon_type = WeaponType.UNKNOWN
             year = data.get("year")
             fallback_name = data.get("fallback")
-            group = WeaponGroup(name, weapon_type, year, fallback_name)
+            configurator = data.get("configurator")
+            group = WeaponGroup(name, weapon_type, year, fallback_name, configurator)
             for clsid in data["clsids"]:
                 weapon = Weapon(clsid, group)
                 Weapon.register(weapon)
@@ -190,6 +195,7 @@ class WeaponGroup:
             type=WeaponType.UNKNOWN,
             introduction_year=None,
             fallback_name=None,
+            configurator=None,
         )
         cls.register(group)
         weapon = Weapon("<CLEAN>", group)
@@ -204,6 +210,7 @@ class WeaponGroup:
             type=WeaponType.UNKNOWN,
             introduction_year=None,
             fallback_name=None,
+            configurator=None,
         )
         cls.register(group)
         for clsid in unknown_weapons:
@@ -240,13 +247,20 @@ class Pylon:
         # configuration.
         return weapon in self.allowed or weapon.clsid == "<CLEAN>"
 
-    def equip(self, unit: FlyingUnit, weapon: Weapon) -> None:
+    def equip(
+        self, unit: FlyingUnit, weapon: Weapon, settings: Optional[WeaponSettings]
+    ) -> None:
         if not self.can_equip(weapon):
             logging.error(f"Pylon {self.number} cannot equip {weapon.name}")
-        unit.load_pylon(self.make_pydcs_assignment(weapon), self.number)
+        unit.load_pylon(self.make_pydcs_assignment(weapon, settings), self.number)
 
-    def make_pydcs_assignment(self, weapon: Weapon) -> PydcsWeaponAssignment:
-        return self.number, weapon.pydcs_data
+    def make_pydcs_assignment(
+        self, weapon: Weapon, settings: Optional[WeaponSettings]
+    ) -> PydcsWeaponAssignment:
+        if settings:
+            return self.number, {**weapon.pydcs_data, "settings": settings}
+        else:
+            return self.number, weapon.pydcs_data
 
     def available_on(self, date: datetime.date, faction: Faction) -> Iterator[Weapon]:
         for weapon in self.allowed:

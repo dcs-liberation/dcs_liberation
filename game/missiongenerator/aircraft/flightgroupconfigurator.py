@@ -25,6 +25,7 @@ from .aircraftpainter import AircraftPainter
 from .bingoestimator import BingoEstimator
 from .flightdata import FlightData
 from .waypoints import WaypointGenerator
+from .weaponsconfigurator import WeaponsConfigurator
 from ...ato.flightmember import FlightMember
 
 if TYPE_CHECKING:
@@ -255,7 +256,10 @@ class FlightGroupConfigurator:
             if weapon is None:
                 continue
             pylon = Pylon.for_aircraft(self.flight.unit_type, pylon_number)
-            pylon.equip(unit, weapon)
+            settings = WeaponsConfigurator.settings_for_weapon_target(
+                weapon, self.flight.package.target
+            )
+            pylon.equip(unit, weapon, settings)
 
     def setup_fuel(self) -> None:
         fuel = self.flight.state.estimate_fuel()
