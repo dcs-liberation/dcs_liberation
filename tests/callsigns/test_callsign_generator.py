@@ -48,10 +48,17 @@ def test_western_group_id_registry() -> None:
     registry.release_group_id(Callsign("Enfield", 1, 1))
     assert registry.alloc_group_id("Enfield") == 1
 
-    # Reset and check allocation og Enfield-1 and Springfield-1.
+    # Reset and check allocation of Enfield-1 and Springfield-1.
     registry.reset()
     assert registry.alloc_group_id("Enfield") == 1
     assert registry.alloc_group_id("Springfield") == 1
+    
+    # Reset and check double release of Enfield-1.
+    registry.reset()
+    registry.release_group_id(Callsign("Enfield", 1, 1))
+    registry.release_group_id(Callsign("Enfield", 1, 1))
+    assert registry.alloc_group_id("Enfield") == 1
+    assert registry.alloc_group_id("Enfield") == 2
 
 
 def test_eastern_group_id_registry() -> None:
@@ -68,6 +75,13 @@ def test_eastern_group_id_registry() -> None:
     # Reset and check allocation.
     registry.reset()
     assert registry.alloc_group_id() == 1
+    
+    # Check double release.
+    registry.reset()
+    registry.release_group_id(Callsign(None, 1, 1))
+    registry.release_group_id(Callsign(None, 1, 1))
+    assert registry.alloc_group_id() == 1
+    assert registry.alloc_group_id() == 2
 
 
 def test_round_robin_allocator() -> None:
