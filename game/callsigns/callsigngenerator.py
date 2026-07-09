@@ -99,7 +99,8 @@ class WesternGroupIdRegistry:
     def release_group_id(self, callsign: Callsign) -> None:
         if callsign.name is None:
             raise ValueError("Releasing eastern callsign")
-        self._names[callsign.name].appendleft(callsign.group_id)
+        if callsign.group_id not in self._names[callsign.name]:
+            self._names[callsign.name].appendleft(callsign.group_id)
 
 
 class EasternGroupIdRegistry:
@@ -120,7 +121,8 @@ class EasternGroupIdRegistry:
         return self._queue.popleft()
 
     def release_group_id(self, callsign: Callsign) -> None:
-        self._queue.appendleft(callsign.group_id)
+        if callsign.group_id not in self._queue:
+            self._queue.appendleft(callsign.group_id)
 
 
 class RoundRobinNameAllocator:
