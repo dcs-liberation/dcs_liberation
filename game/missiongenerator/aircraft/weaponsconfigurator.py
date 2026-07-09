@@ -62,8 +62,8 @@ class ShrikeConfigurator(WeaponsConfigurator):
             for unit in group.units:
                 if not unit.alive:
                     continue
-                # SNR-125 Low Blow (SA-3): MK-49 Mod 1
-                if unit.type == AirDefence.Snr_s_125_tr:
+                # SNR-125 Low Blow (SA-3)/1S91 Straight Flush: MK-49 Mod 1
+                if unit.type in [AirDefence.Snr_s_125_tr, AirDefence.Kub_1S91_str]:
                     settings["EAS_bypass_ctrl"] = 0
                     settings["G_bias"] = True
                     settings["NFP_PRESID"] = "AGM_45"
