@@ -52,7 +52,7 @@ def test_western_group_id_registry() -> None:
     registry.reset()
     assert registry.alloc_group_id("Enfield") == 1
     assert registry.alloc_group_id("Springfield") == 1
-    
+
     # Reset and check double release of Enfield-1.
     registry.reset()
     registry.release_group_id(Callsign("Enfield", 1, 1))
@@ -75,7 +75,7 @@ def test_eastern_group_id_registry() -> None:
     # Reset and check allocation.
     registry.reset()
     assert registry.alloc_group_id() == 1
-    
+
     # Check double release.
     registry.reset()
     registry.release_group_id(Callsign(None, 1, 1))
