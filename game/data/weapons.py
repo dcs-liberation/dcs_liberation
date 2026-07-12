@@ -135,7 +135,7 @@ class WeaponGroup:
     configurator: Optional[str] = field(compare=False)
 
     #: Any setting overrides to be applied to all weapons in this group
-    settings: Optional[dict] = field(compare=False)
+    settings: Optional[dict[str, Any]] = field(compare=False)
 
     _by_name: ClassVar[dict[str, WeaponGroup]] = {}
     _loaded: ClassVar[bool] = False
@@ -184,7 +184,10 @@ class WeaponGroup:
             year = data.get("year")
             fallback_name = data.get("fallback")
             configurator = data.get("configurator")
-            group = WeaponGroup(name, weapon_type, year, fallback_name, configurator)
+            settings = data.get("settings")
+            group = WeaponGroup(
+                name, weapon_type, year, fallback_name, configurator, settings
+            )
             for clsid in data["clsids"]:
                 weapon = Weapon(clsid, group)
                 Weapon.register(weapon)
@@ -199,6 +202,7 @@ class WeaponGroup:
             introduction_year=None,
             fallback_name=None,
             configurator=None,
+            settings=None,
         )
         cls.register(group)
         weapon = Weapon("<CLEAN>", group)
@@ -214,6 +218,7 @@ class WeaponGroup:
             introduction_year=None,
             fallback_name=None,
             configurator=None,
+            settings=None,
         )
         cls.register(group)
         for clsid in unknown_weapons:
