@@ -12,11 +12,8 @@ WeaponSettings = dict[str, Any]
 
 class WeaponsConfigurator(ABC):
 
-    def __init__(self, target: MissionTarget):
-        self.target = target
-
     @abstractmethod
-    def settings(self) -> Optional[WeaponSettings]:
+    def settings(self, target: MissionTarget, weapon: Weapon) -> Optional[WeaponSettings]:
         pass
 
     @staticmethod
@@ -33,8 +30,8 @@ class WeaponsConfigurator(ABC):
         if weapon.weapon_group.configurator:
             for configurator_type in [NoOpConfigurator, ShrikeConfigurator]:
                 if configurator_type.name() == weapon.weapon_group.configurator:
-                    configurator = configurator_type(target)
-                    return configurator.settings()
+                    configurator = configurator_type()
+                    return configurator.settings(target, weapon)
         return None
 
 
@@ -44,8 +41,10 @@ class NoOpConfigurator(WeaponsConfigurator):
     def name() -> str:
         return "NoOp"
 
-    def settings(self) -> Optional[WeaponSettings]:
-        return None
+    def settings(self, target: MissionTarget, weapon: Weapon) -> Optional[WeaponSettings]:
+        if weapon.weapon_group.settings is None:
+            return None
+        return weapon.weapon_group.settings
 
 
 class ShrikeConfigurator(WeaponsConfigurator):
@@ -54,11 +53,11 @@ class ShrikeConfigurator(WeaponsConfigurator):
     def name() -> str:
         return "Shrike"
 
-    def settings(self) -> Optional[WeaponSettings]:
+    def settings(self, target: MissionTarget, weapon: Weapon) -> Optional[WeaponSettings]:
         settings: dict[str, Any] = {}
-        if not isinstance(self.target, TheaterGroundObject):
+        if not isinstance(target, TheaterGroundObject):
             return None
-        for group in self.target.groups:
+        for group in target.groups:
             for unit in group.units:
                 if not unit.alive:
                     continue

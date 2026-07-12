@@ -134,6 +134,9 @@ class WeaponGroup:
     #: The name of the fuzing logic
     configurator: Optional[str] = field(compare=False)
 
+    #: Any setting overrides to be applied to all weapons in this group
+    settings: Optional[dict] = field(compare=False)
+
     _by_name: ClassVar[dict[str, WeaponGroup]] = {}
     _loaded: ClassVar[bool] = False
 
