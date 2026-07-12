@@ -13,7 +13,9 @@ WeaponSettings = dict[str, Any]
 class WeaponsConfigurator(ABC):
 
     @abstractmethod
-    def settings(self, target: MissionTarget, weapon: Weapon) -> Optional[WeaponSettings]:
+    def settings(
+        self, target: MissionTarget, weapon: Weapon
+    ) -> Optional[WeaponSettings]:
         pass
 
     @staticmethod
@@ -41,7 +43,9 @@ class NoOpConfigurator(WeaponsConfigurator):
     def name() -> str:
         return "NoOp"
 
-    def settings(self, target: MissionTarget, weapon: Weapon) -> Optional[WeaponSettings]:
+    def settings(
+        self, target: MissionTarget, weapon: Weapon
+    ) -> Optional[WeaponSettings]:
         if weapon.weapon_group.settings is None:
             return None
         return weapon.weapon_group.settings
@@ -53,7 +57,9 @@ class ShrikeConfigurator(WeaponsConfigurator):
     def name() -> str:
         return "Shrike"
 
-    def settings(self, target: MissionTarget, weapon: Weapon) -> Optional[WeaponSettings]:
+    def settings(
+        self, target: MissionTarget, weapon: Weapon
+    ) -> Optional[WeaponSettings]:
         settings: dict[str, Any] = {}
         if not isinstance(target, TheaterGroundObject):
             return None
