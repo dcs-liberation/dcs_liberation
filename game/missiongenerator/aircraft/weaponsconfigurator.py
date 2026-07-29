@@ -30,18 +30,18 @@ class WeaponsConfigurator(ABC):
         if weapon is None:  # empty pylon, nothing to do
             return None
         if weapon.weapon_group.configurator:
-            for configurator_type in [NoOpConfigurator, ShrikeConfigurator]:
+            for configurator_type in [PassthroughConfigurator, ShrikeConfigurator]:
                 if configurator_type.name() == weapon.weapon_group.configurator:
                     configurator = configurator_type()
                     return configurator.settings(target, weapon)
         return None
 
 
-class NoOpConfigurator(WeaponsConfigurator):
+class PassthroughConfigurator(WeaponsConfigurator):
 
     @staticmethod
     def name() -> str:
-        return "NoOp"
+        return "Passthrough"
 
     def settings(
         self, target: MissionTarget, weapon: Weapon

@@ -1,3 +1,12 @@
+# 16.0.0
+
+Saves from 15.x are not compatible with 16.0.0.
+
+## Features/Improvements
+
+* **[Mission Generation]** Automatic setup of Shrike fuzing when targeting SNR-75 (Fan Song), SNR-125 (Low Blow), 1S91 (Straight Flush), ST-68U (Tin Shield) and SON-9 (Fire Can) radars.
+
+
 # 15.0.0
 
 Saves from 14.x are not compatible with 15.0.0.
