@@ -102,8 +102,8 @@ def to_datetime(
         begin += datetime.timedelta(days=1)
     if end < day_begin_utc:
         end += datetime.timedelta(days=1)
-    begin_hour = round((begin - day_begin_utc).total_seconds() / 3600)
-    end_hour = round((end - day_begin_utc).total_seconds() / 3600)
+    begin_hour = int(round((begin - day_begin_utc).total_seconds() / 3600))
+    end_hour = int(round((end - day_begin_utc).total_seconds() / 3600))
     if begin_hour == end_hour:
         hour = begin_hour
     else:
