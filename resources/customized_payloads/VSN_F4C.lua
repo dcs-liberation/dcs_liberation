@@ -91,11 +91,11 @@ local unitPayloads = {
 			["name"] = "SEAD",
 			["pylons"] = {
 				[1] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{F4C_LAU118_AGM45B-10_PJ}",
 					["num"] = 9,
 				},
 				[2] = {
-					["CLSID"] = "{AGM_45A}",
+					["CLSID"] = "{F4C_LAU118_AGM45B-10_PJ}",
 					["num"] = 3,
 				},
 				[3] = {
@@ -123,7 +123,7 @@ local unitPayloads = {
 					["num"] = 8,
 				},
 				[9] = {
-					["CLSID"] = "{6D21ECEA-F85B-4E8D-9D51-31DC9B8AA4EF}",
+					["CLSID"] = "VSN_F4EC_PTB",
 					["num"] = 6,
 				},
 			},
