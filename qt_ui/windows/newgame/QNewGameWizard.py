@@ -850,7 +850,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), modLayout_row, 0)
         modLayout.addWidget(f22_raptor, modLayout_row, 1)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter"), modLayout_row, 0)
+        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter (version 2.9.23.105)"), modLayout_row, 0)
         modLayout.addWidget(f104_starfighter, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(QtWidgets.QLabel("F-4B&C Phantom (version 2.9.14.207)"), modLayout_row, 0)
