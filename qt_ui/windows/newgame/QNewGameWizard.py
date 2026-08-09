@@ -862,7 +862,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(hercules, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("UH-60L Black Hawk (version 1.3.1)"), modLayout_row, 0
+            QtWidgets.QLabel("UH-60L Black Hawk (version 2.15)"), modLayout_row, 0
         )
         modLayout.addWidget(uh_60l, modLayout_row, 1)
         modLayout_row += 1
