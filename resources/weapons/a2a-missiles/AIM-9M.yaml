@@ -17,3 +17,5 @@ clsids:
   - "{LAU-7_AIM-9M_Right}"
   - "{GD_F100_AIM-9_x1_Left}"
   - "{GD_F100_AIM-9_x1_Right}"
+  - "{SUPERHORNET_PYLON_01_SW_1X_AIM-9}"
+  - "{SUPERHORNET_PYLON_11_SW_1X_AIM-9}"
