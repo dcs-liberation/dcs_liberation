@@ -134,7 +134,7 @@
  },
  "airfield2_1": {
   "name": "rovaniemi",
-  "callsign": "roi",
+  "callsign": "ROI",
   "beacon_type": 3,
   "hertz": 117700000,
   "channel": 124
@@ -270,7 +270,7 @@
   "callsign": "Evenes",
   "beacon_type": 4,
   "hertz": 134000000,
-  "channel": 73
+  "channel": 67
  },
  "airfield14_0": {
   "name": "KIRKENES",
@@ -326,6 +326,34 @@
   "callsign": "ba",
   "beacon_type": 13,
   "hertz": 108300000,
+  "channel": null
+ },
+ "airfield37_0": {
+  "name": "TC",
+  "callsign": "tc",
+  "beacon_type": 13,
+  "hertz": 110900000,
+  "channel": null
+ },
+ "airfield37_1": {
+  "name": "TR",
+  "callsign": "tr",
+  "beacon_type": 13,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield37_2": {
+  "name": "TR",
+  "callsign": "TR",
+  "beacon_type": 14,
+  "hertz": 109900000,
+  "channel": null
+ },
+ "airfield37_3": {
+  "name": "TC",
+  "callsign": "TC",
+  "beacon_type": 14,
+  "hertz": 110900000,
   "channel": null
  },
  "airfield5_0": {
