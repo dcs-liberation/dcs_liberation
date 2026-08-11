@@ -214,11 +214,11 @@ local unitPayloads = {
 					["num"] = 11,
 				},
 				[6] = {
-					["CLSID"] = "{JAS39_GBU31}",
+					["CLSID"] = "{JAS39_GBU32}",
 					["num"] = 2,
 				},
 				[7] = {
-					["CLSID"] = "{JAS39_GBU31}",
+					["CLSID"] = "{JAS39_GBU32}",
 					["num"] = 7,
 				},
                 [8] = {

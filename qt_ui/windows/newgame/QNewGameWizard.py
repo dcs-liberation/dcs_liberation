@@ -870,7 +870,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("JAS 39 Gripen (version v1.8.0-beta)"), modLayout_row, 0
+            QtWidgets.QLabel("JAS 39 Gripen (version v1.8.5-beta)"), modLayout_row, 0
         )
         modLayout.addWidget(jas39_gripen, modLayout_row, 1)
         modLayout_row += 1
