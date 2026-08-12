@@ -1,0 +1,5 @@
+name: UH-60 payloads
+clsids:
+  - "{UH60_SEAT_CARGO_ALL}"
+  - "{UH60_SEAT_GUNNER_L}"
+  - "{UH60_SEAT_GUNNER_R}"

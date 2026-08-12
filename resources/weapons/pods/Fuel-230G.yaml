@@ -1,0 +1,4 @@
+name: Fuel Tank 230Gal
+capacity_liters: 870
+clsids:
+  - "{UH60_FUEL_TANK_230}"

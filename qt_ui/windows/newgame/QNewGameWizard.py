@@ -850,10 +850,14 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(QtWidgets.QLabel("F-22A Raptor"), modLayout_row, 0)
         modLayout.addWidget(f22_raptor, modLayout_row, 1)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("F-104 Starfighter"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("F-104 Starfighter (version 2.9.23.105)"), modLayout_row, 0
+        )
         modLayout.addWidget(f104_starfighter, modLayout_row, 1)
         modLayout_row += 1
-        modLayout.addWidget(QtWidgets.QLabel("F-4B&C Phantom"), modLayout_row, 0)
+        modLayout.addWidget(
+            QtWidgets.QLabel("F-4B&C Phantom (version 2.9.14.207)"), modLayout_row, 0
+        )
         modLayout.addWidget(f4_phantom, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(
@@ -862,7 +866,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(hercules, modLayout_row, 1)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("UH-60L Black Hawk (version 1.3.1)"), modLayout_row, 0
+            QtWidgets.QLabel("UH-60L Black Hawk (version 2.15)"), modLayout_row, 0
         )
         modLayout.addWidget(uh_60l, modLayout_row, 1)
         modLayout_row += 1
@@ -870,7 +874,7 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modLayout.addWidget(QtWidgets.QWidget(), modLayout_row, 0)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("JAS 39 Gripen (version v1.8.0-beta)"), modLayout_row, 0
+            QtWidgets.QLabel("JAS 39 Gripen (version v1.8.5-beta)"), modLayout_row, 0
         )
         modLayout.addWidget(jas39_gripen, modLayout_row, 1)
         modLayout_row += 1
@@ -888,7 +892,9 @@ class GeneratorOptions(QtWidgets.QWizardPage):
         modSettingsGroup.setLayout(modLayout)
         modLayout_row += 1
         modLayout.addWidget(
-            QtWidgets.QLabel("F/A-18EFG Super Hornet (version 2.3.2)"), modLayout_row, 0
+            QtWidgets.QLabel("F/A-18EFG Super Hornet (version 2.4.5.260501.RC1)"),
+            modLayout_row,
+            0,
         )
         modLayout.addWidget(fa18efg, modLayout_row, 1)
         modSettingsGroup.setLayout(modLayout)

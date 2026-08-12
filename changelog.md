@@ -4,8 +4,16 @@ Saves from 15.x are not compatible with 16.0.0.
 
 ## Features/Improvements
 
+* **[Engine]** Support for DCS 2.9.28 including F-14B(U).
 * **[Mission Generation]** Automatic setup of Shrike fuzing when targeting SNR-75 (Fan Song), SNR-125 (Low Blow), 1S91 (Straight Flush), ST-68U (Tin Shield) and SON-9 (Fire Can) radars.
+* **[Mods]** CJS Super Hornet mod updated to version 2.4.5.
+* **[Mods]** JAS39 mod updated to version 1.8.5.
+* **[Mods]** UH-60L updated to version 2.15.
+* **[Mods]** VSN F-4B/C updated to version 2.9.14.207.
 
+## Fixes
+
+* **[Campaign]** Crash when selecting "No night missions".
 
 # 15.0.0
 

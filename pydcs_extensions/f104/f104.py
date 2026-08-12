@@ -179,9 +179,9 @@ class VSN_F104C(PlaneType):
             6,
             Weapons.RN_28___260_kg__nuclear_bomb__free_fall,
         )
-        TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD = (
+        TER_9_A___3_x_BDU_33___25lb_Practice_Bomb_LD = (
             6,
-            Weapons.TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD,
+            Weapons.TER_9_A___3_x_BDU_33___25lb_Practice_Bomb_LD,
         )
         LAU_105_2_AIM_9P5 = (6, Weapons.LAU_105_2_AIM_9P5)
         LAU_115C_2_AIM_9L = (6, WeaponsF104.LAU_115C_2_AIM_9L)
@@ -438,9 +438,9 @@ class VSN_F104G(PlaneType):
             6,
             Weapons.RN_28___260_kg__nuclear_bomb__free_fall,
         )
-        TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD = (
+        TER_9_A___3_x_BDU_33___25lb_Practice_Bomb_LD = (
             6,
-            Weapons.TER_9A_with_3_x_BDU_33___25lb_Practice_Bomb_LD,
+            Weapons.TER_9_A___3_x_BDU_33___25lb_Practice_Bomb_LD,
         )
 
     class Pylon7:
@@ -735,9 +735,9 @@ class VSN_F104S_AG(PlaneType):
         VSN_F104G_L_PTB = (2, WeaponsF104.VSN_F104G_L_PTB)
 
     class Pylon3:
-        LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_ = (
+        LAU_117___AGM_65D___Maverick_D__IIR_ASM_ = (
             3,
-            Weapons.LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_,
+            Weapons.LAU_117___AGM_65D___Maverick_D__IIR_ASM_,
         )
         GBU_16___1000lb_Laser_Guided_Bomb = (
             3,
@@ -780,9 +780,9 @@ class VSN_F104S_AG(PlaneType):
         AGM_119B_Penguin_ASM = (3, Weapons.AGM_119B_Penguin_ASM)
 
     class Pylon4:
-        LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_ = (
+        LAU_117___AGM_65D___Maverick_D__IIR_ASM_ = (
             4,
-            Weapons.LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_,
+            Weapons.LAU_117___AGM_65D___Maverick_D__IIR_ASM_,
         )
         GBU_16___1000lb_Laser_Guided_Bomb = (
             4,
@@ -901,9 +901,9 @@ class VSN_F104S_AG(PlaneType):
         AIM_9P5_Sidewinder_IR_AAM = (7, Weapons.AIM_9P5_Sidewinder_IR_AAM)
 
     class Pylon8:
-        LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_ = (
+        LAU_117___AGM_65D___Maverick_D__IIR_ASM_ = (
             8,
-            Weapons.LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_,
+            Weapons.LAU_117___AGM_65D___Maverick_D__IIR_ASM_,
         )
         GBU_16___1000lb_Laser_Guided_Bomb = (
             8,
@@ -1002,9 +1002,9 @@ class VSN_F104S_AG(PlaneType):
         VSN_F104G_PTB = (8, WeaponsF104.VSN_F104G_PTB)
 
     class Pylon9:
-        LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_ = (
+        LAU_117___AGM_65D___Maverick_D__IIR_ASM_ = (
             9,
-            Weapons.LAU_117_with_AGM_65D___Maverick_D__IIR_ASM_,
+            Weapons.LAU_117___AGM_65D___Maverick_D__IIR_ASM_,
         )
         GBU_16___1000lb_Laser_Guided_Bomb = (
             9,

@@ -135,6 +135,11 @@ class JAS39GripenWeapons:
         "name": "M70B HE Unguided rocket",
         "weight": 372.2,
     }
+    _4_x_M_71_120_kg_GP_Bomb_High_drag = {
+        "clsid": "{JAS39_M71HD}",
+        "name": "4 x M/71 120 kg GP Bomb High-drag",
+        "weight": 605,
+    }
     _4_x_M_71_120_kg_GP_Bomb_Low_drag_ = {
         "clsid": "{JAS39_M71LD}",
         "name": "4 x M/71 120 kg GP Bomb Low-drag ",
@@ -250,6 +255,26 @@ class JAS39GripenWeapons:
         "name": "KEPD 350 Long Range Anti-Radiation Cruise-missile",
         "weight": 1400,
     }
+    RBS_15_Mk4_AShM = {
+        "clsid": "{JAS39_RBS15}",
+        "name": "RBS-15 Mk4 AShM",
+        "weight": 650,
+    }
+    RBS_15_Mk4_AShM_for_AI = {
+        "clsid": "{JAS39_RBS15AI}",
+        "name": "RBS-15 Mk4 AShM for AI",
+        "weight": 650,
+    }
+    AGM_65H_TV_Guided_Missile = {
+        "clsid": "{JAS39_AGM_65H}",
+        "name": "AGM-65H TV Guided Missile",
+        "weight": 260,
+    }
+    AGM_65K_TV_Guided_Missile = {
+        "clsid": "{JAS39_AGM_65K}",
+        "name": "AGM-65K TV Guided Missile",
+        "weight": 349,
+    }
 
 
 inject_weapons(JAS39GripenWeapons)
@@ -326,6 +351,10 @@ class JAS39Gripen(PlaneType):
             2,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
         )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            2,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
         M70B_HE_Unguided_rocket = (2, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (2, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
 
@@ -365,6 +394,10 @@ class JAS39Gripen(PlaneType):
         _4_x_M_71_120_kg_GP_Bomb_Low_drag_ = (
             3,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
+        )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            3,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
         )
         M70B_HE_Unguided_rocket = (3, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (3, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
@@ -413,6 +446,10 @@ class JAS39Gripen(PlaneType):
             6,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
         )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            6,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
         M70B_HE_Unguided_rocket = (6, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (6, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
         Drop_tank_1100_litre = (6, JAS39GripenWeapons.Drop_tank_1100_litre)
@@ -451,6 +488,266 @@ class JAS39Gripen(PlaneType):
         _4_x_M_71_120_kg_GP_Bomb_Low_drag_ = (
             7,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
+        )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            7,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
+        M70B_HE_Unguided_rocket = (7, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
+        M70B_AP_Unguided_rocket = (7, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
+
+    class Pylon8:
+        IRIS_T_IR_AAM = (8, JAS39GripenWeapons.IRIS_T_IR_AAM)
+        AIM_9L_Sidewinder_IR_AAM_ = (8, JAS39GripenWeapons.AIM_9L_Sidewinder_IR_AAM_)
+        A_Darter_IR_AAM = (8, JAS39GripenWeapons.A_Darter_IR_AAM)
+        AIM_9M_Sidewinder_IR_AAM_ = (8, JAS39GripenWeapons.AIM_9M_Sidewinder_IR_AAM_)
+        AIM_9X_Sidewinder_IR_AAM_ = (8, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
+        Python_5_IR_AAM = (8, JAS39GripenWeapons.Python_5_IR_AAM)
+        AIM_132_ASRAAM_IR_AAM = (8, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
+        AN_ASQ_T50_TCTS_Pod___ACMI_Pod = (8, Weapons.AN_ASQ_T50_TCTS_Pod___ACMI_Pod)
+        Smokewinder___red = (8, Weapons.Smokewinder___red)
+        Smokewinder___green = (8, Weapons.Smokewinder___green)
+        Smokewinder___blue = (8, Weapons.Smokewinder___blue)
+        Smokewinder___white = (8, Weapons.Smokewinder___white)
+        Smokewinder___yellow = (8, Weapons.Smokewinder___yellow)
+        Smokewinder___orange = (8, Weapons.Smokewinder___orange)
+
+    class Pylon9:
+        Litening_III_Targeting_Pod_FLIR = (
+            9,
+            JAS39GripenWeapons.Litening_III_Targeting_Pod_FLIR,
+        )
+
+    class Pylon10:
+        Integrated_ELINT = (10, JAS39GripenWeapons.Integrated_ELINT)
+
+    class Pylon11:
+        EWS_39_Integrated_ECM = (11, JAS39GripenWeapons.EWS_39_Integrated_ECM)
+
+    pylons: Set[int] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+
+    tasks = [
+        task.Intercept,
+        task.CAP,
+        task.Reconnaissance,
+        task.Escort,
+        task.FighterSweep,
+    ]
+    task_default = task.FighterSweep
+
+
+@planemod
+class JAS39Gripen_BVR(PlaneType):
+    id = "JAS39Gripen_BVR"
+    flyable = True
+    height = 4.5
+    width = 8.4
+    length = 14.1
+    fuel_max = 2550
+    max_speed = 2649.996
+    chaff = 80
+    flare = 40
+    charge_total = 120
+    chaff_charge_size = 1
+    flare_charge_size = 1
+    eplrs = True
+    category = "Interceptor"  # {78EFB7A2-FD52-4b57-A6A6-3BF0E1D6555F}
+    radio_frequency = 127.5
+
+    livery_name = "JAS39GRIPEN_BVR"  # from type
+
+    class Pylon1:
+        IRIS_T_IR_AAM = (1, JAS39GripenWeapons.IRIS_T_IR_AAM)
+        AIM_9L_Sidewinder_IR_AAM_ = (1, JAS39GripenWeapons.AIM_9L_Sidewinder_IR_AAM_)
+        A_Darter_IR_AAM = (1, JAS39GripenWeapons.A_Darter_IR_AAM)
+        AIM_9M_Sidewinder_IR_AAM_ = (1, JAS39GripenWeapons.AIM_9M_Sidewinder_IR_AAM_)
+        AIM_9X_Sidewinder_IR_AAM_ = (1, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
+        Python_5_IR_AAM = (1, JAS39GripenWeapons.Python_5_IR_AAM)
+        AIM_132_ASRAAM_IR_AAM = (1, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
+        AN_ASQ_T50_TCTS_Pod___ACMI_Pod = (1, Weapons.AN_ASQ_T50_TCTS_Pod___ACMI_Pod)
+        Smokewinder___red = (1, Weapons.Smokewinder___red)
+        Smokewinder___green = (1, Weapons.Smokewinder___green)
+        Smokewinder___blue = (1, Weapons.Smokewinder___blue)
+        Smokewinder___white = (1, Weapons.Smokewinder___white)
+        Smokewinder___yellow = (1, Weapons.Smokewinder___yellow)
+        Smokewinder___orange = (1, Weapons.Smokewinder___orange)
+
+    class Pylon2:
+        IRIS_T_IR_AAM = (2, JAS39GripenWeapons.IRIS_T_IR_AAM)
+        AIM_9L_Sidewinder_IR_AAM_ = (2, JAS39GripenWeapons.AIM_9L_Sidewinder_IR_AAM_)
+        A_Darter_IR_AAM = (2, JAS39GripenWeapons.A_Darter_IR_AAM)
+        AIM_9M_Sidewinder_IR_AAM_ = (2, JAS39GripenWeapons.AIM_9M_Sidewinder_IR_AAM_)
+        AIM_9X_Sidewinder_IR_AAM_ = (2, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
+        Python_5_IR_AAM = (2, JAS39GripenWeapons.Python_5_IR_AAM)
+        AIM_132_ASRAAM_IR_AAM = (2, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
+        Meteor_BVRAAM_Active_Rdr_AAM = (
+            2,
+            JAS39GripenWeapons.Meteor_BVRAAM_Active_Rdr_AAM,
+        )
+        AIM_120B_AMRAAM_Active_Rdr_AAM = (
+            2,
+            JAS39GripenWeapons.AIM_120B_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_5_AMRAAM_Active_Rdr_AAM = (
+            2,
+            JAS39GripenWeapons.AIM_120C_5_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_7_AMRAAM_Active_Rdr_AAM = (
+            2,
+            JAS39GripenWeapons.AIM_120C_7_AMRAAM_Active_Rdr_AAM,
+        )
+        I_Derby_ER_BVRAAM_Active_Rdr_AAM = (
+            2,
+            JAS39GripenWeapons.I_Derby_ER_BVRAAM_Active_Rdr_AAM,
+        )
+        Mk_82_500_lb_GP_Bomb = (2, JAS39GripenWeapons.Mk_82_500_lb_GP_Bomb)
+        Mk_83_1000_lb_GP_Bomb = (2, JAS39GripenWeapons.Mk_83_1000_lb_GP_Bomb)
+        _2_x_Mk_82_500_lb_GP_Bomb = (2, JAS39GripenWeapons._2_x_Mk_82_500_lb_GP_Bomb)
+        _4_x_M_71_120_kg_GP_Bomb_Low_drag_ = (
+            2,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
+        )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            2,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
+        M70B_HE_Unguided_rocket = (2, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
+        M70B_AP_Unguided_rocket = (2, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
+
+    class Pylon3:
+        AIM_9L_Sidewinder_IR_AAM_ = (3, JAS39GripenWeapons.AIM_9L_Sidewinder_IR_AAM_)
+        IRIS_T_IR_AAM = (3, JAS39GripenWeapons.IRIS_T_IR_AAM)
+        A_Darter_IR_AAM = (3, JAS39GripenWeapons.A_Darter_IR_AAM)
+        AIM_9M_Sidewinder_IR_AAM_ = (3, JAS39GripenWeapons.AIM_9M_Sidewinder_IR_AAM_)
+        AIM_9X_Sidewinder_IR_AAM_ = (3, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
+        Python_5_IR_AAM = (3, JAS39GripenWeapons.Python_5_IR_AAM)
+        AIM_132_ASRAAM_IR_AAM = (3, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
+        Meteor_BVRAAM_Active_Rdr_AAM = (
+            3,
+            JAS39GripenWeapons.Meteor_BVRAAM_Active_Rdr_AAM,
+        )
+        AIM_120B_AMRAAM_Active_Rdr_AAM = (
+            3,
+            JAS39GripenWeapons.AIM_120B_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_5_AMRAAM_Active_Rdr_AAM = (
+            3,
+            JAS39GripenWeapons.AIM_120C_5_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_7_AMRAAM_Active_Rdr_AAM = (
+            3,
+            JAS39GripenWeapons.AIM_120C_7_AMRAAM_Active_Rdr_AAM,
+        )
+        I_Derby_ER_BVRAAM_Active_Rdr_AAM = (
+            3,
+            JAS39GripenWeapons.I_Derby_ER_BVRAAM_Active_Rdr_AAM,
+        )
+        Mk_82_500_lb_GP_Bomb = (3, JAS39GripenWeapons.Mk_82_500_lb_GP_Bomb)
+        Mk_83_1000_lb_GP_Bomb = (3, JAS39GripenWeapons.Mk_83_1000_lb_GP_Bomb)
+        Mk_84_2000_lb_GP_Bomb = (3, JAS39GripenWeapons.Mk_84_2000_lb_GP_Bomb)
+        _2_x_Mk_82_500_lb_GP_Bomb = (3, JAS39GripenWeapons._2_x_Mk_82_500_lb_GP_Bomb)
+        _2_x_Mk_83_1000_lb_GP_Bomb = (3, JAS39GripenWeapons._2_x_Mk_83_1000_lb_GP_Bomb)
+        _4_x_M_71_120_kg_GP_Bomb_Low_drag_ = (
+            3,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
+        )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            3,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
+        M70B_HE_Unguided_rocket = (3, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
+        M70B_AP_Unguided_rocket = (3, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
+        Drop_tank_1100_litre = (3, JAS39GripenWeapons.Drop_tank_1100_litre)
+
+    class Pylon4:
+        Drop_tank_1100_litre = (4, JAS39GripenWeapons.Drop_tank_1100_litre)
+
+    class Pylon5:
+        Litening_III_Targeting_Pod = (5, JAS39GripenWeapons.Litening_III_Targeting_Pod)
+
+    class Pylon6:
+        AIM_9L_Sidewinder_IR_AAM_ = (6, JAS39GripenWeapons.AIM_9L_Sidewinder_IR_AAM_)
+        IRIS_T_IR_AAM = (6, JAS39GripenWeapons.IRIS_T_IR_AAM)
+        A_Darter_IR_AAM = (6, JAS39GripenWeapons.A_Darter_IR_AAM)
+        AIM_9M_Sidewinder_IR_AAM_ = (6, JAS39GripenWeapons.AIM_9M_Sidewinder_IR_AAM_)
+        AIM_9X_Sidewinder_IR_AAM_ = (6, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
+        Python_5_IR_AAM = (6, JAS39GripenWeapons.Python_5_IR_AAM)
+        AIM_132_ASRAAM_IR_AAM = (6, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
+        Meteor_BVRAAM_Active_Rdr_AAM = (
+            6,
+            JAS39GripenWeapons.Meteor_BVRAAM_Active_Rdr_AAM,
+        )
+        AIM_120B_AMRAAM_Active_Rdr_AAM = (
+            6,
+            JAS39GripenWeapons.AIM_120B_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_5_AMRAAM_Active_Rdr_AAM = (
+            6,
+            JAS39GripenWeapons.AIM_120C_5_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_7_AMRAAM_Active_Rdr_AAM = (
+            6,
+            JAS39GripenWeapons.AIM_120C_7_AMRAAM_Active_Rdr_AAM,
+        )
+        I_Derby_ER_BVRAAM_Active_Rdr_AAM = (
+            6,
+            JAS39GripenWeapons.I_Derby_ER_BVRAAM_Active_Rdr_AAM,
+        )
+        Mk_82_500_lb_GP_Bomb = (6, JAS39GripenWeapons.Mk_82_500_lb_GP_Bomb)
+        Mk_83_1000_lb_GP_Bomb = (6, JAS39GripenWeapons.Mk_83_1000_lb_GP_Bomb)
+        Mk_84_2000_lb_GP_Bomb = (6, JAS39GripenWeapons.Mk_84_2000_lb_GP_Bomb)
+        _2_x_Mk_82_500_lb_GP_Bomb = (6, JAS39GripenWeapons._2_x_Mk_82_500_lb_GP_Bomb)
+        _2_x_Mk_83_1000_lb_GP_Bomb = (6, JAS39GripenWeapons._2_x_Mk_83_1000_lb_GP_Bomb)
+        _4_x_M_71_120_kg_GP_Bomb_Low_drag_ = (
+            6,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
+        )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            6,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
+        M70B_HE_Unguided_rocket = (6, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
+        M70B_AP_Unguided_rocket = (6, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
+        Drop_tank_1100_litre = (6, JAS39GripenWeapons.Drop_tank_1100_litre)
+
+    class Pylon7:
+        IRIS_T_IR_AAM = (7, JAS39GripenWeapons.IRIS_T_IR_AAM)
+        AIM_9L_Sidewinder_IR_AAM_ = (7, JAS39GripenWeapons.AIM_9L_Sidewinder_IR_AAM_)
+        A_Darter_IR_AAM = (7, JAS39GripenWeapons.A_Darter_IR_AAM)
+        AIM_9M_Sidewinder_IR_AAM_ = (7, JAS39GripenWeapons.AIM_9M_Sidewinder_IR_AAM_)
+        AIM_9X_Sidewinder_IR_AAM_ = (7, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
+        Python_5_IR_AAM = (7, JAS39GripenWeapons.Python_5_IR_AAM)
+        AIM_132_ASRAAM_IR_AAM = (7, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
+        Meteor_BVRAAM_Active_Rdr_AAM = (
+            7,
+            JAS39GripenWeapons.Meteor_BVRAAM_Active_Rdr_AAM,
+        )
+        AIM_120B_AMRAAM_Active_Rdr_AAM = (
+            7,
+            JAS39GripenWeapons.AIM_120B_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_5_AMRAAM_Active_Rdr_AAM = (
+            7,
+            JAS39GripenWeapons.AIM_120C_5_AMRAAM_Active_Rdr_AAM,
+        )
+        AIM_120C_7_AMRAAM_Active_Rdr_AAM = (
+            7,
+            JAS39GripenWeapons.AIM_120C_7_AMRAAM_Active_Rdr_AAM,
+        )
+        I_Derby_ER_BVRAAM_Active_Rdr_AAM = (
+            7,
+            JAS39GripenWeapons.I_Derby_ER_BVRAAM_Active_Rdr_AAM,
+        )
+        Mk_82_500_lb_GP_Bomb = (7, JAS39GripenWeapons.Mk_82_500_lb_GP_Bomb)
+        Mk_83_1000_lb_GP_Bomb = (7, JAS39GripenWeapons.Mk_83_1000_lb_GP_Bomb)
+        _2_x_Mk_82_500_lb_GP_Bomb = (7, JAS39GripenWeapons._2_x_Mk_82_500_lb_GP_Bomb)
+        _4_x_M_71_120_kg_GP_Bomb_Low_drag_ = (
+            7,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
+        )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            7,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
         )
         M70B_HE_Unguided_rocket = (7, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (7, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
@@ -539,14 +836,8 @@ class JAS39Gripen_AG(PlaneType):
         AIM_9X_Sidewinder_IR_AAM_ = (2, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
         Python_5_IR_AAM = (2, JAS39GripenWeapons.Python_5_IR_AAM)
         AIM_132_ASRAAM_IR_AAM = (2, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile = (
-            2,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile,
-        )
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_ = (
-            2,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_,
-        )
+        RBS_15_Mk4_AShM = (2, JAS39GripenWeapons.RBS_15_Mk4_AShM)
+        RBS_15_Mk4_AShM_for_AI = (2, JAS39GripenWeapons.RBS_15_Mk4_AShM_for_AI)
         MAR_1_High_Speed_Anti_Radiation_Missile = (
             2,
             JAS39GripenWeapons.MAR_1_High_Speed_Anti_Radiation_Missile,
@@ -602,17 +893,18 @@ class JAS39Gripen_AG(PlaneType):
             2,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
         )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            2,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
         M70B_HE_Unguided_rocket = (2, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (2, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
         _3_x_Brimstone_Laser_Guided_Missile = (
             2,
             JAS39GripenWeapons._3_x_Brimstone_Laser_Guided_Missile,
         )
-        LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_ = (
-            2,
-            Weapons.LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_,
-        )
-        LAU_117_AGM_65H = (2, Weapons.LAU_117_AGM_65H)
+        AGM_65K_TV_Guided_Missile = (2, JAS39GripenWeapons.AGM_65K_TV_Guided_Missile)
+        AGM_65H_TV_Guided_Missile = (2, JAS39GripenWeapons.AGM_65H_TV_Guided_Missile)
         _3_x_SPEAR_3_Anti_Radiation_Missile = (
             2,
             JAS39GripenWeapons._3_x_SPEAR_3_Anti_Radiation_Missile,
@@ -627,11 +919,8 @@ class JAS39Gripen_AG(PlaneType):
         AIM_9X_Sidewinder_IR_AAM_ = (3, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
         Python_5_IR_AAM = (3, JAS39GripenWeapons.Python_5_IR_AAM)
         AIM_132_ASRAAM_IR_AAM = (3, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
-        LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_ = (
-            3,
-            Weapons.LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_,
-        )
-        LAU_117_AGM_65H = (3, Weapons.LAU_117_AGM_65H)
+        AGM_65K_TV_Guided_Missile = (3, JAS39GripenWeapons.AGM_65K_TV_Guided_Missile)
+        AGM_65H_TV_Guided_Missile = (3, JAS39GripenWeapons.AGM_65H_TV_Guided_Missile)
         _3_x_Brimstone_Laser_Guided_Missile = (
             3,
             JAS39GripenWeapons._3_x_Brimstone_Laser_Guided_Missile,
@@ -641,14 +930,8 @@ class JAS39Gripen_AG(PlaneType):
             JAS39GripenWeapons._3_x_SPEAR_3_Anti_Radiation_Missile,
         )
         _3_x_SPEAR_EW_Decoy = (3, JAS39GripenWeapons._3_x_SPEAR_EW_Decoy)
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile = (
-            3,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile,
-        )
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_ = (
-            3,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_,
-        )
+        RBS_15_Mk4_AShM = (3, JAS39GripenWeapons.RBS_15_Mk4_AShM)
+        RBS_15_Mk4_AShM_for_AI = (3, JAS39GripenWeapons.RBS_15_Mk4_AShM_for_AI)
         MAR_1_High_Speed_Anti_Radiation_Missile = (
             3,
             JAS39GripenWeapons.MAR_1_High_Speed_Anti_Radiation_Missile,
@@ -726,6 +1009,10 @@ class JAS39Gripen_AG(PlaneType):
             3,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
         )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            3,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
         Drop_tank_1100_litre = (3, JAS39GripenWeapons.Drop_tank_1100_litre)
         M70B_HE_Unguided_rocket = (3, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (3, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
@@ -739,6 +1026,7 @@ class JAS39Gripen_AG(PlaneType):
         )
 
     class Pylon4:
+        DIS_LS_6_100_DUAL_L = (4, Weapons.DIS_LS_6_100_DUAL_L)
         Drop_tank_1100_litre = (4, JAS39GripenWeapons.Drop_tank_1100_litre)
 
     # ERRR {INV-SMOKE-RED}
@@ -759,11 +1047,8 @@ class JAS39Gripen_AG(PlaneType):
         AIM_9X_Sidewinder_IR_AAM_ = (6, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
         Python_5_IR_AAM = (6, JAS39GripenWeapons.Python_5_IR_AAM)
         AIM_132_ASRAAM_IR_AAM = (6, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
-        LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_ = (
-            6,
-            Weapons.LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_,
-        )
-        LAU_117_AGM_65H = (6, Weapons.LAU_117_AGM_65H)
+        AGM_65K_TV_Guided_Missile = (6, JAS39GripenWeapons.AGM_65K_TV_Guided_Missile)
+        AGM_65H_TV_Guided_Missile = (6, JAS39GripenWeapons.AGM_65H_TV_Guided_Missile)
         _3_x_Brimstone_Laser_Guided_Missile = (
             6,
             JAS39GripenWeapons._3_x_Brimstone_Laser_Guided_Missile,
@@ -773,14 +1058,8 @@ class JAS39Gripen_AG(PlaneType):
             JAS39GripenWeapons._3_x_SPEAR_3_Anti_Radiation_Missile,
         )
         _3_x_SPEAR_EW_Decoy = (6, JAS39GripenWeapons._3_x_SPEAR_EW_Decoy)
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile = (
-            6,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile,
-        )
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_ = (
-            6,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_,
-        )
+        RBS_15_Mk4_AShM = (6, JAS39GripenWeapons.RBS_15_Mk4_AShM)
+        RBS_15_Mk4_AShM_for_AI = (6, JAS39GripenWeapons.RBS_15_Mk4_AShM_for_AI)
         MAR_1_High_Speed_Anti_Radiation_Missile = (
             6,
             JAS39GripenWeapons.MAR_1_High_Speed_Anti_Radiation_Missile,
@@ -858,6 +1137,10 @@ class JAS39Gripen_AG(PlaneType):
             6,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
         )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            6,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
         Drop_tank_1100_litre = (6, JAS39GripenWeapons.Drop_tank_1100_litre)
         M70B_HE_Unguided_rocket = (6, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (6, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
@@ -878,14 +1161,8 @@ class JAS39Gripen_AG(PlaneType):
         AIM_9X_Sidewinder_IR_AAM_ = (7, JAS39GripenWeapons.AIM_9X_Sidewinder_IR_AAM_)
         Python_5_IR_AAM = (7, JAS39GripenWeapons.Python_5_IR_AAM)
         AIM_132_ASRAAM_IR_AAM = (7, JAS39GripenWeapons.AIM_132_ASRAAM_IR_AAM)
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile = (
-            7,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile,
-        )
-        RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_ = (
-            7,
-            JAS39GripenWeapons.RBS_15_Mk4_Gungnir_Anti_ship_Missile__AI_,
-        )
+        RBS_15_Mk4_AShM = (7, JAS39GripenWeapons.RBS_15_Mk4_AShM)
+        RBS_15_Mk4_AShM_for_AI = (7, JAS39GripenWeapons.RBS_15_Mk4_AShM_for_AI)
         MAR_1_High_Speed_Anti_Radiation_Missile = (
             7,
             JAS39GripenWeapons.MAR_1_High_Speed_Anti_Radiation_Missile,
@@ -941,17 +1218,18 @@ class JAS39Gripen_AG(PlaneType):
             7,
             JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_Low_drag_,
         )
+        _4_x_M_71_120_kg_GP_Bomb_High_drag = (
+            7,
+            JAS39GripenWeapons._4_x_M_71_120_kg_GP_Bomb_High_drag,
+        )
         M70B_HE_Unguided_rocket = (7, JAS39GripenWeapons.M70B_HE_Unguided_rocket)
         M70B_AP_Unguided_rocket = (7, JAS39GripenWeapons.M70B_AP_Unguided_rocket)
         _3_x_Brimstone_Laser_Guided_Missile = (
             7,
             JAS39GripenWeapons._3_x_Brimstone_Laser_Guided_Missile,
         )
-        LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_ = (
-            7,
-            Weapons.LAU_117_with_AGM_65K___Maverick_K__CCD_Imp_ASM_,
-        )
-        LAU_117_AGM_65H = (7, Weapons.LAU_117_AGM_65H)
+        AGM_65K_TV_Guided_Missile = (7, JAS39GripenWeapons.AGM_65K_TV_Guided_Missile)
+        AGM_65H_TV_Guided_Missile = (7, JAS39GripenWeapons.AGM_65H_TV_Guided_Missile)
         _3_x_SPEAR_3_Anti_Radiation_Missile = (
             7,
             JAS39GripenWeapons._3_x_SPEAR_3_Anti_Radiation_Missile,
