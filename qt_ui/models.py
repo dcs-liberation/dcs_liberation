@@ -27,6 +27,10 @@ from qt_ui.simcontroller import SimController
 from qt_ui.uiconstants import AIRCRAFT_ICONS
 
 
+def index_in_range(index: QModelIndex, row_count: int) -> bool:
+    return index.isValid() and 0 <= index.row() < row_count
+
+
 class DeletableChildModelManager:
     """Manages lifetimes for child models.
 
@@ -125,7 +129,7 @@ class PackageModel(QAbstractListModel):
         return len(self.package.flights)
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
-        if not index.isValid():
+        if not index_in_range(index, self.rowCount()):
             return None
         flight = self.flight_at_index(index)
         if role == Qt.DisplayRole:
@@ -162,6 +166,8 @@ class PackageModel(QAbstractListModel):
 
     def cancel_or_abort_flight_at_index(self, index: QModelIndex) -> None:
         """Removes the flight at the given index from the package."""
+        if not index_in_range(index, self.rowCount()):
+            return
         self.cancel_or_abort_flight(self.flight_at_index(index))
 
     def cancel_or_abort_flight(self, flight: Flight) -> None:
@@ -240,7 +246,8 @@ class PackageModel(QAbstractListModel):
             yield flight
 
     def on_sim_update(self, _events: GameUpdateEvents) -> None:
-        self.dataChanged.emit(self.index(0), self.index(self.rowCount()))
+        if self.rowCount():
+            self.dataChanged.emit(self.index(0), self.index(self.rowCount() - 1))
 
 
 class AtoModel(QAbstractListModel):
@@ -266,7 +273,7 @@ class AtoModel(QAbstractListModel):
         return len(self.ato.packages)
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
-        if not index.isValid():
+        if not index_in_range(index, self.rowCount()):
             return None
         package = self.ato.packages[index.row()]
         if role == Qt.DisplayRole:
@@ -289,6 +296,8 @@ class AtoModel(QAbstractListModel):
 
     def cancel_or_abort_package_at_index(self, index: QModelIndex) -> None:
         """Removes the package at the given index from the ATO."""
+        if not index_in_range(index, self.rowCount()):
+            return
         self.cancel_or_abort_package(self.package_at_index(index))
 
     def cancel_or_abort_package(self, package: Package) -> None:
@@ -349,6 +358,8 @@ class AtoModel(QAbstractListModel):
 
     def get_package_model(self, index: QModelIndex) -> PackageModel:
         """Returns a model for the package at the given index."""
+        if not index_in_range(index, self.rowCount()):
+            raise IndexError("Package index out of range")
         return self.package_models.acquire(self.package_at_index(index))
 
     def find_matching_package_model(self, package: Package) -> Optional[PackageModel]:
@@ -364,7 +375,8 @@ class AtoModel(QAbstractListModel):
             yield self.package_models.acquire(package)
 
     def on_sim_update(self, _events: GameUpdateEvents) -> None:
-        self.dataChanged.emit(self.index(0), self.index(self.rowCount()))
+        if self.rowCount():
+            self.dataChanged.emit(self.index(0), self.index(self.rowCount() - 1))
 
 
 class TransferModel(QAbstractListModel):
@@ -384,7 +396,7 @@ class TransferModel(QAbstractListModel):
         return self.transfers.pending_transfer_count
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
-        if not index.isValid():
+        if not index_in_range(index, self.rowCount()):
             return None
         transfer = self.transfer_at_index(index)
         if role == Qt.DisplayRole:
@@ -414,6 +426,8 @@ class TransferModel(QAbstractListModel):
 
     def cancel_transfer_at_index(self, index: QModelIndex) -> None:
         """Cancels the planned unit transfer at the given index."""
+        if not index_in_range(index, self.rowCount()):
+            return
         self.cancel_transfer(self.transfer_at_index(index))
 
     def cancel_transfer(self, transfer: TransferOrder) -> None:
@@ -443,7 +457,7 @@ class AirWingModel(QAbstractListModel):
         return self.game_model.game.air_wing_for(self.player).size
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
-        if not index.isValid():
+        if not index_in_range(index, self.rowCount()):
             return None
         squadron = self.squadron_at_index(index)
         if role == Qt.DisplayRole:
@@ -487,7 +501,7 @@ class SquadronModel(QAbstractListModel):
         return self.squadron.number_of_pilots_including_inactive
 
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
-        if not index.isValid():
+        if not index_in_range(index, self.rowCount()):
             return None
         pilot = self.pilot_at_index(index)
         if role == Qt.DisplayRole:

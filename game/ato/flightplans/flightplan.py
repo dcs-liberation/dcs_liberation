@@ -199,6 +199,22 @@ class FlightPlan(ABC, Generic[LayoutT]):
         distance = meters(a.position.distance_to_point(b.position))
         return timedelta(hours=distance.nautical_miles / speed.knots * error_factor)
 
+    def _travel_time_after_departure(
+        self, a: FlightWaypoint, b: FlightWaypoint
+    ) -> timedelta:
+        """Travel from ``a`` to ``b`` after leaving any task at ``a``."""
+        waypoints = self.waypoints
+        start = waypoints.index(a)
+        end = waypoints.index(b)
+        total = timedelta()
+        edges = zip(waypoints[start:end], waypoints[start + 1 : end + 1])
+        for idx, (previous, waypoint) in enumerate(edges):
+            if idx == 0:
+                total += self.travel_time_between_waypoints(previous, waypoint)
+            else:
+                total += self.total_time_between_waypoints(previous, waypoint)
+        return total
+
     def tot_for_waypoint(self, waypoint: FlightWaypoint) -> datetime | None:
         raise NotImplementedError
 

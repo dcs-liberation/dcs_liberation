@@ -34,6 +34,7 @@ from .landingpoint import LandingPointBuilder
 from .landingzone import LandingZoneBuilder
 from .ocaaircraftingress import OcaAircraftIngressBuilder
 from .ocarunwayingress import OcaRunwayIngressBuilder
+from .premissionaar import PreMissionAarBuilder
 from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
 from .racetrack import RaceTrackBuilder
 from .racetrackend import RaceTrackEndBuilder
@@ -142,6 +143,7 @@ class WaypointGenerator:
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP_ZONE: LandingZoneBuilder,
+            FlightWaypointType.PRE_MISSION_AAR: PreMissionAarBuilder,
             FlightWaypointType.RECOVERY_TANKER: RecoveryTankerBuilder,
             FlightWaypointType.REFUEL: RefuelPointBuilder,
             FlightWaypointType.SPLIT: SplitPointBuilder,

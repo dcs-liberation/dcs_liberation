@@ -19,12 +19,25 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
     def builder_type() -> Type[Builder]:
         return Builder
 
+    def default_tot_offset(self) -> timedelta:
+        if self.package.pre_mission_aar:
+            return -timedelta(minutes=5)
+        return super().default_tot_offset()
+
     @property
     def patrol_duration(self) -> timedelta:
+        recovery_duration = self.recovery_refuel_duration
+        native_end_time = self.native_patrol_start_time + recovery_duration
+        if self.patrol_start_time >= self.native_patrol_start_time:
+            return recovery_duration
+        return native_end_time - self.patrol_start_time
+
+    @property
+    def recovery_refuel_duration(self) -> timedelta:
         # TODO: Only consider aircraft that can refuel with this tanker type.
         refuel_time_minutes = 5
-        for self.flight in self.package.flights:
-            flight_size = self.flight.roster.max_size
+        for flight in self.package.flights:
+            flight_size = flight.roster.max_size
             refuel_time_minutes = refuel_time_minutes + 4 * flight_size + 1
 
         return timedelta(minutes=refuel_time_minutes)
@@ -40,6 +53,15 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
 
     @property
     def patrol_start_time(self) -> datetime:
+        first_pre_refuel = self.first_pre_mission_aar_time
+        if first_pre_refuel is not None:
+            return min(self.native_patrol_start_time, first_pre_refuel)
+        if self.package.pre_mission_aar or self.tot_offset != timedelta():
+            return min(self.native_patrol_start_time, self.tot)
+        return self.native_patrol_start_time
+
+    @property
+    def native_patrol_start_time(self) -> datetime:
         altitude = self.flight.unit_type.patrol_altitude
 
         if altitude is None:

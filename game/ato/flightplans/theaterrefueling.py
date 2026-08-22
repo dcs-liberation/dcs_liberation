@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Type
 
 from game.utils import Heading, feet, meters, nautical_miles
@@ -16,14 +16,25 @@ class TheaterRefuelingFlightPlan(RefuelingFlightPlan):
         return Builder
 
     @property
+    def patrol_start_time(self) -> datetime:
+        first_pre_refuel = self.first_pre_mission_aar_time
+        if first_pre_refuel is None:
+            return super().patrol_start_time
+        return min(super().patrol_start_time, first_pre_refuel)
+
+    @property
     def patrol_duration(self) -> timedelta:
         # Add 30 minutes to desired_player_mission_duration as TOTs for flights
         # can sit up to this time. This extension means the tanker remains on
         # station for the flights' return.
-        return (
+        native_duration = (
             self.flight.coalition.game.settings.desired_player_mission_duration
             + timedelta(minutes=30)
         )
+        native_end_time = self.tot + native_duration
+        if self.patrol_start_time >= self.tot:
+            return native_duration
+        return native_end_time - self.patrol_start_time
 
 
 class Builder(IBuilder[TheaterRefuelingFlightPlan, PatrollingLayout]):

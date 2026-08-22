@@ -40,6 +40,8 @@ class FlightPlanBuilderTypes:
                 target, NavalControlPoint
             ):
                 return RecoveryTankerFlightPlan.builder_type()
+            if flight.package.pre_mission_aar and isinstance(target, FrontLine):
+                return PackageRefuelingFlightPlan.builder_type()
             if target.is_friendly(flight.squadron.player) or isinstance(
                 target, FrontLine
             ):
