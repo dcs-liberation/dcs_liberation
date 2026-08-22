@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Type
+from typing import TYPE_CHECKING, Type
 
 from game.utils import Heading, feet, meters, nautical_miles
 from .ibuilder import IBuilder
@@ -9,18 +10,26 @@ from .patrolling import PatrollingLayout
 from .refuelingflightplan import RefuelingFlightPlan
 from .waypointbuilder import WaypointBuilder
 
+if TYPE_CHECKING:
+    from game.ato.package import Package
+
 
 class TheaterRefuelingFlightPlan(RefuelingFlightPlan):
     @staticmethod
     def builder_type() -> Type[Builder]:
         return Builder
 
+    def pre_mission_aar_packages(self) -> Iterable[Package]:
+        coalition = getattr(self.flight, "coalition", None)
+        ato = getattr(coalition, "ato", None)
+        return getattr(ato, "packages", [self.package])
+
     @property
     def patrol_start_time(self) -> datetime:
-        first_pre_refuel = self.first_pre_mission_aar_time
-        if first_pre_refuel is None:
+        pre_refuel_start = self.pre_mission_aar_tanker_start_time
+        if pre_refuel_start is None:
             return super().patrol_start_time
-        return min(super().patrol_start_time, first_pre_refuel)
+        return min(super().patrol_start_time, pre_refuel_start)
 
     @property
     def patrol_duration(self) -> timedelta:

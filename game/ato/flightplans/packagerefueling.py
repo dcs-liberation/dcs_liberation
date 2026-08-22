@@ -19,11 +19,6 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
     def builder_type() -> Type[Builder]:
         return Builder
 
-    def default_tot_offset(self) -> timedelta:
-        if self.package.pre_mission_aar:
-            return -timedelta(minutes=5)
-        return super().default_tot_offset()
-
     @property
     def patrol_duration(self) -> timedelta:
         recovery_duration = self.recovery_refuel_duration
@@ -53,9 +48,9 @@ class PackageRefuelingFlightPlan(RefuelingFlightPlan):
 
     @property
     def patrol_start_time(self) -> datetime:
-        first_pre_refuel = self.first_pre_mission_aar_time
-        if first_pre_refuel is not None:
-            return min(self.native_patrol_start_time, first_pre_refuel)
+        pre_refuel_start = self.pre_mission_aar_tanker_start_time
+        if pre_refuel_start is not None:
+            return min(self.native_patrol_start_time, pre_refuel_start)
         if self.package.pre_mission_aar or self.tot_offset != timedelta():
             return min(self.native_patrol_start_time, self.tot)
         return self.native_patrol_start_time

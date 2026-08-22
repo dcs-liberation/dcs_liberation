@@ -211,6 +211,10 @@ class PackageModel(QAbstractListModel):
 
     def set_asap(self, asap: bool) -> None:
         with self.game_model.sim_controller.paused_sim():
+            if not asap and self.package.auto_asap:
+                self.package.set_tot_asap(
+                    self.game_model.sim_controller.current_time_in_sim
+                )
             self.package.auto_asap = asap
             self.update_tot()
 

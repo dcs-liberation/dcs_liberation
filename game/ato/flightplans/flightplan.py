@@ -239,7 +239,10 @@ class FlightPlan(ABC, Generic[LayoutT]):
                 yield waypoint
 
     def takeoff_time(self) -> datetime:
-        return self.tot - self._travel_time_to_waypoint(self.tot_waypoint)
+        tot = self.tot_for_waypoint(self.tot_waypoint)
+        if tot is None:
+            tot = self.tot
+        return tot - self._travel_time_to_waypoint(self.tot_waypoint)
 
     def minimum_duration_from_start_to_tot(self) -> timedelta:
         return (
