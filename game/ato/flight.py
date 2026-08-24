@@ -38,6 +38,9 @@ if TYPE_CHECKING:
 
 
 class Flight(SidcDescribable):
+    start_type: StartType
+    custom_name: Optional[str]
+
     def __init__(
         self,
         package: Package,
