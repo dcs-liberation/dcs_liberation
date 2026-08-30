@@ -21,8 +21,8 @@ class SeadFlightPlan(FormationAttackFlightPlan):
 
 
 class Builder(FormationAttackBuilder[SeadFlightPlan, FormationAttackLayout]):
-    def layout(self) -> FormationAttackLayout:
-        return self._build(FlightWaypointType.INGRESS_SEAD)
+    def layout(self,dump_debug_info: bool) -> FormationAttackLayout:
+        return self._build(FlightWaypointType.INGRESS_SEAD, dump_debug_info)
 
     def build(self, dump_debug_info: bool = False) -> SeadFlightPlan:
-        return SeadFlightPlan(self.flight, self.layout())
+        return SeadFlightPlan(self.flight, self.layout(dump_debug_info))

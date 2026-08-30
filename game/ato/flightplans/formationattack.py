@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, TypeVar
 
 from dcs import Point
 
-from game.flightplan import HoldZoneGeometry
 from game.theater import MissionTarget
 from game.utils import Speed, meters
 from .flightplan import FlightPlan
@@ -18,6 +17,7 @@ from .waypointbuilder import StrikeTarget, WaypointBuilder
 from .. import FlightType
 from ..flightwaypoint import FlightWaypoint
 from ..flightwaypointtype import FlightWaypointType
+from ...flightplan.holdpointsolver import HoldPointSolver
 
 if TYPE_CHECKING:
     from ..flight import Flight
@@ -125,6 +125,7 @@ class FormationAttackBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
     def _build(
         self,
         ingress_type: FlightWaypointType,
+        dump_debug_info: bool,
         targets: list[StrikeTarget] | None = None,
     ) -> FormationAttackLayout:
         assert self.package.waypoints is not None
@@ -143,7 +144,7 @@ class FormationAttackBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
                 )
             )
 
-        hold = builder.hold(self._hold_point())
+        hold = builder.hold(self._hold_point(dump_debug_info))
         join = builder.join(self.package.waypoints.join)
         join.wants_escort = True
 
@@ -206,12 +207,5 @@ class FormationAttackBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
         else:
             return builder.strike_area(location)
 
-    def _hold_point(self) -> Point:
-        assert self.package.waypoints is not None
-        origin = self.flight.departure.position
-        target = self.package.target.position
-        join = self.package.waypoints.join
-        ip = self.package.waypoints.ingress
-        return HoldZoneGeometry(
-            target, origin, ip, join, self.coalition, self.theater
-        ).find_best_hold_point()
+    def _hold_point(self, dump_debug_info: bool) -> Point:
+        return HoldPointSolver.solve_for_flight(self.flight, dump_debug_info)
