@@ -83,6 +83,9 @@ class PydcsWaypointBuilder:
         tot = self.flight.flight_plan.tot_for_waypoint(self.waypoint)
         if tot is not None:
             self.set_waypoint_tot(waypoint, tot, self.generated_waypoint_idx)
+        self.waypoint.departure_time = self.flight.flight_plan.depart_time_for_waypoint(
+            self.waypoint
+        )
         self.add_tasks(waypoint)
         return waypoint
 
