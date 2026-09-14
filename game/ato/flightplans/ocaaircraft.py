@@ -20,7 +20,7 @@ class OcaAircraftFlightPlan(FormationAttackFlightPlan):
 
 
 class Builder(FormationAttackBuilder[OcaAircraftFlightPlan, FormationAttackLayout]):
-    def layout(self) -> FormationAttackLayout:
+    def layout(self, dump_debug_info: bool) -> FormationAttackLayout:
         location = self.package.target
 
         if not isinstance(location, Airfield):
@@ -30,7 +30,7 @@ class Builder(FormationAttackBuilder[OcaAircraftFlightPlan, FormationAttackLayou
             )
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(FlightWaypointType.INGRESS_OCA_AIRCRAFT)
+        return self._build(FlightWaypointType.INGRESS_OCA_AIRCRAFT, dump_debug_info)
 
     def build(self, dump_debug_info: bool = False) -> OcaAircraftFlightPlan:
-        return OcaAircraftFlightPlan(self.flight, self.layout())
+        return OcaAircraftFlightPlan(self.flight, self.layout(dump_debug_info))

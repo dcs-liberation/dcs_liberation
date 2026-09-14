@@ -23,7 +23,7 @@ class DeadFlightPlan(FormationAttackFlightPlan):
 
 
 class Builder(FormationAttackBuilder[DeadFlightPlan, FormationAttackLayout]):
-    def layout(self) -> FormationAttackLayout:
+    def layout(self, dump_debug_info: bool) -> FormationAttackLayout:
         location = self.package.target
 
         is_ewr = isinstance(location, EwrGroundObject)
@@ -35,7 +35,7 @@ class Builder(FormationAttackBuilder[DeadFlightPlan, FormationAttackLayout]):
             )
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(FlightWaypointType.INGRESS_DEAD)
+        return self._build(FlightWaypointType.INGRESS_DEAD, dump_debug_info)
 
     def build(self, dump_debug_info: bool = False) -> DeadFlightPlan:
-        return DeadFlightPlan(self.flight, self.layout())
+        return DeadFlightPlan(self.flight, self.layout(dump_debug_info))

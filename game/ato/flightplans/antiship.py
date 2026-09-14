@@ -21,7 +21,7 @@ class AntiShipFlightPlan(FormationAttackFlightPlan):
 
 
 class Builder(FormationAttackBuilder[AntiShipFlightPlan, FormationAttackLayout]):
-    def layout(self) -> FormationAttackLayout:
+    def layout(self, dump_debug_info: bool) -> FormationAttackLayout:
         location = self.package.target
 
         from game.transfers import CargoShip
@@ -35,11 +35,13 @@ class Builder(FormationAttackBuilder[AntiShipFlightPlan, FormationAttackLayout])
         else:
             raise InvalidObjectiveLocation(self.flight.flight_type, location)
 
-        return self._build(FlightWaypointType.INGRESS_ANTI_SHIP, targets)
+        return self._build(
+            FlightWaypointType.INGRESS_ANTI_SHIP, dump_debug_info, targets
+        )
 
     @staticmethod
     def anti_ship_targets_for_tgo(tgo: NavalGroundObject) -> list[StrikeTarget]:
         return [StrikeTarget(f"{g.group_name} at {tgo.name}", g) for g in tgo.groups]
 
     def build(self, dump_debug_info: bool = False) -> AntiShipFlightPlan:
-        return AntiShipFlightPlan(self.flight, self.layout())
+        return AntiShipFlightPlan(self.flight, self.layout(dump_debug_info))
