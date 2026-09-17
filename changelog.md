@@ -6,6 +6,7 @@ Saves from 15.x are not compatible with 16.0.0.
 
 * **[Engine]** Support for DCS 2.9.28 including F-14B(U).
 * **[Mission Generation]** Automatic setup of Shrike fuzing when targeting SNR-75 (Fan Song), SNR-125 (Low Blow), 1S91 (Straight Flush), ST-68U (Tin Shield) and SON-9 (Fire Can) radars.
+* **[Mission Generation]** Add optional package-level Pre-Mission AAR holds for coordinating refueling before ingress.
 * **[Mods]** CJS Super Hornet mod updated to version 2.4.5.
 * **[Mods]** JAS39 mod updated to version 1.8.5.
 * **[Mods]** UH-60L updated to version 2.15.

@@ -28,16 +28,33 @@ class Builder(FormationAttackBuilder[EscortFlightPlan, FormationAttackLayout]):
         join = builder.join(self.package.waypoints.join)
         split = builder.split(self.package.waypoints.split)
         refuel = builder.refuel(self.package.waypoints.refuel)
+        nav_to = builder.nav_path(
+            hold.position, join.position, self.doctrine.combat_altitude
+        )
+        pre_refuel = None
+        nav_from_pre_refuel = []
+        if self.flight.pre_mission_aar:
+            pre_refuel = builder.pre_mission_aar(self.package.waypoints.refuel)
+            nav_to = builder.nav_path(
+                hold.position,
+                pre_refuel.position,
+                self.doctrine.combat_altitude,
+            )
+            nav_from_pre_refuel = builder.nav_path(
+                pre_refuel.position,
+                join.position,
+                self.doctrine.combat_altitude,
+            )
 
         return FormationAttackLayout(
             departure=builder.takeoff(self.flight.departure),
             hold=hold,
-            nav_to=builder.nav_path(
-                hold.position, join.position, self.doctrine.combat_altitude
-            ),
+            nav_to=nav_to,
+            pre_refuel=pre_refuel,
             join=join,
             ingress=ingress,
             targets=[target],
+            nav_from_pre_refuel=nav_from_pre_refuel,
             split=split,
             refuel=refuel,
             nav_from=builder.nav_path(

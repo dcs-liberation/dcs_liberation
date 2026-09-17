@@ -201,6 +201,14 @@ class WaypointBuilder:
             pretty_name="Refuel",
         )
 
+    def pre_mission_aar(self, position: Point) -> FlightWaypoint:
+        waypoint = self.hold(position)
+        waypoint.name = "PRE-REFUEL"
+        waypoint.waypoint_type = FlightWaypointType.PRE_MISSION_AAR
+        waypoint.description = "Refuel before mission push time"
+        waypoint.pretty_name = "Pre-Refuel"
+        return waypoint
+
     def recovery_tanker(self, position: Point) -> FlightWaypoint:
         alt_type: AltitudeReference = "BARO"
 

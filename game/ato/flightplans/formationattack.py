@@ -27,11 +27,20 @@ if TYPE_CHECKING:
 class FormationAttackLayout(FormationLayout):
     ingress: FlightWaypoint
     targets: list[FlightWaypoint]
+    nav_from_pre_refuel: list[FlightWaypoint]
+
+    def __setstate__(self, state: dict[str, object]) -> None:
+        state.setdefault("pre_refuel", None)
+        state.setdefault("nav_from_pre_refuel", [])
+        self.__dict__.update(state)
 
     def iter_waypoints(self) -> Iterator[FlightWaypoint]:
         yield self.departure
         yield self.hold
         yield from self.nav_to
+        if self.pre_refuel is not None:
+            yield self.pre_refuel
+            yield from self.nav_from_pre_refuel
         yield self.join
         yield self.ingress
         yield from self.targets
@@ -79,10 +88,24 @@ class FormationAttackFlightPlan(FormationFlightPlan[FormationAttackLayout], ABC)
 
     @property
     def join_time(self) -> datetime:
-        travel_time = self.total_time_between_waypoints(
+        travel_time = self._travel_time_after_departure(
             self.layout.join, self.layout.ingress
         )
         return self.ingress_time - travel_time
+
+    @property
+    def push_time(self) -> datetime:
+        return self.join_time - self._travel_time_after_departure(
+            self.layout.hold, self.layout.join
+        )
+
+    @property
+    def pre_refuel_push_time(self) -> datetime | None:
+        if self.layout.pre_refuel is None:
+            return None
+        return self.join_time - self._travel_time_after_departure(
+            self.layout.pre_refuel, self.layout.join
+        )
 
     @property
     def split_time(self) -> datetime:
@@ -158,16 +181,33 @@ class FormationAttackBuilder(IBuilder[FlightPlanT, LayoutT], ABC):
         split = builder.split(self.package.waypoints.split)
         split.wants_escort = True
         refuel = builder.refuel(self.package.waypoints.refuel)
+        nav_to = builder.nav_path(
+            hold.position, join.position, self.doctrine.combat_altitude
+        )
+        pre_refuel = None
+        nav_from_pre_refuel: list[FlightWaypoint] = []
+        if self.flight.pre_mission_aar:
+            pre_refuel = builder.pre_mission_aar(self.package.waypoints.refuel)
+            nav_to = builder.nav_path(
+                hold.position,
+                pre_refuel.position,
+                self.doctrine.combat_altitude,
+            )
+            nav_from_pre_refuel = builder.nav_path(
+                pre_refuel.position,
+                join.position,
+                self.doctrine.combat_altitude,
+            )
 
         return FormationAttackLayout(
             departure=builder.takeoff(self.flight.departure),
             hold=hold,
-            nav_to=builder.nav_path(
-                hold.position, join.position, self.doctrine.combat_altitude
-            ),
+            nav_to=nav_to,
+            pre_refuel=pre_refuel,
             join=join,
             ingress=ingress,
             targets=target_waypoints,
+            nav_from_pre_refuel=nav_from_pre_refuel,
             split=split,
             refuel=refuel,
             nav_from=builder.nav_path(

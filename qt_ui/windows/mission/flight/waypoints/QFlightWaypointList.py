@@ -123,10 +123,14 @@ class QFlightWaypointList(QTableView):
         if waypoint.waypoint_type == FlightWaypointType.TAKEOFF:
             return self.takeoff_text(flight)
         prefix = ""
-        time = flight.flight_plan.tot_for_waypoint(waypoint)
-        if time is None:
+        if waypoint.waypoint_type == FlightWaypointType.PRE_MISSION_AAR:
             prefix = "Depart "
             time = flight.flight_plan.depart_time_for_waypoint(waypoint)
+        else:
+            time = flight.flight_plan.tot_for_waypoint(waypoint)
+            if time is None:
+                prefix = "Depart "
+                time = flight.flight_plan.depart_time_for_waypoint(waypoint)
         if time is None:
             return ""
         return f"{prefix}{time:%H:%M:%S}"
