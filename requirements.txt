@@ -1,6 +1,6 @@
 altgraph==0.17.4
 annotated-types==0.6.0
-anyio==3.7.1
+anyio==4.14.2
 asgiref==3.7.2
 astral==3.2
 attrs==23.1.0
