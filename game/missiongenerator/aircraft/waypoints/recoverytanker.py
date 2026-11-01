@@ -1,9 +1,10 @@
 from dcs.point import MovingPoint
-from dcs.task import ActivateBeaconCommand, RecoveryTanker, Tanker
+from dcs.task import RecoveryTanker, Tanker
 
 from game.ato import FlightType
 from game.utils import feet, knots
 from .pydcswaypointbuilder import PydcsWaypointBuilder
+from .tankertacan import tanker_tacan_beacon
 
 
 class RecoveryTankerBuilder(PydcsWaypointBuilder):
@@ -57,12 +58,5 @@ class RecoveryTankerBuilder(PydcsWaypointBuilder):
             }.get(tanker_info.callsign)
 
             waypoint.add_task(
-                ActivateBeaconCommand(
-                    tacan.number,
-                    tacan.band.value,
-                    tacan_callsign,
-                    bearing=True,
-                    unit_id=self.group.units[0].id,
-                    aa=True,
-                )
+                tanker_tacan_beacon(tacan, tacan_callsign, self.group.units[0].id)
             )
