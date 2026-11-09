@@ -6,7 +6,7 @@ runs:
     - name: Set up Node
       uses: actions/setup-node@v4
       with:
-        node-version: "16"
+        node-version: "26"
         cache: npm
         cache-dependency-path: client/package-lock.json
 
