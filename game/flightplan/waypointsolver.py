@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING, Any
 from dcs import Point
 from dcs.mapping import Point as DcsPoint
 from dcs.terrain import Terrain
-from numpy import float64, array
-from numpy._typing import NDArray
+import numpy as np
+from numpy import array, dtype, float64
 from shapely import transform, to_geojson
 from shapely.geometry.base import BaseGeometry
 
@@ -41,10 +41,12 @@ class WaypointSolver:
         assert self._terrain is not None
         origin = DcsPoint(0, 0, self._terrain)
 
-        def xy_to_ll(points: NDArray[float64]) -> NDArray[float64]:
+        def xy_to_ll(
+            points: "np.ndarray[tuple[int, int], np.dtype[np.float64]]",
+        ) -> "np.ndarray[tuple[int, int], np.dtype[np.float64]]":
             ll_points = []
             for point in points:
-                p = origin.new_in_same_map(point[0], point[1])
+                p = origin.new_in_same_map(float(point[0]), float(point[1]))
                 latlng = p.latlng()
                 # Longitude is unintuitively first because it's the "X" coordinate:
                 # https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.1
