@@ -26,7 +26,7 @@ def geometry_ll_to_xy(geometry: BaseGeometry, terrain: Terrain) -> BaseGeometry:
         return geometry
 
     def ll_to_xy(
-        points: "np.ndarray[tuple[int, int], np.dtype[np.float64]]"
+        points: "np.ndarray[tuple[int, int], np.dtype[np.float64]]",
     ) -> "np.ndarray[tuple[int, int], np.dtype[np.float64]]":
         ll_points = []
         for point in points:

@@ -42,7 +42,7 @@ class WaypointSolver:
         origin = DcsPoint(0, 0, self._terrain)
 
         def xy_to_ll(
-            points: "np.ndarray[tuple[int, int], np.dtype[np.float64]]"
+            points: "np.ndarray[tuple[int, int], np.dtype[np.float64]]",
         ) -> "np.ndarray[tuple[int, int], np.dtype[np.float64]]":
             ll_points = []
             for point in points:
