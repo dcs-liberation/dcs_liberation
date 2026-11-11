@@ -1,11 +1,11 @@
 altgraph==0.17.4
 annotated-types==0.6.0
-anyio==3.7.1
+anyio==4.14.2
 asgiref==3.7.2
 astral==3.2
 attrs==23.1.0
 black==26.3.1
-certifi==2024.7.4
+certifi==2026.10.18
 cfgv==3.4.0
 click==8.1.7
 colorama==0.4.6
@@ -30,14 +30,14 @@ numpy==2.5.4
 packaging==26.3
 pathspec==1.0.4
 pefile==2023.2.7
-Pillow==12.3.0
+Pillow==13.0.0
 platformdirs==4.14.5
 pluggy==1.5.0
 pre-commit==3.5.0
 pydantic==2.9.2
 pydantic-settings==2.1.0
 pydantic_core==2.23.4
-pydcs @ git+https://github.com/dcs-liberation/dcs@e20f328390aecaac2a7f82444b4f5a96ac6bb2c3
+pydcs @ git+https://github.com/dcs-liberation/dcs@5ddcc63a2dcd661e16b14f7aa43219b93044855d
 pyinstaller==6.18.0
 pyinstaller-hooks-contrib==2025.9
 pyproj==3.8.0
