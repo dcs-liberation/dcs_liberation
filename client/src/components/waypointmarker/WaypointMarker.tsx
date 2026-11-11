@@ -111,5 +111,6 @@ const WaypointMarker = forwardRef(
     );
   }
 );
+WaypointMarker.displayName = "WaypointMarker";
 
 export default WaypointMarker;

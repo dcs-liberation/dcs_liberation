@@ -33,3 +33,4 @@ export const MovementPath = forwardRef<MovementPathHandle, MovementPathProps>(
     );
   }
 );
+MovementPath.displayName = "MovementPath";

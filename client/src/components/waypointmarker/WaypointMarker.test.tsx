@@ -1,19 +1,18 @@
-import { HTTP_URL } from "../../api/backend";
 import { renderWithProviders } from "../../testutils";
 import WaypointMarker, { TOOLTIP_ZOOM_LEVEL } from "./WaypointMarker";
 import { Map, Marker } from "leaflet";
 import React from "react";
 import { MapContainer } from "react-leaflet";
-import { waitFor, fireEvent } from "@testing-library/react";
+import { waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 
 // Capture the trigger function calls for assertion.
 // This mock avoids jsdom's incompatible AbortSignal with Node.js native Request
 // which breaks RTK Query's fetchBaseQuery internally.
-let triggerFn: jest.MockedFunction<any>;
+let triggerFn: jest.MockedFunction<(arg: unknown) => Promise<unknown>>;
 vi.mock("../../api/liberationApi", () => ({
   liberationApi: vi.fn(),
-  useSetWaypointPositionMutation: () => [triggerFn, {} as any],
+  useSetWaypointPositionMutation: () => [triggerFn, {} as never],
 }));
 
 describe("WaypointMarker", () => {

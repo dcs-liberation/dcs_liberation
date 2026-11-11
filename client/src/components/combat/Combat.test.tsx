@@ -6,10 +6,10 @@ import { vi } from "vitest";
 const mockPolyline = jest.fn();
 const mockPolygon = jest.fn();
 vi.mock("react-leaflet", () => ({
-  Polyline: (props: any) => {
+  Polyline: (props: React.ComponentProps<"polyline">) => {
     mockPolyline(props);
   },
-  Polygon: (props: any) => {
+  Polygon: (props: React.ComponentProps<"polygon">) => {
     mockPolygon(props);
   },
 }));

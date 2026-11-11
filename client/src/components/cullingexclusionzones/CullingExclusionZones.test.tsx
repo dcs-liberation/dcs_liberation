@@ -7,17 +7,17 @@ const mockCircle = jest.fn();
 const mockLayerGroup = jest.fn();
 const mockLayerControlOverlay = jest.fn();
 vi.mock("react-leaflet", () => ({
-  LayerGroup: (props: PropsWithChildren<any>) => {
+  LayerGroup: (props: PropsWithChildren<object>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;
   },
   LayersControl: {
-    Overlay: (props: PropsWithChildren<any>) => {
+    Overlay: (props: PropsWithChildren<object>) => {
       mockLayerControlOverlay(props);
       return <>{props.children}</>;
     },
   },
-  Circle: (props: any) => {
+  Circle: (props: React.ComponentProps<"circle">) => {
     mockCircle(props);
   },
 }));

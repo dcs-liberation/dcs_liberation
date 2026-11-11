@@ -6,11 +6,11 @@ import { vi } from "vitest";
 const mockPolyline = jest.fn();
 const mockLayerGroup = jest.fn();
 vi.mock("react-leaflet", () => ({
-  LayerGroup: (props: PropsWithChildren<any>) => {
+  LayerGroup: (props: PropsWithChildren<object>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;
   },
-  Polyline: (props: any) => {
+  Polyline: (props: React.ComponentProps<"polyline">) => {
     mockPolyline(props);
   },
 }));

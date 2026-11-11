@@ -5,7 +5,7 @@ import { vi } from "vitest";
 
 const mockMarker = jest.fn();
 vi.mock("react-leaflet", () => ({
-  Marker: (props: any) => {
+  Marker: (props: React.ComponentProps<"div">) => {
     mockMarker(props);
   },
 }));

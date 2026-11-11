@@ -6,11 +6,11 @@ import { vi } from "vitest";
 const mockLayerGroup = jest.fn();
 const mockCircle = jest.fn();
 vi.mock("react-leaflet", () => ({
-  LayerGroup: (props: PropsWithChildren<any>) => {
+  LayerGroup: (props: PropsWithChildren<object>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;
   },
-  Circle: (props: any) => {
+  Circle: (props: React.ComponentProps<"circle">) => {
     mockCircle(props);
   },
 }));
