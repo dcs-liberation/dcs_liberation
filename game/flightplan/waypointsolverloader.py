@@ -5,8 +5,8 @@ from typing import Any
 
 from dcs.mapping import Point as DcsPoint, LatLng
 from dcs.terrain import Terrain
-from numpy import float64, array
-from numpy._typing import NDArray
+import numpy as np
+from numpy import array, dtype, float64
 from shapely import transform
 from shapely.geometry import shape
 from shapely.geometry.base import BaseGeometry
@@ -25,12 +25,14 @@ def geometry_ll_to_xy(geometry: BaseGeometry, terrain: Terrain) -> BaseGeometry:
     if geometry.is_empty:
         return geometry
 
-    def ll_to_xy(points: NDArray[float64]) -> NDArray[float64]:
+    def ll_to_xy(
+        points: "np.ndarray[tuple[int, int], np.dtype[np.float64]]"
+    ) -> "np.ndarray[tuple[int, int], np.dtype[np.float64]]":
         ll_points = []
         for point in points:
             # Longitude is unintuitively first because it's the "X" coordinate:
             # https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.1
-            p = DcsPoint.from_latlng(LatLng(point[1], point[0]), terrain)
+            p = DcsPoint.from_latlng(LatLng(float(point[1]), float(point[0])), terrain)
             ll_points.append([p.x, p.y])
         return array(ll_points)
 
