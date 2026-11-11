@@ -9,16 +9,28 @@ import { waitFor } from "@testing-library/react";
 // Minimal Response mock compatible with RTK Query's fetchBaseQuery.
 class MockResponse {
   status: number;
-  body: Record<string, unknown>;
+  headers = {} as Headers;
+  ok = true;
+  redirected = false;
+  statusText = "";
+  type = "basic" as ResponseType;
+  url = "";
+  bodyUsed = false;
+  body = new Blob() as unknown as ReadableStream<Uint8Array>;
+  arrayBuffer() { return Promise.resolve(new ArrayBuffer(0)); }
+  blob() { return Promise.resolve(new Blob()); }
+  formData() { return Promise.resolve(new FormData()); }
+  text() { return Promise.resolve(""); }
+  private _jsonBody: Record<string, unknown>;
   constructor(status: number, body: Record<string, unknown>) {
     this.status = status;
-    this.body = body;
+    this._jsonBody = body;
   }
   clone(): MockResponse {
-    return new MockResponse(this.status, this.body);
+    return new MockResponse(this.status, this._jsonBody);
   }
   json() {
-    return Promise.resolve(this.body);
+    return Promise.resolve(this._jsonBody);
   }
 }
 
