@@ -42,7 +42,7 @@ manager = ConnectionManager()
 
 
 @router.websocket("/eventstream")
-async def event_stream(websocket: WebSocket[Any]) -> None:
+async def event_stream(websocket: WebSocket) -> None:  # type: ignore[type-arg]
     await manager.connect(websocket)
     while True:
         if not (events := await EventStream.get()).empty:
