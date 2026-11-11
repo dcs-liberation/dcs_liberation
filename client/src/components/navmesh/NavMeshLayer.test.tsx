@@ -1,10 +1,11 @@
 import { renderWithProviders } from "../../testutils";
 import NavMeshLayer from "./NavMeshLayer";
 import { PropsWithChildren } from "react";
+import { vi } from "vitest";
 
 const mockPolygon = jest.fn();
 const mockLayerGroup = jest.fn();
-jest.mock("react-leaflet", () => ({
+vi.mock("react-leaflet", () => ({
   LayerGroup: (props: PropsWithChildren<any>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;

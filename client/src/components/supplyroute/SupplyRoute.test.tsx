@@ -2,9 +2,10 @@ import { renderWithProviders } from "../../testutils";
 import SupplyRoute, { RouteColor } from "./SupplyRoute";
 import { screen } from "@testing-library/react";
 import { PropsWithChildren } from "react";
+import { vi } from "vitest";
 
 const mockPolyline = jest.fn();
-jest.mock("react-leaflet", () => ({
+vi.mock("react-leaflet", () => ({
   Polyline: (props: PropsWithChildren<any>) => {
     mockPolyline(props);
     return <>{props.children}</>;

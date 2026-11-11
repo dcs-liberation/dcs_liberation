@@ -15,6 +15,7 @@ import TerrainZonesLayers from "../terrainzones/TerrainZonesLayers";
 import TgosLayer from "../tgoslayer/TgosLayer";
 import { CoalitionThreatZones } from "../threatzones";
 import { WaypointDebugZonesControls } from "../waypointdebugzones/WaypointDebugZonesControls";
+import "leaflet/dist/leaflet.css";
 import "./LiberationMap.css";
 import { Map } from "leaflet";
 import { useEffect, useRef } from "react";
