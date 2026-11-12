@@ -1,18 +1,12 @@
 import logging
 
 from dcs.point import MovingPoint
-from dcs.task import (
-    ActivateBeaconCommand,
-    ControlledTask,
-    EngageTargets,
-    OrbitAction,
-    Tanker,
-    Targets,
-)
+from dcs.task import ControlledTask, EngageTargets, OrbitAction, Tanker, Targets
 
 from game.ato import FlightType
 from game.ato.flightplans.patrolling import PatrollingFlightPlan
 from .pydcswaypointbuilder import PydcsWaypointBuilder
+from .tankertacan import tanker_tacan_beacon
 
 
 class RaceTrackBuilder(PydcsWaypointBuilder):
@@ -72,12 +66,5 @@ class RaceTrackBuilder(PydcsWaypointBuilder):
             }.get(tanker_info.callsign)
 
             waypoint.add_task(
-                ActivateBeaconCommand(
-                    tacan.number,
-                    tacan.band.value,
-                    tacan_callsign,
-                    bearing=True,
-                    unit_id=self.group.units[0].id,
-                    aa=True,
-                )
+                tanker_tacan_beacon(tacan, tacan_callsign, self.group.units[0].id)
             )
