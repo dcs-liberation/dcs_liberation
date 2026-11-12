@@ -2,17 +2,20 @@ import { renderWithProviders } from "../../testutils";
 import ControlPointsLayer from "./ControlPointsLayer";
 import { LatLng } from "leaflet";
 import { PropsWithChildren } from "react";
+import { vi } from "vitest";
 
 const mockMarker = jest.fn();
 const mockLayerGroup = jest.fn();
-jest.mock("react-leaflet", () => ({
-  LayerGroup: (props: PropsWithChildren<any>) => {
+vi.mock("react-leaflet", () => ({
+  LayerGroup: (props: PropsWithChildren<object>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;
   },
-  Marker: (props: any) => {
+  Marker: (props: React.ComponentProps<"div">) => {
     mockMarker(props);
   },
+  Tooltip: (props: PropsWithChildren<object>) => <div>{props.children}</div>,
+  Polyline: (props: React.ComponentProps<"polyline">) => <polyline {...props} />,
 }));
 
 describe("ControlPointsLayer", () => {

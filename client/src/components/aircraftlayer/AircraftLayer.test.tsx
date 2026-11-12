@@ -1,15 +1,16 @@
 import { renderWithProviders } from "../../testutils";
 import AircraftLayer from "./AircraftLayer";
 import { PropsWithChildren } from "react";
+import { vi } from "vitest";
 
 const mockLayerGroup = jest.fn();
 const mockMarker = jest.fn();
-jest.mock("react-leaflet", () => ({
-  LayerGroup: (props: PropsWithChildren<any>) => {
+vi.mock("react-leaflet", () => ({
+  LayerGroup: (props: PropsWithChildren<object>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;
   },
-  Marker: (props: any) => {
+  Marker: (props: React.ComponentProps<"div">) => {
     mockMarker(props);
   },
 }));

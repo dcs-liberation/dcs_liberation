@@ -1,8 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="./leaflet-ruler.d.ts" />
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-ruler";
+import "leaflet-ruler/src/leaflet-ruler.css";
 import "./Ruler.css"
 
 export default function LeafletRuler() {

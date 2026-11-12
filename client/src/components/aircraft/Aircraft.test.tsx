@@ -1,10 +1,11 @@
 import Aircraft from "./Aircraft";
 import { render } from "@testing-library/react";
 import { Icon } from "leaflet";
+import { vi } from "vitest";
 
 const mockMarker = jest.fn();
-jest.mock("react-leaflet", () => ({
-  Marker: (props: any) => {
+vi.mock("react-leaflet", () => ({
+  Marker: (props: React.ComponentProps<"div">) => {
     mockMarker(props);
   },
 }));

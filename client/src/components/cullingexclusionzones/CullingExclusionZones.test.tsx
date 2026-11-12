@@ -1,22 +1,23 @@
 import { renderWithProviders } from "../../testutils";
 import CullingExclusionZones from "./CullingExclusionZones";
 import { PropsWithChildren } from "react";
+import { vi } from "vitest";
 
 const mockCircle = jest.fn();
 const mockLayerGroup = jest.fn();
 const mockLayerControlOverlay = jest.fn();
-jest.mock("react-leaflet", () => ({
-  LayerGroup: (props: PropsWithChildren<any>) => {
+vi.mock("react-leaflet", () => ({
+  LayerGroup: (props: PropsWithChildren<object>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;
   },
   LayersControl: {
-    Overlay: (props: PropsWithChildren<any>) => {
+    Overlay: (props: PropsWithChildren<object>) => {
       mockLayerControlOverlay(props);
       return <>{props.children}</>;
     },
   },
-  Circle: (props: any) => {
+  Circle: (props: React.ComponentProps<"circle">) => {
     mockCircle(props);
   },
 }));
