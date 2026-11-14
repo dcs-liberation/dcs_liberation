@@ -24,3 +24,4 @@ env/
 /resources/logging.yaml
 
 *.psd
+.qwen/settings.json

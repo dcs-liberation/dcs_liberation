@@ -2,61 +2,51 @@ import { HTTP_URL } from "../../api/backend";
 import { renderWithProviders } from "../../testutils";
 import WaypointMarker, { TOOLTIP_ZOOM_LEVEL } from "./WaypointMarker";
 import { Map, Marker } from "leaflet";
-import { rest, MockedRequest, matchRequestUrl } from "msw";
-import { setupServer } from "msw/node";
 import React from "react";
 import { MapContainer } from "react-leaflet";
+import { waitFor } from "@testing-library/react";
 
-// https://mswjs.io/docs/extensions/life-cycle-events#asserting-request-payload
-const waitForRequest = (method: string, url: string) => {
-  let requestId = "";
-
-  return new Promise<MockedRequest>((resolve, reject) => {
-    server.events.on("request:start", (req) => {
-      const matchesMethod = req.method.toLowerCase() === method.toLowerCase();
-      const matchesUrl = matchRequestUrl(req.url, url).matches;
-
-      if (matchesMethod && matchesUrl) {
-        requestId = req.id;
-      }
-    });
-
-    server.events.on("request:match", (req) => {
-      if (req.id === requestId) {
-        resolve(req);
-      }
-    });
-
-    server.events.on("request:unhandled", (req) => {
-      if (req.id === requestId) {
-        reject(
-          new Error(`The ${req.method} ${req.url.href} request was unhandled.`)
-        );
-      }
-    });
-  });
-};
-
-const server = setupServer(
-  rest.post(
-    `${HTTP_URL}/waypoints/:flightId/:waypointIdx/position`,
-    (req, res, ctx) => {
-      if (req.params.flightId === "") {
-        return res(ctx.status(500));
-      }
-      if (req.params.waypointIdx === "0") {
-        return res(ctx.status(403));
-      }
-      return res(ctx.status(204));
-    }
-  )
-);
-
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+// Minimal Response mock compatible with RTK Query's fetchBaseQuery.
+class MockResponse {
+  status: number;
+  headers = {} as Headers;
+  ok = true;
+  redirected = false;
+  statusText = "";
+  type = "basic" as ResponseType;
+  url = "";
+  bodyUsed = false;
+  body = new Blob() as unknown as ReadableStream<Uint8Array>;
+  arrayBuffer() { return Promise.resolve(new ArrayBuffer(0)); }
+  blob() { return Promise.resolve(new Blob()); }
+  formData() { return Promise.resolve(new FormData()); }
+  text() { return Promise.resolve(""); }
+  private _jsonBody: Record<string, unknown>;
+  constructor(status: number, body: Record<string, unknown>) {
+    this.status = status;
+    this._jsonBody = body;
+  }
+  clone(): MockResponse {
+    return new MockResponse(this.status, this._jsonBody);
+  }
+  json() {
+    return Promise.resolve(this._jsonBody);
+  }
+}
 
 describe("WaypointMarker", () => {
+  let fetchSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    fetchSpy = jest
+      .spyOn(global, "fetch")
+      .mockResolvedValue(new MockResponse(204, {}));
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+  });
+
   it("is placed in the correct location", () => {
     const waypoint = {
       name: "",
@@ -246,13 +236,9 @@ describe("WaypointMarker", () => {
     };
     const marker = React.createRef<Marker>();
 
-    // There is no observable UI change from moving a waypoint, just a message
-    // to the backend to record the frontend change. The real backend will then
-    // push an updated game state which will update redux, but that's not part
-    // of this component's behavior.
-    const pendingRequest = waitForRequest(
-      "POST",
-      `${HTTP_URL}/waypoints/1234/1/position`
+    // Override the default mock for this specific call.
+    fetchSpy.mockResolvedValueOnce(
+      new MockResponse(204, { lat: 1, lng: 1 })
     );
 
     renderWithProviders(
@@ -270,8 +256,21 @@ describe("WaypointMarker", () => {
     marker.current?.fireEvent("dragstart");
     marker.current?.fireEvent("dragend", { target: marker.current });
 
-    const request = await pendingRequest;
-    const response = await request.json();
-    expect(response).toEqual({ lat: 1, lng: 1 });
+    // The dragend handler calls putDestination via RTK Query (async).
+    // Wait for the fetch call to complete.
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1), {
+      timeout: 5000,
+    });
+    const [request] = fetchSpy.mock.calls[0];
+    expect((request as Request).url).toBe(
+      `${HTTP_URL}/waypoints/${flight.id}/1/position`
+    );
+    expect((request as Request).method).toBe("POST");
+    // jsdom's internal Request body storage; fall back to text() for compat.
+    const bodyText =
+      typeof (request as Request).text === "function"
+        ? await (request as Request).text()
+        : ((request as unknown as Record<string, unknown>)._bodyText as string);
+    expect(JSON.parse(bodyText)).toEqual({ lat: 1, lng: 1 });
   });
 });
