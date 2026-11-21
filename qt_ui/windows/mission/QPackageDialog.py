@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
 
 from game.ato.flight import Flight
 from game.ato.flightplans.planningerror import PlanningError
+from game.ato.flighttype import FlightType
 from game.ato.package import Package
 from game.game import Game
 from game.server import EventStream
@@ -98,6 +99,17 @@ class QPackageDialog(QDialog):
         self.auto_asap.toggled.connect(self.set_asap)
         self.tot_column.addWidget(self.auto_asap)
 
+        self.pre_mission_aar = QCheckBox("Pre-Mission AAR")
+        self.pre_mission_aar.setToolTip(
+            "Adds a pre-mission refueling hold to the flights in this package."
+        )
+        self.pre_mission_aar.setChecked(self.package_model.package.pre_mission_aar)
+        self.pre_mission_aar.setEnabled(
+            self.package_model.package.all_flights_waiting_for_start()
+        )
+        self.pre_mission_aar.toggled.connect(self.set_pre_mission_aar)
+        self.tot_column.addWidget(self.pre_mission_aar)
+
         self.tot_help_label = QLabel(
             '<a href="https://github.com/dcs-liberation/dcs_liberation/wiki/Mission-planning"><span style="color:#FFFFFF;">Help</span></a>'
         )
@@ -170,6 +182,21 @@ class QPackageDialog(QDialog):
         self.package_model.set_asap(checked)
         self.tot_spinner.setEnabled(not self.package_model.package.auto_asap)
         self.update_tot()
+
+    def set_pre_mission_aar(self, checked: bool) -> None:
+        self.package_model.package.pre_mission_aar = checked
+        for flight in self.package_model.package.flights:
+            try:
+                flight.pre_mission_aar = checked
+                if flight.flight_type is FlightType.REFUELING:
+                    flight.set_flight_type(FlightType.REFUELING)
+                flight.recreate_flight_plan()
+            except PlanningError as ex:
+                logging.exception("Could not recreate flight")
+                QMessageBox.critical(
+                    self, "Could not update flight", str(ex), QMessageBox.Ok
+                )
+        self.package_model.update_tot()
 
     def update_tot(self) -> None:
         self.tot_spinner.setTime(self.tot_qtime())

@@ -34,6 +34,7 @@ from .landingpoint import LandingPointBuilder
 from .landingzone import LandingZoneBuilder
 from .ocaaircraftingress import OcaAircraftIngressBuilder
 from .ocarunwayingress import OcaRunwayIngressBuilder
+from .premissionaar import PreMissionAarBuilder
 from .pydcswaypointbuilder import PydcsWaypointBuilder, TARGET_WAYPOINTS
 from .racetrack import RaceTrackBuilder
 from .racetrackend import RaceTrackEndBuilder
@@ -66,6 +67,7 @@ class WaypointGenerator:
     def create_waypoints(self) -> tuple[timedelta, list[FlightWaypoint]]:
         for waypoint in self.flight.points:
             waypoint.tot = None
+            waypoint.departure_time = None
 
         waypoints = self.flight.flight_plan.waypoints
         mission_start_time = self.set_takeoff_time(waypoints[0])
@@ -142,6 +144,7 @@ class WaypointGenerator:
             FlightWaypointType.PATROL: RaceTrackEndBuilder,
             FlightWaypointType.PATROL_TRACK: RaceTrackBuilder,
             FlightWaypointType.PICKUP_ZONE: LandingZoneBuilder,
+            FlightWaypointType.PRE_MISSION_AAR: PreMissionAarBuilder,
             FlightWaypointType.RECOVERY_TANKER: RecoveryTankerBuilder,
             FlightWaypointType.REFUEL: RefuelPointBuilder,
             FlightWaypointType.SPLIT: SplitPointBuilder,

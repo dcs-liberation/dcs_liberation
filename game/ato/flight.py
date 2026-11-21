@@ -38,6 +38,9 @@ if TYPE_CHECKING:
 
 
 class Flight(SidcDescribable):
+    start_type: StartType
+    custom_name: Optional[str]
+
     def __init__(
         self,
         package: Package,
@@ -58,6 +61,7 @@ class Flight(SidcDescribable):
         self.coalition = squadron.coalition
         self.squadron = squadron
         self.flight_type = flight_type
+        self.pre_mission_aar = package.pre_mission_aar
         if flight_type != FlightType.IDLE:
             self.squadron.claim_inventory(count)
         if roster is None:
@@ -96,6 +100,11 @@ class Flight(SidcDescribable):
     @property
     def flight_plan(self) -> FlightPlan[Any]:
         return self._flight_plan_builder.get_or_build()
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        if "pre_mission_aar" not in state:
+            self.pre_mission_aar = False
 
     def degrade_to_custom_flight_plan(self) -> None:
         from .flightplans.custom import Builder as CustomBuilder

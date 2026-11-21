@@ -51,3 +51,4 @@ class FlightWaypointType(IntEnum):
     INGRESS_AIR_ASSAULT = 31
     RECOVERY_TANKER = 32
     INGRESS_ANTI_SHIP = 33
+    PRE_MISSION_AAR = 34  # Pre-mission refueling hold point.

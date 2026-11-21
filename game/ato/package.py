@@ -31,6 +31,7 @@ class Package:
         # change. This is really a UI property rather than a game property, but we want
         # it to persist in the save.
         self.auto_asap = auto_asap
+        self.pre_mission_aar = False
         self.flights: list[Flight] = []
 
         # Desired TOT as an offset from mission start. Obviously datetime.min is bogus,
@@ -43,6 +44,11 @@ class Package:
     @property
     def has_players(self) -> bool:
         return any(flight.client_count for flight in self.flights)
+
+    def __setstate__(self, state: dict[str, object]) -> None:
+        self.__dict__.update(state)
+        if "pre_mission_aar" not in state:
+            self.pre_mission_aar = False
 
     @property
     def formation_speed(self) -> Optional[Speed]:

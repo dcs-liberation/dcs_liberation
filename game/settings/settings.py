@@ -473,6 +473,20 @@ class Settings:
             "and other flights have their TOTs."
         ),
     )
+    pre_mission_aar_hold_duration: timedelta = minutes_option(
+        "Pre-Mission AAR hold duration",
+        page=MISSION_GENERATOR_PAGE,
+        section=GAMEPLAY_SECTION,
+        default=timedelta(minutes=15),
+        min=1,
+        max=120,
+        detail=(
+            "Pre-Mission AAR can significantly increase time to target. When using "
+            "it, consider increasing Desired Mission Duration by 30-60 minutes so "
+            "enemy CAP and support flights remain active when the package reaches "
+            "the target."
+        ),
+    )
 
     # Performance
     perf_smoke_gen: bool = boolean_option(
