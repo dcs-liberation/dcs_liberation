@@ -268,6 +268,8 @@ class AtoModel(QAbstractListModel):
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole) -> Any:
         if not index.isValid():
             return None
+        if index.row() >= len(self.ato.packages):
+            return None
         package = self.ato.packages[index.row()]
         if role == Qt.DisplayRole:
             return f"{package.package_description} {package.target.name}"

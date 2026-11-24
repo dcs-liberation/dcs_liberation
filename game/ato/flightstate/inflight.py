@@ -36,9 +36,16 @@ class InFlight(FlightState, ABC):
         self.waypoint_index = waypoint_index
         self.has_aborted = has_aborted
         self.current_waypoint = waypoints[self.waypoint_index]
-        # TODO: Error checking for flight plans without landing waypoints.
-        self.next_waypoint = waypoints[self.waypoint_index + 1]
-        self.total_time_to_next_waypoint = self.travel_time_between_waypoints()
+        if (
+            self.waypoint_index + 1 == len(waypoints)
+            or self.current_waypoint.waypoint_type == FlightWaypointType.LANDING_POINT
+        ):
+            # Last waypoint of flight. Set dummy values for next_waypoint and total_time_to_next_waypoint as flight will be deleted.
+            self.next_waypoint = waypoints[self.waypoint_index]
+            self.total_time_to_next_waypoint = timedelta(seconds=1)
+        else:
+            self.next_waypoint = waypoints[self.waypoint_index + 1]
+            self.total_time_to_next_waypoint = self.travel_time_between_waypoints()
         self.elapsed_time = timedelta()
         self.current_waypoint_elapsed = False
         self.pending_actions: deque[ActionState] = deque(
@@ -94,7 +101,7 @@ class InFlight(FlightState, ABC):
         from .navigating import Navigating
 
         new_index = self.waypoint_index + 1
-        if self.next_waypoint.waypoint_type is FlightWaypointType.LANDING_POINT:
+        if self.current_waypoint.waypoint_type == FlightWaypointType.LANDING_POINT:
             return Completed(self.flight, self.settings)
         if self.next_waypoint.waypoint_type in [
             FlightWaypointType.PATROL_TRACK,

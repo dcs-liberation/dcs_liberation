@@ -10,7 +10,7 @@ from dcs.planes import C_101CC, C_101EB, Su_33
 
 from .flightmembers import FlightMembers
 from .flightroster import FlightRoster
-from .flightstate import FlightState, Navigating, Uninitialized
+from .flightstate import FlightState, Navigating, Uninitialized, InCombat
 from .flightstate.killed import Killed
 from .flighttype import FlightType
 from ..sidc import (
@@ -85,6 +85,9 @@ class Flight(SidcDescribable):
 
         # Used for simulating the travel to first contact.
         self.state: FlightState = Uninitialized(self, squadron.settings)
+
+        # Keeps track of delays to the flight due to combat
+        self.combat_delay = timedelta()
 
         # Will be replaced with a more appropriate FlightPlan later, but start with a
         # cheaply constructed one since adding more flights to the package may affect
@@ -233,6 +236,8 @@ class Flight(SidcDescribable):
         self, events: GameUpdateEvents, time: datetime, duration: timedelta
     ) -> None:
         self.state.on_game_tick(events, time, duration)
+        if isinstance(self.state, InCombat):
+            self.combat_delay += duration
 
     def should_halt_sim(self) -> bool:
         return self.state.should_halt_sim()
