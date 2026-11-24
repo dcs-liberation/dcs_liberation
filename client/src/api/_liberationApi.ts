@@ -293,32 +293,32 @@ export type GetNavmeshApiArg = {
   forPlayer: boolean;
 };
 export type OpenNewFrontLinePackageDialogApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ unknown;
 export type OpenNewFrontLinePackageDialogApiArg = {
   frontLineId: string;
 };
 export type OpenNewTgoPackageDialogApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ unknown;
 export type OpenNewTgoPackageDialogApiArg = {
   tgoId: string;
 };
 export type OpenTgoInfoDialogApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ unknown;
 export type OpenTgoInfoDialogApiArg = {
   tgoId: string;
 };
 export type OpenNewControlPointPackageDialogApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ unknown;
 export type OpenNewControlPointPackageDialogApiArg = {
   cpId: string;
 };
 export type OpenControlPointInfoDialogApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ unknown;
 export type OpenControlPointInfoDialogApiArg = {
   cpId: string;
 };
 export type SelectFlightApiResponse =
-  /** status 200 Successful Response */ any;
+  /** status 200 Successful Response */ unknown;
 export type SelectFlightApiArg = {
   flightId: string;
 };

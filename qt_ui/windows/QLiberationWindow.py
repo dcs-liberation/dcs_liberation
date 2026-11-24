@@ -505,6 +505,7 @@ class QLiberationWindow(QMainWindow):
             "karimgarba",
             "juanjux",
             "prikhi",
+            "AlexVeraDesign",
         ]
         text = (
             "<h3>DCS Liberation "

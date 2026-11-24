@@ -33,5 +33,6 @@ interface RulerOptions {
 }
 
 declare namespace L.control {
-  function ruler (options: RulerOptions) : L.Control {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function ruler (_options: RulerOptions) : L.Control {}
 }

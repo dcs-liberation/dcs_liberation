@@ -32,7 +32,7 @@ export const combatSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(gameLoaded, (state, action) => {
+    builder.addCase(gameLoaded, (state, _action) => { // eslint-disable-line @typescript-eslint/no-unused-vars
       state.combat = {};
     });
     builder.addCase(gameUnloaded, (state) => {

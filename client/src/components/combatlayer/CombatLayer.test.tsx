@@ -2,15 +2,16 @@ import { renderWithProviders } from "../../testutils";
 import CombatLayer from "./CombatLayer";
 import { LatLng } from "leaflet";
 import { PropsWithChildren } from "react";
+import { vi } from "vitest";
 
 const mockPolyline = jest.fn();
 const mockLayerGroup = jest.fn();
-jest.mock("react-leaflet", () => ({
-  LayerGroup: (props: PropsWithChildren<any>) => {
+vi.mock("react-leaflet", () => ({
+  LayerGroup: (props: PropsWithChildren<object>) => {
     mockLayerGroup(props);
     return <>{props.children}</>;
   },
-  Polyline: (props: any) => {
+  Polyline: (props: React.ComponentProps<"polyline">) => {
     mockPolyline(props);
   },
 }));

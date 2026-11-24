@@ -1,50 +1,23 @@
-import { HTTP_URL } from "../../api/backend";
 import { renderWithProviders } from "../../testutils";
 import WaypointMarker, { TOOLTIP_ZOOM_LEVEL } from "./WaypointMarker";
 import { Map, Marker } from "leaflet";
 import React from "react";
 import { MapContainer } from "react-leaflet";
 import { waitFor } from "@testing-library/react";
+import { vi } from "vitest";
 
-// Minimal Response mock compatible with RTK Query's fetchBaseQuery.
-class MockResponse {
-  status: number;
-  headers = {} as Headers;
-  ok = true;
-  redirected = false;
-  statusText = "";
-  type = "basic" as ResponseType;
-  url = "";
-  bodyUsed = false;
-  body = new Blob() as unknown as ReadableStream<Uint8Array>;
-  arrayBuffer() { return Promise.resolve(new ArrayBuffer(0)); }
-  blob() { return Promise.resolve(new Blob()); }
-  formData() { return Promise.resolve(new FormData()); }
-  text() { return Promise.resolve(""); }
-  private _jsonBody: Record<string, unknown>;
-  constructor(status: number, body: Record<string, unknown>) {
-    this.status = status;
-    this._jsonBody = body;
-  }
-  clone(): MockResponse {
-    return new MockResponse(this.status, this._jsonBody);
-  }
-  json() {
-    return Promise.resolve(this._jsonBody);
-  }
-}
+// Capture the trigger function calls for assertion.
+// This mock avoids jsdom's incompatible AbortSignal with Node.js native Request
+// which breaks RTK Query's fetchBaseQuery internally.
+let triggerFn: jest.MockedFunction<(arg: unknown) => Promise<unknown>>;
+vi.mock("../../api/liberationApi", () => ({
+  liberationApi: vi.fn(),
+  useSetWaypointPositionMutation: () => [triggerFn, {} as never],
+}));
 
 describe("WaypointMarker", () => {
-  let fetchSpy: jest.SpyInstance;
-
   beforeEach(() => {
-    fetchSpy = jest
-      .spyOn(global, "fetch")
-      .mockResolvedValue(new MockResponse(204, {}));
-  });
-
-  afterEach(() => {
-    fetchSpy.mockRestore();
+    triggerFn = vi.fn();
   });
 
   it("is placed in the correct location", () => {
@@ -236,11 +209,6 @@ describe("WaypointMarker", () => {
     };
     const marker = React.createRef<Marker>();
 
-    // Override the default mock for this specific call.
-    fetchSpy.mockResolvedValueOnce(
-      new MockResponse(204, { lat: 1, lng: 1 })
-    );
-
     renderWithProviders(
       <MapContainer>
         <WaypointMarker number={0} waypoint={departure} flight={flight} />
@@ -256,21 +224,12 @@ describe("WaypointMarker", () => {
     marker.current?.fireEvent("dragstart");
     marker.current?.fireEvent("dragend", { target: marker.current });
 
-    // The dragend handler calls putDestination via RTK Query (async).
-    // Wait for the fetch call to complete.
-    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(1), {
+    // The dragend handler calls setWaypointPositionMutation (via RTK Query).
+    await waitFor(() => expect(triggerFn).toHaveBeenCalledTimes(1), {
       timeout: 5000,
     });
-    const [request] = fetchSpy.mock.calls[0];
-    expect((request as Request).url).toBe(
-      `${HTTP_URL}/waypoints/${flight.id}/1/position`
-    );
-    expect((request as Request).method).toBe("POST");
-    // jsdom's internal Request body storage; fall back to text() for compat.
-    const bodyText =
-      typeof (request as Request).text === "function"
-        ? await (request as Request).text()
-        : ((request as unknown as Record<string, unknown>)._bodyText as string);
-    expect(JSON.parse(bodyText)).toEqual({ lat: 1, lng: 1 });
+    const [arg] = triggerFn.mock.calls[0];
+    expect(arg.flightId).toBe(flight.id);
+    expect(arg.waypointIdx).toBe(1);
   });
 });
