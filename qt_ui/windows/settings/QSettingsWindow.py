@@ -289,7 +289,7 @@ class QSettingsWindow(QDialog):
         self.categoryList = QListView()
         self.right_layout = QStackedLayout()
 
-        self.categoryList.setMaximumWidth(175)
+        self.categoryList.setMaximumWidth(185)
 
         self.categoryModel = QStandardItemModel(self.categoryList)
 
